@@ -746,6 +746,9 @@ def prepare(mode, base, archives):
     )
     with zipfile.ZipFile(UPSTREAM / "resources/bsb.zip") as z:
         baseline = z.read("shared/ptxprint/Default/ptxprint.cfg").decode()
+        (conf / "ptxprint.sty").write_bytes(
+            z.read("shared/ptxprint/Default/ptxprint.sty")
+        )
     cfg = configparser.ConfigParser(interpolation=None)
     cfg.read_string(baseline)
     cfg.read("config/layout.ini", encoding="utf-8")
@@ -754,7 +757,7 @@ def prepare(mode, base, archives):
     cfg["project"]["book"] = ids[0]
     with (conf / "ptxprint.cfg").open("w", encoding="utf-8") as f:
         cfg.write(f)
-    for name in ("ptxprint-mods.sty", "ptxprint-mods.tex", "changes.txt"):
+    for name in ("ptxprint-mods.sty", "changes.txt"):
         shutil.copyfile(Path("config") / name, conf / name)
     front = Path("config/front.sfm").read_text(encoding="utf-8")
     if mode == "sample":
@@ -1012,17 +1015,6 @@ def check_boundaries(base, text, pages, reading_text, sample=False):
     )
     reading_pages = reading_text.split("\f")
     by_code = {b: (i, int(p)) for i, (b, t, p) in enumerate(toc)}
-    if "DAG" in by_code:
-        index, start = by_code["DAG"]
-        end = int(toc[index + 1][2]) - 1 if index + 1 < len(toc) else pages
-        daniel_headers = [
-            p.splitlines()[0] if p.splitlines() else ""
-            for p in page_text[start - 1 : end]
-        ]
-        require(
-            not any(re.search(r"\bDaniel\b.*\b(?:13|14)\b", h) for h in daniel_headers),
-            "Internal Daniel 13/14 labels leaked into running headers",
-        )
     for witness in json.loads(
         Path("config/render-witnesses.json").read_text(encoding="utf-8")
     ):

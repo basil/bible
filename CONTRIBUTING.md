@@ -40,11 +40,11 @@ A hash mismatch is a failure. Replacing an archive is a deliberate step describe
 - `config/edition.json`: the ordered manifest of scripture units and peripherals
 - `config/front.sfm`: title page, source statement, and contents
 - `config/layout.ini`: overrides applied on top of PTXprint's BSB layout
-- `config/ptxprint-mods.sty` and `config/ptxprint-mods.tex`: style and TeX overrides
+- `config/ptxprint-mods.sty`: style overrides
 - `config/sample.json`: chapters included in the sample build
 - `config/render-witnesses.json`: phrases from unusual content (Psalm 151, the Greek additions to Esther and Daniel, and so on) that must appear in the rendered PDF
 
-The layout is derived at build time from PTXprint 3.0.43's `resources/bsb.zip`: A5, two columns, 9.5-point text, its line spacing, margins, column rule, and running headers. This edition replaces Charis with Utopia, replaces the BSB publication metadata, adds front matter and section dividers, enables the contents page, and displays note callers and verse 1. Pagination is continuous Arabic numerals and includes the front matter.
+The layout is derived at build time from PTXprint 3.0.43's `resources/bsb.zip`, including both its configuration and `ptxprint.sty`: A5, two columns, 9.5-point text, its line spacing, margins, column rule, running headers, and heading/reference spacing. This edition replaces Charis with Utopia, replaces the BSB publication metadata, adds front matter and section dividers, and enables the contents page. Note-caller and verse-one settings are inherited from BSB. Pagination is continuous Arabic numerals and includes the front matter.
 
 The reading order is the new title/source/contents pages; Brenton's abbreviations and 1870 introduction; the KJV dedication and translators' preface; Old Testament; Apocrypha; New Testament; then Brenton's historical appendices. Cambridge closing notes remain with their NT books. The historical Cambridge title page is omitted. Details and the reasoning are in [docs/edition.md](docs/edition.md).
 
