@@ -38,7 +38,6 @@ NORMALIZED_TITLE_IDS = {
     "1MA",
     "2MA",
     "3MA",
-    "PRO",
     "SNG",
     "WIS",
     "SIR",
@@ -185,9 +184,8 @@ def validate():
         "NEH": "Nehemiah",
         "ESG": "Esther",
         "DAG": "Daniel",
-        "PRO": "Proverbs of Solomon",
         "SNG": "Song of Songs",
-        "SIR": "Wisdom of Sirach",
+        "SIR": "Wisdom of the Son of Sirach",
         "LAM": "Lamentations of Jeremy",
         "1MA": "1 Maccabees",
         "2MA": "2 Maccabees",
@@ -483,11 +481,11 @@ def scripture_text(entry, archives):
         )
         daniel_chapters[2], song_heading = re.subn(
             r"(?=\\v 25 Then Azarias stood up, and prayed on this manner)",
-            lambda m: "\\s1 SONG OF AZARIAS AND HYMN OF THE THREE YOUTHS\n\\p\n",
+            lambda m: "\\s1 THE SONG OF THE THREE CHILDREN\n\\p\n",
             daniel_chapters[2],
             count=1,
         )
-        require(song_heading == 1, "Daniel 3 Song of Azarias boundary changed")
+        require(song_heading == 1, "Daniel 3 Song of the Three Children boundary changed")
         text = daniel_header + "".join(susanna + daniel_chapters + bel)
     else:
         expected = original
@@ -592,7 +590,7 @@ def prepare(mode, base, archives):
                 and entry["source"] == "brenton"
                 and (
                     entry["id"]
-                    in {"EZR", "NEH", "DAG", "MAL", "ESG", "PRO", "SNG", "SIR", "LAM"}
+                    in {"EZR", "NEH", "DAG", "MAL", "ESG", "SNG", "SIR", "LAM"}
                 )
             ):
                 transformations.append(
