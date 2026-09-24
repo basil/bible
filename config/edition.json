@@ -86,22 +86,73 @@
       "title": "Chronicles II"
     },
     {
+      "id": "MAN",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "The Prayer of Manasses"
+    },
+    {
+      "id": "1ES",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Esdras I"
+    },
+    {
       "id": "EZR",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Ezra and Nehemiah"
+      "title": "Esdras II",
+      "chapters": [
+        1,
+        10
+      ]
+    },
+    {
+      "id": "NEH",
+      "source": "brenton",
+      "source_id": "EZR",
+      "section": "old_testament",
+      "title": "Nehemiah",
+      "chapters": [
+        11,
+        23
+      ]
+    },
+    {
+      "id": "TOB",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Tobit"
+    },
+    {
+      "id": "JDT",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Judith"
     },
     {
       "id": "ESG",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Esther (Greek)"
+      "title": "Esther"
     },
     {
-      "id": "JOB",
+      "id": "1MA",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Job"
+      "title": "Maccabees I"
+    },
+    {
+      "id": "2MA",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Maccabees II"
+    },
+    {
+      "id": "3MA",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Maccabees III"
     },
     {
       "id": "PSA",
@@ -110,10 +161,16 @@
       "title": "Psalms"
     },
     {
+      "id": "JOB",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Job"
+    },
+    {
       "id": "PRO",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Proverbs"
+      "title": "Proverbs of Solomon"
     },
     {
       "id": "ECC",
@@ -125,37 +182,19 @@
       "id": "SNG",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Song of Solomon"
+      "title": "Song of Songs"
     },
     {
-      "id": "ISA",
+      "id": "WIS",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Esaias"
+      "title": "Wisdom of Solomon"
     },
     {
-      "id": "JER",
+      "id": "SIR",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Jeremias"
-    },
-    {
-      "id": "LAM",
-      "source": "brenton",
-      "section": "old_testament",
-      "title": "Lamentations"
-    },
-    {
-      "id": "EZK",
-      "source": "brenton",
-      "section": "old_testament",
-      "title": "Jezekiel"
-    },
-    {
-      "id": "DAG",
-      "source": "brenton",
-      "section": "old_testament",
-      "title": "Daniel (Greek)"
+      "title": "Wisdom of Sirach"
     },
     {
       "id": "HOS",
@@ -164,16 +203,22 @@
       "title": "Osee"
     },
     {
-      "id": "JOL",
-      "source": "brenton",
-      "section": "old_testament",
-      "title": "Joel"
-    },
-    {
       "id": "AMO",
       "source": "brenton",
       "section": "old_testament",
       "title": "Amos"
+    },
+    {
+      "id": "MIC",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Michæas"
+    },
+    {
+      "id": "JOL",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Joel"
     },
     {
       "id": "OBA",
@@ -186,12 +231,6 @@
       "source": "brenton",
       "section": "old_testament",
       "title": "Jonas"
-    },
-    {
-      "id": "MIC",
-      "source": "brenton",
-      "section": "old_testament",
-      "title": "Michæas"
     },
     {
       "id": "NAM",
@@ -230,87 +269,56 @@
       "title": "Malachias"
     },
     {
-      "id": "TOB",
+      "id": "ISA",
       "source": "brenton",
-      "section": "apocrypha",
-      "title": "Tobit"
+      "section": "old_testament",
+      "title": "Esaias"
     },
     {
-      "id": "JDT",
+      "id": "JER",
       "source": "brenton",
-      "section": "apocrypha",
-      "title": "Judith"
-    },
-    {
-      "id": "WIS",
-      "source": "brenton",
-      "section": "apocrypha",
-      "title": "Wisdom of Solomon"
-    },
-    {
-      "id": "SIR",
-      "source": "brenton",
-      "section": "apocrypha",
-      "title": "Wisdom Of Jesus The Son Of Sirach (Ecclesiasticus)"
+      "section": "old_testament",
+      "title": "Jeremias"
     },
     {
       "id": "BAR",
       "source": "brenton",
-      "section": "apocrypha",
+      "section": "old_testament",
       "title": "Baruch"
+    },
+    {
+      "id": "LAM",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Lamentations of Jeremy"
     },
     {
       "id": "LJE",
       "source": "brenton",
-      "section": "apocrypha",
+      "section": "old_testament",
       "title": "Epistle of Jeremy"
     },
     {
-      "id": "SUS",
+      "id": "EZK",
       "source": "brenton",
-      "section": "apocrypha",
-      "title": "Susanna"
+      "section": "old_testament",
+      "title": "Jezekiel"
     },
     {
-      "id": "BEL",
+      "id": "DAG",
       "source": "brenton",
-      "section": "apocrypha",
-      "title": "Bel and the Dragon"
-    },
-    {
-      "id": "1MA",
-      "source": "brenton",
-      "section": "apocrypha",
-      "title": "Maccabees I"
-    },
-    {
-      "id": "2MA",
-      "source": "brenton",
-      "section": "apocrypha",
-      "title": "Maccabees II"
-    },
-    {
-      "id": "1ES",
-      "source": "brenton",
-      "section": "apocrypha",
-      "title": "Esdras I"
-    },
-    {
-      "id": "MAN",
-      "source": "brenton",
-      "section": "apocrypha",
-      "title": "The Prayer of Manasses"
-    },
-    {
-      "id": "3MA",
-      "source": "brenton",
-      "section": "apocrypha",
-      "title": "Maccabees III"
+      "section": "old_testament",
+      "title": "Daniel",
+      "source_parts": [
+        "SUS",
+        "DAG",
+        "BEL"
+      ]
     },
     {
       "id": "4MA",
       "source": "brenton",
-      "section": "apocrypha",
+      "section": "old_testament_appendix",
       "title": "Maccabees IV"
     },
     {
@@ -498,11 +506,11 @@
       "project_id": "NDX"
     }
   ],
-  "apocrypha_introduction": {
-    "source": "brenton",
-    "id": "OTH"
-  },
   "back_apparatus": [
+    {
+      "source": "brenton",
+      "id": "OTH"
+    },
     {
       "source": "brenton",
       "id": "XXA"

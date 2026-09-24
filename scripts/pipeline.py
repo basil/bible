@@ -2,6 +2,7 @@
 """Offline preparation, typesetting, and acceptance checks for the combined Bible."""
 
 import argparse
+from collections import Counter
 import configparser
 import difflib
 import json
@@ -75,21 +76,63 @@ def validate():
         archives[name] = data
     units = EDITION["scripture"]
     ids = [u["id"] for u in units]
-    require(len(ids) == len(set(ids)) == 79, "Expected 79 unique scripture units")
+    require(len(ids) == len(set(ids)) == 78, "Expected 78 printed scripture units")
     require(
-        sum(u["source"] == "brenton" for u in units) == 52, "Expected 52 Brenton units"
+        sum(u["source"] == "brenton" for u in units) == 51,
+        "Expected 51 printed Brenton units",
     )
     require(sum(u["source"] == "kjv" for u in units) == 27, "Expected 27 KJV units")
+    orthodox = "GEN EXO LEV NUM DEU JOS JDG RUT 1SA 2SA 1KI 2KI 1CH 2CH MAN 1ES EZR NEH TOB JDT ESG 1MA 2MA 3MA PSA JOB PRO ECC SNG WIS SIR HOS AMO MIC JOL OBA JON NAM HAB ZEP HAG ZEC MAL ISA JER BAR LAM LJE EZK DAG 4MA".split()
     require(
-        ids[ids.index("EZR") + 1] == "ESG" and ids[ids.index("EZK") + 1] == "DAG",
-        "Incorrect Esther/Daniel placement",
+        ids[: len(orthodox)] == orthodox and ids[len(orthodox)] == "MAT",
+        "Orthodox Old Testament order changed",
     )
     require(
-        ids[ids.index("MAL") + 1 : ids.index("MAT")]
-        == "TOB JDT WIS SIR BAR LJE SUS BEL 1MA 2MA 1ES MAN 3MA 4MA".split(),
-        "Apocrypha order changed",
+        "2ES" not in ids and "SUS" not in ids and "BEL" not in ids,
+        "Unexpected separate scripture unit",
     )
-    require("NEH" not in ids and "2ES" not in ids, "Unwanted overlapping/extra book")
+    revised_titles = {
+        "EZR": "Esdras II",
+        "NEH": "Nehemiah",
+        "ESG": "Esther",
+        "DAG": "Daniel",
+        "PRO": "Proverbs of Solomon",
+        "SNG": "Song of Songs",
+        "SIR": "Wisdom of Sirach",
+        "LAM": "Lamentations of Jeremy",
+    }
+    for unit in units:
+        if unit["source"] != "brenton":
+            continue
+        expected_title = revised_titles.get(unit["id"])
+        if expected_title is None:
+            source_text = archives["brenton"][unit["id"]][2]
+            expected_title = re.search(r"\\toc1\s+([^\n]+)", source_text)[1].strip()
+        require(
+            unit["title"] == expected_title, f"Unexpected Brenton title: {unit['id']}"
+        )
+    source_use = []
+    for unit in units:
+        if unit["source"] == "brenton":
+            source_use.extend(
+                unit.get("source_parts", [unit.get("source_id", unit["id"])])
+            )
+    require(
+        set(source_use)
+        == {
+            u
+            for u in archives["brenton"]
+            if u not in ("NEH", "FRT", "INT", "OTH", "XXA", "XXB", "XXC", "BAK")
+        },
+        "Brenton source selection changed",
+    )
+    require(
+        all(
+            source_use.count(code) == (2 if code == "EZR" else 1)
+            for code in set(source_use)
+        ),
+        "Brenton source reused",
+    )
     front = [(e["source"], e["id"]) for e in EDITION["front_apparatus"]]
     require(
         front
@@ -115,6 +158,24 @@ def validate():
     require(len(inv["DAG"]["chapters"]["3"]) > 90, "Daniel chapter 3 additions missing")
     for b in ("MAN", "3MA", "4MA"):
         require(bool(inv[b]["chapters"]), f"{b} missing")
+    for unit in units:
+        if unit["source"] == "brenton":
+            scripture_text(unit, archives)
+    entries = ordered_entries()
+    ordered_ids = [e.get("project_id", e.get("id")) for e in entries]
+    require(
+        ordered_ids.index("4MA") + 1 == ordered_ids.index("XXG"),
+        "Old Testament appendix misplaced",
+    )
+    require(
+        ordered_ids.index("REV") + 1 == ordered_ids.index("GLO")
+        and ordered_ids.index("GLO") + 1 == ordered_ids.index("OTH"),
+        "Apocrypha introduction misplaced",
+    )
+    require(
+        "THE APOCRYPHA" not in Path("config/front.sfm").read_text(encoding="utf-8"),
+        "Obsolete Apocrypha divider/title remains",
+    )
     # Explain the overlapping witness without modifying either original file.
     ezr = archives["brenton"]["EZR"][2]
     neh = archives["brenton"]["NEH"][2]
@@ -136,15 +197,17 @@ def validate():
     Path("build").mkdir(exist_ok=True)
     Path("build/nehemiah-differences.diff").write_text("".join(diff), encoding="utf-8")
     report = {
-        "scripture_units": 79,
+        "scripture_units": 78,
         "brenton_units": 52,
         "kjv_units": 27,
         "source_verse_labels": sum(
-            sum(
-                len(v)
-                for v in SOURCES[u["source"]]["files"][u["id"]]["chapters"].values()
-            )
+            sum(len(v) for v in SOURCES["brenton"]["files"][code]["chapters"].values())
+            for code in set(source_use)
+        )
+        + sum(
+            sum(len(v) for v in SOURCES["kjv"]["files"][u["id"]]["chapters"].values())
             for u in units
+            if u["source"] == "kjv"
         ),
         "nehemiah_equal_after_whitespace_normalization": normalized(tail)
         == normalized(neh),
@@ -170,10 +233,9 @@ def ordered_entries():
 
     result.extend(EDITION["front_apparatus"])
     add_div("XXF", "THE OLD TESTAMENT", "Brenton’s Septuagint")
-    for section in ("old_testament", "apocrypha", "new_testament"):
-        if section == "apocrypha":
-            add_div("CNC", "THE APOCRYPHA", "Brenton’s Septuagint")
-            result.append(EDITION["apocrypha_introduction"])
+    for section in ("old_testament", "old_testament_appendix", "new_testament"):
+        if section == "old_testament_appendix":
+            add_div("CNC", "OLD TESTAMENT APPENDIX", "Maccabees IV")
         if section == "new_testament":
             add_div(
                 "XXG",
@@ -182,10 +244,146 @@ def ordered_entries():
             )
         result.extend(u for u in EDITION["scripture"] if u["section"] == section)
     add_div(
-        "GLO", "HISTORICAL APPARATUS", "Brenton’s tables, preface, errata, and appendix"
+        "GLO",
+        "HISTORICAL APPARATUS",
+        "Brenton’s introductions, tables, preface, errata, and appendix",
     )
     result.extend(EDITION["back_apparatus"])
     return result
+
+
+def chapter_parts(text):
+    parts = re.split(r"(?=\\c \d+\s)", text)
+    return parts[0], parts[1:]
+
+
+def passage_payload(text):
+    """A wording witness that ignores only headings and displayed reference labels."""
+    text = text[text.index(r"\c ") :]
+    text = re.sub(r"\\s\d?\s+[^\n]*", "", text)
+    text = re.sub(r"\\cp\s+[^\n]*", "", text)
+    text = re.sub(r"\\(?:c|v)\s+\d+[a-z]?\s*", "", text)
+    text = re.sub(r"\\(?:fr|xo)\s+\d+:\d+[a-z]?\s*", "", text)
+    return canonical_text(text)
+
+
+def preserved_markers(text):
+    result = {}
+    for marker, count in Counter(re.findall(r"\\(\+?[\w-]+\*?)", text)).items():
+        name = marker.lstrip("+").rstrip("*")
+        if name in (
+            "f",
+            "fr",
+            "ft",
+            "fqa",
+            "x",
+            "xo",
+            "xt",
+            "add",
+            "it",
+            "tr",
+            "tc1",
+            "tc2",
+            "vp",
+        ):
+            result[marker] = count
+    return result
+
+
+def scripture_text(entry, archives):
+    code = entry["id"]
+    original = archives[entry["source"]][entry.get("source_id", code)][2]
+    if code in ("EZR", "NEH"):
+        header, chapters = chapter_parts(original)
+        require(len(chapters) == 23, "Ezra–Nehemiah source boundary changed")
+        selected = chapters[:10] if code == "EZR" else chapters[10:]
+        if code == "NEH":
+            selected = [
+                re.sub(
+                    r"^\\c (\d+)", lambda m: r"\c " + str(int(m[1]) - 10), c, count=1
+                )
+                for c in selected
+            ]
+        expected = header + "".join(chapters[:10] if code == "EZR" else chapters[10:])
+        text = header + "".join(selected)
+    elif code == "DAG":
+        daniel_header, daniel_chapters = chapter_parts(original)
+        _, susanna = chapter_parts(archives["brenton"]["SUS"][2])
+        _, bel = chapter_parts(archives["brenton"]["BEL"][2])
+        require(
+            len(susanna) == len(bel) == 1 and len(daniel_chapters) == 12,
+            "Daniel source boundaries changed",
+        )
+        expected = "".join(susanna + daniel_chapters + bel)
+        susanna[0] = re.sub(
+            r"^\\c 1",
+            lambda m: "\\s1 SUSANNA\n\\c 13\n\\cp \u200b",
+            susanna[0],
+            count=1,
+        )
+        bel[0] = re.sub(
+            r"^\\c 1",
+            lambda m: "\\s1 BEL AND THE DRAGON\n\\c 14\n\\cp \u200b",
+            bel[0],
+            count=1,
+        )
+        text = daniel_header + "".join(susanna + daniel_chapters + bel)
+    else:
+        expected = original
+        text = original
+    if code == "MAL":
+        require(
+            text.count(r"\v 19 For, behold") == 1, "Malachias chapter boundary changed"
+        )
+        prefix, tail = text.split(r"\v 19 For, behold", 1)
+        tail = "\\c 4\n\\v 1 For, behold" + tail
+        for old, new in zip(range(20, 25), range(2, 7)):
+            tail = re.sub(
+                r"\\v " + str(old) + r"(?=\s)",
+                lambda m: r"\v " + str(new),
+                tail,
+                count=1,
+            )
+        text = prefix + tail.replace(r"\xo 3:23", r"\xo 4:5")
+    if code in {"EZR", "NEH", "ESG", "DAG", "PRO", "SNG", "SIR", "LAM"}:
+        title = entry["title"]
+        for marker in ("h", "toc1", "toc2", "toc3", "mt1"):
+            text, count = re.subn(
+                r"(\\" + marker + r"\s+)[^\n]*",
+                lambda m: m[1] + (title.upper() if marker == "mt1" else title),
+                text,
+                count=1,
+            )
+            require(count == 1, f"Missing {marker} heading: {code}")
+        if code == "SIR":
+            text = re.sub(r"\\mt2\s+[^\n]*\n", "", text, count=1)
+    require(
+        passage_payload(expected) == passage_payload(text),
+        f"Source wording changed: {code}",
+    )
+    require(
+        preserved_markers(expected) == preserved_markers(text),
+        f"Source notes or styling changed: {code}",
+    )
+    expected_chapters = {
+        "EZR": [str(i) for i in range(1, 11)],
+        "NEH": [str(i) for i in range(1, 14)],
+        "DAG": ["13"] + [str(i) for i in range(1, 13)] + ["14"],
+        "MAL": ["1", "2", "3", "4"],
+    }
+    if code in expected_chapters:
+        require(
+            list(inventory(text)["chapters"]) == expected_chapters[code],
+            f"Wrong chapter grouping: {code}",
+        )
+    if code == "MAL":
+        chapters = inventory(text)["chapters"]
+        require(
+            chapters["3"] == [str(i) for i in range(1, 19)]
+            and chapters["4"] == [str(i) for i in range(1, 7)],
+            "Wrong Malachias 3–4 verse labels",
+        )
+    return text
 
 
 def prepare(mode, base, archives):
@@ -204,22 +402,40 @@ def prepare(mode, base, archives):
         if entry.get("generated"):
             text = f"\\id {code}\n\\h {entry['title']}\n\\toc1 {entry['title']}\n\\mt1 {entry['title']}\n\\mt2 {entry['subtitle']}\n"
         else:
-            original = archives[entry["source"]][entry["id"]][2]
-            text = original
-            if code != entry["id"]:
+            original = archives[entry["source"]][entry.get("source_id", entry["id"])][2]
+            text = scripture_text(entry, archives) if "section" in entry else original
+            if (
+                "section" in entry
+                and entry["source"] == "brenton"
+                and (
+                    entry["id"]
+                    in {"EZR", "NEH", "DAG", "MAL", "ESG", "PRO", "SNG", "SIR", "LAM"}
+                )
+            ):
+                transformations.append(
+                    {
+                        "project_id": code,
+                        "source_ids": entry.get(
+                            "source_parts", [entry.get("source_id", entry["id"])]
+                        ),
+                        "operation": "Orthodox book heading, passage grouping, or chapter labels; wording and source markers verified",
+                    }
+                )
+            if code != entry.get("source_id", entry["id"]):
                 text, remapped = re.subn(r"^(\\id\s+)\S+", lambda m: m[1] + code, text)
                 require(remapped == 1, f"Could not remap leading \\id to {code}")
                 transformations.append(
                     {
-                        "source": entry["id"],
+                        "source": entry.get("source_id", entry["id"]),
                         "project_id": code,
-                        "operation": "remap peripheral id to retain it as a distinct ordered unit",
+                        "operation": "remap project id to retain it as a distinct ordered unit",
                     }
                 )
-            require(
-                inventory(original) == inventory(text),
-                f"Preparation changed source markup: {code}",
-            )
+            if "section" not in entry:
+                require(
+                    inventory(original) == inventory(text),
+                    f"Preparation changed source markup: {code}",
+                )
             if mode == "sample" and "section" in entry:
                 chunks = re.split(r"(?=\\c [0-9]+\s)", text)
                 kept = [chunks[0]]
