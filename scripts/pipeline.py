@@ -329,7 +329,7 @@ def scripture_text(entry, archives):
         )
         daniel_chapters[2], song_heading = re.subn(
             r"(?=\\v 25 Then Azarias stood up, and prayed on this manner)",
-            lambda m: "\\s1 SONG OF AZARIAS AND HYMN OF THE THREE YOUTHS\n",
+            lambda m: "\\s1 SONG OF AZARIAS AND HYMN OF THE THREE YOUTHS\n\\p\n",
             daniel_chapters[2],
             count=1,
         )
