@@ -27,12 +27,14 @@ COPY config/ptxprint-allow-otf.patch /opt/ptxprint-allow-otf.patch
 COPY sources/GFS_Porson.zip /opt/GFS_Porson.zip
 RUN python3 /opt/install-upstream.py \
     && mkdir -p /usr/local/share/fonts/adobe \
+    && mkdir -p /usr/local/share/fonts/erewhon \
     && mkdir -p /usr/local/share/fonts/gfs \
     && cd /opt/utopia \
     && ./build.sh \
     && cp dist/*.otf /usr/local/share/fonts/adobe/ \
     && unzip -j /opt/GFS_Porson.zip GFSPorson.otf -d /usr/local/share/fonts/gfs/ \
     && cp /usr/share/texlive/texmf-dist/fonts/opentype/adobe/sourcecodepro/*.otf /usr/local/share/fonts/adobe/ \
+    && cp /usr/share/texlive/texmf-dist/fonts/opentype/public/erewhon/*.otf /usr/local/share/fonts/erewhon/ \
     && fc-cache -f \
     && fc-list \
     && dpkg-query -W >/opt/os-packages.tsv
