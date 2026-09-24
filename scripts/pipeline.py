@@ -485,7 +485,9 @@ def scripture_text(entry, archives):
             daniel_chapters[2],
             count=1,
         )
-        require(song_heading == 1, "Daniel 3 Song of the Three Children boundary changed")
+        require(
+            song_heading == 1, "Daniel 3 Song of the Three Children boundary changed"
+        )
         text = daniel_header + "".join(susanna + daniel_chapters + bel)
     else:
         expected = original
@@ -1012,6 +1014,14 @@ def check_boundaries(base, text, pages, reading_text, sample=False):
         [{"id": b, "title": t, "page": int(p)} for b, t, p in toc],
     )
     reading_pages = reading_text.split("\f")
+    reading_pages_without_headers = []
+    for page_number, page in enumerate(reading_pages, 1):
+        lines = page.splitlines(keepends=True)
+        if lines:
+            header = lines[0].strip()
+            if re.fullmatch(rf"(?:{page_number}(?:\s+.+)?|.+\s+{page_number})", header):
+                lines = lines[1:]
+        reading_pages_without_headers.append("".join(lines))
     by_code = {b: (i, int(p)) for i, (b, t, p) in enumerate(toc)}
     for witness in json.loads(
         Path("config/render-witnesses.json").read_text(encoding="utf-8")
@@ -1029,8 +1039,13 @@ def check_boundaries(base, text, pages, reading_text, sample=False):
             continue
         index, start = by_code[code]
         end = int(toc[index + 1][2]) - 1 if index + 1 < len(toc) else pages
+        rendered = key("".join(reading_pages[start - 1 : end]))
+        rendered_without_headers = key(
+            "".join(reading_pages_without_headers[start - 1 : end])
+        )
         require(
-            key(witness["phrase"]) in key("".join(reading_pages[start - 1 : end])),
+            key(witness["phrase"]) in rendered
+            or key(witness["phrase"]) in rendered_without_headers,
             f"Special-content witness absent from rendered {code}: {witness['phrase']}",
         )
 
