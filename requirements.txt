@@ -1,6 +1,6 @@
 # Python dependencies for the PTXprint build environment.
 appdirs==1.4.4
-fonttools==4.55.3
+fonttools==4.65.0
 markdown-it-py==3.0.0
 mdurl==0.1.2
 numpy==2.5.3
