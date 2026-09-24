@@ -6,16 +6,16 @@ A complete English Bible, typeset as a single book and ready to print or read on
 
 ## What is in it
 
-The Old Testament comes from Sir Lancelot Brenton's 1870 English translation of the Septuagint, arranged in the Church of Greece's order. All 52 selected Brenton scripture source units remain: combined Ezra-Nehemiah is split, and Susanna and Bel are placed within Daniel. The New Testament is the King James Version, in the Cambridge Paragraph edition prepared by F. H. A. Scrivener in 1873.
+The Old Testament comes from Sir Lancelot Brenton's 1870 English translation of the Septuagint, the ancient Greek Old Testament. Its books are divided and arranged in the order used by the Church of Greece. The New Testament is the King James Version, in the Cambridge Paragraph edition prepared by F. H. A. Scrivener in 1873.
 
 The book reads in this order:
 
 1. Title page, a statement of sources, and a table of contents
 2. Brenton's list of abbreviations and his 1870 introduction
 3. The King James translators' dedication to the king and their preface, "The Translators to the Reader"
-4. The Old Testament and its Maccabees IV appendix
+4. The Old Testament, followed by Maccabees IV as an appendix
 5. The New Testament
-6. Brenton's Introduction to the Apocrypha and historical appendices: his 1844 preface, errata, and a table comparing chapter order in Jeremiah
+6. Brenton's introduction to the Apocrypha and his historical appendices: his 1844 preface, errata, and a table comparing chapter order in Jeremiah
 
 Both translations are in the public domain. The texts are taken from [eBible.org](https://ebible.org/), and the original copyright notices are kept with the source files in this repository.
 
