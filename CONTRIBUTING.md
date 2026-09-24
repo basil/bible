@@ -41,7 +41,7 @@ A hash mismatch is a failure. Replacing an archive is a deliberate step describe
 - `config/front.sfm`: title page, source statement, and contents
 - `config/layout.ini`: overrides applied on top of PTXprint's BSB layout
 - `config/ptxprint-mods.sty`: style overrides
-- `config/ptxprint-mods.tex`: selects native American English hyphenation
+- `config/ptxprint-mods.tex`: TeX customizations
 - `config/sample.json`: chapters included in the sample build
 - `config/render-witnesses.json`: phrases from unusual content (Psalm 151, the Greek additions to Esther and Daniel, and so on) that must appear in the rendered PDF
 

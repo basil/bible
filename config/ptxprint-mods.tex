@@ -1,3 +1,102 @@
 % PTXprint selects an empty language; use XeTeX's preloaded US English patterns.
 % This also sets the standard minimum fragments: 2 letters left, 3 right.
 \uselanguage{USenglish}
+
+% Stock microtype XeLaTeX protrusion: include protrusion in line breaking.
+\XeTeXprotrudechars=2
+\begingroup
+\catcode`\@=11
+\newcount\BibleProtrusionLeft
+\newcount\BibleProtrusionRight
+% microtype's values are thousandths of the base character's advance width;
+% XeTeX's lpcode/rpcode take thousandths of an em and native glyph indices.
+% Accented heirs inherit the base character's final codes, as in microtype.
+\gdef\BibleProtrusion#1#2#3#4{%
+  \ifnum\XeTeXcharglyph`#1>0
+    \BibleProtrusionLeft=\numexpr\number\fontcharwd\font`#1*#3/\number\fontdimen6\font\relax
+    \BibleProtrusionRight=\numexpr\number\fontcharwd\font`#1*#4/\number\fontdimen6\font\relax
+    \BibleProtrusionChars#1#2\relax
+  \fi
+}
+\gdef\BibleProtrusionChars#1{%
+  \ifx#1\relax
+    \let\next\relax
+  \else
+    \ifnum\XeTeXcharglyph`#1>0
+      \lpcode\font\XeTeXcharglyph`#1=\BibleProtrusionLeft
+      \rpcode\font\XeTeXcharglyph`#1=\BibleProtrusionRight
+    \fi
+    \let\next\BibleProtrusionChars
+  \fi
+  \next
+}
+\gdef\BibleProtrusionTable{%
+  \BibleProtrusion A{ÀÁÂÃÄÅĄĂ}{50}{50}%
+  \BibleProtrusion F{}{0}{50}%
+  \BibleProtrusion J{}{50}{0}%
+  \BibleProtrusion K{}{0}{50}%
+  \BibleProtrusion L{ŁĹĽ}{0}{50}%
+  \BibleProtrusion T{ŢŤ}{50}{50}%
+  \BibleProtrusion V{}{50}{50}%
+  \BibleProtrusion W{}{50}{50}%
+  \BibleProtrusion X{}{50}{50}%
+  \BibleProtrusion Y{ÝŸ}{50}{50}%
+  \BibleProtrusion k{}{0}{50}%
+  \BibleProtrusion r{ŕř}{0}{50}%
+  \BibleProtrusion v{}{50}{50}%
+  \BibleProtrusion w{}{50}{50}%
+  \BibleProtrusion x{}{50}{50}%
+  \BibleProtrusion y{ýÿ}{0}{50}%
+  \BibleProtrusion 1{}{50}{50}%
+  \BibleProtrusion 4{}{50}{50}%
+  \BibleProtrusion 7{}{50}{50}%
+  \BibleProtrusion .{}{0}{700}%
+  \BibleProtrusion ,{}{0}{500}%
+  \BibleProtrusion :{}{0}{500}%
+  \BibleProtrusion ;{}{0}{300}%
+  \BibleProtrusion !{}{0}{100}%
+  \BibleProtrusion ?{}{0}{100}%
+  \BibleProtrusion @{}{50}{50}%
+  \BibleProtrusion ~{}{200}{250}%
+  \BibleProtrusion \%{}{50}{50}%
+  \BibleProtrusion *{}{200}{200}%
+  \BibleProtrusion +{}{250}{250}%
+  \BibleProtrusion ({}{100}{0}%
+  \BibleProtrusion ){}{0}{200}%
+  \BibleProtrusion /{}{100}{200}%
+  \BibleProtrusion -{}{500}{500}%
+  \BibleProtrusion –{}{200}{200}%
+  \BibleProtrusion —{}{150}{150}%
+  \BibleProtrusion ‘{}{300}{400}%
+  \BibleProtrusion ’{}{300}{400}%
+  \BibleProtrusion “{}{300}{300}%
+  \BibleProtrusion ”{}{300}{300}%
+  \BibleProtrusion Æ{}{50}{0}%
+  \BibleProtrusion _{}{100}{100}%
+  \BibleProtrusion \\{}{100}{200}%
+  \BibleProtrusion ‚{}{400}{400}%
+  \BibleProtrusion „{}{400}{400}%
+  \BibleProtrusion ‹{}{400}{300}%
+  \BibleProtrusion ›{}{300}{400}%
+  \BibleProtrusion «{}{200}{200}%
+  \BibleProtrusion »{}{200}{200}%
+  \BibleProtrusion ¡{}{100}{0}%
+  \BibleProtrusion ¿{}{100}{0}%
+  \BibleProtrusion \{{}{400}{200}%
+  \BibleProtrusion \}{}{200}{400}%
+  \BibleProtrusion <{}{200}{100}%
+  \BibleProtrusion >{}{100}{200}%
+}
+% PTXprint creates fonts lazily. Initialize each face/size/features combination
+% once after selection; font protrusion codes persist outside the local group.
+\global\let\BibleSetFont\s@tfont
+\gdef\s@tfont#1#2{%
+  \BibleSetFont{#1}{#2}%
+  \ifcsname BibleProtrusion:\fontname\font\endcsname\else
+    \begingroup
+    \BibleProtrusionTable
+    \endgroup
+    \expandafter\gdef\csname BibleProtrusion:\fontname\font\endcsname{}%
+  \fi
+}
+\endgroup

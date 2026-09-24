@@ -1,0 +1,74 @@
+% Compare the plain-XeTeX adapter with the installed stock microtype package.
+% Run through `make check-protrusion`; this produces a log, not a PDF.
+\documentclass{article}
+\usepackage{fontspec}
+\setmainfont{Utopia}
+\newfontfamily\porson{GFS Porson}
+\newfontfamily\ezra{Ezra SIL}
+\usepackage{microtype}
+\makeatletter
+% The PTXprint stub selects a supplied native font handle. Avoid LaTeX's
+% selection hooks here so microtype cannot repopulate the codes under test.
+\def\s@tfont#1#2{#1\relax}
+\def\uselanguage#1{}
+\input{config/ptxprint-mods.tex}
+\font\OtherFont="Utopia Italic" at 11pt
+\newcount\glyph
+\newcount\failures
+\def\CheckFont#1{%
+  \begingroup
+  #1\relax
+  \expandafter\let\expandafter\TargetFont\the\font
+  \typeout{CHECKING \fontname\font}%
+  % Save stock codes, then reset them so the adapter must populate them.
+  % Skip glyph 0 (.notdef): we intentionally leave missing glyphs untouched.
+  \glyph=1
+  \loop\ifnum\glyph<\XeTeXcountglyphs\font
+    \expandafter\edef\csname left:\the\glyph\endcsname{\the\lpcode\font\glyph}%
+    \expandafter\edef\csname right:\the\glyph\endcsname{\the\rpcode\font\glyph}%
+    \lpcode\font\glyph=0 \rpcode\font\glyph=0
+    \advance\glyph by1
+  \repeat
+  % Initialize from a different font, then leave the initialization group.
+  \OtherFont
+  \begingroup
+    \s@tfont{\TargetFont}{}%
+    \AssertFontCodes
+  \endgroup
+  % The group restored OtherFont. Reselect the cached target and verify that
+  % both font selection and protrusion codes survive that group boundary.
+  \s@tfont{\TargetFont}{}%
+  \AssertFontCodes
+  \endgroup
+}
+\def\AssertFontCodes{%
+  \expandafter\let\expandafter\SelectedFont\the\font
+  \ifx\SelectedFont\TargetFont\else
+    \errmessage{Protrusion wrapper did not select the requested font}%
+  \fi
+  \glyph=1
+  \loop\ifnum\glyph<\XeTeXcountglyphs\font
+    \ifnum\lpcode\font\glyph=\csname left:\the\glyph\endcsname\relax\else
+      \global\advance\failures by1
+      \typeout{MISMATCH left glyph \the\glyph: \the\lpcode\font\glyph\space expected \csname left:\the\glyph\endcsname}%
+    \fi
+    \ifnum\rpcode\font\glyph=\csname right:\the\glyph\endcsname\relax\else
+      \global\advance\failures by1
+      \typeout{MISMATCH right glyph \the\glyph: \the\rpcode\font\glyph\space expected \csname right:\the\glyph\endcsname}%
+    \fi
+    \advance\glyph by1
+  \repeat
+}
+\makeatother
+\begin{document}
+\CheckFont{\normalfont}
+\CheckFont{\itshape}
+\CheckFont{\bfseries}
+\CheckFont{\bfseries\itshape}
+\CheckFont{\fontsize{9.5}{12}\selectfont}
+\CheckFont{\fontsize{48}{50}\selectfont}
+\CheckFont{\porson}
+\CheckFont{\ezra}
+\ifnum\failures>0 \errmessage{Protrusion mismatches: \the\failures}\fi
+\typeout{ALL PROTRUSION CODES MATCH}
+\end{document}

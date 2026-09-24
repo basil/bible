@@ -1086,7 +1086,10 @@ def inspect_pdf(pdf, base, sample=False):
         ),
         "Missing glyph or TeX error; inspect logs",
     )
-    reading_text = capture("pdftotext", pdf, "-")
+    # PTXprint emits columns in reading order. Protruding edge glyphs can make
+    # pdftotext's geometric heuristics merge adjacent columns, so use stream
+    # order for wording witnesses; keep the layout extraction above for pages.
+    reading_text = capture("pdftotext", "-raw", pdf, "-")
     (base / "reading.txt").write_text(reading_text, encoding="utf-8")
     check_boundaries(base, text, pages, reading_text, sample)
     return {
