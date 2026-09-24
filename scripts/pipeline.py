@@ -757,7 +757,7 @@ def prepare(mode, base, archives):
     cfg["project"]["book"] = ids[0]
     with (conf / "ptxprint.cfg").open("w", encoding="utf-8") as f:
         cfg.write(f)
-    for name in ("ptxprint-mods.sty", "changes.txt"):
+    for name in ("ptxprint-mods.sty", "ptxprint-mods.tex", "changes.txt"):
         shutil.copyfile(Path("config") / name, conf / name)
     front = Path("config/front.sfm").read_text(encoding="utf-8")
     if mode == "sample":

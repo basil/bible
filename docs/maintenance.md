@@ -18,6 +18,8 @@ The inventory implementation lives in `scripts/source_inventory.py`. It stores e
 
 ## Layout customization
 
+American English hyphenation uses XeTeX's preloaded `USenglish` patterns. `config/layout.ini` enables hyphenation and disables BSB's adjustable letter spacing, whose interletter glue prevents native word hyphenation. `config/ptxprint-mods.tex` selects that language after PTXprint's initial empty-language setup, with minimum fragments of two letters before a break and three after. No `hyphenatedWords.txt` or generated exception list is required.
+
 Change `config/layout.ini` to override the upstream BSB configuration; do not edit generated `build/` files. Use `config/ptxprint-mods.sty` for style overrides and `config/front.sfm` for title/source/contents pages. Change `config/edition.json` only when deliberately revising the edition's selection or order. A5 dimensions are an acceptance requirement and checked on every PDF page.
 
 Diagnostics include the effective Paratext project and configuration, the actual PTXprint console/TeX logs, source comparison, PDF inspection outputs, contents and book-boundary records, and extracted PDF text. CI uploads these even when a render fails.
