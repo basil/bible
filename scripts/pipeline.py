@@ -317,16 +317,23 @@ def scripture_text(entry, archives):
         expected = "".join(susanna + daniel_chapters + bel)
         susanna[0] = re.sub(
             r"^\\c 1",
-            lambda m: "\\s1 SUSANNA\n\\c 13\n\\cp \u200b",
+            lambda m: "\\s1 SUSANNA\n\\c 0\n\\cp \u200b",
             susanna[0],
             count=1,
         )
         bel[0] = re.sub(
             r"^\\c 1",
-            lambda m: "\\s1 BEL AND THE DRAGON\n\\c 14\n\\cp \u200b",
+            lambda m: "\\s1 BEL AND THE DRAGON\n\\c 13\n\\cp \u200b",
             bel[0],
             count=1,
         )
+        daniel_chapters[2], song_heading = re.subn(
+            r"(?=\\v 25 Then Azarias stood up, and prayed on this manner)",
+            lambda m: "\\s1 SONG OF AZARIAS AND HYMN OF THE THREE YOUTHS\n",
+            daniel_chapters[2],
+            count=1,
+        )
+        require(song_heading == 1, "Daniel 3 Song of Azarias boundary changed")
         text = daniel_header + "".join(susanna + daniel_chapters + bel)
     else:
         expected = original
@@ -368,7 +375,7 @@ def scripture_text(entry, archives):
     expected_chapters = {
         "EZR": [str(i) for i in range(1, 11)],
         "NEH": [str(i) for i in range(1, 14)],
-        "DAG": ["13"] + [str(i) for i in range(1, 13)] + ["14"],
+        "DAG": ["0"] + [str(i) for i in range(1, 14)],
         "MAL": ["1", "2", "3", "4"],
     }
     if code in expected_chapters:
@@ -815,6 +822,17 @@ def check_boundaries(base, text, pages, reading_text, sample=False):
     )
     reading_pages = reading_text.split("\f")
     by_code = {b: (i, int(p)) for i, (b, t, p) in enumerate(toc)}
+    if "DAG" in by_code:
+        index, start = by_code["DAG"]
+        end = int(toc[index + 1][2]) - 1 if index + 1 < len(toc) else pages
+        daniel_headers = [
+            p.splitlines()[0] if p.splitlines() else ""
+            for p in page_text[start - 1 : end]
+        ]
+        require(
+            not any(re.search(r"\bDaniel\b.*\b(?:13|14)\b", h) for h in daniel_headers),
+            "Internal Daniel 13/14 labels leaked into running headers",
+        )
     for witness in json.loads(
         Path("config/render-witnesses.json").read_text(encoding="utf-8")
     ):
