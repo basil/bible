@@ -1,0 +1,15 @@
+{
+  "base_image": "ubuntu:26.04",
+  "ptxprint": {
+    "url": "https://github.com/sillsdev/ptx2pdf.git",
+    "tag": "3.0.43",
+    "commit": "f4409d06e6664cab14bd7afbde3d49eac47c0935"
+  },
+  "usfmtc": {
+    "url": "https://github.com/usfm-bible/usfmtc.git",
+    "commit": "287ab46537f51eacbe3442480f9adfe9d482b4c2"
+  },
+  "source_date_epoch": 1788220800,
+  "os_packages": "Ubuntu current repositories; installed versions recorded in PDF provenance",
+  "python": "3.14"
+}

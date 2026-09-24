@@ -1,0 +1,529 @@
+{
+  "title": "The Holy Bible: Brenton and the Cambridge Paragraph KJV",
+  "scripture": [
+    {
+      "id": "GEN",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Genesis"
+    },
+    {
+      "id": "EXO",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Exodus"
+    },
+    {
+      "id": "LEV",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Leviticus"
+    },
+    {
+      "id": "NUM",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Numbers"
+    },
+    {
+      "id": "DEU",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Deuteronomy"
+    },
+    {
+      "id": "JOS",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Joshua"
+    },
+    {
+      "id": "JDG",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Judges"
+    },
+    {
+      "id": "RUT",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Ruth"
+    },
+    {
+      "id": "1SA",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Kings I"
+    },
+    {
+      "id": "2SA",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Kings II"
+    },
+    {
+      "id": "1KI",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Kings III"
+    },
+    {
+      "id": "2KI",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Kings IV"
+    },
+    {
+      "id": "1CH",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Chronicles I"
+    },
+    {
+      "id": "2CH",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Chronicles II"
+    },
+    {
+      "id": "EZR",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Ezra and Nehemiah"
+    },
+    {
+      "id": "ESG",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Esther (Greek)"
+    },
+    {
+      "id": "JOB",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Job"
+    },
+    {
+      "id": "PSA",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Psalms"
+    },
+    {
+      "id": "PRO",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Proverbs"
+    },
+    {
+      "id": "ECC",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Ecclesiastes"
+    },
+    {
+      "id": "SNG",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Song of Solomon"
+    },
+    {
+      "id": "ISA",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Esaias"
+    },
+    {
+      "id": "JER",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Jeremias"
+    },
+    {
+      "id": "LAM",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Lamentations"
+    },
+    {
+      "id": "EZK",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Jezekiel"
+    },
+    {
+      "id": "DAG",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Daniel (Greek)"
+    },
+    {
+      "id": "HOS",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Osee"
+    },
+    {
+      "id": "JOL",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Joel"
+    },
+    {
+      "id": "AMO",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Amos"
+    },
+    {
+      "id": "OBA",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Obdias"
+    },
+    {
+      "id": "JON",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Jonas"
+    },
+    {
+      "id": "MIC",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Michæas"
+    },
+    {
+      "id": "NAM",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Naum"
+    },
+    {
+      "id": "HAB",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Ambacum"
+    },
+    {
+      "id": "ZEP",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Sophonias"
+    },
+    {
+      "id": "HAG",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Aggæus"
+    },
+    {
+      "id": "ZEC",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Zacharias"
+    },
+    {
+      "id": "MAL",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "Malachias"
+    },
+    {
+      "id": "TOB",
+      "source": "brenton",
+      "section": "apocrypha",
+      "title": "Tobit"
+    },
+    {
+      "id": "JDT",
+      "source": "brenton",
+      "section": "apocrypha",
+      "title": "Judith"
+    },
+    {
+      "id": "WIS",
+      "source": "brenton",
+      "section": "apocrypha",
+      "title": "Wisdom of Solomon"
+    },
+    {
+      "id": "SIR",
+      "source": "brenton",
+      "section": "apocrypha",
+      "title": "Wisdom Of Jesus The Son Of Sirach (Ecclesiasticus)"
+    },
+    {
+      "id": "BAR",
+      "source": "brenton",
+      "section": "apocrypha",
+      "title": "Baruch"
+    },
+    {
+      "id": "LJE",
+      "source": "brenton",
+      "section": "apocrypha",
+      "title": "Epistle of Jeremy"
+    },
+    {
+      "id": "SUS",
+      "source": "brenton",
+      "section": "apocrypha",
+      "title": "Susanna"
+    },
+    {
+      "id": "BEL",
+      "source": "brenton",
+      "section": "apocrypha",
+      "title": "Bel and the Dragon"
+    },
+    {
+      "id": "1MA",
+      "source": "brenton",
+      "section": "apocrypha",
+      "title": "Maccabees I"
+    },
+    {
+      "id": "2MA",
+      "source": "brenton",
+      "section": "apocrypha",
+      "title": "Maccabees II"
+    },
+    {
+      "id": "1ES",
+      "source": "brenton",
+      "section": "apocrypha",
+      "title": "Esdras I"
+    },
+    {
+      "id": "MAN",
+      "source": "brenton",
+      "section": "apocrypha",
+      "title": "The Prayer of Manasses"
+    },
+    {
+      "id": "3MA",
+      "source": "brenton",
+      "section": "apocrypha",
+      "title": "Maccabees III"
+    },
+    {
+      "id": "4MA",
+      "source": "brenton",
+      "section": "apocrypha",
+      "title": "Maccabees IV"
+    },
+    {
+      "id": "MAT",
+      "source": "kjv",
+      "section": "new_testament",
+      "title": "The Gospel According to S. Matthew"
+    },
+    {
+      "id": "MRK",
+      "source": "kjv",
+      "section": "new_testament",
+      "title": "The Gospel According to S. Mark"
+    },
+    {
+      "id": "LUK",
+      "source": "kjv",
+      "section": "new_testament",
+      "title": "The Gospel According to S. Luke"
+    },
+    {
+      "id": "JHN",
+      "source": "kjv",
+      "section": "new_testament",
+      "title": "The Gospel According to S. John"
+    },
+    {
+      "id": "ACT",
+      "source": "kjv",
+      "section": "new_testament",
+      "title": "The Acts of the Apostles"
+    },
+    {
+      "id": "ROM",
+      "source": "kjv",
+      "section": "new_testament",
+      "title": "The Epistle of Paul the Apostle to the Romans"
+    },
+    {
+      "id": "1CO",
+      "source": "kjv",
+      "section": "new_testament",
+      "title": "The First Epistle of Paul the Apostle to the Corinthians"
+    },
+    {
+      "id": "2CO",
+      "source": "kjv",
+      "section": "new_testament",
+      "title": "The Second Epistle of Paul the Apostle to the Corinthians"
+    },
+    {
+      "id": "GAL",
+      "source": "kjv",
+      "section": "new_testament",
+      "title": "The Epistle of Paul the Apostle to the Galatians"
+    },
+    {
+      "id": "EPH",
+      "source": "kjv",
+      "section": "new_testament",
+      "title": "The Epistle of Paul the Apostle to the Ephesians"
+    },
+    {
+      "id": "PHP",
+      "source": "kjv",
+      "section": "new_testament",
+      "title": "The Epistle of Paul the Apostle to the Philippians"
+    },
+    {
+      "id": "COL",
+      "source": "kjv",
+      "section": "new_testament",
+      "title": "The Epistle of Paul the Apostle to the Colossians"
+    },
+    {
+      "id": "1TH",
+      "source": "kjv",
+      "section": "new_testament",
+      "title": "The First Epistle of Paul the Apostle to the Thessalonians"
+    },
+    {
+      "id": "2TH",
+      "source": "kjv",
+      "section": "new_testament",
+      "title": "The Second Epistle of Paul the Apostle to the Thessalonians"
+    },
+    {
+      "id": "1TI",
+      "source": "kjv",
+      "section": "new_testament",
+      "title": "The First Epistle of Paul the Apostle to Timothy"
+    },
+    {
+      "id": "2TI",
+      "source": "kjv",
+      "section": "new_testament",
+      "title": "The Second Epistle of Paul the Apostle to Timothy"
+    },
+    {
+      "id": "TIT",
+      "source": "kjv",
+      "section": "new_testament",
+      "title": "The Epistle of Paul to Titus"
+    },
+    {
+      "id": "PHM",
+      "source": "kjv",
+      "section": "new_testament",
+      "title": "The Epistle of Paul to Philemon"
+    },
+    {
+      "id": "HEB",
+      "source": "kjv",
+      "section": "new_testament",
+      "title": "The Epistle of Paul the Apostle to the Hebrews"
+    },
+    {
+      "id": "JAS",
+      "source": "kjv",
+      "section": "new_testament",
+      "title": "The General Epistle of James"
+    },
+    {
+      "id": "1PE",
+      "source": "kjv",
+      "section": "new_testament",
+      "title": "The First Epistle General of Peter"
+    },
+    {
+      "id": "2PE",
+      "source": "kjv",
+      "section": "new_testament",
+      "title": "The Second Epistle General of Peter"
+    },
+    {
+      "id": "1JN",
+      "source": "kjv",
+      "section": "new_testament",
+      "title": "The First Epistle General of John"
+    },
+    {
+      "id": "2JN",
+      "source": "kjv",
+      "section": "new_testament",
+      "title": "The Second Epistle of John"
+    },
+    {
+      "id": "3JN",
+      "source": "kjv",
+      "section": "new_testament",
+      "title": "The Third Epistle of John"
+    },
+    {
+      "id": "JUD",
+      "source": "kjv",
+      "section": "new_testament",
+      "title": "The General Epistle of Jude"
+    },
+    {
+      "id": "REV",
+      "source": "kjv",
+      "section": "new_testament",
+      "title": "The Revelation of S. John the Divine"
+    }
+  ],
+  "front_apparatus": [
+    {
+      "source": "brenton",
+      "id": "FRT",
+      "project_id": "XXD"
+    },
+    {
+      "source": "brenton",
+      "id": "INT",
+      "project_id": "XXE"
+    },
+    {
+      "source": "kjv",
+      "id": "OTH",
+      "project_id": "TDX"
+    },
+    {
+      "source": "kjv",
+      "id": "INT",
+      "project_id": "NDX"
+    }
+  ],
+  "apocrypha_introduction": {
+    "source": "brenton",
+    "id": "OTH"
+  },
+  "back_apparatus": [
+    {
+      "source": "brenton",
+      "id": "XXA"
+    },
+    {
+      "source": "brenton",
+      "id": "XXB"
+    },
+    {
+      "source": "brenton",
+      "id": "XXC"
+    },
+    {
+      "source": "brenton",
+      "id": "BAK"
+    }
+  ],
+  "excluded": {
+    "brenton": [
+      "NEH"
+    ],
+    "kjv": "All units except the 27 listed New Testament books, INT (The Translators to the Reader), and OTH (The Epistle Dedicatory). The historical 1873 FRT title page is omitted by editorial choice."
+  }
+}

@@ -1,0 +1,6 @@
+# Brenton's Errata uses literal vertical bars, not USFM attribute delimiters.
+# Protect them while PTXprint flattens XX* modules, then restore exactly.
+sections("initial")
+"\|" > "\uE000"
+sections("default")
+"\uE000" > "|"

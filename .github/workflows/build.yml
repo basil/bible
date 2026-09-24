@@ -1,0 +1,22 @@
+---
+name: Build PDF
+on:
+  push:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-26.04
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - run: make bootstrap
+      - run: make validate
+      - run: make sample
+      - run: make pdf
+      - run: make check

@@ -1,0 +1,6 @@
+**
+!Dockerfile
+!dependencies.json
+!requirements.txt
+!scripts/
+!scripts/install-upstream.py
