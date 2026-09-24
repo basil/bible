@@ -1,23 +1,42 @@
 # Brenton-KJV Bible
 
-An English Bible interior: eBible's Brenton Old Testament and Apocrypha (52 scripture units), then the 27 Cambridge Paragraph KJV New Testament books, with Brenton's historical apparatus and the Cambridge dedication, translators' preface, and NT closing notes. Original source archives, the ordered edition manifest, layout overrides, and dependency locks are kept here. There are no submodules.
+A complete English Bible, typeset as a single book and ready to print or read on screen.
 
-Requires Docker, Make, Python 3, and approximately 5 GB free disk space. Python on the host is used only for source validation; rendering uses Ubuntu 26.04 and Python 3.14 inside the image.
+**[Read the finished Bible (PDF)](https://basil.github.io/bible/bible.pdf)**
 
-```sh
-make bootstrap  # network: pull the latest Ubuntu 26.04 image and build the environment
-make validate   # offline: check original archives and their complete inventories
-make sample     # offline: representative scripture, quotations, notes, and apparatus
-make pdf        # offline: dist/bible.pdf and dist/bible.provenance.json
-make check      # offline: two clean full builds, then compare every rendered page
-```
+## What is in it
 
-The local build image is named `brenton-kjv-bible:local`. The base image uses the floating `ubuntu:26.04` tag, and bootstrap passes `--pull`. Ubuntu packages come from the current repositories. Python dependencies are listed in root-level `requirements.txt` with versions and no hashes; PTXprint, usfmtc, and Bible source snapshots retain their existing pins. Rebuilding the environment later can change OS packages and pagination; repeatability is checked within the built environment.
+The Old Testament and Apocrypha come from Sir Lancelot Brenton's 1870 English translation of the Septuagint, the ancient Greek Old Testament. The New Testament is the King James Version, in the Cambridge Paragraph edition prepared by F. H. A. Scrivener in 1873.
 
-The reading order is the new title/source/contents pages; Brenton's abbreviations and 1870 introduction; the KJV dedication and translators' preface; Old Testament; Apocrypha; New Testament; then Brenton's historical appendices. Cambridge closing notes remain with their NT books. The historical Cambridge title page is omitted.
+The book reads in this order:
 
-The sample selects the chapters listed in `config/sample.json` and retains the complete apparatus to exercise quotations, tables, and unusual numbering. Outputs and logs are in `dist/` and `build/`; neither is tracked. `make clean` deletes those generated directories. Normal builds never download Bible texts. Docker rendering runs with `--network none` and the invoking user's UID/GID.
+1. Title page, a statement of sources, and a table of contents
+2. Brenton's list of abbreviations and his 1870 introduction
+3. The King James translators' dedication to the king and their preface, "The Translators to the Reader"
+4. The Old Testament
+5. The Apocrypha, with Brenton's introduction to it
+6. The New Testament
+7. Brenton's historical appendices: his 1844 preface, errata, and a table comparing chapter order in Jeremiah
 
-The layout is derived at build time from PTXprint 3.0.43's `resources/bsb.zip`: A5, two columns, 9.5-point Charis, its line spacing, margins, column rule, and running headers. This edition replaces BSB publication metadata, adds front matter and section dividers, enables contents, and displays note callers and verse 1. Continuous Arabic pagination includes the front matter. No cover, printer imposition, or historical facsimile pagination is provided.
+Both translations are in the public domain. The texts are taken from [eBible.org](https://ebible.org/), and the original copyright notices are kept with the source files in this repository.
 
-See [edition and source findings](docs/edition.md), [maintenance](docs/maintenance.md), and [verification](docs/verification.md), and the [visual inspection record](docs/inspection.md). Source notices remain inside the original archives and are also saved under `sources/`.
+## How it looks
+
+The page size is A5, about the size of a paperback novel. Scripture is set in two columns in Charis, a typeface designed for long reading. Footnotes, verse numbers, and running headers are included. The page design follows the layout used by PTXprint, a free typesetting program for Bibles.
+
+There is no cover, and the page numbering does not match any historical printed edition.
+
+## Building it yourself
+
+Everything needed to produce the PDF is stored in this repository, including the original source archives. See [CONTRIBUTING.md](CONTRIBUTING.md) for the steps.
+
+## Further reading
+
+- [Edition and source findings](docs/edition.md): how the texts were chosen, arranged, and adjusted
+- [Maintenance](docs/maintenance.md): updating dependencies, sources, and layout
+- [Verification](docs/verification.md): how the output is checked
+- [Visual inspection record](docs/inspection.md): notes from reviewing the printed pages
+
+## License
+
+The build scripts and configuration are released under the [MIT License](LICENSE). The Bible texts themselves are public domain.
