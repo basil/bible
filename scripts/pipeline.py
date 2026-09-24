@@ -24,6 +24,34 @@ EDITION = json.loads(Path("config/edition.json").read_text(encoding="utf-8"))
 SOURCES = json.loads(Path("sources.json").read_text(encoding="utf-8"))
 DEPS = json.loads(Path("dependencies.json").read_text(encoding="utf-8"))
 UPSTREAM = Path("/opt/ptxprint")
+NORMALIZED_TITLE_IDS = {
+    "1SA",
+    "2SA",
+    "1KI",
+    "2KI",
+    "1CH",
+    "2CH",
+    "1ES",
+    "EZR",
+    "NEH",
+    "ESG",
+    "1MA",
+    "2MA",
+    "3MA",
+    "PRO",
+    "SNG",
+    "WIS",
+    "SIR",
+    "LAM",
+    "DAG",
+    "4MA",
+}
+PERIOD_FREE_TITLE_MARKERS = ("h", "toc1", "mt1", "mt2", "mt3")
+BOOK_NAME_MARKERS = {
+    "title": "toc1",
+    "short_title": "toc2",
+    "abbreviation": "toc3",
+}
 
 
 def write_json(path, data):
@@ -37,6 +65,54 @@ def write_json(path, data):
 def require(condition, message):
     if not condition:
         raise RuntimeError(message)
+
+
+def normalize_printed_title(value, marker):
+    saint = "SAINT" if marker.startswith("mt") else "Saint"
+    value = re.sub(r"(?<!\w)S\.(?=\s|$)", saint, value)
+    return re.sub(r"\.(\s*)$", r"\1", value)
+
+
+def source_marker(text, marker):
+    match = re.search(r"^\\" + marker + r"\s+([^\n]+)", text, re.M)
+    require(match is not None, f"Missing source {marker} marker")
+    return match[1].strip()
+
+
+def resolved_book_names(entry, source_text=None):
+    title = entry.get("title")
+    if not title and source_text is not None:
+        title = source_marker(source_text, "h")
+        return {"title": title, "short_title": title, "abbreviation": title}
+    require(title, f"Missing title: {entry.get('id', entry.get('project_id'))}")
+    if source_text is None:
+        return {"title": title, "short_title": title, "abbreviation": title}
+    return {
+        "title": title,
+        "short_title": entry.get("short_title", source_marker(source_text, "toc2")),
+        "abbreviation": entry.get("abbreviation", source_marker(source_text, "toc3")),
+    }
+
+
+def book_names_element(entries, archives):
+    root = ET.Element("BookNames")
+    for entry in entries:
+        code = entry.get("project_id", entry.get("id"))
+        source_text = None
+        if entry.get("source"):
+            source_text = archives[entry["source"]][
+                entry.get("source_id", entry["id"])
+            ][2]
+        names = resolved_book_names(entry, source_text)
+        ET.SubElement(
+            root,
+            "book",
+            code=code,
+            abbr=names["abbreviation"],
+            short=names["short_title"],
+            long=names["title"],
+        )
+    return root
 
 
 def run(args, **kw):
@@ -98,7 +174,14 @@ def validate():
         "Unexpected separate scripture unit",
     )
     revised_titles = {
-        "EZR": "Esdras II",
+        "1SA": "1 Kingdoms",
+        "2SA": "2 Kingdoms",
+        "1KI": "3 Kingdoms",
+        "2KI": "4 Kingdoms",
+        "1CH": "1 Chronicles",
+        "2CH": "2 Chronicles",
+        "1ES": "1 Esdras",
+        "EZR": "2 Esdras",
         "NEH": "Nehemiah",
         "ESG": "Esther",
         "DAG": "Daniel",
@@ -106,6 +189,17 @@ def validate():
         "SNG": "Song of Songs",
         "SIR": "Wisdom of Sirach",
         "LAM": "Lamentations of Jeremy",
+        "1MA": "1 Maccabees",
+        "2MA": "2 Maccabees",
+        "3MA": "3 Maccabees",
+        "4MA": "4 Maccabees",
+    }
+    saint_headings = {
+        "MAT": {"mt1": "SAINT MATTHEW"},
+        "MRK": {"mt1": "SAINT MARK"},
+        "LUK": {"mt1": "SAINT LUKE"},
+        "JHN": {"mt1": "SAINT JOHN"},
+        "REV": {"mt2": "SAINT JOHN THE DIVINE"},
     }
     for unit in units:
         if unit["source"] != "brenton":
@@ -117,6 +211,59 @@ def validate():
         require(
             unit["title"] == expected_title, f"Unexpected Brenton title: {unit['id']}"
         )
+    for unit in units:
+        text = scripture_text(unit, archives)
+        markers = {
+            marker: re.search(r"^\\" + marker + r"\s+([^\n]+)", text, re.M)[1].strip()
+            for marker in ("h", "toc1", "toc2", "toc3", "mt1")
+        }
+        source_text = archives[unit["source"]][unit.get("source_id", unit["id"])][2]
+        names = resolved_book_names(unit, source_text)
+        require(
+            markers["toc1"] == names["title"]
+            and markers["h"] == markers["toc2"] == names["short_title"]
+            and markers["toc3"] == names["abbreviation"],
+            f"Generated book names disagree: {unit['id']}",
+        )
+        printed_title_lines = re.findall(
+            r"^\\(?:h|toc1|mt[123])\s+([^\n]+)", text, re.M
+        )
+        require(
+            all("." not in value for value in printed_title_lines),
+            f"Printed title contains a period: {unit['id']}",
+        )
+        for marker, expected in saint_headings.get(unit["id"], {}).items():
+            match = re.search(r"^\\" + marker + r"\s+([^\n]+)", text, re.M)
+            require(
+                match is not None and match[1].strip() == expected,
+                f"Saint heading differs from edition style: {unit['id']}/{marker}",
+            )
+        if unit["id"] in NORMALIZED_TITLE_IDS:
+            require(
+                markers["mt1"] == unit["title"].upper(),
+                f"Printed title differs from manifest: {unit['id']}",
+            )
+    xml_names = {
+        book.get("code"): {
+            "title": book.get("long"),
+            "short_title": book.get("short"),
+            "abbreviation": book.get("abbr"),
+        }
+        for book in book_names_element(ordered_entries(), archives)
+    }
+    for unit in units:
+        source_text = archives[unit["source"]][unit.get("source_id", unit["id"])][2]
+        require(
+            xml_names[unit["id"]] == resolved_book_names(unit, source_text),
+            f"BookNames.xml values disagree: {unit['id']}",
+        )
+    esdras_names = set(xml_names["EZR"].values())
+    nehemiah_names = set(xml_names["NEH"].values())
+    require(
+        esdras_names.isdisjoint(nehemiah_names)
+        and "Ezra and Nehemiah" not in esdras_names | nehemiah_names,
+        "2 Esdras and Nehemiah must never share alternative names",
+    )
     source_use = []
     for unit in units:
         if unit["source"] == "brenton":
@@ -241,7 +388,7 @@ def ordered_entries():
     add_div("XXF", "THE OLD TESTAMENT", "Brenton’s Septuagint")
     for section in ("old_testament", "old_testament_appendix", "new_testament"):
         if section == "old_testament_appendix":
-            add_div("CNC", "OLD TESTAMENT APPENDIX", "Maccabees IV")
+            add_div("CNC", "OLD TESTAMENT APPENDIX", "4 Maccabees")
         if section == "new_testament":
             add_div(
                 "XXG",
@@ -299,6 +446,7 @@ def preserved_markers(text):
 def scripture_text(entry, archives):
     code = entry["id"]
     original = archives[entry["source"]][entry.get("source_id", code)][2]
+    names = resolved_book_names(entry, original)
     if code in ("EZR", "NEH"):
         header, chapters = chapter_parts(original)
         require(len(chapters) == 23, "Ezra–Nehemiah source boundary changed")
@@ -358,18 +506,40 @@ def scripture_text(entry, archives):
                 count=1,
             )
         text = prefix + tail.replace(r"\xo 3:23", r"\xo 4:5")
-    if code in {"EZR", "NEH", "ESG", "DAG", "PRO", "SNG", "SIR", "LAM"}:
+    for field, marker in BOOK_NAME_MARKERS.items():
+        text, count = re.subn(
+            r"(\\" + marker + r"\s+)[^\n]*",
+            lambda m: m[1] + names[field],
+            text,
+            count=1,
+        )
+        require(count == 1, f"Missing {marker} heading: {code}")
+    text, count = re.subn(
+        r"(\\h\s+)[^\n]*",
+        lambda m: m[1] + names["short_title"],
+        text,
+        count=1,
+    )
+    require(count == 1, f"Missing h heading: {code}")
+    if code in NORMALIZED_TITLE_IDS:
         title = entry["title"]
-        for marker in ("h", "toc1", "toc2", "toc3", "mt1"):
-            text, count = re.subn(
-                r"(\\" + marker + r"\s+)[^\n]*",
-                lambda m: m[1] + (title.upper() if marker == "mt1" else title),
-                text,
-                count=1,
-            )
-            require(count == 1, f"Missing {marker} heading: {code}")
+        text, count = re.subn(
+            r"(\\mt1\s+)[^\n]*",
+            lambda m: m[1] + title.upper(),
+            text,
+            count=1,
+        )
+        require(count == 1, f"Missing mt1 heading: {code}")
         if code == "SIR":
             text = re.sub(r"\\mt2\s+[^\n]*\n", "", text, count=1)
+    for marker in PERIOD_FREE_TITLE_MARKERS:
+        text = re.sub(
+            r"^(\\" + marker + r"\s+)([^\n]*)$",
+            lambda m: m[1] + normalize_printed_title(m[2], marker),
+            text,
+            count=1,
+            flags=re.M,
+        )
     require(
         passage_payload(expected) == passage_payload(text),
         f"Source wording changed: {code}",
@@ -571,15 +741,7 @@ def prepare(mode, base, archives):
     ET.ElementTree(root).write(
         project / "Settings.xml", encoding="utf-8", xml_declaration=True
     )
-    names = ET.Element("BookNames")
-    for entry, code in zip(entries, ids):
-        title = entry.get("title")
-        if not title:
-            title = re.search(
-                r"\\h\s+([^\n]+)", archives[entry["source"]][entry["id"]][2]
-            )[1].strip()
-        ET.SubElement(names, "book", code=code, abbr=title, short=title, long=title)
-    ET.ElementTree(names).write(
+    ET.ElementTree(book_names_element(entries, archives)).write(
         project / "BookNames.xml", encoding="utf-8", xml_declaration=True
     )
     with zipfile.ZipFile(UPSTREAM / "resources/bsb.zip") as z:

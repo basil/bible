@@ -53,37 +53,49 @@
       "id": "1SA",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Kings I"
+      "title": "1 Kingdoms",
+      "short_title": "1 Kingdoms",
+      "abbreviation": "1 Kgdms."
     },
     {
       "id": "2SA",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Kings II"
+      "title": "2 Kingdoms",
+      "short_title": "2 Kingdoms",
+      "abbreviation": "2 Kgdms."
     },
     {
       "id": "1KI",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Kings III"
+      "title": "3 Kingdoms",
+      "short_title": "3 Kingdoms",
+      "abbreviation": "3 Kgdms."
     },
     {
       "id": "2KI",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Kings IV"
+      "title": "4 Kingdoms",
+      "short_title": "4 Kingdoms",
+      "abbreviation": "4 Kgdms."
     },
     {
       "id": "1CH",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Chronicles I"
+      "title": "1 Chronicles",
+      "short_title": "1 Chronicles",
+      "abbreviation": "1 Chr."
     },
     {
       "id": "2CH",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Chronicles II"
+      "title": "2 Chronicles",
+      "short_title": "2 Chronicles",
+      "abbreviation": "2 Chr."
     },
     {
       "id": "MAN",
@@ -95,13 +107,17 @@
       "id": "1ES",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Esdras I"
+      "title": "1 Esdras",
+      "short_title": "1 Esdras",
+      "abbreviation": "1 Esdr."
     },
     {
       "id": "EZR",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Esdras II",
+      "title": "2 Esdras",
+      "short_title": "2 Esdras",
+      "abbreviation": "2 Esdr.",
       "chapters": [
         1,
         10
@@ -113,6 +129,8 @@
       "source_id": "EZR",
       "section": "old_testament",
       "title": "Nehemiah",
+      "short_title": "Nehemiah",
+      "abbreviation": "Neh.",
       "chapters": [
         11,
         23
@@ -134,25 +152,33 @@
       "id": "ESG",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Esther"
+      "title": "Esther",
+      "short_title": "Esther",
+      "abbreviation": "Esth."
     },
     {
       "id": "1MA",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Maccabees I"
+      "title": "1 Maccabees",
+      "short_title": "1 Maccabees",
+      "abbreviation": "1 Macc."
     },
     {
       "id": "2MA",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Maccabees II"
+      "title": "2 Maccabees",
+      "short_title": "2 Maccabees",
+      "abbreviation": "2 Macc."
     },
     {
       "id": "3MA",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Maccabees III"
+      "title": "3 Maccabees",
+      "short_title": "3 Maccabees",
+      "abbreviation": "3 Macc."
     },
     {
       "id": "PSA",
@@ -182,7 +208,9 @@
       "id": "SNG",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Song of Songs"
+      "title": "Song of Songs",
+      "short_title": "Song of Songs",
+      "abbreviation": "Song"
     },
     {
       "id": "WIS",
@@ -309,6 +337,8 @@
       "source": "brenton",
       "section": "old_testament",
       "title": "Daniel",
+      "short_title": "Daniel",
+      "abbreviation": "Dan.",
       "source_parts": [
         "SUS",
         "DAG",
@@ -319,31 +349,33 @@
       "id": "4MA",
       "source": "brenton",
       "section": "old_testament_appendix",
-      "title": "Maccabees IV"
+      "title": "4 Maccabees",
+      "short_title": "4 Maccabees",
+      "abbreviation": "4 Macc."
     },
     {
       "id": "MAT",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The Gospel According to S. Matthew"
+      "title": "The Gospel According to Saint Matthew"
     },
     {
       "id": "MRK",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The Gospel According to S. Mark"
+      "title": "The Gospel According to Saint Mark"
     },
     {
       "id": "LUK",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The Gospel According to S. Luke"
+      "title": "The Gospel According to Saint Luke"
     },
     {
       "id": "JHN",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The Gospel According to S. John"
+      "title": "The Gospel According to Saint John"
     },
     {
       "id": "ACT",
@@ -481,7 +513,7 @@
       "id": "REV",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The Revelation of S. John the Divine"
+      "title": "The Revelation of Saint John the Divine"
     }
   ],
   "front_apparatus": [

@@ -13,7 +13,7 @@ The book reads in this order:
 1. Title page, a statement of sources, and a table of contents
 2. Brenton's list of abbreviations and his 1870 introduction
 3. The King James translators' dedication to the king and their preface, "The Translators to the Reader"
-4. The Old Testament, followed by Maccabees IV as an appendix
+4. The Old Testament, followed by 4 Maccabees as an appendix
 5. The New Testament
 6. Brenton's introduction to the Apocrypha and his historical appendices: his 1844 preface, errata, and a table comparing chapter order in Jeremiah
 
