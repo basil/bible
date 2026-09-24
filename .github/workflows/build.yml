@@ -20,3 +20,30 @@ jobs:
       - run: make sample
       - run: make pdf
       - run: make check
+      - name: Prepare Pages site
+        if: github.ref == 'refs/heads/master'
+        run: |
+          mkdir -p _site
+          cp site/index.html dist/bible.pdf _site/
+      - name: Upload Pages artifact
+        if: github.ref == 'refs/heads/master'
+        uses: actions/upload-pages-artifact@v5.0.0
+        with:
+          path: _site/
+  deploy:
+    if: github.ref == 'refs/heads/master'
+    needs: build
+    runs-on: ubuntu-26.04
+    permissions:
+      pages: write
+      id-token: write
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5.0.1
