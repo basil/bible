@@ -2,5 +2,9 @@
 !Dockerfile
 !dependencies.json
 !requirements.txt
+!config/
+!config/ptxprint-allow-otf.patch
 !scripts/
 !scripts/install-upstream.py
+!sources/
+!sources/GFS_Porson.zip

@@ -54,6 +54,12 @@ def validate():
         and f"SOURCE_DATE_EPOCH={DEPS['source_date_epoch']}" in dockerfile,
         "Dockerfile and dependency lock disagree",
     )
+    greek_font = DEPS["gfs_porson"]
+    greek_font_archive = Path(greek_font["archive"])
+    require(
+        sha256(greek_font_archive.read_bytes()) == greek_font["sha256"],
+        f"Archive checksum mismatch: {greek_font_archive}",
+    )
     archives = {}
     for name, source in SOURCES.items():
         path = Path(source["archive"])
@@ -463,6 +469,19 @@ def prepare(mode, base, archives):
                         "chapters": sample[code],
                     }
                 )
+            # GFS Porson does not encode U+02BC. Normalize Greek elision marks to the
+            # typographic apostrophe it does encode before fixing the printable baseline.
+            text, greek_apostrophes = re.subn(
+                r"(?<=[\u0370-\u03ff\u1f00-\u1fff])\u02bc", "\u2019", text
+            )
+            if greek_apostrophes:
+                transformations.append(
+                    {
+                        "project_id": code,
+                        "operation": "normalize Greek U+02BC elision mark to U+2019 for GFS Porson",
+                        "count": greek_apostrophes,
+                    }
+                )
             # Every later edit must leave printable content unchanged, apart from the spacer.
             expected = canonical_text(text).replace("\u200b", "")
             # Keep the source's reference-only note in 1KI 6:1. Upstream deletes it
@@ -478,16 +497,21 @@ def prepare(mode, base, archives):
                         "count": empty_notes,
                     }
                 )
-            # Explicitly tag even single-letter quotations (the upstream heuristic misses these).
-            for marker, chars in [
-                ("wh", "\u0590-\u05ff"),
-                ("wg", "\u0370-\u03ff\u1f00-\u1fff"),
+            # Explicitly tag even single-letter quotations (the upstream heuristic misses
+            # these). Keep the Greek apostrophe in the Greek font too.
+            for marker, chars, continuation in [
+                ("wh", "\u0590-\u05ff", "\u0590-\u05ff"),
+                (
+                    "wg",
+                    "\u0370-\u03ff\u1f00-\u1fff",
+                    "\u2019\u0370-\u03ff\u1f00-\u1fff",
+                ),
             ]:
                 pattern = (
                     "["
                     + chars
                     + "][\u0300-\u036f"
-                    + chars
+                    + continuation
                     + "]*(?: +["
                     + chars
                     + "][\u0300-\u036f"
@@ -530,7 +554,7 @@ def prepare(mode, base, archives):
         "Encoding": "65001",
         "Language": "English",
         "LanguageIsoCode": "en",
-        "DefaultFont": "Charis",
+        "DefaultFont": "Utopia",
         "DefaultFontSize": "9.5",
         "StyleSheet": "usfm.sty",
         "Versification": "4",
@@ -586,7 +610,7 @@ def render(mode="pdf", name=None):
     require(
         UPSTREAM.exists(), "Run this command through Make/Docker (make bootstrap first)"
     )
-    for dep in ("ptxprint", "usfmtc"):
+    for dep in ("ptxprint", "usfmtc", "utopia"):
         require(
             capture(
                 "git",
@@ -664,15 +688,19 @@ def render(mode="pdf", name=None):
         "requirements.txt",
         "dependencies.json",
         "sources.json",
+        DEPS["gfs_porson"]["archive"],
     ):
         tracked[input_name] = sha256(Path(input_name).read_bytes())
     fonts = {}
     for folder in (
         "/opt/ptxprint/fonts",
-        "/usr/share/fonts/truetype/gentiumplus",
+        "/usr/local/share/fonts/gfs",
+        "/usr/local/share/fonts/adobe",
         "/usr/share/fonts/truetype/ezra",
     ):
-        files = sorted(Path(folder).glob("*.ttf"))
+        files = sorted(
+            p for p in Path(folder).iterdir() if p.suffix in {".otf", ".ttf"}
+        )
         require(files, f"No font files to record in provenance: {folder}")
         for p in files:
             require(p.name not in fonts, f"Duplicate font file name: {p.name}")
@@ -883,9 +911,9 @@ def inspect_pdf(pdf, base, sample=False):
         ),
         "Unembedded PDF font",
     )
-    require("Charis-Italic" in fonts, "Added-word italic font missing")
+    require("Utopia-Italic" in fonts, "Added-word italic font missing")
     require(
-        "Charis" in fonts and "Gentium" in fonts and "Ezra" in fonts,
+        "Utopia" in fonts and "GFSPorson" in fonts and "Ezra" in fonts,
         "Expected text/quotation fonts missing",
     )
     text = capture("pdftotext", "-layout", pdf, "-")

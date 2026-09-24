@@ -21,7 +21,7 @@ Both translations are in the public domain. The texts are taken from [eBible.org
 
 ## How it looks
 
-The page size is A5, about the size of a paperback novel. Scripture is set in two columns in Charis, a typeface designed for long reading. Footnotes, verse numbers, and running headers are included. The page design follows the layout used by PTXprint, a free typesetting program for Bibles.
+The page size is A5, about the size of a paperback novel. Scripture is set in two columns in Utopia. Footnotes, verse numbers, and running headers are included. The page design follows the layout used by PTXprint, a free typesetting program for Bibles.
 
 There is no cover, and the page numbering does not match any historical printed edition.
 

@@ -1,6 +1,6 @@
 # Inspection record -- 2026-09-23
 
-The Orthodox-order interior rendered to 1,584 A5 pages. The 112-page sample is labeled as a typesetting sample. Automated checks verified the selection of all 52 Brenton and 27 KJV scripture sources, the 78 printed scripture units, the complete apparatus, converged contents and actual heading pages, embedded Charis/Gentium Plus/Ezra SIL, and no missing glyphs or fatal TeX errors. The source-to-generated comparison retained 36,573 scripture verse labels, notes, cross-references, added-word spans, and apparatus tables. The reference-only note in Kings III 6:1 remains present.
+The Utopia typesetting sample rendered to 111 A5 pages and is labeled as a sample. Automated checks verified the selection of all 52 Brenton and 27 KJV scripture sources, the 78 printed scripture units, the complete apparatus, converged contents and actual heading pages, embedded Utopia/GFS Porson/Ezra SIL, and no missing glyphs or fatal TeX errors. The source-to-generated comparison retained 36,573 scripture verse labels, notes, cross-references, added-word spans, and apparatus tables. The reference-only note in Kings III 6:1 remains present.
 
 Representative full-PDF pages were rendered and visually inspected:
 

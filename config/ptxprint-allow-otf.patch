@@ -1,0 +1,14 @@
+diff --git a/python/lib/ptxprint/font.py b/python/lib/ptxprint/font.py
+index 5fb403f6..6a85d950 100644
+--- a/python/lib/ptxprint/font.py
++++ b/python/lib/ptxprint/font.py
+@@ -22,9 +22,6 @@ fontconfig_template = """<?xml version="1.0"?>
+         <rejectfont>
+             <glob>*.woff</glob>
+         </rejectfont>
+-        <rejectfont>
+-            <glob>*.otf</glob>
+-        </rejectfont>
+ <!--        <rejectfont>
+             <pattern>
+                 <patelt name="variable"/>

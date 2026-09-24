@@ -11,7 +11,7 @@ def run(*args):
     subprocess.run(args, check=True)
 
 
-for name in ("ptxprint", "usfmtc"):
+for name in ("ptxprint", "usfmtc", "utopia"):
     dep = lock[name]
     path = "/opt/" + name
     if "tag" in dep:
@@ -26,6 +26,7 @@ for name in ("ptxprint", "usfmtc"):
     ).strip()
     if actual != dep["commit"]:
         raise SystemExit(f'{name}: expected {dep["commit"]}, got {actual}')
+run("git", "-C", "/opt/ptxprint", "apply", "/opt/ptxprint-allow-otf.patch")
 run("python3", "-m", "venv", "--system-site-packages", "/opt/venv")
 run(
     "/opt/venv/bin/pip",

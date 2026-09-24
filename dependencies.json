@@ -9,6 +9,15 @@
     "url": "https://github.com/usfm-bible/usfmtc.git",
     "commit": "287ab46537f51eacbe3442480f9adfe9d482b4c2"
   },
+  "utopia": {
+    "url": "https://github.com/basil/adobe-utopia-type1.git",
+    "commit": "75db04f06d90e6dd3227de88b76f8bfea88f8785"
+  },
+  "gfs_porson": {
+    "url": "https://greekfontsociety-gfs.gr/_assets/fonts/GFS_Porson.zip",
+    "archive": "sources/GFS_Porson.zip",
+    "sha256": "34a3f89b467e9ef5f79090a57da383f989fd021d09443dae0acba1a80a277401"
+  },
   "source_date_epoch": 1788220800,
   "os_packages": "Ubuntu current repositories; installed versions recorded in PDF provenance",
   "python": "3.14"
