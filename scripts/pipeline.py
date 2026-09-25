@@ -1072,7 +1072,10 @@ def check_boundaries(base, text, pages, reading_text, sample=False):
         lines = page.splitlines(keepends=True)
         if lines:
             header = lines[0].strip()
-            if re.fullmatch(rf"(?:{page_number}(?:\s+.+)?|.+\s+{page_number})", header):
+            if re.fullmatch(
+                rf"(?:{page_number}(?:\s+.+)?|.+\s+{page_number}(?:\s+.+)?)",
+                header,
+            ):
                 lines = lines[1:]
         reading_pages_without_headers.append("".join(lines))
     by_code = {b: (i, int(p)) for i, (b, t, p) in enumerate(toc)}
