@@ -23,7 +23,7 @@ The original copyright notices are kept alongside the texts in this repository.
 
 ## How it looks
 
-The page size is A5, about the size of a paperback novel. Scripture is set in two columns in [Utopia](https://en.wikipedia.org/wiki/Utopia_(typeface)). Verse numbers and running heads are included. The page design follows the layout used by [PTXprint](https://software.sil.org/ptxprint/), a free typesetting program for Bibles.
+The page size is A5, about the size of a paperback novel. Scripture is set in two columns in [Utopia](<https://en.wikipedia.org/wiki/Utopia_(typeface)>). Verse numbers and running heads are included. The page design follows the layout used by [PTXprint](https://software.sil.org/ptxprint/), a free typesetting program for Bibles.
 
 There is no cover, and the page numbering does not match any historical printed edition.
 
