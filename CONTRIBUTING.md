@@ -30,7 +30,8 @@ The sample selects the chapters listed in `config/sample.json` and retains the c
 
 - `sources/eng-Brenton_usfm.zip`: eBible's Brenton Old Testament and Apocrypha (52 scripture units) with Brenton's historical apparatus
 - `sources/engkjvcpb_usfm.zip`: eBible's Cambridge Paragraph KJV, of which the 27 New Testament books, the dedication, the translators' preface, and the NT closing notes are used
-- `sources.json`: SHA-256 hashes, archive member lists, and chapter/verse/marker inventories for both archives
+- `sources/exhaustive-listing-marginal-notes-1611-edition-king-james-bible.md`: Calvin George's transcription of the 1611 KJV marginal notes, of which only the 775 New Testament notes are read
+- `sources.json`: SHA-256 hashes, archive member lists, and chapter/verse/marker inventories for both archives, and the SHA-256 hash and New Testament note count of the marginal notes
 - `sources/README.md`: retrieval dates, original URLs, and saved copyright notices
 
 A hash mismatch is a failure. Replacing an archive is a deliberate step described in [docs/maintenance.md](docs/maintenance.md).
@@ -43,6 +44,7 @@ A hash mismatch is a failure. Replacing an archive is a deliberate step describe
 - `config/layout.ini`: overrides applied on top of PTXprint's BSB layout
 - `config/ptxprint-mods.sty`: style overrides
 - `config/ptxprint-mods.tex`: TeX customizations
+- `config/marginal-notes.json`: book names, anchors, and corrections for the 1611 New Testament marginal notes
 - `config/sample.json`: chapters included in the sample build
 - `config/render-witnesses.json`: phrases from unusual content (Psalm 151, the Greek additions to Esther and Daniel, and so on) that must appear in the rendered PDF
 

@@ -74271,5 +74271,12 @@
         }
       }
     }
+  },
+  "marginal_notes": {
+    "file": "sources/exhaustive-listing-marginal-notes-1611-edition-king-james-bible.md",
+    "url": "https://en.literaturabautista.com/exhaustive-listing-marginal-notes-1611-edition-king-james-bible",
+    "retrieved": "2026-09-25",
+    "sha256": "3606201438de24788dbfe5b256ad16f700770dc254b18a25760cb039b2e61828",
+    "nt_notes": 775
   }
 }

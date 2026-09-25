@@ -5,6 +5,7 @@ import argparse
 from collections import Counter
 import configparser
 import difflib
+import functools
 import json
 import os
 from pathlib import Path
@@ -23,6 +24,9 @@ os.chdir(ROOT)
 EDITION = json.loads(Path("config/edition.json").read_text(encoding="utf-8"))
 SOURCES = json.loads(Path("sources.json").read_text(encoding="utf-8"))
 DEPS = json.loads(Path("dependencies.json").read_text(encoding="utf-8"))
+MARGINAL_NOTES = json.loads(
+    Path("config/marginal-notes.json").read_text(encoding="utf-8")
+)
 UPSTREAM = Path("/opt/ptxprint")
 PERIOD_FREE_TITLE_MARKERS = ("h", "toc1", "mt1", "mt2", "mt3")
 PAULINE_TITLE_IDS = set(
@@ -187,6 +191,8 @@ def validate():
     )
     archives = {}
     for name, source in SOURCES.items():
+        if "archive" not in source:
+            continue
         path = Path(source["archive"])
         require(
             sha256(path.read_bytes()) == source["sha256"],
@@ -205,6 +211,7 @@ def validate():
                 f"Changed inventory: {name}/{code}",
             )
         archives[name] = data
+    notes = marginal_notes()
     units = EDITION["scripture"]
     ids = [u["id"] for u in units]
     require(len(ids) == len(set(ids)) == 78, "Expected 78 printed scripture units")
@@ -213,6 +220,10 @@ def validate():
         "Expected 51 printed Brenton units",
     )
     require(sum(u["source"] == "kjv" for u in units) == 27, "Expected 27 KJV units")
+    require(
+        set(notes) <= {u["id"] for u in units if u["source"] == "kjv"},
+        "Marginal notes name a book outside the KJV New Testament",
+    )
     orthodox = "GEN EXO LEV NUM DEU JOS JDG RUT 1SA 2SA 1KI 2KI 1CH 2CH MAN 1ES EZR NEH TOB JDT ESG 1MA 2MA 3MA 4MA PSA JOB PRO ECC SNG WIS SIR HOS AMO MIC JOL OBA JON NAM HAB ZEP HAG ZEC MAL ISA JER BAR LAM LJE EZK DAG".split()
     require(
         ids[: len(orthodox)] == orthodox and ids[len(orthodox)] == "MAT",
@@ -511,6 +522,7 @@ def validate():
         "brenton_units": sum(u["source"] == "brenton" for u in units),
         "brenton_source_files": len(set(source_use)),
         "kjv_units": sum(u["source"] == "kjv" for u in units),
+        "kjv_marginal_notes": sum(len(n) for n in notes.values()),
         "source_verse_labels": sum(
             sum(len(v) for v in SOURCES["brenton"]["files"][code]["chapters"].values())
             for code in set(source_use)
@@ -604,6 +616,181 @@ def preserved_markers(text):
         ):
             result[marker] = count
     return result
+
+
+@functools.cache
+def marginal_notes():
+    """The 1611 translators' New Testament marginal notes, by book, in source order.
+
+    George's listing gives a reference, the words the note glosses (the lemma), and
+    the note. The Old Testament entries belong to the Hebrew Old Testament, which
+    this edition does not print, so they are never read.
+    """
+    source = SOURCES["marginal_notes"]
+    path = Path(source["file"])
+    raw = path.read_bytes()
+    require(sha256(raw) == source["sha256"], f"Source checksum mismatch: {path}")
+    text = raw.decode("utf-8")
+    require(
+        text.count("\nMatthew 1:11 ") == 1,
+        "Marginal notes New Testament boundary changed",
+    )
+    books = MARGINAL_NOTES["books"]
+    entry_pattern = re.compile(
+        "(" + "|".join(map(re.escape, books)) + r") (\d+):(\d+) (.+?): (.+)"
+    )
+    corrections = dict(MARGINAL_NOTES["corrections"])
+    anchors = MARGINAL_NOTES["anchors"]
+    result = {}
+    seen = Counter()
+    for paragraph in re.split(r"\n\s*\n", text[text.index("\nMatthew 1:11 ") :]):
+        # The Markdown wraps long entries; a continuation line joins its entry.
+        entry = " ".join(paragraph.split())
+        if not entry:
+            continue
+        match = entry_pattern.fullmatch(entry)
+        require(match is not None, f"Unparsed marginal note: {entry}")
+        book, chapter, verse, lemma, note = match.groups()
+        code = books[book]
+        key = f"{code} {chapter}:{verse} {lemma}"
+        seen[key] += 1
+        if seen[key] > 1:
+            key += f"#{seen[key]}"
+        if key in corrections:
+            correction = corrections.pop(key)
+            require(
+                note.count(correction["from"]) == 1,
+                f"Marginal note correction does not apply: {key}",
+            )
+            note = note.replace(correction["from"], correction["to"])
+        require(
+            "[" not in note and "]" not in note,
+            f"Transcriber's remark left in marginal note: {key}",
+        )
+        result.setdefault(code, []).append(
+            {
+                "key": key,
+                "chapter": chapter,
+                "verse": verse,
+                "lemma": lemma,
+                "note": note,
+                "corrected": key in MARGINAL_NOTES["corrections"],
+            }
+        )
+    require(not corrections, f"Unused marginal note corrections: {sorted(corrections)}")
+    keys = {n["key"] for notes in result.values() for n in notes}
+    require(
+        set(anchors) <= keys,
+        f"Unused marginal note anchors: {sorted(set(anchors) - keys)}",
+    )
+    require(
+        len(keys) == source["nt_notes"],
+        f"Expected {source['nt_notes']} New Testament marginal notes, found {len(keys)}",
+    )
+    return result
+
+
+def word_tokens(text):
+    """Words with their offsets, ignoring markup, case, and punctuation.
+
+    Markers are blanked rather than removed so that offsets index the USFM itself.
+    Apostrophes join a word (king’s is kings); hyphens separate one (market-place).
+    """
+    masked = re.sub(r"\\\+?[\w-]+\*?", lambda m: " " * len(m[0]), text)
+    return [
+        (re.sub(r"[’']", "", m[0]).casefold(), m.start())
+        for m in re.finditer(r"[A-Za-z]+(?:[’'][A-Za-z]+)*", masked)
+    ]
+
+
+def marginal_note_usfm(reference, note):
+    # Brenton's own style: the label in fqa, the note in ft, a closing full stop.
+    label = re.match(r"(Or,|Gr\.) ", note)
+    body = f"\\fqa {label[1]} \\ft {note[label.end():]}" if label else f"\\ft {note}"
+    if not body.endswith((".", "?", "!")):
+        body += "."
+    return f"\\f + \\fr {reference} {body}\\f*"
+
+
+def verse_spans(text):
+    """Each verse's reference with the offsets of its text, up to the next verse."""
+    spans = []
+    chapter = None
+    markers = list(re.finditer(r"\\(c|v) (\S+)\s*", text))
+    for index, m in enumerate(markers):
+        if m[1] == "c":
+            chapter = m[2]
+            continue
+        end = markers[index + 1].start() if index + 1 < len(markers) else len(text)
+        spans.append((f"{chapter}:{m[2]}", m.end(), end))
+    return spans
+
+
+def insert_marginal_notes(code, text, record):
+    """Set each marginal note as a footnote whose caller precedes the words it glosses.
+
+    Brenton's callers, like the 1611 marks, stand before the glossed words, and so do
+    these. A note is anchored at George's lemma, or at the Cambridge words recorded
+    for it in config/marginal-notes.json where the spelling differs, the lemma occurs
+    more than once, or the reference is wrong.
+    """
+    notes = marginal_notes().get(code, [])
+    if not notes:
+        return text
+    require("\\f " not in text, f"Cambridge text already has footnotes: {code}")
+    spans = {reference: (start, end) for reference, start, end in verse_spans(text)}
+    inserts = {}
+    for note in notes:
+        override = MARGINAL_NOTES["anchors"].get(note["key"], {})
+        reference = override.get("verse", f"{note['chapter']}:{note['verse']}")
+        require(reference in spans, f"Marginal note verse missing: {note['key']}")
+        start, end = spans[reference]
+        anchor = [w for w, _ in word_tokens(override.get("anchor", note["lemma"]))]
+        words = word_tokens(text[start:end])
+        hits = [
+            offset
+            for i, (_, offset) in enumerate(words)
+            if [w for w, _ in words[i : i + len(anchor)]] == anchor
+        ]
+        occurrence = override.get("occurrence")
+        require(
+            len(hits) == 1 if occurrence is None else 0 < occurrence <= len(hits),
+            f"Marginal note anchor not found exactly once: {note['key']} ({len(hits)})",
+        )
+        position = start + hits[(occurrence or 1) - 1]
+        # Keep the note outside a character style that opens on the glossed word.
+        while opener := re.search(r"\\\+?(?:add|sc) $", text[start:position]):
+            position = start + opener.start()
+        inserts.setdefault(position, []).append(
+            marginal_note_usfm(reference, note["note"])
+        )
+    original = text
+    for position in sorted(inserts, reverse=True):
+        text = text[:position] + "".join(inserts[position]) + text[position:]
+    note_pattern = r"\\f \+ .*?\\f\*"
+    require(
+        len(re.findall(note_pattern, text)) == len(notes)
+        and re.sub(note_pattern, "", text) == original,
+        f"Marginal note insertion changed the text: {code}",
+    )
+    require(
+        all(
+            re.findall(r"\\fr (\S+)", text[start:end])
+            == [reference] * len(re.findall(r"\\f ", text[start:end]))
+            for reference, start, end in verse_spans(text)
+        ),
+        f"Marginal note reference disagrees with its verse: {code}",
+    )
+    record(
+        "insert 1611 translators' marginal notes (Calvin George's transcription)",
+        source=SOURCES["marginal_notes"]["file"],
+        count=len(notes),
+        anchor_overrides=[
+            n["key"] for n in notes if n["key"] in MARGINAL_NOTES["anchors"]
+        ],
+        corrected_notes=[n["key"] for n in notes if n["corrected"]],
+    )
+    return text
 
 
 def scripture_text(entry, archives, log=None):
@@ -804,6 +991,9 @@ def scripture_text(entry, archives, log=None):
             and chapters["4"] == [str(i) for i in range(1, 7)],
             "Wrong Malachias 3-4 verse labels",
         )
+    if entry["source"] == "kjv":
+        # After the source comparisons above, which the added notes would fail.
+        text = insert_marginal_notes(code, text, record)
     return text
 
 

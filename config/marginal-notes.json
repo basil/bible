@@ -1,0 +1,283 @@
+{
+  "books": {
+    "Matthew": "MAT",
+    "Mark": "MRK",
+    "Luke": "LUK",
+    "John": "JHN",
+    "Acts": "ACT",
+    "Romans": "ROM",
+    "1 Corinthians": "1CO",
+    "2 Corinthians": "2CO",
+    "Galatians": "GAL",
+    "Ephesians": "EPH",
+    "Philippians": "PHP",
+    "Colossians": "COL",
+    "1 Thessalonians": "1TH",
+    "2 Thessalonians": "2TH",
+    "1 Timothy": "1TI",
+    "2 Timothy": "2TI",
+    "Titus": "TIT",
+    "Hebrews": "HEB",
+    "James": "JAS",
+    "1 Peter": "1PE",
+    "2 Peter": "2PE",
+    "1 John": "1JN",
+    "2 John": "2JN",
+    "3 John": "3JN",
+    "Jude": "JUD",
+    "Revelation": "REV"
+  },
+  "anchors": {
+    "MAT 6:1 of": {
+      "occurrence": 2,
+      "why": "reward of your Father (Or, with your Father)"
+    },
+    "MAT 12:14 held a counsel": {
+      "anchor": "held a council"
+    },
+    "MAT 14:2 do show forth themselves in him": {
+      "anchor": "do shew forth themselves in him"
+    },
+    "MAT 14:30 boisterous": {
+      "anchor": "boysterous"
+    },
+    "MRK 2:21 new": {
+      "occurrence": 1,
+      "why": "new cloth; the note repeats the note on Matthew 9:16"
+    },
+    "MRK 3:19 into an house": {
+      "anchor": "into a house"
+    },
+    "MRK 6:56 him": {
+      "occurrence": 2,
+      "why": "as many as touched him, that is, the border of his garment"
+    },
+    "MRK 10:42 are accompted": {
+      "anchor": "are accounted"
+    },
+    "LUK 1:17 to": {
+      "occurrence": 3,
+      "why": "to the wisdom of the just (Or, by the wisdom)"
+    },
+    "LUK 1:28 highly favored": {
+      "anchor": "highly favoured"
+    },
+    "LUK 1:78 day spring": {
+      "anchor": "dayspring"
+    },
+    "LUK 10:22 All these": {
+      "anchor": "All things",
+      "why": "the note concerns the words introducing the verse, which reads All things"
+    },
+    "LUK 11:33 bushell": {
+      "anchor": "bushel"
+    },
+    "LUK 12:6 farthing": {
+      "anchor": "farthings"
+    },
+    "JHN 7:35 Gentiles": {
+      "occurrence": 1,
+      "why": "the dispersed among the Gentiles, the first of the two"
+    },
+    "JHN 13:26 sop": {
+      "occurrence": 1,
+      "why": "the first of the two"
+    },
+    "JHN 16:25 proverbs": {
+      "occurrence": 1,
+      "why": "two notes, one on each occurrence"
+    },
+    "JHN 16:25 proverbs#2": {
+      "occurrence": 2,
+      "why": "two notes, one on each occurrence"
+    },
+    "ACT 12:20 the kings chaberlaine": {
+      "anchor": "the king’s chamberlain"
+    },
+    "ACT 16:19 marketplace": {
+      "anchor": "market-place"
+    },
+    "ACT 25:6 more then ten days": {
+      "anchor": "more than ten days"
+    },
+    "ROM 2:15 the meanwhile": {
+      "anchor": "the mean while"
+    },
+    "ROM 2:18 approves the things that are more excellent": {
+      "anchor": "approvest the things that are more excellent"
+    },
+    "ROM 6:3 were": {
+      "occurrence": 1,
+      "why": "as were baptized (Or, are baptized)"
+    },
+    "ROM 6:13 instruments": {
+      "occurrence": 1,
+      "why": "the first of the two"
+    },
+    "ROM 11:17 among them": {
+      "anchor": "amongst them"
+    },
+    "ROM 14:6 regardeth": {
+      "occurrence": 1,
+      "why": "he that regardeth the day"
+    },
+    "ROM 14:14 unclean": {
+      "occurrence": 1,
+      "why": "nothing unclean of itself, the first of the three"
+    },
+    "1CO 7:22 free man": {
+      "anchor": "freeman"
+    },
+    "1CO 10:6 followed them": {
+      "verse": "10:4",
+      "anchor": "followed them",
+      "why": "the words are in 10:4, the spiritual Rock that followed them"
+    },
+    "1CO 11:26 ye do show": {
+      "anchor": "ye do shew"
+    },
+    "2CO 9:5 bounty": {
+      "occurrence": 1,
+      "why": "your bounty, the first of the two"
+    },
+    "2CO 10:2 think": {
+      "occurrence": 2,
+      "why": "editor's judgement: some which think of us"
+    },
+    "2CO 11:1 bear with me": {
+      "occurrence": 2,
+      "why": "and indeed bear with me (Or, you do bear with me)"
+    },
+    "2CO 11:10 no man shall stop me in this boasting": {
+      "anchor": "no man shall stop me of this boasting"
+    },
+    "2CO 12:15 you": {
+      "occurrence": 1,
+      "why": "be spent for you (Gr. for your souls)"
+    },
+    "GAL 4:9 again": {
+      "occurrence": 1,
+      "why": "how turn ye again (Or, back)"
+    },
+    "GAL 4:17 you": {
+      "occurrence": 2,
+      "why": "they would exclude you (Or, us)"
+    },
+    "GAL 4:24 answereth...which now is": {
+      "verse": "4:25",
+      "anchor": "answereth",
+      "why": "the words are in 4:25, and answereth to Jerusalem which now is"
+    },
+    "GAL 5:16 ye shall not fulfill": {
+      "anchor": "ye shall not fulfil"
+    },
+    "EPH 1:19 of his might power": {
+      "anchor": "of his mighty power"
+    },
+    "EPH 4:29 to use of the edifying": {
+      "anchor": "to the use of edifying"
+    },
+    "COL 1:25 to fulfill the word of God": {
+      "anchor": "to fulfil the word of God"
+    },
+    "COL 4:12 laboring": {
+      "anchor": "labouring"
+    },
+    "1TH 4:8 despiseth": {
+      "occurrence": 1,
+      "why": "he that despiseth, the first of the two"
+    },
+    "1TH 4:12 nothing": {
+      "anchor": "no thing"
+    },
+    "1TI 1:6 having swarved": {
+      "anchor": "having swerved"
+    },
+    "1TI 3:2 of good behavior": {
+      "anchor": "of good behaviour"
+    },
+    "1TI 6:5 Perverse disputing": {
+      "anchor": "Perverse disputings"
+    },
+    "TIT 2:11 that bringeth salvation hat appeared to all men": {
+      "anchor": "that bringeth salvation hath appeared to all men"
+    },
+    "HEB 2:7 little lower then": {
+      "anchor": "little lower than"
+    },
+    "HEB 2:9 for": {
+      "occurrence": 1,
+      "why": "for the suffering of death (Or, by the suffering)"
+    },
+    "HEB 5:13 unskillful": {
+      "anchor": "unskilful"
+    },
+    "HEB 11:31 that believeth not": {
+      "anchor": "that believed not"
+    },
+    "JAS 2:5 the": {
+      "occurrence": 1,
+      "why": "chosen the poor of this world (Or, that poor)"
+    },
+    "1PE 2:17 Honour": {
+      "occurrence": 1,
+      "why": "Honour all men"
+    },
+    "1JN 2:27 him": {
+      "occurrence": 2,
+      "why": "ye shall abide in him (Or, in it, the anointing)"
+    },
+    "1JN 2:29 ye know": {
+      "occurrence": 2,
+      "why": "the second, ye know that every one (Or, know ye)"
+    },
+    "REV 9:15 for": {
+      "occurrence": 1,
+      "why": "prepared for an hour (Or, at an hour)"
+    },
+    "REV 11:18 destroy": {
+      "occurrence": 1,
+      "why": "shouldest destroy them, the first of the two"
+    },
+    "REV 18:12 Thine": {
+      "anchor": "thyine"
+    }
+  },
+  "corrections": {
+    "MAT 5:15 a bushel": {
+      "from": "[symbol in wrong place in 1611] ",
+      "to": "",
+      "why": "transcriber's remark"
+    },
+    "MAT 23:18 guilty": {
+      "from": "debtOr,",
+      "to": "debtor,",
+      "why": "conversion error"
+    },
+    "MRK 14:72 he wept": {
+      "from": " [sic]",
+      "to": "",
+      "why": "transcriber's remark; began to wept is the 1611 reading"
+    },
+    "ACT 13:18 suffered": {
+      "from": "[Greek characters]",
+      "to": "ἐτροποφόρησεν, perhaps for ἐτροφοφόρησεν,",
+      "why": "Greek omitted by the transcriber, restored from the 1611 margin"
+    },
+    "ACT 13:34 mercies": {
+      "from": "[Greek characters]",
+      "to": "τὰ ὅσια,",
+      "why": "Greek omitted by the transcriber, restored from the 1611 margin"
+    },
+    "PHP 1:13 palace": {
+      "from": "Ceasars",
+      "to": "Cesars",
+      "why": "misspelling; the 1611 margin and this text spell Cesar"
+    },
+    "REV 20:13 hell": {
+      "from": " [obviously a typo in 1611]",
+      "to": "",
+      "why": "transcriber's remark"
+    }
+  }
+}
