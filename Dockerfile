@@ -38,7 +38,7 @@ RUN python3 /opt/install-upstream.py \
     && fc-cache -f \
     && fc-list \
     && dpkg-query -W >/opt/os-packages.tsv
-ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 TZ=UTC PYTHONHASHSEED=0
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 TZ=UTC
 ENV PATH=/opt/venv/bin:$PATH
 WORKDIR /work
 ENTRYPOINT ["python3", "scripts/pipeline.py"]
