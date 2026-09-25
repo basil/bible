@@ -10,7 +10,7 @@ Representative full-PDF pages were rendered and visually inspected:
 | --- | --- |
 | 1-5 | Title page; contents listing every unit in manifest order with correct page numbers; editor's introduction following the contents |
 | 6-7, 13, 16 | Old Testament divider; Preface (1844) with its footnote; Introduction (1870) and its Greek quotations in GFS Porson |
-| 21, 25-27 | Introduction to the Apocrypha; abbreviations table; blank verso; Genesis opening with dense footnotes and matching callers |
+| 21, 25-27 | The Books of the Apocrypha; abbreviations table; blank verso; Genesis opening with dense footnotes and matching callers |
 | 580-581 | Prayer of Manasses after 2 Chronicles; 1 Esdras opening |
 | 600-601, 613-614 | 2 Esdras heading after 1 Esdras 9; Nehemiah heading after 2 Esdras 10, with running headers |
 | 661 | Esther opening additions and lettered verse labels |
