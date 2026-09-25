@@ -188,7 +188,7 @@ def validate():
         "DAG": "Daniel",
         "SNG": "Song of Songs",
         "SIR": "Wisdom of the Son of Sirach",
-        "LAM": "Lamentations of Jeremy",
+        "LAM": "Lamentations of Jeremias",
         "1MA": "1 Maccabees",
         "2MA": "2 Maccabees",
         "3MA": "3 Maccabees",
