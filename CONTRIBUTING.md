@@ -52,7 +52,7 @@ The reading order is the new title page, contents, and editor's introduction; th
 
 ## Dependencies
 
-`dependencies.json` records the base image tag, Python version, PTXprint tag and commit, usfmtc commit, and the reproducible timestamp. Python packages are pinned by version, without hashes, in `requirements.txt`. Dependabot proposes updates to that file.
+`dependencies.json` records the base image tag, Python version, PTXprint tag and commit, usfmtc commit, and the `SOURCE_DATE_EPOCH` passed to the render. PTXprint 3.0.43 ignores it for the PDF's creation and modification dates, which record the build time, so PDF bytes differ between builds; `make check` compares rendered page images instead. Python packages are pinned by version, without hashes, in `requirements.txt`. Dependabot proposes updates to that file.
 
 The base image uses the floating `ubuntu:26.04` tag, and `make bootstrap` passes `--pull`, so OS packages come from Ubuntu's current repositories. Rebuilding the environment later can change OS packages and therefore pagination. Repeatability is checked within a single built environment by `make check`, and each PDF's provenance file records the exact environment that produced it.
 
@@ -60,7 +60,7 @@ Upgrade procedure, source updates, and layout customization are covered in [docs
 
 ## Continuous integration
 
-`.github/workflows/build.yml` runs bootstrap, validate, sample, pdf, and check on every push and pull request. On `master` it also publishes `site/index.html` and `dist/bible.pdf` to GitHub Pages.
+`.github/workflows/build.yml` runs bootstrap, validate, check-protrusion, and pdf on pushes to `master` and on pull requests. It does not run `make sample` or the full `make check` repeatability build; run those locally before submitting. On `master` it also publishes `site/index.html` and `dist/bible.pdf` to GitHub Pages.
 
 ## Submitting changes
 

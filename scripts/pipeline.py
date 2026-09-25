@@ -88,8 +88,8 @@ def resolved_book_names(entry, source_text=None):
         return {"title": title, "short_title": title, "abbreviation": title}
     return {
         "title": title,
-        "short_title": entry.get("short_title", source_marker(source_text, "toc2")),
-        "abbreviation": entry.get("abbreviation", source_marker(source_text, "toc3")),
+        "short_title": entry.get("short_title") or source_marker(source_text, "toc2"),
+        "abbreviation": entry.get("abbreviation") or source_marker(source_text, "toc3"),
     }
 
 
@@ -264,6 +264,14 @@ def validate():
         and "Ezra and Nehemiah" not in esdras_names | nehemiah_names,
         "2 Esdras and Nehemiah must never share alternative names",
     )
+    require(
+        all(
+            ("chapters" not in u or u["id"] in ("EZR", "NEH"))
+            and ("source_parts" not in u or u["id"] == "DAG")
+            for u in units
+        ),
+        "chapters and source_parts are only implemented for EZR/NEH and DAG",
+    )
     source_use = []
     for unit in units:
         if unit["source"] == "brenton":
@@ -323,9 +331,6 @@ def validate():
     require(len(inv["DAG"]["chapters"]["3"]) > 90, "Daniel chapter 3 additions missing")
     for b in ("MAN", "3MA", "4MA"):
         require(bool(inv[b]["chapters"]), f"{b} missing")
-    for unit in units:
-        if unit["source"] == "brenton":
-            scripture_text(unit, archives)
     entries = ordered_entries()
     ordered_ids = [e.get("project_id", e.get("id")) for e in entries]
 
@@ -376,9 +381,10 @@ def validate():
     Path("build").mkdir(exist_ok=True)
     Path("build/nehemiah-differences.diff").write_text("".join(diff), encoding="utf-8")
     report = {
-        "scripture_units": 78,
-        "brenton_units": 52,
-        "kjv_units": 27,
+        "scripture_units": len(units),
+        "brenton_units": sum(u["source"] == "brenton" for u in units),
+        "brenton_source_files": len(set(source_use)),
+        "kjv_units": sum(u["source"] == "kjv" for u in units),
         "source_verse_labels": sum(
             sum(len(v) for v in SOURCES["brenton"]["files"][code]["chapters"].values())
             for code in set(source_use)
@@ -472,11 +478,22 @@ def preserved_markers(text):
     return result
 
 
-def scripture_text(entry, archives):
+def scripture_text(entry, archives, log=None):
     code = entry["id"]
-    original = archives[entry["source"]][entry.get("source_id", code)][2]
+    source_id = entry.get("source_id", code)
+    original = archives[entry["source"]][source_id][2]
     names = resolved_book_names(entry, original)
+
+    def record(operation, **details):
+        if log is not None:
+            log.append({"project_id": code, "operation": operation, **details})
+
     if code in ("EZR", "NEH"):
+        # The split below is fixed; the manifest's chapters field must describe it.
+        require(
+            entry.get("chapters") == ([1, 10] if code == "EZR" else [11, 23]),
+            f"Manifest chapters disagree with the Ezra–Nehemiah split: {code}",
+        )
         header, chapters = chapter_parts(original)
         require(len(chapters) == 23, "Ezra–Nehemiah source boundary changed")
         selected = chapters[:10] if code == "EZR" else chapters[10:]
@@ -487,9 +504,26 @@ def scripture_text(entry, archives):
                 )
                 for c in selected
             ]
+            record(
+                "select source chapters and relabel them",
+                source_ids=[source_id],
+                source_chapters="11–23",
+                edition_chapters="1–13",
+            )
+        else:
+            record(
+                "select source chapters",
+                source_ids=[source_id],
+                source_chapters="1–10",
+            )
         expected = header + "".join(chapters[:10] if code == "EZR" else chapters[10:])
         text = header + "".join(selected)
     elif code == "DAG":
+        # The grouping below is fixed; the manifest's source_parts must describe it.
+        require(
+            entry.get("source_parts") == ["SUS", "DAG", "BEL"],
+            "Manifest source_parts disagree with the Daniel grouping",
+        )
         daniel_header, daniel_chapters = chapter_parts(original)
         _, susanna = chapter_parts(archives["brenton"]["SUS"][2])
         _, bel = chapter_parts(archives["brenton"]["BEL"][2])
@@ -520,6 +554,16 @@ def scripture_text(entry, archives):
             song_heading == 1, "Daniel 3 Song of the Three Children boundary changed"
         )
         text = daniel_header + "".join(susanna + daniel_chapters + bel)
+        record(
+            "group Susanna and Bel and the Dragon with Daniel",
+            source_ids=["SUS", source_id, "BEL"],
+            chapter_labels={"SUS 1": "0", "BEL 1": "13"},
+            added_section_headings=[
+                "SUSANNA",
+                "THE SONG OF THE THREE CHILDREN (before Daniel 3:25)",
+                "BEL AND THE DRAGON",
+            ],
+        )
     else:
         expected = original
         text = original
@@ -528,7 +572,10 @@ def scripture_text(entry, archives):
             text.count(r"\v 19 For, behold") == 1, "Malachias chapter boundary changed"
         )
         prefix, tail = text.split(r"\v 19 For, behold", 1)
-        tail = "\\c 4\n\\v 1 For, behold" + tail
+        # Open chapter 4 before the source's paragraph marker, not inside it.
+        require(prefix.endswith("\\p\n"), "Malachias chapter 4 paragraph changed")
+        prefix = prefix[: -len("\\p\n")]
+        tail = "\\c 4\n\\p\n\\v 1 For, behold" + tail
         for old, new in zip(range(20, 25), range(2, 7)):
             tail = re.sub(
                 r"\\v " + str(old) + r"(?=\s)",
@@ -536,7 +583,16 @@ def scripture_text(entry, archives):
                 tail,
                 count=1,
             )
-        text = prefix + tail.replace(r"\xo 3:23", r"\xo 4:5")
+        text, xo = re.subn(r"\\xo 3:23\b", lambda m: r"\xo 4:5", prefix + tail)
+        require(xo == 1, "Malachias 3:23 cross-reference origin changed")
+        record(
+            "relabel verses",
+            source_ids=[source_id],
+            source_verses="3:19–24",
+            edition_verses="4:1–6",
+            relabelled_note_origins={"3:23": "4:5"},
+            moved_paragraph_marker="after the new chapter 4 marker",
+        )
     for field, marker in BOOK_NAME_MARKERS.items():
         text, count = re.subn(
             r"(\\" + marker + r"\s+)[^\n]*",
@@ -571,6 +627,15 @@ def scripture_text(entry, archives):
             count=1,
             flags=re.M,
         )
+    headings = {}
+    for marker in ("h", "toc1", "toc2", "toc3", "mt1", "mt2", "mt3"):
+        pattern = r"^\\" + marker + r"\s+([^\n]*)$"
+        source_values = [v.strip() for v in re.findall(pattern, original, re.M)]
+        edition_values = [v.strip() for v in re.findall(pattern, text, re.M)]
+        if source_values != edition_values:
+            headings[marker] = {"source": source_values, "edition": edition_values}
+    if headings:
+        record("edition book headings replace the source headings", headings=headings)
     require(
         passage_payload(expected) == passage_payload(text),
         f"Source wording changed: {code}",
@@ -621,24 +686,11 @@ def prepare(mode, base, archives):
             require(text.startswith(f"\\id {code}\n"), f"Wrong id in {entry['file']}")
         else:
             original = archives[entry["source"]][entry.get("source_id", entry["id"])][2]
-            text = scripture_text(entry, archives) if "section" in entry else original
-            if (
-                "section" in entry
-                and entry["source"] == "brenton"
-                and (
-                    entry["id"]
-                    in {"EZR", "NEH", "DAG", "MAL", "ESG", "SNG", "SIR", "LAM"}
-                )
-            ):
-                transformations.append(
-                    {
-                        "project_id": code,
-                        "source_ids": entry.get(
-                            "source_parts", [entry.get("source_id", entry["id"])]
-                        ),
-                        "operation": "Orthodox book heading, passage grouping, or chapter labels; wording and source markers verified",
-                    }
-                )
+            text = (
+                scripture_text(entry, archives, transformations)
+                if "section" in entry
+                else original
+            )
             if code != entry.get("source_id", entry["id"]):
                 text, remapped = re.subn(r"^(\\id\s+)\S+", lambda m: m[1] + code, text)
                 require(remapped == 1, f"Could not remap leading \\id to {code}")
@@ -737,7 +789,7 @@ def prepare(mode, base, archives):
                     + "]*(?: +["
                     + chars
                     + "][\u0300-\u036f"
-                    + chars
+                    + continuation
                     + "]*)*"
                 )
                 text, count = re.subn(
@@ -891,8 +943,6 @@ def render(mode="pdf", name=None):
     target = ROOT / "dist" / ("sample.pdf" if mode == "sample" else "bible.pdf")
     target.parent.mkdir(exist_ok=True)
     report = inspect_pdf(pdfs[0], base, sample=mode == "sample")
-    shutil.copyfile(pdfs[0], target.with_suffix(".pdf.tmp"))
-    target.with_suffix(".pdf.tmp").replace(target)
     tracked = {
         str(p): sha256(p.read_bytes())
         for folder in ("config", "scripts")
@@ -913,6 +963,7 @@ def render(mode="pdf", name=None):
         "/opt/ptxprint/fonts",
         "/usr/local/share/fonts/gfs",
         "/usr/local/share/fonts/adobe",
+        "/usr/local/share/fonts/erewhon",
         "/usr/share/fonts/truetype/ezra",
     ):
         files = sorted(
@@ -924,7 +975,7 @@ def render(mode="pdf", name=None):
             fonts[p.name] = sha256(p.read_bytes())
     provenance = {
         "title": EDITION["title"],
-        "pdf_sha256": sha256(target.read_bytes()),
+        "pdf_sha256": sha256(pdfs[0].read_bytes()),
         "dependencies": DEPS,
         "source_archives": {
             k: {x: v[x] for x in ("url", "sha256", "retrieved")}
@@ -940,7 +991,15 @@ def render(mode="pdf", name=None):
         .read_text(encoding="utf-8")
         .splitlines(),
     }
-    write_json(target.with_suffix(".provenance.json"), provenance)
+    # Stage both outputs, then swap them in together so a failure never pairs a new
+    # PDF with an old provenance record.
+    staged_pdf = target.with_suffix(".pdf.tmp")
+    staged_provenance = target.with_suffix(".provenance.json.tmp")
+    shutil.copyfile(pdfs[0], staged_pdf)
+    write_json(staged_provenance, provenance)
+    target.with_suffix(".provenance.json").unlink(missing_ok=True)
+    staged_pdf.replace(target)
+    staged_provenance.replace(target.with_suffix(".provenance.json"))
     print("Wrote", target, flush=True)
     return target, base, report
 
@@ -1106,6 +1165,37 @@ def check_boundaries(base, text, pages, reading_text, sample=False):
         )
 
 
+def check_added_words_roman(pdf):
+    # Malachias 4:2 reads "healing \\add shall be\\add* in his wings". A font change
+    # would put the added words in a different font from their roman neighbours.
+    words = ["healing", "shall", "be", "in", "his", "wings"]
+    pages = [
+        number
+        for number, page in enumerate(capture("pdftotext", pdf, "-").split("\f"), 1)
+        if " ".join(words) in " ".join(page.split())
+    ]
+    require(len(pages) == 1, f"Added-word witness not found once: {pages}")
+    root = ET.fromstring(
+        capture(
+            "pdftohtml", "-xml", "-i", "-stdout", "-f", pages[0], "-l", pages[0], pdf
+        )
+    )
+    families = {f.get("id"): f.get("family") for f in root.iter("fontspec")}
+    runs = [
+        (word, families[t.get("font")])
+        for t in root.iter("text")
+        for word in "".join(t.itertext()).split()
+    ]
+    for i in range(len(runs) - len(words) + 1):
+        if [w.strip(":,") for w, _ in runs[i : i + len(words)]] == words:
+            require(
+                len({f for _, f in runs[i : i + len(words)]}) == 1,
+                "Added words are not set in the surrounding roman font",
+            )
+            return
+    require(False, "Added-word witness not found in PDF text runs")
+
+
 def inspect_pdf(pdf, base, sample=False):
     with (base / "qpdf.log").open("w", encoding="utf-8") as log:
         run(["qpdf", "--check", pdf], stdout=log, stderr=subprocess.STDOUT)
@@ -1134,13 +1224,13 @@ def inspect_pdf(pdf, base, sample=False):
         ),
         "Unembedded PDF font",
     )
-    require("Utopia-Italic" in fonts, "Added-word italic font missing")
     require(
-        "Utopia" in fonts and "GFSPorson" in fonts and "Ezra" in fonts,
-        "Expected text/quotation fonts missing",
+        all(f in fonts for f in ("Utopia", "Erewhon", "GFSPorson", "Ezra")),
+        "Expected text/verse-number/quotation fonts missing",
     )
     text = capture("pdftotext", "-layout", pdf, "-")
     (base / "text.txt").write_text(text, encoding="utf-8")
+    check_added_words_roman(pdf)
     require(
         "Berean Standard Bible" not in text and "CC BY-NC-ND" not in text,
         "Inherited BSB publication text remains",
