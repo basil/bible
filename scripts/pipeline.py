@@ -126,11 +126,7 @@ def capture(*args):
 
 def validate():
     dockerfile = Path("Dockerfile").read_text(encoding="utf-8")
-    require(
-        DEPS["base_image"] in dockerfile
-        and f"SOURCE_DATE_EPOCH={DEPS['source_date_epoch']}" in dockerfile,
-        "Dockerfile and dependency lock disagree",
-    )
+    require(DEPS["base_image"] in dockerfile, "Dockerfile and dependency lock disagree")
     greek_font = DEPS["gfs_porson"]
     greek_font_archive = Path(greek_font["archive"])
     require(
@@ -906,7 +902,6 @@ def render(mode="pdf", name=None):
         HOME=str(home),
         XDG_CONFIG_HOME=str(home / "config"),
         XDG_CACHE_HOME=str(home / "cache"),
-        SOURCE_DATE_EPOCH=str(DEPS["source_date_epoch"]),
     )
     command = [
         "ptxprint",
