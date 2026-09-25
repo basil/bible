@@ -2,6 +2,12 @@
 % This also sets the standard minimum fragments: 2 letters left, 3 right.
 \uselanguage{USenglish}
 
+% Keep the two notes near Psalm 118:109 on stable pages with one extra line
+% in the paragraph that begins at verse 105.
+\ifdefined\setcvhook
+\setcvhook{PSA118.105}{\looseness=1}
+\fi
+
 % Stock microtype XeLaTeX protrusion: include protrusion in line breaking.
 \XeTeXprotrudechars=2
 \begingroup

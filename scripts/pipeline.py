@@ -1347,9 +1347,9 @@ def check_note_callers(text):
 
 
 def check_added_words_roman(pdf):
-    # Malachias 4:2 reads "healing \\add shall be\\add* in his wings". A font change
-    # would put the added words in a different font from their roman neighbours.
-    words = ["healing", "shall", "be", "in", "his", "wings"]
+    # Malachias 4:2 has "\\add shall be\\add* in his wings". Check the added
+    # words against their roman neighbours; "healing" may break as "heal- / ing".
+    words = ["shall", "be", "in", "his", "wings"]
     pages = [
         number
         for number, page in enumerate(capture("pdftotext", pdf, "-").split("\f"), 1)
