@@ -6,7 +6,7 @@ A complete English Bible, typeset as a single book and ready to print or read on
 
 ## What is in it
 
-The Old Testament comes from Sir Lancelot Brenton's 1870 English translation of the Septuagint, the ancient Greek Old Testament. Its books are divided and arranged in the order used by the Church of Greece. The New Testament is the King James Version, in the Cambridge Paragraph edition prepared by F. H. A. Scrivener in 1873.
+The Old Testament comes from Sir Lancelot Brenton's 1870 English translation of the Septuagint. Its books are divided and arranged in the order used by the Church of Greece. The New Testament is the King James Version from the Cambridge Paragraph Bible prepared by F. H. A. Scrivener in 1873.
 
 The book reads in this order:
 
