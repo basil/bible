@@ -17,6 +17,9 @@
 % microtype's values are thousandths of the base character's advance width;
 % XeTeX's lpcode/rpcode take thousandths of an em and native glyph indices.
 % Accented heirs inherit the base character's final codes, as in microtype.
+% XeLaTeX microtype cannot resolve some TU accent macros for GFS Didot even
+% though the font contains their Unicode glyphs (\k A, \u A, \'L, \v L,
+% \c T, \v T, \'r, \v r). Leave those heirs out to match its effective codes.
 \gdef\BibleProtrusion#1#2#3#4{%
   \ifnum\XeTeXcharglyph`#1>0
     \BibleProtrusionLeft=\numexpr\number\fontcharwd\font`#1*#3/\number\fontdimen6\font\relax
@@ -37,18 +40,18 @@
   \next
 }
 \gdef\BibleProtrusionTable{%
-  \BibleProtrusion A{ÀÁÂÃÄÅĄĂ}{50}{50}%
+  \BibleProtrusion A{ÀÁÂÃÄÅ}{50}{50}%
   \BibleProtrusion F{}{0}{50}%
   \BibleProtrusion J{}{50}{0}%
   \BibleProtrusion K{}{0}{50}%
-  \BibleProtrusion L{ŁĹĽ}{0}{50}%
-  \BibleProtrusion T{ŢŤ}{50}{50}%
+  \BibleProtrusion L{Ł}{0}{50}%
+  \BibleProtrusion T{}{50}{50}%
   \BibleProtrusion V{}{50}{50}%
   \BibleProtrusion W{}{50}{50}%
   \BibleProtrusion X{}{50}{50}%
   \BibleProtrusion Y{ÝŸ}{50}{50}%
   \BibleProtrusion k{}{0}{50}%
-  \BibleProtrusion r{ŕř}{0}{50}%
+  \BibleProtrusion r{}{0}{50}%
   \BibleProtrusion v{}{50}{50}%
   \BibleProtrusion w{}{50}{50}%
   \BibleProtrusion x{}{50}{50}%

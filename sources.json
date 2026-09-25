@@ -4,7 +4,6 @@
     "url": "https://ebible.org/Scriptures/eng-Brenton_usfm.zip",
     "retrieved": "2026-09-23",
     "sha256": "93496ef23f7ff2427c32f5d353089dee73e82975ab92c80a00663fb333c57e32",
-    "notice_member": "copr.htm",
     "files": {
       "FRT": {
         "member": "00-FRTeng-Brenton.usfm",
@@ -32685,7 +32684,6 @@
     "url": "https://ebible.org/Scriptures/engkjvcpb_usfm.zip",
     "retrieved": "2026-09-23",
     "sha256": "7940a2d164513b2bd2dbec2c8570b89ef8673621ed4f30f3099218a7ddd04936",
-    "notice_member": "copr.htm",
     "files": {
       "FRT": {
         "member": "00-FRTengkjvcpb.usfm",
@@ -74276,7 +74274,6 @@
     "file": "sources/exhaustive-listing-marginal-notes-1611-edition-king-james-bible.md",
     "url": "https://en.literaturabautista.com/exhaustive-listing-marginal-notes-1611-edition-king-james-bible",
     "retrieved": "2026-09-25",
-    "sha256": "3606201438de24788dbfe5b256ad16f700770dc254b18a25760cb039b2e61828",
-    "nt_notes": 775
+    "sha256": "3606201438de24788dbfe5b256ad16f700770dc254b18a25760cb039b2e61828"
   }
 }

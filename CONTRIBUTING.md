@@ -31,7 +31,7 @@ The sample selects the chapters listed in `config/sample.json` and retains the c
 - `sources/eng-Brenton_usfm.zip`: eBible's Brenton Old Testament and Apocrypha (52 scripture units) with Brenton's historical apparatus
 - `sources/engkjvcpb_usfm.zip`: eBible's Cambridge Paragraph KJV, of which the 27 New Testament books, the dedication, the translators' preface, and the NT closing notes are used
 - `sources/exhaustive-listing-marginal-notes-1611-edition-king-james-bible.md`: Calvin George's transcription of the 1611 KJV marginal notes, of which only the 775 New Testament notes are read
-- `sources.json`: SHA-256 hashes, archive member lists, and chapter/verse/marker inventories for both archives, and the SHA-256 hash and New Testament note count of the marginal notes
+- `sources.json`: SHA-256 hashes, archive member lists, and chapter/verse/marker inventories for both archives, and the SHA-256 hash of the marginal notes
 - `sources/README.md`: retrieval dates, original URLs, and saved copyright notices
 
 A hash mismatch is a failure. Replacing an archive is a deliberate step described in [docs/maintenance.md](docs/maintenance.md).
@@ -54,7 +54,7 @@ The reading order is the new title page, contents, and editor's introduction; th
 
 ## Dependencies
 
-`dependencies.json` records the base image tag, Python version, PTXprint tag and commit, and usfmtc commit. PTXprint 3.0.43 records the build time in the PDF's creation and modification dates, so PDF bytes differ between builds; `make check` compares rendered page images instead. Python packages are pinned by version, without hashes, in `requirements.txt`. Dependabot proposes updates to that file.
+`dependencies.json` records the base image tag, PTXprint tag and commit, and usfmtc commit. PTXprint 3.0.43 records the build time in the PDF's creation and modification dates, so PDF bytes differ between builds; `make check` compares rendered page images instead. Python packages are pinned by version, without hashes, in `requirements.txt`. Dependabot proposes updates to that file.
 
 The base image uses the floating `ubuntu:26.04` tag, and `make bootstrap` passes `--pull`, so OS packages come from Ubuntu's current repositories. Rebuilding the environment later can change OS packages and therefore pagination. Repeatability is checked within a single built environment by `make check`, and each PDF's provenance file records the exact environment that produced it.
 

@@ -28,6 +28,7 @@ MARGINAL_NOTES = json.loads(
     Path("config/marginal-notes.json").read_text(encoding="utf-8")
 )
 UPSTREAM = Path("/opt/ptxprint")
+EXPECTED_NT_MARGINAL_NOTES = 775
 PERIOD_FREE_TITLE_MARKERS = ("h", "toc1", "mt1", "mt2", "mt3")
 PAULINE_TITLE_IDS = set(
     "ROM 1CO 2CO GAL EPH PHP COL 1TH 2TH 1TI 2TI TIT PHM HEB".split()
@@ -183,7 +184,7 @@ def capture(*args):
 def validate():
     dockerfile = Path("Dockerfile").read_text(encoding="utf-8")
     require(DEPS["base_image"] in dockerfile, "Dockerfile and dependency lock disagree")
-    greek_font = DEPS["gfs_porson"]
+    greek_font = DEPS["gfs_didot"]
     greek_font_archive = Path(greek_font["archive"])
     require(
         sha256(greek_font_archive.read_bytes()) == greek_font["sha256"],
@@ -684,8 +685,8 @@ def marginal_notes():
         f"Unused marginal note anchors: {sorted(set(anchors) - keys)}",
     )
     require(
-        len(keys) == source["nt_notes"],
-        f"Expected {source['nt_notes']} New Testament marginal notes, found {len(keys)}",
+        len(keys) == EXPECTED_NT_MARGINAL_NOTES,
+        f"Expected {EXPECTED_NT_MARGINAL_NOTES} New Testament marginal notes, found {len(keys)}",
     )
     return result
 
@@ -1099,7 +1100,7 @@ def prepare(mode, base, archives):
                         "chapters": sample[code],
                     }
                 )
-            # GFS Porson does not encode U+02BC. Normalize Greek elision marks to the
+            # GFS Didot does not encode U+02BC. Normalize Greek elision marks to the
             # typographic apostrophe it does encode before fixing the printable baseline.
             text, greek_apostrophes = re.subn(
                 r"(?<=[\u0370-\u03ff\u1f00-\u1fff])\u02bc", "\u2019", text
@@ -1108,7 +1109,7 @@ def prepare(mode, base, archives):
                 transformations.append(
                     {
                         "project_id": code,
-                        "operation": "normalize Greek U+02BC elision mark to U+2019 for GFS Porson",
+                        "operation": "normalize Greek U+02BC elision mark to U+2019 for GFS Didot",
                         "count": greek_apostrophes,
                     }
                 )
@@ -1310,7 +1311,7 @@ def render(mode="pdf", name=None):
         "requirements.txt",
         "dependencies.json",
         "sources.json",
-        DEPS["gfs_porson"]["archive"],
+        DEPS["gfs_didot"]["archive"],
     ):
         tracked[input_name] = sha256(Path(input_name).read_bytes())
     fonts = {}
@@ -1596,7 +1597,7 @@ def inspect_pdf(pdf, base, sample=False):
         "Unembedded PDF font",
     )
     require(
-        all(f in fonts for f in ("Utopia", "Erewhon", "GFSPorson", "Ezra")),
+        all(f in fonts for f in ("Utopia", "Erewhon", "GFSDidot", "Ezra")),
         "Expected text/verse-number/quotation fonts missing",
     )
     text = capture("pdftotext", "-layout", pdf, "-")

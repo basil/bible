@@ -24,7 +24,7 @@ COPY dependencies.json /opt/dependencies.json
 COPY requirements.txt /opt/requirements.txt
 COPY scripts/install-upstream.py /opt/install-upstream.py
 COPY config/ptxprint-allow-otf.patch /opt/ptxprint-allow-otf.patch
-COPY sources/GFS_Porson.zip /opt/GFS_Porson.zip
+COPY sources/GFS_Didot.zip /opt/GFS_Didot.zip
 RUN python3 /opt/install-upstream.py \
     && mkdir -p /usr/local/share/fonts/adobe \
     && mkdir -p /usr/local/share/fonts/erewhon \
@@ -32,7 +32,8 @@ RUN python3 /opt/install-upstream.py \
     && cd /opt/utopia \
     && ./build.sh \
     && cp dist/*.otf /usr/local/share/fonts/adobe/ \
-    && unzip -j /opt/GFS_Porson.zip GFSPorson.otf -d /usr/local/share/fonts/gfs/ \
+    && unzip -j /opt/GFS_Didot.zip 'GFSDidot*.otf' -d /usr/local/share/fonts/gfs/ \
+    && chmod 644 /usr/local/share/fonts/gfs/*.otf \
     && cp /usr/share/texlive/texmf-dist/fonts/opentype/adobe/sourcecodepro/*.otf /usr/local/share/fonts/adobe/ \
     && cp /usr/share/texlive/texmf-dist/fonts/opentype/public/erewhon/*.otf /usr/local/share/fonts/erewhon/ \
     && fc-cache -f \
