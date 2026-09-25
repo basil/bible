@@ -100,3 +100,20 @@
   \fi
 }
 \endgroup
+
+% Susanna and Bel and the Dragon have a zero-width-space \cp in place of a chapter
+% number. Give that invisible number no drop-cap cutout.
+\begingroup
+\catcode`\@=11
+\xdef\BibleHiddenChapterText{\Uchar"200B}
+\global\let\BibleMakeChapterBox\m@kechapterbox
+\gdef\m@kechapterbox{%
+  \BibleMakeChapterBox
+  \edef\BibleChapterText{\detokenize\expandafter{\ch@ptert@xt}}%
+  \ifx\BibleChapterText\BibleHiddenChapterText
+    \setbox\ch@pterbox=\hbox{}%
+    \ch@pterwd=0pt
+    \ch@pterdp=0pt
+  \fi
+}
+\endgroup

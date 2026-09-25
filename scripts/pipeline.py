@@ -46,6 +46,10 @@ NORMALIZED_TITLE_IDS = {
     "4MA",
 }
 PERIOD_FREE_TITLE_MARKERS = ("h", "toc1", "mt1", "mt2", "mt3")
+# The Epistle Dedicatory's mt2 lines are its address ("&c.") and salutation.
+FRONT_PERIOD_FREE_TITLE_MARKERS = ("h", "toc1", "mt1")
+# Every such heading, not just the first: OTH and BAK head book names with them.
+FRONT_PERIOD_FREE_HEADING_MARKERS = ("is1", "is2")
 BOOK_NAME_MARKERS = {
     "title": "toc1",
     "short_title": "toc2",
@@ -70,6 +74,18 @@ def normalize_printed_title(value, marker):
     saint = "SAINT" if marker.startswith("mt") else "Saint"
     value = re.sub(r"(?<!\w)S\.(?=\s|$)", saint, value)
     return re.sub(r"\.(\s*)$", r"\1", value)
+
+
+def normalize_title_lines(text, markers):
+    for marker in markers:
+        text = re.sub(
+            r"^(\\" + marker + r"\s+)([^\n]*)$",
+            lambda m: m[1] + normalize_printed_title(m[2], marker),
+            text,
+            count=1,
+            flags=re.M,
+        )
+    return text
 
 
 def source_marker(text, marker):
@@ -615,14 +631,7 @@ def scripture_text(entry, archives, log=None):
         require(count == 1, f"Missing mt1 heading: {code}")
         if code == "SIR":
             text = re.sub(r"\\mt2\s+[^\n]*\n", "", text, count=1)
-    for marker in PERIOD_FREE_TITLE_MARKERS:
-        text = re.sub(
-            r"^(\\" + marker + r"\s+)([^\n]*)$",
-            lambda m: m[1] + normalize_printed_title(m[2], marker),
-            text,
-            count=1,
-            flags=re.M,
-        )
+    text = normalize_title_lines(text, PERIOD_FREE_TITLE_MARKERS)
     headings = {}
     for marker in ("h", "toc1", "toc2", "toc3", "mt1", "mt2", "mt3"):
         pattern = r"^\\" + marker + r"\s+([^\n]*)$"
@@ -698,14 +707,16 @@ def prepare(mode, base, archives):
                     }
                 )
             for marker, heading in entry.get("headings", {}).items():
-                text, count = re.subn(
-                    r"^(\\" + marker + r"\s+)[^\n]*",
-                    lambda m: m[1] + heading,
-                    text,
-                    count=1,
-                    flags=re.M,
+                pattern = r"^(\\" + marker + r"\s+)([^\n]*)"
+                source_heading = re.search(pattern, text, re.M)
+                require(source_heading, f"Missing {marker} heading: {code}")
+                require(
+                    source_heading[2].strip() != heading,
+                    f"Edition {marker} heading repeats the source: {code}",
                 )
-                require(count == 1, f"Missing {marker} heading: {code}")
+                text = re.sub(
+                    pattern, lambda m: m[1] + heading, text, count=1, flags=re.M
+                )
             if entry.get("headings"):
                 transformations.append(
                     {
@@ -715,6 +726,28 @@ def prepare(mode, base, archives):
                     }
                 )
             if "section" not in entry:
+                titled = normalize_title_lines(text, FRONT_PERIOD_FREE_TITLE_MARKERS)
+                titled, stripped_headings = re.subn(
+                    r"^(\\(?:"
+                    + "|".join(FRONT_PERIOD_FREE_HEADING_MARKERS)
+                    + r")\s+[^\n]*?)\.(\s*)$",
+                    r"\1\2",
+                    titled,
+                    flags=re.M,
+                )
+                if titled != text:
+                    transformations.append(
+                        {
+                            "project_id": code,
+                            "operation": "drop closing full stops from titles and headings",
+                            "markers": list(
+                                FRONT_PERIOD_FREE_TITLE_MARKERS
+                                + FRONT_PERIOD_FREE_HEADING_MARKERS
+                            ),
+                            "headings": stripped_headings,
+                        }
+                    )
+                text = titled
                 require(
                     inventory(original) == inventory(text),
                     f"Preparation changed source markup: {code}",
@@ -1160,6 +1193,18 @@ def check_boundaries(base, text, pages, reading_text, sample=False):
         )
 
 
+def check_note_callers(text):
+    # Footnote and cross-reference callers restart on each page, so a caller that
+    # introduces two different references on one page points readers at two notes.
+    note = re.compile(r"(?:^|\s{2,})([a-z]|[*†‡§¶#]+) (\d+:\d+[a-z]?)\b", re.M)
+    for number, page in enumerate(text.split("\f"), 1):
+        refs = {}
+        for caller, ref in note.findall(page):
+            refs.setdefault(caller, set()).add(ref)
+        clashes = sorted(c for c, r in refs.items() if len(r) > 1)
+        require(not clashes, f"Note callers reused on PDF page {number}: {clashes}")
+
+
 def check_added_words_roman(pdf):
     # Malachias 4:2 reads "healing \\add shall be\\add* in his wings". A font change
     # would put the added words in a different font from their roman neighbours.
@@ -1225,6 +1270,7 @@ def inspect_pdf(pdf, base, sample=False):
     )
     text = capture("pdftotext", "-layout", pdf, "-")
     (base / "text.txt").write_text(text, encoding="utf-8")
+    check_note_callers(text)
     check_added_words_roman(pdf)
     require(
         "Berean Standard Bible" not in text and "CC BY-NC-ND" not in text,
