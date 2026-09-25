@@ -24,30 +24,6 @@ EDITION = json.loads(Path("config/edition.json").read_text(encoding="utf-8"))
 SOURCES = json.loads(Path("sources.json").read_text(encoding="utf-8"))
 DEPS = json.loads(Path("dependencies.json").read_text(encoding="utf-8"))
 UPSTREAM = Path("/opt/ptxprint")
-NORMALIZED_TITLE_IDS = {
-    "JOS",
-    "EZK",
-    "MIC",
-    "1SA",
-    "2SA",
-    "1KI",
-    "2KI",
-    "1CH",
-    "2CH",
-    "1ES",
-    "EZR",
-    "NEH",
-    "ESG",
-    "1MA",
-    "2MA",
-    "3MA",
-    "SNG",
-    "WIS",
-    "SIR",
-    "LAM",
-    "DAG",
-    "4MA",
-}
 PERIOD_FREE_TITLE_MARKERS = ("h", "toc1", "mt1", "mt2", "mt3")
 PAULINE_TITLE_IDS = set(
     "ROM 1CO 2CO GAL EPH PHP COL 1TH 2TH 1TI 2TI TIT PHM HEB".split()
@@ -101,6 +77,41 @@ def normalize_title_lines(text, markers):
             flags=re.M,
         )
     return text
+
+
+def heading_lines(entry, names):
+    """The mt lines printed over a Brenton book, as (marker, text) pairs.
+
+    As in the Cambridge KJV, the heading is the contents title itself. The
+    manifest's optional "heading" says how to break it into lines and which
+    line is the main one; without it the whole title is one mt1 line.
+    Cambridge books already carry their own layout and keep it.
+    """
+    if entry["source"] != "brenton":
+        require(
+            "heading" not in entry,
+            f"Cambridge books keep their own heading layout: {entry['id']}",
+        )
+        return None
+    lines = entry.get("heading", [["mt1", names["title"]]])
+    require(
+        isinstance(lines, list)
+        and all(
+            isinstance(line, list)
+            and len(line) == 2
+            and line[0] in ("mt1", "mt2", "mt3")
+            and isinstance(line[1], str)
+            and line[1].strip() == line[1] != ""
+            for line in lines
+        )
+        and sum(marker == "mt1" for marker, _ in lines) == 1,
+        f"Invalid heading: {entry['id']}",
+    )
+    require(
+        " ".join(text for _, text in lines) == names["title"],
+        f"Heading lines do not spell the contents title: {entry['id']}",
+    )
+    return [(marker, text.upper()) for marker, text in lines]
 
 
 def source_marker(text, marker):
@@ -212,27 +223,43 @@ def validate():
         "Unexpected separate scripture unit",
     )
     revised_titles = {
-        "JOS": "Jesus, the Son of Navi",
-        "EZK": "Ezekiel",
+        "GEN": "The First Book of Moses, Called Genesis",
+        "EXO": "The Second Book of Moses, Called Exodus",
+        "LEV": "The Third Book of Moses, Called Leviticus",
+        "NUM": "The Fourth Book of Moses, Called Numbers",
+        "DEU": "The Fifth Book of Moses, Called Deuteronomy",
+        "JOS": "The Book of Jesus, the Son of Navi",
+        "JDG": "The Book of Judges",
+        "RUT": "The Book of Ruth",
+        "EZK": "The Book of the Prophet Ezekiel",
         "MIC": "Michaias",
-        "1SA": "1 Kingdoms",
-        "2SA": "2 Kingdoms",
-        "1KI": "3 Kingdoms",
-        "2KI": "4 Kingdoms",
-        "1CH": "1 Chronicles",
-        "2CH": "2 Chronicles",
-        "1ES": "1 Esdras",
-        "EZR": "2 Esdras",
-        "NEH": "Nehemias",
-        "ESG": "Esther",
-        "DAG": "Daniel",
-        "SNG": "Song of Songs",
-        "SIR": "Wisdom of the Son of Sirach",
-        "LAM": "Lamentations of Jeremias",
-        "1MA": "1 Maccabees",
-        "2MA": "2 Maccabees",
-        "3MA": "3 Maccabees",
-        "4MA": "4 Maccabees",
+        "1SA": "The First Book of Kingdoms, Otherwise Called, The First Book of Samuel",
+        "2SA": "The Second Book of Kingdoms, Otherwise Called, The Second Book of Samuel",
+        "1KI": "The Third Book of Kingdoms, Otherwise Called, The First Book of the Kings",
+        "2KI": "The Fourth Book of Kingdoms, Otherwise Called, The Second Book of the Kings",
+        "1CH": "The First Book of the Chronicles",
+        "2CH": "The Second Book of the Chronicles",
+        "MAN": "The Prayer of Manasses King of Juda, When He Was Holden Captive in Babylon",
+        "1ES": "The First Book of Esdras",
+        "EZR": "The Second Book of Esdras",
+        "NEH": "The Book of Nehemias",
+        "ESG": "The Book of Esther",
+        "DAG": "The Book of Daniel",
+        "SNG": "The Song of Songs",
+        "WIS": "The Wisdom of Solomon",
+        "SIR": "The Wisdom of Jesus, the Son of Sirach, or, Ecclesiasticus",
+        "LAM": "The Lamentations of Jeremias",
+        "LJE": "The Epistle of Jeremy",
+        "1MA": "The First Book of the Maccabees",
+        "2MA": "The Second Book of the Maccabees",
+        "3MA": "The Third Book of the Maccabees",
+        "4MA": "The Fourth Book of the Maccabees",
+        "PSA": "The Book of Psalms",
+        "JOB": "The Book of Job",
+        "PRO": "The Proverbs",
+        "ECC": "Ecclesiastes, or, The Preacher",
+        "ISA": "The Book of the Prophet Esaias",
+        "JER": "The Book of the Prophet Jeremias",
     }
     saint_headings = {
         "MAT": {"mt1": "SAINT MATTHEW"},
@@ -298,16 +325,26 @@ def validate():
             all("." not in value for value in printed_title_lines),
             f"Printed title contains a period: {unit['id']}",
         )
+        printed_heading = [
+            (marker, value.strip())
+            for marker, value in re.findall(r"^\\(mt[123])\s+([^\n]+)", text, re.M)
+        ]
+        require(
+            " ".join(value for _, value in printed_heading).casefold()
+            == names["title"].casefold(),
+            f"Printed heading does not spell the contents title: {unit['id']}",
+        )
         for marker, expected in saint_headings.get(unit["id"], {}).items():
             match = re.search(r"^\\" + marker + r"\s+([^\n]+)", text, re.M)
             require(
                 match is not None and match[1].strip() == expected,
                 f"Saint heading differs from edition style: {unit['id']}/{marker}",
             )
-        if unit["id"] in NORMALIZED_TITLE_IDS:
+        heading = heading_lines(unit, names)
+        if heading is not None:
             require(
-                markers["mt1"] == unit["title"].upper(),
-                f"Printed title differs from manifest: {unit['id']}",
+                printed_heading == heading,
+                f"Printed heading differs from manifest: {unit['id']}",
             )
     xml_names = {
         book.get("code"): {
@@ -324,7 +361,7 @@ def validate():
             f"BookNames.xml values disagree: {unit['id']}",
         )
     jeremias_table = next(e for e in EDITION["appendices"] if e["id"] == "XXA")
-    table_title = "Table of Chapters and Verses in " + xml_names["JER"]["title"]
+    table_title = "Table of Chapters and Verses in " + xml_names["JER"]["short_title"]
     require(
         jeremias_table["title"] == table_title
         and jeremias_table["short_title"] == table_title
@@ -719,17 +756,18 @@ def scripture_text(entry, archives, log=None):
                 flags=re.M,
             )
             require(count == 1, f"Missing Catholic epistle {marker} heading: {code}")
-    if code in NORMALIZED_TITLE_IDS:
-        title = entry["title"]
-        text, count = re.subn(
-            r"(\\mt1\s+)[^\n]*",
-            lambda m: m[1] + title.upper(),
-            text,
-            count=1,
+    heading = heading_lines(entry, names)
+    if heading is not None:
+        # The whole heading is replaced, so Brenton's own subtitle lines go.
+        # Only the header block before the first chapter is touched.
+        head, *body = re.split(r"^(?=\\c )", text, maxsplit=1, flags=re.M)
+        head = re.sub(r"^\\mt[23][^\n]*\n", "", head, flags=re.M)
+        added = "".join(f"\\{marker} {value}\n" for marker, value in heading)
+        head, count = re.subn(
+            r"^\\mt1[^\n]*\n", lambda m: added, head, count=1, flags=re.M
         )
         require(count == 1, f"Missing mt1 heading: {code}")
-        if code == "SIR":
-            text = re.sub(r"\\mt2\s+[^\n]*\n", "", text, count=1)
+        text = head + "".join(body)
     text = normalize_title_lines(text, PERIOD_FREE_TITLE_MARKERS)
     headings = {}
     for marker in ("h", "toc1", "toc2", "toc3", "mt1", "mt2", "mt3"):
@@ -1243,7 +1281,11 @@ def check_boundaries(base, text, pages, reading_text, sample=False):
         source = (base / "projects/BIBLE" / (code + ".usfm")).read_text(
             encoding="utf-8"
         )
-        heading = re.search(r"\\mt1\s+([^\n]+)", source)[1].strip()
+        heading = " ".join(
+            value.strip()
+            for value in re.findall(r"^\\mt[123]\s+([^\n]+)", source, re.M)
+        )
+        require(heading, f"Missing heading: {code}")
         require(
             key(canonical_text(heading)) in key(page_text[page - 1]),
             f"Book heading not on advertised PDF page: {code} {page}",

@@ -5,37 +5,108 @@
       "id": "GEN",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Genesis"
+      "title": "The First Book of Moses, Called Genesis",
+      "heading": [
+        [
+          "mt2",
+          "The First Book of Moses,"
+        ],
+        [
+          "mt3",
+          "Called"
+        ],
+        [
+          "mt1",
+          "Genesis"
+        ]
+      ]
     },
     {
       "id": "EXO",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Exodus"
+      "title": "The Second Book of Moses, Called Exodus",
+      "heading": [
+        [
+          "mt2",
+          "The Second Book of Moses,"
+        ],
+        [
+          "mt3",
+          "Called"
+        ],
+        [
+          "mt1",
+          "Exodus"
+        ]
+      ]
     },
     {
       "id": "LEV",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Leviticus"
+      "title": "The Third Book of Moses, Called Leviticus",
+      "heading": [
+        [
+          "mt2",
+          "The Third Book of Moses,"
+        ],
+        [
+          "mt3",
+          "Called"
+        ],
+        [
+          "mt1",
+          "Leviticus"
+        ]
+      ]
     },
     {
       "id": "NUM",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Numbers"
+      "title": "The Fourth Book of Moses, Called Numbers",
+      "heading": [
+        [
+          "mt2",
+          "The Fourth Book of Moses,"
+        ],
+        [
+          "mt3",
+          "Called"
+        ],
+        [
+          "mt1",
+          "Numbers"
+        ]
+      ]
     },
     {
       "id": "DEU",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Deuteronomy"
+      "title": "The Fifth Book of Moses, Called Deuteronomy",
+      "abbreviation": "Deut.",
+      "heading": [
+        [
+          "mt2",
+          "The Fifth Book of Moses,"
+        ],
+        [
+          "mt3",
+          "Called"
+        ],
+        [
+          "mt1",
+          "Deuteronomy"
+        ]
+      ]
     },
     {
       "id": "JOS",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Jesus, the Son of Navi",
+      "title": "The Book of Jesus, the Son of Navi",
       "short_title": "Jesus, the Son of Navi",
       "abbreviation": "Jes. Navi"
     },
@@ -43,83 +114,227 @@
       "id": "JDG",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Judges"
+      "title": "The Book of Judges"
     },
     {
       "id": "RUT",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Ruth"
+      "title": "The Book of Ruth"
     },
     {
       "id": "1SA",
       "source": "brenton",
       "section": "old_testament",
-      "title": "1 Kingdoms",
+      "title": "The First Book of Kingdoms, Otherwise Called, The First Book of Samuel",
       "short_title": "1 Kingdoms",
-      "abbreviation": "1 Kgdms."
+      "abbreviation": "1 Kgdms.",
+      "heading": [
+        [
+          "mt2",
+          "The"
+        ],
+        [
+          "mt1",
+          "First Book of Kingdoms,"
+        ],
+        [
+          "mt3",
+          "Otherwise Called,"
+        ],
+        [
+          "mt2",
+          "The First Book of Samuel"
+        ]
+      ]
     },
     {
       "id": "2SA",
       "source": "brenton",
       "section": "old_testament",
-      "title": "2 Kingdoms",
+      "title": "The Second Book of Kingdoms, Otherwise Called, The Second Book of Samuel",
       "short_title": "2 Kingdoms",
-      "abbreviation": "2 Kgdms."
+      "abbreviation": "2 Kgdms.",
+      "heading": [
+        [
+          "mt2",
+          "The"
+        ],
+        [
+          "mt1",
+          "Second Book of Kingdoms,"
+        ],
+        [
+          "mt3",
+          "Otherwise Called,"
+        ],
+        [
+          "mt2",
+          "The Second Book of Samuel"
+        ]
+      ]
     },
     {
       "id": "1KI",
       "source": "brenton",
       "section": "old_testament",
-      "title": "3 Kingdoms",
+      "title": "The Third Book of Kingdoms, Otherwise Called, The First Book of the Kings",
       "short_title": "3 Kingdoms",
-      "abbreviation": "3 Kgdms."
+      "abbreviation": "3 Kgdms.",
+      "heading": [
+        [
+          "mt2",
+          "The"
+        ],
+        [
+          "mt1",
+          "Third Book of Kingdoms,"
+        ],
+        [
+          "mt3",
+          "Otherwise Called,"
+        ],
+        [
+          "mt2",
+          "The First Book of the Kings"
+        ]
+      ]
     },
     {
       "id": "2KI",
       "source": "brenton",
       "section": "old_testament",
-      "title": "4 Kingdoms",
+      "title": "The Fourth Book of Kingdoms, Otherwise Called, The Second Book of the Kings",
       "short_title": "4 Kingdoms",
-      "abbreviation": "4 Kgdms."
+      "abbreviation": "4 Kgdms.",
+      "heading": [
+        [
+          "mt2",
+          "The"
+        ],
+        [
+          "mt1",
+          "Fourth Book of Kingdoms,"
+        ],
+        [
+          "mt3",
+          "Otherwise Called,"
+        ],
+        [
+          "mt2",
+          "The Second Book of the Kings"
+        ]
+      ]
     },
     {
       "id": "1CH",
       "source": "brenton",
       "section": "old_testament",
-      "title": "1 Chronicles",
+      "title": "The First Book of the Chronicles",
       "short_title": "1 Chronicles",
-      "abbreviation": "1 Chr."
+      "heading": [
+        [
+          "mt2",
+          "The First Book"
+        ],
+        [
+          "mt3",
+          "of the"
+        ],
+        [
+          "mt1",
+          "Chronicles"
+        ]
+      ]
     },
     {
       "id": "2CH",
       "source": "brenton",
       "section": "old_testament",
-      "title": "2 Chronicles",
+      "title": "The Second Book of the Chronicles",
       "short_title": "2 Chronicles",
-      "abbreviation": "2 Chr."
+      "heading": [
+        [
+          "mt2",
+          "The Second Book"
+        ],
+        [
+          "mt3",
+          "of the"
+        ],
+        [
+          "mt1",
+          "Chronicles"
+        ]
+      ]
     },
     {
       "id": "MAN",
       "source": "brenton",
       "section": "old_testament",
-      "title": "The Prayer of Manasses"
+      "title": "The Prayer of Manasses King of Juda, When He Was Holden Captive in Babylon",
+      "abbreviation": "Prayer of Manass.",
+      "heading": [
+        [
+          "mt2",
+          "The"
+        ],
+        [
+          "mt1",
+          "Prayer of Manasses"
+        ],
+        [
+          "mt2",
+          "King of Juda,"
+        ],
+        [
+          "mt3",
+          "When He Was Holden Captive in Babylon"
+        ]
+      ]
     },
     {
       "id": "1ES",
       "source": "brenton",
       "section": "old_testament",
-      "title": "1 Esdras",
+      "title": "The First Book of Esdras",
       "short_title": "1 Esdras",
-      "abbreviation": "1 Esdr."
+      "heading": [
+        [
+          "mt2",
+          "The First Book"
+        ],
+        [
+          "mt3",
+          "of"
+        ],
+        [
+          "mt1",
+          "Esdras"
+        ]
+      ]
     },
     {
       "id": "EZR",
       "source": "brenton",
       "section": "old_testament",
-      "title": "2 Esdras",
+      "title": "The Second Book of Esdras",
       "short_title": "2 Esdras",
       "abbreviation": "2 Esdr.",
+      "heading": [
+        [
+          "mt2",
+          "The Second Book"
+        ],
+        [
+          "mt3",
+          "of"
+        ],
+        [
+          "mt1",
+          "Esdras"
+        ]
+      ],
       "chapters": [
         1,
         10
@@ -130,7 +345,7 @@
       "source": "brenton",
       "source_id": "EZR",
       "section": "old_testament",
-      "title": "Nehemias",
+      "title": "The Book of Nehemias",
       "short_title": "Nehemias",
       "abbreviation": "Neh.",
       "chapters": [
@@ -142,7 +357,8 @@
       "id": "TOB",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Tobit"
+      "title": "Tobit",
+      "abbreviation": "Tobit"
     },
     {
       "id": "JDT",
@@ -154,7 +370,7 @@
       "id": "ESG",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Esther",
+      "title": "The Book of Esther",
       "short_title": "Esther",
       "abbreviation": "Esth."
     },
@@ -162,96 +378,180 @@
       "id": "1MA",
       "source": "brenton",
       "section": "old_testament",
-      "title": "1 Maccabees",
+      "title": "The First Book of the Maccabees",
       "short_title": "1 Maccabees",
-      "abbreviation": "1 Macc."
+      "heading": [
+        [
+          "mt2",
+          "The First Book"
+        ],
+        [
+          "mt3",
+          "of the"
+        ],
+        [
+          "mt1",
+          "Maccabees"
+        ]
+      ]
     },
     {
       "id": "2MA",
       "source": "brenton",
       "section": "old_testament",
-      "title": "2 Maccabees",
+      "title": "The Second Book of the Maccabees",
       "short_title": "2 Maccabees",
-      "abbreviation": "2 Macc."
+      "heading": [
+        [
+          "mt2",
+          "The Second Book"
+        ],
+        [
+          "mt3",
+          "of the"
+        ],
+        [
+          "mt1",
+          "Maccabees"
+        ]
+      ]
     },
     {
       "id": "3MA",
       "source": "brenton",
       "section": "old_testament",
-      "title": "3 Maccabees",
+      "title": "The Third Book of the Maccabees",
       "short_title": "3 Maccabees",
-      "abbreviation": "3 Macc."
+      "heading": [
+        [
+          "mt2",
+          "The Third Book"
+        ],
+        [
+          "mt3",
+          "of the"
+        ],
+        [
+          "mt1",
+          "Maccabees"
+        ]
+      ]
     },
     {
       "id": "4MA",
       "source": "brenton",
       "section": "old_testament",
-      "title": "4 Maccabees",
+      "title": "The Fourth Book of the Maccabees",
       "short_title": "4 Maccabees",
-      "abbreviation": "4 Macc."
+      "heading": [
+        [
+          "mt2",
+          "The Fourth Book"
+        ],
+        [
+          "mt3",
+          "of the"
+        ],
+        [
+          "mt1",
+          "Maccabees"
+        ]
+      ]
     },
     {
       "id": "PSA",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Psalms"
+      "title": "The Book of Psalms"
     },
     {
       "id": "JOB",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Job"
+      "title": "The Book of Job"
     },
     {
       "id": "PRO",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Proverbs"
+      "title": "The Proverbs"
     },
     {
       "id": "ECC",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Ecclesiastes"
+      "title": "Ecclesiastes, or, The Preacher",
+      "abbreviation": "Eccles.",
+      "heading": [
+        [
+          "mt1",
+          "Ecclesiastes,"
+        ],
+        [
+          "mt3",
+          "or,"
+        ],
+        [
+          "mt2",
+          "The Preacher"
+        ]
+      ]
     },
     {
       "id": "SNG",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Song of Songs",
-      "short_title": "Song of Songs",
-      "abbreviation": "Song"
+      "title": "The Song of Songs",
+      "short_title": "Song of Songs"
     },
     {
       "id": "WIS",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Wisdom of Solomon"
+      "title": "The Wisdom of Solomon",
+      "short_title": "Wisdom of Solomon"
     },
     {
       "id": "SIR",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Wisdom of the Son of Sirach"
+      "title": "The Wisdom of Jesus, the Son of Sirach, or, Ecclesiasticus",
+      "heading": [
+        [
+          "mt2",
+          "The Wisdom of Jesus, the Son of Sirach,"
+        ],
+        [
+          "mt3",
+          "or,"
+        ],
+        [
+          "mt1",
+          "Ecclesiasticus"
+        ]
+      ]
     },
     {
       "id": "HOS",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Osee"
+      "title": "Osee",
+      "abbreviation": "Os."
     },
     {
       "id": "AMO",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Amos"
+      "title": "Amos",
+      "abbreviation": "Amos"
     },
     {
       "id": "MIC",
       "source": "brenton",
       "section": "old_testament",
       "title": "Michaias",
-      "short_title": "Michaias"
+      "short_title": "Michaias",
+      "abbreviation": "Mich."
     },
     {
       "id": "JOL",
@@ -269,13 +569,15 @@
       "id": "JON",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Jonas"
+      "title": "Jonas",
+      "abbreviation": "Jonas"
     },
     {
       "id": "NAM",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Naum"
+      "title": "Naum",
+      "abbreviation": "Naum"
     },
     {
       "id": "HAB",
@@ -287,7 +589,8 @@
       "id": "ZEP",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Sophonias"
+      "title": "Sophonias",
+      "abbreviation": "Soph."
     },
     {
       "id": "HAG",
@@ -299,7 +602,8 @@
       "id": "ZEC",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Zacharias"
+      "title": "Zacharias",
+      "abbreviation": "Zach."
     },
     {
       "id": "MAL",
@@ -311,46 +615,87 @@
       "id": "ISA",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Esaias"
+      "title": "The Book of the Prophet Esaias",
+      "abbreviation": "Esai.",
+      "heading": [
+        [
+          "mt2",
+          "The Book of the Prophet"
+        ],
+        [
+          "mt1",
+          "Esaias"
+        ]
+      ]
     },
     {
       "id": "JER",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Jeremias"
+      "title": "The Book of the Prophet Jeremias",
+      "heading": [
+        [
+          "mt2",
+          "The Book of the Prophet"
+        ],
+        [
+          "mt1",
+          "Jeremias"
+        ]
+      ]
     },
     {
       "id": "BAR",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Baruch"
+      "title": "Baruch",
+      "abbreviation": "Baruch"
     },
     {
       "id": "LAM",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Lamentations of Jeremias"
+      "title": "The Lamentations of Jeremias",
+      "heading": [
+        [
+          "mt2",
+          "The"
+        ],
+        [
+          "mt1",
+          "Lamentations of Jeremias"
+        ]
+      ]
     },
     {
       "id": "LJE",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Epistle of Jeremy"
+      "title": "The Epistle of Jeremy"
     },
     {
       "id": "EZK",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Ezekiel",
-      "short_title": "Ezekiel"
+      "title": "The Book of the Prophet Ezekiel",
+      "short_title": "Ezekiel",
+      "heading": [
+        [
+          "mt2",
+          "The Book of the Prophet"
+        ],
+        [
+          "mt1",
+          "Ezekiel"
+        ]
+      ]
     },
     {
       "id": "DAG",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Daniel",
+      "title": "The Book of Daniel",
       "short_title": "Daniel",
-      "abbreviation": "Dan.",
       "source_parts": [
         "SUS",
         "DAG",
