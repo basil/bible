@@ -25,6 +25,9 @@ SOURCES = json.loads(Path("sources.json").read_text(encoding="utf-8"))
 DEPS = json.loads(Path("dependencies.json").read_text(encoding="utf-8"))
 UPSTREAM = Path("/opt/ptxprint")
 NORMALIZED_TITLE_IDS = {
+    "JOS",
+    "EZK",
+    "MIC",
     "1SA",
     "2SA",
     "1KI",
@@ -46,6 +49,18 @@ NORMALIZED_TITLE_IDS = {
     "4MA",
 }
 PERIOD_FREE_TITLE_MARKERS = ("h", "toc1", "mt1", "mt2", "mt3")
+PAULINE_TITLE_IDS = set(
+    "ROM 1CO 2CO GAL EPH PHP COL 1TH 2TH 1TI 2TI TIT PHM HEB".split()
+)
+CATHOLIC_EPISTLES = {
+    "JAS": ("", "James"),
+    "1PE": ("First", "Peter"),
+    "2PE": ("Second", "Peter"),
+    "1JN": ("First", "John"),
+    "2JN": ("Second", "John"),
+    "3JN": ("Third", "John"),
+    "JUD": ("", "Jude"),
+}
 # The Epistle Dedicatory's mt2 lines are its address ("&c.") and salutation.
 FRONT_PERIOD_FREE_TITLE_MARKERS = ("h", "toc1", "mt1")
 # Every such heading, not just the first: OTH and BAK head book names with them.
@@ -92,6 +107,16 @@ def source_marker(text, marker):
     match = re.search(r"^\\" + marker + r"\s+([^\n]+)", text, re.M)
     require(match is not None, f"Missing source {marker} marker")
     return match[1].strip()
+
+
+def catholic_epistle_names(code):
+    ordinal, person = CATHOLIC_EPISTLES[code]
+    prefix = ordinal + " " if ordinal else ""
+    return (
+        f"The {prefix}Catholic Epistle of Saint {person}",
+        f"THE {prefix.upper()}CATHOLIC EPISTLE OF",
+        f"SAINT {person.upper()}",
+    )
 
 
 def resolved_book_names(entry, source_text=None):
@@ -187,6 +212,9 @@ def validate():
         "Unexpected separate scripture unit",
     )
     revised_titles = {
+        "JOS": "Jesus, the Son of Navi",
+        "EZK": "Ezekiel",
+        "MIC": "Michaias",
         "1SA": "1 Kingdoms",
         "2SA": "2 Kingdoms",
         "1KI": "3 Kingdoms",
@@ -195,7 +223,7 @@ def validate():
         "2CH": "2 Chronicles",
         "1ES": "1 Esdras",
         "EZR": "2 Esdras",
-        "NEH": "Nehemiah",
+        "NEH": "Nehemias",
         "ESG": "Esther",
         "DAG": "Daniel",
         "SNG": "Song of Songs",
@@ -231,6 +259,32 @@ def validate():
         }
         source_text = archives[unit["source"]][unit.get("source_id", unit["id"])][2]
         names = resolved_book_names(unit, source_text)
+        if unit["id"] in PAULINE_TITLE_IDS:
+            expected_title = re.sub(
+                r"\bPaul(?: the Apostle)?\b",
+                "Saint Paul",
+                source_marker(source_text, "toc1"),
+            )
+            expected_heading = re.sub(
+                r"\bPAUL(?: THE APOSTLE)?\b",
+                "SAINT PAUL",
+                source_marker(source_text, "mt2"),
+            )
+            require(
+                unit["title"] == expected_title
+                and source_marker(text, "mt2") == expected_heading,
+                f"Saint Paul title differs from edition style: {unit['id']}",
+            )
+        if unit["id"] in CATHOLIC_EPISTLES:
+            expected_title, expected_mt2, expected_mt1 = catholic_epistle_names(
+                unit["id"]
+            )
+            require(
+                unit["title"] == expected_title
+                and markers["mt1"] == expected_mt1
+                and source_marker(text, "mt2") == expected_mt2,
+                f"Catholic epistle title differs from edition style: {unit['id']}",
+            )
         require(
             markers["toc1"] == names["title"]
             and markers["h"] == markers["toc2"] == names["short_title"]
@@ -269,12 +323,25 @@ def validate():
             xml_names[unit["id"]] == resolved_book_names(unit, source_text),
             f"BookNames.xml values disagree: {unit['id']}",
         )
-    esdras_names = set(xml_names["EZR"].values())
-    nehemiah_names = set(xml_names["NEH"].values())
+    jeremias_table = next(e for e in EDITION["appendices"] if e["id"] == "XXA")
+    table_title = "Table of Chapters and Verses in " + xml_names["JER"]["title"]
     require(
-        esdras_names.isdisjoint(nehemiah_names)
-        and "Ezra and Nehemiah" not in esdras_names | nehemiah_names,
-        "2 Esdras and Nehemiah must never share alternative names",
+        jeremias_table["title"] == table_title
+        and jeremias_table["short_title"] == table_title
+        and xml_names["XXA"]["title"] == table_title
+        and xml_names["XXA"]["short_title"] == table_title
+        and jeremias_table["headings"]["h"] == table_title
+        and jeremias_table["headings"]["toc1"] == table_title
+        and jeremias_table["headings"]["toc2"] == table_title
+        and jeremias_table["headings"]["mt1"] == table_title.upper(),
+        "Jeremias table titles disagree between metadata, contents, and heading",
+    )
+    esdras_edition_names = set(xml_names["EZR"].values())
+    nehemias_edition_names = set(xml_names["NEH"].values())
+    require(
+        esdras_edition_names.isdisjoint(nehemias_edition_names)
+        and "Ezra and Nehemiah" not in esdras_edition_names | nehemias_edition_names,
+        "2 Esdras and Nehemias must never share alternative names",
     )
     require(
         all(
@@ -336,7 +403,7 @@ def validate():
     inv = SOURCES["brenton"]["files"]
     require(
         list(inv["EZR"]["chapters"]) == [str(i) for i in range(1, 24)],
-        "Combined Ezra–Nehemiah must have 23 chapters",
+        "Combined Ezra-Nehemiah source must have 23 chapters",
     )
     require("151" in inv["PSA"]["chapters"], "Psalm 151 missing")
     require("1b" in inv["ESG"]["chapters"]["1"], "Esther additions missing")
@@ -373,25 +440,35 @@ def validate():
         "The editor's introduction is a unit, not a front-matter periph",
     )
     # Explain the overlapping witness without modifying either original file.
-    ezr = archives["brenton"]["EZR"][2]
-    neh = archives["brenton"]["NEH"][2]
-    tail = re.split(r"(?=\\c 11\s)", ezr, maxsplit=1)[1]
-    tail = re.sub(r"\\c (\d+)", lambda m: "\\c " + str(int(m[1]) - 10), tail)
-    neh = neh[neh.index("\\c 1") :]
+    combined_ezra_nehemiah_source = archives["brenton"]["EZR"][2]
+    standalone_nehemias_witness = archives["brenton"]["NEH"][2]
+    renumbered_nehemias_chapters = re.split(
+        r"(?=\\c 11\s)", combined_ezra_nehemiah_source, maxsplit=1
+    )[1]
+    renumbered_nehemias_chapters = re.sub(
+        r"\\c (\d+)",
+        lambda m: "\\c " + str(int(m[1]) - 10),
+        renumbered_nehemias_chapters,
+    )
+    standalone_nehemias_chapters = standalone_nehemias_witness[
+        standalone_nehemias_witness.index("\\c 1") :
+    ]
 
     def normalized(s):
         return re.sub(r"\s+", " ", s).strip()
 
-    diff = list(
+    nehemias_source_diff = list(
         difflib.unified_diff(
-            tail.splitlines(True),
-            neh.splitlines(True),
-            fromfile="EZR chapters 11–23 (renumbered for comparison)",
+            renumbered_nehemias_chapters.splitlines(True),
+            standalone_nehemias_chapters.splitlines(True),
+            fromfile="EZR chapters 11-23 (renumbered for comparison)",
             tofile="standalone NEH",
         )
     )
     Path("build").mkdir(exist_ok=True)
-    Path("build/nehemiah-differences.diff").write_text("".join(diff), encoding="utf-8")
+    Path("build/nehemias-differences.diff").write_text(
+        "".join(nehemias_source_diff), encoding="utf-8"
+    )
     report = {
         "scripture_units": len(units),
         "brenton_units": sum(u["source"] == "brenton" for u in units),
@@ -406,9 +483,11 @@ def validate():
             for u in units
             if u["source"] == "kjv"
         ),
-        "nehemiah_equal_after_whitespace_normalization": normalized(tail)
-        == normalized(neh),
-        "nehemiah_diff_lines": len(diff),
+        "nehemias_equal_after_whitespace_normalization": normalized(
+            renumbered_nehemias_chapters
+        )
+        == normalized(standalone_nehemias_chapters),
+        "nehemias_diff_lines": len(nehemias_source_diff),
     }
     write_json("build/validation.json", report)
     print("Validated pinned sources:", report, flush=True)
@@ -446,7 +525,7 @@ def ordered_entries():
     add_div(
         "GLO",
         "APPENDICES",
-        ["Brenton’s Jeremiah table and notes", "eBible’s corrections to the text"],
+        ["Brenton’s Jeremias table and notes", "eBible’s corrections to the text"],
     )
     result.extend(EDITION["appendices"])
     return result
@@ -504,10 +583,10 @@ def scripture_text(entry, archives, log=None):
         # The split below is fixed; the manifest's chapters field must describe it.
         require(
             entry.get("chapters") == ([1, 10] if code == "EZR" else [11, 23]),
-            f"Manifest chapters disagree with the Ezra–Nehemiah split: {code}",
+            f"Manifest chapters disagree with the Ezra-Nehemiah source split: {code}",
         )
         header, chapters = chapter_parts(original)
-        require(len(chapters) == 23, "Ezra–Nehemiah source boundary changed")
+        require(len(chapters) == 23, "Ezra-Nehemiah source boundary changed")
         selected = chapters[:10] if code == "EZR" else chapters[10:]
         if code == "NEH":
             selected = [
@@ -519,14 +598,14 @@ def scripture_text(entry, archives, log=None):
             record(
                 "select source chapters and relabel them",
                 source_ids=[source_id],
-                source_chapters="11–23",
-                edition_chapters="1–13",
+                source_chapters="11-23",
+                edition_chapters="1-13",
             )
         else:
             record(
                 "select source chapters",
                 source_ids=[source_id],
-                source_chapters="1–10",
+                source_chapters="1-10",
             )
         expected = header + "".join(chapters[:10] if code == "EZR" else chapters[10:])
         text = header + "".join(selected)
@@ -600,8 +679,8 @@ def scripture_text(entry, archives, log=None):
         record(
             "relabel verses",
             source_ids=[source_id],
-            source_verses="3:19–24",
-            edition_verses="4:1–6",
+            source_verses="3:19-24",
+            edition_verses="4:1-6",
             relabelled_note_origins={"3:23": "4:5"},
             moved_paragraph_marker="after the new chapter 4 marker",
         )
@@ -620,6 +699,26 @@ def scripture_text(entry, archives, log=None):
         count=1,
     )
     require(count == 1, f"Missing h heading: {code}")
+    if code in PAULINE_TITLE_IDS:
+        text, count = re.subn(
+            r"^(\\mt2\s+)([^\n]*?)PAUL(?: THE APOSTLE)?([^\n]*)$",
+            lambda m: m[1] + m[2] + "SAINT PAUL" + m[3],
+            text,
+            count=1,
+            flags=re.M,
+        )
+        require(count == 1, f"Missing Pauline title heading: {code}")
+    if code in CATHOLIC_EPISTLES:
+        _, mt2, mt1 = catholic_epistle_names(code)
+        for marker, value in (("mt2", mt2), ("mt1", mt1)):
+            text, count = re.subn(
+                r"^(\\" + marker + r"\s+)[^\n]*$",
+                lambda m: m[1] + value,
+                text,
+                count=1,
+                flags=re.M,
+            )
+            require(count == 1, f"Missing Catholic epistle {marker} heading: {code}")
     if code in NORMALIZED_TITLE_IDS:
         title = entry["title"]
         text, count = re.subn(
@@ -665,7 +764,7 @@ def scripture_text(entry, archives, log=None):
         require(
             chapters["3"] == [str(i) for i in range(1, 19)]
             and chapters["4"] == [str(i) for i in range(1, 7)],
-            "Wrong Malachias 3–4 verse labels",
+            "Wrong Malachias 3-4 verse labels",
         )
     return text
 

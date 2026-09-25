@@ -35,7 +35,9 @@
       "id": "JOS",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Joshua"
+      "title": "Jesus, the Son of Navi",
+      "short_title": "Jesus, the Son of Navi",
+      "abbreviation": "Jes. Navi"
     },
     {
       "id": "JDG",
@@ -128,8 +130,8 @@
       "source": "brenton",
       "source_id": "EZR",
       "section": "old_testament",
-      "title": "Nehemiah",
-      "short_title": "Nehemiah",
+      "title": "Nehemias",
+      "short_title": "Nehemias",
       "abbreviation": "Neh.",
       "chapters": [
         11,
@@ -248,7 +250,8 @@
       "id": "MIC",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Michæas"
+      "title": "Michaias",
+      "short_title": "Michaias"
     },
     {
       "id": "JOL",
@@ -338,7 +341,8 @@
       "id": "EZK",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Jezekiel"
+      "title": "Ezekiel",
+      "short_title": "Ezekiel"
     },
     {
       "id": "DAG",
@@ -387,127 +391,127 @@
       "id": "ROM",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The Epistle of Paul the Apostle to the Romans"
+      "title": "The Epistle of Saint Paul to the Romans"
     },
     {
       "id": "1CO",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The First Epistle of Paul the Apostle to the Corinthians"
+      "title": "The First Epistle of Saint Paul to the Corinthians"
     },
     {
       "id": "2CO",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The Second Epistle of Paul the Apostle to the Corinthians"
+      "title": "The Second Epistle of Saint Paul to the Corinthians"
     },
     {
       "id": "GAL",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The Epistle of Paul the Apostle to the Galatians"
+      "title": "The Epistle of Saint Paul to the Galatians"
     },
     {
       "id": "EPH",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The Epistle of Paul the Apostle to the Ephesians"
+      "title": "The Epistle of Saint Paul to the Ephesians"
     },
     {
       "id": "PHP",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The Epistle of Paul the Apostle to the Philippians"
+      "title": "The Epistle of Saint Paul to the Philippians"
     },
     {
       "id": "COL",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The Epistle of Paul the Apostle to the Colossians"
+      "title": "The Epistle of Saint Paul to the Colossians"
     },
     {
       "id": "1TH",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The First Epistle of Paul the Apostle to the Thessalonians"
+      "title": "The First Epistle of Saint Paul to the Thessalonians"
     },
     {
       "id": "2TH",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The Second Epistle of Paul the Apostle to the Thessalonians"
+      "title": "The Second Epistle of Saint Paul to the Thessalonians"
     },
     {
       "id": "1TI",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The First Epistle of Paul the Apostle to Timothy"
+      "title": "The First Epistle of Saint Paul to Timothy"
     },
     {
       "id": "2TI",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The Second Epistle of Paul the Apostle to Timothy"
+      "title": "The Second Epistle of Saint Paul to Timothy"
     },
     {
       "id": "TIT",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The Epistle of Paul to Titus"
+      "title": "The Epistle of Saint Paul to Titus"
     },
     {
       "id": "PHM",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The Epistle of Paul to Philemon"
+      "title": "The Epistle of Saint Paul to Philemon"
     },
     {
       "id": "HEB",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The Epistle of Paul the Apostle to the Hebrews"
+      "title": "The Epistle of Saint Paul to the Hebrews"
     },
     {
       "id": "JAS",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The General Epistle of James"
+      "title": "The Catholic Epistle of Saint James"
     },
     {
       "id": "1PE",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The First Epistle General of Peter"
+      "title": "The First Catholic Epistle of Saint Peter"
     },
     {
       "id": "2PE",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The Second Epistle General of Peter"
+      "title": "The Second Catholic Epistle of Saint Peter"
     },
     {
       "id": "1JN",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The First Epistle General of John"
+      "title": "The First Catholic Epistle of Saint John"
     },
     {
       "id": "2JN",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The Second Epistle of John"
+      "title": "The Second Catholic Epistle of Saint John"
     },
     {
       "id": "3JN",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The Third Epistle of John"
+      "title": "The Third Catholic Epistle of Saint John"
     },
     {
       "id": "JUD",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The General Epistle of Jude"
+      "title": "The Catholic Epistle of Saint Jude"
     },
     {
       "id": "REV",
@@ -564,8 +568,14 @@
     {
       "source": "brenton",
       "id": "XXA",
+      "title": "Table of Chapters and Verses in Jeremias",
+      "short_title": "Table of Chapters and Verses in Jeremias",
+      "abbreviation": "Jer. App.",
       "headings": {
-        "mt1": "TABLE OF CHAPTERS AND VERSES IN JEREMIAH"
+        "h": "Table of Chapters and Verses in Jeremias",
+        "toc1": "Table of Chapters and Verses in Jeremias",
+        "toc2": "Table of Chapters and Verses in Jeremias",
+        "mt1": "TABLE OF CHAPTERS AND VERSES IN JEREMIAS"
       }
     },
     {
