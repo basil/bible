@@ -181,6 +181,14 @@
       "abbreviation": "3 Macc."
     },
     {
+      "id": "4MA",
+      "source": "brenton",
+      "section": "old_testament",
+      "title": "4 Maccabees",
+      "short_title": "4 Maccabees",
+      "abbreviation": "4 Macc."
+    },
+    {
       "id": "PSA",
       "source": "brenton",
       "section": "old_testament",
@@ -346,14 +354,6 @@
       ]
     },
     {
-      "id": "4MA",
-      "source": "brenton",
-      "section": "old_testament_appendix",
-      "title": "4 Maccabees",
-      "short_title": "4 Maccabees",
-      "abbreviation": "4 Macc."
-    },
-    {
       "id": "MAT",
       "source": "kjv",
       "section": "new_testament",
@@ -516,17 +516,46 @@
       "title": "The Revelation of Saint John the Divine"
     }
   ],
-  "front_apparatus": [
+  "old_testament_front": [
     {
       "source": "brenton",
-      "id": "FRT",
-      "project_id": "XXD"
+      "id": "XXB",
+      "headings": {
+        "h": "Preface (1844)",
+        "toc1": "Preface (1844)",
+        "toc2": "Preface (1844)",
+        "mt1": "PREFACE (1844)"
+      }
     },
     {
       "source": "brenton",
       "id": "INT",
-      "project_id": "XXE"
+      "project_id": "XXE",
+      "headings": {
+        "h": "Introduction (1870)",
+        "toc1": "Introduction (1870)",
+        "toc2": "Introduction (1870)",
+        "mt1": "INTRODUCTION (1870)"
+      }
     },
+    {
+      "source": "brenton",
+      "id": "OTH",
+      "headings": {
+        "h": "Introduction to the Apocrypha",
+        "toc1": "Introduction to the Apocrypha",
+        "toc2": "Introduction to the Apocrypha",
+        "toc3": "Apoc. Intr.",
+        "mt1": "INTRODUCTION TO THE APOCRYPHA"
+      }
+    },
+    {
+      "source": "brenton",
+      "id": "FRT",
+      "project_id": "XXD"
+    }
+  ],
+  "new_testament_front": [
     {
       "source": "kjv",
       "id": "OTH",
@@ -538,26 +567,35 @@
       "project_id": "NDX"
     }
   ],
-  "back_apparatus": [
+  "appendices": [
     {
       "source": "brenton",
-      "id": "OTH"
+      "id": "XXA",
+      "headings": {
+        "mt1": "TABLE OF CHAPTERS AND VERSES IN JEREMIAH"
+      }
     },
     {
       "source": "brenton",
-      "id": "XXA"
+      "id": "BAK",
+      "headings": {
+        "h": "Notes and Supplied Passages",
+        "toc1": "Notes and Supplied Passages",
+        "toc2": "Notes and Supplied Passages",
+        "toc3": "Notes",
+        "mt1": "NOTES AND SUPPLIED PASSAGES"
+      }
     },
     {
       "source": "brenton",
-      "id": "XXB"
-    },
-    {
-      "source": "brenton",
-      "id": "XXC"
-    },
-    {
-      "source": "brenton",
-      "id": "BAK"
+      "id": "XXC",
+      "headings": {
+        "h": "Corrections",
+        "toc1": "Corrections to the Text",
+        "toc2": "Corrections",
+        "toc3": "Corr.",
+        "mt1": "CORRECTIONS TO THE TEXT"
+      }
     }
   ],
   "excluded": {

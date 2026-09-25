@@ -38,7 +38,8 @@ A hash mismatch is a failure. Replacing an archive is a deliberate step describe
 ## Configuration
 
 - `config/edition.json`: the ordered manifest of scripture units and peripherals
-- `config/front.sfm`: title page, source statement, and contents
+- `config/front.sfm`: title page and contents
+- `config/introduction.sfm`: the editor's introduction, typeset as the first unit after the contents
 - `config/layout.ini`: overrides applied on top of PTXprint's BSB layout
 - `config/ptxprint-mods.sty`: style overrides
 - `config/ptxprint-mods.tex`: TeX customizations
@@ -47,7 +48,7 @@ A hash mismatch is a failure. Replacing an archive is a deliberate step describe
 
 The layout is derived at build time from PTXprint 3.0.43's `resources/bsb.zip`, including both its configuration and `ptxprint.sty`: A5, two columns, 9.5-point text, its line spacing, margins, column rule, running headers, and heading/reference spacing. This edition replaces Charis with Utopia, replaces the BSB publication metadata, adds front matter and section dividers, and enables the contents page. Note-caller and verse-one settings are inherited from BSB. Pagination is continuous Arabic numerals and includes the front matter.
 
-The reading order is the new title/source/contents pages; Brenton's abbreviations and 1870 introduction; the KJV dedication and translators' preface; Old Testament; Apocrypha; New Testament; then Brenton's historical appendices. Cambridge closing notes remain with their NT books. The historical Cambridge title page is omitted. Details and the reasoning are in [docs/edition.md](docs/edition.md).
+The reading order is the new title page, contents, and editor's introduction; the Old Testament divider, Brenton's preface, introduction, introduction to the Apocrypha, and list of abbreviations, and the Old Testament; the New Testament divider, the KJV dedication and translators' preface, and the New Testament; then the appendices (Brenton's Jeremiah table, his notes and supplied passages, and eBible's corrections). Cambridge closing notes remain with their NT books. The historical Cambridge title page is omitted. Details and the reasoning are in [docs/edition.md](docs/edition.md).
 
 ## Dependencies
 

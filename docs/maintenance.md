@@ -12,7 +12,7 @@ The Ubuntu base and repositories intentionally track updates. A later bootstrap 
 
 ## Source updates
 
-Download replacement archives deliberately to a temporary location. Retain the previous archive until reviewing the differences. Inspect the source notices, scripture unit set, chapter/verse labels, notes, references, italics, tables, and apparatus. Update the tracked archives, retrieval dates, URLs, SHA-256 values, and per-file inventories in `sources.json` together. Update the source statement date in `config/front.sfm`. A lock mismatch is a failure, not an invitation for a normal build to fetch newer data.
+Download replacement archives deliberately to a temporary location. Retain the previous archive until reviewing the differences. Inspect the source notices, scripture unit set, chapter/verse labels, notes, references, italics, tables, and apparatus. Update the tracked archives, retrieval dates, URLs, SHA-256 values, and per-file inventories in `sources.json` together. A lock mismatch is a failure, not an invitation for a normal build to fetch newer data.
 
 The inventory implementation lives in `scripts/source_inventory.py`. It stores exact string labels rather than coercing verses into integers: `1b`, `6a`, and source verse bridges are meaningful. A source upgrade must explicitly review any changed inventory instead of assuming a standard Protestant versification.
 
@@ -28,6 +28,6 @@ The customization wraps PTXprint's internal `\s@tfont` macro and initializes eac
 
 American English hyphenation uses XeTeX's preloaded `USenglish` patterns. `config/layout.ini` enables hyphenation and disables BSB's adjustable letter spacing, whose interletter glue prevents native word hyphenation. `config/ptxprint-mods.tex` selects that language after PTXprint's initial empty-language setup, with minimum fragments of two letters before a break and three after. No `hyphenatedWords.txt` or generated exception list is required.
 
-Change `config/layout.ini` to override the upstream BSB configuration; do not edit generated `build/` files. Use `config/ptxprint-mods.sty` for style overrides and `config/front.sfm` for title/source/contents pages. Change `config/edition.json` only when deliberately revising the edition's selection or order. A5 dimensions are an acceptance requirement and checked on every PDF page.
+Change `config/layout.ini` to override the upstream BSB configuration; do not edit generated `build/` files. Use `config/ptxprint-mods.sty` for style overrides and `config/front.sfm` for the title and contents pages and `config/introduction.sfm` for the editor's introduction. Change `config/edition.json` only when deliberately revising the edition's selection or order. A5 dimensions are an acceptance requirement and checked on every PDF page.
 
 Diagnostics include the effective Paratext project and configuration, the actual PTXprint console/TeX logs, source comparison, PDF inspection outputs, contents and book-boundary records, and extracted PDF text. CI uploads these even when a render fails.

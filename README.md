@@ -10,12 +10,10 @@ The Old Testament comes from Sir Lancelot Brenton's 1870 English translation of 
 
 The book reads in this order:
 
-1. Title page, a statement of sources, and a table of contents
-2. Brenton's list of abbreviations and his 1870 introduction
-3. The King James translators' dedication to the king and their preface, "The Translators to the Reader"
-4. The Old Testament, followed by 4 Maccabees as an appendix
-5. The New Testament
-6. Brenton's introduction to the Apocrypha and his historical appendices: his 1844 preface, errata, and a table comparing chapter order in Jeremiah
+1. Title page, a table of contents, and the editor's introduction
+2. The Old Testament, opening with Brenton's preface (1844), introduction (1870), introduction to the Apocrypha, and list of abbreviations
+3. The New Testament, opening with the King James translators' dedication to the king and their preface, "The Translators to the Reader"
+4. Appendices: Brenton's table comparing chapter order in Jeremiah, his notes and supplied passages, and eBible's corrections to the text
 
 Both translations are in the public domain. The texts are taken from [eBible.org](https://ebible.org/), and the original copyright notices are kept with the source files in this repository.
 

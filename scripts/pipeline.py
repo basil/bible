@@ -102,6 +102,8 @@ def book_names_element(entries, archives):
             source_text = archives[entry["source"]][
                 entry.get("source_id", entry["id"])
             ][2]
+        elif "file" in entry:
+            source_text = Path(entry["file"]).read_text(encoding="utf-8")
         names = resolved_book_names(entry, source_text)
         ET.SubElement(
             root,
@@ -163,7 +165,7 @@ def validate():
         "Expected 51 printed Brenton units",
     )
     require(sum(u["source"] == "kjv" for u in units) == 27, "Expected 27 KJV units")
-    orthodox = "GEN EXO LEV NUM DEU JOS JDG RUT 1SA 2SA 1KI 2KI 1CH 2CH MAN 1ES EZR NEH TOB JDT ESG 1MA 2MA 3MA PSA JOB PRO ECC SNG WIS SIR HOS AMO MIC JOL OBA JON NAM HAB ZEP HAG ZEC MAL ISA JER BAR LAM LJE EZK DAG 4MA".split()
+    orthodox = "GEN EXO LEV NUM DEU JOS JDG RUT 1SA 2SA 1KI 2KI 1CH 2CH MAN 1ES EZR NEH TOB JDT ESG 1MA 2MA 3MA 4MA PSA JOB PRO ECC SNG WIS SIR HOS AMO MIC JOL OBA JON NAM HAB ZEP HAG ZEC MAL ISA JER BAR LAM LJE EZK DAG".split()
     require(
         ids[: len(orthodox)] == orthodox and ids[len(orthodox)] == "MAT",
         "Orthodox Old Testament order changed",
@@ -284,16 +286,28 @@ def validate():
         ),
         "Brenton source reused",
     )
-    front = [(e["source"], e["id"]) for e in EDITION["front_apparatus"]]
+
+    def selected(key):
+        return [(e["source"], e["id"]) for e in EDITION[key]]
+
     require(
-        front
+        selected("old_testament_front")
         == [
-            ("brenton", "FRT"),
+            ("brenton", "XXB"),
             ("brenton", "INT"),
-            ("kjv", "OTH"),
-            ("kjv", "INT"),
+            ("brenton", "OTH"),
+            ("brenton", "FRT"),
         ],
-        "Selected Cambridge peripherals must follow Brenton’s introduction, dedication first",
+        "Old Testament front matter changed",
+    )
+    require(
+        selected("new_testament_front") == [("kjv", "OTH"), ("kjv", "INT")],
+        "New Testament front matter changed",
+    )
+    require(
+        selected("appendices")
+        == [("brenton", "XXA"), ("brenton", "BAK"), ("brenton", "XXC")],
+        "Appendices changed",
     )
     require(
         "Greatandmanifoldweretheblessings" in canonical_text(archives["kjv"]["OTH"][2]),
@@ -314,18 +328,32 @@ def validate():
             scripture_text(unit, archives)
     entries = ordered_entries()
     ordered_ids = [e.get("project_id", e.get("id")) for e in entries]
+
+    # Each testament's front matter sits between its divider and its first book.
+    def follows(*codes):
+        first = ordered_ids.index(codes[0])
+        return ordered_ids[first : first + len(codes)] == list(codes)
+
+    require(ordered_ids[0] == "CNC", "Editor's introduction must open the book")
     require(
-        ordered_ids.index("4MA") + 1 == ordered_ids.index("XXG"),
-        "Old Testament appendix misplaced",
+        follows("CNC", "XXF", "XXB", "XXE", "OTH", "XXD", "GEN"),
+        "Old Testament front matter misplaced",
     )
     require(
-        ordered_ids.index("REV") + 1 == ordered_ids.index("GLO")
-        and ordered_ids.index("GLO") + 1 == ordered_ids.index("OTH"),
-        "Apocrypha introduction misplaced",
+        follows("DAG", "XXG", "TDX", "NDX", "MAT"),
+        "New Testament front matter misplaced",
+    )
+    require(
+        follows("REV", "GLO", "XXA", "BAK", "XXC") and ordered_ids[-1] == "XXC",
+        "Appendices misplaced",
     )
     require(
         "THE APOCRYPHA" not in Path("config/front.sfm").read_text(encoding="utf-8"),
         "Obsolete Apocrypha divider/title remains",
+    )
+    require(
+        "\\periph" not in Path("config/introduction.sfm").read_text(encoding="utf-8"),
+        "The editor's introduction is a unit, not a front-matter periph",
     )
     # Explain the overlapping witness without modifying either original file.
     ezr = archives["brenton"]["EZR"][2]
@@ -373,6 +401,7 @@ def ordered_entries():
     result = []
 
     def add_div(code, title, subtitle):
+        # Subtitle lines mirror the title page in config/front.sfm.
         result.append(
             {
                 "project_id": code,
@@ -382,24 +411,26 @@ def ordered_entries():
             }
         )
 
-    result.extend(EDITION["front_apparatus"])
-    add_div("XXF", "THE OLD TESTAMENT", "Brenton’s Septuagint")
-    for section in ("old_testament", "old_testament_appendix", "new_testament"):
-        if section == "old_testament_appendix":
-            add_div("CNC", "OLD TESTAMENT APPENDIX", "4 Maccabees")
-        if section == "new_testament":
-            add_div(
-                "XXG",
-                "THE NEW TESTAMENT",
-                "The Cambridge Paragraph Bible • King James Version",
-            )
-        result.extend(u for u in EDITION["scripture"] if u["section"] == section)
+    # The editor's introduction is a project unit rather than a front-matter periph so
+    # that it follows the contents page and is listed in it.
+    result.append({"project_id": "CNC", "file": "config/introduction.sfm"})
+    # Each testament opens with its divider and its own translation's front matter.
+    add_div("XXF", "THE OLD TESTAMENT", ["Brenton’s Septuagint"])
+    result.extend(EDITION["old_testament_front"])
+    result.extend(u for u in EDITION["scripture"] if u["section"] == "old_testament")
+    add_div(
+        "XXG",
+        "THE NEW TESTAMENT",
+        ["Scrivener’s Cambridge Paragraph Bible", "King James Version"],
+    )
+    result.extend(EDITION["new_testament_front"])
+    result.extend(u for u in EDITION["scripture"] if u["section"] == "new_testament")
     add_div(
         "GLO",
-        "HISTORICAL APPARATUS",
-        "Brenton’s introductions, tables, preface, errata, and appendix",
+        "APPENDICES",
+        ["Brenton’s Jeremiah table and notes", "eBible’s corrections to the text"],
     )
-    result.extend(EDITION["back_apparatus"])
+    result.extend(EDITION["appendices"])
     return result
 
 
@@ -583,7 +614,11 @@ def prepare(mode, base, archives):
         code = entry.get("project_id", entry.get("id"))
         ids.append(code)
         if entry.get("generated"):
-            text = f"\\id {code}\n\\h {entry['title']}\n\\toc1 {entry['title']}\n\\mt1 {entry['title']}\n\\mt2 {entry['subtitle']}\n"
+            text = f"\\id {code}\n\\h {entry['title']}\n\\toc1 {entry['title']}\n\\mt1 {entry['title']}\n"
+            text += "".join(f"\\mt2 {line}\n" for line in entry["subtitle"])
+        elif "file" in entry:
+            text = Path(entry["file"]).read_text(encoding="utf-8")
+            require(text.startswith(f"\\id {code}\n"), f"Wrong id in {entry['file']}")
         else:
             original = archives[entry["source"]][entry.get("source_id", entry["id"])][2]
             text = scripture_text(entry, archives) if "section" in entry else original
@@ -612,6 +647,23 @@ def prepare(mode, base, archives):
                         "source": entry.get("source_id", entry["id"]),
                         "project_id": code,
                         "operation": "remap project id to retain it as a distinct ordered unit",
+                    }
+                )
+            for marker, heading in entry.get("headings", {}).items():
+                text, count = re.subn(
+                    r"^(\\" + marker + r"\s+)[^\n]*",
+                    lambda m: m[1] + heading,
+                    text,
+                    count=1,
+                    flags=re.M,
+                )
+                require(count == 1, f"Missing {marker} heading: {code}")
+            if entry.get("headings"):
+                transformations.append(
+                    {
+                        "project_id": code,
+                        "operation": "edition heading replaces the source heading",
+                        "headings": entry["headings"],
                     }
                 )
             if "section" not in entry:
@@ -991,7 +1043,8 @@ def check_boundaries(base, text, pages, reading_text, sample=False):
             c for c in unicodedata.normalize("NFKC", s).casefold() if c.isalnum()
         )
 
-    contents = key("".join(page_text[2 : int(toc[0][2]) - 1]))
+    # The contents follows the title page and precedes the first unit.
+    contents = key("".join(page_text[1 : int(toc[0][2]) - 1]))
     previous = 0
     for code, title, page in toc:
         page = int(page)
