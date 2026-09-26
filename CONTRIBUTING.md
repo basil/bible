@@ -81,6 +81,8 @@ CI runs `make bootstrap`, `validate`, `test`, and `pdf` on pull requests and on 
 - `config/ptxprint-mods.sty` overrides paragraph and character styles.
 - `config/ptxprint-mods.tex` holds TeX-level changes: hyphenation, protrusion, and one spacing tweak in Psalm 118.
 
+The tests require every setting in `layout.ini` and `ptxprint-mods.sty` to differ from the value it overrides, and a checkbox PTXprint stores under several keys to be set under all of them.
+
 Don't edit anything in `build/`; it's regenerated on every run.
 
 PTXprint uses plain XeTeX, so the microtype package isn't available. Instead, `config/ptxprint-mods.tex` carries a copy of microtype's default protrusion table, which lets punctuation and a few letters hang slightly into the margin so the column edges look straight. Protrusion affects line breaking, so changing it can change pagination. microtype has no settings made for Utopia, GFS Didot, or Ezra SIL, so all three use the defaults.

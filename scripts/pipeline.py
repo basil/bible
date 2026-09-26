@@ -68,6 +68,18 @@ FONT_ARCHIVES = tuple(
 )
 MARGINAL_NOTES = read_json("pipeline/marginal-notes.json")
 UPSTREAM = Path("/opt/ptxprint")
+BSB_DEFAULT = "shared/ptxprint/Default"
+
+
+def bsb_baseline():
+    """BSB's PTXprint configuration and stylesheet, which config/ overrides."""
+    with zipfile.ZipFile(UPSTREAM / "resources/bsb.zip") as z:
+        return (
+            z.read(f"{BSB_DEFAULT}/ptxprint.cfg").decode(),
+            z.read(f"{BSB_DEFAULT}/ptxprint.sty").decode(),
+        )
+
+
 # The generated PTXprint project, and where PTXprint writes its processed copies.
 PROJECT_DIR = "projects/BIBLE"
 PROCESSED_DIR = "local/ptxprint/Bible"
@@ -941,11 +953,8 @@ def prepare(mode, base, archives):
     ET.ElementTree(book_names_element(entries, archives)).write(
         project / "BookNames.xml", encoding="utf-8", xml_declaration=True
     )
-    with zipfile.ZipFile(UPSTREAM / "resources/bsb.zip") as z:
-        baseline = z.read("shared/ptxprint/Default/ptxprint.cfg").decode()
-        (conf / "ptxprint.sty").write_bytes(
-            z.read("shared/ptxprint/Default/ptxprint.sty")
-        )
+    baseline, styles = bsb_baseline()
+    (conf / "ptxprint.sty").write_text(styles, encoding="utf-8")
     cfg = configparser.ConfigParser(interpolation=None)
     cfg.read_string(baseline)
     # read() would silently skip a missing overlay and typeset BSB's layout.

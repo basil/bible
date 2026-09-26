@@ -1,7 +1,10 @@
+% Set Greek quotations in GFS Didot; ptx2pdf's Galatia SIL is not installed.
 \Marker wg
 \FontName GFS Didot
 
-% Use Erewhon's designed superscript figures for verse numbers.
+% Use Erewhon's designed superscript figures for verse numbers. The figures
+% are already small and raised, so turn off the stylesheet's scaling, and the
+% raise that \Superscript - leaves behind from usfm_sb.sty's \Superscript.
 \Marker v
 \FontName erewhon
 \ztexFontFeatures +[sups]
@@ -15,7 +18,8 @@
 \Superscript -
 \Raise 0pt
 
-% Keep added words in regular roman type.
+% Set added words in ordinary roman type, as docs/edition.md describes, not
+% the bold italic of usfm_sb.sty.
 \Marker add
 \Bold -
 \Italic -
