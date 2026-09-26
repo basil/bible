@@ -1,0 +1,18 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "abandonments:recommended",
+    ":configMigration",
+    "config:recommended",
+    ":dependencyDashboard",
+    "group:monorepos",
+    "group:recommended",
+    ":maintainLockFilesWeekly",
+    "mergeConfidence:age-confidence-badges",
+    ":pinDevDependencies",
+    "replacements:all",
+    "security:minimumReleaseAgeNpm",
+    ":semanticPrefixFixDepsChoreOthers",
+    "workarounds:all"
+  ]
+}
