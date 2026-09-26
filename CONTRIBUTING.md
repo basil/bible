@@ -56,7 +56,7 @@ The reading order is the new title page, contents, and editor's introduction; th
 
 ## Dependencies
 
-`dependencies.json` records the base image tag, PTXprint tag and commit, and usfmtc commit. PTXprint 3.0.43 records the build time in the PDF's creation and modification dates, so PDF bytes differ between builds; `make check` compares rendered page images instead. Python packages, including pytest, are pinned by version, without hashes, in `requirements.txt`. Renovate proposes updates to that file.
+`dependencies.json` records the base image tag, PTXprint tag and commit, and usfmtc commit. PTXprint 3.0.43 records the build time in the PDF's creation and modification dates, so PDF bytes differ between builds; `make check` compares rendered page images instead. Direct Python dependencies, including pytest, are pinned by version, without hashes, in `requirements.txt`; pip resolves their own dependencies. Renovate proposes updates to that file.
 
 The base image uses an Ubuntu LTS codename tag, which floats within that release and which Renovate moves to each new LTS, and `make bootstrap` passes `--pull`, so OS packages come from Ubuntu's current repositories. Rebuilding the environment later can change OS packages and therefore pagination. Repeatability is checked within a single built environment by `make check`, and each PDF's provenance file records the exact environment that produced it.
 
