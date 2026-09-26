@@ -1,5 +1,4 @@
 # Python dependencies for the PTXprint build environment and its tests.
-appdirs==1.4.4
 fonttools==4.66.0
 iniconfig==2.3.0
 markdown-it-py==4.2.0
@@ -13,7 +12,6 @@ psutil==7.2.2
 pygments==2.21.0
 pytest==9.1.1
 regex==2026.9.10
-rply==0.7.8
 setuptools==84.0.0
 smartypants==2.0.2
 wheel==0.48.0
