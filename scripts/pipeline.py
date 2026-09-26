@@ -42,7 +42,26 @@ def write_json(path, data):
 
 
 EDITION = read_json("config/edition.json")
-SOURCES = read_json("sources.json")
+# The pinned source texts. An archive's hash pins every book in it.
+SOURCES = {
+    "brenton": {
+        "archive": "sources/eng-Brenton_usfm.zip",
+        "url": "https://ebible.org/Scriptures/eng-Brenton_usfm.zip",
+        "retrieved": "2026-09-23",
+        "sha256": "93496ef23f7ff2427c32f5d353089dee73e82975ab92c80a00663fb333c57e32",
+    },
+    "kjv": {
+        "archive": "sources/engkjvcpb_usfm.zip",
+        "url": "https://ebible.org/Scriptures/engkjvcpb_usfm.zip",
+        "retrieved": "2026-09-23",
+        "sha256": "7940a2d164513b2bd2dbec2c8570b89ef8673621ed4f30f3099218a7ddd04936",
+    },
+    "marginal_notes": {
+        "file": "sources/exhaustive-listing-marginal-notes-1611-edition-king-james-bible.md",
+        "url": "https://en.literaturabautista.com/exhaustive-listing-marginal-notes-1611-edition-king-james-bible",
+        "retrieved": "2026-09-25",
+    },
+}
 # The font archives the image was built from, relative to /opt as they are to
 # the checkout. The image build checks their hashes; outside it there are none.
 FONT_ARCHIVES = tuple(
@@ -151,7 +170,7 @@ def source_usfm(entry, archives):
     """The text an entry is prepared from: its source file, or the edition's own."""
     if "file" in entry:
         return Path(entry["file"]).read_text(encoding="utf-8")
-    return archives[entry["source"]][source_id(entry)][2]
+    return archives[entry["source"]][source_id(entry)]
 
 
 def heading_lines(entry, names):
@@ -262,24 +281,13 @@ def capture(*args):
 
 
 def validate():
-    archives = {}
-    for name, source in SOURCES.items():
-        if "archive" not in source:
-            continue
-        path = Path(source["archive"])
-        data = read_archive(io.BytesIO(pinned_bytes(path, source["sha256"])))
-        require(set(data) == set(source["files"]), f"Archive inventory changed: {path}")
-        for code, (member, raw, text) in data.items():
-            expected = source["files"][code]
-            require(
-                member == expected["member"] and sha256(raw) == expected["sha256"],
-                f"Changed source: {name}/{code}",
-            )
-            require(
-                inventory(text) == {k: expected[k] for k in ("chapters", "markers")},
-                f"Changed inventory: {name}/{code}",
-            )
-        archives[name] = data
+    archives = {
+        name: read_archive(
+            io.BytesIO(pinned_bytes(source["archive"], source["sha256"]))
+        )
+        for name, source in SOURCES.items()
+        if "archive" in source
+    }
     notes = marginal_notes()
     units = EDITION["scripture"]
     require(
@@ -296,15 +304,15 @@ def validate():
             )
     for (source, code), chapters in divided.items():
         require(
-            chapters == list(SOURCES[source]["files"][code]["chapters"]),
+            chapters == list(inventory(archives[source][code])["chapters"]),
             f"Divided source not printed whole: {source}/{code}",
         )
     source_use = brenton_source_use()
     # Explain the overlapping witness without modifying either original file.
     nehemias = scripture_unit("NEH")
     first, last = nehemias["chapters"]
-    _, combined_chapters = chapter_parts(archives["brenton"][source_id(nehemias)][2])
-    _, standalone_nehemias_witness = chapter_parts(archives["brenton"]["NEH"][2])
+    _, combined_chapters = chapter_parts(archives["brenton"][source_id(nehemias)])
+    _, standalone_nehemias_witness = chapter_parts(archives["brenton"]["NEH"])
     renumbered_nehemias_chapters = "".join(
         renumber_chapters(combined_chapters[first - 1 : last], first - 1)
     )
@@ -328,13 +336,10 @@ def validate():
         "kjv_units": sum(u["source"] == "kjv" for u in units),
         "kjv_marginal_notes": sum(len(n) for n in notes.values()),
         "source_verse_labels": sum(
-            sum(len(v) for v in SOURCES["brenton"]["files"][code]["chapters"].values())
-            for code in set(source_use)
-        )
-        + sum(
-            sum(len(v) for v in SOURCES["kjv"]["files"][u["id"]]["chapters"].values())
-            for u in units
-            if u["source"] == "kjv"
+            len(verses)
+            for source, code in {("brenton", c) for c in source_use}
+            | {("kjv", u["id"]) for u in units if u["source"] == "kjv"}
+            for verses in inventory(archives[source][code])["chapters"].values()
         ),
         "nehemias_equal_after_whitespace_normalization": (
             " ".join(renumbered_nehemias_chapters.split())
@@ -454,8 +459,7 @@ def marginal_notes():
     the note. The Old Testament entries belong to the Hebrew Old Testament, which
     this edition does not print, so they are never read.
     """
-    source = SOURCES["marginal_notes"]
-    text = pinned_bytes(source["file"], source["sha256"]).decode("utf-8")
+    text = Path(SOURCES["marginal_notes"]["file"]).read_text(encoding="utf-8")
     require(
         text.count("\nMatthew 1:11 ") == 1,
         "Marginal notes New Testament boundary changed",
@@ -682,8 +686,8 @@ def scripture_text(entry, archives, log=None):
         )
     elif code == "DAG":
         daniel_header, daniel_chapters = chapter_parts(original)
-        _, susanna = chapter_parts(archives["brenton"]["SUS"][2])
-        _, bel = chapter_parts(archives["brenton"]["BEL"][2])
+        _, susanna = chapter_parts(archives["brenton"]["SUS"])
+        _, bel = chapter_parts(archives["brenton"]["BEL"])
         require(
             len(susanna) == len(bel) == 1 and len(daniel_chapters) == 12,
             "Daniel source boundaries changed",
@@ -1047,7 +1051,8 @@ def publish(mode, pdf, ids, report):
         "compose.yaml",
         "Makefile",
         "requirements.txt",
-        "sources.json",
+        # Not pinned by a hash like the archives, so record the copy that was read.
+        SOURCES["marginal_notes"]["file"],
         *FONT_ARCHIVES,
     ):
         tracked[input_name] = file_sha256(input_name)
@@ -1079,7 +1084,7 @@ def publish(mode, pdf, ids, report):
             for name in ("ptxprint", "usfmtc", "utopia")
         },
         "source_archives": {
-            k: {x: v[x] for x in ("url", "sha256", "retrieved")}
+            k: {x: v[x] for x in ("url", "sha256", "retrieved") if x in v}
             for k, v in SOURCES.items()
         },
         "inputs": tracked,

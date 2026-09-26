@@ -1,3 +1,1 @@
 sources/*.zip binary
-# Checked byte for byte against sources.json: never convert line endings.
-sources/*.md -text

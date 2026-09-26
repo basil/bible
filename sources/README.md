@@ -1,6 +1,6 @@
 # Sources
 
-Everything the build reads is committed here exactly as downloaded, so building never needs the network. `sources.json` and the `Dockerfile` record the SHA-256 hash of each file, and the build refuses to run if a file doesn't match.
+Everything the build reads is committed here exactly as downloaded, so building never needs the network. `scripts/pipeline.py` and the `Dockerfile` record the SHA-256 hash of each archive, and the build refuses to run if an archive doesn't match.
 
 ## Bible texts
 

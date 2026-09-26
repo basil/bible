@@ -9,13 +9,13 @@ import pytest
 import pipeline
 from pipeline import (
     EDITION,
-    SOURCES,
     canonical_text,
     scripture_unit,
     source_id,
     source_marker,
     source_usfm,
 )
+from source_inventory import inventory
 
 UNITS = EDITION["scripture"]
 BRENTON_UNITS = [u for u in UNITS if u["source"] == "brenton"]
@@ -189,26 +189,27 @@ def test_appendices_close_the_book(ordered_ids):
 
 
 def test_kjv_dedication_is_present(archives):
-    assert "Greatandmanifoldweretheblessings" in canonical_text(
-        archives["kjv"]["OTH"][2]
-    )
+    assert "Greatandmanifoldweretheblessings" in canonical_text(archives["kjv"]["OTH"])
 
 
-def test_combined_ezra_nehemiah_source():
-    chapters = SOURCES["brenton"]["files"]["EZR"]["chapters"]
+def brenton_chapters(archives, code):
+    return inventory(archives["brenton"][code])["chapters"]
+
+
+def test_combined_ezra_nehemiah_source(archives):
+    chapters = brenton_chapters(archives, "EZR")
     assert list(chapters) == [str(i) for i in range(1, 24)]
 
 
-def test_greek_additions_are_present():
-    inventory = SOURCES["brenton"]["files"]
-    assert "151" in inventory["PSA"]["chapters"], "Psalm 151"
-    assert "1b" in inventory["ESG"]["chapters"]["1"], "Esther additions"
-    assert len(inventory["DAG"]["chapters"]["3"]) > 90, "Daniel 3 additions"
+def test_greek_additions_are_present(archives):
+    assert "151" in brenton_chapters(archives, "PSA"), "Psalm 151"
+    assert "1b" in brenton_chapters(archives, "ESG")["1"], "Esther additions"
+    assert len(brenton_chapters(archives, "DAG")["3"]) > 90, "Daniel 3 additions"
 
 
 @pytest.mark.parametrize("code", ["MAN", "3MA", "4MA"])
-def test_apocryphal_books_are_present(code):
-    assert SOURCES["brenton"]["files"][code]["chapters"]
+def test_apocryphal_books_are_present(archives, code):
+    assert brenton_chapters(archives, code)
 
 
 # Titles and headings

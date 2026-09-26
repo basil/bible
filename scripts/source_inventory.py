@@ -1,4 +1,5 @@
-"""Lossless source inventory: verse labels are strings (including bridges/letters)."""
+"""Reading source archives, and inventories of USFM: verse labels are strings
+(including bridges/letters), and markers are counted."""
 
 import collections
 import hashlib
@@ -19,12 +20,11 @@ def read_archive(file):
     with zipfile.ZipFile(file) as archive:
         for name in archive.namelist():
             if name.lower().endswith(".usfm"):
-                raw = archive.read(name)
-                text = raw.decode("utf-8-sig").replace("\r\n", "\n")
+                text = archive.read(name).decode("utf-8-sig").replace("\r\n", "\n")
                 code = re.search(r"\\id\s+(\S+)", text)[1]
                 if code in result:
                     raise ValueError(f"Duplicate source book: {code}")
-                result[code] = (name, raw, text)
+                result[code] = text
     return result
 
 

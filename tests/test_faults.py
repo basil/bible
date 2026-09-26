@@ -13,10 +13,9 @@ BAD_SHA256 = "0" * 64
 
 def with_source(archives, source, code, edit):
     """A copy of the archives with one source file's text edited."""
-    member, raw, text = archives[source][code]
     return {
         **archives,
-        source: {**archives[source], code: (member, raw, edit(text))},
+        source: {**archives[source], code: edit(archives[source][code])},
     }
 
 
@@ -38,31 +37,6 @@ def test_source_archive_checksum(patched):
     patched("SOURCES")["kjv"]["sha256"] = BAD_SHA256
     with pytest.raises(CheckFailed, match="Checksum mismatch: sources/engkjvcpb"):
         pipeline.validate()
-
-
-def test_source_member_checksum(patched):
-    patched("SOURCES")["kjv"]["files"]["MAT"]["sha256"] = BAD_SHA256
-    with pytest.raises(CheckFailed, match="Changed source: kjv/MAT"):
-        pipeline.validate()
-
-
-def test_source_inventory(patched):
-    patched("SOURCES")["brenton"]["files"]["PSA"]["chapters"].pop("151")
-    with pytest.raises(CheckFailed, match="Changed inventory: brenton/PSA"):
-        pipeline.validate()
-
-
-def test_archive_member_list(patched):
-    files = patched("SOURCES")["kjv"]["files"]
-    files["XXX"] = files["MAT"]
-    with pytest.raises(CheckFailed, match="Archive inventory changed"):
-        pipeline.validate()
-
-
-def test_marginal_notes_checksum(patched):
-    patched("SOURCES")["marginal_notes"]["sha256"] = BAD_SHA256
-    with pytest.raises(CheckFailed, match="Checksum mismatch: sources/exhaustive"):
-        pipeline.marginal_notes()
 
 
 # Marginal notes

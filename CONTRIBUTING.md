@@ -15,7 +15,7 @@ Run `make bootstrap` first. The other targets run with networking turned off and
 
 ```sh
 make sample     # a short PDF of selected chapters, for checking layout quickly
-make validate   # check the source files against their recorded hashes
+make validate   # check the source archives against their recorded hashes
 make test       # run the tests
 make check      # run the tests, then build the full PDF twice and compare every page
 make clean      # delete build/ and dist/
@@ -28,21 +28,20 @@ The sample prints the chapters listed in `config/sample.json`. They were picked 
 ## Where things are
 
 - `sources/`: the Bible texts, the 1611 marginal notes, and the fonts, committed as downloaded. [sources/README.md](sources/README.md) says where each came from.
-- `sources.json`: hashes and a full inventory of the source texts (every chapter, verse, and markup code).
 - `config/edition.json`: which books are printed, in what order, and what they're called and how their headings break into lines.
 - `config/front.sfm`, `config/introduction.sfm`, and the three divider pages (`config/old-testament.sfm`, `config/new-testament.sfm`, `config/appendices.sfm`): the edition's own pages. The dividers' subtitles repeat the title page's wording.
 - `config/marginal-notes.json`: placements and corrections for the 1611 New Testament notes.
 - `config/layout.ini`, `config/ptxprint-mods.sty`, `config/ptxprint-mods.tex`: layout, style, and TeX changes on top of PTXprint's layout for the Berean Standard Bible (BSB).
 - `config/render-witnesses.json`: phrases that must appear in the finished PDF, to catch unusual passages going missing.
 - `Dockerfile`: the tool image, with the pinned PTXprint, usfmtc, and Utopia commits and the hashes of the font archives.
-- `scripts/pipeline.py`: the build.
+- `scripts/pipeline.py`: the build, with the hashes of the Bible texts.
 - `tests/`: the pytest tests and the TeX protrusion test.
 
 ## Checks
 
 The build checks its own work and stops rather than produce a PDF from bad input.
 
-- **First**, it checks the hash of every source file and compares each book against its recorded inventory. Replacing a source is a deliberate step (see below), never something a build does on its own.
+- **First**, it checks the hash of every source archive. Replacing a source is a deliberate step (see below), never something a build does on its own.
 - **While preparing the text**, it compares each book it changes against the original. Apart from the intended changes, every word, punctuation mark, verse, note, and piece of markup must come through intact. PTXprint's own preprocessing is checked the same way.
 - **After typesetting**, it checks the PDF: every page is A5, all fonts are embedded, no glyphs are missing, the contents list every book once with the right page numbers, and each phrase in `config/render-witnesses.json` is there.
 
@@ -101,9 +100,7 @@ When upgrading PTXprint, check that the `\s@tfont` wrapper in `config/ptxprint-m
 
 ## Updating source texts
 
-Replace a source archive only on purpose. Download the new one somewhere else first and compare it with the old one: the copyright notice, the list of books, chapter and verse labels, notes, italics, tables, and appendices. Then commit the new archive together with its updated entry in `sources.json` and the new retrieval date in `sources/README.md`.
-
-Verse labels are stored as written, including forms like `6a`, `1b`, and verse ranges, and the inventory assumes no particular numbering scheme. Review every change to it rather than accepting it wholesale.
+Replace a source archive only on purpose. Download the new one somewhere else first and compare it with the old one: the copyright notice, the list of books, chapter and verse labels, notes, italics, tables, and appendices. Then commit the new archive together with its updated `SOURCES` entry in `scripts/pipeline.py` and the new retrieval date in `sources/README.md`.
 
 ## PTXprint quirks
 
