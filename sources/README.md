@@ -9,6 +9,18 @@ Retrieved 2026-09-23; the original ZIP files are committed without repacking. `s
 
 The standalone notice pages were downloaded on the same retrieval date. They include references to external site assets that are not needed for the build. The original notices inside the ZIPs are covered by the archive hashes. Normal builds read only the snapshots, never the URLs.
 
+## Fonts
+
+The font files are committed as downloaded and pinned by SHA-256 in `dependencies.json`. All three families are licensed under the SIL Open Font License.
+
+| Snapshot                                    | Original URL                                                                                                                           | Version                     |
+| ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- |
+| `GFS_Didot.zip`                             | https://greekfontsociety-gfs.gr/_assets/fonts/GFS_Didot.zip                                                                            |                             |
+| `OTF-source-code-pro-2.042R-u_1.062R-i.zip` | https://github.com/adobe-fonts/source-code-pro/releases/download/2.042R-u/1.062R-i/1.026R-vf/OTF-source-code-pro-2.042R-u_1.062R-i.zip | 2.042 upright, 1.062 italic |
+| `erewhon.zip`                               | https://mirrors.ctan.org/fonts/erewhon.zip                                                                                              | 1.123 (2025-06-08)          |
+
+Source Code Pro and Erewhon were retrieved 2026-09-25. The build uses only the six OTF files in `erewhon.zip`.
+
 ## 1611 KJV marginal notes
 
 [`exhaustive-listing-marginal-notes-1611-edition-king-james-bible.md`](exhaustive-listing-marginal-notes-1611-edition-king-james-bible.md) is a Markdown conversion of Calvin George's ["An exhaustive listing of the marginal notes of the 1611 edition of the King James Bible"](https://en.literaturabautista.com/exhaustive-listing-marginal-notes-1611-edition-king-james-bible) on Literatura Bautista. It transcribes the translators' marginal notes for the Old and New Testaments, including alternative renderings, literal-language glosses, and textual-variant notes. George reports 6,566 Old Testament notes and 775 New Testament notes; he also cites Scrivener's different counts of 6,637 and 767, respectively.

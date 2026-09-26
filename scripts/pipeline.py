@@ -24,6 +24,7 @@ os.chdir(ROOT)
 EDITION = json.loads(Path("config/edition.json").read_text(encoding="utf-8"))
 SOURCES = json.loads(Path("sources.json").read_text(encoding="utf-8"))
 DEPS = json.loads(Path("dependencies.json").read_text(encoding="utf-8"))
+FONT_DEPS = ("gfs_didot", "source_code_pro", "erewhon")
 MARGINAL_NOTES = json.loads(
     Path("config/marginal-notes.json").read_text(encoding="utf-8")
 )
@@ -184,12 +185,12 @@ def capture(*args):
 def validate():
     dockerfile = Path("Dockerfile").read_text(encoding="utf-8")
     require(DEPS["base_image"] in dockerfile, "Dockerfile and dependency lock disagree")
-    greek_font = DEPS["gfs_didot"]
-    greek_font_archive = Path(greek_font["archive"])
-    require(
-        sha256(greek_font_archive.read_bytes()) == greek_font["sha256"],
-        f"Archive checksum mismatch: {greek_font_archive}",
-    )
+    for name in FONT_DEPS:
+        font_archive = Path(DEPS[name]["archive"])
+        require(
+            sha256(font_archive.read_bytes()) == DEPS[name]["sha256"],
+            f"Archive checksum mismatch: {font_archive}",
+        )
     archives = {}
     for name, source in SOURCES.items():
         if "archive" not in source:
@@ -1327,7 +1328,7 @@ def render(mode="pdf", name=None):
         "requirements.txt",
         "dependencies.json",
         "sources.json",
-        DEPS["gfs_didot"]["archive"],
+        *(DEPS[name]["archive"] for name in FONT_DEPS),
     ):
         tracked[input_name] = sha256(Path(input_name).read_bytes())
     fonts = {}

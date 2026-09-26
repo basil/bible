@@ -16,7 +16,6 @@ RUN apt-get update \
         python3-venv \
         python3-wheel \
         qpdf \
-        texlive-fonts-extra \
         texlive-xetex \
         unzip \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -25,6 +24,8 @@ COPY requirements.txt /opt/requirements.txt
 COPY scripts/install-upstream.py /opt/install-upstream.py
 COPY config/ptxprint-allow-otf.patch /opt/ptxprint-allow-otf.patch
 COPY sources/GFS_Didot.zip /opt/GFS_Didot.zip
+COPY sources/OTF-source-code-pro-2.042R-u_1.062R-i.zip /opt/OTF-source-code-pro.zip
+COPY sources/erewhon.zip /opt/erewhon.zip
 RUN python3 /opt/install-upstream.py \
     && mkdir -p /usr/local/share/fonts/adobe \
     && mkdir -p /usr/local/share/fonts/erewhon \
@@ -34,8 +35,9 @@ RUN python3 /opt/install-upstream.py \
     && cp dist/*.otf /usr/local/share/fonts/adobe/ \
     && unzip -j /opt/GFS_Didot.zip 'GFSDidot*.otf' -d /usr/local/share/fonts/gfs/ \
     && chmod 644 /usr/local/share/fonts/gfs/*.otf \
-    && cp /usr/share/texlive/texmf-dist/fonts/opentype/adobe/sourcecodepro/*.otf /usr/local/share/fonts/adobe/ \
-    && cp /usr/share/texlive/texmf-dist/fonts/opentype/public/erewhon/*.otf /usr/local/share/fonts/erewhon/ \
+    && unzip -j /opt/OTF-source-code-pro.zip 'OTF/*.otf' -d /usr/local/share/fonts/adobe/ \
+    && unzip -j /opt/erewhon.zip 'erewhon/opentype/*.otf' -d /usr/local/share/fonts/erewhon/ \
+    && chmod 644 /usr/local/share/fonts/adobe/*.otf /usr/local/share/fonts/erewhon/*.otf \
     && fc-cache -f \
     && fc-list \
     && dpkg-query -W >/opt/os-packages.tsv

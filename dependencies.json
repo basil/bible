@@ -17,5 +17,16 @@
     "url": "https://greekfontsociety-gfs.gr/_assets/fonts/GFS_Didot.zip",
     "archive": "sources/GFS_Didot.zip",
     "sha256": "866855b0296579451c233fc78bec82918996a8df7341ee2f1c09d7bc94440680"
+  },
+  "source_code_pro": {
+    "url": "https://github.com/adobe-fonts/source-code-pro/releases/download/2.042R-u/1.062R-i/1.026R-vf/OTF-source-code-pro-2.042R-u_1.062R-i.zip",
+    "archive": "sources/OTF-source-code-pro-2.042R-u_1.062R-i.zip",
+    "sha256": "754a2e3ebb945ae905d720ac5896b3b34acc9546dd6551ef9536869788629dae"
+  },
+  "erewhon": {
+    "url": "https://mirrors.ctan.org/fonts/erewhon.zip",
+    "version": "1.123",
+    "archive": "sources/erewhon.zip",
+    "sha256": "865ed6e5b4aeda1b5a350a2dc5d4b239f515059812366acc6dcd04c80fd9d942"
   }
 }
