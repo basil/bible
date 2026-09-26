@@ -488,6 +488,13 @@ def validate():
         "\\periph" not in Path("config/introduction.sfm").read_text(encoding="utf-8"),
         "The editor's introduction is a unit, not a front-matter periph",
     )
+    # Preparation curls the sources' quotes; the edition's own text is typed curly.
+    for path in ("config/front.sfm", "config/introduction.sfm"):
+        text = re.sub(r'\|\w+="[^"\n]*"', "", Path(path).read_text(encoding="utf-8"))
+        require(
+            not re.search(r"['\"`]", text),
+            f"Straight quote outside a USFM attribute: {path}",
+        )
     # Explain the overlapping witness without modifying either original file.
     combined_ezra_nehemiah_source = archives["brenton"]["EZR"][2]
     standalone_nehemias_witness = archives["brenton"]["NEH"][2]
@@ -1113,6 +1120,15 @@ def prepare(mode, base, archives):
                         "count": greek_apostrophes,
                     }
                 )
+            text, smartened = typographic_quotes(text)
+            if smartened:
+                transformations.append(
+                    {
+                        "project_id": code,
+                        "operation": "typographic quotes, ellipses and dashes (SmartyPants)",
+                        "count": smartened,
+                    }
+                )
             # Every later edit must leave printable content unchanged, apart from the spacer.
             expected = canonical_text(text).replace("\u200b", "")
             # Keep the source's reference-only note in 1KI 6:1. Upstream deletes it
@@ -1376,6 +1392,54 @@ def canonical_text(text):
     return re.sub(r"\s+", "", text)
 
 
+def typographic_quotes(text):
+    """Straight quotes, ellipses and double hyphens as typographic characters.
+
+    SmartyPants curls each quote from its context. It reads USFM as plain text:
+    it would take <...> for an HTML tag and a backslash before a quote, period,
+    hyphen or backtick for an escape, so neither may occur. Its backtick option
+    also turns every other ' into a closing quote, so the source's few `single'
+    quotes are opened here instead.
+    """
+    import smartypants
+
+    require("<" not in text, "Text looks like HTML to SmartyPants")
+    require(not re.search(r"\\[\\\"'.`-]", text), "Text contains a SmartyPants escape")
+    require("''" not in text and "``" not in text, "Ambiguous doubled quote characters")
+    require(not re.search(r"`(?![A-Za-z])", text), "Backtick is not an opening quote")
+    result = smartypants.smartypants(
+        text.replace("`", "‘"),
+        smartypants.Attr.q
+        | smartypants.Attr.d
+        | smartypants.Attr.e
+        | smartypants.Attr.u,
+    )
+
+    def fold(s):
+        for typographic, plain in {
+            "‘": "'",
+            "’": "'",
+            "`": "'",
+            "“": '"',
+            "”": '"',
+            "…": "...",
+            "—": "--",
+        }.items():
+            s = s.replace(typographic, plain)
+        return s
+
+    require(
+        inventory(result) == inventory(text) and fold(result) == fold(text),
+        "SmartyPants changed more than quotes, ellipses and dashes",
+    )
+    require(
+        not re.search(r"['\"`]|\.\.\.|--", result)
+        and result.count("&#") == text.count("&#"),
+        "SmartyPants left a straight quote or a character reference",
+    )
+    return result, len(re.findall(r"['\"`]|\.\.\.|--", text))
+
+
 def check_processed(project, base):
     records = []
     texfiles = list((project / "local/ptxprint/Bible").glob("*_ptxp.tex"))
@@ -1602,6 +1666,7 @@ def inspect_pdf(pdf, base, sample=False):
     )
     text = capture("pdftotext", "-layout", pdf, "-")
     (base / "text.txt").write_text(text, encoding="utf-8")
+    require(not re.search(r"['\"`]", text), "Straight quote in the rendered PDF text")
     check_note_callers(text)
     check_added_words_roman(pdf)
     require(

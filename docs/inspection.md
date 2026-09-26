@@ -1,6 +1,20 @@
 # Inspection record -- 2026-09-25
 
-This record covers the 2026-09-25 inspection, the subsequent title-heading updates, and the New Testament marginal-note render.
+This record covers the 2026-09-25 inspection, the subsequent title-heading updates, the New Testament marginal-note render, and the typographic-quote render.
+
+## Typographic-quote render
+
+With SmartyPants curling Brenton's straight quotes, the sample, which now includes 1 Kingdoms 14 and Proverbs 21, rendered to 117 A5 pages, and the full Bible stayed at 1637 A5 pages. `make validate`, `make sample`, and `make check` passed. `make check` includes the protrusion check and two full builds with matching text, page counts, and per-page raster hashes. `transformations.json` records 1,323 converted characters in the full build (70 in 1 Kingdoms, 57 in Proverbs) and 54 in the sample. The new PDF check found no straight quotation mark or backtick in the extracted text, and the logs report no missing characters. The unit start pages are unchanged from the marginal-note render: the New Testament divider is still on page 1289, Matthew on 1310, and the appendices on 1623. The Cambridge text and 1611 notes needed no conversion, so the New Testament page references below still hold.
+
+| PDF page | Inspection |
+| --- | --- |
+| 33 | Genesis 6:18 "sons’ wives": plural possessive with a closing ’ |
+| 353 | 1 Kingdoms 2:10 note: ‘and the Lord executes,’ opens and closes correctly |
+| 386 | 1 Kingdoms 25:39 note: the source's unclosed quote opens as ‘that Nabal was dead. |
+| 388 | 1 Kingdoms 27:8 note: U+2026 … renders between the two Hebrew words, in the right-to-left order |
+| 837 | Psalm 93:19 note: curly quotes around readings sit beside the Greek `ἠὺφπαναν` |
+| 916 | Proverbs 21:18 note: the source's backtick quotes print as ‘off-scouring;’ and ‘ransom,’ |
+| Sample 30, 56 | 1 Kingdoms 14:6 `מצב ‘garrison.’` and Proverbs 21:18 in the sample |
 
 ## New Testament marginal-note render
 
