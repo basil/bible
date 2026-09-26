@@ -6,7 +6,7 @@ UIDGID := $(shell id -u):$(shell id -g)
 # compose.override.yaml or COMPOSE_FILE that provenance would not record.
 COMPOSE := docker compose -f compose.yaml
 TOOLCHAIN := $(COMPOSE) run --rm -T --interactive=false --user $(UIDGID) toolchain
-PIPELINE := $(TOOLCHAIN) python3 scripts/pipeline.py
+PIPELINE := $(TOOLCHAIN) python3 -m bible
 .PHONY: bootstrap validate test test-python test-tex test-tex-save sample pdf clean
 bootstrap:
 	$(COMPOSE) build --pull

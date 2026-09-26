@@ -22,21 +22,27 @@ make clean      # delete build/ and dist/
 
 Alongside the PDF, the build writes `dist/bible.provenance.json`, which records the environment that produced it: the OS release, installed packages, Python version, and font hashes. Logs and intermediate files go to `build/`. The most useful of these is `build/pdf/transformations.json` (or `build/sample/…`), which lists every change the build made to the source text.
 
-The sample prints the chapters listed in `pipeline/sample.json`. They were picked to cover the awkward cases, such as Psalm 151, the additions to Esther and Daniel, the Ezra–Nehemiah split, the end of Malachias, quoted Greek and Hebrew, and pages crowded with notes.
+The sample prints the chapters listed in `edition/sample.json`. They were picked to cover the awkward cases, such as Psalm 151, the additions to Esther and Daniel, the Ezra–Nehemiah split, the end of Malachias, quoted Greek and Hebrew, and pages crowded with notes.
 
 ## Where things are
 
 - `sources/`: the Bible texts, the 1611 marginal notes, and the fonts, committed as downloaded. [sources/README.md](sources/README.md) says where each came from.
 - `content/`: the edition's own pages: the title page (`front.sfm`), the introduction, and the three divider pages (`old-testament.sfm`, `new-testament.sfm`, `appendices.sfm`). The dividers' subtitles repeat the title page's wording.
 - `config/`: PTXprint's configuration. `layout.ini`, `ptxprint-mods.sty`, and `ptxprint-mods.tex` hold layout, style, and TeX changes on top of PTXprint's layout for the Berean Standard Bible (BSB), and `changes.txt` holds its text substitutions.
-- `pipeline/`: the build's own settings, which PTXprint never reads:
-  - `edition.json`: which books are printed, in what order, and what they're called and how their headings break into lines.
+- `edition/`: the build's own settings, which PTXprint never reads:
+  - `manifest.json`: which books are printed, in what order, and what they're called and how their headings break into lines.
   - `marginal-notes.json`: placements and corrections for the 1611 New Testament notes.
   - `sample.json`: the chapters the sample prints.
-  - `render-witnesses.json`: phrases that must appear in the finished PDF, to catch unusual passages going missing.
+  - `witnesses.json`: phrases that must appear in the finished PDF, to catch unusual passages going missing.
 - `Dockerfile`: the tool image, with the pinned PTXprint, usfmtc, and Utopia commits and the hashes of the font archives.
-- `scripts/pipeline.py`: the build, with the hashes of the Bible texts.
-- `tests/`: the pytest tests and the TeX protrusion test.
+- `src/bible/`: the build, a Python package run as `python3 -m bible`. It has one module per stage, in the order the build runs them:
+  - `sources.py`: the pinned Bible texts and their hashes; `edition.py`: the manifest; `notes.py`: the 1611 notes. `validate.py` checks them against each other.
+  - `prepare.py` and `typography.py`: each book as the edition prints it, checked against its source.
+  - `project.py`: the PTXprint project; `typeset.py`: running PTXprint in the image that `toolchain.py` checks.
+  - `verify.py`: the checks on PTXprint's output and the PDF; `publish.py`: the copy in `dist/` and its provenance.
+  - `cli.py` chains the stages, and `usfm.py` holds the text helpers they share.
+- `pyproject.toml`: pytest's settings. The Python dependencies are pinned in `requirements.txt`.
+- `tests/`: the pytest tests, named after the modules they test, and the TeX protrusion test.
 
 ## Checks
 
@@ -44,9 +50,9 @@ The build checks its own work and stops rather than produce a PDF from bad input
 
 - **First**, it checks the hash of every source archive. Replacing a source is a deliberate step (see below), never something a build does on its own.
 - **While preparing the text**, it compares each book it changes against the original. Apart from the intended changes, every word, punctuation mark, verse, note, and piece of markup must come through intact. PTXprint's own preprocessing is checked the same way.
-- **After typesetting**, it checks the PDF: every page is A5, all fonts are embedded, no glyphs are missing, the contents list every book once with the right page numbers, and each phrase in `pipeline/render-witnesses.json` is there.
+- **After typesetting**, it checks the PDF: every page is A5, all fonts are embedded, no glyphs are missing, the contents list every book once with the right page numbers, and each phrase in `edition/witnesses.json` is there.
 
-`make test` runs two suites. The pytest suite in `tests/` covers the editorial rules (book order, titles, and headings), the text helpers, and the build's own checks: `tests/test_faults.py` breaks one input at a time and makes sure the build refuses it. It prepares every book but typesets nothing, so it takes seconds. The [l3build](https://ctan.org/pkg/l3build) test in `tests/tex/` compares the protrusion settings (see below) against real microtype.
+`make test` runs two suites. The pytest suite in `tests/` is organized by module: `test_usfm.py` tests `src/bible/usfm.py`, and so on, and `test_config.py` tests `config/`. Besides the editorial rules (book order, titles, and headings) and the text helpers, it tests the build's own checks by breaking one input at a time and making sure the build refuses it. It prepares every book but typesets nothing, so it takes seconds. The [l3build](https://ctan.org/pkg/l3build) test in `tests/tex/` compares the protrusion settings (see below) against real microtype.
 
 To run only some of the tests, pass pytest's options through `PYTEST_ARGS`:
 
@@ -101,7 +107,7 @@ When upgrading PTXprint, check that the `\s@tfont` wrapper in `config/ptxprint-m
 
 ## Updating source texts
 
-Replace a source archive only on purpose. Download the new one somewhere else first and compare it with the old one: the copyright notice, the list of books, chapter and verse labels, notes, italics, tables, and appendices. Then commit the new archive together with its updated `SOURCES` entry in `scripts/pipeline.py` and the new retrieval date in `sources/README.md`.
+Replace a source archive only on purpose. Download the new one somewhere else first and compare it with the old one: the copyright notice, the list of books, chapter and verse labels, notes, italics, tables, and appendices. Then commit the new archive together with its updated `SOURCES` entry in `src/bible/sources.py` and the new retrieval date in `sources/README.md`.
 
 ## PTXprint quirks
 

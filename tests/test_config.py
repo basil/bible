@@ -3,15 +3,15 @@
 from collections import defaultdict
 import configparser
 import io
-from pathlib import Path
 
 from ptxprint.modelmap import ModelMap
 from ptxprint.usxutils import merge_sty, simple_parse
 
-import pipeline
+from bible import paths
+from bible.project import bsb_baseline
 
-LAYOUT = Path("config/layout.ini")
-STYLE_MODS = Path("config/ptxprint-mods.sty")
+LAYOUT = paths.CONFIG_DIR / "layout.ini"
+STYLE_MODS = paths.CONFIG_DIR / "ptxprint-mods.sty"
 
 
 def read_cfg(text):
@@ -43,7 +43,7 @@ def normalized(key, value):
 
 
 def test_layout_overrides_only_non_default_values():
-    baseline = read_cfg(pipeline.bsb_baseline()[0])
+    baseline = read_cfg(bsb_baseline()[0])
     repeated = [
         f"{key} = {value}"
         for key, value in overlay_values().items()
@@ -81,12 +81,12 @@ def style_value(value):
 
 def test_style_mods_override_only_non_default_fields():
     # The order template.tex loads them in; BSB leaves custom.sty off.
-    src = pipeline.UPSTREAM / "src"
+    src = paths.UPSTREAM / "src"
     with (src / "usfm_sb.sty").open(encoding="utf-8") as f:
         base = simple_parse(f)
     with (src / "ptx2pdf.sty").open(encoding="utf-8") as f:
         merge_sty(base, simple_parse(f))
-    merge_sty(base, simple_parse(io.StringIO(pipeline.bsb_baseline()[1])))
+    merge_sty(base, simple_parse(io.StringIO(bsb_baseline()[1])))
     with STYLE_MODS.open(encoding="utf-8") as f:
         mods = simple_parse(f)
     repeated = [

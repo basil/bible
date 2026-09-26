@@ -10,5 +10,7 @@ services:
     network_mode: none
     environment:
       HOME: /tmp/home
+      # The build runs from the checkout: python3 -m bible.
+      PYTHONPATH: /work/src
     volumes:
       - .:/work:Z

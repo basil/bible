@@ -1,23 +1,22 @@
 """The edition's editorial policy: selection, order, titles, and headings."""
 
 from collections import Counter
-from pathlib import Path
 import re
 
 import pytest
 
-import pipeline
-from pipeline import (
-    EDITION,
+from bible import edition, paths
+from bible.checks import CheckFailed
+from bible.edition import MANIFEST, scripture_unit, source_id, source_usfm
+from bible.usfm import (
+    HEADING_MARKERS,
     canonical_text,
-    scripture_unit,
-    source_id,
+    inventory,
+    marker_lines,
     source_marker,
-    source_usfm,
 )
-from source_inventory import inventory
 
-UNITS = EDITION["scripture"]
+UNITS = MANIFEST["scripture"]
 BRENTON_UNITS = [u for u in UNITS if u["source"] == "brenton"]
 IDS = [u["id"] for u in UNITS]
 
@@ -95,13 +94,13 @@ SAINT_HEADINGS = {
 BRENTON_NON_SCRIPTURE = {
     source_id(e)
     for key in ("old_testament_front", "appendices")
-    for e in EDITION[key]
+    for e in MANIFEST[key]
     if e["source"] == "brenton"
-} | set(EDITION["excluded"]["brenton"])
+} | set(MANIFEST["excluded"]["brenton"])
 
 
 def printed_heading(text):
-    return pipeline.marker_lines(text, pipeline.HEADING_MARKERS)
+    return marker_lines(text, HEADING_MARKERS)
 
 
 # Selection and order
@@ -123,7 +122,7 @@ def test_no_separate_units_for_grouped_sources():
 
 
 def test_every_brenton_scripture_source_is_printed_once(archives):
-    source_use = pipeline.brenton_source_use()
+    source_use = edition.brenton_source_use()
     assert set(source_use) == set(archives["brenton"]) - BRENTON_NON_SCRIPTURE
     # The combined Ezra-Nehemiah file supplies both 2 Esdras and Nehemias.
     counts = Counter(source_use)
@@ -131,7 +130,7 @@ def test_every_brenton_scripture_source_is_printed_once(archives):
 
 
 def selected(key):
-    return [(e["source"], source_id(e)) for e in EDITION[key]]
+    return [(e["source"], source_id(e)) for e in MANIFEST[key]]
 
 
 def test_old_testament_front_matter():
@@ -157,7 +156,7 @@ def test_appendices():
 
 @pytest.fixture(scope="module")
 def ordered_ids():
-    return [e["id"] for e in pipeline.ordered_entries()]
+    return [e["id"] for e in edition.ordered_entries()]
 
 
 def run_of(ordered_ids, *codes):
@@ -177,6 +176,12 @@ def test_old_testament_front_matter_follows_its_divider(ordered_ids):
 def test_new_testament_front_matter_follows_its_divider(ordered_ids):
     codes = ("DAG", "XXG", "TDX", "NDX", "MAT")
     assert run_of(ordered_ids, *codes) == list(codes)
+
+
+def test_scripture_unit_outside_both_testaments(patched):
+    patched(edition, "MANIFEST")["scripture"][0]["section"] = "old_testment"
+    with pytest.raises(CheckFailed, match=r"outside both testaments: \['GEN'\]"):
+        edition.ordered_entries()
 
 
 def test_appendices_close_the_book(ordered_ids):
@@ -226,7 +231,7 @@ def test_brenton_title(archives, unit):
 @pytest.mark.parametrize("unit", UNITS, ids=lambda u: u["id"])
 def test_book_name_markers(archives, scripture, unit):
     text = scripture[unit["id"]]
-    names = pipeline.resolved_book_names(unit, source_usfm(unit, archives))
+    names = edition.resolved_book_names(unit, source_usfm(unit, archives))
     assert source_marker(text, "toc1") == names["title"]
     assert (
         source_marker(text, "h") == source_marker(text, "toc2") == names["short_title"]
@@ -236,15 +241,15 @@ def test_book_name_markers(archives, scripture, unit):
 
 @pytest.mark.parametrize("unit", UNITS, ids=lambda u: u["id"])
 def test_printed_titles_have_no_period(scripture, unit):
-    markers = ("h", "toc1", *pipeline.HEADING_MARKERS)
-    lines = pipeline.marker_lines(scripture[unit["id"]], markers)
+    markers = ("h", "toc1", *HEADING_MARKERS)
+    lines = marker_lines(scripture[unit["id"]], markers)
     assert not [value for _, value in lines if "." in value]
 
 
 @pytest.mark.parametrize("unit", UNITS, ids=lambda u: u["id"])
 def test_heading_follows_the_manifest(archives, scripture, unit):
-    names = pipeline.resolved_book_names(unit, source_usfm(unit, archives))
-    assert printed_heading(scripture[unit["id"]]) == pipeline.heading_lines(unit, names)
+    names = edition.resolved_book_names(unit, source_usfm(unit, archives))
+    assert printed_heading(scripture[unit["id"]]) == edition.heading_lines(unit, names)
 
 
 @pytest.mark.parametrize("code", PAULINE_EPISTLES)
@@ -285,25 +290,25 @@ def test_saint_headings(scripture, code, marker, expected):
 
 @pytest.mark.parametrize("unit", UNITS, ids=lambda u: u["id"])
 def test_book_names_xml(archives, book_names, unit):
-    assert book_names[unit["id"]] == pipeline.resolved_book_names(
+    assert book_names[unit["id"]] == edition.resolved_book_names(
         unit, source_usfm(unit, archives)
     )
 
 
 @pytest.mark.parametrize(
     "entry",
-    [e for e in pipeline.ordered_entries() if "title" in e],
+    [e for e in edition.ordered_entries() if "title" in e],
     ids=lambda e: e["id"],
 )
 def test_book_names_xml_follows_the_manifest(book_names, entry):
     names = book_names[entry["id"]]
-    for field in pipeline.BOOK_NAME_MARKERS:
+    for field in edition.BOOK_NAME_MARKERS:
         if field in entry:
             assert names[field] == entry[field]
 
 
 def test_jeremias_table_titles(book_names):
-    table = next(e for e in EDITION["appendices"] if e["id"] == "XXA")
+    table = next(e for e in MANIFEST["appendices"] if e["id"] == "XXA")
     title = "Table of Chapters and Verses in " + book_names["JER"]["short_title"]
     assert table["title"] == table["short_title"] == title
     assert book_names["XXA"]["title"] == book_names["XXA"]["short_title"] == title
@@ -320,17 +325,97 @@ def test_esdras_and_nehemias_never_share_names(book_names):
 
 
 def test_no_apocrypha_divider():
-    assert "THE APOCRYPHA" not in Path("content/front.sfm").read_text(encoding="utf-8")
+    front = (paths.CONTENT_DIR / "front.sfm").read_text(encoding="utf-8")
+    assert "THE APOCRYPHA" not in front
 
 
 def test_editors_introduction_is_a_unit():
     # A unit, so that it follows the contents page and is listed in it.
-    text = Path("content/introduction.sfm").read_text(encoding="utf-8")
+    text = (paths.CONTENT_DIR / "introduction.sfm").read_text(encoding="utf-8")
     assert "\\periph" not in text
 
 
-@pytest.mark.parametrize("path", sorted(map(str, Path("content").glob("*.sfm"))))
+@pytest.mark.parametrize(
+    "path", sorted(paths.CONTENT_DIR.glob("*.sfm")), ids=lambda p: p.name
+)
 def test_edition_text_is_typed_with_curly_quotes(path):
     # Preparation curls the sources' quotes; the edition's own text is typed curly.
-    text = re.sub(r'\|\w+="[^"\n]*"', "", Path(path).read_text(encoding="utf-8"))
+    text = re.sub(r'\|\w+="[^"\n]*"', "", path.read_text(encoding="utf-8"))
     assert not re.findall(r"[^\n]*['\"`][^\n]*", text)
+
+
+# Title and heading helpers
+
+
+@pytest.mark.parametrize(
+    "value, marker, expected",
+    [
+        (
+            "The Gospel according to S. John.",
+            "toc1",
+            "The Gospel according to Saint John",
+        ),
+        ("S. JOHN", "mt1", "SAINT JOHN"),
+        ("The Epistle of JAS.", "h", "The Epistle of JAS"),
+        ("Acts", "h", "Acts"),
+    ],
+)
+def test_normalize_printed_title(value, marker, expected):
+    assert edition.normalize_printed_title(value, marker) == expected
+
+
+def test_normalize_title_lines_touches_only_the_first_of_each_marker():
+    text = "\\h S. John.\n\\mt1 S. JOHN.\n\\p\n\\h S. Paul.\n"
+    assert (
+        edition.normalize_title_lines(text, ("h", "mt1"))
+        == "\\h Saint John\n\\mt1 SAINT JOHN\n\\p\n\\h S. Paul.\n"
+    )
+
+
+BRENTON = {"id": "GEN", "source": "brenton"}
+NAMES = {"title": "The First Book of Moses, Called Genesis"}
+
+
+def test_heading_lines_default_to_one_main_line():
+    assert edition.heading_lines(BRENTON, NAMES) == [
+        ("mt1", "THE FIRST BOOK OF MOSES, CALLED GENESIS")
+    ]
+
+
+def test_heading_lines_follow_the_manifest():
+    entry = {
+        **BRENTON,
+        "heading": [
+            ["mt2", "The First Book of Moses,"],
+            ["mt3", "Called"],
+            ["mt1", "Genesis"],
+        ],
+    }
+    assert edition.heading_lines(entry, NAMES) == [
+        ("mt2", "THE FIRST BOOK OF MOSES,"),
+        ("mt3", "CALLED"),
+        ("mt1", "GENESIS"),
+    ]
+
+
+@pytest.mark.parametrize(
+    "heading",
+    [
+        [["mt2", "The First Book of Moses, Called Genesis"]],
+        [["mt1", "The First Book of Moses,"], ["mt1", "Called Genesis"]],
+        [["mt4", "The First Book of Moses,"], ["mt1", "Called Genesis"]],
+        [["mt2", "The First Book of Moses, "], ["mt1", "Called Genesis"]],
+        [["mt2", ""], ["mt1", "The First Book of Moses, Called Genesis"]],
+        [["mt1", "The First Book of Moses, Called Genesis", "extra"]],
+        "The First Book of Moses, Called Genesis",
+    ],
+)
+def test_invalid_heading_layouts(heading):
+    with pytest.raises(CheckFailed, match="Invalid heading: GEN"):
+        edition.heading_lines({**BRENTON, "heading": heading}, NAMES)
+
+
+def test_heading_lines_must_spell_the_title():
+    entry = {**BRENTON, "heading": [["mt2", "The Book of"], ["mt1", "Genesis"]]}
+    with pytest.raises(CheckFailed, match="do not spell the contents title"):
+        edition.heading_lines(entry, NAMES)

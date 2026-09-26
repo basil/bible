@@ -1,6 +1,9 @@
+# The build runs from the checkout, as `python3 -m bible` with src/ on the path
+# (compose.yaml sets PYTHONPATH), so it is never installed and has no [project]
+# table. Its dependencies, and PTXprint's, are pinned in requirements.txt.
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["scripts"]
+pythonpath = ["src"]
 # Keep pytest's cache with the other generated files, out of the working tree.
 cache_dir = "build/pytest-cache"
 # The venv sees Ubuntu's system site-packages; load no plugins from there.
