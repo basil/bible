@@ -1317,16 +1317,26 @@ def check_note_callers(text):
         require(not clashes, f"Note callers reused on PDF page {number}: {clashes}")
 
 
-def check_added_words_roman(pdf, reading_text):
+def check_added_words_roman(pdf, reading_text, project, ids, sample):
     # Malachias 4:2 has "\\add shall be\\add* in his wings". Check the added
     # words against their roman neighbours; "healing" may break as "heal- / ing".
+    # Like the render witnesses, only the sample may leave the verse out.
+    malachias = project_usfm(project, "MAL")
+    if (
+        "MAL" not in ids
+        or "4" not in inventory(malachias.read_text(encoding="utf-8"))["chapters"]
+    ):
+        require(sample, "Added-word witness Malachias 4:2 is not in the build")
+        return
     words = ["shall", "be", "in", "his", "wings"]
     pages = [
         number
         for number, page in enumerate(reading_text.split("\f"), 1)
         if " ".join(words) in " ".join(page.split())
     ]
-    require(len(pages) == 1, f"Added-word witness not found once: {pages}")
+    require(
+        len(pages) == 1, f"Added-word witness Malachias 4:2 not found once: {pages}"
+    )
     root = ET.fromstring(
         capture(
             "pdftohtml", "-xml", "-i", "-stdout", "-f", pages[0], "-l", pages[0], pdf
@@ -1389,7 +1399,7 @@ def inspect_pdf(pdf, base, project, ids, sample):
     # order for wording witnesses; keep the layout extraction above for pages.
     reading_text = capture("pdftotext", "-raw", pdf, "-")
     (base / "reading.txt").write_text(reading_text, encoding="utf-8")
-    check_added_words_roman(pdf, reading_text)
+    check_added_words_roman(pdf, reading_text, project, ids, sample)
     require(
         "Berean Standard Bible" not in text and "CC BY-NC-ND" not in text,
         "Inherited BSB publication text remains",

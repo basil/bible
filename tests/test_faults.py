@@ -256,3 +256,23 @@ def test_processed_output_dropped_style(processed):
 def test_processed_output_relabelled_verse(processed):
     with pytest.raises(CheckFailed, match="PTXprint changed chapter/verse labels: GEN"):
         processed(SOURCE_USFM.replace("\\v 1 ", "\\v 2 "))
+
+
+# Rendered PDF
+
+
+def test_added_words_witness_may_be_left_out_of_the_sample(tmp_path):
+    pipeline.check_added_words_roman(None, "", tmp_path, ["GEN"], True)
+
+
+def test_added_words_witness_must_be_in_the_full_bible(tmp_path):
+    with pytest.raises(CheckFailed, match="Malachias 4:2 is not in the build"):
+        pipeline.check_added_words_roman(None, "", tmp_path, ["GEN"], False)
+
+
+def test_added_words_witness_chapter_must_be_in_the_full_bible(tmp_path):
+    pipeline.project_usfm(tmp_path, "MAL").write_text(
+        "\\id MAL\n\\c 3\n\\p\n\\v 1 A.\n", encoding="utf-8"
+    )
+    with pytest.raises(CheckFailed, match="Malachias 4:2 is not in the build"):
+        pipeline.check_added_words_roman(None, "", tmp_path, ["MAL"], False)
