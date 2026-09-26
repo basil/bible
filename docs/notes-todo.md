@@ -1,6 +1,6 @@
 # Notes: open questions
 
-Left over from the footnote reviews of September 2026. Each item needs a decision, or a check against Brenton's 1851 printing or a 1611 facsimile, before anything changes. Nothing here is fixed yet.
+Left over from the footnote reviews of September 2026. Each remaining item needs a decision, or a check against Brenton's printing or a 1611 facsimile, before anything changes.
 
 ## Decisions on the rules
 
@@ -9,13 +9,12 @@ Left over from the footnote reviews of September 2026. Each item needs a decisio
 3. **Notes on "the words in italics".** 2 Kgdms 17:8, 21:11, 1 Kgdms 17:43 and 3 Kgdms 14:26#2 refer to words Brenton set in italics; this edition prints them in square brackets. Either print the bracketed words in italic, or accept it.
 4. **Unlabelled paraphrases.** 1 Cor 14:27 "by two or three sentences separately" has no label and prints roman, though it substitutes cleanly. Probably leave it.
 5. **Long passages.** Hag 2:14 ("Not in Hebrew.") and 2 Kgdms 21:11 are about a whole bracketed passage, but their lemmas cover only its first clause. Decide whether lemmas that long are acceptable.
-6. **The Hebrew in the notes.** eBible confuses similar letters throughout (ב/כ, ם/ס, צ/ע, ט/ס, ת/ה, ת/ח, ד/ר, ג/ו, ז/ו, נ/כ), e.g. Judg 2:1 ככיס for בכים, 13:12 משפס for משפט, 1 Kgdms 14:41 חמיס for תמים, 19:13 כבר for כבד, 4 Kgdms 23:5 הבמויס for הכמרים. Others: Num 16:15 (חמד for חמור), 18:11; Deut 33:2; Judg 2:18, 4:7; 1 Kgdms 13:3, 14:26, 14:40, 15:8, 20:12, 23:15, 27:8, 29:3; 2 Kgdms 1:19, 2:23; 3 Kgdms 5:25, 14:28, 16:28e, 21:10; 4 Kgdms 2:14, 12:16, 14:7, 15:5, 15:10, 23:5#3; Isa 51:3. This needs one pass against the printed book, not note-by-note corrections.
-7. **A rule for additions.** "Alex. + '…'" sets no rendering while "Alex. adds '…'" does, so the rules place the two differently, and about 25 overrides now put an addition's lemma on the words it follows. A rule in `inferred_lemma` for notes that add words (the clause before the mark, or its last four words if it runs past nine; the current rule at the start of a verse) gets 35 of the 41 additions right and would retire about 23 overrides. 1 Kgdms 12:13, 3 Kgdms 3:20, Prov 9:6, Gen 1:11#2, Isa 63:19 and 2 Kgdms 6:3 would still need theirs.
-8. **"or" inside one rendering.** The rules split "_X_ or _Y_" into two italic runs, which is wrong when the "or" belongs to a single rendering. Overrides join Exod 21:28, Num 1:52, 1 Kgdms 20:6, Ps 25:12, 32:4, 50:21 and Acts 25:6. Still split: Exod 14:15 "_harness_ or _yoke the horses again_", 2 Cor 4:8 "_altogether without help_ or _means_" (the 1611 has a comma before "or"), and 1 Kgdms 30:12 "_staid_ or _established in him_". Zech 9:13 italicizes only "_it with_" of the rendering "it with Ephraim", following eBible.
-9. **Brenton's italics for emphasis or citation.** Gen 30:41 ("_from any cause_", "_then_") and 2 Kgdms 5:20#2 ("_Underskiddaw_, _Unterseen_") keep italics that aren't renderings. Decide whether cited words stay italic.
-10. **Abbreviations without a full stop.** "chap 5. 25", "ver 16", "ch 1. 14", "Ps 103. 14", "Gen 7. 11", "See v 8." and the like occur about as often as the stopped forms: Judg 21:4; 1 Kgdms 15:3; Ps 146:8; Prov 1:15, 11:13, 20:27, 27:20a; Joel 2:15, 4:18; Mal 3:10; Isa 2:19, 14:16, 23:11, 45:16, 57:21, with Ps 90:6 and Prov 4:11 below. Check which way Brenton printed them, and correct all or none.
-11. **Two colons.** A lemma that keeps the verse's own colon prints two: "that believed: for there: or, …" (Luke 1:45; also Luke 4:41 and Rev 14:13).
-12. **Prov 30:1** is an empty verse carrying eBible's remark "See chapter 24 for the content of chapter 30.", which prints as if it were Brenton's note. Chapter 31 starts at verse 10 with no remark. Keep the remark as an editorial note, or say where both passages are some other way.
+6. **A rule for additions.** "Alex. + '…'" sets no rendering while "Alex. adds '…'" does, so the rules place the two differently, and about 25 overrides now put an addition's lemma on the words it follows. A rule in `inferred_lemma` for notes that add words (the clause before the mark, or its last four words if it runs past nine; the current rule at the start of a verse) gets 35 of the 41 additions right and would retire about 23 overrides. 1 Kgdms 12:13, 3 Kgdms 3:20, Prov 9:6, Gen 1:11#2, Isa 63:19 and 2 Kgdms 6:3 would still need theirs.
+7. **"or" inside one rendering.** The rules split "_X_ or _Y_" into two italic runs, which is wrong when the "or" belongs to a single rendering. Overrides join Exod 21:28, Num 1:52, 1 Kgdms 20:6, Ps 25:12, 32:4, 50:21 and Acts 25:6. Still split: Exod 14:15 "_harness_ or _yoke the horses again_", 2 Cor 4:8 "_altogether without help_ or _means_" (the 1611 has a comma before "or"), and 1 Kgdms 30:12 "_staid_ or _established in him_". Zech 9:13 italicizes only "_it with_" of the rendering "it with Ephraim", following eBible.
+8. **Brenton's italics for emphasis or citation.** Gen 30:41 ("_from any cause_", "_then_") and 2 Kgdms 5:20#2 ("_Underskiddaw_, _Unterseen_") keep italics that aren't renderings. Decide whether cited words stay italic.
+9. **Abbreviations without a full stop.** "chap 5. 25", "ver 16", "ch 1. 14", "Ps 103. 14", "Gen 7. 11", "See v 8." and the like occur about as often as the stopped forms: Judg 21:4; 1 Kgdms 15:3; Ps 146:8; Prov 1:15, 11:13, 20:27, 27:20a; Joel 2:15, 4:18; Mal 3:10; Isa 2:19, 14:16, 23:11, 45:16, 57:21, with Ps 90:6 and Prov 4:11 below. Check which way Brenton printed them, and correct all or none.
+10. **Two colons.** A lemma that keeps the verse's own colon prints two: "that believed: for there: or, …" (Luke 1:45; also Luke 4:41 and Rev 14:13).
+11. **Prov 30:1** is an empty verse carrying eBible's remark "See chapter 24 for the content of chapter 30.", which prints as if it were Brenton's note. Chapter 31 starts at verse 10 with no remark. Keep the remark as an editorial note, or say where both passages are some other way.
 
 ## References that look wrong
 
@@ -93,9 +92,9 @@ Could be Brenton's own; check the printing.
 - Ps 49:18 "1 Pe" for "1 Pet."; Ps 90:6 "ver 3" for "ver. 3"
 - Gen 41:51 "things belong to my father" for "belonging"; Josh 10:34 "vigourously"; 1 Kgdms 13:21 "interpretors"; 21:8 "repitition"; 4 Kgdms 4:39 "colosynth" for "colocynth"; 24:10 "seige" (a transposition, which no correction category allows); 24:17 "Mattanaiah" for "Mattaniah"
 - 1 Kgdms 6:8 begins lowercase, "in the Alex."; Zech 12:2 "porches or, door-posts" lacks the comma before "or"
-- Greek: Prov 8:5 ἄκατος for ἄκακος, Isa 59:7 ὐφρόνων for ἀφρόνων, Ps 93:19 ἠὺφπαναν for ηὔφραναν, Num 1:18 ἐπαξοοῦν, Judg 18:7 θησανροὺς, 13:19 θανμαστὰ
-- More Greek: Gen 6:7 ἐθμώθην for ἐθυμώθην, Exod 19:22 ἀπαλλατέω, Judg 9:27 χορὺς, 9:37 ὐπὸ for ἀπὸ, 13:5 Ναζίραῖον, 2 Kgdms 1:19 τεθηκότων and τραυματτιῶν, 15:12 σὺστρεμμα, 3 Kgdms 5:18 ἀπαντήμα, 18:21 γόνν for γόνυ, 4 Kgdms 3:21 ἐπάνα for ἐπάνω, 8:28 ἀλλοφύλοι, 17:21 ἀπ᾿οἴκου (no space), 19:30 οἴκον for οἴκου, Joel 4:4 ἀλλοφυλων. Gen 3:15 τειρήσει is probably Brenton's own spelling.
-- 1 Kgdms 17:8 "עברי being read as if עברי": the first should be עבדי
+- Hebrew that eBible misread and no correction mends yet: 1 Kgdms 17:52 שעריס, 21:3 מקוצ and פלכי אלמבי, 2 Kgdms 5:23 בכאיס, Judg 9:6 מעכ, 9:37 מעס, 17:10 ימיס, 18:7 מבליס; Isa 51:3 שוב
+- Greek: Num 1:18 ἐπαξοοῦν, Exod 19:22 ἀπαλλατέω. Gen 3:15 τειρήσει is probably Brenton's own spelling.
+- The maqaf in 4 Kgdms 2:14 still needs checking against the printing; eBible has a space.
 - Gen 15:11: no closing full stop
 - Gal 5:16 (1611) "fulfill" where the text has "fulfil"
 - 1611, to check against a facsimile: John 18:28 "Pilats house", Titus 2:9 "gain saying" (one word?), Rev 6:6 "The word choenix, signifieth", 2 Pet 2:11 lowercase "some read"

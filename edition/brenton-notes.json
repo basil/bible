@@ -15,7 +15,7 @@
       "to": "\\ft he \\fl or",
       "why": "the word space before or is missing"
     },
-    "1KI 6:1": {
+    "1KI 6:1#2": {
       "from": "\\f + \\fr 6:1 \\f*",
       "to": "",
       "why": "an empty note: eBible's text has a reference and no note"
@@ -35,7 +35,7 @@
       "to": "\\fqa Hebraism. \\ft See",
       "why": "the full stop after Hebraism is missing"
     },
-    "JDG 9:33": {
+    "JDG 9:33#2": {
       "from": "whatsoever they hand",
       "to": "whatsoever thy hand",
       "why": "they is a slip for thy"
@@ -45,11 +45,23 @@
       "to": "'that Nabal was dead.'\\f*",
       "why": "the closing quotation mark is missing"
     },
-    "1SA 27:8": {
-      "from": "\\ft Th LXX",
-      "to": "\\ft The LXX",
-      "why": "The is misspelled"
-    },
+    "1SA 27:8": [
+      {
+        "from": "\\ft Th LXX",
+        "to": "\\ft The LXX",
+        "why": "The is misspelled"
+      },
+      {
+        "from": "מעולס",
+        "to": "מעולם",
+        "why": "the printed Hebrew is מעולם"
+      },
+      {
+        "from": "שוה",
+        "to": "שור",
+        "why": "the printed Hebrew is שור, Shur"
+      }
+    ],
     "2SA 17:8": {
       "from": "omit the wods",
       "to": "omit the words",
@@ -121,6 +133,268 @@
       "from": "\\ft ancient \\fqa Or,",
       "to": "\\ft ancient. \\fqa Or,",
       "why": "the full stop after ancient is missing"
+    },
+    "NUM 16:15": {
+      "from": "חפד for חפור",
+      "to": "חמד for חמור",
+      "why": "the printed Hebrew reads חמד for חמור",
+      "uncategorized": true
+    },
+    "NUM 18:11": {
+      "from": "חנפה",
+      "to": "תנופה",
+      "why": "the printed Hebrew is תנופה, wave-offering",
+      "uncategorized": true
+    },
+    "DEU 33:2": {
+      "from": "קרש",
+      "to": "קדש",
+      "why": "the printed Hebrew reads קדש, saints"
+    },
+    "JDG 2:1": {
+      "from": "ככיס",
+      "to": "בכים",
+      "why": "the printed Hebrew is בכים",
+      "uncategorized": true
+    },
+    "JDG 2:18": {
+      "from": "כהס",
+      "to": "נחם",
+      "why": "the Hebrew for repented, which παρεκλήθη renders, is נחם; eBible has כ for נ, ה for ח and ס for ם",
+      "uncategorized": true
+    },
+    "JDG 4:7": {
+      "from": "אה",
+      "to": "את",
+      "why": "the printed Hebrew is את"
+    },
+    "JDG 13:12": {
+      "from": "משפס",
+      "to": "משפט",
+      "why": "the printed Hebrew is משפט"
+    },
+    "1SA 13:3": {
+      "from": "העכיס as if העכריס",
+      "to": "העברים as if העבדים",
+      "why": "the LXX's servants, δοῦλοι, read the Hebrews, העברים, as if העבדים; eBible has כ for ב, ר for ד and ס for ם",
+      "uncategorized": true
+    },
+    "1SA 14:26": {
+      "from": "הלך רבש",
+      "to": "הלך דבש",
+      "why": "the printed Hebrew reads הלך דבש"
+    },
+    "1SA 14:40": {
+      "from": "לעבר as if לעבב",
+      "to": "לעבר as if לעבד",
+      "why": "the printed note reads לעבר as if לעבד"
+    },
+    "1SA 14:41": {
+      "from": "חמיס",
+      "to": "תמים",
+      "why": "the printed Hebrew is תמים",
+      "uncategorized": true
+    },
+    "1SA 15:8": {
+      "from": "החריס",
+      "to": "החרים",
+      "why": "the printed Hebrew is החרים"
+    },
+    "1SA 17:8": {
+      "from": "עברי being read as if עברי",
+      "to": "עבדי being read as if עברי",
+      "why": "the printed note reads עבדי being read as if עברי"
+    },
+    "1SA 20:12": {
+      "from": "השליח",
+      "to": "השלשית",
+      "why": "the printed Hebrew is השלשית, the third day",
+      "uncategorized": true
+    },
+    "1SA 23:15": {
+      "from": "הוש has here been read as if חוש",
+      "to": "חרש has here been read as if חדש",
+      "why": "the printed Hebrew reads חרש as if חדש",
+      "uncategorized": true
+    },
+    "2SA 1:19": {
+      "from": "כיצב",
+      "to": "נצב",
+      "why": "the printing reads נצב, without a yod; the LXX's Set up a pillar takes הצבי as from this root",
+      "uncategorized": true
+    },
+    "2SA 1:19#2": [
+      {
+        "from": "τεθηκότων",
+        "to": "τεθνηκότων",
+        "why": "the printed Greek reads τεθνηκότων"
+      },
+      {
+        "from": "τραυματτιῶν",
+        "to": "τραυματιῶν",
+        "why": "the printed Greek reads τραυματιῶν"
+      }
+    ],
+    "2SA 2:23": {
+      "from": "חחחו",
+      "to": "תחתו",
+      "why": "the printed Hebrew is תחתו",
+      "uncategorized": true
+    },
+    "1KI 5:25": {
+      "from": "מכרח",
+      "to": "מכלת",
+      "why": "the printed Hebrew is מכלת before the Latin cibus",
+      "uncategorized": true
+    },
+    "1KI 14:28": {
+      "from": "חא",
+      "to": "תא",
+      "why": "the Greek θεε retains the Hebrew תא, chamber; eBible has ח for ת"
+    },
+    "1KI 16:28e": {
+      "from": "כצב",
+      "to": "נצב",
+      "why": "the printed Hebrew is נצב, prefect"
+    },
+    "1KI 21:10": {
+      "from": "שועליס for שעליס",
+      "to": "שועלים for שעלים",
+      "why": "the printed Hebrew reads שועלים for שעלים",
+      "uncategorized": true
+    },
+    "2KI 2:14": {
+      "from": "אח הו",
+      "to": "אף־הוא",
+      "why": "the printed Hebrew is אף־הוא",
+      "uncategorized": true
+    },
+    "2KI 12:16": {
+      "from": "באמכה הס",
+      "to": "באמנה הם",
+      "why": "the Hebrew for they acted faithfully is באמנה הם; eBible has כ for נ and ס for ם",
+      "uncategorized": true
+    },
+    "2KI 14:7": {
+      "from": "בוי מלח",
+      "to": "בגי־מלח",
+      "why": "the printed Keri is בגי־מלח",
+      "uncategorized": true
+    },
+    "2KI 15:10": {
+      "from": "קבלעס",
+      "to": "קבלעם",
+      "why": "the printed note prints קבלעם as one word"
+    },
+    "2KI 23:5": {
+      "from": "הבמויס",
+      "to": "הכמרים",
+      "why": "the printed Hebrew is הכמרים",
+      "uncategorized": true
+    },
+    "1SA 19:13#2": {
+      "from": "כבר liver",
+      "to": "כבד liver",
+      "why": "the printed Hebrew is כבד, liver"
+    },
+    "2KI 15:5#3": {
+      "from": "החפשיח",
+      "to": "החפשית",
+      "why": "the printed Hebrew is החפשית"
+    },
+    "2KI 23:5#3": {
+      "from": "ולמולות",
+      "to": "ולמזלות",
+      "why": "the printed Hebrew is ולמזלות"
+    },
+    "1SA 29:3": {
+      "from": "word עכר is here translated",
+      "to": "word עבר is here translated",
+      "why": "the printed Hebrew reads עבר"
+    },
+    "GEN 6:7": {
+      "from": "ἐθμώθην",
+      "to": "ἐθυμώθην",
+      "why": "the printed Greek reads ἐθυμώθην"
+    },
+    "JDG 9:27#2": {
+      "from": "χορὺς",
+      "to": "χοροὺς",
+      "why": "the printed Greek reads χοροὺς"
+    },
+    "JDG 9:37": {
+      "from": "ὐπὸ",
+      "to": "ἀπὸ",
+      "why": "the printed Greek reads ἀπὸ"
+    },
+    "JDG 13:5#2": {
+      "from": "Ναζίραῖον",
+      "to": "Ναζειραῖον",
+      "why": "the printed note reads Ναζειραῖον",
+      "uncategorized": true
+    },
+    "JDG 13:19": {
+      "from": "θανμαστὰ",
+      "to": "θαυμαστὰ",
+      "why": "the printed Greek reads θαυμαστὰ"
+    },
+    "JDG 18:7": {
+      "from": "θησανροὺς",
+      "to": "θησαυροὺς",
+      "why": "the printed Greek reads θησαυροὺς"
+    },
+    "2SA 15:12": {
+      "from": "σὺστρεμμα",
+      "to": "σύστρεμμα",
+      "why": "the printed Greek reads σύστρεμμα"
+    },
+    "1KI 5:18": {
+      "from": "ἀπαντήμα",
+      "to": "ἀπάντημα",
+      "why": "the printed Greek reads ἀπάντημα",
+      "uncategorized": true
+    },
+    "1KI 18:21": {
+      "from": "γόνν",
+      "to": "γόνυ",
+      "why": "the printed Greek reads γόνυ"
+    },
+    "PSA 93:19": {
+      "from": "ἠὺφπαναν",
+      "to": "ἠύφραναν",
+      "why": "the printed Greek reads ἠύφραναν",
+      "uncategorized": true
+    },
+    "PRO 8:5": {
+      "from": "ἄκατος",
+      "to": "ἄκακος",
+      "why": "the printed note reads ἄκακος"
+    },
+    "ISA 59:7#2": {
+      "from": "ὐφρόνων",
+      "to": "ἀφρόνων",
+      "why": "the printed Greek reads ἀφρόνων"
+    },
+    "JOL 4:4": {
+      "from": "ἀλλοφυλων",
+      "to": "ἀλλοφύλων",
+      "why": "the printed Greek reads ἀλλοφύλων"
+    },
+    "2KI 8:28#2": {
+      "from": "ἀλλοφύλοι",
+      "to": "ἀλλόφυλοι",
+      "why": "the printed note reads ἀλλόφυλοι",
+      "uncategorized": true
+    },
+    "2KI 17:21": {
+      "from": "ἀπ᾿οἴκου",
+      "to": "ἀπ᾿ οἴκου",
+      "why": "the printed Greek separates ἀπ᾿ and οἴκου"
+    },
+    "2KI 19:30#2": {
+      "from": "οἴκον",
+      "to": "οἴκου",
+      "why": "the printed Greek reads οἴκου"
     }
   },
   "notes": {
@@ -182,7 +456,7 @@
     },
     "GEN 6:7": {
       "lemma": "I am grieved",
-      "note": "Gr. _I have thought_ or _reasoned_. Alex. ἐθμώθην. _I became angry_.",
+      "note": "Gr. _I have thought_ or _reasoned_. Alex. ἐθυμώθην. _I became angry_.",
       "why": "I have thought renders I am grieved; I became angry renders the Alex. reading"
     },
     "GEN 6:19": {
@@ -1135,7 +1409,7 @@
       "why": "the note is on the Greek word for Nazarite"
     },
     "JDG 13:19": {
-      "note": "According to the Heb. _a wonderful work_. Alex. reads τῷ θανμαστὰ ποιοῦντι κυριῷ.",
+      "note": "According to the Heb. _a wonderful work_. Alex. reads τῷ θαυμαστὰ ποιοῦντι κυριῷ.",
       "why": "a wonderful work is the Hebrew's rendering"
     },
     "JDG 14:1": {
@@ -1160,7 +1434,7 @@
       "why": "survey and examine it render search it"
     },
     "JDG 18:7": {
-      "note": "Here probably διατρέπων and ἐκπιέζων both come under the Heb. מבליס and ἐκπιέζων and θησανροὺς both under עצר.",
+      "note": "Here probably διατρέπων and ἐκπιέζων both come under the Heb. מבליס and ἐκπιέζων and θησαυροὺς both under עצר.",
       "why": "both under is Brenton's comment"
     },
     "JDG 18:10": {
@@ -1494,7 +1768,7 @@
       "why": "the note is on the two words, slain and died, that render one Hebrew word"
     },
     "2SA 2:23": {
-      "note": "A literal version of the Hebrew חחחו q. d. _sur le champ_.",
+      "note": "A literal version of the Hebrew תחתו q. d. _sur le champ_.",
       "why": "sur le champ is the rendering, as with q. d. chez nous and trepidavit"
     },
     "2SA 3:29": {
@@ -2184,7 +2458,7 @@
       "why": "the Gr. transliterates the Hebrew for separate; house is Greek"
     },
     "2KI 15:10": {
-      "note": "Heb. קבלעס _before the people_.",
+      "note": "Heb. קבלעם _before the people_.",
       "why": "before the people renders the Hebrew"
     },
     "2KI 15:33": {

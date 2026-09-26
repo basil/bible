@@ -1200,11 +1200,29 @@ def in_its_place(text, key, snippet):
     start = text.index(snippet)
     end = start + len(snippet)
     place = key.partition(" ")[2]
-    if re.fullmatch(r"\d+:\d+[a-z]?", place):
+    if verse := re.fullmatch(r"(\d+:\d+[a-z]?)(?:#([2-9]|[1-9]\d+))?", place):
+        reference, number = verse.groups()
+        if number is not None:
+            matching = [m for m in BRENTON_NOTE.finditer(text) if m[2] == reference]
+            index = int(number) - 1
+            return (
+                index < len(matching)
+                and matching[index].start() <= start
+                and end <= matching[index].end()
+            )
+        matching = [m for m in BRENTON_NOTE.finditer(text) if m[2] == reference]
+        if in_a_note(text, snippet):
+            return (
+                bool(matching)
+                and matching[0].start() <= start
+                and end <= matching[0].end()
+            )
         return any(
-            reference == place and first <= start and end <= last
-            for reference, first, last in verse_spans(text)
+            verse_ref == reference and first <= start and end <= last
+            for verse_ref, first, last in verse_spans(text)
         )
+    if "#" in place:
+        return False
     touched = [
         m for m in BRENTON_NOTE.finditer(text) if m.start() < end and start < m.end()
     ]
@@ -1234,29 +1252,31 @@ def in_a_note(text, snippet):
 def corrected_brenton(source, text, record):
     """A Brenton source file with the corrections in edition/brenton-notes.json.
 
-    Each correction is keyed by the source file's id and the verse it mends, or in
-    a file without verses, the words the note it mends stands among. Outside the
-    notes a correction may mend only word spaces, so that the wording of the
-    translation stays eBible's: the build's wording checks compare against the
-    corrected text.
+    Each correction is keyed by the source file's id and the verse or note it
+    mends; #n names the nth note in a verse. Several corrections in one note
+    form a list under one key. In a file without verses, the key names the words
+    the note stands among. Outside notes a correction may mend only word spaces,
+    so the translation stays eBible's: wording checks compare with corrected text.
     """
     corrections = {
         key: c
         for key, c in BRENTON_NOTES["corrections"].items()
         if key.split(" ")[0] == source
     }
-    for key, correction in corrections.items():
-        mended = corrected(text, correction, "Brenton correction", key)
-        require(
-            in_its_place(text, key, correction["from"]),
-            f"Brenton correction is not where its key says: {key}",
-        )
-        require(
-            in_a_note(text, correction["from"])
-            or canonical_text(correction["from"]) == canonical_text(correction["to"]),
-            f"Brenton correction changes the wording outside a note: {key}",
-        )
-        text = mended
+    for key, group in corrections.items():
+        for correction in group if isinstance(group, list) else [group]:
+            mended = corrected(text, correction, "Brenton correction", key)
+            require(
+                in_its_place(text, key, correction["from"]),
+                f"Brenton correction is not where its key says: {key}",
+            )
+            require(
+                in_a_note(text, correction["from"])
+                or canonical_text(correction["from"])
+                == canonical_text(correction["to"]),
+                f"Brenton correction changes the wording outside a note: {key}",
+            )
+            text = mended
     if corrections:
         record("correct eBible's Brenton text", corrections=sorted(corrections))
     return text

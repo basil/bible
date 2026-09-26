@@ -207,7 +207,7 @@ def test_footnote_follows_a_lemma_clear_of_its_anchor(scripture):
             "JDG",
             "2:18",
             "\\f - \\fr 2:18 \\fq was moved: \\ft Gr. \\fqa repented\\ft . This "
-            "word seems generally to stand for כהס\\f*",
+            "word seems generally to stand for נחם\\f*",
         ),
         # A note on the whole verse.
         (
@@ -717,6 +717,8 @@ def test_brenton_correction_that_does_not_apply(archives, patched):
         ("GEN", "GEN 21:12", "\\fr 21:11 \\fqa Gr. \\fqa Gr. "),
         # Another verse's text.
         ("GEN", "GEN 1:2", "the beginning God made"),
+        # A numbered note's key still names its verse.
+        ("GEN", "GEN 1:2#2", "the beginning God made"),
         # Words the preface's note does not stand among.
         ("XXB", "XXB is little", "\\f*is little doubt"),
     ],
