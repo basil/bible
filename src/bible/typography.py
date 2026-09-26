@@ -1,6 +1,6 @@
 """The characters and markup the fonts and PTXprint need: typographic quotes,
-Greek elision marks, tagged Greek and Hebrew quotations, and a spacer that
-keeps a reference-only note. Only the printable content's form changes."""
+Greek elision marks, and tagged Greek and Hebrew quotations. Only the
+printable content's form changes."""
 
 import re
 
@@ -27,17 +27,8 @@ def typographic_text(code, text, record):
     text, smartened = typographic_quotes(text)
     if smartened:
         record("typographic quotes, ellipses and dashes (SmartyPants)", count=smartened)
-    # Every later edit must leave printable content unchanged, apart from the spacer.
-    expected = canonical_text(text).replace("\u200b", "")
-    # Keep the source's reference-only note in 1KI 6:1. Upstream deletes it
-    # as empty unless a nonprinting body separates fr from the note end.
-    text, empty_notes = re.subn(
-        r"(\\f \+ \\fr [^\\]+)(?=\\f\*)", r"\1\\ft " + "\u200b", text
-    )
-    if empty_notes:
-        record(
-            "retain reference-only note with zero-width ft spacer", count=empty_notes
-        )
+    # Every later edit must leave printable content unchanged.
+    expected = canonical_text(text)
     # Explicitly tag even single-letter quotations (the upstream heuristic misses
     # these). Keep the Greek apostrophe in the Greek font too.
     for marker, letters, continuation in (
@@ -53,7 +44,7 @@ def typographic_text(code, text, record):
         if count:
             record("tag quotation runs", marker=marker, count=count)
     require(
-        canonical_text(text).replace("\u200b", "") == expected,
+        canonical_text(text) == expected,
         f"Preparation changed printable content: {code}",
     )
     return text
@@ -66,7 +57,10 @@ def typographic_quotes(text):
     it would take <...> for an HTML tag and a backslash before a quote, period,
     hyphen or backtick for an escape, so neither may occur. Its backtick option
     also turns every other ' into a closing quote, so the source's few `single'
-    quotes are opened here instead.
+    quotes are opened here instead. It also reads the space a marker takes, so a
+    quote that closes an italic rendering ("'\\fqa even Nabal\\ft '.") would open;
+    one that follows a word through a marker, and no word follows, even through
+    another marker, is closed here.
     """
     # Imported here, so that the build's other stages, such as validate and the
     # image check, run without it.
@@ -76,8 +70,13 @@ def typographic_quotes(text):
     require(not re.search(r"\\[\\\"'.`-]", text), "Text contains a SmartyPants escape")
     require("''" not in text and "``" not in text, "Ambiguous doubled quote characters")
     require(not re.search(r"`(?![A-Za-z])", text), "Backtick is not an opening quote")
-    result = smartypants.smartypants(
+    closed = re.sub(
+        r"(?<=[^\s\[{(-])(\\\+?[\w-]+ )(['\"])(?!\w|\\\+?[\w-]+ \w)",
+        lambda m: m[1] + {"'": "’", '"': "”"}[m[2]],
         text.replace("`", "‘"),
+    )
+    result = smartypants.smartypants(
+        closed,
         smartypants.Attr.q
         | smartypants.Attr.d
         | smartypants.Attr.e

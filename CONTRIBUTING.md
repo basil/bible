@@ -16,6 +16,7 @@ Run `make bootstrap` first. The other targets run with networking turned off and
 ```sh
 make sample     # a short PDF of selected chapters, for checking layout quickly
 make validate   # check the source archives against their recorded hashes
+make notes-review  # list every note with the words it's about and its italics
 make test       # run the tests
 make clean      # delete build/ and dist/
 ```
@@ -31,12 +32,13 @@ The sample prints the chapters listed in `edition/sample.json`. They were picked
 - `config/`: PTXprint's configuration. `layout.ini`, `ptxprint-mods.sty`, and `ptxprint-mods.tex` hold layout, style, and TeX changes on top of PTXprint's layout for the Berean Standard Bible (BSB), and `changes.txt` holds its text substitutions.
 - `edition/`: the build's own settings, which PTXprint never reads:
   - `manifest.json`: which books are printed, in what order, and what they're called and how their headings break into lines.
-  - `marginal-notes.json`: placements and corrections for the 1611 New Testament notes.
+  - `kjv-notes.json`: placements and corrections for the 1611 New Testament notes.
+  - `brenton-notes.json`: corrections to the words and italics the build works out for Brenton's notes, and to a few slips in eBible's text.
   - `sample.json`: the chapters the sample prints.
   - `witnesses.json`: phrases that must appear in the finished PDF, to catch unusual passages going missing.
 - `Dockerfile`: the tool image, with the pinned PTXprint, usfmtc, and Utopia commits and the hashes of the font archives.
 - `src/bible/`: the build, a Python package run as `python3 -m bible`. It has one module per stage, in the order the build runs them:
-  - `sources.py`: the pinned Bible texts and their hashes; `edition.py`: the manifest; `notes.py`: the 1611 notes. `validate.py` checks them against each other.
+  - `sources.py`: the pinned Bible texts and their hashes; `edition.py`: the manifest; `notes.py`: the notes of both testaments, set as footnotes without callers. `validate.py` checks them against each other.
   - `prepare.py` and `typography.py`: each book as the edition prints it, checked against its source.
   - `project.py`: the PTXprint project; `typeset.py`: running PTXprint in the image that `toolchain.py` checks.
   - `verify.py`: the checks on PTXprint's output and the PDF; `publish.py`: the copy in `dist/` and its provenance.
@@ -64,13 +66,17 @@ make test-python PYTEST_ARGS="-k marginal"
 
 The checks catch missing text, not bad pages. After any change that could move text around, read through the sample, and the full PDF if the page count changed. The places most likely to go wrong are:
 
-- pages crowded with footnotes, and whether each caller matches its note
+- pages crowded with footnotes, and whether each note falls on the page with its verse
 - the New Testament marginal notes, including the Greek in Acts 13:18 and 13:34
 - Greek and right-to-left Hebrew in Brenton's notes
 - poetry in the Psalms
 - the contents and the Jeremias table
 - the joins between 2 Esdras and Nehemias and between Malachias 3 and 4, and the additions to Daniel
 - the opening pages of each testament and of the appendices
+
+### Reviewing the notes
+
+The build works out which words each note is about, and which of its words are italic, by rule; `edition/brenton-notes.json` and `edition/kjv-notes.json` correct the rules where they go wrong. After changing `src/bible/notes.py` or either file, run `make notes-review` and read `build/notes-review-changes.md`, which lists every note whose words or italics changed since the last review. A correction the rules no longer need fails the build, so remove it. A correction to eBible's text is keyed by the verse it mends, or in the preface, which has no verses, by the words the note it mends stands among; the build fails if its text isn't found once, in that place. Outside a note, it may mend only word spaces, so that the translation's wording stays eBible's. Every entry in either file gives its reason as `why`. Each correction, and each anchor that differs from George's lemma, must also fit one of the kinds of slip that `src/bible/notes.py` defines (a missing word space, a stray letter, a bracketed remark, and so on), or be marked `"uncategorized": true`.
 
 ## Submitting changes
 
@@ -85,7 +91,7 @@ CI runs `make bootstrap`, `validate`, `test`, and `pdf` on pull requests and on 
 
 - `config/layout.ini` overrides PTXprint's BSB layout settings.
 - `config/ptxprint-mods.sty` overrides paragraph and character styles.
-- `config/ptxprint-mods.tex` holds TeX-level changes: hyphenation, protrusion, and one spacing tweak in Psalm 118.
+- `config/ptxprint-mods.tex` holds TeX-level changes: hyphenation and protrusion.
 
 The tests require every setting in `layout.ini` and `ptxprint-mods.sty` to differ from the value it overrides, and a checkbox PTXprint stores under several keys to be set under all of them.
 
@@ -115,8 +121,7 @@ A few things look odd but are on purpose:
 
 - Brenton's `FRT` and `INT` files become `XXD` and `XXE`, and the King James `OTH` and `INT` become `TDX` and `NDX`. This keeps PTXprint from treating them as the edition's own front matter, and keeps the two sources' files from colliding.
 - eBible's list of corrections contains literal `|` characters, which PTXprint would read as markup and use to discard text. `config/changes.txt` swaps them out while PTXprint parses the file and puts them back afterwards.
-- A footnote at 3 Kingdoms 6:1 has a reference but no text. PTXprint would drop it as empty, so the build adds a zero-width space.
-- BSB sets `fnomitcaller` and `xromitcaller` to `True`, which in this PTXprint release means the callers *are* printed in the notes. The build checks that this still holds.
+- BSB sets `fnomitcaller` to `True`, which in this PTXprint release means the footnote callers *are* printed in the notes. Only Brenton's preface has callers now; the build checks that this still holds.
 - PTXprint's `canonicalise` option is off, so that it doesn't rewrite the source markup.
 - PTXprint loads GTK even when it runs without a display, which is why the image includes it.
 - PTXprint's font configuration rejects OpenType files, which is how Utopia and the other fonts are installed. The `Dockerfile` adds a system fontconfig rule that accepts the fonts in `/usr/local/share/fonts`, which takes precedence.

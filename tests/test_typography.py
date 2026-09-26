@@ -13,6 +13,20 @@ def test_typographic_quotes():
     assert count == 7
 
 
+def test_typographic_quotes_close_after_a_marker():
+    # A quote closing an italic rendering follows the marker's space.
+    text = "\\f - \\fr 1:1 \\ft Alex. + '\\fqa even Nabal\\ft '.\\f*"
+    result, _ = typographic_quotes(text)
+    assert result == "\\f - \\fr 1:1 \\ft Alex. + ‘\\fqa even Nabal\\ft ’.\\f*"
+
+
+def test_typographic_quotes_open_before_a_marker():
+    # A quote after a word and a marker still opens if a word follows the next marker.
+    text = "\\f - \\fr 1:1 \\fqa word—\\ft '\\fqa other\\ft '\\f*"
+    result, _ = typographic_quotes(text)
+    assert result == "\\f - \\fr 1:1 \\fqa word—\\ft ‘\\fqa other\\ft ’\\f*"
+
+
 @pytest.mark.parametrize(
     "text, message",
     [

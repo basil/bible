@@ -34,20 +34,30 @@ def test_preserved_markers_counts_notes_and_styles_only():
     }
 
 
-def test_word_tokens_join_apostrophes_and_split_hyphens():
-    assert usfm.word_tokens("The King’s market-place") == [
-        ("the", 0),
-        ("kings", 4),
-        ("market", 11),
-        ("place", 18),
+def test_word_spans_join_apostrophes_and_split_hyphens():
+    assert usfm.word_spans("The King’s market-place") == [
+        ("the", 0, 3),
+        ("kings", 4, 10),
+        ("market", 11, 17),
+        ("place", 18, 23),
     ]
 
 
-def test_word_tokens_offsets_index_the_usfm():
+def test_word_spans_offsets_index_the_usfm():
     text = "\\add the\\add* king"
-    assert [(w, text[o : o + len(w)]) for w, o in usfm.word_tokens(text)] == [
+    assert [(w, text[s:e]) for w, s, e in usfm.word_spans(text)] == [
         ("the", "the"),
         ("king", "king"),
+    ]
+
+
+def test_word_spans_keep_a_word_whole_across_markup():
+    # The Cambridge text marks part of a word as added (1 Thessalonians 4:12).
+    text = "of no\\add thing\\add*. high\\add*ways"
+    assert [(w, text[s:e]) for w, s, e in usfm.word_spans(text)] == [
+        ("of", "of"),
+        ("nothing", "no\\add thing"),
+        ("highways", "high\\add*ways"),
     ]
 
 

@@ -1,6 +1,6 @@
 """Acceptance checks on PTXprint's work: first its processed copy of each
-unit's text, then the rendered PDF (page size, fonts, contents, note callers,
-and the phrases in edition/witnesses.json)."""
+unit's text, then the rendered PDF (page size, fonts, contents, and the
+phrases in edition/witnesses.json)."""
 
 import re
 import subprocess
@@ -36,10 +36,7 @@ def check_processed(project, base, ids):
     texfiles = list((project / PROCESSED_DIR).glob("*_ptxp.tex"))
     require(len(texfiles) == 1, "Missing typesetting driver")
     tex = texfiles[0].read_text(encoding="utf-8")
-    require(
-        "%\\OmitCallerInNote{f}" in tex and "%\\OmitCallerInNote{x}" in tex,
-        "Note callers unexpectedly suppressed",
-    )
+    require("%\\OmitCallerInNote{f}" in tex, "Footnote callers unexpectedly suppressed")
     for code in ids:
         source = project_usfm(project, code).read_text(encoding="utf-8")
         processed = processed_usfm(project, code)
@@ -162,18 +159,6 @@ def check_boundaries(base, project, ids, text, pages, reading_text, sample):
         )
 
 
-def check_note_callers(text):
-    # Footnote and cross-reference callers restart on each page, so a caller that
-    # introduces two different references on one page points readers at two notes.
-    note = re.compile(r"(?:^|\s{2,})([a-z]|[*†‡§¶#]+) (\d+:\d+[a-z]?)\b", re.M)
-    for number, page in enumerate(text.split("\f"), 1):
-        refs = {}
-        for caller, ref in note.findall(page):
-            refs.setdefault(caller, set()).add(ref)
-        clashes = sorted(c for c, r in refs.items() if len(r) > 1)
-        require(not clashes, f"Note callers reused on PDF page {number}: {clashes}")
-
-
 def check_added_words_roman(pdf, reading_text, project, ids, sample):
     # Malachias 4:2 has "\\add shall be\\add* in his wings". Check the added
     # words against their roman neighbours; "healing" may break as "heal- / ing".
@@ -250,7 +235,6 @@ def inspect_pdf(pdf, base, project, ids, sample):
     text = capture("pdftotext", "-layout", pdf, "-")
     (base / "text.txt").write_text(text, encoding="utf-8")
     require(not re.search(r"['\"`]", text), "Straight quote in the rendered PDF text")
-    check_note_callers(text)
     # PTXprint emits columns in reading order. Protruding edge glyphs can make
     # pdftotext's geometric heuristics merge adjacent columns, so use stream
     # order for wording witnesses; keep the layout extraction above for pages.

@@ -1,6 +1,7 @@
-"""Preparing each source book as the edition prints it: selecting and
-relabelling chapters, grouping Daniel, renaming books, and adding the 1611
-notes, with checks that the source's wording, notes and markup survive.
+"""Preparing each source book as the edition prints it: correcting eBible's
+Brenton text, selecting and relabelling chapters, grouping Daniel, renaming
+books, and setting the notes as footnotes, with checks that the source's
+wording, notes and markup survive.
 
 Every change is logged through a recorder into build/<mode>/transformations.json.
 """
@@ -17,7 +18,7 @@ from bible.edition import (
     source_id,
     source_usfm,
 )
-from bible.notes import insert_marginal_notes
+from bible.notes import corrected_brenton, insert_marginal_notes, restyle_brenton_notes
 from bible.usfm import (
     HEADING_MARKERS,
     chapter_parts,
@@ -80,10 +81,18 @@ def rename_book(entry, original, text, record):
     return text
 
 
-def scripture_text(entry, archives, log=None):
-    code = entry["id"]
+def corrected_source(entry, archives, record):
+    """The entry's source text, with its corrections if it is Brenton's."""
     original = source_usfm(entry, archives)
+    if entry["source"] != "brenton":
+        return original
+    return corrected_brenton(source_id(entry), original, record)
+
+
+def scripture_text(entry, archives, log=None, review=None):
+    code = entry["id"]
     record = recorder(log, code)
+    original = corrected_source(entry, archives, record)
     if "chapters" in entry:
         # Part of a source file that holds more than one book, numbered from 1.
         first, last = entry["chapters"]
@@ -112,8 +121,10 @@ def scripture_text(entry, archives, log=None):
         )
     elif code == "DAG":
         daniel_header, daniel_chapters = chapter_parts(original)
-        _, susanna = chapter_parts(archives["brenton"]["SUS"])
-        _, bel = chapter_parts(archives["brenton"]["BEL"])
+        (_, susanna), (_, bel) = (
+            chapter_parts(corrected_brenton(part, archives["brenton"][part], record))
+            for part in ("SUS", "BEL")
+        )
         require(
             len(susanna) == len(bel) == 1 and len(daniel_chapters) == 12,
             "Daniel source boundaries changed",
@@ -200,9 +211,17 @@ def scripture_text(entry, archives, log=None):
         preserved_markers(expected) == preserved_markers(text),
         f"Source notes or styling changed: {code}",
     )
+    # After the source comparisons above, which the added and restyled notes
+    # would fail.
     if entry["source"] == "kjv":
-        # After the source comparisons above, which the added notes would fail.
-        text = insert_marginal_notes(code, text, record)
+        text = insert_marginal_notes(code, text, record, review)
+    else:
+        text = restyle_brenton_notes(code, text, record, review)
+    # Any caller, "*" as well as "+"; only "-" sets none.
+    require(
+        not re.search(r"\\f (?!- )", text) and "\\x " not in text,
+        f"Note with a caller left in the text: {code}",
+    )
     # Relabelling rewrites chapter and verse markers only, so every note must
     # still name the verse that holds it.
     require(
@@ -219,8 +238,8 @@ def scripture_text(entry, archives, log=None):
 def front_matter_text(entry, archives, log=None):
     """A translation's front matter or appendix, under the edition's names if any."""
     code = entry["id"]
-    original = source_usfm(entry, archives)
     record = recorder(log, code)
+    original = corrected_source(entry, archives, record)
     text = (
         rename_book(entry, original, original, record) if "title" in entry else original
     )

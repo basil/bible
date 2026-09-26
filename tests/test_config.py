@@ -48,7 +48,7 @@ def test_layout_overrides_only_non_default_values():
         f"{key} = {value}"
         for key, value in overlay_values().items()
         # A key BSB leaves out has no default headless PTXprint could compare:
-        # notes/xrcallers, for one, falls back to the Paratext settings.
+        # it falls back to the Paratext settings.
         if baseline.has_option(*key.split("/", 1))
         and normalized(key, value) == normalized(key, baseline.get(*key.split("/", 1)))
     ]

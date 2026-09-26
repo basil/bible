@@ -9,6 +9,7 @@ import sys
 from bible import paths
 from bible.project import write_project
 from bible.publish import publish
+from bible.review import notes_review
 from bible.toolchain import check_image
 from bible.typeset import typeset
 from bible.validate import validate
@@ -34,13 +35,15 @@ def main(argv=None):
     parser = argparse.ArgumentParser(prog="python3 -m bible", description=__doc__)
     parser.add_argument(
         "command",
-        choices=["validate", *paths.OUTPUTS],
-        help="validate the sources, or build dist/sample.pdf or dist/bible.pdf",
+        choices=["validate", "notes-review", *paths.OUTPUTS],
+        help="validate the sources, write the notes review, or build dist/sample.pdf or dist/bible.pdf",
     )
     args = parser.parse_args(argv)
     try:
         if args.command == "validate":
             validate()
+        elif args.command == "notes-review":
+            notes_review()
         else:
             render(args.command)
     except (RuntimeError, subprocess.CalledProcessError) as exc:

@@ -13,11 +13,14 @@ from bible.checks import require
 # A USFM marker: its name, with the + of a nested character style and the * that
 # closes a span.
 MARKER = r"\\(\+?[\w-]+\*?)"
+# A marker as printing removes it: a closing one ends at its asterisk, and an
+# opening one takes one space.
+MARKUP = re.compile(r"\\\+?[\w-]+(?:\*| ?)")
 HEADING_MARKERS = ("mt1", "mt2", "mt3")
 # Notes, character styles and table cells, which PTXprint must keep...
 NOTE_AND_STYLE_MARKERS = {"f", "x", "add", "it", "tr", "tc1", "tc2", "vp"}
 # ...and the parts of notes, which preparation must keep as well.
-NOTE_PART_MARKERS = {"fr", "ft", "fqa", "xo", "xt"}
+NOTE_PART_MARKERS = {"fr", "ft", "fq", "fqa", "xo", "xt"}
 # USFM's escapes for characters that would otherwise be markup.
 ESCAPED_CHARACTERS = {
     "asterisk": "*",
@@ -107,17 +110,40 @@ def verse_spans(text):
     return spans
 
 
-def word_tokens(text):
-    """Words with their offsets, ignoring markup, case, and punctuation.
+def word_spans(text):
+    """Words with their start and end offsets, ignoring markup, case, and punctuation.
 
-    Markers are blanked rather than removed so that offsets index the USFM itself.
-    Apostrophes join a word (king’s is kings); hyphens separate one (market-place).
+    Markers are removed with the space an opening one takes, so a marker inside a
+    word leaves it whole (no\\add thing\\add* is nothing), and the offsets index
+    the USFM itself. Apostrophes join a word (king’s is kings); hyphens separate
+    one (market-place).
     """
-    masked = re.sub(MARKER, lambda m: " " * len(m[0]), text)
+    # The offset in the USFM of each character that is not markup.
+    offsets = []
+    last = 0
+    for m in MARKUP.finditer(text):
+        offsets += range(last, m.start())
+        last = m.end()
+    offsets += range(last, len(text))
+    unmarked = "".join(text[i] for i in offsets)
     return [
-        (re.sub(r"[’']", "", m[0]).casefold(), m.start())
-        for m in re.finditer(r"[A-Za-z]+(?:[’'][A-Za-z]+)*", masked)
+        (
+            re.sub(r"[’']", "", m[0]).casefold(),
+            offsets[m.start()],
+            offsets[m.end() - 1] + 1,
+        )
+        for m in re.finditer(r"[^\W\d_]+(?:[’'][^\W\d_]+)*", unmarked)
     ]
+
+
+def words_of(text):
+    """The words of a stretch of USFM, as word_spans finds them, without offsets."""
+    return [word for word, _, _ in word_spans(text)]
+
+
+def plain_text(text):
+    """The printable words of a stretch of USFM, markup removed, spaces collapsed."""
+    return " ".join(MARKUP.sub("", text).split())
 
 
 def canonical_text(text):

@@ -1,0 +1,3211 @@
+{
+  "corrections": {
+    "XXB There is": {
+      "from": "\\f*is little doubt",
+      "to": "\\f* is little doubt",
+      "why": "the word space after the note in \"There is\" is missing"
+    },
+    "GEN 21:11": {
+      "from": "\\fr 21:11 \\fqa Gr. \\fqa Gr. ",
+      "to": "\\fr 21:11 \\fqa Gr. ",
+      "why": "the label Gr. is doubled"
+    },
+    "EXO 21:28": {
+      "from": "\\ft he\\fl or",
+      "to": "\\ft he \\fl or",
+      "why": "the word space before or is missing"
+    },
+    "1KI 6:1": {
+      "from": "\\f + \\fr 6:1 \\f*",
+      "to": "",
+      "why": "an empty note: eBible's text has a reference and no note"
+    },
+    "EXO 12:3": {
+      "from": "\\fqa lamb\\ft is",
+      "to": "\\fqa lamb \\ft is",
+      "why": "the word space after lamb is missing"
+    },
+    "EXO 18:11": {
+      "from": "appeaars",
+      "to": "appears",
+      "why": "appears is misspelled"
+    },
+    "JOS 24:17": {
+      "from": "\\fqa Hebraism \\ft See",
+      "to": "\\fqa Hebraism. \\ft See",
+      "why": "the full stop after Hebraism is missing"
+    },
+    "JDG 9:33": {
+      "from": "whatsoever they hand",
+      "to": "whatsoever thy hand",
+      "why": "they is a slip for thy"
+    },
+    "1SA 25:39": {
+      "from": "'that Nabal was dead.\\f*",
+      "to": "'that Nabal was dead.'\\f*",
+      "why": "the closing quotation mark is missing"
+    },
+    "1SA 27:8": {
+      "from": "\\ft Th LXX",
+      "to": "\\ft The LXX",
+      "why": "The is misspelled"
+    },
+    "2SA 17:8": {
+      "from": "omit the wods",
+      "to": "omit the words",
+      "why": "words is misspelled"
+    },
+    "2SA 18:12": {
+      "from": "weigh upon my nanda.",
+      "to": "weigh upon my hands.",
+      "why": "hands is misspelled",
+      "uncategorized": true
+    },
+    "2SA 24:20": {
+      "from": "1 Pet. 1. 12.; \\ft",
+      "to": "1 Pet. 1. 12; \\ft",
+      "why": "a stray full stop before the semicolon"
+    },
+    "2KI 2:16": {
+      "from": "sons of strength \\fqa Hebraism.",
+      "to": "sons of strength. \\fqa Hebraism.",
+      "why": "the full stop before Hebraism is missing"
+    },
+    "PSA 50:21": {
+      "from": "wave-offfering",
+      "to": "wave-offering",
+      "why": "offering is misspelled"
+    },
+    "PSA 89:9": {
+      "from": "\\ft mediated.",
+      "to": "\\ft meditated.",
+      "why": "meditated is misspelled (ἐμελέτησαν)"
+    },
+    "PRO 2:9": {
+      "from": "all good a les.",
+      "to": "all good axles.",
+      "why": "axles lost its x (ἄξονας)",
+      "uncategorized": true
+    },
+    "PRO 6:19": {
+      "from": "\\ft Gr sends",
+      "to": "\\ft Gr. sends",
+      "why": "the full stop after Gr is missing"
+    },
+    "PRO 11:10": {
+      "from": "“[note - Part of verse 10.]— but",
+      "to": "“— but",
+      "why": "eBible's own remark inside the note"
+    },
+    "PRO 12:2": {
+      "from": "\\ft Or. better",
+      "to": "\\ft Or, better",
+      "why": "the label Or, has a full stop for its comma"
+    },
+    "ISA 6:11": {
+      "from": "10,12;\\ft also",
+      "to": "10,12; \\ft also",
+      "why": "the word space after the semicolon is missing"
+    },
+    "ISA 7:1": {
+      "from": "besiege See",
+      "to": "besiege. See",
+      "why": "the full stop after besiege is missing"
+    },
+    "EZK 11:7": {
+      "from": "this\\add city",
+      "to": "this \\add city",
+      "why": "the word space before city is missing, so it prints thiscity"
+    },
+    "ISA 54:4": {
+      "from": "\\ft ancient \\fqa Or,",
+      "to": "\\ft ancient. \\fqa Or,",
+      "why": "the full stop after ancient is missing"
+    }
+  },
+  "notes": {
+    "GEN 1:9#2": {
+      "lemma": "its places",
+      "why": "Brenton's caller follows the words the note glosses"
+    },
+    "GEN 1:27": {
+      "lemma": "male and female he made them",
+      "why": "Mat. 19. 4 quotes male and female he made them"
+    },
+    "GEN 2:2": {
+      "lemma": "he ceased on the seventh day",
+      "why": "Heb. 4. 4 quotes the second half of the verse"
+    },
+    "GEN 2:9#2": {
+      "lemma": "the knowledge",
+      "why": "that which is to be known renders the knowledge; of good and evil stays"
+    },
+    "GEN 2:19": {
+      "lemma": "creature",
+      "why": "Brenton's caller follows the word the note glosses; Gr. soul renders creature, living stays"
+    },
+    "GEN 2:24": {
+      "lemma": "cleave",
+      "why": "Gr. be cemented renders cleave alone"
+    },
+    "GEN 3:16": {
+      "lemma": "submission",
+      "why": "Brenton's caller follows the words the note glosses"
+    },
+    "GEN 4:14": {
+      "lemma": "and I shall be hidden",
+      "why": "then shall I be renders and I shall be"
+    },
+    "GEN 4:15": {
+      "lemma": "suffer seven-fold vengeance",
+      "why": "pay seven penalties covers vengeance too"
+    },
+    "GEN 4:17": {
+      "lemma": "built",
+      "why": "was building renders built alone"
+    },
+    "GEN 4:21": {
+      "lemma": "invented",
+      "why": "Gr. made known renders invented alone"
+    },
+    "GEN 5:1": {
+      "lemma": "genealogy",
+      "why": "Brenton's caller follows the word the note glosses; book of generation renders genealogy, of men stays"
+    },
+    "GEN 5:25": {
+      "lemma": "an hundred and sixty and seven years",
+      "why": "the note gives the whole number"
+    },
+    "GEN 5:26": {
+      "lemma": "eight hundred and two",
+      "why": "782 renders eight hundred and two; years stays"
+    },
+    "GEN 6:7": {
+      "lemma": "I am grieved",
+      "note": "Gr. _I have thought_ or _reasoned_. Alex. ἐθμώθην. _I became angry_.",
+      "why": "I have thought renders I am grieved; I became angry renders the Alex. reading"
+    },
+    "GEN 6:19": {
+      "lemma": "by pairs",
+      "why": "Gr. two, two renders by pairs; of all stays"
+    },
+    "GEN 8:7#2": {
+      "lemma": "he sent forth a raven",
+      "why": "the addition follows sent forth a raven, where Brenton's caller stands"
+    },
+    "GEN 10:32": {
+      "lemma": "the islands of the Gentiles",
+      "why": "simply Gentiles stands for the whole phrase"
+    },
+    "GEN 11:29": {
+      "lemma": "the name of the wife of Abram was Sara",
+      "why": "the note is on Abram's marriage with Sara, before the caller"
+    },
+    "GEN 12:5": {
+      "lemma": "to go into the land of Chanaan",
+      "why": "the addition follows the verse's last words"
+    },
+    "GEN 12:20": {
+      "lemma": "all that he had",
+      "why": "the addition follows the verse's last words"
+    },
+    "GEN 14:20": {
+      "lemma": "into thy power",
+      "why": "under hand to thee renders into thy power"
+    },
+    "GEN 18:21": {
+      "lemma": "completely correspond",
+      "why": "συντελοῦνται and have done altogether render completely correspond; with the cry stays"
+    },
+    "GEN 19:21": {
+      "lemma": "thee",
+      "why": "thy countenance renders thee; also stays"
+    },
+    "GEN 21:14": {
+      "lemma": "near the well of the oath",
+      "why": "Beersheba is the well of the oath"
+    },
+    "GEN 21:19": {
+      "lemma": "springing",
+      "why": "Gr. living renders springing alone"
+    },
+    "GEN 21:22": {
+      "note": "Not in the Heb. _friend of bridegroom_, or _attendant at marriage_.",
+      "why": "friend of bridegroom and attendant at marriage render friend"
+    },
+    "GEN 22:4": {
+      "lemma": "lifted up",
+      "why": "look up with renders lifted up; his eyes stays"
+    },
+    "GEN 22:13": {
+      "lemma": "in a plant of Sabec",
+      "why": "Heb. in a thicket covers in a"
+    },
+    "GEN 24:5": {
+      "lemma": "if haply",
+      "why": "the note is on μή ποτε, if haply"
+    },
+    "GEN 24:11": {
+      "lemma": "rested",
+      "why": "caused to kneel down renders rested; his camels stays"
+    },
+    "GEN 24:15": {
+      "lemma": "the brother of Abraam",
+      "why": "the phrase ends at Abraam"
+    },
+    "GEN 24:66": {
+      "lemma": "all that",
+      "why": "all the words which renders all that"
+    },
+    "GEN 26:10": {
+      "lemma": "within a little had",
+      "why": "had almost renders within a little had"
+    },
+    "GEN 28:13": {
+      "lemma": "stood",
+      "why": "Gr. was established renders stood alone"
+    },
+    "GEN 28:18": {
+      "lemma": "laid",
+      "why": "Lit. put under renders laid"
+    },
+    "GEN 30:30": {
+      "note": "So A. V. but Gr. and Heb. literally, _at my foot_.",
+      "why": "at my foot is the literal rendering"
+    },
+    "GEN 30:33": {
+      "note": "_Hearken to_ or _obey me_.",
+      "why": "hearken to and obey me are two renderings"
+    },
+    "GEN 30:36": {
+      "lemma": "them and Jacob",
+      "why": "and between renders the and of between them and Jacob"
+    },
+    "GEN 33:1": {
+      "lemma": "lifted up",
+      "why": "looked up with renders lifted up; his eyes stays"
+    },
+    "GEN 34:3": {
+      "note": "Lit. _spoke according to the heart of the damsel—to her_. A literal version of the Hebrew.",
+      "why": "the rendering runs past the dash to to her"
+    },
+    "GEN 37:2": {
+      "note": "Or, according to some copies, _they brought an evil report of Joseph_, etc.",
+      "lemma": "Joseph brought",
+      "why": "according to some copies introduces the reading, which runs on past Joseph brought"
+    },
+    "GEN 38:16": {
+      "lemma": "went out of his way to her",
+      "why": "turned his way to her renders went out of his way to her"
+    },
+    "GEN 39:11": {
+      "lemma": "it came to pass on a certain day",
+      "why": "the phrase ends at day"
+    },
+    "GEN 39:22": {
+      "lemma": "prisoners",
+      "why": "Brenton's caller follows the words the note glosses; men led away renders prisoners"
+    },
+    "GEN 41:2": {
+      "lemma": "sedge",
+      "why": "the note is on the Hebrew word the LXX. transliterate, sedge"
+    },
+    "GEN 41:51": {
+      "lemma": "my father's house",
+      "why": "things belong to my father renders my father's house"
+    },
+    "GEN 42:19": {
+      "lemma": "the corn ye have purchased",
+      "why": "the purchase of your gift of corn renders the whole phrase"
+    },
+    "GEN 44:31": {
+      "lemma": "the grave",
+      "why": "Hades renders the grave, as in 44:29"
+    },
+    "GEN 46:29": {
+      "lemma": "made ready",
+      "why": "yoked renders made ready"
+    },
+    "GEN 49:9": {
+      "lemma": "Juda",
+      "why": "the note is on the form of the name Juda"
+    },
+    "GEN 50:26": {
+      "lemma": "they prepared his corpse",
+      "why": "buried him renders prepared his corpse"
+    },
+    "EXO 2:3": {
+      "note": "i. e. a peculiar kind, more resembling vegetable pitch.",
+      "why": "the note explains rather than renders"
+    },
+    "EXO 3:2": {
+      "lemma": "flaming fire",
+      "why": "the rendering stands for fewer words than it has"
+    },
+    "EXO 4:10": {
+      "lemma": "in former times",
+      "why": "before yesterday replaces in former times"
+    },
+    "EXO 4:12": {
+      "lemma": "instruct thee in what thou shalt say",
+      "why": "the phrase runs to the end of the verse"
+    },
+    "EXO 4:21": {
+      "lemma": "charged thee with",
+      "why": "put into thine hands renders charged thee with; have stays"
+    },
+    "EXO 5:14": {
+      "lemma": "and questioned",
+      "why": "the note is on the bracketed words and questioned"
+    },
+    "EXO 9:4": {
+      "lemma": "nothing",
+      "why": "ῥητόν renders nothing"
+    },
+    "EXO 9:14": {
+      "lemma": "plagues",
+      "why": "occurrences renders plagues alone"
+    },
+    "EXO 9:16": {
+      "lemma": "for this purpose",
+      "why": "the note cites the verse, which Rom. 9. 17 quotes from its opening"
+    },
+    "EXO 9:23": {
+      "lemma": "thunderings",
+      "why": "Brenton's caller follows the words the note glosses"
+    },
+    "EXO 10:22": {
+      "lemma": "darkness very black",
+      "why": "the rendering covers both words"
+    },
+    "EXO 10:24": {
+      "lemma": "leave",
+      "why": "be left of renders leave alone"
+    },
+    "EXO 12:3": {
+      "lemma": "each man a lamb",
+      "note": "πρόβατον, _sheep_ generally but ver. 5 seems to show that the word _lamb_ is admissable in this passage.",
+      "why": "the note is on the word lamb; according to the houses is not part of it; sheep renders πρόβατον, generally is comment"
+    },
+    "EXO 12:16": {
+      "lemma": "a holy convocation",
+      "why": "called holy renders a holy convocation"
+    },
+    "EXO 12:42": {
+      "lemma": "so that he should bring them out",
+      "note": "ὥστε seems to be given for ל, instead of ‘_when he brought_,’ etc.",
+      "why": "ὥστε is so that; when he brought is the rendering it replaces"
+    },
+    "EXO 13:12": {
+      "lemma": "set apart",
+      "why": "separate renders set apart"
+    },
+    "EXO 14:10": {
+      "lemma": "having looked up",
+      "why": "the rendering is having looked up with their eyes"
+    },
+    "EXO 16:16": {
+      "lemma": "for each person",
+      "why": "Brenton's caller follows the words the note glosses; by the head renders for each person"
+    },
+    "EXO 16:18#2": {
+      "lemma": "according to the need of",
+      "why": "just sufficient for renders according to the need of"
+    },
+    "EXO 16:35": {
+      "lemma": "land",
+      "why": "οἰκουμένη glosses the land, not they ate the manna"
+    },
+    "EXO 18:21": {
+      "lemma": "over the people",
+      "why": "Gr. them renders the people"
+    },
+    "EXO 18:23": {
+      "lemma": "their own",
+      "why": "Gr. his own renders their own; place stays"
+    },
+    "EXO 19:24": {
+      "lemma": "force their way",
+      "why": "Luke 16. 16's presseth answers force their way; to come cuts the phrase"
+    },
+    "EXO 20:18": {
+      "lemma": "perceived the thundering",
+      "why": "saw the voice renders perceived the thundering"
+    },
+    "EXO 21:28": {
+      "note": "Or, _he or she die_.",
+      "why": "he or she die is one rendering of they die"
+    },
+    "EXO 22:7": {
+      "lemma": "in regard of",
+      "why": "Gr. over renders in regard of"
+    },
+    "EXO 22:14": {
+      "note": "Qu. If the borrower be a hireling, he shall have the ruined beast instead of his hire?",
+      "why": "the note queries rather than renders; borrower is Brenton's emphasis"
+    },
+    "EXO 22:27": {
+      "lemma": "speak ill of the ruler of thy people",
+      "why": "Acts 23. 5 quotes only the second clause"
+    },
+    "EXO 23:16": {
+      "lemma": "thy fruits",
+      "why": "the rendering stands for fewer words than it has"
+    },
+    "EXO 23:18": {
+      "lemma": "sacrifice",
+      "why": "incense offering renders sacrifice alone"
+    },
+    "EXO 24:3": {
+      "lemma": "be obedient",
+      "why": "the rendering stands for more words than it has"
+    },
+    "EXO 24:11": {
+      "lemma": "in the place of God",
+      "why": "where God was stands for in the place of God"
+    },
+    "EXO 25:31": {
+      "lemma": "of one piece",
+      "why": "the phrase ends at piece"
+    },
+    "EXO 25:40": {
+      "lemma": null,
+      "why": "Heb. 8. 5 quotes the verse from its opening See"
+    },
+    "EXO 27:2": {
+      "lemma": "of the same piece",
+      "why": "Gr. of it renders of the same piece"
+    },
+    "EXO 28:13": {
+      "lemma": "circlets",
+      "why": "little shields renders circlets alone"
+    },
+    "EXO 28:30": {
+      "note": "i. e. in Heb. _Urim and Thummim_; lit. _lights and perfections_.",
+      "why": "Urim and Thummim renders Manifestation and the Truth as one name, like lights and perfections"
+    },
+    "EXO 29:24": {
+      "lemma": "separate them as a separate offering",
+      "why": "the phrase ends at offering"
+    },
+    "EXO 29:36": {
+      "lemma": "perform consecration",
+      "why": "Gr. sanctify renders perform consecration"
+    },
+    "EXO 29:41": {
+      "lemma": "of the morning lamb",
+      "why": "Gr. of it renders of the morning lamb"
+    },
+    "EXO 29:45": {
+      "lemma": "called upon",
+      "why": "named renders called upon"
+    },
+    "EXO 29:46": {
+      "lemma": "called upon",
+      "why": "named renders called upon"
+    },
+    "EXO 30:2": {
+      "lemma": "of the same piece",
+      "why": "Gr. of it renders of the same piece"
+    },
+    "EXO 30:34": {
+      "lemma": "an equal weight of each",
+      "why": "Gr. equal to equal renders an equal weight of each"
+    },
+    "EXO 31:6#2": {
+      "lemma": "make",
+      "why": "work in or at renders make alone"
+    },
+    "EXO 32:1": {
+      "lemma": "make us gods who shall go before us",
+      "why": "Acts 7. 40 quotes from make us gods, not from the opening"
+    },
+    "EXO 32:6": {
+      "lemma": "he offered",
+      "why": "set upon the altar renders offered; whole burnt-offerings stays"
+    },
+    "EXO 32:20": {
+      "note": "Gr. _sowed it under the water_, but another reading is ἐπὶ.",
+      "why": "but another reading is comments on the Greek; Brenton's italic here is not a rendering"
+    },
+    "EXO 34:25#2": {
+      "lemma": "my sacrifices",
+      "why": "Gr. incense-offerings renders sacrifices; with leaven is the next note's"
+    },
+    "EXO 35:32": {
+      "lemma": "skilfully",
+      "why": "the note renders skilfully"
+    },
+    "EXO 36:9": {
+      "lemma": "he",
+      "why": "they renders he alone"
+    },
+    "EXO 36:11": {
+      "lemma": "one another",
+      "why": "Gr. itself renders one another"
+    },
+    "EXO 38:9": {
+      "lemma": "set table",
+      "why": "the rendering stands for fewer words than it has"
+    },
+    "EXO 38:16": {
+      "lemma": "knops",
+      "why": "Gr. knops like walnuts renders knops alone"
+    },
+    "EXO 38:17#2": {
+      "lemma": "funnels",
+      "why": "the rendering stands for fewer words than it has"
+    },
+    "EXO 39:1#2": {
+      "lemma": "seven hundred and twenty shekels",
+      "why": "the note gives the whole number"
+    },
+    "EXO 40:4": {
+      "lemma": "that which is to be set forth",
+      "why": "the phrase runs to set forth"
+    },
+    "EXO 40:20": {
+      "lemma": "by the sides of",
+      "why": "Gr. under renders by the sides of"
+    },
+    "NUM 1:18": {
+      "lemma": "registered them",
+      "note": "ἄξονες dicebantur olim tabulae publicae; atque inde ἐπαξοοῦν, quod videtur esse, _in tabulas referre_. L. Bos.",
+      "why": "L. Bos names the source of the note; in tabulas referre renders registered them, not after"
+    },
+    "NUM 1:52": {
+      "note": "Or, _headship_, i. e. _according to the situation of his captain or prince_.",
+      "why": "captain or prince is one phrase, not two renderings"
+    },
+    "NUM 2:18": {
+      "lemma": "westward",
+      "why": "by the sea renders westward alone"
+    },
+    "NUM 3:3": {
+      "note": "Gr. _accomplished their hands to minister_: according to the Hebrew idiom, _filled their hands_.",
+      "why": "filled their hands is the whole Hebrew rendering"
+    },
+    "NUM 4:25": {
+      "lemma": "they",
+      "why": "Gr. it renders they alone"
+    },
+    "NUM 4:47": {
+      "lemma": "service",
+      "why": "Gr. work renders service alone"
+    },
+    "NUM 5:2": {
+      "lemma": "dead body",
+      "why": "Gr. soul renders dead body"
+    },
+    "NUM 6:5": {
+      "lemma": "the long hair",
+      "why": "the rendering stands for the long hair"
+    },
+    "NUM 7:1": {
+      "lemma": "the setting-up of",
+      "why": "Gr. so as to set up renders the setting-up of"
+    },
+    "NUM 7:14": {
+      "lemma": "One golden censer of ten shekels",
+      "why": "the rendering stands for the whole phrase"
+    },
+    "NUM 8:24": {
+      "lemma": "minister",
+      "why": "Gr. do the work renders minister alone"
+    },
+    "NUM 9:20": {
+      "lemma": "a number of days",
+      "why": "the phrase ends at days"
+    },
+    "NUM 10:21": {
+      "lemma": "the others",
+      "note": "i. e. _the Gershonites and the Merarites_. A. V. margin.",
+      "why": "the note explains the others; margin is a comment"
+    },
+    "NUM 11:23": {
+      "lemma": "shall come to pass to thee",
+      "why": "Gr. will overtake thee renders shall come to pass to thee"
+    },
+    "NUM 11:35": {
+      "lemma": "Graves of Lust",
+      "why": "the note gives the Hebrew name of the Graves of Lust"
+    },
+    "NUM 11:35#2": {
+      "lemma": "halted at",
+      "why": "Gr. were in renders halted at"
+    },
+    "NUM 14:40": {
+      "lemma": "we that are here",
+      "why": "Gr. these men renders we that are here"
+    },
+    "NUM 16:15": {
+      "lemma": "the desire",
+      "why": "the note explains the desire as חמד read for חמור"
+    },
+    "NUM 18:11": {
+      "lemma": "wave-offerings",
+      "why": "the note is on the one word"
+    },
+    "NUM 18:19": {
+      "lemma": "of salt for ever",
+      "why": "Gr. of perpetual salt renders of salt for ever"
+    },
+    "NUM 21:1": {
+      "lemma": "some of them captives",
+      "why": "Gr. a captivity of them renders some of them captives"
+    },
+    "NUM 22:3": {
+      "lemma": "before the face of",
+      "why": "because of renders before the face of"
+    },
+    "NUM 22:39": {
+      "lemma": "cities of streets",
+      "why": "cities of villages renders cities of streets"
+    },
+    "NUM 23:3": {
+      "lemma": "appear to me and meet me",
+      "why": "Gr. appear to me in meeting renders appear to me and meet me"
+    },
+    "NUM 24:13": {
+      "lemma": "transgress",
+      "why": "go beyond renders transgress alone"
+    },
+    "NUM 25:1": {
+      "lemma": "profaned itself",
+      "why": "the note is on profaned"
+    },
+    "NUM 25:11": {
+      "lemma": "among them",
+      "why": "against them renders among them"
+    },
+    "NUM 26:2#2": {
+      "lemma": "to battle",
+      "why": "to set himself in array renders to battle"
+    },
+    "NUM 28:13": {
+      "lemma": "burnt-offering",
+      "why": "the note is on κάρπωμα, burnt-offering"
+    },
+    "NUM 30:9": {
+      "lemma": "straitly",
+      "why": "in any wise renders straitly"
+    },
+    "NUM 31:19": {
+      "note": "i. e. of a slain man.",
+      "why": "the note says whose body rather than renders"
+    },
+    "NUM 32:1": {
+      "lemma": "a multitude of cattle, very great",
+      "why": "the rendering covers the whole phrase, to very great"
+    },
+    "NUM 32:13": {
+      "lemma": "in the sight of",
+      "why": "before renders in the sight of"
+    },
+    "NUM 32:14": {
+      "lemma": "combination of sinful men",
+      "why": "the phrase ends at men"
+    },
+    "NUM 34:14": {
+      "lemma": "their families",
+      "why": "the houses of their families renders their families"
+    },
+    "NUM 35:11": {
+      "lemma": "killed another",
+      "why": "Gr. smitten a life renders killed another; unintentionally stands apart"
+    },
+    "DEU 1:6": {
+      "lemma": "to have dwelt",
+      "why": "Gr. to dwell renders to have dwelt"
+    },
+    "DEU 1:15": {
+      "note": "Perhaps, _recorders_: more lit. _instructors in reading and writing_.",
+      "why": "recorders is a rendering; the note is on officers"
+    },
+    "DEU 1:16": {
+      "lemma": "the stranger that is with him",
+      "why": "Gr. his stranger renders the stranger that is with him"
+    },
+    "DEU 1:31": {
+      "lemma": "bear thee as a nursling",
+      "why": "Acts 13. 18 and its margin are on bearing as a nurse"
+    },
+    "DEU 2:3": {
+      "lemma": "Ye have compassed this mount long enough",
+      "why": "the phrase ends at enough"
+    },
+    "DEU 3:11": {
+      "note": "Or, _acropolis, citadel_: or _extremity_ of the land of the Ammonites.",
+      "why": "extremity is a second rendering of chief city"
+    },
+    "DEU 3:27": {
+      "lemma": "quarried rock",
+      "why": "Pisgah is the quarried rock"
+    },
+    "DEU 4:9": {
+      "lemma": "keep thy heart",
+      "why": "soul renders heart alone"
+    },
+    "DEU 4:19": {
+      "lemma": "heavenly bodies",
+      "why": "order of heaven renders heavenly bodies"
+    },
+    "DEU 6:20": {
+      "lemma": "at a future time",
+      "why": "the phrase ends at time"
+    },
+    "DEU 8:7": {
+      "lemma": "of deep places issuing",
+      "why": "the rendering takes in issuing"
+    },
+    "DEU 9:24": {
+      "lemma": "in the things relating to the Lord",
+      "why": "the phrase ends at the Lord"
+    },
+    "DEU 12:20": {
+      "lemma": "according to all",
+      "why": "Gr. in all renders according to all"
+    },
+    "DEU 14:5": {
+      "lemma": "wild goat",
+      "why": "buffalo renders wild goat"
+    },
+    "DEU 16:8#3": {
+      "lemma": "by any one",
+      "why": "Gr. by a soul renders by any one"
+    },
+    "DEU 16:21": {
+      "lemma": "plant for thyself any tree",
+      "why": "Gr. make is ποιήσεις in the second clause"
+    },
+    "DEU 17:6#2": {
+      "lemma": "is put to death shall not be put to death",
+      "why": "Gr. dies shall not die renders both verbs"
+    },
+    "DEU 17:8": {
+      "lemma": "between blood and blood",
+      "why": "the rendering covers the whole phrase"
+    },
+    "DEU 17:17": {
+      "lemma": "turn away",
+      "why": "Gr. change renders turn away"
+    },
+    "DEU 18:10": {
+      "lemma": "uses divination",
+      "why": "Gr. divines renders uses divination"
+    },
+    "DEU 20:19#3": {
+      "lemma": "the work of the siege",
+      "why": "Gr. the trench renders the work of the siege"
+    },
+    "DEU 21:4": {
+      "lemma": "slay",
+      "note": "Gr. _cut the sinews_. i. e. of the neck.",
+      "why": "Gr. cut the sinews renders slay alone; of the neck adds to it rather than renders"
+    },
+    "DEU 21:15": {
+      "lemma": "the other",
+      "why": "Gr. one of them renders the other"
+    },
+    "DEU 23:15": {
+      "note": "i. e. would if thou wert disobedient.",
+      "why": "the note explains rather than renders"
+    },
+    "DEU 24:6": {
+      "lemma": "he who does so",
+      "why": "Gr. this man renders he who does so"
+    },
+    "DEU 28:10": {
+      "note": "Or, _see that the name_, etc.",
+      "lemma": "see thee, that the name",
+      "why": "see that the name is the rendering, of see thee, that the name"
+    },
+    "DEU 28:40": {
+      "lemma": "cast its fruit",
+      "why": "Lit. flow, fall down render cast its fruit"
+    },
+    "DEU 28:50": {
+      "lemma": "respect",
+      "why": "Gr. wonder at renders respect; the person remains"
+    },
+    "DEU 30:1": {
+      "lemma": "call them to mind",
+      "why": "the rendering stands for more words than it has"
+    },
+    "DEU 30:11": {
+      "lemma": null,
+      "why": "a cross-reference at the start of the verse"
+    },
+    "DEU 32:36": {
+      "lemma": "utterly weakened",
+      "why": "Gr. paralysed renders utterly weakened"
+    },
+    "DEU 32:42": {
+      "lemma": "enemies",
+      "why": "Alex. ἐθνῶν stands for ἐχθρῶν, enemies"
+    },
+    "JOS 1:4": {
+      "lemma": "extremity of the sea",
+      "why": "the renderings are of the last sea, the farthest sea"
+    },
+    "JOS 1:6": {
+      "lemma": "to give to your fathers",
+      "why": "the rendering stands for to give to your fathers"
+    },
+    "JOS 1:7": {
+      "lemma": "therefrom",
+      "why": "from them renders therefrom"
+    },
+    "JOS 1:14": {
+      "lemma": "well armed",
+      "why": "in good order renders well armed"
+    },
+    "JOS 2:18": {
+      "lemma": "shall enter",
+      "why": "Gr. do enter renders shall enter; we remains"
+    },
+    "JOS 3:9": {
+      "note": "Gr. _bring hither_. sc. yourselves.",
+      "why": "yourselves supplies the object rather than renders"
+    },
+    "JOS 3:15": {
+      "lemma": "all its banks",
+      "why": "its whole channel renders all its banks"
+    },
+    "JOS 3:15#2": {
+      "lemma": "about the time",
+      "why": "as on the days renders about the time"
+    },
+    "JOS 4:3": {
+      "note": "Gr. _ready_. Heb. הכין. A. V. _firm_, applied to the foot of the priests.",
+      "why": "only firm is the A. V. rendering"
+    },
+    "JOS 4:4": {
+      "lemma": "of distinction",
+      "why": "the rendering is of of distinction"
+    },
+    "JOS 4:7": {
+      "lemma": "dried up",
+      "why": "Gr. failed renders dried up"
+    },
+    "JOS 4:13": {
+      "lemma": "armed",
+      "why": "in good order renders armed, as in chap. 1. 14; for battle remains"
+    },
+    "JOS 5:1": {
+      "lemma": "they were terror-stricken",
+      "why": "their minds melted renders they were terror-stricken"
+    },
+    "JOS 5:1#2": {
+      "lemma": "because of",
+      "why": "from the face of renders because of"
+    },
+    "JOS 6:5": {
+      "lemma": "all the people shall shout",
+      "why": "let all the people, etc. renders all the people shall shout"
+    },
+    "JOS 6:8": {
+      "note": "Heb. שופרות היובלים A. V. ‘_ram's horns_.’ Only in this place.",
+      "why": "ram's horns is the A. V. rendering, of sacred trumpets"
+    },
+    "JOS 8:21": {
+      "lemma": "had taken",
+      "why": "Gr. took renders had taken"
+    },
+    "JOS 9:5": {
+      "note": "Gr. _eaten_, sc. of worms and maggots.",
+      "why": "of worms and maggots adds to eaten rather than renders"
+    },
+    "JOS 10:13": {
+      "note": "i. e. additional day without a night between.",
+      "why": "the note explains rather than renders"
+    },
+    "JOS 10:19": {
+      "lemma": "attack",
+      "why": "fasten upon or seize renders attack; the rear remains"
+    },
+    "JOS 12:2": {
+      "note": "another reading is ἐπὶ τοῦ χείλους, _on the slope_ or, _edge_.",
+      "why": "the English after the Greek renders on the side; of the valley remains"
+    },
+    "JOS 13:3": {
+      "lemma": "wilderness",
+      "why": "uninhabited country renders wilderness"
+    },
+    "JOS 14:8": {
+      "note": "Or, according to the Heb. idiom, ‘_fully followed_.’",
+      "why": "fully followed is the rendering; according to the Heb. idiom introduces it"
+    },
+    "JOS 14:15": {
+      "lemma": "metropolis",
+      "why": "mother-cities renders metropolis; of the Enakim remains"
+    },
+    "JOS 15:2": {
+      "lemma": "high country",
+      "why": "Gr. neck and Heb. tongue render high country"
+    },
+    "JOS 15:7": {
+      "lemma": "the fourth part",
+      "why": "the note is on the reading fourth part"
+    },
+    "JOS 15:15": {
+      "lemma": "the city of Letters",
+      "why": "Kirjath-sepher is the city of Letters"
+    },
+    "JOS 15:18": {
+      "note": "_What has thou to say_? or _of what hast thou need_?",
+      "why": "both are renderings"
+    },
+    "JOS 18:6": {
+      "lemma": "give",
+      "why": "Gr. bring out renders give"
+    },
+    "JOS 18:8": {
+      "lemma": "explore",
+      "occurrence": 1,
+      "why": "walk through renders explore; the land follows"
+    },
+    "JOS 19:11": {
+      "lemma": "to",
+      "why": "Brenton's caller follows the words the note glosses"
+    },
+    "JOS 19:27": {
+      "lemma": "westward",
+      "why": "from the rising of the sun renders westward"
+    },
+    "JOS 19:51": {
+      "lemma": "went to take possession",
+      "why": "finished dividing renders went to take possession"
+    },
+    "JOS 20:2#2": {
+      "lemma": "refuge",
+      "why": "Gr. refugees renders refuge; cities of remains"
+    },
+    "JOS 21:4": {
+      "lemma": "out of the tribe of Juda",
+      "why": "Gr. from renders out of, not cities"
+    },
+    "JOS 21:11": {
+      "lemma": "they",
+      "why": "Gr. he renders they"
+    },
+    "JOS 21:11#2": {
+      "lemma": "metropolis",
+      "why": "parent city renders metropolis"
+    },
+    "JOS 21:13": {
+      "lemma": "Chebron, and the suburbs",
+      "why": "glebe, after q. d., renders suburbs alone"
+    },
+    "JOS 22:24": {
+      "lemma": "hereafter",
+      "why": "to-morrow renders hereafter"
+    },
+    "JOS 22:26": {
+      "lemma": "gave orders",
+      "why": "Gr. spoke renders gave orders"
+    },
+    "JOS 23:4#2": {
+      "lemma": "the boundaries shall be",
+      "why": "he shall bound renders the boundaries shall be"
+    },
+    "JOS 24:9": {
+      "lemma": "made war",
+      "why": "set himself in array renders made war; against Israel remains"
+    },
+    "JOS 24:20": {
+      "lemma": "because",
+      "why": "whereas renders because"
+    },
+    "JOS 24:26": {
+      "note": "Gr. Properly _a pine_ or _turpentine tree_. So chap. 17. 9.",
+      "why": "the note is on oak; Properly is Brenton's comment"
+    },
+    "JDG 1:30": {
+      "lemma": "to them",
+      "why": "sc. Zabulon explains him, not to them"
+    },
+    "JDG 2:18": {
+      "lemma": "was moved",
+      "why": "Gr. repented renders was moved"
+    },
+    "JDG 2:23": {
+      "lemma": "will leave",
+      "why": "left renders will leave"
+    },
+    "JDG 3:15": {
+      "lemma": "son of Jemeni",
+      "why": "Benjamite renders son of Jemeni"
+    },
+    "JDG 3:25": {
+      "lemma": "was no one",
+      "why": "Gr. is renders was"
+    },
+    "JDG 3:30": {
+      "lemma": "humbled",
+      "why": "put to shame renders humbled"
+    },
+    "JDG 5:11": {
+      "lemma": "disturbers",
+      "why": "noisy ones renders disturbers"
+    },
+    "JDG 5:14": {
+      "note": "Gr. Rather, _draw_ or _handle the scribe's pen_, etc.",
+      "lemma": "draw with the scribe's pen",
+      "why": "Rather is Brenton's comment; the rendering replaces draw with the scribe's pen"
+    },
+    "JDG 5:26": {
+      "lemma": "nail",
+      "why": "pin of the tent renders nail; the article stays"
+    },
+    "JDG 6:6": {
+      "lemma": "because of",
+      "why": "from before the face of renders because of"
+    },
+    "JDG 6:7": {
+      "lemma": "because of",
+      "why": "from before the face of renders because of"
+    },
+    "JDG 7:19": {
+      "lemma": "broke",
+      "why": "shook off renders broke; the pitchers are its object"
+    },
+    "JDG 7:24": {
+      "lemma": "into all mount Ephraim",
+      "why": "the phrase ends at Ephraim"
+    },
+    "JDG 8:6": {
+      "note": "Gr. _is the hand_.",
+      "why": "is the hand renders are the hands"
+    },
+    "JDG 8:7": {
+      "lemma": "tear",
+      "why": "dig down renders tear; your flesh is its object"
+    },
+    "JDG 8:21": {
+      "note": "i. e. round like the moon; perhaps circular, or in the form of a crescent.",
+      "why": "the note explains rather than renders"
+    },
+    "JDG 9:6": {
+      "lemma": "Sedition",
+      "why": "the note is on Sedition, the double translation of the Hebrew name"
+    },
+    "JDG 9:23": {
+      "lemma": "dealt treacherously",
+      "why": "despised renders dealt treacherously"
+    },
+    "JDG 9:29": {
+      "lemma": "then would I",
+      "why": "and I will renders then would I; Abimelech is the object of remove"
+    },
+    "JDG 9:37": {
+      "lemma": "westward",
+      "why": "by the sea renders westward"
+    },
+    "JDG 9:46": {
+      "lemma": "gathering",
+      "why": "the other reading ὀχύρωμα stands for gathering"
+    },
+    "JDG 9:50": {
+      "lemma": "against",
+      "why": "Gr. in renders against"
+    },
+    "JDG 10:1": {
+      "lemma": "his",
+      "why": "the note says whose father is meant: Abimelech's renders his"
+    },
+    "JDG 11:40": {
+      "lemma": "from year to year",
+      "why": "the note is on the whole phrase"
+    },
+    "JDG 12:1": {
+      "note": "i. e. by calling.",
+      "why": "the note explains rather than renders"
+    },
+    "JDG 12:2": {
+      "lemma": "I and my people",
+      "why": "the note is on the opening words"
+    },
+    "JDG 12:6": {
+      "note": "Heb. שבלה, “Shibboleth,” _ear of corn_. If translated at all, the English may as well be put as the Greek. Alex. σύνθημα, q. d. _watchword_.",
+      "why": "ear of corn is the English rendering of Stachys"
+    },
+    "JDG 13:5#2": {
+      "lemma": "Nazarite",
+      "why": "the note is on the Greek word for Nazarite"
+    },
+    "JDG 13:19": {
+      "note": "According to the Heb. _a wonderful work_. Alex. reads τῷ θανμαστὰ ποιοῦντι κυριῷ.",
+      "why": "a wonderful work is the Hebrew's rendering"
+    },
+    "JDG 14:1": {
+      "note": "Observe, ἀλλόφυλοι here and elsewhere is rendered _Philistines_.",
+      "why": "Philistines is the English word Brenton cites"
+    },
+    "JDG 14:10": {
+      "lemma": "banquet",
+      "note": "i. e. in the original sense of the word, _a drinking party_.",
+      "why": "the note is on banquet; in the original sense of the word is comment"
+    },
+    "JDG 14:13": {
+      "lemma": "changes of apparel",
+      "why": "changing robes renders changes of apparel"
+    },
+    "JDG 16:9": {
+      "lemma": "liers in wait",
+      "why": "ambush renders liers in wait"
+    },
+    "JDG 18:2": {
+      "lemma": "search it",
+      "why": "survey and examine it render search it"
+    },
+    "JDG 18:7": {
+      "note": "Here probably διατρέπων and ἐκπιέζων both come under the Heb. מבליס and ἐκπιέζων and θησανροὺς both under עצר.",
+      "why": "both under is Brenton's comment"
+    },
+    "JDG 18:10": {
+      "lemma": "of anything that the earth affords",
+      "why": "of the things in the land renders of anything that the earth affords"
+    },
+    "JDG 18:25": {
+      "lemma": "take away",
+      "note": "Lit. _add_. q. d. to the deeds already done.",
+      "why": "add renders take away; to the deeds already done explains rather than renders"
+    },
+    "JDG 19:3#2": {
+      "lemma": "he had his young man",
+      "why": "his young man was renders he had his young man"
+    },
+    "JDG 20:26": {
+      "note": "Or, _unblemished_, according to the Heb. _peace offering_.",
+      "why": "unblemished and peace offering are the renderings"
+    },
+    "JDG 20:37": {
+      "lemma": "moved on",
+      "why": "extended themselves renders moved on; toward Gabaa stays"
+    },
+    "JDG 20:39": {
+      "note": "Or, _slain ones_, i. e. to smite and cause to fall.",
+      "why": "to smite and cause to fall explains smite down, rather than renders wounded ones"
+    },
+    "JDG 20:45": {
+      "lemma": "picked off",
+      "why": "gleaned renders picked off; of them stays"
+    },
+    "JDG 21:6": {
+      "lemma": "relented",
+      "why": "comforted themselves renders relented"
+    },
+    "JDG 21:12": {
+      "note": "Gr. _from_, _out of_.",
+      "why": "from and out of are two renderings of among"
+    },
+    "JDG 21:15": {
+      "lemma": "relented",
+      "why": "the note refers to relented in ver. 6"
+    },
+    "1SA 1:24": {
+      "lemma": "of three years old",
+      "why": "in its third year renders of three years old"
+    },
+    "1SA 2:24": {
+      "lemma": "the reports which I hear are not good, so that the people do not serve God",
+      "why": "the rendering and its etc. cover the clause to serve God"
+    },
+    "1SA 2:36": {
+      "lemma": "for a little piece of silver",
+      "why": "the Alexandrine addition follows piece of silver"
+    },
+    "1SA 3:6": {
+      "lemma": "called again",
+      "why": "Gr. added and called renders called again"
+    },
+    "1SA 4:10#2": {
+      "lemma": "fighting men",
+      "why": "Gr. ranks renders fighting men (thirty thousand ranks)"
+    },
+    "1SA 4:15": {
+      "lemma": "ninety years old",
+      "why": "a son of ninety years renders ninety years old"
+    },
+    "1SA 6:6": {
+      "lemma": "harden",
+      "why": "make heavy renders harden alone; your hearts is kept"
+    },
+    "1SA 6:8": {
+      "lemma": "coffer",
+      "why": "ἀργός and βερσεχθάν are both the Hebrew word for coffer"
+    },
+    "1SA 9:18#2": {
+      "lemma": "which",
+      "why": "of what kind renders which alone"
+    },
+    "1SA 10:9": {
+      "lemma": "turned his back",
+      "why": "was turned with his shoulder renders turned his back; to depart is kept"
+    },
+    "1SA 13:7": {
+      "lemma": "in amazement",
+      "why": "was amazed renders in amazement"
+    },
+    "1SA 14:6": {
+      "lemma": "Messab",
+      "why": "the note is on the Hebrew word Messab"
+    },
+    "1SA 14:21": {
+      "lemma": "before",
+      "why": "yesterday and the third day renders before"
+    },
+    "1SA 14:39": {
+      "lemma": "if answer should be",
+      "why": "if he should answer renders if answer should be"
+    },
+    "1SA 14:40": {
+      "lemma": "will be under subjection",
+      "why": "Gr. become slaves renders be under subjection"
+    },
+    "1SA 15:3": {
+      "lemma": "Hierim",
+      "why": "the note refers to the note on Hierim in v. 8"
+    },
+    "1SA 15:8": {
+      "lemma": "Hierim",
+      "why": "the note is on Hierim"
+    },
+    "1SA 15:12#2": {
+      "lemma": "Samuel has come",
+      "why": "the Heb. and Alex. read Saul for Samuel after saying"
+    },
+    "1SA 15:12#3": {
+      "lemma": "raised up help",
+      "why": "set up a hand renders raised up help; for himself is kept"
+    },
+    "1SA 15:32": {
+      "lemma": "Is death thus bitter",
+      "why": "the rendering stands for the whole question"
+    },
+    "1SA 16:4": {
+      "lemma": "Dost thou come peaceably",
+      "note": "Gr. _is_ '_thy coming in peace_.'",
+      "why": "the whole question is the rendering, of Dost thou come peaceably"
+    },
+    "1SA 16:7#2": {
+      "lemma": "sees not",
+      "why": "will not see renders sees not"
+    },
+    "1SA 16:11#2": {
+      "lemma": "a little one",
+      "why": "the phrase ends at one"
+    },
+    "1SA 16:13": {
+      "lemma": "came upon",
+      "why": "leapt upon renders came upon; David is kept"
+    },
+    "1SA 16:17": {
+      "lemma": "skilful player",
+      "why": "man playing skilfully renders skilful player"
+    },
+    "1SA 17:7": {
+      "lemma": "the spear's head",
+      "why": "Gr. the spear renders the spear's head; the Greek has no word for head"
+    },
+    "1SA 17:35": {
+      "lemma": "he",
+      "why": "Gr. it renders he"
+    },
+    "1SA 17:39": {
+      "lemma": "made trial",
+      "why": "laboured renders made trial"
+    },
+    "1SA 17:43": {
+      "lemma": "and David said, Nay, but worse than a dog",
+      "why": "the note is on the bracketed words, which run to dog"
+    },
+    "1SA 17:46": {
+      "lemma": "deliver thee",
+      "why": "shut thee up renders deliver thee"
+    },
+    "1SA 17:53#2": {
+      "lemma": "destroyed",
+      "why": "trampled on renders destroyed; their camp is kept"
+    },
+    "1SA 19:10": {
+      "lemma": "to smite David with the spear",
+      "why": "the rendering includes the spear"
+    },
+    "1SA 19:11": {
+      "lemma": "David's wife told him",
+      "why": "his wife sent to David renders David's wife told him"
+    },
+    "1SA 20:6": {
+      "note": "Or, _notice me as present or absent_.",
+      "why": "notice me as present or absent is one rendering, not two"
+    },
+    "1SA 20:6#2": {
+      "lemma": "yearly sacrifice",
+      "why": "sacrifice of days renders yearly sacrifice"
+    },
+    "1SA 20:19": {
+      "lemma": "stay three days",
+      "why": "act thrice renders stay three days"
+    },
+    "1SA 20:30": {
+      "note": "Lit. _deserting_ in a military sense.",
+      "why": "Lit. deserting renders traitorous; in a military sense is comment"
+    },
+    "1SA 20:31": {
+      "lemma": "so long as",
+      "why": "all the days that renders so long as"
+    },
+    "1SA 21:3#2": {
+      "note": "Phellani maemoni, a corruption of פלכי אלמבי.",
+      "why": "phellani maemoni repeats the words of the text; the note explains rather than renders"
+    },
+    "1SA 21:8": {
+      "lemma": "detained",
+      "why": "Νεεσσαρὰν repeats the word for detained (Heb. נעצר)"
+    },
+    "1SA 21:10": {
+      "note": "Alex. + _behind the ephod_ (or _shoulder-piece_) —so the Heb.",
+      "why": "shoulder-piece is an alternative rendering of ephod"
+    },
+    "1SA 21:13": {
+      "lemma": "laid up",
+      "why": "Gr. put renders laid up"
+    },
+    "1SA 21:15": {
+      "lemma": "man is mad",
+      "why": "man epileptic renders man is mad; with mad alone the substitution doubles man"
+    },
+    "1SA 22:8": {
+      "lemma": "is sorry",
+      "why": "Gr. labours renders is sorry"
+    },
+    "1SA 23:9": {
+      "lemma": "spoke openly of",
+      "why": "is not silent concerning renders spoke openly of; mischief is not in the rendering"
+    },
+    "1SA 23:11": {
+      "lemma": "Will the place be shut up",
+      "why": "i. e. besieged glosses be shut up"
+    },
+    "1SA 23:11#2": {
+      "lemma": null,
+      "why": "the note is on verse 12, which Alex. supplies after this one"
+    },
+    "1SA 23:15": {
+      "lemma": "New",
+      "why": "the note is on New, the Hebrew read as חדש"
+    },
+    "1SA 25:1": {
+      "lemma": "Armathaim",
+      "why": "the eBible text swaps this note and the next: Rama is the Hebrew for Armathaim"
+    },
+    "1SA 25:1#2": {
+      "lemma": "assembled, and bewailed him",
+      "why": "the eBible text swaps this note and the one before: assemble and bewail renders assembled, and bewailed him"
+    },
+    "1SA 25:2": {
+      "note": "Lit. _3,000 flocks_; as we say in English, _3,000 troops_, meaning men formed into troops.",
+      "why": "3,000 flocks is the literal rendering; 3,000 troops is the English phrase Brenton cites"
+    },
+    "1SA 25:5": {
+      "lemma": "how he is",
+      "why": "concerning peace renders how he is"
+    },
+    "1SA 25:13": {
+      "lemma": "Gird on every man his sword",
+      "why": "the insertion is added after Gird on every man his sword"
+    },
+    "1SA 25:25": {
+      "lemma": "this pestilent man",
+      "why": "even Nabal is added after this pestilent man (Heb. this man of Belial, even Nabal)"
+    },
+    "1SA 25:27": {
+      "lemma": "token of goodwill",
+      "why": "Gr. blessing renders token of goodwill"
+    },
+    "1SA 25:39": {
+      "lemma": "heard it",
+      "why": "Heb. has heard that Nabal was dead"
+    },
+    "1SA 25:44": {
+      "note": "Heb. and Alex. _Laish_ and _Lais_.",
+      "why": "two readings (Heb. Laish, Alex. Lais); and is not part of either"
+    },
+    "1SA 25:44#2": {
+      "note": "Heb. and Alex. _Gallim_ and _Galli_.",
+      "why": "two readings (Heb. Gallim, Alex. Galli); and is not part of either"
+    },
+    "1SA 26:8": {
+      "lemma": "smite him again",
+      "why": "double the stroke to him renders smite him again"
+    },
+    "1SA 26:14": {
+      "lemma": "callest",
+      "why": "to the king is added after callest"
+    },
+    "1SA 26:24#2": {
+      "lemma": "be precious",
+      "why": "magnified renders be precious"
+    },
+    "1SA 28:20": {
+      "lemma": "instantly fell at his full length",
+      "why": "the phrase ends at length"
+    },
+    "1SA 29:3": {
+      "lemma": "that pass by",
+      "why": "the note is on that pass by, which renders the one Hebrew word"
+    },
+    "1SA 29:4": {
+      "lemma": "a traitor in the camp",
+      "why": "a plotter against the camp renders a traitor in the camp; with traitor alone the substitution doubles a and the camp"
+    },
+    "1SA 29:8": {
+      "lemma": "and war",
+      "why": "warring renders and war (that I should not come warring)"
+    },
+    "1SA 29:9": {
+      "lemma": "good in my eyes",
+      "why": "an angel of God is added after good in my eyes (Heb. good in my sight, as an angel of God)"
+    },
+    "1SA 30:12": {
+      "lemma": "restored in him",
+      "why": "established in him renders restored in him; with restored alone in him is doubled"
+    },
+    "1SA 30:24": {
+      "lemma": "inferior",
+      "why": "Gr. an inferior thing renders inferior; to us stays"
+    },
+    "1SA 30:26": {
+      "note": "Heb. and Alex. '_Lo! a blessing from you_.' etc.",
+      "why": "the rendering runs to the closing quotation mark"
+    },
+    "2SA 1:18": {
+      "lemma": "gave orders",
+      "why": "Gr. told renders gave orders"
+    },
+    "2SA 1:18#2": {
+      "note": "Gr. _straight_, or _right_, sometimes _upright_, as of a man. Heb. _Jasher_.",
+      "why": "straight, right and upright are the renderings; the rest is comment"
+    },
+    "2SA 1:19#2": {
+      "lemma": "the slain that died",
+      "why": "the note is on the two words, slain and died, that render one Hebrew word"
+    },
+    "2SA 2:23": {
+      "note": "A literal version of the Hebrew חחחו q. d. _sur le champ_.",
+      "why": "sur le champ is the rendering, as with q. d. chez nous and trepidavit"
+    },
+    "2SA 3:29": {
+      "lemma": "Let it fall",
+      "note": "Gr. Lit. _them_. (sc. _bloods_) _meet_.",
+      "why": "them meet renders it fall; the italic ran across the parenthesis"
+    },
+    "2SA 5:2": {
+      "lemma": "heretofore",
+      "why": "yesterday and the third day renders heretofore"
+    },
+    "2SA 5:4": {
+      "lemma": "thirty years old",
+      "why": "a son of thirty years renders thirty years old"
+    },
+    "2SA 5:16a": {
+      "lemma": null,
+      "why": "the note is on the whole verse of names"
+    },
+    "2SA 5:20#2": {
+      "note": "Thus in English or other languages, _Underskiddaw_, _Unterseen_, etc.",
+      "why": "the comma between the two cited names is not italic"
+    },
+    "2SA 5:23": {
+      "note": "Heb. בכאיס lit. _mulberries_.",
+      "why": "mulberries is the literal rendering of the Hebrew"
+    },
+    "2SA 6:3": {
+      "lemma": "drove the waggon",
+      "note": "Alex. more according to the Heb. inserts '_and brought it out of the house of Abinadab in the hill_.'",
+      "why": "the insertion is the rendering, and it is added after drove the waggon"
+    },
+    "2SA 6:7": {
+      "lemma": "God smote him there",
+      "why": "for his rashness is added after God smote him there (Heb. for his error)"
+    },
+    "2SA 8:1": {
+      "lemma": "tribute",
+      "why": "the Hebrew name is for tribute"
+    },
+    "2SA 8:2": {
+      "lemma": "laid them down",
+      "why": "Gr. caused them to sleep renders laid them down; on the ground stays"
+    },
+    "2SA 8:4#2": {
+      "lemma": "chariot horses",
+      "why": "Gr. chariots renders chariot horses"
+    },
+    "2SA 11:18": {
+      "lemma": "so as to tell them",
+      "note": "Alex. and Heb. make the verse end here.",
+      "why": "the note comments rather than renders; Alex. and Heb. end the verse before these words"
+    },
+    "2SA 12:8": {
+      "lemma": "had been little, I would have given",
+      "why": "is little, I will give renders had been little, I would have given"
+    },
+    "2SA 12:30": {
+      "lemma": "Molchom their king",
+      "note": "Alex. rightly omits Molchom. 'Their king' in Heb.",
+      "why": "the note comments rather than renders; it is on Molchom their king"
+    },
+    "2SA 13:24": {
+      "lemma": "thy servant has a sheep-shearing",
+      "why": "the phrase ends at sheep-shearing"
+    },
+    "2SA 14:4": {
+      "lemma": "Help, O king",
+      "why": "save renders the first help"
+    },
+    "2SA 14:25": {
+      "lemma": "comely",
+      "why": "praised renders comely (αἰνετὸς σφόδρα, very praised); very stays"
+    },
+    "2SA 15:7": {
+      "lemma": "after",
+      "why": "from the end of renders after; etc. stands for forty years"
+    },
+    "2SA 17:8": {
+      "lemma": "and as a wild boar in the plain",
+      "why": "the note is on all the bracketed words"
+    },
+    "2SA 17:16": {
+      "lemma": "swallow up",
+      "why": "the Alex. reading is of the verb alone"
+    },
+    "2SA 17:19": {
+      "lemma": "spread out",
+      "why": "the references (Num. 11. 32, Jer. 8. 2) are for the verb spread out"
+    },
+    "2SA 17:20": {
+      "lemma": "gone a little way",
+      "why": "the phrase ends at way"
+    },
+    "2SA 18:2": {
+      "note": "Gr. _in_, _by_.",
+      "why": "in and by are two renderings"
+    },
+    "2SA 18:3": {
+      "lemma": "as ten thousand of us",
+      "why": "as we, ten thousand renders as ten thousand of us"
+    },
+    "2SA 18:12": {
+      "lemma": "receive",
+      "why": "weigh upon my hands renders receive"
+    },
+    "2SA 18:18#3": {
+      "note": "Heb. idiom for '_place_.'",
+      "why": "place is the rendering"
+    },
+    "2SA 19:30": {
+      "lemma": "speakest thou any longer of thy matters",
+      "why": "thy words renders of thy matters"
+    },
+    "2SA 19:33": {
+      "lemma": "eighty years old",
+      "why": "a son of eighty years renders eighty years old"
+    },
+    "2SA 20:8": {
+      "lemma": "had upon him",
+      "why": "was girded about with renders had upon him"
+    },
+    "2SA 20:22": {
+      "lemma": "they",
+      "why": "it or she renders they alone"
+    },
+    "2SA 21:1#2": {
+      "lemma": "his bloody murder",
+      "why": "the rendering has its own his"
+    },
+    "2SA 21:20": {
+      "note": "Gr. The original is Hebrew in Greek letters.",
+      "why": "the note comments rather than renders"
+    },
+    "2SA 22:30": {
+      "lemma": "a girded man",
+      "why": "the note explains girded man; as is Brenton's supplied word"
+    },
+    "2SA 22:39": {
+      "lemma": "crush",
+      "why": "consume renders crush"
+    },
+    "2SA 22:41": {
+      "lemma": "thou hast caused mine enemies to flee before me",
+      "why": "the rendering has its own thou hast"
+    },
+    "2SA 22:42": {
+      "lemma": "shall be",
+      "why": "Gr. is renders shall be"
+    },
+    "2SA 22:44": {
+      "lemma": "the peoples",
+      "why": "A. V. my people stands for the peoples"
+    },
+    "2SA 24:12": {
+      "lemma": "I bring",
+      "why": "the redundant εἰμὶ stands with I bring"
+    },
+    "2SA 24:17": {
+      "lemma": "it is I that have done wrong",
+      "why": "the addition follows the words before the caller"
+    },
+    "2SA 24:24": {
+      "lemma": "fifty shekels of silver",
+      "why": "the rendering has its own silver"
+    },
+    "1KI 1:47": {
+      "lemma": "make the name of Solomon better",
+      "why": "do good renders make better"
+    },
+    "1KI 2:37#2": {
+      "lemma": "know assuredly",
+      "why": "knowing thou shalt know renders know assuredly"
+    },
+    "1KI 2:46e": {
+      "lemma": "daily provision",
+      "why": "Gr. dinner renders daily provision"
+    },
+    "1KI 3:6#2": {
+      "lemma": "as it is this day",
+      "why": "as this day is renders as it is this day"
+    },
+    "1KI 3:20#2": {
+      "lemma": "laid her dead son",
+      "why": "caused to sleep renders laid"
+    },
+    "1KI 3:26": {
+      "lemma": "her bowels yearned",
+      "why": "her womb was troubled renders her bowels yearned; over her son stays"
+    },
+    "1KI 4:5#2": {
+      "lemma": "Zabuth son of Nathan was",
+      "why": "priest is added before the king's friend (Heb. was priest, and the king's friend)"
+    },
+    "1KI 5:14a": {
+      "lemma": null,
+      "why": "the note is on where the chapter ends, not on any words"
+    },
+    "1KI 5:17#2": {
+      "lemma": "because of",
+      "why": "from the face of renders because of"
+    },
+    "1KI 5:18": {
+      "lemma": "trespass",
+      "why": "the Alex. word is for trespass"
+    },
+    "1KI 5:23": {
+      "lemma": "land them",
+      "why": "shake them off renders land them; there stays"
+    },
+    "1KI 5:30": {
+      "lemma": "six hundred",
+      "why": "the numbers differ in the hundreds"
+    },
+    "1KI 6:1": {
+      "lemma": "of the reign of king Solomon",
+      "why": "the rendering has its own Solomon"
+    },
+    "1KI 6:2": {
+      "lemma": "was forty cubits in length",
+      "why": "the rendering has its own length"
+    },
+    "1KI 6:2#2": {
+      "lemma": "forty cubits",
+      "why": "60 cubits renders forty cubits; in length stays"
+    },
+    "1KI 6:5#2": {
+      "note": "Heb. and Alex. _with_ (or _against_) _the walls of the house round about_.",
+      "why": "with and against are renderings, and the rest of the phrase"
+    },
+    "1KI 6:7#2": {
+      "lemma": "or any iron tool",
+      "why": "the phrase ends at tool"
+    },
+    "1KI 6:20": {
+      "lemma": "perfect",
+      "why": "shut up renders perfect"
+    },
+    "1KI 6:24": {
+      "lemma": "from the tip of one wing to the tip of the other wing",
+      "why": "the rendering covers both tips"
+    },
+    "1KI 7:1": {
+      "lemma": null,
+      "note": "Verse 1, etc. See the first 12 verses of this chapter placed at the end of it in the Vatican copy. See below.",
+      "why": "the note is about the verse and its place in the chapter; the note comments rather than renders"
+    },
+    "1KI 7:6": {
+      "lemma": "formed with net-work",
+      "why": "netted renders formed with net-work"
+    },
+    "1KI 7:17": {
+      "lemma": "side pieces",
+      "why": "the note is on side pieces"
+    },
+    "1KI 7:19": {
+      "lemma": "their axles, and their felloes",
+      "why": "their hands and their backs renders their axles, and their felloes"
+    },
+    "1KI 7:25": {
+      "lemma": "on the right side of the house",
+      "occurrence": 2,
+      "why": "the rendering runs to of the house"
+    },
+    "1KI 7:33": {
+      "note": "_thick part of the land_.",
+      "why": "thick part of the land renders clay land"
+    },
+    "1KI 7:35#2": {
+      "lemma": "snuffers",
+      "why": "the rendering stands for snuffers alone; of gold remains"
+    },
+    "1KI 7:36": {
+      "note": "Or, rather _work about the door_.",
+      "why": "rather is Brenton's comment"
+    },
+    "1KI 7:36#2": {
+      "lemma": "of pure gold",
+      "why": "the phrase ends at gold"
+    },
+    "1KI 7:39#2": {
+      "lemma": "with three rows",
+      "why": "the phrase ends at rows"
+    },
+    "1KI 7:40": {
+      "lemma": "formed the house",
+      "why": "wainscoted the house renders formed the house"
+    },
+    "1KI 7:43": {
+      "lemma": "porch of the pillars",
+      "why": "portico renders porch, not made the porch"
+    },
+    "1KI 8:7": {
+      "note": "pass. part. _spread out with their wings_.",
+      "why": "spread out with their wings is the literal rendering"
+    },
+    "1KI 8:14": {
+      "lemma": "turned",
+      "why": "turned away renders turned; his face remains"
+    },
+    "1KI 8:27": {
+      "lemma": "But",
+      "why": "Gr. that renders But, where the mark stands"
+    },
+    "1KI 8:44": {
+      "lemma": "toward",
+      "why": "Gr. by way of renders toward; the city remains"
+    },
+    "1KI 8:50": {
+      "lemma": "cause them to be pitied",
+      "why": "the phrase ends at pitied"
+    },
+    "1KI 8:53": {
+      "lemma": "O Lord God",
+      "note": "Gr. _Lord, Lord_, i. e. according to the Heb. _Lord Jehovah_.",
+      "why": "Lord, Lord renders O Lord God; according to the Heb. introduces the rendering"
+    },
+    "1KI 9:5": {
+      "lemma": "establish",
+      "why": "raise up renders establish"
+    },
+    "1KI 10:7": {
+      "lemma": "exceeded in goodness",
+      "why": "added good things renders exceeded in goodness"
+    },
+    "1KI 10:13": {
+      "lemma": "by the hand of king Solomon",
+      "note": "_of his royal bounty_, A. V.",
+      "why": "of his royal bounty renders by the hand of king Solomon; of his royal bounty is the A. V. rendering"
+    },
+    "1KI 10:21": {
+      "note": "Lit. '_shut up with gold_,' a frequent phrase in Heb. and Gr. for 'pure gold.' See chap. 6. 20.",
+      "why": "pure gold is the English idiom, not a rendering"
+    },
+    "1KI 10:22a": {
+      "note": "This word more commonly means '_spoil_' in the O.T.",
+      "why": "spoil is another rendering of the word"
+    },
+    "1KI 11:33#2": {
+      "lemma": "the abomination of the children of Ammon",
+      "why": "provocation renders abomination"
+    },
+    "1KI 11:37": {
+      "lemma": "as thy soul desires",
+      "why": "the phrase ends at desires"
+    },
+    "1KI 12:15": {
+      "lemma": "by",
+      "why": "Gr. by the hand of renders by; Achia the Selonite remains"
+    },
+    "1KI 12:18": {
+      "lemma": "made haste",
+      "why": "prevented renders made haste"
+    },
+    "1KI 12:24i": {
+      "lemma": "were dim",
+      "why": "were blunted from seeing renders were dim; eyes remains"
+    },
+    "1KI 12:28": {
+      "lemma": "to have gone",
+      "why": "Gr. to go renders to have gone"
+    },
+    "1KI 13:33": {
+      "lemma": "this",
+      "why": "this word renders this; after stands in the Greek too (μετὰ τὸ ῥῆμα τοῦτο)"
+    },
+    "1KI 14:21": {
+      "lemma": null,
+      "why": "the note is about the chapter, not these words"
+    },
+    "1KI 14:21#2": {
+      "lemma": "was forty and one years old when he began to reign",
+      "why": "a son of 41 years in his reigning is the literal rendering of the whole phrase"
+    },
+    "1KI 14:24": {
+      "lemma": "according to",
+      "why": "of renders according to"
+    },
+    "1KI 14:24#2": {
+      "lemma": "from before",
+      "why": "from the face of renders from before"
+    },
+    "1KI 14:25": {
+      "lemma": "of the reign of Roboam",
+      "why": "of Roboam reigning renders of the reign of Roboam"
+    },
+    "1KI 14:26": {
+      "lemma": "shields",
+      "why": "Gr. arms renders shields; golden stands in the Greek too"
+    },
+    "1KI 14:28": {
+      "lemma": "chamber",
+      "why": "the note is on the word chamber, the Greek θεε"
+    },
+    "1KI 15:2": {
+      "lemma": "three years",
+      "why": "the note gives another number of years"
+    },
+    "1KI 15:7#2": {
+      "lemma": "the chronicles",
+      "why": "the words of the days renders the chronicles; book of remains"
+    },
+    "1KI 15:12#2": {
+      "lemma": "had kept up",
+      "why": "did and wrought render had kept up"
+    },
+    "1KI 15:22": {
+      "lemma": "whole hill of Benjamin, and the watch-tower",
+      "why": "Geba is the hill and Mizpeh the watch-tower"
+    },
+    "1KI 15:23": {
+      "lemma": "mighty deeds",
+      "why": "might renders mighty deeds"
+    },
+    "1KI 15:29": {
+      "lemma": "none that breathed",
+      "why": "no breath renders none that breathed"
+    },
+    "1KI 15:30": {
+      "lemma": "for",
+      "why": "the note is on for, the Greek περὶ"
+    },
+    "1KI 16:8": {
+      "lemma": "Ela",
+      "why": "the inserted words end in Ela"
+    },
+    "1KI 16:10": {
+      "lemma": "smote him and slew him",
+      "why": "the date is added after slew him, before reigned in his stead, as in Heb."
+    },
+    "1KI 16:28a": {
+      "lemma": "year",
+      "why": "the note is on the redundant word year"
+    },
+    "1KI 16:28a#2": {
+      "lemma": "in the beginning of his reign",
+      "why": "in his kingdom renders in the beginning of his reign"
+    },
+    "1KI 16:28c": {
+      "lemma": "mighty deeds",
+      "why": "might renders mighty deeds"
+    },
+    "1KI 16:28d": {
+      "lemma": null,
+      "why": "the note points to the A. V. parallel of the verse, not these words"
+    },
+    "1KI 17:1#2": {
+      "lemma": "word of my mouth",
+      "why": "mouth of my word renders word of my mouth"
+    },
+    "1KI 17:19": {
+      "lemma": "laid him",
+      "why": "caused him to sleep renders laid him; on the bed stands in the Greek too"
+    },
+    "1KI 18:7": {
+      "lemma": "art thou",
+      "why": "if thou art renders art thou"
+    },
+    "1KI 19:2": {
+      "lemma": "do so to me, and more also",
+      "why": "and add these things renders and more also"
+    },
+    "1KI 19:10": {
+      "lemma": "they have digged down thine altars",
+      "why": "Rom. 11. 3 quotes from they have digged down, not from I have been very jealous"
+    },
+    "1KI 20:8#2": {
+      "note": "Possibly _nobles_ is here meant.",
+      "why": "nobles is the word Brenton offers for freemen"
+    },
+    "1KI 20:10": {
+      "lemma": "blessed",
+      "note": "See Prof. Lee on the word ברך in Job 2. 9. Heb. Gram. p. 92.",
+      "why": "the note is a reference on the word blessed, ברך"
+    },
+    "1KI 20:15": {
+      "lemma": "take possession of",
+      "why": "inherit renders take possession of"
+    },
+    "1KI 20:15#2": {
+      "lemma": "would not sell it",
+      "why": "sold it not renders would not sell it"
+    },
+    "1KI 20:19": {
+      "lemma": "Thus",
+      "occurrence": 1,
+      "why": "these things renders Thus alone (Gr. these things saith the Lord)"
+    },
+    "1KI 21:10": {
+      "lemma": "foxes",
+      "why": "the note is on the LXX. reading foxes"
+    },
+    "1KI 21:33": {
+      "lemma": "offered drink-offerings",
+      "why": "poured libations renders offered drink-offerings"
+    },
+    "1KI 21:39": {
+      "lemma": "thy life",
+      "why": "Gr. soul renders life"
+    },
+    "1KI 21:40": {
+      "lemma": "the man was gone",
+      "why": "he was not renders the man was gone"
+    },
+    "1KI 22:8": {
+      "lemma": "by",
+      "why": "Gr. by him renders by"
+    },
+    "1KI 22:14": {
+      "lemma": "that",
+      "why": "these things renders that"
+    },
+    "1KI 22:15": {
+      "lemma": "deliver it into the hand of the king",
+      "why": "the rendering with etc. stands for the whole phrase, which ends at king"
+    },
+    "2KI 1:13": {
+      "lemma": "sent yet again",
+      "why": "added yet to send renders sent yet again"
+    },
+    "2KI 2:2": {
+      "lemma": "As the Lord lives",
+      "why": "the Lord lives renders As the Lord lives"
+    },
+    "2KI 2:4": {
+      "lemma": "As the Lord lives",
+      "why": "the Lord lives renders As the Lord lives"
+    },
+    "2KI 2:10": {
+      "lemma": "asked a hard thing",
+      "why": "hardened in asking renders asked a hard thing"
+    },
+    "2KI 2:16": {
+      "lemma": "men of strength",
+      "why": "sons of strength renders men of strength"
+    },
+    "2KI 2:16#2": {
+      "lemma": "peradventure",
+      "why": "lest at any time renders peradventure"
+    },
+    "2KI 3:9": {
+      "lemma": "fetched a compass of seven days' journey",
+      "why": "compassed a journey of seven days renders fetched a compass of seven days' journey"
+    },
+    "2KI 3:13": {
+      "lemma": "Has",
+      "why": "is it that renders Has (Gr. is it that the Lord has called)"
+    },
+    "2KI 3:21#2": {
+      "lemma": "and they said, Ho",
+      "why": "the Alex. reading and above stands for and they said, Ho"
+    },
+    "2KI 4:10": {
+      "lemma": "turn in",
+      "why": "turn aside renders turn in; thither stays"
+    },
+    "2KI 4:13": {
+      "lemma": "taken all this trouble",
+      "why": "for us is outside the rendering"
+    },
+    "2KI 4:23": {
+      "lemma": "It is well",
+      "why": "Gr. peace renders It is well"
+    },
+    "2KI 4:26": {
+      "lemma": "is it well with thy husband",
+      "why": "the note is on the second question"
+    },
+    "2KI 5:2": {
+      "lemma": "in small bands",
+      "why": "light armed renders in small bands"
+    },
+    "2KI 5:2#2": {
+      "lemma": "waited on",
+      "why": "was before renders waited on"
+    },
+    "2KI 5:13": {
+      "lemma": "wouldest thou",
+      "why": "wilt thou renders wouldest thou; not stays"
+    },
+    "2KI 5:21": {
+      "lemma": "turned back from his chariot to meet him",
+      "why": "the addition follows the verse's last words"
+    },
+    "2KI 6:2": {
+      "lemma": "a habitation",
+      "why": "a place of inhabiting renders a habitation"
+    },
+    "2KI 6:5": {
+      "lemma": "axe head",
+      "why": "Gr. iron renders axe head"
+    },
+    "2KI 6:15": {
+      "lemma": "rose up early",
+      "why": "was early to rise renders rose up early"
+    },
+    "2KI 6:22": {
+      "lemma": "wouldest smite",
+      "why": "smitest renders wouldest smite"
+    },
+    "2KI 7:5": {
+      "lemma": "while it was yet night",
+      "why": "in the dark renders while it was yet night"
+    },
+    "2KI 7:5#2": {
+      "lemma": "was no man",
+      "why": "Gr. is renders was"
+    },
+    "2KI 8:1": {
+      "note": "The Gr. signifies, _to rekindle a fire_.",
+      "why": "to rekindle a fire is the literal rendering"
+    },
+    "2KI 8:17": {
+      "lemma": "Thirty and two years old was he when he began to reign",
+      "why": "a son of 32 years in his reigning renders the whole clause"
+    },
+    "2KI 8:26": {
+      "lemma": "Twenty and two years old was Ochozias when he began to reign",
+      "why": "a son of 22 years in his reigning renders the whole clause"
+    },
+    "2KI 8:28#2": {
+      "lemma": "king of the Syrians",
+      "why": "the note is on the Greek for Syrians"
+    },
+    "2KI 9:13": {
+      "lemma": "top",
+      "why": "the Gr. transliterates the Hebrew for top"
+    },
+    "2KI 9:14": {
+      "lemma": "because of",
+      "why": "from the face of renders because of"
+    },
+    "2KI 9:15": {
+      "lemma": "one fugitive",
+      "why": "one having escaped renders one fugitive"
+    },
+    "2KI 9:20": {
+      "lemma": "drives",
+      "why": "has driven is the rendering"
+    },
+    "2KI 9:26": {
+      "lemma": "Surely, I have seen",
+      "why": "If I have not seen renders Surely, I have seen"
+    },
+    "2KI 10:21#2": {
+      "lemma": "from one end to the other",
+      "why": "mouth to mouth renders from one end to the other"
+    },
+    "2KI 12:1": {
+      "lemma": "seven years old when he began to reign",
+      "why": "in his reigning renders when he began to reign"
+    },
+    "2KI 12:10": {
+      "lemma": "altar",
+      "why": "the Gr. transliterates the Hebrew for altar"
+    },
+    "2KI 12:19": {
+      "lemma": "what he had himself dedicated",
+      "why": "his own holy things renders what he had himself dedicated"
+    },
+    "2KI 13:20": {
+      "lemma": "at the beginning of the year",
+      "why": "the year having come renders at the beginning of the year"
+    },
+    "2KI 14:2": {
+      "lemma": "Twenty and five years old was he when he began to reign",
+      "why": "a son of 25 years in his reigning renders the whole clause"
+    },
+    "2KI 14:6": {
+      "lemma": "shall die",
+      "why": "be put to death renders shall die"
+    },
+    "2KI 14:12": {
+      "lemma": "was overthrown",
+      "why": "Gr. fell renders was overthrown"
+    },
+    "2KI 14:27": {
+      "lemma": "said that he would not",
+      "why": "said not that he would renders said that he would not"
+    },
+    "2KI 15:2": {
+      "lemma": "Sixteen years old was he when he began to reign",
+      "why": "a son of 16 years in his reigning renders the whole clause"
+    },
+    "2KI 15:5#3": {
+      "lemma": "separate",
+      "why": "the Gr. transliterates the Hebrew for separate; house is Greek"
+    },
+    "2KI 15:10": {
+      "note": "Heb. קבלעס _before the people_.",
+      "why": "before the people renders the Hebrew"
+    },
+    "2KI 15:33": {
+      "lemma": "Twenty and five years old was he when he began to reign",
+      "why": "a son of 25 years in his reigning renders the whole clause"
+    },
+    "2KI 16:13": {
+      "lemma": "offered",
+      "why": "offered in way of incense renders offered"
+    },
+    "2KI 16:15": {
+      "lemma": "all the blood of the whole-burnt-offering",
+      "why": "the blood of every renders all the blood of the, not pour"
+    },
+    "2KI 17:9": {
+      "lemma": "secretly practised customs",
+      "why": "cloaked matters renders secretly practised customs"
+    },
+    "2KI 17:14": {
+      "lemma": "their neck",
+      "why": "back renders neck"
+    },
+    "2KI 17:17": {
+      "lemma": "sold themselves",
+      "why": "Gr. were sold renders sold themselves"
+    },
+    "2KI 17:23": {
+      "lemma": "by",
+      "why": "Gr. by the hand of renders by; all his servants stays"
+    },
+    "2KI 18:2": {
+      "lemma": "Five and twenty years old was he when he began to reign",
+      "why": "a son of 25 years in his reigning renders the whole clause"
+    },
+    "2KI 19:4": {
+      "lemma": "Peradventure",
+      "why": "if by any means renders peradventure"
+    },
+    "2KI 19:11": {
+      "lemma": "waste them utterly",
+      "why": "curse them renders waste them utterly"
+    },
+    "2KI 19:14#2": {
+      "lemma": "read it",
+      "why": "Gr. them renders it"
+    },
+    "2KI 19:18": {
+      "lemma": "have cast",
+      "why": "Gr. gave renders have cast"
+    },
+    "2KI 19:20": {
+      "lemma": "thy prayer",
+      "why": "what things thou hast prayed renders thy prayer; to me stands in the Greek too"
+    },
+    "2KI 19:23": {
+      "lemma": "By",
+      "why": "Brenton's caller follows by, the word by the hand of renders"
+    },
+    "2KI 19:23#2": {
+      "lemma": "height of his cedar",
+      "why": "bulk or size renders height, after the caller"
+    },
+    "2KI 19:26": {
+      "lemma": "by him that stands upon it",
+      "why": "before it stands up renders by him that stands upon it"
+    },
+    "2KI 19:30#2": {
+      "lemma": "him that has escaped of the house",
+      "why": "the Greek cited is the escaped of the house"
+    },
+    "2KI 20:1": {
+      "lemma": "shalt die",
+      "why": "diest renders shalt die"
+    },
+    "2KI 20:17": {
+      "lemma": "fail",
+      "why": "be left behind renders fail alone"
+    },
+    "2KI 21:1": {
+      "lemma": "twelve years old when he began to reign",
+      "why": "a son of 12 years in his reigning renders twelve years old when he began to reign"
+    },
+    "2KI 21:3": {
+      "lemma": "built again",
+      "why": "returned and built renders built again"
+    },
+    "2KI 21:3#2": {
+      "lemma": "set up",
+      "why": "built renders set up"
+    },
+    "2KI 21:16": {
+      "lemma": "from one end to the other",
+      "why": "mouth to mouth renders from one end to the other"
+    },
+    "2KI 22:1": {
+      "lemma": "eight years old when he began to reign",
+      "why": "a son of eight years in his reigning renders the whole clause"
+    },
+    "2KI 22:4": {
+      "lemma": "take account of",
+      "why": "seal renders take account of"
+    },
+    "2KI 22:9": {
+      "lemma": "collected",
+      "why": "melted down renders collected"
+    },
+    "2KI 22:20": {
+      "lemma": "thine eyes shall not see any",
+      "why": "the rendering recasts thine eyes shall not see any"
+    },
+    "2KI 23:4": {
+      "lemma": "fields",
+      "why": "the Heb. word the Greek transliterates is fields"
+    },
+    "2KI 23:10": {
+      "lemma": "through fire",
+      "why": "in fire renders through fire"
+    },
+    "2KI 23:11#2": {
+      "lemma": "Nathan the king's eunuch",
+      "why": "the note gives the Hebrew name, Nathan-melech"
+    },
+    "2KI 23:26": {
+      "lemma": "because of",
+      "why": "upon renders because of"
+    },
+    "2KI 23:31": {
+      "lemma": "Twenty and three years old was Joachaz when he began to reign",
+      "why": "the rendering covers the whole clause"
+    },
+    "2KI 23:36": {
+      "lemma": "Twenty-five years old was Joakim when he began to reign",
+      "why": "the rendering covers the whole clause"
+    },
+    "2KI 24:3": {
+      "lemma": "the purpose",
+      "why": "on the mind renders the purpose"
+    },
+    "2KI 24:8": {
+      "lemma": "Eighteen years old was Joachim when he began to reign",
+      "why": "the rendering covers the whole clause"
+    },
+    "2KI 24:18": {
+      "lemma": "Twenty and one years old was Sedekias",
+      "why": "the rendering covers the clause to Sedekias"
+    },
+    "2KI 24:20": {
+      "lemma": "it was according to the Lord's anger against",
+      "why": "the rendering ends at upon, before Jerusalem"
+    },
+    "2KI 25:11": {
+      "lemma": "men who had deserted",
+      "why": "deserters renders men who had deserted"
+    },
+    "PSA 2:9": {
+      "lemma": "rule them",
+      "why": "tend them as a shepherd renders rule them"
+    },
+    "PSA 3:3": {
+      "note": "The word Διάψαλμα (Selah) has been rendered _Pause_, as most intelligible to the English reader.",
+      "why": "Pause is the English word cited from the text"
+    },
+    "PSA 4:9": {
+      "lemma": "both",
+      "why": "at the same time renders both"
+    },
+    "PSA 5:10": {
+      "lemma": "their throat is an open sepulchre",
+      "why": "Rom. 3. 13 quotes from their throat"
+    },
+    "PSA 5:11": {
+      "lemma": "fail of",
+      "why": "fall from renders fail of"
+    },
+    "PSA 7:14": {
+      "note": "See Heb. perhaps '_persecuting ones_.'",
+      "why": "persecuting ones is a rendering"
+    },
+    "PSA 9:22": {
+      "lemma": null,
+      "why": "the note is on the numbering of the psalm that begins here"
+    },
+    "PSA 10:2": {
+      "lemma": "privily",
+      "why": "in dark moon renders privily"
+    },
+    "PSA 11:2": {
+      "lemma": "truth is diminished",
+      "why": "truths are become rare renders truth is diminished"
+    },
+    "PSA 16:4": {
+      "lemma": "I have guarded myself from hard ways",
+      "why": "the rendering begins with I have"
+    },
+    "PSA 17:36": {
+      "lemma": "secure in",
+      "why": "the protection of renders secure in"
+    },
+    "PSA 17:49": {
+      "lemma": "above",
+      "why": "out of the way of renders above alone"
+    },
+    "PSA 19:8": {
+      "lemma": "we will glory",
+      "why": "be magnified renders glory"
+    },
+    "PSA 21:22": {
+      "lemma": "lowliness",
+      "why": "the note is on lowliness"
+    },
+    "PSA 24:8": {
+      "lemma": "instruct",
+      "note": "sc. as a law-giver.",
+      "why": "sc. as a law-giver qualifies instruct rather than renders it"
+    },
+    "PSA 25:12": {
+      "note": "Gr. _in evenness or uprightness_.",
+      "why": "in governs both alternatives"
+    },
+    "PSA 26:6#2": {
+      "lemma": "even sing psalms",
+      "why": "and play on a psaltery renders even sing psalms"
+    },
+    "PSA 26:13": {
+      "lemma": "goodness",
+      "why": "good things renders goodness"
+    },
+    "PSA 27:8": {
+      "lemma": "saving defender of",
+      "why": "defender of the salvation of renders saving defender of"
+    },
+    "PSA 28:9": {
+      "lemma": "strengthens",
+      "why": "the note is on the verb"
+    },
+    "PSA 29:1": {
+      "lemma": "and Song",
+      "why": "of a song renders and Song"
+    },
+    "PSA 30:1": {
+      "lemma": "extreme fear",
+      "why": "ecstasy renders extreme fear"
+    },
+    "PSA 31:1": {
+      "lemma": "by",
+      "why": "Gr. for renders by (τῷ Δαυιδ)"
+    },
+    "PSA 32:2": {
+      "note": "Rather, '_confess_' or _give thanks to_.'",
+      "why": "confess and give thanks to are both renderings"
+    },
+    "PSA 32:4": {
+      "note": "Rather, Gr. _in or with faithfulness_.",
+      "why": "faithfulness goes with both in and with"
+    },
+    "PSA 33:19": {
+      "lemma": "them that are of a contrite heart",
+      "why": "the broken in heart renders them that are of a contrite heart"
+    },
+    "PSA 35:7": {
+      "lemma": "mountains of God",
+      "why": "vast mountains renders the Hebraism mountains of God"
+    },
+    "PSA 35:9": {
+      "lemma": "fully satisfied",
+      "why": "intoxicated renders fully satisfied"
+    },
+    "PSA 43:9": {
+      "lemma": "will we make our boast",
+      "why": "Gr. will be praised renders will we make our boast"
+    },
+    "PSA 44:1": {
+      "lemma": "alternate strains",
+      "why": "the phrase ends at strains"
+    },
+    "PSA 44:2": {
+      "lemma": "has uttered",
+      "why": "eructavit renders has uttered"
+    },
+    "PSA 44:18": {
+      "lemma": "for ever and ever",
+      "why": "to the age of the age renders for ever and ever"
+    },
+    "PSA 45:6": {
+      "lemma": "with his countenance",
+      "why": "the reading toward the morning stands for with his countenance"
+    },
+    "PSA 47:1": {
+      "note": "_A song_.",
+      "why": "A song renders praise"
+    },
+    "PSA 48:3": {
+      "lemma": "sons of mean men",
+      "why": "earth-born renders sons of mean men"
+    },
+    "PSA 48:20": {
+      "lemma": "to",
+      "why": "Gr. as far as renders to alone"
+    },
+    "PSA 50:21": {
+      "note": "Properly, _a heave or wave-offering_.",
+      "why": "a heave or wave-offering renders offering"
+    },
+    "PSA 54:11": {
+      "lemma": "he",
+      "why": "it stands for he alone"
+    },
+    "PSA 54:20": {
+      "lemma": "they suffer no reverse",
+      "note": "Or, _they have nothing to give in exchange_, q. d. to redeem their souls. Compare Ps. 48. 7,8; Mark 8. 37.",
+      "why": "the rendering does not cover For; to redeem their souls adds to it rather than renders"
+    },
+    "PSA 54:22": {
+      "lemma": "his heart drew nigh them",
+      "why": "the note compares the Hebrew of the clause; Brenton's caller follows drew nigh"
+    },
+    "PSA 62:9": {
+      "lemma": "kept very close",
+      "why": "been glued renders kept very close"
+    },
+    "PSA 67:16": {
+      "lemma": "swelling",
+      "why": "curdled like cheese renders swelling alone"
+    },
+    "PSA 70:6": {
+      "lemma": "praise",
+      "why": "hymn singing renders praise"
+    },
+    "PSA 72:11": {
+      "lemma": "is there",
+      "why": "Gr. if there is renders is there"
+    },
+    "PSA 74:9": {
+      "lemma": "from side to side",
+      "why": "from this into that renders from side to side"
+    },
+    "PSA 77:8": {
+      "lemma": "steadfast",
+      "why": "faithfully secured renders steadfast; with God stays"
+    },
+    "PSA 77:38": {
+      "lemma": "forgive",
+      "why": "be propitious and merciful to render forgive, before their sins"
+    },
+    "PSA 77:62": {
+      "lemma": "gave",
+      "why": "Gr. shut up renders gave alone"
+    },
+    "PSA 78:11": {
+      "lemma": "sons of the slain ones",
+      "why": "the phrase ends at ones"
+    },
+    "PSA 79:1": {
+      "lemma": "alternate strains",
+      "why": "the notes at Ps. 44 and 68 titles are on alternate strains"
+    },
+    "PSA 80:16": {
+      "lemma": "their time",
+      "why": "sc. of the others says whose time"
+    },
+    "PSA 81:3": {
+      "lemma": "do justice to",
+      "why": "Gr. justify renders do justice to"
+    },
+    "PSA 87:6": {
+      "note": "Alex. om. ἐῤῥιμμένοι, cast out.",
+      "why": "the Greek words cast out are what Alex. omits"
+    },
+    "PSA 89:17#2": {
+      "lemma": "the works of our hands",
+      "why": "the addition follows the verse's last words"
+    },
+    "PSA 91:8": {
+      "note": "Perhaps, '_come to light_'.",
+      "why": "come to light is a rendering of have watched"
+    },
+    "PSA 92:1": {
+      "lemma": "the day before the Sabbath",
+      "why": "Alex. the sabbath-day renders the day before the Sabbath"
+    },
+    "PSA 92:3": {
+      "lemma": "the rivers have lifted up their voices",
+      "why": "the addition follows the verse's last words"
+    },
+    "PSA 92:4": {
+      "lemma": "at",
+      "why": "Brenton's caller follows the word the note glosses"
+    },
+    "PSA 93:1": {
+      "lemma": "God of vengeance; the God of vengeance",
+      "why": "Brenton's caller follows the words the note is on; plural, bis means vengeance twice"
+    },
+    "PSA 93:19": {
+      "lemma": "have soothed",
+      "why": "have loved renders have soothed, not my soul"
+    },
+    "PSA 94:3": {
+      "lemma": "for the Lord will not cast off his people",
+      "why": "the note is on the whole clause"
+    },
+    "PSA 94:8#2": {
+      "lemma": "irritation",
+      "why": "πειρασμοῦ is a reading for irritation alone"
+    },
+    "PSA 97:8": {
+      "lemma": "the mountains shall exult",
+      "why": "the addition follows the verse's last words"
+    },
+    "PSA 101:17": {
+      "lemma": "and shall appear",
+      "why": "then shall be renders and shall appear"
+    },
+    "PSA 101:26": {
+      "lemma": "beginning",
+      "why": "the note is on beginning"
+    },
+    "PSA 101:29": {
+      "lemma": "prosper",
+      "why": "be directed aright renders prosper; for ever stays"
+    },
+    "PSA 104:28": {
+      "lemma": "rebelled against",
+      "why": "Gr. embittered takes his words as its object"
+    },
+    "PSA 106:33#2": {
+      "lemma": "a dry land",
+      "why": "thirst renders a dry land"
+    },
+    "PSA 113:8": {
+      "lemma": "flint",
+      "why": "sharp rock renders flint"
+    },
+    "PSA 113:24": {
+      "lemma": "heavens",
+      "why": "the note is on heavens"
+    },
+    "PSA 117:27": {
+      "lemma": "thick branches",
+      "why": "the multitude stands for thick branches"
+    },
+    "PSA 118:33": {
+      "note": "sc. as a lawgiver.",
+      "why": "the note qualifies rather than renders, as in ver. 102"
+    },
+    "PSA 118:47": {
+      "lemma": "meditated on",
+      "why": "exercised myself in renders meditated on"
+    },
+    "PSA 118:102": {
+      "note": "That is, as a lawgiver.",
+      "why": "the note explains rather than renders"
+    },
+    "PSA 127:2": {
+      "lemma": "labours of thy hands",
+      "why": "fruits of thy labours stands for labours of thy hands"
+    },
+    "PSA 128:3": {
+      "sentence": false,
+      "why": "read is a participle: the note glosses the Hebrew, it is no sentence"
+    },
+    "PSA 131:18": {
+      "lemma": "holiness",
+      "why": "the note is on holiness (Heb. crown), as in Ps. 88"
+    },
+    "PSA 136:7": {
+      "lemma": "Rase it, rase it",
+      "why": "empty, empty renders the repeated rase it"
+    },
+    "PSA 138:1": {
+      "lemma": "For the end, a Psalm of David",
+      "why": "the addition follows the title"
+    },
+    "PSA 138:3": {
+      "note": "q. d. of rushes, lit. _rush_.",
+      "why": "of rushes adds to bed; rush renders it"
+    },
+    "PSA 140:3": {
+      "lemma": "strong door",
+      "why": "a door of fortification renders strong door"
+    },
+    "PSA 140:5": {
+      "lemma": "in their pleasures",
+      "note": "q. d. lest I be injured by them.",
+      "why": "the note explains the clause rather than renders pleasures"
+    },
+    "PSA 142:10": {
+      "note": "Alex. as Heb. '_land of uprightness_.'",
+      "why": "land of uprightness is the rendering"
+    },
+    "PSA 143:7": {
+      "lemma": "great waters",
+      "why": "Gr. many renders great"
+    },
+    "PSA 146:8": {
+      "lemma": "and green herb for the service of men",
+      "why": "the note is on the whole bracketed clause, from Ps. 103. 14"
+    },
+    "PSA 148:14": {
+      "lemma": "there is a hymn for",
+      "why": "who is the praise of renders there is a hymn for"
+    },
+    "PSA 149:6": {
+      "lemma": "high praises",
+      "why": "Gr. exaltations renders high praises"
+    },
+    "PSA 149:9": {
+      "note": "Gr. _inscribed_, sc. in the scripture.",
+      "why": "in the scripture adds to inscribed rather than renders"
+    },
+    "PRO 1:3": {
+      "lemma": "hard sayings",
+      "why": "turnings, knotty words, render hard sayings"
+    },
+    "PRO 2:15": {
+      "lemma": "courses",
+      "why": "wheel tracks renders courses"
+    },
+    "PRO 3:4": {
+      "lemma": "so shalt thou find favour",
+      "why": "the addition follows find favour, where Brenton's caller stands"
+    },
+    "PRO 3:34": {
+      "lemma": null,
+      "why": "1 Pet. 5. 5 quotes the verse from its start"
+    },
+    "PRO 4:27a": {
+      "lemma": null,
+      "why": "Heb. omits the whole bracketed verse"
+    },
+    "PRO 5:4": {
+      "lemma": "more bitter",
+      "why": "a more bitter thing renders more bitter (Gr. πικρότερον χολῆς)"
+    },
+    "PRO 7:25": {
+      "lemma": "turn aside to her ways",
+      "why": "the addition follows the verse's last words"
+    },
+    "PRO 9:12a": {
+      "lemma": null,
+      "why": "Heb. lacks the whole addition to verse 13"
+    },
+    "PRO 10:13": {
+      "lemma": "fool",
+      "why": "heartless man renders fool"
+    },
+    "PRO 11:3": {
+      "lemma": null,
+      "why": "the Alexandrine text given replaces the whole verse"
+    },
+    "PRO 11:31": {
+      "lemma": null,
+      "why": "1 Pet. 4. 18 quotes the whole verse"
+    },
+    "PRO 12:2": {
+      "lemma": "He that has found favour with the Lord is made better",
+      "why": "better is he, etc. renders the clause"
+    },
+    "PRO 13:8": {
+      "lemma": "endures not",
+      "why": "comes not in for renders endures not"
+    },
+    "PRO 15:5": {
+      "lemma": "utterly",
+      "why": "with the roots wholly torn up renders utterly (Gr. ὁλόρριζοι)"
+    },
+    "PRO 15:27a": {
+      "lemma": "By alms and by faithful dealings sins are purged away",
+      "why": "the note is on the bracketed clause"
+    },
+    "PRO 18:10": {
+      "lemma": "running",
+      "why": "Gr. having run renders running"
+    },
+    "PRO 18:22a": {
+      "lemma": null,
+      "why": "Heb. omits the whole verse"
+    },
+    "PRO 19:11": {
+      "lemma": "triumph overtakes",
+      "why": "boasting comes upon renders triumph overtakes"
+    },
+    "PRO 19:15": {
+      "lemma": "possesses",
+      "why": "keeps down renders possesses"
+    },
+    "PRO 19:23": {
+      "note": "Or, '_but he that is without fear_ (sc. of the Lord) _shall dwell_' etc.",
+      "why": "sc. of the Lord is comment"
+    },
+    "PRO 20:27": {
+      "lemma": "spirit of man",
+      "why": "the lemma should not end on is"
+    },
+    "PRO 21:18": {
+      "lemma": "abomination",
+      "note": "Gr. _`off-scouring_;' perhaps _`ransom_,' q. d. that which cleans.",
+      "why": "off-scouring renders abomination; ransom is a second rendering"
+    },
+    "PRO 22:8a": {
+      "lemma": null,
+      "why": "2 Cor. 9. 7 quotes the verse from its start"
+    },
+    "PRO 22:28": {
+      "lemma": "old",
+      "why": "Gr. eternal renders old"
+    },
+    "PRO 24:22a": {
+      "lemma": null,
+      "why": "Heb. omits the whole addition from here"
+    },
+    "PRO 24:22a#2": {
+      "lemma": "escape",
+      "why": "be outside of renders escape"
+    },
+    "PRO 24:31": {
+      "lemma": "weeds",
+      "why": "Gr. grass renders weeds; Brenton's caller follows the words the note glosses"
+    },
+    "PRO 25:1": {
+      "note": "Possibly _genuine_, q. d. _beyond doubt_.",
+      "why": "genuine and beyond doubt render miscellaneous (Gr. ἀδιάκριτοι)"
+    },
+    "PRO 26:10": {
+      "lemma": null,
+      "why": "the note is on the whole verse"
+    },
+    "PRO 27:20a": {
+      "lemma": null,
+      "why": "Heb. omits the whole bracketed verse"
+    },
+    "PRO 28:9": {
+      "lemma": "made his prayer abominable",
+      "why": "abhorred his prayer renders made his prayer abominable"
+    },
+    "PRO 29:25": {
+      "lemma": "in his master",
+      "why": "in the Lord renders in his master"
+    },
+    "JOL 1:4": {
+      "lemma": null,
+      "why": "the note is on the insect names throughout the verse"
+    },
+    "JOL 1:12": {
+      "lemma": "have abolished",
+      "why": "disfigured renders have abolished"
+    },
+    "JOL 2:3": {
+      "lemma": "Before them is a consuming fire",
+      "note": "Gr. _it_, sc. _the people_.",
+      "why": "Gr. it renders them; the people names it, like sc. Zabulon"
+    },
+    "JOL 2:3#2": {
+      "lemma": "none of them",
+      "note": "Lit. _to him_, sc. _the people_.",
+      "why": "to him renders of them; the people names him, like sc. Zabulon"
+    },
+    "JOL 2:20": {
+      "lemma": "sink",
+      "why": "cause to disappear renders sink"
+    },
+    "JOL 2:20#2": {
+      "lemma": "ill savour",
+      "why": "Gr. corruption renders ill savour"
+    },
+    "JOL 2:20#3": {
+      "lemma": "stink",
+      "why": "the note is on the word stink (smell, Job 6. 7)"
+    },
+    "JOL 4:18": {
+      "lemma": "fountains of Juda",
+      "why": "the note is on fountains of Juda"
+    },
+    "OBA 1:12": {
+      "lemma": "thou shouldest not have looked",
+      "why": "look not thou renders thou shouldest not have looked"
+    },
+    "OBA 1:19": {
+      "lemma": "south",
+      "why": "the Greek transliterates the Hebrew for south"
+    },
+    "JON 1:8": {
+      "lemma": "Tell us",
+      "why": "the Alexandrine addition follows Tell us"
+    },
+    "JON 1:13": {
+      "lemma": "rose and grew more and more",
+      "why": "the phrase runs to more and more"
+    },
+    "JON 2:9": {
+      "lemma": "vanities and lies",
+      "why": "vain and false things renders vanities and lies"
+    },
+    "JON 2:10": {
+      "lemma": "the Lord of my salvation",
+      "why": "for a thank-offering to the Lord renders the Lord of my salvation"
+    },
+    "JON 4:2": {
+      "lemma": "made haste",
+      "why": "Gr. anticipate renders made haste"
+    },
+    "JON 4:3": {
+      "lemma": "Lord God",
+      "why": "sovereign Lord renders Lord God (δέσποτα κύριε)"
+    },
+    "HAG 2:3": {
+      "lemma": "nothing",
+      "why": "not existing renders nothing"
+    },
+    "ZEC 4:10": {
+      "lemma": "the seven eyes",
+      "why": "of the Lord is added after the seven eyes"
+    },
+    "ZEC 6:10": {
+      "note": "Heb. proper names. See A. V.",
+      "why": "proper names describes the Hebrew rather than renders it"
+    },
+    "ZEC 9:13": {
+      "note": "Or, _it with_ Ephraim.",
+      "why": "it with is the rendering"
+    },
+    "ZEC 9:15": {
+      "lemma": "the bowls as the altar",
+      "why": "the altar as bowls renders the bowls as the altar"
+    },
+    "ZEC 10:2#2": {
+      "lemma": "fallen away",
+      "why": "been dried up renders fallen away"
+    },
+    "ZEC 10:4": {
+      "lemma": "oppressor",
+      "why": "he that expels renders oppressor"
+    },
+    "ZEC 11:3": {
+      "lemma": "brought low",
+      "why": "Gr. distressed renders brought low"
+    },
+    "ZEC 11:9": {
+      "lemma": "falls off",
+      "why": "fails renders falls off"
+    },
+    "ZEC 11:17": {
+      "lemma": "the arms of such a one",
+      "why": "his arms renders the arms of such a one"
+    },
+    "ZEC 13:6": {
+      "lemma": "my beloved house",
+      "why": "the house of my beloved renders my beloved house"
+    },
+    "MAL 2:3": {
+      "lemma": "turn my back upon you",
+      "why": "the rendering does not cover I"
+    },
+    "MAL 3:2": {
+      "lemma": "abide",
+      "why": "wait for renders abide"
+    },
+    "MAL 3:5": {
+      "lemma": "afflict",
+      "why": "beat with the fist renders afflict"
+    },
+    "MAL 3:10": {
+      "note": "Or, _windows_, see Gen 7. 11, there rendered '_flood-gates_.'",
+      "why": "flood-gates is cited from Gen. 7. 11"
+    },
+    "ISA 5:1": {
+      "lemma": "high hill",
+      "why": "horn renders high hill"
+    },
+    "ISA 6:4": {
+      "lemma": "shook",
+      "why": "was lifted renders shook"
+    },
+    "ISA 6:11": {
+      "lemma": "by reason of their not being inhabited",
+      "why": "the phrase ends at inhabited"
+    },
+    "ISA 6:13": {
+      "lemma": "there shall be",
+      "why": "Gr. is renders shall be"
+    },
+    "ISA 7:18": {
+      "note": "Or, _which part of the enemy_, etc. _shall rule over the river of Egypt_; but according to Alex. the reading in the text is the right one.",
+      "lemma": "which insect shall rule over a part of the river of Egypt",
+      "why": "the rendering is split by etc. and runs to the river of Egypt; the rest is comment"
+    },
+    "ISA 8:8": {
+      "lemma": "God with us",
+      "why": "Immanuel renders God with us"
+    },
+    "ISA 8:16": {
+      "lemma": "not",
+      "why": "the note is on the word not, which Alex. omits"
+    },
+    "ISA 9:2": {
+      "lemma": "multitude",
+      "why": "greatest part renders multitude; of the people stays"
+    },
+    "ISA 9:5": {
+      "lemma": "the Messenger of great counsel",
+      "why": "Brenton's caller follows the words the note is on: Alex. adds the titles after them, and Heb. 2. 2 compares the Messenger (angel)"
+    },
+    "ISA 10:20": {
+      "lemma": "join themselves with",
+      "why": "repeat their offence renders join themselves with"
+    },
+    "ISA 10:23": {
+      "lemma": "He will finish the work, and cut it short",
+      "note": "Gr. _finishing_ — _cutting_.",
+      "why": "finishing and cutting are both renderings, of finish and cut"
+    },
+    "ISA 10:25": {
+      "lemma": "their council",
+      "why": "of their enemies says whose council, as in Ps. 80. 16"
+    },
+    "ISA 11:15": {
+      "lemma": "smite",
+      "why": "form by smiting glosses smite"
+    },
+    "ISA 13:4": {
+      "lemma": "a war-like nation",
+      "why": "the phrase ends at nation"
+    },
+    "ISA 13:21": {
+      "lemma": "monsters",
+      "why": "the references are on the word monsters (Job 30. 29; Is. 34. 13)"
+    },
+    "ISA 14:2": {
+      "lemma": "they shall inherit",
+      "why": "i. e. the Israelites glosses they"
+    },
+    "ISA 14:2#2": {
+      "lemma": "they shall be multiplied",
+      "why": "i. e. the Gentiles glosses they"
+    },
+    "ISA 14:4": {
+      "lemma": "against the king of Babylon",
+      "why": "the addition follows the king of Babylon, before How (Heb. against the king of Babylon, and say)"
+    },
+    "ISA 14:16": {
+      "lemma": "troubled",
+      "why": "chap. 5. 25 has the same word, troubled"
+    },
+    "ISA 16:11": {
+      "lemma": "thou hast repaired my inward parts as a wall",
+      "why": "the Hebrew differs in the wall that thou hast repaired (Kir-heres), not in my inward parts"
+    },
+    "ISA 17:12": {
+      "note": "Gr. _back_; Complut. reads ἠχος, ‘_noise_’.",
+      "why": "noise renders the Complutensian reading"
+    },
+    "ISA 19:2": {
+      "lemma": "and law",
+      "why": "the note is on the first law; law against would not take district"
+    },
+    "ISA 19:3": {
+      "lemma": "them that have in them a divining spirit",
+      "why": "the ventriloquists (ἐγγαστριμύθους) renders them that have in them a divining spirit, as in 8. 19; them that speak out of the earth is τοὺς ἐκ τῆς γῆς φωνοῦντας"
+    },
+    "ISA 19:9": {
+      "lemma": "make",
+      "why": "work at renders make: them that work at fine linen"
+    },
+    "ISA 22:22": {
+      "lemma": "the key of the house of David",
+      "why": "the quotation (Rev. 3. 7, the key of David) begins at the key"
+    },
+    "ISA 24:23": {
+      "lemma": "from out of",
+      "why": "in replaces from out of: reign in Sion"
+    },
+    "ISA 26:14": {
+      "lemma": "physicians",
+      "why": "the note is on physicians (Heb. rephaim; Job 26. 5)"
+    },
+    "ISA 28:4": {
+      "lemma": "glorious hope",
+      "why": "hope of glory renders glorious hope"
+    },
+    "ISA 28:28#2": {
+      "lemma": "anger crush you",
+      "why": "bitterness trample you renders anger crush you; my stays"
+    },
+    "ISA 29:1": {
+      "lemma": "Alas for",
+      "why": "woe to renders Alas for; the city stays"
+    },
+    "ISA 29:15": {
+      "lemma": "are",
+      "why": "shall be renders are: whose works shall be in darkness"
+    },
+    "ISA 30:18": {
+      "lemma": "stay themselves upon",
+      "why": "wait for renders stay themselves upon: they that wait for him"
+    },
+    "ISA 30:19": {
+      "lemma": "bitterly",
+      "why": "with weeping renders bitterly: has wept with weeping"
+    },
+    "ISA 32:9": {
+      "lemma": "confident daughters",
+      "why": "daughters in hope renders confident daughters; ye stays"
+    },
+    "ISA 33:9": {
+      "lemma": "laid bare",
+      "why": "manifest renders laid bare"
+    },
+    "ISA 33:20": {
+      "lemma": "refuge",
+      "why": "salvation renders refuge; our stays"
+    },
+    "ISA 34:7": {
+      "lemma": "soaked",
+      "why": "made drunken renders soaked: made drunken with blood"
+    },
+    "ISA 34:11": {
+      "lemma": "satyrs",
+      "why": "the note refers the word satyrs to 13. 22"
+    },
+    "ISA 36:2": {
+      "lemma": "by",
+      "why": "Gr. in renders by: stood in the conduit"
+    },
+    "ISA 39:1": {
+      "lemma": "had been",
+      "why": "Gr. was renders had been"
+    },
+    "ISA 40:14": {
+      "lemma": "who has taught him the way of understanding",
+      "why": "the addition follows the verse's last words"
+    },
+    "ISA 42:24": {
+      "lemma": "what",
+      "why": "τίς, who, is a reading for what"
+    },
+    "ISA 43:4": {
+      "lemma": "life",
+      "why": "head renders life: princes for thy head"
+    },
+    "ISA 43:25": {
+      "lemma": "I, even I",
+      "why": "I am, I am renders I, even I"
+    },
+    "ISA 45:19": {
+      "lemma": "I, even I",
+      "why": "I am, I am renders I, even I"
+    },
+    "ISA 46:6": {
+      "note": "Gr. _things made with hands_.",
+      "why": "things made with hands is the rendering"
+    },
+    "ISA 47:10": {
+      "lemma": "thy trusting in wickedness",
+      "why": "the hope of thy wickedness renders thy trusting in wickedness"
+    },
+    "ISA 49:6#2": {
+      "lemma": "the covenant of a race",
+      "why": "a perpetual covenant renders the covenant of a race"
+    },
+    "ISA 50:4": {
+      "lemma": "The Lord even God",
+      "why": "the Lord the Lord renders The Lord even God"
+    },
+    "ISA 51:3": {
+      "lemma": "western places",
+      "why": "the note is on western places (Heb. west or desert)"
+    },
+    "ISA 51:9": {
+      "lemma": "the early time",
+      "why": "the beginning of day renders the early time; in stays (ὡς ἐν ἀρχῇ ἡμέρας)"
+    },
+    "ISA 52:7": {
+      "note": "Rom. 10. 15. Another reading is '_How beautiful are the feet_,' etc. Lit. _Why have the feet been made beautiful_? See also Joel 2. 2.,'the morning [spread] upon the mountains.'",
+      "why": "How beautiful are the feet is the other reading"
+    },
+    "ISA 52:12": {
+      "lemma": "brings up your rear",
+      "why": "gathers you renders brings up your rear"
+    },
+    "ISA 55:2": {
+      "lemma": "for that which will not satisfy",
+      "why": "Col. 2. 23 compares that which will not satisfy; for that alone is empty"
+    },
+    "ISA 57:11": {
+      "lemma": "considered me, nor regarded me",
+      "why": "taken me into thy mind, not into thine heart renders both considered me and regarded me"
+    },
+    "ISA 57:15": {
+      "lemma": "Holy in the holies",
+      "why": "Most Holy renders Holy in the holies (ἅγιος ἐν ἁγίοις)"
+    },
+    "ISA 60:22": {
+      "lemma": "little one",
+      "why": "people few in number renders little one"
+    },
+    "ISA 61:1": {
+      "lemma": null,
+      "why": "Luke 4. 18 quotes the verse from its start"
+    },
+    "ISA 61:9": {
+      "lemma": "take notice of",
+      "why": "acknowledge renders take notice of"
+    },
+    "ISA 63:1": {
+      "lemma": "speak of",
+      "why": "discourse, reason about renders speak of; righteousness stays"
+    },
+    "ISA 63:19": {
+      "lemma": null,
+      "why": "the note is on words Heb. and Alex. add before the verse"
+    },
+    "ISA 64:5": {
+      "lemma": "fallen",
+      "why": "flowed out renders fallen; as leaves stays"
+    },
+    "ISA 66:12": {
+      "lemma": "turn",
+      "why": "turn myself glosses turn; toward stays"
+    },
+    "ISA 66:14": {
+      "lemma": "thrive",
+      "why": "spring up renders thrive"
+    }
+  }
+}

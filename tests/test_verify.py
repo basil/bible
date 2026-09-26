@@ -19,9 +19,7 @@ def processed(tmp_path):
     local = root / project.PROCESSED_DIR
     local.mkdir(parents=True)
     project.project_usfm(root, "GEN").write_text(SOURCE_USFM, encoding="utf-8")
-    (local / "Bible_ptxp.tex").write_text(
-        "%\\OmitCallerInNote{f}\n%\\OmitCallerInNote{x}\n", encoding="utf-8"
-    )
+    (local / "Bible_ptxp.tex").write_text("%\\OmitCallerInNote{f}\n", encoding="utf-8")
 
     def write(output):
         project.processed_usfm(root, "GEN").write_text(output, encoding="utf-8")
@@ -55,15 +53,6 @@ def test_processed_output_relabelled_verse(processed):
 
 
 # Rendered PDF
-
-
-def test_note_callers_may_repeat_on_different_pages():
-    verify.check_note_callers("a 1:1 First.\nb 1:2 Second.\n\fa 1:3 Third.\n")
-
-
-def test_note_callers_may_not_repeat_on_one_page():
-    with pytest.raises(CheckFailed, match=r"page 2: \['a'\]"):
-        verify.check_note_callers("\fa 1:1 First.\na 1:3 Second.\n")
 
 
 def test_added_words_witness_may_be_left_out_of_the_sample(tmp_path):
