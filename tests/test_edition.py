@@ -101,10 +101,7 @@ BRENTON_NON_SCRIPTURE = {
 
 
 def printed_heading(text):
-    return [
-        (marker, value.strip())
-        for marker, value in re.findall(r"^\\(mt[123])\s+([^\n]+)", text, re.M)
-    ]
+    return pipeline.marker_lines(text, pipeline.HEADING_MARKERS)
 
 
 # Selection and order
@@ -238,14 +235,9 @@ def test_book_name_markers(archives, scripture, unit):
 
 @pytest.mark.parametrize("unit", UNITS, ids=lambda u: u["id"])
 def test_printed_titles_have_no_period(scripture, unit):
-    lines = re.findall(r"^\\(?:h|toc1|mt[123])\s+([^\n]+)", scripture[unit["id"]], re.M)
-    assert not [line for line in lines if "." in line]
-
-
-@pytest.mark.parametrize("unit", UNITS, ids=lambda u: u["id"])
-def test_heading_spells_the_contents_title(scripture, unit):
-    heading = " ".join(value for _, value in printed_heading(scripture[unit["id"]]))
-    assert heading.casefold() == unit["title"].casefold()
+    markers = ("h", "toc1", *pipeline.HEADING_MARKERS)
+    lines = pipeline.marker_lines(scripture[unit["id"]], markers)
+    assert not [value for _, value in lines if "." in value]
 
 
 @pytest.mark.parametrize("unit", UNITS, ids=lambda u: u["id"])

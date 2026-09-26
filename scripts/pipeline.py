@@ -23,6 +23,10 @@ from source_inventory import MARKER, inventory, marker_counts, read_archive, sha
 
 ROOT = Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
+BUILD = ROOT / "build"
+DIST = ROOT / "dist"
+# Each command's folder under build/ and the PDF it publishes under dist/.
+OUTPUTS = {"sample": ("sample", "sample.pdf"), "pdf": ("full", "bible.pdf")}
 
 
 def read_json(path):
@@ -44,6 +48,12 @@ DEPS = read_json("dependencies.json")
 FONT_DEPS = tuple(name for name, dep in DEPS.items() if "archive" in dep)
 MARGINAL_NOTES = read_json("config/marginal-notes.json")
 UPSTREAM = Path("/opt/ptxprint")
+# The generated PTXprint project, and where PTXprint writes its processed copies.
+PROJECT_DIR = "projects/BIBLE"
+PROCESSED_DIR = "local/ptxprint/Bible"
+# Daniel is printed from three Brenton files, in this order.
+DANIEL_PARTS = ("SUS", "DAG", "BEL")
+HEADING_MARKERS = ("mt1", "mt2", "mt3")
 EXPECTED_NT_MARGINAL_NOTES = 775
 # The Epistle Dedicatory's mt2 lines are its address ("&c.") and salutation.
 FRONT_PERIOD_FREE_TITLE_MARKERS = ("h", "toc1", "mt1")
@@ -99,6 +109,8 @@ def file_sha256(path):
 
 def recorder(log, code):
     """A function that logs one of a unit's transformations."""
+    if log is None:
+        log = []
 
     def record(operation, **details):
         log.append({"project_id": code, "operation": operation, **details})
@@ -153,7 +165,7 @@ def heading_lines(entry, names):
         and all(
             isinstance(line, list)
             and len(line) == 2
-            and line[0] in ("mt1", "mt2", "mt3")
+            and line[0] in HEADING_MARKERS
             and isinstance(line[1], str)
             and line[1].strip() == line[1] != ""
             for line in lines
@@ -185,6 +197,24 @@ def replace_marker_line(text, marker, value, code):
     )
     require(count == 1, f"Missing {marker} heading: {code}")
     return text
+
+
+def marker_lines(text, markers):
+    """The (marker, value) pairs of the lines that open with one of the markers."""
+    pattern = r"^\\(" + "|".join(markers) + r")\s+([^\n]*)$"
+    return [
+        (marker, value.strip()) for marker, value in re.findall(pattern, text, re.M)
+    ]
+
+
+def project_usfm(project, code):
+    """A prepared unit's file in the PTXprint project."""
+    return project / f"{code}.usfm"
+
+
+def processed_usfm(project, code):
+    """PTXprint's processed copy of a prepared unit."""
+    return project / PROCESSED_DIR / f"{code}-Bible.usfm"
 
 
 def resolved_book_names(entry, source_text):
@@ -221,7 +251,7 @@ def book_names_element(entries, archives):
     return root
 
 
-def run(args, **kw):
+def run(*args, **kw):
     return subprocess.run([str(a) for a in args], check=True, **kw)
 
 
@@ -256,10 +286,6 @@ def validate():
         set(notes) <= {u["id"] for u in units if u["source"] == "kjv"},
         "Marginal notes name a book outside the KJV New Testament",
     )
-    require(
-        all("source_parts" not in u or u["id"] == "DAG" for u in units),
-        "source_parts is only implemented for DAG",
-    )
     # A source divided between units must be printed whole, each chapter once.
     divided = {}
     for u in units:
@@ -283,10 +309,6 @@ def validate():
         renumber_chapters(combined_chapters[first - 1 : last], first - 1)
     )
     standalone_nehemias_chapters = "".join(standalone_nehemias_witness)
-
-    def normalized(s):
-        return re.sub(r"\s+", " ", s).strip()
-
     nehemias_source_diff = list(
         difflib.unified_diff(
             renumbered_nehemias_chapters.splitlines(True),
@@ -295,8 +317,8 @@ def validate():
             tofile="standalone NEH",
         )
     )
-    Path("build").mkdir(exist_ok=True)
-    Path("build/nehemias-differences.diff").write_text(
+    BUILD.mkdir(exist_ok=True)
+    (BUILD / "nehemias-differences.diff").write_text(
         "".join(nehemias_source_diff), encoding="utf-8"
     )
     report = {
@@ -314,13 +336,13 @@ def validate():
             for u in units
             if u["source"] == "kjv"
         ),
-        "nehemias_equal_after_whitespace_normalization": normalized(
-            renumbered_nehemias_chapters
-        )
-        == normalized(standalone_nehemias_chapters),
+        "nehemias_equal_after_whitespace_normalization": (
+            " ".join(renumbered_nehemias_chapters.split())
+            == " ".join(standalone_nehemias_chapters.split())
+        ),
         "nehemias_diff_lines": len(nehemias_source_diff),
     }
-    write_json("build/validation.json", report)
+    write_json(BUILD / "validation.json", report)
     print("Validated pinned sources:", report, flush=True)
     return archives
 
@@ -330,19 +352,21 @@ def brenton_source_use():
     source_use = []
     for unit in EDITION["scripture"]:
         if unit["source"] == "brenton":
-            source_use.extend(unit.get("source_parts", [source_id(unit)]))
+            source_use.extend(
+                DANIEL_PARTS if unit["id"] == "DAG" else [source_id(unit)]
+            )
     return source_use
 
 
 def ordered_entries():
     # Units are placed by section below; one in neither would silently vanish.
+    scripture = EDITION["scripture"]
     unplaced = [
         u["id"]
-        for u in EDITION["scripture"]
+        for u in scripture
         if u.get("section") not in ("old_testament", "new_testament")
     ]
     require(not unplaced, f"Scripture units outside both testaments: {unplaced}")
-    scripture = EDITION["scripture"]
     return [
         # The editor's introduction is a project unit rather than a front-matter
         # periph so that it follows the contents page and is listed in it.
@@ -612,11 +636,13 @@ def rename_book(entry, original, text, record):
     )
     require(count == 1, f"Missing mt1 heading: {code}")
     text = head + "".join(chapters)
+    markers = ("h", *BOOK_NAME_MARKERS.values(), *HEADING_MARKERS)
+    source_lines = marker_lines(original, markers)
+    edition_lines = marker_lines(text, markers)
     headings = {}
-    for marker in ("h", *BOOK_NAME_MARKERS.values(), "mt1", "mt2", "mt3"):
-        pattern = r"^\\" + marker + r"\s+([^\n]*)$"
-        source_values = [v.strip() for v in re.findall(pattern, original, re.M)]
-        edition_values = [v.strip() for v in re.findall(pattern, text, re.M)]
+    for marker in markers:
+        source_values = [v for m, v in source_lines if m == marker]
+        edition_values = [v for m, v in edition_lines if m == marker]
         if source_values != edition_values:
             headings[marker] = {"source": source_values, "edition": edition_values}
     if headings:
@@ -627,7 +653,7 @@ def rename_book(entry, original, text, record):
 def scripture_text(entry, archives, log=None):
     code = entry["id"]
     original = source_usfm(entry, archives)
-    record = recorder([] if log is None else log, code)
+    record = recorder(log, code)
     if "chapters" in entry:
         # Part of a source file that holds more than one book, numbered from 1.
         first, last = entry["chapters"]
@@ -655,11 +681,6 @@ def scripture_text(entry, archives, log=None):
             edition_chapters=f"1-{last - first + 1}",
         )
     elif code == "DAG":
-        # The grouping below is fixed; the manifest's source_parts must describe it.
-        require(
-            entry.get("source_parts") == ["SUS", "DAG", "BEL"],
-            "Manifest source_parts disagree with the Daniel grouping",
-        )
         daniel_header, daniel_chapters = chapter_parts(original)
         _, susanna = chapter_parts(archives["brenton"]["SUS"][2])
         _, bel = chapter_parts(archives["brenton"]["BEL"][2])
@@ -690,9 +711,13 @@ def scripture_text(entry, archives, log=None):
             song_heading == 1, "Daniel 3 Song of the Three Children boundary changed"
         )
         text = daniel_header + "".join(susanna + daniel_chapters + bel)
+        require(
+            list(inventory(text)["chapters"]) == [str(i) for i in range(0, 14)],
+            "Wrong chapter grouping: DAG",
+        )
         record(
             "group Susanna and Bel and the Dragon with Daniel",
-            source_ids=["SUS", source_id(entry), "BEL"],
+            source_ids=list(DANIEL_PARTS),
             chapter_labels={"SUS 1": "0", "BEL 1": "13"},
             added_section_headings=[
                 "SUSANNA",
@@ -721,6 +746,13 @@ def scripture_text(entry, archives, log=None):
             )
         text, xo = re.subn(r"\\xo 3:23\b", lambda m: r"\xo 4:5", prefix + tail)
         require(xo == 1, "Malachias 3:23 cross-reference origin changed")
+        labels = inventory(text)["chapters"]
+        require(list(labels) == ["1", "2", "3", "4"], "Wrong chapter grouping: MAL")
+        require(
+            labels["3"] == [str(i) for i in range(1, 19)]
+            and labels["4"] == [str(i) for i in range(1, 7)],
+            "Wrong Malachias 3-4 verse labels",
+        )
         record(
             "relabel verses",
             source_ids=[source_id(entry)],
@@ -738,22 +770,6 @@ def scripture_text(entry, archives, log=None):
         preserved_markers(expected) == preserved_markers(text),
         f"Source notes or styling changed: {code}",
     )
-    expected_chapters = {
-        "DAG": [str(i) for i in range(0, 14)],
-        "MAL": ["1", "2", "3", "4"],
-    }
-    chapters = inventory(text)["chapters"]
-    if code in expected_chapters:
-        require(
-            list(chapters) == expected_chapters[code],
-            f"Wrong chapter grouping: {code}",
-        )
-    if code == "MAL":
-        require(
-            chapters["3"] == [str(i) for i in range(1, 19)]
-            and chapters["4"] == [str(i) for i in range(1, 7)],
-            "Wrong Malachias 3-4 verse labels",
-        )
     if entry["source"] == "kjv":
         # After the source comparisons above, which the added notes would fail.
         text = insert_marginal_notes(code, text, record)
@@ -774,7 +790,7 @@ def front_matter_text(entry, archives, log=None):
     """A translation's front matter or appendix, under the edition's names if any."""
     code = entry["id"]
     original = source_usfm(entry, archives)
-    record = recorder([] if log is None else log, code)
+    record = recorder(log, code)
     text = (
         rename_book(entry, original, original, record) if "title" in entry else original
     )
@@ -852,7 +868,7 @@ def typographic_text(code, text, record):
 
 def prepare(mode, base, archives):
     """Write the PTXprint project; returns its folder and the order of its units."""
-    project = base / "projects/BIBLE"
+    project = base / PROJECT_DIR
     conf = project / "shared/ptxprint/Bible"
     conf.mkdir(parents=True)
     entries = ordered_entries()
@@ -891,7 +907,7 @@ def prepare(mode, base, archives):
                     chapters=sample[code],
                 )
             text = typographic_text(code, text, record)
-        (project / f"{code}.usfm").write_text(text, encoding="utf-8")
+        project_usfm(project, code).write_text(text, encoding="utf-8")
     write_json(base / "order.json", ids)
     transformations.append(
         {
@@ -901,27 +917,21 @@ def prepare(mode, base, archives):
     )
     write_json(base / "transformations.json", transformations)
     root = ET.Element("ScriptureText")
+    # Only the settings PTXprint reads; without a Guid it would write its own.
     settings = {
-        "Name": "BIBLE",
         "FullName": EDITION["title"],
         "Guid": "407badbc319745d4b3cc9f242039a5ab",
         "Encoding": "65001",
-        "Language": "English",
         "LanguageIsoCode": "en",
         "DefaultFont": "Utopia",
-        "DefaultFontSize": "9.5",
-        "StyleSheet": "usfm.sty",
         "Versification": "4",
         "FileNamePrePart": "",
         "FileNameBookNameForm": "MAT",
         "FileNamePostPart": ".usfm",
-        "UsfmVersion": "3.0",
-        "MinParatextVersion": "8.0.100.76",
         "ChapterVerseSeparator": ":",
     }
     for key, value in settings.items():
         ET.SubElement(root, key).text = value
-    ET.SubElement(root, "Naming", PrePart="", PostPart=".usfm", BookNameForm="MAT")
     ET.ElementTree(root).write(
         project / "Settings.xml", encoding="utf-8", xml_declaration=True
     )
@@ -973,7 +983,7 @@ def build(mode, name, archives):
 
     Returns the PDF, the order of its units, and the report of its checks.
     """
-    base = ROOT / "build" / name
+    base = BUILD / name
     if base.exists():
         shutil.rmtree(base)
     base.mkdir(parents=True)
@@ -1018,14 +1028,14 @@ def build(mode, name, archives):
     check_processed(project, base, ids)
     pdfs = list(project.rglob("*.pdf"))
     require(len(pdfs) == 1, f"Expected one PDF, found {pdfs}; see {base}/console.log")
-    report = inspect_pdf(pdfs[0], base, project, ids, sample=mode == "sample")
+    report = inspect_pdf(pdfs[0], base, project, ids, mode == "sample")
     return pdfs[0], ids, report
 
 
 def publish(mode, pdf, ids, report):
     """Copy a checked PDF to dist/ with a record of what produced it."""
-    target = ROOT / "dist" / ("sample.pdf" if mode == "sample" else "bible.pdf")
-    target.parent.mkdir(exist_ok=True)
+    target = DIST / OUTPUTS[mode][1]
+    DIST.mkdir(exist_ok=True)
     tracked = {
         str(p): file_sha256(p)
         for folder in ("config", "scripts")
@@ -1073,24 +1083,25 @@ def publish(mode, pdf, ids, report):
     }
     # Stage both outputs, then swap them in together so a failure never pairs a new
     # PDF with an old provenance record.
+    provenance_target = target.with_suffix(".provenance.json")
     staged_pdf = target.with_suffix(".pdf.tmp")
     staged_provenance = target.with_suffix(".provenance.json.tmp")
     shutil.copyfile(pdf, staged_pdf)
     write_json(staged_provenance, provenance)
-    target.with_suffix(".provenance.json").unlink(missing_ok=True)
-    if mode != "sample":
+    provenance_target.unlink(missing_ok=True)
+    if mode == "pdf":
         # make check's record describes the PDF it built, not this one; check()
         # writes a fresh record once it has compared its two builds.
-        (ROOT / "dist/check.json").unlink(missing_ok=True)
+        (DIST / "check.json").unlink(missing_ok=True)
     staged_pdf.replace(target)
-    staged_provenance.replace(target.with_suffix(".provenance.json"))
+    staged_provenance.replace(provenance_target)
     print("Wrote", target, flush=True)
 
 
 def render(mode):
     archives = validate()
     check_image()
-    pdf, ids, report = build(mode, "sample" if mode == "sample" else "full", archives)
+    pdf, ids, report = build(mode, OUTPUTS[mode][0], archives)
     publish(mode, pdf, ids, report)
 
 
@@ -1165,8 +1176,7 @@ def processed_markers(markers):
 
 def check_processed(project, base, ids):
     records = []
-    processed_dir = project / "local/ptxprint/Bible"
-    texfiles = list(processed_dir.glob("*_ptxp.tex"))
+    texfiles = list((project / PROCESSED_DIR).glob("*_ptxp.tex"))
     require(len(texfiles) == 1, "Missing typesetting driver")
     tex = texfiles[0].read_text(encoding="utf-8")
     require(
@@ -1174,8 +1184,8 @@ def check_processed(project, base, ids):
         "Note callers unexpectedly suppressed",
     )
     for code in ids:
-        source = (project / (code + ".usfm")).read_text(encoding="utf-8")
-        processed = processed_dir / (code + "-Bible.usfm")
+        source = project_usfm(project, code).read_text(encoding="utf-8")
+        processed = processed_usfm(project, code)
         require(processed.exists(), f"PTXprint omitted {code}")
         output = processed.read_text(encoding="utf-8")
         before, after = inventory(source), inventory(output)
@@ -1205,7 +1215,7 @@ def check_processed(project, base, ids):
     write_json(base / "processed-integrity.json", records)
 
 
-def check_boundaries(base, project, ids, text, pages, reading_text, sample=False):
+def check_boundaries(base, project, ids, text, pages, reading_text, sample):
     tocfiles = list(base.rglob("*_ptxp.toc"))
     require(len(tocfiles) == 1, "Missing/ambiguous contents file")
 
@@ -1238,9 +1248,9 @@ def check_boundaries(base, project, ids, text, pages, reading_text, sample=False
             c for c in unicodedata.normalize("NFKC", s).casefold() if c.isalnum()
         )
 
-    def usfm(code):
-        return (project / (code + ".usfm")).read_text(encoding="utf-8")
-
+    usfm = {
+        code: project_usfm(project, code).read_text(encoding="utf-8") for code in ids
+    }
     # The contents follows the title page and precedes the first unit.
     contents = key("".join(page_text[1 : int(toc[0][2]) - 1]))
     previous = 0
@@ -1253,8 +1263,7 @@ def check_boundaries(base, project, ids, text, pages, reading_text, sample=False
             f"Contents entry missing/wrong page in PDF: {code}",
         )
         heading = " ".join(
-            value.strip()
-            for value in re.findall(r"^\\mt[123]\s+([^\n]+)", usfm(code), re.M)
+            value for _, value in marker_lines(usfm[code], HEADING_MARKERS)
         )
         require(heading, f"Missing heading: {code}")
         require(
@@ -1269,20 +1278,16 @@ def check_boundaries(base, project, ids, text, pages, reading_text, sample=False
     reading_pages_without_headers = []
     for page_number, page in enumerate(reading_pages, 1):
         lines = page.splitlines(keepends=True)
-        if lines:
-            header = lines[0].strip()
-            if re.fullmatch(
-                rf"(?:{page_number}(?:\s+.+)?|.+\s+{page_number}(?:\s+.+)?)",
-                header,
-            ):
-                lines = lines[1:]
+        # A running head carries the page number as one of its words.
+        if lines and str(page_number) in lines[0].split():
+            lines = lines[1:]
         reading_pages_without_headers.append("".join(lines))
     by_code = {b: (i, int(p)) for i, (b, t, p) in enumerate(toc)}
     for witness in read_json("config/render-witnesses.json"):
         code = witness["id"]
         if code not in by_code or (
             "chapter" in witness
-            and witness["chapter"] not in inventory(usfm(code))["chapters"]
+            and witness["chapter"] not in inventory(usfm[code])["chapters"]
         ):
             # The sample deliberately selects only representative units and chapters.
             require(sample, f"Special-content witness not checked: {witness}")
@@ -1343,9 +1348,9 @@ def check_added_words_roman(pdf, reading_text):
     raise CheckFailed("Added-word witness not found in PDF text runs")
 
 
-def inspect_pdf(pdf, base, project, ids, sample=False):
+def inspect_pdf(pdf, base, project, ids, sample):
     with (base / "qpdf.log").open("w", encoding="utf-8") as log:
-        run(["qpdf", "--check", pdf], stdout=log, stderr=subprocess.STDOUT)
+        run("qpdf", "--check", pdf, stdout=log, stderr=subprocess.STDOUT)
     info = capture("pdfinfo", "-box", pdf)
     (base / "pdfinfo.txt").write_text(info, encoding="utf-8")
     pages = int(re.search(r"Pages:\s+(\d+)", info)[1])
@@ -1411,43 +1416,45 @@ def inspect_pdf(pdf, base, project, ids, sample=False):
 def check():
     archives = validate()
     check_image()
-    # The two builds share nothing, so they typeset side by side.
+    names = ("repeat-1", "repeat-2")
+    # The two builds share nothing, so they typeset, and then render, side by side.
     with ThreadPoolExecutor(2) as pool:
         (pdf1, _, report1), (pdf2, ids, report2) = pool.map(
-            lambda name: build("pdf", name, archives), ("repeat-1", "repeat-2")
+            lambda name: build("pdf", name, archives), names
         )
-    require(report1 == report2, "Repeat builds differ in text/page count")
-    publish("pdf", pdf2, ids, report2)
-    # Render pages in batches, hashing then discarding rasters to limit disk use
-    # without reopening each PDF once per page.
-    pages = report1["pages"]
-    rasters = ROOT / "build/check-rasters"
+        require(report1 == report2, "Repeat builds differ in text/page count")
+        publish("pdf", pdf2, ids, report2)
+        # Render pages in batches, hashing then discarding rasters to limit disk
+        # use without reopening each PDF once per page.
+        pages = report1["pages"]
 
-    def page_hashes(pdf, first, last):
-        if rasters.exists():
+        def page_hashes(name, pdf, first, last):
+            rasters = BUILD / "check-rasters" / name
+            if rasters.exists():
+                shutil.rmtree(rasters)
+            rasters.mkdir(parents=True)
+            run("pdftoppm", "-f", first, "-l", last, "-r", "72", pdf, rasters / "page")
+            files = sorted(rasters.glob("page-*.ppm"))
+            require(
+                len(files) == last - first + 1,
+                f"Could not render pages {first}-{last}",
+            )
+            result = [file_sha256(f) for f in files]
             shutil.rmtree(rasters)
-        rasters.mkdir(parents=True)
-        run(["pdftoppm", "-f", first, "-l", last, "-r", "72", pdf, rasters / "page"])
-        files = sorted(rasters.glob("page-*.ppm"))
-        require(
-            len(files) == last - first + 1, f"Could not render pages {first}-{last}"
-        )
-        result = [file_sha256(f) for f in files]
-        shutil.rmtree(rasters)
-        return result
+            return result
 
-    hashes = []
-    for start in range(1, pages + 1, 100):
-        end = min(start + 99, pages)
-        batch = page_hashes(pdf1, start, end)
-        for page, a, b in zip(
-            range(start, end + 1), batch, page_hashes(pdf2, start, end)
-        ):
-            require(a == b, f"Rendered page {page} differs")
-        hashes.extend(batch)
-        print("Compared rendered pages:", end, flush=True)
+        hashes = []
+        for start in range(1, pages + 1, 100):
+            end = min(start + 99, pages)
+            batch1, batch2 = pool.map(
+                page_hashes, names, (pdf1, pdf2), (start, start), (end, end)
+            )
+            for page, a, b in zip(range(start, end + 1), batch1, batch2):
+                require(a == b, f"Rendered page {page} differs")
+            hashes.extend(batch1)
+            print("Compared rendered pages:", end, flush=True)
     write_json(
-        "dist/check.json",
+        DIST / "check.json",
         {
             "repeatability": "passed",
             "pages": len(hashes),

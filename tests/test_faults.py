@@ -1,7 +1,5 @@
 """Fault injection: each guard must refuse a deliberately damaged input."""
 
-import json
-
 import pytest
 
 import pipeline
@@ -146,8 +144,8 @@ def test_scripture_unit_outside_both_testaments(patched):
 
 
 def test_divided_source_must_be_printed_whole(patched):
-    edition = patched("EDITION")
-    next(u for u in edition["scripture"] if u["id"] == "EZR")["chapters"] = [1, 9]
+    patched("EDITION")
+    unit("EZR")["chapters"] = [1, 9]
     with pytest.raises(CheckFailed, match="not printed whole: brenton/EZR"):
         pipeline.validate()
 
@@ -155,12 +153,6 @@ def test_divided_source_must_be_printed_whole(patched):
 def test_manifest_chapters_must_exist(archives):
     entry = {**unit("NEH"), "chapters": [11, 24]}
     with pytest.raises(CheckFailed, match="chapters outside the source: NEH"):
-        pipeline.scripture_text(entry, archives)
-
-
-def test_daniel_grouping_must_match_the_manifest(archives):
-    entry = {**unit("DAG"), "source_parts": ["DAG"]}
-    with pytest.raises(CheckFailed, match="source_parts disagree"):
         pipeline.scripture_text(entry, archives)
 
 
@@ -227,16 +219,16 @@ SOURCE_USFM = (
 @pytest.fixture
 def processed(tmp_path):
     """A minimal generated project, and a function to write PTXprint's output."""
-    project = tmp_path / "projects/BIBLE"
-    local = project / "local/ptxprint/Bible"
+    project = tmp_path / pipeline.PROJECT_DIR
+    local = project / pipeline.PROCESSED_DIR
     local.mkdir(parents=True)
-    (project / "GEN.usfm").write_text(SOURCE_USFM, encoding="utf-8")
+    pipeline.project_usfm(project, "GEN").write_text(SOURCE_USFM, encoding="utf-8")
     (local / "Bible_ptxp.tex").write_text(
         "%\\OmitCallerInNote{f}\n%\\OmitCallerInNote{x}\n", encoding="utf-8"
     )
 
     def write(output):
-        (local / "GEN-Bible.usfm").write_text(output, encoding="utf-8")
+        pipeline.processed_usfm(project, "GEN").write_text(output, encoding="utf-8")
         pipeline.check_processed(project, tmp_path, ["GEN"])
 
     return write
@@ -244,7 +236,7 @@ def processed(tmp_path):
 
 def test_processed_output_unchanged(processed, tmp_path):
     processed(SOURCE_USFM.replace("\n\\p\n", "\n\\p "))
-    (record,) = json.loads((tmp_path / "processed-integrity.json").read_text())
+    (record,) = pipeline.read_json(tmp_path / "processed-integrity.json")
     assert record["id"] == "GEN"
     assert record["preserved_markers"] == {"f": 1, "f*": 1, "add": 1, "add*": 1}
 

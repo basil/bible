@@ -695,12 +695,7 @@
       "source": "brenton",
       "section": "old_testament",
       "title": "The Book of Daniel",
-      "short_title": "Daniel",
-      "source_parts": [
-        "SUS",
-        "DAG",
-        "BEL"
-      ]
+      "short_title": "Daniel"
     },
     {
       "id": "MAT",
@@ -1238,7 +1233,6 @@
   "excluded": {
     "brenton": [
       "NEH"
-    ],
-    "kjv": "All units except the 27 listed New Testament books, INT (The Translators to the Reader), and OTH (The Epistle Dedicatory). The historical 1873 FRT title page is omitted by editorial choice."
+    ]
   }
 }

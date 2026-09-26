@@ -4,16 +4,7 @@
     "abandonments:recommended",
     ":configMigration",
     "config:recommended",
-    ":dependencyDashboard",
-    "group:monorepos",
-    "group:recommended",
-    ":maintainLockFilesWeekly",
-    "mergeConfidence:age-confidence-badges",
-    ":pinDevDependencies",
-    "replacements:all",
-    "security:minimumReleaseAgeNpm",
-    ":semanticPrefixFixDepsChoreOthers",
-    "workarounds:all"
+    "mergeConfidence:age-confidence-badges"
   ],
   "customManagers": [
     {
