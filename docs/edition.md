@@ -16,9 +16,9 @@ The Old Testament follows the [Church of Greece's list of books](https://apostol
 
 Brenton's book names are kept, except that the Orthodox names are used for Jesus, the Son of Navi; 1–4 Kingdoms; the Song of Songs; the Lamentations of Jeremias; Ezekiel; and Michaias. Numbered books put the number first, as in "1 Chronicles".
 
-`config/edition.json` sets the order and names. Each book can have:
+`config/edition.json` sets the order and names. Each book, and each piece of front matter or appendix that the edition renames, can have:
 
-- `title`: the full title, printed in the contents, as in "The First Book of Moses, Called Genesis". Every book has one.
+- `title`: the full title, printed in the contents, as in "The First Book of Moses, Called Genesis". Every book has one; front matter without one keeps its source's names.
 - `short_title`: used in the running heads, as in "3 Kingdoms". Defaults to the source's.
 - `abbreviation`: not printed, but kept consistent. Defaults to the source's.
 - `heading`: how the full title breaks into lines at the start of the book. The lines must spell out `title` exactly. Without it, the title is printed on one line.

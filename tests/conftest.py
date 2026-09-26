@@ -25,9 +25,8 @@ def book_names(archives):
     """BookNames.xml values for every project unit, by project id."""
     return {
         book.get("code"): {
-            "title": book.get("long"),
-            "short_title": book.get("short"),
-            "abbreviation": book.get("abbr"),
+            field: book.get(attr)
+            for field, attr in pipeline.BOOK_NAME_ATTRIBUTES.items()
         }
         for book in pipeline.book_names_element(pipeline.ordered_entries(), archives)
     }
@@ -42,16 +41,12 @@ def fresh_marginal_notes():
 
 
 @pytest.fixture
-def sources(monkeypatch):
-    """A private copy of sources.json that a test may alter."""
-    data = copy.deepcopy(pipeline.SOURCES)
-    monkeypatch.setattr(pipeline, "SOURCES", data)
-    return data
+def patched(monkeypatch):
+    """Give the pipeline a private copy of one of its loaded files, for a test to alter."""
 
+    def patch(name):
+        data = copy.deepcopy(getattr(pipeline, name))
+        monkeypatch.setattr(pipeline, name, data)
+        return data
 
-@pytest.fixture
-def marginal_notes_config(monkeypatch):
-    """A private copy of config/marginal-notes.json that a test may alter."""
-    data = copy.deepcopy(pipeline.MARGINAL_NOTES)
-    monkeypatch.setattr(pipeline, "MARGINAL_NOTES", data)
-    return data
+    return patch

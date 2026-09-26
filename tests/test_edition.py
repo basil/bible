@@ -7,7 +7,15 @@ import re
 import pytest
 
 import pipeline
-from pipeline import EDITION, SOURCES, canonical_text, source_marker
+from pipeline import (
+    EDITION,
+    SOURCES,
+    canonical_text,
+    scripture_unit,
+    source_id,
+    source_marker,
+    source_usfm,
+)
 
 UNITS = EDITION["scripture"]
 BRENTON_UNITS = [u for u in UNITS if u["source"] == "brenton"]
@@ -60,6 +68,19 @@ REVISED_TITLES = {
     "JER": "The Book of the Prophet Jeremias",
 }
 
+PAULINE_EPISTLES = "ROM 1CO 2CO GAL EPH PHP COL 1TH 2TH 1TI 2TI TIT PHM HEB".split()
+
+# The letters of James, Peter, John, and Jude, as the Greek tradition names them.
+CATHOLIC_EPISTLES = {
+    "JAS": ("", "James"),
+    "1PE": ("First ", "Peter"),
+    "2PE": ("Second ", "Peter"),
+    "1JN": ("First ", "John"),
+    "2JN": ("Second ", "John"),
+    "3JN": ("Third ", "John"),
+    "JUD": ("", "Jude"),
+}
+
 SAINT_HEADINGS = {
     "MAT": {"mt1": "SAINT MATTHEW"},
     "MRK": {"mt1": "SAINT MARK"},
@@ -68,13 +89,15 @@ SAINT_HEADINGS = {
     "REV": {"mt2": "SAINT JOHN THE DIVINE"},
 }
 
-# Brenton files that are front matter, appendices, or the standalone Nehemias
-# witness (Nehemias is printed from the combined Ezra-Nehemiah file).
-BRENTON_NON_SCRIPTURE = {"NEH", "FRT", "INT", "OTH", "XXA", "XXB", "XXC", "BAK"}
-
-
-def source_text(archives, unit):
-    return archives[unit["source"]][unit.get("source_id", unit["id"])][2]
+# Brenton files printed as front matter or appendices, or left out: the
+# standalone Nehemias witness (Nehemias is printed from the combined
+# Ezra-Nehemiah file).
+BRENTON_NON_SCRIPTURE = {
+    source_id(e)
+    for key in ("old_testament_front", "appendices")
+    for e in EDITION[key]
+    if e["source"] == "brenton"
+} | set(EDITION["excluded"]["brenton"])
 
 
 def printed_heading(text):
@@ -111,7 +134,7 @@ def test_every_brenton_scripture_source_is_printed_once(archives):
 
 
 def selected(key):
-    return [(e["source"], e["id"]) for e in EDITION[key]]
+    return [(e["source"], source_id(e)) for e in EDITION[key]]
 
 
 def test_old_testament_front_matter():
@@ -137,7 +160,7 @@ def test_appendices():
 
 @pytest.fixture(scope="module")
 def ordered_ids():
-    return [e.get("project_id", e.get("id")) for e in pipeline.ordered_entries()]
+    return [e["id"] for e in pipeline.ordered_entries()]
 
 
 def run_of(ordered_ids, *codes):
@@ -197,7 +220,7 @@ def test_apocryphal_books_are_present(code):
 @pytest.mark.parametrize("unit", BRENTON_UNITS, ids=lambda u: u["id"])
 def test_brenton_title(archives, unit):
     expected = REVISED_TITLES.get(unit["id"]) or source_marker(
-        source_text(archives, unit), "toc1"
+        source_usfm(unit, archives), "toc1"
     )
     assert unit["title"] == expected
 
@@ -205,7 +228,7 @@ def test_brenton_title(archives, unit):
 @pytest.mark.parametrize("unit", UNITS, ids=lambda u: u["id"])
 def test_book_name_markers(archives, scripture, unit):
     text = scripture[unit["id"]]
-    names = pipeline.resolved_book_names(unit, source_text(archives, unit))
+    names = pipeline.resolved_book_names(unit, source_usfm(unit, archives))
     assert source_marker(text, "toc1") == names["title"]
     assert (
         source_marker(text, "h") == source_marker(text, "toc2") == names["short_title"]
@@ -225,16 +248,16 @@ def test_heading_spells_the_contents_title(scripture, unit):
     assert heading.casefold() == unit["title"].casefold()
 
 
-@pytest.mark.parametrize("unit", BRENTON_UNITS, ids=lambda u: u["id"])
-def test_brenton_heading_follows_the_manifest(archives, scripture, unit):
-    names = pipeline.resolved_book_names(unit, source_text(archives, unit))
+@pytest.mark.parametrize("unit", UNITS, ids=lambda u: u["id"])
+def test_heading_follows_the_manifest(archives, scripture, unit):
+    names = pipeline.resolved_book_names(unit, source_usfm(unit, archives))
     assert printed_heading(scripture[unit["id"]]) == pipeline.heading_lines(unit, names)
 
 
-@pytest.mark.parametrize("code", sorted(pipeline.PAULINE_TITLE_IDS))
+@pytest.mark.parametrize("code", PAULINE_EPISTLES)
 def test_pauline_titles_name_saint_paul(archives, scripture, code):
-    unit = next(u for u in UNITS if u["id"] == code)
-    original = source_text(archives, unit)
+    unit = scripture_unit(code)
+    original = source_usfm(unit, archives)
     assert unit["title"] == re.sub(
         r"\bPaul(?: the Apostle)?\b", "Saint Paul", source_marker(original, "toc1")
     )
@@ -243,13 +266,16 @@ def test_pauline_titles_name_saint_paul(archives, scripture, code):
     )
 
 
-@pytest.mark.parametrize("code", sorted(pipeline.CATHOLIC_EPISTLES))
+@pytest.mark.parametrize("code", sorted(CATHOLIC_EPISTLES))
 def test_catholic_epistle_titles(scripture, code):
-    unit = next(u for u in UNITS if u["id"] == code)
-    title, mt2, mt1 = pipeline.catholic_epistle_names(code)
-    assert unit["title"] == title
-    assert source_marker(scripture[code], "mt1") == mt1
-    assert source_marker(scripture[code], "mt2") == mt2
+    ordinal, person = CATHOLIC_EPISTLES[code]
+    assert scripture_unit(code)["title"] == (
+        f"The {ordinal}Catholic Epistle of Saint {person}"
+    )
+    assert printed_heading(scripture[code]) == [
+        ("mt2", f"THE {ordinal.upper()}CATHOLIC EPISTLE OF"),
+        ("mt1", f"SAINT {person.upper()}"),
+    ]
 
 
 @pytest.mark.parametrize(
@@ -267,20 +293,20 @@ def test_saint_headings(scripture, code, marker, expected):
 @pytest.mark.parametrize("unit", UNITS, ids=lambda u: u["id"])
 def test_book_names_xml(archives, book_names, unit):
     assert book_names[unit["id"]] == pipeline.resolved_book_names(
-        unit, source_text(archives, unit)
+        unit, source_usfm(unit, archives)
     )
 
 
 @pytest.mark.parametrize(
     "entry",
-    [e for e in pipeline.ordered_entries() if "headings" in e],
-    ids=lambda e: e.get("project_id", e["id"]),
+    [e for e in pipeline.ordered_entries() if "title" in e],
+    ids=lambda e: e["id"],
 )
-def test_book_names_xml_follows_edition_headings(book_names, entry):
-    names = book_names[entry.get("project_id", entry["id"])]
-    for field, marker in pipeline.BOOK_NAME_MARKERS.items():
-        if marker in entry["headings"]:
-            assert names[field] == entry["headings"][marker]
+def test_book_names_xml_follows_the_manifest(book_names, entry):
+    names = book_names[entry["id"]]
+    for field in pipeline.BOOK_NAME_MARKERS:
+        if field in entry:
+            assert names[field] == entry[field]
 
 
 def test_jeremias_table_titles(book_names):
@@ -288,12 +314,6 @@ def test_jeremias_table_titles(book_names):
     title = "Table of Chapters and Verses in " + book_names["JER"]["short_title"]
     assert table["title"] == table["short_title"] == title
     assert book_names["XXA"]["title"] == book_names["XXA"]["short_title"] == title
-    assert table["headings"] == {
-        "h": title,
-        "toc1": title,
-        "toc2": title,
-        "mt1": title.upper(),
-    }
 
 
 def test_esdras_and_nehemias_never_share_names(book_names):
@@ -316,7 +336,7 @@ def test_editors_introduction_is_a_unit():
     assert "\\periph" not in text
 
 
-@pytest.mark.parametrize("path", ["config/front.sfm", "config/introduction.sfm"])
+@pytest.mark.parametrize("path", sorted(map(str, Path("config").glob("*.sfm"))))
 def test_edition_text_is_typed_with_curly_quotes(path):
     # Preparation curls the sources' quotes; the edition's own text is typed curly.
     text = re.sub(r'\|\w+="[^"\n]*"', "", Path(path).read_text(encoding="utf-8"))

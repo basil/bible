@@ -2,7 +2,6 @@
 !Dockerfile
 !dependencies.json
 !requirements.txt
-!config/ptxprint-allow-otf.patch
 !scripts/install-upstream.py
 !sources/GFS_Didot.zip
 !sources/OTF-source-code-pro-2.042R-u_1.062R-i.zip

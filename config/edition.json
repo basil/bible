@@ -706,25 +706,65 @@
       "id": "MAT",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The Gospel According to Saint Matthew"
+      "title": "The Gospel According to Saint Matthew",
+      "heading": [
+        [
+          "mt2",
+          "The Gospel According to"
+        ],
+        [
+          "mt1",
+          "Saint Matthew"
+        ]
+      ]
     },
     {
       "id": "MRK",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The Gospel According to Saint Mark"
+      "title": "The Gospel According to Saint Mark",
+      "heading": [
+        [
+          "mt2",
+          "The Gospel According to"
+        ],
+        [
+          "mt1",
+          "Saint Mark"
+        ]
+      ]
     },
     {
       "id": "LUK",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The Gospel According to Saint Luke"
+      "title": "The Gospel According to Saint Luke",
+      "heading": [
+        [
+          "mt2",
+          "The Gospel According to"
+        ],
+        [
+          "mt1",
+          "Saint Luke"
+        ]
+      ]
     },
     {
       "id": "JHN",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The Gospel According to Saint John"
+      "title": "The Gospel According to Saint John",
+      "heading": [
+        [
+          "mt2",
+          "The Gospel According to"
+        ],
+        [
+          "mt1",
+          "Saint John"
+        ]
+      ]
     },
     {
       "id": "ACT",
@@ -736,156 +776,420 @@
       "id": "ROM",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The Epistle of Saint Paul to the Romans"
+      "title": "The Epistle of Saint Paul to the Romans",
+      "heading": [
+        [
+          "mt2",
+          "The Epistle of Saint Paul"
+        ],
+        [
+          "mt3",
+          "to the"
+        ],
+        [
+          "mt1",
+          "Romans"
+        ]
+      ]
     },
     {
       "id": "1CO",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The First Epistle of Saint Paul to the Corinthians"
+      "title": "The First Epistle of Saint Paul to the Corinthians",
+      "heading": [
+        [
+          "mt2",
+          "The First Epistle of Saint Paul"
+        ],
+        [
+          "mt3",
+          "to the"
+        ],
+        [
+          "mt1",
+          "Corinthians"
+        ]
+      ]
     },
     {
       "id": "2CO",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The Second Epistle of Saint Paul to the Corinthians"
+      "title": "The Second Epistle of Saint Paul to the Corinthians",
+      "heading": [
+        [
+          "mt2",
+          "The Second Epistle of Saint Paul"
+        ],
+        [
+          "mt3",
+          "to the"
+        ],
+        [
+          "mt1",
+          "Corinthians"
+        ]
+      ]
     },
     {
       "id": "GAL",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The Epistle of Saint Paul to the Galatians"
+      "title": "The Epistle of Saint Paul to the Galatians",
+      "heading": [
+        [
+          "mt2",
+          "The Epistle of Saint Paul"
+        ],
+        [
+          "mt3",
+          "to the"
+        ],
+        [
+          "mt1",
+          "Galatians"
+        ]
+      ]
     },
     {
       "id": "EPH",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The Epistle of Saint Paul to the Ephesians"
+      "title": "The Epistle of Saint Paul to the Ephesians",
+      "heading": [
+        [
+          "mt2",
+          "The Epistle of Saint Paul"
+        ],
+        [
+          "mt3",
+          "to the"
+        ],
+        [
+          "mt1",
+          "Ephesians"
+        ]
+      ]
     },
     {
       "id": "PHP",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The Epistle of Saint Paul to the Philippians"
+      "title": "The Epistle of Saint Paul to the Philippians",
+      "heading": [
+        [
+          "mt2",
+          "The Epistle of Saint Paul"
+        ],
+        [
+          "mt3",
+          "to the"
+        ],
+        [
+          "mt1",
+          "Philippians"
+        ]
+      ]
     },
     {
       "id": "COL",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The Epistle of Saint Paul to the Colossians"
+      "title": "The Epistle of Saint Paul to the Colossians",
+      "heading": [
+        [
+          "mt2",
+          "The Epistle of Saint Paul"
+        ],
+        [
+          "mt3",
+          "to the"
+        ],
+        [
+          "mt1",
+          "Colossians"
+        ]
+      ]
     },
     {
       "id": "1TH",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The First Epistle of Saint Paul to the Thessalonians"
+      "title": "The First Epistle of Saint Paul to the Thessalonians",
+      "heading": [
+        [
+          "mt2",
+          "The First Epistle of Saint Paul"
+        ],
+        [
+          "mt3",
+          "to the"
+        ],
+        [
+          "mt1",
+          "Thessalonians"
+        ]
+      ]
     },
     {
       "id": "2TH",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The Second Epistle of Saint Paul to the Thessalonians"
+      "title": "The Second Epistle of Saint Paul to the Thessalonians",
+      "heading": [
+        [
+          "mt2",
+          "The Second Epistle of Saint Paul"
+        ],
+        [
+          "mt3",
+          "to the"
+        ],
+        [
+          "mt1",
+          "Thessalonians"
+        ]
+      ]
     },
     {
       "id": "1TI",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The First Epistle of Saint Paul to Timothy"
+      "title": "The First Epistle of Saint Paul to Timothy",
+      "heading": [
+        [
+          "mt2",
+          "The First Epistle of Saint Paul"
+        ],
+        [
+          "mt3",
+          "to"
+        ],
+        [
+          "mt1",
+          "Timothy"
+        ]
+      ]
     },
     {
       "id": "2TI",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The Second Epistle of Saint Paul to Timothy"
+      "title": "The Second Epistle of Saint Paul to Timothy",
+      "heading": [
+        [
+          "mt2",
+          "The Second Epistle of Saint Paul"
+        ],
+        [
+          "mt3",
+          "to"
+        ],
+        [
+          "mt1",
+          "Timothy"
+        ]
+      ]
     },
     {
       "id": "TIT",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The Epistle of Saint Paul to Titus"
+      "title": "The Epistle of Saint Paul to Titus",
+      "heading": [
+        [
+          "mt2",
+          "The Epistle of Saint Paul to"
+        ],
+        [
+          "mt1",
+          "Titus"
+        ]
+      ]
     },
     {
       "id": "PHM",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The Epistle of Saint Paul to Philemon"
+      "title": "The Epistle of Saint Paul to Philemon",
+      "heading": [
+        [
+          "mt2",
+          "The Epistle of Saint Paul to"
+        ],
+        [
+          "mt1",
+          "Philemon"
+        ]
+      ]
     },
     {
       "id": "HEB",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The Epistle of Saint Paul to the Hebrews"
+      "title": "The Epistle of Saint Paul to the Hebrews",
+      "heading": [
+        [
+          "mt2",
+          "The Epistle of Saint Paul"
+        ],
+        [
+          "mt3",
+          "to the"
+        ],
+        [
+          "mt1",
+          "Hebrews"
+        ]
+      ]
     },
     {
       "id": "JAS",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The Catholic Epistle of Saint James"
+      "title": "The Catholic Epistle of Saint James",
+      "heading": [
+        [
+          "mt2",
+          "The Catholic Epistle of"
+        ],
+        [
+          "mt1",
+          "Saint James"
+        ]
+      ]
     },
     {
       "id": "1PE",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The First Catholic Epistle of Saint Peter"
+      "title": "The First Catholic Epistle of Saint Peter",
+      "heading": [
+        [
+          "mt2",
+          "The First Catholic Epistle of"
+        ],
+        [
+          "mt1",
+          "Saint Peter"
+        ]
+      ]
     },
     {
       "id": "2PE",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The Second Catholic Epistle of Saint Peter"
+      "title": "The Second Catholic Epistle of Saint Peter",
+      "heading": [
+        [
+          "mt2",
+          "The Second Catholic Epistle of"
+        ],
+        [
+          "mt1",
+          "Saint Peter"
+        ]
+      ]
     },
     {
       "id": "1JN",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The First Catholic Epistle of Saint John"
+      "title": "The First Catholic Epistle of Saint John",
+      "heading": [
+        [
+          "mt2",
+          "The First Catholic Epistle of"
+        ],
+        [
+          "mt1",
+          "Saint John"
+        ]
+      ]
     },
     {
       "id": "2JN",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The Second Catholic Epistle of Saint John"
+      "title": "The Second Catholic Epistle of Saint John",
+      "heading": [
+        [
+          "mt2",
+          "The Second Catholic Epistle of"
+        ],
+        [
+          "mt1",
+          "Saint John"
+        ]
+      ]
     },
     {
       "id": "3JN",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The Third Catholic Epistle of Saint John"
+      "title": "The Third Catholic Epistle of Saint John",
+      "heading": [
+        [
+          "mt2",
+          "The Third Catholic Epistle of"
+        ],
+        [
+          "mt1",
+          "Saint John"
+        ]
+      ]
     },
     {
       "id": "JUD",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The Catholic Epistle of Saint Jude"
+      "title": "The Catholic Epistle of Saint Jude",
+      "heading": [
+        [
+          "mt2",
+          "The Catholic Epistle of"
+        ],
+        [
+          "mt1",
+          "Saint Jude"
+        ]
+      ]
     },
     {
       "id": "REV",
       "source": "kjv",
       "section": "new_testament",
-      "title": "The Revelation of Saint John the Divine"
+      "title": "The Revelation of Saint John the Divine",
+      "heading": [
+        [
+          "mt1",
+          "The Revelation"
+        ],
+        [
+          "mt3",
+          "of"
+        ],
+        [
+          "mt2",
+          "Saint John the Divine"
+        ]
+      ]
     }
   ],
   "old_testament_front": [
     {
       "source": "brenton",
       "id": "XXB",
-      "headings": {
-        "h": "Preface (1844)",
-        "toc1": "Preface (1844)",
-        "toc2": "Preface (1844)",
-        "mt1": "PREFACE (1844)"
-      }
+      "title": "Preface (1844)",
+      "short_title": "Preface (1844)"
     },
     {
       "source": "brenton",
-      "id": "INT",
-      "project_id": "XXE",
-      "headings": {
-        "h": "Introduction (1870)",
-        "toc1": "Introduction (1870)",
-        "toc2": "Introduction (1870)",
-        "mt1": "INTRODUCTION (1870)"
-      }
+      "id": "XXE",
+      "source_id": "INT",
+      "title": "Introduction (1870)",
+      "short_title": "Introduction (1870)"
     },
     {
       "source": "brenton",
@@ -893,20 +1197,20 @@
     },
     {
       "source": "brenton",
-      "id": "FRT",
-      "project_id": "XXD"
+      "id": "XXD",
+      "source_id": "FRT"
     }
   ],
   "new_testament_front": [
     {
       "source": "kjv",
-      "id": "OTH",
-      "project_id": "TDX"
+      "id": "TDX",
+      "source_id": "OTH"
     },
     {
       "source": "kjv",
-      "id": "INT",
-      "project_id": "NDX"
+      "id": "NDX",
+      "source_id": "INT"
     }
   ],
   "appendices": [
@@ -914,36 +1218,21 @@
       "source": "brenton",
       "id": "XXA",
       "title": "Table of Chapters and Verses in Jeremias",
-      "short_title": "Table of Chapters and Verses in Jeremias",
-      "abbreviation": "Jer. App.",
-      "headings": {
-        "h": "Table of Chapters and Verses in Jeremias",
-        "toc1": "Table of Chapters and Verses in Jeremias",
-        "toc2": "Table of Chapters and Verses in Jeremias",
-        "mt1": "TABLE OF CHAPTERS AND VERSES IN JEREMIAS"
-      }
+      "short_title": "Table of Chapters and Verses in Jeremias"
     },
     {
       "source": "brenton",
       "id": "BAK",
-      "headings": {
-        "h": "Notes and Supplied Passages",
-        "toc1": "Notes and Supplied Passages",
-        "toc2": "Notes and Supplied Passages",
-        "toc3": "Notes",
-        "mt1": "NOTES AND SUPPLIED PASSAGES"
-      }
+      "title": "Notes and Supplied Passages",
+      "short_title": "Notes and Supplied Passages",
+      "abbreviation": "Notes"
     },
     {
       "source": "brenton",
       "id": "XXC",
-      "headings": {
-        "h": "Corrections",
-        "toc1": "Corrections to the Text",
-        "toc2": "Corrections",
-        "toc3": "Corr.",
-        "mt1": "CORRECTIONS TO THE TEXT"
-      }
+      "title": "Corrections to the Text",
+      "short_title": "Corrections",
+      "abbreviation": "Corr."
     }
   ],
   "excluded": {

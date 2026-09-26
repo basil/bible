@@ -29,8 +29,8 @@ The sample prints the chapters listed in `config/sample.json`. They were picked 
 
 - `sources/`: the Bible texts, the 1611 marginal notes, and the fonts, committed as downloaded. [sources/README.md](sources/README.md) says where each came from.
 - `sources.json`: hashes and a full inventory of the source texts (every chapter, verse, and markup code).
-- `config/edition.json`: which books are printed, in what order, and what they're called.
-- `config/front.sfm` and `config/introduction.sfm`: the title page, contents, and editor's introduction.
+- `config/edition.json`: which books are printed, in what order, and what they're called and how their headings break into lines.
+- `config/front.sfm`, `config/introduction.sfm`, and the three divider pages (`config/old-testament.sfm`, `config/new-testament.sfm`, `config/appendices.sfm`): the edition's own pages. The dividers' subtitles repeat the title page's wording.
 - `config/marginal-notes.json`: placements and corrections for the 1611 New Testament notes.
 - `config/layout.ini`, `config/ptxprint-mods.sty`, `config/ptxprint-mods.tex`: layout, style, and TeX changes on top of PTXprint's layout for the Berean Standard Bible (BSB).
 - `config/render-witnesses.json`: phrases that must appear in the finished PDF, to catch unusual passages going missing.
@@ -50,10 +50,10 @@ The build checks its own work and stops rather than produce a PDF from bad input
 
 `make check` runs the tests, then builds the full PDF twice from scratch and compares every page as an image. PTXprint stamps the build time into the PDF, so the files themselves always differ; the pages shouldn't.
 
-To run only some of the tests:
+To run only some of the tests, pass pytest's options through `PYTEST_ARGS`:
 
 ```sh
-docker compose -f compose.yaml run --rm --user "$(id -u):$(id -g)" toolchain python3 -m pytest -k marginal
+make test-python PYTEST_ARGS="-k marginal"
 ```
 
 ### Looking at the pages
@@ -87,21 +87,17 @@ Don't edit anything in `build/`; it's regenerated on every run.
 
 PTXprint uses plain XeTeX, so the microtype package isn't available. Instead, `config/ptxprint-mods.tex` carries a copy of microtype's default protrusion table, which lets punctuation and a few letters hang slightly into the margin so the column edges look straight. Protrusion affects line breaking, so changing it can change pagination. microtype has no settings made for Utopia, GFS Didot, or Ezra SIL, so all three use the defaults.
 
-Run `make test-tex` after changing the table. If the change was intended, save the new expected output and review the diff:
-
-```sh
-docker compose -f compose.yaml run --rm --user "$(id -u):$(id -g)" toolchain l3build save protrusion
-```
+Run `make test-tex` after changing the table. If the change was intended, save the new expected output with `make test-tex-save` and review the diff.
 
 ## Updating dependencies
 
-Renovate opens pull requests for the Python packages in `requirements.txt`, the PTXprint, usfmtc, and Utopia commits in `dependencies.json`, and the Ubuntu base image in the `Dockerfile`. The font archives in `sources/` are updated by hand, together with their hashes in `dependencies.json`.
+Renovate opens pull requests for the Python packages in `requirements.txt`, the PTXprint, usfmtc, and Utopia commits in `dependencies.json`, and the Ubuntu base image in the `Dockerfile`. The font archives in `sources/` are updated by hand, together with their hashes in `dependencies.json`. Each archive's entry there also says which of its files to install; a new archive must be admitted in `.dockerignore` as well. The build refuses to run in an image made from a different `dependencies.json` or `requirements.txt`, so run `make bootstrap` after changing either.
 
 `requirements.txt` lists only direct dependencies: what the build and tests import, what PTXprint needs at run time (including `psutil`, which it uses without declaring), and what's needed to build PTXprint and usfmtc. Those two are installed with `--no-deps`, because PTXprint's package metadata points at usfmtc's moving main branch instead of the pinned commit.
 
 The base image is an Ubuntu LTS tag with no digest, and packages come from Ubuntu's live repositories. Rebuilding the image later can therefore bring in newer versions of TeX and fonts, which may change pagination. That's deliberate: `make check` shows that builds are repeatable within one image, and the provenance file records which image made each PDF.
 
-When upgrading PTXprint, check that `config/ptxprint-allow-otf.patch` still applies (it lets PTXprint load Utopia's OTF files), that the `\s@tfont` wrapper in `config/ptxprint-mods.tex` still matches PTXprint's internals, and that the sample's pagination still looks right. When moving to a new Ubuntu release, which brings a new TeX Live, run `make test-tex`.
+When upgrading PTXprint, check that the `\s@tfont` wrapper in `config/ptxprint-mods.tex` still matches PTXprint's internals, and that the sample's pagination still looks right. When moving to a new Ubuntu release, which brings a new TeX Live, run `make test-tex`.
 
 ## Updating source texts
 
@@ -119,3 +115,4 @@ A few things look odd but are on purpose:
 - BSB sets `fnomitcaller` and `xromitcaller` to `True`, which in this PTXprint release means the callers *are* printed in the notes. The build checks that this still holds.
 - PTXprint's `canonicalise` option is off, so that it doesn't rewrite the source markup.
 - PTXprint loads GTK even when it runs without a display, which is why the image includes it.
+- PTXprint's font configuration rejects OpenType files, which is how Utopia and the other fonts are installed. `scripts/install-upstream.py` adds a system fontconfig rule that accepts the fonts in `/usr/local/share/fonts`, which takes precedence.

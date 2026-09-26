@@ -5,14 +5,18 @@ import hashlib
 import re
 import zipfile
 
+# A USFM marker: its name, with the + of a nested character style and the * that
+# closes a span.
+MARKER = r"\\(\+?[\w-]+\*?)"
+
 
 def sha256(data):
     return hashlib.sha256(data).hexdigest()
 
 
-def read_archive(path):
+def read_archive(file):
     result = {}
-    with zipfile.ZipFile(path) as archive:
+    with zipfile.ZipFile(file) as archive:
         for name in archive.namelist():
             if name.lower().endswith(".usfm"):
                 raw = archive.read(name)
@@ -40,5 +44,8 @@ def inventory(text):
             if label in chapters[chapter]:
                 raise ValueError(f"Duplicate verse {chapter}:{label}")
             chapters[chapter].append(label)
-    markers = collections.Counter(re.findall(r"\\(\+?[\w-]+\*?)", text))
-    return {"chapters": chapters, "markers": dict(sorted(markers.items()))}
+    return {"chapters": chapters, "markers": dict(sorted(marker_counts(text).items()))}
+
+
+def marker_counts(text):
+    return collections.Counter(re.findall(MARKER, text))

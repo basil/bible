@@ -48,7 +48,7 @@
         "ptxprint"
       ],
       "prBodyNotes": [
-        "Check that `config/ptxprint-allow-otf.patch` still applies and that the `\\s@tfont` wrapper in `config/ptxprint-mods.tex` still matches PTXprint's internals; inspect the rendered sample pages for pagination changes."
+        "Follow the PTXprint checklist under \"Updating dependencies\" in CONTRIBUTING.md."
       ]
     }
   ]

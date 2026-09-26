@@ -79,6 +79,14 @@ def test_sample_chapters_must_exist():
         pipeline.sample_chapters("DAG", DANIEL, [1, 2])
 
 
+def test_renumber_chapters():
+    chapters = ["\\c 11\n\\v 1 A \\c 11 B\n", "\\c 12\n\\v 1 C\n"]
+    assert pipeline.renumber_chapters(chapters, 10) == [
+        "\\c 1\n\\v 1 A \\c 11 B\n",
+        "\\c 2\n\\v 1 C\n",
+    ]
+
+
 def test_verse_spans():
     text = "\\c 1\n\\p\n\\v 1 A.\n\\v 2 B.\n\\c 2\n\\v 1 C."
     assert [
@@ -150,14 +158,6 @@ def test_heading_lines_follow_the_manifest():
     ]
 
 
-def test_cambridge_books_keep_their_own_headings():
-    assert pipeline.heading_lines({"id": "MAT", "source": "kjv"}, NAMES) is None
-    with pytest.raises(CheckFailed, match="keep their own heading layout"):
-        pipeline.heading_lines(
-            {"id": "MAT", "source": "kjv", "heading": [["mt1", "x"]]}, NAMES
-        )
-
-
 @pytest.mark.parametrize(
     "heading",
     [
@@ -179,31 +179,6 @@ def test_heading_lines_must_spell_the_title():
     entry = {**BRENTON, "heading": [["mt2", "The Book of"], ["mt1", "Genesis"]]}
     with pytest.raises(CheckFailed, match="do not spell the contents title"):
         pipeline.heading_lines(entry, NAMES)
-
-
-@pytest.mark.parametrize(
-    "code, names",
-    [
-        (
-            "JAS",
-            (
-                "The Catholic Epistle of Saint James",
-                "THE CATHOLIC EPISTLE OF",
-                "SAINT JAMES",
-            ),
-        ),
-        (
-            "1PE",
-            (
-                "The First Catholic Epistle of Saint Peter",
-                "THE FIRST CATHOLIC EPISTLE OF",
-                "SAINT PETER",
-            ),
-        ),
-    ],
-)
-def test_catholic_epistle_names(code, names):
-    assert pipeline.catholic_epistle_names(code) == names
 
 
 def test_typographic_quotes():

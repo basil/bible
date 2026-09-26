@@ -3,9 +3,11 @@
 
 import argparse
 from collections import Counter
+from concurrent.futures import ThreadPoolExecutor
 import configparser
 import difflib
 import functools
+import io
 import json
 import os
 from pathlib import Path
@@ -17,43 +19,14 @@ import unicodedata
 import xml.etree.ElementTree as ET
 import zipfile
 
-from source_inventory import inventory, read_archive, sha256
+from source_inventory import MARKER, inventory, marker_counts, read_archive, sha256
 
 ROOT = Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
-EDITION = json.loads(Path("config/edition.json").read_text(encoding="utf-8"))
-SOURCES = json.loads(Path("sources.json").read_text(encoding="utf-8"))
-DEPS = json.loads(Path("dependencies.json").read_text(encoding="utf-8"))
-# Git checkouts are pinned by commit; vendored font archives by hash.
-GIT_DEPS = tuple(name for name, dep in DEPS.items() if "commit" in dep)
-FONT_DEPS = tuple(name for name, dep in DEPS.items() if "archive" in dep)
-MARGINAL_NOTES = json.loads(
-    Path("config/marginal-notes.json").read_text(encoding="utf-8")
-)
-UPSTREAM = Path("/opt/ptxprint")
-EXPECTED_NT_MARGINAL_NOTES = 775
-PERIOD_FREE_TITLE_MARKERS = ("h", "toc1", "mt1", "mt2", "mt3")
-PAULINE_TITLE_IDS = set(
-    "ROM 1CO 2CO GAL EPH PHP COL 1TH 2TH 1TI 2TI TIT PHM HEB".split()
-)
-CATHOLIC_EPISTLES = {
-    "JAS": ("", "James"),
-    "1PE": ("First", "Peter"),
-    "2PE": ("Second", "Peter"),
-    "1JN": ("First", "John"),
-    "2JN": ("Second", "John"),
-    "3JN": ("Third", "John"),
-    "JUD": ("", "Jude"),
-}
-# The Epistle Dedicatory's mt2 lines are its address ("&c.") and salutation.
-FRONT_PERIOD_FREE_TITLE_MARKERS = ("h", "toc1", "mt1")
-# Every such heading, not just the first: OTH and BAK head book names with them.
-FRONT_PERIOD_FREE_HEADING_MARKERS = ("is1", "is2")
-BOOK_NAME_MARKERS = {
-    "title": "toc1",
-    "short_title": "toc2",
-    "abbreviation": "toc3",
-}
+
+
+def read_json(path):
+    return json.loads(Path(path).read_text(encoding="utf-8"))
 
 
 def write_json(path, data):
@@ -64,6 +37,46 @@ def write_json(path, data):
     )
 
 
+EDITION = read_json("config/edition.json")
+SOURCES = read_json("sources.json")
+DEPS = read_json("dependencies.json")
+# Vendored font archives, pinned by hash.
+FONT_DEPS = tuple(name for name, dep in DEPS.items() if "archive" in dep)
+MARGINAL_NOTES = read_json("config/marginal-notes.json")
+UPSTREAM = Path("/opt/ptxprint")
+EXPECTED_NT_MARGINAL_NOTES = 775
+# The Epistle Dedicatory's mt2 lines are its address ("&c.") and salutation.
+FRONT_PERIOD_FREE_TITLE_MARKERS = ("h", "toc1", "mt1")
+# Every such heading, not just the first: OTH and BAK head book names with them.
+FRONT_PERIOD_FREE_HEADING_MARKERS = ("is1", "is2")
+BOOK_NAME_MARKERS = {
+    "title": "toc1",
+    "short_title": "toc2",
+    "abbreviation": "toc3",
+}
+BOOK_NAME_ATTRIBUTES = {
+    "abbreviation": "abbr",
+    "short_title": "short",
+    "title": "long",
+}
+# Notes, character styles and table cells, which PTXprint must keep...
+NOTE_AND_STYLE_MARKERS = {"f", "x", "add", "it", "tr", "tc1", "tc2", "vp"}
+# ...and the parts of notes, which preparation must keep as well.
+NOTE_PART_MARKERS = {"fr", "ft", "fqa", "xo", "xt"}
+# USFM's escapes for characters that would otherwise be markup.
+ESCAPED_CHARACTERS = {
+    "asterisk": "*",
+    "percent": "%",
+    "hash": "#",
+    "dollar": "$",
+    "ampersand": "&",
+    "circumflex": "^",
+    "space": " ",
+}
+GREEK = "\u0370-\u03ff\u1f00-\u1fff"
+HEBREW = "\u0590-\u05ff"
+
+
 class CheckFailed(RuntimeError):
     """A source, preparation, or output check refused the build."""
 
@@ -71,6 +84,26 @@ class CheckFailed(RuntimeError):
 def require(condition, message):
     if not condition:
         raise CheckFailed(message)
+
+
+def pinned_bytes(path, expected_sha256):
+    """A pinned file's contents, refused unless they match the recorded hash."""
+    data = Path(path).read_bytes()
+    require(sha256(data) == expected_sha256, f"Checksum mismatch: {path}")
+    return data
+
+
+def file_sha256(path):
+    return sha256(Path(path).read_bytes())
+
+
+def recorder(log, code):
+    """A function that logs one of a unit's transformations."""
+
+    def record(operation, **details):
+        log.append({"project_id": code, "operation": operation, **details})
+
+    return record
 
 
 def normalize_printed_title(value, marker):
@@ -91,20 +124,29 @@ def normalize_title_lines(text, markers):
     return text
 
 
+def scripture_unit(code):
+    return next(u for u in EDITION["scripture"] if u["id"] == code)
+
+
+def source_id(entry):
+    """The id of the source file an entry is printed from."""
+    return entry.get("source_id", entry["id"])
+
+
+def source_usfm(entry, archives):
+    """The text an entry is prepared from: its source file, or the edition's own."""
+    if "file" in entry:
+        return Path(entry["file"]).read_text(encoding="utf-8")
+    return archives[entry["source"]][source_id(entry)][2]
+
+
 def heading_lines(entry, names):
-    """The mt lines printed over a Brenton book, as (marker, text) pairs.
+    """The mt lines printed over a book, as (marker, text) pairs.
 
     As in the Cambridge KJV, the heading is the contents title itself. The
     manifest's optional "heading" says how to break it into lines and which
     line is the main one; without it the whole title is one mt1 line.
-    Cambridge books already carry their own layout and keep it.
     """
-    if entry["source"] != "brenton":
-        require(
-            "heading" not in entry,
-            f"Cambridge books keep their own heading layout: {entry['id']}",
-        )
-        return None
     lines = entry.get("heading", [["mt1", names["title"]]])
     require(
         isinstance(lines, list)
@@ -132,34 +174,35 @@ def source_marker(text, marker):
     return match[1].strip()
 
 
-def catholic_epistle_names(code):
-    ordinal, person = CATHOLIC_EPISTLES[code]
-    prefix = ordinal + " " if ordinal else ""
-    return (
-        f"The {prefix}Catholic Epistle of Saint {person}",
-        f"THE {prefix.upper()}CATHOLIC EPISTLE OF",
-        f"SAINT {person.upper()}",
+def replace_marker_line(text, marker, value, code):
+    """The text with the value of its first \\marker line replaced."""
+    text, count = re.subn(
+        r"^(\\" + marker + r"\s+)[^\n]*",
+        lambda m: m[1] + value,
+        text,
+        count=1,
+        flags=re.M,
     )
+    require(count == 1, f"Missing {marker} heading: {code}")
+    return text
 
 
-def resolved_book_names(entry, source_text=None):
-    title = entry.get("title")
-    if not title and source_text is not None:
-        # Front matter keeps its source names, except where the edition's
-        # headings replace them in the printed text.
-        headings = entry.get("headings", {})
+def resolved_book_names(entry, source_text):
+    """The contents title, running-head title, and abbreviation of an entry.
+
+    The edition's names replace the source's. Front matter that the edition
+    does not rename keeps its source names, as preparation prints them.
+    """
+    if "title" not in entry and "section" not in entry:
         names = {
-            field: headings.get(marker) or source_marker(source_text, marker)
+            field: source_marker(source_text, marker)
             for field, marker in BOOK_NAME_MARKERS.items()
         }
-        # As printed: preparation normalizes the front matter's toc1.
         names["title"] = normalize_printed_title(names["title"], "toc1")
         return names
-    require(title, f"Missing title: {entry.get('id', entry.get('project_id'))}")
-    if source_text is None:
-        return {"title": title, "short_title": title, "abbreviation": title}
+    require(entry.get("title"), f"Missing title: {entry['id']}")
     return {
-        "title": title,
+        "title": entry["title"],
         "short_title": entry.get("short_title") or source_marker(source_text, "toc2"),
         "abbreviation": entry.get("abbreviation") or source_marker(source_text, "toc3"),
     }
@@ -168,22 +211,12 @@ def resolved_book_names(entry, source_text=None):
 def book_names_element(entries, archives):
     root = ET.Element("BookNames")
     for entry in entries:
-        code = entry.get("project_id", entry.get("id"))
-        source_text = None
-        if entry.get("source"):
-            source_text = archives[entry["source"]][
-                entry.get("source_id", entry["id"])
-            ][2]
-        elif "file" in entry:
-            source_text = Path(entry["file"]).read_text(encoding="utf-8")
-        names = resolved_book_names(entry, source_text)
+        names = resolved_book_names(entry, source_usfm(entry, archives))
         ET.SubElement(
             root,
             "book",
-            code=code,
-            abbr=names["abbreviation"],
-            short=names["short_title"],
-            long=names["title"],
+            code=entry["id"],
+            **{attr: names[field] for field, attr in BOOK_NAME_ATTRIBUTES.items()},
         )
     return root
 
@@ -198,21 +231,13 @@ def capture(*args):
 
 def validate():
     for name in FONT_DEPS:
-        font_archive = Path(DEPS[name]["archive"])
-        require(
-            sha256(font_archive.read_bytes()) == DEPS[name]["sha256"],
-            f"Archive checksum mismatch: {font_archive}",
-        )
+        pinned_bytes(DEPS[name]["archive"], DEPS[name]["sha256"])
     archives = {}
     for name, source in SOURCES.items():
         if "archive" not in source:
             continue
         path = Path(source["archive"])
-        require(
-            sha256(path.read_bytes()) == source["sha256"],
-            f"Archive checksum mismatch: {path}",
-        )
-        data = read_archive(path)
+        data = read_archive(io.BytesIO(pinned_bytes(path, source["sha256"])))
         require(set(data) == set(source["files"]), f"Archive inventory changed: {path}")
         for code, (member, raw, text) in data.items():
             expected = source["files"][code]
@@ -232,25 +257,30 @@ def validate():
         "Marginal notes name a book outside the KJV New Testament",
     )
     require(
-        all(
-            ("chapters" not in u or u["id"] in ("EZR", "NEH"))
-            and ("source_parts" not in u or u["id"] == "DAG")
-            for u in units
-        ),
-        "chapters and source_parts are only implemented for EZR/NEH and DAG",
+        all("source_parts" not in u or u["id"] == "DAG" for u in units),
+        "source_parts is only implemented for DAG",
     )
+    # A source divided between units must be printed whole, each chapter once.
+    divided = {}
+    for u in units:
+        if "chapters" in u:
+            first, last = u["chapters"]
+            divided.setdefault((u["source"], source_id(u)), []).extend(
+                str(c) for c in range(first, last + 1)
+            )
+    for (source, code), chapters in divided.items():
+        require(
+            chapters == list(SOURCES[source]["files"][code]["chapters"]),
+            f"Divided source not printed whole: {source}/{code}",
+        )
     source_use = brenton_source_use()
     # Explain the overlapping witness without modifying either original file.
-    _, combined_ezra_nehemiah_chapters = chapter_parts(archives["brenton"]["EZR"][2])
+    nehemias = scripture_unit("NEH")
+    first, last = nehemias["chapters"]
+    _, combined_chapters = chapter_parts(archives["brenton"][source_id(nehemias)][2])
     _, standalone_nehemias_witness = chapter_parts(archives["brenton"]["NEH"][2])
-    require(
-        len(combined_ezra_nehemiah_chapters) == 23,
-        "Ezra-Nehemiah source boundary changed",
-    )
-    renumbered_nehemias_chapters = re.sub(
-        r"\\c (\d+)",
-        lambda m: "\\c " + str(int(m[1]) - 10),
-        "".join(combined_ezra_nehemiah_chapters[10:]),
+    renumbered_nehemias_chapters = "".join(
+        renumber_chapters(combined_chapters[first - 1 : last], first - 1)
     )
     standalone_nehemias_chapters = "".join(standalone_nehemias_witness)
 
@@ -261,7 +291,7 @@ def validate():
         difflib.unified_diff(
             renumbered_nehemias_chapters.splitlines(True),
             standalone_nehemias_chapters.splitlines(True),
-            fromfile="EZR chapters 11-23 (renumbered for comparison)",
+            fromfile=f"{source_id(nehemias)} chapters {first}-{last} (renumbered for comparison)",
             tofile="standalone NEH",
         )
     )
@@ -300,9 +330,7 @@ def brenton_source_use():
     source_use = []
     for unit in EDITION["scripture"]:
         if unit["source"] == "brenton":
-            source_use.extend(
-                unit.get("source_parts", [unit.get("source_id", unit["id"])])
-            )
+            source_use.extend(unit.get("source_parts", [source_id(unit)]))
     return source_use
 
 
@@ -314,45 +342,34 @@ def ordered_entries():
         if u.get("section") not in ("old_testament", "new_testament")
     ]
     require(not unplaced, f"Scripture units outside both testaments: {unplaced}")
-    result = []
-
-    def add_div(code, title, subtitle):
-        # Subtitle lines mirror the title page in config/front.sfm.
-        result.append(
-            {
-                "project_id": code,
-                "title": title,
-                "subtitle": subtitle,
-                "generated": True,
-            }
-        )
-
-    # The editor's introduction is a project unit rather than a front-matter periph so
-    # that it follows the contents page and is listed in it.
-    result.append({"project_id": "CNC", "file": "config/introduction.sfm"})
-    # Each testament opens with its divider and its own translation's front matter.
-    add_div("XXF", "THE OLD TESTAMENT", ["Brenton’s Septuagint"])
-    result.extend(EDITION["old_testament_front"])
-    result.extend(u for u in EDITION["scripture"] if u["section"] == "old_testament")
-    add_div(
-        "XXG",
-        "THE NEW TESTAMENT",
-        ["Scrivener’s Cambridge Paragraph Bible", "King James Version"],
-    )
-    result.extend(EDITION["new_testament_front"])
-    result.extend(u for u in EDITION["scripture"] if u["section"] == "new_testament")
-    add_div(
-        "GLO",
-        "APPENDICES",
-        ["Brenton’s Jeremias table and notes", "eBible’s corrections to the text"],
-    )
-    result.extend(EDITION["appendices"])
-    return result
+    scripture = EDITION["scripture"]
+    return [
+        # The editor's introduction is a project unit rather than a front-matter
+        # periph so that it follows the contents page and is listed in it.
+        {"id": "CNC", "file": "config/introduction.sfm"},
+        # Each testament opens with its divider and its own translation's front matter.
+        {"id": "XXF", "file": "config/old-testament.sfm"},
+        *EDITION["old_testament_front"],
+        *(u for u in scripture if u["section"] == "old_testament"),
+        {"id": "XXG", "file": "config/new-testament.sfm"},
+        *EDITION["new_testament_front"],
+        *(u for u in scripture if u["section"] == "new_testament"),
+        {"id": "GLO", "file": "config/appendices.sfm"},
+        *EDITION["appendices"],
+    ]
 
 
 def chapter_parts(text):
     parts = re.split(r"(?=\\c \d+\s)", text)
     return parts[0], parts[1:]
+
+
+def renumber_chapters(chapters, offset):
+    """Chapters whose opening chapter marker is lowered by offset."""
+    return [
+        re.sub(r"^\\c (\d+)", lambda m: f"\\c {int(m[1]) - offset}", c, count=1)
+        for c in chapters
+    ]
 
 
 def sample_chapters(code, text, wanted):
@@ -396,26 +413,13 @@ def passage_payload(text):
 
 
 def preserved_markers(text):
-    result = {}
-    for marker, count in Counter(re.findall(r"\\(\+?[\w-]+\*?)", text)).items():
-        name = marker.lstrip("+").rstrip("*")
-        if name in (
-            "f",
-            "fr",
-            "ft",
-            "fqa",
-            "x",
-            "xo",
-            "xt",
-            "add",
-            "it",
-            "tr",
-            "tc1",
-            "tc2",
-            "vp",
-        ):
-            result[marker] = count
-    return result
+    """Counts of the note and character-style markers, which preparation must keep."""
+    kept = NOTE_AND_STYLE_MARKERS | NOTE_PART_MARKERS
+    return {
+        marker: count
+        for marker, count in marker_counts(text).items()
+        if marker.lstrip("+").rstrip("*") in kept
+    }
 
 
 @functools.cache
@@ -427,10 +431,7 @@ def marginal_notes():
     this edition does not print, so they are never read.
     """
     source = SOURCES["marginal_notes"]
-    path = Path(source["file"])
-    raw = path.read_bytes()
-    require(sha256(raw) == source["sha256"], f"Source checksum mismatch: {path}")
-    text = raw.decode("utf-8")
+    text = pinned_bytes(source["file"], source["sha256"]).decode("utf-8")
     require(
         text.count("\nMatthew 1:11 ") == 1,
         "Marginal notes New Testament boundary changed",
@@ -474,7 +475,6 @@ def marginal_notes():
                 "verse": verse,
                 "lemma": lemma,
                 "note": note,
-                "corrected": key in MARGINAL_NOTES["corrections"],
             }
         )
     require(not corrections, f"Unused marginal note corrections: {sorted(corrections)}")
@@ -496,7 +496,7 @@ def word_tokens(text):
     Markers are blanked rather than removed so that offsets index the USFM itself.
     Apostrophes join a word (king’s is kings); hyphens separate one (market-place).
     """
-    masked = re.sub(r"\\\+?[\w-]+\*?", lambda m: " " * len(m[0]), text)
+    masked = re.sub(MARKER, lambda m: " " * len(m[0]), text)
     return [
         (re.sub(r"[’']", "", m[0]).casefold(), m.start())
         for m in re.finditer(r"[A-Za-z]+(?:[’'][A-Za-z]+)*", masked)
@@ -586,51 +586,74 @@ def insert_marginal_notes(code, text, record):
         anchor_overrides=[
             n["key"] for n in notes if n["key"] in MARGINAL_NOTES["anchors"]
         ],
-        corrected_notes=[n["key"] for n in notes if n["corrected"]],
+        corrected_notes=[
+            n["key"] for n in notes if n["key"] in MARGINAL_NOTES["corrections"]
+        ],
     )
+    return text
+
+
+def rename_book(entry, original, text, record):
+    """The text with the edition's names and heading in place of the source's."""
+    code = entry["id"]
+    names = resolved_book_names(entry, original)
+    text = replace_marker_line(text, "h", names["short_title"], code)
+    for field, marker in BOOK_NAME_MARKERS.items():
+        text = replace_marker_line(text, marker, names[field], code)
+    # The whole heading is replaced, so the source's own subtitle lines go.
+    # Only the header block before the first chapter is touched.
+    head, chapters = chapter_parts(text)
+    head = re.sub(r"^\\mt[23][^\n]*\n", "", head, flags=re.M)
+    heading = "".join(
+        f"\\{marker} {value}\n" for marker, value in heading_lines(entry, names)
+    )
+    head, count = re.subn(
+        r"^\\mt1[^\n]*\n", lambda m: heading, head, count=1, flags=re.M
+    )
+    require(count == 1, f"Missing mt1 heading: {code}")
+    text = head + "".join(chapters)
+    headings = {}
+    for marker in ("h", *BOOK_NAME_MARKERS.values(), "mt1", "mt2", "mt3"):
+        pattern = r"^\\" + marker + r"\s+([^\n]*)$"
+        source_values = [v.strip() for v in re.findall(pattern, original, re.M)]
+        edition_values = [v.strip() for v in re.findall(pattern, text, re.M)]
+        if source_values != edition_values:
+            headings[marker] = {"source": source_values, "edition": edition_values}
+    if headings:
+        record("edition book headings replace the source headings", headings=headings)
     return text
 
 
 def scripture_text(entry, archives, log=None):
     code = entry["id"]
-    source_id = entry.get("source_id", code)
-    original = archives[entry["source"]][source_id][2]
-    names = resolved_book_names(entry, original)
-
-    def record(operation, **details):
-        if log is not None:
-            log.append({"project_id": code, "operation": operation, **details})
-
-    if code in ("EZR", "NEH"):
-        # The split below is fixed; the manifest's chapters field must describe it.
-        require(
-            entry.get("chapters") == ([1, 10] if code == "EZR" else [11, 23]),
-            f"Manifest chapters disagree with the Ezra-Nehemiah source split: {code}",
-        )
+    original = source_usfm(entry, archives)
+    record = recorder([] if log is None else log, code)
+    if "chapters" in entry:
+        # Part of a source file that holds more than one book, numbered from 1.
+        first, last = entry["chapters"]
         header, chapters = chapter_parts(original)
-        require(len(chapters) == 23, "Ezra-Nehemiah source boundary changed")
-        selected = chapters[:10] if code == "EZR" else chapters[10:]
-        if code == "NEH":
-            selected = [
-                re.sub(
-                    r"^\\c (\d+)", lambda m: r"\c " + str(int(m[1]) - 10), c, count=1
-                )
-                for c in selected
-            ]
-            record(
-                "select source chapters and relabel them",
-                source_ids=[source_id],
-                source_chapters="11-23",
-                edition_chapters="1-13",
-            )
-        else:
-            record(
-                "select source chapters",
-                source_ids=[source_id],
-                source_chapters="1-10",
-            )
-        expected = header + "".join(chapters[:10] if code == "EZR" else chapters[10:])
-        text = header + "".join(selected)
+        require(
+            0 < first <= last <= len(chapters),
+            f"Manifest chapters outside the source: {code}",
+        )
+        selected = chapters[first - 1 : last]
+        expected = header + "".join(selected)
+        text = header + "".join(renumber_chapters(selected, first - 1))
+        require(
+            list(inventory(text)["chapters"])
+            == [str(c) for c in range(1, last - first + 2)],
+            f"Wrong chapter selection: {code}",
+        )
+        record(
+            (
+                "select source chapters"
+                if first == 1
+                else "select source chapters and relabel them"
+            ),
+            source_ids=[source_id(entry)],
+            source_chapters=f"{first}-{last}",
+            edition_chapters=f"1-{last - first + 1}",
+        )
     elif code == "DAG":
         # The grouping below is fixed; the manifest's source_parts must describe it.
         require(
@@ -669,7 +692,7 @@ def scripture_text(entry, archives, log=None):
         text = daniel_header + "".join(susanna + daniel_chapters + bel)
         record(
             "group Susanna and Bel and the Dragon with Daniel",
-            source_ids=["SUS", source_id, "BEL"],
+            source_ids=["SUS", source_id(entry), "BEL"],
             chapter_labels={"SUS 1": "0", "BEL 1": "13"},
             added_section_headings=[
                 "SUSANNA",
@@ -700,69 +723,13 @@ def scripture_text(entry, archives, log=None):
         require(xo == 1, "Malachias 3:23 cross-reference origin changed")
         record(
             "relabel verses",
-            source_ids=[source_id],
+            source_ids=[source_id(entry)],
             source_verses="3:19-24",
             edition_verses="4:1-6",
             relabelled_note_origins={"3:23": "4:5"},
             moved_paragraph_marker="after the new chapter 4 marker",
         )
-    for field, marker in BOOK_NAME_MARKERS.items():
-        text, count = re.subn(
-            r"(\\" + marker + r"\s+)[^\n]*",
-            lambda m: m[1] + names[field],
-            text,
-            count=1,
-        )
-        require(count == 1, f"Missing {marker} heading: {code}")
-    text, count = re.subn(
-        r"(\\h\s+)[^\n]*",
-        lambda m: m[1] + names["short_title"],
-        text,
-        count=1,
-    )
-    require(count == 1, f"Missing h heading: {code}")
-    if code in PAULINE_TITLE_IDS:
-        text, count = re.subn(
-            r"^(\\mt2\s+)([^\n]*?)PAUL(?: THE APOSTLE)?([^\n]*)$",
-            lambda m: m[1] + m[2] + "SAINT PAUL" + m[3],
-            text,
-            count=1,
-            flags=re.M,
-        )
-        require(count == 1, f"Missing Pauline title heading: {code}")
-    if code in CATHOLIC_EPISTLES:
-        _, mt2, mt1 = catholic_epistle_names(code)
-        for marker, value in (("mt2", mt2), ("mt1", mt1)):
-            text, count = re.subn(
-                r"^(\\" + marker + r"\s+)[^\n]*$",
-                lambda m: m[1] + value,
-                text,
-                count=1,
-                flags=re.M,
-            )
-            require(count == 1, f"Missing Catholic epistle {marker} heading: {code}")
-    heading = heading_lines(entry, names)
-    if heading is not None:
-        # The whole heading is replaced, so Brenton's own subtitle lines go.
-        # Only the header block before the first chapter is touched.
-        head, *body = re.split(r"^(?=\\c )", text, maxsplit=1, flags=re.M)
-        head = re.sub(r"^\\mt[23][^\n]*\n", "", head, flags=re.M)
-        added = "".join(f"\\{marker} {value}\n" for marker, value in heading)
-        head, count = re.subn(
-            r"^\\mt1[^\n]*\n", lambda m: added, head, count=1, flags=re.M
-        )
-        require(count == 1, f"Missing mt1 heading: {code}")
-        text = head + "".join(body)
-    text = normalize_title_lines(text, PERIOD_FREE_TITLE_MARKERS)
-    headings = {}
-    for marker in ("h", "toc1", "toc2", "toc3", "mt1", "mt2", "mt3"):
-        pattern = r"^\\" + marker + r"\s+([^\n]*)$"
-        source_values = [v.strip() for v in re.findall(pattern, original, re.M)]
-        edition_values = [v.strip() for v in re.findall(pattern, text, re.M)]
-        if source_values != edition_values:
-            headings[marker] = {"source": source_values, "edition": edition_values}
-    if headings:
-        record("edition book headings replace the source headings", headings=headings)
+    text = rename_book(entry, original, text, record)
     require(
         passage_payload(expected) == passage_payload(text),
         f"Source wording changed: {code}",
@@ -772,18 +739,16 @@ def scripture_text(entry, archives, log=None):
         f"Source notes or styling changed: {code}",
     )
     expected_chapters = {
-        "EZR": [str(i) for i in range(1, 11)],
-        "NEH": [str(i) for i in range(1, 14)],
-        "DAG": ["0"] + [str(i) for i in range(1, 14)],
+        "DAG": [str(i) for i in range(0, 14)],
         "MAL": ["1", "2", "3", "4"],
     }
+    chapters = inventory(text)["chapters"]
     if code in expected_chapters:
         require(
-            list(inventory(text)["chapters"]) == expected_chapters[code],
+            list(chapters) == expected_chapters[code],
             f"Wrong chapter grouping: {code}",
         )
     if code == "MAL":
-        chapters = inventory(text)["chapters"]
         require(
             chapters["3"] == [str(i) for i in range(1, 19)]
             and chapters["4"] == [str(i) for i in range(1, 7)],
@@ -805,179 +770,128 @@ def scripture_text(entry, archives, log=None):
     return text
 
 
+def front_matter_text(entry, archives, log=None):
+    """A translation's front matter or appendix, under the edition's names if any."""
+    code = entry["id"]
+    original = source_usfm(entry, archives)
+    record = recorder([] if log is None else log, code)
+    text = (
+        rename_book(entry, original, original, record) if "title" in entry else original
+    )
+    titled = normalize_title_lines(text, FRONT_PERIOD_FREE_TITLE_MARKERS)
+    titled, stripped_headings = re.subn(
+        r"^(\\(?:"
+        + "|".join(FRONT_PERIOD_FREE_HEADING_MARKERS)
+        + r")\s+[^\n]*?)\.(\s*)$",
+        r"\1\2",
+        titled,
+        flags=re.M,
+    )
+    if titled != text:
+        record(
+            "drop closing full stops from titles and headings",
+            markers=list(
+                FRONT_PERIOD_FREE_TITLE_MARKERS + FRONT_PERIOD_FREE_HEADING_MARKERS
+            ),
+            headings=stripped_headings,
+        )
+    require(
+        inventory(original) == inventory(titled),
+        f"Preparation changed source markup: {code}",
+    )
+    return titled
+
+
+def typographic_text(code, text, record):
+    """The text with the characters and markup the fonts and PTXprint need.
+
+    Only the printable content's form changes, never its substance.
+    """
+    # GFS Didot does not encode U+02BC. Normalize Greek elision marks to the
+    # typographic apostrophe it does encode before fixing the printable baseline.
+    text, greek_apostrophes = re.subn(f"(?<=[{GREEK}])\u02bc", "\u2019", text)
+    if greek_apostrophes:
+        record(
+            "normalize Greek U+02BC elision mark to U+2019 for GFS Didot",
+            count=greek_apostrophes,
+        )
+    text, smartened = typographic_quotes(text)
+    if smartened:
+        record("typographic quotes, ellipses and dashes (SmartyPants)", count=smartened)
+    # Every later edit must leave printable content unchanged, apart from the spacer.
+    expected = canonical_text(text).replace("\u200b", "")
+    # Keep the source's reference-only note in 1KI 6:1. Upstream deletes it
+    # as empty unless a nonprinting body separates fr from the note end.
+    text, empty_notes = re.subn(
+        r"(\\f \+ \\fr [^\\]+)(?=\\f\*)", r"\1\\ft " + "\u200b", text
+    )
+    if empty_notes:
+        record(
+            "retain reference-only note with zero-width ft spacer", count=empty_notes
+        )
+    # Explicitly tag even single-letter quotations (the upstream heuristic misses
+    # these). Keep the Greek apostrophe in the Greek font too.
+    for marker, letters, continuation in (
+        ("wh", HEBREW, HEBREW),
+        ("wg", GREEK, "\u2019" + GREEK),
+    ):
+        word = f"[{letters}][\u0300-\u036f{continuation}]*"
+        text, count = re.subn(
+            f"{word}(?: +{word})*",
+            lambda m: f"\\+{marker} {m[0]}\\+{marker}*",
+            text,
+        )
+        if count:
+            record("tag quotation runs", marker=marker, count=count)
+    require(
+        canonical_text(text).replace("\u200b", "") == expected,
+        f"Preparation changed printable content: {code}",
+    )
+    return text
+
+
 def prepare(mode, base, archives):
+    """Write the PTXprint project; returns its folder and the order of its units."""
     project = base / "projects/BIBLE"
     conf = project / "shared/ptxprint/Bible"
     conf.mkdir(parents=True)
     entries = ordered_entries()
     if mode == "sample":
-        sample = json.loads(Path("config/sample.json").read_text(encoding="utf-8"))
+        sample = read_json("config/sample.json")
         unknown = set(sample) - {u["id"] for u in EDITION["scripture"]}
         require(
             not unknown, f"Sample names units outside the edition: {sorted(unknown)}"
         )
         entries = [e for e in entries if "section" not in e or e["id"] in sample]
-    ids = []
+    ids = [e["id"] for e in entries]
+    require(len(ids) == len(set(ids)), "Duplicate project id")
     transformations = []
     for entry in entries:
-        code = entry.get("project_id", entry.get("id"))
-        ids.append(code)
-        if entry.get("generated"):
-            text = f"\\id {code}\n\\h {entry['title']}\n\\toc1 {entry['title']}\n\\mt1 {entry['title']}\n"
-            text += "".join(f"\\mt2 {line}\n" for line in entry["subtitle"])
-        elif "file" in entry:
-            text = Path(entry["file"]).read_text(encoding="utf-8")
+        code = entry["id"]
+        record = recorder(transformations, code)
+        if "file" in entry:
+            text = source_usfm(entry, archives)
             require(text.startswith(f"\\id {code}\n"), f"Wrong id in {entry['file']}")
         else:
-            original = archives[entry["source"]][entry.get("source_id", entry["id"])][2]
-            text = (
-                scripture_text(entry, archives, transformations)
-                if "section" in entry
-                else original
-            )
-            if code != entry.get("source_id", entry["id"]):
+            if "section" in entry:
+                text = scripture_text(entry, archives, transformations)
+            else:
+                text = front_matter_text(entry, archives, transformations)
+            if code != source_id(entry):
                 text, remapped = re.subn(r"^(\\id\s+)\S+", lambda m: m[1] + code, text)
                 require(remapped == 1, f"Could not remap leading \\id to {code}")
-                transformations.append(
-                    {
-                        "source": entry.get("source_id", entry["id"]),
-                        "project_id": code,
-                        "operation": "remap project id to retain it as a distinct ordered unit",
-                    }
-                )
-            for marker, heading in entry.get("headings", {}).items():
-                pattern = r"^(\\" + marker + r"\s+)([^\n]*)"
-                source_heading = re.search(pattern, text, re.M)
-                require(source_heading, f"Missing {marker} heading: {code}")
-                require(
-                    source_heading[2].strip() != heading,
-                    f"Edition {marker} heading repeats the source: {code}",
-                )
-                text = re.sub(
-                    pattern, lambda m: m[1] + heading, text, count=1, flags=re.M
-                )
-            if entry.get("headings"):
-                transformations.append(
-                    {
-                        "project_id": code,
-                        "operation": "edition heading replaces the source heading",
-                        "headings": entry["headings"],
-                    }
-                )
-            if "section" not in entry:
-                titled = normalize_title_lines(text, FRONT_PERIOD_FREE_TITLE_MARKERS)
-                titled, stripped_headings = re.subn(
-                    r"^(\\(?:"
-                    + "|".join(FRONT_PERIOD_FREE_HEADING_MARKERS)
-                    + r")\s+[^\n]*?)\.(\s*)$",
-                    r"\1\2",
-                    titled,
-                    flags=re.M,
-                )
-                if titled != text:
-                    transformations.append(
-                        {
-                            "project_id": code,
-                            "operation": "drop closing full stops from titles and headings",
-                            "markers": list(
-                                FRONT_PERIOD_FREE_TITLE_MARKERS
-                                + FRONT_PERIOD_FREE_HEADING_MARKERS
-                            ),
-                            "headings": stripped_headings,
-                        }
-                    )
-                text = titled
-                require(
-                    inventory(original) == inventory(text),
-                    f"Preparation changed source markup: {code}",
+                record(
+                    "remap project id to retain it as a distinct ordered unit",
+                    source=source_id(entry),
                 )
             if mode == "sample" and "section" in entry:
                 text = sample_chapters(code, text, sample[code])
-                transformations.append(
-                    {
-                        "project_id": code,
-                        "operation": "sample chapter selection; nb after an omitted chapter becomes p",
-                        "chapters": sample[code],
-                    }
+                record(
+                    "sample chapter selection; nb after an omitted chapter becomes p",
+                    chapters=sample[code],
                 )
-            # GFS Didot does not encode U+02BC. Normalize Greek elision marks to the
-            # typographic apostrophe it does encode before fixing the printable baseline.
-            text, greek_apostrophes = re.subn(
-                r"(?<=[\u0370-\u03ff\u1f00-\u1fff])\u02bc", "\u2019", text
-            )
-            if greek_apostrophes:
-                transformations.append(
-                    {
-                        "project_id": code,
-                        "operation": "normalize Greek U+02BC elision mark to U+2019 for GFS Didot",
-                        "count": greek_apostrophes,
-                    }
-                )
-            text, smartened = typographic_quotes(text)
-            if smartened:
-                transformations.append(
-                    {
-                        "project_id": code,
-                        "operation": "typographic quotes, ellipses and dashes (SmartyPants)",
-                        "count": smartened,
-                    }
-                )
-            # Every later edit must leave printable content unchanged, apart from the spacer.
-            expected = canonical_text(text).replace("\u200b", "")
-            # Keep the source's reference-only note in 1KI 6:1. Upstream deletes it
-            # as empty unless a nonprinting body separates fr from the note end.
-            text, empty_notes = re.subn(
-                r"(\\f \+ \\fr [^\\]+)(?=\\f\*)", r"\1\\ft " + "\u200b", text
-            )
-            if empty_notes:
-                transformations.append(
-                    {
-                        "project_id": code,
-                        "operation": "retain reference-only note with zero-width ft spacer",
-                        "count": empty_notes,
-                    }
-                )
-            # Explicitly tag even single-letter quotations (the upstream heuristic misses
-            # these). Keep the Greek apostrophe in the Greek font too.
-            for marker, chars, continuation in [
-                ("wh", "\u0590-\u05ff", "\u0590-\u05ff"),
-                (
-                    "wg",
-                    "\u0370-\u03ff\u1f00-\u1fff",
-                    "\u2019\u0370-\u03ff\u1f00-\u1fff",
-                ),
-            ]:
-                pattern = (
-                    "["
-                    + chars
-                    + "][\u0300-\u036f"
-                    + continuation
-                    + "]*(?: +["
-                    + chars
-                    + "][\u0300-\u036f"
-                    + continuation
-                    + "]*)*"
-                )
-                text, count = re.subn(
-                    pattern,
-                    lambda m: "\\+" + marker + " " + m[0] + "\\+" + marker + "*",
-                    text,
-                )
-                if count:
-                    transformations.append(
-                        {
-                            "project_id": code,
-                            "operation": "tag quotation runs",
-                            "marker": marker,
-                            "count": count,
-                        }
-                    )
-            require(
-                canonical_text(text).replace("\u200b", "") == expected,
-                f"Preparation changed printable content: {code}",
-            )
+            text = typographic_text(code, text, record)
         (project / f"{code}.usfm").write_text(text, encoding="utf-8")
-    require(len(ids) == len(set(ids)), "Duplicate generated project id")
     write_json(base / "order.json", ids)
     transformations.append(
         {
@@ -1040,32 +954,30 @@ def prepare(mode, base, archives):
             "\\mt1 THE HOLY BIBLE\n\\mt3 TYPESETTING SAMPLE — selected chapters",
         )
     (conf / "FRTlocal.sfm").write_text(front, encoding="utf-8")
-    return project, conf
+    return project, ids
 
 
-def render(mode="pdf", name=None):
-    archives = validate()
+def check_image():
     require(UPSTREAM.exists(), "Run this command through Make (make bootstrap first)")
-    for dep in GIT_DEPS:
+    # The image keeps the pins it was built from; a stale image would typeset
+    # with other tools or fonts than the ones pinned here.
+    for name in ("dependencies.json", "requirements.txt"):
         require(
-            capture(
-                "git",
-                "-c",
-                "safe.directory=/opt/" + dep,
-                "-C",
-                "/opt/" + dep,
-                "rev-parse",
-                "HEAD",
-            ).strip()
-            == DEPS[dep]["commit"],
-            f"Wrong {dep} checkout",
+            Path("/opt", name).read_bytes() == Path(name).read_bytes(),
+            f"The image was built from another {name}; run make bootstrap",
         )
-    name = name or ("sample" if mode == "sample" else "full")
+
+
+def build(mode, name, archives):
+    """Typeset one edition in build/<name> and check the PDF.
+
+    Returns the PDF, the order of its units, and the report of its checks.
+    """
     base = ROOT / "build" / name
     if base.exists():
         shutil.rmtree(base)
     base.mkdir(parents=True)
-    project, conf = prepare(mode, base, archives)
+    project, ids = prepare(mode, base, archives)
     home = base / "home"
     home.mkdir()
     env = os.environ.copy()
@@ -1103,14 +1015,19 @@ def render(mode="pdf", name=None):
         raise RuntimeError(
             f"PTXprint failed ({result.returncode}); see {base}/console.log"
         )
-    check_processed(project, base)
+    check_processed(project, base, ids)
     pdfs = list(project.rglob("*.pdf"))
     require(len(pdfs) == 1, f"Expected one PDF, found {pdfs}; see {base}/console.log")
+    report = inspect_pdf(pdfs[0], base, project, ids, sample=mode == "sample")
+    return pdfs[0], ids, report
+
+
+def publish(mode, pdf, ids, report):
+    """Copy a checked PDF to dist/ with a record of what produced it."""
     target = ROOT / "dist" / ("sample.pdf" if mode == "sample" else "bible.pdf")
     target.parent.mkdir(exist_ok=True)
-    report = inspect_pdf(pdfs[0], base, sample=mode == "sample")
     tracked = {
-        str(p): sha256(p.read_bytes())
+        str(p): file_sha256(p)
         for folder in ("config", "scripts")
         for p in sorted(Path(folder).rglob("*"))
         if p.is_file() and "__pycache__" not in str(p)
@@ -1124,32 +1041,28 @@ def render(mode="pdf", name=None):
         "sources.json",
         *(DEPS[name]["archive"] for name in FONT_DEPS),
     ):
-        tracked[input_name] = sha256(Path(input_name).read_bytes())
+        tracked[input_name] = file_sha256(input_name)
     fonts = {}
     for folder in (
-        "/opt/ptxprint/fonts",
-        "/usr/local/share/fonts/gfs",
-        "/usr/local/share/fonts/adobe",
-        "/usr/local/share/fonts/erewhon",
-        "/usr/share/fonts/truetype/ezra",
+        UPSTREAM / "fonts",
+        *sorted(p for p in Path("/usr/local/share/fonts").iterdir() if p.is_dir()),
+        Path("/usr/share/fonts/truetype/ezra"),
     ):
-        files = sorted(
-            p for p in Path(folder).iterdir() if p.suffix in {".otf", ".ttf"}
-        )
+        files = sorted(p for p in folder.iterdir() if p.suffix in {".otf", ".ttf"})
         require(files, f"No font files to record in provenance: {folder}")
         for p in files:
             require(p.name not in fonts, f"Duplicate font file name: {p.name}")
-            fonts[p.name] = sha256(p.read_bytes())
+            fonts[p.name] = file_sha256(p)
     provenance = {
         "title": EDITION["title"],
-        "pdf_sha256": sha256(pdfs[0].read_bytes()),
+        "pdf_sha256": file_sha256(pdf),
         "dependencies": DEPS,
         "source_archives": {
             k: {x: v[x] for x in ("url", "sha256", "retrieved")}
             for k, v in SOURCES.items()
         },
         "inputs": tracked,
-        "order": json.loads((base / "order.json").read_text(encoding="utf-8")),
+        "order": ids,
         "checks": report,
         "fonts": fonts,
         "os_release": Path("/etc/os-release").read_text(encoding="utf-8").splitlines(),
@@ -1162,32 +1075,33 @@ def render(mode="pdf", name=None):
     # PDF with an old provenance record.
     staged_pdf = target.with_suffix(".pdf.tmp")
     staged_provenance = target.with_suffix(".provenance.json.tmp")
-    shutil.copyfile(pdfs[0], staged_pdf)
+    shutil.copyfile(pdf, staged_pdf)
     write_json(staged_provenance, provenance)
     target.with_suffix(".provenance.json").unlink(missing_ok=True)
     if mode != "sample":
         # make check's record describes the PDF it built, not this one; check()
-        # writes a fresh record after its second build.
+        # writes a fresh record once it has compared its two builds.
         (ROOT / "dist/check.json").unlink(missing_ok=True)
     staged_pdf.replace(target)
     staged_provenance.replace(target.with_suffix(".provenance.json"))
     print("Wrote", target, flush=True)
-    return target, base, report
+
+
+def render(mode):
+    archives = validate()
+    check_image()
+    pdf, ids, report = build(mode, "sample" if mode == "sample" else "full", archives)
+    publish(mode, pdf, ids, report)
 
 
 def canonical_text(text):
     # Ignore only markup and whitespace; retain every source word, number and punctuation.
-    for macro, char in {
-        "asterisk": "*",
-        "percent": "%",
-        "hash": "#",
-        "dollar": "$",
-        "ampersand": "&",
-        "circumflex": "^",
-        "space": " ",
-    }.items():
-        text = re.sub(r"\\" + macro + r"\b\s?", lambda m: char, text)
-    text = re.sub(r"\\\+?[\w-]+\*?\s?", "", text)
+    text = re.sub(
+        r"\\(" + "|".join(ESCAPED_CHARACTERS) + r")\b\s?",
+        lambda m: ESCAPED_CHARACTERS[m[1]],
+        text,
+    )
+    text = re.sub(MARKER + r"\s?", "", text)
     return re.sub(r"\s+", "", text)
 
 
@@ -1231,12 +1145,12 @@ def typographic_quotes(text):
         inventory(result) == inventory(text) and fold(result) == fold(text),
         "SmartyPants changed more than quotes, ellipses and dashes",
     )
+    plain = r"['\"`]|\.\.\.|--"
     require(
-        not re.search(r"['\"`]|\.\.\.|--", result)
-        and result.count("&#") == text.count("&#"),
+        not re.search(plain, result) and result.count("&#") == text.count("&#"),
         "SmartyPants left a straight quote or a character reference",
     )
-    return result, len(re.findall(r"['\"`]|\.\.\.|--", text))
+    return result, len(re.findall(plain, text))
 
 
 def processed_markers(markers):
@@ -1244,23 +1158,24 @@ def processed_markers(markers):
     result = {}
     for k, v in markers.items():
         k = k.lstrip("+")
-        if k.rstrip("*") in ("f", "x", "add", "it", "tr", "tc1", "tc2", "vp"):
+        if k.rstrip("*") in NOTE_AND_STYLE_MARKERS:
             result[k] = result.get(k, 0) + v
     return result
 
 
-def check_processed(project, base):
+def check_processed(project, base, ids):
     records = []
-    texfiles = list((project / "local/ptxprint/Bible").glob("*_ptxp.tex"))
+    processed_dir = project / "local/ptxprint/Bible"
+    texfiles = list(processed_dir.glob("*_ptxp.tex"))
     require(len(texfiles) == 1, "Missing typesetting driver")
     tex = texfiles[0].read_text(encoding="utf-8")
     require(
         "%\\OmitCallerInNote{f}" in tex and "%\\OmitCallerInNote{x}" in tex,
         "Note callers unexpectedly suppressed",
     )
-    for code in json.loads((base / "order.json").read_text(encoding="utf-8")):
+    for code in ids:
         source = (project / (code + ".usfm")).read_text(encoding="utf-8")
-        processed = project / "local/ptxprint/Bible" / (code + "-Bible.usfm")
+        processed = processed_dir / (code + "-Bible.usfm")
         require(processed.exists(), f"PTXprint omitted {code}")
         output = processed.read_text(encoding="utf-8")
         before, after = inventory(source), inventory(output)
@@ -1290,7 +1205,7 @@ def check_processed(project, base):
     write_json(base / "processed-integrity.json", records)
 
 
-def check_boundaries(base, text, pages, reading_text, sample=False):
+def check_boundaries(base, project, ids, text, pages, reading_text, sample=False):
     tocfiles = list(base.rglob("*_ptxp.toc"))
     require(len(tocfiles) == 1, "Missing/ambiguous contents file")
 
@@ -1305,9 +1220,8 @@ def check_boundaries(base, text, pages, reading_text, sample=False):
         )
 
     toc = readtoc(tocfiles[0])
-    expected = json.loads((base / "order.json").read_text(encoding="utf-8"))
     require(
-        [r[0] for r in toc] == expected,
+        [r[0] for r in toc] == ids,
         "PDF contents omitted, duplicated or reordered units",
     )
     # Both files come from the final TeX run: PTXprint copies the raw TOC to _org.toc and
@@ -1324,6 +1238,9 @@ def check_boundaries(base, text, pages, reading_text, sample=False):
             c for c in unicodedata.normalize("NFKC", s).casefold() if c.isalnum()
         )
 
+    def usfm(code):
+        return (project / (code + ".usfm")).read_text(encoding="utf-8")
+
     # The contents follows the title page and precedes the first unit.
     contents = key("".join(page_text[1 : int(toc[0][2]) - 1]))
     previous = 0
@@ -1335,12 +1252,9 @@ def check_boundaries(base, text, pages, reading_text, sample=False):
             key(title) + str(page) in contents,
             f"Contents entry missing/wrong page in PDF: {code}",
         )
-        source = (base / "projects/BIBLE" / (code + ".usfm")).read_text(
-            encoding="utf-8"
-        )
         heading = " ".join(
             value.strip()
-            for value in re.findall(r"^\\mt[123]\s+([^\n]+)", source, re.M)
+            for value in re.findall(r"^\\mt[123]\s+([^\n]+)", usfm(code), re.M)
         )
         require(heading, f"Missing heading: {code}")
         require(
@@ -1364,16 +1278,11 @@ def check_boundaries(base, text, pages, reading_text, sample=False):
                 lines = lines[1:]
         reading_pages_without_headers.append("".join(lines))
     by_code = {b: (i, int(p)) for i, (b, t, p) in enumerate(toc)}
-    for witness in json.loads(
-        Path("config/render-witnesses.json").read_text(encoding="utf-8")
-    ):
+    for witness in read_json("config/render-witnesses.json"):
         code = witness["id"]
         if code not in by_code or (
             "chapter" in witness
-            and witness["chapter"]
-            not in inventory(
-                (base / "projects/BIBLE" / (code + ".usfm")).read_text(encoding="utf-8")
-            )["chapters"]
+            and witness["chapter"] not in inventory(usfm(code))["chapters"]
         ):
             # The sample deliberately selects only representative units and chapters.
             require(sample, f"Special-content witness not checked: {witness}")
@@ -1431,17 +1340,17 @@ def check_added_words_roman(pdf, reading_text):
                 "Added words are not set in the surrounding roman font",
             )
             return
-    require(False, "Added-word witness not found in PDF text runs")
+    raise CheckFailed("Added-word witness not found in PDF text runs")
 
 
-def inspect_pdf(pdf, base, sample=False):
+def inspect_pdf(pdf, base, project, ids, sample=False):
     with (base / "qpdf.log").open("w", encoding="utf-8") as log:
         run(["qpdf", "--check", pdf], stdout=log, stderr=subprocess.STDOUT)
     info = capture("pdfinfo", "-box", pdf)
     (base / "pdfinfo.txt").write_text(info, encoding="utf-8")
     pages = int(re.search(r"Pages:\s+(\d+)", info)[1])
     # Check every page, not just the first MediaBox.
-    boxes = capture("pdfinfo", "-f", "1", "-l", str(pages), "-box", pdf)
+    boxes = capture("pdfinfo", "-f", 1, "-l", pages, "-box", pdf)
     sizes = re.findall(r"(?:Page\s+\d+ size:|Page size:)\s+([\d.]+) x ([\d.]+)", boxes)
     require(len(sizes) == pages, "Could not inspect every PDF page")
     require(
@@ -1490,7 +1399,7 @@ def inspect_pdf(pdf, base, sample=False):
         ),
         "Missing glyph or TeX error; inspect logs",
     )
-    check_boundaries(base, text, pages, reading_text, sample)
+    check_boundaries(base, project, ids, text, pages, reading_text, sample)
     return {
         "pages": pages,
         "a5_all_pages": True,
@@ -1500,12 +1409,15 @@ def inspect_pdf(pdf, base, sample=False):
 
 
 def check():
-    Path("dist/check.json").unlink(missing_ok=True)
-    first, base1, report1 = render(name="repeat-1")
-    saved = ROOT / "build/repeat-1.pdf"
-    shutil.copyfile(first, saved)
-    second, base2, report2 = render(name="repeat-2")
+    archives = validate()
+    check_image()
+    # The two builds share nothing, so they typeset side by side.
+    with ThreadPoolExecutor(2) as pool:
+        (pdf1, _, report1), (pdf2, ids, report2) = pool.map(
+            lambda name: build("pdf", name, archives), ("repeat-1", "repeat-2")
+        )
     require(report1 == report2, "Repeat builds differ in text/page count")
+    publish("pdf", pdf2, ids, report2)
     # Render pages in batches, hashing then discarding rasters to limit disk use
     # without reopening each PDF once per page.
     pages = report1["pages"]
@@ -1520,16 +1432,16 @@ def check():
         require(
             len(files) == last - first + 1, f"Could not render pages {first}-{last}"
         )
-        result = [sha256(f.read_bytes()) for f in files]
+        result = [file_sha256(f) for f in files]
         shutil.rmtree(rasters)
         return result
 
     hashes = []
     for start in range(1, pages + 1, 100):
         end = min(start + 99, pages)
-        batch = page_hashes(saved, start, end)
+        batch = page_hashes(pdf1, start, end)
         for page, a, b in zip(
-            range(start, end + 1), batch, page_hashes(second, start, end)
+            range(start, end + 1), batch, page_hashes(pdf2, start, end)
         ):
             require(a == b, f"Rendered page {page} differs")
         hashes.extend(batch)
