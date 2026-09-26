@@ -1,6 +1,6 @@
 # Sources
 
-Everything the build reads is committed here exactly as downloaded, so building never needs the network. `sources.json` and `dependencies.json` record the SHA-256 hash of each file, and the build refuses to run if a file doesn't match.
+Everything the build reads is committed here exactly as downloaded, so building never needs the network. `sources.json` and the `Dockerfile` record the SHA-256 hash of each file, and the build refuses to run if a file doesn't match.
 
 ## Bible texts
 
@@ -29,4 +29,4 @@ All three are under the SIL Open Font License. Source Code Pro and Erewhon were 
 | `erewhon.zip`                               | [CTAN](https://mirrors.ctan.org/fonts/erewhon.zip)                                                                                              | 1.123 (2025-06-08)          | Verse numbers                                           |
 | `OTF-source-code-pro-2.042R-u_1.062R-i.zip` | [Adobe](https://github.com/adobe-fonts/source-code-pro/releases/download/2.042R-u/1.062R-i/1.026R-vf/OTF-source-code-pro-2.042R-u_1.062R-i.zip) | 2.042 upright, 1.062 italic | Nothing printed; PTXprint loads it for crop-mark labels |
 
-The main text font, Utopia, is built from the repository pinned in `dependencies.json`. The Hebrew font, Ezra SIL, comes from Ubuntu.
+The main text font, Utopia, is built from the repository pinned in the `Dockerfile`. The Hebrew font, Ezra SIL, comes from Ubuntu.

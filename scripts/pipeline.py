@@ -43,9 +43,11 @@ def write_json(path, data):
 
 EDITION = read_json("config/edition.json")
 SOURCES = read_json("sources.json")
-DEPS = read_json("dependencies.json")
-# Vendored font archives, pinned by hash.
-FONT_DEPS = tuple(name for name, dep in DEPS.items() if "archive" in dep)
+# The font archives the image was built from, relative to /opt as they are to
+# the checkout. The image build checks their hashes; outside it there are none.
+FONT_ARCHIVES = tuple(
+    str(p.relative_to("/opt")) for p in sorted(Path("/opt/sources").glob("*.zip"))
+)
 MARGINAL_NOTES = read_json("config/marginal-notes.json")
 UPSTREAM = Path("/opt/ptxprint")
 # The generated PTXprint project, and where PTXprint writes its processed copies.
@@ -260,8 +262,6 @@ def capture(*args):
 
 
 def validate():
-    for name in FONT_DEPS:
-        pinned_bytes(DEPS[name]["archive"], DEPS[name]["sha256"])
     archives = {}
     for name, source in SOURCES.items():
         if "archive" not in source:
@@ -971,7 +971,7 @@ def check_image():
     require(UPSTREAM.exists(), "Run this command through Make (make bootstrap first)")
     # The image keeps the pins it was built from; a stale image would typeset
     # with other tools or fonts than the ones pinned here.
-    for name in ("dependencies.json", "requirements.txt"):
+    for name in ("Dockerfile", "requirements.txt", *FONT_ARCHIVES):
         require(
             Path("/opt", name).read_bytes() == Path(name).read_bytes(),
             f"The image was built from another {name}; run make bootstrap",
@@ -1047,9 +1047,8 @@ def publish(mode, pdf, ids, report):
         "compose.yaml",
         "Makefile",
         "requirements.txt",
-        "dependencies.json",
         "sources.json",
-        *(DEPS[name]["archive"] for name in FONT_DEPS),
+        *FONT_ARCHIVES,
     ):
         tracked[input_name] = file_sha256(input_name)
     fonts = {}
@@ -1066,7 +1065,19 @@ def publish(mode, pdf, ids, report):
     provenance = {
         "title": EDITION["title"],
         "pdf_sha256": file_sha256(pdf),
-        "dependencies": DEPS,
+        # The checkouts belong to root, which git refuses unless told otherwise.
+        "upstream_commits": {
+            name: capture(
+                "git",
+                "-c",
+                "safe.directory=*",
+                "-C",
+                f"/opt/{name}",
+                "rev-parse",
+                "HEAD",
+            ).strip()
+            for name in ("ptxprint", "usfmtc", "utopia")
+        },
         "source_archives": {
             k: {x: v[x] for x in ("url", "sha256", "retrieved")}
             for k, v in SOURCES.items()

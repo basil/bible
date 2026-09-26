@@ -7,29 +7,14 @@
   ],
   "customManagers": [
     {
-      "description": "PTXprint release tag and its commit in dependencies.json",
-      "customType": "jsonata",
-      "fileFormat": "json",
+      "description": "Upstream projects pinned by commit in the Dockerfile",
+      "customType": "regex",
       "managerFilePatterns": [
-        "/^dependencies\\.json$/"
+        "/^Dockerfile$/"
       ],
       "matchStrings": [
-        "{\"depName\": \"ptxprint\", \"packageName\": \"sillsdev/ptx2pdf\", \"currentValue\": ptxprint.tag, \"currentDigest\": ptxprint.commit}"
-      ],
-      "datasourceTemplate": "github-tags",
-      "versioningTemplate": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)$"
-    },
-    {
-      "description": "Git dependencies pinned to a branch head in dependencies.json",
-      "customType": "jsonata",
-      "fileFormat": "json",
-      "managerFilePatterns": [
-        "/^dependencies\\.json$/"
-      ],
-      "matchStrings": [
-        "$each($, function($v, $k) { $v.branch and $v.commit ? {\"depName\": $k, \"packageName\": $v.url, \"currentValue\": $v.branch, \"currentDigest\": $v.commit} })"
-      ],
-      "datasourceTemplate": "git-refs"
+        "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\s+ARG \\w+_URL=(?<packageName>\\S+)\\s+ARG \\w+_(?:TAG|BRANCH)=(?<currentValue>\\S+)\\s+ARG \\w+_COMMIT=(?<currentDigest>[0-9a-f]{40})"
+      ]
     }
   ],
   "packageRules": [
@@ -37,6 +22,7 @@
       "matchDepNames": [
         "ptxprint"
       ],
+      "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)$",
       "prBodyNotes": [
         "Follow the PTXprint checklist under \"Updating dependencies\" in CONTRIBUTING.md."
       ]

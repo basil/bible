@@ -1,5 +1,8 @@
 """Fault injection: each guard must refuse a deliberately damaged input."""
 
+from pathlib import Path
+import shutil
+
 import pytest
 
 import pipeline
@@ -20,10 +23,15 @@ def with_source(archives, source, code, edit):
 # Pinned inputs
 
 
-def test_font_archive_checksum(patched):
-    patched("DEPS")["erewhon"]["sha256"] = BAD_SHA256
-    with pytest.raises(CheckFailed, match="Checksum mismatch: sources/erewhon.zip"):
-        pipeline.validate()
+def test_stale_image(tmp_path, monkeypatch):
+    # The image's own copies, so that only the damaged archive differs from it.
+    for name in ("Dockerfile", "requirements.txt", *pipeline.FONT_ARCHIVES):
+        (tmp_path / name).parent.mkdir(exist_ok=True)
+        shutil.copy(Path("/opt", name), tmp_path / name)
+    (tmp_path / "sources/erewhon.zip").write_bytes(b"")
+    monkeypatch.chdir(tmp_path)
+    with pytest.raises(CheckFailed, match="another sources/erewhon.zip"):
+        pipeline.check_image()
 
 
 def test_source_archive_checksum(patched):

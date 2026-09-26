@@ -34,7 +34,7 @@ The sample prints the chapters listed in `config/sample.json`. They were picked 
 - `config/marginal-notes.json`: placements and corrections for the 1611 New Testament notes.
 - `config/layout.ini`, `config/ptxprint-mods.sty`, `config/ptxprint-mods.tex`: layout, style, and TeX changes on top of PTXprint's layout for the Berean Standard Bible (BSB).
 - `config/render-witnesses.json`: phrases that must appear in the finished PDF, to catch unusual passages going missing.
-- `dependencies.json`: the pinned PTXprint, usfmtc, and Utopia commits, and the hashes of the font archives.
+- `Dockerfile`: the tool image, with the pinned PTXprint, usfmtc, and Utopia commits and the hashes of the font archives.
 - `scripts/pipeline.py`: the build.
 - `tests/`: the pytest tests and the TeX protrusion test.
 
@@ -91,7 +91,7 @@ Run `make test-tex` after changing the table. If the change was intended, save t
 
 ## Updating dependencies
 
-Renovate opens pull requests for the Python packages in `requirements.txt`, the PTXprint, usfmtc, and Utopia commits in `dependencies.json`, and the Ubuntu base image in the `Dockerfile`. The font archives in `sources/` are updated by hand, together with their hashes in `dependencies.json`. Each archive's entry there also says which of its files to install; a new archive must be admitted in `.dockerignore` as well. The build refuses to run in an image made from a different `dependencies.json` or `requirements.txt`, so run `make bootstrap` after changing either.
+Renovate opens pull requests for the Python packages in `requirements.txt`, and for the Ubuntu base image and the PTXprint, usfmtc, and Utopia commits in the `Dockerfile`. The font archives in `sources/` are updated by hand. Each has a line in the `Dockerfile`'s `sha256sum` check, an `unzip` line there that says which of its files to install, and a line in `.dockerignore` that admits it. The build refuses to run in an image made from a different `Dockerfile`, `requirements.txt`, or font archive, so run `make bootstrap` after changing any of them.
 
 `requirements.txt` lists only direct dependencies: what the build and tests import, what PTXprint needs at run time (including `psutil`, which it uses without declaring), and what's needed to build PTXprint and usfmtc. Those two are installed with `--no-deps`, because PTXprint's package metadata points at usfmtc's moving main branch instead of the pinned commit.
 
@@ -115,4 +115,4 @@ A few things look odd but are on purpose:
 - BSB sets `fnomitcaller` and `xromitcaller` to `True`, which in this PTXprint release means the callers *are* printed in the notes. The build checks that this still holds.
 - PTXprint's `canonicalise` option is off, so that it doesn't rewrite the source markup.
 - PTXprint loads GTK even when it runs without a display, which is why the image includes it.
-- PTXprint's font configuration rejects OpenType files, which is how Utopia and the other fonts are installed. `scripts/install-upstream.py` adds a system fontconfig rule that accepts the fonts in `/usr/local/share/fonts`, which takes precedence.
+- PTXprint's font configuration rejects OpenType files, which is how Utopia and the other fonts are installed. The `Dockerfile` adds a system fontconfig rule that accepts the fonts in `/usr/local/share/fonts`, which takes precedence.
