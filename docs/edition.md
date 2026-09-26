@@ -16,7 +16,7 @@ The Old Testament follows the [Church of Greece's list of books](https://apostol
 
 Brenton's book names are kept, except that the Orthodox names are used for Jesus, the Son of Navi; 1–4 Kingdoms; the Song of Songs; the Lamentations of Jeremias; Ezekiel; and Michaias. Numbered books put the number first, as in "1 Chronicles".
 
-`config/edition.json` sets the order and names. Each book, and each piece of front matter or appendix that the edition renames, can have:
+`pipeline/edition.json` sets the order and names. Each book, and each piece of front matter or appendix that the edition renames, can have:
 
 - `title`: the full title, printed in the contents, as in "The First Book of Moses, Called Genesis". Every book has one; front matter without one keeps its source's names.
 - `short_title`: used in the running heads, as in "3 Kingdoms". Defaults to the source's.
@@ -54,7 +54,7 @@ Each testament opens with the front matter of its own translation, so that the i
 - **Old Testament:** Brenton's preface (1844), his introduction (1870), his introduction to the Apocrypha, and his list of abbreviations. The introduction to the Apocrypha belongs here rather than after Revelation, because those books are part of this Old Testament.
 - **New Testament:** the translators' dedication to King James and their preface, "The Translators to the Reader".
 
-After Revelation come Brenton's table of chapters in Jeremias, his notes and supplied passages, and eBible's corrections, so that Brenton's material comes before eBible's. Some of these have new headings, which are set in `config/edition.json`.
+After Revelation come Brenton's table of chapters in Jeremias, his notes and supplied passages, and eBible's corrections, so that Brenton's material comes before eBible's. Some of these have new headings, which are set in `pipeline/edition.json`.
 
 The Cambridge Paragraph Bible's 1873 title page is left out. It advertises Scrivener's introduction and appendices, which aren't in the digital text, and the editor's introduction says so. The traditional notes at the ends of the epistles, such as "Written to the Romans from Corinthus", are kept.
 
@@ -62,7 +62,7 @@ The Cambridge Paragraph Bible's 1873 title page is left out. It advertises Scriv
 
 The 1611 notes are printed as footnotes in the same style as Brenton's: "Or," and "Gr." are set as labels, and a note gets a closing period unless it ends with a question mark. As in the 1611 printing, the note's caller goes just before the words it's about. George gives those words for each note, and the build finds them in the verse, ignoring case, punctuation, and markup. It never puts a caller inside words the translators supplied.
 
-For 61 notes, that search doesn't find exactly one match, so `config/marginal-notes.json` says where the caller goes, with the reason for each choice. Usually the spelling differs (boysterous, council, thyine), or the words appear more than once in the verse, like "of" in Matthew 6:1. Two notes that George lists under 1 Corinthians 10:6 and Galatians 4:24 actually belong to 10:4 and 4:25.
+For 61 notes, that search doesn't find exactly one match, so `pipeline/marginal-notes.json` says where the caller goes, with the reason for each choice. Usually the spelling differs (boysterous, council, thyine), or the words appear more than once in the verse, like "of" in Matthew 6:1. Two notes that George lists under 1 Corinthians 10:6 and Galatians 4:24 actually belong to 10:4 and 4:25.
 
 The same file makes seven corrections to George's text:
 

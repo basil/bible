@@ -40,7 +40,7 @@ def write_json(path, data):
     )
 
 
-EDITION = read_json("config/edition.json")
+EDITION = read_json("pipeline/edition.json")
 # The pinned source texts. An archive's hash pins every book in it.
 SOURCES = {
     "brenton": {
@@ -66,7 +66,7 @@ SOURCES = {
 FONT_ARCHIVES = tuple(
     str(p.relative_to("/opt")) for p in sorted(Path("/opt/sources").glob("*.zip"))
 )
-MARGINAL_NOTES = read_json("config/marginal-notes.json")
+MARGINAL_NOTES = read_json("pipeline/marginal-notes.json")
 UPSTREAM = Path("/opt/ptxprint")
 # The generated PTXprint project, and where PTXprint writes its processed copies.
 PROJECT_DIR = "projects/BIBLE"
@@ -374,15 +374,15 @@ def ordered_entries():
     return [
         # The editor's introduction is a project unit rather than a front-matter
         # periph so that it follows the contents page and is listed in it.
-        {"id": "CNC", "file": "config/introduction.sfm"},
+        {"id": "CNC", "file": "content/introduction.sfm"},
         # Each testament opens with its divider and its own translation's front matter.
-        {"id": "XXF", "file": "config/old-testament.sfm"},
+        {"id": "XXF", "file": "content/old-testament.sfm"},
         *EDITION["old_testament_front"],
         *(u for u in scripture if u["section"] == "old_testament"),
-        {"id": "XXG", "file": "config/new-testament.sfm"},
+        {"id": "XXG", "file": "content/new-testament.sfm"},
         *EDITION["new_testament_front"],
         *(u for u in scripture if u["section"] == "new_testament"),
-        {"id": "GLO", "file": "config/appendices.sfm"},
+        {"id": "GLO", "file": "content/appendices.sfm"},
         *EDITION["appendices"],
     ]
 
@@ -558,7 +558,7 @@ def insert_marginal_notes(code, text, record):
 
     Brenton's callers, like the 1611 marks, stand before the glossed words, and so do
     these. A note is anchored at George's lemma, or at the Cambridge words recorded
-    for it in config/marginal-notes.json where the spelling differs, the lemma occurs
+    for it in pipeline/marginal-notes.json where the spelling differs, the lemma occurs
     more than once, or the reference is wrong.
     """
     notes = marginal_notes().get(code, [])
@@ -876,7 +876,7 @@ def prepare(mode, base, archives):
     conf.mkdir(parents=True)
     entries = ordered_entries()
     if mode == "sample":
-        sample = read_json("config/sample.json")
+        sample = read_json("pipeline/sample.json")
         unknown = set(sample) - {u["id"] for u in EDITION["scripture"]}
         require(
             not unknown, f"Sample names units outside the edition: {sorted(unknown)}"
@@ -959,7 +959,7 @@ def prepare(mode, base, archives):
         cfg.write(f)
     for name in ("ptxprint-mods.sty", "ptxprint-mods.tex", "changes.txt"):
         shutil.copyfile(Path("config") / name, conf / name)
-    front = Path("config/front.sfm").read_text(encoding="utf-8")
+    front = Path("content/front.sfm").read_text(encoding="utf-8")
     if mode == "sample":
         require(r"\mt1 THE HOLY BIBLE" in front, "Cannot label the sample title page")
         front = front.replace(
@@ -1041,7 +1041,7 @@ def publish(mode, pdf, ids, report):
     DIST.mkdir(exist_ok=True)
     tracked = {
         str(p): file_sha256(p)
-        for folder in ("config", "scripts")
+        for folder in ("config", "content", "pipeline", "scripts")
         for p in sorted(Path(folder).rglob("*"))
         if p.is_file() and "__pycache__" not in str(p)
     }
@@ -1294,7 +1294,7 @@ def check_boundaries(base, project, ids, text, pages, reading_text, sample):
             lines = lines[1:]
         reading_pages_without_headers.append("".join(lines))
     by_code = {b: (i, int(p)) for i, (b, t, p) in enumerate(toc)}
-    for witness in read_json("config/render-witnesses.json"):
+    for witness in read_json("pipeline/render-witnesses.json"):
         code = witness["id"]
         if code not in by_code or (
             "chapter" in witness

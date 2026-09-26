@@ -22,16 +22,18 @@ make clean      # delete build/ and dist/
 
 Alongside the PDF, the build writes `dist/bible.provenance.json`, which records the environment that produced it: the OS release, installed packages, Python version, and font hashes. Logs and intermediate files go to `build/`. The most useful of these is `build/pdf/transformations.json` (or `build/sample/…`), which lists every change the build made to the source text.
 
-The sample prints the chapters listed in `config/sample.json`. They were picked to cover the awkward cases, such as Psalm 151, the additions to Esther and Daniel, the Ezra–Nehemiah split, the end of Malachias, quoted Greek and Hebrew, and pages crowded with notes.
+The sample prints the chapters listed in `pipeline/sample.json`. They were picked to cover the awkward cases, such as Psalm 151, the additions to Esther and Daniel, the Ezra–Nehemiah split, the end of Malachias, quoted Greek and Hebrew, and pages crowded with notes.
 
 ## Where things are
 
 - `sources/`: the Bible texts, the 1611 marginal notes, and the fonts, committed as downloaded. [sources/README.md](sources/README.md) says where each came from.
-- `config/edition.json`: which books are printed, in what order, and what they're called and how their headings break into lines.
-- `config/front.sfm`, `config/introduction.sfm`, and the three divider pages (`config/old-testament.sfm`, `config/new-testament.sfm`, `config/appendices.sfm`): the edition's own pages. The dividers' subtitles repeat the title page's wording.
-- `config/marginal-notes.json`: placements and corrections for the 1611 New Testament notes.
-- `config/layout.ini`, `config/ptxprint-mods.sty`, `config/ptxprint-mods.tex`: layout, style, and TeX changes on top of PTXprint's layout for the Berean Standard Bible (BSB).
-- `config/render-witnesses.json`: phrases that must appear in the finished PDF, to catch unusual passages going missing.
+- `content/`: the edition's own pages: the title page (`front.sfm`), the introduction, and the three divider pages (`old-testament.sfm`, `new-testament.sfm`, `appendices.sfm`). The dividers' subtitles repeat the title page's wording.
+- `config/`: PTXprint's configuration. `layout.ini`, `ptxprint-mods.sty`, and `ptxprint-mods.tex` hold layout, style, and TeX changes on top of PTXprint's layout for the Berean Standard Bible (BSB), and `changes.txt` holds its text substitutions.
+- `pipeline/`: the build's own settings, which PTXprint never reads:
+  - `edition.json`: which books are printed, in what order, and what they're called and how their headings break into lines.
+  - `marginal-notes.json`: placements and corrections for the 1611 New Testament notes.
+  - `sample.json`: the chapters the sample prints.
+  - `render-witnesses.json`: phrases that must appear in the finished PDF, to catch unusual passages going missing.
 - `Dockerfile`: the tool image, with the pinned PTXprint, usfmtc, and Utopia commits and the hashes of the font archives.
 - `scripts/pipeline.py`: the build, with the hashes of the Bible texts.
 - `tests/`: the pytest tests and the TeX protrusion test.
@@ -42,7 +44,7 @@ The build checks its own work and stops rather than produce a PDF from bad input
 
 - **First**, it checks the hash of every source archive. Replacing a source is a deliberate step (see below), never something a build does on its own.
 - **While preparing the text**, it compares each book it changes against the original. Apart from the intended changes, every word, punctuation mark, verse, note, and piece of markup must come through intact. PTXprint's own preprocessing is checked the same way.
-- **After typesetting**, it checks the PDF: every page is A5, all fonts are embedded, no glyphs are missing, the contents list every book once with the right page numbers, and each phrase in `config/render-witnesses.json` is there.
+- **After typesetting**, it checks the PDF: every page is A5, all fonts are embedded, no glyphs are missing, the contents list every book once with the right page numbers, and each phrase in `pipeline/render-witnesses.json` is there.
 
 `make test` runs two suites. The pytest suite in `tests/` covers the editorial rules (book order, titles, and headings), the text helpers, and the build's own checks: `tests/test_faults.py` breaks one input at a time and makes sure the build refuses it. It prepares every book but typesets nothing, so it takes seconds. The [l3build](https://ctan.org/pkg/l3build) test in `tests/tex/` compares the protrusion settings (see below) against real microtype.
 

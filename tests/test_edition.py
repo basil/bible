@@ -320,16 +320,16 @@ def test_esdras_and_nehemias_never_share_names(book_names):
 
 
 def test_no_apocrypha_divider():
-    assert "THE APOCRYPHA" not in Path("config/front.sfm").read_text(encoding="utf-8")
+    assert "THE APOCRYPHA" not in Path("content/front.sfm").read_text(encoding="utf-8")
 
 
 def test_editors_introduction_is_a_unit():
     # A unit, so that it follows the contents page and is listed in it.
-    text = Path("config/introduction.sfm").read_text(encoding="utf-8")
+    text = Path("content/introduction.sfm").read_text(encoding="utf-8")
     assert "\\periph" not in text
 
 
-@pytest.mark.parametrize("path", sorted(map(str, Path("config").glob("*.sfm"))))
+@pytest.mark.parametrize("path", sorted(map(str, Path("content").glob("*.sfm"))))
 def test_edition_text_is_typed_with_curly_quotes(path):
     # Preparation curls the sources' quotes; the edition's own text is typed curly.
     text = re.sub(r'\|\w+="[^"\n]*"', "", Path(path).read_text(encoding="utf-8"))
