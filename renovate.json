@@ -14,5 +14,42 @@
     "security:minimumReleaseAgeNpm",
     ":semanticPrefixFixDepsChoreOthers",
     "workarounds:all"
+  ],
+  "customManagers": [
+    {
+      "description": "PTXprint release tag and its commit in dependencies.json",
+      "customType": "jsonata",
+      "fileFormat": "json",
+      "managerFilePatterns": [
+        "/^dependencies\\.json$/"
+      ],
+      "matchStrings": [
+        "{\"depName\": \"ptxprint\", \"packageName\": \"sillsdev/ptx2pdf\", \"currentValue\": ptxprint.tag, \"currentDigest\": ptxprint.commit}"
+      ],
+      "datasourceTemplate": "github-tags",
+      "versioningTemplate": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)$"
+    },
+    {
+      "description": "Git dependencies pinned to a branch head in dependencies.json",
+      "customType": "jsonata",
+      "fileFormat": "json",
+      "managerFilePatterns": [
+        "/^dependencies\\.json$/"
+      ],
+      "matchStrings": [
+        "$each($, function($v, $k) { $v.branch and $v.commit ? {\"depName\": $k, \"packageName\": $v.url, \"currentValue\": $v.branch, \"currentDigest\": $v.commit} })"
+      ],
+      "datasourceTemplate": "git-refs"
+    }
+  ],
+  "packageRules": [
+    {
+      "matchDepNames": [
+        "ptxprint"
+      ],
+      "prBodyNotes": [
+        "Check that `config/ptxprint-allow-otf.patch` still applies and that the `\\s@tfont` wrapper in `config/ptxprint-mods.tex` still matches PTXprint's internals; inspect the rendered sample pages for pagination changes."
+      ]
+    }
   ]
 }

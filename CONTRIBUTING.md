@@ -8,12 +8,12 @@ This file covers the technical side of the project: how the build works, what it
 - Make
 - Approximately 5 GB of free disk space
 
-Every build step runs inside a Docker image based on Ubuntu 26.04 with Python 3.14, so the host needs no Python.
+Every build step runs inside a Docker image based on the Ubuntu LTS release named in the `Dockerfile`, with its system Python, so the host needs no Python.
 
 ## Build targets
 
 ```sh
-make bootstrap  # network: pull the latest Ubuntu 26.04 image and build the environment
+make bootstrap  # network: pull the latest image for the Ubuntu LTS tag and build the environment
 make validate   # offline: check original archives and their complete inventories
 make sample     # offline: representative scripture, quotations, notes, and apparatus
 make pdf        # offline: dist/bible.pdf and dist/bible.provenance.json
@@ -55,7 +55,7 @@ The reading order is the new title page, contents, and editor's introduction; th
 
 `dependencies.json` records the base image tag, PTXprint tag and commit, and usfmtc commit. PTXprint 3.0.43 records the build time in the PDF's creation and modification dates, so PDF bytes differ between builds; `make check` compares rendered page images instead. Python packages are pinned by version, without hashes, in `requirements.txt`. Renovate proposes updates to that file.
 
-The base image uses the floating `ubuntu:26.04` tag, and `make bootstrap` passes `--pull`, so OS packages come from Ubuntu's current repositories. Rebuilding the environment later can change OS packages and therefore pagination. Repeatability is checked within a single built environment by `make check`, and each PDF's provenance file records the exact environment that produced it.
+The base image uses an Ubuntu LTS codename tag, which floats within that release and which Renovate moves to each new LTS, and `make bootstrap` passes `--pull`, so OS packages come from Ubuntu's current repositories. Rebuilding the environment later can change OS packages and therefore pagination. Repeatability is checked within a single built environment by `make check`, and each PDF's provenance file records the exact environment that produced it.
 
 Upgrade procedure, source updates, and layout customization are covered in [docs/maintenance.md](docs/maintenance.md). Acceptance checks are in [docs/verification.md](docs/verification.md).
 

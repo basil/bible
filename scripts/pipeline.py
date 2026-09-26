@@ -183,8 +183,6 @@ def capture(*args):
 
 
 def validate():
-    dockerfile = Path("Dockerfile").read_text(encoding="utf-8")
-    require(DEPS["base_image"] in dockerfile, "Dockerfile and dependency lock disagree")
     for name in FONT_DEPS:
         font_archive = Path(DEPS[name]["archive"])
         require(

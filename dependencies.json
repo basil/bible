@@ -1,5 +1,4 @@
 {
-  "base_image": "ubuntu:26.04",
   "ptxprint": {
     "url": "https://github.com/sillsdev/ptx2pdf.git",
     "tag": "3.0.43",
@@ -7,10 +6,12 @@
   },
   "usfmtc": {
     "url": "https://github.com/usfm-bible/usfmtc.git",
+    "branch": "main",
     "commit": "287ab46537f51eacbe3442480f9adfe9d482b4c2"
   },
   "utopia": {
     "url": "https://github.com/basil/adobe-utopia-type1.git",
+    "branch": "master",
     "commit": "75db04f06d90e6dd3227de88b76f8bfea88f8785"
   },
   "gfs_didot": {
