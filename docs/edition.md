@@ -60,7 +60,7 @@ The Cambridge Paragraph Bible's 1873 title page is left out. It advertises Scriv
 
 ## New Testament marginal notes
 
-The 1611 notes are printed as footnotes in the same style as Brenton's: "Or," and "Gr." are set as labels, and every note ends with a period. As in the 1611 printing, the note's caller goes just before the words it's about. George gives those words for each note, and the build finds them in the verse, ignoring case, punctuation, and markup. It never puts a caller inside words the translators supplied.
+The 1611 notes are printed as footnotes in the same style as Brenton's: "Or," and "Gr." are set as labels, and a note gets a closing period unless it ends with a question mark. As in the 1611 printing, the note's caller goes just before the words it's about. George gives those words for each note, and the build finds them in the verse, ignoring case, punctuation, and markup. It never puts a caller inside words the translators supplied.
 
 For 61 notes, that search doesn't find exactly one match, so `config/marginal-notes.json` says where the caller goes, with the reason for each choice. Usually the spelling differs (boysterous, council, thyine), or the words appear more than once in the verse, like "of" in Matthew 6:1. Two notes that George lists under 1 Corinthians 10:6 and Galatians 4:24 actually belong to 10:4 and 4:25.
 

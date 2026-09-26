@@ -24,7 +24,9 @@ os.chdir(ROOT)
 EDITION = json.loads(Path("config/edition.json").read_text(encoding="utf-8"))
 SOURCES = json.loads(Path("sources.json").read_text(encoding="utf-8"))
 DEPS = json.loads(Path("dependencies.json").read_text(encoding="utf-8"))
-FONT_DEPS = ("gfs_didot", "source_code_pro", "erewhon")
+# Git checkouts are pinned by commit; vendored font archives by hash.
+GIT_DEPS = tuple(name for name, dep in DEPS.items() if "commit" in dep)
+FONT_DEPS = tuple(name for name, dep in DEPS.items() if "archive" in dep)
 MARGINAL_NOTES = json.loads(
     Path("config/marginal-notes.json").read_text(encoding="utf-8")
 )
@@ -143,8 +145,13 @@ def catholic_epistle_names(code):
 def resolved_book_names(entry, source_text=None):
     title = entry.get("title")
     if not title and source_text is not None:
-        title = source_marker(source_text, "h")
-        return {"title": title, "short_title": title, "abbreviation": title}
+        # Front matter keeps its source names, except where the edition's
+        # headings replace them in the printed text.
+        headings = entry.get("headings", {})
+        return {
+            field: headings.get(marker) or source_marker(source_text, marker)
+            for field, marker in BOOK_NAME_MARKERS.items()
+        }
     require(title, f"Missing title: {entry.get('id', entry.get('project_id'))}")
     if source_text is None:
         return {"title": title, "short_title": title, "abbreviation": title}
@@ -515,6 +522,12 @@ def insert_marginal_notes(code, text, record):
         # Keep the note outside a character style that opens on the glossed word.
         while opener := re.search(r"\\\+?(?:add|sc) $", text[start:position]):
             position = start + opener.start()
+        preceding = text[start:position]
+        require(
+            len(re.findall(r"\\\+?(?:add|sc) ", preceding))
+            == len(re.findall(r"\\\+?(?:add|sc)\*", preceding)),
+            f"Marginal note caller inside a character span: {note['key']}",
+        )
         inserts.setdefault(position, []).append(
             marginal_note_usfm(reference, note["note"])
         )
@@ -526,14 +539,6 @@ def insert_marginal_notes(code, text, record):
         len(re.findall(note_pattern, text)) == len(notes)
         and re.sub(note_pattern, "", text) == original,
         f"Marginal note insertion changed the text: {code}",
-    )
-    require(
-        all(
-            re.findall(r"\\fr (\S+)", text[start:end])
-            == [reference] * len(re.findall(r"\\f ", text[start:end]))
-            for reference, start, end in verse_spans(text)
-        ),
-        f"Marginal note reference disagrees with its verse: {code}",
     )
     record(
         "insert 1611 translators' marginal notes (Calvin George's transcription)",
@@ -748,6 +753,16 @@ def scripture_text(entry, archives, log=None):
     if entry["source"] == "kjv":
         # After the source comparisons above, which the added notes would fail.
         text = insert_marginal_notes(code, text, record)
+    # Relabelling rewrites chapter and verse markers only, so every note must
+    # still name the verse that holds it.
+    require(
+        all(
+            ref == reference
+            for reference, start, end in verse_spans(text)
+            for ref in re.findall(r"\\(?:fr|xo) (\S+)", text[start:end])
+        ),
+        f"Note reference disagrees with its verse: {code}",
+    )
     return text
 
 
@@ -758,6 +773,10 @@ def prepare(mode, base, archives):
     entries = ordered_entries()
     if mode == "sample":
         sample = json.loads(Path("config/sample.json").read_text(encoding="utf-8"))
+        unknown = set(sample) - {u["id"] for u in EDITION["scripture"]}
+        require(
+            not unknown, f"Sample names units outside the edition: {sorted(unknown)}"
+        )
         entries = [e for e in entries if "section" not in e or e["id"] in sample]
     ids = []
     transformations = []
@@ -834,10 +853,10 @@ def prepare(mode, base, archives):
                     f"Preparation changed source markup: {code}",
                 )
             if mode == "sample" and "section" in entry:
-                chunks = re.split(r"(?=\\c [0-9]+\s)", text)
-                kept = [chunks[0]]
+                header, chapters = chapter_parts(text)
+                kept = [header]
                 previous_kept = True
-                for c in chunks[1:]:
+                for c in chapters:
                     selected = int(re.match(r"\\c (\d+)", c)[1]) in sample[code]
                     if selected:
                         if not previous_kept:
@@ -845,6 +864,10 @@ def prepare(mode, base, archives):
                             c = re.sub(r"^(\\c \d+\s+)\\nb\b", r"\1\\p", c, count=1)
                         kept.append(c)
                     previous_kept = selected
+                require(
+                    len(kept) - 1 == len(set(sample[code])),
+                    f"Sample chapters missing from {code}: {sample[code]}",
+                )
                 text = "".join(kept)
                 transformations.append(
                     {
@@ -996,7 +1019,7 @@ def prepare(mode, base, archives):
 def render(mode="pdf", name=None):
     archives = validate()
     require(UPSTREAM.exists(), "Run this command through Make (make bootstrap first)")
-    for dep in ("ptxprint", "usfmtc", "utopia"):
+    for dep in GIT_DEPS:
         require(
             capture(
                 "git",
@@ -1115,6 +1138,10 @@ def render(mode="pdf", name=None):
     shutil.copyfile(pdfs[0], staged_pdf)
     write_json(staged_provenance, provenance)
     target.with_suffix(".provenance.json").unlink(missing_ok=True)
+    if mode != "sample":
+        # make check's record describes the PDF it built, not this one; check()
+        # writes a fresh record after its second build.
+        (ROOT / "dist/check.json").unlink(missing_ok=True)
     staged_pdf.replace(target)
     staged_provenance.replace(target.with_suffix(".provenance.json"))
     print("Wrote", target, flush=True)
@@ -1346,13 +1373,13 @@ def check_note_callers(text):
         require(not clashes, f"Note callers reused on PDF page {number}: {clashes}")
 
 
-def check_added_words_roman(pdf):
+def check_added_words_roman(pdf, reading_text):
     # Malachias 4:2 has "\\add shall be\\add* in his wings". Check the added
     # words against their roman neighbours; "healing" may break as "heal- / ing".
     words = ["shall", "be", "in", "his", "wings"]
     pages = [
         number
-        for number, page in enumerate(capture("pdftotext", pdf, "-").split("\f"), 1)
+        for number, page in enumerate(reading_text.split("\f"), 1)
         if " ".join(words) in " ".join(page.split())
     ]
     require(len(pages) == 1, f"Added-word witness not found once: {pages}")
@@ -1413,7 +1440,12 @@ def inspect_pdf(pdf, base, sample=False):
     (base / "text.txt").write_text(text, encoding="utf-8")
     require(not re.search(r"['\"`]", text), "Straight quote in the rendered PDF text")
     check_note_callers(text)
-    check_added_words_roman(pdf)
+    # PTXprint emits columns in reading order. Protruding edge glyphs can make
+    # pdftotext's geometric heuristics merge adjacent columns, so use stream
+    # order for wording witnesses; keep the layout extraction above for pages.
+    reading_text = capture("pdftotext", "-raw", pdf, "-")
+    (base / "reading.txt").write_text(reading_text, encoding="utf-8")
+    check_added_words_roman(pdf, reading_text)
     require(
         "Berean Standard Bible" not in text and "CC BY-NC-ND" not in text,
         "Inherited BSB publication text remains",
@@ -1428,11 +1460,6 @@ def inspect_pdf(pdf, base, sample=False):
         ),
         "Missing glyph or TeX error; inspect logs",
     )
-    # PTXprint emits columns in reading order. Protruding edge glyphs can make
-    # pdftotext's geometric heuristics merge adjacent columns, so use stream
-    # order for wording witnesses; keep the layout extraction above for pages.
-    reading_text = capture("pdftotext", "-raw", pdf, "-")
-    (base / "reading.txt").write_text(reading_text, encoding="utf-8")
     check_boundaries(base, text, pages, reading_text, sample)
     return {
         "pages": pages,

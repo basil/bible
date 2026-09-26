@@ -132,6 +132,15 @@ def test_ambiguous_anchor(archives, marginal_notes_config):
         pipeline.scripture_text(unit("MAT"), archives)
 
 
+def test_anchor_inside_added_words(archives, marginal_notes_config):
+    # "it" is the second of Mark 3:21's added words "of it".
+    marginal_notes_config["anchors"]["MRK 3:21 friends"] = {"anchor": "it"}
+    with pytest.raises(
+        CheckFailed, match="caller inside a character span: MRK 3:21 friends"
+    ):
+        pipeline.scripture_text(unit("MRK"), archives)
+
+
 # Scripture preparation
 
 
@@ -169,6 +178,22 @@ def test_song_of_the_three_children_boundary(archives):
         CheckFailed, match="Song of the Three Children boundary changed"
     ):
         pipeline.scripture_text(unit("DAG"), damaged)
+
+
+def test_relabelled_note_reference(archives):
+    # Nehemias relabels chapter markers only; a note would keep its source chapter.
+    damaged = with_source(
+        archives,
+        "brenton",
+        "EZR",
+        lambda t: t.replace(
+            "son of Chelcia.", "son of Chelcia.\\f + \\fr 11:1 \\ft x\\f*", 1
+        ),
+    )
+    with pytest.raises(
+        CheckFailed, match="Note reference disagrees with its verse: NEH"
+    ):
+        pipeline.scripture_text(unit("NEH"), damaged)
 
 
 def test_cambridge_text_must_not_already_have_notes(archives):

@@ -271,6 +271,18 @@ def test_book_names_xml(archives, book_names, unit):
     )
 
 
+@pytest.mark.parametrize(
+    "entry",
+    [e for e in pipeline.ordered_entries() if "headings" in e],
+    ids=lambda e: e.get("project_id", e["id"]),
+)
+def test_book_names_xml_follows_edition_headings(book_names, entry):
+    names = book_names[entry.get("project_id", entry["id"])]
+    for field, marker in pipeline.BOOK_NAME_MARKERS.items():
+        if marker in entry["headings"]:
+            assert names[field] == entry["headings"][marker]
+
+
 def test_jeremias_table_titles(book_names):
     table = next(e for e in EDITION["appendices"] if e["id"] == "XXA")
     title = "Table of Chapters and Verses in " + book_names["JER"]["short_title"]
