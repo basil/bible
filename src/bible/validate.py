@@ -37,15 +37,18 @@ def validate():
         unknown = sorted(k for k, v in exceptions.items() if not v.keys() <= fields)
         require(not unknown, f"Note exceptions with unknown fields: {unknown}")
     # A correction replaces its from with its to, and a misspelt flag would be
-    # read as none.
+    # read as none. Several Brenton corrections to one note share its key.
+    corrections = [
+        (k, c)
+        for k, v in notes.BRENTON_NOTES["corrections"].items()
+        for c in (v if isinstance(v, list) else [v])
+    ] + list(notes.KJV_NOTES["corrections"].items())
     malformed = sorted(
-        k
-        for corrections in (
-            notes.BRENTON_NOTES["corrections"],
-            notes.KJV_NOTES["corrections"],
-        )
-        for k, v in corrections.items()
-        if not {"from", "to"} <= v.keys() <= {"from", "to", "why", "uncategorized"}
+        {
+            k
+            for k, v in corrections
+            if not {"from", "to"} <= v.keys() <= {"from", "to", "why", "uncategorized"}
+        }
     )
     require(
         not malformed, f"Note corrections with missing or unknown fields: {malformed}"
@@ -53,15 +56,15 @@ def validate():
     # The edition gives the reason for each of its departures from its sources
     # and from its rules.
     unexplained = sorted(
-        k
-        for entries in (
-            notes.BRENTON_NOTES["notes"],
-            notes.BRENTON_NOTES["corrections"],
-            notes.KJV_NOTES["notes"],
-            notes.KJV_NOTES["corrections"],
-        )
-        for k, v in entries.items()
-        if not v.get("why")
+        {
+            k
+            for k, v in [
+                *notes.BRENTON_NOTES["notes"].items(),
+                *notes.KJV_NOTES["notes"].items(),
+                *corrections,
+            ]
+            if not v.get("why")
+        }
     )
     require(not unexplained, f"Note exceptions without a why: {unexplained}")
     # A Brenton exception's occurrence says which of a repeated lemma is meant,

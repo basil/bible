@@ -70,6 +70,12 @@ def test_note_corrections_must_have_known_fields(patched, file, key, field):
         validate.validate()
 
 
+def test_each_of_several_corrections_to_a_note_is_checked(patched):
+    del patched(notes, "BRENTON_NOTES")["corrections"]["1SA 27:8"][1]["why"]
+    with pytest.raises(CheckFailed, match=r"without a why: \['1SA 27:8'\]"):
+        validate.validate()
+
+
 @pytest.mark.parametrize(
     "file, key",
     [
