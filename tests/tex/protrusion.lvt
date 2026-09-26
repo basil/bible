@@ -1,6 +1,8 @@
-% Compare the plain-XeTeX adapter with the installed stock microtype package.
-% Run through `make check-protrusion`; this produces a log, not a PDF.
+% Compare the plain-XeTeX adapter in config/ptxprint-mods.tex with the
+% installed stock microtype package, for every present glyph in the edition's
+% font families, faces, and representative sizes. Run through `make test-tex`.
 \documentclass{article}
+\input{regression-test}
 \usepackage{fontspec}
 \setmainfont{Utopia}
 \newfontfamily\didot{GFS Didot}
@@ -11,15 +13,15 @@
 % selection hooks here so microtype cannot repopulate the codes under test.
 \def\s@tfont#1#2{#1\relax}
 \def\uselanguage#1{}
-\input{config/ptxprint-mods.tex}
+\input{ptxprint-mods.tex}
 \font\OtherFont="Utopia Italic" at 11pt
 \newcount\glyph
-\newcount\failures
-\def\CheckFont#1{%
+\newcount\mismatches
+% #1 labels the font in the log; #2 selects it.
+\def\CheckFont#1#2{%
   \begingroup
-  #1\relax
+  #2\relax
   \expandafter\let\expandafter\TargetFont\the\font
-  \typeout{CHECKING \fontname\font}%
   % Save stock codes, then reset them so the adapter must populate them.
   % Skip glyph 0 (.notdef): we intentionally leave missing glyphs untouched.
   \glyph=1
@@ -29,46 +31,54 @@
     \lpcode\font\glyph=0 \rpcode\font\glyph=0
     \advance\glyph by1
   \repeat
+  \global\mismatches=0
   % Initialize from a different font, then leave the initialization group.
   \OtherFont
   \begingroup
     \s@tfont{\TargetFont}{}%
-    \AssertFontCodes
+    \AssertFontCodes{initialized}%
   \endgroup
   % The group restored OtherFont. Reselect the cached target and verify that
   % both font selection and protrusion codes survive that group boundary.
   \s@tfont{\TargetFont}{}%
-  \AssertFontCodes
+  \AssertFontCodes{reselected}%
+  \TYPE{#1: \the\mismatches\space mismatches}%
   \endgroup
 }
-\def\AssertFontCodes{%
+% #1 names the check stage in failure messages.
+\def\AssertFontCodes#1{%
   \expandafter\let\expandafter\SelectedFont\the\font
   \ifx\SelectedFont\TargetFont\else
-    \errmessage{Protrusion wrapper did not select the requested font}%
+    \TYPE{#1: Protrusion wrapper did not select the requested font}%
   \fi
   \glyph=1
   \loop\ifnum\glyph<\XeTeXcountglyphs\font
     \ifnum\lpcode\font\glyph=\csname left:\the\glyph\endcsname\relax\else
-      \global\advance\failures by1
-      \typeout{MISMATCH left glyph \the\glyph: \the\lpcode\font\glyph\space expected \csname left:\the\glyph\endcsname}%
+      \global\advance\mismatches by1
+      \TYPE{#1: MISMATCH left glyph \the\glyph: \the\lpcode\font\glyph\space expected \csname left:\the\glyph\endcsname}%
     \fi
     \ifnum\rpcode\font\glyph=\csname right:\the\glyph\endcsname\relax\else
-      \global\advance\failures by1
-      \typeout{MISMATCH right glyph \the\glyph: \the\rpcode\font\glyph\space expected \csname right:\the\glyph\endcsname}%
+      \global\advance\mismatches by1
+      \TYPE{#1: MISMATCH right glyph \the\glyph: \the\rpcode\font\glyph\space expected \csname right:\the\glyph\endcsname}%
     \fi
     \advance\glyph by1
   \repeat
 }
 \makeatother
 \begin{document}
-\CheckFont{\normalfont}
-\CheckFont{\itshape}
-\CheckFont{\bfseries}
-\CheckFont{\bfseries\itshape}
-\CheckFont{\fontsize{9.5}{12}\selectfont}
-\CheckFont{\fontsize{48}{50}\selectfont}
-\CheckFont{\didot}
-\CheckFont{\ezra}
-\ifnum\failures>0 \errmessage{Protrusion mismatches: \the\failures}\fi
-\typeout{ALL PROTRUSION CODES MATCH}
-\end{document}
+% Load every face and size before the logged region so that only the
+% comparison results reach the test log.
+\setbox0=\hbox{%
+  {\normalfont}{\itshape}{\bfseries}{\bfseries\itshape}%
+  {\fontsize{9.5}{12}\selectfont}{\fontsize{48}{50}\selectfont}%
+  {\didot}{\ezra}}
+\START
+\CheckFont{Utopia regular}{\normalfont}
+\CheckFont{Utopia italic}{\itshape}
+\CheckFont{Utopia bold}{\bfseries}
+\CheckFont{Utopia bold italic}{\bfseries\itshape}
+\CheckFont{Utopia 9.5pt}{\fontsize{9.5}{12}\selectfont}
+\CheckFont{Utopia 48pt}{\fontsize{48}{50}\selectfont}
+\CheckFont{GFS Didot}{\didot}
+\CheckFont{Ezra SIL}{\ezra}
+\END

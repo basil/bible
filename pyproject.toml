@@ -1,0 +1,7 @@
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["scripts"]
+# Keep pytest's cache with the other generated files, out of the working tree.
+cache_dir = "build/pytest-cache"
+# The venv sees Ubuntu's system site-packages; load no plugins from there.
+addopts = "-ra --strict-markers --disable-plugin-autoload"

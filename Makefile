@@ -7,19 +7,21 @@ UIDGID := $(shell id -u):$(shell id -g)
 COMPOSE := docker compose -f compose.yaml
 TOOLCHAIN := $(COMPOSE) run --rm -T --interactive=false --user $(UIDGID) toolchain
 PIPELINE := $(TOOLCHAIN) python3 scripts/pipeline.py
-.PHONY: bootstrap validate sample pdf check check-protrusion clean
+.PHONY: bootstrap validate test test-python test-tex sample pdf check clean
 bootstrap:
 	$(COMPOSE) build --pull
 validate:
 	$(PIPELINE) validate
+test: test-python test-tex
+test-python:
+	$(TOOLCHAIN) python3 -m pytest
+test-tex:
+	$(TOOLCHAIN) l3build check
 sample:
 	$(PIPELINE) sample
 pdf:
 	$(PIPELINE) pdf
-check: check-protrusion
+check: test
 	$(PIPELINE) check
-check-protrusion:
-	mkdir -p build/protrusion
-	$(TOOLCHAIN) xelatex -interaction=nonstopmode -halt-on-error -output-directory=build/protrusion scripts/check-protrusion.tex
 clean:
 	rm -rf build dist

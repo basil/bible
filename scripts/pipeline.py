@@ -62,9 +62,13 @@ def write_json(path, data):
     )
 
 
+class CheckFailed(RuntimeError):
+    """A source, preparation, or output check refused the build."""
+
+
 def require(condition, message):
     if not condition:
-        raise RuntimeError(message)
+        raise CheckFailed(message)
 
 
 def normalize_printed_title(value, marker):
@@ -213,183 +217,9 @@ def validate():
         archives[name] = data
     notes = marginal_notes()
     units = EDITION["scripture"]
-    ids = [u["id"] for u in units]
-    require(len(ids) == len(set(ids)) == 78, "Expected 78 printed scripture units")
-    require(
-        sum(u["source"] == "brenton" for u in units) == 51,
-        "Expected 51 printed Brenton units",
-    )
-    require(sum(u["source"] == "kjv" for u in units) == 27, "Expected 27 KJV units")
     require(
         set(notes) <= {u["id"] for u in units if u["source"] == "kjv"},
         "Marginal notes name a book outside the KJV New Testament",
-    )
-    orthodox = "GEN EXO LEV NUM DEU JOS JDG RUT 1SA 2SA 1KI 2KI 1CH 2CH MAN 1ES EZR NEH TOB JDT ESG 1MA 2MA 3MA 4MA PSA JOB PRO ECC SNG WIS SIR HOS AMO MIC JOL OBA JON NAM HAB ZEP HAG ZEC MAL ISA JER BAR LAM LJE EZK DAG".split()
-    require(
-        ids[: len(orthodox)] == orthodox and ids[len(orthodox)] == "MAT",
-        "Orthodox Old Testament order changed",
-    )
-    require(
-        "2ES" not in ids and "SUS" not in ids and "BEL" not in ids,
-        "Unexpected separate scripture unit",
-    )
-    revised_titles = {
-        "GEN": "The First Book of Moses, Called Genesis",
-        "EXO": "The Second Book of Moses, Called Exodus",
-        "LEV": "The Third Book of Moses, Called Leviticus",
-        "NUM": "The Fourth Book of Moses, Called Numbers",
-        "DEU": "The Fifth Book of Moses, Called Deuteronomy",
-        "JOS": "The Book of Jesus, the Son of Navi",
-        "JDG": "The Book of Judges",
-        "RUT": "The Book of Ruth",
-        "EZK": "The Book of the Prophet Ezekiel",
-        "MIC": "Michaias",
-        "1SA": "The First Book of Kingdoms, Otherwise Called, The First Book of Samuel",
-        "2SA": "The Second Book of Kingdoms, Otherwise Called, The Second Book of Samuel",
-        "1KI": "The Third Book of Kingdoms, Otherwise Called, The First Book of the Kings",
-        "2KI": "The Fourth Book of Kingdoms, Otherwise Called, The Second Book of the Kings",
-        "1CH": "The First Book of the Chronicles",
-        "2CH": "The Second Book of the Chronicles",
-        "MAN": "The Prayer of Manasses King of Juda, When He Was Holden Captive in Babylon",
-        "1ES": "The First Book of Esdras",
-        "EZR": "The Second Book of Esdras",
-        "NEH": "The Book of Nehemias",
-        "ESG": "The Book of Esther",
-        "DAG": "The Book of Daniel",
-        "SNG": "The Song of Songs",
-        "WIS": "The Wisdom of Solomon",
-        "SIR": "The Wisdom of Jesus, the Son of Sirach, or, Ecclesiasticus",
-        "LAM": "The Lamentations of Jeremias",
-        "LJE": "The Epistle of Jeremy",
-        "1MA": "The First Book of the Maccabees",
-        "2MA": "The Second Book of the Maccabees",
-        "3MA": "The Third Book of the Maccabees",
-        "4MA": "The Fourth Book of the Maccabees",
-        "PSA": "The Book of Psalms",
-        "JOB": "The Book of Job",
-        "PRO": "The Proverbs",
-        "ECC": "Ecclesiastes, or, The Preacher",
-        "ISA": "The Book of the Prophet Esaias",
-        "JER": "The Book of the Prophet Jeremias",
-    }
-    saint_headings = {
-        "MAT": {"mt1": "SAINT MATTHEW"},
-        "MRK": {"mt1": "SAINT MARK"},
-        "LUK": {"mt1": "SAINT LUKE"},
-        "JHN": {"mt1": "SAINT JOHN"},
-        "REV": {"mt2": "SAINT JOHN THE DIVINE"},
-    }
-    for unit in units:
-        if unit["source"] != "brenton":
-            continue
-        expected_title = revised_titles.get(unit["id"])
-        if expected_title is None:
-            source_text = archives["brenton"][unit["id"]][2]
-            expected_title = re.search(r"\\toc1\s+([^\n]+)", source_text)[1].strip()
-        require(
-            unit["title"] == expected_title, f"Unexpected Brenton title: {unit['id']}"
-        )
-    for unit in units:
-        text = scripture_text(unit, archives)
-        markers = {
-            marker: re.search(r"^\\" + marker + r"\s+([^\n]+)", text, re.M)[1].strip()
-            for marker in ("h", "toc1", "toc2", "toc3", "mt1")
-        }
-        source_text = archives[unit["source"]][unit.get("source_id", unit["id"])][2]
-        names = resolved_book_names(unit, source_text)
-        if unit["id"] in PAULINE_TITLE_IDS:
-            expected_title = re.sub(
-                r"\bPaul(?: the Apostle)?\b",
-                "Saint Paul",
-                source_marker(source_text, "toc1"),
-            )
-            expected_heading = re.sub(
-                r"\bPAUL(?: THE APOSTLE)?\b",
-                "SAINT PAUL",
-                source_marker(source_text, "mt2"),
-            )
-            require(
-                unit["title"] == expected_title
-                and source_marker(text, "mt2") == expected_heading,
-                f"Saint Paul title differs from edition style: {unit['id']}",
-            )
-        if unit["id"] in CATHOLIC_EPISTLES:
-            expected_title, expected_mt2, expected_mt1 = catholic_epistle_names(
-                unit["id"]
-            )
-            require(
-                unit["title"] == expected_title
-                and markers["mt1"] == expected_mt1
-                and source_marker(text, "mt2") == expected_mt2,
-                f"Catholic epistle title differs from edition style: {unit['id']}",
-            )
-        require(
-            markers["toc1"] == names["title"]
-            and markers["h"] == markers["toc2"] == names["short_title"]
-            and markers["toc3"] == names["abbreviation"],
-            f"Generated book names disagree: {unit['id']}",
-        )
-        printed_title_lines = re.findall(
-            r"^\\(?:h|toc1|mt[123])\s+([^\n]+)", text, re.M
-        )
-        require(
-            all("." not in value for value in printed_title_lines),
-            f"Printed title contains a period: {unit['id']}",
-        )
-        printed_heading = [
-            (marker, value.strip())
-            for marker, value in re.findall(r"^\\(mt[123])\s+([^\n]+)", text, re.M)
-        ]
-        require(
-            " ".join(value for _, value in printed_heading).casefold()
-            == names["title"].casefold(),
-            f"Printed heading does not spell the contents title: {unit['id']}",
-        )
-        for marker, expected in saint_headings.get(unit["id"], {}).items():
-            match = re.search(r"^\\" + marker + r"\s+([^\n]+)", text, re.M)
-            require(
-                match is not None and match[1].strip() == expected,
-                f"Saint heading differs from edition style: {unit['id']}/{marker}",
-            )
-        heading = heading_lines(unit, names)
-        if heading is not None:
-            require(
-                printed_heading == heading,
-                f"Printed heading differs from manifest: {unit['id']}",
-            )
-    xml_names = {
-        book.get("code"): {
-            "title": book.get("long"),
-            "short_title": book.get("short"),
-            "abbreviation": book.get("abbr"),
-        }
-        for book in book_names_element(ordered_entries(), archives)
-    }
-    for unit in units:
-        source_text = archives[unit["source"]][unit.get("source_id", unit["id"])][2]
-        require(
-            xml_names[unit["id"]] == resolved_book_names(unit, source_text),
-            f"BookNames.xml values disagree: {unit['id']}",
-        )
-    jeremias_table = next(e for e in EDITION["appendices"] if e["id"] == "XXA")
-    table_title = "Table of Chapters and Verses in " + xml_names["JER"]["short_title"]
-    require(
-        jeremias_table["title"] == table_title
-        and jeremias_table["short_title"] == table_title
-        and xml_names["XXA"]["title"] == table_title
-        and xml_names["XXA"]["short_title"] == table_title
-        and jeremias_table["headings"]["h"] == table_title
-        and jeremias_table["headings"]["toc1"] == table_title
-        and jeremias_table["headings"]["toc2"] == table_title
-        and jeremias_table["headings"]["mt1"] == table_title.upper(),
-        "Jeremias table titles disagree between metadata, contents, and heading",
-    )
-    esdras_edition_names = set(xml_names["EZR"].values())
-    nehemias_edition_names = set(xml_names["NEH"].values())
-    require(
-        esdras_edition_names.isdisjoint(nehemias_edition_names)
-        and "Ezra and Nehemiah" not in esdras_edition_names | nehemias_edition_names,
-        "2 Esdras and Nehemias must never share alternative names",
     )
     require(
         all(
@@ -399,101 +229,7 @@ def validate():
         ),
         "chapters and source_parts are only implemented for EZR/NEH and DAG",
     )
-    source_use = []
-    for unit in units:
-        if unit["source"] == "brenton":
-            source_use.extend(
-                unit.get("source_parts", [unit.get("source_id", unit["id"])])
-            )
-    require(
-        set(source_use)
-        == {
-            u
-            for u in archives["brenton"]
-            if u not in ("NEH", "FRT", "INT", "OTH", "XXA", "XXB", "XXC", "BAK")
-        },
-        "Brenton source selection changed",
-    )
-    require(
-        all(
-            source_use.count(code) == (2 if code == "EZR" else 1)
-            for code in set(source_use)
-        ),
-        "Brenton source reused",
-    )
-
-    def selected(key):
-        return [(e["source"], e["id"]) for e in EDITION[key]]
-
-    require(
-        selected("old_testament_front")
-        == [
-            ("brenton", "XXB"),
-            ("brenton", "INT"),
-            ("brenton", "OTH"),
-            ("brenton", "FRT"),
-        ],
-        "Old Testament front matter changed",
-    )
-    require(
-        selected("new_testament_front") == [("kjv", "OTH"), ("kjv", "INT")],
-        "New Testament front matter changed",
-    )
-    require(
-        selected("appendices")
-        == [("brenton", "XXA"), ("brenton", "BAK"), ("brenton", "XXC")],
-        "Appendices changed",
-    )
-    require(
-        "Greatandmanifoldweretheblessings" in canonical_text(archives["kjv"]["OTH"][2]),
-        "KJV dedication opening missing",
-    )
-    inv = SOURCES["brenton"]["files"]
-    require(
-        list(inv["EZR"]["chapters"]) == [str(i) for i in range(1, 24)],
-        "Combined Ezra-Nehemiah source must have 23 chapters",
-    )
-    require("151" in inv["PSA"]["chapters"], "Psalm 151 missing")
-    require("1b" in inv["ESG"]["chapters"]["1"], "Esther additions missing")
-    require(len(inv["DAG"]["chapters"]["3"]) > 90, "Daniel chapter 3 additions missing")
-    for b in ("MAN", "3MA", "4MA"):
-        require(bool(inv[b]["chapters"]), f"{b} missing")
-    entries = ordered_entries()
-    ordered_ids = [e.get("project_id", e.get("id")) for e in entries]
-
-    # Each testament's front matter sits between its divider and its first book.
-    def follows(*codes):
-        first = ordered_ids.index(codes[0])
-        return ordered_ids[first : first + len(codes)] == list(codes)
-
-    require(ordered_ids[0] == "CNC", "Editor's introduction must open the book")
-    require(
-        follows("CNC", "XXF", "XXB", "XXE", "OTH", "XXD", "GEN"),
-        "Old Testament front matter misplaced",
-    )
-    require(
-        follows("DAG", "XXG", "TDX", "NDX", "MAT"),
-        "New Testament front matter misplaced",
-    )
-    require(
-        follows("REV", "GLO", "XXA", "BAK", "XXC") and ordered_ids[-1] == "XXC",
-        "Appendices misplaced",
-    )
-    require(
-        "THE APOCRYPHA" not in Path("config/front.sfm").read_text(encoding="utf-8"),
-        "Obsolete Apocrypha divider/title remains",
-    )
-    require(
-        "\\periph" not in Path("config/introduction.sfm").read_text(encoding="utf-8"),
-        "The editor's introduction is a unit, not a front-matter periph",
-    )
-    # Preparation curls the sources' quotes; the edition's own text is typed curly.
-    for path in ("config/front.sfm", "config/introduction.sfm"):
-        text = re.sub(r'\|\w+="[^"\n]*"', "", Path(path).read_text(encoding="utf-8"))
-        require(
-            not re.search(r"['\"`]", text),
-            f"Straight quote outside a USFM attribute: {path}",
-        )
+    source_use = brenton_source_use()
     # Explain the overlapping witness without modifying either original file.
     combined_ezra_nehemiah_source = archives["brenton"]["EZR"][2]
     standalone_nehemias_witness = archives["brenton"]["NEH"][2]
@@ -548,6 +284,17 @@ def validate():
     write_json("build/validation.json", report)
     print("Validated pinned sources:", report, flush=True)
     return archives
+
+
+def brenton_source_use():
+    """Brenton source ids in the order the printed units draw on them."""
+    source_use = []
+    for unit in EDITION["scripture"]:
+        if unit["source"] == "brenton":
+            source_use.extend(
+                unit.get("source_parts", [unit.get("source_id", unit["id"])])
+            )
+    return source_use
 
 
 def ordered_entries():

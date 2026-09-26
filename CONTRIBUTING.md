@@ -15,13 +15,16 @@ Every build step runs inside a Docker image based on the Ubuntu LTS release name
 ```sh
 make bootstrap  # network: pull the latest image for the Ubuntu LTS tag and build the environment
 make validate   # offline: check original archives and their complete inventories
+make test       # offline: run the pytest and l3build test suites (test-python, test-tex)
 make sample     # offline: representative scripture, quotations, notes, and apparatus
 make pdf        # offline: dist/bible.pdf and dist/bible.provenance.json
-make check      # offline: two clean full builds, then compare every rendered page
+make check      # offline: the tests, then two clean full builds, comparing every rendered page
 make clean      # delete the generated build/ and dist/ directories
 ```
 
 The `toolchain` service in `compose.yaml` defines the local build image, named `brenton-kjv-bible:local`, and runs it without network access. Make runs the validation, rendering, and check commands in that service as the invoking user's UID/GID; `bootstrap` builds the image and `clean` runs on the host. If the image is missing, Compose builds it on first use, with network access and without `--pull`, so run `make bootstrap` first. Normal builds never download Bible texts; they read only the archives committed under `sources/`.
+
+The tests live under `tests/`: pytest tests of the edition's editorial policy, the text helpers, and the build's guards, configured in `pyproject.toml`, and an l3build regression test of the TeX protrusion customization, configured in `build.lua`. To run a subset, pass arguments through the toolchain service, for example `docker compose -f compose.yaml run --rm --user "$(id -u):$(id -g)" toolchain python3 -m pytest -k marginal`. After an intended change to the protrusion output, regenerate its expected log with `docker compose -f compose.yaml run --rm --user "$(id -u):$(id -g)" toolchain l3build save protrusion` and review the diff. [docs/verification.md](docs/verification.md) describes what each check covers.
 
 The sample selects the chapters listed in `config/sample.json` and retains the complete apparatus so that quotations, tables, and unusual verse numbering are exercised. Outputs and logs go to `dist/` and `build/`; neither is tracked.
 
@@ -53,7 +56,7 @@ The reading order is the new title page, contents, and editor's introduction; th
 
 ## Dependencies
 
-`dependencies.json` records the base image tag, PTXprint tag and commit, and usfmtc commit. PTXprint 3.0.43 records the build time in the PDF's creation and modification dates, so PDF bytes differ between builds; `make check` compares rendered page images instead. Python packages are pinned by version, without hashes, in `requirements.txt`. Renovate proposes updates to that file.
+`dependencies.json` records the base image tag, PTXprint tag and commit, and usfmtc commit. PTXprint 3.0.43 records the build time in the PDF's creation and modification dates, so PDF bytes differ between builds; `make check` compares rendered page images instead. Python packages, including pytest, are pinned by version, without hashes, in `requirements.txt`. Renovate proposes updates to that file.
 
 The base image uses an Ubuntu LTS codename tag, which floats within that release and which Renovate moves to each new LTS, and `make bootstrap` passes `--pull`, so OS packages come from Ubuntu's current repositories. Rebuilding the environment later can change OS packages and therefore pagination. Repeatability is checked within a single built environment by `make check`, and each PDF's provenance file records the exact environment that produced it.
 
@@ -61,11 +64,11 @@ Upgrade procedure, source updates, and layout customization are covered in [docs
 
 ## Continuous integration
 
-`.github/workflows/build.yml` runs bootstrap, validate, check-protrusion, and pdf on pushes to `master` and on pull requests. It does not run `make sample` or the full `make check` repeatability build; run those locally before submitting. On `master` it also publishes `site/index.html` and `dist/bible.pdf` to GitHub Pages.
+`.github/workflows/build.yml` runs bootstrap, validate, test, and pdf on pushes to `master` and on pull requests. It does not run `make sample` or the full `make check` repeatability build; run those locally before submitting. On `master` it also publishes `site/index.html` and `dist/bible.pdf` to GitHub Pages.
 
 ## Submitting changes
 
-1. Run `make validate`, `make sample`, `make pdf`, and `make check` locally.
+1. Run `make validate`, `make test`, `make sample`, `make pdf`, and `make check` locally.
 2. Inspect the rendered sample pages and review any pagination changes.
 3. Commit configuration, dependency, and source changes together with the reasoning in the commit message.
 4. Open a pull request. CI must pass before merging.
