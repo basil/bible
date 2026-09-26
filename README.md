@@ -19,11 +19,11 @@ The Old Testament books are called by their Septuagint names: Esaias rather than
 
 The wording of both translations and of Brenton's notes has not been altered, and the chapter and verse numbers are theirs, apart from the divisions just mentioned and a renumbering of the last verses of Malachias to match the Greek chapters. Brenton's footnotes are printed. The online text of the Cambridge New Testament has no notes, so the New Testament carries instead the marginal notes of the King James Bible of 1611 as transcribed by Calvin George. Words that the translators supplied to complete the English sense, which many Bibles print in italics, are set in ordinary type. The title pages, section dividers, table of contents, and headings are this edition's own.
 
-The original copyright notices are kept alongside the texts in this repository.
+The original copyright notices are kept with the texts in [sources](sources/README.md).
 
 ## How it looks
 
-The page size is A5, about the size of a paperback novel. Scripture is set in two columns in [Utopia](<https://en.wikipedia.org/wiki/Utopia_(typeface)>). Verse numbers and running heads are included. The page design follows the layout used by [PTXprint](https://software.sil.org/ptxprint/), a free typesetting program for Bibles.
+The page size is A5, about the size of a paperback novel. Scripture is set in two columns in [Utopia](<https://en.wikipedia.org/wiki/Utopia_(typeface)>). Verse numbers and running heads are included. The page design is based on the Berean Standard Bible layout that comes with [PTXprint](https://software.sil.org/ptxprint/), a free typesetting program for Bibles.
 
 There is no cover, and the page numbering does not match any historical printed edition.
 
@@ -33,10 +33,9 @@ Everything needed to produce the PDF is stored in this repository, including the
 
 ## Further reading
 
-- [Edition and source findings](docs/edition.md): how the texts were chosen, arranged, and adjusted
-- [Maintenance](docs/maintenance.md): updating dependencies, sources, and layout
-- [Verification](docs/verification.md): how the output is checked
-- [Visual inspection record](docs/inspection.md): notes from reviewing the printed pages
+- [Editorial notes](docs/edition.md): why the texts were chosen, arranged, and adjusted as they were
+- [Sources](sources/README.md): where each text and font came from
+- [Contributing](CONTRIBUTING.md): building, checking, and changing the edition
 
 ## License
 

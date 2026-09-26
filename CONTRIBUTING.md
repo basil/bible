@@ -1,74 +1,121 @@
 # Contributing
 
-This file covers the technical side of the project: how the build works, what it needs, and where things live. For an overview of the edition itself, see [README.md](README.md).
+This covers building the PDF, how the build checks itself, and how to change things. For what the edition contains, see the [README](README.md). For the reasons behind its choices, see the [editorial notes](docs/edition.md).
 
-## Requirements
+## Building
 
-- Docker with the Compose plugin
-- Make
-- Approximately 5 GB of free disk space
-
-Every build step runs inside a Docker image based on the Ubuntu LTS release named in the `Dockerfile`, with its system Python, so the host needs no Python.
-
-## Build targets
+You need Docker with the Compose plugin, Make, and about 5 GB of disk space. Everything runs in a container, so you don't need Python or TeX on your machine.
 
 ```sh
-make bootstrap  # network: pull the latest image for the Ubuntu LTS tag and build the environment
-make validate   # offline: check original archives and their complete inventories
-make test       # offline: run the pytest and l3build test suites (test-python, test-tex)
-make sample     # offline: representative scripture, quotations, notes, and apparatus
-make pdf        # offline: dist/bible.pdf and dist/bible.provenance.json
-make check      # offline: the tests, then two clean full builds, comparing every rendered page
-make clean      # delete the generated build/ and dist/ directories
+make bootstrap  # build the container image (the only step that uses the network)
+make pdf        # build dist/bible.pdf
 ```
 
-The `toolchain` service in `compose.yaml` defines the local build image, named `brenton-kjv-bible:local`, and runs it without network access. Make runs the validation, rendering, and check commands in that service as the invoking user's UID/GID; `bootstrap` builds the image and `clean` runs on the host. If the image is missing, Compose builds it on first use, with network access and without `--pull`, so run `make bootstrap` first. Normal builds never download Bible texts; they read only the archives committed under `sources/`.
+Run `make bootstrap` first. The other targets run with networking turned off and read the texts only from the archives committed in `sources/`:
 
-The tests live under `tests/`: pytest tests of the edition's editorial policy, the text helpers, and the build's guards, configured in `pyproject.toml`, and an l3build regression test of the TeX protrusion customization, configured in `build.lua`. To run a subset, pass arguments through the toolchain service, for example `docker compose -f compose.yaml run --rm --user "$(id -u):$(id -g)" toolchain python3 -m pytest -k marginal`. After an intended change to the protrusion output, regenerate its expected log with `docker compose -f compose.yaml run --rm --user "$(id -u):$(id -g)" toolchain l3build save protrusion` and review the diff. [docs/verification.md](docs/verification.md) describes what each check covers.
+```sh
+make sample     # a short PDF of selected chapters, for checking layout quickly
+make validate   # check the source files against their recorded hashes
+make test       # run the tests
+make check      # run the tests, then build the full PDF twice and compare every page
+make clean      # delete build/ and dist/
+```
 
-The sample selects the chapters listed in `config/sample.json` and retains the complete apparatus so that quotations, tables, and unusual verse numbering are exercised. Outputs and logs go to `dist/` and `build/`; neither is tracked.
+Alongside the PDF, the build writes `dist/bible.provenance.json`, which records the environment that produced it: the OS release, installed packages, Python version, and font hashes. Logs and intermediate files go to `build/`. The most useful of these is `build/full/transformations.json` (or `build/sample/…`), which lists every change the build made to the source text.
 
-## Sources
+The sample prints the chapters listed in `config/sample.json`. They were picked to cover the awkward cases, such as Psalm 151, the additions to Esther and Daniel, the Ezra–Nehemiah split, the end of Malachias, quoted Greek and Hebrew, and pages crowded with notes.
 
-- `sources/eng-Brenton_usfm.zip`: eBible's Brenton Old Testament and Apocrypha (52 scripture units) with Brenton's historical apparatus
-- `sources/engkjvcpb_usfm.zip`: eBible's Cambridge Paragraph KJV, of which the 27 New Testament books, the dedication, the translators' preface, and the NT closing notes are used
-- `sources/exhaustive-listing-marginal-notes-1611-edition-king-james-bible.md`: Calvin George's transcription of the 1611 KJV marginal notes, of which only the 775 New Testament notes are read
-- `sources.json`: SHA-256 hashes, archive member lists, and chapter/verse/marker inventories for both archives, and the SHA-256 hash of the marginal notes
-- `sources/README.md`: retrieval dates, original URLs, and saved copyright notices
+## Where things are
 
-A hash mismatch is a failure. Replacing an archive is a deliberate step described in [docs/maintenance.md](docs/maintenance.md).
+- `sources/`: the Bible texts, the 1611 marginal notes, and the fonts, committed as downloaded. [sources/README.md](sources/README.md) says where each came from.
+- `sources.json`: hashes and a full inventory of the source texts (every chapter, verse, and markup code).
+- `config/edition.json`: which books are printed, in what order, and what they're called.
+- `config/front.sfm` and `config/introduction.sfm`: the title page, contents, and editor's introduction.
+- `config/marginal-notes.json`: placements and corrections for the 1611 New Testament notes.
+- `config/layout.ini`, `config/ptxprint-mods.sty`, `config/ptxprint-mods.tex`: layout, style, and TeX changes on top of PTXprint's layout for the Berean Standard Bible (BSB).
+- `config/render-witnesses.json`: phrases that must appear in the finished PDF, to catch unusual passages going missing.
+- `dependencies.json`: the pinned PTXprint, usfmtc, and Utopia commits, and the hashes of the font archives.
+- `scripts/pipeline.py`: the build.
+- `tests/`: the pytest tests and the TeX protrusion test.
 
-## Configuration
+## Checks
 
-- `config/edition.json`: the ordered manifest of scripture units and peripherals
-- `config/front.sfm`: title page and contents
-- `config/introduction.sfm`: the editor's introduction, typeset as the first unit after the contents
-- `config/layout.ini`: overrides applied on top of PTXprint's BSB layout
-- `config/ptxprint-mods.sty`: style overrides
-- `config/ptxprint-mods.tex`: TeX customizations
-- `config/marginal-notes.json`: book names, anchors, and corrections for the 1611 New Testament marginal notes
-- `config/sample.json`: chapters included in the sample build
-- `config/render-witnesses.json`: phrases from unusual content (Psalm 151, the Greek additions to Esther and Daniel, and so on) that must appear in the rendered PDF
+The build checks its own work and stops rather than produce a PDF from bad input.
 
-The layout is derived at build time from PTXprint 3.0.43's `resources/bsb.zip`, including both its configuration and `ptxprint.sty`: A5, two columns, 9.5-point text, its line spacing, margins, column rule, running headers, and heading/reference spacing. This edition replaces Charis with Utopia, replaces the BSB publication metadata, adds front matter and section dividers, and enables the contents page. Verse-one settings and footnote callers are inherited from BSB; cross-references have their own caller symbols. Pagination is continuous Arabic numerals and includes the front matter.
+- **First**, it checks the hash of every source file and compares each book against its recorded inventory. Replacing a source is a deliberate step (see below), never something a build does on its own.
+- **While preparing the text**, it compares each book it changes against the original. Apart from the intended changes, every word, punctuation mark, verse, note, and piece of markup must come through intact. PTXprint's own preprocessing is checked the same way.
+- **After typesetting**, it checks the PDF: every page is A5, all fonts are embedded, no glyphs are missing, the contents list every book once with the right page numbers, and each phrase in `config/render-witnesses.json` is there.
 
-The reading order is the new title page, contents, and editor's introduction; the Old Testament divider, Brenton's preface, introduction, introduction to the Apocrypha, and list of abbreviations, and the Old Testament; the New Testament divider, the KJV dedication and translators' preface, and the New Testament; then the appendices (Brenton's Jeremias table, his notes and supplied passages, and eBible's corrections). Cambridge closing notes remain with their NT books. The historical Cambridge title page is omitted. Details and the reasoning are in [docs/edition.md](docs/edition.md).
+`make test` runs two suites. The pytest suite in `tests/` covers the editorial rules (book order, titles, and headings), the text helpers, and the build's own checks: `tests/test_faults.py` breaks one input at a time and makes sure the build refuses it. It prepares every book but typesets nothing, so it takes seconds. The [l3build](https://ctan.org/pkg/l3build) test in `tests/tex/` compares the protrusion settings (see below) against real microtype.
 
-## Dependencies
+`make check` runs the tests, then builds the full PDF twice from scratch and compares every page as an image. PTXprint stamps the build time into the PDF, so the files themselves always differ; the pages shouldn't.
 
-`dependencies.json` records the base image tag, PTXprint tag and commit, and usfmtc commit. PTXprint 3.0.43 records the build time in the PDF's creation and modification dates, so PDF bytes differ between builds; `make check` compares rendered page images instead. Direct Python dependencies, including pytest, are pinned by version, without hashes, in `requirements.txt`; pip resolves their own dependencies. Renovate proposes updates to that file.
+To run only some of the tests:
 
-The base image uses an Ubuntu LTS codename tag, which floats within that release and which Renovate moves to each new LTS, and `make bootstrap` passes `--pull`, so OS packages come from Ubuntu's current repositories. Rebuilding the environment later can change OS packages and therefore pagination. Repeatability is checked within a single built environment by `make check`, and each PDF's provenance file records the exact environment that produced it.
+```sh
+docker compose -f compose.yaml run --rm --user "$(id -u):$(id -g)" toolchain python3 -m pytest -k marginal
+```
 
-Upgrade procedure, source updates, and layout customization are covered in [docs/maintenance.md](docs/maintenance.md). Acceptance checks are in [docs/verification.md](docs/verification.md).
+### Looking at the pages
 
-## Continuous integration
+The checks catch missing text, not bad pages. After any change that could move text around, read through the sample, and the full PDF if the page count changed. The places most likely to go wrong are:
 
-`.github/workflows/build.yml` runs bootstrap, validate, test, and pdf on pushes to `master` and on pull requests. It does not run `make sample` or the full `make check` repeatability build; run those locally before submitting. On `master` it also publishes `site/index.html` and `dist/bible.pdf` to GitHub Pages.
+- pages crowded with footnotes, and whether each caller matches its note
+- the New Testament marginal notes, including the Greek in Acts 13:18 and 13:34
+- Greek and right-to-left Hebrew in Brenton's notes
+- poetry in the Psalms
+- the contents and the Jeremias table
+- the joins between 2 Esdras and Nehemias and between Malachias 3 and 4, and the additions to Daniel
+- the opening pages of each testament and of the appendices
 
 ## Submitting changes
 
-1. Run `make validate`, `make test`, `make sample`, `make pdf`, and `make check` locally.
-2. Inspect the rendered sample pages and review any pagination changes.
-3. Commit configuration, dependency, and source changes together with the reasoning in the commit message.
+1. Run `make sample` and `make check`.
+2. Look at the rendered pages, as above.
+3. Commit configuration, dependency, and source changes together, and explain why in the commit message.
 4. Open a pull request. CI must pass before merging.
+
+CI runs `make bootstrap`, `validate`, `test`, and `pdf` on pull requests and on pushes to `master`, and publishes the PDF to GitHub Pages from `master`. It doesn't run `make sample` or `make check`, so run those yourself.
+
+## Changing the layout
+
+- `config/layout.ini` overrides PTXprint's BSB layout settings.
+- `config/ptxprint-mods.sty` overrides paragraph and character styles.
+- `config/ptxprint-mods.tex` holds TeX-level changes: hyphenation, protrusion, and one spacing tweak in Psalm 118.
+
+Don't edit anything in `build/`; it's regenerated on every run.
+
+PTXprint uses plain XeTeX, so the microtype package isn't available. Instead, `config/ptxprint-mods.tex` carries a copy of microtype's default protrusion table, which lets punctuation and a few letters hang slightly into the margin so the column edges look straight. Protrusion affects line breaking, so changing it can change pagination. microtype has no settings made for Utopia, GFS Didot, or Ezra SIL, so all three use the defaults.
+
+Run `make test-tex` after changing the table. If the change was intended, save the new expected output and review the diff:
+
+```sh
+docker compose -f compose.yaml run --rm --user "$(id -u):$(id -g)" toolchain l3build save protrusion
+```
+
+## Updating dependencies
+
+Renovate opens pull requests for the Python packages in `requirements.txt`, the PTXprint, usfmtc, and Utopia commits in `dependencies.json`, and the Ubuntu base image in the `Dockerfile`. The font archives in `sources/` are updated by hand, together with their hashes in `dependencies.json`.
+
+`requirements.txt` lists only direct dependencies: what the build and tests import, what PTXprint needs at run time (including `psutil`, which it uses without declaring), and what's needed to build PTXprint and usfmtc. Those two are installed with `--no-deps`, because PTXprint's package metadata points at usfmtc's moving main branch instead of the pinned commit.
+
+The base image is an Ubuntu LTS tag with no digest, and packages come from Ubuntu's live repositories. Rebuilding the image later can therefore bring in newer versions of TeX and fonts, which may change pagination. That's deliberate: `make check` shows that builds are repeatable within one image, and the provenance file records which image made each PDF.
+
+When upgrading PTXprint, check that `config/ptxprint-allow-otf.patch` still applies (it lets PTXprint load Utopia's OTF files), that the `\s@tfont` wrapper in `config/ptxprint-mods.tex` still matches PTXprint's internals, and that the sample's pagination still looks right. When moving to a new Ubuntu release, which brings a new TeX Live, run `make test-tex`.
+
+## Updating source texts
+
+Replace a source archive only on purpose. Download the new one somewhere else first and compare it with the old one: the copyright notice, the list of books, chapter and verse labels, notes, italics, tables, and appendices. Then commit the new archive together with its updated entry in `sources.json` and the new retrieval date in `sources/README.md`.
+
+Verse labels are stored as written, including forms like `6a`, `1b`, and verse ranges, and the inventory assumes no particular numbering scheme. Review every change to it rather than accepting it wholesale.
+
+## PTXprint quirks
+
+A few things look odd but are on purpose:
+
+- Brenton's `FRT` and `INT` files become `XXD` and `XXE`, and the King James `OTH` and `INT` become `TDX` and `NDX`. This keeps PTXprint from treating them as the edition's own front matter, and keeps the two sources' files from colliding.
+- eBible's list of corrections contains literal `|` characters, which PTXprint would read as markup and use to discard text. `config/changes.txt` swaps them out while PTXprint parses the file and puts them back afterwards.
+- A footnote at 3 Kingdoms 6:1 has a reference but no text. PTXprint would drop it as empty, so the build adds a zero-width space.
+- BSB sets `fnomitcaller` and `xromitcaller` to `True`, which in this PTXprint release means the callers *are* printed in the notes. The build checks that this still holds.
+- PTXprint's `canonicalise` option is off, so that it doesn't rewrite the source markup.
+- PTXprint loads GTK even when it runs without a display, which is why the image includes it.
