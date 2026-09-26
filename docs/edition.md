@@ -1,6 +1,6 @@
 # Editorial notes
 
-The [README](../README.md) describes what's in this Bible. This page explains why it's put together that way. The source files are never modified; every change the build makes is logged in `build/full/transformations.json`.
+The [README](../README.md) describes what's in this Bible. This page explains why it's put together that way. The source files are never modified; every change the build makes is logged in `build/pdf/transformations.json`.
 
 ## Texts
 

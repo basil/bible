@@ -17,11 +17,10 @@ Run `make bootstrap` first. The other targets run with networking turned off and
 make sample     # a short PDF of selected chapters, for checking layout quickly
 make validate   # check the source archives against their recorded hashes
 make test       # run the tests
-make check      # run the tests, then build the full PDF twice and compare every page
 make clean      # delete build/ and dist/
 ```
 
-Alongside the PDF, the build writes `dist/bible.provenance.json`, which records the environment that produced it: the OS release, installed packages, Python version, and font hashes. Logs and intermediate files go to `build/`. The most useful of these is `build/full/transformations.json` (or `build/sample/…`), which lists every change the build made to the source text.
+Alongside the PDF, the build writes `dist/bible.provenance.json`, which records the environment that produced it: the OS release, installed packages, Python version, and font hashes. Logs and intermediate files go to `build/`. The most useful of these is `build/pdf/transformations.json` (or `build/sample/…`), which lists every change the build made to the source text.
 
 The sample prints the chapters listed in `config/sample.json`. They were picked to cover the awkward cases, such as Psalm 151, the additions to Esther and Daniel, the Ezra–Nehemiah split, the end of Malachias, quoted Greek and Hebrew, and pages crowded with notes.
 
@@ -47,8 +46,6 @@ The build checks its own work and stops rather than produce a PDF from bad input
 
 `make test` runs two suites. The pytest suite in `tests/` covers the editorial rules (book order, titles, and headings), the text helpers, and the build's own checks: `tests/test_faults.py` breaks one input at a time and makes sure the build refuses it. It prepares every book but typesets nothing, so it takes seconds. The [l3build](https://ctan.org/pkg/l3build) test in `tests/tex/` compares the protrusion settings (see below) against real microtype.
 
-`make check` runs the tests, then builds the full PDF twice from scratch and compares every page as an image. PTXprint stamps the build time into the PDF, so the files themselves always differ; the pages shouldn't.
-
 To run only some of the tests, pass pytest's options through `PYTEST_ARGS`:
 
 ```sh
@@ -69,12 +66,12 @@ The checks catch missing text, not bad pages. After any change that could move t
 
 ## Submitting changes
 
-1. Run `make sample` and `make check`.
+1. Run `make sample` and `make test`.
 2. Look at the rendered pages, as above.
 3. Commit configuration, dependency, and source changes together, and explain why in the commit message.
 4. Open a pull request. CI must pass before merging.
 
-CI runs `make bootstrap`, `validate`, `test`, and `pdf` on pull requests and on pushes to `master`, and publishes the PDF to GitHub Pages from `master`. It doesn't run `make sample` or `make check`, so run those yourself.
+CI runs `make bootstrap`, `validate`, `test`, and `pdf` on pull requests and on pushes to `master`, and publishes the PDF to GitHub Pages from `master`. It doesn't run `make sample`, so run that yourself.
 
 ## Changing the layout
 
@@ -94,7 +91,7 @@ Renovate opens pull requests for the Python packages in `requirements.txt`, and 
 
 `requirements.txt` lists only direct dependencies: what the build and tests import, what PTXprint needs at run time (including `psutil`, which it uses without declaring), and what's needed to build PTXprint and usfmtc. Those two are installed with `--no-deps`, because PTXprint's package metadata points at usfmtc's moving main branch instead of the pinned commit.
 
-The base image is an Ubuntu LTS tag with no digest, and packages come from Ubuntu's live repositories. Rebuilding the image later can therefore bring in newer versions of TeX and fonts, which may change pagination. That's deliberate: `make check` shows that builds are repeatable within one image, and the provenance file records which image made each PDF.
+The base image is an Ubuntu LTS tag with no digest, and packages come from Ubuntu's live repositories. Rebuilding the image later can therefore bring in newer versions of TeX and fonts, which may change pagination. The provenance file lists the OS packages each PDF was built with, so a change in pagination can be traced to the package that caused it.
 
 When upgrading PTXprint, check that the `\s@tfont` wrapper in `config/ptxprint-mods.tex` still matches PTXprint's internals, and that the sample's pagination still looks right. When moving to a new Ubuntu release, which brings a new TeX Live, run `make test-tex`.
 

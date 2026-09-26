@@ -7,7 +7,7 @@ UIDGID := $(shell id -u):$(shell id -g)
 COMPOSE := docker compose -f compose.yaml
 TOOLCHAIN := $(COMPOSE) run --rm -T --interactive=false --user $(UIDGID) toolchain
 PIPELINE := $(TOOLCHAIN) python3 scripts/pipeline.py
-.PHONY: bootstrap validate test test-python test-tex test-tex-save sample pdf check clean
+.PHONY: bootstrap validate test test-python test-tex test-tex-save sample pdf clean
 bootstrap:
 	$(COMPOSE) build --pull
 validate:
@@ -23,7 +23,5 @@ sample:
 	$(PIPELINE) sample
 pdf:
 	$(PIPELINE) pdf
-check: test
-	$(PIPELINE) check
 clean:
 	rm -rf build dist

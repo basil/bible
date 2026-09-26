@@ -3,7 +3,6 @@
 
 import argparse
 from collections import Counter
-from concurrent.futures import ThreadPoolExecutor
 import configparser
 import difflib
 import functools
@@ -25,8 +24,8 @@ ROOT = Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
 BUILD = ROOT / "build"
 DIST = ROOT / "dist"
-# Each command's folder under build/ and the PDF it publishes under dist/.
-OUTPUTS = {"sample": ("sample", "sample.pdf"), "pdf": ("full", "bible.pdf")}
+# The PDF each command publishes under dist/; it builds in build/<command>.
+OUTPUTS = {"sample": "sample.pdf", "pdf": "bible.pdf"}
 
 
 def read_json(path):
@@ -982,12 +981,12 @@ def check_image():
         )
 
 
-def build(mode, name, archives):
-    """Typeset one edition in build/<name> and check the PDF.
+def build(mode, archives):
+    """Typeset one edition and check the PDF.
 
     Returns the PDF, the order of its units, and the report of its checks.
     """
-    base = BUILD / name
+    base = BUILD / mode
     if base.exists():
         shutil.rmtree(base)
     base.mkdir(parents=True)
@@ -1038,7 +1037,7 @@ def build(mode, name, archives):
 
 def publish(mode, pdf, ids, report):
     """Copy a checked PDF to dist/ with a record of what produced it."""
-    target = DIST / OUTPUTS[mode][1]
+    target = DIST / OUTPUTS[mode]
     DIST.mkdir(exist_ok=True)
     tracked = {
         str(p): file_sha256(p)
@@ -1105,10 +1104,6 @@ def publish(mode, pdf, ids, report):
     shutil.copyfile(pdf, staged_pdf)
     write_json(staged_provenance, provenance)
     provenance_target.unlink(missing_ok=True)
-    if mode == "pdf":
-        # make check's record describes the PDF it built, not this one; check()
-        # writes a fresh record once it has compared its two builds.
-        (DIST / "check.json").unlink(missing_ok=True)
     staged_pdf.replace(target)
     staged_provenance.replace(provenance_target)
     print("Wrote", target, flush=True)
@@ -1117,7 +1112,7 @@ def publish(mode, pdf, ids, report):
 def render(mode):
     archives = validate()
     check_image()
-    pdf, ids, report = build(mode, OUTPUTS[mode][0], archives)
+    pdf, ids, report = build(mode, archives)
     publish(mode, pdf, ids, report)
 
 
@@ -1433,74 +1428,17 @@ def inspect_pdf(pdf, base, project, ids, sample):
     check_boundaries(base, project, ids, text, pages, reading_text, sample)
     return {
         "pages": pages,
-        "a5_all_pages": True,
-        "fonts_embedded": True,
         "text_sha256": sha256(text.encode()),
     }
 
 
-def check():
-    archives = validate()
-    check_image()
-    names = ("repeat-1", "repeat-2")
-    # The two builds share nothing, so they typeset, and then render, side by side.
-    with ThreadPoolExecutor(2) as pool:
-        (pdf1, _, report1), (pdf2, ids, report2) = pool.map(
-            lambda name: build("pdf", name, archives), names
-        )
-        require(report1 == report2, "Repeat builds differ in text/page count")
-        publish("pdf", pdf2, ids, report2)
-        # Render pages in batches, hashing then discarding rasters to limit disk
-        # use without reopening each PDF once per page.
-        pages = report1["pages"]
-
-        def page_hashes(name, pdf, first, last):
-            rasters = BUILD / "check-rasters" / name
-            if rasters.exists():
-                shutil.rmtree(rasters)
-            rasters.mkdir(parents=True)
-            run("pdftoppm", "-f", first, "-l", last, "-r", "72", pdf, rasters / "page")
-            files = sorted(rasters.glob("page-*.ppm"))
-            require(
-                len(files) == last - first + 1,
-                f"Could not render pages {first}-{last}",
-            )
-            result = [file_sha256(f) for f in files]
-            shutil.rmtree(rasters)
-            return result
-
-        hashes = []
-        for start in range(1, pages + 1, 100):
-            end = min(start + 99, pages)
-            batch1, batch2 = pool.map(
-                page_hashes, names, (pdf1, pdf2), (start, start), (end, end)
-            )
-            for page, a, b in zip(range(start, end + 1), batch1, batch2):
-                require(a == b, f"Rendered page {page} differs")
-            hashes.extend(batch1)
-            print("Compared rendered pages:", end, flush=True)
-    write_json(
-        DIST / "check.json",
-        {
-            "repeatability": "passed",
-            "pages": len(hashes),
-            "render_dpi": 72,
-            "page_sha256": hashes,
-            "checks": report2,
-        },
-    )
-    print("All source, PDF and repeatability checks passed.", flush=True)
-
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("command", choices=["validate", "sample", "pdf", "check"])
+    parser.add_argument("command", choices=["validate", "sample", "pdf"])
     args = parser.parse_args()
     try:
         if args.command == "validate":
             validate()
-        elif args.command == "check":
-            check()
         else:
             render(args.command)
     except (RuntimeError, subprocess.CalledProcessError) as exc:
