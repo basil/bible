@@ -1,0 +1,14 @@
+---
+name: brenton-kjv-bible
+services:
+  toolchain:
+    build:
+      context: .
+    image: brenton-kjv-bible:local
+    # The image exists only locally; never look it up in a registry.
+    pull_policy: never
+    network_mode: none
+    environment:
+      HOME: /tmp/home
+    volumes:
+      - .:/work:Z

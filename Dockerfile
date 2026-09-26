@@ -44,4 +44,3 @@ RUN python3 /opt/install-upstream.py \
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 TZ=UTC
 ENV PATH=/opt/venv/bin:$PATH
 WORKDIR /work
-ENTRYPOINT ["python3", "scripts/pipeline.py"]

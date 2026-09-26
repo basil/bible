@@ -1250,9 +1250,7 @@ def prepare(mode, base, archives):
 
 def render(mode="pdf", name=None):
     archives = validate()
-    require(
-        UPSTREAM.exists(), "Run this command through Make/Docker (make bootstrap first)"
-    )
+    require(UPSTREAM.exists(), "Run this command through Make (make bootstrap first)")
     for dep in ("ptxprint", "usfmtc", "utopia"):
         require(
             capture(
@@ -1324,6 +1322,7 @@ def render(mode="pdf", name=None):
     }
     for input_name in (
         "Dockerfile",
+        "compose.yaml",
         "Makefile",
         "requirements.txt",
         "dependencies.json",

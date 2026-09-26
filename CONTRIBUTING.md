@@ -4,12 +4,11 @@ This file covers the technical side of the project: how the build works, what it
 
 ## Requirements
 
-- Docker
+- Docker with the Compose plugin
 - Make
-- Python 3 on the host, used only for source validation
 - Approximately 5 GB of free disk space
 
-Rendering happens inside a Docker image based on Ubuntu 26.04 with Python 3.14. The host Python version does not affect the output.
+Every build step runs inside a Docker image based on Ubuntu 26.04 with Python 3.14, so the host needs no Python.
 
 ## Build targets
 
@@ -22,7 +21,7 @@ make check      # offline: two clean full builds, then compare every rendered pa
 make clean      # delete the generated build/ and dist/ directories
 ```
 
-The local build image is named `brenton-kjv-bible:local`. Docker rendering runs with `--network none` and the invoking user's UID/GID. Normal builds never download Bible texts; they read only the archives committed under `sources/`.
+The `toolchain` service in `compose.yaml` defines the local build image, named `brenton-kjv-bible:local`, and runs it without network access. Make runs the validation, rendering, and check commands in that service as the invoking user's UID/GID; `bootstrap` builds the image and `clean` runs on the host. If the image is missing, Compose builds it on first use, with network access and without `--pull`, so run `make bootstrap` first. Normal builds never download Bible texts; they read only the archives committed under `sources/`.
 
 The sample selects the chapters listed in `config/sample.json` and retains the complete apparatus so that quotations, tables, and unusual verse numbering are exercised. Outputs and logs go to `dist/` and `build/`; neither is tracked.
 
@@ -54,7 +53,7 @@ The reading order is the new title page, contents, and editor's introduction; th
 
 ## Dependencies
 
-`dependencies.json` records the base image tag, PTXprint tag and commit, and usfmtc commit. PTXprint 3.0.43 records the build time in the PDF's creation and modification dates, so PDF bytes differ between builds; `make check` compares rendered page images instead. Python packages are pinned by version, without hashes, in `requirements.txt`. Dependabot proposes updates to that file.
+`dependencies.json` records the base image tag, PTXprint tag and commit, and usfmtc commit. PTXprint 3.0.43 records the build time in the PDF's creation and modification dates, so PDF bytes differ between builds; `make check` compares rendered page images instead. Python packages are pinned by version, without hashes, in `requirements.txt`. Renovate proposes updates to that file.
 
 The base image uses the floating `ubuntu:26.04` tag, and `make bootstrap` passes `--pull`, so OS packages come from Ubuntu's current repositories. Rebuilding the environment later can change OS packages and therefore pagination. Repeatability is checked within a single built environment by `make check`, and each PDF's provenance file records the exact environment that produced it.
 
