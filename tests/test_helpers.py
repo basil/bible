@@ -52,6 +52,33 @@ def test_word_tokens_offsets_index_the_usfm():
     ]
 
 
+# Like the prepared Daniel: Susanna's heading ends the header, and Bel's
+# follows Daniel's last verse on the same line.
+HEADER = "\\id DAG\n\\mt1 DANIEL\n"
+SUSANNA = "\\s1 SUSANNA\n\\c 0\n\\p\n\\v 1 A.  "
+DANIEL_1 = "\\c 1\n\\p\n\\v 1 B.  "
+BEL = "\\s1 BEL\n\\c 13\n\\nb\n\\v 1 C."
+DANIEL = HEADER + SUSANNA + DANIEL_1 + BEL
+
+
+@pytest.mark.parametrize(
+    "wanted, expected",
+    [
+        ([0, 1, 13], DANIEL),
+        ([1, 13], HEADER + DANIEL_1 + BEL),
+        ([0, 13], HEADER + SUSANNA + BEL.replace("\\nb", "\\p")),
+        ([0, 1], HEADER + SUSANNA + DANIEL_1),
+    ],
+)
+def test_sample_chapters_keep_lead_in_headings_with_their_chapter(wanted, expected):
+    assert pipeline.sample_chapters("DAG", DANIEL, wanted) == expected
+
+
+def test_sample_chapters_must_exist():
+    with pytest.raises(CheckFailed, match="Sample chapters missing from DAG"):
+        pipeline.sample_chapters("DAG", DANIEL, [1, 2])
+
+
 def test_verse_spans():
     text = "\\c 1\n\\p\n\\v 1 A.\n\\v 2 B.\n\\c 2\n\\v 1 C."
     assert [

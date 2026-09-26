@@ -11,8 +11,10 @@ def run(*args):
     subprocess.run(args, check=True)
 
 
-for name in ("ptxprint", "usfmtc", "utopia"):
-    dep = lock[name]
+# Every dependency pinned by commit, as scripts/pipeline.py checks them.
+for name, dep in lock.items():
+    if "commit" not in dep:
+        continue
     path = "/opt/" + name
     if "tag" in dep:
         run("git", "clone", "--depth", "1", "--branch", dep["tag"], dep["url"], path)

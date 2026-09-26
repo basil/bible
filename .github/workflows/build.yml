@@ -10,12 +10,14 @@ on:
       - reopened
       - synchronize
   workflow_dispatch:
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
 jobs:
   build:
     runs-on: ubuntu-26.04
+    # A newer push supersedes this build. Scoped to the job, not the workflow,
+    # so that it never cancels a Pages deployment already in progress.
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
     permissions:
       contents: read
     steps:

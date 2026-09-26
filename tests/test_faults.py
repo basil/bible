@@ -144,6 +144,14 @@ def test_anchor_inside_added_words(archives, marginal_notes_config):
 # Scripture preparation
 
 
+def test_scripture_unit_outside_both_testaments(monkeypatch):
+    edition = copy.deepcopy(pipeline.EDITION)
+    edition["scripture"][0]["section"] = "old_testment"
+    monkeypatch.setattr(pipeline, "EDITION", edition)
+    with pytest.raises(CheckFailed, match=r"outside both testaments: \['GEN'\]"):
+        pipeline.ordered_entries()
+
+
 def test_ezra_nehemiah_split_must_match_the_manifest(archives):
     entry = {**unit("EZR"), "chapters": [1, 11]}
     with pytest.raises(CheckFailed, match="Manifest chapters disagree"):

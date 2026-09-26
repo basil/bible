@@ -148,10 +148,13 @@ def resolved_book_names(entry, source_text=None):
         # Front matter keeps its source names, except where the edition's
         # headings replace them in the printed text.
         headings = entry.get("headings", {})
-        return {
+        names = {
             field: headings.get(marker) or source_marker(source_text, marker)
             for field, marker in BOOK_NAME_MARKERS.items()
         }
+        # As printed: preparation normalizes the front matter's toc1.
+        names["title"] = normalize_printed_title(names["title"], "toc1")
+        return names
     require(title, f"Missing title: {entry.get('id', entry.get('project_id'))}")
     if source_text is None:
         return {"title": title, "short_title": title, "abbreviation": title}
@@ -238,19 +241,18 @@ def validate():
     )
     source_use = brenton_source_use()
     # Explain the overlapping witness without modifying either original file.
-    combined_ezra_nehemiah_source = archives["brenton"]["EZR"][2]
-    standalone_nehemias_witness = archives["brenton"]["NEH"][2]
-    renumbered_nehemias_chapters = re.split(
-        r"(?=\\c 11\s)", combined_ezra_nehemiah_source, maxsplit=1
-    )[1]
+    _, combined_ezra_nehemiah_chapters = chapter_parts(archives["brenton"]["EZR"][2])
+    _, standalone_nehemias_witness = chapter_parts(archives["brenton"]["NEH"][2])
+    require(
+        len(combined_ezra_nehemiah_chapters) == 23,
+        "Ezra-Nehemiah source boundary changed",
+    )
     renumbered_nehemias_chapters = re.sub(
         r"\\c (\d+)",
         lambda m: "\\c " + str(int(m[1]) - 10),
-        renumbered_nehemias_chapters,
+        "".join(combined_ezra_nehemiah_chapters[10:]),
     )
-    standalone_nehemias_chapters = standalone_nehemias_witness[
-        standalone_nehemias_witness.index("\\c 1") :
-    ]
+    standalone_nehemias_chapters = "".join(standalone_nehemias_witness)
 
     def normalized(s):
         return re.sub(r"\s+", " ", s).strip()
@@ -305,6 +307,13 @@ def brenton_source_use():
 
 
 def ordered_entries():
+    # Units are placed by section below; one in neither would silently vanish.
+    unplaced = [
+        u["id"]
+        for u in EDITION["scripture"]
+        if u.get("section") not in ("old_testament", "new_testament")
+    ]
+    require(not unplaced, f"Scripture units outside both testaments: {unplaced}")
     result = []
 
     def add_div(code, title, subtitle):
@@ -344,6 +353,36 @@ def ordered_entries():
 def chapter_parts(text):
     parts = re.split(r"(?=\\c \d+\s)", text)
     return parts[0], parts[1:]
+
+
+def sample_chapters(code, text, wanted):
+    """The header and the wanted chapters of a book, for the typesetting sample.
+
+    A heading set just before a chapter marker (Susanna, Bel and the Dragon)
+    opens that chapter, so it is kept or dropped with it. A chapter cannot
+    continue the paragraph of an omitted chapter, so its nb becomes p.
+    """
+    header, chapters = chapter_parts(text)
+    parts = [header, *chapters]
+    for i in range(len(chapters)):
+        lead_in = re.search(r"(?:\\s\d?\s[^\n]*\n)+\Z", parts[i])
+        if lead_in:
+            parts[i] = parts[i][: lead_in.start()]
+            parts[i + 1] = lead_in[0] + parts[i + 1]
+    kept = [parts[0]]
+    previous_kept = True
+    for part in parts[1:]:
+        selected = int(re.search(r"\\c (\d+)", part)[1]) in wanted
+        if selected:
+            if not previous_kept:
+                part = re.sub(r"(\\c \d+\s+)\\nb\b", r"\1\\p", part, count=1)
+            kept.append(part)
+        previous_kept = selected
+    require(
+        len(kept) - 1 == len(set(wanted)),
+        f"Sample chapters missing from {code}: {wanted}",
+    )
+    return "".join(kept)
 
 
 def passage_payload(text):
@@ -853,22 +892,7 @@ def prepare(mode, base, archives):
                     f"Preparation changed source markup: {code}",
                 )
             if mode == "sample" and "section" in entry:
-                header, chapters = chapter_parts(text)
-                kept = [header]
-                previous_kept = True
-                for c in chapters:
-                    selected = int(re.match(r"\\c (\d+)", c)[1]) in sample[code]
-                    if selected:
-                        if not previous_kept:
-                            # A chapter cannot continue the preceding (omitted) chapter's paragraph.
-                            c = re.sub(r"^(\\c \d+\s+)\\nb\b", r"\1\\p", c, count=1)
-                        kept.append(c)
-                    previous_kept = selected
-                require(
-                    len(kept) - 1 == len(set(sample[code])),
-                    f"Sample chapters missing from {code}: {sample[code]}",
-                )
-                text = "".join(kept)
+                text = sample_chapters(code, text, sample[code])
                 transformations.append(
                     {
                         "project_id": code,
@@ -997,7 +1021,10 @@ def prepare(mode, base, archives):
         )
     cfg = configparser.ConfigParser(interpolation=None)
     cfg.read_string(baseline)
-    cfg.read("config/layout.ini", encoding="utf-8")
+    # read() would silently skip a missing overlay and typeset BSB's layout.
+    cfg.read_string(
+        Path("config/layout.ini").read_text(encoding="utf-8"), "config/layout.ini"
+    )
     cfg.remove_section("import")
     cfg["project"]["booklist"] = " ".join(ids)
     cfg["project"]["book"] = ids[0]
@@ -1212,6 +1239,16 @@ def typographic_quotes(text):
     return result, len(re.findall(r"['\"`]|\.\.\.|--", text))
 
 
+def processed_markers(markers):
+    # Nested italic/quotation markers may be flattened by the module parser.
+    result = {}
+    for k, v in markers.items():
+        k = k.lstrip("+")
+        if k.rstrip("*") in ("f", "x", "add", "it", "tr", "tc1", "tc2", "vp"):
+            result[k] = result.get(k, 0) + v
+    return result
+
+
 def check_processed(project, base):
     records = []
     texfiles = list((project / "local/ptxprint/Bible").glob("*_ptxp.tex"))
@@ -1226,35 +1263,28 @@ def check_processed(project, base):
         processed = project / "local/ptxprint/Bible" / (code + "-Bible.usfm")
         require(processed.exists(), f"PTXprint omitted {code}")
         output = processed.read_text(encoding="utf-8")
+        before, after = inventory(source), inventory(output)
         require(
-            inventory(source)["chapters"] == inventory(output)["chapters"],
+            before["chapters"] == after["chapters"],
             f"PTXprint changed chapter/verse labels: {code}",
         )
+        content = canonical_text(output)
         require(
-            canonical_text(source) == canonical_text(output),
+            canonical_text(source) == content,
             f"PTXprint changed printable content: {code}",
         )
-
-        # Nested italic/quotation markers may be flattened by the module parser.
-        def counts(s):
-            result = {}
-            for k, v in inventory(s)["markers"].items():
-                k = k.lstrip("+")
-                if k.rstrip("*") in ("f", "x", "add", "it", "tr", "tc1", "tc2", "vp"):
-                    result[k] = result.get(k, 0) + v
-            return result
-
+        markers = processed_markers(after["markers"])
         require(
-            counts(source) == counts(output),
+            processed_markers(before["markers"]) == markers,
             f"PTXprint changed notes, styles or tables: {code}",
         )
         require("\ue000" not in output, f"Unrestored pipe sentinel: {code}")
         records.append(
             {
                 "id": code,
-                "content_sha256": sha256(canonical_text(output).encode()),
-                "chapters": inventory(output)["chapters"],
-                "preserved_markers": counts(output),
+                "content_sha256": sha256(content.encode()),
+                "chapters": after["chapters"],
+                "preserved_markers": markers,
             }
         )
     write_json(base / "processed-integrity.json", records)

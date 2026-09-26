@@ -98,7 +98,9 @@
 }
 % PTXprint creates fonts lazily. Initialize each face/size/features combination
 % once after selection; font protrusion codes persist outside the local group.
-\global\let\BibleSetFont\s@tfont
+% Save only PTXprint's own macro: were this file read twice, saving the wrapper
+% would make it call itself.
+\ifx\BibleSetFont\undefined\global\let\BibleSetFont\s@tfont\fi
 \gdef\s@tfont#1#2{%
   \BibleSetFont{#1}{#2}%
   \ifcsname BibleProtrusion:\fontname\font\endcsname\else
@@ -115,7 +117,7 @@
 \begingroup
 \catcode`\@=11
 \xdef\BibleHiddenChapterText{\Uchar"200B}
-\global\let\BibleMakeChapterBox\m@kechapterbox
+\ifx\BibleMakeChapterBox\undefined\global\let\BibleMakeChapterBox\m@kechapterbox\fi
 \gdef\m@kechapterbox{%
   \BibleMakeChapterBox
   \edef\BibleChapterText{\detokenize\expandafter{\ch@ptert@xt}}%
