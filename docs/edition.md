@@ -8,7 +8,7 @@ The [README](../README.md) describes what's in this Bible. This page explains wh
 - **New Testament:** [eBible's Cambridge Paragraph Bible](https://ebible.org/engkjvcpb/) (`engkjvcpb`), not its standard KJV (`eng-kjv2006`). Only the 27 books, the translators' dedication to King James, and their preface are used. The text keeps Scrivener's paragraphs and poetry layout.
 - **Marginal notes:** [Calvin George's transcription](https://en.literaturabautista.com/exhaustive-listing-marginal-notes-1611-edition-king-james-bible) of the notes in the 1611 King James Bible. Only the 775 New Testament notes are used. The Old Testament notes belong to the KJV's translation from the Hebrew, which this edition doesn't print.
 
-[sources/README.md](../sources/README.md) has the retrieval dates and copyright notices.
+[sources/README.md](../sources/README.md) has the retrieval dates and original copyright notices. The source translations remain public domain. Basil Crow’s original editorial material and the assembled edition, to the extent copyright protects them, are licensed under [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/). The build scripts and configuration are [MIT licensed](../LICENSE).
 
 ## Order and names
 
@@ -47,7 +47,7 @@ Brenton's Malachias 3:19–24 is printed as chapter 4, verses 1–6, which match
 
 ## Front matter and appendices
 
-The contents come right after the title page, as in most books, followed by the editor's introduction. The introduction is set like a book of the Bible so that it's listed in the contents.
+The build copies PTXprint’s pinned basic front matter template without editing it. The title and publication data come from `config/layout.ini`, including the edition’s copyright and license. The template puts the publication data page after the title page, followed by the contents, and resets numbering so that the editor’s introduction starts at printed page 1. The introduction is set like a book of the Bible so that it’s listed in the contents.
 
 Each testament opens with the front matter of its own translation, so that the introductions sit next to the text they describe:
 

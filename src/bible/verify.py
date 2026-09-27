@@ -105,16 +105,31 @@ def check_boundaries(base, project, ids, text, pages, reading_text, sample):
     usfm = {
         code: project_usfm(project, code).read_text(encoding="utf-8") for code in ids
     }
-    # The contents follows the title page and precedes the first unit.
-    contents = key("".join(page_text[1 : int(toc[0][2]) - 1]))
+    # The basic front matter template restarts printed numbering at the
+    # contents. Its TOC numbers therefore differ from physical PDF pages.
+    first_heading = " ".join(
+        value for _, value in marker_lines(usfm[ids[0]], HEADING_MARKERS)
+    )
+    first_physical = next(
+        (
+            i + 1
+            for i in range(3, pages)
+            if key(canonical_text(first_heading)) in key(page_text[i])
+        ),
+        None,
+    )
+    require(first_physical is not None, "First unit heading missing from PDF")
+    page_offset = first_physical - int(toc[0][2])
+    require(page_offset >= 3, "Front matter page offset is invalid")
+    contents = key("".join(page_text[2 : first_physical - 1]))
     previous = 0
-    for code, title, page in toc:
-        page = int(page)
+    for code, title, printed_page in toc:
+        page = int(printed_page) + page_offset
         require(previous < page <= pages, f"Invalid boundary page: {code} {page}")
         previous = page
         require(
-            key(title) + str(page) in contents,
-            f"Contents entry missing/wrong page in PDF: {code}",
+            key(title) + printed_page in contents,
+            f"Contents entry missing/wrong printed page in PDF: {code}",
         )
         heading = " ".join(
             value for _, value in marker_lines(usfm[code], HEADING_MARKERS)
@@ -126,7 +141,10 @@ def check_boundaries(base, project, ids, text, pages, reading_text, sample):
         )
     write_json(
         base / "book-boundaries.json",
-        [{"id": b, "title": t, "page": int(p)} for b, t, p in toc],
+        [
+            {"id": b, "title": t, "page": int(p) + page_offset, "printed_page": int(p)}
+            for b, t, p in toc
+        ],
     )
     reading_pages = reading_text.split("\f")
     reading_pages_without_headers = []
@@ -136,7 +154,7 @@ def check_boundaries(base, project, ids, text, pages, reading_text, sample):
         if lines and str(page_number) in lines[0].split():
             lines = lines[1:]
         reading_pages_without_headers.append("".join(lines))
-    by_code = {b: (i, int(p)) for i, (b, t, p) in enumerate(toc)}
+    by_code = {b: (i, int(p) + page_offset) for i, (b, t, p) in enumerate(toc)}
     for witness in read_json(paths.EDITION_DIR / "witnesses.json"):
         code = witness["id"]
         if code not in by_code or (
@@ -147,7 +165,9 @@ def check_boundaries(base, project, ids, text, pages, reading_text, sample):
             require(sample, f"Special-content witness not checked: {witness}")
             continue
         index, start = by_code[code]
-        end = int(toc[index + 1][2]) - 1 if index + 1 < len(toc) else pages
+        end = (
+            int(toc[index + 1][2]) + page_offset - 1 if index + 1 < len(toc) else pages
+        )
         rendered = key("".join(reading_pages[start - 1 : end]))
         rendered_without_headers = key(
             "".join(reading_pages_without_headers[start - 1 : end])
@@ -235,6 +255,14 @@ def inspect_pdf(pdf, base, project, ids, sample):
     text = capture("pdftotext", "-layout", pdf, "-")
     (base / "text.txt").write_text(text, encoding="utf-8")
     require(not re.search(r"['\"`]", text), "Straight quote in the rendered PDF text")
+    publication = " ".join(text.split("\f")[1].split())
+    require(
+        "Copyright © 2026 Basil Crow" in publication
+        and "Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)"
+        in publication
+        and "https://creativecommons.org/licenses/by-nc-nd/4.0/" in publication,
+        "Publication data page omitted the edition license notice",
+    )
     # PTXprint emits columns in reading order. Protruding edge glyphs can make
     # pdftotext's geometric heuristics merge adjacent columns, so use stream
     # order for wording witnesses; keep the layout extraction above for pages.
@@ -242,7 +270,7 @@ def inspect_pdf(pdf, base, project, ids, sample):
     (base / "reading.txt").write_text(reading_text, encoding="utf-8")
     check_added_words_roman(pdf, reading_text, project, ids, sample)
     require(
-        "Berean Standard Bible" not in text and "CC BY-NC-ND" not in text,
+        "Berean Standard Bible" not in text,
         "Inherited BSB publication text remains",
     )
     logs = "\n".join(

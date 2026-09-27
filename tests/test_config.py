@@ -8,7 +8,7 @@ from ptxprint.modelmap import ModelMap
 from ptxprint.usxutils import merge_sty, simple_parse
 
 from bible import paths
-from bible.project import bsb_baseline
+from bible.project import FRONT_TEMPLATE, bsb_baseline
 
 LAYOUT = paths.CONFIG_DIR / "layout.ini"
 STYLE_MODS = paths.CONFIG_DIR / "ptxprint-mods.sty"
@@ -70,6 +70,28 @@ def test_layout_sets_every_key_of_a_shared_setting():
         assert group <= overlay.keys(), f"{key} is also stored as {group - {key}}"
         values = {normalized(k, overlay[k]) for k in group}
         assert len(values) == 1, f"{sorted(group)} disagree"
+
+
+def test_publication_data_uses_project_license_fields():
+    cfg = read_cfg(LAYOUT.read_text(encoding="utf-8"))
+    front = FRONT_TEMPLATE.read_text(encoding="utf-8")
+    assert cfg["project"]["copyright"] == "Copyright © 2026 Basil Crow"
+    assert (
+        "Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International"
+        in cfg["project"]["license"]
+    )
+    assert (
+        "https://creativecommons.org/licenses/by-nc-nd/4.0/"
+        in cfg["project"]["license"]
+    )
+    assert (
+        front.index("\\periph Title Page")
+        < front.index("\\periph Publication Data")
+        < front.index("\\periph Table of Contents")
+    )
+    assert "\\zcopyright" in front and "\\zlicense" in front
+    assert "\\resetpagenums -1" in front
+    assert cfg["project"]["ifcolophon"] == "False"
 
 
 def style_value(value):

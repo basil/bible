@@ -16,6 +16,7 @@ from bible.prepare import front_matter_text, recorder, sample_chapters, scriptur
 from bible.typography import typographic_text
 
 BSB_DEFAULT = "shared/ptxprint/Default"
+FRONT_TEMPLATE = paths.UPSTREAM / "python/lib/ptxprint/FRTtemplateBasic.txt"
 # The generated PTXprint project, and where PTXprint writes its processed copies.
 PROJECT_DIR = "projects/BIBLE"
 PROCESSED_DIR = "local/ptxprint/Bible"
@@ -124,16 +125,12 @@ def write_project(mode, base, archives):
     cfg.remove_section("import")
     cfg["project"]["booklist"] = " ".join(ids)
     cfg["project"]["book"] = ids[0]
+    if mode == "sample":
+        cfg["vars"]["subtitle"] += " — TYPESETTING SAMPLE: selected chapters"
     with (conf / "ptxprint.cfg").open("w", encoding="utf-8") as f:
         cfg.write(f)
     for name in ("ptxprint-mods.sty", "ptxprint-mods.tex", "changes.txt"):
         shutil.copyfile(paths.CONFIG_DIR / name, conf / name)
-    front = (paths.CONTENT_DIR / "front.sfm").read_text(encoding="utf-8")
-    if mode == "sample":
-        require(r"\mt1 THE HOLY BIBLE" in front, "Cannot label the sample title page")
-        front = front.replace(
-            r"\mt1 THE HOLY BIBLE",
-            "\\mt1 THE HOLY BIBLE\n\\mt3 TYPESETTING SAMPLE — selected chapters",
-        )
-    (conf / "FRTlocal.sfm").write_text(front, encoding="utf-8")
+    # PTXprint's own basic template supplies the title, publication, and TOC.
+    shutil.copyfile(FRONT_TEMPLATE, conf / "FRTlocal.sfm")
     return project, ids

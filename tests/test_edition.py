@@ -5,7 +5,7 @@ import re
 
 import pytest
 
-from bible import edition, paths
+from bible import edition, paths, project
 from bible.checks import CheckFailed
 from bible.edition import MANIFEST, scripture_unit, source_id, source_usfm
 from bible.usfm import (
@@ -325,7 +325,7 @@ def test_esdras_and_nehemias_never_share_names(book_names):
 
 
 def test_no_apocrypha_divider():
-    front = (paths.CONTENT_DIR / "front.sfm").read_text(encoding="utf-8")
+    front = project.FRONT_TEMPLATE.read_text(encoding="utf-8")
     assert "THE APOCRYPHA" not in front
 
 

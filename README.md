@@ -10,7 +10,7 @@ The Old Testament is Sir Lancelot Brenton's English translation of the Septuagin
 
 The book reads in this order:
 
-1. A title page, a table of contents, and the editor's introduction
+1. A title page, a publication data page, a table of contents, and the editor's introduction
 2. The Old Testament, opening with Brenton's preface (1844), introduction (1870), introduction to the Apocrypha, and list of abbreviations
 3. The New Testament, opening with the King James translators' dedication to the king and their preface, "The Translators to the Reader"
 4. Appendices: Brenton's table comparing chapter order in Jeremias, his notes and supplied passages, and eBible's corrections to the text
@@ -39,4 +39,6 @@ Everything needed to produce the PDF is stored in this repository, including the
 
 ## License
 
-The build scripts and configuration are released under the [MIT License](LICENSE). The Bible texts themselves are public domain.
+Copyright © 2026 Basil Crow. Basil Crow’s original editorial material and the assembled edition, to the extent copyright protects them, are licensed under [Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)](https://creativecommons.org/licenses/by-nc-nd/4.0/).
+
+The source translations remain public domain. This edition’s license does not change their status. The build scripts and configuration are released under the [MIT License](LICENSE).
