@@ -8,7 +8,7 @@ The [README](../README.md) describes what's in this Bible. This page explains wh
 - **New Testament:** [eBible's Cambridge Paragraph Bible](https://ebible.org/engkjvcpb/) (`engkjvcpb`), not its standard KJV (`eng-kjv2006`). Only the 27 books, the translators' dedication to King James, and their preface are used. The text keeps Scrivener's paragraphs and poetry layout.
 - **Marginal notes:** [Calvin George's transcription](https://en.literaturabautista.com/exhaustive-listing-marginal-notes-1611-edition-king-james-bible) of the notes in the 1611 King James Bible. Only the 775 New Testament notes are used. The Old Testament notes belong to the KJV's translation from the Hebrew, which this edition doesn't print.
 
-[sources/README.md](../sources/README.md) has the retrieval dates and original copyright notices. The source translations remain public domain. Basil Crow’s original editorial material and the assembled edition, to the extent copyright protects them, are licensed under [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/). The build scripts and configuration are [MIT licensed](../LICENSE).
+[sources/README.md](../sources/README.md) has the retrieval dates and original copyright notices. Both source translations are in the public domain outside the United Kingdom. Brenton's is also in the public domain in the UK, where the right to print and publish the King James Version belongs to the Crown and is licensed only to certain publishers. Basil Crow’s original editorial material and the assembled edition, to the extent copyright protects them, are licensed under [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/). The build scripts and configuration are [MIT licensed](../LICENSE).
 
 ## Order and names
 

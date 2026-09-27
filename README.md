@@ -6,7 +6,7 @@ A complete English Bible, typeset as a single book and ready to print or read on
 
 ## What is in it
 
-The Old Testament is Sir Lancelot Brenton's English translation of the Septuagint, as printed in 1870, arranged in the order followed by the Church of Greece. The New Testament is the King James Version in the text of the _Cambridge Paragraph Bible_, prepared by F. H. A. Scrivener in 1873. Scrivener's own introduction and appendices to that edition are not included. Both translations are in the public domain. The texts are taken from [eBible.org](https://ebible.org/), and Brenton's includes the corrections eBible has made to it.
+The Old Testament is Sir Lancelot Brenton's English translation of the Septuagint, as printed in 1870, arranged in the order followed by the Church of Greece. The New Testament is the King James Version in the text of the _Cambridge Paragraph Bible_, prepared by F. H. A. Scrivener in 1873. Scrivener's own introduction and appendices to that edition are not included. Both translations are in the public domain outside the United Kingdom. Brenton's is also in the public domain in the UK, where the right to print and publish the King James Version belongs to the Crown and is licensed only to certain publishers. The texts are taken from [eBible.org](https://ebible.org/), and Brenton's includes the corrections eBible has made to it.
 
 The book reads in this order:
 
@@ -41,4 +41,4 @@ Everything needed to produce the PDF is stored in this repository, including the
 
 Copyright © 2026 Basil Crow. Basil Crow’s original editorial material and the assembled edition, to the extent copyright protects them, are licensed under [Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)](https://creativecommons.org/licenses/by-nc-nd/4.0/).
 
-The source translations remain public domain. This edition’s license does not change their status. The build scripts and configuration are released under the [MIT License](LICENSE).
+This edition’s license does not change the status of the source translations. The build scripts and configuration are released under the [MIT License](LICENSE).

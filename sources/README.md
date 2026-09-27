@@ -11,7 +11,7 @@ Both archives were retrieved from eBible.org on 2026-09-23.
 | `eng-Brenton_usfm.zip` | [eBible](https://ebible.org/Scriptures/eng-Brenton_usfm.zip) | `copr.htm` in the archive; `brenton-notice.html` |
 | `engkjvcpb_usfm.zip`   | [eBible](https://ebible.org/Scriptures/engkjvcpb_usfm.zip)   | `copr.htm` in the archive; `kjv-notice.html`     |
 
-Both texts are in the public domain. The King James notice also mentions the Crown's rights over printing it in the United Kingdom. `brenton-notice.html` and `kjv-notice.html` are copies of eBible's [Brenton](https://ebible.org/eng-Brenton/copyright.htm) and [KJV](https://ebible.org/engkjvcpb/copyright.htm) copyright pages, saved the same day.
+Both texts are in the public domain outside the United Kingdom. Brenton's is also in the public domain in the UK, where the right to print and publish the King James Version belongs to the Crown and is licensed only to certain publishers under letters patent. See the [UK Intellectual Property Office's guidance](https://www.gov.uk/government/publications/copyright-notice-duration-of-copyright-term/copyright-notice-duration-of-copyright-term). `brenton-notice.html` and `kjv-notice.html` are unaltered copies of eBible's [Brenton](https://ebible.org/eng-Brenton/copyright.htm) and [KJV](https://ebible.org/engkjvcpb/copyright.htm) copyright pages, saved the same day.
 
 ## 1611 marginal notes
 
