@@ -56,8 +56,8 @@ The sample prints the chapters listed in `edition/sample.json`. They were picked
 The build checks its own work and stops rather than produce a PDF from bad input.
 
 - **First**, it checks the hash of every source archive. Replacing a source is a deliberate step (see below), never something a build does on its own.
-- **While preparing the text**, it compares each book it changes against the original. Apart from the intended changes, every word, punctuation mark, verse, note, and piece of markup must come through intact. PTXprint's own preprocessing is checked the same way.
-- **After typesetting**, it checks the PDF: every page is A5, all fonts are embedded, no glyphs are missing, the contents list every book once with the right page numbers, and each phrase in `edition/witnesses.json` is there.
+- **While preparing the text**, it compares each book it changes against the original. Apart from the intended changes, every word, punctuation mark, verse, note, and piece of markup must come through intact. PTXprint's own preprocessing is checked the same way. It reads every citation, in the notes and in the front and back matter, and stops at one that it can't read or that names a verse the edition doesn't print.
+- **After typesetting**, it checks the PDF: every page is A5, all fonts are embedded, no glyphs are missing, the contents list every book once with the right page numbers, each phrase in `edition/witnesses.json` is there, and nothing on its pages cites as a source writes ("Rom. 4. 7") instead of as the edition prints ("Romans 4:7").
 
 `make test` runs two suites. The pytest suite in `tests/` is organized by module: `test_usfm.py` tests `src/bible/usfm.py`, and so on, and `test_config.py` tests `config/`. Besides the editorial rules (book order, titles, and headings) and the text helpers, it tests the build's own checks by breaking one input at a time and making sure the build refuses it. It prepares every book but typesets nothing, so it takes seconds. The [l3build](https://ctan.org/pkg/l3build) test in `tests/tex/` compares the protrusion settings (see below) against real microtype.
 
@@ -82,6 +82,17 @@ The checks catch missing text, not bad pages. After any change that could move t
 ### Reviewing the notes
 
 The build works out which words each note is about, and which of its words are italic, by rule; `edition/brenton-notes.json` and `edition/kjv-notes.json` correct the rules where they go wrong. After changing `src/bible/notes.py` or either file, run `make notes-review` and read `build/notes-review-changes.md`, which lists every note whose words or italics changed since the last review. A correction the rules no longer need fails the build, so remove it. A correction to eBible's text is keyed by its verse. If it changes a note, the bare verse key means the first note; `#2` means the second, `#3` the third, as in the note exceptions. Put several corrections to one note in a list under that note's key. In the preface, which has no verses, a correction is keyed by the words the note stands among. The build fails if the source text is not found once, in that place. Outside a note, a correction may mend only word spaces, so the translation's wording stays eBible's. Every entry in either file gives its reason as `why`. Each correction, and each anchor that differs from George's lemma, must also fit one of the kinds of slip that `src/bible/notes.py` defines (a missing word space, a stray letter, a bracketed remark, and so on), or be marked `"uncategorized": true`.
+
+### Reviewing the citations
+
+A citation that the build can't read stops it, and names the note or the unit and the words: `Citation that can't be read: ISA 34:11 (13. 22)`. So does one that names what the edition doesn't print, which is usually a citation by another numbering. Read the note, and the verse it means, and add a decision to `edition/citations.json` with its reason as `why`:
+
+- `numbering` reads the citation by another numbering than its source's: `kjv`, the King James Bible's; `hebrew`, for a psalm by the Hebrew's number; or `kjv-verses`, for Brenton's chapter with the King James Bible's verse. The edition's numbers are worked out from `edition/versification.json`.
+- `passages` and `print` say what is cited and what prints, where the grammar can't: `print` names a book by its code between braces, as `{PSA} 41:5`, so that the edition's name for it prints.
+- `unprinted` and `print` are for a citation of what the edition doesn't print, as a verse that the Vatican text lacks. It stays among the note's words.
+- `not_a_citation` is for figures that only look like one.
+
+A decision on a note is keyed as the note is. One on front or back matter is keyed by the unit and the words it decides, as `XXB Psalm iv. 4`. A name for a book that a source uses, and the dialects don't have, goes under the source's dialect. A decision that nothing meets, or a name that nothing uses, stops the build, so remove it.
 
 ### Reviewing the numbering
 

@@ -264,8 +264,8 @@ def aligned(texts, code, table):
     pairs.update(placed)
     blocks = {verse: ([verse], [other]) for verse, other in pairs.items()}
     facing = {other: blocks[verse] for verse, other in pairs.items()}
-    _join(texts.edition, texts.kjv, ours, blocks, 0, texts.weight)
-    _join(texts.kjv, texts.edition, theirs, facing, 1, texts.weight)
+    _join(texts.edition, texts.kjv, ours, blocks, 0)
+    _join(texts.kjv, texts.edition, theirs, facing, 1)
     result, seen = [], set()
     paired = {id(block): block for block in blocks.values()}
     for verse in ours:
@@ -342,7 +342,7 @@ def _out_of_order(texts, ours, theirs, pairs, table):
     return found
 
 
-def _join(near, far, order, blocks, side, weight):
+def _join(near, far, order, blocks, side):
     """Join each verse left over on one side to the pair before or after it,
     if the pair's other side has the greater share of its words."""
     for n, verse in enumerate(order):

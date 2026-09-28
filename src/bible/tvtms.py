@@ -16,7 +16,6 @@ import functools
 import re
 from dataclasses import dataclass
 
-from bible import paths
 from bible.references import Verse
 from bible.sources import SOURCES, pinned_bytes
 from bible.usfm import chapter_parts, verse_spans, words_of

@@ -55,6 +55,46 @@ def test_processed_output_relabelled_verse(processed):
 # Rendered PDF
 
 
+@pytest.mark.parametrize(
+    "words",
+    [
+        "See Romans 4:7, 8",
+        "see chapter 6:13, 15; verse 3",
+        "Psalm 117:22–23 (LXX against Heb.)",
+        "Heb. 300. Alex. 500",
+        "Alex. 187 years. Heb. Gram. p. 92",
+        # The numbers that the appendix supplies a passage under.
+        "17. 12And David son of an Ephrathite",
+        "the days of Saul. 13And the three elder sons",
+        "A talent is 187. pound 10. Shillings",
+        "1870. it | 1844. It",
+        "about the year b.c. 280. The Jews",
+        # A verse's number, after the sentence before it.
+        "and the evening star. 32 Or wilt thou",
+    ],
+)
+def test_the_editions_citations_pass(words):
+    verify.check_citations(words)
+
+
+@pytest.mark.parametrize(
+    "words",
+    [
+        "See Rom. 4. 7,8",
+        "See 2 Cor. 9. 7. Compare Heb.",
+        "as Mat. 18.28",
+        "afforded by Gen. xlvii. 31, compared",
+        "Hebrews xi. 21",
+        "2Ki. 19. 18",
+        "1. Cor. 8.11",
+        "See 1 Cor 2. 16. Gr.",
+    ],
+)
+def test_a_citation_as_a_source_writes_it_is_refused(words):
+    with pytest.raises(CheckFailed, match="not written as the edition cites"):
+        verify.check_citations(f"12:3 lamb: {words} and so on")
+
+
 def test_added_words_witness_may_be_left_out_of_the_sample(tmp_path):
     verify.check_added_words_roman(None, "", tmp_path, ["GEN"], True)
 

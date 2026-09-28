@@ -17,7 +17,7 @@ import re
 
 from bible import edition, versification
 from bible.checks import require
-from bible.references import EDITION, Passage, Verse, parse_passage, runs
+from bible.references import EDITION, Verse, parse_passage
 
 WANTING = "wanting"
 # A passage that the editor's pages name: "{PSA 33:13-17}", or with how it is

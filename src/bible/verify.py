@@ -1,6 +1,6 @@
 """Acceptance checks on PTXprint's work: first its processed copy of each
-unit's text, then the rendered PDF (page size, fonts, contents, and the
-phrases in edition/witnesses.json)."""
+unit's text, then the rendered PDF (page size, fonts, contents, the way it
+cites, and the phrases in edition/witnesses.json)."""
 
 import re
 import subprocess
@@ -179,6 +179,27 @@ def check_boundaries(base, project, ids, text, pages, reading_text, sample):
         )
 
 
+# A citation as a source writes it, and not as the edition prints it: a name,
+# a chapter in Arabic or Roman, and a stop before the verse, as "Rom. 4. 7",
+# "Mat. 18.28", "Gen. xlvii. 31", "2Ki. 19. 18". A number that a supplied
+# passage is printed under has no name before it.
+FOREIGN_CITATION = re.compile(
+    r"(?<![\w.])(?:[1-4]\.? ?)?[A-Z][a-z]+\.? (?:\d+|[ivxlc]+)\. ?\d+"
+)
+
+
+def check_citations(reading_text):
+    """Every citation on the pages is in the edition's way of writing.
+
+    Preparation reads each citation where its source is read, and refuses
+    what it can't read. This looks at the pages themselves, so that words
+    which no reading met, as those of a unit added later, don't cite in a
+    way of their own unnoticed.
+    """
+    found = sorted({match[0] for match in FOREIGN_CITATION.finditer(reading_text)})
+    require(not found, f"Citation not written as the edition cites: {found[:12]}")
+
+
 def check_added_words_roman(pdf, reading_text, project, ids, sample):
     # Malachias 4:2 has "\\add shall be\\add* in his wings". Check the added
     # words against their roman neighbours; "healing" may break as "heal- / ing".
@@ -269,6 +290,7 @@ def inspect_pdf(pdf, base, project, ids, sample):
     reading_text = capture("pdftotext", "-raw", pdf, "-")
     (base / "reading.txt").write_text(reading_text, encoding="utf-8")
     check_added_words_roman(pdf, reading_text, project, ids, sample)
+    check_citations(reading_text)
     require(
         "Berean Standard Bible" not in text,
         "Inherited BSB publication text remains",

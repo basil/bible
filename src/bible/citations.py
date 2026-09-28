@@ -217,7 +217,7 @@ def _items(cited, tongue, last_verse):
     return tuple(found)
 
 
-def _carried(book, passage):
+def _carried(passage):
     """A King James passage's items in the edition, which may be in more
     than one place."""
     found = versification.edition_passages(passage)
@@ -297,7 +297,6 @@ def _edition(book, items, numbering):
                 f"Verses by the Hebrew's numbering: {book} {item}",
             )
             moved += _carried(
-                ours,
                 Passage(
                     Verse(theirs, chapter, item.first),
                     Verse(theirs, chapter, item.last),
