@@ -249,15 +249,8 @@ def inspect_pdf(pdf, base, project, ids, sample):
         "Unembedded PDF font",
     )
     require(
-        all(f in fonts for f in ("Utopia", "GFSDidot", "Ezra")),
-        "Expected text/quotation fonts missing",
-    )
-    # Erewhon Math apart from the verse numbers' Erewhon: Utopia has no ≠, which
-    # the introduction and the quotation links print, so a fallback that failed
-    # would drop it without an error.
-    require(
-        re.search(r"Erewhon-(?!Math)", fonts) and "Erewhon-Math" in fonts,
-        "Verse-number font or the ≠ fallback font, Erewhon Math, missing",
+        all(f in fonts for f in ("Utopia", "Erewhon", "GFSDidot", "Ezra")),
+        "Expected text/verse-number/quotation fonts missing",
     )
     text = capture("pdftotext", "-layout", pdf, "-")
     (base / "text.txt").write_text(text, encoding="utf-8")

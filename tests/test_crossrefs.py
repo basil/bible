@@ -20,16 +20,26 @@ from bible.files import read_json
 from bible.prepare import recorder, scripture_text
 
 NAMES = {"MAT": "Matthew", "ISA": "Isaiah"}
+TABLE_CODES = {
+    "A": "A.s",
+    "B": "B.s",
+    "C": "C.I.r",
+    "D": "D.s.I.r",
+    "E": "E.I.r",
+}
 
 
 def brenton_link(origin, target, display, passage=None, cls="D"):
     """A Brenton verse's link to one New Testament passage."""
+    code = TABLE_CODES[cls]
     return {
         "origin": origin,
         "passages": [passage or origin],
         "targets": [target],
         "target_display": display,
         "class": cls,
+        "table_code": code,
+        "gloss": crossrefs.gloss(cls, code),
         "row_ids": ["Q-test"],
     }
 
@@ -39,7 +49,13 @@ def isaiah_link(origin="ISA 1:9"):
 
 
 def row(id, nt, ot, cls="A"):
-    return {"id": id, "nt": [nt], "ot": [ot], "class": cls}
+    return {
+        "id": id,
+        "nt": [nt],
+        "ot": [ot],
+        "class": cls,
+        "table_code": TABLE_CODES[cls],
+    }
 
 
 def unlinked(code, archives):
@@ -144,25 +160,41 @@ def test_malformed_link_is_rejected_by_link_parser():
     )
 
 
-@pytest.mark.parametrize("cls", sorted(crossrefs.CLASS_GLOSSES))
-def test_every_class_prints_a_link_the_parser_reads(cls):
-    link = {**isaiah_link(), "class": cls}
+@pytest.mark.parametrize(
+    "code", ["A.s", "B.s", "C.I.r", "C.II.r.o", "D.s.II.r.o", "E.I.r"]
+)
+def test_every_printed_outcome_parses(code):
+    cls = code[0]
+    link = {**isaiah_link(), "class": cls, "gloss": crossrefs.gloss(cls, code)}
     match = LINK.fullmatch(_link_usfm(link))
     assert match is not None
-    assert match.groups() == ("1:9", "Romans 9:29", crossrefs.CLASS_GLOSSES[cls])
+    assert (*match.groups()[:2], match[3] or "") == (
+        "1:9",
+        "Romans 9:29",
+        link["gloss"] or "",
+    )
 
 
-def test_classes_that_differ_in_the_hebrew_and_septuagint_are_glossed_apart():
-    glosses = crossrefs.CLASS_GLOSSES
-    assert len(set(glosses.values())) == len(glosses)
-    assert glosses["C"] != glosses["E"]
+def test_scope_glosses():
+    assert crossrefs.gloss("C", "C.I.r") == crossrefs.gloss("A", "A.s")
+    assert crossrefs.gloss("C", "C.II.r.o") is None
+    assert crossrefs.gloss("C", "C.III.a.2.a") is None
+    assert crossrefs.gloss("E", "E.I.r") is None
+    assert crossrefs.gloss("D", "D.s.II.r.o") == "LXX against Heb."
 
 
-def test_a_gloss_breaks_before_its_relation_but_not_after():
-    for gloss in crossrefs.CLASS_GLOSSES.values():
-        for relation in "=≠":
-            if relation in gloss:
-                assert f" {relation}\u00a0" in gloss, gloss
+def test_bare_link_parses_but_unknown_gloss_does_not():
+    assert LINK.findall(r"\x - \xo 1:9 \xt Romans 9:29\x*") == [
+        ("1:9", "Romans 9:29", "")
+    ]
+    assert not LINK.fullmatch(r"\x - \xo 1:9 \xt Romans 9:29 \xta (unknown)\x*")
+
+
+def test_glossed_and_bare_links_round_trip(archives):
+    original = unlinked("ISA", archives)
+    bare = {**isaiah_link(), "target_display": "Matthew 4:6", "gloss": None}
+    linked = apply_links("ISA", original, [isaiah_link(), bare], recorder(None, "ISA"))
+    assert LINK.sub("", linked) == original
 
 
 def test_a_target_with_a_parenthesis_is_refused():
@@ -191,6 +223,26 @@ def test_a_quotation_links_once_at_the_first_verse_of_each_passage(links):
         ] == [origin]
 
 
+def test_shared_origin_uses_manifest_book_order(links):
+    assert [
+        link["target_display"].split()[0]
+        for link in links["ISA"]
+        if link["origin"] == "ISA 40:3"
+    ] == ["Matthew", "Mark", "Luke", "John"]
+
+
+def test_real_link_gloss_counts(links):
+    from collections import Counter
+
+    counts = Counter(link["gloss"] for book in links.values() for link in book)
+    assert counts == {
+        "Heb. and LXX": 257,
+        "Heb. against LXX": 20,
+        "LXX against Heb.": 72,
+        None: 226,
+    }
+
+
 def test_inserted_link_cannot_change_scripture_wording(monkeypatch, archives):
     original = crossrefs._link_usfm
     monkeypatch.setattr(
@@ -202,48 +254,52 @@ def test_inserted_link_cannot_change_scripture_wording(monkeypatch, archives):
         )
 
 
-def test_identical_visible_links_coalesce_without_losing_source_ids(patched):
-    patched(quotations, "DECISIONS")["class_conflicts"] = []
-    rows = [row("Q-a", "MAT 1:1", "ISA 1:1"), row("Q-b", "MAT 1:1", "ISA 1:1")]
-    links = planned_links(rows, NAMES)
-    assert sum(map(len, links.values())) == 2
-    assert all(
-        link["row_ids"] == ["Q-a", "Q-b"]
-        for values in links.values()
-        for link in values
-    )
-
-
-def test_coalesced_link_keeps_every_passage_it_stands_for(patched):
-    patched(quotations, "DECISIONS")["class_conflicts"] = []
-    rows = [row("Q-a", "MAT 1:1", "ISA 1:1-2"), row("Q-b", "MAT 1:1", "ISA 1:1")]
-    [coalesced] = planned_links(rows, NAMES)["ISA"]
-    assert coalesced["origin"] == "ISA 1:1"
-    assert coalesced["passages"] == ["ISA 1:1-2", "ISA 1:1"]
-
-
 def test_conflicting_classes_need_an_editorial_resolution(patched):
     patched(quotations, "DECISIONS")["class_conflicts"] = []
     rows = [row("Q-a", "MAT 1:1", "ISA 1:1"), row("Q-b", "MAT 1:1", "ISA 1:1", "D")]
-    with pytest.raises(CheckFailed, match="Conflicting classes"):
+    with pytest.raises(CheckFailed, match="Conflicting glosses"):
         planned_links(rows, NAMES)
+
+
+def test_equal_printed_glosses_do_not_conflict(patched):
+    patched(quotations, "DECISIONS")["class_conflicts"] = []
+    rows = [
+        row("Q-a", "MAT 1:1", "ISA 1:1"),
+        # Its links name other ranges, so none prints the same as Q-a's.
+        row("Q-c", "MAT 1:1-2", "ISA 1:1-2", "C"),
+    ]
+    links = planned_links(rows, NAMES)
+    assert {link["gloss"] for link in links["MAT"]} == {"Heb. and LXX"}
 
 
 def test_overlapping_passages_with_conflicting_classes_need_a_decision(patched):
     patched(quotations, "DECISIONS")["class_conflicts"] = []
     # No two links display the same range, but both rows join MAT 1:2 and ISA 1:2.
     rows = [row("Q-a", "MAT 1:1-2", "ISA 1:1-2"), row("Q-b", "MAT 1:2", "ISA 1:2", "D")]
-    with pytest.raises(CheckFailed, match="Conflicting classes"):
+    with pytest.raises(CheckFailed, match="Conflicting glosses"):
+        planned_links(rows, NAMES)
+
+
+def test_identical_links_at_one_verse_are_refused(patched):
+    patched(quotations, "DECISIONS")["class_conflicts"] = []
+    rows = [row("Q-a", "MAT 1:1", "ISA 1:1"), row("Q-c", "MAT 1:1", "ISA 1:1", "C")]
+    # A and C.I print alike, so the two would print the same link twice.
+    with pytest.raises(CheckFailed, match="Identical quotation links at one verse"):
         planned_links(rows, NAMES)
 
 
 def test_conflict_decision_covers_every_contributor_in_any_order(patched):
-    rows = [row(f"Q-{c}{i}", "MAT 1:1", "ISA 1:1", c) for i, c in enumerate("ADA")]
+    rows = [
+        row("Q-A0", "MAT 1:1", "ISA 1:1"),
+        row("Q-D1", "MAT 1:1", "ISA 1:1", "D"),
+        # Joins the same verses, but its links name other ranges.
+        row("Q-A2", "MAT 1:1-2", "ISA 1:1-2"),
+    ]
     patched(quotations, "DECISIONS")["class_conflicts"] = [
         {"rows": [r["id"] for r in reversed(rows)], "why": "x"}
     ]
     links = planned_links(rows, NAMES)
-    assert sorted(link["class"] for link in links["MAT"]) == ["A", "D"]
+    assert sorted(link["class"] for link in links["MAT"]) == ["A", "A", "D"]
 
 
 def test_passage_mapped_across_chapters_prints_as_ranges(patched):
@@ -363,6 +419,11 @@ def test_every_link_lands_and_every_merge_decision_is_used(prepared, links):
     applied = [e for e in log if e["operation"] == LINK_OPERATION]
     merged = [e for e in log if e["operation"] == MERGE_OPERATION]
     assert sum(len(e["links"]) for e in applied) == sum(map(len, links.values()))
+    assert all(
+        {"class", "table_code", "gloss", "row_ids"} <= entry.keys()
+        for operation in applied
+        for entry in operation["links"]
+    )
     assert {key for e in merged for key in e["merge_decisions"]} == set(
         quotations.DECISIONS["note_merges"]
     )

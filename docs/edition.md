@@ -99,11 +99,24 @@ The same file corrects 74 slips in eBible's text, among them Hebrew and Greek mi
 
 ## Quotations
 
-Where the New Testament quotes the Old, both ends are linked: the first verse of the quotation names the passage it quotes, and the first verse of that passage names the quotation. Putting Brenton's Septuagint beside the King James New Testament invites one question above others, whether the apostles were quoting the Greek Bible, so each link also says how the quotation's wording stands to the Hebrew and the Septuagint.
+Where the New Testament quotes the Old, both ends are linked: the first verse of the quotation names the passage it quotes, and the first verse of that passage names the quotation. Links at one verse follow the edition's book order.
 
-Those judgments are David McCalman Turpie's, from _The Old Testament in the New_ (1868), which gives one of five classes to every quotation it tables. His letters A–E aren't printed, because Archer and Chirichigno's better-known A–F classes give the same letters other meanings. Short glosses such as "LXX against Heb." take their place, and the introduction explains them.
+The judgments come from David McCalman Turpie's _The Old Testament in the New_ (1868). It is in the public domain, tables the quotations completely, and judges the underlying Hebrew and Greek texts rather than either English version. Turpie gives each tabled quotation one of five classes, A–E, according to its agreement with the Hebrew and the Septuagint ([introductory remarks, p. XVI, PDF p. 22](https://archive.org/download/oldtestamentinne00turp/oldtestamentinne00turp.pdf#page=22)). His table codes further distinguish the same or different word order (`s`/`d`); variation in words, clauses, or both (`I`/`II`/`III`); and rendering, omission, or addition (`r`/`o`/`a`). Digits before the last letters locate the clauses ([table of contents, pp. IX–XII, PDF pp. 15–18](https://archive.org/download/oldtestamentinne00turp/oldtestamentinne00turp.pdf#page=15)).
 
-`edition/turpie.json` transcribes the references and class of each of Turpie's 282 entries, with the page of the [scan](../sources/README.md#new-testament-quotations-of-the-old-testament) it comes from. It records references only, not the quoted words. `edition/quotations.json` holds the edition's own decisions, each with its reason. It leaves out nine entries: eight that Turpie himself doubts or repeats, and 1 Timothy 5:18, for which he prints no Old Testament heading. At Hebrews 2:13, where Turpie withdraws the second clause from his first entry and tables it again under another class, the first entry links only the clause he keeps.
+### Printed quotation glosses
+
+The edition prints three glosses and, for two cases, the reference alone:
+
+| Turpie's class and scope | After the reference |
+| --- | --- |
+| A; C.I (words only) | `Heb. and LXX` |
+| B | `Heb. against LXX` |
+| D (any scope) | `LXX against Heb.` |
+| C.II or C.III; E (any scope) | Nothing |
+
+In C, the Septuagint and Hebrew agree. C.I records a difference in words only, so it joins A in the printed gloss: the variation is a matter of form rather than a choice between texts. C.II and C.III record a difference in whole clauses, such as abridgment or joining passages, so the reference alone avoids claiming a wording match. E also prints without a gloss: all three texts differ, and the code does not establish which pair its scope describes. B's subdivisions concern word order; D's describe the Septuagint's departure from the Hebrew. Neither changes its printed gloss. Turpie's letters aren't printed because Archer and Chirichigno's A–F classes give the same letters other meanings. The transformation log records Turpie's letter and table code for each link; the printed gloss is derived from them, not stored in `edition/turpie.json`.
+
+`edition/turpie.json` transcribes the references, class, and table code of each of Turpie's 282 entries, with the page of the [scan](../sources/README.md#new-testament-quotations-of-the-old-testament) it comes from. It records references only, not the quoted words. `edition/quotations.json` holds the edition's own decisions, each with its reason; its `class_conflicts` decisions concern different printed glosses on the same verse pair. It leaves out nine entries: eight that Turpie himself doubts or repeats, and 1 Timothy 5:18, for which he prints no Old Testament heading. At Hebrews 2:13, where Turpie withdraws the second clause from his first entry and tables it again under another class, the first entry links only the clause he keeps.
 
 ### Numbering
 
@@ -123,7 +136,7 @@ A link can point to a verse that exists and still be one verse off, especially w
 
 - Words the translators supplied, which many Bibles print in italics, are set in ordinary type.
 - Brenton's transcription mixes curly and straight quotation marks. The build converts the straight ones with [SmartyPants](https://pypi.org/project/smartypants/), then checks that nothing changed except quotation marks, dashes, and ellipses. The two backtick quotes in Proverbs 21:18 are handled separately. The Cambridge text already has curly quotes, and the edition's own pages are typed with them.
-- The text is set in Utopia, with verse numbers in the superscript figures of Erewhon, a font based on Utopia. Greek is set in GFS Didot and Hebrew in Ezra SIL. The ≠ of the quotation links, which Utopia lacks, is set in Erewhon Math.
+- The text is set in Utopia, with verse numbers in the superscript figures of Erewhon, a font based on Utopia. Greek is set in GFS Didot and Hebrew in Ezra SIL.
 
 ## Known issues
 

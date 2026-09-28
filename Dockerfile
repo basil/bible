@@ -32,7 +32,7 @@ COPY <<EOF /etc/fonts/conf.d/99-accept-local-fonts.conf
 </fontconfig>
 EOF
 # The font archives are committed as downloaded; sources/README.md says
-# where each came from. .dockerignore admits only these four.
+# where each came from. .dockerignore admits only these three.
 COPY sources/*.zip /opt/sources/
 RUN <<EOF
 set -eu
@@ -42,13 +42,11 @@ sha256sum --strict -c <<SUMS
 866855b0296579451c233fc78bec82918996a8df7341ee2f1c09d7bc94440680  GFS_Didot.zip
 754a2e3ebb945ae905d720ac5896b3b34acc9546dd6551ef9536869788629dae  OTF-source-code-pro-2.042R-u_1.062R-i.zip
 865ed6e5b4aeda1b5a350a2dc5d4b239f515059812366acc6dcd04c80fd9d942  erewhon.zip
-afd722e515f0c94e08902c8960f8799736657d98348cb00068d827e71bbbb706  erewhon-math.zip
 SUMS
 fonts=/usr/local/share/fonts
 unzip -qj GFS_Didot.zip 'GFSDidot*.otf' -d $fonts/gfs_didot
 unzip -qj OTF-source-code-pro-2.042R-u_1.062R-i.zip 'OTF/*.otf' -d $fonts/source_code_pro
 unzip -qj erewhon.zip 'erewhon/opentype/*.otf' -d $fonts/erewhon
-unzip -qj erewhon-math.zip 'erewhon-math/Erewhon-Math.otf' -d $fonts/erewhon_math
 # unzip keeps each archive's permissions, ignoring the umask: GFS Didot's
 # are owner-only and Erewhon's group-writable.
 chmod 644 $fonts/*/*.otf

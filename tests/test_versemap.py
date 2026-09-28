@@ -85,4 +85,4 @@ def test_a_lettered_verse_maps_alone_and_never_joins_a_range(scripture):
 def test_a_link_to_a_lettered_verse_prints_its_label(links):
     [link] = [l for l in links["PRO"] if "Q216" in l["row_ids"]]
     assert link["origin"] == "PRO 22:8a"
-    assert _link_usfm(link).startswith(r"\x - \xo 22:8a \xt 2 Corinthians 9:7 ")
+    assert _link_usfm(link) == r"\x - \xo 22:8a \xt 2 Corinthians 9:7\x*"

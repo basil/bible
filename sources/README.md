@@ -30,13 +30,12 @@ George modernized much of the spelling and sometimes had to judge which words a 
 
 ## Fonts
 
-All four are under the SIL Open Font License. Source Code Pro and Erewhon were retrieved on 2026-09-25, and Erewhon Math on 2026-09-27.
+All three are under the SIL Open Font License. Source Code Pro and Erewhon were retrieved on 2026-09-25.
 
 | File                                        | Downloaded from                                                                                                                                 | Version                     | Used for                                                |
 | ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- | ------------------------------------------------------- |
 | `GFS_Didot.zip`                             | [Greek Font Society](https://greekfontsociety-gfs.gr/_assets/fonts/GFS_Didot.zip)                                                               |                             | Greek                                                   |
 | `erewhon.zip`                               | [CTAN](https://mirrors.ctan.org/fonts/erewhon.zip)                                                                                              | 1.123 (2025-06-08)          | Verse numbers                                           |
-| `erewhon-math.zip`                          | [CTAN](https://mirrors.ctan.org/fonts/erewhon-math.zip)                                                                                         | 0.76                        | The ≠ in quotation links, which Utopia lacks            |
 | `OTF-source-code-pro-2.042R-u_1.062R-i.zip` | [Adobe](https://github.com/adobe-fonts/source-code-pro/releases/download/2.042R-u/1.062R-i/1.026R-vf/OTF-source-code-pro-2.042R-u_1.062R-i.zip) | 2.042 upright, 1.062 italic | Nothing printed; PTXprint loads it for crop-mark labels |
 
 The main text font, Utopia, is built from the repository pinned in the `Dockerfile`. The Hebrew font, Ezra SIL, comes from Ubuntu.

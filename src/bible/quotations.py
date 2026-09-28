@@ -1,5 +1,7 @@
 """Turpie's quotation heads as transcribed, and the edition's choices among them."""
 
+import re
+
 from bible import paths
 from bible.checks import require
 from bible.files import read_json
@@ -10,6 +12,12 @@ CLASSES = {"A", "B", "C", "D", "E"}
 # conflicts, and Brenton note merges.
 TURPIE = read_json(paths.EDITION_DIR / "turpie.json")
 DECISIONS = read_json(paths.EDITION_DIR / "quotations.json")
+
+
+def scope(table_code):
+    """The first Roman numeral component of a Turpie table code, if any."""
+    match = re.match(r"^[A-E]\.(?:[sd]\.)?(I{1,3})(?:\.|$)", table_code)
+    return match[1] if match else None
 
 
 def nt_verses(passages):
@@ -67,6 +75,11 @@ def _check_transcription(heads):
                 and head.get("printed_sequence"),
                 f"Missing table heading or sequence: {head['id']}",
             )
+            # A and B divide by word order alone; C-E also by words or clauses.
+            require(
+                (scope(head["table_code"]) is None) == (head["class"] in {"A", "B"}),
+                f"Invalid table scope: {head['id']}",
+            )
 
 
 def reviewed_rows():
@@ -112,13 +125,15 @@ def reviewed_rows():
         if narrowing := narrowed.get(head["id"]):
             part = narrowing["lxx"].split("; ")
             require(
-                {v for p in part for v in expand(p)} < {v for p in ot for v in expand(p)},
+                {v for p in part for v in expand(p)}
+                < {v for p in ot for v in expand(p)},
                 f"Narrowing to what isn't part of its head: {head['id']}",
             )
             ot = part
         row = {
             "id": head["id"],
             "class": head["class"],
+            "table_code": head["table_code"],
             "nt": head["nt"]["normalized"].split("; "),
             "ot": ot,
         }

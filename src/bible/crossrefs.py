@@ -1,4 +1,4 @@
-"""Insert classified reciprocal quotations and merge Brenton's matching notes."""
+"""Insert reciprocal quotation links and merge Brenton's matching notes."""
 
 import collections
 import itertools
@@ -10,21 +10,21 @@ from bible.edition import BOOK_NAME_MARKERS, resolved_book_names, source_usfm
 from bible.usfm import book_header, marker_lines, verse_spans
 from bible.versemap import RANGE, expand, mapped_passages, parse
 
-# Turpie's classes A-E, glossed by how the quotation's wording stands to the
-# Hebrew and the Septuagint. The letters don't print, so the glosses alone must
-# tell the classes apart: C and E differ only in whether the two agree. As in
-# a displayed equation, a line may break before = or ≠ but not after it; PTXprint
-# sets the no-break space as \nobreak\space, so the font needs no glyph for it.
-CLASS_GLOSSES = {
-    "A": "Heb. and LXX",
-    "B": "Heb. against LXX",
-    "C": "neither, LXX =\u00a0Heb.",
-    "D": "LXX against Heb.",
-    "E": "neither, LXX ≠\u00a0Heb.",
-}
+# The printed glosses, by Turpie's class. C.I, which differs from the agreeing
+# Hebrew and Septuagint in words alone, prints as A; the rest of C, and E,
+# print the reference alone.
+GLOSSES = {"A": "Heb. and LXX", "B": "Heb. against LXX", "D": "LXX against Heb."}
+
+
+def gloss(cls, table_code):
+    """What a link prints after its reference, or None for the reference alone."""
+    scope = quotations.scope(table_code)
+    return GLOSSES.get("A" if (cls, scope) == ("C", "I") else cls)
+
+
 LINK = re.compile(
-    r"\\x - \\xo (\d+:\d+[a-z]?) \\xt ([^\\(]*?) \\xta "
-    rf"\(({'|'.join(map(re.escape, CLASS_GLOSSES.values()))})\)\\x\*"
+    r"\\x - \\xo (\d+:\d+[a-z]?) \\xt ([^\\(]*?)"
+    rf"(?: \\xta \(({'|'.join(map(re.escape, GLOSSES.values()))})\))?\\x\*"
 )
 # The transformation record of each book's links, which the notes review reads.
 LINK_OPERATION = "insert reciprocal classified quotation links"
@@ -52,33 +52,26 @@ def planned_links(rows, names):
     """Reciprocal links at the first verse of each quotation's passages, by book.
 
     Each link names the whole of the other side's passages, and each of those
-    passages carries a link back at its own first verse. Identical visible
-    links at one origin are kept once with all their rows and passages. A New
-    Testament verse and a Brenton verse that rows class differently need an
+    passages carries a link back at its own first verse. A New Testament verse
+    and a Brenton verse that rows gloss differently need an
     explicit editorial decision naming the rows, even where the links that
-    join them display different ranges or stand at different verses.
+    join them display different ranges or stand at different verses. Two
+    links that would print alike at one verse are refused.
     """
     by_book = collections.defaultdict(list)
-    signatures = {}
-    # Each (NT verse, Brenton verse) pair with the rows and classes joining it.
-    pair_classes = collections.defaultdict(list)
+    # Each (NT verse, Brenton verse) pair with the rows and glosses joining it.
+    pair_glosses = collections.defaultdict(list)
     sources = {unit["id"]: unit["source"] for unit in edition.MANIFEST["scripture"]}
     conflicts = quotations.DECISIONS["class_conflicts"]
     require(all(c.get("why") for c in conflicts), "Unexplained class conflict")
     resolved = {frozenset(c["rows"]) for c in conflicts}
 
-    def add(row, passage, side, targets, target_display):
+    def add(row, printed, passage, side, targets, target_display):
         origin = expand(passage)[0]
         require(
             sources.get(parse(origin)[0]) == ("kjv" if side == "nt" else "brenton"),
             f"Quotation verse outside its testament's printed books: {origin}",
         )
-        signature = (origin, target_display, row["class"])
-        if link := signatures.get(signature):
-            link["row_ids"].append(row["id"])
-            if passage not in link["passages"]:
-                link["passages"].append(passage)
-            return
         link = {
             "origin": origin,
             # The passages the link stands for, whose verses must all print.
@@ -86,32 +79,50 @@ def planned_links(rows, names):
             "targets": targets,
             "target_display": target_display,
             "class": row["class"],
+            "table_code": row["table_code"],
+            "gloss": printed,
             "row_ids": [row["id"]],
         }
-        signatures[signature] = link
         by_book[parse(origin)[0]].append(link)
 
     for row in rows:
+        printed = gloss(row["class"], row["table_code"])
         mapped_ot = [m for p in row["ot"] for m in mapped_passages(p)]
         to_ot = "; ".join(display_passage(p, names) for p in mapped_ot)
         to_nt = "; ".join(display_passage(p, names) for p in row["nt"])
         for passage in row["nt"]:
-            add(row, passage, "nt", mapped_ot, to_ot)
+            add(row, printed, passage, "nt", mapped_ot, to_ot)
         for passage in mapped_ot:
-            add(row, passage, "ot", row["nt"], to_nt)
+            add(row, printed, passage, "ot", row["nt"], to_nt)
         for pair in itertools.product(
             quotations.nt_verses(row["nt"]), quotations.brenton_verses(row["ot"])
         ):
-            pair_classes[pair].append((row["id"], row["class"]))
+            pair_glosses[pair].append((row["id"], printed))
     # Judged on every contributor, so the order of the rows doesn't matter.
     used_conflicts = set()
-    for pair, contributors in pair_classes.items():
+    for pair, contributors in pair_glosses.items():
         if len({c for _, c in contributors}) == 1:
             continue
         contributing_rows = frozenset(i for i, _ in contributors)
-        require(contributing_rows in resolved, f"Conflicting classes at {pair}")
+        require(contributing_rows in resolved, f"Conflicting glosses at {pair}")
         used_conflicts.add(contributing_rows)
     require(used_conflicts == resolved, "Unused link class conflict decisions")
+    book_order = {unit["id"]: i for i, unit in enumerate(edition.MANIFEST["scripture"])}
+
+    def position(reference):
+        code, chapter, verse = parse(expand(reference)[0])
+        number, letter = re.fullmatch(r"(\d+)([a-z]?)", verse).groups()
+        return book_order[code], chapter, int(number), letter
+
+    for links in by_book.values():
+        visible = collections.Counter(
+            (link["origin"], link["target_display"], link["gloss"]) for link in links
+        )
+        repeated = sorted(key[:2] for key, count in visible.items() if count > 1)
+        require(not repeated, f"Identical quotation links at one verse: {repeated}")
+        links.sort(
+            key=lambda link: (position(link["origin"]), position(link["targets"][0]))
+        )
     return dict(by_book)
 
 
@@ -193,9 +204,10 @@ def _link_usfm(link):
     target = link["target_display"]
     # A parenthesis in the target would run into the gloss's.
     require(not set(target) & set("\\\n("), f"Malformed link target: {target}")
-    gloss = CLASS_GLOSSES[link["class"]]
-    # The reference first, then its gloss: the space before \xta prints.
-    return f"\\x - \\xo {chapter}:{verse} \\xt {target} \\xta ({gloss})\\x*"
+    marker = f"\\x - \\xo {chapter}:{verse} \\xt {target}"
+    if link["gloss"]:
+        marker += f" \\xta ({link['gloss']})"
+    return marker + "\\x*"
 
 
 def merged_notes(code, found, links, archives, record):
@@ -309,7 +321,7 @@ def apply_links(code, text, links, record):
         (
             link["origin"].partition(" ")[2],
             link["target_display"],
-            CLASS_GLOSSES[link["class"]],
+            link["gloss"] or "",
         )
         for link in links
     )
@@ -328,6 +340,8 @@ def apply_links(code, text, links, record):
                 "origin": link["origin"],
                 "passages": link["passages"],
                 "class": link["class"],
+                "table_code": link["table_code"],
+                "gloss": link["gloss"],
                 "target": link["target_display"],
                 "row_ids": link["row_ids"],
             }

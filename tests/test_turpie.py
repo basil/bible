@@ -9,7 +9,7 @@ import re
 
 import pytest
 
-from bible.quotations import TURPIE
+from bible.quotations import TURPIE, scope
 from bible.versemap import expand, parse
 
 ROWS = TURPIE["rows"]
@@ -206,6 +206,14 @@ def test_classes_follow_the_tables():
     # fixes its class: a class read from the wrong table goes backwards.
     classes = [row["class"] for row in ROWS if row["kind"] == "table"]
     assert classes == sorted(classes)
+
+
+def test_table_codes_have_the_expected_scope():
+    # A and B divide by word order alone; C-E also by words, clauses, or both.
+    for row in ROWS:
+        if row["kind"] == "table":
+            has_scope = scope(row["table_code"]) is not None
+            assert has_scope == (row["class"] not in {"A", "B"}), row["id"]
 
 
 def test_each_table_numbers_its_heads_in_order():
