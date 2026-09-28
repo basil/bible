@@ -11,14 +11,12 @@ edition/quotations.json with the reason.
 """
 
 import collections
-import math
-import re
 
 import pytest
 
-from bible import quotations, versemap
-from bible.references import Passage, Verse, verse_at
-from bible.usfm import verse_spans, words_of
+from bible import quotations, versification
+from bible.alignment import Verses
+from bible.references import Passage, Verse
 
 # How far a neighbour must outscore a target to flag it.
 MARGIN = 0.05
@@ -26,70 +24,6 @@ MARGIN = 0.05
 # the check can't vouch for it.
 UNSCORED = 2 * MARGIN
 SHIFTS = (-3, -2, -1, 1, 2, 3)
-# Words so common, or so much the quoting formula's, that sharing them shows nothing.
-STOP_WORDS = set(
-    """a all also am an and are art as at be because been behold but by did do
-    even for from had hath have he her him his i if in into is it its let may me
-    might my no nor not o of on or our said saith say says saying shall she so
-    spake spoke that the thee their them then there therefore these they this
-    thou thy to unto upon us was we were what when wherefore which who whom will
-    with written ye you your""".split()
-)
-
-
-def stem(word):
-    """A word without the commonest inflexions, so that sows meets sow."""
-    for suffix in ("eth", "est", "ing", "ed", "es", "s"):
-        if word.endswith(suffix) and len(word) - len(suffix) >= 3:
-            return word[: -len(suffix)]
-    return word
-
-
-class Verses:
-    """Every printed verse's content words, and each book's verses in order."""
-
-    def __init__(self, scripture):
-        self.words = {}
-        self.order = collections.defaultdict(list)
-        for code, text in scripture.items():
-            # A note's words aren't the verse's.
-            text = re.sub(r"\\([fx]) .*?\\\1\*", "", text, flags=re.S)
-            for reference, start, end in verse_spans(text):
-                verse = verse_at(code, reference)
-                self.words[verse] = {
-                    stem(w) for w in words_of(text[start:end]) if w not in STOP_WORDS
-                }
-                self.order[code].append(verse)
-        self.index = {
-            v: i for verses in self.order.values() for i, v in enumerate(verses)
-        }
-        frequency = collections.Counter(w for ws in self.words.values() for w in ws)
-        self.weight = {
-            w: math.log(len(self.words) / (1 + n)) for w, n in frequency.items()
-        }
-
-    def bag(self, verses):
-        return set().union(*(self.words[v] for v in verses))
-
-    def score(self, quotation, source):
-        """The share of the quotation's weighted words the source also has.
-
-        A quotation is usually part of its source verse, so only the
-        quotation's side is measured.
-        """
-        total = sum(self.weight[w] for w in quotation)
-        return sum(self.weight[w] for w in quotation & source) / total if total else 0
-
-    def shifted(self, verses, k):
-        """The verses k places on in their book's printed order, lettered verses included."""
-        result = []
-        for verse in verses:
-            book = self.order[verse.book]
-            i = self.index[verse] + k
-            if not 0 <= i < len(book):
-                return None
-            result.append(book[i])
-        return result
 
 
 @pytest.fixture(scope="module")
@@ -165,7 +99,7 @@ def test_a_misplaced_link_is_outscored(verses, patched):
     # mapping exception, the link would land on 22:8.
     [row] = [r for r in quotations.reviewed_rows() if r["id"] == "Q216"]
     assert alignments(verses, [row])["Q216"][0] >= UNSCORED
-    del patched(versemap, "EXCEPTIONS")["PRO 22:8"]
+    del patched(versification, "EXCEPTIONS")["PRO 22:8"]
     target, rival = alignments(verses, [row])["Q216"]
     assert rival > target + MARGIN
 
@@ -246,7 +180,7 @@ def test_a_range_run_a_verse_too_far_is_caught(verses, side):
             next_verse = Verse(last.book, last.chapter, last.number + 1)
             beyond = next_verse
             if side == "ot":
-                beyond = versemap.lxx_to_edition(beyond)
+                beyond = versification.lxx_to_edition(beyond)
             if beyond not in verses.words:
                 continue
             run_on = {**row, side: [*row[side]]}

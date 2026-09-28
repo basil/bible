@@ -137,39 +137,39 @@
   },
   "lxx_to_edition": {
     "JOL 2:28-32": {
-      "target": "JOL 3:1-5",
+      "numbering": "kjv",
       "why": "Turpie's Joel II.28-32 heading uses the continuous chapter 2 numbering; Brenton numbers this oracle as Joel 3:1-5."
     },
     "HOS 1:10": {
-      "target": "HOS 2:1",
+      "numbering": "kjv",
       "why": "Turpie prints Hosea I.10 while Brenton places the same verse at Hosea 2:1."
     },
     "HOS 2:23": {
-      "target": "HOS 2:25",
+      "numbering": "kjv",
       "why": "Turpie prints Hosea II.23 in the English numbering; Brenton's 'will say to that which was not my people, Thou art my people' is Hosea 2:25, as Turpie's Hebrew column has it."
     },
     "EXO 22:28": {
-      "target": "EXO 22:27",
+      "numbering": "kjv",
       "why": "Turpie prints Exodus XXII.28 in the English numbering; Brenton's 'nor speak ill of the ruler of thy people' is Exodus 22:27, as Turpie's Hebrew column has it."
     },
     "JER 9:24": {
-      "target": "JER 9:23",
+      "numbering": "kjv",
       "why": "Turpie prints Jeremiah IX.24 in the English numbering; Brenton's 'let him that boasts boast in this' is Jeremiah 9:23, as Turpie's Hebrew column has it."
     },
     "MIC 5:2": {
-      "target": "MIC 5:1",
+      "numbering": "kjv",
       "why": "Turpie prints Micah V.2 in the English numbering; Brenton's 'And thou, Bethleem' is Micah 5:1, as Turpie's Hebrew column has it."
     },
     "ISA 64:4": {
-      "target": "ISA 64:3",
+      "numbering": "kjv",
       "why": "Turpie prints Isaiah LXIV.4 in the English numbering; Brenton's 'neither have our eyes seen a God beside thee' is Isaiah 64:3, as Turpie's Hebrew column has it."
     },
     "ISA 9:1": {
-      "target": "ISA 8:23",
+      "numbering": "kjv",
       "why": "Turpie prints Isaiah IX.1-2 in the English numbering; Brenton's 'land of Zabulon, land of Nephthalim' is Isaiah 8:23, as Turpie's Hebrew column has it."
     },
     "ISA 9:2": {
-      "target": "ISA 9:1",
+      "numbering": "kjv",
       "why": "Turpie prints Isaiah IX.1-2 in the English numbering; Brenton's 'O people walking in darkness, behold a great light' is Isaiah 9:1, as Turpie's Hebrew column has it."
     },
     "PRO 22:8": {

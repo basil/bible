@@ -1,0 +1,131 @@
+"""STEPBible's table, read against a Bible's verses."""
+
+import pytest
+
+from bible import tvtms
+from bible.references import Verse
+from bible.tvtms import Bible, Row
+
+GREEK = (
+    "\\id JOL\n\\c 2\n\\p\n\\v 26 And ye shall eat.\n\\v 27 And ye shall know.\n"
+    "\\c 3\n\\p\n\\v 1 And it shall come to pass afterward that I will pour out.\n"
+    "\\v 2 And on my servants.\n\\v 2a And on my handmaids in those days.\n"
+    "\\c 4\n\\p\n\\v 1 For, behold, in those days.\n"
+)
+
+
+@pytest.fixture
+def bible():
+    return Bible({"JOL": GREEK})
+
+
+def test_the_table_is_read_whole():
+    found, unread = tvtms.rows()
+    assert len(found) == 22860
+    # Lists of scattered verses, as "9:10,15,23,24,25", name no run to read.
+    assert len(unread) == 14
+    assert {row.action.rstrip("*") for row in found} >= {
+        "Keep verse",
+        "Renumber verse",
+    }
+
+
+@pytest.mark.parametrize(
+    "written,verses",
+    [
+        ("Gen.31:55", [("GEN", "31", 55, "")]),
+        ("Psa.50:Title", [("PSA", "50", 0, "")]),
+        ("1Ki.2:35!a", [("1KI", "2", 35, "a")]),
+        ("Jol.2:28-29", [("JOL", "2", 28, ""), ("JOL", "2", 29, "")]),
+        ("Gen.5:32; 6:1", [("GEN", "5", 32, ""), ("GEN", "6", 1, "")]),
+        ("Gen.2:25-3:1", [("GEN", "2", 25, ""), ("GEN", "3", 1, "")]),
+        ("Est.A:3", [("EST", "A", 3, "")]),
+    ],
+)
+def test_a_reference_names_its_verses(written, verses):
+    assert tvtms._verses(written) == verses
+
+
+@pytest.mark.parametrize("written", ["1Ki.9:10,15", "Gen.1", "5:1", ""])
+def test_an_unreadable_reference_is_none(written):
+    assert tvtms._verses(written) is None
+
+
+@pytest.mark.parametrize(
+    "tests,holds",
+    [
+        ("Jol.3:1=Exist", True),
+        ("Jol.3:5=Exist", False),
+        ("Jol.3:5=NotExist & Jol.3:1=Exist", True),
+        ("Jol.2:27=Last", True),
+        ("Jol.2:32=Last", False),
+        ("JOL.2:27=Last", True),
+        # The second verse's first lettered part, 3:2a.
+        ("Jol.3:2.1=Exist", True),
+        ("Jol.3:2.2=Exist", False),
+        ("Jol.3:TextBeforeV1=NotExist", True),
+        ("Jol.3:1>Jol.3:2", True),
+        ("Jol.3:2*4<Jol.3:1", False),
+        ("Jol.3:2*2<Jol.3:1+Jol.4:1", True),
+        ("", True),
+    ],
+)
+def test_a_test_asks_what_the_bible_has(bible, tests, holds):
+    assert bible.passes(tests) is holds
+
+
+@pytest.mark.parametrize("tests", ["3:1=Exist", "Jol.3:1=Exist & nonsense"])
+def test_an_unreadable_test_is_neither(bible, tests):
+    assert bible.passes(tests) is None
+
+
+def test_the_account_is_of_the_rows_the_bible_passes(bible, monkeypatch):
+    rows = [
+        Row(
+            "Hebrew",
+            (("JOL", "3", 1, ""),),
+            (("JOL", "2", 28, ""),),
+            "Renumber verse",
+            "Jol.2:27=Last",
+        ),
+        Row(
+            "English",
+            (("JOL", "3", 1, ""),),
+            (("JOL", "3", 1, ""),),
+            "Keep verse",
+            "Jol.2:32=Last",
+        ),
+        Row(
+            "Greek",
+            (("JOL", "3", 2, "a"),),
+            (("JOL", "2", 29, ""),),
+            "Renumber verse",
+            "",
+        ),
+        Row(
+            "Greek",
+            (("JOL", "3", 1, "b"),),
+            (("JOL", "2", 28, ""),),
+            "Renumber verse",
+            "",
+        ),
+        Row(
+            "Hebrew",
+            (("HOS", "2", 1, ""),),
+            (("HOS", "1", 10, ""),),
+            "Renumber verse",
+            "",
+        ),
+    ]
+    monkeypatch.setattr(tvtms, "rows", lambda: (rows, []))
+    account = tvtms.account(bible, {"JOL": ["JOL"]})
+    found = {
+        str(verse): [list(map(str, standard)) for standard, _ in answers]
+        for verse, answers in account.items()
+    }
+    assert found == {
+        # A part the Bible doesn't letter is part of its verse.
+        "JOL 3:1": [["JOL 2:28"], ["JOL 2:28"]],
+        "JOL 3:2a": [["JOL 2:29"]],
+    }
+    assert Verse("JOL", 3, 1) in account

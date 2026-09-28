@@ -27,6 +27,12 @@ SOURCES = {
         "retrieved": "2026-09-23",
         "sha256": "7940a2d164513b2bd2dbec2c8570b89ef8673621ed4f30f3099218a7ddd04936",
     },
+    "versification": {
+        "file": "sources/TVTMS - Translators Versification Traditions with Methodology for Standardisation for Eng+Heb+Lat+Grk+Others - STEPBible.org CC BY.txt",
+        "url": "https://github.com/STEPBible/STEPBible-Data/blob/1f342173b881ba5d1a5a4cae6e7c6c3fcc7cac51/Versification/",
+        "retrieved": "2026-09-28",
+        "sha256": "63058e0f20201af4bdaa7d830da5be8f493455d947c5f147d84840b33db9ddf8",
+    },
     "marginal_notes": {
         "file": "sources/exhaustive-listing-marginal-notes-1611-edition-king-james-bible.md",
         "url": "https://en.literaturabautista.com/exhaustive-listing-marginal-notes-1611-edition-king-james-bible",

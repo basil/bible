@@ -6,7 +6,7 @@ from bible import paths
 from bible.checks import require
 from bible.files import read_json
 from bible.references import parse_passage, parse_passages
-from bible.versemap import lxx_to_edition, mapped_passages, unused_exceptions
+from bible.versification import lxx_to_edition, mapped_passages, unused_exceptions
 
 CLASSES = {"A", "B", "C", "D", "E"}
 # Turpie's heads as read from the page, and the edition's exclusions, class
@@ -126,8 +126,7 @@ def reviewed_rows():
         if narrowing := narrowed.get(head["id"]):
             part = parse_passages(narrowing["lxx"])
             require(
-                {v for p in part for v in p.verses}
-                < {v for p in ot for v in p.verses},
+                {v for p in part for v in p.verses} < {v for p in ot for v in p.verses},
                 f"Narrowing to what isn't part of its head: {head['id']}",
             )
             ot = part

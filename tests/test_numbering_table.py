@@ -18,10 +18,10 @@ import re
 
 import pytest
 
-from bible import edition, paths, quotations, versemap
+from bible import edition, paths, quotations, versification
 from bible.crossrefs import _alias_key, _aliases
 from bible.references import EDITION, Passage, parse_passage
-from test_quotation_alignment import Verses
+from bible.alignment import Verses
 
 # How far a counterpart must outscore the verse numbered like it.
 MARGIN = 0.1
@@ -187,9 +187,7 @@ def test_the_table_numbers_every_linked_verse_numbered_differently(
     checked = {
         verse
         for verse in linked
-        if not lettered(verse)
-        and verse.book != "PSA"
-        and not in_brenton_table(verse)
+        if not lettered(verse) and verse.book != "PSA" and not in_brenton_table(verse)
     }
     # The table numbers linked verses only.
     assert set(rows) <= checked
@@ -235,12 +233,28 @@ def test_a_linked_lettered_verse_is_named_but_has_no_row(
         assert verse not in table[1], verse
 
 
+def test_the_table_is_as_the_file_has_it(table):
+    # Until the file prints the table, the table typed here must agree with it.
+    psalms, rows = table
+    for verse, kjv in rows.items():
+        assert versification.to_kjv(verse) == (kjv,), str(verse)
+    for brenton, kjv in psalms:
+        found = {
+            counterpart.chapter
+            for psalm in brenton
+            # Every psalm has a second verse, which is never its title alone
+            # in both Bibles.
+            for verse in versification.verses(f"PSA {psalm}:2")
+            for counterpart in versification.to_kjv(verse)
+        }
+        assert found <= set(kjv), brenton
+
+
 def test_every_exception_is_a_row(table):
     # Each exception pairs Turpie's English number with Brenton's, so it is
     # exactly a row of the table, unless it names a lettered verse.
-    for source, exception in versemap.EXCEPTIONS.items():
-        targets = parse_passage(exception["target"]).verses
+    for source in versification.EXCEPTIONS:
+        excepted = parse_passage(source).verses
+        targets = [versification.lxx_to_edition(verse) for verse in excepted]
         if not lettered(targets[0]):
-            assert [table[1].get(t) for t in targets] == parse_passage(
-                source
-            ).verses, source
+            assert [table[1].get(t) for t in targets] == excepted, source

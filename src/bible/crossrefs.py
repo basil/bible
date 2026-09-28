@@ -9,7 +9,7 @@ from bible.checks import require
 from bible.edition import BOOK_NAME_MARKERS
 from bible.references import EDITION, VERSE_LABEL, Verse
 from bible.usfm import book_header, marker_lines, verse_spans
-from bible.versemap import mapped_passages
+from bible.versification import mapped_passages
 
 # The printed glosses, by Turpie's class. C.I, which differs from the agreeing
 # Hebrew and Septuagint in words alone, prints as A; the rest of C, and E,

@@ -9,7 +9,7 @@ Every change is logged through a recorder into build/<mode>/transformations.json
 import re
 from dataclasses import dataclass
 
-from bible import edition, introductions
+from bible import edition, introductions, versification
 from bible.checks import require
 from bible.crossrefs import apply_links, merged_notes
 from bible.edition import (
@@ -191,49 +191,58 @@ def scripture_text(entry, archives, log=None, review=None, *, links):
     else:
         expected = original
         text = original
-    if code == "MAL":
-        require(
-            text.count(r"\v 19 For, behold") == 1, "Malachias chapter boundary changed"
-        )
-        prefix, tail = text.split(r"\v 19 For, behold", 1)
-        # Open chapter 4 before the source's paragraph marker, not inside it.
-        require(prefix.endswith("\\p\n"), "Malachias chapter 4 paragraph changed")
+    for labels, printed, opens in versification.new_chapters(code):
+        first, chapter = labels[0], printed[0].chapter
+        name = resolved_book_names(entry, original)["short_title"]
+        opening = rf"\v {first.number} {opens}"
+        require(text.count(opening) == 1, f"{name} chapter boundary changed")
+        prefix, tail = text.split(opening, 1)
+        # Open the chapter before the source's paragraph marker, not inside it.
+        require(prefix.endswith("\\p\n"), f"{name} chapter {chapter} paragraph changed")
         prefix = prefix[: -len("\\p\n")]
-        tail = "\\c 4\n\\p\n\\v 1 For, behold" + tail
-        for old, new in zip(range(20, 25), range(2, 7)):
+        tail = f"\\c {chapter}\n\\p\n\\v 1 {opens}" + tail
+        for source, target in zip(labels[1:], printed[1:]):
             tail = re.sub(
-                r"\\v " + str(old) + r"(?=\s)",
-                lambda m: r"\v " + str(new),
+                rf"\\v {source.number}(?=\s)",
+                lambda m, target=target: rf"\v {target.number}",
                 tail,
                 count=1,
             )
-        # The one note in the relabelled verses, by its source and printed origin.
-        source_origin, printed_origin = "3:23", "4:5"
-        text, xo = re.subn(
-            rf"\\xo {source_origin}\b",
-            lambda m: rf"\xo {printed_origin}",
-            prefix + tail,
-        )
-        require(xo == 1, f"Malachias {source_origin} cross-reference origin changed")
+        text = prefix + tail
+        # Each note in the relabelled verses, by its source and printed origin.
+        origins = {}
+        for source, target in zip(labels, printed):
+            text, found = re.subn(
+                rf"\\(fr|xo) {source.label}\b",
+                lambda m, target=target: rf"\{m[1]} {target.label}",
+                text,
+            )
+            if found:
+                origins[source.label] = target.label
         # A correction names the note by its source origin, and a merged note's
         # key by its printed one, so the guard below compares them relabelled.
-        mended_notes = {
-            re.sub(rf"^{source_origin}(?=#|$)", printed_origin, p) for p in mended_notes
-        }
-        labels = inventory(text)["chapters"]
-        require(list(labels) == ["1", "2", "3", "4"], "Wrong chapter grouping: MAL")
+        for source_origin, printed_origin in origins.items():
+            mended_notes = {
+                re.sub(rf"^{source_origin}(?=#|$)", printed_origin, p)
+                for p in mended_notes
+            }
+        found = inventory(text)["chapters"]
         require(
-            labels["3"] == [str(i) for i in range(1, 19)]
-            and labels["4"] == [str(i) for i in range(1, 7)],
-            "Wrong Malachias 3-4 verse labels",
+            list(found) == [str(c) for c in range(1, chapter + 1)],
+            f"Wrong chapter grouping: {code}",
+        )
+        require(
+            found[str(first.chapter)] == [str(i) for i in range(1, first.number)]
+            and found[str(chapter)] == [str(v.number) for v in printed],
+            f"Wrong {name} {first.chapter}-{chapter} verse labels",
         )
         record(
             "relabel verses",
             source_ids=[source_id(entry)],
-            source_verses="3:19-24",
-            edition_verses="4:1-6",
-            relabelled_note_origins={source_origin: printed_origin},
-            moved_paragraph_marker="after the new chapter 4 marker",
+            source_verses=f"{first.label}-{labels[-1].number}",
+            edition_verses=f"{printed[0].label}-{printed[-1].number}",
+            relabelled_note_origins=origins,
+            moved_paragraph_marker=f"after the new chapter {chapter} marker",
         )
     text = rename_book(entry, original, text, record)
     require(

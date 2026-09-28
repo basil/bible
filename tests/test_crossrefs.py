@@ -2,7 +2,7 @@
 
 import pytest
 
-from bible import crossrefs, notes, paths, quotations, versemap
+from bible import crossrefs, notes, paths, quotations, versification
 from bible import review
 from bible.checks import CheckFailed
 from bible.crossrefs import (
@@ -15,7 +15,7 @@ from bible.crossrefs import (
     planned_links,
 )
 from bible.edition import scripture_unit as unit
-from bible.versemap import mapped_passages
+from bible.versification import mapped_passages
 from bible.files import read_json
 from bible.prepare import recorder, scripture_text
 from bible.references import Books, parse_passage, parse_verse
@@ -308,7 +308,7 @@ def test_conflict_decision_covers_every_contributor_in_any_order(patched):
 
 
 def test_passage_mapped_across_chapters_prints_as_ranges(patched):
-    exceptions = patched(versemap, "EXCEPTIONS")
+    exceptions = patched(versification, "EXCEPTIONS")
     exceptions.clear()
     exceptions.update(
         {

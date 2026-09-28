@@ -17,6 +17,7 @@ Run `make bootstrap` first. The other targets run with networking turned off and
 make sample     # a short PDF of selected chapters, for checking layout quickly
 make validate   # check the source archives against their recorded hashes
 make notes-review  # list every note with the words it's about and its italics
+make seed-versification  # propose where each verse stands in the King James Bible
 make test       # run the tests
 make clean      # delete build/ and dist/
 ```
@@ -35,6 +36,7 @@ The sample prints the chapters listed in `edition/sample.json`. They were picked
   - `kjv-notes.json`: placements and corrections for the 1611 New Testament notes.
   - `brenton-notes.json`: corrections to the words and italics the build works out for Brenton's notes, and to a few slips in eBible's text.
   - `book-introductions.json`: which paragraphs of the introduction to the Apocrypha stay at the front and which introduce each book as a footnote, with the editorial glosses, book-name changes, and their reasons.
+  - `versification.json`: where each verse of the Old Testament stands in the King James Bible, the verses the edition relabels, and what the King James Bible sets apart in its Apocrypha.
   - `sample.json`: the chapters the sample prints.
   - `witnesses.json`: phrases that must appear in the finished PDF, to catch unusual passages going missing.
 - `Dockerfile`: the tool image, with the pinned PTXprint, usfmtc, and Utopia commits and the hashes of the font archives.
@@ -43,7 +45,8 @@ The sample prints the chapters listed in `edition/sample.json`. They were picked
   - `prepare.py` and `typography.py`: each book as the edition prints it, checked against its source.
   - `project.py`: the PTXprint project; `typeset.py`: running PTXprint in the image that `toolchain.py` checks.
   - `verify.py`: the checks on PTXprint's output and the PDF; `publish.py`: the copy in `dist/` and its provenance.
-  - `cli.py` chains the stages, and `usfm.py` holds the text helpers they share.
+  - `cli.py` chains the stages, and `usfm.py` holds the text helpers they share. `references.py` holds a verse and a passage, as the files write them and the pages print them, and `versification.py` the numberings they are written in.
+  - `seed.py` proposes `edition/versification.json` from two witnesses: STEP Bible's table (`tvtms.py`) and the words of both translations (`alignment.py`). The build never reads what it proposes.
 - `pyproject.toml`: pytest's settings. The Python dependencies are pinned in `requirements.txt`.
 - `tests/`: the pytest tests, named after the modules they test, and the TeX protrusion test.
 
@@ -78,6 +81,12 @@ The checks catch missing text, not bad pages. After any change that could move t
 ### Reviewing the notes
 
 The build works out which words each note is about, and which of its words are italic, by rule; `edition/brenton-notes.json` and `edition/kjv-notes.json` correct the rules where they go wrong. After changing `src/bible/notes.py` or either file, run `make notes-review` and read `build/notes-review-changes.md`, which lists every note whose words or italics changed since the last review. A correction the rules no longer need fails the build, so remove it. A correction to eBible's text is keyed by its verse. If it changes a note, the bare verse key means the first note; `#2` means the second, `#3` the third, as in the note exceptions. Put several corrections to one note in a list under that note's key. In the preface, which has no verses, a correction is keyed by the words the note stands among. The build fails if the source text is not found once, in that place. Outside a note, a correction may mend only word spaces, so the translation's wording stays eBible's. Every entry in either file gives its reason as `why`. Each correction, and each anchor that differs from George's lemma, must also fit one of the kinds of slip that `src/bible/notes.py` defines (a missing word space, a stray letter, a bracketed remark, and so on), or be marked `"uncategorized": true`.
+
+### Reviewing the numbering
+
+`edition/versification.json` lists every verse of the Old Testament that doesn't keep its number in the King James Bible, in runs. Each run says what it rests on as `by`: `table`, STEP Bible's account of a Bible numbered like this one; `words`, the words the two translations share; `place`, its place between verses that the words fix; or `reading`, the editor's reading of both, which gives its reason as `why`. A verse the file doesn't list keeps its number, unless Brenton letters it. The tests hold each run to its witness, and check that every verse of both Bibles has a place.
+
+`make seed-versification` hears the witnesses again and writes what they propose to `build/versification-seed.json`, what differs from the file to `build/versification-changes.md`, and the runs that rest on words or place alone, with both translations' words, to `build/versification-to-read.md`. What has been read stands, whatever they propose. To correct a run, read both translations, and write it into the file as a `reading`.
 
 ## Submitting changes
 

@@ -2,7 +2,7 @@ import copy
 
 import pytest
 
-from bible import edition, notes, prepare, sources
+from bible import edition, notes, prepare, seed, sources, versification
 from bible.crossrefs import quotation_links
 
 
@@ -73,3 +73,26 @@ def with_source(archives):
         }
 
     return edited
+
+
+@pytest.fixture(autouse=True)
+def fresh_versification():
+    # Tests may patch the file the maps are read from.
+    caches = (versification._maps, versification.apocryphal, versification.relabelled)
+    for cache in caches:
+        cache.cache_clear()
+    yield
+    for cache in caches:
+        cache.cache_clear()
+
+
+@pytest.fixture(scope="session")
+def texts(scripture, archives):
+    """The words of both translations' Old Testaments, verse by verse."""
+    return seed.Texts(scripture, archives)
+
+
+@pytest.fixture(scope="session")
+def table(texts, scripture):
+    """STEPBible's account of where each of the edition's verses stands."""
+    return seed.tabled(texts, scripture)
