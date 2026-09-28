@@ -8,7 +8,7 @@ import shutil
 import xml.etree.ElementTree as ET
 import zipfile
 
-from bible import edition, paths
+from bible import edition, numbering, paths
 from bible.checks import require
 from bible.edition import book_names_element, ordered_entries, source_id, source_usfm
 from bible.files import read_json, write_json
@@ -62,8 +62,17 @@ def write_project(mode, base, archives, scripture):
         code = entry["id"]
         record = recorder(transformations, code)
         if "file" in entry:
-            text = source_usfm(entry, archives)
-            require(text.startswith(f"\\id {code}\n"), f"Wrong id in {entry['file']}")
+            written = source_usfm(entry, archives)
+            require(
+                written.startswith(f"\\id {code}\n"), f"Wrong id in {entry['file']}"
+            )
+            text = numbering.page(written, archives)
+            if text != written:
+                record(
+                    "print the passages and tables that the page names",
+                    passages=[match[0] for match in numbering.NAMED.finditer(written)],
+                    tables=numbering.TABLES.findall(written),
+                )
         else:
             if "section" in entry:
                 text = scripture[code].text

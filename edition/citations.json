@@ -6,7 +6,6 @@
     "XXD": null,
     "TDX": null,
     "NDX": "kjv-preface",
-    "XXA": false,
     "BAK": "brenton-appendix",
     "XXC": "ebible-corrections"
   },
@@ -550,6 +549,13 @@
         "from": ", page 1131",
         "to": "",
         "why": "The page of the printing of 1870, where the note isn't to be found in this one."
+      }
+    ],
+    "XXC": [
+      {
+        "from": "\\im Table of Chapters and Verses in Jeremiah  \n\\im period following “39 the 3 first verses, and 5 last” omitted  \n\\im 1870. period included | 1844. period omitted  ",
+        "to": "",
+        "why": "A correction to Brenton's table of the chapters of Jeremias, whose place the table of chapters and verses takes."
       }
     ]
   }

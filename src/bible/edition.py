@@ -65,6 +65,8 @@ def ordered_entries():
         # The editor's introduction is a project unit rather than a front-matter
         # periph so that it follows the contents page and is listed in it.
         {"id": "CNC", "file": "content/introduction.sfm"},
+        # The table of chapters and verses, which the introduction refers to.
+        {"id": "XXA", "file": "content/numbering.sfm"},
         # Each testament opens with its divider and its own translation's front matter.
         {"id": "XXF", "file": "content/old-testament.sfm"},
         *MANIFEST["old_testament_front"],
@@ -139,9 +141,16 @@ def kjv_books(archives):
     """The King James Bible's books, in its order, under its own names for
     them, which a reader's other Bible has."""
     return Books(
-        (code, source_marker(text, "toc2"))
-        for code, text in archives["kjv"].items()
-        if re.search(r"^\\toc2\s", text, re.M)
+        (
+            (code, source_marker(text, "toc2"))
+            for code, text in archives["kjv"].items()
+            if re.search(r"^\\toc2\s", text, re.M)
+        ),
+        (
+            (unit["id"], unit["cited_singly"])
+            for unit in MANIFEST["scripture"]
+            if "cited_singly" in unit
+        ),
     )
 
 

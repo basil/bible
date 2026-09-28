@@ -1219,12 +1219,6 @@
   "appendices": [
     {
       "source": "brenton",
-      "id": "XXA",
-      "title": "Table of Chapters and Verses in Jeremias",
-      "short_title": "Table of Chapters and Verses in Jeremias"
-    },
-    {
-      "source": "brenton",
       "id": "BAK",
       "title": "Notes and Supplied Passages",
       "short_title": "Notes and Supplied Passages",
@@ -1240,7 +1234,8 @@
   ],
   "excluded": {
     "brenton": [
-      "NEH"
+      "NEH",
+      "XXA"
     ]
   }
 }

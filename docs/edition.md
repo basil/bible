@@ -43,18 +43,18 @@ The Song of the Three Children gets its own heading but keeps Brenton's numberin
 
 ## Malachias
 
-Brenton's Malachias 3:19–24 is printed as chapter 4, verses 1–6, which matches the [Church of Greece's text](https://apostoliki-diakonia.gr/bible/malachias/?file=42.4) and most English Bibles.
+Brenton's Malachias 3:19–24 is printed as chapter 4, verses 1–6, which matches the [Church of Greece's text](https://apostoliki-diakonia.gr/bible/malachias/?file=42.4). Most English Bibles divide the chapter there too, but order its last three verses otherwise: Brenton has Elias before the law of Moses, so his 4:4–6 are the King James Bible's 4:5, 4:6 and 4:4. `edition/versification.json` says which verses are relabelled, with the words the first of them opens with, which the build holds the source to.
 
 ## Front matter and appendices
 
-The build copies PTXprint’s pinned basic front matter template without editing it. The title and publication data come from `config/layout.ini`, including the edition’s copyright and license. The template puts the publication data page after the title page, followed by the contents, and resets numbering so that the editor’s introduction starts at printed page 1. The introduction is set like a book of the Bible so that it’s listed in the contents.
+The build copies PTXprint’s pinned basic front matter template without editing it. The title and publication data come from `config/layout.ini`, including the edition’s copyright and license. The template puts the publication data page after the title page, followed by the contents, and resets numbering so that the editor’s introduction starts at printed page 1. The introduction is set like a book of the Bible so that it’s listed in the contents, and so is the table of chapters and verses that follows it (see [below](#the-table-of-chapters-and-verses)).
 
 Each testament opens with the front matter of its own translation, so that the introductions sit next to the text they describe:
 
 - **Old Testament:** Brenton's preface (1844), his introduction (1870), the introduction to the Apocrypha, and his list of abbreviations. The introduction to the Apocrypha isn't Brenton's: it describes the Hebrew text of Ecclesiasticus found from 1896 and says that 3 and 4 Maccabees were translated "for this edition", so it was written for a later reissue of his translation, after his death in 1862. It belongs here rather than after Revelation, because those books are part of this Old Testament. Its general paragraphs stay here, along with the paragraph about the second book of Esdras it leaves out. Its account of each book is printed as a footnote on that book (see [below](#book-introductions)), and its headings, which the books' titles replace, are dropped. None of it is omitted.
 - **New Testament:** the translators' dedication to King James and their preface, "The Translators to the Reader".
 
-After Revelation come Brenton's table of chapters in Jeremias, his notes and supplied passages, and eBible's corrections, so that Brenton's material comes before eBible's. Some of these have new headings, which are set in `edition/manifest.json`.
+After Revelation come Brenton's notes and supplied passages, and eBible's corrections, so that Brenton's material comes before eBible's. They have new headings, which are set in `edition/manifest.json`. Brenton's table of the chapters of Jeremias is left out, the one piece of his that is: the table of chapters and verses takes its place, and with it goes eBible's correction to it.
 
 The Cambridge Paragraph Bible's 1873 title page is left out. It advertises Scrivener's introduction and appendices, which aren't in the digital text, and the editor's introduction says so. The traditional notes at the ends of the epistles, such as "Written to the Romans from Corinthus", are kept.
 
@@ -128,6 +128,19 @@ The links give Brenton's chapter and verse numbers, because those are the number
 
 That file says where each verse of this Old Testament stands in the King James Bible. It rests on two witnesses. [STEP Bible's table](../sources/README.md#versification) says where a verse of a Bible numbered like this one should stand; the words of the two translations say where it does. They agree on all but a few hundred of some 23,000 verses. Where they don't, the words decide if they speak clearly, and the editor's reading where they can't: the census of Numbers 1 is worded alike tribe by tribe, so only a reader can tell that the Greek numbers Gad after Benjamin. The table isn't the authority because it wasn't made for this text. It gives two accounts of the end of Malachias, and Brenton's is neither: he has Elias before the law of Moses, so his 4:4–6 are the King James Bible's 4:5, 4:6 and 4:4. eBible's Brenton also divides verses where the King James Bible doesn't, even in chapters that count the same: his Leviticus 8:18 is the King James Bible's 8:18–19, and the ten verses after it each stand one earlier. For readers who look the verses up in another Bible, the introduction has a table of every linked verse that the King James Bible numbers differently. A test checks the table against the words of both translations, so no row is missing and no row is wrong.
 
+### The table of chapters and verses
+
+The table after the editor's introduction gives the King James Bible's number for every chapter and verse of the Old Testament that it numbers otherwise, and says what either Bible lacks. It is written from `edition/versification.json` by `src/bible/numbering.py`, row for row, and a test reads the rows back and holds them to the file. `content/numbering.sfm` has the editor's words and says where each table goes.
+
+It takes the place of two tables. One was typed into the introduction, for the verses that the links name. The other was Brenton's own, of the chapters of Jeremias, which doesn't fit the text printed here: it puts the prophecy against Edom at "29 from v. 7 to the end", and eBible's text has it as 30:1–16.
+
+- A chapter that stands whole elsewhere under the same verse numbers is one row, as most chapters of Jeremias from 26 on. Anything else is a row of its verses.
+- The psalms differ in nearly every psalm, so they are numbered together: the psalms' own numbers; then the psalms whose verses are each one higher than the King James Bible's, or two, because Brenton counts the title; then rows for the five psalms that differ by no one number.
+- The column for the King James Bible gives that Bible's names for the books, from its own text, since those are what a reader will look under. It is the one place where another Bible's name for a book is printed for a reader to use.
+- The books that the King James Bible sets apart in its Apocrypha are named with where it has them, and the additions to Esther and Daniel likewise. Their verses aren't compared.
+
+The editor's pages don't type a chapter and verse. They name a passage between braces by its code, as `{PSA 33:13-17}`, and the build prints it as the edition cites; `{kjv PSA 33:13-17}` prints it as the King James Bible numbers it, under that Bible's name, and `bare` prints the numbers alone. A passage that the edition doesn't print is refused, so what the introduction says of a number is what the file says.
+
 ### Citations in the notes
 
 Every citation in a note is read where the note is, as its source writes it. Brenton writes "Rom. 4. 7,8" and the margin of 1611 "Mat. 18.28", and each names the books its own way: Brenton's "2 Kings" is the Second Book of Kingdoms, which the King James Bible calls 2 Samuel. `edition/citations.json` records each source's way of writing as a dialect. A name for a book that no note uses is refused, so the file lists only what the sources have.
@@ -160,6 +173,3 @@ A link can point to a verse that exists and still be one verse off, especially w
 - Brenton's transcription mixes curly and straight quotation marks. The build converts the straight ones with [SmartyPants](https://pypi.org/project/smartypants/), then checks that nothing changed except quotation marks, dashes, and ellipses. The two backtick quotes in Proverbs 21:18 are handled separately. The Cambridge text already has curly quotes, and the edition's own pages are typed with them.
 - The text is set in Utopia, with verse numbers in the superscript figures of Erewhon, a font based on Utopia. Greek is set in GFS Didot and Hebrew in Ezra SIL.
 
-## Known issues
-
-- At the last check, the title of the Jeremias table was cramped, with its word spaces squeezed.

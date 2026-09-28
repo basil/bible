@@ -58,7 +58,11 @@ def apocryphal():
     Bible sets apart in its Apocrypha, or lacks, and so doesn't number among
     the books they stand in here."""
     return frozenset(
-        verse for span in DATA["apocrypha"] for verse in verses(span["edition"])
+        verse
+        for span in DATA["apocrypha"]
+        # A span of verses, not a book or its lettered verses as a whole.
+        if ":" in span["edition"]
+        for verse in verses(span["edition"])
     )
 
 

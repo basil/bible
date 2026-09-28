@@ -29,7 +29,7 @@ The sample prints the chapters listed in `edition/sample.json`. They were picked
 ## Where things are
 
 - `sources/`: the Bible texts, the 1611 marginal notes, and the fonts, committed as downloaded. [sources/README.md](sources/README.md) says where each came from.
-- `content/`: the edition's own pages: the title page (`front.sfm`), the introduction, and the three divider pages (`old-testament.sfm`, `new-testament.sfm`, `appendices.sfm`). The dividers' subtitles repeat the title page's wording.
+- `content/`: the edition's own pages: the title page (`front.sfm`), the introduction, the table of chapters and verses (`numbering.sfm`), and the three divider pages (`old-testament.sfm`, `new-testament.sfm`, `appendices.sfm`). The dividers' subtitles repeat the title page's wording. A page names a passage between braces, by its code, and the build prints it; `numbering.sfm` also says where its tables go, which the build writes.
 - `config/`: PTXprint's configuration. `layout.ini`, `ptxprint-mods.sty`, and `ptxprint-mods.tex` hold layout, style, and TeX changes on top of PTXprint's layout for the Berean Standard Bible (BSB), and `changes.txt` holds its text substitutions.
 - `edition/`: the build's own settings, which PTXprint never reads:
   - `manifest.json`: which books are printed, in what order, and what they're called and how their headings break into lines.
@@ -46,7 +46,7 @@ The sample prints the chapters listed in `edition/sample.json`. They were picked
   - `prepare.py` and `typography.py`: each book as the edition prints it, checked against its source.
   - `project.py`: the PTXprint project; `typeset.py`: running PTXprint in the image that `toolchain.py` checks.
   - `verify.py`: the checks on PTXprint's output and the PDF; `publish.py`: the copy in `dist/` and its provenance.
-  - `cli.py` chains the stages, and `usfm.py` holds the text helpers they share. `references.py` holds a verse and a passage, as the files write them and the pages print them, `versification.py` the numberings they are written in, and `citations.py` reads the citations in the notes as each source writes them.
+  - `cli.py` chains the stages, and `usfm.py` holds the text helpers they share. `numbering.py` writes the table of chapters and verses and prints the passages that the edition's own pages name. `references.py` holds a verse and a passage, as the files write them and the pages print them, `versification.py` the numberings they are written in, and `citations.py` reads the citations in the notes as each source writes them.
   - `seed.py` proposes `edition/versification.json` from two witnesses: STEP Bible's table (`tvtms.py`) and the words of both translations (`alignment.py`). The build never reads what it proposes.
 - `pyproject.toml`: pytest's settings. The Python dependencies are pinned in `requirements.txt`.
 - `tests/`: the pytest tests, named after the modules they test, and the TeX protrusion test.
@@ -75,7 +75,7 @@ The checks catch missing text, not bad pages. After any change that could move t
 - the New Testament marginal notes, including the Greek in Acts 13:18 and 13:34
 - Greek and right-to-left Hebrew in Brenton's notes
 - poetry in the Psalms
-- the contents and the Jeremias table
+- the contents and the table of chapters and verses
 - the joins between 2 Esdras and Nehemias and between Malachias 3 and 4, and the additions to Daniel
 - the opening pages of each testament and of the appendices
 

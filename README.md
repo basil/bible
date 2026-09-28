@@ -10,10 +10,10 @@ The Old Testament is Sir Lancelot Brenton's English translation of the Septuagin
 
 The book reads in this order:
 
-1. A title page, a publication data page, a table of contents, and the editor's introduction
+1. A title page, a publication data page, a table of contents, the editor's introduction, and a table of the chapters and verses that the King James Bible numbers otherwise
 2. The Old Testament, opening with Brenton's preface (1844) and introduction (1870), the introduction to the Apocrypha from a later edition of his translation (its account of each book printed here is a footnote on that book), and list of abbreviations
 3. The New Testament, opening with the King James translators' dedication to the king and their preface, "The Translators to the Reader"
-4. Appendices: Brenton's table comparing chapter order in Jeremias, his notes and supplied passages, and eBible's corrections to the text
+4. Appendices: Brenton's notes and supplied passages, and eBible's corrections to the text
 
 The Old Testament books are called for the most part by their Septuagint names: Esaias rather than Isaiah; Jesus, the Son of Navi rather than Joshua; and 1-4 Kingdoms rather than Samuel and Kings. The books that English Bibles set apart as the Apocrypha are printed in their Greek places, so there is no separate Apocrypha section: the Prayer of Manasses comes after 2 Chronicles, 4 Maccabees after 3 Maccabees, and the additions to Esther and Daniel and Psalm 151 stand within the text. Ezra and Nehemiah are printed as 2 Esdras and Nehemias. Each book carries a full title in the style of the Cambridge Paragraph Bible, such as "The First Book of Moses, Called Genesis."
 

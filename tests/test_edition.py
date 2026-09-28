@@ -94,7 +94,8 @@ SAINT_HEADINGS = {
 
 # Brenton files printed as front matter or appendices, or left out: the
 # standalone Nehemias witness (Nehemias is printed from the combined
-# Ezra-Nehemiah file).
+# Ezra-Nehemiah file), and his table of the chapters of Jeremias, whose place
+# the table of chapters and verses takes.
 BRENTON_NON_SCRIPTURE = {
     source_id(e)
     for key in ("old_testament_front", "appendices")
@@ -151,11 +152,11 @@ def test_new_testament_front_matter():
 
 
 def test_appendices():
-    assert selected("appendices") == [
-        ("brenton", "XXA"),
-        ("brenton", "BAK"),
-        ("brenton", "XXC"),
-    ]
+    assert selected("appendices") == [("brenton", "BAK"), ("brenton", "XXC")]
+
+
+def test_what_is_left_out():
+    assert MANIFEST["excluded"] == {"brenton": ["NEH", "XXA"]}
 
 
 @pytest.fixture(scope="module")
@@ -172,8 +173,12 @@ def test_editors_introduction_opens_the_book(ordered_ids):
     assert ordered_ids[0] == "CNC"
 
 
+def test_the_table_of_chapters_and_verses_follows_the_introduction(ordered_ids):
+    assert ordered_ids[:2] == ["CNC", "XXA"]
+
+
 def test_old_testament_front_matter_follows_its_divider(ordered_ids):
-    codes = ("CNC", "XXF", "XXB", "XXE", "OTH", "XXD", "GEN")
+    codes = ("XXA", "XXF", "XXB", "XXE", "OTH", "XXD", "GEN")
     assert run_of(ordered_ids, *codes) == list(codes)
 
 
@@ -189,7 +194,7 @@ def test_scripture_unit_outside_both_testaments(patched):
 
 
 def test_appendices_close_the_book(ordered_ids):
-    codes = ("REV", "GLO", "XXA", "BAK", "XXC")
+    codes = ("REV", "GLO", "BAK", "XXC")
     assert run_of(ordered_ids, *codes) == list(codes)
     assert ordered_ids[-1] == "XXC"
 
@@ -323,11 +328,12 @@ def test_book_names_xml_follows_the_manifest(book_names, entry):
             assert names[field] == entry[field]
 
 
-def test_jeremias_table_titles(book_names):
-    table = next(e for e in MANIFEST["appendices"] if e["id"] == "XXA")
-    title = "Table of Chapters and Verses in " + book_names["JER"]["short_title"]
-    assert table["title"] == table["short_title"] == title
-    assert book_names["XXA"]["title"] == book_names["XXA"]["short_title"] == title
+def test_the_table_of_chapters_and_verses_is_listed_in_the_contents(book_names):
+    assert book_names["XXA"] == {
+        "title": "Table of Chapters and Verses",
+        "short_title": "Chapters and Verses",
+        "abbreviation": "Numbering",
+    }
 
 
 def test_esdras_and_nehemias_never_share_names(book_names):
