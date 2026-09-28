@@ -7,6 +7,7 @@ import xml.etree.ElementTree as ET
 from bible import paths
 from bible.checks import require
 from bible.files import read_json
+from bible.references import Books
 from bible.usfm import HEADING_MARKERS, source_marker
 
 MANIFEST = read_json(paths.EDITION_DIR / "manifest.json")
@@ -113,6 +114,17 @@ def resolved_book_names(entry, source_text):
         "short_title": entry.get("short_title") or source_marker(source_text, "toc2"),
         "abbreviation": entry.get("abbreviation") or source_marker(source_text, "toc3"),
     }
+
+
+def books(archives):
+    """The edition's books, in its order, under their running-head names."""
+    return Books(
+        (
+            unit["id"],
+            resolved_book_names(unit, source_usfm(unit, archives))["short_title"],
+        )
+        for unit in MANIFEST["scripture"]
+    )
 
 
 def heading_lines(entry, names):

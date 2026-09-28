@@ -17,6 +17,7 @@ import re
 import pytest
 
 from bible import quotations, versemap
+from bible.references import Passage, Verse, verse_at
 from bible.usfm import verse_spans, words_of
 
 # How far a neighbour must outscore a target to flag it.
@@ -54,7 +55,7 @@ class Verses:
             # A note's words aren't the verse's.
             text = re.sub(r"\\([fx]) .*?\\\1\*", "", text, flags=re.S)
             for reference, start, end in verse_spans(text):
-                verse = f"{code} {reference}"
+                verse = verse_at(code, reference)
                 self.words[verse] = {
                     stem(w) for w in words_of(text[start:end]) if w not in STOP_WORDS
                 }
@@ -83,7 +84,7 @@ class Verses:
         """The verses k places on in their book's printed order, lettered verses included."""
         result = []
         for verse in verses:
-            book = self.order[verse.split(" ")[0]]
+            book = self.order[verse.book]
             i = self.index[verse] + k
             if not 0 <= i < len(book):
                 return None
@@ -213,7 +214,7 @@ def range_ends(verses, rows):
             continue
         nt, ot = passages(row)
         sides = (
-            ([versemap.expand(p) for p in row["nt"]], verses.bag(ot)),
+            ([p.verses for p in row["nt"]], verses.bag(ot)),
             ([quotations.brenton_verses([p]) for p in row["ot"]], verses.bag(nt)),
         )
         for spans, other in sides:
@@ -239,16 +240,17 @@ def test_a_range_run_a_verse_too_far_is_caught(verses, side):
     caught = total = 0
     for row in rows:
         for i, passage in enumerate(row[side]):
-            code, chapter, first, last = versemap.RANGE.fullmatch(passage).groups()
-            if not first.isdigit() or row["id"] in waived(rows):
+            if passage.first.letter or row["id"] in waived(rows):
                 continue
-            beyond = f"{code} {chapter}:{int(last or first) + 1}"
+            last = passage.last
+            next_verse = Verse(last.book, last.chapter, last.number + 1)
+            beyond = next_verse
             if side == "ot":
                 beyond = versemap.lxx_to_edition(beyond)
             if beyond not in verses.words:
                 continue
             run_on = {**row, side: [*row[side]]}
-            run_on[side][i] = f"{code} {chapter}:{first}-{int(last or first) + 1}"
+            run_on[side][i] = Passage(passage.first, next_verse)
             total += 1
             caught += range_ends(verses, [run_on])[f"{row['id']} {beyond}"] < UNSCORED
     assert caught >= 0.6 * total

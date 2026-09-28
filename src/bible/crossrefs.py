@@ -6,9 +6,10 @@ import re
 
 from bible import edition, quotations
 from bible.checks import require
-from bible.edition import BOOK_NAME_MARKERS, resolved_book_names, source_usfm
+from bible.edition import BOOK_NAME_MARKERS
+from bible.references import EDITION, VERSE_LABEL, Verse
 from bible.usfm import book_header, marker_lines, verse_spans
-from bible.versemap import RANGE, expand, mapped_passages, parse
+from bible.versemap import mapped_passages
 
 # The printed glosses, by Turpie's class. C.I, which differs from the agreeing
 # Hebrew and Septuagint in words alone, prints as A; the rest of C, and E,
@@ -23,7 +24,7 @@ def gloss(cls, table_code):
 
 
 LINK = re.compile(
-    r"\\x - \\xo (\d+:\d+[a-z]?) \\xt ([^\\(]*?)"
+    rf"\\x - \\xo (\d+:{VERSE_LABEL}) \\xt ([^\\(]*?)"
     rf"(?: \\xta \(({'|'.join(map(re.escape, GLOSSES.values()))})\))?\\x\*"
 )
 # The transformation record of each book's links, which the notes review reads.
@@ -31,24 +32,7 @@ LINK_OPERATION = "insert reciprocal classified quotation links"
 MERGE_OPERATION = "merge Brenton's See notes into quotation links"
 
 
-def book_names(archives):
-    return {
-        entry["id"]: resolved_book_names(entry, source_usfm(entry, archives))[
-            "short_title"
-        ]
-        for entry in edition.MANIFEST["scripture"]
-    }
-
-
-def display_passage(passage, names):
-    match = RANGE.fullmatch(passage)
-    require(match is not None, f"Malformed displayed passage: {passage}")
-    code, chapter, first, last = match.groups()
-    require(code in names, f"No display name for {passage}")
-    return f"{names[code]} {chapter}:{first}" + (f"–{last}" if last else "")
-
-
-def planned_links(rows, names):
+def planned_links(rows, books):
     """Reciprocal links at the first verse of each quotation's passages, by book.
 
     Each link names the whole of the other side's passages, and each of those
@@ -67,9 +51,9 @@ def planned_links(rows, names):
     resolved = {frozenset(c["rows"]) for c in conflicts}
 
     def add(row, printed, passage, side, targets, target_display):
-        origin = expand(passage)[0]
+        origin = passage.first
         require(
-            sources.get(parse(origin)[0]) == ("kjv" if side == "nt" else "brenton"),
+            sources.get(origin.book) == ("kjv" if side == "nt" else "brenton"),
             f"Quotation verse outside its testament's printed books: {origin}",
         )
         link = {
@@ -83,13 +67,13 @@ def planned_links(rows, names):
             "gloss": printed,
             "row_ids": [row["id"]],
         }
-        by_book[parse(origin)[0]].append(link)
+        by_book[origin.book].append(link)
 
     for row in rows:
         printed = gloss(row["class"], row["table_code"])
         mapped_ot = [m for p in row["ot"] for m in mapped_passages(p)]
-        to_ot = "; ".join(display_passage(p, names) for p in mapped_ot)
-        to_nt = "; ".join(display_passage(p, names) for p in row["nt"])
+        to_ot = EDITION.listed(mapped_ot, books)
+        to_nt = EDITION.listed(row["nt"], books)
         for passage in row["nt"]:
             add(row, printed, passage, "nt", mapped_ot, to_ot)
         for passage in mapped_ot:
@@ -104,31 +88,31 @@ def planned_links(rows, names):
         if len({c for _, c in contributors}) == 1:
             continue
         contributing_rows = frozenset(i for i, _ in contributors)
-        require(contributing_rows in resolved, f"Conflicting glosses at {pair}")
+        require(
+            contributing_rows in resolved,
+            f"Conflicting glosses at {tuple(map(str, pair))}",
+        )
         used_conflicts.add(contributing_rows)
     require(used_conflicts == resolved, "Unused link class conflict decisions")
-    book_order = {unit["id"]: i for i, unit in enumerate(edition.MANIFEST["scripture"])}
-
-    def position(reference):
-        code, chapter, verse = parse(expand(reference)[0])
-        number, letter = re.fullmatch(r"(\d+)([a-z]?)", verse).groups()
-        return book_order[code], chapter, int(number), letter
-
     for links in by_book.values():
         visible = collections.Counter(
-            (link["origin"], link["target_display"], link["gloss"]) for link in links
+            (str(link["origin"]), link["target_display"], link["gloss"])
+            for link in links
         )
         repeated = sorted(key[:2] for key, count in visible.items() if count > 1)
         require(not repeated, f"Identical quotation links at one verse: {repeated}")
         links.sort(
-            key=lambda link: (position(link["origin"]), position(link["targets"][0]))
+            key=lambda link: (
+                books.position(link["origin"]),
+                books.position(link["targets"][0].first),
+            )
         )
     return dict(by_book)
 
 
 def quotation_links(archives):
     """The edition's reviewed quotation links, by book."""
-    return planned_links(quotations.reviewed_rows(), book_names(archives))
+    return planned_links(quotations.reviewed_rows(), edition.books(archives))
 
 
 def _alias_key(name):
@@ -168,7 +152,7 @@ def _reference_verses(chunk, aliases):
         first, last = int(first), int(last or first)
         if last < first:
             return None
-        verses += [f"{code} {chapter}:{v}" for v in range(first, last + 1)]
+        verses += [Verse(code, chapter, v) for v in range(first, last + 1)]
     return verses
 
 
@@ -200,11 +184,10 @@ def _cited_verses(source, aliases):
 
 
 def _link_usfm(link):
-    _, chapter, verse = parse(link["origin"])
     target = link["target_display"]
     # A parenthesis in the target would run into the gloss's.
     require(not set(target) & set("\\\n("), f"Malformed link target: {target}")
-    marker = f"\\x - \\xo {chapter}:{verse} \\xt {target}"
+    marker = f"\\x - \\xo {link['origin'].label} \\xt {target}"
     if link["gloss"]:
         marker += f" \\xta ({link['gloss']})"
     return marker + "\\x*"
@@ -223,10 +206,9 @@ def merged_notes(code, found, links, archives, record):
     # has notes to merge.
     nt_rows = collections.defaultdict(lambda: collections.defaultdict(set))
     for link in links:
-        reference = link["origin"].partition(" ")[2]
         for passage in link["targets"]:
-            for verse in expand(passage):
-                nt_rows[reference][verse].update(link["row_ids"])
+            for verse in passage.verses:
+                nt_rows[link["origin"].label][verse].update(link["row_ids"])
     if not nt_rows:
         return frozenset()
     aliases = _aliases(archives)
@@ -242,7 +224,7 @@ def merged_notes(code, found, links, archives, record):
         if named is not None and not set(named) & set(linked):
             continue
         references = _note_references(note.source, aliases)
-        dropped = [verse for verse in named or () if verse not in linked]
+        dropped = [str(verse) for verse in named or () if verse not in linked]
         if decision := decisions.get(note.key):
             used_decisions.add(note.key)
             action = decision["action"]
@@ -266,7 +248,7 @@ def merged_notes(code, found, links, archives, record):
             merges.append(
                 {
                     "note": note.key,
-                    "verses": named,
+                    "verses": [str(verse) for verse in named],
                     "dropped": dropped,
                     "row_ids": row_ids,
                 }
@@ -293,19 +275,19 @@ def apply_links(code, text, links, record):
         return text
     original = text
     require(
-        all(parse(link["origin"])[0] == code for link in links),
+        all(link["origin"].book == code for link in links),
         f"Links for another book passed to {code}",
     )
     by_verse = collections.defaultdict(list)
     for link in links:
-        by_verse[link["origin"].partition(" ")[2]].append(link)
+        by_verse[link["origin"].label].append(link)
     spans = verse_spans(text)
     # A link stands at its passage's first verse, so the rest are checked here.
     passage_verses = {
-        verse.partition(" ")[2]
+        verse.label
         for link in links
         for passage in link["passages"]
-        for verse in expand(passage)
+        for verse in passage.verses
     }
     require(
         passage_verses <= {reference for reference, _, _ in spans},
@@ -319,7 +301,7 @@ def apply_links(code, text, links, record):
             text = text[:start] + markers + text[start:]
     expected = sorted(
         (
-            link["origin"].partition(" ")[2],
+            link["origin"].label,
             link["target_display"],
             link["gloss"] or "",
         )
@@ -337,8 +319,8 @@ def apply_links(code, text, links, record):
         LINK_OPERATION,
         links=[
             {
-                "origin": link["origin"],
-                "passages": link["passages"],
+                "origin": str(link["origin"]),
+                "passages": [str(passage) for passage in link["passages"]],
                 "class": link["class"],
                 "table_code": link["table_code"],
                 "gloss": link["gloss"],

@@ -10,7 +10,7 @@ import re
 import pytest
 
 from bible.quotations import TURPIE, scope
-from bible.versemap import expand, parse
+from bible.references import ROMAN, parse_passage, roman
 
 ROWS = TURPIE["rows"]
 COLUMNS = ("nt", "lxx", "hebrew")
@@ -66,7 +66,6 @@ KINGS = {
     "hebrew": {"1 Kings": "1KI", "2 Kings": "2KI"},
     "nt": {},
 }
-ROMAN = {"I": 1, "V": 5, "X": 10, "L": 50, "C": 100}
 MARKER = re.compile(r"\b(lp|fp)\b")
 # A textual variant beside a heading, as "(and 28 lp. in ς)", names no source.
 VARIANT = re.compile(r"\s*\(and \d+ lp\. in ς\)")
@@ -78,11 +77,6 @@ VERSES = re.compile(
     r"(?:(?P<chapter>[IVXLC]+)\.\s*)?(?P<first>\d+)"
     r"(?:\s*–\s*(?:(?P<to_chapter>[IVXLC]+)\.\s*)?(?P<last>\d+))?"
 )
-
-
-def roman(numeral):
-    values = [ROMAN[c] for c in numeral]
-    return sum(-v if v < w else v for v, w in zip(values, values[1:] + [0]))
 
 
 def number(chapter):
@@ -130,12 +124,11 @@ def printed_verses(printed, column):
 
 
 def normalized_verses(passages):
-    verses = []
-    for passage in passages:
-        for verse in expand(passage):
-            book, chapter, v = parse(verse)
-            verses.append((book, chapter, int(v)))
-    return verses
+    return [
+        (verse.book, verse.chapter, verse.number)
+        for passage in passages
+        for verse in parse_passage(passage).verses
+    ]
 
 
 @each_row

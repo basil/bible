@@ -18,8 +18,9 @@ from bible.edition import scripture_unit as unit
 from bible.versemap import mapped_passages
 from bible.files import read_json
 from bible.prepare import recorder, scripture_text
+from bible.references import Books, parse_passage, parse_verse
 
-NAMES = {"MAT": "Matthew", "ISA": "Isaiah"}
+NAMES = Books({"MAT": "Matthew", "ISA": "Isaiah"})
 TABLE_CODES = {
     "A": "A.s",
     "B": "B.s",
@@ -33,9 +34,9 @@ def brenton_link(origin, target, display, passage=None, cls="D"):
     """A Brenton verse's link to one New Testament passage."""
     code = TABLE_CODES[cls]
     return {
-        "origin": origin,
-        "passages": [passage or origin],
-        "targets": [target],
+        "origin": parse_verse(origin),
+        "passages": [parse_passage(passage or origin)],
+        "targets": [parse_passage(target)],
         "target_display": display,
         "class": cls,
         "table_code": code,
@@ -51,8 +52,8 @@ def isaiah_link(origin="ISA 1:9"):
 def row(id, nt, ot, cls="A"):
     return {
         "id": id,
-        "nt": [nt],
-        "ot": [ot],
+        "nt": [parse_passage(nt)],
+        "ot": [parse_passage(ot)],
         "class": cls,
         "table_code": TABLE_CODES[cls],
     }
@@ -61,6 +62,11 @@ def row(id, nt, ot, cls="A"):
 def unlinked(code, archives):
     """The book as prepared without any links, to compare a linked one against."""
     return scripture_text(unit(code), archives, links={})
+
+
+def written(references):
+    """References as the edition's files write them."""
+    return [str(reference) for reference in references]
 
 
 def verse(text, number):
@@ -88,7 +94,7 @@ def test_unmatched_note_survives_and_missing_verse_is_rejected(archives):
     with pytest.raises(CheckFailed, match="Quotation verse missing"):
         apply_links("ISA", isaiah, [isaiah_link("ISA 999:1")], recorder(None, "ISA"))
     # A link stands only at its passage's first verse, but every verse must print.
-    beyond = {**isaiah_link("ISA 1:31"), "passages": ["ISA 1:31-32"]}
+    beyond = {**isaiah_link("ISA 1:31"), "passages": [parse_passage("ISA 1:31-32")]}
     with pytest.raises(CheckFailed, match="Quotation verse missing"):
         apply_links("ISA", isaiah, [beyond], recorder(None, "ISA"))
 
@@ -205,11 +211,10 @@ def test_a_target_with_a_parenthesis_is_refused():
 def test_a_quotation_links_once_at_the_first_verse_of_each_passage(links):
     [mark] = [link for link in links["MRK"] if "Q054" in link["row_ids"]]
     [deuteronomy] = [link for link in links["DEU"] if "Q054" in link["row_ids"]]
-    assert (mark["origin"], mark["passages"]) == ("MRK 12:29", ["MRK 12:29-30"])
-    assert (deuteronomy["origin"], deuteronomy["passages"]) == (
-        "DEU 6:4",
-        ["DEU 6:4-5"],
-    )
+    assert str(mark["origin"]) == "MRK 12:29"
+    assert written(mark["passages"]) == ["MRK 12:29-30"]
+    assert str(deuteronomy["origin"]) == "DEU 6:4"
+    assert written(deuteronomy["passages"]) == ["DEU 6:4-5"]
     assert mark["target_display"] == "Deuteronomy 6:4–5"
     assert deuteronomy["target_display"] == "Mark 12:29–30"
     assert mark["class"] == deuteronomy["class"] == "B"
@@ -218,16 +223,16 @@ def test_a_quotation_links_once_at_the_first_verse_of_each_passage(links):
     )
     # Hebrews 3:7-11 quotes Psalm 94:8-11 in one link each way.
     for code, origin in (("HEB", "HEB 3:7"), ("PSA", "PSA 94:8")):
-        assert [
+        assert written(
             link["origin"] for link in links[code] if "Q252" in link["row_ids"]
-        ] == [origin]
+        ) == [origin]
 
 
 def test_shared_origin_uses_manifest_book_order(links):
     assert [
         link["target_display"].split()[0]
         for link in links["ISA"]
-        if link["origin"] == "ISA 40:3"
+        if str(link["origin"]) == "ISA 40:3"
     ] == ["Matthew", "Mark", "Luke", "John"]
 
 
@@ -311,18 +316,30 @@ def test_passage_mapped_across_chapters_prints_as_ranges(patched):
             "ISA 9:2": {"target": "ISA 9:1", "why": "x"},
         }
     )
-    assert mapped_passages("ISA 9:1-3") == ["ISA 8:23", "ISA 9:1", "ISA 9:3"]
-    assert mapped_passages("ISA 9:2-4") == ["ISA 9:1", "ISA 9:3-4"]
+    assert written(mapped_passages(parse_passage("ISA 9:1-3"))) == [
+        "ISA 8:23",
+        "ISA 9:1",
+        "ISA 9:3",
+    ]
+    assert written(mapped_passages(parse_passage("ISA 9:2-4"))) == [
+        "ISA 9:1",
+        "ISA 9:3-4",
+    ]
     patched(quotations, "DECISIONS")["class_conflicts"] = []
     links = planned_links([row("Q-a", "MAT 4:15", "ISA 9:1-2", "E")], NAMES)
     assert links["MAT"][0]["target_display"] == "Isaiah 8:23; Isaiah 9:1"
-    assert {link["origin"] for link in links["ISA"]} == {"ISA 8:23", "ISA 9:1"}
+    assert set(written(link["origin"] for link in links["ISA"])) == {
+        "ISA 8:23",
+        "ISA 9:1",
+    }
 
 
 def test_only_a_bare_see_note_is_read_as_references(archives):
     aliases = crossrefs._aliases(archives)
-    assert _note_references(r"See \xt Rom. 9. 29.", aliases) == [["ROM 9:29"]]
-    assert _note_references(r"\ft See \xt Heb. 2. 6-9; Rom. 4. 7,8.", aliases) == [
+    [reference] = _note_references(r"See \xt Rom. 9. 29.", aliases)
+    assert written(reference) == ["ROM 9:29"]
+    references = _note_references(r"\ft See \xt Heb. 2. 6-9; Rom. 4. 7,8.", aliases)
+    assert list(map(written, references)) == [
         ["HEB 2:6", "HEB 2:7", "HEB 2:8", "HEB 2:9"],
         ["ROM 4:7", "ROM 4:8"],
     ]
@@ -336,10 +353,12 @@ def test_only_a_bare_see_note_is_read_as_references(archives):
 def test_every_reference_of_a_note_is_read(archives):
     aliases = crossrefs._aliases(archives)
     source = r"\xt Rom. 10. 15. \ft See also \xt Joel 2. 2.,\ft the morning"
-    assert crossrefs._cited_verses(source, aliases) == ["ROM 10:15", "JOL 2:2"]
-    assert crossrefs._cited_verses(r"\ft See \xt Mat. 12. 18, \ft etc.", aliases) == [
-        "MAT 12:18"
+    assert written(crossrefs._cited_verses(source, aliases)) == [
+        "ROM 10:15",
+        "JOL 2:2",
     ]
+    cited = crossrefs._cited_verses(r"\ft See \xt Mat. 12. 18, \ft etc.", aliases)
+    assert written(cited) == ["MAT 12:18"]
     assert crossrefs._cited_verses(r"\ft See \xt Nowhere 1. 1", aliases) is None
 
 

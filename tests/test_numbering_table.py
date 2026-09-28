@@ -18,9 +18,9 @@ import re
 
 import pytest
 
-from bible import paths, quotations, versemap
-from bible.crossrefs import _alias_key, _aliases, book_names, display_passage
-from bible.versemap import expand
+from bible import edition, paths, quotations, versemap
+from bible.crossrefs import _alias_key, _aliases
+from bible.references import EDITION, Passage, parse_passage
 from test_quotation_alignment import Verses
 
 # How far a counterpart must outscore the verse numbered like it.
@@ -34,11 +34,11 @@ PASSAGE = re.compile(r"(.+?) (\d+)(?::(\d+))?(?:–(\d+))?")
 
 
 def chapter_of(verse):
-    return versemap.parse(verse)[:2]
+    return verse.book, verse.chapter
 
 
 def lettered(verse):
-    return not verse[-1].isdigit()
+    return bool(verse.letter)
 
 
 def in_brenton_table(verse):
@@ -54,7 +54,8 @@ def introduction():
 @pytest.fixture(scope="module")
 def table(archives, introduction):
     """The table's psalm rows, as chapter lists, and its other rows, by verse."""
-    brenton_codes = {name: code for code, name in book_names(archives).items()}
+    names = edition.books(archives).names
+    brenton_codes = {name: code for code, name in names.items()}
     kjv_codes = _aliases(archives)
     psalms, verses = [], {}
     for brenton, kjv in re.findall(
@@ -73,11 +74,13 @@ def table(archives, introduction):
             continue
         code = brenton_codes[name]
         assert kjv_codes[_alias_key(kjv_name)] == code, kjv
-        passage = f"{code} {chapter}:{first}" + (f"-{last}" if last else "")
-        kjv_passage = f"{code} {kjv_chapter}:{kjv_first}" + (
-            f"-{kjv_last}" if kjv_last else ""
+        passage = parse_passage(
+            f"{code} {chapter}:{first}" + (f"-{last}" if last else "")
         )
-        pairs = list(zip(expand(passage), expand(kjv_passage), strict=True))
+        kjv_passage = parse_passage(
+            f"{code} {kjv_chapter}:{kjv_first}" + (f"-{kjv_last}" if kjv_last else "")
+        )
+        pairs = list(zip(passage.verses, kjv_passage.verses, strict=True))
         assert not set(verses) & {b for b, _ in pairs}, f"Two rows for {brenton}"
         verses.update(pairs)
     return psalms, verses
@@ -137,6 +140,8 @@ class Counterparts:
                 (self.similarity(brenton[b], kjv[k]), b, k)
                 for b, k in itertools.product(*near)
             ),
+            # Equal scores fall back on the references as written.
+            key=lambda pair: (pair[0], str(pair[1]), str(pair[2])),
             reverse=True,
         )
         result, taken = {}, set()
@@ -168,7 +173,7 @@ class Counterparts:
 
 @pytest.fixture(scope="module")
 def counterparts(archives, scripture, linked, table):
-    codes = {"PSA"} | {v.split(" ")[0] for v in [*linked, *table[1]]}
+    codes = {"PSA"} | {v.book for v in [*linked, *table[1]]}
     return Counterparts(
         Verses({code: scripture[code] for code in codes}).words,
         Verses({code: archives["kjv"][code] for code in codes}).words,
@@ -183,13 +188,13 @@ def test_the_table_numbers_every_linked_verse_numbered_differently(
         verse
         for verse in linked
         if not lettered(verse)
-        and not verse.startswith("PSA ")
+        and verse.book != "PSA"
         and not in_brenton_table(verse)
     }
     # The table numbers linked verses only.
     assert set(rows) <= checked
-    for verse in sorted(checked):
-        assert rows.get(verse) == counterparts.counterpart(verse), verse
+    for verse in sorted(checked, key=str):
+        assert rows.get(verse) == counterparts.counterpart(verse), str(verse)
 
 
 def test_the_table_numbers_every_psalm(counterparts, table):
@@ -224,9 +229,9 @@ def test_a_linked_lettered_verse_is_named_but_has_no_row(
     archives, introduction, table, linked
 ):
     # A Septuagint addition that Brenton letters has no King James number.
-    names = book_names(archives)
+    books = edition.books(archives)
     for verse in filter(lettered, linked):
-        assert display_passage(verse, names) in introduction, verse
+        assert EDITION.passage(Passage(verse, verse), books) in introduction, verse
         assert verse not in table[1], verse
 
 
@@ -234,6 +239,8 @@ def test_every_exception_is_a_row(table):
     # Each exception pairs Turpie's English number with Brenton's, so it is
     # exactly a row of the table, unless it names a lettered verse.
     for source, exception in versemap.EXCEPTIONS.items():
-        targets = expand(exception["target"])
+        targets = parse_passage(exception["target"]).verses
         if not lettered(targets[0]):
-            assert [table[1].get(t) for t in targets] == expand(source), source
+            assert [table[1].get(t) for t in targets] == parse_passage(
+                source
+            ).verses, source

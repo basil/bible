@@ -58,7 +58,7 @@ def test_a_head_is_linked_only_from_its_printed_heading(patched):
 
 def test_a_narrowed_head_links_only_its_part():
     [row] = [r for r in quotations.reviewed_rows() if r["id"] == "Q052"]
-    assert row["ot"] == ["ISA 8:17"]
+    assert list(map(str, row["ot"])) == ["ISA 8:17"]
 
 
 @pytest.mark.parametrize("part", ["ISA 8:17-18", "ISA 8:16"])

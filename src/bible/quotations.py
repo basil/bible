@@ -5,7 +5,8 @@ import re
 from bible import paths
 from bible.checks import require
 from bible.files import read_json
-from bible.versemap import expand, lxx_to_edition, mapped_passages, unused_exceptions
+from bible.references import parse_passage, parse_passages
+from bible.versemap import lxx_to_edition, mapped_passages, unused_exceptions
 
 CLASSES = {"A", "B", "C", "D", "E"}
 # Turpie's heads as read from the page, and the edition's exclusions, class
@@ -22,12 +23,12 @@ def scope(table_code):
 
 def nt_verses(passages):
     """Every verse of New Testament passages."""
-    return [verse for passage in passages for verse in expand(passage)]
+    return [verse for passage in passages for verse in passage.verses]
 
 
 def brenton_verses(passages):
     """Every printed Brenton verse of Septuagint passages."""
-    return [lxx_to_edition(verse) for passage in passages for verse in expand(passage)]
+    return [lxx_to_edition(verse) for passage in passages for verse in passage.verses]
 
 
 def _unique(values, label):
@@ -121,12 +122,12 @@ def reviewed_rows():
             head["lxx"].get("printed") and head["lxx"].get("normalized"),
             f"No printed Septuagint heading: {head['id']}",
         )
-        ot = head["lxx"]["normalized"].split("; ")
+        ot = parse_passages(head["lxx"]["normalized"])
         if narrowing := narrowed.get(head["id"]):
-            part = narrowing["lxx"].split("; ")
+            part = parse_passages(narrowing["lxx"])
             require(
-                {v for p in part for v in expand(p)}
-                < {v for p in ot for v in expand(p)},
+                {v for p in part for v in p.verses}
+                < {v for p in ot for v in p.verses},
                 f"Narrowing to what isn't part of its head: {head['id']}",
             )
             ot = part
@@ -134,13 +135,16 @@ def reviewed_rows():
             "id": head["id"],
             "class": head["class"],
             "table_code": head["table_code"],
-            "nt": head["nt"]["normalized"].split("; "),
+            "nt": parse_passages(head["nt"]["normalized"]),
             "ot": ot,
         }
         mapped = brenton_verses(row["ot"])
         _unique(nt_verses(row["nt"]), f"NT verses in {row['id']}")
         _unique(mapped, f"Brenton verses in {row['id']}")
-        alternatives = head["lxx"].get("alternative_normalized", [])
+        alternatives = [
+            parse_passage(passage)
+            for passage in head["lxx"].get("alternative_normalized", [])
+        ]
         require(
             not set(brenton_verses(alternatives)) & set(mapped),
             f"Alternative selected as linked source: {row['id']}",
@@ -152,7 +156,7 @@ def reviewed_rows():
     # A merge decision is used where a link lands on its note's verse, the first
     # of a printed passage, so one anywhere else would go unused unnoticed.
     linked = {
-        expand(printed)[0]
+        str(printed.first)
         for row in rows
         for passage in row["ot"]
         for printed in mapped_passages(passage)
