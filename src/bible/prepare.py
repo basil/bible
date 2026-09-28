@@ -7,8 +7,11 @@ Every change is logged through a recorder into build/<mode>/transformations.json
 """
 
 import re
+from dataclasses import dataclass
 
+from bible import edition
 from bible.checks import require
+from bible.crossrefs import apply_links, merged_notes
 from bible.edition import (
     BOOK_NAME_MARKERS,
     DANIEL_PARTS,
@@ -18,7 +21,12 @@ from bible.edition import (
     source_id,
     source_usfm,
 )
-from bible.notes import corrected_brenton, insert_marginal_notes, restyle_brenton_notes
+from bible.notes import (
+    brenton_notes,
+    corrected_brenton,
+    insert_marginal_notes,
+    restyle_brenton_notes,
+)
 from bible.usfm import (
     HEADING_MARKERS,
     chapter_parts,
@@ -81,18 +89,23 @@ def rename_book(entry, original, text, record):
     return text
 
 
-def corrected_source(entry, archives, record):
+def corrected_source(entry, archives, record, mended_notes=None):
     """The entry's source text, with its corrections if it is Brenton's."""
     original = source_usfm(entry, archives)
     if entry["source"] != "brenton":
         return original
-    return corrected_brenton(source_id(entry), original, record)
+    return corrected_brenton(source_id(entry), original, record, mended_notes)
 
 
-def scripture_text(entry, archives, log=None, review=None):
+def scripture_text(entry, archives, log=None, review=None, *, links):
+    # The links, by book, are required: without them the See notes they replace
+    # would be restyled and printed, and the text would differ silently from the
+    # build's.
     code = entry["id"]
+    links = links.get(code, ())
     record = recorder(log, code)
-    original = corrected_source(entry, archives, record)
+    mended_notes = set()
+    original = corrected_source(entry, archives, record, mended_notes)
     if "chapters" in entry:
         # Part of a source file that holds more than one book, numbered from 1.
         first, last = entry["chapters"]
@@ -185,8 +198,19 @@ def scripture_text(entry, archives, log=None, review=None):
                 tail,
                 count=1,
             )
-        text, xo = re.subn(r"\\xo 3:23\b", lambda m: r"\xo 4:5", prefix + tail)
-        require(xo == 1, "Malachias 3:23 cross-reference origin changed")
+        # The one note in the relabelled verses, by its source and printed origin.
+        source_origin, printed_origin = "3:23", "4:5"
+        text, xo = re.subn(
+            rf"\\xo {source_origin}\b",
+            lambda m: rf"\xo {printed_origin}",
+            prefix + tail,
+        )
+        require(xo == 1, f"Malachias {source_origin} cross-reference origin changed")
+        # A correction names the note by its source origin, and a merged note's
+        # key by its printed one, so the guard below compares them relabelled.
+        mended_notes = {
+            re.sub(rf"^{source_origin}(?=#|$)", printed_origin, p) for p in mended_notes
+        }
         labels = inventory(text)["chapters"]
         require(list(labels) == ["1", "2", "3", "4"], "Wrong chapter grouping: MAL")
         require(
@@ -199,7 +223,7 @@ def scripture_text(entry, archives, log=None, review=None):
             source_ids=[source_id(entry)],
             source_verses="3:19-24",
             edition_verses="4:1-6",
-            relabelled_note_origins={"3:23": "4:5"},
+            relabelled_note_origins={source_origin: printed_origin},
             moved_paragraph_marker="after the new chapter 4 marker",
         )
     text = rename_book(entry, original, text, record)
@@ -216,10 +240,19 @@ def scripture_text(entry, archives, log=None, review=None):
     if entry["source"] == "kjv":
         text = insert_marginal_notes(code, text, record, review)
     else:
-        text = restyle_brenton_notes(code, text, record, review)
+        clean, found = brenton_notes(code, text)
+        merged = merged_notes(code, found, links, archives, record)
+        # A merged note doesn't print, so a correction to it would go unused
+        # unnoticed, as an exception to it would.
+        replaced = sorted(k for k in merged if k.partition(" ")[2] in mended_notes)
+        require(
+            not replaced, f"Brenton correction to a note a link replaces: {replaced}"
+        )
+        text = restyle_brenton_notes(code, clean, found, record, review, merged)
+    text = apply_links(code, text, links, record)
     # Any caller, "*" as well as "+"; only "-" sets none.
     require(
-        not re.search(r"\\f (?!- )", text) and "\\x " not in text,
+        not re.search(r"\\[fx] (?!- )", text),
         f"Note with a caller left in the text: {code}",
     )
     # Relabelling rewrites chapter and verse markers only, so every note must
@@ -233,6 +266,25 @@ def scripture_text(entry, archives, log=None, review=None):
         f"Note reference disagrees with its verse: {code}",
     )
     return text
+
+
+@dataclass
+class PreparedUnit:
+    """A scripture unit as the build prints it, with what preparing it recorded."""
+
+    text: str
+    transformations: list
+    review: list
+
+
+def prepared_scripture(archives, links):
+    """Every scripture unit prepared, by id, in the manifest's order."""
+    result = {}
+    for unit in edition.MANIFEST["scripture"]:
+        log, review = [], []
+        text = scripture_text(unit, archives, log, review, links=links)
+        result[unit["id"]] = PreparedUnit(text, log, review)
+    return result
 
 
 def front_matter_text(entry, archives, log=None):

@@ -48,6 +48,9 @@ def publish(mode, pdf, ids, report):
             for k, v in sources.SOURCES.items()
         },
         "inputs": tracked_inputs(),
+        "transformations_sha256": file_sha256(
+            paths.BUILD_DIR / mode / "transformations.json"
+        ),
         "order": ids,
         "checks": report,
         "fonts": toolchain.installed_fonts(),

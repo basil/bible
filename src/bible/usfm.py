@@ -18,7 +18,19 @@ MARKER = r"\\(\+?[\w-]+\*?)"
 MARKUP = re.compile(r"\\\+?[\w-]+(?:\*| ?)")
 HEADING_MARKERS = ("mt1", "mt2", "mt3")
 # Notes, character styles and table cells, which PTXprint must keep...
-NOTE_AND_STYLE_MARKERS = {"f", "x", "add", "it", "tr", "tc1", "tc2", "vp"}
+NOTE_AND_STYLE_MARKERS = {
+    "f",
+    "x",
+    "xta",
+    "add",
+    "it",
+    "tr",
+    "th1",
+    "th2",
+    "tc1",
+    "tc2",
+    "vp",
+}
 # ...and the parts of notes, which preparation must keep as well.
 NOTE_PART_MARKERS = {"fr", "ft", "fq", "fqa", "xo", "xt"}
 # USFM's escapes for characters that would otherwise be markup.
@@ -83,9 +95,17 @@ def marker_lines(text, markers):
     ]
 
 
+CHAPTER_START = re.compile(r"(?=\\c \d+\s)")
+
+
 def chapter_parts(text):
-    parts = re.split(r"(?=\\c \d+\s)", text)
+    parts = CHAPTER_START.split(text)
     return parts[0], parts[1:]
+
+
+def book_header(text):
+    """The text before the first chapter, without splitting the rest."""
+    return CHAPTER_START.split(text, maxsplit=1)[0]
 
 
 def renumber_chapters(chapters, offset):

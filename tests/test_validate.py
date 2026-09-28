@@ -2,7 +2,7 @@
 
 import pytest
 
-from bible import edition, notes, paths, sources, validate
+from bible import edition, notes, paths, quotations, sources, validate
 from bible.checks import CheckFailed
 from bible.edition import scripture_unit as unit
 from bible.files import read_json
@@ -18,7 +18,9 @@ def build_dir(tmp_path, monkeypatch):
 
 
 def test_validate(build_dir):
-    assert set(validate.validate()) == {"brenton", "kjv"}
+    archives, scripture = validate.validate()
+    assert set(archives) == {"brenton", "kjv"}
+    assert set(scripture) == {u["id"] for u in edition.MANIFEST["scripture"]}
     report = read_json(build_dir / "validation.json")
     assert report["kjv_marginal_notes"] == notes.EXPECTED_NT_MARGINAL_NOTES
     assert (build_dir / "nehemias-differences.diff").exists()
@@ -138,4 +140,21 @@ def test_divided_source_must_be_printed_whole(patched):
 def test_uncategorized_flag_needs_an_anchor(patched):
     patched(notes, "KJV_NOTES")["notes"]["MRK 2:21 new"]["uncategorized"] = True
     with pytest.raises(CheckFailed, match=r"without an anchor: \['MRK 2:21 new'\]"):
+        validate.validate()
+
+
+def test_note_merge_decisions_must_be_used(patched):
+    # PSA 2:7 has a link, but no second note there to merge or preserve.
+    merges = patched(quotations, "DECISIONS")["note_merges"]
+    merges["PSA 2:7#9"] = {"action": "preserve", "why": "x"}
+    with pytest.raises(CheckFailed, match="Unused note merge decisions in PSA"):
+        validate.validate()
+
+
+def test_quotation_verses_must_be_printed(patched):
+    # The edition prints Brenton's Malachias 3:23 as 4:5.
+    rows = patched(quotations, "TURPIE")["rows"]
+    head = next(h for h in rows if h["lxx"].get("normalized") == "MAL 3:1")
+    head["lxx"]["normalized"] = "MAL 3:23"
+    with pytest.raises(CheckFailed, match="Quotation verse missing.*MAL"):
         validate.validate()

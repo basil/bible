@@ -3,6 +3,7 @@ import copy
 import pytest
 
 from bible import edition, notes, prepare, sources
+from bible.crossrefs import quotation_links
 
 
 @pytest.fixture(scope="session")
@@ -12,12 +13,21 @@ def archives():
 
 
 @pytest.fixture(scope="session")
-def scripture(archives):
-    """Each printed scripture unit's prepared USFM, by id."""
-    return {
-        unit["id"]: prepare.scripture_text(unit, archives)
-        for unit in edition.MANIFEST["scripture"]
-    }
+def links(archives):
+    """The edition's quotation links, by book."""
+    return quotation_links(archives)
+
+
+@pytest.fixture(scope="session")
+def prepared(archives, links):
+    """Each printed scripture unit as the build prepares it, by id."""
+    return prepare.prepared_scripture(archives, links)
+
+
+@pytest.fixture(scope="session")
+def scripture(prepared):
+    """Each printed scripture unit's prepared USFM, by id, as the build prints it."""
+    return {code: unit.text for code, unit in prepared.items()}
 
 
 @pytest.fixture(scope="session")

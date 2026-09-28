@@ -1,0 +1,161 @@
+"""Turpie's quotation heads as transcribed, and the edition's choices among them."""
+
+from bible import paths
+from bible.checks import require
+from bible.files import read_json
+from bible.versemap import expand, lxx_to_edition, mapped_passages, unused_exceptions
+
+CLASSES = {"A", "B", "C", "D", "E"}
+# Turpie's heads as read from the page, and the edition's exclusions, class
+# conflicts, and Brenton note merges.
+TURPIE = read_json(paths.EDITION_DIR / "turpie.json")
+DECISIONS = read_json(paths.EDITION_DIR / "quotations.json")
+
+
+def nt_verses(passages):
+    """Every verse of New Testament passages."""
+    return [verse for passage in passages for verse in expand(passage)]
+
+
+def brenton_verses(passages):
+    """Every printed Brenton verse of Septuagint passages."""
+    return [lxx_to_edition(verse) for passage in passages for verse in expand(passage)]
+
+
+def _unique(values, label):
+    require(len(values) == len(set(values)), f"Duplicate {label}")
+
+
+def _check_transcription(heads):
+    ids = [head["id"] for head in heads]
+    require(
+        ids == [f"Q{i:03d}" for i in range(1, 283)],
+        "Turpie transcription must cover its 282 heads, Q001-Q282, once each in order",
+    )
+    for head in heads:
+        require(head.get("pdf_page"), f"Missing Turpie page: {head['id']}")
+        require(
+            head.get("kind") in {"table", "appendix"}
+            and (
+                head.get("class") in CLASSES
+                if head["kind"] == "table"
+                else head.get("class") is None
+            ),
+            f"Invalid Turpie classification: {head['id']}",
+        )
+        require(
+            head["nt"].get("printed") and head["nt"].get("normalized"),
+            f"Missing printed NT heading: {head['id']}",
+        )
+        if head.get("source_headings") == "none":
+            require(
+                not head["lxx"].get("printed") and not head["hebrew"].get("printed"),
+                f"Unexpected source-column heading: {head['id']}",
+            )
+        else:
+            require(
+                head["lxx"].get("printed") and head["lxx"].get("normalized"),
+                f"Missing printed LXX heading: {head['id']}",
+            )
+            require(
+                head["hebrew"].get("printed") and head["hebrew"].get("normalized"),
+                f"Missing printed Hebrew heading: {head['id']}",
+            )
+        if head["kind"] == "table":
+            require(
+                head.get("table_code", "").startswith(head["class"] + ".")
+                and head.get("printed_sequence"),
+                f"Missing table heading or sequence: {head['id']}",
+            )
+
+
+def reviewed_rows():
+    """Turpie's heads that the edition links, as passages, with its decisions checked.
+
+    The edition links each head's primary normalized passages; only an exclusion,
+    or a narrowing to part of a head that Turpie withdraws the rest of, departs
+    from Turpie, each with its reason.
+    """
+    heads = TURPIE["rows"]
+    _check_transcription(heads)
+    excluded = DECISIONS["excluded"]
+    require(
+        set(excluded) <= {head["id"] for head in heads} and all(excluded.values()),
+        "Exclusion of no Turpie head, or without a reason",
+    )
+    narrowed = DECISIONS["narrowed"]
+    require(
+        set(narrowed) <= {head["id"] for head in heads} - set(excluded)
+        and all(n.get("why") for n in narrowed.values()),
+        "Narrowing of no linked Turpie head, or without a reason",
+    )
+    rows = []
+    # Every Septuagint verse the rows link, so an exception no link reaches is
+    # caught. An alternative the edition doesn't link can't justify one: the
+    # introduction's table would owe it a row for a verse no link names.
+    linked_passages = []
+    for head in heads:
+        if head["id"] in excluded:
+            continue
+        # An appendix discussion has no class for a link to carry.
+        require(
+            head["kind"] == "table",
+            f"Unclassified appendix discussion included: {head['id']}",
+        )
+        # A passage read from Turpie's prose, not his heading, would carry his
+        # class to a target he never tabled.
+        require(
+            head["lxx"].get("printed") and head["lxx"].get("normalized"),
+            f"No printed Septuagint heading: {head['id']}",
+        )
+        ot = head["lxx"]["normalized"].split("; ")
+        if narrowing := narrowed.get(head["id"]):
+            part = narrowing["lxx"].split("; ")
+            require(
+                {v for p in part for v in expand(p)} < {v for p in ot for v in expand(p)},
+                f"Narrowing to what isn't part of its head: {head['id']}",
+            )
+            ot = part
+        row = {
+            "id": head["id"],
+            "class": head["class"],
+            "nt": head["nt"]["normalized"].split("; "),
+            "ot": ot,
+        }
+        mapped = brenton_verses(row["ot"])
+        _unique(nt_verses(row["nt"]), f"NT verses in {row['id']}")
+        _unique(mapped, f"Brenton verses in {row['id']}")
+        alternatives = head["lxx"].get("alternative_normalized", [])
+        require(
+            not set(brenton_verses(alternatives)) & set(mapped),
+            f"Alternative selected as linked source: {row['id']}",
+        )
+        linked_passages += row["ot"]
+        rows.append(row)
+    unused = unused_exceptions(linked_passages)
+    require(not unused, f"Verse mapping exceptions no quotation uses: {unused}")
+    # A merge decision is used where a link lands on its note's verse, the first
+    # of a printed passage, so one anywhere else would go unused unnoticed.
+    linked = {
+        expand(printed)[0]
+        for row in rows
+        for passage in row["ot"]
+        for printed in mapped_passages(passage)
+    }
+    for key, decision in DECISIONS["note_merges"].items():
+        require(
+            decision.get("action") in {"merge", "preserve"}
+            and decision.get("why")
+            and decision.keys() <= {"action", "why", "drops"},
+            f"Incomplete note merge decision: {key}",
+        )
+        # A merge that drops a verse of the note says which; preserving drops none.
+        require(
+            "drops" not in decision
+            or (decision["action"] == "merge" and decision["drops"]),
+            f"Note merge decision's drops without a merge: {key}",
+        )
+        require(
+            key.partition("#")[0] in linked, f"Note merge decision at no link: {key}"
+        )
+    return rows

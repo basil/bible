@@ -1,0 +1,180 @@
+{
+  "excluded": {
+    "Q049": "Turpie explicitly says the 'every man a liar' clause need not be regarded as a quotation; Romans 3:4 has a separate clear quotation of Psalm 50:6.",
+    "Q087": "Turpie prints no Septuagint or Hebrew heading for 1 Timothy 5:18, which he calls a quotation of the idea only; his prose cites Lev. XIX. 13 and Deut. XXV. 14–15, the latter about weights, not wages. A link would carry his class to a target he never tabled.",
+    "Q178": "Turpie says the source of James 4:5 is difficult to determine and prints no settled Old Testament parallel; no direct reciprocal target can be justified.",
+    "Q191": "Turpie says 1 Peter 2:24's words “are, properly speaking, not a Quotation, though bearing an evident reference to these verses in Is.” (page 175), as he says of Luke 1:17 (Q276).",
+    "Q269": "Turpie repeats the same 1 Corinthians 2:9 / Isaiah 64:4 quotation already printed at p. 223 (Q262) to discuss a second variation. One reciprocal link represents the passage; this repeated analysis is retained as a reviewed exclusion.",
+    "Q276": "Turpie prints Luke 1:17 as a table head but says it cannot be regarded as containing a quotation, having no introductory formula; it only respects the prophecies of Malachi.",
+    "Q280": "Turpie discusses this in his appendix (printed p. 263) without assigning a definite directly quoted Old Testament source; No direct OT source. Possible allusions: Is. XLIV.3; LV.1; LVIII.11.",
+    "Q281": "Turpie discusses this in his appendix (printed p. 264) without assigning a definite directly quoted Old Testament source; Multiple propositions: 2 Sam. VII.11–13,16; Ps. CXXXII.11–12; Is. XI.1; Jer. XXIII.5; Mic. V.2; 1 Sam. XVI.1–13.",
+    "Q282": "Turpie discusses this in his appendix (printed p. 265) without assigning a definite directly quoted Old Testament source; Source uncertain in the appendix."
+  },
+  "class_conflicts": [],
+  "narrowed": {
+    "Q052": {
+      "lxx": "ISA 8:17",
+      "why": "Turpie tables all of Hebrews 2:13 under A.d against Isaiah 8:17-18 (page 55), then withdraws its second part on page 56: “The next part should have been assigned to Table D.s.I.r. since, while the New Test. and Sept. agree, they differ from the Heb., which has יהוה, by reading ὁ θεός.” He tables it there as Q153 against Isaiah 8:18, so Q052 links the trust clause, Isaiah 8:17, alone."
+    }
+  },
+  "note_merges": {
+    "PSA 2:7": {
+      "action": "merge",
+      "why": "Brenton’s single note names Acts 13:33 and Hebrews 1:5; both are independently classified Turpie quotations of Psalm 2:7, so the two new links replace the combined note."
+    },
+    "PSA 68:10": {
+      "action": "merge",
+      "why": "The Brenton note names John 2:17 and Romans 15:3, both independently classified Turpie quotations linked at Psalm 68:10."
+    },
+    "ISA 28:16": {
+      "action": "merge",
+      "why": "Brenton names Romans 9:33 and 1 Peter 2:6. Turpie page 247 identifies Romans 9:33 as a composite quotation of Isaiah 8:14 and 28:16; both NT references receive classified links at Isaiah 28:16."
+    },
+    "ISA 40:3": {
+      "action": "merge",
+      "why": "Brenton’s combined note names Matthew 3:3 and John 1:23; Turpie independently classifies both at Isaiah 40:3 and both generated links are present."
+    },
+    "ISA 53:1": {
+      "action": "merge",
+      "why": "Brenton’s combined note names John 12:38 and Romans 10:16; both are classified Turpie quotations of Isaiah 53:1 and both generated links are present."
+    },
+    "DEU 5:16": {
+      "action": "merge",
+      "drops": [
+        "EPH 6:1"
+      ],
+      "why": "Brenton’s note names Matthew 15:4 and Ephesians 6:1. Turpie’s quotations of Deuteronomy 5:16 include Matthew 15:4 (Q088) and Ephesians 6:2-3 (Q205), which the links name; Ephesians 6:1 is Paul’s own command to children and quotes nothing."
+    },
+    "PSA 8:5": {
+      "action": "merge",
+      "drops": [
+        "HEB 2:9"
+      ],
+      "why": "Brenton’s note names Hebrews 2:6-9. Turpie’s quotation of Psalm 8:5-7 is Hebrews 2:6-8, which the link names; verse 9 takes up the psalm’s words for Jesus, ‘made a little lower than the angels’ and ‘crowned with glory and honour’, but Turpie doesn’t table it."
+    },
+    "PSA 33:13": {
+      "action": "merge",
+      "drops": [
+        "1PE 3:13"
+      ],
+      "why": "Brenton’s note names 1 Peter 3:10-13. Turpie’s quotation of Psalm 33:13-17 is 1 Peter 3:10-12, which the link names; verse 13 is Peter’s own question and quotes nothing."
+    },
+    "PSA 44:7": {
+      "action": "merge",
+      "drops": [
+        "HEB 1:10"
+      ],
+      "why": "Brenton’s note names Hebrews 1:8-10. Turpie’s quotation of Psalm 44:7-8 is Hebrews 1:8-9, which the link names; verse 10 begins the quotation of Psalm 101:26-28 (Q251), linked there."
+    },
+    "PSA 94:8": {
+      "action": "merge",
+      "drops": [
+        "HEB 3:12"
+      ],
+      "why": "Brenton’s note names Hebrews 3:7-12. Turpie’s quotations of Psalm 94:8 are Hebrews 3:7-11, 3:15 and 4:7, which the links name; verse 12 is the epistle’s own warning and quotes nothing."
+    },
+    "ISA 52:11": {
+      "action": "merge",
+      "drops": [
+        "2CO 6:18"
+      ],
+      "why": "Brenton’s note names 2 Corinthians 6:17-18. Turpie’s quotation of Isaiah 52:11-12 is 2 Corinthians 6:17, which the link names; verse 18 quotes 2 Kingdoms 7:8 and 7:14 (Q123), linked there."
+    },
+    "ISA 42:1": {
+      "action": "merge",
+      "why": "Brenton’s ‘See Mat. 12. 18, etc.’ points to the quotation that begins at Matthew 12:18 and runs on; the link names all of it, Matthew 12:18-21, so the ‘etc.’ says nothing the link doesn’t."
+    },
+    "GEN 2:24": {
+      "action": "preserve",
+      "why": "The note glosses ‘be cemented’ before it cites Matthew 19:5, and merging would lose Brenton’s rendering; the reference repeats one of the links."
+    },
+    "GEN 25:23": {
+      "action": "preserve",
+      "why": "The note glosses ‘the greater shall serve the less’ before it cites Romans 9:12, and merging would lose Brenton’s rendering; the reference repeats the link."
+    },
+    "PSA 2:9": {
+      "action": "preserve",
+      "why": "The note glosses ‘tend them as a shepherd’ before it cites Revelation 2:27, and merging would lose Brenton’s rendering; the reference repeats the link."
+    },
+    "PRO 22:8a": {
+      "action": "preserve",
+      "why": "After citing 2 Corinthians 9:7 the note sends the reader to the Hebrew, which lacks this Septuagint addition; merging would lose that pointer."
+    },
+    "ISA 52:7": {
+      "action": "preserve",
+      "why": "Beside Romans 10:15 the note gives another reading, a literal rendering and a reference to Joel 2:2, none of which a link carries."
+    }
+  },
+  "alignment": {
+    "outscored": {
+      "Q103": "John 8:17 gives the sense of the law of two witnesses, 'the testimony of two men is true'; Deuteronomy 19:17's 'two men' belong to the next provision, and share the words by chance.",
+      "Q222": "James 5:20's 'hide a multitude of sins' follows the Hebrew, where Brenton's Proverbs 10:12 has 'affection covers all that do not love strife' (Turpie's class E); 10:14 shares only 'hide', by chance."
+    },
+    "unscored": {
+      "Q058": "2 Timothy 2:19's 'the Lord knoweth them that are his' is Brenton's 'God has visited and known those that are his': knoweth and known don't meet, and the words they share are common.",
+      "Q116": "Hebrews 12:21's 'I exceedingly fear and quake' renders what Brenton gives as 'I was greatly terrified', in other words.",
+      "Q125": "Matthew 2:23's 'He shall be called a Nazarene' rests on the Hebrew netzer, the branch of Isaiah 11:1, which Brenton renders 'blossom'; the pun has no English words in common.",
+      "Q128": "1 Corinthians 1:31's 'he that glorieth, let him glory' is Brenton's 'let him that boasts boast', in other words.",
+      "Q197": "Matthew 8:17's 'Himself took our infirmities, and bare our sicknesses' follows the Hebrew, where Brenton's Isaiah 53:4 has 'He bears our sins and is pained for us' (Turpie's class E).",
+      "Q214": "Romans 12:19 shares only 'vengeance' with Brenton's 'In the day of vengeance I will recompense', and its exhortation around the quotation outweighs it.",
+      "Q222": "James 5:20 follows the Hebrew 'love covers all sins', where Brenton's Proverbs 10:12 has 'affection covers all that do not love strife' (Turpie's class E), with no word in common."
+    },
+    "passages": {
+      "Q108 GEN 12:3": "Galatians 3:8's preface, 'the scripture, foreseeing that God would justify the heathen through faith, preached before the gospel unto Abraham', outweighs 'in thee shall all nations be blessed', so neither promise to Abraham scores alone; together they pass.",
+      "Q108 GEN 18:18": "As at Genesis 12:3: Galatians 3:8's preface outweighs the promise it quotes."
+    },
+    "range_ends": {
+      "Q065 EXO 20:17": "Mark 10:19's 'Defraud not' stands for the tenth commandment, 'Thou shalt not covet', as Turpie argues on page 65; it shares no word with it.",
+      "Q065 DEU 5:21": "As at Exodus 20:17: Turpie reads Mark 10:19's 'Defraud not' as the tenth commandment.",
+      "Q107 LEV 26:11": "2 Corinthians 6:16's 'I will dwell in them' is Brenton's 'I will set my tabernacle among you', in other words; Turpie prints the verse, abridged to that clause.",
+      "Q133 ISA 52:12": "Turpie heads Isaiah 52:11-12 and prints verse 12's first clause, 'for the Lord shall go first before you', though 2 Corinthians 6:17 takes no words from it.",
+      "Q177 PSA 39:9": "Hebrews 10:7 takes only 'to do thy will, O God' from the verse, whose other words it lacks.",
+      "Q250 ISA 59:21": "Romans 11:27 takes only 'this is my covenant unto them' from the long verse, and Turpie prints no more of it.",
+      "Q256 1PE 3:14": "The quotation begins partway through the verse, after 'if ye suffer for righteousness' sake, happy are ye', and its 'be not afraid of their terror, neither be troubled' is Brenton's 'fear not ye their fear, neither be dismayed', in other words.",
+      "Q268 MAT 27:10": "Matthew 27:10's 'gave them for the potter's field' follows the Hebrew, where Brenton's Zacharias 11:13 has 'cast them into the furnace' (Turpie's class E).",
+      "Q273 ACT 7:26": "Stephen's 'Sirs, ye are brethren; why do ye wrong one to another?' gives Moses' 'Wherefore smitest thou thy neighbour?' in other words; Turpie prints it as quoted, 'If verse 26 be reckoned as cited' (page 284)."
+    }
+  },
+  "lxx_to_edition": {
+    "JOL 2:28-32": {
+      "target": "JOL 3:1-5",
+      "why": "Turpie's Joel II.28-32 heading uses the continuous chapter 2 numbering; Brenton numbers this oracle as Joel 3:1-5."
+    },
+    "HOS 1:10": {
+      "target": "HOS 2:1",
+      "why": "Turpie prints Hosea I.10 while Brenton places the same verse at Hosea 2:1."
+    },
+    "HOS 2:23": {
+      "target": "HOS 2:25",
+      "why": "Turpie prints Hosea II.23 in the English numbering; Brenton's 'will say to that which was not my people, Thou art my people' is Hosea 2:25, as Turpie's Hebrew column has it."
+    },
+    "EXO 22:28": {
+      "target": "EXO 22:27",
+      "why": "Turpie prints Exodus XXII.28 in the English numbering; Brenton's 'nor speak ill of the ruler of thy people' is Exodus 22:27, as Turpie's Hebrew column has it."
+    },
+    "JER 9:24": {
+      "target": "JER 9:23",
+      "why": "Turpie prints Jeremiah IX.24 in the English numbering; Brenton's 'let him that boasts boast in this' is Jeremiah 9:23, as Turpie's Hebrew column has it."
+    },
+    "MIC 5:2": {
+      "target": "MIC 5:1",
+      "why": "Turpie prints Micah V.2 in the English numbering; Brenton's 'And thou, Bethleem' is Micah 5:1, as Turpie's Hebrew column has it."
+    },
+    "ISA 64:4": {
+      "target": "ISA 64:3",
+      "why": "Turpie prints Isaiah LXIV.4 in the English numbering; Brenton's 'neither have our eyes seen a God beside thee' is Isaiah 64:3, as Turpie's Hebrew column has it."
+    },
+    "ISA 9:1": {
+      "target": "ISA 8:23",
+      "why": "Turpie prints Isaiah IX.1-2 in the English numbering; Brenton's 'land of Zabulon, land of Nephthalim' is Isaiah 8:23, as Turpie's Hebrew column has it."
+    },
+    "ISA 9:2": {
+      "target": "ISA 9:1",
+      "why": "Turpie prints Isaiah IX.1-2 in the English numbering; Brenton's 'O people walking in darkness, behold a great light' is Isaiah 9:1, as Turpie's Hebrew column has it."
+    },
+    "PRO 22:8": {
+      "target": "PRO 22:8a",
+      "why": "Turpie's Proverbs XXII.8 is the whole Septuagint verse; Brenton sets apart its addition 'God loves a cheerful and liberal man', the words 2 Corinthians 9:7 quotes, as Proverbs 22:8a."
+    }
+  }
+}

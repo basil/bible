@@ -18,13 +18,13 @@ from bible.verify import check_processed, inspect_pdf
 
 def render(mode):
     """Typeset one edition in build/<mode>, check it, and publish it to dist/."""
-    archives = validate()
+    archives, scripture = validate()
     check_image()
     base = paths.BUILD_DIR / mode
     if base.exists():
         shutil.rmtree(base)
     base.mkdir(parents=True)
-    project, ids = write_project(mode, base, archives)
+    project, ids = write_project(mode, base, archives, scripture)
     pdf = typeset(base, project)
     check_processed(project, base, ids)
     report = inspect_pdf(pdf, base, project, ids, mode == "sample")

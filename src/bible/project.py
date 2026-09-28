@@ -12,7 +12,7 @@ from bible import edition, paths
 from bible.checks import require
 from bible.edition import book_names_element, ordered_entries, source_id, source_usfm
 from bible.files import read_json, write_json
-from bible.prepare import front_matter_text, recorder, sample_chapters, scripture_text
+from bible.prepare import front_matter_text, recorder, sample_chapters
 from bible.typography import typographic_text
 
 BSB_DEFAULT = "shared/ptxprint/Default"
@@ -41,8 +41,9 @@ def processed_usfm(project, code):
     return project / PROCESSED_DIR / f"{code}-Bible.usfm"
 
 
-def write_project(mode, base, archives):
-    """Write the PTXprint project; returns its folder and the order of its units."""
+def write_project(mode, base, archives, scripture):
+    """Write the PTXprint project from validate's prepared scripture; returns its
+    folder and the order of its units."""
     project = base / PROJECT_DIR
     conf = project / "shared/ptxprint/Bible"
     conf.mkdir(parents=True)
@@ -65,7 +66,8 @@ def write_project(mode, base, archives):
             require(text.startswith(f"\\id {code}\n"), f"Wrong id in {entry['file']}")
         else:
             if "section" in entry:
-                text = scripture_text(entry, archives, transformations)
+                text = scripture[code].text
+                transformations.extend(scripture[code].transformations)
             else:
                 text = front_matter_text(entry, archives, transformations)
             if code != source_id(entry):

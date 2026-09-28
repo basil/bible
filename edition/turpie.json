@@ -1,0 +1,5814 @@
+{
+  "edition": "David McCalman Turpie, The Old Testament in the New (1868)",
+  "pdf_page_numbering": "One-based PDF page numbers; printed page = PDF page minus 38 where numbered.",
+  "transcription_scope": "Printed and normalized NT, LXX, and Hebrew reference headings and table metadata. Later displayed headings and alternatives are recorded separately. No Greek, Hebrew, or English quotation wording has been transcribed.",
+  "rows": [
+    {
+      "id": "Q001",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(1)",
+      "pdf_page": 39,
+      "nt": {
+        "printed": "Matt. XIX. 18.",
+        "normalized": "MAT 19:18"
+      },
+      "lxx": {
+        "printed": "Exod. XX. 13–16.; Deut. V. 17–20.",
+        "normalized": "EXO 20:13-16; DEU 5:17-20"
+      },
+      "hebrew": {
+        "printed": "Exod. XX. 13–16.; Deut. V. 17–20.",
+        "normalized": "EXO 20:13-16; DEU 5:17-20"
+      }
+    },
+    {
+      "id": "Q002",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(2)",
+      "pdf_page": 40,
+      "nt": {
+        "printed": "Matt. XIX. 19 lp.",
+        "normalized": "MAT 19:19"
+      },
+      "lxx": {
+        "printed": "Lev. XIX. 18.",
+        "normalized": "LEV 19:18"
+      },
+      "hebrew": {
+        "printed": "Lev. XIX. 18.",
+        "normalized": "LEV 19:18"
+      },
+      "part_markers": [
+        "lp"
+      ]
+    },
+    {
+      "id": "Q003",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(3)",
+      "pdf_page": 40,
+      "nt": {
+        "printed": "Matt. XXI. 16.",
+        "normalized": "MAT 21:16"
+      },
+      "lxx": {
+        "printed": "Ps. VIII. 3.",
+        "normalized": "PSA 8:3"
+      },
+      "hebrew": {
+        "printed": "Ps. VIII. 3.",
+        "normalized": "PSA 8:3"
+      }
+    },
+    {
+      "id": "Q004",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(4)",
+      "pdf_page": 41,
+      "nt": {
+        "printed": "Matt. XXII. 39.",
+        "normalized": "MAT 22:39"
+      },
+      "lxx": {
+        "printed": "Lev. XIX. 18.",
+        "normalized": "LEV 19:18"
+      },
+      "hebrew": {
+        "printed": "Lev. XIX. 18.",
+        "normalized": "LEV 19:18"
+      }
+    },
+    {
+      "id": "Q005",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(5)",
+      "pdf_page": 41,
+      "nt": {
+        "printed": "Mark VII. 10 fp.",
+        "normalized": "MRK 7:10"
+      },
+      "lxx": {
+        "printed": "Exod. XX. 12.",
+        "normalized": "EXO 20:12"
+      },
+      "hebrew": {
+        "printed": "Exod. XX. 12.",
+        "normalized": "EXO 20:12"
+      },
+      "part_markers": [
+        "fp"
+      ]
+    },
+    {
+      "id": "Q006",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(6)",
+      "pdf_page": 41,
+      "nt": {
+        "printed": "Mark XI. 17.",
+        "normalized": "MRK 11:17"
+      },
+      "lxx": {
+        "printed": "Is. LVI. 7.",
+        "normalized": "ISA 56:7"
+      },
+      "hebrew": {
+        "printed": "Is. LVI. 7.",
+        "normalized": "ISA 56:7"
+      }
+    },
+    {
+      "id": "Q007",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(7)",
+      "pdf_page": 41,
+      "nt": {
+        "printed": "Mark XII. 31.",
+        "normalized": "MRK 12:31"
+      },
+      "lxx": {
+        "printed": "Lev. XIX. 18.",
+        "normalized": "LEV 19:18"
+      },
+      "hebrew": {
+        "printed": "Lev. XIX. 18.",
+        "normalized": "LEV 19:18"
+      }
+    },
+    {
+      "id": "Q008",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(8)",
+      "pdf_page": 41,
+      "nt": {
+        "printed": "Luke X. 27 lp.",
+        "normalized": "LUK 10:27"
+      },
+      "lxx": {
+        "printed": "Lev. XIX. 18.",
+        "normalized": "LEV 19:18"
+      },
+      "hebrew": {
+        "printed": "Lev. XIX. 18.",
+        "normalized": "LEV 19:18"
+      },
+      "part_markers": [
+        "lp"
+      ]
+    },
+    {
+      "id": "Q009",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(9)",
+      "pdf_page": 42,
+      "nt": {
+        "printed": "Luke XVIII. 20 lp.",
+        "normalized": "LUK 18:20"
+      },
+      "lxx": {
+        "printed": "Exod. XX. 12; Deut. V. 16.",
+        "normalized": "EXO 20:12; DEU 5:16"
+      },
+      "hebrew": {
+        "printed": "Exod. XX. 12; Deut. V. 16.",
+        "normalized": "EXO 20:12; DEU 5:16"
+      },
+      "note": "Page 42 prints both Exodus XX.12 and Deuteronomy V.16 in the parallel source heading. Visual correction recorded from the cited PDF page.",
+      "part_markers": [
+        "lp"
+      ]
+    },
+    {
+      "id": "Q010",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(10)",
+      "pdf_page": 42,
+      "nt": {
+        "printed": "John X. 34.",
+        "normalized": "JHN 10:34"
+      },
+      "lxx": {
+        "printed": "Ps. LXXXI. 6.",
+        "normalized": "PSA 81:6"
+      },
+      "hebrew": {
+        "printed": "Ps. LXXXII. 6.",
+        "normalized": "PSA 82:6"
+      }
+    },
+    {
+      "id": "Q011",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(11)",
+      "pdf_page": 42,
+      "nt": {
+        "printed": "John XIX. 24.",
+        "normalized": "JHN 19:24"
+      },
+      "lxx": {
+        "printed": "Ps. XXI. 19.",
+        "normalized": "PSA 21:19"
+      },
+      "hebrew": {
+        "printed": "Ps. XXII. 19.",
+        "normalized": "PSA 22:19"
+      }
+    },
+    {
+      "id": "Q012",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(12)",
+      "pdf_page": 42,
+      "nt": {
+        "printed": "Acts I. 20 lp.",
+        "normalized": "ACT 1:20"
+      },
+      "lxx": {
+        "printed": "Ps. CVIII. 8.",
+        "normalized": "PSA 108:8"
+      },
+      "hebrew": {
+        "printed": "Ps. CIX. 8.",
+        "normalized": "PSA 109:8"
+      },
+      "part_markers": [
+        "lp"
+      ]
+    },
+    {
+      "id": "Q013",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(13)",
+      "pdf_page": 43,
+      "nt": {
+        "printed": "Acts II. 34–35.",
+        "normalized": "ACT 2:34-35"
+      },
+      "lxx": {
+        "printed": "Ps. CIX. 1.",
+        "normalized": "PSA 109:1"
+      },
+      "hebrew": {
+        "printed": "Ps. CX. 1.",
+        "normalized": "PSA 110:1"
+      }
+    },
+    {
+      "id": "Q014",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(14)",
+      "pdf_page": 43,
+      "nt": {
+        "printed": "Acts IV. 25–26.",
+        "normalized": "ACT 4:25-26"
+      },
+      "lxx": {
+        "printed": "Ps. II. 1–2.",
+        "normalized": "PSA 2:1-2"
+      },
+      "hebrew": {
+        "printed": "Ps. II. 1–2.",
+        "normalized": "PSA 2:1-2"
+      }
+    },
+    {
+      "id": "Q015",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(15)",
+      "pdf_page": 44,
+      "nt": {
+        "printed": "Acts XIII. 33.",
+        "normalized": "ACT 13:33"
+      },
+      "lxx": {
+        "printed": "Ps. II. 7.",
+        "normalized": "PSA 2:7"
+      },
+      "hebrew": {
+        "printed": "Ps. II. 7.",
+        "normalized": "PSA 2:7"
+      }
+    },
+    {
+      "id": "Q016",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(16)",
+      "pdf_page": 44,
+      "nt": {
+        "printed": "Acts XIII. 35.",
+        "normalized": "ACT 13:35"
+      },
+      "lxx": {
+        "printed": "Ps. XV. 10.",
+        "normalized": "PSA 15:10"
+      },
+      "hebrew": {
+        "printed": "Ps. XVI. 10.",
+        "normalized": "PSA 16:10"
+      }
+    },
+    {
+      "id": "Q017",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(17)",
+      "pdf_page": 44,
+      "nt": {
+        "printed": "Rom. III. 13.",
+        "normalized": "ROM 3:13"
+      },
+      "lxx": {
+        "printed": "Ps. V. 10.",
+        "normalized": "PSA 5:10"
+      },
+      "hebrew": {
+        "printed": "Ps. V. 10.",
+        "normalized": "PSA 5:10"
+      }
+    },
+    {
+      "id": "Q018",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(18)",
+      "pdf_page": 45,
+      "nt": {
+        "printed": "Rom. III. 13.",
+        "normalized": "ROM 3:13"
+      },
+      "lxx": {
+        "printed": "Ps. CXXXIX. 4.",
+        "normalized": "PSA 139:4"
+      },
+      "hebrew": {
+        "printed": "Ps. CXL. 4.",
+        "normalized": "PSA 140:4"
+      }
+    },
+    {
+      "id": "Q019",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(19)",
+      "pdf_page": 45,
+      "nt": {
+        "printed": "Rom. IV. 17.",
+        "normalized": "ROM 4:17"
+      },
+      "lxx": {
+        "printed": "Gen. XVII. 5.",
+        "normalized": "GEN 17:5"
+      },
+      "hebrew": {
+        "printed": "Gen. XVII. 5.",
+        "normalized": "GEN 17:5"
+      }
+    },
+    {
+      "id": "Q020",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(20)",
+      "pdf_page": 46,
+      "nt": {
+        "printed": "Rom. IV. 18.",
+        "normalized": "ROM 4:18"
+      },
+      "lxx": {
+        "printed": "Gen. XV. 5.",
+        "normalized": "GEN 15:5"
+      },
+      "hebrew": {
+        "printed": "Gen. XV. 5.",
+        "normalized": "GEN 15:5"
+      }
+    },
+    {
+      "id": "Q021",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(21)",
+      "pdf_page": 46,
+      "nt": {
+        "printed": "Rom. VIII. 36.",
+        "normalized": "ROM 8:36"
+      },
+      "lxx": {
+        "printed": "Ps. XLIII. 23.",
+        "normalized": "PSA 43:23"
+      },
+      "hebrew": {
+        "printed": "Ps. XLIV. 23.",
+        "normalized": "PSA 44:23"
+      }
+    },
+    {
+      "id": "Q022",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(22)",
+      "pdf_page": 46,
+      "nt": {
+        "printed": "Rom. IX. 7.",
+        "normalized": "ROM 9:7"
+      },
+      "lxx": {
+        "printed": "Gen. XXI. 12.",
+        "normalized": "GEN 21:12"
+      },
+      "hebrew": {
+        "printed": "Gen. XXI. 12.",
+        "normalized": "GEN 21:12"
+      }
+    },
+    {
+      "id": "Q023",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(23)",
+      "pdf_page": 46,
+      "nt": {
+        "printed": "Rom. IX. 12.",
+        "normalized": "ROM 9:12"
+      },
+      "lxx": {
+        "printed": "Gen. XXV. 23.",
+        "normalized": "GEN 25:23"
+      },
+      "hebrew": {
+        "printed": "Gen. XXV. 23.",
+        "normalized": "GEN 25:23"
+      }
+    },
+    {
+      "id": "Q024",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(24)",
+      "pdf_page": 46,
+      "nt": {
+        "printed": "Rom. IX. 15.",
+        "normalized": "ROM 9:15"
+      },
+      "lxx": {
+        "printed": "Exod. XXXIII. 19.",
+        "normalized": "EXO 33:19"
+      },
+      "hebrew": {
+        "printed": "Exod. XXXIII. 19.",
+        "normalized": "EXO 33:19"
+      }
+    },
+    {
+      "id": "Q025",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(25)",
+      "pdf_page": 47,
+      "nt": {
+        "printed": "Rom. X. 13.",
+        "normalized": "ROM 10:13"
+      },
+      "lxx": {
+        "printed": "Joel II. 32.",
+        "normalized": "JOL 2:32"
+      },
+      "hebrew": {
+        "printed": "Joel III. 5.",
+        "normalized": "JOL 3:5"
+      }
+    },
+    {
+      "id": "Q026",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(26)",
+      "pdf_page": 47,
+      "nt": {
+        "printed": "Rom. XIII. 9 fp.",
+        "normalized": "ROM 13:9"
+      },
+      "lxx": {
+        "printed": "Exod. XX. 13–17.; Deut. V. 17–21.",
+        "normalized": "EXO 20:13-17; DEU 5:17-21"
+      },
+      "hebrew": {
+        "printed": "Exod. XX. 13–17.; Deut. V. 17–21.",
+        "normalized": "EXO 20:13-17; DEU 5:17-21"
+      },
+      "part_markers": [
+        "fp"
+      ],
+      "note": "Page 47 prints Deut. V.17–21 beneath Exod. XX.13–17 in both source columns, as for Matt. XIX.18 (Q001). Visual correction recorded from the cited PDF page."
+    },
+    {
+      "id": "Q027",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(27)",
+      "pdf_page": 48,
+      "nt": {
+        "printed": "Rom. XIII. 9 lp.",
+        "normalized": "ROM 13:9"
+      },
+      "lxx": {
+        "printed": "Lev. XIX. 18.",
+        "normalized": "LEV 19:18"
+      },
+      "hebrew": {
+        "printed": "Lev. XIX. 18.",
+        "normalized": "LEV 19:18"
+      },
+      "part_markers": [
+        "lp"
+      ]
+    },
+    {
+      "id": "Q028",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(28)",
+      "pdf_page": 48,
+      "nt": {
+        "printed": "Rom. XV. 3.",
+        "normalized": "ROM 15:3"
+      },
+      "lxx": {
+        "printed": "Ps. LXVIII. 10.",
+        "normalized": "PSA 68:10"
+      },
+      "hebrew": {
+        "printed": "Ps. LXIX. 10.",
+        "normalized": "PSA 69:10"
+      }
+    },
+    {
+      "id": "Q029",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(29)",
+      "pdf_page": 48,
+      "nt": {
+        "printed": "1 Cor. X. 7.",
+        "normalized": "1CO 10:7"
+      },
+      "lxx": {
+        "printed": "Exod. XXXII. 6.",
+        "normalized": "EXO 32:6"
+      },
+      "hebrew": {
+        "printed": "Exod. XXXII. 6.",
+        "normalized": "EXO 32:6"
+      }
+    },
+    {
+      "id": "Q030",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(30)",
+      "pdf_page": 48,
+      "nt": {
+        "printed": "1 Cor. X. 26 (and 28 lp. in ς).",
+        "normalized": "1CO 10:26"
+      },
+      "lxx": {
+        "printed": "Ps. XXIII. 1.",
+        "normalized": "PSA 23:1"
+      },
+      "hebrew": {
+        "printed": "Ps. XXIV. 1.",
+        "normalized": "PSA 24:1"
+      },
+      "note": "Turpie page 48 heads the quotation 1 Corinthians 10:26 and parenthetically notes the same wording in verse 28 in some manuscripts. The edition links the principal printed occurrence, verse 26; the parenthetical textual variant does not define a second quotation."
+    },
+    {
+      "id": "Q031",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(31)",
+      "pdf_page": 48,
+      "nt": {
+        "printed": "2 Cor. IV. 13.",
+        "normalized": "2CO 4:13"
+      },
+      "lxx": {
+        "printed": "Ps. CXV. 1.",
+        "normalized": "PSA 115:1"
+      },
+      "hebrew": {
+        "printed": "Ps. CXVI. 10.",
+        "normalized": "PSA 116:10"
+      }
+    },
+    {
+      "id": "Q032",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(32)",
+      "pdf_page": 49,
+      "nt": {
+        "printed": "2 Cor. VI. 2.",
+        "normalized": "2CO 6:2"
+      },
+      "lxx": {
+        "printed": "Is. XLIX. 8.",
+        "normalized": "ISA 49:8"
+      },
+      "hebrew": {
+        "printed": "Is. XLIX. 8.",
+        "normalized": "ISA 49:8"
+      }
+    },
+    {
+      "id": "Q033",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(33)",
+      "pdf_page": 49,
+      "nt": {
+        "printed": "2 Cor. IX. 9.",
+        "normalized": "2CO 9:9"
+      },
+      "lxx": {
+        "printed": "Ps. CXI. 9.",
+        "normalized": "PSA 111:9"
+      },
+      "hebrew": {
+        "printed": "Ps. CXII. 9.",
+        "normalized": "PSA 112:9"
+      }
+    },
+    {
+      "id": "Q034",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(34)",
+      "pdf_page": 49,
+      "nt": {
+        "printed": "Gal. III. 16.",
+        "normalized": "GAL 3:16"
+      },
+      "lxx": {
+        "printed": "Gen. XXII. 18.",
+        "normalized": "GEN 22:18"
+      },
+      "hebrew": {
+        "printed": "Gen. XXII. 18.",
+        "normalized": "GEN 22:18"
+      }
+    },
+    {
+      "id": "Q035",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(35)",
+      "pdf_page": 49,
+      "nt": {
+        "printed": "Gal. V. 14.",
+        "normalized": "GAL 5:14"
+      },
+      "lxx": {
+        "printed": "Lev. XIX. 18.",
+        "normalized": "LEV 19:18"
+      },
+      "hebrew": {
+        "printed": "Lev. XIX. 18.",
+        "normalized": "LEV 19:18"
+      }
+    },
+    {
+      "id": "Q036",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(36)",
+      "pdf_page": 50,
+      "nt": {
+        "printed": "Heb. I. 5 fp.",
+        "normalized": "HEB 1:5"
+      },
+      "lxx": {
+        "printed": "Ps. II. 7.",
+        "normalized": "PSA 2:7"
+      },
+      "hebrew": {
+        "printed": "Ps. II. 7.",
+        "normalized": "PSA 2:7"
+      },
+      "part_markers": [
+        "fp"
+      ]
+    },
+    {
+      "id": "Q037",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(37)",
+      "pdf_page": 50,
+      "nt": {
+        "printed": "Heb. I. 5 lp.",
+        "normalized": "HEB 1:5"
+      },
+      "lxx": {
+        "printed": "2 Kings VII. 14.",
+        "normalized": "2SA 7:14"
+      },
+      "hebrew": {
+        "printed": "2 Sam. VII. 14.",
+        "normalized": "2SA 7:14"
+      },
+      "part_markers": [
+        "lp"
+      ]
+    },
+    {
+      "id": "Q038",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(38)",
+      "pdf_page": 50,
+      "nt": {
+        "printed": "Heb. I. 8–9.",
+        "normalized": "HEB 1:8-9"
+      },
+      "lxx": {
+        "printed": "Ps. XLIV. 7–8.",
+        "normalized": "PSA 44:7-8"
+      },
+      "hebrew": {
+        "printed": "Ps. XLV. 7–8.",
+        "normalized": "PSA 45:7-8"
+      },
+      "note": "Page 50 prints Ps. XLIV.7-8 beside Hebrews I.8-9. Visual correction recorded from the cited PDF page."
+    },
+    {
+      "id": "Q039",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(39)",
+      "pdf_page": 51,
+      "nt": {
+        "printed": "Heb. I. 13.",
+        "normalized": "HEB 1:13"
+      },
+      "lxx": {
+        "printed": "Ps. CIX. 1.",
+        "normalized": "PSA 109:1"
+      },
+      "hebrew": {
+        "printed": "Ps. CX. 1.",
+        "normalized": "PSA 110:1"
+      }
+    },
+    {
+      "id": "Q040",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(40)",
+      "pdf_page": 51,
+      "nt": {
+        "printed": "Heb. III. 15.",
+        "normalized": "HEB 3:15"
+      },
+      "lxx": {
+        "printed": "Ps. XCIV. 8.",
+        "normalized": "PSA 94:8"
+      },
+      "hebrew": {
+        "printed": "Ps. XCV. 7–8.",
+        "normalized": "PSA 95:7-8"
+      }
+    },
+    {
+      "id": "Q041",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(41)",
+      "pdf_page": 51,
+      "nt": {
+        "printed": "Heb. IV. 3.",
+        "normalized": "HEB 4:3"
+      },
+      "lxx": {
+        "printed": "Ps. XCIV. 11.",
+        "normalized": "PSA 94:11"
+      },
+      "hebrew": {
+        "printed": "Ps. XCV. 11.",
+        "normalized": "PSA 95:11"
+      }
+    },
+    {
+      "id": "Q042",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(42)",
+      "pdf_page": 52,
+      "nt": {
+        "printed": "Heb. IV. 7.",
+        "normalized": "HEB 4:7"
+      },
+      "lxx": {
+        "printed": "Ps. XCIV. 8.",
+        "normalized": "PSA 94:8"
+      },
+      "hebrew": {
+        "printed": "Ps. XCV. 7–8.",
+        "normalized": "PSA 95:7-8"
+      }
+    },
+    {
+      "id": "Q043",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(43)",
+      "pdf_page": 52,
+      "nt": {
+        "printed": "Heb. V. 5.",
+        "normalized": "HEB 5:5"
+      },
+      "lxx": {
+        "printed": "Ps. II. 7.",
+        "normalized": "PSA 2:7"
+      },
+      "hebrew": {
+        "printed": "Ps. II. 7.",
+        "normalized": "PSA 2:7"
+      }
+    },
+    {
+      "id": "Q044",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(44)",
+      "pdf_page": 52,
+      "nt": {
+        "printed": "Heb. V. 6.",
+        "normalized": "HEB 5:6"
+      },
+      "lxx": {
+        "printed": "Ps. CIX. 4.",
+        "normalized": "PSA 109:4"
+      },
+      "hebrew": {
+        "printed": "Ps. CX. 4.",
+        "normalized": "PSA 110:4"
+      }
+    },
+    {
+      "id": "Q045",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(45)",
+      "pdf_page": 52,
+      "nt": {
+        "printed": "Heb. VII. 17. 21.",
+        "normalized": "HEB 7:17; HEB 7:21"
+      },
+      "lxx": {
+        "printed": "Ps. CIX. 4.",
+        "normalized": "PSA 109:4"
+      },
+      "hebrew": {
+        "printed": "Ps. CX. 4.",
+        "normalized": "PSA 110:4"
+      },
+      "note": "Page 52 prints Heb. VII.17, 21 as two separate NT occurrences of the same Psalm quotation. Visual correction recorded from the cited PDF page."
+    },
+    {
+      "id": "Q046",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(46)",
+      "pdf_page": 53,
+      "nt": {
+        "printed": "Heb. XI. 18.",
+        "normalized": "HEB 11:18"
+      },
+      "lxx": {
+        "printed": "Gen. XXI. 12.",
+        "normalized": "GEN 21:12"
+      },
+      "hebrew": {
+        "printed": "Gen. XXI. 12.",
+        "normalized": "GEN 21:12"
+      }
+    },
+    {
+      "id": "Q047",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(47)",
+      "pdf_page": 53,
+      "nt": {
+        "printed": "James II. 8.",
+        "normalized": "JAS 2:8"
+      },
+      "lxx": {
+        "printed": "Lev. XIX. 18.",
+        "normalized": "LEV 19:18"
+      },
+      "hebrew": {
+        "printed": "Lev. XIX. 18.",
+        "normalized": "LEV 19:18"
+      }
+    },
+    {
+      "id": "Q048",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(4*)",
+      "pdf_page": 53,
+      "nt": {
+        "printed": "Matt. XXVII. 35.",
+        "normalized": "MAT 27:35"
+      },
+      "lxx": {
+        "printed": "Ps. XXI. 19.",
+        "normalized": "PSA 21:19"
+      },
+      "hebrew": {
+        "printed": "Ps. XXII. 19.",
+        "normalized": "PSA 22:19"
+      },
+      "note": "Turpie marks this received-text Matthew 27:35 entry with an asterisk; the edition's KJV contains it."
+    },
+    {
+      "id": "Q049",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.s",
+      "printed_sequence": "(16*)",
+      "pdf_page": 54,
+      "nt": {
+        "printed": "Rom. III. 4 fp.",
+        "normalized": "ROM 3:4"
+      },
+      "lxx": {
+        "printed": "Ps. CXV. 2.",
+        "normalized": "PSA 115:2"
+      },
+      "hebrew": {
+        "printed": "Ps. CXVI. 11.",
+        "normalized": "PSA 116:11"
+      },
+      "part_markers": [
+        "fp"
+      ]
+    },
+    {
+      "id": "Q050",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.d",
+      "printed_sequence": "(1)",
+      "pdf_page": 55,
+      "nt": {
+        "printed": "Acts XXIII. 5.",
+        "normalized": "ACT 23:5"
+      },
+      "lxx": {
+        "printed": "Exod. XXII. 28.",
+        "normalized": "EXO 22:28"
+      },
+      "hebrew": {
+        "printed": "Exod. XXII. 27.",
+        "normalized": "EXO 22:27"
+      }
+    },
+    {
+      "id": "Q051",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.d",
+      "printed_sequence": "(2)",
+      "pdf_page": 55,
+      "nt": {
+        "printed": "Rom. IX. 13.",
+        "normalized": "ROM 9:13"
+      },
+      "lxx": {
+        "printed": "Mal. I. 2–3.",
+        "normalized": "MAL 1:2-3"
+      },
+      "hebrew": {
+        "printed": "Mal. I. 2–3.",
+        "normalized": "MAL 1:2-3"
+      }
+    },
+    {
+      "id": "Q052",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.d",
+      "printed_sequence": "(3)",
+      "pdf_page": 55,
+      "nt": {
+        "printed": "Heb. II. 13.",
+        "normalized": "HEB 2:13"
+      },
+      "lxx": {
+        "printed": "Is. VIII. 17–18.",
+        "normalized": "ISA 8:17-18"
+      },
+      "hebrew": {
+        "printed": "Is. VIII. 17–18.",
+        "normalized": "ISA 8:17-18"
+      }
+    },
+    {
+      "id": "Q053",
+      "kind": "table",
+      "class": "A",
+      "table_code": "A.d",
+      "printed_sequence": "(4)",
+      "pdf_page": 56,
+      "nt": {
+        "printed": "1 Pet. I. 16.",
+        "normalized": "1PE 1:16"
+      },
+      "lxx": {
+        "printed": "Lev. XI. 44.",
+        "normalized": "LEV 11:44"
+      },
+      "hebrew": {
+        "printed": "Lev. XI. 44.",
+        "normalized": "LEV 11:44"
+      }
+    },
+    {
+      "id": "Q054",
+      "kind": "table",
+      "class": "B",
+      "table_code": "B.s",
+      "printed_sequence": "(1)",
+      "pdf_page": 57,
+      "nt": {
+        "printed": "Mark XII. 29–30.",
+        "normalized": "MRK 12:29-30"
+      },
+      "lxx": {
+        "printed": "Deut. VI. 4–5.",
+        "normalized": "DEU 6:4-5"
+      },
+      "hebrew": {
+        "printed": "Deut. VI. 4–5.",
+        "normalized": "DEU 6:4-5"
+      }
+    },
+    {
+      "id": "Q055",
+      "kind": "table",
+      "class": "B",
+      "table_code": "B.s",
+      "printed_sequence": "(2)",
+      "pdf_page": 58,
+      "nt": {
+        "printed": "Mark XV. 28.",
+        "normalized": "MRK 15:28"
+      },
+      "lxx": {
+        "printed": "Is. LIII. 12.",
+        "normalized": "ISA 53:12"
+      },
+      "hebrew": {
+        "printed": "Is. LIII. 12.",
+        "normalized": "ISA 53:12"
+      }
+    },
+    {
+      "id": "Q056",
+      "kind": "table",
+      "class": "B",
+      "table_code": "B.s",
+      "printed_sequence": "(3)",
+      "pdf_page": 58,
+      "nt": {
+        "printed": "Luke XXII. 37.",
+        "normalized": "LUK 22:37"
+      },
+      "lxx": {
+        "printed": "Is. LIII. 12.",
+        "normalized": "ISA 53:12"
+      },
+      "hebrew": {
+        "printed": "Is. LIII. 12.",
+        "normalized": "ISA 53:12"
+      }
+    },
+    {
+      "id": "Q057",
+      "kind": "table",
+      "class": "B",
+      "table_code": "B.s",
+      "printed_sequence": "(4)",
+      "pdf_page": 58,
+      "nt": {
+        "printed": "2 Cor. VIII. 15.",
+        "normalized": "2CO 8:15"
+      },
+      "lxx": {
+        "printed": "Exod. XVI. 18.",
+        "normalized": "EXO 16:18"
+      },
+      "hebrew": {
+        "printed": "Exod. XVI. 18.",
+        "normalized": "EXO 16:18"
+      }
+    },
+    {
+      "id": "Q058",
+      "kind": "table",
+      "class": "B",
+      "table_code": "B.s",
+      "printed_sequence": "(5)",
+      "pdf_page": 59,
+      "nt": {
+        "printed": "2 Tim. II. 19.",
+        "normalized": "2TI 2:19"
+      },
+      "lxx": {
+        "printed": "Num. XVI. 5.",
+        "normalized": "NUM 16:5"
+      },
+      "hebrew": {
+        "printed": "Num. XVI. 5.",
+        "normalized": "NUM 16:5"
+      }
+    },
+    {
+      "id": "Q059",
+      "kind": "table",
+      "class": "B",
+      "table_code": "B.s",
+      "printed_sequence": "(6)",
+      "pdf_page": 59,
+      "nt": {
+        "printed": "Heb. II. 12.",
+        "normalized": "HEB 2:12"
+      },
+      "lxx": {
+        "printed": "Ps. XXI. 23.",
+        "normalized": "PSA 21:23"
+      },
+      "hebrew": {
+        "printed": "Ps. XXII. 23.",
+        "normalized": "PSA 22:23"
+      }
+    },
+    {
+      "id": "Q060",
+      "kind": "table",
+      "class": "B",
+      "table_code": "B.d",
+      "printed_sequence": "(1)",
+      "pdf_page": 60,
+      "nt": {
+        "printed": "Matt. II. 15.",
+        "normalized": "MAT 2:15"
+      },
+      "lxx": {
+        "printed": "Hos. XI. 1.",
+        "normalized": "HOS 11:1"
+      },
+      "hebrew": {
+        "printed": "Hos. XI. 1.",
+        "normalized": "HOS 11:1"
+      }
+    },
+    {
+      "id": "Q061",
+      "kind": "table",
+      "class": "B",
+      "table_code": "B.d",
+      "printed_sequence": "(2)",
+      "pdf_page": 60,
+      "nt": {
+        "printed": "Matt. XXVII. 46.",
+        "normalized": "MAT 27:46"
+      },
+      "lxx": {
+        "printed": "Ps. XXI. 2.",
+        "normalized": "PSA 21:2"
+      },
+      "hebrew": {
+        "printed": "Ps. XXII. 2.",
+        "normalized": "PSA 22:2"
+      }
+    },
+    {
+      "id": "Q062",
+      "kind": "table",
+      "class": "B",
+      "table_code": "B.d",
+      "printed_sequence": "(3)",
+      "pdf_page": 61,
+      "nt": {
+        "printed": "Mark XV. 34.",
+        "normalized": "MRK 15:34"
+      },
+      "lxx": {
+        "printed": "Ps. XXI. 2.",
+        "normalized": "PSA 21:2"
+      },
+      "hebrew": {
+        "printed": "Ps. XXII. 2.",
+        "normalized": "PSA 22:2"
+      }
+    },
+    {
+      "id": "Q063",
+      "kind": "table",
+      "class": "B",
+      "table_code": "B.d",
+      "printed_sequence": "(4)",
+      "pdf_page": 62,
+      "nt": {
+        "printed": "1 Cor. III. 19.",
+        "normalized": "1CO 3:19"
+      },
+      "lxx": {
+        "printed": "Job V. 13.",
+        "normalized": "JOB 5:13"
+      },
+      "hebrew": {
+        "printed": "Job V. 13.",
+        "normalized": "JOB 5:13"
+      }
+    },
+    {
+      "id": "Q064",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r",
+      "printed_sequence": "(1)",
+      "pdf_page": 63,
+      "nt": {
+        "printed": "Matt. XXII. 44.",
+        "normalized": "MAT 22:44"
+      },
+      "lxx": {
+        "printed": "Ps. CIX. 1.",
+        "normalized": "PSA 109:1"
+      },
+      "hebrew": {
+        "printed": "Ps. CX. 1.",
+        "normalized": "PSA 110:1"
+      }
+    },
+    {
+      "id": "Q065",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r",
+      "printed_sequence": "(2)",
+      "pdf_page": 64,
+      "nt": {
+        "printed": "Mark X. 19 fp.",
+        "normalized": "MRK 10:19"
+      },
+      "lxx": {
+        "printed": "Exod. XX. 13–17.; Deut. V. 17–21.",
+        "normalized": "EXO 20:13-17; DEU 5:17-21"
+      },
+      "hebrew": {
+        "printed": "Exod. XX. 13–17.; Deut. V. 17–21.",
+        "normalized": "EXO 20:13-17; DEU 5:17-21"
+      },
+      "part_markers": [
+        "fp"
+      ],
+      "note": "Page 64 prints Deut. V.17–21 beneath Exod. XX.13–17 in both source columns, as for Matt. XIX.18 (Q001). Visual correction recorded from the cited PDF page."
+    },
+    {
+      "id": "Q066",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r",
+      "printed_sequence": "(3)",
+      "pdf_page": 65,
+      "nt": {
+        "printed": "Mark XII. 36.",
+        "normalized": "MRK 12:36"
+      },
+      "lxx": {
+        "printed": "Ps. CIX. 1.",
+        "normalized": "PSA 109:1"
+      },
+      "hebrew": {
+        "printed": "Ps. CX. 1.",
+        "normalized": "PSA 110:1"
+      }
+    },
+    {
+      "id": "Q067",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r",
+      "printed_sequence": "(4)",
+      "pdf_page": 66,
+      "nt": {
+        "printed": "Luke XVIII. 20 fp.",
+        "normalized": "LUK 18:20"
+      },
+      "lxx": {
+        "printed": "Exod. XX. 13–16.; Deut. V. 17–20.",
+        "normalized": "EXO 20:13-16; DEU 5:17-20"
+      },
+      "hebrew": {
+        "printed": "Exod. XX. 13–16.; Deut. V. 17–20.",
+        "normalized": "EXO 20:13-16; DEU 5:17-20"
+      },
+      "part_markers": [
+        "fp"
+      ],
+      "note": "Page 66 prints Deut. V.17–20 beneath Exod. XX.13–16 in both source columns, as for Matt. XIX.18 (Q001). Visual correction recorded from the cited PDF page."
+    },
+    {
+      "id": "Q068",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r",
+      "printed_sequence": "(5)",
+      "pdf_page": 66,
+      "nt": {
+        "printed": "Luke XX. 42–43.",
+        "normalized": "LUK 20:42-43"
+      },
+      "lxx": {
+        "printed": "Ps. CIX. 1.",
+        "normalized": "PSA 109:1"
+      },
+      "hebrew": {
+        "printed": "Ps. CX. 1.",
+        "normalized": "PSA 110:1"
+      }
+    },
+    {
+      "id": "Q069",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r",
+      "printed_sequence": "(6)",
+      "pdf_page": 67,
+      "nt": {
+        "printed": "Luke XXIII. 46.",
+        "normalized": "LUK 23:46"
+      },
+      "lxx": {
+        "printed": "Ps. XXX. 6.",
+        "normalized": "PSA 30:6"
+      },
+      "hebrew": {
+        "printed": "Ps. XXXI. 6.",
+        "normalized": "PSA 31:6"
+      }
+    },
+    {
+      "id": "Q070",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r",
+      "printed_sequence": "(7)",
+      "pdf_page": 67,
+      "nt": {
+        "printed": "John II. 17.",
+        "normalized": "JHN 2:17"
+      },
+      "lxx": {
+        "printed": "Ps. LXVIII. 10.",
+        "normalized": "PSA 68:10"
+      },
+      "hebrew": {
+        "printed": "Ps. LXIX. 10.",
+        "normalized": "PSA 69:10"
+      }
+    },
+    {
+      "id": "Q071",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r",
+      "printed_sequence": "(8)",
+      "pdf_page": 68,
+      "nt": {
+        "printed": "John XV. 25.",
+        "normalized": "JHN 15:25"
+      },
+      "lxx": {
+        "printed": "Ps. XXXIV. 19 and LXVIII. 5.",
+        "normalized": "PSA 34:19; PSA 68:5"
+      },
+      "hebrew": {
+        "printed": "Ps. XXXV. 19 and LXIX. 5.",
+        "normalized": "PSA 35:19; PSA 69:5"
+      },
+      "additional_source_headings": {
+        "printed": [
+          "Ps. CVIII. 3.",
+          "Ps. XXXVII. 20."
+        ],
+        "hebrew_printed": [
+          "Ps. CIX. 3.",
+          "Ps. XXXVIII. 20."
+        ],
+        "lxx_normalized": [
+          "PSA 108:3",
+          "PSA 37:20"
+        ],
+        "hebrew_normalized": [
+          "PSA 109:3",
+          "PSA 38:20"
+        ],
+        "scope": "Later displayed headings in both source columns; primary normalized fields give the first heading."
+      },
+      "note": "Page 68 also prints Ps. CVIII.3 and XXXVII.20 (Hebrew CIX.3 and XXXVIII.20), but Turpie refers the quotation to Ps. XXXIV.19 or LXVIII.5, where John’s verb is found; CVIII.3 has another verb and XXXVII.20 is only “see also”, so neither is linked."
+    },
+    {
+      "id": "Q072",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r",
+      "printed_sequence": "(9)",
+      "pdf_page": 69,
+      "nt": {
+        "printed": "John XIX. 36.",
+        "normalized": "JHN 19:36"
+      },
+      "lxx": {
+        "printed": "Exod. XII. 46.; Ps. XXXIII. 21.",
+        "normalized": "EXO 12:46; PSA 33:21"
+      },
+      "hebrew": {
+        "printed": "Exod. XII. 46.; Ps. XXXIV. 21.",
+        "normalized": "EXO 12:46; PSA 34:21"
+      },
+      "note": "Page 69 prints Ps. XXXIII.21 (Hebrew XXXIV.21) beneath Exod. XII.46 in both source columns; Turpie allows that John may have had it in view also. Visual correction recorded from the cited PDF page."
+    },
+    {
+      "id": "Q073",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r",
+      "printed_sequence": "(10)",
+      "pdf_page": 70,
+      "nt": {
+        "printed": "Acts III. 25.",
+        "normalized": "ACT 3:25"
+      },
+      "lxx": {
+        "printed": "Gen. XXII. 18.",
+        "normalized": "GEN 22:18"
+      },
+      "hebrew": {
+        "printed": "Gen. XXII. 18.",
+        "normalized": "GEN 22:18"
+      }
+    },
+    {
+      "id": "Q074",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r",
+      "printed_sequence": "(11)",
+      "pdf_page": 70,
+      "nt": {
+        "printed": "Rom. III. 4.",
+        "normalized": "ROM 3:4"
+      },
+      "lxx": {
+        "printed": "Ps. L. 6.",
+        "normalized": "PSA 50:6"
+      },
+      "hebrew": {
+        "printed": "Ps. LI. 6.",
+        "normalized": "PSA 51:6"
+      }
+    },
+    {
+      "id": "Q075",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r",
+      "printed_sequence": "(12)",
+      "pdf_page": 71,
+      "nt": {
+        "printed": "Rom. III. 18.",
+        "normalized": "ROM 3:18"
+      },
+      "lxx": {
+        "printed": "Ps. XXXV. 2.",
+        "normalized": "PSA 35:2"
+      },
+      "hebrew": {
+        "printed": "Ps. XXXVI. 2.",
+        "normalized": "PSA 36:2"
+      }
+    },
+    {
+      "id": "Q076",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r",
+      "printed_sequence": "(13)",
+      "pdf_page": 71,
+      "nt": {
+        "printed": "Rom. X. 19.",
+        "normalized": "ROM 10:19"
+      },
+      "lxx": {
+        "printed": "Deut. XXXII. 21.",
+        "normalized": "DEU 32:21"
+      },
+      "hebrew": {
+        "printed": "Deut. XXXII. 21.",
+        "normalized": "DEU 32:21"
+      }
+    },
+    {
+      "id": "Q077",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r",
+      "printed_sequence": "(14)",
+      "pdf_page": 71,
+      "nt": {
+        "printed": "Rom. XV. 11.",
+        "normalized": "ROM 15:11"
+      },
+      "lxx": {
+        "printed": "Ps. CXVI. 1.",
+        "normalized": "PSA 116:1"
+      },
+      "hebrew": {
+        "printed": "Ps. CXVII. 1.",
+        "normalized": "PSA 117:1"
+      }
+    },
+    {
+      "id": "Q078",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r",
+      "printed_sequence": "(15)",
+      "pdf_page": 72,
+      "nt": {
+        "printed": "1 Cor. III. 20.",
+        "normalized": "1CO 3:20"
+      },
+      "lxx": {
+        "printed": "Ps. XCIII. 11.",
+        "normalized": "PSA 93:11"
+      },
+      "hebrew": {
+        "printed": "Ps. XCIV. 11.",
+        "normalized": "PSA 94:11"
+      }
+    },
+    {
+      "id": "Q079",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r",
+      "printed_sequence": "(16)",
+      "pdf_page": 72,
+      "nt": {
+        "printed": "1 Cor. XV. 27.",
+        "normalized": "1CO 15:27"
+      },
+      "lxx": {
+        "printed": "Ps. VIII. 7.",
+        "normalized": "PSA 8:7"
+      },
+      "hebrew": {
+        "printed": "Ps. VIII. 7.",
+        "normalized": "PSA 8:7"
+      }
+    },
+    {
+      "id": "Q080",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r",
+      "printed_sequence": "(17)",
+      "pdf_page": 73,
+      "nt": {
+        "printed": "Eph. IV. 8.",
+        "normalized": "EPH 4:8"
+      },
+      "lxx": {
+        "printed": "Ps. LXVII. 19.",
+        "normalized": "PSA 67:19"
+      },
+      "hebrew": {
+        "printed": "Ps. LXVIII. 19.",
+        "normalized": "PSA 68:19"
+      }
+    },
+    {
+      "id": "Q081",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r",
+      "printed_sequence": "(18)",
+      "pdf_page": 74,
+      "nt": {
+        "printed": "Heb. I. 7.",
+        "normalized": "HEB 1:7"
+      },
+      "lxx": {
+        "printed": "Ps. CIII. 4.",
+        "normalized": "PSA 103:4"
+      },
+      "hebrew": {
+        "printed": "Ps. CIV. 4.",
+        "normalized": "PSA 104:4"
+      },
+      "note": "Turpie’s LXX column plainly prints Ps. CIII.4; the right Hebrew column prints Ps. CIV.4. The earlier scan ledger and decision misread the LXX chapter."
+    },
+    {
+      "id": "Q082",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r",
+      "printed_sequence": "(19)",
+      "pdf_page": 74,
+      "nt": {
+        "printed": "Heb. VI. 14.",
+        "normalized": "HEB 6:14"
+      },
+      "lxx": {
+        "printed": "Gen. XXII. 17.",
+        "normalized": "GEN 22:17"
+      },
+      "hebrew": {
+        "printed": "Gen. XXII. 17.",
+        "normalized": "GEN 22:17"
+      }
+    },
+    {
+      "id": "Q083",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r",
+      "printed_sequence": "(20)",
+      "pdf_page": 75,
+      "nt": {
+        "printed": "Heb. IX. 20.",
+        "normalized": "HEB 9:20"
+      },
+      "lxx": {
+        "printed": "Exod. XXIV. 8.",
+        "normalized": "EXO 24:8"
+      },
+      "hebrew": {
+        "printed": "Exod. XXIV. 8.",
+        "normalized": "EXO 24:8"
+      }
+    },
+    {
+      "id": "Q084",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r",
+      "printed_sequence": "(21)",
+      "pdf_page": 75,
+      "nt": {
+        "printed": "Heb. XIII. 5.",
+        "normalized": "HEB 13:5"
+      },
+      "lxx": {
+        "printed": "Deut. XXXI. 6.",
+        "normalized": "DEU 31:6"
+      },
+      "hebrew": {
+        "printed": "Deut. XXXI. 6.",
+        "normalized": "DEU 31:6"
+      },
+      "additional_source_headings": {
+        "printed": [
+          "——. ——. 8.",
+          "Josh. I. 5."
+        ],
+        "lxx_normalized": [
+          "DEU 31:8",
+          "JOS 1:5"
+        ],
+        "hebrew_normalized": [
+          "DEU 31:8",
+          "JOS 1:5"
+        ],
+        "scope": "Later displayed headings in both source columns on PDF pages 75–76; primary normalized fields give the first heading."
+      },
+      "note": "Pages 75–76 also print Deut. XXXI.8 (as “——. ——. 8.”) and Josh. I.5, but Turpie concludes the writer copied Deut. XXXI.6, not ver. 8, “nor from Josh. I. 5 at all”, so only the first heading is linked."
+    },
+    {
+      "id": "Q085",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r",
+      "printed_sequence": "(22)",
+      "pdf_page": 76,
+      "nt": {
+        "printed": "James II. 11.",
+        "normalized": "JAS 2:11"
+      },
+      "lxx": {
+        "printed": "Exod. XX. 13 and 15.; Deut. V. 17 and 18.",
+        "normalized": "EXO 20:13; EXO 20:15; DEU 5:17; DEU 5:18"
+      },
+      "hebrew": {
+        "printed": "Exod. XX. 13 and 14.; Deut. V. 17 and 18.",
+        "normalized": "EXO 20:13; EXO 20:14; DEU 5:17; DEU 5:18"
+      },
+      "note": "Page 76 prints Exod. XX.13 and 15 in the LXX column, where the Vatican order puts “kill” after “steal”, against Exod. XX.13 and 14 in the Hebrew; both columns add Deut. V.17 and 18. Visual correction recorded from the cited PDF page."
+    },
+    {
+      "id": "Q086",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r",
+      "printed_sequence": "(23)",
+      "pdf_page": 77,
+      "nt": {
+        "printed": "1 Pet. II. 24.",
+        "normalized": "1PE 2:24"
+      },
+      "lxx": {
+        "printed": "Is. LIII. 5.",
+        "normalized": "ISA 53:5"
+      },
+      "hebrew": {
+        "printed": "Is. LIII. 5.",
+        "normalized": "ISA 53:5"
+      }
+    },
+    {
+      "id": "Q087",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r",
+      "printed_sequence": "(24)",
+      "pdf_page": 77,
+      "nt": {
+        "printed": "1 Tim. V. 18 lp.",
+        "normalized": "1TI 5:18"
+      },
+      "lxx": {
+        "normalized": "LEV 19:13; DEU 25:14-15",
+        "reference_location": "prose_discussion",
+        "evidence_pages": [
+          77,
+          78
+        ]
+      },
+      "hebrew": {
+        "reference_location": "no_parallel_heading"
+      },
+      "source_headings": "none",
+      "note": "Turpie’s Class C table prints 1 Timothy 5:18 as an idea quotation. The prose discussion over PDF pages 77–78 cites “Lev. XIX. 13. and Deut. XXV. 14—15”; no LXX or Hebrew parallel heading is printed. Deuteronomy XXV.14–15 concerns weights; the hireling’s wages are at XXIV.14–15.",
+      "part_markers": [
+        "lp"
+      ]
+    },
+    {
+      "id": "Q088",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.o",
+      "printed_sequence": "(1)",
+      "pdf_page": 79,
+      "nt": {
+        "printed": "Matt. XV. 4 fp.",
+        "normalized": "MAT 15:4"
+      },
+      "lxx": {
+        "printed": "Exod. XX. 12.; Deut. V. 16.",
+        "normalized": "EXO 20:12; DEU 5:16"
+      },
+      "hebrew": {
+        "printed": "Exod. XX. 12.; Deut. V. 16.",
+        "normalized": "EXO 20:12; DEU 5:16"
+      },
+      "part_markers": [
+        "fp"
+      ],
+      "note": "Page 79 prints a second Deuteronomy V.16 parallel directly beneath Exodus XX.12. Visual correction recorded from the cited PDF page."
+    },
+    {
+      "id": "Q089",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.o",
+      "printed_sequence": "(2)",
+      "pdf_page": 79,
+      "nt": {
+        "printed": "Matt. XIX. 19 fp.",
+        "normalized": "MAT 19:19"
+      },
+      "lxx": {
+        "printed": "Exod. XX. 12.",
+        "normalized": "EXO 20:12"
+      },
+      "hebrew": {
+        "printed": "Exod. XX. 12.",
+        "normalized": "EXO 20:12"
+      },
+      "part_markers": [
+        "fp"
+      ]
+    },
+    {
+      "id": "Q090",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.o",
+      "printed_sequence": "(3)",
+      "pdf_page": 79,
+      "nt": {
+        "printed": "Matt. XXI. 13 fp.",
+        "normalized": "MAT 21:13"
+      },
+      "lxx": {
+        "printed": "Is. LVI. 7.",
+        "normalized": "ISA 56:7"
+      },
+      "hebrew": {
+        "printed": "Is. LVI. 7.",
+        "normalized": "ISA 56:7"
+      },
+      "part_markers": [
+        "fp"
+      ]
+    },
+    {
+      "id": "Q091",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.o",
+      "printed_sequence": "(4)",
+      "pdf_page": 80,
+      "nt": {
+        "printed": "Matt. XXII. 32.",
+        "normalized": "MAT 22:32"
+      },
+      "lxx": {
+        "printed": "Exod. III. 6.",
+        "normalized": "EXO 3:6"
+      },
+      "hebrew": {
+        "printed": "Exod. III. 6.",
+        "normalized": "EXO 3:6"
+      }
+    },
+    {
+      "id": "Q092",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.o",
+      "printed_sequence": "(5)",
+      "pdf_page": 80,
+      "nt": {
+        "printed": "Mark X. 19 lp.",
+        "normalized": "MRK 10:19"
+      },
+      "lxx": {
+        "printed": "Exod. XX. 12.; Deut. V. 16.",
+        "normalized": "EXO 20:12; DEU 5:16"
+      },
+      "hebrew": {
+        "printed": "Exod. XX. 12.; Deut. V. 16.",
+        "normalized": "EXO 20:12; DEU 5:16"
+      },
+      "part_markers": [
+        "lp"
+      ],
+      "note": "Page 80 prints a second Deuteronomy V.16 parallel beneath Exodus XX.12, as for Matt. XV.4 (Q088). Visual correction recorded from the cited PDF page."
+    },
+    {
+      "id": "Q093",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.o",
+      "printed_sequence": "(6)",
+      "pdf_page": 81,
+      "nt": {
+        "printed": "Mark XII. 26.",
+        "normalized": "MRK 12:26"
+      },
+      "lxx": {
+        "printed": "Exod. III. 6.",
+        "normalized": "EXO 3:6"
+      },
+      "hebrew": {
+        "printed": "Exod. III. 6.",
+        "normalized": "EXO 3:6"
+      }
+    },
+    {
+      "id": "Q094",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.o",
+      "printed_sequence": "(7)",
+      "pdf_page": 81,
+      "nt": {
+        "printed": "Luke IV. 10–11.",
+        "normalized": "LUK 4:10-11"
+      },
+      "lxx": {
+        "printed": "Ps. XC. 11–12.",
+        "normalized": "PSA 90:11-12"
+      },
+      "hebrew": {
+        "printed": "Ps. XCI. 11–12.",
+        "normalized": "PSA 91:11-12"
+      }
+    },
+    {
+      "id": "Q095",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.o",
+      "printed_sequence": "(8)",
+      "pdf_page": 82,
+      "nt": {
+        "printed": "Acts VII. 40.",
+        "normalized": "ACT 7:40"
+      },
+      "lxx": {
+        "printed": "Exod. XXXII. 1 or 23.",
+        "normalized": "EXO 32:1",
+        "alternative_normalized": [
+          "EXO 32:23"
+        ]
+      },
+      "hebrew": {
+        "printed": "Exod. XXXII. 1 or 23.",
+        "normalized": "EXO 32:1",
+        "alternative_normalized": [
+          "EXO 32:23"
+        ]
+      },
+      "note": "Turpie page 82 explicitly offers Exodus 32:1 or 32:23 as alternative wording for Acts 7:40. The cross-reference uses the earlier source occurrence, Exodus 32:1; Exodus 32:23 remains a reviewed alternative, not a composite second quotation."
+    },
+    {
+      "id": "Q096",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.o",
+      "printed_sequence": "(9)",
+      "pdf_page": 82,
+      "nt": {
+        "printed": "Rom. X. 5.",
+        "normalized": "ROM 10:5"
+      },
+      "lxx": {
+        "printed": "Lev. XVIII. 5.",
+        "normalized": "LEV 18:5"
+      },
+      "hebrew": {
+        "printed": "Lev. XVIII. 5.",
+        "normalized": "LEV 18:5"
+      }
+    },
+    {
+      "id": "Q097",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.o",
+      "printed_sequence": "(10)",
+      "pdf_page": 83,
+      "nt": {
+        "printed": "Rom. XV. 9.",
+        "normalized": "ROM 15:9"
+      },
+      "lxx": {
+        "printed": "Ps. XVII. 50.",
+        "normalized": "PSA 17:50"
+      },
+      "hebrew": {
+        "printed": "Ps. XVIII. 50.",
+        "normalized": "PSA 18:50"
+      }
+    },
+    {
+      "id": "Q098",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.o",
+      "printed_sequence": "(11)",
+      "pdf_page": 83,
+      "nt": {
+        "printed": "Gal. III. 12.",
+        "normalized": "GAL 3:12"
+      },
+      "lxx": {
+        "printed": "Lev. XVIII. 5.",
+        "normalized": "LEV 18:5"
+      },
+      "hebrew": {
+        "printed": "Lev. XVIII. 5.",
+        "normalized": "LEV 18:5"
+      }
+    },
+    {
+      "id": "Q099",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r.o",
+      "printed_sequence": "(1)",
+      "pdf_page": 85,
+      "nt": {
+        "printed": "Matt. XV. 4 lp.",
+        "normalized": "MAT 15:4"
+      },
+      "lxx": {
+        "printed": "Exod. XXI. 16.",
+        "normalized": "EXO 21:16"
+      },
+      "hebrew": {
+        "printed": "Exod. XXI. 17.",
+        "normalized": "EXO 21:17"
+      },
+      "part_markers": [
+        "lp"
+      ]
+    },
+    {
+      "id": "Q100",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r.o",
+      "printed_sequence": "(2)",
+      "pdf_page": 85,
+      "nt": {
+        "printed": "Mark VII. 10 lp.",
+        "normalized": "MRK 7:10"
+      },
+      "lxx": {
+        "printed": "Exod. XXI. 16.",
+        "normalized": "EXO 21:16"
+      },
+      "hebrew": {
+        "printed": "Exod. XXI. 17.",
+        "normalized": "EXO 21:17"
+      },
+      "part_markers": [
+        "lp"
+      ]
+    },
+    {
+      "id": "Q101",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r.o",
+      "printed_sequence": "(3)",
+      "pdf_page": 85,
+      "nt": {
+        "printed": "Luke II. 23.",
+        "normalized": "LUK 2:23"
+      },
+      "lxx": {
+        "printed": "Exod. XIII. 2.",
+        "normalized": "EXO 13:2"
+      },
+      "hebrew": {
+        "printed": "Exod. XIII. 2.",
+        "normalized": "EXO 13:2"
+      }
+    },
+    {
+      "id": "Q102",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r.o",
+      "printed_sequence": "(4)",
+      "pdf_page": 86,
+      "nt": {
+        "printed": "Luke XIX. 46 fp.",
+        "normalized": "LUK 19:46"
+      },
+      "lxx": {
+        "printed": "Is. LVI. 7.",
+        "normalized": "ISA 56:7"
+      },
+      "hebrew": {
+        "printed": "Is. LVI. 7.",
+        "normalized": "ISA 56:7"
+      },
+      "part_markers": [
+        "fp"
+      ]
+    },
+    {
+      "id": "Q103",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r.o",
+      "printed_sequence": "(5)",
+      "pdf_page": 87,
+      "nt": {
+        "printed": "John VIII. 17.",
+        "normalized": "JHN 8:17"
+      },
+      "lxx": {
+        "printed": "Deut. XIX. 15.",
+        "normalized": "DEU 19:15"
+      },
+      "hebrew": {
+        "printed": "Deut. XIX. 15.",
+        "normalized": "DEU 19:15"
+      }
+    },
+    {
+      "id": "Q104",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r.o",
+      "printed_sequence": "(6)",
+      "pdf_page": 87,
+      "nt": {
+        "printed": "Acts I. 20 fp.",
+        "normalized": "ACT 1:20"
+      },
+      "lxx": {
+        "printed": "Ps. LXVIII. 26.",
+        "normalized": "PSA 68:26"
+      },
+      "hebrew": {
+        "printed": "Ps. LXIX. 26.",
+        "normalized": "PSA 69:26"
+      },
+      "part_markers": [
+        "fp"
+      ]
+    },
+    {
+      "id": "Q105",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r.o",
+      "printed_sequence": "(7)",
+      "pdf_page": 88,
+      "nt": {
+        "printed": "Acts VII. 32.",
+        "normalized": "ACT 7:32"
+      },
+      "lxx": {
+        "printed": "Exod. III. 6.; ver. 15.",
+        "normalized": "EXO 3:6; EXO 3:15"
+      },
+      "hebrew": {
+        "printed": "Exod. III. 6.; ver. 15.",
+        "normalized": "EXO 3:6; EXO 3:15"
+      },
+      "note": "Page 88 prints Exod. III.15 as “ver. 15.” beneath Exod. III.6 in both source columns; Turpie ties the plural “fathers” of Acts VII.32 to it. His “ver. 16” references are not headings. Visual correction recorded from the cited PDF page."
+    },
+    {
+      "id": "Q106",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r.o",
+      "printed_sequence": "(8)",
+      "pdf_page": 88,
+      "nt": {
+        "printed": "Acts XIII. 34.",
+        "normalized": "ACT 13:34"
+      },
+      "lxx": {
+        "printed": "Is. LV. 3.",
+        "normalized": "ISA 55:3"
+      },
+      "hebrew": {
+        "printed": "Is. LV. 3.",
+        "normalized": "ISA 55:3"
+      }
+    },
+    {
+      "id": "Q107",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r.o",
+      "printed_sequence": "(9)",
+      "pdf_page": 89,
+      "nt": {
+        "printed": "2 Cor. VI. 16.",
+        "normalized": "2CO 6:16"
+      },
+      "lxx": {
+        "printed": "Lev. XXVI. 11–12.; Ezek. XXXVII. 27.",
+        "normalized": "LEV 26:11-12; EZK 37:27"
+      },
+      "hebrew": {
+        "printed": "Lev. XXVI. 11–12.; Ezek. XXXVII. 27.",
+        "normalized": "LEV 26:11-12; EZK 37:27"
+      }
+    },
+    {
+      "id": "Q108",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r.o",
+      "printed_sequence": "(10)",
+      "pdf_page": 90,
+      "nt": {
+        "printed": "Gal. III. 8.",
+        "normalized": "GAL 3:8"
+      },
+      "lxx": {
+        "printed": "Gen. XII. 3.; Gen. XVIII. 18.",
+        "normalized": "GEN 12:3; GEN 18:18"
+      },
+      "hebrew": {
+        "printed": "Gen. XII. 3.; Gen. XVIII. 18.",
+        "normalized": "GEN 12:3; GEN 18:18"
+      },
+      "note": "Page 90 prints Gen. XVIII.18 beneath Gen. XII.3 in both source columns. Visual correction recorded from the cited PDF page."
+    },
+    {
+      "id": "Q109",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r.o",
+      "printed_sequence": "(11)",
+      "pdf_page": 91,
+      "nt": {
+        "printed": "1 Pet. II. 9.",
+        "normalized": "1PE 2:9"
+      },
+      "lxx": {
+        "printed": "Exod. XIX. 6.",
+        "normalized": "EXO 19:6"
+      },
+      "hebrew": {
+        "printed": "Exod. XIX. 6.",
+        "normalized": "EXO 19:6"
+      }
+    },
+    {
+      "id": "Q110",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.a",
+      "printed_sequence": "(1)",
+      "pdf_page": 92,
+      "nt": {
+        "printed": "Matt. XIX. 4.",
+        "normalized": "MAT 19:4"
+      },
+      "lxx": {
+        "printed": "Gen. I. 27.; Gen. V. 2.",
+        "normalized": "GEN 1:27; GEN 5:2"
+      },
+      "hebrew": {
+        "printed": "Gen. I. 27.; Gen. V. 2.",
+        "normalized": "GEN 1:27; GEN 5:2"
+      },
+      "note": "Page 92 prints Gen. I.27 and an additional Gen. V.2 line for Matthew XIX.4; chapter I verse 21 is not this quotation. Visual correction recorded from the cited PDF page."
+    },
+    {
+      "id": "Q111",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.a",
+      "printed_sequence": "(2)",
+      "pdf_page": 92,
+      "nt": {
+        "printed": "Mark X. 6.",
+        "normalized": "MRK 10:6"
+      },
+      "lxx": {
+        "printed": "Gen. I. 27.; Gen. V. 2.",
+        "normalized": "GEN 1:27; GEN 5:2"
+      },
+      "hebrew": {
+        "printed": "Gen. I. 27.; Gen. V. 2.",
+        "normalized": "GEN 1:27; GEN 5:2"
+      },
+      "note": "Page 92 prints Gen. V.2 below Gen. I.27 in the Mark X.6 parallel columns. Visual correction recorded from the cited PDF page."
+    },
+    {
+      "id": "Q112",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.a",
+      "printed_sequence": "(3)",
+      "pdf_page": 93,
+      "nt": {
+        "printed": "John XIII. 18.",
+        "normalized": "JHN 13:18"
+      },
+      "lxx": {
+        "printed": "Ps. XL. 10.",
+        "normalized": "PSA 40:10"
+      },
+      "hebrew": {
+        "printed": "Ps. XLI. 10.",
+        "normalized": "PSA 41:10"
+      }
+    },
+    {
+      "id": "Q113",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.a",
+      "printed_sequence": "(4)",
+      "pdf_page": 94,
+      "nt": {
+        "printed": "Rom. III. 11–12.",
+        "normalized": "ROM 3:11-12"
+      },
+      "lxx": {
+        "printed": "Ps. XIII. 2–3.",
+        "normalized": "PSA 13:2-3"
+      },
+      "hebrew": {
+        "printed": "Ps. XIV. 2–3.",
+        "normalized": "PSA 14:2-3"
+      }
+    },
+    {
+      "id": "Q114",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.a",
+      "printed_sequence": "(5)",
+      "pdf_page": 94,
+      "nt": {
+        "printed": "1 Cor. XV. 45.",
+        "normalized": "1CO 15:45"
+      },
+      "lxx": {
+        "printed": "Gen. II. 7.",
+        "normalized": "GEN 2:7"
+      },
+      "hebrew": {
+        "printed": "Gen. II. 7.",
+        "normalized": "GEN 2:7"
+      }
+    },
+    {
+      "id": "Q115",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.a",
+      "printed_sequence": "(6)",
+      "pdf_page": 95,
+      "nt": {
+        "printed": "Heb. IV. 4.",
+        "normalized": "HEB 4:4"
+      },
+      "lxx": {
+        "printed": "Gen. II. 2.",
+        "normalized": "GEN 2:2"
+      },
+      "hebrew": {
+        "printed": "Gen. II. 2.",
+        "normalized": "GEN 2:2"
+      }
+    },
+    {
+      "id": "Q116",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.a",
+      "printed_sequence": "(7)",
+      "pdf_page": 95,
+      "nt": {
+        "printed": "Heb. XII. 21.",
+        "normalized": "HEB 12:21"
+      },
+      "lxx": {
+        "printed": "Deut. IX. 19.",
+        "normalized": "DEU 9:19"
+      },
+      "hebrew": {
+        "printed": "Deut. IX. 19.",
+        "normalized": "DEU 9:19"
+      }
+    },
+    {
+      "id": "Q117",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r.a",
+      "printed_sequence": "(1)",
+      "pdf_page": 96,
+      "nt": {
+        "printed": "Matt. XI. 10.",
+        "normalized": "MAT 11:10"
+      },
+      "lxx": {
+        "printed": "Mal. III. 1.",
+        "normalized": "MAL 3:1"
+      },
+      "hebrew": {
+        "printed": "Mal. III. 1.",
+        "normalized": "MAL 3:1"
+      }
+    },
+    {
+      "id": "Q118",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r.a",
+      "printed_sequence": "(2)",
+      "pdf_page": 97,
+      "nt": {
+        "printed": "Mark I. 2.",
+        "normalized": "MRK 1:2"
+      },
+      "lxx": {
+        "printed": "Mal. III. 1.",
+        "normalized": "MAL 3:1"
+      },
+      "hebrew": {
+        "printed": "Mal. III. 1.",
+        "normalized": "MAL 3:1"
+      },
+      "note": "Page 97 prints Mal. III.1 for Mark I.2; chapter 1 verse 1 is wrong. Visual correction recorded from the cited PDF page."
+    },
+    {
+      "id": "Q119",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r.a",
+      "printed_sequence": "(3)",
+      "pdf_page": 98,
+      "nt": {
+        "printed": "Luke VII. 27.",
+        "normalized": "LUK 7:27"
+      },
+      "lxx": {
+        "printed": "Mal. III. 1.",
+        "normalized": "MAL 3:1"
+      },
+      "hebrew": {
+        "printed": "Mal. III. 1.",
+        "normalized": "MAL 3:1"
+      }
+    },
+    {
+      "id": "Q120",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r.a",
+      "printed_sequence": "(4)",
+      "pdf_page": 98,
+      "nt": {
+        "printed": "John VI. 31.",
+        "normalized": "JHN 6:31"
+      },
+      "lxx": {
+        "printed": "Ps. LXXVII. 24.",
+        "normalized": "PSA 77:24"
+      },
+      "hebrew": {
+        "printed": "Ps. LXXVIII. 24.",
+        "normalized": "PSA 78:24"
+      }
+    },
+    {
+      "id": "Q121",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r.a",
+      "printed_sequence": "(5)",
+      "pdf_page": 99,
+      "nt": {
+        "printed": "Rom. IX. 25.",
+        "normalized": "ROM 9:25"
+      },
+      "lxx": {
+        "printed": "Hos. II. 23.",
+        "normalized": "HOS 2:23"
+      },
+      "hebrew": {
+        "printed": "Hos. II. 25.",
+        "normalized": "HOS 2:25"
+      }
+    },
+    {
+      "id": "Q122",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r.a",
+      "printed_sequence": "(6)",
+      "pdf_page": 100,
+      "nt": {
+        "printed": "1 Cor. X. 20.",
+        "normalized": "1CO 10:20"
+      },
+      "lxx": {
+        "printed": "Deut. XXXII. 17.",
+        "normalized": "DEU 32:17"
+      },
+      "hebrew": {
+        "printed": "Deut. XXXII. 17.",
+        "normalized": "DEU 32:17"
+      }
+    },
+    {
+      "id": "Q123",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r.a",
+      "printed_sequence": "(7)",
+      "pdf_page": 101,
+      "nt": {
+        "printed": "2 Cor. VI. 18.",
+        "normalized": "2CO 6:18"
+      },
+      "lxx": {
+        "printed": "2 Kings VII. 8, 14.",
+        "normalized": "2SA 7:8; 2SA 7:14"
+      },
+      "hebrew": {
+        "printed": "2 Sam. VII. 8, 14.",
+        "normalized": "2SA 7:8; 2SA 7:14"
+      }
+    },
+    {
+      "id": "Q124",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r.a",
+      "printed_sequence": "(6)",
+      "pdf_page": 101,
+      "nt": {
+        "printed": "1 Pet. II. 22.",
+        "normalized": "1PE 2:22"
+      },
+      "lxx": {
+        "printed": "Is. LIII. 9.",
+        "normalized": "ISA 53:9"
+      },
+      "hebrew": {
+        "printed": "Is. LIII. 9.",
+        "normalized": "ISA 53:9"
+      },
+      "note": "Turpie prints sequence (6) here on PDF page 101, after (7) at Q123 on the same page; Q122 also prints (6). The repeated number is retained as printed."
+    },
+    {
+      "id": "Q125",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.o.a",
+      "printed_sequence": "(1)",
+      "pdf_page": 102,
+      "nt": {
+        "printed": "Matt. II. 23.",
+        "normalized": "MAT 2:23"
+      },
+      "lxx": {
+        "printed": "Is. XI. 1.",
+        "normalized": "ISA 11:1"
+      },
+      "hebrew": {
+        "printed": "Is. XI. 1.",
+        "normalized": "ISA 11:1"
+      }
+    },
+    {
+      "id": "Q126",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.o.a",
+      "printed_sequence": "(2)",
+      "pdf_page": 104,
+      "nt": {
+        "printed": "Rom. III. 10.",
+        "normalized": "ROM 3:10"
+      },
+      "lxx": {
+        "printed": "Eccl. VII. 20.",
+        "normalized": "ECC 7:20"
+      },
+      "hebrew": {
+        "printed": "Eccl. VII. 20.",
+        "normalized": "ECC 7:20"
+      }
+    },
+    {
+      "id": "Q127",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.o.a",
+      "printed_sequence": "(3)",
+      "pdf_page": 105,
+      "nt": {
+        "printed": "Rom. XI. 3.",
+        "normalized": "ROM 11:3"
+      },
+      "lxx": {
+        "printed": "3 Kings XIX. 14.",
+        "normalized": "1KI 19:14"
+      },
+      "hebrew": {
+        "printed": "1 Kings XIX. 14.",
+        "normalized": "1KI 19:14"
+      }
+    },
+    {
+      "id": "Q128",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.o.a",
+      "printed_sequence": "(4)",
+      "pdf_page": 105,
+      "nt": {
+        "printed": "1 Cor. I. 31.",
+        "normalized": "1CO 1:31"
+      },
+      "lxx": {
+        "printed": "Jer. IX. 24.",
+        "normalized": "JER 9:24"
+      },
+      "hebrew": {
+        "printed": "Jer. IX. 23.",
+        "normalized": "JER 9:23"
+      }
+    },
+    {
+      "id": "Q129",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.o.a",
+      "printed_sequence": "(5)",
+      "pdf_page": 106,
+      "nt": {
+        "printed": "Gal. IV. 30.",
+        "normalized": "GAL 4:30"
+      },
+      "lxx": {
+        "printed": "Gen. XXI. 10.",
+        "normalized": "GEN 21:10"
+      },
+      "hebrew": {
+        "printed": "Gen. XXI. 10.",
+        "normalized": "GEN 21:10"
+      }
+    },
+    {
+      "id": "Q130",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r.a.o",
+      "printed_sequence": "(1)",
+      "pdf_page": 107,
+      "nt": {
+        "printed": "1 Cor. XV. 25.",
+        "normalized": "1CO 15:25"
+      },
+      "lxx": {
+        "printed": "Ps. CIX. 1.",
+        "normalized": "PSA 109:1"
+      },
+      "hebrew": {
+        "printed": "Ps. CX. 1.",
+        "normalized": "PSA 110:1"
+      }
+    },
+    {
+      "id": "Q131",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.I.r.a.o",
+      "printed_sequence": "(2)",
+      "pdf_page": 107,
+      "nt": {
+        "printed": "1 Pet. III. 10–12.",
+        "normalized": "1PE 3:10-12"
+      },
+      "lxx": {
+        "printed": "Ps. XXXIII. 13–17.",
+        "normalized": "PSA 33:13-17"
+      },
+      "hebrew": {
+        "printed": "Ps. XXXIV. 13–17.",
+        "normalized": "PSA 34:13-17"
+      }
+    },
+    {
+      "id": "Q132",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.II.r.o",
+      "printed_sequence": "unnumbered",
+      "pdf_page": 110,
+      "nt": {
+        "printed": "Heb. XII. 20.",
+        "normalized": "HEB 12:20"
+      },
+      "lxx": {
+        "printed": "Exod. XIX. 12–13.",
+        "normalized": "EXO 19:12-13"
+      },
+      "hebrew": {
+        "printed": "Exod. XIX. 12–13.",
+        "normalized": "EXO 19:12-13"
+      }
+    },
+    {
+      "id": "Q133",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.II.r.a",
+      "printed_sequence": "unnumbered",
+      "pdf_page": 111,
+      "nt": {
+        "printed": "2 Cor. VI. 17.",
+        "normalized": "2CO 6:17"
+      },
+      "lxx": {
+        "printed": "Is. LII. 11–12.",
+        "normalized": "ISA 52:11-12"
+      },
+      "hebrew": {
+        "printed": "Is. LII. 11–12.",
+        "normalized": "ISA 52:11-12"
+      }
+    },
+    {
+      "id": "Q134",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.II.2.o",
+      "printed_sequence": "(1)",
+      "pdf_page": 112,
+      "nt": {
+        "printed": "Matt. IV. 6.",
+        "normalized": "MAT 4:6"
+      },
+      "lxx": {
+        "printed": "Ps. XC. 11, 12.",
+        "normalized": "PSA 90:11-12"
+      },
+      "hebrew": {
+        "printed": "Ps. XCI. 11, 12.",
+        "normalized": "PSA 91:11-12"
+      }
+    },
+    {
+      "id": "Q135",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.II.2.o",
+      "printed_sequence": "(2)",
+      "pdf_page": 113,
+      "nt": {
+        "printed": "Rom. VII. 7.",
+        "normalized": "ROM 7:7"
+      },
+      "lxx": {
+        "printed": "Exod. XX. 17.; Deut. V. 21.",
+        "normalized": "EXO 20:17; DEU 5:21"
+      },
+      "hebrew": {
+        "printed": "Exod. XX. 17.; Deut. V. 21.",
+        "normalized": "EXO 20:17; DEU 5:21"
+      },
+      "note": "Page 113 prints Deut. V.21 beneath Exod. XX.17 in both source columns. Visual correction recorded from the cited PDF page."
+    },
+    {
+      "id": "Q136",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.II.1.o.2.o.3.a",
+      "printed_sequence": "(1)",
+      "pdf_page": 114,
+      "nt": {
+        "printed": "Matt. XXII. 24.",
+        "normalized": "MAT 22:24"
+      },
+      "lxx": {
+        "printed": "Deut. XXV. 5.",
+        "normalized": "DEU 25:5"
+      },
+      "hebrew": {
+        "printed": "Deut. XXV. 5.",
+        "normalized": "DEU 25:5"
+      }
+    },
+    {
+      "id": "Q137",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.II.1.o.2.o.3.a",
+      "printed_sequence": "(2)",
+      "pdf_page": 115,
+      "nt": {
+        "printed": "Mark XII. 19.",
+        "normalized": "MRK 12:19"
+      },
+      "lxx": {
+        "printed": "Deut. XXV. 5.",
+        "normalized": "DEU 25:5"
+      },
+      "hebrew": {
+        "printed": "Deut. XXV. 5.",
+        "normalized": "DEU 25:5"
+      }
+    },
+    {
+      "id": "Q138",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.II.1.o.2.o.3.a",
+      "printed_sequence": "(3)",
+      "pdf_page": 116,
+      "nt": {
+        "printed": "Luke XX. 28.",
+        "normalized": "LUK 20:28"
+      },
+      "lxx": {
+        "printed": "Deut. XXV. 5.",
+        "normalized": "DEU 25:5"
+      },
+      "hebrew": {
+        "printed": "Deut. XXV. 5.",
+        "normalized": "DEU 25:5"
+      }
+    },
+    {
+      "id": "Q139",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.III.a.2.a",
+      "printed_sequence": "(1)",
+      "pdf_page": 118,
+      "nt": {
+        "printed": "Acts II. 17–21.",
+        "normalized": "ACT 2:17-21"
+      },
+      "lxx": {
+        "printed": "Joel II. 28–32.",
+        "normalized": "JOL 2:28-32"
+      },
+      "hebrew": {
+        "printed": "Joel III. 1–5.",
+        "normalized": "JOL 3:1-5"
+      }
+    },
+    {
+      "id": "Q140",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.III.o.a",
+      "printed_sequence": "(1)",
+      "pdf_page": 122,
+      "nt": {
+        "printed": "Acts XIII. 22.",
+        "normalized": "ACT 13:22"
+      },
+      "lxx": {
+        "printed": "Ps. LXXXVIII. 21.; 1 Kings XIII. 14.",
+        "normalized": "PSA 88:21; 1SA 13:14"
+      },
+      "hebrew": {
+        "printed": "Ps. LXXXIX. 21.; 1 Sam. XIII. 14.",
+        "normalized": "PSA 89:21; 1SA 13:14"
+      },
+      "note": "Page 122 prints the compound source’s second part beneath the Psalm: 1 Kings (1 Kingdoms) XIII.14 in the LXX column and 1 Sam. XIII.14 in the Hebrew. Visual correction recorded from the cited PDF page."
+    },
+    {
+      "id": "Q141",
+      "kind": "table",
+      "class": "C",
+      "table_code": "C.III.o.a",
+      "printed_sequence": "(2)",
+      "pdf_page": 123,
+      "nt": {
+        "printed": "Rom. XI. 8.",
+        "normalized": "ROM 11:8"
+      },
+      "lxx": {
+        "printed": "Deut. XXIX. 4.; Is. XXIX. 10.",
+        "normalized": "DEU 29:4; ISA 29:10"
+      },
+      "hebrew": {
+        "printed": "Deut. XXIX. 3.; Is. XXIX. 10.",
+        "normalized": "DEU 29:3; ISA 29:10"
+      },
+      "note": "Page 123 prints Is. XXIX.10 beneath Deuteronomy in both source columns; Turpie treats Romans XI.8 as compounded from the two. Visual correction recorded from the cited PDF page."
+    },
+    {
+      "id": "Q142",
+      "kind": "table",
+      "class": "D",
+      "table_code": "D.s.I.r",
+      "printed_sequence": "(1)",
+      "pdf_page": 125,
+      "nt": {
+        "printed": "Matt. IV. 7.",
+        "normalized": "MAT 4:7"
+      },
+      "lxx": {
+        "printed": "Deut. VI. 16.",
+        "normalized": "DEU 6:16"
+      },
+      "hebrew": {
+        "printed": "Deut. VI. 16.",
+        "normalized": "DEU 6:16"
+      }
+    },
+    {
+      "id": "Q143",
+      "kind": "table",
+      "class": "D",
+      "table_code": "D.s.I.r",
+      "printed_sequence": "(2)",
+      "pdf_page": 126,
+      "nt": {
+        "printed": "Matt. XIII. 14–15.",
+        "normalized": "MAT 13:14-15"
+      },
+      "lxx": {
+        "printed": "Is. VI. 9–10.",
+        "normalized": "ISA 6:9-10"
+      },
+      "hebrew": {
+        "printed": "Is. VI. 9–10.",
+        "normalized": "ISA 6:9-10"
+      }
+    },
+    {
+      "id": "Q144",
+      "kind": "table",
+      "class": "D",
+      "table_code": "D.s.I.r",
+      "printed_sequence": "(3)",
+      "pdf_page": 128,
+      "nt": {
+        "printed": "Luke IV. 12.",
+        "normalized": "LUK 4:12"
+      },
+      "lxx": {
+        "printed": "Deut. VI. 16.",
+        "normalized": "DEU 6:16"
+      },
+      "hebrew": {
+        "printed": "Deut. VI. 16.",
+        "normalized": "DEU 6:16"
+      }
+    },
+    {
+      "id": "Q145",
+      "kind": "table",
+      "class": "D",
+      "table_code": "D.s.I.r",
+      "printed_sequence": "(4)",
+      "pdf_page": 128,
+      "nt": {
+        "printed": "Acts II. 25–28.",
+        "normalized": "ACT 2:25-28"
+      },
+      "lxx": {
+        "printed": "Ps. XV. 8–11.",
+        "normalized": "PSA 15:8-11"
+      },
+      "hebrew": {
+        "printed": "Ps. XVI. 8–11.",
+        "normalized": "PSA 16:8-11"
+      }
+    },
+    {
+      "id": "Q146",
+      "kind": "table",
+      "class": "D",
+      "table_code": "D.s.I.r",
+      "printed_sequence": "(5)",
+      "pdf_page": 130,
+      "nt": {
+        "printed": "Acts VIII. 32–33.",
+        "normalized": "ACT 8:32-33"
+      },
+      "lxx": {
+        "printed": "Is. LIII. 7–8.",
+        "normalized": "ISA 53:7-8"
+      },
+      "hebrew": {
+        "printed": "Is. LIII. 7–8.",
+        "normalized": "ISA 53:7-8"
+      }
+    },
+    {
+      "id": "Q147",
+      "kind": "table",
+      "class": "D",
+      "table_code": "D.s.I.r",
+      "printed_sequence": "(6)",
+      "pdf_page": 135,
+      "nt": {
+        "printed": "Acts XXVIII. 26–27.",
+        "normalized": "ACT 28:26-27"
+      },
+      "lxx": {
+        "printed": "Is. VI. 9–10.",
+        "normalized": "ISA 6:9-10"
+      },
+      "hebrew": {
+        "printed": "Is. VI. 9–10.",
+        "normalized": "ISA 6:9-10"
+      }
+    },
+    {
+      "id": "Q148",
+      "kind": "table",
+      "class": "D",
+      "table_code": "D.s.I.r",
+      "printed_sequence": "(7)",
+      "pdf_page": 137,
+      "nt": {
+        "printed": "Rom. IV. 7–8.",
+        "normalized": "ROM 4:7-8"
+      },
+      "lxx": {
+        "printed": "Ps. XXXI. 1–2.",
+        "normalized": "PSA 31:1-2"
+      },
+      "hebrew": {
+        "printed": "Ps. XXXII. 1–2.",
+        "normalized": "PSA 32:1-2"
+      }
+    },
+    {
+      "id": "Q149",
+      "kind": "table",
+      "class": "D",
+      "table_code": "D.s.I.r",
+      "printed_sequence": "(8)",
+      "pdf_page": 137,
+      "nt": {
+        "printed": "Rom. X. 18.",
+        "normalized": "ROM 10:18"
+      },
+      "lxx": {
+        "printed": "Ps. XVIII. 5.",
+        "normalized": "PSA 18:5"
+      },
+      "hebrew": {
+        "printed": "Ps. XIX. 5.",
+        "normalized": "PSA 19:5"
+      }
+    },
+    {
+      "id": "Q150",
+      "kind": "table",
+      "class": "D",
+      "table_code": "D.s.I.r",
+      "printed_sequence": "(9)",
+      "pdf_page": 138,
+      "nt": {
+        "printed": "1 Cor. IX. 9.",
+        "normalized": "1CO 9:9"
+      },
+      "lxx": {
+        "printed": "Deut. XXV. 4.",
+        "normalized": "DEU 25:4"
+      },
+      "hebrew": {
+        "printed": "Deut. XXV. 4.",
+        "normalized": "DEU 25:4"
+      }
+    },
+    {
+      "id": "Q151",
+      "kind": "table",
+      "class": "D",
+      "table_code": "D.s.I.r",
+      "printed_sequence": "(10)",
+      "pdf_page": 138,
+      "nt": {
+        "printed": "1 Cor. XV. 32.",
+        "normalized": "1CO 15:32"
+      },
+      "lxx": {
+        "printed": "Is. XXII. 13.",
+        "normalized": "ISA 22:13"
+      },
+      "hebrew": {
+        "printed": "Is. XXII. 13.",
+        "normalized": "ISA 22:13"
+      }
+    },
+    {
+      "id": "Q152",
+      "kind": "table",
+      "class": "D",
+      "table_code": "D.s.I.r",
+      "printed_sequence": "(11)",
+      "pdf_page": 139,
+      "nt": {
+        "printed": "Gal. IV. 27.",
+        "normalized": "GAL 4:27"
+      },
+      "lxx": {
+        "printed": "Is. LIV. 1.",
+        "normalized": "ISA 54:1"
+      },
+      "hebrew": {
+        "printed": "Is. LIV. 1.",
+        "normalized": "ISA 54:1"
+      }
+    },
+    {
+      "id": "Q153",
+      "kind": "table",
+      "class": "D",
+      "table_code": "D.s.I.r",
+      "printed_sequence": "(12)",
+      "pdf_page": 139,
+      "nt": {
+        "printed": "Heb. II. 13.",
+        "normalized": "HEB 2:13"
+      },
+      "lxx": {
+        "printed": "Is. VIII. 18.",
+        "normalized": "ISA 8:18"
+      },
+      "hebrew": {
+        "printed": "Is. VIII. 18.",
+        "normalized": "ISA 8:18"
+      }
+    },
+    {
+      "id": "Q154",
+      "kind": "table",
+      "class": "D",
+      "table_code": "D.s.I.o",
+      "printed_sequence": "(1)",
+      "pdf_page": 140,
+      "nt": {
+        "printed": "Acts VII. 35.",
+        "normalized": "ACT 7:35"
+      },
+      "lxx": {
+        "printed": "Exod. II. 14.",
+        "normalized": "EXO 2:14"
+      },
+      "hebrew": {
+        "printed": "Exod. II. 14.",
+        "normalized": "EXO 2:14"
+      }
+    },
+    {
+      "id": "Q155",
+      "kind": "table",
+      "class": "D",
+      "table_code": "D.s.I.r.o",
+      "printed_sequence": "(1)",
+      "pdf_page": 141,
+      "nt": {
+        "printed": "Rom. XV. 12.",
+        "normalized": "ROM 15:12"
+      },
+      "lxx": {
+        "printed": "Is. XI. 10.",
+        "normalized": "ISA 11:10"
+      },
+      "hebrew": {
+        "printed": "Is. XI. 10.",
+        "normalized": "ISA 11:10"
+      }
+    },
+    {
+      "id": "Q156",
+      "kind": "table",
+      "class": "D",
+      "table_code": "D.s.I.r.o",
+      "printed_sequence": "(2)",
+      "pdf_page": 141,
+      "nt": {
+        "printed": "Heb. XI. 21.",
+        "normalized": "HEB 11:21"
+      },
+      "lxx": {
+        "printed": "Gen. XLVII. 31.",
+        "normalized": "GEN 47:31"
+      },
+      "hebrew": {
+        "printed": "Gen. XLVII. 31.",
+        "normalized": "GEN 47:31"
+      }
+    },
+    {
+      "id": "Q157",
+      "kind": "table",
+      "class": "D",
+      "table_code": "D.s.I.a",
+      "printed_sequence": "(1)",
+      "pdf_page": 143,
+      "nt": {
+        "printed": "Matt. XXI. 42.",
+        "normalized": "MAT 21:42"
+      },
+      "lxx": {
+        "printed": "Ps. CXVII. 22–23.",
+        "normalized": "PSA 117:22-23"
+      },
+      "hebrew": {
+        "printed": "Ps. CXVIII. 22–23.",
+        "normalized": "PSA 118:22-23"
+      }
+    },
+    {
+      "id": "Q158",
+      "kind": "table",
+      "class": "D",
+      "table_code": "D.s.I.a",
+      "printed_sequence": "(2)",
+      "pdf_page": 143,
+      "nt": {
+        "printed": "Mark XII. 10–11.",
+        "normalized": "MRK 12:10-11"
+      },
+      "lxx": {
+        "printed": "Ps. CXVII. 22–23.",
+        "normalized": "PSA 117:22-23"
+      },
+      "hebrew": {
+        "printed": "Ps. CXVIII. 22–23.",
+        "normalized": "PSA 118:22-23"
+      },
+      "note": "The printed Class D head and Greek parallel on PDF page 143 cover Mark 12:10–11. The earlier selected boundary dropped verse 11; both NT verses now link to the already selected Psalm 117:22–23."
+    },
+    {
+      "id": "Q159",
+      "kind": "table",
+      "class": "D",
+      "table_code": "D.s.I.a",
+      "printed_sequence": "(3)",
+      "pdf_page": 144,
+      "nt": {
+        "printed": "Luke XX. 17.",
+        "normalized": "LUK 20:17"
+      },
+      "lxx": {
+        "printed": "Ps. CXVII. 22.",
+        "normalized": "PSA 117:22"
+      },
+      "hebrew": {
+        "printed": "Ps. CXVIII. 22.",
+        "normalized": "PSA 118:22"
+      }
+    },
+    {
+      "id": "Q160",
+      "kind": "table",
+      "class": "D",
+      "table_code": "D.s.I.a",
+      "printed_sequence": "(4)",
+      "pdf_page": 144,
+      "nt": {
+        "printed": "John XII. 38.",
+        "normalized": "JHN 12:38"
+      },
+      "lxx": {
+        "printed": "Is. LIII. 1.",
+        "normalized": "ISA 53:1"
+      },
+      "hebrew": {
+        "printed": "Is. LIII. 1.",
+        "normalized": "ISA 53:1"
+      }
+    },
+    {
+      "id": "Q161",
+      "kind": "table",
+      "class": "D",
+      "table_code": "D.s.I.a",
+      "printed_sequence": "(5)",
+      "pdf_page": 145,
+      "nt": {
+        "printed": "Rom. X. 16.",
+        "normalized": "ROM 10:16"
+      },
+      "lxx": {
+        "printed": "Is. LIII. 1.",
+        "normalized": "ISA 53:1"
+      },
+      "hebrew": {
+        "printed": "Is. LIII. 1.",
+        "normalized": "ISA 53:1"
+      }
+    },
+    {
+      "id": "Q162",
+      "kind": "table",
+      "class": "D",
+      "table_code": "D.s.I.a",
+      "printed_sequence": "(6)",
+      "pdf_page": 145,
+      "nt": {
+        "printed": "Rom. XII. 20.",
+        "normalized": "ROM 12:20"
+      },
+      "lxx": {
+        "printed": "Prov. XXV. 21–22.",
+        "normalized": "PRO 25:21-22"
+      },
+      "hebrew": {
+        "printed": "Prov. XXV. 21–22.",
+        "normalized": "PRO 25:21-22"
+      }
+    },
+    {
+      "id": "Q163",
+      "kind": "table",
+      "class": "D",
+      "table_code": "D.s.I.a",
+      "printed_sequence": "(7)",
+      "pdf_page": 145,
+      "nt": {
+        "printed": "Rom. XV. 10.",
+        "normalized": "ROM 15:10"
+      },
+      "lxx": {
+        "printed": "Deut. XXXII. 43.",
+        "normalized": "DEU 32:43"
+      },
+      "hebrew": {
+        "printed": "Deut. XXXII. 43.",
+        "normalized": "DEU 32:43"
+      }
+    },
+    {
+      "id": "Q164",
+      "kind": "table",
+      "class": "D",
+      "table_code": "D.s.I.a",
+      "printed_sequence": "(8)",
+      "pdf_page": 146,
+      "nt": {
+        "printed": "Rom. XV. 21.",
+        "normalized": "ROM 15:21"
+      },
+      "lxx": {
+        "printed": "Is. LII. 15.",
+        "normalized": "ISA 52:15"
+      },
+      "hebrew": {
+        "printed": "Is. LII. 15.",
+        "normalized": "ISA 52:15"
+      },
+      "note": "Turpie’s LXX column plainly prints Is. LII.15. The earlier scan ledger and decision misread LII as III."
+    },
+    {
+      "id": "Q165",
+      "kind": "table",
+      "class": "D",
+      "table_code": "D.s.I.a",
+      "printed_sequence": "(9)",
+      "pdf_page": 147,
+      "nt": {
+        "printed": "1 Cor. VI. 16.",
+        "normalized": "1CO 6:16"
+      },
+      "lxx": {
+        "printed": "Gen. II. 24.",
+        "normalized": "GEN 2:24"
+      },
+      "hebrew": {
+        "printed": "Gen. II. 24.",
+        "normalized": "GEN 2:24"
+      }
+    },
+    {
+      "id": "Q166",
+      "kind": "table",
+      "class": "D",
+      "table_code": "D.s.I.a",
+      "printed_sequence": "(10)",
+      "pdf_page": 147,
+      "nt": {
+        "printed": "Heb. XIII. 6.",
+        "normalized": "HEB 13:6"
+      },
+      "lxx": {
+        "printed": "Ps. CXVII. 6.",
+        "normalized": "PSA 117:6"
+      },
+      "hebrew": {
+        "printed": "Ps. CXVIII. 6.",
+        "normalized": "PSA 118:6"
+      }
+    },
+    {
+      "id": "Q167",
+      "kind": "table",
+      "class": "D",
+      "table_code": "D.s.I.a",
+      "printed_sequence": "(11)",
+      "pdf_page": 148,
+      "nt": {
+        "printed": "1 Pet. II. 7.",
+        "normalized": "1PE 2:7"
+      },
+      "lxx": {
+        "printed": "Ps. CXVII. 22.",
+        "normalized": "PSA 117:22"
+      },
+      "hebrew": {
+        "printed": "Ps. CXVIII. 22.",
+        "normalized": "PSA 118:22"
+      }
+    },
+    {
+      "id": "Q168",
+      "kind": "table",
+      "class": "D",
+      "table_code": "D.s.I.r.a",
+      "printed_sequence": "(1)",
+      "pdf_page": 149,
+      "nt": {
+        "printed": "Rom. IV. 3.",
+        "normalized": "ROM 4:3"
+      },
+      "lxx": {
+        "printed": "Gen. XV. 6.",
+        "normalized": "GEN 15:6"
+      },
+      "hebrew": {
+        "printed": "Gen. XV. 6.",
+        "normalized": "GEN 15:6"
+      }
+    },
+    {
+      "id": "Q169",
+      "kind": "table",
+      "class": "D",
+      "table_code": "D.s.I.r.a",
+      "printed_sequence": "(2)",
+      "pdf_page": 149,
+      "nt": {
+        "printed": "Rom. IX. 29.",
+        "normalized": "ROM 9:29"
+      },
+      "lxx": {
+        "printed": "Is. I. 9.",
+        "normalized": "ISA 1:9"
+      },
+      "hebrew": {
+        "printed": "Is. I. 9.",
+        "normalized": "ISA 1:9"
+      }
+    },
+    {
+      "id": "Q170",
+      "kind": "table",
+      "class": "D",
+      "table_code": "D.s.I.r.a",
+      "printed_sequence": "(3)",
+      "pdf_page": 150,
+      "nt": {
+        "printed": "James II. 23.",
+        "normalized": "JAS 2:23"
+      },
+      "lxx": {
+        "printed": "Gen. XV. 6.",
+        "normalized": "GEN 15:6"
+      },
+      "hebrew": {
+        "printed": "Gen. XV. 6.",
+        "normalized": "GEN 15:6"
+      }
+    },
+    {
+      "id": "Q171",
+      "kind": "table",
+      "class": "D",
+      "table_code": "D.d.I.r.o",
+      "printed_sequence": "(1)",
+      "pdf_page": 151,
+      "nt": {
+        "printed": "Rom. XI. 34.",
+        "normalized": "ROM 11:34"
+      },
+      "lxx": {
+        "printed": "Is. XL. 13.",
+        "normalized": "ISA 40:13"
+      },
+      "hebrew": {
+        "printed": "Is. XL. 13.",
+        "normalized": "ISA 40:13"
+      }
+    },
+    {
+      "id": "Q172",
+      "kind": "table",
+      "class": "D",
+      "table_code": "D.d.I.r.o",
+      "printed_sequence": "(2)",
+      "pdf_page": 151,
+      "nt": {
+        "printed": "1 Tim. V. 18 fp.",
+        "normalized": "1TI 5:18"
+      },
+      "lxx": {
+        "printed": "Deut. XXV. 4.",
+        "normalized": "DEU 25:4"
+      },
+      "hebrew": {
+        "printed": "Deut. XXV. 4.",
+        "normalized": "DEU 25:4"
+      },
+      "part_markers": [
+        "fp"
+      ]
+    },
+    {
+      "id": "Q173",
+      "kind": "table",
+      "class": "D",
+      "table_code": "D.d.I.r.a",
+      "printed_sequence": "(1)",
+      "pdf_page": 152,
+      "nt": {
+        "printed": "Rom. X. 20–21.",
+        "normalized": "ROM 10:20-21"
+      },
+      "lxx": {
+        "printed": "Is. LXV. 1–2.",
+        "normalized": "ISA 65:1-2"
+      },
+      "hebrew": {
+        "printed": "Is. LXV. 1–2.",
+        "normalized": "ISA 65:1-2"
+      }
+    },
+    {
+      "id": "Q174",
+      "kind": "table",
+      "class": "D",
+      "table_code": "D.d.I.r.a",
+      "printed_sequence": "(2)",
+      "pdf_page": 153,
+      "nt": {
+        "printed": "Gal. III. 6.",
+        "normalized": "GAL 3:6"
+      },
+      "lxx": {
+        "printed": "Gen. XV. 6.",
+        "normalized": "GEN 15:6"
+      },
+      "hebrew": {
+        "printed": "Gen. XV. 6.",
+        "normalized": "GEN 15:6"
+      }
+    },
+    {
+      "id": "Q175",
+      "kind": "table",
+      "class": "D",
+      "table_code": "D.d.I.r.o.a",
+      "printed_sequence": "(1)",
+      "pdf_page": 154,
+      "nt": {
+        "printed": "Heb. X. 37–38.",
+        "normalized": "HEB 10:37-38"
+      },
+      "lxx": {
+        "printed": "Hab. II. 3–4.",
+        "normalized": "HAB 2:3-4"
+      },
+      "hebrew": {
+        "printed": "Hab. II. 3–4.",
+        "normalized": "HAB 2:3-4"
+      }
+    },
+    {
+      "id": "Q176",
+      "kind": "table",
+      "class": "D",
+      "table_code": "D.s.II.r.o",
+      "printed_sequence": "(1)",
+      "pdf_page": 156,
+      "nt": {
+        "printed": "Heb. II. 6–8.",
+        "normalized": "HEB 2:6-8"
+      },
+      "lxx": {
+        "printed": "Ps. VIII. 5–7.",
+        "normalized": "PSA 8:5-7"
+      },
+      "hebrew": {
+        "printed": "Ps. VIII. 5–7.",
+        "normalized": "PSA 8:5-7"
+      }
+    },
+    {
+      "id": "Q177",
+      "kind": "table",
+      "class": "D",
+      "table_code": "D.s.II.r.o",
+      "printed_sequence": "(2)",
+      "pdf_page": 157,
+      "nt": {
+        "printed": "Heb. X. 5–7.",
+        "normalized": "HEB 10:5-7"
+      },
+      "lxx": {
+        "printed": "Ps. XXXIX. 7–9.",
+        "normalized": "PSA 39:7-9"
+      },
+      "hebrew": {
+        "printed": "Ps. XL. 7–9.",
+        "normalized": "PSA 40:7-9"
+      },
+      "note": "Page 157 prints Ps. XXXIX.7-9 for Hebrews X.5-7. Visual correction recorded from the cited PDF page."
+    },
+    {
+      "id": "Q178",
+      "kind": "table",
+      "class": "D",
+      "table_code": "D.s.II.r.o",
+      "printed_sequence": "unnumbered",
+      "pdf_page": 161,
+      "nt": {
+        "printed": "James IV. 5.",
+        "normalized": "JAS 4:5"
+      },
+      "lxx": {
+        "normalized": ""
+      },
+      "hebrew": {},
+      "source_headings": "none"
+    },
+    {
+      "id": "Q179",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r",
+      "printed_sequence": "(1)",
+      "pdf_page": 165,
+      "nt": {
+        "printed": "Matt. I. 23.",
+        "normalized": "MAT 1:23"
+      },
+      "lxx": {
+        "printed": "Is. VII. 14.",
+        "normalized": "ISA 7:14"
+      },
+      "hebrew": {
+        "printed": "Is. VII. 14.",
+        "normalized": "ISA 7:14"
+      },
+      "note": "Page 165 prints Is. VII.14 for Matthew I.23; current link points to an unrelated chapter. Visual correction recorded from the cited PDF page."
+    },
+    {
+      "id": "Q180",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r",
+      "printed_sequence": "(2)",
+      "pdf_page": 166,
+      "nt": {
+        "printed": "Matt. IX. 13.",
+        "normalized": "MAT 9:13"
+      },
+      "lxx": {
+        "printed": "Hos. VI. 6.",
+        "normalized": "HOS 6:6"
+      },
+      "hebrew": {
+        "printed": "Hos. VI. 6.",
+        "normalized": "HOS 6:6"
+      }
+    },
+    {
+      "id": "Q181",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r",
+      "printed_sequence": "(3)",
+      "pdf_page": 167,
+      "nt": {
+        "printed": "Matt. XII. 7.",
+        "normalized": "MAT 12:7"
+      },
+      "lxx": {
+        "printed": "Hos. VI. 6.",
+        "normalized": "HOS 6:6"
+      },
+      "hebrew": {
+        "printed": "Hos. VI. 6.",
+        "normalized": "HOS 6:6"
+      }
+    },
+    {
+      "id": "Q182",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r",
+      "printed_sequence": "(4)",
+      "pdf_page": 167,
+      "nt": {
+        "printed": "Matt. XIII. 35.",
+        "normalized": "MAT 13:35"
+      },
+      "lxx": {
+        "printed": "Ps. LXXVII. 2.",
+        "normalized": "PSA 77:2"
+      },
+      "hebrew": {
+        "printed": "Ps. LXXVIII. 2.",
+        "normalized": "PSA 78:2"
+      },
+      "note": "Page 167’s middle, Septuagint, column prints Ps. LXXVII.2 for Matthew XIII.35. The right Hebrew column prints Ps. LXXVIII.2; Brenton prepared Psalm 77:2 contains the quoted line. Visual correction recorded from the cited PDF page."
+    },
+    {
+      "id": "Q183",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r",
+      "printed_sequence": "(5)",
+      "pdf_page": 168,
+      "nt": {
+        "printed": "Mark XIV. 27.",
+        "normalized": "MRK 14:27"
+      },
+      "lxx": {
+        "printed": "Zech. XIII. 7.",
+        "normalized": "ZEC 13:7"
+      },
+      "hebrew": {
+        "printed": "Zech. XIII. 7.",
+        "normalized": "ZEC 13:7"
+      }
+    },
+    {
+      "id": "Q184",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r",
+      "printed_sequence": "(6)",
+      "pdf_page": 168,
+      "nt": {
+        "printed": "Luke II. 24.",
+        "normalized": "LUK 2:24"
+      },
+      "lxx": {
+        "printed": "Lev. XII. 8.",
+        "normalized": "LEV 12:8"
+      },
+      "hebrew": {
+        "printed": "Lev. XII. 8.",
+        "normalized": "LEV 12:8"
+      }
+    },
+    {
+      "id": "Q185",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r",
+      "printed_sequence": "(7)",
+      "pdf_page": 169,
+      "nt": {
+        "printed": "John XIX. 37.",
+        "normalized": "JHN 19:37"
+      },
+      "lxx": {
+        "printed": "Zech. XII. 10.",
+        "normalized": "ZEC 12:10"
+      },
+      "hebrew": {
+        "printed": "Zech. XII. 10.",
+        "normalized": "ZEC 12:10"
+      }
+    },
+    {
+      "id": "Q186",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r",
+      "printed_sequence": "(8)",
+      "pdf_page": 170,
+      "nt": {
+        "printed": "Acts VII. 49–50.",
+        "normalized": "ACT 7:49-50"
+      },
+      "lxx": {
+        "printed": "Is. LXVI. 1–2.",
+        "normalized": "ISA 66:1-2"
+      },
+      "hebrew": {
+        "printed": "Is. LXVI. 1–2.",
+        "normalized": "ISA 66:1-2"
+      }
+    },
+    {
+      "id": "Q187",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r",
+      "printed_sequence": "(9)",
+      "pdf_page": 171,
+      "nt": {
+        "printed": "Rom. III. 14.",
+        "normalized": "ROM 3:14"
+      },
+      "lxx": {
+        "printed": "Ps. IX. 28 (X. 7).",
+        "normalized": "PSA 9:28"
+      },
+      "hebrew": {
+        "printed": "Ps. X. 7.",
+        "normalized": "PSA 10:7"
+      }
+    },
+    {
+      "id": "Q188",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r",
+      "printed_sequence": "(10)",
+      "pdf_page": 172,
+      "nt": {
+        "printed": "1 Cor. XV. 54.",
+        "normalized": "1CO 15:54"
+      },
+      "lxx": {
+        "printed": "Is. XXV. 8.",
+        "normalized": "ISA 25:8"
+      },
+      "hebrew": {
+        "printed": "Is. XXV. 8.",
+        "normalized": "ISA 25:8"
+      }
+    },
+    {
+      "id": "Q189",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r",
+      "printed_sequence": "(11)",
+      "pdf_page": 173,
+      "nt": {
+        "printed": "1 Cor. XV. 55.",
+        "normalized": "1CO 15:55"
+      },
+      "lxx": {
+        "printed": "Hosea XIII. 14.",
+        "normalized": "HOS 13:14"
+      },
+      "hebrew": {
+        "printed": "Hosea XIII. 14.",
+        "normalized": "HOS 13:14"
+      }
+    },
+    {
+      "id": "Q190",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r",
+      "printed_sequence": "(12)",
+      "pdf_page": 174,
+      "nt": {
+        "printed": "1 Pet. I. 24–25.",
+        "normalized": "1PE 1:24-25"
+      },
+      "lxx": {
+        "printed": "Is. XL. 6–8.",
+        "normalized": "ISA 40:6-8"
+      },
+      "hebrew": {
+        "printed": "Is. XL. 6–8.",
+        "normalized": "ISA 40:6-8"
+      }
+    },
+    {
+      "id": "Q191",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r",
+      "printed_sequence": "(12)",
+      "pdf_page": 175,
+      "nt": {
+        "printed": "1 Pet. II. 24 fp.",
+        "normalized": "1PE 2:24"
+      },
+      "lxx": {
+        "printed": "Is. LIII. 4.; Is. LIII. 11.; Is. LIII. 12.",
+        "normalized": "ISA 53:4; ISA 53:11-12"
+      },
+      "hebrew": {
+        "printed": "Is. LIII. 4.; Is. LIII. 11.; Is. LIII. 12.",
+        "normalized": "ISA 53:4; ISA 53:11-12"
+      },
+      "note": "Turpie prints 1 Peter 2:24 in Table E with Is. LIII.4, 11 and 12 in both source columns, but says that “These words in 1 Pet. are, properly speaking, not a Quotation, though bearing an evident reference to these verses in Is.” He ties Peter’s verb to ver. 12. Turpie prints sequence (12) here on PDF page 175 although Q190 also prints (12) on page 174; the next head Q192 is (13). The repeated number is retained as printed.",
+      "part_markers": [
+        "fp"
+      ]
+    },
+    {
+      "id": "Q192",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r",
+      "printed_sequence": "(13)",
+      "pdf_page": 175,
+      "nt": {
+        "printed": "1 Pet. IV. 8.",
+        "normalized": "1PE 4:8"
+      },
+      "lxx": {
+        "printed": "Prov. X. 12.",
+        "normalized": "PRO 10:12"
+      },
+      "hebrew": {
+        "printed": "Prov. X. 12.",
+        "normalized": "PRO 10:12"
+      }
+    },
+    {
+      "id": "Q193",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r",
+      "printed_sequence": "(14)",
+      "pdf_page": 176,
+      "nt": {
+        "printed": "2 Pet. II. 22 fp.",
+        "normalized": "2PE 2:22"
+      },
+      "lxx": {
+        "printed": "Prov. XXVI. 11.",
+        "normalized": "PRO 26:11"
+      },
+      "hebrew": {
+        "printed": "Prov. XXVI. 11.",
+        "normalized": "PRO 26:11"
+      },
+      "part_markers": [
+        "fp"
+      ]
+    },
+    {
+      "id": "Q194",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r",
+      "printed_sequence": "(15)",
+      "pdf_page": 176,
+      "nt": {
+        "printed": "Rev. II. 27.",
+        "normalized": "REV 2:27"
+      },
+      "lxx": {
+        "printed": "Ps. II. 9.",
+        "normalized": "PSA 2:9"
+      },
+      "hebrew": {
+        "printed": "Ps. II. 9.",
+        "normalized": "PSA 2:9"
+      },
+      "note": "Page 176 prints Ps. II.9 for Revelation II.27; current link points to an unrelated Psalm. Visual correction recorded from the cited PDF page."
+    },
+    {
+      "id": "Q195",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.o",
+      "printed_sequence": "(1)",
+      "pdf_page": 178,
+      "nt": {
+        "printed": "Rom. I. 17.",
+        "normalized": "ROM 1:17"
+      },
+      "lxx": {
+        "printed": "Hab. II. 4.",
+        "normalized": "HAB 2:4"
+      },
+      "hebrew": {
+        "printed": "Hab. II. 4.",
+        "normalized": "HAB 2:4"
+      }
+    },
+    {
+      "id": "Q196",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.o",
+      "printed_sequence": "(2)",
+      "pdf_page": 179,
+      "nt": {
+        "printed": "Gal. III. 11.",
+        "normalized": "GAL 3:11"
+      },
+      "lxx": {
+        "printed": "Hab. II. 4.",
+        "normalized": "HAB 2:4"
+      },
+      "hebrew": {
+        "printed": "Hab. II. 4.",
+        "normalized": "HAB 2:4"
+      }
+    },
+    {
+      "id": "Q197",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r.o",
+      "printed_sequence": "(1)",
+      "pdf_page": 180,
+      "nt": {
+        "printed": "Matt. VIII. 17.",
+        "normalized": "MAT 8:17"
+      },
+      "lxx": {
+        "printed": "Is. LIII. 4.",
+        "normalized": "ISA 53:4"
+      },
+      "hebrew": {
+        "printed": "Is. LIII. 4.",
+        "normalized": "ISA 53:4"
+      }
+    },
+    {
+      "id": "Q198",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r.o",
+      "printed_sequence": "(2)",
+      "pdf_page": 181,
+      "nt": {
+        "printed": "Luke VIII. 10.",
+        "normalized": "LUK 8:10"
+      },
+      "lxx": {
+        "printed": "Is. VI. 9.",
+        "normalized": "ISA 6:9"
+      },
+      "hebrew": {
+        "printed": "Is. VI. 9.",
+        "normalized": "ISA 6:9"
+      }
+    },
+    {
+      "id": "Q199",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r.o",
+      "printed_sequence": "(3)",
+      "pdf_page": 181,
+      "nt": {
+        "printed": "Acts VII. 37.",
+        "normalized": "ACT 7:37"
+      },
+      "lxx": {
+        "printed": "Deut. XVIII. 15.",
+        "normalized": "DEU 18:15"
+      },
+      "hebrew": {
+        "printed": "Deut. XVIII. 15.",
+        "normalized": "DEU 18:15"
+      }
+    },
+    {
+      "id": "Q200",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r.o",
+      "printed_sequence": "(4)",
+      "pdf_page": 182,
+      "nt": {
+        "printed": "Acts XIII. 47.",
+        "normalized": "ACT 13:47"
+      },
+      "lxx": {
+        "printed": "Is. XLIX. 6.",
+        "normalized": "ISA 49:6"
+      },
+      "hebrew": {
+        "printed": "Is. XLIX. 6.",
+        "normalized": "ISA 49:6"
+      }
+    },
+    {
+      "id": "Q201",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r.o",
+      "printed_sequence": "(5)",
+      "pdf_page": 183,
+      "nt": {
+        "printed": "Rom. IX. 9.",
+        "normalized": "ROM 9:9"
+      },
+      "lxx": {
+        "printed": "Gen. XVIII. 10.",
+        "normalized": "GEN 18:10"
+      },
+      "hebrew": {
+        "printed": "Gen. XVIII. 10.",
+        "normalized": "GEN 18:10"
+      }
+    },
+    {
+      "id": "Q202",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r.o",
+      "printed_sequence": "(6)",
+      "pdf_page": 184,
+      "nt": {
+        "printed": "Rom. X. 15.",
+        "normalized": "ROM 10:15"
+      },
+      "lxx": {
+        "printed": "Is. LII. 7.",
+        "normalized": "ISA 52:7"
+      },
+      "hebrew": {
+        "printed": "Is. LII. 7.",
+        "normalized": "ISA 52:7"
+      }
+    },
+    {
+      "id": "Q203",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r.o",
+      "printed_sequence": "(7)",
+      "pdf_page": 185,
+      "nt": {
+        "printed": "1 Cor. I. 19.",
+        "normalized": "1CO 1:19"
+      },
+      "lxx": {
+        "printed": "Is. XXIX. 14.",
+        "normalized": "ISA 29:14"
+      },
+      "hebrew": {
+        "printed": "Is. XXIX. 14.",
+        "normalized": "ISA 29:14"
+      }
+    },
+    {
+      "id": "Q204",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r.o",
+      "printed_sequence": "(8)",
+      "pdf_page": 186,
+      "nt": {
+        "printed": "1 Cor. II. 16.",
+        "normalized": "1CO 2:16"
+      },
+      "lxx": {
+        "printed": "Is. XL. 13.",
+        "normalized": "ISA 40:13"
+      },
+      "hebrew": {
+        "printed": "Is. XL. 13.",
+        "normalized": "ISA 40:13"
+      }
+    },
+    {
+      "id": "Q205",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r.o",
+      "printed_sequence": "(6)",
+      "pdf_page": 187,
+      "nt": {
+        "printed": "Eph. VI. 2–3.",
+        "normalized": "EPH 6:2-3"
+      },
+      "lxx": {
+        "printed": "Deut. V. 16.",
+        "normalized": "DEU 5:16"
+      },
+      "hebrew": {
+        "printed": "Deut. V. 16.",
+        "normalized": "DEU 5:16"
+      },
+      "additional_source_headings": {
+        "printed": [
+          "Exod. XX. 12."
+        ],
+        "lxx_normalized": [
+          "EXO 20:12"
+        ],
+        "hebrew_normalized": [
+          "EXO 20:12"
+        ],
+        "scope": "Later displayed headings in both source columns; primary normalized fields give the first heading."
+      },
+      "note": "Page 187 also prints Exod. XX.12, but Turpie concludes the quotation “is made from Deut. V. 16”, whose clause “that it may be well with thee” Paul keeps, so only Deuteronomy is linked. Turpie prints sequence (6) here on PDF page 187 even though Q202 also prints (6) on page 184; the next displayed head Q206 is (10). The repeated number and missing (9) are retained as printed."
+    },
+    {
+      "id": "Q206",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r.o",
+      "printed_sequence": "(10)",
+      "pdf_page": 188,
+      "nt": {
+        "printed": "Heb. XII. 26.",
+        "normalized": "HEB 12:26"
+      },
+      "lxx": {
+        "printed": "Hag. II. 6.",
+        "normalized": "HAG 2:6"
+      },
+      "hebrew": {
+        "printed": "Hag. II. 6.",
+        "normalized": "HAG 2:6"
+      }
+    },
+    {
+      "id": "Q207",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.a",
+      "printed_sequence": "(1)",
+      "pdf_page": 189,
+      "nt": {
+        "printed": "Matt. IV. 10.",
+        "normalized": "MAT 4:10"
+      },
+      "lxx": {
+        "printed": "Deut. VI. 13.",
+        "normalized": "DEU 6:13"
+      },
+      "hebrew": {
+        "printed": "Deut. VI. 13.",
+        "normalized": "DEU 6:13"
+      }
+    },
+    {
+      "id": "Q208",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.a",
+      "printed_sequence": "(2)",
+      "pdf_page": 189,
+      "nt": {
+        "printed": "Luke IV. 8.",
+        "normalized": "LUK 4:8"
+      },
+      "lxx": {
+        "printed": "Deut. VI. 13.",
+        "normalized": "DEU 6:13"
+      },
+      "hebrew": {
+        "printed": "Deut. VI. 13.",
+        "normalized": "DEU 6:13"
+      }
+    },
+    {
+      "id": "Q209",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r.a",
+      "printed_sequence": "(1)",
+      "pdf_page": 190,
+      "nt": {
+        "printed": "Matt. XXVI. 31.",
+        "normalized": "MAT 26:31"
+      },
+      "lxx": {
+        "printed": "Zech. XIII. 7.",
+        "normalized": "ZEC 13:7"
+      },
+      "hebrew": {
+        "printed": "Zech. XIII. 7.",
+        "normalized": "ZEC 13:7"
+      }
+    },
+    {
+      "id": "Q210",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r.a",
+      "printed_sequence": "(2)",
+      "pdf_page": 190,
+      "nt": {
+        "printed": "Acts IV. 11.",
+        "normalized": "ACT 4:11"
+      },
+      "lxx": {
+        "printed": "Ps. CXVII. 22.",
+        "normalized": "PSA 117:22"
+      },
+      "hebrew": {
+        "printed": "Ps. CXVIII. 22.",
+        "normalized": "PSA 118:22"
+      }
+    },
+    {
+      "id": "Q211",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r.a",
+      "printed_sequence": "(3)",
+      "pdf_page": 191,
+      "nt": {
+        "printed": "Rom. IX. 17.",
+        "normalized": "ROM 9:17"
+      },
+      "lxx": {
+        "printed": "Exod. IX. 16.",
+        "normalized": "EXO 9:16"
+      },
+      "hebrew": {
+        "printed": "Exod. IX. 16.",
+        "normalized": "EXO 9:16"
+      }
+    },
+    {
+      "id": "Q212",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r.a",
+      "printed_sequence": "(4)",
+      "pdf_page": 192,
+      "nt": {
+        "printed": "Rom. IX. 26.",
+        "normalized": "ROM 9:26"
+      },
+      "lxx": {
+        "printed": "Hos. I. 10.",
+        "normalized": "HOS 1:10"
+      },
+      "hebrew": {
+        "printed": "Hos. II. 1.",
+        "normalized": "HOS 2:1"
+      }
+    },
+    {
+      "id": "Q213",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r.a",
+      "printed_sequence": "(5)",
+      "pdf_page": 193,
+      "nt": {
+        "printed": "Rom. X. 11.",
+        "normalized": "ROM 10:11"
+      },
+      "lxx": {
+        "printed": "Is. XXVIII. 16.",
+        "normalized": "ISA 28:16"
+      },
+      "hebrew": {
+        "printed": "Is. XXVIII. 16.",
+        "normalized": "ISA 28:16"
+      }
+    },
+    {
+      "id": "Q214",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r.a",
+      "printed_sequence": "(6)",
+      "pdf_page": 193,
+      "nt": {
+        "printed": "Rom. XII. 19.",
+        "normalized": "ROM 12:19"
+      },
+      "lxx": {
+        "printed": "Deut. XXXII. 35.",
+        "normalized": "DEU 32:35"
+      },
+      "hebrew": {
+        "printed": "Deut. XXXII. 35.",
+        "normalized": "DEU 32:35"
+      }
+    },
+    {
+      "id": "Q215",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r.a",
+      "printed_sequence": "(7)",
+      "pdf_page": 194,
+      "nt": {
+        "printed": "1 Cor. XIV. 21.",
+        "normalized": "1CO 14:21"
+      },
+      "lxx": {
+        "printed": "Is. XXVIII. 11–12.",
+        "normalized": "ISA 28:11-12"
+      },
+      "hebrew": {
+        "printed": "Is. XXVIII. 11–12.",
+        "normalized": "ISA 28:11-12"
+      }
+    },
+    {
+      "id": "Q216",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r.a",
+      "printed_sequence": "(8)",
+      "pdf_page": 195,
+      "nt": {
+        "printed": "2 Cor. IX. 7.",
+        "normalized": "2CO 9:7"
+      },
+      "lxx": {
+        "printed": "Prov. XXII. 8.",
+        "normalized": "PRO 22:8"
+      },
+      "hebrew": {
+        "printed": "Prov. XXII. 9.",
+        "normalized": "PRO 22:9"
+      }
+    },
+    {
+      "id": "Q217",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r.a",
+      "printed_sequence": "(9)",
+      "pdf_page": 196,
+      "nt": {
+        "printed": "Gal. III. 10.",
+        "normalized": "GAL 3:10"
+      },
+      "lxx": {
+        "printed": "Deut. XXVII. 26.",
+        "normalized": "DEU 27:26"
+      },
+      "hebrew": {
+        "printed": "Deut. XXVII. 26.",
+        "normalized": "DEU 27:26"
+      }
+    },
+    {
+      "id": "Q218",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r.a",
+      "printed_sequence": "(10)",
+      "pdf_page": 197,
+      "nt": {
+        "printed": "Heb. I. 6.",
+        "normalized": "HEB 1:6"
+      },
+      "lxx": {
+        "printed": "Ps. XCVI. 7.",
+        "normalized": "PSA 96:7"
+      },
+      "hebrew": {
+        "printed": "Ps. XCVII. 7.",
+        "normalized": "PSA 97:7"
+      }
+    },
+    {
+      "id": "Q219",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r.a",
+      "printed_sequence": "(11)",
+      "pdf_page": 198,
+      "nt": {
+        "printed": "Heb. X. 30.",
+        "normalized": "HEB 10:30"
+      },
+      "lxx": {
+        "printed": "Deut. XXXII. 35–36.; Ps. 134. 14.",
+        "normalized": "DEU 32:35-36; PSA 134:14"
+      },
+      "hebrew": {
+        "printed": "Deut. XXXII. 35–36.; Ps. 135. 14.",
+        "normalized": "DEU 32:35-36; PSA 135:14"
+      },
+      "note": "Page 198 prints Ps. 134.14 (Hebrew 135.14), in Arabic numerals, beneath Deut. XXXII.35–36 in both source columns. Visual correction recorded from the cited PDF page."
+    },
+    {
+      "id": "Q220",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r.a",
+      "printed_sequence": "(12)",
+      "pdf_page": 199,
+      "nt": {
+        "printed": "Heb. XII. 5–6.",
+        "normalized": "HEB 12:5-6"
+      },
+      "lxx": {
+        "printed": "Prov. III. 11–12.",
+        "normalized": "PRO 3:11-12"
+      },
+      "hebrew": {
+        "printed": "Prov. III. 11–12.",
+        "normalized": "PRO 3:11-12"
+      }
+    },
+    {
+      "id": "Q221",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r.a",
+      "printed_sequence": "(13)",
+      "pdf_page": 200,
+      "nt": {
+        "printed": "James IV. 6.",
+        "normalized": "JAS 4:6"
+      },
+      "lxx": {
+        "printed": "Prov. III. 34.",
+        "normalized": "PRO 3:34"
+      },
+      "hebrew": {
+        "printed": "Prov. III. 34.",
+        "normalized": "PRO 3:34"
+      }
+    },
+    {
+      "id": "Q222",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r.a",
+      "printed_sequence": "(14)",
+      "pdf_page": 200,
+      "nt": {
+        "printed": "James V. 20.",
+        "normalized": "JAS 5:20"
+      },
+      "lxx": {
+        "printed": "Prov. X. 12.",
+        "normalized": "PRO 10:12"
+      },
+      "hebrew": {
+        "printed": "Prov. X. 12.",
+        "normalized": "PRO 10:12"
+      }
+    },
+    {
+      "id": "Q223",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.a.o",
+      "printed_sequence": "(1)",
+      "pdf_page": 202,
+      "nt": {
+        "printed": "Matt. IV. 4.",
+        "normalized": "MAT 4:4"
+      },
+      "lxx": {
+        "printed": "Deut. VIII. 3.",
+        "normalized": "DEU 8:3"
+      },
+      "hebrew": {
+        "printed": "Deut. VIII. 3.",
+        "normalized": "DEU 8:3"
+      }
+    },
+    {
+      "id": "Q224",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.a.o",
+      "printed_sequence": "(2)",
+      "pdf_page": 202,
+      "nt": {
+        "printed": "Matt. XVIII. 16.",
+        "normalized": "MAT 18:16"
+      },
+      "lxx": {
+        "printed": "Deut. XIX. 15.",
+        "normalized": "DEU 19:15"
+      },
+      "hebrew": {
+        "printed": "Deut. XIX. 15.",
+        "normalized": "DEU 19:15"
+      }
+    },
+    {
+      "id": "Q225",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.a.o",
+      "printed_sequence": "(3)",
+      "pdf_page": 203,
+      "nt": {
+        "printed": "Matt. XIX. 5.",
+        "normalized": "MAT 19:5"
+      },
+      "lxx": {
+        "printed": "Gen. II. 24.",
+        "normalized": "GEN 2:24"
+      },
+      "hebrew": {
+        "printed": "Gen. II. 24.",
+        "normalized": "GEN 2:24"
+      }
+    },
+    {
+      "id": "Q226",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.a.o",
+      "printed_sequence": "(4)",
+      "pdf_page": 203,
+      "nt": {
+        "printed": "Matt. XXI. 13 lp.",
+        "normalized": "MAT 21:13"
+      },
+      "lxx": {
+        "printed": "Jer. VII. 11.",
+        "normalized": "JER 7:11"
+      },
+      "hebrew": {
+        "printed": "Jer. VII. 11.",
+        "normalized": "JER 7:11"
+      },
+      "part_markers": [
+        "lp"
+      ]
+    },
+    {
+      "id": "Q227",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.a.o",
+      "printed_sequence": "(5)",
+      "pdf_page": 204,
+      "nt": {
+        "printed": "Matt. XXII. 37.",
+        "normalized": "MAT 22:37"
+      },
+      "lxx": {
+        "printed": "Deut. VI. 5.",
+        "normalized": "DEU 6:5"
+      },
+      "hebrew": {
+        "printed": "Deut. VI. 5.",
+        "normalized": "DEU 6:5"
+      }
+    },
+    {
+      "id": "Q228",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.a.o",
+      "printed_sequence": "(6)",
+      "pdf_page": 205,
+      "nt": {
+        "printed": "Mark X. 7–8.",
+        "normalized": "MRK 10:7-8"
+      },
+      "lxx": {
+        "printed": "Gen. II. 24.",
+        "normalized": "GEN 2:24"
+      },
+      "hebrew": {
+        "printed": "Gen. II. 24.",
+        "normalized": "GEN 2:24"
+      },
+      "note": "The printed Class E head on PDF page 205 reads Mark X. 7–8; the previous source transcription dropped verse 8. Both NT verses are selected against Genesis 2:24."
+    },
+    {
+      "id": "Q229",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.a.o",
+      "printed_sequence": "(7)",
+      "pdf_page": 206,
+      "nt": {
+        "printed": "Mark XI. 17 lp.",
+        "normalized": "MRK 11:17"
+      },
+      "lxx": {
+        "printed": "Jer. VII. 11.",
+        "normalized": "JER 7:11"
+      },
+      "hebrew": {
+        "printed": "Jer. VII. 11.",
+        "normalized": "JER 7:11"
+      },
+      "part_markers": [
+        "lp"
+      ]
+    },
+    {
+      "id": "Q230",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.a.o",
+      "printed_sequence": "(8)",
+      "pdf_page": 206,
+      "nt": {
+        "printed": "Luke XIX. 46 lp.",
+        "normalized": "LUK 19:46"
+      },
+      "lxx": {
+        "printed": "Jer. VII. 11.",
+        "normalized": "JER 7:11"
+      },
+      "hebrew": {
+        "printed": "Jer. VII. 11.",
+        "normalized": "JER 7:11"
+      },
+      "part_markers": [
+        "lp"
+      ]
+    },
+    {
+      "id": "Q231",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.a.o",
+      "printed_sequence": "(9)",
+      "pdf_page": 207,
+      "nt": {
+        "printed": "Acts VII. 3.",
+        "normalized": "ACT 7:3"
+      },
+      "lxx": {
+        "printed": "Gen. XII. 1.",
+        "normalized": "GEN 12:1"
+      },
+      "hebrew": {
+        "printed": "Gen. XII. 1.",
+        "normalized": "GEN 12:1"
+      }
+    },
+    {
+      "id": "Q232",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.a.o",
+      "printed_sequence": "(10)",
+      "pdf_page": 207,
+      "nt": {
+        "printed": "Acts VII. 42–43.",
+        "normalized": "ACT 7:42-43"
+      },
+      "lxx": {
+        "printed": "Amos V. 25–27.",
+        "normalized": "AMO 5:25-27"
+      },
+      "hebrew": {
+        "printed": "Amos V. 25–27.",
+        "normalized": "AMO 5:25-27"
+      }
+    },
+    {
+      "id": "Q233",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.a.o",
+      "printed_sequence": "(11)",
+      "pdf_page": 221,
+      "nt": {
+        "printed": "Acts XIII. 41.",
+        "normalized": "ACT 13:41"
+      },
+      "lxx": {
+        "printed": "Hab. I. 5.",
+        "normalized": "HAB 1:5"
+      },
+      "hebrew": {
+        "printed": "Hab. I. 5.",
+        "normalized": "HAB 1:5"
+      }
+    },
+    {
+      "id": "Q234",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.a.o",
+      "printed_sequence": "(12)",
+      "pdf_page": 222,
+      "nt": {
+        "printed": "Rom. II. 24.",
+        "normalized": "ROM 2:24"
+      },
+      "lxx": {
+        "printed": "Is. LII. 5.",
+        "normalized": "ISA 52:5"
+      },
+      "hebrew": {
+        "printed": "Is. LII. 5.",
+        "normalized": "ISA 52:5"
+      },
+      "note": "Turpie's numbered Class E (12) row on printed page 184 reads Rom. II. 24 and Is. LII. 5; the pinned OCR dropped the final digits in both references."
+    },
+    {
+      "id": "Q235",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.a.o",
+      "printed_sequence": "(13)",
+      "pdf_page": 223,
+      "nt": {
+        "printed": "Rom. XI. 4.",
+        "normalized": "ROM 11:4"
+      },
+      "lxx": {
+        "printed": "3 Kings XIX. 18.",
+        "normalized": "1KI 19:18"
+      },
+      "hebrew": {
+        "printed": "1 Kings XIX. 18.",
+        "normalized": "1KI 19:18"
+      }
+    },
+    {
+      "id": "Q236",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.a.o",
+      "printed_sequence": "(14)",
+      "pdf_page": 224,
+      "nt": {
+        "printed": "2 Cor. XIII. 1.",
+        "normalized": "2CO 13:1"
+      },
+      "lxx": {
+        "printed": "Deut. XIX. 15.",
+        "normalized": "DEU 19:15"
+      },
+      "hebrew": {
+        "printed": "Deut. XIX. 15.",
+        "normalized": "DEU 19:15"
+      }
+    },
+    {
+      "id": "Q237",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.a.o",
+      "printed_sequence": "(15)",
+      "pdf_page": 225,
+      "nt": {
+        "printed": "Gal. III. 13.",
+        "normalized": "GAL 3:13"
+      },
+      "lxx": {
+        "printed": "Deut. XXI. 23.",
+        "normalized": "DEU 21:23"
+      },
+      "hebrew": {
+        "printed": "Deut. XXI. 23.",
+        "normalized": "DEU 21:23"
+      }
+    },
+    {
+      "id": "Q238",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.a.o",
+      "printed_sequence": "(16)",
+      "pdf_page": 225,
+      "nt": {
+        "printed": "Eph. V. 31.",
+        "normalized": "EPH 5:31"
+      },
+      "lxx": {
+        "printed": "Gen. II. 24.",
+        "normalized": "GEN 2:24"
+      },
+      "hebrew": {
+        "printed": "Gen. II. 24.",
+        "normalized": "GEN 2:24"
+      }
+    },
+    {
+      "id": "Q239",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r.a.o",
+      "printed_sequence": "(1)",
+      "pdf_page": 227,
+      "nt": {
+        "printed": "Matt. II. 6.",
+        "normalized": "MAT 2:6"
+      },
+      "lxx": {
+        "printed": "Mic. V. 2.",
+        "normalized": "MIC 5:2"
+      },
+      "hebrew": {
+        "printed": "Mic. V. 1.",
+        "normalized": "MIC 5:1"
+      }
+    },
+    {
+      "id": "Q240",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r.a.o",
+      "printed_sequence": "(2)",
+      "pdf_page": 231,
+      "nt": {
+        "printed": "Matt. II. 18.",
+        "normalized": "MAT 2:18"
+      },
+      "lxx": {
+        "printed": "Jerem. XXXVIII. 15.",
+        "normalized": "JER 38:15"
+      },
+      "hebrew": {
+        "printed": "Jerem. XXXI. 15.",
+        "normalized": "JER 31:15"
+      }
+    },
+    {
+      "id": "Q241",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r.a.o",
+      "printed_sequence": "(3)",
+      "pdf_page": 232,
+      "nt": {
+        "printed": "Matt. III. 3.",
+        "normalized": "MAT 3:3"
+      },
+      "lxx": {
+        "printed": "Is. XL. 3.",
+        "normalized": "ISA 40:3"
+      },
+      "hebrew": {
+        "printed": "Is. XL. 3.",
+        "normalized": "ISA 40:3"
+      }
+    },
+    {
+      "id": "Q242",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r.a.o",
+      "printed_sequence": "(4)",
+      "pdf_page": 233,
+      "nt": {
+        "printed": "Matt. XV. 8–9.",
+        "normalized": "MAT 15:8-9"
+      },
+      "lxx": {
+        "printed": "Is. XXIX. 13.",
+        "normalized": "ISA 29:13"
+      },
+      "hebrew": {
+        "printed": "Is. XXIX. 13.",
+        "normalized": "ISA 29:13"
+      }
+    },
+    {
+      "id": "Q243",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r.a.o",
+      "printed_sequence": "(5)",
+      "pdf_page": 235,
+      "nt": {
+        "printed": "Mark I. 3.",
+        "normalized": "MRK 1:3"
+      },
+      "lxx": {
+        "printed": "Is. XL. 3.",
+        "normalized": "ISA 40:3"
+      },
+      "hebrew": {
+        "printed": "Is. XL. 3.",
+        "normalized": "ISA 40:3"
+      }
+    },
+    {
+      "id": "Q244",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r.a.o",
+      "printed_sequence": "(6)",
+      "pdf_page": 236,
+      "nt": {
+        "printed": "Mark VII. 6–7.",
+        "normalized": "MRK 7:6-7"
+      },
+      "lxx": {
+        "printed": "Is. XXIX. 13.",
+        "normalized": "ISA 29:13"
+      },
+      "hebrew": {
+        "printed": "Is. XXIX. 13.",
+        "normalized": "ISA 29:13"
+      }
+    },
+    {
+      "id": "Q245",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r.a.o",
+      "printed_sequence": "(7)",
+      "pdf_page": 236,
+      "nt": {
+        "printed": "John VI. 45.",
+        "normalized": "JHN 6:45"
+      },
+      "lxx": {
+        "printed": "Is. LIV. 13.",
+        "normalized": "ISA 54:13"
+      },
+      "hebrew": {
+        "printed": "Is. LIV. 13.",
+        "normalized": "ISA 54:13"
+      }
+    },
+    {
+      "id": "Q246",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r.a.o",
+      "printed_sequence": "(8)",
+      "pdf_page": 237,
+      "nt": {
+        "printed": "Acts VII. 33–34.",
+        "normalized": "ACT 7:33-34"
+      },
+      "lxx": {
+        "printed": "Exod. III. 5, 7, 8, 10.",
+        "normalized": "EXO 3:5; EXO 3:7-8; EXO 3:10"
+      },
+      "hebrew": {
+        "printed": "Exod. III. 5, 7, 8, 10.",
+        "normalized": "EXO 3:5; EXO 3:7-8; EXO 3:10"
+      }
+    },
+    {
+      "id": "Q247",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r.a.o",
+      "printed_sequence": "(9)",
+      "pdf_page": 239,
+      "nt": {
+        "printed": "Acts XV. 16–17.",
+        "normalized": "ACT 15:16-17"
+      },
+      "lxx": {
+        "printed": "Amos IX. 11–12.",
+        "normalized": "AMO 9:11-12"
+      },
+      "hebrew": {
+        "printed": "Amos IX. 11–12.",
+        "normalized": "AMO 9:11-12"
+      }
+    },
+    {
+      "id": "Q248",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r.a.o",
+      "printed_sequence": "(10)",
+      "pdf_page": 241,
+      "nt": {
+        "printed": "Rom. IX. 27–28.",
+        "normalized": "ROM 9:27-28"
+      },
+      "lxx": {
+        "printed": "Is. X. 22–23.",
+        "normalized": "ISA 10:22-23"
+      },
+      "hebrew": {
+        "printed": "Is. X. 22–23.",
+        "normalized": "ISA 10:22-23"
+      }
+    },
+    {
+      "id": "Q249",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r.a.o",
+      "printed_sequence": "(11)",
+      "pdf_page": 244,
+      "nt": {
+        "printed": "Rom. XI. 9–10.",
+        "normalized": "ROM 11:9-10"
+      },
+      "lxx": {
+        "printed": "Ps. LXVIII. 23–24.",
+        "normalized": "PSA 68:23-24"
+      },
+      "hebrew": {
+        "printed": "Ps. LXIX. 23–24.",
+        "normalized": "PSA 69:23-24"
+      }
+    },
+    {
+      "id": "Q250",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r.a.o",
+      "printed_sequence": "(12)",
+      "pdf_page": 245,
+      "nt": {
+        "printed": "Rom. XI. 26–27.",
+        "normalized": "ROM 11:26-27"
+      },
+      "lxx": {
+        "printed": "Is. LIX. 20–21.; Is. XXVII. 9.",
+        "normalized": "ISA 59:20-21; ISA 27:9"
+      },
+      "hebrew": {
+        "printed": "Is. LIX. 20–21.; Is. XXVII. 9.",
+        "normalized": "ISA 59:20-21; ISA 27:9"
+      },
+      "note": "Page 245 prints Is. XXVII.9 beneath Is. LIX.20–21 in both source columns; Turpie says Paul’s added “when I remit their sins” is probably taken from it, so both are linked."
+    },
+    {
+      "id": "Q251",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r.a.o",
+      "printed_sequence": "(13)",
+      "pdf_page": 247,
+      "nt": {
+        "printed": "Heb. I. 10–12.",
+        "normalized": "HEB 1:10-12"
+      },
+      "lxx": {
+        "printed": "Ps. CI. 26–28.",
+        "normalized": "PSA 101:26-28"
+      },
+      "hebrew": {
+        "printed": "Ps. CII. 26–28.",
+        "normalized": "PSA 102:26-28"
+      }
+    },
+    {
+      "id": "Q252",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r.a.o",
+      "printed_sequence": "(14)",
+      "pdf_page": 248,
+      "nt": {
+        "printed": "Heb. III. 7–11.",
+        "normalized": "HEB 3:7-11"
+      },
+      "lxx": {
+        "printed": "Ps. XCIV. 8–11.",
+        "normalized": "PSA 94:8-11"
+      },
+      "hebrew": {
+        "printed": "Ps. XCV. 7–11.",
+        "normalized": "PSA 95:7-11"
+      }
+    },
+    {
+      "id": "Q253",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r.a.o",
+      "printed_sequence": "(15)",
+      "pdf_page": 251,
+      "nt": {
+        "printed": "Heb. VIII. 5.",
+        "normalized": "HEB 8:5"
+      },
+      "lxx": {
+        "printed": "Exod. XXV. 40.",
+        "normalized": "EXO 25:40"
+      },
+      "hebrew": {
+        "printed": "Exod. XXV. 40.",
+        "normalized": "EXO 25:40"
+      }
+    },
+    {
+      "id": "Q254",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r.a.o",
+      "printed_sequence": "(16)",
+      "pdf_page": 251,
+      "nt": {
+        "printed": "Heb. X. 16–17.",
+        "normalized": "HEB 10:16-17"
+      },
+      "lxx": {
+        "printed": "Jer. XXXVIII. 33–34.",
+        "normalized": "JER 38:33-34"
+      },
+      "hebrew": {
+        "printed": "Jer. XXXI. 33–34.",
+        "normalized": "JER 31:33-34"
+      }
+    },
+    {
+      "id": "Q255",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r.a.o",
+      "printed_sequence": "(17)",
+      "pdf_page": 253,
+      "nt": {
+        "printed": "1 Pet. II. 6.",
+        "normalized": "1PE 2:6"
+      },
+      "lxx": {
+        "printed": "Is. XXVIII. 16.",
+        "normalized": "ISA 28:16"
+      },
+      "hebrew": {
+        "printed": "Is. XXVIII. 16.",
+        "normalized": "ISA 28:16"
+      }
+    },
+    {
+      "id": "Q256",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.I.r.a.o",
+      "printed_sequence": "(18)",
+      "pdf_page": 253,
+      "nt": {
+        "printed": "1 Pet. III. 14–15.",
+        "normalized": "1PE 3:14-15"
+      },
+      "lxx": {
+        "printed": "Is. VIII. 12–13.",
+        "normalized": "ISA 8:12-13"
+      },
+      "hebrew": {
+        "printed": "Is. VIII. 12–13.",
+        "normalized": "ISA 8:12-13"
+      }
+    },
+    {
+      "id": "Q257",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.II.a",
+      "printed_sequence": "unnumbered",
+      "pdf_page": 256,
+      "nt": {
+        "printed": "Luke X. 27 fp.",
+        "normalized": "LUK 10:27"
+      },
+      "lxx": {
+        "printed": "Deut. VI. 5.",
+        "normalized": "DEU 6:5"
+      },
+      "hebrew": {
+        "printed": "Deut. VI. 5.",
+        "normalized": "DEU 6:5"
+      },
+      "part_markers": [
+        "fp"
+      ]
+    },
+    {
+      "id": "Q258",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.II.o",
+      "printed_sequence": "(1)",
+      "pdf_page": 257,
+      "nt": {
+        "printed": "Luke IV. 4.",
+        "normalized": "LUK 4:4"
+      },
+      "lxx": {
+        "printed": "Deut. VIII. 3.",
+        "normalized": "DEU 8:3"
+      },
+      "hebrew": {
+        "printed": "Deut. VIII. 3.",
+        "normalized": "DEU 8:3"
+      }
+    },
+    {
+      "id": "Q259",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.II.o",
+      "printed_sequence": "(2)",
+      "pdf_page": 257,
+      "nt": {
+        "printed": "John I. 23.",
+        "normalized": "JHN 1:23"
+      },
+      "lxx": {
+        "printed": "Is. XL. 3.",
+        "normalized": "ISA 40:3"
+      },
+      "hebrew": {
+        "printed": "Is. XL. 3.",
+        "normalized": "ISA 40:3"
+      }
+    },
+    {
+      "id": "Q260",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.II.1.a.2.o.r",
+      "printed_sequence": "(1)",
+      "pdf_page": 259,
+      "nt": {
+        "printed": "Matt. XXI. 5.",
+        "normalized": "MAT 21:5"
+      },
+      "lxx": {
+        "printed": "Zech. IX. 9.",
+        "normalized": "ZEC 9:9"
+      },
+      "hebrew": {
+        "printed": "Zech. IX. 9.",
+        "normalized": "ZEC 9:9"
+      }
+    },
+    {
+      "id": "Q261",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.II.1.a.2.o.r",
+      "printed_sequence": "(2)",
+      "pdf_page": 260,
+      "nt": {
+        "printed": "John XII. 14, 15.",
+        "normalized": "JHN 12:14-15"
+      },
+      "lxx": {
+        "printed": "Zech. IX. 9.",
+        "normalized": "ZEC 9:9"
+      },
+      "hebrew": {
+        "printed": "Zech. IX. 9.",
+        "normalized": "ZEC 9:9"
+      },
+      "note": "Page 260 prints John XII.14,15; the quoted wording is verse 15 and current verse-14-only boundary excludes it. Visual correction recorded from the cited PDF page."
+    },
+    {
+      "id": "Q262",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.II.1.a.2.o.r",
+      "printed_sequence": "(3)",
+      "pdf_page": 261,
+      "nt": {
+        "printed": "1 Cor. II. 9.",
+        "normalized": "1CO 2:9"
+      },
+      "lxx": {
+        "printed": "Is. LXIV. 4.",
+        "normalized": "ISA 64:4"
+      },
+      "hebrew": {
+        "printed": "Is. LXIV. 3.",
+        "normalized": "ISA 64:3"
+      }
+    },
+    {
+      "id": "Q263",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.III.r.1.o",
+      "printed_sequence": "(1)",
+      "pdf_page": 263,
+      "nt": {
+        "printed": "Matt. IV. 15, 16.",
+        "normalized": "MAT 4:15-16"
+      },
+      "lxx": {
+        "printed": "Is. IX. 1, 2.",
+        "normalized": "ISA 9:1-2"
+      },
+      "hebrew": {
+        "printed": "Is. VIII. 23–IX. 1.",
+        "normalized": "ISA 8:23; ISA 9:1"
+      }
+    },
+    {
+      "id": "Q264",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.III.r.1.o",
+      "printed_sequence": "(2)",
+      "pdf_page": 264,
+      "nt": {
+        "printed": "Rom. III. 15–17.",
+        "normalized": "ROM 3:15-17"
+      },
+      "lxx": {
+        "printed": "Is. LIX. 7–8.",
+        "normalized": "ISA 59:7-8"
+      },
+      "hebrew": {
+        "printed": "Is. LIX. 7–8.",
+        "normalized": "ISA 59:7-8"
+      }
+    },
+    {
+      "id": "Q265",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.III.r.2.o",
+      "printed_sequence": "(1)",
+      "pdf_page": 266,
+      "nt": {
+        "printed": "Matt. XII. 18–21.",
+        "normalized": "MAT 12:18-21"
+      },
+      "lxx": {
+        "printed": "Is. XLII. 1–4.",
+        "normalized": "ISA 42:1-4"
+      },
+      "hebrew": {
+        "printed": "Is. XLII. 1–4.",
+        "normalized": "ISA 42:1-4"
+      }
+    },
+    {
+      "id": "Q266",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.III.r.2.o",
+      "printed_sequence": "(2)",
+      "pdf_page": 269,
+      "nt": {
+        "printed": "Mark IV. 12.",
+        "normalized": "MRK 4:12"
+      },
+      "lxx": {
+        "printed": "Is. VI. 9–10.",
+        "normalized": "ISA 6:9-10"
+      },
+      "hebrew": {
+        "printed": "Is. VI. 9–10.",
+        "normalized": "ISA 6:9-10"
+      }
+    },
+    {
+      "id": "Q267",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.III.r.2.o",
+      "printed_sequence": "(3)",
+      "pdf_page": 271,
+      "nt": {
+        "printed": "John XII. 40.",
+        "normalized": "JHN 12:40"
+      },
+      "lxx": {
+        "printed": "Is. VI. 10.",
+        "normalized": "ISA 6:10"
+      },
+      "hebrew": {
+        "printed": "Is. VI. 10.",
+        "normalized": "ISA 6:10"
+      }
+    },
+    {
+      "id": "Q268",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.III.1.o.3.a.r",
+      "printed_sequence": "(1)",
+      "pdf_page": 273,
+      "nt": {
+        "printed": "Matt. XXVII. 9, 10.",
+        "normalized": "MAT 27:9-10"
+      },
+      "lxx": {
+        "printed": "Zech. XI. 13.",
+        "normalized": "ZEC 11:13"
+      },
+      "hebrew": {
+        "printed": "Zech. XI. 13.",
+        "normalized": "ZEC 11:13"
+      },
+      "note": "Page 273 prints Matt. XXVII.9,10, and the quotation continues into verse 10. Visual correction recorded from the cited PDF page."
+    },
+    {
+      "id": "Q269",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.III.1.o.3.a.r",
+      "printed_sequence": "(2)",
+      "pdf_page": 275,
+      "nt": {
+        "printed": "1 Cor. II. 9.",
+        "normalized": "1CO 2:9"
+      },
+      "lxx": {
+        "printed": "Is. LXIV. 4.",
+        "normalized": "ISA 64:4"
+      },
+      "hebrew": {
+        "printed": "Is. LXIV. 3.",
+        "normalized": "ISA 64:3"
+      }
+    },
+    {
+      "id": "Q270",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.III.r.2.a.o",
+      "printed_sequence": "(1)",
+      "pdf_page": 277,
+      "nt": {
+        "printed": "Luke IV. 18–19.",
+        "normalized": "LUK 4:18-19"
+      },
+      "lxx": {
+        "printed": "Is. LXI. 1–2.",
+        "normalized": "ISA 61:1-2"
+      },
+      "hebrew": {
+        "printed": "Is. LXI. 1–2.",
+        "normalized": "ISA 61:1-2"
+      }
+    },
+    {
+      "id": "Q271",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.III.r.2.a.o",
+      "printed_sequence": "(2)",
+      "pdf_page": 279,
+      "nt": {
+        "printed": "Acts III. 22–23.",
+        "normalized": "ACT 3:22-23"
+      },
+      "lxx": {
+        "printed": "Deut. XVIII. 15, 16, 18, 19.",
+        "normalized": "DEU 18:15-16; DEU 18:18-19"
+      },
+      "hebrew": {
+        "printed": "Deut. XVIII. 15, 16, 18, 19.",
+        "normalized": "DEU 18:15-16; DEU 18:18-19"
+      }
+    },
+    {
+      "id": "Q272",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.III.r.2.a.o",
+      "printed_sequence": "(3)",
+      "pdf_page": 281,
+      "nt": {
+        "printed": "Acts VII. 6–7.",
+        "normalized": "ACT 7:6-7"
+      },
+      "lxx": {
+        "printed": "Gen. XV. 13–14.",
+        "normalized": "GEN 15:13-14"
+      },
+      "hebrew": {
+        "printed": "Gen. XV. 13–14.",
+        "normalized": "GEN 15:13-14"
+      }
+    },
+    {
+      "id": "Q273",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.III.r.2.a.o",
+      "printed_sequence": "(4)",
+      "pdf_page": 282,
+      "nt": {
+        "printed": "Acts VII. 26–28.",
+        "normalized": "ACT 7:26-28"
+      },
+      "lxx": {
+        "printed": "Exod. II. 13–14.",
+        "normalized": "EXO 2:13-14"
+      },
+      "hebrew": {
+        "printed": "Exod. II. 13–14.",
+        "normalized": "EXO 2:13-14"
+      }
+    },
+    {
+      "id": "Q274",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.III.r.2.a.o",
+      "printed_sequence": "(5)",
+      "pdf_page": 284,
+      "nt": {
+        "printed": "Rom. IX. 33.",
+        "normalized": "ROM 9:33"
+      },
+      "lxx": {
+        "printed": "Is. VIII. 14; Is. XXVIII. 16.",
+        "normalized": "ISA 8:14; ISA 28:16"
+      },
+      "hebrew": {
+        "printed": "Is. VIII. 14; Is. XXVIII. 16.",
+        "normalized": "ISA 8:14; ISA 28:16"
+      },
+      "note": "Turpie's printed Class E table continues from PDF page 284 to 285 (printed 246–247), showing both Isaiah passages; his prose on PDF page 285 explicitly describes a portion of one passage inserted into another."
+    },
+    {
+      "id": "Q275",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.III.r.2.a.o",
+      "printed_sequence": "(6)",
+      "pdf_page": 286,
+      "nt": {
+        "printed": "Heb. VIII. 8–12.",
+        "normalized": "HEB 8:8-12"
+      },
+      "lxx": {
+        "printed": "Jer. XXXVIII. 31–34.",
+        "normalized": "JER 38:31-34"
+      },
+      "hebrew": {
+        "printed": "Jer. XXXI. 31–34.",
+        "normalized": "JER 31:31-34"
+      }
+    },
+    {
+      "id": "Q276",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.III.r.2.a.o",
+      "printed_sequence": "(7)",
+      "pdf_page": 291,
+      "nt": {
+        "printed": "Luke I. 17.",
+        "normalized": "LUK 1:17"
+      },
+      "lxx": {
+        "printed": "Mal. III. 1.; IV. 4–5.",
+        "normalized": "MAL 3:1; MAL 4:4-5"
+      },
+      "hebrew": {
+        "printed": "Mal. III. 1.; III. 23–24.",
+        "normalized": "MAL 3:1; MAL 3:23-24"
+      },
+      "note": "Turpie prints Luke I.17 as a Class E head on PDF page 291 but says on page 292 that it cannot be regarded as containing a quotation, having no introductory formula; it only respects the prophecies of Malachi."
+    },
+    {
+      "id": "Q277",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.III.r.o.a.2.o",
+      "printed_sequence": "(1)",
+      "pdf_page": 294,
+      "nt": {
+        "printed": "Luke III. 4–6.",
+        "normalized": "LUK 3:4-6"
+      },
+      "lxx": {
+        "printed": "Is. XL. 3–5.",
+        "normalized": "ISA 40:3-5"
+      },
+      "hebrew": {
+        "printed": "Is. XL. 3–5.",
+        "normalized": "ISA 40:3-5"
+      }
+    },
+    {
+      "id": "Q278",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.III.r.o.a.2.o",
+      "printed_sequence": "(2)",
+      "pdf_page": 297,
+      "nt": {
+        "printed": "Rom. X. 6–8.",
+        "normalized": "ROM 10:6-8"
+      },
+      "lxx": {
+        "printed": "Deut. XXX. 12–14.",
+        "normalized": "DEU 30:12-14"
+      },
+      "hebrew": {
+        "printed": "Deut. XXX. 12–14.",
+        "normalized": "DEU 30:12-14"
+      }
+    },
+    {
+      "id": "Q279",
+      "kind": "table",
+      "class": "E",
+      "table_code": "E.III.r.o.a.2.o",
+      "printed_sequence": "(3)",
+      "pdf_page": 299,
+      "nt": {
+        "printed": "Rom. XIV. 11.",
+        "normalized": "ROM 14:11"
+      },
+      "lxx": {
+        "printed": "Is. XLV. 23.",
+        "normalized": "ISA 45:23"
+      },
+      "hebrew": {
+        "printed": "Is. XLV. 23.",
+        "normalized": "ISA 45:23"
+      }
+    },
+    {
+      "id": "Q280",
+      "kind": "appendix",
+      "class": null,
+      "printed_sequence": "unnumbered",
+      "pdf_page": 301,
+      "nt": {
+        "printed": "John VII. 38.",
+        "normalized": "JHN 7:38"
+      },
+      "lxx": {
+        "normalized": null
+      },
+      "hebrew": {},
+      "source_headings": "none"
+    },
+    {
+      "id": "Q281",
+      "kind": "appendix",
+      "class": null,
+      "printed_sequence": "unnumbered",
+      "pdf_page": 302,
+      "nt": {
+        "printed": "John VII. 42.",
+        "normalized": "JHN 7:42"
+      },
+      "lxx": {
+        "normalized": null
+      },
+      "hebrew": {},
+      "source_headings": "none"
+    },
+    {
+      "id": "Q282",
+      "kind": "appendix",
+      "class": null,
+      "printed_sequence": "unnumbered",
+      "pdf_page": 303,
+      "nt": {
+        "printed": "Eph. V. 14.",
+        "normalized": "EPH 5:14"
+      },
+      "lxx": {
+        "normalized": null
+      },
+      "hebrew": {},
+      "source_headings": "none"
+    }
+  ]
+}

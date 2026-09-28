@@ -85,23 +85,45 @@ Brenton's 2,595 notes and 150 cross-references record only where his mark stood,
 - A note that renders the words differently is measured by that rendering. If its last word, or a form of it, comes shortly after the mark, the words end there ("Gr. _glean you_" is about "strip you"). Otherwise they run as many words as the rendering has ("Gr. _chief cook_" is about "captain of the guard"), stopping at punctuation and never ending on a word like "the", "his" or "of", unless the rendering is one such word for another: "Alex. _their_" is about "his", and "Gr. _upon_" is about "into" if "into" occurs only once in the verse. If the rendering's first word stands just before the mark, the words take it in ("Alex. _the Chorrhæan_" is about "the Evite").
 - A note that comments rather than renders is about its clause, or its first four words if the clause is longer than six.
 - A note at the end of a verse is about the words before it if it renders them, and about the whole verse if it doesn't.
-- A cross-reference within the first three words of its verse needs no words; the New Testament quotes the verse. Later in the verse, the words show where the quotation begins: its clause, or its first four words if the clause is longer than eight. Each cross-reference is printed as a footnote of "See" and its reference.
+- A cross-reference within the first three words of its verse needs no words; the New Testament quotes the verse. Later in the verse, the words show where the quotation begins: its clause, or its first four words if the clause is longer than eight. Each cross-reference is printed as a footnote of "See" and its reference, unless the [quotation links](#quotations) at its verse name what it cites, when they replace it.
 
 Like the 1611 notes, the words are extended until they occur only once in the verse, and the rendering with them ("your: Gr. _thy_" becomes "your soul: Gr. _thy soul_"). Where the rules' words were too few, so that the rendering already covers the words added ("was moved: Gr. _repented_"), the lemma is given as an exception, which the rendering doesn't take in. An exception's lemma that occurs more than once in the verse names its occurrence, and is widened like the rules' ("explore", the first of two in Joshua 18:8, prints "to explore: or, _to walk through_").
 
 Brenton set his labels in italic, and eBible marks them the same way as the words he cites in italic. The build tells them apart by the label names, and italicizes what follows a label unless it's a comment ("probably", "has the following", "from the Heb.", a verse reference, or quoted Greek or Hebrew). English after quoted Greek is a rendering ("Alex. ἐντολαί, _commands_"), and so are the words a note quotes as added ("Heb. and Alex. insert '_priest_'").
 
-`edition/brenton-notes.json` corrects the rules in 763 places, with the reason for each: 682 notes get other words, 108 get other italics, and one that reads as a sentence is printed as none. Often Brenton's mark follows the words it's about instead of preceding them, as in Genesis 2:19, or the rendering is shorter or longer than the words it replaces. Two kinds of correction follow a convention of their own. After "i. e.", "q. d.", "sc." or "That is," the words are italic only if they could stand in place of the words the note is about ("son of Jemeni: i. e. _Benjamite_") or name what a pronoun stands for ("sc. _the people_"); an explanation that adds to them stays roman ("instruct: sc. as a law-giver"). A note that records words a manuscript adds is about the words they follow, since those show where they go ("Tell us: Alex. + '_for those whose cause this evil is upon us_'").
+`edition/brenton-notes.json` corrects the rules in 755 places, with the reason for each: 674 notes get other words, 108 get other italics, and one that reads as a sentence is printed as none. Often Brenton's mark follows the words it's about instead of preceding them, as in Genesis 2:19, or the rendering is shorter or longer than the words it replaces. Two kinds of correction follow a convention of their own. After "i. e.", "q. d.", "sc." or "That is," the words are italic only if they could stand in place of the words the note is about ("son of Jemeni: i. e. _Benjamite_") or name what a pronoun stands for ("sc. _the people_"); an explanation that adds to them stays roman ("instruct: sc. as a law-giver"). A note that records words a manuscript adds is about the words they follow, since those show where they go ("Tell us: Alex. + '_for those whose cause this evil is upon us_'").
 
 The same file corrects 74 slips in eBible's text, among them Hebrew and Greek misread letter for letter, such as "ככיס" for "בכים" in Judges 2:1 and "θανμαστὰ" for "θαυμαστὰ" in Judges 13:19, a doubled "Gr." in Genesis 21:11, an empty note in 3 Kingdoms 6:1, eBible's own remark inside a note in Proverbs 11:10, misspellings such as "appeaars" and "nanda" for "hands", missing full stops, and missing word spaces, as in Exodus 21:28 ("he or she"), Ezekiel 11:7 ("thiscity"), and Brenton's preface, where "There is" printed as "There<sup>a</sup>is".
 
 `make notes-review` lists every note with the words it's about and its italics in `build/notes-review.md`, and those that changed since the last review in `build/notes-review-changes.md`.
 
+## Quotations
+
+Where the New Testament quotes the Old, both ends are linked: the first verse of the quotation names the passage it quotes, and the first verse of that passage names the quotation. Putting Brenton's Septuagint beside the King James New Testament invites one question above others, whether the apostles were quoting the Greek Bible, so each link also says how the quotation's wording stands to the Hebrew and the Septuagint.
+
+Those judgments are David McCalman Turpie's, from _The Old Testament in the New_ (1868), which gives one of five classes to every quotation it tables. His letters A–E aren't printed, because Archer and Chirichigno's better-known A–F classes give the same letters other meanings. Short glosses such as "LXX against Heb." take their place, and the introduction explains them.
+
+`edition/turpie.json` transcribes the references and class of each of Turpie's 282 entries, with the page of the [scan](../sources/README.md#new-testament-quotations-of-the-old-testament) it comes from. It records references only, not the quoted words. `edition/quotations.json` holds the edition's own decisions, each with its reason. It leaves out nine entries: eight that Turpie himself doubts or repeats, and 1 Timothy 5:18, for which he prints no Old Testament heading. At Hebrews 2:13, where Turpie withdraws the second clause from his first entry and tables it again under another class, the first entry links only the clause he keeps.
+
+### Numbering
+
+The links give Brenton's chapter and verse numbers, because those are the numbers on the page. Turpie sometimes numbers a verse the English way instead, as in Joel 2:28–32, which is Brenton's 3:1–5. Each such case is a recorded exception with its reason. For readers who look the verses up in another Bible, the introduction has a table of every linked verse that the King James Bible numbers differently. A test checks the table against the words of both translations, so no row is missing and no row is wrong.
+
+### Brenton's "See" notes
+
+Brenton marked about 150 quotations himself, with a footnote such as "See Rom. 4. 7,8". Where a link now names the same verses, the note is dropped so that the reader isn't given the reference twice. Some notes say more than a link could: a gloss, a pointer to the Hebrew, or verses the quotation doesn't reach. Dropping one of those would lose something, so each is decided by hand, and most are kept.
+
+### Checking the links
+
+A link can point to a verse that exists and still be one verse off, especially where the numbering differs. So a test compares words: a quotation should share more of its distinctive words with the verse it links to than with the verses around it. This test found that the cheerful giver of 2 Corinthians 9:7 is at Proverbs 22:8a, a verse Brenton sets apart for a Septuagint addition. Quotations that paraphrase, or that follow the Hebrew where Brenton follows the Greek, share too few words for this check to work. Those are listed with a reason in `edition/quotations.json`.
+
+[Kalvesmaki's chart](https://www.kalvesmaki.com/LXX/NTChart.htm) lists 23 more parallels that Turpie doesn't table. They have no class to print, so they aren't linked.
+
 ## Typography
 
 - Words the translators supplied, which many Bibles print in italics, are set in ordinary type.
 - Brenton's transcription mixes curly and straight quotation marks. The build converts the straight ones with [SmartyPants](https://pypi.org/project/smartypants/), then checks that nothing changed except quotation marks, dashes, and ellipses. The two backtick quotes in Proverbs 21:18 are handled separately. The Cambridge text already has curly quotes, and the edition's own pages are typed with them.
-- The text is set in Utopia, with verse numbers in the superscript figures of Erewhon, a font based on Utopia. Greek is set in GFS Didot and Hebrew in Ezra SIL.
+- The text is set in Utopia, with verse numbers in the superscript figures of Erewhon, a font based on Utopia. Greek is set in GFS Didot and Hebrew in Ezra SIL. The ≠ of the quotation links, which Utopia lacks, is set in Erewhon Math.
 
 ## Known issues
 

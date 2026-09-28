@@ -1249,7 +1249,7 @@ def in_a_note(text, snippet):
     )
 
 
-def corrected_brenton(source, text, record):
+def corrected_brenton(source, text, record, mended_notes=None):
     """A Brenton source file with the corrections in edition/brenton-notes.json.
 
     Each correction is keyed by the source file's id and the verse or note it
@@ -1257,6 +1257,9 @@ def corrected_brenton(source, text, record):
     form a list under one key. In a file without verses, the key names the words
     the note stands among. Outside notes a correction may mend only word spaces,
     so the translation stays eBible's: wording checks compare with corrected text.
+    Where notes are corrected is added to mended_notes, if given, as note keys
+    without the file's id: a correction keyed to a verse in a note mends its
+    first note.
     """
     corrections = {
         key: c
@@ -1270,27 +1273,41 @@ def corrected_brenton(source, text, record):
                 in_its_place(text, key, correction["from"]),
                 f"Brenton correction is not where its key says: {key}",
             )
+            in_note = in_a_note(text, correction["from"])
             require(
-                in_a_note(text, correction["from"])
+                in_note
                 or canonical_text(correction["from"])
                 == canonical_text(correction["to"]),
                 f"Brenton correction changes the wording outside a note: {key}",
             )
+            if in_note and mended_notes is not None:
+                mended_notes.add(key.partition(" ")[2])
             text = mended
     if corrections:
         record("correct eBible's Brenton text", corrections=sorted(corrections))
     return text
 
 
-def restyle_brenton_notes(code, text, record, review=None):
-    """Set Brenton's notes and cross-references as caller-free footnotes, each naming its lemma.
+def note_key(code, reference, number):
+    """A Brenton note's key: its verse, then after its verse's first note, its number there."""
+    return f"{code} {reference}" + (f"#{number}" if number > 1 else "")
 
-    A cross-reference becomes a footnote of "See" and its reference.
-    """
-    exceptions = {
-        k: v for k, v in BRENTON_NOTES["notes"].items() if k.split(" ")[0] == code
-    }
-    # Each note with its position in the text without notes.
+
+@dataclass
+class SourceNote:
+    """One of Brenton's notes or cross-references, as eBible has it."""
+
+    key: str
+    kind: str  # "f" for a note, "x" for a cross-reference
+    reference: str
+    start: int  # the verse's span in the text without notes
+    end: int
+    position: int  # in the text without notes
+    source: str  # a cross-reference is "See" and its reference
+
+
+def brenton_notes(code, text):
+    """The text without Brenton's notes and cross-references, and each of them keyed."""
     found = []
     removed = 0
     for match in BRENTON_NOTE.finditer(text):
@@ -1301,37 +1318,69 @@ def restyle_brenton_notes(code, text, record, review=None):
         "\\f " not in clean and "\\x " not in clean, f"Unparsed Brenton note: {code}"
     )
     if not found:
-        require(
-            not exceptions, f"Brenton note exceptions for a book without notes: {code}"
-        )
-        return text
+        return clean, []
     spans = verse_spans(clean)
     span_starts = [start for _, start, _ in spans]
     seen = Counter()
-    entries = []
+    result = []
     for position, kind, source_reference, body in found:
         # A note just after a verse number stands before the space its span skips.
         ahead = re.compile(r"\s*").match(clean, position).end()
         index = bisect.bisect_right(span_starts, ahead) - 1
         require(index >= 0, f"Note before the first verse: {code} {source_reference}")
         reference, start, end = spans[index]
-        position = max(position, start)
         require(
             reference == source_reference,
             f"Note reference disagrees with its verse: {code} {source_reference}",
         )
         seen[reference] += 1
-        key = f"{code} {reference}" + (
-            f"#{seen[reference]}" if seen[reference] > 1 else ""
+        result.append(
+            SourceNote(
+                note_key(code, reference, seen[reference]),
+                kind,
+                reference,
+                start,
+                end,
+                max(position, start),
+                body if kind == "f" else "See " + body,
+            )
         )
+    return clean, result
+
+
+def restyle_brenton_notes(code, clean, found, record, review, merged):
+    """Set Brenton's notes and cross-references as caller-free footnotes, each naming its lemma.
+
+    Takes brenton_notes' text without notes and the notes found in it. A
+    cross-reference becomes a footnote of "See" and its reference. The notes
+    whose keys are merged, which quotation links replace, are left out.
+    """
+    exceptions = {
+        k: v for k, v in BRENTON_NOTES["notes"].items() if k.split(" ")[0] == code
+    }
+    if not found:
+        require(
+            not exceptions, f"Brenton note exceptions for a book without notes: {code}"
+        )
+        return clean
+    # A merged note doesn't print, so an exception to its lemma or wording
+    # would go unused unnoticed.
+    require(
+        not merged & set(exceptions),
+        f"Brenton note exception for a note a link replaces: {sorted(merged & set(exceptions))}",
+    )
+    entries = []
+    for note in found:
+        if note.key in merged:
+            continue
+        key, kind, position, source = note.key, note.kind, note.position, note.source
         exception = exceptions.get(key, {})
-        source = body if kind == "f" else "See " + body
         plain, styles, alternative, style = note_body(
             brenton_pieces(source), exception.get("note"), key, source
         )
-        verse = clean[start:end]
+        verse = clean[note.start : note.end]
         words = word_spans(verse)
-        offset = position - start
+        offset = position - note.start
         span, rule = inferred_lemma(kind, verse, words, offset, alternative)
         glossed, _ = inferred_lemma(
             kind, verse, words, offset, alternative, widen=False
@@ -1349,8 +1398,8 @@ def restyle_brenton_notes(code, text, record, review=None):
         plain, styles = echoed(plain, styles, style, *echo(verse, words, span, glossed))
         entry = Entry(
             key,
-            reference,
-            outside_styles(clean, start, position, key),
+            note.reference,
+            outside_styles(clean, note.start, position, key),
             lemma_text(verse, words, span) if span else None,
             plain,
             styles,
@@ -1367,10 +1416,11 @@ def restyle_brenton_notes(code, text, record, review=None):
         f"Unused Brenton note exceptions: {sorted(set(exceptions) - keys)}",
     )
     text = set_footnotes(clean, entries)
+    kinds = Counter(n.kind for n in found if n.key not in merged)
     record(
         "set Brenton's notes and cross-references as footnotes without callers",
-        notes=sum(kind == "f" for _, kind, _, _ in found),
-        cross_references=sum(kind == "x" for _, kind, _, _ in found),
+        notes=kinds["f"],
+        cross_references=kinds["x"],
         lemma_rules=dict(Counter(e.rule for e in entries)),
         exceptions=sorted(exceptions),
     )

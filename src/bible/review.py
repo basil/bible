@@ -2,9 +2,8 @@
 build/notes-review.md, with the entries changed since the last review in
 build/notes-review-changes.md."""
 
-from bible import edition, paths
+from bible import paths
 from bible.files import read_json, write_json
-from bible.prepare import scripture_text
 from bible.validate import validate
 
 
@@ -18,10 +17,9 @@ def line(entry, status=""):
 def notes_review():
     # Validation checks the exception files' fields, which the build alone
     # would read as no override.
-    archives = validate()
-    entries = []
-    for unit in edition.MANIFEST["scripture"]:
-        scripture_text(unit, archives, review=entries)
+    _, scripture = validate()
+    # A note a quotation link replaces doesn't print, so isn't reviewed.
+    entries = [entry for unit in scripture.values() for entry in unit.review]
     data = paths.BUILD_DIR / "notes-review.json"
     previous = {e["key"]: e for e in read_json(data)} if data.exists() else {}
     changed = [e for e in entries if previous.get(e["key"]) != e]

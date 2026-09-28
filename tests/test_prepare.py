@@ -7,23 +7,23 @@ from bible.edition import scripture_unit as unit
 from bible.prepare import sample_chapters, scripture_text
 
 
-def test_manifest_chapters_must_exist(archives):
+def test_manifest_chapters_must_exist(archives, links):
     entry = {**unit("NEH"), "chapters": [11, 24]}
     with pytest.raises(CheckFailed, match="chapters outside the source: NEH"):
-        scripture_text(entry, archives)
+        scripture_text(entry, archives, links=links)
 
 
-def test_malachias_chapter_boundary(with_source):
+def test_malachias_chapter_boundary(with_source, links):
     damaged = with_source(
         "brenton",
         "MAL",
         lambda t: t.replace("\\v 19 For, behold", "\\v 19 For, lo"),
     )
     with pytest.raises(CheckFailed, match="Malachias chapter boundary changed"):
-        scripture_text(unit("MAL"), damaged)
+        scripture_text(unit("MAL"), damaged, links=links)
 
 
-def test_song_of_the_three_children_boundary(with_source):
+def test_song_of_the_three_children_boundary(with_source, links):
     damaged = with_source(
         "brenton",
         "DAG",
@@ -32,10 +32,10 @@ def test_song_of_the_three_children_boundary(with_source):
     with pytest.raises(
         CheckFailed, match="Song of the Three Children boundary changed"
     ):
-        scripture_text(unit("DAG"), damaged)
+        scripture_text(unit("DAG"), damaged, links=links)
 
 
-def test_relabelled_note_reference(with_source):
+def test_relabelled_note_reference(with_source, links):
     # Nehemias relabels chapter markers only; a note would keep its source chapter.
     damaged = with_source(
         "brenton",
@@ -47,7 +47,7 @@ def test_relabelled_note_reference(with_source):
     with pytest.raises(
         CheckFailed, match="Note reference disagrees with its verse: NEH"
     ):
-        scripture_text(unit("NEH"), damaged)
+        scripture_text(unit("NEH"), damaged, links=links)
 
 
 # Like the prepared Daniel: Susanna's heading ends the header, and Bel's

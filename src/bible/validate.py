@@ -1,21 +1,25 @@
 """Validating the pinned sources against the edition before anything is built:
-the archive hashes, the notes and corrections, divided sources, and the overlapping
-Nehemias witness, reported in build/validation.json."""
+the archive hashes, the notes and corrections, the quotation links, divided sources,
+and the overlapping Nehemias witness, reported in build/validation.json."""
 
 import difflib
 
 from bible import edition, notes, paths
 from bible.checks import require
+from bible.crossrefs import quotation_links
 from bible.edition import brenton_source_use, scripture_unit, source_id
 from bible.files import write_json
-from bible.prepare import recorder
+from bible.prepare import prepared_scripture, recorder
 from bible.sources import load_archives
 from bible.usfm import chapter_parts, inventory, renumber_chapters
 
 
 def validate():
-    """Check the pinned sources and report on them; returns their books."""
+    """Check the pinned sources and report on them; returns their books and the
+    prepared scripture, by id."""
     archives = load_archives()
+    # Turpie's transcription and the edition's decisions among its heads.
+    links = quotation_links(archives)
     units = edition.MANIFEST["scripture"]
     # A unit checks only the exceptions and corrections keyed to it, so one keyed
     # to anything the edition doesn't print would go unused unnoticed.
@@ -121,6 +125,10 @@ def validate():
             chapters == list(inventory(archives[source][code])["chapters"]),
             f"Divided source not printed whole: {source}/{code}",
         )
+    # Preparing each book, as the build does, checks that every verse a link
+    # stands for prints and that the note merge decisions are used. The build
+    # and the notes review use what it prepares.
+    scripture = prepared_scripture(archives, links)
     source_use = brenton_source_use()
     # Explain the overlapping witness without modifying either original file.
     nehemias = scripture_unit("NEH")
@@ -163,4 +171,4 @@ def validate():
     }
     write_json(paths.BUILD_DIR / "validation.json", report)
     print("Validated pinned sources:", report, flush=True)
-    return archives
+    return archives, scripture

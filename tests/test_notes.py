@@ -8,6 +8,7 @@ import pytest
 
 from bible import notes
 from bible.checks import CheckFailed
+from bible.crossrefs import LINK
 from bible.edition import MANIFEST, scripture_unit as unit
 from bible.prepare import front_matter_text, recorder, scripture_text
 from bible.usfm import word_spans
@@ -54,32 +55,32 @@ def test_unused_exception(patched):
         notes.marginal_notes()
 
 
-def test_missing_anchor_verse(archives, patched):
+def test_missing_anchor_verse(archives, patched, links):
     exceptions = patched(notes, "KJV_NOTES")["notes"]
     exceptions["MAT 12:14 held a counsel"]["verse"] = "12:99"
     with pytest.raises(CheckFailed, match="verse missing: MAT 12:14 held a counsel"):
-        scripture_text(unit("MAT"), archives)
+        scripture_text(unit("MAT"), archives, links=links)
 
 
-def test_wrong_anchor(archives, patched):
+def test_wrong_anchor(archives, patched, links):
     # George's lemma reads "counsel" where the Cambridge text has "council".
     del patched(notes, "KJV_NOTES")["notes"]["MAT 12:14 held a counsel"]
     with pytest.raises(
         CheckFailed, match=r"not found exactly once: MAT 12:14 held a counsel \(0\)"
     ):
-        scripture_text(unit("MAT"), archives)
+        scripture_text(unit("MAT"), archives, links=links)
 
 
-def test_ambiguous_anchor(archives, patched):
+def test_ambiguous_anchor(archives, patched, links):
     # "of" occurs more than once in Matthew 6:1; the override picks the second.
     del patched(notes, "KJV_NOTES")["notes"]["MAT 6:1 of"]
     with pytest.raises(
         CheckFailed, match=r"not found exactly once: MAT 6:1 of \([2-9]\)"
     ):
-        scripture_text(unit("MAT"), archives)
+        scripture_text(unit("MAT"), archives, links=links)
 
 
-def test_anchor_inside_added_words(archives, patched):
+def test_anchor_inside_added_words(archives, patched, links):
     # "it" is the second of Mark 3:21's added words "of it".
     patched(notes, "KJV_NOTES")["notes"]["MRK 3:21 friends"] = {
         "anchor": "it",
@@ -89,17 +90,17 @@ def test_anchor_inside_added_words(archives, patched):
     with pytest.raises(
         CheckFailed, match="Note inside a character span: MRK 3:21 friends"
     ):
-        scripture_text(unit("MRK"), archives)
+        scripture_text(unit("MRK"), archives, links=links)
 
 
-def test_cambridge_text_must_not_already_have_notes(with_source):
+def test_cambridge_text_must_not_already_have_notes(with_source, links):
     damaged = with_source(
         "kjv",
         "MAT",
         lambda t: t.replace("\\v 2 ", "\\v 2 \\f + \\ft x\\f* ", 1),
     )
     with pytest.raises(CheckFailed, match="already has footnotes: MAT"):
-        scripture_text(unit("MAT"), damaged)
+        scripture_text(unit("MAT"), damaged, links=links)
 
 
 def unit_front(code):
@@ -157,14 +158,14 @@ def test_each_note_is_its_own_footnote(scripture):
     ]
 
 
-def test_marginal_note_on_the_whole_verse(archives, patched):
+def test_marginal_note_on_the_whole_verse(archives, patched, links):
     patched(notes, "KJV_NOTES")["notes"][
         "LUK 17:36 Two men shall be in the field, the one shall be taken, and the other left"
     ] = {
         "lemma": None,
         "why": "x",
     }
-    assert footnotes(scripture_text(unit("LUK"), archives), "17:36") == [
+    assert footnotes(scripture_text(unit("LUK"), archives, links=links), "17:36") == [
         "\\f - \\fr 17:36 \\ft This 36. verse is wanting in most of the Greek copies.\\f*"
     ]
 
@@ -224,7 +225,8 @@ def test_brenton_footnotes(scripture, code, reference, usfm):
 
 def test_brenton_text_keeps_no_caller(scripture):
     text = scripture["GEN"]
-    assert "\\f +" not in text and "\\x " not in text
+    # The only cross-references are the quotation links, which set no caller.
+    assert "\\f +" not in text and "\\x " not in LINK.sub("", text)
     # The empty note in 3 Kingdoms 6:1 is corrected away; its verse keeps the other.
     assert len(footnotes(scripture["1KI"], "6:1")) == 1
 
@@ -625,7 +627,7 @@ def test_reference_after_lemma_keeps_its_capital():
     assert entry.body == "\\xt Rom. 10. 15"
 
 
-def test_unused_brenton_exception(archives, patched):
+def test_unused_brenton_exception(archives, patched, links):
     patched(notes, "BRENTON_NOTES")["notes"]["GEN 1:1"] = {
         "lemma": "heaven",
         "why": "x",
@@ -633,37 +635,39 @@ def test_unused_brenton_exception(archives, patched):
     with pytest.raises(
         CheckFailed, match=r"Unused Brenton note exceptions: \['GEN 1:1'\]"
     ):
-        scripture_text(unit("GEN"), archives)
+        scripture_text(unit("GEN"), archives, links=links)
 
 
-def test_brenton_lemma_override_that_changes_nothing(archives, patched):
+def test_brenton_lemma_override_that_changes_nothing(archives, patched, links):
     patched(notes, "BRENTON_NOTES")["notes"]["GEN 1:10"] = {
         "lemma": "gatherings",
         "why": "x",
     }
     with pytest.raises(CheckFailed, match="Lemma override changes nothing: GEN 1:10"):
-        scripture_text(unit("GEN"), archives)
+        scripture_text(unit("GEN"), archives, links=links)
 
 
-def test_brenton_lemma_override_of_the_widened_lemma_stops_the_echo(archives, patched):
+def test_brenton_lemma_override_of_the_widened_lemma_stops_the_echo(
+    archives, patched, links
+):
     patched(notes, "BRENTON_NOTES")["notes"]["DEU 4:29"] = {
         "lemma": "your heart",
         "why": "x",
     }
-    text = scripture_text(unit("DEU"), archives)
+    text = scripture_text(unit("DEU"), archives, links=links)
     assert footnotes(text, "4:29")[0] == (
         "\\f - \\fr 4:29 \\fq your heart: \\ft Gr. \\fqa thy\\f*"
     )
 
 
-def test_brenton_lemma_override_names_its_occurrence(archives):
+def test_brenton_lemma_override_names_its_occurrence(scripture):
     # "Thus" occurs twice; widened to be unique, the rendering takes in "saying".
-    assert footnotes(scripture_text(unit("1KI"), archives), "20:19") == [
+    assert footnotes(scripture["1KI"], "20:19") == [
         "\\f - \\fr 20:19 \\fq saying, Thus: \\ft Gr. \\fqa saying, these things\\f*"
     ]
 
 
-def test_brenton_lemma_override_occurrence_must_be_needed(archives, patched):
+def test_brenton_lemma_override_occurrence_must_be_needed(archives, patched, links):
     patched(notes, "BRENTON_NOTES")["notes"]["GEN 1:10"] = {
         "lemma": "gatherings",
         "occurrence": 1,
@@ -672,24 +676,24 @@ def test_brenton_lemma_override_occurrence_must_be_needed(archives, patched):
     with pytest.raises(
         CheckFailed, match=r"occurrence not found, or not needed: GEN 1:10 \(1\)"
     ):
-        scripture_text(unit("GEN"), archives)
+        scripture_text(unit("GEN"), archives, links=links)
 
 
-def test_brenton_lemma_override_must_occur_once(archives, patched):
+def test_brenton_lemma_override_must_occur_once(archives, patched, links):
     patched(notes, "BRENTON_NOTES")["notes"]["GEN 1:10"] = {"lemma": "the", "why": "x"}
     with pytest.raises(
         CheckFailed, match=r"not found exactly once: GEN 1:10 \([2-9]\)"
     ):
-        scripture_text(unit("GEN"), archives)
+        scripture_text(unit("GEN"), archives, links=links)
 
 
-def test_brenton_note_override_that_changes_nothing(archives, patched):
+def test_brenton_note_override_that_changes_nothing(archives, patched, links):
     patched(notes, "BRENTON_NOTES")["notes"]["GEN 1:10"] = {
         "note": "Gr. _systems_.",
         "why": "x",
     }
     with pytest.raises(CheckFailed, match="Note override changes nothing: GEN 1:10"):
-        scripture_text(unit("GEN"), archives)
+        scripture_text(unit("GEN"), archives, links=links)
 
 
 def test_brenton_corrections(archives, scripture):
@@ -700,14 +704,14 @@ def test_brenton_corrections(archives, scripture):
     assert "LXX.\\f* is little doubt" in preface
 
 
-def test_brenton_correction_that_does_not_apply(archives, patched):
+def test_brenton_correction_that_does_not_apply(archives, patched, links):
     patched(notes, "BRENTON_NOTES")["corrections"]["GEN 1:1"] = {
         "from": "no such text",
         "to": "x",
         "why": "x",
     }
     with pytest.raises(CheckFailed, match="Brenton correction does not apply: GEN 1:1"):
-        scripture_text(unit("GEN"), archives)
+        scripture_text(unit("GEN"), archives, links=links)
 
 
 @pytest.mark.parametrize(
@@ -820,7 +824,7 @@ def test_anchor_category(lemma, anchor, category):
     assert notes.anchor_category(*words) == category
 
 
-def test_anchor_that_fits_no_category(archives, patched):
+def test_anchor_that_fits_no_category(archives, patched, links):
     del patched(notes, "KJV_NOTES")["notes"]["MAT 12:14 held a counsel"][
         "uncategorized"
     ]
@@ -828,26 +832,26 @@ def test_anchor_that_fits_no_category(archives, patched):
         CheckFailed,
         match="anchor fits no category of difference: MAT 12:14 held a counsel",
     ):
-        scripture_text(unit("MAT"), archives)
+        scripture_text(unit("MAT"), archives, links=links)
 
 
-def test_uncategorized_anchor_that_fits_a_category(archives, patched):
+def test_uncategorized_anchor_that_fits_a_category(archives, patched, links):
     patched(notes, "KJV_NOTES")["notes"]["MAT 14:30 boisterous"]["uncategorized"] = True
     with pytest.raises(
         CheckFailed,
         match="anchor listed as uncategorized is a wrong letter: MAT 14:30 boisterous",
     ):
-        scripture_text(unit("MAT"), archives)
+        scripture_text(unit("MAT"), archives, links=links)
 
 
-def test_anchor_that_changes_nothing(archives, patched):
+def test_anchor_that_changes_nothing(archives, patched, links):
     patched(notes, "KJV_NOTES")["notes"]["MAT 14:30 boisterous"] = {
         "anchor": "Boisterous,"
     }
     with pytest.raises(
         CheckFailed, match="anchor changes nothing: MAT 14:30 boisterous"
     ):
-        scripture_text(unit("MAT"), archives)
+        scripture_text(unit("MAT"), archives, links=links)
 
 
 def test_note_must_keep_its_word_spaces():

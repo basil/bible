@@ -402,14 +402,6 @@
       "lemma": "its places",
       "why": "Brenton's caller follows the words the note glosses"
     },
-    "GEN 1:27": {
-      "lemma": "male and female he made them",
-      "why": "Mat. 19. 4 quotes male and female he made them"
-    },
-    "GEN 2:2": {
-      "lemma": "he ceased on the seventh day",
-      "why": "Heb. 4. 4 quotes the second half of the verse"
-    },
     "GEN 2:9#2": {
       "lemma": "the knowledge",
       "why": "that which is to be known renders the knowledge; of good and evil stays"
@@ -640,10 +632,6 @@
       "lemma": "plagues",
       "why": "occurrences renders plagues alone"
     },
-    "EXO 9:16": {
-      "lemma": "for this purpose",
-      "why": "the note cites the verse, which Rom. 9. 17 quotes from its opening"
-    },
     "EXO 9:23": {
       "lemma": "thunderings",
       "why": "Brenton's caller follows the words the note glosses"
@@ -718,10 +706,6 @@
       "note": "Qu. If the borrower be a hireling, he shall have the ruined beast instead of his hire?",
       "why": "the note queries rather than renders; borrower is Brenton's emphasis"
     },
-    "EXO 22:27": {
-      "lemma": "speak ill of the ruler of thy people",
-      "why": "Acts 23. 5 quotes only the second clause"
-    },
     "EXO 23:16": {
       "lemma": "thy fruits",
       "why": "the rendering stands for fewer words than it has"
@@ -741,10 +725,6 @@
     "EXO 25:31": {
       "lemma": "of one piece",
       "why": "the phrase ends at piece"
-    },
-    "EXO 25:40": {
-      "lemma": null,
-      "why": "Heb. 8. 5 quotes the verse from its opening See"
     },
     "EXO 27:2": {
       "lemma": "of the same piece",
@@ -789,10 +769,6 @@
     "EXO 31:6#2": {
       "lemma": "make",
       "why": "work in or at renders make alone"
-    },
-    "EXO 32:1": {
-      "lemma": "make us gods who shall go before us",
-      "why": "Acts 7. 40 quotes from make us gods, not from the opening"
     },
     "EXO 32:6": {
       "lemma": "he offered",
@@ -2625,10 +2601,6 @@
       "lemma": "both",
       "why": "at the same time renders both"
     },
-    "PSA 5:10": {
-      "lemma": "their throat is an open sepulchre",
-      "why": "Rom. 3. 13 quotes from their throat"
-    },
     "PSA 5:11": {
       "lemma": "fail of",
       "why": "fall from renders fail of"
@@ -3452,10 +3424,6 @@
     "ISA 60:22": {
       "lemma": "little one",
       "why": "people few in number renders little one"
-    },
-    "ISA 61:1": {
-      "lemma": null,
-      "why": "Luke 4. 18 quotes the verse from its start"
     },
     "ISA 61:9": {
       "lemma": "take notice of",
