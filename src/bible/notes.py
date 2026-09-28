@@ -1099,18 +1099,7 @@ def read_citations(record, tongue, read, books):
         "read citations",
         dialect=tongue.name,
         citations=[
-            {
-                "key": key,
-                "source": citation.source,
-                "cites": " ".join(
-                    [citation.book, *map(str, citation.passages)]
-                    if not citation.passages
-                    else map(str, citation.passages)
-                ),
-                "numbering": citation.numbering,
-                "name": citation.name,
-                "printed": citations.printed(citation, books),
-            }
+            citations.logged(key, citation, books)
             for key, found in read
             for citation in found
         ],

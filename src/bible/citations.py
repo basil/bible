@@ -270,7 +270,7 @@ def _edition(book, items, numbering):
                     f"Citation across a relabelled chapter: {book} {item}",
                 )
                 moved.append(Item(ends[0].chapter, ends[0].number, ends[1].number))
-            runs.append(tuple(moved))
+            runs += _by_chapter(moved)
         return book, tuple(runs)
     if numbering == "kjv-verses":
         ours, theirs = book, versification.kjv_book(book)
@@ -302,13 +302,20 @@ def _edition(book, items, numbering):
                     Verse(theirs, chapter, item.last),
                 ),
             )
-        # Verses carried into another chapter open a run of their own.
-        for n, item in enumerate(moved):
-            if n and runs[-1][-1].chapter == item.chapter:
-                runs[-1] = (*runs[-1], item)
-            else:
-                runs.append((item,))
+        runs += _by_chapter(moved)
     return ours, tuple(runs)
+
+
+def _by_chapter(moved):
+    """A run's items as the edition numbers them, as runs: verses carried or
+    relabelled into another chapter open a run of their own."""
+    runs = []
+    for item in moved:
+        if runs and runs[-1][-1].chapter == item.chapter:
+            runs[-1] = (*runs[-1], item)
+        else:
+            runs.append((item,))
+    return runs
 
 
 class Names(string.Formatter):
@@ -341,17 +348,27 @@ def unit_decisions(unit, plain):
         code, _, words = key.partition(" ")
         if code == unit and not re.fullmatch(rf"\d+:{VERSE_LABEL}.*", words):
             source = decision.get("source", words)
-            if source in plain:
+            if _places(source, plain):
                 found[key] = {**decision, "source": source}
     return found
+
+
+def _places(source, plain):
+    """Where a decision's words stand in a text, as words of their own:
+    "3. 8" is not the end of "13. 8", nor "Verse 8" the start of "Verse 80"."""
+    return [
+        match.start()
+        for match in re.finditer(rf"(?<!\w){re.escape(source)}(?!\w)", plain)
+    ]
 
 
 def _decided(decision, plain, tongue, home, key, inventory):
     """Where a decision's words stand, and its citation, if it decides that
     there is one."""
     source = decision.get("source", "")
+    places = _places(source, plain) if source else []
     require(
-        decision.get("why") and plain.count(source) == 1,
+        decision.get("why") and len(places) == 1,
         f"Citation decision without a reason, or not found once: {key} ({source})",
     )
     kinds = [kind for kind in DECISIONS if decision.get(kind)]
@@ -359,7 +376,7 @@ def _decided(decision, plain, tongue, home, key, inventory):
         len(kinds) == 1 and decision.keys() <= DECISIONS[kinds[0]],
         f"Citation decision that decides nothing, or too much: {key} ({source})",
     )
-    start, (kind,) = plain.index(source), kinds
+    (start,), (kind,) = places, kinds
     end = start + len(source)
     if kind == "not_a_citation":
         return start, end, None
@@ -375,14 +392,17 @@ def _decided(decision, plain, tongue, home, key, inventory):
             and decision["numbering"] in NUMBERINGS - {tongue.numbering},
             f"Citation decision of no other numbering: {key} ({source})",
         )
-        items = _items(
-            match["cited"],
-            tongue,
-            lambda chapter: _last_verse(inventory, book, chapter),
-        )
-        book, items = _edition(
-            tongue.books[match["book"]], items, decision["numbering"]
-        )
+        numbering, book = decision["numbering"], tongue.books[match["book"]]
+        if (
+            tongue.numbering == "brenton"
+            and numbering in {"kjv", "hebrew"}
+            and book in versification.DATA["old_testament"]
+        ):
+            # The dialect names the edition's book, and the numbering is the
+            # King James Bible's, whose code for it may be another: Daniel's.
+            book = versification.kjv_book(book)
+        items = _items(match["cited"], tongue, _last_verses(inventory, book, numbering))
+        book, items = _edition(book, items, numbering)
         relative = None
     else:
         require(decision.get("print"), f"Citation decision prints nothing: {key}")
@@ -418,6 +438,22 @@ def _last_verse(inventory, book, chapter):
     labels = inventory.get(book, {}).get(str(chapter))
     require(labels, f"No such chapter: {book} {chapter}")
     return int(re.match(r"\d+", labels[-1])[0])
+
+
+def _last_verses(inventory, book, numbering):
+    """The last verse of each of a book's chapters, as a citation by a
+    numbering names it: the inventory is the edition's, and knows no chapter
+    of the King James Bible's Old Testament."""
+
+    def last(chapter):
+        require(
+            numbering in {"brenton", "edition"}
+            or (numbering != "kjv-verses" and book not in versification.kjv_books()),
+            f"Last verse by the King James Bible's numbering: {book} {chapter}",
+        )
+        return _last_verse(inventory, book, chapter)
+
+    return last
 
 
 def missing(citation, inventory):
@@ -485,9 +521,7 @@ def scan(plain, tongue, home, key, inventory, decided=None, before=None):
             book, numbering, relative = standing.book, "edition", "verse"
             cited = None
         if cited is not None:
-            items = _items(
-                cited, tongue, lambda chapter: _last_verse(inventory, book, chapter)
-            )
+            items = _items(cited, tongue, _last_verses(inventory, book, numbering))
         else:
             items = (
                 tuple(
@@ -532,10 +566,12 @@ def printed(citation, books, style=EDITION):
     its source does, by no name."""
     if citation.printed is not None:
         # A decision names the books by their codes, and the edition's names
-        # for them print.
+        # for them print. What a page without verses doesn't print stands in
+        # no book.
         names = {
             book: books.name(book, [item.chapter for run in runs for item in run])
             for book, runs in citation.targets
+            if book
         }
         return named(citation.printed, names)
     chapters = [item.chapter for run in citation.items for item in run]
@@ -710,3 +746,16 @@ def unused(read):
         for book in tongue["books"]
         if (name, book) not in named
     )
+
+
+def logged(key, citation, books):
+    """A citation as the log of what was read has it: as its source writes
+    it, as the edition numbers it, and as the edition prints it."""
+    return {
+        "key": key,
+        "source": citation.source,
+        "cites": " ".join(map(str, citation.passages)) or citation.book,
+        "numbering": citation.numbering,
+        "name": citation.name,
+        "printed": printed(citation, books),
+    }

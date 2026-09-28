@@ -21,7 +21,7 @@ import re
 from bible import edition, paths
 from bible.checks import require
 from bible.files import read_json
-from bible.usfm import marker_counts, plain_text, verse_spans
+from bible.usfm import NOTE, marker_counts, plain_text, verse_spans
 
 INTRODUCTIONS = read_json(paths.EDITION_DIR / "book-introductions.json")
 FRONT = "front"
@@ -31,8 +31,6 @@ HEADING = re.compile(r"^\\is\d?\s+(.*?)\s*$")
 LINE = re.compile(r"^\\(?:id|h|toc\d|mt\d?|ip|is\d?)\s")
 # An editorial gloss, which the edition's introduction says is bracketed.
 GLOSS = re.compile(r" ?\[[^\[\]]+\]")
-# A footnote or cross reference, left out of a verse in the notes review.
-NOTE = re.compile(r"\\([fx]) .*?\\\1\*", re.S)
 
 
 def source_lines(source_text):

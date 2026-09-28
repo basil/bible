@@ -339,10 +339,21 @@ def cited_introductions(code, text, archives, record):
     printed = versification.edition_inventory(archives)
     books = edition.books(archives)
     first = next(iter(printed[code]))
-    home = verse_at(code, f"{first}:{printed[code][first][0]}")
+    opening = verse_at(code, f"{first}:{printed[code][first][0]}")
+    spans = verse_spans(text)
     read, used = [], []
 
     def cited(note):
+        # A section's introduction stands at the section's first verse, which
+        # is where a verse or chapter it names by number alone is.
+        home = next(
+            (
+                verse_at(code, reference)
+                for reference, start, end in spans
+                if start <= note.start() < end
+            ),
+            opening,
+        )
         decided = citations.unit_decisions(unit, citations.printable(note[2])[0])
         body, found = citations.rewritten(
             note[2], tongue, home, unit, printed, books, list(decided.values())
@@ -357,23 +368,13 @@ def cited_introductions(code, text, archives, record):
 
 
 def log_citations(record, tongue, key, read, used, books):
-    doubled = sorted(key for key in set(used) if used.count(key) > 1)
+    doubled = sorted(d for d in set(used) if used.count(d) > 1)
     require(not doubled, f"Citation decisions met more than once: {doubled}")
     if read or used:
         record(
             "read citations",
             dialect=tongue.name,
-            citations=[
-                {
-                    "key": key,
-                    "source": citation.source,
-                    "cites": " ".join(map(str, citation.passages)) or citation.book,
-                    "numbering": citation.numbering,
-                    "name": citation.name,
-                    "printed": citations.printed(citation, books),
-                }
-                for citation in read
-            ],
+            citations=[citations.logged(key, citation, books) for citation in read],
             decided=used,
         )
 

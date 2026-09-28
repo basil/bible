@@ -17,7 +17,7 @@ import re
 from bible import alignment, paths, tvtms, versification
 from bible.files import write_json
 from bible.references import Verse, runs
-from bible.usfm import plain_text, verse_spans
+from bible.usfm import NOTE, plain_text, verse_spans
 from bible.validate import validate
 
 # The table's names for the edition's books, where they aren't the King James code.
@@ -640,7 +640,7 @@ def _plain(scripture):
     """Each verse's words as printed, without its notes, by book and label."""
     found = {}
     for code, text in scripture.items():
-        text = re.sub(r"\\([fx]) .*?\\\1\*", "", text, flags=re.S)
+        text = NOTE.sub("", text)
         for label, start, end in verse_spans(text):
             found[code, label] = plain_text(
                 re.sub(r"\\(?:s\d?|d|c|cp)\b[^\n]*", "", text[start:end])

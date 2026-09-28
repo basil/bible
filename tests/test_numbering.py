@@ -208,7 +208,10 @@ def test_psalms_are_numbered_as_the_greek_numbers_them(archives):
         ("Psalms 10–112", "Psalms 11–113"),
         ("Psalm 113", "Psalms 114–115"),
         ("Psalms 114–115", "Psalm 116"),
-        ("Psalms 116–146", "Psalms 117–147"),
+        ("Psalms 116–145", "Psalms 117–146"),
+        # Together one, as Psalms 114-115 are: Psalm 146 isn't the whole of
+        # the King James Bible's 147.
+        ("Psalms 146–147", "Psalm 147"),
         ("Psalm 151", WANTING),
     ]
 
@@ -226,7 +229,7 @@ def test_a_psalms_title_is_counted(archives):
 
 def test_the_page_prints_its_tables(page):
     assert "{" not in page and "}" not in page
-    assert page.count("\\tr \\tc1 ") == 422
+    assert page.count("\\tr \\tc1 ") == 423
     assert "\\is1 Jeremias (Jeremiah)\n\\tr \\th1 Jeremias \\th2 Jeremiah\n" in page
     assert "\\is1 Genesis\n\\tr \\th1 This edition \\th2 King James Bible\n" in page
     assert "\\tr \\tc1 3 Kingdoms \\tc2 1 Kings\n" in page

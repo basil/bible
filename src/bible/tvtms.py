@@ -18,7 +18,7 @@ from dataclasses import dataclass
 
 from bible.references import Verse
 from bible.sources import SOURCES, pinned_bytes
-from bible.usfm import chapter_parts, verse_spans, words_of
+from bible.usfm import NOTE, chapter_parts, verse_spans, words_of
 
 SOURCE = SOURCES["versification"]
 # A reference as the table writes it, as "Gen.31:55", "Psa.50:Title", or the
@@ -104,7 +104,7 @@ class Bible:
         self.last = {}
         self.titled = set()
         for book, text in scripture.items():
-            text = re.sub(r"\\([fx]) .*?\\\1\*", "", text, flags=re.S)
+            text = NOTE.sub("", text)
             for chapter in chapter_parts(text)[1]:
                 number, head = re.match(
                     r"\\c (\d+)(.*?)(?=\\v |\Z)", chapter, re.S

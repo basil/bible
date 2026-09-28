@@ -551,9 +551,13 @@ def test_a_decision_on_a_unit_is_keyed_by_its_words(archives, patched):
         front_matter_text(preface, archives)
     # One that the unit has twice decides neither.
     decisions["XXB cxliv. 13"] = {"passages": "PSA 144:13", "print": "x", "why": "x"}
-    decisions["XXB Rom"] = {"not_a_citation": True, "why": "x"}
+    decisions["XXB Roman"] = {"not_a_citation": True, "why": "x"}
     with pytest.raises(CheckFailed, match="not found once|met more than once"):
         front_matter_text(preface, archives)
+    del decisions["XXB Roman"]
+    # Nor is one met where its words are part of others' words.
+    decisions["XXB Roman versi"] = {"not_a_citation": True, "why": "x"}
+    assert "XXB Roman versi" not in citations.unit_decisions("XXB", "the Roman version")
 
 
 def test_markup_within_a_citation_goes_with_it(inventory, archives):

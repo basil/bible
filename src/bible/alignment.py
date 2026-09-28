@@ -11,7 +11,7 @@ import math
 import re
 
 from bible.references import Verse, verse_at
-from bible.usfm import MARKUP, chapter_parts, verse_spans, words_of
+from bible.usfm import MARKUP, NOTE, chapter_parts, verse_spans, words_of
 
 # Words so common, or so much the quoting formula's, that sharing them shows nothing.
 STOP_WORDS = set(
@@ -74,7 +74,7 @@ class Verses:
         self.order = collections.defaultdict(list)
         for code, text in scripture.items():
             # A note's words aren't the verse's.
-            text = re.sub(r"\\([fx]) .*?\\\1\*", "", text, flags=re.S)
+            text = NOTE.sub("", text)
             heads = titles(text) if titled else {}
             for reference, start, end in verse_spans(text):
                 verse = verse_at(code, reference)

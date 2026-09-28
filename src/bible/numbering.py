@@ -206,10 +206,8 @@ class Table:
 
 def kjv_inventory(archives):
     """The King James Bible's chapters and verses, book by book."""
-    from bible.usfm import inventory
-
     return {
-        code: inventory(text)["chapters"]
+        code: versification.source_chapters(text)
         for code, text in archives["kjv"].items()
         if "\\c " in text
     }
@@ -285,33 +283,36 @@ class Psalter:
         """Rows of psalm numbers: runs of psalms that are each one King
         James psalm, by the same difference; psalms that are together one;
         and a psalm that is more than one, or none."""
-        groups = []
+        # Psalms that are together one King James psalm stand together first,
+        # so that the first of them doesn't run on with the psalms before it.
+        together = []
         for psalm, (facing, _) in self.psalms.items():
+            last = together[-1] if together else None
+            if (
+                last
+                and len(facing) == 1
+                and last["facing"] == facing
+                and last["psalms"][-1] == psalm - 1
+            ):
+                last["psalms"].append(psalm)
+            else:
+                together.append({"psalms": [psalm], "facing": list(facing)})
+        groups = []
+        for unit in together:
+            psalms, facing = unit["psalms"], unit["facing"]
+            # Each one King James psalm, so many from its own number.
+            step = facing[0] - psalms[0] if len(psalms) == len(facing) == 1 else None
             last = groups[-1] if groups else None
             if (
                 last
-                and facing
-                and last["psalms"][-1] == psalm - 1
-                and (
-                    # Of one King James psalm with the psalm before...
-                    (last["facing"] == facing and len(facing) == 1)
-                    # ...or of the next, as the psalm before is of its own.
-                    or (
-                        last["step"] is not None
-                        and len(facing) == 1
-                        and facing[0] - psalm == last["step"]
-                        and facing[0] == last["facing"][-1] + 1
-                    )
-                )
+                and step is not None
+                and last["step"] == step
+                and last["psalms"][-1] == psalms[0] - 1
             ):
-                if last["facing"] == facing:
-                    last["step"] = None
-                else:
-                    last["facing"].append(facing[0])
-                last["psalms"].append(psalm)
+                last["psalms"].append(psalms[0])
+                last["facing"].append(facing[0])
             else:
-                step = facing[0] - psalm if len(facing) == 1 else None
-                groups.append({"psalms": [psalm], "facing": list(facing), "step": step})
+                groups.append({"psalms": psalms, "facing": facing, "step": step})
         rows = [
             (
                 _psalms(group["psalms"][0], group["psalms"][-1]),
@@ -361,20 +362,20 @@ def _psalms(first, last):
 STEPS = {1: "one lower", 2: "two lower"}
 
 
-def psalm_numbers(archives):
-    return table_rows(Psalter(archives).numbers(), ("This edition", "King James Bible"))
+def psalm_numbers(psalter):
+    return table_rows(psalter.numbers(), ("This edition", "King James Bible"))
 
 
-def psalm_verses(archives):
-    steps, _ = Psalter(archives).steps()
+def psalm_verses(psalter):
+    steps, _ = psalter.steps()
     return table_rows(
         [(_spans(psalms), STEPS[step]) for step, psalms in steps.items()],
         ("Psalms", "King James verse"),
     )
 
 
-def psalm_rows(archives):
-    return table_rows(Psalter(archives).uneven_rows(), ("Psalms", "King James Bible"))
+def psalm_rows(psalter):
+    return table_rows(psalter.uneven_rows(), ("Psalms", "King James Bible"))
 
 
 def names_table(archives):
@@ -424,7 +425,13 @@ def tables(text, archives):
     require(
         sorted(asked) == sorted(written), f"Tables asked for, not once each: {asked}"
     )
-    return TABLES.sub(lambda match: written[match[1]](archives).rstrip("\n"), text)
+    # The three tables of the Psalms are written from one reading of them.
+    psalter = Psalter(archives)
+
+    def table(name):
+        return written[name](psalter if name.startswith("psalm ") else archives)
+
+    return TABLES.sub(lambda match: table(match[1]).rstrip("\n"), text)
 
 
 def page(text, archives):

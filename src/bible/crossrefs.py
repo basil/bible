@@ -125,8 +125,18 @@ def bare(note):
 
 def cited_verses(note):
     """Every verse a note cites, or None if it cites what names no verse, as
-    a chapter."""
-    if not all(citation.passages for citation in note.citations):
+    a chapter: even beside verses, as "Ps. 22; 23. 4", since a merge would
+    drop it unnamed."""
+    items = [
+        item
+        for citation in note.citations
+        for _, runs in citation.targets
+        for run in runs
+        for item in run
+    ]
+    if not all(citation.passages for citation in note.citations) or any(
+        item.first is None for item in items
+    ):
         return None
     return [verse for citation in note.citations for verse in citation.verses]
 

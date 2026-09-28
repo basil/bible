@@ -182,9 +182,10 @@ def check_boundaries(base, project, ids, text, pages, reading_text, sample):
 # A citation as a source writes it, and not as the edition prints it: a name,
 # a chapter in Arabic or Roman, and a stop before the verse, as "Rom. 4. 7",
 # "Mat. 18.28", "Gen. xlvii. 31", "2Ki. 19. 18". A number that a supplied
-# passage is printed under has no name before it.
+# passage is printed under has no name before it. A line may break at any of
+# its spaces.
 FOREIGN_CITATION = re.compile(
-    r"(?<![\w.])(?:[1-4]\.? ?)?[A-Z][a-z]+\.? (?:\d+|[ivxlc]+)\. ?\d+"
+    r"(?<![\w.])(?:[1-4]\.?\s?)?[A-Z][a-z]+\.?\s(?:\d+|[ivxlc]+)\.\s?\d+"
 )
 
 

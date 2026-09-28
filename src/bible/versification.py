@@ -187,6 +187,16 @@ def new_chapters(code):
     return found
 
 
+@functools.lru_cache(maxsize=512)
+def source_chapters(text):
+    """A source book's chapters and verse labels, read once however often a
+    book or page asks: each book's preparation asks for every book's."""
+    return {
+        chapter: tuple(labels)
+        for chapter, labels in inventory(text)["chapters"].items()
+    }
+
+
 def edition_inventory(archives):
     """Every printed book's chapters and verse labels, as preparation will
     print them, from the sources and what the edition does to their labels:
@@ -200,7 +210,7 @@ def edition_inventory(archives):
     for unit in edition.MANIFEST["scripture"]:
         code = unit["id"]
         source = archives[unit["source"]]
-        chapters = inventory(source[edition.source_id(unit)])["chapters"]
+        chapters = source_chapters(source[edition.source_id(unit)])
         if "chapters" in unit:
             first, last = unit["chapters"]
             chapters = {
@@ -210,7 +220,7 @@ def edition_inventory(archives):
             }
         elif code == edition.DANIEL_PARTS[1]:
             susanna, bel = (
-                inventory(source[part])["chapters"]["1"]
+                source_chapters(source[part])["1"]
                 for part in (edition.DANIEL_PARTS[0], edition.DANIEL_PARTS[2])
             )
             chapters = {"0": susanna, **chapters, str(len(chapters) + 1): bel}

@@ -16,6 +16,8 @@ MARKER = r"\\(\+?[\w-]+\*?)"
 # A marker as printing removes it: a closing one ends at its asterisk, and an
 # opening one takes one space.
 MARKUP = re.compile(r"\\\+?[\w-]+(?:\*| ?)")
+# A footnote or cross reference, whose words aren't the verse's.
+NOTE = re.compile(r"\\([fx]) .*?\\\1\*", re.S)
 HEADING_MARKERS = ("mt1", "mt2", "mt3")
 # Notes, character styles and table cells, which PTXprint must keep...
 NOTE_AND_STYLE_MARKERS = {
