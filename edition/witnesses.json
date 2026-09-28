@@ -155,5 +155,34 @@
     "id": "MAT",
     "chapter": "5",
     "phrase": "a measure containing about a pint less than a peck"
+  },
+  {
+    "id": "TOB",
+    "chapter": "1",
+    "phrase": "one of the most perfect of Hebrew idylls"
+  },
+  {
+    "id": "LJE",
+    "chapter": "1",
+    "phrase": "the last chapter of Baruch [in the English Apocrypha]"
+  },
+  {
+    "id": "DAG",
+    "chapter": "0",
+    "phrase": "several anecdotes related of Daniel"
+  },
+  {
+    "id": "OTH",
+    "phrase": "The second book of Esdras [of the English Apocrypha]"
+  },
+  {
+    "id": "1MA",
+    "chapter": "1",
+    "phrase": "the Western Church receives only the first two as canonical"
+  },
+  {
+    "id": "4MA",
+    "chapter": "1",
+    "phrase": "[for which this introduction was written]"
   }
 ]

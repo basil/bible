@@ -130,6 +130,17 @@ def test_brenton_corrections_are_applied_in_turn(patched):
         validate.validate()
 
 
+@pytest.mark.parametrize("copies", [0, 2])
+def test_introduction_to_the_apocrypha_must_be_printed_once(patched, copies):
+    # Its general paragraphs print nowhere else.
+    front = patched(edition, "MANIFEST")["old_testament_front"]
+    (entry,) = [e for e in front if e["id"] == "OTH"]
+    front.remove(entry)
+    front.extend([entry] * copies)
+    with pytest.raises(CheckFailed, match="Apocrypha is not printed once"):
+        validate.validate()
+
+
 def test_divided_source_must_be_printed_whole(patched):
     patched(edition, "MANIFEST")
     unit("EZR")["chapters"] = [1, 9]

@@ -1,15 +1,16 @@
 """Validating the pinned sources against the edition before anything is built:
-the archive hashes, the notes and corrections, the quotation links, divided sources,
-and the overlapping Nehemias witness, reported in build/validation.json."""
+the archive hashes, the notes and corrections, the book introductions, the quotation
+links, divided sources, and the overlapping Nehemias witness, reported in
+build/validation.json."""
 
 import difflib
 
-from bible import edition, notes, paths
+from bible import edition, introductions, notes, paths
 from bible.checks import require
 from bible.crossrefs import quotation_links
 from bible.edition import brenton_source_use, scripture_unit, source_id
 from bible.files import write_json
-from bible.prepare import prepared_scripture, recorder
+from bible.prepare import introductions_source, prepared_scripture, recorder
 from bible.sources import load_archives
 from bible.usfm import chapter_parts, inventory, renumber_chapters
 
@@ -88,11 +89,13 @@ def validate():
         set(marginal) <= {u["id"] for u in units if u["source"] == "kjv"},
         "Marginal notes name a book outside the KJV New Testament",
     )
-    printed_sources = set(brenton_source_use()) | {
+    # Brenton's front matter and appendices, by source, as often as each prints.
+    brenton_front_sources = [
         source_id(e)
         for e in edition.ordered_entries()
         if "section" not in e and e.get("source") == "brenton"
-    }
+    ]
+    printed_sources = set(brenton_source_use()) | set(brenton_front_sources)
     corrected_sources = {k.split(" ")[0] for k in notes.BRENTON_NOTES["corrections"]}
     unprinted_sources = sorted(corrected_sources - printed_sources)
     require(
@@ -105,6 +108,14 @@ def validate():
         notes.corrected_brenton(
             source, archives["brenton"][source], recorder(None, source)
         )
+    # The introductions to the books of the Apocrypha, placed and glossed.
+    introductions.placed_paragraphs(introductions_source(archives))
+    # Its general paragraphs print only in its own front matter, so without that
+    # entry they would vanish while the books' notes still printed.
+    require(
+        brenton_front_sources.count(introductions.INTRODUCTIONS["source"]) == 1,
+        "The introduction to the Apocrypha is not printed once as front matter",
+    )
     # Only an anchor is categorized, so the flag on any other exception is unused.
     unused = sorted(
         k

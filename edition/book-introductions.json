@@ -1,0 +1,186 @@
+{
+  "source": "OTH",
+  "front": [
+    "The Alexandrian Jews",
+    "During the Reformation",
+    "In more recent times",
+    "The second book of Esdras"
+  ],
+  "omit": {},
+  "books": {
+    "MAN": ["This purports"],
+    "1ES": ["The first book of Esdras"],
+    "TOB": ["The book of Tobit"],
+    "JDT": ["The story of Judith"],
+    "ESG": ["These additions to the Canonical Esther"],
+    "1MA": ["There are four books", "The first book of the Maccabees"],
+    "2MA": ["The second book of the Maccabees"],
+    "3MA": ["The third book of the Maccabees"],
+    "4MA": ["The fourth book of the Maccabees", "The third and fourth books"],
+    "WIS": ["This book is one of the most beautiful", "The book was, without doubt"],
+    "SIR": [
+      "This book was originally written",
+      "The book falls into two",
+      "The title"
+    ],
+    "BAR": ["This book contains several"],
+    "LJE": ["This pseudepigraphal epistle"],
+    "DAG": ["These three additions", "The History of Susanna"]
+  },
+  "sections": {
+    "DAG": {
+      "3:25": {
+        "heading": "THE SONG OF THE THREE CHILDREN",
+        "paragraphs": ["The Song of the Three Children"]
+      }
+    }
+  },
+  "glosses": {
+    "During the Reformation": [
+      {
+        "after": "I. and II. Esdras",
+        "insert": " [of the English Apocrypha]",
+        "why": "This edition prints Ezra as The Second Book of Esdras, which Rome accepted as canonical"
+      }
+    ],
+    "The second book of Esdras": [
+      {
+        "after": "The second book of Esdras",
+        "insert": " [of the English Apocrypha]",
+        "why": "This edition prints Ezra as The Second Book of Esdras, the book Brenton says is not included"
+      }
+    ],
+    "This pseudepigraphal epistle": [
+      {
+        "replace": "This pseudepigraphal epistle",
+        "insert": "[The Epistle of Jeremias]",
+        "why": "The heading that named the epistle is dropped, so the gloss names it, by this edition's title, in place of the words that pointed to the heading"
+      },
+      {
+        "after": "the last chapter of Baruch",
+        "insert": " [in the English Apocrypha]",
+        "why": "This edition prints the Epistle of Jeremias as a book of its own, after Lamentations"
+      }
+    ],
+    "The second book of the Maccabees": [
+      {
+        "after": "the first book",
+        "insert": " [of the Maccabees]",
+        "why": "The paragraph no longer follows the one on the first book under a shared heading, so the gloss names the book it is compared with"
+      }
+    ],
+    "These three additions": [
+      {
+        "after": "These three additions",
+        "insert": " [the Song of the Three Children, Susanna, and Bel and the Dragon]",
+        "why": "The heading that named the three additions is dropped, and the note stands at the head of Daniel, before the reader has met the Song of the Three Children"
+      },
+      {
+        "replace": "Canonical Daniel",
+        "insert": "[Book of Daniel]",
+        "why": "Use this edition's title for the book, which includes the additions and which the Church of Greece, whose order the edition follows, receives; “Canonical” carries a meaning the title would lose, so the title is the editor's and bracketed"
+      }
+    ],
+    "The third and fourth books": [
+      {
+        "after": "this edition of the Apocrypha",
+        "insert": " [for which this introduction was written]",
+        "why": "Printed here, “this edition” would mean this volume, which reprints the translation but was not the edition it was made for"
+      }
+    ],
+    "These additions to the Canonical Esther": [
+      {
+        "replace": "Canonical Esther",
+        "insert": "[Book of Esther]",
+        "why": "Use this edition's title for the book, which includes the additions and which the Church of Greece, whose order the edition follows, receives; “Canonical” carries a meaning the title would lose, so the title is the editor's and bracketed"
+      }
+    ]
+  },
+  "names": {
+    "This book was originally written": [
+      {
+        "from": "Joshua Ben Sira",
+        "to": "Jesus, the Son of Sirach",
+        "why": "Use the author's name as this edition's title for Ecclesiasticus gives it"
+      }
+    ],
+    "During the Reformation": [
+      {
+        "from": "Prayer of Manasseh",
+        "to": "Prayer of Manasses",
+        "why": "Use the spelling in this edition's title for the prayer"
+      }
+    ],
+    "In more recent times": [
+      {
+        "from": "Nehemiah",
+        "to": "Nehemias",
+        "why": "Use this edition's title for the book"
+      }
+    ],
+    "This purports": [
+      {
+        "from": "Manasseh, King of Judah",
+        "to": "Manasses, King of Judah",
+        "why": "Use the spelling in this edition's title for the Prayer of Manasses"
+      },
+      {
+        "from": "2. Chronicles",
+        "to": "2 Chronicles",
+        "why": "Use this edition's short title, as the note on the First Book of Esdras does; a full title beside the source's reference style would read oddly"
+      }
+    ],
+    "The first book of Esdras": [
+      {
+        "from": "The first book of Esdras",
+        "to": "The First Book of Esdras",
+        "why": "Capitalize as this edition's title for the book, The First Book of Esdras"
+      },
+      {
+        "from": "2. Chronicles and Ezra-Nehemiah",
+        "to": "2 Chronicles, 2 Esdras, and Nehemias",
+        "why": "This edition divides Ezra-Nehemiah into 2 Esdras and Nehemias; short titles send the reader to the passages without weighing down the note"
+      }
+    ],
+    "The History of Susanna": [
+      {
+        "from": "The History of Susanna, and Bel and the Dragon, contain",
+        "to": "Susanna and Bel and the Dragon contain",
+        "why": "Use this edition's headings for the two Daniel sections"
+      }
+    ],
+    "The first book of the Maccabees": [
+      {
+        "from": "\\it first\\it* book of the Maccabees",
+        "to": "\\it First\\it* Book of the Maccabees",
+        "why": "Capitalize as this edition's title for the book, The First Book of the Maccabees"
+      }
+    ],
+    "The second book of the Maccabees": [
+      {
+        "from": "\\it second\\it* book of the Maccabees",
+        "to": "\\it Second\\it* Book of the Maccabees",
+        "why": "Capitalize as this edition's title for the book, The Second Book of the Maccabees"
+      },
+      {
+        "from": "the first book",
+        "to": "the First Book",
+        "why": "Capitalize as this edition's title for the book the gloss names, The First Book of the Maccabees"
+      }
+    ],
+    "The third book of the Maccabees": [
+      {
+        "from": "\\it third\\it* book of the Maccabees",
+        "to": "\\it Third\\it* Book of the Maccabees",
+        "why": "Capitalize as this edition's title for the book, The Third Book of the Maccabees"
+      }
+    ],
+    "The fourth book of the Maccabees": [
+      {
+        "from": "\\it fourth\\it* book of the Maccabees",
+        "to": "\\it Fourth\\it* Book of the Maccabees",
+        "why": "Capitalize as this edition's title for the book, The Fourth Book of the Maccabees"
+      }
+    ]
+  }
+}

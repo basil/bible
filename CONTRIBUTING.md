@@ -34,11 +34,12 @@ The sample prints the chapters listed in `edition/sample.json`. They were picked
   - `manifest.json`: which books are printed, in what order, and what they're called and how their headings break into lines.
   - `kjv-notes.json`: placements and corrections for the 1611 New Testament notes.
   - `brenton-notes.json`: corrections to the words and italics the build works out for Brenton's notes, and to a few slips in eBible's text.
+  - `book-introductions.json`: which paragraphs of the introduction to the Apocrypha stay at the front and which introduce each book as a footnote, with the editorial glosses, book-name changes, and their reasons.
   - `sample.json`: the chapters the sample prints.
   - `witnesses.json`: phrases that must appear in the finished PDF, to catch unusual passages going missing.
 - `Dockerfile`: the tool image, with the pinned PTXprint, usfmtc, and Utopia commits and the hashes of the font archives.
 - `src/bible/`: the build, a Python package run as `python3 -m bible`. It has one module per stage, in the order the build runs them:
-  - `sources.py`: the pinned Bible texts and their hashes; `edition.py`: the manifest; `notes.py`: the notes of both testaments, set as footnotes without callers. `validate.py` checks them against each other.
+  - `sources.py`: the pinned Bible texts and their hashes; `edition.py`: the manifest; `notes.py`: the notes of both testaments, set as footnotes without callers; `introductions.py`: the introduction to the Apocrypha, divided between its front matter and footnotes on the books. `validate.py` checks them against each other.
   - `prepare.py` and `typography.py`: each book as the edition prints it, checked against its source.
   - `project.py`: the PTXprint project; `typeset.py`: running PTXprint in the image that `toolchain.py` checks.
   - `verify.py`: the checks on PTXprint's output and the PDF; `publish.py`: the copy in `dist/` and its provenance.

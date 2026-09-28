@@ -9,7 +9,7 @@ Every change is logged through a recorder into build/<mode>/transformations.json
 import re
 from dataclasses import dataclass
 
-from bible import edition
+from bible import edition, introductions
 from bible.checks import require
 from bible.crossrefs import apply_links, merged_notes
 from bible.edition import (
@@ -41,7 +41,8 @@ from bible.usfm import (
 
 # The Epistle Dedicatory's mt2 lines are its address ("&c.") and salutation.
 FRONT_PERIOD_FREE_TITLE_MARKERS = ("h", "toc1", "mt1")
-# Every such heading, not just the first: OTH and BAK head book names with them.
+# Every such heading, not just the first: BAK heads book names with them. (OTH's
+# headings are dropped for the book introductions.)
 FRONT_PERIOD_FREE_HEADING_MARKERS = ("is1", "is2")
 
 
@@ -95,6 +96,14 @@ def corrected_source(entry, archives, record, mended_notes=None):
     if entry["source"] != "brenton":
         return original
     return corrected_brenton(source_id(entry), original, record, mended_notes)
+
+
+def introductions_source(archives):
+    """The introduction to the Apocrypha, corrected as its front prints it."""
+    source = introductions.INTRODUCTIONS["source"]
+    return corrected_brenton(
+        source, archives["brenton"][source], recorder(None, source)
+    )
 
 
 def scripture_text(entry, archives, log=None, review=None, *, links):
@@ -250,6 +259,15 @@ def scripture_text(entry, archives, log=None, review=None, *, links):
         )
         text = restyle_brenton_notes(code, clean, found, record, review, merged)
     text = apply_links(code, text, links, record)
+    # Only a book, or a book with a section, that the introduction to the
+    # Apocrypha describes; placed_paragraphs checks that each is one of Brenton's.
+    if (
+        code in introductions.INTRODUCTIONS["books"]
+        or code in introductions.INTRODUCTIONS["sections"]
+    ):
+        text = introductions.with_book_note(
+            code, text, introductions_source(archives), record, review
+        )
     # Any caller, "*" as well as "+"; only "-" sets none.
     require(
         not re.search(r"\\[fx] (?!- )", text),
@@ -292,6 +310,11 @@ def front_matter_text(entry, archives, log=None):
     code = entry["id"]
     record = recorder(log, code)
     original = corrected_source(entry, archives, record)
+    if (entry["source"], source_id(entry)) == (
+        "brenton",
+        introductions.INTRODUCTIONS["source"],
+    ):
+        original = introductions.front_text(original, record)
     text = (
         rename_book(entry, original, original, record) if "title" in entry else original
     )
