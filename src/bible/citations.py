@@ -17,12 +17,20 @@ that looks like a citation goes unread, and no decision unused.
 
 import functools
 import re
+import string
 from dataclasses import dataclass
 
 from bible import paths, versification
 from bible.checks import require
 from bible.files import read_json
-from bible.references import EDITION, Passage, Verse, parse_passages, roman
+from bible.references import (
+    EDITION,
+    VERSE_LABEL,
+    Passage,
+    Verse,
+    parse_passages,
+    roman,
+)
 
 DATA = read_json(paths.EDITION_DIR / "citations.json")
 # How a source may number what it cites: as Brenton does, which the edition
@@ -41,18 +49,27 @@ NUMERALS = {
     "arabic": r"\d+",
     "roman": r"[IVXLC]+",
     "roman-lower": r"[ivxlc]+",
+    # Brenton's preface numbers chapters in Roman, and its notes in Arabic.
+    "either": r"\d+|[ivxlc]+",
 }
+# What prints nothing of a paragraph's own words: a note's origin, the label of
+# a verse that a supplied passage prints, and the markers, each of which takes
+# the space after it unless it closes a span.
+UNPRINTED = re.compile(r"\\(?:fr|xo) \S+ ?|\\vp [^\\]*\\vp\*|\\\+?[\w-]+(?:\*| ?)")
+OPENING = re.compile(r"\\(\+?[\w-]+) ?")
+CLOSING = re.compile(r"\\(\+?[\w-]+)\*")
 # One verse, a range, or a list of either: "7", "6-9", "7,8", "10,12-14".
 RANGE = r"\d+(?:\s?(?:[-–]|\bto\b)\s?\d+)?"
 VERSES = rf"{RANGE}(?:,\s?{RANGE})*"
-# The words by which a note names a verse or chapter of its own book.
-VERSE_WORD = r"[Vv]erses?|[Vv]er\.?|[Vv]v\.?|[Vv]\.?"
-CHAPTER_WORD = r"[Cc]hapter|[Cc]hap\.?|[Cc]h\.?"
+# The words by which a note names a verse or chapter of its own book, which
+# a stop or a space parts from the number: "children" names no chapter 49.
+VERSE_WORD = r"(?:[Vv]erses?|[Vv]er|[Vv]v|[Vv])(?:\.\s?|\s)"
+CHAPTER_WORD = r"(?:[Cc]hapter|[Cc]hap|[Cc]h)(?:\.\s?|\s)"
 # What a citation looks like, whatever its dialect: figures on either side of
 # a stop or colon, or a word for a verse or chapter before a figure.
 SHAPE = re.compile(
-    rf"\b(?:\d+|[ivxlc]+|[IVXLC]+)(?:\.\s?|:)\d+"
-    rf"|(?<![\w.])(?:{VERSE_WORD}|{CHAPTER_WORD})\s?\d+"
+    rf"(?<![\w.])(?:\d+|[ivxlc]+|[IVXLC]+)(?:\.\s?|:)\d+"
+    rf"|(?<![\w.])(?:{VERSE_WORD}|{CHAPTER_WORD})\d+"
 )
 
 
@@ -126,11 +143,15 @@ class Dialect:
 
     @functools.cached_property
     def pattern(self):
-        names = "|".join(
-            re.escape(name).replace(r"\ ", r"\s")
-            for name in sorted(self.books, key=len, reverse=True)
+        # A dialect of no names reads no book: "(?!)" matches nothing.
+        names = (
+            "|".join(
+                re.escape(name).replace(r"\ ", r"\s")
+                for name in sorted(self.books, key=len, reverse=True)
+            )
+            or "(?!)"
         )
-        chapter = NUMERALS[self.numerals]
+        chapter = rf"(?:{NUMERALS[self.numerals]})(?![a-z])"
         item = rf"{chapter}(?:{self.chapter_verse}{VERSES}|\.?\s?ult\b)?"
         # An item after a semicolon is of the same book, unless a book's name
         # stands there: "Rom. 9. 12; 1 Cor. 2. 9".
@@ -138,10 +159,10 @@ class Dialect:
         # A run of dashes is no range: what is cited ends before no "-9".
         end = r"(?![-–]\s?\d)"
         return re.compile(
-            rf"(?<![\w.])(?P<book>{names})(?P<stop>\.?)(?!\w)\s?"
+            rf"(?<![\w.])(?P<book>{names})(?P<stop>\.?)(?!\w)\s*"
             rf"(?P<cited>{item}{more}){end}"
-            rf"|(?<![\w.])(?P<chapter>{CHAPTER_WORD})\s?(?P<within>{item}{more}){end}"
-            rf"|(?<![\w.])(?P<verse>{VERSE_WORD})\s?(?P<verses>{VERSES}){end}"
+            rf"|(?<![\w.])(?P<chapter>{CHAPTER_WORD})(?P<within>{item}{more}){end}"
+            rf"|(?<![\w.])(?P<verse>{VERSE_WORD})(?P<verses>{VERSES}){end}"
         )
 
     def number(self, numeral):
@@ -149,6 +170,9 @@ class Dialect:
 
 
 def dialect(name):
+    """A source's way of writing citations, or that of one that writes none."""
+    if name is None:
+        return Dialect("none", "brenton", {}, "arabic", r"\.\s?")
     found = DATA["dialects"][name]
     require(
         found.get("numbering") in NUMBERINGS and found.get("numerals") in NUMERALS,
@@ -177,7 +201,7 @@ def _items(cited, tongue, last_verse):
     found = []
     for part in re.split(r";\s?(?:and\s|also\s)?", cited):
         match = re.fullmatch(
-            rf"(?P<chapter>{NUMERALS[tongue.numerals]})"
+            rf"(?P<chapter>(?:{NUMERALS[tongue.numerals]}))(?![a-z])"
             rf"(?:{tongue.chapter_verse}(?P<verses>{VERSES})|(?P<ult>\.?\s?ult))?",
             part,
         )
@@ -288,10 +312,39 @@ def _edition(book, items, numbering):
     return ours, tuple(runs)
 
 
+class Names(string.Formatter):
+    """What a decision or a change of name prints, with the edition's names
+    for the books it names by their codes: "{ISA} 2:6", or in capitals,
+    "{ISA:upper} 2:6"."""
+
+    def format_field(self, value, spec):
+        return value.upper() if spec == "upper" else super().format_field(value, spec)
+
+
+def named(words, names):
+    return Names().vformat(words, (), names)
+
+
 def decisions(key):
-    """The decisions on a note's or a unit's citations, in the file's order."""
+    """The decisions on a note's citations, in the file's order."""
     found = DATA["decisions"].get(key, [])
     return found if isinstance(found, list) else [found]
+
+
+def unit_decisions(unit, plain):
+    """The decisions on a paragraph of a unit without verses, by key.
+
+    Such a decision is keyed by its unit and the words it decides, as "XXB
+    Psalm iv. 4", which must be the unit's once.
+    """
+    found = {}
+    for key, decision in DATA["decisions"].items():
+        code, _, words = key.partition(" ")
+        if code == unit and not re.fullmatch(rf"\d+:{VERSE_LABEL}.*", words):
+            source = decision.get("source", words)
+            if source in plain:
+                found[key] = {**decision, "source": source}
+    return found
 
 
 def _decided(decision, plain, tongue, home, key, inventory):
@@ -386,16 +439,21 @@ def missing(citation, inventory):
     return found
 
 
-def scan(plain, tongue, home, key, inventory):
+def scan(plain, tongue, home, key, inventory, decided=None, before=None):
     """The citations in a stretch of plain text, in order.
 
     home is the verse the text stands at, whose book and chapter a citation
-    names that names none. Whatever a citation names must be among the
-    edition's chapters and verses, the inventory.
+    names that names none. Where the text stands at no verse, they are those
+    of the citation before it, in the text or before the text. Whatever a
+    citation names must be among the edition's chapters and verses, the
+    inventory. The decisions are the note's, by its key, unless they are
+    given.
     """
     taken, found = [], []
-    for decision in decisions(key):
-        start, end, citation = _decided(decision, plain, tongue, home, key, inventory)
+    for decision in decisions(key) if decided is None else decided:
+        start, end, citation = _decided(
+            decision, plain, tongue, home or Verse("", 0, 0), key, inventory
+        )
         require(
             not any(s < end and start < e for s, e in taken),
             f"Citation decisions that overlap: {key}",
@@ -403,18 +461,29 @@ def scan(plain, tongue, home, key, inventory):
         taken.append((start, end))
         if citation:
             found.append(citation)
+    standing = home or before
     for match in tongue.pattern.finditer(plain):
+        earlier = [
+            c for c in found if c.end <= match.start() and c.items and not c.relative
+        ]
+        if home is None and earlier:
+            last = max(earlier, key=lambda citation: citation.end)
+            standing = Verse(last.book, last.items[-1][-1].chapter, 1)
         if any(s < match.end() and match.start() < e for s, e in taken):
             continue
+        require(
+            match["book"] or standing is not None,
+            f"Citation of no book: {key} ({match[0]})",
+        )
         relative = None
         if match["book"]:
             book, numbering = tongue.books[match["book"]], tongue.numbering
             cited = match["cited"]
         elif match["chapter"]:
-            book, numbering, relative = home.book, "edition", "chapter"
+            book, numbering, relative = standing.book, "edition", "chapter"
             cited = match["within"]
         else:
-            book, numbering, relative = home.book, "edition", "verse"
+            book, numbering, relative = standing.book, "edition", "verse"
             cited = None
         if cited is not None:
             items = _items(
@@ -423,7 +492,7 @@ def scan(plain, tongue, home, key, inventory):
         else:
             items = (
                 tuple(
-                    Item(home.chapter, first, last)
+                    Item(standing.chapter, first, last)
                     for first, last in _ranges(match["verses"])
                 ),
             )
@@ -463,16 +532,15 @@ def printed(citation, books, style=EDITION):
     book, or as a verse or chapter of the note's own book, which it names as
     its source does, by no name."""
     if citation.printed is not None:
-        # A decision names the books by their codes, or the first as "book",
-        # and the edition's names for them print.
+        # A decision names the books by their codes, and the edition's names
+        # for them print.
         names = {
             book: books.name(book, [item.chapter for run in runs for item in run])
             for book, runs in citation.targets
         }
-        name = names[citation.book]
-        return citation.printed.format(book=name, BOOK=name.upper(), **names)
+        return named(citation.printed, names)
     chapters = [item.chapter for run in citation.items for item in run]
-    named = [item for run in citation.items for item in run if item.first is not None]
+    verses = [item for run in citation.items for item in run if item.first is not None]
     if citation.relative == "verse":
         (run,) = citation.items
         word = "verse" if len(run) == 1 and run[0].first == run[0].last else "verses"
@@ -490,7 +558,7 @@ def printed(citation, books, style=EDITION):
             runs.append(chapter)
         body = style.passages.join(runs)
         if citation.relative == "chapter":
-            word = "chapter" if named or len(chapters) == 1 else "chapters"
+            word = "chapter" if verses or len(chapters) == 1 else "chapters"
         else:
             return f"{books.name(citation.book, chapters)} {body}"
     # A note that opens with the word keeps its capital.
@@ -554,6 +622,75 @@ def normalized(pieces, found, books):
         at += len(citation.source)
     require(restored == plain, f"Citations that don't restore their note: {plain}")
     return [(kind, text) for kind, text in result if text]
+
+
+def renamed(unit, text, books):
+    """A unit's text with the edition's names for what its source names
+    otherwise, where that is no citation: a heading, or words that were true
+    of another printing. Each change gives its reason, and is met once."""
+    changes = []
+    for change in DATA["names"].get(unit, []):
+        old, new = change.get("from"), change.get("to")
+        require(
+            change.get("why") and old and new is not None,
+            f"Change of name without its words or reason: {unit} ({old})",
+        )
+        words = re.compile(rf"(?<!\w){re.escape(old)}(?!\w)")
+        require(
+            len(words.findall(text)) == 1,
+            f"Change of name not met once: {unit} ({old})",
+        )
+        printed_as = named(new, books.names)
+        text = words.sub(lambda match: printed_as, text)
+        changes.append({"from": old, "to": printed_as})
+    return text, changes
+
+
+def printable(usfm):
+    """A paragraph's printed characters, and where each stands in its USFM."""
+    offsets, last = [], 0
+    for match in UNPRINTED.finditer(usfm):
+        offsets += range(last, match.start())
+        last = match.end()
+    offsets += range(last, len(usfm))
+    return "".join(usfm[i] for i in offsets), offsets
+
+
+def rewritten(usfm, tongue, home, key, inventory, books, decided=None, before=None):
+    """A paragraph of USFM with each citation as the edition prints it, and
+    the citations read.
+
+    Markup within a citation goes with the source's way of writing it, as the
+    italic of "\\it John\\it* 5. 39"; a span that the citation opens or closes
+    goes whole, so that none is left open.
+    """
+    plain, offsets = printable(usfm)
+    found = scan(plain, tongue, home, key, inventory, decided, before)
+    for citation in reversed(found):
+        start, end = offsets[citation.start], offsets[citation.end - 1] + 1
+        inside = usfm[start:end]
+        opened = [m[1] for m in OPENING.finditer(CLOSING.sub("", inside))]
+        closed = [m[1] for m in CLOSING.finditer(inside)]
+        for marker in closed:
+            if marker in opened:
+                opened.remove(marker)
+                continue
+            # The span opens just before the citation.
+            opening = re.search(rf"\\{re.escape(marker)} ?$", usfm[:start])
+            require(
+                opening is not None,
+                f"Citation across markup: {key} ({citation.source})",
+            )
+            start = opening.start()
+        for marker in opened:
+            closing = re.match(rf"\\{re.escape(marker)}\*", usfm[end:])
+            require(
+                closing is not None,
+                f"Citation across markup: {key} ({citation.source})",
+            )
+            end += closing.end()
+        usfm = usfm[:start] + printed(citation, books) + usfm[end:]
+    return usfm, found
 
 
 def unused(read):

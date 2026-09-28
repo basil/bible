@@ -1,5 +1,15 @@
 {
-  "units": {},
+  "units": {
+    "XXB": "brenton-preface",
+    "XXE": null,
+    "OTH": "apocrypha-introduction",
+    "XXD": null,
+    "TDX": null,
+    "NDX": "kjv-preface",
+    "XXA": false,
+    "BAK": "brenton-appendix",
+    "XXC": "ebible-corrections"
+  },
   "dialects": {
     "brenton": {
       "numbering": "brenton",
@@ -99,6 +109,98 @@
         "Esai": "ISA",
         "2. Macc": "2MA"
       }
+    },
+    "brenton-preface": {
+      "numbering": "brenton",
+      "numerals": "either",
+      "chapter_verse": "\\.\\s?",
+      "books": {
+        "Gen": "GEN",
+        "Genesis": "GEN",
+        "Deut": "DEU",
+        "Prov": "PRO",
+        "Hebrews": "HEB",
+        "Heb": "HEB",
+        "Eph": "EPH",
+        "Acts": "ACT",
+        "1 Cor": "1CO",
+        "Tit": "TIT",
+        "John": "JHN",
+        "Rom": "ROM"
+      }
+    },
+    "apocrypha-introduction": {
+      "numbering": "brenton",
+      "numerals": "arabic",
+      "chapter_verse": "\\.\\s?",
+      "books": {
+        "2. Chronicles": "2CH"
+      }
+    },
+    "brenton-appendix": {
+      "numbering": "brenton",
+      "numerals": "arabic",
+      "chapter_verse": "\\.\\s?",
+      "books": {
+        "Job": "JOB",
+        "Proverbs": "PRO",
+        "Isaiah": "ISA",
+        "Jezekiel": "EZK",
+        "Exodus": "EXO",
+        "John": "JHN",
+        "Mark": "MRK",
+        "Luke": "LUK",
+        "Heb": "HEB"
+      }
+    },
+    "kjv-preface": {
+      "numbering": "kjv",
+      "numerals": "arabic",
+      "chapter_verse": "\\.\\s?",
+      "books": {
+        "John": "JHN",
+        "Isaiah": "ISA",
+        "Acts": "ACT",
+        "Matth": "MAT",
+        "Luke": "LUK",
+        "2 Tim": "2TI"
+      }
+    },
+    "ebible-corrections": {
+      "numbering": "brenton",
+      "numerals": "arabic",
+      "chapter_verse": "\\.\\s?",
+      "books": {
+        "Gen": "GEN",
+        "Exo": "EXO",
+        "Lev": "LEV",
+        "Num": "NUM",
+        "Deu": "DEU",
+        "Jos": "JOS",
+        "Jdg": "JDG",
+        "2Sa": "2SA",
+        "2Ki": "2KI",
+        "1Ch": "1CH",
+        "2Ch": "2CH",
+        "Ezr": "EZR",
+        "Neh": "NEH",
+        "Job": "JOB",
+        "Psa": "PSA",
+        "Ezk": "EZK",
+        "Hos": "HOS",
+        "Dan": "DAG",
+        "Tob": "TOB",
+        "Jdt": "JDT",
+        "Wis": "WIS",
+        "Sir": "SIR",
+        "Bar": "BAR",
+        "Lje": "LJE",
+        "1Ma": "1MA",
+        "2Ma": "2MA",
+        "3Ma": "3MA",
+        "4Ma": "4MA",
+        "1Es": "1ES"
+      }
     }
   },
   "decisions": {
@@ -166,6 +268,78 @@
       "numbering": "kjv",
       "why": "'Let him that boasts boast in this' is the King James Bible's verse 24, which is Brenton's 23."
     },
+    "BAK 12. 16; 13. 1, 16; 14. 8, 15, 18; 15. 5; 21. 11; 22. 3; 27. 12; 28. 2": {
+      "passages": "PRO 12:16; PRO 13:1; PRO 13:16; PRO 14:8; PRO 14:15; PRO 14:18; PRO 15:5; PRO 21:11; PRO 22:3; PRO 27:12; PRO 28:2",
+      "print": "12:16; 13:1, 16; 14:8, 15, 18; 15:5; 21:11; 22:3; 27:12; 28:2",
+      "why": "Of Proverbs, as the list before it, which names the chapter."
+    },
+    "BAK 2 Kings (2 Sam.) 5. 18": {
+      "passages": "2SA 5:18",
+      "print": "{2SA} 5:18",
+      "why": "Brenton names the book both ways; it is this edition's Second Book of Kingdoms."
+    },
+    "BAK II. Kings (II. Sam.) 5. 18": {
+      "passages": "2SA 5:18",
+      "print": "{2SA} 5:18",
+      "why": "Brenton names the book both ways; it is this edition's Second Book of Kingdoms."
+    },
+    "BAK Psalm 41 (42):4": {
+      "passages": "PSA 41:5",
+      "print": "{PSA} 41:5",
+      "why": "The place of the wondrous tabernacle, which the note is on, is the fourth verse of the psalm as the Hebrew and the English number it, whose number for the psalm Brenton gives beside the Greek's; it is his fifth, since he counts the title."
+    },
+    "BAK Verse 1,": {
+      "source": "Verse 1",
+      "not_a_citation": true,
+      "why": "The label of a passage that the appendix supplies, not a citation of one: Brenton's own number for the verse."
+    },
+    "BAK Verse 30": {
+      "not_a_citation": true,
+      "why": "The label of a passage that the appendix supplies, not a citation of one: Brenton's own number for the verse."
+    },
+    "BAK Verse 41": {
+      "not_a_citation": true,
+      "why": "The label of a passage that the appendix supplies, not a citation of one: Brenton's own number for the verse."
+    },
+    "BAK Verse 50": {
+      "not_a_citation": true,
+      "why": "The label of a passage that the appendix supplies, not a citation of one: Brenton's own number for the verse."
+    },
+    "BAK Verse 55": {
+      "not_a_citation": true,
+      "why": "The label of a passage that the appendix supplies, not a citation of one: Brenton's own number for the verse."
+    },
+    "BAK Verse 8": {
+      "not_a_citation": true,
+      "why": "The label of a passage that the appendix supplies, not a citation of one: Brenton's own number for the verse."
+    },
+    "BAK Verses 1 to 20": {
+      "not_a_citation": true,
+      "why": "The label of a passage that the appendix supplies, not a citation of one: Brenton's own number for the verse."
+    },
+    "BAK Verses 16, 17": {
+      "not_a_citation": true,
+      "why": "The label of a passage that the appendix supplies, not a citation of one: Brenton's own number for the verse."
+    },
+    "BAK and 11. 19": {
+      "source": "11. 19",
+      "passages": "HEB 11:19",
+      "print": "11:19",
+      "why": "Of Hebrews, which the citation before names."
+    },
+    "BAK v. 24, chap. 12": {
+      "passages": "1KI 12:24",
+      "print": "chapter 12:24",
+      "why": "Brenton gives the verse before the chapter."
+    },
+    "BAK verse 1": {
+      "not_a_citation": true,
+      "why": "The label of a passage that the appendix supplies, not a citation of one: Brenton's own number for the verse."
+    },
+    "BAK verses 10, 11": {
+      "not_a_citation": true,
+      "why": "The label of a passage that the appendix supplies, not a citation of one: Brenton's own number for the verse."
+    },
     "ISA 26:19": {
       "source": "Ps. 110",
       "numbering": "hebrew",
@@ -174,7 +348,7 @@
     "ISA 2:6": {
       "source": "ISAIAH 2. 6",
       "passages": "ISA 2:6",
-      "print": "{BOOK} 2:6",
+      "print": "{ISA:upper} 2:6",
       "why": "eBible quotes the heading of Brenton's appendix, which is in capitals."
     },
     "ISA 34:11": {
@@ -204,6 +378,47 @@
       "passages": "ZEC 3:8; ISA 11:1; MAL 4:2; NUM 24:17",
       "print": "{ZEC} 3:8; {ISA} 11:1; {MAL} 4:2; {NUM} 24:17",
       "why": "The margin of 1611 runs the four together, with one stop between them; they are set apart as citations are."
+    },
+    "NDX Judges viii. verse 2": {
+      "passages": "JDG 8:2",
+      "print": "{JDG} 8:2",
+      "why": "The translators write the verse out in words."
+    },
+    "NDX and 8. 28, 29": {
+      "source": "8. 28, 29",
+      "passages": "ACT 8:28; ACT 8:29",
+      "print": "8:28, 29",
+      "why": "Of the Acts, which the citation before names."
+    },
+    "OTH 1. 1–14": {
+      "passages": "BAR 1:1-14",
+      "print": "1:1–14",
+      "why": "A portion of the book that the note is on, by its first and last verses; the introduction names no book."
+    },
+    "OTH 1–11. 4": {
+      "passages": "WIS 1:1; WIS 11:4",
+      "print": "1:1–11:4",
+      "why": "A portion of the book that the note is on, by its first and last verses; the introduction names no book."
+    },
+    "OTH 3. 8": {
+      "passages": "BAR 3:8",
+      "print": "3:8",
+      "why": "A portion of the book that the note is on, by its first and last verses; the introduction names no book."
+    },
+    "OTH 3. 9–4. 4": {
+      "passages": "BAR 3:9; BAR 4:4",
+      "print": "3:9–4:4",
+      "why": "A portion of the book that the note is on, by its first and last verses; the introduction names no book."
+    },
+    "OTH 3–5. 6": {
+      "passages": "1ES 3:1; 1ES 5:6",
+      "print": "3:1–5:6",
+      "why": "A portion of the book that the note is on, by its first and last verses; the introduction names no book."
+    },
+    "OTH 4. 5–5. 9": {
+      "passages": "BAR 4:5; BAR 5:9",
+      "print": "4:5–5:9",
+      "why": "A portion of the book that the note is on, by its first and last verses; the introduction names no book."
     },
     "PRO 11:31": {
       "source": "1 Pet.",
@@ -251,6 +466,91 @@
       "source": "Ps. 88. 20",
       "numbering": "kjv-verses",
       "why": "Brenton gives the Greek psalm's number and the English verse's: he counts the title, and the verse he means is one later."
+    },
+    "XXB Peter, iv. 18": {
+      "source": "iv. 18",
+      "passages": "1PE 4:18",
+      "print": "4:18",
+      "why": "Brenton names the epistle in words before the chapter and verse."
+    },
+    "XXB Psalm iv. 4": {
+      "passages": "PSA 4:5",
+      "print": "{PSA} 4:5",
+      "why": "'Be ye angry, and sin not' is the fourth verse of the Hebrew and the English, and Brenton's fifth: he counts the title."
+    },
+    "XXB cxliv. 13": {
+      "passages": "PSA 144:13",
+      "print": "144:13",
+      "why": "Of the Psalms, which the sentence names."
+    },
+    "XXC Dan. 4. 16": {
+      "passages": "DAG 4:19",
+      "print": "{DAG} 4:19",
+      "why": "eBible cites the verse by another count: the word it corrects stands in this one."
+    },
+    "XXC Gen. 11. 1": {
+      "passages": "GEN 11:12-13",
+      "print": "{GEN} 11:12–13",
+      "why": "eBible cites the chapter's first verse; Cainan, whose name it corrects, is named in these two."
+    },
+    "XXC Gen. 38. 1": {
+      "passages": "GEN 38:11",
+      "print": "{GEN} 38:11",
+      "why": "eBible cites the verse by another count: the word it corrects stands in this one."
+    },
+    "XXC Lev. 6. 34": {
+      "passages": "LEV 7:4",
+      "print": "{LEV} 7:4",
+      "why": "eBible cites the verse by another count: the word it corrects stands in this one."
+    },
+    "XXC Lev. 6. 36": {
+      "passages": "LEV 7:6",
+      "print": "{LEV} 7:6",
+      "why": "eBible cites the verse by another count: the word it corrects stands in this one."
+    },
+    "XXC Psa. 50. 11": {
+      "passages": "PSA 50:13",
+      "print": "{PSA} 50:13",
+      "why": "eBible cites the verse by another count: the word it corrects stands in this one."
+    },
+    "XXC Sus. 1. 19": {
+      "passages": "DAG 0:19",
+      "print": "Susanna 19",
+      "why": "Susanna opens this edition's Daniel under its own heading, and prints no chapter number."
     }
+  },
+  "names": {
+    "BAK": [
+      {
+        "from": "KINGS I. (\\sc Sam\\sc*. I)",
+        "to": "{1SA:upper}",
+        "why": "Brenton's First Book of Kings, which he also calls Samuel's, is this edition's First Book of Kingdoms."
+      },
+      {
+        "from": "KINGS III. (\\sc Kings\\sc* I)",
+        "to": "{1KI:upper}",
+        "why": "Brenton's Third Book of Kings is this edition's Third Book of Kingdoms."
+      },
+      {
+        "from": "CHRONICLES I",
+        "to": "{1CH:upper}",
+        "why": "A numbered book puts its number first."
+      },
+      {
+        "from": "CHRONICLES II",
+        "to": "{2CH:upper}",
+        "why": "A numbered book puts its number first."
+      },
+      {
+        "from": "JEZEKIEL",
+        "to": "{EZK:upper}",
+        "why": "Brenton's Jezekiel is this edition's Ezekiel."
+      },
+      {
+        "from": ", page 1131",
+        "to": "",
+        "why": "The page of the printing of 1870, where the note isn't to be found in this one."
+      }
+    ]
   }
 }

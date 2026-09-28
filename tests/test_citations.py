@@ -3,6 +3,7 @@
 import pytest
 
 from bible import citations, edition, validate, versification
+from bible.prepare import front_matter_text
 from bible.checks import CheckFailed
 from bible.citations import Item, scan
 from bible.references import parse_verse
@@ -420,13 +421,144 @@ def test_every_decision_and_name_is_used(monkeypatch, patched):
         validate.validate()
 
 
-def test_every_note_is_read(prepared):
-    read = [
+@pytest.fixture(scope="module")
+def matter(archives):
+    """The front and back matter prepared, by id, each with its log."""
+    found = {}
+    for entry in edition.ordered_entries():
+        if "file" not in entry and "section" not in entry:
+            log = []
+            found[entry["id"]] = (front_matter_text(entry, archives, log), log)
+    return found
+
+
+def read_in(logs):
+    return [
         operation
-        for unit in prepared.values()
-        for operation in unit.transformations
+        for log in logs
+        for operation in log
         if operation["operation"] == "read citations"
     ]
-    assert {entry["dialect"] for entry in read} == {"brenton", "george"}
-    assert sum(len(entry["citations"]) for entry in read) == 377
+
+
+def test_everything_that_cites_is_read(prepared, matter):
+    read = read_in(
+        [
+            *(unit.transformations for unit in prepared.values()),
+            *(log for _, log in matter.values()),
+        ]
+    )
+    assert {entry["dialect"] for entry in read} == set(citations.DATA["dialects"])
+    assert sum(len(entry["citations"]) for entry in read) == 510
     assert citations.unused(read) == ([], [])
+
+
+@pytest.mark.parametrize(
+    "unit,printed",
+    [
+        ("XXB", "than is afforded by Genesis 47:31, compared with Hebrews 11:21."),
+        ("XXB", "The Septuagint rendering of Psalm 4:5, is"),
+        ("XXB", "the first Epistle of Peter, 4:18."),
+        ("XXB", "See John 7:35; Romans 1:14."),
+        ("XXB", "one of the acrostic Psalms, (144:13), where"),
+        ("XXB", "In Acts 17:28, we find"),
+        ("NDX", "commanded to search. John 5:39. Esaias 8:20. They"),
+        ("NDX", "studied them. Acts 17:11. and 8:28, 29. They"),
+        ("NDX", "unto salvation. 2 Timothy 3:15. If we"),
+        ("NDX", "See Judges 8:2. \\it Joash\\it* the king"),
+        ("BAK", "\\ip 2 Kingdoms 5:18.—Giants."),
+        ("BAK", "\\ip Psalm 41:5.—There are"),
+        ("BAK", "\\ip Esaias 2:6.—Philistines."),
+        ("BAK", "\\ip Ezekiel 16:44.—The most"),
+        ("BAK", "Mark 4:30; in Hebrews 9:9 and 11:19 it is"),
+        (
+            "BAK",
+            "see chapter 1:4, 22; 8:5; 14:15; 21:11. For πανοῦργος, 12:16; 13:1, 16;",
+        ),
+        ("BAK", "\\is2 1 KINGDOMS"),
+        ("BAK", "\\is2 3 KINGDOMS"),
+        ("BAK", "\\is2 EZEKIEL"),
+        ("BAK", "in the Vatican copy after chapter 12:24."),
+        ("BAK", "see \\it Appendix\\it*. Note on 2 Kingdoms 5:18."),
+        # The labels of the passages it supplies are no citations.
+        ("BAK", "\\ip \\it Verse\\it* 41. And the Philistine"),
+        ("BAK", "\\ip 17. \\vp 12\\vp*And David"),
+        ("XXC", "\\im 4 Kingdoms 19:18"),
+        ("XXC", "\\im Psalm 50:13"),
+        ("XXC", "\\im Leviticus 7:4"),
+        ("XXC", "\\im Susanna 19"),
+        ("XXC", "\\im Epistle of Jeremias 1:46"),
+        ("XXC", "\\im Jesus, the Son of Navi 13:7"),
+        ("XXC", "duplicate verse 8 marker removed"),
+    ],
+)
+def test_the_front_and_back_matter_cite_as_the_edition_does(matter, unit, printed):
+    assert printed in matter[unit][0]
+
+
+@pytest.mark.parametrize("unit", ["XXE", "XXD", "TDX"])
+def test_a_unit_that_cites_nothing_is_read_to_cite_nothing(matter, unit):
+    assert citations.DATA["units"][unit] is None
+    assert read_in([matter[unit][1]]) == []
+
+
+def test_a_unit_must_say_how_it_cites(archives, patched):
+    del patched(citations, "DATA")["units"]["XXB"]
+    [preface] = [e for e in edition.ordered_entries() if e["id"] == "XXB"]
+    with pytest.raises(CheckFailed, match="Unit whose citations nothing reads: XXB"):
+        front_matter_text(preface, archives)
+
+
+def test_a_decision_on_a_unit_is_keyed_by_its_words(archives, patched):
+    [preface] = [e for e in edition.ordered_entries() if e["id"] == "XXB"]
+    decisions = patched(citations, "DATA")["decisions"]
+    del decisions["XXB cxliv. 13"]
+    with pytest.raises(CheckFailed, match=r"can't be read: XXB \(cxliv. 13\)"):
+        front_matter_text(preface, archives)
+    # One that the unit has twice decides neither.
+    decisions["XXB cxliv. 13"] = {"passages": "PSA 144:13", "print": "x", "why": "x"}
+    decisions["XXB Rom"] = {"not_a_citation": True, "why": "x"}
+    with pytest.raises(CheckFailed, match="not found once|met more than once"):
+        front_matter_text(preface, archives)
+
+
+def test_markup_within_a_citation_goes_with_it(inventory, archives):
+    books = edition.books(archives)
+    tongue = citations.dialect("kjv-preface")
+
+    def cited(usfm):
+        return citations.rewritten(usfm, tongue, None, "x", inventory, books)[0]
+
+    assert cited(r"search. \it John\it* 5. 39. They") == "search. John 5:39. They"
+    assert cited(r"2 \it Tim.\it* 3. 15. If") == "2 Timothy 3:15. If"
+    # A span that the citation only begins or ends in is no citation's to close.
+    with pytest.raises(CheckFailed, match="Citation across markup"):
+        cited(r"\it See John\it* 5. 39.")
+
+
+def test_a_note_in_the_matter_is_read_without_its_origin(inventory, archives):
+    books = edition.books(archives)
+    tongue = citations.dialect("brenton-preface")
+    usfm = r"at all.\f + \fr 1:0 \ft In Acts 17. 28, we find\f* Let us"
+    cited, [found] = citations.rewritten(usfm, tongue, None, "x", inventory, books)
+    assert cited == r"at all.\f + \fr 1:0 \ft In Acts 17:28, we find\f* Let us"
+    assert found.source == "Acts 17. 28"
+
+
+def test_a_name_is_changed_once_and_whole(archives, patched):
+    books = edition.books(archives)
+    text = "\\is2 CHRONICLES I  \n\\is2 CHRONICLES II  \n"
+    names = patched(citations, "DATA")["names"]
+    names["x"] = [
+        {"from": "CHRONICLES I", "to": "{1CH:upper}", "why": "x"},
+        {"from": "CHRONICLES II", "to": "{2CH:upper}", "why": "x"},
+    ]
+    renamed, changes = citations.renamed("x", text, books)
+    assert renamed == "\\is2 1 CHRONICLES  \n\\is2 2 CHRONICLES  \n"
+    assert changes[0] == {"from": "CHRONICLES I", "to": "1 CHRONICLES"}
+    names["x"] = [{"from": "CHRONICLES", "to": "x", "why": "x"}]
+    with pytest.raises(CheckFailed, match="Change of name not met once: x"):
+        citations.renamed("x", text, books)
+    names["x"] = [{"from": "CHRONICLES I", "to": "x"}]
+    with pytest.raises(CheckFailed, match="without its words or reason"):
+        citations.renamed("x", text, books)

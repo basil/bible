@@ -139,11 +139,34 @@ def test_gloss_in_a_book_note(source):
     )
 
 
+def test_the_books_notes_cite_as_the_edition_does(scripture, prepared):
+    # Where the books are prepared, so that a note is read at its own book.
+    assert (
+        "Manasses, King of Judah, mentioned in 2 Chronicles 33:18." in scripture["MAN"]
+    )
+    assert "peculiar to the book (3:1–5:6), commonly" in scripture["1ES"]
+    assert "first portion (1:1–11:4) is distinguished" in scripture["WIS"]
+    baruch = scripture["BAR"]
+    assert "historical introduction (1:1–14), attributing" in baruch
+    assert "ending at 3:8, was" in baruch
+    assert "second portion (3:9–4:4) in Aramaic" in baruch
+    assert "third portion (4:5–5:9) in Greek" in baruch
+    [read] = [
+        operation
+        for operation in prepared["BAR"].transformations
+        if operation["operation"] == "read citations"
+        and operation["dialect"] == "apocrypha-introduction"
+    ]
+    assert [citation["source"] for citation in read["citations"]] == [
+        "1. 1–14",
+        "3. 8",
+        "3. 9–4. 4",
+        "4. 5–5. 9",
+    ]
+
+
 def test_book_names_match_the_edition(source):
     notes = book_notes(source)
-    assert (
-        "Manasses, King of Judah, mentioned in 2 Chronicles 33. 18" in notes["MAN"][0]
-    )
     assert "The First Book of Esdras, which" in notes["1ES"][0]
     assert "portions of 2 Chronicles, 2 Esdras, and Nehemias." in notes["1ES"][0]
     assert "These additions to the [Book of Esther] supply" in notes["ESG"][0]

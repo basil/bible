@@ -36,7 +36,7 @@ The sample prints the chapters listed in `edition/sample.json`. They were picked
   - `kjv-notes.json`: placements and corrections for the 1611 New Testament notes.
   - `brenton-notes.json`: corrections to the words and italics the build works out for Brenton's notes, and to a few slips in eBible's text.
   - `book-introductions.json`: which paragraphs of the introduction to the Apocrypha stay at the front and which introduce each book as a footnote, with the editorial glosses, book-name changes, and their reasons.
-  - `citations.json`: how each source writes its citations (its names for the books, its numerals and stops, and the numbering it cites by), and the editor's decisions on the citations that the grammar can't read, or reads by the wrong numbering.
+  - `citations.json`: how each source writes its citations (its names for the books, its numerals and stops, and the numbering it cites by); which way each piece of front and back matter writes them; the editor's decisions on the citations that the grammar can't read, or reads by the wrong numbering; and the names that are changed where a book is named but not cited.
   - `versification.json`: where each verse of the Old Testament stands in the King James Bible, the verses the edition relabels, and what the King James Bible sets apart in its Apocrypha.
   - `sample.json`: the chapters the sample prints.
   - `witnesses.json`: phrases that must appear in the finished PDF, to catch unusual passages going missing.

@@ -28,6 +28,7 @@ from bible.notes import (
     read_citations,
     restyle_brenton_notes,
 )
+from bible.references import Verse, verse_at
 from bible.usfm import (
     HEADING_MARKERS,
     chapter_parts,
@@ -288,6 +289,7 @@ def scripture_text(entry, archives, log=None, review=None, *, links):
         text = introductions.with_book_note(
             code, text, introductions_source(archives), record, review
         )
+        text = cited_introductions(code, text, archives, record)
     # Any caller, "*" as well as "+"; only "-" sets none.
     require(
         not re.search(r"\\[fx] (?!- )", text),
@@ -325,8 +327,106 @@ def prepared_scripture(archives, links):
     return result
 
 
+INTRODUCTION = re.compile(r"(\\f - \\ft )(.*?)(\\f\*)", re.S)
+
+
+def cited_introductions(code, text, archives, record):
+    """A book whose introduction is a footnote, with what the introduction
+    cites as the edition cites it: of all the footnotes, it alone opens
+    with no reference."""
+    unit = introductions.INTRODUCTIONS["source"]
+    tongue = citations.dialect(citations.DATA["units"][unit])
+    printed = versification.edition_inventory(archives)
+    books = edition.books(archives)
+    first = next(iter(printed[code]))
+    home = verse_at(code, f"{first}:{printed[code][first][0]}")
+    read, used = [], []
+
+    def cited(note):
+        decided = citations.unit_decisions(unit, citations.printable(note[2])[0])
+        body, found = citations.rewritten(
+            note[2], tongue, home, unit, printed, books, list(decided.values())
+        )
+        used.extend(decided)
+        read.extend(found)
+        return note[1] + body + note[3]
+
+    text = INTRODUCTION.sub(cited, text)
+    log_citations(record, tongue, unit, read, used, books)
+    return text
+
+
+def log_citations(record, tongue, key, read, used, books):
+    doubled = sorted(key for key in set(used) if used.count(key) > 1)
+    require(not doubled, f"Citation decisions met more than once: {doubled}")
+    if read or used:
+        record(
+            "read citations",
+            dialect=tongue.name,
+            citations=[
+                {
+                    "key": key,
+                    "source": citation.source,
+                    "cites": " ".join(map(str, citation.passages)) or citation.book,
+                    "numbering": citation.numbering,
+                    "name": citation.name,
+                    "printed": citations.printed(citation, books),
+                }
+                for citation in read
+            ],
+            decided=used,
+        )
+
+
+def cited_matter(code, text, archives, record):
+    """Front or back matter with what it cites as the edition cites it,
+    paragraph by paragraph.
+
+    edition/citations.json says how each unit writes its citations, or that
+    it has none, and decides the ones its grammar can't read, each by the
+    words it decides, which must be the unit's once.
+    """
+    units = citations.DATA["units"]
+    require(code in units, f"Unit whose citations nothing reads: {code}")
+    if units[code] is False:
+        return text
+    tongue = citations.dialect(units[code])
+    printed = versification.edition_inventory(archives)
+    books = edition.books(archives)
+    text, changes = citations.renamed(code, text, books)
+    if changes:
+        record("name as the edition does", names=changes)
+    lines, read, used = [], [], []
+    # A paragraph that names no book is of the book last cited: a correction's
+    # account of it follows its citation, on a line of its own.
+    standing = None
+    for line in text.split("\n"):
+        if not line.startswith("\\id "):
+            decided = citations.unit_decisions(code, citations.printable(line)[0])
+            line, found = citations.rewritten(
+                line,
+                tongue,
+                None,
+                code,
+                printed,
+                books,
+                list(decided.values()),
+                standing,
+            )
+            used += decided
+            read += found
+            for citation in found:
+                if citation.items and not citation.relative:
+                    *_, last = (item for run in citation.items for item in run)
+                    standing = Verse(citation.book, last.chapter, last.first or 1)
+        lines.append(line)
+    log_citations(record, tongue, code, read, used, books)
+    return "\n".join(lines)
+
+
 def front_matter_text(entry, archives, log=None):
-    """A translation's front matter or appendix, under the edition's names if any."""
+    """A translation's front matter or appendix, under the edition's names if
+    any, citing as the edition cites."""
     code = entry["id"]
     record = recorder(log, code)
     original = corrected_source(entry, archives, record)
@@ -359,7 +459,7 @@ def front_matter_text(entry, archives, log=None):
         inventory(original) == inventory(titled),
         f"Preparation changed source markup: {code}",
     )
-    return titled
+    return cited_matter(code, titled, archives, record)
 
 
 def sample_chapters(code, text, wanted):

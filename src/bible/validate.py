@@ -10,7 +10,12 @@ from bible.checks import require
 from bible.crossrefs import quotation_links
 from bible.edition import brenton_source_use, scripture_unit, source_id
 from bible.files import write_json
-from bible.prepare import introductions_source, prepared_scripture, recorder
+from bible.prepare import (
+    front_matter_text,
+    introductions_source,
+    prepared_scripture,
+    recorder,
+)
 from bible.sources import load_archives
 from bible.usfm import chapter_parts, inventory, renumber_chapters
 
@@ -143,11 +148,17 @@ def validate():
     # A decision on a citation is met where its note is read, and a dialect's
     # name for a book where a citation uses it; one that nothing meets would
     # go unused unnoticed.
+    # The front and back matter are prepared for what they cite alone: the
+    # build prepares them again where it writes them.
+    matter = []
+    for entry in edition.ordered_entries():
+        if "file" not in entry and "section" not in entry:
+            front_matter_text(entry, archives, matter)
     decisions, names = citations.unused(
         [
             operation
-            for unit in scripture.values()
-            for operation in unit.transformations
+            for log in (*(unit.transformations for unit in scripture.values()), matter)
+            for operation in log
             if operation["operation"] == "read citations"
         ]
     )
