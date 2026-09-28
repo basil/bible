@@ -22,7 +22,7 @@ from dataclasses import dataclass
 from bible import paths, versification
 from bible.checks import require
 from bible.files import read_json
-from bible.references import Passage, Verse, parse_passages, roman
+from bible.references import EDITION, Passage, Verse, parse_passages, roman
 
 DATA = read_json(paths.EDITION_DIR / "citations.json")
 # How a source may number what it cites: as Brenton does, which the edition
@@ -86,6 +86,8 @@ class Citation:
     # Runs of items: those of a run are of one chapter, as "4:7, 8".
     items: tuple
     numbering: str
+    # What it names in other books, where a decision reads several as one.
+    others: tuple = ()
     # A citation of the note's own book names only a "verse" or "chapter".
     relative: str | None = None
     # What prints, where a decision says, instead of what the items would.
@@ -94,12 +96,18 @@ class Citation:
     name: str | None = None
 
     @property
+    def targets(self):
+        """What the citation names, book by book."""
+        return ((self.book, self.items), *self.others)
+
+    @property
     def passages(self):
         return [
             passage
-            for run in self.items
+            for book, runs in self.targets
+            for run in runs
             for item in run
-            if (passage := item.passage(self.book))
+            if (passage := item.passage(book))
         ]
 
     @property
@@ -326,16 +334,15 @@ def _decided(decision, plain, tongue, home, key, inventory):
         relative = None
     else:
         require(decision.get("print"), f"Citation decision prints nothing: {key}")
-        passages = parse_passages(decision["passages"])
-        book = passages[0].first.book
-        require(
-            all(p.first.book == book for p in passages),
-            f"Citation decision of more than one book: {key}",
-        )
-        items = tuple(
-            (Item(p.first.chapter, p.first.number, p.last.number, p.first.letter),)
-            for p in passages
-        )
+        named = []
+        for passage in parse_passages(decision["passages"]):
+            first, last = passage.first, passage.last
+            item = Item(first.chapter, first.number, last.number, first.letter)
+            if named and named[-1][0] == first.book:
+                named[-1][1].append((item,))
+            else:
+                named.append((first.book, [(item,)]))
+        (book, items), *others = ((book, tuple(runs)) for book, runs in named)
         relative = decision.get("relative")
     return (
         start,
@@ -347,6 +354,7 @@ def _decided(decision, plain, tongue, home, key, inventory):
             book,
             items,
             decision.get("numbering", tongue.numbering),
+            tuple(others) if kind == "passages" else (),
             relative,
             decision.get("print"),
         ),
@@ -362,16 +370,16 @@ def _last_verse(inventory, book, chapter):
 
 def missing(citation, inventory):
     """What a citation names that the edition doesn't print."""
-    chapters = inventory.get(citation.book, {})
     found = []
-    for run in citation.items:
-        for item in run:
+    for book, runs in citation.targets:
+        chapters = inventory.get(book, {})
+        for item in (item for run in runs for item in run):
             labels = chapters.get(str(item.chapter))
             if labels is None:
-                found.append(f"{citation.book} {item.chapter}")
+                found.append(f"{book} {item.chapter}")
             elif item.first is not None:
                 found += [
-                    f"{citation.book} {item.chapter}:{number}{item.letter}"
+                    f"{book} {item.chapter}:{number}{item.letter}"
                     for number in range(item.first, item.last + 1)
                     if f"{number}{item.letter}" not in labels
                 ]
@@ -429,7 +437,7 @@ def scan(plain, tongue, home, key, inventory):
                 book,
                 items,
                 tongue.numbering,
-                relative,
+                relative=relative,
                 name=match["book"],
             )
         )
@@ -448,6 +456,104 @@ def scan(plain, tongue, home, key, inventory):
             f"({citation.source}: {', '.join(lacking)})",
         )
     return sorted(found, key=lambda citation: citation.start)
+
+
+def printed(citation, books, style=EDITION):
+    """A citation as the edition prints it: under the edition's name for the
+    book, or as a verse or chapter of the note's own book, which it names as
+    its source does, by no name."""
+    if citation.printed is not None:
+        # A decision names the books by their codes, or the first as "book",
+        # and the edition's names for them print.
+        names = {
+            book: books.name(book, [item.chapter for run in runs for item in run])
+            for book, runs in citation.targets
+        }
+        name = names[citation.book]
+        return citation.printed.format(book=name, BOOK=name.upper(), **names)
+    chapters = [item.chapter for run in citation.items for item in run]
+    named = [item for run in citation.items for item in run if item.first is not None]
+    if citation.relative == "verse":
+        (run,) = citation.items
+        word = "verse" if len(run) == 1 and run[0].first == run[0].last else "verses"
+        body = style.verses.join(
+            style.stretch(item.first, item.last, item.letter) for item in run
+        )
+    else:
+        runs = []
+        for run in citation.items:
+            chapter = str(run[0].chapter)
+            if run[0].first is not None:
+                chapter += style.chapter_verse + style.verses.join(
+                    style.stretch(item.first, item.last, item.letter) for item in run
+                )
+            runs.append(chapter)
+        body = style.passages.join(runs)
+        if citation.relative == "chapter":
+            word = "chapter" if named or len(chapters) == 1 else "chapters"
+        else:
+            return f"{books.name(citation.book, chapters)} {body}"
+    # A note that opens with the word keeps its capital.
+    if citation.source[0].isupper():
+        word = word.capitalize()
+    return f"{word} {body}"
+
+
+def normalized(pieces, found, books):
+    """A note's pieces with each citation as the edition prints it, as a
+    reference of its own.
+
+    A citation that names nothing the edition prints is no reference for a
+    reader to follow, and stays among the words it stands in. The pieces
+    with their citations as the source has them must be the pieces given.
+    """
+    plain = "".join(text for _, text in pieces)
+    result, offset, cursor, joined = [], 0, 0, False
+    pending = sorted(found, key=lambda citation: citation.start)
+    for kind, text in pieces:
+        end = offset + len(text)
+        while cursor < end:
+            citation = next((c for c in pending if c.end > cursor), None)
+            if citation is None or citation.start >= end:
+                stop = end
+            elif citation.start > cursor:
+                stop = citation.start
+            else:
+                stop = None
+            if stop is not None:
+                if joined and result[-1][0] == kind:
+                    result[-1] = (kind, result[-1][1] + plain[cursor:stop])
+                else:
+                    result.append((kind, plain[cursor:stop]))
+                cursor = stop
+            elif citation.items:
+                result.append(("xt", printed(citation, books)))
+                cursor = citation.end
+            else:
+                # Among its words: of their kind, and not apart from them.
+                words = printed(citation, books)
+                if result and result[-1][0] == kind and cursor > offset:
+                    result[-1] = (kind, result[-1][1] + words)
+                else:
+                    result.append((kind, words))
+                cursor = citation.end
+                joined = True
+                continue
+            joined = False
+        offset = end
+    restored, at = "", 0
+    for kind, text in result:
+        restored += text
+    for citation in pending:
+        at = restored.index(printed(citation, books), at)
+        restored = (
+            restored[:at]
+            + citation.source
+            + restored[at + len(printed(citation, books)) :]
+        )
+        at += len(citation.source)
+    require(restored == plain, f"Citations that don't restore their note: {plain}")
+    return [(kind, text) for kind, text in result if text]
 
 
 def unused(read):

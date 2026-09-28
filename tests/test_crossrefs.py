@@ -77,7 +77,7 @@ def verse(text, number):
 def test_matching_brenton_note_becomes_classified_link(archives):
     linked = scripture_text(unit("ISA"), archives, links={"ISA": [isaiah_link()]})
     before, after = verse(unlinked("ISA", archives), 9), verse(linked, 9)
-    note = r"\f - \fr 1:9 \ft See \xt Rom. 9. 29\f*"
+    note = r"\f - \fr 1:9 \ft See \xt Romans 9:29\f*"
     marker = r"\x - \xo 1:9 \xt Romans 9:29 \xta (LXX against Heb.)\x*"
     assert note in before and note not in after
     assert marker in after and len(LINK.findall(after)) == 1
@@ -328,7 +328,7 @@ def test_passage_mapped_across_chapters_prints_as_ranges(patched):
     ]
     patched(quotations, "DECISIONS")["class_conflicts"] = []
     links = planned_links([row("Q-a", "MAT 4:15", "ISA 9:1-2", "E")], NAMES)
-    assert links["MAT"][0]["target_display"] == "Isaiah 8:23; Isaiah 9:1"
+    assert links["MAT"][0]["target_display"] == "Isaiah 8:23; 9:1"
     assert set(written(link["origin"] for link in links["ISA"])) == {
         "ISA 8:23",
         "ISA 9:1",
@@ -395,7 +395,7 @@ def test_a_glossed_note_citing_a_link_needs_a_decision(archives, patched):
         scripture_text(unit("PSA"), archives, links={"PSA": [psalm_2]})
     decisions["PSA 2:9"] = {"action": "preserve", "why": "x"}
     linked = scripture_text(unit("PSA"), archives, links={"PSA": [psalm_2]})
-    assert r"\xt Rev. 2. 27" in linked
+    assert r"\xt Revelation 2:27" in linked
 
 
 def test_a_note_that_names_no_verse_can_only_be_preserved(
@@ -425,7 +425,7 @@ def test_range_note_within_the_links_is_merged(archives, patched):
         "PSA 68:23", "ROM 11:9-10", "Romans 11:9–10", "PSA 68:23-24"
     )
     patched(quotations, "DECISIONS")["note_merges"] = {}
-    note = r"\f - \fr 68:23 \ft See \xt Rom. 11. 9,10\f*"
+    note = r"\f - \fr 68:23 \ft See \xt Romans 11:9, 10\f*"
     assert note in unlinked("PSA", archives)
     log = []
     linked = scripture_text(unit("PSA"), archives, log, links={"PSA": [psalm_68]})

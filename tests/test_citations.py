@@ -2,7 +2,7 @@
 
 import pytest
 
-from bible import citations, validate, versification
+from bible import citations, edition, validate, versification
 from bible.checks import CheckFailed
 from bible.citations import Item, scan
 from bible.references import parse_verse
@@ -117,7 +117,7 @@ def test_a_note_cites_its_own_book_by_verse_or_chapter(
         # The King James Bible's names and numbers, carried into the edition's.
         ("Gr. made, 1 Sam. 12.6", ["1SA 12:6"]),
         ("Esai 55.3", ["ISA 55:3"]),
-        ("malach. 4.2", ["MAL 4:2"]),
+        ("Deut. 1.31", ["DEU 1:31"]),
         ("2. Macc 7.27", ["2MA 7:27"]),
     ],
 )
@@ -243,6 +243,108 @@ def test_a_decision_may_name_the_passages_itself(brenton, inventory, patched):
     assert citation.printed == "13:22"
 
 
+def test_a_decision_may_read_several_books_as_one_citation(
+    george, inventory, patched, archives
+):
+    decided(
+        patched,
+        {
+            "source": "Zac. 3.8 esay 11.1",
+            "passages": "ZEC 3:8; ISA 11:1",
+            "print": "{ZEC} 3:8; {ISA} 11:1",
+            "why": "x",
+        },
+    )
+    [citation] = scan("branch, Zac. 3.8 esay 11.1", george, HOME, "x", inventory)
+    assert read([citation])[0][1] == ["ZEC 3:8"]
+    assert list(map(str, citation.passages)) == ["ZEC 3:8", "ISA 11:1"]
+    books = edition.books(archives)
+    assert citations.printed(citation, books) == "Zacharias 3:8; Esaias 11:1"
+    # Each must be printed, whatever book it is of.
+    decided(
+        patched,
+        {
+            "source": "Zac. 3.8 esay 11.1",
+            "passages": "ZEC 3:8; ISA 99:1",
+            "print": "x",
+            "why": "x",
+        },
+    )
+    with pytest.raises(CheckFailed, match="doesn't print: x .*ISA 99"):
+        scan("branch, Zac. 3.8 esay 11.1", george, HOME, "x", inventory)
+
+
+PRINTED = [
+    ("See Rom. 4. 7,8.", "Romans 4:7, 8"),
+    ("See Heb. 2. 6-9.", "Hebrews 2:6–9"),
+    ("See 2 Kings 22. 16.", "2 Kingdoms 22:16"),
+    ("See Hab. 2. 3.", "Abbacum 2:3"),
+    ("See Ps. 118. 32.", "Psalm 118:32"),
+    ("See also Ps. 68; 79, titles", "Psalms 68; 79"),
+    ("as in Gen. 43.", "Genesis 43"),
+    ("See Col. 2. ult.", "Colossians 2:23"),
+    ("See ver. 6.", "verse 6"),
+    ("For vv. 2-5, see above.", "verses 2–5"),
+    ("See v 8, 9.", "verses 8, 9"),
+    ("Verse 5 is read.", "Verse 5"),
+    ("See chap 6. 13,15.", "chapter 6:13, 15"),
+    ("See chap 5. 25; 14. 16.", "chapter 5:25; 14:16"),
+    ("See chapter 20.", "chapter 20"),
+]
+
+
+@pytest.mark.parametrize("text,expected", PRINTED)
+def test_a_citation_prints_as_the_edition_cites(
+    brenton, inventory, archives, text, expected
+):
+    [citation] = scan(text, brenton, HOME, "x", inventory)
+    assert citations.printed(citation, edition.books(archives)) == expected
+
+
+def test_a_notes_citations_are_references_of_their_own(brenton, inventory, archives):
+    pieces = [
+        ("label", "Gr. "),
+        ("cited", "seed"),
+        ("text", "; see "),
+        ("xt", "Rom. 9. 29"),
+    ]
+    plain = "".join(text for _, text in pieces)
+    found = scan(plain, brenton, HOME, "x", inventory)
+    assert citations.normalized(pieces, found, edition.books(archives)) == [
+        ("label", "Gr. "),
+        ("cited", "seed"),
+        ("text", "; see "),
+        ("xt", "Romans 9:29"),
+    ]
+    # One that eBible leaves among the words, or marks in part, is marked whole.
+    pieces = [
+        ("text", "See chap "),
+        ("xt", "6. 13,15"),
+        ("text", ". Also 1 Cor 2. 16."),
+    ]
+    plain = "".join(text for _, text in pieces)
+    found = scan(plain, brenton, HOME, "x", inventory)
+    assert citations.normalized(pieces, found, edition.books(archives)) == [
+        ("text", "See "),
+        ("xt", "chapter 6:13, 15"),
+        ("text", ". Also "),
+        ("xt", "1 Corinthians 2:16"),
+        ("text", "."),
+    ]
+
+
+def test_what_the_edition_does_not_print_stays_among_its_words(
+    brenton, inventory, archives, patched
+):
+    decided(
+        patched,
+        {"source": "Verse 99", "unprinted": True, "print": "Verse 99", "why": "x"},
+    )
+    pieces = [("text", "Verse 99 is not in Vat.")]
+    found = scan(pieces[0][1], brenton, HOME, "x", inventory)
+    assert citations.normalized(pieces, found, edition.books(archives)) == pieces
+
+
 def test_several_decisions_on_one_note_form_a_list(brenton, inventory, patched):
     decided(
         patched,
@@ -277,15 +379,6 @@ def test_several_decisions_on_one_note_form_a_list(brenton, inventory, patched):
         (
             {"source": "Jer. 9. 24", "passages": "JER 9:23", "why": "x"},
             "prints nothing",
-        ),
-        (
-            {
-                "source": "Jer. 9. 24",
-                "passages": "JER 9:23; ISA 1:1",
-                "print": "x",
-                "why": "x",
-            },
-            "more than one book",
         ),
     ],
 )
@@ -335,5 +428,5 @@ def test_every_note_is_read(prepared):
         if operation["operation"] == "read citations"
     ]
     assert {entry["dialect"] for entry in read} == {"brenton", "george"}
-    assert sum(len(entry["citations"]) for entry in read) == 379
+    assert sum(len(entry["citations"]) for entry in read) == 377
     assert citations.unused(read) == ([], [])

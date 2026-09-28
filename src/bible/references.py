@@ -6,6 +6,7 @@ addition, as Proverbs 22:8a, but a lettered verse is never part of a range.
 A passage keeps to one chapter; nothing guesses where a chapter ends.
 """
 
+import itertools
 import re
 from dataclasses import dataclass
 
@@ -119,11 +120,23 @@ def roman(numeral):
 
 
 class Books:
-    """One Bible's books, in its order, under the names its pages print."""
+    """One Bible's books, in its order, under the names its pages print.
 
-    def __init__(self, names):
+    A book of many may have a name for one of them: a psalm of the Psalms.
+    """
+
+    def __init__(self, names, one=()):
         self.names = dict(names)
+        self.one = dict(one)
         self.order = {code: index for index, code in enumerate(self.names)}
+
+    def name(self, code, chapters=()):
+        """A book's name where it is cited: that of one of its chapters, if
+        it has such a name and one chapter is cited."""
+        require(code in self.names, f"No display name for {code}")
+        if code in self.one and len(set(chapters)) == 1:
+            return self.one[code]
+        return self.names[code]
 
     def position(self, verse):
         """Where a verse stands in this Bible, a lettered verse after its own."""
@@ -136,21 +149,44 @@ class Style:
 
     chapter_verse: str = ":"
     range: str = "–"
+    verses: str = ", "
     passages: str = "; "
 
-    def passage(self, passage, books):
+    def stretch(self, first, last, letter=""):
+        """A verse, or a range of them: "7", "6–9", "8a"."""
+        if first == last:
+            return f"{first}{letter}"
+        return f"{first}{self.range}{last}"
+
+    def within(self, passage):
+        """A passage within its book: "40:3–5"."""
         first, last = passage.first, passage.last
-        require(first.book in books.names, f"No display name for {passage}")
-        printed = (
-            f"{books.names[first.book]} "
-            f"{first.chapter}{self.chapter_verse}{first.number}{first.letter}"
+        return (
+            f"{first.chapter}{self.chapter_verse}"
+            f"{self.stretch(first.number, last.number, first.letter)}"
         )
-        if first != last:
-            printed += f"{self.range}{last.number}{last.letter}"
-        return printed
+
+    def passage(self, passage, books):
+        name = books.name(passage.first.book, [passage.first.chapter])
+        return f"{name} {self.within(passage)}"
 
     def listed(self, passages, books):
-        return self.passages.join(self.passage(p, books) for p in passages)
+        """Passages in order, each book named once: "Esaias 8:23; 9:1;
+        Matthew 4:15"."""
+        printed = []
+        for n, passage in enumerate(passages):
+            book = passage.first.book
+            if n and passages[n - 1].first.book == book:
+                printed.append(self.within(passage))
+                continue
+            chapters = [
+                p.first.chapter
+                for p in itertools.takewhile(
+                    lambda p: p.first.book == book, passages[n:]
+                )
+            ]
+            printed.append(f"{books.name(book, chapters)} {self.within(passage)}")
+        return self.passages.join(printed)
 
 
 EDITION = Style()

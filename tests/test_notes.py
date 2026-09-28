@@ -6,11 +6,12 @@ import re
 
 import pytest
 
-from bible import notes
+from bible import citations, edition, notes, versification
 from bible.checks import CheckFailed
 from bible.crossrefs import LINK
 from bible.edition import MANIFEST, scripture_unit as unit
 from bible.prepare import front_matter_text, recorder, scripture_text
+from bible.references import verse_at
 from bible.usfm import word_spans
 
 
@@ -190,7 +191,7 @@ def test_footnote_follows_a_lemma_clear_of_its_anchor(scripture):
             "down\\ft . Gr. \\fqa caused to sleep\\f*",
         ),
         # A cross-reference at the start of its verse needs no lemma.
-        ("DEU", "32:21", "\\f - \\fr 32:21 \\ft See \\xt Rom. 10. 9\\f*"),
+        ("DEU", "32:21", "\\f - \\fr 32:21 \\ft See \\xt Romans 10:9\\f*"),
         # A note after the last word of its verse glosses the words before it.
         (
             "PRO",
@@ -242,10 +243,6 @@ def test_brenton_text_keeps_no_caller(scripture):
         ("Some read τίς, who", "Some read τίς, _who_"),
         ("Gr. is revealed", "Gr. _is revealed_"),
         (
-            "Or, gods that you worship, 2 Thess. 2.4",
-            "Or, _gods that you worship_, 2 Thess. 2.4",
-        ),
-        (
             "Or, lascivious ways, as some copies read",
             "Or, _lascivious ways_, as some copies read",
         ),
@@ -260,6 +257,29 @@ def test_brenton_text_keeps_no_caller(scripture):
 def test_marginal_note_styling(note, styled):
     plain, styles, _ = notes.styled(notes.labelled_pieces(note))
     assert notes.underscored(plain, styles) == styled
+
+
+def test_a_citation_ends_a_rendering(archives):
+    # It is a reference of its own by the time the note is styled.
+    source = "Or, gods that you worship, 2 Thess. 2.4"
+    found = citations.scan(
+        source,
+        citations.dialect("george"),
+        verse_at("ACT", "17:23"),
+        "x",
+        versification.edition_inventory(archives),
+    )
+    pieces, printed = notes.cited(
+        notes.labelled_pieces(source), found, edition.books(archives), "x", source
+    )
+    assert printed == "Or, gods that you worship, 2 Thessalonians 2:4"
+    plain, styles, _ = notes.styled(pieces)
+    assert notes.underscored(plain, styles) == (
+        "Or, _gods that you worship_, 2 Thessalonians 2:4"
+    )
+    assert notes.usfm_body(plain, styles) == (
+        "\\ft Or, \\fqa gods that you worship\\ft , \\xt 2 Thessalonians 2:4"
+    )
 
 
 @pytest.mark.parametrize(

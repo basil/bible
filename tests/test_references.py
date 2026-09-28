@@ -106,12 +106,31 @@ def test_books_order_verses_as_their_bible_does():
 def test_a_passage_prints_under_its_books_name():
     assert EDITION.passage(parse_passage("ISA 40:3-5"), BOOKS) == "Esaias 40:3–5"
     assert EDITION.passage(parse_passage("PRO 22:8a"), BOOKS) == "Proverbs 22:8a"
+    with pytest.raises(CheckFailed, match="No display name for JER"):
+        EDITION.passage(parse_passage("JER 1:1"), BOOKS)
+
+
+def test_a_list_names_each_book_once():
     assert (
         EDITION.listed(parse_passages("ISA 8:23; ISA 9:1; 1CO 2:9"), BOOKS)
-        == "Esaias 8:23; Esaias 9:1; 1 Corinthians 2:9"
+        == "Esaias 8:23; 9:1; 1 Corinthians 2:9"
     )
-    with pytest.raises(CheckFailed, match="No display name for JER 1:1"):
-        EDITION.passage(parse_passage("JER 1:1"), BOOKS)
+    # But again, where another book comes between.
+    assert (
+        EDITION.listed(parse_passages("ISA 8:23; 1CO 2:9; ISA 9:1"), BOOKS)
+        == "Esaias 8:23; 1 Corinthians 2:9; Esaias 9:1"
+    )
+
+
+def test_one_of_a_books_chapters_may_have_its_own_name():
+    books = Books({"PSA": "Psalms", "ISA": "Esaias"}, {"PSA": "Psalm"})
+    assert EDITION.passage(parse_passage("PSA 117:22-23"), books) == "Psalm 117:22–23"
+    assert EDITION.listed(parse_passages("PSA 2:1; PSA 2:7"), books) == "Psalm 2:1; 2:7"
+    assert (
+        EDITION.listed(parse_passages("PSA 2:7; PSA 109:1"), books)
+        == "Psalms 2:7; 109:1"
+    )
+    assert books.name("PSA") == "Psalms" and books.name("ISA", [1]) == "Esaias"
 
 
 @pytest.mark.parametrize(

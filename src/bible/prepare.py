@@ -258,8 +258,9 @@ def scripture_text(entry, archives, log=None, review=None, *, links):
     # would fail.
     # What the edition prints, which a citation must name.
     printed = versification.edition_inventory(archives)
+    books = edition.books(archives)
     if entry["source"] == "kjv":
-        text = insert_marginal_notes(code, text, record, review, printed)
+        text = insert_marginal_notes(code, text, record, review, printed, books)
     else:
         clean, found = brenton_notes(code, text, printed)
         if found:
@@ -267,6 +268,7 @@ def scripture_text(entry, archives, log=None, review=None, *, links):
                 record,
                 citations.dialect("brenton"),
                 [(note.key, note.citations) for note in found],
+                books,
             )
         merged = merged_notes(code, found, links, record)
         # A merged note doesn't print, so a correction to it would go unused
@@ -275,7 +277,7 @@ def scripture_text(entry, archives, log=None, review=None, *, links):
         require(
             not replaced, f"Brenton correction to a note a link replaces: {replaced}"
         )
-        text = restyle_brenton_notes(code, clean, found, record, review, merged)
+        text = restyle_brenton_notes(code, clean, found, record, review, merged, books)
     text = apply_links(code, text, links, record)
     # Only a book, or a book with a section, that the introduction to the
     # Apocrypha describes; placed_paragraphs checks that each is one of Brenton's.

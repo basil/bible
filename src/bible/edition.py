@@ -117,13 +117,21 @@ def resolved_book_names(entry, source_text):
 
 
 def books(archives):
-    """The edition's books, in its order, under their running-head names."""
+    """The edition's books, in its order, under their running-head names,
+    and the names by which one of a book's chapters is cited."""
     return Books(
         (
-            unit["id"],
-            resolved_book_names(unit, source_usfm(unit, archives))["short_title"],
-        )
-        for unit in MANIFEST["scripture"]
+            (
+                unit["id"],
+                resolved_book_names(unit, source_usfm(unit, archives))["short_title"],
+            )
+            for unit in MANIFEST["scripture"]
+        ),
+        (
+            (unit["id"], unit["cited_singly"])
+            for unit in MANIFEST["scripture"]
+            if "cited_singly" in unit
+        ),
     )
 
 

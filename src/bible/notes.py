@@ -70,8 +70,8 @@ NAMES = re.compile(
 # Abbreviations, whose full stop stays at the end of a note ("so the Heb.").
 ABBREVIATION = re.compile(
     r"(?<![\w'’])(?:etc|&c|Gr|Heb|Syr|Alex|Vat|Complut|Ald|Vulg|Chrysost|LXX|A\. V"
-    r"|O\. ?T|N\. ?T|App|Comp|lit|Lit|i\. e|q\. d|sc|scil|viz|ver|ch|chap|pl"
-    r"|absol|infin|imper|ult|Pet|N|s|ob)\.$"
+    r"|O\. ?T|N\. ?T|App|Comp|lit|Lit|i\. e|q\. d|sc|scil|viz|pl"
+    r"|absol|infin|imper|N|s|ob)\.$"
 )
 # George's notes are plain text; a label opens a note or a sentence in it.
 KJV_LABEL = re.compile(
@@ -83,13 +83,13 @@ KJV_LABEL = re.compile(
 )
 # A rendering stops at the end of its sentence or clause, at "etc." unless the
 # sentence goes on ("Gr. none etc. shall be seen by thine eyes"), and before a
-# comment or citation ("his vow, compare Acts 18. 18", "for him, Rom. 11. 36",
-# "lascivious ways, as some copies read", "horn, so Heb.", "cold, probably the
-# right reading", "breach, as in ch. xii.", "it, sc. the people").
+# comment ("his vow, compare", "lascivious ways, as some copies read", "horn,
+# so Heb.", "cold, probably the right reading", "breach, as in", "it, sc. the
+# people"). A citation is a reference of its own, which ends it as well.
 RENDERING_END = re.compile(
     r"(?<!\betc)(?<!&c)\.['’”]?(?=\s|$)|\.(?=\s+[^\sa-z]|$)|[;:?!(—]"
-    r"|,\s+(?=(?:but|which|compare|see|chap|ver|probably|perhaps|so|if|as in)\b"
-    r"|(?:sc|scil|viz)\.|i\.\s?e\.|q\.\s?d\.|\d|[A-Z][a-z]*\.\s*\d)"
+    r"|,\s+(?=(?:but|which|compare|see|probably|perhaps|so|if|as in)\b"
+    r"|(?:sc|scil|viz)\.|i\.\s?e\.|q\.\s?d\.)"
     r"|,?\s+(?=as some\b)"
 )
 # Greek or Hebrew quoted in a note.
@@ -111,8 +111,6 @@ COMMENTARY = re.compile(
     r"|adds|add(?=\s*[,:])|omits?|reads?|inserts?|wants?|translates?)\b|[—(-])",
     re.I,
 )
-# A citation ("ver. 12", "3. 14"), not a rendering; figures alone ("187 years") are one.
-NOT_A_RENDERING = re.compile(r"\d+\s*[.:]\s*\d|\b(?:ver|vv?|ch|chap)\.?\s*\d")
 # Words that never end a lemma alone: they want the word after them.
 LINKING_WORDS = {
     *("a", "an", "the", "of", "to", "and", "in", "on", "at", "by", "for", "from"),
@@ -610,8 +608,6 @@ def styled(pieces):
         )
         if not extent.strip() or COMMENTARY.match(extent) or joins_labels:
             continue
-        if NOT_A_RENDERING.search(extent):
-            continue
         last = 0
         for separator in [*RENDERING_SEPARATOR.finditer(extent), None]:
             end = separator.start() if separator else len(extent)
@@ -1096,9 +1092,9 @@ def anchor_category(lemma, anchor):
     return None
 
 
-def read_citations(record, tongue, read):
-    """Log what a unit's notes cite, note by note, as its source writes it
-    and as the edition numbers it."""
+def read_citations(record, tongue, read, books):
+    """Log what a unit's notes cite, note by note: as its source writes it,
+    as the edition numbers it, and as the edition prints it."""
     record(
         "read citations",
         dialect=tongue.name,
@@ -1113,6 +1109,7 @@ def read_citations(record, tongue, read):
                 ),
                 "numbering": citation.numbering,
                 "name": citation.name,
+                "printed": citations.printed(citation, books),
             }
             for key, found in read
             for citation in found
@@ -1121,7 +1118,22 @@ def read_citations(record, tongue, read):
     )
 
 
-def insert_marginal_notes(code, text, record, review, inventory):
+def cited(pieces, found, books, key, source):
+    """A note's pieces with its citations as the edition prints them, and
+    the note's text so, which its footnote must print.
+
+    The pieces must be the source's words, so that nothing but its citations
+    is changed.
+    """
+    require(
+        plain_text("".join(text for _, text in pieces)) == plain_text(source),
+        f"Note's pieces are not its source: {key}",
+    )
+    pieces = citations.normalized(pieces, found, books)
+    return pieces, "".join(text for _, text in pieces)
+
+
+def insert_marginal_notes(code, text, record, review, inventory, books):
     """Set the 1611 marginal notes on the Cambridge text as caller-free footnotes.
 
     Each note is anchored at George's lemma, or at the Cambridge words recorded
@@ -1180,19 +1192,16 @@ def insert_marginal_notes(code, text, record, review, inventory):
         position = outside_styles(text, start, start + words[first][1], key)
         source = note["note"]
         pieces = labelled_pieces(source)
-        read.append(
-            (
-                key,
-                citations.scan(
-                    "".join(text for _, text in pieces),
-                    tongue,
-                    verse_at(code, reference),
-                    key,
-                    inventory,
-                ),
-            )
+        found = citations.scan(
+            "".join(text for _, text in pieces),
+            tongue,
+            verse_at(code, reference),
+            key,
+            inventory,
         )
-        plain, styles, _, style = note_body(pieces, override.get("note"), key, source)
+        read.append((key, found))
+        pieces, printed = cited(pieces, found, books, key, source)
+        plain, styles, _, style = note_body(pieces, override.get("note"), key, printed)
         plain, styles = echoed(plain, styles, style, *echo(verse, words, span, glossed))
         entry = Entry(
             key,
@@ -1211,7 +1220,7 @@ def insert_marginal_notes(code, text, record, review, inventory):
                 review_entry(entry, verse, words[first][1], words, span, note["note"])
             )
     text = set_footnotes(text, entries)
-    read_citations(record, tongue, read)
+    read_citations(record, tongue, read, books)
     record(
         "insert 1611 translators' marginal notes (Calvin George's transcription)",
         source=sources.SOURCES["marginal_notes"]["file"],
@@ -1404,12 +1413,13 @@ def brenton_notes(code, text, inventory):
     return clean, result
 
 
-def restyle_brenton_notes(code, clean, found, record, review, merged):
+def restyle_brenton_notes(code, clean, found, record, review, merged, books):
     """Set Brenton's notes and cross-references as caller-free footnotes, each naming its lemma.
 
     Takes brenton_notes' text without notes and the notes found in it. A
     cross-reference becomes a footnote of "See" and its reference. The notes
-    whose keys are merged, which quotation links replace, are left out.
+    whose keys are merged, which quotation links replace, are left out. What
+    a note cites prints as the edition cites it.
     """
     exceptions = {
         k: v for k, v in BRENTON_NOTES["notes"].items() if k.split(" ")[0] == code
@@ -1431,8 +1441,9 @@ def restyle_brenton_notes(code, clean, found, record, review, merged):
             continue
         key, kind, position, source = note.key, note.kind, note.position, note.source
         exception = exceptions.get(key, {})
+        pieces, printed = cited(note.pieces, note.citations, books, key, source)
         plain, styles, alternative, style = note_body(
-            note.pieces, exception.get("note"), key, source
+            pieces, exception.get("note"), key, printed
         )
         verse = clean[note.start : note.end]
         words = word_spans(verse)

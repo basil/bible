@@ -97,30 +97,33 @@
         "Deut": "DEU",
         "1 Sam": "1SA",
         "Esai": "ISA",
-        "esay": "ISA",
-        "Zac": "ZEC",
-        "malach": "MAL",
-        "numb": "NUM",
         "2. Macc": "2MA"
       }
     }
   },
   "decisions": {
-    "JOS 8:29#2": {
-      "source": "vv. 30-35",
+    "1KI 13:26": {
+      "source": "verse 27",
       "unprinted": true,
-      "print": "verses 30–35",
-      "why": "The verses of the Hebrew's chapter, which the Greek sets after 9:2 and Brenton letters there."
+      "print": "verse 27",
+      "why": "The verse isn't in the Vatican text that Brenton translates; the note says where it is supplied from."
     },
-    "JDG 13:18": {
-      "source": "Is. 9. 6",
-      "numbering": "kjv",
-      "why": "The name that is wonderful is in the King James Bible's verse 6, which is Brenton's 5."
+    "1KI 15:31#2": {
+      "source": "Verse 32",
+      "unprinted": true,
+      "print": "Verse 32",
+      "why": "The verse isn't in the Vatican text that Brenton translates; the note says where it is supplied from."
     },
-    "1SA 2:10": {
-      "source": "Jer. 9. 24",
-      "numbering": "kjv",
-      "why": "'Let him that boasts boast in this' is the King James Bible's verse 24, which is Brenton's 23."
+    "1KI 16:28d": {
+      "source": "1 Kings 22. 46-50",
+      "unprinted": true,
+      "print": "1 Kings 22:46–50",
+      "why": "The note cites the Authorized Version by name, and so by its name for the book and its numbers: these verses of it stand here in the Greek."
+    },
+    "1KI 5:30": {
+      "source": "Heb. 300",
+      "not_a_citation": true,
+      "why": "The Hebrew's number of the officers, not a chapter of Hebrews."
     },
     "1SA 17:40": {
       "source": "Verse 41",
@@ -140,16 +143,16 @@
       "print": "Verses 55 to 58",
       "why": "The verse isn't in the Vatican text that Brenton translates; the note says where it is supplied from."
     },
-    "1SA 18:8": {
-      "source": "v 11",
-      "unprinted": true,
-      "print": "verse 11",
-      "why": "The verse isn't in the Vatican text that Brenton translates; the note says where it is supplied from."
-    },
     "1SA 18:16": {
       "source": "vv 17-19",
       "unprinted": true,
       "print": "Verses 17–19",
+      "why": "The verse isn't in the Vatican text that Brenton translates; the note says where it is supplied from."
+    },
+    "1SA 18:8": {
+      "source": "v 11.",
+      "unprinted": true,
+      "print": "verse 11",
       "why": "The verse isn't in the Vatican text that Brenton translates; the note says where it is supplied from."
     },
     "1SA 23:11#2": {
@@ -158,28 +161,71 @@
       "print": "Verse 12",
       "why": "The verse isn't in the Vatican text that Brenton translates; the note says where it is supplied from."
     },
-    "1KI 5:30": {
-      "source": "Heb. 300",
-      "not_a_citation": true,
-      "why": "The Hebrew's number of the officers, not a chapter of Hebrews."
+    "1SA 2:10": {
+      "source": "Jer. 9. 24",
+      "numbering": "kjv",
+      "why": "'Let him that boasts boast in this' is the King James Bible's verse 24, which is Brenton's 23."
     },
-    "1KI 13:26": {
-      "source": "verse 27",
-      "unprinted": true,
-      "print": "verse 27",
-      "why": "The verse isn't in the Vatican text that Brenton translates; the note says where it is supplied from."
+    "ISA 26:19": {
+      "source": "Ps. 110",
+      "numbering": "hebrew",
+      "why": "The dew of the morning is in the Hebrew's Psalm 110:3, which is Brenton's 109."
     },
-    "1KI 15:31#2": {
-      "source": "Verse 32",
-      "unprinted": true,
-      "print": "Verse 32",
-      "why": "The verse isn't in the Vatican text that Brenton translates; the note says where it is supplied from."
+    "ISA 2:6": {
+      "source": "ISAIAH 2. 6",
+      "passages": "ISA 2:6",
+      "print": "{BOOK} 2:6",
+      "why": "eBible quotes the heading of Brenton's appendix, which is in capitals."
     },
-    "1KI 16:28d": {
-      "source": "1 Kings 22. 46-50",
+    "ISA 34:11": {
+      "source": "13. 22",
+      "passages": "ISA 13:22",
+      "print": "13:22",
+      "why": "Above, in this book: Brenton names no book."
+    },
+    "ISA 43:17": {
+      "source": "Ps. 75. 5,6",
+      "numbering": "kjv-verses",
+      "why": "Brenton gives the Greek psalm's number and the English verse's: he counts the title, and the verse he means is one later."
+    },
+    "JDG 13:18": {
+      "source": "Is. 9. 6",
+      "numbering": "kjv",
+      "why": "The name that is wonderful is in the King James Bible's verse 6, which is Brenton's 5."
+    },
+    "JOS 8:29#2": {
+      "source": "vv. 30-35",
       "unprinted": true,
-      "print": "1 Kings 22:46–50",
-      "why": "The note cites the Authorized Version by name, and so by its name for the book and its numbers: these verses of it stand here in the Greek."
+      "print": "verses 30–35",
+      "why": "The verses of the Hebrew's chapter, which the Greek sets after 9:2 and Brenton letters there."
+    },
+    "LUK 1:78 day spring": {
+      "source": "Zac. 3.8 esay 11.1 malach. 4.2. numb. 24.17",
+      "passages": "ZEC 3:8; ISA 11:1; MAL 4:2; NUM 24:17",
+      "print": "{ZEC} 3:8; {ISA} 11:1; {MAL} 4:2; {NUM} 24:17",
+      "why": "The margin of 1611 runs the four together, with one stop between them; they are set apart as citations are."
+    },
+    "PRO 11:31": {
+      "source": "1 Pet.",
+      "passages": "1PE 4:18",
+      "print": "{1PE}",
+      "why": "Brenton names the book alone, which prints under its name; the verse that quotes this one is 4:18."
+    },
+    "PRO 1:15": {
+      "source": "ver 16",
+      "unprinted": true,
+      "print": "verse 16",
+      "why": "The verse isn't in the Greek; Brenton's appendix supplies it."
+    },
+    "PRO 1:33": {
+      "source": "Ps. 16",
+      "numbering": "hebrew",
+      "why": "'My flesh shall rest in hope' is in the Hebrew's Psalm 16, which is Brenton's 15."
+    },
+    "PSA 131:18": {
+      "source": "Ps. 88. 39",
+      "numbering": "kjv-verses",
+      "why": "Brenton gives the Greek psalm's number and the English verse's: he counts the title, and the verse he means is one later."
     },
     "PSA 43:9": {
       "source": "Ps. 106",
@@ -203,44 +249,6 @@
     },
     "PSA 91:11": {
       "source": "Ps. 88. 20",
-      "numbering": "kjv-verses",
-      "why": "Brenton gives the Greek psalm's number and the English verse's: he counts the title, and the verse he means is one later."
-    },
-    "PSA 131:18": {
-      "source": "Ps. 88. 39",
-      "numbering": "kjv-verses",
-      "why": "Brenton gives the Greek psalm's number and the English verse's: he counts the title, and the verse he means is one later."
-    },
-    "PRO 1:15": {
-      "source": "ver 16",
-      "unprinted": true,
-      "print": "verse 16",
-      "why": "The verse isn't in the Greek; Brenton's appendix supplies it."
-    },
-    "PRO 1:33": {
-      "source": "Ps. 16",
-      "numbering": "hebrew",
-      "why": "'My flesh shall rest in hope' is in the Hebrew's Psalm 16, which is Brenton's 15."
-    },
-    "ISA 2:6": {
-      "source": "ISAIAH 2. 6",
-      "passages": "ISA 2:6",
-      "print": "{BOOK} 2:6",
-      "why": "eBible quotes the heading of Brenton's appendix, which is in capitals."
-    },
-    "ISA 26:19": {
-      "source": "Ps. 110",
-      "numbering": "hebrew",
-      "why": "The dew of the morning is in the Hebrew's Psalm 110:3, which is Brenton's 109."
-    },
-    "ISA 34:11": {
-      "source": "13. 22",
-      "passages": "ISA 13:22",
-      "print": "13:22",
-      "why": "Above, in this book: Brenton names no book."
-    },
-    "ISA 43:17": {
-      "source": "Ps. 75. 5,6",
       "numbering": "kjv-verses",
       "why": "Brenton gives the Greek psalm's number and the English verse's: he counts the title, and the verse he means is one later."
     }
