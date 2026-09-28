@@ -272,7 +272,7 @@
       "id": "MAN",
       "source": "brenton",
       "section": "old_testament",
-      "title": "The Prayer of Manasses King of Juda, When He Was Holden Captive in Babylon",
+      "title": "The Prayer of Manasses King of Judah, When He Was Holden Captive in Babylon",
       "abbreviation": "Prayer of Manass.",
       "heading": [
         [
@@ -285,7 +285,7 @@
         ],
         [
           "mt2",
-          "King of Juda,"
+          "King of Judah,"
         ],
         [
           "mt3",
@@ -535,8 +535,8 @@
       "id": "HOS",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Osee",
-      "abbreviation": "Os."
+      "title": "Hosea",
+      "short_title": "Hosea"
     },
     {
       "id": "AMO",
@@ -563,7 +563,9 @@
       "id": "OBA",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Obdias"
+      "title": "Abdias",
+      "short_title": "Abdias",
+      "abbreviation": "Abd."
     },
     {
       "id": "JON",
@@ -576,14 +578,17 @@
       "id": "NAM",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Naum",
-      "abbreviation": "Naum"
+      "title": "Nahum",
+      "short_title": "Nahum",
+      "abbreviation": "Nahum"
     },
     {
       "id": "HAB",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Ambacum"
+      "title": "Abbacum",
+      "short_title": "Abbacum",
+      "abbreviation": "Abb."
     },
     {
       "id": "ZEP",
@@ -596,7 +601,8 @@
       "id": "HAG",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Aggæus"
+      "title": "Aggæus",
+      "abbreviation": "Agg."
     },
     {
       "id": "ZEC",
@@ -671,7 +677,8 @@
       "id": "LJE",
       "source": "brenton",
       "section": "old_testament",
-      "title": "The Epistle of Jeremy"
+      "title": "The Epistle of Jeremias",
+      "short_title": "Epistle of Jeremias"
     },
     {
       "id": "EZK",

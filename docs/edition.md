@@ -14,7 +14,7 @@ The [README](../README.md) describes what's in this Bible. This page explains wh
 
 The Old Testament follows the [Church of Greece's list of books](https://apostoliki-diakonia.gr/bible/zacharias/). The books that English Bibles set apart as the Apocrypha stay in their places: the Prayer of Manasses follows 2 Chronicles, 4 Maccabees follows 3 Maccabees, and Psalm 151 and the additions to Esther and Daniel stay where Brenton put them.
 
-Brenton's book names are kept, except that the Orthodox names are used for Jesus, the Son of Navi; 1–4 Kingdoms; the Song of Songs; the Lamentations of Jeremias; Ezekiel; and Michaias. Numbered books put the number first, as in "1 Chronicles".
+Brenton's book names are kept, except that the Orthodox names are used for Jesus, the Son of Navi; 1–4 Kingdoms; the Song of Songs; the Lamentations of Jeremias; the Epistle of Jeremias; Ezekiel; Michaias; Abdias; and Abbacum, and the familiar English names for Hosea and Nahum. Numbered books put the number first, as in "1 Chronicles".
 
 `edition/manifest.json` sets the order and names. Each book, and each piece of front matter or appendix that the edition renames, can have:
 

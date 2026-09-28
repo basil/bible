@@ -44,7 +44,7 @@ REVISED_TITLES = {
     "2KI": "The Fourth Book of Kingdoms, Otherwise Called, The Second Book of the Kings",
     "1CH": "The First Book of the Chronicles",
     "2CH": "The Second Book of the Chronicles",
-    "MAN": "The Prayer of Manasses King of Juda, When He Was Holden Captive in Babylon",
+    "MAN": "The Prayer of Manasses King of Judah, When He Was Holden Captive in Babylon",
     "1ES": "The First Book of Esdras",
     "EZR": "The Second Book of Esdras",
     "NEH": "The Book of Nehemias",
@@ -53,8 +53,12 @@ REVISED_TITLES = {
     "SNG": "The Song of Songs",
     "WIS": "The Wisdom of Solomon",
     "SIR": "The Wisdom of Jesus, the Son of Sirach, or, Ecclesiasticus",
+    "HOS": "Hosea",
+    "OBA": "Abdias",
+    "NAM": "Nahum",
+    "HAB": "Abbacum",
     "LAM": "The Lamentations of Jeremias",
-    "LJE": "The Epistle of Jeremy",
+    "LJE": "The Epistle of Jeremias",
     "1MA": "The First Book of the Maccabees",
     "2MA": "The Second Book of the Maccabees",
     "3MA": "The Third Book of the Maccabees",
@@ -226,6 +230,18 @@ def test_brenton_title(archives, unit):
         source_usfm(unit, archives), "toc1"
     )
     assert unit["title"] == expected
+
+
+def test_inherited_running_heads_name_the_book(archives):
+    # A renamed book needs its own short_title, or its running heads keep
+    # Brenton's name, as Osee over a book titled Hosea.
+    stale = [
+        unit["id"]
+        for unit in BRENTON_UNITS
+        if "short_title" not in unit
+        and source_marker(source_usfm(unit, archives), "toc2") not in unit["title"]
+    ]
+    assert not stale
 
 
 @pytest.mark.parametrize("unit", UNITS, ids=lambda u: u["id"])
