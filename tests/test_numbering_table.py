@@ -19,7 +19,6 @@ import re
 import pytest
 
 from bible import edition, paths, quotations, versification
-from bible.crossrefs import _alias_key, _aliases
 from bible.references import EDITION, Passage, parse_passage
 from bible.alignment import Verses
 
@@ -56,7 +55,8 @@ def table(archives, introduction):
     """The table's psalm rows, as chapter lists, and its other rows, by verse."""
     names = edition.books(archives).names
     brenton_codes = {name: code for code, name in names.items()}
-    kjv_codes = _aliases(archives)
+    kjv_names = edition.kjv_books(archives).names
+    kjv_codes = {name: code for code, name in kjv_names.items()}
     psalms, verses = [], {}
     for brenton, kjv in re.findall(
         r"^\\tr \\tc1 (.+?) \\tc2 (.+)$", introduction, re.M
@@ -73,7 +73,7 @@ def table(archives, introduction):
             )
             continue
         code = brenton_codes[name]
-        assert kjv_codes[_alias_key(kjv_name)] == code, kjv
+        assert kjv_codes[kjv_name] == code, kjv
         passage = parse_passage(
             f"{code} {chapter}:{first}" + (f"-{last}" if last else "")
         )

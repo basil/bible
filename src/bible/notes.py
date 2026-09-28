@@ -20,9 +20,10 @@ import itertools
 import re
 import unicodedata
 
-from bible import paths, sources
+from bible import citations, paths, sources
 from bible.checks import require
 from bible.files import read_json
+from bible.references import verse_at
 from bible.typography import GREEK, HEBREW
 from bible.usfm import canonical_text, plain_text, verse_spans, word_spans, words_of
 
@@ -320,7 +321,7 @@ def marginal_notes():
         text.count("\nMatthew 1:11 ") == 1,
         "Marginal notes New Testament boundary changed",
     )
-    books = KJV_NOTES["books"]
+    books = citations.DATA["dialects"]["george"]["entries"]
     entry_pattern = re.compile(
         "(" + "|".join(map(re.escape, books)) + r") (\d+):(\d+) (.+?): (.+)"
     )
@@ -1095,7 +1096,32 @@ def anchor_category(lemma, anchor):
     return None
 
 
-def insert_marginal_notes(code, text, record, review=None):
+def read_citations(record, tongue, read):
+    """Log what a unit's notes cite, note by note, as its source writes it
+    and as the edition numbers it."""
+    record(
+        "read citations",
+        dialect=tongue.name,
+        citations=[
+            {
+                "key": key,
+                "source": citation.source,
+                "cites": " ".join(
+                    [citation.book, *map(str, citation.passages)]
+                    if not citation.passages
+                    else map(str, citation.passages)
+                ),
+                "numbering": citation.numbering,
+                "name": citation.name,
+            }
+            for key, found in read
+            for citation in found
+        ],
+        decided=[key for key, _ in read if citations.decisions(key)],
+    )
+
+
+def insert_marginal_notes(code, text, record, review, inventory):
     """Set the 1611 marginal notes on the Cambridge text as caller-free footnotes.
 
     Each note is anchored at George's lemma, or at the Cambridge words recorded
@@ -1110,6 +1136,8 @@ def insert_marginal_notes(code, text, record, review=None):
     require("\\f " not in text, f"Cambridge text already has footnotes: {code}")
     spans = {reference: (start, end) for reference, start, end in verse_spans(text)}
     entries = []
+    tongue = citations.dialect("george")
+    read = []
     for note in notes:
         key = note["key"]
         override = KJV_NOTES["notes"].get(key, {})
@@ -1151,9 +1179,20 @@ def insert_marginal_notes(code, text, record, review=None):
             first = span[0]
         position = outside_styles(text, start, start + words[first][1], key)
         source = note["note"]
-        plain, styles, _, style = note_body(
-            labelled_pieces(source), override.get("note"), key, source
+        pieces = labelled_pieces(source)
+        read.append(
+            (
+                key,
+                citations.scan(
+                    "".join(text for _, text in pieces),
+                    tongue,
+                    verse_at(code, reference),
+                    key,
+                    inventory,
+                ),
+            )
         )
+        plain, styles, _, style = note_body(pieces, override.get("note"), key, source)
         plain, styles = echoed(plain, styles, style, *echo(verse, words, span, glossed))
         entry = Entry(
             key,
@@ -1172,6 +1211,7 @@ def insert_marginal_notes(code, text, record, review=None):
                 review_entry(entry, verse, words[first][1], words, span, note["note"])
             )
     text = set_footnotes(text, entries)
+    read_citations(record, tongue, read)
     record(
         "insert 1611 translators' marginal notes (Calvin George's transcription)",
         source=sources.SOURCES["marginal_notes"]["file"],
@@ -1304,10 +1344,13 @@ class SourceNote:
     end: int
     position: int  # in the text without notes
     source: str  # a cross-reference is "See" and its reference
+    pieces: list  # the source as (kind, text) pieces
+    citations: list  # what it cites, by their place in the pieces' text
 
 
-def brenton_notes(code, text):
-    """The text without Brenton's notes and cross-references, and each of them keyed."""
+def brenton_notes(code, text, inventory):
+    """The text without Brenton's notes and cross-references, and each of them
+    keyed, with what it cites read."""
     found = []
     removed = 0
     for match in BRENTON_NOTE.finditer(text):
@@ -1323,6 +1366,7 @@ def brenton_notes(code, text):
     span_starts = [start for _, start, _ in spans]
     seen = Counter()
     result = []
+    tongue = citations.dialect("brenton")
     for position, kind, source_reference, body in found:
         # A note just after a verse number stands before the space its span skips.
         ahead = re.compile(r"\s*").match(clean, position).end()
@@ -1334,15 +1378,27 @@ def brenton_notes(code, text):
             f"Note reference disagrees with its verse: {code} {source_reference}",
         )
         seen[reference] += 1
+        key = note_key(code, reference, seen[reference])
+        source = body if kind == "f" else "See " + body
+        pieces = brenton_pieces(source)
+        cited = citations.scan(
+            "".join(text for _, text in pieces),
+            tongue,
+            verse_at(code, reference),
+            key,
+            inventory,
+        )
         result.append(
             SourceNote(
-                note_key(code, reference, seen[reference]),
+                key,
                 kind,
                 reference,
                 start,
                 end,
                 max(position, start),
-                body if kind == "f" else "See " + body,
+                source,
+                pieces,
+                cited,
             )
         )
     return clean, result
@@ -1376,7 +1432,7 @@ def restyle_brenton_notes(code, clean, found, record, review, merged):
         key, kind, position, source = note.key, note.kind, note.position, note.source
         exception = exceptions.get(key, {})
         plain, styles, alternative, style = note_body(
-            brenton_pieces(source), exception.get("note"), key, source
+            note.pieces, exception.get("note"), key, source
         )
         verse = clean[note.start : note.end]
         words = word_spans(verse)

@@ -127,6 +127,16 @@ def books(archives):
     )
 
 
+def kjv_books(archives):
+    """The King James Bible's books, in its order, under its own names for
+    them, which a reader's other Bible has."""
+    return Books(
+        (code, source_marker(text, "toc2"))
+        for code, text in archives["kjv"].items()
+        if re.search(r"^\\toc2\s", text, re.M)
+    )
+
+
 def heading_lines(entry, names):
     """The mt lines printed over a book, as (marker, text) pairs.
 

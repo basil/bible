@@ -20,10 +20,11 @@ used.
 
 import functools
 
-from bible import paths
+from bible import edition, paths
 from bible.checks import require
 from bible.files import read_json
 from bible.references import Verse, parse_passage, parse_passages, runs
+from bible.usfm import inventory
 
 DATA = read_json(paths.EDITION_DIR / "versification.json")
 EXCEPTIONS = read_json(paths.EDITION_DIR / "quotations.json")["lxx_to_edition"]
@@ -39,6 +40,12 @@ def kjv_book(code):
     """The King James Old Testament's code for one of the edition's books."""
     require(code in DATA["old_testament"], f"No King James counterpart: {code}")
     return DATA["books"].get(code, code)
+
+
+@functools.cache
+def kjv_books():
+    """The edition's code for each book of the King James Old Testament."""
+    return {kjv_book(code): code for code in DATA["old_testament"]}
 
 
 def verses(passages):
@@ -173,6 +180,44 @@ def new_chapters(code):
             f"Relabelling that opens no chapter: {source}",
         )
         found.append((labels, targets, printed["opens"]))
+    return found
+
+
+def edition_inventory(archives):
+    """Every printed book's chapters and verse labels, as preparation will
+    print them, from the sources and what the edition does to their labels:
+    the chapters it selects and numbers from 1, Susanna and Bel and the
+    Dragon beside Daniel, and the verses it relabels.
+
+    Known before any book is prepared, so that a citation read while one is
+    can be held to the verses of another.
+    """
+    found = {}
+    for unit in edition.MANIFEST["scripture"]:
+        code = unit["id"]
+        source = archives[unit["source"]]
+        chapters = inventory(source[edition.source_id(unit)])["chapters"]
+        if "chapters" in unit:
+            first, last = unit["chapters"]
+            chapters = {
+                str(int(chapter) - first + 1): labels
+                for chapter, labels in chapters.items()
+                if first <= int(chapter) <= last
+            }
+        elif code == edition.DANIEL_PARTS[1]:
+            susanna, bel = (
+                inventory(source[part])["chapters"]["1"]
+                for part in (edition.DANIEL_PARTS[0], edition.DANIEL_PARTS[2])
+            )
+            chapters = {"0": susanna, **chapters, str(len(chapters) + 1): bel}
+        chapters = {chapter: list(labels) for chapter, labels in chapters.items()}
+        for label, printed in relabelled().items():
+            if label.book == code:
+                chapters[str(label.chapter)].remove(str(label.number))
+                chapters.setdefault(str(printed.chapter), []).append(
+                    str(printed.number)
+                )
+        found[code] = chapters
     return found
 
 

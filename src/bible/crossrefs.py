@@ -6,9 +6,8 @@ import re
 
 from bible import edition, quotations
 from bible.checks import require
-from bible.edition import BOOK_NAME_MARKERS
-from bible.references import EDITION, VERSE_LABEL, Verse
-from bible.usfm import book_header, marker_lines, verse_spans
+from bible.references import EDITION, VERSE_LABEL
+from bible.usfm import verse_spans
 from bible.versification import mapped_passages
 
 # The printed glosses, by Turpie's class. C.I, which differs from the agreeing
@@ -115,72 +114,21 @@ def quotation_links(archives):
     return planned_links(quotations.reviewed_rows(), edition.books(archives))
 
 
-def _alias_key(name):
-    return re.sub(r"[^a-z0-9]", "", name.casefold())
+def bare(note):
+    """Whether a note is nothing but "See" and what it cites: only such a
+    note can be merged whole, since merging drops the note."""
+    plain = "".join(text for _, text in note.pieces)
+    for citation in reversed(note.citations):
+        plain = plain[: citation.start] + plain[citation.end :]
+    return bool(note.citations) and re.fullmatch(r"\s*[Ss]ee[\s;.]*", plain) is not None
 
 
-def _aliases(archives):
-    """Each KJV book's code, running head and abbreviation, as Brenton's notes cite it."""
-    result = {}
-    markers = (BOOK_NAME_MARKERS["short_title"], BOOK_NAME_MARKERS["abbreviation"])
-    for code, source in archives["kjv"].items():
-        # The names are in the book's header, before its first chapter.
-        names = [code, *(n for _, n in marker_lines(book_header(source), markers))]
-        for name in names:
-            key = _alias_key(name)
-            # A name shared by two books would silently cite the later one.
-            require(
-                result.get(key, code) == code, f"KJV book name is ambiguous: {name}"
-            )
-            result[key] = code
-    return result
-
-
-# Each item of a list is a verse or one range, so "6-9-11" isn't read.
-VERSE_LIST = r"\d+(?:\s*-\s*\d+)?(?:\s*,\s*\d+(?:\s*-\s*\d+)?)*"
-
-
-def _reference_verses(chunk, aliases):
-    """The verses one reference names, as "Heb. 2. 6-9" or "Rom. 4. 7,8", or None."""
-    item = re.fullmatch(rf"\s*(.+?)\s+(\d+)\.\s*({VERSE_LIST})[\s.,]*", chunk)
-    if not item or _alias_key(item[1]) not in aliases:
+def cited_verses(note):
+    """Every verse a note cites, or None if it cites what names no verse, as
+    a chapter."""
+    if not all(citation.passages for citation in note.citations):
         return None
-    code, chapter = aliases[_alias_key(item[1])], int(item[2])
-    verses = []
-    for part in item[3].split(","):
-        first, _, last = part.partition("-")
-        first, last = int(first), int(last or first)
-        if last < first:
-            return None
-        verses += [Verse(code, chapter, v) for v in range(first, last + 1)]
-    return verses
-
-
-def _note_references(source, aliases):
-    """Each reference of a bare Brenton See note, as its verses.
-
-    Only a note that is nothing but "See" and its references qualifies, since
-    merging drops the whole note. A reference may name a verse, a range, or a
-    list, as "Heb. 2. 6-9" or "Rom. 4. 7,8".
-    """
-    match = re.fullmatch(r"\s*(?:\\ft )?[Ss]ee \\xt ([^\\]*?)\.?\s*", source)
-    if not match:
-        return None
-    # As _cited_verses reads them, so a stray semicolon doesn't unmake a bare note.
-    chunks = filter(str.strip, match[1].split(";"))
-    result = [_reference_verses(chunk, aliases) for chunk in chunks]
-    return None if None in result else result
-
-
-def _cited_verses(source, aliases):
-    """Every verse any note cites, bare or not, or None if a reference is unreadable."""
-    result = []
-    for span in re.findall(r"\\xt ([^\\]*)", source):
-        for chunk in filter(str.strip, span.split(";")):
-            if (verses := _reference_verses(chunk, aliases)) is None:
-                return None
-            result += verses
-    return result
+    return [verse for citation in note.citations for verse in citation.verses]
 
 
 def _link_usfm(link):
@@ -193,12 +141,12 @@ def _link_usfm(link):
     return marker + "\\x*"
 
 
-def merged_notes(code, found, links, archives, record):
+def merged_notes(code, found, links, record):
     """The keys of Brenton's See notes that the links at their verses replace.
 
     Read from brenton_notes, before restyling, so a merged note is never
-    restyled and needs no exception. A note of one reference, a verse, range or
-    list, all of whose verses a link at its verse names, is merged. A note of
+    restyled and needs no exception. A note of one citation, of a verse, range
+    or list, all of whose verses a link at its verse names, is merged. A note of
     several references, or one naming a verse no link there names, needs a
     reviewed decision: to preserve it, or to merge it naming what it drops.
     """
@@ -211,7 +159,6 @@ def merged_notes(code, found, links, archives, record):
                 nt_rows[link["origin"].label][verse].update(link["row_ids"])
     if not nt_rows:
         return frozenset()
-    aliases = _aliases(archives)
     decisions = quotations.DECISIONS["note_merges"]
     used_decisions = set()
     merges = []
@@ -219,18 +166,17 @@ def merged_notes(code, found, links, archives, record):
         if not (linked := nt_rows.get(note.reference)):
             continue
         # A note that cites a linked verse among other words, or cites what
-        # can't be read, needs a decision too, lest it print beside its link.
-        named = _cited_verses(note.source, aliases)
+        # names no verse, needs a decision too, lest it print beside its link.
+        named = cited_verses(note)
         if named is not None and not set(named) & set(linked):
             continue
-        references = _note_references(note.source, aliases)
         dropped = [str(verse) for verse in named or () if verse not in linked]
         if decision := decisions.get(note.key):
             used_decisions.add(note.key)
             action = decision["action"]
             require(
                 named is not None or action == "preserve",
-                f"Merge decision for a note with an unreadable reference: {note.key}",
+                f"Merge decision for a note that names no verse: {note.key}",
             )
             # A merge loses no reference unless its decision says which.
             require(
@@ -239,7 +185,7 @@ def merged_notes(code, found, links, archives, record):
             )
         else:
             require(
-                references is not None and len(references) == 1 and not dropped,
+                bare(note) and len(note.citations) == 1 and not dropped,
                 f"Brenton cross-reference needs a merge decision: {note.key}",
             )
             action = "merge"

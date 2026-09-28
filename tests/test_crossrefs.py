@@ -10,8 +10,9 @@ from bible.crossrefs import (
     LINK_OPERATION,
     MERGE_OPERATION,
     _link_usfm,
-    _note_references,
     apply_links,
+    bare,
+    cited_verses,
     planned_links,
 )
 from bible.edition import scripture_unit as unit
@@ -110,7 +111,7 @@ def test_merged_note_cannot_keep_a_note_exception(archives, patched):
 def test_merged_note_cannot_keep_a_correction(archives, patched):
     patched(notes, "BRENTON_NOTES")["corrections"]["ISA 1:9"] = {
         "from": r"\xt Rom. 9. 29.",
-        "to": r"\xt Rom. 9.  29.",
+        "to": r"\xt Rom. 9. 29",
         "why": "x",
     }
     with pytest.raises(
@@ -124,7 +125,7 @@ def test_merged_note_cannot_keep_a_correction_under_its_source_label(archives, p
     # edition prints as 4:5.
     patched(notes, "BRENTON_NOTES")["corrections"]["MAL 3:23"] = {
         "from": r"\xt Luke 1. 17.",
-        "to": r"\xt Luke 1.  17.",
+        "to": r"\xt Luke 1. 17",
         "why": "x",
     }
     link = brenton_link("MAL 4:5", "LUK 1:17", "Luke 1:17")
@@ -334,32 +335,54 @@ def test_passage_mapped_across_chapters_prints_as_ranges(patched):
     }
 
 
-def test_only_a_bare_see_note_is_read_as_references(archives):
-    aliases = crossrefs._aliases(archives)
-    [reference] = _note_references(r"See \xt Rom. 9. 29.", aliases)
-    assert written(reference) == ["ROM 9:29"]
-    references = _note_references(r"\ft See \xt Heb. 2. 6-9; Rom. 4. 7,8.", aliases)
-    assert list(map(written, references)) == [
+def note(body, archives, kind="f"):
+    """A note of Isaias 1:9 as eBible would have it, read."""
+    origin = "fr" if kind == "f" else "xo"
+    text = (
+        "\\c 1\n\\p\n\\v 9 And if "
+        + f"\\{kind} + \\{origin} 1:9 {body}\\{kind}*"
+        + "the Lord.\n"
+    )
+    inventory = versification.edition_inventory(archives)
+    _, [found] = notes.brenton_notes("ISA", text, inventory)
+    return found
+
+
+def test_only_a_bare_see_note_can_be_merged_whole(archives):
+    assert bare(note(r"\xt Rom. 9. 29.", archives, "x"))
+    several = note(r"\ft See \xt Heb. 2. 6-9; Rom. 4. 7,8.", archives)
+    assert bare(several)
+    assert [written(citation.verses) for citation in several.citations] == [
         ["HEB 2:6", "HEB 2:7", "HEB 2:8", "HEB 2:9"],
         ["ROM 4:7", "ROM 4:8"],
     ]
-    glossed = r"\ft Gr. \fqa seed\ft ; see \xt Rom. 9. 29"
-    assert _note_references(glossed, aliases) is None
-    assert _note_references(r"\ft See \xt Mat. 12. 18, \ft etc.", aliases) is None
-    # A run of dashes is no range, and is refused rather than misread.
-    assert _note_references(r"See \xt Heb. 2. 6-9-11", aliases) is None
+    assert not bare(note(r"\ft Gr. \fqa seed\ft ; see \xt Rom. 9. 29", archives))
+    assert not bare(note(r"\ft See \xt Mat. 12. 18, \ft etc.", archives))
+    assert not bare(note(r"\ft Gr. \fqa seed", archives))
 
 
-def test_every_reference_of_a_note_is_read(archives):
-    aliases = crossrefs._aliases(archives)
+def test_every_citation_of_a_note_is_read(archives):
     source = r"\xt Rom. 10. 15. \ft See also \xt Joel 2. 2.,\ft the morning"
-    assert written(crossrefs._cited_verses(source, aliases)) == [
-        "ROM 10:15",
-        "JOL 2:2",
-    ]
-    cited = crossrefs._cited_verses(r"\ft See \xt Mat. 12. 18, \ft etc.", aliases)
+    assert written(cited_verses(note(source, archives))) == ["ROM 10:15", "JOL 2:2"]
+    cited = cited_verses(note(r"\ft See \xt Mat. 12. 18, \ft etc.", archives))
     assert written(cited) == ["MAT 12:18"]
-    assert crossrefs._cited_verses(r"\ft See \xt Nowhere 1. 1", aliases) is None
+    # One that eBible doesn't mark is read as well.
+    assert written(cited_verses(note(r"\ft See 1 Cor 2. 16.", archives))) == [
+        "1CO 2:16"
+    ]
+    # A chapter names no verse.
+    assert cited_verses(note(r"\ft See \xt Gen. 43.", archives)) is None
+
+
+def test_a_citation_that_cannot_be_read_is_refused(archives):
+    with pytest.raises(CheckFailed, match=r"can't be read: ISA 1:9 \(1. 1\)"):
+        note(r"\ft See \xt Nowhere 1. 1", archives)
+    # Nor is a verse the edition doesn't print, however well it is written.
+    with pytest.raises(CheckFailed, match=r"doesn't print: ISA 1:9"):
+        note(r"\ft See \xt Heb. 2. 6-99", archives)
+    # A run of dashes is no range, and is refused rather than misread.
+    with pytest.raises(CheckFailed, match=r"can't be read: ISA 1:9"):
+        note(r"\ft See \xt Heb. 2. 6-9-11", archives)
 
 
 def test_a_glossed_note_citing_a_link_needs_a_decision(archives, patched):
@@ -375,18 +398,20 @@ def test_a_glossed_note_citing_a_link_needs_a_decision(archives, patched):
     assert r"\xt Rev. 2. 27" in linked
 
 
-def test_an_unreadable_reference_can_only_be_preserved(archives, with_source, patched):
+def test_a_note_that_names_no_verse_can_only_be_preserved(
+    archives, with_source, patched
+):
     damaged = with_source(
         "brenton",
         "ISA",
-        lambda t: t.replace(r"\xt Rom. 9. 29", r"\xt Rom. 9. 29; Q. 1. 1", 1),
+        lambda t: t.replace(r"\xt Rom. 9. 29", r"\xt Rom. 9. 29; Gen. 43", 1),
     )
     decisions = patched(quotations, "DECISIONS")["note_merges"]
     decisions.clear()
     with pytest.raises(CheckFailed, match="needs a merge decision: ISA 1:9"):
         scripture_text(unit("ISA"), damaged, links={"ISA": [isaiah_link()]})
     decisions["ISA 1:9"] = {"action": "merge", "why": "x"}
-    with pytest.raises(CheckFailed, match="unreadable reference: ISA 1:9"):
+    with pytest.raises(CheckFailed, match="names no verse: ISA 1:9"):
         scripture_text(unit("ISA"), damaged, links={"ISA": [isaiah_link()]})
 
 

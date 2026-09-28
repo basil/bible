@@ -78,7 +78,12 @@ def with_source(archives):
 @pytest.fixture(autouse=True)
 def fresh_versification():
     # Tests may patch the file the maps are read from.
-    caches = (versification._maps, versification.apocryphal, versification.relabelled)
+    caches = (
+        versification._maps,
+        versification.apocryphal,
+        versification.relabelled,
+        versification.kjv_books,
+    )
     for cache in caches:
         cache.cache_clear()
     yield

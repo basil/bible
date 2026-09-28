@@ -5,7 +5,7 @@ build/validation.json."""
 
 import difflib
 
-from bible import edition, introductions, notes, paths
+from bible import citations, edition, introductions, notes, paths
 from bible.checks import require
 from bible.crossrefs import quotation_links
 from bible.edition import brenton_source_use, scripture_unit, source_id
@@ -140,6 +140,19 @@ def validate():
     # stands for prints and that the note merge decisions are used. The build
     # and the notes review use what it prepares.
     scripture = prepared_scripture(archives, links)
+    # A decision on a citation is met where its note is read, and a dialect's
+    # name for a book where a citation uses it; one that nothing meets would
+    # go unused unnoticed.
+    decisions, names = citations.unused(
+        [
+            operation
+            for unit in scripture.values()
+            for operation in unit.transformations
+            if operation["operation"] == "read citations"
+        ]
+    )
+    require(not decisions, f"Unused citation decisions: {decisions}")
+    require(not names, f"Unused names for books: {names}")
     source_use = brenton_source_use()
     # Explain the overlapping witness without modifying either original file.
     nehemias = scripture_unit("NEH")

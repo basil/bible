@@ -66,7 +66,8 @@ class Texts:
 def _best(words, index, others, weight):
     """The verse among the others that a verse's words pick out, and its score."""
     candidates = collections.Counter()
-    for word in words:
+    # In the words' own order, so that verses that tie are taken alike each time.
+    for word in sorted(words):
         found = index.get(word, ())
         if len(found) <= COMMON:
             for other in found:
@@ -82,10 +83,11 @@ def _best(words, index, others, weight):
 
 
 def _index(words, verses):
-    index = collections.defaultdict(set)
+    """The verses that have each word, in their book's order."""
+    index = collections.defaultdict(list)
     for verse in verses:
         for word in words[verse]:
-            index[word].add(verse)
+            index[word].append(verse)
     return index
 
 

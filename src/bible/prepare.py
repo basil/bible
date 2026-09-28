@@ -9,7 +9,7 @@ Every change is logged through a recorder into build/<mode>/transformations.json
 import re
 from dataclasses import dataclass
 
-from bible import edition, introductions, versification
+from bible import citations, edition, introductions, versification
 from bible.checks import require
 from bible.crossrefs import apply_links, merged_notes
 from bible.edition import (
@@ -25,6 +25,7 @@ from bible.notes import (
     brenton_notes,
     corrected_brenton,
     insert_marginal_notes,
+    read_citations,
     restyle_brenton_notes,
 )
 from bible.usfm import (
@@ -255,11 +256,19 @@ def scripture_text(entry, archives, log=None, review=None, *, links):
     )
     # After the source comparisons above, which the added and restyled notes
     # would fail.
+    # What the edition prints, which a citation must name.
+    printed = versification.edition_inventory(archives)
     if entry["source"] == "kjv":
-        text = insert_marginal_notes(code, text, record, review)
+        text = insert_marginal_notes(code, text, record, review, printed)
     else:
-        clean, found = brenton_notes(code, text)
-        merged = merged_notes(code, found, links, archives, record)
+        clean, found = brenton_notes(code, text, printed)
+        if found:
+            read_citations(
+                record,
+                citations.dialect("brenton"),
+                [(note.key, note.citations) for note in found],
+            )
+        merged = merged_notes(code, found, links, record)
         # A merged note doesn't print, so a correction to it would go unused
         # unnoticed, as an exception to it would.
         replaced = sorted(k for k in merged if k.partition(" ")[2] in mended_notes)
