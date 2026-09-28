@@ -3,6 +3,7 @@
 import pytest
 
 from bible import citations, edition, validate, versification
+from bible.crossrefs import MERGE_OPERATION
 from bible.prepare import front_matter_text
 from bible.checks import CheckFailed
 from bible.citations import Item, scan
@@ -344,6 +345,39 @@ def test_what_the_edition_does_not_print_stays_among_its_words(
     pieces = [("text", "Verse 99 is not in Vat.")]
     found = scan(pieces[0][1], brenton, HOME, "x", inventory)
     assert citations.normalized(pieces, found, edition.books(archives)) == pieces
+
+
+def test_a_citation_of_the_wrong_verse_prints_the_verse_meant(scripture, prepared):
+    # The margin of 1611 has "Rom. 1.19" for 15.19, and George after it.
+    assert (
+        "fully to preach the word of God\\ft , \\xt Romans 15:19\\f*"
+        in scripture["COL"]
+    )
+    # Brenton's "Rom. 10. 9" is 10. 19, which the link at the verse names, so
+    # the note is merged into it as any note is that the link repeats.
+    deuteronomy = scripture["DEU"]
+    assert "\\xo 32:21 \\xt Romans 10:19 \\xta (Heb. and LXX)\\x*" in deuteronomy
+    assert "\\fr 32:21" not in deuteronomy and "Romans 10:9" not in deuteronomy
+    [merges] = [
+        operation["merges"]
+        for operation in prepared["DEU"].transformations
+        if operation["operation"] == MERGE_OPERATION
+    ]
+    assert {
+        "note": "DEU 32:21",
+        "verses": ["ROM 10:19"],
+        "dropped": [],
+        "row_ids": ["Q076"],
+    } in merges
+    [read] = [
+        citation
+        for operation in prepared["DEU"].transformations
+        if operation["operation"] == "read citations"
+        for citation in operation["citations"]
+        if citation["key"] == "DEU 32:21"
+    ]
+    # The log keeps what the source has beside what it is read as.
+    assert (read["source"], read["printed"]) == ("Rom. 10. 9", "Romans 10:19")
 
 
 def test_several_decisions_on_one_note_form_a_list(brenton, inventory, patched):

@@ -339,6 +339,18 @@
       "not_a_citation": true,
       "why": "The label of a passage that the appendix supplies, not a citation of one: Brenton's own number for the verse."
     },
+    "COL 1:25 to fulfill the word of God": {
+      "source": "Rom. 1.19",
+      "passages": "ROM 15:19",
+      "print": "{ROM} 15:19",
+      "why": "The margin of 1611 has 1.19, and George after it, which is a slip of its printer's: 'fully to preach' is the 'fully preached' of Romans 15:19, and what may be known of God, in 1:19, is nothing to it."
+    },
+    "DEU 32:21": {
+      "source": "Rom. 10. 9",
+      "passages": "ROM 10:19",
+      "print": "{ROM} 10:19",
+      "why": "A slip for 10. 19, which quotes the verse, 'I will provoke you to jealousy by them that are no people'; Turpie heads the quotation so."
+    },
     "ISA 26:19": {
       "source": "Ps. 110",
       "numbering": "hebrew",

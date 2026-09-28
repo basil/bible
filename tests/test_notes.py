@@ -191,7 +191,7 @@ def test_footnote_follows_a_lemma_clear_of_its_anchor(scripture):
             "down\\ft . Gr. \\fqa caused to sleep\\f*",
         ),
         # A cross-reference at the start of its verse needs no lemma.
-        ("DEU", "32:21", "\\f - \\fr 32:21 \\ft See \\xt Romans 10:9\\f*"),
+        ("DEU", "4:24", "\\f - \\fr 4:24 \\ft See \\xt Hebrews 12:29\\f*"),
         # A note after the last word of its verse glosses the words before it.
         (
             "PRO",
