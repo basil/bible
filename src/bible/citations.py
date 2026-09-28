@@ -337,15 +337,21 @@ def decisions(key):
     return found if isinstance(found, list) else [found]
 
 
-def unit_decisions(unit, plain):
+def unit_decisions(unit, plain, book=None):
     """The decisions on a paragraph of a unit without verses, by key.
 
     Such a decision is keyed by its unit and the words it decides, as "XXB
-    Psalm iv. 4", which must be the unit's once.
+    Psalm iv. 4", which must be the unit's once. A unit read into each book in
+    turn, as the introductions are, keys them by the book as well, as "OTH BAR
+    3. 8", that the same words in another book's paragraph not be decided so.
     """
     found = {}
     for key, decision in DATA["decisions"].items():
         code, _, words = key.partition(" ")
+        if book is not None:
+            within, _, words = words.partition(" ")
+            if within != book:
+                continue
         if code == unit and not re.fullmatch(rf"\d+:{VERSE_LABEL}.*", words):
             source = decision.get("source", words)
             if _places(source, plain):

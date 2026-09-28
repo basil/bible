@@ -560,6 +560,12 @@ def test_a_decision_on_a_unit_is_keyed_by_its_words(archives, patched):
     assert "XXB Roman versi" not in citations.unit_decisions("XXB", "the Roman version")
 
 
+def test_a_decision_on_an_introduction_is_keyed_by_its_book():
+    # The introductions are one unit, read into each book in turn.
+    assert "OTH BAR 3. 8" in citations.unit_decisions("OTH", "ch. 3. 8.", "BAR")
+    assert citations.unit_decisions("OTH", "ch. 3. 8.", "TOB") == {}
+
+
 def test_markup_within_a_citation_goes_with_it(inventory, archives):
     books = edition.books(archives)
     tongue = citations.dialect("kjv-preface")

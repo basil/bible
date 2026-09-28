@@ -354,7 +354,7 @@ def cited_introductions(code, text, archives, record):
             ),
             opening,
         )
-        decided = citations.unit_decisions(unit, citations.printable(note[2])[0])
+        decided = citations.unit_decisions(unit, citations.printable(note[2])[0], code)
         body, found = citations.rewritten(
             note[2], tongue, home, unit, printed, books, list(decided.values())
         )
