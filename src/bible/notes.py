@@ -1165,9 +1165,7 @@ def insert_marginal_notes(code, text, record, review, inventory, books):
         # An anchor of no words would be found everywhere, and span nothing.
         require(
             anchor
-            and (
-                len(hits) == 1 if occurrence is None else 0 < occurrence <= len(hits)
-            ),
+            and (len(hits) == 1 if occurrence is None else 0 < occurrence <= len(hits)),
             f"Marginal note anchor not found exactly once: {key} ({len(hits)})",
         )
         first = hits[(occurrence or 1) - 1]

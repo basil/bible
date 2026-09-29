@@ -2,6 +2,10 @@
 
 The [README](../README.md) describes what's in this Bible. This page explains why it's put together that way. The source files are never modified; every change the build makes is logged in `build/pdf/transformations.json`.
 
+## Name
+
+The edition is the Orthodox Liturgical English Bible, or OLEB. It's Orthodox because its Old Testament is the Septuagint, in the Church of Greece's order. It's liturgical because both translations are in the English of the King James Bible, which English translations of the Orthodox services have commonly used.
+
 ## Texts
 
 - **Old Testament:** [eBible's transcription of Brenton](https://ebible.org/eng-Brenton/), which includes eBible's corrections to the 1870 printing. The corrections are listed in the last appendix. It is neither a facsimile nor the separate "Updated Brenton" translation.

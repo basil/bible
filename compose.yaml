@@ -1,10 +1,10 @@
 ---
-name: brenton-kjv-bible
+name: oleb
 services:
   toolchain:
     build:
       context: .
-    image: brenton-kjv-bible:local
+    image: oleb:local
     # The image exists only locally; never look it up in a registry.
     pull_policy: never
     network_mode: none

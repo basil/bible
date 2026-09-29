@@ -1,6 +1,6 @@
-# Brenton-KJV Bible
+# Orthodox Liturgical English Bible (OLEB)
 
-A complete English Bible, typeset as a single book and ready to print or read on screen.
+The Orthodox Liturgical English Bible (OLEB) is a complete English Bible, typeset as a single book and ready to print or read on screen. Its Old Testament is the Septuagint, in the order of the Church of Greece, and both testaments are in the English of the King James Bible.
 
 **[Read the finished Bible (PDF)](https://basil.github.io/bible/bible.pdf)**
 
