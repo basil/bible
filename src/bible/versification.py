@@ -74,7 +74,6 @@ def _maps():
     reaches it, and two that claim one verse can't shadow each other.
     """
     to_kjv, from_kjv = {}, {}
-    books = {kjv_book(code): code for code in DATA["old_testament"]}
     for code, listed in DATA["kjv"].items():
         kjv = kjv_book(code)
         for run in listed:
@@ -110,7 +109,7 @@ def _maps():
                 for verse in far:
                     require(verse not in from_kjv, f"Two runs reach {verse}")
                     from_kjv[verse] = tuple(near)
-    return to_kjv, from_kjv, books
+    return to_kjv, from_kjv
 
 
 def to_kjv(verse):
@@ -128,7 +127,7 @@ def to_kjv(verse):
 
 def from_kjv(verse):
     """The edition's verses that hold a King James verse's words, if any."""
-    listed, books = _maps()[1], _maps()[2]
+    listed, books = _maps()[1], kjv_books()
     if verse in listed:
         return listed[verse]
     require(verse.book in books, f"No edition counterpart: {verse}")

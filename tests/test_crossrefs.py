@@ -415,6 +415,18 @@ def test_a_note_that_names_no_verse_can_only_be_preserved(
         scripture_text(unit("ISA"), damaged, links={"ISA": [isaiah_link()]})
 
 
+def test_a_bare_note_of_a_chapter_needs_a_decision(archives, with_source, patched):
+    # "See Gen. 43" is bare, but names no verse for a link to name.
+    damaged = with_source(
+        "brenton",
+        "ISA",
+        lambda t: t.replace(r"\xt Rom. 9. 29", r"\xt Gen. 43", 1),
+    )
+    patched(quotations, "DECISIONS")["note_merges"] = {}
+    with pytest.raises(CheckFailed, match="needs a merge decision: ISA 1:9"):
+        scripture_text(unit("ISA"), damaged, links={"ISA": [isaiah_link()]})
+
+
 def psalm_8_link():
     return brenton_link("PSA 8:5", "HEB 2:6-8", "Hebrews 2:6–8", "PSA 8:5-7")
 

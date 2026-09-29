@@ -150,8 +150,9 @@ def check_boundaries(base, project, ids, text, pages, reading_text, sample):
     reading_pages_without_headers = []
     for page_number, page in enumerate(reading_pages, 1):
         lines = page.splitlines(keepends=True)
-        # A running head carries the page number as one of its words.
-        if lines and str(page_number) in lines[0].split():
+        # A running head carries the page number as one of its words: the
+        # printed number, which the front matter puts behind the physical one.
+        if lines and str(page_number - page_offset) in lines[0].split():
             lines = lines[1:]
         reading_pages_without_headers.append("".join(lines))
     by_code = {b: (i, int(p) + page_offset) for i, (b, t, p) in enumerate(toc)}

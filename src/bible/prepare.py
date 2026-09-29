@@ -418,8 +418,10 @@ def cited_matter(code, text, archives, record):
             read += found
             for citation in found:
                 if citation.items and not citation.relative:
-                    *_, last = (item for run in citation.items for item in run)
-                    standing = Verse(citation.book, last.chapter, last.first or 1)
+                    # The last book it names, where a decision reads several as one.
+                    book, runs = citation.targets[-1]
+                    last = runs[-1][-1]
+                    standing = Verse(book, last.chapter, last.first or 1)
         lines.append(line)
     log_citations(record, tongue, code, read, used, books)
     return "\n".join(lines)

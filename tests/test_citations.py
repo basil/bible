@@ -443,8 +443,9 @@ def test_a_dialect_says_how_it_numbers(patched):
         citations.dialect("brenton")
 
 
-def test_every_decision_and_name_is_used(monkeypatch, patched):
-    monkeypatch.setattr(validate.paths, "BUILD_DIR", validate.paths.BUILD_DIR / "test")
+def test_every_decision_and_name_is_used(monkeypatch, patched, tmp_path):
+    # validate() reports into build/; keep the test's reports out of the checkout.
+    monkeypatch.setattr(validate.paths, "BUILD_DIR", tmp_path)
     data = patched(citations, "DATA")
     data["decisions"]["GEN 1:1"] = {"source": "x", "not_a_citation": True, "why": "x"}
     with pytest.raises(CheckFailed, match=r"Unused citation decisions: \['GEN 1:1'\]"):

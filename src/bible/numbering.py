@@ -449,7 +449,12 @@ def cited(text, archives):
 
     def printed(match):
         ways, written = set(match[1].split()), match[2]
-        require(ways <= WAYS, f"Passage named to print no known way: {match[0]}")
+        # Brenton's label and the King James Bible's number are two numberings,
+        # and a passage prints by one.
+        require(
+            ways <= WAYS and not {"brenton", "kjv"} <= ways,
+            f"Passage named to print no known way: {match[0]}",
+        )
         passage = parse_passage(written)
         books = ours
         if "brenton" in ways:

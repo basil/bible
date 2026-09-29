@@ -194,8 +194,13 @@ def merged_notes(code, found, links, record):
                 f"Merge decision must name exactly the verses it drops: {note.key}",
             )
         else:
+            # A note that names no verse, as a chapter, can't be merged without
+            # dropping what it names, so it needs a decision like any other.
             require(
-                bare(note) and len(note.citations) == 1 and not dropped,
+                named is not None
+                and bare(note)
+                and len(note.citations) == 1
+                and not dropped,
                 f"Brenton cross-reference needs a merge decision: {note.key}",
             )
             action = "merge"

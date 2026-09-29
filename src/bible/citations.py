@@ -168,6 +168,11 @@ class Dialect:
     def number(self, numeral):
         return int(numeral) if numeral.isdigit() else roman(numeral.upper())
 
+    def book_name(self, matched):
+        """The dialect's name for a book, as the pattern read it, whose words
+        may stand apart by any space, as a tab or a no-break space."""
+        return " ".join(matched.split())
+
 
 def dialect(name):
     """A source's way of writing citations, or that of one that writes none."""
@@ -231,9 +236,15 @@ def _carried(passage):
 def _kjv_chapter(book, chapter):
     """The King James chapter that holds an edition chapter's verses."""
     labels = versification.verses(f"{book} {chapter}:1-3")
-    found = [kjv for verse in labels for kjv in _counterparts(verse)]
+    # A psalm's title, which the King James Bible doesn't number, places no chapter.
+    found = [
+        kjv
+        for verse in labels
+        for kjv in _counterparts(verse)
+        if kjv.number != versification.TITLE
+    ]
     require(found, f"Chapter the King James Bible lacks: {book} {chapter}")
-    return next(v for v in found if v.number != versification.TITLE).chapter
+    return found[0].chapter
 
 
 def _counterparts(verse):
@@ -398,7 +409,8 @@ def _decided(decision, plain, tongue, home, key, inventory):
             and decision["numbering"] in NUMBERINGS - {tongue.numbering},
             f"Citation decision of no other numbering: {key} ({source})",
         )
-        numbering, book = decision["numbering"], tongue.books[match["book"]]
+        numbering = decision["numbering"]
+        book = tongue.books[tongue.book_name(match["book"])]
         if (
             tongue.numbering == "brenton"
             and numbering in {"kjv", "hebrew"}
@@ -509,7 +521,9 @@ def scan(plain, tongue, home, key, inventory, decided=None, before=None):
         ]
         if home is None and earlier:
             last = max(earlier, key=lambda citation: citation.end)
-            standing = Verse(last.book, last.items[-1][-1].chapter, 1)
+            # The last book it names, where a decision reads several as one.
+            book, runs = last.targets[-1]
+            standing = Verse(book, runs[-1][-1].chapter, 1)
         if any(s < match.end() and match.start() < e for s, e in taken):
             continue
         require(
@@ -517,8 +531,9 @@ def scan(plain, tongue, home, key, inventory, decided=None, before=None):
             f"Citation of no book: {key} ({match[0]})",
         )
         relative = None
-        if match["book"]:
-            book, numbering = tongue.books[match["book"]], tongue.numbering
+        name = tongue.book_name(match["book"]) if match["book"] else None
+        if name:
+            book, numbering = tongue.books[name], tongue.numbering
             cited = match["cited"]
         elif match["chapter"]:
             book, numbering, relative = standing.book, "edition", "chapter"
@@ -546,7 +561,7 @@ def scan(plain, tongue, home, key, inventory, decided=None, before=None):
                 items,
                 tongue.numbering,
                 relative=relative,
-                name=match["book"],
+                name=name,
             )
         )
         taken.append((match.start(), match.end()))

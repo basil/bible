@@ -781,9 +781,11 @@ def phrase_span(words, phrase, key, occurrence=None):
     occurrence, or the one the exception names if it occurs more than once."""
     tokens = words_of(phrase)
     hits = occurrences(words, tokens)
+    # A lemma of no words would be found everywhere, and span nothing.
     require(
-        (
-            tokens and len(hits) == 1
+        tokens
+        and (
+            len(hits) == 1
             if occurrence is None
             else len(hits) > 1 and 0 < occurrence <= len(hits)
         ),
@@ -1160,8 +1162,12 @@ def insert_marginal_notes(code, text, record, review, inventory, books):
             )
         hits = occurrences(words, anchor)
         occurrence = override.get("occurrence")
+        # An anchor of no words would be found everywhere, and span nothing.
         require(
-            len(hits) == 1 if occurrence is None else 0 < occurrence <= len(hits),
+            anchor
+            and (
+                len(hits) == 1 if occurrence is None else 0 < occurrence <= len(hits)
+            ),
             f"Marginal note anchor not found exactly once: {key} ({len(hits)})",
         )
         first = hits[(occurrence or 1) - 1]
