@@ -9,7 +9,7 @@ Every change is logged through a recorder into build/<mode>/transformations.json
 import re
 from dataclasses import dataclass
 
-from bible import citations, edition, introductions, versification
+from bible import abbreviations, citations, edition, introductions, versification
 from bible.checks import require
 from bible.crossrefs import apply_links, merged_notes
 from bible.edition import (
@@ -41,7 +41,7 @@ from bible.usfm import (
     verse_spans,
 )
 
-# The Epistle Dedicatory's mt2 lines are its address ("&c.") and salutation.
+# The Epistle Dedicatory's mt2 lines are its address ("ETC.") and salutation.
 FRONT_PERIOD_FREE_TITLE_MARKERS = ("h", "toc1", "mt1")
 # Every such heading, not just the first: BAK heads book names with them. (OTH's
 # headings are dropped for the book introductions.)
@@ -305,7 +305,8 @@ def scripture_text(entry, archives, log=None, review=None, *, links):
         ),
         f"Note reference disagrees with its verse: {code}",
     )
-    return text
+    # Last, since reading the notes relies on the forms they are written in.
+    return abbreviations.chicago(code, text, record, notes_only=True)
 
 
 @dataclass
@@ -438,6 +439,8 @@ def front_matter_text(entry, archives, log=None):
         introductions.INTRODUCTIONS["source"],
     ):
         original = introductions.front_text(original, record)
+    elif (entry["source"], source_id(entry)) == ("brenton", abbreviations.SOURCE):
+        original = abbreviations.completed(original, record)
     text = (
         rename_book(entry, original, original, record) if "title" in entry else original
     )
@@ -462,7 +465,8 @@ def front_matter_text(entry, archives, log=None):
         inventory(original) == inventory(titled),
         f"Preparation changed source markup: {code}",
     )
-    return cited_matter(code, titled, archives, record)
+    text = cited_matter(code, titled, archives, record)
+    return abbreviations.chicago(code, text, record, notes_only=False)
 
 
 def sample_chapters(code, text, wanted):

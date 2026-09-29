@@ -167,7 +167,7 @@ def test_marginal_note_on_the_whole_verse(archives, patched, links):
         "why": "x",
     }
     assert footnotes(scripture_text(unit("LUK"), archives, links=links), "17:36") == [
-        "\\f - \\fr 17:36 \\ft This 36. verse is wanting in most of the Greek copies.\\f*"
+        "\\f - \\fr 17:36 \\ft This 36th verse is wanting in most of the Greek copies.\\f*"
     ]
 
 
@@ -557,6 +557,8 @@ def test_footnotes_stand_where_their_notes_were():
         ("two", "Gr. first", "Gr. _first_"),
         ("two", "Alex. first", "Alex. _first_"),
         ("two", "A. V. first", "A. V. _first_"),
+        # "Sept." too, which the edition prints as "LXX" only as he wrote it.
+        ("two", "Sept. first", "Sept. first"),
         # ...as do the pronoun "I", capitals, quotations and references.
         ("two", "I first", "I first"),
         ("two", "LXX. first", "LXX. first"),
@@ -580,12 +582,16 @@ def test_note_runs_on_from_its_lemma(lemma, note, styled):
         # An abbreviation keeps its full stop.
         ("Gr. gift, etc.", "Gr. _gift_, etc."),
         ("Gr. gift, so the Heb.", "Gr. _gift_, so the Heb."),
-        ("Gr. gift, as in LXX.", "Gr. _gift_, as in LXX."),
         ("Gr. or.", "Gr. _or_"),
         ("i. e. Abimelech's.", "i. e. _Abimelech's_"),
-        ("Gr. infin. for imper.", "Gr. infin. for imper."),
         # So does an ellipsis.
         ("Or, probably so...", "Or, probably so..."),
+        # But not an abbreviation the edition prints without a period, as
+        # Chicago prints "LXX", or in full.
+        ("Gr. gift, as in LXX.", "Gr. _gift_, as in LXX"),
+        ("Gr. gift, so A. V.", "Gr. _gift_, so A. V"),
+        ("Gr. spoil, as in the O.T.", "Gr. _spoil_, as in the O.T"),
+        ("Gr. infin. for imper.", "Gr. infin. for imper"),
     ],
 )
 def test_note_drops_its_closing_full_stop(note, styled):
@@ -774,6 +780,50 @@ def test_brenton_correction_must_keep_the_wording_outside_notes(archives, patche
     ):
         notes.corrected_brenton(
             "GEN", archives["brenton"]["GEN"], recorder(None, "GEN")
+        )
+
+
+def test_brenton_correction_may_mend_the_wording_of_a_preface(archives):
+    text = notes.corrected_brenton(
+        "XXB", archives["brenton"]["XXB"], recorder(None, "XXB")
+    )
+    assert "Septuagint of Genesis with which" in text
+    assert "Avith" not in text
+
+
+def test_brenton_correction_outside_notes_names_its_words(archives, patched):
+    patched(notes, "BRENTON_NOTES")["corrections"] = {
+        "XXB Genesis with": {
+            "from": "Genesis Avith which",
+            "to": "Genesis with which",
+            "why": "x",
+            "uncategorized": True,
+        }
+    }
+    with pytest.raises(CheckFailed, match="not where its key says: XXB Genesis with"):
+        notes.corrected_brenton(
+            "XXB", archives["brenton"]["XXB"], recorder(None, "XXB")
+        )
+
+
+def test_brenton_correction_must_keep_the_wording_of_a_supplied_passage(
+    archives, patched
+):
+    # The appendix has no verse markers, but the passages it supplies are
+    # translation.
+    patched(notes, "BRENTON_NOTES")["corrections"] = {
+        "BAK Ephrathite said": {
+            "from": "Ephrathite said",
+            "to": "Ephrathite spoke",
+            "why": "x",
+            "uncategorized": True,
+        }
+    }
+    with pytest.raises(
+        CheckFailed, match="changes the wording outside a note: BAK Ephrathite said"
+    ):
+        notes.corrected_brenton(
+            "BAK", archives["brenton"]["BAK"], recorder(None, "BAK")
         )
 
 

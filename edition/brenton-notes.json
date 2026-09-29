@@ -5,6 +5,18 @@
       "to": "\\f* is little doubt",
       "why": "the word space after the note in \"There is\" is missing"
     },
+    "XXB the Hebrew In Genesis": {
+      "from": "Introduction to Bos’s edition",
+      "to": "Introduction to Lambert Bos’s edition",
+      "why": "the name is written in full, as the preface's other note on his edition gives it",
+      "uncategorized": true
+    },
+    "XXB Genesis Avith which": {
+      "from": "Genesis Avith which",
+      "to": "Genesis with which",
+      "why": "Avith is a misreading of with",
+      "uncategorized": true
+    },
     "GEN 21:11": {
       "from": "\\fr 21:11 \\fqa Gr. \\fqa Gr. ",
       "to": "\\fr 21:11 \\fqa Gr. ",
@@ -395,6 +407,64 @@
       "from": "οἴκον",
       "to": "οἴκου",
       "why": "the printed Greek reads οἴκου"
+    },
+    "DEU 24:13": {
+      "from": "\\fqa ie. ",
+      "to": "\\fqa i. e. ",
+      "why": "ie. is a slip for i. e., as every other note has it",
+      "uncategorized": true
+    },
+    "GEN 33:18": {
+      "from": "\\fqa Bos \\ft and \\fqa P. Junius ",
+      "to": "\\fqa Lambert Bos \\ft and \\fqa Patrick Junius ",
+      "why": "the names are written in full: Lambert Bos, as Brenton's preface gives him, and Patrick Young, who wrote his name Patricius Junius, the editor of the Codex Alexandrinus",
+      "uncategorized": true
+    },
+    "NUM 1:18": {
+      "from": "L. Bos.",
+      "to": "Lambert Bos.",
+      "why": "the name is written in full, as Brenton's preface gives it",
+      "uncategorized": true
+    },
+    "1KI 20:10": {
+      "from": "\\fqa Prof. Lee ",
+      "to": "\\fqa Professor Samuel Lee ",
+      "why": "the name is written in full: Samuel Lee, Regius Professor of Hebrew at Cambridge, whose Hebrew Grammar the note cites",
+      "uncategorized": true
+    },
+    "1SA 31:9": {
+      "from": "\\fqa Comp. \\ft reads",
+      "to": "\\fqa Complut. \\ft reads",
+      "why": "Comp. here is the Complutensian Text, as the reading it gives shows, not Compare, so it is written Complut. as Brenton's other notes write it, and printed in full",
+      "uncategorized": true
+    },
+    "NUM 25:8": {
+      "from": "Trom renders",
+      "to": "Abraham Trommius renders",
+      "why": "the name is written in full: Abraham Trommius, whose concordance to the Septuagint (1718) glosses each Hebrew word in Latin, קבה here as lupanar",
+      "uncategorized": true
+    },
+    "BAK C. Pridham": {
+      "from": "\\it C. Pridham\\it*",
+      "to": "\\it Charles Pridham\\it*",
+      "why": "the name is written in full, as Brenton's preface gives it: Mr. Charles Pridham",
+      "uncategorized": true
+    },
+    "BAK Alex 15": {
+      "from": "\\it Alex. \\it*. 15",
+      "to": "\\it Alex. \\it* 15",
+      "why": "the abbreviation's period is doubled"
+    },
+    "2KI 24:17": {
+      "from": "\\ft Mattanaiah.",
+      "to": "\\ft Mattaniah.",
+      "why": "the Authorized Version reads Mattaniah"
+    },
+    "DEU 1:31": {
+      "from": "on ἐτροφόρησεν.",
+      "to": "on ἐτροφοφόρησεν.",
+      "why": "the Authorized Version's margin at Acts 13:18 gives ἐτροφοφόρησεν, from τροφοφορέω, which the Septuagint has here",
+      "uncategorized": true
     }
   },
   "notes": {
@@ -820,8 +890,8 @@
     },
     "NUM 1:18": {
       "lemma": "registered them",
-      "note": "ἄξονες dicebantur olim tabulae publicae; atque inde ἐπαξοοῦν, quod videtur esse, _in tabulas referre_. L. Bos.",
-      "why": "L. Bos names the source of the note; in tabulas referre renders registered them, not after"
+      "note": "ἄξονες dicebantur olim tabulae publicae; atque inde ἐπαξοοῦν, quod videtur esse, _in tabulas referre_. Lambert Bos.",
+      "why": "Lambert Bos names the source of the note; in tabulas referre renders registered them, not after"
     },
     "NUM 1:52": {
       "note": "Or, _headship_, i. e. _according to the situation of his captain or prince_.",
@@ -2217,7 +2287,7 @@
     },
     "1KI 20:10": {
       "lemma": "blessed",
-      "note": "See Prof. Lee on the word ברך in Job 2:9. Heb. Gram. p. 92.",
+      "note": "See Professor Samuel Lee on the word ברך in Job 2:9. Heb. Gram. p. 92.",
       "why": "the note is a reference on the word blessed, ברך"
     },
     "1KI 20:15": {

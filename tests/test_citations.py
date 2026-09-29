@@ -484,7 +484,7 @@ def test_everything_that_cites_is_read(prepared, matter):
         ]
     )
     assert {entry["dialect"] for entry in read} == set(citations.DATA["dialects"])
-    assert sum(len(entry["citations"]) for entry in read) == 510
+    assert sum(len(entry["citations"]) for entry in read) == 511
     assert citations.unused(read) == ([], [])
 
 
@@ -498,7 +498,7 @@ def test_everything_that_cites_is_read(prepared, matter):
         ("XXB", "one of the acrostic Psalms, (144:13), where"),
         ("XXB", "In Acts 17:28, we find"),
         ("NDX", "commanded to search. John 5:39. Esaias 8:20. They"),
-        ("NDX", "studied them. Acts 17:11. and 8:28, 29. They"),
+        ("NDX", "studied them. Acts 17:11 and 8:28, 29. They"),
         ("NDX", "unto salvation. 2 Timothy 3:15. If we"),
         ("NDX", "See Judges 8:2. \\it Joash\\it* the king"),
         ("BAK", "\\ip 2 Kingdoms 5:18.—Giants."),

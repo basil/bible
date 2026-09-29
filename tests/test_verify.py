@@ -62,13 +62,13 @@ def test_processed_output_relabelled_verse(processed):
         "see chapter 6:13, 15; verse 3",
         "Psalm 117:22–23 (LXX against Heb.)",
         "Heb. 300. Alex. 500",
-        "Alex. 187 years. Heb. Gram. p. 92",
+        "Alex. 187 years. Heb. Grammar, p. 92",
         # The numbers that the appendix supplies a passage under.
         "17. 12And David son of an Ephrathite",
         "the days of Saul. 13And the three elder sons",
-        "A talent is 187. pound 10. Shillings",
+        "A talent is 187 pounds 10 shillings",
         "1870. it | 1844. It",
-        "about the year b.c. 280. The Jews",
+        "about the year 280 BC. The Jews",
         # A verse's number, after the sentence before it.
         "and the evening star. 32 Or wilt thou",
     ],

@@ -85,12 +85,11 @@ Could be Brenton's own; check the printing.
 - Ps 51:1 "Gr. governing." for "understanding"?
 - Isa 2:6 "sound to tense" for "sense", and the quotation is never closed
 - Isa 52:7 "Joel 2. 2.,'the morning"
-- Deut 24:13 "ie." for "i. e."
 - Josh 15:18 "has thou" for "hast"
 - 2 Kgdms 13:12 "fasciendum" for "faciendum"
 - Exod 39:22 and 4 Kgdms 3:17 "posession"; Exod 12:3 "admissable"
 - Ps 49:18 "1 Pe" for "1 Pet."; Ps 90:6 "ver 3" for "ver. 3"
-- Gen 41:51 "things belong to my father" for "belonging"; Josh 10:34 "vigourously"; 1 Kgdms 13:21 "interpretors"; 21:8 "repitition"; 4 Kgdms 4:39 "colosynth" for "colocynth"; 24:10 "seige" (a transposition, which no correction category allows); 24:17 "Mattanaiah" for "Mattaniah"
+- Gen 41:51 "things belong to my father" for "belonging"; Josh 10:34 "vigourously"; 1 Kgdms 13:21 "interpretors"; 21:8 "repitition"; 4 Kgdms 4:39 "colosynth" for "colocynth"; 24:10 "seige" (a transposition, which no correction category allows)
 - 1 Kgdms 6:8 begins lowercase, "in the Alex."; Zech 12:2 "porches or, door-posts" lacks the comma before "or"
 - Hebrew that eBible misread and no correction mends yet: 1 Kgdms 17:52 שעריס, 21:3 מקוצ and פלכי אלמבי, 2 Kgdms 5:23 בכאיס, Judg 9:6 מעכ, 9:37 מעס, 17:10 ימיס, 18:7 מבליס; Isa 51:3 שוב
 - Greek: Num 1:18 ἐπαξοοῦν, Exod 19:22 ἀπαλλατέω. Gen 3:15 τειρήσει is probably Brenton's own spelling.

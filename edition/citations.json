@@ -267,6 +267,13 @@
       "numbering": "kjv",
       "why": "'Let him that boasts boast in this' is the King James Bible's verse 24, which is Brenton's 23."
     },
+    "2KI 22:5#2": {
+      "source": "ch. xii",
+      "passages": "2KI 12:1-22",
+      "print": "chapter 12",
+      "relative": "chapter",
+      "why": "Brenton's notes number chapters in Arabic, and this one alone in Roman: the chapter of this book where Gr. breach is noted twice, at 12:8 and 12:13."
+    },
     "BAK 12. 16; 13. 1, 16; 14. 8, 15, 18; 15. 5; 21. 11; 22. 3; 27. 12; 28. 2": {
       "passages": "PRO 12:16; PRO 13:1; PRO 13:16; PRO 14:8; PRO 14:15; PRO 14:18; PRO 15:5; PRO 21:11; PRO 22:3; PRO 27:12; PRO 28:2",
       "print": "12:16; 13:1, 16; 14:8, 15, 18; 15:5; 21:11; 22:3; 27:12; 28:2",

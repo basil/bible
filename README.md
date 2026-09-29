@@ -11,7 +11,7 @@ The Old Testament is Sir Lancelot Brenton's English translation of the Septuagin
 The book reads in this order:
 
 1. A title page, a publication data page, a table of contents, the editor's introduction, and a table of the chapters and verses that the King James Bible numbers otherwise
-2. The Old Testament, opening with Brenton's preface (1844) and introduction (1870), the introduction to the Apocrypha from a later edition of his translation (its account of each book printed here is a footnote on that book), and list of abbreviations
+2. The Old Testament, opening with Brenton's preface (1844) and introduction (1870), the introduction to the Apocrypha from a later edition of his translation (its account of each book printed here is a footnote on that book), and list of abbreviations, supplemented with further abbreviations used in the notes
 3. The New Testament, opening with the King James translators' dedication to the king and their preface, "The Translators to the Reader"
 4. Appendices: Brenton's notes and supplied passages, and eBible's corrections to the text
 

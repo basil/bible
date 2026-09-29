@@ -35,7 +35,7 @@ EXPECTED_NT_MARGINAL_NOTES = 775
 RENDERING_LABELS = {
     *("Or,", "or,", "or", "Or simply,", "Possibly,", "Perhaps"),
     *("Gr.", "Gr. sing.", "Heb.", "Hebrew"),
-    *("Lit.", "lit.", "more lit.", "i. e.", "ie.", "viz.", "sc.", "scil.", "Scil."),
+    *("Lit.", "lit.", "more lit.", "i. e.", "viz.", "sc.", "scil.", "Scil."),
     *("q. d.", "Gr. q. d.", "adj. q. d."),
     *("Alex.", "Vat.", "Vat.,", "Vat. i.e.", "Complut.", "Ald.", "Vulg."),
     *("A. V.", "Margin,"),
@@ -58,20 +58,21 @@ OTHER_LABELS = {
         "Of course",
     ),
     *("nom.", "voc.", "pl.", "singular.", "ver.", "bis."),
-    *("Bos", "P. Junius", "Tertullian"),
+    *("Lambert Bos", "Patrick Junius", "Tertullian"),
 }
 LABELS = RENDERING_LABELS | OTHER_LABELS
 # Names, which keep their capital where a note runs on from its lemma: of
 # languages, texts, versions and people, and the pronoun "I".
 NAMES = re.compile(
-    r"(?:Gr|Heb|Hebrew|Hebraism|Syr|Alex|Vat|Complut|Ald|Vulg|A\. V|App|Appendix"
-    r"|Bos|P\. Junius|Tertullian|Prof\. Lee|I)(?!\w)"
+    r"(?:Gr|Heb|Hebrew|Hebraism|Syr|Sept|Alex|Vat|Complut|Ald|Vulg|A\. V|App|Appendix"
+    r"|Lambert Bos|Patrick Junius|Tertullian|Professor Samuel Lee|I)(?!\w)"
 )
-# Abbreviations, whose full stop stays at the end of a note ("so the Heb.").
+# Abbreviations, whose full stop stays at the end of a note ("so the Heb."). Not
+# those the edition prints without one: "LXX", as Chicago does, and those it
+# prints in full ("guard, Authorized Version"), as "A. V.", the text names but
+# "Alex.", and those edition/abbreviations.json decides ("Chrysost.", "pl.").
 ABBREVIATION = re.compile(
-    r"(?<![\w'’])(?:etc|&c|Gr|Heb|Syr|Alex|Vat|Complut|Ald|Vulg|Chrysost|LXX|A\. V"
-    r"|O\. ?T|N\. ?T|App|Comp|lit|Lit|i\. e|q\. d|sc|scil|viz|pl"
-    r"|absol|infin|imper|N|s|ob)\.$"
+    r"(?<![\w'’])(?:etc|&c|Gr|Heb|Syr|Alex|lit|Lit|i\. e|q\. d|sc|scil)\.$"
 )
 # George's notes are plain text; a label opens a note or a sentence in it.
 KJV_LABEL = re.compile(
@@ -1237,7 +1238,7 @@ BRENTON_NOTE = re.compile(r"\\(f|x) \S \\(?:fr|xo) (\S+) ?(.*?)\\\1\*")
 def in_its_place(text, key, snippet):
     """Whether the snippet's one occurrence lies where its key says: in the verse
     it names, or in a file without verses, in a note standing among the words it
-    names.
+    names, or outside the notes, in the words it names.
     """
     start = text.index(snippet)
     end = start + len(snippet)
@@ -1268,6 +1269,8 @@ def in_its_place(text, key, snippet):
     touched = [
         m for m in BRENTON_NOTE.finditer(text) if m.start() < end and start < m.end()
     ]
+    if not touched and not verse_spans(text):
+        return words_of(place) == words_of(plain_text(snippet))
     if len(touched) != 1:
         return False
     note = touched[0]
@@ -1291,14 +1294,39 @@ def in_a_note(text, snippet):
     )
 
 
+# Any paragraph but a heading (\is1, \is2) or a blank line (\ib).
+APPENDIX_PARAGRAPH = re.compile(r"^\\(?!i[sb]\d*\b)\w+ [^\n]*", re.M)
+
+
+def in_translation(text, snippet):
+    """Whether the snippet's one occurrence touches translation: a book's verses,
+    or a passage the appendix supplies. Most of the appendix's notes come before
+    its first passage; after it, a paragraph is translation from its first \\vp,
+    the label before being Brenton's, or throughout, where it has none. That
+    errs toward the translation: a passage may open with its label alone
+    ("Verse 41. And the Philistine"), and the few notes set among the passages
+    ("Considerable variation here rather than omission") are taken for one.
+    """
+    start = text.index(snippet)
+    end = start + len(snippet)
+    spans = [(first, last) for _, first, last in verse_spans(text)]
+    if (passages := text.find("\\vp ")) >= 0:
+        for m in APPENDIX_PARAGRAPH.finditer(text, text.rfind("\n", 0, passages) + 1):
+            spans.append((m.start() + max(m[0].find("\\vp "), 0), m.end()))
+    return any(first < end and start < last for first, last in spans)
+
+
 def corrected_brenton(source, text, record, mended_notes=None):
     """A Brenton source file with the corrections in edition/brenton-notes.json.
 
     Each correction is keyed by the source file's id and the verse or note it
     mends; #n names the nth note in a verse. Several corrections in one note
     form a list under one key. In a file without verses, the key names the words
-    the note stands among. Outside notes a correction may mend only word spaces,
-    so the translation stays eBible's: wording checks compare with corrected text.
+    the note stands among, or outside the notes, the words it mends. Outside
+    notes a correction may mend only word spaces in translation, so the
+    translation stays eBible's: wording checks compare with corrected text. A
+    preface, an introduction, or the appendix's notes and labels may have their
+    words mended.
     Where notes are corrected is added to mended_notes, if given, as note keys
     without the file's id: a correction keyed to a verse in a note mends its
     first note.
@@ -1318,6 +1346,7 @@ def corrected_brenton(source, text, record, mended_notes=None):
             in_note = in_a_note(text, correction["from"])
             require(
                 in_note
+                or not in_translation(text, correction["from"])
                 or canonical_text(correction["from"])
                 == canonical_text(correction["to"]),
                 f"Brenton correction changes the wording outside a note: {key}",

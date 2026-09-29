@@ -527,6 +527,18 @@
       "from": "mat. 10.9",
       "to": "Mat. 10.9",
       "why": "lowercase book name"
+    },
+    "MAT 10:29 farthing?": {
+      "from": "half penny farthing",
+      "to": "halfpenny farthing",
+      "why": "halfpenny is one word, as every other note writes it",
+      "uncategorized": true
+    },
+    "LUK 15:8 pieces of silver": {
+      "from": "seven pence half penny",
+      "to": "seven pence halfpenny",
+      "why": "halfpenny is one word, as every other note writes it",
+      "uncategorized": true
     }
   }
 }
