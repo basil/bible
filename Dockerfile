@@ -67,8 +67,8 @@ ARG USFMTC_BRANCH=main
 ARG USFMTC_COMMIT=f1e4f23e83953032c0a9574a1df9ab4b4ec89a22
 # renovate: datasource=git-tags depName=ptxprint
 ARG PTXPRINT_URL=https://github.com/sillsdev/ptx2pdf.git
-ARG PTXPRINT_TAG=3.0.43
-ARG PTXPRINT_COMMIT=f4409d06e6664cab14bd7afbde3d49eac47c0935
+ARG PTXPRINT_TAG=3.0.44
+ARG PTXPRINT_COMMIT=4f8dee1cf6f3de2e5ecba9473cc2e92ddf72bbb6
 RUN <<EOF
 set -eu
 fetch() {
