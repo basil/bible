@@ -7,8 +7,8 @@ quotation links. edition/abbreviations.json gives the rows that complete it,
 set as his are, after them. An abbreviation used only once or twice is
 printed in full where it stands instead, the file deciding each, unless it is
 one Chicago prints, as "AD", "MS" and "p." are, and his rows for those are
-dropped. Text names are also printed in full, but for the Alexandrine Text,
-which stays "Alex." and keeps his row, and Brenton's "Comp." for "Compare" is
+dropped. Text names are also printed in full, but for the Alexandrine and Vatican
+Texts, which stay "Alex." and "Vat." and have rows, and Brenton's "Comp." for "Compare" is
 printed in full. "Sept." is printed as "LXX", which is listed, and "A. V.",
 like the English Version, a note's "English Bible" and eBible's "AV", as
 "Authorized Version", whose row is dropped. The notes and the front and back
@@ -58,7 +58,7 @@ REPLACED = [
     (re.compile(r"&c\b"), "etc"),
 ]
 TEXT_NAMES = {
-    "Vat.": "Vatican Text",
+    "Vat.": "Vat.",
     "Ald.": "Aldine Text",
     "Complut.": "Complutensian Text",
     "Vulg.": "Vulgate",
@@ -97,7 +97,7 @@ UNCHICAGO = re.compile(
     r"|\d AD\b"
     r"|\bS(?:\. \\\+?it|\\\+?it\*\.) [A-Z]|&c\b|\b[ab]\.[dc]\."
     r"|(?<![\w.])(?:LXX|MSS?|A\. V)\.(?!" + SENTENCE_END.pattern + ")"
-    r"|(?<![\w.])(?:[ON]\. ?T|A\. V|Vat|Ald|Complut|Vulg)(?!\w)|\bAV\b"
+    r"|(?<![\w.])(?:[ON]\. ?T|A\. V|Ald|Complut|Vulg)(?!\w)|\bAV\b"
     # At a note's end, the period is already gone: "and so Chrysost\f*".
     r"|\b(?:App|Chrysost|Gram|Qu|Rom|om|nom|voc|absol|infin|imper|pl|qy|viz|niph"
     r"|fem|ob)(?:\.|\\f\*)|\bCateches\b|\bult\b|\b4to\b|\bEng\. Ver\b"
@@ -160,6 +160,25 @@ def chicago_forms(text, changes):
         key = f"{old} → {new}"
         changes[key] = changes.get(key, 0) + 1
 
+    def note_forms(text):
+        for pattern, new in (
+            (r"\bVatican Text\b", "Vat."),
+            (r"\b[Ss]o the Heb\.", "Heb. and Alex."),
+        ):
+
+            def replace(m, new=new):
+                count(m[0], new)
+                return new
+
+            text = re.sub(pattern, replace, text)
+        return text
+
+    # Preserve full names in prose and abbreviation-table definitions.
+    # Plain text is also used by the footnote review renderer.
+    text = (
+        NOTE.sub(lambda m: note_forms(m[0]), text) if "\\" in text else note_forms(text)
+    )
+
     for pattern, new in REPLACED:
 
         def replaced(m, new=new):
@@ -170,7 +189,13 @@ def chicago_forms(text, changes):
         text = pattern.sub(replaced, text)
 
     def unstopped(m):
-        stop = "." if m[2] and SENTENCE_END.match(m.string, m.end()) else ""
+        stop = (
+            "."
+            if m[2]
+            and SENTENCE_END.match(m.string, m.end())
+            and not UNSTOPPED[m[1]].endswith(".")
+            else ""
+        )
         printed = UNSTOPPED[m[1]] + stop
         if printed != m[0]:
             count(m[0], printed)

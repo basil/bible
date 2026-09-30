@@ -139,3 +139,9 @@ def test_what_has_been_read_stands(scripture, archives, patched):
     found = seed.seed(scripture, archives)["LEV"]
     # The raven and the owls, which the witnesses leave where they are numbered.
     assert not [run for run in found if "LEV 11" in (run["edition"] or run["kjv"])]
+
+
+def test_seed_preserves_declared_partial_overlaps(texts):
+    expected = next(run for run in versification.DATA["kjv"]["PRO"] if "pairs" in run)
+    found = seed.written(texts, "PRO", [])
+    assert expected in found

@@ -254,6 +254,30 @@ def test_malachias_ends_in_another_order():
     assert ends == {1: 1, 2: 2, 3: 3, 4: 5, 5: 6, 6: 4}
 
 
+def test_proverbs_sea_clause_overlaps_the_next_king_james_verse():
+    first, second = map(parse_verse, ("PRO 8:28", "PRO 8:29"))
+    assert versification.to_kjv(first) == (first, second)
+    assert versification.to_kjv(second) == (second,)
+    assert versification.from_kjv(first) == (first,)
+    assert versification.from_kjv(second) == (first, second)
+
+
+@pytest.mark.parametrize(
+    "pairs",
+    [
+        {"PRO 8:28": "PRO 8:28-29"},
+        {"PRO 8:28": "PRO 8:28", "PRO 8:29": "PRO 8:30"},
+        {"PRO 8:28": "PRO 8:28", "PRO 8:29": "PRO 8:28"},
+        {"PRO 8:28": "PRO 8:28-29", "PRO 8:29": ""},
+    ],
+)
+def test_explicit_pairs_must_cover_only_the_declared_run(patched, pairs):
+    run = next(r for r in patched(versification, "DATA")["kjv"]["PRO"] if "pairs" in r)
+    run["pairs"] = pairs
+    with pytest.raises(CheckFailed, match="verse pairs|Verse pairs"):
+        versification.to_kjv(parse_verse("PRO 8:28"))
+
+
 def test_a_run_rests_on_the_witness_it_names(texts, table):
     """A run by the table is the table's account of the verse, and any other
     run departs from it; so does no verse that the file leaves unlisted."""

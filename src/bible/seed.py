@@ -570,7 +570,18 @@ def written(texts, code, entries):
         for v in texts.kjv.order[texts.books[code]]
         if v not in claimed and v.number != tvtms.TITLE
     ]
-    return _runs(listed) + [
+    written_runs = _runs(listed)
+    # Preserve precise overlaps when carrying the editor's readings forward.
+    declared_pairs = {
+        (run["edition"], run["kjv"]): run["pairs"]
+        for run in versification.DATA["kjv"].get(code, [])
+        if run.get("by") == "reading" and "pairs" in run
+    }
+    for run in written_runs:
+        pair = (run["edition"], run["kjv"])
+        if pair in declared_pairs:
+            run["pairs"] = declared_pairs[pair]
+    return written_runs + [
         {"edition": None, "kjv": str(passage)} for passage in runs(wanting)
     ]
 

@@ -1,5 +1,5 @@
 {
-  "review": "Seeded on 2026-09-28 by `python3 -m bible seed-versification` from STEPBible's TVTMS and the words of both translations. Runs by the table that the words bear out are as good as either witness; runs by words or place against the table have been read only where a `why` says so.",
+  "review": "Seeded on 2026-09-28 by `python3 -m bible seed-versification` from STEPBible's TVTMS and the words of both translations. Runs by the table that the words bear out are as good as either witness; runs by words or place against the table have been read only where a `why` says so. Reconciled on 2026-09-30 against the promoted Alexandrine readings and appendix passages; the new verses retain Brenton’s numbering. The selective Alexandrine review retains 3 Kingdoms 6:11–14 and 2 Chronicles 27:8 in the Appendix, so their missing-verse rows are restored. The omitted names at 2 Kingdoms 5:16a now appear only in the footnote to 5:16; the empty 16a label is removed from the printed inventory.",
   "relabel": {
     "MAL 3:19-24": {
       "edition": "MAL 4:1-6",
@@ -769,38 +769,6 @@
       {
         "edition": null,
         "kjv": "1SA 13:1"
-      },
-      {
-        "edition": null,
-        "kjv": "1SA 17:41"
-      },
-      {
-        "edition": null,
-        "kjv": "1SA 17:50"
-      },
-      {
-        "edition": null,
-        "kjv": "1SA 17:55-58"
-      },
-      {
-        "edition": null,
-        "kjv": "1SA 18:1-5"
-      },
-      {
-        "edition": null,
-        "kjv": "1SA 18:9-11"
-      },
-      {
-        "edition": null,
-        "kjv": "1SA 18:17-19"
-      },
-      {
-        "edition": null,
-        "kjv": "1SA 18:30"
-      },
-      {
-        "edition": null,
-        "kjv": "1SA 23:12"
       }
     ],
     "2SA": [
@@ -1110,19 +1078,11 @@
       },
       {
         "edition": null,
-        "kjv": "1KI 13:27"
-      },
-      {
-        "edition": null,
         "kjv": "1KI 14:1-20"
       },
       {
         "edition": null,
         "kjv": "1KI 15:6"
-      },
-      {
-        "edition": null,
-        "kjv": "1KI 15:32"
       }
     ],
     "2KI": [
@@ -1163,14 +1123,6 @@
         "edition": "1CH 16:23a",
         "kjv": "1CH 16:24",
         "by": "words"
-      },
-      {
-        "edition": null,
-        "kjv": "1CH 1:11-16"
-      },
-      {
-        "edition": null,
-        "kjv": "1CH 1:18-23"
       }
     ],
     "2CH": [
@@ -1188,7 +1140,7 @@
         "edition": "2CH 3:11",
         "kjv": "2CH 3:11",
         "by": "reading",
-        "why": "The Greek lacks the other cherub's wings, which are worded as these are."
+        "why": "The first cherub’s two wings belong to verse 11; the Alexandrine appendix supplies the other cherub’s wings separately at verse 12."
       },
       {
         "edition": "2CH 13:23",
@@ -1199,10 +1151,6 @@
         "edition": "2CH 14:1-14",
         "kjv": "2CH 14:2-15",
         "by": "table"
-      },
-      {
-        "edition": null,
-        "kjv": "2CH 3:12"
       },
       {
         "edition": null,
@@ -2185,6 +2133,27 @@
         "why": "The Greek makes the woman look out, and joins the youth she sees to the same verse."
       },
       {
+        "edition": "PRO 8:28-29",
+        "kjv": "PRO 8:28-29",
+        "by": "reading",
+        "why": "The Alexandrine addition printed in verse 28 restores the sea’s bound and decree, the first part of King James verse 29; printed verse 29 retains its foundations clause.",
+        "pairs": {
+          "PRO 8:28": "PRO 8:28-29",
+          "PRO 8:29": "PRO 8:29"
+        }
+      },
+      {
+        "edition": "PRO 8:32",
+        "kjv": "PRO 8:32-33",
+        "by": "reading",
+        "why": "The Alexandrine addition in Brenton’s verse 32 includes the blessing of those who keep wisdom’s ways and the instruction to hear wisdom, which the King James Bible numbers as verses 32 and 33."
+      },
+      {
+        "edition": "PRO 11:3",
+        "kjv": "PRO 11:3-4",
+        "by": "words"
+      },
+      {
         "edition": "PRO 20:9a",
         "kjv": "PRO 20:20",
         "by": "words"
@@ -2276,23 +2245,7 @@
       },
       {
         "edition": null,
-        "kjv": "PRO 1:16"
-      },
-      {
-        "edition": null,
         "kjv": "PRO 4:7"
-      },
-      {
-        "edition": null,
-        "kjv": "PRO 8:33"
-      },
-      {
-        "edition": null,
-        "kjv": "PRO 11:4"
-      },
-      {
-        "edition": null,
-        "kjv": "PRO 13:6"
       },
       {
         "edition": null,
@@ -3006,10 +2959,6 @@
       {
         "edition": null,
         "kjv": "EZK 32:19"
-      },
-      {
-        "edition": null,
-        "kjv": "EZK 33:26"
       },
       {
         "edition": null,

@@ -1,0 +1,5121 @@
+{
+  "swete": {
+    "1": "Swete, The Old Testament in Greek, vol. I, 3rd ed., 1901 (archive.org oldtestamentingr0001henr)",
+    "2": "Swete, The Old Testament in Greek, vol. II, 3rd ed., 1907",
+    "3": "Swete, The Old Testament in Greek, vol. III, 3rd ed., 1905"
+  },
+  "readings": {
+    "GEN 3:22": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 5,
+        "evidence": "text",
+        "reading": "Κύριος ὁ θεός",
+        "agrees": true
+      },
+      "from": "God said",
+      "note": "\\fqa Vat. \\ft omits “the Lord”.",
+      "english": {
+        "source": "brenton",
+        "span": [17, 25],
+        "edits": [
+          {
+            "span": [8, 8],
+            "to": " God said"
+          }
+        ]
+      },
+      "source_note": "\\fqa Alex. \\ft + the Lord."
+    },
+    "GEN 5:2": {
+      "why": "Print Brenton’s reading from corrected Alexandrinus; the correcting hand is uncertain.",
+      "swete": {
+        "volume": 1,
+        "page": 7,
+        "evidence": "text",
+        "reading": "αὐτῶν Ἀδάμ; litt. ων Αδαμ sup ras A¹? a?",
+        "agrees": true
+      },
+      "from": "his",
+      "note": "\\fqa Vat. \\ft \\+it his\\+it*.",
+      "english": {
+        "source": "brenton",
+        "span": [15, 20]
+      },
+      "source_note": "\\fqa Alex. \\ft their."
+    },
+    "GEN 5:25": {
+      "why": "Print the corrected Alexandrine age with the matching lifespan in 5:26; note the apparent original age of 167.",
+      "swete": {
+        "volume": 1,
+        "page": 8,
+        "evidence": "apparatus",
+        "reading": "ογδο sup ras A¹? a? (εξη.. A*vid)",
+        "agrees": true
+      },
+      "from": "an hundred and sixty and seven years",
+      "note": "\\fqa Vat. \\ft \\+it an hundred and sixty and seven years\\+it*.",
+      "english": {
+        "source": "brenton",
+        "span": [15, 24],
+        "edits": [
+          {
+            "span": [0, 3],
+            "to": "an hundred and eighty and seven"
+          }
+        ]
+      },
+      "source_note": "\\fqa Alex. \\ft 187 years."
+    },
+    "GEN 5:26": {
+      "why": "Print the corrected Alexandrine lifespan with the matching age in 5:25.",
+      "swete": {
+        "volume": 1,
+        "page": 8,
+        "evidence": "apparatus",
+        "reading": "ἑπτακ. καὶ ὀγδόη sup ras Aᵃ",
+        "agrees": true
+      },
+      "from": "eight hundred and two",
+      "note": "\\fqa Vat. \\ft \\+it eight hundred and two\\+it*.",
+      "english": {
+        "source": "brenton",
+        "span": [15, 18],
+        "edits": [
+          {
+            "span": [0, 3],
+            "to": "seven hundred and eighty and two",
+            "why": "Spell out Brenton’s number in the manner of the surrounding translation."
+          }
+        ]
+      },
+      "source_note": "\\fqa Alex. \\ft 782."
+    },
+    "GEN 5:32": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 9,
+        "evidence": "apparatus",
+        "reading": "Χαφ A",
+        "agrees": true
+      },
+      "from": "Cham",
+      "english": {
+        "source": "brenton",
+        "span": [15, 20]
+      },
+      "source_note": "\\fqa Alex. \\ft Chaph."
+    },
+    "GEN 6:10": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 9,
+        "evidence": "apparatus",
+        "reading": "Χαφ A",
+        "agrees": true
+      },
+      "from": "Cham",
+      "english": {
+        "source": "brenton",
+        "span": [15, 20]
+      },
+      "source_note": "\\fqa Alex. \\ft Chaph."
+    },
+    "GEN 6:7": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Keep the remaining glosses with their readings.",
+      "swete": {
+        "volume": 1,
+        "page": 9,
+        "evidence": "text",
+        "reading": "ἐθυμώθην",
+        "agrees": true
+      },
+      "from": "I am grieved",
+      "note": "\\fqa Vat. \\ft I am grieved. \\fqa Gr. \\ft I have thought or reasoned.",
+      "english": {
+        "source": "brenton",
+        "span": [66, 80]
+      },
+      "source_note": "\\fqa Gr. \\ft I have thought or reasoned. \\fqa Alex. \\ft ἐθυμώθην. I became angry."
+    },
+    "GEN 8:7#2": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 12,
+        "evidence": "text",
+        "reading": "τοῦ ἰδεῖν εἰ κεκόπακεν τὸ ὕδωρ",
+        "agrees": true
+      },
+      "from": "a raven;",
+      "note": "\\fqa Vat. \\ft omits.",
+      "english": {
+        "source": "brenton",
+        "span": [17, 47],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "a raven, "
+          },
+          {
+            "span": [30, 30],
+            "to": ";"
+          }
+        ]
+      },
+      "note_at": 9,
+      "source_note": "\\fqa Alex. \\ft + to see if the water had ceased."
+    },
+    "GEN 11:13": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 17,
+        "evidence": "text",
+        "reading": "ἔτη τετρακόσια τριάκοντα",
+        "agrees": true
+      },
+      "from": "four hundred years",
+      "english": {
+        "source": "brenton",
+        "span": [15, 24],
+        "edits": [
+          {
+            "span": [0, 3],
+            "to": "four hundred and thirty"
+          }
+        ]
+      },
+      "source_note": "\\fqa Alex. \\ft 430 years."
+    },
+    "GEN 11:17": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 18,
+        "evidence": "text",
+        "reading": "ἔτη τριακόσια ἑβδομήκοντα",
+        "agrees": true
+      },
+      "from": "two hundred and seventy years",
+      "english": {
+        "source": "brenton",
+        "span": [15, 24],
+        "edits": [
+          {
+            "span": [0, 3],
+            "to": "three hundred and seventy"
+          }
+        ]
+      },
+      "source_note": "\\fqa Alex. \\ft 370 years."
+    },
+    "GEN 11:24": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 18,
+        "evidence": "text",
+        "reading": "ἔτη ἑβδομήκοντα ἐννέα",
+        "agrees": true
+      },
+      "from": "a hundred and seventy-nine years",
+      "english": {
+        "source": "brenton",
+        "span": [15, 23],
+        "edits": [
+          {
+            "span": [0, 2],
+            "to": "seventy-nine"
+          }
+        ]
+      },
+      "source_note": "\\fqa Alex. \\ft 79 years."
+    },
+    "GEN 11:25": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 18,
+        "evidence": "text",
+        "reading": "ἔτη ἑκατὸν εἴκοσι ἐννέα",
+        "agrees": true
+      },
+      "from": "an hundred and twenty-five years",
+      "english": {
+        "source": "brenton",
+        "span": [15, 24],
+        "edits": [
+          {
+            "span": [0, 3],
+            "to": "an hundred and twenty-nine"
+          }
+        ]
+      },
+      "source_note": "\\fqa Alex. \\ft 129 years."
+    },
+    "GEN 12:5": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 19,
+        "evidence": "text",
+        "reading": "καὶ ἦλθον εἰς γῆν Χανάαν",
+        "agrees": true
+      },
+      "from": "into the land of Chanaan.",
+      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft omits.",
+      "english": {
+        "source": "brenton",
+        "span": [17, 50],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "into the land of Chanaan, "
+          },
+          {
+            "span": [33, 33],
+            "to": "."
+          }
+        ]
+      },
+      "note_at": 26,
+      "source_note": "\\fqa Alex. \\ft + and came into the land of Chanaan. So the \\fqa Heb."
+    },
+    "GEN 12:20": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 20,
+        "evidence": "text",
+        "reading": "καὶ Λὼτ μετ’ αὐτοῦ",
+        "agrees": true
+      },
+      "from": "and all that he had.",
+      "note": "\\fqa Vat. \\ft omits.",
+      "english": {
+        "source": "brenton",
+        "span": [17, 33],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "and all that he had, "
+          },
+          {
+            "span": [16, 16],
+            "to": "."
+          }
+        ]
+      },
+      "note_at": 21,
+      "source_note": "\\fqa Alex. \\ft + and Lot with him."
+    },
+    "GEN 13:4": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Use the original alternative to avoid “where he there”. The A text has οὗ ἐποίησεν ἐκεῖ τὴν σκηνήν and lacks “at first”. Brenton’s “where he pitched his tent” expresses the location naturally without repeating “there”; use his English alternative “pitched”.",
+      "swete": {
+        "volume": 1,
+        "page": 20,
+        "evidence": "text",
+        "reading": "οὗ ἐποίησεν ἐκεῖ τὴν σκηνήν",
+        "agrees": true
+      },
+      "from": "which he built there at first",
+      "note": "Or, \\fqa made. \\fqa Vat. \\ft which he built there at first.",
+      "english": {
+        "source": "brenton",
+        "span": [15, 48],
+        "edits": [
+          {
+            "span": [8, 16],
+            "to": ""
+          }
+        ]
+      },
+      "source_note": "\\fqa Alex. \\ft where he made or pitched his tent."
+    },
+    "GEN 13:5": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 20,
+        "evidence": "text",
+        "reading": "κτήνη",
+        "agrees": true
+      },
+      "from": "tents",
+      "english": {
+        "source": "brenton",
+        "span": [15, 21]
+      },
+      "source_note": "\\fqa Alex. \\ft cattle."
+    },
+    "GEN 26:34": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. The Hivite reading belongs to the second wife’s father; the first Χετταίου is unchanged. Brenton’s note mark precedes the first Chettite.",
+      "swete": {
+        "volume": 1,
+        "page": 46,
+        "evidence": "text",
+        "reading": "θυγατέρα Αἰλὼμ τοῦ Εὐαίου",
+        "agrees": true
+      },
+      "from": "daughter of Helon the Chettite",
+      "note": "\\fqa Vat. \\ft Chettite.",
+      "english": {
+        "source": "brenton",
+        "span": [15, 21],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "daughter of Helon the "
+          }
+        ]
+      },
+      "note_at": 22,
+      "source_note": "\\fqa Alex. \\ft Hivite."
+    },
+    "GEN 34:2": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 64,
+        "evidence": "text",
+        "reading": "ὁ Χορραῖος",
+        "agrees": true
+      },
+      "from": "Evite",
+      "english": {
+        "source": "brenton",
+        "span": [19, 28]
+      },
+      "source_note": "\\fqa Alex. \\ft the Chorrhæan."
+    },
+    "EXO 6:18": {
+      "why": "Print Brenton’s alternative: it is compatible with Swete, but no distinct Alexandrine–Vatican difference is established.",
+      "swete": {
+        "volume": 1,
+        "page": 114,
+        "evidence": "silence",
+        "reading": "ἑκατὸν τριάκοντα ἔτη; no A variant at the number",
+        "agrees": true
+      },
+      "from": "hundred and thirty-three years",
+      "note": "\\ft \\fqa Vat. \\ft \\+it hundred and thirty-three years\\+it*.",
+      "english": {
+        "source": "brenton",
+        "span": [15, 24],
+        "edits": [
+          {
+            "span": [0, 3],
+            "to": "hundred and thirty"
+          }
+        ]
+      },
+      "source_note": "\\fqa Alex. \\ft 130 years."
+    },
+    "EXO 6:20": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 114,
+        "evidence": "apparatus",
+        "reading": "δύο] ἕξ A",
+        "agrees": true
+      },
+      "from": "hundred and thirty-two years",
+      "english": {
+        "source": "brenton",
+        "span": [15, 24],
+        "edits": [
+          {
+            "span": [0, 3],
+            "to": "hundred and thirty-six"
+          }
+        ]
+      },
+      "source_note": "\\fqa Alex. \\ft 136 years."
+    },
+    "EXO 39:1#2": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 184,
+        "evidence": "apparatus",
+        "reading": "εἴκοσι 2°] καὶ τριάκοντα AF",
+        "agrees": true
+      },
+      "from": "seven hundred and twenty shekels",
+      "english": {
+        "source": "brenton",
+        "span": [15, 26],
+        "edits": [
+          {
+            "span": [0, 3],
+            "to": "seven hundred and thirty"
+          }
+        ]
+      },
+      "source_note": "\\fqa Alex. \\ft 730 shekels."
+    },
+    "EXO 39:7": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 184,
+        "evidence": "apparatus",
+        "reading": "ἑβδομήκοντα] pr τετρακόσια AF",
+        "agrees": true
+      },
+      "from": "seventy talents",
+      "english": {
+        "source": "brenton",
+        "span": [15, 26],
+        "edits": [
+          {
+            "span": [0, 3],
+            "to": "four hundred and seventy"
+          }
+        ]
+      },
+      "source_note": "\\fqa Alex. \\ft 470 talents."
+    },
+    "EXO 39:7#2": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 184,
+        "evidence": "apparatus",
+        "reading": "χίλιοι πεντακόσιοι] δισχίλιοι καὶ τετρακόσιοι AF",
+        "agrees": true
+      },
+      "from": "a thousand five hundred shekels",
+      "english": {
+        "source": "brenton",
+        "span": [15, 27],
+        "edits": [
+          {
+            "span": [0, 4],
+            "to": "two thousand four hundred"
+          }
+        ]
+      },
+      "source_note": "\\fqa Alex. \\ft 2400 shekels."
+    },
+    "NUM 1:29": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 252,
+        "evidence": "apparatus",
+        "reading": "τετρακόσιοι] πεντακόσιοι A",
+        "agrees": true
+      },
+      "from": "four hundred",
+      "english": {
+        "source": "brenton",
+        "span": [15, 18],
+        "edits": [
+          {
+            "span": [0, 3],
+            "to": "five hundred",
+            "why": "Spell out Brenton’s number in the manner of the surrounding translation."
+          }
+        ]
+      },
+      "source_note": "\\fqa Alex. \\ft 500."
+    },
+    "NUM 4:36": {
+      "why": "Swete confirms the Alexandrine reading. Brenton’s displaced wording differs from Swete’s Vatican text and still needs a source check. Swete has 2,250 in the Vatican main text and 2,350 in A; Brenton’s main English has 2,750. The footnote scopes both displaced numbers to the hundreds and tens.",
+      "swete": {
+        "volume": 1,
+        "page": 263,
+        "evidence": "apparatus",
+        "reading": "διακόσιοι] τριακόσιοι A; πεντήκοντα retained",
+        "agrees": true
+      },
+      "from": "seven hundred and fifty",
+      "note": "\\fqa Vat. \\ft \\+it seven hundred and fifty\\+it*.",
+      "english": {
+        "source": "brenton",
+        "span": [15, 18],
+        "edits": [
+          {
+            "span": [0, 3],
+            "to": "three hundred and fifty",
+            "why": "Spell out Brenton’s number in the manner of the surrounding translation."
+          }
+        ]
+      },
+      "source_note": "\\fqa Alex. \\ft 350."
+    },
+    "NUM 26:31": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 314,
+        "evidence": "apparatus",
+        "reading": "χʹ] ἑξακόσιοι AF",
+        "agrees": true
+      },
+      "from": "four hundred",
+      "english": {
+        "source": "brenton",
+        "span": [15, 18],
+        "edits": [
+          {
+            "span": [0, 3],
+            "to": "six hundred",
+            "why": "Spell out Brenton’s number in the manner of the surrounding translation."
+          }
+        ]
+      },
+      "source_note": "\\fqa Alex. \\ft 600."
+    },
+    "NUM 26:38": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 314,
+        "evidence": "apparatus",
+        "reading": "πεντήκοντα] ἑξήκοντα A; ἑπτακόσιοι] πεντακόσιοι A",
+        "agrees": true
+      },
+      "from": "fifty-two thousand and seven hundred",
+      "english": {
+        "source": "brenton",
+        "span": [15, 21],
+        "edits": [
+          {
+            "span": [0, 6],
+            "to": "sixty-two thousand and five hundred",
+            "why": "Spell out Brenton’s number in the manner of the surrounding translation."
+          }
+        ]
+      },
+      "source_note": "\\fqa Alex. \\ft 62,500."
+    },
+    "NUM 26:47": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 315,
+        "evidence": "apparatus",
+        "reading": "χʹ] ἑξακόσιοι AF",
+        "agrees": true
+      },
+      "from": "four hundred",
+      "english": {
+        "source": "brenton",
+        "span": [15, 18],
+        "edits": [
+          {
+            "span": [0, 3],
+            "to": "six hundred",
+            "why": "Spell out Brenton’s number in the manner of the surrounding translation."
+          }
+        ]
+      },
+      "source_note": "\\fqa Alex. \\ft 600."
+    },
+    "DEU 32:42": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 414,
+        "evidence": "apparatus",
+        "reading": "ἐχθρῶν] ἐθνῶν A",
+        "agrees": true
+      },
+      "from": "enemies",
+      "note": "\\fqa Vat. \\ft enemies.",
+      "english": {
+        "source": "brenton",
+        "span": [22, 30]
+      },
+      "source_note": "\\fqa Alex. \\ft ἐθνῶν, Gentiles."
+    },
+    "JOS 17:10": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 456,
+        "evidence": "apparatus",
+        "reading": "Ἰασήβ] Ἀσήρ A",
+        "agrees": true
+      },
+      "from": "Aseb",
+      "english": {
+        "source": "brenton",
+        "span": [15, 19]
+      },
+      "source_note": "\\fqa Alex. \\ft Aser."
+    },
+    "JDG 9:37#2": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 503,
+        "evidence": "apparatus",
+        "reading": "διὰ ὁδοῦ Ἠλωνμαωνεὶμ] ἀπὸ ὁδοῦ δρυὸς ἀποβλεπόντων A",
+        "agrees": true
+      },
+      "from": "the way of Helon Maonenim",
+      "english": {
+        "source": "brenton",
+        "span": [42, 73]
+      },
+      "source_note": "\\fqa Alex. \\ft translates the words \\fqa “the way of the oak of the seers.”"
+    },
+    "JDG 12:6": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Keep the remaining glosses with their readings.",
+      "swete": {
+        "volume": 1,
+        "page": 511,
+        "evidence": "apparatus",
+        "reading": "στάχυς] σύνθημα A",
+        "agrees": true
+      },
+      "from": "Stachys",
+      "note": "\\fqa Vat. \\ft Stachys. \\fqa Heb. \\ft שבלה, “Shibboleth,” \\+it ear of corn\\+it*.",
+      "english": {
+        "source": "brenton",
+        "span": [153, 162]
+      },
+      "source_note": "\\fqa Heb. \\ft שבלה, “Shibboleth,” ear of corn. If translated at all, the English may as well be put as the Greek. \\fqa Alex. \\ft σύνθημα, \\fqa q. d. \\ft watchword."
+    },
+    "JDG 16:4": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Swete replaces the complete prepositional phrase; “at” renders ἐπί and replaces Vatican “in”.",
+      "swete": {
+        "volume": 1,
+        "page": 519,
+        "evidence": "apparatus",
+        "reading": "ἐν Ἀλσωρὴχ] ἐπὶ τοῦ χειμάρρου Σωρηχ A",
+        "agrees": true
+      },
+      "from": "in Alsorech",
+      "supplied": [
+        "at"
+      ],
+      "english": {
+        "source": "brenton",
+        "span": [15, 34],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "at "
+          }
+        ]
+      },
+      "source_note": "\\fqa Alex. \\ft the brook of Sorech."
+    },
+    "1SA 2:36": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 550,
+        "evidence": "apparatus",
+        "reading": "ἀργυρίου] + καὶ ἐν ἄρτῳ ἐν (sic) A",
+        "agrees": true
+      },
+      "from": "for a little piece of silver, ",
+      "note": "\\fqa Vat. \\ft omits.",
+      "english": {
+        "source": "brenton",
+        "span": [22, 46],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "for a little piece of silver, "
+          },
+          {
+            "span": [24, 24],
+            "to": ", "
+          }
+        ]
+      },
+      "note_at": 30,
+      "source_note": "\\fqa Alex. \\ft + \\ft 'and for a piece of bread.'"
+    },
+    "1SA 7:14": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 558,
+        "evidence": "apparatus",
+        "reading": "Ἀσκαλῶνος] Ἀκκαρων A | Ἀζόβ] Γεθ A",
+        "agrees": true
+      },
+      "from": "from Ascalon to Azob",
+      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft from Ascalon to Azob.",
+      "english": {
+        "source": "brenton",
+        "span": [15, 35]
+      },
+      "source_note": "\\fqa Alex. \\ft from Accaron to Geth. So the \\fqa Heb."
+    },
+    "1SA 12:13": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. A’s addition follows “chosen”, away from Brenton’s note mark.",
+      "swete": {
+        "volume": 1,
+        "page": 567,
+        "evidence": "apparatus",
+        "reading": "ἐξελέξ.] + ὃν ᾐτίσασθαι (sic) A",
+        "agrees": true
+      },
+      "from": "whom ye have chosen;",
+      "note": "Nearer the \\fqa Heb. \\fqa Vat. \\ft omits.",
+      "lemma": "whom ye asked for",
+      "english": {
+        "source": "brenton",
+        "span": [22, 39],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "whom ye have chosen, "
+          },
+          {
+            "span": [17, 17],
+            "to": ";"
+          }
+        ]
+      },
+      "note_at": 21,
+      "source_note": "\\fqa Alex. \\ft + \\ft 'whom ye asked for,' nearer the \\fqa Heb."
+    },
+    "1SA 15:12": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 575,
+        "evidence": "apparatus",
+        "reading": "Σαουλ] Σαμουηλ A",
+        "agrees": true
+      },
+      "from": "it was told Saul",
+      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft told Saul.",
+      "lemma": "told Samuel",
+      "english": {
+        "source": "brenton",
+        "span": [33, 39],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "it was told "
+          }
+        ]
+      },
+      "note_at": 12,
+      "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft Samuel."
+    },
+    "1SA 15:12#2": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 575,
+        "evidence": "apparatus",
+        "reading": "Σαμουηλ 2°] Σαουλ A",
+        "agrees": true
+      },
+      "from": "saying, Samuel has come",
+      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft Samuel has come.",
+      "lemma": "Saul has come",
+      "english": {
+        "source": "brenton",
+        "span": [33, 37],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "saying, "
+          },
+          {
+            "span": [4, 4],
+            "to": " has come"
+          }
+        ]
+      },
+      "note_at": 8,
+      "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft Saul."
+    },
+    "1SA 17:1": {
+      "why": "Print Brenton’s Alexandrine place-name and supply “in” for Swete’s ἐν. A has ἐν before the place-name; supply “in” to connect Aphesdommin to the preceding location.",
+      "swete": {
+        "volume": 1,
+        "page": 578,
+        "evidence": "apparatus",
+        "reading": "Ἐφερμέμ] ἐν Ἀφεσδομμειν A",
+        "agrees": true
+      },
+      "from": "Ephermen",
+      "supplied": [
+        "in"
+      ],
+      "english": {
+        "source": "brenton",
+        "span": [15, 26],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "\\add in\\add* "
+          }
+        ]
+      },
+      "source_note": "\\fqa Alex. \\ft Aphesdommin."
+    },
+    "1SA 17:43": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Keep the remaining glosses with their readings.",
+      "swete": {
+        "volume": 1,
+        "page": 581,
+        "evidence": "apparatus",
+        "reading": "om καὶ εἶπεν Δαυεὶδ οὐχὶ ἀλλ’ ἢ χείρων κυνὸς A",
+        "agrees": true
+      },
+      "from": "with a staff and stones? [and David said, Nay, but worse than a dog.]",
+      "note": "\\fqa Vat. \\ft adds after the question, \\+it and David said, Nay, but worse than a dog\\+it*. The \\fqa Heb. \\ft also omits this reply.",
+      "english": {
+        "source": "from",
+        "edits": [
+          {
+            "span": [24, 69],
+            "to": "",
+            "why": "Remove only the words Brenton’s source note identifies as omitted."
+          }
+        ]
+      },
+      "source_note": "\\ft The following words in italics not in \\fqa Alex. \\ft or \\fqa Heb."
+    },
+    "1SA 17:52#2": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 581,
+        "evidence": "apparatus",
+        "reading": "Γεθ 1°] Γαι A",
+        "agrees": true
+      },
+      "from": "the entrance to Geth",
+      "lemma": "Gai",
+      "note": "\\fqa Vat. \\ft Geth.",
+      "english": {
+        "source": "brenton",
+        "span": [15, 18],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "the entrance to "
+          }
+        ]
+      },
+      "note_at": 16,
+      "source_note": "\\fqa Alex. \\ft Gai."
+    },
+    "1SA 21:10": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Keep the remaining glosses with their readings. The phrase follows “cloth”; Brenton’s alternative explanation “shoulder-piece” stays in the note.",
+      "swete": {
+        "volume": 1,
+        "page": 590,
+        "evidence": "apparatus",
+        "reading": "ἱματίῳ] + ὀπίσω τῆς ἐπωμίδος A",
+        "agrees": true
+      },
+      "from": "wrapt in a cloth:",
+      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Or, \\ft behind the shoulder-piece. \\fqa Vat. \\ft omits.",
+      "english": {
+        "source": "brenton",
+        "span": [21, 37],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "wrapt in a cloth "
+          },
+          {
+            "span": [16, 16],
+            "to": ":"
+          }
+        ]
+      },
+      "note_at": 17,
+      "source_note": "\\fqa Alex. \\ft + \\ft behind the ephod (or shoulder-piece) —so the \\fqa Heb."
+    },
+    "1SA 22:18": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 592,
+        "evidence": "apparatus",
+        "reading": "ἐφούδ] + λινοῦν A",
+        "agrees": true
+      },
+      "from": "an ephod",
+      "english": {
+        "source": "brenton",
+        "span": [15, 28]
+      },
+      "source_note": "\\fqa Alex. \\ft a linen ephod."
+    },
+    "1SA 25:1": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Brenton’s Rama note stands at “assembled”; A confirms it replaces Armathaim.",
+      "swete": {
+        "volume": 1,
+        "page": 596,
+        "evidence": "apparatus",
+        "reading": "Ἀρμαθαίμ] Ραμα A",
+        "agrees": true
+      },
+      "from": "Armathaim",
+      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft Armathaim.",
+      "english": {
+        "source": "brenton",
+        "span": [14, 18]
+      },
+      "source_note": "\\fqa Heb. \\ft Rama. \\fqa Alex. \\ft Rama."
+    },
+    "1SA 25:1#3": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 596,
+        "evidence": "apparatus",
+        "reading": "Μααν] Φαραν A",
+        "agrees": true
+      },
+      "from": "Maon",
+      "english": {
+        "source": "brenton",
+        "span": [15, 20]
+      },
+      "source_note": "\\fqa Alex. \\ft Paran."
+    },
+    "1SA 25:13": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 597,
+        "evidence": "apparatus",
+        "reading": "καὶ ἀνέβησαν] pr καὶ περιεζώσαντο ἀνὴρ τὴν μάχαιραν αὐτοῦ καὶ περιεζώσατο καὶ Δαδ τὴν μάχαιραν αὐτοῦ A",
+        "agrees": true
+      },
+      "from": "his sword. And they went",
+      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft omits.",
+      "lemma": "And they girded on every man his sword, and David also girded on his sword",
+      "english": {
+        "source": "brenton",
+        "span": [40, 110],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "his sword. And "
+          },
+          {
+            "span": [70, 70],
+            "to": ". And they went"
+          }
+        ]
+      },
+      "note_at": 11,
+      "source_note": "\\fqa Alex. \\ft and \\fqa Heb. \\ft + 'and they girded on every man his sword, and David also girded on his sword.'"
+    },
+    "1SA 25:24": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 598,
+        "evidence": "apparatus",
+        "reading": "ἐπὶ τοὺς πόδας] pr καὶ ἔπεσεν A",
+        "agrees": true
+      },
+      "from": "\\add even\\add* to his feet",
+      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft omits.",
+      "lemma": "And she fell",
+      "edits": [
+        {
+          "target": "1SA 25:23",
+          "from": "to the ground",
+          "note": null,
+          "why": "End the previous sentence before “And she fell”.",
+          "english": {
+            "source": "from",
+            "edits": [
+              {
+                "span": [13, 13],
+                "to": "."
+              }
+            ]
+          }
+        }
+      ],
+      "english": {
+        "source": "brenton",
+        "span": [43, 51],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "And "
+          },
+          {
+            "span": [8, 8],
+            "to": " \\add even\\add* to his feet"
+          }
+        ]
+      },
+      "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft + \\ft and she fell."
+    },
+    "1SA 25:25": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 598,
+        "evidence": "apparatus",
+        "reading": "τούτον] + ἐπὶ Ναβαλ A",
+        "agrees": true
+      },
+      "from": "this pestilent man,",
+      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft omits.",
+      "english": {
+        "source": "brenton",
+        "span": [41, 51],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "this pestilent man, "
+          },
+          {
+            "span": [10, 10],
+            "to": ","
+          }
+        ]
+      },
+      "note_at": 20,
+      "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft + \\fqa 'even Nabal'."
+    },
+    "1SA 25:39": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. A’s clause supplies the content of “heard”; Brenton’s anticipatory “it” is replaced.",
+      "swete": {
+        "volume": 1,
+        "page": 599,
+        "evidence": "apparatus",
+        "reading": "Δαυεὶδ 1°] + ὅτι ἀπέθανεν Ναβαλ A",
+        "agrees": true
+      },
+      "from": "David heard it",
+      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft it.",
+      "lemma": "that Nabal was dead",
+      "english": {
+        "source": "brenton",
+        "span": [41, 60],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "David heard "
+          }
+        ]
+      },
+      "note_at": 12,
+      "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft insert 'that Nabal was dead.'"
+    },
+    "1SA 25:44": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. The second name in Brenton’s pair is Alexandrinus.",
+      "swete": {
+        "volume": 1,
+        "page": 600,
+        "evidence": "apparatus",
+        "reading": "Ἀμεις] Λαις A",
+        "agrees": true
+      },
+      "from": "Amis",
+      "note": "\\fqa Heb. \\ft Laish. \\fqa Vat. \\ft Amis.",
+      "english": {
+        "source": "brenton",
+        "span": [33, 37]
+      },
+      "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft Laish and Lais."
+    },
+    "1SA 25:44#2": {
+      "why": "Print Brenton’s Alexandrine name; note Swete’s possible original spelling Γαδδει. The second name in Brenton’s pair is Alexandrinus.",
+      "swete": {
+        "volume": 1,
+        "page": 600,
+        "evidence": "apparatus",
+        "reading": "Ρομμα] Γαλλει A (Γαδδει forte A*)",
+        "agrees": true
+      },
+      "from": "Romma",
+      "note": "\\fqa Heb. \\ft Gallim. \\fqa Vat. \\ft Romma.",
+      "english": {
+        "source": "brenton",
+        "span": [33, 38]
+      },
+      "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft Gallim and Galli."
+    },
+    "1SA 26:14": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Keep the remaining glosses with their readings.",
+      "swete": {
+        "volume": 1,
+        "page": 601,
+        "evidence": "apparatus",
+        "reading": "καλῶν] + με πρὸς τὸν βασιλέα A",
+        "agrees": true
+      },
+      "from": "thou that callest?",
+      "note": "\\fqa Heb. \\ft to the king. \\fqa Vat. \\ft omits.",
+      "english": {
+        "source": "brenton",
+        "span": [45, 59],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "thou that callest "
+          },
+          {
+            "span": [14, 14],
+            "to": "?"
+          }
+        ]
+      },
+      "note_at": 18,
+      "source_note": "\\fqa Heb. \\ft + to the king. \\fqa Alex. \\ft 'me to the king.'"
+    },
+    "1SA 29:9": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Supply “as” from καθώς to join Brenton’s English to the sentence.",
+      "swete": {
+        "volume": 1,
+        "page": 606,
+        "evidence": "apparatus",
+        "reading": "μου] + καθὼς ἄγγελος θεοῦ A",
+        "agrees": true
+      },
+      "from": "good in my eyes,",
+      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft omits.",
+      "supplied": [
+        "as"
+      ],
+      "english": {
+        "source": "brenton",
+        "span": [39, 54],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "good in my eyes, as "
+          },
+          {
+            "span": [15, 15],
+            "to": ","
+          }
+        ]
+      },
+      "note_at": 17,
+      "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft + \\ft an angel of God."
+    },
+    "1SA 30:7": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 607,
+        "evidence": "apparatus",
+        "reading": "ἐφουδ] + καὶ προσήγαγεν Ἀβιαθαρ τὸ ἐφουδ πρὸς Δαδ A",
+        "agrees": true
+      },
+      "from": "Bring near the ephod.",
+      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft omits.",
+      "english": {
+        "source": "brenton",
+        "span": [36, 75],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "Bring near the ephod. "
+          },
+          {
+            "span": [39, 39],
+            "to": "."
+          }
+        ]
+      },
+      "note_at": 22,
+      "source_note": "\\fqa Alex. \\ft and \\fqa Heb. \\ft + 'And Abiathar brought the ephod to David.'"
+    },
+    "1SA 30:27": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 608,
+        "evidence": "apparatus",
+        "reading": "Βαιθσουρ] Βαιθηλ A",
+        "agrees": true
+      },
+      "from": "Bæthsur",
+      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft Bæthsur.",
+      "english": {
+        "source": "brenton",
+        "span": [34, 40]
+      },
+      "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft 'Bethel.'"
+    },
+    "2SA 5:16a": {
+      "why": "Follow the Alexandrine omission of the additional names and remove the empty verse label. Attach the omission note, preserving all omitted names, to the end of 5:16.",
+      "swete": {
+        "volume": 1,
+        "page": 621,
+        "evidence": "apparatus",
+        "reading": "om Σαμαε…Ἐλειφααθ (2°) A",
+        "agrees": true
+      },
+      "from": "Samae, Jessibath, Nathan, Galamaan, Jebaar, Theësus, Eliphalat, Naged, Naphec, Janathan, Leasamys, Baalimath, Eliphaath.",
+      "note": "\\fqa Heb. \\ft also omits these names. \\fqa Vat. \\ft adds \\+it Samae, Jessibath, Nathan, Galamaan, Jebaar, Theësus, Eliphalat, Naged, Naphec, Janathan, Leasamys, Baalimath, Eliphaath\\+it*.",
+      "lemma": null,
+      "edits": [
+        {
+          "target": "2SA 5:16",
+          "from": "Eliphalath,",
+          "note": null,
+          "why": "End the list of names after omitting the following verse.",
+          "english": {
+            "source": "from",
+            "edits": [
+              {
+                "span": [10, 11],
+                "to": "."
+              }
+            ]
+          }
+        }
+      ],
+      "english": {
+        "source": "from",
+        "edits": [
+          {
+            "span": [0, 120],
+            "to": ""
+          }
+        ]
+      },
+      "note_at": 0,
+      "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft omit the remaining names in this verse.",
+      "omit_verse": true,
+      "note_target": "2SA 5:16"
+    },
+    "2SA 6:3": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Keep the remaining glosses with their readings. A places the addition before “with the ark” and spells Aminadab as the surrounding text does.",
+      "swete": {
+        "volume": 1,
+        "page": 622,
+        "evidence": "apparatus",
+        "reading": "σὺν τῇ κιβ.] pr καὶ ἦραν αὐτὴν ἀπὸ οἴκου Ἀμιναδὰβ ἐν βουνῷ A",
+        "agrees": true
+      },
+      "from": "waggon with the ark.",
+      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft omits the clause.",
+      "supplied": [
+        "Aminadab"
+      ],
+      "lemma": "and brought it out of the house of Aminadab in the hill",
+      "english": {
+        "source": "brenton",
+        "span": [60, 115],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "waggon, "
+          },
+          {
+            "span": [35, 43],
+            "to": "Aminadab"
+          },
+          {
+            "span": [55, 55],
+            "to": ", with the ark."
+          }
+        ]
+      },
+      "note_at": 8,
+      "source_note": "\\fqa Alex. \\ft more according to the \\fqa Heb. \\ft inserts 'and brought it out of the house of Abinadab in the hill.'"
+    },
+    "2SA 6:7": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 623,
+        "evidence": "apparatus",
+        "reading": "ὁ θεός] + ἐπὶ προπετείᾳ A",
+        "agrees": true
+      },
+      "from": "God smote him there:",
+      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft omits.",
+      "english": {
+        "source": "brenton",
+        "span": [39, 55],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "God smote him there "
+          },
+          {
+            "span": [16, 16],
+            "to": ":"
+          }
+        ]
+      },
+      "note_at": 20,
+      "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft + \\ft for his rashness."
+    },
+    "2SA 6:22": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Keep the remaining glosses with their readings.",
+      "swete": {
+        "volume": 1,
+        "page": 624,
+        "evidence": "apparatus",
+        "reading": "δοξασθῆναι] pr μη (superscr) Bᵃvid; no negative in A",
+        "agrees": true
+      },
+      "from": "I was not had in honour",
+      "note": "\\fqa Vat. \\ft I was not had in honour.",
+      "english": {
+        "source": "from",
+        "edits": [
+          {
+            "span": [5, 9],
+            "to": ""
+          }
+        ]
+      },
+      "source_note": "\\fqa Alex. \\ft omits the negative, but still differs from the Hebrew."
+    },
+    "2SA 7:26": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 626,
+        "evidence": "apparatus",
+        "reading": "ἕως αἰῶνος] + …ὁ οἶκος τοῦ δούλου σου Δαδ ἔσται ἀνωρθωμένος ἐνώπιον σου A",
+        "agrees": true
+      },
+      "from": "for ever.",
+      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft omits.",
+      "english": {
+        "source": "brenton",
+        "span": [39, 104],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "for ever, "
+          },
+          {
+            "span": [65, 65],
+            "to": "."
+          }
+        ]
+      },
+      "note_at": 10,
+      "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft add, 'and let the house of thy servant David be established before thee.'"
+    },
+    "2SA 8:4": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 626,
+        "evidence": "apparatus",
+        "reading": "χίλια] ἑπτά A",
+        "agrees": true
+      },
+      "from": "a thousand of his chariots",
+      "english": {
+        "source": "brenton",
+        "span": [15, 20],
+        "edits": [
+          {
+            "span": [5, 5],
+            "to": " of his chariots"
+          }
+        ]
+      },
+      "source_note": "\\fqa Alex. \\ft seven."
+    },
+    "2SA 10:16": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 630,
+        "evidence": "apparatus",
+        "reading": "om Χαλαμακ A",
+        "agrees": true
+      },
+      "from": "the river Chalamak",
+      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft the river Chalamak.",
+      "english": {
+        "source": "from",
+        "edits": [
+          {
+            "span": [9, 18],
+            "to": ""
+          }
+        ]
+      },
+      "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft omit the name."
+    },
+    "2SA 11:18": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Keep the remaining glosses with their readings. Swete confirms that Brenton’s “make the verse end here” is omission of the concluding clause.",
+      "swete": {
+        "volume": 1,
+        "page": 631,
+        "evidence": "apparatus",
+        "reading": "om λαλῆσαι πρὸς τὸν βασ. A",
+        "agrees": true
+      },
+      "from": ", so as to tell them to the king.",
+      "note": "\\fqa Heb. \\ft also ends the verse here. \\fqa Vat. \\ft adds \\+it so as to tell them to the king\\+it*.",
+      "lemma": "events of the war",
+      "english": {
+        "source": "from",
+        "edits": [
+          {
+            "span": [0, 32],
+            "to": ""
+          }
+        ]
+      },
+      "source_note": "\\fqa Alex. \\ft and \\fqa Heb. \\ft make the verse end here."
+    },
+    "2SA 12:30": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Keep the note of Hebrew agreement.",
+      "swete": {
+        "volume": 1,
+        "page": 635,
+        "evidence": "apparatus",
+        "reading": "om Μελχολ A",
+        "agrees": true
+      },
+      "from": "the crown of Molchom their king",
+      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft the crown of Molchom their king.",
+      "english": {
+        "source": "from",
+        "edits": [
+          {
+            "span": [13, 21],
+            "to": ""
+          }
+        ]
+      },
+      "source_note": "\\fqa Alex. \\ft rightly omits Molchom. 'Their king' in \\fqa Heb."
+    },
+    "2SA 17:8": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 646,
+        "evidence": "apparatus",
+        "reading": "om καὶ ὡς ὗς τραχ. ἐν τῷ πεδ. καὶ ὁ A",
+        "agrees": true
+      },
+      "from": "as a bereaved bear in the field, [and as a wild boar in the plain]",
+      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft as a bereaved bear in the field, and as a wild boar in the plain.",
+      "english": {
+        "source": "from",
+        "edits": [
+          {
+            "span": [31, 66],
+            "to": ""
+          }
+        ]
+      },
+      "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft omit the words in italics."
+    },
+    "2SA 18:18#2": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. A places “after his own name” after the first “called the pillar”, then repeats that clause.",
+      "swete": {
+        "volume": 1,
+        "page": 650,
+        "evidence": "apparatus",
+        "reading": "στήλην 3°] + ἐπὶ τῷ ὀνόματι αὐτοῦ καὶ ἐκάλεσεν τὴν στήλην A",
+        "agrees": true
+      },
+      "from": "and he called the pillar,",
+      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft omits.",
+      "english": {
+        "source": "brenton",
+        "span": [41, 84],
+        "edits": [
+          {
+            "span": [43, 43],
+            "to": ": and he called the pillar,"
+          }
+        ]
+      },
+      "note_at": 25,
+      "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft insert 'and he called the pillar after his own name.'"
+    },
+    "2SA 22:39": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. A adds “consume” before “crush”; it does not replace “crush”.",
+      "swete": {
+        "volume": 1,
+        "page": 662,
+        "evidence": "apparatus",
+        "reading": "καὶ θλάσω] pr καὶ τελέσω αὐτούς A",
+        "agrees": true
+      },
+      "from": "And I will crush them",
+      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft omits.",
+      "lemma": "And I will consume them",
+      "english": {
+        "source": "brenton",
+        "span": [15, 18],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "And I will consume them, "
+          },
+          {
+            "span": [3, 3],
+            "to": " I will crush them"
+          }
+        ]
+      },
+      "note_at": 11,
+      "source_note": "\\fqa Alex. \\ft and \\fqa Heb. \\ft consume."
+    },
+    "2SA 24:17": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 667,
+        "evidence": "apparatus",
+        "reading": "ἠδίκησα] + καὶ ἐγὼ ὁ ποιμὴν ἐκακοποίησα A",
+        "agrees": true
+      },
+      "from": "I that have done wrong,",
+      "note": "\\fqa Vat. \\ft omits.",
+      "english": {
+        "source": "brenton",
+        "span": [22, 59],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "I that have done wrong, "
+          },
+          {
+            "span": [37, 37],
+            "to": ","
+          }
+        ]
+      },
+      "note_at": 24,
+      "source_note": "\\fqa Alex. \\ft adds, 'and I the shepherd have done wickedly.'"
+    },
+    "1KI 1:9#2": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 669,
+        "evidence": "apparatus",
+        "reading": "Ρωγηλ] pr πηγῆς A",
+        "agrees": true
+      },
+      "from": "near Rogel",
+      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft Rogel.",
+      "lemma": "the fountain of Rogel",
+      "english": {
+        "source": "brenton",
+        "span": [33, 54],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "near "
+          }
+        ]
+      },
+      "note_at": 5,
+      "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft the fountain of Rogel."
+    },
+    "1KI 3:20": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 680,
+        "evidence": "apparatus",
+        "reading": "μου 2°] + καὶ ἡ δούλη σου ὕπνου A",
+        "agrees": true
+      },
+      "from": "from my arms,",
+      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft omits.",
+      "english": {
+        "source": "brenton",
+        "span": [40, 66],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "from my arms, "
+          },
+          {
+            "span": [26, 26],
+            "to": ","
+          }
+        ]
+      },
+      "note_at": 14,
+      "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft + \\ft 'while thine handmaid slept.'"
+    },
+    "1KI 4:5#2": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 681,
+        "evidence": "apparatus",
+        "reading": "Ναθαν 2°] + ἱερεὺς A",
+        "agrees": true
+      },
+      "from": "\\add was\\add* the king's",
+      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft omits.",
+      "lemma": "priest",
+      "english": {
+        "source": "brenton",
+        "span": [41, 47],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "\\add was\\add* "
+          },
+          {
+            "span": [6, 6],
+            "to": ", the king's"
+          }
+        ]
+      },
+      "note_at": 14,
+      "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft insert 'priest.'"
+    },
+    "1KI 5:30": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 684,
+        "evidence": "apparatus",
+        "reading": "ἑξακόσιοι] πεντακόσιοι A",
+        "agrees": true
+      },
+      "from": "six hundred",
+      "note": "\\fqa Heb. \\ft 300. \\fqa Vat. \\ft six hundred.",
+      "english": {
+        "source": "brenton",
+        "span": [34, 37],
+        "edits": [
+          {
+            "span": [0, 3],
+            "to": "five hundred",
+            "why": "Spell out Brenton’s number in the manner of the surrounding translation."
+          }
+        ]
+      },
+      "source_note": "\\fqa Heb. \\ft 300. \\fqa Alex. \\ft 500."
+    },
+    "1KI 5:30#2": {
+      "why": "Print “overseers of the people” and keep the following relative clause, which Swete does not omit. Swete’s τοῦ λαοῦ joins “overseers”; the following “who wrought in the works” remains in the text, with no A omission recorded.",
+      "swete": {
+        "volume": 1,
+        "page": 684,
+        "evidence": "apparatus",
+        "reading": "ἐπιστάται] + τοῦ λαοῦ A",
+        "agrees": true
+      },
+      "from": "masters who wrought in the works",
+      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft masters.",
+      "lemma": "overseers of the people",
+      "english": {
+        "source": "brenton",
+        "span": [33, 56],
+        "edits": [
+          {
+            "span": [23, 23],
+            "to": " who wrought in the works"
+          }
+        ]
+      },
+      "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft overseers of the people."
+    },
+    "1KI 6:2#2": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 684,
+        "evidence": "apparatus",
+        "reading": "τεσσαράκοντα] … ἑξήκοντα πήχεων A",
+        "agrees": true
+      },
+      "from": "forty cubits",
+      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft forty cubits.",
+      "note_edits": [
+        {
+          "key": "1KI 6:2",
+          "from": "\\fqa Gr. \\ft its length forty in cubit, etc.",
+          "to": "\\ft Vatican Greek, literally, \\+it its length forty in cubit\\+it*, etc.",
+          "lemma": "was sixty cubits in length",
+          "why": "The literal gloss belongs to the displaced Vatican reading of forty; identify it as Vatican."
+        }
+      ],
+      "english": {
+        "source": "brenton",
+        "span": [33, 42],
+        "edits": [
+          {
+            "span": [0, 2],
+            "to": "sixty"
+          }
+        ]
+      },
+      "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft 60 cubits."
+    },
+    "1KI 6:2#3": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 685,
+        "evidence": "apparatus",
+        "reading": "πέντε καὶ εἴκοσι] τριάκοντα A",
+        "agrees": true
+      },
+      "from": "five and twenty cubits",
+      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft five and twenty cubits.",
+      "english": {
+        "source": "brenton",
+        "span": [33, 42],
+        "edits": [
+          {
+            "span": [0, 2],
+            "to": "thirty"
+          }
+        ]
+      },
+      "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft 30 cubits."
+    },
+    "1KI 6:5#2": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. A adds after “round about”; σύν selects Brenton’s “with” alternative.",
+      "swete": {
+        "volume": 1,
+        "page": 685,
+        "evidence": "apparatus",
+        "reading": "κυκλόθεν] + σὺν τείχοις (sic) τοῦ οἴκου κυκλόθεν A",
+        "agrees": true
+      },
+      "from": "chambers round about the temple",
+      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Or, \\ft against. \\fqa Vat. \\ft omits.",
+      "lemma": "with the walls of the house round about",
+      "english": {
+        "source": "brenton",
+        "span": [33, 85],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "chambers round about, "
+          },
+          {
+            "span": [4, 17],
+            "to": ""
+          },
+          {
+            "span": [52, 52],
+            "to": " the temple"
+          }
+        ]
+      },
+      "note_at": 22,
+      "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft with (or against) the walls of the house round about."
+    },
+    "1KI 14:26#2": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Swete’s Vatican main text ends at “golden shields”; its marginal addition includes both Solomon’s manufacture and the removal to Egypt, whereas A adds the manufacture only. Label the displaced full English as Vatican Text following Brenton’s attribution.",
+      "swete": {
+        "volume": 1,
+        "page": 715,
+        "evidence": "apparatus",
+        "reading": "χρυσᾶ 2°] + ὅσα ἐποίησε Σαλωμων A (Bᵃ?ᵇ?mg inf adds καὶ ἀπήνεγκεν αὐτὰ εἰς Αἴγυπτον)",
+        "agrees": true
+      },
+      "from": "the golden shields which Solomon had made, [and carried them away into Egypt.]",
+      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft \\+it the golden shields which Solomon had made, and carried them away into Egypt\\+it*.",
+      "english": {
+        "source": "brenton",
+        "span": [4, 7],
+        "edits": [
+          {
+            "span": [3, 3],
+            "to": " golden shields which Solomon had made."
+          }
+        ]
+      },
+      "source_note": "\\ft the remainder of this verse (here shown in italics) is not in \\fqa Heb. \\ft or \\fqa Alex."
+    },
+    "1KI 15:2": {
+      "why": "Swete confirms the Alexandrine reading. Brenton’s displaced wording differs from Swete’s Vatican text and still needs a source check. Swete’s Vatican main text reads six (ἓξ) years and A prefixes ten, giving sixteen. Brenton’s displaced English reads three; label it Vat., with Swete’s Vatican reading separately identified. The origin of three still requires checking Brenton’s printing.",
+      "swete": {
+        "volume": 1,
+        "page": 716,
+        "evidence": "apparatus",
+        "reading": "ἕξ] pr δέκα A",
+        "agrees": true
+      },
+      "from": "three years",
+      "note": "\\fqa Vat. \\ft \\+it three years\\+it*.",
+      "english": {
+        "source": "brenton",
+        "span": [15, 23],
+        "edits": [
+          {
+            "span": [0, 2],
+            "to": "sixteen"
+          }
+        ]
+      },
+      "source_note": "\\fqa Alex. \\ft 16 years."
+    },
+    "1KI 15:9": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 716,
+        "evidence": "apparatus",
+        "reading": "ἐν τῷ ἐνιαυτῷ τῷ τετ. καὶ εἰκοστῷ] καὶ ἐν ἔτει εἰκοστοῦ (sic) A",
+        "agrees": true
+      },
+      "from": "In the four and twentieth year",
+      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft In the four and twentieth year.",
+      "english": {
+        "source": "brenton",
+        "span": [33, 54]
+      },
+      "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft In the twentieth year."
+    },
+    "1KI 16:8": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Place the note before the opening-date lemma.",
+      "swete": {
+        "volume": 1,
+        "page": 719,
+        "evidence": "apparatus",
+        "reading": "καὶ Ηλα…Θερσα] ἐν ἔτει εἰκοστῷ καὶ ἕκτῳ…Ἡλα υἱὸς Βαασα A",
+        "agrees": true
+      },
+      "from": "And Ela",
+      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft omits.",
+      "lemma": "In the twenty-sixth year of Asa king of Juda",
+      "english": {
+        "source": "brenton",
+        "span": [37, 75],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "In "
+          },
+          {
+            "span": [4, 8],
+            "to": "twenty-sixth"
+          }
+        ]
+      },
+      "note_at": 0,
+      "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft 'in the 26th year of Asa king of Juda, Ela,' etc."
+    },
+    "1KI 16:10": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 719,
+        "evidence": "apparatus",
+        "reading": "αὐτὸν 2°] + ἐν ἔτει εἰκοστῷ καὶ ἑβδόμῳ τοῦ Ασα βασιλέως Ιουδα A",
+        "agrees": true
+      },
+      "from": "and slew him,",
+      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft omits.",
+      "english": {
+        "source": "brenton",
+        "span": [41, 77],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "and slew him ",
+            "why": "Retain the scripture words before the addition."
+          },
+          {
+            "span": [7, 11],
+            "to": "twenty-seventh",
+            "why": "Spell out Brenton’s ordinal in the manner of the surrounding translation."
+          },
+          {
+            "span": [36, 36],
+            "to": ",",
+            "why": "Retain the comma following the enlarged clause."
+          }
+        ]
+      },
+      "note_at": 13,
+      "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft insert 'in the 27th year of Asa king of Juda.'"
+    },
+    "2KI 5:21": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Supply “and said” from καὶ εἶπεν to introduce the question.",
+      "swete": {
+        "volume": 1,
+        "page": 752,
+        "evidence": "apparatus",
+        "reading": "ἀπὸ τοῦ ἅρμ. εἰς ἀπάντην αὐτοῦ] εἰς ἀπάντησιν αὐτῷ ἀπὸ τοῦ ἅρματος· καὶ εἶπεν εἰρήνη· A",
+        "agrees": true
+      },
+      "from": "to meet him.",
+      "note": "\\fqa Vat. \\ft omits.",
+      "supplied": [
+        "and",
+        "said"
+      ],
+      "lemma": "and said, Is all well",
+      "english": {
+        "source": "brenton",
+        "span": [22, 33],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "to meet him, and said, "
+          },
+          {
+            "span": [11, 11],
+            "to": "?"
+          }
+        ]
+      },
+      "note_at": 23,
+      "source_note": "\\fqa Alex. \\ft + \\ft 'Is all well?'."
+    },
+    "PSA 16:14": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 2,
+        "page": 228,
+        "evidence": "apparatus",
+        "reading": "υείων Bℵ] υἱῶν ARvid υων U",
+        "agrees": true
+      },
+      "from": "uncleanness",
+      "english": {
+        "source": "brenton",
+        "span": [15, 23]
+      },
+      "source_note": "\\fqa Alex. \\ft children."
+    },
+    "PSA 38:6": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 2,
+        "page": 263,
+        "evidence": "apparatus",
+        "reading": "παλαιάς] παλαιστάς AT",
+        "agrees": true
+      },
+      "from": "my days old",
+      "english": {
+        "source": "brenton",
+        "span": [15, 26],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "my days "
+          }
+        ]
+      },
+      "source_note": "\\fqa Alex. \\ft a span long."
+    },
+    "PSA 44:14": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Keep the note of Hebrew agreement.",
+      "swete": {
+        "volume": 2,
+        "page": 271,
+        "evidence": "apparatus",
+        "reading": "Ἐσεβών] ἔσωθεν BbℵcaART",
+        "agrees": true
+      },
+      "from": "of Esebon",
+      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft of Esebon.",
+      "english": {
+        "source": "brenton",
+        "span": [23, 29]
+      },
+      "source_note": "\\fqa Alex. \\ft ἔσωθεν, within, so \\fqa Heb."
+    },
+    "PSA 45:6": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Swete’s πρὸς πρωὶ selects “toward the morning” from Brenton’s alternatives.",
+      "swete": {
+        "volume": 2,
+        "page": 272,
+        "evidence": "apparatus",
+        "reading": "τῷ προσώπῳ] τὸ (τῷ ℵca) πρὸς πρωὶ BbℵcaAT",
+        "agrees": true
+      },
+      "from": "with his countenance",
+      "note": "\\fqa Heb. \\ft before, \\fqa or, \\ft toward the morning. \\fqa Vat. \\ft with his countenance.",
+      "english": {
+        "source": "brenton",
+        "span": [54, 72]
+      },
+      "source_note": "\\fqa Alex. \\ft and \\fqa Heb. \\ft before, \\fqa or, \\ft toward the morning."
+    },
+    "PSA 80:1": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 2,
+        "page": 322,
+        "evidence": "apparatus",
+        "reading": "τῷ Ἀσάφ ψαλμός] ψ. τῷ Δαδ A",
+        "agrees": true
+      },
+      "from": "Asaph",
+      "english": {
+        "source": "brenton",
+        "span": [15, 20]
+      },
+      "source_note": "\\fqa Alex. \\ft David."
+    },
+    "PSA 80:4": {
+      "why": "Print Brenton’s alternative: it is compatible with Swete, but no distinct Alexandrine–Vatican difference is established.",
+      "swete": {
+        "volume": 2,
+        "page": 322,
+        "evidence": "silence",
+        "reading": "ἡμερας A; ἡμῶν] ὑμῶν ℵca (statim restit ἡμ.) R",
+        "agrees": true
+      },
+      "from": "your",
+      "note": "\\ft \\fqa Vat. \\ft \\fqa your.",
+      "english": {
+        "source": "brenton",
+        "span": [15, 18]
+      },
+      "source_note": "\\fqa Alex. \\ft our."
+    },
+    "PSA 82:13": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 2,
+        "page": 324,
+        "evidence": "apparatus",
+        "reading": "θυσιαστήριον] ἁγιαστήριον ℵAT",
+        "agrees": true
+      },
+      "from": "altar",
+      "english": {
+        "source": "brenton",
+        "span": [15, 24]
+      },
+      "source_note": "\\fqa Alex. \\ft sanctuary."
+    },
+    "PSA 87:6": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Keep the Vatican addition in the note.",
+      "swete": {
+        "volume": 2,
+        "page": 329,
+        "evidence": "apparatus",
+        "reading": "om ἐρριμμένοι ℵcaAT",
+        "agrees": true
+      },
+      "from": "slain ones cast out",
+      "note": "\\fqa Vat. \\ft adds ἐῤῥιμμένοι, \\+it cast out\\+it*.",
+      "english": {
+        "source": "from",
+        "edits": [
+          {
+            "span": [10, 19],
+            "to": "",
+            "why": "Remove only the words Brenton’s source note identifies as omitted."
+          }
+        ]
+      },
+      "source_note": "\\fqa Alex. \\ft om. ἐῤῥιμμένοι, cast out."
+    },
+    "PSA 87:15": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Keep the note of Hebrew agreement.",
+      "swete": {
+        "volume": 2,
+        "page": 330,
+        "evidence": "apparatus",
+        "reading": "προσευχήν] ψυχήν ℵ¹ (rescr πῶθες τὴν ψ. μου) AT",
+        "agrees": true
+      },
+      "from": "prayer",
+      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft prayer.",
+      "english": {
+        "source": "brenton",
+        "span": [33, 37]
+      },
+      "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft soul."
+    },
+    "PSA 87:19": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 2,
+        "page": 330,
+        "evidence": "apparatus",
+        "reading": "φίλον] + καὶ πλησίον ℵcaART",
+        "agrees": true
+      },
+      "from": "\\add every\\add* friend",
+      "english": {
+        "source": "brenton",
+        "span": [15, 35]
+      },
+      "source_note": "\\fqa Alex. \\ft friend and neighbour."
+    },
+    "PSA 88:21#2": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Keep the note of Hebrew agreement.",
+      "swete": {
+        "volume": 2,
+        "page": 332,
+        "evidence": "apparatus",
+        "reading": "ἐλέει] ἐλεῳ B* (R¹) ἐλαίῳ BbℵA(?R¹)T",
+        "agrees": true
+      },
+      "from": "mercy",
+      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft See \\xt Ps. 91. 10. \\fqa Vat. \\ft mercy.",
+      "english": {
+        "source": "brenton",
+        "span": [33, 36]
+      },
+      "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft oil, see \\xt Ps. 91. 10."
+    },
+    "PSA 88:46": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 2,
+        "page": 334,
+        "evidence": "apparatus",
+        "reading": "θρόνου] χρόνου ℵART",
+        "agrees": true
+      },
+      "from": "throne",
+      "english": {
+        "source": "brenton",
+        "span": [15, 19]
+      },
+      "source_note": "\\fqa Alex. \\ft time."
+    },
+    "PSA 89:17#2": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 2,
+        "page": 336,
+        "evidence": "apparatus",
+        "reading": "20] + καὶ τὸ ἔργον τῶν χειρῶν ἡμῶν κατεύθυνον ℵART",
+        "agrees": true
+      },
+      "from": "the works of our hands.",
+      "note": "\\fqa Vat. \\ft omits.",
+      "english": {
+        "source": "brenton",
+        "span": [17, 56],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "the works of our hands: "
+          },
+          {
+            "span": [39, 39],
+            "to": "."
+          }
+        ]
+      },
+      "note_at": 24,
+      "source_note": "\\fqa Alex. \\ft + yea, prosper thou the work of our hands."
+    },
+    "PSA 91:10": {
+      "why": "Print Brenton’s addition, confirmed by Swete as a marginal correction in Alexandrinus. Swete prefixes the repeated address before the existing “for, behold”; promote Brenton’s addition in this order.",
+      "swete": {
+        "volume": 2,
+        "page": 338,
+        "evidence": "apparatus",
+        "reading": "ὅτι ἰδού] pr ὅτι ἰδοὺ οἱ ἐχθροί σου κε ℵAa(mg)RT",
+        "agrees": true
+      },
+      "from": "For, behold, thine enemies shall perish",
+      "note": "\\fqa Heb. \\ft includes the clause. \\fqa Vat. \\ft omits.",
+      "lemma": "For, behold thine enemies, O Lord",
+      "english": {
+        "source": "brenton",
+        "span": [21, 49],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "For, "
+          },
+          {
+            "span": [28, 28],
+            "to": ", for, behold, thine enemies shall perish"
+          }
+        ]
+      },
+      "note_at": 35,
+      "source_note": "\\fqa Alex. \\ft + for behold thine enemies, O Lord, as in \\fqa Heb."
+    },
+    "PSA 91:11": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 2,
+        "page": 338,
+        "evidence": "apparatus",
+        "reading": "ἐλαίῳ BabℵA(?R)T; ἐλέῳ B* (?R)",
+        "agrees": true
+      },
+      "from": "mercy",
+      "note": "\\fqa Vat. \\ft mercy. See \\xt Ps. 88. 20.",
+      "english": {
+        "source": "brenton",
+        "span": [15, 18]
+      },
+      "source_note": "\\fqa Alex. \\ft oil. See \\xt Ps. 88. 20."
+    },
+    "PSA 92:1": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Swete replaces προσάββατου only; preserve “when the land was first inhabited” and the rest of the title.",
+      "swete": {
+        "volume": 2,
+        "page": 339,
+        "evidence": "apparatus",
+        "reading": "προσάββατου] σαββάτου ART",
+        "agrees": true
+      },
+      "from": "day before the Sabbath",
+      "english": {
+        "source": "brenton",
+        "span": [19, 30]
+      },
+      "source_note": "\\fqa Alex. \\ft the sabbath-day."
+    },
+    "PSA 92:3": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 2,
+        "page": 339,
+        "evidence": "apparatus",
+        "reading": "αὐτῶν] + ἀροῦσιν οἱ ποταμοὶ ἐπιτρίψεις (ἐπιτριψις A [ε sup ras Aa?]) αὐτῶν ℵcaA",
+        "agrees": true
+      },
+      "from": "their voices,",
+      "note": "\\fqa Heb. \\ft includes the clause. \\fqa Vat. \\ft omits.",
+      "english": {
+        "source": "brenton",
+        "span": [17, 52],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "their voices; "
+          },
+          {
+            "span": [35, 35],
+            "to": ":"
+          }
+        ]
+      },
+      "note_at": 14,
+      "source_note": "\\fqa Alex. \\ft + the floods will lift up their waves. See \\fqa Heb."
+    },
+    "PSA 93:19": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 2,
+        "page": 340,
+        "evidence": "apparatus",
+        "reading": "ἠγάπησαν] εὔφραναν Bb(?R)T ἠὔφραναν ℵcaA(?R)",
+        "agrees": true
+      },
+      "from": "have soothed",
+      "note": "\\fqa Vat. \\ft have soothed; literally, \\+it have loved\\+it*.",
+      "english": {
+        "source": "brenton",
+        "span": [54, 68]
+      },
+      "source_note": "\\fqa Lit. \\ft 'have loved'. \\fqa Alex. \\ft ἠύφραναν, 'have gladdened'."
+    },
+    "PSA 94:3": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Keep the remaining glosses with their readings.",
+      "swete": {
+        "volume": 2,
+        "page": 341,
+        "evidence": "apparatus",
+        "reading": "om ὅτι οὐκ...λαὸν αὐτοῦ ℵ* (hab ℵca) AT",
+        "agrees": true
+      },
+      "from": "over all gods: for the Lord will not cast off his people.",
+      "note": "\\fqa Vat. \\ft adds \\+it for the Lord will not cast off his people\\+it*. \\fqa Heb. \\ft also omits this added clause. See \\xt Ps. 93. 14.",
+      "english": {
+        "source": "from",
+        "edits": [
+          {
+            "span": [13, 56],
+            "to": ""
+          }
+        ]
+      },
+      "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft omit this clause. See \\xt Ps. 93. 14."
+    },
+    "PSA 97:8": {
+      "why": "Swete confirms the addition’s position after “exult”; note its possible marginal status in Alexandrinus.",
+      "swete": {
+        "volume": 2,
+        "page": 344,
+        "evidence": "apparatus",
+        "reading": "ἀγαλλιάσονται] + ἀπὸ προσώπου κυ ὅτι ἔρχεται ℵcaAT (forte in mg A)",
+        "agrees": true
+      },
+      "from": "the mountains shall exult.",
+      "note": "\\fqa Vat. \\ft omits.",
+      "english": {
+        "source": "brenton",
+        "span": [17, 46],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "the mountains shall exult "
+          },
+          {
+            "span": [29, 29],
+            "to": "."
+          }
+        ]
+      },
+      "note_at": 26,
+      "source_note": "\\fqa Alex. \\ft + before the Lord, for he comes."
+    },
+    "PSA 118:109": {
+      "why": "Swete confirms the Alexandrine reading. Brenton’s displaced wording differs from Swete’s Vatican text and still needs a source check. Swete’s Vatican main text has χερσί without a possessive; A has χερσιν μου, while χερσιν σου belongs to ℵcaRT. Label thine Vat.",
+      "swete": {
+        "volume": 2,
+        "page": 383,
+        "evidence": "apparatus",
+        "reading": "χερσί] -σιν σου ℵcaRT χερσιν μου A",
+        "agrees": true
+      },
+      "from": "thine",
+      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft \\+it thine\\+it*.",
+      "english": {
+        "source": "brenton",
+        "span": [33, 35]
+      },
+      "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft my."
+    },
+    "PSA 127:2": {
+      "why": "Print Brenton’s alternative: it is compatible with Swete, but no distinct Alexandrine–Vatican difference is established.",
+      "swete": {
+        "volume": 2,
+        "page": 392,
+        "evidence": "silence",
+        "reading": "καρποὺς τῶν πόνων] πόνους τῶν καρπῶν ℵcaRT",
+        "agrees": true
+      },
+      "from": "the labours of thy hands",
+      "note": "\\ft \\fqa Vat. \\ft \\fqa the labours of thy hands.",
+      "english": {
+        "source": "brenton",
+        "span": [15, 36]
+      },
+      "source_note": "\\fqa Alex. \\ft fruits of thy labours."
+    },
+    "PSA 136:1": {
+      "why": "Print Brenton’s alternative: it is compatible with Swete, but no distinct Alexandrine–Vatican difference is established.",
+      "swete": {
+        "volume": 2,
+        "page": 399,
+        "evidence": "silence",
+        "reading": "Τῷ Δαυείδ; no A title variant",
+        "agrees": true
+      },
+      "from": "For David, \\add a Psalm\\add* of Jeremias.",
+      "note": "\\ft \\fqa Vat. \\ft adds \\fqa a Psalm of Jeremias.",
+      "english": {
+        "source": "from",
+        "edits": [
+          {
+            "span": [9, 40],
+            "to": ""
+          }
+        ]
+      },
+      "source_note": "\\fqa Alex. \\ft omits."
+    },
+    "PSA 138:1": {
+      "why": "Print Brenton’s addition; note that “in the dispersion” is a marginal correction in Alexandrinus.",
+      "swete": {
+        "volume": 2,
+        "page": 401,
+        "evidence": "apparatus",
+        "reading": "ψαλμὸς τῷ Δαυείδ] τῷ Δαδ ψαλμος A + Ζαχαριου A + ἐν τῇ διασπορᾷ Aa(mg)",
+        "agrees": true
+      },
+      "from": "a Psalm of David.",
+      "note": "\\fqa Vat. \\ft omits.",
+      "english": {
+        "source": "brenton",
+        "span": [17, 47],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "a Psalm of David, "
+          },
+          {
+            "span": [30, 30],
+            "to": "."
+          }
+        ]
+      },
+      "note_at": 18,
+      "source_note": "\\fqa Alex. \\ft + of Zacharias in the dispersion."
+    },
+    "PSA 138:9": {
+      "why": "Swete supports “toward the dawn”. Note the rewritten letter; Brenton’s reported Greek spelling still needs checking. Swete distinguishes Vatican ὄρθον from A ὄρθρον. The inherited English-source note reports κατ᾿ ὄρθον as Alexandrine; identify it as the former note’s spelling alongside the confirmed A form pending inspection of Brenton’s printing.",
+      "swete": {
+        "volume": 2,
+        "page": 401,
+        "evidence": "apparatus",
+        "reading": "ὄρθον] ὄρθρον A (ο 2° rescr A¹) RT",
+        "agrees": true
+      },
+      "from": "straight forward",
+      "note": "\\fqa Vat. \\ft straight forward.",
+      "english": {
+        "source": "brenton",
+        "span": [27, 42]
+      },
+      "source_note": "\\fqa Alex. \\ft κατ᾿ ὄρθον, toward the dawn."
+    },
+    "PSA 142:10": {
+      "why": "Print Brenton’s alternative; Swete records a difference in Greek case, with the same words for land and uprightness. The case variation γῇ εὐθείᾳ / γῆ εὐθεῖα does not establish different Greek vocabulary for land and uprightness; keep Brenton’s available English alternative, with the displaced translation labelled Vat.",
+      "swete": {
+        "volume": 2,
+        "page": 406,
+        "evidence": "apparatus",
+        "reading": "γῇ εὐθείᾳ] γῆ εὐθεῖα ART",
+        "agrees": true
+      },
+      "from": "the straight \\add way\\add*",
+      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft \\+it the straight way\\+it*.",
+      "english": {
+        "source": "brenton",
+        "span": [33, 52],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "the "
+          }
+        ]
+      },
+      "source_note": "\\fqa Alex. \\ft as \\fqa Heb. \\ft 'land of uprightness.'"
+    },
+    "PSA 151:1": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 2,
+        "page": 415,
+        "evidence": "apparatus",
+        "reading": "Γολιάδ] πρὸς τὸν Γολιαθ AT",
+        "agrees": true
+      },
+      "from": "Goliad",
+      "english": {
+        "source": "brenton",
+        "span": [15, 22]
+      },
+      "source_note": "\\fqa Alex. \\ft Goliath."
+    },
+    "PRO 3:4": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 2,
+        "page": 420,
+        "evidence": "apparatus",
+        "reading": "χάριν] + γράψον δὲ αὐτὰς ἐπὶ τὸ πλάτος καρδίας σου A",
+        "agrees": true
+      },
+      "from": "so shalt thou find favour:",
+      "note": "\\fqa Vat. \\ft omits.",
+      "english": {
+        "source": "brenton",
+        "span": [18, 60],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "so shalt thou find favour: "
+          },
+          {
+            "span": [42, 42],
+            "to": ";"
+          }
+        ]
+      },
+      "note_at": 27,
+      "source_note": "\\fqa Alex. \\ft + 'and write them on the table of thine heart.'"
+    },
+    "PRO 7:25": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 2,
+        "page": 430,
+        "evidence": "apparatus",
+        "reading": "σου] + καὶ μὴ πλανηθῇς ἐν ἀτραποῖς αὐτῆς ℵcaA",
+        "agrees": true
+      },
+      "from": "her ways:",
+      "note": "\\fqa Vat. \\ft omits.",
+      "english": {
+        "source": "brenton",
+        "span": [18, 44],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "her ways: "
+          },
+          {
+            "span": [26, 26],
+            "to": ";"
+          }
+        ]
+      },
+      "note_at": 10,
+      "source_note": "\\fqa Alex. \\ft + 'and stray not in her paths.'"
+    },
+    "PRO 9:6": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Swete places the A addition after φρόνησιν, translated “wisdom” by Brenton; insert there rather than after “folly” at his note mark.",
+      "swete": {
+        "volume": 2,
+        "page": 433,
+        "evidence": "apparatus",
+        "reading": "βασιλεύσητε] ἵνα ζήσεσθε ℵca; φρόνησιν] + ἵνα βιώσηται ℵcaA",
+        "agrees": true
+      },
+      "lemma": "that ye may live",
+      "from": "seek wisdom,",
+      "note": "\\fqa Vat. \\ft omits.",
+      "english": {
+        "source": "brenton",
+        "span": [18, 34],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "seek wisdom "
+          },
+          {
+            "span": [16, 16],
+            "to": ","
+          }
+        ]
+      },
+      "note_at": 12,
+      "source_note": "\\fqa Alex. \\ft + 'that ye may live.'"
+    },
+    "ISA 7:22": {
+      "why": "Print Brenton’s alternative: it is compatible with Swete, but no distinct Alexandrine–Vatican difference is established.",
+      "swete": {
+        "volume": 3,
+        "page": 113,
+        "evidence": "silence",
+        "reading": "text πλεῖστον ποιεῖν γάλα; no A variant at ποιεῖν",
+        "agrees": true
+      },
+      "from": "drinking",
+      "note": "\\fqa Vat. \\ft \\+it drinking\\+it*.",
+      "english": {
+        "source": "brenton",
+        "span": [24, 30]
+      },
+      "source_note": "\\fqa Alex. \\ft ποιεῖν, 'giving.'"
+    },
+    "ISA 8:16": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 3,
+        "page": 115,
+        "evidence": "apparatus",
+        "reading": "om μή AΓ",
+        "agrees": true
+      },
+      "from": "may not learn",
+      "english": {
+        "source": "from",
+        "edits": [
+          {
+            "span": [4, 8],
+            "to": "",
+            "why": "Remove only the words Brenton’s source note identifies as omitted."
+          }
+        ]
+      },
+      "source_note": "\\fqa Alex. \\ft — 'not.'"
+    },
+    "ISA 9:5": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 3,
+        "page": 116,
+        "evidence": "apparatus",
+        "reading": "ἀγγέλος] + θαυμ. συμβ. ἰσχ. ἐξουσ. ἀρχων εἰρ. πηρ τ. μελλ. αἰωνος A (continued p. 117)",
+        "agrees": true
+      },
+      "from": "the Messenger of great counsel:",
+      "note": "\\fqa Vat. \\ft omits. Compare \\xt Heb. 2. 2.",
+      "english": {
+        "source": "brenton",
+        "span": [17, 105],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "the Messenger of great counsel, "
+          },
+          {
+            "span": [88, 88],
+            "to": ":"
+          }
+        ]
+      },
+      "note_at": 32,
+      "source_note": "\\fqa Alex. \\ft + Wonderful, Counsellor, Mighty One, Potentate, Prince of Peace, Father of the age to come; Compare \\xt Heb. 2. 2."
+    },
+    "ISA 10:4": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Capitalize the added sentence after the retained question mark. The A addition precedes ἐπὶ τούτοις πᾶσιν and thus follows “captivity?”, rather than preceding it at Brenton’s note mark.",
+      "swete": {
+        "volume": 3,
+        "page": 118,
+        "evidence": "apparatus",
+        "reading": "ἐπί] pr καὶ ὑποκάτω ἀνῃρημένων πεσοῦνται ℵA",
+        "agrees": true
+      },
+      "from": "that ye may not fall into captivity?",
+      "note": "\\fqa Heb. \\ft includes the clause. \\fqa Vat. \\ft omits.",
+      "english": {
+        "source": "brenton",
+        "span": [40, 71],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "that ye may not fall into captivity? And "
+          },
+          {
+            "span": [31, 31],
+            "to": "."
+          }
+        ]
+      },
+      "note_at": 37,
+      "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft + ‘and they shall fall under the slain’."
+    },
+    "ISA 12:6": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Keep the note of Hebrew agreement.",
+      "swete": {
+        "volume": 3,
+        "page": 123,
+        "evidence": "apparatus",
+        "reading": "αὐτῆς] σου ℵAQ (αὐτῆς Q*) Γ",
+        "agrees": true
+      },
+      "from": "of her",
+      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft of her.",
+      "english": {
+        "source": "brenton",
+        "span": [34, 41]
+      },
+      "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft ‘of thee’."
+    },
+    "ISA 14:4": {
+      "why": "Restore Brenton’s complete alternative. Swete’s Vatican text includes “and thou shalt say”; Alexandrinus adds “in that day”. Brenton’s body lacks the full clause supplied by his note. Swete retains καὶ ἐρεῖς in the Vatican main text and A adds ἐν τῇ ἡμέρᾳ ἐκείνῃ. Restore Brenton’s complete alternative and distinguish the shared words from the narrower A/B addition in the footnote.",
+      "swete": {
+        "volume": 3,
+        "page": 125,
+        "evidence": "apparatus",
+        "reading": "ἐρεῖς] + ἐν τῇ ἡμέρᾳ ἐκείνῃ (ἐκειν. ℵc) ℵAQΓ",
+        "agrees": true
+      },
+      "from": "the king of Babylon,",
+      "note": "\\fqa Vat. \\ft omits this clause.",
+      "lemma": "and thou shalt say in that day",
+      "english": {
+        "source": "brenton",
+        "span": [18, 48],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "the king of Babylon, "
+          },
+          {
+            "span": [30, 30],
+            "to": ","
+          }
+        ]
+      },
+      "note_at": 21,
+      "source_note": "\\fqa Alex. \\ft + 'and thou shalt say in that day'."
+    },
+    "ISA 19:2": {
+      "why": "Print Brenton’s alternative: it is compatible with Swete, but no distinct Alexandrine–Vatican difference is established.",
+      "swete": {
+        "volume": 3,
+        "page": 133,
+        "evidence": "silence",
+        "reading": "text νομός ἐπὶ νομόν; A not cited against either word",
+        "agrees": true
+      },
+      "from": "and law",
+      "note": "\\ft \\fqa Vat. \\ft \\+it law against law\\+it*; the Greek accent differs for \\+it district\\+it* and \\+it law\\+it*.",
+      "lemma": "district against district",
+      "english": {
+        "source": "brenton",
+        "span": [16, 24],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "and "
+          }
+        ]
+      },
+      "note_at": 4,
+      "source_note": "\\fqa Alex. \\ft ‘district,’ the accent being different."
+    },
+    "ISA 19:2#2": {
+      "why": "Print Brenton’s alternative: it is compatible with Swete, but no distinct Alexandrine–Vatican difference is established.",
+      "swete": {
+        "volume": 3,
+        "page": 133,
+        "evidence": "silence",
+        "reading": "text νομός ἐπὶ νομόν; A not cited against either word",
+        "agrees": true
+      },
+      "from": "against law",
+      "note": null,
+      "english": {
+        "source": "brenton",
+        "span": [16, 24],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "against "
+          }
+        ]
+      },
+      "source_note": "\\fqa Alex. \\ft ‘district,’ the accent being different."
+    },
+    "ISA 24:23": {
+      "why": "Swete confirms the Alexandrine reading. Brenton’s displaced wording differs from Swete’s Vatican text and still needs a source check. Swete records ἐν for both prepositions in A, requiring “in” in both places. The Vatican main text has ἐκ Σειων καὶ εἰς Ιερουσαλημ; Brenton’s main-text “out of Jerusalem” is not its second preposition.",
+      "swete": {
+        "volume": 3,
+        "page": 143,
+        "evidence": "apparatus",
+        "reading": "ἐκ] ἐν ℵAQ; εἰς] ἐν ℵAQ ἐκ Γ (sic)",
+        "agrees": true
+      },
+      "from": "from out of Sion, and out of Jerusalem",
+      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft \\+it from out of Sion, and out of Jerusalem\\+it*.",
+      "english": {
+        "source": "from",
+        "edits": [
+          {
+            "span": [0, 11],
+            "to": "in",
+            "why": "Use Brenton’s noted “in” for the first preposition."
+          },
+          {
+            "span": [22, 28],
+            "to": "in",
+            "why": "Use Brenton’s noted “in” for the second preposition."
+          }
+        ]
+      },
+      "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft ‘in’."
+    },
+    "ISA 40:14": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 3,
+        "page": 174,
+        "evidence": "apparatus",
+        "reading": "αὐτῷ 2°] + ἢ τίς προέδωκεν αὐτῷ καὶ ἀνταποδοθήσεται (-δωθ. A) αὐτῷ ℵ* (improb ℵcb et postea) A",
+        "agrees": true
+      },
+      "from": "the way of understanding;",
+      "note": "\\fqa Vat. \\ft and \\fqa Heb. \\ft omit. \\xt Rom. 11. 35.",
+      "english": {
+        "source": "from",
+        "edits": [
+          {
+            "span": [24, 24],
+            "to": "? Or who has first given to him, and it shall be recompensed to him again"
+          }
+        ]
+      },
+      "note_at": 26,
+      "source_note": "\\fqa Alex. \\ft + Or who has first given to him, and it shall be recompensed to him again? \\xt Rom. 11. 35; \\fqa Heb. \\ft omits."
+    },
+    "ISA 48:5": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Swete’s παλαιά supports the plural object and plural “they”; keep “upon thee”, which A does not omit.",
+      "swete": {
+        "volume": 3,
+        "page": 190,
+        "evidence": "apparatus",
+        "reading": "πάλαι] παλαιά ℵAQ; om ποτέ ℵAQ* (hab Qmg)",
+        "agrees": true
+      },
+      "from": "of old what \\add should be\\add* before it came",
+      "english": {
+        "source": "brenton",
+        "span": [15, 50]
+      },
+      "source_note": "\\fqa Alex. \\ft the ancient things before they came."
+    },
+    "ISA 51:5": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Keep the remaining glosses with their readings.",
+      "swete": {
+        "volume": 3,
+        "page": 196,
+        "evidence": "apparatus",
+        "reading": "ὡς φῶς καί] εἰς φῶς om AQ* (hab ὡς φῶς Qbmg)",
+        "agrees": true
+      },
+      "from": "go forth as light",
+      "note": "\\fqa Vat. \\ft \\+it go forth as light\\+it*. \\fqa Heb. \\ft omits \\+it as light\\+it*.",
+      "english": {
+        "source": "from",
+        "edits": [
+          {
+            "span": [8, 17],
+            "to": "",
+            "why": "Remove only the words Brenton’s source note identifies as omitted."
+          }
+        ]
+      },
+      "source_note": "\\ft Not in \\fqa Heb. \\ft or \\fqa Alex."
+    },
+    "ISA 63:19": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Swete places the addition after σου in verse 18; append the English to Brenton’s 63:18 rather than the beginning of 63:19.",
+      "swete": {
+        "volume": 3,
+        "page": 216,
+        "evidence": "apparatus",
+        "reading": "18 σου] + οἱ ὑπεναντίοι ἡμῶν κατεπάτησαν τὸ ἁγίασμά σου AQ",
+        "agrees": true
+      },
+      "target": "ISA 63:18",
+      "from": "thy holy mountain.",
+      "note": "\\fqa Heb. \\ft includes the clause. \\fqa Vat. \\ft omits.",
+      "english": {
+        "source": "brenton",
+        "span": [36, 83],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "thy holy mountain: "
+          },
+          {
+            "span": [47, 47],
+            "to": "."
+          }
+        ]
+      },
+      "note_at": 19,
+      "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft + 'our adversaries have trodden down the sanctuary.'"
+    },
+    "ZEC 4:10": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 3,
+        "page": 78,
+        "evidence": "apparatus",
+        "reading": "εἰσιν] + κυ A εἰ sup ras Γa?",
+        "agrees": true
+      },
+      "from": "the seven eyes",
+      "note": "\\fqa Vat. \\ft omits.",
+      "english": {
+        "source": "brenton",
+        "span": [18, 29],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "the seven eyes "
+          }
+        ]
+      },
+      "note_at": 15,
+      "source_note": "\\fqa Alex. \\ft + 'of the Lord.'"
+    },
+    "ZEC 11:14": {
+      "why": "Print Brenton’s “covenant”, confirmed by Swete. Alexandrinus also adds “my”, which Brenton does not supply here. Promote Brenton’s English covenant only. The apparatus also records + μου A; it is noted explicitly rather than silently translated, under the Brenton-English-only scope.",
+      "swete": {
+        "volume": 3,
+        "page": 88,
+        "evidence": "apparatus",
+        "reading": "κατάσχεσιν] διαθήκην ℵcbAQ + μου A",
+        "agrees": true
+      },
+      "from": "possession",
+      "note": "Compare \\fqa Heb. \\fqa Vat. \\ft possession.",
+      "english": {
+        "source": "brenton",
+        "span": [50, 58]
+      },
+      "source_note": "\\ft Compare \\fqa Heb. \\fqa Alex. \\ft διαθήκην \\ft covenant."
+    },
+    "ZEC 13:6": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "swete": {
+        "volume": 3,
+        "page": 91,
+        "evidence": "apparatus",
+        "reading": "τοῦ] τοῦ ἀγαπητοῦ A",
+        "agrees": true
+      },
+      "from": "my beloved house",
+      "english": {
+        "source": "brenton",
+        "span": [19, 38],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "the "
+          }
+        ]
+      },
+      "source_note": "\\fqa Alex. \\ft The house of my beloved."
+    },
+    "ZEC 13:7": {
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Swete explicitly limits the singular A reading to the first occurrence; the second “smite the shepherds” stays plural.",
+      "swete": {
+        "volume": 3,
+        "page": 91,
+        "evidence": "apparatus",
+        "reading": "τοὺς ποιμένας (1°)] τὸν ποιμένα ℵcb; τὸν ποιμῆνα AQ* τὸν ποιμένα QaΓ",
+        "agrees": true
+      },
+      "from": "against my shepherds",
+      "note": "\\fqa Vat. \\ft against my shepherds.",
+      "english": {
+        "source": "brenton",
+        "span": [15, 23],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "against my "
+          }
+        ]
+      },
+      "source_note": "\\fqa Alex. \\ft shepherd."
+    },
+    "ZEC 14:11": {
+      "why": "Print Brenton’s alternative: it is compatible with Swete, but no distinct Alexandrine–Vatican difference is established.",
+      "swete": {
+        "volume": 3,
+        "page": 92,
+        "evidence": "silence",
+        "reading": "11 text ἐν αὐτῇ; A not cited against it",
+        "agrees": true
+      },
+      "from": "in the city",
+      "note": "\\ft \\fqa Vat. \\ft \\fqa in the city.",
+      "english": {
+        "source": "brenton",
+        "span": [15, 20]
+      },
+      "source_note": "\\fqa Alex. \\ft in it."
+    },
+    "ZEC 14:13": {
+      "why": "Print Brenton’s alternative: it is compatible with Swete, but no distinct Alexandrine–Vatican difference is established.",
+      "swete": {
+        "volume": 3,
+        "page": 93,
+        "evidence": "silence",
+        "reading": "ἔστασις ℵ* (ἔκστα. ℵca); text ἔκστασις; A not cited against it",
+        "agrees": true
+      },
+      "from": "panic",
+      "note": "\\ft \\fqa Vat. \\ft \\fqa panic.",
+      "english": {
+        "source": "brenton",
+        "span": [15, 27]
+      },
+      "source_note": "\\fqa Alex. \\ft astonishment."
+    }
+  },
+  "passages": {
+    "1SA 17:12-31": {
+      "appendix": "\\ip 17. \\vp 12\\vp*And David son of an Ephrathite said, this \\add Ephrathite \\add* was of Bethleem Juda, and his name was Jessæ, and he had eight sons. And the man passed for an old man among men in the days of Saul. \\vp 13\\vp*And the three elder sons of Jessæ went and followed Saul to the war, and the names of his sons that went to the war were, Eliab his first-born, and his second Aminadab, and his third \\add son\\add* Samma. \\vp 14\\vp*And David himself was the younger \\add son\\add*, and the three elder followed Saul. \\vp 15\\vp*And David departed and returned from Saul, to feed his father’s sheep in Bethleem. \\vp 16\\vp*And the Philistine advanced morning and evening, and stood up forty days. \\vp 17\\vp*And Jessæ said to David, Take now to thy brethren an ephah of this \\add meal\\add*, and these ten loaves, and run to the camp and give them to thy brothers. \\vp 18\\vp*And thou shalt carry to the captain of the thousand these ten cheeses of milk, and thou shalt see how thy brethren fare, and learn what they want. \\vp 19\\vp*And Saul himself and all the men of Israel were in the valley of the Oak, warring with the Philistines. \\vp 20\\vp*And David rose early in the morning, and left the sheep to a keeper, and took and went as Jessæ commanded him, and he came to the trench and to the army as it was going out to fight, and they shouted for the battle. \\vp 21\\vp*And Israel and the Philistines formed their lines one opposite the other. \\vp 22\\vp*And David deposited his burden in the hand of a keeper, and ran to the line, and went and asked his brethren how they were. \\vp 23\\vp*And while he was speaking with them, behold the Amessæan advanced, Goliath by name, the Philistine of Geth, of the armies of the Philistines, and he spoke as before, and David heard. \\vp 24\\vp*And all the men of Israel when they saw the man fled from before him, and they were greatly terrified. \\vp 25\\vp*And the men of Israel said, Have ye seen this man that comes up? for he has reproached Israel \\add and\\add* has come up; and it shall be that the man who shall smite him, the king shall enrich him with great wealth, and shall give him his daughter, and shall make his father’s house free in Israel. \\vp 26\\vp*And David spoke to the men who stood with him, saying, Shall it \\add indeed\\add* be done \\add thus\\add* to the man who shall smite that Philistine, and take away reproach from Israel? for who is this uncircumcised Philistine that he has defied the army of the living God? \\vp 27\\vp*And the people spoke to him according to this word, saying, Thus shall it be done to the man who shall smite him. \\vp 28\\vp*And Eliab his elder brother heard as he spoke to the men, and Eliab was very angry with David and said, Why hast thou thus come down, and with whom hast thou left those few sheep in the wilderness? I know thy pride and the naughtiness of thine heart, for thou art come down to see the battle. \\vp 29\\vp*And David said, What have I done now? Have I no business \\add here\\add*? \\vp 30\\vp*And he turned from him toward another, and he spoke after the same manner; and the people answered him after the former manner. \\vp 31\\vp*And the words which David spoke were heard, and were reported to Saul. And he took him to himself.  \n",
+      "why": "Use Brenton’s Appendix wording for these existing verses, remove the duplicate, and note Vaticanus’s omission.",
+      "swete": {
+        "volume": 1,
+        "page": 579,
+        "evidence": "apparatus",
+        "reading": "12–31 καὶ εἶπεν Δαδ υἱὸς ἀνδρὸς Εφραθαί ... (om B)",
+        "agrees": true
+      },
+      "edits": [
+        {
+          "target": "1SA 17:12",
+          "from": "\\add And David son of an Ephrathite said, this Ephrathite was of Bethleem Juda, and his name was Jessae, and he had eight sons. And the man passed for an old man among men in the days of Saul. \\add*",
+          "note": "\\fqa Vat. \\ft omits verses 12–31.",
+          "lemma": null,
+          "english": {
+            "source": "brenton",
+            "span": [18, 214],
+            "edits": [
+              {
+                "span": [196, 196],
+                "to": "."
+              }
+            ]
+          }
+        },
+        {
+          "target": "1SA 17:13",
+          "from": "\\add And the three elder sons of Jessae went and followed Saul to the war, and the \\add*  \\add names of his sons that went to the war were, Eliab his ﬁrst-born, and his second Aminadab, and his third son Samma. \\add*",
+          "note": null,
+          "english": {
+            "source": "brenton",
+            "span": [226, 428],
+            "edits": [
+              {
+                "span": [202, 202],
+                "to": "."
+              }
+            ]
+          }
+        },
+        {
+          "target": "1SA 17:14",
+          "from": "\\add And David himself \\add*  \\add was the younger son, and the three elder followed Saul. \\add*",
+          "note": null,
+          "english": {
+            "source": "brenton",
+            "span": [440, 522],
+            "edits": [
+              {
+                "span": [82, 82],
+                "to": "."
+              }
+            ]
+          }
+        },
+        {
+          "target": "1SA 17:15",
+          "from": "\\add And David departed and returned from Saul, \\add*  \\add to feed his father’s sheep in Bethleem; \\add*",
+          "note": null,
+          "english": {
+            "source": "brenton",
+            "span": [534, 615],
+            "edits": [
+              {
+                "span": [81, 81],
+                "to": "."
+              }
+            ]
+          }
+        },
+        {
+          "target": "1SA 17:16",
+          "from": "\\add And the Philistine advanced morning and evening, and stood up forty days. \\add*",
+          "note": null,
+          "english": {
+            "source": "brenton",
+            "span": [627, 699],
+            "edits": [
+              {
+                "span": [72, 72],
+                "to": "."
+              }
+            ]
+          }
+        },
+        {
+          "target": "1SA 17:17",
+          "from": "\\add And Jessae said to David, Take now to thy brethren an ephah of this meal, and these ten loaves, and run to the camp and give them to thy brothers. \\add*",
+          "note": null,
+          "english": {
+            "source": "brenton",
+            "span": [711, 865],
+            "edits": [
+              {
+                "span": [154, 154],
+                "to": "."
+              }
+            ]
+          }
+        },
+        {
+          "target": "1SA 17:18",
+          "from": "\\add And thou shalt carry to the captain of the thousand \\add*  \\add these ten cheeses of milk, and thou shalt see how thy brethren fare, and learn what they want. \\add*",
+          "note": null,
+          "english": {
+            "source": "brenton",
+            "span": [877, 1022],
+            "edits": [
+              {
+                "span": [145, 145],
+                "to": "."
+              }
+            ]
+          }
+        },
+        {
+          "target": "1SA 17:19",
+          "from": "\\add And Saul himself and all the men of Israel were in the valley of the Oak, warring with the Philistines. \\add*",
+          "note": null,
+          "english": {
+            "source": "brenton",
+            "span": [1034, 1136],
+            "edits": [
+              {
+                "span": [102, 102],
+                "to": "."
+              }
+            ]
+          }
+        },
+        {
+          "target": "1SA 17:20",
+          "from": "\\add And David rose early in the morning, and left the sheep to a keeper, and took and went as Jessae commanded him, and he came to the trench and to the army as it was going out to ﬁght, and they shouted for the battle. \\add*",
+          "note": null,
+          "english": {
+            "source": "brenton",
+            "span": [1148, 1362],
+            "edits": [
+              {
+                "span": [214, 214],
+                "to": "."
+              }
+            ]
+          }
+        },
+        {
+          "target": "1SA 17:21",
+          "from": "\\add And Israel and the Philistines formed their lines one opposite the other. \\add*",
+          "note": null,
+          "english": {
+            "source": "brenton",
+            "span": [1374, 1446],
+            "edits": [
+              {
+                "span": [72, 72],
+                "to": "."
+              }
+            ]
+          }
+        },
+        {
+          "target": "1SA 17:22",
+          "from": "\\add And David deposited his burden in the hand of a keeper, and ran to the line, and went and asked his brethren how they Were. \\add*",
+          "note": null,
+          "english": {
+            "source": "brenton",
+            "span": [1458, 1580],
+            "edits": [
+              {
+                "span": [122, 122],
+                "to": "."
+              }
+            ]
+          }
+        },
+        {
+          "target": "1SA 17:23",
+          "from": "\\add And while he was speaking with them, behold the Amessaean advanced, Goliath by name, the Philistine of Geth, of the armies of the Philistines, and he spoke \\add*  \\add as before, and David heard. \\add*",
+          "note": null,
+          "english": {
+            "source": "brenton",
+            "span": [1592, 1773],
+            "edits": [
+              {
+                "span": [181, 181],
+                "to": "."
+              }
+            ]
+          }
+        },
+        {
+          "target": "1SA 17:24",
+          "from": "\\add And all the men of Israel when they saw the man ﬂed from before him, and they were greatly terrified. \\add*",
+          "note": null,
+          "english": {
+            "source": "brenton",
+            "span": [1785, 1886],
+            "edits": [
+              {
+                "span": [101, 101],
+                "to": "."
+              }
+            ]
+          }
+        },
+        {
+          "target": "1SA 17:25",
+          "from": "\\add And the men of Israel said, Have ye seen this man that comes up? for he has reproached Israel and has come up; and it shall be that the man who shall smite him, the king shall enrich him with great wealth and shall give him his daughter, and shall make his father’s house free in Israel. \\add*",
+          "note": null,
+          "english": {
+            "source": "brenton",
+            "span": [1898, 2195],
+            "edits": [
+              {
+                "span": [297, 297],
+                "to": "."
+              }
+            ]
+          }
+        },
+        {
+          "target": "1SA 17:26",
+          "from": "\\add and David spoke to the men who stood with him saying, Shall it indeed be done thus to the man who shall smite that Philistine, and take away reproach from Israel? for who is this uncircumcised Philistine that he has defied the army of the living God? \\add*",
+          "note": null,
+          "english": {
+            "source": "brenton",
+            "span": [2207, 2477],
+            "edits": [
+              {
+                "span": [270, 270],
+                "to": "?"
+              }
+            ]
+          }
+        },
+        {
+          "target": "1SA 17:27",
+          "from": "\\add And the people spoke to him according to this Word, saying Thus shall it be done to the man Who shall smite him. \\add*",
+          "note": null,
+          "english": {
+            "source": "brenton",
+            "span": [2489, 2601],
+            "edits": [
+              {
+                "span": [112, 112],
+                "to": "."
+              }
+            ]
+          }
+        },
+        {
+          "target": "1SA 17:28",
+          "from": "\\add And Eliab his elder brother heard as he spoke to the men, and Eliab was very angry with David and said, Why hast thou thus come down, and with whom hast thou left those few sheep in the wilderness? I know thy pride and the naughtiness of thine heart, for thou art come down to see the battle. \\add*",
+          "note": null,
+          "english": {
+            "source": "brenton",
+            "span": [2613, 2904],
+            "edits": [
+              {
+                "span": [291, 291],
+                "to": "."
+              }
+            ]
+          }
+        },
+        {
+          "target": "1SA 17:29",
+          "from": "\\add And David said what have I done now? \\add*  \\add Have I no business here? \\add*",
+          "note": null,
+          "english": {
+            "source": "brenton",
+            "span": [2916, 2982],
+            "edits": [
+              {
+                "span": [66, 66],
+                "to": "\\add*?"
+              }
+            ]
+          }
+        },
+        {
+          "target": "1SA 17:30",
+          "from": "\\add And he turned from him towards another, and he spoke after the same manner; and the people answered him \\add*  \\add after the former manner. \\add*",
+          "note": null,
+          "english": {
+            "source": "brenton",
+            "span": [2999, 3125],
+            "edits": [
+              {
+                "span": [126, 126],
+                "to": "."
+              }
+            ]
+          }
+        },
+        {
+          "target": "1SA 17:31",
+          "from": "\\add And the Words which David spoke were heard and were reported \\add*  \\add to Saul. And he took him to himself. \\add*",
+          "note": null,
+          "english": {
+            "source": "brenton",
+            "span": [3137, 3234],
+            "edits": [
+              {
+                "span": [97, 97],
+                "to": "."
+              }
+            ]
+          }
+        }
+      ],
+      "source_notes": {
+        "1SA 17:11": "\\ft See Appendix. which has verses 12-31 translated from the Alexandrine codex. These verses (below) are not found in the Vatican Codex. "
+      }
+    },
+    "1SA 17:41": {
+      "appendix": "\\ip \\it Verse\\it* 41. And the Philistine advanced and drew nigh to David, and a man bearing his shield \\add went\\add* before him, and the Philistine looked on.  \n",
+      "why": "Print Brenton’s Appendix passage, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 580,
+        "evidence": "apparatus",
+        "reading": "41 καὶ ἐπορεύθη ὁ ἀλλόφυλος ... A (om B)",
+        "agrees": true
+      },
+      "insertions": [
+        {
+          "after": "17:40",
+          "verses": [
+            {
+              "reference": "17:41",
+              "note": "\\fqa Vat. \\ft omits this verse.",
+              "english": {
+                "source": "brenton",
+                "span": [22, 158],
+                "edits": [
+                  {
+                    "span": [136, 136],
+                    "to": "."
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "source_notes": {
+        "1SA 17:40": "\\ft Verse 41 is not in the Vatican codex. \\fqa Alex. \\ft has the following."
+      }
+    },
+    "1SA 17:50": {
+      "appendix": "\\ip \\it Verse\\it* 50. So David prevailed over the Philistine with a sling and a stone, and smote the Philistine and slew him, and there was no sword in the hand of David.  \n",
+      "why": "Print Brenton’s Appendix passage, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 581,
+        "evidence": "apparatus",
+        "reading": "50 καὶ κατίσχυσεν Δαδ ... A (om B)",
+        "agrees": true
+      },
+      "insertions": [
+        {
+          "after": "17:49",
+          "verses": [
+            {
+              "reference": "17:50",
+              "note": "\\fqa Vat. \\ft omits this verse.",
+              "english": {
+                "source": "brenton",
+                "span": [22, 169],
+                "edits": [
+                  {
+                    "span": [147, 147],
+                    "to": "."
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "source_notes": {
+        "1SA 17:49": "\\ft Verse 50 is not in the Vatican codex. \\fqa Alex. \\ft has the following."
+      }
+    },
+    "1SA 18:30": {
+      "appendix": "\\ip \\it Verse\\it* 30. And the chief of the Philistines went forth; and it came to pass that from the sufficiency of their expedition David acted wisely above all the servants of Saul; and his name was honoured exceedingly.  \n",
+      "why": "Print Brenton’s Appendix passage, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 584,
+        "evidence": "apparatus",
+        "reading": "(30) καὶ ἐξῆλθον οἱ ἄρχοντες τῶν ἀλλοφύλων ... καὶ ἐτιμήθη τὸ ὄνομα αὐτοῦ σφόδρα A (om B)",
+        "agrees": true
+      },
+      "insertions": [
+        {
+          "after": "18:29",
+          "verses": [
+            {
+              "reference": "18:30",
+              "note": "\\fqa Vat. \\ft omits this verse.",
+              "english": {
+                "source": "brenton",
+                "span": [22, 221],
+                "edits": [
+                  {
+                    "span": [199, 199],
+                    "to": "."
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "1SA 17:55-58": {
+      "appendix": "\\ip \\it Verse\\it* 55. And when Saul saw David going out to meet the Philistine, he said to Abener the captain of the host, Whose son is this youth? and Abener said, As thy soul lives, O king, I know not. \\vp 56\\vp*And the king said, Do thou ask whose son this youth is. \\vp 57\\vp*And as David returned from the slaughter of the Philistine, Abener took him and brought him in before Saul, and the head of the Philistine was in his hand. \\vp 58\\vp*And Saul said to him, Whose son art thou, young man? and David said, The son of thy servant Jessæ the Bethleemite.  \n",
+      "why": "Print Brenton’s Appendix passage, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 582,
+        "evidence": "apparatus",
+        "reading": "55–XVIII 5 καὶ ὡς εἶδεν Σαουλ ... (om B)",
+        "agrees": true
+      },
+      "insertions": [
+        {
+          "after": "17:54",
+          "verses": [
+            {
+              "reference": "17:55",
+              "note": "\\fqa Vat. \\ft omits verses 55–58.",
+              "english": {
+                "source": "brenton",
+                "span": [22, 202],
+                "edits": [
+                  {
+                    "span": [180, 180],
+                    "to": "."
+                  }
+                ]
+              }
+            },
+            {
+              "reference": "17:56",
+              "english": {
+                "source": "brenton",
+                "span": [214, 268],
+                "edits": [
+                  {
+                    "span": [54, 54],
+                    "to": "."
+                  }
+                ]
+              }
+            },
+            {
+              "reference": "17:57",
+              "english": {
+                "source": "brenton",
+                "span": [280, 434],
+                "edits": [
+                  {
+                    "span": [154, 154],
+                    "to": "."
+                  }
+                ]
+              }
+            },
+            {
+              "reference": "17:58",
+              "english": {
+                "source": "brenton",
+                "span": [446, 559],
+                "edits": [
+                  {
+                    "span": [113, 113],
+                    "to": "."
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "source_notes": {
+        "1SA 17:54": "\\ft Verses 55 to 58 are not in the Vatican codex. \\fqa Alex. \\ft has the following."
+      }
+    },
+    "1SA 18:1-11": {
+      "appendix": "\\ip 18. And it came to pass when he had finished speaking to Saul, that the soul of Jonathan was knit to the soul of David, and Jonathan loved him as his own soul. \\vp 2\\vp*And Saul took him in that day, and did not suffer him to return to his father’s house. \\vp 3\\vp*And Jonathan and David made a covenant because he loved him as his own soul. \\vp 4\\vp*And Jonathan stripped himself of his upper garment, and gave it to David, and his mantle and \\add all he had upon him\\add*, even to his sword and to his bow, and to his girdle. \\vp 6\\vp*And David went out whithersoever Saul sent him, and acted wisely, and Saul set him over the men of war, and he was pleasing in the eyes of all the people, and also in the eyes of the servants of Saul. Verse 8. (last part.) And what more can he have but the kingdom? \\vp 9\\vp*And Saul eyed David from that day and onward. 10 And it came to pass on the morrow that an evil spirit from God fell upon Saul, and he prophesied in the midst of his house. And David was playing on the harp with his hand, according to his daily custom. And Saul’s spear was in his hand. \\vp 11\\vp*And Saul took his spear and said, I will smite David even to the wall. But David escaped twice from his presence.  \n",
+      "why": "Print Brenton’s Appendix passage, confirmed by Swete. The Appendix label 6 denotes Swete XVIII 5; insert its words at 18:5. The later 8–11 follows the apparatus placement. Swete prints verse 9 in the Vatican main text. Its English is restored from Brenton’s Appendix because the eBible main text lacks it; only verses 10–11 have the recorded A (om B) omission. Preserve the separate provenance and omission scopes.",
+      "swete": {
+        "volume": 1,
+        "page": 582,
+        "evidence": "apparatus",
+        "reading": "55–XVIII 5 ... (5) καὶ ἐξεπορεύετο Δαδ ...; 8 χιλιάδας] + καὶ τί αὐτῷ πλὴν ἡ βασιλεία A; 10–11 ... A (om B)",
+        "agrees": true
+      },
+      "insertions": [
+        {
+          "verses": [
+            {
+              "reference": "18:1",
+              "note": "\\fqa Vat. \\ft omits verses 1–5.",
+              "english": {
+                "source": "brenton",
+                "span": [8, 162],
+                "edits": [
+                  {
+                    "span": [154, 154],
+                    "to": "."
+                  }
+                ]
+              }
+            },
+            {
+              "reference": "18:2",
+              "english": {
+                "source": "brenton",
+                "span": [173, 258],
+                "edits": [
+                  {
+                    "span": [85, 85],
+                    "to": "."
+                  }
+                ]
+              }
+            },
+            {
+              "reference": "18:3",
+              "english": {
+                "source": "brenton",
+                "span": [269, 344],
+                "edits": [
+                  {
+                    "span": [75, 75],
+                    "to": "."
+                  }
+                ]
+              }
+            },
+            {
+              "reference": "18:4",
+              "english": {
+                "source": "brenton",
+                "span": [355, 530],
+                "edits": [
+                  {
+                    "span": [175, 175],
+                    "to": "."
+                  }
+                ]
+              }
+            },
+            {
+              "reference": "18:5",
+              "english": {
+                "source": "brenton",
+                "span": [541, 740],
+                "edits": [
+                  {
+                    "span": [199, 199],
+                    "to": "."
+                  }
+                ]
+              }
+            }
+          ],
+          "before": "18:6"
+        },
+        {
+          "after": "18:8",
+          "verses": [
+            {
+              "reference": "18:9",
+              "english": {
+                "source": "brenton",
+                "span": [816, 860],
+                "edits": [
+                  {
+                    "span": [44, 44],
+                    "to": "."
+                  }
+                ]
+              }
+            },
+            {
+              "reference": "18:10",
+              "note": "\\fqa Vat. \\ft omits verses 10–11.",
+              "english": {
+                "source": "brenton",
+                "span": [865, 1101],
+                "edits": [
+                  {
+                    "span": [236, 236],
+                    "to": "."
+                  }
+                ]
+              }
+            },
+            {
+              "reference": "18:11",
+              "english": {
+                "source": "brenton",
+                "span": [1113, 1225],
+                "edits": [
+                  {
+                    "span": [112, 112],
+                    "to": "."
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "edits": [
+        {
+          "target": "1SA 18:8",
+          "from": "thousands.",
+          "note": "\\fqa Vat. \\ft omits.",
+          "english": {
+            "source": "brenton",
+            "span": [764, 805],
+            "edits": [
+              {
+                "span": [0, 0],
+                "to": "thousands. "
+              },
+              {
+                "span": [41, 41],
+                "to": "?"
+              }
+            ]
+          },
+          "note_at": 11
+        }
+      ],
+      "source_notes": {
+        "1SA 18:8": "\\ft From this point to the end of v 11. is read from \\fqa Alex."
+      }
+    },
+    "1SA 18:17-19": {
+      "appendix": "\\ip \\vp 17\\vp*And Saul said to David, Behold my elder daughter Merob, I will give her to thee to wife, only be thou to me a mighty man and fight the wars of the Lord. And Saul said, Let not my hand be upon him, but the hand of the Philistines shall be upon him. \\vp 18\\vp*And David said to Saul, Who am I, and what is the life of my father’s family in Israel, that I should be the king’s son-in-law? \\vp 19\\vp*But it came to pass at the time when Merob Saul’s daughter should have been given to David, that she was given to Israel the Mothulathite to wife.  \n",
+      "why": "Print Brenton’s Appendix passage, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 583,
+        "evidence": "apparatus",
+        "reading": "17–19 καὶ εἶπεν Σαουλ πρὸς Δαδ ... A (om B)",
+        "agrees": true
+      },
+      "insertions": [
+        {
+          "after": "18:16",
+          "verses": [
+            {
+              "reference": "18:17",
+              "note": "\\fqa Vat. \\ft omits verses 17–19.",
+              "english": {
+                "source": "brenton",
+                "span": [14, 260],
+                "edits": [
+                  {
+                    "span": [246, 246],
+                    "to": "."
+                  }
+                ]
+              }
+            },
+            {
+              "reference": "18:18",
+              "english": {
+                "source": "brenton",
+                "span": [272, 398],
+                "edits": [
+                  {
+                    "span": [126, 126],
+                    "to": "?"
+                  }
+                ]
+              }
+            },
+            {
+              "reference": "18:19",
+              "english": {
+                "source": "brenton",
+                "span": [410, 555],
+                "edits": [
+                  {
+                    "span": [145, 145],
+                    "to": "."
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "source_notes": {
+        "1SA 18:16": "\\ft vv 17-19 are not in the Vatican codex. They are here read from \\fqa Alex."
+      }
+    },
+    "1KI 13:27": {
+      "appendix": "\\ip 13. \\vp 27\\vp*And he spoke to his sons, saying, Saddle me the ass, and they saddled \\add it\\add*.  \n",
+      "why": "Print Brenton’s Appendix passage, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 713,
+        "evidence": "apparatus",
+        "reading": "26 παρεπίκρανεν] + ... (27) καὶ ἐλάλησεν αὐτοῖς ... A",
+        "agrees": true
+      },
+      "insertions": [
+        {
+          "after": "13:26",
+          "verses": [
+            {
+              "reference": "13:27",
+              "note": "\\fqa Vat. \\ft omits this verse.",
+              "english": {
+                "source": "brenton",
+                "span": [18, 95],
+                "edits": [
+                  {
+                    "span": [77, 77],
+                    "to": "\\add*."
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "source_notes": {
+        "1KI 13:26": "\\fqa Vat. \\ft has no verse 27. \\fqa Alex. \\ft reads as follows."
+      }
+    },
+    "1KI 15:32": {
+      "appendix": "\\ip 15. \\vp 32\\vp*And there was war between Asa and Baasa King of Israel all their days.  \n",
+      "why": "Print Brenton’s Appendix passage, confirmed by Swete.",
+      "swete": {
+        "volume": 1,
+        "page": 718,
+        "evidence": "apparatus",
+        "reading": "32 καὶ πόλεμος ἦν μεταξὺ Ασα καὶ μεταξὺ Βαασα ... A",
+        "agrees": true
+      },
+      "insertions": [
+        {
+          "after": "15:31",
+          "verses": [
+            {
+              "reference": "15:32",
+              "note": "\\fqa Vat. \\ft omits this verse.",
+              "english": {
+                "source": "brenton",
+                "span": [18, 87],
+                "edits": [
+                  {
+                    "span": [69, 69],
+                    "to": "."
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "source_notes": {
+        "1KI 15:31#2": "\\ft Verse 32 is not in \\fqa Vat., \\ft it is here read from \\fqa Alex."
+      }
+    },
+    "1CH 1:11-23": {
+      "appendix": "\\ip 1. \\vp 11\\vp*And Mesraim was father of the Lodiim, and the Anamiim, and the Labin, and the Nephthalim, \\vp 12\\vp*and the Patrosoniim, and the Chasloniim, whence went forth Philistiim, and the Chaphoriim. \\vp 13\\vp*And Chanaan was father of Sidon, his first-born, and the Chettite, and the Jebusite, \\vp 14\\vp*and the Amorrhæan, and the Gergesite, \\vp 15\\vp*and the Evite, and the Arucæan, and the Asennæan, \\vp 16\\vp*and the Aradian, and the Samaræan, and the Amathite, \\vp 17\\vp*and Arphaxad, and Lud and Aram. And the sons of Aram: Os and Ul, and Gather, and Mosoch. \\vp 18\\vp*And Arphaxad begot Cainan, and Cainan begot Sala, and Sala begot Eber. \\vp 19\\vp*And to Eber were born two sons, the name of the one Phalec, for in his days the earth was divided, and the name of his brother was Jectan. \\vp 20\\vp*And Jectan begot Elmodad and Saleph and Aramoth, \\vp 21\\vp*and Keduran, and Æxe, and Declam, \\vp 22\\vp*and Gemian, and Abimeel, and Saban, \\vp 23\\vp*and Uphir, and Evi, and Oram; all these were the sons of Jectan.  \n",
+      "why": "Print Brenton’s Appendix passage, confirmed by Swete. Appendix 1:17 begins with the continuation of the existing verse, after Assur; retain those existing words.",
+      "swete": {
+        "volume": 2,
+        "page": 1,
+        "evidence": "apparatus",
+        "reading": "11–16 καὶ Μεσραιμ ἐγέννησεν ...; 17–23 υἱοὶ Σημ Αιλαμ καὶ Ασσουρ καὶ Αρφαξαδ ... A (om B)",
+        "agrees": true
+      },
+      "insertions": [
+        {
+          "after": "1:10",
+          "verses": [
+            {
+              "reference": "1:11",
+              "note": "\\fqa Vat. \\ft omits verses 11–16.",
+              "english": {
+                "source": "brenton",
+                "span": [17, 105],
+                "edits": [
+                  {
+                    "span": [88, 88],
+                    "to": ","
+                  }
+                ]
+              }
+            },
+            {
+              "reference": "1:12",
+              "english": {
+                "source": "brenton",
+                "span": [117, 206],
+                "edits": [
+                  {
+                    "span": [89, 89],
+                    "to": "."
+                  }
+                ]
+              }
+            },
+            {
+              "reference": "1:13",
+              "english": {
+                "source": "brenton",
+                "span": [218, 301],
+                "edits": [
+                  {
+                    "span": [83, 83],
+                    "to": ","
+                  }
+                ]
+              }
+            },
+            {
+              "reference": "1:14",
+              "english": {
+                "source": "brenton",
+                "span": [313, 349],
+                "edits": [
+                  {
+                    "span": [36, 36],
+                    "to": ","
+                  }
+                ]
+              }
+            },
+            {
+              "reference": "1:15",
+              "english": {
+                "source": "brenton",
+                "span": [361, 409],
+                "edits": [
+                  {
+                    "span": [48, 48],
+                    "to": ","
+                  }
+                ]
+              }
+            },
+            {
+              "reference": "1:16",
+              "english": {
+                "source": "brenton",
+                "span": [421, 472],
+                "edits": [
+                  {
+                    "span": [51, 51],
+                    "to": ","
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "after": "1:17",
+          "verses": [
+            {
+              "reference": "1:18",
+              "note": "\\fqa Vat. \\ft omits verses 18–23.",
+              "english": {
+                "source": "brenton",
+                "span": [583, 652],
+                "edits": [
+                  {
+                    "span": [69, 69],
+                    "to": "."
+                  }
+                ]
+              }
+            },
+            {
+              "reference": "1:19",
+              "english": {
+                "source": "brenton",
+                "span": [4, 801],
+                "edits": [
+                  {
+                    "span": [0, 660],
+                    "to": ""
+                  },
+                  {
+                    "span": [797, 797],
+                    "to": "."
+                  }
+                ]
+              }
+            },
+            {
+              "reference": "1:20",
+              "english": {
+                "source": "brenton",
+                "span": [813, 860],
+                "edits": [
+                  {
+                    "span": [47, 47],
+                    "to": ","
+                  }
+                ]
+              }
+            },
+            {
+              "reference": "1:21",
+              "english": {
+                "source": "brenton",
+                "span": [872, 904],
+                "edits": [
+                  {
+                    "span": [32, 32],
+                    "to": ","
+                  }
+                ]
+              }
+            },
+            {
+              "reference": "1:22",
+              "english": {
+                "source": "brenton",
+                "span": [916, 950],
+                "edits": [
+                  {
+                    "span": [34, 34],
+                    "to": ","
+                  }
+                ]
+              }
+            },
+            {
+              "reference": "1:23",
+              "english": {
+                "source": "brenton",
+                "span": [962, 1025],
+                "edits": [
+                  {
+                    "span": [63, 63],
+                    "to": "."
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "edits": [
+        {
+          "target": "1CH 1:17",
+          "from": "The sons of Sem, Ælam, and Assur,",
+          "note": "\\fqa Vat. \\ft omits.",
+          "english": {
+            "source": "brenton",
+            "span": [40, 571],
+            "edits": [
+              {
+                "span": [0, 0],
+                "to": "The sons "
+              },
+              {
+                "span": [3, 6],
+                "to": "Sem,"
+              },
+              {
+                "span": [7, 13],
+                "to": "Ælam"
+              },
+              {
+                "span": [19, 30],
+                "to": "Assur"
+              },
+              {
+                "span": [32, 444],
+                "to": ""
+              },
+              {
+                "span": [531, 531],
+                "to": "."
+              }
+            ]
+          },
+          "note_at": 34
+        }
+      ]
+    },
+    "2CH 3:12": {
+      "appendix": "\\ip 3. \\vp 12\\vp*And the wing of one cherub was five cubits touching the wall of the house, and the other wing was five cubits touching the wing of the other cherub.  \n",
+      "why": "Print Brenton’s Appendix passage, confirmed by Swete.",
+      "swete": {
+        "volume": 2,
+        "page": 65,
+        "evidence": "apparatus",
+        "reading": "11 ἑτέρου] + (12) καὶ ἡ πτέρυξ τοῦ χερουβ ... A",
+        "agrees": true
+      },
+      "insertions": [
+        {
+          "after": "3:11",
+          "verses": [
+            {
+              "reference": "3:12",
+              "note": "\\fqa Vat. \\ft omits this verse.",
+              "english": {
+                "source": "brenton",
+                "span": [17, 164],
+                "edits": [
+                  {
+                    "span": [147, 147],
+                    "to": "."
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "PRO 1:16": {
+      "appendix": "\\ip 1. \\vp 16\\vp*For their feet run to do evil, and are swift to shed blood.  \n",
+      "why": "Print Brenton’s Appendix passage, confirmed by Swete.",
+      "swete": {
+        "volume": 2,
+        "page": 417,
+        "evidence": "apparatus",
+        "reading": "15 αὐτῶν] + (16) οἱ γὰρ πόδες αὐτῶν εἰς κακίαν τρέχουσιν ...",
+        "agrees": true
+      },
+      "insertions": [
+        {
+          "after": "1:15",
+          "verses": [
+            {
+              "reference": "1:16",
+              "note": "\\fqa Vat. \\ft omits this verse.",
+              "english": {
+                "source": "brenton",
+                "span": [21, 75],
+                "edits": [
+                  {
+                    "span": [0, 0],
+                    "to": "for "
+                  },
+                  {
+                    "span": [54, 54],
+                    "to": ";"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "source_notes": {
+        "PRO 1:15": "\\ft For ver 16, see Appendix."
+      }
+    },
+    "PRO 13:6": {
+      "appendix": "\\ip 13. \\vp 6\\vp*Righteousness preserves the simple in the way, but sin makes worthless the ungodly.  \n",
+      "why": "Print Brenton’s Appendix passage, confirmed by Swete.",
+      "swete": {
+        "volume": 2,
+        "page": 440,
+        "evidence": "apparatus",
+        "reading": "5 παρρησίαν] + (6) δικαιοσύνη φυλάσσει ἀκάκους ... A",
+        "agrees": true
+      },
+      "insertions": [
+        {
+          "after": "13:5",
+          "verses": [
+            {
+              "reference": "13:6",
+              "note": "\\fqa Vat. \\ft omits this verse.",
+              "english": {
+                "source": "brenton",
+                "span": [17, 99],
+                "edits": [
+                  {
+                    "span": [82, 82],
+                    "to": "."
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "source_notes": {
+        "PRO 13:5": "\\ft See Appendix for Alexandrine text shown as: “Righteousness preserves the simple in the way, but sin makes worthless the ungodly.”"
+      }
+    },
+    "EZK 33:25": {
+      "appendix": "\\ip 33. \\vp 25\\vp*Therefore say to them, Thus saith the Lord God: Ye will eat with the blood, and ye will lift up your eyes to your idols, and ye shed blood, and shall ye inherit the land? \\vp 26\\vp*Ye stand upon your sword, ye have wrought abomination, and have defiled every one his neighbour, and shall ye inherit the land?  ",
+      "why": "Print Brenton’s Appendix passage, confirmed by Swete. The source has the opening of 33:25 already; add only the missing remainder and insert 33:26 after it.",
+      "swete": {
+        "volume": 3,
+        "page": 457,
+        "evidence": "apparatus",
+        "reading": "27 τάδε λέγει] pr (25) οὕτως εἰπὸν αὐτοῖς ... (26) ἔστητε ... AQ",
+        "agrees": true
+      },
+      "insertions": [
+        {
+          "after": "33:25",
+          "verses": [
+            {
+              "reference": "33:26",
+              "note": "\\fqa Vat. \\ft omits this verse.",
+              "english": {
+                "source": "brenton",
+                "span": [199, 325],
+                "edits": [
+                  {
+                    "span": [126, 126],
+                    "to": "?"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "edits": [
+        {
+          "target": "EZK 33:25",
+          "from": "Therefore say to them, Thus saith the Lord God,",
+          "note": "\\fqa Vat. \\ft omits.",
+          "english": {
+            "source": "brenton",
+            "span": [18, 187],
+            "edits": [
+              {
+                "span": [169, 169],
+                "to": "?"
+              }
+            ]
+          },
+          "note_at": 48
+        }
+      ]
+    },
+    "PRO 4:5": {
+      "appendix": "\\ip 4. \\vp 5\\vp*Get wisdom, get understanding, forget not, nor decline from the words of my mouth.  \n",
+      "why": "Print Brenton’s Appendix passage, confirmed by Swete. Swete shows an addition after the existing words, not a replacement.",
+      "swete": {
+        "volume": 2,
+        "page": 422,
+        "evidence": "apparatus",
+        "reading": "5 στόματος] + κτῆσαι σοφίαν κτῆσαι σύνεσιν ... A",
+        "agrees": true
+      },
+      "edits": [
+        {
+          "target": "PRO 4:5",
+          "from": "and do not neglect the speech of my mouth.",
+          "note": "\\fqa Vat. \\ft omits.",
+          "english": {
+            "source": "brenton",
+            "span": [16, 97],
+            "edits": [
+              {
+                "span": [0, 0],
+                "to": "and do not neglect the speech of my mouth. "
+              },
+              {
+                "span": [81, 81],
+                "to": "."
+              }
+            ]
+          },
+          "note_at": 43
+        }
+      ],
+      "source_notes": {
+        "PRO 4:5": "\\ft See Appendix - Alexandrian codex has: “Get wisdom, get understanding, forget not, nor decline from the words of my mouth.”"
+      }
+    },
+    "PRO 8:29-33": {
+      "appendix": "\\ip 8. \\vp 29\\vp*When he set to the sea its bound, and the waters shall not pass his decree. \\vp 32\\vp*And blessed are they that keep my ways. \\vp 33\\vp*Hear wisdom and be wise, and be not strangers to it.  \n",
+      "why": "Print Brenton’s Appendix passage, confirmed by Swete. The Appendix 8:29 words follow 8:28, ahead of existing 8:29; 32–33 follow hear me, ahead of existing blessed words.",
+      "swete": {
+        "volume": 2,
+        "page": 432,
+        "evidence": "apparatus",
+        "reading": "28 οὐρανῷ] + ἐν τῷ τιθέναι αὐτὸν τῇ θαλάσσῃ ἀκρίβασμα ...; 32 μου] + μακάριοι οἱ ... (33) ἀκούσατε σοφίας ... A",
+        "agrees": true
+      },
+      "edits": [
+        {
+          "target": "PRO 8:28",
+          "from": "and when he strengthened the clouds above; and when he secured the fountains of the earth:",
+          "note": "\\fqa Vat. \\ft omits.",
+          "english": {
+            "source": "brenton",
+            "span": [22, 91],
+            "edits": [
+              {
+                "span": [0, 0],
+                "to": "and when he strengthened the clouds above; and when he secured the fountains of the earth: when "
+              },
+              {
+                "span": [69, 69],
+                "to": ";"
+              }
+            ]
+          },
+          "note_at": 91
+        },
+        {
+          "target": "PRO 8:32",
+          "from": "hear me: blessed",
+          "note": "\\fqa Vat. \\ft omits.",
+          "lemma": "And blessed are they that keep my ways. Hear wisdom and be wise, and be not strangers to it",
+          "english": {
+            "source": "brenton",
+            "span": [103, 204],
+            "edits": [
+              {
+                "span": [0, 0],
+                "to": "hear me: "
+              },
+              {
+                "span": [40, 50],
+                "to": ""
+              },
+              {
+                "span": [101, 101],
+                "to": ".  Blessed"
+              }
+            ]
+          },
+          "note_at": 9
+        }
+      ],
+      "source_notes": {
+        "PRO 8:29": "\\ft See Appendix.",
+        "PRO 8:32": "\\ft appendix has Alexandrine text as: “And blessed are they that keep my ways.”"
+      }
+    },
+    "PRO 11:3-4": {
+      "appendix": "\\ip 11. \\vp 3\\vp*The integrity of the upright shall guide them, but the overthrow of the rebellious shall spoil them. \\vp 4\\vp*Possessions will not profit in a day of wrath, but righteousness will deliver from death.  \n",
+      "why": "Print Brenton’s Appendix passage, confirmed by Swete. Both supplied sayings precede the existing 11:3 text in A; Brenton’s numbering is retained by including both additions at the start of 11:3.",
+      "swete": {
+        "volume": 2,
+        "page": 436,
+        "evidence": "apparatus",
+        "reading": "3 ἀποθανών] pr τελειότης εὐθέων ὁδηγήσει αὐτούς ... οὐκ ὠφελήσει ὑπάρχοντα ... A",
+        "agrees": true
+      },
+      "edits": [
+        {
+          "target": "PRO 11:3",
+          "from": "When a just man dies",
+          "note": "\\fqa Vat. \\ft omits.",
+          "lemma": "The integrity of the upright shall guide them, but the overthrow of the rebellious shall spoil them. Possessions will not profit in a day of wrath, but righteousness will deliver from death",
+          "english": {
+            "source": "brenton",
+            "span": [17, 215],
+            "edits": [
+              {
+                "span": [101, 110],
+                "to": ""
+              },
+              {
+                "span": [198, 198],
+                "to": ". When a just man dies"
+              }
+            ]
+          }
+        }
+      ],
+      "source_notes": {
+        "PRO 11:2": "\\ft See Appendix.",
+        "PRO 11:3": "\\ft the Alexandrine text reads: “The integrity of the upright shall guide them, but the overthrow of the rebellious shall spoil them.”"
+      }
+    },
+    "PRO 11:10-11": {
+      "appendix": "\\ip \\it Part of verses\\it* 10, 11.—but at the destruction of the wicked there is exultation. \\vp 11\\vp*At the blessing of the upright a city shall be exalted.  \n",
+      "why": "Print Brenton’s Appendix passage, confirmed by Swete. The two clauses augment verses 10 and 11 in the places shown by the apparatus.",
+      "swete": {
+        "volume": 2,
+        "page": 437,
+        "evidence": "apparatus",
+        "reading": "10 πόλις] + καὶ ἐπὶ ἀπωλείᾳ ἀσεβῶν ἀγαλλίαμα (11) ἐν εὐλογίαις δικαίων ...",
+        "agrees": true
+      },
+      "edits": [
+        {
+          "target": "PRO 11:10",
+          "from": "prospers:",
+          "note": "\\fqa Vat. \\ft omits.",
+          "english": {
+            "source": "brenton",
+            "span": [35, 91],
+            "edits": [
+              {
+                "span": [0, 0],
+                "to": "prospers: "
+              },
+              {
+                "span": [56, 56],
+                "to": "."
+              }
+            ]
+          },
+          "note_at": 10
+        },
+        {
+          "target": "PRO 11:11",
+          "from": "but by",
+          "note": "\\fqa Vat. \\ft omits.",
+          "lemma": "At the blessing of the upright a city shall be exalted",
+          "english": {
+            "source": "brenton",
+            "span": [103, 157],
+            "edits": [
+              {
+                "span": [54, 54],
+                "to": ", but by"
+              }
+            ]
+          }
+        }
+      ],
+      "source_notes": {
+        "PRO 11:10": "\\ft See Appendix which gives the Alexandrine text as: “— but at the destruction of the wicked there is exultation.”"
+      }
+    },
+    "PRO 15:33": {
+      "appendix": "\\ip 16. (\\it Alex. \\it* 15.) \\vp 33\\vp*The humble advances in glory.  \n",
+      "why": "Print Brenton’s Appendix addition at 15:33, confirmed by Swete; keep the Appendix’s historical numbering in the source record. Appendix labels 16 (Alex.15) 33; Swete places the addition after the existing Brenton 15:33.",
+      "swete": {
+        "volume": 2,
+        "page": 446,
+        "evidence": "apparatus",
+        "reading": "XVI 4 αὐτῇ] + προσπορεύεται ταπεινὸς δόξᾳ A",
+        "agrees": true
+      },
+      "edits": [
+        {
+          "target": "PRO 15:33",
+          "from": "The fear of the Lord is instruction and wisdom; and the highest honour will correspond therewith.",
+          "note": "\\fqa Vat. \\ft omits.",
+          "english": {
+            "source": "brenton",
+            "span": [39, 67],
+            "edits": [
+              {
+                "span": [0, 0],
+                "to": "The fear of the Lord is instruction and wisdom; and the highest honour will correspond therewith. "
+              },
+              {
+                "span": [28, 28],
+                "to": "."
+              }
+            ]
+          },
+          "note_at": 98
+        }
+      ]
+    },
+    "1SA 23:12": {
+      "kjv": true,
+      "why": "Supply the missing verse verbatim from the Authorized Version; Brenton gives no English, and Swete confirms the same sense in Alexandrinus. The page image supplies the whole verse in A. The KJV has the same sense: Then for και, explicit men of Keilah, singular hand for χειρας, and thee as the implicit object of the answer. Borrow its English unchanged rather than translate the Greek editorially.",
+      "swete": {
+        "volume": 1,
+        "page": 593,
+        "evidence": "apparatus",
+        "reading": "και ειπεν Δαδ ει παραδωσουσιν παρα της Κεειλα εμε και τους ανδρας μου εις χειρας Σαουλ· και ειπεν κς παραδωσουσιν· A (om B)",
+        "agrees": true
+      },
+      "insertions": [
+        {
+          "after": "23:11",
+          "verses": [
+            {
+              "reference": "23:12",
+              "note": "\\fqa Alex. \\ft has the verse. \\fqa Vat. \\ft omits; the English is supplied from the Authorized Version."
+            }
+          ]
+        }
+      ],
+      "source_notes": {
+        "1SA 23:11#2": "\\ft Verse 12 is here supplied by \\fqa Alex."
+      }
+    }
+  },
+  "kept": {
+    "NUM 28:24": {
+      "swete": {
+        "volume": 1,
+        "page": 319,
+        "evidence": "apparatus",
+        "reading": "ἑπτὰ] δύο sup ras Aᵃ",
+        "agrees": true
+      },
+      "source_note": "\\fqa Alex. \\ft two days.",
+      "why": "Retain seven days in the body, consistent with the seven-day feast and offerings at 28:17 and 28:19. Keep two days, a corrected Alexandrine reading over an erasure, in the footnote."
+    },
+    "NUM 4:48": {
+      "why": "Keep as a note pending correction: Brenton reports 450; Swete’s Alexandrinus reads 8,550. Swete’s A supports fifty, giving 8,550; retain the discrepancy with Brenton’s 450 for a note.",
+      "todo": true,
+      "swete": {
+        "volume": 1,
+        "page": 264,
+        "evidence": "apparatus",
+        "reading": "ὀγδοήκοντα] καὶ πεντήκοντα A",
+        "agrees": true
+      },
+      "source_note": "\\fqa Alex. \\ft 450."
+    },
+    "GEN 1:11#2": {
+      "why": "Brenton supplies Greek alone for the fruit-tree clause; no English reading to promote.",
+      "todo": true,
+      "swete": {
+        "volume": 1,
+        "page": 1,
+        "evidence": "text",
+        "reading": "εἰς ὁμοιότητα",
+        "agrees": true
+      },
+      "source_note": "\\fqa Gr. \\fqa Alex. \\ft + εἰς ὁμοιότητα."
+    },
+    "GEN 33:18": {
+      "why": "The verse already translates Alexandrinus παρενέβαλε as “took up a position”; the alternative “pitched his tent” is another translation of the same reading.",
+      "todo": true,
+      "swete": {
+        "volume": 1,
+        "page": 64,
+        "evidence": "text",
+        "reading": "παρενέβαλεν",
+        "agrees": true
+      },
+      "source_note": "\\fqa Or, \\ft pitched his tent. \\fqa Alex. \\ft παρενέβαλε, for which probably παρενέλαβε is a mere mistake. So \\fqa Lambert Bos \\ft and \\fqa Patrick Junius \\ft thought."
+    },
+    "JDG 9:6": {
+      "why": "The omitted Greek εὐρετῆ already has no separate English words in Brenton’s verse; his text “of Sedition” follows Alexandrinus here.",
+      "todo": true,
+      "swete": {
+        "volume": 1,
+        "page": 500,
+        "evidence": "apparatus",
+        "reading": "om τῇ εὑρετῇ A",
+        "agrees": true
+      },
+      "source_note": "\\fqa Heb. \\ft מעכ. this is an instance of double translation, στάσεως being given for מעכ, and εὐρετῆ having reference to the word מעא \\fqa to find; \\ft but \\fqa Alex. \\ft rightly omits εὐρετῆ."
+    },
+    "JDG 9:27#2": {
+      "why": "Brenton gives Alexandrinus in Greek alone.",
+      "todo": true,
+      "swete": {
+        "volume": 1,
+        "page": 502,
+        "evidence": "apparatus",
+        "reading": "ἐλλουλεὶμ] χοροὺς A",
+        "agrees": true
+      },
+      "source_note": "\\fqa Gr. \\ft made \\fqa ellulim, \\ft a Hebrew word. \\fqa Alex. \\ft χοροὺς."
+    },
+    "JDG 13:5#2": {
+      "why": "Brenton gives the Alexandrinus Greek without an English variant to promote.",
+      "todo": true,
+      "swete": {
+        "volume": 1,
+        "page": 512,
+        "evidence": "apparatus",
+        "reading": "ναζείρ] ἡγιασμένον ναζειραῖον A",
+        "agrees": true
+      },
+      "source_note": "\\ft So \\fqa Vat. i.e. \\ft Ναζίρ but \\fqa Alex. \\ft nearer to reading in Mat. 2. ult. Ναζειραῖον."
+    },
+    "JDG 13:19": {
+      "why": "Brenton gives the Alexandrinus Greek alone.",
+      "todo": true,
+      "swete": {
+        "volume": 1,
+        "page": 513,
+        "evidence": "apparatus",
+        "reading": "καὶ διεχώρισεν ποιῆσαι] τῷ θαυμαστὰ ποιοῦντι κῷ A",
+        "agrees": true
+      },
+      "source_note": "\\ft According to the \\fqa Heb. \\ft a wonderful work. \\fqa Alex. \\ft reads τῷ θαυμαστὰ ποιοῦντι κυριῷ."
+    },
+    "JDG 21:22": {
+      "why": "Brenton expressly says the existing English “according to the occasion” is translated from Alexandrinus.",
+      "todo": true,
+      "swete": {
+        "volume": 1,
+        "page": 537,
+        "evidence": "apparatus",
+        "reading": "ὡς κλῆρος] κατὰ τὸν καιρὸν A",
+        "agrees": true
+      },
+      "source_note": "\\ft Translated from \\fqa Alex."
+    },
+    "1SA 6:8": {
+      "why": "Greek alone; Brenton gives no English Alexandrine reading.",
+      "swete": {
+        "volume": 1,
+        "page": 556,
+        "evidence": "apparatus",
+        "reading": "βερσεχθαν (βερσεχθαν Bᵃᵇvid)] ἀργός A",
+        "agrees": true
+      },
+      "todo": true,
+      "source_note": "\\ft in the \\fqa Alex. \\ft ἀργός is substituted for βερσεχθάν."
+    },
+    "1SA 30:26": {
+      "why": "Brenton’s “from you” contradicts A’s ὑμῖν (“to you”); retain for editorial correction.",
+      "swete": {
+        "volume": 1,
+        "page": 608,
+        "evidence": "apparatus",
+        "reading": "ἰδού] + ὑμῖν εὐλογία A",
+        "agrees": false
+      },
+      "todo": true,
+      "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft 'Lo! a blessing from you.' etc."
+    },
+    "2SA 5:18": {
+      "why": "A pointer to Govett’s Isaiah discussion, with no Alexandrine English variant.",
+      "swete": {
+        "volume": 1,
+        "page": 621,
+        "evidence": "apparatus",
+        "reading": "Τειτανων B* (Τιτ. BᵇA item 22)",
+        "agrees": true
+      },
+      "todo": true,
+      "source_note": "\\fqa Lit. \\ft Titans. \\fqa Heb. \\ft Rephaim. See also \\fqa Appendix. \\ft which refers us to Govett's work on the book of the prophet Isaiah."
+    },
+    "2SA 11:25": {
+      "why": "Brenton’s verse already prints “strengthen him”, following A.",
+      "todo": true,
+      "swete": {
+        "volume": 1,
+        "page": 632,
+        "evidence": "silence",
+        "reading": "σου 2°] συ A (αὐτόν printed in text; no A variant)",
+        "agrees": true
+      },
+      "source_note": "\\ft There can be little doubt that αὐτὸν the \\fqa Alex. \\ft reading, is correct, instead of αὐτήν."
+    },
+    "2SA 15:12": {
+      "why": "Brenton’s translation already follows A’s conspiracy reading.",
+      "todo": true,
+      "swete": {
+        "volume": 1,
+        "page": 642,
+        "evidence": "apparatus",
+        "reading": "σύστριμμα Bᵇ (σύντριμμα B*) … σύστρεμμα A",
+        "agrees": true
+      },
+      "source_note": "\\ft So the \\fqa Alex. \\ft which reads σύστρεμμα. See \\xt Acts 23. 12."
+    },
+    "2SA 17:16": {
+      "why": "Greek alone; no English variant given.",
+      "swete": {
+        "volume": 1,
+        "page": 647,
+        "evidence": "apparatus",
+        "reading": "καταπέσει] καταπίῃ A",
+        "agrees": true
+      },
+      "todo": true,
+      "source_note": "\\fqa Alex. \\ft καταπίῃ."
+    },
+    "1KI 1:9": {
+      "why": "The verse already follows A: “by the stone of Zoelethi”.",
+      "todo": true,
+      "swete": {
+        "volume": 1,
+        "page": 669,
+        "evidence": "apparatus",
+        "reading": "μετὰ Αιδη τοῦ Ζωελεθει] παρὰ τὸν λίθον τοῦ Ζωελεθ A",
+        "agrees": true
+      },
+      "source_note": "\\ft So the \\fqa Alex. \\ft The \\fqa Vat. \\ft renders אבן as if it were אחי \\fqa or \\ft אחה."
+    },
+    "1KI 5:14a": {
+      "why": "Chapter division only; preserve Brenton’s numbering.",
+      "swete": {
+        "volume": 1,
+        "page": 683,
+        "evidence": "text",
+        "reading": "V 1 begins at καὶ ἀπέστειλεν Χειραμ",
+        "agrees": true
+      },
+      "todo": true,
+      "source_note": "\\ft Here the chapter ends, according to \\fqa Heb. \\ft and \\fqa Alex."
+    },
+    "1KI 5:18": {
+      "why": "Greek alone; no English Alexandrine translation given.",
+      "swete": {
+        "volume": 1,
+        "page": 683,
+        "evidence": "apparatus",
+        "reading": "ἁμάρτημα] ἀπάντημα A",
+        "agrees": true
+      },
+      "todo": true,
+      "source_note": "\\fqa Alex. \\ft ἀπάντημα. See συναντήματα, \\xt Ex. 9. 14."
+    },
+    "1KI 8:59#3": {
+      "why": "Greek only; Brenton gives no English A translation.",
+      "swete": {
+        "volume": 1,
+        "page": 696,
+        "evidence": "apparatus",
+        "reading": "ἐνιαυτοῦ] αὐτοῦ A",
+        "agrees": true
+      },
+      "todo": true,
+      "source_note": "\\fqa Gr. \\ft a thing \\fqa or \\ft word of a day in a day of a year. But \\fqa Alex. \\ft reads ἡμέρᾳ αὐτοῦ, which agrees with the \\fqa Heb."
+    },
+    "2KI 19:24": {
+      "why": "Greek alone; no English Alexandrine translation supplied.",
+      "swete": {
+        "volume": 1,
+        "page": 787,
+        "evidence": "apparatus",
+        "reading": "ἔψυξα] ἐφύλαξα A",
+        "agrees": true
+      },
+      "todo": true,
+      "source_note": "\\fqa Alex. \\ft reads ἐφύλαξα."
+    },
+    "2KI 21:6#2": {
+      "why": "Greek alone; no English Alexandrine translation supplied.",
+      "swete": {
+        "volume": 1,
+        "page": 791,
+        "evidence": "apparatus",
+        "reading": "ἑλλην] τεμένην Bᵇmg θελητην A",
+        "agrees": true
+      },
+      "todo": true,
+      "source_note": "\\fqa Alex. \\ft θελητὴν."
+    },
+    "1KI 2:35a": {
+      "why": "Appendix pointer; passage handled separately.",
+      "todo": true,
+      "swete": {
+        "volume": 1,
+        "page": 677,
+        "evidence": "apparatus",
+        "reading": "II 35l ἔτι ζῆν Δαδ A",
+        "agrees": true
+      },
+      "source_note": "\\ft See \\fqa Appendix."
+    },
+    "1KI 14:21": {
+      "why": "Bare appendix pointer without English passage; retain for later editor.",
+      "swete": {
+        "volume": 1,
+        "page": 714,
+        "evidence": "apparatus",
+        "reading": "XIV 1–20 in A (om B)",
+        "agrees": true
+      },
+      "todo": true,
+      "source_note": "\\ft The first 20 verses of this chapter are supplied by the \\fqa Alex. \\ft See \\fqa App."
+    },
+    "BAK 1KI 2:35a": {
+      "appendix": "\\ip 2 \\it ult\\it*. 3. \\it verse\\it* 1. Considerable variation here rather than omission.  \n",
+      "why": "The Appendix reports variation without translating an Alexandrine reading.",
+      "todo": true,
+      "swete": {
+        "volume": 1,
+        "page": 678,
+        "evidence": "apparatus",
+        "reading": "46 a–l om καὶ ἦν ὁ βασιλεὺς ... ἐν Ιερουσαλημ A; III 2 θυμιῶντες] pr τῆς δὲ βασιλείας ἑδρασθείσης ... A",
+        "agrees": true
+      }
+    },
+    "BAK 1KI 5:17": {
+      "appendix": "\\ip 5. \\vp 17\\vp*And the king commanded and they brought great stones, precious stones for the foundation of the house, and unhewn stones.  \n",
+      "why": "Promotion would duplicate 6:1a–b; Swete alone cannot authorize deletion of Brenton’s unmarked Vatican words.",
+      "todo": true,
+      "swete": {
+        "volume": 1,
+        "page": 684,
+        "evidence": "apparatus",
+        "reading": "17 καὶ ἠτοίμασαν] pr καὶ ἐνετείλατο ὁ βασιλεὺς ... A; VI 2–5 om A",
+        "agrees": true
+      }
+    },
+    "BAK 1KI 7:1-12": {
+      "appendix": "\\ip 7. \\it Verse\\it* 1, etc. See the first 12 verses of this chapter placed at the end of it in the Vatican copy.  \n",
+      "why": "Structural pointer gives no separate English passage; moving existing verses requires a later editorial decision.",
+      "todo": true,
+      "swete": {
+        "volume": 1,
+        "page": 687,
+        "evidence": "apparatus",
+        "reading": "VII 38–50 anteponit A",
+        "agrees": true
+      }
+    },
+    "BAK 1KI 14:1-20": {
+      "appendix": "\\ip 14. \\it Verses\\it* 1 to 20. The substance of these verses is found in the Vatican copy after \\it v\\it*. 24, \\it chap\\it*. 12.  \n",
+      "why": "The Appendix gives a structural pointer to Vatican 12:24, no separate English to promote.",
+      "todo": true,
+      "swete": {
+        "volume": 1,
+        "page": 714,
+        "evidence": "apparatus",
+        "reading": "XIV 1–20 ἐν τῷ καιρῷ ἐκείνῳ ἠρρωστήσεν Αβια υἱὸς Ιεροβοαμ ... A",
+        "agrees": true
+      }
+    },
+    "BAK PRO 21:16-17": {
+      "appendix": "\\ip 21. \\it Verses\\it* 16, 17, see \\it Appendix\\it*, page 1131. Note on II. Kings (II. Sam.) 5. 18.  \n",
+      "why": "Cross-reference to an explanatory Appendix note; no Alexandrine English is supplied.",
+      "todo": true,
+      "swete": {
+        "volume": 2,
+        "page": 456,
+        "evidence": "silence",
+        "reading": "16 ἐν συναγωγῇ γιγάντων ἀναπαύσεται (no A variant cited)",
+        "agrees": true
+      }
+    },
+    "PSA 31:9": {
+      "why": "Brenton gives Greek only, without an English Alexandrine rendering.",
+      "swete": {
+        "volume": 2,
+        "page": 250,
+        "evidence": "apparatus",
+        "reading": "ἄγξαι] ἄγξης A",
+        "agrees": true
+      },
+      "todo": true,
+      "source_note": "\\ft See \\fqa Alex. \\ft ἄγξεις."
+    },
+    "PSA 41:5": {
+      "why": "Appendix cross-reference supplies no Alexandrine English in this note.",
+      "swete": {
+        "volume": 2,
+        "page": 267,
+        "evidence": "apparatus",
+        "reading": "διελεύσομαι] εἰσελεύσομαι A",
+        "agrees": true
+      },
+      "todo": true,
+      "source_note": "\\ft See \\fqa Appendix."
+    },
+    "PSA 49:19": {
+      "why": "The note reports a manuscript lacuna rather than English verse wording.",
+      "todo": true,
+      "swete": {
+        "volume": 2,
+        "page": 278,
+        "evidence": "apparatus",
+        "reading": "hiat A usque LXXIX 10",
+        "agrees": true
+      },
+      "source_note": "\\ft From these words in \\fqa Alex. \\ft to \\xt Ps. 79. 11, \\ft thirty psalms are wanting."
+    },
+    "PSA 118:151": {
+      "why": "Swete reads ways (ὁδοί) and cites no Alexandrinus substitution “commands” at this verse.",
+      "swete": {
+        "volume": 2,
+        "page": 385,
+        "evidence": "apparatus",
+        "reading": "151 εἶ] + συ AT; text αἱ ὁδοί σου",
+        "agrees": false
+      },
+      "todo": true,
+      "source_note": "\\fqa Alex. \\ft ἐντολαί, commands."
+    },
+    "PSA 130:1": {
+      "why": "Swete says A omits “for David”, contradicting Brenton’s reported addition.",
+      "swete": {
+        "volume": 2,
+        "page": 393,
+        "evidence": "apparatus",
+        "reading": "om τῷ Δαυείδ AT",
+        "agrees": false
+      },
+      "todo": true,
+      "source_note": "\\fqa Alex. \\ft + 'for David.'"
+    },
+    "PSA 132:1": {
+      "why": "Swete says A omits “for David”, contradicting Brenton’s reported addition.",
+      "swete": {
+        "volume": 2,
+        "page": 395,
+        "evidence": "apparatus",
+        "reading": "om τῷ Δαυείδ A*vidT",
+        "agrees": false
+      },
+      "todo": true,
+      "source_note": "\\fqa Alex. \\ft + 'for David.'"
+    },
+    "PRO 5:13": {
+      "why": "Swete retains οὐκ ἤκουον and cites no A variant at 13; A omits μή at 5:10 and 5:16 instead.",
+      "swete": {
+        "volume": 2,
+        "page": 425,
+        "evidence": "apparatus",
+        "reading": "13 παρέβαλον ℵ; 10 om μή A; 16 om μή ℵ?A",
+        "agrees": false
+      },
+      "todo": true,
+      "source_note": "\\fqa Alex. \\ft omits 'not.'"
+    },
+    "PRO 8:5": {
+      "why": "This Appendix pointer discusses Greek vocabulary without supplying a distinct English Alexandrine reading.",
+      "swete": {
+        "volume": 2,
+        "page": 430,
+        "evidence": "silence",
+        "reading": "8:5 no A apparatus entry; text ἄκακοι...ἀπαίδευτοι",
+        "agrees": null
+      },
+      "todo": true,
+      "source_note": "\\ft For the use of ἄκακος and πανοῦργος in this book, see Appendix."
+    },
+    "PRO 21:16": {
+      "why": "The Appendix pointer concerns Rephaim and 2 Kings; it gives no Alexandrine verse reading.",
+      "swete": {
+        "volume": 2,
+        "page": 456,
+        "evidence": "silence",
+        "reading": "21:16 no A variant; text γιγάντων",
+        "agrees": null
+      },
+      "todo": true,
+      "source_note": "\\fqa Heb. \\ft Rephaim. see Appendix. Note on \\xt 2 Kings 5. 18."
+    },
+    "PRO 21:29": {
+      "why": "The verse already says ungodly at the marked word; Swete has no A substitution there.",
+      "swete": {
+        "volume": 2,
+        "page": 457,
+        "evidence": "silence",
+        "reading": "29 no A variant; text ἀσεβὴς ἀνὴρ ἀναιδῶς",
+        "agrees": null
+      },
+      "todo": true,
+      "source_note": "\\ft See \\fqa Alex. \\ft ungodly."
+    },
+    "ISA 2:6": {
+      "why": "The Appendix note explains the LXX rendering Philistines rather than giving an Alexandrine variant.",
+      "todo": true,
+      "swete": {
+        "volume": 3,
+        "page": 104,
+        "evidence": "silence",
+        "reading": "2:6 no A lexical variant at ἀλλοφύλων; ἡ γῆ] + αὐτῶν A",
+        "agrees": null
+      },
+      "source_note": "\\fqa Or, \\ft aliens, see \\fqa Appendix \\ft which has: “ISAIAH 2. 6. — Philistines. The LXX. generally render by Φιλιστεὶμ or Φυλιστιὶμ till about the middle of Judges, after which the word almost always used is ἀλλόφυλοι. In this there was probably some accommodation of sound to tense."
+    },
+    "ISA 7:18": {
+      "why": "Brenton explicitly says the verse’s existing wording is already the Alexandrine reading.",
+      "todo": true,
+      "swete": {
+        "volume": 3,
+        "page": 113,
+        "evidence": "apparatus",
+        "reading": "μυίας ℵAT; κυριεύει ℵAQΓ; μέρους ℵcaAQ",
+        "agrees": true
+      },
+      "source_note": "\\fqa Or, \\ft which part \\fqa of the enemy, etc. shall rule over the river of Egypt; but according to \\fqa Alex. \\ft the reading in the text is the right one."
+    },
+    "ISA 40:4": {
+      "why": "A cross-reference to Luke supplies no English Alexandrine variant in Brenton’s note.",
+      "swete": {
+        "volume": 3,
+        "page": 173,
+        "evidence": "apparatus",
+        "reading": "ὁδοὺς λείας ℵ*A (ὁ. λείας ℵc) Q",
+        "agrees": true
+      },
+      "todo": true,
+      "source_note": "\\ft See \\xt Luke 3. 5, \\ft with which \\fqa Alex. \\ft agrees."
+    },
+    "ISA 54:10": {
+      "why": "Brenton explicitly adopts the Alexandrine reading already in the verse.",
+      "todo": true,
+      "swete": {
+        "volume": 3,
+        "page": 202,
+        "evidence": "silence",
+        "reading": "10 no variant at κύριος; text κύριος",
+        "agrees": true
+      },
+      "source_note": "\\fqa Alex. \\ft κύριος for κύριε adopted here. Compare \\xt Mat. 16. 22, \\ft with this passage."
+    },
+    "ISA 59:7#2": {
+      "why": "Brenton gives the Greek alone without English to promote.",
+      "swete": {
+        "volume": 3,
+        "page": 209,
+        "evidence": "apparatus",
+        "reading": "ἀπὸ φόνων] ἀφρόνων ℵ* (ἀπὸ φον. ℵcb) A",
+        "agrees": true
+      },
+      "todo": true,
+      "source_note": "\\fqa Gr. \\ft from murders, but \\fqa Alex. \\ft reads ἀφρόνων."
+    },
+    "ISA 61:3": {
+      "why": "The note is about Greek word division, with no alternative English wording.",
+      "todo": true,
+      "swete": {
+        "volume": 3,
+        "page": 212,
+        "evidence": "silence",
+        "reading": "text καταστολήν; A not cited against word division",
+        "agrees": true
+      },
+      "source_note": "\\fqa Alex. \\ft reads καταστολὴν as one word."
+    },
+    "ISA 66:5": {
+      "why": "The English already says “our”; the Alexandrine reading is already in the verse.",
+      "todo": true,
+      "swete": {
+        "volume": 3,
+        "page": 220,
+        "evidence": "apparatus",
+        "reading": "5 ὑμᾶς] ἡμᾶς AQ",
+        "agrees": true
+      },
+      "source_note": "\\fqa Alex. \\ft ἡμῶν, but \\fqa Heb. \\ft and \\fqa Vat. \\ft 'your.'"
+    },
+    "JON 1:8": {
+      "why": "Brenton’s “for those whose cause” is grammatically defective and does not match τίνος; retain pending source correction.",
+      "swete": {
+        "volume": 3,
+        "page": 49,
+        "evidence": "apparatus",
+        "reading": "ἡμῖν] + τίνος ἕνεκεν ἡ κακία αὕτη ἐστὶν ἐν ἡμῖν AQ",
+        "agrees": true
+      },
+      "todo": true,
+      "source_note": "\\fqa Alex. \\ft + 'for those whose cause this evil is upon us'."
+    },
+    "ZEC 9:5": {
+      "why": "Swete attributes “of her hope” to Q, without A against the Vatican text.",
+      "swete": {
+        "volume": 3,
+        "page": 85,
+        "evidence": "apparatus",
+        "reading": "ἐπὶ τῷ παραπτώματι] ἐπὶ π. ℵ* (ἐπὶ τω π. ℵca) ἀπὸ τῆς ἐλπίδος Q",
+        "agrees": false
+      },
+      "todo": true,
+      "source_note": "\\fqa Alex. \\ft of her hope."
+    },
+    "ZEC 9:15": {
+      "why": "Swete cites Γ for “as bowls” and gives no A reversal of altar and bowls.",
+      "swete": {
+        "volume": 3,
+        "page": 86,
+        "evidence": "apparatus",
+        "reading": "τὰς φιάλας] ὡς φ. Γ; om ὡς 2° AQ",
+        "agrees": false
+      },
+      "todo": true,
+      "source_note": "\\fqa Alex. \\ft the altar as bowls."
+    },
+    "ZEC 14:7": {
+      "why": "The verse already translates A’s ψύχος as cold; the footnote explains the adopted reading.",
+      "todo": true,
+      "swete": {
+        "volume": 3,
+        "page": 92,
+        "evidence": "apparatus",
+        "reading": "ψύχη] ψύχος ℵcbAQ*",
+        "agrees": true
+      },
+      "source_note": "\\fqa Alex. \\ft ψύχος, cold, probably the right reading."
+    },
+    "MAL 3:11": {
+      "why": "The marked alternative “give a charge for you to be fed” has no clear English correspondence to A’s noun-case change; retain for an editor’s translation review.",
+      "swete": {
+        "volume": 3,
+        "page": 98,
+        "evidence": "apparatus",
+        "reading": "εἰς βρῶσιν] τὴν βρ. A",
+        "agrees": null
+      },
+      "todo": true,
+      "source_note": "\\fqa Or, \\ft give a charge for you to be fed. \\fqa Alex."
+    },
+    "GEN 6:2": {
+      "why": "Keep as a note: “angels” is written over an erasure, and the reading and hand remain uncertain. The recorded reading is over an erasure with an uncertain A attribution (A?vid). Its qualification needs resolution before the English alternative is promoted.",
+      "swete": {
+        "volume": 1,
+        "page": 9,
+        "evidence": "text",
+        "reading": "ἄγγελοι sup ras A?vid",
+        "agrees": true
+      },
+      "todo": true,
+      "source_note": "\\fqa Alex. \\ft angels of God."
+    },
+    "2KI 3:21#2": {
+      "why": "Keep as a note: “and above” lacks a stated threshold, and the Greek spelling needs checking. The apparatus records ἐπάνω A where Brenton’s body has they said, Ho; the inherited note instead gives καὶ ἐπάνα. Establish the integrated English threshold and the source spelling before changing the body.",
+      "swete": {
+        "volume": 1,
+        "page": 746,
+        "evidence": "apparatus",
+        "reading": "εἶπον ὤ] ἐπάνω A",
+        "agrees": true
+      },
+      "todo": true,
+      "source_note": "\\fqa Alex. \\ft καὶ ἐπάνα, 'and above.'"
+    },
+    "PSA 41:9": {
+      "why": "Keep as a note: Brenton gives an incomplete clause whose connection to the following prayer phrase is unresolved. The record gives ᾠδὴ αὐτοῦ A and παρ’ ἐμοί A¹. It does not supply a complete Brenton English clause settling the attachment of with me and prayer or the proposed deletion of is and addition of and.",
+      "swete": {
+        "volume": 2,
+        "page": 267,
+        "evidence": "apparatus",
+        "reading": "δηλώσει] ᾠδὴ αὐτοῦ A; παρ’ ἐμοί A¹",
+        "agrees": true
+      },
+      "todo": true,
+      "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft his song shall be, etc."
+    },
+    "ISA 8:1": {
+      "why": "Keep as a note: Swete confirms “paper”, but its connection to “great new” needs an English reconstruction. A adds χάρτου after τόμον. Brenton supplies paper or parchment, but the record does not settle how great new attaches or establish the proposed replacement of his supplied book.",
+      "swete": {
+        "volume": 3,
+        "page": 114,
+        "evidence": "apparatus",
+        "reading": "τόμον] + χάρτου A",
+        "agrees": true
+      },
+      "todo": true,
+      "source_note": "\\fqa Alex. \\ft paper, \\fqa or, \\ft parchment."
+    },
+    "ISA 30:8": {
+      "why": "Keep as a note: the Greek changes case and word order, leaving the English construction unresolved. The record says A retains ἡμέρας, reads plural καιρῶν, and omits ἕως. These changes do not establish days in seasons as usable English; keep the alternative in its note until the full construction is resolved.",
+      "swete": {
+        "volume": 3,
+        "page": 153,
+        "evidence": "apparatus",
+        "reading": "ταῦτα καιρῷ] καιρῶν ταῦτα ℵAQ",
+        "agrees": true
+      },
+      "todo": true,
+      "source_note": "\\fqa Gr. \\ft for days in time. \\fqa Alex. \\ft seasons."
+    },
+    "BAK 1KI 6:11-22": {
+      "why": "Keep in the Appendix until both insertion points are checked; Swete’s first anchor has not been mapped to Brenton’s verses. The recorded first Greek anchor is 15 κέδρου; its mapping to Brenton’s verse 6:10 has not been demonstrated. The second addition is recorded at 21 οἶκον on p. 686. Keep both Appendix portions pending separate placement checks.",
+      "swete": {
+        "volume": 1,
+        "page": 685,
+        "evidence": "apparatus",
+        "reading": "15 κέδρου] + καὶ ἐγένετο λόγος κυρίου πρὸς Σαλωμων ... A; p.686 21 οἶκον] + καὶ ὅλον τὸ ἐντὸς τοῦ δαβειρ ... A",
+        "agrees": true
+      },
+      "todo": true,
+      "appendix": "\\ip 6. \\vp 11\\vp*And the word of the Lord came to Solomon, saying, \\vp 12\\vp*As \\add for\\add* this house which thou art building, if thou wilt walk in my ordinances and execute my judgments, and keep all my commandments to walk in them, I will establish my word with thee which I spoke to David thy father. \\vp 13\\vp*And I will dwell in the midst of the children of Israel, and will not forsake my people Israel. \\vp 14\\vp*So Solomon built the house, and finished it. \\vp 22\\vp*And all inside the oracle he overlaid with gold.  \n"
+    },
+    "BAK 2CH 27:8": {
+      "why": "Keep in the Appendix: Brenton calls both twenty-five and sixteen years of reign; check the source and distinguish age from reign. The Greek confirms the presence of the verse, but does not resolve Brenton’s English attributing both twenty-five and sixteen years to the reign. Check the age/reign distinction before promotion.",
+      "swete": {
+        "volume": 2,
+        "page": 105,
+        "evidence": "apparatus",
+        "reading": "7 Ισραηλ] + (8) καὶ εἴκοσι καὶ πέντε ἐτῶν ... A",
+        "agrees": true
+      },
+      "todo": true,
+      "appendix": "\\ip 27. \\vp 8\\vp*And he reigned twenty-five years, and sixteen years he reigned in Jerusalem.  \n"
+    }
+  }
+}

@@ -508,26 +508,9 @@
       "lemma": "genealogy",
       "why": "Brenton's caller follows the word the note glosses; book of generation renders genealogy, of men stays"
     },
-    "GEN 5:25": {
-      "lemma": "an hundred and sixty and seven years",
-      "why": "the note gives the whole number"
-    },
-    "GEN 5:26": {
-      "lemma": "eight hundred and two",
-      "why": "782 renders eight hundred and two; years stays"
-    },
-    "GEN 6:7": {
-      "lemma": "I am grieved",
-      "note": "Gr. _I have thought_ or _reasoned_. Alex. ἐθυμώθην. _I became angry_.",
-      "why": "I have thought renders I am grieved; I became angry renders the Alex. reading"
-    },
     "GEN 6:19": {
       "lemma": "by pairs",
       "why": "Gr. two, two renders by pairs; of all stays"
-    },
-    "GEN 8:7#2": {
-      "lemma": "he sent forth a raven",
-      "why": "the addition follows sent forth a raven, where Brenton's caller stands"
     },
     "GEN 10:32": {
       "lemma": "the islands of the Gentiles",
@@ -536,14 +519,6 @@
     "GEN 11:29": {
       "lemma": "the name of the wife of Abram was Sara",
       "why": "the note is on Abram's marriage with Sara, before the caller"
-    },
-    "GEN 12:5": {
-      "lemma": "to go into the land of Chanaan",
-      "why": "the addition follows the verse's last words"
-    },
-    "GEN 12:20": {
-      "lemma": "all that he had",
-      "why": "the addition follows the verse's last words"
     },
     "GEN 14:20": {
       "lemma": "into thy power",
@@ -876,10 +851,6 @@
       "lemma": "funnels",
       "why": "the rendering stands for fewer words than it has"
     },
-    "EXO 39:1#2": {
-      "lemma": "seven hundred and twenty shekels",
-      "why": "the note gives the whole number"
-    },
     "EXO 40:4": {
       "lemma": "that which is to be set forth",
       "why": "the phrase runs to set forth"
@@ -1159,10 +1130,6 @@
     "DEU 32:36": {
       "lemma": "utterly weakened",
       "why": "Gr. paralysed renders utterly weakened"
-    },
-    "DEU 32:42": {
-      "lemma": "enemies",
-      "why": "Alex. ἐθνῶν stands for ἐχθρῶν, enemies"
     },
     "JOS 1:4": {
       "lemma": "extremity of the sea",
@@ -1446,10 +1413,6 @@
       "lemma": "I and my people",
       "why": "the note is on the opening words"
     },
-    "JDG 12:6": {
-      "note": "Heb. שבלה, “Shibboleth,” _ear of corn_. If translated at all, the English may as well be put as the Greek. Alex. σύνθημα, q. d. _watchword_.",
-      "why": "ear of corn is the English rendering of Stachys"
-    },
     "JDG 13:5#2": {
       "lemma": "Nazarite",
       "why": "the note is on the Greek word for Nazarite"
@@ -1532,10 +1495,6 @@
       "lemma": "the reports which I hear are not good, so that the people do not serve God",
       "why": "the rendering and its etc. cover the clause to serve God"
     },
-    "1SA 2:36": {
-      "lemma": "for a little piece of silver",
-      "why": "the Alexandrine addition follows piece of silver"
-    },
     "1SA 3:6": {
       "lemma": "called again",
       "why": "Gr. added and called renders called again"
@@ -1592,10 +1551,6 @@
       "lemma": "Hierim",
       "why": "the note is on Hierim"
     },
-    "1SA 15:12#2": {
-      "lemma": "Samuel has come",
-      "why": "the Heb. and Alex. read Saul for Samuel after saying"
-    },
     "1SA 15:12#3": {
       "lemma": "raised up help",
       "why": "set up a hand renders raised up help; for himself is kept"
@@ -1636,10 +1591,6 @@
     "1SA 17:39": {
       "lemma": "made trial",
       "why": "laboured renders made trial"
-    },
-    "1SA 17:43": {
-      "lemma": "and David said, Nay, but worse than a dog",
-      "why": "the note is on the bracketed words, which run to dog"
     },
     "1SA 17:46": {
       "lemma": "deliver thee",
@@ -1685,10 +1636,6 @@
       "lemma": "detained",
       "why": "Νεεσσαρὰν repeats the word for detained (Heb. נעצר)"
     },
-    "1SA 21:10": {
-      "note": "Alex. + _behind the ephod_ (or _shoulder-piece_) —so the Heb.",
-      "why": "shoulder-piece is an alternative rendering of ephod"
-    },
     "1SA 21:13": {
       "lemma": "laid up",
       "why": "Gr. put renders laid up"
@@ -1709,17 +1656,9 @@
       "lemma": "Will the place be shut up",
       "why": "i. e. besieged glosses be shut up"
     },
-    "1SA 23:11#2": {
-      "lemma": null,
-      "why": "the note is on verse 12, which Alex. supplies after this one"
-    },
     "1SA 23:15": {
       "lemma": "New",
       "why": "the note is on New, the Hebrew read as חדש"
-    },
-    "1SA 25:1": {
-      "lemma": "Armathaim",
-      "why": "the eBible text swaps this note and the next: Rama is the Hebrew for Armathaim"
     },
     "1SA 25:1#2": {
       "lemma": "assembled, and bewailed him",
@@ -1733,37 +1672,13 @@
       "lemma": "how he is",
       "why": "concerning peace renders how he is"
     },
-    "1SA 25:13": {
-      "lemma": "Gird on every man his sword",
-      "why": "the insertion is added after Gird on every man his sword"
-    },
-    "1SA 25:25": {
-      "lemma": "this pestilent man",
-      "why": "even Nabal is added after this pestilent man (Heb. this man of Belial, even Nabal)"
-    },
     "1SA 25:27": {
       "lemma": "token of goodwill",
       "why": "Gr. blessing renders token of goodwill"
     },
-    "1SA 25:39": {
-      "lemma": "heard it",
-      "why": "Heb. has heard that Nabal was dead"
-    },
-    "1SA 25:44": {
-      "note": "Heb. and Alex. _Laish_ and _Lais_.",
-      "why": "two readings (Heb. Laish, Alex. Lais); and is not part of either"
-    },
-    "1SA 25:44#2": {
-      "note": "Heb. and Alex. _Gallim_ and _Galli_.",
-      "why": "two readings (Heb. Gallim, Alex. Galli); and is not part of either"
-    },
     "1SA 26:8": {
       "lemma": "smite him again",
       "why": "double the stroke to him renders smite him again"
-    },
-    "1SA 26:14": {
-      "lemma": "callest",
-      "why": "to the king is added after callest"
     },
     "1SA 26:24#2": {
       "lemma": "be precious",
@@ -1784,10 +1699,6 @@
     "1SA 29:8": {
       "lemma": "and war",
       "why": "warring renders and war (that I should not come warring)"
-    },
-    "1SA 29:9": {
-      "lemma": "good in my eyes",
-      "why": "an angel of God is added after good in my eyes (Heb. good in my sight, as an angel of God)"
     },
     "1SA 30:12": {
       "lemma": "restored in him",
@@ -1830,10 +1741,6 @@
       "lemma": "thirty years old",
       "why": "a son of thirty years renders thirty years old"
     },
-    "2SA 5:16a": {
-      "lemma": null,
-      "why": "the note is on the whole verse of names"
-    },
     "2SA 5:20#2": {
       "note": "Thus in English or other languages, _Underskiddaw_, _Unterseen_, etc.",
       "why": "the comma between the two cited names is not italic"
@@ -1841,15 +1748,6 @@
     "2SA 5:23": {
       "note": "Heb. בכאיס lit. _mulberries_.",
       "why": "mulberries is the literal rendering of the Hebrew"
-    },
-    "2SA 6:3": {
-      "lemma": "drove the waggon",
-      "note": "Alex. more according to the Heb. inserts '_and brought it out of the house of Abinadab in the hill_.'",
-      "why": "the insertion is the rendering, and it is added after drove the waggon"
-    },
-    "2SA 6:7": {
-      "lemma": "God smote him there",
-      "why": "for his rashness is added after God smote him there (Heb. for his error)"
     },
     "2SA 8:1": {
       "lemma": "tribute",
@@ -1863,19 +1761,9 @@
       "lemma": "chariot horses",
       "why": "Gr. chariots renders chariot horses"
     },
-    "2SA 11:18": {
-      "lemma": "so as to tell them",
-      "note": "Alex. and Heb. make the verse end here.",
-      "why": "the note comments rather than renders; Alex. and Heb. end the verse before these words"
-    },
     "2SA 12:8": {
       "lemma": "had been little, I would have given",
       "why": "is little, I will give renders had been little, I would have given"
-    },
-    "2SA 12:30": {
-      "lemma": "Molchom their king",
-      "note": "Alex. rightly omits Molchom. 'Their king' in Heb.",
-      "why": "the note comments rather than renders; it is on Molchom their king"
     },
     "2SA 13:24": {
       "lemma": "thy servant has a sheep-shearing",
@@ -1892,10 +1780,6 @@
     "2SA 15:7": {
       "lemma": "after",
       "why": "from the end of renders after; etc. stands for forty years"
-    },
-    "2SA 17:8": {
-      "lemma": "and as a wild boar in the plain",
-      "why": "the note is on all the bracketed words"
     },
     "2SA 17:16": {
       "lemma": "swallow up",
@@ -1953,10 +1837,6 @@
       "lemma": "a girded man",
       "why": "the note explains girded man; as is Brenton's supplied word"
     },
-    "2SA 22:39": {
-      "lemma": "crush",
-      "why": "consume renders crush"
-    },
     "2SA 22:41": {
       "lemma": "thou hast caused mine enemies to flee before me",
       "why": "the rendering has its own thou hast"
@@ -1972,10 +1852,6 @@
     "2SA 24:12": {
       "lemma": "I bring",
       "why": "the redundant εἰμὶ stands with I bring"
-    },
-    "2SA 24:17": {
-      "lemma": "it is I that have done wrong",
-      "why": "the addition follows the words before the caller"
     },
     "2SA 24:24": {
       "lemma": "fifty shekels of silver",
@@ -2005,10 +1881,6 @@
       "lemma": "her bowels yearned",
       "why": "her womb was troubled renders her bowels yearned; over her son stays"
     },
-    "1KI 4:5#2": {
-      "lemma": "Zabuth son of Nathan was",
-      "why": "priest is added before the king's friend (Heb. was priest, and the king's friend)"
-    },
     "1KI 5:14a": {
       "lemma": null,
       "why": "the note is on where the chapter ends, not on any words"
@@ -2025,25 +1897,9 @@
       "lemma": "land them",
       "why": "shake them off renders land them; there stays"
     },
-    "1KI 5:30": {
-      "lemma": "six hundred",
-      "why": "the numbers differ in the hundreds"
-    },
     "1KI 6:1": {
       "lemma": "of the reign of king Solomon",
       "why": "the rendering has its own Solomon"
-    },
-    "1KI 6:2": {
-      "lemma": "was forty cubits in length",
-      "why": "the rendering has its own length"
-    },
-    "1KI 6:2#2": {
-      "lemma": "forty cubits",
-      "why": "60 cubits renders forty cubits; in length stays"
-    },
-    "1KI 6:5#2": {
-      "note": "Heb. and Alex. _with_ (or _against_) _the walls of the house round about_.",
-      "why": "with and against are renderings, and the rest of the phrase"
     },
     "1KI 6:7#2": {
       "lemma": "or any iron tool",
@@ -2209,10 +2065,6 @@
       "lemma": "chamber",
       "why": "the note is on the word chamber, the Greek θεε"
     },
-    "1KI 15:2": {
-      "lemma": "three years",
-      "why": "the note gives another number of years"
-    },
     "1KI 15:7#2": {
       "lemma": "the chronicles",
       "why": "the words of the days renders the chronicles; book of remains"
@@ -2236,14 +2088,6 @@
     "1KI 15:30": {
       "lemma": "for",
       "why": "the note is on for, the Greek περὶ"
-    },
-    "1KI 16:8": {
-      "lemma": "Ela",
-      "why": "the inserted words end in Ela"
-    },
-    "1KI 16:10": {
-      "lemma": "smote him and slew him",
-      "why": "the date is added after slew him, before reigned in his stead, as in Heb."
     },
     "1KI 16:28a": {
       "lemma": "year",
@@ -2363,10 +2207,6 @@
       "lemma": "Has",
       "why": "is it that renders Has (Gr. is it that the Lord has called)"
     },
-    "2KI 3:21#2": {
-      "lemma": "and they said, Ho",
-      "why": "the Alex. reading and above stands for and they said, Ho"
-    },
     "2KI 4:10": {
       "lemma": "turn in",
       "why": "turn aside renders turn in; thither stays"
@@ -2394,10 +2234,6 @@
     "2KI 5:13": {
       "lemma": "wouldest thou",
       "why": "wilt thou renders wouldest thou; not stays"
-    },
-    "2KI 5:21": {
-      "lemma": "turned back from his chariot to meet him",
-      "why": "the addition follows the verse's last words"
     },
     "2KI 6:2": {
       "lemma": "a habitation",
@@ -2784,10 +2620,6 @@
       "lemma": "for ever and ever",
       "why": "to the age of the age renders for ever and ever"
     },
-    "PSA 45:6": {
-      "lemma": "with his countenance",
-      "why": "the reading toward the morning stands for with his countenance"
-    },
     "PSA 47:1": {
       "note": "_A song_.",
       "why": "A song renders praise"
@@ -2865,25 +2697,9 @@
       "lemma": "do justice to",
       "why": "Gr. justify renders do justice to"
     },
-    "PSA 87:6": {
-      "note": "Alex. om. ἐῤῥιμμένοι, cast out.",
-      "why": "the Greek words cast out are what Alex. omits"
-    },
-    "PSA 89:17#2": {
-      "lemma": "the works of our hands",
-      "why": "the addition follows the verse's last words"
-    },
     "PSA 91:8": {
       "note": "Perhaps, '_come to light_'.",
       "why": "come to light is a rendering of have watched"
-    },
-    "PSA 92:1": {
-      "lemma": "the day before the Sabbath",
-      "why": "Alex. the sabbath-day renders the day before the Sabbath"
-    },
-    "PSA 92:3": {
-      "lemma": "the rivers have lifted up their voices",
-      "why": "the addition follows the verse's last words"
     },
     "PSA 92:4": {
       "lemma": "at",
@@ -2893,21 +2709,9 @@
       "lemma": "God of vengeance; the God of vengeance",
       "why": "Brenton's caller follows the words the note is on; plural, bis means vengeance twice"
     },
-    "PSA 93:19": {
-      "lemma": "have soothed",
-      "why": "have loved renders have soothed, not my soul"
-    },
-    "PSA 94:3": {
-      "lemma": "for the Lord will not cast off his people",
-      "why": "the note is on the whole clause"
-    },
     "PSA 94:8#2": {
       "lemma": "irritation",
       "why": "πειρασμοῦ is a reading for irritation alone"
-    },
-    "PSA 97:8": {
-      "lemma": "the mountains shall exult",
-      "why": "the addition follows the verse's last words"
     },
     "PSA 101:17": {
       "lemma": "and shall appear",
@@ -2953,10 +2757,6 @@
       "note": "That is, as a lawgiver.",
       "why": "the note explains rather than renders"
     },
-    "PSA 127:2": {
-      "lemma": "labours of thy hands",
-      "why": "fruits of thy labours stands for labours of thy hands"
-    },
     "PSA 128:3": {
       "sentence": false,
       "why": "read is a participle: the note glosses the Hebrew, it is no sentence"
@@ -2968,10 +2768,6 @@
     "PSA 136:7": {
       "lemma": "Rase it, rase it",
       "why": "empty, empty renders the repeated rase it"
-    },
-    "PSA 138:1": {
-      "lemma": "For the end, a Psalm of David",
-      "why": "the addition follows the title"
     },
     "PSA 138:3": {
       "note": "q. d. of rushes, lit. _rush_.",
@@ -2985,10 +2781,6 @@
       "lemma": "in their pleasures",
       "note": "q. d. lest I be injured by them.",
       "why": "the note explains the clause rather than renders pleasures"
-    },
-    "PSA 142:10": {
-      "note": "Alex. as Heb. '_land of uprightness_.'",
-      "why": "land of uprightness is the rendering"
     },
     "PSA 143:7": {
       "lemma": "great waters",
@@ -3018,10 +2810,6 @@
       "lemma": "courses",
       "why": "wheel tracks renders courses"
     },
-    "PRO 3:4": {
-      "lemma": "so shalt thou find favour",
-      "why": "the addition follows find favour, where Brenton's caller stands"
-    },
     "PRO 3:34": {
       "lemma": null,
       "why": "1 Pet. 5. 5 quotes the verse from its start"
@@ -3034,10 +2822,6 @@
       "lemma": "more bitter",
       "why": "a more bitter thing renders more bitter (Gr. πικρότερον χολῆς)"
     },
-    "PRO 7:25": {
-      "lemma": "turn aside to her ways",
-      "why": "the addition follows the verse's last words"
-    },
     "PRO 9:12a": {
       "lemma": null,
       "why": "Heb. lacks the whole addition to verse 13"
@@ -3045,10 +2829,6 @@
     "PRO 10:13": {
       "lemma": "fool",
       "why": "heartless man renders fool"
-    },
-    "PRO 11:3": {
-      "lemma": null,
-      "why": "the Alexandrine text given replaces the whole verse"
     },
     "PRO 11:31": {
       "lemma": null,
@@ -3209,10 +2989,6 @@
       "lemma": "nothing",
       "why": "not existing renders nothing"
     },
-    "ZEC 4:10": {
-      "lemma": "the seven eyes",
-      "why": "of the Lord is added after the seven eyes"
-    },
     "ZEC 6:10": {
       "note": "Heb. proper names. See A. V.",
       "why": "proper names describes the Hebrew rather than renders it"
@@ -3244,10 +3020,6 @@
     "ZEC 11:17": {
       "lemma": "the arms of such a one",
       "why": "his arms renders the arms of such a one"
-    },
-    "ZEC 13:6": {
-      "lemma": "my beloved house",
-      "why": "the house of my beloved renders my beloved house"
     },
     "MAL 2:3": {
       "lemma": "turn my back upon you",
@@ -3290,17 +3062,9 @@
       "lemma": "God with us",
       "why": "Immanuel renders God with us"
     },
-    "ISA 8:16": {
-      "lemma": "not",
-      "why": "the note is on the word not, which Alex. omits"
-    },
     "ISA 9:2": {
       "lemma": "multitude",
       "why": "greatest part renders multitude; of the people stays"
-    },
-    "ISA 9:5": {
-      "lemma": "the Messenger of great counsel",
-      "why": "Brenton's caller follows the words the note is on: Alex. adds the titles after them, and Heb. 2. 2 compares the Messenger (angel)"
     },
     "ISA 10:20": {
       "lemma": "join themselves with",
@@ -3335,10 +3099,6 @@
       "lemma": "they shall be multiplied",
       "why": "i. e. the Gentiles glosses they"
     },
-    "ISA 14:4": {
-      "lemma": "against the king of Babylon",
-      "why": "the addition follows the king of Babylon, before How (Heb. against the king of Babylon, and say)"
-    },
     "ISA 14:16": {
       "lemma": "troubled",
       "why": "chap. 5. 25 has the same word, troubled"
@@ -3351,10 +3111,6 @@
       "note": "Gr. _back_; Complut. reads ἠχος, ‘_noise_’.",
       "why": "noise renders the Complutensian reading"
     },
-    "ISA 19:2": {
-      "lemma": "and law",
-      "why": "the note is on the first law; law against would not take district"
-    },
     "ISA 19:3": {
       "lemma": "them that have in them a divining spirit",
       "why": "the ventriloquists (ἐγγαστριμύθους) renders them that have in them a divining spirit, as in 8. 19; them that speak out of the earth is τοὺς ἐκ τῆς γῆς φωνοῦντας"
@@ -3366,10 +3122,6 @@
     "ISA 22:22": {
       "lemma": "the key of the house of David",
       "why": "the quotation (Rev. 3. 7, the key of David) begins at the key"
-    },
-    "ISA 24:23": {
-      "lemma": "from out of",
-      "why": "in replaces from out of: reign in Sion"
     },
     "ISA 26:14": {
       "lemma": "physicians",
@@ -3426,10 +3178,6 @@
     "ISA 39:1": {
       "lemma": "had been",
       "why": "Gr. was renders had been"
-    },
-    "ISA 40:14": {
-      "lemma": "who has taught him the way of understanding",
-      "why": "the addition follows the verse's last words"
     },
     "ISA 42:24": {
       "lemma": "what",
@@ -3503,10 +3251,6 @@
       "lemma": "speak of",
       "why": "discourse, reason about renders speak of; righteousness stays"
     },
-    "ISA 63:19": {
-      "lemma": null,
-      "why": "the note is on words Heb. and Alex. add before the verse"
-    },
     "ISA 64:5": {
       "lemma": "fallen",
       "why": "flowed out renders fallen; as leaves stays"
@@ -3518,6 +3262,10 @@
     "ISA 66:14": {
       "lemma": "thrive",
       "why": "spring up renders thrive"
+    },
+    "2KI 3:21#2": {
+      "lemma": "and they said, Ho",
+      "why": "the Alex. reading and above stands for and they said, Ho"
     }
   }
 }

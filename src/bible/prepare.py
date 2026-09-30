@@ -9,7 +9,14 @@ Every change is logged through a recorder into build/<mode>/transformations.json
 import re
 from dataclasses import dataclass
 
-from bible import abbreviations, citations, edition, introductions, versification
+from bible import (
+    abbreviations,
+    alexandrinus,
+    citations,
+    edition,
+    introductions,
+    versification,
+)
 from bible.checks import require
 from bible.crossrefs import apply_links, merged_notes
 from bible.edition import (
@@ -92,12 +99,13 @@ def rename_book(entry, original, text, record):
     return text
 
 
-def corrected_source(entry, archives, record, mended_notes=None):
+def corrected_source(entry, archives, record, mended_notes=None, alex_context=None):
     """The entry's source text, with its corrections if it is Brenton's."""
     original = source_usfm(entry, archives)
     if entry["source"] != "brenton":
         return original
-    return corrected_brenton(source_id(entry), original, record, mended_notes)
+    text = corrected_brenton(source_id(entry), original, record, mended_notes)
+    return alexandrinus.promoted(source_id(entry), text, record, alex_context)
 
 
 def introductions_source(archives):
@@ -116,7 +124,8 @@ def scripture_text(entry, archives, log=None, review=None, *, links):
     links = links.get(code, ())
     record = recorder(log, code)
     mended_notes = set()
-    original = corrected_source(entry, archives, record, mended_notes)
+    alex_context = {}
+    original = corrected_source(entry, archives, record, mended_notes, alex_context)
     if "chapters" in entry:
         # Part of a source file that holds more than one book, numbered from 1.
         first, last = entry["chapters"]
@@ -146,7 +155,13 @@ def scripture_text(entry, archives, log=None, review=None, *, links):
     elif code == "DAG":
         daniel_header, daniel_chapters = chapter_parts(original)
         (_, susanna), (_, bel) = (
-            chapter_parts(corrected_brenton(part, archives["brenton"][part], record))
+            chapter_parts(
+                alexandrinus.promoted(
+                    part,
+                    corrected_brenton(part, archives["brenton"][part], record),
+                    record,
+                )
+            )
             for part in ("SUS", "BEL")
         )
         require(
@@ -263,7 +278,7 @@ def scripture_text(entry, archives, log=None, review=None, *, links):
     if entry["source"] == "kjv":
         text = insert_marginal_notes(code, text, record, review, printed, books)
     else:
-        clean, found = brenton_notes(code, text, printed)
+        clean, found = brenton_notes(code, text, printed, alex_context.get("keys"))
         if found:
             read_citations(
                 record,
@@ -278,7 +293,16 @@ def scripture_text(entry, archives, log=None, review=None, *, links):
         require(
             not replaced, f"Brenton correction to a note a link replaces: {replaced}"
         )
-        text = restyle_brenton_notes(code, clean, found, record, review, merged, books)
+        text = restyle_brenton_notes(
+            code,
+            clean,
+            found,
+            record,
+            review,
+            merged,
+            books,
+            alex_context.get("lemmas"),
+        )
     text = apply_links(code, text, links, record)
     # Only a book, or a book with a section, that the introduction to the
     # Apocrypha describes; placed_paragraphs checks that each is one of Brenton's.

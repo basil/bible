@@ -5,7 +5,7 @@ build/validation.json."""
 
 import difflib
 
-from bible import citations, edition, introductions, notes, paths
+from bible import alexandrinus, citations, edition, introductions, notes, paths
 from bible.checks import require
 from bible.crossrefs import quotation_links
 from bible.edition import brenton_source_use, scripture_unit, source_id
@@ -113,6 +113,7 @@ def validate():
         notes.corrected_brenton(
             source, archives["brenton"][source], recorder(None, source)
         )
+    alex_counts = alexandrinus.check_decisions(archives)
     # The introductions to the books of the Apocrypha, placed and glossed.
     introductions.placed_paragraphs(introductions_source(archives))
     # Its general paragraphs print only in its own front matter, so without that
@@ -187,6 +188,8 @@ def validate():
         "".join(nehemias_source_diff), encoding="utf-8"
     )
     report = {
+        "alexandrine_notes": alex_counts[0],
+        "alexandrine_appendix_paragraphs": alex_counts[1],
         "scripture_units": len(units),
         "brenton_units": sum(u["source"] == "brenton" for u in units),
         "brenton_source_files": len(set(source_use)),

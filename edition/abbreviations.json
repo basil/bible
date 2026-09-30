@@ -32,6 +32,10 @@
     {
       "abbreviation": "St.",
       "meaning": "saint"
+    },
+    {
+      "abbreviation": "Vat.",
+      "meaning": "Vatican Text"
     }
   ],
   "meanings": {
@@ -141,7 +145,7 @@
     ]
   },
   "expanded": {
-    "why": "Text names are printed in full in the notes, apart from the Alexandrine Text, which stays Alex. as Brenton's list gives it, and their other rows are removed from his list, as is his row for Comp. as Compare, which is printed in full. LXX remains in the text, and is listed by a row added. The Authorized Version is printed in full, whether Brenton writes it A. V., Eng. Ver., the English Version or, in a note, English Bible, and his row for A. V. is removed. Other abbreviations used only once or twice are also printed in full where they stand and not listed, but for those that Chicago prints (AD, MS, MSS, p., pp.), which are listed. Where one ends a note, its period goes, as a note ends with no full stop, unless the note is a sentence of its own, which keeps it.",
+    "why": "Text names are printed in full in the notes, apart from the Alexandrine and Vatican Texts, which stay Alex. and Vat., and their other rows are removed from his list, as is his row for Comp. as Compare, which is printed in full. LXX remains in the text, and is listed by a row added. The Authorized Version is printed in full, whether Brenton writes it A. V., Eng. Ver., the English Version or, in a note, English Bible, and his row for A. V. is removed. Other abbreviations used only once or twice are also printed in full where they stand and not listed, but for those that Chicago prints (AD, MS, MSS, p., pp.), which are listed. Where one ends a note, its period goes, as a note ends with no full stop, unless the note is a sentence of its own, which keeps it.",
     "removed": [
       "Ald.",
       "App.",
@@ -244,11 +248,6 @@
         "from": "The Rom. penny is sevenpence halfpenny",
         "to": "The Roman penny is seven pence halfpenny",
         "why": "the sum as the notes on Matthew 20:2 and 22:19 and Mark 12:15 write it"
-      },
-      {
-        "unit": "PSA",
-        "from": "Alex. om. ",
-        "to": "Alex. omits "
       },
       {
         "unit": "XXB",

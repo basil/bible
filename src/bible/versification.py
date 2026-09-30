@@ -10,7 +10,8 @@ A verse the file doesn't list keeps its number in the King James Bible,
 unless Brenton letters it: a lettered verse is a Septuagint addition, and has
 no counterpart unless the file gives one. A run of verses faces a run as long
 verse for verse; runs of different lengths face each other whole, as where
-Brenton divides one verse in two.
+Brenton divides one verse in two. Explicit pairs describe partial overlaps
+within a run without assigning its unchanged clauses to the wrong verse.
 
 Turpie's Septuagint column normally numbers chapters and verses as Brenton
 does, Psalm superscriptions included; where he numbers a verse the English
@@ -19,8 +20,9 @@ used.
 """
 
 import functools
+import re
 
-from bible import edition, paths
+from bible import alexandrinus, edition, paths
 from bible.checks import require
 from bible.files import read_json
 from bible.references import Verse, parse_passage, parse_passages, runs
@@ -50,6 +52,31 @@ def kjv_books():
 
 def verses(passages):
     return [verse for passage in parse_passages(passages) for verse in passage.verses]
+
+
+def run_pairs(run):
+    """A run's correspondences, including explicitly declared partial overlaps."""
+    ours = verses(run["edition"]) if run["edition"] else []
+    theirs = verses(run["kjv"]) if run["kjv"] else []
+    if "pairs" in run:
+        declared = run["pairs"]
+        require(
+            isinstance(declared, dict)
+            and set(declared) == set(map(str, ours))
+            and all(isinstance(v, str) and v.strip() for v in declared.values()),
+            f"Invalid verse pairs: {run['edition']}",
+        )
+        pairs = [([verse], verses(declared[str(verse)])) for verse in ours]
+        targets = [v for _, far in pairs for v in far]
+        require(
+            set(targets) == set(theirs)
+            and all(far and len(far) == len(set(far)) for _, far in pairs),
+            f"Verse pairs do not cover their run: {run['edition']}",
+        )
+        return pairs
+    if len(ours) == len(theirs):
+        return [([v], [o]) for v, o in zip(ours, theirs)]
+    return [(ours, theirs)]
 
 
 @functools.cache
@@ -98,17 +125,16 @@ def _maps():
                 bool(run.get("why")) == (run.get("by") == "reading"),
                 f"A reading gives its reason, and no other run does: {name}",
             )
-            if len(ours) == len(theirs):
-                pairs = [([v], [o]) for v, o in zip(ours, theirs)]
-            else:
-                pairs = [(ours, theirs)]
-            for near, far in pairs:
+            reverse = {}
+            for near, far in run_pairs(run):
                 for verse in near:
                     require(verse not in to_kjv, f"Two runs for {verse}")
                     to_kjv[verse] = tuple(far)
                 for verse in far:
-                    require(verse not in from_kjv, f"Two runs reach {verse}")
-                    from_kjv[verse] = tuple(near)
+                    reverse.setdefault(verse, []).extend(near)
+            for verse, near in reverse.items():
+                require(verse not in from_kjv, f"Two runs reach {verse}")
+                from_kjv[verse] = tuple(near)
     return to_kjv, from_kjv
 
 
@@ -224,6 +250,33 @@ def edition_inventory(archives):
             )
             chapters = {"0": susanna, **chapters, str(len(chapters) + 1): bel}
         chapters = {chapter: list(labels) for chapter, labels in chapters.items()}
+        if unit["source"] == "brenton":
+            for key, decision in alexandrinus.DATA["readings"].items():
+                if key.split()[0] != edition.source_id(unit) or not decision.get(
+                    "omit_verse"
+                ):
+                    continue
+                reference = decision.get("target", key).split()[-1].split("#")[0]
+                chapter, label = reference.split(":")
+                require(
+                    label in chapters.get(chapter, []), f"Omitted verse missing: {key}"
+                )
+                chapters[chapter].remove(label)
+            for key, decision in alexandrinus.DATA["passages"].items():
+                if key.split()[0] != edition.source_id(unit):
+                    continue
+                for insertion in decision.get("insertions", []):
+                    for verse in insertion["verses"]:
+                        chapter, label = verse["reference"].split(":")
+                        require(
+                            label not in chapters.get(chapter, []),
+                            f"Alexandrine verse already exists: {key}: {verse['reference']}",
+                        )
+                        chapters.setdefault(chapter, []).append(label)
+            chapters = {
+                chapter: sorted(labels, key=lambda v: (int(re.match(r"\d+", v)[0]), v))
+                for chapter, labels in chapters.items()
+            }
         for label, printed in relabelled().items():
             if label.book == code:
                 chapters[str(label.chapter)].remove(str(label.number))

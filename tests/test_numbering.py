@@ -88,6 +88,11 @@ def test_malachias_ends_in_another_order(inventory, facing):
     assert rows("MAL", inventory, facing) == [("4:4–5", "4:5–6"), ("4:6", "4:4")]
 
 
+def test_proverbs_table_identifies_the_partial_overlap(inventory, facing):
+    assert ("8:28", "8:28–29") in rows("PRO", inventory, facing)
+    assert ("8:28–29", "8:28–29") not in rows("PRO", inventory, facing)
+
+
 def test_a_run_that_keeps_its_numbers_has_no_row(inventory, facing):
     # Genesis 31:47-48 is read to keep its numbers, against the words.
     kept = [
@@ -229,7 +234,10 @@ def test_a_psalms_title_is_counted(archives):
 
 def test_the_page_prints_its_tables(page):
     assert "{" not in page and "}" not in page
-    assert page.count("\\tr \\tc1 ") == 423
+    # The selective review restores the missing-verse rows for 1KI 6:11–14
+    # and 2CH 27:8, whose English remains in the Appendix.
+    # Proverbs 8:28 now also holds the first part of King James 8:29.
+    assert page.count("\\tr \\tc1 ") == 408
     assert "\\is1 Jeremias (Jeremiah)\n\\tr \\th1 Jeremias \\th2 Jeremiah\n" in page
     assert "\\is1 Genesis\n\\tr \\th1 This edition \\th2 King James Bible\n" in page
     assert "\\tr \\tc1 3 Kingdoms \\tc2 1 Kings\n" in page

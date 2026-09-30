@@ -85,16 +85,14 @@ def test_the_list_keeps_brentons_rows_and_adds_the_rest(front_matter, source):
     assert listed(text) == [
         forms(a, notes_only=False) for a in listed(source) if a not in removed
     ] + [e["abbreviation"] for e in ABBREVIATIONS["added"]]
-    assert not {"A. V.", "Ald.", "Vat.", "Complut.", "Vulg.", "Comp."} & set(
-        listed(text)
-    )
-    assert {"LXX", "Alex.", "p., pp."} <= set(listed(text))
+    assert not {"A. V.", "Ald.", "Complut.", "Vulg.", "Comp."} & set(listed(text))
+    assert {"LXX", "Alex.", "Vat.", "p., pp."} <= set(listed(text))
 
 
 @pytest.mark.parametrize(
     "old, new",
     [
-        ("Vat.", "Vatican Text"),
+        ("Vat.", "Vat."),
         ("Ald.", "Aldine Text"),
         ("Complut.", "Complutensian Text"),
         ("Vulg.", "Vulgate"),
@@ -110,6 +108,8 @@ def test_text_names_are_printed_inline(old, new):
 
 def test_printed_notes_use_full_text_names(printed):
     for old, full in abbreviations.TEXT_NAMES.items():
+        if old == full:
+            continue
         assert any(full in text for text in printed)
         assert not any(re.search(rf"(?<!\w){re.escape(old)}", text) for text in printed)
     assert not any(re.search(r"\bSept\.", text) for text in printed)
@@ -150,7 +150,7 @@ def test_latin_is_italic():
         ("to call\\ft , &c. The LXX. seem", "to call\\ft , etc. The LXX seem"),
         # A period that ends the sentence, or the note, stays.
         ("edition of the LXX.\\f*", "edition of the LXX.\\f*"),
-        ("So the Vat. The Alex. reads", "So the Vatican Text. The Alex. reads"),
+        ("So the Vat. The Alex. reads", "So the Vat. The Alex. reads"),
         ("in LXX.; the singular", "in LXX; the singular"),
         (
             "\\ft A. V. \\fqa Mattaniah",
@@ -325,7 +325,6 @@ def test_a_label_outside_the_notes_keeps_its_number_period():
         ("BAK", "2 \\it last verse\\it*. 3."),
         ("BAK", "(query item struthiocamelus)"),
         ("BAK", "\\it Charles Pridham\\it*."),
-        ("BAK", "16. (\\it Alex. \\it* 15.)"),
         ("XXB", "\\im \\it Authorized Version\\it* bowed himself"),
         ("1KI", "Heb. Grammar, p. 92"),
         ("DEU", "note in the margin of the Authorized Version on"),
@@ -350,8 +349,7 @@ def test_compare_and_the_authorized_version_are_in_full(printed, front_matter):
     "code, printed",
     [
         # "Alex." keeps its period, as an abbreviation does...
-        ("1KI", "So the Alex. The Vatican Text renders"),
-        ("1SA", "Verse 12 is here supplied by Alex.\\f*"),
+        ("1KI", "So the Alex. The Vat. renders"),
         ("1KI", "supplied by the Alex. See Appendix.\\f*"),
         ("MAL", "\\fqa give a charge for you to be fed\\ft . Alex.\\f*"),
         # ...and a sum printed in full keeps the period that ends its sentence.

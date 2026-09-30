@@ -484,7 +484,12 @@ def test_everything_that_cites_is_read(prepared, matter):
         ]
     )
     assert {entry["dialect"] for entry in read} == set(citations.DATA["dialects"])
-    assert sum(len(entry["citations"]) for entry in read) == 511
+    # Promoted passages consume nine former appendix pointer citations;
+    # the omission notice for 1SA 17:12–31 adds one passage reference.
+    # Supplying 23:12 consumes its former missing-verse pointer.
+    # Deferring 1KI 6:11–14 removes its omission-range citation, and returning
+    # 2CH 27:8 to the Appendix removes its age/reign comparison with 27:1.
+    assert sum(len(entry["citations"]) for entry in read) == 508
     assert citations.unused(read) == ([], [])
 
 
@@ -510,14 +515,11 @@ def test_everything_that_cites_is_read(prepared, matter):
             "BAK",
             "see chapter 1:4, 22; 8:5; 14:15; 21:11. For πανοῦργος, 12:16; 13:1, 16;",
         ),
-        ("BAK", "\\is2 1 KINGDOMS"),
         ("BAK", "\\is2 3 KINGDOMS"),
-        ("BAK", "\\is2 EZEKIEL"),
         ("BAK", "in the Vatican copy after chapter 12:24."),
         ("BAK", "see \\it Appendix\\it*. Note on 2 Kingdoms 5:18."),
-        # The labels of the passages it supplies are no citations.
-        ("BAK", "\\ip \\it Verse\\it* 41. And the Philistine"),
-        ("BAK", "\\ip 17. \\vp 12\\vp*And David"),
+        # The label of a passage retained for editorial review is no citation.
+        ("BAK", "\\ip 5. \\vp 17\\vp*And the king commanded"),
         ("XXC", "\\im 4 Kingdoms 19:18"),
         ("XXC", "\\im Psalm 50:13"),
         ("XXC", "\\im Leviticus 7:4"),

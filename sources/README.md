@@ -22,6 +22,12 @@ Both archives were retrieved from eBible.org on 2026-09-23.
 
 Both texts are in the public domain outside the United Kingdom. Brenton's is also in the public domain in the UK, where the right to print and publish the King James Version belongs to the Crown and is licensed only to certain publishers under letters patent. See the [UK Intellectual Property Office's guidance](https://www.gov.uk/government/publications/copyright-notice-duration-of-copyright-term/copyright-notice-duration-of-copyright-term). `brenton-notice.html` and `kjv-notice.html` are unaltered copies of eBible's [Brenton](https://ebible.org/eng-Brenton/copyright.htm) and [KJV](https://ebible.org/engkjvcpb/copyright.htm) copyright pages, saved the same day.
 
+## Swete’s Greek edition
+
+`edition/alexandrinus.json` cites Henry Barclay Swete, *The Old Testament in Greek according to the Septuagint*, third edition: volume I (1901), volume II (1907), and volume III (1905). The manuscript apparatus was consulted from page images, using printed page numbers. It checks Brenton’s reports of Codex Alexandrinus and settles the placement of supplied English passages; it is not an additional English translation printed in the edition.
+
+The scans are consulted editorial evidence. The build reads the recorded decisions and citations in `edition/alexandrinus.json` and does not require the images or network access. See [Alexandrine readings](../docs/edition.md#alexandrine-readings) for the limits of this use and the per-decision audit.
+
 ## Versification
 
 [`TVTMS - Translators Versification Traditions with Methodology for Standardisation for Eng+Heb+Lat+Grk+Others - STEPBible.org CC BY.txt`](<TVTMS - Translators Versification Traditions with Methodology for Standardisation for Eng+Heb+Lat+Grk+Others - STEPBible.org CC BY.txt>) is [STEP Bible](https://www.STEPBible.org)'s table of the ways Bibles number their chapters and verses, retrieved on 2026-09-28 from [STEPBible-Data](https://github.com/STEPBible/STEPBible-Data/tree/1f342173b881ba5d1a5a4cae6e7c6c3fcc7cac51/Versification) at commit `1f34217`. Data created by www.STEPBible.org based on work at Tyndale House Cambridge (CC BY 4.0). The file is unaltered. Its header asks users to refer others to [github.com/STEPBible](https://github.com/STEPBible) rather than redistribute it; it is committed here, as its licence allows, so that the checks that read it never need the network. Look there for the current version.

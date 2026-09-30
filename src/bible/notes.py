@@ -65,7 +65,7 @@ LABELS = RENDERING_LABELS | OTHER_LABELS
 # languages, texts, versions and people, and the pronoun "I".
 NAMES = re.compile(
     r"(?:Gr|Heb|Hebrew|Hebraism|Syr|Sept|Alex|Vat|Complut|Ald|Vulg|A\. V|App|Appendix"
-    r"|Lambert Bos|Patrick Junius|Tertullian|Professor Samuel Lee|I)(?!\w)"
+    r"|Lambert Bos|Patrick Junius|Tertullian|Professor Samuel Lee|Brenton|Swete|Vatican|I)(?!\w)"
 )
 # Abbreviations, whose full stop stays at the end of a note ("so the Heb."). Not
 # those the edition prints without one: "LXX", as Chicago does, and those it
@@ -106,10 +106,11 @@ RENDERING_SEPARATOR = re.compile(r",?\s+or,?\s+|,?\s*(?:\betc\b|&c\b)")
 # What follows a label but comments on the reading instead of giving one:
 # "Alex. has the following", "Gr. plural", "Alex. adds to", "Heb. omits".
 COMMENTARY = re.compile(
-    r"\s*(?:(?:probably|perhaps|possibly|see|compare|comp|cf"
+    r"\s*(?:(?:also\s+)?(?:probably|perhaps|possibly|see|compare|comp|cf"
     r"|ha(?:s|ve)(?=\s+(?:the|a|an|this|these|those|no|nothing|only|here|it|them)\b)"
     r"|plural|singular|sing|participle|infin"
-    r"|adds|add(?=\s*[,:])|omits?|reads?|inserts?|wants?|translates?)\b|[—(-])",
+    r"|adds|add(?=\s*[,:])|omits?|reads?|inserts?|wants?|translates?"
+    r"|ends(?=\s+the\s+verse\b)|includes(?=\s+the\s+clause\b))\b|[—(-])",
     re.I,
 )
 # Words that never end a lemma alone: they want the word after them.
@@ -1379,7 +1380,7 @@ class SourceNote:
     citations: list  # what it cites, by their place in the pieces' text
 
 
-def brenton_notes(code, text, inventory):
+def brenton_notes(code, text, inventory, note_keys=None):
     """The text without Brenton's notes and cross-references, and each of them
     keyed, with what it cites read."""
     found = []
@@ -1398,7 +1399,11 @@ def brenton_notes(code, text, inventory):
     seen = Counter()
     result = []
     tongue = citations.dialect("brenton")
-    for position, kind, source_reference, body in found:
+    require(
+        note_keys is None or len(note_keys) == len(found),
+        f"Alexandrine note identities changed: {code}",
+    )
+    for ordinal, (position, kind, source_reference, body) in enumerate(found):
         # A note just after a verse number stands before the space its span skips.
         ahead = re.compile(r"\s*").match(clean, position).end()
         index = bisect.bisect_right(span_starts, ahead) - 1
@@ -1409,7 +1414,11 @@ def brenton_notes(code, text, inventory):
             f"Note reference disagrees with its verse: {code} {source_reference}",
         )
         seen[reference] += 1
-        key = note_key(code, reference, seen[reference])
+        key = (
+            note_keys[ordinal]
+            if note_keys is not None
+            else note_key(code, reference, seen[reference])
+        )
         source = body if kind == "f" else "See " + body
         pieces = brenton_pieces(source)
         cited = citations.scan(
@@ -1435,7 +1444,9 @@ def brenton_notes(code, text, inventory):
     return clean, result
 
 
-def restyle_brenton_notes(code, clean, found, record, review, merged, books):
+def restyle_brenton_notes(
+    code, clean, found, record, review, merged, books, alex_lemmas=None
+):
     """Set Brenton's notes and cross-references as caller-free footnotes, each naming its lemma.
 
     Takes brenton_notes' text without notes and the notes found in it. A
@@ -1474,16 +1485,63 @@ def restyle_brenton_notes(code, clean, found, record, review, merged, books):
         glossed, _ = inferred_lemma(
             kind, verse, words, offset, alternative, widen=False
         )
-        span, glossed, rule = overridden_lemma(
-            verse,
-            words,
-            exception,
-            span,
-            glossed,
-            rule,
-            key,
-            exception.get("occurrence"),
+        preserved = (
+            alex_lemmas is not None
+            and key in alex_lemmas
+            and isinstance(alex_lemmas[key], dict)
         )
+        if alex_lemmas is not None and key in alex_lemmas and not preserved:
+            require(
+                "lemma" not in exception,
+                f"Alexandrine lemma also has a Brenton exception: {key}",
+            )
+        if not preserved:
+            span, glossed, rule = overridden_lemma(
+                verse,
+                words,
+                exception,
+                span,
+                glossed,
+                rule,
+                key,
+                exception.get("occurrence"),
+            )
+        if alex_lemmas is not None and key in alex_lemmas:
+            chosen = alex_lemmas[key]
+            if preserved:
+                # The passage stage validated this note against its original
+                # words before relocating it. Keep both the displayed lemma
+                # and the narrower gloss, so restyling cannot invent an echo.
+                span = (
+                    phrase_span(words, chosen["lemma"], key)
+                    if chosen["lemma"] is not None
+                    else None
+                )
+                glossed = (
+                    phrase_span(words, chosen["glossed"], key)
+                    if chosen["glossed"] is not None
+                    else None
+                )
+            elif chosen is None:
+                span = glossed = None
+            else:
+                hits = occurrences(words, words_of(chosen))
+                if len(hits) > 1:
+                    anchored = [
+                        i for i, hit in enumerate(hits, 1) if words[hit][1] == offset
+                    ]
+                    require(
+                        len(anchored) == 1,
+                        f"Alexandrine lemma not anchored once: {key}",
+                    )
+                    glossed = phrase_span(words, chosen, key, anchored[0])
+                else:
+                    glossed = phrase_span(words, chosen, key)
+                # Declared Alexandrine phrases name the precise changed words.
+                # A complete phrase can end in a preposition ("asked for");
+                # widening it would falsely assign retained words to an omission.
+                span = unique_span(verse, words, *glossed) if len(hits) > 1 else glossed
+            rule = "preserved passage note" if preserved else "Alexandrine reading"
         plain, styles = echoed(plain, styles, style, *echo(verse, words, span, glossed))
         entry = Entry(
             key,

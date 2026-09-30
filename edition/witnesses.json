@@ -27,7 +27,7 @@
   {
     "id": "PSA",
     "chapter": "151",
-    "phrase": "But I drew his own sword, and beheaded him"
+    "phrase": "his own sword, and beheaded him"
   },
   {
     "id": "ESG",
@@ -184,5 +184,30 @@
     "id": "4MA",
     "chapter": "1",
     "phrase": "[for which this introduction was written]"
+  },
+  {
+    "id": "GEN",
+    "chapter": "5",
+    "phrase": "an hundred and eighty and seven years"
+  },
+  {
+    "id": "1SA",
+    "chapter": "17",
+    "phrase": "there was no sword in the hand of David"
+  },
+  {
+    "id": "1SA",
+    "chapter": "18",
+    "phrase": "the soul of Jonathan was knit to the soul of David"
+  },
+  {
+    "id": "PRO",
+    "chapter": "11",
+    "phrase": "The integrity of the upright shall guide them"
+  },
+  {
+    "id": "1KI",
+    "chapter": "16",
+    "phrase": "In the twenty-sixth year"
   }
 ]

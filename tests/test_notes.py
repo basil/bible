@@ -211,13 +211,6 @@ def test_footnote_follows_a_lemma_clear_of_its_anchor(scripture):
             "\\f - \\fr 2:18 \\fq was moved: \\ft Gr. \\fqa repented\\ft . This "
             "word seems generally to stand for נחם\\f*",
         ),
-        # A note on the whole verse.
-        (
-            "1SA",
-            "17:49",
-            "\\f - \\fr 17:49 \\ft Verse 50 is not in the Vatican codex. "
-            "Alex. has the following.\\f*",
-        ),
     ],
 )
 def test_brenton_footnotes(scripture, code, reference, usfm):
@@ -928,3 +921,67 @@ def test_note_must_keep_its_word_spaces():
     # Ignoring whitespace, "heor" and "he or" would be the same text.
     with pytest.raises(CheckFailed, match="Note restyling changed its text: K"):
         notes.note_body(notes.brenton_pieces("\\ft heor."), None, "K", "\\ft he or.")
+
+
+def test_promoted_whole_verse_consumes_its_appendix_pointer(scripture):
+    assert footnotes(scripture["1SA"], "17:49") == []
+    assert "\\v 50 " in scripture["1SA"]
+    assert "Verse 50 is not in the Vatican codex" not in scripture["1SA"]
+
+
+@pytest.mark.parametrize(
+    "code, reference, lemma",
+    [
+        ("1SA", "12:13", "whom ye asked for"),
+        ("1KI", "16:8", "In the twenty-sixth year of Asa king of Juda"),
+    ],
+)
+def test_promoted_addition_lemma_names_only_the_alexandrine_words(
+    scripture, code, reference, lemma
+):
+    printed = footnotes(scripture[code], reference)
+    assert len(printed) == 1
+    assert re.search(r"\\fq (.*?): \\ft", printed[0])[1] == lemma
+
+
+def test_demoted_vatican_clause_stays_entirely_italic(scripture):
+    printed = footnotes(scripture["PSA"], "94:3")
+    assert len(printed) == 1
+    assert (
+        "Vat. adds \\fqa for the Lord will not cast off his people"
+        "\\ft . Heb. also omits this added clause. See \\xt Psalm 93:14"
+    ) in printed[0]
+
+
+@pytest.mark.parametrize(
+    "comment",
+    ["also omits these names", "also ends the verse here", "includes the clause"],
+)
+def test_witness_comment_is_roman_before_an_italic_variant(comment):
+    source = f"Heb. {comment}. Vat. old words."
+    plain, styles, _, _ = notes.note_body(
+        notes.brenton_pieces(
+            r"\fqa Heb. \ft " + comment + r". \fqa Vat. \ft old words."
+        ),
+        None,
+        "test",
+        source,
+    )
+    assert notes.underscored(plain, styles) == f"Heb. {comment}. Vat. _old words_."
+
+
+@pytest.mark.parametrize("name", ["Brenton", "Swete", "Vatican"])
+def test_editorial_source_names_keep_their_capital_after_a_lemma(name):
+    plain = name + "’s Vatican text"
+    assert notes.run_on(plain, ["ft"] * len(plain)) == plain
+
+
+@pytest.mark.parametrize(
+    "code,reference,gloss",
+    [("JDG", "12:6", "ear of corn"), ("PSA", "93:19", "have loved")],
+)
+def test_promoted_notes_preserve_independent_gloss_italics(
+    scripture, code, reference, gloss
+):
+    [note] = footnotes(scripture[code], reference)
+    assert re.search(r"\\fqa " + re.escape(gloss) + r"\\(?:ft|f\*)", note)

@@ -203,18 +203,6 @@
     }
   },
   "decisions": {
-    "1KI 13:26": {
-      "source": "verse 27",
-      "unprinted": true,
-      "print": "verse 27",
-      "why": "The verse isn't in the Vatican text that Brenton translates; the note says where it is supplied from."
-    },
-    "1KI 15:31#2": {
-      "source": "Verse 32",
-      "unprinted": true,
-      "print": "Verse 32",
-      "why": "The verse isn't in the Vatican text that Brenton translates; the note says where it is supplied from."
-    },
     "1KI 16:28d": {
       "source": "1 Kings 22. 46-50",
       "unprinted": true,
@@ -225,42 +213,6 @@
       "source": "Heb. 300",
       "not_a_citation": true,
       "why": "The Hebrew's number of the officers, not a chapter of Hebrews."
-    },
-    "1SA 17:40": {
-      "source": "Verse 41",
-      "unprinted": true,
-      "print": "Verse 41",
-      "why": "The verse isn't in the Vatican text that Brenton translates; the note says where it is supplied from."
-    },
-    "1SA 17:49": {
-      "source": "Verse 50",
-      "unprinted": true,
-      "print": "Verse 50",
-      "why": "The verse isn't in the Vatican text that Brenton translates; the note says where it is supplied from."
-    },
-    "1SA 17:54": {
-      "source": "Verses 55 to 58",
-      "unprinted": true,
-      "print": "Verses 55 to 58",
-      "why": "The verse isn't in the Vatican text that Brenton translates; the note says where it is supplied from."
-    },
-    "1SA 18:16": {
-      "source": "vv 17-19",
-      "unprinted": true,
-      "print": "Verses 17–19",
-      "why": "The verse isn't in the Vatican text that Brenton translates; the note says where it is supplied from."
-    },
-    "1SA 18:8": {
-      "source": "v 11.",
-      "unprinted": true,
-      "print": "verse 11",
-      "why": "The verse isn't in the Vatican text that Brenton translates; the note says where it is supplied from."
-    },
-    "1SA 23:11#2": {
-      "source": "Verse 12",
-      "unprinted": true,
-      "print": "Verse 12",
-      "why": "The verse isn't in the Vatican text that Brenton translates; the note says where it is supplied from."
     },
     "1SA 2:10": {
       "source": "Jer. 9. 24",
@@ -299,26 +251,6 @@
       "not_a_citation": true,
       "why": "The label of a passage that the appendix supplies, not a citation of one: Brenton's own number for the verse."
     },
-    "BAK Verse 30": {
-      "not_a_citation": true,
-      "why": "The label of a passage that the appendix supplies, not a citation of one: Brenton's own number for the verse."
-    },
-    "BAK Verse 41": {
-      "not_a_citation": true,
-      "why": "The label of a passage that the appendix supplies, not a citation of one: Brenton's own number for the verse."
-    },
-    "BAK Verse 50": {
-      "not_a_citation": true,
-      "why": "The label of a passage that the appendix supplies, not a citation of one: Brenton's own number for the verse."
-    },
-    "BAK Verse 55": {
-      "not_a_citation": true,
-      "why": "The label of a passage that the appendix supplies, not a citation of one: Brenton's own number for the verse."
-    },
-    "BAK Verse 8": {
-      "not_a_citation": true,
-      "why": "The label of a passage that the appendix supplies, not a citation of one: Brenton's own number for the verse."
-    },
     "BAK Verses 1 to 20": {
       "not_a_citation": true,
       "why": "The label of a passage that the appendix supplies, not a citation of one: Brenton's own number for the verse."
@@ -339,10 +271,6 @@
       "why": "Brenton gives the verse before the chapter."
     },
     "BAK verse 1": {
-      "not_a_citation": true,
-      "why": "The label of a passage that the appendix supplies, not a citation of one: Brenton's own number for the verse."
-    },
-    "BAK verses 10, 11": {
       "not_a_citation": true,
       "why": "The label of a passage that the appendix supplies, not a citation of one: Brenton's own number for the verse."
     },
@@ -444,12 +372,6 @@
       "print": "{1PE}",
       "why": "Brenton names the book alone, which prints under its name; the verse that quotes this one is 4:18."
     },
-    "PRO 1:15": {
-      "source": "ver 16",
-      "unprinted": true,
-      "print": "verse 16",
-      "why": "The verse isn't in the Greek; Brenton's appendix supplies it."
-    },
     "PRO 1:33": {
       "source": "Ps. 16",
       "numbering": "hebrew",
@@ -540,29 +462,14 @@
   "names": {
     "BAK": [
       {
-        "from": "KINGS I. (\\sc Sam\\sc*. I)",
-        "to": "{1SA:upper}",
-        "why": "Brenton's First Book of Kings, which he also calls Samuel's, is this edition's First Book of Kingdoms."
-      },
-      {
         "from": "KINGS III. (\\sc Kings\\sc* I)",
         "to": "{1KI:upper}",
         "why": "Brenton's Third Book of Kings is this edition's Third Book of Kingdoms."
       },
       {
-        "from": "CHRONICLES I",
-        "to": "{1CH:upper}",
-        "why": "A numbered book puts its number first."
-      },
-      {
         "from": "CHRONICLES II",
         "to": "{2CH:upper}",
         "why": "A numbered book puts its number first."
-      },
-      {
-        "from": "JEZEKIEL",
-        "to": "{EZK:upper}",
-        "why": "Brenton's Jezekiel is this edition's Ezekiel."
       },
       {
         "from": ", page 1131",

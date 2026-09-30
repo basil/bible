@@ -136,7 +136,16 @@ class Table:
             )
         }
         found, told = [], set()
-        for run in self.listed:
+        listed = [
+            {**run, "edition": ours, "kjv": theirs}
+            for run in self.listed
+            for ours, theirs in (
+                run["pairs"].items()
+                if "pairs" in run
+                else [(run["edition"], run["kjv"])]
+            )
+        ]
+        for run in listed:
             ours, theirs = numbered(run)
             if not ours and not theirs:
                 # A title, which the King James Bible doesn't number.

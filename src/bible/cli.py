@@ -10,7 +10,7 @@ import sys
 from bible import paths
 from bible.project import write_project
 from bible.publish import publish
-from bible.review import notes_review
+from bible.review import alexandrinus_review, notes_review
 from bible.seed import seed_versification
 from bible.toolchain import check_image
 from bible.typeset import typeset
@@ -37,13 +37,21 @@ def main(argv=None):
     parser = argparse.ArgumentParser(prog="python3 -m bible", description=__doc__)
     parser.add_argument(
         "command",
-        choices=["validate", "notes-review", "seed-versification", *paths.OUTPUTS],
+        choices=[
+            "validate",
+            "notes-review",
+            "alexandrinus-review",
+            "seed-versification",
+            *paths.OUTPUTS,
+        ],
         help="validate the sources, write the notes review or the versification seed, or build dist/sample.pdf or dist/bible.pdf",
     )
     args = parser.parse_args(argv)
     try:
         if args.command == "validate":
             validate()
+        elif args.command == "alexandrinus-review":
+            alexandrinus_review()
         elif args.command == "notes-review":
             notes_review()
         elif args.command == "seed-versification":
