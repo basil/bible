@@ -98,7 +98,7 @@ SAINT_HEADINGS = {
 # the table of chapters and verses takes.
 BRENTON_NON_SCRIPTURE = {
     source_id(e)
-    for key in ("old_testament_front", "appendices")
+    for key in ("front_matter", "old_testament_front", "appendices")
     for e in MANIFEST[key]
     if e["source"] == "brenton"
 } | set(MANIFEST["excluded"]["brenton"])
@@ -143,7 +143,6 @@ def test_old_testament_front_matter():
         ("brenton", "XXB"),
         ("brenton", "INT"),
         ("brenton", "OTH"),
-        ("brenton", "FRT"),
     ]
 
 
@@ -152,11 +151,11 @@ def test_new_testament_front_matter():
 
 
 def test_appendices():
-    assert selected("appendices") == [("brenton", "BAK"), ("brenton", "XXC")]
+    assert selected("appendices") == [("brenton", "BAK")]
 
 
 def test_what_is_left_out():
-    assert MANIFEST["excluded"] == {"brenton": ["NEH", "XXA"]}
+    assert MANIFEST["excluded"] == {"brenton": ["NEH", "XXA", "XXC"]}
 
 
 @pytest.fixture(scope="module")
@@ -169,16 +168,17 @@ def run_of(ordered_ids, *codes):
     return ordered_ids[first : first + len(codes)]
 
 
-def test_editors_introduction_opens_the_book(ordered_ids):
-    assert ordered_ids[0] == "CNC"
+def test_abbreviations_follow_the_contents(ordered_ids):
+    assert selected("front_matter") == [("brenton", "FRT")]
+    assert ordered_ids[:2] == ["XXD", "CNC"]
 
 
 def test_the_table_of_chapters_and_verses_follows_the_introduction(ordered_ids):
-    assert ordered_ids[:2] == ["CNC", "XXA"]
+    assert run_of(ordered_ids, "CNC", "XXA") == ["CNC", "XXA"]
 
 
 def test_old_testament_front_matter_follows_its_divider(ordered_ids):
-    codes = ("XXA", "XXF", "XXB", "XXE", "OTH", "XXD", "GEN")
+    codes = ("XXA", "XXF", "XXB", "XXE", "OTH", "GEN")
     assert run_of(ordered_ids, *codes) == list(codes)
 
 
@@ -194,9 +194,9 @@ def test_scripture_unit_outside_both_testaments(patched):
 
 
 def test_appendices_close_the_book(ordered_ids):
-    codes = ("REV", "GLO", "BAK", "XXC")
+    codes = ("REV", "GLO", "BAK")
     assert run_of(ordered_ids, *codes) == list(codes)
-    assert ordered_ids[-1] == "XXC"
+    assert ordered_ids[-1] == "BAK"
 
 
 # Special content in the pinned sources

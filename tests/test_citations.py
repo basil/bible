@@ -489,7 +489,8 @@ def test_everything_that_cites_is_read(prepared, matter):
     # Supplying 23:12 consumes its former missing-verse pointer.
     # Deferring 1KI 6:11–14 removes its omission-range citation, and returning
     # 2CH 27:8 to the Appendix removes its age/reign comparison with 27:1.
-    assert sum(len(entry["citations"]) for entry in read) == 508
+    # Omitting eBible’s corrections removes its 84 citations.
+    assert sum(len(entry["citations"]) for entry in read) == 424
     assert citations.unused(read) == ([], [])
 
 
@@ -520,13 +521,6 @@ def test_everything_that_cites_is_read(prepared, matter):
         ("BAK", "see \\it Appendix\\it*. Note on 2 Kingdoms 5:18."),
         # The label of a passage retained for editorial review is no citation.
         ("BAK", "\\ip 5. \\vp 17\\vp*And the king commanded"),
-        ("XXC", "\\im 4 Kingdoms 19:18"),
-        ("XXC", "\\im Psalm 50:13"),
-        ("XXC", "\\im Leviticus 7:4"),
-        ("XXC", "\\im Susanna 19"),
-        ("XXC", "\\im Epistle of Jeremias 1:46"),
-        ("XXC", "\\im Jesus, the Son of Navi 13:7"),
-        ("XXC", "duplicate verse 8 marker removed"),
     ],
 )
 def test_the_front_and_back_matter_cite_as_the_edition_does(matter, unit, printed):

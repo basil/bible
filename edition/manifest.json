@@ -1180,6 +1180,13 @@
       ]
     }
   ],
+  "front_matter": [
+    {
+      "source": "brenton",
+      "id": "XXD",
+      "source_id": "FRT"
+    }
+  ],
   "old_testament_front": [
     {
       "source": "brenton",
@@ -1197,11 +1204,6 @@
     {
       "source": "brenton",
       "id": "OTH"
-    },
-    {
-      "source": "brenton",
-      "id": "XXD",
-      "source_id": "FRT"
     }
   ],
   "new_testament_front": [
@@ -1223,19 +1225,13 @@
       "title": "Notes and Supplied Passages",
       "short_title": "Notes and Supplied Passages",
       "abbreviation": "Notes"
-    },
-    {
-      "source": "brenton",
-      "id": "XXC",
-      "title": "Corrections to the Text",
-      "short_title": "Corrections",
-      "abbreviation": "Corr."
     }
   ],
   "excluded": {
     "brenton": [
       "NEH",
-      "XXA"
+      "XXA",
+      "XXC"
     ]
   }
 }

@@ -62,8 +62,9 @@ def ordered_entries():
     ]
     require(not unplaced, f"Scripture units outside both testaments: {unplaced}")
     return [
-        # The editor's introduction is a project unit rather than a front-matter
-        # periph so that it follows the contents page and is listed in it.
+        # Project units follow the contents page and are listed in it.
+        *MANIFEST["front_matter"],
+        # The editor's introduction follows the list of abbreviations.
         {"id": "CNC", "file": "content/introduction.sfm"},
         # The table of chapters and verses, which the introduction refers to.
         {"id": "XXA", "file": "content/numbering.sfm"},

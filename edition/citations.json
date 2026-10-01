@@ -6,8 +6,7 @@
     "XXD": null,
     "TDX": null,
     "NDX": "kjv-preface",
-    "BAK": "brenton-appendix",
-    "XXC": "ebible-corrections"
+    "BAK": "brenton-appendix"
   },
   "dialects": {
     "brenton": {
@@ -163,42 +162,6 @@
         "Matth": "MAT",
         "Luke": "LUK",
         "2 Tim": "2TI"
-      }
-    },
-    "ebible-corrections": {
-      "numbering": "brenton",
-      "numerals": "arabic",
-      "chapter_verse": "\\.\\s?",
-      "books": {
-        "Gen": "GEN",
-        "Exo": "EXO",
-        "Lev": "LEV",
-        "Num": "NUM",
-        "Deu": "DEU",
-        "Jos": "JOS",
-        "Jdg": "JDG",
-        "2Sa": "2SA",
-        "2Ki": "2KI",
-        "1Ch": "1CH",
-        "2Ch": "2CH",
-        "Ezr": "EZR",
-        "Neh": "NEH",
-        "Job": "JOB",
-        "Psa": "PSA",
-        "Ezk": "EZK",
-        "Hos": "HOS",
-        "Dan": "DAG",
-        "Tob": "TOB",
-        "Jdt": "JDT",
-        "Wis": "WIS",
-        "Sir": "SIR",
-        "Bar": "BAR",
-        "Lje": "LJE",
-        "1Ma": "1MA",
-        "2Ma": "2MA",
-        "3Ma": "3MA",
-        "4Ma": "4MA",
-        "1Es": "1ES"
       }
     }
   },
@@ -422,41 +385,6 @@
       "passages": "PSA 144:13",
       "print": "144:13",
       "why": "Of the Psalms, which the sentence names."
-    },
-    "XXC Dan. 4. 16": {
-      "passages": "DAG 4:19",
-      "print": "{DAG} 4:19",
-      "why": "eBible cites the verse by another count: the word it corrects stands in this one."
-    },
-    "XXC Gen. 11. 1": {
-      "passages": "GEN 11:12-13",
-      "print": "{GEN} 11:12–13",
-      "why": "eBible cites the chapter's first verse; Cainan, whose name it corrects, is named in these two."
-    },
-    "XXC Gen. 38. 1": {
-      "passages": "GEN 38:11",
-      "print": "{GEN} 38:11",
-      "why": "eBible cites the verse by another count: the word it corrects stands in this one."
-    },
-    "XXC Lev. 6. 34": {
-      "passages": "LEV 7:4",
-      "print": "{LEV} 7:4",
-      "why": "eBible cites the verse by another count: the word it corrects stands in this one."
-    },
-    "XXC Lev. 6. 36": {
-      "passages": "LEV 7:6",
-      "print": "{LEV} 7:6",
-      "why": "eBible cites the verse by another count: the word it corrects stands in this one."
-    },
-    "XXC Psa. 50. 11": {
-      "passages": "PSA 50:13",
-      "print": "{PSA} 50:13",
-      "why": "eBible cites the verse by another count: the word it corrects stands in this one."
-    },
-    "XXC Sus. 1. 19": {
-      "passages": "DAG 0:19",
-      "print": "Susanna 19",
-      "why": "Susanna opens this edition's Daniel under its own heading, and prints no chapter number."
     }
   },
   "names": {
@@ -475,13 +403,6 @@
         "from": ", page 1131",
         "to": "",
         "why": "The page of the printing of 1870, where the note isn't to be found in this one."
-      }
-    ],
-    "XXC": [
-      {
-        "from": "\\im Table of Chapters and Verses in Jeremiah  \n\\im period following “39 the 3 first verses, and 5 last” omitted  \n\\im 1870. period included | 1844. period omitted  ",
-        "to": "",
-        "why": "A correction to Brenton's table of the chapters of Jeremias, whose place the table of chapters and verses takes."
       }
     ]
   }
