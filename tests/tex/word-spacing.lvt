@@ -1,0 +1,61 @@
+\documentclass{article}
+\input{regression-test}
+\usepackage{fontspec}
+\makeatletter
+\def\s@tfont#1#2{#1\relax}
+\input{protrusion.tex}
+\input{word-spacing.tex}
+% Reloading must not make the selector recurse or multiply spacing again.
+\input{word-spacing.tex}
+\font\Regular="OLEBFont" at 10pt
+\font\Italic="OLEBFont Italic" at 10pt
+\font\Bold="OLEBFont Bold" at 10pt
+\font\BoldItalic="OLEBFont Bold Italic" at 10pt
+\font\Small="OLEBFont:+onum;+pnum" at 8pt
+\font\Large="OLEBFont:+smcp;+c2sc" at 48pt
+\font\Superior="OLEBFont:+onum;+pnum;+sups" at 10pt
+\font\Greek="GFS Didot" at 10pt
+\font\Hebrew="Ezra SIL" at 10pt
+\newcount\mismatches
+\def\CheckDimension#1#2{%
+  \dimen0=\dimexpr#2*6/5\relax
+  \ifdim\fontdimen#1\font=\dimen0\else\advance\mismatches by1\fi
+}
+\def\CheckFont#1#2{%
+  \mismatches=0
+  #2\relax
+  \edef\BeforeSpace{\the\fontdimen2\font}%
+  \edef\BeforeStretch{\the\fontdimen3\font}%
+  \edef\BeforeShrink{\the\fontdimen4\font}%
+  \begingroup\s@tfont{#2}{}\endgroup
+  \s@tfont{#2}{}%
+  \CheckDimension{2}{\BeforeSpace}%
+  \CheckDimension{3}{\BeforeStretch}%
+  \CheckDimension{4}{\BeforeShrink}%
+  % Verify actual word glue, including stretch/shrink, outside the hook group.
+  \setbox0=\hbox{a \global\skip0=\lastskip}%
+  \skip2=\fontdimen2\font plus\fontdimen3\font minus\fontdimen4\font
+  \edef\actual{\the\skip0}\edef\expected{\the\skip2}%
+  \ifx\actual\expected\else\advance\mismatches by1\fi
+  \TYPE{#1: \the\mismatches\space mismatches}%
+}
+\def\CheckOther#1#2{%
+  #2\relax
+  \edef\before{\the\fontdimen2\font,\the\fontdimen3\font,\the\fontdimen4\font}%
+  \s@tfont{#2}{}%
+  \edef\after{\the\fontdimen2\font,\the\fontdimen3\font,\the\fontdimen4\font}%
+  \ifx\before\after\TYPE{#1: unchanged}\else\TYPE{#1: changed}\fi
+}
+\begin{document}
+\START
+\CheckFont{Regular}{\Regular}
+\CheckFont{Italic}{\Italic}
+\CheckFont{Bold}{\Bold}
+\CheckFont{Bold italic}{\BoldItalic}
+\CheckFont{Oldstyle 8pt}{\Small}
+\CheckFont{Small caps 48pt}{\Large}
+\CheckFont{Superscripts}{\Superior}
+\CheckOther{Greek}{\Greek}
+\CheckOther{Hebrew}{\Hebrew}
+\END
+\end{document}

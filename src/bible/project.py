@@ -190,6 +190,7 @@ def write_project(mode, base, archives, scripture):
         "ptxprint-mods.sty",
         "ptxprint-mods.tex",
         "protrusion.tex",
+        "word-spacing.tex",
         "changes.txt",
     ):
         shutil.copyfile(paths.CONFIG_DIR / name, conf / name)

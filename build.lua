@@ -20,4 +20,4 @@ installfiles = {}
 unpackfiles = {}
 supportdir = "config"
 -- Test the production font adapter independently of PTXprint's note engine.
-checksuppfiles = {"protrusion.tex"}
+checksuppfiles = {"protrusion.tex", "word-spacing.tex"}

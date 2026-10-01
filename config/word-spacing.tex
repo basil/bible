@@ -1,0 +1,35 @@
+% Widen OLEBFont's inherited Utopia word spacing by 20%, retaining
+% its proportions. The multiplier is 6/5 = 1.2.
+% PTXprint uses plain XeTeX; set TeX's glue dimensions after font selection
+% so every face, size and OpenType feature combination gets the same policy.
+\begingroup
+\catcode`\@=11
+% fontname yields category-12 characters. Match with the same categories;
+% the appended sentinel also handles fonts that do not contain OLEBFont.
+\edef\BibleSpacingDefine{%
+  \noexpand\gdef\noexpand\BibleSpacingMatch##1\detokenize{OLEBFont}##2\noexpand\relax}
+\BibleSpacingDefine{%
+  \def\BibleSpacingSuffix{#2}%
+  \ifx\BibleSpacingSuffix\empty\else
+    \fontdimen2\font=\dimexpr\fontdimen2\font*6/5\relax
+    \fontdimen3\font=\dimexpr\fontdimen3\font*6/5\relax
+    \fontdimen4\font=\dimexpr\fontdimen4\font*6/5\relax
+    % Font dimensions persist across groups; so must this initialization flag.
+    \expandafter\gdef\csname BibleSpacing:\fontname\font\endcsname{}%
+  \fi
+}
+\gdef\BibleWordSpacing{%
+  \ifcsname BibleSpacing:\fontname\font\endcsname\else
+  \begingroup
+  \edef\BibleSpacingName{\fontname\font\detokenize{OLEBFont}}%
+  \expandafter\BibleSpacingMatch\BibleSpacingName\relax
+  \endgroup
+  \fi
+}
+% Preserve the existing selector, including the optical-margin adapter.
+\ifx\BibleSpacingSetFont\undefined\global\let\BibleSpacingSetFont\s@tfont\fi
+\gdef\s@tfont#1#2{%
+  \BibleSpacingSetFont{#1}{#2}%
+  \BibleWordSpacing
+}
+\endgroup
