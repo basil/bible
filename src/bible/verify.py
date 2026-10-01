@@ -206,9 +206,9 @@ def check_citations(reading_text):
     require(not found, f"Citation not written as the edition cites: {found[:12]}")
 
 
-def stream_text(pdf, top, bottom):
-    """Each page's text block, word by word in stream order; form feeds part
-    the pages. pdftotext's own stream text drops the spaces of a tight line."""
+def stream_text(pdf, top, bottom, inner=None):
+    """Each page's text in stream order within body and inner-note columns.
+    Form feeds part the pages; bbox extraction preserves tight-line spaces."""
     pages = []
     # A whole Bible is a million words: drop each page's once they are read.
     for _, page in ET.iterparse(
@@ -216,14 +216,21 @@ def stream_text(pdf, top, bottom):
     ):
         if page.tag != XHTML + "page":
             continue
-        pages.append(
-            " ".join(
-                word.text
-                for word in page.iter(XHTML + "word")
-                # The running head and the folio stand in the margins.
-                if top <= float(word.get("yMin")) <= float(page.get("height")) - bottom
+        body, notes = [], []
+        for word in page.iter(XHTML + "word"):
+            # The running head and the folio stand in the margins.
+            if not top <= float(word.get("yMin")) <= float(page.get("height")) - bottom:
+                continue
+            # Side notes can interrupt a sentence in PDF stream order. Keep
+            # each column together, allowing 3 pt for optical protrusion at
+            # the body edge (less than the 5.5 mm gap to the notes).
+            marginal = inner is not None and (
+                float(word.get("xMax")) < inner - 3
+                if len(pages) % 2 == 0
+                else float(word.get("xMin")) > float(page.get("width")) - inner + 3
             )
-        )
+            (notes if marginal else body).append(word.text)
+        pages.append(" ".join([*body, *notes]))
         page.clear()
     return "\f".join(pages)
 
@@ -308,10 +315,11 @@ def inspect_pdf(pdf, base, project, ids, sample):
     require(len(sizes) == pages, "Could not inspect every PDF page")
     require(
         all(
-            abs(float(w) - 419.528) < 0.1 and abs(float(h) - 595.276) < 0.1
+            abs(float(w) - 176 * POINTS_PER_MM) < 0.1
+            and abs(float(h) - 250 * POINTS_PER_MM) < 0.1
             for w, h in sizes
         ),
-        "Non-A5 page found",
+        "Non-B5 page found",
     )
     fonts = capture("pdffonts", pdf)
     (base / "fonts.txt").write_text(fonts, encoding="utf-8")
@@ -358,7 +366,10 @@ def inspect_pdf(pdf, base, project, ids, sample):
         settings.getfloat("paper", key) * POINTS_PER_MM
         for key in ("topmargin", "bottommargin")
     )
-    reading_text = stream_text(pdf, top, bottom)
+    inner = (
+        settings.getfloat("paper", "margins") + settings.getfloat("paper", "gutter")
+    ) * POINTS_PER_MM
+    reading_text = stream_text(pdf, top, bottom, inner)
     (base / "reading.txt").write_text(reading_text, encoding="utf-8")
     check_added_words_roman(pdf, reading_text, project, ids, sample)
     check_citations(reading_text)

@@ -23,15 +23,15 @@
 % second scripture column. Its repeated runs adjust crowded note positions;
 % the source reference and caller still identify their verse. This native
 % marginal-note mode does not move overflow to the bottom of the page.
-% Divide the existing 36 mm inner margin into a quarter-unit (3 mm) gap,
-% two units (24 mm) of notes, and 9 mm clear at the binding. PTXprint's
-% marginnoteswidth includes the gap, so the allocation is 27 mm, not 24 mm.
+% Divide the 42 mm inner margin into a 6 mm gap,
+% 24 mm of notes, and 12 mm clear at the binding. PTXprint's
+% marginnoteswidth includes the gap, so the allocation is 30 mm, not 24 mm.
 \newif\ifBibleMarginNote
 \begingroup
 \catcode`\@=11
 \marginaln@te{x}
 \marginaln@te{f}
-\global\marginnotesgap=3mm
+\global\marginnotesgap=6mm
 \global\marginnoteswidth=\dimexpr 24mm+\marginnotesgap\relax
 \gdef\MarginNoteSide{inner}
 \gdef\BibleStartNote#1{%

@@ -171,6 +171,35 @@ def test_stream_text_parts_words_and_leaves_out_the_margins(monkeypatch):
         verify.check_citations(text)
 
 
+def test_stream_text_keeps_inner_notes_out_of_body_sentences(monkeypatch):
+    def word(text, left, right):
+        return f'<word xMin="{left}" yMin="40" xMax="{right}" yMax="50">{text}</word>'
+
+    odd = (
+        word("the soul", 102, 150)
+        + word("Vat. omits", 30, 90)
+        + word("of Jonathan", 102, 160)
+    )
+    even = (
+        word("the soul", 34, 82)
+        + word("Vat. omits", 410, 460)
+        + word("of Jonathan", 34, 100)
+    )
+    monkeypatch.setattr(
+        verify,
+        "capture",
+        lambda *args: (
+            f'<html xmlns="{verify.XHTML[1:-1]}"><body><doc>'
+            f'<page width="499" height="709">{odd}</page>'
+            f'<page width="499" height="709">{even}</page>'
+            "</doc></body></html>"
+        ),
+    )
+    assert verify.stream_text("bible.pdf", 34, 51, 102) == (
+        "the soul of Jonathan Vat. omits\fthe soul of Jonathan Vat. omits"
+    )
+
+
 def check_notes(tmp_path, *notes):
     """Check notes given as (reference, page, top, depth), in points, against
     a text block from 51 to 561 points above the foot of the page."""

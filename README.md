@@ -23,7 +23,7 @@ The original copyright notices are kept with the texts in [sources](sources/READ
 
 ## How it looks
 
-The page size is A5, about the size of a paperback novel. Scripture is set in one column in [Utopia](<https://en.wikipedia.org/wiki/Utopia_(typeface)>). Verse numbers and running heads are included. The page design is based on the Berean Standard Bible layout that comes with [PTXprint](https://software.sil.org/ptxprint/), a free typesetting program for Bibles.
+The page size is ISO B5 (176 × 250 mm). Scripture is set in one column in [Utopia](<https://en.wikipedia.org/wiki/Utopia_(typeface)>), at 10 pt with 12.5 pt leading. Margins are 42 mm inside, 18 mm outside, 14 mm above, and 28 mm below, giving a 116 × 208 mm text area. Notes occupy a 24 mm column in the inside margin, separated from the body by a 6 mm gap. Verse numbers and running heads are included. The page design is based on the Berean Standard Bible layout that comes with [PTXprint](https://software.sil.org/ptxprint/), a free typesetting program for Bibles.
 
 There is no cover, and the page numbering does not match any historical printed edition.
 
