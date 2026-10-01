@@ -19,4 +19,5 @@ sourcefiles = {}
 installfiles = {}
 unpackfiles = {}
 supportdir = "config"
-checksuppfiles = {"ptxprint-mods.tex"}
+-- Test the production font adapter independently of PTXprint's note engine.
+checksuppfiles = {"protrusion.tex"}

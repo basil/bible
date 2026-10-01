@@ -316,7 +316,7 @@ def scripture_text(entry, archives, log=None, review=None, *, links):
         text = cited_introductions(code, text, archives, record)
     # Any caller, "*" as well as "+"; only "-" sets none.
     require(
-        not re.search(r"\\[fx] (?!- )", text),
+        not re.search(r"\\(?:ef|[fx]) (?!- )", text),
         f"Note with a caller left in the text: {code}",
     )
     # Relabelling rewrites chapter and verse markers only, so every note must
@@ -352,13 +352,12 @@ def prepared_scripture(archives, links):
     return result
 
 
-INTRODUCTION = re.compile(r"(\\f - \\ft )(.*?)(\\f\*)", re.S)
+INTRODUCTION = re.compile(r"(\\ef - \\ft )(.*?)(\\ef\*)", re.S)
 
 
 def cited_introductions(code, text, archives, record):
     """A book whose introduction is a footnote, with what the introduction
-    cites as the edition cites it: of all the footnotes, it alone opens
-    with no reference."""
+    cites as the edition cites it, identified by its extended-footnote class."""
     unit = introductions.INTRODUCTIONS["source"]
     tongue = citations.dialect(citations.DATA["units"][unit])
     printed = versification.edition_inventory(archives)

@@ -76,7 +76,7 @@ def test_printed_paragraphs_give_back_the_source(source):
     for place, entries in placed.items():
         if place != "front":
             expected = " ".join(words(body) for _, _, body in entries)
-            note = notes[place][0].removeprefix("\\f - \\ft ").removesuffix("\\f*")
+            note = notes[place][0].removeprefix("\\ef - \\ft ").removesuffix("\\ef*")
             assert words(note) == expected
     omitted = [
         i
@@ -110,14 +110,14 @@ def test_book_notes_are_reviewed(prepared):
 def test_book_note_on_the_first_verse(scripture):
     tobit = scripture["TOB"]
     assert tobit.count("one of the most perfect of Hebrew idylls") == 1
-    assert "\\v 1 \\f - \\ft The book of Tobit is one" in tobit
+    assert "\\v 1 \\ef - \\ft The book of Tobit is one" in tobit
 
 
 def test_book_note_paragraphs_and_nested_styles(source):
     note, *_ = book_notes(source)["1MA"]
-    assert note.startswith("\\f - \\ft There are four books")
+    assert note.startswith("\\ef - \\ft There are four books")
     assert "canonical. The \\+it First\\+it* Book of the Maccabees" in note
-    assert note.endswith("sterling worth.\\f*")
+    assert note.endswith("sterling worth.\\ef*")
     assert "\\+sc b.c.\\+sc*" in note
 
 
@@ -135,7 +135,7 @@ def test_gloss_in_a_book_note(source):
     assert "the last chapter of Baruch [in the English Apocrypha]. It" in note
     note, *_ = book_notes(source)["4MA"]
     assert note.endswith(
-        "this edition of the Apocrypha [for which this introduction was written].\\f*"
+        "this edition of the Apocrypha [for which this introduction was written].\\ef*"
     )
 
 
@@ -177,7 +177,7 @@ def test_book_names_match_the_edition(source):
         "much inferior to that of the First Book [of the Maccabees]." in notes["2MA"][0]
     )
     assert notes["LJE"][0].startswith(
-        "\\f - \\ft [The Epistle of Jeremias], containing a denunciation"
+        "\\ef - \\ft [The Epistle of Jeremias], containing a denunciation"
     )
     assert "Susanna and Bel and the Dragon contain" in notes["DAG"][0]
 
@@ -185,11 +185,11 @@ def test_book_names_match_the_edition(source):
 def test_daniel_notes_follow_their_sections(scripture):
     daniel = scripture["DAG"]
     assert re.search(
-        r"\\c 0\n.*?\\v 1 \\f - \\ft These three additions \[the Song", daniel, re.S
+        r"\\c 0\n.*?\\v 1 \\ef - \\ft These three additions \[the Song", daniel, re.S
     )
     assert (
         "\\s1 THE SONG OF THE THREE CHILDREN\n\\p\n\\v 25 "
-        "\\f - \\ft The Song of the Three Children"
+        "\\ef - \\ft The Song of the Three Children"
     ) in daniel
     assert daniel.count("The Song of the Three Children contains") == 1
     assert daniel.count("in the Maccabean age") == 1

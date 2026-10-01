@@ -1,0 +1,155 @@
+% Shared by production PTXprint and the isolated protrusion regression test.
+% Keep this adapter separate so testing font codes needs no note-layout macros.
+% Let punctuation hang slightly into the margins so the justified column
+% looks optically straight. PTXprint uses plain XeTeX, so apply microtype's
+% stock XeLaTeX protrusion table directly and include it in line breaking.
+% These faces have no dedicated microtype tables; use its standard values.
+\XeTeXprotrudechars=2
+\newif\ifBibleProtrusionSame
+\begingroup
+\catcode`\@=11
+\newcount\BibleProtrusionLeft
+\newcount\BibleProtrusionRight
+\newcount\BibleProtrusionSetLeft
+\newcount\BibleProtrusionSetRight
+\newcount\BibleProtrusionGlyph
+% microtype's values are thousandths of the base character's advance width;
+% XeTeX's lpcode/rpcode take thousandths of an em and native glyph indices.
+% Accented heirs inherit the base character's final codes, as in microtype.
+% Include the accent heirs supplied by OLEBFont's added Latin coverage.
+% Direct Unicode characters resolve to native glyphs without accent macros.
+\gdef\BibleProtrusion#1#2#3#4{%
+  \ifnum\XeTeXcharglyph`#1>0
+    \BibleProtrusionLeft=\numexpr\number\fontcharwd\font`#1*#3/\number\fontdimen6\font\relax
+    \BibleProtrusionRight=\numexpr\number\fontcharwd\font`#1*#4/\number\fontdimen6\font\relax
+    % The same for the glyph that the font's features set in its place,
+    % which can be of another width: an oldstyle figure is narrower.
+    \setbox0=\hbox{\char`#1}%
+    \BibleProtrusionSetLeft=\numexpr\number\wd0*#3/\number\fontdimen6\font\relax
+    \BibleProtrusionSetRight=\numexpr\number\wd0*#4/\number\fontdimen6\font\relax
+    \BibleProtrusionChars#1#2\relax
+  \fi
+}
+\gdef\BibleProtrusionChars#1{%
+  \ifx#1\relax
+    \let\next\relax
+  \else
+    \ifnum\XeTeXcharglyph`#1>0
+      \lpcode\font\XeTeXcharglyph`#1=\BibleProtrusionLeft
+      \rpcode\font\XeTeXcharglyph`#1=\BibleProtrusionRight
+      \BibleProtrusionSubstitute{`#1}%
+    \fi
+    \let\next\BibleProtrusionChars
+  \fi
+  \next
+}
+% A font's features can set another glyph than the one its character map
+% names: production's oldstyle figures, superscripts and small capitals. The
+% codes belong to the glyph on the page, and XeTeX cannot be asked which one
+% shaping chose, so find it by its measurements: set the character as text,
+% and when that differs from the mapped glyph, give every glyph of the same
+% width, height and depth the codes reckoned from the width as set.
+\gdef\BibleProtrusionSubstitute#1{%
+  \XeTeXuseglyphmetrics=1
+  \setbox0=\hbox{\char#1}%
+  \setbox2=\hbox{\XeTeXglyph\XeTeXcharglyph#1}%
+  \BibleProtrusionCompare
+  \ifBibleProtrusionSame\else
+    \BibleProtrusionGlyph=\XeTeXcountglyphs\font
+    \BibleProtrusionMatch
+  \fi
+}
+% Glyph 0 is .notdef; count down to it.
+\gdef\BibleProtrusionMatch{%
+  \advance\BibleProtrusionGlyph by-1
+  \ifnum\BibleProtrusionGlyph>0
+    \setbox2=\hbox{\XeTeXglyph\BibleProtrusionGlyph}%
+    \BibleProtrusionCompare
+    \ifBibleProtrusionSame
+      \lpcode\font\BibleProtrusionGlyph=\BibleProtrusionSetLeft
+      \rpcode\font\BibleProtrusionGlyph=\BibleProtrusionSetRight
+    \fi
+    \expandafter\BibleProtrusionMatch
+  \fi
+}
+% Text and a lone glyph round their height and depth apart in the last place.
+\gdef\BibleProtrusionCompare{%
+  \BibleProtrusionSamefalse
+  \ifdim\wd2=\wd0
+    \dimen0=\dimexpr\ht2-\ht0\relax \ifdim\dimen0<0pt \dimen0=-\dimen0 \fi
+    \dimen2=\dimexpr\dp2-\dp0\relax \ifdim\dimen2<0pt \dimen2=-\dimen2 \fi
+    \ifdim\dimen0<0.001pt \ifdim\dimen2<0.001pt \BibleProtrusionSametrue \fi\fi
+  \fi
+}
+\gdef\BibleProtrusionTable{%
+  \BibleProtrusion A{ÀÁÂÃÄÅĂĄ}{50}{50}%
+  \BibleProtrusion F{}{0}{50}%
+  \BibleProtrusion J{}{50}{0}%
+  \BibleProtrusion K{}{0}{50}%
+  \BibleProtrusion L{ŁĹĽ}{0}{50}%
+  \BibleProtrusion T{ŢŤ}{50}{50}%
+  \BibleProtrusion V{}{50}{50}%
+  \BibleProtrusion W{}{50}{50}%
+  \BibleProtrusion X{}{50}{50}%
+  \BibleProtrusion Y{ÝŸ}{50}{50}%
+  \BibleProtrusion k{}{0}{50}%
+  \BibleProtrusion r{ŕř}{0}{50}%
+  \BibleProtrusion v{}{50}{50}%
+  \BibleProtrusion w{}{50}{50}%
+  \BibleProtrusion x{}{50}{50}%
+  \BibleProtrusion y{ýÿ}{0}{50}%
+  \BibleProtrusion 1{}{50}{50}%
+  \BibleProtrusion 4{}{50}{50}%
+  \BibleProtrusion 7{}{50}{50}%
+  \BibleProtrusion .{}{0}{700}%
+  \BibleProtrusion ,{}{0}{500}%
+  \BibleProtrusion :{}{0}{500}%
+  \BibleProtrusion ;{}{0}{300}%
+  \BibleProtrusion !{}{0}{100}%
+  \BibleProtrusion ?{}{0}{100}%
+  \BibleProtrusion @{}{50}{50}%
+  \BibleProtrusion ~{}{200}{250}%
+  \BibleProtrusion \%{}{50}{50}%
+  \BibleProtrusion *{}{200}{200}%
+  \BibleProtrusion +{}{250}{250}%
+  \BibleProtrusion ({}{100}{0}%
+  \BibleProtrusion ){}{0}{200}%
+  \BibleProtrusion /{}{100}{200}%
+  \BibleProtrusion -{}{500}{500}%
+  \BibleProtrusion –{}{200}{200}%
+  \BibleProtrusion —{}{150}{150}%
+  \BibleProtrusion ‘{}{300}{400}%
+  \BibleProtrusion ’{}{300}{400}%
+  \BibleProtrusion “{}{300}{300}%
+  \BibleProtrusion ”{}{300}{300}%
+  \BibleProtrusion Æ{}{50}{0}%
+  \BibleProtrusion _{}{100}{100}%
+  \BibleProtrusion \\{}{100}{200}%
+  \BibleProtrusion ‚{}{400}{400}%
+  \BibleProtrusion „{}{400}{400}%
+  \BibleProtrusion ‹{}{400}{300}%
+  \BibleProtrusion ›{}{300}{400}%
+  \BibleProtrusion «{}{200}{200}%
+  \BibleProtrusion »{}{200}{200}%
+  \BibleProtrusion ¡{}{100}{0}%
+  \BibleProtrusion ¿{}{100}{0}%
+  \BibleProtrusion \{{}{400}{200}%
+  \BibleProtrusion \}{}{200}{400}%
+  \BibleProtrusion <{}{200}{100}%
+  \BibleProtrusion >{}{100}{200}%
+}
+% PTXprint creates fonts lazily. Initialize each face/size/features combination
+% once after selection; font protrusion codes persist outside the local group.
+% Save only PTXprint's own macro: were this file read twice, saving the wrapper
+% would make it call itself.
+\ifx\BibleSetFont\undefined\global\let\BibleSetFont\s@tfont\fi
+\gdef\s@tfont#1#2{%
+  \BibleSetFont{#1}{#2}%
+  \ifcsname BibleProtrusion:\fontname\font\endcsname\else
+    \begingroup
+    \BibleProtrusionTable
+    \endgroup
+    \expandafter\gdef\csname BibleProtrusion:\fontname\font\endcsname{}%
+  \fi
+}
+\endgroup

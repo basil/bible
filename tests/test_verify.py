@@ -52,6 +52,44 @@ def test_processed_output_relabelled_verse(processed):
         processed(SOURCE_USFM.replace("\\v 1 ", "\\v 2 "))
 
 
+def test_printed_origins_lose_only_their_chapter():
+    prepared = (
+        "\\f - \\fr 9:12 \\ft See \\xt Hebrews 12:29\\f*"
+        "\\x - \\xo 1:2a \\xt Psalm 1:2\\x*"
+    )
+    assert project.ORIGIN_CHAPTER.sub(r"\1", prepared) == (
+        "\\f - \\fr 12 \\ft See \\xt Hebrews 12:29\\f*"
+        "\\x - \\xo 2a \\xt Psalm 1:2\\x*"
+    )
+
+
+def test_an_origin_that_names_no_verse_is_not_printed():
+    prepared = "its use.\\f + \\fr 1:0 \\ft In accounting for the quotation\\f*"
+    assert project.EMPTY_ORIGIN.sub("", prepared) == (
+        "its use.\\f + \\ft In accounting for the quotation\\f*"
+    )
+    assert not project.EMPTY_ORIGIN.search("\\f - \\fr 1:10 \\ft or\\f*")
+
+
+def test_only_front_matter_loses_an_origin_that_names_no_verse():
+    prepared = "\\f + \\fr 3:0 \\ft A title\\f*"
+    log = []
+
+    def record(operation, **details):
+        log.append((operation, details))
+
+    assert project.printed_origins({"id": "XXB"}, prepared, record) == (
+        "\\f + \\ft A title\\f*"
+    )
+    assert project.printed_origins(
+        {"id": "PSA", "section": "old-testament"}, prepared, record
+    ) == ("\\f + \\fr 0 \\ft A title\\f*")
+    assert [operation for operation, _ in log] == [
+        "omit note origins that name no verse",
+        "print note origins without their chapter",
+    ]
+
+
 # Rendered PDF
 
 
@@ -110,3 +148,74 @@ def test_added_words_witness_chapter_must_be_in_the_full_bible(tmp_path):
     )
     with pytest.raises(CheckFailed, match="Malachias 4:2 is not in the build"):
         verify.check_added_words_roman(None, "", tmp_path, ["MAL"], False)
+
+
+def test_stream_text_parts_words_and_leaves_out_the_margins(monkeypatch):
+    def word(text, y):
+        return f'<word xMin="34" yMin="{y}" xMax="54" yMax="{y + 10}">{text}</word>'
+
+    words = [("Esaias", 13), ("as", 40), ("in", 40), ("Rom.", 40), ("4.", 52)]
+    page = "".join(word(*w) for w in [*words, ("7", 52), ("53", 556)])
+    monkeypatch.setattr(
+        verify,
+        "capture",
+        lambda *args: (
+            f'<html xmlns="{verify.XHTML[1:-1]}"><body><doc>'
+            f'<page height="595">{page}</page><page height="595">{page}</page>'
+            "</doc></body></html>"
+        ),
+    )
+    text = verify.stream_text("bible.pdf", 34, 51)
+    assert text == "as in Rom. 4. 7\fas in Rom. 4. 7"
+    with pytest.raises(CheckFailed, match="not written as the edition cites"):
+        verify.check_citations(text)
+
+
+def check_notes(tmp_path, *notes):
+    """Check notes given as (reference, page, top, depth), in points, against
+    a text block from 51 to 561 points above the foot of the page."""
+    (tmp_path / "Bible_ptxp.marginnotes").write_text(
+        "".join(
+            f"\\@marginnote{{{ref}}}{{f}}{{inner}}{{bottom}}{{8.5pt}}{{68.3pt}}"
+            f"{{0.00000pt}}{{{depth:.5f}pt}}{{0.00000pt}}{{0.00000pt}}"
+            f"{{{page}}}{{6712846}}{{{top * 65536}}}\n"
+            for ref, page, top, depth in notes
+        ),
+        encoding="utf-8",
+    )
+    verify.check_margin_notes(tmp_path, 561, 51)
+
+
+def test_margin_notes_that_fit_in_order_pass(tmp_path):
+    check_notes(
+        tmp_path,
+        ("GEN2.19", 46, 561, 20),
+        ("GEN2.20", 46, 541, 10),
+        ("GEN2.23", 46, 71, 20),
+        # Each page's margin is its own.
+        ("GEN3.1", 47, 561, 20),
+    )
+
+
+@pytest.mark.parametrize(
+    "notes",
+    [
+        # Off the foot of the text block, and off its head.
+        [("GEN2.19", 46, 561, 20), ("GEN2.20", 46, 70, 20)],
+        [("GEN2.20", 46, 562, 20)],
+        # Over the note before it, and above it.
+        [("GEN2.19", 46, 561, 20), ("GEN2.20", 46, 551, 10)],
+        [("GEN2.19", 46, 551, 20), ("GEN2.20", 46, 561, 10)],
+    ],
+)
+def test_a_margin_note_that_does_not_fit_is_refused(tmp_path, notes):
+    with pytest.raises(CheckFailed, match="does not fit: page 46 GEN2.20"):
+        check_notes(tmp_path, *notes)
+
+
+def test_a_margin_note_record_in_another_form_is_refused(tmp_path):
+    (tmp_path / "Bible_ptxp.marginnotes").write_text(
+        "\\@marginnote{GEN2.19}{f}{inner}{46}{-36765696}\n", encoding="utf-8"
+    )
+    with pytest.raises(CheckFailed, match="Could not read every margin note"):
+        verify.check_margin_notes(tmp_path, 561, 51)

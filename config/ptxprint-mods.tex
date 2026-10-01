@@ -1,113 +1,98 @@
+% Preserve original Unicode in PDF copy/search when OpenType features select
+% CID glyphs (oldstyle figures, superscripts, small caps and ligatures). This
+% native XeTeX output switch records ActualText without changing shaped text.
+\XeTeXgenerateactualtext=1
+
 % PTXprint selects an empty language; use XeTeX's preloaded US English patterns.
 % This also sets the standard minimum fragments: 2 letters left, 3 right.
 \uselanguage{USenglish}
 
-% Stock microtype XeLaTeX protrusion: include protrusion in line breaking.
-\XeTeXprotrudechars=2
+% Give note origin numbers a compact fixed 1 pt separation in the margin.
+% Remove the source's trailing space/NBSP inside the origin style, then add
+% the kern after the style closes. Keeping both hooks avoids an extra word
+% space or a gap that changes during justification; retain the no-break tie.
+% Register hooks through PTXprint's API; defining end-/after- macros alone
+% does not put them in the style engine's hook lookup.
+\sethook{end}{fr}{\unskip}
+\sethook{end}{xo}{\unskip}
+\sethook{after}{fr}{\kern1pt\nobreak}
+\sethook{after}{xo}{\kern1pt\nobreak}
+
+% Put cross references and footnotes beside their source verses in the wide
+% inner margin, using PTXprint's native side-aligned notes rather than a
+% second scripture column. Its repeated runs adjust crowded note positions;
+% the source reference and caller still identify their verse. This native
+% marginal-note mode does not move overflow to the bottom of the page.
+% Divide the existing 36 mm inner margin into a quarter-unit (3 mm) gap,
+% two units (24 mm) of notes, and 9 mm clear at the binding. PTXprint's
+% marginnoteswidth includes the gap, so the allocation is 27 mm, not 24 mm.
+\newif\ifBibleMarginNote
 \begingroup
 \catcode`\@=11
-\newcount\BibleProtrusionLeft
-\newcount\BibleProtrusionRight
-% microtype's values are thousandths of the base character's advance width;
-% XeTeX's lpcode/rpcode take thousandths of an em and native glyph indices.
-% Accented heirs inherit the base character's final codes, as in microtype.
-% XeLaTeX microtype cannot resolve some TU accent macros for GFS Didot even
-% though the font contains their Unicode glyphs (\k A, \u A, \'L, \v L,
-% \c T, \v T, \'r, \v r). Leave those heirs out to match its effective codes.
-\gdef\BibleProtrusion#1#2#3#4{%
-  \ifnum\XeTeXcharglyph`#1>0
-    \BibleProtrusionLeft=\numexpr\number\fontcharwd\font`#1*#3/\number\fontdimen6\font\relax
-    \BibleProtrusionRight=\numexpr\number\fontcharwd\font`#1*#4/\number\fontdimen6\font\relax
-    \BibleProtrusionChars#1#2\relax
-  \fi
-}
-\gdef\BibleProtrusionChars#1{%
-  \ifx#1\relax
-    \let\next\relax
+\marginaln@te{x}
+\marginaln@te{f}
+\global\marginnotesgap=3mm
+\global\marginnoteswidth=\dimexpr 24mm+\marginnotesgap\relax
+\gdef\MarginNoteSide{inner}
+\gdef\BibleStartNote#1{%
+  \BibleMarginNotetrue
+  \ifx\ch@pter\empty\BibleMarginNotefalse\fi
+  \ifx\ch@pter\z@ro\BibleMarginNotefalse\fi
+  \ifhe@dings\BibleMarginNotefalse\fi
+  \ifBibleMarginNote
+    \n@test@rt{#1}%
   \else
-    \ifnum\XeTeXcharglyph`#1>0
-      \lpcode\font\XeTeXcharglyph`#1=\BibleProtrusionLeft
-      \rpcode\font\XeTeXcharglyph`#1=\BibleProtrusionRight
-    \fi
-    \let\next\BibleProtrusionChars
-  \fi
-  \next
-}
-\gdef\BibleProtrusionTable{%
-  \BibleProtrusion A{ÀÁÂÃÄÅ}{50}{50}%
-  \BibleProtrusion F{}{0}{50}%
-  \BibleProtrusion J{}{50}{0}%
-  \BibleProtrusion K{}{0}{50}%
-  \BibleProtrusion L{Ł}{0}{50}%
-  \BibleProtrusion T{}{50}{50}%
-  \BibleProtrusion V{}{50}{50}%
-  \BibleProtrusion W{}{50}{50}%
-  \BibleProtrusion X{}{50}{50}%
-  \BibleProtrusion Y{ÝŸ}{50}{50}%
-  \BibleProtrusion k{}{0}{50}%
-  \BibleProtrusion r{}{0}{50}%
-  \BibleProtrusion v{}{50}{50}%
-  \BibleProtrusion w{}{50}{50}%
-  \BibleProtrusion x{}{50}{50}%
-  \BibleProtrusion y{ýÿ}{0}{50}%
-  \BibleProtrusion 1{}{50}{50}%
-  \BibleProtrusion 4{}{50}{50}%
-  \BibleProtrusion 7{}{50}{50}%
-  \BibleProtrusion .{}{0}{700}%
-  \BibleProtrusion ,{}{0}{500}%
-  \BibleProtrusion :{}{0}{500}%
-  \BibleProtrusion ;{}{0}{300}%
-  \BibleProtrusion !{}{0}{100}%
-  \BibleProtrusion ?{}{0}{100}%
-  \BibleProtrusion @{}{50}{50}%
-  \BibleProtrusion ~{}{200}{250}%
-  \BibleProtrusion \%{}{50}{50}%
-  \BibleProtrusion *{}{200}{200}%
-  \BibleProtrusion +{}{250}{250}%
-  \BibleProtrusion ({}{100}{0}%
-  \BibleProtrusion ){}{0}{200}%
-  \BibleProtrusion /{}{100}{200}%
-  \BibleProtrusion -{}{500}{500}%
-  \BibleProtrusion –{}{200}{200}%
-  \BibleProtrusion —{}{150}{150}%
-  \BibleProtrusion ‘{}{300}{400}%
-  \BibleProtrusion ’{}{300}{400}%
-  \BibleProtrusion “{}{300}{300}%
-  \BibleProtrusion ”{}{300}{300}%
-  \BibleProtrusion Æ{}{50}{0}%
-  \BibleProtrusion _{}{100}{100}%
-  \BibleProtrusion \\{}{100}{200}%
-  \BibleProtrusion ‚{}{400}{400}%
-  \BibleProtrusion „{}{400}{400}%
-  \BibleProtrusion ‹{}{400}{300}%
-  \BibleProtrusion ›{}{300}{400}%
-  \BibleProtrusion «{}{200}{200}%
-  \BibleProtrusion »{}{200}{200}%
-  \BibleProtrusion ¡{}{100}{0}%
-  \BibleProtrusion ¿{}{100}{0}%
-  \BibleProtrusion \{{}{400}{200}%
-  \BibleProtrusion \}{}{200}{400}%
-  \BibleProtrusion <{}{200}{100}%
-  \BibleProtrusion >{}{100}{200}%
-}
-% PTXprint creates fonts lazily. Initialize each face/size/features combination
-% once after selection; font protrusion codes persist outside the local group.
-% Save only PTXprint's own macro: were this file read twice, saving the wrapper
-% would make it call itself.
-\ifx\BibleSetFont\undefined\global\let\BibleSetFont\s@tfont\fi
-\gdef\s@tfont#1#2{%
-  \BibleSetFont{#1}{#2}%
-  \ifcsname BibleProtrusion:\fontname\font\endcsname\else
-    \begingroup
-    \BibleProtrusionTable
-    \endgroup
-    \expandafter\gdef\csname BibleProtrusion:\fontname\font\endcsname{}%
+    % Separate paragraphs keep front-matter/heading notes readable;
+    % PTXprint's normal insertions reserve space and can split long notes.
+    \global\p@ranotesfalse
+    \expandafter\insert\csname note-#1\endcsname
   \fi
 }
+\gdef\BibleEndNote#1{%
+  \ifBibleMarginNote
+    % Reuse PTXprint's globally incremented note ID: its marginal occurrence
+    % counter is local and can repeat IDs for notes on the same verse.
+    % n@te@nd increments this seed once; the resulting suffix stays unique.
+    \expandafter\global\expandafter\let\csname nm-cref-#1\endcsname\c@rref
+    \expandafter\global\csname nm-count-#1\endcsname=\n@teid\relax
+    \n@te@nd{#1}%
+  \fi
+}
+\expandafter\gdef\csname note-no-insert-f\endcsname{\BibleStartNote{f}}
+\expandafter\gdef\csname note-no-insert-x\endcsname{\BibleStartNote{x}}
+\expandafter\gdef\csname endnote-no-insert-f\endcsname{\BibleEndNote{f}}
+\expandafter\gdef\csname endnote-no-insert-x\endcsname{\BibleEndNote{x}}
 \endgroup
 
-% Susanna and Bel and the Dragon have a zero-width-space \cp in place of a chapter
-% number. Give that invisible number no drop-cap cutout.
+% Introduction notes use the native ef class in the generated USFM. Leaving
+% that class out of marginaln@te keeps them below without a placement lookup.
+% Including ef enables study-note formatting in the template; use its native
+% switch to retain ordinary full-width bottom notes for these introductions.
+% NotStudyNotes assigns locally, so call it outside the temporary group above.
+\NotStudyNotes{ef}
+
+% BSB numbers ordinary/no-verse pages in the center header and opening
+% pages in the center footer. Put every visible folio at the outer bottom
+% corner for a consistent locator on facing pages, clearing the old slots
+% to avoid duplicates. Keep \pagenumber itself, so \nopagenums and
+% \dopagenums govern
+% suppression. PTXprint continues to choose page types and omit blank pages.
+\def\RFoddright{\pagenumber}
+\def\RFevenleft{\pagenumber}
+\def\RFnoVoddright{\pagenumber}
+\def\RFnoVevenleft{\pagenumber}
+\let\RFtitleoddcenter\empty
+\let\RFtitleevencenter\empty
+\def\RFtitleoddright{\pagenumber}
+\def\RFtitleevenleft{\pagenumber}
+
+% Load the shared optical-margin adapter used by the font regression test.
+\input ../../../shared/ptxprint/Bible/protrusion.tex
+
+% Susanna and Bel and the Dragon have a zero-width-space \cp in place
+% of a chapter
+% number. Remove its drop-cap cutout so the opening text does not indent
+% around a chapter figure that readers cannot see.
 \begingroup
 \catcode`\@=11
 \xdef\BibleHiddenChapterText{\Uchar"200B}

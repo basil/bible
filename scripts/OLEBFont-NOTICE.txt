@@ -1,0 +1,23 @@
+OLEBFont: Utopia with Erewhon additions for the Orthodox Liturgical English Bible.
+
+Utopia outlines, spacing, hinting and original OpenType typography are retained.
+Erewhon supplies missing characters, alternate figures and small capitals.
+The sole replacement of existing Utopia glyphs is superscript 1, 2 and 3,
+which use Erewhon designs for consistency. No outlines are optically redesigned. Erewhon Italic’s tabular oldstyle zero
+advance is corrected from 498 to 500 units to match the other nine figures. The four faces are assembled
+by scripts/build_olebfont.py from the inputs pinned in Dockerfile.
+
+Copyright (c) 1989, 1991 Adobe Systems Incorporated. All Rights Reserved.
+Utopia is a registered trademark of Adobe Systems Incorporated.
+See Adobe-Utopia-COPYING.txt and Adobe-TUG-Utopia-LICENSE.txt for Adobe's
+original grant and the subsequent Adobe/TUG grant permitting modifications
+and redistribution under a new font name.
+
+Erewhon contributions are licensed under the SIL Open Font License 1.1.
+See OFL.txt for the full license, copyright notices and Reserved Font Names
+Heuristica and Erewhon. OLEBFont is distributed under the SIL OFL 1.1 with
+the Adobe notices retained. This font license does not govern the Bible text.
+
+Donor provenance: Erewhon by Michael J. Sharpe, based on Heuristica by
+Andrey V. Panov and Utopia by Adobe; Vntopia by Han The Thanh; Greek additions
+by GUTenberg. The original notices remain embedded in each generated face.

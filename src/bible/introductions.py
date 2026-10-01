@@ -266,11 +266,13 @@ def book_notes(source_text):
     the notes review shows it, and its source paragraphs without glosses or name
     changes, by id."""
     bodies = source_paragraphs(source_text)
+    # Generate the native extended-footnote class directly: introductions
+    # stay below the text while ordinary f/x notes occupy the inner margin.
     return {
         place: (
-            "\\f - \\ft "
+            "\\ef - \\ft "
             + " ".join(note_body(body) for _, _, body in paragraphs)
-            + "\\f*",
+            + "\\ef*",
             [key for _, key, _ in paragraphs],
             " ".join(underscored(body) for _, _, body in paragraphs),
             " ".join(plain_text(bodies[index]) for index, _, _ in paragraphs),

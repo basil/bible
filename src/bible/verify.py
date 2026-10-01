@@ -2,6 +2,7 @@
 unit's text, then the rendered PDF (page size, fonts, contents, the way it
 cites, and the phrases in edition/witnesses.json)."""
 
+import io
 import re
 import subprocess
 import unicodedata
@@ -10,7 +11,13 @@ import xml.etree.ElementTree as ET
 from bible import paths
 from bible.checks import CheckFailed, require
 from bible.files import read_json, sha256, write_json
-from bible.project import PROCESSED_DIR, processed_usfm, project_usfm
+from bible.project import (
+    PROCESSED_DIR,
+    processed_usfm,
+    project_settings,
+    project_usfm,
+    text_font,
+)
 from bible.toolchain import capture, run
 from bible.usfm import (
     HEADING_MARKERS,
@@ -18,6 +25,17 @@ from bible.usfm import (
     canonical_text,
     inventory,
     marker_lines,
+)
+
+POINTS_PER_MM = 72 / 25.4
+# TeX points (72.27 to the inch) in a PDF point.
+TEX_POINTS = 72.27 / 72
+XHTML = "{http://www.w3.org/1999/xhtml}"
+# PTXprint's record of where the final run set a margin note: its reference,
+# height, depth, page, and top (in scaled points from the foot of the page).
+MARGIN_NOTE = re.compile(
+    r"\\@marginnote\{([^}]*)\}(?:\{[^}]*\}){5}\{([\d.]+)pt\}\{([\d.]+)pt\}"
+    r"(?:\{[^}]*\}){2}\{(\d+)\}\{\d+\}\{(\d+)\}"
 )
 
 
@@ -69,7 +87,7 @@ def check_processed(project, base, ids):
     write_json(base / "processed-integrity.json", records)
 
 
-def check_boundaries(base, project, ids, text, pages, reading_text, sample):
+def check_boundaries(base, project, ids, pages, reading_text, sample):
     tocfiles = list(base.rglob("*_ptxp.toc"))
     require(len(tocfiles) == 1, "Missing/ambiguous contents file")
 
@@ -95,7 +113,7 @@ def check_boundaries(base, project, ids, text, pages, reading_text, sample):
         toc == readtoc(tocfiles[0].with_name(tocfiles[0].stem + "_org.toc")),
         "PTXprint's regenerated contents differ from the final TeX run",
     )
-    page_text = text.split("\f")
+    page_text = reading_text.split("\f")
 
     def key(s):
         return "".join(
@@ -146,15 +164,6 @@ def check_boundaries(base, project, ids, text, pages, reading_text, sample):
             for b, t, p in toc
         ],
     )
-    reading_pages = reading_text.split("\f")
-    reading_pages_without_headers = []
-    for page_number, page in enumerate(reading_pages, 1):
-        lines = page.splitlines(keepends=True)
-        # A running head carries the page number as one of its words: the
-        # printed number, which the front matter puts behind the physical one.
-        if lines and str(page_number - page_offset) in lines[0].split():
-            lines = lines[1:]
-        reading_pages_without_headers.append("".join(lines))
     by_code = {b: (i, int(p) + page_offset) for i, (b, t, p) in enumerate(toc)}
     for witness in read_json(paths.EDITION_DIR / "witnesses.json"):
         code = witness["id"]
@@ -169,13 +178,8 @@ def check_boundaries(base, project, ids, text, pages, reading_text, sample):
         end = (
             int(toc[index + 1][2]) + page_offset - 1 if index + 1 < len(toc) else pages
         )
-        rendered = key("".join(reading_pages[start - 1 : end]))
-        rendered_without_headers = key(
-            "".join(reading_pages_without_headers[start - 1 : end])
-        )
         require(
-            key(witness["phrase"]) in rendered
-            or key(witness["phrase"]) in rendered_without_headers,
+            key(witness["phrase"]) in key("".join(page_text[start - 1 : end])),
             f"Special-content witness absent from rendered {code}: {witness['phrase']}",
         )
 
@@ -200,6 +204,55 @@ def check_citations(reading_text):
     """
     found = sorted({match[0] for match in FOREIGN_CITATION.finditer(reading_text)})
     require(not found, f"Citation not written as the edition cites: {found[:12]}")
+
+
+def stream_text(pdf, top, bottom):
+    """Each page's text block, word by word in stream order; form feeds part
+    the pages. pdftotext's own stream text drops the spaces of a tight line."""
+    pages = []
+    # A whole Bible is a million words: drop each page's once they are read.
+    for _, page in ET.iterparse(
+        io.StringIO(capture("pdftotext", "-raw", "-bbox", pdf, "-"))
+    ):
+        if page.tag != XHTML + "page":
+            continue
+        pages.append(
+            " ".join(
+                word.text
+                for word in page.iter(XHTML + "word")
+                # The running head and the folio stand in the margins.
+                if top <= float(word.get("yMin")) <= float(page.get("height")) - bottom
+            )
+        )
+        page.clear()
+    return "\f".join(pages)
+
+
+def check_margin_notes(base, top, bottom):
+    """Every margin note is in the text block, below the note before it:
+    PTXprint has nowhere else to put the notes of an overfull margin. top and
+    bottom are the block's edges, in TeX points from the foot of the page."""
+    files = list(base.rglob("*_ptxp.marginnotes"))
+    require(len(files) == 1, "Missing/ambiguous margin note positions")
+    records = files[0].read_text(encoding="utf-8")
+    notes = MARGIN_NOTE.findall(records)
+    # A record in a form this can't read would otherwise go unchecked.
+    require(
+        len(notes) == records.count("\\@marginnote"),
+        "Could not read every margin note position",
+    )
+    last_page, ceiling = None, top
+    for ref, height, depth, page, y in notes:
+        if page != last_page:
+            last_page, ceiling = page, top
+        note_top = int(y) / 65536
+        note_bottom = note_top - float(height) - float(depth)
+        # A twentieth of a point allows for rounding.
+        require(
+            note_top <= ceiling + 0.05 and note_bottom >= bottom - 0.05,
+            f"Margin note does not fit: page {page} {ref}",
+        )
+        ceiling = note_bottom
 
 
 def check_added_words_roman(pdf, reading_text, project, ids, sample):
@@ -271,13 +324,27 @@ def inspect_pdf(pdf, base, project, ids, sample):
         ),
         "Unembedded PDF font",
     )
+    settings = project_settings(project)
+    family = text_font(settings)
+    text_fonts = (family, "GFSDidot", "Ezra")
     require(
-        all(f in fonts for f in ("Utopia", "Erewhon", "GFSDidot", "Ezra")),
-        "Expected text/verse-number/quotation fonts missing",
+        all(f in fonts for f in text_fonts),
+        "Expected text/quotation fonts missing",
+    )
+    # Every embedded face must belong to an edition font; merely finding
+    # the text family in verse labels would not catch substitution in the body text.
+    allowed_fonts = (*text_fonts, "SourceCodePro")
+    require(
+        all(any(f in row.split()[0] for f in allowed_fonts) for row in rows),
+        "Unexpected font family in PDF; inspect font selections",
     )
     text = capture("pdftotext", "-layout", pdf, "-")
     (base / "text.txt").write_text(text, encoding="utf-8")
     require(not re.search(r"['\"`]", text), "Straight quote in the rendered PDF text")
+    require(
+        not re.search(r"[\ue000-\uf8ff]", text),
+        "Private-use glyph code in extracted PDF text",
+    )
     publication = " ".join(text.split("\f")[1].split())
     require(
         "Copyright © 2026 Basil Crow" in publication
@@ -286,13 +353,16 @@ def inspect_pdf(pdf, base, project, ids, sample):
         and "https://creativecommons.org/licenses/by-nc-nd/4.0/" in publication,
         "Publication data page omitted the edition license notice",
     )
-    # PTXprint emits columns in reading order. Protruding edge glyphs can make
-    # pdftotext's geometric heuristics merge adjacent columns, so use stream
-    # order for wording witnesses; keep the layout extraction above for pages.
-    reading_text = capture("pdftotext", "-raw", pdf, "-")
+    height = float(sizes[0][1])
+    top, bottom = (
+        settings.getfloat("paper", key) * POINTS_PER_MM
+        for key in ("topmargin", "bottommargin")
+    )
+    reading_text = stream_text(pdf, top, bottom)
     (base / "reading.txt").write_text(reading_text, encoding="utf-8")
     check_added_words_roman(pdf, reading_text, project, ids, sample)
     check_citations(reading_text)
+    check_margin_notes(base, (height - top) * TEX_POINTS, bottom * TEX_POINTS)
     require(
         "Berean Standard Bible" not in text,
         "Inherited BSB publication text remains",
@@ -307,7 +377,7 @@ def inspect_pdf(pdf, base, project, ids, sample):
         ),
         "Missing glyph or TeX error; inspect logs",
     )
-    check_boundaries(base, project, ids, text, pages, reading_text, sample)
+    check_boundaries(base, project, ids, pages, reading_text, sample)
     return {
         "pages": pages,
         "text_sha256": sha256(text.encode()),

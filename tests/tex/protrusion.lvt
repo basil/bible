@@ -1,10 +1,10 @@
-% Compare the plain-XeTeX adapter in config/ptxprint-mods.tex with the
+% Compare the plain-XeTeX adapter in config/protrusion.tex with the
 % installed stock microtype package, for every present glyph in the edition's
 % font families, faces, and representative sizes. Run through `make test-tex`.
 \documentclass{article}
 \input{regression-test}
 \usepackage{fontspec}
-\setmainfont{Utopia}
+\setmainfont{OLEBFont}
 \newfontfamily\didot{GFS Didot}
 \newfontfamily\ezra{Ezra SIL}
 \usepackage{microtype}
@@ -12,9 +12,8 @@
 % The PTXprint stub selects a supplied native font handle. Avoid LaTeX's
 % selection hooks here so microtype cannot repopulate the codes under test.
 \def\s@tfont#1#2{#1\relax}
-\def\uselanguage#1{}
-\input{ptxprint-mods.tex}
-\font\OtherFont="Utopia Italic" at 11pt
+\input{protrusion.tex}
+\font\OtherFont="OLEBFont Italic" at 11pt
 \newcount\glyph
 \newcount\mismatches
 % #1 labels the font in the log; #2 selects it.
@@ -64,6 +63,70 @@
     \advance\glyph by1
   \repeat
 }
+% Production loads OLEBFont with proportional oldstyle figures, which are not
+% the glyphs its character map names, and the stock table knows nothing of
+% them. Set a figure at each end of a line and see whether it hangs.
+\font\PlainFont="OLEBFont" at 11pt
+\font\OldstyleFont="OLEBFont:+onum;+pnum" at 11pt
+\newcount\coded
+% #1 selects a font; count the glyphs the adapter gives a code.
+\def\CountCoded#1{%
+  \begingroup
+  \s@tfont{#1}{}%
+  \global\coded=0
+  \glyph=1
+  \loop\ifnum\glyph<\XeTeXcountglyphs\font
+    \ifnum\lpcode\font\glyph=0
+      \ifnum\rpcode\font\glyph=0 \else\global\advance\coded by1 \fi
+    \else
+      \global\advance\coded by1
+    \fi
+    \advance\glyph by1
+  \repeat
+  \endgroup
+}
+% #1 is a line's text; #2 is the macro that receives the finding. The line
+% is a tenth of a point too wide for its measure unless a figure hangs off
+% an end. Unpacking the line would discard its margin kerns, so read whether
+% it was overfull.
+\def\LineEnd#1#2{\LineEndBy{#1}{0.1pt}#2}
+% The same, for a line too wide by #2.
+\def\LineEndBy#1#2#3{%
+  \setbox4=\hbox{#1}%
+  \setbox0=\vbox{\hsize=\dimexpr\wd4-#2\relax
+    \parfillskip=0pt \leftskip=0pt \rightskip=0pt
+    \hfuzz=\maxdimen \hbadness=10000
+    \noindent#1\par
+    \xdef\LineBadness{\the\badness}}%
+  \ifnum\LineBadness<1000000 \def#3{hangs}\else\def#3{is flush}\fi
+}
+% #1 labels the font in the log; #2 selects it; #3 is a figure that the table
+% hangs by a twentieth of its width. See that it hangs by that much of the
+% width it is set at, and no more: a lining figure is wider than an oldstyle
+% one. The codes are whole thousandths of an em, so allow 0.02pt either way.
+\newdimen\FigureHang
+\def\CheckHang#1#2#3{%
+  \begingroup
+  \s@tfont{#2}{}%
+  \XeTeXprotrudechars=2
+  \setbox4=\hbox{#3}%
+  \FigureHang=0.05\wd4
+  \LineEndBy{2#3}{\dimexpr\FigureHang-0.02pt\relax}\Within
+  \LineEndBy{2#3}{\dimexpr\FigureHang+0.02pt\relax}\Beyond
+  \TYPE{#1 #3: \Within\space by its width's share, \Beyond\space by more}%
+  \endgroup
+}
+% #1 labels the font in the log; #2 selects it; #3 is the figure. The other
+% end of each line has a figure that the table gives no code.
+\def\CheckFigure#1#2#3{%
+  \begingroup
+  \s@tfont{#2}{}%
+  \XeTeXprotrudechars=2
+  \LineEnd{#32}\Left
+  \LineEnd{2#3}\Right
+  \TYPE{#1 #3: \Left\space at the left, \Right\space at the right}%
+  \endgroup
+}
 \makeatother
 \begin{document}
 % Load every face and size before the logged region so that only the
@@ -73,12 +136,26 @@
   {\fontsize{9.5}{12}\selectfont}{\fontsize{48}{50}\selectfont}%
   {\didot}{\ezra}}
 \START
-\CheckFont{Utopia regular}{\normalfont}
-\CheckFont{Utopia italic}{\itshape}
-\CheckFont{Utopia bold}{\bfseries}
-\CheckFont{Utopia bold italic}{\bfseries\itshape}
-\CheckFont{Utopia 9.5pt}{\fontsize{9.5}{12}\selectfont}
-\CheckFont{Utopia 48pt}{\fontsize{48}{50}\selectfont}
+\CheckFont{OLEBFont regular}{\normalfont}
+\CheckFont{OLEBFont italic}{\itshape}
+\CheckFont{OLEBFont bold}{\bfseries}
+\CheckFont{OLEBFont bold italic}{\bfseries\itshape}
+\CheckFont{OLEBFont 9.5pt}{\fontsize{9.5}{12}\selectfont}
+\CheckFont{OLEBFont 48pt}{\fontsize{48}{50}\selectfont}
 \CheckFont{GFS Didot}{\didot}
 \CheckFont{Ezra SIL}{\ezra}
+\CheckFigure{Lining}{\PlainFont}{1}
+\CheckFigure{Oldstyle}{\OldstyleFont}{1}
+\CheckFigure{Oldstyle}{\OldstyleFont}{4}
+\CheckFigure{Oldstyle}{\OldstyleFont}{7}
+\CheckFigure{Oldstyle}{\OldstyleFont}{3}
+\CheckHang{Lining}{\PlainFont}{1}
+\CheckHang{Oldstyle}{\OldstyleFont}{1}
+\CheckHang{Oldstyle}{\OldstyleFont}{4}
+\CheckHang{Oldstyle}{\OldstyleFont}{7}
+% The three figures are the only glyphs coded beyond the character map's.
+\CountCoded{\PlainFont}
+\TYPE{OLEBFont lining: \the\coded\space glyphs coded}
+\CountCoded{\OldstyleFont}
+\TYPE{OLEBFont oldstyle: \the\coded\space glyphs coded}
 \END

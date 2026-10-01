@@ -24,9 +24,22 @@ def font_archives():
     """The font archives the image was built from, relative to /opt as they are
     to the checkout. The image build checks their hashes; outside it there are none."""
     return tuple(
-        str(p.relative_to(paths.OPT))
-        for p in sorted((paths.OPT / "sources").glob("*.zip"))
+        str(p.relative_to(paths.OPT)) for p in sorted(paths.FONT_ARCHIVES.glob("*.zip"))
     )
+
+
+def font_build_inputs():
+    """Assembly and notices are image inputs, checked alongside font pins."""
+    return tuple(
+        str(p.relative_to(paths.OPT))
+        for p in sorted(paths.FONT_SCRIPTS.glob("*"))
+        if p.suffix in {".py", ".txt"}
+    )
+
+
+def image_inputs():
+    """Every checkout file whose copy in the image must match it."""
+    return ("Dockerfile", "requirements.txt", *font_build_inputs(), *font_archives())
 
 
 def check_image(root=paths.ROOT):
@@ -35,7 +48,7 @@ def check_image(root=paths.ROOT):
     )
     # The image keeps the pins it was built from; a stale image would typeset
     # with other tools or fonts than the ones pinned here.
-    for name in ("Dockerfile", "requirements.txt", *font_archives()):
+    for name in image_inputs():
         require(
             (paths.OPT / name).read_bytes() == (root / name).read_bytes(),
             f"The image was built from another {name}; run make bootstrap",
@@ -63,7 +76,7 @@ def installed_fonts():
     fonts = {}
     for folder in (
         paths.UPSTREAM / "fonts",
-        *sorted(p for p in Path("/usr/local/share/fonts").iterdir() if p.is_dir()),
+        *sorted(p for p in paths.FONTS.iterdir() if p.is_dir()),
         Path("/usr/share/fonts/truetype/ezra"),
     ):
         files = sorted(p for p in folder.iterdir() if p.suffix in {".otf", ".ttf"})

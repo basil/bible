@@ -7,7 +7,7 @@ from bible import edition, paths, sources, toolchain
 from bible.files import file_sha256, write_json
 
 # The checkout's folders and files that the provenance record hashes.
-TRACKED_FOLDERS = ("config", "content", "edition", "src")
+TRACKED_FOLDERS = ("config", "content", "edition", "src", "scripts")
 TRACKED_FILES = (
     "Dockerfile",
     "compose.yaml",

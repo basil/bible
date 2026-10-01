@@ -15,3 +15,8 @@ OUTPUTS = {"sample": "sample.pdf", "pdf": "bible.pdf"}
 # The container image's pinned tools, and the PTXprint checkout among them.
 OPT = Path("/opt")
 UPSTREAM = OPT / "ptxprint"
+# What the image builds its fonts from, and where it installs them.
+FONT_ARCHIVES = OPT / "sources"
+FONT_SCRIPTS = OPT / "scripts"
+UTOPIA = OPT / "utopia"
+FONTS = Path("/usr/local/share/fonts")

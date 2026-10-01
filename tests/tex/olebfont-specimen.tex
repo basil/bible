@@ -1,0 +1,49 @@
+% Manual visual specimen: native font features at the production nominal sizes.
+% Render after make bootstrap with make font-specimen.
+% Fail this specimen if a future font input loses a demonstrated glyph.
+\tracinglostchars=3
+\documentclass[10pt]{article}
+\usepackage[a5paper,inner=36mm,outer=12mm,top=12mm,bottom=18mm,includehead,includefoot]{geometry}
+\usepackage{fontspec}
+\usepackage{fancyhdr}
+% Native PDF semantics preserve the input text behind alternate glyphs.
+\XeTeXgenerateactualtext=1
+\setmainfont{OLEBFont}[Numbers={OldStyle,Proportional}]
+\newfontfamily\superiors{OLEBFont}[RawFeature={+onum,+pnum,+sups}]
+\newfontfamily\furniture{OLEBFont}[RawFeature={+onum,+pnum,+smcp,+c2sc}]
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[R]{{\furniture Genesis 12:34}}
+\fancyfoot[R]{{\furniture\thepage}}
+\renewcommand\headrulewidth{0pt}
+\setlength\parindent{0pt}
+\begin{document}
+{\Large OLEBFont specimen}\par\medskip
+Ordinary figures: 0123456789\par
+\textit{Italic figures: 0123456789}\par
+\textbf{Bold figures: 0123456789}\par
+\textbf{\textit{Bold italic figures: 0123456789}}\par\medskip
+% These form conversions use the same designed donor figures in every face.
+Superscripts: {\superiors 0123456789}\par
+\textit{Italic: {\superiors\itshape 0123456789}}\par
+\textbf{Bold: {\superiors\bfseries 0123456789}}\par
+\textbf{\textit{Bold italic: {\superiors\bfseries\itshape 0123456789}}}\par
+Unicode superscripts: ¹²³\par\medskip
+{\furniture Small capitals: Genesis ABC abc 0123456789}\par\medskip
+{\fontsize{24}{26}\selectfont 12}\quad
+{\superiors 1} In the beginning. Ordinary text: 123, 456 and 789.\par
+{\superiors 2} Chapter and verse figures keep their respective native features.\par\medskip
+% Match the production note-origin size and fixed, unbreakable 1 pt gap.
+{\fontsize{8.3333}{10}\selectfont
+ {\superiors\fontsize{10}{12.5}\selectfont 123}\kern1pt\nobreak
+ Note origin followed by note text, with ordinary figures 4567890.}\par\medskip
+{\bfseries FRONT MATTER 2026}\par
+Edition figures and publication year: 2026.\par\medskip
+{\bfseries CONTENTS}\par
+Genesis\dotfill 12\par
+Exodus\dotfill 345\par\medskip
+Added characters: Ā Ą Đ Ł Œ ẞ ǽ ễ ự.\par
+\textit{Added italic: Ā Ą Đ Ł Œ ẞ ǽ ễ ự.}\par
+\textbf{Added bold: Ā Ą Đ Ł Œ ẞ ǽ ễ ự.}\par
+\textbf{\textit{Added bold italic: Ā Ą Đ Ł Œ ẞ ǽ ễ ự.}}\par
+\end{document}

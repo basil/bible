@@ -7,7 +7,7 @@ UIDGID := $(shell id -u):$(shell id -g)
 COMPOSE := docker compose -f compose.yaml
 TOOLCHAIN := $(COMPOSE) run --rm -T --interactive=false --user $(UIDGID) toolchain
 PIPELINE := $(TOOLCHAIN) python3 -m bible
-.PHONY: bootstrap validate notes-review alexandrinus-review seed-versification test test-python test-tex test-tex-save sample pdf clean
+.PHONY: bootstrap validate notes-review alexandrinus-review seed-versification test test-python test-tex test-tex-save font-specimen sample pdf clean
 bootstrap:
 	$(COMPOSE) build --pull
 validate:
@@ -25,6 +25,9 @@ test-tex:
 	$(TOOLCHAIN) l3build check
 test-tex-save:
 	$(TOOLCHAIN) l3build save protrusion
+# A visual proof of all four faces and native numeral/small-cap features.
+font-specimen:
+	$(TOOLCHAIN) sh -c 'mkdir -p build/font-specimen dist && xelatex -interaction=nonstopmode -halt-on-error -output-directory=build/font-specimen tests/tex/olebfont-specimen.tex && cp build/font-specimen/olebfont-specimen.pdf dist/'
 sample:
 	$(PIPELINE) sample
 pdf:

@@ -86,13 +86,15 @@ ERA = re.compile(
 # its paragraph, or before a capital in the same run of text, after any
 # closing quotation mark or bracket. A capital after a marker opens a
 # rendering, a name as often as not ("Authorized Version \fqa Mattaniah").
-SENTENCE_END = re.compile(r"(?:\\\+?\w+\*|['’”)])*(?:\\[fx]\*|\s+[A-Z]|[ \t]*(?:\n|$))")
+SENTENCE_END = re.compile(
+    r"(?:\\\+?\w+\*|['’”)])*(?:\\(?:ef|[fx])\*|\s+[A-Z]|[ \t]*(?:\n|$))"
+)
 # What must not be left once the forms are Chicago's: the forms the rules above
 # replace, and those the file prints in full, which are never words.
 UNCHICAGO = re.compile(
     r"\bi\. e\.|\bi\.e\.(?:\\it\*)? |\bq\. d\.|\b[Ss]cil\.|\bSept\b"
     # "Comp." at a note's end has lost its period, and compares nothing.
-    r"|\b[Cc]omp(?:\.|\\f\*)"
+    r"|\b[Cc]omp(?:\.|\\(?:ef|f)\*)"
     # "AD" before its year, never after it: "AD 126".
     r"|\d AD\b"
     r"|\bS(?:\. \\\+?it|\\\+?it\*\.) [A-Z]|&c\b|\b[ab]\.[dc]\."
@@ -100,7 +102,7 @@ UNCHICAGO = re.compile(
     r"|(?<![\w.])(?:[ON]\. ?T|A\. V|Ald|Complut|Vulg)(?!\w)|\bAV\b"
     # At a note's end, the period is already gone: "and so Chrysost\f*".
     r"|\b(?:App|Chrysost|Gram|Qu|Rom|om|nom|voc|absol|infin|imper|pl|qy|viz|niph"
-    r"|fem|ob)(?:\.|\\f\*)|\bCateches\b|\bult\b|\b4to\b|\bEng\. Ver\b"
+    r"|fem|ob)(?:\.|\\(?:ef|f)\*)|\bCateches\b|\bult\b|\b4to\b|\bEng\. Ver\b"
     r"|\d\.(?:li|[sd])\b"
 )
 # A number with a period within a note's sentence, which the file must decide:

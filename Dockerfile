@@ -7,6 +7,7 @@ RUN apt-get update \
         fonts-sil-ezra \
         gir1.2-gtk-3.0 \
         git \
+        libharfbuzz-bin \
         poppler-utils \
         python3 \
         python3-cairo \
@@ -46,9 +47,8 @@ SUMS
 fonts=/usr/local/share/fonts
 unzip -qj GFS_Didot.zip 'GFSDidot*.otf' -d $fonts/gfs_didot
 unzip -qj OTF-source-code-pro-2.042R-u_1.062R-i.zip 'OTF/*.otf' -d $fonts/source_code_pro
-unzip -qj erewhon.zip 'erewhon/opentype/*.otf' -d $fonts/erewhon
 # unzip keeps each archive's permissions, ignoring the umask: GFS Didot's
-# are owner-only and Erewhon's group-writable.
+# are owner-only.
 chmod 644 $fonts/*/*.otf
 EOF
 COPY requirements.txt /opt/requirements.txt
@@ -84,14 +84,36 @@ fetch() {
 fetch utopia "$UTOPIA_URL" "$UTOPIA_COMMIT"
 fetch usfmtc "$USFMTC_URL" "$USFMTC_COMMIT"
 fetch ptxprint "$PTXPRINT_URL" "$PTXPRINT_COMMIT"
+# Two fixes to how PTXprint moves the notes of a crowded margin apart. It
+# orders notes by their tops and then puts the shorter first, so notes on one
+# line of text can print out of the text's order: keep its stable sort to the
+# tops alone. And when it lifts a block of notes, it checks the note above the
+# block against the top of the page, or none, and can lift the block off the
+# page. Each grep fails the build if an upgrade has rewritten the line.
+notes=/opt/ptxprint/python/lib/ptxprint/marginnotes.py
+grep -qF 't.sort(key=lambda n:(-n.ymax, -n.ymin))' $notes
+grep -qx '                            start = k' $notes
+sed -i -e 's/t\.sort(key=lambda n:(-n\.ymax, -n\.ymin))/t.sort(key=lambda n: -n.ymax)/' \
+    -e 's/^\( *start = k\)$/\1 + 1/' $notes
 cd /opt/utopia
 ./build.sh
-mkdir /usr/local/share/fonts/utopia
-cp dist/*.otf /usr/local/share/fonts/utopia/
 # The venv already holds requirements.txt. PTXprint's metadata names usfmtc's
 # moving main branch, not the pinned commit, so neither brings dependencies.
 /opt/venv/bin/pip install --no-cache-dir --no-deps --no-build-isolation \
     /opt/usfmtc /opt/ptxprint
+EOF
+# Font assembly changes should not refetch upstream projects or Python wheels.
+COPY scripts/ /opt/scripts/
+RUN /opt/venv/bin/python /opt/scripts/patch_margin_convergence.py \
+    /opt/ptxprint/python/lib/ptxprint \
+    && /opt/venv/bin/python -c 'import ptxprint; from pathlib import Path; import sys; sys.path.insert(0, "/opt/scripts"); from patch_margin_convergence import patch; patch(Path(ptxprint.__file__).parent)'
+RUN <<EOF
+set -eu
+# Assemble the sole Latin text family with separate source hint dictionaries.
+/opt/venv/bin/python /opt/scripts/build_olebfont.py \
+    --utopia /opt/utopia --erewhon /opt/sources/erewhon.zip \
+    --output /usr/local/share/fonts/olebfont
+chmod 644 /usr/local/share/fonts/olebfont/*
 fc-cache -f
 fc-list
 EOF

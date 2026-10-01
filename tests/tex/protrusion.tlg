@@ -1,10 +1,21 @@
 This is a generated file for the l3build validation system.
 Don't change this file in any respect.
-Utopia regular: 0 mismatches
-Utopia italic: 0 mismatches
-Utopia bold: 0 mismatches
-Utopia bold italic: 0 mismatches
-Utopia 9.5pt: 0 mismatches
-Utopia 48pt: 0 mismatches
+OLEBFont regular: 0 mismatches
+OLEBFont italic: 0 mismatches
+OLEBFont bold: 0 mismatches
+OLEBFont bold italic: 0 mismatches
+OLEBFont 9.5pt: 0 mismatches
+OLEBFont 48pt: 0 mismatches
 GFS Didot: 0 mismatches
 Ezra SIL: 0 mismatches
+Lining 1: hangs at the left, hangs at the right
+Oldstyle 1: hangs at the left, hangs at the right
+Oldstyle 4: hangs at the left, hangs at the right
+Oldstyle 7: hangs at the left, hangs at the right
+Oldstyle 3: is flush at the left, is flush at the right
+Lining 1: hangs by its width's share, is flush by more
+Oldstyle 1: hangs by its width's share, is flush by more
+Oldstyle 4: hangs by its width's share, is flush by more
+Oldstyle 7: hangs by its width's share, is flush by more
+OLEBFont lining: 74 glyphs coded
+OLEBFont oldstyle: 77 glyphs coded

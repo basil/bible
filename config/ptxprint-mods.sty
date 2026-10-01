@@ -1,19 +1,25 @@
+% Inherit the font family and numeral features from layout.ini throughout.
+% Set running furniture in small caps. smcp converts lowercase and c2sc
+% converts capitals, keeping book names entirely in small caps.
+% PTXprint's zfooter+h style stack makes
+% footers inherit this header style without a duplicate override.
+\Marker h
+\ztexFontFeatures +[smcp] +[c2sc]
+
 % Set Greek quotations in GFS Didot; ptx2pdf's Galatia SIL is not installed.
 \Marker wg
 \FontName GFS Didot
 
-% Use Erewhon's designed superscript figures for verse numbers. The figures
+% Use OLEBFont's Erewhon-derived designed superscript figures for verse numbers. The figures
 % are already small and raised, so turn off the stylesheet's scaling, and the
 % raise that \Superscript - leaves behind from usfm_sb.sty's \Superscript.
 \Marker v
-\FontName erewhon
 \ztexFontFeatures +[sups]
 \Superscript -
 \Raise 0pt
 
 % Match publishing alternate verse numbers to the main verse-number style.
 \Marker vp
-\FontName erewhon
 \ztexFontFeatures +[sups]
 \Superscript -
 \Raise 0pt
@@ -28,3 +34,42 @@
 % only another rendering of them (fqa) is italic. usfm_sb.sty sets fq italic.
 \Marker fq
 \Italic -
+
+% Match note origin numbers to the body verse figures: OLEBFont's Erewhon-derived designed
+% superscripts at the same nominal 10 pt (12 stylesheet units). FontSize
+% clears the inherited note-relative FontScale; disable extra scaling and
+% raising so the glyphs keep their designed size and position. Keep them roman.
+\Marker fr
+\FontSize 12
+\ztexFontFeatures +[sups]
+\Superscript -
+\Raise 0pt
+\Bold -
+
+% Cross-reference origin numbers should match footnote origin numbers.
+\Marker xo
+\FontSize 12
+\ztexFontFeatures +[sups]
+\Superscript -
+\Raise 0pt
+\Bold -
+
+% Narrow marginal notes need a ragged right edge to avoid stretched words.
+% Keep PTXprint's existing note size and leading. Zero SpaceBeside removes
+% its implicit extra 1 pt, leaving the 3 mm gap specified in mods.tex.
+\Marker f
+\Justification Left
+\SpaceBeside 0
+
+% Match cross references to the footnotes sharing the inner-margin column.
+\Marker x
+\Justification Left
+\SpaceBeside 0
+
+% Book and section introductions use the native extended-footnote class,
+% which stays below the text. Match the ordinary footnote size and leading
+% from ptx2pdf.sty; ef otherwise inherits the larger USFM default size.
+\Marker ef
+\FontSize 10
+\LineSpacing 0.833
+\Justification Left

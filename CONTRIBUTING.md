@@ -126,25 +126,38 @@ CI runs `make bootstrap`, `validate`, `test`, and `pdf` on pull requests and on 
 
 - `config/layout.ini` overrides PTXprint's BSB layout settings.
 - `config/ptxprint-mods.sty` overrides paragraph and character styles.
-- `config/ptxprint-mods.tex` holds TeX-level changes: hyphenation and protrusion.
+- `config/ptxprint-mods.tex` holds TeX-level changes: hyphenation, note placement, folios, and the loader for `config/protrusion.tex`.
 
-The tests require every setting in `layout.ini` and `ptxprint-mods.sty` to differ from the value it overrides, and a checkbox PTXprint stores under several keys to be set under all of them.
+The tests require every setting in `layout.ini` and `ptxprint-mods.sty` to change the value it overrides (an explicit `FontSize` also clears inherited `FontScale`), and a checkbox PTXprint stores under several keys to be set under all of them.
 
 Don't edit anything in `build/`; it's regenerated on every run.
 
-PTXprint uses plain XeTeX, so the microtype package isn't available. Instead, `config/ptxprint-mods.tex` carries a copy of microtype's default protrusion table, which lets punctuation and a few letters hang slightly into the margin so the column edges look straight. Protrusion affects line breaking, so changing it can change pagination. microtype has no settings made for Utopia, GFS Didot, or Ezra SIL, so all three use the defaults.
+PTXprint uses plain XeTeX, so the microtype package isn't available. Instead, `config/protrusion.tex` carries a copy of microtype's default protrusion table, which lets punctuation and a few letters hang slightly into the margin so the column edges look straight. Production and the isolated font regression test load the same adapter; the test does not need PTXprint's note-layout macros. Protrusion affects line breaking, so changing it can change pagination. microtype has no settings made for OLEBFont, GFS Didot, or Ezra SIL, so all three use the defaults.
 
 Run `make test-tex` after changing the table. If the change was intended, save the new expected output with `make test-tex-save` and review the diff.
 
+OLEBFont is the edition’s combined Latin family. `scripts/build_olebfont.py` runs after the pinned Utopia conversion and pairs regular, italic, bold and bold italic with their Erewhon counterparts. Utopia wins overlapping glyphs and character mappings, with one exception: Unicode superscript 1, 2 and 3 use Erewhon’s outlines, widths and hint dictionary so they match the rest of the superscript figures. The assembler copies CFF charstrings and local subroutines into separate CID font dictionaries, preserving source hints and width defaults rather than redrawing outlines. It refuses unsupported global subroutines or seac composites; the pinned sources use neither. It retains Utopia’s layout metrics and expands clipping bounds for added glyphs.
+
+Native PTXprint font settings enable `onum` and `pnum` on all four faces, so chapter figures, headings, notes, front matter and contents inherit proportional oldstyle numbers. The stylesheet selects `sups` for verses and note origins, and `smcp`/`c2sc` for running furniture. These settings preserve the nominal sizes, zero extra superscript raise and fixed 1 pt origin gap. No content digits are rewritten. Native `\XeTeXgenerateactualtext=1` records the input Unicode as PDF ActualText, preserving copy/search for CID glyph alternates that would otherwise extract as private-use codes or disappear. The assembler corrects Erewhon Italic’s tabular oldstyle zero advance from 498 to 500 units without changing its outline or hints. It repairs donor numeral transitions and makes superscripts accept every numeral form, including an inherited oldstyle form.
+
+`tests/test_olebfont.py` checks all four serialized faces against both sources: outlines, widths, sidebearings, hint programs and subroutines, original ligature and kerning lookups, layout metrics, names, donor additions and repeatable bytes. HarfBuzz shapes all ten digits under each numeral style and superscripts, including feature combinations, plus small caps and original kerning/ligatures, and every pair of Latin letters with an added glyph, which must be positioned as Erewhon positions it. `make test-tex` checks OLEBFont’s margin protrusion, including the oldstyle figures that production's font features set in place of the mapped ones. The font build scripts and notices are included in image checks and publication provenance. Generated fonts and their licenses reside in `/usr/local/share/fonts/olebfont` inside the image. `make font-specimen` renders `tests/tex/olebfont-specimen.tex` to `dist/olebfont-specimen.pdf`, a manual XeLaTeX specimen for the numeral forms, four faces, small caps, note-origin spacing and added accents; review it alongside actual PTXprint sample and Bible pages.
+
 ## Updating dependencies
 
-Renovate opens pull requests for the Python packages in `requirements.txt`, and for the Ubuntu base image and the PTXprint, usfmtc, and Utopia commits in the `Dockerfile`. The font archives in `sources/` are updated by hand. Each has a line in the `Dockerfile`'s `sha256sum` check, an `unzip` line there that says which of its files to install, and a line in `.dockerignore` that admits it. The build refuses to run in an image made from a different `Dockerfile`, `requirements.txt`, or font archive, so run `make bootstrap` after changing any of them.
+Renovate opens pull requests for the Python packages in `requirements.txt`, and for the Ubuntu base image and the PTXprint, usfmtc, and Utopia commits in the `Dockerfile`. The font archives in `sources/` are updated by hand. Each has a line in the `Dockerfile`'s `sha256sum` check and a line in `.dockerignore` that admits it. GFS Didot and Source Code Pro are extracted directly; Erewhon is consumed by the font assembler. The build refuses to run in an image made from a different `Dockerfile`, `requirements.txt`, font assembly script or notice, or font archive, so run `make bootstrap` after changing any of them.
 
 `requirements.txt` lists only direct dependencies: what the build and tests import, what PTXprint needs at run time (including `psutil`, which it uses without declaring), and what's needed to build PTXprint and usfmtc. Those two are installed with `--no-deps`, because PTXprint's package metadata points at usfmtc's moving main branch instead of the pinned commit.
 
 The base image is an Ubuntu LTS tag with no digest, and packages come from Ubuntu's live repositories. Rebuilding the image later can therefore bring in newer versions of TeX and fonts, which may change pagination. The provenance file lists the OS packages each PDF was built with, so a change in pagination can be traced to the package that caused it.
 
-When upgrading PTXprint, check that the `\s@tfont` wrapper in `config/ptxprint-mods.tex` still matches PTXprint's internals, and that the sample's pagination still looks right. When moving to a new Ubuntu release, which brings a new TeX Live, run `make test-tex`.
+When upgrading PTXprint, check the places that depend on its internals, and that the sample's pagination still looks right:
+
+- `config/protrusion.tex` wraps `\s@tfont`.
+- `config/ptxprint-mods.tex` builds the margin notes from PTXprint's private note macros (`\marginaln@te`, `\n@test@rt`, `\n@te@nd`, `\n@teid`, the `nm-cref-` and `nm-count-` names, the `note-no-insert-` hooks, `\p@ranotes`, `\NotStudyNotes`) and reads `\ch@pter`, `\ifhe@dings` and `\m@kechapterbox`. No test loads these apart from the build itself, so look at the notes in the sample: beside their verses in the margin, and at the foot of the page in the front matter and introductions.
+- The `Dockerfile` patches two lines of PTXprint's `marginnotes.py`: notes on the same line of text keep the text's order, and a block of notes lifted in a crowded margin stays under the top of the page. The image build fails if either line has changed; drop each patch once PTXprint has the fix.
+- `scripts/patch_margin_convergence.py` patches the pinned note convergence check: offset changes of at most one TeX scaled point (1/65536 pt) settle without another pass. The same tolerance applies only to note coordinates in the paragraph-position cache; note identities, pages and all other records still compare exactly. Larger changes still request a rerun; reaching the five-pass cap with an unsettled layout fails the build and records the reason in `ptxprint.log`. The guarded replacements fail on changed upstream code and must be reviewed on upgrades.
+
+The build refuses a PDF in which a margin note overlaps the note before it, stands above it, or runs off the text block. PTXprint doesn't move the notes of an overfull margin to the foot of the page, so such a page has to be rebalanced by hand. When moving to a new Ubuntu release, which brings a new TeX Live, run `make test-tex`.
 
 ## Updating source texts
 
@@ -159,4 +172,4 @@ A few things look odd but are on purpose:
 - BSB sets `fnomitcaller` to `True`, which in this PTXprint release means the footnote callers *are* printed in the notes. Only Brenton's preface has callers now; the build checks that this still holds.
 - PTXprint's `canonicalise` option is off, so that it doesn't rewrite the source markup.
 - PTXprint loads GTK even when it runs without a display, which is why the image includes it.
-- PTXprint's font configuration rejects OpenType files, which is how Utopia and the other fonts are installed. The `Dockerfile` adds a system fontconfig rule that accepts the fonts in `/usr/local/share/fonts`, which takes precedence.
+- PTXprint's font configuration rejects OpenType files, which is how OLEBFont and the other fonts are installed. The `Dockerfile` adds a system fontconfig rule that accepts the fonts in `/usr/local/share/fonts`, which takes precedence.

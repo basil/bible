@@ -48,6 +48,12 @@ def typeset(base, project):
         raise RuntimeError(
             f"PTXprint failed ({result.returncode}); see {base}/console.log"
         )
+    # PTXprint's headless CLI can return success even when RunJob failed.
+    require(
+        "did not converge after"
+        not in (base / "ptxprint.log").read_text(encoding="utf-8"),
+        f"Typesetting did not converge; see {base}/ptxprint.log",
+    )
     pdfs = list(project.rglob("*.pdf"))
     require(len(pdfs) == 1, f"Expected one PDF, found {pdfs}; see {base}/console.log")
     return pdfs[0]
