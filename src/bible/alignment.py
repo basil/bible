@@ -8,10 +8,9 @@ counterpart in another translation than with the verses around it.
 
 import collections
 import math
-import re
 
+from bible import scripture, usj
 from bible.references import Verse, verse_at
-from bible.usfm import MARKUP, NOTE, chapter_parts, verse_spans, words_of
 
 # Words so common, or so much the quoting formula's, that sharing them shows nothing.
 STOP_WORDS = set(
@@ -33,33 +32,22 @@ def stem(word):
 
 
 def content_words(text):
-    return {stem(w) for w in words_of(text) if w not in STOP_WORDS}
+    return {stem(w) for w in scripture.words_of(text) if w not in STOP_WORDS}
 
 
-def titles(text):
+def titles(doc):
     """Each chapter's title, by chapter: the words set before its first verse.
 
     The King James Bible sets a psalm's title so; Brenton numbers it as the
     psalm's first verse or two.
     """
     result = {}
-    for chapter in chapter_parts(text)[1]:
-        number, head = re.match(r"\\c (\d+)(.*?)(?=\\v |\Z)", chapter, re.S).groups()
-        title = re.search(r"\\d ([^\n]*)", head)
-        if title and MARKUP.sub("", title[1]).strip():
-            result[int(number)] = title[1]
-    return result
-
-
-def title_verses(text):
-    """The verses that make up each chapter's title, by chapter, as Brenton
-    numbers them: those of the paragraph that the title marker opens."""
-    result = {}
-    for chapter in chapter_parts(text)[1]:
-        number = int(re.match(r"\\c (\d+)", chapter)[1])
-        title = re.search(r"\\d\s*\n((?:\\v [^\n]*\n)+)", chapter)
-        if title:
-            result[number] = re.findall(r"\\v (\S+)", title[1])
+    for chapter, paragraphs in scripture.heads(doc).items():
+        for paragraph in paragraphs:
+            title = usj.text_of(paragraph["content"])
+            if paragraph["marker"] == "d" and title.strip():
+                result[int(chapter)] = title
+                break
     return result
 
 
@@ -69,14 +57,13 @@ class Verses:
     With titles, a chapter's title is its verse 0. Verses may be left out.
     """
 
-    def __init__(self, scripture, titled=False, without=()):
+    def __init__(self, books, titled=False, without=()):
         self.words = {}
         self.order = collections.defaultdict(list)
-        for code, text in scripture.items():
-            # A note's words aren't the verse's.
-            text = NOTE.sub("", text)
-            heads = titles(text) if titled else {}
-            for reference, start, end in verse_spans(text):
+        for code, doc in books.items():
+            heads = titles(doc) if titled else {}
+            # A verse's words are read without its notes.
+            for reference, found in scripture.verses(doc).items():
                 verse = verse_at(code, reference)
                 if verse in without:
                     continue
@@ -84,7 +71,7 @@ class Verses:
                     title = Verse(code, verse.chapter, 0)
                     self.words[title] = content_words(heads.pop(verse.chapter))
                     self.order[code].append(title)
-                self.words[verse] = content_words(text[start:end])
+                self.words[verse] = content_words(found.text)
                 self.order[code].append(verse)
         self.index = {
             v: i for verses in self.order.values() for i, v in enumerate(verses)

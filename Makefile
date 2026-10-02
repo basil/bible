@@ -7,20 +7,33 @@ UIDGID := $(shell id -u):$(shell id -g)
 COMPOSE := docker compose -f compose.yaml
 TOOLCHAIN := $(COMPOSE) run --rm -T --interactive=false --user $(UIDGID) toolchain
 PIPELINE := $(TOOLCHAIN) python3 -m bible
-.PHONY: bootstrap validate notes-review alexandrinus-review seed-versification test test-python test-tex test-tex-save font-specimen sample pdf clean
+.PHONY: bootstrap validate review review-diff test test-python test-fonts test-tex test-tex-save font-specimen sample pdf clean
 bootstrap:
 	$(COMPOSE) build --pull
 validate:
 	$(PIPELINE) validate
-alexandrinus-review:
-	$(PIPELINE) alexandrinus-review
-notes-review:
-	$(PIPELINE) notes-review
-seed-versification:
-	$(PIPELINE) seed-versification
-test: test-python test-tex
+review:
+	$(PIPELINE) review
+# What a change does to the edition: the review of BASE and of the working
+# tree, and every line that differs between them, in build/review.diff.
+BASE ?= origin/master
+review-diff:
+	rm -rf build/review-base
+	git worktree prune
+	git worktree add --quiet --detach build/review-base $(BASE)
+	$(TOOLCHAIN) sh -c 'cd build/review-base && PYTHONPATH=src python3 -m bible review' \
+		|| { echo "$(BASE) cannot write a review" >&2; exit 1; }
+	$(PIPELINE) review
+	diff -ru -x changes.diff build/review-base/build/review build/review > build/review.diff; test $$? -le 1
+	git worktree remove --force build/review-base
+	@echo "$$(grep -c '^diff \|^Only in ' build/review.diff) files differ from $(BASE): build/review.diff"
+# The three suites are independent, and run side by side.
+test:
+	$(MAKE) --no-print-directory -j3 --output-sync=target test-python test-fonts test-tex
 test-python:
-	$(TOOLCHAIN) python3 -m pytest $(PYTEST_ARGS)
+	$(TOOLCHAIN) python3 -m pytest --ignore=tests/test_olebfont.py $(PYTEST_ARGS)
+test-fonts:
+	$(TOOLCHAIN) python3 -m pytest tests/test_olebfont.py -o cache_dir=build/pytest-cache-fonts
 test-tex:
 	$(TOOLCHAIN) l3build check
 test-tex-save:

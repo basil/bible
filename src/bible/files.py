@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+from collections.abc import Mapping
 from pathlib import Path
 
 
@@ -12,9 +13,18 @@ def read_json(path):
 def write_json(path, data):
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(
-        json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
-    )
+
+    def plain(value):
+        # The policy's frozen objects and lists.
+        if isinstance(value, Mapping):
+            return dict(value)
+        if isinstance(value, (tuple, set, frozenset)):
+            return list(value)
+        raise TypeError(f"Unsupported JSON value: {type(value).__name__}")
+
+    with path.open("w", encoding="utf-8") as stream:
+        json.dump(data, stream, indent=2, ensure_ascii=False, default=plain)
+        stream.write("\n")
 
 
 def sha256(data):

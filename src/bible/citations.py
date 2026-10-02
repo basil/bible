@@ -20,19 +20,20 @@ import re
 import string
 from dataclasses import dataclass
 
-from bible import paths, versification
+from bible import versification
 from bible.checks import require
-from bible.files import read_json
 from bible.references import (
     EDITION,
+    LAST_VERSE,
     VERSE_LABEL,
+    Item,
+    LastVerse,
     Passage,
     Verse,
     parse_passages,
     roman,
 )
 
-DATA = read_json(paths.EDITION_DIR / "citations.json")
 # How a source may number what it cites: as Brenton does, which the edition
 # relabels in places; as the King James Bible does; as the Hebrew does, whose
 # psalms are the King James Bible's; or by Brenton's chapter and the King James
@@ -52,12 +53,6 @@ NUMERALS = {
     # Brenton's preface numbers chapters in Roman, and its notes in Arabic.
     "either": r"\d+|[ivxlc]+",
 }
-# What prints nothing of a paragraph's own words: a note's origin, the label of
-# a verse that a supplied passage prints, and the markers, each of which takes
-# the space after it unless it closes a span.
-UNPRINTED = re.compile(r"\\(?:fr|xo) \S+ ?|\\vp [^\\]*\\vp\*|\\\+?[\w-]+(?:\*| ?)")
-OPENING = re.compile(r"\\(\+?[\w-]+) ?")
-CLOSING = re.compile(r"\\(\+?[\w-]+)\*")
 # One verse, a range, or a list of either: "7", "6-9", "7,8", "10,12-14".
 RANGE = r"\d+(?:\s?(?:[-–]|\bto\b)\s?\d+)?"
 VERSES = rf"{RANGE}(?:,\s?{RANGE})*"
@@ -71,25 +66,6 @@ SHAPE = re.compile(
     rf"(?<![\w.])(?:\d+|[ivxlc]+|[IVXLC]+)(?:\.\s?|:)\d+"
     rf"|(?<![\w.])(?:{VERSE_WORD}|{CHAPTER_WORD})\d+"
 )
-
-
-@dataclass(frozen=True)
-class Item:
-    """A chapter, or a stretch of its verses, that a citation names."""
-
-    chapter: int
-    first: int | None = None
-    last: int | None = None
-    letter: str = ""
-
-    def passage(self, book):
-        """The item's verses, if it names any."""
-        if self.first is None:
-            return None
-        return Passage(
-            Verse(book, self.chapter, self.first, self.letter),
-            Verse(book, self.chapter, self.last, self.letter),
-        )
 
 
 @dataclass(frozen=True)
@@ -130,6 +106,18 @@ class Citation:
     @property
     def verses(self):
         return [verse for passage in self.passages for verse in passage.verses]
+
+
+@dataclass(frozen=True)
+class UnresolvedCitation(Citation):
+    """Source coordinates and the context that supplies relative references.
+
+    Parsing never consults an edition inventory. The context remains attached
+    to this expression if its containing paragraph subsequently moves.
+    """
+
+    coordinate_numbering: str = "edition"
+    context: object = None
 
 
 @dataclass(frozen=True)
@@ -174,11 +162,12 @@ class Dialect:
         return " ".join(matched.split())
 
 
-def dialect(name):
+@functools.cache
+def dialect(name, *, policy):
     """A source's way of writing citations, or that of one that writes none."""
     if name is None:
         return Dialect("none", "brenton", {}, "arabic", r"\.\s?")
-    found = DATA["dialects"][name]
+    found = policy.citations["dialects"][name]
     require(
         found.get("numbering") in NUMBERINGS and found.get("numerals") in NUMERALS,
         f"Dialect without its numbering or numerals: {name}",
@@ -201,7 +190,7 @@ def _ranges(verses):
     return found
 
 
-def _items(cited, tongue, last_verse):
+def _items(cited, tongue):
     """The runs of items a citation's figures name, chapter by chapter."""
     found = []
     for part in re.split(r";\s?(?:and\s|also\s)?", cited):
@@ -214,18 +203,17 @@ def _items(cited, tongue, last_verse):
         if match["verses"]:
             stretches = _ranges(match["verses"])
         elif match["ult"]:
-            # The last verse of the chapter, which the Bible knows.
-            stretches = [(last_verse(chapter),) * 2]
+            stretches = [(LAST_VERSE, LAST_VERSE)]
         else:
             stretches = [(None, None)]
         found.append(tuple(Item(chapter, first, last) for first, last in stretches))
     return tuple(found)
 
 
-def _carried(passage):
+def _carried(passage, *, policy):
     """A King James passage's items in the edition, which may be in more
     than one place."""
-    found = versification.edition_passages(passage)
+    found = versification.edition_passages(passage, policy=policy)
     require(found, f"Verses the edition lacks: {passage}")
     return [
         Item(p.first.chapter, p.first.number, p.last.number, p.first.letter)
@@ -233,28 +221,28 @@ def _carried(passage):
     ]
 
 
-def _kjv_chapter(book, chapter):
+def _kjv_chapter(book, chapter, *, policy):
     """The King James chapter that holds an edition chapter's verses."""
     labels = versification.verses(f"{book} {chapter}:1-3")
     # A psalm's title, which the King James Bible doesn't number, places no chapter.
     found = [
         kjv
         for verse in labels
-        for kjv in _counterparts(verse)
+        for kjv in _counterparts(verse, policy=policy)
         if kjv.number != versification.TITLE
     ]
     require(found, f"Chapter the King James Bible lacks: {book} {chapter}")
     return found[0].chapter
 
 
-def _counterparts(verse):
+def _counterparts(verse, *, policy):
     try:
-        return versification.to_kjv(verse)
+        return versification.to_kjv(verse, policy=policy)
     except RuntimeError:
         return ()
 
 
-def _edition(book, items, numbering):
+def _edition(book, items, numbering, *, policy):
     """A book's items as the edition numbers them, from a source's numbering.
 
     Brenton's verse is the edition's unless the edition relabels it. The King
@@ -262,7 +250,7 @@ def _edition(book, items, numbering):
     one place, or none.
     """
     if numbering == "brenton":
-        relabelled = versification.relabelled()
+        relabelled = versification.relabelled(policy=policy)
         runs = []
         for run in items:
             moved = []
@@ -284,22 +272,22 @@ def _edition(book, items, numbering):
             runs += _by_chapter(moved)
         return book, tuple(runs)
     if numbering == "kjv-verses":
-        ours, theirs = book, versification.kjv_book(book)
-    elif book not in versification.kjv_books():
+        ours, theirs = book, versification.kjv_book(book, policy=policy)
+    elif book not in versification.kjv_books(policy=policy):
         # A book the King James Old Testament lacks is numbered as it stands.
         return book, items
     else:
-        ours, theirs = versification.kjv_books()[book], book
+        ours, theirs = versification.kjv_books(policy=policy)[book], book
     runs = []
     for run in items:
         moved = []
         for item in run:
             chapter = item.chapter
             if numbering == "kjv-verses":
-                chapter = _kjv_chapter(ours, chapter)
+                chapter = _kjv_chapter(ours, chapter, policy=policy)
             if item.first is None:
                 # A chapter is where its first verse is.
-                found = versification.from_kjv(Verse(theirs, chapter, 1))
+                found = versification.from_kjv(Verse(theirs, chapter, 1), policy=policy)
                 require(found, f"Chapter the edition lacks: {theirs} {chapter}")
                 moved.append(Item(found[0].chapter))
                 continue
@@ -312,6 +300,7 @@ def _edition(book, items, numbering):
                     Verse(theirs, chapter, item.first),
                     Verse(theirs, chapter, item.last),
                 ),
+                policy=policy,
             )
         runs += _by_chapter(moved)
     return ours, tuple(runs)
@@ -329,26 +318,13 @@ def _by_chapter(moved):
     return runs
 
 
-class Names(string.Formatter):
-    """What a decision or a change of name prints, with the edition's names
-    for the books it names by their codes: "{ISA} 2:6", or in capitals,
-    "{ISA:upper} 2:6"."""
-
-    def format_field(self, value, spec):
-        return value.upper() if spec == "upper" else super().format_field(value, spec)
-
-
-def named(words, names):
-    return Names().vformat(words, (), names)
-
-
-def decisions(key):
+def decisions(key, *, policy):
     """The decisions on a note's citations, in the file's order."""
-    found = DATA["decisions"].get(key, [])
-    return found if isinstance(found, list) else [found]
+    found = policy.citations["decisions"].get(key, ())
+    return list(found) if isinstance(found, tuple) else [found]
 
 
-def unit_decisions(unit, plain, book=None):
+def unit_decisions(unit, plain, book=None, *, policy):
     """The decisions on a paragraph of a unit without verses, by key.
 
     Such a decision is keyed by its unit and the words it decides, as "XXB
@@ -357,7 +333,7 @@ def unit_decisions(unit, plain, book=None):
     3. 8", that the same words in another book's paragraph not be decided so.
     """
     found = {}
-    for key, decision in DATA["decisions"].items():
+    for key, decision in policy.citations["decisions"].items():
         code, _, words = key.partition(" ")
         if book is not None:
             within, _, words = words.partition(" ")
@@ -379,7 +355,7 @@ def _places(source, plain):
     ]
 
 
-def _decided(decision, plain, tongue, home, key, inventory):
+def _decided(decision, plain, tongue, home, key, *, policy):
     """Where a decision's words stand, and its citation, if it decides that
     there is one."""
     source = decision.get("source", "")
@@ -395,6 +371,7 @@ def _decided(decision, plain, tongue, home, key, inventory):
     )
     (start,), (kind,) = places, kinds
     end = start + len(source)
+    coordinates = "edition"
     if kind == "not_a_citation":
         return start, end, None
     if kind == "unprinted":
@@ -414,13 +391,13 @@ def _decided(decision, plain, tongue, home, key, inventory):
         if (
             tongue.numbering == "brenton"
             and numbering in {"kjv", "hebrew"}
-            and book in versification.DATA["old_testament"]
+            and book in policy.versification["old_testament"]
         ):
             # The dialect names the edition's book, and the numbering is the
             # King James Bible's, whose code for it may be another: Daniel's.
-            book = versification.kjv_book(book)
-        items = _items(match["cited"], tongue, _last_verses(inventory, book, numbering))
-        book, items = _edition(book, items, numbering)
+            book = versification.kjv_book(book, policy=policy)
+        items = _items(match["cited"], tongue)
+        coordinates = numbering
         relative = None
     else:
         require(decision.get("print"), f"Citation decision prints nothing: {key}")
@@ -437,7 +414,7 @@ def _decided(decision, plain, tongue, home, key, inventory):
     return (
         start,
         end,
-        Citation(
+        UnresolvedCitation(
             start,
             end,
             source,
@@ -447,6 +424,7 @@ def _decided(decision, plain, tongue, home, key, inventory):
             tuple(others) if kind == "passages" else (),
             relative,
             decision.get("print"),
+            coordinate_numbering=coordinates,
         ),
     )
 
@@ -458,7 +436,7 @@ def _last_verse(inventory, book, chapter):
     return int(re.match(r"\d+", labels[-1])[0])
 
 
-def _last_verses(inventory, book, numbering):
+def _last_verses(inventory, book, numbering, *, policy):
     """The last verse of each of a book's chapters, as a citation by a
     numbering names it: the inventory is the edition's, and knows no chapter
     of the King James Bible's Old Testament."""
@@ -466,7 +444,10 @@ def _last_verses(inventory, book, numbering):
     def last(chapter):
         require(
             numbering in {"brenton", "edition"}
-            or (numbering != "kjv-verses" and book not in versification.kjv_books()),
+            or (
+                numbering != "kjv-verses"
+                and book not in versification.kjv_books(policy=policy)
+            ),
             f"Last verse by the King James Bible's numbering: {book} {chapter}",
         )
         return _last_verse(inventory, book, chapter)
@@ -492,20 +473,16 @@ def missing(citation, inventory):
     return found
 
 
-def scan(plain, tongue, home, key, inventory, decided=None, before=None):
-    """The citations in a stretch of plain text, in order.
+def parse(plain, tongue, home, key, decided=None, before=None, *, policy):
+    """Interpret source expressions without needing an edition inventory.
 
-    home is the verse the text stands at, whose book and chapter a citation
-    names that names none. Where the text stands at no verse, they are those
-    of the citation before it, in the text or before the text. Whatever a
-    citation names must be among the edition's chapters and verses, the
-    inventory. The decisions are the note's, by its key, unless they are
-    given.
+    ``home`` and ``before`` are immutable semantic context, not the location
+    at which an introduction or annotation eventually prints.
     """
     taken, found = [], []
-    for decision in decisions(key) if decided is None else decided:
+    for decision in decisions(key, policy=policy) if decided is None else decided:
         start, end, citation = _decided(
-            decision, plain, tongue, home or Verse("", 0, 0), key, inventory
+            decision, plain, tongue, home or Verse("", 0, 0), key, policy=policy
         )
         require(
             not any(s < end and start < e for s, e in taken),
@@ -520,10 +497,9 @@ def scan(plain, tongue, home, key, inventory, decided=None, before=None):
             c for c in found if c.end <= match.start() and c.items and not c.relative
         ]
         if home is None and earlier:
-            last = max(earlier, key=lambda citation: citation.end)
-            # The last book it names, where a decision reads several as one.
-            book, runs = last.targets[-1]
-            standing = Verse(book, runs[-1][-1].chapter, 1)
+            # Resolving reads the last book it names, where a decision reads
+            # several as one.
+            standing = max(earlier, key=lambda citation: citation.end)
         if any(s < match.end() and match.start() < e for s, e in taken):
             continue
         require(
@@ -542,18 +518,24 @@ def scan(plain, tongue, home, key, inventory, decided=None, before=None):
             book, numbering, relative = standing.book, "edition", "verse"
             cited = None
         if cited is not None:
-            items = _items(cited, tongue, _last_verses(inventory, book, numbering))
+            items = _items(cited, tongue)
         else:
             items = (
                 tuple(
-                    Item(standing.chapter, first, last)
+                    Item(
+                        (
+                            standing.chapter
+                            if isinstance(standing, Verse)
+                            else standing.targets[-1][1][-1][-1].chapter
+                        ),
+                        first,
+                        last,
+                    )
                     for first, last in _ranges(match["verses"])
                 ),
             )
-        if numbering != "edition":
-            book, items = _edition(book, items, numbering)
         found.append(
-            Citation(
+            UnresolvedCitation(
                 match.start(),
                 match.end(),
                 match[0],
@@ -562,6 +544,8 @@ def scan(plain, tongue, home, key, inventory, decided=None, before=None):
                 tongue.numbering,
                 relative=relative,
                 name=name,
+                coordinate_numbering=numbering,
+                context=standing if relative else None,
             )
         )
         taken.append((match.start(), match.end()))
@@ -571,6 +555,62 @@ def scan(plain, tongue, home, key, inventory, decided=None, before=None):
         if not any(s <= match.start() and match.end() <= e for s, e in taken)
     ]
     require(not unread, f"Citation that can't be read: {key} ({'; '.join(unread)})")
+    return sorted(found, key=lambda citation: citation.start)
+
+
+def resolve(expression, inventory, *, policy):
+    """Resolve one source expression against actual assembled content."""
+    book, items = expression.book, expression.items
+    if expression.relative and isinstance(expression.context, UnresolvedCitation):
+        previous = resolve(expression.context, inventory, policy=policy)
+        book, previous_runs = previous.targets[-1]
+        if expression.relative == "verse":
+            chapter = previous_runs[-1][-1].chapter
+            items = tuple(
+                tuple(Item(chapter, i.first, i.last, i.letter) for i in run)
+                for run in items
+            )
+    resolved = []
+    for run in items:
+        values = []
+        for item in run:
+            if isinstance(item.first, LastVerse):
+                last = _last_verses(
+                    inventory,
+                    book,
+                    expression.coordinate_numbering,
+                    policy=policy,
+                )(item.chapter)
+                item = Item(item.chapter, last, last)
+            values.append(item)
+        resolved.append(tuple(values))
+    items = tuple(resolved)
+    if expression.coordinate_numbering != "edition":
+        book, items = _edition(
+            book, items, expression.coordinate_numbering, policy=policy
+        )
+    return Citation(
+        expression.start,
+        expression.end,
+        expression.source,
+        book,
+        items,
+        expression.numbering,
+        expression.others,
+        expression.relative,
+        expression.printed,
+        expression.name,
+    )
+
+
+def scan(plain, tongue, home, key, inventory, decided=None, before=None, *, policy):
+    """Parse then resolve; retained convenience API for source-note consumers."""
+    found = [
+        resolve(expression, inventory, policy=policy)
+        for expression in parse(
+            plain, tongue, home, key, decided, before, policy=policy
+        )
+    ]
     for citation in found:
         lacking = missing(citation, inventory)
         require(
@@ -578,7 +618,69 @@ def scan(plain, tongue, home, key, inventory, decided=None, before=None):
             f"Citation of what the edition doesn't print: {key} "
             f"({citation.source}: {', '.join(lacking)})",
         )
-    return sorted(found, key=lambda citation: citation.start)
+    return found
+
+
+def source_pieces(pieces, found):
+    """A note's pieces with each citation as the edition prints it, as a
+    reference of its own.
+
+    A citation that names nothing the edition prints is no reference for a
+    reader to follow, and stays among the words it stands in. The pieces
+    with their citations as the source has them must be the pieces given.
+    """
+    plain = "".join(text for _, text in pieces)
+    result, offset, cursor, joined = [], 0, 0, False
+    pending = sorted(found, key=lambda citation: citation.start)
+    for kind, text in pieces:
+        end = offset + len(text)
+        while cursor < end:
+            citation = next((c for c in pending if c.end > cursor), None)
+            if citation is None or citation.start >= end:
+                stop = end
+            elif citation.start > cursor:
+                stop = citation.start
+            else:
+                stop = None
+            if stop is not None:
+                if joined and result[-1][0] == kind:
+                    result[-1] = (kind, result[-1][1] + plain[cursor:stop])
+                else:
+                    result.append((kind, plain[cursor:stop]))
+                cursor = stop
+            elif citation.items:
+                result.append(("xt", citation.source))
+                cursor = citation.end
+            else:
+                # Among its words: of their kind, and not apart from them.
+                words = citation.source
+                if result and result[-1][0] == kind and cursor > offset:
+                    result[-1] = (kind, result[-1][1] + words)
+                else:
+                    result.append((kind, words))
+                cursor = citation.end
+                joined = True
+                continue
+            joined = False
+        offset = end
+    require(
+        "".join(value for _, value in result) == plain,
+        f"Source citation segmentation lost text: {plain}",
+    )
+    return [(kind, text) for kind, text in result if text]
+
+
+class Names(string.Formatter):
+    """What a decision or a change of name prints, with the edition's names
+    for the books it names by their codes: "{ISA} 2:6", or in capitals,
+    "{ISA:upper} 2:6"."""
+
+    def format_field(self, value, spec):
+        return value.upper() if spec == "upper" else super().format_field(value, spec)
+
+
+def named(words, names):
+    return Names().vformat(words, (), names)
 
 
 def printed(citation, books, style=EDITION):
@@ -621,162 +723,3 @@ def printed(citation, books, style=EDITION):
     if citation.source[0].isupper():
         word = word.capitalize()
     return f"{word} {body}"
-
-
-def normalized(pieces, found, books):
-    """A note's pieces with each citation as the edition prints it, as a
-    reference of its own.
-
-    A citation that names nothing the edition prints is no reference for a
-    reader to follow, and stays among the words it stands in. The pieces
-    with their citations as the source has them must be the pieces given.
-    """
-    plain = "".join(text for _, text in pieces)
-    result, offset, cursor, joined = [], 0, 0, False
-    pending = sorted(found, key=lambda citation: citation.start)
-    for kind, text in pieces:
-        end = offset + len(text)
-        while cursor < end:
-            citation = next((c for c in pending if c.end > cursor), None)
-            if citation is None or citation.start >= end:
-                stop = end
-            elif citation.start > cursor:
-                stop = citation.start
-            else:
-                stop = None
-            if stop is not None:
-                if joined and result[-1][0] == kind:
-                    result[-1] = (kind, result[-1][1] + plain[cursor:stop])
-                else:
-                    result.append((kind, plain[cursor:stop]))
-                cursor = stop
-            elif citation.items:
-                result.append(("xt", printed(citation, books)))
-                cursor = citation.end
-            else:
-                # Among its words: of their kind, and not apart from them.
-                words = printed(citation, books)
-                if result and result[-1][0] == kind and cursor > offset:
-                    result[-1] = (kind, result[-1][1] + words)
-                else:
-                    result.append((kind, words))
-                cursor = citation.end
-                joined = True
-                continue
-            joined = False
-        offset = end
-    restored, at = "", 0
-    for kind, text in result:
-        restored += text
-    for citation in pending:
-        at = restored.index(printed(citation, books), at)
-        restored = (
-            restored[:at]
-            + citation.source
-            + restored[at + len(printed(citation, books)) :]
-        )
-        at += len(citation.source)
-    require(restored == plain, f"Citations that don't restore their note: {plain}")
-    return [(kind, text) for kind, text in result if text]
-
-
-def renamed(unit, text, books):
-    """A unit's text with the edition's names for what its source names
-    otherwise, where that is no citation: a heading, or words that were true
-    of another printing. Each change gives its reason, and is met once."""
-    changes = []
-    for change in DATA["names"].get(unit, []):
-        old, new = change.get("from"), change.get("to")
-        require(
-            change.get("why") and old and new is not None,
-            f"Change of name without its words or reason: {unit} ({old})",
-        )
-        words = re.compile(rf"(?<!\w){re.escape(old)}(?!\w)")
-        require(
-            len(words.findall(text)) == 1,
-            f"Change of name not met once: {unit} ({old})",
-        )
-        printed_as = named(new, books.names)
-        text = words.sub(lambda match: printed_as, text)
-        changes.append({"from": old, "to": printed_as})
-    return text, changes
-
-
-def printable(usfm):
-    """A paragraph's printed characters, and where each stands in its USFM."""
-    offsets, last = [], 0
-    for match in UNPRINTED.finditer(usfm):
-        offsets += range(last, match.start())
-        last = match.end()
-    offsets += range(last, len(usfm))
-    return "".join(usfm[i] for i in offsets), offsets
-
-
-def rewritten(usfm, tongue, home, key, inventory, books, decided=None, before=None):
-    """A paragraph of USFM with each citation as the edition prints it, and
-    the citations read.
-
-    Markup within a citation goes with the source's way of writing it, as the
-    italic of "\\it John\\it* 5. 39"; a span that the citation opens or closes
-    goes whole, so that none is left open.
-    """
-    plain, offsets = printable(usfm)
-    found = scan(plain, tongue, home, key, inventory, decided, before)
-    for citation in reversed(found):
-        start, end = offsets[citation.start], offsets[citation.end - 1] + 1
-        inside = usfm[start:end]
-        opened = [m[1] for m in OPENING.finditer(CLOSING.sub("", inside))]
-        closed = [m[1] for m in CLOSING.finditer(inside)]
-        for marker in closed:
-            if marker in opened:
-                opened.remove(marker)
-                continue
-            # The span opens just before the citation.
-            opening = re.search(rf"\\{re.escape(marker)} ?$", usfm[:start])
-            require(
-                opening is not None,
-                f"Citation across markup: {key} ({citation.source})",
-            )
-            start = opening.start()
-        for marker in opened:
-            closing = re.match(rf"\\{re.escape(marker)}\*", usfm[end:])
-            require(
-                closing is not None,
-                f"Citation across markup: {key} ({citation.source})",
-            )
-            end += closing.end()
-        usfm = usfm[:start] + printed(citation, books) + usfm[end:]
-    return usfm, found
-
-
-def unused(read):
-    """What the file has that nothing read has met: the keys of its
-    decisions, and each dialect's names for books, by dialect.
-
-    read is the log of every unit's citations, as read_citations writes it.
-    """
-    decided = {key for entry in read for key in entry["decided"]}
-    named = {
-        (entry["dialect"], citation["name"])
-        for entry in read
-        for citation in entry["citations"]
-    }
-    return sorted(set(DATA["decisions"]) - decided), sorted(
-        (name, book)
-        for name, tongue in DATA["dialects"].items()
-        for book in tongue["books"]
-        if (name, book) not in named
-    )
-
-
-def logged(key, citation, books):
-    """A citation as the log of what was read has it: as its source writes
-    it, as the edition numbers it, and as the edition prints it."""
-    return {
-        "key": key,
-        "source": citation.source,
-        "cites": " ".join(map(str, citation.passages)) or citation.book,
-        "numbering": citation.numbering,
-        "name": citation.name,
-        "printed": printed(citation, books),
-    }

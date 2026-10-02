@@ -68,26 +68,20 @@ def test_a_list_is_read_passage_by_passage():
     assert list(map(str, passages)) == ["EXO 20:13-16", "DEU 5:17-20"]
 
 
-def test_consecutive_verses_run_together():
-    verses = [
-        *parse_passage("ISA 8:22-23").verses,
-        *parse_passage("ISA 9:1-2").verses,
-        parse_verse("ISA 9:4"),
-    ]
-    assert list(map(str, runs(verses))) == ["ISA 8:22-23", "ISA 9:1-2", "ISA 9:4"]
-
-
-def test_a_lettered_verse_joins_no_run():
-    verses = [Verse("PRO", 22, 7), Verse("PRO", 22, 8, "a"), Verse("PRO", 22, 9)]
-    assert list(map(str, runs(verses))) == ["PRO 22:7", "PRO 22:8a", "PRO 22:9"]
-    # Nor does the verse after a lettered one continue it.
-    verses = [Verse("PRO", 22, 8, "a"), Verse("PRO", 22, 9)]
-    assert list(map(str, runs(verses))) == ["PRO 22:8a", "PRO 22:9"]
-
-
-def test_a_verse_is_usable_as_a_key():
-    assert {parse_verse("ISA 1:9"): 1}[Verse("ISA", 1, 9)] == 1
-    assert len({parse_verse("ISA 1:9"), verse_at("ISA", "1:9")}) == 1
+@pytest.mark.parametrize(
+    "verses,passages",
+    [
+        (
+            "ISA 8:22; ISA 8:23; ISA 9:1; ISA 9:2; ISA 9:4",
+            "ISA 8:22-23; ISA 9:1-2; ISA 9:4",
+        ),
+        # A lettered verse joins no run, nor does the verse after it continue it.
+        ("PRO 22:7; PRO 22:8a; PRO 22:9", "PRO 22:7; PRO 22:8a; PRO 22:9"),
+    ],
+)
+def test_consecutive_verses_run_together(verses, passages):
+    found = runs(map(parse_verse, verses.split("; ")))
+    assert "; ".join(map(str, found)) == passages
 
 
 def test_books_order_verses_as_their_bible_does():

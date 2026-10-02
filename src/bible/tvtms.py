@@ -6,8 +6,8 @@ Old Testament is the King James Bible's, under tests of the Bible it is read
 against: which verses exist, which one ends its chapter, which of two is the
 longer. The rows whose tests a Bible passes are the table's account of it.
 
-The table seeds edition/versification.json and is compared with it. It isn't
-the authority: its tests weren't written for eBible's Brenton, and where its
+The table is one of the two witnesses that places.py hears. It isn't the
+authority: its tests weren't written for eBible's Brenton, and where its
 account and the words of the two translations disagree, the words decide.
 """
 
@@ -16,9 +16,9 @@ import functools
 import re
 from dataclasses import dataclass
 
+from bible import scripture, usj
 from bible.references import Verse
 from bible.sources import SOURCES, pinned_bytes
-from bible.usfm import NOTE, chapter_parts, verse_spans, words_of
 
 SOURCE = SOURCES["versification"]
 # A reference as the table writes it, as "Gen.31:55", "Psa.50:Title", or the
@@ -99,21 +99,20 @@ class Bible:
     """What the table's tests ask of a Bible: which verses it has, and how
     long each is. Books are named as the table names them, in capitals."""
 
-    def __init__(self, scripture):
+    def __init__(self, books):
         self.length = {}
         self.last = {}
         self.titled = set()
-        for book, text in scripture.items():
-            text = NOTE.sub("", text)
-            for chapter in chapter_parts(text)[1]:
-                number, head = re.match(
-                    r"\\c (\d+)(.*?)(?=\\v |\Z)", chapter, re.S
-                ).groups()
-                if words_of(head):
-                    self.titled.add((book, number))
-            for reference, start, end in verse_spans(text):
+        for book, doc in books.items():
+            for chapter, paragraphs in scripture.heads(doc).items():
+                if any(
+                    scripture.words_of(usj.text_of(p["content"])) for p in paragraphs
+                ):
+                    self.titled.add((book, chapter))
+            # A verse's words are counted without its notes.
+            for reference, verse in scripture.verses(doc).items():
                 chapter, label = reference.split(":")
-                self.length[book, chapter, label] = len(words_of(text[start:end]))
+                self.length[book, chapter, label] = len(scripture.words_of(verse.text))
                 self.last[book, chapter] = int(re.match(r"\d+", label)[0])
 
     def passes(self, tests):

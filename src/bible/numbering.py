@@ -3,19 +3,20 @@ verses, and what the editor's pages cite.
 
 The table says where the chapters and verses of this Old Testament stand in
 the King James Bible, for a reader who looks a verse up there. Every row is
-written from edition/versification.json, so that the table can say no more
-and no less than the file: a chapter that stands whole elsewhere is one row,
-a run of verses another, and what either Bible lacks is said to be wanting.
+written from the runs that the build works out (places.py), so that the table
+can say no more and no less than they do: a chapter that stands whole
+elsewhere is one row, a run of verses another, and what either Bible lacks is
+said to be wanting.
 
 The editor's pages name a passage between braces, by its code, and the build
 prints it as the edition cites, or as the King James Bible numbers it, so
-that what the pages say of a number is what the file says.
+that what the pages say of a number is what the runs say.
 """
 
 import collections
 import re
 
-from bible import edition, versification
+from bible import usj, versification
 from bible.checks import require
 from bible.references import EDITION, Verse, parse_passage
 
@@ -89,12 +90,13 @@ def numbered(run):
 class Table:
     """One book's chapters and verses beside the King James Bible's."""
 
-    def __init__(self, code, inventory, kjv_inventory):
+    def __init__(self, code, inventory, kjv_inventory, *, policy):
+        self.policy = policy
         self.code = code
-        self.kjv = versification.kjv_book(code)
+        self.kjv = versification.kjv_book(code, policy=policy)
         self.ours = inventory[code]
         self.theirs = kjv_inventory[self.kjv]
-        self.listed = versification.DATA["kjv"].get(code, [])
+        self.listed = policy.versification["kjv"].get(code, [])
 
     def verses(self, chapter):
         return [
@@ -110,9 +112,9 @@ class Table:
         under the same numbers, if it is one and not the same chapter."""
         facing = set()
         for verse in self.verses(chapter):
-            if verse in versification.apocryphal() or verse.letter:
+            if verse in versification.apocryphal(policy=self.policy) or verse.letter:
                 continue
-            found = versification.to_kjv(verse)
+            found = versification.to_kjv(verse, policy=self.policy)
             if len(found) != 1 or found[0].number != verse.number:
                 return None
             facing.add(found[0].chapter)
@@ -171,7 +173,7 @@ class Table:
                 and _next(last[1][-1], ours[0])
                 and _next(last[2][-1], theirs[0])
             ):
-                # Lettered verses, which the file lists one by one, run on.
+                # Lettered verses, which the runs list one by one, run on.
                 last[1].extend(ours)
                 last[2].extend(theirs)
                 continue
@@ -204,48 +206,58 @@ class Table:
             for number in self.theirs[str(verse.chapter)]
         ]
         for before in reversed(chapter[: chapter.index(verse)]):
-            if held := versification.from_kjv(before):
+            if held := versification.from_kjv(before, policy=self.policy):
                 return order[held[-1]] + 0.5
         # Nothing of its chapter before it: before the chapter's first verse.
         for after in chapter[chapter.index(verse) + 1 :]:
-            if held := versification.from_kjv(after):
+            if held := versification.from_kjv(after, policy=self.policy):
                 return order[held[0]] - 0.5
         return len(order)
 
 
-def kjv_inventory(archives):
-    """The King James Bible's chapters and verses, book by book."""
+def table_rows(rows, heads):
+    """A table: its headings, and a row for each pair of cells."""
+
+    def row(kind, cells):
+        return {
+            "type": "table:row",
+            "marker": "tr",
+            "content": [
+                {
+                    "type": "table:cell",
+                    "marker": f"{kind}{n}",
+                    "align": "start",
+                    "content": [cell],
+                }
+                for n, cell in enumerate(cells, 1)
+            ],
+        }
+
     return {
-        code: versification.source_chapters(text)
-        for code, text in archives["kjv"].items()
-        if "\\c " in text
+        "type": "table",
+        "content": [row("th", heads), *(row("tc", r) for r in rows)],
     }
 
 
-def table_rows(rows, heads):
-    return "".join(
-        [f"\\tr \\th1 {heads[0]} \\th2 {heads[1]}\n"]
-        + [f"\\tr \\tc1 {ours} \\tc2 {theirs}\n" for ours, theirs in rows]
-    )
-
-
-def books_tables(archives):
+def books_tables(inventory, facing, ours, theirs, *, policy):
     """Every book's table that has rows, under both Bibles' names for it."""
-    ours, theirs = edition.books(archives), edition.kjv_books(archives)
-    inventory = versification.edition_inventory(archives)
-    facing = kjv_inventory(archives)
+    rows = [
+        (code, Table(code, inventory, facing, policy=policy).rows())
+        for code in policy.versification["old_testament"]
+        if code != "PSA" and code in inventory
+    ]
     sections = []
-    for code in versification.DATA["old_testament"]:
-        if code == "PSA":
+    for code, values in rows:
+        if not values:
             continue
-        rows = Table(code, inventory, facing).rows()
-        if not rows:
-            continue
-        name, other = ours.names[code], theirs.names[versification.kjv_book(code)]
+        name, other = (
+            ours.names[code],
+            theirs.names[versification.kjv_book(code, policy=policy)],
+        )
         heading = name if name == other else f"{name} ({other})"
         heads = ("This edition", "King James Bible") if name == other else (name, other)
-        sections.append(f"\\is1 {heading}\n" + table_rows(rows, heads))
-    return "".join(sections)
+        sections.extend((usj.para("is1", heading), table_rows(values, heads)))
+    return sections
 
 
 def _spans(numbers):
@@ -266,19 +278,20 @@ class Psalter:
     psalm, and mostly in one of three ways: in the psalm's number, in the
     count of its verses by one for its title, or by two."""
 
-    def __init__(self, archives):
-        inventory = versification.edition_inventory(archives)
-        self.table = Table("PSA", inventory, kjv_inventory(archives))
+    def __init__(self, facing, *, printed, policy):
+        self.policy = policy
+        inventory = printed
+        self.table = Table("PSA", inventory, facing, policy=policy)
         self.psalms = {}
         for chapter in self.table.ours:
             facing = collections.Counter()
             steps = set()
             for verse in self.table.verses(chapter):
-                if verse in versification.apocryphal():
+                if verse in versification.apocryphal(policy=policy):
                     continue
                 found = [
                     v
-                    for v in versification.to_kjv(verse)
+                    for v in versification.to_kjv(verse, policy=policy)
                     if v.number != versification.TITLE
                 ]
                 if len(found) != 1:
@@ -387,18 +400,22 @@ def psalm_rows(psalter):
     return table_rows(psalter.uneven_rows(), ("Psalms", "King James Bible"))
 
 
-def names_table(archives):
+def names_table(printed, ours, theirs, *, policy):
     """The books that the King James Bible names otherwise, or sets apart in
     its Apocrypha, or lacks, and the parts of books that it sets apart."""
-    ours, theirs = edition.books(archives), edition.kjv_books(archives)
-    parts = versification.DATA["apocrypha"]
+    parts = policy.versification["apocrypha"]
     rows = []
-    for code, name in ours.names.items():
-        if edition.scripture_unit(code)["source"] == "kjv":
+    require(
+        set(printed) <= set(ours.names),
+        "Assembled books missing from the book-name registry",
+    )
+    for code in printed:
+        name = ours.names[code]
+        if policy.unit(code)["source"] == "kjv":
             continue
         whole = next((part for part in parts if part["edition"] == code), None)
-        if code in versification.DATA["old_testament"]:
-            other = theirs.names[versification.kjv_book(code)]
+        if code in policy.versification["old_testament"]:
+            other = theirs.names[versification.kjv_book(code, policy=policy)]
             if name != other:
                 rows.append((name, other))
         else:
@@ -421,78 +438,70 @@ def _apocryphal(part, theirs):
     return f"{name}, in the Apocrypha"
 
 
-def tables(text, archives):
-    """The table's page with its tables written in."""
-    written = {
-        "names": names_table,
-        "psalm numbers": psalm_numbers,
-        "psalm verses": psalm_verses,
-        "psalm rows": psalm_rows,
-        "books": books_tables,
-    }
+def page(text, inventory, facing, ours, theirs, *, policy):
+    """One of the editor's pages as it prints: the passages it names between
+    braces as the edition cites them, or as the King James Bible numbers
+    them, and the tables it asks for, each on a line of its own."""
     asked = TABLES.findall(text)
     require(
-        sorted(asked) == sorted(written), f"Tables asked for, not once each: {asked}"
+        not asked
+        or sorted(asked)
+        == sorted(("names", "psalm numbers", "psalm verses", "psalm rows", "books")),
+        f"Tables asked for, not once each: {asked}",
     )
-    # The three tables of the Psalms are written from one reading of them.
-    psalter = Psalter(archives)
+    tables = {}
+    if asked:
+        psalter = Psalter(facing, printed=inventory, policy=policy)
+        tables = {
+            "names": [names_table(tuple(inventory), ours, theirs, policy=policy)],
+            "psalm numbers": [psalm_numbers(psalter)],
+            "psalm verses": [psalm_verses(psalter)],
+            "psalm rows": [psalm_rows(psalter)],
+            "books": books_tables(inventory, facing, ours, theirs, policy=policy),
+        }
 
-    def table(name):
-        return written[name](psalter if name.startswith("psalm ") else archives)
-
-    return TABLES.sub(lambda match: table(match[1]).rstrip("\n"), text)
-
-
-def page(text, archives):
-    """One of the editor's pages as it prints: its tables written in, if it
-    asks for any, and the passages it names printed."""
-    if TABLES.search(text):
-        text = tables(text, archives)
-    return cited(text, archives)
-
-
-def cited(text, archives):
-    """One of the editor's pages with the passages it names printed."""
-    ours, theirs = edition.books(archives), edition.kjv_books(archives)
-    inventory = versification.edition_inventory(archives)
-
-    def printed(match):
-        ways, written = set(match[1].split()), match[2]
-        # Brenton's label and the King James Bible's number are two numberings,
-        # and a passage prints by one.
+    def named(match):
+        ways = frozenset(match[1].split())
         require(
             ways <= WAYS and not {"brenton", "kjv"} <= ways,
             f"Passage named to print no known way: {match[0]}",
         )
-        passage = parse_passage(written)
-        books = ours
+        passage = parse_passage(match[2])
         if "brenton" in ways:
-            # Brenton's label for what the edition relabels.
             require(
-                all(v in versification.relabelled() for v in passage.verses),
+                all(
+                    v in versification.relabelled(policy=policy) for v in passage.verses
+                ),
                 f"Passage that the edition doesn't relabel: {match[0]}",
             )
-            passages = [passage]
         else:
-            labels = inventory.get(passage.first.book, {}).get(
-                str(passage.first.chapter), []
-            )
             lacking = [
-                str(v) for v in passage.verses if f"{v.number}{v.letter}" not in labels
+                str(v)
+                for v in passage.verses
+                if f"{v.number}{v.letter}"
+                not in inventory.get(v.book, {}).get(str(v.chapter), ())
             ]
             require(not lacking, f"Passage that the edition doesn't print: {lacking}")
-            passages = [passage]
-            if "kjv" in ways:
-                passages = versification.kjv_passages(passage)
-                require(passages, f"Passage that the King James Bible lacks: {written}")
-                books = theirs
+        targets = (
+            tuple(versification.kjv_passages(passage, policy=policy))
+            if "kjv" in ways
+            else (passage,)
+        )
+        require(targets, f"Passage that the King James Bible lacks: {match[0]}")
         if "bare" in ways:
-            return EDITION.passages.join(EDITION.within(p) for p in passages)
-        return EDITION.listed(passages, books)
+            return EDITION.passages.join(EDITION.within(p) for p in targets)
+        return EDITION.listed(targets, theirs if "kjv" in ways else ours)
 
-    text = NAMED.sub(printed, text)
-    require(
-        "{" not in text and "}" not in text,
-        "Braces left on one of the editor's pages",
-    )
-    return text
+    blocks = []
+    for line in text.split("\n"):
+        asked = TABLES.fullmatch(line)
+        if asked:
+            blocks += tables[asked[1]]
+        elif line.strip():
+            line = NAMED.sub(named, line)
+            require(
+                "{" not in line and "}" not in line,
+                "Braces left on one of the editor's pages",
+            )
+            blocks += usj.parse(line)["content"]
+    return usj.document(blocks)

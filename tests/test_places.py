@@ -1,6 +1,13 @@
-"""The versification seed: the table and the words, heard together."""
+"""Placing the verses: the table and the words, heard together.
 
-from bible import alignment, seed, versification
+On verses made for the purpose; test_versification.py checks the places of
+the edition's own."""
+
+import pytest
+from conftest import changed
+
+from bible import alignment, places, usj
+from bible.checks import CheckFailed
 from bible.references import Verse, parse_verse
 
 OURS = (
@@ -25,11 +32,11 @@ THEIRS = (
 )
 
 
-class Texts(seed.Texts):
+class Texts(places.Texts):
     def __init__(self, ours, theirs):
         self.books = {"GEN": "GEN"}
-        self.edition = alignment.Verses({"GEN": ours})
-        self.kjv = alignment.Verses({"GEN": theirs}, titled=True)
+        self.edition = alignment.Verses({"GEN": usj.parse(ours)})
+        self.kjv = alignment.Verses({"GEN": usj.parse(theirs)}, titled=True)
         self.weight = alignment.weights(self.edition.words, self.kjv.words)
 
 
@@ -44,7 +51,7 @@ def same(texts):
 def blocks(texts, table):
     return [
         (" ".join(map(str, ours)), " ".join(map(str, theirs)), by)
-        for ours, theirs, by in seed.aligned(texts, "GEN", table)
+        for ours, theirs, by in places.aligned(texts, "GEN", table)
     ]
 
 
@@ -80,10 +87,10 @@ def test_the_words_must_outvote_the_table():
     texts = Texts(OURS, THEIRS)
     raven, dove = parse_verse("GEN 1:2"), parse_verse("GEN 1:3")
     table = same(texts)
-    assert seed.outvotes(texts, table, raven, dove)
-    assert seed.outvotes(texts, table, raven, raven)
+    assert places.outvotes(texts, table, raven, dove)
+    assert places.outvotes(texts, table, raven, raven)
     # One that shares a word with its neighbour doesn't go to it for that.
-    assert not seed.outvotes(texts, table, parse_verse("GEN 1:1"), dove)
+    assert not places.outvotes(texts, table, parse_verse("GEN 1:1"), dove)
 
 
 def test_the_words_may_not_leave_a_verse_without_a_place():
@@ -93,7 +100,7 @@ def test_the_words_may_not_leave_a_verse_without_a_place():
         {"edition": [one], "words": [two], "table": [one], "by": "words"},
         {"edition": [two], "words": [], "table": [two], "by": "words"},
     ]
-    settled = seed.settle(texts, taken)
+    settled = places.settle(texts, taken)
     assert [(b["words"], b["by"]) for b in settled] == [
         ([one], "table"),
         ([two], "table"),
@@ -104,7 +111,7 @@ def test_the_words_may_not_leave_a_verse_without_a_place():
         {"edition": [two], "words": [], "table": [two], "by": "words"},
         {"edition": [three], "words": [three], "table": [three], "by": "words"},
     ]
-    assert [b["words"] for b in seed.settle(texts, held)] == [[two], [], [three]]
+    assert [b["words"] for b in places.settle(texts, held)] == [[two], [], [three]]
 
 
 def test_runs_are_written_verse_for_verse_or_whole():
@@ -118,7 +125,7 @@ def test_runs_are_written_verse_for_verse_or_whole():
         ([lettered], [verses[6]], "reading", "x"),
         ([verses[6]], [], "words", None),
     ]
-    assert seed._runs(entries) == [
+    assert places._runs(entries) == [
         {"edition": "GEN 1:1-2", "kjv": "GEN 1:2-3", "by": "words"},
         {"edition": "GEN 1:3", "kjv": "GEN 1:4", "by": "table"},
         {"edition": "GEN 1:4-5", "kjv": "GEN 1:5", "by": "words"},
@@ -127,21 +134,55 @@ def test_runs_are_written_verse_for_verse_or_whole():
     ]
 
 
-def test_the_seed_is_the_file(scripture, archives):
-    # What has been read is in the file, and nothing has changed since it was
-    # seeded: the sources are pinned, and so is the table.
-    assert seed.seed(scripture, archives) == versification.DATA["kjv"]
+def reading_of(policy, **reading):
+    """The policy with one reading, of Genesis."""
+    return changed(
+        policy, "versification", lambda data: data["readings"].update(GEN=[reading])
+    )
 
 
-def test_what_has_been_read_stands(scripture, archives, patched):
-    runs = patched(versification, "DATA")["kjv"]["LEV"]
-    runs[:] = [run for run in runs if run["by"] != "reading"]
-    found = seed.seed(scripture, archives)["LEV"]
-    # The raven and the owls, which the witnesses leave where they are numbered.
-    assert not [run for run in found if "LEV 11" in (run["edition"] or run["kjv"])]
+def test_what_has_been_read_stands(policy):
+    # Whatever the witnesses give for its verses, and with the overlaps it
+    # declares; what is left of the King James Bible's verses is wanting.
+    reading = {
+        "edition": "GEN 1:2-3",
+        "kjv": "GEN 1:2-3",
+        "why": "x",
+        "pairs": {"GEN 1:2": "GEN 1:2-3", "GEN 1:3": "GEN 1:3"},
+    }
+    raven, dove = parse_verse("GEN 1:2"), parse_verse("GEN 1:3")
+    proposed = [([raven], [dove], "words", None), ([dove], [raven], "words", None)]
+    assert places.written(
+        Texts(OURS, THEIRS), "GEN", proposed, policy=reading_of(policy, **reading)
+    ) == [
+        {**reading, "by": "reading"},
+        {"edition": None, "kjv": "GEN 1:7"},
+    ]
 
 
-def test_seed_preserves_declared_partial_overlaps(texts):
-    expected = next(run for run in versification.DATA["kjv"]["PRO"] if "pairs" in run)
-    found = seed.written(texts, "PRO", [])
-    assert expected in found
+@pytest.mark.parametrize(
+    "reading, refusal",
+    [
+        ({"edition": "GEN 1:2", "kjv": "GEN 1:3"}, "missing or unknown fields"),
+        ({"edition": "GEN 1:2", "kjv": "GEN 1:3", "why": ""}, "without its reason"),
+        ({"edition": "GEN 1:9", "kjv": "GEN 1:3", "why": "x"}, "its Bible lacks"),
+        ({"edition": "GEN 1:2", "kjv": "GEN 1:9", "why": "x"}, "its Bible lacks"),
+    ],
+)
+def test_a_reading_must_fit_both_bibles(policy, reading, refusal):
+    with pytest.raises(CheckFailed, match=refusal):
+        places.written(
+            Texts(OURS, THEIRS), "GEN", [], policy=reading_of(policy, **reading)
+        )
+
+
+def test_a_reading_is_of_a_book_of_the_old_testament(policy):
+    stray = changed(
+        policy,
+        "versification",
+        lambda data: data["readings"].update(
+            TOB=[{"edition": "TOB 1:1", "kjv": "TOB 1:2", "why": "x"}]
+        ),
+    )
+    with pytest.raises(CheckFailed, match=r"outside the Old Testament: \['TOB'\]"):
+        places.placed({}, {}, policy=stray)

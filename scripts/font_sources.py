@@ -5,11 +5,11 @@ symbol: a superscript and an extensible delimiter still belong to their font's
 size convention. See docs/font-normalization.md for evidence and limits.
 """
 
+import zipfile
 from copy import deepcopy
 from io import BytesIO
-import zipfile
 
-from fontTools.cffLib.specializer import programToCommands, commandsToProgram
+from fontTools.cffLib.specializer import commandsToProgram, programToCommands
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.scaleUpem import ScalerVisitor
 

@@ -629,6 +629,11 @@
       "lemma": "the corn ye have purchased",
       "why": "the purchase of your gift of corn renders the whole phrase"
     },
+    "GEN 43:13": {
+      "verse": "43:14",
+      "lemma": "other",
+      "why": "eBible has the note in 43:13, whose Greek has no one; one renders other in 43:14 (τὸν ἀδελφὸν ὑμῶν τὸν ἕνα)"
+    },
     "GEN 44:31": {
       "lemma": "the grave",
       "why": "Hades renders the grave, as in 44:29"
@@ -691,7 +696,7 @@
     },
     "EXO 12:3": {
       "lemma": "each man a lamb",
-      "note": "πρόβατον, _sheep_ generally but verse 5 seems to show that the word _lamb_ is admissable in this passage.",
+      "note": "πρόβατον, _sheep_ generally but ver. 5 seems to show that the word _lamb_ is admissable in this passage.",
       "why": "the note is on the word lamb; according to the houses is not part of it; sheep renders πρόβατον, generally is comment"
     },
     "EXO 12:16": {
@@ -1305,7 +1310,7 @@
       "why": "whereas renders because"
     },
     "JOS 24:26": {
-      "note": "Gr. Properly _a pine_ or _turpentine tree_. So chapter 17:9.",
+      "note": "Gr. Properly _a pine_ or _turpentine tree_. So chap. 17. 9.",
       "why": "the note is on oak; Properly is Brenton's comment"
     },
     "JDG 1:30": {
@@ -2002,7 +2007,7 @@
       "why": "of his royal bounty renders by the hand of king Solomon; of his royal bounty is the A. V. rendering"
     },
     "1KI 10:21": {
-      "note": "Lit. '_shut up with gold_,' a frequent phrase in Heb. and Gr. for 'pure gold.' See chapter 6:20.",
+      "note": "Lit. '_shut up with gold_,' a frequent phrase in Heb. and Gr. for 'pure gold.' See chap. 6. 20.",
       "why": "pure gold is the English idiom, not a rendering"
     },
     "1KI 10:22a": {
@@ -2131,7 +2136,7 @@
     },
     "1KI 20:10": {
       "lemma": "blessed",
-      "note": "See Professor Samuel Lee on the word ברך in Job 2:9. Heb. Gram. p. 92.",
+      "note": "See Professor Samuel Lee on the word ברך in Job 2. 9. Heb. Gram. p. 92.",
       "why": "the note is a reference on the word blessed, ברך"
     },
     "1KI 20:15": {
@@ -2298,6 +2303,11 @@
     "2KI 10:21#2": {
       "lemma": "from one end to the other",
       "why": "mouth to mouth renders from one end to the other"
+    },
+    "2KI 11:9": {
+      "verse": "11:7",
+      "lemma": "parties",
+      "why": "eBible has the note in 11:9, whose Greek has no hands; hands renders parties in 11:7 (δύο χεῖρες ἐν ὑμῖν)"
     },
     "2KI 12:1": {
       "lemma": "seven years old when he began to reign",
@@ -2642,7 +2652,7 @@
     },
     "PSA 54:20": {
       "lemma": "they suffer no reverse",
-      "note": "Or, _they have nothing to give in exchange_, q. d. to redeem their souls. Compare Psalm 48:8, 9; Mark 8:37.",
+      "note": "Or, _they have nothing to give in exchange_, q. d. to redeem their souls. Compare Ps. 48. 7,8; Mark 8. 37.",
       "why": "the rendering does not cover For; to redeem their souls adds to it rather than renders"
     },
     "PSA 54:22": {
@@ -3034,7 +3044,7 @@
       "why": "beat with the fist renders afflict"
     },
     "MAL 3:10": {
-      "note": "Or, _windows_, see Genesis 7:11, there rendered '_flood-gates_.'",
+      "note": "Or, _windows_, see Gen 7. 11, there rendered '_flood-gates_.'",
       "why": "flood-gates is cited from Gen. 7. 11"
     },
     "ISA 5:1": {
@@ -3220,7 +3230,7 @@
       "why": "the beginning of day renders the early time; in stays (ὡς ἐν ἀρχῇ ἡμέρας)"
     },
     "ISA 52:7": {
-      "note": "Romans 10:15. Another reading is '_How beautiful are the feet_,' etc. Lit. _Why have the feet been made beautiful_? See also Joel 2:2.,'the morning [spread] upon the mountains.'",
+      "note": "Rom. 10. 15. Another reading is '_How beautiful are the feet_,' etc. Lit. _Why have the feet been made beautiful_? See also Joel 2. 2.,'the morning [spread] upon the mountains.'",
       "why": "How beautiful are the feet is the other reading"
     },
     "ISA 52:12": {
@@ -3267,5 +3277,22 @@
       "lemma": "and they said, Ho",
       "why": "the Alex. reading and above stands for and they said, Ho"
     }
+  },
+  "shapes": {
+    "NUM 35:30#2": "by renders on the testimony of: the Greek has no word for testimony",
+    "DEU 24:16": "die in his own sin renders the whole clause, be put to death standing for die",
+    "JDG 5:8": "the Greek's conditional is the whole clause: if a shield or spear should be seen",
+    "1SA 24:23": "narrow renders the strong-hold of",
+    "1SA 25:38": "there were about ten days renders it came to pass after about ten days",
+    "1SA 28:9": "ventriloquists renders the whole phrase for those with divining spirits",
+    "1KI 7:5": "nets renders ornaments of net-work",
+    "1KI 22:41": "reigned renders began to reign, about the king's name",
+    "2KI 2:3#2": "takes renders is going to take",
+    "2KI 14:8": "appear to faces renders look one another in the face",
+    "2KI 15:13": "reigned renders began to reign, about the king's name",
+    "PSA 7:7": "the Hebrew's because of mine enemies stands for the whole phrase",
+    "ZEC 11:16": "wring their necks renders dislocate the joints of their necks",
+    "ISA 8:19": "ventriloquists renders the whole phrase for those with a divining spirit",
+    "ISA 44:25": "ventriloquists renders the whole phrase for those with divining spirits"
   }
 }

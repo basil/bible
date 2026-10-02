@@ -1,29 +1,15 @@
 """Inspect serialized production fonts and shape them through HarfBuzz."""
 
-from copy import deepcopy
-from functools import cache
-import json
 import csv
-from io import BytesIO
-from font_sources import (
-    normalized_donor,
-    archive_font,
-    MATH_MEMBERS,
-)
-from fontTools.pens.transformPen import TransformPen
-from fontTools.misc.fixedTools import otRound
-from fontTools.cffLib.specializer import programToCommands
+import json
 import subprocess
 import unicodedata
 import zipfile
+from copy import deepcopy
+from functools import cache
+from io import BytesIO
 
-from fontTools.feaLib.builder import addOpenTypeFeaturesFromString
-from fontTools.pens.recordingPen import RecordingPen
-from fontTools.ttLib import TTFont
-from fontTools.ttLib.tables.otBase import OTTableWriter
 import pytest
-
-from bible import paths
 from build_olebfont import (
     DIGITS,
     EREWHON_MEMBER,
@@ -36,6 +22,16 @@ from build_olebfont import (
     font_file,
     rename,
 )
+from font_sources import MATH_MEMBERS, archive_font, normalized_donor
+from fontTools.cffLib.specializer import programToCommands
+from fontTools.feaLib.builder import addOpenTypeFeaturesFromString
+from fontTools.misc.fixedTools import otRound
+from fontTools.pens.recordingPen import RecordingPen
+from fontTools.pens.transformPen import TransformPen
+from fontTools.ttLib import TTFont
+from fontTools.ttLib.tables.otBase import OTTableWriter
+
+from bible import paths
 
 FONTS = paths.FONTS / "olebfont"
 EREWHON = paths.FONT_ARCHIVES / "erewhon.zip"

@@ -1,35 +1,30 @@
-"""The edition's notes: the 1611 translators' New Testament marginal notes, from
-Calvin George's transcription, and Brenton's own notes and cross-references.
+"""What a note says: its labels, its renderings and what it cites, and how
+the edition prints them.
 
-No note leaves a caller in the text. Each note is set as a footnote that opens
-with its verse's reference and names the words it glosses (its lemma): "25:20 I
-doubted of such manner of questions: or, I was doubtful how to enquire hereof".
-Labels such as "Or," and "Gr." are roman, and only another rendering of the
-glossed words is italic.
+Brenton's notes and the 1611 margin are read once, as their sources write
+them. A label such as "Gr." or "Or," is roman, another rendering of the
+glossed words is italic, and a citation is a reference of its own. The rules
+here tell them apart; edition/brenton-notes.json and edition/kjv-notes.json
+say what to print where the rules go wrong, and why. The notes that
+edition/alexandrinus.json writes say what each of their parts is themselves.
 
-The rules below find each lemma and each note's italics. Where they go wrong,
-edition/kjv-notes.json and edition/brenton-notes.json say what to print
-instead, and why.
+A note is printed as a footnote without a caller: its verse, the words it is
+about, and its text, which runs on from them unless it is a sentence of its
+own. Besides corrections, the "See" that opens a cross-reference, the words a
+widened lemma adds to its renderings, and the decisions of edition/prose.json,
+the edition changes nothing of a note's words but its citations and
+abbreviations, which print in the edition's forms.
 """
 
-import bisect
-from collections import Counter
-from dataclasses import dataclass
-import functools
-import itertools
 import re
-import unicodedata
+from dataclasses import dataclass, replace
+from difflib import SequenceMatcher
 
-from bible import citations, paths, sources
+from bible import citations, lemmas, terminology, usfm, usj
 from bible.checks import require
-from bible.files import read_json
-from bible.references import verse_at
-from bible.typography import GREEK, HEBREW
-from bible.usfm import canonical_text, plain_text, verse_spans, word_spans, words_of
-
-KJV_NOTES = read_json(paths.EDITION_DIR / "kjv-notes.json")
-BRENTON_NOTES = read_json(paths.EDITION_DIR / "brenton-notes.json")
-EXPECTED_NT_MARGINAL_NOTES = 775
+from bible.repairs import change
+from bible.scripture import plain, word_spans
+from bible.usfm import GREEK, HEBREW
 
 # Labels that introduce another rendering of the glossed words, which is italic.
 RENDERING_LABELS = {
@@ -46,34 +41,12 @@ RENDERING_LABELS = {
 # Labels after which the note comments rather than renders, and stays roman.
 OTHER_LABELS = {
     *("Hebraism.", "Hebrew.", "Heb. עֹבֹר."),
-    *(
-        "Appendix.",
-        "Appendix",
-        "App.",
-        "Comp.",
-        "Note.",
-        "Vide supra,",
-        "vide",
-        "See",
-        "Of course",
-    ),
+    *("Appendix.", "Appendix", "App.", "Comp.", "Note.", "Vide supra,", "vide"),
+    *("See", "Of course"),
     *("nom.", "voc.", "pl.", "singular.", "ver.", "bis."),
     *("Lambert Bos", "Patrick Junius", "Tertullian"),
 }
 LABELS = RENDERING_LABELS | OTHER_LABELS
-# Names, which keep their capital where a note runs on from its lemma: of
-# languages, texts, versions and people, and the pronoun "I".
-NAMES = re.compile(
-    r"(?:Gr|Heb|Hebrew|Hebraism|Syr|Sept|Alex|Vat|Complut|Ald|Vulg|A\. V|App|Appendix"
-    r"|Lambert Bos|Patrick Junius|Tertullian|Professor Samuel Lee|Brenton|Swete|Vatican|I)(?!\w)"
-)
-# Abbreviations, whose full stop stays at the end of a note ("so the Heb."). Not
-# those the edition prints without one: "LXX", as Chicago does, and those it
-# prints in full ("guard, Authorized Version"), as "A. V.", the text names but
-# "Alex.", and those edition/abbreviations.json decides ("Chrysost.", "pl.").
-ABBREVIATION = re.compile(
-    r"(?<![\w'’])(?:etc|&c|Gr|Heb|Syr|Alex|lit|Lit|i\. e|q\. d|sc|scil)\.$"
-)
 # George's notes are plain text; a label opens a note or a sentence in it.
 KJV_LABEL = re.compile(
     r"(?:^|(?<=[.;] ))("
@@ -113,33 +86,19 @@ COMMENTARY = re.compile(
     r"|ends(?=\s+the\s+verse\b)|includes(?=\s+the\s+clause\b))\b|[—(-])",
     re.I,
 )
-# Words that never end a lemma alone: they want the word after them.
-LINKING_WORDS = {
-    *("a", "an", "the", "of", "to", "and", "in", "on", "at", "by", "for", "from"),
-    *("with", "as", "or", "unto", "upon", "into", "nor", "but"),
-}
-OPEN_WORDS = LINKING_WORDS | {
-    *("thy", "his", "her", "my", "their", "your", "our", "its"),
-    *("this", "these", "those", "every", "all", "some", "any", "own"),
-    *("thou", "he", "she", "we", "ye", "they", "i"),
-}
-# Words that open a clause, where a lemma stops unless the rendering has them.
-CLAUSE_WORDS = {
-    *("that", "which", "who", "whom", "whose", "when", "where", "because"),
-    *("if", "lest", "whereas", "while", "until"),
-}
-# Pronouns whose relative clause belongs to them: "those who ...", "he that ...".
-ANTECEDENTS = {"those", "these", "he", "she", "they", "them", "him", "all", "one"}
-CONJUNCTIONS = {"and", "but", "or", "nor"}
-ARTICLES = {"a", "an", "the"}
-POSSESSIVES = {
-    *("thy", "thine", "his", "her", "my", "mine", "their", "your", "our", "its"),
-}
-PREPOSITIONS = {
-    *("of", "to", "in", "on", "at", "by", "for", "from", "with", "unto", "upon"),
-    *("into", "among", "amongst", "above", "under", "over", "before", "after"),
-    *("against", "toward", "towards", "through", "within", "without", "about"),
-}
+# Punctuation and quotation marks stay roman at either end of an italic run.
+TRIM = " \n.,;:?!+'‘’“”\""
+# Names, which keep their capital where a note runs on from its lemma: of
+# languages, texts, versions and people, and the pronoun "I".
+NAMES = re.compile(
+    r"(?:Gr|Heb|Hebrew|Hebraism|Syr|Sept|Alex|Vat|Complut|Ald|Vulg|A\. V|App|Appendix"
+    r"|Lambert Bos|Patrick Junius|Tertullian|Professor Samuel Lee|Brenton|Swete|Vatican|I)(?!\w)"
+)
+# Abbreviations, whose full stop stays at the end of a note ("so the Heb.").
+# Not those the edition prints without one, or in full.
+ABBREVIATION = re.compile(
+    r"(?<![\w'’])(?:etc|&c|Gr|Heb|Syr|Alex|lit|Lit|i\. e|q\. d|sc|scil)\.$"
+)
 # Labels at the start of a note, which it runs on from.
 LABEL_START = re.compile(
     "|".join(re.escape(label) for label in sorted(LABELS, key=len, reverse=True))
@@ -153,226 +112,122 @@ FINITE_VERB = re.compile(
     r"|takes?|begins?|continues?|ends|belongs?|comes?|form|maintain|signifi(?:es|eth)"
     r"|contain(?:s|eth)|cometh|importeth)\b"
 )
-# A note that measures nothing glosses its clause, or the clause's first words.
-CLAUSE_LEMMA_WORDS = 6
-# A cross-reference shows where the quotation begins, so it takes a longer clause.
-XREF_CLAUSE_LEMMA_WORDS = 8
-# How far "those who ..." reaches into its clause.
-RELATIVE_LEMMA_WORDS = 8
-DEFAULT_LEMMA_WORDS = 4
-# Punctuation that ends the words a note can gloss.
-CLAUSE_END = re.compile(r"[,;:.?!()—]")
-# Markers that start a new line of text inside a verse.
-LINE_START = re.compile(r"\s*\\(?:p|m|b|nb|pi\d?|q\d?|qm\d?|li\d?|mi|d|s\d?)\b")
-# Punctuation and quotation marks stay roman at either end of an italic run.
-# A backtick stays with its word: SmartyPants reads it as an opening quote
-# only before a letter.
-TRIM = " \n.,;:?!+'‘’“”\""
+# What each part of a note the edition writes is, by its marker.
+AUTHORED = {
+    "fl": "label",
+    "ft": "text",
+    "fqa": "alternative",
+    "fq": "quotation",
+    "xt": "citation",
+}
+# How a part of a printed note is marked.
+PRINTED = {"commentary": "ft", "reading": "fqa", "citation": "xt"}
 
 
-@dataclass
-class Entry:
-    """One note, ready to be set as a footnote."""
+@dataclass(frozen=True)
+class Body:
+    """A note's words and what each stretch of them is: text, a label, an
+    alternative rendering, a quotation, or a citation.
 
-    key: str
-    reference: str
-    position: int  # in the text without notes
-    lemma: str | None  # None for a note on the whole verse
-    plain: str  # the note's text
-    styles: list[str]  # each character's style
+    The reading is the rendering that measures how far the glossed words
+    reach. A citation is bound to the words that write it, whatever they are.
+    """
+
+    plain: str
+    roles: tuple
+    reading: tuple | None
     rule: str
-    style: str  # the rule that set its italics
-    sentence: bool | None = None  # an exception's say, over is_sentence's
+    citations: tuple = ()
+    terms: tuple = ()
 
     @property
-    def printed(self):
-        """The note's text and styles as printed: a sentence with its capital
-        and a closing full stop; any other note without one, and after a lemma,
-        running on from the colon.
-
-        Besides their corrections, the "See" that opens a cross-reference and
-        the words a widened lemma adds to its renderings (echoed), these are
-        the only changes the edition makes to the words of the notes.
-        """
-        if (
-            self.sentence
-            if self.sentence is not None
-            else is_sentence(self.plain, self.styles)
-        ):
-            return closed(self.plain, self.styles)
-        plain, styles = unclosed(self.plain, self.styles)
-        if self.lemma is not None:
-            plain = run_on(plain, styles)
-        return plain, styles
+    def alternative(self):
+        return self.plain[slice(*self.reading)] if self.reading else None
 
     @property
-    def body(self):
-        """The USFM after the reference and lemma."""
-        return usfm_body(*self.printed)
-
-    @property
-    def styled(self):
-        """The note as printed, with its italic between underscores."""
-        return underscored(*self.printed)
-
-
-# A bracketed remark of the transcriber's or eBible's, with a space beside it.
-REMARK = re.compile(r" ?\[[^\]]*\] ?")
-EMPTY_BRENTON_NOTE = re.compile(r"\\f \+ \\fr \S+ \\f\*")
-
-
-def change(before, after):
-    """Where after departs from before: the offset, the stretch of before it
-    replaces, and what replaces it."""
-    start = 0
-    while start < min(len(before), len(after)) and before[start] == after[start]:
-        start += 1
-    end = 0
-    while (
-        end < min(len(before), len(after)) - start
-        and before[-1 - end] == after[-1 - end]
-    ):
-        end += 1
-    return start, before[start : len(before) - end], after[start : len(after) - end]
+    def leaves(self):
+        """The stretches of one role, each citation a stretch of its own, as
+        (start, end, role, citation)."""
+        intervals = list(self.roles)
+        bound = {}
+        for first, last, citation in self.citations:
+            role = next(r for a, b, r in self.roles if a <= first < b)
+            intervals = [
+                (a, b, r)
+                for x, y, r in intervals
+                for a, b in ((x, min(y, first)), (max(x, last), y))
+                if a < b
+            ]
+            intervals.append((first, last, role))
+            bound[first] = citation
+        return [(a, b, r, bound.get(a)) for a, b, r in sorted(intervals)]
 
 
-def punctuation(text):
-    return len(text) == 1 and unicodedata.category(text).startswith("P")
+class Roles:
+    """A note's roles while they are being read."""
 
-
-def letter_slip(old, new):
-    """The kind of slip that replaces old with new, if it is one letter's."""
-    if not old and len(new) == 1 and new.isalpha():
-        return "missing letter"
-    if not new and len(old) == 1 and old.isalpha():
-        return "stray letter"
-    if len(old) == len(new) == 1 and old.isalpha() and new.isalpha():
-        return "wrong letter"
-    return None
-
-
-def correction_category(before, after):
-    """The kind of slip a correction mends, or None if it is none of them."""
-    at, old, new = change(before, after)
-    if not old and new == " ":
-        return "missing word space"
-    if not old and punctuation(new):
-        return "missing punctuation"
-    if not new and punctuation(old):
-        return "stray punctuation"
-    if punctuation(old) and punctuation(new):
-        return "wrong punctuation"
-    if kind := letter_slip(old, new):
-        return kind
-    if old and not new:
-        beside = (
-            before[max(0, at - len(old)) : at],
-            before[at + len(old) :][: len(old)],
+    def __init__(self, text, intervals=None):
+        self.plain = text
+        self.intervals = (
+            list(intervals)
+            if intervals is not None
+            else [(0, len(text), "text")] if text else []
         )
-        if old in beside:
-            return "doubled text"
-        if REMARK.fullmatch(old):
-            return "remark"
-        if EMPTY_BRENTON_NOTE.fullmatch(old):
-            return "empty note"
-    if old == "[Greek characters]" and re.fullmatch(rf"[{GREEK}\s,.;]+", new):
-        return "omitted Greek"
-    return None
 
+    def kind_at(self, offset):
+        return next(
+            kind for start, end, kind in self.intervals if start <= offset < end
+        )
 
-def check_category(category, entry, kind, key, what="slip"):
-    """An entry must fit a category, unless it is marked uncategorized, and
-    only then."""
-    uncategorized = entry.get("uncategorized", False)
-    require(
-        category is not None or uncategorized,
-        f"{kind} fits no category of {what}: {key}",
-    )
-    require(
-        category is None or not uncategorized,
-        f"{kind} listed as uncategorized is a {category}: {key}",
-    )
-
-
-def corrected(text, correction, kind, key):
-    """The text with a correction's one occurrence of its "from" replaced.
-
-    The correction must mend a slip of a known kind, unless it is marked
-    uncategorized.
-    """
-    require(text.count(correction["from"]) == 1, f"{kind} does not apply: {key}")
-    category = correction_category(correction["from"], correction["to"])
-    check_category(category, correction, kind, key)
-    return text.replace(correction["from"], correction["to"])
-
-
-@functools.cache
-def marginal_notes():
-    """The 1611 translators' New Testament marginal notes, by book, in source order.
-
-    George's listing gives a reference, the words the note glosses (the lemma), and
-    the note. The Old Testament entries belong to the Hebrew Old Testament, which
-    this edition does not print, so they are never read.
-    """
-    text = (paths.ROOT / sources.SOURCES["marginal_notes"]["file"]).read_text(
-        encoding="utf-8"
-    )
-    require(
-        text.count("\nMatthew 1:11 ") == 1,
-        "Marginal notes New Testament boundary changed",
-    )
-    books = citations.DATA["dialects"]["george"]["entries"]
-    entry_pattern = re.compile(
-        "(" + "|".join(map(re.escape, books)) + r") (\d+):(\d+) (.+?): (.+)"
-    )
-    corrections = dict(KJV_NOTES["corrections"])
-    exceptions = KJV_NOTES["notes"]
-    result = {}
-    seen = Counter()
-    for paragraph in re.split(r"\n\s*\n", text[text.index("\nMatthew 1:11 ") :]):
-        # The Markdown wraps long entries; a continuation line joins its entry.
-        entry = " ".join(paragraph.split())
-        if not entry:
-            continue
-        match = entry_pattern.fullmatch(entry)
-        require(match is not None, f"Unparsed marginal note: {entry}")
-        book, chapter, verse, lemma, note = match.groups()
-        code = books[book]
-        key = f"{code} {chapter}:{verse} {lemma}"
-        seen[key] += 1
-        if seen[key] > 1:
-            key += f"#{seen[key]}"
-        if key in corrections:
-            note = corrected(
-                note, corrections.pop(key), "Marginal note correction", key
-            )
+    def mark(self, start, end, kind):
+        if start == end:
+            return
         require(
-            "[" not in note and "]" not in note,
-            f"Transcriber's remark left in marginal note: {key}",
+            0 <= start < end <= len(self.plain), "Note interpretation outside content"
         )
-        result.setdefault(code, []).append(
-            {
-                "key": key,
-                "chapter": chapter,
-                "verse": verse,
-                "lemma": lemma,
-                "note": note,
-            }
+        result = []
+        for first, last, prior in self.intervals:
+            if last <= start or first >= end:
+                result.append((first, last, prior))
+                continue
+            if first < start:
+                result.append((first, start, prior))
+            result.append((max(first, start), min(last, end), kind))
+            if last > end:
+                result.append((end, last, prior))
+        self.intervals = []
+        for first, last, role in result:
+            if self.intervals and self.intervals[-1][2] == role:
+                self.intervals[-1] = (self.intervals[-1][0], last, role)
+            else:
+                self.intervals.append((first, last, role))
+
+    def reading(self, start, end, kind="alternative"):
+        """Mark a rendering, without the punctuation at either end of it."""
+        while start < end and self.plain[start] in TRIM:
+            start += 1
+        while end > start and self.plain[end - 1] in TRIM:
+            end -= 1
+        for first, last, role in tuple(self.intervals):
+            if role != "citation" and first < end and start < last:
+                self.mark(max(first, start), min(last, end), kind)
+        return start, end
+
+    def body(self, reading, rule, *, trim=False):
+        start = len(self.plain) - len(self.plain.lstrip()) if trim else 0
+        end = len(self.plain.rstrip()) if trim else len(self.plain)
+        roles = tuple(
+            (max(a, start) - start, min(b, end) - start, role)
+            for a, b, role in self.intervals
+            if max(a, start) < min(b, end)
         )
-    require(not corrections, f"Unused marginal note corrections: {sorted(corrections)}")
-    keys = {n["key"] for notes in result.values() for n in notes}
-    require(
-        set(exceptions) <= keys,
-        f"Unused marginal note exceptions: {sorted(set(exceptions) - keys)}",
-    )
-    require(
-        len(keys) == EXPECTED_NT_MARGINAL_NOTES,
-        f"Expected {EXPECTED_NT_MARGINAL_NOTES} New Testament marginal notes, found {len(keys)}",
-    )
-    return result
-
-
-# Note bodies: labels roman, renderings italic.
+        if reading is not None:
+            reading = (reading[0] - start, reading[1] - start)
+            require(
+                0 <= reading[0] < reading[1] <= end - start,
+                "Note reading outside content",
+            )
+        return Body(self.plain[start:end], roles, reading, rule)
 
 
 def labelled_pieces(text):
@@ -389,89 +244,54 @@ def labelled_pieces(text):
     return pieces
 
 
-def unclosed(plain, styles):
-    """The note's text and styles without its closing full stop, before any
-    closing quotation mark ("A. V. 'my people'"), unless the stop ends an
-    abbreviation ("etc.", "so the Heb.") or is the last of an ellipsis."""
-    stop = re.search(r"(?<!\.)\.(?=['’”\"]?$)", plain)
-    if not stop or ABBREVIATION.search(plain[: stop.end()]):
-        return plain, styles
-    at = stop.start()
-    return plain[:at] + plain[at + 1 :], styles[:at] + styles[at + 1 :]
-
-
-def is_sentence(plain, styles):
-    """Whether the note is a sentence of its own: it opens with neither a label,
-    a rendering nor a reference, and has a finite verb outside its renderings."""
-    roman = "".join(c if style == "ft" else " " for c, style in zip(plain, styles))
-    return (
-        styles[0] == "ft"
-        and not LABEL_START.match(plain)
-        and FINITE_VERB.search(roman) is not None
+def source_text(note):
+    """A source note's words after its origin, as its source marks them up:
+    what the decision files pin and the review shows."""
+    return usj.serialize(
+        [
+            item
+            for item in note["content"]
+            if not usj.is_type(item, "char", "fr")
+            and not usj.is_type(item, "char", "xo")
+        ]
     )
 
 
-def closed(plain, styles):
-    """The sentence with its first letter a capital, and a closing full stop
-    where it has none: George's notes have neither. Quoted Greek or Hebrew
-    keeps its letter."""
-    if not re.search(r"[.?!]['’”\"]?$", plain):
-        plain, styles = plain + ".", [*styles, "ft"]
-    if re.match("[a-z]", plain):
-        plain = plain[0].upper() + plain[1:]
-    return plain, styles
+def source_pieces(note):
+    """One of Brenton's notes as (kind, text) pieces.
 
-
-def overridden_sentence(exception, plain, styles, key):
-    """An exception's say on whether the note is a sentence."""
-    sentence = exception.get("sentence")
-    require(
-        sentence is None or sentence != is_sentence(plain, styles),
-        f"Note sentence override changes nothing: {key}",
-    )
-    return sentence
-
-
-def run_on(plain, styles):
-    """The note's text as it runs on from its lemma's colon: its first word
-    lowercased ("elder: or, greater"), unless the word is a name ("his: Alex.
-    their"), a reference, in capitals, or in quotation marks."""
-    if (
-        styles[0] == "xt"
-        or NAMES.match(plain)
-        or not re.match(r"[A-Z](?![A-Z])", plain)
-    ):
-        return plain
-    return plain[0].lower() + plain[1:]
-
-
-def brenton_pieces(body):
-    """A Brenton note body as (kind, text) pieces.
-
-    Brenton printed his labels in italic, and the eBible text marks them fqa, but
-    it marks the same way the words he cites: those stay italic.
+    Brenton printed his labels in italic, and the eBible text marks them fqa,
+    but it marks the same way the words he cites: those stay italic. A
+    cross-reference is "See" and what it cites.
     """
-    pieces = []
-    kind = "text"
-    outer = []
-    # An opening marker takes the space after it; a closing one does not.
-    for match in re.finditer(r"\\(\+?[\w-]+\*)|\\(\+?[\w-]+) ?|[^\\]+", body):
-        marker = match[1] or match[2]
-        if marker is None:
-            pieces.append((kind, match[0]))
-        elif marker == "ft":
-            kind = "text"
-        elif marker in ("fqa", "fl"):
-            kind = "fqa"
-        elif marker == "xt":
-            kind = "xt"
-        elif marker == "+it":
-            outer.append(kind)
-            kind = "fqa"
-        elif marker == "+it*" and outer:
-            kind = outer.pop()
+    pieces = [("text", "See ")] if note["marker"] == "x" else []
+
+    def visit(items, kind):
+        for item in items:
+            if isinstance(item, str):
+                pieces.append((kind, item))
+                continue
+            marker = item.get("marker")
+            if marker in ("fr", "xo"):
+                continue
+            if marker == "ft":
+                visit(item["content"], "text")
+            elif marker in ("fqa", "fl"):
+                visit(item["content"], "emphasis")
+            elif marker == "xt":
+                visit(item["content"], "xt")
+            elif marker == "it" and kind is not None:
+                visit(item["content"], "emphasis")
+            else:
+                require(False, f"Unexpected marker in a Brenton note: \\{marker}")
+
+    for item in note["content"]:
+        if isinstance(item, str):
+            pieces.append(("text", item))
+        elif item["marker"] == "it":
+            require(False, "Unexpected marker in a Brenton note: \\it")
         else:
-            require(False, f"Unexpected marker in a Brenton note: \\{marker}")
+            visit([item], None)
     # Merge runs that one marker split ("\\ft + \\ft 'and ...'"), and take the
     # full stop that follows "Gr" or "Lit" into the label.
     merged = []
@@ -487,18 +307,17 @@ def brenton_pieces(body):
             merged
             and kind == "text"
             and text.startswith(".")
-            and merged[-1][0] == "fqa"
+            and merged[-1][0] == "emphasis"
             and merged[-1][1].strip() + "." in RENDERING_LABELS
         ):
-            merged[-1] = ("fqa", merged[-1][1].strip() + ". ")
+            merged[-1] = ("emphasis", merged[-1][1].strip() + ". ")
             merged.append((kind, text[1:].lstrip()))
         else:
             merged.append((kind, text))
     result = []
     for kind, text in merged:
-        if kind == "fqa":
-            labelled = text.strip() in LABELS
-            result.append(("label" if labelled else "cited", text))
+        if kind == "emphasis":
+            result.append(("label" if text.strip() in LABELS else "cited", text))
         elif kind == "text":
             # A few labels are left in the note text ("Some read, out of").
             result += labelled_pieces(text)
@@ -507,34 +326,30 @@ def brenton_pieces(body):
     return result
 
 
-def italicize(styles, plain, start, end):
-    while start < end and plain[start] in TRIM:
-        start += 1
-    while end > start and plain[end - 1] in TRIM:
-        end -= 1
-    for i in range(start, end):
-        if styles[i] != "xt":
-            styles[i] = "fqa"
-    return plain[start:end]
-
-
-def styled(pieces):
-    """The note's text, each character's style, and its first rendering.
-
-    Styles are ft (roman), fqa (italic) and xt (a reference).
-    """
-    plain = "".join(text for _, text in pieces)
-    styles = []
+def interpreted(pieces, key):
+    """Read a source note's roles, and the first rendering, which measures
+    the words the note is about."""
+    text = "".join(value for _, value in pieces)
+    meaning = Roles(text)
     starts = []
-    for kind, text in pieces:
-        starts.append(len(styles))
-        styles += ["xt" if kind == "xt" else "ft"] * len(text)
-    for (kind, text), start in zip(pieces, starts):
+    offset = 0
+    for kind, value in pieces:
+        require(
+            kind in {"text", "label", "xt", "cited"},
+            f"Unsupported source note role: {key}: {kind}",
+        )
+        starts.append(offset)
+        meaning.mark(
+            offset,
+            offset + len(value),
+            {"xt": "citation", "label": "label"}.get(kind, "text"),
+        )
         if kind == "cited":
-            italicize(styles, plain, start, start + len(text))
+            meaning.reading(offset, offset + len(value), "quotation")
+        offset += len(value)
     alternative = None
-    for i, (kind, text) in enumerate(pieces[:-1]):
-        if kind != "label" or text.strip() not in RENDERING_LABELS:
+    for i, (kind, value) in enumerate(pieces[:-1]):
+        if kind != "label" or value.strip() not in RENDERING_LABELS:
             continue
         if pieces[i + 1][0] != "text":
             continue
@@ -542,12 +357,12 @@ def styled(pieces):
         # but one after a comma does ("rightness, or straightness"), as does "or"
         # after a rendering ("do good or make good"), and a label joined to
         # another ("Heb. and Alex. Samuel").
-        sentence = re.split(r"[.;](?:\s|$)", plain[: starts[i]])[-1]
-        before = plain[: starts[i]].rstrip(TRIM)
+        sentence = re.split(r"[.;](?:\s|$)", text[: starts[i]])[-1]
+        before = text[: starts[i]].rstrip(TRIM)
         continues = (
-            text.strip() in ("or", "or,")
+            value.strip() in ("or", "or,")
             and before != ""
-            and styles[len(before) - 1] == "fqa"
+            and meaning.kind_at(len(before) - 1) in {"alternative", "quotation"}
         )
         if (
             re.search(r"\w\s*$", sentence)
@@ -555,7 +370,7 @@ def styled(pieces):
             and not (
                 i > 1
                 and pieces[i - 2][0] == "label"
-                and pieces[i - 1][1].strip() in CONJUNCTIONS
+                and pieces[i - 1][1].strip() in lemmas.CONJUNCTIONS
             )
         ):
             continue
@@ -563,12 +378,12 @@ def styled(pieces):
         # even hair") does not end it, but a comma from that word on does
         # ("made ellulim, a Hebrew word").
         ends = [start for (kind, _), start in zip(pieces, starts) if kind != "text"]
-        stop = next((end for end in ends if end > starts[i + 1]), len(plain))
-        if stop < len(plain) and pieces[i + 2][0] == "cited":
-            resume = next((end for end in ends if end > stop), len(plain))
-            comma = plain.find(",", stop, resume)
+        stop = next((end for end in ends if end > starts[i + 1]), len(text))
+        if stop < len(text) and pieces[i + 2][0] == "cited":
+            resume = next((end for end in ends if end > stop), len(text))
+            comma = text.find(",", stop, resume)
             stop = resume if comma < 0 else comma
-        after = plain[starts[i + 1] : stop]
+        after = text[starts[i + 1] : stop]
         extent = RENDERING_END.split(after, maxsplit=1)[0]
         start = starts[i + 1]
         # Greek before its English renders by the English ("Alex. ἐντολαί,
@@ -577,15 +392,15 @@ def styled(pieces):
         if gloss := GREEK_GLOSS.match(extent) or ADDED.match(extent):
             start += gloss.end()
             extent = extent[gloss.end() :]
-        # Quoted Greek or Hebrew ends a rendering after a comma ("furnace,
-        # κάμινον"). Inside a sentence it makes the sentence a comment ("the
-        # word עדנה"), unless an earlier comma ends the rendering ("the hams,
-        # from γόνν").
         # A rendering in quotation marks ends with them ("'turned away,' but").
         if closing := re.match(
             r"\s*['‘“].*?[^\W\d_][,.;:?!]?(['’”])(?![^\W\d_])", extent
         ):
             extent = extent[: closing.start(1)]
+        # Quoted Greek or Hebrew ends a rendering after a comma ("furnace,
+        # κάμινον"). Inside a sentence it makes the sentence a comment ("the
+        # word עדנה"), unless an earlier comma ends the rendering ("the hams,
+        # from γόνν").
         if quoted := QUOTED.search(extent):
             extent = extent[: quoted.start()]
             if not re.search(r",\s*$", extent):
@@ -595,8 +410,8 @@ def styled(pieces):
         tail = word_spans(extent)
         if (
             tail
-            and tail[-1][0] in LINKING_WORDS
-            and stop < len(plain)
+            and tail[-1][0] in lemmas.LINKING_WORDS
+            and stop < len(text)
             and pieces[i + 2][0] == "label"
             and pieces[i + 2][1].strip().rstrip(",").lower() != "or"
             and after.rstrip().endswith(extent.rstrip())
@@ -604,7 +419,7 @@ def styled(pieces):
             extent = extent[: extent.rfind(",")] if "," in extent else ""
         # "Heb. and Alex. Samuel": the conjunction joins two labels.
         joins_labels = (
-            extent.strip() in CONJUNCTIONS
+            extent.strip() in lemmas.CONJUNCTIONS
             and i + 2 < len(pieces)
             and pieces[i + 2][0] == "label"
         )
@@ -613,962 +428,400 @@ def styled(pieces):
         last = 0
         for separator in [*RENDERING_SEPARATOR.finditer(extent), None]:
             end = separator.start() if separator else len(extent)
-            words = italicize(styles, plain, start + last, start + end)
+            bounds = meaning.reading(start + last, start + end)
             # "Alex. + the Lord" adds to the text rather than rendering it.
-            if alternative is None and words and not extent.lstrip().startswith("+"):
-                alternative = words
-            last = separator.end() if separator else len(extent)
-    # Two italic runs a space apart are one ("innocent things").
-    for match in re.finditer(r"(?<=\S) +(?=\S)", plain):
-        if styles[match.start() - 1] == styles[match.end()] == "fqa":
-            styles[match.start() : match.end()] = ["fqa"] * len(match[0])
-    return plain, styles, alternative
-
-
-def underscored(plain, styles):
-    """The note with its italic between underscores, as the exception files write it."""
-    result = []
-    italic = False
-    for char, style in zip(plain, styles):
-        if (style == "fqa") != italic:
-            result.append("_")
-            italic = not italic
-        result.append(char)
-    return "".join(result) + ("_" if italic else "")
-
-
-def overridden_styles(note, plain, styles, key):
-    """Styles from an exception's note, whose underscores mark its italic."""
-    require(
-        note.replace("_", "") == plain,
-        f"Note override does not match the note: {key}",
-    )
-    result = []
-    italic = False
-    for char in note:
-        if char == "_":
-            italic = not italic
-            continue
-        result.append("fqa" if italic else "ft")
-    require(not italic, f"Unclosed italic in note override: {key}")
-    return [
-        "xt" if original == "xt" else style for original, style in zip(styles, result)
-    ]
-
-
-def usfm_body(plain, styles):
-    """The note text as ft, fqa and xt runs."""
-    runs = []
-    for char, style in zip(plain, styles):
-        # A marker takes the space after it, so a space ends the run before,
-        # whatever its style.
-        if runs and (runs[-1][0] == style or char.isspace()):
-            runs[-1][1] += char
-        else:
-            runs.append([style, char])
-    return "".join(f"\\{style} {text}" for style, text in runs)
-
-
-def first_italic(plain, styles):
-    """The first italic run of a note, without its surrounding punctuation."""
-    for italic, run in itertools.groupby(
-        zip(plain, styles), key=lambda pair: pair[1] == "fqa"
-    ):
-        if italic and (text := "".join(char for char, _ in run).strip(TRIM)):
-            return text
-    return None
-
-
-def note_body(pieces, override, key, source):
-    """The note's text, each character's style, its first rendering, and its
-    styling rule.
-
-    The text's USFM must print the source's text, word spaces included.
-    """
-    plain, styles, alternative = styled(pieces)
-    # Space at either end of a note would print, and hide its closing full stop
-    # ("Gr. name. ", 1 Kingdoms 17:13).
-    start, end = len(plain) - len(plain.lstrip()), len(plain.rstrip())
-    plain, styles = plain[start:end], styles[start:end]
-    # An empty note would print only its reference and lemma.
-    require(unclosed(plain, styles)[0], f"Empty note: {key}")
-    require("_" not in plain, f"Underscore in note: {key}")
-    rule = "rendering" if alternative else "roman"
-    if override is not None:
-        changed = overridden_styles(override, plain, styles, key)
-        require(changed != styles, f"Note override changes nothing: {key}")
-        styles = changed
-        rule = "override"
-        # The lemma is measured by the rendering the override italicizes.
-        alternative = first_italic(plain, styles)
-    require(
-        plain_text(usfm_body(plain, styles)) == plain_text(source),
-        f"Note restyling changed its text: {key}",
-    )
-    return plain, styles, alternative, rule
-
-
-# Lemmas.
-
-
-def occurrences(words, phrase):
-    return [
-        i
-        for i in range(len(words) - len(phrase) + 1)
-        if [w for w, _, _ in words[i : i + len(phrase)]] == phrase
-    ]
-
-
-def ends_clause(verse, words, i):
-    """Whether punctuation between words[i] and the next word ends a clause."""
-    return bool(CLAUSE_END.search(plain_text(verse[words[i][2] : words[i + 1][1]])))
-
-
-def crosses_clause(verse, words, first, last):
-    return any(ends_clause(verse, words, i) for i in range(first, last))
-
-
-def whole_compounds(verse, words, first, last):
-    """The span widened to whole hyphenated words (flood-gates, seven-fold)."""
-    while first > 0 and verse[words[first - 1][2] : words[first][1]] == "-":
-        first -= 1
-    while last + 1 < len(words) and verse[words[last][2] : words[last + 1][1]] == "-":
-        last += 1
-    return first, last
-
-
-def unique_span(verse, words, first, last, lone=False):
-    """The shortest widening of words[first..last] that occurs once in the verse.
-
-    A widening that stays within its clause and does not end on a word like
-    "the" or "his" is preferred, even at up to two words longer; of equally
-    good ones, the shortest, then the one to the right. Words that already
-    occur once are left as they are, unless they end on "the" or "of"; a lone
-    word the note is about (lone) stands even then ("for: Or, unto").
-    """
-
-    def unique(span):
-        return (
-            len(occurrences(words, [w for w, _, _ in words[span[0] : span[1] + 1]]))
-            == 1
-        )
-
-    def awkwardness(span):
-        return 2 * crosses_clause(verse, words, *span) + (
-            words[span[1]][0] in OPEN_WORDS
-        )
-
-    span = whole_compounds(verse, words, first, last)
-    if unique(span) and (
-        words[span[1]][0] not in LINKING_WORDS or (lone and span[0] == span[1])
-    ):
-        return span
-    best = None
-    for extra in range(1, len(words)):
-        if best and (awkwardness(best[1]) == 0 or extra > best[0] + 2):
-            break
-        for left in range(extra + 1):
-            if first - left < 0 or last + extra - left >= len(words):
-                continue
-            span = whole_compounds(verse, words, first - left, last + extra - left)
-            if unique(span) and (
-                best is None or awkwardness(span) < awkwardness(best[1])
+            if (
+                alternative is None
+                and text[slice(*bounds)]
+                and not extent.lstrip().startswith("+")
             ):
-                best = extra, span
-    return best[1] if best else (first, last)
-
-
-def phrase_span(words, phrase, key, occurrence=None):
-    """The place in the verse where an exception's lemma occurs: its one
-    occurrence, or the one the exception names if it occurs more than once."""
-    tokens = words_of(phrase)
-    hits = occurrences(words, tokens)
-    # A lemma of no words would be found everywhere, and span nothing.
-    require(
-        tokens
-        and (
-            len(hits) == 1
-            if occurrence is None
-            else len(hits) > 1 and 0 < occurrence <= len(hits)
-        ),
-        (
-            f"Lemma override not found exactly once: {key} ({len(hits)})"
-            if occurrence is None
-            else f"Lemma override occurrence not found, or not needed: {key} ({len(hits)})"
-        ),
-    )
-    first = hits[(occurrence or 1) - 1]
-    return first, first + len(tokens) - 1
-
-
-def overridden_lemma(
-    verse, words, exception, span, glossed, rule, key, occurrence=None
-):
-    """The lemma's span, the span of the words it glosses, and the rule, or
-    those of the exception's lemma if it has one.
-
-    An exception's lemma is the words the note glosses. One that occurs more
-    than once in the verse comes with its occurrence, and is widened like any
-    other lemma.
-    """
-    if "lemma" not in exception:
-        return span, glossed, rule
-    if exception["lemma"] is None:
-        chosen = widened = None
-    elif occurrence is None:
-        chosen = widened = phrase_span(words, exception["lemma"], key)
-    else:
-        chosen = phrase_span(words, exception["lemma"], key, occurrence)
-        widened = unique_span(verse, words, *chosen)
-    # A lemma the same as the widened one still changes what the rendering echoes.
-    require(
-        (widened, chosen) != (span, glossed), f"Lemma override changes nothing: {key}"
-    )
-    return widened, chosen, "override"
-
-
-def same_word(a, b):
-    # Every way of stripping a suffix, so "executes" (execute-s) meets "execute".
-    def stems(word):
-        return {word} | {
-            word[: -len(suffix)]
-            for suffix in ("ings", "ing", "eth", "est", "ed", "es", "s", "d", "ly")
-            if word.endswith(suffix) and len(word) - len(suffix) >= 3
-        }
-
-    return a == b or bool(stems(a) & stems(b))
-
-
-def clause_after(verse, words, first, other):
-    """The words from first to the end of their clause, as a note can gloss them."""
-    clause = [first]
-    for i in range(first + 1, len(words)):
-        if ends_clause(verse, words, i - 1):
-            break
-        # "those who had in them divining spirits" is one phrase.
-        if (
-            words[i][0] in CLAUSE_WORDS
-            and words[i][0] not in other
-            and words[i - 1][0] not in OPEN_WORDS
+                alternative = bounds
+            last = separator.end() if separator else len(extent)
+    # Two renderings or quotations a space apart are one ("innocent things").
+    for match in re.finditer(r"(?<=\S) +(?=\S)", text):
+        if all(
+            meaning.kind_at(at) in {"alternative", "quotation"}
+            for at in (match.start() - 1, match.end())
         ):
-            break
-        clause.append(i)
-    return clause
+            meaning.mark(match.start(), match.end(), "alternative")
+    return meaning.body(alternative, "rendering" if alternative else "roman", trim=True)
 
 
-def clause_before(verse, words, last):
-    """The words from the start of their clause to last."""
-    first = last
-    while first > 0 and not ends_clause(verse, words, first - 1):
-        first -= 1
-    return list(range(first, last + 1))
+def declared_readings(body, override, key):
+    """A note with the renderings an exception declares, between underscores,
+    in place of those the rules found."""
+    words = override.replace("_", "")
+    require(words == body.plain, f"Note override does not match the note: {key}")
+    require(override.count("_") % 2 == 0, f"Unclosed italic in note override: {key}")
+    roles = Roles(body.plain, body.roles)
+    for first, last, role in tuple(roles.intervals):
+        if role != "citation":
+            roles.mark(first, last, "text")
+    at, opened = 0, None
+    for part in re.split("(_)", override):
+        if part != "_":
+            at += len(part)
+        elif opened is None:
+            opened = at
+        else:
+            for first, last, role in tuple(roles.intervals):
+                if role != "citation" and first < at and opened < last:
+                    roles.mark(max(first, opened), min(last, at), "alternative")
+            opened = None
+    # The lemma is measured by the first rendering the override declares.
+    reading = None
+    for first, last, role in roles.intervals:
+        if role == "alternative":
+            value = body.plain[first:last]
+            if value.strip(TRIM):
+                reading = (
+                    first + len(value) - len(value.lstrip(TRIM)),
+                    last - len(value) + len(value.rstrip(TRIM)),
+                )
+                break
+    return roles.body(reading, "override")
 
 
-def measured(words, clause, other, backward=False):
-    """How many words of the clause a rendering stands for, and the rule that said so.
-
-    Forward, the words run from the caller to the rendering's last word. Backward
-    they end at the caller, so they run from the rendering's first word, counted
-    back from its last, to the caller.
-    """
-    if other[-1] not in LINKING_WORDS:
-        near = clause[::-1] if backward else clause
-        for j, i in enumerate(near[: len(other) + 3]):
-            if same_word(words[i][0], other[-1]):
-                return (j + len(other) if backward else j + 1), "last-word"
-    size = len(other)
-    # The word the lemma would start with, which the rendering's article stands for.
-    edge = clause[-min(size, len(clause))] if backward else clause[0]
-    if size > 1 and other[0] in ARTICLES and words[edge][0] not in ARTICLES:
-        size -= 1
-    return size, "length"
+def reading_of(note, override, key):
+    """The rendering by which a source note measures the words it is about."""
+    body = interpreted(source_pieces(note), key)
+    if override is not None:
+        body = declared_readings(body, override, key)
+    return body.alternative
 
 
-def inferred_lemma(kind, verse, words, offset, alternative, widen=True):
-    """The words a Brenton note or cross-reference glosses, and the rule that found them.
-
-    Brenton's caller stands before the glossed words, or after the first of them
-    if the rendering begins with it. A rendering measures how far they reach, by
-    its last word or its length; otherwise the clause, or its first few words,
-    stands for the place. A caller at the end of a verse or a line glosses the
-    words before it if the note renders them, and otherwise the whole verse
-    (None). Unless widen is false, the words are widened until they occur once.
-    """
-
-    def unique(verse, words, first, last, lone=False):
-        if widen:
-            return unique_span(verse, words, first, last, lone)
-        return first, last
-
-    after = [i for i, (_, start, _) in enumerate(words) if start >= offset]
-    # A rendering with figures ("Alex. 187 years") cannot be measured by its words.
-    if alternative and re.search(r"\d", alternative):
-        alternative = None
-    other = words_of(alternative or "")
-    if kind == "x" and after and after[0] <= 3:
-        return None, "xref-verse"
-    if not after or LINE_START.match(verse[offset:]):
-        before = [i for i, (_, _, end) in enumerate(words) if end <= offset]
-        if not other or kind == "x" or not before:
-            return None, "verse-level"
-        clause = clause_before(verse, words, before[-1])
-        size, rule = measured(words, clause, other, backward=True)
-        span = clause[-min(size, len(clause))], clause[-1]
-        return unique(verse, words, *span), rule + " before"
-    clause = clause_after(verse, words, after[0], other)
-    # "and tents" for Alex. "cattle": the conjunction is not what the note renders.
-    if (
-        len(clause) > 1
-        and words[clause[0]][0] in CONJUNCTIONS
-        and (not other or other[0] not in CONJUNCTIONS)
-    ):
-        clause = clause[1:]
-    if other and kind != "x":
-        size, rule = measured(words, clause, other)
-    else:
-        rule = "xref-opening" if kind == "x" else "explanatory"
-        whole = XREF_CLAUSE_LEMMA_WORDS if kind == "x" else CLAUSE_LEMMA_WORDS
-        size = len(clause) if len(clause) <= whole else DEFAULT_LEMMA_WORDS
-    # "his: Alex. their", "into: Gr. upon": a possessive, preposition or
-    # conjunction rendered by one of its kind glosses it alone.
-    alone = len(other) == 1 and any(
-        other[0] in group and words[clause[0]][0] in group
-        for group in (POSSESSIVES, PREPOSITIONS | CONJUNCTIONS)
-    )
-
-    def rounded(size):
-        # Never end on a word like "the" or "his" while the clause goes on.
-        size = min(size, len(clause))
-        while (
-            not alone
-            and size < len(clause)
-            and words[clause[size - 1]][0] in OPEN_WORDS
-        ):
-            size += 1
-        return size
-
-    size = rounded(size)
-    # "those who" wants the rest of its clause.
-    if (
-        size > 1
-        and words[clause[size - 1]][0] in CLAUSE_WORDS
-        and words[clause[size - 2]][0] in ANTECEDENTS
-    ):
-        size = rounded(max(size + 2, RELATIVE_LEMMA_WORDS))
-    if CLAUSE_END.search(plain_text(verse[offset : words[after[0]][1]])):
-        rule += " after punctuation"
-    span = whole_compounds(verse, words, clause[0], clause[size - 1])
-    first, last = unique(verse, words, *span, lone=alone)
-    # "the Evite: Alex. the Chorrhæan", "a consecration: Gr. an accomplishment":
-    # the caller follows the word the rendering begins with.
-    if (
-        other
-        and first == clause[0]
-        and first > 0
-        and indefinite(words[first - 1][0]) == indefinite(other[0])
-        and indefinite(other[0]) != indefinite(words[first][0])
-        and not ends_clause(verse, words, first - 1)
-    ):
-        first -= 1
-    return (first, last), rule
-
-
-def indefinite(word):
-    """The word, with "an" as "a"."""
-    return "a" if word == "an" else word
-
-
-def lemma_text(verse, words, span):
-    first, last = span
-    return plain_text(verse[words[first][1] : words[last][2]])
-
-
-def echo(verse, words, span, glossed):
-    """The lemma's words before and after the words the note glosses: those it
-    took in to occur once in the verse."""
-    if span is None or span == glossed:
-        return "", ""
-    require(
-        span[0] <= glossed[0] and glossed[1] <= span[1],
-        "Lemma does not contain the words it glosses: "
-        + lemma_text(verse, words, span),
-    )
-    words_glossed = lemma_text(verse, words, glossed)
-    head = lemma_text(verse, words, (span[0], glossed[1]))
-    tail = lemma_text(verse, words, (glossed[0], span[1]))
-    return head[: len(head) - len(words_glossed)], tail[len(words_glossed) :]
-
-
-def echoed(plain, styles, style, before, after):
-    """The note with each rendering widened as its lemma was ("of your Father:
-    or, with your Father"), so that it still stands in for the whole lemma.
-
-    A note without a rendering is left as it is, whatever Brenton set in italic.
-    """
-    if style == "roman" or not (before or after):
-        return plain, styles
-    result, result_styles = "", []
-    for italic, run in itertools.groupby(
-        zip(plain, styles), key=lambda pair: pair[1] == "fqa"
-    ):
-        chars, run_styles = zip(*run)
-        if italic:
-            chars = before + "".join(chars) + after
-            run_styles = ["fqa"] * len(chars)
-        result += "".join(chars)
-        result_styles += run_styles
-    return result, result_styles
-
-
-# Placing the notes.
-
-
-def outside_styles(text, start, position, key):
-    """The position moved out of any character style opening on the glossed word."""
-    while opener := re.search(r"\\\+?(?:add|sc) $", text[start:position]):
-        position = start + opener.start()
-    preceding = text[start:position]
-    require(
-        len(re.findall(r"\\\+?(?:add|sc) ", preceding))
-        == len(re.findall(r"\\\+?(?:add|sc)\*", preceding)),
-        f"Note inside a character span: {key}",
-    )
-    return position
-
-
-def set_footnotes(text, entries):
-    """The text with each note as a caller-free footnote of its own.
-
-    A footnote opens with its verse's reference and stands where the note's
-    caller did, so PTXprint sets it on the page with the words it glosses.
-    """
-    parts = []
-    last = 0
-    # A stable sort keeps the notes at one place in order.
-    for entry in sorted(entries, key=lambda e: e.position):
-        lemma = f"\\fq {entry.lemma}: " if entry.lemma is not None else ""
-        parts += [
-            text[last : entry.position],
-            f"\\f - \\fr {entry.reference} {lemma}{entry.body}\\f*",
-        ]
-        last = entry.position
-    result = "".join(parts) + text[last:]
-    require(
-        re.sub(r"\\f - .*?\\f\*", "", result) == text
-        and len(re.findall(r"\\f - ", result)) == len(entries),
-        "Setting the notes changed the text",
-    )
+def visual(body):
+    """A body's roles as they print: readings, citations and the rest."""
+    result = []
+    for start, end, role in body.roles:
+        kind = (
+            "reading"
+            if role in {"alternative", "quotation"}
+            else "citation" if role == "citation" else "text"
+        )
+        if result and result[-1][0] == kind:
+            result[-1] = (kind, result[-1][1] + body.plain[start:end])
+        else:
+            result.append((kind, body.plain[start:end]))
     return result
 
 
-def review_entry(entry, verse, offset, words, span, source):
-    """One line of the notes review: the verse with its lemma, and the note."""
-    marks = {offset: "‸"}
-    if span:
-        marks[words[span[0]][1]] = marks.get(words[span[0]][1], "") + "**"
-        marks[words[span[1]][2]] = "**" + marks.get(words[span[1]][2], "")
-    shown = verse
-    for at in sorted(marks, reverse=True):
-        shown = shown[:at] + marks[at] + shown[at:]
-    return {
-        "key": entry.key,
-        "rule": entry.rule,
-        "verse": plain_text(shown),
-        "lemma": entry.lemma,
-        "note": entry.styled,
-        "source": plain_text(source),
-        "style": entry.style,
-    }
-
-
-# The 1611 marginal notes.
-
-
-def anchor_category(lemma, anchor):
-    """How the anchor's words differ from the lemma's, or None if by more than
-    one category allows: words joined or parted, or one word's letter slip."""
-    if "".join(lemma) == "".join(anchor):
-        return "word division"
-    differing = [(x, y) for x, y in zip(lemma, anchor) if x != y]
-    if len(lemma) == len(anchor) and len(differing) == 1:
-        _, old, new = change(*differing[0])
-        return letter_slip(old, new)
-    return None
-
-
-def read_citations(record, tongue, read, books):
-    """Log what a unit's notes cite, note by note: as its source writes it,
-    as the edition numbers it, and as the edition prints it."""
-    record(
-        "read citations",
-        dialect=tongue.name,
-        citations=[
-            citations.logged(key, citation, books)
-            for key, found in read
-            for citation in found
-        ],
-        decided=[key for key, _ in read if citations.decisions(key)],
-    )
-
-
-def cited(pieces, found, books, key, source):
-    """A note's pieces with its citations as the edition prints them, and
-    the note's text so, which its footnote must print.
-
-    The pieces must be the source's words, so that nothing but its citations
-    is changed.
-    """
-    require(
-        plain_text("".join(text for _, text in pieces)) == plain_text(source),
-        f"Note's pieces are not its source: {key}",
-    )
-    pieces = citations.normalized(pieces, found, books)
-    return pieces, "".join(text for _, text in pieces)
-
-
-def insert_marginal_notes(code, text, record, review, inventory, books):
-    """Set the 1611 marginal notes on the Cambridge text as caller-free footnotes.
-
-    Each note is anchored at George's lemma, or at the Cambridge words recorded
-    for it in edition/kjv-notes.json where the spelling differs, the lemma
-    occurs more than once, or the reference is wrong. The note names the words
-    it is anchored at, widened until they occur only once in the verse, and
-    its renderings take in the same words.
-    """
-    notes = marginal_notes().get(code, [])
-    if not notes:
-        return text
-    require("\\f " not in text, f"Cambridge text already has footnotes: {code}")
-    spans = {reference: (start, end) for reference, start, end in verse_spans(text)}
-    entries = []
-    tongue = citations.dialect("george")
-    read = []
-    for note in notes:
-        key = note["key"]
-        override = KJV_NOTES["notes"].get(key, {})
-        reference = override.get("verse", f"{note['chapter']}:{note['verse']}")
-        require(reference in spans, f"Marginal note verse missing: {key}")
-        start, end = spans[reference]
-        verse = text[start:end]
-        words = word_spans(verse)
-        anchor = words_of(override.get("anchor", note["lemma"]))
-        if "anchor" in override:
-            lemma = words_of(note["lemma"])
-            require(anchor != lemma, f"Marginal note anchor changes nothing: {key}")
-            check_category(
-                anchor_category(lemma, anchor),
-                override,
-                "Marginal note anchor",
-                key,
-                what="difference",
-            )
-        hits = occurrences(words, anchor)
-        occurrence = override.get("occurrence")
-        # An anchor of no words would be found everywhere, and span nothing.
+def source_body(pieces, found, override, key, source):
+    """A source note's body: its roles read, an exception's renderings in
+    place of the rules', and its citations bound to their words."""
+    text = "".join(value for _, value in pieces)
+    leading = len(text) - len(text.lstrip())
+    body = interpreted(citations.source_pieces(pieces, found), key)
+    require(body.plain and body.plain != ".", f"Empty note: {key}")
+    require("_" not in body.plain, f"Underscore in note: {key}")
+    if override is not None:
+        changed = declared_readings(body, override, key)
         require(
-            anchor
-            and (len(hits) == 1 if occurrence is None else 0 < occurrence <= len(hits)),
-            f"Marginal note anchor not found exactly once: {key} ({len(hits)})",
+            visual(changed) != visual(body), f"Note override changes nothing: {key}"
         )
-        first = hits[(occurrence or 1) - 1]
-        glossed = whole_compounds(verse, words, first, first + len(anchor) - 1)
-        # George's lemma of one word stands if it occurs once, even "for".
-        span = unique_span(verse, words, *glossed, lone=anchor[0] not in ARTICLES)
-        rule = "anchor" if span == (first, first + len(anchor) - 1) else "widened"
-        # A 1611 note's occurrence is its anchor's, not its lemma override's.
-        span, glossed, rule = overridden_lemma(
-            verse, words, override, span, glossed, rule, key
-        )
-        # A lemma clear of George's anchor says where the note belongs ("George
-        # swaps the two notes"), so the footnote follows it. A null lemma, for a
-        # note on the whole verse, leaves the note at the anchor.
-        if span and (span[1] < first or first + len(anchor) - 1 < span[0]):
-            first = span[0]
-        position = outside_styles(text, start, start + words[first][1], key)
-        source = note["note"]
-        pieces = labelled_pieces(source)
-        found = citations.scan(
-            "".join(text for _, text in pieces),
-            tongue,
-            verse_at(code, reference),
-            key,
-            inventory,
-        )
-        read.append((key, found))
-        pieces, printed = cited(pieces, found, books, key, source)
-        plain, styles, _, style = note_body(pieces, override.get("note"), key, printed)
-        plain, styles = echoed(plain, styles, style, *echo(verse, words, span, glossed))
-        entry = Entry(
-            key,
-            reference,
-            position,
-            lemma_text(verse, words, span) if span else None,
-            plain,
-            styles,
-            rule,
-            style,
-            overridden_sentence(override, plain, styles, key),
-        )
-        entries.append(entry)
-        if review is not None:
-            review.append(
-                review_entry(entry, verse, words[first][1], words, span, note["note"])
-            )
-    text = set_footnotes(text, entries)
-    read_citations(record, tongue, read, books)
-    record(
-        "insert 1611 translators' marginal notes (Calvin George's transcription)",
-        source=sources.SOURCES["marginal_notes"]["file"],
-        count=len(notes),
-        lemma_rules=dict(Counter(e.rule for e in entries)),
-        exceptions=[n["key"] for n in notes if n["key"] in KJV_NOTES["notes"]],
-        corrected_notes=[
-            n["key"] for n in notes if n["key"] in KJV_NOTES["corrections"]
-        ],
+        body = changed
+    require(
+        plain(body.plain) == usfm.plain_text(source),
+        f"Note restyling changed its text: {key}",
     )
-    return text
+    return bound(body, found, key, leading)
 
 
-# Brenton's notes and cross-references.
-
-
-# Any caller: the preface's notes use "*" as well as "+".
-BRENTON_NOTE = re.compile(r"\\(f|x) \S \\(?:fr|xo) (\S+) ?(.*?)\\\1\*")
-
-
-def in_its_place(text, key, snippet):
-    """Whether the snippet's one occurrence lies where its key says: in the verse
-    it names, or in a file without verses, in a note standing among the words it
-    names, or outside the notes, in the words it names.
-    """
-    start = text.index(snippet)
-    end = start + len(snippet)
-    place = key.partition(" ")[2]
-    if verse := re.fullmatch(r"(\d+:\d+[a-z]?)(?:#([2-9]|[1-9]\d+))?", place):
-        reference, number = verse.groups()
-        if number is not None:
-            matching = [m for m in BRENTON_NOTE.finditer(text) if m[2] == reference]
-            index = int(number) - 1
-            return (
-                index < len(matching)
-                and matching[index].start() <= start
-                and end <= matching[index].end()
-            )
-        matching = [m for m in BRENTON_NOTE.finditer(text) if m[2] == reference]
-        if in_a_note(text, snippet):
-            return (
-                bool(matching)
-                and matching[0].start() <= start
-                and end <= matching[0].end()
-            )
-        return any(
-            verse_ref == reference and first <= start and end <= last
-            for verse_ref, first, last in verse_spans(text)
+def bound(body, found, key, leading=0):
+    """A body with its citations bound to the words that write them."""
+    spans, previous = [], 0
+    for citation in found:
+        first, last = citation.start - leading, citation.end - leading
+        require(
+            previous <= first < last <= len(body.plain)
+            and body.plain[first:last] == citation.source,
+            f"Citation source changed during interpretation: {key}",
         )
-    if "#" in place:
-        return False
-    touched = [
-        m for m in BRENTON_NOTE.finditer(text) if m.start() < end and start < m.end()
-    ]
-    if not touched and not verse_spans(text):
-        return words_of(place) == words_of(plain_text(snippet))
-    if len(touched) != 1:
-        return False
-    note = touched[0]
-    before, after = (
-        words_of(BRENTON_NOTE.sub("", side))
-        for side in (text[: note.start()], text[note.end() :])
-    )
-    words = words_of(place)
-    return any(
-        before[len(before) - k :] + after[: len(words) - k] == words
-        for k in range(1, len(words))
-    )
+        previous = last
+        spans.append((first, last, citation))
+    return replace(body, citations=tuple(spans))
 
 
-def in_a_note(text, snippet):
-    """Whether the snippet's one occurrence lies within a note."""
-    start = text.index(snippet)
-    end = start + len(snippet)
-    return any(
-        m.start() <= start and end <= m.end() for m in BRENTON_NOTE.finditer(text)
-    )
-
-
-# Any paragraph but a heading (\is1, \is2) or a blank line (\ib).
-APPENDIX_PARAGRAPH = re.compile(r"^\\(?!i[sb]\d*\b)\w+ [^\n]*", re.M)
-
-
-def in_translation(text, snippet):
-    """Whether the snippet's one occurrence touches translation: a book's verses,
-    or a passage the appendix supplies. Most of the appendix's notes come before
-    its first passage; after it, a paragraph is translation from its first \\vp,
-    the label before being Brenton's, or throughout, where it has none. That
-    errs toward the translation: a passage may open with its label alone
-    ("Verse 41. And the Philistine"), and the few notes set among the passages
-    ("Considerable variation here rather than omission") are taken for one.
-    """
-    start = text.index(snippet)
-    end = start + len(snippet)
-    spans = [(first, last) for _, first, last in verse_spans(text)]
-    if (passages := text.find("\\vp ")) >= 0:
-        for m in APPENDIX_PARAGRAPH.finditer(text, text.rfind("\n", 0, passages) + 1):
-            spans.append((m.start() + max(m[0].find("\\vp "), 0), m.end()))
-    return any(first < end and start < last for first, last in spans)
-
-
-def corrected_brenton(source, text, record, mended_notes=None):
-    """A Brenton source file with the corrections in edition/brenton-notes.json.
-
-    Each correction is keyed by the source file's id and the verse or note it
-    mends; #n names the nth note in a verse. Several corrections in one note
-    form a list under one key. In a file without verses, the key names the words
-    the note stands among, or outside the notes, the words it mends. Outside
-    notes a correction may mend only word spaces in translation, so the
-    translation stays eBible's: wording checks compare with corrected text. A
-    preface, an introduction, or the appendix's notes and labels may have their
-    words mended.
-    Where notes are corrected is added to mended_notes, if given, as note keys
-    without the file's id: a correction keyed to a verse in a note mends its
-    first note.
-    """
-    corrections = {
-        key: c
-        for key, c in BRENTON_NOTES["corrections"].items()
-        if key.split(" ")[0] == source
-    }
-    for key, group in corrections.items():
-        for correction in group if isinstance(group, list) else [group]:
-            mended = corrected(text, correction, "Brenton correction", key)
+def authored_body(note, override, key):
+    """The body of a note the edition writes, whose markers say what each
+    part is: \\fl a label, \\fqa an alternative rendering, \\fq quoted words,
+    \\xt a citation, \\ft the rest. A rendering or quotation carries no space
+    at either end; the space is the text's beside it."""
+    runs = []
+    for item in note["content"]:
+        if isinstance(item, str) or item.get("marker") in ("fr", "xo"):
             require(
-                in_its_place(text, key, correction["from"]),
-                f"Brenton correction is not where its key says: {key}",
+                not isinstance(item, str), f"Unmarked words in an edition note: {key}"
             )
-            in_note = in_a_note(text, correction["from"])
-            require(
-                in_note
-                or not in_translation(text, correction["from"])
-                or canonical_text(correction["from"])
-                == canonical_text(correction["to"]),
-                f"Brenton correction changes the wording outside a note: {key}",
-            )
-            if in_note and mended_notes is not None:
-                mended_notes.add(key.partition(" ")[2])
-            text = mended
-    if corrections:
-        record("correct eBible's Brenton text", corrections=sorted(corrections))
-    return text
-
-
-def note_key(code, reference, number):
-    """A Brenton note's key: its verse, then after its verse's first note, its number there."""
-    return f"{code} {reference}" + (f"#{number}" if number > 1 else "")
-
-
-@dataclass
-class SourceNote:
-    """One of Brenton's notes or cross-references, as eBible has it."""
-
-    key: str
-    kind: str  # "f" for a note, "x" for a cross-reference
-    reference: str
-    start: int  # the verse's span in the text without notes
-    end: int
-    position: int  # in the text without notes
-    source: str  # a cross-reference is "See" and its reference
-    pieces: list  # the source as (kind, text) pieces
-    citations: list  # what it cites, by their place in the pieces' text
-
-
-def brenton_notes(code, text, inventory, note_keys=None):
-    """The text without Brenton's notes and cross-references, and each of them
-    keyed, with what it cites read."""
-    found = []
-    removed = 0
-    for match in BRENTON_NOTE.finditer(text):
-        found.append((match.start() - removed, match[1], match[2], match[3]))
-        removed += len(match[0])
-    clean = BRENTON_NOTE.sub("", text)
-    require(
-        "\\f " not in clean and "\\x " not in clean, f"Unparsed Brenton note: {code}"
-    )
-    if not found:
-        return clean, []
-    spans = verse_spans(clean)
-    span_starts = [start for _, start, _ in spans]
-    seen = Counter()
-    result = []
-    tongue = citations.dialect("brenton")
-    require(
-        note_keys is None or len(note_keys) == len(found),
-        f"Alexandrine note identities changed: {code}",
-    )
-    for ordinal, (position, kind, source_reference, body) in enumerate(found):
-        # A note just after a verse number stands before the space its span skips.
-        ahead = re.compile(r"\s*").match(clean, position).end()
-        index = bisect.bisect_right(span_starts, ahead) - 1
-        require(index >= 0, f"Note before the first verse: {code} {source_reference}")
-        reference, start, end = spans[index]
-        require(
-            reference == source_reference,
-            f"Note reference disagrees with its verse: {code} {source_reference}",
-        )
-        seen[reference] += 1
-        key = (
-            note_keys[ordinal]
-            if note_keys is not None
-            else note_key(code, reference, seen[reference])
-        )
-        source = body if kind == "f" else "See " + body
-        pieces = brenton_pieces(source)
-        cited = citations.scan(
-            "".join(text for _, text in pieces),
-            tongue,
-            verse_at(code, reference),
-            key,
-            inventory,
-        )
-        result.append(
-            SourceNote(
-                key,
-                kind,
-                reference,
-                start,
-                end,
-                max(position, start),
-                source,
-                pieces,
-                cited,
-            )
-        )
-    return clean, result
-
-
-def restyle_brenton_notes(
-    code, clean, found, record, review, merged, books, alex_lemmas=None
-):
-    """Set Brenton's notes and cross-references as caller-free footnotes, each naming its lemma.
-
-    Takes brenton_notes' text without notes and the notes found in it. A
-    cross-reference becomes a footnote of "See" and its reference. The notes
-    whose keys are merged, which quotation links replace, are left out. What
-    a note cites prints as the edition cites it.
-    """
-    exceptions = {
-        k: v for k, v in BRENTON_NOTES["notes"].items() if k.split(" ")[0] == code
-    }
-    if not found:
-        require(
-            not exceptions, f"Brenton note exceptions for a book without notes: {code}"
-        )
-        return clean
-    # A merged note doesn't print, so an exception to its lemma or wording
-    # would go unused unnoticed.
-    require(
-        not merged & set(exceptions),
-        f"Brenton note exception for a note a link replaces: {sorted(merged & set(exceptions))}",
-    )
-    entries = []
-    for note in found:
-        if note.key in merged:
             continue
-        key, kind, position, source = note.key, note.kind, note.position, note.source
-        exception = exceptions.get(key, {})
-        pieces, printed = cited(note.pieces, note.citations, books, key, source)
-        plain, styles, alternative, style = note_body(
-            pieces, exception.get("note"), key, printed
+        require(
+            item["marker"] in AUTHORED
+            and all(isinstance(c, str) for c in item["content"]),
+            f"Unknown part of an edition note: {key}",
         )
-        verse = clean[note.start : note.end]
-        words = word_spans(verse)
-        offset = position - note.start
-        span, rule = inferred_lemma(kind, verse, words, offset, alternative)
-        glossed, _ = inferred_lemma(
-            kind, verse, words, offset, alternative, widen=False
-        )
-        preserved = (
-            alex_lemmas is not None
-            and key in alex_lemmas
-            and isinstance(alex_lemmas[key], dict)
-        )
-        if alex_lemmas is not None and key in alex_lemmas and not preserved:
-            require(
-                "lemma" not in exception,
-                f"Alexandrine lemma also has a Brenton exception: {key}",
+        runs.append([AUTHORED[item["marker"]], "".join(item["content"])])
+    for index, (role, value) in enumerate(runs):
+        if role in ("alternative", "quotation"):
+            kept = value.rstrip(" ")
+            if kept != value and index + 1 < len(runs):
+                runs[index + 1][1] = value[len(kept) :] + runs[index + 1][1]
+            runs[index][1] = kept
+    text = "".join(value for _, value in runs)
+    roles = Roles(text)
+    offset, reading = 0, None
+    for role, value in runs:
+        roles.mark(offset, offset + len(value), role)
+        if role == "alternative" and reading is None and value.strip(TRIM):
+            reading = (
+                offset + len(value) - len(value.lstrip(TRIM)),
+                offset + len(value.rstrip(TRIM)),
             )
-        if not preserved:
-            span, glossed, rule = overridden_lemma(
-                verse,
-                words,
-                exception,
-                span,
-                glossed,
-                rule,
-                key,
-                exception.get("occurrence"),
-            )
-        if alex_lemmas is not None and key in alex_lemmas:
-            chosen = alex_lemmas[key]
-            if preserved:
-                # The passage stage validated this note against its original
-                # words before relocating it. Keep both the displayed lemma
-                # and the narrower gloss, so restyling cannot invent an echo.
-                span = (
-                    phrase_span(words, chosen["lemma"], key)
-                    if chosen["lemma"] is not None
-                    else None
-                )
-                glossed = (
-                    phrase_span(words, chosen["glossed"], key)
-                    if chosen["glossed"] is not None
-                    else None
-                )
-            elif chosen is None:
-                span = glossed = None
-            else:
-                hits = occurrences(words, words_of(chosen))
-                if len(hits) > 1:
-                    anchored = [
-                        i for i, hit in enumerate(hits, 1) if words[hit][1] == offset
-                    ]
-                    require(
-                        len(anchored) == 1,
-                        f"Alexandrine lemma not anchored once: {key}",
-                    )
-                    glossed = phrase_span(words, chosen, key, anchored[0])
-                else:
-                    glossed = phrase_span(words, chosen, key)
-                # Declared Alexandrine phrases name the precise changed words.
-                # A complete phrase can end in a preposition ("asked for");
-                # widening it would falsely assign retained words to an omission.
-                span = unique_span(verse, words, *glossed) if len(hits) > 1 else glossed
-            rule = "preserved passage note" if preserved else "Alexandrine reading"
-        plain, styles = echoed(plain, styles, style, *echo(verse, words, span, glossed))
-        entry = Entry(
-            key,
-            note.reference,
-            outside_styles(clean, note.start, position, key),
-            lemma_text(verse, words, span) if span else None,
-            plain,
-            styles,
-            rule,
-            style,
-            overridden_sentence(exception, plain, styles, key),
+        offset += len(value)
+    body = roles.body(reading, "rendering" if reading else "roman")
+    if override is not None:
+        body = declared_readings(body, override, key)
+    return body
+
+
+def with_terms(body, terms):
+    return replace(body, terms=terminology.recognize(body.plain, terms))
+
+
+def edited(body, before, after, key):
+    """A body with a declared change to its words, its roles, reading,
+    citations and terms carried through the change."""
+    text = body.plain
+    require(text.count(before) == 1, f"Prose edit does not apply once: {key}: {before}")
+    prefix, removed, added = change(before, after)
+    start = text.index(before) + prefix
+    end = start + len(removed)
+    leaves = body.leaves
+    # What is added belongs to the first stretch the change touches, or to
+    # the one that ends where words are only added.
+    touched = [
+        n
+        for n, (a, b, _, _) in enumerate(leaves)
+        if a < end and start < b or start == end and a < start <= b
+    ]
+    owner = touched[0] if touched else 0
+    require(touched or start == 0, f"Prose edit has no words to change: {key}")
+    roles, bound_citations, at = [], [], 0
+    for n, (a, b, role, citation) in enumerate(leaves):
+        gone = max(min(b, end) - max(a, start), 0)
+        length = (b - a) - gone + (len(added) if n == owner else 0)
+        if not length:
+            continue
+        if citation is not None:
+            bound_citations.append((at, at + length, citation))
+        if roles and roles[-1][2] == role:
+            roles[-1] = (roles[-1][0], at + length, role)
+        else:
+            roles.append((at, at + length, role))
+        at += length
+
+    def moved(at, closing=False):
+        if at < start or at == start and not closing:
+            return at
+        if at >= end:
+            return at + len(added) - (end - start)
+        return start + (len(added) if closing else 0)
+
+    return replace(
+        body,
+        plain=text[:start] + added + text[end:],
+        roles=tuple(roles),
+        reading=(
+            None
+            if body.reading is None
+            else (moved(body.reading[0]), moved(body.reading[1], True))
+        ),
+        citations=tuple(bound_citations),
+        terms=tuple(
+            replace(t, start=moved(t.start), end=moved(t.end, True)) for t in body.terms
+        ),
+    )
+
+
+# How a note prints.
+
+
+def text_of(runs):
+    return "".join(value for _, value in runs)
+
+
+def merged_runs(runs):
+    result = []
+    for role, value in runs:
+        if not value:
+            continue
+        if result and result[-1][0] == role:
+            result[-1] = (role, result[-1][1] + value)
+        else:
+            result.append((role, value))
+    return result
+
+
+def displayed(body, before="", after="", *, books=None):
+    """A body as runs of commentary, readings and citations: each rendering
+    widened as its lemma was, each citation as the edition prints it. Returns
+    the runs, the terms where they now stand, and the runs before widening."""
+    runs, original = [], []
+    for start, end, role, citation in body.leaves:
+        value = body.plain[start:end]
+        if citation is not None:
+            value = citations.printed(citation, books)
+            if citation.items:
+                role = "citation"
+            elif role not in {"alternative", "quotation"}:
+                role = "text"
+        shown = value
+        # Only an alternative rendering stands in for the whole lemma; words
+        # the note merely quotes are left as they are.
+        if role == "alternative" and body.rule != "roman" and (before or after):
+            shown = before + value + after
+        kind = (
+            "reading"
+            if role in {"alternative", "quotation"}
+            else "citation" if role == "citation" else "commentary"
         )
-        entries.append(entry)
-        if review is not None:
-            review.append(review_entry(entry, verse, offset, words, span, source))
-    keys = {e.key for e in entries}
+        original.append((kind, value))
+        runs.append((kind, shown))
+    runs, original = merged_runs(runs), merged_runs(original)
+    terms = body.terms
+    text = text_of(runs)
+    if text != body.plain:
+        blocks = SequenceMatcher(
+            None, body.plain, text, autojunk=False
+        ).get_matching_blocks()
+        terms = tuple(
+            replace(t, start=block.b + t.start - block.a, end=block.b + t.end - block.a)
+            for t in terms
+            for block in blocks
+            if block.a <= t.start < t.end <= block.a + block.size
+        )
+    return runs, terms, original
+
+
+def is_sentence(runs):
+    """Whether the note is a sentence of its own: it opens with neither a label,
+    a rendering nor a reference, and has a finite verb outside its renderings."""
+    roman = "".join(
+        value if role == "commentary" else " " * len(value) for role, value in runs
+    )
+    return (
+        runs[0][0] == "commentary"
+        and not LABEL_START.match(text_of(runs))
+        and FINITE_VERB.search(roman) is not None
+    )
+
+
+def sliced(runs, start=0, end=None):
+    end = len(text_of(runs)) if end is None else end
+    result, offset = [], 0
+    for role, value in runs:
+        first, last = max(start - offset, 0), min(end - offset, len(value))
+        if first < last:
+            result.append((role, value[first:last]))
+        offset += len(value)
+    return result
+
+
+def finished(runs, terms, lemma, sentence, registry, key):
+    """The note as it prints: its terms in the edition's forms; a sentence
+    with its capital and a closing full stop; any other note without one, and
+    after a lemma, running on from the colon ("elder: or, greater") unless it
+    opens with a name, a reference, capitals or a quotation mark."""
+    found = is_sentence(runs)
     require(
-        set(exceptions) <= keys,
-        f"Unused Brenton note exceptions: {sorted(set(exceptions) - keys)}",
+        sentence is None or sentence != found,
+        f"Note sentence override changes nothing: {key}",
     )
-    text = set_footnotes(clean, entries)
-    kinds = Counter(n.kind for n in found if n.key not in merged)
-    record(
-        "set Brenton's notes and cross-references as footnotes without callers",
-        notes=kinds["f"],
-        cross_references=kinds["x"],
-        lemma_rules=dict(Counter(e.rule for e in entries)),
-        exceptions=sorted(exceptions),
-    )
-    return text
+    complete = found if sentence is None else sentence
+    text = text_of(runs)
+    # The closing full stop, before any closing quotation mark, unless it is
+    # the last of an ellipsis; it stays if it ends an abbreviation ("so the Heb.").
+    stop = re.search(r"(?<!\.)\.(?=['’”\"]?$)", text)
+    terminal = stop.start() if stop else None
+    lexical = bool(stop and ABBREVIATION.search(text[: stop.end()]))
+    initial = None
+    if complete and re.match("[a-z]", text):
+        initial = str.upper
+    elif (
+        not complete
+        and lemma is not None
+        and runs[0][0] != "citation"
+        and not NAMES.match(text)
+        and re.match(r"[A-Z](?![A-Z])", text)
+    ):
+        initial = str.lower
+    bounds, offset = [], 0
+    for role, value in runs:
+        bounds.append((offset, offset + len(value), role))
+        offset += len(value)
+    edits = []
+    for term in terms:
+        # A capital in a separate reading or citation is no evidence that a
+        # sentence ends at the term.
+        capital = re.search(r"\s+([A-Z])", text[term.end :])
+        if term.closure and capital and capital.start() == 0:
+            at = term.end + capital.start(1)
+            if not any(a <= term.start < at < b for a, b, _ in bounds):
+                term = replace(term, closure=False)
+        if terminal == term.end - 1 and not complete and not lexical:
+            term = replace(term, closure=False)
+        edits.append((term.start, term.end, terminology.render(term, registry, text)))
+    if terminal is not None and not complete and not lexical:
+        # A term's own period is the term's; any other closing stop goes.
+        own = any(
+            t.start <= terminal < t.end
+            and t.end == terminal + 1
+            and registry.display(t.identity).endswith(".")
+            for t in terms
+        )
+        covered = any(a <= terminal < b for a, b, _ in edits)
+        if not own and not covered:
+            edits.append((terminal, terminal + 1, ""))
+    for start, end, value in sorted(edits, reverse=True):
+        role = next(role for a, b, role in bounds if a <= start < b)
+        runs = [*sliced(runs, 0, start), (role, value), *sliced(runs, end)]
+    runs = merged_runs(runs)
+    if complete and not re.search(r"[.?!]['’”\"]?$", text_of(runs)):
+        runs = merged_runs([*runs, ("commentary", ".")])
+    if initial:
+        role, value = runs[0]
+        runs[0] = (role, initial(value[0]) + value[1:])
+    return runs
+
+
+def underscored(runs):
+    """The note with its italic between underscores, as the exception files write it."""
+    result, reading = [], False
+    for role, value in runs:
+        if (role == "reading") != reading:
+            result.append("_")
+            reading = not reading
+        result.append(value)
+    return "".join(result) + ("_" if reading else "")
+
+
+def footnote(reference, lemma, runs, **extra):
+    """A printed note: its verse, the words it is about, and its text. A
+    marker takes the space after it, so a run's leading space is written at
+    the end of the run before."""
+    parts = []
+    for role, value in runs:
+        marker = PRINTED[role]
+        spaces = len(value) - len(value.lstrip())
+        if parts and spaces:
+            parts[-1][1] += value[:spaces]
+            value = value[spaces:]
+        if value:
+            if parts and parts[-1][0] == marker:
+                parts[-1][1] += value
+            else:
+                parts.append([marker, value])
+    content = [usj.char("fr", f"{reference} ")]
+    if lemma is not None:
+        content.append(usj.char("fq", f"{lemma}: "))
+    content += [usj.char(marker, value) for marker, value in parts]
+    return usj.note("f", *content, **extra)

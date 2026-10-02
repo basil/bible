@@ -3,12 +3,12 @@
 from types import SimpleNamespace
 
 import pytest
-from ptxprint.marginnotes import MarginNote, MarginNotes
+from patch_margin_convergence import patch
 from ptxprint import runjob
+from ptxprint.marginnotes import MarginNote, MarginNotes
 
 from bible import typeset
 from bible.checks import CheckFailed
-from patch_margin_convergence import patch
 
 
 @pytest.mark.parametrize("offset", [0, 12.34567, -12.34567])

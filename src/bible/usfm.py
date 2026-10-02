@@ -1,43 +1,23 @@
-"""USFM text helpers: inventories, chapter and verse structure, and the
-canonical forms that the build's wording and markup checks compare.
+"""USFM as text: what the build reads of a source before it is parsed, and of
+PTXprint's files after they are written. Every document between is USJ.
 
 Verse labels are strings (including bridges and letters), and markers are
 counted by name.
 """
 
-import collections
 import re
 
-from bible.checks import require
+from bible import scripture
 
-# A USFM marker: its name, with the + of a nested character style and the * that
-# closes a span.
-MARKER = r"\\(\+?[\w-]+\*?)"
+# Unicode source alphabets.
+GREEK = "\u0370-\u03ff\u1f00-\u1fff"
+HEBREW = "\u0590-\u05ff"
 # A marker as printing removes it: a closing one ends at its asterisk, and an
 # opening one takes one space.
 MARKUP = re.compile(r"\\\+?[\w-]+(?:\*| ?)")
-# A footnote or cross reference, whose words aren't the verse's.
-NOTE = re.compile(r"\\(ef|[fx]) .*?\\\1\*", re.S)
 HEADING_MARKERS = ("mt1", "mt2", "mt3")
-# Notes, character styles and table cells, which PTXprint must keep...
-NOTE_AND_STYLE_MARKERS = {
-    "f",
-    "ef",
-    "x",
-    "xta",
-    "add",
-    "it",
-    "tr",
-    "th1",
-    "th2",
-    "tc1",
-    "tc2",
-    "vp",
-}
-# ...and the parts of notes, which preparation must keep as well.
-NOTE_PART_MARKERS = {"fr", "ft", "fq", "fqa", "xo", "xt"}
 # USFM's escapes for characters that would otherwise be markup.
-ESCAPED_CHARACTERS = {
+ESCAPED = {
     "asterisk": "*",
     "percent": "%",
     "hash": "#",
@@ -48,81 +28,32 @@ ESCAPED_CHARACTERS = {
 }
 
 
-def marker_counts(text):
-    return collections.Counter(re.findall(MARKER, text))
-
-
 def inventory(text):
-    chapters = {}
-    chapter = None
-    for m in re.finditer(r"\\(c|v)\s+(\S+)", text):
-        kind, label = m.groups()
+    """A text's chapters with their verses' labels, and its markers counted."""
+    chapters, chapter = {}, None
+    for kind, label in re.findall(r"\\(c|v)\s+(\S+)", text):
         if kind == "c":
-            if label in chapters:
-                raise ValueError(f"Duplicate chapter {label}")
             chapter = label
             chapters[chapter] = []
         else:
-            if chapter is None:
-                raise ValueError("Verse before chapter")
-            if label in chapters[chapter]:
-                raise ValueError(f"Duplicate verse {chapter}:{label}")
             chapters[chapter].append(label)
-    return {"chapters": chapters, "markers": dict(sorted(marker_counts(text).items()))}
+    markers = {}
+    for marker in re.findall(r"\\(\+?[\w-]+\*?)", text):
+        markers[marker] = markers.get(marker, 0) + 1
+    return {"chapters": chapters, "markers": markers}
 
 
-def source_marker(text, marker):
-    match = re.search(r"^\\" + marker + r"\s+([^\n]+)", text, re.M)
-    require(match is not None, f"Missing source {marker} marker")
-    return match[1].strip()
-
-
-def replace_marker_line(text, marker, value, code):
-    """The text with the value of its first \\marker line replaced."""
-    text, count = re.subn(
-        r"^(\\" + marker + r"\s+)[^\n]*",
-        lambda m: m[1] + value,
-        text,
-        count=1,
-        flags=re.M,
+def heading(text):
+    """The words of a text's heading lines."""
+    lines = re.findall(
+        r"^\\(?:" + "|".join(HEADING_MARKERS) + r")\s+([^\n]*)$", text, re.M
     )
-    require(count == 1, f"Missing {marker} heading: {code}")
-    return text
-
-
-def marker_lines(text, markers):
-    """The (marker, value) pairs of the lines that open with one of the markers."""
-    pattern = r"^\\(" + "|".join(markers) + r")\s+([^\n]*)$"
-    return [
-        (marker, value.strip()) for marker, value in re.findall(pattern, text, re.M)
-    ]
-
-
-CHAPTER_START = re.compile(r"(?=\\c \d+\s)")
-
-
-def chapter_parts(text):
-    parts = CHAPTER_START.split(text)
-    return parts[0], parts[1:]
-
-
-def book_header(text):
-    """The text before the first chapter, without splitting the rest."""
-    return CHAPTER_START.split(text, maxsplit=1)[0]
-
-
-def renumber_chapters(chapters, offset):
-    """Chapters whose opening chapter marker is lowered by offset."""
-    return [
-        re.sub(r"^\\c (\d+)", lambda m: f"\\c {int(m[1]) - offset}", c, count=1)
-        for c in chapters
-    ]
+    return " ".join(line.strip() for line in lines)
 
 
 def verse_spans(text):
     """Each verse's reference with the offsets of its text, up to the next verse."""
-    spans = []
-    chapter = None
+    spans, chapter = [], None
     markers = list(re.finditer(r"\\(c|v) (\S+)\s*", text))
     for index, m in enumerate(markers):
         if m[1] == "c":
@@ -133,35 +64,10 @@ def verse_spans(text):
     return spans
 
 
-def word_spans(text):
-    """Words with their start and end offsets, ignoring markup, case, and punctuation.
-
-    Markers are removed with the space an opening one takes, so a marker inside a
-    word leaves it whole (no\\add thing\\add* is nothing), and the offsets index
-    the USFM itself. Apostrophes join a word (king’s is kings); hyphens separate
-    one (market-place).
-    """
-    # The offset in the USFM of each character that is not markup.
-    offsets = []
-    last = 0
-    for m in MARKUP.finditer(text):
-        offsets += range(last, m.start())
-        last = m.end()
-    offsets += range(last, len(text))
-    unmarked = "".join(text[i] for i in offsets)
-    return [
-        (
-            re.sub(r"[’']", "", m[0]).casefold(),
-            offsets[m.start()],
-            offsets[m.end() - 1] + 1,
-        )
-        for m in re.finditer(r"[^\W\d_]+(?:[’'][^\W\d_]+)*", unmarked)
-    ]
-
-
 def words_of(text):
-    """The words of a stretch of USFM, as word_spans finds them, without offsets."""
-    return [word for word, _, _ in word_spans(text)]
+    """The words of a stretch of USFM, as scripture.words_of reads them,
+    ignoring its markup."""
+    return scripture.words_of(MARKUP.sub("", text))
 
 
 def plain_text(text):
@@ -170,31 +76,6 @@ def plain_text(text):
 
 
 def canonical_text(text):
-    # Ignore only markup and whitespace; retain every source word, number and punctuation.
-    text = re.sub(
-        r"\\(" + "|".join(ESCAPED_CHARACTERS) + r")\b\s?",
-        lambda m: ESCAPED_CHARACTERS[m[1]],
-        text,
-    )
-    text = re.sub(MARKER + r"\s?", "", text)
-    return re.sub(r"\s+", "", text)
-
-
-def passage_payload(text):
-    """A wording witness that ignores only headings and displayed reference labels."""
-    text = text[text.index(r"\c ") :]
-    text = re.sub(r"\\s\d?\s+[^\n]*", "", text)
-    text = re.sub(r"\\cp\s+[^\n]*", "", text)
-    text = re.sub(r"\\(?:c|v)\s+\d+[a-z]?\s*", "", text)
-    text = re.sub(r"\\(?:fr|xo)\s+\d+:\d+[a-z]?\s*", "", text)
-    return canonical_text(text)
-
-
-def preserved_markers(text):
-    """Counts of the note and character-style markers, which preparation must keep."""
-    kept = NOTE_AND_STYLE_MARKERS | NOTE_PART_MARKERS
-    return {
-        marker: count
-        for marker, count in marker_counts(text).items()
-        if marker.lstrip("+").rstrip("*") in kept
-    }
+    """A text's printed characters, without its markup and spaces."""
+    text = re.sub(r"\\(" + "|".join(ESCAPED) + r")\b\s?", lambda m: ESCAPED[m[1]], text)
+    return re.sub(r"\s+", "", re.sub(r"\\(\+?[\w-]+\*?)\s?", "", text))

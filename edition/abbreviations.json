@@ -1,42 +1,15 @@
 {
   "why": "Brenton's list names only some of the abbreviations that the printed notes use: his own notes, the introductions to the Apocrypha, the footnotes to his preface, the margin of 1611, and the quotation links. These rows supplement it, each in the form The Chicago Manual of Style gives it (AD, BC, etc., i.e., MS, St.). A meaning is capitalized only where it is a proper noun.",
   "added": [
-    {
-      "abbreviation": "AD",
-      "meaning": "_anno Domini_"
-    },
-    {
-      "abbreviation": "BC",
-      "meaning": "before Christ"
-    },
-    {
-      "abbreviation": "etc.",
-      "meaning": "_et cetera_, and so forth"
-    },
-    {
-      "abbreviation": "i.e.",
-      "meaning": "_id est_, that is"
-    },
-    {
-      "abbreviation": "LXX",
-      "meaning": "Septuagint"
-    },
-    {
-      "abbreviation": "MS, MSS",
-      "meaning": "manuscript, manuscripts"
-    },
-    {
-      "abbreviation": "p., pp.",
-      "meaning": "page, pages"
-    },
-    {
-      "abbreviation": "St.",
-      "meaning": "saint"
-    },
-    {
-      "abbreviation": "Vat.",
-      "meaning": "Vatican Text"
-    }
+    ["anno-domini"],
+    ["before-christ"],
+    ["et-cetera"],
+    ["id-est"],
+    ["septuagint"],
+    ["manuscript", "manuscripts"],
+    ["page", "pages"],
+    ["saint"],
+    ["vatican"]
   ],
   "meanings": {
     "why": "Chicago capitalizes a meaning only where it is a proper noun, as \"Hebrew\" and \"Septuagint\" are, so Brenton's other meanings are lowercased to match the added rows.",
@@ -56,266 +29,22 @@
       }
     ]
   },
-  "numbers": {
-    "why": "Chicago sets no period after a number within a sentence. The number stays in figures, as the source writes it, unless the notes around it write theirs in words, and an ordinal takes its suffix. Each change names its unit and the words it changes there, once.",
-    "changes": [
-      {
-        "unit": "MAT",
-        "from": "after 5. shillings",
-        "to": "after five shillings",
-        "why": "the rate in words, as every other note writes it"
-      },
-      {
-        "unit": "MAT",
-        "from": "187. pound 10. Shillings",
-        "to": "187 pounds 10 shillings",
-        "why": "the sum as the note it cites, on 18:24, prints it"
-      },
-      {
-        "unit": "LUK",
-        "from": "nine gallons 3. quarts",
-        "to": "nine gallons three quarts",
-        "why": "in words, as the measures of the notes around it are"
-      },
-      {
-        "unit": "LUK",
-        "from": "This 36. verse",
-        "to": "This 36th verse",
-        "why": "an ordinal, as 1611 wrote them"
-      },
-      {
-        "unit": "LUK",
-        "from": "is 3. pounds two shillings sixpence",
-        "to": "is three pounds two shillings six pence",
-        "why": "in words, as the rest of the sum is, and six pence as the note on Matthew 17:27 writes it"
-      },
-      {
-        "unit": "NDX",
-        "from": "in his 4. \\it Cateches",
-        "to": "in his 4th \\it Cateches",
-        "why": "an ordinal: Cyril's fourth catechetical lecture"
-      },
-      {
-        "unit": "NDX",
-        "from": "Acts 17:11. and 8:28",
-        "to": "Acts 17:11 and 8:28"
-      },
-      {
-        "unit": "ACT",
-        "from": "\\xt Deuteronomy 1:31\\ft . \\xt 2 Maccabees 7:27\\ft . according",
-        "to": "\\xt Deuteronomy 1:31\\ft ; \\xt 2 Maccabees 7:27\\ft , according",
-        "why": "two citations, set apart as those at Luke 1:78 are, and the clause that runs on from them"
-      },
-      {
-        "unit": "ACT",
-        "from": "\\xt Esaias 55:3\\ft . and in many others",
-        "to": "\\xt Esaias 55:3 \\ft and in many others"
-      },
-      {
-        "unit": "PRO",
-        "from": "\\xt Mark 14:72\\ft . and margin",
-        "to": "\\xt Mark 14:72 \\ft and margin"
-      },
-      {
-        "unit": "ISA",
-        "from": "\\xt Genesis 1:9. \\ft also",
-        "to": "\\xt Genesis 1:9 \\ft also"
-      },
-      {
-        "unit": "ISA",
-        "from": "\\xt Joel 2:2.,",
-        "to": "\\xt Joel 2:2,"
-      },
-      {
-        "unit": "PSA",
-        "from": "\\xt Psalm 44. \\ft title",
-        "to": "\\xt Psalm 44 \\ft title"
-      },
-      {
-        "unit": "BAK",
-        "from": "in Luke 4:23. \\it proverb",
-        "to": "in Luke 4:23 \\it proverb"
-      },
-      {
-        "unit": "OTH",
-        "from": "save I. and II. Esdras",
-        "to": "save 1 and 2 Esdras",
-        "why": "the numbers of books, in the figures of the edition's names for them"
-      }
-    ]
-  },
   "expanded": {
     "why": "Text names are printed in full in the notes, apart from the Alexandrine and Vatican Texts, which stay Alex. and Vat., and their other rows are removed from his list, as is his row for Comp. as Compare, which is printed in full. LXX remains in the text, and is listed by a row added. The Authorized Version is printed in full, whether Brenton writes it A. V., Eng. Ver., the English Version or, in a note, English Bible, and his row for A. V. is removed. Other abbreviations used only once or twice are also printed in full where they stand and not listed, but for those that Chicago prints (AD, MS, MSS, p., pp.), which are listed. Where one ends a note, its period goes, as a note ends with no full stop, unless the note is a sentence of its own, which keeps it.",
-    "removed": [
-      "Ald.",
-      "App.",
-      "Comp.",
-      "A. V."
-    ],
-    "changes": [
-      {
-        "unit": "1KI",
-        "from": "by the Alex. See App.\\f*",
-        "to": "by the Alex. See Appendix.\\f*",
-        "why": "the note is a sentence of its own, which keeps its full stop"
-      },
-      {
-        "unit": "1KI",
-        "from": "Heb. Gram. p. 92",
-        "to": "Heb. Grammar, p. 92"
-      },
-      {
-        "unit": "1KI",
-        "from": "Gr. infin. for imper\\f*",
-        "to": "Gr. infinitive for imperative\\f*"
-      },
-      {
-        "unit": "1KI",
-        "from": "\\ft pass. part. \\fqa",
-        "to": "\\ft passive participle \\fqa"
-      },
-      {
-        "unit": "1KI",
-        "from": "in the O.T\\f*",
-        "to": "in the Old Testament\\f*"
-      },
-      {
-        "unit": "2KI",
-        "from": "\\ft Gr. sing. \\fqa colosynth",
-        "to": "\\ft Gr. singular \\fqa colosynth"
-      },
-      {
-        "unit": "2KI",
-        "from": "\\fqa interest\\ft , pl\\f*",
-        "to": "\\fqa interest\\ft , plural\\f*"
-      },
-      {
-        "unit": "2SA",
-        "from": "to express one. viz. ",
-        "to": "to express one, namely "
-      },
-      {
-        "unit": "ACT",
-        "from": "Chrysost\\f*",
-        "to": "Chrysostom\\f*"
-      },
-      {
-        "unit": "EXO",
-        "from": "\\ft Qu. If the borrower",
-        "to": "\\ft Query: if the borrower"
-      },
-      {
-        "unit": "GEN",
-        "from": "apparently the nom. absol\\f*",
-        "to": "apparently the nominative absolute\\f*"
-      },
-      {
-        "unit": "GEN",
-        "from": "nom. and voc. not being",
-        "to": "nominative and vocative not being"
-      },
-      {
-        "unit": "JOS",
-        "from": "\\ft , adj. q. d.",
-        "to": "\\ft , adjective, q. d."
-      },
-      {
-        "unit": "JOS",
-        "from": "\\fq Nephthali: \\ft or, \\fqa of N\\f*",
-        "to": "\\fq Nephthali: \\ft or, \\fqa of Nephthali\\f*",
-        "why": "N. is the Nephthali of the words the note is about"
-      },
-      {
-        "unit": "MAT",
-        "from": "the ounce is 187.li 10.s.\\f*",
-        "to": "the ounce is 187 pounds 10 shillings.\\f*",
-        "why": "the note is a sentence of its own, which keeps its full stop"
-      },
-      {
-        "unit": "MAT",
-        "from": "five shillings the ounce is 7.d. ob\\f*",
-        "to": "five shillings the ounce is seven pence halfpenny\\f*",
-        "why": "the sum as the notes on Matthew 20:2 and 22:19 and Mark 6:37 and 12:15 write it"
-      },
-      {
-        "unit": "MAT",
-        "from": "five shillings the ounce is 7.d. ob.\\f*",
-        "to": "five shillings the ounce is seven pence halfpenny.\\f*",
-        "why": "the sum as the notes on Matthew 20:2 and 22:19 and Mark 6:37 and 12:15 write it; the note is a sentence of its own, which keeps its full stop"
-      },
-      {
-        "unit": "MRK",
-        "from": "The Rom. penny is sevenpence halfpenny",
-        "to": "The Roman penny is seven pence halfpenny",
-        "why": "the sum as the notes on Matthew 20:2 and 22:19 and Mark 12:15 write it"
-      },
-      {
-        "unit": "XXB",
-        "from": "Bos’s edition, 4to. 1709.",
-        "to": "Bos’s edition, quarto 1709."
-      },
-      {
-        "unit": "XXB",
-        "from": "into schools, viz. that",
-        "to": "into schools, namely that"
-      },
-      {
-        "unit": "BAK",
-        "from": "נעלסּה, part. niph. fem.",
-        "to": "נעלסּה, participle Niphal feminine"
-      },
-      {
-        "unit": "BAK",
-        "from": "2 \\it ult\\it*. 3.",
-        "to": "2 \\it last verse\\it*. 3."
-      },
-      {
-        "unit": "BAK",
-        "from": "(qy. item",
-        "to": "(query item"
-      },
-      {
-        "unit": "NDX",
-        "from": "4th \\it Cateches\\it*.",
-        "to": "4th \\it Catechesis\\it*.",
-        "why": "Cyril of Jerusalem's fourth catechetical lecture"
-      },
-      {
-        "unit": "DEU",
-        "from": "note in the margin of English Bible on",
-        "to": "note in the margin of the Authorized Version on",
-        "why": "the Authorized Version's margin at Acts 13:18 notes the Greek there, ἐτροποφόρησεν, perhaps for ἐτροφοφόρησεν, as a nurse beareth or feedeth her child, citing Deut. 1.31"
-      },
-      {
-        "unit": "XXB",
-        "from": "\\it Eng. Ver\\it*. bowed",
-        "to": "\\it Authorized Version\\it* bowed"
-      },
-      {
-        "unit": "XXB",
-        "from": "Correctness of the English Version",
-        "to": "Correctness of the Authorized Version"
-      },
-      {
-        "unit": "XXB",
-        "from": "In the English version of",
-        "to": "In the Authorized Version of"
-      },
-      {
-        "unit": "XXB",
-        "from": "which the English version is at variance",
-        "to": "which the Authorized Version is at variance"
-      },
-      {
-        "unit": "XXB",
-        "from": "(according to the English Version)",
-        "to": "(according to the Authorized Version)"
-      },
-      {
-        "unit": "XXB",
-        "from": "rendered in the English version Cain",
-        "to": "rendered in the Authorized Version Cain"
-      }
-    ]
+    "removed": ["Ald.", "App.", "Comp.", "A. V."]
+  },
+  "source_rows": {
+    "Heb.": "hebrew",
+    "Gr.": "greek",
+    "Lit.": "literally",
+    "q. d.": "quasi-dicat",
+    "Comp.": "compare",
+    "A. V.": "authorized-version",
+    "Alex.": "alexandrine",
+    "Ald.": "aldine",
+    "App.": "appendix",
+    "+": "addition",
+    "—": "omission",
+    "sc.": "scilicet"
   }
 }

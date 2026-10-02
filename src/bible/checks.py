@@ -8,3 +8,13 @@ class CheckFailed(RuntimeError):
 def require(condition, message):
     if not condition:
         raise CheckFailed(message)
+
+
+def require_fields(entry, required, optional, what):
+    """A declaration must have its fields and no others: a misspelt one would
+    otherwise be read as absent."""
+    require(
+        hasattr(entry, "keys")
+        and set(required) <= set(entry) <= set(required) | set(optional),
+        f"{what} has missing or unknown fields",
+    )

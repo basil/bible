@@ -1,4 +1,76 @@
 {
+  "corrections": {
+    "MAT 5:15 a bushel": {
+      "from": "[symbol in wrong place in 1611] ",
+      "to": "",
+      "why": "transcriber's remark"
+    },
+    "MAT 23:18 guilty": {
+      "from": "debtOr,",
+      "to": "debtor,",
+      "why": "conversion error"
+    },
+    "MRK 14:72 he wept": {
+      "from": "wept [sic]",
+      "to": "weep",
+      "why": "transcriber's remark on the 1611 misprint began to wept",
+      "uncategorized": true
+    },
+    "ACT 13:18 suffered": {
+      "from": "[Greek characters]",
+      "to": "ἐτροποφόρησεν, perhaps for ἐτροφοφόρησεν,",
+      "why": "Greek omitted by the transcriber, restored from the 1611 margin",
+      "uncategorized": true
+    },
+    "ACT 13:34 mercies": {
+      "from": "[Greek characters]",
+      "to": "τὰ ὅσια,",
+      "why": "Greek omitted by the transcriber, restored from the 1611 margin"
+    },
+    "PHP 1:13 palace": {
+      "from": "Ceasars",
+      "to": "Cesars",
+      "why": "misspelling; the 1611 margin and this text spell Cesar"
+    },
+    "REV 20:13 hell": {
+      "from": " [obviously a typo in 1611]",
+      "to": "",
+      "why": "transcriber's remark"
+    },
+    "2CO 3:18 by the spirit of the Lord": {
+      "from": "O, of",
+      "to": "Or, of",
+      "why": "slip; the label is Or,"
+    },
+    "ROM 9:33 ashamed": {
+      "from": "or confounded",
+      "to": "Or, confounded",
+      "why": "slip; the label is Or,",
+      "uncategorized": true
+    },
+    "HEB 11:7 moved": {
+      "from": "being weary",
+      "to": "being wary",
+      "why": "slip; the 1611 margin reads being wary"
+    },
+    "MRK 6:8 money": {
+      "from": "mat. 10.9",
+      "to": "Mat. 10.9",
+      "why": "lowercase book name"
+    },
+    "MAT 10:29 farthing?": {
+      "from": "half penny farthing",
+      "to": "halfpenny farthing",
+      "why": "halfpenny is one word, as every other note writes it",
+      "uncategorized": true
+    },
+    "LUK 15:8 pieces of silver": {
+      "from": "seven pence half penny",
+      "to": "seven pence halfpenny",
+      "why": "halfpenny is one word, as every other note writes it",
+      "uncategorized": true
+    }
+  },
   "notes": {
     "MAT 6:1 of": {
       "occurrence": 2,
@@ -129,7 +201,7 @@
       "uncategorized": true
     },
     "ACT 13:34 mercies": {
-      "note": "Gr. τὰ ὅσια, _holy_ or _just things_, which word the Sept. both in the place of Esaias 55:3. and in many others, use for that which is in the Hebrew, _Mercies_",
+      "note": "Gr. τὰ ὅσια, _holy_ or _just things_, which word the Sept. both in the place of Esai 55.3. and in many others, use for that which is in the Hebrew, _Mercies_",
       "why": "holy or just things renders the Greek, and Mercies the Hebrew"
     },
     "ACT 13:36 own generation by the will of God": {
@@ -467,78 +539,6 @@
     "REV 18:12 Thine": {
       "anchor": "thyine",
       "why": "George has Thine; the verse reads thyine"
-    }
-  },
-  "corrections": {
-    "MAT 5:15 a bushel": {
-      "from": "[symbol in wrong place in 1611] ",
-      "to": "",
-      "why": "transcriber's remark"
-    },
-    "MAT 23:18 guilty": {
-      "from": "debtOr,",
-      "to": "debtor,",
-      "why": "conversion error"
-    },
-    "MRK 14:72 he wept": {
-      "from": "wept [sic]",
-      "to": "weep",
-      "why": "transcriber's remark on the 1611 misprint began to wept",
-      "uncategorized": true
-    },
-    "ACT 13:18 suffered": {
-      "from": "[Greek characters]",
-      "to": "ἐτροποφόρησεν, perhaps for ἐτροφοφόρησεν,",
-      "why": "Greek omitted by the transcriber, restored from the 1611 margin",
-      "uncategorized": true
-    },
-    "ACT 13:34 mercies": {
-      "from": "[Greek characters]",
-      "to": "τὰ ὅσια,",
-      "why": "Greek omitted by the transcriber, restored from the 1611 margin"
-    },
-    "PHP 1:13 palace": {
-      "from": "Ceasars",
-      "to": "Cesars",
-      "why": "misspelling; the 1611 margin and this text spell Cesar"
-    },
-    "REV 20:13 hell": {
-      "from": " [obviously a typo in 1611]",
-      "to": "",
-      "why": "transcriber's remark"
-    },
-    "2CO 3:18 by the spirit of the Lord": {
-      "from": "O, of",
-      "to": "Or, of",
-      "why": "slip; the label is Or,"
-    },
-    "ROM 9:33 ashamed": {
-      "from": "or confounded",
-      "to": "Or, confounded",
-      "why": "slip; the label is Or,",
-      "uncategorized": true
-    },
-    "HEB 11:7 moved": {
-      "from": "being weary",
-      "to": "being wary",
-      "why": "slip; the 1611 margin reads being wary"
-    },
-    "MRK 6:8 money": {
-      "from": "mat. 10.9",
-      "to": "Mat. 10.9",
-      "why": "lowercase book name"
-    },
-    "MAT 10:29 farthing?": {
-      "from": "half penny farthing",
-      "to": "halfpenny farthing",
-      "why": "halfpenny is one word, as every other note writes it",
-      "uncategorized": true
-    },
-    "LUK 15:8 pieces of silver": {
-      "from": "seven pence half penny",
-      "to": "seven pence halfpenny",
-      "why": "halfpenny is one word, as every other note writes it",
-      "uncategorized": true
     }
   }
 }

@@ -1,18 +1,15 @@
 """Turpie's quotation heads as transcribed, and the edition's choices among them."""
 
+import functools
 import re
 
-from bible import paths
 from bible.checks import require
-from bible.files import read_json
 from bible.references import parse_passage, parse_passages
 from bible.versification import lxx_to_edition, mapped_passages, unused_exceptions
 
 CLASSES = {"A", "B", "C", "D", "E"}
 # Turpie's heads as read from the page, and the edition's exclusions, class
 # conflicts, and Brenton note merges.
-TURPIE = read_json(paths.EDITION_DIR / "turpie.json")
-DECISIONS = read_json(paths.EDITION_DIR / "quotations.json")
 
 
 def scope(table_code):
@@ -26,9 +23,13 @@ def nt_verses(passages):
     return [verse for passage in passages for verse in passage.verses]
 
 
-def brenton_verses(passages):
+def brenton_verses(passages, *, policy):
     """Every printed Brenton verse of Septuagint passages."""
-    return [lxx_to_edition(verse) for passage in passages for verse in passage.verses]
+    return [
+        lxx_to_edition(verse, policy=policy)
+        for passage in passages
+        for verse in passage.verses
+    ]
 
 
 def _unique(values, label):
@@ -83,21 +84,22 @@ def _check_transcription(heads):
             )
 
 
-def reviewed_rows():
+@functools.cache
+def reviewed_rows(*, policy):
     """Turpie's heads that the edition links, as passages, with its decisions checked.
 
     The edition links each head's primary normalized passages; only an exclusion,
     or a narrowing to part of a head that Turpie withdraws the rest of, departs
     from Turpie, each with its reason.
     """
-    heads = TURPIE["rows"]
+    heads = policy.turpie["rows"]
     _check_transcription(heads)
-    excluded = DECISIONS["excluded"]
+    excluded = policy.quotations["excluded"]
     require(
         set(excluded) <= {head["id"] for head in heads} and all(excluded.values()),
         "Exclusion of no Turpie head, or without a reason",
     )
-    narrowed = DECISIONS["narrowed"]
+    narrowed = policy.quotations["narrowed"]
     require(
         set(narrowed) <= {head["id"] for head in heads} - set(excluded)
         and all(n.get("why") for n in narrowed.values()),
@@ -137,7 +139,7 @@ def reviewed_rows():
             "nt": parse_passages(head["nt"]["normalized"]),
             "ot": ot,
         }
-        mapped = brenton_verses(row["ot"])
+        mapped = brenton_verses(row["ot"], policy=policy)
         _unique(nt_verses(row["nt"]), f"NT verses in {row['id']}")
         _unique(mapped, f"Brenton verses in {row['id']}")
         alternatives = [
@@ -145,12 +147,12 @@ def reviewed_rows():
             for passage in head["lxx"].get("alternative_normalized", [])
         ]
         require(
-            not set(brenton_verses(alternatives)) & set(mapped),
+            not set(brenton_verses(alternatives, policy=policy)) & set(mapped),
             f"Alternative selected as linked source: {row['id']}",
         )
         linked_passages += row["ot"]
         rows.append(row)
-    unused = unused_exceptions(linked_passages)
+    unused = unused_exceptions(linked_passages, policy=policy)
     require(not unused, f"Verse mapping exceptions no quotation uses: {unused}")
     # A merge decision is used where a link lands on its note's verse, the first
     # of a printed passage, so one anywhere else would go unused unnoticed.
@@ -158,9 +160,9 @@ def reviewed_rows():
         str(printed.first)
         for row in rows
         for passage in row["ot"]
-        for printed in mapped_passages(passage)
+        for printed in mapped_passages(passage, policy=policy)
     }
-    for key, decision in DECISIONS["note_merges"].items():
+    for key, decision in policy.quotations["note_merges"].items():
         require(
             decision.get("action") in {"merge", "preserve"}
             and decision.get("why")

@@ -6,24 +6,24 @@ before scaling coordinates, width operands and hint dictionaries by 100/94.
 Separate CID font dictionaries retain each source's hint environment.
 """
 
-from argparse import ArgumentParser
-from copy import deepcopy
 import csv
-from pathlib import Path
 import math
 import shutil
 import unicodedata
 import zipfile
+from argparse import ArgumentParser
+from copy import deepcopy
+from pathlib import Path
 
+from font_sources import math_donors, normalized_donor
 from fontTools.cffLib import CharStrings, FDArrayIndex, FDSelect, FontDict
 from fontTools.feaLib.builder import addOpenTypeFeaturesFromString
 from fontTools.otlLib.builder import buildPairPosGlyphs
 from fontTools.pens.boundsPen import BoundsPen
 from fontTools.pens.recordingPen import RecordingPen
 from fontTools.ttLib import TTFont
-from fontTools.ttLib.tables._c_m_a_p import CmapSubtable
-from font_sources import normalized_donor, math_donors
 from fontTools.ttLib.reorderGlyphs import reorderGlyphs
+from fontTools.ttLib.tables._c_m_a_p import CmapSubtable
 
 FAMILY = "OLEBFont"
 STYLES = ("Regular", "Italic", "Bold", "BoldItalic")

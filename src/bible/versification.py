@@ -1,14 +1,14 @@
 """Where the edition's chapters and verses stand in other numberings
-(edition/versification.json).
+(edition/versification.json, and the runs the build works out in places.py).
 
 Two numberings meet the edition's. Brenton's own, as eBible labels it, which
 the edition relabels in a few places, as Malachias 3:19-24; and the King
 James Bible's, which a reader's other Bible follows, and in which some of the
 edition's sources cite the Old Testament.
 
-A verse the file doesn't list keeps its number in the King James Bible,
-unless Brenton letters it: a lettered verse is a Septuagint addition, and has
-no counterpart unless the file gives one. A run of verses faces a run as long
+A verse that no run lists keeps its number in the King James Bible, unless
+Brenton letters it: a lettered verse is a Septuagint addition, and has no
+counterpart unless a run gives it one. A run of verses faces a run as long
 verse for verse; runs of different lengths face each other whole, as where
 Brenton divides one verse in two. Explicit pairs describe partial overlaps
 within a run without assigning its unchanged clauses to the wrong verse.
@@ -20,16 +20,11 @@ used.
 """
 
 import functools
-import re
+from collections.abc import Mapping
 
-from bible import alexandrinus, edition, paths
 from bible.checks import require
-from bible.files import read_json
 from bible.references import Verse, parse_passage, parse_passages, runs
-from bible.usfm import inventory
 
-DATA = read_json(paths.EDITION_DIR / "versification.json")
-EXCEPTIONS = read_json(paths.EDITION_DIR / "quotations.json")["lxx_to_edition"]
 # What a run rests on: the table's account of a Bible numbered like this one,
 # the words of both translations, its place between verses that they fix, or
 # the editor's reading of both, which gives its reason.
@@ -38,16 +33,22 @@ WITNESSES = {"table", "words", "place", "reading"}
 TITLE = 0
 
 
-def kjv_book(code):
+def kjv_book(code, *, policy):
     """The King James Old Testament's code for one of the edition's books."""
-    require(code in DATA["old_testament"], f"No King James counterpart: {code}")
-    return DATA["books"].get(code, code)
+    require(
+        code in policy.versification["old_testament"],
+        f"No King James counterpart: {code}",
+    )
+    return policy.versification["books"].get(code, code)
 
 
 @functools.cache
-def kjv_books():
+def kjv_books(*, policy):
     """The edition's code for each book of the King James Old Testament."""
-    return {kjv_book(code): code for code in DATA["old_testament"]}
+    return {
+        kjv_book(code, policy=policy): code
+        for code in policy.versification["old_testament"]
+    }
 
 
 def verses(passages):
@@ -61,7 +62,7 @@ def run_pairs(run):
     if "pairs" in run:
         declared = run["pairs"]
         require(
-            isinstance(declared, dict)
+            isinstance(declared, Mapping)
             and set(declared) == set(map(str, ours))
             and all(isinstance(v, str) and v.strip() for v in declared.values()),
             f"Invalid verse pairs: {run['edition']}",
@@ -80,13 +81,13 @@ def run_pairs(run):
 
 
 @functools.cache
-def apocryphal():
+def apocryphal(*, policy):
     """The verses of the edition's Old Testament books that the King James
     Bible sets apart in its Apocrypha, or lacks, and so doesn't number among
     the books they stand in here."""
     return frozenset(
         verse
-        for span in DATA["apocrypha"]
+        for span in policy.versification["apocrypha"]
         # A span of verses, not a book or its lettered verses as a whole.
         if ":" in span["edition"]
         for verse in verses(span["edition"])
@@ -94,22 +95,24 @@ def apocryphal():
 
 
 @functools.cache
-def _maps():
+def _maps(*, policy):
     """Each listed verse's counterparts, both ways, every run checked.
 
     Checked whole, so that a run is refused whether or not a reference
     reaches it, and two that claim one verse can't shadow each other.
     """
+    # The runs are worked out once the edition's books are assembled.
+    require("kjv" in policy.versification, "The verses are not yet placed")
     to_kjv, from_kjv = {}, {}
-    for code, listed in DATA["kjv"].items():
-        kjv = kjv_book(code)
+    for code, listed in policy.versification["kjv"].items():
+        kjv = kjv_book(code, policy=policy)
         for run in listed:
             ours = verses(run["edition"]) if run["edition"] else []
             theirs = verses(run["kjv"]) if run["kjv"] else []
             name = run["edition"] or run["kjv"]
             require(ours or theirs, f"Empty versification run in {code}")
             require(
-                not apocryphal().intersection(ours),
+                not apocryphal(policy=policy).intersection(ours),
                 f"Versification run within the Apocrypha: {name}",
             )
             require(
@@ -138,27 +141,34 @@ def _maps():
     return to_kjv, from_kjv
 
 
-def to_kjv(verse):
+def to_kjv(verse, *, policy):
     """The King James verses that hold an edition verse's words, if any."""
-    listed = _maps()[0]
+    listed = _maps(policy=policy)[0]
     if verse in listed:
         return listed[verse]
-    kjv = Verse(kjv_book(verse.book), verse.chapter, verse.number)
-    if verse.letter or verse in apocryphal():
+    kjv = Verse(kjv_book(verse.book, policy=policy), verse.chapter, verse.number)
+    if verse.letter or verse in apocryphal(policy=policy):
         return ()
     # A verse that loses its place to another is listed, with what it faces.
-    require(kjv not in _maps()[1], f"Another verse has the place of {verse}")
+    require(
+        kjv not in _maps(policy=policy)[1],
+        f"Another verse has the place of {verse}",
+    )
     return (kjv,)
 
 
-def from_kjv(verse):
+def from_kjv(verse, *, policy):
     """The edition's verses that hold a King James verse's words, if any."""
-    listed, books = _maps()[1], kjv_books()
+    listed, books = _maps(policy=policy)[1], kjv_books(policy=policy)
     if verse in listed:
         return listed[verse]
     require(verse.book in books, f"No edition counterpart: {verse}")
     ours = Verse(books[verse.book], verse.chapter, verse.number)
-    return () if ours in _maps()[0] or ours in apocryphal() else (ours,)
+    return (
+        ()
+        if ours in _maps(policy=policy)[0] or ours in apocryphal(policy=policy)
+        else (ours,)
+    )
 
 
 def _mapped(passage, counterparts):
@@ -168,29 +178,29 @@ def _mapped(passage, counterparts):
     return runs(found)
 
 
-def kjv_passages(passage):
+def kjv_passages(passage, *, policy):
     """An edition passage as the King James Bible numbers it: verse by verse,
     since a passage may be carried into more than one place."""
-    return _mapped(passage, to_kjv)
+    return _mapped(passage, lambda v: to_kjv(v, policy=policy))
 
 
-def edition_passages(passage):
+def edition_passages(passage, *, policy):
     """A King James passage as the edition numbers it."""
-    return _mapped(passage, from_kjv)
+    return _mapped(passage, lambda v: from_kjv(v, policy=policy))
 
 
 @functools.cache
-def relabelled():
+def relabelled(*, policy):
     """Each verse the edition relabels, by Brenton's label for it."""
     found = {}
-    for source, printed in DATA["relabel"].items():
+    for source, printed in policy.versification["relabel"].items():
         labels, targets = verses(source), verses(printed["edition"])
         require(len(labels) == len(targets), f"Misaligned relabelling: {source}")
         found.update(zip(labels, targets))
     return found
 
 
-def new_chapters(code):
+def new_chapters(code, *, policy):
     """The chapters a book's relabelling opens, as (Brenton's verses, the
     printed ones, the words the first opens with).
 
@@ -198,7 +208,7 @@ def new_chapters(code):
     own; the words witness that the verse is the one meant.
     """
     found = []
-    for source, printed in DATA["relabel"].items():
+    for source, printed in policy.versification["relabel"].items():
         labels, targets = verses(source), verses(printed["edition"])
         if labels[0].book != code:
             continue
@@ -212,99 +222,27 @@ def new_chapters(code):
     return found
 
 
-@functools.lru_cache(maxsize=512)
-def source_chapters(text):
-    """A source book's chapters and verse labels, read once however often a
-    book or page asks: each book's preparation asks for every book's."""
-    return {
-        chapter: tuple(labels)
-        for chapter, labels in inventory(text)["chapters"].items()
-    }
-
-
-def edition_inventory(archives):
-    """Every printed book's chapters and verse labels, as preparation will
-    print them, from the sources and what the edition does to their labels:
-    the chapters it selects and numbers from 1, Susanna and Bel and the
-    Dragon beside Daniel, and the verses it relabels.
-
-    Known before any book is prepared, so that a citation read while one is
-    can be held to the verses of another.
-    """
-    found = {}
-    for unit in edition.MANIFEST["scripture"]:
-        code = unit["id"]
-        source = archives[unit["source"]]
-        chapters = source_chapters(source[edition.source_id(unit)])
-        if "chapters" in unit:
-            first, last = unit["chapters"]
-            chapters = {
-                str(int(chapter) - first + 1): labels
-                for chapter, labels in chapters.items()
-                if first <= int(chapter) <= last
-            }
-        elif code == edition.DANIEL_PARTS[1]:
-            susanna, bel = (
-                source_chapters(source[part])["1"]
-                for part in (edition.DANIEL_PARTS[0], edition.DANIEL_PARTS[2])
-            )
-            chapters = {"0": susanna, **chapters, str(len(chapters) + 1): bel}
-        chapters = {chapter: list(labels) for chapter, labels in chapters.items()}
-        if unit["source"] == "brenton":
-            for key, decision in alexandrinus.DATA["readings"].items():
-                if key.split()[0] != edition.source_id(unit) or not decision.get(
-                    "omit_verse"
-                ):
-                    continue
-                reference = decision.get("target", key).split()[-1].split("#")[0]
-                chapter, label = reference.split(":")
-                require(
-                    label in chapters.get(chapter, []), f"Omitted verse missing: {key}"
-                )
-                chapters[chapter].remove(label)
-            for key, decision in alexandrinus.DATA["passages"].items():
-                if key.split()[0] != edition.source_id(unit):
-                    continue
-                for insertion in decision.get("insertions", []):
-                    for verse in insertion["verses"]:
-                        chapter, label = verse["reference"].split(":")
-                        require(
-                            label not in chapters.get(chapter, []),
-                            f"Alexandrine verse already exists: {key}: {verse['reference']}",
-                        )
-                        chapters.setdefault(chapter, []).append(label)
-            chapters = {
-                chapter: sorted(labels, key=lambda v: (int(re.match(r"\d+", v)[0]), v))
-                for chapter, labels in chapters.items()
-            }
-        for label, printed in relabelled().items():
-            if label.book == code:
-                chapters[str(label.chapter)].remove(str(label.number))
-                chapters.setdefault(str(printed.chapter), []).append(
-                    str(printed.number)
-                )
-        found[code] = chapters
-    return found
-
-
-def _excepted_verses():
+@functools.cache
+def _excepted_verses(*, policy):
     """Each excepted verse's printed verse, every exception checked.
 
     Checked whole, so an exception is refused whether or not a reference
     reaches it, and two that claim one verse can't shadow each other. An
     exception that says only that Turpie numbers as the King James Bible
-    does takes its printed verses from the file.
+    does takes its printed verses from the runs.
     """
     mapped = {}
-    for source, exception in EXCEPTIONS.items():
+    for source, exception in policy.quotations["lxx_to_edition"].items():
         excepted = parse_passage(source).verses
         if exception.get("numbering") == "kjv":
             require("target" not in exception, f"Mapping given twice: {source}")
-            kjv = kjv_book(excepted[0].book)
+            kjv = kjv_book(excepted[0].book, policy=policy)
             targets = [
                 target
                 for verse in excepted
-                for target in from_kjv(Verse(kjv, verse.chapter, verse.number))
+                for target in from_kjv(
+                    Verse(kjv, verse.chapter, verse.number), policy=policy
+                )
             ]
         else:
             targets = parse_passage(exception.get("target", "")).verses
@@ -319,26 +257,26 @@ def _excepted_verses():
     return mapped
 
 
-def lxx_to_edition(verse):
+def lxx_to_edition(verse, *, policy):
     """Map one Turpie/Brenton Septuagint verse to the printed edition."""
-    return _excepted_verses().get(verse, verse)
+    return _excepted_verses(policy=policy).get(verse, verse)
 
 
-def mapped_passages(passage):
+def mapped_passages(passage, *, policy):
     """A Septuagint passage's printed Brenton verses, as same-chapter ranges.
 
     A mapping exception can carry part of a passage into another chapter, so
     one source passage may print as more than one range. A lettered verse
     prints alone.
     """
-    return runs(lxx_to_edition(verse) for verse in passage.verses)
+    return runs(lxx_to_edition(verse, policy=policy) for verse in passage.verses)
 
 
-def unused_exceptions(passages):
+def unused_exceptions(passages, *, policy):
     """The exceptions that no verse of the passages reaches."""
     reached = {verse for passage in passages for verse in passage.verses}
     return sorted(
         source
-        for source in EXCEPTIONS
+        for source in policy.quotations["lxx_to_edition"]
         if not reached.intersection(parse_passage(source).verses)
     )

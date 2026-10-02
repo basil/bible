@@ -1,24 +1,25 @@
-"""Seeding edition/versification.json: where each of the edition's Old
-Testament verses stands in the King James Bible, by two witnesses.
+"""Where each of the edition's Old Testament verses stands in the King James
+Bible, by two witnesses and the editor's readings.
 
 The table (tvtms.py) says where a verse of a Bible numbered like this one
 should stand. The words say where it does: the verses of the two translations
 are aligned by the rarer words they share, without regard to their numbers.
-Where the witnesses agree, the seed proposes their answer; where they don't,
-it lists both for review. The build never reads the seed: what is reviewed is
-copied into edition/versification.json, and tested there. What the editor has
-read there stands, whatever the witnesses propose.
+Where the witnesses agree, a verse stands where they say; where they don't,
+the words decide if they speak, and the table if they are silent. What the
+editor has read (edition/versification.json) stands, whatever the witnesses
+give.
+
+The build works the places out afresh each time, so that nothing is checked
+in but the readings. The review lists every run, and both translations' words
+for those that rest on the words or on their place alone, to be read.
 """
 
 import collections
-import json
 import re
 
-from bible import alignment, paths, tvtms, versification
-from bible.files import write_json
+from bible import alignment, scripture, tvtms, usj, versification
+from bible.checks import require, require_fields
 from bible.references import Verse, runs
-from bible.usfm import NOTE, plain_text, verse_spans
-from bible.validate import validate
 
 # The table's names for the edition's books, where they aren't the King James code.
 TABLE_NAMES = {"ESG": ["EST", "ESG"], "EZR": ["EZR", "2ES"]}
@@ -43,17 +44,18 @@ MOVED = 0.25
 class Texts:
     """Both translations' verses and words, book by book."""
 
-    def __init__(self, scripture, archives):
+    def __init__(self, books, kjv, *, policy):
+        self.policy = policy
         self.books = {
-            code: versification.kjv_book(code)
-            for code in versification.DATA["old_testament"]
+            code: versification.kjv_book(code, policy=policy)
+            for code in policy.versification["old_testament"]
         }
         self.edition = alignment.Verses(
-            {code: scripture[code] for code in self.books},
-            without=versification.apocryphal(),
+            {code: books[code] for code in self.books},
+            without=versification.apocryphal(policy=policy),
         )
         self.kjv = alignment.Verses(
-            {code: archives["kjv"][code] for code in self.books.values()}, titled=True
+            {code: kjv[code] for code in self.books.values()}, titled=True
         )
         self.weight = alignment.weights(self.edition.words, self.kjv.words)
 
@@ -63,31 +65,31 @@ class Texts:
         )
 
 
-def _best(words, index, others, weight):
+def _best(words, index, order, others, weight):
     """The verse among the others that a verse's words pick out, and its score."""
     candidates = collections.Counter()
     # In the words' own order, so that verses that tie are taken alike each time.
     for word in sorted(words):
         found = index.get(word, ())
         if len(found) <= COMMON:
-            for other in found:
-                candidates[other] += weight[word]
+            for n in found:
+                candidates[n] += weight[word]
     scored = [
-        (alignment.similarity(weight, words, others[other]), str(other), other)
-        for other, _ in candidates.most_common(8)
+        (alignment.similarity(weight, words, others[order[n]]), str(order[n]), n)
+        for n, _ in candidates.most_common(8)
     ]
     if not scored:
         return None, 0
-    score, _, other = max(scored)
-    return other, score
+    score, _, n = max(scored)
+    return order[n], score
 
 
 def _index(words, verses):
-    """The verses that have each word, in their book's order."""
+    """The verses that have each word, by their places in their book's order."""
     index = collections.defaultdict(list)
-    for verse in verses:
+    for n, verse in enumerate(verses):
         for word in words[verse]:
-            index[word].append(verse)
+            index[word].append(n)
     return index
 
 
@@ -110,12 +112,16 @@ def anchors(texts, code, table):
     found = []
     for i, verse in enumerate(ours):
         other, score = _best(
-            texts.edition.words[verse], their_index, texts.kjv.words, texts.weight
+            texts.edition.words[verse],
+            their_index,
+            theirs,
+            texts.kjv.words,
+            texts.weight,
         )
         if other is None or score < ANCHOR:
             continue
         back, _ = _best(
-            texts.kjv.words[other], our_index, texts.edition.words, texts.weight
+            texts.kjv.words[other], our_index, ours, texts.edition.words, texts.weight
         )
         if back == verse and outvotes(texts, table, verse, other):
             found.append((i, position[other], score))
@@ -367,14 +373,14 @@ def _join(near, far, order, blocks, side):
             blocks[verse] = block
 
 
-def tabled(texts, scripture):
+def tabled(texts, books):
     """Each verse's counterparts by the table, or None where its rows disagree.
 
     A verse the table says nothing of keeps its number.
     """
     names = {code: TABLE_NAMES.get(code, [kjv]) for code, kjv in texts.books.items()}
     bible = tvtms.Bible(
-        {name: scripture[code] for code, listed in names.items() for name in listed}
+        {name: books[code] for code, listed in names.items() for name in listed}
     )
     account = tvtms.account(bible, names)
     result = {}
@@ -397,10 +403,10 @@ def tabled(texts, scripture):
     return result
 
 
-def witnesses(scripture, archives):
+def witnesses(books, kjv, *, policy):
     """Both witnesses on every verse of every book, block by block."""
-    texts = Texts(scripture, archives)
-    table = tabled(texts, scripture)
+    texts = Texts(books, kjv, policy=policy)
+    table = tabled(texts, books)
     report = {}
     for code in texts.books:
         blocks = []
@@ -480,9 +486,9 @@ def _same(ours, theirs, kjv):
 
 
 def proposal(texts, report):
-    """What the witnesses propose for edition/versification.json, by book, as
-    (edition verses, King James verses, witness): every verse that doesn't
-    keep its number, and every one that keeps it against the table.
+    """What the witnesses give, by book, as (edition verses, King James
+    verses, witness): every verse that doesn't keep its number, and every
+    one that keeps it against the table.
 
     The words decide where they speak. Where they are silent the table does,
     if no other verse has its place; a verse neither can place is listed
@@ -530,23 +536,29 @@ def proposal(texts, report):
     return result
 
 
-def read(code):
-    """The runs of a book that the file's editor has read, which stand
-    whatever the witnesses propose."""
+def read(texts, code, *, policy):
+    """The runs of a book that the editor has read, which stand whatever the
+    witnesses give."""
     found = []
-    for run in versification.DATA["kjv"].get(code, []):
-        if run.get("by") == "reading":
-            ours = versification.verses(run["edition"]) if run["edition"] else []
-            theirs = versification.verses(run["kjv"]) if run["kjv"] else []
-            found.append((ours, theirs, "reading", run["why"]))
+    for run in policy.versification["readings"].get(code, []):
+        name = f"{run.get('edition')} = {run.get('kjv')}"
+        require_fields(run, {"edition", "kjv", "why"}, {"pairs"}, f"Reading {name}")
+        require(run["edition"] and run["why"], f"Reading without its reason: {name}")
+        ours = versification.verses(run["edition"])
+        theirs = versification.verses(run["kjv"]) if run["kjv"] else []
+        require(
+            all(v in texts.edition.words for v in ours)
+            and all(v in texts.kjv.words for v in theirs),
+            f"Reading of a verse that its Bible lacks: {name}",
+        )
+        found.append((ours, theirs, "reading", run["why"]))
     return found
 
 
-def written(texts, code, entries):
-    """A book's runs as the file writes them: what has been read, what the
-    witnesses propose of the rest, and what the edition wants of the King
-    James Bible's verses."""
-    decided = read(code)
+def written(texts, code, entries, *, policy):
+    """A book's runs: what has been read, what the witnesses give of the
+    rest, and what the edition wants of the King James Bible's verses."""
+    decided = read(texts, code, policy=policy)
     ours = {v for entry in decided for v in entry[0]}
     theirs = {v for entry in decided for v in entry[1]}
     kept = [
@@ -571,11 +583,11 @@ def written(texts, code, entries):
         if v not in claimed and v.number != tvtms.TITLE
     ]
     written_runs = _runs(listed)
-    # Preserve precise overlaps when carrying the editor's readings forward.
+    # A reading may say which part of its run each verse faces.
     declared_pairs = {
         (run["edition"], run["kjv"]): run["pairs"]
-        for run in versification.DATA["kjv"].get(code, [])
-        if run.get("by") == "reading" and "pairs" in run
+        for run in policy.versification["readings"].get(code, [])
+        if "pairs" in run
     }
     for run in written_runs:
         pair = (run["edition"], run["kjv"])
@@ -586,17 +598,26 @@ def written(texts, code, entries):
     ]
 
 
-def seed(scripture, archives):
-    """The file's "kjv" as the witnesses and the editor's reading give it."""
-    texts, report = witnesses(scripture, archives)
+def placed(books, kjv, *, policy):
+    """Every book's runs, as the witnesses and the editor's readings give
+    them: of the edition's books and the King James Bible's, as documents."""
+    unknown = sorted(
+        set(policy.versification["readings"])
+        - set(policy.versification["old_testament"])
+    )
+    require(not unknown, f"Readings outside the Old Testament: {unknown}")
+    texts, report = witnesses(books, kjv, policy=policy)
     proposed = proposal(texts, report)
-    found = {code: written(texts, code, proposed[code]) for code in texts.books}
+    found = {
+        code: written(texts, code, proposed[code], policy=policy)
+        for code in texts.books
+    }
     return {code: listed for code, listed in found.items() if listed}
 
 
 def _runs(entries):
-    """Entries as the file writes them, verse for verse where a run of
-    verses faces a run as long, and as a block where it doesn't."""
+    """Entries as runs, verse for verse where a run of verses faces a run as
+    long, and as a block where it doesn't."""
     written = []
     for ours, theirs, by, why in entries:
         last = written[-1] if written else None
@@ -647,31 +668,57 @@ def _follows(verse, other):
     ) == (other.book, other.chapter, other.number)
 
 
-def _plain(scripture):
-    """Each verse's words as printed, without its notes, by book and label."""
+# A heading set among a verse's words, which the review leaves out.
+HEADING = re.compile(r"s\d?|d")
+
+
+def _plain(books):
+    """Each verse's words as printed, by book and label, without its notes
+    or a heading set within it."""
     found = {}
-    for code, text in scripture.items():
-        text = NOTE.sub("", text)
-        for label, start, end in verse_spans(text):
-            found[code, label] = plain_text(
-                re.sub(r"\\(?:s\d?|d|c|cp)\b[^\n]*", "", text[start:end])
+    for code, doc in books.items():
+        for label, verse in scripture.verses(doc).items():
+            found[code, label] = scripture.plain(
+                " ".join(
+                    usj.text_of(doc["content"][block]["content"][start:end])
+                    for block, start, end, _ in verse.parts
+                    # A paragraph that opens within the verse may be a heading.
+                    if start or not HEADING.fullmatch(doc["content"][block]["marker"])
+                )
             )
     return found
 
 
-def _worklist(found, scripture, archives):
-    """The runs that rest on the words or on their place alone, with both
-    translations' words, for the editor to read."""
-    ours = _plain(scripture)
-    theirs = _plain({code: archives["kjv"][code] for code in archives["kjv"]})
-    lines = []
+def report(found, books, kjv):
+    """Every run, by book, for the review; those that rest on the words or on
+    their place alone with both translations' words, for the editor to read."""
+    # Only of the books that have such runs.
+    unread = [
+        run
+        for listed in found.values()
+        for run in listed
+        if run.get("by") in {"words", "place"}
+    ]
+    ours = _plain(
+        {code: books[code] for code in {run["edition"].split()[0] for run in unread}}
+    )
+    theirs = _plain(
+        {
+            code: kjv[code]
+            for code in {run["kjv"].split()[0] for run in unread if run["kjv"]}
+        }
+    )
+    lines = ["# Numbering\n\n"]
     for code, listed in found.items():
+        lines.append(f"## {code}\n\n")
         for run in listed:
-            if run.get("by") not in {"words", "place"}:
-                continue
+            by = run.get("by", "wanting")
+            why = f": {run['why']}" if "why" in run else ""
             lines.append(
-                f"## {run['edition']} = {run['kjv'] or 'nothing'} ({run['by']})\n"
+                f"- {run['edition'] or 'nothing'} = {run['kjv'] or 'nothing'} ({by}{why})\n"
             )
+            if by not in {"words", "place"}:
+                continue
             for side, words, passages in (
                 ("Brenton", ours, run["edition"]),
                 ("King James", theirs, run["kjv"]),
@@ -680,47 +727,6 @@ def _worklist(found, scripture, archives):
                     said = words.get(
                         (verse.book, f"{verse.chapter}:{verse.number}{verse.letter}")
                     )
-                    lines.append(f"- {side} {verse.label}: {said or '(title)'}\n")
-            lines.append("\n")
+                    lines.append(f"  - {side} {verse.label}: {said or '(title)'}\n")
+        lines.append("\n")
     return "".join(lines)
-
-
-def seed_versification():
-    """Write what the witnesses propose to build/versification-seed.json,
-    beside what differs from the file and what is left to read."""
-    archives, prepared = validate()
-    scripture = {code: unit.text for code, unit in prepared.items()}
-    found = seed(scripture, archives)
-    write_json(
-        paths.BUILD_DIR / "versification-seed.json",
-        {**versification.DATA, "kjv": found},
-    )
-    (paths.BUILD_DIR / "versification-to-read.md").write_text(
-        _worklist(found, scripture, archives), encoding="utf-8"
-    )
-    before = {
-        (code, json.dumps(run, sort_keys=True))
-        for code, listed in versification.DATA["kjv"].items()
-        for run in listed
-    }
-    after = {
-        (code, json.dumps(run, sort_keys=True))
-        for code, listed in found.items()
-        for run in listed
-    }
-    (paths.BUILD_DIR / "versification-changes.md").write_text(
-        "".join(
-            f"- {mark} {code}: {run}\n"
-            for mark, runs_ in (("removed", before - after), ("added", after - before))
-            for code, run in sorted(runs_)
-        ),
-        encoding="utf-8",
-    )
-    by = collections.Counter(
-        run.get("by", "wanting") for listed in found.values() for run in listed
-    )
-    print(
-        f"Seeded {sum(by.values())} runs {dict(sorted(by.items()))}, "
-        f"{len(before ^ after)} unlike the file's:",
-        paths.BUILD_DIR / "versification-seed.json",
-    )

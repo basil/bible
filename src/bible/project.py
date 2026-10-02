@@ -3,17 +3,15 @@ Settings.xml and BookNames.xml, and its configuration, which overlays config/
 on the Berean Standard Bible (BSB) layout that ships with PTXprint."""
 
 import configparser
-import re
 import shutil
 import xml.etree.ElementTree as ET
 import zipfile
+from pathlib import Path
+from typing import NamedTuple
 
-from bible import edition, numbering, paths
+from bible import assembly, paths
 from bible.checks import require
-from bible.edition import book_names_element, ordered_entries, source_id, source_usfm
-from bible.files import read_json, write_json
-from bible.prepare import front_matter_text, recorder, sample_chapters
-from bible.typography import typographic_text
+from bible.files import write_json
 
 BSB_DEFAULT = "shared/ptxprint/Default"
 FRONT_TEMPLATE = paths.UPSTREAM / "python/lib/ptxprint/FRTtemplateBasic.txt"
@@ -21,14 +19,11 @@ FRONT_TEMPLATE = paths.UPSTREAM / "python/lib/ptxprint/FRTtemplateBasic.txt"
 PROJECT_DIR = "projects/BIBLE"
 SETTINGS_DIR = "shared/ptxprint/Bible"
 PROCESSED_DIR = "local/ptxprint/Bible"
-# A note's origin in the prepared text, as "\\fr 3:16 ": the chapter is cut
-# from the printed copy. PTXprint's notes/frverseonly and notes/xrverseonly
-# would cut it from PTXprint's processed copy instead, which the build
-# requires to keep every printable character of this one.
-ORIGIN_CHAPTER = re.compile(r"(\\(?:fr|xo) )\d+:")
-# Front matter has no verses, and its source gives its notes the origin "1:0",
-# which names nothing: these notes print under their callers alone.
-EMPTY_ORIGIN = re.compile(r"\\(?:fr|xo) \d+:0 ")
+
+
+class ProjectOutput(NamedTuple):
+    project: Path
+    ids: list[str]
 
 
 def bsb_baseline():
@@ -63,83 +58,32 @@ def text_font(cfg):
     return cfg["document"]["fontregular"].split("|")[0]
 
 
-def printed_origins(entry, text, record):
-    """A unit's text with its note origins as they are printed."""
-    if "section" not in entry:
-        text, empty = EMPTY_ORIGIN.subn("", text)
-        if empty:
-            record("omit note origins that name no verse", origins=empty)
-    # Notes sit beside their source verses, so print only the verse in
-    # an origin; the nearby chapter figure and running head supply the
-    # chapter. The targets of cross references keep their full form.
-    text, origins = ORIGIN_CHAPTER.subn(r"\1", text)
-    if origins:
-        record("print note origins without their chapter", origins=origins)
-    return text
+def book_names(policy, sources, ids):
+    """PTXprint's BookNames.xml for the units a project prints."""
+    root = ET.Element("BookNames")
+    entries = {entry["id"]: entry for entry in policy.entries}
+    for code in ids:
+        entry = entries[code]
+        names = assembly.names(entry, assembly.source_text(entry, sources))
+        ET.SubElement(
+            root,
+            "book",
+            code=code,
+            **{attr: names[field] for field, attr in assembly.NAME_ATTRIBUTES.items()},
+        )
+    return root
 
 
-def write_project(mode, base, archives, scripture):
-    """Write the PTXprint project from validate's prepared scripture; returns its
-    folder and the order of its units."""
+def write_project(mode, base, documents, policy, sources):
+    """Write the exported documents, as (id, USFM), and PTXprint's configuration."""
     project = base / PROJECT_DIR
     conf = project / SETTINGS_DIR
     conf.mkdir(parents=True)
-    entries = ordered_entries()
-    if mode == "sample":
-        sample = read_json(paths.EDITION_DIR / "sample.json")
-        unknown = set(sample) - {u["id"] for u in edition.MANIFEST["scripture"]}
-        require(
-            not unknown, f"Sample names units outside the edition: {sorted(unknown)}"
-        )
-        entries = [e for e in entries if "section" not in e or e["id"] in sample]
-    ids = [e["id"] for e in entries]
-    require(len(ids) == len(set(ids)), "Duplicate project id")
-    transformations = []
-    for entry in entries:
-        code = entry["id"]
-        record = recorder(transformations, code)
-        if "file" in entry:
-            written = source_usfm(entry, archives)
-            require(
-                written.startswith(f"\\id {code}\n"), f"Wrong id in {entry['file']}"
-            )
-            text = numbering.page(written, archives)
-            if text != written:
-                record(
-                    "print the passages and tables that the page names",
-                    passages=[match[0] for match in numbering.NAMED.finditer(written)],
-                    tables=numbering.TABLES.findall(written),
-                )
-        else:
-            if "section" in entry:
-                text = scripture[code].text
-                transformations.extend(scripture[code].transformations)
-            else:
-                text = front_matter_text(entry, archives, transformations)
-            if code != source_id(entry):
-                text, remapped = re.subn(r"^(\\id\s+)\S+", lambda m: m[1] + code, text)
-                require(remapped == 1, f"Could not remap leading \\id to {code}")
-                record(
-                    "remap project id to retain it as a distinct ordered unit",
-                    source=source_id(entry),
-                )
-            if mode == "sample" and "section" in entry:
-                text = sample_chapters(code, text, sample[code])
-                record(
-                    "sample chapter selection; nb after an omitted chapter becomes p",
-                    chapters=sample[code],
-                )
-            text = typographic_text(code, text, record)
-        text = printed_origins(entry, text, record)
+    ids = [code for code, _ in documents]
+    require(ids and len(ids) == len(set(ids)), "Empty or duplicate project id")
+    for code, text in documents:
         project_usfm(project, code).write_text(text, encoding="utf-8")
     write_json(base / "order.json", ids)
-    transformations.append(
-        {
-            "operation": "protect literal pipes with U+E000 before XX module parsing; restore U+007C afterwards",
-            "configuration": "config/changes.txt",
-        }
-    )
-    write_json(base / "transformations.json", transformations)
     baseline, styles = bsb_baseline()
     (conf / "ptxprint.sty").write_text(styles, encoding="utf-8")
     cfg = configparser.ConfigParser(interpolation=None)
@@ -152,7 +96,7 @@ def write_project(mode, base, archives, scripture):
     root = ET.Element("ScriptureText")
     # Only the settings PTXprint reads; without a Guid it would write its own.
     settings = {
-        "FullName": edition.MANIFEST["title"],
+        "FullName": policy.title,
         "Guid": "407badbc319745d4b3cc9f242039a5ab",
         "Encoding": "65001",
         "LanguageIsoCode": "en",
@@ -168,7 +112,7 @@ def write_project(mode, base, archives, scripture):
     ET.ElementTree(root).write(
         project / "Settings.xml", encoding="utf-8", xml_declaration=True
     )
-    ET.ElementTree(book_names_element(entries, archives)).write(
+    ET.ElementTree(book_names(policy, sources, ids)).write(
         project / "BookNames.xml", encoding="utf-8", xml_declaration=True
     )
     # BSB's import selections describe copying from its project; our generated
@@ -197,4 +141,4 @@ def write_project(mode, base, archives, scripture):
     # Replace BSB's front matter with PTXprint's basic template so the title,
     # publication data, and contents come from this edition's settings.
     shutil.copyfile(FRONT_TEMPLATE, conf / "FRTlocal.sfm")
-    return project, ids
+    return ProjectOutput(project, ids)

@@ -2,8 +2,7 @@
 
 import pytest
 
-from bible import tvtms
-from bible.references import Verse
+from bible import tvtms, usj
 from bible.tvtms import Bible, Row
 
 GREEK = (
@@ -16,7 +15,7 @@ GREEK = (
 
 @pytest.fixture
 def bible():
-    return Bible({"JOL": GREEK})
+    return Bible({"JOL": usj.parse(GREEK)})
 
 
 def test_the_table_is_read_whole():
@@ -80,42 +79,16 @@ def test_an_unreadable_test_is_neither(bible, tests):
 
 
 def test_the_account_is_of_the_rows_the_bible_passes(bible, monkeypatch):
+    def row(tradition, source, standard, tests=""):
+        verses = tuple(tvtms._verses(source)), tuple(tvtms._verses(standard))
+        return Row(tradition, *verses, "Renumber verse", tests)
+
     rows = [
-        Row(
-            "Hebrew",
-            (("JOL", "3", 1, ""),),
-            (("JOL", "2", 28, ""),),
-            "Renumber verse",
-            "Jol.2:27=Last",
-        ),
-        Row(
-            "English",
-            (("JOL", "3", 1, ""),),
-            (("JOL", "3", 1, ""),),
-            "Keep verse",
-            "Jol.2:32=Last",
-        ),
-        Row(
-            "Greek",
-            (("JOL", "3", 2, "a"),),
-            (("JOL", "2", 29, ""),),
-            "Renumber verse",
-            "",
-        ),
-        Row(
-            "Greek",
-            (("JOL", "3", 1, "b"),),
-            (("JOL", "2", 28, ""),),
-            "Renumber verse",
-            "",
-        ),
-        Row(
-            "Hebrew",
-            (("HOS", "2", 1, ""),),
-            (("HOS", "1", 10, ""),),
-            "Renumber verse",
-            "",
-        ),
+        row("Hebrew", "Jol.3:1", "Jol.2:28", "Jol.2:27=Last"),
+        row("English", "Jol.3:1", "Jol.3:1", "Jol.2:32=Last"),
+        row("Greek", "Jol.3:2!a", "Jol.2:29"),
+        row("Greek", "Jol.3:1!b", "Jol.2:28"),
+        row("Hebrew", "Hos.2:1", "Hos.1:10"),
     ]
     monkeypatch.setattr(tvtms, "rows", lambda: (rows, []))
     account = tvtms.account(bible, {"JOL": ["JOL"]})
@@ -128,4 +101,3 @@ def test_the_account_is_of_the_rows_the_bible_passes(bible, monkeypatch):
         "JOL 3:1": [["JOL 2:28"], ["JOL 2:28"]],
         "JOL 3:2a": [["JOL 2:29"]],
     }
-    assert Verse("JOL", 3, 1) in account

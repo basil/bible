@@ -7,6 +7,8 @@ and retrieval date here.
 import io
 import re
 import zipfile
+from dataclasses import dataclass
+from types import MappingProxyType
 
 from bible import paths
 from bible.checks import require
@@ -41,6 +43,23 @@ SOURCES = {
 }
 
 
+@dataclass(frozen=True)
+class Sources:
+    """Every text the edition is made from, as it was read.
+
+    The archives' books are USFM by their \\id codes; the edition's own pages
+    are by their paths; the marginal notes are Calvin George's listing.
+    """
+
+    brenton: MappingProxyType
+    kjv: MappingProxyType
+    authored: MappingProxyType
+    marginal: str
+
+    def __getitem__(self, family):
+        return {"brenton": self.brenton, "kjv": self.kjv}[family]
+
+
 def read_archive(file):
     """Each USFM book in a zip archive, by its \\id code."""
     result = {}
@@ -49,10 +68,9 @@ def read_archive(file):
             if name.lower().endswith(".usfm"):
                 text = archive.read(name).decode("utf-8-sig").replace("\r\n", "\n")
                 code = re.search(r"\\id\s+(\S+)", text)[1]
-                if code in result:
-                    raise ValueError(f"Duplicate source book: {code}")
+                require(code not in result, f"Duplicate source book: {code}")
                 result[code] = text
-    return result
+    return MappingProxyType(result)
 
 
 def pinned_bytes(path, expected_sha256):
@@ -62,12 +80,22 @@ def pinned_bytes(path, expected_sha256):
     return data
 
 
-def load_archives():
-    """Every pinned archive's books, by source name, refused on a hash mismatch."""
-    return {
+def load():
+    """Read the archives, the edition's pages and the marginal notes."""
+    archives = {
         name: read_archive(
             io.BytesIO(pinned_bytes(source["archive"], source["sha256"]))
         )
         for name, source in SOURCES.items()
         if "archive" in source
     }
+    authored = {
+        str(path.relative_to(paths.ROOT)): path.read_text(encoding="utf-8")
+        for path in sorted(paths.CONTENT_DIR.glob("*.sfm"))
+    }
+    marginal = (paths.ROOT / SOURCES["marginal_notes"]["file"]).read_text(
+        encoding="utf-8"
+    )
+    return Sources(
+        archives["brenton"], archives["kjv"], MappingProxyType(authored), marginal
+    )

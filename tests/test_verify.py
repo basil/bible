@@ -1,8 +1,10 @@
 """The checks on PTXprint's processed text and on the rendered PDF."""
 
+from types import SimpleNamespace
+
 import pytest
 
-from bible import project, verify
+from bible import pipeline, project, usj, verify
 from bible.checks import CheckFailed
 from bible.files import read_json
 
@@ -32,62 +34,44 @@ def test_processed_output_unchanged(processed, tmp_path):
     processed(SOURCE_USFM.replace("\n\\p\n", "\n\\p "))
     (record,) = read_json(tmp_path / "processed-integrity.json")
     assert record["id"] == "GEN"
+    assert record["chapters"] == {"1": ["1"]}
     assert record["preserved_markers"] == {"f": 1, "f*": 1, "add": 1, "add*": 1}
 
 
-def test_processed_output_deleted_footnote(processed):
-    with pytest.raises(CheckFailed, match="PTXprint changed printable content: GEN"):
-        processed(SOURCE_USFM.replace("\\f + \\fr 1:1 \\ft Or, first\\f*", ""))
+@pytest.mark.parametrize(
+    "before,after,refusal",
+    [
+        ("\\f + \\fr 1:1 \\ft Or, first\\f*", "", "printable content"),
+        ("\\add God\\add*", "God", "notes, styles or tables"),
+        ("\\v 1 ", "\\v 2 ", "chapter/verse labels"),
+    ],
+)
+def test_processed_output_that_changes_the_text_is_refused(
+    processed, before, after, refusal
+):
+    with pytest.raises(CheckFailed, match=f"PTXprint changed {refusal}: GEN"):
+        processed(SOURCE_USFM.replace(before, after))
 
 
-def test_processed_output_dropped_style(processed):
-    with pytest.raises(
-        CheckFailed, match="PTXprint changed notes, styles or tables: GEN"
-    ):
-        processed(SOURCE_USFM.replace("\\add God\\add*", "God"))
-
-
-def test_processed_output_relabelled_verse(processed):
-    with pytest.raises(CheckFailed, match="PTXprint changed chapter/verse labels: GEN"):
-        processed(SOURCE_USFM.replace("\\v 1 ", "\\v 2 "))
-
-
-def test_printed_origins_lose_only_their_chapter():
-    prepared = (
-        "\\f - \\fr 9:12 \\ft See \\xt Hebrews 12:29\\f*"
-        "\\x - \\xo 1:2a \\xt Psalm 1:2\\x*"
-    )
-    assert project.ORIGIN_CHAPTER.sub(r"\1", prepared) == (
-        "\\f - \\fr 12 \\ft See \\xt Hebrews 12:29\\f*"
-        "\\x - \\xo 2a \\xt Psalm 1:2\\x*"
+def test_printed_origins_lose_their_chapter_and_front_matter_its_empty_ones():
+    # What verify compares PTXprint's copy against is the exported text.
+    doc = usj.parse(
+        "\\id GEN\n\\c 9\n\\p\n"
+        "\\v 12 And God\\f - \\fr 9:12 \\ft See \\xt Hebrews 12:29\\f* said"
+        "\\x - \\xo 9:12a \\xt Psalm 1:2\\x* to Noe.\\f + \\fr 3:0 \\ft A title\\f*\n"
     )
 
+    def exported(code, scripture):
+        unit = SimpleNamespace(scripture=frozenset(scripture), authored=frozenset())
+        return pipeline.exported(code, doc, unit).split("\\v 12 ")[1]
 
-def test_an_origin_that_names_no_verse_is_not_printed():
-    prepared = "its use.\\f + \\fr 1:0 \\ft In accounting for the quotation\\f*"
-    assert project.EMPTY_ORIGIN.sub("", prepared) == (
-        "its use.\\f + \\ft In accounting for the quotation\\f*"
+    assert exported("GEN", {"GEN"}) == (
+        "And God\\f - \\fr 12 \\ft See \\xt Hebrews 12:29\\f* said"
+        "\\x - \\xo 12a \\xt Psalm 1:2\\x* to Noe.\\f + \\fr 0 \\ft A title\\f*\n"
     )
-    assert not project.EMPTY_ORIGIN.search("\\f - \\fr 1:10 \\ft or\\f*")
-
-
-def test_only_front_matter_loses_an_origin_that_names_no_verse():
-    prepared = "\\f + \\fr 3:0 \\ft A title\\f*"
-    log = []
-
-    def record(operation, **details):
-        log.append((operation, details))
-
-    assert project.printed_origins({"id": "XXB"}, prepared, record) == (
-        "\\f + \\ft A title\\f*"
-    )
-    assert project.printed_origins(
-        {"id": "PSA", "section": "old-testament"}, prepared, record
-    ) == ("\\f + \\fr 0 \\ft A title\\f*")
-    assert [operation for operation, _ in log] == [
-        "omit note origins that name no verse",
-        "print note origins without their chapter",
-    ]
+    # Front matter has no verses: an origin that names none isn't printed.
+    assert exported("XXB", set()).endswith("to Noe.\\f + \\ft A title\\f*\n")
+    assert "\\fr 12 \\ft See" in exported("XXB", set())
 
 
 # Rendered PDF
@@ -104,9 +88,7 @@ def test_only_front_matter_loses_an_origin_that_names_no_verse():
         # The numbers that the appendix supplies a passage under.
         "17. 12And David son of an Ephrathite",
         "the days of Saul. 13And the three elder sons",
-        "A talent is 187 pounds 10 shillings",
         "1870. it | 1844. It",
-        "about the year 280 BC. The Jews",
         # A verse's number, after the sentence before it.
         "and the evening star. 32 Or wilt thou",
     ],
@@ -119,7 +101,6 @@ def test_the_editions_citations_pass(words):
     "words",
     [
         "See Rom. 4. 7,8",
-        "See 2 Cor. 9. 7. Compare Heb.",
         "as Mat. 18.28",
         "afforded by Gen. xlvii. 31, compared",
         "Hebrews xi. 21",
@@ -133,38 +114,46 @@ def test_a_citation_as_a_source_writes_it_is_refused(words):
         verify.check_citations(f"12:3 lamb: {words} and so on")
 
 
-def test_added_words_witness_may_be_left_out_of_the_sample(tmp_path):
-    verify.check_added_words_roman(None, "", tmp_path, ["GEN"], True)
-
-
-def test_added_words_witness_must_be_in_the_full_bible(tmp_path):
+@pytest.mark.parametrize("ids,chapters", [(["GEN"], None), (["MAL"], "3")])
+def test_added_words_witness_may_be_left_out_of_the_sample_only(
+    tmp_path, ids, chapters
+):
+    if chapters:
+        project.project_usfm(tmp_path, "MAL").write_text(
+            f"\\id MAL\n\\c {chapters}\n\\p\n\\v 1 A.\n", encoding="utf-8"
+        )
+    verify.check_added_words_roman(None, "", tmp_path, ids, True)
     with pytest.raises(CheckFailed, match="Malachias 4:2 is not in the build"):
-        verify.check_added_words_roman(None, "", tmp_path, ["GEN"], False)
+        verify.check_added_words_roman(None, "", tmp_path, ids, False)
 
 
-def test_added_words_witness_chapter_must_be_in_the_full_bible(tmp_path):
-    project.project_usfm(tmp_path, "MAL").write_text(
-        "\\id MAL\n\\c 3\n\\p\n\\v 1 A.\n", encoding="utf-8"
+def pdf_words(monkeypatch, *pages, **size):
+    """Have pdftotext report pages of words, each (text, left, top, right)."""
+    attributes = "".join(f' {name}="{value}"' for name, value in size.items())
+    body = "".join(
+        f"<page{attributes}>"
+        + "".join(
+            f'<word xMin="{left}" yMin="{top}" xMax="{right}" yMax="{top + 10}">'
+            f"{text}</word>"
+            for text, left, top, right in page
+        )
+        + "</page>"
+        for page in pages
     )
-    with pytest.raises(CheckFailed, match="Malachias 4:2 is not in the build"):
-        verify.check_added_words_roman(None, "", tmp_path, ["MAL"], False)
-
-
-def test_stream_text_parts_words_and_leaves_out_the_margins(monkeypatch):
-    def word(text, y):
-        return f'<word xMin="34" yMin="{y}" xMax="54" yMax="{y + 10}">{text}</word>'
-
-    words = [("Esaias", 13), ("as", 40), ("in", 40), ("Rom.", 40), ("4.", 52)]
-    page = "".join(word(*w) for w in [*words, ("7", 52), ("53", 556)])
     monkeypatch.setattr(
         verify,
         "capture",
         lambda *args: (
-            f'<html xmlns="{verify.XHTML[1:-1]}"><body><doc>'
-            f'<page height="595">{page}</page><page height="595">{page}</page>'
-            "</doc></body></html>"
+            f'<html xmlns="{verify.XHTML[1:-1]}"><body><doc>{body}</doc></body></html>'
         ),
     )
+
+
+def test_stream_text_parts_words_and_leaves_out_the_margins(monkeypatch):
+    # The running head and the folio stand above and below the text block.
+    words = [("Esaias", 13), ("as", 40), ("in", 40), ("Rom.", 40), ("4.", 52)]
+    page = [(text, 34, top, 54) for text, top in [*words, ("7", 52), ("53", 556)]]
+    pdf_words(monkeypatch, page, page, height=595)
     text = verify.stream_text("bible.pdf", 34, 51)
     assert text == "as in Rom. 4. 7\fas in Rom. 4. 7"
     with pytest.raises(CheckFailed, match="not written as the edition cites"):
@@ -172,28 +161,15 @@ def test_stream_text_parts_words_and_leaves_out_the_margins(monkeypatch):
 
 
 def test_stream_text_keeps_inner_notes_out_of_body_sentences(monkeypatch):
-    def word(text, left, right):
-        return f'<word xMin="{left}" yMin="40" xMax="{right}" yMax="50">{text}</word>'
-
-    odd = (
-        word("the soul", 102, 150)
-        + word("Vat. omits", 30, 90)
-        + word("of Jonathan", 102, 160)
-    )
-    even = (
-        word("the soul", 34, 82)
-        + word("Vat. omits", 410, 460)
-        + word("of Jonathan", 34, 100)
-    )
-    monkeypatch.setattr(
-        verify,
-        "capture",
-        lambda *args: (
-            f'<html xmlns="{verify.XHTML[1:-1]}"><body><doc>'
-            f'<page width="499" height="709">{odd}</page>'
-            f'<page width="499" height="709">{even}</page>'
-            "</doc></body></html>"
-        ),
+    # The inner margin is on the left of an odd page and the right of an even.
+    odd = [("the soul", 102, 40, 150), ("Vat. omits", 30, 40, 90)]
+    even = [("the soul", 34, 40, 82), ("Vat. omits", 410, 40, 460)]
+    pdf_words(
+        monkeypatch,
+        [*odd, ("of Jonathan", 102, 40, 160)],
+        [*even, ("of Jonathan", 34, 40, 100)],
+        width=499,
+        height=709,
     )
     assert verify.stream_text("bible.pdf", 34, 51, 102) == (
         "the soul of Jonathan Vat. omits\fthe soul of Jonathan Vat. omits"

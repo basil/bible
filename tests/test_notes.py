@@ -1,426 +1,272 @@
-"""The edition's notes: the 1611 marginal notes' parsing, corrections and
-anchoring, Brenton's notes, the lemmas and italics of both, and the footnotes
-they are set as."""
-
-import re
+"""Notes: what each says, the words it is about, and how it prints."""
 
 import pytest
+from conftest import book, changed, verse_lines
 
-from bible import citations, edition, notes, versification
+from bible import annotate, lemmas, notes, scripture, terminology, usj
 from bible.checks import CheckFailed
-from bible.crossrefs import LINK
-from bible.edition import MANIFEST, scripture_unit as unit
-from bible.prepare import front_matter_text, recorder, scripture_text
-from bible.references import verse_at
-from bible.usfm import word_spans
 
 
-def test_marginal_notes_parse():
-    parsed = notes.marginal_notes()
-    assert sum(len(n) for n in parsed.values()) == notes.EXPECTED_NT_MARGINAL_NOTES
-
-
-def test_unused_correction(patched):
-    patched(notes, "KJV_NOTES")["corrections"]["MAT 1:1 nothing"] = {
-        "from": "a",
-        "to": "b",
-    }
-    with pytest.raises(
-        CheckFailed, match=r"Unused marginal note corrections: \['MAT 1:1 nothing'\]"
-    ):
-        notes.marginal_notes()
-
-
-def test_correction_that_does_not_apply(patched):
-    patched(notes, "KJV_NOTES")["corrections"]["MAT 23:18 guilty"][
-        "from"
-    ] = "no such text"
-    with pytest.raises(
-        CheckFailed, match="correction does not apply: MAT 23:18 guilty"
-    ):
-        notes.marginal_notes()
-
-
-def test_transcribers_remark_left_in_note(patched):
-    # This correction removes "[symbol in wrong place in 1611]".
-    del patched(notes, "KJV_NOTES")["corrections"]["MAT 5:15 a bushel"]
-    with pytest.raises(
-        CheckFailed, match="Transcriber's remark left in marginal note: MAT 5:15"
-    ):
-        notes.marginal_notes()
-
-
-def test_unused_exception(patched):
-    patched(notes, "KJV_NOTES")["notes"]["MAT 1:1 nothing"] = {"anchor": "nothing"}
-    with pytest.raises(CheckFailed, match="Unused marginal note exceptions"):
-        notes.marginal_notes()
-
-
-def test_missing_anchor_verse(archives, patched, links):
-    exceptions = patched(notes, "KJV_NOTES")["notes"]
-    exceptions["MAT 12:14 held a counsel"]["verse"] = "12:99"
-    with pytest.raises(CheckFailed, match="verse missing: MAT 12:14 held a counsel"):
-        scripture_text(unit("MAT"), archives, links=links)
-
-
-def test_wrong_anchor(archives, patched, links):
-    # George's lemma reads "counsel" where the Cambridge text has "council".
-    del patched(notes, "KJV_NOTES")["notes"]["MAT 12:14 held a counsel"]
-    with pytest.raises(
-        CheckFailed, match=r"not found exactly once: MAT 12:14 held a counsel \(0\)"
-    ):
-        scripture_text(unit("MAT"), archives, links=links)
-
-
-def test_ambiguous_anchor(archives, patched, links):
-    # "of" occurs more than once in Matthew 6:1; the override picks the second.
-    del patched(notes, "KJV_NOTES")["notes"]["MAT 6:1 of"]
-    with pytest.raises(
-        CheckFailed, match=r"not found exactly once: MAT 6:1 of \([2-9]\)"
-    ):
-        scripture_text(unit("MAT"), archives, links=links)
-
-
-def test_anchor_inside_added_words(archives, patched, links):
-    # "it" is the second of Mark 3:21's added words "of it".
-    patched(notes, "KJV_NOTES")["notes"]["MRK 3:21 friends"] = {
-        "anchor": "it",
-        "why": "x",
-        "uncategorized": True,
-    }
-    with pytest.raises(
-        CheckFailed, match="Note inside a character span: MRK 3:21 friends"
-    ):
-        scripture_text(unit("MRK"), archives, links=links)
-
-
-def test_cambridge_text_must_not_already_have_notes(with_source, links):
-    damaged = with_source(
-        "kjv",
-        "MAT",
-        lambda t: t.replace("\\v 2 ", "\\v 2 \\f + \\ft x\\f* ", 1),
-    )
-    with pytest.raises(CheckFailed, match="already has footnotes: MAT"):
-        scripture_text(unit("MAT"), damaged, links=links)
-
-
-def unit_front(code):
-    return next(e for e in MANIFEST["old_testament_front"] if e["id"] == code)
-
-
-def footnotes(text, reference):
-    """The footnotes set for a verse in prepared USFM, in order."""
-    return re.findall(r"\\f - \\fr " + re.escape(reference) + r" .*?\\f\*", text)
+def printed(body, ctx, *, code="GEN", links=()):
+    """A small book's verses with their notes as the edition prints them."""
+    doc, _ = annotate.brenton(code, book(code, body), links, frozenset(), ctx)
+    return verse_lines(doc)
 
 
 @pytest.mark.parametrize(
-    "code, reference, usfm",
+    "verse, expected",
     [
+        # A rendering is italic and its label roman; the note runs on from
+        # the word it glosses, without its closing stop.
         (
-            "ACT",
-            "25:20",
-            "\\f - \\fr 25:20 \\fq I doubted of such manner of questions: "
-            "\\ft or, \\fqa I was doubtful how to enquire hereof\\f*",
+            r"\v 9 Let the water be collected into one \f + \fr 99:9 \fqa Gr. \ft meeting.\f*place, and let the dry land appear.",
+            r"Let the water be collected into one \f - \fr 99:9 \fq place: \ft Gr. \fqa meeting\f*place, and let the dry land appear.",
         ),
+        # A label that comments stays roman with what follows it.
         (
-            "1CO",
-            "15:31",
-            "\\f - \\fr 15:31 \\fq your: \\ft some read, \\fqa our\\f*",
+            r"\v 4 God divided between the light \f + \fr 99:4 \fqa Gr. \ft and between the darkness. \fqa Hebraism.\f*and the darkness.",
+            r"God divided between the light \f - \fr 99:4 \fq and the darkness: \ft Gr. \fqa and between the darkness\ft . Hebraism\f*and the darkness.",
         ),
+        # "X, or Y" are two renderings; an abbreviation keeps its stop.
         (
-            "1CO",
-            "16:3",
-            "\\f - \\fr 16:3 \\fq liberality: \\ft Gr. \\fqa gift\\f*",
+            r"\v 6 I am \f + \fr 99:6 \fqa Gr. \ft I have thought, or reasoned, so the Heb.\f*grieved that I made them.",
+            r"I am \f - \fr 99:6 \fq grieved: \ft Gr. \fqa I have thought\ft , or \fqa reasoned\ft , so the Heb.\f*grieved that I made them.",
         ),
-        # George's lone preposition stands where it occurs once...
-        ("MRK", "1:4", "\\f - \\fr 1:4 \\fq for: \\ft or, \\fqa unto\\f*"),
-        # ...and is widened where it doesn't, and its rendering with it.
+        # A cross-reference is "See" and what it cites, as the edition cites.
         (
-            "MAT",
-            "6:1",
-            "\\f - \\fr 6:1 \\fq of your Father: \\ft or, \\fqa with your Father\\f*",
+            r"\v 5 \x + \xo 99:5 \xt Rom. 4. 7,8.\x* Blessed are they whose sins are forgiven.",
+            r"\f - \fr 99:5 \ft See \xt Romans 4:7, 8\f*Blessed are they whose sins are forgiven.",
         ),
+        # A caller at the end of a verse glosses the words before it.
         (
-            "MRK",
-            "2:21",
-            "\\f - \\fr 2:21 \\fq new cloth: \\ft or, \\fqa raw cloth\\ft , or "
-            "\\fqa unwrought cloth\\f*",
+            r"\v 7 and he called his name Light.\f + \fr 99:7 \fqa Heb. \ft Brightness.\f*",
+            r"and he called his name Light.\f - \fr 99:7 \fq Light: \ft Heb. \fqa Brightness\f*",
+        ),
+        # Abbreviations print in the edition's forms.
+        (
+            r"\v 8 the captain of the \f + \fr 99:8 \fqa A. V. \ft guard, i. e. the Sept. reading.\f*cooks stood there.",
+            r"the captain of the \f - \fr 99:8 \fq cooks: \ft Authorized Version \fqa guard\ft , i.e., the LXX reading\f*cooks stood there.",
+        ),
+        # A caller just inside supplied words stands before them.
+        (
+            r"\v 3 they came \add \f + \fr 99:3 \fqa Gr. \ft a place.\f*to\add* the city.",
+            r"they came \f - \fr 99:3 \fq to the city: \ft Gr. \fqa a place\f*\add to\add* the city.",
         ),
     ],
 )
-def test_marginal_footnotes(scripture, code, reference, usfm):
-    assert footnotes(scripture[code], reference) == [usfm]
+def test_a_note_of_brentons_is_set_as_a_footnote_on_its_words(verse, expected, ctx):
+    assert list(printed(verse, ctx).values()) == [expected]
 
 
-def test_each_note_is_its_own_footnote(scripture):
-    assert footnotes(scripture["ROM"], "9:12") == [
-        "\\f - \\fr 9:12 \\fq elder: \\ft or, \\fqa greater\\f*",
-        "\\f - \\fr 9:12 \\fq younger: \\ft or, \\fqa lesser\\f*",
-    ]
-
-
-def test_marginal_note_on_the_whole_verse(archives, patched, links):
-    patched(notes, "KJV_NOTES")["notes"][
-        "LUK 17:36 Two men shall be in the field, the one shall be taken, and the other left"
-    ] = {
-        "lemma": None,
-        "why": "x",
-    }
-    assert footnotes(scripture_text(unit("LUK"), archives, links=links), "17:36") == [
-        "\\f - \\fr 17:36 \\ft This 36th verse is wanting in most of the Greek copies.\\f*"
-    ]
-
-
-def test_footnote_follows_a_lemma_clear_of_its_anchor(scripture):
-    # George swaps Mark 7:4's notes; their lemmas say where each belongs.
-    assert footnotes(scripture["MRK"], "7:4") == [
-        "\\f - \\fr 7:4 \\fq pots: \\ft Sextarius, is about a pint and an half.\\f*",
-        "\\f - \\fr 7:4 \\fq tables: \\ft or, \\fqa beds\\f*",
-    ]
-    assert "\\fqa beds\\f*tables." in scripture["MRK"]
-
-
-@pytest.mark.parametrize(
-    "code, reference, usfm",
-    [
-        # Its italic renderings, each after its label.
-        (
-            "GEN",
-            "24:11",
-            "\\f - \\fr 24:11 \\fq rested: \\ft Heb. \\fqa caused to kneel "
-            "down\\ft . Gr. \\fqa caused to sleep\\f*",
-        ),
-        # A cross-reference at the start of its verse needs no lemma.
-        ("DEU", "4:24", "\\f - \\fr 4:24 \\ft See \\xt Hebrews 12:29\\f*"),
-        # A note after the last word of its verse glosses the words before it.
-        (
-            "PRO",
-            "21:27",
-            "\\f - \\fr 21:27 \\fq wickedly: \\ft or, \\fqa unlawfully\\f*",
-        ),
-        # A widened lemma widens its rendering...
-        (
-            "GEN",
-            "40:9",
-            "\\f - \\fr 40:9 \\fq my dream: \\ft Gr. \\fqa my sleep\\f*",
-        ),
-        # ...unless an exception's lemma says what the rendering renders.
-        (
-            "JDG",
-            "2:18",
-            "\\f - \\fr 2:18 \\fq was moved: \\ft Gr. \\fqa repented\\ft . This "
-            "word seems generally to stand for נחם\\f*",
-        ),
-    ],
-)
-def test_brenton_footnotes(scripture, code, reference, usfm):
-    assert footnotes(scripture[code], reference) == [usfm]
-
-
-def test_brenton_text_keeps_no_caller(scripture):
-    text = scripture["GEN"]
-    # The only cross-references are the quotation links, which set no caller.
-    assert "\\f +" not in text and "\\x " not in LINK.sub("", text)
-    # The empty note in 3 Kingdoms 6:1 is corrected away; its verse keeps the other.
-    assert len(footnotes(scripture["1KI"], "6:1")) == 1
-
-
-@pytest.mark.parametrize(
-    "note, styled",
-    [
-        ("Or, a thing", "Or, _a thing_"),
-        ("Gr. logos.", "Gr. _logos_."),
-        ("Who is he?", "Who is he?"),
-        ("Some read, our", "Some read, _our_"),
-        # Greek before its English renders by the English.
-        ("Some read τίς, who", "Some read τίς, _who_"),
-        ("Gr. is revealed", "Gr. _is revealed_"),
-        (
-            "Or, lascivious ways, as some copies read",
-            "Or, _lascivious ways_, as some copies read",
-        ),
-        ("Gr. rightness, or straightness", "Gr. _rightness_, or _straightness_"),
-        (
-            "Or, be diminished, or fail of, etc.",
-            "Or, _be diminished_, or _fail of_, etc.",
-        ),
-        ("the word signifieth a measure", "the word signifieth a measure"),
-    ],
-)
-def test_marginal_note_styling(note, styled):
-    plain, styles, _ = notes.styled(notes.labelled_pieces(note))
-    assert notes.underscored(plain, styles) == styled
-
-
-def test_a_citation_ends_a_rendering(archives):
-    # It is a reference of its own by the time the note is styled.
-    source = "Or, gods that you worship, 2 Thess. 2.4"
-    found = citations.scan(
-        source,
-        citations.dialect("george"),
-        verse_at("ACT", "17:23"),
-        "x",
-        versification.edition_inventory(archives),
+def test_a_lemma_is_widened_until_it_occurs_once_and_its_rendering_with_it():
+    verse = "that ye have no reward of your Father, and praise of men"
+    words = scripture.word_spans(verse)
+    of = [i for i, (word, _, _) in enumerate(words) if word == "of"]
+    span, glossed, rule, first = lemmas.anchored(verse, words, ["of"], 1, {}, "key")
+    assert (lemmas.lemma_text(verse, words, span), rule, first) == (
+        "of your Father",
+        "widened",
+        of[0],
     )
-    pieces, printed = notes.cited(
-        notes.labelled_pieces(source), found, edition.books(archives), "x", source
-    )
-    assert printed == "Or, gods that you worship, 2 Thessalonians 2:4"
-    plain, styles, _ = notes.styled(pieces)
-    assert notes.underscored(plain, styles) == (
-        "Or, _gods that you worship_, 2 Thessalonians 2:4"
-    )
-    assert notes.usfm_body(plain, styles) == (
-        "\\ft Or, \\fqa gods that you worship\\ft , \\xt 2 Thessalonians 2:4"
-    )
+    assert lemmas.echoes(verse, words, span, glossed) == ("", " your Father")
 
 
-@pytest.mark.parametrize(
-    "body, styled",
-    [
-        (
-            "\\fqa Gr. \\ft and between the darkness. \\fqa Hebraism.",
-            "Gr. _and between the darkness_. Hebraism.",
-        ),
-        # A comment after a label stays roman.
-        (
-            "\\fqa Or, \\ft probably any large fish, or marine animals.",
-            "Or, probably any large fish, or marine animals.",
-        ),
-        ("\\fqa Alex. \\ft has the following.", "Alex. has the following."),
-        ("\\fqa Gr. \\ft plural.", "Gr. plural."),
-        # A label inside a sentence introduces no rendering.
-        (
-            "\\ft The \\fqa Gr. \\ft word ἀλλοφύλοι is applied elsewhere.",
-            "The Gr. word ἀλλοφύλοι is applied elsewhere.",
-        ),
-        (
-            "\\fqa Gr. \\ft do good \\fqa or \\ft make good.",
-            "Gr. _do good_ or _make good_.",
-        ),
-        ("\\fqa Heb. \\ft and \\fqa Alex. \\ft Samuel.", "Heb. and Alex. _Samuel_."),
-        # Quoted Greek ends a rendering after a comma...
-        ("\\fqa Gr. \\ft furnace, κάμινον.", "Gr. _furnace_, κάμινον."),
-        # ...and before its English, the English is the rendering.
-        ("\\fqa Alex. \\ft ἐντολαί, commands.", "Alex. ἐντολαί, _commands_."),
-        # A comment after a comma ends a rendering.
-        ("\\fqa Gr. \\ft horn, so \\fqa Heb.", "Gr. _horn_, so Heb."),
-        ("\\fqa Gr. \\ft it, sc. the people.", "Gr. _it_, sc. the people."),
-        # Words ending on "the" or "as" before a label introduce it.
-        ("\\fqa Gr. \\ft from the \\fqa Heb.", "Gr. from the Heb."),
-        # Quoted words a note adds are the reading, as after "+".
-        (
-            "\\fqa Heb. \\ft and \\fqa Alex. \\ft insert 'priest.'",
-            "Heb. and Alex. insert '_priest_.'",
-        ),
-        ("\\fqa Alex. \\ft + the Lord.", "Alex. + _the Lord_."),
-        (
-            "\\fqa Gr. \\ft 'turned away,' but not from them.",
-            "Gr. '_turned away_,' but not from them.",
-        ),
-        # Brenton's italic for a cited word stays italic.
-        (
-            "\\ft rendered by \\fqa meadow, \\ft in Job.",
-            "rendered by _meadow_, in Job.",
-        ),
-        # A word Brenton set in italic inside a rendering does not end it...
-        (
-            "\\fqa Gr. \\ft a head of hair \\fqa even \\ft hair, etc.",
-            "Gr. _a head of hair even hair_, etc.",
-        ),
-        # ...but a comma after it does.
-        (
-            "\\fqa Gr. \\ft made \\fqa ellulim, \\ft a Hebrew word.",
-            "Gr. _made ellulim_, a Hebrew word.",
-        ),
-        # Figures are a rendering.
-        ("\\fqa Alex. \\ft 187 years.", "Alex. _187 years_."),
-        (
-            "\\fqa Alex. \\ft translates the words \\fqa “the way of the seers.”",
-            "Alex. translates the words “_the way of the seers_.”",
-        ),
-    ],
-)
-def test_brenton_note_styling(body, styled):
-    plain, styles, _ = notes.styled(notes.brenton_pieces(body))
-    assert notes.underscored(plain, styles) == styled
+def test_the_exception_files_correct_the_rules(ctx, policy):
+    verse = r"\v 9 Let the water be collected into one \f + \fr 99:9 \fqa Gr. \ft meeting together.\f*place of rest."
 
+    def with_exception(entry):
+        excepted = changed(
+            policy,
+            "brenton_notes",
+            lambda data: data["notes"].update({"GEN 99:9": entry}),
+        )
+        return printed(
+            verse, annotate.Context(excepted, *list(vars(ctx).values())[1:])
+        )["9"]
 
-@pytest.mark.parametrize(
-    "styled, style, expected",
-    [
-        ("Gr. _thy_", "rendering", "Gr. _thy soul_"),
-        ("Gr. _in_, or, _among_", "rendering", "Gr. _in soul_, or, _among soul_"),
-        # Brenton's own italic in a note without a rendering stays as it is.
-        ("see _Underskiddaw_", "roman", "see _Underskiddaw_"),
-    ],
-)
-def test_echoed(styled, style, expected):
-    plain = styled.replace("_", "")
-    styles = notes.overridden_styles(styled, plain, ["ft"] * len(plain), "K")
     assert (
-        notes.underscored(*notes.echoed(plain, styles, style, "", " soul")) == expected
+        r"\fq place of rest: \ft Gr. \fqa meeting together\f*"
+        in printed(verse, ctx)["9"]
+    )
+    assert r"\fq into one place: \ft Gr. \fqa meeting together\f*" in with_exception(
+        {"lemma": "into one place", "why": "the rendering is of the whole phrase"}
+    )
+    assert r"\fq place: \ft Gr. \fqa meeting \ft together\f*" in with_exception(
+        {"note": "Gr. _meeting_ together.", "why": "together is the editor's"}
+    )
+    assert r"\f - \fr 99:9 \ft Gr. \fqa meeting together\f*" in with_exception(
+        {"lemma": None, "why": "the note is on the verse"}
+    )
+    # An exception that changes nothing, or isn't the note's words, is refused.
+    with pytest.raises(CheckFailed, match="Lemma override changes nothing"):
+        with_exception({"lemma": "place of rest", "why": "the same"})
+    with pytest.raises(CheckFailed, match="Note override changes nothing"):
+        with_exception({"note": "Gr. _meeting together_.", "why": "the same"})
+    with pytest.raises(CheckFailed, match="does not match the note"):
+        with_exception({"note": "Gr. _meeting_ apart.", "why": "other words"})
+
+
+def test_a_note_in_the_wrong_verse_is_set_on_its_words_in_the_right_one(ctx, policy):
+    verses = (
+        "\\v 7 And there shall be two parties among you.\n"
+        r"\v 9 both those that went in, \f + \fr 99:9 \fqa Gr. \ft hands.\f*and those that went out."
+    )
+
+    def with_exception(entry):
+        moved = changed(
+            policy,
+            "brenton_notes",
+            lambda data: data["notes"].update({"GEN 99:9": entry}),
+        )
+        return printed(verses, annotate.Context(moved, *list(vars(ctx).values())[1:]))
+
+    why = {"why": "hands renders parties"}
+    assert with_exception({"verse": "99:7", "lemma": "parties", **why}) == {
+        "7": r"And there shall be two \f - \fr 99:7 \fq parties: \ft Gr. \fqa hands\f*parties among you.",
+        "9": "both those that went in, and those that went out.",
+    }
+    # It moves to another verse of its book, where its words are.
+    for verse in ("99:9", "99:8"):
+        with pytest.raises(CheckFailed, match="moved to no other verse"):
+            with_exception({"verse": verse, "lemma": "parties", **why})
+    with pytest.raises(CheckFailed, match="not found"):
+        with_exception({"verse": "99:7", "lemma": "sides", **why})
+
+
+def test_a_note_that_is_a_sentence_takes_a_capital_and_a_full_stop(ctx, policy):
+    doc = book("MAT", r"\v 2 and paid an hundred pence to the keeper of the house.")
+    listed = [
+        dict(
+            key="MAT 99:2 pence",
+            reference="99:2",
+            lemma="pence",
+            note="the Roman penny is the eighth part of an ounce",
+        ),
+        dict(
+            key="MAT 99:2 keeper", reference="99:2", lemma="keeper", note="Or, porter."
+        ),
+    ]
+    doc, report = annotate.george("MAT", doc, listed, ctx)
+    assert verse_lines(doc)["2"] == (
+        r"and paid an hundred \f - \fr 99:2 \fq pence: \ft The Roman penny is the eighth "
+        r"part of an ounce.\f*pence to the \f - \fr 99:2 \fq keeper: \ft or, \fqa porter\f*"
+        "keeper of the house."
+    )
+    assert [row["rule"] for row in report.rows] == ["anchor", "anchor"]
+
+
+def test_a_note_of_the_margin_must_find_its_words_once(ctx):
+    doc = book("MAT", r"\v 2 of the house of the keeper.")
+    note = dict(key="MAT 99:2 of", reference="99:2", lemma="of", note="Or, from.")
+    with pytest.raises(CheckFailed, match="not found exactly once"):
+        annotate.george("MAT", doc, [note], ctx)
+    with pytest.raises(CheckFailed, match="verse missing"):
+        annotate.george("MAT", doc, [{**note, "reference": "99:3"}], ctx)
+
+
+def test_a_declared_change_of_wording_is_carried_through_a_notes_parts():
+    pieces = notes.labelled_pieces("Or, after 5. shillings the ounce.")
+    body = notes.source_body(
+        pieces, [], None, "key", "Or, after 5. shillings the ounce."
+    )
+    edited = notes.edited(body, "5.", "five", "key")
+    assert edited.plain == "Or, after five shillings the ounce."
+    # The rendering ended at the number's stop, and still ends at the number.
+    assert (body.alternative, edited.alternative) == ("after 5", "after five")
+    with pytest.raises(CheckFailed, match="does not apply once"):
+        notes.edited(body, "6.", "six", "key")
+
+
+def test_the_notes_the_edition_writes_say_what_each_part_is():
+    note = usj.note(
+        "f",
+        *usj.parse(
+            r"\fl Vat. \fqa forty cubits\ft . \fl Gr. \fq its length\ft , etc.",
+            fragment=True,
+        ),
+    )
+    body = notes.authored_body(note, None, "key")
+    assert [(role, body.plain[a:b]) for a, b, role in body.roles] == [
+        ("label", "Vat. "),
+        ("alternative", "forty cubits"),
+        ("text", ". "),
+        ("label", "Gr. "),
+        ("quotation", "its length"),
+        ("text", ", etc."),
+    ]
+    assert (body.alternative, body.rule) == ("forty cubits", "rendering")
+    with pytest.raises(CheckFailed, match="Unknown part"):
+        notes.authored_body(usj.note("f", usj.char("fk", "x")), None, "key")
+
+
+@pytest.mark.parametrize(
+    "words, expected",
+    [
+        ("so in the Sept. and A. V. also", "so in the LXX and Authorized Version also"),
+        ("see the MS. Then the Vulg. reads", "see the MS. Then the Vulgate reads"),
+        ("in the year a.d. 126, or b.c. 217", "in the year AD 126, or 217 BC"),
+        ("scil. the people, &c.", "sc. the people, etc."),
+    ],
+)
+def test_terms_print_in_the_editions_forms(words, expected, policy):
+    registry = terminology.registry(policy)
+    assert (
+        usj.serialize(
+            terminology.printed(
+                [words], terminology.found([words], registry, note=True), registry
+            )
+        )
+        == expected
     )
 
 
-def test_echo():
-    verse = "with all your heart, and with all your soul"
-    words = word_spans(verse)
-    # The second your (7), widened to your soul or all your.
-    assert notes.echo(verse, words, (7, 8), (7, 7)) == ("", " soul")
-    assert notes.echo(verse, words, (6, 7), (7, 7)) == ("all ", "")
-    assert notes.echo(verse, words, (7, 7), (7, 7)) == ("", "")
-    assert notes.echo(verse, words, None, None) == ("", "")
-
-
-def test_usfm_body_runs():
-    plain, styles, alternative = notes.styled(notes.labelled_pieces("Gr. gift."))
-    assert alternative == "gift"
-    assert notes.usfm_body(plain, styles) == "\\ft Gr. \\fqa gift\\ft ."
-
-
-def test_usfm_body_joins_a_run_of_spaces_to_the_run_before():
-    styles = ["fqa", "fqa", "ft", "xt", "xt", "xt"]
-    assert notes.usfm_body("ab  cd", styles) == "\\fqa ab  \\xt cd"
-
-
-def test_measured_backward_keeps_the_article_the_lemma_starts_with():
-    verse = "and he saw the great city."
-    words = word_spans(verse)
-    clause = notes.clause_before(verse, words, len(words) - 1)
-    assert notes.measured(words, clause, ["the", "big", "town"], backward=True) == (
-        3,
-        "length",
+def test_every_note_of_the_sources_is_printed_or_replaced_by_a_link(edition):
+    assert edition.summary["printed_notes"] == 3417
+    rows = [row for listed in edition.notes.values() for row in listed]
+    assert len({row["key"] for row in rows}) == len(rows)
+    # The 1611 margin is printed whole, on the New Testament alone.
+    margin = sum(
+        len(edition.notes[u["id"]])
+        for u in edition.policy.scripture
+        if u["source"] == "kjv"
     )
+    assert margin == edition.summary["kjv_marginal_notes"] == 775
+    # A widened lemma's rendering takes in the same words (Matthew 6:1).
+    row = next(row for row in edition.notes["MAT"] if row["key"] == "MAT 6:1 of")
+    assert (row["lemma"], row["note"]) == ("of your Father", "or, _with your Father_")
 
 
-def test_note_override_must_match_the_note():
-    plain, styles, _ = notes.styled(notes.labelled_pieces("Gr. gift."))
-    with pytest.raises(CheckFailed, match="does not match the note: KEY"):
-        notes.overridden_styles("Gr. _gifts_.", plain, styles, "KEY")
+def test_an_inferred_lemma_has_the_shape_of_its_rendering(edition, policy):
+    """A lemma that a rule found, and nobody has read, should be about as
+    long as the rendering that measured it. One much longer is read once, and
+    listed with what was found (edition/brenton-notes.json, "shapes")."""
+    read = policy.brenton_notes["shapes"]
+    assert all(read.values()), "Unexplained lemma shape"
+    decided = {"override", "Alexandrine reading", "preserved passage note"}
+    brenton = [u["id"] for u in policy.scripture if u["source"] == "brenton"]
+    flagged = {
+        row["key"]
+        for code in brenton
+        for row in edition.notes[code]
+        if row["rule"] not in decided
+        and lemmas.misshapen(row["glossed"], row["reading"])
+    }
+    assert flagged == set(read)
+    # The check tells a rendering from words it can't be of.
+    assert lemmas.misshapen("those that went out on the sabbath-day", "hands")
+    assert not lemmas.misshapen("captain of the guard", "chief cook")
+    assert not lemmas.misshapen("friend", "he that gives away in marriage")
+    assert not lemmas.misshapen("five hundred and eighty", "450")
 
 
-def test_note_override_sets_the_rendering():
-    source = "\\fqa Lit. \\ft deserting in a military sense."
-    pieces = notes.brenton_pieces(source)
-    _, _, alternative, rule = notes.note_body(
-        pieces, "Lit. _deserting_ in a military sense.", "K", source
-    )
-    assert (alternative, rule) == ("deserting", "override")
-    _, _, alternative, _ = notes.note_body(
-        pieces, "Lit. deserting in a military sense.", "K", source
-    )
-    assert alternative is None
-
-
-def lemma(verse, note, kind="f"):
+def inferred(verse, note, kind="f"):
     """The lemma inferred for a note whose caller stands at ‸ in the verse."""
     offset = verse.index("‸")
     verse = verse.replace("‸", "")
-    words = word_spans(verse)
-    _, _, alternative = notes.styled(notes.labelled_pieces(note))
-    span, rule = notes.inferred_lemma(kind, verse, words, offset, alternative)
-    return (notes.lemma_text(verse, words, span) if span else None), rule
+    words = scripture.word_spans(verse)
+    alternative = notes.interpreted(notes.labelled_pieces(note), "K").alternative
+    span, rule = lemmas.inferred_lemma(kind, verse, words, offset, alternative)
+    return (lemmas.lemma_text(verse, words, span) if span else None), rule
 
 
 @pytest.mark.parametrize(
@@ -502,8 +348,8 @@ def lemma(verse, note, kind="f"):
         ),
     ],
 )
-def test_inferred_lemma(verse, note, expected):
-    assert lemma(verse, note) == expected
+def test_the_rules_find_the_words_a_note_is_about(verse, note, expected):
+    assert inferred(verse, note) == expected
 
 
 @pytest.mark.parametrize(
@@ -521,467 +367,5 @@ def test_inferred_lemma(verse, note, expected):
         ),
     ],
 )
-def test_cross_reference_lemma(verse, expected):
-    assert lemma(verse, "See Rom. 1. 1.", kind="x") == expected
-
-
-def test_footnotes_stand_where_their_notes_were():
-    text = "\\v 1 One two three four.\n"
-    start = text.index("One")
-    entries = [
-        notes.Entry(
-            "K#2", "1:1", start + 8, "three", "b.", ["ft"] * 2, "length", "roman"
-        ),
-        notes.Entry("K", "1:1", start + 4, "two", "a.", ["ft"] * 2, "length", "roman"),
-    ]
-    assert notes.set_footnotes(text, entries) == (
-        "\\v 1 One \\f - \\fr 1:1 \\fq two: \\ft a\\f*two "
-        "\\f - \\fr 1:1 \\fq three: \\ft b\\f*three four.\n"
-    )
-
-
-@pytest.mark.parametrize(
-    "lemma, note, styled",
-    [
-        ("two", "Or, first", "or, _first_"),
-        ("two", "Some read, first", "some read, _first_"),
-        ("two", "The Gr. word first", "the Gr. word first"),
-        # Names keep their capital...
-        ("two", "Gr. first", "Gr. _first_"),
-        ("two", "Alex. first", "Alex. _first_"),
-        ("two", "A. V. first", "A. V. _first_"),
-        # "Sept." too, which the edition prints as "LXX" only as he wrote it.
-        ("two", "Sept. first", "Sept. first"),
-        # ...as do the pronoun "I", capitals, quotations and references.
-        ("two", "I first", "I first"),
-        ("two", "LXX. first", "LXX. first"),
-        ("two", "'First,' etc.", "'First,' etc."),
-        # A note on the whole verse opens its sentence.
-        (None, "Or, first", "Or, _first_"),
-    ],
-)
-def test_note_runs_on_from_its_lemma(lemma, note, styled):
-    plain, styles, _ = notes.styled(notes.labelled_pieces(note))
-    entry = notes.Entry("K", "1:1", 0, lemma, plain, styles, "anchor", "rendering")
-    assert entry.styled == styled
-
-
-@pytest.mark.parametrize(
-    "note, styled",
-    [
-        ("Gr. gift.", "Gr. _gift_"),
-        ("Who is he?", "Who is he?"),
-        ("A. V. 'my people.'", "A. V. '_my people_'"),
-        # An abbreviation keeps its full stop.
-        ("Gr. gift, etc.", "Gr. _gift_, etc."),
-        ("Gr. gift, so the Heb.", "Gr. _gift_, so the Heb."),
-        ("Gr. or.", "Gr. _or_"),
-        ("i. e. Abimelech's.", "i. e. _Abimelech's_"),
-        # So does an ellipsis.
-        ("Or, probably so...", "Or, probably so..."),
-        # But not an abbreviation the edition prints without a period, as
-        # Chicago prints "LXX", or in full.
-        ("Gr. gift, as in LXX.", "Gr. _gift_, as in LXX"),
-        ("Gr. gift, so A. V.", "Gr. _gift_, so A. V"),
-        ("Gr. spoil, as in the O.T.", "Gr. _spoil_, as in the O.T"),
-        ("Gr. infin. for imper.", "Gr. infin. for imper"),
-    ],
-)
-def test_note_drops_its_closing_full_stop(note, styled):
-    plain, styles, _ = notes.styled(notes.labelled_pieces(note))
-    entry = notes.Entry("K", "1:1", 0, None, plain, styles, "verse-level", "rendering")
-    assert entry.styled == styled
-
-
-@pytest.mark.parametrize(
-    "note, styled",
-    [
-        # George's notes have neither the capital nor the full stop.
-        (
-            "the word Batus in the original containeth nine gallons 3. quarts",
-            "The word Batus in the original containeth nine gallons 3. quarts.",
-        ),
-        ("The Gr. is from the Heb. word.", "The Gr. is from the Heb. word."),
-        ("Who is he?", "Who is he?"),
-        # Quoted Greek keeps its letter.
-        ("ὥστε seems to be given", "ὥστε seems to be given."),
-        # A label, a rendering, or a verb only in a rendering makes no sentence.
-        ("Or, as being righteous", "or, _as being righteous_"),
-        ("Gr. it is so.", "Gr. _it is so_"),
-        ("Men, understood.", "men, understood"),
-    ],
-)
-def test_sentence_keeps_its_capital_and_full_stop(note, styled):
-    plain, styles, _ = notes.styled(notes.labelled_pieces(note))
-    entry = notes.Entry("K", "1:1", 0, "two", plain, styles, "anchor", "roman")
-    assert entry.styled == styled
-
-
-def test_sentence_override():
-    plain, styles, _ = notes.styled(
-        notes.labelled_pieces("a word easily read for another")
-    )
-    entry = notes.Entry("K", "1:1", 0, "two", plain, styles, "anchor", "roman", False)
-    assert entry.styled == "a word easily read for another"
-    with pytest.raises(CheckFailed, match="Note sentence override changes nothing: K"):
-        notes.overridden_sentence({"sentence": True}, plain, styles, "K")
-
-
-def test_note_drops_its_closing_full_stop_before_a_trailing_space():
-    # eBible ends the notes on 1 Kingdoms 17:13-31 with a space.
-    source = "\\ft \\+it Gr. \\+it* name. "
-    plain, styles, _, _ = notes.note_body(
-        notes.brenton_pieces(source), None, "K", source
-    )
-    entry = notes.Entry("K", "1:1", 0, "names", plain, styles, "length", "rendering")
-    assert entry.body == "\\ft Gr. \\fqa name"
-
-
-def test_reference_after_lemma_keeps_its_capital():
-    source = "\\xt Rom. 10. 15."
-    plain, styles, _, _ = notes.note_body(
-        notes.brenton_pieces(source), None, "K", source
-    )
-    entry = notes.Entry("K", "1:1", 0, "two", plain, styles, "anchor", "roman")
-    assert entry.body == "\\xt Rom. 10. 15"
-
-
-def test_unused_brenton_exception(archives, patched, links):
-    patched(notes, "BRENTON_NOTES")["notes"]["GEN 1:1"] = {
-        "lemma": "heaven",
-        "why": "x",
-    }
-    with pytest.raises(
-        CheckFailed, match=r"Unused Brenton note exceptions: \['GEN 1:1'\]"
-    ):
-        scripture_text(unit("GEN"), archives, links=links)
-
-
-def test_brenton_lemma_override_that_changes_nothing(archives, patched, links):
-    patched(notes, "BRENTON_NOTES")["notes"]["GEN 1:10"] = {
-        "lemma": "gatherings",
-        "why": "x",
-    }
-    with pytest.raises(CheckFailed, match="Lemma override changes nothing: GEN 1:10"):
-        scripture_text(unit("GEN"), archives, links=links)
-
-
-def test_brenton_lemma_override_of_the_widened_lemma_stops_the_echo(
-    archives, patched, links
-):
-    patched(notes, "BRENTON_NOTES")["notes"]["DEU 4:29"] = {
-        "lemma": "your heart",
-        "why": "x",
-    }
-    text = scripture_text(unit("DEU"), archives, links=links)
-    assert footnotes(text, "4:29")[0] == (
-        "\\f - \\fr 4:29 \\fq your heart: \\ft Gr. \\fqa thy\\f*"
-    )
-
-
-def test_brenton_lemma_override_names_its_occurrence(scripture):
-    # "Thus" occurs twice; widened to be unique, the rendering takes in "saying".
-    assert footnotes(scripture["1KI"], "20:19") == [
-        "\\f - \\fr 20:19 \\fq saying, Thus: \\ft Gr. \\fqa saying, these things\\f*"
-    ]
-
-
-def test_brenton_lemma_override_occurrence_must_be_needed(archives, patched, links):
-    patched(notes, "BRENTON_NOTES")["notes"]["GEN 1:10"] = {
-        "lemma": "gatherings",
-        "occurrence": 1,
-        "why": "x",
-    }
-    with pytest.raises(
-        CheckFailed, match=r"occurrence not found, or not needed: GEN 1:10 \(1\)"
-    ):
-        scripture_text(unit("GEN"), archives, links=links)
-
-
-def test_brenton_lemma_override_must_occur_once(archives, patched, links):
-    patched(notes, "BRENTON_NOTES")["notes"]["GEN 1:10"] = {"lemma": "the", "why": "x"}
-    with pytest.raises(
-        CheckFailed, match=r"not found exactly once: GEN 1:10 \([2-9]\)"
-    ):
-        scripture_text(unit("GEN"), archives, links=links)
-
-
-def test_brenton_note_override_that_changes_nothing(archives, patched, links):
-    patched(notes, "BRENTON_NOTES")["notes"]["GEN 1:10"] = {
-        "note": "Gr. _systems_.",
-        "why": "x",
-    }
-    with pytest.raises(CheckFailed, match="Note override changes nothing: GEN 1:10"):
-        scripture_text(unit("GEN"), archives, links=links)
-
-
-def test_brenton_corrections(archives, scripture):
-    assert footnotes(scripture["GEN"], "21:11") == [
-        "\\f - \\fr 21:11 \\fq word: \\ft Gr. \\fqa saying\\ft , or \\fqa matter\\f*"
-    ]
-    preface = front_matter_text(unit_front("XXB"), archives)
-    assert "LXX.\\f* is little doubt" in preface
-
-
-def test_brenton_correction_that_does_not_apply(archives, patched, links):
-    patched(notes, "BRENTON_NOTES")["corrections"]["GEN 1:1"] = {
-        "from": "no such text",
-        "to": "x",
-        "why": "x",
-    }
-    with pytest.raises(CheckFailed, match="Brenton correction does not apply: GEN 1:1"):
-        scripture_text(unit("GEN"), archives, links=links)
-
-
-@pytest.mark.parametrize(
-    "source, key, snippet",
-    [
-        # Another verse's note.
-        ("GEN", "GEN 21:12", "\\fr 21:11 \\fqa Gr. \\fqa Gr. "),
-        # Another verse's text.
-        ("GEN", "GEN 1:2", "the beginning God made"),
-        # A numbered note's key still names its verse.
-        ("GEN", "GEN 1:2#2", "the beginning God made"),
-        # Words the preface's note does not stand among.
-        ("XXB", "XXB is little", "\\f*is little doubt"),
-    ],
-)
-def test_brenton_correction_must_be_where_its_key_says(
-    archives, patched, source, key, snippet
-):
-    patched(notes, "BRENTON_NOTES")["corrections"] = {
-        key: {"from": snippet, "to": snippet + ".", "why": "x"}
-    }
-    message = f"Brenton correction is not where its key says: {key}"
-    with pytest.raises(CheckFailed, match=message):
-        notes.corrected_brenton(
-            source, archives["brenton"][source], recorder(None, source)
-        )
-
-
-def test_brenton_correction_must_keep_the_wording_outside_notes(archives, patched):
-    # A correction to the verse's own words, not a note's, even a slip's size.
-    patched(notes, "BRENTON_NOTES")["corrections"] = {
-        "GEN 1:1": {
-            "from": "beginning God made the heaven and",
-            "to": "beginning God made the heavens and",
-            "why": "x",
-        }
-    }
-    with pytest.raises(
-        CheckFailed, match="changes the wording outside a note: GEN 1:1"
-    ):
-        notes.corrected_brenton(
-            "GEN", archives["brenton"]["GEN"], recorder(None, "GEN")
-        )
-
-
-def test_brenton_correction_may_mend_the_wording_of_a_preface(archives):
-    text = notes.corrected_brenton(
-        "XXB", archives["brenton"]["XXB"], recorder(None, "XXB")
-    )
-    assert "Septuagint of Genesis with which" in text
-    assert "Avith" not in text
-
-
-def test_brenton_correction_outside_notes_names_its_words(archives, patched):
-    patched(notes, "BRENTON_NOTES")["corrections"] = {
-        "XXB Genesis with": {
-            "from": "Genesis Avith which",
-            "to": "Genesis with which",
-            "why": "x",
-            "uncategorized": True,
-        }
-    }
-    with pytest.raises(CheckFailed, match="not where its key says: XXB Genesis with"):
-        notes.corrected_brenton(
-            "XXB", archives["brenton"]["XXB"], recorder(None, "XXB")
-        )
-
-
-def test_brenton_correction_must_keep_the_wording_of_a_supplied_passage(
-    archives, patched
-):
-    # The appendix has no verse markers, but the passages it supplies are
-    # translation.
-    patched(notes, "BRENTON_NOTES")["corrections"] = {
-        "BAK Ephrathite said": {
-            "from": "Ephrathite said",
-            "to": "Ephrathite spoke",
-            "why": "x",
-            "uncategorized": True,
-        }
-    }
-    with pytest.raises(
-        CheckFailed, match="changes the wording outside a note: BAK Ephrathite said"
-    ):
-        notes.corrected_brenton(
-            "BAK", archives["brenton"]["BAK"], recorder(None, "BAK")
-        )
-
-
-@pytest.mark.parametrize(
-    "before, after, category",
-    [
-        ("\\ft he\\fl or", "\\ft he \\fl or", "missing word space"),
-        ("Hebraism \\ft See", "Hebraism. \\ft See", "missing punctuation"),
-        ("12.; \\ft", "12; \\ft", "stray punctuation"),
-        ("him. And", "him, And", "wrong punctuation"),
-        ("Th LXX", "The LXX", "missing letter"),
-        ("appeaars", "appears", "stray letter"),
-        ("debtOr,", "debtor,", "wrong letter"),
-        ("\\fqa Gr. \\fqa Gr. \\ft x", "\\fqa Gr. \\ft x", "doubled text"),
-        ("hell [obviously a typo]", "hell", "remark"),
-        ("Israel,\\f + \\fr 6:1 \\f*", "Israel,", "empty note"),
-        ("[Greek characters]", "τὰ ὅσια,", "omitted Greek"),
-        # Two letters wrong, a letter for a space, and Greek with English.
-        ("my nanda.", "my hands.", None),
-        ("good a les.", "good axles.", None),
-        ("[Greek characters]", "ἐτροποφόρησεν, perhaps for", None),
-        ("same", "same", None),
-    ],
-)
-def test_correction_category(before, after, category):
-    assert notes.correction_category(before, after) == category
-
-
-def test_correction_that_fits_no_category(archives, patched):
-    patched(notes, "BRENTON_NOTES")["corrections"] = {
-        "GEN 21:11": {"from": "\\fqa Gr. \\fqa Gr. ", "to": "\\fqa Heb. ", "why": "x"}
-    }
-    with pytest.raises(
-        CheckFailed, match="Brenton correction fits no category of slip: GEN 21:11"
-    ):
-        notes.corrected_brenton(
-            "GEN", archives["brenton"]["GEN"], recorder(None, "GEN")
-        )
-
-
-def test_uncategorized_correction_that_fits_a_category(archives, patched):
-    patched(notes, "BRENTON_NOTES")["corrections"]["GEN 21:11"]["uncategorized"] = True
-    with pytest.raises(
-        CheckFailed,
-        match="Brenton correction listed as uncategorized is a doubled text: GEN 21:11",
-    ):
-        notes.corrected_brenton(
-            "GEN", archives["brenton"]["GEN"], recorder(None, "GEN")
-        )
-
-
-@pytest.mark.parametrize(
-    "lemma, anchor, category",
-    [
-        ("day spring", "dayspring", "word division"),
-        ("marketplace", "market-place", "word division"),
-        ("boisterous", "boysterous", "wrong letter"),
-        ("highly favored", "highly favoured", "missing letter"),
-        ("into an house", "into a house", "stray letter"),
-        ("held a counsel", "held a council", None),
-        ("stop me in this", "stop me of this", None),
-        ("to use of the edifying", "to the use of edifying", None),
-        ("the kings chaberlaine", "the king’s chamberlain", None),
-    ],
-)
-def test_anchor_category(lemma, anchor, category):
-    words = [[w for w, _, _ in word_spans(p)] for p in (lemma, anchor)]
-    assert notes.anchor_category(*words) == category
-
-
-def test_anchor_that_fits_no_category(archives, patched, links):
-    del patched(notes, "KJV_NOTES")["notes"]["MAT 12:14 held a counsel"][
-        "uncategorized"
-    ]
-    with pytest.raises(
-        CheckFailed,
-        match="anchor fits no category of difference: MAT 12:14 held a counsel",
-    ):
-        scripture_text(unit("MAT"), archives, links=links)
-
-
-def test_uncategorized_anchor_that_fits_a_category(archives, patched, links):
-    patched(notes, "KJV_NOTES")["notes"]["MAT 14:30 boisterous"]["uncategorized"] = True
-    with pytest.raises(
-        CheckFailed,
-        match="anchor listed as uncategorized is a wrong letter: MAT 14:30 boisterous",
-    ):
-        scripture_text(unit("MAT"), archives, links=links)
-
-
-def test_anchor_that_changes_nothing(archives, patched, links):
-    patched(notes, "KJV_NOTES")["notes"]["MAT 14:30 boisterous"] = {
-        "anchor": "Boisterous,"
-    }
-    with pytest.raises(
-        CheckFailed, match="anchor changes nothing: MAT 14:30 boisterous"
-    ):
-        scripture_text(unit("MAT"), archives, links=links)
-
-
-def test_note_must_keep_its_word_spaces():
-    # Ignoring whitespace, "heor" and "he or" would be the same text.
-    with pytest.raises(CheckFailed, match="Note restyling changed its text: K"):
-        notes.note_body(notes.brenton_pieces("\\ft heor."), None, "K", "\\ft he or.")
-
-
-def test_promoted_whole_verse_consumes_its_appendix_pointer(scripture):
-    assert footnotes(scripture["1SA"], "17:49") == []
-    assert "\\v 50 " in scripture["1SA"]
-    assert "Verse 50 is not in the Vatican codex" not in scripture["1SA"]
-
-
-@pytest.mark.parametrize(
-    "code, reference, lemma",
-    [
-        ("1SA", "12:13", "whom ye asked for"),
-        ("1KI", "16:8", "In the twenty-sixth year of Asa king of Juda"),
-    ],
-)
-def test_promoted_addition_lemma_names_only_the_alexandrine_words(
-    scripture, code, reference, lemma
-):
-    printed = footnotes(scripture[code], reference)
-    assert len(printed) == 1
-    assert re.search(r"\\fq (.*?): \\ft", printed[0])[1] == lemma
-
-
-def test_demoted_vatican_clause_stays_entirely_italic(scripture):
-    printed = footnotes(scripture["PSA"], "94:3")
-    assert len(printed) == 1
-    assert (
-        "Vat. adds \\fqa for the Lord will not cast off his people"
-        "\\ft . Heb. also omits this added clause. See \\xt Psalm 93:14"
-    ) in printed[0]
-
-
-@pytest.mark.parametrize(
-    "comment",
-    ["also omits these names", "also ends the verse here", "includes the clause"],
-)
-def test_witness_comment_is_roman_before_an_italic_variant(comment):
-    source = f"Heb. {comment}. Vat. old words."
-    plain, styles, _, _ = notes.note_body(
-        notes.brenton_pieces(
-            r"\fqa Heb. \ft " + comment + r". \fqa Vat. \ft old words."
-        ),
-        None,
-        "test",
-        source,
-    )
-    assert notes.underscored(plain, styles) == f"Heb. {comment}. Vat. _old words_."
-
-
-@pytest.mark.parametrize("name", ["Brenton", "Swete", "Vatican"])
-def test_editorial_source_names_keep_their_capital_after_a_lemma(name):
-    plain = name + "’s Vatican text"
-    assert notes.run_on(plain, ["ft"] * len(plain)) == plain
-
-
-@pytest.mark.parametrize(
-    "code,reference,gloss",
-    [("JDG", "12:6", "ear of corn"), ("PSA", "93:19", "have loved")],
-)
-def test_promoted_notes_preserve_independent_gloss_italics(
-    scripture, code, reference, gloss
-):
-    [note] = footnotes(scripture[code], reference)
-    assert re.search(r"\\fqa " + re.escape(gloss) + r"\\(?:ft|f\*)", note)
+def test_a_cross_reference_shows_where_its_quotation_begins(verse, expected):
+    assert inferred(verse, "See Rom. 1. 1.", kind="x") == expected

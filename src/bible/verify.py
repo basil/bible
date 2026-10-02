@@ -8,9 +8,8 @@ import subprocess
 import unicodedata
 import xml.etree.ElementTree as ET
 
-from bible import paths
 from bible.checks import CheckFailed, require
-from bible.files import read_json, sha256, write_json
+from bible.files import sha256, write_json
 from bible.project import (
     PROCESSED_DIR,
     processed_usfm,
@@ -19,18 +18,16 @@ from bible.project import (
     text_font,
 )
 from bible.toolchain import capture, run
-from bible.usfm import (
-    HEADING_MARKERS,
-    NOTE_AND_STYLE_MARKERS,
-    canonical_text,
-    inventory,
-    marker_lines,
-)
+from bible.usfm import canonical_text, heading, inventory
 
 POINTS_PER_MM = 72 / 25.4
 # TeX points (72.27 to the inch) in a PDF point.
 TEX_POINTS = 72.27 / 72
 XHTML = "{http://www.w3.org/1999/xhtml}"
+# Notes, character styles and table cells, which PTXprint must keep.
+KEPT_MARKERS = {
+    *("f", "ef", "x", "xta", "add", "it", "tr", "th1", "th2", "tc1", "tc2", "vp")
+}
 # PTXprint's record of where the final run set a margin note: its reference,
 # height, depth, page, and top (in scaled points from the foot of the page).
 MARGIN_NOTE = re.compile(
@@ -44,7 +41,7 @@ def processed_markers(markers):
     result = {}
     for k, v in markers.items():
         k = k.lstrip("+")
-        if k.rstrip("*") in NOTE_AND_STYLE_MARKERS:
+        if k.rstrip("*") in KEPT_MARKERS:
             result[k] = result.get(k, 0) + v
     return result
 
@@ -87,7 +84,7 @@ def check_processed(project, base, ids):
     write_json(base / "processed-integrity.json", records)
 
 
-def check_boundaries(base, project, ids, pages, reading_text, sample):
+def check_boundaries(base, project, ids, pages, reading_text, sample, witnesses):
     tocfiles = list(base.rglob("*_ptxp.toc"))
     require(len(tocfiles) == 1, "Missing/ambiguous contents file")
 
@@ -125,9 +122,7 @@ def check_boundaries(base, project, ids, pages, reading_text, sample):
     }
     # The basic front matter template restarts printed numbering at the
     # contents. Its TOC numbers therefore differ from physical PDF pages.
-    first_heading = " ".join(
-        value for _, value in marker_lines(usfm[ids[0]], HEADING_MARKERS)
-    )
+    first_heading = heading(usfm[ids[0]])
     first_physical = next(
         (
             i + 1
@@ -149,12 +144,10 @@ def check_boundaries(base, project, ids, pages, reading_text, sample):
             key(title) + printed_page in contents,
             f"Contents entry missing/wrong printed page in PDF: {code}",
         )
-        heading = " ".join(
-            value for _, value in marker_lines(usfm[code], HEADING_MARKERS)
-        )
-        require(heading, f"Missing heading: {code}")
+        words = heading(usfm[code])
+        require(words, f"Missing heading: {code}")
         require(
-            key(canonical_text(heading)) in key(page_text[page - 1]),
+            key(canonical_text(words)) in key(page_text[page - 1]),
             f"Book heading not on advertised PDF page: {code} {page}",
         )
     write_json(
@@ -165,7 +158,8 @@ def check_boundaries(base, project, ids, pages, reading_text, sample):
         ],
     )
     by_code = {b: (i, int(p) + page_offset) for i, (b, t, p) in enumerate(toc)}
-    for witness in read_json(paths.EDITION_DIR / "witnesses.json"):
+
+    for witness in witnesses:
         code = witness["id"]
         if code not in by_code or (
             "chapter" in witness
@@ -303,7 +297,7 @@ def check_added_words_roman(pdf, reading_text, project, ids, sample):
     raise CheckFailed("Added-word witness not found in PDF text runs")
 
 
-def inspect_pdf(pdf, base, project, ids, sample):
+def inspect_pdf(pdf, base, project, ids, sample, witnesses):
     with (base / "qpdf.log").open("w", encoding="utf-8") as log:
         run("qpdf", "--check", pdf, stdout=log, stderr=subprocess.STDOUT)
     info = capture("pdfinfo", "-box", pdf)
@@ -388,7 +382,7 @@ def inspect_pdf(pdf, base, project, ids, sample):
         ),
         "Missing glyph or TeX error; inspect logs",
     )
-    check_boundaries(base, project, ids, pages, reading_text, sample)
+    check_boundaries(base, project, ids, pages, reading_text, sample, witnesses)
     return {
         "pages": pages,
         "text_sha256": sha256(text.encode()),

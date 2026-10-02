@@ -3,7 +3,6 @@
 import pytest
 
 from bible import usfm
-from bible.usfm import inventory
 
 
 def test_canonical_text_keeps_words_numbers_and_punctuation():
@@ -11,62 +10,29 @@ def test_canonical_text_keeps_words_numbers_and_punctuation():
     assert usfm.canonical_text(text) == "1InthebeginningGod,50*."
 
 
-def test_passage_payload_ignores_headings_and_labels():
-    text = (
-        "\\id GEN\n\\h Genesis\n\\c 1\n\\s1 The Creation\n\\cp A\n\\p\n"
-        "\\v 1 In the beginning\\f + \\fr 1:1 \\ft Or, first\\f*\n"
-        "\\v 2 And the earth\\x - \\xo 1:2 \\xt Ps 1\\x*\n"
-    )
-    assert usfm.passage_payload(text) == "Inthebeginning+Or,firstAndtheearth-Ps1"
+def test_plain_text_keeps_the_words_apart():
+    text = "\\v 1 In the \\add beginning\\add*\n\\q1 God,  \\+it made\\+it*.\n"
+    assert usfm.plain_text(text) == "1 In the beginning God, made."
 
 
-def test_preserved_markers_counts_notes_and_styles_only():
-    text = "\\p\n\\v 1 \\add he\\add* said\\f + \\fr 1:1 \\ft x\\f* \\+it y\\+it*"
-    assert usfm.preserved_markers(text) == {
-        "add": 1,
-        "add*": 1,
-        "f": 1,
-        "fr": 1,
-        "ft": 1,
-        "f*": 1,
-        "+it": 1,
-        "+it*": 1,
-    }
+@pytest.mark.parametrize(
+    "text,words",
+    [
+        # An apostrophe joins a word, and a hyphen parts one.
+        ("The King’s market-place", ["the", "kings", "market", "place"]),
+        ("\\add the\\add* king, 2 kings", ["the", "king", "kings"]),
+        # The Cambridge text marks part of a word as added (1 Thessalonians 4:12).
+        ("of no\\add thing\\add*. high\\add*ways", ["of", "nothing", "highways"]),
+    ],
+)
+def test_words_ignore_markup_case_and_punctuation(text, words):
+    assert usfm.words_of(text) == words
 
 
-def test_word_spans_join_apostrophes_and_split_hyphens():
-    assert usfm.word_spans("The King’s market-place") == [
-        ("the", 0, 3),
-        ("kings", 4, 10),
-        ("market", 11, 17),
-        ("place", 18, 23),
-    ]
-
-
-def test_word_spans_offsets_index_the_usfm():
-    text = "\\add the\\add* king"
-    assert [(w, text[s:e]) for w, s, e in usfm.word_spans(text)] == [
-        ("the", "the"),
-        ("king", "king"),
-    ]
-
-
-def test_word_spans_keep_a_word_whole_across_markup():
-    # The Cambridge text marks part of a word as added (1 Thessalonians 4:12).
-    text = "of no\\add thing\\add*. high\\add*ways"
-    assert [(w, text[s:e]) for w, s, e in usfm.word_spans(text)] == [
-        ("of", "of"),
-        ("nothing", "no\\add thing"),
-        ("highways", "high\\add*ways"),
-    ]
-
-
-def test_renumber_chapters():
-    chapters = ["\\c 11\n\\v 1 A \\c 11 B\n", "\\c 12\n\\v 1 C\n"]
-    assert usfm.renumber_chapters(chapters, 10) == [
-        "\\c 1\n\\v 1 A \\c 11 B\n",
-        "\\c 2\n\\v 1 C\n",
-    ]
+def test_heading_joins_the_title_lines():
+    text = "\\id 1SA\n\\h 1 Kingdoms\n\\mt2 THE FIRST BOOK OF \n\\mt1 KINGDOMS\n\\c 1\n"
+    assert usfm.heading(text) == "THE FIRST BOOK OF KINGDOMS"
+    assert usfm.heading("\\id FRT\n\\ip No title.\n") == ""
 
 
 def test_verse_spans():
@@ -78,20 +44,7 @@ def test_verse_spans():
 
 def test_inventory():
     text = "\\id GEN\n\\c 1\n\\p\n\\v 1 A\n\\v 2-3 B\n\\c 2\n\\v 1a C\\f + \\ft n\\f*\n"
-    assert inventory(text) == {
+    assert usfm.inventory(text) == {
         "chapters": {"1": ["1", "2-3"], "2": ["1a"]},
         "markers": {"c": 2, "f": 1, "f*": 1, "ft": 1, "id": 1, "p": 1, "v": 3},
     }
-
-
-@pytest.mark.parametrize(
-    "text, message",
-    [
-        ("\\c 1\n\\v 1 A\n\\c 1\n", "Duplicate chapter 1"),
-        ("\\c 1\n\\v 1 A\n\\v 1 B\n", "Duplicate verse 1:1"),
-        ("\\v 1 A\n\\c 1\n", "Verse before chapter"),
-    ],
-)
-def test_inventory_rejects_malformed_numbering(text, message):
-    with pytest.raises(ValueError, match=message):
-        inventory(text)

@@ -1,103 +1,84 @@
-import copy
+"""What the tests share: the sources, the edition's decisions, and the
+edition prepared from them once."""
 
 import pytest
 
-from bible import edition, notes, prepare, seed, sources, versification
-from bible.crossrefs import quotation_links
+from bible import pipeline
+from bible import policy as decisions
+from bible import sources as source_files
 
 
 @pytest.fixture(scope="session")
-def archives():
-    """The pinned source archives, read through the input-integrity checks."""
-    return sources.load_archives()
+def sources():
+    """The pinned sources, read through the input-integrity checks."""
+    return source_files.load()
 
 
 @pytest.fixture(scope="session")
-def links(archives):
-    """The edition's quotation links, by book."""
-    return quotation_links(archives)
+def declared():
+    """The edition's decisions as its files declare them."""
+    return decisions.load()
 
 
 @pytest.fixture(scope="session")
-def prepared(archives, links):
-    """Each printed scripture unit as the build prepares it, by id."""
-    return prepare.prepared_scripture(archives, links)
+def read(sources, declared):
+    """The sources as documents, their transcription corrected."""
+    return pipeline.read(sources, declared)
 
 
 @pytest.fixture(scope="session")
-def scripture(prepared):
-    """Each printed scripture unit's prepared USFM, by id, as the build prints it."""
-    return {code: unit.text for code, unit in prepared.items()}
+def edition(sources, declared):
+    return pipeline.prepare(sources, declared)
 
 
 @pytest.fixture(scope="session")
-def book_names(archives):
-    """BookNames.xml values for every project unit, by project id."""
-    return {
-        book.get("code"): {
-            field: book.get(attr)
-            for field, attr in edition.BOOK_NAME_ATTRIBUTES.items()
-        }
-        for book in edition.book_names_element(edition.ordered_entries(), archives)
-    }
-
-
-@pytest.fixture(autouse=True)
-def fresh_marginal_notes():
-    # Tests may patch the notes' source or configuration.
-    notes.marginal_notes.cache_clear()
-    yield
-    notes.marginal_notes.cache_clear()
-
-
-@pytest.fixture
-def patched(monkeypatch):
-    """Give a module a private copy of one of its loaded files, for a test to alter."""
-
-    def patch(module, name):
-        data = copy.deepcopy(getattr(module, name))
-        monkeypatch.setattr(module, name, data)
-        return data
-
-    return patch
+def policy(edition):
+    """The decisions, with the places of the verses that the build works out."""
+    return edition.policy
 
 
 @pytest.fixture(scope="session")
-def with_source(archives):
-    """A copy of the archives with one source file's text edited."""
-
-    def edited(source, code, edit):
-        return {
-            **archives,
-            source: {**archives[source], code: edit(archives[source][code])},
-        }
-
-    return edited
+def exported(edition):
+    """The full edition as it is sent to be typeset, by unit."""
+    return dict(pipeline.export(edition, "pdf"))
 
 
-@pytest.fixture(autouse=True)
-def fresh_versification():
-    # Tests may patch the file the maps are read from.
-    caches = (
-        versification._maps,
-        versification.apocryphal,
-        versification.relabelled,
-        versification.kjv_books,
+def changed(policy, name, change):
+    """A policy with one of its files changed: change is given the file's
+    data as plain objects and lists, to alter in place."""
+    data = decisions.thaw(getattr(policy, name))
+    change(data)
+    return policy.replace(**{name: data})
+
+
+@pytest.fixture(scope="session")
+def ctx(edition, policy, sources):
+    """What reading a note needs: the policy and what the edition prints."""
+    from bible import annotate, assembly, terminology
+
+    return annotate.Context(
+        policy,
+        edition.inventory,
+        assembly.books(policy, sources),
+        terminology.registry(policy),
+        pipeline.note_prose(policy),
     )
-    for cache in caches:
-        cache.cache_clear()
-    yield
-    for cache in caches:
-        cache.cache_clear()
 
 
-@pytest.fixture(scope="session")
-def texts(scripture, archives):
-    """The words of both translations' Old Testaments, verse by verse."""
-    return seed.Texts(scripture, archives)
+def book(code, body, chapter=99):
+    """A small book of scripture, its notes keyed as a source's are. Chapter
+    99 is no book's, so that no exception in the edition's files applies."""
+    from bible import usj
+
+    return pipeline.keyed(code, usj.parse(f"\\id {code}\n\\c {chapter}\n\\p\n{body}\n"))
 
 
-@pytest.fixture(scope="session")
-def table(texts, scripture):
-    """STEPBible's account of where each of the edition's verses stands."""
-    return seed.tabled(texts, scripture)
+def verse_lines(doc):
+    """A document's verses as USFM lines, by their numbers."""
+    from bible import usj
+
+    return {
+        line.split(" ", 2)[1]: line.split(" ", 2)[2]
+        for line in usj.serialize(doc).splitlines()
+        if line.startswith("\\v ")
+    }

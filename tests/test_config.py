@@ -1,8 +1,8 @@
 """The PTXprint overrides in config/: each one must change something."""
 
-from collections import defaultdict
 import configparser
 import io
+from collections import defaultdict
 
 from ptxprint.modelmap import ModelMap
 from ptxprint.usxutils import merge_sty, simple_parse

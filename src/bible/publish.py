@@ -3,7 +3,7 @@
 import shutil
 import sys
 
-from bible import edition, paths, sources, toolchain
+from bible import paths, sources, toolchain
 from bible.files import file_sha256, write_json
 
 # The checkout's folders and files that the provenance record hashes.
@@ -35,12 +35,12 @@ def tracked_inputs():
     return tracked
 
 
-def publish(mode, pdf, ids, report):
+def publish(mode, pdf, ids, report, title):
     """Copy a checked PDF to dist/ with a record of what produced it."""
     target = paths.DIST_DIR / paths.OUTPUTS[mode]
     paths.DIST_DIR.mkdir(exist_ok=True)
     provenance = {
-        "title": edition.MANIFEST["title"],
+        "title": title,
         "pdf_sha256": file_sha256(pdf),
         "upstream_commits": toolchain.upstream_commits(),
         "source_archives": {
@@ -48,9 +48,6 @@ def publish(mode, pdf, ids, report):
             for k, v in sources.SOURCES.items()
         },
         "inputs": tracked_inputs(),
-        "transformations_sha256": file_sha256(
-            paths.BUILD_DIR / mode / "transformations.json"
-        ),
         "order": ids,
         "checks": report,
         "fonts": toolchain.installed_fonts(),

@@ -25,6 +25,22 @@ jobs:
       - run: make bootstrap
       - run: make validate
       - run: make test
+      # What the change does to the edition, line by line, for the reviewer.
+      # A base that cannot write a review, as one from before `make review`,
+      # has nothing to compare with: that is said, and fails no build.
+      - name: Review against the base branch
+        if: github.event_name == 'pull_request'
+        run: |
+          git fetch --depth 1 origin "$GITHUB_BASE_REF"
+          if make review-diff BASE=FETCH_HEAD; then
+            {
+              echo '```diff'
+              head -c 60000 build/review.diff
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No review diff: the base branch or this one could not write a review." >> "$GITHUB_STEP_SUMMARY"
+          fi
       - run: make pdf
       - name: Prepare Pages site
         if: github.ref == 'refs/heads/master'

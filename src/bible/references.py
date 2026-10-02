@@ -90,7 +90,7 @@ def parse_passages(text):
 
 
 def verse_at(book, label):
-    """A book's verse by its label, as verse_spans names it."""
+    """A book's verse by its label, as scripture.verses names it."""
     return parse_verse(f"{book} {label}")
 
 
@@ -190,3 +190,30 @@ class Style:
 
 
 EDITION = Style()
+
+
+@dataclass(frozen=True)
+class LastVerse:
+    """An unresolved source chapter end (historical ``ult.``)."""
+
+
+LAST_VERSE = LastVerse()
+
+
+@dataclass(frozen=True)
+class Item:
+    """A chapter, or a stretch of its verses, that a citation names."""
+
+    chapter: int
+    first: int | LastVerse | None = None
+    last: int | LastVerse | None = None
+    letter: str = ""
+
+    def passage(self, book):
+        """The item's verses, if it names any."""
+        if self.first is None:
+            return None
+        return Passage(
+            Verse(book, self.chapter, self.first, self.letter),
+            Verse(book, self.chapter, self.last, self.letter),
+        )

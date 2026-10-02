@@ -4,6 +4,11 @@
     "2": "Swete, The Old Testament in Greek, vol. II, 3rd ed., 1907",
     "3": "Swete, The Old Testament in Greek, vol. III, 3rd ed., 1905"
   },
+  "witness_evidence": {
+    "hebrew": "brenton",
+    "vaticanus": "brenton",
+    "alexandrinus": "brenton-and-swete"
+  },
   "readings": {
     "GEN 3:22": {
       "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
@@ -15,7 +20,7 @@
         "agrees": true
       },
       "from": "God said",
-      "note": "\\fqa Vat. \\ft omits “the Lord”.",
+      "note": "\\fl Vat. \\ft omits “the Lord”.",
       "english": {
         "source": "brenton",
         "span": [17, 25],
@@ -38,7 +43,7 @@
         "agrees": true
       },
       "from": "his",
-      "note": "\\fqa Vat. \\ft \\+it his\\+it*.",
+      "note": "\\fl Vat. \\fq his\\ft .",
       "english": {
         "source": "brenton",
         "span": [15, 20]
@@ -55,7 +60,7 @@
         "agrees": true
       },
       "from": "an hundred and sixty and seven years",
-      "note": "\\fqa Vat. \\ft \\+it an hundred and sixty and seven years\\+it*.",
+      "note": "\\fl Vat. \\fq an hundred and sixty and seven years\\ft .",
       "english": {
         "source": "brenton",
         "span": [15, 24],
@@ -78,7 +83,7 @@
         "agrees": true
       },
       "from": "eight hundred and two",
-      "note": "\\fqa Vat. \\ft \\+it eight hundred and two\\+it*.",
+      "note": "\\fl Vat. \\fq eight hundred and two\\ft .",
       "english": {
         "source": "brenton",
         "span": [15, 18],
@@ -134,7 +139,7 @@
         "agrees": true
       },
       "from": "I am grieved",
-      "note": "\\fqa Vat. \\ft I am grieved. \\fqa Gr. \\ft I have thought or reasoned.",
+      "note": "\\fl Vat. \\fqa I am grieved\\ft . \\fl Gr. \\fqa I have thought \\ft or \\fqa reasoned\\ft .",
       "english": {
         "source": "brenton",
         "span": [66, 80]
@@ -151,7 +156,7 @@
         "agrees": true
       },
       "from": "a raven;",
-      "note": "\\fqa Vat. \\ft omits.",
+      "note": "\\fl Vat. \\ft omits.",
       "english": {
         "source": "brenton",
         "span": [17, 47],
@@ -267,7 +272,11 @@
         "agrees": true
       },
       "from": "into the land of Chanaan.",
-      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft omits.",
+      "note": "\\fl Heb. \\ft and \\fl Alex. Vat. \\ft omits.",
+      "witnesses": {
+        "adopted": ["hebrew", "alexandrinus"],
+        "displaced": "vaticanus"
+      },
       "english": {
         "source": "brenton",
         "span": [17, 50],
@@ -295,7 +304,7 @@
         "agrees": true
       },
       "from": "and all that he had.",
-      "note": "\\fqa Vat. \\ft omits.",
+      "note": "\\fl Vat. \\ft omits.",
       "english": {
         "source": "brenton",
         "span": [17, 33],
@@ -323,7 +332,7 @@
         "agrees": true
       },
       "from": "which he built there at first",
-      "note": "Or, \\fqa made. \\fqa Vat. \\ft which he built there at first.",
+      "note": "\\fl Or, \\fq made\\ft . \\fl Vat. \\fqa which he built there at first\\ft .",
       "english": {
         "source": "brenton",
         "span": [15, 48],
@@ -362,7 +371,7 @@
         "agrees": true
       },
       "from": "daughter of Helon the Chettite",
-      "note": "\\fqa Vat. \\ft Chettite.",
+      "note": "\\fl Vat. \\fqa Chettite\\ft .",
       "english": {
         "source": "brenton",
         "span": [15, 21],
@@ -402,7 +411,7 @@
         "agrees": true
       },
       "from": "hundred and thirty-three years",
-      "note": "\\ft \\fqa Vat. \\ft \\+it hundred and thirty-three years\\+it*.",
+      "note": "\\fl Vat. \\fq hundred and thirty-three years\\ft .",
       "english": {
         "source": "brenton",
         "span": [15, 24],
@@ -536,7 +545,7 @@
         "agrees": true
       },
       "from": "seven hundred and fifty",
-      "note": "\\fqa Vat. \\ft \\+it seven hundred and fifty\\+it*.",
+      "note": "\\fl Vat. \\fq seven hundred and fifty\\ft .",
       "english": {
         "source": "brenton",
         "span": [15, 18],
@@ -629,7 +638,7 @@
         "agrees": true
       },
       "from": "enemies",
-      "note": "\\fqa Vat. \\ft enemies.",
+      "note": "\\fl Vat. \\fqa enemies\\ft .",
       "english": {
         "source": "brenton",
         "span": [22, 30]
@@ -678,7 +687,7 @@
         "agrees": true
       },
       "from": "Stachys",
-      "note": "\\fqa Vat. \\ft Stachys. \\fqa Heb. \\ft שבלה, “Shibboleth,” \\+it ear of corn\\+it*.",
+      "note": "\\fl Vat. \\fqa Stachys\\ft . \\fl Heb. \\ft שבלה, “Shibboleth,” \\fq ear of corn\\ft .",
       "english": {
         "source": "brenton",
         "span": [153, 162]
@@ -695,9 +704,7 @@
         "agrees": true
       },
       "from": "in Alsorech",
-      "supplied": [
-        "at"
-      ],
+      "supplied": ["at"],
       "english": {
         "source": "brenton",
         "span": [15, 34],
@@ -720,7 +727,7 @@
         "agrees": true
       },
       "from": "for a little piece of silver, ",
-      "note": "\\fqa Vat. \\ft omits.",
+      "note": "\\fl Vat. \\ft omits.",
       "english": {
         "source": "brenton",
         "span": [22, 46],
@@ -748,7 +755,11 @@
         "agrees": true
       },
       "from": "from Ascalon to Azob",
-      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft from Ascalon to Azob.",
+      "note": "\\fl Heb. \\ft and \\fl Alex. Vat. \\fqa from Ascalon to Azob\\ft .",
+      "witnesses": {
+        "adopted": ["hebrew", "alexandrinus"],
+        "displaced": "vaticanus"
+      },
       "english": {
         "source": "brenton",
         "span": [15, 35]
@@ -765,7 +776,7 @@
         "agrees": true
       },
       "from": "whom ye have chosen;",
-      "note": "Nearer the \\fqa Heb. \\fqa Vat. \\ft omits.",
+      "note": "\\ft Nearer the \\fl Heb. Vat. \\ft omits.",
       "lemma": "whom ye asked for",
       "english": {
         "source": "brenton",
@@ -794,7 +805,11 @@
         "agrees": true
       },
       "from": "it was told Saul",
-      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft told Saul.",
+      "note": "\\fl Heb. \\ft and \\fl Alex. Vat. \\fqa told Saul\\ft .",
+      "witnesses": {
+        "adopted": ["hebrew", "alexandrinus"],
+        "displaced": "vaticanus"
+      },
       "lemma": "told Samuel",
       "english": {
         "source": "brenton",
@@ -819,7 +834,11 @@
         "agrees": true
       },
       "from": "saying, Samuel has come",
-      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft Samuel has come.",
+      "note": "\\fl Heb. \\ft and \\fl Alex. Vat. \\fqa Samuel has come\\ft .",
+      "witnesses": {
+        "adopted": ["hebrew", "alexandrinus"],
+        "displaced": "vaticanus"
+      },
       "lemma": "Saul has come",
       "english": {
         "source": "brenton",
@@ -848,9 +867,7 @@
         "agrees": true
       },
       "from": "Ephermen",
-      "supplied": [
-        "in"
-      ],
+      "supplied": ["in"],
       "english": {
         "source": "brenton",
         "span": [15, 26],
@@ -873,7 +890,7 @@
         "agrees": true
       },
       "from": "with a staff and stones? [and David said, Nay, but worse than a dog.]",
-      "note": "\\fqa Vat. \\ft adds after the question, \\+it and David said, Nay, but worse than a dog\\+it*. The \\fqa Heb. \\ft also omits this reply.",
+      "note": "\\fl Vat. \\ft adds after the question, \\fq and David said, Nay, but worse than a dog\\ft . The \\fl Heb. \\ft also omits this reply.",
       "english": {
         "source": "from",
         "edits": [
@@ -897,7 +914,7 @@
       },
       "from": "the entrance to Geth",
       "lemma": "Gai",
-      "note": "\\fqa Vat. \\ft Geth.",
+      "note": "\\fl Vat. \\fqa Geth\\ft .",
       "english": {
         "source": "brenton",
         "span": [15, 18],
@@ -921,7 +938,7 @@
         "agrees": true
       },
       "from": "wrapt in a cloth:",
-      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Or, \\ft behind the shoulder-piece. \\fqa Vat. \\ft omits.",
+      "note": "\\fl Heb. \\ft and \\fl Alex. Or, \\fqa behind the shoulder-piece\\ft . \\fl Vat. \\ft omits.",
       "english": {
         "source": "brenton",
         "span": [21, 37],
@@ -965,7 +982,11 @@
         "agrees": true
       },
       "from": "Armathaim",
-      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft Armathaim.",
+      "note": "\\fl Heb. \\ft and \\fl Alex. Vat. \\fqa Armathaim\\ft .",
+      "witnesses": {
+        "adopted": ["hebrew", "alexandrinus"],
+        "displaced": "vaticanus"
+      },
       "english": {
         "source": "brenton",
         "span": [14, 18]
@@ -998,7 +1019,11 @@
         "agrees": true
       },
       "from": "his sword. And they went",
-      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft omits.",
+      "note": "\\fl Heb. \\ft and \\fl Alex. Vat. \\ft omits.",
+      "witnesses": {
+        "adopted": ["hebrew", "alexandrinus"],
+        "displaced": "vaticanus"
+      },
       "lemma": "And they girded on every man his sword, and David also girded on his sword",
       "english": {
         "source": "brenton",
@@ -1027,7 +1052,11 @@
         "agrees": true
       },
       "from": "\\add even\\add* to his feet",
-      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft omits.",
+      "note": "\\fl Heb. \\ft and \\fl Alex. Vat. \\ft omits.",
+      "witnesses": {
+        "adopted": ["hebrew", "alexandrinus"],
+        "displaced": "vaticanus"
+      },
       "lemma": "And she fell",
       "edits": [
         {
@@ -1072,7 +1101,11 @@
         "agrees": true
       },
       "from": "this pestilent man,",
-      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft omits.",
+      "note": "\\fl Heb. \\ft and \\fl Alex. Vat. \\ft omits.",
+      "witnesses": {
+        "adopted": ["hebrew", "alexandrinus"],
+        "displaced": "vaticanus"
+      },
       "english": {
         "source": "brenton",
         "span": [41, 51],
@@ -1100,7 +1133,11 @@
         "agrees": true
       },
       "from": "David heard it",
-      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft it.",
+      "note": "\\fl Heb. \\ft and \\fl Alex. Vat. \\fqa it\\ft .",
+      "witnesses": {
+        "adopted": ["hebrew", "alexandrinus"],
+        "displaced": "vaticanus"
+      },
       "lemma": "that Nabal was dead",
       "english": {
         "source": "brenton",
@@ -1125,7 +1162,7 @@
         "agrees": true
       },
       "from": "Amis",
-      "note": "\\fqa Heb. \\ft Laish. \\fqa Vat. \\ft Amis.",
+      "note": "\\fl Heb. \\fqa Laish\\ft . \\fl Vat. \\fqa Amis\\ft .",
       "english": {
         "source": "brenton",
         "span": [33, 37]
@@ -1142,7 +1179,7 @@
         "agrees": true
       },
       "from": "Romma",
-      "note": "\\fqa Heb. \\ft Gallim. \\fqa Vat. \\ft Romma.",
+      "note": "\\fl Heb. \\fqa Gallim\\ft . \\fl Vat. \\fqa Romma\\ft .",
       "english": {
         "source": "brenton",
         "span": [33, 38]
@@ -1159,7 +1196,7 @@
         "agrees": true
       },
       "from": "thou that callest?",
-      "note": "\\fqa Heb. \\ft to the king. \\fqa Vat. \\ft omits.",
+      "note": "\\fl Heb. \\fqa to the king\\ft . \\fl Vat. \\ft omits.",
       "english": {
         "source": "brenton",
         "span": [45, 59],
@@ -1187,10 +1224,12 @@
         "agrees": true
       },
       "from": "good in my eyes,",
-      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft omits.",
-      "supplied": [
-        "as"
-      ],
+      "note": "\\fl Heb. \\ft and \\fl Alex. Vat. \\ft omits.",
+      "witnesses": {
+        "adopted": ["hebrew", "alexandrinus"],
+        "displaced": "vaticanus"
+      },
+      "supplied": ["as"],
       "english": {
         "source": "brenton",
         "span": [39, 54],
@@ -1218,7 +1257,11 @@
         "agrees": true
       },
       "from": "Bring near the ephod.",
-      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft omits.",
+      "note": "\\fl Heb. \\ft and \\fl Alex. Vat. \\ft omits.",
+      "witnesses": {
+        "adopted": ["hebrew", "alexandrinus"],
+        "displaced": "vaticanus"
+      },
       "english": {
         "source": "brenton",
         "span": [36, 75],
@@ -1246,7 +1289,11 @@
         "agrees": true
       },
       "from": "Bæthsur",
-      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft Bæthsur.",
+      "note": "\\fl Heb. \\ft and \\fl Alex. Vat. \\fqa Bæthsur\\ft .",
+      "witnesses": {
+        "adopted": ["hebrew", "alexandrinus"],
+        "displaced": "vaticanus"
+      },
       "english": {
         "source": "brenton",
         "span": [34, 40]
@@ -1263,7 +1310,7 @@
         "agrees": true
       },
       "from": "Samae, Jessibath, Nathan, Galamaan, Jebaar, Theësus, Eliphalat, Naged, Naphec, Janathan, Leasamys, Baalimath, Eliphaath.",
-      "note": "\\fqa Heb. \\ft also omits these names. \\fqa Vat. \\ft adds \\+it Samae, Jessibath, Nathan, Galamaan, Jebaar, Theësus, Eliphalat, Naged, Naphec, Janathan, Leasamys, Baalimath, Eliphaath\\+it*.",
+      "note": "\\fl Heb. \\ft also omits these names. \\fl Vat. \\ft adds \\fq Samae, Jessibath, Nathan, Galamaan, Jebaar, Theësus, Eliphalat, Naged, Naphec, Janathan, Leasamys, Baalimath, Eliphaath\\ft .",
       "lemma": null,
       "edits": [
         {
@@ -1306,10 +1353,12 @@
         "agrees": true
       },
       "from": "waggon with the ark.",
-      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft omits the clause.",
-      "supplied": [
-        "Aminadab"
-      ],
+      "note": "\\fl Heb. \\ft and \\fl Alex. Vat. \\ft omits the clause.",
+      "witnesses": {
+        "adopted": ["hebrew", "alexandrinus"],
+        "displaced": "vaticanus"
+      },
+      "supplied": ["Aminadab"],
       "lemma": "and brought it out of the house of Aminadab in the hill",
       "english": {
         "source": "brenton",
@@ -1342,7 +1391,11 @@
         "agrees": true
       },
       "from": "God smote him there:",
-      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft omits.",
+      "note": "\\fl Heb. \\ft and \\fl Alex. Vat. \\ft omits.",
+      "witnesses": {
+        "adopted": ["hebrew", "alexandrinus"],
+        "displaced": "vaticanus"
+      },
       "english": {
         "source": "brenton",
         "span": [39, 55],
@@ -1370,7 +1423,7 @@
         "agrees": true
       },
       "from": "I was not had in honour",
-      "note": "\\fqa Vat. \\ft I was not had in honour.",
+      "note": "\\fl Vat. \\fqa I was not had in honour\\ft .",
       "english": {
         "source": "from",
         "edits": [
@@ -1392,7 +1445,11 @@
         "agrees": true
       },
       "from": "for ever.",
-      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft omits.",
+      "note": "\\fl Heb. \\ft and \\fl Alex. Vat. \\ft omits.",
+      "witnesses": {
+        "adopted": ["hebrew", "alexandrinus"],
+        "displaced": "vaticanus"
+      },
       "english": {
         "source": "brenton",
         "span": [39, 104],
@@ -1442,7 +1499,11 @@
         "agrees": true
       },
       "from": "the river Chalamak",
-      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft the river Chalamak.",
+      "note": "\\fl Heb. \\ft and \\fl Alex. Vat. \\fqa the river Chalamak\\ft .",
+      "witnesses": {
+        "adopted": ["hebrew", "alexandrinus"],
+        "displaced": "vaticanus"
+      },
       "english": {
         "source": "from",
         "edits": [
@@ -1464,7 +1525,7 @@
         "agrees": true
       },
       "from": ", so as to tell them to the king.",
-      "note": "\\fqa Heb. \\ft also ends the verse here. \\fqa Vat. \\ft adds \\+it so as to tell them to the king\\+it*.",
+      "note": "\\fl Heb. \\ft also ends the verse here. \\fl Vat. \\ft adds \\fq so as to tell them to the king\\ft .",
       "lemma": "events of the war",
       "english": {
         "source": "from",
@@ -1487,7 +1548,11 @@
         "agrees": true
       },
       "from": "the crown of Molchom their king",
-      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft the crown of Molchom their king.",
+      "note": "\\fl Heb. \\ft and \\fl Alex. Vat. \\fqa the crown of Molchom their king\\ft .",
+      "witnesses": {
+        "adopted": ["hebrew", "alexandrinus"],
+        "displaced": "vaticanus"
+      },
       "english": {
         "source": "from",
         "edits": [
@@ -1509,7 +1574,11 @@
         "agrees": true
       },
       "from": "as a bereaved bear in the field, [and as a wild boar in the plain]",
-      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft as a bereaved bear in the field, and as a wild boar in the plain.",
+      "note": "\\fl Heb. \\ft and \\fl Alex. Vat. \\fqa as a bereaved bear in the field, and as a wild boar in the plain\\ft .",
+      "witnesses": {
+        "adopted": ["hebrew", "alexandrinus"],
+        "displaced": "vaticanus"
+      },
       "english": {
         "source": "from",
         "edits": [
@@ -1531,7 +1600,11 @@
         "agrees": true
       },
       "from": "and he called the pillar,",
-      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft omits.",
+      "note": "\\fl Heb. \\ft and \\fl Alex. Vat. \\ft omits.",
+      "witnesses": {
+        "adopted": ["hebrew", "alexandrinus"],
+        "displaced": "vaticanus"
+      },
       "english": {
         "source": "brenton",
         "span": [41, 84],
@@ -1555,7 +1628,11 @@
         "agrees": true
       },
       "from": "And I will crush them",
-      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft omits.",
+      "note": "\\fl Heb. \\ft and \\fl Alex. Vat. \\ft omits.",
+      "witnesses": {
+        "adopted": ["hebrew", "alexandrinus"],
+        "displaced": "vaticanus"
+      },
       "lemma": "And I will consume them",
       "english": {
         "source": "brenton",
@@ -1584,7 +1661,7 @@
         "agrees": true
       },
       "from": "I that have done wrong,",
-      "note": "\\fqa Vat. \\ft omits.",
+      "note": "\\fl Vat. \\ft omits.",
       "english": {
         "source": "brenton",
         "span": [22, 59],
@@ -1612,7 +1689,11 @@
         "agrees": true
       },
       "from": "near Rogel",
-      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft Rogel.",
+      "note": "\\fl Heb. \\ft and \\fl Alex. Vat. \\fqa Rogel\\ft .",
+      "witnesses": {
+        "adopted": ["hebrew", "alexandrinus"],
+        "displaced": "vaticanus"
+      },
       "lemma": "the fountain of Rogel",
       "english": {
         "source": "brenton",
@@ -1637,7 +1718,11 @@
         "agrees": true
       },
       "from": "from my arms,",
-      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft omits.",
+      "note": "\\fl Heb. \\ft and \\fl Alex. Vat. \\ft omits.",
+      "witnesses": {
+        "adopted": ["hebrew", "alexandrinus"],
+        "displaced": "vaticanus"
+      },
       "english": {
         "source": "brenton",
         "span": [40, 66],
@@ -1665,7 +1750,11 @@
         "agrees": true
       },
       "from": "\\add was\\add* the king's",
-      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft omits.",
+      "note": "\\fl Heb. \\ft and \\fl Alex. Vat. \\ft omits.",
+      "witnesses": {
+        "adopted": ["hebrew", "alexandrinus"],
+        "displaced": "vaticanus"
+      },
       "lemma": "priest",
       "english": {
         "source": "brenton",
@@ -1694,7 +1783,7 @@
         "agrees": true
       },
       "from": "six hundred",
-      "note": "\\fqa Heb. \\ft 300. \\fqa Vat. \\ft six hundred.",
+      "note": "\\fl Heb. \\fqa 300\\ft . \\fl Vat. \\fqa six hundred\\ft .",
       "english": {
         "source": "brenton",
         "span": [34, 37],
@@ -1718,7 +1807,11 @@
         "agrees": true
       },
       "from": "masters who wrought in the works",
-      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft masters.",
+      "note": "\\fl Heb. \\ft and \\fl Alex. Vat. \\fqa masters\\ft .",
+      "witnesses": {
+        "adopted": ["hebrew", "alexandrinus"],
+        "displaced": "vaticanus"
+      },
       "lemma": "overseers of the people",
       "english": {
         "source": "brenton",
@@ -1742,16 +1835,19 @@
         "agrees": true
       },
       "from": "forty cubits",
-      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft forty cubits.",
-      "note_edits": [
-        {
-          "key": "1KI 6:2",
+      "note": "\\fl Heb. \\ft and \\fl Alex. Vat. \\fqa forty cubits\\ft .",
+      "witnesses": {
+        "adopted": ["hebrew", "alexandrinus"],
+        "displaced": "vaticanus"
+      },
+      "note_edits": {
+        "1KI 6:2": {
           "from": "\\fqa Gr. \\ft its length forty in cubit, etc.",
-          "to": "\\ft Vatican Greek, literally, \\+it its length forty in cubit\\+it*, etc.",
+          "to": "\\ft Vatican Greek, literally, \\fq its length forty in cubit\\ft , etc.",
           "lemma": "was sixty cubits in length",
           "why": "The literal gloss belongs to the displaced Vatican reading of forty; identify it as Vatican."
         }
-      ],
+      },
       "english": {
         "source": "brenton",
         "span": [33, 42],
@@ -1774,7 +1870,11 @@
         "agrees": true
       },
       "from": "five and twenty cubits",
-      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft five and twenty cubits.",
+      "note": "\\fl Heb. \\ft and \\fl Alex. Vat. \\fqa five and twenty cubits\\ft .",
+      "witnesses": {
+        "adopted": ["hebrew", "alexandrinus"],
+        "displaced": "vaticanus"
+      },
       "english": {
         "source": "brenton",
         "span": [33, 42],
@@ -1797,7 +1897,7 @@
         "agrees": true
       },
       "from": "chambers round about the temple",
-      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Or, \\ft against. \\fqa Vat. \\ft omits.",
+      "note": "\\fl Heb. \\ft and \\fl Alex. Or, \\fqa against\\ft . \\fl Vat. \\ft omits.",
       "lemma": "with the walls of the house round about",
       "english": {
         "source": "brenton",
@@ -1830,7 +1930,11 @@
         "agrees": true
       },
       "from": "the golden shields which Solomon had made, [and carried them away into Egypt.]",
-      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft \\+it the golden shields which Solomon had made, and carried them away into Egypt\\+it*.",
+      "note": "\\fl Heb. \\ft and \\fl Alex. Vat. \\fq the golden shields which Solomon had made, and carried them away into Egypt\\ft .",
+      "witnesses": {
+        "adopted": ["hebrew", "alexandrinus"],
+        "displaced": "vaticanus"
+      },
       "english": {
         "source": "brenton",
         "span": [4, 7],
@@ -1853,7 +1957,7 @@
         "agrees": true
       },
       "from": "three years",
-      "note": "\\fqa Vat. \\ft \\+it three years\\+it*.",
+      "note": "\\fl Vat. \\fq three years\\ft .",
       "english": {
         "source": "brenton",
         "span": [15, 23],
@@ -1876,7 +1980,11 @@
         "agrees": true
       },
       "from": "In the four and twentieth year",
-      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft In the four and twentieth year.",
+      "note": "\\fl Heb. \\ft and \\fl Alex. Vat. \\fqa In the four and twentieth year\\ft .",
+      "witnesses": {
+        "adopted": ["hebrew", "alexandrinus"],
+        "displaced": "vaticanus"
+      },
       "english": {
         "source": "brenton",
         "span": [33, 54]
@@ -1893,7 +2001,11 @@
         "agrees": true
       },
       "from": "And Ela",
-      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft omits.",
+      "note": "\\fl Heb. \\ft and \\fl Alex. Vat. \\ft omits.",
+      "witnesses": {
+        "adopted": ["hebrew", "alexandrinus"],
+        "displaced": "vaticanus"
+      },
       "lemma": "In the twenty-sixth year of Asa king of Juda",
       "english": {
         "source": "brenton",
@@ -1922,7 +2034,11 @@
         "agrees": true
       },
       "from": "and slew him,",
-      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft omits.",
+      "note": "\\fl Heb. \\ft and \\fl Alex. Vat. \\ft omits.",
+      "witnesses": {
+        "adopted": ["hebrew", "alexandrinus"],
+        "displaced": "vaticanus"
+      },
       "english": {
         "source": "brenton",
         "span": [41, 77],
@@ -1957,11 +2073,8 @@
         "agrees": true
       },
       "from": "to meet him.",
-      "note": "\\fqa Vat. \\ft omits.",
-      "supplied": [
-        "and",
-        "said"
-      ],
+      "note": "\\fl Vat. \\ft omits.",
+      "supplied": ["and", "said"],
       "lemma": "and said, Is all well",
       "english": {
         "source": "brenton",
@@ -2028,7 +2141,11 @@
         "agrees": true
       },
       "from": "of Esebon",
-      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft of Esebon.",
+      "note": "\\fl Heb. \\ft and \\fl Alex. Vat. \\fqa of Esebon\\ft .",
+      "witnesses": {
+        "adopted": ["hebrew", "alexandrinus"],
+        "displaced": "vaticanus"
+      },
       "english": {
         "source": "brenton",
         "span": [23, 29]
@@ -2045,7 +2162,7 @@
         "agrees": true
       },
       "from": "with his countenance",
-      "note": "\\fqa Heb. \\ft before, \\fqa or, \\ft toward the morning. \\fqa Vat. \\ft with his countenance.",
+      "note": "\\fl Heb. \\fqa before\\ft , \\fl or, \\fqa toward the morning\\ft . \\fl Vat. \\fqa with his countenance\\ft .",
       "english": {
         "source": "brenton",
         "span": [54, 72]
@@ -2078,7 +2195,7 @@
         "agrees": true
       },
       "from": "your",
-      "note": "\\ft \\fqa Vat. \\ft \\fqa your.",
+      "note": "\\fl Vat. \\fq your\\ft .",
       "english": {
         "source": "brenton",
         "span": [15, 18]
@@ -2111,7 +2228,7 @@
         "agrees": true
       },
       "from": "slain ones cast out",
-      "note": "\\fqa Vat. \\ft adds ἐῤῥιμμένοι, \\+it cast out\\+it*.",
+      "note": "\\fl Vat. \\ft adds ἐῤῥιμμένοι, \\fq cast out\\ft .",
       "english": {
         "source": "from",
         "edits": [
@@ -2134,7 +2251,11 @@
         "agrees": true
       },
       "from": "prayer",
-      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft prayer.",
+      "note": "\\fl Heb. \\ft and \\fl Alex. Vat. \\fqa prayer\\ft .",
+      "witnesses": {
+        "adopted": ["hebrew", "alexandrinus"],
+        "displaced": "vaticanus"
+      },
       "english": {
         "source": "brenton",
         "span": [33, 37]
@@ -2167,7 +2288,7 @@
         "agrees": true
       },
       "from": "mercy",
-      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft See \\xt Ps. 91. 10. \\fqa Vat. \\ft mercy.",
+      "note": "\\fl Heb. \\ft and \\fl Alex. \\ft See \\xt Ps. 91. 10. \\fl Vat. \\fqa mercy\\ft .",
       "english": {
         "source": "brenton",
         "span": [33, 36]
@@ -2200,7 +2321,7 @@
         "agrees": true
       },
       "from": "the works of our hands.",
-      "note": "\\fqa Vat. \\ft omits.",
+      "note": "\\fl Vat. \\ft omits.",
       "english": {
         "source": "brenton",
         "span": [17, 56],
@@ -2228,7 +2349,7 @@
         "agrees": true
       },
       "from": "For, behold, thine enemies shall perish",
-      "note": "\\fqa Heb. \\ft includes the clause. \\fqa Vat. \\ft omits.",
+      "note": "\\fl Heb. \\ft includes the clause. \\fl Vat. \\ft omits.",
       "lemma": "For, behold thine enemies, O Lord",
       "english": {
         "source": "brenton",
@@ -2257,7 +2378,7 @@
         "agrees": true
       },
       "from": "mercy",
-      "note": "\\fqa Vat. \\ft mercy. See \\xt Ps. 88. 20.",
+      "note": "\\fl Vat. \\fqa mercy\\ft . See \\xt Ps. 88. 20.",
       "english": {
         "source": "brenton",
         "span": [15, 18]
@@ -2290,7 +2411,7 @@
         "agrees": true
       },
       "from": "their voices,",
-      "note": "\\fqa Heb. \\ft includes the clause. \\fqa Vat. \\ft omits.",
+      "note": "\\fl Heb. \\ft includes the clause. \\fl Vat. \\ft omits.",
       "english": {
         "source": "brenton",
         "span": [17, 52],
@@ -2318,7 +2439,7 @@
         "agrees": true
       },
       "from": "have soothed",
-      "note": "\\fqa Vat. \\ft have soothed; literally, \\+it have loved\\+it*.",
+      "note": "\\fl Vat. \\fqa have soothed\\ft ; literally, \\fq have loved\\ft .",
       "english": {
         "source": "brenton",
         "span": [54, 68]
@@ -2335,7 +2456,7 @@
         "agrees": true
       },
       "from": "over all gods: for the Lord will not cast off his people.",
-      "note": "\\fqa Vat. \\ft adds \\+it for the Lord will not cast off his people\\+it*. \\fqa Heb. \\ft also omits this added clause. See \\xt Ps. 93. 14.",
+      "note": "\\fl Vat. \\ft adds \\fq for the Lord will not cast off his people\\ft . \\fl Heb. \\ft also omits this added clause. See \\xt Ps. 93. 14.",
       "english": {
         "source": "from",
         "edits": [
@@ -2357,7 +2478,7 @@
         "agrees": true
       },
       "from": "the mountains shall exult.",
-      "note": "\\fqa Vat. \\ft omits.",
+      "note": "\\fl Vat. \\ft omits.",
       "english": {
         "source": "brenton",
         "span": [17, 46],
@@ -2376,7 +2497,7 @@
       "source_note": "\\fqa Alex. \\ft + before the Lord, for he comes."
     },
     "PSA 118:109": {
-      "why": "Swete confirms the Alexandrine reading. Brenton’s displaced wording differs from Swete’s Vatican text and still needs a source check. Swete’s Vatican main text has χερσί without a possessive; A has χερσιν μου, while χερσιν σου belongs to ℵcaRT. Label thine Vat.",
+      "why": "Swete confirms the Alexandrine reading. Brenton’s displaced wording differs from Swete’s Vatican text. Vat. is the editor’s decided label for the text Brenton printed as Vatican; its attribution rests on Brenton, while Swete confirms only the Alexandrine reading. Swete’s Vatican main text has χερσί without a possessive; A has χερσιν μου, while χερσιν σου belongs to ℵcaRT. Label thine Vat.",
       "swete": {
         "volume": 2,
         "page": 383,
@@ -2385,7 +2506,11 @@
         "agrees": true
       },
       "from": "thine",
-      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft \\+it thine\\+it*.",
+      "note": "\\fl Heb. \\ft and \\fl Alex. Vat. \\fq thine\\ft .",
+      "witnesses": {
+        "adopted": ["hebrew", "alexandrinus"],
+        "displaced": "vaticanus"
+      },
       "english": {
         "source": "brenton",
         "span": [33, 35]
@@ -2402,7 +2527,7 @@
         "agrees": true
       },
       "from": "the labours of thy hands",
-      "note": "\\ft \\fqa Vat. \\ft \\fqa the labours of thy hands.",
+      "note": "\\fl Vat. \\fq the labours of thy hands\\ft .",
       "english": {
         "source": "brenton",
         "span": [15, 36]
@@ -2419,7 +2544,7 @@
         "agrees": true
       },
       "from": "For David, \\add a Psalm\\add* of Jeremias.",
-      "note": "\\ft \\fqa Vat. \\ft adds \\fqa a Psalm of Jeremias.",
+      "note": "\\fl Vat. \\ft adds \\fq a Psalm of Jeremias\\ft .",
       "english": {
         "source": "from",
         "edits": [
@@ -2441,7 +2566,7 @@
         "agrees": true
       },
       "from": "a Psalm of David.",
-      "note": "\\fqa Vat. \\ft omits.",
+      "note": "\\fl Vat. \\ft omits.",
       "english": {
         "source": "brenton",
         "span": [17, 47],
@@ -2469,7 +2594,7 @@
         "agrees": true
       },
       "from": "straight forward",
-      "note": "\\fqa Vat. \\ft straight forward.",
+      "note": "\\fl Vat. \\fqa straight forward\\ft .",
       "english": {
         "source": "brenton",
         "span": [27, 42]
@@ -2486,7 +2611,11 @@
         "agrees": true
       },
       "from": "the straight \\add way\\add*",
-      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft \\+it the straight way\\+it*.",
+      "note": "\\fl Heb. \\ft and \\fl Alex. Vat. \\fq the straight way\\ft .",
+      "witnesses": {
+        "adopted": ["hebrew", "alexandrinus"],
+        "displaced": "vaticanus"
+      },
       "english": {
         "source": "brenton",
         "span": [33, 52],
@@ -2525,7 +2654,7 @@
         "agrees": true
       },
       "from": "so shalt thou find favour:",
-      "note": "\\fqa Vat. \\ft omits.",
+      "note": "\\fl Vat. \\ft omits.",
       "english": {
         "source": "brenton",
         "span": [18, 60],
@@ -2553,7 +2682,7 @@
         "agrees": true
       },
       "from": "her ways:",
-      "note": "\\fqa Vat. \\ft omits.",
+      "note": "\\fl Vat. \\ft omits.",
       "english": {
         "source": "brenton",
         "span": [18, 44],
@@ -2582,7 +2711,7 @@
       },
       "lemma": "that ye may live",
       "from": "seek wisdom,",
-      "note": "\\fqa Vat. \\ft omits.",
+      "note": "\\fl Vat. \\ft omits.",
       "english": {
         "source": "brenton",
         "span": [18, 34],
@@ -2610,7 +2739,7 @@
         "agrees": true
       },
       "from": "drinking",
-      "note": "\\fqa Vat. \\ft \\+it drinking\\+it*.",
+      "note": "\\fl Vat. \\fq drinking\\ft .",
       "english": {
         "source": "brenton",
         "span": [24, 30]
@@ -2649,7 +2778,7 @@
         "agrees": true
       },
       "from": "the Messenger of great counsel:",
-      "note": "\\fqa Vat. \\ft omits. Compare \\xt Heb. 2. 2.",
+      "note": "\\fl Vat. \\ft omits. Compare \\xt Heb. 2. 2.",
       "english": {
         "source": "brenton",
         "span": [17, 105],
@@ -2677,7 +2806,7 @@
         "agrees": true
       },
       "from": "that ye may not fall into captivity?",
-      "note": "\\fqa Heb. \\ft includes the clause. \\fqa Vat. \\ft omits.",
+      "note": "\\fl Heb. \\ft includes the clause. \\fl Vat. \\ft omits.",
       "english": {
         "source": "brenton",
         "span": [40, 71],
@@ -2705,7 +2834,11 @@
         "agrees": true
       },
       "from": "of her",
-      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft of her.",
+      "note": "\\fl Heb. \\ft and \\fl Alex. Vat. \\fqa of her\\ft .",
+      "witnesses": {
+        "adopted": ["hebrew", "alexandrinus"],
+        "displaced": "vaticanus"
+      },
       "english": {
         "source": "brenton",
         "span": [34, 41]
@@ -2722,7 +2855,7 @@
         "agrees": true
       },
       "from": "the king of Babylon,",
-      "note": "\\fqa Vat. \\ft omits this clause.",
+      "note": "\\fl Vat. \\ft omits this clause.",
       "lemma": "and thou shalt say in that day",
       "english": {
         "source": "brenton",
@@ -2751,7 +2884,7 @@
         "agrees": true
       },
       "from": "and law",
-      "note": "\\ft \\fqa Vat. \\ft \\+it law against law\\+it*; the Greek accent differs for \\+it district\\+it* and \\+it law\\+it*.",
+      "note": "\\fl Vat. \\fq law against law\\ft ; the Greek accent differs for \\fq district \\ft and \\fq law\\ft .",
       "lemma": "district against district",
       "english": {
         "source": "brenton",
@@ -2790,7 +2923,7 @@
       "source_note": "\\fqa Alex. \\ft ‘district,’ the accent being different."
     },
     "ISA 24:23": {
-      "why": "Swete confirms the Alexandrine reading. Brenton’s displaced wording differs from Swete’s Vatican text and still needs a source check. Swete records ἐν for both prepositions in A, requiring “in” in both places. The Vatican main text has ἐκ Σειων καὶ εἰς Ιερουσαλημ; Brenton’s main-text “out of Jerusalem” is not its second preposition.",
+      "why": "Swete confirms the Alexandrine reading. Brenton’s displaced wording differs from Swete’s Vatican text. Vat. is the editor’s decided label for the text Brenton printed as Vatican; its attribution rests on Brenton, while Swete confirms only the Alexandrine reading. Swete records ἐν for both prepositions in A, requiring “in” in both places. The Vatican main text has ἐκ Σειων καὶ εἰς Ιερουσαλημ; Brenton’s main-text “out of Jerusalem” is not its second preposition.",
       "swete": {
         "volume": 3,
         "page": 143,
@@ -2799,7 +2932,11 @@
         "agrees": true
       },
       "from": "from out of Sion, and out of Jerusalem",
-      "note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft \\fqa Vat. \\ft \\+it from out of Sion, and out of Jerusalem\\+it*.",
+      "note": "\\fl Heb. \\ft and \\fl Alex. Vat. \\fq from out of Sion, and out of Jerusalem\\ft .",
+      "witnesses": {
+        "adopted": ["hebrew", "alexandrinus"],
+        "displaced": "vaticanus"
+      },
       "english": {
         "source": "from",
         "edits": [
@@ -2827,7 +2964,7 @@
         "agrees": true
       },
       "from": "the way of understanding;",
-      "note": "\\fqa Vat. \\ft and \\fqa Heb. \\ft omit. \\xt Rom. 11. 35.",
+      "note": "\\fl Vat. \\ft and \\fl Heb. \\ft omit. \\xt Rom. 11. 35.",
       "english": {
         "source": "from",
         "edits": [
@@ -2866,7 +3003,7 @@
         "agrees": true
       },
       "from": "go forth as light",
-      "note": "\\fqa Vat. \\ft \\+it go forth as light\\+it*. \\fqa Heb. \\ft omits \\+it as light\\+it*.",
+      "note": "\\fl Vat. \\fq go forth as light\\ft . \\fl Heb. \\ft omits \\fq as light\\ft .",
       "english": {
         "source": "from",
         "edits": [
@@ -2890,7 +3027,7 @@
       },
       "target": "ISA 63:18",
       "from": "thy holy mountain.",
-      "note": "\\fqa Heb. \\ft includes the clause. \\fqa Vat. \\ft omits.",
+      "note": "\\fl Heb. \\ft includes the clause. \\fl Vat. \\ft omits.",
       "english": {
         "source": "brenton",
         "span": [36, 83],
@@ -2918,7 +3055,7 @@
         "agrees": true
       },
       "from": "the seven eyes",
-      "note": "\\fqa Vat. \\ft omits.",
+      "note": "\\fl Vat. \\ft omits.",
       "english": {
         "source": "brenton",
         "span": [18, 29],
@@ -2942,7 +3079,7 @@
         "agrees": true
       },
       "from": "possession",
-      "note": "Compare \\fqa Heb. \\fqa Vat. \\ft possession.",
+      "note": "\\ft Compare \\fl Heb. Vat. \\fqa possession\\ft .",
       "english": {
         "source": "brenton",
         "span": [50, 58]
@@ -2981,7 +3118,7 @@
         "agrees": true
       },
       "from": "against my shepherds",
-      "note": "\\fqa Vat. \\ft against my shepherds.",
+      "note": "\\fl Vat. \\fqa against my shepherds\\ft .",
       "english": {
         "source": "brenton",
         "span": [15, 23],
@@ -3004,7 +3141,7 @@
         "agrees": true
       },
       "from": "in the city",
-      "note": "\\ft \\fqa Vat. \\ft \\fqa in the city.",
+      "note": "\\fl Vat. \\fq in the city\\ft .",
       "english": {
         "source": "brenton",
         "span": [15, 20]
@@ -3021,7 +3158,7 @@
         "agrees": true
       },
       "from": "panic",
-      "note": "\\ft \\fqa Vat. \\ft \\fqa panic.",
+      "note": "\\fl Vat. \\fq panic\\ft .",
       "english": {
         "source": "brenton",
         "span": [15, 27]
@@ -3044,7 +3181,7 @@
         {
           "target": "1SA 17:12",
           "from": "\\add And David son of an Ephrathite said, this Ephrathite was of Bethleem Juda, and his name was Jessae, and he had eight sons. And the man passed for an old man among men in the days of Saul. \\add*",
-          "note": "\\fqa Vat. \\ft omits verses 12–31.",
+          "note": "\\fl Vat. \\ft omits verses 12–31.",
           "lemma": null,
           "english": {
             "source": "brenton",
@@ -3363,7 +3500,7 @@
           "verses": [
             {
               "reference": "17:41",
-              "note": "\\fqa Vat. \\ft omits this verse.",
+              "note": "\\fl Vat. \\ft omits this verse.",
               "english": {
                 "source": "brenton",
                 "span": [22, 158],
@@ -3398,7 +3535,7 @@
           "verses": [
             {
               "reference": "17:50",
-              "note": "\\fqa Vat. \\ft omits this verse.",
+              "note": "\\fl Vat. \\ft omits this verse.",
               "english": {
                 "source": "brenton",
                 "span": [22, 169],
@@ -3433,7 +3570,7 @@
           "verses": [
             {
               "reference": "18:30",
-              "note": "\\fqa Vat. \\ft omits this verse.",
+              "note": "\\fl Vat. \\ft omits this verse.",
               "english": {
                 "source": "brenton",
                 "span": [22, 221],
@@ -3465,7 +3602,7 @@
           "verses": [
             {
               "reference": "17:55",
-              "note": "\\fqa Vat. \\ft omits verses 55–58.",
+              "note": "\\fl Vat. \\ft omits verses 55–58.",
               "english": {
                 "source": "brenton",
                 "span": [22, 202],
@@ -3535,10 +3672,11 @@
       },
       "insertions": [
         {
+          "before": "18:6",
           "verses": [
             {
               "reference": "18:1",
-              "note": "\\fqa Vat. \\ft omits verses 1–5.",
+              "note": "\\fl Vat. \\ft omits verses 1–5.",
               "english": {
                 "source": "brenton",
                 "span": [8, 162],
@@ -3602,8 +3740,7 @@
                 ]
               }
             }
-          ],
-          "before": "18:6"
+          ]
         },
         {
           "after": "18:8",
@@ -3623,7 +3760,7 @@
             },
             {
               "reference": "18:10",
-              "note": "\\fqa Vat. \\ft omits verses 10–11.",
+              "note": "\\fl Vat. \\ft omits verses 10–11.",
               "english": {
                 "source": "brenton",
                 "span": [865, 1101],
@@ -3655,7 +3792,7 @@
         {
           "target": "1SA 18:8",
           "from": "thousands.",
-          "note": "\\fqa Vat. \\ft omits.",
+          "note": "\\fl Vat. \\ft omits.",
           "english": {
             "source": "brenton",
             "span": [764, 805],
@@ -3693,7 +3830,7 @@
           "verses": [
             {
               "reference": "18:17",
-              "note": "\\fqa Vat. \\ft omits verses 17–19.",
+              "note": "\\fl Vat. \\ft omits verses 17–19.",
               "english": {
                 "source": "brenton",
                 "span": [14, 260],
@@ -3754,7 +3891,7 @@
           "verses": [
             {
               "reference": "13:27",
-              "note": "\\fqa Vat. \\ft omits this verse.",
+              "note": "\\fl Vat. \\ft omits this verse.",
               "english": {
                 "source": "brenton",
                 "span": [18, 95],
@@ -3789,7 +3926,7 @@
           "verses": [
             {
               "reference": "15:32",
-              "note": "\\fqa Vat. \\ft omits this verse.",
+              "note": "\\fl Vat. \\ft omits this verse.",
               "english": {
                 "source": "brenton",
                 "span": [18, 87],
@@ -3824,7 +3961,7 @@
           "verses": [
             {
               "reference": "1:11",
-              "note": "\\fqa Vat. \\ft omits verses 11–16.",
+              "note": "\\fl Vat. \\ft omits verses 11–16.",
               "english": {
                 "source": "brenton",
                 "span": [17, 105],
@@ -3908,7 +4045,7 @@
           "verses": [
             {
               "reference": "1:18",
-              "note": "\\fqa Vat. \\ft omits verses 18–23.",
+              "note": "\\fl Vat. \\ft omits verses 18–23.",
               "english": {
                 "source": "brenton",
                 "span": [583, 652],
@@ -3996,7 +4133,7 @@
         {
           "target": "1CH 1:17",
           "from": "The sons of Sem, Ælam, and Assur,",
-          "note": "\\fqa Vat. \\ft omits.",
+          "note": "\\fl Vat. \\ft omits.",
           "english": {
             "source": "brenton",
             "span": [40, 571],
@@ -4047,7 +4184,7 @@
           "verses": [
             {
               "reference": "3:12",
-              "note": "\\fqa Vat. \\ft omits this verse.",
+              "note": "\\fl Vat. \\ft omits this verse.",
               "english": {
                 "source": "brenton",
                 "span": [17, 164],
@@ -4079,7 +4216,7 @@
           "verses": [
             {
               "reference": "1:16",
-              "note": "\\fqa Vat. \\ft omits this verse.",
+              "note": "\\fl Vat. \\ft omits this verse.",
               "english": {
                 "source": "brenton",
                 "span": [21, 75],
@@ -4118,7 +4255,7 @@
           "verses": [
             {
               "reference": "13:6",
-              "note": "\\fqa Vat. \\ft omits this verse.",
+              "note": "\\fl Vat. \\ft omits this verse.",
               "english": {
                 "source": "brenton",
                 "span": [17, 99],
@@ -4153,7 +4290,7 @@
           "verses": [
             {
               "reference": "33:26",
-              "note": "\\fqa Vat. \\ft omits this verse.",
+              "note": "\\fl Vat. \\ft omits this verse.",
               "english": {
                 "source": "brenton",
                 "span": [199, 325],
@@ -4172,7 +4309,7 @@
         {
           "target": "EZK 33:25",
           "from": "Therefore say to them, Thus saith the Lord God,",
-          "note": "\\fqa Vat. \\ft omits.",
+          "note": "\\fl Vat. \\ft omits.",
           "english": {
             "source": "brenton",
             "span": [18, 187],
@@ -4201,7 +4338,7 @@
         {
           "target": "PRO 4:5",
           "from": "and do not neglect the speech of my mouth.",
-          "note": "\\fqa Vat. \\ft omits.",
+          "note": "\\fl Vat. \\ft omits.",
           "english": {
             "source": "brenton",
             "span": [16, 97],
@@ -4237,7 +4374,7 @@
         {
           "target": "PRO 8:28",
           "from": "and when he strengthened the clouds above; and when he secured the fountains of the earth:",
-          "note": "\\fqa Vat. \\ft omits.",
+          "note": "\\fl Vat. \\ft omits.",
           "english": {
             "source": "brenton",
             "span": [22, 91],
@@ -4257,7 +4394,7 @@
         {
           "target": "PRO 8:32",
           "from": "hear me: blessed",
-          "note": "\\fqa Vat. \\ft omits.",
+          "note": "\\fl Vat. \\ft omits.",
           "lemma": "And blessed are they that keep my ways. Hear wisdom and be wise, and be not strangers to it",
           "english": {
             "source": "brenton",
@@ -4299,7 +4436,7 @@
         {
           "target": "PRO 11:3",
           "from": "When a just man dies",
-          "note": "\\fqa Vat. \\ft omits.",
+          "note": "\\fl Vat. \\ft omits.",
           "lemma": "The integrity of the upright shall guide them, but the overthrow of the rebellious shall spoil them. Possessions will not profit in a day of wrath, but righteousness will deliver from death",
           "english": {
             "source": "brenton",
@@ -4336,7 +4473,7 @@
         {
           "target": "PRO 11:10",
           "from": "prospers:",
-          "note": "\\fqa Vat. \\ft omits.",
+          "note": "\\fl Vat. \\ft omits.",
           "english": {
             "source": "brenton",
             "span": [35, 91],
@@ -4356,7 +4493,7 @@
         {
           "target": "PRO 11:11",
           "from": "but by",
-          "note": "\\fqa Vat. \\ft omits.",
+          "note": "\\fl Vat. \\ft omits.",
           "lemma": "At the blessing of the upright a city shall be exalted",
           "english": {
             "source": "brenton",
@@ -4388,7 +4525,7 @@
         {
           "target": "PRO 15:33",
           "from": "The fear of the Lord is instruction and wisdom; and the highest honour will correspond therewith.",
-          "note": "\\fqa Vat. \\ft omits.",
+          "note": "\\fl Vat. \\ft omits.",
           "english": {
             "source": "brenton",
             "span": [39, 67],
@@ -4423,7 +4560,7 @@
           "verses": [
             {
               "reference": "23:12",
-              "note": "\\fqa Alex. \\ft has the verse. \\fqa Vat. \\ft omits; the English is supplied from the Authorized Version."
+              "note": "\\fl Alex. \\ft has the verse. \\fl Vat. \\ft omits; the English is supplied from the Authorized Version."
             }
           ]
         }

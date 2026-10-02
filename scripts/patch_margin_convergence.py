@@ -1,9 +1,9 @@
 """Guarded fixes for the pinned PTXprint margin-note convergence checks."""
 
-from pathlib import Path
 import inspect
 import re
 import sys
+from pathlib import Path
 
 
 def replace_once(path, old, new):

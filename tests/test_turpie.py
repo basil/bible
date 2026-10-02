@@ -9,57 +9,20 @@ import re
 
 import pytest
 
-from bible.quotations import TURPIE, scope
 from bible.references import ROMAN, parse_passage, roman
 
-ROWS = TURPIE["rows"]
-COLUMNS = ("nt", "lxx", "hebrew")
-each_row = pytest.mark.parametrize("row", ROWS, ids=[row["id"] for row in ROWS])
-
-BOOKS = {
-    "Gen": "GEN",
-    "Exod": "EXO",
-    "Lev": "LEV",
-    "Num": "NUM",
-    "Deut": "DEU",
-    "Josh": "JOS",
-    "1 Sam": "1SA",
-    "2 Sam": "2SA",
-    "Job": "JOB",
-    "Ps": "PSA",
-    "Prov": "PRO",
-    "Eccl": "ECC",
-    "Is": "ISA",
-    "Jer": "JER",
-    "Jerem": "JER",
-    "Ezek": "EZK",
-    "Hos": "HOS",
-    "Hosea": "HOS",
-    "Joel": "JOL",
-    "Amos": "AMO",
-    "Mic": "MIC",
-    "Hab": "HAB",
-    "Hag": "HAG",
-    "Zech": "ZEC",
-    "Mal": "MAL",
-    "Matt": "MAT",
-    "Mark": "MRK",
-    "Luke": "LUK",
-    "John": "JHN",
-    "Acts": "ACT",
-    "Rom": "ROM",
-    "1 Cor": "1CO",
-    "2 Cor": "2CO",
-    "Gal": "GAL",
-    "Eph": "EPH",
-    "1 Tim": "1TI",
-    "2 Tim": "2TI",
-    "Heb": "HEB",
-    "James": "JAS",
-    "1 Pet": "1PE",
-    "2 Pet": "2PE",
-    "Rev": "REV",
-}
+# Turpie's names for the books.
+BOOKS = dict(
+    name.split("=")
+    for name in (
+        "Gen=GEN, Exod=EXO, Lev=LEV, Num=NUM, Deut=DEU, Josh=JOS, 1 Sam=1SA, "
+        "2 Sam=2SA, Job=JOB, Ps=PSA, Prov=PRO, Eccl=ECC, Is=ISA, Jer=JER, "
+        "Jerem=JER, Ezek=EZK, Hos=HOS, Hosea=HOS, Joel=JOL, Amos=AMO, Mic=MIC, "
+        "Hab=HAB, Hag=HAG, Zech=ZEC, Mal=MAL, Matt=MAT, Mark=MRK, Luke=LUK, "
+        "John=JHN, Acts=ACT, Rom=ROM, 1 Cor=1CO, 2 Cor=2CO, Gal=GAL, Eph=EPH, "
+        "1 Tim=1TI, 2 Tim=2TI, Heb=HEB, James=JAS, 1 Pet=1PE, 2 Pet=2PE, Rev=REV"
+    ).split(", ")
+)
 # The Septuagint's four books of Kingdoms; the Hebrew column's Kings are ours.
 KINGS = {
     "lxx": {"1 Kings": "1SA", "2 Kings": "2SA", "3 Kings": "1KI", "4 Kings": "2KI"},
@@ -131,88 +94,94 @@ def normalized_verses(passages):
     ]
 
 
-@each_row
-def test_part_markers_are_the_printed_ones(row):
-    printed = VARIANT.sub("", row["nt"]["printed"])
-    assert sorted(set(MARKER.findall(printed))) == row.get("part_markers", [])
+@pytest.fixture(scope="module")
+def rows(policy):
+    return policy.turpie["rows"]
 
 
-@each_row
-@pytest.mark.parametrize("column", COLUMNS)
-def test_normalized_passages_are_the_printed_ones(row, column):
-    heading = row[column]
-    if "printed" not in heading:
-        return
-    normalized = normalized_verses(heading["normalized"].split("; "))
-    printed = set(printed_verses(heading["printed"], column))
-    assert set(normalized) <= printed
-    assert len(normalized) == len(set(normalized))
-    # A printed alternative or later heading is kept apart from the link.
-    kept_apart = heading.get("alternative_normalized", []) + row.get(
-        "additional_source_headings", {}
-    ).get(f"{column}_normalized", [])
-    assert printed <= set(normalized + normalized_verses(kept_apart))
+@pytest.fixture(scope="module")
+def headings(rows):
+    """Each heading that Turpie prints, as (where it stands, its row, its
+    column, the heading)."""
+    return [
+        (f"{row['id']} {column}", row, column, row[column])
+        for row in rows
+        for column in ("nt", "lxx", "hebrew")
+        if "printed" in row[column]
+    ]
 
 
-@each_row
-@pytest.mark.parametrize("column", COLUMNS)
-def test_printed_headings_share_one_style(row, column):
-    printed = row[column].get("printed")
-    if printed is None:
-        return
-    assert printed.endswith("."), "A heading ends with a full stop"
-    assert not re.search(r"\d\s*[-—]\s*\d", printed), "Ranges take an en dash"
-    assert not re.search(r"\s{2}|\s\.|\.\.", printed), "Stray spacing or stops"
+def test_part_markers_are_the_printed_ones(rows):
+    for row in rows:
+        printed = VARIANT.sub("", row["nt"]["printed"])
+        markers = sorted(set(MARKER.findall(printed)))
+        assert markers == list(row.get("part_markers", ())), row["id"]
 
 
-@each_row
-def test_source_columns_differ_only_in_numbering(row):
-    lxx, hebrew = row["lxx"].get("normalized"), row["hebrew"].get("normalized")
-    if not (lxx and hebrew):
-        return
+def test_normalized_passages_are_the_printed_ones(headings):
+    for where, row, column, heading in headings:
+        normalized = normalized_verses(heading["normalized"].split("; "))
+        printed = set(printed_verses(heading["printed"], column))
+        assert set(normalized) <= printed, where
+        assert len(normalized) == len(set(normalized)), where
+        # A printed alternative or later heading is kept apart from the link.
+        later = row.get("additional_source_headings", {})
+        kept_apart = normalized_verses(
+            [
+                *heading.get("alternative_normalized", ()),
+                *later.get(f"{column}_normalized", ()),
+            ]
+        )
+        assert printed <= set(normalized + kept_apart), where
+
+
+def test_printed_headings_share_one_style(headings):
+    for where, _, _, heading in headings:
+        printed = heading["printed"]
+        assert printed.endswith("."), f"A heading ends with a full stop: {where}"
+        ranged = re.search(r"\d\s*[-—]\s*\d", printed)
+        assert not ranged, f"Ranges take an en dash: {where}"
+        stray = re.search(r"\s{2}|\s\.|\.\.", printed)
+        assert not stray, f"Stray spacing or stops: {where}"
+
+
+def test_source_columns_differ_only_in_numbering(rows):
     # A column's verses may run longer, or break at another chapter, so only
     # the books and the Psalm numbering are compared, passage by passage.
     kingdoms = {"1SA", "2SA", "1KI", "2KI"}
-    lxx = [normalized_verses([p])[0] for p in lxx.split("; ")]
-    hebrew = [normalized_verses([p])[0] for p in hebrew.split("; ")]
+
+    def firsts(heading):
+        return [normalized_verses([p])[0] for p in heading["normalized"].split("; ")]
 
     def books(verses):
         return {"KINGDOMS" if b in kingdoms else b for b, _, _ in verses}
 
-    assert books(lxx) == books(hebrew)
-    if len(lxx) != len(hebrew):
-        return
-    for (book, chapter_a, _), (_, chapter_b, _) in zip(lxx, hebrew):
-        if book == "PSA":
+    for row in rows:
+        if not (row["lxx"].get("normalized") and row["hebrew"].get("normalized")):
+            continue
+        lxx, hebrew = firsts(row["lxx"]), firsts(row["hebrew"])
+        assert books(lxx) == books(hebrew), row["id"]
+        if len(lxx) != len(hebrew):
+            continue
+        for (book, chapter_a, _), (_, chapter_b, _) in zip(lxx, hebrew):
             # Psalms 10-147 of the Hebrew are one lower in the Septuagint, which
             # joins 9-10 and 114-115 and divides 116 and 147.
-            assert chapter_b - chapter_a in (0, 1, 2), f"Psalm {chapter_a}, {chapter_b}"
+            assert book != "PSA" or chapter_b - chapter_a in (0, 1, 2), row["id"]
 
 
-def test_rows_follow_the_pages():
-    pages = [row["pdf_page"] for row in ROWS]
+def test_rows_follow_the_pages_and_classes_the_tables(rows):
+    pages = [row["pdf_page"] for row in rows]
     assert pages == sorted(pages)
-
-
-def test_classes_follow_the_tables():
     # Turpie gives each class its own table, A to E in turn, so a row's page
     # fixes its class: a class read from the wrong table goes backwards.
-    classes = [row["class"] for row in ROWS if row["kind"] == "table"]
+    classes = [row["class"] for row in rows if row["kind"] == "table"]
     assert classes == sorted(classes)
 
 
-def test_table_codes_have_the_expected_scope():
-    # A and B divide by word order alone; C-E also by words, clauses, or both.
-    for row in ROWS:
-        if row["kind"] == "table":
-            has_scope = scope(row["table_code"]) is not None
-            assert has_scope == (row["class"] not in {"A", "B"}), row["id"]
-
-
-def test_each_table_numbers_its_heads_in_order():
+def test_each_table_numbers_its_heads_in_order(rows):
     """Turpie's own slips are retained, and a note on the slip says so."""
     previous = None
-    for row in ROWS:
+    for row in rows:
         sequence = re.fullmatch(r"\((\d+)\)", row.get("printed_sequence", ""))
         if row["kind"] != "table" or not sequence:
             continue

@@ -1,20 +1,18 @@
 """Verses compared by the rarer words they share."""
 
-from bible import alignment
+from bible import alignment, usj
 from bible.alignment import Verses, content_words, similarity, stem, weights
 from bible.references import Verse
 
-PSALM = (
+PSALM = usj.parse(
     "\\id PSA\n\\c 3\n\\d A Psalm of David, when he fled.\n\\q1\n"
     "\\v 1 Lord, how are they increased that trouble me!\n"
     "\\v 2 Many there be which say of my soul.\\f + \\fr 3:2 \\ft Selah\\f*\n"
     "\\c 4\n\\q1\n\\v 1 Hear me when I call.\n"
 )
-BRENTON = (
+BRENTON = usj.parse(
     "\\id PSA\n\\c 50\n\\d\n\\v 1 For the end, a Psalm of David,\n"
-    "\\v 2 when Nathan the prophet came to him.\n\\p\n"
-    "\\v 3 Have mercy upon me, O God.\n"
-    "\\c 116\n\\p\n\\v 1 Praise the Lord, all ye nations.\n"
+    "\\v 2 when Nathan the prophet came to him.\n"
 )
 
 
@@ -32,7 +30,6 @@ def test_a_title_is_the_words_before_the_first_verse():
     assert alignment.titles(PSALM) == {3: "A Psalm of David, when he fled."}
     # Brenton's title marker is empty: he numbers the title's words.
     assert alignment.titles(BRENTON) == {}
-    assert alignment.title_verses(BRENTON) == {50: ["1", "2"]}
 
 
 def test_a_title_is_verse_nothing_of_its_chapter():
@@ -45,10 +42,7 @@ def test_a_title_is_verse_nothing_of_its_chapter():
     ]
     assert verses.words[Verse("PSA", 3, 0)] == {"psalm", "david", "fled"}
     assert Verse("PSA", 3, 0) not in Verses({"PSA": PSALM}).words
-
-
-def test_a_notes_words_are_not_the_verses():
-    verses = Verses({"PSA": PSALM})
+    # A note's words aren't the verse's.
     assert "selah" not in verses.words[Verse("PSA", 3, 2)]
 
 

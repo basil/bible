@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 """Inventory every glyph slot (including unencoded alternates) in pinned faces."""
 
-from argparse import ArgumentParser
 import csv
 import hashlib
-from io import BytesIO
 import json
-from pathlib import Path
 import zipfile
+from argparse import ArgumentParser
+from io import BytesIO
+from pathlib import Path
 
+from font_sources import UTOPIA_STD_TO_UTOPIA
 from fontTools.pens.boundsPen import BoundsPen
 from fontTools.ttLib import TTFont
-from font_sources import UTOPIA_STD_TO_UTOPIA
 
 
 def inventory(utopia, archives, output):

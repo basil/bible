@@ -1,13 +1,16 @@
-"""Insert reciprocal quotation links and merge Brenton's matching notes."""
+"""The quotation links: each New Testament quotation of the Old joined to
+the passage it quotes, both ways, from Turpie's tables (edition/turpie.json)
+as edition/quotations.json reviews them, and Brenton's own "See" notes that
+the links replace.
+"""
 
 import collections
-import itertools
 import re
+from dataclasses import dataclass
 
-from bible import edition, quotations
+from bible import quotations, usj
 from bible.checks import require
-from bible.references import EDITION, VERSE_LABEL
-from bible.usfm import verse_spans
+from bible.references import EDITION, Passage, Verse
 from bible.versification import mapped_passages
 
 # The printed glosses, by Turpie's class. C.I, which differs from the agreeing
@@ -16,22 +19,72 @@ from bible.versification import mapped_passages
 GLOSSES = {"A": "Heb. and LXX", "B": "Heb. against LXX", "D": "LXX against Heb."}
 
 
-def gloss(cls, table_code):
-    """What a link prints after its reference, or None for the reference alone."""
+@dataclass(frozen=True)
+class Relation:
+    """One reviewed quotation, both sides in the edition's numbering."""
+
+    id: str
+    classification: str
+    table_code: str
+    nt: tuple[Passage, ...]
+    ot: tuple[Passage, ...]
+
+    @property
+    def pairs(self):
+        return tuple(
+            (nt, ot)
+            for nt_passage in self.nt
+            for nt in nt_passage.verses
+            for ot_passage in self.ot
+            for ot in ot_passage.verses
+        )
+
+
+@dataclass(frozen=True)
+class Link:
+    """One direction of a relation, at the first verse of one of its passages."""
+
+    origin: Verse
+    passages: tuple[Passage, ...]
+    targets: tuple[Passage, ...]
+    classification: str
+    table_code: str
+    row_ids: tuple[str, ...]
+    agreement: str | None
+
+
+def agreement(cls, table_code):
+    """Semantic equivalence class used by conflict and duplicate guards."""
     scope = quotations.scope(table_code)
-    return GLOSSES.get("A" if (cls, scope) == ("C", "I") else cls)
+    return (
+        "A" if (cls, scope) == ("C", "I") else cls if cls in {"A", "B", "D"} else None
+    )
 
 
-LINK = re.compile(
-    rf"\\x - \\xo (\d+:{VERSE_LABEL}) \\xt ([^\\(]*?)"
-    rf"(?: \\xta \(({'|'.join(map(re.escape, GLOSSES.values()))})\))?\\x\*"
-)
-# The transformation record of each book's links, which the notes review reads.
-LINK_OPERATION = "insert reciprocal classified quotation links"
-MERGE_OPERATION = "merge Brenton's See notes into quotation links"
+def quotation_relations(rows, *, policy):
+    """Resolve each reviewed row once, before deriving either direction."""
+    relations = tuple(
+        Relation(
+            row["id"],
+            row["class"],
+            row["table_code"],
+            tuple(row["nt"]),
+            tuple(
+                mapped
+                for passage in row["ot"]
+                for mapped in mapped_passages(passage, policy=policy)
+            ),
+        )
+        for row in rows
+    )
+    require(
+        len({r.id for r in relations}) == len(relations),
+        "Duplicate quotation relation id",
+    )
+    return relations
 
 
-def planned_links(rows, books):
+def planned_links(relations, order, *, policy):
     """Reciprocal links at the first verse of each quotation's passages, by book.
 
     Each link names the whole of the other side's passages, and each of those
@@ -42,45 +95,43 @@ def planned_links(rows, books):
     links that would print alike at one verse are refused.
     """
     by_book = collections.defaultdict(list)
+    order = {code: index for index, code in enumerate(order)}
+
+    def position(verse):
+        return order[verse.book], verse.chapter, verse.number, verse.letter
+
     # Each (NT verse, Brenton verse) pair with the rows and glosses joining it.
     pair_glosses = collections.defaultdict(list)
-    sources = {unit["id"]: unit["source"] for unit in edition.MANIFEST["scripture"]}
-    conflicts = quotations.DECISIONS["class_conflicts"]
+    sources = {unit["id"]: unit["source"] for unit in policy.manifest["scripture"]}
+    conflicts = policy.quotations["class_conflicts"]
     require(all(c.get("why") for c in conflicts), "Unexplained class conflict")
     resolved = {frozenset(c["rows"]) for c in conflicts}
 
-    def add(row, printed, passage, side, targets, target_display):
+    def add(relation, printed, passage, side, targets):
         origin = passage.first
         require(
             sources.get(origin.book) == ("kjv" if side == "nt" else "brenton"),
             f"Quotation verse outside its testament's printed books: {origin}",
         )
-        link = {
-            "origin": origin,
-            # The passages the link stands for, whose verses must all print.
-            "passages": [passage],
-            "targets": targets,
-            "target_display": target_display,
-            "class": row["class"],
-            "table_code": row["table_code"],
-            "gloss": printed,
-            "row_ids": [row["id"]],
-        }
+        link = Link(
+            origin,
+            (passage,),
+            tuple(targets),
+            relation.classification,
+            relation.table_code,
+            (relation.id,),
+            printed,
+        )
         by_book[origin.book].append(link)
 
-    for row in rows:
-        printed = gloss(row["class"], row["table_code"])
-        mapped_ot = [m for p in row["ot"] for m in mapped_passages(p)]
-        to_ot = EDITION.listed(mapped_ot, books)
-        to_nt = EDITION.listed(row["nt"], books)
-        for passage in row["nt"]:
-            add(row, printed, passage, "nt", mapped_ot, to_ot)
-        for passage in mapped_ot:
-            add(row, printed, passage, "ot", row["nt"], to_nt)
-        for pair in itertools.product(
-            quotations.nt_verses(row["nt"]), quotations.brenton_verses(row["ot"])
-        ):
-            pair_glosses[pair].append((row["id"], printed))
+    for relation in relations:
+        printed = agreement(relation.classification, relation.table_code)
+        for passage in relation.nt:
+            add(relation, printed, passage, "nt", relation.ot)
+        for passage in relation.ot:
+            add(relation, printed, passage, "ot", relation.nt)
+        for pair in relation.pairs:
+            pair_glosses[pair].append((relation.id, printed))
     # Judged on every contributor, so the order of the rows doesn't matter.
     used_conflicts = set()
     for pair, contributors in pair_glosses.items():
@@ -95,29 +146,28 @@ def planned_links(rows, books):
     require(used_conflicts == resolved, "Unused link class conflict decisions")
     for links in by_book.values():
         visible = collections.Counter(
-            (str(link["origin"]), link["target_display"], link["gloss"])
-            for link in links
+            (link.origin, tuple(link.targets), link.agreement) for link in links
         )
-        repeated = sorted(key[:2] for key, count in visible.items() if count > 1)
+        repeated = sorted(
+            (str(key[0]), tuple(map(str, key[1])))
+            for key, count in visible.items()
+            if count > 1
+        )
         require(not repeated, f"Identical quotation links at one verse: {repeated}")
         links.sort(
             key=lambda link: (
-                books.position(link["origin"]),
-                books.position(link["targets"][0].first),
+                position(link.origin),
+                position(link.targets[0].first),
+                tuple(link.row_ids),
             )
         )
     return dict(by_book)
 
 
-def quotation_links(archives):
-    """The edition's reviewed quotation links, by book."""
-    return planned_links(quotations.reviewed_rows(), edition.books(archives))
-
-
 def bare(note):
     """Whether a note is nothing but "See" and what it cites: only such a
     note can be merged whole, since merging drops the note."""
-    plain = "".join(text for _, text in note.pieces)
+    plain = note.text
     for citation in reversed(note.citations):
         plain = plain[: citation.start] + plain[citation.end :]
     return bool(note.citations) and re.fullmatch(r"\s*[Ss]ee[\s;.]*", plain) is not None
@@ -141,17 +191,7 @@ def cited_verses(note):
     return [verse for citation in note.citations for verse in citation.verses]
 
 
-def _link_usfm(link):
-    target = link["target_display"]
-    # A parenthesis in the target would run into the gloss's.
-    require(not set(target) & set("\\\n("), f"Malformed link target: {target}")
-    marker = f"\\x - \\xo {link['origin'].label} \\xt {target}"
-    if link["gloss"]:
-        marker += f" \\xta ({link['gloss']})"
-    return marker + "\\x*"
-
-
-def merged_notes(code, found, links, record):
+def merged_notes(code, found, links, *, policy):
     """The keys of Brenton's See notes that the links at their verses replace.
 
     Read from brenton_notes, before restyling, so a merged note is never
@@ -164,12 +204,12 @@ def merged_notes(code, found, links, record):
     # has notes to merge.
     nt_rows = collections.defaultdict(lambda: collections.defaultdict(set))
     for link in links:
-        for passage in link["targets"]:
+        for passage in link.targets:
             for verse in passage.verses:
-                nt_rows[link["origin"].label][verse].update(link["row_ids"])
+                nt_rows[link.origin.label][verse].update(link.row_ids)
     if not nt_rows:
         return frozenset()
-    decisions = quotations.DECISIONS["note_merges"]
+    decisions = policy.quotations["note_merges"]
     used_decisions = set()
     merges = []
     for note in found:
@@ -190,7 +230,8 @@ def merged_notes(code, found, links, record):
             )
             # A merge loses no reference unless its decision says which.
             require(
-                decision.get("drops", []) == (dropped if action == "merge" else []),
+                list(decision.get("drops", ()))
+                == (dropped if action == "merge" else []),
                 f"Merge decision must name exactly the verses it drops: {note.key}",
             )
         else:
@@ -205,90 +246,25 @@ def merged_notes(code, found, links, record):
             )
             action = "merge"
         if action == "merge":
-            row_ids = sorted({rid for verse in named for rid in linked.get(verse, ())})
-            merges.append(
-                {
-                    "note": note.key,
-                    "verses": [str(verse) for verse in named],
-                    "dropped": dropped,
-                    "row_ids": row_ids,
-                }
-            )
+            merges.append(note.key)
     linked_verses = {f"{code} {reference}" for reference in nt_rows}
     require(
         {k for k in decisions if k.partition("#")[0] in linked_verses}
         <= used_decisions,
         f"Unused note merge decisions in {code}",
     )
-    record(
-        MERGE_OPERATION,
-        merges=merges,
-        merge_decisions=sorted(used_decisions),
-    )
-    return frozenset(merge["note"] for merge in merges)
+    return frozenset(merges)
 
 
-def apply_links(code, text, links, record):
-    """Add each link at the start of its verse, changing nothing else."""
-    # Brenton's own cross-references are footnotes by now; only the links are \x.
-    require("\\x " not in text, f"Cross-reference other than a quotation link: {code}")
-    if not links:
-        return text
-    original = text
-    require(
-        all(link["origin"].book == code for link in links),
-        f"Links for another book passed to {code}",
-    )
-    by_verse = collections.defaultdict(list)
-    for link in links:
-        by_verse[link["origin"].label].append(link)
-    spans = verse_spans(text)
-    # A link stands at its passage's first verse, so the rest are checked here.
-    passage_verses = {
-        verse.label
-        for link in links
-        for passage in link["passages"]
-        for verse in passage.verses
-    }
-    require(
-        passage_verses <= {reference for reference, _, _ in spans},
-        f"Quotation verse missing from prepared scripture: {code}",
-    )
-    for reference, start, _ in reversed(spans):
-        if reference in by_verse:
-            # Like Brenton's notes, the links abut the verse's words: a space
-            # after one would print as a second space after the verse number.
-            markers = "".join(_link_usfm(link) for link in by_verse[reference])
-            text = text[:start] + markers + text[start:]
-    expected = sorted(
-        (
-            link["origin"].label,
-            link["target_display"],
-            link["gloss"] or "",
-        )
-        for link in links
-    )
-    require(
-        sorted(LINK.findall(text)) == expected,
-        f"Malformed or stale classified links: {code}",
-    )
-    require(
-        LINK.sub("", text) == original,
-        f"Scripture wording or notes changed by quotation links: {code}",
-    )
-    record(
-        LINK_OPERATION,
-        links=[
-            {
-                "origin": str(link["origin"]),
-                "passages": [str(passage) for passage in link["passages"]],
-                "class": link["class"],
-                "table_code": link["table_code"],
-                "gloss": link["gloss"],
-                "target": link["target_display"],
-                "row_ids": link["row_ids"],
-            }
-            for link in links
-        ],
-    )
-    return text
+def link_note(link, books):
+    """A link as it prints: the other side's passages, and Turpie's judgment
+    of the quotation's wording where the edition prints one."""
+    target = EDITION.listed(link.targets, books)
+    require(not set(target) & set("\\\n("), f"Malformed link target: {target}")
+    gloss = GLOSSES.get(link.agreement)
+    content = [usj.char("xo", f"{link.origin.label} ")]
+    if gloss:
+        content += [usj.char("xt", f"{target} "), usj.char("xta", f"({gloss})")]
+    else:
+        content.append(usj.char("xt", target))
+    return usj.note("x", *content)

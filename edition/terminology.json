@@ -1,0 +1,183 @@
+{
+  "anno-domini": {
+    "display": "AD",
+    "meaning": "_anno Domini_",
+    "period_forms": [],
+    "note_forms": [],
+    "source_forms": ["AD"]
+  },
+  "before-christ": {
+    "display": "BC",
+    "meaning": "before Christ",
+    "period_forms": [],
+    "note_forms": [],
+    "source_forms": ["BC"]
+  },
+  "et-cetera": {
+    "display": "etc.",
+    "meaning": "_et cetera_, and so forth",
+    "period_forms": [],
+    "note_forms": [],
+    "source_forms": ["etc."]
+  },
+  "id-est": {
+    "display": "i.e.",
+    "meaning": "_id est_, that is",
+    "period_forms": [],
+    "note_forms": [],
+    "source_forms": ["i.e."]
+  },
+  "septuagint": {
+    "display": "LXX",
+    "meaning": "Septuagint",
+    "period_forms": ["LXX", "Sept"],
+    "note_forms": [],
+    "source_forms": ["LXX", "Septuagint"]
+  },
+  "manuscript": {
+    "display": "MS",
+    "meaning": "manuscript",
+    "period_forms": ["MS"],
+    "note_forms": [],
+    "source_forms": ["MS"]
+  },
+  "manuscripts": {
+    "display": "MSS",
+    "meaning": "manuscripts",
+    "period_forms": ["MSS"],
+    "note_forms": [],
+    "source_forms": ["MSS"]
+  },
+  "page": {
+    "display": "p.",
+    "meaning": "page",
+    "period_forms": [],
+    "note_forms": [],
+    "source_forms": ["p."]
+  },
+  "pages": {
+    "display": "pp.",
+    "meaning": "pages",
+    "period_forms": [],
+    "note_forms": [],
+    "source_forms": ["pp."]
+  },
+  "saint": {
+    "display": "St.",
+    "meaning": "saint",
+    "period_forms": [],
+    "note_forms": [],
+    "source_forms": ["St."]
+  },
+  "vatican": {
+    "display": "Vat.",
+    "meaning": "Vatican Text",
+    "period_forms": ["Vat"],
+    "note_forms": ["Vatican Text"],
+    "source_forms": ["Vat.", "Vatican Text", "Vaticanus"]
+  },
+  "aldine": {
+    "display": "Aldine Text",
+    "meaning": "Aldine Text",
+    "period_forms": ["Ald"],
+    "note_forms": [],
+    "source_forms": ["Aldine Text"]
+  },
+  "complutensian": {
+    "display": "Complutensian Text",
+    "meaning": "Complutensian Text",
+    "period_forms": ["Complut"],
+    "note_forms": [],
+    "source_forms": ["Complutensian Text", "Complutensian"]
+  },
+  "vulgate": {
+    "display": "Vulgate",
+    "meaning": "Vulgate",
+    "period_forms": ["Vulg"],
+    "note_forms": [],
+    "source_forms": ["Vulgate"]
+  },
+  "authorized-version": {
+    "display": "Authorized Version",
+    "meaning": "Authorized Version",
+    "period_forms": ["A. V"],
+    "note_forms": [],
+    "source_forms": [
+      "Authorized Version",
+      "English Bible",
+      "English Version",
+      "English version",
+      "Eng. Ver."
+    ]
+  },
+  "quasi-dicat": {
+    "display": "q.d.",
+    "meaning": "_quasi dicat_",
+    "period_forms": [],
+    "note_forms": [],
+    "source_forms": ["q.d."]
+  },
+  "scilicet": {
+    "display": "sc.",
+    "meaning": "_scilicet_, that is to say",
+    "period_forms": [],
+    "note_forms": [],
+    "source_forms": ["sc."]
+  },
+  "compare": {
+    "display": "Compare",
+    "meaning": "Compare",
+    "period_forms": [],
+    "note_forms": [],
+    "source_forms": ["Compare", "compare"]
+  },
+  "hebrew": {
+    "display": "Heb.",
+    "meaning": "Hebrew",
+    "period_forms": [],
+    "note_forms": [],
+    "source_forms": ["Heb.", "Hebrew"]
+  },
+  "greek": {
+    "display": "Gr.",
+    "meaning": "Greek",
+    "period_forms": [],
+    "note_forms": [],
+    "source_forms": ["Gr.", "Greek"]
+  },
+  "literally": {
+    "display": "Lit.",
+    "meaning": "literally",
+    "period_forms": [],
+    "note_forms": [],
+    "source_forms": ["Lit.", "lit."]
+  },
+  "alexandrine": {
+    "display": "Alex.",
+    "meaning": "Alexandrine Text",
+    "period_forms": [],
+    "note_forms": [],
+    "source_forms": ["Alex.", "Alexandrine Text", "Alexandrinus"]
+  },
+  "addition": {
+    "display": "+",
+    "meaning": "sign of addition",
+    "period_forms": [],
+    "note_forms": [],
+    "source_forms": ["+"]
+  },
+  "omission": {
+    "display": "—",
+    "meaning": "sign of omission",
+    "period_forms": [],
+    "note_forms": [],
+    "source_forms": ["—"]
+  },
+  "appendix": {
+    "display": "Appendix",
+    "meaning": "Appendix",
+    "period_forms": [],
+    "note_forms": [],
+    "source_forms": ["Appendix"]
+  }
+}

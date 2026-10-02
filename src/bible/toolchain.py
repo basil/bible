@@ -1,8 +1,8 @@
 """The container image the build runs in: its pinned tools and fonts, and the
 refusal to typeset in an image built from other pins than the checkout's."""
 
-from pathlib import Path
 import subprocess
+from pathlib import Path
 
 from bible import paths
 from bible.checks import require
