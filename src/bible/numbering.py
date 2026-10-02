@@ -268,17 +268,20 @@ def books_tables(
     facing: scripture.Inventory,
     ours: bible.references.Books,
     theirs: bible.references.Books,
+    psalms: Sequence[Node],
     *,
     policy: bible.policy.Policy,
 ) -> list[Node]:
-    """Every book's table that has rows, under both Bibles' names for it."""
-    rows = [
-        (code, Table(code, inventory, facing, policy=policy).rows())
-        for code in policy.versification["old_testament"]
-        if code != "PSA" and code in inventory
-    ]
+    """The numbering sections in the manifest's book order."""
     sections: list[Node] = []
-    for code, values in rows:
+    for entry in policy.scripture:
+        code = entry["id"]
+        if code not in inventory or code not in policy.versification["old_testament"]:
+            continue
+        if code == "PSA":
+            sections.extend(psalms)
+            continue
+        values = Table(code, inventory, facing, policy=policy).rows()
         if not values:
             continue
         name, other = (
@@ -425,22 +428,6 @@ def _psalms(first: int, last: int) -> str:
 STEPS = {1: "one lower", 2: "two lower"}
 
 
-def psalm_numbers(psalter: Psalter) -> Node:
-    return table_rows(psalter.numbers(), ("This edition", "King James Bible"))
-
-
-def psalm_verses(psalter: Psalter) -> Node:
-    steps, _ = psalter.steps()
-    return table_rows(
-        [(_spans(psalms), STEPS[step]) for step, psalms in steps.items()],
-        ("Psalms", "King James verse"),
-    )
-
-
-def psalm_rows(psalter: Psalter) -> Node:
-    return table_rows(psalter.uneven_rows(), ("Psalms", "King James Bible"))
-
-
 def names_table(
     printed: tuple[str, ...],
     ours: bible.references.Books,
@@ -493,6 +480,7 @@ def page(
     theirs: bible.references.Books,
     *,
     policy: bible.policy.Policy,
+    psalms: str = "",
 ) -> Document:
     """One of the editor's pages as it prints: the passages it names between
     braces as the edition cites them, or as the King James Bible numbers
@@ -501,18 +489,43 @@ def page(
     require(
         not requested
         or sorted(requested)
-        == sorted(("names", "psalm numbers", "psalm verses", "psalm rows", "books")),
+        in (
+            ["books", "names"],
+            ["psalm numbers", "psalm rows", "psalm verses"],
+        ),
         f"Tables asked for, not once each: {requested}",
     )
-    tables = {}
-    if requested:
-        psalter = Psalter(facing, printed=inventory, policy=policy)
+    tables: dict[str, list[Node]] = {}
+    if "books" in requested:
+        require(bool(psalms), "Missing Psalms numbering section")
+        psalm_section = page(psalms, inventory, facing, ours, theirs, policy=policy)
         tables = {
             "names": [names_table(tuple(inventory), ours, theirs, policy=policy)],
-            "psalm numbers": [psalm_numbers(psalter)],
-            "psalm verses": [psalm_verses(psalter)],
-            "psalm rows": [psalm_rows(psalter)],
-            "books": books_tables(inventory, facing, ours, theirs, policy=policy),
+            "books": books_tables(
+                inventory,
+                facing,
+                ours,
+                theirs,
+                list(usj.objects(psalm_section["content"])),
+                policy=policy,
+            ),
+        }
+    elif requested:
+        psalter = Psalter(facing, printed=inventory, policy=policy)
+        steps, _ = psalter.steps()
+        tables = {
+            "psalm numbers": [
+                table_rows(psalter.numbers(), ("This edition", "King James Bible"))
+            ],
+            "psalm verses": [
+                table_rows(
+                    [(_spans(numbers), STEPS[step]) for step, numbers in steps.items()],
+                    ("Psalms", "King James verse"),
+                )
+            ],
+            "psalm rows": [
+                table_rows(psalter.uneven_rows(), ("Psalms", "King James Bible"))
+            ],
         }
 
     def named(match: re.Match[str]) -> str:

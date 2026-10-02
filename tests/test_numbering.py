@@ -55,6 +55,7 @@ def printed(
     edition: bible.pipeline.Edition,
     facing: Inventory,
     names: tuple[bible.references.Books, ...],
+    sources: bible.sources.Sources,
 ) -> Printed:
     """One of the editor's pages as it prints, from what it is written."""
 
@@ -64,7 +65,15 @@ def printed(
         ours: bible.references.Books = names[0],
     ) -> str:
         return usj.serialize(
-            numbering.page(written, inventory, facing, ours, names[1], policy=policy)
+            numbering.page(
+                written,
+                inventory,
+                facing,
+                ours,
+                names[1],
+                policy=policy,
+                psalms=sources.authored["content/numbering-psalms.sfm"],
+            )
         )
 
     return page
@@ -295,6 +304,13 @@ def test_the_page_prints_its_tables(edition: bible.pipeline.Edition) -> None:
         assert f"\\tr\n\\tc1 {ours}\n\\tc2 {theirs}\n" in page
     assert "as Proverbs 22:8a, is an addition" in page
     assert "so that Psalm 33:13–17 is its 34:12–16." in page
+    headings = [
+        usj.text_of(block["content"])
+        for block in edition.documents[NUMBERING["id"]]["content"]
+        if isinstance(block, dict) and block.get("marker") == "is1"
+    ]
+    assert headings.index("Nehemias (Nehemiah)") < headings.index("Psalms")
+    assert headings.index("Psalms") < headings.index("Job")
     # Books that are numbered alike have no table.
     assert "\\is1 Judges" not in page and "\\is1 Ruth" not in page
 
@@ -303,9 +319,9 @@ def test_the_page_prints_its_tables(edition: bible.pipeline.Edition) -> None:
     "more", ["", "{names}\n{psalm numbers}\n{psalm verses}\n{psalm rows}\n"]
 )
 def test_the_page_asks_for_each_table_once(printed: Printed, more: str) -> None:
-    # All five, or none; and none twice.
+    # A complete set of tables, with none repeated.
     with pytest.raises(CheckFailed, match="not once each"):
-        printed(f"\\ip x\n{{names}}\n{{books}}\n{more}")
+        printed(f"\\ip x\n{{names}}\n{{books}}\n{{books}}\n{more}")
 
 
 @pytest.mark.parametrize(

@@ -460,7 +460,13 @@ def authored(
             text.startswith(f"\\id {entry['id']}\n"), f"Wrong id in {entry['file']}"
         )
         docs[entry["id"]] = numbering.page(
-            text, ctx.inventory, facing, ctx.books, theirs, policy=policy
+            text,
+            ctx.inventory,
+            facing,
+            ctx.books,
+            theirs,
+            policy=policy,
+            psalms=sources.authored["content/numbering-psalms.sfm"],
         )
     return docs
 
