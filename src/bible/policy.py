@@ -6,12 +6,19 @@ is checked here is what every file shares: its fields, and a reason for each
 departure from the sources.
 """
 
+from __future__ import annotations
+
+from collections.abc import Mapping
 from dataclasses import dataclass
+from pathlib import Path
 from types import MappingProxyType
+from typing import Any, cast
 
 from bible import paths
+from bible import policy_schema as schema
 from bible.checks import require, require_fields
 from bible.files import read_json
+from bible.policy_schema import Entry
 
 FILES = (
     "manifest",
@@ -31,17 +38,17 @@ FILES = (
     "witnesses",
 )
 # The edition's own pages, among the units the manifest lists.
-EDITOR = {"id": "CNC", "file": "content/introduction.sfm"}
-NUMBERING = {"id": "XXA", "file": "content/numbering.sfm"}
-OLD_TESTAMENT = {"id": "XXF", "file": "content/old-testament.sfm"}
-NEW_TESTAMENT = {"id": "XXG", "file": "content/new-testament.sfm"}
-APPENDICES = {"id": "GLO", "file": "content/appendices.sfm"}
+EDITOR: Entry = {"id": "CNC", "file": "content/introduction.sfm"}
+NUMBERING: Entry = {"id": "XXA", "file": "content/numbering.sfm"}
+OLD_TESTAMENT: Entry = {"id": "XXF", "file": "content/old-testament.sfm"}
+NEW_TESTAMENT: Entry = {"id": "XXG", "file": "content/new-testament.sfm"}
+APPENDICES: Entry = {"id": "GLO", "file": "content/appendices.sfm"}
 
 
-def freeze(value):
+def freeze(value: object) -> object:
     if isinstance(value, dict):
         return MappingProxyType({k: freeze(v) for k, v in value.items()})
-    if isinstance(value, list):
+    if isinstance(value, (list, tuple)):
         return tuple(freeze(v) for v in value)
     return value
 
@@ -50,32 +57,32 @@ def freeze(value):
 # can be kept for as long as the policy is.
 @dataclass(frozen=True, eq=False)
 class Policy:
-    manifest: MappingProxyType
-    sample: MappingProxyType
-    alexandrinus: MappingProxyType
-    brenton_notes: MappingProxyType
-    kjv_notes: MappingProxyType
-    introductions: MappingProxyType
-    abbreviations: MappingProxyType
-    terminology: MappingProxyType
-    prose: MappingProxyType
-    revisions: MappingProxyType
-    citations: MappingProxyType
-    quotations: MappingProxyType
-    turpie: MappingProxyType
-    versification: MappingProxyType
-    witnesses: MappingProxyType
+    manifest: schema.Manifest
+    sample: Mapping[str, tuple[int, ...]]
+    alexandrinus: schema.Alexandrinus
+    brenton_notes: schema.BrentonNotes
+    kjv_notes: schema.KjvNotes
+    introductions: schema.BookIntroductions
+    abbreviations: schema.Abbreviations
+    terminology: Mapping[str, schema.Terminology]
+    prose: Mapping[str, schema.Prose]
+    revisions: schema.Revisions
+    citations: schema.Citations
+    quotations: schema.Quotations
+    turpie: schema.Turpie
+    versification: schema.Versification
+    witnesses: tuple[schema.Witnesses, ...]
 
     @property
-    def title(self):
+    def title(self) -> str:
         return self.manifest["title"]
 
     @property
-    def scripture(self):
+    def scripture(self) -> tuple[Entry, ...]:
         return self.manifest["scripture"]
 
     @property
-    def entries(self):
+    def entries(self) -> tuple[Entry, ...]:
         """Every unit the edition prints, in its order."""
         manifest = self.manifest
         scripture = manifest["scripture"]
@@ -97,10 +104,10 @@ class Policy:
             *manifest["appendices"],
         )
 
-    def unit(self, code):
+    def unit(self, code: str) -> Entry:
         return next(u for u in self.scripture if u["id"] == code)
 
-    def replace(self, **files):
+    def replace(self, **files: object) -> Policy:
         """A policy with some of its files replaced: as a test declares them,
         or with what the build works out from the sources."""
         values = {name: getattr(self, name) for name in self.__dataclass_fields__}
@@ -110,12 +117,12 @@ class Policy:
         return policy
 
 
-def source_id(entry):
+def source_id(entry: Entry) -> str:
     """The id of the source file an entry is printed from."""
     return entry.get("source_id", entry["id"])
 
 
-def thaw(value):
+def thaw(value: object) -> Any:
     """A frozen value as plain lists and objects, to declare a changed policy."""
     if isinstance(value, (MappingProxyType, dict)):
         return {k: thaw(v) for k, v in value.items()}
@@ -124,7 +131,7 @@ def thaw(value):
     return value
 
 
-def check(policy):
+def check(policy: Policy) -> None:
     scripture = policy.scripture
     unplaced = [
         u["id"]
@@ -163,9 +170,9 @@ def check(policy):
             {"shapes"} if name == "Brenton" else (),
             f"{name} note file",
         )
-        for key, entry in notes["notes"].items():
-            require_fields(entry, {"why"}, fields, f"{name} note exception {key}")
-            require(entry["why"], f"{name} note exception without a why: {key}")
+        for key, override in notes["notes"].items():
+            require_fields(override, {"why"}, fields, f"{name} note exception {key}")
+            require(override["why"], f"{name} note exception without a why: {key}")
         for key, group in notes["corrections"].items():
             for entry in group if isinstance(group, tuple) else (group,):
                 require_fields(
@@ -208,10 +215,10 @@ def check(policy):
     # made in: one that named neither, or a unit that nothing reads, would be
     # met by nothing, unnoticed.
     matter = {e["id"] for e in policy.entries if "file" not in e and "section" not in e}
-    for name, group in policy.prose.items():
-        require_fields(group, {"why", "changes"}, (), f"Prose changes {name}")
-        require(group["why"], f"Prose changes without a why: {name}")
-        for change in group["changes"]:
+    for name, prose_group in policy.prose.items():
+        require_fields(prose_group, {"why", "changes"}, (), f"Prose changes {name}")
+        require(prose_group["why"], f"Prose changes without a why: {name}")
+        for change in prose_group["changes"]:
             require_fields(
                 change,
                 {"from", "to"},
@@ -228,26 +235,26 @@ def check(policy):
             )
 
 
-def load(directory=None):
+def load(directory: Path | None = None) -> Policy:
     """Read and check the edition's decisions."""
     directory = paths.EDITION_DIR if directory is None else directory
     data = {name: freeze(read_json(directory / f"{name}.json")) for name in FILES}
     policy = Policy(
-        manifest=data["manifest"],
-        sample=data["sample"],
-        alexandrinus=data["alexandrinus"],
-        brenton_notes=data["brenton-notes"],
-        kjv_notes=data["kjv-notes"],
-        introductions=data["book-introductions"],
-        abbreviations=data["abbreviations"],
-        terminology=data["terminology"],
-        prose=data["prose"],
-        revisions=data["revisions"],
-        citations=data["citations"],
-        quotations=data["quotations"],
-        turpie=data["turpie"],
-        versification=data["versification"],
-        witnesses=data["witnesses"],
+        manifest=cast(schema.Manifest, data["manifest"]),
+        sample=cast(Mapping[str, tuple[int, ...]], data["sample"]),
+        alexandrinus=cast(schema.Alexandrinus, data["alexandrinus"]),
+        brenton_notes=cast(schema.BrentonNotes, data["brenton-notes"]),
+        kjv_notes=cast(schema.KjvNotes, data["kjv-notes"]),
+        introductions=cast(schema.BookIntroductions, data["book-introductions"]),
+        abbreviations=cast(schema.Abbreviations, data["abbreviations"]),
+        terminology=cast(Mapping[str, schema.Terminology], data["terminology"]),
+        prose=cast(Mapping[str, schema.Prose], data["prose"]),
+        revisions=cast(schema.Revisions, data["revisions"]),
+        citations=cast(schema.Citations, data["citations"]),
+        quotations=cast(schema.Quotations, data["quotations"]),
+        turpie=cast(schema.Turpie, data["turpie"]),
+        versification=cast(schema.Versification, data["versification"]),
+        witnesses=cast(tuple[schema.Witnesses, ...], data["witnesses"]),
     )
     check(policy)
     return policy

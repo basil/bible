@@ -225,6 +225,29 @@ Native PTXprint font settings enable `onum` and `pnum` on all four faces, so cha
 
 `tests/test_olebfont.py` checks all four serialized faces against all selected sources: outlines, widths, sidebearings, hint programs and subroutines, original ligature and kerning lookups, layout metrics, names, donor additions and repeatable bytes. HarfBuzz shapes all ten digits under each numeral style and superscripts, including feature combinations, plus small caps and original kerning/ligatures, and every pair of Latin letters with an added glyph, which must be positioned as Erewhon positions it. `make test-tex` checks OLEBFont’s margin protrusion, including the oldstyle figures that production's font features set in place of the mapped ones. The font build scripts and notices are included in image checks and publication provenance. Generated fonts and their licenses reside in `/usr/local/share/fonts/olebfont` inside the image. `make font-specimen` renders `tests/tex/olebfont-specimen.tex` to `dist/olebfont-specimen.pdf`, a manual XeLaTeX specimen for the numeral forms, four faces, small caps, note-origin spacing and added accents; review it alongside actual PTXprint sample and Bible pages.
 
+## Linting and typing
+
+Run `make lint` before submitting a change. It checks `src`, `scripts` and
+`tests` with Black, isort and strict mypy, and checks the Makefile and Dockerfile
+with mbake, dockerfmt and hadolint. CI runs the same target after bootstrap.
+
+`make lint-fix` applies isort before Black and formats the Makefile and
+Dockerfile. Mypy and hadolint findings require a manual fix. Both targets use
+pinned container tools, run without networking, and write files as the invoking
+user. Run `make bootstrap` first to build the toolchain and pull the two lint
+images; subsequent lint runs use those local images.
+
+Annotate every Python function, fixture and callback, including collection
+elements and optional values. Keep JSON decision shapes in `policy_schema.py`
+and USJ shapes in `usj.py`; these describe the existing dictionaries, tuples and
+frozen mappings. Keep dynamic typing and casts at JSON or upstream-library
+boundaries. Do not suppress type errors in first-party modules.
+
+Rebuild with `make bootstrap` after formatting changes `Dockerfile`,
+`requirements.txt`, or the font scripts: their copies in the image must match
+the checkout before typesetting. Check that a second `make lint-fix` makes no
+further changes.
+
 ## Updating dependencies
 
 Renovate opens pull requests for the Python packages in `requirements.txt`, and for the Ubuntu base image and the PTXprint, usfmtc, and Utopia commits in the `Dockerfile`. The font archives in `sources/` are updated by hand. Each has a line in the `Dockerfile`'s `sha256sum` check and a line in `.dockerignore` that admits it. GFS Didot and Source Code Pro are extracted directly; Erewhon and Erewhon Math are consumed by the font assembler. The build refuses to run in an image made from a different `Dockerfile`, `requirements.txt`, font assembly script or notice, or font archive, so run `make bootstrap` after changing any of them.

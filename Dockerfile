@@ -1,4 +1,6 @@
 FROM ubuntu:resolute
+# Ubuntu packages follow the LTS repositories.
+# hadolint ignore=DL3008
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         ca-certificates \
@@ -32,12 +34,13 @@ COPY <<EOF /etc/fonts/conf.d/99-accept-local-fonts.conf
   </selectfont>
 </fontconfig>
 EOF
+
 # The font archives are committed as downloaded; sources/README.md says
 # where each came from. .dockerignore admits only the font archives.
 COPY sources/*.zip /opt/sources/
+WORKDIR /opt/sources
 RUN <<EOF
 set -eu
-cd /opt/sources
 # --strict: a malformed line would otherwise be skipped with only a warning.
 sha256sum --strict -c <<SUMS
 866855b0296579451c233fc78bec82918996a8df7341ee2f1c09d7bc94440680  GFS_Didot.zip
@@ -52,6 +55,7 @@ unzip -qj OTF-source-code-pro-2.042R-u_1.062R-i.zip 'OTF/*.otf' -d $fonts/source
 # are owner-only.
 chmod 644 $fonts/*/*.otf
 EOF
+
 COPY requirements.txt /opt/requirements.txt
 RUN python3 -m venv --system-site-packages /opt/venv \
     && /opt/venv/bin/pip install --no-cache-dir --only-binary=:all: \
@@ -70,6 +74,8 @@ ARG USFMTC_COMMIT=f1e4f23e83953032c0a9574a1df9ab4b4ec89a22
 ARG PTXPRINT_URL=https://github.com/sillsdev/ptx2pdf.git
 ARG PTXPRINT_TAG=3.0.44
 ARG PTXPRINT_COMMIT=4f8dee1cf6f3de2e5ecba9473cc2e92ddf72bbb6
+# Fetching and building several projects in one layer requires their directories.
+# hadolint ignore=DL3003
 RUN <<EOF
 set -eu
 fetch() {
@@ -103,6 +109,7 @@ cd /opt/utopia
 /opt/venv/bin/pip install --no-cache-dir --no-deps --no-build-isolation \
     /opt/usfmtc /opt/ptxprint
 EOF
+
 # Font assembly changes should not refetch upstream projects or Python wheels.
 COPY scripts/ /opt/scripts/
 RUN /opt/venv/bin/python /opt/scripts/patch_margin_convergence.py \
@@ -119,6 +126,7 @@ chmod 644 /usr/local/share/fonts/olebfont/*
 fc-cache -f
 fc-list
 EOF
+
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 TZ=UTC
 ENV PATH=/opt/venv/bin:$PATH
 WORKDIR /work

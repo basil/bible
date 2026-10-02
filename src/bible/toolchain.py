@@ -1,8 +1,11 @@
 """The container image the build runs in: its pinned tools and fonts, and the
 refusal to typeset in an image built from other pins than the checkout's."""
 
+from __future__ import annotations
+
 import subprocess
 from pathlib import Path
+from typing import IO
 
 from bible import paths
 from bible.checks import require
@@ -12,15 +15,21 @@ from bible.files import file_sha256
 UPSTREAM_PROJECTS = ("ptxprint", "usfmtc", "utopia")
 
 
-def run(*args, **kw):
-    return subprocess.run([str(a) for a in args], check=True, **kw)
+def run(
+    *args: str | int | Path,
+    stdout: IO[str] | int | None = None,
+    stderr: IO[str] | int | None = None,
+) -> subprocess.CompletedProcess[bytes]:
+    return subprocess.run(
+        [str(a) for a in args], check=True, stdout=stdout, stderr=stderr
+    )
 
 
-def capture(*args):
+def capture(*args: str | int | Path) -> str:
     return subprocess.check_output([str(a) for a in args], text=True)
 
 
-def font_archives():
+def font_archives() -> tuple[str, ...]:
     """The font archives the image was built from, relative to /opt as they are
     to the checkout. The image build checks their hashes; outside it there are none."""
     return tuple(
@@ -28,7 +37,7 @@ def font_archives():
     )
 
 
-def font_build_inputs():
+def font_build_inputs() -> tuple[str, ...]:
     """Assembly and notices are image inputs, checked alongside font pins."""
     return tuple(
         str(p.relative_to(paths.OPT))
@@ -37,12 +46,12 @@ def font_build_inputs():
     )
 
 
-def image_inputs():
+def image_inputs() -> tuple[str, ...]:
     """Every checkout file whose copy in the image must match it."""
     return ("Dockerfile", "requirements.txt", *font_build_inputs(), *font_archives())
 
 
-def check_image(root=paths.ROOT):
+def check_image(root: Path = paths.ROOT) -> None:
     require(
         paths.UPSTREAM.exists(), "Run this command through Make (make bootstrap first)"
     )
@@ -55,7 +64,7 @@ def check_image(root=paths.ROOT):
         )
 
 
-def upstream_commits():
+def upstream_commits() -> dict[str, str]:
     # The checkouts belong to root, which git refuses unless told otherwise.
     return {
         name: capture(
@@ -71,7 +80,7 @@ def upstream_commits():
     }
 
 
-def installed_fonts():
+def installed_fonts() -> dict[str, str]:
     """The hash of every font file the image installs, by file name."""
     fonts = {}
     for folder in (
@@ -87,9 +96,9 @@ def installed_fonts():
     return fonts
 
 
-def os_release():
+def os_release() -> list[str]:
     return Path("/etc/os-release").read_text(encoding="utf-8").splitlines()
 
 
-def os_packages():
+def os_packages() -> list[str]:
     return (paths.OPT / "os-packages.tsv").read_text(encoding="utf-8").splitlines()

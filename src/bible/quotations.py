@@ -1,29 +1,52 @@
 """Turpie's quotation heads as transcribed, and the edition's choices among them."""
 
+from __future__ import annotations
+
 import functools
 import re
+from collections.abc import Iterable, Sequence
+from typing import TypedDict
 
+import bible.policy
+import bible.references
 from bible.checks import require
+from bible.policy_schema import TurpieRows
 from bible.references import parse_passage, parse_passages
 from bible.versification import lxx_to_edition, mapped_passages, unused_exceptions
+
+ReviewedRow = TypedDict(
+    "ReviewedRow",
+    {
+        "id": str,
+        "class": str,
+        "table_code": str,
+        "nt": list[bible.references.Passage],
+        "ot": list[bible.references.Passage],
+    },
+)
+
 
 CLASSES = {"A", "B", "C", "D", "E"}
 # Turpie's heads as read from the page, and the edition's exclusions, class
 # conflicts, and Brenton note merges.
 
 
-def scope(table_code):
+def scope(table_code: str) -> str | None:
     """The first Roman numeral component of a Turpie table code, if any."""
     match = re.match(r"^[A-E]\.(?:[sd]\.)?(I{1,3})(?:\.|$)", table_code)
     return match[1] if match else None
 
 
-def nt_verses(passages):
+def nt_verses(
+    passages: Iterable[bible.references.Passage],
+) -> list[bible.references.Verse]:
     """Every verse of New Testament passages."""
     return [verse for passage in passages for verse in passage.verses]
 
 
-def brenton_verses(passages, *, policy):
+def brenton_verses(
+    passages: Iterable[bible.references.Passage], *, policy: bible.policy.Policy
+) -> list[bible.references.Verse]:
     """Every printed Brenton verse of Septuagint passages."""
     return [
         lxx_to_edition(verse, policy=policy)
@@ -32,11 +55,11 @@ def brenton_verses(passages, *, policy):
     ]
 
 
-def _unique(values, label):
+def _unique(values: Sequence[bible.references.Verse], label: str) -> None:
     require(len(values) == len(set(values)), f"Duplicate {label}")
 
 
-def _check_transcription(heads):
+def _check_transcription(heads: Sequence[TurpieRows]) -> None:
     ids = [head["id"] for head in heads]
     require(
         ids == [f"Q{i:03d}" for i in range(1, 283)],
@@ -73,7 +96,7 @@ def _check_transcription(heads):
             )
         if head["kind"] == "table":
             require(
-                head.get("table_code", "").startswith(head["class"] + ".")
+                head.get("table_code", "").startswith((head["class"] or "") + ".")
                 and head.get("printed_sequence"),
                 f"Missing table heading or sequence: {head['id']}",
             )
@@ -85,7 +108,7 @@ def _check_transcription(heads):
 
 
 @functools.cache
-def reviewed_rows(*, policy):
+def reviewed_rows(*, policy: bible.policy.Policy) -> list[ReviewedRow]:
     """Turpie's heads that the edition links, as passages, with its decisions checked.
 
     The edition links each head's primary normalized passages; only an exclusion,
@@ -105,7 +128,7 @@ def reviewed_rows(*, policy):
         and all(n.get("why") for n in narrowed.values()),
         "Narrowing of no linked Turpie head, or without a reason",
     )
-    rows = []
+    rows: list[ReviewedRow] = []
     # Every Septuagint verse the rows link, so an exception no link reaches is
     # caught. An alternative the edition doesn't link can't justify one: the
     # introduction's table would owe it a row for a verse no link names.
@@ -124,7 +147,9 @@ def reviewed_rows(*, policy):
             head["lxx"].get("printed") and head["lxx"].get("normalized"),
             f"No printed Septuagint heading: {head['id']}",
         )
-        ot = parse_passages(head["lxx"]["normalized"])
+        normalized = head["lxx"]["normalized"]
+        assert normalized is not None
+        ot = parse_passages(normalized)
         if narrowing := narrowed.get(head["id"]):
             part = parse_passages(narrowing["lxx"])
             require(
@@ -132,11 +157,15 @@ def reviewed_rows(*, policy):
                 f"Narrowing to what isn't part of its head: {head['id']}",
             )
             ot = part
-        row = {
+        classification = head["class"]
+        assert classification is not None
+        normalized_nt = head["nt"]["normalized"]
+        assert normalized_nt is not None
+        row: ReviewedRow = {
             "id": head["id"],
-            "class": head["class"],
+            "class": classification,
             "table_code": head["table_code"],
-            "nt": parse_passages(head["nt"]["normalized"]),
+            "nt": parse_passages(normalized_nt),
             "ot": ot,
         }
         mapped = brenton_verses(row["ot"], policy=policy)

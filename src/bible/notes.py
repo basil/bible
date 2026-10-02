@@ -16,15 +16,23 @@ the edition changes nothing of a note's words but its citations and
 abbreviations, which print in the edition's forms.
 """
 
+from __future__ import annotations
+
 import re
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass, replace
 from difflib import SequenceMatcher
+from typing import Unpack
 
+import bible.references
+import bible.terminology
 from bible import citations, lemmas, terminology, usfm, usj
 from bible.checks import require
+from bible.citations import Citation
 from bible.repairs import change
 from bible.scripture import plain, word_spans
 from bible.usfm import GREEK, HEBREW
+from bible.usj import Content, Node
 
 # Labels that introduce another rendering of the glossed words, which is italic.
 RENDERING_LABELS = {
@@ -134,18 +142,18 @@ class Body:
     """
 
     plain: str
-    roles: tuple
-    reading: tuple | None
+    roles: tuple[tuple[int, int, str], ...]
+    reading: tuple[int, int] | None
     rule: str
-    citations: tuple = ()
-    terms: tuple = ()
+    citations: tuple[tuple[int, int, Citation], ...] = ()
+    terms: tuple[terminology.Term, ...] = ()
 
     @property
-    def alternative(self):
+    def alternative(self) -> str | None:
         return self.plain[slice(*self.reading)] if self.reading else None
 
     @property
-    def leaves(self):
+    def leaves(self) -> list[tuple[int, int, str, Citation | None]]:
         """The stretches of one role, each citation a stretch of its own, as
         (start, end, role, citation)."""
         intervals = list(self.roles)
@@ -166,7 +174,9 @@ class Body:
 class Roles:
     """A note's roles while they are being read."""
 
-    def __init__(self, text, intervals=None):
+    def __init__(
+        self, text: str, intervals: Iterable[tuple[int, int, str]] | None = None
+    ) -> None:
         self.plain = text
         self.intervals = (
             list(intervals)
@@ -174,18 +184,18 @@ class Roles:
             else [(0, len(text), "text")] if text else []
         )
 
-    def kind_at(self, offset):
+    def kind_at(self, offset: int) -> str:
         return next(
             kind for start, end, kind in self.intervals if start <= offset < end
         )
 
-    def mark(self, start, end, kind):
+    def mark(self, start: int, end: int, kind: str) -> None:
         if start == end:
             return
         require(
             0 <= start < end <= len(self.plain), "Note interpretation outside content"
         )
-        result = []
+        result: list[tuple[int, int, str]] = []
         for first, last, prior in self.intervals:
             if last <= start or first >= end:
                 result.append((first, last, prior))
@@ -202,7 +212,9 @@ class Roles:
             else:
                 self.intervals.append((first, last, role))
 
-    def reading(self, start, end, kind="alternative"):
+    def reading(
+        self, start: int, end: int, kind: str = "alternative"
+    ) -> tuple[int, int]:
         """Mark a rendering, without the punctuation at either end of it."""
         while start < end and self.plain[start] in TRIM:
             start += 1
@@ -213,7 +225,9 @@ class Roles:
                 self.mark(max(first, start), min(last, end), kind)
         return start, end
 
-    def body(self, reading, rule, *, trim=False):
+    def body(
+        self, reading: tuple[int, int] | None, rule: str, *, trim: bool = False
+    ) -> Body:
         start = len(self.plain) - len(self.plain.lstrip()) if trim else 0
         end = len(self.plain.rstrip()) if trim else len(self.plain)
         roles = tuple(
@@ -230,7 +244,7 @@ class Roles:
         return Body(self.plain[start:end], roles, reading, rule)
 
 
-def labelled_pieces(text):
+def labelled_pieces(text: str) -> list[tuple[str, str]]:
     """Plain note text as (kind, text) pieces, its labels found by KJV_LABEL."""
     pieces = []
     last = 0
@@ -244,7 +258,7 @@ def labelled_pieces(text):
     return pieces
 
 
-def source_text(note):
+def source_text(note: Node) -> str:
     """A source note's words after its origin, as its source marks them up:
     what the decision files pin and the review shows."""
     return usj.serialize(
@@ -257,7 +271,7 @@ def source_text(note):
     )
 
 
-def source_pieces(note):
+def source_pieces(note: Node) -> list[tuple[str, str]]:
     """One of Brenton's notes as (kind, text) pieces.
 
     Brenton printed his labels in italic, and the eBible text marks them fqa,
@@ -266,9 +280,10 @@ def source_pieces(note):
     """
     pieces = [("text", "See ")] if note["marker"] == "x" else []
 
-    def visit(items, kind):
+    def visit(items: Content, kind: str | None) -> None:
         for item in items:
             if isinstance(item, str):
+                assert kind is not None
                 pieces.append((kind, item))
                 continue
             marker = item.get("marker")
@@ -294,7 +309,7 @@ def source_pieces(note):
             visit([item], None)
     # Merge runs that one marker split ("\\ft + \\ft 'and ...'"), and take the
     # full stop that follows "Gr" or "Lit" into the label.
-    merged = []
+    merged: list[tuple[str, str]] = []
     for kind, text in pieces:
         # "\\+it Gr. \\+it* name": one space where two runs meet.
         if merged and merged[-1][1].endswith(" "):
@@ -314,7 +329,7 @@ def source_pieces(note):
             merged.append((kind, text[1:].lstrip()))
         else:
             merged.append((kind, text))
-    result = []
+    result: list[tuple[str, str]] = []
     for kind, text in merged:
         if kind == "emphasis":
             result.append(("label" if text.strip() in LABELS else "cited", text))
@@ -326,7 +341,7 @@ def source_pieces(note):
     return result
 
 
-def interpreted(pieces, key):
+def interpreted(pieces: Sequence[tuple[str, str]], key: str) -> Body:
     """Read a source note's roles, and the first rendering, which measures
     the words the note is about."""
     text = "".join(value for _, value in pieces)
@@ -447,9 +462,10 @@ def interpreted(pieces, key):
     return meaning.body(alternative, "rendering" if alternative else "roman", trim=True)
 
 
-def declared_readings(body, override, key):
+def declared_readings(body: Body, override: str | None, key: str) -> Body:
     """A note with the renderings an exception declares, between underscores,
     in place of those the rules found."""
+    assert override is not None
     words = override.replace("_", "")
     require(words == body.plain, f"Note override does not match the note: {key}")
     require(override.count("_") % 2 == 0, f"Unclosed italic in note override: {key}")
@@ -482,7 +498,7 @@ def declared_readings(body, override, key):
     return roles.body(reading, "override")
 
 
-def reading_of(note, override, key):
+def reading_of(note: Node, override: str | None, key: str) -> str | None:
     """The rendering by which a source note measures the words it is about."""
     body = interpreted(source_pieces(note), key)
     if override is not None:
@@ -490,9 +506,9 @@ def reading_of(note, override, key):
     return body.alternative
 
 
-def visual(body):
+def visual(body: Body) -> list[tuple[str, str]]:
     """A body's roles as they print: readings, citations and the rest."""
-    result = []
+    result: list[tuple[str, str]] = []
     for start, end, role in body.roles:
         kind = (
             "reading"
@@ -506,7 +522,13 @@ def visual(body):
     return result
 
 
-def source_body(pieces, found, override, key, source):
+def source_body(
+    pieces: Sequence[tuple[str, str]],
+    found: Sequence[Citation],
+    override: str | None,
+    key: str,
+    source: str,
+) -> Body:
     """A source note's body: its roles read, an exception's renderings in
     place of the rules', and its citations bound to their words."""
     text = "".join(value for _, value in pieces)
@@ -527,7 +549,7 @@ def source_body(pieces, found, override, key, source):
     return bound(body, found, key, leading)
 
 
-def bound(body, found, key, leading=0):
+def bound(body: Body, found: Sequence[Citation], key: str, leading: int = 0) -> Body:
     """A body with its citations bound to the words that write them."""
     spans, previous = [], 0
     for citation in found:
@@ -542,7 +564,7 @@ def bound(body, found, key, leading=0):
     return replace(body, citations=tuple(spans))
 
 
-def authored_body(note, override, key):
+def authored_body(note: Node, override: str | None, key: str) -> Body:
     """The body of a note the edition writes, whose markers say what each
     part is: \\fl a label, \\fqa an alternative rendering, \\fq quoted words,
     \\xt a citation, \\ft the rest. A rendering or quotation carries no space
@@ -559,7 +581,7 @@ def authored_body(note, override, key):
             and all(isinstance(c, str) for c in item["content"]),
             f"Unknown part of an edition note: {key}",
         )
-        runs.append([AUTHORED[item["marker"]], "".join(item["content"])])
+        runs.append([AUTHORED[item["marker"]], usj.text_of(item["content"])])
     for index, (role, value) in enumerate(runs):
         if role in ("alternative", "quotation"):
             kept = value.rstrip(" ")
@@ -583,11 +605,11 @@ def authored_body(note, override, key):
     return body
 
 
-def with_terms(body, terms):
+def with_terms(body: Body, terms: bible.terminology.Registry) -> Body:
     return replace(body, terms=terminology.recognize(body.plain, terms))
 
 
-def edited(body, before, after, key):
+def edited(body: Body, before: str, after: str, key: str) -> Body:
     """A body with a declared change to its words, its roles, reading,
     citations and terms carried through the change."""
     text = body.plain
@@ -605,7 +627,9 @@ def edited(body, before, after, key):
     ]
     owner = touched[0] if touched else 0
     require(touched or start == 0, f"Prose edit has no words to change: {key}")
-    roles, bound_citations, at = [], [], 0
+    roles: list[tuple[int, int, str]] = []
+    bound_citations: list[tuple[int, int, Citation]] = []
+    at = 0
     for n, (a, b, role, citation) in enumerate(leaves):
         gone = max(min(b, end) - max(a, start), 0)
         length = (b - a) - gone + (len(added) if n == owner else 0)
@@ -619,7 +643,7 @@ def edited(body, before, after, key):
             roles.append((at, at + length, role))
         at += length
 
-    def moved(at, closing=False):
+    def moved(at: int, closing: bool = False) -> int:
         if at < start or at == start and not closing:
             return at
         if at >= end:
@@ -645,12 +669,12 @@ def edited(body, before, after, key):
 # How a note prints.
 
 
-def text_of(runs):
+def text_of(runs: Sequence[tuple[str, str]]) -> str:
     return "".join(value for _, value in runs)
 
 
-def merged_runs(runs):
-    result = []
+def merged_runs(runs: Iterable[tuple[str, str]]) -> list[tuple[str, str]]:
+    result: list[tuple[str, str]] = []
     for role, value in runs:
         if not value:
             continue
@@ -661,7 +685,13 @@ def merged_runs(runs):
     return result
 
 
-def displayed(body, before="", after="", *, books=None):
+def displayed(
+    body: Body,
+    before: str = "",
+    after: str = "",
+    *,
+    books: bible.references.Books | None = None,
+) -> tuple[list[tuple[str, str]], tuple[terminology.Term, ...], list[tuple[str, str]]]:
     """A body as runs of commentary, readings and citations: each rendering
     widened as its lemma was, each citation as the edition prints it. Returns
     the runs, the terms where they now stand, and the runs before widening."""
@@ -669,6 +699,7 @@ def displayed(body, before="", after="", *, books=None):
     for start, end, role, citation in body.leaves:
         value = body.plain[start:end]
         if citation is not None:
+            assert books is not None
             value = citations.printed(citation, books)
             if citation.items:
                 role = "citation"
@@ -702,7 +733,7 @@ def displayed(body, before="", after="", *, books=None):
     return runs, terms, original
 
 
-def is_sentence(runs):
+def is_sentence(runs: Sequence[tuple[str, str]]) -> bool:
     """Whether the note is a sentence of its own: it opens with neither a label,
     a rendering nor a reference, and has a finite verb outside its renderings."""
     roman = "".join(
@@ -715,7 +746,9 @@ def is_sentence(runs):
     )
 
 
-def sliced(runs, start=0, end=None):
+def sliced(
+    runs: Sequence[tuple[str, str]], start: int = 0, end: int | None = None
+) -> list[tuple[str, str]]:
     end = len(text_of(runs)) if end is None else end
     result, offset = [], 0
     for role, value in runs:
@@ -726,7 +759,14 @@ def sliced(runs, start=0, end=None):
     return result
 
 
-def finished(runs, terms, lemma, sentence, registry, key):
+def finished(
+    runs: list[tuple[str, str]],
+    terms: tuple[terminology.Term, ...],
+    lemma: str | None,
+    sentence: bool | None,
+    registry: terminology.Registry,
+    key: str,
+) -> list[tuple[str, str]]:
     """The note as it prints: its terms in the edition's forms; a sentence
     with its capital and a closing full stop; any other note without one, and
     after a lemma, running on from the colon ("elder: or, greater") unless it
@@ -793,7 +833,7 @@ def finished(runs, terms, lemma, sentence, registry, key):
     return runs
 
 
-def underscored(runs):
+def underscored(runs: Sequence[tuple[str, str]]) -> str:
     """The note with its italic between underscores, as the exception files write it."""
     result, reading = [], False
     for role, value in runs:
@@ -804,11 +844,16 @@ def underscored(runs):
     return "".join(result) + ("_" if reading else "")
 
 
-def footnote(reference, lemma, runs, **extra):
+def footnote(
+    reference: str,
+    lemma: str | None,
+    runs: Iterable[tuple[str, str]],
+    **extra: Unpack[usj.Extra],
+) -> Node:
     """A printed note: its verse, the words it is about, and its text. A
     marker takes the space after it, so a run's leading space is written at
     the end of the run before."""
-    parts = []
+    parts: list[list[str]] = []
     for role, value in runs:
         marker = PRINTED[role]
         spaces = len(value) - len(value.lstrip())

@@ -1,5 +1,7 @@
 """The PTXprint overrides in config/: each one must change something."""
 
+from __future__ import annotations
+
 import configparser
 import io
 from collections import defaultdict
@@ -14,19 +16,21 @@ LAYOUT = paths.CONFIG_DIR / "layout.ini"
 STYLE_MODS = paths.CONFIG_DIR / "ptxprint-mods.sty"
 
 
-def read_cfg(text):
+def read_cfg(text: str) -> configparser.ConfigParser:
     cfg = configparser.ConfigParser(interpolation=None)
     cfg.read_string(text)
     return cfg
 
 
-def overlay_values():
+def overlay_values() -> dict[str, str]:
     """Each "section/key" that layout.ini sets, with its value."""
     cfg = read_cfg(LAYOUT.read_text(encoding="utf-8"))
     return {f"{s}/{k}": v for s in cfg.sections() for k, v in cfg[s].items()}
 
 
-def normalized(key, value):
+def normalized(
+    key: str, value: str
+) -> bool | float | str | tuple[str | frozenset[str], ...]:
     """A cfg value as PTXprint reads it, by the kind of widget that holds it."""
     info = ModelMap.get(key)
     widget = info.widget if info and info.widget else ""
@@ -42,7 +46,7 @@ def normalized(key, value):
     return value
 
 
-def test_layout_overrides_only_non_default_values():
+def test_layout_overrides_only_non_default_values() -> None:
     baseline = read_cfg(bsb_baseline()[0])
     repeated = [
         f"{key} = {value}"
@@ -55,7 +59,7 @@ def test_layout_overrides_only_non_default_values():
     assert repeated == [], "layout.ini repeats BSB's defaults"
 
 
-def test_layout_sets_every_key_of_a_shared_setting():
+def test_layout_sets_every_key_of_a_shared_setting() -> None:
     # PTXprint writes a widget shared by several keys under each of them, and
     # on loading, whichever comes last in the file wins. The merged file keeps
     # BSB's order, so setting one key alone can be undone by BSB's value for
@@ -72,7 +76,7 @@ def test_layout_sets_every_key_of_a_shared_setting():
         assert len(values) == 1, f"{sorted(group)} disagree"
 
 
-def test_publication_data_uses_project_license_fields():
+def test_publication_data_uses_project_license_fields() -> None:
     cfg = read_cfg(LAYOUT.read_text(encoding="utf-8"))
     front = FRONT_TEMPLATE.read_text(encoding="utf-8")
     assert cfg["project"]["copyright"] == "Copyright © 2026 Basil Crow"
@@ -94,14 +98,14 @@ def test_publication_data_uses_project_license_fields():
     assert cfg["project"]["ifcolophon"] == "False"
 
 
-def style_value(value):
+def style_value(value: str) -> str | float:
     try:
         return float(value)
     except ValueError:
         return value.strip()
 
 
-def test_style_mods_override_only_non_default_fields():
+def test_style_mods_override_only_non_default_fields() -> None:
     # The order template.tex loads them in; BSB leaves custom.sty off.
     src = paths.UPSTREAM / "src"
     with (src / "usfm_sb.sty").open(encoding="utf-8") as f:

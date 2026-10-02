@@ -1,13 +1,18 @@
 """Inspect serialized production fonts and shape them through HarfBuzz."""
 
+from __future__ import annotations
+
 import csv
 import json
 import subprocess
 import unicodedata
 import zipfile
+from collections.abc import Iterable, Sequence
 from copy import deepcopy
 from functools import cache
 from io import BytesIO
+from pathlib import Path
+from typing import Any, TypedDict, cast
 
 import pytest
 from build_olebfont import (
@@ -38,12 +43,25 @@ EREWHON = paths.FONT_ARCHIVES / "erewhon.zip"
 MATH = paths.FONT_ARCHIVES / "erewhon-math.zip"
 
 
-def utopia(style):
+def utopia(style: str) -> Path:
     return paths.UTOPIA / f"dist/Utopia-{style}.otf"
 
 
+class GlyphPosition(TypedDict):
+    g: int
+    cl: int
+    ax: int
+    ay: int
+    dx: int
+    dy: int
+
+
+type Outline = list[tuple[str, tuple[tuple[float, float], ...]]]
+type Program = list[int | float | str | bytes]
+
+
 @pytest.fixture
-def donor_path(style, tmp_path):
+def donor_path(style: str, tmp_path: Path) -> Path:
     path = tmp_path / f"Erewhon-{style}.otf"
     with zipfile.ZipFile(EREWHON) as archive:
         path.write_bytes(archive.read(EREWHON_MEMBER.format(style)))
@@ -51,19 +69,24 @@ def donor_path(style, tmp_path):
 
 
 @pytest.fixture
-def scaled_donor(style, donor_path):
+def scaled_donor(style: str, donor_path: Path) -> Path:
     path = donor_path.with_name("scaled.otf")
     normalized_donor(TTFont(donor_path), style).save(path)
     return path
 
 
-def outline(glyphs, name):
+def outline(
+    glyphs: Any, name: str
+) -> list[tuple[str, tuple[tuple[float, float], ...]]]:
     pen = RecordingPen()
     glyphs[name].draw(pen)
-    return pen.value
+    return cast(Outline, pen.value)
 
 
-def assert_outlines(a, b):
+def assert_outlines(
+    a: Sequence[tuple[str, Sequence[tuple[float, float]]]],
+    b: Sequence[tuple[str, Sequence[tuple[float, float]]]],
+) -> None:
     assert len(a) == len(b)
     for (op_a, points_a), (op_b, points_b) in zip(a, b):
         assert op_a == op_b
@@ -74,7 +97,9 @@ def assert_outlines(a, b):
             assert p == pytest.approx(q, abs=0.002)
 
 
-def assert_programs(a, b):
+def assert_programs(
+    a: Sequence[int | float | str | bytes], b: Sequence[int | float | str | bytes]
+) -> None:
     assert len(a) == len(b)
     for x, y in zip(a, b):
         if isinstance(x, (float, int)):
@@ -83,29 +108,34 @@ def assert_programs(a, b):
             assert x == y
 
 
-def program(cs):
+def program(cs: Any) -> list[int | float | str | bytes]:
     cs.decompile()
-    return cs.program
+    return cast(Program, cs.program)
 
 
 @cache
-def shape(path, text, features):
-    return json.loads(
-        subprocess.check_output(
-            [
-                "hb-shape",
-                str(path),
-                text,
-                "--features=" + features,
-                "--output-format=json",
-                "--no-glyph-names",
-            ],
-            text=True,
-        )
+def shape(path: Path, text: str, features: str) -> list[GlyphPosition]:
+    return cast(
+        list[GlyphPosition],
+        json.loads(
+            subprocess.check_output(
+                [
+                    "hb-shape",
+                    str(path),
+                    text,
+                    "--features=" + features,
+                    "--output-format=json",
+                    "--no-glyph-names",
+                ],
+                text=True,
+            )
+        ),
     )
 
 
-def shape_lines(path, lines, features):
+def shape_lines(
+    path: Path, lines: Iterable[str], features: str
+) -> list[list[GlyphPosition]]:
     """Shape each line by itself, in one run."""
     shaped = subprocess.run(
         [
@@ -123,7 +153,7 @@ def shape_lines(path, lines, features):
     return [json.loads(line) for line in shaped.stdout.splitlines()]
 
 
-def glyph_ids(base, donor):
+def glyph_ids(base: TTFont, donor: TTFont) -> dict[str, int]:
     """The combined font's glyph index for each source glyph name."""
     donor_map, added = donor_names(base, donor)
     # The inventory follows donor order after the 229 authoritative glyphs.
@@ -134,7 +164,9 @@ def glyph_ids(base, donor):
 
 
 @pytest.mark.parametrize("style", STYLES)
-def test_original_typography_and_hint_dependencies(style, donor_path):
+def test_original_typography_and_hint_dependencies(
+    style: str, donor_path: Path
+) -> None:
     # Keep this contract independent of the builder's exception list: adding
     # another replacement there must fail rather than broaden this test.
     assert SUPERIOR_CODES == (0x00B9, 0x00B2, 0x00B3)
@@ -227,8 +259,8 @@ def test_original_typography_and_hint_dependencies(style, donor_path):
         assert (expected_width, bearing) == result["hmtx"][target_g]
         assert_programs(expected_program, program(rt.CharStrings[target_g]))
     assert donor_cmap.keys() <= result_cmap.keys()
-    for key in (1, 16):
-        assert result["name"].getDebugName(key) == FAMILY
+    for name_id in (1, 16):
+        assert result["name"].getDebugName(name_id) == FAMILY
     assert result["name"].getDebugName(6) == f"{FAMILY}-{style}"
     assert result["head"].macStyle == base["head"].macStyle
     assert result["OS/2"].fsSelection == base["OS/2"].fsSelection
@@ -236,7 +268,7 @@ def test_original_typography_and_hint_dependencies(style, donor_path):
 
 
 @pytest.mark.parametrize("style", STYLES)
-def test_numerals_smallcaps_and_shaping(style, scaled_donor):
+def test_numerals_smallcaps_and_shaping(style: str, scaled_donor: Path) -> None:
     path = FONTS / font_file(style)
     donor = TTFont(scaled_donor)
     ids = glyph_ids(TTFont(utopia(style)), donor)
@@ -289,7 +321,9 @@ def test_numerals_smallcaps_and_shaping(style, scaled_donor):
 
 
 @pytest.mark.parametrize("style", STYLES)
-def test_added_glyphs_are_positioned_as_the_donor_positions_them(style, scaled_donor):
+def test_added_glyphs_are_positioned_as_the_donor_positions_them(
+    style: str, scaled_donor: Path
+) -> None:
     # Every pair of the donor's letters, not a few witnesses: a donor subtable
     # that settles a pair at zero must still keep a later one from moving it.
     donor, base = TTFont(scaled_donor), TTFont(utopia(style))
@@ -299,7 +333,9 @@ def test_added_glyphs_are_positioned_as_the_donor_positions_them(style, scaled_d
     donor_widths = [donor["hmtx"][g][0] for g in donor_order]
     widths = [result["hmtx"][g][0] for g in result.getGlyphOrder()]
 
-    def adjustments(shaped, widths):
+    def adjustments(
+        shaped: Sequence[GlyphPosition], widths: Sequence[int]
+    ) -> list[tuple[int, int, int, int]]:
         # The sources' unadjusted widths differ; compare what is added to them.
         return [(i["ax"] - widths[i["g"]], i["ay"], i["dx"], i["dy"]) for i in shaped]
 
@@ -330,7 +366,7 @@ def test_added_glyphs_are_positioned_as_the_donor_positions_them(style, scaled_d
     assert checked > 500_000
 
 
-def test_rename_leaves_layout_tags_alone():
+def test_rename_leaves_layout_tags_alone() -> None:
     # "zero" names both a digit's glyph and the slashed-zero feature.
     font = TTFont()
     font.setGlyphOrder([".notdef", "zero", "zero.slash"])
@@ -343,8 +379,8 @@ def test_rename_leaves_layout_tags_alone():
     assert table.LookupList.Lookup[0].SubTable[0].mapping == {"cid00001": "cid00002"}
 
 
-def test_an_imported_language_keeps_only_the_original_default_features():
-    def layout(features):
+def test_an_imported_language_keeps_only_the_original_default_features() -> None:
+    def layout(features: str) -> Any:
         font = TTFont()
         font.setGlyphOrder([".notdef", "A", "B"])
         addOpenTypeFeaturesFromString(font, features)
@@ -366,7 +402,7 @@ def test_an_imported_language_keeps_only_the_original_default_features():
         r.Script for r in base.ScriptList.ScriptRecord if r.ScriptTag == "latn"
     )
 
-    def tags(lang):
+    def tags(lang: Any) -> list[str]:
         return sorted(
             base.FeatureList.FeatureRecord[i].FeatureTag for i in lang.FeatureIndex
         )
@@ -376,7 +412,7 @@ def test_an_imported_language_keeps_only_the_original_default_features():
     assert tags(latin.LangSysRecord[0].LangSys) == ["liga", "smcp"]
 
 
-def test_deterministic_build(tmp_path):
+def test_deterministic_build(tmp_path: Path) -> None:
     with zipfile.ZipFile(EREWHON) as z:
         for style in STYLES:
             path = tmp_path / font_file(style)
@@ -388,7 +424,7 @@ def test_deterministic_build(tmp_path):
 
 
 @pytest.mark.parametrize("style", STYLES)
-def test_every_selected_glyph_has_correct_source_and_scale(style):
+def test_every_selected_glyph_has_correct_source_and_scale(style: str) -> None:
     result_path = FONTS / font_file(style)
     result = TTFont(result_path)
     sources = {"Utopia-" + style: TTFont(utopia(style))}
@@ -547,7 +583,7 @@ def test_every_selected_glyph_has_correct_source_and_scale(style):
     assert all(g["g"] != 0 for g in shaped)
 
 
-def test_inverse_scale_restores_legacy_reference_geometry():
+def test_inverse_scale_restores_legacy_reference_geometry() -> None:
     # Compare actual curve bounds: contour starting points differ between
     # Utopia and Erewhon, even when they describe the same geometry.
     from fontTools.pens.boundsPen import BoundsPen
@@ -570,7 +606,7 @@ def test_inverse_scale_restores_legacy_reference_geometry():
             assert abs(ut["hmtx"][uc[ord(char)]][0] - er["hmtx"][ec[ord(char)]][0]) <= 1
 
 
-def test_inventory_is_complete_and_reproducible(tmp_path):
+def test_inventory_is_complete_and_reproducible(tmp_path: Path) -> None:
     from inventory_fonts import inventory
 
     inventory(paths.UTOPIA, paths.FONT_ARCHIVES, tmp_path)
@@ -595,7 +631,7 @@ def test_inventory_is_complete_and_reproducible(tmp_path):
         )
 
 
-def test_ghost_hint_markers_and_edges_survive_scaling():
+def test_ghost_hint_markers_and_edges_survive_scaling() -> None:
     from font_sources import scaled_stems
 
     # Bottom edge at zero, then a real stem at 218, then a top edge at 650.

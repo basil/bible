@@ -2,13 +2,18 @@
 Settings.xml and BookNames.xml, and its configuration, which overlays config/
 on the Berean Standard Bible (BSB) layout that ships with PTXprint."""
 
+from __future__ import annotations
+
 import configparser
 import shutil
 import xml.etree.ElementTree as ET
 import zipfile
+from collections.abc import Sequence
 from pathlib import Path
 from typing import NamedTuple
 
+import bible.policy
+import bible.sources
 from bible import assembly, paths
 from bible.checks import require
 from bible.files import write_json
@@ -26,7 +31,7 @@ class ProjectOutput(NamedTuple):
     ids: list[str]
 
 
-def bsb_baseline():
+def bsb_baseline() -> tuple[str, ...]:
     """BSB's PTXprint configuration and stylesheet, which config/ overrides."""
     with zipfile.ZipFile(paths.UPSTREAM / "resources/bsb.zip") as z:
         return (
@@ -35,17 +40,17 @@ def bsb_baseline():
         )
 
 
-def project_usfm(project, code):
+def project_usfm(project: Path, code: str) -> Path:
     """A prepared unit's file in the PTXprint project."""
     return project / f"{code}.usfm"
 
 
-def processed_usfm(project, code):
+def processed_usfm(project: Path, code: str) -> Path:
     """PTXprint's processed copy of a prepared unit."""
     return project / PROCESSED_DIR / f"{code}-Bible.usfm"
 
 
-def project_settings(project):
+def project_settings(project: Path) -> configparser.ConfigParser:
     """The PTXprint configuration the project was written with."""
     cfg = configparser.ConfigParser(interpolation=None)
     # read() would silently skip a missing file.
@@ -53,12 +58,14 @@ def project_settings(project):
     return cfg
 
 
-def text_font(cfg):
+def text_font(cfg: configparser.ConfigParser) -> str:
     """The family of the body face, from PTXprint's "family|style|..." value."""
     return cfg["document"]["fontregular"].split("|")[0]
 
 
-def book_names(policy, sources, ids):
+def book_names(
+    policy: bible.policy.Policy, sources: bible.sources.Sources, ids: Sequence[str]
+) -> ET.Element:
     """PTXprint's BookNames.xml for the units a project prints."""
     root = ET.Element("BookNames")
     entries = {entry["id"]: entry for entry in policy.entries}
@@ -68,13 +75,24 @@ def book_names(policy, sources, ids):
         ET.SubElement(
             root,
             "book",
-            code=code,
-            **{attr: names[field] for field, attr in assembly.NAME_ATTRIBUTES.items()},
+            {
+                "code": code,
+                **{
+                    attr: names[field]
+                    for field, attr in assembly.NAME_ATTRIBUTES.items()
+                },
+            },
         )
     return root
 
 
-def write_project(mode, base, documents, policy, sources):
+def write_project(
+    mode: str,
+    base: Path,
+    documents: Sequence[tuple[str, str]],
+    policy: bible.policy.Policy,
+    sources: bible.sources.Sources,
+) -> ProjectOutput:
     """Write the exported documents, as (id, USFM), and PTXprint's configuration."""
     project = base / PROJECT_DIR
     conf = project / SETTINGS_DIR

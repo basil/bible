@@ -23,6 +23,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7.0.1
       - run: make bootstrap
+      - run: make lint
       - run: make validate
       - run: make test
       - uses: DavidAnson/markdownlint-cli2-action@v24.2.0

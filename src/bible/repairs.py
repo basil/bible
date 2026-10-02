@@ -8,10 +8,14 @@ once, and must fit one of the kinds of slip below unless it is marked
 uncategorized, so that no correction can rewrite the translation unnoticed.
 """
 
+from __future__ import annotations
+
 import re
 import unicodedata
+from collections.abc import Mapping
 
 from bible.checks import require
+from bible.policy_schema import Correction
 from bible.usfm import GREEK, canonical_text, verse_spans, words_of
 
 # A bracketed remark of the transcriber's or eBible's, with a space beside it.
@@ -23,7 +27,7 @@ NOTE = re.compile(r"\\(f|x) \S \\(?:fr|xo) (\S+) ?(.*?)\\\1\*")
 APPENDIX_PARAGRAPH = re.compile(r"^\\(?!i[sb]\d*\b)\w+ [^\n]*", re.M)
 
 
-def change(before, after):
+def change(before: str, after: str) -> tuple[int, str, str]:
     """Where after departs from before: the offset, the stretch of before it
     replaces, and what replaces it."""
     start = 0
@@ -38,11 +42,11 @@ def change(before, after):
     return start, before[start : len(before) - end], after[start : len(after) - end]
 
 
-def punctuation(text):
+def punctuation(text: str) -> bool:
     return len(text) == 1 and unicodedata.category(text).startswith("P")
 
 
-def letter_slip(old, new):
+def letter_slip(old: str, new: str) -> str | None:
     """The kind of slip that replaces old with new, if it is one letter's."""
     if not old and len(new) == 1 and new.isalpha():
         return "missing letter"
@@ -53,7 +57,7 @@ def letter_slip(old, new):
     return None
 
 
-def category(before, after):
+def category(before: str, after: str) -> str | None:
     """The kind of slip a correction mends, or None if it is none of them."""
     at, old, new = change(before, after)
     if not old and new == " ":
@@ -82,7 +86,13 @@ def category(before, after):
     return None
 
 
-def check_category(found, entry, kind, key, what="slip"):
+def check_category(
+    found: str | None,
+    entry: Mapping[str, object],
+    kind: str,
+    key: str,
+    what: str = "slip",
+) -> None:
     """An entry must fit a category, unless it is marked uncategorized, and
     only then."""
     uncategorized = entry.get("uncategorized", False)
@@ -96,7 +106,7 @@ def check_category(found, entry, kind, key, what="slip"):
     )
 
 
-def corrected(text, correction, kind, key):
+def corrected(text: str, correction: Correction, kind: str, key: str) -> str:
     """The text with a correction's one occurrence of its "from" replaced."""
     require(text.count(correction["from"]) == 1, f"{kind} does not apply: {key}")
     require(
@@ -109,14 +119,14 @@ def corrected(text, correction, kind, key):
     return text.replace(correction["from"], correction["to"])
 
 
-def in_a_note(text, snippet):
+def in_a_note(text: str, snippet: str) -> bool:
     """Whether the snippet's one occurrence lies within a note."""
     start = text.index(snippet)
     end = start + len(snippet)
     return any(m.start() <= start and end <= m.end() for m in NOTE.finditer(text))
 
 
-def in_its_place(text, key, snippet):
+def in_its_place(text: str, key: str, snippet: str) -> bool:
     """Whether the snippet's one occurrence lies where its key says: in the verse
     it names, or in a file without verses, in a note standing among the words it
     names, or outside the notes, in the words it names."""
@@ -156,7 +166,7 @@ def in_its_place(text, key, snippet):
     )
 
 
-def in_translation(text, snippet):
+def in_translation(text: str, snippet: str) -> bool:
     """Whether the snippet's one occurrence touches translation: a book's verses,
     or a passage the appendix supplies. Most of the appendix's notes come before
     its first passage; after it, a paragraph is translation from its first \\vp,
@@ -172,7 +182,9 @@ def in_translation(text, snippet):
     return any(first < end and start < last for first, last in spans)
 
 
-def brenton(code, text, corrections):
+def brenton(
+    code: str, text: str, corrections: Mapping[str, Correction | tuple[Correction, ...]]
+) -> tuple[str, frozenset[str]]:
     """A Brenton source file with its corrections, and the keys of the notes
     they mend, without the file's code.
 

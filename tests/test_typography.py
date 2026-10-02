@@ -1,12 +1,15 @@
 """Typography: quotes, ellipses and dashes curled from the words about them."""
 
+from __future__ import annotations
+
 import pytest
 
+import bible.pipeline
 from bible import typography, usj
 from bible.checks import CheckFailed
 
 
-def curled(body):
+def curled(body: str) -> str:
     doc = usj.parse(f"\\id GEN\n\\c 1\n\\p\n{body}\n")
     return usj.serialize(typography.typographic(doc)).split("\n", 3)[3].rstrip("\n")
 
@@ -35,18 +38,20 @@ def curled(body):
         ),
     ],
 )
-def test_quotes_are_curled_by_the_words_about_them(body, expected):
+def test_quotes_are_curled_by_the_words_about_them(body: str, expected: str) -> None:
     assert curled(body) == expected
 
 
-def test_what_looks_like_markup_to_the_typographer_is_refused():
+def test_what_looks_like_markup_to_the_typographer_is_refused() -> None:
     with pytest.raises(CheckFailed, match="looks like HTML"):
         curled("\\v 1 a <b> c 'd'")
     with pytest.raises(CheckFailed, match="Ambiguous doubled quote"):
         curled("\\v 1 he said ''so''")
 
 
-def test_the_edition_is_sent_without_a_straight_quote(exported, edition):
+def test_the_edition_is_sent_without_a_straight_quote(
+    exported: dict[str, str], edition: bible.pipeline.Edition
+) -> None:
     for code, text in exported.items():
         if code not in edition.authored:
             assert not typography.PLAIN.search(text), code

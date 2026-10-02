@@ -6,9 +6,12 @@ UIDGID := $(shell id -u):$(shell id -g)
 # compose.override.yaml or COMPOSE_FILE that provenance would not record.
 COMPOSE := docker compose -f compose.yaml
 TOOLCHAIN := $(COMPOSE) run --rm -T --interactive=false --user $(UIDGID) toolchain
+DOCKERFMT := $(COMPOSE) run --rm -T --interactive=false --user $(UIDGID) dockerfmt
+HADOLINT := $(COMPOSE) run --rm -T --interactive=true hadolint
 PIPELINE := $(TOOLCHAIN) python3 -m bible
-.PHONY: bootstrap validate review review-diff test test-python test-fonts test-tex test-tex-save font-specimen sample pdf clean
+.PHONY: bootstrap validate review review-diff test test-python test-fonts test-tex test-tex-save font-specimen sample pdf clean lint lint-fix
 bootstrap:
+	$(COMPOSE) pull dockerfmt hadolint
 	$(COMPOSE) build --pull
 validate:
 	$(PIPELINE) validate
@@ -47,3 +50,11 @@ pdf:
 	$(PIPELINE) pdf
 clean:
 	rm -rf build dist
+# All Python code, excluding generated files and review worktrees.
+lint:
+	$(TOOLCHAIN) sh -c 'black --check src scripts tests && isort --check-only src scripts tests && mypy && mbake format --check Makefile'
+	$(DOCKERFMT) -c -n Dockerfile
+	$(HADOLINT) <Dockerfile
+lint-fix:
+	$(TOOLCHAIN) sh -c 'isort src scripts tests && black src scripts tests && mbake format Makefile'
+	$(DOCKERFMT) -w -n Dockerfile

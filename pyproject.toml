@@ -8,3 +8,19 @@ pythonpath = ["src", "scripts"]
 cache_dir = "build/pytest-cache"
 # The venv sees Ubuntu's system site-packages; load no plugins from there.
 addopts = "-ra --strict-markers --disable-plugin-autoload"
+
+[tool.isort]
+profile = "black"
+
+[tool.mypy]
+strict = true
+python_version = "3.14"
+files = ["src", "scripts", "tests"]
+mypy_path = ["src", "scripts", "tests"]
+explicit_package_bases = true
+cache_dir = "build/mypy-cache"
+
+# These pinned upstream libraries publish no typing marker or stub package.
+[[tool.mypy.overrides]]
+module = ["fontTools.*", "smartypants", "ptxprint.*", "usfmtc"]
+ignore_missing_imports = true

@@ -13,14 +13,27 @@ terms it uses. What is read is carried through each declared change of its
 words, so that nothing is read again from words the edition has rewritten.
 """
 
+from __future__ import annotations
+
 import re
+from collections.abc import Iterable, Iterator, Sequence
 from dataclasses import dataclass, replace
 from difflib import SequenceMatcher
 
-from bible import assembly, citations, repairs, terminology, usj
+import bible.annotate
+import bible.policy
+import bible.references
+import bible.terminology
+from bible import assembly, citations, repairs, scripture, terminology, usj
 from bible.checks import CheckFailed, require
 from bible.policy import source_id
+from bible.policy_schema import Entry, WordingChange
 from bible.references import Verse, verse_at
+from bible.usj import Content, Document, Node
+
+type Address = tuple[int, int] | None
+type Unit = list[tuple[Node, dict[Address, Reading]]]
+
 
 # The titles and headings that drop a closing full stop. Not mt2: the Epistle
 # Dedicatory's are its address ("ETC.") and salutation.
@@ -35,9 +48,9 @@ class Reading:
     citations and terms found in them, by their offsets in those words."""
 
     text: str
-    citations: tuple = ()
-    terms: tuple = ()
-    decisions: tuple = ()
+    citations: tuple[citations.Citation | citations.UnresolvedCitation, ...] = ()
+    terms: tuple[terminology.Term, ...] = ()
+    decisions: tuple[str, ...] = ()
     # Where an introduction's paragraph goes: a book, or "book@verse".
     destination: str | None = None
     key: str | None = None
@@ -45,28 +58,28 @@ class Reading:
     issue: str | None = None
 
 
-def is_introduction(entry, policy):
+def is_introduction(entry: Entry, policy: bible.policy.Policy) -> bool:
     return (entry["source"], source_id(entry)) == (
         "brenton",
         policy.introductions["source"],
     )
 
 
-def is_glossary(entry):
+def is_glossary(entry: Entry) -> bool:
     return (entry["source"], source_id(entry)) == ("brenton", terminology.GLOSSARY)
 
 
-def words(content):
+def words(content: Iterable[str | Node]) -> str:
     return usj.text_of(content, skip=usj.is_label)
 
 
-def rebased(reading, text):
+def rebased(reading: Reading, text: str) -> Reading:
     """A reading carried to the paragraph's words as they now stand."""
     if text == reading.text:
         return reading
     changes = SequenceMatcher(None, reading.text, text, autojunk=False).get_opcodes()
 
-    def at(position, ending=False):
+    def at(position: int, ending: bool = False) -> int:
         for kind, a, b, c, d in changes:
             if a <= position < b or ending and a < position <= b:
                 return c + position - a if kind == "equal" else d if ending else c
@@ -85,7 +98,7 @@ def rebased(reading, text):
     )
 
 
-def regions(block):
+def regions(block: Node) -> list[tuple[Address, Content]]:
     """The stretches of prose a block holds, each with its address in it: a
     paragraph is one, and a table has one for each cell."""
     if block["type"] == "para":
@@ -93,24 +106,28 @@ def regions(block):
     if block["type"] == "table":
         return [
             ((r, c), cell["content"])
-            for r, row in enumerate(block["content"])
-            for c, cell in enumerate(row["content"])
+            for r, row in enumerate(usj.objects(block["content"]))
+            for c, cell in enumerate(usj.objects(row["content"]))
         ]
     return []
 
 
-def with_region(block, address, content):
+def with_region(block: Node, address: Address, content: Content) -> Node:
     if address is None:
         return {**block, "content": content}
     r, c = address
     rows = list(block["content"])
-    cells = list(rows[r]["content"])
-    cells[c] = {**cells[c], "content": content}
-    rows[r] = {**rows[r], "content": cells}
+    row = rows[r]
+    assert isinstance(row, dict)
+    cells = list(row["content"])
+    cell = cells[c]
+    assert isinstance(cell, dict)
+    cells[c] = {**cell, "content": content}
+    rows[r] = {**row, "content": cells}
     return {**block, "content": rows}
 
 
-def destinations(policy):
+def destinations(policy: bible.policy.Policy) -> dict[str, str]:
     """Where each paragraph of the introduction to the Apocrypha goes, by its
     opening words."""
     data = policy.introductions
@@ -125,7 +142,9 @@ def destinations(policy):
     return found
 
 
-def read(code, doc, entry, ctx):
+def read(
+    code: str, doc: Document, entry: Entry, ctx: bible.annotate.Context
+) -> tuple[Unit, citations.Dialect]:
     """A unit's blocks, each with what was read in its prose."""
     policy = ctx.policy
     require(
@@ -136,10 +155,10 @@ def read(code, doc, entry, ctx):
     places = destinations(policy) if introduction else {}
     # A paragraph that names no book is of the book last cited: a correction's
     # account of it follows its citation, in a paragraph of its own.
-    standing = None
-    unit = []
+    standing: citations.Citation | None = None
+    unit: Unit = []
     for block in doc["content"]:
-        readings = {}
+        readings: dict[Address, Reading] = {}
         for address, content in regions(block):
             text = words(content)
             if not text.strip():
@@ -154,7 +173,7 @@ def read(code, doc, entry, ctx):
             )
             book = destination.split("@")[0] if destination else None
             home = (
-                verse_at(book, destination.split("@")[1])
+                verse_at(book or "", (destination or "").split("@")[1])
                 if "@" in (destination or "")
                 else Verse(book, 0, 1) if book else None
             )
@@ -189,7 +208,7 @@ def read(code, doc, entry, ctx):
     return unit, tongue
 
 
-def changed(unit, index, address, content):
+def changed(unit: Unit, index: int, address: Address, content: Content) -> Unit:
     """A unit with one stretch of prose rewritten, what was read in it
     carried to its new words."""
     block, readings = unit[index]
@@ -201,7 +220,15 @@ def changed(unit, index, address, content):
     return unit
 
 
-def rewritten(content, before, after, key, *, start=None, right=True):
+def rewritten(
+    content: Content,
+    before: str,
+    after: str,
+    key: str,
+    *,
+    start: int | None = None,
+    right: bool = True,
+) -> Content:
     """Content with words changed without disturbing its character styles."""
     text = words(content)
     if start is None:
@@ -222,7 +249,7 @@ def rewritten(content, before, after, key, *, start=None, right=True):
     return usj.substituted(content, edits, skip=usj.is_label, right=right)
 
 
-def once_in_words(text, wanted):
+def once_in_words(text: str, wanted: str) -> bool:
     """Whether the words occur once in the text, and not as part of a longer word."""
     return (
         text.count(wanted) == 1
@@ -230,7 +257,7 @@ def once_in_words(text, wanted):
     )
 
 
-def placed(unit, policy):
+def placed(unit: Unit, policy: bible.policy.Policy) -> Unit:
     """The unit that is the introduction to the Apocrypha with each of its
     paragraphs placed, glossed and renamed as the file declares.
 
@@ -291,10 +318,11 @@ def placed(unit, policy):
     }
     empty = sorted(places - {place for place, _ in placements})
     require(not empty, f"Book introductions with no paragraphs: {empty}")
-    for place in places:
-        order = [i for (where, _), i in zip(accounted, indices) if where == place]
+    for destination in places:
+        order = [i for (where, _), i in zip(accounted, indices) if where == destination]
         require(
-            order == sorted(order), f"Book introduction out of source order: {place}"
+            order == sorted(order),
+            f"Book introduction out of source order: {destination}",
         )
     for (place, key), n in zip(accounted, indices):
         index = paragraphs[n]
@@ -313,7 +341,7 @@ def placed(unit, policy):
             # A gloss follows the source's words, or replaces them. Once in
             # the source as well, so that no gloss falls inside another.
             replaces = "replace" in gloss
-            before = gloss.get("replace" if replaces else "after")
+            before = gloss.get("replace") if replaces else gloss.get("after")
             content = unit[index][0]["content"]
             require(
                 replaces != ("after" in gloss)
@@ -322,6 +350,7 @@ def placed(unit, policy):
                 and once_in_words(words(content), before),
                 f"Gloss does not apply: {key}",
             )
+            assert before is not None
             require(
                 gloss["insert"].startswith(" ") != replaces,
                 f"Gloss and the space before it disagree: {key}",
@@ -335,15 +364,15 @@ def placed(unit, policy):
                 f"Name change that changes nothing: {key}",
             )
             # A name is written with its source's styling, which stays.
-            before, after = (
+            old_content, new_content = (
                 usj.parse(name[side], fragment=True) for side in ("from", "to")
             )
             require(
-                [n["marker"] for n in usj.walk(before)]
-                == [n["marker"] for n in usj.walk(after)],
+                [n["marker"] for n in usj.walk(old_content)]
+                == [n["marker"] for n in usj.walk(new_content)],
                 f"Name change alters the markup: {key}",
             )
-            before, after = usj.text_of(before), usj.text_of(after)
+            before, after = usj.text_of(old_content), usj.text_of(new_content)
             content = unit[index][0]["content"]
             # The source's words, so that no change alters or removes a gloss.
             require(
@@ -360,7 +389,7 @@ def placed(unit, policy):
     return unit
 
 
-def edited(unit, code, changes, name):
+def edited(unit: Unit, code: str, changes: Iterable[WordingChange], name: str) -> Unit:
     """A unit with each declared change to its words, which must be its once."""
     for change in changes:
         found = [
@@ -394,10 +423,12 @@ def edited(unit, code, changes, name):
     return unit
 
 
-def resolved(unit, code, inventory, policy):
+def resolved(
+    unit: Unit, code: str, inventory: scripture.Inventory, policy: bible.policy.Policy
+) -> Unit:
     """A unit's citations as the edition numbers them. A paragraph that
     introduces a book cites as from the book's first verse, or its section's."""
-    result = []
+    result: Unit = []
     for block, readings in unit:
         settled = {}
         for address, reading in readings.items():
@@ -410,8 +441,9 @@ def resolved(unit, code, inventory, policy):
                 else:
                     chapter = next(iter(inventory[book]))
                     home = verse_at(book, f"{chapter}:{inventory[book][chapter][0]}")
-            found = []
+            found: list[citations.Citation] = []
             for citation in reading.citations:
+                assert isinstance(citation, citations.UnresolvedCitation)
                 if (
                     home is not None
                     and citation.relative
@@ -426,19 +458,21 @@ def resolved(unit, code, inventory, policy):
                     citation = replace(
                         citation, book=home.book, items=items, context=home
                     )
-                citation = citations.resolve(citation, inventory, policy=policy)
-                missing = citations.missing(citation, inventory)
+                settled_citation = citations.resolve(citation, inventory, policy=policy)
+                missing = citations.missing(settled_citation, inventory)
                 require(
                     not missing,
                     f"Citation of what the edition doesn't print: {code}: {citation.source}: {missing}",
                 )
-                found.append(citation)
+                found.append(settled_citation)
             settled[address] = replace(reading, citations=tuple(found))
         result.append((block, settled))
     return result
 
 
-def cited(content, reading, books, code):
+def cited(
+    content: Content, reading: Reading, books: bible.references.Books, code: str
+) -> Content:
     """Content with what it cites as the edition prints it. The source's
     italics within a citation give way to the edition's way of citing."""
     text = words(content)
@@ -452,7 +486,7 @@ def cited(content, reading, books, code):
     # A style that only part of a citation lies in can be neither kept nor dropped.
     at = 0
 
-    def spans(items):
+    def spans(items: Content) -> Iterator[tuple[int, int]]:
         nonlocal at
         for item in items:
             if isinstance(item, str):
@@ -472,7 +506,9 @@ def cited(content, reading, books, code):
     return usj.substituted(content, edits, skip=usj.is_label, unwrap=unwrap)
 
 
-def renamed(unit, code, books, policy):
+def renamed(
+    unit: Unit, code: str, books: bible.references.Books, policy: bible.policy.Policy
+) -> Unit:
     """A unit with the names that are changed where a book is named but not
     cited (edition/citations.json), each met once."""
     for declaration in policy.citations["names"].get(code, ()):
@@ -518,9 +554,9 @@ def renamed(unit, code, books, policy):
     return unit
 
 
-def unpunctuated(unit):
+def unpunctuated(unit: Unit) -> Unit:
     """A unit whose titles and headings drop their closing full stops."""
-    result = []
+    result: Unit = []
     for block, readings in unit:
         if block.get("marker") in PERIOD_FREE:
             # The stop that closes its words, not one that ends a string
@@ -537,9 +573,9 @@ def unpunctuated(unit):
     return result
 
 
-def with_terms(unit, registry):
+def with_terms(unit: Unit, registry: bible.terminology.Registry) -> Unit:
     """A unit with the terms read in its prose as the edition prints them."""
-    result = []
+    result: Unit = []
     for block, readings in unit:
         for address, content in regions(block):
             reading = readings.get(address)
@@ -553,7 +589,14 @@ def with_terms(unit, registry):
     return result
 
 
-def unit(entry, doc, source, text, ctx, report):
+def unit(
+    entry: Entry,
+    doc: Document,
+    source: Document,
+    text: str,
+    ctx: bible.annotate.Context,
+    report: bible.annotate.Report,
+) -> tuple[Document, dict[str, list[Content]]]:
     """One unit of front or back matter as the edition prints it, and the
     introductions it sends to the books, by where each goes.
 
@@ -603,21 +646,25 @@ def unit(entry, doc, source, text, ctx, report):
         shown.append((block, readings))
     introductions = {}
     if introduction:
-        front, moved = [], {}
+        front: Unit = []
+        moved: dict[str, list[tuple[Node, Reading]]] = {}
         for block, readings in shown:
-            reading = readings.get(None)
+            current_reading = readings.get(None)
             if usj.is_type(block, "para") and block["marker"].startswith("is"):
                 # The books' titles replace the chapter's headings.
                 continue
             if usj.is_type(block, "para", "ip"):
                 require(
-                    reading is not None and reading.key is not None,
+                    current_reading is not None and current_reading.key is not None,
                     "Unaccounted introduction paragraph",
                 )
-                if reading.destination:
-                    moved.setdefault(reading.destination, []).append((block, reading))
+                assert current_reading is not None
+                if current_reading.destination:
+                    moved.setdefault(current_reading.destination, []).append(
+                        (block, current_reading)
+                    )
                     continue
-                if reading.key not in policy.introductions["front"]:
+                if current_reading.key not in policy.introductions["front"]:
                     continue
             front.append((block, readings))
         shown = front
@@ -650,10 +697,10 @@ def unit(entry, doc, source, text, ctx, report):
     return result, introductions
 
 
-def introduction_note(paragraphs):
+def introduction_note(paragraphs: Sequence[Content]) -> Node:
     """A book's introduction as a footnote without a caller, set below the
     text among the extended notes while the ordinary notes keep the margin."""
-    content = []
+    content: Content = []
     for paragraph in paragraphs:
         content = usj.joined(content, [" "] if content else [], paragraph)
     return usj.note("ef", usj.char("ft", *content))

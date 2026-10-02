@@ -12,10 +12,17 @@ each paragraph or line parted from the next by a newline. Words are named by
 their index in the verse, and a span by its first and last word.
 """
 
+from __future__ import annotations
+
 import re
 
 from bible.checks import require
+from bible.policy_schema import NoteOverride
 from bible.scripture import plain, words_of
+
+type Span = tuple[int, int]
+type Words = list[tuple[str, int, int]]
+
 
 # Words that never end a lemma alone: they want the word after them.
 LINKING_WORDS = {
@@ -55,7 +62,7 @@ DEFAULT_LEMMA_WORDS = 4
 CLAUSE_END = re.compile(r"[,;:.?!()—]")
 
 
-def occurrences(words, phrase):
+def occurrences(words: Words, phrase: list[str]) -> list[int]:
     return [
         i
         for i in range(len(words) - len(phrase) + 1)
@@ -63,16 +70,16 @@ def occurrences(words, phrase):
     ]
 
 
-def ends_clause(verse, words, i):
+def ends_clause(verse: str, words: Words, i: int) -> bool:
     """Whether punctuation between words[i] and the next word ends a clause."""
     return bool(CLAUSE_END.search(plain(verse[words[i][2] : words[i + 1][1]])))
 
 
-def crosses_clause(verse, words, first, last):
+def crosses_clause(verse: str, words: Words, first: int, last: int) -> bool:
     return any(ends_clause(verse, words, i) for i in range(first, last))
 
 
-def whole_compounds(verse, words, first, last):
+def whole_compounds(verse: str, words: Words, first: int, last: int) -> Span:
     """The span widened to whole hyphenated words (flood-gates, seven-fold)."""
     while first > 0 and verse[words[first - 1][2] : words[first][1]] == "-":
         first -= 1
@@ -81,7 +88,9 @@ def whole_compounds(verse, words, first, last):
     return first, last
 
 
-def unique_span(verse, words, first, last, lone=False):
+def unique_span(
+    verse: str, words: Words, first: int, last: int, lone: bool = False
+) -> Span:
     """The shortest widening of words[first..last] that occurs once in the verse.
 
     A widening that stays within its clause and does not end on a word like
@@ -91,13 +100,13 @@ def unique_span(verse, words, first, last, lone=False):
     word the note is about (lone) stands even then ("for: Or, unto").
     """
 
-    def unique(span):
+    def unique(span: Span) -> bool:
         return (
             len(occurrences(words, [w for w, _, _ in words[span[0] : span[1] + 1]]))
             == 1
         )
 
-    def awkwardness(span):
+    def awkwardness(span: Span) -> int:
         return 2 * crosses_clause(verse, words, *span) + (
             words[span[1]][0] in OPEN_WORDS
         )
@@ -122,7 +131,9 @@ def unique_span(verse, words, first, last, lone=False):
     return best[1] if best else (first, last)
 
 
-def phrase_span(words, phrase, key, occurrence=None):
+def phrase_span(
+    words: Words, phrase: str, key: str, occurrence: int | None = None
+) -> Span:
     """The place in the verse where an exception's lemma occurs: its one
     occurrence, or the one the exception names if it occurs more than once."""
     tokens = words_of(phrase)
@@ -146,8 +157,15 @@ def phrase_span(words, phrase, key, occurrence=None):
 
 
 def overridden_lemma(
-    verse, words, exception, span, glossed, rule, key, occurrence=None
-):
+    verse: str,
+    words: Words,
+    exception: NoteOverride,
+    span: Span | None,
+    glossed: Span | None,
+    rule: str | None,
+    key: str,
+    occurrence: int | None = None,
+) -> tuple[Span | None, Span | None, str]:
     """The lemma's span, the span of the words it glosses, and the rule, or
     those of the exception's lemma if it has one.
 
@@ -156,6 +174,7 @@ def overridden_lemma(
     other lemma.
     """
     if "lemma" not in exception:
+        assert rule is not None
         return span, glossed, rule
     if exception["lemma"] is None:
         chosen = widened = None
@@ -171,9 +190,9 @@ def overridden_lemma(
     return widened, chosen, "override"
 
 
-def same_word(a, b):
+def same_word(a: str, b: str) -> bool:
     # Every way of stripping a suffix, so "executes" (execute-s) meets "execute".
-    def stems(word):
+    def stems(word: str) -> set[str]:
         return {word} | {
             word[: -len(suffix)]
             for suffix in ("ings", "ing", "eth", "est", "ed", "es", "s", "d", "ly")
@@ -183,7 +202,7 @@ def same_word(a, b):
     return a == b or bool(stems(a) & stems(b))
 
 
-def clause_after(verse, words, first, other):
+def clause_after(verse: str, words: Words, first: int, other: list[str]) -> list[int]:
     """The words from first to the end of their clause, as a note can gloss them."""
     clause = [first]
     for i in range(first + 1, len(words)):
@@ -200,7 +219,7 @@ def clause_after(verse, words, first, other):
     return clause
 
 
-def clause_before(verse, words, last):
+def clause_before(verse: str, words: Words, last: int) -> list[int]:
     """The words from the start of their clause to last."""
     first = last
     while first > 0 and not ends_clause(verse, words, first - 1):
@@ -208,7 +227,9 @@ def clause_before(verse, words, last):
     return list(range(first, last + 1))
 
 
-def measured(words, clause, other, backward=False):
+def measured(
+    words: Words, clause: list[int], other: list[str], backward: bool = False
+) -> tuple[int, str]:
     """How many words of the clause a rendering stands for, and the rule that said so.
 
     Forward, the words run from the caller to the rendering's last word. Backward
@@ -228,7 +249,14 @@ def measured(words, clause, other, backward=False):
     return size, "length"
 
 
-def inferred_lemma(kind, verse, words, offset, alternative, widen=True):
+def inferred_lemma(
+    kind: str,
+    verse: str,
+    words: Words,
+    offset: int,
+    alternative: str | None,
+    widen: bool = True,
+) -> tuple[Span | None, str]:
     """The words a Brenton note or cross-reference glosses, and the rule that found them.
 
     Brenton's caller stands before the glossed words, or after the first of them
@@ -239,7 +267,9 @@ def inferred_lemma(kind, verse, words, offset, alternative, widen=True):
     (None). Unless widen is false, the words are widened until they occur once.
     """
 
-    def unique(verse, words, first, last, lone=False):
+    def unique(
+        verse: str, words: Words, first: int, last: int, lone: bool = False
+    ) -> Span:
         if widen:
             return unique_span(verse, words, first, last, lone)
         return first, last
@@ -280,7 +310,7 @@ def inferred_lemma(kind, verse, words, offset, alternative, widen=True):
         for group in (POSSESSIVES, PREPOSITIONS | CONJUNCTIONS)
     )
 
-    def rounded(size):
+    def rounded(size: int) -> int:
         # Never end on a word like "the" or "his" while the clause goes on.
         size = min(size, len(clause))
         while (
@@ -317,29 +347,32 @@ def inferred_lemma(kind, verse, words, offset, alternative, widen=True):
     return (first, last), rule
 
 
-def indefinite(word):
+def indefinite(word: str) -> str:
     """The word, with "an" as "a"."""
     return "a" if word == "an" else word
 
 
-def ends_line(verse, offset):
+def ends_line(verse: str, offset: int) -> bool:
     """Whether nothing but space stands between an offset and the end of its
     paragraph or line."""
     line = verse.find("\n", offset)
     return line >= 0 and not verse[offset:line].strip()
 
 
-def lemma_text(verse, words, span):
+def lemma_text(verse: str, words: Words, span: Span) -> str:
     first, last = span
     return plain(verse[words[first][1] : words[last][2]])
 
 
-def echoes(verse, words, span, glossed):
+def echoes(
+    verse: str, words: Words, span: Span | None, glossed: Span | None
+) -> tuple[str, str]:
     """The lemma's words before and after the words the note glosses: those it
     took in to occur once in the verse, which a rendering takes in as well
     ("of your Father: or, with your Father")."""
     if span is None or span == glossed:
         return "", ""
+    assert glossed is not None
     require(
         span[0] <= glossed[0] and glossed[1] <= span[1],
         "Lemma does not contain the words it glosses: "
@@ -351,7 +384,15 @@ def echoes(verse, words, span, glossed):
     return head[: len(head) - len(narrow)], tail[len(narrow) :]
 
 
-def inferred(kind, verse, words, offset, alternative, exception, key):
+def inferred(
+    kind: str,
+    verse: str,
+    words: Words,
+    offset: int,
+    alternative: str | None,
+    exception: NoteOverride,
+    key: str,
+) -> tuple[Span | None, Span | None, str]:
     """A Brenton note's lemma, the words it glosses, and the rule that found
     them, with the exception file's say."""
     span, rule = inferred_lemma(kind, verse, words, offset, alternative)
@@ -361,7 +402,9 @@ def inferred(kind, verse, words, offset, alternative, exception, key):
     )
 
 
-def declared(verse, words, offset, phrase, key):
+def declared(
+    verse: str, words: Words, offset: int, phrase: str | None, key: str
+) -> tuple[Span | None, Span | None, str]:
     """The lemma a manuscript decision declares: the precise changed words,
     widened only where they occur more than once, when the one at the caller
     is meant. A complete phrase can end in a preposition ("asked for");
@@ -379,7 +422,9 @@ def declared(verse, words, offset, phrase, key):
     return span, glossed, "Alexandrine reading"
 
 
-def preserved(words, lemma, glossed, key):
+def preserved(
+    words: Words, lemma: str | None, glossed: str | None, key: str
+) -> tuple[Span | None, Span | None, str]:
     """The lemma and gloss a note had before a manuscript reading changed the
     words around it, found again in the verse as it now stands."""
     return (
@@ -389,7 +434,14 @@ def preserved(words, lemma, glossed, key):
     )
 
 
-def anchored(verse, words, anchor, occurrence, exception, key):
+def anchored(
+    verse: str,
+    words: Words,
+    anchor: list[str],
+    occurrence: int | None,
+    exception: NoteOverride,
+    key: str,
+) -> tuple[Span | None, Span | None, str, int]:
     """A 1611 note's lemma: George's, found in the verse or at the anchor the
     exception file records for it, widened until it occurs once. Returns the
     lemma, the words glossed, the rule, and the word the note stands at."""
@@ -401,9 +453,12 @@ def anchored(verse, words, anchor, occurrence, exception, key):
         f"Marginal note anchor not found exactly once: {key} ({len(hits)})",
     )
     first = hits[(occurrence or 1) - 1]
-    glossed = whole_compounds(verse, words, first, first + len(anchor) - 1)
+    glossed: Span | None = whole_compounds(verse, words, first, first + len(anchor) - 1)
     # George's lemma of one word stands if it occurs once, even "for".
-    span = unique_span(verse, words, *glossed, lone=anchor[0] not in ARTICLES)
+    assert glossed is not None
+    span: Span | None = unique_span(
+        verse, words, *glossed, lone=anchor[0] not in ARTICLES
+    )
     rule = "anchor" if span == (first, first + len(anchor) - 1) else "widened"
     # A 1611 note's occurrence is its anchor's, not its lemma override's.
     span, glossed, rule = overridden_lemma(
@@ -421,7 +476,7 @@ def anchored(verse, words, anchor, occurrence, exception, key):
 MISSHAPEN = 3
 
 
-def misshapen(glossed, reading):
+def misshapen(glossed: str | None, reading: str | None) -> bool:
     """Whether the words a rule found for a note are so much longer than the
     rendering that measured them that the rendering may not be of them: "Gr.
     hands" on a clause of seven words. A rendering longer than its words is

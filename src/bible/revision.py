@@ -15,13 +15,20 @@ are read, and every other decision is met, in the sources' own words. A
 change that nothing meets is refused.
 """
 
-import re
+from __future__ import annotations
 
+import re
+from collections.abc import Callable
+from collections.abc import Set as AbstractSet
+
+import bible.policy
 from bible import repairs, scripture, usj
 from bible.checks import require, require_fields
+from bible.policy_schema import RevisionChange
+from bible.usj import Content, Document, Node
 
 
-def check(policy):
+def check(policy: bible.policy.Policy) -> None:
     data = policy.revisions
     require_fields(data, {"why", "words", "verses"}, (), "Revisions file")
     for word, entry in data["words"].items():
@@ -58,7 +65,7 @@ def check(policy):
             )
 
 
-def verse_changes(policy):
+def verse_changes(policy: bible.policy.Policy) -> list[RevisionChange]:
     return [
         change
         for group in policy.revisions["verses"].values()
@@ -66,7 +73,7 @@ def verse_changes(policy):
     ]
 
 
-def _edit(at, old, new):
+def _edit(at: int, old: str, new: str) -> tuple[int, int, str]:
     """Words at an offset giving way to others, as usj.substituted takes
     them. Only what differs gives way, so that the rest keeps its styles."""
     prefix, gone, came = repairs.change(old, new)
@@ -78,7 +85,9 @@ def _edit(at, old, new):
     return start, start + len(gone), came
 
 
-def _rewritten(content, pattern, new):
+def _rewritten(
+    content: Content, pattern: re.Pattern[str], new: Callable[[re.Match[str]], str]
+) -> Content:
     """Content with every match of a pattern in its words giving way to what
     new makes of it. The words are read as one, whatever styles divide them;
     a note's words are its own, not those of the content it stands in."""
@@ -89,7 +98,7 @@ def _rewritten(content, pattern, new):
     return usj.substituted(content, edits) if edits else content
 
 
-def respelt(doc, policy, met):
+def respelt(doc: Document, policy: bible.policy.Policy, met: set[str]) -> Document:
     """A document with the words the file respells, each recorded as met."""
     words = policy.revisions["words"]
     if not words:
@@ -100,16 +109,16 @@ def respelt(doc, policy, met):
         + r")(?!\w)"
     )
 
-    def new(match):
+    def new(match: re.Match[str]) -> str:
         met.add(match[0])
         return words[match[0]]["to"]
 
-    def note(item):
+    def note(item: Node) -> Node:
         if item["type"] != "note":
             return item
         return {**item, "content": _rewritten(item["content"], pattern, new)}
 
-    def respell(content):
+    def respell(content: Content) -> Content:
         # A verse's number parts its words from those of the verse before.
         numbers = [i for i, item in enumerate(content) if usj.is_type(item, "verse")]
         starts, ends = [0, *(i + 1 for i in numbers)], [*numbers, len(content)]
@@ -122,7 +131,9 @@ def respelt(doc, policy, met):
     return usj.with_content(doc, respell)
 
 
-def revised(code, doc, policy, met):
+def revised(
+    code: str, doc: Document, policy: bible.policy.Policy, met: set[str]
+) -> Document:
     """A book with the changes the file declares for its verses. A verse's
     words give way where they stand, in the styles they stand in, and the
     lemma of a note of the verse that quotes them changes with them. A lemma
@@ -159,15 +170,15 @@ def revised(code, doc, policy, met):
     if not any(verse.notes for verse, *_ in edits):
         return doc
     # The notes of a revised verse, by the verse they stand in.
-    revised_notes = {}
+    revised_notes: dict[str, list[RevisionChange]] = {}
     for verse, _, _, _, change in edits:
         revised_notes.setdefault(verse.reference, []).append(change)
     verses = scripture.verses(doc)
-    replacements = {}
+    replacements: dict[int, Node] = {}
     for reference, listed in revised_notes.items():
         words = scripture.plain(verses[reference].text)
 
-        def lemma(item):
+        def lemma(item: Node) -> Node:
             if not usj.is_type(item, "char", "fq"):
                 return item
             content = item["content"]
@@ -191,7 +202,7 @@ def revised(code, doc, policy, met):
                 "content": usj.mapped(note["content"], lemma),
             }
 
-    def swap(content):
+    def swap(content: Content) -> Content:
         return [
             (
                 replacements.get(id(item), item)
@@ -208,7 +219,9 @@ def revised(code, doc, policy, met):
     return usj.with_content(doc, swap)
 
 
-def check_met(policy, met):
+def check_met(
+    policy: bible.policy.Policy, met: AbstractSet[str | tuple[str, str | None]]
+) -> None:
     data = policy.revisions
     verses = {change["verse"] for change in verse_changes(policy)}
     unused = sorted((set(data["words"]) | verses) - met)

@@ -1,9 +1,19 @@
 """USJ: reading and writing USFM, and changing content by its words."""
 
+from __future__ import annotations
+
+from collections.abc import Iterable
+from pathlib import Path
+
 import pytest
 
+import bible.pipeline
+import bible.sources
 from bible import scripture, usj
 from bible.checks import CheckFailed
+from bible.usj import Node
+
+type Shape = str | tuple[str, str | None, str | None, list[Shape]]
 
 BOOK = (
     "\\id GEN - Brenton\n\\h Genesis\n\\mt1 GENESIS\n\\c 1  \n\\p\n"
@@ -12,7 +22,7 @@ BOOK = (
 )
 
 
-def test_a_document_is_plain_usj():
+def test_a_document_is_plain_usj() -> None:
     doc = usj.parse(BOOK)
     assert doc["type"] == "USJ"
     book, h, mt, chapter, para, line, second, last = doc["content"]
@@ -33,20 +43,25 @@ def test_a_document_is_plain_usj():
         "and day.",
         "Poetry,",
     )
-    assert note["caller"] == "+" and [part["marker"] for part in note["content"]] == [
+    assert isinstance(note, dict)
+    assert note["caller"] == "+" and [
+        part["marker"] for part in usj.objects(note["content"])
+    ] == [
         "fr",
         "fqa",
         "ft",
     ]
     # A style within a part of a note nests in it.
-    assert note["content"][2]["content"] == [
+    third_part = note["content"][2]
+    assert isinstance(third_part, dict)
+    assert third_part["content"] == [
         "a ",
         {"type": "char", "marker": "it", "content": ["note"]},
         ".",
     ]
 
 
-def test_writing_gives_each_verse_a_line_and_nests_styles_in_notes():
+def test_writing_gives_each_verse_a_line_and_nests_styles_in_notes() -> None:
     assert usj.serialize(usj.parse(BOOK)) == (
         "\\id GEN - Brenton\n\\h Genesis\n\\mt1 GENESIS\n\\c 1\n\\p\n"
         "\\v 1 \\sc In\\sc* the beginning \\add was\\add* light \\f + \\fr 1:1 \\fqa Gr. \\ft a \\+it note\\+it*.\\f*and day.\n"
@@ -54,10 +69,12 @@ def test_writing_gives_each_verse_a_line_and_nests_styles_in_notes():
     )
 
 
-def test_every_source_book_survives_reading_and_writing(sources, read):
+def test_every_source_book_survives_reading_and_writing(
+    sources: bible.sources.Sources, read: bible.pipeline.Read
+) -> None:
     """Nothing but spacing may differ, and what is written reads back the same."""
 
-    def unspaced(text):
+    def unspaced(text: str) -> str:
         return "".join(text.split())
 
     # The corrections to Brenton's transcription are made before it is read.
@@ -88,12 +105,14 @@ def test_every_source_book_survives_reading_and_writing(sources, read):
         ("\\id GEN\n\\c 1\n\\cp 11\n\\cp 12\n", "not at the head of a chapter"),
     ],
 )
-def test_malformed_usfm_is_refused(text, refusal):
+def test_malformed_usfm_is_refused(text: str, refusal: str) -> None:
     with pytest.raises(CheckFailed, match=refusal):
         usj.parse(text)
 
 
-def test_usj_agrees_with_the_reference_parser(sources, tmp_path):
+def test_usj_agrees_with_the_reference_parser(
+    sources: bible.sources.Sources, tmp_path: Path
+) -> None:
     """usfmtc is the USFM committee's own reader, pinned in the image.
 
     Read against every book of both sources on 2026-10-01, the two agree but
@@ -106,9 +125,9 @@ def test_usj_agrees_with_the_reference_parser(sources, tmp_path):
     path.write_text(sources.brenton["RUT"], encoding="utf-8")
     theirs = usfmtc.readFile(str(path)).outUsj(None)
 
-    def shape(content):
+    def shape(content: Iterable[str | Node]) -> list[Shape]:
         """Types, markers and words, without the spacing each reader keeps."""
-        found = []
+        found: list[Shape] = []
         for item in content:
             if isinstance(item, str):
                 if item.strip():
@@ -135,7 +154,7 @@ CONTENT = usj.parse(
 )
 
 
-def test_words_are_read_without_notes_unless_asked():
+def test_words_are_read_without_notes_unless_asked() -> None:
     assert usj.text_of(CONTENT) == "the straight way of life ends."
     assert (
         usj.text_of(CONTENT, skip=usj.is_label)
@@ -143,14 +162,14 @@ def test_words_are_read_without_notes_unless_asked():
     )
 
 
-def test_replacing_words_takes_their_styles_and_keeps_notes_outside():
+def test_replacing_words_takes_their_styles_and_keeps_notes_outside() -> None:
     assert (
         usj.serialize(usj.replaced(CONTENT, 4, 16, ["narrow path"]))
         == r"the narrow path of \f + \fr 1:1 \ft a note\f*life \it ends\it*."
     )
 
 
-def test_an_insertion_stands_before_a_style_and_among_notes_in_order():
+def test_an_insertion_stands_before_a_style_and_among_notes_in_order() -> None:
     note = usj.note("f", usj.char("ft", "x"))
     assert usj.serialize(usj.inserted(CONTENT, 13, [note])).startswith(
         r"the straight \f - \ft x\f*\add way"
@@ -165,7 +184,7 @@ def test_an_insertion_stands_before_a_style_and_among_notes_in_order():
         usj.inserted(CONTENT, 14, [note])
 
 
-def test_rewriting_words_in_place_keeps_their_styles():
+def test_rewriting_words_in_place_keeps_their_styles() -> None:
     assert (
         usj.serialize(usj.substituted(CONTENT, [(4, 16, "narrow"), (25, 29, "begins")]))
         == r"the narrow of \f + \fr 1:1 \ft a note\f*life \it begins\it*."
@@ -179,7 +198,7 @@ def test_rewriting_words_in_place_keeps_their_styles():
     ).startswith("A straight way of")
 
 
-def test_changing_content_leaves_the_original_as_it_was():
+def test_changing_content_leaves_the_original_as_it_was() -> None:
     before = usj.serialize(CONTENT)
     usj.replaced(CONTENT, 0, 3, ["A"])
     usj.substituted(CONTENT, [(0, 3, "A")])
@@ -187,7 +206,7 @@ def test_changing_content_leaves_the_original_as_it_was():
     assert usj.serialize(CONTENT) == before
 
 
-def test_a_verse_runs_across_its_paragraphs_with_its_notes_placed():
+def test_a_verse_runs_across_its_paragraphs_with_its_notes_placed() -> None:
     doc = usj.parse(BOOK)
     verses = scripture.verses(doc)
     assert list(verses) == ["1:1", "1:2", "2:1"]
@@ -197,7 +216,7 @@ def test_a_verse_runs_across_its_paragraphs_with_its_notes_placed():
     assert verses["1:2"].text == "Poetry,\nline two" and verses["1:2"].lines == (8,)
 
 
-def test_a_paragraph_that_holds_nothing_of_a_verse_is_no_part_of_it():
+def test_a_paragraph_that_holds_nothing_of_a_verse_is_no_part_of_it() -> None:
     doc = usj.parse(
         "\\id GEN\n\\c 1\n\\q1\n\\v 1 One,\n\\b\n\\q1 two.\n"
         "\\p\n\\v 2\n\\p\n\\v 3 Three.\n"
@@ -210,7 +229,7 @@ def test_a_paragraph_that_holds_nothing_of_a_verse_is_no_part_of_it():
     assert verses["1:2"].parts == ((5, 1, 1, 0),) and verses["1:2"].text == ""
 
 
-def test_changes_to_a_verse_are_made_together_by_their_offsets():
+def test_changes_to_a_verse_are_made_together_by_their_offsets() -> None:
     doc = usj.parse(BOOK)
     verse = scripture.verses(doc)["1:1"]
     note = usj.note("f", usj.char("ft", "new"))

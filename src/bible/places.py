@@ -14,12 +14,41 @@ in but the readings. The review lists every run, and both translations' words
 for those that rest on the words or on their place alone, to be read.
 """
 
+from __future__ import annotations
+
 import collections
 import re
+from collections.abc import Mapping, Sequence
+from typing import NotRequired, TypedDict
 
+import bible.policy
+import bible.references
 from bible import alignment, scripture, tvtms, usj, versification
 from bible.checks import require, require_fields
+from bible.policy_schema import Run
 from bible.references import Verse, runs
+from bible.usj import Document
+
+type Table = Mapping[Verse, tuple[Verse, ...] | None]
+type Anchor = tuple[int, int, float]
+type Placement = tuple[list[Verse], list[Verse], str, str | None]
+
+
+class WitnessBlock(TypedDict):
+    edition: list[Verse]
+    words: list[Verse]
+    table: list[Verse] | None
+    by: str
+    score: NotRequired[float]
+
+
+class WrittenBlock(TypedDict):
+    ours: list[Verse]
+    theirs: list[Verse]
+    by: str
+    why: str | None
+    paired: bool
+
 
 # The table's names for the edition's books, where they aren't the King James code.
 TABLE_NAMES = {"ESG": ["EST", "ESG"], "EZR": ["EZR", "2ES"]}
@@ -44,7 +73,13 @@ MOVED = 0.25
 class Texts:
     """Both translations' verses and words, book by book."""
 
-    def __init__(self, books, kjv, *, policy):
+    def __init__(
+        self,
+        books: Mapping[str, Document],
+        kjv: Mapping[str, Document],
+        *,
+        policy: bible.policy.Policy,
+    ) -> None:
         self.policy = policy
         self.books = {
             code: versification.kjv_book(code, policy=policy)
@@ -59,15 +94,23 @@ class Texts:
         )
         self.weight = alignment.weights(self.edition.words, self.kjv.words)
 
-    def similarity(self, verse, counterpart):
+    def similarity(
+        self, verse: bible.references.Verse, counterpart: bible.references.Verse
+    ) -> float:
         return alignment.similarity(
             self.weight, self.edition.words[verse], self.kjv.words[counterpart]
         )
 
 
-def _best(words, index, order, others, weight):
+def _best(
+    words: set[str],
+    index: Mapping[str, Sequence[int]],
+    order: Sequence[Verse],
+    others: Mapping[Verse, set[str]],
+    weight: Mapping[str, float],
+) -> tuple[Verse | None, float]:
     """The verse among the others that a verse's words pick out, and its score."""
-    candidates = collections.Counter()
+    candidates: collections.defaultdict[int, float] = collections.defaultdict(float)
     # In the words' own order, so that verses that tie are taken alike each time.
     for word in sorted(words):
         found = index.get(word, ())
@@ -76,7 +119,9 @@ def _best(words, index, order, others, weight):
                 candidates[n] += weight[word]
     scored = [
         (alignment.similarity(weight, words, others[order[n]]), str(order[n]), n)
-        for n, _ in candidates.most_common(8)
+        for n, _ in sorted(candidates.items(), key=lambda item: item[1], reverse=True)[
+            :8
+        ]
     ]
     if not scored:
         return None, 0
@@ -84,16 +129,18 @@ def _best(words, index, order, others, weight):
     return order[n], score
 
 
-def _index(words, verses):
+def _index(
+    words: Mapping[Verse, set[str]], verses: Sequence[Verse]
+) -> dict[str, list[int]]:
     """The verses that have each word, by their places in their book's order."""
-    index = collections.defaultdict(list)
+    index: collections.defaultdict[str, list[int]] = collections.defaultdict(list)
     for n, verse in enumerate(verses):
         for word in words[verse]:
             index[word].append(n)
     return index
 
 
-def outvotes(texts, table, verse, other):
+def outvotes(texts: Texts, table: Table, verse: Verse, other: Verse) -> bool:
     """Whether a verse's words put it at another verse than the table does,
     by more than the table's word is worth."""
     said = [v for v in table.get(verse) or () if v in texts.kjv.words]
@@ -103,7 +150,7 @@ def outvotes(texts, table, verse, other):
     return texts.similarity(verse, other) - rival >= PRIOR
 
 
-def anchors(texts, code, table):
+def anchors(texts: Texts, code: str, table: Table) -> list[Anchor]:
     """Pairs of verses that pick each other out, as (edition, kjv, score) positions."""
     ours, theirs = texts.edition.order[code], texts.kjv.order[texts.books[code]]
     our_index = _index(texts.edition.words, ours)
@@ -128,27 +175,29 @@ def anchors(texts, code, table):
     return found
 
 
-def chain(found):
+def chain(found: list[Anchor]) -> list[Anchor]:
     """The anchors that stand in the same order in both translations: the
     heaviest run of them that rises in both."""
     found = sorted(found)
     weight = [score for _, _, score in found]
-    before = [None] * len(found)
+    before: list[int | None] = [None] * len(found)
     for n, (i, j, score) in enumerate(found):
         for m in range(n):
             if found[m][1] < j and found[m][0] < i and weight[m] + score > weight[n]:
                 weight[n], before[n] = weight[m] + score, m
     if not found:
         return []
-    n = max(range(len(found)), key=weight.__getitem__)
+    cursor: int | None = max(range(len(found)), key=weight.__getitem__)
     kept = []
-    while n is not None:
-        kept.append(found[n])
-        n = before[n]
+    while cursor is not None:
+        kept.append(found[cursor])
+        cursor = before[cursor]
     return kept[::-1]
 
 
-def _between(texts, ours, theirs, table):
+def _between(
+    texts: Texts, ours: list[Verse], theirs: list[Verse], table: Table
+) -> list[tuple[Verse, Verse]]:
     """Align two stretches of verses in order, leaving unlike verses unpaired.
 
     The table's word counts for something: a verse stands where the table
@@ -156,7 +205,7 @@ def _between(texts, ours, theirs, table):
     """
     rows, columns = len(ours), len(theirs)
 
-    def worth(i, j):
+    def worth(i: int, j: int) -> float:
         said = theirs[j] in (table.get(ours[i]) or ())
         return texts.similarity(ours[i], theirs[j]) - MATCH + (PRIOR if said else 0)
 
@@ -166,7 +215,8 @@ def _between(texts, ours, theirs, table):
             best[i][j] = max(
                 best[i + 1][j], best[i][j + 1], best[i + 1][j + 1] + worth(i, j)
             )
-    pairs, i, j = [], 0, 0
+    pairs: list[tuple[Verse, Verse]] = []
+    i = j = 0
     while i < rows and j < columns:
         pair = worth(i, j)
         if best[i][j] == best[i + 1][j + 1] + pair and pair > 0:
@@ -179,7 +229,9 @@ def _between(texts, ours, theirs, table):
     return pairs
 
 
-def moved(texts, code, found, kept):
+def moved(
+    texts: Texts, code: str, found: list[Anchor], kept: list[Anchor]
+) -> dict[int, int]:
     """The stretches of verses that stand elsewhere in the King James Bible,
     as (edition, kjv) positions: anchors off the chain, three or more on one
     diagonal, that the verses the chain would give them can't match.
@@ -191,7 +243,7 @@ def moved(texts, code, found, kept):
     on_chain = {i: j for i, j, _ in kept}
     places = sorted(on_chain)
 
-    def in_order(i):
+    def in_order(i: int) -> int | None:
         """The verse the chain gives a position: its diagonal's, if it has one."""
         before = max((p for p in places if p < i), default=None)
         after = min((p for p in places if p > i), default=None)
@@ -204,12 +256,13 @@ def moved(texts, code, found, kept):
                     return j
         return None
 
-    def gain(i, j):
+    def gain(i: int, j: int) -> float:
         j0 = in_order(i)
         rival = texts.similarity(ours[i], theirs[j0]) if j0 is not None else 0
         return texts.similarity(ours[i], theirs[j]) - rival
 
-    blocks, block = [], []
+    blocks: list[list[tuple[int, int]]] = []
+    block: list[tuple[int, int]] = []
     for i, j, _ in sorted(a for a in found if a[0] not in on_chain):
         if block and j - i == block[-1][1] - block[-1][0] and i - block[-1][0] <= 3:
             block.append((i, j))
@@ -239,7 +292,9 @@ def moved(texts, code, found, kept):
     return pairs
 
 
-def aligned(texts, code, table):
+def aligned(
+    texts: Texts, code: str, table: Table
+) -> list[tuple[list[Verse], list[Verse], str]]:
     """A book's verses and their counterparts by their words, as blocks of
     (edition verses, King James verses), either of which may be empty.
 
@@ -269,10 +324,11 @@ def aligned(texts, code, table):
     placed = _in_place(ours, theirs, pairs)
     pairs.update(placed)
     blocks = {verse: ([verse], [other]) for verse, other in pairs.items()}
-    facing = {other: blocks[verse] for verse, other in pairs.items()}
+    facing_blocks = {other: blocks[verse] for verse, other in pairs.items()}
     _join(texts.edition, texts.kjv, ours, blocks, 0)
-    _join(texts.kjv, texts.edition, theirs, facing, 1)
-    result, seen = [], set()
+    _join(texts.kjv, texts.edition, theirs, facing_blocks, 1)
+    result: list[tuple[list[Verse], list[Verse], str]] = []
+    seen: set[int] = set()
     paired = {id(block): block for block in blocks.values()}
     for verse in ours:
         block = blocks.get(verse)
@@ -295,7 +351,9 @@ def aligned(texts, code, table):
     ]
 
 
-def _in_place(ours, theirs, pairs):
+def _in_place(
+    ours: list[Verse], theirs: list[Verse], pairs: Mapping[Verse, Verse]
+) -> dict[Verse, Verse]:
     """Verses left over that face as many left over, between two pairs that
     stand in the same order: names spelt otherwise share no words.
 
@@ -304,7 +362,9 @@ def _in_place(ours, theirs, pairs):
     """
     position = {verse: j for j, verse in enumerate(theirs)}
     taken = set(pairs.values())
-    found, run, before = {}, [], -1
+    found: dict[Verse, Verse] = {}
+    run: list[Verse] = []
+    before = -1
     for verse in [*ours, None]:
         if verse is not None and verse not in pairs:
             run.append(verse)
@@ -322,11 +382,17 @@ def _in_place(ours, theirs, pairs):
     return found
 
 
-def _out_of_order(texts, ours, theirs, pairs, table):
+def _out_of_order(
+    texts: Texts,
+    ours: list[Verse],
+    theirs: list[Verse],
+    pairs: Mapping[Verse, Verse],
+    table: Table,
+) -> dict[Verse, Verse]:
     """Verses left over that pick each other out within a chapter, as where
     the Greek numbers Gad after the other tribes."""
     taken = set(pairs.values())
-    left = collections.defaultdict(list)
+    left: collections.defaultdict[int, list[Verse]] = collections.defaultdict(list)
     for verse in theirs:
         if verse not in taken:
             left[verse.chapter].append(verse)
@@ -348,7 +414,13 @@ def _out_of_order(texts, ours, theirs, pairs, table):
     return found
 
 
-def _join(near, far, order, blocks, side):
+def _join(
+    near: alignment.Verses,
+    far: alignment.Verses,
+    order: list[Verse],
+    blocks: dict[Verse, tuple[list[Verse], list[Verse]]],
+    side: int,
+) -> None:
     """Join each verse left over on one side to the pair before or after it,
     if the pair's other side has the greater share of its words."""
     for n, verse in enumerate(order):
@@ -373,7 +445,9 @@ def _join(near, far, order, blocks, side):
             blocks[verse] = block
 
 
-def tabled(texts, books):
+def tabled(
+    texts: Texts, books: Mapping[str, Document]
+) -> dict[Verse, tuple[Verse, ...] | None]:
     """Each verse's counterparts by the table, or None where its rows disagree.
 
     A verse the table says nothing of keeps its number.
@@ -383,7 +457,7 @@ def tabled(texts, books):
         {name: books[code] for code, listed in names.items() for name in listed}
     )
     account = tvtms.account(bible, names)
-    result = {}
+    result: dict[Verse, tuple[Verse, ...] | None] = {}
     for verse in texts.edition.words:
         kjv = texts.books[verse.book]
         answers = {standard for standard, _ in account.get(verse, [])}
@@ -403,18 +477,23 @@ def tabled(texts, books):
     return result
 
 
-def witnesses(books, kjv, *, policy):
+def witnesses(
+    books: Mapping[str, Document],
+    kjv: Mapping[str, Document],
+    *,
+    policy: bible.policy.Policy,
+) -> tuple[Texts, dict[str, list[WitnessBlock]]]:
     """Both witnesses on every verse of every book, block by block."""
     texts = Texts(books, kjv, policy=policy)
     table = tabled(texts, books)
-    report = {}
+    report: dict[str, list[WitnessBlock]] = {}
     for code in texts.books:
-        blocks = []
+        blocks: list[WitnessBlock] = []
         for ours, theirs, by in aligned(texts, code, table):
             answers = [table[verse] for verse in ours]
             said = None
             if all(answer is not None for answer in answers):
-                said = [v for answer in answers for v in answer]
+                said = [v for answer in answers if answer is not None for v in answer]
             blocks.append(
                 {
                     "edition": ours,
@@ -436,7 +515,7 @@ def witnesses(books, kjv, *, policy):
     return texts, report
 
 
-def settle(texts, blocks):
+def settle(texts: Texts, blocks: list[WitnessBlock]) -> list[WitnessBlock]:
     """Give back to the table what the words took without cause.
 
     Words carried over a verse's end draw it to its neighbour, and leave the
@@ -445,17 +524,19 @@ def settle(texts, blocks):
     the table's place too, if it has one, and if none can't, nothing moves.
     """
 
-    def said(block):
+    def said(block: WitnessBlock) -> list[Verse] | None:
         real = [v for v in block["table"] or () if v in texts.kjv.words]
-        return real if real and len(real) == len(block["table"]) else None
+        return real if real and len(real) == len(block["table"] or ()) else None
 
     holder = {v: n for n, b in enumerate(blocks) if b["edition"] for v in b["words"]}
     for n, block in enumerate(blocks):
         if not block["edition"] or block["words"] or not said(block):
             continue
-        moving, waiting = {n}, [n]
+        moving: set[int] | None = {n}
+        waiting = [n]
         while waiting:
             wanted = said(blocks[waiting.pop()])
+            assert wanted is not None and moving is not None
             for other in {holder[v] for v in wanted if v in holder} - moving:
                 theirs = said(blocks[other])
                 if theirs is None or sorted(map(str, theirs)) == sorted(
@@ -473,19 +554,25 @@ def settle(texts, blocks):
             for verse in blocks[m]["words"]:
                 del holder[verse]
         for m in moving:
-            blocks[m]["words"], blocks[m]["by"] = said(blocks[m]), "table"
+            replacement = said(blocks[m])
+            assert replacement is not None
+            blocks[m]["words"], blocks[m]["by"] = replacement, "table"
             holder.update({verse: m for verse in blocks[m]["words"]})
     return blocks
 
 
-def _same(ours, theirs, kjv):
+def _same(
+    ours: list[bible.references.Verse], theirs: list[bible.references.Verse], kjv: str
+) -> bool:
     """Whether verses keep their numbers in the King James Bible."""
     return [(kjv, v.chapter, v.number, v.letter) for v in ours] == [
         (v.book, v.chapter, v.number, v.letter) for v in theirs
     ]
 
 
-def proposal(texts, report):
+def proposal(
+    texts: Texts, report: Mapping[str, list[WitnessBlock]]
+) -> dict[str, list[Placement]]:
     """What the witnesses give, by book, as (edition verses, King James
     verses, witness): every verse that doesn't keep its number, and every
     one that keeps it against the table.
@@ -494,12 +581,12 @@ def proposal(texts, report):
     if no other verse has its place; a verse neither can place is listed
     without a counterpart, to be read.
     """
-    result = {}
+    result: dict[str, list[Placement]] = {}
     for code, blocks in report.items():
         kjv = texts.books[code]
         blocks = settle(texts, blocks)
         claimed = {v for block in blocks if block["edition"] for v in block["words"]}
-        entries = []
+        entries: list[Placement] = []
         for block in blocks:
             ours, theirs, said = block["edition"], block["words"], block["table"]
             real = [v for v in said or () if v in texts.kjv.words]
@@ -509,7 +596,7 @@ def proposal(texts, report):
             if (
                 titled
                 and real
-                and len(real) == len(said)
+                and len(real) == len(said or ())
                 and not any(v.number == tvtms.TITLE for v in real)
                 and not claimed & set(real)
             ):
@@ -521,7 +608,7 @@ def proposal(texts, report):
                 # Two verses that face one verse are each given it by the table.
                 agreed = said is not None and set(said) == set(theirs)
                 by = "table" if agreed else block["by"]
-            elif real and len(real) == len(said) and not claimed & set(real):
+            elif real and len(real) == len(said or ()) and not claimed & set(real):
                 theirs, by = real, "table"
                 claimed |= set(real)
             else:
@@ -536,14 +623,15 @@ def proposal(texts, report):
     return result
 
 
-def read(texts, code, *, policy):
+def read(texts: Texts, code: str, *, policy: bible.policy.Policy) -> list[Placement]:
     """The runs of a book that the editor has read, which stand whatever the
     witnesses give."""
-    found = []
+    found: list[Placement] = []
     for run in policy.versification["readings"].get(code, []):
         name = f"{run.get('edition')} = {run.get('kjv')}"
         require_fields(run, {"edition", "kjv", "why"}, {"pairs"}, f"Reading {name}")
         require(run["edition"] and run["why"], f"Reading without its reason: {name}")
+        assert run["edition"] is not None
         ours = versification.verses(run["edition"])
         theirs = versification.verses(run["kjv"]) if run["kjv"] else []
         require(
@@ -555,7 +643,13 @@ def read(texts, code, *, policy):
     return found
 
 
-def written(texts, code, entries, *, policy):
+def written(
+    texts: Texts,
+    code: str,
+    entries: Sequence[Placement],
+    *,
+    policy: bible.policy.Policy,
+) -> list[Run]:
     """A book's runs: what has been read, what the witnesses give of the
     rest, and what the edition wants of the King James Bible's verses."""
     decided = read(texts, code, policy=policy)
@@ -598,7 +692,12 @@ def written(texts, code, entries, *, policy):
     ]
 
 
-def placed(books, kjv, *, policy):
+def placed(
+    books: Mapping[str, Document],
+    kjv: Mapping[str, Document],
+    *,
+    policy: bible.policy.Policy,
+) -> dict[str, list[Run]]:
     """Every book's runs, as the witnesses and the editor's readings give
     them: of the edition's books and the King James Bible's, as documents."""
     unknown = sorted(
@@ -615,10 +714,10 @@ def placed(books, kjv, *, policy):
     return {code: listed for code, listed in found.items() if listed}
 
 
-def _runs(entries):
+def _runs(entries: list[Placement]) -> list[Run]:
     """Entries as runs, verse for verse where a run of verses faces a run as
     long, and as a block where it doesn't."""
-    written = []
+    written: list[WrittenBlock] = []
     for ours, theirs, by, why in entries:
         last = written[-1] if written else None
         if (
@@ -660,7 +759,7 @@ def _runs(entries):
     ]
 
 
-def _follows(verse, other):
+def _follows(verse: bible.references.Verse, other: bible.references.Verse) -> bool:
     return not (verse.letter or other.letter) and (
         verse.book,
         verse.chapter,
@@ -672,7 +771,7 @@ def _follows(verse, other):
 HEADING = re.compile(r"s\d?|d")
 
 
-def _plain(books):
+def _plain(books: Mapping[str, Document]) -> dict[tuple[str, str], str]:
     """Each verse's words as printed, by book and label, without its notes
     or a heading set within it."""
     found = {}
@@ -689,7 +788,11 @@ def _plain(books):
     return found
 
 
-def report(found, books, kjv):
+def report(
+    found: Mapping[str, Sequence[Run]],
+    books: Mapping[str, Document],
+    kjv: Mapping[str, Document],
+) -> str:
     """Every run, by book, for the review; those that rest on the words or on
     their place alone with both translations' words, for the editor to read."""
     # Only of the books that have such runs.
@@ -700,7 +803,10 @@ def report(found, books, kjv):
         if run.get("by") in {"words", "place"}
     ]
     ours = _plain(
-        {code: books[code] for code in {run["edition"].split()[0] for run in unread}}
+        {
+            code: books[code]
+            for code in {run["edition"].split()[0] for run in unread if run["edition"]}
+        }
     )
     theirs = _plain(
         {

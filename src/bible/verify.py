@@ -2,14 +2,20 @@
 unit's text, then the rendered PDF (page size, fonts, contents, the way it
 cites, and the phrases in edition/witnesses.json)."""
 
+from __future__ import annotations
+
 import io
 import re
 import subprocess
 import unicodedata
 import xml.etree.ElementTree as ET
+from collections.abc import Mapping, Sequence
+from pathlib import Path
+from typing import TypedDict
 
-from bible.checks import CheckFailed, require
+from bible.checks import CheckFailed, present, require
 from bible.files import sha256, write_json
+from bible.policy_schema import Witnesses
 from bible.project import (
     PROCESSED_DIR,
     processed_usfm,
@@ -17,8 +23,15 @@ from bible.project import (
     project_usfm,
     text_font,
 )
-from bible.toolchain import capture, run
+from bible.toolchain import capture as capture
+from bible.toolchain import run
 from bible.usfm import canonical_text, heading, inventory
+
+
+class PdfReport(TypedDict):
+    pages: int
+    text_sha256: str
+
 
 POINTS_PER_MM = 72 / 25.4
 # TeX points (72.27 to the inch) in a PDF point.
@@ -36,9 +49,9 @@ MARGIN_NOTE = re.compile(
 )
 
 
-def processed_markers(markers):
+def processed_markers(markers: Mapping[str, int]) -> dict[str, int]:
     # Nested italic/quotation markers may be flattened by the module parser.
-    result = {}
+    result: dict[str, int] = {}
     for k, v in markers.items():
         k = k.lstrip("+")
         if k.rstrip("*") in KEPT_MARKERS:
@@ -46,7 +59,7 @@ def processed_markers(markers):
     return result
 
 
-def check_processed(project, base, ids):
+def check_processed(project: Path, base: Path, ids: list[str]) -> None:
     records = []
     texfiles = list((project / PROCESSED_DIR).glob("*_ptxp.tex"))
     require(len(texfiles) == 1, "Missing typesetting driver")
@@ -84,11 +97,19 @@ def check_processed(project, base, ids):
     write_json(base / "processed-integrity.json", records)
 
 
-def check_boundaries(base, project, ids, pages, reading_text, sample, witnesses):
+def check_boundaries(
+    base: Path,
+    project: Path,
+    ids: Sequence[str],
+    pages: int,
+    reading_text: str,
+    sample: bool,
+    witnesses: Sequence[Witnesses],
+) -> None:
     tocfiles = list(base.rglob("*_ptxp.toc"))
     require(len(tocfiles) == 1, "Missing/ambiguous contents file")
 
-    def readtoc(path):
+    def readtoc(path: Path) -> list[tuple[str, str, str]]:
         main = (
             path.read_text(encoding="utf-8")
             .split("\\defTOC{main}{", 1)[1]
@@ -112,7 +133,7 @@ def check_boundaries(base, project, ids, pages, reading_text, sample, witnesses)
     )
     page_text = reading_text.split("\f")
 
-    def key(s):
+    def key(s: str) -> str:
         return "".join(
             c for c in unicodedata.normalize("NFKC", s).casefold() if c.isalnum()
         )
@@ -123,15 +144,17 @@ def check_boundaries(base, project, ids, pages, reading_text, sample, witnesses)
     # The basic front matter template restarts printed numbering at the
     # contents. Its TOC numbers therefore differ from physical PDF pages.
     first_heading = heading(usfm[ids[0]])
-    first_physical = next(
-        (
-            i + 1
-            for i in range(3, pages)
-            if key(canonical_text(first_heading)) in key(page_text[i])
+    first_physical = present(
+        next(
+            (
+                i + 1
+                for i in range(3, pages)
+                if key(canonical_text(first_heading)) in key(page_text[i])
+            ),
+            None,
         ),
-        None,
+        "First unit heading missing from PDF",
     )
-    require(first_physical is not None, "First unit heading missing from PDF")
     page_offset = first_physical - int(toc[0][2])
     require(page_offset >= 3, "Front matter page offset is invalid")
     contents = key("".join(page_text[2 : first_physical - 1]))
@@ -188,7 +211,7 @@ FOREIGN_CITATION = re.compile(
 )
 
 
-def check_citations(reading_text):
+def check_citations(reading_text: str) -> None:
     """Every citation on the pages is in the edition's way of writing.
 
     Preparation reads each citation where its source is read, and refuses
@@ -200,11 +223,13 @@ def check_citations(reading_text):
     require(not found, f"Citation not written as the edition cites: {found[:12]}")
 
 
-def stream_text(pdf, top, bottom, inner=None):
+def stream_text(
+    pdf: str | Path, top: float, bottom: float, inner: float | None = None
+) -> str:
     """Each page's text in stream order within body and inner-note columns.
     Form feeds part the pages; blank lines part the extracted text blocks,
     so a heading cannot become the book name of the paragraph below it."""
-    pages = []
+    pages: list[str] = []
     # A whole Bible is a million words: drop each page's once they are read.
     for _, page in ET.iterparse(
         io.StringIO(capture("pdftotext", "-bbox-layout", pdf, "-"))
@@ -213,23 +238,26 @@ def stream_text(pdf, top, bottom, inner=None):
             continue
         body, notes = [], []
         for block in page.iter(XHTML + "block"):
-            body_words, note_words = [], []
+            body_words: list[str] = []
+            note_words: list[str] = []
             for word in block.iter(XHTML + "word"):
                 # The running head and the folio stand in the margins.
                 if (
                     not top
-                    <= float(word.get("yMin"))
-                    <= float(page.get("height")) - bottom
+                    <= float(word.attrib["yMin"])
+                    <= float(page.attrib["height"]) - bottom
                 ):
                     continue
                 # Side notes can interrupt a sentence in PDF stream order. Keep
                 # each column together, allowing 3 pt for optical protrusion at
                 # the body edge (less than the 5.5 mm gap to the notes).
                 marginal = inner is not None and (
-                    float(word.get("xMax")) < inner - 3
+                    float(word.attrib["xMax"]) < inner - 3
                     if len(pages) % 2 == 0
-                    else float(word.get("xMin")) > float(page.get("width")) - inner + 3
+                    else float(word.attrib["xMin"])
+                    > float(page.attrib["width"]) - inner + 3
                 )
+                assert word.text is not None
                 (note_words if marginal else body_words).append(word.text)
             if body_words:
                 body.append(" ".join(body_words))
@@ -240,7 +268,7 @@ def stream_text(pdf, top, bottom, inner=None):
     return "\f".join(pages)
 
 
-def check_margin_notes(base, top, bottom):
+def check_margin_notes(base: Path, top: float, bottom: float) -> None:
     """Every margin note is in the text block, below the note before it:
     PTXprint has nowhere else to put the notes of an overfull margin. top and
     bottom are the block's edges, in TeX points from the foot of the page."""
@@ -253,7 +281,8 @@ def check_margin_notes(base, top, bottom):
         len(notes) == records.count("\\@marginnote"),
         "Could not read every margin note position",
     )
-    last_page, ceiling = None, top
+    last_page: str | None = None
+    ceiling = top
     for ref, height, depth, page, y in notes:
         if page != last_page:
             last_page, ceiling = page, top
@@ -267,7 +296,9 @@ def check_margin_notes(base, top, bottom):
         ceiling = note_bottom
 
 
-def check_added_words_roman(pdf, reading_text, project, ids, sample):
+def check_added_words_roman(
+    pdf: str | Path, reading_text: str, project: Path, ids: Sequence[str], sample: bool
+) -> None:
     # Malachias 4:2 has "\\add shall be\\add* in his wings". Check the added
     # words against their roman neighbours; "healing" may break as "heal- / ing".
     # Like the render witnesses, only the sample may leave the verse out.
@@ -308,12 +339,21 @@ def check_added_words_roman(pdf, reading_text, project, ids, sample):
     raise CheckFailed("Added-word witness not found in PDF text runs")
 
 
-def inspect_pdf(pdf, base, project, ids, sample, witnesses):
+def inspect_pdf(
+    pdf: Path,
+    base: Path,
+    project: Path,
+    ids: Sequence[str],
+    sample: bool,
+    witnesses: Sequence[Witnesses],
+) -> PdfReport:
     with (base / "qpdf.log").open("w", encoding="utf-8") as log:
         run("qpdf", "--check", pdf, stdout=log, stderr=subprocess.STDOUT)
     info = capture("pdfinfo", "-box", pdf)
     (base / "pdfinfo.txt").write_text(info, encoding="utf-8")
-    pages = int(re.search(r"Pages:\s+(\d+)", info)[1])
+    page_count = re.search(r"Pages:\s+(\d+)", info)
+    assert page_count is not None
+    pages = int(page_count[1])
     # Check every page, not just the first MediaBox.
     boxes = capture("pdfinfo", "-f", 1, "-l", pages, "-box", pdf)
     sizes = re.findall(r"(?:Page\s+\d+ size:|Page size:)\s+([\d.]+) x ([\d.]+)", boxes)

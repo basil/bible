@@ -1,9 +1,15 @@
 """The checks on PTXprint's processed text and on the rendered PDF."""
 
-from types import SimpleNamespace
+from __future__ import annotations
+
+from collections.abc import Callable, Sequence
+from pathlib import Path
+from types import MappingProxyType
+from typing import Any
 
 import pytest
 
+import bible.policy
 from bible import pipeline, project, usj, verify
 from bible.checks import CheckFailed
 from bible.files import read_json
@@ -15,7 +21,7 @@ SOURCE_USFM = (
 
 
 @pytest.fixture
-def processed(tmp_path):
+def processed(tmp_path: Path) -> Callable[[str], None]:
     """A minimal generated project, and a function to write PTXprint's output."""
     root = tmp_path / project.PROJECT_DIR
     local = root / project.PROCESSED_DIR
@@ -23,14 +29,16 @@ def processed(tmp_path):
     project.project_usfm(root, "GEN").write_text(SOURCE_USFM, encoding="utf-8")
     (local / "Bible_ptxp.tex").write_text("%\\OmitCallerInNote{f}\n", encoding="utf-8")
 
-    def write(output):
+    def write(output: str) -> None:
         project.processed_usfm(root, "GEN").write_text(output, encoding="utf-8")
         verify.check_processed(root, tmp_path, ["GEN"])
 
     return write
 
 
-def test_processed_output_unchanged(processed, tmp_path):
+def test_processed_output_unchanged(
+    processed: Callable[[str], None], tmp_path: Path
+) -> None:
     processed(SOURCE_USFM.replace("\n\\p\n", "\n\\p "))
     (record,) = read_json(tmp_path / "processed-integrity.json")
     assert record["id"] == "GEN"
@@ -47,13 +55,15 @@ def test_processed_output_unchanged(processed, tmp_path):
     ],
 )
 def test_processed_output_that_changes_the_text_is_refused(
-    processed, before, after, refusal
-):
+    processed: Callable[[str], None], before: str, after: str, refusal: str
+) -> None:
     with pytest.raises(CheckFailed, match=f"PTXprint changed {refusal}: GEN"):
         processed(SOURCE_USFM.replace(before, after))
 
 
-def test_printed_origins_lose_their_chapter_and_front_matter_its_empty_ones():
+def test_printed_origins_lose_their_chapter_and_front_matter_its_empty_ones(
+    declared: bible.policy.Policy,
+) -> None:
     # What verify compares PTXprint's copy against is the exported text.
     doc = usj.parse(
         "\\id GEN\n\\c 9\n\\p\n"
@@ -61,8 +71,13 @@ def test_printed_origins_lose_their_chapter_and_front_matter_its_empty_ones():
         "\\x - \\xo 9:12a \\xt Psalm 1:2\\x* to Noe.\\f + \\fr 3:0 \\ft A title\\f*\n"
     )
 
-    def exported(code, scripture):
-        unit = SimpleNamespace(scripture=frozenset(scripture), authored=frozenset())
+    # An edition of no books: exporting reads only which units are scripture.
+    none: MappingProxyType[str, Any] = MappingProxyType({})
+
+    def exported(code: str, scripture: set[str]) -> str:
+        unit = pipeline.Edition(
+            declared, none, frozenset(scripture), frozenset(), none, none, none, none
+        )
         return pipeline.exported(code, doc, unit).split("\\v 12 ")[1]
 
     assert exported("GEN", {"GEN"}) == (
@@ -93,7 +108,7 @@ def test_printed_origins_lose_their_chapter_and_front_matter_its_empty_ones():
         "and the evening star. 32 Or wilt thou",
     ],
 )
-def test_the_editions_citations_pass(words):
+def test_the_editions_citations_pass(words: str) -> None:
     verify.check_citations(words)
 
 
@@ -109,25 +124,31 @@ def test_the_editions_citations_pass(words):
         "See 1 Cor 2. 16. Gr.",
     ],
 )
-def test_a_citation_as_a_source_writes_it_is_refused(words):
+def test_a_citation_as_a_source_writes_it_is_refused(words: str) -> None:
     with pytest.raises(CheckFailed, match="not written as the edition cites"):
         verify.check_citations(f"12:3 lamb: {words} and so on")
 
 
 @pytest.mark.parametrize("ids,chapters", [(["GEN"], None), (["MAL"], "3")])
 def test_added_words_witness_may_be_left_out_of_the_sample_only(
-    tmp_path, ids, chapters
-):
+    tmp_path: Path, ids: list[str], chapters: str | None
+) -> None:
     if chapters:
         project.project_usfm(tmp_path, "MAL").write_text(
             f"\\id MAL\n\\c {chapters}\n\\p\n\\v 1 A.\n", encoding="utf-8"
         )
-    verify.check_added_words_roman(None, "", tmp_path, ids, True)
+    verify.check_added_words_roman(tmp_path / "unused.pdf", "", tmp_path, ids, True)
     with pytest.raises(CheckFailed, match="Malachias 4:2 is not in the build"):
-        verify.check_added_words_roman(None, "", tmp_path, ids, False)
+        verify.check_added_words_roman(
+            tmp_path / "unused.pdf", "", tmp_path, ids, False
+        )
 
 
-def pdf_words(monkeypatch, *pages, **size):
+def pdf_words(
+    monkeypatch: pytest.MonkeyPatch,
+    *pages: Sequence[tuple[str, float, float, float]],
+    **size: float,
+) -> None:
     """Have pdftotext report pages of words, each (text, left, top, right)."""
     attributes = "".join(f' {name}="{value}"' for name, value in size.items())
     body = "".join(
@@ -149,7 +170,9 @@ def pdf_words(monkeypatch, *pages, **size):
     )
 
 
-def test_stream_text_parts_words_and_leaves_out_the_margins(monkeypatch):
+def test_stream_text_parts_words_and_leaves_out_the_margins(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     # The running head and the folio stand above and below the text block.
     words = [("Esaias", 13), ("as", 40), ("in", 40), ("Rom.", 40), ("4.", 52)]
     page = [(text, 34, top, 54) for text, top in [*words, ("7", 52), ("53", 556)]]
@@ -160,7 +183,9 @@ def test_stream_text_parts_words_and_leaves_out_the_margins(monkeypatch):
         verify.check_citations(text)
 
 
-def test_stream_text_keeps_inner_notes_out_of_body_sentences(monkeypatch):
+def test_stream_text_keeps_inner_notes_out_of_body_sentences(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     # The inner margin is on the left of an odd page and the right of an even.
     odd = [("the soul", 102, 40, 150), ("Vat. omits", 30, 40, 90)]
     even = [("the soul", 34, 40, 82), ("Vat. omits", 410, 40, 460)]
@@ -176,7 +201,9 @@ def test_stream_text_keeps_inner_notes_out_of_body_sentences(monkeypatch):
     )
 
 
-def test_stream_text_keeps_a_heading_apart_from_the_following_numbers(monkeypatch):
+def test_stream_text_keeps_a_heading_apart_from_the_following_numbers(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     pdf_words(
         monkeypatch,
         [("2 Chronicles", 100, 40, 200), ("27. 8", 100, 72, 150)],
@@ -193,7 +220,7 @@ def test_stream_text_keeps_a_heading_apart_from_the_following_numbers(monkeypatc
     verify.check_citations(text)
 
 
-def check_notes(tmp_path, *notes):
+def check_notes(tmp_path: Path, *notes: tuple[str, int, float, float]) -> None:
     """Check notes given as (reference, page, top, depth), in points, against
     a text block from 51 to 561 points above the foot of the page."""
     (tmp_path / "Bible_ptxp.marginnotes").write_text(
@@ -208,7 +235,7 @@ def check_notes(tmp_path, *notes):
     verify.check_margin_notes(tmp_path, 561, 51)
 
 
-def test_margin_notes_that_fit_in_order_pass(tmp_path):
+def test_margin_notes_that_fit_in_order_pass(tmp_path: Path) -> None:
     check_notes(
         tmp_path,
         ("GEN2.19", 46, 561, 20),
@@ -230,12 +257,14 @@ def test_margin_notes_that_fit_in_order_pass(tmp_path):
         [("GEN2.19", 46, 551, 20), ("GEN2.20", 46, 561, 10)],
     ],
 )
-def test_a_margin_note_that_does_not_fit_is_refused(tmp_path, notes):
+def test_a_margin_note_that_does_not_fit_is_refused(
+    tmp_path: Path, notes: list[tuple[str, int, float, float]]
+) -> None:
     with pytest.raises(CheckFailed, match="does not fit: page 46 GEN2.20"):
         check_notes(tmp_path, *notes)
 
 
-def test_a_margin_note_record_in_another_form_is_refused(tmp_path):
+def test_a_margin_note_record_in_another_form_is_refused(tmp_path: Path) -> None:
     (tmp_path / "Bible_ptxp.marginnotes").write_text(
         "\\@marginnote{GEN2.19}{f}{inner}{46}{-36765696}\n", encoding="utf-8"
     )

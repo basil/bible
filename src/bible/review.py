@@ -14,25 +14,32 @@ review shows what they come to. It is written from the prepared edition and
 is never read by the build.
 """
 
+from __future__ import annotations
+
 import difflib
 import json
 import shutil
+from collections.abc import Mapping
 
+import bible.pipeline
+import bible.policy
+import bible.sources
 from bible import assembly, paths, pipeline, places, scripture, versification
 from bible.alexandrinus import APPENDIX
 from bible.policy import thaw
 from bible.references import parse_passage
 from bible.usfm import plain_text
+from bible.usj import Document
 
 
-def note_line(row):
+def note_line(row: Mapping[str, object]) -> str:
     return (
         f"- `{row['key']}` [{row['rule']}; {row['style']}] {row['verse']}\n"
         f"  → {row['lemma'] or '(verse)'}: {row['note']}\n"
     )
 
 
-def notes_report(edition):
+def notes_report(edition: bible.pipeline.Edition) -> str:
     return "# Notes\n\n" + "".join(
         f"## {code}\n\n" + "".join(map(note_line, rows)) + "\n"
         for code, rows in edition.notes.items()
@@ -40,7 +47,9 @@ def notes_report(edition):
     )
 
 
-def placed(policy, code, reference):
+def placed(
+    policy: bible.policy.Policy, code: str, reference: str
+) -> tuple[str, str] | None:
     """Where the edition prints a verse of one of Brenton's files: its unit
     and the verse's reference there."""
     for part, number, _ in assembly.DANIEL:
@@ -60,7 +69,7 @@ def placed(policy, code, reference):
     return None
 
 
-def context(verses, wanted):
+def context(verses: Mapping[str, scripture.Verse], wanted: set[str]) -> str:
     """The wanted verses with the one before and the one after."""
     labels = list(verses)
     found = [n for n, label in enumerate(labels) if label in wanted]
@@ -72,13 +81,19 @@ def context(verses, wanted):
     )
 
 
-def alexandrinus_report(read, edition):
+def alexandrinus_report(
+    read: bible.pipeline.Read, edition: bible.pipeline.Edition
+) -> str:
     policy = edition.policy
     data = policy.alexandrinus
-    sources = {}
-    printed = {}
+    sources: dict[str, dict[str, scripture.Verse]] = {}
+    printed: dict[str, dict[str, scripture.Verse]] = {}
 
-    def verses(cache, docs, code):
+    def verses(
+        cache: dict[str, dict[str, scripture.Verse]],
+        docs: Mapping[str, Document],
+        code: str,
+    ) -> dict[str, scripture.Verse]:
         if code not in cache:
             cache[code] = scripture.verses(docs[code])
         return cache[code]
@@ -93,12 +108,14 @@ def alexandrinus_report(read, edition):
                 wanted.add(edit["target"].split()[-1])
             for insertion in decision.get("insertions", ()):
                 wanted.update(v["reference"] for v in insertion["verses"])
-                wanted.add(insertion.get("after", insertion.get("before")))
+                anchor = insertion.get("after", insertion.get("before"))
+                assert anchor is not None
+                wanted.add(anchor)
             wanted = {w for w in wanted if ":" in w and "-" not in w}
             source = decision.get("appendix", decision.get("source_note", ""))
             if "kjv" in decision:
                 source = "Authorized Version, " + key
-            targets = {}
+            targets: dict[str, set[str]] = {}
             for reference in wanted:
                 where = placed(policy, code, reference)
                 if where:
@@ -171,7 +188,11 @@ def alexandrinus_report(read, edition):
     return "".join(lines + audit)
 
 
-def review(sources, policy, edition):
+def review(
+    sources: bible.sources.Sources,
+    policy: bible.policy.Policy,
+    edition: bible.pipeline.Edition,
+) -> None:
     """Write the review, and what differs in it from the last one."""
     read = pipeline.read(sources, policy)
     files = {
@@ -183,7 +204,7 @@ def review(sources, policy, edition):
         **{f"text/{code}.usfm": text for code, text in pipeline.export(edition, "pdf")},
     }
     base = paths.BUILD_DIR / "review"
-    changes = []
+    changes: list[str] = []
     previous = (
         {
             str(path.relative_to(base)): path.read_text(encoding="utf-8")

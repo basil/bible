@@ -1,5 +1,7 @@
 """STEPBible's table, read against a Bible's verses."""
 
+from __future__ import annotations
+
 import pytest
 
 from bible import tvtms, usj
@@ -14,11 +16,11 @@ GREEK = (
 
 
 @pytest.fixture
-def bible():
+def bible() -> Bible:
     return Bible({"JOL": usj.parse(GREEK)})
 
 
-def test_the_table_is_read_whole():
+def test_the_table_is_read_whole() -> None:
     found, unread = tvtms.rows()
     assert len(found) == 22860
     # Lists of scattered verses, as "9:10,15,23,24,25", name no run to read.
@@ -41,12 +43,14 @@ def test_the_table_is_read_whole():
         ("Est.A:3", [("EST", "A", 3, "")]),
     ],
 )
-def test_a_reference_names_its_verses(written, verses):
+def test_a_reference_names_its_verses(
+    written: str, verses: list[tuple[int | str, ...]]
+) -> None:
     assert tvtms._verses(written) == verses
 
 
 @pytest.mark.parametrize("written", ["1Ki.9:10,15", "Gen.1", "5:1", ""])
-def test_an_unreadable_reference_is_none(written):
+def test_an_unreadable_reference_is_none(written: str) -> None:
     assert tvtms._verses(written) is None
 
 
@@ -69,18 +73,22 @@ def test_an_unreadable_reference_is_none(written):
         ("", True),
     ],
 )
-def test_a_test_asks_what_the_bible_has(bible, tests, holds):
+def test_a_test_asks_what_the_bible_has(bible: Bible, tests: str, holds: bool) -> None:
     assert bible.passes(tests) is holds
 
 
 @pytest.mark.parametrize("tests", ["3:1=Exist", "Jol.3:1=Exist & nonsense"])
-def test_an_unreadable_test_is_neither(bible, tests):
+def test_an_unreadable_test_is_neither(bible: Bible, tests: str) -> None:
     assert bible.passes(tests) is None
 
 
-def test_the_account_is_of_the_rows_the_bible_passes(bible, monkeypatch):
-    def row(tradition, source, standard, tests=""):
-        verses = tuple(tvtms._verses(source)), tuple(tvtms._verses(standard))
+def test_the_account_is_of_the_rows_the_bible_passes(
+    bible: Bible, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def row(tradition: str, source: str, standard: str, tests: str = "") -> Row:
+        source_verses, standard_verses = tvtms._verses(source), tvtms._verses(standard)
+        assert source_verses is not None and standard_verses is not None
+        verses = tuple(source_verses), tuple(standard_verses)
         return Row(tradition, *verses, "Renumber verse", tests)
 
     rows = [

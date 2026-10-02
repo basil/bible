@@ -1,13 +1,19 @@
 """Canonical Turpie transcription and editorial input checks."""
 
+from __future__ import annotations
+
+from collections.abc import Callable
+from typing import Any
+
 import pytest
 from conftest import changed
 
+import bible.policy
 from bible import quotations
 from bible.checks import CheckFailed
 
 
-def test_complete_review(policy):
+def test_complete_review(policy: bible.policy.Policy) -> None:
     rows = {row["id"]: row for row in quotations.reviewed_rows(policy=policy)}
     assert len(rows) == 273
     # A narrowed head links only its part.
@@ -22,13 +28,17 @@ def test_complete_review(policy):
         (lambda heads: heads[0]["hebrew"].pop("printed"), "Missing printed Hebrew"),
     ],
 )
-def test_a_transcription_must_be_whole(policy, change, refusal):
+def test_a_transcription_must_be_whole(
+    policy: bible.policy.Policy,
+    change: Callable[[list[dict[str, Any]]], object],
+    refusal: str,
+) -> None:
     lacking = changed(policy, "turpie", lambda data: change(data["rows"]))
     with pytest.raises(CheckFailed, match=refusal):
         quotations.reviewed_rows(policy=lacking)
 
 
-def part(lxx, why="x"):
+def part(lxx: str, why: str = "x") -> dict[str, str]:
     return {"lxx": lxx, "why": why}
 
 
@@ -52,9 +62,13 @@ def part(lxx, why="x"):
     ],
 )
 def test_a_decision_must_be_of_a_head_and_have_its_reason(
-    policy, section, key, decision, refusal
-):
-    def decide(data):
+    policy: bible.policy.Policy,
+    section: str,
+    key: str,
+    decision: str | dict[str, str] | None,
+    refusal: str,
+) -> None:
+    def decide(data: dict[str, Any]) -> None:
         if decision is None:
             del data[section][key]
         else:

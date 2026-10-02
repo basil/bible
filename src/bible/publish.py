@@ -1,10 +1,15 @@
 """Publishing a checked PDF to dist/ with a provenance record of what produced it."""
 
+from __future__ import annotations
+
 import shutil
 import sys
+from collections.abc import Sequence
+from pathlib import Path
 
 from bible import paths, sources, toolchain
 from bible.files import file_sha256, write_json
+from bible.verify import PdfReport
 
 # The checkout's folders and files that the provenance record hashes.
 TRACKED_FOLDERS = ("config", "content", "edition", "src", "scripts")
@@ -17,7 +22,7 @@ TRACKED_FILES = (
 )
 
 
-def tracked_inputs():
+def tracked_inputs() -> dict[str, str]:
     """The hash of every input in the checkout, by its path in the checkout."""
     tracked = {
         p.relative_to(paths.ROOT).as_posix(): file_sha256(p)
@@ -35,7 +40,9 @@ def tracked_inputs():
     return tracked
 
 
-def publish(mode, pdf, ids, report, title):
+def publish(
+    mode: str, pdf: Path, ids: Sequence[str], report: PdfReport, title: str
+) -> None:
     """Copy a checked PDF to dist/ with a record of what produced it."""
     target = paths.DIST_DIR / paths.OUTPUTS[mode]
     paths.DIST_DIR.mkdir(exist_ok=True)

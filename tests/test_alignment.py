@@ -1,5 +1,7 @@
 """Verses compared by the rarer words they share."""
 
+from __future__ import annotations
+
 from bible import alignment, usj
 from bible.alignment import Verses, content_words, similarity, stem, weights
 from bible.references import Verse
@@ -16,23 +18,23 @@ BRENTON = usj.parse(
 )
 
 
-def test_a_word_is_compared_without_its_inflexion():
+def test_a_word_is_compared_without_its_inflexion() -> None:
     assert [stem(w) for w in ("sows", "soweth", "sowing", "sowed")] == ["sow"] * 4
     # What is left must still be a word.
     assert stem("is") == "is" and stem("sing") == "sing"
 
 
-def test_common_words_show_nothing():
+def test_common_words_show_nothing() -> None:
     assert content_words("And the Lord said unto Moses") == {"lord", "mos"}
 
 
-def test_a_title_is_the_words_before_the_first_verse():
+def test_a_title_is_the_words_before_the_first_verse() -> None:
     assert alignment.titles(PSALM) == {3: "A Psalm of David, when he fled."}
     # Brenton's title marker is empty: he numbers the title's words.
     assert alignment.titles(BRENTON) == {}
 
 
-def test_a_title_is_verse_nothing_of_its_chapter():
+def test_a_title_is_verse_nothing_of_its_chapter() -> None:
     verses = Verses({"PSA": PSALM}, titled=True)
     assert list(map(str, verses.order["PSA"])) == [
         "PSA 3:0",
@@ -46,19 +48,21 @@ def test_a_title_is_verse_nothing_of_its_chapter():
     assert "selah" not in verses.words[Verse("PSA", 3, 2)]
 
 
-def test_verses_can_be_left_out():
+def test_verses_can_be_left_out() -> None:
     left = Verses({"PSA": PSALM}, without={Verse("PSA", 3, 2)})
     assert list(map(str, left.order["PSA"])) == ["PSA 3:1", "PSA 4:1"]
 
 
-def test_verses_shift_in_their_books_order():
+def test_verses_shift_in_their_books_order() -> None:
     verses = Verses({"PSA": PSALM})
-    [moved] = verses.shifted([Verse("PSA", 3, 2)], 1)
+    shifted = verses.shifted([Verse("PSA", 3, 2)], 1)
+    assert shifted is not None
+    [moved] = shifted
     assert str(moved) == "PSA 4:1"
     assert verses.shifted([Verse("PSA", 4, 1)], 1) is None
 
 
-def test_rarer_words_weigh_more():
+def test_rarer_words_weigh_more() -> None:
     ours = {1: {"ark", "water"}, 2: {"water"}, 3: {"water", "dove"}}
     theirs = {1: {"ark", "waters"}, 2: {"dove"}}
     weight = weights(ours, theirs)

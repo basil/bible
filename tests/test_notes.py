@@ -1,13 +1,27 @@
 """Notes: what each says, the words it is about, and how it prints."""
 
+from __future__ import annotations
+
+from collections.abc import Sequence
+from typing import Any
+
 import pytest
 from conftest import book, changed, verse_lines
 
-from bible import annotate, lemmas, notes, scripture, terminology, usj
+import bible.annotate
+import bible.pipeline
+import bible.policy
+from bible import annotate, crossrefs, lemmas, notes, scripture, terminology, usj
 from bible.checks import CheckFailed
 
 
-def printed(body, ctx, *, code="GEN", links=()):
+def printed(
+    body: str,
+    ctx: bible.annotate.Context,
+    *,
+    code: str = "GEN",
+    links: Sequence[crossrefs.Link] = (),
+) -> dict[str, str]:
     """A small book's verses with their notes as the edition prints them."""
     doc, _ = annotate.brenton(code, book(code, body), links, frozenset(), ctx)
     return verse_lines(doc)
@@ -54,15 +68,18 @@ def printed(body, ctx, *, code="GEN", links=()):
         ),
     ],
 )
-def test_a_note_of_brentons_is_set_as_a_footnote_on_its_words(verse, expected, ctx):
+def test_a_note_of_brentons_is_set_as_a_footnote_on_its_words(
+    verse: str, expected: str, ctx: bible.annotate.Context
+) -> None:
     assert list(printed(verse, ctx).values()) == [expected]
 
 
-def test_a_lemma_is_widened_until_it_occurs_once_and_its_rendering_with_it():
+def test_a_lemma_is_widened_until_it_occurs_once_and_its_rendering_with_it() -> None:
     verse = "that ye have no reward of your Father, and praise of men"
     words = scripture.word_spans(verse)
     of = [i for i, (word, _, _) in enumerate(words) if word == "of"]
     span, glossed, rule, first = lemmas.anchored(verse, words, ["of"], 1, {}, "key")
+    assert span is not None
     assert (lemmas.lemma_text(verse, words, span), rule, first) == (
         "of your Father",
         "widened",
@@ -71,10 +88,12 @@ def test_a_lemma_is_widened_until_it_occurs_once_and_its_rendering_with_it():
     assert lemmas.echoes(verse, words, span, glossed) == ("", " your Father")
 
 
-def test_the_exception_files_correct_the_rules(ctx, policy):
+def test_the_exception_files_correct_the_rules(
+    ctx: bible.annotate.Context, policy: bible.policy.Policy
+) -> None:
     verse = r"\v 9 Let the water be collected into one \f + \fr 99:9 \fqa Gr. \ft meeting together.\f*place of rest."
 
-    def with_exception(entry):
+    def with_exception(entry: dict[str, Any]) -> str:
         excepted = changed(
             policy,
             "brenton_notes",
@@ -106,13 +125,15 @@ def test_the_exception_files_correct_the_rules(ctx, policy):
         with_exception({"note": "Gr. _meeting_ apart.", "why": "other words"})
 
 
-def test_a_note_in_the_wrong_verse_is_set_on_its_words_in_the_right_one(ctx, policy):
+def test_a_note_in_the_wrong_verse_is_set_on_its_words_in_the_right_one(
+    ctx: bible.annotate.Context, policy: bible.policy.Policy
+) -> None:
     verses = (
         "\\v 7 And there shall be two parties among you.\n"
         r"\v 9 both those that went in, \f + \fr 99:9 \fqa Gr. \ft hands.\f*and those that went out."
     )
 
-    def with_exception(entry):
+    def with_exception(entry: dict[str, Any]) -> dict[str, str]:
         moved = changed(
             policy,
             "brenton_notes",
@@ -133,7 +154,9 @@ def test_a_note_in_the_wrong_verse_is_set_on_its_words_in_the_right_one(ctx, pol
         with_exception({"verse": "99:7", "lemma": "sides", **why})
 
 
-def test_a_note_that_is_a_sentence_takes_a_capital_and_a_full_stop(ctx, policy):
+def test_a_note_that_is_a_sentence_takes_a_capital_and_a_full_stop(
+    ctx: bible.annotate.Context, policy: bible.policy.Policy
+) -> None:
     doc = book("MAT", r"\v 2 and paid an hundred pence to the keeper of the house.")
     listed = [
         dict(
@@ -155,7 +178,9 @@ def test_a_note_that_is_a_sentence_takes_a_capital_and_a_full_stop(ctx, policy):
     assert [row["rule"] for row in report.rows] == ["anchor", "anchor"]
 
 
-def test_a_note_of_the_margin_must_find_its_words_once(ctx):
+def test_a_note_of_the_margin_must_find_its_words_once(
+    ctx: bible.annotate.Context,
+) -> None:
     doc = book("MAT", r"\v 2 of the house of the keeper.")
     note = dict(key="MAT 99:2 of", reference="99:2", lemma="of", note="Or, from.")
     with pytest.raises(CheckFailed, match="not found exactly once"):
@@ -164,7 +189,7 @@ def test_a_note_of_the_margin_must_find_its_words_once(ctx):
         annotate.george("MAT", doc, [{**note, "reference": "99:3"}], ctx)
 
 
-def test_a_declared_change_of_wording_is_carried_through_a_notes_parts():
+def test_a_declared_change_of_wording_is_carried_through_a_notes_parts() -> None:
     pieces = notes.labelled_pieces("Or, after 5. shillings the ounce.")
     body = notes.source_body(
         pieces, [], None, "key", "Or, after 5. shillings the ounce."
@@ -177,7 +202,7 @@ def test_a_declared_change_of_wording_is_carried_through_a_notes_parts():
         notes.edited(body, "6.", "six", "key")
 
 
-def test_the_notes_the_edition_writes_say_what_each_part_is():
+def test_the_notes_the_edition_writes_say_what_each_part_is() -> None:
     note = usj.note(
         "f",
         *usj.parse(
@@ -208,7 +233,9 @@ def test_the_notes_the_edition_writes_say_what_each_part_is():
         ("scil. the people, &c.", "sc. the people, etc."),
     ],
 )
-def test_terms_print_in_the_editions_forms(words, expected, policy):
+def test_terms_print_in_the_editions_forms(
+    words: str, expected: str, policy: bible.policy.Policy
+) -> None:
     registry = terminology.registry(policy)
     assert (
         usj.serialize(
@@ -220,7 +247,9 @@ def test_terms_print_in_the_editions_forms(words, expected, policy):
     )
 
 
-def test_every_note_of_the_sources_is_printed_or_replaced_by_a_link(edition):
+def test_every_note_of_the_sources_is_printed_or_replaced_by_a_link(
+    edition: bible.pipeline.Edition,
+) -> None:
     assert edition.summary["printed_notes"] == 3417
     rows = [row for listed in edition.notes.values() for row in listed]
     assert len({row["key"] for row in rows}) == len(rows)
@@ -236,7 +265,9 @@ def test_every_note_of_the_sources_is_printed_or_replaced_by_a_link(edition):
     assert (row["lemma"], row["note"]) == ("of your Father", "or, _with your Father_")
 
 
-def test_an_inferred_lemma_has_the_shape_of_its_rendering(edition, policy):
+def test_an_inferred_lemma_has_the_shape_of_its_rendering(
+    edition: bible.pipeline.Edition, policy: bible.policy.Policy
+) -> None:
     """A lemma that a rule found, and nobody has read, should be about as
     long as the rendering that measured it. One much longer is read once, and
     listed with what was found (edition/brenton-notes.json, "shapes")."""
@@ -259,7 +290,7 @@ def test_an_inferred_lemma_has_the_shape_of_its_rendering(edition, policy):
     assert not lemmas.misshapen("five hundred and eighty", "450")
 
 
-def inferred(verse, note, kind="f"):
+def inferred(verse: str, note: str, kind: str = "f") -> tuple[str | None, str]:
     """The lemma inferred for a note whose caller stands at ‸ in the verse."""
     offset = verse.index("‸")
     verse = verse.replace("‸", "")
@@ -348,7 +379,9 @@ def inferred(verse, note, kind="f"):
         ),
     ],
 )
-def test_the_rules_find_the_words_a_note_is_about(verse, note, expected):
+def test_the_rules_find_the_words_a_note_is_about(
+    verse: str, note: str, expected: tuple[str | None, str]
+) -> None:
     assert inferred(verse, note) == expected
 
 
@@ -367,5 +400,7 @@ def test_the_rules_find_the_words_a_note_is_about(verse, note, expected):
         ),
     ],
 )
-def test_a_cross_reference_shows_where_its_quotation_begins(verse, expected):
+def test_a_cross_reference_shows_where_its_quotation_begins(
+    verse: str, expected: tuple[None | str, ...]
+) -> None:
     assert inferred(verse, "See Rom. 1. 1.", kind="x") == expected

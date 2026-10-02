@@ -2,9 +2,19 @@
 Bible's: each run that the build works out checked against the table, the
 words of both translations, and the verses both Bibles have."""
 
+from __future__ import annotations
+
+from collections.abc import Callable
+from typing import Any
+
 import pytest
 from conftest import changed
 
+import bible.pipeline
+import bible.places
+import bible.policy
+import bible.references
+import bible.sources
 from bible import (
     alignment,
     assembly,
@@ -18,7 +28,8 @@ from bible import (
 )
 from bible.checks import CheckFailed
 from bible.policy import thaw
-from bible.references import parse_passage, parse_verse
+from bible.references import Verse, parse_passage, parse_verse
+from bible.usj import Document
 from bible.versification import lxx_to_edition
 
 # How far a run's words may be outscored by the same run a few verses off.
@@ -27,29 +38,35 @@ SHIFTS = (-3, -2, -1, 1, 2, 3)
 
 
 @pytest.fixture(scope="module")
-def scripture(edition):
+def scripture(edition: bible.pipeline.Edition) -> dict[str, Document]:
     """Each book of scripture as the edition prints it, by its code."""
     return {code: edition.documents[code] for code in edition.scripture}
 
 
 @pytest.fixture(scope="module")
-def texts(scripture, read, policy):
+def texts(
+    scripture: dict[str, Document],
+    read: bible.pipeline.Read,
+    policy: bible.policy.Policy,
+) -> bible.places.Texts:
     """The words of both translations' Old Testaments, verse by verse."""
     return places.Texts(scripture, read.kjv, policy=policy)
 
 
 @pytest.fixture(scope="module")
-def table(texts, scripture):
+def table(texts: bible.places.Texts, scripture: dict[str, Document]) -> places.Table:
     """STEPBible's account of where each of the edition's verses stands."""
     return places.tabled(texts, scripture)
 
 
-def printed(verse, edition):
+def printed(verse: bible.references.Verse, edition: bible.pipeline.Edition) -> bool:
     labels = edition.inventory[verse.book].get(str(verse.chapter), ())
     return f"{verse.number}{verse.letter}" in labels
 
 
-def excepting(policy, source, **exception):
+def excepting(
+    policy: bible.policy.Policy, source: str, **exception: str
+) -> bible.policy.Policy:
     """The policy with one more exception to Turpie's numbering, or with one
     of its own given otherwise."""
     return changed(
@@ -64,16 +81,21 @@ def excepting(policy, source, **exception):
     [("JOL 2:28", "JOL 3:1"), ("HOS 1:10", "HOS 2:1"), ("PRO 22:8", "PRO 22:8a")],
 )
 def test_source_numbering_exceptions_name_printed_verses(
-    policy, edition, source, target
-):
+    policy: bible.policy.Policy,
+    edition: bible.pipeline.Edition,
+    source: str,
+    target: str,
+) -> None:
     assert lxx_to_edition(parse_verse(source), policy=policy) == parse_verse(target)
     assert printed(parse_verse(target), edition)
 
 
-def test_relabelled_verse_needs_no_exception_to_be_caught(policy, edition):
+def test_relabelled_verse_needs_no_exception_to_be_caught(
+    policy: bible.policy.Policy, edition: bible.pipeline.Edition
+) -> None:
     # The edition prints Brenton's Malachias 3:23 as 4:5, so a quotation of
     # "MAL 3:23" has no printed verse to link and fails preparation.
-    def quote(data):
+    def quote(data: dict[str, Any]) -> None:
         head = next(h for h in data["rows"] if h["lxx"].get("normalized") == "MAL 3:1")
         head["lxx"]["normalized"] = "MAL 3:23"
 
@@ -90,7 +112,9 @@ def test_relabelled_verse_needs_no_exception_to_be_caught(policy, edition):
         ("EXO 32:23", "EXO 32:22"),
     ],
 )
-def test_every_exception_is_used(policy, source, target):
+def test_every_exception_is_used(
+    policy: bible.policy.Policy, source: str, target: str
+) -> None:
     with pytest.raises(CheckFailed, match=rf"no quotation uses: \['{source}'\]"):
         quotations.reviewed_rows(policy=excepting(policy, source, target=target))
 
@@ -110,7 +134,9 @@ def test_every_exception_is_used(policy, source, target):
         ("JOL 2:32", {"target": "JOL 3:5"}, "Overlapping mappings of JOL 2:32"),
     ],
 )
-def test_the_exceptions_are_checked_whole(policy, source, exception, refusal):
+def test_the_exceptions_are_checked_whole(
+    policy: bible.policy.Policy, source: str, exception: dict[str, Any], refusal: str
+) -> None:
     # Even for a reference no exception reaches.
     with pytest.raises(CheckFailed, match=refusal):
         lxx_to_edition(
@@ -118,7 +144,11 @@ def test_the_exceptions_are_checked_whole(policy, source, exception, refusal):
         )
 
 
-def test_a_lettered_verse_never_joins_a_range(policy, edition, sources):
+def test_a_lettered_verse_never_joins_a_range(
+    policy: bible.policy.Policy,
+    edition: bible.pipeline.Edition,
+    sources: bible.sources.Sources,
+) -> None:
     mapped = versification.mapped_passages(parse_passage("PRO 22:7-9"), policy=policy)
     assert list(map(str, mapped)) == ["PRO 22:7", "PRO 22:8a", "PRO 22:9"]
     # The link that stands at it prints its label.
@@ -129,7 +159,9 @@ def test_a_lettered_verse_never_joins_a_range(policy, edition, sources):
     assert usj.serialize([note]) == r"\x - \xo 22:8a \xt 2 Corinthians 9:7\x*"
 
 
-def unplaced(texts, policy):
+def unplaced(
+    texts: bible.places.Texts, policy: bible.policy.Policy
+) -> tuple[list[str], ...]:
     """What the runs leave without a place: the King James verses that no
     verse of the edition reaches and no run lists as wanting, and the
     edition's verses whose counterparts the King James Bible lacks."""
@@ -144,7 +176,7 @@ def unplaced(texts, policy):
         wanting = {
             verse
             for run in policy.versification["kjv"].get(code, [])
-            if not run["edition"]
+            if not run["edition"] and run["kjv"]
             for verse in versification.verses(run["kjv"])
         }
         assert not wanting & reached, f"Wanting and reached: {code}"
@@ -158,18 +190,24 @@ def unplaced(texts, policy):
     return missing, lost
 
 
-def test_every_verse_of_both_bibles_has_its_place(texts, policy):
+def test_every_verse_of_both_bibles_has_its_place(
+    texts: bible.places.Texts, policy: bible.policy.Policy
+) -> None:
     assert unplaced(texts, policy) == ([], [])
 
 
-def test_a_verse_faces_the_verses_that_face_it(texts, policy):
+def test_a_verse_faces_the_verses_that_face_it(
+    texts: bible.places.Texts, policy: bible.policy.Policy
+) -> None:
     for code in texts.books:
         for verse in texts.edition.order[code]:
             for counterpart in versification.to_kjv(verse, policy=policy):
                 assert verse in versification.from_kjv(counterpart, policy=policy)
 
 
-def test_a_verse_the_edition_lacks_is_listed(texts, policy):
+def test_a_verse_the_edition_lacks_is_listed(
+    texts: bible.places.Texts, policy: bible.policy.Policy
+) -> None:
     # The Greek lacks the promise of the Branch, Jeremiah 33:14-26.
     branch = {"edition": None, "kjv": "JER 33:14-26"}
     unlisted = changed(
@@ -179,11 +217,11 @@ def test_a_verse_the_edition_lacks_is_listed(texts, policy):
     assert missing == [f"JER 33:{verse}" for verse in range(14, 27)]
 
 
-def joel(**change):
+def joel(**change: str) -> Callable[[dict[str, Any]], object]:
     """A change to the run that gives Joel 3:1-5 the King James Bible's
     2:28-32, or the run's removal."""
 
-    def edit(data):
+    def edit(data: dict[str, Any]) -> None:
         runs = data["kjv"]["JOL"]
         [run] = [run for run in runs if run["edition"] == "JOL 3:1-5"]
         if change:
@@ -194,14 +232,14 @@ def joel(**change):
     return edit
 
 
-def added(code, **run):
+def added(code: str, **run: str) -> Callable[[dict[str, Any]], object]:
     return lambda data: data["kjv"][code].append(run)
 
 
-def paired(*kjv):
+def paired(*kjv: str) -> Callable[[dict[str, Any]], object]:
     """Other pairs for Proverbs 8:28 and 8:29, whose verses overlap."""
 
-    def edit(data):
+    def edit(data: dict[str, Any]) -> None:
         run = next(run for run in data["kjv"]["PRO"] if "pairs" in run)
         run["pairs"] = dict(zip(("PRO 8:28", "PRO 8:29"), kjv))
 
@@ -217,7 +255,9 @@ def paired(*kjv):
         (joel(kjv="JOL 2:27-31"), "JOL 2:27"),
     ],
 )
-def test_a_verse_cannot_take_the_place_of_another(policy, change, verse):
+def test_a_verse_cannot_take_the_place_of_another(
+    policy: bible.policy.Policy, change: Callable[[dict[str, Any]], object], verse: str
+) -> None:
     with pytest.raises(CheckFailed, match=f"Another verse has the place of {verse}"):
         versification.to_kjv(
             parse_verse(verse), policy=changed(policy, "versification", change)
@@ -247,7 +287,11 @@ def test_a_verse_cannot_take_the_place_of_another(policy, change, verse):
         (paired("PRO 8:28", "PRO 8:28"), "Verse pairs do not cover"),
     ],
 )
-def test_a_malformed_run_is_refused(policy, change, refusal):
+def test_a_malformed_run_is_refused(
+    policy: bible.policy.Policy,
+    change: Callable[[dict[str, Any]], object],
+    refusal: str,
+) -> None:
     # Whatever verse is asked for: the runs are checked whole.
     with pytest.raises(CheckFailed, match=refusal):
         versification.to_kjv(
@@ -277,21 +321,27 @@ def test_a_malformed_run_is_refused(policy, change, refusal):
         ("edition", "PRO 8:29", "PRO 8:28-29"),
     ],
 )
-def test_a_passage_is_mapped_verse_by_verse(policy, way, passage, mapped):
+def test_a_passage_is_mapped_verse_by_verse(
+    policy: bible.policy.Policy, way: str, passage: str, mapped: str
+) -> None:
     passages = getattr(versification, f"{way}_passages")
     found = passages(parse_passage(passage), policy=policy)
     assert "; ".join(map(str, found)) == mapped
 
 
-def test_a_book_of_the_apocrypha_has_no_counterpart_to_ask_for(policy):
+def test_a_book_of_the_apocrypha_has_no_counterpart_to_ask_for(
+    policy: bible.policy.Policy,
+) -> None:
     with pytest.raises(CheckFailed, match="No King James counterpart: TOB"):
         versification.to_kjv(parse_verse("TOB 1:1"), policy=policy)
 
 
-def test_a_run_rests_on_the_witness_it_names(texts, table, policy):
+def test_a_run_rests_on_the_witness_it_names(
+    texts: bible.places.Texts, table: places.Table, policy: bible.policy.Policy
+) -> None:
     """A run by the table is the table's account of the verse, and any other
     run departs from it; so does no verse that the file leaves unlisted."""
-    departs = {}
+    departs: dict[str, list[bool]] = {}
     for code in texts.books:
         listed = {
             verse: run
@@ -311,13 +361,17 @@ def test_a_run_rests_on_the_witness_it_names(texts, table, policy):
             elif listed[verse]["by"] != "reading":
                 # What the editor has read stands on its reason, with the table
                 # or against it.
-                departs.setdefault(listed[verse]["edition"], []).append(ours != tabled)
+                edition_run = listed[verse]["edition"]
+                assert edition_run is not None
+                departs.setdefault(edition_run, []).append(ours != tabled)
     # A run departs from the table if any of its verses does: of two verses
     # that face one, the table may give one of them the same.
     assert [run for run, verses in departs.items() if not any(verses)] == []
 
 
-def test_the_file_holds_only_what_the_editor_has_read(declared, policy):
+def test_the_file_holds_only_what_the_editor_has_read(
+    declared: bible.policy.Policy, policy: bible.policy.Policy
+) -> None:
     # The build works out the rest, and the readings stand among it as given.
     assert "kjv" not in declared.versification
     with pytest.raises(CheckFailed, match="not yet placed"):
@@ -331,14 +385,18 @@ def test_the_file_holds_only_what_the_editor_has_read(declared, policy):
         assert stood == thaw(readings), code
 
 
-def outscored(texts, ours, theirs):
+def outscored(
+    texts: bible.places.Texts,
+    ours: list[bible.references.Verse],
+    theirs: list[bible.references.Verse],
+) -> bool:
     """Whether the same run a few verses off shares more words than the run.
 
     Verse for verse, where the run pairs its verses: a long run and the same
     run a verse off have nearly the same words between them.
     """
 
-    def score(facing):
+    def score(facing: list[bible.references.Verse]) -> float:
         if len(facing) != len(ours):
             return alignment.similarity(
                 texts.weight, texts.edition.bag(ours), texts.kjv.bag(facing)
@@ -351,12 +409,15 @@ def outscored(texts, ours, theirs):
     return max(rivals, default=0) > score(theirs) + MARGIN
 
 
-def runs_to_compare(texts, policy):
+def runs_to_compare(
+    texts: bible.places.Texts, policy: bible.policy.Policy
+) -> list[tuple[str, list[Verse], list[Verse]]]:
     """The runs whose words can be compared: those the table or the words
     give, and each chapter's verses that keep their numbers."""
     found = []
     for code in texts.books:
-        named, chapters = set(), {}
+        named: set[Verse] = set()
+        chapters: dict[int, list[Verse]] = {}
         for run in policy.versification["kjv"].get(code, []):
             if not run["edition"]:
                 continue
@@ -375,7 +436,9 @@ def runs_to_compare(texts, policy):
     return found
 
 
-def test_the_words_bear_out_every_run(texts, policy):
+def test_the_words_bear_out_every_run(
+    texts: bible.places.Texts, policy: bible.policy.Policy
+) -> None:
     runs = runs_to_compare(texts, policy)
     flagged = {name for name, ours, theirs in runs if outscored(texts, ours, theirs)}
     assert flagged == set()
@@ -391,8 +454,10 @@ def test_the_words_bear_out_every_run(texts, policy):
 
 
 def test_every_relabelled_verse_is_printed_under_its_new_label(
-    policy, edition, sources
-):
+    policy: bible.policy.Policy,
+    edition: bible.pipeline.Edition,
+    sources: bible.sources.Sources,
+) -> None:
     for source, printed_as in versification.relabelled(policy=policy).items():
         labels = usfm.inventory(sources.brenton[source.book])["chapters"]
         assert str(source.number) in labels[str(source.chapter)]

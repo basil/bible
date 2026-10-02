@@ -1,12 +1,23 @@
 """Citations read as each source writes them, into the edition's verses."""
 
+from __future__ import annotations
+
+from collections.abc import Callable, Sequence
 from dataclasses import replace
+from typing import Any, Protocol, Unpack
 
 import pytest
 from conftest import changed
 
+import bible.annotate
+import bible.citations
+import bible.pipeline
+import bible.policy
+import bible.references
+import bible.sources
 from bible import annotate, citations, matter, notes, pipeline, usj
 from bible.checks import CheckFailed
+from bible.policy_schema import CitationsDecisions
 from bible.references import parse_verse
 
 HOME = parse_verse("JDG 13:8")
@@ -17,27 +28,42 @@ MORE = {
 }
 
 
+class Cite(Protocol):
+    def __call__(
+        self,
+        text: str,
+        dialect: str | None = "brenton",
+        decided: CitationsDecisions | Sequence[CitationsDecisions] | None = None,
+        home: bible.references.Verse | None = HOME,
+    ) -> list[citations.Citation]: ...
+
+
 @pytest.fixture(scope="module")
-def cite(policy, ctx):
+def cite(policy: bible.policy.Policy, ctx: bible.annotate.Context) -> Cite:
     """Read a text's citations as a note on Judges 13:8 has them."""
 
-    def cite(text, dialect="brenton", decided=None, home=HOME):
+    def cite(
+        text: str,
+        dialect: str | None = "brenton",
+        decided: CitationsDecisions | Sequence[CitationsDecisions] | None = None,
+        home: bible.references.Verse | None = HOME,
+    ) -> list[bible.citations.Citation]:
         tongue = citations.dialect(dialect, policy=policy)
-        tongue = replace(tongue, books={**tongue.books, **MORE.get(dialect, {})})
-        if isinstance(decided, dict):
-            decided = [decided]
+        more = MORE.get(dialect, {}) if dialect else {}
+        tongue = replace(tongue, books={**tongue.books, **more})
+        selected = [decided] if isinstance(decided, dict) else decided
         return citations.scan(
-            text, tongue, home, "x", ctx.inventory, decided, policy=policy
+            text, tongue, home, "x", ctx.inventory, selected, policy=policy
         )
 
     return cite
 
 
-def decision(**fields):
+def decision(**fields: Unpack[CitationsDecisions]) -> CitationsDecisions:
     return {"why": "x", **fields}
 
 
-def named(found):
+def named(found: list[bible.citations.Citation]) -> str:
     """What each citation names, a chapter as its book and number."""
     return " | ".join(
         "; ".join(
@@ -50,7 +76,9 @@ def named(found):
     )
 
 
-def printed(text, found, books):
+def printed(
+    text: str, found: list[bible.citations.Citation], books: bible.references.Books
+) -> str:
     """The text with each citation as the edition prints it."""
     for citation in reversed(found):
         words = citations.printed(citation, books)
@@ -127,13 +155,23 @@ GEORGE = [
         ("brenton-preface", "by Gen. xlvii. 31.", "GEN 47:31", "by Genesis 47:31."),
     ],
 )
-def test_a_source_cites_in_its_own_way(cite, ctx, dialect, text, names, prints):
+def test_a_source_cites_in_its_own_way(
+    cite: Cite,
+    ctx: bible.annotate.Context,
+    dialect: str,
+    text: str,
+    names: str,
+    prints: str,
+) -> None:
     found = cite(text, dialect)
     assert named(found) == names
     assert printed(text, found, ctx.books) == prints
 
 
-SEVERAL = {"source": "Zac. 3.8 esay 11.1", "passages": "ZEC 3:8; ISA 11:1"}
+SEVERAL: CitationsDecisions = {
+    "source": "Zac. 3.8 esay 11.1",
+    "passages": "ZEC 3:8; ISA 11:1",
+}
 
 
 @pytest.mark.parametrize(
@@ -177,12 +215,22 @@ SEVERAL = {"source": "Zac. 3.8 esay 11.1", "passages": "ZEC 3:8; ISA 11:1"}
         ),
         (
             "branch, Zac. 3.8 esay 11.1",
-            decision(**SEVERAL, print="{ZEC} 3:8; {ISA:upper} 11:1"),
+            decision(
+                source=SEVERAL["source"],
+                passages=SEVERAL["passages"],
+                print="{ZEC} 3:8; {ISA:upper} 11:1",
+            ),
             "branch, Zacharias 3:8; ESAIAS 11:1",
         ),
     ],
 )
-def test_a_decision_reads_what_the_grammar_cannot(cite, ctx, text, decided, prints):
+def test_a_decision_reads_what_the_grammar_cannot(
+    cite: Cite,
+    ctx: bible.annotate.Context,
+    text: str,
+    decided: CitationsDecisions,
+    prints: str,
+) -> None:
     assert printed(text, cite(text, decided=decided), ctx.books) == prints
 
 
@@ -205,7 +253,7 @@ def test_a_decision_reads_what_the_grammar_cannot(cite, ctx, text, decided, prin
         (
             "brenton",
             "branch, Zac. 3.8 esay 11.1",
-            decision(**{**SEVERAL, "passages": "ZEC 3:8; ISA 99:1"}, print="x"),
+            decision(source=SEVERAL["source"], passages="ZEC 3:8; ISA 99:1", print="x"),
             "doesn't print: x .*ISA 99",
         ),
         # The Hebrew's verses aren't the King James Bible's: none is carried.
@@ -218,8 +266,12 @@ def test_a_decision_reads_what_the_grammar_cannot(cite, ctx, text, decided, prin
     ],
 )
 def test_what_cannot_be_read_or_is_not_printed_is_refused(
-    cite, dialect, text, decided, refusal
-):
+    cite: Cite,
+    dialect: str | None,
+    text: str,
+    decided: CitationsDecisions | None,
+    refusal: str,
+) -> None:
     with pytest.raises(CheckFailed, match=refusal):
         cite(text, dialect, decided)
 
@@ -247,12 +299,16 @@ JER = "Jer. 9. 24"
         ),
     ],
 )
-def test_a_malformed_decision_is_refused(cite, decided, refusal):
+def test_a_malformed_decision_is_refused(
+    cite: Cite,
+    decided: CitationsDecisions | Sequence[CitationsDecisions],
+    refusal: str,
+) -> None:
     with pytest.raises(CheckFailed, match=refusal):
         cite("Comp. Jer. 9. 24.", decided=decided)
 
 
-def test_a_dialect_says_how_it_numbers(policy):
+def test_a_dialect_says_how_it_numbers(policy: bible.policy.Policy) -> None:
     unnumbered = changed(
         policy, "citations", lambda data: data["dialects"]["brenton"].pop("numbering")
     )
@@ -260,7 +316,9 @@ def test_a_dialect_says_how_it_numbers(policy):
         citations.dialect("brenton", policy=unnumbered)
 
 
-def test_every_decision_and_name_must_be_met(policy, edition):
+def test_every_decision_and_name_must_be_met(
+    policy: bible.policy.Policy, edition: bible.pipeline.Edition
+) -> None:
     pipeline.check_met(policy, edition.met)
     figures = decision(source="Heb. 300", not_a_citation=True)
     decided = changed(
@@ -313,8 +371,12 @@ def test_every_decision_and_name_must_be_met(policy, edition):
     ],
 )
 def test_a_notes_citations_are_references_of_their_own(
-    cite, ctx, pieces, decided, prints
-):
+    cite: Cite,
+    ctx: bible.annotate.Context,
+    pieces: list[tuple[str, str]],
+    decided: CitationsDecisions | None,
+    prints: str,
+) -> None:
     plain = "".join(text for _, text in pieces)
     body = notes.source_body(pieces, cite(plain, decided=decided), None, "x", plain)
     marks = {"commentary": "{}", "reading": "[{}]", "citation": "<{}>"}
@@ -322,7 +384,9 @@ def test_a_notes_citations_are_references_of_their_own(
     assert "".join(marks[role].format(words) for role, words in runs) == prints
 
 
-def test_a_citation_of_the_wrong_verse_prints_the_verse_meant(edition):
+def test_a_citation_of_the_wrong_verse_prints_the_verse_meant(
+    edition: bible.pipeline.Edition,
+) -> None:
     # The margin of 1611 has "Rom. 1.19" for 15.19, and George after it.
     colossians = usj.serialize(edition.documents["COL"])
     assert "fully to preach the word of God\\ft , \\xt Romans 15:19\\f*" in colossians
@@ -361,11 +425,15 @@ def test_a_citation_of_the_wrong_verse_prints_the_verse_meant(edition):
         ("BAR", "ending at 3:8, was in all probability originally written in Hebrew"),
     ],
 )
-def test_the_front_and_back_matter_cite_as_the_edition_does(edition, unit, prints):
+def test_the_front_and_back_matter_cite_as_the_edition_does(
+    edition: bible.pipeline.Edition, unit: str, prints: str
+) -> None:
     assert prints in usj.serialize(edition.documents[unit])
 
 
-def test_a_decision_on_a_unit_is_keyed_by_its_words(policy):
+def test_a_decision_on_a_unit_is_keyed_by_its_words(
+    policy: bible.policy.Policy,
+) -> None:
     words = "one of the acrostic Psalms, (cxliv. 13), where"
     found = citations.unit_decisions("XXB", words, policy=policy)
     assert list(found) == ["XXB cxliv. 13"]
@@ -400,8 +468,13 @@ def test_a_decision_on_a_unit_is_keyed_by_its_words(policy):
     ids=["no dialect", "undecided", "met twice"],
 )
 def test_a_unit_says_how_it_cites_and_meets_each_decision_once(
-    policy, sources, read, ctx, change, refusal
-):
+    policy: bible.policy.Policy,
+    sources: bible.sources.Sources,
+    read: bible.pipeline.Read,
+    ctx: bible.annotate.Context,
+    change: Callable[[dict[str, Any]], object],
+    refusal: str,
+) -> None:
     policy = changed(policy, "citations", change)
     [preface] = [entry for entry in policy.entries if entry["id"] == "XXB"]
     doc, text = read.brenton["XXB"], sources.brenton["XXB"]
@@ -411,8 +484,10 @@ def test_a_unit_says_how_it_cites_and_meets_each_decision_once(
         )
 
 
-def test_markup_within_a_citation_goes_with_it(cite, ctx):
-    def cited(text, dialect="kjv-preface"):
+def test_markup_within_a_citation_goes_with_it(
+    cite: Cite, ctx: bible.annotate.Context
+) -> None:
+    def cited(text: str, dialect: str = "kjv-preface") -> str:
         content = usj.parse(text, fragment=True)
         words = matter.words(content)
         reading = matter.Reading(words, tuple(cite(words, dialect, home=None)))
@@ -428,11 +503,13 @@ def test_markup_within_a_citation_goes_with_it(cite, ctx):
         cited(r"\it See John\it* 5. 39.")
 
 
-def test_a_name_is_changed_once_and_whole(policy, ctx):
+def test_a_name_is_changed_once_and_whole(
+    policy: bible.policy.Policy, ctx: bible.annotate.Context
+) -> None:
     doc = usj.parse("\\id BAK\n\\is2 CHRONICLES I\n\\is2 CHRONICLES II\n")
-    unit = [(block, {}) for block in doc["content"]]
+    unit: matter.Unit = [(block, {}) for block in doc["content"]]
 
-    def renamed(*names):
+    def renamed(*names: object) -> str:
         declared = changed(
             policy, "citations", lambda data: data["names"].update(x=list(names))
         )
@@ -449,8 +526,10 @@ def test_a_name_is_changed_once_and_whole(policy, ctx):
         renamed({"from": "CHRONICLES I", "to": "x"})
 
 
-def test_several_decisions_on_one_note_form_a_list(policy, ctx):
-    def both(data):
+def test_several_decisions_on_one_note_form_a_list(
+    policy: bible.policy.Policy, ctx: bible.annotate.Context
+) -> None:
+    def both(data: dict[str, Any]) -> None:
         data["decisions"]["JDG 13:8"] = [
             decision(source="Heb. 300", not_a_citation=True),
             decision(source="Jer. 9. 24", numbering="kjv"),

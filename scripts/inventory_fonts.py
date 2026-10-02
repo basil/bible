@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Inventory every glyph slot (including unencoded alternates) in pinned faces."""
 
+from __future__ import annotations
+
 import csv
 import hashlib
 import json
@@ -8,13 +10,31 @@ import zipfile
 from argparse import ArgumentParser
 from io import BytesIO
 from pathlib import Path
+from typing import TypedDict
 
 from font_sources import UTOPIA_STD_TO_UTOPIA
 from fontTools.pens.boundsPen import BoundsPen
 from fontTools.ttLib import TTFont
 
 
-def inventory(utopia, archives, output):
+class Measurement(TypedDict):
+    bounds: tuple[float, float, float, float] | None
+    hmtx: tuple[int, int]
+
+
+class Face(TypedDict):
+    font: str | None
+    member: str
+    sha256: str
+    glyphs: int
+    encoded_glyphs: int
+    unicode_mappings: int
+    SizeType: str
+    scale_to_utopia: float
+    reference_measurements: dict[str, Measurement]
+
+
+def inventory(utopia: Path, archives: Path, output: Path) -> None:
     output.mkdir(parents=True, exist_ok=True)
     inputs = [
         (p.name, p.read_bytes(), "Utopia")
@@ -31,7 +51,7 @@ def inventory(utopia, archives, output):
                 for member in sorted(z.namelist())
                 if member.endswith(".otf")
             )
-    summary = []
+    summary: list[Face] = []
     with (output / "glyphs.csv").open("w", newline="") as stream:
         writer = csv.writer(stream, lineterminator="\n")
         writer.writerow(
@@ -56,10 +76,10 @@ def inventory(utopia, archives, output):
             font = TTFont(BytesIO(data), recalcTimestamp=False)
             name = font["name"].getDebugName(6)
             glyphs, cmap = font.getGlyphSet(), font.getBestCmap()
-            codes = {}
+            codes: dict[str, list[str]] = {}
             for code, g in cmap.items():
                 codes.setdefault(g, []).append(f"U+{code:04X}")
-            measurements = {}
+            measurements: dict[str, Measurement] = {}
             for i, g in enumerate(font.getGlyphOrder()):
                 pen = BoundsPen(glyphs)
                 glyphs[g].draw(pen)
@@ -111,7 +131,7 @@ def inventory(utopia, archives, output):
     print(json.dumps({k: v for k, v in result.items() if k != "faces"}, indent=2))
 
 
-def main():
+def main() -> None:
     parser = ArgumentParser(description=__doc__)
     parser.add_argument("--utopia", type=Path, required=True)
     parser.add_argument("--archives", type=Path, required=True)

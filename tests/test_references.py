@@ -1,5 +1,7 @@
 """References read from the edition's files and printed on its pages."""
 
+from __future__ import annotations
+
 import pytest
 
 from bible.checks import CheckFailed
@@ -22,11 +24,11 @@ BOOKS = Books({"ISA": "Esaias", "PRO": "Proverbs", "1CO": "1 Corinthians"})
 @pytest.mark.parametrize(
     "written", ["ISA 40:3", "ISA 40:3-5", "PRO 22:8a", "1CO 2:9", "DAG 0:19"]
 )
-def test_a_passage_is_written_as_it_is_read(written):
+def test_a_passage_is_written_as_it_is_read(written: str) -> None:
     assert str(parse_passage(written)) == written
 
 
-def test_a_passage_names_each_of_its_verses():
+def test_a_passage_names_each_of_its_verses() -> None:
     verses = parse_passage("ISA 40:3-5").verses
     assert list(map(str, verses)) == ["ISA 40:3", "ISA 40:4", "ISA 40:5"]
     assert parse_passage("PRO 22:8a").verses == [Verse("PRO", 22, 8, "a")]
@@ -44,26 +46,26 @@ def test_a_passage_names_each_of_its_verses():
         ("", "Malformed passage"),
     ],
 )
-def test_a_malformed_passage_is_refused(written, refusal):
+def test_a_malformed_passage_is_refused(written: str, refusal: str) -> None:
     with pytest.raises(CheckFailed, match=refusal):
         parse_passage(written)
 
 
-def test_a_passage_keeps_to_one_chapter():
+def test_a_passage_keeps_to_one_chapter() -> None:
     with pytest.raises(CheckFailed, match="Passage beyond one chapter"):
         Passage(Verse("ISA", 8, 23), Verse("ISA", 9, 1))
     with pytest.raises(CheckFailed, match="Passage beyond one chapter"):
         Passage(Verse("ISA", 8, 23), Verse("JER", 8, 23))
 
 
-def test_a_verse_is_no_range():
+def test_a_verse_is_no_range() -> None:
     assert parse_verse("PRO 22:8a") == Verse("PRO", 22, 8, "a")
     assert verse_at("PRO", "22:8a") == Verse("PRO", 22, 8, "a")
     with pytest.raises(CheckFailed, match="Malformed verse reference: ISA 40:3-5"):
         parse_verse("ISA 40:3-5")
 
 
-def test_a_list_is_read_passage_by_passage():
+def test_a_list_is_read_passage_by_passage() -> None:
     passages = parse_passages("EXO 20:13-16; DEU 5:17-20")
     assert list(map(str, passages)) == ["EXO 20:13-16", "DEU 5:17-20"]
 
@@ -79,12 +81,12 @@ def test_a_list_is_read_passage_by_passage():
         ("PRO 22:7; PRO 22:8a; PRO 22:9", "PRO 22:7; PRO 22:8a; PRO 22:9"),
     ],
 )
-def test_consecutive_verses_run_together(verses, passages):
+def test_consecutive_verses_run_together(verses: str, passages: str) -> None:
     found = runs(map(parse_verse, verses.split("; ")))
     assert "; ".join(map(str, found)) == passages
 
 
-def test_books_order_verses_as_their_bible_does():
+def test_books_order_verses_as_their_bible_does() -> None:
     verses = ["1CO 2:9", "PRO 22:9", "PRO 22:8a", "ISA 40:3", "PRO 22:8", "ISA 9:1"]
     ordered = sorted(map(parse_verse, verses), key=BOOKS.position)
     assert list(map(str, ordered)) == [
@@ -97,14 +99,14 @@ def test_books_order_verses_as_their_bible_does():
     ]
 
 
-def test_a_passage_prints_under_its_books_name():
+def test_a_passage_prints_under_its_books_name() -> None:
     assert EDITION.passage(parse_passage("ISA 40:3-5"), BOOKS) == "Esaias 40:3–5"
     assert EDITION.passage(parse_passage("PRO 22:8a"), BOOKS) == "Proverbs 22:8a"
     with pytest.raises(CheckFailed, match="No display name for JER"):
         EDITION.passage(parse_passage("JER 1:1"), BOOKS)
 
 
-def test_a_list_names_each_book_once():
+def test_a_list_names_each_book_once() -> None:
     assert (
         EDITION.listed(parse_passages("ISA 8:23; ISA 9:1; 1CO 2:9"), BOOKS)
         == "Esaias 8:23; 9:1; 1 Corinthians 2:9"
@@ -116,7 +118,7 @@ def test_a_list_names_each_book_once():
     )
 
 
-def test_one_of_a_books_chapters_may_have_its_own_name():
+def test_one_of_a_books_chapters_may_have_its_own_name() -> None:
     books = Books({"PSA": "Psalms", "ISA": "Esaias"}, {"PSA": "Psalm"})
     assert EDITION.passage(parse_passage("PSA 117:22-23"), books) == "Psalm 117:22–23"
     assert EDITION.listed(parse_passages("PSA 2:1; PSA 2:7"), books) == "Psalm 2:1; 2:7"
@@ -131,5 +133,5 @@ def test_one_of_a_books_chapters_may_have_its_own_name():
     "numeral,number",
     [("I", 1), ("IV", 4), ("IX", 9), ("XIX", 19), ("XL", 40), ("CXVII", 117)],
 )
-def test_roman_numerals(numeral, number):
+def test_roman_numerals(numeral: str, number: int) -> None:
     assert roman(numeral) == number

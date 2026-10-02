@@ -7,23 +7,34 @@ after its number, each note where it stands. Markup never reaches it; what it
 changes is carried back to the strings the words came from.
 """
 
+from __future__ import annotations
+
 import re
 from bisect import bisect_right
+from collections.abc import Callable, Sequence
 
 from bible import usj
 from bible.checks import require
+from bible.usj import Content, Document
 
 PLAIN = re.compile(r"['\"`]|\.\.\.|--")
 OPENING = {"'": "‘", '"': "“"}
 
 
-def _walk(doc, text, const, note_end, comment):
+def _walk(
+    doc: Document,
+    text: Callable[[str], str],
+    const: Callable[[str], object],
+    note_end: Callable[[], object],
+    comment: Callable[[], object],
+) -> Document:
     """Visit a document's words in reading order. text(value) is given each
     string and returns what stands in its place; const(value) is given what
     is read between them."""
 
-    def inline(content):
-        result, previous = [], None
+    def inline(content: Content) -> Content:
+        result: Content = []
+        previous: str | None = None
         for item in content:
             if isinstance(item, str):
                 result.append(text(item))
@@ -51,10 +62,10 @@ def _walk(doc, text, const, note_end, comment):
         if block["type"] == "chapter":
             const(f"{block['number']}\n")
         elif block["type"] == "table":
-            rows = []
-            for row in block["content"]:
-                cells = []
-                for cell in row["content"]:
+            rows: Content = []
+            for row in usj.objects(block["content"]):
+                cells: Content = []
+                for cell in usj.objects(row["content"]):
                     cells.append({**cell, "content": inline(cell["content"])})
                     const("\n")
                 rows.append({**row, "content": cells})
@@ -66,7 +77,7 @@ def _walk(doc, text, const, note_end, comment):
     return usj.with_blocks(doc, blocks)
 
 
-def curled(text, comments, note_ends):
+def curled(text: str, comments: Sequence[int], note_ends: Sequence[int]) -> str:
     import smartypants
 
     require("<" not in text, "Text looks like HTML to SmartyPants")
@@ -80,21 +91,26 @@ def curled(text, comments, note_ends):
         end = next((end for end in note_ends if end > at), len(text))
         if re.match(r"['\"]\w", text[at:end]):
             text = text[:at] + OPENING[text[at]] + text[at + 1 :]
-    return smartypants.smartypants(
-        text,
-        smartypants.Attr.q
-        | smartypants.Attr.d
-        | smartypants.Attr.e
-        | smartypants.Attr.u,
+    return str(
+        smartypants.smartypants(
+            text,
+            smartypants.Attr.q
+            | smartypants.Attr.d
+            | smartypants.Attr.e
+            | smartypants.Attr.u,
+        )
     )
 
 
-def typographic(doc):
+def typographic(doc: Document) -> Document:
     """A document with typographic quotes, ellipses and dashes."""
-    parts, leaves, comments, ends = [], [], [], []
+    parts: list[str] = []
+    leaves: list[tuple[int, str]] = []
+    comments: list[int] = []
+    ends: list[int] = []
     length = 0
 
-    def add(value, leaf):
+    def add(value: str, leaf: bool) -> str:
         nonlocal length
         if leaf:
             leaves.append((length, value))
@@ -116,7 +132,7 @@ def typographic(doc):
     # Carry each change back to the string it falls in.
     starts = [start for start, _ in leaves]
     values = [value for _, value in leaves]
-    edits = {}
+    edits: dict[int, list[tuple[int, str]]] = {}
     i = j = 0
     while i < len(plain):
         if plain[i] == quoted[j]:
@@ -158,11 +174,11 @@ def typographic(doc):
     )
 
 
-def count(doc):
+def count(doc: Document) -> int:
     """How many straight quotes, triple periods and double hyphens a document has."""
     found = 0
 
-    def text(value):
+    def text(value: str) -> str:
         nonlocal found
         found += len(PLAIN.findall(value))
         return value

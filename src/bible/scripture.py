@@ -7,16 +7,21 @@ Changes are declared by such offsets and made together, so that none
 disturbs the place of another.
 """
 
+from __future__ import annotations
+
 import re
+from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 
 from bible import usj
 from bible.checks import require
 
+type Inventory = Mapping[str, Mapping[str, Sequence[str]]]
+
 WORD = re.compile(r"[^\W\d_]+(?:[’'][^\W\d_]+)*")
 
 
-def word_spans(text):
+def word_spans(text: str) -> list[tuple[str, int, int]]:
     """Words with their offsets, ignoring case and punctuation. An apostrophe
     joins a word (king’s is kings); a hyphen separates one (market-place)."""
     return [
@@ -25,11 +30,11 @@ def word_spans(text):
     ]
 
 
-def words_of(text):
+def words_of(text: str) -> list[str]:
     return [word for word, _, _ in word_spans(text)]
 
 
-def plain(text):
+def plain(text: str) -> str:
     """Words with their spaces and line breaks as single spaces."""
     return " ".join(text.split())
 
@@ -38,17 +43,17 @@ def plain(text):
 class Verse:
     reference: str
     # Where it stands: the block, and the items of the block's content.
-    parts: tuple
+    parts: tuple[tuple[int, int, int, int], ...]
     text: str
     # Each note in it, with the offset in the words where it stands.
-    notes: tuple
+    notes: tuple[tuple[int, usj.Node], ...]
 
     @property
-    def lines(self):
+    def lines(self) -> tuple[int, ...]:
         """The offsets at which a new paragraph or line of the verse begins."""
         return tuple(m.end() for m in re.finditer("\n", self.text))
 
-    def part_at(self, offset, *, at_end=False):
+    def part_at(self, offset: int, *, at_end: bool = False) -> tuple[int, int]:
         """The part holding an offset, and the offset within it. An offset
         between two parts is the end of the first only if asked."""
         start = 0
@@ -64,7 +69,7 @@ class Verse:
         raise AssertionError("A verse has at least one part")
 
 
-def _noted(content, at, found):
+def _noted(content: usj.Content, at: int, found: list[tuple[int, usj.Node]]) -> int:
     for item in content:
         if isinstance(item, str):
             at += len(item)
@@ -75,7 +80,7 @@ def _noted(content, at, found):
     return at
 
 
-def verses(doc):
+def verses(doc: usj.Document) -> dict[str, Verse]:
     """Every verse of a document, by "chapter:verse", in order.
 
     What stands between one verse number and the next is the verse's, a
@@ -83,19 +88,23 @@ def verses(doc):
     verse is no part of it: a blank line, or the paragraph the next verse
     opens.
     """
-    result, chapter = {}, None
-    reference, parts = None, []
+    result: dict[str, Verse] = {}
+    chapter: str | None = None
+    reference: str | None = None
+    parts: list[tuple[int, int, int]] = []
 
-    def hold(block, start, end):
+    def hold(block: int, start: int, end: int) -> None:
         # A verse whose number closes its paragraph still stands there.
         if reference is not None and (end > start or not parts):
             parts.append((block, start, end))
 
-    def close():
+    def close() -> None:
         if reference is None:
             return
         require(reference not in result, f"Duplicate verse: {reference}")
-        texts, notes, offset = [], [], 0
+        texts: list[str] = []
+        notes: list[tuple[int, usj.Node]] = []
+        offset = 0
         for block, lo, hi in parts:
             items = doc["content"][block]["content"][lo:hi]
             _noted(items, offset, notes)
@@ -126,10 +135,11 @@ def verses(doc):
     return result
 
 
-def heads(doc):
+def heads(doc: usj.Document) -> dict[str, list[usj.Node]]:
     """What stands before each chapter's first verse, by chapter: its
     paragraphs, the one that holds the verse as far as its number."""
-    result, chapter = {}, None
+    result: dict[str, list[usj.Node]] = {}
+    chapter: str | None = None
     for block in doc["content"]:
         if block["type"] == "chapter":
             chapter = block["number"]
@@ -146,7 +156,9 @@ def heads(doc):
     return result
 
 
-def edited(doc, changes):
+def edited(
+    doc: usj.Document, changes: Iterable[tuple[Verse, int, int, usj.Content]]
+) -> usj.Document:
     """The document with changes made to its verses' words.
 
     A change is (verse, start, end, content): the words from start to end, by
@@ -154,7 +166,7 @@ def edited(doc, changes):
     is an insertion, and stands after the notes already at its place; those
     at one place stand in the order given.
     """
-    by_part = {}
+    by_part: dict[tuple[int, int, int], list[tuple[int, int, int, usj.Content]]] = {}
     for order, (verse, start, end, content) in enumerate(changes):
         index, local = verse.part_at(start, at_end=start == end)
         require(
@@ -188,11 +200,13 @@ def edited(doc, changes):
     return usj.with_blocks(doc, blocks)
 
 
-def rewritten(doc, changes):
+def rewritten(
+    doc: usj.Document, changes: Iterable[tuple[Verse, int, int, str]]
+) -> usj.Document:
     """The document with stretches of its verses' words rewritten in place,
     each in the styles its words stood in: a change is (verse, start, end,
     words), by the verse's offsets."""
-    by_part = {}
+    by_part: dict[tuple[int, int, int], list[tuple[int, int, str]]] = {}
     for verse, start, end, words in changes:
         # Words only added stand at the end of the paragraph they follow.
         index, local = verse.part_at(start, at_end=start == end)
@@ -220,11 +234,11 @@ def rewritten(doc, changes):
     return usj.with_blocks(doc, blocks)
 
 
-def map_notes(doc, change):
+def map_notes(doc: usj.Document, change: usj.Change) -> usj.Document:
     """The document with each note replaced by what change makes of it: a
     note, a list of content, or None to drop it."""
 
-    def visit(item):
+    def visit(item: usj.Node) -> usj.Node | usj.Content | None:
         return change(item) if item["type"] == "note" else item
 
     return usj.with_blocks(

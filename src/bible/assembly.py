@@ -7,12 +7,26 @@ What the edition prints is read from the assembled books themselves: nothing
 predicts which chapters and verses a manuscript decision or a grouping leaves.
 """
 
-import re
+from __future__ import annotations
 
+import re
+from collections.abc import Iterator, Mapping
+from typing import TypedDict, Unpack
+
+import bible.policy
+import bible.references
+import bible.sources
 from bible import usfm, usj, versification
-from bible.checks import require
+from bible.checks import present, require
 from bible.policy import source_id
+from bible.policy_schema import Entry
 from bible.references import Books
+from bible.usj import Document, Node
+
+
+class ChapterExtra(TypedDict, total=False):
+    pubnumber: str
+
 
 NAME_MARKERS = {"title": "toc1", "short_title": "toc2", "abbreviation": "toc3"}
 NAME_ATTRIBUTES = {"abbreviation": "abbr", "short_title": "short", "title": "long"}
@@ -27,27 +41,29 @@ SONG = (
 )
 
 
-def source_marker(text, marker):
+def source_marker(text: str, marker: str) -> str:
     """The words of a source file's first line of a kind."""
-    match = re.search(r"^\\" + marker + r"\s+([^\n]+)", text, re.M)
-    require(match is not None, f"Missing source {marker} marker")
+    match = present(
+        re.search(r"^\\" + marker + r"\s+([^\n]+)", text, re.M),
+        f"Missing source {marker} marker",
+    )
     return match[1].strip()
 
 
-def source_text(entry, sources):
+def source_text(entry: Entry, sources: bible.sources.Sources) -> str:
     """The text an entry is prepared from: its source file, or the edition's own."""
     if "file" in entry:
         return sources.authored[entry["file"]]
     return sources[entry["source"]][source_id(entry)]
 
 
-def printed_title(value, marker):
+def printed_title(value: str, marker: str) -> str:
     saint = "SAINT" if marker.startswith("mt") else "Saint"
     value = re.sub(r"(?<!\w)S\.(?=\s|$)", saint, value)
     return re.sub(r"\.(\s*)$", r"\1", value)
 
 
-def names(entry, text):
+def names(entry: Entry, text: str) -> dict[str, str]:
     """The contents title, running-head title, and abbreviation of an entry.
 
     The edition's names replace the source's. Front matter that the edition
@@ -67,7 +83,9 @@ def names(entry, text):
     }
 
 
-def books(policy, sources):
+def books(
+    policy: bible.policy.Policy, sources: bible.sources.Sources
+) -> bible.references.Books:
     """The edition's books, in its order, under their running-head names,
     and the names by which one of a book's chapters is cited."""
     return Books(
@@ -79,7 +97,9 @@ def books(policy, sources):
     )
 
 
-def kjv_books(policy, sources):
+def kjv_books(
+    policy: bible.policy.Policy, sources: bible.sources.Sources
+) -> bible.references.Books:
     """The King James Bible's books, in its order, under its own names for
     them, which a reader's other Bible has."""
     return Books(
@@ -92,7 +112,7 @@ def kjv_books(policy, sources):
     )
 
 
-def _cited_singly(policy):
+def _cited_singly(policy: bible.policy.Policy) -> Iterator[tuple[str, str]]:
     return (
         (unit["id"], unit["cited_singly"])
         for unit in policy.scripture
@@ -100,7 +120,7 @@ def _cited_singly(policy):
     )
 
 
-def heading_lines(entry, found):
+def heading_lines(entry: Entry, found: Mapping[str, str]) -> list[tuple[str, str]]:
     """The mt lines printed over a book, as (marker, text) pairs.
 
     As in the Cambridge KJV, the heading is the contents title itself. The
@@ -126,7 +146,7 @@ def heading_lines(entry, found):
     return [(marker, text) for marker, text in lines]
 
 
-def named(entry, doc, text):
+def named(entry: Entry, doc: Document, text: str) -> Document:
     """A document with the edition's names and heading in place of the source's."""
     found = names(entry, text)
     replacements = {
@@ -155,7 +175,7 @@ def named(entry, doc, text):
     return usj.with_blocks(doc, blocks)
 
 
-def chapters_of(doc):
+def chapters_of(doc: Document) -> tuple[list[Node], list[list[Node]]]:
     """A document's blocks before its first chapter, and each chapter's blocks."""
     starts = [i for i, block in enumerate(doc["content"]) if block["type"] == "chapter"]
     require(bool(starts), f"Source has no chapters: {usj.book_code(doc)}")
@@ -164,12 +184,14 @@ def chapters_of(doc):
     ]
 
 
-def relabelled(blocks, number, **extra):
+def relabelled(
+    blocks: list[Node], number: int | str, **extra: Unpack[ChapterExtra]
+) -> list[Node]:
     chapter, *rest = blocks
     return [{**chapter, "number": str(number), **extra}, *rest]
 
 
-def daniel(doc, brenton):
+def daniel(doc: Document, brenton: Mapping[str, Document]) -> Document:
     """Daniel with Susanna before it and Bel and the Dragon after, each a
     chapter that prints no number under its heading, and the Song of the Three
     Children headed where it begins."""
@@ -200,6 +222,7 @@ def daniel(doc, brenton):
         and usj.text_of(third[at[0]]["content"][at[1] + 1 :]).startswith(opens),
         "Daniel 3 Song of the Three Children boundary changed",
     )
+    assert at is not None
     index, n = at
     block = third[index]
     chapters[2] = [
@@ -214,16 +237,18 @@ def daniel(doc, brenton):
     return usj.with_blocks(doc, blocks)
 
 
-def opened_chapters(code, doc, policy):
+def opened_chapters(code: str, doc: Document, policy: bible.policy.Policy) -> Document:
     """A book with the close of a chapter opened as a chapter of its own,
     where the edition relabels it, as Malachias 3:19-24 is its chapter 4."""
     for labels, printed, opens in versification.new_chapters(code, policy=policy):
         first, chapter = labels[0], printed[0].chapter
-        targets = {
+        targets: Mapping[tuple[str | None, str], bible.references.Verse] = {
             (str(v.chapter), f"{v.number}{v.letter}"): t
             for v, t in zip(labels, printed)
         }
-        blocks, current, opened = [], None, False
+        blocks: list[Node] = []
+        current: str | None = None
+        opened = False
         for block in doc["content"]:
             if block["type"] == "chapter":
                 current = block["number"]
@@ -270,7 +295,12 @@ def opened_chapters(code, doc, policy):
     return doc
 
 
-def scripture_unit(entry, brenton, kjv, policy):
+def scripture_unit(
+    entry: Entry,
+    brenton: Mapping[str, Document],
+    kjv: Mapping[str, Document],
+    policy: bible.policy.Policy,
+) -> Document:
     """One of the edition's books, from its source's chapters, before its
     name and its notes."""
     code = entry["id"]
@@ -310,9 +340,9 @@ def scripture_unit(entry, brenton, kjv, policy):
     return opened_chapters(code, doc, policy)
 
 
-def check_divided(policy, sources):
+def check_divided(policy: bible.policy.Policy, sources: bible.sources.Sources) -> None:
     """A source divided between units must be printed whole, each chapter once."""
-    divided = {}
+    divided: dict[tuple[str, str], list[str]] = {}
     for unit in policy.scripture:
         if "chapters" in unit:
             first, last = unit["chapters"]
@@ -324,6 +354,6 @@ def check_divided(policy, sources):
         require(chapters == found, f"Divided source not printed whole: {source}/{code}")
 
 
-def inventory(units):
+def inventory(units: Mapping[str, Document]) -> dict[str, dict[str, list[str]]]:
     """What the edition prints: each book's chapters and their verses."""
     return {code: usj.inventory(doc) for code, doc in units.items()}

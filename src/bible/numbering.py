@@ -13,12 +13,27 @@ prints it as the edition cites, or as the King James Bible numbers it, so
 that what the pages say of a number is what the runs say.
 """
 
+from __future__ import annotations
+
 import collections
 import re
+from collections.abc import Mapping, Sequence
+from typing import TypedDict
 
-from bible import usj, versification
+import bible.policy
+import bible.references
+from bible import scripture, usj, versification
 from bible.checks import require
+from bible.policy_schema import Run, VersificationApocrypha
 from bible.references import EDITION, Verse, parse_passage
+from bible.usj import Document, Node
+
+
+class PsalmGroup(TypedDict):
+    psalms: list[int]
+    facing: list[int]
+    step: int | None
+
 
 WANTING = "wanting"
 # A passage that the editor's pages name: "{PSA 33:13-17}", or with how it is
@@ -30,7 +45,7 @@ TABLES = re.compile(r"^\{(names|psalm numbers|psalm verses|psalm rows|books)\}$"
 WAYS = {"kjv", "brenton", "bare"}
 
 
-def _letters(verses):
+def _letters(verses: list[bible.references.Verse]) -> str:
     """Verses within a chapter as they print: "5", "19–28", "2a–f", "5, 9a"."""
     printed, n = [], 0
     while n < len(verses):
@@ -49,7 +64,7 @@ def _letters(verses):
     return EDITION.verses.join(printed)
 
 
-def _next(verse, other):
+def _next(verse: bible.references.Verse, other: bible.references.Verse) -> bool:
     """Whether a verse follows another: the next number, or the next letter
     of the same."""
     if verse.chapter != other.chapter:
@@ -63,9 +78,9 @@ def _next(verse, other):
     )
 
 
-def within(verses):
+def within(verses: list[bible.references.Verse]) -> str:
     """Verses of one book as a table's cell prints them, chapter by chapter."""
-    chapters = collections.defaultdict(list)
+    chapters: collections.defaultdict[int, list[Verse]] = collections.defaultdict(list)
     for verse in verses:
         chapters[verse.chapter].append(verse)
     return EDITION.passages.join(
@@ -74,7 +89,7 @@ def within(verses):
     )
 
 
-def numbered(run):
+def numbered(run: Run) -> tuple[list[Verse], list[Verse]]:
     """A run's verses on either side, without a psalm's title, which the
     King James Bible doesn't number, and the verse that is one."""
     ours = versification.verses(run["edition"]) if run["edition"] else []
@@ -90,24 +105,31 @@ def numbered(run):
 class Table:
     """One book's chapters and verses beside the King James Bible's."""
 
-    def __init__(self, code, inventory, kjv_inventory, *, policy):
+    def __init__(
+        self,
+        code: str,
+        inventory: Mapping[str, Mapping[str, Sequence[str]]],
+        kjv_inventory: scripture.Inventory,
+        *,
+        policy: bible.policy.Policy,
+    ) -> None:
         self.policy = policy
         self.code = code
         self.kjv = versification.kjv_book(code, policy=policy)
         self.ours = inventory[code]
         self.theirs = kjv_inventory[self.kjv]
-        self.listed = policy.versification["kjv"].get(code, [])
+        self.listed: Sequence[Run] = policy.versification["kjv"].get(code, [])
 
-    def verses(self, chapter):
-        return [
-            Verse(self.code, int(chapter), int(number), letter)
-            for number, letter in (
-                re.fullmatch(r"(\d+)([a-z]?)", label).groups()
-                for label in self.ours[str(chapter)]
-            )
-        ]
+    def verses(self, chapter: str | int) -> list[Verse]:
+        result = []
+        for label in self.ours[str(chapter)]:
+            match = re.fullmatch(r"(\d+)([a-z]?)", label)
+            assert match is not None
+            number, letter = match.groups()
+            result.append(Verse(self.code, int(chapter), int(number), letter))
+        return result
 
-    def whole(self, chapter):
+    def whole(self, chapter: str | int) -> int | None:
         """The King James chapter that an edition chapter is, verse for verse
         under the same numbers, if it is one and not the same chapter."""
         facing = set()
@@ -122,7 +144,7 @@ class Table:
             return None
         return facing.pop()
 
-    def rows(self):
+    def rows(self) -> list[tuple[str, str]]:
         """The book's rows as (edition cell, King James cell), in the
         edition's order; what the edition lacks stands where the King James
         Bible has it, among the rows of its chapter."""
@@ -137,8 +159,9 @@ class Table:
                 verse for chapter in self.ours for verse in self.verses(chapter)
             )
         }
-        found, told = [], set()
-        listed = [
+        found: list[tuple[float, str | list[Verse], str | list[Verse]]] = []
+        told: set[int] = set()
+        listed: list[Run] = [
             {**run, "edition": ours, "kjv": theirs}
             for run in self.listed
             for ours, theirs in (
@@ -166,6 +189,7 @@ class Table:
             if (
                 last
                 and isinstance(last[1], list)
+                and isinstance(last[2], list)
                 and len(ours) == len(theirs)
                 and len(last[1]) == len(last[2])
                 and last[1]
@@ -198,7 +222,7 @@ class Table:
             if ours != theirs
         ]
 
-    def _place(self, verse, order):
+    def _place(self, verse: Verse, order: Mapping[Verse, int]) -> float:
         """Where a verse that the edition lacks would stand in it: after the
         edition's verse that holds the King James verse before it."""
         chapter = [
@@ -215,10 +239,10 @@ class Table:
         return len(order)
 
 
-def table_rows(rows, heads):
+def table_rows(rows: Sequence[tuple[str, str]], heads: tuple[str, str]) -> Node:
     """A table: its headings, and a row for each pair of cells."""
 
-    def row(kind, cells):
+    def row(kind: str, cells: tuple[str, ...]) -> Node:
         return {
             "type": "table:row",
             "marker": "tr",
@@ -239,14 +263,21 @@ def table_rows(rows, heads):
     }
 
 
-def books_tables(inventory, facing, ours, theirs, *, policy):
+def books_tables(
+    inventory: scripture.Inventory,
+    facing: scripture.Inventory,
+    ours: bible.references.Books,
+    theirs: bible.references.Books,
+    *,
+    policy: bible.policy.Policy,
+) -> list[Node]:
     """Every book's table that has rows, under both Bibles' names for it."""
     rows = [
         (code, Table(code, inventory, facing, policy=policy).rows())
         for code in policy.versification["old_testament"]
         if code != "PSA" and code in inventory
     ]
-    sections = []
+    sections: list[Node] = []
     for code, values in rows:
         if not values:
             continue
@@ -260,9 +291,10 @@ def books_tables(inventory, facing, ours, theirs, *, policy):
     return sections
 
 
-def _spans(numbers):
+def _spans(numbers: list[int]) -> str:
     """Numbers as they print in a list: "3–8, 11, 17–21"."""
-    spans, numbers = [], sorted(numbers)
+    spans: list[list[int]] = []
+    numbers = sorted(numbers)
     for number in numbers:
         if spans and spans[-1][1] == number - 1:
             spans[-1][1] = number
@@ -278,14 +310,20 @@ class Psalter:
     psalm, and mostly in one of three ways: in the psalm's number, in the
     count of its verses by one for its title, or by two."""
 
-    def __init__(self, facing, *, printed, policy):
+    def __init__(
+        self,
+        facing: scripture.Inventory,
+        *,
+        printed: scripture.Inventory,
+        policy: bible.policy.Policy,
+    ) -> None:
         self.policy = policy
         inventory = printed
         self.table = Table("PSA", inventory, facing, policy=policy)
-        self.psalms = {}
+        self.psalms: dict[int, tuple[list[int], set[int | None | str]]] = {}
         for chapter in self.table.ours:
-            facing = collections.Counter()
-            steps = set()
+            counts: collections.Counter[int] = collections.Counter()
+            steps: set[int | str | None] = set()
             for verse in self.table.verses(chapter):
                 if verse in versification.apocryphal(policy=policy):
                     continue
@@ -297,17 +335,17 @@ class Psalter:
                 if len(found) != 1:
                     steps.add(None if found else "title")
                     continue
-                facing[found[0].chapter] += 1
+                counts[found[0].chapter] += 1
                 steps.add(verse.number - found[0].number)
-            self.psalms[int(chapter)] = (sorted(facing), steps - {"title"})
+            self.psalms[int(chapter)] = (sorted(counts), steps - {"title"})
 
-    def numbers(self):
+    def numbers(self) -> list[tuple[str, str]]:
         """Rows of psalm numbers: runs of psalms that are each one King
         James psalm, by the same difference; psalms that are together one;
         and a psalm that is more than one, or none."""
         # Psalms that are together one King James psalm stand together first,
         # so that the first of them doesn't run on with the psalms before it.
-        together = []
+        together: list[PsalmGroup] = []
         for psalm, (facing, _) in self.psalms.items():
             last = together[-1] if together else None
             if (
@@ -318,8 +356,10 @@ class Psalter:
             ):
                 last["psalms"].append(psalm)
             else:
-                together.append({"psalms": [psalm], "facing": list(facing)})
-        groups = []
+                together.append(
+                    {"psalms": [psalm], "facing": list(facing), "step": None}
+                )
+        groups: list[PsalmGroup] = []
         for unit in together:
             psalms, facing = unit["psalms"], unit["facing"]
             # Each one King James psalm, so many from its own number.
@@ -348,22 +388,23 @@ class Psalter:
         ]
         return [row for row in rows if row[0] != row[1]]
 
-    def steps(self):
+    def steps(self) -> tuple[dict[int, list[int]], list[int]]:
         """The psalms whose verses are each so many higher than the King
         James Bible's, by how many, and the psalms whose verses differ by no
         one number."""
-        by_step, uneven = collections.defaultdict(list), []
+        by_step: collections.defaultdict[int, list[int]] = collections.defaultdict(list)
+        uneven: list[int] = []
         for psalm, (facing, steps) in self.psalms.items():
             if steps <= {0} or not facing:
                 continue
             (step,) = steps if len(steps) == 1 else (None,)
-            if step in STEPS:
+            if isinstance(step, int) and step in STEPS:
                 by_step[step].append(psalm)
             else:
                 uneven.append(psalm)
         return dict(sorted(by_step.items())), uneven
 
-    def uneven_rows(self):
+    def uneven_rows(self) -> list[tuple[str, str]]:
         """The rows of the psalms whose verses differ by no one number."""
         _, uneven = self.steps()
         rows = []
@@ -374,7 +415,7 @@ class Psalter:
         return rows
 
 
-def _psalms(first, last):
+def _psalms(first: int, last: int) -> str:
     if first == last:
         return f"Psalm {first}"
     return f"Psalms {first}{EDITION.range}{last}"
@@ -384,11 +425,11 @@ def _psalms(first, last):
 STEPS = {1: "one lower", 2: "two lower"}
 
 
-def psalm_numbers(psalter):
+def psalm_numbers(psalter: Psalter) -> Node:
     return table_rows(psalter.numbers(), ("This edition", "King James Bible"))
 
 
-def psalm_verses(psalter):
+def psalm_verses(psalter: Psalter) -> Node:
     steps, _ = psalter.steps()
     return table_rows(
         [(_spans(psalms), STEPS[step]) for step, psalms in steps.items()],
@@ -396,11 +437,17 @@ def psalm_verses(psalter):
     )
 
 
-def psalm_rows(psalter):
+def psalm_rows(psalter: Psalter) -> Node:
     return table_rows(psalter.uneven_rows(), ("Psalms", "King James Bible"))
 
 
-def names_table(printed, ours, theirs, *, policy):
+def names_table(
+    printed: tuple[str, ...],
+    ours: bible.references.Books,
+    theirs: bible.references.Books,
+    *,
+    policy: bible.policy.Policy,
+) -> Node:
     """The books that the King James Bible names otherwise, or sets apart in
     its Apocrypha, or lacks, and the parts of books that it sets apart."""
     parts = policy.versification["apocrypha"]
@@ -428,7 +475,7 @@ def names_table(printed, ours, theirs, *, policy):
     return table_rows(rows, ("This edition", "King James Bible"))
 
 
-def _apocryphal(part, theirs):
+def _apocryphal(part: VersificationApocrypha, theirs: bible.references.Books) -> str:
     """Where the King James Bible has what it sets apart, if it has it."""
     if part["kjv"] is None:
         return WANTING
@@ -438,19 +485,27 @@ def _apocryphal(part, theirs):
     return f"{name}, in the Apocrypha"
 
 
-def page(text, inventory, facing, ours, theirs, *, policy):
+def page(
+    text: str,
+    inventory: scripture.Inventory,
+    facing: scripture.Inventory,
+    ours: bible.references.Books,
+    theirs: bible.references.Books,
+    *,
+    policy: bible.policy.Policy,
+) -> Document:
     """One of the editor's pages as it prints: the passages it names between
     braces as the edition cites them, or as the King James Bible numbers
     them, and the tables it asks for, each on a line of its own."""
-    asked = TABLES.findall(text)
+    requested = TABLES.findall(text)
     require(
-        not asked
-        or sorted(asked)
+        not requested
+        or sorted(requested)
         == sorted(("names", "psalm numbers", "psalm verses", "psalm rows", "books")),
-        f"Tables asked for, not once each: {asked}",
+        f"Tables asked for, not once each: {requested}",
     )
     tables = {}
-    if asked:
+    if requested:
         psalter = Psalter(facing, printed=inventory, policy=policy)
         tables = {
             "names": [names_table(tuple(inventory), ours, theirs, policy=policy)],
@@ -460,7 +515,7 @@ def page(text, inventory, facing, ours, theirs, *, policy):
             "books": books_tables(inventory, facing, ours, theirs, policy=policy),
         }
 
-    def named(match):
+    def named(match: re.Match[str]) -> str:
         ways = frozenset(match[1].split())
         require(
             ways <= WAYS and not {"brenton", "kjv"} <= ways,

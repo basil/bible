@@ -7,26 +7,48 @@ A note is read once, against the verse it stands in as the edition numbers
 it. Everything it needs is in the assembled book and the policy.
 """
 
-from collections import Counter
-from dataclasses import dataclass, field, replace
+from __future__ import annotations
 
+from collections import Counter
+from collections.abc import Iterable, Mapping, Sequence
+from dataclasses import dataclass, field, replace
+from typing import TypedDict
+
+import bible.policy
+import bible.references
+import bible.terminology
 from bible import citations, crossrefs, lemmas, notes, repairs, scripture, usj
 from bible.checks import require
+from bible.policy_schema import NoteOverride, WordingChange
 from bible.references import verse_at
 from bible.scripture import word_spans, words_of
+from bible.usj import Content, Document, Node
+
+
+class NoteRow(TypedDict):
+    key: str
+    reference: str
+    rule: str
+    verse: str
+    lemma: str | None
+    glossed: str | None
+    reading: str | None
+    note: str
+    source: str
+    style: str
 
 
 @dataclass(frozen=True)
 class Context:
     """What reading a note needs beside its book."""
 
-    policy: object
+    policy: bible.policy.Policy
     # What the edition prints, which a citation must name.
-    inventory: object
-    books: object
-    terms: object
+    inventory: scripture.Inventory
+    books: bible.references.Books
+    terms: bible.terminology.Registry
     # Each note's declared changes of wording, by its key.
-    prose: object
+    prose: Mapping[str, Sequence[WordingChange]]
 
 
 @dataclass(frozen=True)
@@ -36,13 +58,13 @@ class Read:
     key: str
     kind: str
     reference: str
-    verse: object
+    verse: scripture.Verse
     offset: int
-    body: object
-    citations: tuple
+    body: notes.Body
+    citations: tuple[citations.Citation, ...]
     source: str
     text: str
-    scope: object = None
+    scope: usj.Scope | None = None
 
 
 @dataclass
@@ -51,21 +73,35 @@ class Report:
     edition and for the review."""
 
     # Each citation read, as (dialect, the source's name for the book).
-    names: set = field(default_factory=set)
+    names: set[tuple[str, str | None]] = field(default_factory=set)
     # The keys of the citation decisions and prose changes that were met.
-    decided: set = field(default_factory=set)
-    edited: list = field(default_factory=list)
+    decided: set[str] = field(default_factory=set)
+    edited: list[str] = field(default_factory=list)
     # Every printed note's key, and one row of the review for each.
-    keys: set = field(default_factory=set)
-    rows: list = field(default_factory=list)
+    keys: set[str] = field(default_factory=set)
+    rows: list[NoteRow] = field(default_factory=list)
 
-    def read(self, tongue, key, found, policy):
+    def read(
+        self,
+        tongue: citations.Dialect,
+        key: str,
+        found: Sequence[citations.Citation],
+        policy: bible.policy.Policy,
+    ) -> None:
         self.names.update((tongue.name, c.name) for c in found)
         if citations.decisions(key, policy=policy):
             self.decided.add(key)
 
 
-def printed(read, span, glossed, rule, exception, ctx, report):
+def printed(
+    read: Read,
+    span: lemmas.Span | None,
+    glossed: lemmas.Span | None,
+    rule: str,
+    exception: NoteOverride,
+    ctx: Context,
+    report: Report,
+) -> Node:
     """A note as the edition prints it, and its row of the review."""
     key, verse = read.key, read.verse
     words = word_spans(verse.text)
@@ -103,10 +139,16 @@ def printed(read, span, glossed, rule, exception, ctx, report):
             style=body.rule,
         )
     )
-    return notes.footnote(read.reference, lemma, runs, **{"x-key": key})
+    return notes.footnote(read.reference, lemma, runs, **usj.Extra({"x-key": key}))
 
 
-def brenton(code, doc, links, mended, ctx):
+def brenton(
+    code: str,
+    doc: Document,
+    links: Sequence[crossrefs.Link],
+    mended: frozenset[str],
+    ctx: Context,
+) -> tuple[Document, Report]:
     """A book of Brenton's with his notes and cross-references set as
     footnotes without callers, each naming its lemma. A cross-reference
     becomes a footnote of "See" and what it cites; those the quotation links
@@ -174,7 +216,8 @@ def brenton(code, doc, links, mended, ctx):
     )
     corrected = sorted(k for k in merged if k.partition(" ")[2] in mended)
     require(not corrected, f"Brenton correction to a note a link replaces: {corrected}")
-    replacements, moved = {}, []
+    replacements: dict[str, Node | None] = {}
+    moved: list[tuple[str, int, Node]] = []
     for read in found:
         if read.key in merged:
             replacements[read.key] = None
@@ -194,6 +237,7 @@ def brenton(code, doc, links, mended, ctx):
                 key,
                 exception.get("occurrence"),
             )
+            assert glossed is not None
             at = words[glossed[0]][1]
             read = replace(read, offset=at)
             note = printed(read, span, glossed, rule, exception, ctx, report)
@@ -224,7 +268,7 @@ def brenton(code, doc, links, mended, ctx):
             )
         replacements[key] = printed(read, span, glossed, rule, exception, ctx, report)
 
-    def change(item):
+    def change(item: Node) -> Node | Content | None:
         if item["type"] == "note":
             require(
                 item.get("x-key") in replacements, f"Note outside any verse: {code}"
@@ -253,7 +297,7 @@ def brenton(code, doc, links, mended, ctx):
     return doc, report
 
 
-def outside(span):
+def outside(span: Node) -> Node | Content:
     """A character style with the notes that open it set before it: a caller
     just inside "\\add" belongs to the word, not to its styling. A note
     anywhere else within a style is refused."""
@@ -269,7 +313,7 @@ def outside(span):
     return [*content[:leading], {**span, "content": rest}]
 
 
-def anchor_category(lemma, anchor):
+def anchor_category(lemma: list[str], anchor: list[str]) -> str | None:
     """How the anchor's words differ from the lemma's, or None if by more than
     one category allows: words joined or parted, or one word's letter slip."""
     if "".join(lemma) == "".join(anchor):
@@ -281,7 +325,9 @@ def anchor_category(lemma, anchor):
     return None
 
 
-def george(code, doc, listed, ctx):
+def george(
+    code: str, doc: Document, listed: Sequence[Mapping[str, str]], ctx: Context
+) -> tuple[Document, Report]:
     """A book of the Cambridge text with the 1611 marginal notes set on it as
     footnotes without callers.
 
@@ -294,7 +340,7 @@ def george(code, doc, listed, ctx):
     policy, report = ctx.policy, Report()
     tongue = citations.dialect("george", policy=policy)
     verses = scripture.verses(doc)
-    changes = []
+    changes: list[tuple[scripture.Verse, int, int, Content]] = []
     for note in listed:
         key = note["key"]
         override = policy.kjv_notes["notes"].get(key, {})
@@ -342,7 +388,7 @@ def george(code, doc, listed, ctx):
     return scripture.edited(doc, changes), report
 
 
-def at_verse_starts(doc, placed):
+def at_verse_starts(doc: Document, placed: Mapping[str, Content]) -> Document:
     """The document with content set at the start of verses, before the notes
     there, by each verse's reference."""
     verses = scripture.verses(doc)
@@ -357,7 +403,7 @@ def at_verse_starts(doc, placed):
     return usj.with_blocks(doc, blocks)
 
 
-def check_notes(policy, reports):
+def check_notes(policy: bible.policy.Policy, reports: Iterable[Report]) -> None:
     """Every exception and declared change must have met its note."""
     keys = set().union(*(r.keys for r in reports))
     unused = sorted(set(policy.brenton_notes["notes"]) - keys)

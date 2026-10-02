@@ -2,10 +2,13 @@
 write the review, or typeset the sample or the full Bible, check it, and
 publish it."""
 
+from __future__ import annotations
+
 import argparse
 import shutil
 import subprocess
 import sys
+from collections.abc import Sequence
 
 from bible import paths, pipeline, policy, sources
 from bible.project import write_project
@@ -18,19 +21,19 @@ from bible.verify import check_processed, inspect_pdf
 COMMANDS = ("validate", "review", *paths.OUTPUTS)
 
 
-def prepared():
+def prepared() -> tuple[sources.Sources, policy.Policy, pipeline.Edition]:
     read = sources.load()
     decisions = policy.load()
     return read, decisions, pipeline.prepare(read, decisions)
 
 
-def validate():
+def validate() -> None:
     """Prepare the whole edition, which checks every source and decision."""
     _, _, edition = prepared()
     print("Validated the sources and the edition:", dict(edition.summary), flush=True)
 
 
-def render(mode):
+def render(mode: str) -> None:
     """Typeset one edition in build/<mode>, check it, and publish it to dist/."""
     read, decisions, edition = prepared()
     documents = pipeline.export(edition, mode)
@@ -46,7 +49,7 @@ def render(mode):
     publish(mode, pdf, ids, report, decisions.title)
 
 
-def main(argv=None):
+def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="python3 -m bible", description=__doc__)
     parser.add_argument("command", choices=COMMANDS)
     args = parser.parse_args(argv)

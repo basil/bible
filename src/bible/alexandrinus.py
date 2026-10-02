@@ -13,13 +13,20 @@ The notes it writes say which words they are about; a note of Brenton's whose
 words a reading changes keeps the words it was about.
 """
 
+from __future__ import annotations
+
 import re
 from collections import Counter
+from collections.abc import Iterator, Mapping, Sequence
 from dataclasses import dataclass
+from typing import Literal
 
+import bible.policy
 from bible import lemmas, notes, scripture, usj
-from bible.checks import require, require_fields
+from bible.checks import present, require, require_fields
+from bible.policy_schema import AlexandrinusReadingsNoteEdits, Decision
 from bible.scripture import plain, word_spans, words_of
+from bible.usj import Content, Document, Node
 
 ALEX = re.compile(r"\b(?:Alex\.?|Alexandr\w*|App(?:endix)?\.?)(?!\w)")
 # Brenton's appendix, and the heading of the passages it supplies.
@@ -52,7 +59,7 @@ FIELDS = {
 }
 
 
-def tokens(text):
+def tokens(text: str) -> list[str]:
     """Words and number values, including Brenton's reversed tens and ordinals."""
     words = re.findall(
         r"\d[\d,]*(?:st|nd|rd|th)?|[^\W\d_]+(?:[’'][^\W\d_]+)*",
@@ -100,10 +107,13 @@ def tokens(text):
     return [re.sub(r"(?<=\d)(st|nd|rd)$", "th", w) for w in result]
 
 
-def check_swete(key, entry, policy, kept=False):
+def check_swete(
+    key: str, entry: Decision, policy: bible.policy.Policy, kept: bool = False
+) -> None:
     swete = entry.get("swete")
     require(
-        hasattr(swete, "keys")
+        swete is not None
+        and hasattr(swete, "keys")
         and set(swete) == SWETE
         and type(swete["volume"]) is int
         and str(swete["volume"]) in policy.alexandrinus["swete"]
@@ -115,6 +125,7 @@ def check_swete(key, entry, policy, kept=False):
         and (swete["agrees"] is None or type(swete["agrees"]) is bool),
         f"Malformed Swete record: {key}",
     )
+    assert swete is not None
     require(
         kept or swete["agrees"] is True,
         f"Swete does not agree with promoted reading: {key}",
@@ -125,19 +136,24 @@ def check_swete(key, entry, policy, kept=False):
     )
 
 
-def derived(key, operation, source, supplied=()):
+def derived(
+    key: str, operation: Decision, source: str, supplied: Sequence[str] = ()
+) -> str:
     """The English a decision prints, derived exactly from a source phrase by
     its declared edits: order, punctuation, spelling and supplied-word markup
     cannot change without one. Its vocabulary must be Brenton's besides."""
     proof = operation.get("english")
     require(
-        hasattr(proof, "keys")
+        proof is not None
+        and hasattr(proof, "keys")
         and {"source"} <= set(proof) <= {"source", "span", "edits"}
         and proof["source"] in {"brenton", "from"},
         f"Missing or malformed exact English derivation: {key}",
     )
+    assert proof is not None
     original = source if proof["source"] == "brenton" else operation.get("from")
     require(isinstance(original, str), f"Invalid English source: {key}")
+    assert isinstance(original, str)
     start, stop = proof.get("span", (0, len(original)))
     require(
         0 <= start <= stop <= len(original) and start < stop,
@@ -166,7 +182,7 @@ def derived(key, operation, source, supplied=()):
     return english
 
 
-def note_content(entry, key):
+def note_content(entry: Decision, key: str) -> Content | None:
     """The note a decision leaves on the words it displaces: the one it
     declares, or the Vatican's words quoted; None if it declares none."""
     if "note" in entry:
@@ -181,14 +197,18 @@ def note_content(entry, key):
     ]
 
 
-def edition_note(key, reference, content, scope=None):
-    extra = {"x-key": key, "category": "edition"}
+def edition_note(
+    key: str, reference: str, content: Content, scope: usj.Scope | None = None
+) -> Node:
+    extra: usj.Extra = {"x-key": key, "category": "edition"}
     if scope is not None:
         extra["x-scope"] = scope
     return usj.note("f", usj.char("fr", f"{reference} "), *content, caller="+", **extra)
 
 
-def operations(policy, code):
+def operations(
+    policy: bible.policy.Policy, code: str
+) -> Iterator[tuple[str, Decision, str, str, str]]:
     """Each replacement a book's decisions declare, as (decision, operation,
     source words, verse, the key of its note)."""
     data = policy.alexandrinus
@@ -210,17 +230,18 @@ def operations(policy, code):
             yield key, further(entry, item), entry["appendix"], verse, f"{key}@{index}"
 
 
-def further(entry, item):
+def further(entry: Decision, item: Decision) -> Decision:
     """A decision's further replacement: its own words, derivation and note
     position, and the decision's reason, note and lemma unless it has its
     own. Only the decision itself may omit a verse."""
-    inherited = {
-        k: v for k, v in entry.items() if k not in ("english", "note_at", "omit_verse")
-    }
+    inherited: Decision = {**entry}
+    inherited.pop("english", None)
+    inherited.pop("note_at", None)
+    inherited.pop("omit_verse", None)
     return {**inherited, **item}
 
 
-def consumed_notes(policy, code):
+def consumed_notes(policy: bible.policy.Policy, code: str) -> set[str]:
     """The keys of the notes a book's decisions replace or take up."""
     data = policy.alexandrinus
     keys = {key for key in data["readings"] if key.split()[0] == code}
@@ -230,11 +251,13 @@ def consumed_notes(policy, code):
     return keys
 
 
-def companions(policy, code):
+def companions(
+    policy: bible.policy.Policy, code: str
+) -> dict[str, AlexandrinusReadingsNoteEdits]:
     """The notes a book's decisions rewrite without replacing the words they
     stand in: a reading's companion notes, and kept notes given new words."""
     data = policy.alexandrinus
-    found = {}
+    found: dict[str, AlexandrinusReadingsNoteEdits] = {}
     for owner, entry in data["readings"].items():
         if owner.split()[0] != code:
             continue
@@ -250,13 +273,17 @@ def companions(policy, code):
         if key.split()[0] == code and "note" in entry:
             found[key] = {
                 "from": entry["source_note"],
-                "to": entry["note"],
+                "to": present(
+                    entry["note"], f"Kept Alexandrine note without its words: {key}"
+                ),
                 "why": entry["why"],
             }
     return found
 
 
-def check(policy, books):
+def check(
+    policy: bible.policy.Policy, books: Mapping[str, Document]
+) -> tuple[int, int]:
     """Every decision well formed, and the decisions exhaustive: each of
     Brenton's Alexandrine notes and each paragraph of the Appendix's supplied
     passages has exactly one."""
@@ -267,12 +294,17 @@ def check(policy, books):
         (),
         "Alexandrine file",
     )
-    sections = [set(data[s]) for s in ("readings", "passages", "kept")]
+    sections = [set(data["readings"]), set(data["passages"]), set(data["kept"])]
     require(
         sum(map(len, sections)) == len(set.union(*sections)),
         "Alexandrine decision appears in several sections",
     )
-    for section in ("readings", "passages", "kept"):
+    sections_to_check: tuple[Literal["readings", "passages", "kept"], ...] = (
+        "readings",
+        "passages",
+        "kept",
+    )
+    for section in sections_to_check:
         for key, entry in data[section].items():
             require(
                 set(entry) <= FIELDS[section],
@@ -353,7 +385,7 @@ def check(policy, books):
     return len(found), len(paragraphs)
 
 
-def supplied_heading(doc):
+def supplied_heading(doc: Document) -> int:
     found = [
         index
         for index, block in enumerate(doc["content"])
@@ -364,7 +396,7 @@ def supplied_heading(doc):
     return found[0]
 
 
-def supplied_paragraphs(doc):
+def supplied_paragraphs(doc: Document) -> list[Node]:
     return [
         block
         for block in doc["content"][supplied_heading(doc) :]
@@ -372,7 +404,7 @@ def supplied_paragraphs(doc):
     ]
 
 
-def pruned_appendix(doc, policy):
+def pruned_appendix(doc: Document, policy: bible.policy.Policy) -> Document:
     """The Appendix without the passages the edition prints in their books,
     the sections left empty by their going, and the blank lines left doubled."""
     promoted = [
@@ -410,7 +442,9 @@ def pruned_appendix(doc, policy):
     return usj.with_blocks(doc, blocks)
 
 
-def surviving_scope(note, verse, offset, policy):
+def surviving_scope(
+    note: Node, verse: scripture.Verse, offset: int, policy: bible.policy.Policy
+) -> tuple[str | None, str | None]:
     """The words a note of Brenton's is about, measured against its verse
     before a reading changes it: its lemma and the narrower words it glosses."""
     key = note["x-key"]
@@ -431,7 +465,7 @@ def surviving_scope(note, verse, offset, policy):
     )
 
 
-def anchor(verse, phrase, key):
+def anchor(verse: scripture.Verse, phrase: str | None, key: str) -> int:
     """Where a phrase stands in a verse: the start of its one occurrence, as
     whole words, whatever the markup; a note on the whole verse stands at its
     start. An absent or repeated phrase needs a decision, never a guess."""
@@ -446,7 +480,13 @@ def anchor(verse, phrase, key):
     return words[hits[0]][1]
 
 
-def check_pins(code, policy, placed, consumed, rewritten):
+def check_pins(
+    code: str,
+    policy: bible.policy.Policy,
+    placed: Mapping[str, tuple[scripture.Verse, int, Node]],
+    consumed: set[str],
+    rewritten: Mapping[str, AlexandrinusReadingsNoteEdits],
+) -> None:
     """Each note a decision rests on must be the note as the source has it."""
     data = policy.alexandrinus
     for key in consumed:
@@ -479,14 +519,22 @@ class Replacement:
     verse: str
     start: int
     end: int
-    content: tuple
-    note: dict | None = None
+    content: tuple[str | Node, ...]
+    note: Node | None = None
     note_verse: str | None = None
-    note_at: tuple = (0, 0)
+    note_at: tuple[int, int] = (0, 0)
     omits_verse: bool = False
 
 
-def replacement(key, entry, source, verse, note_key, verses, consumed):
+def replacement(
+    key: str,
+    entry: Decision,
+    source: str,
+    verse: scripture.Verse,
+    note_key: str,
+    verses: Mapping[str, scripture.Verse],
+    consumed: set[str],
+) -> Replacement:
     reference = verse.reference
     # The words as the verse has them, however a note among them parts
     # their spaces.
@@ -543,7 +591,7 @@ def replacement(key, entry, source, verse, note_key, verses, consumed):
     )
 
 
-def shifted(position, changes, strict=False):
+def shifted(position: int, changes: list[Replacement], strict: bool = False) -> int:
     """An offset in a verse's words, carried through the replacements made
     in the verse; strictly, through only those before it."""
     delta = 0
@@ -557,7 +605,9 @@ def shifted(position, changes, strict=False):
     return position + delta
 
 
-def promoted(code, doc, policy, kjv):
+def promoted(
+    code: str, doc: Document, policy: bible.policy.Policy, kjv: Mapping[str, Document]
+) -> Document:
     """A book of Brenton's with its Alexandrine decisions carried out."""
     verses = scripture.verses(doc)
     placed = {
@@ -584,10 +634,10 @@ def promoted(code, doc, policy, kjv):
     # where it belongs once the words have changed.
     touched = (
         {r.verse for r in replacements}
-        | {r.note_verse for r in replacements if r.note}
+        | {r.note_verse for r in replacements if r.note and r.note_verse is not None}
         | {placed[key][0].reference for key in rewritten}
     ) - omitted
-    again = {}
+    again: dict[str, list[tuple[int, int, Node, usj.Scope | None]]] = {}
     for reference in touched:
         verse = verses[reference]
         changes = sorted(
@@ -598,13 +648,13 @@ def promoted(code, doc, policy, kjv):
                 previous.end <= current.start,
                 f"Overlapping Alexandrine replacements: {previous.decision}, {current.decision}",
             )
-        kept = []
+        kept: list[tuple[int, int, Node, usj.Scope | None]] = []
         for offset, note in verse.notes:
             key = note["x-key"]
             if key in consumed:
                 continue
             companion = rewritten.get(key)
-            scope = None
+            scope: usj.Scope | None = None
             if companion is not None and "lemma" in companion:
                 scope = {"declared": companion["lemma"]}
             elif any(r.start <= offset < r.end for r in changes):
@@ -620,7 +670,7 @@ def promoted(code, doc, policy, kjv):
             kept.append((shifted(offset, changes), order[key], note, scope))
         # A reading's note takes the place, among the verse's notes, of the
         # note it replaces; any other new note follows them.
-        fresh = [
+        fresh: list[tuple[int, int, Node, usj.Scope | None]] = [
             (
                 shifted(r.note_at[0], changes, strict=True) + r.note_at[1],
                 order.get(r.note["x-key"], len(order)),
@@ -644,7 +694,7 @@ def promoted(code, doc, policy, kjv):
     doc = without_verses(doc, omitted)
     doc = with_insertions(code, doc, policy, kjv)
     verses = scripture.verses(doc)
-    changes = []
+    note_changes: list[tuple[scripture.Verse, int, int, Content]] = []
     for reference, listed in again.items():
         verse = verses[reference]
         set_again = []
@@ -659,11 +709,13 @@ def promoted(code, doc, policy, kjv):
                     anchor(verse, scope["glossed"], note["x-key"])
             set_again.append((position, rank, note))
         for position, _, note in sorted(set_again, key=lambda e: e[:2]):
-            changes.append((verse, position, position, [note]))
-    return scripture.edited(doc, changes)
+            note_changes.append((verse, position, position, [note]))
+    return scripture.edited(doc, note_changes)
 
 
-def pinned(key, body, placed):
+def pinned(
+    key: str, body: str, placed: Mapping[str, tuple[scripture.Verse, int, Node]]
+) -> None:
     """A decision's source note must be the note as the corrected source has it."""
     require(
         key in placed and plain(notes.source_text(placed[key][2])) == plain(body),
@@ -671,14 +723,14 @@ def pinned(key, body, placed):
     )
 
 
-def derived_lemma(english, at):
+def derived_lemma(english: str, at: int) -> str | None:
     """The words a displaced reading's note is about: those printed after its
     caller, without their closing punctuation."""
     words = plain(usj.text_of(usj.parse(english[at:], fragment=True)))
     return words.strip().strip(".,;:!?") or None
 
 
-def without_verses(doc, omitted):
+def without_verses(doc: Document, omitted: set[str]) -> Document:
     """The document without the numbers of the verses a decision omits whole,
     by their references."""
     if not omitted:
@@ -705,7 +757,9 @@ def without_verses(doc, omitted):
     return usj.with_blocks(doc, blocks)
 
 
-def with_insertions(code, doc, policy, kjv):
+def with_insertions(
+    code: str, doc: Document, policy: bible.policy.Policy, kjv: Mapping[str, Document]
+) -> Document:
     """The document with the verses its passages supply, each from Brenton's
     Appendix by a declared derivation, or verbatim from the King James Bible."""
     for key, entry in policy.alexandrinus["passages"].items():
@@ -723,13 +777,14 @@ def with_insertions(code, doc, policy, kjv):
             verses = scripture.verses(doc)
             reference = insertion.get("before", insertion.get("after"))
             require(reference in verses, f"Alexandrine insertion anchor missing: {key}")
+            assert reference is not None
             parts = verses[reference].parts
             if "before" in insertion:
                 block, at = parts[0][0], parts[0][1] - 1
             else:
                 # After the verse's words, in the paragraph that holds them.
                 block, at = parts[-1][0], parts[-1][2]
-            items = []
+            items: Content = []
             for verse in insertion["verses"]:
                 require_fields(
                     verse,
@@ -765,11 +820,15 @@ def with_insertions(code, doc, policy, kjv):
                     {"type": "verse", "marker": "v", "number": label.split(":")[1]}
                 )
                 if "note" in verse:
+                    note = present(
+                        verse["note"],
+                        f"Alexandrine inserted verse without its note: {key}: {label}",
+                    )
                     items.append(
                         edition_note(
                             f"{code} {label}",
                             label,
-                            usj.parse(verse["note"], fragment=True),
+                            usj.parse(note, fragment=True),
                             {"declared": None},
                         )
                     )

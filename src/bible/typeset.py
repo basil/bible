@@ -1,13 +1,16 @@
 """Running PTXprint on a written project, in a private home directory."""
 
+from __future__ import annotations
+
 import os
 import subprocess
+from pathlib import Path
 
 from bible import paths
 from bible.checks import require
 
 
-def typeset(base, project):
+def typeset(base: Path, project: Path) -> Path:
     """Typeset the project written under base; returns the PDF it produced."""
     home = base / "home"
     home.mkdir()

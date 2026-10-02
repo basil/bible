@@ -1,13 +1,23 @@
 """Assembly: the edition's books from the sources' chapters, under its names."""
 
+from __future__ import annotations
+
+from typing import Any
+
 import pytest
 from conftest import changed
 
+import bible.pipeline
+import bible.policy
+import bible.sources
 from bible import assembly, usj
 from bible.checks import CheckFailed
+from bible.policy_schema import Entry
 
 
-def test_every_book_prints_under_the_editions_name_and_heading(edition, policy):
+def test_every_book_prints_under_the_editions_name_and_heading(
+    edition: bible.pipeline.Edition, policy: bible.policy.Policy
+) -> None:
     for entry in policy.scripture:
         headings = [
             (block["marker"], usj.text_of(block["content"]))
@@ -30,23 +40,25 @@ def test_every_book_prints_under_the_editions_name_and_heading(edition, policy):
     ]
 
 
-def test_heading_lines_must_spell_the_contents_title():
+def test_heading_lines_must_spell_the_contents_title() -> None:
     names = {"title": "The Book of Ruth"}
     assert assembly.heading_lines({"id": "RUT"}, names) == [("mt1", "The Book of Ruth")]
-    split = {"id": "RUT", "heading": [["mt2", "The Book of"], ["mt1", "Ruth"]]}
+    split: Entry = {"id": "RUT", "heading": (("mt2", "The Book of"), ("mt1", "Ruth"))}
     assert assembly.heading_lines(split, names) == [
         ("mt2", "The Book of"),
         ("mt1", "Ruth"),
     ]
     with pytest.raises(CheckFailed, match="do not spell the contents title"):
-        assembly.heading_lines({"id": "RUT", "heading": [["mt1", "Ruth"]]}, names)
+        assembly.heading_lines({"id": "RUT", "heading": (("mt1", "Ruth"),)}, names)
     with pytest.raises(CheckFailed, match="Invalid heading"):
         assembly.heading_lines(
-            {"id": "RUT", "heading": [["mt2", "The Book of Ruth"]]}, names
+            {"id": "RUT", "heading": (("mt2", "The Book of Ruth"),)}, names
         )
 
 
-def test_nehemias_is_the_close_of_the_file_that_holds_esdras(edition, read):
+def test_nehemias_is_the_close_of_the_file_that_holds_esdras(
+    edition: bible.pipeline.Edition, read: bible.pipeline.Read
+) -> None:
     assert list(edition.inventory["EZR"]) == [str(c) for c in range(1, 11)]
     assert list(edition.inventory["NEH"]) == [str(c) for c in range(1, 14)]
     assert usj.book_code(edition.documents["NEH"]) == "NEH"
@@ -56,7 +68,9 @@ def test_nehemias_is_the_close_of_the_file_that_holds_esdras(edition, read):
     assert edition.inventory["NEH"]["13"] == source["23"]
 
 
-def test_daniel_stands_between_susanna_and_bel_and_the_dragon(edition):
+def test_daniel_stands_between_susanna_and_bel_and_the_dragon(
+    edition: bible.pipeline.Edition,
+) -> None:
     blocks = edition.documents["DAG"]["content"]
     assert list(edition.inventory["DAG"]) == [str(c) for c in range(14)]
     # Each addition is a chapter that prints no number, under its heading.
@@ -75,7 +89,9 @@ def test_daniel_stands_between_susanna_and_bel_and_the_dragon(edition):
     )
 
 
-def test_the_close_of_malachias_is_a_chapter_of_its_own(edition, read):
+def test_the_close_of_malachias_is_a_chapter_of_its_own(
+    edition: bible.pipeline.Edition, read: bible.pipeline.Read
+) -> None:
     assert len(usj.inventory(read.brenton["MAL"])["3"]) == 24
     assert edition.inventory["MAL"]["3"] == [str(v) for v in range(1, 19)]
     assert edition.inventory["MAL"]["4"] == [str(v) for v in range(1, 7)]
@@ -83,8 +99,10 @@ def test_the_close_of_malachias_is_a_chapter_of_its_own(edition, read):
     assert "\\c 4\n\\p\n\\v 1 For, behold, a day comes burning as an oven" in text
 
 
-def test_a_chapter_is_opened_only_at_the_words_the_file_names(policy, read):
-    def other_words(data):
+def test_a_chapter_is_opened_only_at_the_words_the_file_names(
+    policy: bible.policy.Policy, read: bible.pipeline.Read
+) -> None:
+    def other_words(data: dict[str, Any]) -> None:
         data["relabel"]["MAL 3:19-24"]["opens"] = "For, lo, a day"
 
     with pytest.raises(CheckFailed, match="MAL chapter 4 boundary changed"):
@@ -96,10 +114,12 @@ def test_a_chapter_is_opened_only_at_the_words_the_file_names(policy, read):
         )
 
 
-def test_a_divided_source_must_be_printed_whole(policy, sources):
+def test_a_divided_source_must_be_printed_whole(
+    policy: bible.policy.Policy, sources: bible.sources.Sources
+) -> None:
     assembly.check_divided(policy, sources)
 
-    def shorter(data):
+    def shorter(data: dict[str, Any]) -> None:
         next(u for u in data["scripture"] if u["id"] == "NEH")["chapters"] = [11, 22]
 
     with pytest.raises(

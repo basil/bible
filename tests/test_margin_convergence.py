@@ -1,5 +1,9 @@
 """Margin-note convergence at TeX precision and refusal at the pass cap."""
 
+from __future__ import annotations
+
+import subprocess
+from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
@@ -13,7 +17,9 @@ from bible.checks import CheckFailed
 
 @pytest.mark.parametrize("offset", [0, 12.34567, -12.34567])
 @pytest.mark.parametrize("shift_sp", [0, 0.00001, -0.00001, 1, -1, 2, -2, 65536])
-def test_rerun_requires_more_than_one_scaled_point(tmp_path, offset, shift_sp):
+def test_rerun_requires_more_than_one_scaled_point(
+    tmp_path: Path, offset: float, shift_sp: float
+) -> None:
     notes = MarginNotes()
     notes.pages = [
         [
@@ -46,7 +52,7 @@ def test_rerun_requires_more_than_one_scaled_point(tmp_path, offset, shift_sp):
     )
 
 
-def test_crowded_notes_settle_after_their_offsets_are_applied(tmp_path):
+def test_crowded_notes_settle_after_their_offsets_are_applied(tmp_path: Path) -> None:
     notes = MarginNotes(top=500, bot=0)
     notes.pages = [
         [
@@ -83,14 +89,14 @@ def test_crowded_notes_settle_after_their_offsets_are_applied(tmp_path):
 
 @pytest.mark.parametrize("unsettled", [False, True])
 def test_typeset_refuses_unsettled_notes_even_with_cli_success(
-    tmp_path, monkeypatch, unsettled
-):
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, unsettled: bool
+) -> None:
     project = tmp_path / "projects/BIBLE"
     project.mkdir(parents=True)
     pdf = project / "Bible.pdf"
     pdf.write_bytes(b"test PDF")
 
-    def run(*args, **kwargs):
+    def run(*args: object, **kwargs: object) -> subprocess.CompletedProcess[bytes]:
         (tmp_path / "ptxprint.log").write_text(
             (
                 "ERROR Margin notes did not converge after 5 passes\n"
@@ -99,9 +105,9 @@ def test_typeset_refuses_unsettled_notes_even_with_cli_success(
             ),
             encoding="utf-8",
         )
-        return SimpleNamespace(returncode=0)
+        return subprocess.CompletedProcess([str(arg) for arg in args], 0)
 
-    monkeypatch.setattr(typeset.subprocess, "run", run)
+    monkeypatch.setattr(subprocess, "run", run)
     if unsettled:
         with pytest.raises(CheckFailed, match="Typesetting did not converge"):
             typeset.typeset(tmp_path, project)
@@ -109,7 +115,7 @@ def test_typeset_refuses_unsettled_notes_even_with_cli_success(
         assert typeset.typeset(tmp_path, project) == pdf
 
 
-def test_patch_refuses_changed_upstream(tmp_path):
+def test_patch_refuses_changed_upstream(tmp_path: Path) -> None:
     (tmp_path / "marginnotes.py").write_text("# upstream changed\n")
     with pytest.raises(RuntimeError, match="review the convergence patch"):
         patch(tmp_path)
@@ -125,8 +131,14 @@ def test_patch_refuses_changed_upstream(tmp_path):
     ],
 )
 def test_note_reruns_and_cap(
-    tmp_path, monkeypatch, caplog, max_runs, settles, expected_runs, layout_changes
-):
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    caplog: pytest.LogCaptureFixture,
+    max_runs: int,
+    settles: bool,
+    expected_runs: int,
+    layout_changes: bool,
+) -> None:
     job = runjob.RunJob.__new__(runjob.RunJob)
     printer = SimpleNamespace(
         incrementProgress=lambda **kw: None,
@@ -146,7 +158,7 @@ def test_note_reruns_and_cap(
     converted = []
     job.xdvtopdf = lambda *args: converted.append(args)
 
-    def xetex(*args, **kwargs):
+    def xetex(*args: object, **kwargs: object) -> int:
         passes.append(args)
         # A different byte representation every pass must not override the
         # note solver's decision that the layout has settled.
@@ -186,13 +198,13 @@ def test_note_reruns_and_cap(
         (r"\@noteid{7}{f}{n}{43}{1678212}{16998254}" + "\nextra", False),
     ],
 )
-def test_parloc_note_coordinate_tolerance(after, same):
+def test_parloc_note_coordinate_tolerance(after: str, same: bool) -> None:
     before = r"\@noteid{7}{f}{n}{43}{1678212}{16998254}"
     assert runjob._bible_same_cache(before, after, "parlocs") == same
     assert not runjob._bible_same_cache(before, after, "toc")
 
 
-def test_parloc_other_coordinates_remain_exact():
+def test_parloc_other_coordinates_remain_exact() -> None:
     before = r"\@parend {0}{20517504}{27714133}{0.0pt}"
     after = r"\@parend {0}{20517504}{27714134}{0.0pt}"
     assert not runjob._bible_same_cache(before, after, "parlocs")

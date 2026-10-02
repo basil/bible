@@ -15,8 +15,51 @@ end, nor before a verse number; the line breaks of the USFM are the writer's.
 """
 
 import re
+from collections.abc import Callable, Iterable, Iterator, Sequence
+from typing import Literal, TypedDict, TypeGuard, Unpack, overload
 
-from bible.checks import require
+from bible.checks import present, require
+
+
+class Scope(TypedDict, total=False):
+    declared: str | None
+    lemma: str | None
+    glossed: str | None
+
+
+Node = TypedDict(
+    "Node",
+    {
+        "type": str,
+        "marker": str,
+        "content": list["str | Node"],
+        "caller": str,
+        "code": str,
+        "number": str,
+        "pubnumber": str,
+        "align": str,
+        "category": str,
+        "x-key": str,
+        "x-scope": Scope,
+    },
+    total=False,
+)
+
+Extra = TypedDict(
+    "Extra", {"x-key": str, "x-scope": Scope, "category": str}, total=False
+)
+
+
+class Document(TypedDict):
+    type: str
+    version: str
+    content: list[Node]
+
+
+type Content = list[str | Node]
+type Predicate = Callable[[Node], bool]
+type Change = Callable[[Node], Node | Content | None]
+
 
 VERSION = "3.1"
 MARKER = re.compile(r"\\(?P<plus>\+?)(?P<name>[a-z][a-z0-9-]*)(?P<close>\*?)")
@@ -32,7 +75,7 @@ FIELDS = frozenset("fr ft fq fqa fl xo xt xta".split())
 LABEL = re.compile(r"\d+[a-z]?(?:-\d+[a-z]?)?")
 
 
-def is_type(node, kind, marker=None):
+def is_type(node: object, kind: str, marker: str | None = None) -> TypeGuard[Node]:
     return (
         isinstance(node, dict)
         and node["type"] == kind
@@ -40,49 +83,69 @@ def is_type(node, kind, marker=None):
     )
 
 
-def para(marker, *content):
+def para(marker: str, *content: str | Node) -> Node:
     return {"type": "para", "marker": marker, "content": list(content)}
 
 
-def char(marker, *content):
+def char(marker: str, *content: str | Node) -> Node:
     return {"type": "char", "marker": marker, "content": list(content)}
 
 
-def note(marker, *content, caller="-", **extra):
-    return {
+def note(
+    marker: str, *content: str | Node, caller: str = "-", **extra: Unpack[Extra]
+) -> Node:
+    result: Node = {
         "type": "note",
         "marker": marker,
         "caller": caller,
         "content": list(content),
-        **extra,
     }
+    if "x-key" in extra:
+        result["x-key"] = extra["x-key"]
+    if "x-scope" in extra:
+        result["x-scope"] = extra["x-scope"]
+    if "category" in extra:
+        result["category"] = extra["category"]
+    return result
 
 
-def document(content):
+def document(content: Iterable[Node]) -> Document:
     return {"type": "USJ", "version": VERSION, "content": list(content)}
 
 
-def parse(text, *, fragment=False):
+@overload
+def parse(text: str, *, fragment: Literal[False] = False) -> Document: ...
+
+
+@overload
+def parse(text: str, *, fragment: Literal[True]) -> Content: ...
+
+
+@overload
+def parse(text: str, *, fragment: bool) -> Document | Content: ...
+
+
+def parse(text: str, *, fragment: bool = False) -> Document | Content:
     """Read USFM. A fragment is the inline content of a paragraph or a note,
     and comes back as a content list."""
-    root = []
+    root: Content = []
     # The block that takes inline content, and the notes, note parts and
     # character styles open within it, innermost last.
-    block = None
-    inline = []
-    table = None
+    block: Node | None = None
+    inline: list[tuple[str, Node]] = []
+    table: Node | None = None
 
-    def where(at):
+    def where(at: int) -> str:
         return f"{text[max(0, at - 30) : at + 50]!r}"
 
-    def content():
+    def content() -> Content:
         if inline:
             return inline[-1][1]["content"]
         if block is not None:
             return block["content"]
         return root
 
-    def add_text(value, at):
+    def add_text(value: str, at: int) -> None:
         if not value:
             return
         require("\\" not in value, f"Malformed marker: {where(at)}")
@@ -95,7 +158,7 @@ def parse(text, *, fragment=False):
         else:
             items.append(value)
 
-    def in_note():
+    def in_note() -> bool:
         return any(kind == "note" for kind, _ in inline)
 
     cursor = 0
@@ -122,8 +185,9 @@ def parse(text, *, fragment=False):
                 inline.pop()
                 continue
             require(not in_note(), f"Nested note: {where(at)}")
-            caller = re.match(r"(\S+) ?", text[end:])
-            require(caller is not None, f"Missing note caller: {where(at)}")
+            caller = present(
+                re.match(r"(\S+) ?", text[end:]), f"Missing note caller: {where(at)}"
+            )
             cursor = end + caller.end()
             node = note(name, caller=caller[1])
             content().append(node)
@@ -162,9 +226,11 @@ def parse(text, *, fragment=False):
                     block is not None and block["type"] == "para",
                     f"Verse outside a paragraph: {where(at)}",
                 )
-                label = LABEL.match(text, end)
-                require(label is not None, f"Missing verse number: {where(at)}")
+                label = present(
+                    LABEL.match(text, end), f"Missing verse number: {where(at)}"
+                )
                 cursor = label.end() + (text[label.end() : label.end() + 1] == " ")
+                assert block is not None
                 block["content"].append(
                     {"type": "verse", "marker": "v", "number": label[0]}
                 )
@@ -177,7 +243,10 @@ def parse(text, *, fragment=False):
                     "align": "start",
                     "content": [],
                 }
-                table["content"][-1]["content"].append(block)
+                assert table is not None
+                row = table["content"][-1]
+                assert isinstance(row, dict)
+                row["content"].append(block)
                 continue
             block = None
             if name == "tr":
@@ -190,14 +259,16 @@ def parse(text, *, fragment=False):
                 continue
             table = None
             if name == "id":
-                code = re.match(r"(\S+) ?", text[end:])
-                require(code is not None, f"Missing book code: {where(at)}")
+                code = present(
+                    re.match(r"(\S+) ?", text[end:]), f"Missing book code: {where(at)}"
+                )
                 cursor = end + code.end()
                 block = {"type": "book", "marker": "id", "code": code[1], "content": []}
                 root.append(block)
             elif name == "c":
-                label = LABEL.match(text, end)
-                require(label is not None, f"Missing chapter number: {where(at)}")
+                label = present(
+                    LABEL.match(text, end), f"Missing chapter number: {where(at)}"
+                )
                 cursor = label.end()
                 root.append({"type": "chapter", "marker": "c", "number": label[0]})
             elif name == "cp":
@@ -205,12 +276,14 @@ def parse(text, *, fragment=False):
                 # further into its chapter would be moved to its head.
                 require(
                     bool(root)
-                    and root[-1]["type"] == "chapter"
+                    and is_type(root[-1], "chapter")
                     and "pubnumber" not in root[-1],
                     f"Published chapter number not at the head of a chapter: {where(at)}",
                 )
                 line = re.match(r"[^\n\\]*", text[end:])
-                root[-1] = {**root[-1], "pubnumber": line[0].strip(" ")}
+                chapter_node = root[-1]
+                assert isinstance(chapter_node, dict) and line is not None
+                root[-1] = {**chapter_node, "pubnumber": line[0].strip(" ")}
                 cursor = end + line.end()
             else:
                 require(name in PARAGRAPHS, f"Unsupported marker \\{name}: {where(at)}")
@@ -224,17 +297,17 @@ def parse(text, *, fragment=False):
         )
     if fragment:
         return _tidy(root, edges=False)
-    return document([_tidy_block(node) for node in root])
+    return document([_tidy_block(node) for node in objects(root)])
 
 
-def _spaces(value):
+def _spaces(value: str) -> str:
     return re.sub(r"\s+", " ", value)
 
 
-def _tidy(content, *, edges):
+def _tidy(content: Iterable[str | Node], *, edges: bool) -> Content:
     """Content with single spaces, and none at a paragraph's edges or before a
     verse number."""
-    result = []
+    result: Content = []
     for item in content:
         if isinstance(item, str):
             item = _spaces(item)
@@ -247,7 +320,8 @@ def _tidy(content, *, edges):
         return result
     # A paragraph's words carry no space at either end, nor a verse's before
     # its first word, whatever notes stand there.
-    trimmed, opening = [], True
+    trimmed: Content = []
+    opening = True
     for index, item in enumerate(result):
         if isinstance(item, str):
             following = result[index + 1] if index + 1 < len(result) else None
@@ -266,13 +340,16 @@ def _tidy(content, *, edges):
     return trimmed
 
 
-def _tidy_block(node):
+def _tidy_block(node: Node) -> Node:
     if node["type"] == "table":
         return {
             **node,
             "content": [
-                {**row, "content": [_tidy_block(cell) for cell in row["content"]]}
-                for row in node["content"]
+                {
+                    **row,
+                    "content": [_tidy_block(cell) for cell in objects(row["content"])],
+                }
+                for row in objects(node["content"])
             ],
         }
     if "content" not in node:
@@ -280,7 +357,7 @@ def _tidy_block(node):
     return {**node, "content": _tidy(node["content"], edges=True)}
 
 
-def serialize(node):
+def serialize(node: Document | Content) -> str:
     """Write USFM: a document, or a list of inline content."""
     if isinstance(node, list):
         return _inline(node, nested=False, in_note=False)
@@ -294,14 +371,14 @@ def serialize(node):
             if "pubnumber" in block:
                 lines.append(f"\\cp {block['pubnumber']}")
         elif kind == "table":
-            for row in block["content"]:
+            for row in objects(block["content"]):
                 lines.append("\\tr")
-                for cell in row["content"]:
+                for cell in objects(row["content"]):
                     lines.append(_line(f"\\{cell['marker']}", cell["content"]))
         else:
             require(kind == "para", f"Unsupported block: {kind}")
             # Each verse opens a line of its own.
-            head, *verses = _split_verses(block["content"])
+            head, verses = _split_verses(block["content"])
             lines.append(_line(f"\\{block['marker']}", head))
             lines.extend(
                 _line(f"\\v {verse['number']}", rest) for verse, rest in verses
@@ -309,24 +386,25 @@ def serialize(node):
     return "\n".join(lines) + "\n"
 
 
-def _split_verses(content):
-    parts = [[]]
+def _split_verses(content: Content) -> tuple[Content, list[tuple[Node, Content]]]:
+    head: Content = []
+    parts: list[tuple[Node, Content]] = []
     for item in content:
         if is_type(item, "verse"):
             parts.append((item, []))
-        elif len(parts) == 1:
-            parts[0].append(item)
+        elif not parts:
+            head.append(item)
         else:
             parts[-1][1].append(item)
-    return parts
+    return head, parts
 
 
-def _line(marker, content):
+def _line(marker: str, content: Iterable[str | Node]) -> str:
     text = _inline(content, nested=False, in_note=False)
     return f"{marker} {text}" if text else marker
 
 
-def _inline(content, *, nested, in_note):
+def _inline(content: Iterable[str | Node], *, nested: bool, in_note: bool) -> str:
     parts = []
     for item in content:
         if isinstance(item, str):
@@ -358,18 +436,18 @@ def _inline(content, *, nested, in_note):
 # Reading a document.
 
 
-def is_note(node):
+def is_note(node: Node) -> bool:
     """What stands in a verse without being its words."""
     return node["type"] == "note"
 
 
-def is_label(node):
+def is_label(node: Node) -> bool:
     """What stands in a paragraph without being its prose: a note's origin and
     the number of a verse that a supplied passage prints."""
     return node.get("marker") in ("fr", "xo", "vp")
 
 
-def text_of(content, *, skip=is_note):
+def text_of(content: Iterable[str | Node], *, skip: Predicate = is_note) -> str:
     """The words of some content, without the objects to skip."""
     parts = []
     for item in content:
@@ -380,7 +458,7 @@ def text_of(content, *, skip=is_note):
     return "".join(parts)
 
 
-def walk(content):
+def walk(content: Iterable[str | Node]) -> Iterator[Node]:
     """Every object in the content, outermost first."""
     for item in content:
         if isinstance(item, dict):
@@ -389,17 +467,18 @@ def walk(content):
                 yield from walk(item["content"])
 
 
-def notes_of(content):
+def notes_of(content: Iterable[str | Node]) -> list[Node]:
     return [node for node in walk(content) if node["type"] == "note"]
 
 
-def book_code(doc):
+def book_code(doc: Document) -> str:
     return doc["content"][0]["code"]
 
 
-def inventory(doc):
+def inventory(doc: Document) -> dict[str, list[str]]:
     """The chapters of a document, each with its verses' labels in order."""
-    chapters, chapter = {}, None
+    chapters: dict[str, list[str]] = {}
+    chapter: str | None = None
     for block in doc["content"]:
         if block["type"] == "chapter":
             chapter = block["number"]
@@ -408,7 +487,7 @@ def inventory(doc):
         elif block["type"] == "para":
             for item in block["content"]:
                 if is_type(item, "verse"):
-                    require(chapter is not None, "Verse before a chapter")
+                    chapter = present(chapter, "Verse before a chapter")
                     require(
                         item["number"] not in chapters[chapter],
                         f"Duplicate verse {chapter}:{item['number']}",
@@ -417,21 +496,24 @@ def inventory(doc):
     return chapters
 
 
-def with_blocks(doc, blocks):
+def with_blocks(doc: Document, blocks: Iterable[Node]) -> Document:
     return {**doc, "content": list(blocks)}
 
 
-def with_content(doc, change):
+def with_content(doc: Document, change: Callable[[Content], Content]) -> Document:
     """A document with the content of each paragraph and table cell given to
     change. Its \\id line is the source's own, and stays."""
 
-    def block(node):
+    def block(node: Node) -> Node:
         if node["type"] == "table":
             return {
                 **node,
                 "content": [
-                    {**row, "content": [block(cell) for cell in row["content"]]}
-                    for row in node["content"]
+                    {
+                        **row,
+                        "content": [block(cell) for cell in objects(row["content"])],
+                    }
+                    for row in objects(node["content"])
                 ],
             }
         if "content" not in node or node["type"] == "book":
@@ -444,9 +526,9 @@ def with_content(doc, change):
 # Changing content, by the offsets of its words.
 
 
-def joined(*parts):
+def joined(*parts: Iterable[str | Node]) -> Content:
     """Content lists as one, adjacent strings run together."""
-    result = []
+    result: Content = []
     for part in parts:
         for item in part:
             if isinstance(item, str) and result and isinstance(result[-1], str):
@@ -456,14 +538,21 @@ def joined(*parts):
     return result
 
 
-def split(content, offset, *, notes_left=True, whole=False):
+def split(
+    content: Sequence[str | Node],
+    offset: int,
+    *,
+    notes_left: bool = True,
+    whole: bool = False,
+) -> tuple[Content, Content]:
     """The content before and after an offset in its words.
 
     A character style the offset falls within is divided, or refused if it
     must stay whole. Notes and verse numbers standing exactly at the offset go
     with the words before it, or after.
     """
-    left, right = [], []
+    left: Content = []
+    right: Content = []
     at = 0
     for index, item in enumerate(content):
         if isinstance(item, str):
@@ -500,7 +589,7 @@ def split(content, offset, *, notes_left=True, whole=False):
     return left, right
 
 
-def replaced(content, start, end, new):
+def replaced(content: Content, start: int, end: int, new: Content) -> Content:
     """The content with the words from start to end, and the notes among
     them, giving way to new content."""
     head, rest = split(content, start, notes_left=False)
@@ -508,18 +597,23 @@ def replaced(content, start, end, new):
     return joined(head, new, tail)
 
 
-def inserted(content, offset, items, *, after_notes=True):
+def inserted(
+    content: Content, offset: int, items: Content, *, after_notes: bool = True
+) -> Content:
     """The content with items set at an offset in its words, after the notes
     already there or before them, and never inside a character style."""
     head, tail = split(content, offset, notes_left=after_notes, whole=True)
     return joined(head, items, tail)
 
 
-def leaves(content, *, skip=is_note):
+def leaves(
+    content: Iterable[str | Node], *, skip: Predicate = is_note
+) -> list[tuple[int, int]]:
     """Each string of the content with the offsets of its words."""
-    found, at = [], 0
+    found: list[tuple[int, int]] = []
+    at = 0
 
-    def visit(items):
+    def visit(items: Iterable[str | Node]) -> None:
         nonlocal at
         for item in items:
             if isinstance(item, str):
@@ -532,7 +626,14 @@ def leaves(content, *, skip=is_note):
     return found
 
 
-def substituted(content, edits, *, skip=is_note, right=False, unwrap=()):
+def substituted(
+    content: Content,
+    edits: Iterable[tuple[int, int, str]],
+    *,
+    skip: Predicate = is_note,
+    right: bool = False,
+    unwrap: Iterable[tuple[int, int]] = (),
+) -> Content:
     """The content with stretches of its words rewritten in place.
 
     An edit is (start, end, words). The words stand in the first string the
@@ -543,8 +644,7 @@ def substituted(content, edits, *, skip=is_note, right=False, unwrap=()):
     gives them to what holds it.
     """
     spans = leaves(content, skip=skip)
-    values = None
-    changes = [[] for _ in spans]
+    changes: list[list[tuple[int, int, str]]] = [[] for _ in spans]
     for start, end, words in edits:
         if start == end:
             if right:
@@ -565,9 +665,9 @@ def substituted(content, edits, *, skip=is_note, right=False, unwrap=()):
     index = -1
     at = 0
 
-    def visit(items):
+    def visit(items: Iterable[str | Node]) -> Content:
         nonlocal index, at
-        result = []
+        result: Content = []
         for item in items:
             if isinstance(item, str):
                 index += 1
@@ -592,20 +692,28 @@ def substituted(content, edits, *, skip=is_note, right=False, unwrap=()):
     return visit(content)
 
 
-def mapped(content, change):
+def mapped(content: Iterable[str | Node], change: Change) -> Content:
     """The content with every object replaced by what change makes of it:
     an object, a list of content to stand in its place, or None to drop it.
     Children are mapped before their parents."""
-    result = []
+    result: Content = []
     for item in content:
         if isinstance(item, dict):
             if "content" in item:
                 item = {**item, "content": mapped(item["content"], change)}
-            item = change(item)
-            if item is None:
+            changed = change(item)
+            if changed is None:
                 continue
-            if isinstance(item, list):
-                result = joined(result, item)
+            if isinstance(changed, list):
+                result = joined(result, changed)
                 continue
+            item = changed
         result = joined(result, [item])
     return result
+
+
+def objects(content: Iterable[str | Node]) -> Iterator[Node]:
+    """The objects of a block container, which cannot hold bare text."""
+    for item in content:
+        assert isinstance(item, dict)
+        yield item

@@ -10,11 +10,18 @@ little with its quotation for the comparison to mean anything, are listed in
 edition/quotations.json with the reason.
 """
 
+from __future__ import annotations
+
 import collections
+from collections.abc import Mapping
+from typing import Literal
 
 import pytest
 from conftest import changed
 
+import bible.alignment
+import bible.pipeline
+import bible.policy
 from bible import quotations, versification
 from bible.alignment import Verses
 from bible.references import Passage, Verse
@@ -28,39 +35,51 @@ SHIFTS = (-3, -2, -1, 1, 2, 3)
 
 
 @pytest.fixture(scope="module")
-def verses(edition):
+def verses(edition: bible.pipeline.Edition) -> bible.alignment.Verses:
     """The words of every verse the edition prints, in both testaments."""
     return Verses({code: edition.documents[code] for code in edition.scripture})
 
 
 @pytest.fixture(scope="module")
-def rows(policy):
+def rows(policy: bible.policy.Policy) -> list[quotations.ReviewedRow]:
     return quotations.reviewed_rows(policy=policy)
 
 
-def passages(row, policy):
+def passages(
+    row: quotations.ReviewedRow, policy: bible.policy.Policy
+) -> tuple[list[Verse], list[Verse]]:
     return (
         quotations.nt_verses(row["nt"]),
         quotations.brenton_verses(row["ot"], policy=policy),
     )
 
 
-def alignments(verses, rows, policy, move=0):
+def alignments(
+    verses: bible.alignment.Verses,
+    rows: list[quotations.ReviewedRow],
+    policy: bible.policy.Policy,
+    move: int = 0,
+) -> dict[str, tuple[float, float]]:
     """Each row's score at its target, moved by `move` verses, and its best rival's.
 
     A neighbour that another quotation links from one of the row's New
     Testament verses is its sibling, not its rival: the commandments of the
     Decalogue are quoted together.
     """
-    rows = [(row, *passages(row, policy)) for row in rows]
-    linked = collections.defaultdict(lambda: collections.defaultdict(set))
-    for row, nt, ot in rows:
+    parsed = [(row, *passages(row, policy)) for row in rows]
+    linked: collections.defaultdict[Verse, collections.defaultdict[str, set[Verse]]] = (
+        collections.defaultdict(lambda: collections.defaultdict(set))
+    )
+    for row, nt, ot in parsed:
         for verse in nt:
             linked[verse][row["id"]].update(ot)
     result = {}
-    for row, nt, ot in rows:
-        if move and (ot := verses.shifted(ot, move)) is None:
-            continue
+    for row, nt, ot in parsed:
+        if move:
+            shifted = verses.shifted(ot, move)
+            if shifted is None:
+                continue
+            ot = shifted
         siblings = {
             verse
             for v in nt
@@ -81,7 +100,7 @@ def alignments(verses, rows, policy, move=0):
     return result
 
 
-def flagged(scores):
+def flagged(scores: Mapping[str, tuple[float, float]]) -> tuple[set[str], ...]:
     """The targets that a neighbour outscores, and those that score too
     little for the comparison to mean anything."""
     return (
@@ -90,7 +109,11 @@ def flagged(scores):
     )
 
 
-def test_every_link_lands_on_the_words_it_quotes(verses, rows, policy):
+def test_every_link_lands_on_the_words_it_quotes(
+    verses: bible.alignment.Verses,
+    rows: list[quotations.ReviewedRow],
+    policy: bible.policy.Policy,
+) -> None:
     reviewed = policy.quotations["alignment"]
     for kind in ("outscored", "unscored", "passages", "range_ends"):
         assert all(reviewed[kind].values()), f"Unexplained {kind} alignment"
@@ -100,14 +123,23 @@ def test_every_link_lands_on_the_words_it_quotes(verses, rows, policy):
 
 
 @pytest.mark.parametrize("move", [-1, 1])
-def test_a_link_off_by_a_verse_is_caught(verses, rows, policy, move):
+def test_a_link_off_by_a_verse_is_caught(
+    verses: bible.alignment.Verses,
+    rows: list[quotations.ReviewedRow],
+    policy: bible.policy.Policy,
+    move: int,
+) -> None:
     # The check must still tell a verse from its neighbour: most targets, moved
     # one verse, are outscored by the true one.
     scores = alignments(verses, rows, policy, move)
     assert len(flagged(scores)[0]) >= 0.9 * len(scores) > 0
 
 
-def test_a_misplaced_link_is_outscored(verses, rows, policy):
+def test_a_misplaced_link_is_outscored(
+    verses: bible.alignment.Verses,
+    rows: list[quotations.ReviewedRow],
+    policy: bible.policy.Policy,
+) -> None:
     # 2 Corinthians 9:7 quotes Brenton's lettered Proverbs 22:8a; without its
     # mapping exception, the link would land on 22:8.
     row = [next(row for row in rows if row["id"] == "Q216")]
@@ -118,18 +150,24 @@ def test_a_misplaced_link_is_outscored(verses, rows, policy):
     assert flagged(alignments(verses, row, unmapped))[0] == {"Q216"}
 
 
-def unwaived(rows, policy):
+def unwaived(
+    rows: list[quotations.ReviewedRow], policy: bible.policy.Policy
+) -> list[quotations.ReviewedRow]:
     """The rows whose whole alignment isn't reviewed, and so need a finer check."""
     reviewed = policy.quotations["alignment"]
     waived = {*reviewed["outscored"], *reviewed["unscored"]}
     return [row for row in rows if row["id"] not in waived]
 
 
-def test_every_passage_of_a_link_lands_on_the_words_it_quotes(verses, rows, policy):
+def test_every_passage_of_a_link_lands_on_the_words_it_quotes(
+    verses: bible.alignment.Verses,
+    rows: list[quotations.ReviewedRow],
+    policy: bible.policy.Policy,
+) -> None:
     # A row for each Septuagint passage of a row that cites several. The row's
     # other passages are its siblings, not its rivals, and its own score would
     # let a well-placed first passage carry a misplaced second.
-    each = [
+    each: list[quotations.ReviewedRow] = [
         {**row, "id": f"{row['id']} {passage}", "ot": [passage]}
         for row in unwaived(rows, policy)
         if len(row["ot"]) > 1
@@ -139,7 +177,11 @@ def test_every_passage_of_a_link_lands_on_the_words_it_quotes(verses, rows, poli
     assert outscored | unscored == set(policy.quotations["alignment"]["passages"])
 
 
-def range_ends(verses, rows, policy):
+def range_ends(
+    verses: bible.alignment.Verses,
+    rows: list[quotations.ReviewedRow],
+    policy: bible.policy.Policy,
+) -> dict[str, float]:
     """How much of each range's first and last verse the other side quotes.
 
     A range that runs a verse too far, into context the quotation doesn't
@@ -165,14 +207,23 @@ def range_ends(verses, rows, policy):
     return result
 
 
-def test_every_range_ends_on_quoted_words(verses, rows, policy):
+def test_every_range_ends_on_quoted_words(
+    verses: bible.alignment.Verses,
+    rows: list[quotations.ReviewedRow],
+    policy: bible.policy.Policy,
+) -> None:
     scores = range_ends(verses, unwaived(rows, policy), policy)
     reviewed = policy.quotations["alignment"]["range_ends"]
     assert {key for key, score in scores.items() if score < UNSCORED} == set(reviewed)
 
 
 @pytest.mark.parametrize("side", ["nt", "ot"])
-def test_a_range_run_a_verse_too_far_is_caught(verses, rows, policy, side):
+def test_a_range_run_a_verse_too_far_is_caught(
+    verses: bible.alignment.Verses,
+    rows: list[quotations.ReviewedRow],
+    policy: bible.policy.Policy,
+    side: Literal["nt", "ot"],
+) -> None:
     # Most ranges, run on a verse, end on one the other side doesn't quote.
     caught = total = 0
     for row in unwaived(rows, policy):
@@ -183,8 +234,13 @@ def test_a_range_run_a_verse_too_far_is_caught(verses, rows, policy, side):
                 beyond = versification.lxx_to_edition(beyond, policy=policy)
             if passage.first.letter or beyond not in verses.words:
                 continue
-            run_on = {**row, side: [*row[side]]}
-            run_on[side][i] = Passage(passage.first, next_verse)
+            run_on: quotations.ReviewedRow = {**row}
+            passages = list(row[side])
+            passages[i] = Passage(passage.first, next_verse)
+            if side == "nt":
+                run_on["nt"] = passages
+            else:
+                run_on["ot"] = passages
             ends = range_ends(verses, [run_on], policy)
             total += 1
             caught += ends[f"{row['id']} {beyond}"] < UNSCORED

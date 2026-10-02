@@ -1,9 +1,16 @@
 """Corrections to the sources' transcription."""
 
+from __future__ import annotations
+
+from typing import Any, Unpack
+
 import pytest
 
+import bible.pipeline
+import bible.policy
 from bible import repairs
 from bible.checks import CheckFailed
+from bible.policy_schema import Correction
 
 BOOK = (
     "\\id GEN\n\\c 1\n\\p\n"
@@ -27,22 +34,28 @@ BOOK = (
         ("[Greek characters]", "λόγος", "omitted Greek"),
     ],
 )
-def test_a_correction_mends_a_known_kind_of_slip(before, after, category):
+def test_a_correction_mends_a_known_kind_of_slip(
+    before: str, after: str, category: str | None
+) -> None:
     assert repairs.category(before, after) == category
 
 
-def corrected(key, **correction):
+def corrected(key: str, **correction: Unpack[Correction]) -> tuple[str, frozenset[str]]:
     return repairs.brenton("GEN", BOOK, {key: {"why": "a slip", **correction}})
 
 
-def test_corrections_are_made_where_their_keys_say():
-    text, mended = corrected("GEN 1:2", **{"from": "earthwas", "to": "earth was"})
+def test_corrections_are_made_where_their_keys_say() -> None:
+    text, mended = corrected(
+        "GEN 1:2", **Correction({"from": "earthwas", "to": "earth was"})
+    )
     assert "But the earth was unsightly" in text and mended == frozenset()
     # #2 names the verse's second note, and the note it mends is recorded.
-    text, mended = corrected("GEN 1:2#2", **{"from": "secnd", "to": "second"})
+    text, mended = corrected(
+        "GEN 1:2#2", **Correction({"from": "secnd", "to": "second"})
+    )
     assert "\\ft second.\\f*" in text and mended == {"1:2#2"}
     text, mended = corrected(
-        "GEN 1:1", **{"from": "\\fqa Gr. \\fqa Gr. ", "to": "\\fqa Gr. "}
+        "GEN 1:1", **Correction({"from": "\\fqa Gr. \\fqa Gr. ", "to": "\\fqa Gr. "})
     )
     assert text.count("\\fqa Gr. ") == 1 and mended == {"1:1"}
 
@@ -73,7 +86,9 @@ def test_corrections_are_made_where_their_keys_say():
         ),
     ],
 )
-def test_a_correction_that_does_not_fit_is_refused(key, correction, refusal):
+def test_a_correction_that_does_not_fit_is_refused(
+    key: str, correction: dict[str, Any], refusal: str | None
+) -> None:
     if refusal is None:
         assert "In the beginning God" in corrected(key, **correction)[0]
         return
@@ -81,7 +96,9 @@ def test_a_correction_that_does_not_fit_is_refused(key, correction, refusal):
         corrected(key, **correction)
 
 
-def test_the_editions_corrections_all_apply(read, policy):
+def test_the_editions_corrections_all_apply(
+    read: bible.pipeline.Read, policy: bible.policy.Policy
+) -> None:
     """Each is made once, to a file the edition prints; reading refused otherwise."""
     corrections = policy.brenton_notes["corrections"]
     assert len(corrections) == 83

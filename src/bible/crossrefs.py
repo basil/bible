@@ -4,13 +4,20 @@ as edition/quotations.json reviews them, and Brenton's own "See" notes that
 the links replace.
 """
 
+from __future__ import annotations
+
 import collections
 import re
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 
+import bible.annotate
+import bible.policy
+import bible.references
 from bible import quotations, usj
 from bible.checks import require
 from bible.references import EDITION, Passage, Verse
+from bible.usj import Node
 from bible.versification import mapped_passages
 
 # The printed glosses, by Turpie's class. C.I, which differs from the agreeing
@@ -30,7 +37,7 @@ class Relation:
     ot: tuple[Passage, ...]
 
     @property
-    def pairs(self):
+    def pairs(self) -> tuple[tuple[Verse, Verse], ...]:
         return tuple(
             (nt, ot)
             for nt_passage in self.nt
@@ -53,7 +60,7 @@ class Link:
     agreement: str | None
 
 
-def agreement(cls, table_code):
+def agreement(cls: str, table_code: str) -> str | None:
     """Semantic equivalence class used by conflict and duplicate guards."""
     scope = quotations.scope(table_code)
     return (
@@ -61,7 +68,9 @@ def agreement(cls, table_code):
     )
 
 
-def quotation_relations(rows, *, policy):
+def quotation_relations(
+    rows: Iterable[quotations.ReviewedRow], *, policy: bible.policy.Policy
+) -> tuple[Relation, ...]:
     """Resolve each reviewed row once, before deriving either direction."""
     relations = tuple(
         Relation(
@@ -84,7 +93,9 @@ def quotation_relations(rows, *, policy):
     return relations
 
 
-def planned_links(relations, order, *, policy):
+def planned_links(
+    relations: Iterable[Relation], order: Sequence[str], *, policy: bible.policy.Policy
+) -> dict[str, list[Link]]:
     """Reciprocal links at the first verse of each quotation's passages, by book.
 
     Each link names the whole of the other side's passages, and each of those
@@ -94,20 +105,28 @@ def planned_links(relations, order, *, policy):
     join them display different ranges or stand at different verses. Two
     links that would print alike at one verse are refused.
     """
-    by_book = collections.defaultdict(list)
-    order = {code: index for index, code in enumerate(order)}
+    by_book: collections.defaultdict[str, list[Link]] = collections.defaultdict(list)
+    positions = {code: index for index, code in enumerate(order)}
 
-    def position(verse):
-        return order[verse.book], verse.chapter, verse.number, verse.letter
+    def position(verse: Verse) -> tuple[int, int, int, str]:
+        return positions[verse.book], verse.chapter, verse.number, verse.letter
 
     # Each (NT verse, Brenton verse) pair with the rows and glosses joining it.
-    pair_glosses = collections.defaultdict(list)
+    pair_glosses: collections.defaultdict[
+        tuple[Verse, Verse], list[tuple[str, str | None]]
+    ] = collections.defaultdict(list)
     sources = {unit["id"]: unit["source"] for unit in policy.manifest["scripture"]}
     conflicts = policy.quotations["class_conflicts"]
     require(all(c.get("why") for c in conflicts), "Unexplained class conflict")
     resolved = {frozenset(c["rows"]) for c in conflicts}
 
-    def add(relation, printed, passage, side, targets):
+    def add(
+        relation: Relation,
+        printed: str | None,
+        passage: Passage,
+        side: str,
+        targets: Sequence[Passage],
+    ) -> None:
         origin = passage.first
         require(
             sources.get(origin.book) == ("kjv" if side == "nt" else "brenton"),
@@ -164,7 +183,7 @@ def planned_links(relations, order, *, policy):
     return dict(by_book)
 
 
-def bare(note):
+def bare(note: bible.annotate.Read) -> bool:
     """Whether a note is nothing but "See" and what it cites: only such a
     note can be merged whole, since merging drops the note."""
     plain = note.text
@@ -173,7 +192,7 @@ def bare(note):
     return bool(note.citations) and re.fullmatch(r"\s*[Ss]ee[\s;.]*", plain) is not None
 
 
-def cited_verses(note):
+def cited_verses(note: bible.annotate.Read) -> list[Verse] | None:
     """Every verse a note cites, or None if it cites what names no verse, as
     a chapter: even beside verses, as "Ps. 22; 23. 4", since a merge would
     drop it unnamed."""
@@ -191,7 +210,13 @@ def cited_verses(note):
     return [verse for citation in note.citations for verse in citation.verses]
 
 
-def merged_notes(code, found, links, *, policy):
+def merged_notes(
+    code: str,
+    found: Sequence[bible.annotate.Read],
+    links: Sequence[Link],
+    *,
+    policy: bible.policy.Policy,
+) -> frozenset[str]:
     """The keys of Brenton's See notes that the links at their verses replace.
 
     Read from brenton_notes, before restyling, so a merged note is never
@@ -202,7 +227,9 @@ def merged_notes(code, found, links, *, policy):
     """
     # Only a Septuagint verse links to the New Testament, so only a Brenton book
     # has notes to merge.
-    nt_rows = collections.defaultdict(lambda: collections.defaultdict(set))
+    nt_rows: collections.defaultdict[str, collections.defaultdict[Verse, set[str]]] = (
+        collections.defaultdict(lambda: collections.defaultdict(set))
+    )
     for link in links:
         for passage in link.targets:
             for verse in passage.verses:
@@ -256,12 +283,12 @@ def merged_notes(code, found, links, *, policy):
     return frozenset(merges)
 
 
-def link_note(link, books):
+def link_note(link: Link, books: bible.references.Books) -> Node:
     """A link as it prints: the other side's passages, and Turpie's judgment
     of the quotation's wording where the edition prints one."""
     target = EDITION.listed(link.targets, books)
     require(not set(target) & set("\\\n("), f"Malformed link target: {target}")
-    gloss = GLOSSES.get(link.agreement)
+    gloss = GLOSSES.get(link.agreement or "")
     content = [usj.char("xo", f"{link.origin.label} ")]
     if gloss:
         content += [usj.char("xt", f"{target} "), usj.char("xta", f"({gloss})")]

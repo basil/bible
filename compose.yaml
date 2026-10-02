@@ -14,3 +14,14 @@ services:
       PYTHONPATH: /work/src
     volumes:
       - .:/work:Z
+  dockerfmt:
+    image: ghcr.io/reteps/dockerfmt:v0.5.4
+    pull_policy: always
+    network_mode: none
+    working_dir: /work
+    volumes:
+      - .:/work:Z
+  hadolint:
+    image: hadolint/hadolint:v2.14.0
+    pull_policy: always
+    network_mode: none

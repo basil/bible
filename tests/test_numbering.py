@@ -1,19 +1,38 @@
 """The table of chapters and verses, and the passages the editor's pages name."""
 
+from __future__ import annotations
+
 import re
+from collections.abc import Callable, Iterable, Mapping, Sequence
+from typing import Any, Protocol
 
 import pytest
 from conftest import changed
 
+import bible.numbering
+import bible.pipeline
+import bible.policy
+import bible.references
+import bible.sources
 from bible import assembly, numbering, quotations, usfm, usj, versification
 from bible.checks import CheckFailed
 from bible.numbering import WANTING, Psalter, Table, within
 from bible.policy import EDITOR, NUMBERING
 from bible.references import Verse, parse_verse
+from bible.scripture import Inventory
+
+
+class Printed(Protocol):
+    def __call__(
+        self,
+        written: str,
+        inventory: Inventory = ...,
+        ours: bible.references.Books = ...,
+    ) -> str: ...
 
 
 @pytest.fixture(scope="module")
-def facing(sources):
+def facing(sources: bible.sources.Sources) -> Inventory:
     """The King James Bible's chapters and verses, by book."""
     return {
         code: usfm.inventory(text)["chapters"]
@@ -23,16 +42,27 @@ def facing(sources):
 
 
 @pytest.fixture(scope="module")
-def names(policy, sources):
+def names(
+    policy: bible.policy.Policy, sources: bible.sources.Sources
+) -> tuple[bible.references.Books, ...]:
     """Both Bibles' names for their books: the edition's, and the King James."""
     return assembly.books(policy, sources), assembly.kjv_books(policy, sources)
 
 
 @pytest.fixture(scope="module")
-def printed(policy, edition, facing, names):
+def printed(
+    policy: bible.policy.Policy,
+    edition: bible.pipeline.Edition,
+    facing: Inventory,
+    names: tuple[bible.references.Books, ...],
+) -> Printed:
     """One of the editor's pages as it prints, from what it is written."""
 
-    def page(written, inventory=edition.inventory, ours=names[0]):
+    def page(
+        written: str,
+        inventory: Mapping[str, Mapping[str, Sequence[str]]] = edition.inventory,
+        ours: bible.references.Books = names[0],
+    ) -> str:
         return usj.serialize(
             numbering.page(written, inventory, facing, ours, names[1], policy=policy)
         )
@@ -41,12 +71,16 @@ def printed(policy, edition, facing, names):
 
 
 @pytest.fixture(scope="module")
-def rows(policy, edition, facing):
+def rows(
+    policy: bible.policy.Policy, edition: bible.pipeline.Edition, facing: Inventory
+) -> Callable[[str], list[tuple[str, str]]]:
     return lambda code: Table(code, edition.inventory, facing, policy=policy).rows()
 
 
 @pytest.fixture(scope="module")
-def psalter(policy, edition, facing):
+def psalter(
+    policy: bible.policy.Policy, edition: bible.pipeline.Edition, facing: Inventory
+) -> bible.numbering.Psalter:
     return Psalter(facing, printed=edition.inventory, policy=policy)
 
 
@@ -61,11 +95,13 @@ def psalter(policy, edition, facing):
         (["1KI 16:28d", "1KI 16:28e", "1KI 22:46"], "16:28d–e; 22:46"),
     ],
 )
-def test_verses_print_chapter_by_chapter(verses, cell):
+def test_verses_print_chapter_by_chapter(verses: list[str], cell: str) -> None:
     assert within(list(map(parse_verse, verses))) == cell
 
 
-def test_a_chapter_that_stands_whole_elsewhere_is_one_row(rows):
+def test_a_chapter_that_stands_whole_elsewhere_is_one_row(
+    rows: Callable[[str], list[tuple[str, str]]],
+) -> None:
     jeremias = set(rows("JER"))
     assert {("26", "46"), ("32", "25"), ("36", "29"), ("50", "43")} <= jeremias
     # A chapter in part is its verses.
@@ -77,7 +113,9 @@ def test_a_chapter_that_stands_whole_elsewhere_is_one_row(rows):
     } <= jeremias
 
 
-def test_what_either_bible_lacks_is_wanting(rows):
+def test_what_either_bible_lacks_is_wanting(
+    rows: Callable[[str], list[tuple[str, str]]],
+) -> None:
     jeremias = rows("JER")
     assert (WANTING, "39:4–13") in jeremias
     assert ("36:8", WANTING) in rows("EXO")
@@ -86,7 +124,9 @@ def test_what_either_bible_lacks_is_wanting(rows):
     assert jeremias[at - 1] == ("40", "33") and jeremias[at + 1] == ("41", "34")
 
 
-def test_a_verse_may_stand_beside_two(rows):
+def test_a_verse_may_stand_beside_two(
+    rows: Callable[[str], list[tuple[str, str]]],
+) -> None:
     assert rows("LEV")[:5] == [
         ("5:20–26", "6:1–7"),
         ("6:1–23", "6:8–30"),
@@ -103,7 +143,9 @@ def test_a_verse_may_stand_beside_two(rows):
     assert rows("MAL") == [("4:4–5", "4:5–6"), ("4:6", "4:4")]
 
 
-def test_a_run_that_keeps_its_numbers_has_no_row(policy, rows):
+def test_a_run_that_keeps_its_numbers_has_no_row(
+    policy: bible.policy.Policy, rows: Callable[[str], list[tuple[str, str]]]
+) -> None:
     # Genesis 31:47-48 is read to keep its numbers, against the words.
     kept = [
         (run["edition"], run["kjv"])
@@ -115,7 +157,7 @@ def test_a_run_that_keeps_its_numbers_has_no_row(policy, rows):
     assert rows("JDG") == rows("RUT") == []
 
 
-def read_cell(cell, book):
+def read_cell(cell: str, book: str) -> list[bible.references.Verse]:
     """The verses a cell names, read back from what it prints; none, if it
     names a whole chapter or says that its verses are wanting."""
     verses = []
@@ -123,7 +165,9 @@ def read_cell(cell, book):
         chapter, _, listed = part.partition(":")
         for stretch in listed.split(", "):
             first, _, last = stretch.partition("–")
-            number, letter = re.fullmatch(r"(\d+)([a-z]?)", first).groups()
+            match = re.fullmatch(r"(\d+)([a-z]?)", first)
+            assert match is not None
+            number, letter = match.groups()
             if not last:
                 verses.append(Verse(book, int(chapter), int(number), letter))
             elif last.isalpha():
@@ -139,7 +183,12 @@ def read_cell(cell, book):
     return verses
 
 
-def test_the_table_says_what_the_runs_say(policy, edition, facing, psalter):
+def test_the_table_says_what_the_runs_say(
+    policy: bible.policy.Policy,
+    edition: bible.pipeline.Edition,
+    facing: Inventory,
+    psalter: bible.numbering.Psalter,
+) -> None:
     """Read back, the rows give every verse the King James verses that the
     runs give it, and every verse they don't name keeps its number. A psalm
     whose verses the table numbers together is numbered there."""
@@ -147,7 +196,7 @@ def test_the_table_says_what_the_runs_say(policy, edition, facing, psalter):
     for code in policy.versification["old_testament"]:
         table = Table(code, edition.inventory, facing, policy=policy)
         kjv = versification.kjv_book(code, policy=policy)
-        told = {}
+        told: dict[Verse, tuple[Verse, ...]] = {}
         for ours, theirs in table.rows() if code != "PSA" else psalter.uneven_rows():
             if ours == WANTING:
                 for verse in read_cell(theirs, kjv):
@@ -187,7 +236,9 @@ def test_the_table_says_what_the_runs_say(policy, edition, facing, psalter):
                     assert found == (Verse(kjv, verse.chapter, verse.number),)
 
 
-def test_psalms_are_numbered_as_the_greek_numbers_them(psalter):
+def test_psalms_are_numbered_as_the_greek_numbers_them(
+    psalter: bible.numbering.Psalter,
+) -> None:
     assert psalter.numbers() == [
         ("Psalm 9", "Psalms 9–10"),
         ("Psalms 10–112", "Psalms 11–113"),
@@ -201,7 +252,9 @@ def test_psalms_are_numbered_as_the_greek_numbers_them(psalter):
     ]
 
 
-def test_a_psalms_title_is_counted(policy, psalter):
+def test_a_psalms_title_is_counted(
+    policy: bible.policy.Policy, psalter: bible.numbering.Psalter
+) -> None:
     steps, uneven = psalter.steps()
     assert steps[2] == [50, 51, 53, 59]
     assert steps[1][:8] == [3, 4, 5, 6, 7, 8, 11, 17] and len(steps[1]) == 57
@@ -227,7 +280,7 @@ def test_a_psalms_title_is_counted(policy, psalter):
                     assert kjv.chapter == numbers.get(psalm, psalm), str(verse)
 
 
-def test_the_page_prints_its_tables(edition):
+def test_the_page_prints_its_tables(edition: bible.pipeline.Edition) -> None:
     page = usj.serialize(edition.documents[NUMBERING["id"]])
     assert "{" not in page and "}" not in page
     assert page.count("\\tr\n\\tc1 ") == 408
@@ -249,7 +302,7 @@ def test_the_page_prints_its_tables(edition):
 @pytest.mark.parametrize(
     "more", ["", "{names}\n{psalm numbers}\n{psalm verses}\n{psalm rows}\n"]
 )
-def test_the_page_asks_for_each_table_once(printed, more):
+def test_the_page_asks_for_each_table_once(printed: Printed, more: str) -> None:
     # All five, or none; and none twice.
     with pytest.raises(CheckFailed, match="not once each"):
         printed(f"\\ip x\n{{names}}\n{{books}}\n{more}")
@@ -273,7 +326,9 @@ def test_the_page_asks_for_each_table_once(printed, more):
         ("{kjv bare JER 25:13-16}", "25:13; 49:34–36"),
     ],
 )
-def test_a_passage_named_prints_as_the_files_have_it(printed, named, cited):
+def test_a_passage_named_prints_as_the_files_have_it(
+    printed: Printed, named: str, cited: str
+) -> None:
     assert printed(f"\\ip so that {named} is") == f"\\ip so that {cited} is\n"
 
 
@@ -290,12 +345,18 @@ def test_a_passage_named_prints_as_the_files_have_it(printed, named, cited):
         ("{", "Braces left"),
     ],
 )
-def test_a_passage_misnamed_is_refused(printed, named, refusal):
+def test_a_passage_misnamed_is_refused(
+    printed: Printed, named: str, refusal: str
+) -> None:
     with pytest.raises(CheckFailed, match=refusal):
         printed(f"\\ip so that {named} is")
 
 
-def test_the_introduction_names_its_passages(policy, edition, sources):
+def test_the_introduction_names_its_passages(
+    policy: bible.policy.Policy,
+    edition: bible.pipeline.Edition,
+    sources: bible.sources.Sources,
+) -> None:
     written = sources.authored[EDITOR["file"]]
     page = usj.serialize(edition.documents[EDITOR["id"]])
     # No chapter and verse is typed: each is a passage named, which the files
@@ -317,7 +378,9 @@ def test_the_introduction_names_its_passages(policy, edition, sources):
     assert "of 2 Corinthians 9:7 is found at Proverbs 22:8a." in page
 
 
-def test_every_exception_is_in_the_table(policy, rows):
+def test_every_exception_is_in_the_table(
+    policy: bible.policy.Policy, rows: Callable[[str], list[tuple[str, str]]]
+) -> None:
     # Each exception pairs Turpie's English number with Brenton's, and the
     # table gives Brenton's beside the King James Bible's.
     for source, exception in policy.quotations["lxx_to_edition"].items():
@@ -332,13 +395,16 @@ def test_every_exception_is_in_the_table(policy, rows):
 
 
 def test_a_page_is_written_of_the_books_and_verses_it_is_given(
-    policy, edition, names, printed
-):
-    def named(codes):
+    policy: bible.policy.Policy,
+    edition: bible.pipeline.Edition,
+    names: tuple[bible.references.Books, ...],
+    printed: Printed,
+) -> None:
+    def named(codes: Iterable[str]) -> list[tuple[str, ...]]:
         table = numbering.names_table(tuple(codes), *names, policy=policy)
         return [
-            tuple(usj.text_of(cell["content"]) for cell in row["content"])
-            for row in table["content"]
+            tuple(usj.text_of(cell["content"]) for cell in usj.objects(row["content"]))
+            for row in usj.objects(table["content"])
         ]
 
     full = named(edition.inventory)
@@ -352,8 +418,12 @@ def test_a_page_is_written_of_the_books_and_verses_it_is_given(
         printed("\\ip {PRO 22:8a}", inventory={**edition.inventory, "PRO": proverbs})
 
 
-def test_generated_names_share_the_body_heading_registry(policy, sources, printed):
-    def rename(data):
+def test_generated_names_share_the_body_heading_registry(
+    policy: bible.policy.Policy,
+    sources: bible.sources.Sources,
+    printed: Printed,
+) -> None:
+    def rename(data: dict[str, Any]) -> None:
         unit = next(unit for unit in data["scripture"] if unit["id"] == "JER")
         unit["short_title"] = "Renamed Jeremias"
 

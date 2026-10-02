@@ -19,10 +19,15 @@ way instead, edition/quotations.json names it as an exception, which must be
 used.
 """
 
-import functools
-from collections.abc import Mapping
+from __future__ import annotations
 
+import functools
+from collections.abc import Callable, Iterable, Mapping
+
+import bible.policy
+import bible.references
 from bible.checks import require
+from bible.policy_schema import Run
 from bible.references import Verse, parse_passage, parse_passages, runs
 
 # What a run rests on: the table's account of a Bible numbered like this one,
@@ -33,7 +38,7 @@ WITNESSES = {"table", "words", "place", "reading"}
 TITLE = 0
 
 
-def kjv_book(code, *, policy):
+def kjv_book(code: str, *, policy: bible.policy.Policy) -> str:
     """The King James Old Testament's code for one of the edition's books."""
     require(
         code in policy.versification["old_testament"],
@@ -43,7 +48,7 @@ def kjv_book(code, *, policy):
 
 
 @functools.cache
-def kjv_books(*, policy):
+def kjv_books(*, policy: bible.policy.Policy) -> dict[str, str]:
     """The edition's code for each book of the King James Old Testament."""
     return {
         kjv_book(code, policy=policy): code
@@ -51,11 +56,11 @@ def kjv_books(*, policy):
     }
 
 
-def verses(passages):
+def verses(passages: str) -> list[bible.references.Verse]:
     return [verse for passage in parse_passages(passages) for verse in passage.verses]
 
 
-def run_pairs(run):
+def run_pairs(run: Run) -> list[tuple[list[Verse], list[Verse]]]:
     """A run's correspondences, including explicitly declared partial overlaps."""
     ours = verses(run["edition"]) if run["edition"] else []
     theirs = verses(run["kjv"]) if run["kjv"] else []
@@ -81,7 +86,7 @@ def run_pairs(run):
 
 
 @functools.cache
-def apocryphal(*, policy):
+def apocryphal(*, policy: bible.policy.Policy) -> frozenset[bible.references.Verse]:
     """The verses of the edition's Old Testament books that the King James
     Bible sets apart in its Apocrypha, or lacks, and so doesn't number among
     the books they stand in here."""
@@ -95,7 +100,9 @@ def apocryphal(*, policy):
 
 
 @functools.cache
-def _maps(*, policy):
+def _maps(
+    *, policy: bible.policy.Policy
+) -> tuple[dict[Verse, tuple[Verse, ...]], dict[Verse, tuple[Verse, ...]]]:
     """Each listed verse's counterparts, both ways, every run checked.
 
     Checked whole, so that a run is refused whether or not a reference
@@ -103,7 +110,8 @@ def _maps(*, policy):
     """
     # The runs are worked out once the edition's books are assembled.
     require("kjv" in policy.versification, "The verses are not yet placed")
-    to_kjv, from_kjv = {}, {}
+    to_kjv: dict[Verse, tuple[Verse, ...]] = {}
+    from_kjv: dict[Verse, tuple[Verse, ...]] = {}
     for code, listed in policy.versification["kjv"].items():
         kjv = kjv_book(code, policy=policy)
         for run in listed:
@@ -128,7 +136,7 @@ def _maps(*, policy):
                 bool(run.get("why")) == (run.get("by") == "reading"),
                 f"A reading gives its reason, and no other run does: {name}",
             )
-            reverse = {}
+            reverse: dict[Verse, list[Verse]] = {}
             for near, far in run_pairs(run):
                 for verse in near:
                     require(verse not in to_kjv, f"Two runs for {verse}")
@@ -141,7 +149,9 @@ def _maps(*, policy):
     return to_kjv, from_kjv
 
 
-def to_kjv(verse, *, policy):
+def to_kjv(
+    verse: bible.references.Verse, *, policy: bible.policy.Policy
+) -> tuple[bible.references.Verse, ...]:
     """The King James verses that hold an edition verse's words, if any."""
     listed = _maps(policy=policy)[0]
     if verse in listed:
@@ -157,7 +167,9 @@ def to_kjv(verse, *, policy):
     return (kjv,)
 
 
-def from_kjv(verse, *, policy):
+def from_kjv(
+    verse: bible.references.Verse, *, policy: bible.policy.Policy
+) -> tuple[bible.references.Verse, ...]:
     """The edition's verses that hold a King James verse's words, if any."""
     listed, books = _maps(policy=policy)[1], kjv_books(policy=policy)
     if verse in listed:
@@ -171,28 +183,34 @@ def from_kjv(verse, *, policy):
     )
 
 
-def _mapped(passage, counterparts):
+def _mapped(
+    passage: bible.references.Passage, counterparts: Callable[[Verse], Iterable[Verse]]
+) -> list[bible.references.Passage]:
     found = []
     for verse in passage.verses:
         found += [v for v in counterparts(verse) if v not in found]
     return runs(found)
 
 
-def kjv_passages(passage, *, policy):
+def kjv_passages(
+    passage: bible.references.Passage, *, policy: bible.policy.Policy
+) -> list[bible.references.Passage]:
     """An edition passage as the King James Bible numbers it: verse by verse,
     since a passage may be carried into more than one place."""
     return _mapped(passage, lambda v: to_kjv(v, policy=policy))
 
 
-def edition_passages(passage, *, policy):
+def edition_passages(
+    passage: bible.references.Passage, *, policy: bible.policy.Policy
+) -> list[bible.references.Passage]:
     """A King James passage as the edition numbers it."""
     return _mapped(passage, lambda v: from_kjv(v, policy=policy))
 
 
 @functools.cache
-def relabelled(*, policy):
+def relabelled(*, policy: bible.policy.Policy) -> dict[Verse, Verse]:
     """Each verse the edition relabels, by Brenton's label for it."""
-    found = {}
+    found: dict[Verse, Verse] = {}
     for source, printed in policy.versification["relabel"].items():
         labels, targets = verses(source), verses(printed["edition"])
         require(len(labels) == len(targets), f"Misaligned relabelling: {source}")
@@ -200,7 +218,9 @@ def relabelled(*, policy):
     return found
 
 
-def new_chapters(code, *, policy):
+def new_chapters(
+    code: str, *, policy: bible.policy.Policy
+) -> list[tuple[list[Verse], list[Verse], str]]:
     """The chapters a book's relabelling opens, as (Brenton's verses, the
     printed ones, the words the first opens with).
 
@@ -223,7 +243,7 @@ def new_chapters(code, *, policy):
 
 
 @functools.cache
-def _excepted_verses(*, policy):
+def _excepted_verses(*, policy: bible.policy.Policy) -> dict[Verse, Verse]:
     """Each excepted verse's printed verse, every exception checked.
 
     Checked whole, so an exception is refused whether or not a reference
@@ -257,12 +277,16 @@ def _excepted_verses(*, policy):
     return mapped
 
 
-def lxx_to_edition(verse, *, policy):
+def lxx_to_edition(
+    verse: bible.references.Verse, *, policy: bible.policy.Policy
+) -> bible.references.Verse:
     """Map one Turpie/Brenton Septuagint verse to the printed edition."""
     return _excepted_verses(policy=policy).get(verse, verse)
 
 
-def mapped_passages(passage, *, policy):
+def mapped_passages(
+    passage: bible.references.Passage, *, policy: bible.policy.Policy
+) -> list[bible.references.Passage]:
     """A Septuagint passage's printed Brenton verses, as same-chapter ranges.
 
     A mapping exception can carry part of a passage into another chapter, so
@@ -272,7 +296,9 @@ def mapped_passages(passage, *, policy):
     return runs(lxx_to_edition(verse, policy=policy) for verse in passage.verses)
 
 
-def unused_exceptions(passages, *, policy):
+def unused_exceptions(
+    passages: Iterable[bible.references.Passage], *, policy: bible.policy.Policy
+) -> list[str]:
     """The exceptions that no verse of the passages reaches."""
     reached = {verse for passage in passages for verse in passage.verses}
     return sorted(

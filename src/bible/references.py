@@ -6,11 +6,14 @@ addition, as Proverbs 22:8a, but a lettered verse is never part of a range.
 A passage keeps to one chapter; nothing guesses where a chapter ends.
 """
 
+from __future__ import annotations
+
 import itertools
 import re
+from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 
-from bible.checks import require
+from bible.checks import present, require
 
 # A verse within its chapter, as a verse marker and a note's origin name it.
 VERSE_LABEL = r"\d+[a-z]?"
@@ -27,11 +30,11 @@ class Verse:
     letter: str = ""
 
     @property
-    def label(self):
+    def label(self) -> str:
         """The verse within its book, as "22:8a"."""
         return f"{self.chapter}:{self.number}{self.letter}"
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.book} {self.label}"
 
 
@@ -40,7 +43,7 @@ class Passage:
     first: Verse
     last: Verse
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         first, last = self.first, self.last
         require(
             (first.book, first.chapter) == (last.book, last.chapter),
@@ -52,13 +55,13 @@ class Passage:
         )
         require(last.number >= first.number, f"Reversed passage: {self}")
 
-    def __str__(self):
+    def __str__(self) -> str:
         if self.first == self.last:
             return str(self.first)
         return f"{self.first}-{self.last.number}{self.last.letter}"
 
     @property
-    def verses(self):
+    def verses(self) -> list[Verse]:
         first = self.first
         return [
             Verse(first.book, first.chapter, number, first.letter)
@@ -66,17 +69,16 @@ class Passage:
         ]
 
 
-def parse_passage(text):
-    match = PASSAGE.fullmatch(text)
-    require(match is not None, f"Malformed passage: {text}")
-    book, chapter, first, letter, last = match.groups()
-    first = Verse(book, int(chapter), int(first), letter)
+def parse_passage(text: str) -> Passage:
+    match = present(PASSAGE.fullmatch(text), f"Malformed passage: {text}")
+    book, chapter, first_number, letter, last = match.groups()
+    first = Verse(book, int(chapter), int(first_number), letter)
     return Passage(
         first, first if last is None else Verse(book, int(chapter), int(last))
     )
 
 
-def parse_verse(text):
+def parse_verse(text: str) -> Verse:
     match = PASSAGE.fullmatch(text)
     require(
         match is not None and match[5] is None, f"Malformed verse reference: {text}"
@@ -84,22 +86,22 @@ def parse_verse(text):
     return parse_passage(text).first
 
 
-def parse_passages(text):
+def parse_passages(text: str) -> list[Passage]:
     """The passages of a list, as "EXO 20:13-16; DEU 5:17-20"."""
     return [parse_passage(passage) for passage in text.split("; ")]
 
 
-def verse_at(book, label):
+def verse_at(book: str, label: str) -> Verse:
     """A book's verse by its label, as scripture.verses names it."""
     return parse_verse(f"{book} {label}")
 
 
-def runs(verses):
+def runs(verses: Iterable[Verse]) -> list[Passage]:
     """Verses as passages, each run of consecutive unlettered verses as one.
 
     A lettered verse stands alone.
     """
-    passages = []
+    passages: list[Passage] = []
     for verse in verses:
         last = passages[-1].last if passages else None
         if (
@@ -114,7 +116,7 @@ def runs(verses):
     return passages
 
 
-def roman(numeral):
+def roman(numeral: str) -> int:
     values = [ROMAN[c] for c in numeral]
     return sum(-v if v < w else v for v, w in zip(values, values[1:] + [0]))
 
@@ -125,12 +127,16 @@ class Books:
     A book of many may have a name for one of them: a psalm of the Psalms.
     """
 
-    def __init__(self, names, one=()):
+    def __init__(
+        self,
+        names: Mapping[str, str] | Iterable[tuple[str, str]],
+        one: Mapping[str, str] | Iterable[tuple[str, str]] = (),
+    ) -> None:
         self.names = dict(names)
         self.one = dict(one)
         self.order = {code: index for index, code in enumerate(self.names)}
 
-    def name(self, code, chapters=()):
+    def name(self, code: str, chapters: Iterable[int] = ()) -> str:
         """A book's name where it is cited: that of one of its chapters, if
         it has such a name and one chapter is cited."""
         require(code in self.names, f"No display name for {code}")
@@ -138,7 +144,7 @@ class Books:
             return self.one[code]
         return self.names[code]
 
-    def position(self, verse):
+    def position(self, verse: Verse) -> tuple[int, int, int, str]:
         """Where a verse stands in this Bible, a lettered verse after its own."""
         return self.order[verse.book], verse.chapter, verse.number, verse.letter
 
@@ -152,13 +158,13 @@ class Style:
     verses: str = ", "
     passages: str = "; "
 
-    def stretch(self, first, last, letter=""):
+    def stretch(self, first: int, last: int, letter: str = "") -> str:
         """A verse, or a range of them: "7", "6–9", "8a"."""
         if first == last:
             return f"{first}{letter}"
         return f"{first}{self.range}{last}"
 
-    def within(self, passage):
+    def within(self, passage: Passage) -> str:
         """A passage within its book: "40:3–5"."""
         first, last = passage.first, passage.last
         return (
@@ -166,11 +172,11 @@ class Style:
             f"{self.stretch(first.number, last.number, first.letter)}"
         )
 
-    def passage(self, passage, books):
+    def passage(self, passage: Passage, books: Books) -> str:
         name = books.name(passage.first.book, [passage.first.chapter])
         return f"{name} {self.within(passage)}"
 
-    def listed(self, passages, books):
+    def listed(self, passages: Sequence[Passage], books: Books) -> str:
         """Passages in order, each book named once: "Esaias 8:23; 9:1;
         Matthew 4:15"."""
         printed = []
@@ -209,10 +215,11 @@ class Item:
     last: int | LastVerse | None = None
     letter: str = ""
 
-    def passage(self, book):
+    def passage(self, book: str) -> Passage | None:
         """The item's verses, if it names any."""
         if self.first is None:
             return None
+        assert isinstance(self.first, int) and isinstance(self.last, int)
         return Passage(
             Verse(book, self.chapter, self.first, self.letter),
             Verse(book, self.chapter, self.last, self.letter),

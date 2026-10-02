@@ -5,9 +5,13 @@ symbol: a superscript and an extensible delimiter still belong to their font's
 size convention. See docs/font-normalization.md for evidence and limits.
 """
 
+from __future__ import annotations
+
 import zipfile
+from collections.abc import Sequence
 from copy import deepcopy
 from io import BytesIO
+from pathlib import Path
 
 from fontTools.cffLib.specializer import commandsToProgram, programToCommands
 from fontTools.ttLib import TTFont
@@ -17,12 +21,12 @@ UTOPIA_STD_TO_UTOPIA = 100 / 94
 MATH_MEMBERS = ("erewhon-math/Erewhon-Math.otf", "erewhon-math/Erewhon-Math-Bold.otf")
 
 
-def archive_font(archive, member):
+def archive_font(archive: str | Path, member: str) -> TTFont:
     with zipfile.ZipFile(archive) as z:
         return TTFont(BytesIO(z.read(member)), recalcTimestamp=False)
 
 
-def scaled_stems(args, factor):
+def scaled_stems(args: Sequence[float], factor: float) -> list[float]:
     """Scale edge locations while retaining Type 2 ghost-hint sentinels.
 
     A -20 hint names its first edge; a -21 hint names its second edge.
@@ -30,8 +34,9 @@ def scaled_stems(args, factor):
     Adobe Type 2 specification, section 4.3 (5177.Type2.pdf).
     """
     assert len(args) % 2 == 0
-    old_end = new_end = 0
-    result = []
+    old_end: float = 0
+    new_end: float = 0
+    result: list[float] = []
     for delta, width in zip(args[::2], args[1::2]):
         start = old_end + delta
         if width == -21:
@@ -46,7 +51,7 @@ def scaled_stems(args, factor):
     return result
 
 
-def normalized_donor(font, style=None):
+def normalized_donor(font: TTFont, style: str | None = None) -> TTFont:
     """Enlarge a UtopiaStd donor at unchanged UPEM; keep its Type 2 hints.
 
     Expand subroutines before scaling so call indices and hintmask bytes cannot
@@ -132,7 +137,7 @@ def normalized_donor(font, style=None):
     return font
 
 
-def math_donors(archive, style):
+def math_donors(archive: str | Path, style: str) -> list[TTFont]:
     """No italic math face exists. Use upright symbols, never synthesize slant.
 
     Bold Math has limited coverage; use Regular Math for its missing glyphs.

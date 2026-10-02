@@ -11,14 +11,18 @@ authority: its tests weren't written for eBible's Brenton, and where its
 account and the words of the two translations disagree, the words decide.
 """
 
+from __future__ import annotations
+
 import collections
 import functools
 import re
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 
 from bible import scripture, usj
 from bible.references import Verse
 from bible.sources import SOURCES, pinned_bytes
+from bible.usj import Document
 
 SOURCE = SOURCES["versification"]
 # A reference as the table writes it, as "Gen.31:55", "Psa.50:Title", or the
@@ -44,13 +48,15 @@ TITLE = 0
 @dataclass(frozen=True)
 class Row:
     tradition: str
-    source: tuple
-    standard: tuple
+    source: tuple[tuple[str, str, int, str], ...]
+    standard: tuple[tuple[str, str, int, str], ...]
     action: str
     tests: str
 
 
-def _verses(text, book=None):
+def _verses(
+    text: str, book: str | None = None
+) -> list[tuple[str, str, int, str]] | None:
     """The verses a reference, range or list names, as (book, chapter, verse,
     part), or None if it can't be read."""
     verses = []
@@ -58,7 +64,9 @@ def _verses(text, book=None):
         match = REFERENCE.fullmatch(item)
         if match is None or not (match["book"] or book):
             return None
-        book = (match["book"] or book).upper()
+        found_book = match["book"] or book
+        assert found_book is not None
+        book = found_book.upper()
         chapter = match["chapter"]
         first = TITLE if match["verse"] == "Title" else int(match["verse"])
         if match["to_chapter"]:
@@ -76,7 +84,7 @@ def _verses(text, book=None):
 
 
 @functools.cache
-def rows():
+def rows() -> tuple[list[Row], list[str]]:
     """The expanded table's rows, and how many of them couldn't be read."""
     text = pinned_bytes(SOURCE["file"], SOURCE["sha256"]).decode("utf-8-sig")
     lines = text.replace("\r\n", "\n").split("\n")
@@ -99,10 +107,10 @@ class Bible:
     """What the table's tests ask of a Bible: which verses it has, and how
     long each is. Books are named as the table names them, in capitals."""
 
-    def __init__(self, books):
-        self.length = {}
-        self.last = {}
-        self.titled = set()
+    def __init__(self, books: Mapping[str, Document]) -> None:
+        self.length: dict[tuple[str, str, str], int] = {}
+        self.last: dict[tuple[str, str], int] = {}
+        self.titled: set[tuple[str, str]] = set()
         for book, doc in books.items():
             for chapter, paragraphs in scripture.heads(doc).items():
                 if any(
@@ -113,16 +121,18 @@ class Bible:
             for reference, verse in scripture.verses(doc).items():
                 chapter, label = reference.split(":")
                 self.length[book, chapter, label] = len(scripture.words_of(verse.text))
-                self.last[book, chapter] = int(re.match(r"\d+", label)[0])
+                match = re.match(r"\d+", label)
+                assert match is not None
+                self.last[book, chapter] = int(match[0])
 
-    def passes(self, tests):
+    def passes(self, tests: str) -> bool | None:
         """Whether every test holds, or None if one can't be read."""
         results = [
             self._holds(test.strip()) for test in tests.split("&") if test.strip()
         ]
         return None if None in results else all(results)
 
-    def _holds(self, test):
+    def _holds(self, test: str) -> bool | None:
         if match := TEST.fullmatch(test):
             book, chapter = match["book"].upper(), match["chapter"]
             if match["verse"] == "TextBeforeV1":
@@ -139,9 +149,11 @@ class Bible:
         lengths = [self._sum(side) for side in (sides[0], sides[2])]
         if None in lengths:
             return None
-        return lengths[0] < lengths[1] if sides[1] == "<" else lengths[0] > lengths[1]
+        first, last = lengths
+        assert first is not None and last is not None
+        return first < last if sides[1] == "<" else first > last
 
-    def _sum(self, side):
+    def _sum(self, side: str) -> int | None:
         total = 0
         for term in side.split("+"):
             match = TERM.fullmatch(term.strip())
@@ -155,7 +167,9 @@ class Bible:
         return total
 
 
-def account(bible, books):
+def account(
+    bible: Bible, books: Mapping[str, Sequence[str]]
+) -> dict[Verse, list[tuple[tuple[Verse, ...], Row]]]:
     """The table's account of a Bible's books: each verse's standard verses,
     by every row it passes, as {verse: [(standard verses, row), ...]}.
 
@@ -165,7 +179,9 @@ def account(bible, books):
     """
     found, _ = rows()
     names = {name: code for code, listed in books.items() for name in listed}
-    result = collections.defaultdict(list)
+    result: collections.defaultdict[Verse, list[tuple[tuple[Verse, ...], Row]]] = (
+        collections.defaultdict(list)
+    )
     for row in found:
         if len(row.source) != 1 or row.source[0][0] not in names:
             continue

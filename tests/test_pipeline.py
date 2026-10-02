@@ -1,19 +1,29 @@
 """The pipeline whole: its order, what it refuses, and what it sends to be
 typeset."""
 
+from __future__ import annotations
+
 import copy
 import re
+from collections.abc import Callable
+from pathlib import Path
+from typing import Any
 
 import pytest
 from conftest import changed
 
-from bible import annotate, paths, pipeline, review, revision, usj
+import bible.pipeline
+import bible.policy
+import bible.sources
+from bible import annotate, assembly, paths, pipeline, review, revision, usj
 from bible.checks import CheckFailed
 
 
 def test_the_edition_prints_every_unit_once_in_the_manifests_order(
-    edition, policy, exported
-):
+    edition: bible.pipeline.Edition,
+    policy: bible.policy.Policy,
+    exported: dict[str, str],
+) -> None:
     order = [entry["id"] for entry in policy.entries]
     assert list(edition.documents) == list(exported) == order
     assert edition.scripture == {unit["id"] for unit in policy.scripture}
@@ -32,7 +42,11 @@ def test_the_edition_prints_every_unit_once_in_the_manifests_order(
     }
 
 
-def test_no_stage_changes_what_an_earlier_stage_made(sources, policy, read):
+def test_no_stage_changes_what_an_earlier_stage_made(
+    sources: bible.sources.Sources,
+    policy: bible.policy.Policy,
+    read: bible.pipeline.Read,
+) -> None:
     """Documents are shared between stages, so none may be changed in place."""
     before = copy.deepcopy((dict(read.brenton), dict(read.kjv)))
     promoted, _ = pipeline.promote(read, policy)
@@ -47,7 +61,9 @@ def test_no_stage_changes_what_an_earlier_stage_made(sources, policy, read):
     assert dict(units) == assembled
 
 
-def test_the_policy_is_read_once_and_cannot_be_changed(policy):
+def test_the_policy_is_read_once_and_cannot_be_changed(
+    policy: bible.policy.Policy,
+) -> None:
     with pytest.raises(TypeError):
         policy.manifest["title"] = "Another"
     with pytest.raises(TypeError):
@@ -95,13 +111,18 @@ def test_the_policy_is_read_once_and_cannot_be_changed(policy):
     ],
 )
 def test_a_malformed_decision_is_refused_when_the_policy_is_read(
-    policy, name, change, refusal
-):
+    policy: bible.policy.Policy,
+    name: str,
+    change: Callable[[dict[str, Any]], object],
+    refusal: str,
+) -> None:
     with pytest.raises(CheckFailed, match=refusal):
         changed(policy, name, change)
 
 
-def test_a_decision_that_nothing_meets_is_refused(edition, policy):
+def test_a_decision_that_nothing_meets_is_refused(
+    edition: bible.pipeline.Edition, policy: bible.policy.Policy
+) -> None:
     reports = [
         annotate.Report(
             keys={row["key"] for rows in edition.notes.values() for row in rows},
@@ -116,7 +137,7 @@ def test_a_decision_that_nothing_meets_is_refused(edition, policy):
     annotate.check_notes(policy, reports)
     pipeline.check_met(policy, edition.met)
 
-    def exception(data):
+    def exception(data: dict[str, Any]) -> None:
         data["notes"]["GEN 1:1"] = {
             "lemma": "beginning",
             "why": "there is no such note",
@@ -127,7 +148,7 @@ def test_a_decision_that_nothing_meets_is_refused(edition, policy):
     ):
         annotate.check_notes(changed(policy, "brenton_notes", exception), reports)
 
-    def prose(data):
+    def prose(data: dict[str, Any]) -> None:
         data["numbers"]["changes"].append(
             {"note": "GEN 1:4", "from": "5.", "to": "five"}
         )
@@ -135,7 +156,7 @@ def test_a_decision_that_nothing_meets_is_refused(edition, policy):
     with pytest.raises(CheckFailed, match="Prose changes to notes not met once each"):
         annotate.check_notes(changed(policy, "prose", prose), reports)
 
-    def decision(data):
+    def decision(data: dict[str, Any]) -> None:
         data["decisions"]["GEN 1:1"] = {
             "source": "Heb. 1",
             "not_a_citation": True,
@@ -145,14 +166,16 @@ def test_a_decision_that_nothing_meets_is_refused(edition, policy):
     with pytest.raises(CheckFailed, match=r"Unused citation decisions: \['GEN 1:1'\]"):
         pipeline.check_met(changed(policy, "citations", decision), edition.met)
 
-    def name(data):
+    def name(data: dict[str, Any]) -> None:
         data["dialects"]["brenton"]["books"]["Jezek"] = "EZK"
 
     with pytest.raises(CheckFailed, match="Unused names for books"):
         pipeline.check_met(changed(policy, "citations", name), edition.met)
 
 
-def test_the_editions_spelling_is_revised_wherever_a_word_is_printed(edition, policy):
+def test_the_editions_spelling_is_revised_wherever_a_word_is_printed(
+    edition: bible.pipeline.Edition, policy: bible.policy.Policy
+) -> None:
     assert policy.revisions["words"]["Jezekiel"]["to"] == "Ezekiel"
     assert edition.met["revisions"] == {"Jezekiel"}
     whole = "".join(usj.serialize(doc) for doc in edition.documents.values())
@@ -169,17 +192,21 @@ NOE = (
 )
 
 
-def revisions(policy, **sections):
-    def change(data):
+def revisions(
+    policy: bible.policy.Policy, **sections: dict[str, Any]
+) -> bible.policy.Policy:
+    def change(data: dict[str, Any]) -> None:
         data.update(words={}, verses={})
         data.update(sections)
 
     return changed(policy, "revisions", change)
 
 
-def test_a_word_is_respelt_whole_in_the_text_and_its_notes(policy):
+def test_a_word_is_respelt_whole_in_the_text_and_its_notes(
+    policy: bible.policy.Policy,
+) -> None:
     words = revisions(policy, words={"Noe": {"to": "Noah", "why": "the English name"}})
-    met = set()
+    met: set[str] = set()
     text = usj.serialize(revision.respelt(usj.parse(NOE), words, met))
     assert (
         "\\v 1 Noah’s sons and Noeman \\f - \\fr 1:1 \\fq went with Noah: \\ft or, "
@@ -188,7 +215,9 @@ def test_a_word_is_respelt_whole_in_the_text_and_its_notes(policy):
     assert "\\mt1 NOE" in text and met == {"Noe"}
 
 
-def test_a_word_is_respelt_whatever_styles_divide_it(policy):
+def test_a_word_is_respelt_whatever_styles_divide_it(
+    policy: bible.policy.Policy,
+) -> None:
     words = revisions(
         policy,
         words={
@@ -203,7 +232,7 @@ def test_a_word_is_respelt_whatever_styles_divide_it(policy):
         "Noe\\add man\\add* and \\it Sem\\it*s and \\it thus \\it*ham and Noe\n"
         "\\v 2 begat Sem.\n"
     )
-    met = set()
+    met: set[str] = set()
     text = usj.serialize(revision.respelt(doc, words, met))
     # Each letter keeps the style it stood in, and what is added takes the
     # style of the word it joins.
@@ -217,15 +246,17 @@ def test_a_word_is_respelt_whatever_styles_divide_it(policy):
     assert met == {"Noe", "Sem", "ham"}
 
 
-def group(*changes, why="the sentence runs on"):
+def group(*changes: object, why: str = "the sentence runs on") -> dict[str, Any]:
     return {"pointing": {"why": why, "changes": list(changes)}}
 
 
-def test_a_verse_is_revised_in_its_own_words_and_the_notes_that_quote_them(policy):
+def test_a_verse_is_revised_in_its_own_words_and_the_notes_that_quote_them(
+    policy: bible.policy.Policy,
+) -> None:
     change = {"verse": "GEN 1:1", "from": "went with Noe.", "to": "went with Noe:"}
     verses = revisions(policy, verses=group(change))
     revision.check(verses)
-    met = set()
+    met: set[str] = set()
     text = usj.serialize(revision.revised("GEN", usj.parse(NOE), verses, met))
     # The words change in the styles they stand in; the other verse is as it was.
     assert "\\fqa Noe\\f*went \\add with\\add* Noe:\n\\v 2 And Noe went.\n" in text
@@ -245,7 +276,9 @@ def test_a_verse_is_revised_in_its_own_words_and_the_notes_that_quote_them(polic
     assert "\\fq went beside Noe: " in text and "went \\add beside\\add* Noe:" in text
 
 
-def test_a_note_quotes_a_verse_whatever_styles_divide_its_words(policy):
+def test_a_note_quotes_a_verse_whatever_styles_divide_its_words(
+    policy: bible.policy.Policy,
+) -> None:
     doc = usj.parse(
         "\\id GEN\n\\c 1\n\\p\n\\v 1 He went \\add with\\add* Noe \\f - \\fr 1:1 "
         "\\fq went \\+it with\\+it* Noe: \\ft or, \\fqa beside\\f*then.\n"
@@ -257,7 +290,9 @@ def test_a_note_quotes_a_verse_whatever_styles_divide_its_words(policy):
     assert "\\fq went \\+it beside\\+it* Noe: \\ft or, \\fqa beside\\f*then." in text
 
 
-def test_a_revision_changes_a_lemma_whole_or_is_refused(policy):
+def test_a_revision_changes_a_lemma_whole_or_is_refused(
+    policy: bible.policy.Policy,
+) -> None:
     doc = usj.parse(
         "\\id GEN\n\\c 1\n\\p\n\\v 1 He went with Noe \\f - \\fr 1:1 "
         "\\fq with Noe: \\ft Gr. went with Noe\\f*then.\n"
@@ -298,12 +333,14 @@ def test_a_revision_changes_a_lemma_whole_or_is_refused(policy):
         ),
     ],
 )
-def test_a_malformed_revision_is_refused(policy, sections, refusal):
+def test_a_malformed_revision_is_refused(
+    policy: bible.policy.Policy, sections: dict[str, Any], refusal: str
+) -> None:
     with pytest.raises(CheckFailed, match=refusal):
         revision.check(revisions(policy, **sections))
 
 
-def test_a_revision_must_be_met(policy):
+def test_a_revision_must_be_met(policy: bible.policy.Policy) -> None:
     doc = usj.parse(NOE)
     twice = {"verse": "GEN 1:1", "from": "Noe", "to": "Noah"}
     with pytest.raises(CheckFailed, match="not met once in its verse: GEN 1:1"):
@@ -329,7 +366,9 @@ def test_a_revision_must_be_met(policy):
         revision.check_met(unmet, set())
 
 
-def test_a_revision_may_end_a_paragraph_or_leave_a_style_without_words(policy):
+def test_a_revision_may_end_a_paragraph_or_leave_a_style_without_words(
+    policy: bible.policy.Policy,
+) -> None:
     doc = usj.parse(
         "\\id GEN\n\\c 1\n\\p\n\\v 1 In \\add the\\add* beginning\n"
         "\\v 2 God made\n\\p\n\\v 3 the earth\n"
@@ -347,17 +386,17 @@ def test_a_revision_may_end_a_paragraph_or_leave_a_style_without_words(policy):
 
 
 def test_the_sample_prints_selected_chapters_as_the_full_edition_has_them(
-    edition, policy
-):
+    edition: bible.pipeline.Edition, policy: bible.policy.Policy
+) -> None:
     full = dict(pipeline.view(edition, "pdf"))
     sample = dict(pipeline.view(edition, "sample"))
     assert set(sample) == set(full) - (edition.scripture - set(policy.sample))
     for code, chapters in policy.sample.items():
-        _, wanted = pipeline.assembly.chapters_of(sample[code])
+        _, wanted = assembly.chapters_of(sample[code])
         assert [int(blocks[0]["number"]) for blocks in wanted] == sorted(chapters)
         whole = {
             blocks[0]["number"]: blocks
-            for blocks in pipeline.assembly.chapters_of(full[code])[1]
+            for blocks in assembly.chapters_of(full[code])[1]
         }
         for blocks in wanted:
             # A chapter that followed an omitted one may open a paragraph of its own.
@@ -382,8 +421,8 @@ def test_the_sample_prints_selected_chapters_as_the_full_edition_has_them(
 
 
 def test_what_is_typeset_carries_no_callers_and_prints_notes_by_their_verses(
-    exported, edition
-):
+    exported: dict[str, str], edition: bible.pipeline.Edition
+) -> None:
     for code in edition.scripture:
         text = exported[code]
         # Any caller, "*" as well as "+"; only "-" sets none.
@@ -400,7 +439,7 @@ def test_what_is_typeset_carries_no_callers_and_prints_notes_by_their_verses(
     assert not re.search(r"\\\+?w[gh] ", exported["CNC"])
 
 
-def test_greek_and_hebrew_are_set_in_the_styles_of_their_fonts():
+def test_greek_and_hebrew_are_set_in_the_styles_of_their_fonts() -> None:
     content = usj.parse("Gr. ἀλλʼ ἐγώ, \\it Heb.\\it* א, \\it or β\\it*", fragment=True)
     assert usj.serialize(pipeline.font_runs(content)) == (
         "Gr. \\wg ἀλλ’ ἐγώ\\wg*, \\it Heb.\\it* \\wh א\\wh*, "
@@ -411,8 +450,13 @@ def test_greek_and_hebrew_are_set_in_the_styles_of_their_fonts():
 
 
 def test_the_review_is_written_once_and_shows_what_changed(
-    edition, policy, sources, tmp_path, monkeypatch, capsys
-):
+    edition: bible.pipeline.Edition,
+    policy: bible.policy.Policy,
+    sources: bible.sources.Sources,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
     monkeypatch.setattr(paths, "BUILD_DIR", tmp_path)
     review.review(sources, policy, edition)
     base = tmp_path / "review"

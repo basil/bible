@@ -6,14 +6,18 @@ before scaling coordinates, width operands and hint dictionaries by 100/94.
 Separate CID font dictionaries retain each source's hint environment.
 """
 
+from __future__ import annotations
+
 import csv
 import math
 import shutil
 import unicodedata
 import zipfile
 from argparse import ArgumentParser
+from collections.abc import Iterator, Mapping, Sequence
 from copy import deepcopy
 from pathlib import Path
+from typing import IO, Any
 
 from font_sources import math_donors, normalized_donor
 from fontTools.cffLib import CharStrings, FDArrayIndex, FDSelect, FontDict
@@ -44,7 +48,7 @@ FEATURES = ("onum", "lnum", "pnum", "tnum", "sups", "smcp", "c2sc")
 EREWHON_MEMBER = "erewhon/opentype/Erewhon-{}.otf"
 
 
-def rename(value, names):
+def rename(value: Any, names: Mapping[str, str]) -> Any:
     """Remap glyph references throughout decoded OpenType structures."""
     if isinstance(value, str):
         return names.get(value, value)
@@ -61,7 +65,7 @@ def rename(value, names):
     return value
 
 
-def languages(script):
+def languages(script: Any) -> Iterator[tuple[str | None, Any]]:
     """Each language system present, by tag; the default's tag is None."""
     if script.DefaultLangSys is not None:
         yield None, script.DefaultLangSys
@@ -69,11 +73,11 @@ def languages(script):
         yield r.LangSysTag, r.LangSys
 
 
-def union(a, b):
+def union(a: list[int], b: list[int]) -> list[int]:
     return sorted(set(a + b))
 
 
-def append_layout(base, extra):
+def append_layout(base: Any, extra: Any) -> None:
     """Extend each language's features while retaining its original lookups.
 
     A feature tag can have several records for different language systems.
@@ -121,12 +125,12 @@ def append_layout(base, extra):
         existing.Script.LangSysCount = len(existing.Script.LangSysRecord)
     # Canonicalize one feature record per active tag per language. Sharing
     # identical variants keeps tables compact without losing language choices.
-    variants = {}
+    variants: dict[tuple[str, tuple[int, ...]], Any] = {}
     assignments = []
     for rec in base.ScriptList.ScriptRecord:
         for _, lang in languages(rec.Script):
             assert lang.ReqFeatureIndex == 65535
-            by_tag = {}
+            by_tag: dict[str, list[Any]] = {}
             for i in lang.FeatureIndex:
                 feature = records[i]
                 by_tag.setdefault(feature.FeatureTag, []).append(feature)
@@ -143,10 +147,10 @@ def append_layout(base, extra):
                     variants[key] = feature
                 keys.append(key)
             assignments.append((lang, keys))
-    keys = sorted(variants)
-    indices = {key: i for i, key in enumerate(keys)}
-    base.FeatureList.FeatureRecord = [variants[key] for key in keys]
-    base.FeatureList.FeatureCount = len(keys)
+    all_keys = sorted(variants)
+    indices = {key: i for i, key in enumerate(all_keys)}
+    base.FeatureList.FeatureRecord = [variants[key] for key in all_keys]
+    base.FeatureList.FeatureCount = len(all_keys)
     for lang, lang_keys in assignments:
         lang.FeatureIndex = [indices[key] for key in lang_keys]
         lang.FeatureCount = len(lang.FeatureIndex)
@@ -154,7 +158,12 @@ def append_layout(base, extra):
     base.ScriptList.ScriptCount = len(base.ScriptList.ScriptRecord)
 
 
-def donor_positioning(donor, names, original, inventory):
+def donor_positioning(
+    donor: TTFont,
+    names: Mapping[str, str],
+    original: set[str],
+    inventory: Sequence[str],
+) -> Any:
     """Keep donor pair adjustments only where at least one glyph was added."""
     table = rename(deepcopy(donor["GPOS"].table), names)
     glyph_ids = {g: i for i, g in enumerate(inventory)}
@@ -173,7 +182,8 @@ def donor_positioning(donor, names, original, inventory):
         # for that glyph. Flattened pairs have no such order: keep each pair's
         # deciding value only.
         subtables = []
-        decided, closed = set(), set()
+        decided: set[tuple[str, str]] = set()
+        closed: set[str] = set()
         for st in lookup.SubTable:
             pairs = {}
             if st.Format == 1:
@@ -225,14 +235,14 @@ def donor_positioning(donor, names, original, inventory):
     return table
 
 
-def substitutions(base, donor, names):
+def substitutions(base: TTFont, donor: TTFont, names: Mapping[str, str]) -> None:
     """Rebuild numeral transitions and retain the donor's small-cap mappings.
 
     Explicit four-way transitions fix donor omissions (notably oldstyle one
     and regular-face lining six). Superscripts accept every numeral form, so
     inherited onum/pnum cannot break verse or note-origin figures.
     """
-    mappings = {tag: {} for tag in FEATURES}
+    mappings: dict[str, dict[str, str]] = {tag: {} for tag in FEATURES}
     for rec in donor["GSUB"].table.FeatureList.FeatureRecord:
         if rec.FeatureTag not in ("smcp", "c2sc", "sups"):
             continue
@@ -283,7 +293,7 @@ def substitutions(base, donor, names):
         ]
 
 
-def donor_names(base, donor):
+def donor_names(base: TTFont, donor: TTFont) -> tuple[dict[str, str], list[str]]:
     """Map donor glyphs onto the base's names; list those the base lacks."""
     cmap = base.getBestCmap()
     names = {g: g for g in donor.getGlyphOrder()}
@@ -294,12 +304,18 @@ def donor_names(base, donor):
     return names, [g for g in donor.getGlyphOrder() if names[g] not in original]
 
 
-def font_file(style):
+def font_file(style: str) -> str:
     """A face's file, named as its PostScript name."""
     return f"{FAMILY}-{style}.otf"
 
 
-def assemble(utopia_path, donor_path, output, style, math_archive):
+def assemble(
+    utopia_path: str | Path,
+    donor_path: str | Path | IO[bytes],
+    output: Path,
+    style: str,
+    math_archive: str | Path,
+) -> tuple[int, int]:
     base = TTFont(utopia_path, recalcTimestamp=False)
     donor = normalized_donor(TTFont(donor_path, recalcTimestamp=False), style)
     assert base["head"].unitsPerEm == donor["head"].unitsPerEm == 1000
@@ -351,7 +367,7 @@ def assemble(utopia_path, donor_path, output, style, math_archive):
     donor_source = {names[g]: (1, g) for g in added}
     donor_source.update({g: (1, d) for g, d in replacements.items()})
     math_added = 0
-    math_names = {}
+    math_names: dict[str, str] = {}
     # Normalization copies each face; the originals keep their names and notices.
     raw_maths = math_donors(math_archive, style)
     for index, raw_math in enumerate(raw_maths, 2):
@@ -506,8 +522,8 @@ def assemble(utopia_path, donor_path, output, style, math_archive):
         17: style_name,
     }
     base["name"].names = []
-    for key, value in values.items():
-        base["name"].setName(value, key, 3, 1, 0x409)
+    for name_id, value in values.items():
+        base["name"].setName(value, name_id, 3, 1, 0x409)
     cff.fontNames = [f"{FAMILY}-{style}"]
     top.FamilyName, top.FullName = FAMILY, f"{FAMILY} {style_name}"
     top.Notice = legal
@@ -518,7 +534,7 @@ def assemble(utopia_path, donor_path, output, style, math_archive):
     reorderGlyphs(base, base.getGlyphOrder())
     base.save(output)
     # Preserve readable names and provenance beside the CID font.
-    codes = {}
+    codes: dict[str, list[str]] = {}
     for code, name in cmap.items():
         codes.setdefault(name, []).append(f"U+{code:04X}")
     labels = [f"Utopia-{style}", f"Erewhon-{style}"]
@@ -561,7 +577,7 @@ def assemble(utopia_path, donor_path, output, style, math_archive):
     return len(original), len(added) + math_added
 
 
-def main():
+def main() -> None:
     parser = ArgumentParser(description=__doc__)
     parser.add_argument("--utopia", type=Path, required=True)
     parser.add_argument("--erewhon", type=Path, required=True)

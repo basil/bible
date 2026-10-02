@@ -6,11 +6,15 @@ letters. Words can: a verse shares more of its rarer words with its
 counterpart in another translation than with the verses around it.
 """
 
+from __future__ import annotations
+
 import collections
 import math
+from collections.abc import Iterable, Mapping
 
 from bible import scripture, usj
 from bible.references import Verse, verse_at
+from bible.usj import Document
 
 # Words so common, or so much the quoting formula's, that sharing them shows nothing.
 STOP_WORDS = set(
@@ -23,7 +27,7 @@ STOP_WORDS = set(
 )
 
 
-def stem(word):
+def stem(word: str) -> str:
     """A word without the commonest inflexions, so that sows meets sow."""
     for suffix in ("eth", "est", "ing", "ed", "es", "s"):
         if word.endswith(suffix) and len(word) - len(suffix) >= 3:
@@ -31,11 +35,11 @@ def stem(word):
     return word
 
 
-def content_words(text):
+def content_words(text: str) -> set[str]:
     return {stem(w) for w in scripture.words_of(text) if w not in STOP_WORDS}
 
 
-def titles(doc):
+def titles(doc: Document) -> dict[int, str]:
     """Each chapter's title, by chapter: the words set before its first verse.
 
     The King James Bible sets a psalm's title so; Brenton numbers it as the
@@ -57,9 +61,16 @@ class Verses:
     With titles, a chapter's title is its verse 0. Verses may be left out.
     """
 
-    def __init__(self, books, titled=False, without=()):
-        self.words = {}
-        self.order = collections.defaultdict(list)
+    def __init__(
+        self,
+        books: Mapping[str, Document],
+        titled: bool = False,
+        without: Iterable[Verse] = (),
+    ) -> None:
+        self.words: dict[Verse, set[str]] = {}
+        self.order: collections.defaultdict[str, list[Verse]] = collections.defaultdict(
+            list
+        )
         for code, doc in books.items():
             heads = titles(doc) if titled else {}
             # A verse's words are read without its notes.
@@ -81,10 +92,10 @@ class Verses:
             w: math.log(len(self.words) / (1 + n)) for w, n in frequency.items()
         }
 
-    def bag(self, verses):
-        return set().union(*(self.words[v] for v in verses))
+    def bag(self, verses: Iterable[Verse]) -> set[str]:
+        return set[str]().union(*(self.words[v] for v in verses))
 
-    def score(self, quotation, source):
+    def score(self, quotation: set[str], source: set[str]) -> float:
         """The share of the quotation's weighted words the source also has.
 
         A quotation is usually part of its source verse, so only the
@@ -93,7 +104,7 @@ class Verses:
         total = sum(self.weight[w] for w in quotation)
         return sum(self.weight[w] for w in quotation & source) / total if total else 0
 
-    def shifted(self, verses, k):
+    def shifted(self, verses: Iterable[Verse], k: int) -> list[Verse] | None:
         """The verses k places on in their book's printed order, lettered verses included."""
         result = []
         for verse in verses:
@@ -105,14 +116,14 @@ class Verses:
         return result
 
 
-def weights(*sides):
+def weights[K](*sides: Mapping[K, set[str]]) -> dict[str, float]:
     """Each word's weight across translations: the rarer, the heavier."""
     bags = [bag for side in sides for bag in side.values()]
     frequency = collections.Counter(w for ws in bags for w in ws)
     return {w: math.log(len(bags) / (1 + n)) for w, n in frequency.items()}
 
 
-def similarity(weight, a, b):
+def similarity(weight: Mapping[str, float], a: set[str], b: set[str]) -> float:
     """The weight of the words two bags share, as a share of both bags'."""
     total = sum(weight[w] for w in a) * sum(weight[w] for w in b)
     return sum(weight[w] for w in a & b) / math.sqrt(total) if total else 0

@@ -1,13 +1,23 @@
 """The Alexandrine readings: declared, derived from Brenton's words, and
 carried out on his books before anything else reads them."""
 
+from __future__ import annotations
+
+from collections.abc import Mapping
+from typing import Any
+
 import pytest
 from conftest import book, changed, verse_lines
 
+import bible.annotate
+import bible.pipeline
+import bible.policy
 from bible import alexandrinus, annotate, scripture, usj
 from bible.checks import CheckFailed
+from bible.policy_schema import Decision, Swete
+from bible.usj import Document
 
-SWETE = {
+SWETE: Swete = {
     "volume": 1,
     "page": 5,
     "evidence": "text",
@@ -15,15 +25,15 @@ SWETE = {
     "agrees": True,
 }
 NOTE = r"\fqa Alex. \ft + the Lord."
-READING = {
+READING: Decision = {
     "why": "Print Brenton's Alexandrine reading.",
     "swete": SWETE,
     "from": "God said",
     "note": r"\fl Vat. \ft omits “the Lord”.",
     "english": {
         "source": "brenton",
-        "span": [17, 25],
-        "edits": [{"span": [8, 8], "to": " God said"}],
+        "span": (17, 25),
+        "edits": ({"span": (8, 8), "to": " God said"},),
     },
     "source_note": NOTE,
 }
@@ -36,18 +46,29 @@ VERSES = (
 )
 
 
-def decided(policy, readings=None, passages=None, kept=None):
-    def change(data):
+def decided(
+    policy: bible.policy.Policy,
+    readings: dict[str, Any] | None = None,
+    passages: object = None,
+    kept: object = None,
+) -> bible.policy.Policy:
+    def change(data: dict[str, Any]) -> None:
         data.update(readings=readings or {}, passages=passages or {}, kept=kept or {})
 
     return changed(policy, "alexandrinus", change)
 
 
-def promoted(policy, body=VERSES, kjv=None):
+def promoted(
+    policy: bible.policy.Policy,
+    body: str = VERSES,
+    kjv: Mapping[str, Document] | None = None,
+) -> Document:
     return alexandrinus.promoted("GEN", book("GEN", body), policy, kjv or {})
 
 
-def test_a_reading_replaces_the_vatican_words_and_notes_them(policy, ctx):
+def test_a_reading_replaces_the_vatican_words_and_notes_them(
+    policy: bible.policy.Policy, ctx: bible.annotate.Context
+) -> None:
     doc = promoted(decided(policy, {"GEN 99:22": READING}))
     assert verse_lines(doc)["22"] == (
         r"And \f + \fr 99:22 \fl Vat. \ft omits “the Lord”.\f*the Lord God said, Behold, "
@@ -66,21 +87,23 @@ def test_a_reading_replaces_the_vatican_words_and_notes_them(policy, ctx):
     )
 
 
-def test_a_reading_without_a_note_of_its_own_quotes_the_vatican_words(policy):
+def test_a_reading_without_a_note_of_its_own_quotes_the_vatican_words(
+    policy: bible.policy.Policy,
+) -> None:
     reading = {k: v for k, v in READING.items() if k != "note"}
     doc = promoted(decided(policy, {"GEN 99:22": reading}))
     assert r"\fl Vat. \fq God said\ft ." in verse_lines(doc)["22"]
 
 
-def test_english_is_derived_exactly_and_only_from_brentons_words():
+def test_english_is_derived_exactly_and_only_from_brentons_words() -> None:
     assert alexandrinus.derived("key", READING, NOTE) == "the Lord God said"
     # A span's edit may write supplied words; its vocabulary must be Brenton's,
     # or declared as the editor's.
-    supplied = {
+    supplied: Decision = {
         **READING,
         "english": {
             "source": "from",
-            "edits": [{"span": [0, 0], "to": r"\add Almighty\add* "}],
+            "edits": ({"span": (0, 0), "to": r"\add Almighty\add* "},),
         },
     }
     with pytest.raises(CheckFailed, match="English not supplied by Brenton"):
@@ -90,12 +113,12 @@ def test_english_is_derived_exactly_and_only_from_brentons_words():
         == r"\add Almighty\add* God said"
     )
     # Brenton's numbers may be spelt out, whichever way he wrote them.
-    aged = {
+    aged: Decision = {
         "from": "an hundred and sixty and seven years",
         "english": {
             "source": "brenton",
-            "span": [15, 24],
-            "edits": [{"span": [0, 3], "to": "an hundred and eighty and seven"}],
+            "span": (15, 24),
+            "edits": ({"span": (0, 3), "to": "an hundred and eighty and seven"},),
         },
     }
     assert (
@@ -109,7 +132,7 @@ def test_english_is_derived_exactly_and_only_from_brentons_words():
                 **READING,
                 "english": {
                     "source": "brenton",
-                    "edits": [{"span": [0, 3], "to": NOTE[:3]}],
+                    "edits": ({"span": (0, 3), "to": NOTE[:3]},),
                 },
             },
             NOTE,
@@ -126,7 +149,9 @@ def test_english_is_derived_exactly_and_only_from_brentons_words():
         ("21st 22nd 23rd 24th", ["21th", "22th", "23th", "24th"]),
     ],
 )
-def test_numbers_are_brentons_by_their_value_however_written(words, expected):
+def test_numbers_are_brentons_by_their_value_however_written(
+    words: str, expected: list[str]
+) -> None:
     assert alexandrinus.tokens(words) == expected
 
 
@@ -137,12 +162,26 @@ def test_numbers_are_brentons_by_their_value_however_written(words, expected):
         ({"source_note": r"\fqa Alex. \ft + the Lord God."}, "source note changed"),
     ],
 )
-def test_a_decision_that_no_longer_fits_its_source_is_refused(change, refusal, policy):
+def test_a_decision_that_no_longer_fits_its_source_is_refused(
+    change: Decision,
+    refusal: str,
+    policy: bible.policy.Policy,
+) -> None:
     with pytest.raises(CheckFailed, match=refusal):
         promoted(decided(policy, {"GEN 99:22": {**READING, **change}}))
 
 
-def test_a_note_within_replaced_words_keeps_the_words_it_was_about(policy):
+def test_a_kept_note_declared_without_its_words_is_refused(
+    policy: bible.policy.Policy,
+) -> None:
+    kept = {"GEN 99:22#1": {"source_note": NOTE, "note": None, "why": "Keep it."}}
+    with pytest.raises(CheckFailed, match="without its words: GEN 99:22#1"):
+        alexandrinus.companions(decided(policy, kept=kept), "GEN")
+
+
+def test_a_note_within_replaced_words_keeps_the_words_it_was_about(
+    policy: bible.policy.Policy,
+) -> None:
     reading = {
         **READING,
         "from": "God said, Behold, Adam",
@@ -161,7 +200,9 @@ def test_a_note_within_replaced_words_keeps_the_words_it_was_about(policy):
     )
 
 
-def test_a_verse_omitted_whole_leaves_its_note_on_the_verse_before(policy):
+def test_a_verse_omitted_whole_leaves_its_note_on_the_verse_before(
+    policy: bible.policy.Policy,
+) -> None:
     body = (
         r"\v 16 And Elisama, and Eliphalath,"
         "\n"
@@ -196,7 +237,9 @@ def test_a_verse_omitted_whole_leaves_its_note_on_the_verse_before(policy):
     )
 
 
-def test_a_passage_supplies_verses_from_the_appendix_or_the_king_james_bible(policy):
+def test_a_passage_supplies_verses_from_the_appendix_or_the_king_james_bible(
+    policy: bible.policy.Policy,
+) -> None:
     appendix = r"\ip \it Verse\it* 22. And the Philistine \add drew\add* nigh."
     passage = {
         "appendix": appendix,
@@ -232,9 +275,17 @@ def test_a_passage_supplies_verses_from_the_appendix_or_the_king_james_bible(pol
     )
     assert list(lines) == ["21", "22", "22b", "23"]
     assert lines["22b"] == r"Then said \sc David\sc*, Will they?"
+    # A note declared without its words is refused by name.
+    english = {"source": "brenton", "span": [22, 61]}
+    verse = {"reference": "99:22a", "note": None, "english": english}
+    unnoted = {**passage, "insertions": [{"after": "99:21", "verses": [verse]}]}
+    with pytest.raises(CheckFailed, match="without its note: GEN 99:22a: 99:22a"):
+        promoted(decided(policy, passages={"GEN 99:22a": unnoted}))
 
 
-def test_every_alexandrine_note_and_supplied_passage_has_its_decision(policy, read):
+def test_every_alexandrine_note_and_supplied_passage_has_its_decision(
+    policy: bible.policy.Policy, read: bible.pipeline.Read
+) -> None:
     assert alexandrinus.check(policy, read.brenton) == (198, 26)
     # A note left without a decision, or a decision without its note, is refused.
     undecided = decided(
@@ -247,7 +298,9 @@ def test_every_alexandrine_note_and_supplied_passage_has_its_decision(policy, re
         alexandrinus.check(undecided, read.brenton)
 
 
-def test_the_edition_prints_its_readings_and_supplied_passages(edition):
+def test_the_edition_prints_its_readings_and_supplied_passages(
+    edition: bible.pipeline.Edition,
+) -> None:
     assert (
         r"\v 22 And \f - \fr 3:22 \fq the Lord God said: \ft Vat. omits"
         in usj.serialize(edition.documents["GEN"])

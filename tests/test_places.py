@@ -3,11 +3,17 @@
 On verses made for the purpose; test_versification.py checks the places of
 the edition's own."""
 
+from __future__ import annotations
+
+from typing import Any, Unpack
+
 import pytest
 from conftest import changed
 
+import bible.policy
 from bible import alignment, places, usj
 from bible.checks import CheckFailed
+from bible.policy_schema import Run
 from bible.references import Verse, parse_verse
 
 OURS = (
@@ -33,14 +39,14 @@ THEIRS = (
 
 
 class Texts(places.Texts):
-    def __init__(self, ours, theirs):
+    def __init__(self, ours: str, theirs: str) -> None:
         self.books = {"GEN": "GEN"}
         self.edition = alignment.Verses({"GEN": usj.parse(ours)})
         self.kjv = alignment.Verses({"GEN": usj.parse(theirs)}, titled=True)
         self.weight = alignment.weights(self.edition.words, self.kjv.words)
 
 
-def same(texts):
+def same(texts: places.Texts) -> dict[Verse, tuple[Verse, ...] | None]:
     """The table's account of a Bible it says nothing of."""
     return {
         verse: () if verse.letter else (Verse("GEN", verse.chapter, verse.number),)
@@ -48,14 +54,14 @@ def same(texts):
     }
 
 
-def blocks(texts, table):
+def blocks(texts: places.Texts, table: places.Table) -> list[tuple[str, str, str]]:
     return [
         (" ".join(map(str, ours)), " ".join(map(str, theirs)), by)
         for ours, theirs, by in places.aligned(texts, "GEN", table)
     ]
 
 
-def test_the_words_move_a_verse_and_its_place_keeps_one():
+def test_the_words_move_a_verse_and_its_place_keeps_one() -> None:
     texts = Texts(OURS, THEIRS)
     table = same(texts)
     # Where the table's rows disagree, it says nothing.
@@ -73,7 +79,7 @@ def test_the_words_move_a_verse_and_its_place_keeps_one():
     ]
 
 
-def test_a_verse_left_over_joins_the_pair_that_has_its_words():
+def test_a_verse_left_over_joins_the_pair_that_has_its_words() -> None:
     ours = OURS.replace(
         "\\v 4 Noe builded an altar of clean beasts.\n",
         "\\v 4 Noe builded an altar\n\\v 4a of clean beasts.\n",
@@ -83,7 +89,7 @@ def test_a_verse_left_over_joins_the_pair_that_has_its_words():
     assert ("GEN 1:4 GEN 1:4a", "GEN 1:4", "words") in blocks(texts, table)
 
 
-def test_the_words_must_outvote_the_table():
+def test_the_words_must_outvote_the_table() -> None:
     texts = Texts(OURS, THEIRS)
     raven, dove = parse_verse("GEN 1:2"), parse_verse("GEN 1:3")
     table = same(texts)
@@ -93,10 +99,10 @@ def test_the_words_must_outvote_the_table():
     assert not places.outvotes(texts, table, parse_verse("GEN 1:1"), dove)
 
 
-def test_the_words_may_not_leave_a_verse_without_a_place():
+def test_the_words_may_not_leave_a_verse_without_a_place() -> None:
     texts = Texts(OURS, THEIRS)
     one, two, three = (parse_verse(f"GEN 1:{n}") for n in (1, 2, 3))
-    taken = [
+    taken: list[places.WitnessBlock] = [
         {"edition": [one], "words": [two], "table": [one], "by": "words"},
         {"edition": [two], "words": [], "table": [two], "by": "words"},
     ]
@@ -106,7 +112,7 @@ def test_the_words_may_not_leave_a_verse_without_a_place():
         ([two], "table"),
     ]
     # Unless a verse that stands in the way has no other place to go.
-    held = [
+    held: list[places.WitnessBlock] = [
         {"edition": [one], "words": [two], "table": None, "by": "words"},
         {"edition": [two], "words": [], "table": [two], "by": "words"},
         {"edition": [three], "words": [three], "table": [three], "by": "words"},
@@ -114,7 +120,7 @@ def test_the_words_may_not_leave_a_verse_without_a_place():
     assert [b["words"] for b in places.settle(texts, held)] == [[two], [], [three]]
 
 
-def test_runs_are_written_verse_for_verse_or_whole():
+def test_runs_are_written_verse_for_verse_or_whole() -> None:
     verses = [parse_verse(f"GEN 1:{n}") for n in range(1, 8)]
     lettered = parse_verse("GEN 1:6a")
     entries = [
@@ -134,17 +140,19 @@ def test_runs_are_written_verse_for_verse_or_whole():
     ]
 
 
-def reading_of(policy, **reading):
+def reading_of(
+    policy: bible.policy.Policy, **reading: Unpack[Run]
+) -> bible.policy.Policy:
     """The policy with one reading, of Genesis."""
     return changed(
         policy, "versification", lambda data: data["readings"].update(GEN=[reading])
     )
 
 
-def test_what_has_been_read_stands(policy):
+def test_what_has_been_read_stands(policy: bible.policy.Policy) -> None:
     # Whatever the witnesses give for its verses, and with the overlaps it
     # declares; what is left of the King James Bible's verses is wanting.
-    reading = {
+    reading: Run = {
         "edition": "GEN 1:2-3",
         "kjv": "GEN 1:2-3",
         "why": "x",
@@ -169,14 +177,18 @@ def test_what_has_been_read_stands(policy):
         ({"edition": "GEN 1:2", "kjv": "GEN 1:9", "why": "x"}, "its Bible lacks"),
     ],
 )
-def test_a_reading_must_fit_both_bibles(policy, reading, refusal):
+def test_a_reading_must_fit_both_bibles(
+    policy: bible.policy.Policy, reading: dict[str, Any], refusal: str
+) -> None:
     with pytest.raises(CheckFailed, match=refusal):
         places.written(
             Texts(OURS, THEIRS), "GEN", [], policy=reading_of(policy, **reading)
         )
 
 
-def test_a_reading_is_of_a_book_of_the_old_testament(policy):
+def test_a_reading_is_of_a_book_of_the_old_testament(
+    policy: bible.policy.Policy,
+) -> None:
     stray = changed(
         policy,
         "versification",

@@ -12,15 +12,25 @@ Recognizing a term decides nothing about the manuscripts: a run of "Heb.",
 "Alex." and "Vat." stays a run of labels.
 """
 
+from __future__ import annotations
+
 import functools
 import re
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass, replace
-from types import MappingProxyType
+from typing import Literal
 
+import bible.policy
 from bible import usj
 from bible.checks import require, require_fields
+from bible.policy_schema import Terminology
+from bible.usj import Content, Document, Node
 
-ALIASES = ("period_forms", "note_forms", "source_forms")
+ALIASES: tuple[Literal["period_forms", "note_forms", "source_forms"], ...] = (
+    "period_forms",
+    "note_forms",
+    "source_forms",
+)
 # The end of a sentence, where an abbreviation's own period also closes it.
 SENTENCE_END = re.compile(r"['’”)]*(?:\s+[A-Z]|[ \t]*(?:\n|$))")
 ERA = re.compile(r"\b(?P<era>a\.d|b\.c)\.(?: (?P<year>\d+(?:[–-]\d+)?)\b)?")
@@ -45,20 +55,22 @@ class Term:
 
 @dataclass(frozen=True, eq=False)
 class Registry:
-    terms: MappingProxyType
+    terms: Mapping[str, Terminology]
 
-    def display(self, identity):
+    def display(self, identity: str) -> str:
         require(identity in self.terms, f"Unknown term: {identity}")
         return self.terms[identity]["display"]
 
-    def aliases(self, field):
+    def aliases(
+        self, field: Literal["period_forms", "note_forms", "source_forms"]
+    ) -> dict[str, str]:
         return {
             alias: identity
             for identity, term in self.terms.items()
             for alias in term[field]
         }
 
-    def row(self, identities):
+    def row(self, identities: Iterable[str]) -> tuple[str, str]:
         """A row of the list of abbreviations: the terms' forms and meanings."""
         return (
             ", ".join(self.display(i) for i in identities),
@@ -67,10 +79,10 @@ class Registry:
 
 
 @functools.cache
-def registry(policy):
+def registry(policy: bible.policy.Policy) -> Registry:
     data = policy.terminology
     require(bool(data), "Invalid terminology registry")
-    used = {field: set() for field in ALIASES}
+    used: dict[str, set[str]] = {field: set() for field in ALIASES}
     for identity, entry in data.items():
         require_fields(entry, {"display", "meaning", *ALIASES}, (), f"Term {identity}")
         require(
@@ -86,16 +98,18 @@ def registry(policy):
     return Registry(data)
 
 
-def recognize(text, terms, *, note=True):
+def recognize(text: str, terms: Registry, *, note: bool = True) -> tuple[Term, ...]:
     return _recognized(text, terms, note)
 
 
 @functools.lru_cache(maxsize=8192)
-def _recognized(text, terms, note):
+def _recognized(text: str, terms: Registry, note: bool) -> tuple[Term, ...]:
     """The terms a source's words name, each where it stands, longest first."""
     candidates = []
 
-    def add(pattern, identity, form="display", *, period=False):
+    def add(
+        pattern: str, identity: str, form: str = "display", *, period: bool = False
+    ) -> None:
         for m in re.finditer(pattern, text, re.M):
             closure = bool(
                 period and m[0].endswith(".") and SENTENCE_END.match(text, m.end())
@@ -143,14 +157,14 @@ def _recognized(text, terms, note):
             identity,
             "display" if n == 0 else "literal",
         )
-    result = []
+    result: list[Term] = []
     for term in candidates:
         if not any(term.start < t.end and t.start < term.end for t in result):
             result.append(term)
     return tuple(sorted(result, key=lambda t: t.start))
 
 
-def render(term, terms, text):
+def render(term: Term, terms: Registry, text: str) -> str:
     """A term as the edition prints it where it stands."""
     display = terms.display(term.identity)
     if term.form == "literal":
@@ -180,14 +194,18 @@ def render(term, terms, text):
     return display
 
 
-def _outline(content):
+def _outline(
+    content: Content,
+) -> tuple[list[tuple[int, str, bool]], list[int], list[tuple[int, int]]]:
     """A paragraph's prose with what bounds its words: where each character
     style opens and closes, where a part of a note begins, and where the
     words of its notes lie."""
-    styles, fields, noted = [], [], []
+    styles: list[tuple[int, str, bool]] = []
+    fields: list[int] = []
+    noted: list[tuple[int, int]] = []
     at = 0
 
-    def visit(items, in_note):
+    def visit(items: Content, in_note: bool) -> None:
         nonlocal at
         for item in items:
             if isinstance(item, str):
@@ -210,7 +228,7 @@ def _outline(content):
     return styles, fields, noted
 
 
-def found(content, terms, *, note):
+def found(content: Content, terms: Registry, *, note: bool) -> tuple[Term, ...]:
     """The terms in a paragraph of prose, or in an introduction set as a
     note, each where it stands in the paragraph's words. The words of a
     footnote within prose are read as a note's."""
@@ -250,7 +268,7 @@ def found(content, terms, *, note):
     )
 
 
-def printed(content, found_terms, terms):
+def printed(content: Content, found_terms: Iterable[Term], terms: Registry) -> Content:
     """A paragraph with the terms found in it as the edition prints them."""
     text = usj.text_of(content, skip=usj.is_label)
     styles, fields, _ = _outline(content)
@@ -318,13 +336,13 @@ def printed(content, found_terms, terms):
     return content
 
 
-def glossary_rows(policy):
+def glossary_rows(policy: bible.policy.Policy) -> list[tuple[str, str]]:
     """The rows the edition adds to Brenton's list, as (abbreviation, meaning)."""
     terms = registry(policy)
     return [terms.row(identities) for identities in policy.abbreviations["added"]]
 
 
-def check_abbreviations(policy):
+def check_abbreviations(policy: bible.policy.Policy) -> None:
     data, terms = policy.abbreviations, registry(policy)
     require_fields(
         data,
@@ -353,7 +371,7 @@ def check_abbreviations(policy):
     )
 
 
-def glossary_table(doc):
+def glossary_table(doc: Document) -> Node:
     tables = [b for b in doc["content"] if b["type"] == "table"]
     require(
         len(tables) == 1 and doc["content"][-1] is tables[0],
@@ -362,14 +380,16 @@ def glossary_table(doc):
     return tables[0]
 
 
-def dropped_rows(doc, policy):
+def dropped_rows(doc: Document, policy: bible.policy.Policy) -> set[int]:
     """The rows of Brenton's list for what the edition prints in full, by
     their place in his table as its source has it."""
     data = policy.abbreviations
     labels = []
-    for row in glossary_table(doc)["content"]:
+    for row in usj.objects(glossary_table(doc)["content"]):
         require(len(row["content"]) == 2, "Source glossary row has no pair of cells")
-        labels.append(usj.text_of(row["content"][0]["content"]).strip())
+        labels.append(
+            usj.text_of(list(usj.objects(row["content"]))[0]["content"]).strip()
+        )
     require(
         sorted(labels) == sorted(data["source_rows"]),
         "Source glossary disagrees with bound rows",
@@ -377,14 +397,18 @@ def dropped_rows(doc, policy):
     return {n for n, label in enumerate(labels) if label in data["expanded"]["removed"]}
 
 
-def completed_glossary(doc, dropped, policy):
+def completed_glossary(
+    doc: Document, dropped: set[int], policy: bible.policy.Policy
+) -> Document:
     """Brenton's list of abbreviations without the rows dropped, and with the
     edition's rows after his, set as his are: the abbreviation in italic, and
     "for" its meaning."""
     table = glossary_table(doc)
-    rows = [row for n, row in enumerate(table["content"]) if n not in dropped]
+    rows: Content = [
+        row for n, row in enumerate(usj.objects(table["content"])) if n not in dropped
+    ]
     for abbreviation, meaning in glossary_rows(policy):
-        cells = ["for "]
+        cells: Content = ["for "]
         at = 0
         for match in LATIN.finditer(meaning):
             cells += [meaning[at : match.start()], usj.char("it", match[1])]
@@ -403,7 +427,7 @@ def completed_glossary(doc, dropped, policy):
     return usj.with_blocks(doc, [*doc["content"][:-1], {**table, "content": rows}])
 
 
-def _cell(marker, content):
+def _cell(marker: str, content: Content) -> Node:
     return {
         "type": "table:cell",
         "marker": marker,
@@ -412,19 +436,19 @@ def _cell(marker, content):
     }
 
 
-def check_glossary(doc, policy):
+def check_glossary(doc: Document, policy: bible.policy.Policy) -> None:
     """Every row the list prints must agree with the registry."""
     data, terms = policy.abbreviations, registry(policy)
     table = next(b for b in doc["content"] if b["type"] == "table")
     printed_rows = [
         (
-            usj.text_of(row["content"][0]["content"]).strip(),
-            usj.text_of(row["content"][1]["content"]).strip(),
+            usj.text_of(list(usj.objects(row["content"]))[0]["content"]).strip(),
+            usj.text_of(list(usj.objects(row["content"]))[1]["content"]).strip(),
         )
-        for row in table["content"]
+        for row in usj.objects(table["content"])
     ]
 
-    def expected(rows):
+    def expected(rows: Iterable[tuple[str, str]]) -> list[tuple[str, str]]:
         return [(a, "for " + LATIN.sub(r"\1", m) + ".") for a, m in rows]
 
     kept = [
@@ -454,7 +478,7 @@ UNPRINTED = re.compile(
 NUMBER_STOP = re.compile(r"\d\. +[a-z]")
 
 
-def check_forms(code, text, *, note):
+def check_forms(code: str, text: str, *, note: bool) -> None:
     left = [m[0] for m in UNPRINTED.finditer(text)]
     require(not left, f"Abbreviations not in Chicago's forms: {code}: {left}")
     if note:

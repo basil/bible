@@ -1,19 +1,21 @@
 """Guarded fixes for the pinned PTXprint margin-note convergence checks."""
 
+from __future__ import annotations
+
 import inspect
 import re
 import sys
 from pathlib import Path
 
 
-def replace_once(path, old, new):
+def replace_once(path: Path, old: str, new: str) -> None:
     text = path.read_text(encoding="utf-8")
     if text.count(old) != 1:
         raise RuntimeError(f"PTXprint changed in {path}; review the convergence patch")
     path.write_text(text.replace(old, new), encoding="utf-8")
 
 
-def _bible_same_cache(old, new, extension):
+def _bible_same_cache(old: str, new: str, extension: str) -> bool:
     if old == new:
         return True
     if extension != "parlocs":
@@ -35,7 +37,7 @@ def _bible_same_cache(old, new, extension):
     return True
 
 
-def patch(root):
+def patch(root: Path) -> None:
     replace_once(
         root / "marginnotes.py",
         "                    if s['yshift'] != 0:\n",

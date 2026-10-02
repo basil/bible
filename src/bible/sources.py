@@ -4,10 +4,14 @@ Replacing a source is deliberate: commit the new archive with its new hash
 and retrieval date here.
 """
 
+from __future__ import annotations
+
 import io
 import re
 import zipfile
+from collections.abc import Mapping
 from dataclasses import dataclass
+from io import BytesIO
 from types import MappingProxyType
 
 from bible import paths
@@ -51,36 +55,38 @@ class Sources:
     are by their paths; the marginal notes are Calvin George's listing.
     """
 
-    brenton: MappingProxyType
-    kjv: MappingProxyType
-    authored: MappingProxyType
+    brenton: MappingProxyType[str, str]
+    kjv: MappingProxyType[str, str]
+    authored: MappingProxyType[str, str]
     marginal: str
 
-    def __getitem__(self, family):
+    def __getitem__(self, family: str) -> Mapping[str, str]:
         return {"brenton": self.brenton, "kjv": self.kjv}[family]
 
 
-def read_archive(file):
+def read_archive(file: BytesIO) -> MappingProxyType[str, str]:
     """Each USFM book in a zip archive, by its \\id code."""
     result = {}
     with zipfile.ZipFile(file) as archive:
         for name in archive.namelist():
             if name.lower().endswith(".usfm"):
                 text = archive.read(name).decode("utf-8-sig").replace("\r\n", "\n")
-                code = re.search(r"\\id\s+(\S+)", text)[1]
+                match = re.search(r"\\id\s+(\S+)", text)
+                assert match is not None
+                code = match[1]
                 require(code not in result, f"Duplicate source book: {code}")
                 result[code] = text
     return MappingProxyType(result)
 
 
-def pinned_bytes(path, expected_sha256):
+def pinned_bytes(path: str, expected_sha256: str) -> bytes:
     """A pinned file's contents, refused unless they match the recorded hash."""
     data = (paths.ROOT / path).read_bytes()
     require(sha256(data) == expected_sha256, f"Checksum mismatch: {path}")
     return data
 
 
-def load():
+def load() -> Sources:
     """Read the archives, the edition's pages and the marginal notes."""
     archives = {
         name: read_archive(
