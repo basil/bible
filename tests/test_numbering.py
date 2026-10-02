@@ -365,7 +365,7 @@ def test_the_introduction_names_its_passages(
     assert "\\tr " not in written
     assert "so that Psalm 33:13–17 is the King James Bible’s 34:12–16." in page
     assert "so that Jeremias 38:31–34 is the King James Bible’s 31:31–34." in page
-    assert "and Malachias 3:19–24 is numbered 4:1–6, again" in page
+    assert "and Malachias 3:19–24 is numbered 4:1–6, as in" in page
     # A Septuagint addition that Brenton letters has no King James number,
     # so the introduction names the one that a link stands at.
     linked = {
