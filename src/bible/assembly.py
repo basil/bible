@@ -148,6 +148,11 @@ def heading_lines(entry: Entry, found: Mapping[str, str]) -> list[tuple[str, str
         " ".join(text for _, text in lines) == found["title"],
         f"Heading lines do not spell the contents title: {entry['id']}",
     )
+    # One line can only be the whole title as mt1, which is the default.
+    require(
+        "heading" not in entry or len(lines) > 1,
+        f"Heading that changes nothing: {entry['id']}",
+    )
     return [(marker, text) for marker, text in lines]
 
 

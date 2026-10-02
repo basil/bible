@@ -176,10 +176,19 @@ def test_a_decision_that_nothing_meets_is_refused(
 def test_the_editions_spelling_is_revised_wherever_a_word_is_printed(
     edition: bible.pipeline.Edition, policy: bible.policy.Policy
 ) -> None:
-    assert policy.revisions["words"]["Jezekiel"]["to"] == "Ezekiel"
-    assert edition.met["revisions"] == {"Jezekiel"}
-    whole = "".join(usj.serialize(doc) for doc in edition.documents.values())
-    assert "Jezekiel" not in whole
+    words = policy.revisions["words"]
+    assert words["Jezekiel"]["to"] == "Ezekiel"
+    assert edition.met["revisions"] == set(words)
+    pattern = re.compile(r"(?<!\w)(?:" + "|".join(map(re.escape, words)) + r")(?!\w)")
+    # The editor's own pages name the sources' books, rather than respelling
+    # the translations: the introduction explains Brenton's names, and the
+    # table names the KJV's.
+    source_names = {
+        "CNC": ["Nehemiah", "Osee", "Naum"],
+        "XXA": ["Nehemiah", "Nehemiah"],
+    }
+    for code, doc in edition.documents.items():
+        assert pattern.findall(usj.serialize(doc)) == source_names.get(code, []), code
     ezekiel = usj.serialize(edition.documents["EZK"])
     assert "the word of the Lord came to Ezekiel the priest" in ezekiel
     assert "And Ezekiel shall be for a sign to you" in ezekiel

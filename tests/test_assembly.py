@@ -27,15 +27,14 @@ def test_every_book_prints_under_the_editions_name_and_heading(
         assert headings == [
             tuple(line) for line in entry.get("heading", (("mt1", entry["title"]),))
         ]
-    genesis = usj.serialize(edition.documents["GEN"]).splitlines()[:8]
+    genesis = usj.serialize(edition.documents["GEN"]).splitlines()[:7]
     assert genesis == [
         "\\id GEN - Brenton English Septuagint",
         "\\h Genesis",
         "\\toc1 The First Book of Moses, Called Genesis",
         "\\toc2 Genesis",
         "\\toc3 Gen.",
-        "\\mt2 The First Book of Moses,",
-        "\\mt3 Called",
+        "\\mt2 The First Book of Moses, Called",
         "\\mt1 Genesis",
     ]
 
@@ -50,6 +49,10 @@ def test_heading_lines_must_spell_the_contents_title() -> None:
     ]
     with pytest.raises(CheckFailed, match="do not spell the contents title"):
         assembly.heading_lines({"id": "RUT", "heading": (("mt1", "Ruth"),)}, names)
+    with pytest.raises(CheckFailed, match="Heading that changes nothing"):
+        assembly.heading_lines(
+            {"id": "RUT", "heading": (("mt1", "The Book of Ruth"),)}, names
+        )
     with pytest.raises(CheckFailed, match="Invalid heading"):
         assembly.heading_lines(
             {"id": "RUT", "heading": (("mt2", "The Book of Ruth"),)}, names

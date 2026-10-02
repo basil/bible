@@ -197,7 +197,7 @@ def test_front_and_back_matter_heading_capitalization(
             "\\mt2 Defender of the Faith, etc.",
             "\\mt2 The Translators of the Bible wish Grace, Mercy, and Peace, through Jesus Christ our Lord.",
         ],
-        "NDX": ["\\mt2 The", "\\mt1 Translators to the Reader"],
+        "NDX": ["\\mt1 The Translators to the Reader"],
         "BAK": ["\\mt1 Notes and Supplied Passages"],
         "CNC": ["\\mt1 Editor’s Introduction"],
         "XXF": ["\\mt1 The Old Testament", "\\mt2 Brenton’s Septuagint"],
@@ -214,7 +214,7 @@ def test_front_and_back_matter_heading_capitalization(
         ] == headings
 
 
-@pytest.mark.parametrize("unit", ["XXD", "OTH", "TDX", "NDX", "BAK"])
+@pytest.mark.parametrize("unit", ["XXD", "OTH", "TDX", "BAK"])
 @pytest.mark.parametrize("source", ["missing heading", "changed capitalization"])
 def test_heading_decisions_reject_changed_or_missing_source(
     unit: str,

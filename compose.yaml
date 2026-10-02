@@ -13,14 +13,14 @@ services:
       # The build runs from the checkout: python3 -m bible.
       PYTHONPATH: /work/src
     volumes:
-      - .:/work:Z
+      - .:/work:z
   dockerfmt:
     image: ghcr.io/reteps/dockerfmt:v0.5.4
     pull_policy: always
     network_mode: none
     working_dir: /work
     volumes:
-      - .:/work:Z
+      - .:/work:z
   hadolint:
     image: hadolint/hadolint:v2.14.0
     pull_policy: always

@@ -9,11 +9,7 @@
       "heading": [
         [
           "mt2",
-          "The First Book of Moses,"
-        ],
-        [
-          "mt3",
-          "Called"
+          "The First Book of Moses, Called"
         ],
         [
           "mt1",
@@ -29,11 +25,7 @@
       "heading": [
         [
           "mt2",
-          "The Second Book of Moses,"
-        ],
-        [
-          "mt3",
-          "Called"
+          "The Second Book of Moses, Called"
         ],
         [
           "mt1",
@@ -49,11 +41,7 @@
       "heading": [
         [
           "mt2",
-          "The Third Book of Moses,"
-        ],
-        [
-          "mt3",
-          "Called"
+          "The Third Book of Moses, Called"
         ],
         [
           "mt1",
@@ -69,11 +57,7 @@
       "heading": [
         [
           "mt2",
-          "The Fourth Book of Moses,"
-        ],
-        [
-          "mt3",
-          "Called"
+          "The Fourth Book of Moses, Called"
         ],
         [
           "mt1",
@@ -90,11 +74,7 @@
       "heading": [
         [
           "mt2",
-          "The Fifth Book of Moses,"
-        ],
-        [
-          "mt3",
-          "Called"
+          "The Fifth Book of Moses, Called"
         ],
         [
           "mt1",
@@ -131,12 +111,8 @@
       "abbreviation": "1 Kgdms.",
       "heading": [
         [
-          "mt2",
-          "The"
-        ],
-        [
           "mt1",
-          "First Book of Kingdoms,"
+          "The First Book of Kingdoms,"
         ],
         [
           "mt3",
@@ -157,12 +133,8 @@
       "abbreviation": "2 Kgdms.",
       "heading": [
         [
-          "mt2",
-          "The"
-        ],
-        [
           "mt1",
-          "Second Book of Kingdoms,"
+          "The Second Book of Kingdoms,"
         ],
         [
           "mt3",
@@ -183,12 +155,8 @@
       "abbreviation": "3 Kgdms.",
       "heading": [
         [
-          "mt2",
-          "The"
-        ],
-        [
           "mt1",
-          "Third Book of Kingdoms,"
+          "The Third Book of Kingdoms,"
         ],
         [
           "mt3",
@@ -209,12 +177,8 @@
       "abbreviation": "4 Kgdms.",
       "heading": [
         [
-          "mt2",
-          "The"
-        ],
-        [
           "mt1",
-          "Fourth Book of Kingdoms,"
+          "The Fourth Book of Kingdoms,"
         ],
         [
           "mt3",
@@ -235,11 +199,7 @@
       "heading": [
         [
           "mt2",
-          "The First Book"
-        ],
-        [
-          "mt3",
-          "of the"
+          "The First Book of the"
         ],
         [
           "mt1",
@@ -256,11 +216,7 @@
       "heading": [
         [
           "mt2",
-          "The Second Book"
-        ],
-        [
-          "mt3",
-          "of the"
+          "The Second Book of the"
         ],
         [
           "mt1",
@@ -276,12 +232,8 @@
       "abbreviation": "Prayer of Manass.",
       "heading": [
         [
-          "mt2",
-          "The"
-        ],
-        [
           "mt1",
-          "Prayer of Manasses"
+          "The Prayer of Manasses"
         ],
         [
           "mt2",
@@ -302,11 +254,7 @@
       "heading": [
         [
           "mt2",
-          "The First Book"
-        ],
-        [
-          "mt3",
-          "of"
+          "The First Book of"
         ],
         [
           "mt1",
@@ -324,11 +272,7 @@
       "heading": [
         [
           "mt2",
-          "The Second Book"
-        ],
-        [
-          "mt3",
-          "of"
+          "The Second Book of"
         ],
         [
           "mt1",
@@ -383,11 +327,7 @@
       "heading": [
         [
           "mt2",
-          "The First Book"
-        ],
-        [
-          "mt3",
-          "of the"
+          "The First Book of the"
         ],
         [
           "mt1",
@@ -404,11 +344,7 @@
       "heading": [
         [
           "mt2",
-          "The Second Book"
-        ],
-        [
-          "mt3",
-          "of the"
+          "The Second Book of the"
         ],
         [
           "mt1",
@@ -425,11 +361,7 @@
       "heading": [
         [
           "mt2",
-          "The Third Book"
-        ],
-        [
-          "mt3",
-          "of the"
+          "The Third Book of the"
         ],
         [
           "mt1",
@@ -446,11 +378,7 @@
       "heading": [
         [
           "mt2",
-          "The Fourth Book"
-        ],
-        [
-          "mt3",
-          "of the"
+          "The Fourth Book of the"
         ],
         [
           "mt1",
@@ -491,12 +419,8 @@
           "Ecclesiastes,"
         ],
         [
-          "mt3",
-          "or,"
-        ],
-        [
           "mt2",
-          "The Preacher"
+          "or, The Preacher"
         ]
       ]
     },
@@ -522,15 +446,15 @@
       "heading": [
         [
           "mt2",
-          "The Wisdom of Jesus, the Son of Sirach,"
-        ],
-        [
-          "mt3",
-          "or,"
+          "The Wisdom of"
         ],
         [
           "mt1",
-          "Ecclesiasticus"
+          "Jesus, the Son of Sirach,"
+        ],
+        [
+          "mt2",
+          "or, Ecclesiasticus"
         ]
       ]
     },
@@ -664,17 +588,7 @@
       "id": "LAM",
       "source": "brenton",
       "section": "old_testament",
-      "title": "The Lamentations of Jeremias",
-      "heading": [
-        [
-          "mt2",
-          "The"
-        ],
-        [
-          "mt1",
-          "Lamentations of Jeremias"
-        ]
-      ]
+      "title": "The Lamentations of Jeremias"
     },
     {
       "id": "LJE",
@@ -786,11 +700,7 @@
       "heading": [
         [
           "mt2",
-          "The Epistle of Saint Paul"
-        ],
-        [
-          "mt3",
-          "to the"
+          "The Epistle of Saint Paul to the"
         ],
         [
           "mt1",
@@ -806,11 +716,7 @@
       "heading": [
         [
           "mt2",
-          "The First Epistle of Saint Paul"
-        ],
-        [
-          "mt3",
-          "to the"
+          "The First Epistle of Saint Paul to the"
         ],
         [
           "mt1",
@@ -826,11 +732,7 @@
       "heading": [
         [
           "mt2",
-          "The Second Epistle of Saint Paul"
-        ],
-        [
-          "mt3",
-          "to the"
+          "The Second Epistle of Saint Paul to the"
         ],
         [
           "mt1",
@@ -846,11 +748,7 @@
       "heading": [
         [
           "mt2",
-          "The Epistle of Saint Paul"
-        ],
-        [
-          "mt3",
-          "to the"
+          "The Epistle of Saint Paul to the"
         ],
         [
           "mt1",
@@ -866,11 +764,7 @@
       "heading": [
         [
           "mt2",
-          "The Epistle of Saint Paul"
-        ],
-        [
-          "mt3",
-          "to the"
+          "The Epistle of Saint Paul to the"
         ],
         [
           "mt1",
@@ -886,11 +780,7 @@
       "heading": [
         [
           "mt2",
-          "The Epistle of Saint Paul"
-        ],
-        [
-          "mt3",
-          "to the"
+          "The Epistle of Saint Paul to the"
         ],
         [
           "mt1",
@@ -906,11 +796,7 @@
       "heading": [
         [
           "mt2",
-          "The Epistle of Saint Paul"
-        ],
-        [
-          "mt3",
-          "to the"
+          "The Epistle of Saint Paul to the"
         ],
         [
           "mt1",
@@ -926,11 +812,7 @@
       "heading": [
         [
           "mt2",
-          "The First Epistle of Saint Paul"
-        ],
-        [
-          "mt3",
-          "to the"
+          "The First Epistle of Saint Paul to the"
         ],
         [
           "mt1",
@@ -946,11 +828,7 @@
       "heading": [
         [
           "mt2",
-          "The Second Epistle of Saint Paul"
-        ],
-        [
-          "mt3",
-          "to the"
+          "The Second Epistle of Saint Paul to the"
         ],
         [
           "mt1",
@@ -966,11 +844,7 @@
       "heading": [
         [
           "mt2",
-          "The First Epistle of Saint Paul"
-        ],
-        [
-          "mt3",
-          "to"
+          "The First Epistle of Saint Paul to"
         ],
         [
           "mt1",
@@ -986,11 +860,7 @@
       "heading": [
         [
           "mt2",
-          "The Second Epistle of Saint Paul"
-        ],
-        [
-          "mt3",
-          "to"
+          "The Second Epistle of Saint Paul to"
         ],
         [
           "mt1",
@@ -1038,11 +908,7 @@
       "heading": [
         [
           "mt2",
-          "The Epistle of Saint Paul"
-        ],
-        [
-          "mt3",
-          "to the"
+          "The Epistle of Saint Paul to the"
         ],
         [
           "mt1",
@@ -1173,12 +1039,8 @@
           "The Revelation"
         ],
         [
-          "mt3",
-          "of"
-        ],
-        [
           "mt2",
-          "Saint John the Divine"
+          "of Saint John the Divine"
         ]
       ]
     }
@@ -1218,7 +1080,8 @@
     {
       "source": "kjv",
       "id": "NDX",
-      "source_id": "INT"
+      "source_id": "INT",
+      "title": "The Translators to the Reader"
     }
   ],
   "appendices": [

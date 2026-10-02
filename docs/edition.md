@@ -144,7 +144,7 @@ Every abbreviation the edition prints is in the list of abbreviations. Brenton's
 
 The edition keeps the words of its text and regularizes how they are spelt and pointed.
 
-So far one word is revised. Brenton writes the prophet's name "Jezekiel" at Ezekiel 1:3 and 24:24, transliterating the Greek Ἰεζεκιήλ; the edition prints "Ezekiel".
+So far eight words are revised, all of them names. Brenton writes the prophet's name "Jezekiel" at Ezekiel 1:3 and 24:24, transliterating the Greek Ἰεζεκιήλ; the edition prints "Ezekiel". His Osee, Michæas, Obdias, Naum and Ambacum are printed as the edition's titles spell them: Hosea, Michaias, Abdias, Nahum and Abbacum.
 
 ## Typography
 
