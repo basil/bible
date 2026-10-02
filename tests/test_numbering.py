@@ -16,7 +16,7 @@ import bible.references
 import bible.sources
 from bible import assembly, numbering, quotations, usfm, usj, versification
 from bible.checks import CheckFailed
-from bible.numbering import WANTING, Psalter, Table, within
+from bible.numbering import MISSING, Table, within
 from bible.policy import EDITOR, NUMBERING
 from bible.references import Verse, parse_verse
 from bible.scripture import Inventory
@@ -55,7 +55,6 @@ def printed(
     edition: bible.pipeline.Edition,
     facing: Inventory,
     names: tuple[bible.references.Books, ...],
-    sources: bible.sources.Sources,
 ) -> Printed:
     """One of the editor's pages as it prints, from what it is written."""
 
@@ -72,7 +71,6 @@ def printed(
                 ours,
                 names[1],
                 policy=policy,
-                psalms=sources.authored["content/numbering-psalms.sfm"],
             )
         )
 
@@ -84,13 +82,6 @@ def rows(
     policy: bible.policy.Policy, edition: bible.pipeline.Edition, facing: Inventory
 ) -> Callable[[str], list[tuple[str, str]]]:
     return lambda code: Table(code, edition.inventory, facing, policy=policy).rows()
-
-
-@pytest.fixture(scope="module")
-def psalter(
-    policy: bible.policy.Policy, edition: bible.pipeline.Edition, facing: Inventory
-) -> bible.numbering.Psalter:
-    return Psalter(facing, printed=edition.inventory, policy=policy)
 
 
 @pytest.mark.parametrize(
@@ -112,9 +103,12 @@ def test_a_chapter_that_stands_whole_elsewhere_is_one_row(
     rows: Callable[[str], list[tuple[str, str]]],
 ) -> None:
     jeremias = set(rows("JER"))
-    assert {("26", "46"), ("32", "25"), ("36", "29"), ("50", "43")} <= jeremias
-    # A chapter in part is its verses.
+    assert {("26", "46"), ("36", "29"), ("50", "43")} <= jeremias
+    # A chapter in part is its verses, and so is one that is only part of
+    # the King James chapter: the rest of chapter 25 keeps its number.
+    assert ("32", "25") not in jeremias
     assert {
+        ("32:15–38", "25:15–38"),
         ("38:1–34", "31:1–34"),
         ("51:1–30", "44:1–30"),
         ("51:31–35", "45:1–5"),
@@ -122,15 +116,23 @@ def test_a_chapter_that_stands_whole_elsewhere_is_one_row(
     } <= jeremias
 
 
-def test_what_either_bible_lacks_is_wanting(
+def test_what_either_bible_lacks_is_missing(
     rows: Callable[[str], list[tuple[str, str]]],
 ) -> None:
     jeremias = rows("JER")
-    assert (WANTING, "39:4–13") in jeremias
-    assert ("36:8", WANTING) in rows("EXO")
+    assert ("missing", "39:4–13") in jeremias
+    assert ("38:15", "missing") in rows("EXO")
     # Where the King James Bible has it, among the rows of its chapter.
-    at = jeremias.index((WANTING, "33:14–26"))
+    at = jeremias.index((MISSING, "33:14–26"))
     assert jeremias[at - 1] == ("40", "33") and jeremias[at + 1] == ("41", "34")
+    # In the King James Bible's order, where the edition's verse holds more.
+    at = jeremias.index(("10:5, 9a", "10:5"))
+    assert jeremias[at + 1 : at + 3] == [(MISSING, "10:6–8"), (MISSING, "10:10")]
+    # A lettered verse that the King James Bible lacks has no row: its
+    # letter says so. Esther's prayer is ruled to be one.
+    esther = rows("ESG")
+    assert (MISSING, "5:1–2") in esther
+    assert not [row for row in esther if row[1] == MISSING]
 
 
 def test_a_verse_may_stand_beside_two(
@@ -144,10 +146,19 @@ def test_a_verse_may_stand_beside_two(
         ("8:29–30", "8:30"),
     ]
     assert ("9:2a–f", "8:30–35") in rows("JOS")
+    assert ("35:16", "35:16, 21") in rows("GEN")
+    # A verse that is empty here points to the one that has its words.
+    assert ("24:22f; 30:1", "30:1") in rows("PRO")
     # Proverbs 8:28 also holds the first part of the King James Bible's 8:29,
     # which the row says without giving 8:29 both.
     assert ("8:28", "8:28–29") in rows("PRO")
     assert ("8:28–29", "8:28–29") not in rows("PRO")
+    # One verse may hold what the King James Bible tells in two places, and
+    # lettered verses that a reading pairs each stand beside their own part.
+    assert ("38:11", "37:4, 15") in rows("EXO")
+    kingdoms = rows("1KI")
+    at = kingdoms.index(("10:22a", "9:15, 17–19"))
+    assert kingdoms[at + 1 : at + 3] == [("10:22b", "9:20–21"), ("10:22c", "9:22")]
     # Malachias ends in another order.
     assert rows("MAL") == [("4:4–5", "4:5–6"), ("4:6", "4:4")]
 
@@ -159,7 +170,7 @@ def test_a_run_that_keeps_its_numbers_has_no_row(
     kept = [
         (run["edition"], run["kjv"])
         for run in policy.versification["kjv"]["GEN"]
-        if run.get("by") == "reading"
+        if run.get("by") == "reading" and run["edition"] == run["kjv"]
     ]
     assert kept == [("GEN 31:47-48", "GEN 31:47-48")]
     assert not [row for row in rows("GEN") if row[0] == row[1]]
@@ -168,7 +179,7 @@ def test_a_run_that_keeps_its_numbers_has_no_row(
 
 def read_cell(cell: str, book: str) -> list[bible.references.Verse]:
     """The verses a cell names, read back from what it prints; none, if it
-    names a whole chapter or says that its verses are wanting."""
+    names a whole chapter or says that its verses are missing."""
     verses = []
     for part in cell.split("; ") if ":" in cell else ():
         chapter, _, listed = part.partition(":")
@@ -196,26 +207,41 @@ def test_the_table_says_what_the_runs_say(
     policy: bible.policy.Policy,
     edition: bible.pipeline.Edition,
     facing: Inventory,
-    psalter: bible.numbering.Psalter,
 ) -> None:
     """Read back, the rows give every verse the King James verses that the
-    runs give it, and every verse they don't name keeps its number. A psalm
-    whose verses the table numbers together is numbered there."""
-    _, uneven = psalter.steps()
+    runs give it, and every verse they don't name keeps its number. A range
+    of psalms is read back psalm by psalm."""
     for code in policy.versification["old_testament"]:
         table = Table(code, edition.inventory, facing, policy=policy)
         kjv = versification.kjv_book(code, policy=policy)
         told: dict[Verse, tuple[Verse, ...]] = {}
-        for ours, theirs in table.rows() if code != "PSA" else psalter.uneven_rows():
-            if ours == WANTING:
+        listed = (
+            numbering.psalms_rows(edition.inventory, facing, policy=policy)
+            if code == "PSA"
+            else table.rows()
+        )
+        for ours, theirs in listed:
+            if ours == MISSING:
                 for verse in read_cell(theirs, kjv):
                     assert versification.from_kjv(verse, policy=policy) == ()
                 continue
             if ":" not in ours:
+                if theirs == MISSING:
+                    assert all(
+                        verse in versification.apocryphal(policy=policy)
+                        for verse in table.verses(ours)
+                    )
+                    continue
                 # A chapter that stands whole elsewhere.
-                for verse in table.verses(ours):
-                    if not verse.letter:
-                        told[verse] = (Verse(kjv, int(theirs), verse.number),)
+                first, _, last = ours.partition("–")
+                other_first, _, other_last = theirs.partition("–")
+                chapters = range(int(first), int(last or first) + 1)
+                other = range(int(other_first), int(other_last or other_first) + 1)
+                assert len(chapters) == len(other)
+                for numbered_chapter, facing_chapter in zip(chapters, other):
+                    for verse in table.verses(numbered_chapter):
+                        if not verse.letter:
+                            told[verse] = (Verse(kjv, facing_chapter, verse.number),)
                 continue
             here, there = read_cell(ours, code), tuple(read_cell(theirs, kjv))
             pairs = (
@@ -235,8 +261,6 @@ def test_the_table_says_what_the_runs_say(
                 if facing_it and not found:
                     # A title, which the King James Bible doesn't number.
                     assert verse not in told
-                elif code == "PSA" and verse.chapter not in uneven:
-                    continue
                 elif verse in told:
                     assert told[verse] == found, (str(verse), told[verse], found)
                 elif verse.letter:
@@ -245,83 +269,121 @@ def test_the_table_says_what_the_runs_say(
                     assert found == (Verse(kjv, verse.chapter, verse.number),)
 
 
-def test_psalms_are_numbered_as_the_greek_numbers_them(
-    psalter: bible.numbering.Psalter,
+def test_psalms_use_whole_psalms_and_verse_ranges(
+    policy: bible.policy.Policy,
+    edition: bible.pipeline.Edition,
+    facing: Inventory,
 ) -> None:
-    assert psalter.numbers() == [
-        ("Psalm 9", "Psalms 9–10"),
-        ("Psalms 10–112", "Psalms 11–113"),
-        ("Psalm 113", "Psalms 114–115"),
-        ("Psalms 114–115", "Psalm 116"),
-        ("Psalms 116–145", "Psalms 117–146"),
-        # Together one, as Psalms 114-115 are: Psalm 146 isn't the whole of
-        # the King James Bible's 147.
-        ("Psalms 146–147", "Psalm 147"),
-        ("Psalm 151", WANTING),
+    psalms = numbering.psalms_rows(edition.inventory, facing, policy=policy)
+    assert psalms[:8] == [
+        ("3:2–9", "3:1–8"),
+        ("4:2–9", "4:1–8"),
+        ("5:2–13", "5:1–12"),
+        ("6:2–11", "6:1–10"),
+        ("7:2–18", "7:1–17"),
+        ("8:2–10", "8:1–9"),
+        ("9:2–21", "9:1–20"),
+        ("9:22–39", "10:1–18"),
     ]
-
-
-def test_a_psalms_title_is_counted(
-    policy: bible.policy.Policy, psalter: bible.numbering.Psalter
-) -> None:
-    steps, uneven = psalter.steps()
-    assert steps[2] == [50, 51, 53, 59]
-    assert steps[1][:8] == [3, 4, 5, 6, 7, 8, 11, 17] and len(steps[1]) == 57
-    assert uneven == [9, 12, 113, 115, 147]
-    # Outside the psalms that have rows of their own, a verse is the King
-    # James verse of the same number, or so many lower, or the title.
-    numbers = {}
-    for ours, theirs in psalter.numbers():
-        first, _, last = ours.split(" ")[1].partition("–")
-        there, _, end = theirs.split(" ")[-1].partition("–")
-        if last and end:
-            for n in range(int(first), int(last) + 1):
-                numbers[n] = int(there) + n - int(first)
-    for step, psalms in steps.items():
-        for psalm in psalms:
-            for verse in psalter.table.verses(psalm):
-                found = versification.to_kjv(verse, policy=policy)
-                if verse.number <= step:
-                    assert [v.number for v in found] == [versification.TITLE]
-                else:
-                    [kjv] = found
-                    assert kjv.number == verse.number - step, str(verse)
-                    assert kjv.chapter == numbers.get(psalm, psalm), str(verse)
+    assert ("13–16", "14–17") in psalms
+    assert ("50:3–21", "51:1–19") in psalms
+    assert ("12:2–5", "13:1–4") in psalms
+    assert ("12:6", "13:5–6") in psalms
+    assert ("113:1–8", "114:1–8") in psalms
+    assert ("113:9–26", "115:1–18") in psalms
+    assert ("114:1–9", "116:1–9") in psalms
+    assert ("115:4a", "116:14") in psalms
+    assert ("146:1–11", "147:1–11") in psalms
+    assert ("147:1–9", "147:12–20") in psalms
+    assert ("114", "116") not in psalms
+    assert ("146", "147") not in psalms
 
 
 def test_the_page_prints_its_tables(edition: bible.pipeline.Edition) -> None:
     page = usj.serialize(edition.documents[NUMBERING["id"]])
     assert "{" not in page and "}" not in page
-    assert page.count("\\tr\n\\tc1 ") == 408
-    assert "\\is1 Jeremias (Jeremiah)\n\\tr\n\\th1 Jeremias\n\\th2 Jeremiah\n" in page
-    assert "\\is1 Genesis\n\\tr\n\\th1 This edition\n\\th2 King James Bible\n" in page
+    assert page.count("\\tr\n\\tc1 ") == 485
+    # A book's table is headed by both Bibles' names for the book.
+    assert "\\tr\n\\th1 \\bd Jeremias\\bd*\n\\th2 \\bd Jeremiah\\bd*\n" in page
+    assert "\\tr\n\\th1 \\bd Genesis\\bd*\n\\th2 \\bd Genesis\\bd*\n" in page
+    assert "\\is2" not in page
+    tables = [
+        node
+        for node in usj.walk(edition.documents[NUMBERING["id"]]["content"])
+        if usj.is_type(node, "table")
+    ]
+    assert len(tables) == 33
+    for table in tables:
+        *named, heading = list(usj.objects(table["content"]))[
+            : 1 if table is tables[0] else 2
+        ]
+        # Only the table of the books' names has no book over it.
+        assert len(named) == (table is not tables[0])
+        assert heading["marker"] == "tr"
+        cells = list(usj.objects(heading["content"]))
+        assert [cell["marker"] for cell in cells] == ["th1", "th2"]
+        assert [cell["content"] for cell in cells] == [
+            ["Orthodox Liturgical English Bible"],
+            ["King James Bible"],
+        ]
+    assert "the word \\it missing\\it* stands on its side." in page
     for ours, theirs in (
         ("3 Kingdoms", "1 Kings"),
         ("Epistle of Jeremias", "Baruch 6, in the Apocrypha"),
         ("Tobit", "Tobit, in the Apocrypha"),
-        ("3 Maccabees", WANTING),
+        ("3 Maccabees", "(\\it missing\\it*)"),
     ):
         assert f"\\tr\n\\tc1 {ours}\n\\tc2 {theirs}\n" in page
-    assert "as Proverbs 22:8a, is an addition" in page
-    assert "so that Psalm 33:13–17 is its 34:12–16." in page
+    assert "as Proverbs 22:8a, is usually an addition" in page
+    assert "the Song of the Three Children runs from Daniel 3:24 to 3:90." in page
+    assert "as 32:2–33 beside 32:1–32, they answer" in page
+    # Esther's verses that are the King James Bible's Rest of Esther.
+    assert (
+        "\\tc1 Esther, the additions\n\\tc2 The Rest of Esther, in the Apocrypha\n"
+        in page
+    )
+    assert "\\tc2 one lower" not in page and "\\tc2 two lower" not in page
+    assert "\\tr\n\\tc1 151\n\\tc2 (\\it missing\\it*)\n" in page
+    blocks = list(usj.objects(edition.documents[NUMBERING["id"]]["content"]))
     headings = [
-        usj.text_of(block["content"])
-        for block in edition.documents[NUMBERING["id"]]["content"]
-        if isinstance(block, dict) and block.get("marker") == "is1"
+        usj.text_of(next(usj.objects(table["content"]))["content"][:1])
+        for table in tables[1:]
     ]
-    assert headings.index("Nehemias (Nehemiah)") < headings.index("Psalms")
+    # The Psalms' table stands at their place, under the editor's words, and
+    # a blank line sets every table off from the one before it.
+    psalms = blocks.index(tables[1:][headings.index("Psalms")])
+    assert [block.get("marker") for block in blocks[psalms - 2 : psalms]] == [
+        "ib",
+        "ip",
+    ]
+    assert blocks[psalms + 1]["marker"] == "ib"
+    assert headings.index("Nehemias") < headings.index("Psalms")
     assert headings.index("Psalms") < headings.index("Job")
     # Books that are numbered alike have no table.
-    assert "\\is1 Judges" not in page and "\\is1 Ruth" not in page
+    assert "Judges" not in headings and "Ruth" not in headings
 
 
-@pytest.mark.parametrize(
-    "more", ["", "{names}\n{psalm numbers}\n{psalm verses}\n{psalm rows}\n"]
-)
+@pytest.mark.parametrize("more", ["", "{names}\n{psalms}\n"])
 def test_the_page_asks_for_each_table_once(printed: Printed, more: str) -> None:
     # A complete set of tables, with none repeated.
     with pytest.raises(CheckFailed, match="not once each"):
         printed(f"\\ip x\n{{names}}\n{{books}}\n{{books}}\n{more}")
+
+
+@pytest.mark.parametrize(
+    "written",
+    [
+        # Before the books, with no words, and with another table among them.
+        "{psalms}\n{names}\n{books}\n",
+        "{names}\n{books}\n{psalms}\n",
+        "{books}\n\\ip Psalms\n{names}\n{psalms}\n",
+    ],
+)
+def test_the_psalms_have_their_words_between_the_books_and_their_table(
+    printed: Printed, written: str
+) -> None:
+    with pytest.raises(CheckFailed, match="Words for the Psalms"):
+        printed(f"\\ip x\n{written}")
 
 
 @pytest.mark.parametrize(
@@ -413,11 +475,12 @@ def test_every_exception_is_in_the_table(
 def test_a_page_is_written_of_the_books_and_verses_it_is_given(
     policy: bible.policy.Policy,
     edition: bible.pipeline.Edition,
+    facing: Inventory,
     names: tuple[bible.references.Books, ...],
     printed: Printed,
 ) -> None:
     def named(codes: Iterable[str]) -> list[tuple[str, ...]]:
-        table = numbering.names_table(tuple(codes), *names, policy=policy)
+        table = numbering.names_table(tuple(codes), facing, *names, policy=policy)
         return [
             tuple(usj.text_of(cell["content"]) for cell in usj.objects(row["content"]))
             for row in usj.objects(table["content"])
@@ -426,8 +489,12 @@ def test_a_page_is_written_of_the_books_and_verses_it_is_given(
     full = named(edition.inventory)
     tobit = ("Tobit", "Tobit, in the Apocrypha")
     assert tobit in full
+    # A book that the edition lacks is missing on its side.
+    assert full[-1] == ("(missing)", "2 Esdras, in the Apocrypha")
     assert named(c for c in edition.inventory if c != "TOB") == [
-        row for row in full if row != tobit
+        *(row for row in full[:-1] if row != tobit),
+        ("(missing)", "Tobit, in the Apocrypha"),
+        full[-1],
     ]
     proverbs = {**edition.inventory["PRO"], "22": ["1", "2"]}
     with pytest.raises(CheckFailed, match="edition doesn't print"):
@@ -447,5 +514,5 @@ def test_generated_names_share_the_body_heading_registry(
     written = sources.authored[NUMBERING["file"]] + "\\ip {JER 38:31}\n"
     page = printed(written, ours=ours)
     assert "\\tr\n\\tc1 Renamed Jeremias\n\\tc2 Jeremiah\n" in page
-    assert "\\is1 Renamed Jeremias (Jeremiah)\n" in page
+    assert "\\th1 \\bd Renamed Jeremias\\bd*\n\\th2 \\bd Jeremiah\\bd*\n" in page
     assert page.endswith("\\ip Renamed Jeremias 38:31\n")

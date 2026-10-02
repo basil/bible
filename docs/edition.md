@@ -155,8 +155,11 @@ The table after the editor's introduction gives the King James Bible's number fo
 
 It takes the place of two tables. One was typed into the introduction, for the verses that the links name. The other was Brenton's own, of the chapters of Jeremias, which doesn't fit the text printed here: it puts the prophecy against Edom at "29 from v. 7 to the end", and eBible's text has it as 30:1–16.
 
-- A chapter that stands whole elsewhere under the same verse numbers is one row, as most chapters of Jeremias from 26 on. Anything else is a row of its verses.
-- The psalms differ in nearly every psalm, so they are numbered together: the psalms' own numbers; then the psalms whose verses are each one higher than the King James Bible's, or two, because Brenton counts the title; then rows for the five psalms that differ by no one number.
+- A chapter that stands elsewhere under the same verse numbers is one row, as most chapters of Jeremias from 26 on, unless another chapter of the edition holds part of the same King James chapter. Anything else is a row of its verses, as Jeremias 32:15–38: the rest of the King James Bible's chapter 25 stays in the edition's 25.
+- The table of books also says which books of the King James Bible's Apocrypha the edition lacks: its 2 Esdras.
+- A lettered verse that the King James Bible lacks has no row, even where a reading rules it so; its letter says as much.
+- Each book's table is headed by the book's name in this edition and in the King James Bible, side by side.
+- The psalms differ in nearly every psalm, so their table has the editor's words over it. A psalm that alone holds a King James psalm under the same verse numbers is one row, and such psalms that follow one another are a range of psalms, as 13–16 beside 14–17. Any other psalm is rows of its verses: those after the title, which Brenton counts as a verse or two, or those of each part of a psalm that the other Bible divides. Psalms 114 and 146 are rows of their verses too, because each is only the first part of a King James psalm, 116 and 147.
 - The column for the King James Bible gives that Bible's names for the books, from its own text, since those are what a reader will look under. It is the one place where another Bible's name for a book is printed for a reader to use.
 - The books that the King James Bible sets apart in its Apocrypha are named with where it has them, and the additions to Esther and Daniel likewise. Their verses aren't compared.
 

@@ -1,4 +1,11 @@
 {
+  "king-james-bible": {
+    "display": "King James Bible",
+    "meaning": "The English Bible first published in 1611",
+    "period_forms": [],
+    "note_forms": [],
+    "source_forms": []
+  },
   "anno-domini": {
     "display": "AD",
     "meaning": "_anno Domini_",

@@ -65,6 +65,7 @@ def check_processed(project: Path, base: Path, ids: list[str]) -> None:
     require(len(texfiles) == 1, "Missing typesetting driver")
     tex = texfiles[0].read_text(encoding="utf-8")
     require("%\\OmitCallerInNote{f}" in tex, "Footnote callers unexpectedly suppressed")
+    require("\\AutoCallers{f}{1,2," in tex, "Footnote callers not numbered")
     for code in ids:
         source = project_usfm(project, code).read_text(encoding="utf-8")
         processed = processed_usfm(project, code)

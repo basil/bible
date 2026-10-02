@@ -5,7 +5,7 @@ the edition's own."""
 
 from __future__ import annotations
 
-from typing import Any, Unpack
+from typing import Any, cast
 
 import pytest
 from conftest import changed
@@ -140,18 +140,9 @@ def test_runs_are_written_verse_for_verse_or_whole() -> None:
     ]
 
 
-def reading_of(
-    policy: bible.policy.Policy, **reading: Unpack[Run]
-) -> bible.policy.Policy:
-    """The policy with one reading, of Genesis."""
-    return changed(
-        policy, "versification", lambda data: data["readings"].update(GEN=[reading])
-    )
-
-
-def test_what_has_been_read_stands(policy: bible.policy.Policy) -> None:
+def test_what_has_been_read_stands() -> None:
     # Whatever the witnesses give for its verses, and with the overlaps it
-    # declares; what is left of the King James Bible's verses is wanting.
+    # declares; what is left of the King James Bible's verses is missing.
     reading: Run = {
         "edition": "GEN 1:2-3",
         "kjv": "GEN 1:2-3",
@@ -160,9 +151,7 @@ def test_what_has_been_read_stands(policy: bible.policy.Policy) -> None:
     }
     raven, dove = parse_verse("GEN 1:2"), parse_verse("GEN 1:3")
     proposed = [([raven], [dove], "words", None), ([dove], [raven], "words", None)]
-    assert places.written(
-        Texts(OURS, THEIRS), "GEN", proposed, policy=reading_of(policy, **reading)
-    ) == [
+    assert places.decided(Texts(OURS, THEIRS), "GEN", proposed, [reading]) == [
         {**reading, "by": "reading"},
         {"edition": None, "kjv": "GEN 1:7"},
     ]
@@ -177,13 +166,29 @@ def test_what_has_been_read_stands(policy: bible.policy.Policy) -> None:
         ({"edition": "GEN 1:2", "kjv": "GEN 1:9", "why": "x"}, "its Bible lacks"),
     ],
 )
-def test_a_reading_must_fit_both_bibles(
-    policy: bible.policy.Policy, reading: dict[str, Any], refusal: str
-) -> None:
+def test_a_reading_must_fit_both_bibles(reading: dict[str, Any], refusal: str) -> None:
     with pytest.raises(CheckFailed, match=refusal):
-        places.written(
-            Texts(OURS, THEIRS), "GEN", [], policy=reading_of(policy, **reading)
-        )
+        places.written(Texts(OURS, THEIRS), "GEN", [], [cast(Run, reading)])
+
+
+def test_a_reading_must_change_what_the_witnesses_give() -> None:
+    raven, dove = parse_verse("GEN 1:2"), parse_verse("GEN 1:3")
+    proposed: list[places.Placement] = [
+        ([raven], [dove], "words", None),
+        ([dove], [raven], "words", None),
+    ]
+    given: Run = {"edition": "GEN 1:2", "kjv": "GEN 1:3", "why": "x"}
+    with pytest.raises(CheckFailed, match="changes nothing: GEN 1:2 = GEN 1:3"):
+        places.decided(Texts(OURS, THEIRS), "GEN", proposed, [given])
+    # Nor may it only part a run in two: each verse stands where it stood.
+    ark = parse_verse("GEN 1:1")
+    run: list[places.Placement] = [
+        ([ark], [raven], "table", None),
+        ([raven], [dove], "table", None),
+    ]
+    part: Run = {"edition": "GEN 1:1", "kjv": "GEN 1:2", "why": "x"}
+    with pytest.raises(CheckFailed, match="changes nothing: GEN 1:1 = GEN 1:2"):
+        places.decided(Texts(OURS, THEIRS), "GEN", run, [part])
 
 
 def test_a_reading_is_of_a_book_of_the_old_testament(

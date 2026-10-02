@@ -623,11 +623,11 @@ def proposal(
     return result
 
 
-def read(texts: Texts, code: str, *, policy: bible.policy.Policy) -> list[Placement]:
+def read(texts: Texts, readings: Sequence[Run]) -> list[Placement]:
     """The runs of a book that the editor has read, which stand whatever the
     witnesses give."""
     found: list[Placement] = []
-    for run in policy.versification["readings"].get(code, []):
+    for run in readings:
         name = f"{run.get('edition')} = {run.get('kjv')}"
         require_fields(run, {"edition", "kjv", "why"}, {"pairs"}, f"Reading {name}")
         require(run["edition"] and run["why"], f"Reading without its reason: {name}")
@@ -647,14 +647,13 @@ def written(
     texts: Texts,
     code: str,
     entries: Sequence[Placement],
-    *,
-    policy: bible.policy.Policy,
+    readings: Sequence[Run],
 ) -> list[Run]:
     """A book's runs: what has been read, what the witnesses give of the
     rest, and what the edition wants of the King James Bible's verses."""
-    decided = read(texts, code, policy=policy)
-    ours = {v for entry in decided for v in entry[0]}
-    theirs = {v for entry in decided for v in entry[1]}
+    ruled = read(texts, readings)
+    ours = {v for entry in ruled for v in entry[0]}
+    theirs = {v for entry in ruled for v in entry[1]}
     kept = [
         entry
         for entry in entries
@@ -662,7 +661,7 @@ def written(
     ]
     order = {v: n for n, v in enumerate(texts.edition.order[code])}
     listed = sorted(
-        kept + [entry for entry in decided if entry[0]],
+        kept + [entry for entry in ruled if entry[0]],
         key=lambda entry: order[entry[0][0]],
     )
     claimed = {v for entry in listed for v in entry[1]}
@@ -671,7 +670,7 @@ def written(
     for verse in texts.edition.order[code]:
         if verse not in named and not verse.letter:
             claimed.add(Verse(texts.books[code], verse.chapter, verse.number))
-    wanting = [
+    missing = [
         v
         for v in texts.kjv.order[texts.books[code]]
         if v not in claimed and v.number != tvtms.TITLE
@@ -679,17 +678,33 @@ def written(
     written_runs = _runs(listed)
     # A reading may say which part of its run each verse faces.
     declared_pairs = {
-        (run["edition"], run["kjv"]): run["pairs"]
-        for run in policy.versification["readings"].get(code, [])
-        if "pairs" in run
+        (run["edition"], run["kjv"]): run["pairs"] for run in readings if "pairs" in run
     }
     for run in written_runs:
         pair = (run["edition"], run["kjv"])
         if pair in declared_pairs:
             run["pairs"] = declared_pairs[pair]
     return written_runs + [
-        {"edition": None, "kjv": str(passage)} for passage in runs(wanting)
+        {"edition": None, "kjv": str(passage)} for passage in runs(missing)
     ]
+
+
+def decided(
+    texts: Texts,
+    code: str,
+    entries: Sequence[Placement],
+    readings: Sequence[Run],
+) -> list[Run]:
+    """A book's runs, each of its readings held to changing them: a reading
+    is kept only for what the witnesses don't give."""
+    found = written(texts, code, entries, readings)
+    for n, run in enumerate(readings):
+        rest = [*readings[:n], *readings[n + 1 :]]
+        require(
+            _facing(written(texts, code, entries, rest)) != _facing(found),
+            f"Reading that changes nothing: {run['edition']} = {run['kjv']}",
+        )
+    return found
 
 
 def placed(
@@ -708,10 +723,34 @@ def placed(
     texts, report = witnesses(books, kjv, policy=policy)
     proposed = proposal(texts, report)
     found = {
-        code: written(texts, code, proposed[code], policy=policy)
+        code: decided(
+            texts,
+            code,
+            proposed[code],
+            policy.versification["readings"].get(code, ()),
+        )
         for code in texts.books
     }
     return {code: listed for code, listed in found.items() if listed}
+
+
+def _facing(
+    listed: Sequence[Run],
+) -> tuple[dict[Verse, tuple[Verse, ...]], set[Verse]]:
+    """Runs as what each verse stands beside, and what the edition lacks,
+    however each run was decided and wherever one run ends and the next
+    begins."""
+    beside: dict[Verse, tuple[Verse, ...]] = {}
+    lacking: set[Verse] = set()
+    for run in listed:
+        for near, far in versification.run_pairs(run):
+            # A lettered verse stands beside nothing, listed so or not.
+            beside.update(
+                (verse, tuple(far)) for verse in near if far or not verse.letter
+            )
+            if not near:
+                lacking.update(far)
+    return beside, lacking
 
 
 def _runs(entries: list[Placement]) -> list[Run]:
@@ -818,7 +857,7 @@ def report(
     for code, listed in found.items():
         lines.append(f"## {code}\n\n")
         for run in listed:
-            by = run.get("by", "wanting")
+            by = run.get("by", "missing")
             why = f": {run['why']}" if "why" in run else ""
             lines.append(
                 f"- {run['edition'] or 'nothing'} = {run['kjv'] or 'nothing'} ({by}{why})\n"

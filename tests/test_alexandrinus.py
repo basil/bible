@@ -265,7 +265,7 @@ def test_a_passage_supplies_verses_from_the_appendix_or_the_king_james_bible(
     )
     borrowed = {
         "kjv": True,
-        "why": "The verse is wanting.",
+        "why": "The verse is missing.",
         "swete": SWETE,
         "insertions": [{"before": "99:23", "verses": [{"reference": "99:22b"}]}],
     }

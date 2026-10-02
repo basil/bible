@@ -163,7 +163,7 @@ def unplaced(
     texts: bible.places.Texts, policy: bible.policy.Policy
 ) -> tuple[list[str], ...]:
     """What the runs leave without a place: the King James verses that no
-    verse of the edition reaches and no run lists as wanting, and the
+    verse of the edition reaches and no run lists as missing, and the
     edition's verses whose counterparts the King James Bible lacks."""
     missing, lost = [], []
     for code, kjv in texts.books.items():
@@ -173,19 +173,19 @@ def unplaced(
             for counterpart in versification.to_kjv(verse, policy=policy)
         }
         lost += sorted(map(str, reached - set(texts.kjv.words)))
-        wanting = {
+        listed = {
             verse
             for run in policy.versification["kjv"].get(code, [])
             if not run["edition"] and run["kjv"]
             for verse in versification.verses(run["kjv"])
         }
-        assert not wanting & reached, f"Wanting and reached: {code}"
+        assert not listed & reached, f"Listed as missing and reached: {code}"
         missing += [
             str(verse)
             for verse in texts.kjv.order[kjv]
             if verse.number != versification.TITLE
             and verse not in reached
-            and verse not in wanting
+            and verse not in listed
         ]
     return missing, lost
 

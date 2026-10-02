@@ -481,7 +481,7 @@ def test_the_review_is_written_once_and_shows_what_changed(
     # with the words of both translations, to be read.
     numbering = (base / "numbering.md").read_text(encoding="utf-8")
     assert "- JOL 3:1-5 = JOL 2:28-32 (table)\n" in numbering
-    assert "- nothing = JER 33:14-26 (wanting)\n" in numbering
+    assert "- nothing = JER 33:14-26 (missing)\n" in numbering
     assert "- GEN 31:47-48 = GEN 31:47-48 (reading: The King James" in numbering
     assert (
         "- GEN 8:3 = GEN 8:3-4 (words)\n  - Brenton 8:3: And the water" in numbering

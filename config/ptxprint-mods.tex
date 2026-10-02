@@ -108,3 +108,23 @@
   \fi
 }
 \endgroup
+
+% Share the reference-table style between the numbering and abbreviations pages.
+% Select it at table entry, before PTXprint opens the table's group and reads
+% the category. Row hooks run too late; transition hooks depend on the
+% preceding paragraph marker. PTXprint clears the category after each table.
+\newif\ifBibleReferenceTables
+\setbookhook{start}{XXA}{\BibleReferenceTablestrue}
+\setbookhook{end}{XXA}{\BibleReferenceTablesfalse}
+\setbookhook{start}{XXD}{\BibleReferenceTablestrue}
+\setbookhook{end}{XXD}{\BibleReferenceTablesfalse}
+\begingroup
+\catcode`\@=11
+\global\let\BibleStartTable\startt@ble
+\gdef\startt@ble{%
+  \ifBibleReferenceTables
+    \ifdoingt@ble\else\def\tablecategory{reference}\fi
+  \fi
+  \BibleStartTable
+}
+\endgroup

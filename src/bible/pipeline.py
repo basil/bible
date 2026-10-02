@@ -466,7 +466,6 @@ def authored(
             ctx.books,
             theirs,
             policy=policy,
-            psalms=sources.authored["content/numbering-psalms.sfm"],
         )
     return docs
 

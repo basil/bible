@@ -68,8 +68,8 @@
       "kjv": "BEL"
     },
     {
-      "edition": "ESG",
-      "title": "Esther, the verses with letters",
+      "edition": "ESG 1:1; ESG 5:1; ESG 5:1c; ESG 5:2",
+      "title": "Esther, the additions",
       "kjv": "ESG"
     },
     {
@@ -97,9 +97,34 @@
         "edition": "GEN 31:47-48",
         "kjv": "GEN 31:47-48",
         "why": "The King James Bible keeps the names of the heap in Aramaic and Hebrew, which Brenton translates, so the verses share few words."
+      },
+      {
+        "edition": "GEN 35:16",
+        "kjv": "GEN 35:16; GEN 35:21",
+        "why": "The Greek tells of the tent pitched beyond the tower of Gader at the head of this verse, before Rachel's travail; the Hebrew tells it after her burial."
       }
     ],
     "EXO": [
+      {
+        "edition": "EXO 36:8; EXO 39:13",
+        "kjv": "EXO 39:1",
+        "why": "Both tell what the Hebrew tells in one verse: the garments of ministry made of the blue, purple and scarlet, and Aaron's holy garments made as the Lord commanded Moses."
+      },
+      {
+        "edition": "EXO 38:4",
+        "kjv": "EXO 37:5",
+        "why": "The Greek gives a shorter account of the furniture, in another order; this is its verse for the Hebrew's."
+      },
+      {
+        "edition": "EXO 38:11",
+        "kjv": "EXO 37:4; EXO 37:15",
+        "why": "The Greek tells of the staves of the ark and of the table in one verse; the Hebrew tells of each with its own furniture."
+      },
+      {
+        "edition": "EXO 38:17",
+        "kjv": "EXO 37:23",
+        "why": "The Greek gives a shorter account of the furniture, in another order; this is its verse for the Hebrew's."
+      },
       {
         "edition": "EXO 38:27",
         "kjv": "EXO 40:30-32",
@@ -114,6 +139,11 @@
         "edition": "EXO 39:6",
         "kjv": "EXO 38:28",
         "why": "Brenton divides the hundred talents of the chapiters in two."
+      },
+      {
+        "edition": "EXO 39:19",
+        "kjv": "EXO 39:41",
+        "why": "The garments of Aaron and of his sons, in the list of what was brought to Moses, which the Greek orders otherwise."
       }
     ],
     "LEV": [
@@ -143,13 +173,38 @@
         "edition": "NUM 21:19",
         "kjv": "NUM 21:19-20",
         "why": "Brenton ends the stages of the journey in one verse."
+      },
+      {
+        "edition": "NUM 27:3",
+        "kjv": "NUM 27:3-4",
+        "why": "Brenton joins the daughters' plea for an inheritance to the verse before."
       }
     ],
     "1KI": [
       {
-        "edition": "1KI 2:46l",
-        "kjv": null,
-        "why": "The Greek's own summary of Solomon's reign, which shares only his name with the verse the words give it."
+        "edition": "1KI 2:35g",
+        "kjv": "1KI 9:25",
+        "why": "The Greek tells this of Solomon in a lettered verse, and lacks it where the Hebrew has it."
+      },
+      {
+        "edition": "1KI 2:46a",
+        "kjv": "1KI 4:20",
+        "why": "The Greek tells this of Solomon in a lettered verse, and lacks it where the Hebrew has it."
+      },
+      {
+        "edition": "1KI 2:46b",
+        "kjv": "1KI 4:21",
+        "why": "The Greek tells this of Solomon in a lettered verse, and lacks it where the Hebrew has it."
+      },
+      {
+        "edition": "1KI 2:46g",
+        "kjv": "1KI 4:25",
+        "why": "The Greek tells this of Solomon in a lettered verse, and lacks it where the Hebrew has it."
+      },
+      {
+        "edition": "1KI 2:46i",
+        "kjv": "1KI 4:26",
+        "why": "The Greek tells this of Solomon in a lettered verse, and lacks it where the Hebrew has it."
       },
       {
         "edition": "1KI 4:17-18",
@@ -167,19 +222,44 @@
         "why": "The officers' provision for Solomon, and the barley and straw, which the Greek sets before his daily supplies."
       },
       {
+        "edition": "1KI 5:14a",
+        "kjv": "1KI 3:1",
+        "why": "The Greek tells this of Solomon in a lettered verse, and lacks it where the Hebrew has it."
+      },
+      {
+        "edition": "1KI 5:14b",
+        "kjv": "1KI 9:16",
+        "why": "The Greek tells this of Solomon in a lettered verse, and lacks it where the Hebrew has it."
+      },
+      {
+        "edition": "1KI 6:1a",
+        "kjv": "1KI 5:17",
+        "why": "The Greek tells this of Solomon in a lettered verse, and lacks it where the Hebrew has it."
+      },
+      {
         "edition": "1KI 7:38; 1KI 7:50",
         "kjv": "1KI 7:1",
         "why": "The Greek tells of Solomon's own house after the temple's furniture, and ends the account with the words that the Hebrew joins to its beginning."
       },
       {
+        "edition": "1KI 10:22a; 1KI 10:22b; 1KI 10:22c",
+        "kjv": "1KI 9:15; 1KI 9:17-22",
+        "why": "The Greek tells this of Solomon in lettered verses, and lacks it where the Hebrew has it: the levy and what it built, the nations put to tribute, and the children of Israel spared.",
+        "pairs": {
+          "1KI 10:22a": "1KI 9:15; 1KI 9:17-19",
+          "1KI 10:22b": "1KI 9:20-21",
+          "1KI 10:22c": "1KI 9:22"
+        }
+      },
+      {
+        "edition": "1KI 11:1",
+        "kjv": "1KI 11:1; 1KI 11:3",
+        "why": "The Greek sets Solomon's seven hundred wives and three hundred concubines at the head of the chapter."
+      },
+      {
         "edition": "1KI 15:7",
         "kjv": "1KI 15:7",
         "why": "The Greek lacks the war of the verse before, whose words the end of this verse shares."
-      },
-      {
-        "edition": "1KI 16:28d; 1KI 16:28e; 1KI 16:28f; 1KI 16:28g",
-        "kjv": "1KI 22:46-49",
-        "why": "The Greek tells Josaphat's reign at 16:28a-h as well as here, and leaves these verses of it out of chapter 22."
       },
       {
         "edition": "1KI 22:45-46",
@@ -199,13 +279,6 @@
         "why": "The King James Bible joins the Gederathite and his companions to the verse before."
       }
     ],
-    "2CH": [
-      {
-        "edition": "2CH 3:11",
-        "kjv": "2CH 3:11",
-        "why": "The first cherub’s two wings belong to verse 11; the Alexandrine appendix supplies the other cherub’s wings separately at verse 12."
-      }
-    ],
     "NEH": [
       {
         "edition": "NEH 7:67",
@@ -216,6 +289,13 @@
         "edition": "NEH 12:28-29",
         "kjv": "NEH 12:28-29",
         "why": "The singers' villages stand in the second verse of both."
+      }
+    ],
+    "ESG": [
+      {
+        "edition": "ESG 4:17k; ESG 4:17l",
+        "kjv": null,
+        "why": "Esther's prayer, of the additions. The words set it beside Esther 5:1-2 only because the Greek lacks those verses, and gives their matter in the addition that follows."
       }
     ],
     "PSA": [
@@ -237,13 +317,8 @@
     ],
     "JOB": [
       {
-        "edition": "JOB 23:15",
+        "edition": "JOB 23:15; JOB 23:15a",
         "kjv": "JOB 23:15",
-        "why": "Brenton gives the verse in two renderings, of which the lettered one is the second; the Greek lacks the verse before."
-      },
-      {
-        "edition": "JOB 23:15a",
-        "kjv": null,
         "why": "Brenton gives the verse in two renderings, of which the lettered one is the second; the Greek lacks the verse before."
       }
     ],
@@ -261,7 +336,7 @@
       {
         "edition": "PRO 7:8-9",
         "kjv": "PRO 7:9",
-        "why": "The Greek makes the woman look out, and joins the youth she sees to the same verse."
+        "why": "Brenton divides the verse in two."
       },
       {
         "edition": "PRO 8:28-29",
@@ -275,7 +350,52 @@
       {
         "edition": "PRO 8:32",
         "kjv": "PRO 8:32-33",
-        "why": "The Alexandrine addition in Brenton’s verse 32 includes the blessing of those who keep wisdom’s ways and the instruction to hear wisdom, which the King James Bible numbers as verses 32 and 33."
+        "why": "The Alexandrine addition in Brenton’s verse 32 includes the blessing of those who keep wisdom’s ways and the instruction to hear wisdom, which the King James Bible numbers as verses 32 and 33. It also holds the blessing that opens King James verse 34."
+      },
+      {
+        "edition": "PRO 15:27a",
+        "kjv": "PRO 16:6",
+        "why": "The Greek sets these sayings of the Hebrew's chapter 16 at the end of chapter 15, in lettered verses."
+      },
+      {
+        "edition": "PRO 15:28a",
+        "kjv": "PRO 16:7",
+        "why": "The Greek sets these sayings of the Hebrew's chapter 16 at the end of chapter 15, in lettered verses."
+      },
+      {
+        "edition": "PRO 15:29a",
+        "kjv": "PRO 16:8",
+        "why": "The Greek sets these sayings of the Hebrew's chapter 16 at the end of chapter 15, in lettered verses."
+      },
+      {
+        "edition": "PRO 15:29b",
+        "kjv": "PRO 16:9",
+        "why": "The Greek sets these sayings of the Hebrew's chapter 16 at the end of chapter 15, in lettered verses."
+      },
+      {
+        "edition": "PRO 16:7-8",
+        "kjv": null,
+        "why": "Sayings of the Greek alone. They stand at the numbers of two sayings of the Hebrew that the Greek gives at 15:28a and 15:29a."
+      },
+      {
+        "edition": "PRO 16:9",
+        "kjv": "PRO 16:4",
+        "why": "The saying of the wicked kept for the day of evil, which the Greek sets here."
+      },
+      {
+        "edition": "PRO 20:9c",
+        "kjv": "PRO 20:22",
+        "why": "The Greek sets the Hebrew's 20:20-22 after verse 9, in lettered verses; this is the third."
+      },
+      {
+        "edition": "PRO 24:22f; PRO 30:1",
+        "kjv": "PRO 30:1",
+        "why": "The Greek sets the Hebrew's 30:1-14 here, in lettered verses: this verse ends with the words of the man, which open that chapter. The edition's own 30:1 is empty, and only points here."
+      },
+      {
+        "edition": "PRO 24:22g",
+        "kjv": "PRO 30:2",
+        "why": "The second verse of the Hebrew's chapter 30, which the Greek sets here."
       }
     ],
     "OBA": [
@@ -287,7 +407,14 @@
       {
         "edition": "OBA 1:3",
         "kjv": "OBA 1:2-3",
-        "why": "Brenton divides the call to war from the vision."
+        "why": "Brenton joins the Hebrew's second and third verses."
+      }
+    ],
+    "ISA": [
+      {
+        "edition": "ISA 63:19",
+        "kjv": "ISA 63:19; ISA 64:1",
+        "why": "Brenton ends chapter 63 with the opening of the heaven, as the Hebrew does; the King James Bible begins chapter 64 with it."
       }
     ],
     "JER": [
@@ -309,7 +436,7 @@
       {
         "edition": "JER 30:29-33",
         "kjv": "JER 49:23-27",
-        "why": "Concerning Damascus."
+        "why": "The prophecy concerning Damascus, verse for verse, which the Greek sets after the prophecy against Kedar."
       },
       {
         "edition": "JER 38:35",
@@ -322,6 +449,11 @@
         "edition": "EZK 1:13",
         "kjv": "EZK 1:13",
         "why": "The Greek lacks the verse after, which is worded like this one."
+      },
+      {
+        "edition": "EZK 32:21",
+        "kjv": "EZK 32:19; EZK 32:21",
+        "why": "The Greek sets the taunt of the Hebrew's verse 19, and its going down to lie with the uncircumcised, within this verse."
       },
       {
         "edition": "EZK 40:29",
