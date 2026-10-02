@@ -153,7 +153,8 @@
 \CheckHang{Oldstyle}{\OldstyleFont}{1}
 \CheckHang{Oldstyle}{\OldstyleFont}{4}
 \CheckHang{Oldstyle}{\OldstyleFont}{7}
-% The three figures are the only glyphs coded beyond the character map's.
+% The three oldstyle figures and their new Math copies share measurements;
+% the adapter codes all six in addition to the character map's glyphs.
 \CountCoded{\PlainFont}
 \TYPE{OLEBFont lining: \the\coded\space glyphs coded}
 \CountCoded{\OldstyleFont}

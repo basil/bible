@@ -1,7 +1,10 @@
-OLEBFont: Utopia with Erewhon additions for the Orthodox Liturgical English Bible.
+OLEBFont: Utopia with normalized Erewhon and Erewhon Math additions for the Orthodox Liturgical English Bible.
 
 Utopia outlines, spacing, hinting and original OpenType typography are retained.
 Erewhon supplies missing characters, alternate figures and small capitals.
+Erewhon Math supplies glyphs absent from both text sources. Donor geometry,
+spacing, positioning and hint dimensions are enlarged by 100/94 to restore
+Utopia size. Donor local subroutines are expanded before scaling; hints remain.
 The sole replacement of existing Utopia glyphs is superscript 1, 2 and 3,
 which use Erewhon designs for consistency. No outlines are optically redesigned. Erewhon Italic’s tabular oldstyle zero
 advance is corrected from 498 to 500 units to match the other nine figures. The four faces are assembled
@@ -13,7 +16,7 @@ See Adobe-Utopia-COPYING.txt and Adobe-TUG-Utopia-LICENSE.txt for Adobe's
 original grant and the subsequent Adobe/TUG grant permitting modifications
 and redistribution under a new font name.
 
-Erewhon contributions are licensed under the SIL Open Font License 1.1.
+Erewhon and Erewhon Math contributions are licensed under the SIL Open Font License 1.1.
 See OFL.txt for the full license, copyright notices and Reserved Font Names
 Heuristica and Erewhon. OLEBFont is distributed under the SIL OFL 1.1 with
 the Adobe notices retained. This font license does not govern the Bible text.
@@ -21,3 +24,8 @@ the Adobe notices retained. This font license does not govern the Bible text.
 Donor provenance: Erewhon by Michael J. Sharpe, based on Heuristica by
 Andrey V. Panov and Utopia by Adobe; Vntopia by Han The Thanh; Greek additions
 by GUTenberg. The original notices remain embedded in each generated face.
+
+Erewhon Math: Copyright (c) 2019–2026 Michel Bovani and Daniel Flipo;
+Fourier-GUTenberg-derived symbols and Erewhon-derived letters and digits.
+See Erewhon-Math-README.md for the source attribution and license declaration.
+All original font copyright and license strings are embedded in the faces.

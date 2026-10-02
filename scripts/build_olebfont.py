@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
-"""Assemble OLEBFont without redrawing or unhinting either pinned source.
+"""Assemble OLEBFont with Utopia-sized, hinted Erewhon and Math additions.
 
-Only local subroutines occur in these sources. Separate CID font dictionaries
-keep their indices, width defaults, blue zones and stem hints intact. Refuse
-new source formats rather than silently flattening their hint dependencies.
+Utopia programs and subroutines remain intact. Donor subroutines are expanded
+before scaling coordinates, width operands and hint dictionaries by 100/94.
+Separate CID font dictionaries retain each source's hint environment.
 """
 
 from argparse import ArgumentParser
 from copy import deepcopy
+import csv
 from pathlib import Path
 import math
 import shutil
+import unicodedata
 import zipfile
 
 from fontTools.cffLib import CharStrings, FDArrayIndex, FDSelect, FontDict
@@ -18,8 +20,9 @@ from fontTools.feaLib.builder import addOpenTypeFeaturesFromString
 from fontTools.otlLib.builder import buildPairPosGlyphs
 from fontTools.pens.boundsPen import BoundsPen
 from fontTools.pens.recordingPen import RecordingPen
-from fontTools.misc.psCharStrings import T2CharString
 from fontTools.ttLib import TTFont
+from fontTools.ttLib.tables._c_m_a_p import CmapSubtable
+from font_sources import normalized_donor, math_donors
 from fontTools.ttLib.reorderGlyphs import reorderGlyphs
 
 FAMILY = "OLEBFont"
@@ -296,9 +299,9 @@ def font_file(style):
     return f"{FAMILY}-{style}.otf"
 
 
-def assemble(utopia_path, donor_path, output, style):
+def assemble(utopia_path, donor_path, output, style, math_archive):
     base = TTFont(utopia_path, recalcTimestamp=False)
-    donor = TTFont(donor_path, recalcTimestamp=False)
+    donor = normalized_donor(TTFont(donor_path, recalcTimestamp=False), style)
     assert base["head"].unitsPerEm == donor["head"].unitsPerEm == 1000
     original = set(base.getGlyphOrder())
     cmap = base.getBestCmap().copy()
@@ -314,23 +317,7 @@ def assemble(utopia_path, donor_path, output, style):
     base["hmtx"].metrics.update(
         {g: donor["hmtx"].metrics[d] for g, d in replacements.items()}
     )
-    # Erewhon Italic's tabular oldstyle zero is 498 units while its other
-    # nine tabular figures are 500. Correct only its width operand/advance;
-    # outlines, bearings, hints and subroutine references stay untouched.
-    if style == "Italic":
-        assert donor["hmtx"]["zero.taboldstyle"][0] == 498
-        assert {donor["hmtx"][d + ".taboldstyle"][0] for d in DIGITS[1:]} == {500}
-        base["hmtx"].metrics[names["zero.taboldstyle"]] = (
-            500,
-            donor["hmtx"]["zero.taboldstyle"][1],
-        )
     cmap.update({code: names[g] for code, g in donor_cmap.items() if code not in cmap})
-    for table in base["cmap"].tables:
-        assert table.isUnicode() or table.platformID == 1
-        # Unicode subtables are authoritative; retain the original legacy cmap.
-        if table.isUnicode():
-            assert max(cmap) <= 65535
-            table.cmap = cmap.copy()
     substitutions(base, donor, names)
     append_layout(
         base["GPOS"].table, donor_positioning(donor, names, original, inventory)
@@ -360,39 +347,99 @@ def assemble(utopia_path, donor_path, output, style):
         gd.LigCaretList.LigGlyph.extend(c for _, c in extra)
         gd.LigCaretList.LigGlyphCount = len(gd.LigCaretList.LigGlyph)
 
+    sources = [base["CFF "].cff[0], donor["CFF "].cff[0]]
+    donor_source = {names[g]: (1, g) for g in added}
+    donor_source.update({g: (1, d) for g, d in replacements.items()})
+    math_added = 0
+    math_names = {}
+    # Normalization copies each face; the originals keep their names and notices.
+    raw_maths = math_donors(math_archive, style)
+    for index, raw_math in enumerate(raw_maths, 2):
+        extra = normalized_donor(raw_math)
+        old = set(inventory)
+        mapping = {g: f"math{index}.{g}" for g in extra.getGlyphOrder()}
+        mapping[".notdef"] = ".notdef"
+        for g in mapping:
+            if g in math_names:
+                mapping[g] = math_names[g]
+        for code, g in extra.getBestCmap().items():
+            # Private-use numbers have font-local meanings. Erewhon's PUA
+            # small caps must not replace unrelated Math construction pieces.
+            if code in cmap and unicodedata.category(chr(code)) != "Co":
+                mapping[g] = cmap[code]
+        math_names.update(
+            {g: target for g, target in mapping.items() if g not in math_names}
+        )
+        new = [g for g in extra.getGlyphOrder() if mapping[g] not in old]
+        inventory.extend(mapping[g] for g in new)
+        base.setGlyphOrder(inventory)
+        base["hmtx"].metrics.update({mapping[g]: extra["hmtx"][g] for g in new})
+        cmap.update(
+            {c: mapping[g] for c, g in extra.getBestCmap().items() if c not in cmap}
+        )
+        donor_source.update({mapping[g]: (index, g) for g in new})
+        sources.append(extra["CFF "].cff[0])
+        math_added += len(new)
+        # Only added inputs acquire math alternates; existing text features win.
+        layout = rename(deepcopy(extra["GSUB"].table), mapping)
+        for lookup in layout.LookupList.Lookup:
+            for st in lookup.SubTable:
+                if lookup.LookupType == 1:
+                    st.mapping = {a: b for a, b in st.mapping.items() if a not in old}
+                else:
+                    assert lookup.LookupType == 3
+                    st.alternates = {
+                        a: b for a, b in st.alternates.items() if a not in old
+                    }
+        append_layout(base["GSUB"].table, layout)
+        append_layout(
+            base["GPOS"].table, donor_positioning(extra, mapping, old, inventory)
+        )
+        classes = extra["GDEF"].table.GlyphClassDef
+        if classes is not None:
+            gd.GlyphClassDef.classDefs.update(
+                {
+                    mapping[g]: v
+                    for g, v in classes.classDefs.items()
+                    if mapping[g] not in old
+                }
+            )
+    # Format 4 cannot encode the supplementary mathematical alphabets. Keep
+    # the legacy map and write complete Unicode maps for both BMP and UCS-4.
+    for table in base["cmap"].tables:
+        if table.isUnicode():
+            table.cmap = {c: g for c, g in cmap.items() if c <= 0xFFFF}
+    if max(cmap) > 0xFFFF:
+        for platform, encoding in ((0, 4), (3, 10)):
+            table = CmapSubtable.newSubtable(12)
+            table.platformID, table.platEncID, table.language = platform, encoding, 0
+            table.cmap = cmap.copy()
+            base["cmap"].tables.append(table)
+
     cff = base["CFF "].cff
-    top, dt = cff[0], donor["CFF "].cff[0]
-    assert not len(top.GlobalSubrs) and not len(dt.GlobalSubrs)
+    top = cff[0]
+    assert all(not len(source.GlobalSubrs) for source in sources)
     fdarray = FDArrayIndex()
     fdarray.strings = cff.strings
     fdarray.GlobalSubrs = cff.GlobalSubrs
-    for i, source in enumerate((top, dt)):
+    for i, source in enumerate(sources):
         fd = FontDict(strings=cff.strings, GlobalSubrs=cff.GlobalSubrs)
         fd.Private = source.Private
         fd.FontName = f"{FAMILY}-{style}-FD{i}"
         fdarray.append(fd)
     select = FDSelect(format=3)
-    # Donor glyphs, by the name each takes here; all others stay Utopia's.
-    donor_source = {names[g]: g for g in added} | replacements
-    select.gidArray = [int(g in donor_source) for g in inventory]
+    select.gidArray = [donor_source.get(g, (0, g))[0] for g in inventory]
     chars = CharStrings(None, inventory, cff.GlobalSubrs, None, select, fdarray)
     bounds = BoundsPen(None)
     for g, fd_index in zip(inventory, select.gidArray):
-        source_g = donor_source.get(g, g)
-        cs = (top, dt)[fd_index].CharStrings[source_g]
+        _, source_g = donor_source.get(g, (0, g))
+        cs = sources[fd_index].CharStrings[source_g]
         # seac composites cannot be represented in a CID charset. These pinned
         # fonts express their components through preserved local subroutines.
         pen = RecordingPen()
         cs.draw(pen)
         assert not any(op == "addComponent" for op, _ in pen.value), (style, g)
         pen.replay(bounds)
-        if style == "Italic" and source_g == "zero.taboldstyle":
-            assert cs.program[:6] == [17, -11, 33, 432, 33, "hstem"]
-            cs = T2CharString(
-                program=[19, *cs.program[1:]],
-                private=dt.Private,
-                globalSubrs=cff.GlobalSubrs,
-            )
         cs.fdSelectIndex = fd_index
         chars[g] = cs
     top.CharStrings = chars
@@ -415,21 +462,26 @@ def assemble(utopia_path, donor_path, output, style):
     base["hmtx"].metrics = {cid[g]: v for g, v in base["hmtx"].metrics.items()}
     base.setGlyphOrder(top.charset)
     base["post"].formatType = 3.0
-    # Utopia's typographic ascent, descent, line gap and hhea stay authoritative.
-    # Only clipping bounds grow to encompass additions.
+    # Utopia's vertical metrics stay authoritative, win metrics included: Math's
+    # extensible delimiters would otherwise set the line height. Only the
+    # bounding box grows to encompass additions.
     xmin, ymin, xmax, ymax = bounds.bounds
-    bbox = [math.floor(xmin), math.floor(ymin), math.ceil(xmax), math.ceil(ymax)]
-    top.FontBBox = bbox
-    base["OS/2"].usWinAscent = max(base["OS/2"].usWinAscent, bbox[3])
-    base["OS/2"].usWinDescent = max(base["OS/2"].usWinDescent, -bbox[1])
-    base["OS/2"].usFirstCharIndex, base["OS/2"].usLastCharIndex = min(cmap), max(cmap)
+    top.FontBBox = [
+        math.floor(xmin),
+        math.floor(ymin),
+        math.ceil(xmax),
+        math.ceil(ymax),
+    ]
+    base["OS/2"].usFirstCharIndex, base["OS/2"].usLastCharIndex = min(cmap), min(
+        max(cmap), 65535
+    )
     base["OS/2"].recalcUnicodeRanges(base)
     base["OS/2"].recalcCodePageRanges(base)
     # Preserve legal notices while removing source family identification.
     legal = "\n\n".join(
         dict.fromkeys(
             n.toUnicode()
-            for f in (base, donor)
+            for f in (base, donor, *raw_maths)
             for n in f["name"].names
             if n.nameID in (0, 7, 13)
         )
@@ -447,7 +499,7 @@ def assemble(utopia_path, donor_path, output, style):
         7: legal,
         8: "Adobe Systems Incorporated; Michael Sharpe; OLEB",
         9: "Adobe Systems Incorporated; Michael Sharpe and Erewhon contributors",
-        10: "Utopia with Erewhon additions; assembled for the Orthodox Liturgical English Bible.",
+        10: "Utopia with normalized Erewhon and Erewhon Math additions; assembled for the Orthodox Liturgical English Bible.",
         13: legal,
         14: "https://tug.org/fonts/utopia/",
         16: FAMILY,
@@ -465,19 +517,55 @@ def assemble(utopia_path, donor_path, output, style):
         del base["FFTM"]
     reorderGlyphs(base, base.getGlyphOrder())
     base.save(output)
+    # Preserve readable names and provenance beside the CID font.
+    codes = {}
+    for code, name in cmap.items():
+        codes.setdefault(name, []).append(f"U+{code:04X}")
+    labels = [f"Utopia-{style}", f"Erewhon-{style}"]
+    labels.extend(f["name"].getDebugName(6) for f in raw_maths)
+    with Path(output).with_suffix(".glyphs.csv").open("w", newline="") as stream:
+        writer = csv.writer(stream, lineterminator="\n")
+        writer.writerow(
+            (
+                "GID",
+                "Glyph",
+                "Unicode",
+                "SourceFont",
+                "SourceGlyph",
+                "SizeType",
+                "ScaleToUtopia",
+                "Advance",
+                "LSB",
+            )
+        )
+        for i, name in enumerate(inventory):
+            index, source_g = donor_source.get(name, (0, name))
+            writer.writerow(
+                (
+                    i,
+                    cid[name],
+                    " ".join(codes.get(name, [])),
+                    labels[index],
+                    source_g,
+                    "Utopia" if index == 0 else "UtopiaStd",
+                    "1" if index == 0 else "100/94",
+                    *base["hmtx"][cid[name]],
+                )
+            )
     # Force full decompilation: catch dangling glyph or hint references now.
     check = TTFont(output, recalcTimestamp=False)
     for tag in check.keys():
         check[tag]
     for g in check.getGlyphSet().values():
         g.draw(RecordingPen())
-    return len(original), len(added)
+    return len(original), len(added) + math_added
 
 
 def main():
     parser = ArgumentParser(description=__doc__)
     parser.add_argument("--utopia", type=Path, required=True)
     parser.add_argument("--erewhon", type=Path, required=True)
+    parser.add_argument("--erewhon-math", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
@@ -486,12 +574,20 @@ def main():
             target = args.output / font_file(style)
             with archive.open(EREWHON_MEMBER.format(style)) as source:
                 original, added = assemble(
-                    args.utopia / "dist" / f"Utopia-{style}.otf", source, target, style
+                    args.utopia / "dist" / f"Utopia-{style}.otf",
+                    source,
+                    target,
+                    style,
+                    args.erewhon_math,
                 )
             print(
-                f"{target.name}: {original} Utopia slots (three superscripts replaced), {added} Erewhon additions"
+                f"{target.name}: {original} Utopia slots (three superscripts replaced), {added} normalized Erewhon / Math additions"
             )
         (args.output / "OFL.txt").write_bytes(archive.read("erewhon/doc/OFL.txt"))
+    with zipfile.ZipFile(args.erewhon_math) as archive:
+        (args.output / "Erewhon-Math-README.md").write_bytes(
+            archive.read("erewhon-math/README.md")
+        )
     shutil.copyfile(args.utopia / "COPYING", args.output / "Adobe-Utopia-COPYING.txt")
     for name in ("OLEBFont-NOTICE.txt", "Adobe-TUG-Utopia-LICENSE.txt"):
         shutil.copyfile(Path(__file__).with_name(name), args.output / name)

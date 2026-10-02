@@ -33,7 +33,7 @@ COPY <<EOF /etc/fonts/conf.d/99-accept-local-fonts.conf
 </fontconfig>
 EOF
 # The font archives are committed as downloaded; sources/README.md says
-# where each came from. .dockerignore admits only these three.
+# where each came from. .dockerignore admits only the font archives.
 COPY sources/*.zip /opt/sources/
 RUN <<EOF
 set -eu
@@ -43,6 +43,7 @@ sha256sum --strict -c <<SUMS
 866855b0296579451c233fc78bec82918996a8df7341ee2f1c09d7bc94440680  GFS_Didot.zip
 754a2e3ebb945ae905d720ac5896b3b34acc9546dd6551ef9536869788629dae  OTF-source-code-pro-2.042R-u_1.062R-i.zip
 865ed6e5b4aeda1b5a350a2dc5d4b239f515059812366acc6dcd04c80fd9d942  erewhon.zip
+afd722e515f0c94e08902c8960f8799736657d98348cb00068d827e71bbbb706  erewhon-math.zip
 SUMS
 fonts=/usr/local/share/fonts
 unzip -qj GFS_Didot.zip 'GFSDidot*.otf' -d $fonts/gfs_didot
@@ -109,9 +110,10 @@ RUN /opt/venv/bin/python /opt/scripts/patch_margin_convergence.py \
     && /opt/venv/bin/python -c 'import ptxprint; from pathlib import Path; import sys; sys.path.insert(0, "/opt/scripts"); from patch_margin_convergence import patch; patch(Path(ptxprint.__file__).parent)'
 RUN <<EOF
 set -eu
-# Assemble the sole Latin text family with separate source hint dictionaries.
+# Assemble the normalized text family with separate source hint dictionaries.
 /opt/venv/bin/python /opt/scripts/build_olebfont.py \
     --utopia /opt/utopia --erewhon /opt/sources/erewhon.zip \
+    --erewhon-math /opt/sources/erewhon-math.zip \
     --output /usr/local/share/fonts/olebfont
 chmod 644 /usr/local/share/fonts/olebfont/*
 fc-cache -f

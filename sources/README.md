@@ -42,14 +42,19 @@ George modernized much of the spelling and sometimes had to judge which words a 
 
 ## Fonts
 
-All three are under the SIL Open Font License. Source Code Pro and Erewhon were retrieved on 2026-09-25.
+The fonts below are under the SIL Open Font License. Source Code Pro and Erewhon were retrieved on 2026-09-25.
 
 | File                                        | Downloaded from                                                                                                                                 | Version                     | Used for                                                |
 | ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- | ------------------------------------------------------- |
 | `GFS_Didot.zip`                             | [Greek Font Society](https://greekfontsociety-gfs.gr/_assets/fonts/GFS_Didot.zip)                                                               |                             | Greek                                                   |
-| `erewhon.zip`                               | [CTAN](https://mirrors.ctan.org/fonts/erewhon.zip)                                                                                              | 1.123 (2025-06-08)          | OLEBFont additions                                           |
+| `erewhon.zip`                               | [CTAN](https://mirrors.ctan.org/fonts/erewhon.zip)                                                                                              | 1.123 (2025-06-08)          | OLEBFont text additions                                 |
+| `erewhon-math.zip`                          | [CTAN](https://mirrors.ctan.org/fonts/erewhon-math.zip)                                                                                         | 0.75 (2026-08-27)           | OLEBFont additional symbols and mathematical alphabets  |
 | `OTF-source-code-pro-2.042R-u_1.062R-i.zip` | [Adobe](https://github.com/adobe-fonts/source-code-pro/releases/download/2.042R-u/1.062R-i/1.026R-vf/OTF-source-code-pro-2.042R-u_1.062R-i.zip) | 2.042 upright, 1.062 italic | Nothing printed; PTXprint loads it for crop-mark labels |
 
-The main text family, OLEBFont, is assembled by `scripts/build_olebfont.py` from Utopia (the repository pinned in `Dockerfile`) and the matching four Erewhon OpenType faces in the archive above. Existing Utopia glyphs, spacing, ligatures, kerning and hinting remain authoritative except that superscript 1, 2 and 3 are replaced with Erewhon’s designs for a consistent figure set; Erewhon supplies missing glyphs and alternate forms. Erewhon is a build input rather than an installed typesetting family. The Hebrew font, Ezra SIL, comes from Ubuntu.
+The main text family, OLEBFont, is assembled by `scripts/build_olebfont.py` from Utopia (the repository pinned in `Dockerfile`), the matching four Erewhon text faces, and Erewhon Math. See [font normalization](../docs/font-normalization.md) for donor selection and scaling.
 
-The generated family includes Erewhon’s `OFL.txt`, Utopia’s original Adobe `COPYING`, the [Adobe/TUG sublicensing notice](https://tug.org/fonts/utopia/LICENSE-utopia.txt) (retrieved 2026-09-30, committed in `scripts/Adobe-TUG-Utopia-LICENSE.txt`), and `OLEBFont-NOTICE.txt`. All copyright, donor attribution and reserved-name declarations are retained. The renamed family is distributed under OFL 1.1 with the Adobe notices; the edition’s text license is separate.
+Utopia supplies overlapping glyphs, spacing, ligatures, kerning and hinting, except that superscript 1, 2 and 3 use Erewhon’s designs for a consistent figure set. Erewhon supplies missing glyphs and alternate forms, followed by Erewhon Math. Both donors are enlarged by 100/94 to restore Utopia size, including their spacing, positioning and hints.
+
+Erewhon and Erewhon Math are build inputs. Production uses the combined OLEBFont family. The Hebrew font, Ezra SIL, comes from Ubuntu.
+
+The generated family includes Erewhon’s `OFL.txt`, Utopia’s original Adobe `COPYING`, the [Adobe/TUG sublicensing notice](https://tug.org/fonts/utopia/LICENSE-utopia.txt) (retrieved 2026-09-30, committed in `scripts/Adobe-TUG-Utopia-LICENSE.txt`), Erewhon Math’s `README.md`, and `OLEBFont-NOTICE.txt`. All copyright, donor attribution and reserved-name declarations are retained. The renamed family is distributed under OFL 1.1 with the Adobe notices; the edition’s text license is separate.
