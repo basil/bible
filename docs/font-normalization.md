@@ -50,6 +50,22 @@ included with the generated family.
 OLEBFont imports Math substitutions and pair positioning for added glyphs.
 It does not import a MATH table or replace an extensible equation font.
 
+## Numerals and word spacing
+
+PTXprint's font settings enable `onum` and `pnum` on all four faces, so chapter
+figures, headings, notes, front matter and contents use proportional oldstyle
+numbers. The stylesheet selects `sups` for verse numbers and note origins, and
+`smcp`/`c2sc` for the running heads. No digits in the content are rewritten.
+`\XeTeXgenerateactualtext=1` records the input Unicode in the PDF, so that
+these alternate glyphs can still be copied and searched.
+
+The assembler corrects the advance of Erewhon Italic's tabular oldstyle zero
+from 498 to 500 units, and makes the superscripts accept every numeral form.
+
+`config/word-spacing.tex` multiplies OLEBFont's word space, stretch and shrink
+by 6/5, which keeps Utopia's proportions: about 0.27em, 0.135em and 0.09em.
+Other families are left alone. `make test-tex` checks the resulting glue.
+
 ## Validation and inspection
 
 `tests/test_olebfont.py` checks all four serialized faces against independently

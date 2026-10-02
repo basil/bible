@@ -200,3 +200,9 @@ Check the wording and source spellings of promoted readings. The 4 Kingdoms 3:21
 ### Optional historical-label note
 
 Proverbs 15:33: the original Appendix label “16 (Alex.15) 33” remains in the source metadata. Printing a historical-label note is optional; the relocated saying is present in the body.
+
+## Other open items
+
+- The 36 notes printed as "Heb. and Alex. Vat." are ambiguous as printed. Their decisions' `witnesses` name Heb./Alex. support for the adopted wording and Vat. for the displaced wording, but the printed form is unchanged.
+- The names Lambert Bos, Charles Pridham and Abraham Trommius are written out as corrections to the source. Whether they are editorial changes instead has not been reconsidered.
+- Deuteronomy 24:13 keeps the declared `ie.` source repair before the explanatory label is rendered. The recorded normalization round trip has not been corrected.

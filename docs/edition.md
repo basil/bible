@@ -1,6 +1,6 @@
 # Editorial notes
 
-The [README](../README.md) describes what is in this Bible. This page gives the rules by which it was edited, and the reasons for them. [CONTRIBUTING.md](../CONTRIBUTING.md) explains how the build carries them out.
+The [README](../README.md) describes what is in this Bible. This page gives the rules by which it was edited, and the reasons for them. [AGENTS.md](../AGENTS.md) explains how the build carries them out, and [CONTRIBUTING.md](../CONTRIBUTING.md) how each kind of decision is reviewed.
 
 The edition is the Orthodox Liturgical English Bible, or OLEB. It is Orthodox because its Old Testament is the Septuagint, in the Church of Greece's order. It is liturgical because both translations are in the English of the King James Bible, which English translations of the Orthodox services have commonly used.
 
@@ -142,7 +142,7 @@ Every abbreviation the edition prints is in the list of abbreviations. Brenton's
 
 ## Spelling and punctuation
 
-Spelling and punctuation follow the lines of the New Cambridge Paragraph Bible, which keeps the words of its text and regularizes how they are spelt and pointed.
+The edition keeps the words of its text and regularizes how they are spelt and pointed.
 
 So far one word is revised. Brenton writes the prophet's name "Jezekiel" at Ezekiel 1:3 and 24:24, transliterating the Greek Ἰεζεκιήλ; the edition prints "Ezekiel".
 

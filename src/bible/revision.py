@@ -1,5 +1,6 @@
 """The edition's revision of the translation's spelling and punctuation
-(edition/revisions.json), along the lines of the New Cambridge Paragraph Bible.
+(edition/revisions.json): its words are kept, and how they are spelt and
+pointed is regularized.
 
 Two kinds of change are declared, each with its reason:
 

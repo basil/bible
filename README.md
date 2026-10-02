@@ -25,13 +25,14 @@ The page size is ISO B5 (176 × 250 mm). Scripture is set in one column in [Utop
 
 ## Building it yourself
 
-Everything needed to produce the PDF is stored in this repository, including the original source archives. See [CONTRIBUTING.md](CONTRIBUTING.md) for the steps.
+Everything needed to produce the PDF is stored in this repository, including the original source archives. See [AGENTS.md](AGENTS.md) for the steps.
 
 ## Further reading
 
 - [Editorial notes](docs/edition.md): why the texts were chosen, arranged, and adjusted as they were
 - [Sources](sources/README.md): where each text and font came from
-- [Contributing](CONTRIBUTING.md): building, checking, and changing the edition
+- [Working on this repository](AGENTS.md): building, checking, and changing the edition
+- [Contributing](CONTRIBUTING.md): the editorial work, the layout, the dependencies and the sources
 
 ## License
 
