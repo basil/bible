@@ -1,231 +1,155 @@
 # Editorial notes
 
-The [README](../README.md) describes what's in this Bible. This page explains why it's put together that way. The source files are never modified; every change the build makes is a decision in `edition/`, with its reason, and `make review` writes what the decisions come to.
+The [README](../README.md) describes what is in this Bible. This page gives the rules by which it was edited, and the reasons for them. [CONTRIBUTING.md](../CONTRIBUTING.md) explains how the build carries them out.
 
-## Name
+The edition is the Orthodox Liturgical English Bible, or OLEB. It is Orthodox because its Old Testament is the Septuagint, in the Church of Greece's order. It is liturgical because both translations are in the English of the King James Bible, which English translations of the Orthodox services have commonly used.
 
-The edition is the Orthodox Liturgical English Bible, or OLEB. It's Orthodox because its Old Testament is the Septuagint, in the Church of Greece's order. It's liturgical because both translations are in the English of the King James Bible, which English translations of the Orthodox services have commonly used.
+The translations are preserved with a few exceptions. In the Old Testament, some readings from Codex Alexandrinus are printed in the text, one missing verse is supplied from the King James Version, and spelling and punctuation are revised. Slips in the transcriptions are corrected. The wording of the New Testament is unchanged. Around the text, the two sources are brought into one style: book names, notes, citations and abbreviations. Whatever is doubtful stays as the source has it.
 
 ## Texts
 
 - **Old Testament:** [eBible's transcription of Brenton](https://ebible.org/eng-Brenton/), which includes eBible's corrections to the 1870 printing. It is neither a facsimile nor the separate "Updated Brenton" translation.
-- **New Testament:** [eBible's Cambridge Paragraph Bible](https://ebible.org/engkjvcpb/) (`engkjvcpb`), not its standard KJV (`eng-kjv2006`). Only the 27 books, the translators' dedication to King James, and their preface are used. The text keeps Scrivener's paragraphs and poetry layout.
-- **Marginal notes:** [Calvin George's transcription](https://en.literaturabautista.com/exhaustive-listing-marginal-notes-1611-edition-king-james-bible) of the notes in the 1611 King James Bible. Only the 775 New Testament notes are used. The Old Testament notes belong to the KJV's translation from the Hebrew, which this edition doesn't print.
+- **New Testament:** [eBible's Cambridge Paragraph Bible](https://ebible.org/engkjvcpb/), not its standard KJV. Only the 27 books, the translators' dedication to King James, and their preface are used. The text keeps Scrivener's paragraphs and poetry layout.
+- **Marginal notes:** [Calvin George's transcription](https://en.literaturabautista.com/exhaustive-listing-marginal-notes-1611-edition-king-james-bible) of the notes in the 1611 King James Bible. Only the New Testament notes are used. The Old Testament notes belong to the KJV's translation from the Hebrew, which this edition does not print.
 
-[sources/README.md](../sources/README.md) has the retrieval dates and original copyright notices. Both source translations are in the public domain outside the United Kingdom. Brenton's is also in the public domain in the UK, where the right to print and publish the King James Version belongs to the Crown and is licensed only to certain publishers. Basil Crow’s original editorial material and the assembled edition, to the extent copyright protects them, are licensed under [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/). The build scripts and configuration are [MIT licensed](../LICENSE).
-
-## Readings from Codex Alexandrinus
-
-Brenton translated chiefly the Vatican Text and supplied English readings of Codex Alexandrinus in his notes and Appendix. This edition selectively prints those words from Codex Alexandrinus where the recorded Swete evidence supports both the reading and its placement, and Brenton supplies usable English. An `agrees: true` record alone does not settle English grammar, manuscript hands, or insertion position. Clear corrected and marginal readings may be printed; this is not a reconstruction of original-hand Alexandrinus. Nine further exact Brenton alternatives are retained as compatible readings where Swete records no contrary A reading, without claiming an established A/B contrast. Apparent scribal errors may remain in the notes: Genesis 5:32 and 6:10 keep Brenton’s “Cham” in the body and Alexandrinus’s “Chaph” in his footnotes, so the name of Noe’s son stays consistent through the narrative. An unconfirmed reading remains a note, with its reason recorded in `edition/alexandrinus.json`.
-
-The displaced words become a footnote in Brenton’s note style. It identifies them as “Vat.” when that attribution is supported, and as “Brenton’s text” when his English differs from Swete’s Vatican reading or no A/B contrast is established. Those decisions are recorded in the editorial evidence. An addition is marked “Vat. omits”. Hebrew readings and glosses of displaced words remain in the new note; Greek readings already promoted into the body are not repeated. Vatican passages too long for a useful footnote may be dropped; each such decision explains why, and the review identifies every drop. The new words use Brenton’s English, including his manner of spelling numbers; any editorially supplied word is declared separately.
-
-Swete’s apparatus determines the position of an addition, whether it adds or replaces, and which of Brenton’s alternatives Alexandrinus reads. Its role has three limits. Only readings for which Brenton gives English are normally promoted; Swete’s other variants are not translated here. Placement and minimal connecting words may follow unambiguous Greek evidence, but an unresolved English reconstruction stays in a note. The English at Esaias 8:1 and 30:8, Psalm 41:9, and 4 Kingdoms 3:21 therefore remains unchanged; the doubtful Appendix English of 2 Chronicles 27:8 and the unresolved placement at 3 Kingdoms 6:11–22 remain in the Appendix. Genesis 6:2 also remains a note because its recorded reading over an erasure is uncertain. The exception is 1 Kingdoms 23:12: Brenton’s note announces the verse but supplies no English, so the Authorized Version’s 1 Samuel 23:12 is borrowed verbatim. Swete I, p. 593, confirms the same question and answer in Alexandrinus and their omission in Vaticanus. The KJV’s wording, spelling, punctuation, small-capital markup, and supplied-word markup are preserved, and a footnote identifies the English source. The build checks the inserted verse against the pinned KJV archive. Alexandrinus’s order governs the position of promoted words, while Brenton’s verse numbers remain. Swete alone never removes Vatican words that Brenton does not mark: the Appendix’s 3 Kingdoms 5:17 remains there because printing it would duplicate existing words at 6:1a–b.
-
-Numbers 28:24 retains “seven days” in the body, consistent with the surrounding seven-day instructions; its footnote gives “two days”. The additional names at 2 Kingdoms 5:16a are omitted with the empty verse label, and preserved in the footnote to 5:16.
-
-Promoted Appendix paragraphs are removed so that their English prints once. Structural pointers and passages without a separate English translation of Codex Alexandrinus remain in the Appendix. Greek-only notes, bare pointers, reports of lacunae, and readings the verse already follows remain notes. Unfinished decisions are listed in [the notes todo](notes-todo.md).
-
-Each keyed source note is stored once in full and must match the corrected text from the pinned Brenton archive exactly: `source_note` for a reading or retained note, and `source_notes`, keyed by note, for notes consumed by an Appendix passage. Those keys also declare which notes the passage consumes; its book comes from the decision key. Every replacement and non-KJV inserted verse has its own `english` derivation. `source` selects the Brenton note/Appendix (`brenton`) or the unchanged scripture span (`from`); an optional `span: [start, end]` selects a zero-based, half-open character range, otherwise the whole source is used. Ordered, non-overlapping `edits` each select a `span` within that phrase and give its replacement `to`; equal start and end declare an insertion. An edit’s optional `why` overrides the operation or decision’s reason. The build derives the final wording, source excerpts, and edited source strings from these declarations; they are not stored again as replacement `to`, verse `text`, or derivation `text` and edit `from`. An optional `note_at` gives the caller’s character offset in the derived replacement. A whole-verse omission can declare `omit_verse: true` and a `note_target` naming the preceding verse: the build removes the empty verse label, attaches the omission note to the end of that verse, and updates the printed inventory. A retained decision may supply an edited `note` while its pinned `source_note` stays unchanged. `kjv: true` borrows the decision key’s verse verbatim from the pinned Authorized Version archive, without copying its text into JSON. Spelling, punctuation, whitespace, word order, repeated words, and supplied-word markup therefore cannot change without a declared edit. Omission decisions start from the scripture span and declare the deletion; their pinned source note supplies Brenton’s instruction. The vocabulary check remains an additional guard, not the proof of provenance. Expanded derivations and final wording appear in the review of readings from Codex Alexandrinus and transformation log. The existing editorial decisions are preserved in these declarations; the checks do not independently verify their interpretation of Swete.
-
-Every decision records the Swete volume and printed page, the Greek evidence including manuscript hands, and whether it agrees with Brenton. Any qualifications are explained in the decision’s `why`. The build checks that record, coverage of the source notes and Appendix, the source words changed, the English introduced, and preservation elsewhere. `make review` writes the before and after passages with their neighbours, printed notes, and an audit table to `build/review/alexandrinus.md`.
+[sources/README.md](../sources/README.md) has the retrieval dates and original copyright notices, and the [README](../README.md#license) gives the license.
 
 ## Order and names
 
-The Old Testament follows the [Church of Greece's list of books](https://apostoliki-diakonia.gr/bible/zacharias/). The books that English Bibles set apart as the Apocrypha stay in their places: the Prayer of Manasses follows 2 Chronicles, 4 Maccabees follows 3 Maccabees, and Psalm 151 and the additions to Esther and Daniel stay where Brenton put them.
+The Old Testament follows the [Church of Greece's list of books](https://apostoliki-diakonia.gr/bible/zacharias/). The books that English Bibles set apart as the Apocrypha stay in their Greek places, so there is no separate Apocrypha section.
 
-Brenton's book names are kept, except that the Orthodox names are used for Jesus, the Son of Navi; 1–4 Kingdoms; the Song of Songs; the Lamentations of Jeremias; the Epistle of Jeremias; Ezekiel; Michaias; Abdias; and Abbacum, and the familiar English names for Hosea and Nahum. Numbered books put the number first, as in "1 Chronicles".
+Brenton's book names are kept, with two kinds of exception. The Orthodox names are used for Jesus, the Son of Navi; 1–4 Kingdoms; the Song of Songs; the Lamentations of Jeremias; the Epistle of Jeremias; Michaias; Abdias; and Abbacum. The familiar English names are used for Ezekiel, Hosea and Nahum. Numbered books put the number first, as in "1 Chronicles".
 
-`edition/manifest.json` sets the order and names. Each book, and each piece of front matter or appendix that the edition renames, can have:
+Every book has a full title in the style of the Cambridge Paragraph Bible, adapted to this edition's names and extended to the books the Cambridge Bible lacks: "The Book of Jesus, the Son of Navi", "The Third Book of Kingdoms, Otherwise Called, The First Book of the Kings". These replace Brenton's own subtitles, such as "(1 SAMUEL)". In the New Testament, "S." is written out as "Saint", and the letters of James, Peter, John, and Jude are called Catholic Epistles, as in the Greek tradition.
 
-- `title`: the full title, printed in the contents, as in "The First Book of Moses, Called Genesis". Every book has one; front matter without one keeps its source's names.
-- `short_title`: used in the running heads, as in "3 Kingdoms". Defaults to the source's.
-- `abbreviation`: printed wherever a note, the front and back matter, or a quotation link cites the book, as in "3 Kgdms. 8:53", and beside the book's title in the contents, which is the key to the abbreviations. Defaults to the source's.
-- `cited_singly`, `abbreviated_singly`: the name and the abbreviation where one chapter of the book is cited, if they differ: "Psalm" and "Ps." beside "Psalms" and "Pss.".
-- `heading`: how the full title breaks into lines at the start of the book. The lines must spell out `title` exactly. Without it, the title is printed on one line.
+Each book also has a short title for the running heads and an abbreviation for citations. The contents prints the abbreviation beside the title, and so serves as the key.
 
-## Titles and headings
+## Divisions of the text
 
-Every book gets a full title in the style of the Cambridge Paragraph Bible, adapted to this edition's names and extended to books the Cambridge Bible doesn't have: "The Book of Jesus, the Son of Navi", "The Third Book of Kingdoms, Otherwise Called, The First Book of the Kings". Where the Cambridge Bible breaks a heading over several lines, this edition does the same. These headings replace Brenton's own subtitles, such as "(1 SAMUEL)".
+The edition keeps Brenton's chapters and verses, and divides his text as the Church of Greece does in three places.
 
-Where Cambridge punctuation disagrees with the pattern, the pattern wins. For example, Sirach gets a comma after "Jesus" to match "Jesus, the Son of Navi".
-
-In the New Testament, "S." is written out as "Saint", Paul's letters are titled "of Saint Paul", and the letters of James, Peter, John, and Jude are called Catholic Epistles, as in the Greek tradition. No title or heading ends with a period.
-
-## Ezra and Nehemiah
-
-eBible's Brenton has two overlapping files: "Ezra and Nehemiah" (23 chapters) and a separate "Nehemiah" (13 chapters). The edition uses the first, printing chapters 1–10 as 2 Esdras and chapters 11–23 as Nehemias 1–13. The two files aren't identical: they differ in paragraphing, small capitals, spellings like Raphæa and Raphaea, and one verse label. The edition prints the first; the second is not printed.
-
-## Daniel
-
-Following the Church of Greece, Susanna comes before Daniel 1 and Bel and the Dragon after Daniel 12, each as a titled section. Internally they're chapters 0 and 13, but those numbers aren't printed.
-
-The Song of the Three Children gets its own heading but keeps Brenton's numbering as Daniel 3:24–90. The Church of Greece numbers it separately as verses 1–67, but Brenton merges some of those verses and lacks others, so renumbering would suggest a match that isn't there.
-
-## Malachias
-
-Brenton's Malachias 3:19–24 is printed as chapter 4, verses 1–6, which matches the [Church of Greece's text](https://apostoliki-diakonia.gr/bible/malachias/?file=42.4). Most English Bibles divide the chapter there too, but order its last three verses otherwise: Brenton has Elias before the law of Moses, so his 4:4–6 are the King James Bible's 4:5, 4:6 and 4:4. `edition/versification.json` says which verses are relabelled, with the words the first of them opens with, which the build holds the source to.
+- **Ezra and Nehemiah.** Brenton's single book of 23 chapters is printed as 2 Esdras (chapters 1–10) and Nehemias (chapters 11–23, numbered 1–13).
+- **Daniel.** Susanna comes before Daniel 1 and Bel and the Dragon after Daniel 12, each as a titled section without a chapter number. The Song of the Three Children gets its own heading but keeps Brenton's numbering as Daniel 3:24–90. The Church of Greece numbers it as verses 1–67, but Brenton merges some of those verses and lacks others, so renumbering would suggest a match that is not there.
+- **Malachias.** Brenton's 3:19–24 is printed as chapter 4, verses 1–6, which matches the [Church of Greece's text](https://apostoliki-diakonia.gr/bible/malachias/?file=42.4). Most English Bibles divide the chapter there too, but order its last three verses otherwise: Brenton has Elias before the law of Moses, so his 4:4–6 are the King James Bible's 4:5, 4:6 and 4:4.
 
 ## Front matter and appendices
 
-The build copies PTXprint’s pinned basic front matter template without editing it. The title and publication data come from `config/layout.ini`, including the edition’s copyright and license. The template puts the publication data page after the title page, followed by the contents, and resets numbering so that the editor’s introduction starts at printed page 1. The introduction is set like a book of the Bible so that it’s listed in the contents, and so is the table of chapters and verses that follows it (see [below](#the-table-of-chapters-and-verses)).
+Each translation's front matter stands before its own testament, so that the introductions sit next to the text they describe. Their wording is kept; only their citations, abbreviations and book names are brought into this edition's style.
 
-Each testament opens with the front matter of its own translation, so that the introductions sit next to the text they describe:
-
-- **Old Testament:** Brenton's preface (1844), his introduction (1870), and the introduction to the Apocrypha. His list of abbreviations follows the table of contents. The introduction to the Apocrypha isn't Brenton's: it describes the Hebrew text of Ecclesiasticus found from 1896 and says that 3 and 4 Maccabees were translated "for this edition", so it was written for a later reissue of his translation, after his death in 1862. It belongs here rather than after Revelation, because those books are part of this Old Testament. Its general paragraphs stay here, along with the paragraph about the second book of Esdras it leaves out. Its account of each book is printed as a footnote on that book (see [below](#book-introductions)), and its headings, which the books' titles replace, are dropped. None of it is omitted. Brenton's list of abbreviations gives only twelve, so `edition/abbreviations.json` adds, after his, the others that the printed notes use: in his notes, the introductions to the Apocrypha, the footnotes to his preface, the 1611 margin, and the quotation links. The Aldine Text, Complutensian Text, and Vulgate are named in full in the notes and have no row, while "Sept." is printed as "LXX". Codex Alexandrinus and the Vatican Text stay "Alex." and "Vat."; Alex. keeps Brenton’s row, and Vat. has an added row. The one note that writes the Complutensian Text "Comp.", which his list gives for "Compare", is corrected to "Complut." and so printed in full; "Compare" is printed in full. "LXX" remains in the text and is listed by an added row. The Authorized Version is printed in full, whether Brenton writes "A. V.", "Eng. Ver." or "the English Version", as in his preface, "English Bible", as in his note on Deuteronomy 1:31. Other abbreviations used only once or twice are printed in full where they stand ("seven pence halfpenny", "query", "Niphal feminine"), as the same file decides, but those that Chicago prints, "AD", "MS", "MSS", "p." and "pp.", stay and are listed. Brenton’s rows for "Ald.", "App.", "Comp." and "A. V." are dropped. The new rows are set like his and not marked; the editor's introduction says the list has been completed. Every row, his included, gives the form the edition prints (see [below](#abbreviations)).
+- **Old Testament:** Brenton's preface (1844), his introduction (1870), and the introduction to the Apocrypha.
 - **New Testament:** the translators' dedication to King James and their preface, "The Translators to the Reader".
+- **After Revelation:** Brenton's remaining notes and supplied passages.
 
-After Revelation come Brenton's remaining notes and supplied passages. Their heading is set in `edition/manifest.json`. eBible's list of corrections is omitted. Brenton's table of the chapters of Jeremias is left out: the table of chapters and verses takes its place.
+The introduction to the Apocrypha is not Brenton's. It describes the Hebrew text of Ecclesiasticus found from 1896, so it was written for a later reissue, after his death in 1862. It stands with the Old Testament rather than after Revelation, because those books are part of this Old Testament. Its general paragraphs stay at the front, and its account of each book is printed as a footnote at the start of that book. None of it is omitted.
 
-The Cambridge Paragraph Bible's 1873 title page is left out. It advertises Scrivener's introduction and appendices, which aren't in the digital text, and the editor's introduction says so. The traditional notes at the ends of the epistles, such as "Written to the Romans from Corinthus", are kept.
+In those accounts, a book's name becomes this edition's where the paragraph now points into this edition: "Joshua Ben Sira" becomes "Jesus, the Son of Sirach". Where a new name would lose the meaning, a gloss in square brackets is added instead: the second book of Esdras that is not included is that "[of the English Apocrypha]", which is not this edition's 2 Esdras. In these accounts, words in square brackets are the editor's.
+
+Three things are left out:
+
+- eBible's list of corrections.
+- Brenton's table of the chapters of Jeremias, which does not match eBible's text. The table of chapters and verses replaces it.
+- The Cambridge Paragraph Bible's 1873 title page, which advertises an introduction and appendices by Scrivener that are not in the online text.
+
+The traditional notes at the ends of the epistles, such as "Written to the Romans from Corinthus", are kept.
+
+## Readings from Codex Alexandrinus
+
+Brenton translated the Vatican text, and gave the readings of Codex Alexandrinus in English in his notes and Appendix. Such a reading is printed in the text where Swete's edition of the Septuagint supports both the reading and its place in the verse, and Brenton supplies the English. Swete records the manuscript's later corrections along with its first writing, and a corrected reading may be printed. Otherwise the reading stays where Brenton left it.
+
+When a reading is printed:
+
+- The words it displaces become a note, marked "Vat." where that attribution is supported and "Brenton's text" where it is not. An addition is marked "Vat. omits".
+- The new words are Brenton's English. Swete's other variants, for which Brenton gives no English, are not translated.
+- The words go where Alexandrinus has them, under Brenton's verse numbers.
+- A passage taken from the Appendix is removed from it, so that its English prints once.
+
+One verse is not Brenton's English. His note at 1 Kingdoms 23:12 announces the verse but gives no English, so the verse is borrowed word for word from the King James Version's 1 Samuel 23:12, and a note says so.
+
+Doubtful readings are left alone. Genesis 6:2 remains a note, because the manuscript's reading stands over an erasure. Genesis 5:32 and 6:10 keep "Cham" in the text, because Alexandrinus's "Chaph" is an apparent scribal error. The readings still to be decided are listed in [the open notes](notes-todo.md).
 
 ## Notes
 
-No note leaves a mark in the text. Each note is printed in the inner margin, beside its verse. It begins with the verse's number and names the words it's about, followed by a colon:
+No note on the scripture leaves a mark in the text. The sources' footnotes and marginal notes are printed in the inside margin, beside their verse. Only the front matter and the accounts of the books use footnotes. Each note begins with the verse's number and the words it is about, followed by a colon:
 
 > **20** I doubted of such manner of questions: or, _I was doubtful how to enquire hereof_
 
-The same style applies to notes in both testaments:
+The same style applies in both testaments:
 
-- Set alternative renderings, cited words and lexical glosses in italic, without enclosing quotation marks. Preserve apostrophes, including possessives.
-- Set labels, references and explanatory comments in roman. English glosses of Greek and Hebrew follow the same rule as other glosses.
-- Run a note on from its colon in lowercase, preserving names, initials and the opening capital of a source quotation.
-- Give complete explanatory sentences normal capitalization and punctuation. Omit the final full stop from fragments, but retain abbreviation periods.
-- When the words a note identifies are extended, extend its alternative rendering to match. Keep quotations and lexical glosses in their own wording.
-
-Each note stands beside the words it concerns, in text order. Several notes on one verse each carry its number. Front matter and book introductions use footnotes; Brenton's preface retains its callers.
+- Alternative renderings, cited words and glosses are in italic, without quotation marks around them.
+- Labels, references and explanatory comments are in roman.
+- A note runs on from its colon in lowercase, except for names and the opening capital of a quotation.
+- A complete sentence is capitalized and punctuated as one. A fragment has no final full stop.
+- A note quotes enough of the verse to be unambiguous. If that takes more words, the same words are added to the rendering: "of: or, _with_" in Matthew 6:1 becomes "of your Father: or, _with your Father_".
 
 ### The 1611 marginal notes
 
-The New Testament has the 775 notes from the 1611 King James Bible. George gives the words each note is about, and the build finds them in the verse, ignoring case, punctuation, and markup. If they occur more than once in the verse, the build adds the next words until they occur only once, and adds the same words to the rendering: "of: or, _with_" in Matthew 6:1 becomes "of your Father: or, _with your Father_". It does the same to words that end on one like "of" or "the", but a single preposition or conjunction that occurs once stands alone: "for: or, _unto_" (Mark 1:4).
+The New Testament has the 775 notes of the 1611 King James Bible. George gives the words each note is about, and the note is placed on those words in its verse.
 
-`edition/kjv-notes.json` says where a note belongs or what it prints when the rules need an exception, with the reason for each choice. Usually the spelling differs (boysterous, council, thyine), or the words appear more than once in the verse. Two notes that George lists under 1 Corinthians 10:6 and Galatians 4:24 actually belong to 10:4 and 4:25.
-
-The same file makes thirteen corrections to George's text:
-
-- His own bracketed remarks are removed (Matthew 5:15, Mark 14:72, Revelation 20:13). The 1611's misprint "began to wept" in Mark 14:72 is corrected to "weep".
-- The Greek he left out is restored from the 1611 margin (Acts 13:18 and 13:34).
-- Six slips are fixed: "debtOr" in Matthew 23:18, "mat." for "Mat." in Mark 6:8, "or" for "Or," in Romans 9:33, "O," for "Or," in 2 Corinthians 3:18, "Ceasars" in Philippians 1:13, which becomes "Cesars" to match the 1611 and this text, and "being weary" for the 1611's "being wary" in Hebrews 11:7.
-- "Half penny" is written "halfpenny", as every other note writes it, in Matthew 10:29 and Luke 15:8.
+His text is corrected in a few places. His own bracketed remarks are removed, the Greek he left out at Acts 13:18 and 13:34 is restored from the 1611 margin, and a few slips of transcription are fixed. Two notes that he lists under 1 Corinthians 10:6 and Galatians 4:24 are moved to 10:4 and 4:25, where they belong. Two misprints of the 1611 itself are corrected as later printings have them: "began to wept" at Mark 14:72 becomes "weep", and "Or, hell" at Revelation 20:13 becomes "Or, the grave".
 
 ### Brenton's notes
 
-The source’s 2,595 Brenton notes and 150 cross-references record only where his mark stood, just before the words the note is about. Decisions about Codex Alexandrinus replace or consume the notes they identify; their new footnotes receive the lemma declared by that stage. The build works out how far those words reach:
+Brenton has 2,595 notes and 150 cross-references. Each note is placed on the words it is about: the words it renders, if it gives another rendering, and otherwise its clause or its verse. The cross-references are treated under [Quotations](#quotations).
 
-- A note that renders the words differently is measured by that rendering. If its last word, or a form of it, comes shortly after the mark, the words end there ("Gr. _glean you_" is about "strip you"). Otherwise they run as many words as the rendering has ("Gr. _chief cook_" is about "captain of the guard"), stopping at punctuation and never ending on a word like "the", "his" or "of", unless the rendering is one such word for another: "Alex. _their_" is about "his", and "Gr. _upon_" is about "into" if "into" occurs only once in the verse. If the rendering's first word stands just before the mark, the words take it in ("Alex. _the Chorrhæan_" is about "the Evite").
-- A note that comments rather than renders is about its clause, or its first four words if the clause is longer than six.
-- A note at the end of a verse is about the words before it if it renders them, and about the whole verse if it doesn't.
-- A cross-reference within the first three words of its verse needs no words; the New Testament quotes the verse. Later in the verse, the words show where the quotation begins: its clause, or its first four words if the clause is longer than eight. Each cross-reference is printed as a footnote of "See" and its reference, unless the [quotation links](#quotations) at its verse name what it cites, when they replace it.
-
-Like the 1611 notes, the words are extended until they occur only once in the verse, and the rendering with them ("your: Gr. _thy_" becomes "your soul: Gr. _thy soul_"). Where the rules' words were too few, so that the rendering already covers the words added ("was moved: Gr. _repented_"), the lemma is given as an exception, which the rendering doesn't take in. An exception's lemma that occurs more than once in the verse names its occurrence, and is widened like the rules' ("explore", the first of two in Joshua 18:8, prints "to explore: or, _to walk through_"). A decision may keep a repeated word alone where widening would obscure the gloss: the notes on “plant” at Deuteronomy 16:21, “laid” at 3 Kingdoms 3:20, and “was” at 4 Kingdoms 7:5 identify the second occurrence without taking its object or surrounding instruction into the alternative rendering.
-
-Brenton's source marks labels and cited words alike in italic; the edition distinguishes them by meaning and applies the common note style above. `edition/brenton-notes.json` records exceptions to the inferred scope and styling, with a reason for each. Notes reporting additions identify the words the addition follows.
-
-The same file corrects transcription slips and expands scholars' names. Corrections outside notes are limited to word spacing in scripture; front matter and appendix prose may also receive wording corrections.
-
-`make review` lists every note with the words it's about and its italics in `build/review/notes.md`, and what changed since the last review in `build/review/changes.diff`.
-
-### Book introductions
-
-Each book the introduction to the Apocrypha describes opens with that description as a footnote on its first verse, with no reference, because it is about the whole book. The Song of the Three Children's description instead follows its heading at Daniel 3:25; the paragraph on all three additions and Susanna's stay at the opening of the combined Daniel. The paragraph on the four books of the Maccabees opens the note on the first, and the sentence on the translation of the third and fourth closes the note on the fourth. Source paragraphs keep their order and run on in one note. `edition/book-introductions.json` says where each paragraph goes and records changes to book names so that both the footnotes and the remaining front matter use this edition's titles and spellings. What the introduction cites is read as [the front and back matter's citations](#citations-in-the-front-and-back-matter) are: a portion of a book that it gives by chapter and verse alone, as "(3. 9–4. 4)" of Baruch, prints as "(3:9–4:4)". "Joshua Ben Sira" is "Jesus, the Son of Sirach", as this edition's title for Ecclesiasticus names him. A book named by one of this edition's titles is capitalized as the title is: "The First Book of Esdras" and "The First Book of the Maccabees", where the introduction has "The first book of Esdras" and "The _first_ book of the Maccabees". A name is changed only where the paragraph now points into this edition, and a change swaps one name for another without adding the editor's own words. Where the words describe another Bible or edition, carry a meaning a new name would lose, or have lost the heading or neighbouring paragraph that named their subject, a gloss in square brackets is added instead, or takes the place of the words. The glosses keep the introduction's words true of this edition: the I. and II. Esdras that Rome didn't accept as canonical, and the second book of Esdras that isn't included, are those "[of the English Apocrypha]", whose second book isn't this edition's 2 Esdras; the Epistle of Jeremias is the last chapter of Baruch "[in the English Apocrypha]", not here; the third and fourth books of the Maccabees were translated for the edition "[for which this introduction was written]", not this one. The additions to "the Canonical Esther" and "the Canonical Daniel" are additions to "the [Book of Esther]" and "the [Book of Daniel]", this edition's titles, since its Esther and Daniel include them and the Church of Greece receives them; the titles are bracketed because "Canonical" carries a meaning they lose. Others explain what the moved paragraphs no longer do: "These three additions [the Song of the Three Children, Susanna, and Bel and the Dragon]", at the head of Daniel, before the Song; "[The Epistle of Jeremias]", in place of "This pseudepigraphal epistle", whose heading is dropped; and "the First Book [of the Maccabees]", no longer under the heading it shared with the first book.
+Brenton's source sets labels and cited words alike in italic; the edition tells them apart and applies the style above. Slips in the transcription are corrected, and scholars' names are written out. In the scripture itself, corrections are limited to word spacing.
 
 ## Quotations
 
-Where the New Testament quotes the Old, both ends are linked: the first verse of the quotation names the passage it quotes, and the first verse of that passage names the quotation. At each verse, links sharing a printed gloss form one note; links without a gloss also form one note. Within each note, references follow the edition's book order, then chapter and verse, with commas between passages in one chapter and semicolons between chapters or books. Each book is named once: "Heb. 5:6; 7:17, 21". Notes follow the order of their first references. The original quotation ranges remain separate, even when adjacent, and the underlying relations retain their individual classes and table codes.
+Where the New Testament quotes the Old, both ends are linked: the first verse of the quotation names the passage it quotes, and the first verse of that passage names the quotation. A gloss after the reference says which text the quotation follows.
 
-The judgments come from David McCalman Turpie's _The Old Testament in the New_ (1868). It is in the public domain, tables the quotations completely, and judges the underlying Hebrew and Greek texts rather than either English version. Turpie gives each tabled quotation one of five classes, A–E, according to its agreement with the Hebrew and the Septuagint ([introductory remarks, p. XVI, PDF p. 22](https://archive.org/download/oldtestamentinne00turp/oldtestamentinne00turp.pdf#page=22)). His table codes further distinguish the same or different word order (`s`/`d`); variation in words, clauses, or both (`I`/`II`/`III`); and rendering, omission, or addition (`r`/`o`/`a`). Digits before the last letters locate the clauses ([table of contents, pp. IX–XII, PDF pp. 15–18](https://archive.org/download/oldtestamentinne00turp/oldtestamentinne00turp.pdf#page=15)).
+The judgments are David McCalman Turpie's, from _The Old Testament in the New_ (1868). It is in the public domain, covers every quotation, and judges the underlying Hebrew and Greek texts rather than either English version. Turpie gives each quotation one of five classes, A–E, according to its agreement with the Hebrew and the Septuagint ([introductory remarks, p. XVI](https://archive.org/download/oldtestamentinne00turp/oldtestamentinne00turp.pdf#page=22)).
 
-### Printed quotation glosses
+| Turpie's class | Gloss | Meaning |
+| --- | --- | --- |
+| A; C in words only | "Heb. + LXX" | Agrees with both, allowing differences in wording |
+| B | "Heb. ≠ LXX" | Follows the Hebrew and differs from the Septuagint |
+| D | "LXX ≠ Heb." | Follows the Septuagint and differs from the Hebrew |
+| C in whole clauses; E | No gloss | Departs from both by whole clauses, or follows neither |
 
-The edition prints three glosses and, for two cases, the reference alone:
+In class C the Hebrew and the Septuagint agree with each other, and the quotation differs from them. Where it differs only in words, it joins A. Where it differs by whole clauses, as when a verse is abridged or two passages are joined, the reference is printed alone, so as not to claim a match. The meaning of a gloss is the same at both ends of the link.
 
-| Turpie's class and scope | After the reference |
-| --- | --- |
-| A; C.I (words only) | `Heb. + LXX` |
-| B | `Heb. ≠ LXX` |
-| D (any scope) | `LXX ≠ Heb.` |
-| C.II or C.III; E (any scope) | Nothing |
+Of Turpie's 282 entries, nine are left out: eight that he himself doubts or repeats, and 1 Timothy 5:18, for which he gives no Old Testament passage. [Kalvesmaki's chart](https://www.kalvesmaki.com/LXX/NTChart.htm) lists 23 more parallels that Turpie does not list. He gives no judgment on them, so they are not linked.
 
-Spaces surround each symbol. A line may break after the symbol but not before it, as a formula breaks in running text, so a symbol never begins a line. The plus sign indicates agreement with both texts, allowing differences in wording; with ≠, the New Testament quotation follows the first text named and differs from the second. This meaning applies at both ends of the link.
+Brenton's 150 cross-references mark quotations too, with a note such as "See Rom. 4. 7,8". Where a link names the same verses, his note is dropped so that the reference is not given twice. A note that says more than a link could, such as a gloss or a pointer to the Hebrew, is usually kept.
 
-In C, the Septuagint and Hebrew agree. C.I records a difference in words only, so it joins A in the printed gloss: the variation is a matter of form rather than a choice between texts. C.II and C.III record a difference in whole clauses, such as abridgment or joining passages, so the reference alone avoids claiming a wording match. E also prints without a gloss: all three texts differ, and the code does not establish which pair its scope describes. B's subdivisions concern word order; D's describe the Septuagint's departure from the Hebrew. Neither changes its printed gloss. Turpie's letters aren't printed because Archer and Chirichigno's A–F classes give the same letters other meanings. The transformation log records Turpie's letter and table code for each link; the printed gloss is derived from them, not stored in `edition/turpie.json`.
+## Numbering
 
-`edition/turpie.json` transcribes the references, class, and table code of each of Turpie's 282 entries, with the page of the [scan](../sources/README.md#new-testament-quotations-of-the-old-testament) it comes from. It records references only, not the quoted words. `edition/quotations.json` holds the edition's own decisions, each with its reason; its `class_conflicts` decisions concern different printed glosses on the same verse pair. It leaves out nine entries: eight that Turpie himself doubts or repeats, and 1 Timothy 5:18, for which he prints no Old Testament heading. At Hebrews 2:13, where Turpie withdraws the second clause from his first entry and tables it again under another class, the first entry links only the clause he keeps.
+Every reference uses this edition's chapter and verse numbers, because those are the numbers on the page. They are Brenton's, except in Nehemias and Malachias 4. A reference written by another numbering is converted: Turpie's Joel 2:28–32 is Brenton's 3:1–5.
 
-### Numbering
+For readers who look verses up in another Bible, the table after the editor's introduction gives the King James Bible's number for every chapter and verse of the Old Testament that it numbers otherwise, and notes the verses that one Bible has and the other lacks. The differences are greatest in two books. Brenton numbers most of the psalms one lower and counts a psalm's title as a verse or two, and from chapter 25 on the chapters of Jeremias follow a different order. The King James column uses that Bible's names for the books, since those are what a reader will look under. Where the Septuagint adds to a verse, Brenton may set the addition apart as a lettered verse, such as Proverbs 22:8a, which the King James Bible lacks.
 
-The links give Brenton's chapter and verse numbers, because those are the numbers on the page. Turpie sometimes numbers a verse the English way instead, as in Joel 2:28–32, which is Brenton's 3:1–5. Each such case is a recorded exception with its reason, and takes Brenton's number from the build's numbering of the verses.
+[sources/README.md](../sources/README.md#versification) explains how the two numberings are compared.
 
-The build works out where each verse of this Old Testament stands in the King James Bible. It hears two witnesses. [STEP Bible's table](../sources/README.md#versification) says where a verse of a Bible numbered like this one should stand; the words of the two translations say where it does. They agree on all but a few hundred of some 23,000 verses. Where they don't, the words decide if they speak clearly, and the editor's reading where they can't: the census of Numbers 1 is worded alike tribe by tribe, so only a reader can tell that the Greek numbers Gad after Benjamin. Only those readings are kept, in `edition/versification.json`, each with its reason; the rest is worked out again by every build. The table isn't the authority because it wasn't made for this text. It gives two accounts of the end of Malachias, and Brenton's is neither: he has Elias before the law of Moses, so his 4:4–6 are the King James Bible's 4:5, 4:6 and 4:4. eBible's Brenton also divides verses where the King James Bible doesn't, even in chapters that count the same: his Leviticus 8:18 is the King James Bible's 8:18–19, and the ten verses after it each stand one earlier. For readers who look the verses up in another Bible, the introduction has a table of every linked verse that the King James Bible numbers differently. A test checks the table against the words of both translations, so no row is missing and no row is wrong.
+## Citations and abbreviations
 
-### The table of chapters and verses
+Every citation, in the notes and in the front and back matter, is printed one way: the book's abbreviation, a colon between chapter and verse, an en dash in a range, and a comma between verses. It names the book and the verse as this edition does. The words around it, such as "See" and "Compare", are the source's.
 
-The table after the editor's introduction gives the King James Bible's number for every chapter and verse of the Old Testament that it numbers otherwise, and says what either Bible lacks. It is written from the build's numbering by `src/bible/numbering.py`, row for row, and a test reads the rows back and holds them to it. `content/numbering.sfm` has the editor's words and says where each table goes.
+- Brenton's "See Heb. 2. 6-9" is "See Heb. 2:6–9".
+- His "2 Kings" is the Second Book of Kingdoms, so "See 2 Kings 22. 16" is "See 2 Kgdms. 22:16".
+- A reference within the same book is spelt out: "See ver 3" is "See verse 3".
+- One psalm is "Ps." and several are "Pss.".
 
-It takes the place of two tables. One was typed into the introduction, for the verses that the links name. The other was Brenton's own, of the chapters of Jeremias, which doesn't fit the text printed here: it puts the prophecy against Edom at "29 from v. 7 to the end", and eBible's text has it as 30:1–16.
+Brenton usually cites by his own numbers, but not always: "Comp. Jer. 9. 24" at 1 Kingdoms 2:10 is the English number of his own 9:23. The translators of 1611 cite by the King James Bible's numbers. Both are converted, as under [Numbering](#numbering).
 
-- A chapter that stands elsewhere under the same verse numbers is one row, as most chapters of Jeremias from 26 on, unless another chapter of the edition holds part of the same King James chapter. Anything else is a row of its verses, as Jeremias 32:15–38: the rest of the King James Bible's chapter 25 stays in the edition's 25.
-- The table of books also says which books of the King James Bible's Apocrypha the edition lacks: its 2 Esdras.
-- A lettered verse that the King James Bible lacks has no row, even where a reading rules it so; its letter says as much.
-- Each book's table is headed by the book's name in this edition and in the King James Bible, side by side.
-- The psalms differ in nearly every psalm, so their table has the editor's words over it. A psalm that alone holds a King James psalm under the same verse numbers is one row, and such psalms that follow one another are a range of psalms, as 13–16 beside 14–17. Any other psalm is rows of its verses: those after the title, which Brenton counts as a verse or two, or those of each part of a psalm that the other Bible divides. Psalms 114 and 146 are rows of their verses too, because each is only the first part of a King James psalm, 116 and 147.
-- The column for the King James Bible gives that Bible's names for the books, from its own text, since those are what a reader will look under. It is the one place where another Bible's name for a book is printed for a reader to use.
-- The books that the King James Bible sets apart in its Apocrypha are named with where it has them, and the additions to Esther and Daniel likewise. Their verses aren't compared.
+Abbreviations and numbers follow _The Chicago Manual of Style_:
 
-The editor's pages don't type a chapter and verse. They name a passage between braces by its code, as `{PSA 33:13-17}`, and the build prints it as the edition cites; `{kjv PSA 33:13-17}` prints it as the King James Bible numbers it, under that Bible's name, and `bare` prints the numbers alone. A passage that the edition doesn't print is refused, so what the introduction says of a number is what the file says.
+- Initialisms have no periods. Other abbreviations have standard spacing, capitalization and periods.
+- The names of versions and texts are printed in full, such as the Vulgate and the Authorized Version, however Brenton writes them. The witnesses he cites most keep their labels: "Alex.", "Vat." and "Heb.", with "LXX" for his "Sept.".
+- An abbreviation used only once or twice is printed in full where it stands, as in "seven pence halfpenny".
+- Brenton's signs for addition and omission are written "adds" and "omits".
 
-### Citations in the notes
-
-Every citation in a note is read where the note is, as its source writes it. Brenton writes "Rom. 4. 7,8" and the margin of 1611 "Mat. 18.28", and each names the books its own way: Brenton's "2 Kings" is the Second Book of Kingdoms, which the King James Bible calls 2 Samuel. `edition/citations.json` records each source's way of writing as a dialect. A name for a book that no note uses is refused, so the file lists only what the sources have.
-
-A citation prints as this edition cites: the book's abbreviation, a colon between chapter and verse, an en dash in a range, and a comma between the verses of a list. "See Heb. 2. 6-9" is "See Heb. 2:6–9", and "See 2 Kings 22. 16" is "See 2 Kgdms. 22:16". One psalm is "Ps." and several are "Pss.", as Chicago abbreviates them: "Ps. 117:22", "Pss. 68; 79". The editor's own pages name a book in full, as the running heads do. A note that cites its own book by verse or chapter still does, in words: "See ver 3" is "See verse 3", and "See chap 6. 13,15" is "See chapter 6:13, 15". The words around a citation are the source's, and stay: "See", "Comp.", "compare", "Vide supra". Every citation is set as a reference, so the quotation links and the notes cite alike. The transformation log keeps each citation as its source has it, beside what prints.
-
-A citation must name chapters and verses that this edition prints, which is how a citation by another numbering comes to light. Brenton mostly cites by his own numbers, but not always. "Comp. Jer. 9. 24" at 1 Kingdoms 2:10 is the English number of his own 9:23. In the Psalms he often gives the Greek psalm's number with the English verse's: "see Ps. 91. 10" is 91:11, because he counts the title. And "See Ps. 110" at Esaias 26:19 is the Hebrew's number for his Psalm 109. Each of these is a decision in the file, with its reason, and prints by this edition's number. So are the figures that aren't citations ("Heb. 300", the Hebrew's number of Solomon's officers) and the notes on verses that the Vatican text lacks, which name no verse to be found and stay among the note's words. Two citations keep another Bible's name or no number: "See 1 Kings 22. 46-50. A. V." at 3 Kingdoms 16:28d cites the Authorized Version by name, and so by its name for the book; and "See 1 Pet." at Proverbs 11:31 names the book alone. The margin of 1611 runs four citations together at Luke 1:78, which are set apart with semicolons.
-
-Two citations name the wrong verse, and print the one meant. The margin of 1611 has "Rom. 1.19" at Colossians 1:25, which George transcribes as it stands; "fully to preach the word of God" is the "fully preached" of Romans 15:19, as later printings of the margin have it. Brenton's note at Deuteronomy 32:21 has "Rom. 10. 9" for 10. 19, which quotes the verse. That note now cites what the quotation link at its verse names, so it is merged into the link like any other that the link repeats.
-
-A decision that no note meets is refused.
-
-### Citations in the front and back matter
-
-The front and back matter cite as the notes do, and are read the same way, paragraph by paragraph. After typesetting, the build looks over the pages of the PDF for any citation still written as a source writes it, so that words added later, which no reading met, can't cite in a way of their own. Brenton's preface of 1844 numbers chapters in Roman ("Gen. xlvii. 31"), and the translators' preface of 1611 sets the books' names in italic. Each is a dialect in `edition/citations.json`, and each unit says there which it writes, or that it cites nothing. A citation's italic goes with the way it was written. The translators cite by the King James Bible's numbers, so their "Isaiah 8. 20" is carried into this edition's as the notes' citations are.
-
-A decision on a citation in these units is keyed by the unit and the words it decides, which must be the unit's once. Brenton's appendix gives the Hebrew's name or number beside the Greek's, as in "2 Kings (2 Sam.) 5. 18" and "Psalm 41 (42):4"; this edition's alone prints, and the second of those is Psalm 41:5, since its verse is the English one. The appendix also supplies passages that the Vatican text lacks, under their chapter and verse; those numbers are labels, not citations. The chapter labels in its 3 Kingdoms section print without a full stop after the number; the other labels stay as Brenton set them.
-
-What names a book without citing it is changed by name, each change with its reason, under `names` in the same file: the appendix's headings, so that "KINGS I. (Sam. I)" is "1 KINGDOMS", and a page number of the printing of 1870, which is dropped.
-
-### Brenton's "See" notes
-
-Brenton marked about 150 quotations himself, with a footnote such as "See Rom. 4. 7,8", which prints as "See Romans 4:7, 8". Where a link now names the same verses, the note is dropped so that the reader isn't given the reference twice. Some notes say more than a link could: a gloss, a pointer to the Hebrew, or verses the quotation doesn't reach. Dropping one of those would lose something, so each is decided by hand, and most are kept.
-
-### Checking the links
-
-A link can point to a verse that exists and still be one verse off, especially where the numbering differs. So a test compares words: a quotation should share more of its distinctive words with the verse it links to than with the verses around it. This test found that the cheerful giver of 2 Corinthians 9:7 is at Proverbs 22:8a, a verse Brenton sets apart for a Septuagint addition. Quotations that paraphrase, or that follow the Hebrew where Brenton follows the Greek, share too few words for this check to work. Those are listed with a reason in `edition/quotations.json`.
-
-[Kalvesmaki's chart](https://www.kalvesmaki.com/LXX/NTChart.htm) lists 23 more parallels that Turpie doesn't table. They have no class to print, so they aren't linked.
-
-### Abbreviations
-
-Use the forms prescribed by The Chicago Manual of Style throughout the notes and front and back matter:
-
-- Expand book names, version names and explanatory terms where the edition calls for their full forms. Retain conventional witness labels.
-- Use standard spacing, capitalization and abbreviation periods. Initialisms have no periods; a sentence may still end with a full stop.
-- Write addition and omission signs as “adds” and “omits”. Preserve ordinary punctuation dashes.
-- Capitalize glossary meanings only for proper names.
-
-Omit periods after numbers within sentences. Keep figures unless the surrounding notes use words for a sum or measure; record wording changes as editorial decisions.
-
-[terminology.json](../edition/terminology.json) defines the printed forms; [abbreviations.json](../edition/abbreviations.json) defines the glossary. Both use the same terminology.
+Every abbreviation the edition prints is in the list of abbreviations. Brenton's list gives only twelve, so the others that the notes use are added to it.
 
 ## Spelling and punctuation
 
-The translation's spelling and punctuation are being revised along the lines of the New Cambridge Paragraph Bible, which keeps the words of its text and regularizes how they are spelt and pointed. `edition/revisions.json` holds the revision: a word respelt wherever the translation, its notes, and the front and back matter print it, or a change to the words of a single verse, each with its reason; the changes to verses stand in groups, by the reason they share. It is applied last, to the edition as prepared, so that every other decision is still written in the sources' own words.
+Spelling and punctuation follow the lines of the New Cambridge Paragraph Bible, which keeps the words of its text and regularizes how they are spelt and pointed.
 
-The first revision is the prophet's name. Brenton writes "Jezekiel" at Ezekiel 1:3 and 24:24, transliterating the Greek Ἰεζεκιήλ; the edition prints "Ezekiel", as its title for the book and its citations already do.
+So far one word is revised. Brenton writes the prophet's name "Jezekiel" at Ezekiel 1:3 and 24:24, transliterating the Greek Ἰεζεκιήλ; the edition prints "Ezekiel".
 
 ## Typography
 
 - Words the translators supplied, which many Bibles print in italics, are set in ordinary type.
-- OLEBFont's inherited Utopia word spacing is multiplied by 6/5 (1.2), giving the text more room between words while retaining its spacing proportions. Space, stretch and shrink are approximately 0.27em, 0.135em and 0.09em.
-- Use typographic quotation marks in running prose. In verse notes, italic takes the place of enclosing quotation marks around cited words. Footnotes in the sources' front and back matter retain their emphasis and nested quotation marks. The sources' straight quotation marks, triple periods and double hyphens are converted with [SmartyPants](https://pypi.org/project/smartypants/), and the build checks that nothing else changed.
-- The text is set in OLEBFont, which preserves Utopia’s existing glyphs and typography and adds Erewhon’s missing characters, oldstyle figures, superscripts and small capitals, followed by Erewhon Math’s remaining symbols. Donor glyphs and spacing are enlarged by 100/94 to match Utopia’s size convention. Superscript 1, 2 and 3 are the sole replacements of existing Utopia glyphs, using Erewhon’s designs for consistency. Ordinary numbers use proportional oldstyle figures; verse numbers and note origins use designed superscripts at their existing size and position. Running headers and footers use small capitals. Greek is set in GFS Didot and Hebrew in Ezra SIL.
+- Running prose uses typographic quotation marks. In the notes, italic takes their place around cited words.
+- Greek is set in GFS Didot and Hebrew in Ezra SIL.
+
+The README describes the page and its typeface, and [font normalization](font-normalization.md) explains how the typeface was assembled.

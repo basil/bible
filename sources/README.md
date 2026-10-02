@@ -26,7 +26,7 @@ Both texts are in the public domain outside the United Kingdom. Brenton's is als
 
 `edition/alexandrinus.json` cites Henry Barclay Swete, *The Old Testament in Greek according to the Septuagint*, third edition: volume I (1901), volume II (1907), and volume III (1905). The manuscript apparatus was consulted from page images, using printed page numbers. It checks Brenton’s reports of Codex Alexandrinus and settles the placement of supplied English passages; it is not an additional English translation printed in the edition.
 
-The scans are consulted editorial evidence. The build reads the recorded decisions and citations in `edition/alexandrinus.json` and does not require the images or network access. See [Readings from Codex Alexandrinus](../docs/edition.md#readings-from-codex-alexandrinus) for the limits of this use and the per-decision audit.
+The scans are consulted editorial evidence. The build reads the recorded decisions and citations in `edition/alexandrinus.json` and does not require the images or network access. See [Readings from Codex Alexandrinus](../docs/edition.md#readings-from-codex-alexandrinus) for the limits of this use, and [CONTRIBUTING.md](../CONTRIBUTING.md#reviewing-the-readings-from-codex-alexandrinus) for the review of each decision.
 
 ## Versification
 
