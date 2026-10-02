@@ -5,7 +5,7 @@ Left over from the footnote reviews of September 2026. Each remaining item needs
 ## Decisions on the rules
 
 1. **1611 notes on a whole verse.** Luke 17:36 ("This 36. verse is wanting in most of the Greek copies") reprints the whole verse as its lemma, and John 18:13's note on the order of events prints under "year". `kjv-notes.json` now allows `"lemma": null`, as `brenton-notes.json` does; decide whether to give these two notes one.
-2. **"Heb. <Hebrew> <English>".** The English after a Hebrew word stays roman almost everywhere ("Emec Achor: Heb. עמק עכור valley of trouble"; 1 Kgdms 4:15, 14:6, 14:26, 17:52, 20:12), though it's arguably a rendering. Decide once, and change the rule rather than override each note. The same pattern with Greek is italic by rule ("Alex. ἐντολαί, _commands_"); extending that rule to Hebrew would change 16 notes, some of which are comments, not renderings ("Heb. שוב ambiguous", Isa 51:3; Judg 6:13). Where eBible marks the English as Brenton's italic, it prints italic instead: Judg 9:6 "the word מעא _to find_" (a gloss on the Hebrew, not on the lemma), Judg 17:10 "Heb. ימיס _(year of) days_", and the Latin "_cibus_" in 3 Kgdms 5:25.
+2. **"`Heb. <Hebrew> <English>`".** The English after a Hebrew word stays roman almost everywhere ("Emec Achor: Heb. עמק עכור valley of trouble"; 1 Kgdms 4:15, 14:6, 14:26, 17:52, 20:12), though it's arguably a rendering. Decide once, and change the rule rather than override each note. The same pattern with Greek is italic by rule ("Alex. ἐντολαί, _commands_"); extending that rule to Hebrew would change 16 notes, some of which are comments, not renderings ("Heb. שוב ambiguous", Isa 51:3; Judg 6:13). Where eBible marks the English as Brenton's italic, it prints italic instead: Judg 9:6 "the word מעא _to find_" (a gloss on the Hebrew, not on the lemma), Judg 17:10 "Heb. ימיס _(year of) days_", and the Latin "_cibus_" in 3 Kgdms 5:25.
 3. **Notes on "the words in italics".** 2 Kgdms 17:8, 21:11, 1 Kgdms 17:43 and 3 Kgdms 14:26#2 refer to words Brenton set in italics; this edition prints them in square brackets. Either print the bracketed words in italic, or accept it.
 4. **Unlabelled paraphrases.** 1 Cor 14:27 "by two or three sentences separately" has no label and prints roman, though it substitutes cleanly. Probably leave it.
 5. **Long passages.** Hag 2:14 ("Not in Hebrew.") and 2 Kgdms 21:11 are about a whole bracketed passage, but their lemmas cover only its first clause. Decide whether lemmas that long are acceptable.
@@ -21,7 +21,7 @@ Left over from the footnote reviews of September 2026. Each remaining item needs
 Probably slips in Brenton or eBible; check the printed book before correcting.
 
 | Note | Prints | Probably |
-|---|---|---|
+| --- | --- | --- |
 | Ps 9:27 | Rom. 8. 14 | Rom. 3. 14, which quotes 9:28; the note belongs on 9:28 |
 | Isa 29:13 | Mat. 8. 9 | Mat. 15. 8, 9 |
 | Isa 53:5 | 1 Pet. 2. 22 | 1 Pet. 2. 24 |

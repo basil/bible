@@ -25,6 +25,7 @@ jobs:
       - run: make bootstrap
       - run: make validate
       - run: make test
+      - uses: DavidAnson/markdownlint-cli2-action@v24.2.0
       # What the change does to the edition, line by line, for the reviewer.
       # A base that cannot write a review, as one from before `make review`,
       # has nothing to compare with: that is said, and fails no build.

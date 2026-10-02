@@ -252,7 +252,7 @@ A few things look odd but are on purpose:
 
 - Brenton's `FRT` and `INT` files become `XXD` and `XXE`, and the King James `OTH` and `INT` become `TDX` and `NDX`. This keeps PTXprint from treating them as the edition's own front matter, and keeps the two sources' files from colliding.
 - eBible's list of corrections contains literal `|` characters, which PTXprint would read as markup and use to discard text. `config/changes.txt` swaps them out while PTXprint parses the file and puts them back afterwards.
-- BSB sets `fnomitcaller` to `True`, which in this PTXprint release means the footnote callers *are* printed in the notes. Only Brenton's preface has callers now; the build checks that this still holds.
+- BSB sets `fnomitcaller` to `True`, which in this PTXprint release means the footnote callers _are_ printed in the notes. Only Brenton's preface has callers now; the build checks that this still holds.
 - PTXprint's `canonicalise` option is off, so that it doesn't rewrite the source markup.
 - PTXprint drops chapter markers outside scripture unless told to show them. `showxtrachapnums` keeps the chapter 1 that opens Brenton's appendix in eBible's text, which numbers nothing and prints nothing, because with it PTXprint sets the appendix's paragraphs flush left. Without the setting they would be indented, as the other introductions' paragraphs are.
 - PTXprint loads GTK even when it runs without a display, which is why the image includes it.

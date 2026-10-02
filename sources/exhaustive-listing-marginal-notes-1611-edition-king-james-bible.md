@@ -1,8 +1,8 @@
-[Literatura Bautista](https://en.literaturabautista.com/)
-
 # An exhaustive listing of the marginal notes of the 1611 edition of the King James Bible
 
-**In honor of the 400th anniversary of the Authorized Version 1611-2011**
+[Literatura Bautista](https://en.literaturabautista.com/)
+
+In honor of the 400th anniversary of the Authorized Version 1611-2011
 
 These marginal notes are available in scans and published reprints of the
 1611, but we believe that listing them all together and in modern spelling
@@ -10,7 +10,7 @@ makes it much easier to study the notes in depth, or to do quick visual scans.
 The digital text of the notes allows for keyword searches, among other
 advantages.
 
-#### Ways in which the marginal notes are valuable
+## Ways in which the marginal notes are valuable
 
 - Sometimes the notes shed light on an obscure passage.
 - The meanings of the names of Bible characters revealed in the notes are often of interest.
@@ -18,13 +18,13 @@ advantages.
 - It reveals that Bible translation work is not as simple and straightforward as some people imagine.
 - It illustrates the absurdity of never deviating from translating in a literal fashion. The notes for a verse that illustrates this vividly is Genesis 25:18, where "he did eat of his venison" in literal Hebrew would have been "venison was in his mouth," according to the marginal notes.
 
-#### Why are the marginal notes left out of virtually all modern printings of the KJV? We present the following theories:
+## Why are the marginal notes left out of virtually all modern printings of the KJV? We present the following theories
 
 - Extra material, as in marginal notes, costs more to print.
 - Popularity of study Bibles that do not leave room for these marginal notes.
 - Lack of demand, as the notes often deal with technicalities that do not concern the overwhelming majority of Bible readers.
 
-#### Misc. technical details of interest
+## Misc. technical details of interest
 
 - The famous phrase "rock of ages" is not found in the text of the KJV, but rather in the margin at Isaiah 26:4.
 - The very last marginal note in the 1611 was a typo at Rev. 20:13. For the word _hell_ in the text, it had the marginal note "Or, hell."
@@ -34,7 +34,7 @@ advantages.
 
 \*Apochrypha not included. Scrivener's totals were 767 for the NT, 6,637 for the OT, for a total of 7,404 marginal notes. We used a spreadsheet program to help avoid human error in counting.
 
-#### Scrivener's assessment
+## Scrivener's assessment
 
 > In fact, more than half the references contained in the edition of 1611 are
 > derived from manuscript and printed copies of the Vulgate Latin Bible, and
@@ -51,7 +51,7 @@ advantages.
 > Ambrose. _The Authorized Edition of the English Bible_. Cambridge: The
 > University Press, 1910, pp. 117-118)
 
-#### Historical documentation regarding the marginal notes
+## Historical documentation regarding the marginal notes
 
 An account of the work and the rules of translation was provided to the 1618
 Synod of Dort. The following rules relate to the marginal notes:
@@ -67,7 +67,7 @@ Synod of Dort. The following rules relate to the marginal notes:
 > Authorized Version Published in the Year 1611_. Oxford: Oxford University
 > Press, 1911, p. 142)
 
-#### Notes we found to be humorous due to our evolving language
+## Notes we found to be humorous due to our evolving language
 
 Psalm 80:4 - wilt thou be angry: Heb. wilt thou smoke?
 
@@ -77,7 +77,7 @@ Isaiah 34:14 - shrichowle: Or, night monster
 
 Jeremiah 13:18 - principalities: or, head tires
 
-#### Heeding the warning of the KJV translators
+## Heeding the warning of the KJV translators
 
 Many of the marginal notes reveal thousands of instances in which the KJV
 translators were forced to interpret as part of their translation work. The
@@ -109,7 +109,7 @@ rewritten in the margin. The marginal notes reveal some italics were
 inconsistent (though perhaps they should be considered vindicated by the
 content of the marginal notes).
 
-#### Our methods
+## Our methods
 
 We did not include the cross-references from the margins, nor the chapter
 headings. The notes of the Apocrypha were also not included. To make the notes
