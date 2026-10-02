@@ -20,7 +20,7 @@
         "agrees": true
       },
       "from": "God said",
-      "note": "\\fl Vat. \\ft omits “the Lord”.",
+      "note": "\\fl Vat. \\ft omits \\fq the Lord\\ft .",
       "english": {
         "source": "brenton",
         "span": [17, 25],
@@ -96,38 +96,6 @@
         ]
       },
       "source_note": "\\fqa Alex. \\ft 782."
-    },
-    "GEN 5:32": {
-      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
-      "swete": {
-        "volume": 1,
-        "page": 9,
-        "evidence": "apparatus",
-        "reading": "Χαφ A",
-        "agrees": true
-      },
-      "from": "Cham",
-      "english": {
-        "source": "brenton",
-        "span": [15, 20]
-      },
-      "source_note": "\\fqa Alex. \\ft Chaph."
-    },
-    "GEN 6:10": {
-      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
-      "swete": {
-        "volume": 1,
-        "page": 9,
-        "evidence": "apparatus",
-        "reading": "Χαφ A",
-        "agrees": true
-      },
-      "from": "Cham",
-      "english": {
-        "source": "brenton",
-        "span": [15, 20]
-      },
-      "source_note": "\\fqa Alex. \\ft Chaph."
     },
     "GEN 6:7": {
       "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Keep the remaining glosses with their readings.",
@@ -4571,6 +4539,28 @@
     }
   },
   "kept": {
+    "GEN 5:32": {
+      "why": "Keep Brenton’s main-text Cham and his Chaph footnote: the apparent Alexandrine scribal error should not interrupt the identity of Noe’s son in the narrative.",
+      "swete": {
+        "volume": 1,
+        "page": 9,
+        "evidence": "apparatus",
+        "reading": "Χαφ A",
+        "agrees": true
+      },
+      "source_note": "\\fqa Alex. \\ft Chaph."
+    },
+    "GEN 6:10": {
+      "why": "Keep Brenton’s main-text Cham and his Chaph footnote: the apparent Alexandrine scribal error should not interrupt the identity of Noe’s son in the narrative.",
+      "swete": {
+        "volume": 1,
+        "page": 9,
+        "evidence": "apparatus",
+        "reading": "Χαφ A",
+        "agrees": true
+      },
+      "source_note": "\\fqa Alex. \\ft Chaph."
+    },
     "NUM 28:24": {
       "swete": {
         "volume": 1,

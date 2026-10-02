@@ -3,7 +3,8 @@ the edition prints them.
 
 Brenton's notes and the 1611 margin are read once, as their sources write
 them. A label such as "Gr." or "Or," is roman, another rendering of the
-glossed words is italic, and a citation is a reference of its own. The rules
+glossed words, cited words and lexical glosses are italic, without quotation
+marks, and a citation is a reference of its own. The rules
 here tell them apart; edition/brenton-notes.json and edition/kjv-notes.json
 say what to print where the rules go wrong, and why. The notes that
 edition/alexandrinus.json writes say what each of their parts is themselves.
@@ -12,8 +13,8 @@ A note is printed as a footnote without a caller: its verse, the words it is
 about, and its text, which runs on from them unless it is a sentence of its
 own. Besides corrections, the "See" that opens a cross-reference, the words a
 widened lemma adds to its renderings, and the decisions of edition/prose.json,
-the edition changes nothing of a note's words but its citations and
-abbreviations, which print in the edition's forms.
+the edition changes nothing of a note's words but its quotation marks,
+citations and abbreviations, which print in the edition's forms.
 """
 
 from __future__ import annotations
@@ -79,6 +80,19 @@ QUOTED = re.compile(f"[{GREEK}{HEBREW}]")
 # Greek that opens a rendering and is followed by its English, which is the
 # rendering: "Alex. ἐντολαί, commands", "some read λαοῦ 'people'".
 GREEK_GLOSS = re.compile(rf"\s*[{GREEK}][{GREEK}’'\s]*,?\s+(?=['‘“]?[A-Za-z])")
+# English glosses of Hebrew are quotations, not alternatives that determine
+# the lemma. A following comment ("a particle of entreaty") stays roman.
+HEBREW_GLOSS = re.compile(rf"\s*[{HEBREW}][{HEBREW}\s]*,?\s+(?=['‘“]?[A-Za-z])")
+GLOSS_COMMENT = re.compile(
+    r"\s*(?:ambiguous\b|a particle\b|name of a town\b|as if\b|is retained\b|sc\.)"
+)
+# Quotation marks delimit cited words; apostrophes inside words do not.
+ENGLISH_QUOTE = re.compile(
+    r"(?<!\w)(?:‘(?P<curly>.*?)’|“(?P<double>.*?)”|"
+    r"'(?P<single>.*?)'|\"(?P<straight>.*?)\"|`(?P<backtick>.*?)')(?!\w)"
+)
+# The closing marks that are also apostrophes, by the quotation they close.
+CLOSERS = {"curly": "’", "single": "'", "backtick": "'"}
 # The words a note quotes as added are the reading, as after "+": "Heb. and
 # Alex. insert 'priest'", "Alex. adds, 'and I the shepherd have done wickedly'".
 ADDED = re.compile(r"\s*(?:adds?|inserts?),?\s+(?=['‘“])")
@@ -95,7 +109,7 @@ COMMENTARY = re.compile(
     re.I,
 )
 # Punctuation and quotation marks stay roman at either end of an italic run.
-TRIM = " \n.,;:?!+'‘’“”\""
+TRIM = " \n.,;:?!+'‘’“”\"`"
 # Names, which keep their capital where a note runs on from its lemma: of
 # languages, texts, versions and people, and the pronoun "I".
 NAMES = re.compile(
@@ -105,12 +119,13 @@ NAMES = re.compile(
 # Abbreviations, whose full stop stays at the end of a note ("so the Heb.").
 # Not those the edition prints without one, or in full.
 ABBREVIATION = re.compile(
-    r"(?<![\w'’])(?:etc|&c|Gr|Heb|Syr|Alex|lit|Lit|i\. e|q\. d|sc|scil)\.$"
+    r"(?<![\w'’])(?:etc|&c|Gr|Heb|Syr|Alex|lit|Lit|i\. e|q\. d|sc|scil|Gr\. sing)\.$"
 )
 # Labels at the start of a note, which it runs on from.
 LABEL_START = re.compile(
-    "|".join(re.escape(label) for label in sorted(LABELS, key=len, reverse=True))
-    + r"(?!\w)"
+    "(?:"
+    + "|".join(re.escape(label) for label in sorted(LABELS, key=len, reverse=True))
+    + r")(?!\w)"
 )
 # Finite verbs, which make a note that opens with neither a label nor a
 # rendering a sentence: "the word Batus in the original containeth nine gallons".
@@ -129,7 +144,7 @@ AUTHORED = {
     "xt": "citation",
 }
 # How a part of a printed note is marked.
-PRINTED = {"commentary": "ft", "reading": "fqa", "citation": "xt"}
+PRINTED = {"commentary": "ft", "reading": "fqa", "quotation": "fqa", "citation": "xt"}
 
 
 @dataclass(frozen=True)
@@ -169,6 +184,25 @@ class Body:
             intervals.append((first, last, role))
             bound[first] = citation
         return [(a, b, r, bound.get(a)) for a, b, r in sorted(intervals)]
+
+
+def trimmed(text: str, start: int, end: int) -> tuple[int, int]:
+    """A stretch of words without the punctuation and quotation marks at
+    either end of it. The apostrophe of a plural possessive stays ("their
+    fathers'"), unless the stretch opens with the mark it would close."""
+    opens = text[start:end].lstrip().startswith(tuple("'‘“\"`"))
+    while start < end and text[start] in TRIM:
+        start += 1
+    while end > start and text[end - 1] in TRIM:
+        if (
+            not opens
+            and text[end - 1] in "'’"
+            and end - 1 > start
+            and text[end - 2] in "sS"
+        ):
+            break
+        end -= 1
+    return start, end
 
 
 class Roles:
@@ -216,14 +250,23 @@ class Roles:
         self, start: int, end: int, kind: str = "alternative"
     ) -> tuple[int, int]:
         """Mark a rendering, without the punctuation at either end of it."""
-        while start < end and self.plain[start] in TRIM:
-            start += 1
-        while end > start and self.plain[end - 1] in TRIM:
-            end -= 1
+        start, end = trimmed(self.plain, start, end)
         for first, last, role in tuple(self.intervals):
             if role != "citation" and first < end and start < last:
                 self.mark(max(first, start), min(last, end), kind)
         return start, end
+
+    def renderings(
+        self, start: int, extent: str, kind: str = "alternative"
+    ) -> list[tuple[int, int]]:
+        """Mark each rendering of the extent that stands at start, "X, or Y"
+        and "X, etc." being X and Y alone, and say where each stands."""
+        found, last = [], 0
+        for separator in [*RENDERING_SEPARATOR.finditer(extent), None]:
+            end = separator.start() if separator else len(extent)
+            found.append(self.reading(start + last, start + end, kind))
+            last = separator.end() if separator else len(extent)
+        return found
 
     def body(
         self, reading: tuple[int, int] | None, rule: str, *, trim: bool = False
@@ -364,6 +407,18 @@ def interpreted(pieces: Sequence[tuple[str, str]], key: str) -> Body:
         offset += len(value)
     alternative = None
     for i, (kind, value) in enumerate(pieces[:-1]):
+        if kind != "label" or value.strip() not in {"Heb.", "Hebrew"}:
+            continue
+        if pieces[i + 1][0] != "text":
+            continue
+        after = pieces[i + 1][1]
+        if gloss := HEBREW_GLOSS.match(after):
+            english = after[gloss.end() :]
+            if COMMENTARY.match(english) or GLOSS_COMMENT.match(english):
+                continue
+            extent = RENDERING_END.split(english, maxsplit=1)[0]
+            meaning.renderings(starts[i + 1] + gloss.end(), extent, "quotation")
+    for i, (kind, value) in enumerate(pieces[:-1]):
         if kind != "label" or value.strip() not in RENDERING_LABELS:
             continue
         if pieces[i + 1][0] != "text":
@@ -440,10 +495,7 @@ def interpreted(pieces: Sequence[tuple[str, str]], key: str) -> Body:
         )
         if not extent.strip() or COMMENTARY.match(extent) or joins_labels:
             continue
-        last = 0
-        for separator in [*RENDERING_SEPARATOR.finditer(extent), None]:
-            end = separator.start() if separator else len(extent)
-            bounds = meaning.reading(start + last, start + end)
+        for bounds in meaning.renderings(start, extent):
             # "Alex. + the Lord" adds to the text rather than rendering it.
             if (
                 alternative is None
@@ -451,7 +503,6 @@ def interpreted(pieces: Sequence[tuple[str, str]], key: str) -> Body:
                 and not extent.lstrip().startswith("+")
             ):
                 alternative = bounds
-            last = separator.end() if separator else len(extent)
     # Two renderings or quotations a space apart are one ("innocent things").
     for match in re.finditer(r"(?<=\S) +(?=\S)", text):
         if all(
@@ -462,9 +513,11 @@ def interpreted(pieces: Sequence[tuple[str, str]], key: str) -> Body:
     return meaning.body(alternative, "rendering" if alternative else "roman", trim=True)
 
 
-def declared_readings(body: Body, override: str | None, key: str) -> Body:
-    """A note with the renderings an exception declares, between underscores,
-    in place of those the rules found."""
+def declared_readings(
+    body: Body, override: str | None, key: str, *, quotation: bool = False
+) -> Body:
+    """A note with declared italic spans in place of those the rules found.
+    A quotation keeps its wording rather than measuring or echoing a lemma."""
     assert override is not None
     words = override.replace("_", "")
     require(words == body.plain, f"Note override does not match the note: {key}")
@@ -482,8 +535,16 @@ def declared_readings(body: Body, override: str | None, key: str) -> Body:
         else:
             for first, last, role in tuple(roles.intervals):
                 if role != "citation" and first < at and opened < last:
-                    roles.mark(max(first, opened), min(last, at), "alternative")
+                    roles.mark(
+                        max(first, opened),
+                        min(last, at),
+                        "quotation" if quotation else "alternative",
+                    )
             opened = None
+    require(
+        not quotation or any(role == "quotation" for _, _, role in roles.intervals),
+        f"Quotation exception declares no quoted words: {key}",
+    )
     # The lemma is measured by the first rendering the override declares.
     reading = None
     for first, last, role in roles.intervals:
@@ -498,11 +559,13 @@ def declared_readings(body: Body, override: str | None, key: str) -> Body:
     return roles.body(reading, "override")
 
 
-def reading_of(note: Node, override: str | None, key: str) -> str | None:
+def reading_of(
+    note: Node, override: str | None, key: str, *, quotation: bool = False
+) -> str | None:
     """The rendering by which a source note measures the words it is about."""
     body = interpreted(source_pieces(note), key)
     if override is not None:
-        body = declared_readings(body, override, key)
+        body = declared_readings(body, override, key, quotation=quotation)
     return body.alternative
 
 
@@ -522,12 +585,60 @@ def visual(body: Body) -> list[tuple[str, str]]:
     return result
 
 
+def check_quotes(text: str) -> None:
+    """Quotation marks must pair in one way only. A single mark closes at the
+    first apostrophe that ends a word, so a plural possessive within it ("'the
+    fathers' houses'") or after it cannot be told from its closing mark."""
+    quotes = list(ENGLISH_QUOTE.finditer(text))
+    paired = {at for quote in quotes for at in (quote.start(), quote.end() - 1)}
+    for quote in quotes:
+        assert quote.lastgroup is not None
+        closer = CLOSERS.get(quote.lastgroup)
+        inner = quote[quote.lastgroup]
+        require(
+            closer is None
+            or inner == inner.strip()
+            and not any(
+                stray.start() not in paired
+                for stray in re.finditer(rf"(?<=\S){closer}(?!\w)", text)
+                if stray.start() >= quote.end()
+            ),
+            f"Ambiguous quotation marks: {text}",
+        )
+
+
+def quoted(body: Body) -> Body:
+    """A body with the words it sets in quotation marks as quotations: the
+    rules print cited words in italic wherever they stand, even in
+    commentary. The rendering that measured the lemma stays as it is."""
+    meaning = Roles(body.plain, body.roles)
+    for match in ENGLISH_QUOTE.finditer(body.plain):
+        assert match.lastgroup is not None
+        first, last = match.span(match.lastgroup)
+        # Quoted Greek or Hebrew is not set in italic.
+        if not re.search(r"[A-Za-z]", body.plain[first:last]):
+            continue
+        for a, b, role in tuple(meaning.intervals):
+            if role == "text" and a < last and first < b:
+                meaning.reading(max(a, first), min(b, last), "quotation")
+    # Two renderings or quotations a space apart are one.
+    for match in re.finditer(r"(?<=\S) +(?=\S)", body.plain):
+        if meaning.kind_at(match.start()) == "text" and all(
+            meaning.kind_at(at) in {"alternative", "quotation"}
+            for at in (match.start() - 1, match.end())
+        ):
+            meaning.mark(match.start(), match.end(), "quotation")
+    return replace(body, roles=tuple(meaning.intervals))
+
+
 def source_body(
     pieces: Sequence[tuple[str, str]],
     found: Sequence[Citation],
     override: str | None,
     key: str,
     source: str,
+    *,
+    quotation: bool = False,
 ) -> Body:
     """A source note's body: its roles read, an exception's renderings in
     place of the rules', and its citations bound to their words."""
@@ -537,9 +648,14 @@ def source_body(
     require(body.plain and body.plain != ".", f"Empty note: {key}")
     require("_" not in body.plain, f"Underscore in note: {key}")
     if override is not None:
-        changed = declared_readings(body, override, key)
+        changed = declared_readings(body, override, key, quotation=quotation)
+        # An exception changes the italics the rules would print, quoted
+        # words among them, or the rendering that measures the lemma.
         require(
-            visual(changed) != visual(body), f"Note override changes nothing: {key}"
+            visual(changed) != visual(quoted(body))
+            or changed.reading != body.reading
+            or (quotation and changed.roles != body.roles),
+            f"Note override changes nothing: {key}",
         )
         body = changed
     require(
@@ -564,7 +680,9 @@ def bound(body: Body, found: Sequence[Citation], key: str, leading: int = 0) -> 
     return replace(body, citations=tuple(spans))
 
 
-def authored_body(note: Node, override: str | None, key: str) -> Body:
+def authored_body(
+    note: Node, override: str | None, key: str, *, quotation: bool = False
+) -> Body:
     """The body of a note the edition writes, whose markers say what each
     part is: \\fl a label, \\fqa an alternative rendering, \\fq quoted words,
     \\xt a citation, \\ft the rest. A rendering or quotation carries no space
@@ -601,7 +719,7 @@ def authored_body(note: Node, override: str | None, key: str) -> Body:
         offset += len(value)
     body = roles.body(reading, "rendering" if reading else "roman")
     if override is not None:
-        body = declared_readings(body, override, key)
+        body = declared_readings(body, override, key, quotation=quotation)
     return body
 
 
@@ -695,6 +813,11 @@ def displayed(
     """A body as runs of commentary, readings and citations: each rendering
     widened as its lemma was, each citation as the edition prints it. Returns
     the runs, the terms where they now stand, and the runs before widening."""
+    # An exception's italics stand as it declares them. The rules' take in
+    # the words a note sets in quotation marks.
+    if body.rule != "override":
+        check_quotes(body.plain)
+        body = quoted(body)
     runs, original = [], []
     for start, end, role, citation in body.leaves:
         value = body.plain[start:end]
@@ -711,9 +834,13 @@ def displayed(
         if role == "alternative" and body.rule != "roman" and (before or after):
             shown = before + value + after
         kind = (
-            "reading"
-            if role in {"alternative", "quotation"}
-            else "citation" if role == "citation" else "commentary"
+            "quotation"
+            if role == "quotation"
+            else (
+                "reading"
+                if role == "alternative"
+                else "citation" if role == "citation" else "commentary"
+            )
         )
         original.append((kind, value))
         runs.append((kind, shown))
@@ -784,12 +911,13 @@ def finished(
     terminal = stop.start() if stop else None
     lexical = bool(stop and ABBREVIATION.search(text[: stop.end()]))
     initial = None
-    if complete and re.match("[a-z]", text):
+    continuation = not complete or LABEL_START.match(text) is not None
+    if not continuation and re.match("[a-z]", text):
         initial = str.upper
     elif (
-        not complete
+        continuation
         and lemma is not None
-        and runs[0][0] != "citation"
+        and runs[0][0] not in {"citation", "quotation"}
         and not NAMES.match(text)
         and re.match(r"[A-Z](?![A-Z])", text)
     ):
@@ -830,18 +958,97 @@ def finished(
     if initial:
         role, value = runs[0]
         runs[0] = (role, initial(value[0]) + value[1:])
-    return runs
+    # Italic carries the quotation: remove its enclosing marks, preserving
+    # word apostrophes and the punctuation beside the cited words.
+    text = text_of(runs)
+    reading_bounds: list[tuple[int, int]] = []
+    offset = 0
+    for role, value in runs:
+        if role in {"reading", "quotation"}:
+            reading_bounds.append((offset, offset + len(value)))
+        offset += len(value)
+    removed = []
+    paired = {
+        at
+        for quote in ENGLISH_QUOTE.finditer(text)
+        for at in (quote.start(), quote.end() - 1)
+    }
+    for match in re.finditer(r"['‘’“”\"`]", text):
+        at = match.start()
+        if 0 < at < len(text) - 1 and text[at - 1].isalnum() and text[at + 1].isalnum():
+            continue
+        if match[0] in "'’" and at not in paired and at > 0 and text[at - 1] in "sS":
+            continue
+        left = len(text[:at].rstrip(" .,;:?!"))
+        right = at + 1 + len(text[at + 1 :]) - len(text[at + 1 :].lstrip(" .,;:?!"))
+        if any(
+            left == b or right == a or at == a or at + 1 == b for a, b in reading_bounds
+        ):
+            removed.append(at)
+    for at in reversed(removed):
+        runs = [*sliced(runs, 0, at), *sliced(runs, at + 1)]
+    runs = merged_runs(runs)
+    return merged_runs(
+        (
+            (
+                "reading"
+                if role == "commentary"
+                and value.isspace()
+                and 0 < i < len(runs) - 1
+                and runs[i - 1][0] in {"reading", "quotation"}
+                and runs[i + 1][0] in {"reading", "quotation"}
+                else role
+            ),
+            value,
+        )
+        for i, (role, value) in enumerate(runs)
+    )
 
 
 def underscored(runs: Sequence[tuple[str, str]]) -> str:
     """The note with its italic between underscores, as the exception files write it."""
     result, reading = [], False
     for role, value in runs:
-        if (role == "reading") != reading:
+        if (role in {"reading", "quotation"}) != reading:
             result.append("_")
             reading = not reading
         result.append(value)
     return "".join(result) + ("_" if reading else "")
+
+
+def prose(content: Content) -> Content:
+    """Prose footnotes use roman commentary and italic quotations, including
+    nested quotations, without their enclosing marks. Keep other semantic
+    styles, citations and the punctuation beside the quoted words."""
+
+    def roman(node: Node) -> Node | Content:
+        return node["content"] if usj.is_type(node, "char", "it") else node
+
+    content = usj.mapped(content, roman)
+    text = usj.text_of(content)
+    for quote in reversed(list(ENGLISH_QUOTE.finditer(text))):
+        assert quote.lastgroup is not None
+        first, last = trimmed(text, *quote.span(quote.lastgroup))
+        if first < last:
+            _, rest = usj.split(content, first)
+            inner, _ = usj.split(rest, last - first)
+            content = usj.replaced(content, first, last, [usj.char("it", *inner)])
+
+    removed: list[tuple[int, int, str]] = []
+
+    def delimiters(value: str, offset: int = 0) -> None:
+        check_quotes(value)
+        for quote in ENGLISH_QUOTE.finditer(value):
+            assert quote.lastgroup is not None
+            removed.extend(
+                (offset + at, offset + at + 1, "")
+                for at in (quote.start(), quote.end() - 1)
+            )
+            first, last = quote.span(quote.lastgroup)
+            delimiters(value[first:last], offset + first)
+
+    delimiters(text)
+    return usj.substituted(content, removed)
 
 
 def footnote(

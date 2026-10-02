@@ -1,4 +1,34 @@
 {
+  "appendix-chapter-labels": {
+    "why": "The chapter labels in the appendix's 3 Kingdoms section have no full stop after their numbers.",
+    "changes": [
+      {
+        "unit": "BAK",
+        "from": "2 ult. 3. verse 1.",
+        "to": "2 ult. 3 verse 1."
+      },
+      {
+        "unit": "BAK",
+        "from": "5. And the king commanded",
+        "to": "5 And the king commanded"
+      },
+      {
+        "unit": "BAK",
+        "from": "6. And the word of the Lord came to Solomon",
+        "to": "6 And the word of the Lord came to Solomon"
+      },
+      {
+        "unit": "BAK",
+        "from": "7. Verse 1, etc.",
+        "to": "7 Verse 1, etc."
+      },
+      {
+        "unit": "BAK",
+        "from": "14. Verses 1 to 20.",
+        "to": "14 Verses 1 to 20."
+      }
+    ]
+  },
   "numbers": {
     "why": "Chicago sets no period after a number within a sentence. The number stays in figures, as the source writes it, unless the notes around it write theirs in words, and an ordinal takes its suffix. Each change names its unit and the words it changes there, once.",
     "changes": [
@@ -73,7 +103,7 @@
       {
         "note": "ISA 52:7",
         "from": "2. 2.,",
-        "to": "2. 2,"
+        "to": "2. 2, "
       },
       {
         "note": "PSA 68:1",
@@ -90,6 +120,21 @@
         "from": "I. and II.",
         "to": "1 and 2",
         "why": "the numbers of books, in the figures of the edition's names for them"
+      }
+    ]
+  },
+  "appendix-references": {
+    "why": "Appendix is a full word, so these references have no abbreviation period after it.",
+    "changes": [
+      {
+        "note": "2SA 5:18",
+        "from": "Appendix. which",
+        "to": "Appendix which"
+      },
+      {
+        "note": "PRO 21:16",
+        "from": "Appendix. Note",
+        "to": "Appendix Note"
       }
     ]
   },
@@ -323,6 +368,31 @@
         "unit": "BAK",
         "from": "PROVERBS.",
         "to": "Proverbs."
+      }
+    ]
+  },
+  "note-quotation-marks": {
+    "why": "Quoted words in notes are italic without enclosing quotation marks; remove the unmatched mark before the appendix quotation.",
+    "changes": [
+      {
+        "note": "ISA 2:6",
+        "from": "has: “ISAIAH",
+        "to": "has: ISAIAH"
+      }
+    ]
+  },
+  "note-quotation-punctuation": {
+    "why": "Removing quotation marks leaves these stops inside a sentence or before etc.; the cited words retain the surrounding sentence punctuation.",
+    "changes": [
+      {
+        "note": "JOS 21:13",
+        "from": "suburbs.’ above",
+        "to": "suburbs’ above"
+      },
+      {
+        "note": "1SA 30:26",
+        "from": "you.' etc.",
+        "to": "you' etc."
       }
     ]
   }

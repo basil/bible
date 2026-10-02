@@ -455,7 +455,12 @@ def surviving_scope(
         verse.text,
         words,
         offset,
-        notes.reading_of(note, exception.get("note"), key),
+        notes.reading_of(
+            note,
+            exception.get("note"),
+            key,
+            quotation=exception.get("quotation", False),
+        ),
         exception,
         key,
     )

@@ -176,7 +176,9 @@ def brenton(
                 verse = verses[reference]
             home = verse_at(code, reference)
             if note.get("category") == "edition":
-                body = notes.authored_body(note, override, key)
+                body = notes.authored_body(
+                    note, override, key, quotation=exception.get("quotation", False)
+                )
                 source = text = body.plain
                 cited = citations.scan(
                     text, tongue, home, key, ctx.inventory, policy=policy
@@ -191,7 +193,14 @@ def brenton(
                 cited = citations.scan(
                     text, tongue, home, key, ctx.inventory, policy=policy
                 )
-                body = notes.source_body(pieces, cited, override, key, source)
+                body = notes.source_body(
+                    pieces,
+                    cited,
+                    override,
+                    key,
+                    source,
+                    quotation=exception.get("quotation", False),
+                )
             report.read(tongue, key, cited, policy)
             found.append(
                 Read(
@@ -225,8 +234,12 @@ def brenton(
         key, verse = read.key, read.verse
         exception = exceptions.get(key, {})
         words = word_spans(verse.text)
-        if "verse" in exception:
-            # It stands at the words the exception names, as no caller does.
+        if "verse" in exception or exception.get("widen") is False:
+            # A moved or deliberately narrow note stands at its named words.
+            require(
+                read.scope is None,
+                f"Alexandrine lemma also has a Brenton exception: {key}",
+            )
             span, glossed, rule = lemmas.overridden_lemma(
                 verse.text,
                 words,
@@ -378,7 +391,14 @@ def george(
             reference,
             verse,
             words[first][1],
-            notes.source_body(pieces, cited, override.get("note"), key, note["note"]),
+            notes.source_body(
+                pieces,
+                cited,
+                override.get("note"),
+                key,
+                note["note"],
+                quotation=override.get("quotation", False),
+            ),
             tuple(cited),
             note["note"],
             note["note"],

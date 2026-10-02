@@ -379,7 +379,12 @@ def test_a_notes_citations_are_references_of_their_own(
 ) -> None:
     plain = "".join(text for _, text in pieces)
     body = notes.source_body(pieces, cite(plain, decided=decided), None, "x", plain)
-    marks = {"commentary": "{}", "reading": "[{}]", "citation": "<{}>"}
+    marks = {
+        "commentary": "{}",
+        "reading": "[{}]",
+        "quotation": "[{}]",
+        "citation": "<{}>",
+    }
     runs = notes.displayed(body, books=ctx.books)[0]
     assert "".join(marks[role].format(words) for role, words in runs) == prints
 
@@ -420,7 +425,7 @@ def test_a_citation_of_the_wrong_verse_prints_the_verse_meant(
         # A book that is named and not cited is renamed.
         ("BAK", "\\is2 3 Kingdoms"),
         # The label of a passage retained for editorial review is no citation.
-        ("BAK", "\\ip 5. \\vp 17\\vp*And the king commanded"),
+        ("BAK", "\\ip 5 \\vp 17\\vp*And the king commanded"),
         # A book's introduction, set as a note on the book, cites the book.
         ("BAR", "ending at 3:8, was in all probability originally written in Hebrew"),
     ],

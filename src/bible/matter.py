@@ -24,7 +24,7 @@ import bible.annotate
 import bible.policy
 import bible.references
 import bible.terminology
-from bible import assembly, citations, repairs, scripture, terminology, usj
+from bible import assembly, citations, notes, repairs, scripture, terminology, usj
 from bible.checks import CheckFailed, require
 from bible.policy import source_id
 from bible.policy_schema import Entry, WordingChange
@@ -389,8 +389,17 @@ def placed(unit: Unit, policy: bible.policy.Policy) -> Unit:
     return unit
 
 
-def edited(unit: Unit, code: str, changes: Iterable[WordingChange], name: str) -> Unit:
-    """A unit with each declared change to its words, which must be its once."""
+def edited(
+    unit: Unit,
+    code: str,
+    changes: Iterable[WordingChange],
+    name: str,
+    *,
+    right: bool = False,
+) -> Unit:
+    """A unit with each declared change to its words, which must be its once.
+    Words that are only added join the words before them, or, from the right,
+    the words after them."""
     for change in changes:
         found = [
             (index, address)
@@ -417,7 +426,10 @@ def edited(unit: Unit, code: str, changes: Iterable[WordingChange], name: str) -
             index,
             address,
             usj.substituted(
-                content, [(start, start + len(removed), added)], skip=usj.is_label
+                content,
+                [(start, start + len(removed), added)],
+                skip=usj.is_label,
+                right=right,
             ),
         )
     return unit
@@ -619,10 +631,18 @@ def unit(
         for c in group["changes"]
         if c.get("unit") == code
     ]
+    read_unit = edited(read_unit, code, changes, "Prose change")
     if is_glossary(entry):
         terminology.check_abbreviations(policy)
-        changes += policy.abbreviations["meanings"]["changes"]
-    read_unit = edited(read_unit, code, changes, "Prose change")
+        # What a meaning adds takes the style of the words after it, so that
+        # an English gloss after italic Latin stays roman.
+        read_unit = edited(
+            read_unit,
+            code,
+            policy.abbreviations["meanings"]["changes"],
+            "Prose change",
+            right=True,
+        )
     read_unit = [
         pair for pair, original in zip(read_unit, originals) if id(original) in kept
     ]
@@ -703,4 +723,4 @@ def introduction_note(paragraphs: Sequence[Content]) -> Node:
     content: Content = []
     for paragraph in paragraphs:
         content = usj.joined(content, [" "] if content else [], paragraph)
-    return usj.note("ef", usj.char("ft", *content))
+    return usj.note("ef", usj.char("ft", *notes.prose(content)))

@@ -171,7 +171,7 @@ def overridden_lemma(
 
     An exception's lemma is the words the note glosses. One that occurs more
     than once in the verse comes with its occurrence, and is widened like any
-    other lemma.
+    other lemma unless its decision explicitly keeps the narrow wording.
     """
     if "lemma" not in exception:
         assert rule is not None
@@ -182,7 +182,11 @@ def overridden_lemma(
         chosen = widened = phrase_span(words, exception["lemma"], key)
     else:
         chosen = phrase_span(words, exception["lemma"], key, occurrence)
-        widened = unique_span(verse, words, *chosen)
+        widened = (
+            unique_span(verse, words, *chosen)
+            if exception.get("widen", True)
+            else chosen
+        )
     # A lemma the same as the widened one still changes what the rendering echoes.
     require(
         (widened, chosen) != (span, glossed), f"Lemma override changes nothing: {key}"

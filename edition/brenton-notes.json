@@ -552,6 +552,10 @@
       "lemma": "in a plant of Sabec",
       "why": "Heb. in a thicket covers in a"
     },
+    "GEN 22:20": {
+      "note": "_Men_, understood.",
+      "why": "The cited words and lexical glosses are italic; the surrounding explanation stays roman"
+    },
     "GEN 24:5": {
       "lemma": "if haply",
       "why": "the note is on μή ποτε, if haply"
@@ -572,6 +576,10 @@
       "lemma": "within a little had",
       "why": "had almost renders within a little had"
     },
+    "GEN 27:38": {
+      "note": "Heb. — _Isaac being troubled_.",
+      "why": "Isaac being troubled quotes the words omitted by the Hebrew, so the quotation is italic and the omission sign stays roman"
+    },
     "GEN 28:13": {
       "lemma": "stood",
       "why": "Gr. was established renders stood alone"
@@ -579,6 +587,11 @@
     "GEN 28:18": {
       "lemma": "laid",
       "why": "Lit. put under renders laid"
+    },
+    "GEN 30:27": {
+      "lemma": "I would augur well",
+      "note": "_Stay thou_, perhaps understood. Heb. _I have argued that_, etc.",
+      "why": "The cited words and lexical glosses are italic; the surrounding explanation stays roman; retain the existing scope of the note"
     },
     "GEN 30:30": {
       "note": "So A. V. but Gr. and Heb. literally, _at my foot_.",
@@ -608,6 +621,11 @@
     "GEN 38:16": {
       "lemma": "went out of his way to her",
       "why": "turned his way to her renders went out of his way to her"
+    },
+    "GEN 39:1": {
+      "note": "Gr. _chief cook_. The same Hebrew word טבח signifies _a cook_, who was also a butcher; and _a guardsman_, who was also an executioner.",
+      "why": "The cited words and lexical glosses are italic; the surrounding explanation stays roman. The complete explanation retains its final full stop.",
+      "sentence": true
     },
     "GEN 39:11": {
       "lemma": "it came to pass on a certain day",
@@ -860,6 +878,11 @@
       "lemma": "that which is to be set forth",
       "why": "the phrase runs to set forth"
     },
+    "EXO 40:15": {
+      "lemma": "everlasting anointing of priesthood",
+      "note": "See 1 John 2. 27; _The anointing abideth_, etc.",
+      "why": "The anointing abideth quotes the cited verse and is italic; the note remains on everlasting anointing of priesthood"
+    },
     "EXO 40:20": {
       "lemma": "by the sides of",
       "why": "Gr. under renders by the sides of"
@@ -982,6 +1005,10 @@
       "lemma": "burnt-offering",
       "why": "the note is on κάρπωμα, burnt-offering"
     },
+    "NUM 30:7": {
+      "note": "It would seem that the relative _in respect of_ οὓς must refer to ὁρισμοὺς, understood.",
+      "why": "The cited words and lexical glosses are italic; the surrounding explanation stays roman"
+    },
     "NUM 30:9": {
       "lemma": "straitly",
       "why": "in any wise renders straitly"
@@ -1071,8 +1098,10 @@
       "why": "Gr. by a soul renders by any one"
     },
     "DEU 16:21": {
-      "lemma": "plant for thyself any tree",
-      "why": "Gr. make is ποιήσεις in the second clause"
+      "lemma": "plant",
+      "occurrence": 2,
+      "widen": false,
+      "why": "Gr. make renders the second plant alone; the rest of the instruction stays"
     },
     "DEU 17:6#2": {
       "lemma": "is put to death shall not be put to death",
@@ -1216,6 +1245,11 @@
       "lemma": "attack",
       "why": "fasten upon or seize renders attack; the rear remains"
     },
+    "JOS 11:21": {
+      "lemma": "race of Israel",
+      "note": "Heb. הר ישראל probably הר for דור _a mountain_, not _a generation_.",
+      "why": "The cited words and lexical glosses are italic; the surrounding explanation stays roman; retain the existing scope of the note"
+    },
     "JOS 12:2": {
       "note": "another reading is ἐπὶ τοῦ χείλους, _on the slope_ or, _edge_.",
       "why": "the English after the Greek renders on the side; of the valley remains"
@@ -1267,7 +1301,8 @@
     },
     "JOS 19:51": {
       "lemma": "went to take possession",
-      "why": "finished dividing renders went to take possession"
+      "why": "finished dividing renders went to take possession; the complete explanation keeps its final full stop.",
+      "sentence": true
     },
     "JOS 20:2#2": {
       "lemma": "refuge",
@@ -1319,7 +1354,8 @@
     },
     "JDG 2:18": {
       "lemma": "was moved",
-      "why": "Gr. repented renders was moved"
+      "why": "Gr. repented renders was moved; the complete explanation keeps its final full stop.",
+      "sentence": true
     },
     "JDG 2:23": {
       "lemma": "will leave",
@@ -1560,6 +1596,10 @@
       "lemma": "raised up help",
       "why": "set up a hand renders raised up help; for himself is kept"
     },
+    "1SA 15:17": {
+      "note": "Gr. _staff of a tribe_. A double rendering of שבט i. e. both _staff_ and _tribe_.",
+      "why": "The cited words and lexical glosses are italic; the surrounding explanation stays roman"
+    },
     "1SA 15:32": {
       "lemma": "Is death thus bitter",
       "why": "the rendering stands for the whole question"
@@ -1613,6 +1653,11 @@
       "lemma": "David's wife told him",
       "why": "his wife sent to David renders David's wife told him"
     },
+    "1SA 19:13#2": {
+      "lemma": "liver of a goat",
+      "note": "כבד _liver_, has evidently been read here for כביר _a quilt_, or perhaps _a pillow_.",
+      "why": "The cited words and lexical glosses are italic; the surrounding explanation stays roman; retain the existing scope of the note"
+    },
     "1SA 20:6": {
       "note": "Or, _notice me as present or absent_.",
       "why": "notice me as present or absent is one rendering, not two"
@@ -1625,6 +1670,10 @@
       "lemma": "stay three days",
       "why": "act thrice renders stay three days"
     },
+    "1SA 20:19#2": {
+      "note": "A corruption of the Heb. _ezel_.",
+      "why": "The cited words and lexical glosses are italic; the surrounding explanation stays roman"
+    },
     "1SA 20:30": {
       "note": "Lit. _deserting_ in a military sense.",
       "why": "Lit. deserting renders traitorous; in a military sense is comment"
@@ -1633,9 +1682,10 @@
       "lemma": "so long as",
       "why": "all the days that renders so long as"
     },
-    "1SA 21:3#2": {
-      "note": "Phellani maemoni, a corruption of פלכי אלמבי.",
-      "why": "phellani maemoni repeats the words of the text; the note explains rather than renders"
+    "1SA 21:3": {
+      "lemma": "The faithfulness of God",
+      "note": "This is another instance of double translation, מקוצ suggesting probably both the idea of _place_ and _faithfulness_.",
+      "why": "The cited words and lexical glosses are italic; the surrounding explanation stays roman; retain the existing scope of the note"
     },
     "1SA 21:8": {
       "lemma": "detained",
@@ -1879,8 +1929,10 @@
       "why": "as this day is renders as it is this day"
     },
     "1KI 3:20#2": {
-      "lemma": "laid her dead son",
-      "why": "caused to sleep renders laid"
+      "lemma": "laid",
+      "occurrence": 2,
+      "widen": false,
+      "why": "caused to sleep renders the second laid alone; her dead son is its object"
     },
     "1KI 3:26": {
       "lemma": "her bowels yearned",
@@ -2007,12 +2059,13 @@
       "why": "of his royal bounty renders by the hand of king Solomon; of his royal bounty is the A. V. rendering"
     },
     "1KI 10:21": {
-      "note": "Lit. '_shut up with gold_,' a frequent phrase in Heb. and Gr. for 'pure gold.' See chap. 6. 20.",
-      "why": "pure gold is the English idiom, not a rendering"
+      "note": "Lit. '_shut up with gold_,' a frequent phrase in Heb. and Gr. for '_pure gold_.' See chap. 6. 20.",
+      "why": "shut up with gold is the literal rendering; pure gold is the quoted English idiom, italic as cited words are"
     },
     "1KI 10:22a": {
       "note": "This word more commonly means '_spoil_' in the O.T.",
-      "why": "spoil is another rendering of the word"
+      "why": "spoil is another rendering of the word. The complete explanation retains its final full stop.",
+      "sentence": true
     },
     "1KI 11:33#2": {
       "lemma": "the abomination of the children of Ammon",
@@ -2121,6 +2174,10 @@
     "1KI 18:7": {
       "lemma": "art thou",
       "why": "if thou art renders art thou"
+    },
+    "1KI 18:21": {
+      "note": "Gr. _the hams_, from γόνυ, _the knee_.",
+      "why": "The cited words and lexical glosses are italic; the surrounding explanation stays roman"
     },
     "1KI 19:2": {
       "lemma": "do so to me, and more also",
@@ -2261,12 +2318,19 @@
       "why": "in the dark renders while it was yet night"
     },
     "2KI 7:5#2": {
-      "lemma": "was no man",
-      "why": "Gr. is renders was"
+      "lemma": "was",
+      "occurrence": 2,
+      "widen": false,
+      "why": "Gr. is renders the second was alone; no man stays"
     },
     "2KI 8:1": {
       "note": "The Gr. signifies, _to rekindle a fire_.",
       "why": "to rekindle a fire is the literal rendering"
+    },
+    "2KI 8:15": {
+      "lemma": "thick cloth",
+      "note": "The Gr. is from the Heb. _rug_ or _quilt_, etc.",
+      "why": "The cited words and lexical glosses are italic; the surrounding explanation stays roman; retain the existing scope of the note"
     },
     "2KI 8:17": {
       "lemma": "Thirty and two years old was he when he began to reign",
@@ -2348,10 +2412,6 @@
     "2KI 15:5#3": {
       "lemma": "separate",
       "why": "the Gr. transliterates the Hebrew for separate; house is Greek"
-    },
-    "2KI 15:10": {
-      "note": "Heb. קבלעם _before the people_.",
-      "why": "before the people renders the Hebrew"
     },
     "2KI 15:33": {
       "lemma": "Twenty and five years old was he when he began to reign",
@@ -2769,7 +2829,8 @@
     },
     "PSA 128:3": {
       "sentence": false,
-      "why": "read is a participle: the note glosses the Hebrew, it is no sentence"
+      "why": "The lexical glosses iniquity and a furrow are italic; read is a participle, so the note stays without sentence styling",
+      "note": "שיך _iniquity_, easily read for שוכה _a furrow_."
     },
     "PSA 131:18": {
       "lemma": "holiness",
@@ -2793,8 +2854,8 @@
       "why": "the note explains the clause rather than renders pleasures"
     },
     "PSA 143:7": {
-      "lemma": "great waters",
-      "why": "Gr. many renders great"
+      "lemma": "great",
+      "why": "Gr. many renders great alone; waters stays"
     },
     "PSA 146:8": {
       "lemma": "and green herb for the service of men",
@@ -2889,6 +2950,11 @@
       "note": "Gr. _`off-scouring_;' perhaps _`ransom_,' q. d. that which cleans.",
       "why": "off-scouring renders abomination; ransom is a second rendering"
     },
+    "PRO 21:29": {
+      "lemma": "impudently withstands with his face",
+      "note": "See Alex. _ungodly_.",
+      "why": "The cited words and lexical glosses are italic; the surrounding explanation stays roman; retain the existing scope of the note"
+    },
     "PRO 22:8a": {
       "lemma": null,
       "why": "2 Cor. 9. 7 quotes the verse from its start"
@@ -2959,6 +3025,10 @@
       "lemma": "stink",
       "why": "the note is on the word stink (smell, Job 6. 7)"
     },
+    "JOL 4:4": {
+      "note": "ἀλλοφύλων, usually _Philistines_.",
+      "why": "The cited words and lexical glosses are italic; the surrounding explanation stays roman"
+    },
     "JOL 4:18": {
       "lemma": "fountains of Juda",
       "why": "the note is on fountains of Juda"
@@ -3004,8 +3074,8 @@
       "why": "proper names describes the Hebrew rather than renders it"
     },
     "ZEC 9:13": {
-      "note": "Or, _it with_ Ephraim.",
-      "why": "it with is the rendering"
+      "note": "Or, _it with Ephraim_.",
+      "why": "it with Ephraim is the whole alternative rendering; Or stays roman"
     },
     "ZEC 9:15": {
       "lemma": "the bowls as the altar",
@@ -3043,9 +3113,10 @@
       "lemma": "afflict",
       "why": "beat with the fist renders afflict"
     },
-    "MAL 3:10": {
-      "note": "Or, _windows_, see Gen 7. 11, there rendered '_flood-gates_.'",
-      "why": "flood-gates is cited from Gen. 7. 11"
+    "ISA 2:6": {
+      "note": "Or, _aliens_, see Appendix which has: “ISAIAH 2. 6. — _Philistines_. The LXX. generally render by Φιλιστεὶμ or Φυλιστιὶμ till about the middle of Judges, after which the word almost always used is ἀλλόφυλοι. In this there was probably some accommodation of sound to tense.",
+      "why": "The cited words and lexical glosses are italic; the surrounding explanation stays roman. The complete explanation retains its final full stop.",
+      "sentence": true
     },
     "ISA 5:1": {
       "lemma": "high hill",
@@ -3116,10 +3187,6 @@
     "ISA 16:11": {
       "lemma": "thou hast repaired my inward parts as a wall",
       "why": "the Hebrew differs in the wall that thou hast repaired (Kir-heres), not in my inward parts"
-    },
-    "ISA 17:12": {
-      "note": "Gr. _back_; Complut. reads ἠχος, ‘_noise_’.",
-      "why": "noise renders the Complutensian reading"
     },
     "ISA 19:3": {
       "lemma": "them that have in them a divining spirit",
@@ -3230,8 +3297,8 @@
       "why": "the beginning of day renders the early time; in stays (ὡς ἐν ἀρχῇ ἡμέρας)"
     },
     "ISA 52:7": {
-      "note": "Rom. 10. 15. Another reading is '_How beautiful are the feet_,' etc. Lit. _Why have the feet been made beautiful_? See also Joel 2. 2.,'the morning [spread] upon the mountains.'",
-      "why": "How beautiful are the feet is the other reading"
+      "note": "Rom. 10. 15. Another reading is '_How beautiful are the feet_,' etc. Lit. _Why have the feet been made beautiful_? See also Joel 2. 2.,'_the morning [spread] upon the mountains_.'",
+      "why": "How beautiful are the feet is the other reading; the morning [spread] upon the mountains is quoted from Joel"
     },
     "ISA 52:12": {
       "lemma": "brings up your rear",
@@ -3276,6 +3343,23 @@
     "2KI 3:21#2": {
       "lemma": "and they said, Ho",
       "why": "the Alex. reading and above stands for and they said, Ho"
+    },
+    "GEN 15:11": {
+      "why": "The note ends with a complete explanatory sentence, which keeps normal capitalization and its final full stop.",
+      "sentence": true
+    },
+    "1SA 15:11": {
+      "why": "The note ends with a complete explanatory sentence, which keeps normal capitalization and its final full stop.",
+      "sentence": true
+    },
+    "2KI 12:14": {
+      "why": "The note ends with a complete explanatory sentence, which keeps normal capitalization and its final full stop.",
+      "sentence": true
+    },
+    "1SA 14:29": {
+      "note": "_E medio sustulit_. עכר probably read as עבר.",
+      "why": "E medio sustulit is the Latin rendering and is italic; the following explanation keeps its sentence punctuation.",
+      "sentence": true
     }
   },
   "shapes": {

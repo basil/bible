@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
+from copy import deepcopy
 from typing import Any
 
 import pytest
@@ -13,6 +14,118 @@ import bible.pipeline
 import bible.policy
 from bible import annotate, crossrefs, lemmas, notes, scripture, terminology, usj
 from bible.checks import CheckFailed
+from bible.usj import Content
+
+
+def test_prose_quotations_span_styles_and_preserve_apostrophes() -> None:
+    content: Content = [
+        "He quotes “The ",
+        usj.char("it", "fathers’"),
+        " words: ‘we are his offspring.’” ",
+        usj.char("it", "This"),
+        " is commentary. See ",
+        usj.char("xt", "Acts 17:28"),
+        ".",
+    ]
+    source = deepcopy(content)
+    printed = notes.prose(content)
+    assert content == source
+    assert usj.text_of(printed) == (
+        "He quotes The fathers’ words: we are his offspring. "
+        "This is commentary. See Acts 17:28."
+    )
+    italic = [
+        usj.text_of(n["content"])
+        for n in usj.walk(printed)
+        if usj.is_type(n, "char", "it")
+    ]
+    assert italic == ["The fathers’ words: we are his offspring"]
+    assert usj.char("xt", "Acts 17:28") in printed
+
+
+@pytest.mark.parametrize(
+    "key",
+    [
+        "GEN 15:11",
+        "GEN 39:1",
+        "JOS 19:51",
+        "JDG 2:18",
+        "1SA 15:11",
+        "2KI 12:14",
+        "ISA 2:6",
+        "1KI 10:22a",
+        "MAT 17:27 a piece of money",
+        "ACT 17:19 Areopagus",
+    ],
+)
+def test_complete_explanations_keep_their_final_stop(
+    edition: bible.pipeline.Edition, key: str
+) -> None:
+    row = next(r for rows in edition.notes.values() for r in rows if r["key"] == key)
+    assert row["note"].endswith(".")
+    if key == "1KI 10:22a":
+        assert row["note"].startswith("This word")
+    if key in (
+        "GEN 15:11",
+        "ISA 2:6",
+        "MAT 17:27 a piece of money",
+        "ACT 17:19 Areopagus",
+    ):
+        assert row["note"].startswith("or,")
+
+
+def test_editorial_note_styles_and_punctuation(
+    edition: bible.pipeline.Edition,
+) -> None:
+    rows = {r["key"]: r for notes in edition.notes.values() for r in notes}
+    assert "_from any cause_" in rows["GEN 30:41"]["note"]
+    assert "_then_" in rows["GEN 30:41"]["note"]
+    assert rows["1SA 14:29"]["note"].startswith("_E medio sustulit_.")
+    assert rows["1SA 14:29"]["lemma"] == "destroyed the land"
+    assert rows["PSA 113:24"]["note"] == "Gr. sing."
+    assert "_suburbs_ above" in rows["JOS 21:13"]["note"]
+    assert "_Lo! a blessing from you_ etc." in rows["1SA 30:26"]["note"]
+    assert rows["JHN 18:13 year"]["note"].startswith("_And Annas sent Christ")
+
+
+@pytest.mark.parametrize(
+    "quotation, expected",
+    [(True, "_And Annas sent Christ_"), (False, "_and Annas sent Christ_")],
+)
+def test_declared_quotations_preserve_capitals_but_alternatives_run_on(
+    policy: bible.policy.Policy, quotation: bool, expected: str
+) -> None:
+    source = "And Annas sent Christ"
+    body = notes.source_body(
+        [("text", source)],
+        [],
+        "_" + source + "_",
+        "key",
+        source,
+        quotation=quotation,
+    )
+    assert body.alternative == (None if quotation else source)
+    runs, terms, _ = notes.displayed(body)
+    result = notes.finished(
+        runs, terms, "year", None, terminology.registry(policy), "key"
+    )
+    assert notes.underscored(result) == expected
+    echoed = notes.displayed(body, "before ", " after")[0]
+    assert notes.text_of(echoed) == (
+        source if quotation else "before " + source + " after"
+    )
+
+
+def test_a_quotation_decision_must_declare_quoted_words() -> None:
+    with pytest.raises(CheckFailed, match="declares no quoted words: key"):
+        notes.source_body(
+            [("text", "And Annas sent Christ")],
+            [],
+            "And Annas sent Christ",
+            "key",
+            "And Annas sent Christ",
+            quotation=True,
+        )
 
 
 def printed(
@@ -125,6 +238,37 @@ def test_the_exception_files_correct_the_rules(
         with_exception({"note": "Gr. _meeting_ apart.", "why": "other words"})
 
 
+def test_a_repeated_verb_can_keep_its_gloss_clear_of_its_object(
+    ctx: bible.annotate.Context, policy: bible.policy.Policy
+) -> None:
+    verse = (
+        r"\v 9 And she "
+        r"\f + \fr 99:9 \fqa Gr. \ft caused to sleep.\f*"
+        "laid him in her bosom, and laid her dead son in my bosom."
+    )
+    excepted = changed(
+        policy,
+        "brenton_notes",
+        lambda data: data["notes"].update(
+            {
+                "GEN 99:9": {
+                    "lemma": "laid",
+                    "occurrence": 2,
+                    "widen": False,
+                    "why": "The note glosses the verb, not its object.",
+                }
+            }
+        ),
+    )
+    result = printed(verse, annotate.Context(excepted, *list(vars(ctx).values())[1:]))[
+        "9"
+    ]
+    assert result == (
+        r"And she laid him in her bosom, and \f - \fr 99:9 \fq laid: "
+        r"\ft Gr. \fqa caused to sleep\f*laid her dead son in my bosom."
+    )
+
+
 def test_a_note_in_the_wrong_verse_is_set_on_its_words_in_the_right_one(
     ctx: bible.annotate.Context, policy: bible.policy.Policy
 ) -> None:
@@ -202,6 +346,118 @@ def test_a_declared_change_of_wording_is_carried_through_a_notes_parts() -> None
         notes.edited(body, "6.", "six", "key")
 
 
+@pytest.mark.parametrize(
+    "words, expected",
+    [
+        ("Alex. omits 'not.'", "Alex. omits _not_"),
+        (
+            "The Greek word is different from that translated ‘suburbs.’ above.",
+            "The Greek word is different from that translated _suburbs_. above.",
+        ),
+        ("Heb. שופרות ‘ram's horns.’", "Heb. שופרות _ram's horns_"),
+        ("The rendering is 'he destroyed.'", "The rendering is _he destroyed_."),
+        (
+            "The author quotes 'et tota terra non prandebat.'",
+            "The author quotes _et tota terra non prandebat_.",
+        ),
+        ("Brenton's note has no quotation.", "Brenton's note has no quotation."),
+        ("Gr. of their fathers' families.", "Gr. _of their fathers' families_"),
+        ("Gr. the fathers'.", "Gr. _the fathers'_"),
+        # "Gr. sing." keeps its stop as an abbreviation; the verb does not.
+        ("Or, they shall sing.", "or, _they shall sing_"),
+    ],
+)
+def test_quoted_words_use_italic_without_quotation_marks(
+    words: str, expected: str, policy: bible.policy.Policy
+) -> None:
+    body = notes.interpreted(notes.labelled_pieces(words), "key")
+    body = notes.with_terms(body, terminology.registry(policy))
+    runs, terms, _ = notes.displayed(body)
+    result = notes.finished(
+        runs, terms, "lemma", None, terminology.registry(policy), "key"
+    )
+    assert notes.underscored(result) == expected
+
+
+@pytest.mark.parametrize(
+    "words",
+    [
+        # A plural possessive within single marks, or after them.
+        "Gr. 'the fathers' houses.'",
+        "Gr. ‘the fathers’ houses.’",
+        "Gr. 'the sons' and their fathers' houses.",
+        "Gr. 'the fathers' houses' and 'the sons.'",
+    ],
+)
+def test_quotation_marks_that_pair_in_two_ways_are_refused(words: str) -> None:
+    body = notes.interpreted(notes.labelled_pieces(words), "key")
+    with pytest.raises(CheckFailed, match="Ambiguous quotation marks"):
+        notes.displayed(body)
+    with pytest.raises(CheckFailed, match="Ambiguous quotation marks"):
+        notes.prose([words])
+
+
+def test_a_label_opens_a_note_only_as_a_whole_word() -> None:
+    assert notes.LABEL_START.match("See the note above.")
+    assert notes.LABEL_START.match("Gr. meeting.")
+    assert not notes.LABEL_START.match("Seeing that it is so.")
+    assert not notes.LABEL_START.match("Hebrews are meant.")
+
+
+def test_an_exception_declares_its_italics_and_must_differ_from_the_rules(
+    policy: bible.policy.Policy,
+) -> None:
+    registry = terminology.registry(policy)
+
+    def printed_note(source: str, override: str) -> str:
+        body = notes.source_body(
+            notes.labelled_pieces(source), [], override, "key", source
+        )
+        runs, terms, _ = notes.displayed(notes.with_terms(body, registry))
+        return notes.underscored(
+            notes.finished(runs, terms, "lemma", None, registry, "key")
+        )
+
+    # Quoted words that an exception leaves roman stay roman.
+    assert (
+        printed_note(
+            "Or, 'but he that is without fear (sc. of the Lord) shall dwell' etc.",
+            "Or, '_but he that is without fear_ (sc. of the Lord) _shall dwell_' etc.",
+        )
+        == "or, _but he that is without fear_ (sc. of the Lord) _shall dwell_ etc."
+    )
+    # One that only repeats the italics of the rules, quoted words among
+    # them, changes nothing.
+    with pytest.raises(CheckFailed, match="Note override changes nothing: key"):
+        printed_note(
+            "Or, windows, see above, there rendered 'flood-gates.'",
+            "Or, _windows_, see above, there rendered '_flood-gates_.'",
+        )
+
+
+@pytest.mark.parametrize(
+    "english, italic",
+    [
+        ("valley of trouble", True),
+        ("the back of the neck", True),
+        ("rose or stood", True),
+        ("ambiguous", False),
+        ("a particle of entreaty, here rendered literally", False),
+        ("name of a town", False),
+        ("is retained in the Greek", False),
+        ("as if העבדים", False),
+    ],
+)
+def test_a_hebrew_gloss_is_italic_without_measuring_the_lemma(
+    english: str, italic: bool
+) -> None:
+    body = notes.interpreted(
+        [("label", "Heb. "), ("text", "ערף " + english + ".")], "key"
+    )
+    assert body.alternative is None
+    assert any(role == "quotation" for _, _, role in body.roles) == italic
+
+
 def test_the_notes_the_edition_writes_say_what_each_part_is() -> None:
     note = usj.note(
         "f",
@@ -231,6 +487,15 @@ def test_the_notes_the_edition_writes_say_what_each_part_is() -> None:
         ("see the MS. Then the Vulg. reads", "see the MS. Then the Vulgate reads"),
         ("in the year a.d. 126, or b.c. 217", "in the year AD 126, or 217 BC"),
         ("scil. the people, &c.", "sc. the people, etc."),
+        ("Alex. + the Lord.", "Alex. adds the Lord."),
+        ("Heb. and Alex. + and she fell.", "Heb. and Alex. add and she fell."),
+        ("Alex. and Vat. — these words.", "Alex. and Vat. omit these words."),
+        ("Alex. Vat. — the clause.", "Alex. Vat. omits the clause."),
+        ("Heb. — Isaac being troubled.", "Heb. omits Isaac being troubled."),
+        ("Alex. — 'not.'", "Alex. omits 'not.'"),
+        ("Gr. from. Heb.—מ.", "Gr. from. Heb.—מ."),
+        ("Gr. finishing — cutting.", "Gr. finishing — cutting."),
+        ("Note. - This rendering.", "Note. - This rendering."),
     ],
 )
 def test_terms_print_in_the_editions_forms(
@@ -245,6 +510,25 @@ def test_terms_print_in_the_editions_forms(
         )
         == expected
     )
+
+
+@pytest.mark.parametrize(
+    "words",
+    [
+        "Complut. + and they went.",
+        "Complut. — and they went.",
+        "Alex. +'and they went.'",
+        "Gr. one + one.",
+    ],
+)
+def test_a_sign_after_no_witness_is_refused(
+    words: str, policy: bible.policy.Policy
+) -> None:
+    registry = terminology.registry(policy)
+    with pytest.raises(CheckFailed, match="Sign after no witness"):
+        terminology.recognize(words, registry)
+    # Prose has no signs to read.
+    assert terminology.recognize(words, registry, note=False)
 
 
 def test_every_note_of_the_sources_is_printed_or_replaced_by_a_link(

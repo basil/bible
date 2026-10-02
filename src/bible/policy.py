@@ -158,9 +158,9 @@ def check(policy: Policy) -> None:
     # A misspelt field would be read as no override, and the entry as used.
     # The 1611 notes also say where George's lemma is found in the verse; a
     # note of either source may say which verse it belongs to.
-    note_fields = {"lemma", "note", "sentence", "occurrence"}
+    note_fields = {"lemma", "note", "sentence", "occurrence", "quotation"}
     for name, notes, fields in (
-        ("Brenton", policy.brenton_notes, note_fields | {"verse"}),
+        ("Brenton", policy.brenton_notes, note_fields | {"verse", "widen"}),
         ("1611", policy.kjv_notes, note_fields | {"anchor", "verse", "uncategorized"}),
     ):
         # Brenton's file also lists the lemmas whose shape has been read.
@@ -173,6 +173,18 @@ def check(policy: Policy) -> None:
         for key, override in notes["notes"].items():
             require_fields(override, {"why"}, fields, f"{name} note exception {key}")
             require(override["why"], f"{name} note exception without a why: {key}")
+            if "quotation" in override:
+                require(
+                    override["quotation"] is True and bool(override.get("note")),
+                    f"Quotation exception needs declared italic words: {key}",
+                )
+            if "widen" in override:
+                require(
+                    override["widen"] is False
+                    and isinstance(override.get("lemma"), str)
+                    and "occurrence" in override,
+                    f"Unwidened note exception needs a repeated lemma: {key}",
+                )
         for key, group in notes["corrections"].items():
             for entry in group if isinstance(group, tuple) else (group,):
                 require_fields(

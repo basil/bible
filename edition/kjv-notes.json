@@ -164,6 +164,18 @@
       "anchor": "farthings",
       "why": "George has farthing; the verse reads farthings"
     },
+    "LUK 15:8 pieces of silver": {
+      "note": "Drachma here translated _a piece of silver_, is the eighth part of an ounce, which cometh to seven pence halfpenny, and is equal to the Roman penny, Mat. 18.28",
+      "why": "The cited words and lexical glosses are italic; the surrounding explanation stays roman"
+    },
+    "LUK 16:7 measures": {
+      "note": "the word here interpreted _a measure_, in the original containeth about fourteen bushels and a pottle",
+      "why": "The cited words and lexical glosses are italic; the surrounding explanation stays roman"
+    },
+    "LUK 19:13 pounds": {
+      "note": "Mina here translated _a pound_, is twelve ounces and an half, which according to five shillings the ounce, is 3. pounds two shillings sixpence",
+      "why": "The cited words and lexical glosses are italic; the surrounding explanation stays roman"
+    },
     "JHN 5:13 a multitude being in that": {
       "lemma": "a multitude being",
       "why": "from the multitude that was renders a multitude being; in that place stays"
@@ -184,6 +196,11 @@
       "occurrence": 2,
       "why": "two notes, one on each occurrence"
     },
+    "JHN 18:13 year": {
+      "note": "_And Annas sent Christ bound unto Caiaphas the high priest_, ver. 24",
+      "quotation": true,
+      "why": "The words cite verse 24 rather than render year; preserve the quotation’s opening capital and set it in italic, with the reference roman"
+    },
     "JHN 18:22 with the palm": {
       "lemma": "with the palm of his hand",
       "why": "with a rod stands for the whole phrase"
@@ -200,6 +217,10 @@
       "anchor": "the king’s chamberlain",
       "why": "George has chaberlaine; the verse reads the king’s chamberlain",
       "uncategorized": true
+    },
+    "ACT 13:18 suffered": {
+      "note": "Gr. ἐτροποφόρησεν, perhaps for ἐτροφοφόρησεν, _as a nurse beareth or feedeth her child_, Deut. 1.31. 2. Macc 7.27. according to the Sept. and so Chrysost.",
+      "why": "The cited words and lexical glosses are italic; the surrounding explanation stays roman"
     },
     "ACT 13:34 mercies": {
       "note": "Gr. τὰ ὅσια, _holy_ or _just things_, which word the Sept. both in the place of Esai 55.3. and in many others, use for that which is in the Hebrew, _Mercies_",
@@ -305,7 +326,8 @@
     },
     "1CO 14:27 two...": {
       "lemma": "by two, or at the most by three, and that by course",
-      "why": "George's two... marks a span; the note paraphrases the whole phrase"
+      "why": "George's two... marks a span; the italic paraphrase stands for the whole phrase",
+      "note": "_by two or three sentences separately_"
     },
     "1CO 15:2 what I preached": {
       "lemma": "what",
@@ -540,6 +562,14 @@
     "REV 18:12 Thine": {
       "anchor": "thyine",
       "why": "George has Thine; the verse reads thyine"
+    },
+    "MAT 17:27 a piece of money": {
+      "why": "The note ends with a complete explanatory sentence, which retains its final full stop.",
+      "sentence": true
+    },
+    "ACT 17:19 Areopagus": {
+      "why": "The note ends with a complete explanatory sentence, which retains its final full stop.",
+      "sentence": true
     }
   }
 }

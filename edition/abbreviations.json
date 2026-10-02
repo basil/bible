@@ -1,5 +1,5 @@
 {
-  "why": "Brenton's list names only some of the abbreviations that the printed notes use: his own notes, the introductions to the Apocrypha, the footnotes to his preface, the margin of 1611, and the quotation links. These rows supplement it, each in the form The Chicago Manual of Style gives it (AD, BC, etc., i.e., MS, St.). A meaning is capitalized only where it is a proper noun.",
+  "why": "Brenton's list names only some of the abbreviations that the printed notes use: his own notes, the introductions to the Apocrypha, the footnotes to his preface, the margin of 1611, and the quotation links. These rows supplement it, each in the form The Chicago Manual of Style gives it (AD, BC, etc., i.e., MS, St.). A meaning is capitalized only where it is a proper noun. The meanings are table labels rather than sentences, so they are printed without a final full stop.",
   "added": [
     ["anno-domini"],
     ["before-christ"],
@@ -15,23 +15,24 @@
     "why": "Chicago capitalizes a meaning only where it is a proper noun, as \"Hebrew\" and \"Septuagint\" are, so Brenton's other meanings are lowercased to match the added rows.",
     "changes": [
       {
+        "from": "for quasi dicat.",
+        "to": "for quasi dicat, as if to say.",
+        "why": "Give the English meaning alongside the Latin, as the other Latin entries do."
+      },
+      {
+        "from": "for Alexandrine Text.",
+        "to": "for Codex Alexandrinus.",
+        "why": "Alex. and Vat. name the manuscripts Codex Alexandrinus and Codex Vaticanus in the table."
+      },
+      {
         "from": "for Literally.",
         "to": "for literally."
-      },
-      {
-        "from": "for Sign of addition.",
-        "to": "for sign of addition."
-      },
-      {
-        "from": "for Sign of ommission.",
-        "to": "for sign of omission.",
-        "why": "ommission is a slip for omission"
       }
     ]
   },
   "expanded": {
-    "why": "Text names are printed in full in the notes, apart from the Alexandrine and Vatican Texts, which stay Alex. and Vat., and their other rows are removed from his list, as is his row for Comp. as Compare, which is printed in full. LXX remains in the text, and is listed by a row added. The Authorized Version is printed in full, whether Brenton writes it A. V., Eng. Ver., the English Version or, in a note, English Bible, and his row for A. V. is removed. Other abbreviations used only once or twice are also printed in full where they stand and not listed, but for those that Chicago prints (AD, MS, MSS, p., pp.), which are listed. Where one ends a note, its period goes, as a note ends with no full stop, unless the note is a sentence of its own, which keeps it.",
-    "removed": ["Ald.", "App.", "Comp.", "A. V."]
+    "why": "Text names are printed in full in the notes, apart from the Alexandrine and Vatican Texts, which stay Alex. and Vat., and their other rows are removed from his list, as is his row for Comp. as Compare, which is printed in full. LXX remains in the text, and is listed by a row added. The Authorized Version is printed in full, whether Brenton writes it A. V., Eng. Ver., the English Version or, in a note, English Bible, and his row for A. V. is removed. Other abbreviations used only once or twice are also printed in full where they stand and not listed, but for those that Chicago prints (AD, MS, MSS, p., pp.), which are listed. The addition and omission signs after witness labels are printed as adds and omits, and their rows are removed. Punctuation dashes stay as written. Where one ends a note, its period goes, as a note ends with no full stop, unless the note is a sentence of its own, which keeps it.",
+    "removed": ["Ald.", "App.", "Comp.", "A. V.", "+", "—"]
   },
   "source_rows": {
     "Heb.": "hebrew",

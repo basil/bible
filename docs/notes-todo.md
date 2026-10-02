@@ -5,16 +5,19 @@ Left over from the footnote reviews of September 2026. Each remaining item needs
 ## Decisions on the rules
 
 1. **1611 notes on a whole verse.** Luke 17:36 ("This 36. verse is wanting in most of the Greek copies") reprints the whole verse as its lemma, and John 18:13's note on the order of events prints under "year". `kjv-notes.json` now allows `"lemma": null`, as `brenton-notes.json` does; decide whether to give these two notes one.
-2. **"`Heb. <Hebrew> <English>`".** The English after a Hebrew word stays roman almost everywhere ("Emec Achor: Heb. עמק עכור valley of trouble"; 1 Kgdms 4:15, 14:6, 14:26, 17:52, 20:12), though it's arguably a rendering. Decide once, and change the rule rather than override each note. The same pattern with Greek is italic by rule ("Alex. ἐντολαί, _commands_"); extending that rule to Hebrew would change 16 notes, some of which are comments, not renderings ("Heb. שוב ambiguous", Isa 51:3; Judg 6:13). Where eBible marks the English as Brenton's italic, it prints italic instead: Judg 9:6 "the word מעא _to find_" (a gloss on the Hebrew, not on the lemma), Judg 17:10 "Heb. ימיס _(year of) days_", and the Latin "_cibus_" in 3 Kgdms 5:25.
-3. **Notes on "the words in italics".** 2 Kgdms 17:8, 21:11, 1 Kgdms 17:43 and 3 Kgdms 14:26#2 refer to words Brenton set in italics; this edition prints them in square brackets. Either print the bracketed words in italic, or accept it.
-4. **Unlabelled paraphrases.** 1 Cor 14:27 "by two or three sentences separately" has no label and prints roman, though it substitutes cleanly. Probably leave it.
-5. **Long passages.** Hag 2:14 ("Not in Hebrew.") and 2 Kgdms 21:11 are about a whole bracketed passage, but their lemmas cover only its first clause. Decide whether lemmas that long are acceptable.
-6. **A rule for additions.** "Alex. + '…'" sets no rendering while "Alex. adds '…'" does, so the rules place the two differently, and about 25 overrides now put an addition's lemma on the words it follows. A rule in `inferred_lemma` for notes that add words (the clause before the mark, or its last four words if it runs past nine; the current rule at the start of a verse) gets 35 of the 41 additions right and would retire about 23 overrides. 1 Kgdms 12:13, 3 Kgdms 3:20, Prov 9:6, Gen 1:11#2, Isa 63:19 and 2 Kgdms 6:3 would still need theirs.
-7. **"or" inside one rendering.** The rules split "_X_ or _Y_" into two italic runs, which is wrong when the "or" belongs to a single rendering. Overrides join Exod 21:28, Num 1:52, 1 Kgdms 20:6, Ps 25:12, 32:4, 50:21 and Acts 25:6. Still split: Exod 14:15 "_harness_ or _yoke the horses again_", 2 Cor 4:8 "_altogether without help_ or _means_" (the 1611 has a comma before "or"), and 1 Kgdms 30:12 "_staid_ or _established in him_". Zech 9:13 italicizes only "_it with_" of the rendering "it with Ephraim", following eBible.
-8. **Brenton's italics for emphasis or citation.** Gen 30:41 ("_from any cause_", "_then_") and 2 Kgdms 5:20#2 ("_Underskiddaw_, _Unterseen_") keep italics that aren't renderings. Decide whether cited words stay italic.
-9. **Abbreviations without a full stop.** "chap 5. 25", "ver 16", "ch 1. 14", "Ps 103. 14", "Gen 7. 11", "See v 8." and the like occur about as often as the stopped forms: Judg 21:4; 1 Kgdms 15:3; Ps 146:8; Prov 1:15, 11:13, 20:27, 27:20a; Joel 2:15, 4:18; Mal 3:10; Isa 2:19, 14:16, 23:11, 45:16, 57:21, with Ps 90:6 and Prov 4:11 below. Check which way Brenton printed them, and correct all or none.
-10. **Two colons.** A lemma that keeps the verse's own colon prints two: "that believed: for there: or, …" (Luke 1:45; also Luke 4:41 and Rev 14:13).
-11. **Prov 30:1** is an empty verse carrying eBible's remark "See chapter 24 for the content of chapter 30.", which prints as if it were Brenton's note. Chapter 31 starts at verse 10 with no remark. Keep the remark as an editorial note, or say where both passages are some other way.
+2. **Notes on "the words in italics".** 2 Kgdms 17:8, 21:11, 1 Kgdms 17:43 and 3 Kgdms 14:26#2 refer to words Brenton set in italics; this edition prints them in square brackets. Either print the bracketed words in italic, or accept it.
+3. **Long passages.** Hag 2:14 ("Not in Hebrew.") and 2 Kgdms 21:11 are about a whole bracketed passage, but their lemmas cover only its first clause. Decide whether lemmas that long are acceptable.
+4. **A rule for additions.** "Alex. + '…'" sets no rendering while "Alex. adds '…'" does, so the rules place the two differently, and about 25 overrides now put an addition's lemma on the words it follows. A rule in `inferred_lemma` for notes that add words (the clause before the mark, or its last four words if it runs past nine; the current rule at the start of a verse) gets 35 of the 41 additions right and would retire about 23 overrides. 1 Kgdms 12:13, 3 Kgdms 3:20, Prov 9:6, Gen 1:11#2, Isa 63:19 and 2 Kgdms 6:3 would still need theirs.
+5. **"or" inside one rendering.** The rules split "_X_ or _Y_" into two italic runs, which is wrong when the "or" belongs to a single rendering. Overrides join Exod 21:28, Num 1:52, 1 Kgdms 20:6, Ps 25:12, 32:4, 50:21 and Acts 25:6. Still split: Exod 14:15 "_harness_ or _yoke the horses again_", 2 Cor 4:8 "_altogether without help_ or _means_" (the 1611 has a comma before "or"), and 1 Kgdms 30:12 "_staid_ or _established in him_".
+6. **Abbreviations without a full stop.** "chap 5. 25", "ver 16", "ch 1. 14", "Ps 103. 14", "Gen 7. 11", "See v 8." and the like occur about as often as the stopped forms: Judg 21:4; 1 Kgdms 15:3; Ps 146:8; Prov 1:15, 11:13, 20:27, 27:20a; Joel 2:15, 4:18; Mal 3:10; Isa 2:19, 14:16, 23:11, 45:16, 57:21, with Ps 90:6 and Prov 4:11 below. Check which way Brenton printed them, and correct all or none.
+7. **Two colons.** A lemma that keeps the verse's own colon prints two: "that believed: for there: or, …" (Luke 1:45; also Luke 4:41 and Rev 14:13).
+8. **Prov 30:1** is an empty verse carrying eBible's remark "See chapter 24 for the content of chapter 30.", which prints as if it were Brenton's note. Chapter 31 starts at verse 10 with no remark. Keep the remark as an editorial note, or say where both passages are some other way.
+
+## Italic spans needing source review
+
+- **NUM 30:7:** check Brenton's printing to establish whether “in respect of” is a quoted rendering or explanatory wording, and where its italic span ends before οὓς. The current override italicizes the English phrase.
+- **EXO 40:15:** check Brenton's printing for the quotation “The anointing abideth” from 1 John 2:27, including its boundaries, opening capital, and treatment of “etc.” The current override italicizes the quoted words.
+- **1CO 14:27 two...:** check the 1611 facsimile to decide whether “by two or three sentences separately” is an alternative rendering or an explanatory paraphrase and whether the whole phrase should be italic. The current override italicizes it all.
 
 ## References that look wrong
 
@@ -56,7 +59,7 @@ Some references use Hebrew or English numbering, such as Isa 26:19 "Ps. 110" (LX
 - **Deut 9:22**: three notes print the same "Heb. Taberah, Massah, and Kibroth Hattavah."
 - **1 Kgdms 29:3–8**: every note begins "to or" (29:3#2, 29:4, 29:5, 29:8), which makes sense only in 29:2.
 - **Matt 17:27 (1611)**: George's note ends "is 7.d. ob.", apparently copied from 18:28.
-- **eBible's words in Brenton's notes.** Some notes paraphrase the Appendix instead of pointing to it: 2 Kgdms 5:18 ("which refers us to Govett's work…"), Prov 4:5 ("See Appendix - Alexandrian codex has:"), 8:32 and 11:3 (beginning lowercase, with "appendix has…" and a reference to the reading from Codex Alexandrinus), 11:10, 13:5, and Isa 2:6, where "see Appendix which has: “…" pastes in the Appendix's note and never closes the quotation. Brenton probably printed only a pointer to the Appendix.
+- **eBible's words in Brenton's notes.** Some notes paraphrase the Appendix instead of pointing to it: 2 Kgdms 5:18 ("which refers us to Govett's work…"), Prov 4:5 ("See Appendix - Alexandrian codex has:"), 8:32 and 11:3 (beginning lowercase, with "appendix has…" and a reference to the reading from Codex Alexandrinus), 11:10, 13:5, and Isa 2:6, where "see Appendix which has: …" pastes in the Appendix's note. Brenton probably printed only a pointer to the Appendix.
 - **Labels with nothing after them**: 1 Kgdms 20:41 "Gr. See v. 19." (a Greek word lost?), Ps 79:17 "Gr. See Ps. 20. 9.", 1 Kgdms 13:21 "Gr. Such is the meaning...", 1 Kgdms 20:15 "Gr. The meaning of the Heb. is here greatly obscured.", Gen 18:12 "Gr. The difference turns on…", Exod 4:12 "See 1 Cor 2. 16. Gr.", Mal 3:11 "…to be fed. Alex."
 - **3 Kgdms 11:27**: the lemma and the rendering are the same, "of his lifting: Gr. _of his lifting_".
 - **4 Kgdms 23:36**: the note says "a son of 23 years", but the verse and the Greek say twenty-five (copied from 23:31?).
@@ -66,7 +69,6 @@ Some references use Hebrew or English numbering, such as Isa 26:19 "Ps. 110" (LX
 - **4 Kgdms 19:25** "destruction: Gr. _captivities_": "captivities" (ἀποικεσιῶν) is what Brenton renders "bands of warlike prisoners". Check where the mark stands.
 - **Ps 101:17** "Or, then shall be" leaves the verse without a subject when substituted; a word may be lost ("then shall he be seen"?).
 - **Prov 21:29**: the marked word already reads “ungodly”, and Swete reports no A substitution there. Check whether “See Alex. ungodly.” belongs on “impudently”; see the retained decision below.
-- **Ps 32:2** has a closing quotation mark with no opening one: "Rather, 'confess' or give thanks to.'"
 - **Deut 21:5** "bless in his name: Gr. _his name_. Hebraism." fits only if the mark stands before "in". **Josh 18:5** "came to him: Gr. _went through_" should be on "came" alone if the Greek has πρὸς αὐτόν.
 - **3 Kgdms 15:2**: Swete confirms A sixteen and B six; Brenton’s Vatican English three still needs checking against Brenton’s printing (see [the editorial queries below](#editorial-queries-on-wording-and-source-text)).
 
@@ -78,8 +80,7 @@ Could be Brenton's own; check the printing.
 - Gen 30:27 "argued" for "augured"
 - 2 Kgdms 15:20 "Gr. it." for "if"
 - Ps 51:1 "Gr. governing." for "understanding"?
-- Isa 2:6 "sound to tense" for "sense", and the quotation is never closed
-- Isa 52:7 "Joel 2. 2.,'the morning"
+- Isa 2:6 "sound to tense" for "sense"
 - Josh 15:18 "has thou" for "hast"
 - 2 Kgdms 13:12 "fasciendum" for "faciendum"
 - Exod 39:22 and 4 Kgdms 3:17 "posession"; Exod 12:3 "admissable"
@@ -194,6 +195,7 @@ Check the wording and source spellings of promoted readings. The 4 Kingdoms 3:21
 | Deuteronomy 32:42 | The English has “their Gentiles”. Decide what “their” refers to before retaining or removing this supplied word. |
 | 3 Kingdoms 15:2 | Swete confirms sixteen in Codex Alexandrinus but gives Vatican six; Brenton’s body has three. Check Brenton’s printing to establish whether three is his reading or a transcription error. The footnote currently distinguishes the two sources. |
 | 4 Kingdoms 3:21; Psalm 138:9 | The inherited notes give ἐπάνα and ὄρθον; the repository’s Swete record gives A’s ἐπάνω and ὄρθρον. Check Brenton’s printing to determine where the discrepant spellings arose. The 4 Kingdoms reading is restored to its original note; the retained Psalm footnote distinguishes the forms. |
+| Zacharias 11:14 | The body adopts Brenton’s “covenant”, but the recorded Alexandrine reading also adds “my”. The decision says this addition is noted explicitly, while the printed footnote only gives the displaced “possession”. Resolve how to disclose the partial adoption and the possessive without silently supplying a new translation; leave the text and note as they stand meanwhile. |
 
 ### Optional historical-label note
 

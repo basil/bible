@@ -12,7 +12,7 @@ import bible.annotate
 import bible.pipeline
 import bible.policy
 import bible.sources
-from bible import annotate, matter, terminology, usj
+from bible import annotate, matter, notes, terminology, usj
 from bible.checks import CheckFailed
 from bible.policy import source_id
 from bible.usj import Content, Document
@@ -74,16 +74,53 @@ def test_a_books_introduction_is_a_footnote_on_its_first_verse(
     assert tobit.startswith(
         "\\v 1 \\ef - \\ft The book of Tobit is one of the most perfect"
     )
-    # Several paragraphs make one note, and its italics nest in it.
+    # Several paragraphs make one note; the book name is roman.
     first = next(line for line in lines(edition, "1MA") if line.startswith("\\v 1 "))
-    assert (
-        "first two as canonical. The \\+it First\\+it* Book of the Maccabees" in first
-    )
+    assert "first two as canonical. The First Book of the Maccabees" in first
     # A section's introduction stands at the section's first verse, under its heading.
     daniel = lines(edition, "DAG")
     song = daniel.index("\\s1 The Song of the Three Children")
     assert daniel[song + 2].startswith(
         "\\v 25 \\ef - \\ft The Song of the Three Children contains"
+    )
+
+
+@pytest.mark.parametrize("code", ["1ES", "JDT", "SIR", "DAG"])
+def test_prose_footnotes_quote_in_italic_without_marks(
+    edition: bible.pipeline.Edition, code: str
+) -> None:
+    footnotes = usj.notes_of(edition.documents[code]["content"])
+    assert footnotes
+    for note in footnotes:
+        text = usj.text_of(note["content"])
+        assert notes.ENGLISH_QUOTE.search(text) is None
+        assert not any(mark in text for mark in '‘“”"')
+        # Note fields contain character styles, never the reverse.
+        for node in usj.walk(note["content"]):
+            if usj.is_type(node, "char", "it"):
+                assert not any(
+                    usj.is_type(child, "char", "ft")
+                    for child in usj.walk(node["content"])
+                )
+
+
+def test_brenton_introduction_preserves_emphasis_and_nested_quotation(
+    edition: bible.pipeline.Edition,
+) -> None:
+    content = next(
+        n["content"]
+        for n in usj.notes_of(edition.documents["XXB"]["content"])
+        if "Evil communications" in usj.text_of(n["content"])
+    )
+    italic = [
+        usj.text_of(n["content"])
+        for n in usj.walk(content)
+        if usj.is_type(n, "char", "it")
+    ]
+    assert "There" in italic and "is" in italic
+    assert (
+        "“As certain also of your own poets have said, ‘For we are also his offspring.’”"
+        in usj.text_of(content)
     )
 
 
@@ -129,16 +166,19 @@ def test_the_list_of_abbreviations_is_completed_from_the_registry(
     # Brenton's rows for what the edition prints in full are dropped...
     assert not set(policy.abbreviations["expanded"]["removed"]) & set(labels)
     # ...his meanings are lowercased where they aren't proper nouns...
-    assert ("Lit.", "for literally.") in rows and ("—", "for sign of omission.") in rows
+    assert ("Lit.", "for literally") in rows
+    assert not {"+", "—", "adds", "omits"} & set(labels)
     # ...and the edition's rows follow his, in the registry's forms.
     assert rows[-3:] == [
-        ("p., pp.", "for page, pages."),
-        ("St.", "for saint."),
-        ("Vat.", "for Vatican Text."),
+        ("p., pp.", "for page, pages"),
+        ("St.", "for saint"),
+        ("Vat.", "for Codex Vaticanus"),
     ]
-    assert ("AD", "for anno Domini.") in rows
+    assert ("AD", "for anno Domini, in the year of our Lord") in rows
+    assert all(not meaning.endswith(".") for _, meaning in rows)
     latin = usj.serialize(edition.documents["XXD"])
-    assert "\\tc2 for \\it anno Domini\\it*." in latin
+    assert "\\tc2 for \\it anno Domini\\it*, in the year of our Lord\n" in latin
+    assert "\\tc2 for \\it quasi dicat\\it*, as if to say\n" in latin
 
 
 def test_front_and_back_matter_heading_capitalization(

@@ -8,7 +8,7 @@
   },
   "anno-domini": {
     "display": "AD",
-    "meaning": "_anno Domini_",
+    "meaning": "_anno Domini_, in the year of our Lord",
     "period_forms": [],
     "note_forms": [],
     "source_forms": ["AD"]
@@ -78,7 +78,7 @@
   },
   "vatican": {
     "display": "Vat.",
-    "meaning": "Vatican Text",
+    "meaning": "Codex Vaticanus",
     "period_forms": ["Vat"],
     "note_forms": ["Vatican Text"],
     "source_forms": ["Vat.", "Vatican Text", "Vaticanus"]
@@ -119,7 +119,7 @@
   },
   "quasi-dicat": {
     "display": "q.d.",
-    "meaning": "_quasi dicat_",
+    "meaning": "_quasi dicat_, as if to say",
     "period_forms": [],
     "note_forms": [],
     "source_forms": ["q.d."]
@@ -161,20 +161,22 @@
   },
   "alexandrine": {
     "display": "Alex.",
-    "meaning": "Alexandrine Text",
+    "meaning": "Codex Alexandrinus",
     "period_forms": [],
     "note_forms": [],
     "source_forms": ["Alex.", "Alexandrine Text", "Alexandrinus"]
   },
   "addition": {
-    "display": "+",
+    "display": "adds",
+    "plural": "add",
     "meaning": "sign of addition",
     "period_forms": [],
     "note_forms": [],
     "source_forms": ["+"]
   },
   "omission": {
-    "display": "—",
+    "display": "omits",
+    "plural": "omit",
     "meaning": "sign of omission",
     "period_forms": [],
     "note_forms": [],

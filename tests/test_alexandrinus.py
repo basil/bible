@@ -83,7 +83,7 @@ def test_a_reading_replaces_the_vatican_words_and_notes_them(
     # The edition's note names the words that were printed in the Vatican's place.
     printed, _ = annotate.brenton("GEN", doc, (), frozenset(), ctx)
     assert verse_lines(printed)["22"].startswith(
-        r"And \f - \fr 99:22 \fq the Lord God said: \ft Vat. omits “the Lord”\f*the Lord God said,"
+        r"And \f - \fr 99:22 \fq the Lord God said: \ft Vat. omits \fqa the Lord\f*the Lord God said,"
     )
 
 

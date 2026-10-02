@@ -24,14 +24,7 @@ def curled(body: str) -> str:
             "\\v 1 He said, ‘Go,’ and they went.\n\\v 2 ‘Stay,’ said the \\add other\\add*’s son.",
         ),
         ('\\v 1 "Come" -- and they came...', "\\v 1 “Come” — and they came…"),
-        # The sources' few `single' quotes open with a backtick.
-        ("\\v 1 the `word' of God", "\\v 1 the ‘word’ of God"),
-        # A quotation that opens a note's commentary after a rendering opens,
-        # though no space stands before it; one that closes a rendering closes.
-        (
-            "\\v 1 word \\f - \\fr 1:1 \\fq word: \\ft Gr. \\fqa saying\\ft 'as some read'\\f*here",
-            "\\v 1 word \\f - \\fr 1:1 \\fq word: \\ft Gr. \\fqa saying\\ft ‘as some read’\\f*here",
-        ),
+        # A quotation mark that closes a rendering closes.
         (
             "\\v 1 word \\f - \\fr 1:1 \\ft Alex. '\\fqa even Nabal\\ft '\\f*here",
             "\\v 1 word \\f - \\fr 1:1 \\ft Alex. ‘\\fqa even Nabal\\ft ’\\f*here",
@@ -47,6 +40,8 @@ def test_what_looks_like_markup_to_the_typographer_is_refused() -> None:
         curled("\\v 1 a <b> c 'd'")
     with pytest.raises(CheckFailed, match="Ambiguous doubled quote"):
         curled("\\v 1 he said ''so''")
+    with pytest.raises(CheckFailed, match="Backtick"):
+        curled("\\v 1 the `word' of God")
 
 
 def test_the_edition_is_sent_without_a_straight_quote(

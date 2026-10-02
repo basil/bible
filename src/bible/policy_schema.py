@@ -129,7 +129,9 @@ class NoteOverride(TypedDict, total=False):
     lemma: str | None
     note: str | None
     occurrence: int
+    widen: bool
     sentence: bool
+    quotation: bool
     uncategorized: bool
     verse: str
     why: str
@@ -231,6 +233,7 @@ class Terminology(TypedDict, total=False):
     meaning: str
     note_forms: tuple[str, ...]
     period_forms: tuple[str, ...]
+    plural: str
     source_forms: tuple[str, ...]
 
 

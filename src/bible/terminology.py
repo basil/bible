@@ -32,11 +32,15 @@ ALIASES: tuple[Literal["period_forms", "note_forms", "source_forms"], ...] = (
     "source_forms",
 )
 # The end of a sentence, where an abbreviation's own period also closes it.
+# What joins two witness labels that share a verb: "Heb. and Alex. add".
+WITNESS_JOIN = re.compile(r",?\s+and\s+")
 SENTENCE_END = re.compile(r"['’”)]*(?:\s+[A-Z]|[ \t]*(?:\n|$))")
 ERA = re.compile(r"\b(?P<era>a\.d|b\.c)\.(?: (?P<year>\d+(?:[–-]\d+)?)\b)?")
 # Latin in a meaning, italic as Brenton's "quasi dicat" is.
 LATIN = re.compile(r"_([^_]+)_")
 GLOSSARY = "FRT"
+# The witnesses whose additions and omissions the sources mark with a sign.
+WITNESSES = ("hebrew", "alexandrine", "vatican")
 
 
 @dataclass(frozen=True)
@@ -84,9 +88,12 @@ def registry(policy: bible.policy.Policy) -> Registry:
     require(bool(data), "Invalid terminology registry")
     used: dict[str, set[str]] = {field: set() for field in ALIASES}
     for identity, entry in data.items():
-        require_fields(entry, {"display", "meaning", *ALIASES}, (), f"Term {identity}")
+        require_fields(
+            entry, {"display", "meaning", *ALIASES}, {"plural"}, f"Term {identity}"
+        )
         require(
-            entry["display"] and entry["meaning"], f"Invalid term wording: {identity}"
+            entry["display"] and entry["meaning"] and entry.get("plural", "plural"),
+            f"Invalid term wording: {identity}",
         )
         for field in ALIASES:
             forms = entry[field]
@@ -152,6 +159,8 @@ def _recognized(text: str, terms: Registry, note: bool) -> tuple[Term, ...]:
         for n, alias in enumerate(term["source_forms"])
     ]
     for alias, identity, n in sorted(forms, key=lambda f: -len(f[0])):
+        if identity in ("addition", "omission"):
+            continue
         add(
             r"(?<![\w&])" + re.escape(alias) + r"(?!\w)",
             identity,
@@ -161,6 +170,44 @@ def _recognized(text: str, terms: Registry, note: bool) -> tuple[Term, ...]:
     for term in candidates:
         if not any(term.start < t.end and t.start < term.end for t in result):
             result.append(term)
+    # A sign following a witness label introduces its added or omitted
+    # words, and agrees with the labels before it: "Alex. adds", "Heb. and
+    # Alex. add". Other dashes are punctuation, including "Heb.—מ". A sign
+    # after any other term, or a sign of addition anywhere else, is not
+    # understood.
+    if note:
+        witnesses = [t for t in result if t.identity in WITNESSES]
+        signs = []
+        for term in result:
+            for identity in ("addition", "omission"):
+                for alias in terms.terms[identity]["source_forms"]:
+                    match = re.match(
+                        r"\s*" + re.escape(alias) + r"(?=\s)", text[term.end :]
+                    )
+                    if not match:
+                        continue
+                    require(term in witnesses, f"Sign after no witness: {text}")
+                    end = term.end + match.end()
+                    several = any(
+                        WITNESS_JOIN.fullmatch(text, w.end, term.start)
+                        for w in witnesses
+                    )
+                    signs.append(
+                        Term(
+                            identity,
+                            alias,
+                            end - len(alias),
+                            end,
+                            "plural" if several else "display",
+                        )
+                    )
+        for alias in terms.terms["addition"]["source_forms"]:
+            for found in re.finditer(re.escape(alias), text):
+                require(
+                    any(s.start == found.start() for s in signs),
+                    f"Sign after no witness: {text}",
+                )
+        result += signs
     return tuple(sorted(result, key=lambda t: t.start))
 
 
@@ -177,6 +224,8 @@ def render(term: Term, terms: Registry, text: str) -> str:
         display = display.upper()
     elif term.form == "stem":
         display = display.removesuffix(".")
+    elif term.form == "plural":
+        display = terms.terms[term.identity]["plural"]
     elif term.form == "space":
         display += " "
     elif term.form == "comma":
@@ -402,18 +451,26 @@ def completed_glossary(
 ) -> Document:
     """Brenton's list of abbreviations without the rows dropped, and with the
     edition's rows after his, set as his are: the abbreviation in italic, and
-    "for" its meaning."""
+    "for" its meaning, without a final full stop."""
     table = glossary_table(doc)
-    rows: Content = [
-        row for n, row in enumerate(usj.objects(table["content"])) if n not in dropped
-    ]
+    rows: Content = []
+    for n, row in enumerate(usj.objects(table["content"])):
+        if n in dropped:
+            continue
+        label, meaning_cell = list(usj.objects(row["content"]))
+        meaning_text = usj.text_of(meaning_cell["content"]).rstrip()
+        require(meaning_text.endswith("."), "Source glossary meaning has no full stop")
+        content = usj.substituted(
+            meaning_cell["content"], [(len(meaning_text) - 1, len(meaning_text), "")]
+        )
+        rows.append({**row, "content": [label, {**meaning_cell, "content": content}]})
     for abbreviation, meaning in glossary_rows(policy):
         cells: Content = ["for "]
         at = 0
         for match in LATIN.finditer(meaning):
             cells += [meaning[at : match.start()], usj.char("it", match[1])]
             at = match.end()
-        cells.append(meaning[at:] + ".")
+        cells.append(meaning[at:])
         rows.append(
             {
                 "type": "table:row",
@@ -449,7 +506,7 @@ def check_glossary(doc: Document, policy: bible.policy.Policy) -> None:
     ]
 
     def expected(rows: Iterable[tuple[str, str]]) -> list[tuple[str, str]]:
-        return [(a, "for " + LATIN.sub(r"\1", m) + ".") for a, m in rows]
+        return [(a, "for " + LATIN.sub(r"\1", m)) for a, m in rows]
 
     kept = [
         terms.row((identity,))
