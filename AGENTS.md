@@ -2,8 +2,6 @@
 
 This is a hobby project that prepares a printed Bible from pinned sources. Keep it small and understandable: prefer deleting to adding, and a plain function to a new abstraction.
 
-This page explains how the edition is built, how it is prepared, the principles every change must hold to, and how a change is checked. [CONTRIBUTING.md](CONTRIBUTING.md) covers the editorial work, the layout, the dependencies and the sources. Read both before changing anything.
-
 ## Building
 
 You need Docker with the Compose plugin, Make, and about 5 GB of disk space. Everything runs in a container, so you don't need Python or TeX on your machine.
