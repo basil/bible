@@ -17,7 +17,7 @@ The volume is arranged as follows:
 
 Most Old Testament books use their Septuagint names: Esaias rather than Isaiah; Jesus, the Son of Navi rather than Joshua; and 1-4 Kingdoms rather than Samuel and Kings. The books that English Bibles set apart as the Apocrypha are printed in their Greek places, so there is no separate Apocrypha section: the Prayer of Manasses follows 2 Chronicles, 4 Maccabees follows 3 Maccabees, and the additions to Esther and Daniel and Psalm 151 stand within the text.
 
-The translations are preserved with a few exceptions. Brenton translated the Vatican text and gave readings from Codex Alexandrinus in his notes and Appendix. Where Swete's edition supports the wording and placement of a reading, it is printed in the main text and the displaced reading appears in a footnote. The wording of the New Testament is unchanged. Brenton's footnotes are printed, and the New Testament carries the marginal notes of the King James Bible of 1611. The [editorial notes](docs/edition.md) explain these choices in detail.
+The translations are preserved with a few exceptions. Brenton translated the Vatican text and gave readings from Codex Alexandrinus in his notes and Appendix. Where Swete's edition supports the wording and placement of a reading from Codex Alexandrinus, it is printed in the main text and the displaced reading appears in a footnote. The wording of the New Testament is unchanged. Brenton's footnotes are printed, and the New Testament carries the marginal notes of the King James Bible of 1611. The [editorial notes](docs/edition.md) explain these choices in detail.
 
 ## How it looks
 
