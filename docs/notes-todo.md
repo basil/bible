@@ -69,7 +69,6 @@ Some references use Hebrew or English numbering, such as Isa 26:19 "Ps. 110" (LX
 - **Ps 32:2** has a closing quotation mark with no opening one: "Rather, 'confess' or give thanks to.'"
 - **Deut 21:5** "bless in his name: Gr. _his name_. Hebraism." fits only if the mark stands before "in". **Josh 18:5** "came to him: Gr. _went through_" should be on "came" alone if the Greek has πρὸς αὐτόν.
 - **3 Kgdms 15:2**: Swete confirms A sixteen and B six; Brenton’s Vatican English three still needs checking against Brenton’s printing (see [the editorial queries below](#editorial-queries-on-wording-and-source-text)).
-- **Rev 20:13 (1611)** prints "hell: or, _hell_". George marks the 1611's "Or, hell" as a misprint; later printings have "Or, the grave". Correct it as Mark 14:72's "wept" is corrected, or drop the note.
 
 ## Probable typos
 

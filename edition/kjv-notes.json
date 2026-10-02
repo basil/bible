@@ -33,9 +33,10 @@
       "why": "misspelling; the 1611 margin and this text spell Cesar"
     },
     "REV 20:13 hell": {
-      "from": " [obviously a typo in 1611]",
-      "to": "",
-      "why": "transcriber's remark"
+      "from": "hell [obviously a typo in 1611]",
+      "to": "the grave",
+      "why": "George marks Or, hell as a 1611 misprint; later printings correct the alternative rendering to Or, the grave",
+      "uncategorized": true
     },
     "2CO 3:18 by the spirit of the Lord": {
       "from": "O, of",
