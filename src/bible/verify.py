@@ -339,6 +339,21 @@ def check_added_words_roman(
     raise CheckFailed("Added-word witness not found in PDF text runs")
 
 
+def check_publication(text: str) -> None:
+    publication = " ".join(text.split("\f")[1].split())
+    require(
+        "Copyright © 2026 Basil Crow" in publication
+        and "Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)"
+        in publication
+        and "https://creativecommons.org/licenses/by-nc-nd/4.0/" in publication,
+        "Publication data page omitted the edition license notice",
+    )
+    require(
+        "Berean Standard Bible" not in publication,
+        "Inherited BSB publication text remains",
+    )
+
+
 def inspect_pdf(
     pdf: Path,
     base: Path,
@@ -398,14 +413,7 @@ def inspect_pdf(
         not re.search(r"[\ue000-\uf8ff]", text),
         "Private-use glyph code in extracted PDF text",
     )
-    publication = " ".join(text.split("\f")[1].split())
-    require(
-        "Copyright © 2026 Basil Crow" in publication
-        and "Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)"
-        in publication
-        and "https://creativecommons.org/licenses/by-nc-nd/4.0/" in publication,
-        "Publication data page omitted the edition license notice",
-    )
+    check_publication(text)
     height = float(sizes[0][1])
     top, bottom = (
         settings.getfloat("paper", key) * POINTS_PER_MM
@@ -419,10 +427,6 @@ def inspect_pdf(
     check_added_words_roman(pdf, reading_text, project, ids, sample)
     check_citations(reading_text)
     check_margin_notes(base, (height - top) * TEX_POINTS, bottom * TEX_POINTS)
-    require(
-        "Berean Standard Bible" not in text,
-        "Inherited BSB publication text remains",
-    )
     logs = "\n".join(
         p.read_text(encoding="utf-8", errors="replace") for p in base.rglob("*.log")
     )

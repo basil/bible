@@ -92,6 +92,33 @@ def test_printed_origins_lose_their_chapter_and_front_matter_its_empty_ones(
 # Rendered PDF
 
 
+PUBLICATION = (
+    "Copyright © 2026 Basil Crow\n"
+    "Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International "
+    "(CC BY-NC-ND 4.0)\n"
+    "https://creativecommons.org/licenses/by-nc-nd/4.0/"
+)
+
+
+def test_layout_credit_in_the_introduction_passes() -> None:
+    verify.check_publication(
+        f"Title\f{PUBLICATION}\f"
+        "The design is based on the Berean Standard Bible layout."
+    )
+
+
+def test_inherited_publication_identity_is_refused() -> None:
+    with pytest.raises(CheckFailed, match="Inherited BSB publication text remains"):
+        verify.check_publication(
+            f"Title\f{PUBLICATION}\nBerean Standard\nBible\fIntroduction"
+        )
+
+
+def test_missing_edition_license_on_the_publication_page_is_refused() -> None:
+    with pytest.raises(CheckFailed, match="omitted the edition license notice"):
+        verify.check_publication(f"Title\fPublication\f{PUBLICATION}")
+
+
 @pytest.mark.parametrize(
     "words",
     [
