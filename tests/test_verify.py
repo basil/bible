@@ -131,13 +131,13 @@ def pdf_words(monkeypatch, *pages, **size):
     """Have pdftotext report pages of words, each (text, left, top, right)."""
     attributes = "".join(f' {name}="{value}"' for name, value in size.items())
     body = "".join(
-        f"<page{attributes}>"
+        f"<page{attributes}><block>"
         + "".join(
             f'<word xMin="{left}" yMin="{top}" xMax="{right}" yMax="{top + 10}">'
             f"{text}</word>"
             for text, left, top, right in page
         )
-        + "</page>"
+        + "</block></page>"
         for page in pages
     )
     monkeypatch.setattr(
@@ -172,8 +172,25 @@ def test_stream_text_keeps_inner_notes_out_of_body_sentences(monkeypatch):
         height=709,
     )
     assert verify.stream_text("bible.pdf", 34, 51, 102) == (
-        "the soul of Jonathan Vat. omits\fthe soul of Jonathan Vat. omits"
+        "the soul of Jonathan\n\nVat. omits\fthe soul of Jonathan\n\nVat. omits"
     )
+
+
+def test_stream_text_keeps_a_heading_apart_from_the_following_numbers(monkeypatch):
+    pdf_words(
+        monkeypatch,
+        [("2 Chronicles", 100, 40, 200), ("27. 8", 100, 72, 150)],
+        height=709,
+    )
+    xml = verify.capture()
+    monkeypatch.setattr(
+        verify,
+        "capture",
+        lambda *args: xml.replace("</word><word", "</word></block><block><word"),
+    )
+    text = verify.stream_text("bible.pdf", 34, 51)
+    assert text == "2 Chronicles\n\n27. 8"
+    verify.check_citations(text)
 
 
 def check_notes(tmp_path, *notes):

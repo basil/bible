@@ -112,8 +112,6 @@ def _recognized(text, terms, note):
     add(r"\bComp\.", "compare")
     add(r"\bcomp\.", "compare", "lower")
     add(r"\bAV\b", "authorized-version")
-    # The Epistle Dedicatory's address is in capitals: "DEFENDER OF THE FAITH, &c."
-    add(r"(?<=[A-Z]{2}, )&c\.(?=[^a-z\n]*$)", "et-cetera", "upper")
     add(r"&c\.", "et-cetera")
     add(r"&c\b", "et-cetera", "stem")
     for alias, identity in terms.aliases("period_forms").items():

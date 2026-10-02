@@ -506,7 +506,13 @@ def renamed(unit, code, books, policy):
         ]
         unit = list(unit)
         unit[index] = (
-            with_region(block, address, usj.substituted(content, edits, right=True)),
+            with_region(
+                block,
+                address,
+                usj.substituted(
+                    content, edits, right=True, unwrap=[(match.start(), match.end())]
+                ),
+            ),
             readings,
         )
     return unit

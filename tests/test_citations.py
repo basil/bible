@@ -354,7 +354,7 @@ def test_a_citation_of_the_wrong_verse_prints_the_verse_meant(edition):
         ("BAK", "see chapter 1:4, 22; 8:5; 14:15; 21:11. For πανοῦργος, 12:16; 13:1,"),
         ("BAK", "see \\it Appendix\\it*. Note on 2 Kingdoms 5:18."),
         # A book that is named and not cited is renamed.
-        ("BAK", "\\is2 3 KINGDOMS"),
+        ("BAK", "\\is2 3 Kingdoms"),
         # The label of a passage retained for editorial review is no citation.
         ("BAK", "\\ip 5. \\vp 17\\vp*And the king commanded"),
         # A book's introduction, set as a note on the book, cites the book.

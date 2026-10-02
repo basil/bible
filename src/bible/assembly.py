@@ -19,11 +19,11 @@ NAME_ATTRIBUTES = {"abbreviation": "abbr", "short_title": "short", "title": "lon
 # A hidden chapter number: the chapter is one for citing, and prints none.
 HIDDEN = "​"
 # Daniel's parts that the Greek sets about it, each under a heading.
-DANIEL = (("SUS", "0", "SUSANNA"), ("BEL", "13", "BEL AND THE DRAGON"))
+DANIEL = (("SUS", "0", "Susanna"), ("BEL", "13", "Bel and the Dragon"))
 SONG = (
     "3:25",
     "Then Azarias stood up, and prayed on this manner",
-    "THE SONG OF THE THREE CHILDREN",
+    "The Song of the Three Children",
 )
 
 
@@ -123,7 +123,7 @@ def heading_lines(entry, found):
         " ".join(text for _, text in lines) == found["title"],
         f"Heading lines do not spell the contents title: {entry['id']}",
     )
-    return [(marker, text.upper()) for marker, text in lines]
+    return [(marker, text) for marker, text in lines]
 
 
 def named(entry, doc, text):

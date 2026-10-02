@@ -372,7 +372,7 @@ def test_the_sample_prints_selected_chapters_as_the_full_edition_has_them(
             ], code
     # A heading set before a chapter is kept with it.
     daniel = usj.serialize(sample["DAG"])
-    assert daniel.count("\\s1 SUSANNA\n\\c 0\n\\cp ​\n") == 1
+    assert daniel.count("\\s1 Susanna\n\\c 0\n\\cp ​\n") == 1
     # A chapter's own closing paragraph stays with it: Psalm 71 ends in a \d
     # that holds its last verse.
     close = "\\d\n\\v 20 The hymns of David the son of Jessæ are ended.\n"

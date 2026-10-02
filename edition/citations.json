@@ -391,12 +391,12 @@
     "BAK": [
       {
         "from": "KINGS III. (\\sc Kings\\sc* I)",
-        "to": "{1KI:upper}",
+        "to": "{1KI}",
         "why": "Brenton's Third Book of Kings is this edition's Third Book of Kingdoms."
       },
       {
         "from": "CHRONICLES II",
-        "to": "{2CH:upper}",
+        "to": "{2CH}",
         "why": "A numbered book puts its number first."
       },
       {

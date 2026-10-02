@@ -7,7 +7,16 @@ from bible import assembly, usj
 from bible.checks import CheckFailed
 
 
-def test_every_book_prints_under_the_editions_name_and_heading(edition):
+def test_every_book_prints_under_the_editions_name_and_heading(edition, policy):
+    for entry in policy.scripture:
+        headings = [
+            (block["marker"], usj.text_of(block["content"]))
+            for block in edition.documents[entry["id"]]["content"]
+            if block.get("marker") in ("mt1", "mt2", "mt3")
+        ]
+        assert headings == [
+            tuple(line) for line in entry.get("heading", (("mt1", entry["title"]),))
+        ]
     genesis = usj.serialize(edition.documents["GEN"]).splitlines()[:8]
     assert genesis == [
         "\\id GEN - Brenton English Septuagint",
@@ -15,19 +24,19 @@ def test_every_book_prints_under_the_editions_name_and_heading(edition):
         "\\toc1 The First Book of Moses, Called Genesis",
         "\\toc2 Genesis",
         "\\toc3 Gen.",
-        "\\mt2 THE FIRST BOOK OF MOSES,",
-        "\\mt3 CALLED",
-        "\\mt1 GENESIS",
+        "\\mt2 The First Book of Moses,",
+        "\\mt3 Called",
+        "\\mt1 Genesis",
     ]
 
 
 def test_heading_lines_must_spell_the_contents_title():
     names = {"title": "The Book of Ruth"}
-    assert assembly.heading_lines({"id": "RUT"}, names) == [("mt1", "THE BOOK OF RUTH")]
+    assert assembly.heading_lines({"id": "RUT"}, names) == [("mt1", "The Book of Ruth")]
     split = {"id": "RUT", "heading": [["mt2", "The Book of"], ["mt1", "Ruth"]]}
     assert assembly.heading_lines(split, names) == [
-        ("mt2", "THE BOOK OF"),
-        ("mt1", "RUTH"),
+        ("mt2", "The Book of"),
+        ("mt1", "Ruth"),
     ]
     with pytest.raises(CheckFailed, match="do not spell the contents title"):
         assembly.heading_lines({"id": "RUT", "heading": [["mt1", "Ruth"]]}, names)
@@ -56,9 +65,9 @@ def test_daniel_stands_between_susanna_and_bel_and_the_dragon(edition):
         for n, block in enumerate(blocks)
         if block.get("pubnumber") == assembly.HIDDEN
     ]
-    assert hidden == [("SUSANNA", "0"), ("BEL AND THE DRAGON", "13")]
+    assert hidden == [("Susanna", "0"), ("Bel and the Dragon", "13")]
     lines = usj.serialize(edition.documents["DAG"]).splitlines()
-    song = lines.index("\\s1 THE SONG OF THE THREE CHILDREN")
+    song = lines.index("\\s1 The Song of the Three Children")
     assert lines[song + 1 : song + 3] == ["\\p", lines[song + 2]]
     assert (
         lines[song + 2].startswith("\\v 25 ")

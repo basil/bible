@@ -260,5 +260,70 @@
         "to": "the Authorized Version Cain"
       }
     ]
+  },
+  "headings": {
+    "why": "Print page and section headings in mixed case, retaining their hierarchy, punctuation, and line arrangements; keep the dedication's by and etc. lowercase.",
+    "changes": [
+      {
+        "unit": "XXD",
+        "from": "ABBREVIATIONS AND SIGNS USED IN THE NOTES",
+        "to": "Abbreviations and Signs Used in the Notes"
+      },
+      {
+        "unit": "OTH",
+        "from": "THE BOOKS OF THE APOCRYPHA",
+        "to": "The Books of the Apocrypha"
+      },
+      {
+        "unit": "TDX",
+        "from": "TO THE MOST HIGH AND MIGHTY PRINCE",
+        "to": "To the Most High and Mighty Prince"
+      },
+      {
+        "unit": "TDX",
+        "from": "JAMES,",
+        "to": "James,"
+      },
+      {
+        "unit": "TDX",
+        "from": "BY THE GRACE OF GOD",
+        "to": "by the Grace of God"
+      },
+      {
+        "unit": "TDX",
+        "from": "KING OF GREAT BRITAIN, FRANCE, AND IRELAND,",
+        "to": "King of Great Britain, France, and Ireland,"
+      },
+      {
+        "unit": "TDX",
+        "from": "DEFENDER OF THE FAITH, &c.",
+        "to": "Defender of the Faith, &c."
+      },
+      {
+        "unit": "TDX",
+        "from": "JESUS CHRIST our Lord.",
+        "to": "Jesus Christ our Lord."
+      },
+      {
+        "unit": "NDX",
+        "from": "TRANSLATORS TO THE READER.",
+        "to": "Translators to the Reader."
+      },
+      {
+        "unit": "NDX",
+        "from": "THE",
+        "to": "The"
+      },
+      {
+        "unit": "BAK",
+        "from": "The Following Passages are Supplied From the Alexandrine Text",
+        "to": "The Following Passages Are Supplied from the Alexandrine Text"
+      },
+      {
+        "unit": "BAK",
+        "from": "PROVERBS.",
+        "to": "Proverbs."
+      }
+    ]
   }
 }

@@ -202,29 +202,40 @@ def check_citations(reading_text):
 
 def stream_text(pdf, top, bottom, inner=None):
     """Each page's text in stream order within body and inner-note columns.
-    Form feeds part the pages; bbox extraction preserves tight-line spaces."""
+    Form feeds part the pages; blank lines part the extracted text blocks,
+    so a heading cannot become the book name of the paragraph below it."""
     pages = []
     # A whole Bible is a million words: drop each page's once they are read.
     for _, page in ET.iterparse(
-        io.StringIO(capture("pdftotext", "-raw", "-bbox", pdf, "-"))
+        io.StringIO(capture("pdftotext", "-bbox-layout", pdf, "-"))
     ):
         if page.tag != XHTML + "page":
             continue
         body, notes = [], []
-        for word in page.iter(XHTML + "word"):
-            # The running head and the folio stand in the margins.
-            if not top <= float(word.get("yMin")) <= float(page.get("height")) - bottom:
-                continue
-            # Side notes can interrupt a sentence in PDF stream order. Keep
-            # each column together, allowing 3 pt for optical protrusion at
-            # the body edge (less than the 5.5 mm gap to the notes).
-            marginal = inner is not None and (
-                float(word.get("xMax")) < inner - 3
-                if len(pages) % 2 == 0
-                else float(word.get("xMin")) > float(page.get("width")) - inner + 3
-            )
-            (notes if marginal else body).append(word.text)
-        pages.append(" ".join([*body, *notes]))
+        for block in page.iter(XHTML + "block"):
+            body_words, note_words = [], []
+            for word in block.iter(XHTML + "word"):
+                # The running head and the folio stand in the margins.
+                if (
+                    not top
+                    <= float(word.get("yMin"))
+                    <= float(page.get("height")) - bottom
+                ):
+                    continue
+                # Side notes can interrupt a sentence in PDF stream order. Keep
+                # each column together, allowing 3 pt for optical protrusion at
+                # the body edge (less than the 5.5 mm gap to the notes).
+                marginal = inner is not None and (
+                    float(word.get("xMax")) < inner - 3
+                    if len(pages) % 2 == 0
+                    else float(word.get("xMin")) > float(page.get("width")) - inner + 3
+                )
+                (note_words if marginal else body_words).append(word.text)
+            if body_words:
+                body.append(" ".join(body_words))
+            if note_words:
+                notes.append(" ".join(note_words))
+        pages.append("\n\n".join([*body, *notes]))
         page.clear()
     return "\f".join(pages)
 

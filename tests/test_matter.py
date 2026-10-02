@@ -62,7 +62,7 @@ def test_a_books_introduction_is_a_footnote_on_its_first_verse(edition):
     )
     # A section's introduction stands at the section's first verse, under its heading.
     daniel = lines(edition, "DAG")
-    song = daniel.index("\\s1 THE SONG OF THE THREE CHILDREN")
+    song = daniel.index("\\s1 The Song of the Three Children")
     assert daniel[song + 2].startswith(
         "\\v 25 \\ef - \\ft The Song of the Three Children contains"
     )
@@ -106,6 +106,52 @@ def test_the_list_of_abbreviations_is_completed_from_the_registry(edition, polic
     assert "\\tc2 for \\it anno Domini\\it*." in latin
 
 
+def test_front_and_back_matter_heading_capitalization(edition):
+    expected = {
+        "XXD": ["\\mt1 Abbreviations and Signs Used in the Notes"],
+        "XXB": ["\\mt1 Preface (1844)"],
+        "XXE": ["\\mt1 Introduction (1870)"],
+        "OTH": ["\\mt1 The Books of the Apocrypha"],
+        "TDX": [
+            "\\mt2 To the Most High and Mighty Prince",
+            "\\mt1 James,",
+            "\\mt2 by the Grace of God",
+            "\\mt2 King of Great Britain, France, and Ireland,",
+            "\\mt2 Defender of the Faith, etc.",
+            "\\mt2 The Translators of the Bible wish Grace, Mercy, and Peace, through Jesus Christ our Lord.",
+        ],
+        "NDX": ["\\mt2 The", "\\mt1 Translators to the Reader"],
+        "BAK": ["\\mt1 Notes and Supplied Passages"],
+        "CNC": ["\\mt1 Editor’s Introduction"],
+        "XXF": ["\\mt1 The Old Testament", "\\mt2 Brenton’s Septuagint"],
+        "XXG": [
+            "\\mt1 The New Testament",
+            "\\mt2 Scrivener’s Cambridge Paragraph Bible",
+            "\\mt2 King James Version",
+        ],
+        "GLO": ["\\mt1 Appendices", "\\mt2 Brenton’s notes and supplied passages"],
+    }
+    for code, headings in expected.items():
+        assert [
+            line for line in lines(edition, code) if line.startswith("\\mt")
+        ] == headings
+
+
+@pytest.mark.parametrize("unit", ["XXD", "OTH", "TDX", "NDX", "BAK"])
+@pytest.mark.parametrize("source", ["missing heading", "changed capitalization"])
+def test_heading_decisions_reject_changed_or_missing_source(
+    unit, source, policy, read, sources, ctx
+):
+    def stale(data):
+        decision = next(c for c in data["headings"]["changes"] if c["unit"] == unit)
+        decision["from"] = (
+            decision["to"] if source == "changed capitalization" else "Missing heading"
+        )
+
+    with pytest.raises(CheckFailed, match=f"Prose change not met once: {unit}"):
+        prepared(unit, changed(policy, "prose", stale), read, sources, ctx)
+
+
 def test_matter_cites_and_names_as_the_edition_does(edition):
     preface = usj.serialize(edition.documents["XXB"])
     # Brenton's "Gen. xlvii. 31, compared with Hebrews xi. 21".
@@ -113,7 +159,7 @@ def test_matter_cites_and_names_as_the_edition_does(edition):
     # A declared change keeps the style of the words it replaces.
     assert "\\im \\it Authorized Version\\it* bowed himself" in preface
     appendix = lines(edition, "BAK")
-    assert "\\is2 3 KINGDOMS" in appendix and "\\is2 2 CHRONICLES" in appendix
+    assert "\\is2 3 Kingdoms" in appendix and "\\is2 2 Chronicles" in appendix
     # Titles and headings drop their closing full stops.
     assert not [
         line
