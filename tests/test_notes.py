@@ -162,7 +162,7 @@ def printed(
         # A cross-reference is "See" and what it cites, as the edition cites.
         (
             r"\v 5 \x + \xo 99:5 \xt Rom. 4. 7,8.\x* Blessed are they whose sins are forgiven.",
-            r"\f - \fr 99:5 \ft See \xt Romans 4:7, 8\f*Blessed are they whose sins are forgiven.",
+            r"\f - \fr 99:5 \ft See \xt Rom. 4:7, 8\f*Blessed are they whose sins are forgiven.",
         ),
         # A caller at the end of a verse glosses the words before it.
         (

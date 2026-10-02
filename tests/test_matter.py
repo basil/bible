@@ -239,7 +239,7 @@ def test_matter_cites_and_names_as_the_edition_does(
 ) -> None:
     preface = usj.serialize(edition.documents["XXB"])
     # Brenton's "Gen. xlvii. 31, compared with Hebrews xi. 21".
-    assert "afforded by Genesis 47:31, compared with Hebrews 11:21" in preface
+    assert "afforded by Gen. 47:31, compared with Heb. 11:21" in preface
     # A declared change keeps the style of the words it replaces.
     assert "\\im \\it Authorized Version\\it* bowed himself" in preface
     appendix = lines(edition, "BAK")

@@ -463,6 +463,8 @@
       "source": "brenton",
       "section": "old_testament",
       "cited_singly": "Psalm",
+      "abbreviation": "Pss.",
+      "abbreviated_singly": "Ps.",
       "title": "The Book of Psalms"
     },
     {
@@ -779,6 +781,7 @@
       "id": "ROM",
       "source": "kjv",
       "section": "new_testament",
+      "abbreviation": "Rom.",
       "title": "The Epistle of Saint Paul to the Romans",
       "heading": [
         [

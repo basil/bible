@@ -144,6 +144,7 @@ class BrentonNotes(TypedDict, total=False):
 
 
 class Entry(TypedDict, total=False):
+    abbreviated_singly: str
     abbreviation: str
     chapters: tuple[int, ...]
     cited_singly: str

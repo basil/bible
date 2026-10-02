@@ -111,6 +111,11 @@ def test_a_list_names_each_book_once() -> None:
         EDITION.listed(parse_passages("ISA 8:23; ISA 9:1; 1CO 2:9"), BOOKS)
         == "Esaias 8:23; 9:1; 1 Corinthians 2:9"
     )
+    # And each chapter once, where its passages stand together.
+    assert (
+        EDITION.listed(parse_passages("ISA 8:23; ISA 9:1; ISA 9:2-3; ISA 8:1"), BOOKS)
+        == "Esaias 8:23; 9:1, 2–3; 8:1"
+    )
     # But again, where another book comes between.
     assert (
         EDITION.listed(parse_passages("ISA 8:23; 1CO 2:9; ISA 9:1"), BOOKS)
@@ -121,12 +126,27 @@ def test_a_list_names_each_book_once() -> None:
 def test_one_of_a_books_chapters_may_have_its_own_name() -> None:
     books = Books({"PSA": "Psalms", "ISA": "Esaias"}, {"PSA": "Psalm"})
     assert EDITION.passage(parse_passage("PSA 117:22-23"), books) == "Psalm 117:22–23"
-    assert EDITION.listed(parse_passages("PSA 2:1; PSA 2:7"), books) == "Psalm 2:1; 2:7"
+    assert EDITION.listed(parse_passages("PSA 2:1; PSA 2:7"), books) == "Psalm 2:1, 7"
     assert (
         EDITION.listed(parse_passages("PSA 2:7; PSA 109:1"), books)
         == "Psalms 2:7; 109:1"
     )
     assert books.name("PSA") == "Psalms" and books.name("ISA", [1]) == "Esaias"
+
+
+def test_a_books_abbreviation_may_have_one_for_a_single_chapter() -> None:
+    books = Books(
+        {"PSA": "Psalms"}, {"PSA": "Psalm"}, Books({"PSA": "Pss."}, {"PSA": "Ps."})
+    )
+    assert books.abbreviated.abbreviated is books.abbreviated
+    assert (
+        EDITION.listed(parse_passages("PSA 2:1; PSA 2:7"), books.abbreviated)
+        == "Ps. 2:1, 7"
+    )
+    assert (
+        EDITION.listed(parse_passages("PSA 2:7; PSA 109:1"), books.abbreviated)
+        == "Pss. 2:7; 109:1"
+    )
 
 
 @pytest.mark.parametrize(

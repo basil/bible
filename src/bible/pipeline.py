@@ -402,10 +402,8 @@ def introduced(
     require(
         cited <= set(verses), f"Quotation verse missing from prepared scripture: {code}"
     )
-    for link in links:
-        placed.setdefault(link.origin.label, []).append(
-            crossrefs.link_note(link, ctx.books)
-        )
+    for reference, notes in crossrefs.link_notes(links, ctx.books).items():
+        placed.setdefault(reference, []).extend(notes)
     return annotate.at_verse_starts(doc, placed) if placed else doc
 
 

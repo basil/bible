@@ -60,7 +60,7 @@ A stage decides on a document's words, not on its markup. `usj.py` and `scriptur
 | a slip in a source's transcription | `corrections` in `edition/brenton-notes.json` or `edition/kjv-notes.json` | `repairs.py` |
 | the words a note is about, its italics, or whether it is a sentence | `notes` in the same files | `notes.py`, `lemmas.py`, `annotate.py` |
 | a reading from Codex Alexandrinus, a supplied passage, a kept note | `edition/alexandrinus.json` | `alexandrinus.py` |
-| how a citation is read or printed | `edition/citations.json` | `citations.py` |
+| how a citation is read or printed | `edition/citations.json` (book abbreviations from the manifest and sources) | `citations.py` |
 | the wording of a note or of front matter | `edition/prose.json` | `annotate.py`, `matter.py` |
 | an abbreviation's printed form, or the list of abbreviations | `edition/terminology.json`, `edition/abbreviations.json` | `terminology.py` |
 | where a book's introduction goes | `edition/book-introductions.json` | `matter.py` |

@@ -88,31 +88,31 @@ def printed(
 
 # A text, what its citations name, and how it prints.
 BRENTON = [
-    ("See Rom. 4. 7,8.", "ROM 4:7; ROM 4:8", "See Romans 4:7, 8."),
-    ("See Heb. 2. 6-9.", "HEB 2:6-9", "See Hebrews 2:6–9."),
-    ("See 1 Cor 2. 16. Gr.", "1CO 2:16", "See 1 Corinthians 2:16. Gr."),
+    ("See Rom. 4. 7,8.", "ROM 4:7; ROM 4:8", "See Rom. 4:7, 8."),
+    ("See Heb. 2. 6-9.", "HEB 2:6-9", "See Heb. 2:6–9."),
+    ("See 1 Cor 2. 16. Gr.", "1CO 2:16", "See 1 Cor. 2:16. Gr."),
     (
         "See Lev. 23. 6; Num. 29. 35; 2 Chr. 7. 9.",
         "LEV 23:6 | NUM 29:35 | 2CH 7:9",
-        "See Leviticus 23:6; Numbers 29:35; 2 Chronicles 7:9.",
+        "See Lev. 23:6; Num. 29:35; 2 Chr. 7:9.",
     ),
     (
         "Jer. 40. 10,12;also 1 Cor. 12. 15,16.",
         "JER 40:10; JER 40:12 | 1CO 12:15; 1CO 12:16",
-        "Jeremias 40:10, 12;also 1 Corinthians 12:15, 16.",
+        "Jer. 40:10, 12;also 1 Cor. 12:15, 16.",
     ),
     # Brenton's Kings are the four books of Kingdoms, under the edition's names.
-    ("See on 3 Kings 8. 53.", "1KI 8:53", "See on 3 Kingdoms 8:53."),
-    ("See Hab. 2. 3.", "HAB 2:3", "See Abbacum 2:3."),
+    ("See on 3 Kings 8. 53.", "1KI 8:53", "See on 3 Kgdms. 8:53."),
+    ("See Hab. 2. 3.", "HAB 2:3", "See Abb. 2:3."),
     # A chapter, several, and the last verse of one; one psalm is a Psalm.
-    ("as in Gen. 43.", "GEN 43", "as in Genesis 43."),
-    ("See also Ps. 68; 79, titles", "PSA 68; PSA 79", "See also Psalms 68; 79, titles"),
-    ("See Ps. 118. 32.", "PSA 118:32", "See Psalm 118:32."),
-    ("See Col. 2. ult.", "COL 2:23", "See Colossians 2:23."),
+    ("as in Gen. 43.", "GEN 43", "as in Gen. 43."),
+    ("See also Ps. 68; 79, titles", "PSA 68; PSA 79", "See also Pss. 68; 79, titles"),
+    ("See Ps. 118. 32.", "PSA 118:32", "See Ps. 118:32."),
+    ("See Col. 2. ult.", "COL 2:23", "See Col. 2:23."),
     # By Brenton's number for a verse the edition relabels, and for one that
     # a decision could say is cited by the King James Bible's.
-    ("See Mal. 3. 23.", "MAL 4:5", "See Malachias 4:5."),
-    ("Comp. Jer. 9. 24.", "JER 9:24", "Comp. Jeremias 9:24."),
+    ("See Mal. 3. 23.", "MAL 4:5", "See Mal. 4:5."),
+    ("Comp. Jer. 9. 24.", "JER 9:24", "Comp. Jer. 9:24."),
     # A note cites its own book by a verse or chapter, and keeps its capital.
     ("See ver. 6.", "JDG 13:6", "See verse 6."),
     ("See v 8, 9.", "JDG 13:8; JDG 13:9", "See verses 8, 9."),
@@ -131,18 +131,18 @@ BRENTON = [
 ]
 # The margin of 1611 cites as the King James Bible does.
 GEORGE = [
-    ("as Mat. 18.28", "MAT 18:28", "as Matthew 18:28"),
-    ("1. Cor. 8.11", "1CO 8:11", "1 Corinthians 8:11"),
-    ("Gr. made, 1 Sam. 12.6", "1SA 12:6", "Gr. made, 1 Kingdoms 12:6"),
-    ("Esai 55.3", "ISA 55:3", "Esaias 55:3"),
+    ("as Mat. 18.28", "MAT 18:28", "as Matt. 18:28"),
+    ("1. Cor. 8.11", "1CO 8:11", "1 Cor. 8:11"),
+    ("Gr. made, 1 Sam. 12.6", "1SA 12:6", "Gr. made, 1 Kgdms. 12:6"),
+    ("Esai 55.3", "ISA 55:3", "Esai. 55:3"),
     # A book the King James Old Testament lacks is numbered as it stands.
-    ("2. Macc 7.27", "2MA 7:27", "2 Maccabees 7:27"),
+    ("2. Macc 7.27", "2MA 7:27", "2 Macc. 7:27"),
     # Its numbering is carried verse by verse, into two places where the
     # edition has the verses apart.
     ("Joel 2.28-32", "JOL 3:1-5", "Joel 3:1–5"),
-    ("Psal. 34.12-16", "PSA 33:13-17", "Psalm 33:13–17"),
-    ("Jer. 25.13-16", "JER 25:13; JER 32:15-16", "Jeremias 25:13; 32:15–16"),
-    ("Mal. 4.4-6", "MAL 4:6; MAL 4:4-5", "Malachias 4:6, 4–5"),
+    ("Psal. 34.12-16", "PSA 33:13-17", "Ps. 33:13–17"),
+    ("Jer. 25.13-16", "JER 25:13; JER 32:15-16", "Jer. 25:13; 32:15–16"),
+    ("Mal. 4.4-6", "MAL 4:6; MAL 4:4-5", "Mal. 4:6, 4–5"),
 ]
 
 
@@ -152,7 +152,7 @@ GEORGE = [
         *(("brenton", *row) for row in BRENTON),
         *(("george", *row) for row in GEORGE),
         # Brenton's preface numbers its chapters in Roman.
-        ("brenton-preface", "by Gen. xlvii. 31.", "GEN 47:31", "by Genesis 47:31."),
+        ("brenton-preface", "by Gen. xlvii. 31.", "GEN 47:31", "by Gen. 47:31."),
     ],
 )
 def test_a_source_cites_in_its_own_way(
@@ -182,17 +182,17 @@ SEVERAL: CitationsDecisions = {
         (
             "Comp. Jer. 9. 24.",
             decision(source="Jer. 9. 24", numbering="kjv"),
-            "Comp. Jeremias 9:23.",
+            "Comp. Jer. 9:23.",
         ),
         (
             "see Ps. 91. 10.",
             decision(source="Ps. 91. 10", numbering="kjv-verses"),
-            "see Psalm 91:11.",
+            "see Ps. 91:11.",
         ),
         (
             "See Ps. 110.",
             decision(source="Ps. 110", numbering="hebrew"),
-            "See Psalm 109.",
+            "See Ps. 109.",
         ),
         # Figures that are no citation stay as they are.
         (
@@ -220,7 +220,7 @@ SEVERAL: CitationsDecisions = {
                 passages=SEVERAL["passages"],
                 print="{ZEC} 3:8; {ISA:upper} 11:1",
             ),
-            "branch, Zacharias 3:8; ESAIAS 11:1",
+            "branch, Zach. 3:8; ESAI. 11:1",
         ),
     ],
 )
@@ -360,7 +360,7 @@ def test_every_decision_and_name_must_be_met(
                 ("text", ". Also 1 Cor 2. 16."),
             ],
             None,
-            "Gr. [seed]; see <chapter 6:13, 15>. Also <1 Corinthians 2:16>.",
+            "Gr. [seed]; see <chapter 6:13, 15>. Also <1 Cor. 2:16>.",
         ),
         # What the edition doesn't print stays among its words.
         (
@@ -394,12 +394,22 @@ def test_a_citation_of_the_wrong_verse_prints_the_verse_meant(
 ) -> None:
     # The margin of 1611 has "Rom. 1.19" for 15.19, and George after it.
     colossians = usj.serialize(edition.documents["COL"])
-    assert "fully to preach the word of God\\ft , \\xt Romans 15:19\\f*" in colossians
+    assert "fully to preach the word of God\\ft , \\xt Rom. 15:19\\f*" in colossians
     # Brenton's "Rom. 10. 9" is 10. 19, which the link at the verse names, so
     # the note is merged into it as any note is that the link repeats.
     deuteronomy = usj.serialize(edition.documents["DEU"])
-    assert "\\xo 32:21 \\xt Romans 10:19 \\xta (Heb. and LXX)\\x*" in deuteronomy
-    assert "\\fr 32:21" not in deuteronomy and "Romans 10:9" not in deuteronomy
+    assert "\\xo 32:21 \\xt Rom. 10:19 \\xta (Heb.\u00a0+ LXX)\\x*" in deuteronomy
+    assert "\\fr 32:21" not in deuteronomy and "Rom. 10:9" not in deuteronomy
+
+
+def test_a_book_cited_alone_keeps_its_abbreviations_period(
+    edition: bible.pipeline.Edition,
+) -> None:
+    proverbs = usj.serialize(edition.documents["PRO"])
+    # Brenton's "See 1 Pet." names the book alone: the period is its name's.
+    assert "\\fr 11:31 \\ft See \\xt 1 Pet.\\f*" in proverbs
+    # After a number, the period closed the note, and goes as any does.
+    assert "\\fr 3:34 \\ft See \\xt 1 Pet. 5:5\\f*" in proverbs
 
 
 # In the front and back matter
@@ -408,20 +418,20 @@ def test_a_citation_of_the_wrong_verse_prints_the_verse_meant(
 @pytest.mark.parametrize(
     "unit,prints",
     [
-        ("XXB", "than is afforded by Genesis 47:31, compared with Hebrews 11:21."),
+        ("XXB", "than is afforded by Gen. 47:31, compared with Heb. 11:21."),
         # Decisions, keyed by the unit and the words they decide.
-        ("XXB", "The Septuagint rendering of Psalm 4:5, is"),
+        ("XXB", "The Septuagint rendering of Ps. 4:5, is"),
         ("XXB", "the first Epistle of Peter, 4:18."),
         ("XXB", "one of the acrostic Psalms, (144:13), where"),
         ("XXB", "In Acts 17:28, we find"),
         ("NDX", "studied them. Acts 17:11 and 8:28, 29. They"),
-        ("NDX", "See Judges 8:2. \\it Joash\\it* the king"),
-        ("BAK", "\\ip 2 Kingdoms 5:18.—Giants."),
-        ("BAK", "\\ip Psalm 41:5.—There are"),
-        ("BAK", "Mark 4:30; in Hebrews 9:9 and 11:19 it is"),
+        ("NDX", "See Judg. 8:2. \\it Joash\\it* the king"),
+        ("BAK", "\\ip 2 Kgdms. 5:18.—Giants."),
+        ("BAK", "\\ip Ps. 41:5.—There are"),
+        ("BAK", "Mark 4:30; in Heb. 9:9 and 11:19 it is"),
         # A paragraph that names no book is of the book last cited.
         ("BAK", "see chapter 1:4, 22; 8:5; 14:15; 21:11. For πανοῦργος, 12:16; 13:1,"),
-        ("BAK", "see \\it Appendix\\it*. Note on 2 Kingdoms 5:18."),
+        ("BAK", "see \\it Appendix\\it*. Note on 2 Kgdms. 5:18."),
         # A book that is named and not cited is renamed.
         ("BAK", "\\is2 3 Kingdoms"),
         # The label of a passage retained for editorial review is no citation.
@@ -499,7 +509,7 @@ def test_markup_within_a_citation_goes_with_it(
         return usj.serialize(matter.cited(content, reading, ctx.books, "x"))
 
     assert cited(r"search. \it John\it* 5. 39. They") == "search. John 5:39. They"
-    assert cited(r"2 \it Tim.\it* 3. 15. If") == "2 Timothy 3:15. If"
+    assert cited(r"2 \it Tim.\it* 3. 15. If") == "2 Tim. 3:15. If"
     # A note in the matter is read without its origin, which it keeps.
     note = r"at all.\f + \fr 1:0 \ft In Acts 17. 28, we find\f* Let us"
     assert cited(note, "brenton-preface") == note.replace("17. 28", "17:28")

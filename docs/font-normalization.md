@@ -32,7 +32,7 @@ by the factor to retain its pixel-size threshold. Integer OpenType metrics and
 positioning use OpenType rounding; explicit CFF widths match the rounded hmtx
 advances. Erewhon Italic's tabular oldstyle zero advance is repaired from 498
 to 500 before scaling. Utopia programs, subroutines, hints, original lookups and
-line metrics remain intact; clipping bounds grow to fit the additions.
+line metrics remain intact; glyph bounding boxes grow to fit the additions.
 
 ## Coverage and provenance
 

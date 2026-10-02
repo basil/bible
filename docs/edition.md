@@ -40,7 +40,8 @@ Brenton's book names are kept, except that the Orthodox names are used for Jesus
 
 - `title`: the full title, printed in the contents, as in "The First Book of Moses, Called Genesis". Every book has one; front matter without one keeps its source's names.
 - `short_title`: used in the running heads, as in "3 Kingdoms". Defaults to the source's.
-- `abbreviation`: not printed, but kept consistent. Defaults to the source's.
+- `abbreviation`: printed wherever a note, the front and back matter, or a quotation link cites the book, as in "3 Kgdms. 8:53", and beside the book's title in the contents, which is the key to the abbreviations. Defaults to the source's.
+- `cited_singly`, `abbreviated_singly`: the name and the abbreviation where one chapter of the book is cited, if they differ: "Psalm" and "Ps." beside "Psalms" and "Pss.".
 - `heading`: how the full title breaks into lines at the start of the book. The lines must spell out `title` exactly. Without it, the title is printed on one line.
 
 ## Titles and headings
@@ -130,7 +131,7 @@ Each book the introduction to the Apocrypha describes opens with that descriptio
 
 ## Quotations
 
-Where the New Testament quotes the Old, both ends are linked: the first verse of the quotation names the passage it quotes, and the first verse of that passage names the quotation. Links at one verse follow the edition's book order. A link that names several passages of one book names the book once: "Esaias 8:23; 9:1".
+Where the New Testament quotes the Old, both ends are linked: the first verse of the quotation names the passage it quotes, and the first verse of that passage names the quotation. At each verse, links sharing a printed gloss form one note; links without a gloss also form one note. Within each note, references follow the edition's book order, then chapter and verse, with commas between passages in one chapter and semicolons between chapters or books. Each book is named once: "Heb. 5:6; 7:17, 21". Notes follow the order of their first references. The original quotation ranges remain separate, even when adjacent, and the underlying relations retain their individual classes and table codes.
 
 The judgments come from David McCalman Turpie's _The Old Testament in the New_ (1868). It is in the public domain, tables the quotations completely, and judges the underlying Hebrew and Greek texts rather than either English version. Turpie gives each tabled quotation one of five classes, A–E, according to its agreement with the Hebrew and the Septuagint ([introductory remarks, p. XVI, PDF p. 22](https://archive.org/download/oldtestamentinne00turp/oldtestamentinne00turp.pdf#page=22)). His table codes further distinguish the same or different word order (`s`/`d`); variation in words, clauses, or both (`I`/`II`/`III`); and rendering, omission, or addition (`r`/`o`/`a`). Digits before the last letters locate the clauses ([table of contents, pp. IX–XII, PDF pp. 15–18](https://archive.org/download/oldtestamentinne00turp/oldtestamentinne00turp.pdf#page=15)).
 
@@ -140,10 +141,12 @@ The edition prints three glosses and, for two cases, the reference alone:
 
 | Turpie's class and scope | After the reference |
 | --- | --- |
-| A; C.I (words only) | `Heb. and LXX` |
-| B | `Heb. against LXX` |
-| D (any scope) | `LXX against Heb.` |
+| A; C.I (words only) | `Heb. + LXX` |
+| B | `Heb. ≠ LXX` |
+| D (any scope) | `LXX ≠ Heb.` |
 | C.II or C.III; E (any scope) | Nothing |
+
+Spaces surround each symbol. A line may break after the symbol but not before it, as a formula breaks in running text, so a symbol never begins a line. The plus sign indicates agreement with both texts, allowing differences in wording; with ≠, the New Testament quotation follows the first text named and differs from the second. This meaning applies at both ends of the link.
 
 In C, the Septuagint and Hebrew agree. C.I records a difference in words only, so it joins A in the printed gloss: the variation is a matter of form rather than a choice between texts. C.II and C.III record a difference in whole clauses, such as abridgment or joining passages, so the reference alone avoids claiming a wording match. E also prints without a gloss: all three texts differ, and the code does not establish which pair its scope describes. B's subdivisions concern word order; D's describe the Septuagint's departure from the Hebrew. Neither changes its printed gloss. Turpie's letters aren't printed because Archer and Chirichigno's A–F classes give the same letters other meanings. The transformation log records Turpie's letter and table code for each link; the printed gloss is derived from them, not stored in `edition/turpie.json`.
 
@@ -175,7 +178,7 @@ The editor's pages don't type a chapter and verse. They name a passage between b
 
 Every citation in a note is read where the note is, as its source writes it. Brenton writes "Rom. 4. 7,8" and the margin of 1611 "Mat. 18.28", and each names the books its own way: Brenton's "2 Kings" is the Second Book of Kingdoms, which the King James Bible calls 2 Samuel. `edition/citations.json` records each source's way of writing as a dialect. A name for a book that no note uses is refused, so the file lists only what the sources have.
 
-A citation prints as this edition cites: the book's name in full, as in the running heads, a colon between chapter and verse, an en dash in a range, and a comma between the verses of a list. "See Rom. 4. 7,8" is "See Romans 4:7, 8", and "See 2 Kings 22. 16" is "See 2 Kingdoms 22:16". A psalm is cited as "Psalm 117:22", and the book as "Psalms" only where more than one psalm is named. A note that cites its own book by verse or chapter still does, in words: "See ver 3" is "See verse 3", and "See chap 6. 13,15" is "See chapter 6:13, 15". The words around a citation are the source's, and stay: "See", "Comp.", "compare", "Vide supra". Every citation is set as a reference, so the quotation links and the notes cite alike. The transformation log keeps each citation as its source has it, beside what prints.
+A citation prints as this edition cites: the book's abbreviation, a colon between chapter and verse, an en dash in a range, and a comma between the verses of a list. "See Heb. 2. 6-9" is "See Heb. 2:6–9", and "See 2 Kings 22. 16" is "See 2 Kgdms. 22:16". One psalm is "Ps." and several are "Pss.", as Chicago abbreviates them: "Ps. 117:22", "Pss. 68; 79". The editor's own pages name a book in full, as the running heads do. A note that cites its own book by verse or chapter still does, in words: "See ver 3" is "See verse 3", and "See chap 6. 13,15" is "See chapter 6:13, 15". The words around a citation are the source's, and stay: "See", "Comp.", "compare", "Vide supra". Every citation is set as a reference, so the quotation links and the notes cite alike. The transformation log keeps each citation as its source has it, beside what prints.
 
 A citation must name chapters and verses that this edition prints, which is how a citation by another numbering comes to light. Brenton mostly cites by his own numbers, but not always. "Comp. Jer. 9. 24" at 1 Kingdoms 2:10 is the English number of his own 9:23. In the Psalms he often gives the Greek psalm's number with the English verse's: "see Ps. 91. 10" is 91:11, because he counts the title. And "See Ps. 110" at Esaias 26:19 is the Hebrew's number for his Psalm 109. Each of these is a decision in the file, with its reason, and prints by this edition's number. So are the figures that aren't citations ("Heb. 300", the Hebrew's number of Solomon's officers) and the notes on verses that the Vatican text lacks, which name no verse to be found and stay among the note's words. Two citations keep another Bible's name or no number: "See 1 Kings 22. 46-50. A. V." at 3 Kingdoms 16:28d cites the Authorized Version by name, and so by its name for the book; and "See 1 Pet." at Proverbs 11:31 names the book alone. The margin of 1611 runs four citations together at Luke 1:78, which are set apart with semicolons.
 

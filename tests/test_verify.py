@@ -124,9 +124,10 @@ def test_missing_edition_license_on_the_publication_page_is_refused() -> None:
 @pytest.mark.parametrize(
     "words",
     [
-        "See Romans 4:7, 8",
+        "See 1 Cor. 10:26, 28",
         "see chapter 6:13, 15; verse 3",
-        "Psalm 117:22–23 (LXX against Heb.)",
+        "Ps. 117:22–23 (LXX ≠ Heb.)",
+        "Heb. 5:6; 7:17, 21 (Heb. + LXX)",
         "Heb. 300. Alex. 500",
         "Alex. 187 years. Heb. Grammar, p. 92",
         # The numbers that the appendix supplies a passage under.

@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import re
 from collections.abc import Iterator, Mapping
-from typing import TypedDict, Unpack
+from typing import Literal, TypedDict, Unpack
 
 import bible.policy
 import bible.references
@@ -87,13 +87,18 @@ def books(
     policy: bible.policy.Policy, sources: bible.sources.Sources
 ) -> bible.references.Books:
     """The edition's books, in its order, under their running-head names,
-    and the names by which one of a book's chapters is cited."""
+    the names by which one of a book's chapters is cited, and the
+    abbreviations of both that citations print."""
+    found = {
+        unit["id"]: names(unit, source_text(unit, sources)) for unit in policy.scripture
+    }
     return Books(
-        (
-            (unit["id"], names(unit, source_text(unit, sources))["short_title"])
-            for unit in policy.scripture
+        ((code, name["short_title"]) for code, name in found.items()),
+        _singly(policy, "cited_singly"),
+        Books(
+            ((code, name["abbreviation"]) for code, name in found.items()),
+            _singly(policy, "abbreviated_singly"),
         ),
-        _cited_singly(policy),
     )
 
 
@@ -108,16 +113,16 @@ def kjv_books(
             for code, text in sources.kjv.items()
             if re.search(r"^\\toc2\s", text, re.M)
         ),
-        _cited_singly(policy),
+        _singly(policy, "cited_singly"),
     )
 
 
-def _cited_singly(policy: bible.policy.Policy) -> Iterator[tuple[str, str]]:
-    return (
-        (unit["id"], unit["cited_singly"])
-        for unit in policy.scripture
-        if "cited_singly" in unit
-    )
+def _singly(
+    policy: bible.policy.Policy,
+    field: Literal["cited_singly", "abbreviated_singly"],
+) -> Iterator[tuple[str, str]]:
+    """Each book's name, or its abbreviation, for one of its chapters."""
+    return ((unit["id"], unit[field]) for unit in policy.scripture if field in unit)
 
 
 def heading_lines(entry: Entry, found: Mapping[str, str]) -> list[tuple[str, str]]:

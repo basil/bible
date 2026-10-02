@@ -939,12 +939,17 @@ def finished(
             term = replace(term, closure=False)
         edits.append((term.start, term.end, terminology.render(term, registry, text)))
     if terminal is not None and not complete and not lexical:
-        # A term's own period is the term's; any other closing stop goes.
+        # A term's own period is the term's, and so is a book's abbreviation's
+        # where a citation names the book alone ("See 1 Pet."): a citation's
+        # stop after a number closes the note. Any other closing stop goes.
         own = any(
             t.start <= terminal < t.end
             and t.end == terminal + 1
             and registry.display(t.identity).endswith(".")
             for t in terms
+        ) or any(
+            a < terminal < b and role == "citation" and text[terminal - 1].isalpha()
+            for a, b, role in bounds
         )
         covered = any(a <= terminal < b for a, b, _ in edits)
         if not own and not covered:

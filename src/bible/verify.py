@@ -158,22 +158,37 @@ def check_boundaries(
     )
     page_offset = first_physical - int(toc[0][2])
     require(page_offset >= 3, "Front matter page offset is invalid")
-    contents = key("".join(page_text[2 : first_physical - 1]))
+    # A contents page reads by its columns: the titles with the abbreviations,
+    # then the page numbers, which must be those of the titles on that page.
+    contents = [key(page) for page in page_text[2 : first_physical - 1]]
+    listed = 0
+    numbers = ""
     previous = 0
     for code, title, printed_page in toc:
         page = int(printed_page) + page_offset
         require(previous < page <= pages, f"Invalid boundary page: {code} {page}")
         previous = page
+        if listed < len(contents) and key(title) not in contents[listed]:
+            require(
+                numbers and contents[listed].endswith(numbers),
+                f"Contents page numbers wrong in PDF before: {code}",
+            )
+            listed, numbers = listed + 1, ""
         require(
-            key(title) + printed_page in contents,
-            f"Contents entry missing/wrong printed page in PDF: {code}",
+            listed < len(contents) and key(title) in contents[listed],
+            f"Contents entry missing in PDF: {code}",
         )
+        numbers += printed_page
         words = heading(usfm[code])
         require(words, f"Missing heading: {code}")
         require(
             key(canonical_text(words)) in key(page_text[page - 1]),
             f"Book heading not on advertised PDF page: {code} {page}",
         )
+    require(
+        contents[listed].endswith(numbers),
+        "Contents page numbers wrong in PDF on the last page of the contents",
+    )
     write_json(
         base / "book-boundaries.json",
         [

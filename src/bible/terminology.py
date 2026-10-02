@@ -524,11 +524,13 @@ def check_glossary(doc: Document, policy: bible.policy.Policy) -> None:
 
 # Source forms that must not be left once the terms are printed, including
 # the abbreviations that edition/prose.json prints in full where they stand.
+# "Rom." is Brenton's Roman edition, unless a chapter follows: then it is the
+# edition's abbreviation for Romans.
 UNPRINTED = re.compile(
     r"\bi\. e\.|\bq\. d\.|\b[Ss]cil\.|\bSept\b|\b[Cc]omp\.|\d AD\b|&c\b|\b[ab]\.[dc]\."
     r"|(?<![\w.])(?:[ON]\. ?T|A\. V|Ald|Complut|Vulg)(?!\w)|\bAV\b"
-    r"|\b(?:App|Chrysost|Gram|Qu|Rom|om|nom|voc|absol|infin|imper|pl|qy|viz|niph"
-    r"|fem|ob)\.|\bCateches\b|\bult\b|\b4to\b|\bEng\. Ver\b|\d\.(?:li|[sd])\b"
+    r"|\b(?:App|Chrysost|Gram|Qu|om|nom|voc|absol|infin|imper|pl|qy|viz|niph"
+    r"|fem|ob)\.|\bRom\.(?! \d)|\bCateches\b|\bult\b|\b4to\b|\bEng\. Ver\b|\d\.(?:li|[sd])\b"
 )
 # A number with a period within a note's sentence, which edition/prose.json
 # must decide: "after 5. shillings".

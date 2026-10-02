@@ -774,9 +774,10 @@ def printed(
     books: bible.references.Books,
     style: bible.references.Style = EDITION,
 ) -> str:
-    """A citation as the edition prints it: under the edition's name for the
+    """A citation as the edition prints it: under the edition's abbreviation for the
     book, or as a verse or chapter of the note's own book, which it names as
     its source does, by no name."""
+    books = books.abbreviated
     if citation.printed is not None:
         # A decision names the books by their codes, and the edition's names
         # for them print. What a page without verses doesn't print stands in

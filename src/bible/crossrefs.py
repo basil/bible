@@ -22,8 +22,9 @@ from bible.versification import mapped_passages
 
 # The printed glosses, by Turpie's class. C.I, which differs from the agreeing
 # Hebrew and Septuagint in words alone, prints as A; the rest of C, and E,
-# print the reference alone.
-GLOSSES = {"A": "Heb. and LXX", "B": "Heb. against LXX", "D": "LXX against Heb."}
+# print the reference alone. A line may break after the symbol but not before
+# it, as TeX breaks a formula after a binary operation or a relation.
+GLOSSES = {"A": "Heb.\u00a0+ LXX", "B": "Heb.\u00a0≠ LXX", "D": "LXX\u00a0≠ Heb."}
 
 
 @dataclass(frozen=True)
@@ -103,7 +104,8 @@ def planned_links(
     and a Brenton verse that rows gloss differently need an
     explicit editorial decision naming the rows, even where the links that
     join them display different ranges or stand at different verses. Two
-    links that would print alike at one verse are refused.
+    links that would print alike at one verse are refused; those that share
+    a verse and a gloss print as one note (link_notes).
     """
     by_book: collections.defaultdict[str, list[Link]] = collections.defaultdict(list)
     positions = {code: index for index, code in enumerate(order)}
@@ -283,13 +285,52 @@ def merged_notes(
     return frozenset(merges)
 
 
-def link_note(link: Link, books: bible.references.Books) -> Node:
-    """A link as it prints: the other side's passages, and Turpie's judgment
-    of the quotation's wording where the edition prints one."""
-    target = EDITION.listed(link.targets, books)
+def link_notes(
+    links: Sequence[Link], books: bible.references.Books
+) -> dict[str, list[Node]]:
+    """One note per origin and printed agreement, with targets in edition order.
+
+    Keep the relations separate upstream, where their classes and row ids
+    govern reciprocal links, conflicts and source-note merges.
+    """
+    groups: dict[tuple[Verse, str | None], list[Passage]] = {}
+    for link in links:
+        groups.setdefault((link.origin, link.agreement), []).extend(link.targets)
+    for (origin, _), targets in groups.items():
+        # Identical links are refused where they are planned; joined in one
+        # note, two that share a passage would print it twice.
+        require(
+            len(set(targets)) == len(targets),
+            f"Quotation passage linked twice at one verse: {origin}",
+        )
+
+    def position(passage: Passage) -> tuple[int, int, int, str, int]:
+        return (*books.position(passage.first), passage.last.number)
+
+    ordered = [
+        (origin, agreement, sorted(targets, key=position))
+        for (origin, agreement), targets in groups.items()
+    ]
+    ordered.sort(key=lambda group: position(group[2][0]))
+    result: dict[str, list[Node]] = {}
+    for origin, agreement, targets in ordered:
+        result.setdefault(origin.label, []).append(
+            link_note(origin, targets, agreement, books)
+        )
+    return result
+
+
+def link_note(
+    origin: Verse,
+    targets: Sequence[Passage],
+    agreement: str | None,
+    books: bible.references.Books,
+) -> Node:
+    """Ordered references sharing one origin and printed agreement."""
+    target = EDITION.listed(targets, books.abbreviated)
     require(not set(target) & set("\\\n("), f"Malformed link target: {target}")
-    gloss = GLOSSES.get(link.agreement or "")
-    content = [usj.char("xo", f"{link.origin.label} ")]
+    gloss = GLOSSES.get(agreement or "")
+    content = [usj.char("xo", f"{origin.label} ")]
     if gloss:
         content += [usj.char("xt", f"{target} "), usj.char("xta", f"({gloss})")]
     else:

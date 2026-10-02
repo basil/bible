@@ -155,8 +155,10 @@ def test_a_lettered_verse_never_joins_a_range(
     links = pipeline.quotation_links(policy, edition.inventory)
     [link] = [link for link in links["PRO"] if "Q216" in link.row_ids]
     assert link.origin == parse_verse("PRO 22:8a")
-    note = crossrefs.link_note(link, assembly.books(policy, sources))
-    assert usj.serialize([note]) == r"\x - \xo 22:8a \xt 2 Corinthians 9:7\x*"
+    note = crossrefs.link_note(
+        link.origin, link.targets, link.agreement, assembly.books(policy, sources)
+    )
+    assert usj.serialize([note]) == r"\x - \xo 22:8a \xt 2 Cor. 9:7\x*"
 
 
 def unplaced(

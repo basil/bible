@@ -125,15 +125,19 @@ class Books:
     """One Bible's books, in its order, under the names its pages print.
 
     A book of many may have a name for one of them: a psalm of the Psalms.
+    The same books under their citation abbreviations are `abbreviated`:
+    these books themselves, if they have none.
     """
 
     def __init__(
         self,
         names: Mapping[str, str] | Iterable[tuple[str, str]],
         one: Mapping[str, str] | Iterable[tuple[str, str]] = (),
+        abbreviated: Books | None = None,
     ) -> None:
         self.names = dict(names)
         self.one = dict(one)
+        self.abbreviated = abbreviated or self
         self.order = {code: index for index, code in enumerate(self.names)}
 
     def name(self, code: str, chapters: Iterable[int] = ()) -> str:
@@ -177,12 +181,18 @@ class Style:
         return f"{name} {self.within(passage)}"
 
     def listed(self, passages: Sequence[Passage], books: Books) -> str:
-        """Passages in order, each book named once: "Esaias 8:23; 9:1;
-        Matthew 4:15"."""
-        printed = []
+        """Passages in order, each book named once, and each chapter once
+        where its passages stand together: "Exodus 20:12, 13–17; Deuteronomy
+        5:16"."""
+        printed: list[str] = []
         for n, passage in enumerate(passages):
             book = passage.first.book
             if n and passages[n - 1].first.book == book:
+                if passages[n - 1].first.chapter == passage.first.chapter:
+                    printed[-1] += self.verses + self.stretch(
+                        passage.first.number, passage.last.number, passage.first.letter
+                    )
+                    continue
                 printed.append(self.within(passage))
                 continue
             chapters = [
