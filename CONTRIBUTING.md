@@ -31,7 +31,7 @@ The sample prints the chapters listed in `edition/sample.json`. They were picked
 The sources are never modified. Every departure from them is a decision in `edition/*.json` with its reason as `why`, and the build is the fixed sequence of stages in `src/bible/pipeline.py` that carries those decisions out:
 
 1. **read:** the pinned archives, with the corrections to their transcription, parsed once. Nothing is read after this.
-2. **promote:** the Alexandrine readings, on Brenton's books as their source numbers them.
+2. **promote:** the readings from Codex Alexandrinus, on Brenton's books as their source numbers them.
 3. **assemble:** the edition's books from the sources' chapters, under its names: Nehemias from the file that holds Esdras, Daniel with Susanna and Bel and the Dragon, the close of Malachias as its fourth chapter. What the edition prints is read from the assembled books.
 4. **place:** where each verse of the Old Testament stands in the King James Bible, by STEP Bible's table, the words of both translations, and the editor's readings (`edition/versification.json`). The notes, the links and the table of chapters and verses read it.
 5. **matter:** the translations' front and back matter, citing and abbreviating as the edition does, and the introductions that go to the books.
@@ -48,9 +48,9 @@ Each stage is a function of the stages before it and of the policy, which is rea
 Every document between the sources and PTXprint is [USJ](https://docs.usfm.bible/usfm/latest/usj/), the JSON form of USFM: plain objects, lists and strings, read and written by `src/bible/usj.py` and checked against usfmtc, the USFM committee's own parser, which the image pins. The build adds two things to it and no more:
 
 - A note carries `x-key`, the address of the source note it was made from: `GEN 1:9#2` is the second note of Genesis 1:9 as the source numbers it, and `MAT 6:1 of` is the 1611 note on "of" at Matthew 6:1. The decision files name notes by these keys. They are stable while the source archive is, and the archive is pinned by its hash.
-- A note that an Alexandrine decision writes or moves carries `x-scope`, the words the decision says it is about, and the standard `category` of `edition`.
+- A note that a decision about Codex Alexandrinus writes or moves carries `x-scope`, the words the decision says it is about, and the standard `category` of `edition`.
 
-A stage decides on a document's words, not on its markup. `usj.py` and `scripture.py` read the words of a verse or a paragraph as one string, whatever notes and styles stand among them, and make a change at its offsets: `replaced` and `inserted` set content in place of words, and `substituted` rewrites words in the styles they stand in. USFM as text is read at the two ends: `repairs.py` corrects a source's transcription before it is parsed, and `verify.py` reads what PTXprint wrote (`usfm.py` holds the helpers both use). Three things between them still meet it. The names of the sources' books and the numbers of their chapters and verses are in places read from the sources' text (`assembly.py`, `pipeline.authored`): of the King James Bible only the books the edition prints, borrows from or places its verses in are parsed. The editor's own pages are parsed when the passages and tables they ask for have been filled in (`numbering.page`). And a decision that gives words with their markup, as an Alexandrine `to` or `source_note`, is written in USFM: it is parsed where it is carried out, and a source's note is written out to be compared with it (`notes.source_text`).
+A stage decides on a document's words, not on its markup. `usj.py` and `scripture.py` read the words of a verse or a paragraph as one string, whatever notes and styles stand among them, and make a change at its offsets: `replaced` and `inserted` set content in place of words, and `substituted` rewrites words in the styles they stand in. USFM as text is read at the two ends: `repairs.py` corrects a source's transcription before it is parsed, and `verify.py` reads what PTXprint wrote (`usfm.py` holds the helpers both use). Three things between them still meet it. The names of the sources' books and the numbers of their chapters and verses are in places read from the sources' text (`assembly.py`, `pipeline.authored`): of the King James Bible only the books the edition prints, borrows from or places its verses in are parsed. The editor's own pages are parsed when the passages and tables they ask for have been filled in (`numbering.page`). And a decision that gives words with their markup, as the `to` or `source_note` of a decision about Codex Alexandrinus, is written in USFM: it is parsed where it is carried out, and a source's note is written out to be compared with it (`notes.source_text`).
 
 ### Where a change goes
 
@@ -59,7 +59,7 @@ A stage decides on a document's words, not on its markup. `usj.py` and `scriptur
 | which books are printed, their order, names and headings | `edition/manifest.json` | `assembly.py` |
 | a slip in a source's transcription | `corrections` in `edition/brenton-notes.json` or `edition/kjv-notes.json` | `repairs.py` |
 | the words a note is about, its italics, or whether it is a sentence | `notes` in the same files | `notes.py`, `lemmas.py`, `annotate.py` |
-| an Alexandrine reading, a supplied passage, a kept note | `edition/alexandrinus.json` | `alexandrinus.py` |
+| a reading from Codex Alexandrinus, a supplied passage, a kept note | `edition/alexandrinus.json` | `alexandrinus.py` |
 | how a citation is read or printed | `edition/citations.json` | `citations.py` |
 | the wording of a note or of front matter | `edition/prose.json` | `annotate.py`, `matter.py` |
 | an abbreviation's printed form, or the list of abbreviations | `edition/terminology.json`, `edition/abbreviations.json` | `terminology.py` |
@@ -90,14 +90,14 @@ A decision that no longer fits its source, changes nothing, or is met by nothing
 }
 ```
 
-A word is respelt wherever it is printed as a whole word: in the translation, its notes, and the front and back matter. Changes to single verses stand in groups, named as you please, each under the one `why` its changes share; a change may add a `why` of its own. A verse's change is made to that verse alone, as the edition numbers it; the verse must have the words once, only what differs gives way, and a note of the verse that quotes the words changes with them. Two changes may revise one verse, but not the same words of it. The revision is made last, so every other decision is still written in the sources' own words: a lemma or an Alexandrine `from` names "Jezekiel" if the source does. Run `make review` after a change and read `build/review/changes.diff`, which shows every place it reached.
+A word is respelt wherever it is printed as a whole word: in the translation, its notes, and the front and back matter. Changes to single verses stand in groups, named as you please, each under the one `why` its changes share; a change may add a `why` of its own. A verse's change is made to that verse alone, as the edition numbers it; the verse must have the words once, only what differs gives way, and a note of the verse that quotes the words changes with them. Two changes may revise one verse, but not the same words of it. The revision is made last, so every other decision is still written in the sources' own words: a lemma or a `from` for a Codex Alexandrinus reading names "Jezekiel" if the source does. Run `make review` after a change and read `build/review/changes.diff`, which shows every place it reached.
 
 ### Review
 
 `make review` writes what the decisions come to, for reading through, under `build/review/`:
 
 - `notes.md`: every note, with its verse, the words it is about between asterisks, the place of the source's caller (‸), the rule that found them, and the note with its italics between underscores.
-- `alexandrinus.md`: every Alexandrine decision with its source, the passage before and after with its neighbours, the footnotes printed, the derivation of its English, its reason, and Swete's evidence, and an audit table of the Swete records.
+- `alexandrinus.md`: every decision about Codex Alexandrinus with its source, the passage before and after with its neighbours, the footnotes printed, the derivation of its English, its reason, and Swete's evidence, and an audit table of the Swete records.
 - `text/`: every unit as it is sent to be typeset.
 - `changes.diff`: what differs in all of these from the last review.
 
@@ -113,7 +113,7 @@ The review is written from the prepared edition and never read by the build.
 - `edition/`: the build's own settings, which PTXprint never reads:
   - `manifest.json`: which books are printed, in what order, and what they're called and how their headings break into lines.
   - `kjv-notes.json`: placements and corrections for the 1611 New Testament notes.
-  - `alexandrinus.json`: the Alexandrine readings printed, the passages supplied from the Appendix, the notes kept, and the Swete evidence for every decision.
+  - `alexandrinus.json`: the printed readings from Codex Alexandrinus, the passages supplied from the Appendix, the notes kept, and the Swete evidence for every decision.
   - `brenton-notes.json`: corrections to the words and italics the build works out for Brenton's notes, and to a few slips in eBible's text; and the lemmas of unusual shape that have been read.
   - `book-introductions.json`: which paragraphs of the introduction to the Apocrypha stay at the front and which introduce each book as a footnote, with the editorial glosses, book-name changes, and their reasons.
   - `abbreviations.json`: the rows added to Brenton's list of abbreviations and dropped from it, and the corrections to his meanings.
@@ -131,7 +131,7 @@ The review is written from the prepared edition and never read by the build.
 
 ## Checks
 
-The build stops on a changed source hash; a correction, exception or decision that is malformed, changes nothing, or is met by nothing; a note or Alexandrine passage without its decision; a citation it can't read or that names what the edition doesn't print; an abbreviation left in a source's form; a number with a period inside a note's sentence; and a change of wording or spelling that doesn't apply. It also checks PTXprint's processed copy of every unit against what was sent.
+The build stops on a changed source hash; a correction, exception or decision that is malformed, changes nothing, or is met by nothing; a note or passage from Codex Alexandrinus without its decision; a citation it can't read or that names what the edition doesn't print; an abbreviation left in a source's form; a number with a period inside a note's sentence; and a change of wording or spelling that doesn't apply. It also checks PTXprint's processed copy of every unit against what was sent.
 
 After typesetting it checks B5 geometry, embedded fonts, missing glyphs, the contents and its page numbers, declared witnesses, source-form citations and margin-note collisions. These checks supplement visual inspection.
 
@@ -155,7 +155,7 @@ The checks catch missing text, not bad pages. After any change that could move t
 - the joins between 2 Esdras and Nehemias and between Malachias 3 and 4, and the additions to Daniel
 - the opening pages of each testament and of the appendices
 
-### Reviewing the Alexandrine readings
+### Reviewing the readings from Codex Alexandrinus
 
 `edition/alexandrinus.json` declares every promoted reading with the source words it replaces (`from`), the derivation of its English, and its reason. A decision is keyed by the note it rests on, as `GEN 5:25`, or for a passage by the verses it supplies. Appendix decisions pin the paragraph they take (`appendix`) and say which verses it replaces or supplies. The declared KJV source for 1 Kingdoms 23:12 (`kjv: true`) is read verbatim from the pinned archive; its English is not edited. Every decision, including those kept as notes, records Swete's volume, printed page, Greek reading, evidence type and agreement, with any qualifications explained in its `why`.
 
@@ -285,8 +285,8 @@ A few things look odd but are on purpose:
 
 No correction to these cases is included in the accepted output:
 
-- The 36 notes printed as “Heb. and Alex. Vat.”: the decisions' `witnesses` separately name Heb./Alex. support for the adopted wording and Vat. for the displaced wording, but their ambiguous printed form remains unchanged. Brenton supports the Hebrew/Vatican attribution; Swete confirms the Alexandrine reading.
-- The 56 retained Alexandrine decisions carrying `todo` in `edition/alexandrinus.json`, individually listed and grouped in [the open notes](docs/notes-todo.md#alexandrine-readings-kept-for-later-work).
+- The 36 notes printed as “Heb. and Alex. Vat.”: the decisions' `witnesses` separately name Heb./Alex. support for the adopted wording and Vat. for the displaced wording, but their ambiguous printed form remains unchanged. Brenton supports the Hebrew/Vatican attribution; Swete confirms the reading from Codex Alexandrinus.
+- The 56 retained decisions about Codex Alexandrinus carrying `todo` in `edition/alexandrinus.json`, individually listed and grouped in [the open notes](docs/notes-todo.md#readings-from-codex-alexandrinus-kept-for-later-work).
 - The scope/italic questions, suspect references, misplaced/copied notes, transcription and spelling queries, English wording questions and optional historical-label note in [the open notes](docs/notes-todo.md).
 - The personal-name expansions Lambert Bos, Charles Pridham and Abraham Trommius remain filed as source repairs; their editorial classification has not been reconsidered.
 - Deuteronomy 24:13 retains the declared `ie.` source repair before final explanatory-label rendering; the recorded normalization round trip has not been corrected.

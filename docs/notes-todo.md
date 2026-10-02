@@ -56,7 +56,7 @@ Some references use Hebrew or English numbering, such as Isa 26:19 "Ps. 110" (LX
 - **Deut 9:22**: three notes print the same "Heb. Taberah, Massah, and Kibroth Hattavah."
 - **1 Kgdms 29:3–8**: every note begins "to or" (29:3#2, 29:4, 29:5, 29:8), which makes sense only in 29:2.
 - **Matt 17:27 (1611)**: George's note ends "is 7.d. ob.", apparently copied from 18:28.
-- **eBible's words in Brenton's notes.** Some notes paraphrase the Appendix instead of pointing to it: 2 Kgdms 5:18 ("which refers us to Govett's work…"), Prov 4:5 ("See Appendix - Alexandrian codex has:"), 8:32 and 11:3 (beginning lowercase, "appendix has…" and "the Alexandrine text reads…"), 11:10, 13:5, and Isa 2:6, where "see Appendix which has: “…" pastes in the Appendix's note and never closes the quotation. Brenton probably printed only a pointer to the Appendix.
+- **eBible's words in Brenton's notes.** Some notes paraphrase the Appendix instead of pointing to it: 2 Kgdms 5:18 ("which refers us to Govett's work…"), Prov 4:5 ("See Appendix - Alexandrian codex has:"), 8:32 and 11:3 (beginning lowercase, with "appendix has…" and a reference to the reading from Codex Alexandrinus), 11:10, 13:5, and Isa 2:6, where "see Appendix which has: “…" pastes in the Appendix's note and never closes the quotation. Brenton probably printed only a pointer to the Appendix.
 - **Labels with nothing after them**: 1 Kgdms 20:41 "Gr. See v. 19." (a Greek word lost?), Ps 79:17 "Gr. See Ps. 20. 9.", 1 Kgdms 13:21 "Gr. Such is the meaning...", 1 Kgdms 20:15 "Gr. The meaning of the Heb. is here greatly obscured.", Gen 18:12 "Gr. The difference turns on…", Exod 4:12 "See 1 Cor 2. 16. Gr.", Mal 3:11 "…to be fed. Alex."
 - **3 Kgdms 11:27**: the lemma and the rendering are the same, "of his lifting: Gr. _of his lifting_".
 - **4 Kgdms 23:36**: the note says "a son of 23 years", but the verse and the Greek say twenty-five (copied from 23:31?).
@@ -93,7 +93,7 @@ Could be Brenton's own; check the printing.
 - Gal 5:16 (1611) "fulfill" where the text has "fulfil"
 - 1611, to check against a facsimile: John 18:28 "Pilats house", Titus 2:9 "gain saying" (one word?), Rev 6:6 "The word choenix, signifieth", 2 Pet 2:11 lowercase "some read"
 
-## Alexandrine readings kept for later work
+## Readings from Codex Alexandrinus kept for later work
 
 Numbers 28:24 is intentionally retained as “seven days” for consistency with the surrounding feast instructions. Its footnote gives “two days”; this is a settled editorial choice, rather than an unresolved source query.
 
@@ -141,7 +141,7 @@ Numbers 28:24 is intentionally retained as “seven days” for consistency with
 
 | Decision | Reason retained / remaining issue |
 | --- | --- |
-| GEN 6:2 | Keep Brenton’s body wording and Alexandrine note. The recorded angels reading is over an erasure with uncertain attribution (A?vid); establish the reading and hand before promotion. |
+| GEN 6:2 | Keep Brenton’s body wording and note on Codex Alexandrinus. The recorded angels reading is over an erasure with uncertain attribution (A?vid); establish the reading and hand before promotion. |
 | NUM 4:48 | Brenton reports “450”, but Swete’s Alexandrinus reads 8,550. Check Brenton’s printing and establish the correct number before promotion. |
 | PSA 118:151 | Brenton offers “commands”, but Swete’s text has “ways” and reports no A substitution at that word. Keep the note until its manuscript basis or verse reference is verified. |
 | PSA 130:1 | Brenton reports A adds “for David”; Swete says A omits it. Do not insert the addition while the sources contradict each other; check Brenton’s report. |
@@ -178,11 +178,11 @@ Review these current decisions too, including cases where the body already follo
 | 1KI 1:9 | The verse already follows A: “by the stone of Zoelethi”. |
 | 1KI 2:35a | Appendix pointer; passage handled separately. |
 | PSA 49:19 | The note reports a manuscript lacuna rather than English verse wording. |
-| ISA 2:6 | The Appendix note explains the LXX rendering Philistines rather than giving an Alexandrine variant. |
-| ISA 7:18 | Brenton explicitly says the verse’s existing wording is already the Alexandrine reading. |
-| ISA 54:10 | Brenton explicitly adopts the Alexandrine reading already in the verse. |
+| ISA 2:6 | The Appendix note explains the LXX rendering Philistines rather than giving a variant from Codex Alexandrinus. |
+| ISA 7:18 | Brenton explicitly says the verse’s existing wording is already the reading from Codex Alexandrinus. |
+| ISA 54:10 | Brenton explicitly adopts the reading from Codex Alexandrinus already in the verse. |
 | ISA 61:3 | The note is about Greek word division, with no alternative English wording. |
-| ISA 66:5 | The English already says “our”; the Alexandrine reading is already in the verse. |
+| ISA 66:5 | The English already says “our”; the reading from Codex Alexandrinus is already in the verse. |
 | ZEC 14:7 | The verse already translates A’s ψύχος as cold; the footnote explains the adopted reading. |
 
 ## Editorial queries on wording and source text
@@ -192,7 +192,7 @@ Check the wording and source spellings of promoted readings. The 4 Kingdoms 3:21
 | Passage | Remaining work |
 | --- | --- |
 | Deuteronomy 32:42 | The English has “their Gentiles”. Decide what “their” refers to before retaining or removing this supplied word. |
-| 3 Kingdoms 15:2 | Swete confirms Alexandrine sixteen but gives Vatican six; Brenton’s body has three. Check Brenton’s printing to establish whether three is his reading or a transcription error. The footnote currently distinguishes the two sources. |
+| 3 Kingdoms 15:2 | Swete confirms sixteen in Codex Alexandrinus but gives Vatican six; Brenton’s body has three. Check Brenton’s printing to establish whether three is his reading or a transcription error. The footnote currently distinguishes the two sources. |
 | 4 Kingdoms 3:21; Psalm 138:9 | The inherited notes give ἐπάνα and ὄρθον; the repository’s Swete record gives A’s ἐπάνω and ὄρθρον. Check Brenton’s printing to determine where the discrepant spellings arose. The 4 Kingdoms reading is restored to its original note; the retained Psalm footnote distinguishes the forms. |
 
 ### Optional historical-label note
