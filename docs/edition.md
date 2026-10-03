@@ -81,6 +81,8 @@ The same style applies in both testaments:
 - A complete sentence is capitalized and punctuated as one. A fragment has no final full stop.
 - A note quotes enough of the verse to be unambiguous. If that takes more words, the same words are added to the rendering: "of: or, _with_" in Matthew 6:1 becomes "of your Father: or, _with your Father_".
 
+For alternative renderings, this convention adheres to the Liskov substitution principle: the rendering in the note must be able to replace the words it is about in the verse without breaking the grammar of the surrounding sentence.
+
 ### The 1611 marginal notes
 
 The New Testament has the 775 notes of the 1611 King James Bible. George gives the words each note is about, and the note is placed on those words in its verse.
