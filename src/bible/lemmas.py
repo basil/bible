@@ -259,40 +259,32 @@ def inferred_lemma(
     words: Words,
     offset: int,
     alternative: str | None,
-    widen: bool = True,
-) -> tuple[Span | None, str]:
-    """The words a Brenton note or cross-reference glosses, and the rule that found them.
+) -> tuple[Span | None, Span | None, str]:
+    """The words a Brenton note or cross-reference glosses, widened until
+    they occur once in the verse and as they are, and the rule that found them.
 
     Brenton's caller stands before the glossed words, or after the first of them
     if the rendering begins with it. A rendering measures how far they reach, by
     its last word or its length; otherwise the clause, or its first few words,
     stands for the place. A caller at the end of a verse or a line glosses the
     words before it if the note renders them, and otherwise the whole verse
-    (None). Unless widen is false, the words are widened until they occur once.
+    (None).
     """
-
-    def unique(
-        verse: str, words: Words, first: int, last: int, lone: bool = False
-    ) -> Span:
-        if widen:
-            return unique_span(verse, words, first, last, lone)
-        return first, last
-
     after = [i for i, (_, start, _) in enumerate(words) if start >= offset]
     # A rendering with figures ("Alex. 187 years") cannot be measured by its words.
     if alternative and re.search(r"\d", alternative):
         alternative = None
     other = words_of(alternative or "")
     if kind == "x" and after and after[0] <= 3:
-        return None, "xref-verse"
+        return None, None, "xref-verse"
     if not after or ends_line(verse, offset):
         before = [i for i, (_, _, end) in enumerate(words) if end <= offset]
         if not other or kind == "x" or not before:
-            return None, "verse-level"
+            return None, None, "verse-level"
         clause = clause_before(verse, words, before[-1])
         size, rule = measured(words, clause, other, backward=True)
         span = clause[-min(size, len(clause))], clause[-1]
-        return unique(verse, words, *span), rule + " before"
+        return unique_span(verse, words, *span), span, rule + " before"
     clause = clause_after(verse, words, after[0], other)
     # "and tents" for Alex. "cattle": the conjunction is not what the note renders.
     if (
@@ -336,19 +328,22 @@ def inferred_lemma(
     if CLAUSE_END.search(plain(verse[offset : words[after[0]][1]])):
         rule += " after punctuation"
     span = whole_compounds(verse, words, clause[0], clause[size - 1])
-    first, last = unique(verse, words, *span, lone=alone)
-    # "the Evite: Alex. the Chorrhæan", "a consecration: Gr. an accomplishment":
-    # the caller follows the word the rendering begins with.
-    if (
-        other
-        and first == clause[0]
-        and first > 0
-        and indefinite(words[first - 1][0]) == indefinite(other[0])
-        and indefinite(other[0]) != indefinite(words[first][0])
-        and not ends_clause(verse, words, first - 1)
-    ):
-        first -= 1
-    return (first, last), rule
+
+    def opened(first: int, last: int) -> Span:
+        # "the Evite: Alex. the Chorrhæan", "a consecration: Gr. an
+        # accomplishment": the caller follows the word the rendering begins with.
+        if (
+            other
+            and first == clause[0]
+            and first > 0
+            and indefinite(words[first - 1][0]) == indefinite(other[0])
+            and indefinite(other[0]) != indefinite(words[first][0])
+            and not ends_clause(verse, words, first - 1)
+        ):
+            first -= 1
+        return first, last
+
+    return opened(*unique_span(verse, words, *span, lone=alone)), opened(*span), rule
 
 
 def indefinite(word: str) -> str:
@@ -399,8 +394,7 @@ def inferred(
 ) -> tuple[Span | None, Span | None, str]:
     """A Brenton note's lemma, the words it glosses, and the rule that found
     them, with the exception file's say."""
-    span, rule = inferred_lemma(kind, verse, words, offset, alternative)
-    glossed, _ = inferred_lemma(kind, verse, words, offset, alternative, widen=False)
+    span, glossed, rule = inferred_lemma(kind, verse, words, offset, alternative)
     return overridden_lemma(
         verse, words, exception, span, glossed, rule, key, exception.get("occurrence")
     )

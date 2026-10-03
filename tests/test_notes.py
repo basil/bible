@@ -580,7 +580,7 @@ def inferred(verse: str, note: str, kind: str = "f") -> tuple[str | None, str]:
     verse = verse.replace("‸", "")
     words = scripture.word_spans(verse)
     alternative = notes.interpreted(notes.labelled_pieces(note), "K").alternative
-    span, rule = lemmas.inferred_lemma(kind, verse, words, offset, alternative)
+    span, _, rule = lemmas.inferred_lemma(kind, verse, words, offset, alternative)
     return (lemmas.lemma_text(verse, words, span) if span else None), rule
 
 

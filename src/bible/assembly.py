@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import re
 from collections.abc import Iterator, Mapping
-from typing import Literal, TypedDict, Unpack
+from typing import Literal
 
 import bible.policy
 import bible.references
@@ -22,11 +22,6 @@ from bible.policy import source_id
 from bible.policy_schema import Entry
 from bible.references import Books
 from bible.usj import Document, Node
-
-
-class ChapterExtra(TypedDict, total=False):
-    pubnumber: str
-
 
 NAME_MARKERS = {"title": "toc1", "short_title": "toc2", "abbreviation": "toc3"}
 NAME_ATTRIBUTES = {"abbreviation": "abbr", "short_title": "short", "title": "long"}
@@ -57,10 +52,13 @@ def source_text(entry: Entry, sources: bible.sources.Sources) -> str:
     return sources[entry["source"]][source_id(entry)]
 
 
-def printed_title(value: str, marker: str) -> str:
-    saint = "SAINT" if marker.startswith("mt") else "Saint"
-    value = re.sub(r"(?<!\w)S\.(?=\s|$)", saint, value)
-    return re.sub(r"\.(\s*)$", r"\1", value)
+def source_codes(entry: Entry) -> tuple[str, ...]:
+    """The source files a unit is assembled from: its own, and for Daniel
+    the files of the parts the Greek sets about it."""
+    code = source_id(entry)
+    if entry["id"] == "DAG":
+        return (code, *(part for part, _, _ in DANIEL))
+    return (code,)
 
 
 def names(entry: Entry, text: str) -> dict[str, str]:
@@ -70,11 +68,9 @@ def names(entry: Entry, text: str) -> dict[str, str]:
     does not rename keeps its source names, as preparation prints them.
     """
     if "title" not in entry and "section" not in entry:
-        found = {
+        return {
             field: source_marker(text, marker) for field, marker in NAME_MARKERS.items()
         }
-        found["title"] = printed_title(found["title"], "toc1")
-        return found
     require(entry.get("title"), f"Missing title: {entry['id']}")
     return {
         "title": entry["title"],
@@ -195,10 +191,15 @@ def chapters_of(doc: Document) -> tuple[list[Node], list[list[Node]]]:
 
 
 def relabelled(
-    blocks: list[Node], number: int | str, **extra: Unpack[ChapterExtra]
+    blocks: list[Node], number: int | str, pubnumber: str | None = None
 ) -> list[Node]:
+    """A chapter's blocks under another number, and the one it prints if
+    that is another again."""
     chapter, *rest = blocks
-    return [{**chapter, "number": str(number), **extra}, *rest]
+    head: Node = {**chapter, "number": str(number)}
+    if pubnumber is not None:
+        head["pubnumber"] = pubnumber
+    return [head, *rest]
 
 
 def daniel(doc: Document, brenton: Mapping[str, Document]) -> Document:
@@ -345,9 +346,7 @@ def scripture_unit(
             "Wrong chapter grouping: DAG",
         )
     # A book printed from a file that holds another is a unit of its own.
-    book, *rest = doc["content"]
-    doc = usj.with_blocks(doc, [{**book, "code": code}, *rest])
-    return opened_chapters(code, doc, policy)
+    return opened_chapters(code, usj.with_code(doc, code), policy)
 
 
 def check_divided(policy: bible.policy.Policy, sources: bible.sources.Sources) -> None:
@@ -360,10 +359,5 @@ def check_divided(policy: bible.policy.Policy, sources: bible.sources.Sources) -
                 str(c) for c in range(first, last + 1)
             )
     for (source, code), chapters in divided.items():
-        found = re.findall(r"^\\c (\d+)", sources[source][code], re.M)
+        found = list(usfm.inventory(sources[source][code])["chapters"])
         require(chapters == found, f"Divided source not printed whole: {source}/{code}")
-
-
-def inventory(units: Mapping[str, Document]) -> dict[str, dict[str, list[str]]]:
-    """What the edition prints: each book's chapters and their verses."""
-    return {code: usj.inventory(doc) for code, doc in units.items()}

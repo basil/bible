@@ -73,6 +73,9 @@ NOTES = frozenset("f ef x".split())
 # The parts of a note, each of which runs to the next or to the note's end.
 FIELDS = frozenset("fr ft fq fqa fl xo xt xta".split())
 LABEL = re.compile(r"\d+[a-z]?(?:-\d+[a-z]?)?")
+# What follows a marker that takes one: a note's caller, a book's code.
+TOKEN = re.compile(r"(\S+) ?")
+SPACES = re.compile(r"\s+")
 
 
 def is_type(node: object, kind: str, marker: str | None = None) -> TypeGuard[Node]:
@@ -107,6 +110,19 @@ def note(
     if "category" in extra:
         result["category"] = extra["category"]
     return result
+
+
+def cell(marker: str, *content: str | Node) -> Node:
+    return {
+        "type": "table:cell",
+        "marker": marker,
+        "align": "start",
+        "content": list(content),
+    }
+
+
+def row(*cells: Node) -> Node:
+    return {"type": "table:row", "marker": "tr", "content": list(cells)}
 
 
 def document(content: Iterable[Node]) -> Document:
@@ -186,9 +202,9 @@ def parse(text: str, *, fragment: bool = False) -> Document | Content:
                 continue
             require(not in_note(), f"Nested note: {where(at)}")
             caller = present(
-                re.match(r"(\S+) ?", text[end:]), f"Missing note caller: {where(at)}"
+                TOKEN.match(text, end), f"Missing note caller: {where(at)}"
             )
-            cursor = end + caller.end()
+            cursor = caller.end()
             node = note(name, caller=caller[1])
             content().append(node)
             inline.append(("note", node))
@@ -237,32 +253,25 @@ def parse(text: str, *, fragment: bool = False) -> Document | Content:
                 continue
             if name in CELLS:
                 require(table is not None, f"Table cell outside a row: {where(at)}")
-                block = {
-                    "type": "table:cell",
-                    "marker": name,
-                    "align": "start",
-                    "content": [],
-                }
+                block = cell(name)
                 assert table is not None
-                row = table["content"][-1]
-                assert isinstance(row, dict)
-                row["content"].append(block)
+                current = table["content"][-1]
+                assert isinstance(current, dict)
+                current["content"].append(block)
                 continue
             block = None
             if name == "tr":
                 if table is None:
                     table = {"type": "table", "content": []}
                     root.append(table)
-                table["content"].append(
-                    {"type": "table:row", "marker": "tr", "content": []}
-                )
+                table["content"].append(row())
                 continue
             table = None
             if name == "id":
                 code = present(
-                    re.match(r"(\S+) ?", text[end:]), f"Missing book code: {where(at)}"
+                    TOKEN.match(text, end), f"Missing book code: {where(at)}"
                 )
-                cursor = end + code.end()
+                cursor = code.end()
                 block = {"type": "book", "marker": "id", "code": code[1], "content": []}
                 root.append(block)
             elif name == "c":
@@ -301,7 +310,7 @@ def parse(text: str, *, fragment: bool = False) -> Document | Content:
 
 
 def _spaces(value: str) -> str:
-    return re.sub(r"\s+", " ", value)
+    return SPACES.sub(" ", value)
 
 
 def _tidy(content: Iterable[str | Node], *, edges: bool) -> Content:
@@ -498,6 +507,13 @@ def inventory(doc: Document) -> dict[str, list[str]]:
 
 def with_blocks(doc: Document, blocks: Iterable[Node]) -> Document:
     return {**doc, "content": list(blocks)}
+
+
+def with_code(doc: Document, code: str) -> Document:
+    """A document under another book code: a unit printed from a file that
+    holds another, or under an id of its own."""
+    book, *rest = doc["content"]
+    return with_blocks(doc, [{**book, "code": code}, *rest])
 
 
 def with_content(doc: Document, change: Callable[[Content], Content]) -> Document:

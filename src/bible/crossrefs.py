@@ -14,17 +14,26 @@ from dataclasses import dataclass
 import bible.annotate
 import bible.policy
 import bible.references
+import bible.terminology
 from bible import quotations, usj
 from bible.checks import require
 from bible.references import EDITION, Passage, Verse
 from bible.usj import Node
 from bible.versification import mapped_passages
 
-# The printed glosses, by Turpie's class. C.I, which differs from the agreeing
-# Hebrew and Septuagint in words alone, prints as A; the rest of C, and E,
-# print the reference alone. A line may break after the symbol but not before
-# it, as TeX breaks a formula after a binary operation or a relation.
-GLOSSES = {"A": "Heb.\u00a0+ LXX", "B": "Heb.\u00a0≠ LXX", "D": "LXX\u00a0≠ Heb."}
+
+def gloss(agreement: str | None, terms: bible.terminology.Registry) -> str | None:
+    """The printed gloss of a link's agreement, by Turpie's class. C.I, which
+    differs from the agreeing Hebrew and Septuagint in words alone, prints as
+    A; the rest of C, and E, print the reference alone. A line may break after
+    the symbol but not before it, as TeX breaks a formula after a binary
+    operation or a relation."""
+    hebrew, septuagint = terms.display("hebrew"), terms.display("septuagint")
+    return {
+        "A": f"{hebrew}\u00a0+ {septuagint}",
+        "B": f"{hebrew}\u00a0≠ {septuagint}",
+        "D": f"{septuagint}\u00a0≠ {hebrew}",
+    }.get(agreement or "")
 
 
 @dataclass(frozen=True)
@@ -53,10 +62,8 @@ class Link:
     """One direction of a relation, at the first verse of one of its passages."""
 
     origin: Verse
-    passages: tuple[Passage, ...]
+    passage: Passage
     targets: tuple[Passage, ...]
-    classification: str
-    table_code: str
     row_ids: tuple[str, ...]
     agreement: str | None
 
@@ -95,7 +102,10 @@ def quotation_relations(
 
 
 def planned_links(
-    relations: Iterable[Relation], order: Sequence[str], *, policy: bible.policy.Policy
+    relations: Iterable[Relation],
+    books: bible.references.Books,
+    *,
+    policy: bible.policy.Policy,
 ) -> dict[str, list[Link]]:
     """Reciprocal links at the first verse of each quotation's passages, by book.
 
@@ -108,11 +118,6 @@ def planned_links(
     a verse and a gloss print as one note (link_notes).
     """
     by_book: collections.defaultdict[str, list[Link]] = collections.defaultdict(list)
-    positions = {code: index for index, code in enumerate(order)}
-
-    def position(verse: Verse) -> tuple[int, int, int, str]:
-        return positions[verse.book], verse.chapter, verse.number, verse.letter
-
     # Each (NT verse, Brenton verse) pair with the rows and glosses joining it.
     pair_glosses: collections.defaultdict[
         tuple[Verse, Verse], list[tuple[str, str | None]]
@@ -134,15 +139,7 @@ def planned_links(
             sources.get(origin.book) == ("kjv" if side == "nt" else "brenton"),
             f"Quotation verse outside its testament's printed books: {origin}",
         )
-        link = Link(
-            origin,
-            (passage,),
-            tuple(targets),
-            relation.classification,
-            relation.table_code,
-            (relation.id,),
-            printed,
-        )
+        link = Link(origin, passage, tuple(targets), (relation.id,), printed)
         by_book[origin.book].append(link)
 
     for relation in relations:
@@ -177,8 +174,8 @@ def planned_links(
         require(not repeated, f"Identical quotation links at one verse: {repeated}")
         links.sort(
             key=lambda link: (
-                position(link.origin),
-                position(link.targets[0].first),
+                books.position(link.origin),
+                books.position(link.targets[0].first),
                 tuple(link.row_ids),
             )
         )
@@ -286,7 +283,9 @@ def merged_notes(
 
 
 def link_notes(
-    links: Sequence[Link], books: bible.references.Books
+    links: Sequence[Link],
+    books: bible.references.Books,
+    terms: bible.terminology.Registry,
 ) -> dict[str, list[Node]]:
     """One note per origin and printed agreement, with targets in edition order.
 
@@ -315,7 +314,7 @@ def link_notes(
     result: dict[str, list[Node]] = {}
     for origin, agreement, targets in ordered:
         result.setdefault(origin.label, []).append(
-            link_note(origin, targets, agreement, books)
+            link_note(origin, targets, agreement, books, terms)
         )
     return result
 
@@ -325,14 +324,15 @@ def link_note(
     targets: Sequence[Passage],
     agreement: str | None,
     books: bible.references.Books,
+    terms: bible.terminology.Registry,
 ) -> Node:
     """Ordered references sharing one origin and printed agreement."""
     target = EDITION.listed(targets, books.abbreviated)
     require(not set(target) & set("\\\n("), f"Malformed link target: {target}")
-    gloss = GLOSSES.get(agreement or "")
+    glossed = gloss(agreement, terms)
     content = [usj.char("xo", f"{origin.label} ")]
-    if gloss:
-        content += [usj.char("xt", f"{target} "), usj.char("xta", f"({gloss})")]
+    if glossed:
+        content += [usj.char("xt", f"{target} "), usj.char("xta", f"({glossed})")]
     else:
         content.append(usj.char("xt", target))
     return usj.note("x", *content)

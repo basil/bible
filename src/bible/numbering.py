@@ -88,8 +88,7 @@ def within(verses: list[bible.references.Verse]) -> str:
 def numbered(run: Run) -> tuple[list[Verse], list[Verse]]:
     """A run's verses on either side, without a psalm's title, which the
     King James Bible doesn't number, and the verse that is one."""
-    ours = versification.verses(run["edition"]) if run["edition"] else []
-    theirs = versification.verses(run["kjv"]) if run["kjv"] else []
+    ours, theirs = versification.run_verses(run)
     if len(ours) == len(theirs):
         pairs = [
             (v, o) for v, o in zip(ours, theirs) if o.number != versification.TITLE
@@ -274,19 +273,12 @@ def table_rows(
         return [usj.char(style, cell) if style else cell]
 
     def row(kind: str, cells: tuple[str, ...], style: str | None = None) -> Node:
-        return {
-            "type": "table:row",
-            "marker": "tr",
-            "content": [
-                {
-                    "type": "table:cell",
-                    "marker": f"{kind}{n}",
-                    "align": "start",
-                    "content": content(cell, style),
-                }
+        return usj.row(
+            *(
+                usj.cell(f"{kind}{n}", *content(cell, style))
                 for n, cell in enumerate(cells, 1)
-            ],
-        }
+            )
+        )
 
     return {
         "type": "table",
@@ -466,10 +458,7 @@ def page(
             )
         else:
             lacking = [
-                str(v)
-                for v in passage.verses
-                if f"{v.number}{v.letter}"
-                not in inventory.get(v.book, {}).get(str(v.chapter), ())
+                str(v) for v in passage.verses if not scripture.has_verse(inventory, v)
             ]
             require(not lacking, f"Passage that the edition doesn't print: {lacking}")
         targets = (

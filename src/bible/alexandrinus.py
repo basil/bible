@@ -22,7 +22,7 @@ from dataclasses import dataclass
 from typing import Literal
 
 import bible.policy
-from bible import lemmas, notes, scripture, usj
+from bible import lemmas, notes, scripture, terminology, usfm, usj
 from bible.checks import present, require, require_fields
 from bible.policy_schema import AlexandrinusReadingsNoteEdits, Decision
 from bible.scripture import plain, word_spans, words_of
@@ -62,8 +62,8 @@ FIELDS = {
 def tokens(text: str) -> list[str]:
     """Words and number values, including Brenton's reversed tens and ordinals."""
     words = re.findall(
-        r"\d[\d,]*(?:st|nd|rd|th)?|[^\W\d_]+(?:[’'][^\W\d_]+)*",
-        plain(re.sub(r"\\\+?[\w-]+(?:\*| ?)", "", text)).casefold(),
+        rf"\d[\d,]*(?:st|nd|rd|th)?|{scripture.WORD.pattern}",
+        usfm.plain_text(text).casefold(),
     )
     result = []
     i = 0
@@ -176,13 +176,15 @@ def derived(
     added = set(tokens(english)) - allowed
     require(not added, f"English not supplied by Brenton: {key}: {sorted(added)}")
     require(
-        set(re.findall(r"\\(\+?[A-Za-z]\w*\*?)", before + english)) <= {"add", "add*"},
+        set(usfm.inventory(before + english)["markers"]) <= {"add", "add*"},
         f"Unsupported USFM marker in Alexandrine replacement: {key}",
     )
     return english
 
 
-def note_content(entry: Decision, key: str) -> Content | None:
+def note_content(
+    entry: Decision, key: str, terms: terminology.Registry
+) -> Content | None:
     """The note a decision leaves on the words it displaces: the one it
     declares, or the Vatican's words quoted; None if it declares none."""
     if "note" in entry:
@@ -191,7 +193,7 @@ def note_content(entry: Decision, key: str) -> Content | None:
         return usj.parse(entry["note"], fragment=True)
     words = plain(usj.text_of(usj.parse(entry["from"], fragment=True)))
     return [
-        usj.char("fl", "Vat. "),
+        usj.char("fl", f"{terms.display('vatican')} "),
         usj.char("fq", words.strip().rstrip(".")),
         usj.char("ft", "."),
     ]
@@ -361,9 +363,7 @@ def check(
         note["x-key"]
         for code, doc in books.items()
         if code != APPENDIX
-        for block in doc["content"]
-        if block["type"] == "para"
-        for note in usj.notes_of(block["content"])
+        for note in usj.notes_of(doc["content"])
         if "x-key" in note and ALEX.search(notes.source_text(note))
     }
     require(
@@ -525,10 +525,10 @@ class Replacement:
     start: int
     end: int
     content: tuple[str | Node, ...]
-    note: Node | None = None
-    note_verse: str | None = None
-    note_at: tuple[int, int] = (0, 0)
-    omits_verse: bool = False
+    note: Node | None
+    note_verse: str
+    note_at: tuple[int, int]
+    omits_verse: bool
 
 
 def replacement(
@@ -539,6 +539,7 @@ def replacement(
     note_key: str,
     verses: Mapping[str, scripture.Verse],
     consumed: set[str],
+    terms: terminology.Registry,
 ) -> Replacement:
     reference = verse.reference
     # The words as the verse has them, however a note among them parts
@@ -558,7 +559,7 @@ def replacement(
     new = usj.parse(english[:at] + CALLER + english[at:], fragment=True)
     before = usj.text_of(new).index(CALLER)
     new = usj.substituted(new, [(before, before + 1, "")])
-    body = note_content(entry, key)
+    body = note_content(entry, key, terms)
     require(
         body is not None or entry.get("why"),
         f"Dropped Vatican text without a why: {key}",
@@ -624,12 +625,13 @@ def promoted(
     consumed = consumed_notes(policy, code)
     rewritten = companions(policy, code)
     check_pins(code, policy, placed, consumed, rewritten)
+    terms = terminology.registry(policy)
     replacements = []
     for key, entry, source, reference, note_key in operations(policy, code):
         require(reference in verses, f"Alexandrine target verse missing: {key}")
         replacements.append(
             replacement(
-                key, entry, source, verses[reference], note_key, verses, consumed
+                key, entry, source, verses[reference], note_key, verses, consumed, terms
             )
         )
     if not replacements and not rewritten:
@@ -639,7 +641,7 @@ def promoted(
     # where it belongs once the words have changed.
     touched = (
         {r.verse for r in replacements}
-        | {r.note_verse for r in replacements if r.note and r.note_verse is not None}
+        | {r.note_verse for r in replacements if r.note}
         | {placed[key][0].reference for key in rewritten}
     ) - omitted
     again: dict[str, list[tuple[int, int, Node, usj.Scope | None]]] = {}
@@ -770,6 +772,8 @@ def with_insertions(
     for key, entry in policy.alexandrinus["passages"].items():
         if key.split()[0] != code:
             continue
+        # The King James verses a passage supplies verbatim.
+        source = scripture.verses(kjv[code]) if "kjv" in entry else {}
         for insertion in entry.get("insertions", ()):
             require_fields(
                 insertion, {"verses"}, {"before", "after"}, f"Insertion of {key}"
@@ -809,7 +813,6 @@ def with_insertions(
                         f"{code} {label}" == key and "english" not in verse,
                         f"KJV insertion changed its source verse: {key}",
                     )
-                    source = scripture.verses(kjv[code])
                     require(label in source, f"KJV source verse missing: {key}")
                     words = [
                         item

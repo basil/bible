@@ -5,11 +5,13 @@ words of both translations, and the verses both Bibles have."""
 from __future__ import annotations
 
 from collections.abc import Callable
+from dataclasses import replace
 from typing import Any
 
 import pytest
 from conftest import changed
 
+import bible.annotate
 import bible.pipeline
 import bible.places
 import bible.policy
@@ -93,7 +95,7 @@ def test_source_numbering_exceptions_name_printed_verses(
 
 
 def test_relabelled_verse_needs_no_exception_to_be_caught(
-    policy: bible.policy.Policy, edition: bible.pipeline.Edition
+    policy: bible.policy.Policy, ctx: bible.annotate.Context
 ) -> None:
     # The edition prints Brenton's Malachias 3:23 as 4:5, so a quotation of
     # "MAL 3:23" has no printed verse to link and fails preparation.
@@ -102,7 +104,7 @@ def test_relabelled_verse_needs_no_exception_to_be_caught(
         head["lxx"]["normalized"] = "MAL 3:23"
 
     with pytest.raises(CheckFailed, match="Quotation verse missing.*MAL 3:23"):
-        pipeline.quotation_links(changed(policy, "turpie", quote), edition.inventory)
+        pipeline.quotation_links(replace(ctx, policy=changed(policy, "turpie", quote)))
 
 
 @pytest.mark.parametrize(
@@ -147,18 +149,16 @@ def test_the_exceptions_are_checked_whole(
 
 
 def test_a_lettered_verse_never_joins_a_range(
-    policy: bible.policy.Policy,
-    edition: bible.pipeline.Edition,
-    sources: bible.sources.Sources,
+    policy: bible.policy.Policy, ctx: bible.annotate.Context
 ) -> None:
     mapped = versification.mapped_passages(parse_passage("PRO 22:7-9"), policy=policy)
     assert list(map(str, mapped)) == ["PRO 22:7", "PRO 22:8a", "PRO 22:9"]
     # The link that stands at it prints its label.
-    links = pipeline.quotation_links(policy, edition.inventory)
+    links = pipeline.quotation_links(ctx)
     [link] = [link for link in links["PRO"] if "Q216" in link.row_ids]
     assert link.origin == parse_verse("PRO 22:8a")
     note = crossrefs.link_note(
-        link.origin, link.targets, link.agreement, assembly.books(policy, sources)
+        link.origin, link.targets, link.agreement, ctx.books, ctx.terms
     )
     assert usj.serialize([note]) == r"\x - \xo 22:8a \xt 2 Cor. 9:7\x*"
 

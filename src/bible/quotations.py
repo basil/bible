@@ -11,7 +11,7 @@ import bible.policy
 import bible.references
 from bible.checks import require
 from bible.policy_schema import TurpieRows
-from bible.references import parse_passage, parse_passages
+from bible.references import parse_passage, parse_passages, verses_of
 from bible.versification import lxx_to_edition, mapped_passages, unused_exceptions
 
 ReviewedRow = TypedDict(
@@ -37,22 +37,11 @@ def scope(table_code: str) -> str | None:
     return match[1] if match else None
 
 
-def nt_verses(
-    passages: Iterable[bible.references.Passage],
-) -> list[bible.references.Verse]:
-    """Every verse of New Testament passages."""
-    return [verse for passage in passages for verse in passage.verses]
-
-
 def brenton_verses(
     passages: Iterable[bible.references.Passage], *, policy: bible.policy.Policy
 ) -> list[bible.references.Verse]:
     """Every printed Brenton verse of Septuagint passages."""
-    return [
-        lxx_to_edition(verse, policy=policy)
-        for passage in passages
-        for verse in passage.verses
-    ]
+    return [lxx_to_edition(verse, policy=policy) for verse in verses_of(passages)]
 
 
 def _unique(values: Sequence[bible.references.Verse], label: str) -> None:
@@ -153,7 +142,7 @@ def reviewed_rows(*, policy: bible.policy.Policy) -> list[ReviewedRow]:
         if narrowing := narrowed.get(head["id"]):
             part = parse_passages(narrowing["lxx"])
             require(
-                {v for p in part for v in p.verses} < {v for p in ot for v in p.verses},
+                set(verses_of(part)) < set(verses_of(ot)),
                 f"Narrowing to what isn't part of its head: {head['id']}",
             )
             ot = part
@@ -169,7 +158,7 @@ def reviewed_rows(*, policy: bible.policy.Policy) -> list[ReviewedRow]:
             "ot": ot,
         }
         mapped = brenton_verses(row["ot"], policy=policy)
-        _unique(nt_verses(row["nt"]), f"NT verses in {row['id']}")
+        _unique(verses_of(row["nt"]), f"NT verses in {row['id']}")
         _unique(mapped, f"Brenton verses in {row['id']}")
         alternatives = [
             parse_passage(passage)

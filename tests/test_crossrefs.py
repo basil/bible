@@ -19,10 +19,8 @@ from bible.references import parse_passage, parse_passages
 
 
 @pytest.fixture(scope="module")
-def links(
-    policy: bible.policy.Policy, edition: bible.pipeline.Edition
-) -> dict[str, list[crossrefs.Link]]:
-    return pipeline.quotation_links(policy, edition.inventory)
+def links(ctx: bible.annotate.Context) -> dict[str, list[crossrefs.Link]]:
+    return pipeline.quotation_links(ctx)
 
 
 def test_every_link_has_its_link_back(
@@ -95,23 +93,17 @@ def test_links_joined_in_one_note_may_not_repeat_a_passage(
 
     def link(row: str, targets: str) -> crossrefs.Link:
         return crossrefs.Link(
-            origin.first,
-            (origin,),
-            tuple(parse_passages(targets)),
-            "A",
-            "",
-            (row,),
-            "A",
+            origin.first, origin, tuple(parse_passages(targets)), (row,), "A"
         )
 
     joined = [link("Q1", "ACT 13:33; HEB 1:5"), link("Q2", "HEB 5:5")]
-    [note] = crossrefs.link_notes(joined, ctx.books)["2:7"]
+    [note] = crossrefs.link_notes(joined, ctx.books, ctx.terms)["2:7"]
     assert (
         usj.text_of(note["content"])
         == "2:7 Acts 13:33; Heb. 1:5; 5:5 (Heb.\u00a0+ LXX)"
     )
     with pytest.raises(CheckFailed, match="linked twice at one verse: PSA 2:7"):
-        crossrefs.link_notes([*joined, link("Q3", "HEB 1:5")], ctx.books)
+        crossrefs.link_notes([*joined, link("Q3", "HEB 1:5")], ctx.books, ctx.terms)
 
 
 def linked(
@@ -120,10 +112,8 @@ def linked(
     """A verse of Isaiah whose quotation in Matthew is linked, with a note."""
     link = crossrefs.Link(
         parse_passage("ISA 99:3").first,
-        (parse_passage("ISA 99:3"),),
+        parse_passage("ISA 99:3"),
         (parse_passage("MAT 3:3"),),
-        "A",
-        "A.I",
         ("Q999",),
         "A",
     )

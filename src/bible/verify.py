@@ -4,6 +4,7 @@ cites, and the phrases in edition/witnesses.json)."""
 
 from __future__ import annotations
 
+import configparser
 import io
 import re
 import subprocess
@@ -23,6 +24,7 @@ from bible.project import (
     project_usfm,
     text_font,
 )
+from bible.scripture import plain
 from bible.toolchain import capture as capture
 from bible.toolchain import run
 from bible.usfm import canonical_text, heading, inventory
@@ -329,7 +331,7 @@ def check_added_words_roman(
     pages = [
         number
         for number, page in enumerate(reading_text.split("\f"), 1)
-        if " ".join(words) in " ".join(page.split())
+        if " ".join(words) in plain(page)
     ]
     require(
         len(pages) == 1, f"Added-word witness Malachias 4:2 not found once: {pages}"
@@ -355,13 +357,15 @@ def check_added_words_roman(
     raise CheckFailed("Added-word witness not found in PDF text runs")
 
 
-def check_publication(text: str) -> None:
-    publication = " ".join(text.split("\f")[1].split())
+def check_publication(text: str, settings: configparser.ConfigParser) -> None:
+    """The publication data page carries the edition's copyright and license
+    as config/layout.ini gives them, and nothing of the layout's own."""
+    publication = plain(text.split("\f")[1])
     require(
-        "Copyright © 2026 Basil Crow" in publication
-        and "Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)"
-        in publication
-        and "https://creativecommons.org/licenses/by-nc-nd/4.0/" in publication,
+        all(
+            plain(settings["project"][key]) in publication
+            for key in ("copyright", "license")
+        ),
         "Publication data page omitted the edition license notice",
     )
     require(
@@ -429,7 +433,7 @@ def inspect_pdf(
         not re.search(r"[\ue000-\uf8ff]", text),
         "Private-use glyph code in extracted PDF text",
     )
-    check_publication(text)
+    check_publication(text, settings)
     height = float(sizes[0][1])
     top, bottom = (
         settings.getfloat("paper", key) * POINTS_PER_MM

@@ -28,7 +28,7 @@ import bible.policy
 import bible.references
 from bible.checks import require
 from bible.policy_schema import Run
-from bible.references import Verse, parse_passage, parse_passages, runs
+from bible.references import Verse, parse_passage, parse_passages, runs, verses_of
 
 # What a run rests on: the table's account of a Bible numbered like this one,
 # the words of both translations, its place between verses that they fix, or
@@ -56,14 +56,19 @@ def kjv_books(*, policy: bible.policy.Policy) -> dict[str, str]:
     }
 
 
-def verses(passages: str) -> list[bible.references.Verse]:
-    return [verse for passage in parse_passages(passages) for verse in passage.verses]
+def verses(passages: str | None) -> list[bible.references.Verse]:
+    """The verses of a list of passages; of none, where a run has no side."""
+    return verses_of(parse_passages(passages)) if passages else []
+
+
+def run_verses(run: Run) -> tuple[list[Verse], list[Verse]]:
+    """A run's verses on either side: the edition's, and the King James Bible's."""
+    return verses(run["edition"]), verses(run["kjv"])
 
 
 def run_pairs(run: Run) -> list[tuple[list[Verse], list[Verse]]]:
     """A run's correspondences, including explicitly declared partial overlaps."""
-    ours = verses(run["edition"]) if run["edition"] else []
-    theirs = verses(run["kjv"]) if run["kjv"] else []
+    ours, theirs = run_verses(run)
     if "pairs" in run:
         declared = run["pairs"]
         require(
@@ -115,8 +120,7 @@ def _maps(
     for code, listed in policy.versification["kjv"].items():
         kjv = kjv_book(code, policy=policy)
         for run in listed:
-            ours = verses(run["edition"]) if run["edition"] else []
-            theirs = verses(run["kjv"]) if run["kjv"] else []
+            ours, theirs = run_verses(run)
             name = run["edition"] or run["kjv"]
             require(ours or theirs, f"Empty versification run in {code}")
             require(
@@ -300,7 +304,7 @@ def unused_exceptions(
     passages: Iterable[bible.references.Passage], *, policy: bible.policy.Policy
 ) -> list[str]:
     """The exceptions that no verse of the passages reaches."""
-    reached = {verse for passage in passages for verse in passage.verses}
+    reached = set(verses_of(passages))
     return sorted(
         source
         for source in policy.quotations["lxx_to_edition"]

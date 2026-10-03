@@ -15,6 +15,7 @@ from dataclasses import dataclass
 
 from bible import usj
 from bible.checks import require
+from bible.references import Verse as Reference
 
 type Inventory = Mapping[str, Mapping[str, Sequence[str]]]
 
@@ -25,7 +26,7 @@ def word_spans(text: str) -> list[tuple[str, int, int]]:
     """Words with their offsets, ignoring case and punctuation. An apostrophe
     joins a word (king’s is kings); a hyphen separates one (market-place)."""
     return [
-        (re.sub(r"[’']", "", m[0]).casefold(), m.start(), m.end())
+        (m[0].replace("’", "").replace("'", "").casefold(), m.start(), m.end())
         for m in WORD.finditer(text)
     ]
 
@@ -37,6 +38,12 @@ def words_of(text: str) -> list[str]:
 def plain(text: str) -> str:
     """Words with their spaces and line breaks as single spaces."""
     return " ".join(text.split())
+
+
+def has_verse(inventory: Inventory, verse: Reference) -> bool:
+    """Whether what the edition prints has a verse."""
+    labels = inventory.get(verse.book, {}).get(str(verse.chapter), ())
+    return f"{verse.number}{verse.letter}" in labels
 
 
 @dataclass(frozen=True)
@@ -241,14 +248,4 @@ def map_notes(doc: usj.Document, change: usj.Change) -> usj.Document:
     def visit(item: usj.Node) -> usj.Node | usj.Content | None:
         return change(item) if item["type"] == "note" else item
 
-    return usj.with_blocks(
-        doc,
-        [
-            (
-                {**block, "content": usj.mapped(block["content"], visit)}
-                if block["type"] == "para"
-                else block
-            )
-            for block in doc["content"]
-        ],
-    )
+    return usj.with_content(doc, lambda content: usj.mapped(content, visit))

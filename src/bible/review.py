@@ -26,7 +26,7 @@ import bible.policy
 import bible.sources
 from bible import assembly, paths, pipeline, places, scripture, versification
 from bible.alexandrinus import APPENDIX
-from bible.policy import thaw
+from bible.policy import source_id, thaw
 from bible.references import parse_passage
 from bible.usfm import plain_text
 from bible.usj import Document
@@ -57,7 +57,7 @@ def placed(
             return "DAG", f"{number}:{reference.split(':')[1]}"
     chapter, _, verse = reference.partition(":")
     for unit in policy.scripture:
-        if unit.get("source_id", unit["id"]) != code or unit["source"] != "brenton":
+        if source_id(unit) != code or unit["source"] != "brenton":
             continue
         first, last = unit.get("chapters", (1, 10**6))
         if first <= int(chapter) <= last:

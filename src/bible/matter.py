@@ -227,9 +227,10 @@ def rewritten(
     key: str,
     *,
     start: int | None = None,
-    right: bool = True,
+    unwrap: Iterable[tuple[int, int]] = (),
 ) -> Content:
-    """Content with words changed without disturbing its character styles."""
+    """Content with words changed without disturbing its character styles,
+    but for those whose words lie wholly within a stretch to unwrap."""
     text = words(content)
     if start is None:
         require(
@@ -246,7 +247,7 @@ def rewritten(
         ).get_opcodes()
         if kind != "equal"
     ]
-    return usj.substituted(content, edits, skip=usj.is_label, right=right)
+    return usj.substituted(content, edits, skip=usj.is_label, right=True, unwrap=unwrap)
 
 
 def once_in_words(text: str, wanted: str) -> bool:
@@ -275,16 +276,9 @@ def placed(unit: Unit, policy: bible.policy.Policy) -> Unit:
         not any("[" in body or "]" in body for body in bodies),
         "Book introduction brackets not a gloss's",
     )
-    placements = (
-        [("front", key) for key in data["front"]]
-        + [(code, key) for code, keys in data["books"].items() for key in keys]
-        + [
-            (f"{code}@{verse}", key)
-            for code, sections in data["sections"].items()
-            for verse, section in sections.items()
-            for key in section["paragraphs"]
-        ]
-    )
+    placements = [("front", key) for key in data["front"]] + [
+        (place, key) for key, place in destinations(policy).items()
+    ]
     require(all(data["omit"].values()), "Omitted book introductions need a reason")
     accounted = placements + [(None, key) for key in data["omit"]]
     books = {u["id"] for u in policy.scripture if u["source"] == "brenton"}
@@ -474,13 +468,9 @@ def resolved(
                     citation = replace(
                         citation, book=home.book, items=items, context=home
                     )
-                settled_citation = citations.resolve(citation, inventory, policy=policy)
-                missing = citations.missing(settled_citation, inventory)
-                require(
-                    not missing,
-                    f"Citation of what the edition doesn't print: {code}: {citation.source}: {missing}",
+                found.append(
+                    citations.resolve(citation, inventory, code, policy=policy)
                 )
-                found.append(settled_citation)
             settled[address] = replace(reading, citations=tuple(found))
         result.append((block, settled))
     return result
@@ -542,7 +532,7 @@ def renamed(
             (index, address, match)
             for index, (block, _) in enumerate(unit)
             for address, content in regions(block)
-            for match in pattern.finditer(usj.text_of(content))
+            for match in pattern.finditer(words(content))
         ]
         require(len(found) == 1, f"Change of name not met once: {code} ({before})")
         index, address, match = found[0]
@@ -550,20 +540,19 @@ def renamed(
         content = dict(regions(block))[address]
         after = citations.named(declaration["to"], books.names)
         require(before != after, f"Change of name changes nothing: {code} ({before})")
-        edits = [
-            (match.start() + a, match.start() + b, after[c:d])
-            for kind, a, b, c, d in SequenceMatcher(
-                None, before, after, autojunk=False
-            ).get_opcodes()
-            if kind != "equal"
-        ]
+        # The name's own styling gives way to what the edition's name has.
         unit = list(unit)
         unit[index] = (
             with_region(
                 block,
                 address,
-                usj.substituted(
-                    content, edits, right=True, unwrap=[(match.start(), match.end())]
+                rewritten(
+                    content,
+                    before,
+                    after,
+                    key=f"{code} ({before})",
+                    start=match.start(),
+                    unwrap=[match.span()],
                 ),
             ),
             readings,

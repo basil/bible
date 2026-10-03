@@ -10,7 +10,6 @@ import xml.etree.ElementTree as ET
 import zipfile
 from collections.abc import Sequence
 from pathlib import Path
-from typing import NamedTuple
 
 import bible.policy
 import bible.sources
@@ -24,11 +23,6 @@ FRONT_TEMPLATE = paths.UPSTREAM / "python/lib/ptxprint/FRTtemplateBasic.txt"
 PROJECT_DIR = "projects/BIBLE"
 SETTINGS_DIR = "shared/ptxprint/Bible"
 PROCESSED_DIR = "local/ptxprint/Bible"
-
-
-class ProjectOutput(NamedTuple):
-    project: Path
-    ids: list[str]
 
 
 def bsb_baseline() -> tuple[str, ...]:
@@ -92,8 +86,9 @@ def write_project(
     documents: Sequence[tuple[str, str]],
     policy: bible.policy.Policy,
     sources: bible.sources.Sources,
-) -> ProjectOutput:
-    """Write the exported documents, as (id, USFM), and PTXprint's configuration."""
+) -> tuple[Path, list[str]]:
+    """Write the exported documents, as (id, USFM), and PTXprint's
+    configuration; the project's directory, and the ids it prints."""
     project = base / PROJECT_DIR
     conf = project / SETTINGS_DIR
     conf.mkdir(parents=True)
@@ -159,4 +154,4 @@ def write_project(
     # Replace BSB's front matter with PTXprint's basic template so the title,
     # publication data, and contents come from this edition's settings.
     shutil.copyfile(FRONT_TEMPLATE, conf / "FRTlocal.sfm")
-    return ProjectOutput(project, ids)
+    return project, ids

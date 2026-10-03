@@ -91,6 +91,11 @@ def parse_passages(text: str) -> list[Passage]:
     return [parse_passage(passage) for passage in text.split("; ")]
 
 
+def verses_of(passages: Iterable[Passage]) -> list[Verse]:
+    """Every verse of some passages, in their order."""
+    return [verse for passage in passages for verse in passage.verses]
+
+
 def verse_at(book: str, label: str) -> Verse:
     """A book's verse by its label, as scripture.verses names it."""
     return parse_verse(f"{book} {label}")

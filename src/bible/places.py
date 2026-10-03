@@ -17,9 +17,12 @@ for those that rest on the words or on their place alone, to be read.
 from __future__ import annotations
 
 import collections
+import functools
+import heapq
+import math
 import re
 from collections.abc import Mapping, Sequence
-from typing import NotRequired, TypedDict
+from typing import TypedDict
 
 import bible.policy
 import bible.references
@@ -39,7 +42,6 @@ class WitnessBlock(TypedDict):
     words: list[Verse]
     table: list[Verse] | None
     by: str
-    score: NotRequired[float]
 
 
 class WrittenBlock(TypedDict):
@@ -80,7 +82,6 @@ class Texts:
         *,
         policy: bible.policy.Policy,
     ) -> None:
-        self.policy = policy
         self.books = {
             code: versification.kjv_book(code, policy=policy)
             for code in policy.versification["old_testament"]
@@ -94,34 +95,59 @@ class Texts:
         )
         self.weight = alignment.weights(self.edition.words, self.kjv.words)
 
+    @functools.cached_property
+    def norms(self) -> tuple[dict[Verse, float], dict[Verse, float]]:
+        """The weight of each verse's words, on either side, which every
+        comparison of the verse divides by."""
+
+        def norm(side: Mapping[Verse, set[str]]) -> dict[Verse, float]:
+            return {v: sum((self.weight[w] for w in ws), 0.0) for v, ws in side.items()}
+
+        return norm(self.edition.words), norm(self.kjv.words)
+
+    def compared(self, a: set[str], norm_a: float, b: set[str], norm_b: float) -> float:
+        """The weight of the words two verses share, as a share of both."""
+        total = norm_a * norm_b
+        return sum(self.weight[w] for w in a & b) / math.sqrt(total) if total else 0
+
     def similarity(
         self, verse: bible.references.Verse, counterpart: bible.references.Verse
     ) -> float:
-        return alignment.similarity(
-            self.weight, self.edition.words[verse], self.kjv.words[counterpart]
+        return self.compared(
+            self.edition.words[verse],
+            self.norms[0][verse],
+            self.kjv.words[counterpart],
+            self.norms[1][counterpart],
         )
 
 
 def _best(
-    words: set[str],
+    texts: Texts,
+    verse: Verse,
+    side: int,
     index: Mapping[str, Sequence[int]],
     order: Sequence[Verse],
-    others: Mapping[Verse, set[str]],
-    weight: Mapping[str, float],
 ) -> tuple[Verse | None, float]:
-    """The verse among the others that a verse's words pick out, and its score."""
+    """The verse among the other translation's that a verse's words pick
+    out, and its score. The verse is the edition's (side 0) or the King James
+    Bible's (1); the others are indexed by word, in their order."""
+    sides = (texts.edition.words, texts.kjv.words)
+    words, norm = sides[side][verse], texts.norms[side][verse]
+    others, norms = sides[1 - side], texts.norms[1 - side]
     candidates: collections.defaultdict[int, float] = collections.defaultdict(float)
     # In the words' own order, so that verses that tie are taken alike each time.
     for word in sorted(words):
         found = index.get(word, ())
         if len(found) <= COMMON:
             for n in found:
-                candidates[n] += weight[word]
+                candidates[n] += texts.weight[word]
     scored = [
-        (alignment.similarity(weight, words, others[order[n]]), str(order[n]), n)
-        for n, _ in sorted(candidates.items(), key=lambda item: item[1], reverse=True)[
-            :8
-        ]
+        (
+            texts.compared(words, norm, others[order[n]], norms[order[n]]),
+            str(order[n]),
+            n,
+        )
+        for n, _ in heapq.nlargest(8, candidates.items(), key=lambda item: item[1])
     ]
     if not scored:
         return None, 0
@@ -158,18 +184,10 @@ def anchors(texts: Texts, code: str, table: Table) -> list[Anchor]:
     position = {verse: i for i, verse in enumerate(theirs)}
     found = []
     for i, verse in enumerate(ours):
-        other, score = _best(
-            texts.edition.words[verse],
-            their_index,
-            theirs,
-            texts.kjv.words,
-            texts.weight,
-        )
+        other, score = _best(texts, verse, 0, their_index, theirs)
         if other is None or score < ANCHOR:
             continue
-        back, _ = _best(
-            texts.kjv.words[other], our_index, ours, texts.edition.words, texts.weight
-        )
+        back, _ = _best(texts, other, 1, our_index, ours)
         if back == verse and outvotes(texts, table, verse, other):
             found.append((i, position[other], score))
     return found
@@ -329,7 +347,6 @@ def aligned(
     _join(texts.kjv, texts.edition, theirs, facing_blocks, 1)
     result: list[tuple[list[Verse], list[Verse], str]] = []
     seen: set[int] = set()
-    paired = {id(block): block for block in blocks.values()}
     for verse in ours:
         block = blocks.get(verse)
         if block is None:
@@ -338,7 +355,7 @@ def aligned(
             seen.add(id(block))
             by = "place" if block[0][0] in placed and len(block[0]) == 1 else "words"
             result.append((*block, by))
-    claimed = {v for block in paired.values() for v in block[1]}
+    claimed = {v for block in blocks.values() for v in block[1]}
     result += [([], [verse], "words") for verse in theirs if verse not in claimed]
     # A verse that holds a psalm's title and its first words is its first verse.
     return [
@@ -495,23 +512,7 @@ def witnesses(
             said = None
             if all(answer is not None for answer in answers):
                 said = [v for answer in answers if answer is not None for v in answer]
-            blocks.append(
-                {
-                    "edition": ours,
-                    "words": theirs,
-                    "table": said,
-                    "by": by,
-                    "score": (
-                        alignment.similarity(
-                            texts.weight,
-                            texts.edition.bag(ours),
-                            texts.kjv.bag(theirs),
-                        )
-                        if ours and theirs
-                        else 0
-                    ),
-                }
-            )
+            blocks.append({"edition": ours, "words": theirs, "table": said, "by": by})
         report[code] = blocks
     return texts, report
 
@@ -632,9 +633,7 @@ def read(texts: Texts, readings: Sequence[Run]) -> list[Placement]:
         name = f"{run.get('edition')} = {run.get('kjv')}"
         require_fields(run, {"edition", "kjv", "why"}, {"pairs"}, f"Reading {name}")
         require(run["edition"] and run["why"], f"Reading without its reason: {name}")
-        assert run["edition"] is not None
-        ours = versification.verses(run["edition"])
-        theirs = versification.verses(run["kjv"]) if run["kjv"] else []
+        ours, theirs = versification.run_verses(run)
         require(
             all(v in texts.edition.words for v in ours)
             and all(v in texts.kjv.words for v in theirs),
@@ -870,10 +869,8 @@ def report(
                 ("Brenton", ours, run["edition"]),
                 ("King James", theirs, run["kjv"]),
             ):
-                for verse in versification.verses(passages) if passages else ():
-                    said = words.get(
-                        (verse.book, f"{verse.chapter}:{verse.number}{verse.letter}")
-                    )
+                for verse in versification.verses(passages):
+                    said = words.get((verse.book, verse.label))
                     lines.append(f"  - {side} {verse.label}: {said or '(title)'}\n")
         lines.append("\n")
     return "".join(lines)

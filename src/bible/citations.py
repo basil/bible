@@ -20,7 +20,7 @@ from __future__ import annotations
 import functools
 import re
 import string
-from collections.abc import Callable, Iterable, Mapping, Sequence
+from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 
 import bible.policy
@@ -35,10 +35,10 @@ from bible.references import (
     Item,
     LastVerse,
     Passage,
-    Style,
     Verse,
     parse_passages,
     roman,
+    verses_of,
 )
 
 # How a source may number what it cites: as Brenton does, which the edition
@@ -112,7 +112,7 @@ class Citation:
 
     @property
     def verses(self) -> list[bible.references.Verse]:
-        return [verse for passage in self.passages for verse in passage.verses]
+        return verses_of(self.passages)
 
 
 @dataclass(frozen=True)
@@ -166,7 +166,7 @@ class Dialect:
     def book_name(self, matched: str) -> str:
         """The dialect's name for a book, as the pattern read it, whose words
         may stand apart by any space, as a tab or a no-break space."""
-        return " ".join(matched.split())
+        return scripture.plain(matched)
 
 
 @functools.cache
@@ -468,9 +468,24 @@ def _decided(
 
 
 def _last_verse(
-    inventory: Mapping[str, Mapping[str, Sequence[str]]], book: str, chapter: int
+    inventory: scripture.Inventory,
+    book: str,
+    chapter: int,
+    numbering: str,
+    *,
+    policy: bible.policy.Policy,
 ) -> int:
-    """The last verse of a chapter, which a citation names as "ult."."""
+    """The last verse of a chapter, which a citation names as "ult.", by a
+    numbering: the inventory is the edition's, and knows no chapter of the
+    King James Bible's Old Testament."""
+    require(
+        numbering in {"brenton", "edition"}
+        or (
+            numbering != "kjv-verses"
+            and book not in versification.kjv_books(policy=policy)
+        ),
+        f"Last verse by the King James Bible's numbering: {book} {chapter}",
+    )
     labels = inventory.get(book, {}).get(str(chapter))
     require(labels, f"No such chapter: {book} {chapter}")
     assert labels
@@ -479,49 +494,22 @@ def _last_verse(
     return int(match[0])
 
 
-def _last_verses(
-    inventory: scripture.Inventory,
-    book: str,
-    numbering: str,
-    *,
-    policy: bible.policy.Policy,
-) -> Callable[[int], int]:
-    """The last verse of each of a book's chapters, as a citation by a
-    numbering names it: the inventory is the edition's, and knows no chapter
-    of the King James Bible's Old Testament."""
-
-    def last(chapter: int) -> int:
-        require(
-            numbering in {"brenton", "edition"}
-            or (
-                numbering != "kjv-verses"
-                and book not in versification.kjv_books(policy=policy)
-            ),
-            f"Last verse by the King James Bible's numbering: {book} {chapter}",
-        )
-        return _last_verse(inventory, book, chapter)
-
-    return last
-
-
-def missing(
-    citation: Citation,
-    inventory: Mapping[str, Mapping[str, Sequence[str]]],
-) -> list[str]:
+def missing(citation: Citation, inventory: scripture.Inventory) -> list[str]:
     """What a citation names that the edition doesn't print."""
     found = []
     for book, runs in citation.targets:
-        chapters = inventory.get(book, {})
         for item in (item for run in runs for item in run):
-            labels = chapters.get(str(item.chapter))
-            if labels is None:
+            if str(item.chapter) not in inventory.get(book, {}):
                 found.append(f"{book} {item.chapter}")
             elif item.first is not None:
                 assert isinstance(item.first, int) and isinstance(item.last, int)
                 found += [
-                    f"{book} {item.chapter}:{number}{item.letter}"
+                    str(verse)
                     for number in range(item.first, item.last + 1)
-                    if f"{number}{item.letter}" not in labels
+                    if not scripture.has_verse(
+                        inventory,
+                        verse := Verse(book, item.chapter, number, item.letter),
+                    )
                 ]
     return found
 
@@ -626,14 +614,16 @@ def parse(
 
 def resolve(
     expression: UnresolvedCitation,
-    inventory: Mapping[str, Mapping[str, Sequence[str]]],
+    inventory: scripture.Inventory,
+    key: str,
     *,
     policy: bible.policy.Policy,
 ) -> Citation:
-    """Resolve one source expression against actual assembled content."""
+    """Resolve one source expression against actual assembled content,
+    which must print what it names."""
     book, items = expression.book, expression.items
     if expression.relative and isinstance(expression.context, UnresolvedCitation):
-        previous = resolve(expression.context, inventory, policy=policy)
+        previous = resolve(expression.context, inventory, key, policy=policy)
         book, previous_runs = previous.targets[-1]
         if expression.relative == "verse":
             chapter = previous_runs[-1][-1].chapter
@@ -646,12 +636,13 @@ def resolve(
         values = []
         for item in run:
             if isinstance(item.first, LastVerse):
-                last = _last_verses(
+                last = _last_verse(
                     inventory,
                     book,
+                    item.chapter,
                     expression.coordinate_numbering,
                     policy=policy,
-                )(item.chapter)
+                )
                 item = Item(item.chapter, last, last)
             values.append(item)
         resolved.append(tuple(values))
@@ -660,7 +651,7 @@ def resolve(
         book, items = _edition(
             book, items, expression.coordinate_numbering, policy=policy
         )
-    return Citation(
+    citation = Citation(
         expression.start,
         expression.end,
         expression.source,
@@ -672,6 +663,13 @@ def resolve(
         expression.printed,
         expression.name,
     )
+    lacking = missing(citation, inventory)
+    require(
+        not lacking,
+        f"Citation of what the edition doesn't print: {key} "
+        f"({citation.source}: {', '.join(lacking)})",
+    )
+    return citation
 
 
 def scan(
@@ -681,25 +679,14 @@ def scan(
     key: str,
     inventory: scripture.Inventory,
     decided: Sequence[CitationsDecisions] | None = None,
-    before: Citation | None = None,
     *,
     policy: bible.policy.Policy,
 ) -> list[Citation]:
     """Parse then resolve; retained convenience API for source-note consumers."""
-    found = [
-        resolve(expression, inventory, policy=policy)
-        for expression in parse(
-            plain, tongue, home, key, decided, before, policy=policy
-        )
+    return [
+        resolve(expression, inventory, key, policy=policy)
+        for expression in parse(plain, tongue, home, key, decided, policy=policy)
     ]
-    for citation in found:
-        lacking = missing(citation, inventory)
-        require(
-            not lacking,
-            f"Citation of what the edition doesn't print: {key} "
-            f"({citation.source}: {', '.join(lacking)})",
-        )
-    return found
 
 
 def source_pieces(
@@ -769,11 +756,7 @@ def named(words: str, names: Mapping[str, str]) -> str:
     return Names().vformat(words, (), names)
 
 
-def printed(
-    citation: Citation,
-    books: bible.references.Books,
-    style: bible.references.Style = EDITION,
-) -> str:
+def printed(citation: Citation, books: bible.references.Books) -> str:
     """A citation as the edition prints it: under the edition's abbreviation for the
     book, or as a verse or chapter of the note's own book, which it names as
     its source does, by no name."""
@@ -793,17 +776,17 @@ def printed(
     if citation.relative == "verse":
         (run,) = citation.items
         word = "verse" if len(run) == 1 and run[0].first == run[0].last else "verses"
-        body = style.verses.join(_printed_item(item, style) for item in run)
+        body = EDITION.verses.join(_printed_item(item) for item in run)
     else:
         runs: list[str] = []
         for run in citation.items:
             chapter = str(run[0].chapter)
             if run[0].first is not None:
-                chapter += style.chapter_verse + style.verses.join(
-                    _printed_item(item, style) for item in run
+                chapter += EDITION.chapter_verse + EDITION.verses.join(
+                    _printed_item(item) for item in run
                 )
             runs.append(chapter)
-        body = style.passages.join(runs)
+        body = EDITION.passages.join(runs)
         if citation.relative == "chapter":
             word = "chapter" if verses or len(chapters) == 1 else "chapters"
         else:
@@ -814,6 +797,6 @@ def printed(
     return f"{word} {body}"
 
 
-def _printed_item(item: Item, style: Style) -> str:
+def _printed_item(item: Item) -> str:
     assert isinstance(item.first, int) and isinstance(item.last, int)
-    return style.stretch(item.first, item.last, item.letter)
+    return EDITION.stretch(item.first, item.last, item.letter)

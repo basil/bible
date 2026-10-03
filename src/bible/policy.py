@@ -10,7 +10,6 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass
-from pathlib import Path
 from types import MappingProxyType
 from typing import Any, cast
 
@@ -314,10 +313,11 @@ def check(policy: Policy) -> None:
             )
 
 
-def load(directory: Path | None = None) -> Policy:
+def load() -> Policy:
     """Read and check the edition's decisions."""
-    directory = paths.EDITION_DIR if directory is None else directory
-    data = {name: freeze(read_json(directory / f"{name}.json")) for name in FILES}
+    data = {
+        name: freeze(read_json(paths.EDITION_DIR / f"{name}.json")) for name in FILES
+    }
     policy = Policy(
         manifest=cast(schema.Manifest, data["manifest"]),
         sample=cast(Mapping[str, tuple[int, ...]], data["sample"]),

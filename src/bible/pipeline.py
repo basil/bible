@@ -75,6 +75,11 @@ def note_key(code: str, reference: str, number: int) -> str:
     return f"{code} {reference}" + (f"#{number}" if number > 1 else "")
 
 
+def note_origin(note: Node) -> str:
+    """The verse a note names as its own, in its first part."""
+    return usj.text_of(note["content"][:1]).strip()
+
+
 def keyed(code: str, doc: Document) -> Document:
     """A source book with each note keyed by its source verse."""
     seen: dict[str, int] = {}
@@ -82,7 +87,7 @@ def keyed(code: str, doc: Document) -> Document:
     keys = {}
     for reference, verse in verses.items():
         for _, note in verse.notes:
-            origin = usj.text_of(note["content"][:1]).strip()
+            origin = note_origin(note)
             require(
                 origin == reference,
                 f"Note reference disagrees with its verse: {code} {origin}",
@@ -92,14 +97,13 @@ def keyed(code: str, doc: Document) -> Document:
     if not keys:
         return doc
 
-    def with_key(item: Node) -> Node:
-        return {**item, "x-key": keys[id(item)]} if id(item) in keys else item
-
+    # The notes are keyed by their identity, so they are found in place
+    # rather than rebuilt by usj.mapped.
     def visit(content: Content) -> Content:
         return [
             (
-                with_key(item)
-                if isinstance(item, dict) and item["type"] == "note"
+                {**item, "x-key": keys[id(item)]}
+                if isinstance(item, dict) and id(item) in keys
                 else (
                     {**item, "content": visit(item["content"])}
                     if isinstance(item, dict) and "content" in item
@@ -109,17 +113,7 @@ def keyed(code: str, doc: Document) -> Document:
             for item in content
         ]
 
-    return usj.with_blocks(
-        doc,
-        [
-            (
-                {**block, "content": visit(block["content"])}
-                if block["type"] == "para"
-                else block
-            )
-            for block in doc["content"]
-        ],
-    )
+    return usj.with_content(doc, visit)
 
 
 def marginal_notes(
@@ -145,7 +139,7 @@ def marginal_notes(
     seen: dict[str, int] = {}
     for paragraph in re.split(r"\n\s*\n", text[text.index("\nMatthew 1:11 ") :]):
         # The Markdown wraps long entries; a continuation line joins its entry.
-        entry = " ".join(paragraph.split())
+        entry = scripture.plain(paragraph)
         if not entry:
             continue
         match = present(
@@ -188,8 +182,11 @@ def marginal_notes(
 def read(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Read:
     """Parse the sources once, with the corrections to their transcription."""
     corrections = policy.brenton_notes["corrections"]
-    printed = {source_id(e) for e in policy.entries if e.get("source") == "brenton"} | {
-        part for part, _, _ in assembly.DANIEL
+    printed = {
+        code
+        for e in policy.entries
+        if e.get("source") == "brenton"
+        for code in assembly.source_codes(e)
     }
     unprinted = sorted({k.split(" ")[0] for k in corrections} - printed)
     require(
@@ -215,10 +212,7 @@ def read(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Read:
     for unit in policy.scripture:
         if unit["source"] == "kjv":
             require(
-                not any(
-                    usj.notes_of(b.get("content", ()))
-                    for b in kjv[unit["id"]]["content"]
-                ),
+                not usj.notes_of(kjv[unit["id"]]["content"]),
                 f"Cambridge text already has footnotes: {unit['id']}",
             )
     return Read(
@@ -290,10 +284,9 @@ def note_prose(policy: bible.policy.Policy) -> dict[str, list[WordingChange]]:
     return found
 
 
-def quotation_links(
-    policy: bible.policy.Policy, inventory: scripture.Inventory
-) -> dict[str, list[crossrefs.Link]]:
+def quotation_links(ctx: annotate.Context) -> dict[str, list[crossrefs.Link]]:
     """The reviewed quotation links, by book, each side in the edition."""
+    policy = ctx.policy
     relations = crossrefs.quotation_relations(
         quotations.reviewed_rows(policy=policy), policy=policy
     )
@@ -301,11 +294,10 @@ def quotation_links(
         for passage in (*relation.nt, *relation.ot):
             for verse in passage.verses:
                 require(
-                    f"{verse.number}{verse.letter}"
-                    in inventory.get(verse.book, {}).get(str(verse.chapter), ()),
+                    scripture.has_verse(ctx.inventory, verse),
                     f"Quotation verse missing from assembled edition: {relation.id}: {verse}",
                 )
-    return crossrefs.planned_links(relations, tuple(inventory), policy=policy)
+    return crossrefs.planned_links(relations, ctx.books, policy=policy)
 
 
 def context(
@@ -315,7 +307,7 @@ def context(
 ) -> bible.annotate.Context:
     return annotate.Context(
         policy,
-        assembly.inventory(units),
+        {code: usj.inventory(doc) for code, doc in units.items()},
         assembly.books(policy, sources),
         terminology.registry(policy),
         note_prose(policy),
@@ -401,15 +393,13 @@ def introduced(
         all(link.origin.book == code for link in links),
         f"Links for another book passed to {code}",
     )
-    cited = {
-        v.label for link in links for passage in link.passages for v in passage.verses
-    }
+    cited = {v.label for link in links for v in link.passage.verses}
     require(
         cited <= set(verses), f"Quotation verse missing from prepared scripture: {code}"
     )
-    for reference, notes in crossrefs.link_notes(links, ctx.books).items():
+    for reference, notes in crossrefs.link_notes(links, ctx.books, ctx.terms).items():
         placed.setdefault(reference, []).extend(notes)
-    return annotate.at_verse_starts(doc, placed) if placed else doc
+    return annotate.at_verse_starts(doc, verses, placed) if placed else doc
 
 
 def annotated(
@@ -420,7 +410,7 @@ def annotated(
 ) -> tuple[dict[str, Document], dict[str, annotate.Report]]:
     """The books with their notes, introductions and quotation links."""
     policy = ctx.policy
-    links = quotation_links(policy, ctx.inventory)
+    links = quotation_links(ctx)
     docs, reports = {}, {}
     for unit in policy.scripture:
         code = unit["id"]
@@ -429,11 +419,9 @@ def annotated(
                 code, units[code], read_sources.marginal.get(code, ()), ctx
             )
         else:
-            mended = read_sources.mended[source_id(unit)]
-            if code == "DAG":
-                mended = mended.union(
-                    *(read_sources.mended[part] for part, _, _ in assembly.DANIEL)
-                )
+            mended = frozenset[str]().union(
+                *(read_sources.mended[c] for c in assembly.source_codes(unit))
+            )
             doc, report = annotate.brenton(
                 code, units[code], links.get(code, ()), mended, ctx
             )
@@ -448,10 +436,11 @@ def authored(
 ) -> dict[str, Document]:
     """The edition's own pages, with the passages and tables they ask for."""
     policy = ctx.policy
+    # Its books have chapters; its prefaces have none.
     facing = {
-        code: usfm.inventory(text)["chapters"]
+        code: chapters
         for code, text in sources.kjv.items()
-        if re.search(r"^\\c ", text, re.M)
+        if (chapters := usfm.inventory(text)["chapters"])
     }
     theirs = assembly.kjv_books(policy, sources)
     docs = {}
@@ -513,21 +502,15 @@ def check_document(
     code: str, doc: Document, *, scripture_unit: bool, authored_page: bool
 ) -> None:
     """What every prepared document must hold to."""
-    notes = [
-        (block, note)
-        for block in doc["content"]
-        if block["type"] == "para"
-        for note in usj.notes_of(block["content"])
-    ]
     if scripture_unit:
         # Any caller, "*" as well as "+"; only "-" sets none.
         require(
-            all(note["caller"] == "-" for _, note in notes),
+            all(note["caller"] == "-" for note in usj.notes_of(doc["content"])),
             f"Note with a caller left in the text: {code}",
         )
         for reference, verse in scripture.verses(doc).items():
             for _, note in verse.notes:
-                origin = usj.text_of(note["content"][:1]).strip()
+                origin = note_origin(note)
                 require(
                     note["marker"] == "ef" or origin == reference,
                     f"Note reference disagrees with its verse: {code} {origin}",
@@ -728,8 +711,7 @@ def exported(code: str, doc: Document, edition: Edition) -> str:
 
     # A unit printed from a file that holds another, or under an id that
     # PTXprint would take for its own front matter, is a unit of its own.
-    book, *rest = usj.with_content(doc, content)["content"]
-    return usj.serialize(usj.with_blocks(doc, [{**book, "code": code}, *rest]))
+    return usj.serialize(usj.with_code(usj.with_content(doc, content), code))
 
 
 def export(edition: Edition, mode: str) -> list[tuple[str, str]]:

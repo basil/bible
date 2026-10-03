@@ -105,12 +105,8 @@ def registry(policy: bible.policy.Policy) -> Registry:
     return Registry(data)
 
 
-def recognize(text: str, terms: Registry, *, note: bool = True) -> tuple[Term, ...]:
-    return _recognized(text, terms, note)
-
-
 @functools.lru_cache(maxsize=8192)
-def _recognized(text: str, terms: Registry, note: bool) -> tuple[Term, ...]:
+def recognize(text: str, terms: Registry, *, note: bool = True) -> tuple[Term, ...]:
     """The terms a source's words name, each where it stands, longest first."""
     candidates = []
 
@@ -220,8 +216,6 @@ def render(term: Term, terms: Registry, text: str) -> str:
         display = display.capitalize()
     elif term.form == "lower":
         display = display.lower()
-    elif term.form == "upper":
-        display = display.upper()
     elif term.form == "stem":
         display = display.removesuffix(".")
     elif term.form == "plural":
@@ -374,12 +368,10 @@ def printed(content: Content, found_terms: Iterable[Term], terms: Registry) -> C
     if commas:
         # Each comma stands where its term ended, as the words now run.
         placed = [
-            (
-                at + sum(len(v) - (e - s) for s, e, v in edits if e <= at),
-                at + sum(len(v) - (e - s) for s, e, v in edits if e <= at),
-                ",",
-            )
+            (moved, moved, ",")
             for at in commas
+            if (moved := at + sum(len(v) - (e - s) for s, e, v in edits if e <= at))
+            is not None
         ]
         content = usj.substituted(content, placed, skip=usj.is_label, right=True)
     return content
@@ -472,31 +464,18 @@ def completed_glossary(
             at = match.end()
         cells.append(meaning[at:])
         rows.append(
-            {
-                "type": "table:row",
-                "marker": "tr",
-                "content": [
-                    _cell("tc1", [usj.char("it", abbreviation)]),
-                    _cell("tc2", usj.joined(cells)),
-                ],
-            }
+            usj.row(
+                usj.cell("tc1", usj.char("it", abbreviation)),
+                usj.cell("tc2", *usj.joined(cells)),
+            )
         )
     return usj.with_blocks(doc, [*doc["content"][:-1], {**table, "content": rows}])
-
-
-def _cell(marker: str, content: Content) -> Node:
-    return {
-        "type": "table:cell",
-        "marker": marker,
-        "align": "start",
-        "content": content,
-    }
 
 
 def check_glossary(doc: Document, policy: bible.policy.Policy) -> None:
     """Every row the list prints must agree with the registry."""
     data, terms = policy.abbreviations, registry(policy)
-    table = next(b for b in doc["content"] if b["type"] == "table")
+    table = glossary_table(doc)
     printed_rows = [
         (
             usj.text_of(list(usj.objects(row["content"]))[0]["content"]).strip(),

@@ -24,7 +24,7 @@ import bible.pipeline
 import bible.policy
 from bible import quotations, versification
 from bible.alignment import Verses
-from bible.references import Passage, Verse
+from bible.references import Passage, Verse, verses_of
 
 # How far a neighbour must outscore a target to flag it.
 MARGIN = 0.05
@@ -49,7 +49,7 @@ def passages(
     row: quotations.ReviewedRow, policy: bible.policy.Policy
 ) -> tuple[list[Verse], list[Verse]]:
     return (
-        quotations.nt_verses(row["nt"]),
+        verses_of(row["nt"]),
         quotations.brenton_verses(row["ot"], policy=policy),
     )
 

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import configparser
 from collections.abc import Callable, Sequence
 from pathlib import Path
 from types import MappingProxyType
@@ -94,31 +95,43 @@ def test_printed_origins_lose_their_chapter_and_front_matter_its_empty_ones(
 # Rendered PDF
 
 
+# The publication page as the layout's settings give it, and as pdftotext
+# reads it: the license notice broken across lines.
+SETTINGS = configparser.ConfigParser(interpolation=None)
+SETTINGS.read_dict(
+    {
+        "project": {
+            "copyright": "Copyright © 2026 Basil Crow",
+            "license": "Creative Commons Attribution 4.0 International (CC BY 4.0). "
+            "https://creativecommons.org/licenses/by/4.0/",
+        }
+    }
+)
 PUBLICATION = (
     "Copyright © 2026 Basil Crow\n"
-    "Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International "
-    "(CC BY-NC-ND 4.0)\n"
-    "https://creativecommons.org/licenses/by-nc-nd/4.0/"
+    "Creative Commons Attribution 4.0 International (CC BY 4.0).\n"
+    "https://creativecommons.org/licenses/by/4.0/"
 )
 
 
 def test_layout_credit_in_the_introduction_passes() -> None:
     verify.check_publication(
         f"Title\f{PUBLICATION}\f"
-        "The design is based on the Berean Standard Bible layout."
+        "The design is based on the Berean Standard Bible layout.",
+        SETTINGS,
     )
 
 
 def test_inherited_publication_identity_is_refused() -> None:
     with pytest.raises(CheckFailed, match="Inherited BSB publication text remains"):
         verify.check_publication(
-            f"Title\f{PUBLICATION}\nBerean Standard\nBible\fIntroduction"
+            f"Title\f{PUBLICATION}\nBerean Standard\nBible\fIntroduction", SETTINGS
         )
 
 
 def test_missing_edition_license_on_the_publication_page_is_refused() -> None:
     with pytest.raises(CheckFailed, match="omitted the edition license notice"):
-        verify.check_publication(f"Title\fPublication\f{PUBLICATION}")
+        verify.check_publication(f"Title\fPublication\f{PUBLICATION}", SETTINGS)
 
 
 @pytest.mark.parametrize(

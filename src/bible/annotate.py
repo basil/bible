@@ -59,6 +59,8 @@ class Read:
     kind: str
     reference: str
     verse: scripture.Verse
+    # The verse's words with their offsets, read once for every note in it.
+    words: lemmas.Words
     offset: int
     body: notes.Body
     citations: tuple[citations.Citation, ...]
@@ -103,8 +105,7 @@ def printed(
     report: Report,
 ) -> Node:
     """A note as the edition prints it, and its row of the review."""
-    key, verse = read.key, read.verse
-    words = word_spans(verse.text)
+    key, verse, words = read.key, read.verse, read.words
     body = notes.with_terms(read.body, ctx.terms)
     for edit in ctx.prose.get(key, ()):
         body = notes.edited(body, edit["from"], edit["to"], key)
@@ -189,7 +190,7 @@ def brenton(
                 source = ("See " if note["marker"] == "x" else "") + notes.source_text(
                     note
                 )
-                text = "".join(value for _, value in pieces)
+                text = notes.text_of(pieces)
                 cited = citations.scan(
                     text, tongue, home, key, ctx.inventory, policy=policy
                 )
@@ -208,6 +209,7 @@ def brenton(
                     note["marker"],
                     reference,
                     verse,
+                    word_spans(verse.text),
                     offset,
                     body,
                     tuple(cited),
@@ -231,9 +233,8 @@ def brenton(
         if read.key in merged:
             replacements[read.key] = None
             continue
-        key, verse = read.key, read.verse
+        key, verse, words = read.key, read.verse, read.words
         exception = exceptions.get(key, {})
-        words = word_spans(verse.text)
         if "verse" in exception or exception.get("widen") is False:
             # A moved or deliberately narrow note stands at its named words.
             require(
@@ -291,17 +292,7 @@ def brenton(
             return outside(item)
         return item
 
-    doc = usj.with_blocks(
-        doc,
-        [
-            (
-                {**block, "content": usj.mapped(block["content"], change)}
-                if block["type"] == "para"
-                else block
-            )
-            for block in doc["content"]
-        ],
-    )
+    doc = usj.with_content(doc, lambda content: usj.mapped(content, change))
     if moved:
         verses = scripture.verses(doc)
         doc = scripture.edited(
@@ -390,6 +381,7 @@ def george(
             "f",
             reference,
             verse,
+            words,
             words[first][1],
             notes.source_body(
                 pieces,
@@ -408,10 +400,11 @@ def george(
     return scripture.edited(doc, changes), report
 
 
-def at_verse_starts(doc: Document, placed: Mapping[str, Content]) -> Document:
-    """The document with content set at the start of verses, before the notes
-    there, by each verse's reference."""
-    verses = scripture.verses(doc)
+def at_verse_starts(
+    doc: Document, verses: Mapping[str, scripture.Verse], placed: Mapping[str, Content]
+) -> Document:
+    """The document with content set at the start of its verses, before the
+    notes there, by each verse's reference."""
     blocks = list(doc["content"])
     for reference in sorted(placed, key=lambda r: verses[r].parts[0][:2], reverse=True):
         block, at, _, _ = verses[reference].parts[0]
