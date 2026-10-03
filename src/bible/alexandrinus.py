@@ -450,19 +450,20 @@ def surviving_scope(
     key = note["x-key"]
     exception = policy.brenton_notes["notes"].get(key, {})
     words = word_spans(verse.text)
+    body = notes.interpreted(notes.source_pieces(note), key)
+    if exception.get("note") is not None:
+        body = notes.declared_readings(
+            body, exception["note"], key, quotation=exception.get("quotation", False)
+        )
     span, glossed, _ = lemmas.inferred(
         note["marker"],
         verse.text,
         words,
         offset,
-        notes.reading_of(
-            note,
-            exception.get("note"),
-            key,
-            quotation=exception.get("quotation", False),
-        ),
+        body.alternative,
         exception,
         key,
+        addition=body.addition,
     )
     return (
         lemmas.lemma_text(verse.text, words, span) if span else None,

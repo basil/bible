@@ -95,7 +95,7 @@ ENGLISH_QUOTE = re.compile(
 CLOSERS = {"curly": "’", "single": "'", "backtick": "'"}
 # The words a note quotes as added are the reading, as after "+": "Heb. and
 # Alex. insert 'priest'", "Alex. adds, 'and I the shepherd have done wickedly'".
-ADDED = re.compile(r"\s*(?:adds?|inserts?),?\s+(?=['‘“])")
+ADDED = re.compile(r"\s*(?:adds?|inserts?),?\s+(?=['‘“\"`])")
 # "X, or Y" and "X, etc." (or "&c.") set only X and Y in italic.
 RENDERING_SEPARATOR = re.compile(r",?\s+or,?\s+|,?\s*(?:\betc\b|&c\b)")
 # What follows a label but comments on the reading instead of giving one:
@@ -154,6 +154,7 @@ class Body:
 
     The reading is the rendering that measures how far the glossed words
     reach. A citation is bound to the words that write it, whatever they are.
+    An addition names added words, which never echo a widened lemma.
     """
 
     plain: str
@@ -162,6 +163,7 @@ class Body:
     rule: str
     citations: tuple[tuple[int, int, Citation], ...] = ()
     terms: tuple[terminology.Term, ...] = ()
+    addition: bool = False
 
     @property
     def alternative(self) -> str | None:
@@ -269,7 +271,12 @@ class Roles:
         return found
 
     def body(
-        self, reading: tuple[int, int] | None, rule: str, *, trim: bool = False
+        self,
+        reading: tuple[int, int] | None,
+        rule: str,
+        *,
+        trim: bool = False,
+        addition: bool = False,
     ) -> Body:
         start = len(self.plain) - len(self.plain.lstrip()) if trim else 0
         end = len(self.plain.rstrip()) if trim else len(self.plain)
@@ -284,7 +291,7 @@ class Roles:
                 0 <= reading[0] < reading[1] <= end - start,
                 "Note reading outside content",
             )
-        return Body(self.plain[start:end], roles, reading, rule)
+        return Body(self.plain[start:end], roles, reading, rule, addition=addition)
 
 
 def labelled_pieces(text: str) -> list[tuple[str, str]]:
@@ -406,6 +413,7 @@ def interpreted(pieces: Sequence[tuple[str, str]], key: str) -> Body:
             meaning.reading(offset, offset + len(value), "quotation")
         offset += len(value)
     alternative = None
+    addition = False
     for i, (kind, value) in enumerate(pieces[:-1]):
         if kind != "label" or value.strip() not in {"Heb.", "Hebrew"}:
             continue
@@ -456,15 +464,21 @@ def interpreted(pieces: Sequence[tuple[str, str]], key: str) -> Body:
         after = text[starts[i + 1] : stop]
         extent = RENDERING_END.split(after, maxsplit=1)[0]
         start = starts[i + 1]
+        added = ADDED.match(extent)
+        adds = extent.lstrip().startswith("+") or added is not None
+        # The note adds words if the rendering that measures its lemma does,
+        # or, with none that measures, if any of its renderings does.
+        if alternative is None:
+            addition = addition or adds
         # Greek before its English renders by the English ("Alex. ἐντολαί,
         # commands"), and words quoted as added are the reading ("insert
         # 'priest'").
-        if gloss := GREEK_GLOSS.match(extent) or ADDED.match(extent):
+        if gloss := GREEK_GLOSS.match(extent) or added:
             start += gloss.end()
             extent = extent[gloss.end() :]
         # A rendering in quotation marks ends with them ("'turned away,' but").
         if closing := re.match(
-            r"\s*['‘“].*?[^\W\d_][,.;:?!]?(['’”])(?![^\W\d_])", extent
+            r"\s*['‘“\"`].*?[^\W\d_][,.;:?!]?(['’”\"])(?![^\W\d_])", extent
         ):
             extent = extent[: closing.start(1)]
         # Quoted Greek or Hebrew ends a rendering after a comma ("furnace,
@@ -503,6 +517,7 @@ def interpreted(pieces: Sequence[tuple[str, str]], key: str) -> Body:
                 and not extent.lstrip().startswith("+")
             ):
                 alternative = bounds
+                addition = adds
     # Two renderings or quotations a space apart are one ("innocent things").
     for match in re.finditer(r"(?<=\S) +(?=\S)", text):
         if all(
@@ -510,7 +525,12 @@ def interpreted(pieces: Sequence[tuple[str, str]], key: str) -> Body:
             for at in (match.start() - 1, match.end())
         ):
             meaning.mark(match.start(), match.end(), "alternative")
-    return meaning.body(alternative, "rendering" if alternative else "roman", trim=True)
+    return meaning.body(
+        alternative,
+        "rendering" if alternative else "roman",
+        trim=True,
+        addition=addition,
+    )
 
 
 def declared_readings(
@@ -556,17 +576,7 @@ def declared_readings(
                     last - len(value) + len(value.rstrip(TRIM)),
                 )
                 break
-    return roles.body(reading, "override")
-
-
-def reading_of(
-    note: Node, override: str | None, key: str, *, quotation: bool = False
-) -> str | None:
-    """The rendering by which a source note measures the words it is about."""
-    body = interpreted(source_pieces(note), key)
-    if override is not None:
-        body = declared_readings(body, override, key, quotation=quotation)
-    return body.alternative
+    return roles.body(reading, "override", addition=body.addition)
 
 
 def visual(body: Body) -> list[tuple[str, str]]:
@@ -832,7 +842,12 @@ def displayed(
         shown = value
         # Only an alternative rendering stands in for the whole lemma; words
         # the note merely quotes are left as they are.
-        if role == "alternative" and body.rule != "roman" and (before or after):
+        if (
+            role == "alternative"
+            and body.rule != "roman"
+            and not body.addition
+            and (before or after)
+        ):
             shown = before + value + after
         kind = (
             "quotation"

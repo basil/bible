@@ -259,6 +259,8 @@ def inferred_lemma(
     words: Words,
     offset: int,
     alternative: str | None,
+    *,
+    addition: bool = False,
 ) -> tuple[Span | None, Span | None, str]:
     """The words a Brenton note or cross-reference glosses, widened until
     they occur once in the verse and as they are, and the rule that found them.
@@ -268,9 +270,18 @@ def inferred_lemma(
     its last word or its length; otherwise the clause, or its first few words,
     stands for the place. A caller at the end of a verse or a line glosses the
     words before it if the note renders them, and otherwise the whole verse
-    (None).
+    (None). An addition belongs to the preceding clause, or its last four
+    words if it exceeds nine; at verse start the usual rules apply.
     """
     after = [i for i, (_, start, _) in enumerate(words) if start >= offset]
+    if addition:
+        before = [i for i, (_, _, end) in enumerate(words) if end <= offset]
+        if before:
+            clause = clause_before(verse, words, before[-1])
+            if len(clause) > 9:
+                clause = clause[-DEFAULT_LEMMA_WORDS:]
+            span = whole_compounds(verse, words, clause[0], clause[-1])
+            return unique_span(verse, words, *span), span, "addition before"
     # A rendering with figures ("Alex. 187 years") cannot be measured by its words.
     if alternative and re.search(r"\d", alternative):
         alternative = None
@@ -391,10 +402,14 @@ def inferred(
     alternative: str | None,
     exception: NoteOverride,
     key: str,
+    *,
+    addition: bool = False,
 ) -> tuple[Span | None, Span | None, str]:
     """A Brenton note's lemma, the words it glosses, and the rule that found
     them, with the exception file's say."""
-    span, glossed, rule = inferred_lemma(kind, verse, words, offset, alternative)
+    span, glossed, rule = inferred_lemma(
+        kind, verse, words, offset, alternative, addition=addition
+    )
     return overridden_lemma(
         verse, words, exception, span, glossed, rule, key, exception.get("occurrence")
     )

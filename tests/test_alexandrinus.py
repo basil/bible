@@ -95,6 +95,35 @@ def test_a_reading_without_a_note_of_its_own_quotes_the_vatican_words(
     assert r"\fl Vat. \fq God said\ft ." in verse_lines(doc)["22"]
 
 
+@pytest.mark.parametrize("override", [False, True])
+def test_an_addition_keeps_its_scope_before_promotion(
+    policy: bible.policy.Policy, override: bool
+) -> None:
+    doc = book(
+        "GEN",
+        r"\v 22 He said, Tell us \f + \fr 99:22 \fqa Alex. \ft adds 'new words'.\f*what happened.",
+    )
+    verse = scripture.verses(doc)["99:22"]
+    offset, note = verse.notes[0]
+    if override:
+        policy = changed(
+            policy,
+            "brenton_notes",
+            lambda data: data["notes"].update(
+                {
+                    "GEN 99:22": {
+                        "note": "Alex. adds '_new words_'.",
+                        "why": "Test italics.",
+                    }
+                }
+            ),
+        )
+    assert alexandrinus.surviving_scope(note, verse, offset, policy) == (
+        "Tell us",
+        "Tell us",
+    )
+
+
 def test_english_is_derived_exactly_and_only_from_brentons_words() -> None:
     assert alexandrinus.derived("key", READING, NOTE) == "the Lord God said"
     # A span's edit may write supplied words; its vocabulary must be Brenton's,

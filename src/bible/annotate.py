@@ -267,6 +267,7 @@ def brenton(
                 read.body.alternative,
                 exception,
                 key,
+                addition=read.body.addition,
             )
         elif "declared" in read.scope:
             require(

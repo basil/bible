@@ -48,8 +48,8 @@ Most of these are probably slips of transcription, by eBible or George, but some
 | NUM 36:7 | Acts 5. 26 | Acts 5. 13 |
 | DEU 16:8 | Lev. 23. 6 | Lev. 23. 36 |
 | DEU 5:16 | Eph. 6. 1 | Eph. 6. 2, which quotes the verse |
-| PRO 3:6 | 2 Tim 2. 13 | 2 Tim 2. 15 [also 2.6] |
-| PRO 4:11 | chap 2. 18 | chap 2. 15 [also 2.6] |
+| PRO 3:6 | 2 Tim 2. 13 | 2 Tim 2. 15 [also 2.5] |
+| PRO 4:11 | chap 2. 18 | chap 2. 15 [also 2.5] |
 | PRO 11:28 | 1 Tim. 5. 8 | 1 Tim. 6. 2 |
 | PRO 11:31 | 1 Pet. | 1 Pet. 4. 18 |
 | PRO 16:16 | Luke 13. 35 | Luke 13. 34 |
@@ -121,10 +121,10 @@ eBible's slips or Brenton's own; check the printing to know which file mends the
   - DEU 28:49 "Gr. bear." for "hear"; 2SA 15:20 "Gr. it." for "if"; PSA 51:1 "Gr. governing.", perhaps for "understanding"
   - GEN 30:27 "argued" for "augured"; GEN 41:51 "things belong to my father" for "belonging"; ISA 2:6 "sound to tense" for "sense" [also 1.4, 3.6]; JOS 15:18 "has thou" for "hast"
   - EXO 39:22 and 2KI 3:17 "posession"; EXO 12:3 "admissable"; JOS 10:34 "vigourously"; 1SA 13:21 "interpretors" [also 1.4]; 1SA 21:8 "repitition"; 2KI 4:39 "colosynth" for "colocynth"; 2KI 24:10 "seige". No category of correction allows a transposition like "seige", so a correction of it must be marked `"uncategorized": true`.
-  - 2SA 13:12 "fasciendum" for "faciendum"; PSA 49:18 "1 Pe" for "1 Pet." [also 2.6]
+  - 2SA 13:12 "fasciendum" for "faciendum"; PSA 49:18 "1 Pe" for "1 Pet." [also 2.5]
 - **Punctuation and capitals.** GEN 15:11 has no closing full stop. 1SA 6:8 begins in lowercase, "in the Alex." [also 3.1]. ZEC 12:2 "porches or, door-posts" lacks the comma before "or".
 - **Hebrew that eBible misread**, which no correction mends yet: 1SA 17:52 שעריס; 1SA 21:3 מקוצ and פלכי אלמבי; 2SA 5:23 בכאיס; JDG 9:6 מעכ [also 3.6]; JDG 9:37 מעס; JDG 17:10 ימיס; JDG 18:7 מבליס; ISA 51:3 שוב. Check also the maqaf in 2KI 2:14, where eBible has a space.
-- **Greek.** NUM 1:18 ἐπαξοοῦν [also 2.10] and EXO 19:22 ἀπαλλατέω. GEN 3:15 τειρήσει is probably Brenton's own spelling.
+- **Greek.** NUM 1:18 ἐπαξοοῦν [also 2.9] and EXO 19:22 ἀπαλλατέω. GEN 3:15 τειρήσει is probably Brenton's own spelling.
 - **1611.** GAL 5:16 (1611) has "fulfill", where the text has "fulfil". To check against a facsimile: JHN 18:28 (1611) "Pilats house"; TIT 2:9 (1611) "gain saying" (one word?); REV 6:6 (1611) "The word choenix, signifieth"; 2PE 2:11 (1611) "some read", in lowercase.
 
 ### 1.6 Italics to check
@@ -142,13 +142,12 @@ Each of these is a question about a rule. One decision settles every note it cov
 1. **1611 notes on a whole verse.** LUK 17:36 (1611), "This 36. verse is wanting in most of the Greek copies", reprints the whole verse as its lemma, and JHN 18:13 (1611), a note on the order of events, prints under "year". `kjv-notes.json` now allows `"lemma": null`, as `brenton-notes.json` does. Decide whether to give these two notes no lemma.
 2. **Notes on "the words in italics".** 2SA 17:8, 2SA 21:11 [also 2.3], 1SA 17:43 and 1KI 14:26#2 refer to words Brenton set in italics, which this edition prints in square brackets. Either print the bracketed words in italics too, or accept the mismatch.
 3. **Lemmas on a long passage.** HAG 2:14 ("Not in Hebrew.") and 2SA 21:11 [also 2.2] are about a whole bracketed passage, but their lemmas cover only its first clause. Decide whether a lemma that long is acceptable.
-4. **A rule for additions.** "Alex. + '…'" sets no rendering while "Alex. adds '…'" does, so the rules place the two differently, and about 25 overrides now put an addition's lemma on the words it follows. Proposed: a rule in `inferred_lemma` for notes that add words, taking the clause before the mark, or its last four words if it runs past nine, and the current rule at the start of a verse. It places 35 of the 41 additions correctly and would retire about 23 overrides; 1SA 12:13, 1KI 3:20, PRO 9:6, GEN 1:11#2 [also 3.1], ISA 63:19 and 2SA 6:3 would keep theirs.
-5. **"or" inside one rendering.** The rules split "_X_ or _Y_" into two italic runs, which is wrong when the "or" belongs to a single rendering. Overrides join EXO 21:28, NUM 1:52, 1SA 20:6, PSA 25:12, PSA 32:4, PSA 50:21 and ACT 25:6 (1611). Still split: EXO 14:15 "_harness_ or _yoke the horses again_", 2CO 4:8 (1611) "_altogether without help_ or _means_", where the 1611 has a comma before "or", and 1SA 30:12 "_staid_ or _established in him_". Decide whether these three should be joined.
-6. **Abbreviations without a full stop.** "chap 5. 25", "ver 16", "ch 1. 14", "Ps 103. 14", "Gen 7. 11", "See v 8." and the like occur about as often as the forms with a stop: JDG 21:4; 1SA 15:3; PSA 146:8; PRO 1:15, PRO 11:13, PRO 20:27, PRO 27:20a; JOL 2:15, JOL 4:18; MAL 3:10; ISA 2:19, ISA 14:16, ISA 23:11, ISA 45:16, ISA 57:21; PSA 49:18 "1 Pe" [also 1.5], PSA 90:6 "ver 3", PRO 3:6 "2 Tim" and PRO 4:11 "chap" [both also 1.1]. Check which way Brenton printed them, and correct all or none.
-7. **Two colons.** A lemma that keeps the verse's own colon prints two: "that believed: for there: or, …" (LUK 1:45 (1611); also LUK 4:41 (1611) and REV 14:13 (1611)). Decide whether the lemma should drop its colon.
-8. **"Heb. and Alex. Vat."** 36 notes print this, which is ambiguous. Their decisions' `witnesses` already say that Heb. and Alex. support the adopted wording and Vat. the displaced wording, but the printed form doesn't. Decide how to print it.
-9. **eBible's remark at PRO 30:1.** The verse is empty and carries eBible's remark "See chapter 24 for the content of chapter 30.", which prints as if it were Brenton's note. Chapter 31 starts at verse 10 with no remark at all. Keep the remark as an editorial note, or say where both passages are some other way.
-10. **Names and words written out in full.** `corrections` in `brenton-notes.json` write out "Lambert Bos" (the preface, GEN 33:18 [also 3.6], NUM 1:18 [also 1.5]), "Patrick Junius" (GEN 33:18), "Abraham Trommius" (NUM 25:8), "Professor Samuel Lee" (1KI 20:10), "Charles Pridham" (the Appendix) and "Complut." for "Comp." (1SA 31:9), all marked `uncategorized`, as if they mended slips. Decide whether they are editorial changes instead, and so belong elsewhere, or should stay as Brenton printed them. The same question goes for DEU 24:13, whose correction of "ie." to "i. e." is `uncategorized` too: keep it as a correction, or make it a revision in `edition/revisions.json`.
+4. **"or" inside one rendering.** The rules split "_X_ or _Y_" into two italic runs, which is wrong when the "or" belongs to a single rendering. Overrides join EXO 21:28, NUM 1:52, 1SA 20:6, PSA 25:12, PSA 32:4, PSA 50:21 and ACT 25:6 (1611). Still split: EXO 14:15 "_harness_ or _yoke the horses again_", 2CO 4:8 (1611) "_altogether without help_ or _means_", where the 1611 has a comma before "or", and 1SA 30:12 "_staid_ or _established in him_". Decide whether these three should be joined.
+5. **Abbreviations without a full stop.** "chap 5. 25", "ver 16", "ch 1. 14", "Ps 103. 14", "Gen 7. 11", "See v 8." and the like occur about as often as the forms with a stop: JDG 21:4; 1SA 15:3; PSA 146:8; PRO 1:15, PRO 11:13, PRO 20:27, PRO 27:20a; JOL 2:15, JOL 4:18; MAL 3:10; ISA 2:19, ISA 14:16, ISA 23:11, ISA 45:16, ISA 57:21; PSA 49:18 "1 Pe" [also 1.5], PSA 90:6 "ver 3", PRO 3:6 "2 Tim" and PRO 4:11 "chap" [both also 1.1]. Check which way Brenton printed them, and correct all or none.
+6. **Two colons.** A lemma that keeps the verse's own colon prints two: "that believed: for there: or, …" (LUK 1:45 (1611); also LUK 4:41 (1611) and REV 14:13 (1611)). Decide whether the lemma should drop its colon.
+7. **"Heb. and Alex. Vat."** 36 notes print this, which is ambiguous. Their decisions' `witnesses` already say that Heb. and Alex. support the adopted wording and Vat. the displaced wording, but the printed form doesn't. Decide how to print it.
+8. **eBible's remark at PRO 30:1.** The verse is empty and carries eBible's remark "See chapter 24 for the content of chapter 30.", which prints as if it were Brenton's note. Chapter 31 starts at verse 10 with no remark at all. Keep the remark as an editorial note, or say where both passages are some other way.
+9. **Names and words written out in full.** `corrections` in `brenton-notes.json` write out "Lambert Bos" (the preface, GEN 33:18 [also 3.6], NUM 1:18 [also 1.5]), "Patrick Junius" (GEN 33:18), "Abraham Trommius" (NUM 25:8), "Professor Samuel Lee" (1KI 20:10), "Charles Pridham" (the Appendix) and "Complut." for "Comp." (1SA 31:9), all marked `uncategorized`, as if they mended slips. Decide whether they are editorial changes instead, and so belong elsewhere, or should stay as Brenton printed them. The same question goes for DEU 24:13, whose correction of "ie." to "i. e." is `uncategorized` too: keep it as a correction, or make it a revision in `edition/revisions.json`.
 
 ## 3. Readings from Codex Alexandrinus
 
@@ -160,7 +159,7 @@ Not open: NUM 28:24, GEN 5:32 and GEN 6:10 are kept without `todo`, and their de
 
 Swete confirms the Greek, but Brenton gives it only in Greek, so printing it needs English of the edition's own. One policy decision settles the group: whether the edition ever supplies its own English.
 
-GEN 1:11#2 [also 2.4], JDG 9:27#2, JDG 13:5#2, JDG 13:19, 1SA 6:8 [also 1.5], 2SA 17:16, 1KI 5:18, 1KI 8:59#3, 2KI 19:24, 2KI 21:6#2, PSA 31:9, ISA 59:7#2.
+GEN 1:11#2, JDG 9:27#2, JDG 13:5#2, JDG 13:19, 1SA 6:8 [also 1.5], 2SA 17:16, 1KI 5:18, 1KI 8:59#3, 2KI 19:24, 2KI 21:6#2, PSA 31:9, ISA 59:7#2.
 
 ### 3.2 A pointer with no English (3)
 
@@ -219,7 +218,7 @@ Nothing here needs printing: the text already follows A, or the note explains ra
 
 | Decision | Why it can probably stay a note |
 | --- | --- |
-| GEN 33:18 | The verse already translates A's παρενέβαλε as "took up a position"; "pitched his tent" is another translation of the same word. [also 2.10] |
+| GEN 33:18 | The verse already translates A's παρενέβαλε as "took up a position"; "pitched his tent" is another translation of the same word. [also 2.9] |
 | JDG 9:6 | The Greek εὐρετῆ that A omits has no English words of its own in Brenton's verse, and his "of Sedition" follows A. [also 1.5] |
 | JDG 21:22 | Brenton says that "according to the occasion" is translated from A. |
 | 2SA 5:18 | Brenton points to Govett's discussion of Isaiah and gives no English; Swete's Greek doesn't supply any. [also 1.4] |

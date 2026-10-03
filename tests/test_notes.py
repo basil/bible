@@ -579,8 +579,10 @@ def inferred(verse: str, note: str, kind: str = "f") -> tuple[str | None, str]:
     offset = verse.index("‸")
     verse = verse.replace("‸", "")
     words = scripture.word_spans(verse)
-    alternative = notes.interpreted(notes.labelled_pieces(note), "K").alternative
-    span, _, rule = lemmas.inferred_lemma(kind, verse, words, offset, alternative)
+    body = notes.interpreted(notes.labelled_pieces(note), "K")
+    span, _, rule = lemmas.inferred_lemma(
+        kind, verse, words, offset, body.alternative, addition=body.addition
+    )
     return (lemmas.lemma_text(verse, words, span) if span else None), rule
 
 
@@ -667,6 +669,137 @@ def test_the_rules_find_the_words_a_note_is_about(
     verse: str, note: str, expected: tuple[str | None, str]
 ) -> None:
     assert inferred(verse, note) == expected
+
+
+@pytest.mark.parametrize(
+    "note",
+    [
+        "Alex. + 'new words'.",
+        "Alex. adds 'new words'.",
+        'Alex. add "new words".',
+        "Alex. insert ‘new words’.",
+        "Alex. inserts, “new words”.",
+        "Gr. Alex. + εἰς ὁμοιότητα.",
+    ],
+)
+def test_addition_syntax_survives_italic_overrides(note: str) -> None:
+    body = notes.interpreted(notes.labelled_pieces(note), "key")
+    assert body.addition
+    assert notes.declared_readings(body, body.plain, "key").addition
+    assert inferred("He said, Tell us ‸what happened.", note) == (
+        "Tell us",
+        "addition before",
+    )
+
+
+def test_joined_witness_labels_introduce_an_addition() -> None:
+    note = usj.note(
+        "f",
+        *usj.parse(
+            r"\fqa Heb. \ft and \fqa Alex. \ft insert ‘new words’.", fragment=True
+        ),
+    )
+    body = notes.interpreted(notes.source_pieces(note), "key")
+    assert body.addition
+    assert body.alternative == "new words"
+
+
+@pytest.mark.parametrize(
+    "verse, expected",
+    [
+        ("He said, Tell us.‸", "Tell us"),
+        ("He said, Tell us ‸\nwhat happened.", "Tell us"),
+        (
+            "One two three four five six seven eight nine ‸then.",
+            "One two three four five six seven eight nine",
+        ),
+        (
+            "One two three four five six seven eight nine ten ‸then.",
+            "seven eight nine ten",
+        ),
+        ("Tell us, Tell us ‸what happened.", "Tell us what"),
+        (
+            "One two three four five six seven flood-gates opened ‸then.",
+            "seven flood-gates opened",
+        ),
+        (
+            "One two three four five flood-gates six seven eight ‸then.",
+            "flood-gates six seven eight",
+        ),
+    ],
+)
+def test_additions_select_the_preceding_clause(verse: str, expected: str) -> None:
+    assert inferred(verse, "Alex. adds 'new words'.") == (expected, "addition before")
+
+
+@pytest.mark.parametrize("note", ["Alex. + for David.", "Alex. adds 'for David'."])
+def test_additions_at_verse_start_keep_existing_inference(note: str) -> None:
+    assert inferred("‸A Song of Degrees. O Lord.", note) == (
+        "A Song of Degrees" if "+" in note else "A Song",
+        "explanatory" if "+" in note else "length",
+    )
+
+
+@pytest.mark.parametrize("note", ["Gr. add these things.", "Gr. add words."])
+def test_literal_add_is_a_rendering(note: str) -> None:
+    body = notes.interpreted(notes.labelled_pieces(note), "key")
+    assert not body.addition
+    assert body.alternative == note[4:-1]
+
+
+@pytest.mark.parametrize(
+    "note", ['Alex. adds "new words" at the end.', "Alex. adds `new words' at the end."]
+)
+def test_an_added_reading_ends_with_its_quotation_marks(note: str) -> None:
+    assert notes.interpreted(notes.labelled_pieces(note), "key").alternative == (
+        "new words"
+    )
+
+
+def test_an_addition_beside_the_measuring_rendering_does_not_place_the_lemma() -> None:
+    body = notes.interpreted(notes.labelled_pieces("Heb. the Lord; Alex. + God."), "K")
+    assert body.alternative == "the Lord"
+    assert not body.addition
+
+
+def test_additions_do_not_echo_words_from_a_widened_lemma(
+    ctx: bible.annotate.Context,
+) -> None:
+    result = printed(
+        r"\v 1 Tell us, Tell us \f + \fr 99:1 \fqa Alex. \ft adds 'new words'.\f*what happened.",
+        ctx,
+    )["1"]
+    assert result == (
+        r"Tell us, Tell us \f - \fr 99:1 \fq Tell us what: \ft Alex. adds \fqa new words\f*what happened."
+    )
+
+
+def test_surviving_additions_keep_their_printed_words(
+    edition: bible.pipeline.Edition,
+    policy: bible.policy.Policy,
+) -> None:
+    rows = {r["key"]: r for listed in edition.notes.values() for r in listed}
+    expected = {
+        "GEN 1:11#2": (
+            "according to its likeness",
+            "Gr. Alex. adds εἰς ὁμοιότητα",
+            "override",
+        ),
+        "JON 1:8": (
+            "Tell us",
+            "Alex. adds _for those whose cause this evil is upon us_",
+            "addition before",
+        ),
+        "PSA 130:1": ("A Song of Degrees", "Alex. adds _for David_", "explanatory"),
+        "PSA 132:1": ("A Song of Degrees", "Alex. adds _for David_", "explanatory"),
+    }
+    for key, values in expected.items():
+        assert tuple(rows[key][field] for field in ("lemma", "note", "rule")) == values
+    assert "JON 1:8" not in policy.brenton_notes["notes"]
+    assert (
+        policy.brenton_notes["notes"]["GEN 1:11#2"]["lemma"]
+        == "according to its likeness"
+    )
 
 
 @pytest.mark.parametrize(

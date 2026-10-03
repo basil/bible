@@ -472,6 +472,10 @@
       "lemma": "its places",
       "why": "Brenton's caller follows the words the note glosses"
     },
+    "GEN 1:11#2": {
+      "lemma": "according to its likeness",
+      "why": "the Greek addition concerns according to its likeness, rather than the clause before the caller"
+    },
     "GEN 2:9#2": {
       "lemma": "the knowledge",
       "why": "that which is to be known renders the knowledge; of good and evil stays"
@@ -3040,10 +3044,6 @@
     "OBA 1:19": {
       "lemma": "south",
       "why": "the Greek transliterates the Hebrew for south"
-    },
-    "JON 1:8": {
-      "lemma": "Tell us",
-      "why": "the Alexandrine addition follows Tell us"
     },
     "JON 1:13": {
       "lemma": "rose and grew more and more",
