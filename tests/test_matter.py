@@ -85,6 +85,19 @@ def test_a_books_introduction_is_a_footnote_on_its_first_verse(
     )
 
 
+def test_front_matter_notes_drop_the_origin_that_names_no_verse() -> None:
+    # eBible gives the notes of its front matter, which has no verses, the
+    # origin "1:0": they print under their callers alone. A real origin stays.
+    doc = usj.parse(
+        "\\id XXB\n\\ip Words\\f + \\fr 1:0 \\ft A title\\f* and"
+        "\\f + \\fr 3:12 \\ft Cited\\f* more.\n"
+    )
+    assert usj.serialize(matter.without_empty_origins(doc)) == (
+        "\\id XXB\n\\ip Words\\f + \\ft A title\\f* and"
+        "\\f + \\fr 3:12 \\ft Cited\\f* more.\n"
+    )
+
+
 @pytest.mark.parametrize("code", ["1ES", "JDT", "SIR", "DAG"])
 def test_prose_footnotes_quote_in_italic_without_marks(
     edition: bible.pipeline.Edition, code: str

@@ -647,7 +647,6 @@ def view(edition: Edition, mode: str) -> list[tuple[str, Document]]:
 
 
 ORIGIN = re.compile(r"^\d+:")
-EMPTY_ORIGIN = re.compile(r"\d+:0 ")
 
 
 # GFS Didot does not encode U+02BC, the Greek elision mark; it does encode the
@@ -691,17 +690,12 @@ def exported(code: str, doc: Document, edition: Edition) -> str:
     origins without their chapter, which the chapter figure and running head
     supply; and its Greek and Hebrew tagged for their fonts. The edition's own
     pages are sent as the editor wrote them."""
-    scripture_unit = code in edition.scripture
 
-    def origin(item: Node) -> Node | None:
+    def origin(item: Node) -> Node:
         if item["type"] == "char" and item["marker"] in ("fr", "xo"):
             values = item["content"]
             assert all(isinstance(v, str) for v in values)
             value = "".join(v for v in values if isinstance(v, str))
-            # Front matter has no verses, and its source gives its notes the
-            # origin "1:0", which names nothing: they print under their callers.
-            if not scripture_unit and EMPTY_ORIGIN.fullmatch(value):
-                return None
             return {**item, "content": [ORIGIN.sub("", value)]}
         return item
 

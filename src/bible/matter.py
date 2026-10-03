@@ -40,6 +40,9 @@ type Unit = list[tuple[Node, dict[Address, Reading]]]
 PERIOD_FREE = ("h", "toc1", "mt1", "is1", "is2")
 # An editorial gloss, which the edition's introduction says is bracketed.
 GLOSS = re.compile(r" ?\[[^\[\]]+\]")
+# The origin eBible gives a note of its front matter, which has no verses:
+# it names nothing.
+EMPTY_ORIGIN = re.compile(r"\d+:0 ")
 
 
 @dataclass(frozen=True)
@@ -77,7 +80,32 @@ def rebased(reading: Reading, text: str) -> Reading:
     """A reading carried to the paragraph's words as they now stand."""
     if text == reading.text:
         return reading
-    changes = SequenceMatcher(None, reading.text, text, autojunk=False).get_opcodes()
+    # A change touches a few words of a long paragraph: only the words between
+    # what the two texts share at either end need to be compared.
+    before, after = reading.text, text
+    head = 0
+    while head < min(len(before), len(after)) and before[head] == after[head]:
+        head += 1
+    tail = 0
+    while (
+        tail < min(len(before), len(after)) - head
+        and before[-1 - tail] == after[-1 - tail]
+    ):
+        tail += 1
+    middle = SequenceMatcher(
+        None,
+        before[head : len(before) - tail],
+        after[head : len(after) - tail],
+        autojunk=False,
+    ).get_opcodes()
+    changes = [
+        ("equal", 0, head, 0, head),
+        *(
+            (kind, head + a, head + b, head + c, head + d)
+            for kind, a, b, c, d in middle
+        ),
+        ("equal", len(before) - tail, len(before), len(after) - tail, len(after)),
+    ]
 
     def at(position: int, ending: bool = False) -> int:
         for kind, a, b, c, d in changes:
@@ -560,6 +588,20 @@ def renamed(
     return unit
 
 
+def without_empty_origins(doc: Document) -> Document:
+    """A unit without the origins of its notes that name no verse: those
+    notes print under their callers alone."""
+
+    def origin(item: Node) -> Node | None:
+        if usj.is_type(item, "char", "fr") and EMPTY_ORIGIN.fullmatch(
+            usj.text_of(item["content"])
+        ):
+            return None
+        return item
+
+    return usj.with_content(doc, lambda content: usj.mapped(content, origin))
+
+
 def unpunctuated(unit: Unit) -> Unit:
     """A unit whose titles and headings drop their closing full stops."""
     result: Unit = []
@@ -702,7 +744,7 @@ def unit(
     shown = unpunctuated(shown)
     shown = renamed(shown, code, ctx.books, policy)
     shown = with_terms(shown, ctx.terms)
-    result = usj.with_blocks(doc, [block for block, _ in shown])
+    result = without_empty_origins(usj.with_blocks(doc, [block for block, _ in shown]))
     if is_glossary(entry):
         result = terminology.completed_glossary(
             result, terminology.dropped_rows(source, policy), policy

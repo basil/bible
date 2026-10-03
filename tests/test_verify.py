@@ -64,32 +64,22 @@ def test_processed_output_that_changes_the_text_is_refused(
         processed(SOURCE_USFM.replace(before, after))
 
 
-def test_printed_origins_lose_their_chapter_and_front_matter_its_empty_ones(
-    declared: bible.policy.Policy,
-) -> None:
+def test_printed_origins_lose_their_chapter(declared: bible.policy.Policy) -> None:
     # What verify compares PTXprint's copy against is the exported text.
     doc = usj.parse(
         "\\id GEN\n\\c 9\n\\p\n"
         "\\v 12 And God\\f - \\fr 9:12 \\ft See \\xt Hebrews 12:29\\f* said"
         "\\x - \\xo 9:12a \\xt Psalm 1:2\\x* to Noe.\\f + \\fr 3:0 \\ft A title\\f*\n"
     )
-
     # An edition of no books: exporting reads only which units are scripture.
     none: MappingProxyType[str, Any] = MappingProxyType({})
-
-    def exported(code: str, scripture: set[str]) -> str:
-        unit = pipeline.Edition(
-            declared, none, frozenset(scripture), frozenset(), none, none, none, none
-        )
-        return pipeline.exported(code, doc, unit).split("\\v 12 ")[1]
-
-    assert exported("GEN", {"GEN"}) == (
+    unit = pipeline.Edition(
+        declared, none, frozenset({"GEN"}), frozenset(), none, none, none, none
+    )
+    assert pipeline.exported("GEN", doc, unit).split("\\v 12 ")[1] == (
         "And God\\f - \\fr 12 \\ft See \\xt Hebrews 12:29\\f* said"
         "\\x - \\xo 12a \\xt Psalm 1:2\\x* to Noe.\\f + \\fr 0 \\ft A title\\f*\n"
     )
-    # Front matter has no verses: an origin that names none isn't printed.
-    assert exported("XXB", set()).endswith("to Noe.\\f + \\ft A title\\f*\n")
-    assert "\\fr 12 \\ft See" in exported("XXB", set())
 
 
 # Rendered PDF
