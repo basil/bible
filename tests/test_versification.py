@@ -54,9 +54,11 @@ def texts(
 
 
 @pytest.fixture(scope="module")
-def table(texts: bible.places.Texts, scripture: dict[str, Document]) -> places.Table:
+def table(
+    texts: bible.places.Texts, scripture: dict[str, Document], read: bible.pipeline.Read
+) -> places.Table:
     """STEPBible's account of where each of the edition's verses stands."""
-    return places.tabled(texts, scripture)
+    return places.tabled(texts, scripture, read.versification)
 
 
 def printed(verse: bible.references.Verse, edition: bible.pipeline.Edition) -> bool:

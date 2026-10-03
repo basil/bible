@@ -68,6 +68,10 @@ def test_the_policy_is_read_once_and_cannot_be_changed(
         policy.manifest["title"] = "Another"
     with pytest.raises(TypeError):
         policy.brenton_notes["notes"]["GEN 1:9#2"]["lemma"] = "other words"
+    for entry in policy.entries:
+        if "file" in entry:
+            with pytest.raises(TypeError):
+                entry["id"] = "XYZ"
     # A test declares another policy; the one it started from is as it was.
     other = changed(policy, "sample", lambda data: data.pop("GEN"))
     assert "GEN" in policy.sample and "GEN" not in other.sample
@@ -102,6 +106,49 @@ def test_the_policy_is_read_once_and_cannot_be_changed(
                 {"unit": "GEN", "from": "In the beginning", "to": "At first"}
             ),
             "no front or back matter",
+        ),
+        (
+            "manifest",
+            lambda d: d["scripture"][0].update(short_titel="Genesis"),
+            "Manifest scripture.*GEN.*missing or unknown fields",
+        ),
+        (
+            "manifest",
+            lambda d: d["front_matter"][0].update(short_titel="Front matter"),
+            "Manifest front_matter.*missing or unknown fields",
+        ),
+        (
+            "citations",
+            lambda d: d["names"].update(
+                XYZ=[{"from": "Never present", "to": "{GEN}", "why": "x"}]
+            ),
+            "Unused citation name changes.*XYZ",
+        ),
+        (
+            "citations",
+            lambda d: d["names"]["BAK"][0].update(whyy="x"),
+            "Citation name change BAK has missing or unknown fields",
+        ),
+        (
+            "prose",
+            lambda d: d.update(
+                probe={
+                    "why": "x",
+                    "changes": [
+                        {
+                            "unit": "XXB",
+                            "from": "introduction may be necessary",
+                            "to": "introduction may be necessary",
+                        }
+                    ],
+                }
+            ),
+            "Prose change that changes nothing: probe: XXB",
+        ),
+        (
+            "prose",
+            lambda d: d["numbers"]["changes"][0].update(to="5."),
+            "Prose change that changes nothing: numbers: MAT 18:28 pence",
         ),
         (
             "prose",
@@ -514,3 +561,18 @@ def test_the_review_is_written_once_and_shows_what_changed(
         and "+\\v 24 And Ezekiel shall be" in diff
     )
     assert "1 files changed" in capsys.readouterr().out
+
+
+def test_preparation_reads_only_the_supplied_inputs(
+    sources: bible.sources.Sources,
+    declared: bible.policy.Policy,
+    edition: bible.pipeline.Edition,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def unreadable(*args: object, **kwargs: object) -> None:
+        raise AssertionError("Preparation must not read files")
+
+    monkeypatch.setattr(Path, "open", unreadable)
+    prepared = pipeline.prepare(sources, declared)
+    assert prepared.documents == edition.documents
+    assert prepared.policy.versification == edition.policy.versification

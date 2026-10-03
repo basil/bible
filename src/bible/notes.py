@@ -731,6 +731,7 @@ def edited(body: Body, before: str, after: str, key: str) -> Body:
     """A body with a declared change to its words, its roles, reading,
     citations and terms carried through the change."""
     text = body.plain
+    require(before and before != after, f"Prose edit changes nothing: {key}: {before}")
     require(text.count(before) == 1, f"Prose edit does not apply once: {key}: {before}")
     prefix, removed, added = change(before, after)
     start = text.index(before) + prefix

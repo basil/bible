@@ -37,12 +37,6 @@ FILES = (
     "versification",
     "witnesses",
 )
-# The edition's own pages, among the units the manifest lists.
-EDITOR: Entry = {"id": "CNC", "file": "content/introduction.sfm"}
-NUMBERING: Entry = {"id": "XXA", "file": "content/numbering.sfm"}
-OLD_TESTAMENT: Entry = {"id": "XXF", "file": "content/old-testament.sfm"}
-NEW_TESTAMENT: Entry = {"id": "XXG", "file": "content/new-testament.sfm"}
-APPENDICES: Entry = {"id": "GLO", "file": "content/appendices.sfm"}
 
 
 def freeze(value: object) -> object:
@@ -51,6 +45,14 @@ def freeze(value: object) -> object:
     if isinstance(value, (list, tuple)):
         return tuple(freeze(v) for v in value)
     return value
+
+
+# The edition's own pages, among the units the manifest lists.
+EDITOR = cast(Entry, freeze({"id": "CNC", "file": "content/introduction.sfm"}))
+NUMBERING = cast(Entry, freeze({"id": "XXA", "file": "content/numbering.sfm"}))
+OLD_TESTAMENT = cast(Entry, freeze({"id": "XXF", "file": "content/old-testament.sfm"}))
+NEW_TESTAMENT = cast(Entry, freeze({"id": "XXG", "file": "content/new-testament.sfm"}))
+APPENDICES = cast(Entry, freeze({"id": "GLO", "file": "content/appendices.sfm"}))
 
 
 # Compared and hashed by identity, so that what is worked out from a policy
@@ -132,6 +134,45 @@ def thaw(value: object) -> Any:
 
 
 def check(policy: Policy) -> None:
+    manifest_fields = {
+        "title",
+        "scripture",
+        "front_matter",
+        "old_testament_front",
+        "new_testament_front",
+        "appendices",
+        "excluded",
+    }
+    require_fields(policy.manifest, manifest_fields, (), "Manifest")
+    require_fields(policy.manifest["excluded"], {"brenton"}, (), "Excluded sources")
+    names = {"source_id", "title", "short_title", "abbreviation", "heading"}
+    for manifest_group in (
+        "scripture",
+        "front_matter",
+        "old_testament_front",
+        "new_testament_front",
+        "appendices",
+    ):
+        for unit_entry in policy.manifest[manifest_group]:
+            required = {"id", "source"}
+            optional = names
+            if manifest_group == "scripture":
+                required = required | {"section", "title"}
+                optional = (names - {"title"}) | {
+                    "chapters",
+                    "cited_singly",
+                    "abbreviated_singly",
+                }
+            require_fields(
+                unit_entry,
+                required,
+                optional,
+                f"Manifest {manifest_group} entry {unit_entry.get('id')}",
+            )
+            require(
+                unit_entry["source"] in {"brenton", "kjv"},
+                f"Unknown source: {unit_entry['id']}",
+            )
     scripture = policy.scripture
     unplaced = [
         u["id"]
@@ -227,6 +268,28 @@ def check(policy: Policy) -> None:
     # made in: one that named neither, or a unit that nothing reads, would be
     # met by nothing, unnoticed.
     matter = {e["id"] for e in policy.entries if "file" not in e and "section" not in e}
+    require_fields(
+        policy.citations,
+        {"units", "dialects", "decisions", "names"},
+        (),
+        "Citations file",
+    )
+    unused_names = sorted(set(policy.citations["names"]) - matter)
+    require(not unused_names, f"Unused citation name changes: {unused_names}")
+    for code, changes in policy.citations["names"].items():
+        require(changes, f"Empty citation name changes: {code}")
+        for change in changes:
+            require_fields(
+                change, {"from", "to", "why"}, (), f"Citation name change {code}"
+            )
+            require(
+                change["from"] and change["why"],
+                f"Citation name change without words or reason: {code}",
+            )
+            require(
+                change["from"] != change["to"],
+                f"Citation name change that changes nothing: {code}",
+            )
     for name, prose_group in policy.prose.items():
         require_fields(prose_group, {"why", "changes"}, (), f"Prose changes {name}")
         require(prose_group["why"], f"Prose changes without a why: {name}")
@@ -236,6 +299,10 @@ def check(policy: Policy) -> None:
                 {"from", "to"},
                 {"note", "unit", "why"},
                 f"Prose change in {name}",
+            )
+            require(
+                change["from"] and change["from"] != change["to"],
+                f"Prose change that changes nothing: {name}: {change.get('note', change.get('unit'))}",
             )
             require(
                 ("note" in change) != ("unit" in change),

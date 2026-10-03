@@ -526,18 +526,20 @@ def test_a_name_is_changed_once_and_whole(
 
     def renamed(*names: object) -> str:
         declared = changed(
-            policy, "citations", lambda data: data["names"].update(x=list(names))
+            policy, "citations", lambda data: data["names"].update(BAK=list(names))
         )
-        found = matter.renamed(unit, "x", ctx.books, declared)
+        found = matter.renamed(unit, "BAK", ctx.books, declared)
         return usj.serialize(usj.with_blocks(doc, [block for block, _ in found]))
 
     assert renamed(
         {"from": "CHRONICLES I", "to": "{1CH:upper}", "why": "x"},
         {"from": "CHRONICLES II", "to": "{2CH:upper}", "why": "x"},
     ) == ("\\id BAK\n\\is2 1 CHRONICLES\n\\is2 2 CHRONICLES\n")
-    with pytest.raises(CheckFailed, match="Change of name not met once: x"):
+    with pytest.raises(CheckFailed, match="Change of name not met once: BAK"):
         renamed({"from": "CHRONICLES", "to": "x", "why": "x"})
-    with pytest.raises(CheckFailed, match="without its words or reason"):
+    with pytest.raises(
+        CheckFailed, match="Citation name change BAK has missing or unknown fields"
+    ):
         renamed({"from": "CHRONICLES I", "to": "x"})
 
 

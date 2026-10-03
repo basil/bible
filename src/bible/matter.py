@@ -401,6 +401,10 @@ def edited(
     Words that are only added join the words before them, or, from the right,
     the words after them."""
     for change in changes:
+        require(
+            change["from"] and change["from"] != change["to"],
+            f"{name} changes nothing: {code}: {change['from']}",
+        )
         found = [
             (index, address)
             for index, (block, readings) in enumerate(unit)
@@ -545,6 +549,7 @@ def renamed(
         block, readings = unit[index]
         content = dict(regions(block))[address]
         after = citations.named(declaration["to"], books.names)
+        require(before != after, f"Change of name changes nothing: {code} ({before})")
         edits = [
             (match.start() + a, match.start() + b, after[c:d])
             for kind, a, b, c, d in SequenceMatcher(

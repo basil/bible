@@ -5,6 +5,7 @@ from __future__ import annotations
 import pytest
 
 from bible import tvtms, usj
+from bible.sources import Sources
 from bible.tvtms import Bible, Row
 
 GREEK = (
@@ -20,8 +21,8 @@ def bible() -> Bible:
     return Bible({"JOL": usj.parse(GREEK)})
 
 
-def test_the_table_is_read_whole() -> None:
-    found, unread = tvtms.rows()
+def test_the_table_is_read_whole(sources: Sources) -> None:
+    found, unread = tvtms.rows(sources.versification)
     assert len(found) == 22860
     # Lists of scattered verses, as "9:10,15,23,24,25", name no run to read.
     assert len(unread) == 14
@@ -83,7 +84,7 @@ def test_an_unreadable_test_is_neither(bible: Bible, tests: str) -> None:
 
 
 def test_the_account_is_of_the_rows_the_bible_passes(
-    bible: Bible, monkeypatch: pytest.MonkeyPatch
+    bible: Bible,
 ) -> None:
     def row(tradition: str, source: str, standard: str, tests: str = "") -> Row:
         source_verses, standard_verses = tvtms._verses(source), tvtms._verses(standard)
@@ -98,8 +99,7 @@ def test_the_account_is_of_the_rows_the_bible_passes(
         row("Greek", "Jol.3:1!b", "Jol.2:28"),
         row("Hebrew", "Hos.2:1", "Hos.1:10"),
     ]
-    monkeypatch.setattr(tvtms, "rows", lambda: (rows, []))
-    account = tvtms.account(bible, {"JOL": ["JOL"]})
+    account = tvtms.account(bible, {"JOL": ["JOL"]}, rows)
     found = {
         str(verse): [list(map(str, standard)) for standard, _ in answers]
         for verse, answers in account.items()

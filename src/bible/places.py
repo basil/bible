@@ -446,7 +446,7 @@ def _join(
 
 
 def tabled(
-    texts: Texts, books: Mapping[str, Document]
+    texts: Texts, books: Mapping[str, Document], rows: Sequence[tvtms.Row]
 ) -> dict[Verse, tuple[Verse, ...] | None]:
     """Each verse's counterparts by the table, or None where its rows disagree.
 
@@ -456,7 +456,7 @@ def tabled(
     bible = tvtms.Bible(
         {name: books[code] for code, listed in names.items() for name in listed}
     )
-    account = tvtms.account(bible, names)
+    account = tvtms.account(bible, names, rows)
     result: dict[Verse, tuple[Verse, ...] | None] = {}
     for verse in texts.edition.words:
         kjv = texts.books[verse.book]
@@ -480,12 +480,13 @@ def tabled(
 def witnesses(
     books: Mapping[str, Document],
     kjv: Mapping[str, Document],
+    rows: Sequence[tvtms.Row],
     *,
     policy: bible.policy.Policy,
 ) -> tuple[Texts, dict[str, list[WitnessBlock]]]:
     """Both witnesses on every verse of every book, block by block."""
     texts = Texts(books, kjv, policy=policy)
-    table = tabled(texts, books)
+    table = tabled(texts, books, rows)
     report: dict[str, list[WitnessBlock]] = {}
     for code in texts.books:
         blocks: list[WitnessBlock] = []
@@ -710,6 +711,7 @@ def decided(
 def placed(
     books: Mapping[str, Document],
     kjv: Mapping[str, Document],
+    rows: Sequence[tvtms.Row],
     *,
     policy: bible.policy.Policy,
 ) -> dict[str, list[Run]]:
@@ -720,7 +722,7 @@ def placed(
         - set(policy.versification["old_testament"])
     )
     require(not unknown, f"Readings outside the Old Testament: {unknown}")
-    texts, report = witnesses(books, kjv, policy=policy)
+    texts, report = witnesses(books, kjv, rows, policy=policy)
     proposed = proposal(texts, report)
     found = {
         code: decided(

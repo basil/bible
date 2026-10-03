@@ -43,6 +43,7 @@ SOURCES = {
         "file": "sources/exhaustive-listing-marginal-notes-1611-edition-king-james-bible.md",
         "url": "https://en.literaturabautista.com/exhaustive-listing-marginal-notes-1611-edition-king-james-bible",
         "retrieved": "2026-09-25",
+        "sha256": "3372e39512dc23c13bf6118eb80901532d05607444b5694b2e175aa3a7c1cc38",
     },
 }
 
@@ -52,13 +53,14 @@ class Sources:
     """Every text the edition is made from, as it was read.
 
     The archives' books are USFM by their \\id codes; the edition's own pages
-    are by their paths; the marginal notes are Calvin George's listing.
+    are by their paths; the marginal notes are Calvin George's listing; versification is TVTMS.
     """
 
     brenton: MappingProxyType[str, str]
     kjv: MappingProxyType[str, str]
     authored: MappingProxyType[str, str]
     marginal: str
+    versification: str
 
     def __getitem__(self, family: str) -> Mapping[str, str]:
         return {"brenton": self.brenton, "kjv": self.kjv}[family]
@@ -87,7 +89,7 @@ def pinned_bytes(path: str, expected_sha256: str) -> bytes:
 
 
 def load() -> Sources:
-    """Read the archives, the edition's pages and the marginal notes."""
+    """Read the pinned texts and the edition's own pages."""
     archives = {
         name: read_archive(
             io.BytesIO(pinned_bytes(source["archive"], source["sha256"]))
@@ -99,9 +101,16 @@ def load() -> Sources:
         str(path.relative_to(paths.ROOT)): path.read_text(encoding="utf-8")
         for path in sorted(paths.CONTENT_DIR.glob("*.sfm"))
     }
-    marginal = (paths.ROOT / SOURCES["marginal_notes"]["file"]).read_text(
-        encoding="utf-8"
-    )
+    marginal = pinned_bytes(
+        SOURCES["marginal_notes"]["file"], SOURCES["marginal_notes"]["sha256"]
+    ).decode("utf-8")
+    versification = pinned_bytes(
+        SOURCES["versification"]["file"], SOURCES["versification"]["sha256"]
+    ).decode("utf-8-sig")
     return Sources(
-        archives["brenton"], archives["kjv"], MappingProxyType(authored), marginal
+        archives["brenton"],
+        archives["kjv"],
+        MappingProxyType(authored),
+        marginal,
+        versification,
     )

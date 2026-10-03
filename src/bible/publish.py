@@ -32,7 +32,7 @@ def tracked_inputs() -> dict[str, str]:
     }
     for name in (
         *TRACKED_FILES,
-        # Not pinned by a hash like the archives, so record the copy that was read.
+        # Record the local marginal listing alongside its source pin.
         sources.SOURCES["marginal_notes"]["file"],
         *toolchain.font_archives(),
     ):

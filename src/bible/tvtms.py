@@ -14,17 +14,14 @@ account and the words of the two translations disagree, the words decide.
 from __future__ import annotations
 
 import collections
-import functools
 import re
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 
 from bible import scripture, usj
 from bible.references import Verse
-from bible.sources import SOURCES, pinned_bytes
 from bible.usj import Document
 
-SOURCE = SOURCES["versification"]
 # A reference as the table writes it, as "Gen.31:55", "Psa.50:Title", or the
 # part of a verse "Gen.3:1!a". Esther's Greek additions are chapters A to F.
 REFERENCE = re.compile(
@@ -83,10 +80,8 @@ def _verses(
     return verses
 
 
-@functools.cache
-def rows() -> tuple[list[Row], list[str]]:
-    """The expanded table's rows, and how many of them couldn't be read."""
-    text = pinned_bytes(SOURCE["file"], SOURCE["sha256"]).decode("utf-8-sig")
+def rows(text: str) -> tuple[tuple[Row, ...], tuple[str, ...]]:
+    """The expanded table's rows, and the lines that couldn't be read."""
     lines = text.replace("\r\n", "\n").split("\n")
     start = lines.index(next(l for l in lines if l.startswith("#DataStart(Expanded)")))
     end = lines.index(next(l for l in lines if l.startswith("#DataEnd(Expanded)")))
@@ -100,7 +95,7 @@ def rows() -> tuple[list[Row], list[str]]:
             unread.append(line)
             continue
         found.append(Row(cells[0], tuple(source), tuple(standard), cells[3], cells[8]))
-    return found, unread
+    return tuple(found), tuple(unread)
 
 
 class Bible:
@@ -168,7 +163,7 @@ class Bible:
 
 
 def account(
-    bible: Bible, books: Mapping[str, Sequence[str]]
+    bible: Bible, books: Mapping[str, Sequence[str]], rows: Sequence[Row]
 ) -> dict[Verse, list[tuple[tuple[Verse, ...], Row]]]:
     """The table's account of a Bible's books: each verse's standard verses,
     by every row it passes, as {verse: [(standard verses, row), ...]}.
@@ -177,12 +172,11 @@ def account(
     verse if the Bible letters it, and otherwise about the verse it is part
     of. Books map the Bible's codes to the table's names for them.
     """
-    found, _ = rows()
     names = {name: code for code, listed in books.items() for name in listed}
     result: collections.defaultdict[Verse, list[tuple[tuple[Verse, ...], Row]]] = (
         collections.defaultdict(list)
     )
-    for row in found:
+    for row in rows:
         if len(row.source) != 1 or row.source[0][0] not in names:
             continue
         book, chapter, number, part = row.source[0]

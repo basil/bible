@@ -202,4 +202,4 @@ def test_a_reading_is_of_a_book_of_the_old_testament(
         ),
     )
     with pytest.raises(CheckFailed, match=r"outside the Old Testament: \['TOB'\]"):
-        places.placed({}, {}, policy=stray)
+        places.placed({}, {}, (), policy=stray)

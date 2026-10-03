@@ -38,6 +38,7 @@ from bible import (
     revision,
     scripture,
     terminology,
+    tvtms,
     typography,
     usfm,
     usj,
@@ -59,12 +60,13 @@ EXPECTED_NT_MARGINAL_NOTES = 775
 class Read:
     """The sources as documents: Brenton's files and the King James Bible's
     by their codes, the notes that corrections mend, and George's listing of
-    the 1611 margin by book."""
+    the 1611 margin by book, and the parsed versification table."""
 
     brenton: MappingProxyType[str, Document]
     kjv: MappingProxyType[str, Document]
     mended: MappingProxyType[str, frozenset[str]]
     marginal: MappingProxyType[str, tuple[Mapping[str, str], ...]]
+    versification: tuple[tvtms.Row, ...]
 
 
 def note_key(code: str, reference: str, number: int) -> str:
@@ -224,6 +226,7 @@ def read(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Read:
         MappingProxyType(kjv),
         MappingProxyType(mended),
         marginal_notes(sources.marginal, policy),
+        tvtms.rows(sources.versification)[0],
     )
 
 
@@ -271,7 +274,9 @@ def placed(
     """The policy with every Old Testament verse's place in the King James
     Bible, which the notes, the links and the table of chapters and verses
     then read."""
-    runs = places.placed(units, read_sources.kjv, policy=policy)
+    runs = places.placed(
+        units, read_sources.kjv, read_sources.versification, policy=policy
+    )
     return policy.replace(versification={**policy.versification, "kjv": runs})
 
 

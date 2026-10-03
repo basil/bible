@@ -230,7 +230,12 @@ def test_heading_decisions_reject_changed_or_missing_source(
             decision["to"] if source == "changed capitalization" else "Missing heading"
         )
 
-    with pytest.raises(CheckFailed, match=f"Prose change not met once: {unit}"):
+    refusal = (
+        f"Prose change that changes nothing: headings: {unit}"
+        if source == "changed capitalization"
+        else f"Prose change not met once: {unit}"
+    )
+    with pytest.raises(CheckFailed, match=refusal):
         prepared(unit, changed(policy, "prose", stale), read, sources, ctx)
 
 
@@ -283,3 +288,39 @@ def test_what_was_read_is_carried_through_a_change_of_words() -> None:
         matter.Reading(reading.text, (), (term,)), "see Genesis 1:1 and the Sept. here"
     )
     assert moved.text[moved.terms[0].start : moved.terms[0].end] == "Sept."
+
+
+def test_a_name_change_that_prints_the_same_words_is_refused(
+    policy: bible.policy.Policy,
+    ctx: bible.annotate.Context,
+) -> None:
+    before = ctx.books.names["GEN"]
+    other = changed(
+        policy,
+        "citations",
+        lambda d: d["names"].update(
+            XXB=[
+                {
+                    "from": before,
+                    "to": "{GEN}",
+                    "why": "x",
+                }
+            ]
+        ),
+    )
+    with pytest.raises(CheckFailed, match="Change of name changes nothing: XXB"):
+        matter.renamed([(usj.para("ip", before), {})], "XXB", ctx.books, other)
+
+
+def test_a_prose_edit_that_changes_nothing_is_refused() -> None:
+    doc = usj.parse("\\id XXB\n\\ip Some introduction.\n")
+    unit: matter.Unit = [
+        (doc["content"][1], {None: matter.Reading("Some introduction.")})
+    ]
+    with pytest.raises(CheckFailed, match="Prose change changes nothing: XXB"):
+        matter.edited(
+            unit,
+            "XXB",
+            [{"from": "introduction", "to": "introduction"}],
+            "Prose change",
+        )
