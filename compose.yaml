@@ -22,6 +22,6 @@ services:
     volumes:
       - .:/work:z
   hadolint:
-    image: hadolint/hadolint:v2.14.0
+    image: hadolint/hadolint:v2.15.1
     pull_policy: always
     network_mode: none
