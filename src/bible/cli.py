@@ -60,7 +60,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             review(*prepared())
         else:
             render(args.command)
-    except (RuntimeError, subprocess.CalledProcessError) as exc:
+    except (RuntimeError, ValueError, subprocess.CalledProcessError) as exc:
         print("ERROR:", exc, file=sys.stderr)
         return 1
     return 0

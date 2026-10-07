@@ -268,8 +268,8 @@
       "why": "the first of the two"
     },
     "ROM 7:6 that being dead wherein": {
-      "lemma": "that being dead",
-      "why": "being dead to that leaves wherein we were held"
+      "omitted": true,
+      "why": "The 1611 margin's reading, being dead to that, is the reading of the Byzantine text, which this edition now prints; the Received Text's that being dead, which the margin was set against, is quoted in the TR note."
     },
     "ROM 11:17 among them": {
       "anchor": "amongst them",
@@ -442,8 +442,8 @@
       "why": "without prejudice renders without preferring one before another (χωρὶς προκρίματος)"
     },
     "1TI 6:5 Perverse disputing": {
-      "anchor": "Perverse disputings",
-      "why": "George has disputing; the verse reads Perverse disputings"
+      "omitted": true,
+      "why": "The note glosses the Received Text's words, which the Byzantine text replaces; the TR note quotes them, and the margin's rendering fits no words the edition prints."
     },
     "2TI 4:5 make full proof": {
       "lemma": "make full proof of",
@@ -471,8 +471,8 @@
       "why": "the rendering runs to the end of the note"
     },
     "HEB 4:2 not being mixed with faith in them": {
-      "lemma": "not being mixed with faith in",
-      "why": "the rendering ends on to, which stands for in; them that heard it follows"
+      "omitted": true,
+      "why": "The 1611 margin's reading is the reading of the Byzantine text, which this edition now prints; the Received Text's words, which the margin was set against, are quoted in the TR note. The margin's because they were not united by faith to is the sense of the Byzantine they not being united by faith to."
     },
     "HEB 5:2 can have compassion": {
       "lemma": "can have compassion on",
@@ -489,6 +489,10 @@
     "HEB 10:5 prepared me": {
       "lemma": "hast thou prepared me",
       "why": "thou hast fitted me renders hast thou prepared me"
+    },
+    "HEB 11:4 yet speaketh": {
+      "omitted": true,
+      "why": "Or, is yet spoken of: the Byzantine reading, which this edition now prints; the Received Text's yet speaketh is quoted in the TR note."
     },
     "HEB 11:7 moved": {
       "lemma": "moved with fear",
@@ -520,8 +524,8 @@
       "why": "that Law which said renders he that said"
     },
     "JAS 2:18 without": {
-      "lemma": "without thy works",
-      "why": "the other reading is by thy works"
+      "omitted": true,
+      "why": "Some copies read, by thy works: the Byzantine reading, which this edition now prints; the Received Text's without thy works is quoted in the TR note."
     },
     "JAS 3:5 a matter": {
       "lemma": "matter",
@@ -570,6 +574,58 @@
     "ACT 17:19 Areopagus": {
       "why": "The note ends with a complete explanatory sentence, which retains its final full stop.",
       "sentence": true
+    },
+    "LUK 17:36 Two men shall be in the field, the one shall be taken, and the other left": {
+      "verse": "17:35",
+      "anchor": "and the other left",
+      "lemma": null,
+      "uncategorized": true,
+      "why": "The Byzantine text lacks the verse, which the TR note at the end of 17:35 quotes; the 1611 translators' own remark on it stands there as a note on the verse, beside it."
+    },
+    "JHN 1:41 the Christ": {
+      "anchor": "Christ",
+      "uncategorized": true,
+      "why": "The Byzantine text has no article: the edition prints Christ, and the margin's the anointed can stand for it."
+    },
+    "MAT 9:36 fainted, and were scattered abroad": {
+      "omitted": true,
+      "why": "The note glosses the Received Text's words, which the Byzantine text replaces; the TR note quotes them, and the margin's rendering fits no words the edition prints."
+    },
+    "MAT 26:26 blessed it": {
+      "omitted": true,
+      "why": "Many Greek copies have, gave thanks: the Byzantine reading, which this edition now prints; the Received Text's blessed it is quoted in the TR note."
+    },
+    "ROM 8:11 by his spirit": {
+      "omitted": true,
+      "why": "The 1611 margin's reading is the reading of the Byzantine text, which this edition now prints; the Received Text's words, which the margin was set against, are quoted in the TR note."
+    },
+    "1CO 12:25 schism": {
+      "omitted": true,
+      "why": "The Byzantine text has the plural, schisms, which the edition prints; the margin's division renders the Received Text's singular, which the TR note quotes."
+    },
+    "JAS 4:14 It is even": {
+      "omitted": true,
+      "why": "The margin supplies the conjunction of the Received Text's It is, which the Byzantine text has in another tense: the edition prints It shall be even, and the TR note quotes It is."
+    },
+    "2PE 2:2 pernicious ways": {
+      "omitted": true,
+      "why": "Or, lascivious ways, as some copies read: the Byzantine reading, which this edition now prints; the Received Text's pernicious ways is quoted in the TR note."
+    },
+    "REV 3:14 of the Laodiceans": {
+      "omitted": true,
+      "why": "The 1611 margin's reading is the reading of the Byzantine text, which this edition now prints; the Received Text's words, which the margin was set against, are quoted in the TR note."
+    },
+    "REV 6:8 unto them": {
+      "omitted": true,
+      "why": "The 1611 margin's reading is the reading of the Byzantine text, which this edition now prints; the Received Text's words, which the margin was set against, are quoted in the TR note."
+    },
+    "REV 13:1 name": {
+      "omitted": true,
+      "why": "The 1611 margin's reading is the reading of the Byzantine text, which this edition now prints; the Received Text's words, which the margin was set against, are quoted in the TR note."
+    },
+    "REV 13:5 to continue": {
+      "omitted": true,
+      "why": "The 1611 margin's reading is the reading of the Byzantine text, which this edition now prints; the Received Text's words, which the margin was set against, are quoted in the TR note."
     }
   }
 }

@@ -12,6 +12,14 @@ After changing a decision, run `make review` and read its entry in `build/review
 
 Print a reading when Swete gives an unambiguous position and Brenton supplies the English without substantive rewriting. Agreement with Swete does not by itself settle the English or the point of insertion, so consult the page image whenever Swete changes the placement or the interpretation. Keep a doubtful reading as a note, with its reason and a `todo`, rather than supply an unresolved English reconstruction.
 
+### Reviewing the Byzantine readings
+
+The New Testament's changes are decided by the build from the Greek texts and the published witnesses, as [the New Testament text](docs/new-testament.md) explains; what the build cannot decide, or decides otherwise than the editor, is a reading in `edition/byzantine.json`. A reading is keyed by the unit it concerns (the verse, and the Received Text's and the Byzantine text's words there, as `MAT 5:39#1`), and gives the edits or a `nochange` ruling, one `from:` tag for where the wording comes from and one `gram:` tag for the kind of difference, a reason of at most two sentences, and evidence quoted from the sources, which the build checks verbatim: a verse of the Revised Version or Boyd's ASV, or a row of Pierpont's or an apparatus. A placement in `edition/byzantine-placements.json` says which unit a witness's row is about where the code cannot tell; it is objective, with one right answer. A lemma widened by hand is under `lemmas` in `edition/byzantine.json`, keyed by the note. A reading already recorded may be revised when another wording follows RP2026 and the house style better: judge the alternatives on their merits, for a reading has no preference merely because the build accepts it.
+
+After changing a decision, run `make review` and read the unit in `build/review/byzantine/<BOOK>.md`: the Greek of both texts at the unit and in the whole verse, the King James words before and after, the note as printed with its lemma in bold, every witness in its own words, the disposition with its tags and a sentence saying how it follows, and the reading if there is one. `build/review/byzantine.md` gives the figures. For a unit that changes, ask in order: is the Greek difference real at this unit, and not orthography; does the instruction bind to the pinned King James text; is the new wording what RP2026's main text says, and not the Received Text's, Hodges–Farstad's or a marginal alternate's; is it King James English, by the house style; does the seam read; and does the note, put back, give the King James words exactly. For a unit that does not change, ask whether any witness shows the difference at the King James Version's level of literalness: `ev:tcent-reports` on a silent unit is the strongest sign that it does.
+
+A reading the build would decide the same way without it is redundant, and a placement the code now makes on its own is stale: each stops the build and names itself, so that the files cannot drift. Remove it.
+
 ### Reviewing the notes
 
 The build works out by rule which words each note is about and which of its words are italic. Where a rule goes wrong, a decision under `notes` in `edition/brenton-notes.json` or `edition/kjv-notes.json` gives the note's `lemma`, the words it is about, or its `note`, the note's own words with its italics between underscores. In such a decision, `quotation: true` identifies the italic spans as quotations rather than alternative renderings: they keep their opening capital and do not widen with the lemma.
@@ -29,9 +37,9 @@ A citation that the build can't read stops it and names the note and the words. 
 
 ### Reviewing the numbering
 
-The build works out where each verse of the Old Testament stands in the King James Bible. It uses STEP Bible's table, the words the two translations share, and the editor's readings in `edition/versification.json`. The result is worked out afresh on each build, so a change to the text carries through to the numbering.
+The build works out where each verse stands in the King James Bible: the Old Testament's from the table and the words, the New Testament's from the verses the Byzantine text lacks or places elsewhere, which are decisions in `edition/byzantine.json`. It uses STEP Bible's table, the words the two translations share, and the editor's readings in `edition/versification.json`. The result is worked out afresh on each build, so a change to the text carries through to the numbering.
 
-`build/review/numbering.md` lists every run of verses and what it rests on. To correct a run, read both translations and add a reading with its reason.
+`build/review/numbering.md` lists every run of verses and what it rests on. To correct a run, read both translations and add a reading with its reason. A chapter that a transcription numbers without words (eBible's Proverbs 30) is a `stub` in `edition/versification.json`, and a passage that stands at other numbers than the King James Bible's may be given a note saying so, as a `relocation` there; both are checked against the source and the runs.
 
 ### Revising spelling and punctuation
 
@@ -86,7 +94,7 @@ Then look at the sample: the notes should stand beside their verses in the margi
 
 ## Updating source texts
 
-Replace a source archive only on purpose. Download the new one somewhere else first and compare it with the old one: the copyright notice, the list of books, chapter and verse labels, notes, italics, tables, and appendices. Then commit the new archive together with its hash in `src/bible/sources.py` and the new retrieval date in `sources/README.md`.
+Replace a source archive only on purpose. Download the new one somewhere else first and compare it with the old one: the copyright notice, the list of books, chapter and verse labels, notes, italics, tables, and appendices. Then commit the new archive together with its hash in `src/bible/sources.py` and the new retrieval date in `sources/README.md`. The New Testament's Greek texts and witnesses are pinned the same way; the two PDFs among them are read by Poppler inside the container on every build, and the readers' counts (7,957 verses printed, 1,885 rows of the collation) say if a conversion changed.
 
 ## Submitting changes
 

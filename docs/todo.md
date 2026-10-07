@@ -9,6 +9,7 @@ The sections:
 1. [Errors in the printed notes](#1-errors-in-the-printed-notes): the book prints something wrong, or probably wrong.
 2. [Rules to decide](#2-rules-to-decide): one decision settles many notes.
 3. [Readings from Codex Alexandrinus](#3-readings-from-codex-alexandrinus): readings not yet printed in the text, and readings already printed that need another look.
+4. [Layout](#4-layout): pages the typesetting does not yet fit.
 
 **Keys.** Brenton's notes are named by their keys, the `x-key` the build gives each source note ([AGENTS.md](../AGENTS.md#the-document-model)), which a decision in `edition/` is filed under:
 
@@ -139,15 +140,14 @@ Each of these has an override that italicizes the phrase in question. Check the 
 
 Each of these is a question about a rule. One decision settles every note it covers.
 
-1. **1611 notes on a whole verse.** LUK 17:36 (1611), "This 36. verse is wanting in most of the Greek copies", reprints the whole verse as its lemma, and JHN 18:13 (1611), a note on the order of events, prints under "year". `kjv-notes.json` now allows `"lemma": null`, as `brenton-notes.json` does. Decide whether to give these two notes no lemma.
+1. **1611 notes on a whole verse.** JHN 18:13 (1611), a note on the order of events, prints under "year". `kjv-notes.json` allows `"lemma": null`, as `brenton-notes.json` does. Decide whether to give the note no lemma. (The note on LUK 17:36 now stands at 17:35 as a note on the verse, beside the TR note that quotes the omitted verse.)
 2. **Notes on "the words in italics".** 2SA 17:8, 2SA 21:11 [also 2.3], 1SA 17:43 and 1KI 14:26#2 refer to words Brenton set in italics, which this edition prints in square brackets. Either print the bracketed words in italics too, or accept the mismatch.
 3. **Lemmas on a long passage.** HAG 2:14 ("Not in Hebrew.") and 2SA 21:11 [also 2.2] are about a whole bracketed passage, but their lemmas cover only its first clause. Decide whether a lemma that long is acceptable.
 4. **"or" inside one rendering.** The rules split "_X_ or _Y_" into two italic runs, which is wrong when the "or" belongs to a single rendering. Overrides join EXO 21:28, NUM 1:52, 1SA 20:6, PSA 25:12, PSA 32:4, PSA 50:21 and ACT 25:6 (1611). Still split: EXO 14:15 "_harness_ or _yoke the horses again_", 2CO 4:8 (1611) "_altogether without help_ or _means_", where the 1611 has a comma before "or", and 1SA 30:12 "_staid_ or _established in him_". Decide whether these three should be joined.
 5. **Abbreviations without a full stop.** "chap 5. 25", "ver 16", "ch 1. 14", "Ps 103. 14", "Gen 7. 11", "See v 8." and the like occur about as often as the forms with a stop: JDG 21:4; 1SA 15:3; PSA 146:8; PRO 1:15, PRO 11:13, PRO 20:27, PRO 27:20a; JOL 2:15, JOL 4:18; MAL 3:10; ISA 2:19, ISA 14:16, ISA 23:11, ISA 45:16, ISA 57:21; PSA 49:18 "1 Pe" [also 1.5], PSA 90:6 "ver 3", PRO 3:6 "2 Tim" and PRO 4:11 "chap" [both also 1.1]. Check which way Brenton printed them, and correct all or none.
 6. **Two colons.** A lemma that keeps the verse's own colon prints two: "that believed: for there: or, …" (LUK 1:45 (1611); also LUK 4:41 (1611) and REV 14:13 (1611)). Decide whether the lemma should drop its colon.
 7. **"Heb. and Alex. Vat."** 36 notes print this, which is ambiguous. Their decisions' `witnesses` already say that Heb. and Alex. support the adopted wording and Vat. the displaced wording, but the printed form doesn't. Decide how to print it.
-8. **eBible's remark at PRO 30:1.** The verse is empty and carries eBible's remark "See chapter 24 for the content of chapter 30.", which prints as if it were Brenton's note. Chapter 31 starts at verse 10 with no remark at all. Keep the remark as an editorial note, or say where both passages are some other way.
-9. **Names and words written out in full.** `corrections` in `brenton-notes.json` write out "Lambert Bos" (the preface, GEN 33:18 [also 3.6], NUM 1:18 [also 1.5]), "Patrick Junius" (GEN 33:18), "Abraham Trommius" (NUM 25:8), "Professor Samuel Lee" (1KI 20:10), "Charles Pridham" (the Appendix) and "Complut." for "Comp." (1SA 31:9), all marked `uncategorized`, as if they mended slips. Decide whether they are editorial changes instead, and so belong elsewhere, or should stay as Brenton printed them. The same question goes for DEU 24:13, whose correction of "ie." to "i. e." is `uncategorized` too: keep it as a correction, or make it a revision in `edition/revisions.json`.
+8. **Names and words written out in full.** `corrections` in `brenton-notes.json` write out "Lambert Bos" (the preface, GEN 33:18 [also 3.6], NUM 1:18 [also 1.5]), "Patrick Junius" (GEN 33:18), "Abraham Trommius" (NUM 25:8), "Professor Samuel Lee" (1KI 20:10), "Charles Pridham" (the Appendix) and "Complut." for "Comp." (1SA 31:9), all marked `uncategorized`, as if they mended slips. Decide whether they are editorial changes instead, and so belong elsewhere, or should stay as Brenton printed them. The same question goes for DEU 24:13, whose correction of "ie." to "i. e." is `uncategorized` too: keep it as a correction, or make it a revision in `edition/revisions.json`.
 
 ## 3. Readings from Codex Alexandrinus
 
@@ -247,3 +247,11 @@ These readings are in the text now. Each needs a check against Brenton's printin
 - **PSA 138:9**: the note as received gives ὄρθον, where Swete has A's ὄρθρον. Check which spelling Brenton printed; the note distinguishes the two forms meanwhile.
 - **ZEC 11:14**: the text adopts Brenton's "covenant", but A also adds "my", and the note gives only the displaced "possession", although the decision says the addition is noted. Decide how to disclose the partial adoption and the possessive without supplying new English.
 - **PRO 15:33**: the Appendix's original label, "16 (Alex.15) 33", is kept in the decision. Printing a note with it is optional; the moved saying is already in the text.
+
+## 4. Layout
+
+1. **TR notes overflow the margin.** The TR notes stand in the inside margin with the 1611 notes and Brenton's, as every note on the scripture does, and in Revelation they are more than the margin holds. In the full build 41 notes do not fit, 40 of them in Revelation (chapters 2, 4–6, 10, 11, 13, 14, 19 and 21) and one at 2 Corinthians 6:16; on those pages the notes overlap one another, away from their verses. The build lists them in `build/pdf/margin-overflow.txt` and goes on, where it used to refuse them. Decide how to fit them (a smaller size for the notes, a wider margin, or another place for the TR notes), then make the margin check a refusal again, as the comment above its call in `src/bible/verify.py` says.
+
+## 5. Code
+
+1. **The reconciliation refuses with `ValueError`.** `src/bible/byzantine/` raises `ValueError` where the rest of the build raises `CheckFailed` through `bible.checks.require`, at about 180 sites, with the tests asserting `ValueError` to match. The command line treats both as a refusal, so the build stops and names the problem either way. Convert the package to `CheckFailed` in a change of its own, tests included.

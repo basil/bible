@@ -16,7 +16,7 @@ from typing import Literal
 import bible.policy
 import bible.references
 import bible.sources
-from bible import usfm, usj, versification
+from bible import scripture, usfm, usj, versification
 from bible.checks import present, require
 from bible.policy import source_id
 from bible.policy_schema import Entry
@@ -346,7 +346,38 @@ def scripture_unit(
             "Wrong chapter grouping: DAG",
         )
     # A book printed from a file that holds another is a unit of its own.
-    return opened_chapters(code, usj.with_code(doc, code), policy)
+    doc = opened_chapters(code, usj.with_code(doc, code), policy)
+    return without_stubs(code, doc, policy)
+
+
+def without_stubs(code: str, doc: Document, policy: bible.policy.Policy) -> Document:
+    """A book without a chapter its transcription numbers but gives no words,
+    where the edition's versification says the source has none (as eBible's
+    empty Proverbs 30): the chapter and its one empty verse go, with any
+    remark of the transcriber's in it. A stub that has words is refused."""
+    for reference, entry in policy.versification.get("stubs", {}).items():
+        if isinstance(entry, str) or reference.split()[0] != code:
+            continue
+        require(bool(entry.get("why")), f"Stub without its reason: {reference}")
+        address = reference.split()[1]
+        verses = scripture.verses(doc)
+        require(address in verses, f"Stub verse missing: {reference}")
+        verse = verses[address]
+        require(not scripture.plain(verse.text), f"Stub verse has words: {reference}")
+        chapter, number = address.split(":")
+        require(
+            usj.inventory(doc).get(chapter) == [number],
+            f"Stub verse is not its chapter's only verse: {reference}",
+        )
+        held = {block for block, *_ in verse.parts}
+        blocks = [
+            block
+            for index, block in enumerate(doc["content"])
+            if index not in held
+            and not (block["type"] == "chapter" and block["number"] == chapter)
+        ]
+        doc = usj.with_blocks(doc, blocks)
+    return doc
 
 
 def check_divided(policy: bible.policy.Policy, sources: bible.sources.Sources) -> None:

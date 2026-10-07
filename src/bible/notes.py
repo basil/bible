@@ -42,6 +42,8 @@ RENDERING_LABELS = {
     *("Lit.", "lit.", "more lit.", "i. e.", "viz.", "sc.", "scil.", "Scil."),
     *("q. d.", "Gr. q. d.", "adj. q. d."),
     *("Alex.", "Vat.", "Vat.,", "Vat. i.e.", "Complut.", "Ald.", "Vulg."),
+    # The edition's label for the Received Text, on the New Testament's readings.
+    "TR",
     *("A. V.", "Margin,"),
     *("Some read,", "Some read", "some read,", "some read", "Some copies read,"),
     *("Many Greek copies have,", "Many ancient copies add these words,"),

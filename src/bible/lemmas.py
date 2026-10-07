@@ -423,7 +423,7 @@ def declared(
     is meant. A complete phrase can end in a preposition ("asked for");
     widening it would assign retained words to an omission."""
     if phrase is None:
-        return None, None, "Alexandrine reading"
+        return None, None, "edition reading"
     hits = occurrences(words, words_of(phrase))
     occurrence = None
     if len(hits) > 1:
@@ -432,7 +432,7 @@ def declared(
         occurrence = anchored[0]
     glossed = phrase_span(words, phrase, key, occurrence)
     span = unique_span(verse, words, *glossed) if len(hits) > 1 else glossed
-    return span, glossed, "Alexandrine reading"
+    return span, glossed, "edition reading"
 
 
 def preserved(

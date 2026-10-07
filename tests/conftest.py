@@ -3,8 +3,8 @@ edition prepared from them once."""
 
 from __future__ import annotations
 
-from collections.abc import Callable
-from typing import Any
+from collections.abc import Callable, Mapping
+from typing import Any, cast
 
 import pytest
 
@@ -14,7 +14,11 @@ import bible.policy
 import bible.sources
 from bible import pipeline
 from bible import policy as decisions
+from bible import scripture
 from bible import sources as source_files
+from bible.byzantine.rows import Disposition, Instruction, Report, Unit
+from bible.byzantine.stages import Context
+from bible.sources import Content
 from bible.usj import Document
 
 
@@ -102,3 +106,80 @@ def verse_lines(doc: Document) -> dict[str, str]:
         for line in usj.serialize(doc).splitlines()
         if line.startswith("\\v ")
     }
+
+
+@pytest.fixture(scope="session")
+def byzantine(edition: bible.pipeline.Edition) -> Context:
+    """What the reconciliation of the New Testament with the Byzantine text
+    worked out, by the names its stages gave it: the read inputs
+    (source_inputs), the Greek texts (tr, rp), the unit ledger (units), the
+    witnesses (instructions, reports, revision_rows), the readings
+    (overrides), every unit's disposition (dispositions), the King James
+    books before (documents) and after (prepared) the edits, the verses'
+    texts (kjv), and the checks (invariants, finished)."""
+    return edition.byzantine.context
+
+
+@pytest.fixture(scope="session")
+def byzantine_inputs(sources: bible.sources.Sources) -> Mapping[str, Content]:
+    """The New Testament's Greek texts and witnesses, as the read stage
+    gives them to the reconciliation, by the registry's names."""
+    return sources.byzantine
+
+
+@pytest.fixture(scope="session")
+def kjv_text(byzantine: Mapping[str, Any]) -> Mapping[str, str]:
+    """The pinned King James New Testament's verse texts, by "BOOK c:v",
+    before the Byzantine readings."""
+    return cast(Mapping[str, str], byzantine["kjv"])
+
+
+@pytest.fixture(scope="session")
+def units(byzantine: Mapping[str, Any]) -> list[Unit]:
+    return cast(list[Unit], byzantine["units"])
+
+
+@pytest.fixture(scope="session")
+def by_id(units: list[Unit]) -> dict[str, Unit]:
+    return {u["id"]: u for u in units}
+
+
+@pytest.fixture(scope="session")
+def dispositions(byzantine: Mapping[str, Any]) -> dict[str, Disposition]:
+    return {r["unit"]: r for r in cast(list[Disposition], byzantine["dispositions"])}
+
+
+@pytest.fixture(scope="session")
+def instructions(
+    byzantine: Mapping[str, Any],
+) -> dict[tuple[str, int | str], Instruction]:
+    return {
+        (i["source"], i["entry"]): i
+        for i in cast(list[Instruction], byzantine["instructions"])
+    }
+
+
+@pytest.fixture(scope="session")
+def reports(byzantine: Mapping[str, Any]) -> dict[tuple[str, int | str], Report]:
+    return {
+        (r["witness"], r["entry"]): r for r in cast(list[Report], byzantine["reports"])
+    }
+
+
+@pytest.fixture(scope="session")
+def prepared_verses(byzantine: Mapping[str, Any]) -> dict[str, scripture.Verse]:
+    """Every verse of the conformed New Testament, by "BOOK c:v", before
+    the annotate stage sets its notes in the edition's form."""
+    return {
+        f"{code} {address}": verse
+        for code, doc in byzantine["prepared"].items()
+        for address, verse in scripture.verses(doc).items()
+    }
+
+
+@pytest.fixture(scope="session")
+def prepared_text(
+    prepared_verses: dict[str, scripture.Verse],
+) -> Callable[[str], str]:
+    """The plain text of a verse of the conformed New Testament."""
+    return lambda ref: scripture.plain(prepared_verses[ref].text)

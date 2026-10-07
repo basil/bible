@@ -1,0 +1,4445 @@
+{
+  "why": "Which Greek unit a witness's row is about, where the code cannot tell: an objective decision with one right answer, keyed by the witness and its row. unit names a unit by its verse and its Greek, several units, or null where the row is about Greek both texts share or about no Greek at all. A placement the code now makes on its own is stale and stops the build.",
+  "placements": {
+    "faa 1PE 5:10#2": {
+      "ref": "1PE 5:10",
+      "unit": {
+        "tr": "hmas",
+        "rp": "umas"
+      },
+      "why": "The row reports the us/you pronoun difference, not the three closing verbs."
+    },
+    "faa 1PE 5:10#4": {
+      "ref": "1PE 5:10",
+      "unit": {
+        "tr": "sthricai sqenwsai qemeliwsai",
+        "rp": "sthricei sqenwsei qemeliwsei"
+      },
+      "why": "Establish, strengthen and settle are constituents of the combined change from optatives to futures; multiple directives remain entangled for execution."
+    },
+    "faa 2CO 7:13#1": {
+      "ref": "2CO 7:13",
+      "unit": {
+        "tr": "",
+        "rp": "de"
+      },
+      "why": "The added But renders RP's added de, the only added Greek in the verse."
+    },
+    "faa ACT 13:23#1": {
+      "ref": "ACT 13:23",
+      "unit": {
+        "tr": "hgeiren",
+        "rp": "hgagen"
+      },
+      "why": "Raised versus brought is hgeiren versus hgagen."
+    },
+    "faa ACT 17:18#2": {
+      "ref": "ACT 17:18",
+      "unit": {
+        "tr": "autois",
+        "rp": ""
+      },
+      "why": "To them identifies the autois omission, not the opening kai addition."
+    },
+    "faa ACT 21:8#1": {
+      "ref": "ACT 21:8",
+      "unit": {
+        "tr": "hlqomen",
+        "rp": "hlqon"
+      },
+      "why": "FAA removes we from the subject as the Greek changes hlqomen to hlqon; hoi peri ton Paulon remains shared."
+    },
+    "faa ACT 26:22#1": {
+      "ref": "ACT 26:22",
+      "unit": {
+        "tr": "marturoumenos",
+        "rp": "marturomenos"
+      },
+      "why": "Reputed by versus witnessing to is marturoumenos versus marturomenos."
+    },
+    "faa ACT 3:20#1": {
+      "ref": "ACT 3:20",
+      "unit": {
+        "tr": "ihsoun xriston",
+        "rp": "xriston ihsoun"
+      },
+      "why": "Christ Jesus is the name-order contrast, not the proclaimed or appointed verb."
+    },
+    "faa ACT 3:20#2": {
+      "ref": "ACT 3:20",
+      "unit": {
+        "tr": "prokekhrugmenon",
+        "rp": "prokexeirismenon"
+      },
+      "why": "Proclaimed and appointed identify the verb contrast, not the name order."
+    },
+    "faa ACT 7:37#1": {
+      "ref": "ACT 7:37",
+      "unit": {
+        "tr": "umwn",
+        "rp": "hmwn"
+      },
+      "why": "Your versus our God concerns the possessive pronoun, not the spelling of Moses or the omitted closing phrase."
+    },
+    "faa COL 2:20#1": {
+      "ref": "COL 2:20",
+      "unit": {
+        "tr": "oun",
+        "rp": ""
+      },
+      "why": "Therefore concerns the omitted oun, not the separate article."
+    },
+    "faa EPH 1:10#1": {
+      "ref": "EPH 1:10",
+      "unit": {
+        "tr": "te en",
+        "rp": "epi"
+      },
+      "why": "Dropping both renders the loss of te."
+    },
+    "faa HEB 5:4#1": {
+      "ref": "HEB 5:4",
+      "unit": [
+        {
+          "tr": "o",
+          "rp": "",
+          "nth": 1
+        }
+      ],
+      "why": "It is the one against he is concerns the first article, before kaloumenos, not the article before Aaron."
+    },
+    "faa HEB 8:5#1": {
+      "ref": "HEB 8:5",
+      "unit": {
+        "tr": "poihshs",
+        "rp": "poihseis"
+      },
+      "why": "Shall make concerns the verb inflection, not the spelling of Moses."
+    },
+    "faa JAS 2:13#1": {
+      "ref": "JAS 2:13",
+      "unit": {
+        "tr": "kai katakauxatai eleos",
+        "rp": "katakauxatai eleon"
+      },
+      "why": "But mercy concerns the second clause with kai omitted and eleos changed to eleon, not the preceding adjective merciless."
+    },
+    "faa JAS 4:13#2": {
+      "ref": "JAS 4:13",
+      "unit": {
+        "tr": "poreusomeqa",
+        "rp": "poreuswmeqa"
+      },
+      "why": "We will go versus let us go concerns the first verb."
+    },
+    "faa JHN 14:3#1": {
+      "ref": "JHN 14:3",
+      "unit": {
+        "tr": "kai",
+        "rp": ""
+      },
+      "why": "And versus I will is the kai before prepare that RP omits."
+    },
+    "faa JHN 14:3#2": {
+      "ref": "JHN 14:3",
+      "unit": {
+        "tr": "kai",
+        "rp": ""
+      },
+      "why": "The comma becoming a semicolon after for you is the clause break left when RP omits kai before prepare."
+    },
+    "faa LUK 10:21#1": {
+      "ref": "LUK 10:21",
+      "unit": {
+        "tr": "panta paredoqh moi",
+        "rp": "kai strafeis pros tous maqhtas eipen panta moi paredoqh",
+        "ref": "LUK 10:22"
+      },
+      "why": "The closing quotation in 10:21 follows from the speech introduction added at 10:22."
+    },
+    "faa LUK 17:35#1": {
+      "ref": "LUK 17:35",
+      "unit": {
+        "tr": "duo esontai en tw agrw o eis paralhfqhsetai kai o eteros afeqhsetai",
+        "rp": "",
+        "ref": "LUK 17:36"
+      },
+      "why": "The closing quotation at the end of 17:35 follows from the omission of verse 36."
+    },
+    "faa LUK 20:31#1": {
+      "ref": "LUK 20:31",
+      "unit": {
+        "tr": "",
+        "rp": "wsautws"
+      },
+      "why": "Likewise concerns the added hosautos."
+    },
+    "faa LUK 3:2#1": {
+      "ref": "LUK 3:2",
+      "unit": {
+        "tr": "ep arxierewn",
+        "rp": "epi arxierews"
+      },
+      "why": "High priests versus high priest reports archeiereon versus archeiereos within the combined preposition and noun unit."
+    },
+    "faa LUK 7:12#1": {
+      "ref": "LUK 7:12",
+      "unit": [
+        {
+          "tr": "hn",
+          "rp": "",
+          "nth": 1
+        }
+      ],
+      "why": "The FAA group contrasts pronoun accent and copula presence; its italic supplied was supports attachment to the hn omission as partial coverage."
+    },
+    "faa MAT 10:28#1": {
+      "ref": "MAT 10:28",
+      "unit": {
+        "tr": "yuxhn kai",
+        "rp": "thn yuxhn kai to"
+      },
+      "why": "The soul and body articles belong to Greek group three, not the imperative."
+    },
+    "faa MAT 12:32#1": {
+      "ref": "MAT 12:32",
+      "unit": {
+        "tr": "toutw tw",
+        "rp": "tw nun"
+      },
+      "why": "This age versus the present age concerns touto versus nyn, not the conditional particle."
+    },
+    "faa MAT 23:13#1": {
+      "ref": "MAT 23:13",
+      "unit": {
+        "tr": "ouai de umin grammateis kai farisaioi upokritai oti kleiete thn basileian twn ouranwn emprosqen twn anqrwpwn umeis gar ouk eiserxesqe oude tous eiserxomenous afiete eiselqein",
+        "rp": "ouai umin grammateis kai farisaioi upokritai oti kleiete thn basileian twn ouranwn emprosqen twn anqrwpwn umeis gar ouk eiserxesqe oude tous eiserxomenous afiete eiselqein"
+      },
+      "why": "The row reports the exchange of the two woes; it belongs to the relocation, not the separate particle change."
+    },
+    "faa MAT 23:14#1": {
+      "ref": "MAT 23:14",
+      "unit": {
+        "tr": "ouai umin grammateis kai farisaioi upokritai oti katesqiete tas oikias twn xhrwn kai profasei makra proseuxomenoi dia touto lhyesqe perissoteron krima",
+        "rp": "ouai de umin grammateis kai farisaioi upokritai oti katesqiete tas oikias twn xhrwn kai profasei makra proseuxomenoi dia touto lhyesqe perissoteron krima"
+      },
+      "why": "The row reports the exchange of the two woes; it belongs to the relocation, not the separate particle change."
+    },
+    "faa MAT 27:35#1": {
+      "ref": "MAT 27:35",
+      "unit": {
+        "tr": "ina plhrwqh to rhqen upo tou profhtou diemerisanto ta imatia mou eautois kai epi ton imatismon mou ebalon klhron",
+        "rp": ""
+      },
+      "why": "The full stop after casting a lot follows from the omitted fulfilment clause."
+    },
+    "faa MRK 12:36#1": {
+      "ref": "MRK 12:36",
+      "unit": {
+        "tr": "tw pneumati tw agiw eipen",
+        "rp": "pneumati agiw legei"
+      },
+      "why": "Holy spirit and says versus said are constituents of this combined unit, not the spelling of David."
+    },
+    "faa MRK 15:34#1": {
+      "ref": "MRK 15:34",
+      "unit": {
+        "tr": "lamma",
+        "rp": "lima"
+      },
+      "why": "The quoted Aramaic concerns lamma versus lima, not the spelling of ninth."
+    },
+    "faa REV 10:4#1": {
+      "ref": "REV 10:4",
+      "unit": {
+        "tr": "tas fwnas eautwn",
+        "rp": ""
+      },
+      "why": "Their sounds concerns the omitted voices phrase."
+    },
+    "faa REV 10:4#2": {
+      "ref": "REV 10:4",
+      "unit": {
+        "tr": "tas fwnas eautwn",
+        "rp": ""
+      },
+      "why": "FAA changes the supplied object of the first write clause from them to it when its preceding plural antecedent tas fwnas eautwn is omitted."
+    },
+    "faa REV 10:4#3": {
+      "ref": "REV 10:4",
+      "unit": {
+        "tr": "moi",
+        "rp": ""
+      },
+      "why": "FAA omits to me in the voice saying clause, matching omitted moi after legousan, not the earlier omitted voices."
+    },
+    "faa REV 10:4#4": {
+      "ref": "REV 10:4",
+      "unit": {
+        "tr": "tauta",
+        "rp": "auta"
+      },
+      "why": "These things versus them concerns the final pronoun."
+    },
+    "faa REV 11:16#1": {
+      "ref": "REV 11:16",
+      "unit": null,
+      "why": "FAA adds the throne of, absent from RP2026 main enopion tou theou; neither pinned unit reports that addition."
+    },
+    "faa REV 11:6#1": {
+      "ref": "REV 11:6",
+      "unit": {
+        "tr": "en hmerais autwn ths profhteias",
+        "rp": "tas hmeras ths profhteias autwn"
+      },
+      "why": "The days concerns the combined preposition, case and order unit."
+    },
+    "faa REV 12:3#1": {
+      "ref": "REV 12:3",
+      "unit": {
+        "tr": "megas purros",
+        "rp": "puros megas"
+      },
+      "why": "Fiery versus flame-coloured concerns the combined fire noun/adjective and order unit."
+    },
+    "faa REV 12:8#2": {
+      "ref": "REV 12:8",
+      "unit": {
+        "tr": "autwn",
+        "rp": "autw"
+      },
+      "why": "Them versus him concerns the pronoun."
+    },
+    "faa REV 13:1#1": {
+      "ref": "REV 13:1",
+      "unit": {
+        "tr": "kefalas epta kai kerata deka",
+        "rp": "kerata deka kai kefalas epta"
+      },
+      "why": "Ten horns and seven heads is the reordering."
+    },
+    "faa REV 13:1#2": {
+      "ref": "REV 13:1",
+      "unit": {
+        "tr": "onoma",
+        "rp": "onomata"
+      },
+      "why": "Was a to were follows the singular-to-plural name."
+    },
+    "faa REV 13:1#3": {
+      "ref": "REV 13:1",
+      "unit": {
+        "tr": "onoma",
+        "rp": "onomata"
+      },
+      "why": "Names for name is the number change."
+    },
+    "faa REV 13:14#1": {
+      "ref": "REV 13:14",
+      "unit": {
+        "tr": "",
+        "rp": "emous tous"
+      },
+      "why": "My own people concerns the added possessive and article."
+    },
+    "faa REV 13:4#2": {
+      "ref": "REV 13:4",
+      "unit": {
+        "tr": "tis dunatai",
+        "rp": "kai tis dunatos"
+      },
+      "why": "And who concerns the conjunction in the combined able construction."
+    },
+    "faa REV 13:8#1": {
+      "ref": "REV 13:8",
+      "unit": {
+        "tr": "ta onomata",
+        "rp": "to onoma"
+      },
+      "why": "Names versus name concerns the noun and article number."
+    },
+    "faa REV 14:15#1": {
+      "ref": "REV 14:15",
+      "unit": {
+        "tr": "soi",
+        "rp": ""
+      },
+      "why": "For you concerns the omitted soi; the other unit separately omits the article before reap."
+    },
+    "faa REV 14:5#1": {
+      "ref": "REV 14:5",
+      "unit": {
+        "tr": "en tw stomati autwn oux eureqh dolos",
+        "rp": "oux eureqh en tw stomati autwn yeudos"
+      },
+      "why": "Deceit versus falsehood with the moved in their mouth is the combined order and noun unit."
+    },
+    "faa REV 14:8#2": {
+      "ref": "REV 14:8",
+      "unit": [
+        {
+          "tr": "epesen",
+          "rp": ""
+        },
+        {
+          "tr": "polis h megalh oti",
+          "rp": "megalh"
+        }
+      ],
+      "why": "The contrast removes the repeated has fallen and city because, spanning both omissions."
+    },
+    "faa REV 14:9#1": {
+      "ref": "REV 14:9",
+      "unit": {
+        "tr": "tritos aggelos",
+        "rp": "allos aggelos tritos"
+      },
+      "why": "Another third angel concerns the added allos and changed order."
+    },
+    "faa REV 15:6#2": {
+      "ref": "REV 15:6",
+      "unit": {
+        "tr": "",
+        "rp": "oi hsan"
+      },
+      "why": "Who were clothed concerns the added relative article and verb."
+    },
+    "faa REV 16:10#1": {
+      "ref": "REV 16:10",
+      "unit": {
+        "tr": "aggelos",
+        "rp": ""
+      },
+      "why": "Angel versus one concerns the omitted aggelos after the ordinal, not the later verb."
+    },
+    "faa REV 16:17#1": {
+      "ref": "REV 16:17",
+      "unit": {
+        "tr": "aggelos",
+        "rp": ""
+      },
+      "why": "Angel versus one concerns the omitted aggelos after the ordinal, not the later preposition."
+    },
+    "faa REV 16:5#3": {
+      "ref": "REV 16:5",
+      "unit": {
+        "tr": "kai o esomenos",
+        "rp": "o osios"
+      },
+      "why": "Who are to be versus who are holy is the closing designation unit."
+    },
+    "faa REV 17:13#1": {
+      "ref": "REV 17:13",
+      "unit": {
+        "tr": "diadidwsousin",
+        "rp": "didoasin"
+      },
+      "why": "Will hand and give identify diadidwsousin to didoasin, not the pronoun."
+    },
+    "faa REV 18:13#2": {
+      "ref": "REV 18:13",
+      "unit": {
+        "tr": "kthnh kai probata",
+        "rp": "probata kai kthnh"
+      },
+      "why": "Cattle and sheep concerns their order, regardless of the row’s edition labels."
+    },
+    "faa REV 18:20#1": {
+      "ref": "REV 18:20",
+      "unit": {
+        "tr": "",
+        "rp": "kai oi"
+      },
+      "why": "And you supplies the added kai oi before apostles, not the pronoun after rejoice."
+    },
+    "faa REV 18:9#1": {
+      "ref": "REV 18:9",
+      "unit": {
+        "tr": "klausontai authn",
+        "rp": "klausousin"
+      },
+      "why": "Wail over her versus weep belongs to klausontai authn versus klausousin in the first verb phrase, not the pronoun after mourn."
+    },
+    "faa REV 19:1#3": {
+      "ref": "REV 19:1",
+      "unit": [
+        {
+          "tr": "doca",
+          "rp": "dunamis"
+        },
+        {
+          "tr": "timh kai h dunamis kuriw tw qew",
+          "rp": "doca tou qeou"
+        }
+      ],
+      "why": "The glory, honour and power group spans both its reordered nouns and the following construction."
+    },
+    "faa REV 19:15#1": {
+      "ref": "REV 19:15",
+      "unit": {
+        "tr": "",
+        "rp": "distomos"
+      },
+      "why": "Double-edged identifies added distomos, not the later kai omission."
+    },
+    "faa REV 19:17#3": {
+      "ref": "REV 19:17",
+      "unit": {
+        "tr": "tou megalou",
+        "rp": "to mega tou"
+      },
+      "why": "Great supper of God versus supper of the great God concerns the adjective and article construction."
+    },
+    "faa REV 1:12#2": {
+      "ref": "REV 1:12",
+      "unit": {
+        "tr": "elalhsen",
+        "rp": "elalei"
+      },
+      "why": "Was speaking versus spoke concerns the verb aspect."
+    },
+    "faa REV 20:12#1": {
+      "ref": "REV 20:12",
+      "unit": {
+        "tr": "mikrous kai megalous",
+        "rp": "tous megalous kai tous mikrous"
+      },
+      "why": "Great and small concerns the combined articles and order unit."
+    },
+    "faa REV 20:12#2": {
+      "ref": "REV 20:12",
+      "unit": {
+        "tr": "qeou",
+        "rp": "qronou"
+      },
+      "why": "Throne versus God concerns the noun."
+    },
+    "faa REV 20:3#1": {
+      "ref": "REV 20:3",
+      "unit": {
+        "tr": "auton",
+        "rp": ""
+      },
+      "why": "Him in shut him up concerns the omitted object pronoun."
+    },
+    "faa REV 20:5#1": {
+      "ref": "REV 20:5",
+      "unit": {
+        "tr": "anezhsan ews",
+        "rp": "ezhsan axri"
+      },
+      "why": "Come back to life and live identify anezhsan to ezhsan within the verb and until unit."
+    },
+    "faa REV 21:12#1": {
+      "ref": "REV 21:12",
+      "unit": {
+        "tr": "exousan te",
+        "rp": "exousa"
+      },
+      "why": "Having versus and having concerns the combined conjunction and participle unit."
+    },
+    "faa REV 21:2#1": {
+      "ref": "REV 21:2",
+      "unit": [
+        {
+          "tr": "egw iwannhs eidon",
+          "rp": ""
+        },
+        {
+          "tr": "",
+          "rp": "eidon"
+        }
+      ],
+      "why": "I John saw versus I saw is the omitted egw iwannhs eidon with eidon re-added later."
+    },
+    "faa REV 21:6#1": {
+      "ref": "REV 21:6",
+      "unit": {
+        "tr": "gegonen egw eimi",
+        "rp": "gegona"
+      },
+      "why": "It has come about I am versus I have become concerns the combined verb and subject unit."
+    },
+    "faa REV 21:7#1": {
+      "ref": "REV 21:7",
+      "unit": {
+        "tr": "panta",
+        "rp": "tauta"
+      },
+      "why": "All versus these concerns the determiner."
+    },
+    "faa REV 21:7#2": {
+      "ref": "REV 21:7",
+      "unit": {
+        "tr": "o",
+        "rp": ""
+      },
+      "why": "The versus a concerns the omitted o before son, not all versus these."
+    },
+    "faa REV 22:11#1": {
+      "ref": "REV 22:11",
+      "unit": {
+        "tr": "dikaiwqhtw",
+        "rp": "dikaiosunhn poihsatw"
+      },
+      "why": "Work righteousness identifies dikaiwqhtw to dikaiosunhn poihsatw, not the filth clause."
+    },
+    "faa REV 22:18#1": {
+      "ref": "REV 22:18",
+      "unit": {
+        "tr": "summarturoumai gar",
+        "rp": "marturw egw"
+      },
+      "why": "For I jointly testify versus I testify concerns the combined prefix and subject unit."
+    },
+    "faa REV 22:18#3": {
+      "ref": "REV 22:18",
+      "unit": {
+        "tr": "epitiqh pros tauta epiqhsei",
+        "rp": "epiqh ep auta epiqhsai"
+      },
+      "why": "Adding to these and God adding concern the combined verb, preposition and pronoun unit."
+    },
+    "faa REV 22:19#2": {
+      "ref": "REV 22:19",
+      "unit": {
+        "tr": "afairhsei",
+        "rp": "afeloi"
+      },
+      "why": "May God take away versus will take away concerns the second verb mood."
+    },
+    "faa REV 22:19#3": {
+      "ref": "REV 22:19",
+      "unit": {
+        "tr": "biblou",
+        "rp": "tou culou"
+      },
+      "why": "Tree versus book of life concerns the second book noun."
+    },
+    "faa REV 22:2#2": {
+      "ref": "REV 22:2",
+      "unit": {
+        "tr": "apodidoun",
+        "rp": "apodidous"
+      },
+      "why": "FAA adds in only for RP, whose participle is apodidous; P1904 and TR share apodidoun, while RP and P1904 both omit ena, excluding the numeral omission."
+    },
+    "faa REV 22:8#1": {
+      "ref": "REV 22:8",
+      "unit": {
+        "tr": "blepwn tauta kai akouwn",
+        "rp": "akouwn kai blepwn tauta"
+      },
+      "why": "Heard and saw identifies the participle order, not opening crasis."
+    },
+    "faa REV 2:14#1": {
+      "ref": "REV 2:14",
+      "unit": {
+        "tr": "edidasken",
+        "rp": "edidacen"
+      },
+      "why": "Used to teach and taught identify edidasken to edidacen; FAA omits movable nu in its TR form."
+    },
+    "faa REV 2:2#1": {
+      "ref": "REV 2:2",
+      "unit": {
+        "tr": "faskontas einai apostolous",
+        "rp": "legontas eautous apostolous einai"
+      },
+      "why": "Claim and say concern the apostolic claim; the tested verb lies outside the English contrast."
+    },
+    "faa REV 2:20#3": {
+      "ref": "REV 2:20",
+      "unit": {
+        "tr": "didaskein kai planasqai",
+        "rp": "kai didaskei kai plana tous"
+      },
+      "why": "Who teaches and leads concerns the change from infinitives to finite verbs."
+    },
+    "faa REV 2:22#1": {
+      "ref": "REV 2:22",
+      "unit": {
+        "tr": "autwn",
+        "rp": "auths"
+      },
+      "why": "Their versus her concerns auton versus autes, not the omitted ego."
+    },
+    "faa REV 2:3#2": {
+      "ref": "REV 2:3",
+      "unit": [
+        {
+          "tr": "ebastasas kai upomonhn exeis kai",
+          "rp": "upomonhn exeis kai ebastasas"
+        },
+        {
+          "tr": "kekopiakas kai ou kekmhkas",
+          "rp": "kai ouk ekopiasas"
+        }
+      ],
+      "why": "The dropped leading and is the trailing kai of the first unit; have toiled but not flagged versus have not become weary is the second unit."
+    },
+    "faa REV 3:17#1": {
+      "ref": "REV 3:17",
+      "unit": {
+        "tr": "",
+        "rp": "o"
+      },
+      "why": "Most concerns the added article before miserable, not omitted quotation-introducing oti."
+    },
+    "faa REV 3:18#1": {
+      "ref": "REV 3:18",
+      "unit": {
+        "tr": "kollourion egxrison",
+        "rp": "kollurion ina egxrish"
+      },
+      "why": "Eye-salve to apply concerns the combined spelling, purpose clause and verb unit."
+    },
+    "faa REV 3:2#2": {
+      "ref": "REV 3:2",
+      "unit": {
+        "tr": "mellei apoqanein",
+        "rp": "emelles apoballein"
+      },
+      "why": "The explicitly labelled active you casting off concerns the changed death/casting-away predicate."
+    },
+    "faa REV 3:4#1": {
+      "ref": "REV 3:4",
+      "unit": {
+        "tr": "exeis oliga",
+        "rp": "all oliga exeis"
+      },
+      "why": "But you identifies the opening alla construction, not the later kai omission."
+    },
+    "faa REV 3:7#1": {
+      "ref": "REV 3:7",
+      "unit": [
+        {
+          "tr": "kleiei kai kleiei",
+          "rp": "kleisei authn ei mh o anoigwn"
+        },
+        {
+          "tr": "anoigei",
+          "rp": "anoicei"
+        }
+      ],
+      "why": "The opening-key contrast includes both present and future forms of the opening verb."
+    },
+    "faa REV 4:3#1": {
+      "ref": "REV 4:3",
+      "unit": {
+        "tr": "kai o kaqhmenos hn",
+        "rp": ""
+      },
+      "why": "The person sitting is in the omitted opening kai o kaqhmenos hn, not the stone name."
+    },
+    "faa REV 4:3#2": {
+      "ref": "REV 4:3",
+      "unit": {
+        "tr": "omoia orasei smaragdinw",
+        "rp": "omoiws orasis smaragdinwn"
+      },
+      "why": "An emerald versus emeralds concerns the rainbow description, not the preceding sardine stone."
+    },
+    "faa REV 4:7#1": {
+      "ref": "REV 4:7",
+      "unit": {
+        "tr": "to proswpon ws anqrwpos",
+        "rp": "proswpon anqrwpou"
+      },
+      "why": "A face like a man versus a face of a man concerns the combined face phrase."
+    },
+    "faa REV 5:13#3": {
+      "ref": "REV 5:13",
+      "unit": {
+        "tr": "a",
+        "rp": ""
+      },
+      "why": "The sea-clause creatures which are versus which is follows the published ha estin versus estin group; it concerns omitted ha, not the earlier estin or the later all."
+    },
+    "faa REV 5:13#4": {
+      "ref": "REV 5:13",
+      "unit": {
+        "tr": "panta",
+        "rp": "pantas"
+      },
+      "why": "All the creatures in them and they said versus the creatures in them all saying reports masculine pantas versus neuter panta."
+    },
+    "faa REV 5:13#5": {
+      "ref": "REV 5:13",
+      "unit": {
+        "tr": "",
+        "rp": "amhn"
+      },
+      "why": "The closing quotation moves after the added Amen, so this punctuation consequence concerns the same amhn addition."
+    },
+    "faa REV 5:6#1": {
+      "ref": "REV 5:6",
+      "unit": {
+        "tr": "kai idou",
+        "rp": ""
+      },
+      "why": "Looked and behold versus saw concerns the omitted kai idou in the opening."
+    },
+    "faa REV 5:6#2": {
+      "ref": "REV 5:6",
+      "unit": {
+        "tr": "kai idou",
+        "rp": ""
+      },
+      "why": "The supplied was disappears when the opening changes from behold to saw; the elders and lamb clause has shared Greek and follows the same kai idou omission."
+    },
+    "faa REV 5:6#3": {
+      "ref": "REV 5:6",
+      "unit": {
+        "tr": "tou qeou pneumata ta apestalmena",
+        "rp": "pneumata tou qeou apostellomena"
+      },
+      "why": "Which have been sent versus which are being sent concerns ta apestalmena versus apostellomena within the unit that also reorders spirits of God."
+    },
+    "faa REV 6:5#2": {
+      "ref": "REV 6:5",
+      "unit": {
+        "tr": "blepe kai eidon",
+        "rp": "ide"
+      },
+      "why": "I looked concerns the omitted eidon within this combined imperative unit."
+    },
+    "faa REV 7:17#3": {
+      "ref": "REV 7:17",
+      "unit": {
+        "tr": "zwsas",
+        "rp": "zwhs"
+      },
+      "why": "Living waters versus waters of life concerns zoe versus the participle."
+    },
+    "faa REV 8:7#1": {
+      "ref": "REV 8:7",
+      "unit": {
+        "tr": "aggelos",
+        "rp": ""
+      },
+      "why": "Angel versus first one concerns the omitted noun."
+    },
+    "faa REV 8:7#2": {
+      "ref": "REV 8:7",
+      "unit": {
+        "tr": "",
+        "rp": "kai to triton ths ghs katekah"
+      },
+      "why": "The third of the earth burned concerns the added clause."
+    },
+    "faa REV 9:10#1": {
+      "ref": "REV 9:10",
+      "unit": [
+        {
+          "tr": "hn",
+          "rp": "kai"
+        },
+        {
+          "tr": "kai h ecousia autwn",
+          "rp": "ecousian exousin tou"
+        }
+      ],
+      "why": "The sting and authority construction spans both the conjunction change and relocated authority clause."
+    },
+    "faa REV 9:11#1": {
+      "ref": "REV 9:11",
+      "unit": {
+        "tr": "kai exousin",
+        "rp": "exousai basilea"
+      },
+      "why": "The opening And they had contrast concerns kai exousin to exousai, not the later naming clause."
+    },
+    "faa REV 9:6#1": {
+      "ref": "REV 9:6",
+      "unit": {
+        "tr": "oux",
+        "rp": "ou mh"
+      },
+      "why": "By no means concerns the strengthened negative."
+    },
+    "faa ROM 14:24#1": {
+      "ref": "ROM 14:24",
+      "unit": {
+        "tr": "tw de dunamenw umas sthricai kata to euaggelion mou kai to khrugma ihsou xristou kata apokaluyin musthriou xronois aiwniois sesighmenou",
+        "rp": "tw de dunamenw umas sthricai kata to euaggelion mou kai to khrugma ihsou xristou kata apokaluyin musthriou xronois aiwniois sesighmenou",
+        "ref": "ROM 16:25"
+      },
+      "why": "The doxology's first clause printed at 14:24 is the relocated 16:25."
+    },
+    "faa ROM 14:25#1": {
+      "ref": "ROM 14:25",
+      "unit": {
+        "tr": "fanerwqentos de nun dia te grafwn profhtikwn kat epitaghn tou aiwniou qeou eis upakohn pistews eis panta ta eqnh gnwrisqentos",
+        "rp": "fanerwqentos de nun dia te grafwn profhtikwn kat epitaghn tou aiwniou qeou eis upakohn pistews eis panta ta eqnh gnwrisqentos",
+        "ref": "ROM 16:26"
+      },
+      "why": "The clause printed at 14:25 is the relocated 16:26."
+    },
+    "faa ROM 14:26#1": {
+      "ref": "ROM 14:26",
+      "unit": {
+        "tr": "monw sofw qew dia ihsou xristou h doca eis tous aiwnas amhn",
+        "rp": "monw sofw qew dia ihsou xristou w h doca eis tous aiwnas amhn",
+        "ref": "ROM 16:27"
+      },
+      "why": "The closing clause printed at 14:26 is the relocated 16:27."
+    },
+    "faa ROM 16:27#1": {
+      "ref": "ROM 16:27",
+      "unit": {
+        "tr": "monw sofw qew dia ihsou xristou h doca eis tous aiwnas amhn",
+        "rp": "monw sofw qew dia ihsou xristou w h doca eis tous aiwnas amhn"
+      },
+      "why": "The row concerns the relocated doxology, not the added relative pronoun."
+    },
+    "faa ROM 16:27#3": {
+      "ref": "ROM 16:27",
+      "unit": {
+        "tr": "monw sofw qew dia ihsou xristou h doca eis tous aiwnas amhn",
+        "rp": "monw sofw qew dia ihsou xristou w h doca eis tous aiwnas amhn"
+      },
+      "why": "The row concerns the relocated doxology, not the added relative pronoun."
+    },
+    "msb 1694": {
+      "ref": "MAT 3:11",
+      "unit": {
+        "tr": "kai puri",
+        "rp": ""
+      },
+      "why": "The note explicitly identifies the TR addition and with fire, kai puri."
+    },
+    "msb 7886": {
+      "ref": "MAT 10:8",
+      "unit": {
+        "tr": "nekrous egeirete",
+        "rp": ""
+      },
+      "why": "The note identifies raise the dead after cleanse the lepers as a TR addition, the omitted nekrous egeirete."
+    },
+    "msb 9845": {
+      "ref": "MAT 12:8",
+      "unit": {
+        "tr": "kai",
+        "rp": ""
+      },
+      "why": "Even of the versus of the identifies the omitted kai."
+    },
+    "msb 10488": {
+      "ref": "MAT 12:32",
+      "unit": {
+        "tr": "toutw tw",
+        "rp": "tw nun"
+      },
+      "why": "This versus the present identifies the demonstrative replaced by the temporal adjective, not an versus ean."
+    },
+    "msb 13283": {
+      "ref": "MAT 14:22",
+      "unit": {
+        "tr": "autou",
+        "rp": ""
+      },
+      "why": "His disciples versus the main-text the disciples reports the omitted autou after tous mathhtas; disciples is only the footnoted token."
+    },
+    "msb 17148": {
+      "ref": "MAT 18:29",
+      "unit": {
+        "tr": "panta",
+        "rp": ""
+      },
+      "why": "The TR note quotes everything absent from the source main text; this is the panta omission, not shared soi."
+    },
+    "msb 19259": {
+      "ref": "MAT 21:7",
+      "unit": {
+        "tr": "epekaqisan",
+        "rp": "epekaqisen"
+      },
+      "why": "They set Jesus versus Jesus sat reports plural epekaqisan versus singular epekaqisen."
+    },
+    "msb 21863": {
+      "ref": "MAT 23:14",
+      "unit": {
+        "tr": "ouai umin grammateis kai farisaioi upokritai oti katesqiete tas oikias twn xhrwn kai profasei makra proseuxomenoi dia touto lhyesqe perissoteron krima",
+        "rp": "ouai de umin grammateis kai farisaioi upokritai oti katesqiete tas oikias twn xhrwn kai profasei makra proseuxomenoi dia touto lhyesqe perissoteron krima"
+      },
+      "why": "The row reports the exchange of the two woes; it belongs to the relocation, not the separate particle change."
+    },
+    "msb 21897": {
+      "ref": "MAT 23:13",
+      "unit": {
+        "tr": "ouai de umin grammateis kai farisaioi upokritai oti kleiete thn basileian twn ouranwn emprosqen twn anqrwpwn umeis gar ouk eiserxesqe oude tous eiserxomenous afiete eiselqein",
+        "rp": "ouai umin grammateis kai farisaioi upokritai oti kleiete thn basileian twn ouranwn emprosqen twn anqrwpwn umeis gar ouk eiserxesqe oude tous eiserxomenous afiete eiselqein"
+      },
+      "why": "The row reports the exchange of the two woes; it belongs to the relocation, not the separate particle change."
+    },
+    "msb 28106": {
+      "ref": "MAT 27:35",
+      "unit": {
+        "tr": "ina plhrwqh to rhqen upo tou profhtou diemerisanto ta imatia mou eautois kai epi ton imatismon mou ebalon klhron",
+        "rp": ""
+      },
+      "why": "The note quotes the TR fulfilment clause absent from RP; it reports the omitted ina plhrwqh clause and quotation."
+    },
+    "msb 28275": {
+      "ref": "MAT 27:42",
+      "unit": {
+        "tr": "",
+        "rp": "ep"
+      },
+      "why": "Believe in Him versus believe Him reports the added ep."
+    },
+    "msb 29394": {
+      "ref": "MAT 28:19",
+      "unit": {
+        "tr": "oun",
+        "rp": ""
+      },
+      "why": "The quoted literal contrasts differ by therefore, reporting the omitted oun even though no contrast was extracted."
+    },
+    "msb 30848": {
+      "ref": "MRK 2:9",
+      "unit": {
+        "tr": "soi",
+        "rp": "sou"
+      },
+      "why": "Forgiven you versus Your sins are forgiven reports the dative-to-possessive pronoun change soi to sou."
+    },
+    "msb 32275": {
+      "ref": "MRK 3:32",
+      "unit": {
+        "tr": "",
+        "rp": "kai ai adelfai sou"
+      },
+      "why": "The reported sisters addition is kai hai adelphai sou, the only Greek addition in this verse."
+    },
+    "msb 32462": {
+      "ref": "MRK 4:4",
+      "unit": {
+        "tr": "tou ouranou",
+        "rp": ""
+      },
+      "why": "The reported of the air omission identifies tou ouranou after the birds."
+    },
+    "msb 32590": {
+      "ref": "MRK 4:9",
+      "unit": {
+        "tr": "autois",
+        "rp": ""
+      },
+      "why": "Said to them versus said identifies omission of autois, not a change to the shared verb."
+    },
+    "msb 35832": {
+      "ref": "MRK 6:44",
+      "unit": {
+        "tr": "wsei",
+        "rp": ""
+      },
+      "why": "About five thousand versus five thousand reports the omission of wsei."
+    },
+    "msb 38057": {
+      "ref": "MRK 8:34",
+      "unit": {
+        "tr": "elqein",
+        "rp": "akolouqein"
+      },
+      "why": "Come versus follow identifies elthein versus akolouthein; the shared after remains."
+    },
+    "msb 38389": {
+      "ref": "MRK 9:7",
+      "unit": {
+        "tr": "legousa",
+        "rp": ""
+      },
+      "why": "The saying omission identifies omitted legousa introducing the voice from the cloud."
+    },
+    "msb 39298": {
+      "ref": "MRK 9:40",
+      "unit": {
+        "tr": "hmwn uper hmwn",
+        "rp": "umwn uper umwn"
+      },
+      "why": "The not-against-us/is-for-us contrast reports the combined pronoun replacement to umwn."
+    },
+    "msb 41135": {
+      "ref": "MRK 11:4",
+      "unit": {
+        "tr": "ton",
+        "rp": ""
+      },
+      "why": "The source main text has a colt, while its TR note reads the colt; the contrast reports omission of ton before pwlon."
+    },
+    "msb 46262": {
+      "ref": "MRK 15:3",
+      "unit": {
+        "tr": "autos de ouden apekrinato",
+        "rp": ""
+      },
+      "why": "But He gave no answer reports the omitted autos de ouden apekrinato, rather than the shared polla carrying the note."
+    },
+    "msb 46983": {
+      "ref": "MRK 15:34",
+      "unit": {
+        "tr": "lamma",
+        "rp": "lima"
+      },
+      "why": "The main-text lima and the footnoted TR lamma concern the transliterated quotation, not the spelling of ninth."
+    },
+    "msb 47543": {
+      "ref": "MRK 16:8",
+      "unit": {
+        "tr": "taxu",
+        "rp": ""
+      },
+      "why": "The TR ran away quickly note identifies the omitted tachy; ran away renders the shared ephygon although the contrast extraction includes those words."
+    },
+    "msb 48779": {
+      "ref": "LUK 1:35",
+      "unit": {
+        "tr": "ek sou",
+        "rp": ""
+      },
+      "why": "The omitted of you renders the omitted ek sou after the birth participle."
+    },
+    "msb 50145": {
+      "ref": "LUK 2:12",
+      "unit": {
+        "tr": "th",
+        "rp": ""
+      },
+      "why": "The manger versus a manger reports omission of the article te before phatne."
+    },
+    "msb 50414": {
+      "ref": "LUK 2:22",
+      "unit": {
+        "tr": "auths",
+        "rp": "autwn"
+      },
+      "why": "The TR her purification contrasts with their purification in the source main text and reports auths versus autwn."
+    },
+    "msb 51286": {
+      "ref": "LUK 3:2",
+      "unit": {
+        "tr": "ep arxierewn",
+        "rp": "epi arxierews"
+      },
+      "why": "High priesthood versus high priests concerns the singular high-priest form in the combined unit."
+    },
+    "msb 51779": {
+      "ref": "LUK 3:19",
+      "unit": {
+        "tr": "filippou",
+        "rp": ""
+      },
+      "why": "His brother Philips name in the TR note contrasts with his brothers wife in the source main text and reports omitted filippou."
+    },
+    "msb 51901": {
+      "ref": "LUK 3:23",
+      "unit": {
+        "tr": "hli",
+        "rp": "hli"
+      },
+      "why": "The pinned main name Heli contrasts with the Stephanus TR note Eli, reporting the smooth-to-rough breathing on Eli in this accent unit; the KJV already renders Heli."
+    },
+    "msb 51973": {
+      "ref": "LUK 3:27",
+      "unit": {
+        "tr": "iwanna",
+        "rp": "iwanan"
+      },
+      "why": "Joanna in the TR note contrasts with Joanan in the source main text and reports iwanna versus iwanan."
+    },
+    "msb 52055": {
+      "ref": "LUK 3:31",
+      "unit": {
+        "tr": "menam",
+        "rp": "mainan"
+      },
+      "why": "The named ancestor concerns Menam versus Mainan, not the spelling of David."
+    },
+    "msb 52413": {
+      "ref": "LUK 4:8",
+      "unit": {
+        "tr": "gar",
+        "rp": ""
+      },
+      "why": "For it is written versus It is written reports the omission of gar; the extraction failure does not change its Greek referent."
+    },
+    "msb 55308": {
+      "ref": "LUK 6:26",
+      "unit": {
+        "tr": "pantes",
+        "rp": ""
+      },
+      "why": "All men versus men identifies the omission of pantes, not the separate omission of umin."
+    },
+    "msb 56884": {
+      "ref": "LUK 7:31",
+      "unit": {
+        "tr": "eipen de o kurios",
+        "rp": ""
+      },
+      "why": "And the Lord said is the introductory clause eipen de o kurios omitted in RP; To what belongs to the following shared question."
+    },
+    "msb 57517": {
+      "ref": "LUK 8:3",
+      "unit": {
+        "tr": "autw",
+        "rp": "autois"
+      },
+      "why": "The note contrasts to Him with to them, the singular-to-plural pronoun autw/autois."
+    },
+    "msb 57644": {
+      "ref": "LUK 8:8",
+      "unit": {
+        "tr": "epi",
+        "rp": "eis"
+      },
+      "why": "The raw note explicitly contrasts literal into with TR literal on, the preposition epi/eis, despite the unavailable extracted contrast."
+    },
+    "msb 58373": {
+      "ref": "LUK 8:31",
+      "unit": {
+        "tr": "parekaloun",
+        "rp": "parekalei"
+      },
+      "why": "The contrast they kept begging/he kept begging identifies the plural-to-singular verb parekaloun/parekalei."
+    },
+    "msb 58464": {
+      "ref": "LUK 8:34",
+      "unit": {
+        "tr": "apelqontes",
+        "rp": ""
+      },
+      "why": "The TR note they ran off, went away, identifies the omitted participle apelqontes."
+    },
+    "msb 58983": {
+      "ref": "LUK 8:51",
+      "unit": {
+        "tr": "iakwbon kai iwannhn",
+        "rp": "iwannhn kai iakwbon"
+      },
+      "why": "The contrast Peter, James, John/Peter, John, James identifies the order of James and John, not the separate coming verb."
+    },
+    "msb 59117": {
+      "ref": "LUK 9:1",
+      "unit": {
+        "tr": "maqhtas autou",
+        "rp": ""
+      },
+      "why": "The TR note His twelve disciples identifies the omitted maqhtas autou in the Twelve construction."
+    },
+    "msb 59729": {
+      "ref": "LUK 9:22",
+      "unit": {
+        "tr": "egerqhnai",
+        "rp": "anasthnai"
+      },
+      "why": "Be raised versus rise again reports egerthenai versus anastenai, the sole Greek difference in this verse."
+    },
+    "msb 59756": {
+      "ref": "LUK 9:23",
+      "unit": {
+        "tr": "kaq hmeran",
+        "rp": ""
+      },
+      "why": "The omission of daily reports the omission of kath hemeran."
+    },
+    "msb 61533": {
+      "ref": "LUK 10:22",
+      "unit": {
+        "tr": "panta paredoqh moi",
+        "rp": "kai strafeis pros tous maqhtas eipen panta moi paredoqh"
+      },
+      "why": "The note explicitly identifies the turning to the disciples and saying absent from TR, the added opening construction."
+    },
+    "msb 62318": {
+      "ref": "LUK 11:6",
+      "unit": {
+        "tr": "mou",
+        "rp": ""
+      },
+      "why": "A friend of mine versus a friend reports the omitted possessive mou."
+    },
+    "msb 62871": {
+      "ref": "LUK 11:26",
+      "unit": {
+        "tr": "eiselqonta",
+        "rp": "elqonta"
+      },
+      "why": "Go in versus go reports the removal of the eis prefix in eiselqonta to elqonta."
+    },
+    "msb 65256": {
+      "ref": "LUK 12:56",
+      "unit": {
+        "tr": "tou ouranou kai ths ghs",
+        "rp": "ths ghs kai tou ouranou"
+      },
+      "why": "Sky and earth versus earth and sky reports the reversed order of the two Greek noun phrases."
+    },
+    "msb 65762": {
+      "ref": "LUK 13:15",
+      "unit": {
+        "tr": "upokrita",
+        "rp": "upokritai"
+      },
+      "why": "The note contrasts singular hypocrite with plural hypocrites, the upokrita/upokritai unit."
+    },
+    "msb 66485": {
+      "ref": "LUK 14:5",
+      "unit": {
+        "tr": "onos",
+        "rp": "uios"
+      },
+      "why": "The note contrasts donkey with son, the onos/uios unit."
+    },
+    "msb 66772": {
+      "ref": "LUK 14:15",
+      "unit": {
+        "tr": "arton",
+        "rp": "ariston"
+      },
+      "why": "The raw note contrasts breakfast with CT and TR bread, the arton/ariston unit despite its unavailable extracted contrast."
+    },
+    "msb 70049": {
+      "ref": "LUK 17:35",
+      "unit": {
+        "ref": "LUK 17:36",
+        "tr": "duo esontai en tw agrw o eis paralhfqhsetai kai o eteros afeqhsetai",
+        "rp": ""
+      },
+      "why": "The note expressly says TR includes verse 36 and quotes that verse; its Greek difference is the omission of 17:36, not the article difference in 17:35."
+    },
+    "msb 75743": {
+      "ref": "LUK 22:45",
+      "unit": {
+        "tr": "autou",
+        "rp": ""
+      },
+      "why": "His disciples versus the disciples concerns the omitted possessive autou."
+    },
+    "msb 76154": {
+      "ref": "LUK 22:60",
+      "unit": {
+        "tr": "o",
+        "rp": ""
+      },
+      "why": "The explicit literal a rooster versus TR the rooster note concerns the omitted article before alektor."
+    },
+    "msb 77042": {
+      "ref": "LUK 23:25",
+      "unit": {
+        "tr": "autois",
+        "rp": ""
+      },
+      "why": "TR released for them concerns the omitted autois; the additional GOC Barabbas reading is not part of the Scrivener-to-RP unit."
+    },
+    "msb 81046": {
+      "ref": "JHN 2:17",
+      "unit": {
+        "tr": "katefagen",
+        "rp": "katafagetai"
+      },
+      "why": "Consumed versus will consume concerns the verb tense."
+    },
+    "msb 81975": {
+      "ref": "JHN 3:25",
+      "unit": {
+        "tr": "ioudaiwn",
+        "rp": "ioudaiou"
+      },
+      "why": "Jews versus a Jew concerns the noun number."
+    },
+    "msb 82054": {
+      "ref": "JHN 3:28",
+      "unit": {
+        "tr": "moi",
+        "rp": ""
+      },
+      "why": "To me concerns the omitted moi."
+    },
+    "msb 83796": {
+      "ref": "JHN 5:1",
+      "unit": {
+        "tr": "",
+        "rp": "h"
+      },
+      "why": "A feast versus the feast concerns the added article."
+    },
+    "msb 88693": {
+      "ref": "JHN 8:9",
+      "unit": {
+        "tr": "ews twn esxatwn",
+        "rp": ""
+      },
+      "why": "Unto the last is ews twn esxatwn, which RP omits."
+    },
+    "msb 88727": {
+      "ref": "JHN 8:10",
+      "unit": {
+        "tr": "h gunh",
+        "rp": ""
+      },
+      "why": "Woman, where versus Where is the omitted vocative h gunh."
+    },
+    "msb 88758": {
+      "ref": "JHN 8:11",
+      "unit": {
+        "tr": "auth",
+        "rp": ""
+      },
+      "why": "To her concerns the omitted aute after said."
+    },
+    "msb 90032": {
+      "ref": "JHN 8:54",
+      "unit": {
+        "tr": "umwn",
+        "rp": "hmwn"
+      },
+      "why": "Your versus our is umwn versus hmwn."
+    },
+    "msb 91486": {
+      "ref": "JHN 10:8",
+      "unit": {
+        "tr": "pro emou",
+        "rp": ""
+      },
+      "why": "All who came before Me versus came is the omitted pro emou."
+    },
+    "msb 97229": {
+      "ref": "JHN 14:30",
+      "unit": {
+        "tr": "toutou",
+        "rp": ""
+      },
+      "why": "This concerns the omitted toutou after world, not the word division of ouk eti."
+    },
+    "msb 99020": {
+      "ref": "JHN 17:2",
+      "unit": {
+        "tr": "dwsh",
+        "rp": "dwsei"
+      },
+      "why": "May give versus will give is dwsh versus dwsei."
+    },
+    "msb 99284": {
+      "ref": "JHN 17:11",
+      "unit": {
+        "tr": "ous",
+        "rp": "w"
+      },
+      "why": "Whom versus which concerns the relative pronoun, not the word division of ouk eti."
+    },
+    "msb 100141": {
+      "ref": "JHN 18:15",
+      "unit": {
+        "tr": "",
+        "rp": "o"
+      },
+      "why": "Another versus the other is RP's added article o before allos."
+    },
+    "msb 101085": {
+      "ref": "JHN 19:6",
+      "unit": {
+        "tr": "",
+        "rp": "auton"
+      },
+      "why": "Crucify Him versus Crucify is RP's added auton."
+    },
+    "msb 101417": {
+      "ref": "JHN 19:17",
+      "unit": {
+        "tr": "ton",
+        "rp": "topon"
+      },
+      "why": "What is called versus a place called is ton versus topon."
+    },
+    "msb 101759": {
+      "ref": "JHN 19:28",
+      "unit": {
+        "tr": "eidws",
+        "rp": "idwn"
+      },
+      "why": "Knowing versus seeing is eidws versus idwn."
+    },
+    "msb 106693": {
+      "ref": "ACT 3:24",
+      "unit": {
+        "tr": "prokathggeilan",
+        "rp": "kathggeilan"
+      },
+      "why": "Announced beforehand versus announced concerns the omitted pro verbal prefix."
+    },
+    "msb 107088": {
+      "ref": "ACT 4:12",
+      "unit": {
+        "tr": "upo ton ouranon",
+        "rp": ""
+      },
+      "why": "The source says CT, TR, and some MT include under heaven, identifying the omitted hypo ton ouranon even though its English contrast was not extracted."
+    },
+    "msb 108750": {
+      "ref": "ACT 5:33",
+      "unit": null,
+      "why": "Took counsel versus wanted is a CT variant of ebouleuonto, which Scrivener and RP share."
+    },
+    "msb 108835": {
+      "ref": "ACT 5:36",
+      "unit": {
+        "tr": "prosekollhqh",
+        "rp": "proseklhqh"
+      },
+      "why": "Joined him versus rallied to him is prosekollhqh versus proseklhqh."
+    },
+    "msb 108996": {
+      "ref": "ACT 5:41",
+      "unit": {
+        "tr": "autou",
+        "rp": "tou ihsou"
+      },
+      "why": "His name versus the name of Jesus is autou versus tou ihsou."
+    },
+    "msb 110522": {
+      "ref": "ACT 7:37",
+      "unit": {
+        "tr": "umwn",
+        "rp": "hmwn"
+      },
+      "why": "Your versus our God concerns the possessive pronoun, not the spelling of Moses or the omitted closing phrase."
+    },
+    "msb 110568": {
+      "ref": "ACT 7:38",
+      "unit": {
+        "tr": "logia",
+        "rp": "logon"
+      },
+      "why": "Living words versus word is logia versus logon."
+    },
+    "msb 110594": {
+      "ref": "ACT 7:39",
+      "unit": {
+        "tr": "tais kardiais",
+        "rp": "th kardia"
+      },
+      "why": "Hearts versus heart is tais kardiais versus th kardia."
+    },
+    "msb 111603": {
+      "ref": "ACT 8:16",
+      "unit": {
+        "tr": "kuriou",
+        "rp": "xristou"
+      },
+      "why": "Lord Jesus versus Christ Jesus is kuriou versus xristou."
+    },
+    "msb 112178": {
+      "ref": "ACT 8:36",
+      "unit": {
+        "tr": "eipen de o filippos ei pisteueis ec olhs ths kardias ecestin apokriqeis de eipen pisteuw ton uion tou qeou einai ton ihsoun xriston",
+        "rp": "",
+        "ref": "ACT 8:37"
+      },
+      "why": "The row explicitly reports the presence of verse 37, a structural omission in RP."
+    },
+    "msb 112415": {
+      "ref": "ACT 9:5",
+      "unit": [
+        {
+          "tr": "sklhron soi pros kentra laktizein",
+          "rp": ""
+        },
+        {
+          "ref": "ACT 9:6",
+          "tr": "tremwn te kai qambwn eipen kurie ti me qeleis poihsai kai o kurios pros auton",
+          "rp": "alla"
+        }
+      ],
+      "why": "The quoted trembling and dialogue passage spans both verses five and six."
+    },
+    "msb 112745": {
+      "ref": "ACT 9:17",
+      "unit": {
+        "tr": "ihsous",
+        "rp": ""
+      },
+      "why": "The Lord Jesus versus Lord is the omitted ihsous."
+    },
+    "msb 112782": {
+      "ref": "ACT 9:18",
+      "unit": {
+        "tr": "paraxrhma",
+        "rp": ""
+      },
+      "why": "Immediately is the omitted paraxrhma."
+    },
+    "msb 113338": {
+      "ref": "ACT 9:38",
+      "unit": {
+        "tr": "duo andras",
+        "rp": ""
+      },
+      "why": "Two men is the omitted duo andras."
+    },
+    "msb 113661": {
+      "ref": "ACT 10:6",
+      "unit": {
+        "tr": "outos lalhsei soi ti se dei poiein",
+        "rp": ""
+      },
+      "why": "He will tell you what you need to do is the omitted clause outos lalhsei soi ti se dei poiein."
+    },
+    "msb 113996": {
+      "ref": "ACT 10:19",
+      "unit": {
+        "tr": "treis",
+        "rp": ""
+      },
+      "why": "Three men versus men is the omitted treis."
+    },
+    "msb 114037": {
+      "ref": "ACT 10:21",
+      "unit": {
+        "tr": "tous apestalmenous apo tou kornhliou pros auton",
+        "rp": ""
+      },
+      "why": "The men sent to him by Cornelius is the omitted tous apestalmenous apo tou kornhliou pros auton."
+    },
+    "msb 116406": {
+      "ref": "ACT 12:25",
+      "unit": {
+        "tr": "ec",
+        "rp": "eis"
+      },
+      "why": "Returned from versus to Jerusalem is ec versus eis."
+    },
+    "msb 116906": {
+      "ref": "ACT 13:17",
+      "unit": {
+        "tr": "israhl",
+        "rp": ""
+      },
+      "why": "The people of Israel versus people is the omitted israhl."
+    },
+    "msb 117080": {
+      "ref": "ACT 13:23",
+      "unit": {
+        "tr": "swthra ihsoun",
+        "rp": "swthrian"
+      },
+      "why": "The Savior Jesus versus salvation is swthra ihsoun versus swthrian."
+    },
+    "msb 117103": {
+      "ref": "ACT 13:24",
+      "unit": {
+        "tr": "panti tw law",
+        "rp": "tw"
+      },
+      "why": "To all the people of Israel versus to Israel is panti tw law versus tw."
+    },
+    "msb 118973": {
+      "ref": "ACT 15:11",
+      "unit": {
+        "tr": "kuriou ihsou xristou",
+        "rp": "tou kuriou ihsou"
+      },
+      "why": "The Lord Jesus Christ versus the Lord Jesus is kuriou ihsou xristou versus tou kuriou ihsou."
+    },
+    "msb 119564": {
+      "ref": "ACT 15:33",
+      "unit": {
+        "ref": "ACT 15:34",
+        "tr": "edocen de tw sila epimeinai autou",
+        "rp": ""
+      },
+      "why": "TR includes verse 34 about Silas; the CT wording in 15:33 is not an RP difference."
+    },
+    "msb 124100": {
+      "ref": "ACT 20:8",
+      "unit": {
+        "tr": "hsan",
+        "rp": "hmen"
+      },
+      "why": "They were versus we were is hsan versus hmen."
+    },
+    "msb 124226": {
+      "ref": "ACT 20:13",
+      "unit": {
+        "tr": "proelqontes",
+        "rp": "proselqontes"
+      },
+      "why": "Went on ahead versus went is proelqontes versus proselqontes."
+    },
+    "msb 124476": {
+      "ref": "ACT 20:21",
+      "unit": {
+        "tr": "xriston",
+        "rp": ""
+      },
+      "why": "Our Lord Jesus Christ versus Jesus is the omitted xriston."
+    },
+    "msb 126057": {
+      "ref": "ACT 21:37",
+      "unit": {
+        "tr": "ti",
+        "rp": ""
+      },
+      "why": "Say something versus speak is the omitted ti."
+    },
+    "msb 126867": {
+      "ref": "ACT 22:25",
+      "unit": {
+        "tr": "proeteinan",
+        "rp": "proeteinen"
+      },
+      "why": "They stretched versus he stretched is proeteinan versus proeteinen."
+    },
+    "msb 127243": {
+      "ref": "ACT 23:7",
+      "unit": {
+        "tr": "kai twn saddoukaiwn",
+        "rp": ""
+      },
+      "why": "And Sadducees is the omitted kai twn saddoukaiwn."
+    },
+    "msb 128231": {
+      "ref": "ACT 24:6",
+      "unit": [
+        {
+          "tr": "kai kata ton hmeteron nomon hqelhsamen krinein",
+          "rp": ""
+        },
+        {
+          "ref": "ACT 24:7",
+          "tr": "parelqwn de lusias o xiliarxos meta pollhs bias ek twn xeirwn hmwn aphgagen",
+          "rp": ""
+        },
+        {
+          "ref": "ACT 24:8",
+          "tr": "keleusas tous kathgorous autou erxesqai epi se",
+          "rp": ""
+        }
+      ],
+      "why": "The quoted law, Lysias and accusers passage spans verses six through eight."
+    },
+    "msb 129186": {
+      "ref": "ACT 25:14",
+      "unit": {
+        "tr": "dietribon",
+        "rp": "dietriben"
+      },
+      "why": "They were staying versus he was staying is dietribon versus dietriben."
+    },
+    "msb 129680": {
+      "ref": "ACT 26:3",
+      "unit": {
+        "tr": "eidws",
+        "rp": ""
+      },
+      "why": "Since I know concerns the omitted eidos, not the spelling of customs."
+    },
+    "msb 131567": {
+      "ref": "ACT 27:39",
+      "unit": {
+        "tr": "dunainto",
+        "rp": "dunaton"
+      },
+      "why": "If they could versus possible is dunainto versus dunaton."
+    },
+    "msb 133671": {
+      "ref": "ROM 2:5",
+      "unit": {
+        "tr": "",
+        "rp": "kai"
+      },
+      "why": "The MSB main text coordinates wrath, revelation, and righteous judgment; its quoted TR note removes that coordination, reporting the added kai before dikaiokrisias."
+    },
+    "msb 141829": {
+      "ref": "ROM 13:9",
+      "unit": {
+        "tr": "ou yeudomarturhseis",
+        "rp": ""
+      },
+      "why": "The explicit TR false-witness command concerns the omitted ou yeudomartureseis, despite failed contrast extraction."
+    },
+    "msb 143640": {
+      "ref": "ROM 16:3",
+      "unit": {
+        "tr": "priskillan",
+        "rp": "priskan"
+      },
+      "why": "The note expressly contrasts Prisca with TR Priscilla, the priskan/priskillan name difference."
+    },
+    "msb 146774": {
+      "ref": "1CO 5:7",
+      "unit": {
+        "tr": "oun",
+        "rp": ""
+      },
+      "why": "Therefore concerns the omitted oun, not the spelling of sacrificed."
+    },
+    "msb 147193": {
+      "ref": "1CO 6:10",
+      "unit": {
+        "tr": "kleptai oute pleonektai",
+        "rp": "pleonektai oute kleptai"
+      },
+      "why": "The MSB footnote contrasts thieves then the covetous with the covetous then thieves, the Greek unit’s transposition."
+    },
+    "msb 147369": {
+      "ref": "1CO 6:16",
+      "unit": {
+        "tr": "h",
+        "rp": ""
+      },
+      "why": "The MSB footnote adds Or to Don’t you know, identifying the initial Greek particle omitted by RP."
+    },
+    "msb 150841": {
+      "ref": "1CO 11:15",
+      "unit": {
+        "tr": "auth",
+        "rp": ""
+      },
+      "why": "Given to her versus is given reports the omitted dative auth following dedotai."
+    },
+    "msb 151189": {
+      "ref": "1CO 11:27",
+      "unit": {
+        "tr": "",
+        "rp": "tou kuriou"
+      },
+      "why": "Of the Lord concerns the added tou kyriou, not the separate added article; each witness retains its own placement and wording."
+    },
+    "msb 155826": {
+      "ref": "2CO 1:11",
+      "unit": {
+        "tr": "hmwn",
+        "rp": "umwn"
+      },
+      "why": "On our behalf versus on your behalf reports the final hmwn/umwn pronoun change."
+    },
+    "msb 156690": {
+      "ref": "2CO 3:1",
+      "unit": {
+        "tr": "h",
+        "rp": "ei"
+      },
+      "why": "Or do we need versus Do we need reports h versus ei; the footnote contrasts the clause beginning, though its table anchor is the shared verb."
+    },
+    "msb 158556": {
+      "ref": "2CO 6:15",
+      "unit": {
+        "tr": "belial",
+        "rp": "beliar"
+      },
+      "why": "The footnote explicitly names Beliar against the displayed Belial; this is the verse’s name-form unit."
+    },
+    "msb 159023": {
+      "ref": "2CO 7:12",
+      "unit": {
+        "tr": "hmwn thn uper umwn",
+        "rp": "umwn thn uper hmwn"
+      },
+      "why": "Our earnestness on your behalf versus your earnestness on our behalf reports the coordinated pronoun transposition."
+    },
+    "msb 159141": {
+      "ref": "2CO 7:16",
+      "unit": {
+        "tr": "oun",
+        "rp": ""
+      },
+      "why": "The note contrasts I rejoice therefore with I rejoice, reporting the omission of oun."
+    },
+    "msb 161502": {
+      "ref": "2CO 11:31",
+      "unit": {
+        "tr": "hmwn",
+        "rp": ""
+      },
+      "why": "Our Lord versus the Lord reports omitted hmwn; Christ is shared by TR and RP despite the separate CT reading."
+    },
+    "msb 166778": {
+      "ref": "EPH 1:18",
+      "unit": {
+        "tr": "dianoias",
+        "rp": "kardias"
+      },
+      "why": "The TR note quotes understanding where the main text has heart, identifying dianoias/kardias despite the failed contrast extraction."
+    },
+    "msb 167743": {
+      "ref": "EPH 3:9",
+      "unit": {
+        "tr": "koinwnia",
+        "rp": "oikonomia"
+      },
+      "why": "The TR note’s fellowship contrasts with the main text’s stewardship, reporting koinwnia versus oikonomia; for everyone remains shared."
+    },
+    "msb 168198": {
+      "ref": "EPH 4:6",
+      "unit": {
+        "tr": "umin",
+        "rp": "hmin"
+      },
+      "why": "In you all versus in us all reports umin versus hmin, despite the table’s anchor on shared all."
+    },
+    "msb 169350": {
+      "ref": "EPH 5:21",
+      "unit": {
+        "tr": "qeou",
+        "rp": "xristou"
+      },
+      "why": "The TR wording out of reverence for God contrasts with the main text’s out of reverence for Christ, reporting qeou versus xristou."
+    },
+    "msb 171916": {
+      "ref": "PHP 3:3",
+      "unit": {
+        "tr": "qew",
+        "rp": "qeou"
+      },
+      "why": "God by the Spirit versus the source main text by the Spirit of God reports the changed case of qew to qeou."
+    },
+    "msb 172466": {
+      "ref": "PHP 4:3",
+      "unit": {
+        "tr": "kai",
+        "rp": "nai"
+      },
+      "why": "The TR note And also contrasts with the main text’s Yes and, reporting initial kai versus nai; the later kai remains shared despite the table anchor."
+    },
+    "msb 173151": {
+      "ref": "COL 1:6",
+      "unit": {
+        "tr": "",
+        "rp": "kai aucanomenon"
+      },
+      "why": "The note explicitly reports TR’s omission of and growing, the added kai aucanomenon."
+    },
+    "msb 176452": {
+      "ref": "1TH 2:19",
+      "unit": {
+        "tr": "xristou",
+        "rp": ""
+      },
+      "why": "The TR note has our Lord Jesus Christ where the main text has our Lord Jesus, identifying the omitted xristou despite failed contrast extraction."
+    },
+    "msb 177182": {
+      "ref": "1TH 4:13",
+      "unit": {
+        "tr": "qelw",
+        "rp": "qelomen"
+      },
+      "why": "I do not want versus we do not want reports the first-person singular/plural verb change qelw/qelomen despite failed contrast extraction."
+    },
+    "msb 178174": {
+      "ref": "2TH 1:8",
+      "unit": {
+        "tr": "xristou",
+        "rp": ""
+      },
+      "why": "The TR note’s our Lord Jesus Christ contrasts with main-text our Lord Jesus; xristou is the sole difference."
+    },
+    "msb 178286": {
+      "ref": "2TH 1:12",
+      "unit": {
+        "tr": "xristou",
+        "rp": ""
+      },
+      "why": "The TR note retains Christ after the name of our Lord Jesus, the first xristou that RP omits; the final Christ remains shared."
+    },
+    "msb 180942": {
+      "ref": "1TI 5:4",
+      "unit": {
+        "tr": "kalon kai",
+        "rp": ""
+      },
+      "why": "Good and pleasing versus pleasing reports the omitted kalon kai before apodekton."
+    },
+    "msb 182930": {
+      "ref": "2TI 2:19",
+      "unit": {
+        "tr": "xristou",
+        "rp": "kuriou"
+      },
+      "why": "Of Christ in the TR note contrasts with main-text of the Lord, reporting xristou versus kuriou."
+    },
+    "msb 184661": {
+      "ref": "TIT 2:8",
+      "unit": {
+        "tr": "umwn",
+        "rp": "hmwn"
+      },
+      "why": "The TR note about you contrasts with main-text about us, reporting final umwn versus hmwn."
+    },
+    "msb 186365": {
+      "ref": "HEB 2:7",
+      "unit": {
+        "tr": "kai katesthsas auton epi ta erga twn xeirwn sou",
+        "rp": ""
+      },
+      "why": "The row reports omission of setting him over the works of thy hands, the omitted closing clause."
+    },
+    "msb 186704": {
+      "ref": "HEB 3:1",
+      "unit": {
+        "tr": "xriston ihsoun",
+        "rp": "ihsoun xriston"
+      },
+      "why": "On Christ Jesus versus on Jesus Christ reports the Greek name transposition."
+    },
+    "msb 190471": {
+      "ref": "HEB 10:1",
+      "unit": {
+        "tr": "dunatai",
+        "rp": "dunantai"
+      },
+      "why": "The TR note has singular It can never, while the main text has plural The same sacrifices can never, reporting dunatai versus dunantai despite its anchor on never."
+    },
+    "msb 191757": {
+      "ref": "HEB 11:13",
+      "unit": null,
+      "why": "The note quotes and confessed, which renders kai omologhsantes shared by TR and RP; it does not quote the omitted peisqentes kai construction."
+    },
+    "msb 192067": {
+      "ref": "HEB 11:26",
+      "unit": {
+        "tr": "en aiguptw",
+        "rp": "aiguptou"
+      },
+      "why": "In Egypt versus of Egypt reports en Aigupto versus the genitive Aiguptou."
+    },
+    "msb 192600": {
+      "ref": "HEB 12:7",
+      "unit": {
+        "tr": "ei",
+        "rp": "eis"
+      },
+      "why": "The conditional If you endure contrasts with the source’s purpose construction for discipline, identifying ei versus eis."
+    },
+    "msb 192957": {
+      "ref": "HEB 12:20",
+      "unit": {
+        "tr": "h bolidi katatoceuqhsetai",
+        "rp": ""
+      },
+      "why": "The row reports omission of being shot with an arrow after stoned, the omitted closing clause."
+    },
+    "msb 193383": {
+      "ref": "HEB 13:9",
+      "unit": {
+        "tr": "periferesqe",
+        "rp": "paraferesqe"
+      },
+      "why": "The TR note carried about contrasts with main-text carried away, reporting periferesqe versus paraferesqe."
+    },
+    "msb 194963": {
+      "ref": "JAS 2:18",
+      "unit": {
+        "tr": "xwris",
+        "rp": "ek"
+      },
+      "why": "The raw footnote explicitly contrasts from your deeds with TR without your deeds, identifying choris versus ek despite failed extraction."
+    },
+    "msb 196341": {
+      "ref": "JAS 5:9",
+      "unit": {
+        "tr": "katakriqhte",
+        "rp": "kriqhte"
+      },
+      "why": "The TR condemned note contrasts with judged in the main text and reports katakriqhte/kriqhte despite failed contrast extraction."
+    },
+    "msb 196400": {
+      "ref": "JAS 5:11",
+      "unit": {
+        "tr": "o kurios",
+        "rp": ""
+      },
+      "why": "The Lord is versus He is reports only the omitted o kurios subject, not the separate imperative verb change."
+    },
+    "msb 196444": {
+      "ref": "JAS 5:12",
+      "unit": {
+        "tr": "upo krisin",
+        "rp": "eis upokrisin"
+      },
+      "why": "Under judgment versus into hypocrisy reports the combined upo krisin/eis upokrisin construction despite the token-sized extraction."
+    },
+    "msb 196860": {
+      "ref": "1PE 1:8",
+      "unit": {
+        "tr": "idontes",
+        "rp": "eidotes"
+      },
+      "why": "Have not seen versus have not known reports idontes/eidotes; the shared negative and supplied though do not identify separate units."
+    },
+    "msb 199253": {
+      "ref": "1PE 5:8",
+      "unit": {
+        "tr": "oti",
+        "rp": ""
+      },
+      "why": "The footnote’s alert, because contrasts with the source’s alert followed by Your adversary, reporting the omitted hoti."
+    },
+    "msb 199434": {
+      "ref": "2PE 1:1",
+      "unit": {
+        "tr": "simwn",
+        "rp": "sumewn"
+      },
+      "why": "Simon versus Simeon concerns the name."
+    },
+    "msb 200070": {
+      "ref": "2PE 2:2",
+      "unit": {
+        "tr": "apwleiais",
+        "rp": "aselgeiais"
+      },
+      "why": "The TR note destructive ways contrasts with main-text depravity, reporting apwleiais versus aselgeiais."
+    },
+    "msb 200106": {
+      "ref": "2PE 2:3",
+      "unit": {
+        "tr": "nustazei",
+        "rp": "nustacei"
+      },
+      "why": "The TR note does not sleep contrasts with main-text will not sleep, reporting nustazei versus nustacei."
+    },
+    "msb 200410": {
+      "ref": "2PE 2:15",
+      "unit": null,
+      "why": "The note concerns Bosor versus WH Beor, while Bosor is shared by TR and RP; it does not concern the omitted article before right way."
+    },
+    "msb 200786": {
+      "ref": "2PE 3:7",
+      "unit": {
+        "tr": "autw",
+        "rp": "autou"
+      },
+      "why": "The same word versus his word reports autw versus autou before logo."
+    },
+    "msb 201276": {
+      "ref": "1JN 1:5",
+      "unit": null,
+      "why": "The footnote names Stephanus’s promise reading; both pinned texts have aggelia, message, and differ only in order."
+    },
+    "msb 202130": {
+      "ref": "1JN 2:23",
+      "unit": {
+        "tr": "o omologwn ton uion kai ton patera exei",
+        "rp": ""
+      },
+      "why": "The row reports omission of the closing clause about acknowledging the Son and having the Father."
+    },
+    "msb 202775": {
+      "ref": "1JN 3:16",
+      "unit": {
+        "tr": "tou qeou",
+        "rp": ""
+      },
+      "why": "The love of God versus love identifies the omitted tou theou; the main source text confirms the contrast despite failed extraction."
+    },
+    "msb 202989": {
+      "ref": "1JN 3:23",
+      "unit": {
+        "tr": "hmin",
+        "rp": ""
+      },
+      "why": "The TR commanded us note contrasts with commanded in the main text, reporting the omitted hmin despite failed contrast extraction."
+    },
+    "msb 203898": {
+      "ref": "1JN 5:7",
+      "unit": [
+        {
+          "tr": "en tw ouranw o pathr o logos kai to agion pneuma kai outoi oi treis en eisin",
+          "rp": ""
+        },
+        {
+          "ref": "1JN 5:8",
+          "tr": "kai treis eisin oi marturountes en th gh",
+          "rp": ""
+        }
+      ],
+      "why": "The heavenly-witness quotation includes both verses seven and eight."
+    },
+    "msb 204869": {
+      "ref": "3JN 1:7",
+      "unit": {
+        "tr": "autou",
+        "rp": ""
+      },
+      "why": "His name versus the Name reports omitted autou, despite the table anchor on shared name."
+    },
+    "msb 205625": {
+      "ref": "JUD 1:19",
+      "unit": {
+        "tr": "eautous",
+        "rp": ""
+      },
+      "why": "Separate themselves versus cause divisions identifies the omission of the reflexive heautous."
+    },
+    "msb 205737": {
+      "ref": "JUD 1:24",
+      "unit": {
+        "tr": "umas",
+        "rp": "autous"
+      },
+      "why": "Keep you versus keep them identifies umas versus autous; the same object governs the following presentation clause."
+    },
+    "msb 205889": {
+      "ref": "REV 1:4",
+      "unit": {
+        "tr": "tou",
+        "rp": "qeou"
+      },
+      "why": "God concerns theos versus the article before the one who is."
+    },
+    "msb 206033": {
+      "ref": "REV 1:8",
+      "unit": {
+        "tr": "arxh kai telos",
+        "rp": ""
+      },
+      "why": "Beginning and end concerns the omitted phrase."
+    },
+    "msb 206128": {
+      "ref": "REV 1:11",
+      "unit": {
+        "tr": "egw eimi to a kai to w o prwtos kai o esxatos kai",
+        "rp": ""
+      },
+      "why": "The TR note quotes the omitted Alpha and Omega declaration through its closing and."
+    },
+    "msb 206138": {
+      "ref": "REV 1:11",
+      "unit": {
+        "tr": "tais en asia",
+        "rp": ""
+      },
+      "why": "TR includes in Asia reports the omitted tais en asia phrase."
+    },
+    "msb 206171": {
+      "ref": "REV 1:12",
+      "unit": {
+        "tr": "",
+        "rp": "ekei"
+      },
+      "why": "There concerns the added ekei."
+    },
+    "msb 206339": {
+      "ref": "REV 1:17",
+      "unit": {
+        "tr": "moi",
+        "rp": ""
+      },
+      "why": "To me concerns the omitted moi after saying."
+    },
+    "msb 206383": {
+      "ref": "REV 1:18",
+      "unit": {
+        "tr": "adou kai tou qanatou",
+        "rp": "qanatou kai tou adou"
+      },
+      "why": "Hades and Death versus Death and Hades reports the order of the two genitives."
+    },
+    "msb 206394": {
+      "ref": "REV 1:19",
+      "unit": {
+        "tr": "",
+        "rp": "oun"
+      },
+      "why": "TR’s omission of Therefore reports RP’s added oun."
+    },
+    "msb 206433": {
+      "ref": "REV 1:20",
+      "unit": {
+        "tr": "epta luxniai as eides",
+        "rp": "luxniai ai epta"
+      },
+      "why": "Lampstands that you saw versus lampstands reports omitted as eides in the final lampstands construction."
+    },
+    "msb 206960": {
+      "ref": "REV 2:16",
+      "unit": {
+        "tr": "",
+        "rp": "oun"
+      },
+      "why": "The explicit TR omission of Therefore reports the added oun despite failed contrast extraction."
+    },
+    "msb 207001": {
+      "ref": "REV 2:17",
+      "unit": {
+        "tr": "fagein apo",
+        "rp": ""
+      },
+      "why": "I will give the right to eat versus I will give reports the omitted fagein apo construction despite failed contrast extraction."
+    },
+    "msb 207110": {
+      "ref": "REV 2:20",
+      "unit": {
+        "tr": "oliga oti eas",
+        "rp": "oti afeis"
+      },
+      "why": "Few things and permit concern the combined opening unit."
+    },
+    "msb 207623": {
+      "ref": "REV 3:7",
+      "unit": [
+        {
+          "tr": "kleiei kai kleiei",
+          "rp": "kleisei authn ei mh o anoigwn"
+        },
+        {
+          "tr": "anoigei",
+          "rp": "anoicei"
+        }
+      ],
+      "why": "The quoted opening and shutting clause spans both changed verb constructions."
+    },
+    "msb 207755": {
+      "ref": "REV 3:11",
+      "unit": {
+        "tr": "idou",
+        "rp": ""
+      },
+      "why": "Behold I am coming versus I am coming reports omitted idou."
+    },
+    "msb 207864": {
+      "ref": "REV 3:14",
+      "unit": {
+        "tr": "ekklhsias laodikewn",
+        "rp": "en laodikeia ekklhsias"
+      },
+      "why": "The TR note of the Laodiceans contrasts with main-text in Laodicea, reporting the changed church construction."
+    },
+    "msb 208242": {
+      "ref": "REV 4:4",
+      "unit": {
+        "tr": "eidon tous eikosi kai",
+        "rp": "tous eikosi"
+      },
+      "why": "I saw and the twenty-four concern the combined unit."
+    },
+    "msb 208357": {
+      "ref": "REV 4:7",
+      "unit": {
+        "tr": "to proswpon ws anqrwpos",
+        "rp": "proswpon anqrwpou"
+      },
+      "why": "A face like a man versus a face of a man concerns the combined face phrase."
+    },
+    "msb 208503": {
+      "ref": "REV 4:11",
+      "unit": {
+        "tr": "kurie",
+        "rp": "o kurios kai o qeos hmwn o agios"
+      },
+      "why": "Our Lord and God the holy one concerns the expanded address."
+    },
+    "msb 208505": {
+      "ref": "REV 4:11",
+      "unit": {
+        "tr": "kurie",
+        "rp": "o kurios kai o qeos hmwn o agios"
+      },
+      "why": "Our Lord and God the holy one concerns the expanded address."
+    },
+    "msb 208854": {
+      "ref": "REV 5:10",
+      "unit": {
+        "tr": "basileusomen",
+        "rp": "basileusousin"
+      },
+      "why": "The pinned main text has they will reign upon the earth and the TR note we will reign upon; the contrast concerns the verb person, not the shared epi."
+    },
+    "msb 209013": {
+      "ref": "REV 5:14",
+      "unit": {
+        "tr": "zwnti eis tous aiwnas twn aiwnwn",
+        "rp": ""
+      },
+      "why": "The one living forever concerns the omitted phrase."
+    },
+    "msb 209060": {
+      "ref": "REV 6:2",
+      "unit": {
+        "tr": "eidon kai",
+        "rp": ""
+      },
+      "why": "I looked and saw concerns the omitted eidon kai."
+    },
+    "msb 209232": {
+      "ref": "REV 6:7",
+      "unit": {
+        "tr": "fwnhn",
+        "rp": ""
+      },
+      "why": "The voice concerns the omitted noun."
+    },
+    "msb 209268": {
+      "ref": "REV 6:8",
+      "unit": {
+        "tr": "autois",
+        "rp": "autw"
+      },
+      "why": "They were given concerns the recipient pronoun, plural versus singular."
+    },
+    "msb 209519": {
+      "ref": "REV 6:15",
+      "unit": {
+        "tr": "plousioi kai oi xiliarxoi",
+        "rp": "xiliarxoi kai oi plousioi"
+      },
+      "why": "The footnote quotes TR rich then commanders; the pinned main context has commanders then rich, matching the whole order unit."
+    },
+    "msb 209526": {
+      "ref": "REV 6:15",
+      "unit": {
+        "tr": "pas",
+        "rp": ""
+      },
+      "why": "The footnote and every contrasts with and before free man in the pinned main context, reporting omission of the second pas."
+    },
+    "msb 210150": {
+      "ref": "REV 7:17",
+      "unit": {
+        "tr": "poimanei",
+        "rp": "poimainei"
+      },
+      "why": "Will be their shepherd concerns the tense of poimaino."
+    },
+    "msb 210385": {
+      "ref": "REV 8:7",
+      "unit": {
+        "tr": "",
+        "rp": "kai to triton ths ghs katekah"
+      },
+      "why": "The third of the earth burned concerns the added clause."
+    },
+    "msb 210411": {
+      "ref": "REV 8:8",
+      "unit": {
+        "tr": "puri",
+        "rp": ""
+      },
+      "why": "The full pinned main phrase a great burning mountain contrasts with the note a great mountain burning with fire, reporting omitted pyri; the extracted footnoted token mountain alone is incomplete."
+    },
+    "msb 210673": {
+      "ref": "REV 9:2",
+      "unit": {
+        "tr": "megalhs",
+        "rp": "kaiomenhs"
+      },
+      "why": "The great-furnace report concerns megalhs versus kaiomenhs, not the shared opening of the bottomless pit."
+    },
+    "msb 211105": {
+      "ref": "REV 9:16",
+      "unit": {
+        "tr": "ippikou duo",
+        "rp": "ippou"
+      },
+      "why": "Two hundred million concerns the omitted duo in the combined noun and numeral unit."
+    },
+    "msb 211335": {
+      "ref": "REV 10:1",
+      "unit": {
+        "tr": "allon",
+        "rp": ""
+      },
+      "why": "Another mighty concerns the omitted allon."
+    },
+    "msb 211380": {
+      "ref": "REV 10:2",
+      "unit": {
+        "tr": "biblaridion",
+        "rp": "biblion"
+      },
+      "why": "Small scroll concerns biblion versus biblaridion."
+    },
+    "msb 211440": {
+      "ref": "REV 10:4",
+      "unit": {
+        "tr": "tas fwnas eautwn",
+        "rp": ""
+      },
+      "why": "Their sounds concerns the omitted voices phrase."
+    },
+    "msb 211488": {
+      "ref": "REV 10:5",
+      "unit": {
+        "tr": "",
+        "rp": "thn decian"
+      },
+      "why": "The TR his hand note contrasts with his right hand in the main text, identifying the added thn decian despite token-sized extraction."
+    },
+    "msb 211740": {
+      "ref": "REV 11:1",
+      "unit": {
+        "tr": "kai o aggelos eisthkei",
+        "rp": ""
+      },
+      "why": "The angel stood and said versus was told reports the omitted kai o aggelos eisthkei construction, despite failed contrast extraction."
+    },
+    "msb 211840": {
+      "ref": "REV 11:4",
+      "unit": {
+        "tr": "qeou",
+        "rp": "kuriou"
+      },
+      "why": "The God versus Lord reports qeou/kuriou; the preceding article is shared context."
+    },
+    "msb 212026": {
+      "ref": "REV 11:9",
+      "unit": {
+        "tr": "mnhmata",
+        "rp": "mnhma"
+      },
+      "why": "Tomb versus tombs concerns the number."
+    },
+    "msb 212113": {
+      "ref": "REV 11:12",
+      "unit": {
+        "tr": "hkousan",
+        "rp": "hkousa"
+      },
+      "why": "Despite failed extraction, the footnote explicitly quotes they heard or the witnesses heard, and the pinned main reads I heard, matching the person change."
+    },
+    "msb 212151": {
+      "ref": "REV 11:13",
+      "unit": {
+        "tr": "wra",
+        "rp": "hmera"
+      },
+      "why": "Hour versus day concerns wra versus hmera, the only Greek difference in the verse."
+    },
+    "msb 212232": {
+      "ref": "REV 11:15",
+      "unit": {
+        "tr": "egenonto ai basileiai",
+        "rp": "egeneto h basileia"
+      },
+      "why": "The full pinned main text has The kingdom of the world has become the kingdom versus the TR note The kingdoms of the world have become the kingdoms; the contrast is the singular kingdom construction, including its supplied predicate."
+    },
+    "msb 212390": {
+      "ref": "REV 11:19",
+      "unit": {
+        "tr": "autou",
+        "rp": "tou kuriou"
+      },
+      "why": "The pinned main phrase the ark of the covenant of the Lord contrasts with the TR note the ark of His covenant; this concerns autou versus tou kuriou, not the isolated extracted token Lord."
+    },
+    "msb 212812": {
+      "ref": "REV 12:12",
+      "unit": {
+        "tr": "tois katoikousin thn ghn kai thn qalassan",
+        "rp": "th gh kai th qalassh"
+      },
+      "why": "Land and sea versus their inhabitants concerns the combined case and participle unit."
+    },
+    "msb 213001": {
+      "ref": "REV 12:17",
+      "unit": {
+        "tr": "tou ihsou xristou",
+        "rp": "ihsou"
+      },
+      "why": "The footnote of Jesus Christ contrasts with of Jesus in the pinned main context, matching the entire name construction with Christ omitted."
+    },
+    "msb 213041": {
+      "ref": "REV 13:1",
+      "unit": {
+        "tr": "onoma",
+        "rp": "onomata"
+      },
+      "why": "The footnote a blasphemous name contrasts with blasphemous names in the pinned main context, matching singular to plural onoma."
+    },
+    "msb 213179": {
+      "ref": "REV 13:5",
+      "unit": {
+        "tr": "blasfhmias",
+        "rp": "blasfhmian"
+      },
+      "why": "Blasphemy versus blasphemies concerns the noun number."
+    },
+    "msb 213182": {
+      "ref": "REV 13:5",
+      "unit": {
+        "tr": "",
+        "rp": "polemon"
+      },
+      "why": "War concerns the added noun."
+    },
+    "msb 213321": {
+      "ref": "REV 13:10",
+      "unit": {
+        "tr": "aixmalwsian sunagei eis",
+        "rp": "exei"
+      },
+      "why": "The captivity contrast concerns aixmalwsian sunagei eis versus exei, including the omitted eis before the retained second aixmalwsian."
+    },
+    "msb 213434": {
+      "ref": "REV 13:13",
+      "unit": {
+        "tr": "ina kai pur poih katabainein ek tou ouranou eis",
+        "rp": "kai pur ina ek tou ouranou katabainh epi"
+      },
+      "why": "To come down to the earth versus to come down upon the earth reports eis versus epi within the whole fire construction; its main wording is quoted in the pinned verse despite extraction refusing the row."
+    },
+    "msb 213463": {
+      "ref": "REV 13:14",
+      "unit": {
+        "tr": "",
+        "rp": "emous tous"
+      },
+      "why": "My own people concerns the added possessive and article."
+    },
+    "msb 213814": {
+      "ref": "REV 14:5",
+      "unit": {
+        "tr": "en tw stomati autwn oux eureqh dolos",
+        "rp": "oux eureqh en tw stomati autwn yeudos"
+      },
+      "why": "The deceit versus lie contrast concerns dolos versus pseudos in the combined noun and word-order unit."
+    },
+    "msb 213835": {
+      "ref": "REV 14:6",
+      "unit": {
+        "tr": "allon aggelon petwmenon",
+        "rp": "aggelon petomenon"
+      },
+      "why": "Another angel concerns allon in the combined omission and spelling unit."
+    },
+    "msb 213874": {
+      "ref": "REV 14:7",
+      "unit": {
+        "tr": "qeon",
+        "rp": "kurion"
+      },
+      "why": "God versus Lord concerns the noun."
+    },
+    "msb 213914": {
+      "ref": "REV 14:8",
+      "unit": {
+        "tr": "",
+        "rp": "deuteros"
+      },
+      "why": "Another versus second concerns the added ordinal."
+    },
+    "msb 213921": {
+      "ref": "REV 14:8",
+      "unit": {
+        "tr": "polis h megalh oti",
+        "rp": "megalh"
+      },
+      "why": "The great city concerns the omitted city clause."
+    },
+    "msb 214512": {
+      "ref": "REV 15:3",
+      "unit": {
+        "tr": "agiwn",
+        "rp": "eqnwn"
+      },
+      "why": "Saints versus nations concerns the noun, not the spelling of Moses."
+    },
+    "msb 214847": {
+      "ref": "REV 16:5",
+      "unit": [
+        {
+          "tr": "kurie",
+          "rp": ""
+        },
+        {
+          "tr": "kai o esomenos",
+          "rp": "o osios"
+        }
+      ],
+      "why": "The pinned main address O Holy One versus the TR O Lord note combines omitted kurie with the replacement title ho hosios, relocated before who is and was in this witness; both title units are involved."
+    },
+    "msb 214890": {
+      "ref": "REV 16:7",
+      "unit": {
+        "tr": "allou ek",
+        "rp": ""
+      },
+      "why": "The pinned main I heard the altar reply contrasts with the TR note I heard another from; this reports omitted allou ek, not a change to shared ekousa."
+    },
+    "msb 214954": {
+      "ref": "REV 16:9",
+      "unit": {
+        "tr": "",
+        "rp": "oi anqrwpoi"
+      },
+      "why": "The footnote they cursed contrasts with and men cursed in the pinned main context, identifying the added explicit subject despite truncated token extraction."
+    },
+    "msb 215251": {
+      "ref": "REV 16:18",
+      "unit": [
+        {
+          "tr": "fwnai",
+          "rp": "astrapai"
+        },
+        {
+          "tr": "astrapai",
+          "rp": "fwnai"
+        }
+      ],
+      "why": "The different orders refer to the voices and lightning exchanging their positions."
+    },
+    "msb 216010": {
+      "ref": "REV 18:1",
+      "unit": null,
+      "why": "The Stephanus an versus another note concerns allon, which Scrivener and RP2026 share; it does not concern the omitted initial kai."
+    },
+    "msb 216061": {
+      "ref": "REV 18:2",
+      "unit": null,
+      "why": "This note contrasts other CT additions to the unclean bird construction; Scrivener and RP2026 share that construction, outside both verse units."
+    },
+    "msb 216296": {
+      "ref": "REV 18:9",
+      "unit": {
+        "tr": "klausontai authn",
+        "rp": "klausousin"
+      },
+      "why": "Weep for her versus will weep concerns the first verb phrase, not the later pronoun after lament."
+    },
+    "msb 216361": {
+      "ref": "REV 18:11",
+      "unit": {
+        "tr": "klaiousin",
+        "rp": "klausousin"
+      },
+      "why": "The TR earth weep quotation contrasts with earth will weep in the pinned main, reporting the first future verb rather than the following mourn verb."
+    },
+    "msb 216687": {
+      "ref": "REV 18:20",
+      "unit": {
+        "tr": "",
+        "rp": "kai oi"
+      },
+      "why": "Saints and apostles concerns the added conjunction and article."
+    },
+    "msb 216888": {
+      "ref": "REV 19:1",
+      "unit": {
+        "tr": "timh kai h dunamis kuriw tw qew",
+        "rp": "doca tou qeou"
+      },
+      "why": "Of God versus to the Lord God concerns the closing combined unit."
+    },
+    "msb 217053": {
+      "ref": "REV 19:6",
+      "unit": {
+        "tr": "",
+        "rp": "hmwn"
+      },
+      "why": "The original MSB table’s our God contrast concerns the added possessive despite its truncated token extract."
+    },
+    "msb 217426": {
+      "ref": "REV 19:17",
+      "unit": {
+        "tr": "tou megalou",
+        "rp": "to mega tou"
+      },
+      "why": "Great supper of God versus supper of the great God concerns the adjective and article construction."
+    },
+    "msb 217458": {
+      "ref": "REV 19:18",
+      "unit": null,
+      "why": "This explicitly concerns Stephanus TR, and the first both before free and bond. Scrivener TR and RP share that first te; the added second te is separately reported by MSB 217462."
+    },
+    "msb 217651": {
+      "ref": "REV 20:2",
+      "unit": {
+        "tr": "satanas",
+        "rp": "o satanas o planwn thn oikoumenhn olhn"
+      },
+      "why": "The reported omitted he who deceives the whole world matches the expanded Satan construction in RP main."
+    },
+    "msb 217764": {
+      "ref": "REV 20:4",
+      "unit": {
+        "tr": "xristou",
+        "rp": "tou xristou ta"
+      },
+      "why": "The thousand concerns the added article in the combined Christ and thousand unit."
+    },
+    "msb 218265": {
+      "ref": "REV 21:3",
+      "unit": {
+        "tr": "qeos autwn",
+        "rp": ""
+      },
+      "why": "The TR inclusion as their God concerns the final theos auton omitted in RP2026 main text."
+    },
+    "msb 218411": {
+      "ref": "REV 21:8",
+      "unit": {
+        "tr": "",
+        "rp": "kai amartwlois"
+      },
+      "why": "And sinners concerns the added phrase."
+    },
+    "msb 218634": {
+      "ref": "REV 21:14",
+      "unit": {
+        "tr": "en autois",
+        "rp": "ep autwn dwdeka"
+      },
+      "why": "Despite failed extraction and abbreviated main translation, the note explicitly contrasts literally the twelve names with TR the names, reporting added dwdeka."
+    },
+    "msb 218965": {
+      "ref": "REV 21:24",
+      "unit": {
+        "tr": "thn docan kai thn timhn autwn",
+        "rp": "autw docan kai timhn twn eqnwn"
+      },
+      "why": "The pinned main phrase their glory and the honor of the nations contrasts with the TR note their glory and honor; this reports ton ethnon in the changed glory-and-honour construction despite the failed extraction and does not establish the entire RP wording."
+    },
+    "msb 219233": {
+      "ref": "REV 22:6",
+      "unit": {
+        "tr": "agiwn",
+        "rp": "pneumatwn twn"
+      },
+      "why": "The original MSB table’s spirits-of-the-prophets contrast concerns the changed description, not said."
+    },
+    "msb 219644": {
+      "ref": "REV 22:19",
+      "unit": {
+        "tr": "afairhsei",
+        "rp": "afeloi"
+      },
+      "why": "May God take away versus will take away concerns the second verb mood."
+    },
+    "msb 219653": {
+      "ref": "REV 22:19",
+      "unit": {
+        "tr": "biblou",
+        "rp": "tou culou"
+      },
+      "why": "Tree versus book of life concerns the second book noun."
+    },
+    "msb 219703": {
+      "ref": "REV 22:21",
+      "unit": {
+        "tr": "hmwn",
+        "rp": ""
+      },
+      "why": "The source main says the Lord Jesus Christ while its explicit TR quotation says our Lord Jesus Christ: our concerns the omitted hemon. Christ is shared by the pinned texts; its omission belongs only to the quoted CT alternative."
+    },
+    "msb 219707": {
+      "ref": "REV 22:21",
+      "unit": {
+        "tr": "umwn",
+        "rp": "twn agiwn"
+      },
+      "why": "The explicit TR omission of the saints concerns the replacement of humon by ton hagion; source main all the saints confirms the whole recipient construction."
+    },
+    "pierpont 25": {
+      "ref": "MAT 11:16",
+      "unit": null,
+      "why": "The market singular concerns RP2018’s margin; RP2026 retains agorais, while its only unit changes the word for children."
+    },
+    "pierpont 26": {
+      "ref": "MAT 11:16",
+      "unit": null,
+      "why": "The proposed others changes tois etairois autwn, shared by Scrivener and RP2026; the only main-text unit changes the word for children."
+    },
+    "pierpont 45": {
+      "ref": "MAT 20:26",
+      "unit": null,
+      "why": "But renders de, which Scrivener and RP share."
+    },
+    "pierpont 54": {
+      "ref": "MAT 23:13",
+      "unit": {
+        "tr": "ouai de umin grammateis kai farisaioi upokritai oti kleiete thn basileian twn ouranwn emprosqen twn anqrwpwn umeis gar ouk eiserxesqe oude tous eiserxomenous afiete eiselqein",
+        "rp": "ouai umin grammateis kai farisaioi upokritai oti kleiete thn basileian twn ouranwn emprosqen twn anqrwpwn umeis gar ouk eiserxesqe oude tous eiserxomenous afiete eiselqein"
+      },
+      "why": "The row reports the exchange of the two woes, placed like the other exchange rows on the relocation."
+    },
+    "pierpont 57": {
+      "ref": "MAT 24:17",
+      "unit": {
+        "tr": "ti",
+        "rp": "ta"
+      },
+      "why": "The things versus anything is ta versus ti."
+    },
+    "pierpont 75": {
+      "ref": "MRK 1:16",
+      "unit": null,
+      "why": "About concerns the net-casting expression ballontas amphiblhstron shared by Scrivener and RP2026, not the added identification tou simwnos."
+    },
+    "pierpont 83": {
+      "ref": "MRK 6:15",
+      "unit": null,
+      "why": "Neither Scrivener nor RP has a conjunction before the first others said."
+    },
+    "pierpont 110": {
+      "ref": "MRK 14:9",
+      "unit": null,
+      "why": "Neither Scrivener nor RP has a conjunction before verily."
+    },
+    "pierpont 117": {
+      "ref": "MRK 15:3",
+      "unit": {
+        "tr": "autos de ouden apekrinato",
+        "rp": ""
+      },
+      "why": "Omitting but he answered nothing is the omitted autos de ouden apekrinato."
+    },
+    "pierpont 118": {
+      "ref": "MRK 15:31",
+      "unit": null,
+      "why": "The KJV's also renders kai, which Scrivener and RP share (Homoiws kai); RP lacks only de, which the KJV leaves unexpressed."
+    },
+    "pierpont 121": {
+      "ref": "MRK 15:34",
+      "unit": null,
+      "why": "My renders mou, which Scrivener and RP share."
+    },
+    "pierpont 124": {
+      "ref": "LUK 1:26",
+      "unit": null,
+      "why": "From God and by God concern the shared upo tou qeou, not the spelling of Nazareth."
+    },
+    "pierpont 126": {
+      "ref": "LUK 1:35",
+      "unit": null,
+      "why": "Shall be and is concern the shared participle gennwmenon, not the omitted ek sou."
+    },
+    "pierpont 171": {
+      "ref": "LUK 13:34",
+      "unit": null,
+      "why": "Thee and her concern pros authn, which Scrivener and RP share; the only Greek unit changes the spelling of apokteinousa."
+    },
+    "pierpont 172": {
+      "ref": "LUK 13:35",
+      "unit": null,
+      "why": "Desolate renders erhmos, which Scrivener and RP share."
+    },
+    "pierpont 196": {
+      "ref": "LUK 20:35",
+      "unit": null,
+      "why": "Shall be accounted and are accounted concern shared kataciwqentes, not the marriage verb."
+    },
+    "pierpont 226": {
+      "ref": "JHN 6:39",
+      "unit": null,
+      "why": "It and him concern auto, which Scrivener and RP main text share; the unit is the omitted en."
+    },
+    "pierpont 237": {
+      "ref": "JHN 8:2",
+      "unit": null,
+      "why": "Very early renders bathews, which neither Scrivener nor RP2026 reads."
+    },
+    "pierpont 238": {
+      "ref": "JHN 8:2",
+      "unit": null,
+      "why": "Jesus as subject of came is in neither Scrivener nor RP2026."
+    },
+    "pierpont 240": {
+      "ref": "JHN 8:3",
+      "unit": null,
+      "why": "Unto him renders pros auton in 8:3, which both texts share."
+    },
+    "pierpont 248": {
+      "ref": "JHN 8:7",
+      "unit": null,
+      "why": "Lifted up himself renders anakuyas, which both texts share."
+    },
+    "pierpont 249": {
+      "ref": "JHN 8:9",
+      "unit": null,
+      "why": "Being convicted by their own conscience renders upo ths suneidhsews elegxomenoi, which both texts share."
+    },
+    "pierpont 252": {
+      "ref": "JHN 8:10",
+      "unit": null,
+      "why": "Saw her concerns kai mhdena qeasamenos plhn ths gunaikos, which both texts share."
+    },
+    "pierpont 253": {
+      "ref": "JHN 8:10",
+      "unit": null,
+      "why": "Unto her renders auth after eipen, which both texts share."
+    },
+    "pierpont 254": {
+      "ref": "JHN 8:10",
+      "unit": {
+        "tr": "h gunh",
+        "rp": ""
+      },
+      "why": "Omitting the vocative Woman is the omitted h gunh."
+    },
+    "pierpont 255": {
+      "ref": "JHN 8:10",
+      "unit": null,
+      "why": "Those renders ekeinoi before oi kathgoroi, which both texts share."
+    },
+    "pierpont 257": {
+      "ref": "JHN 8:11",
+      "unit": null,
+      "why": "From now on renders apo tou nun, which neither Scrivener nor RP2026 reads."
+    },
+    "pierpont 274": {
+      "ref": "JHN 14:14",
+      "unit": {
+        "tr": "",
+        "rp": "me"
+      },
+      "why": "Adding me after ask is RP's added me."
+    },
+    "pierpont 276": {
+      "ref": "JHN 14:23",
+      "unit": null,
+      "why": "Word versus words concerns ton logon, singular in both texts, not the omitted article before Jesus."
+    },
+    "pierpont 318": {
+      "ref": "ACT 7:5",
+      "unit": null,
+      "why": "Adding him before that renders a second autw that neither text has; RP only moves autw after dounai, which the KJV's to him already renders."
+    },
+    "pierpont 319": {
+      "ref": "ACT 7:26",
+      "unit": null,
+      "why": "Urged them to peace re-renders sunhlasen, which both texts share; the verse's only unit is de versus te."
+    },
+    "pierpont 320": {
+      "ref": "ACT 7:35",
+      "unit": null,
+      "why": "Ruler and leader both concern the shared archonta, not the verse’s sole unit changing the spelling of Moses."
+    },
+    "pierpont 353": {
+      "ref": "ACT 13:4",
+      "unit": null,
+      "why": "The row adds then at So they being sent forth, rendering outoi men oun, which both texts share; the te/de unit is at from thence."
+    },
+    "pierpont 385": {
+      "ref": "ACT 20:28",
+      "unit": {
+        "tr": "",
+        "rp": "kuriou kai"
+      },
+      "why": "Adding the Lord and before God is RP's added kuriou kai."
+    },
+    "pierpont 387": {
+      "ref": "ACT 20:35",
+      "unit": null,
+      "why": "Word for words concerns twn logwn, which both texts share; the verse's only unit is the order of didonai mallon."
+    },
+    "pierpont 388": {
+      "ref": "ACT 21:8",
+      "unit": {
+        "tr": "hlqomen",
+        "rp": "hlqon"
+      },
+      "why": "We versus they is the person of hlqomen versus hlqon."
+    },
+    "pierpont 389": {
+      "ref": "ACT 21:8",
+      "unit": null,
+      "why": "That were of Paul's company renders oi peri ton paulon, which both texts share."
+    },
+    "pierpont 406": {
+      "ref": "ACT 24:24",
+      "unit": null,
+      "why": "Adding Jesus after Christ concerns eis xriston, which both texts read without ihsoun."
+    },
+    "pierpont 412": {
+      "ref": "ACT 26:22",
+      "unit": null,
+      "why": "Both before the prophets renders wn te, which both texts share."
+    },
+    "pierpont 442": {
+      "ref": "ROM 16:25",
+      "unit": [
+        {
+          "tr": "tw de dunamenw umas sthricai kata to euaggelion mou kai to khrugma ihsou xristou kata apokaluyin musthriou xronois aiwniois sesighmenou",
+          "rp": "tw de dunamenw umas sthricai kata to euaggelion mou kai to khrugma ihsou xristou kata apokaluyin musthriou xronois aiwniois sesighmenou"
+        },
+        {
+          "tr": "fanerwqentos de nun dia te grafwn profhtikwn kat epitaghn tou aiwniou qeou eis upakohn pistews eis panta ta eqnh gnwrisqentos",
+          "rp": "fanerwqentos de nun dia te grafwn profhtikwn kat epitaghn tou aiwniou qeou eis upakohn pistews eis panta ta eqnh gnwrisqentos",
+          "ref": "ROM 16:26"
+        },
+        {
+          "tr": "monw sofw qew dia ihsou xristou h doca eis tous aiwnas amhn",
+          "rp": "monw sofw qew dia ihsou xristou w h doca eis tous aiwnas amhn",
+          "ref": "ROM 16:27"
+        }
+      ],
+      "why": "Moving 16:25-27 to 14:24-26 concerns the three relocated doxology units."
+    },
+    "pierpont 454": {
+      "ref": "1CO 11:27",
+      "unit": {
+        "tr": "",
+        "rp": "tou kuriou"
+      },
+      "why": "Unworthy of the Lord renders the added tou kuriou after unworthily."
+    },
+    "pierpont 465": {
+      "ref": "2CO 1:6",
+      "unit": {
+        "tr": "eite parakaloumeqa uper ths umwn paraklhsews kai swthrias kai h elpis hmwn bebaia uper umwn",
+        "rp": "kai h elpis hmwn bebaia uper umwn eite parakaloumeqa uper ths umwn paraklhsews kai swthrias"
+      },
+      "why": "Reversing the comforted clause and the hope clause is the transposition unit."
+    },
+    "pierpont 477": {
+      "ref": "2CO 8:4",
+      "unit": {
+        "tr": "decasqai hmas",
+        "rp": ""
+      },
+      "why": "This grace and recasts the clause left by omitting decasqai hmas, the verse's only difference."
+    },
+    "pierpont 504": {
+      "ref": "PHP 4:3",
+      "unit": {
+        "tr": "kai",
+        "rp": "nai"
+      },
+      "why": "Yea for And is nai for kai."
+    },
+    "pierpont 511": {
+      "ref": "COL 2:13",
+      "unit": {
+        "tr": "",
+        "rp": "umas"
+      },
+      "why": "He hath quickened you renders the added object umas."
+    },
+    "pierpont 520": {
+      "ref": "1TH 2:12",
+      "unit": null,
+      "why": "Calleth re-renders kalountos, which Scrivener and RP share; the verse's unit is marturoumenoi/marturomenoi, rendered charged in KJV 2:11."
+    },
+    "pierpont 525": {
+      "ref": "1TH 4:1",
+      "unit": null,
+      "why": "So versus that re-renders the shared hina construction and changes only a supplied KJV word, not the omitted article to before loipon."
+    },
+    "pierpont 539": {
+      "ref": "1TI 6:5",
+      "unit": {
+        "tr": "paradiatribai",
+        "rp": "diaparatribai"
+      },
+      "why": "Constant quarrelings renders diaparatribai in place of paradiatribai."
+    },
+    "pierpont 550": {
+      "ref": "HEB 4:2",
+      "unit": null,
+      "why": "Also renders kai in kai gar, which both texts share."
+    },
+    "pierpont 571": {
+      "ref": "JAS 4:14",
+      "unit": {
+        "tr": "estin",
+        "rp": "estai"
+      },
+      "why": "Shall be against is renders estai for estin."
+    },
+    "pierpont 580": {
+      "ref": "1PE 2:12",
+      "unit": null,
+      "why": "Have beheld re-renders epopteusantes, which Scrivener and RP share; the only unit in the verse is the order of en tois eqnesin."
+    },
+    "pierpont 592": {
+      "ref": "2PE 1:1",
+      "unit": {
+        "tr": "hmwn",
+        "rp": ""
+      },
+      "why": "Our God and Savior concerns the omitted hmwn after Savior."
+    },
+    "pierpont 607": {
+      "ref": "1JN 5:20",
+      "unit": null,
+      "why": "May know renders ginwskwmen, which Scrivener and RP share; the weight-2 indicative is a minority reading RP2026 does not print."
+    },
+    "pierpont 646": {
+      "ref": "REV 2:20",
+      "unit": {
+        "tr": "iezabhl thn legousan",
+        "rp": "sou iezabel h legei"
+      },
+      "why": "Your wife for that woman renders the added sou with Jezebel."
+    },
+    "pierpont 653": {
+      "ref": "REV 3:1",
+      "unit": null,
+      "why": "And for that renders the marginal kai zhs; RP main keeps oti zhs, shared with the TR, and the unit is only the article before onoma."
+    },
+    "pierpont 661": {
+      "ref": "REV 3:7",
+      "unit": [
+        {
+          "tr": "kleiei kai kleiei",
+          "rp": "kleisei authn ei mh o anoigwn"
+        },
+        {
+          "tr": "anoigei",
+          "rp": "anoicei"
+        }
+      ],
+      "why": "The published except he who openeth clause belongs to the changed shutting construction, and no man shall open belongs to the following future anoicei; neither concerns key or David spelling."
+    },
+    "pierpont 669": {
+      "ref": "REV 4:2",
+      "unit": null,
+      "why": "The initial kai remains in RP2026’s printed main text, so the proposed omission follows another reading."
+    },
+    "pierpont 677": {
+      "ref": "REV 4:7",
+      "unit": null,
+      "why": "The fourth zoon remains in both pinned texts; the proposed omission or supplied marking follows another reading."
+    },
+    "pierpont 679": {
+      "ref": "REV 4:8",
+      "unit": null,
+      "why": "The nine Holies proposal is about a reading absent from both pinned texts; RP2026 printed main and TR each have three agios, so it owns no changed unit."
+    },
+    "pierpont 684": {
+      "ref": "REV 5:1",
+      "unit": {
+        "tr": "opisqen",
+        "rp": "ecwqen"
+      },
+      "why": "Without for on the back side renders ecwqen for opisqen."
+    },
+    "pierpont 695": {
+      "ref": "REV 5:13",
+      "unit": {
+        "tr": "panta",
+        "rp": "pantas"
+      },
+      "why": "I heard all is the counterpart to Pierpont’s preceding omission of all; FAA pairs the construction with panta versus pantas, so unchanged hkousa alone does not put this instruction outside the ledger."
+    },
+    "pierpont 706": {
+      "ref": "REV 6:5",
+      "unit": null,
+      "why": "Omitting and see follows the marginal reading; RP main keeps kai ide, so Come and see stands and only kai eidon (And I beheld) is omitted."
+    },
+    "pierpont 715": {
+      "ref": "REV 6:11",
+      "unit": {
+        "tr": "edoqhsan ekastois stolai leukai",
+        "rp": "edoqh autois ekastw stolh leukh"
+      },
+      "why": "Unto everyone of them concerns the recipients ekastois versus autois ekastw in the robe construction; the source writes everyone where the pinned KJV has every one, so placement alone cannot license its deletion."
+    },
+    "pierpont 725": {
+      "ref": "REV 7:3",
+      "unit": null,
+      "why": "Have sealed and seal concern the shared sfragiswmen; the sole unit changes only movable sigma in axris/axri."
+    },
+    "pierpont 730": {
+      "ref": "REV 7:6",
+      "unit": {
+        "tr": "ib xiliades esfragismenoi",
+        "rp": "dwdeka xiliades",
+        "nth": 2
+      },
+      "why": "Omitting sealed after Nephthalim is the second sealed clause."
+    },
+    "pierpont 734": {
+      "ref": "REV 7:7",
+      "unit": {
+        "tr": "ib xiliades esfragismenoi",
+        "rp": "dwdeka xiliades",
+        "nth": 3
+      },
+      "why": "Omitting sealed after Issachar is the third sealed clause."
+    },
+    "pierpont 737": {
+      "ref": "REV 7:11",
+      "unit": null,
+      "why": "The row changes the throne to his throne, but both pinned texts retain tou thronou without autou; the faces construction is elsewhere in the verse."
+    },
+    "pierpont 738": {
+      "ref": "REV 7:14",
+      "unit": {
+        "tr": "",
+        "rp": "mou"
+      },
+      "why": "My lord for Sir renders the added mou."
+    },
+    "pierpont 741": {
+      "ref": "REV 8:3",
+      "unit": null,
+      "why": "Shall renders the marginal dwsei; RP main keeps dwsh with the TR, so the row concerns no unit (the unit is the case of the altar after epi)."
+    },
+    "pierpont 747": {
+      "ref": "REV 9:2",
+      "unit": null,
+      "why": "The proposed opening-clause omission follows another reading: both pinned TR and RP2026 printed main retain kai hnoicen to frear ths abussou."
+    },
+    "pierpont 752": {
+      "ref": "REV 9:10",
+      "unit": null,
+      "why": "Adding also before stings translates the kai before kentra shared by both texts. The changed hn to kai is after kentra and coordinates the following tail-power clause, so this insertion does not render that changed conjunction."
+    },
+    "pierpont 756": {
+      "ref": "REV 9:12",
+      "unit": null,
+      "why": "Hereafter renders meta tauta, retained in both pinned texts; the changed verb number does not concern that phrase."
+    },
+    "pierpont 763": {
+      "ref": "REV 9:18",
+      "unit": {
+        "tr": "ek tou kapnou kai ek",
+        "rp": "tou kapnou kai"
+      },
+      "why": "The two omitted by before smoke and brimstone are the two omitted ek."
+    },
+    "pierpont 765": {
+      "ref": "REV 9:20",
+      "unit": null,
+      "why": "Yet repented not concerns the shared ou metenoesan, not the added article before idols."
+    },
+    "pierpont 766": {
+      "ref": "REV 9:20",
+      "unit": null,
+      "why": "And brass renders kai ta chalka, retained in RP2026 main as in TR; the added idols article does not concern brass."
+    },
+    "pierpont 768": {
+      "ref": "REV 10:1",
+      "unit": {
+        "tr": "",
+        "rp": "h"
+      },
+      "why": "The rainbow for a rainbow is the added article."
+    },
+    "pierpont 783": {
+      "ref": "REV 11:11",
+      "unit": null,
+      "why": "The proposed the before three days renders tas shared in the pinned TR and RP; it does not concern the changed preposition before them."
+    },
+    "pierpont 785": {
+      "ref": "REV 11:13",
+      "unit": null,
+      "why": "Both pinned texts begin kai; the initial And omission follows another reading, not RP2026 printed main."
+    },
+    "pierpont 788": {
+      "ref": "REV 11:16",
+      "unit": null,
+      "why": "RP2026 main retains enopion tou theou without tou thronou, so the proposed throne of addition targets another edition, not either unit in this verse."
+    },
+    "pierpont 806": {
+      "ref": "REV 13:5",
+      "unit": {
+        "tr": "",
+        "rp": "polemon"
+      },
+      "why": "Make war for continue renders the added polemon."
+    },
+    "pierpont 810": {
+      "ref": "REV 13:10",
+      "unit": null,
+      "why": "He that versus if anyone concerns ei tis, shared at both occurrences in both pinned texts; the changed captivity construction begins after the first ei tis."
+    },
+    "pierpont 811": {
+      "ref": "REV 13:10",
+      "unit": {
+        "tr": "aixmalwsian sunagei eis",
+        "rp": "exei"
+      },
+      "why": "The rewording of leads into captivity is the aixmalwsian sunagei/exei unit."
+    },
+    "pierpont 812": {
+      "ref": "REV 13:10",
+      "unit": null,
+      "why": "RP2026's main text keeps en macaira apoktanqhnai; the omission of with the sword is HF's reading and RP's marginal alternate, and no unit carries it."
+    },
+    "pierpont 815": {
+      "ref": "REV 13:14",
+      "unit": {
+        "tr": "",
+        "rp": "emous tous"
+      },
+      "why": "My (people) concerns the added possessive and article."
+    },
+    "pierpont 820": {
+      "ref": "REV 13:18",
+      "unit": null,
+      "why": "The and before his number renders kai, which both texts share."
+    },
+    "pierpont 843": {
+      "ref": "REV 15:4",
+      "unit": null,
+      "why": "Nations renders ta eqnh, which both texts share."
+    },
+    "pierpont 845": {
+      "ref": "REV 15:6",
+      "unit": null,
+      "why": "Of the temple renders ek tou naou, which both texts share."
+    },
+    "pierpont 847": {
+      "ref": "REV 16:1",
+      "unit": null,
+      "why": "Out of the temple renders ek tou naou, which both texts share."
+    },
+    "pierpont 866": {
+      "ref": "REV 16:18",
+      "unit": null,
+      "why": "Men were versus man was concerns oi anqrwpoi egenonto, which both texts share."
+    },
+    "pierpont 869": {
+      "ref": "REV 17:4",
+      "unit": null,
+      "why": "Her fornication renders porneias auths, which both texts share."
+    },
+    "pierpont 871": {
+      "ref": "REV 17:8",
+      "unit": null,
+      "why": "Names versus name concerns ta onomata, which both texts share."
+    },
+    "pierpont 874": {
+      "ref": "REV 17:9",
+      "unit": null,
+      "why": "Neither text has a kai for the opening And."
+    },
+    "pierpont 883": {
+      "ref": "REV 18:8",
+      "unit": null,
+      "why": "The and before mourning renders kai, which both texts share."
+    },
+    "pierpont 888": {
+      "ref": "REV 18:14",
+      "unit": null,
+      "why": "The row explicitly quotes the first departed after thy soul lusted after; its aphlqen is shared in both texts. Only the second departed after dainty and goodly changes to apwleto, so this bound first-occurrence proposal has no changed unit."
+    },
+    "pierpont 893": {
+      "ref": "REV 18:20",
+      "unit": {
+        "tr": "",
+        "rp": "kai oi"
+      },
+      "why": "Saints and separates agioi from apostoloi at the added kai oi, as Boyd and FAA print; it does not concern the case of her in the opening exhortation."
+    },
+    "pierpont 898": {
+      "ref": "REV 19:1",
+      "unit": [
+        {
+          "tr": "doca",
+          "rp": "dunamis"
+        },
+        {
+          "tr": "timh kai h dunamis kuriw tw qew",
+          "rp": "doca tou qeou"
+        }
+      ],
+      "why": "Power and glory combines the exchanged praise nouns and the omission of honour, spanning both praise units as Boyd and FAA show; it does not concern the number of saying."
+    },
+    "pierpont 912": {
+      "ref": "REV 20:3",
+      "unit": null,
+      "why": "The and before after that renders kai, which both texts share."
+    },
+    "pierpont 925": {
+      "ref": "REV 21:5",
+      "unit": null,
+      "why": "Neither text has of God after these words."
+    },
+    "pierpont 926": {
+      "ref": "REV 21:5",
+      "unit": null,
+      "why": "True and faithful renders alhqinoi kai pistoi, in the same order in both texts."
+    },
+    "pierpont 927": {
+      "ref": "REV 21:7",
+      "unit": null,
+      "why": "Shall inherit renders klhronomhsei, which both texts share."
+    },
+    "pierpont 936": {
+      "ref": "REV 21:15",
+      "unit": null,
+      "why": "And the wall thereof renders kai to teixos auths, which both texts share."
+    },
+    "pierpont 938": {
+      "ref": "REV 21:16",
+      "unit": {
+        "tr": "",
+        "rp": "dwdeka"
+      },
+      "why": "Likewise twelve renders the added dwdeka; isa estin is shared."
+    },
+    "pierpont 945": {
+      "ref": "REV 22:3",
+      "unit": null,
+      "why": "More and there concern the shared adverbial wording ouk estai eti, not the sole unit’s synonymous noun spelling katanaqema/kataqema."
+    },
+    "pierpont 958": {
+      "ref": "REV 22:18",
+      "unit": null,
+      "why": "Neither text has seven before the plagues."
+    },
+    "pierpont 973": {
+      "ref": "LUK 10:6",
+      "unit": {
+        "tr": "men",
+        "rp": ""
+      },
+      "why": "Pierpont lists the KJV without indeed as agreeing with the Byzantine reading; indeed is the men omitted by RP2026, not the separate article before son."
+    },
+    "pierpont 975": {
+      "ref": "LUK 18:9",
+      "unit": {
+        "tr": "kai",
+        "rp": ""
+      },
+      "why": "Also renders the kai that TR has and RP lacks."
+    },
+    "pierpont 976": {
+      "ref": "JHN 7:12",
+      "unit": {
+        "tr": "de",
+        "rp": ""
+      },
+      "why": "But before others said is the de that RP omits."
+    },
+    "pierpont 980": {
+      "ref": "ACT 13:2",
+      "unit": {
+        "tr": "te",
+        "rp": ""
+      },
+      "why": "Both before Barnabas and Saul renders te, which RP omits."
+    },
+    "pierpont 981": {
+      "ref": "ACT 24:26",
+      "unit": {
+        "tr": "de",
+        "rp": ""
+      },
+      "why": "And before He hoped also is the de that RP omits."
+    },
+    "pierpont 988": {
+      "ref": "1TH 3:8",
+      "unit": {
+        "tr": "sthkhte",
+        "rp": "sthkete"
+      },
+      "why": "Should stand fast concerns the mood of sthkhte/sthkete."
+    },
+    "pierpont 994": {
+      "ref": "1JN 1:5",
+      "unit": null,
+      "why": "Both Scrivener and RP2026 read aggelia, message; Pierpont contrasts promise, while this ledger unit only changes auth estin to estin auth."
+    },
+    "tcent 67": {
+      "ref": "LUK 3:2",
+      "unit": {
+        "tr": "ep arxierewn",
+        "rp": "epi arxierews"
+      },
+      "why": "High priesthood versus high priests concerns the singular high-priest form in the combined unit."
+    },
+    "tcent 103": {
+      "ref": "LUK 20:30",
+      "unit": {
+        "tr": "",
+        "rp": "wsautws",
+        "ref": "LUK 20:31"
+      },
+      "why": "The Likewise contrast at the start of 20:31 is the added wsautws."
+    },
+    "tcent 106": {
+      "ref": "LUK 22:30",
+      "unit": [
+        {
+          "tr": "en th basileia mou",
+          "rp": ""
+        },
+        {
+          "tr": "kaqishsqe",
+          "rp": "kaqisesqe"
+        }
+      ],
+      "why": "The contrast removes in my kingdom and changes the seating clause from dependent subjunctive to independent future, spanning both Greek units."
+    },
+    "tcent 141": {
+      "ref": "ACT 3:20",
+      "unit": [
+        {
+          "tr": "prokekhrugmenon",
+          "rp": "prokexeirismenon"
+        },
+        {
+          "tr": "ihsoun xriston",
+          "rp": "xriston ihsoun"
+        }
+      ],
+      "why": "The published contrast includes both appointed versus proclaimed and Christ Jesus versus Jesus Christ."
+    },
+    "tcent 157": {
+      "ref": "ACT 9:5",
+      "unit": [
+        {
+          "tr": "sklhron soi pros kentra laktizein",
+          "rp": ""
+        },
+        {
+          "ref": "ACT 9:6",
+          "tr": "tremwn te kai qambwn eipen kurie ti me qeleis poihsai kai o kurios pros auton",
+          "rp": "alla"
+        }
+      ],
+      "why": "The published dialogue contrast spans both verses five and six."
+    },
+    "tcent 168": {
+      "ref": "ACT 13:23",
+      "unit": [
+        {
+          "tr": "hgeiren",
+          "rp": "hgagen"
+        },
+        {
+          "tr": "swthra ihsoun",
+          "rp": "swthrian"
+        }
+      ],
+      "why": "Raised versus brought and a Savior, Jesus versus salvation span both units of the verse."
+    },
+    "tcent 193": {
+      "ref": "ACT 24:6",
+      "unit": [
+        {
+          "tr": "kai kata ton hmeteron nomon hqelhsamen krinein",
+          "rp": ""
+        },
+        {
+          "ref": "ACT 24:7",
+          "tr": "parelqwn de lusias o xiliarxos meta pollhs bias ek twn xeirwn hmwn aphgagen",
+          "rp": ""
+        },
+        {
+          "ref": "ACT 24:8",
+          "tr": "keleusas tous kathgorous autou erxesqai epi se",
+          "rp": ""
+        }
+      ],
+      "why": "The published Lysias passage spans verses six through eight."
+    },
+    "tcent 208": {
+      "ref": "ROM 16:25",
+      "unit": [
+        {
+          "tr": "tw de dunamenw umas sthricai kata to euaggelion mou kai to khrugma ihsou xristou kata apokaluyin musthriou xronois aiwniois sesighmenou",
+          "rp": "tw de dunamenw umas sthricai kata to euaggelion mou kai to khrugma ihsou xristou kata apokaluyin musthriou xronois aiwniois sesighmenou"
+        },
+        {
+          "ref": "ROM 16:26",
+          "tr": "fanerwqentos de nun dia te grafwn profhtikwn kat epitaghn tou aiwniou qeou eis upakohn pistews eis panta ta eqnh gnwrisqentos",
+          "rp": "fanerwqentos de nun dia te grafwn profhtikwn kat epitaghn tou aiwniou qeou eis upakohn pistews eis panta ta eqnh gnwrisqentos"
+        },
+        {
+          "ref": "ROM 16:27",
+          "tr": "monw sofw qew dia ihsou xristou h doca eis tous aiwnas amhn",
+          "rp": "monw sofw qew dia ihsou xristou w h doca eis tous aiwnas amhn"
+        }
+      ],
+      "why": "The doxology contrast concerns all three relocated verses."
+    },
+    "tcent 289": {
+      "ref": "JAS 4:13",
+      "unit": [
+        {
+          "tr": "poreusomeqa",
+          "rp": "poreuswmeqa"
+        },
+        {
+          "tr": "poihsomen",
+          "rp": "poihswmen"
+        },
+        {
+          "tr": "emporeusomeqa",
+          "rp": "emporeuswmeqa"
+        },
+        {
+          "tr": "kerdhsomen",
+          "rp": "kerdhswmen"
+        }
+      ],
+      "why": "The generic let us against we will contrast covers the four repeated subjunctive verb changes in this sentence."
+    },
+    "tcent 290": {
+      "ref": "JAS 4:15",
+      "unit": [
+        {
+          "tr": "zhsomen",
+          "rp": "zhswmen"
+        },
+        {
+          "tr": "poihsomen",
+          "rp": "poihswmen"
+        }
+      ],
+      "why": "Let us against we will covers both live and do, the two subjunctive verb changes."
+    },
+    "tcent 303": {
+      "ref": "1PE 5:10",
+      "unit": {
+        "tr": "sthricai sqenwsai qemeliwsai",
+        "rp": "sthricei sqenwsei qemeliwsei"
+      },
+      "why": "Establish, strengthen and settle are constituents of the combined change from optatives to futures; multiple directives remain entangled for execution."
+    },
+    "tcent 304": {
+      "ref": "1PE 5:10",
+      "unit": {
+        "tr": "hmas",
+        "rp": "umas"
+      },
+      "why": "The row reports the us/you pronoun difference, not the three closing verbs."
+    },
+    "tcent 305": {
+      "ref": "2PE 1:1",
+      "unit": {
+        "tr": "simwn",
+        "rp": "sumewn"
+      },
+      "why": "Simon versus Simeon concerns the name."
+    },
+    "tcent 306": {
+      "ref": "2PE 1:1",
+      "unit": {
+        "tr": "hmwn",
+        "rp": ""
+      },
+      "why": "Our Savior concerns the omitted second hemon after Savior; the first hemon after God is shared."
+    },
+    "tcent 339": {
+      "ref": "REV 2:2",
+      "unit": {
+        "tr": "faskontas einai apostolous",
+        "rp": "legontas eautous apostolous einai"
+      },
+      "why": "Declare themselves versus say they concerns the apostolic-claim construction, not the tested verb."
+    },
+    "tcent 354": {
+      "ref": "REV 2:20",
+      "unit": [
+        {
+          "tr": "oliga oti eas",
+          "rp": "oti afeis"
+        },
+        {
+          "tr": "didaskein kai planasqai",
+          "rp": "kai didaskei kai plana tous"
+        }
+      ],
+      "why": "The paired Greek note 1333 spans afeis and didaskei kai plana, so the tolerating and teaching contrast concerns these two units."
+    },
+    "tcent 357": {
+      "ref": "REV 2:22",
+      "unit": {
+        "tr": "autwn",
+        "rp": "auths"
+      },
+      "why": "Her versus their concerns the possessive pronoun."
+    },
+    "tcent 358": {
+      "ref": "REV 2:24",
+      "unit": {
+        "tr": "kai",
+        "rp": "tois"
+      },
+      "why": "And the others concerns kai versus the article before rest."
+    },
+    "tcent 361": {
+      "ref": "REV 3:2",
+      "unit": {
+        "tr": "mellei apoqanein",
+        "rp": "emelles apoballein"
+      },
+      "why": "The death/casting-away apparatus belongs to the changed predicate, retaining its HF alternatives."
+    },
+    "tcent 383": {
+      "ref": "REV 5:6",
+      "unit": {
+        "tr": "kai idou",
+        "rp": ""
+      },
+      "why": "Saw versus looked and behold concerns omitted kai idou, not the gender of which after the seven eyes."
+    },
+    "tcent 393": {
+      "ref": "REV 6:1",
+      "unit": [
+        {
+          "tr": "blepe",
+          "rp": "ide"
+        },
+        {
+          "ref": "REV 6:2",
+          "tr": "eidon kai",
+          "rp": ""
+        }
+      ],
+      "why": "The paired Greek note spans both verses, replacing blepe kai eidon with ide across the boundary."
+    },
+    "tcent 397": {
+      "ref": "REV 6:7",
+      "unit": [
+        {
+          "tr": "blepe",
+          "rp": "ide"
+        },
+        {
+          "ref": "REV 6:8",
+          "tr": "eidon kai",
+          "rp": ""
+        }
+      ],
+      "why": "The paired Greek note spans both verses, replacing blepe kai eidon with ide across the boundary."
+    },
+    "tcent 416": {
+      "ref": "REV 7:9",
+      "unit": {
+        "tr": "foinikes",
+        "rp": "foinikas"
+      },
+      "why": "The palm-branch construction concerns palms, retaining TCENT’s different English construction."
+    },
+    "tcent 419": {
+      "ref": "REV 7:17",
+      "unit": {
+        "tr": "zwsas",
+        "rp": "zwhs"
+      },
+      "why": "Living waters versus waters of life concerns zoe versus the participle."
+    },
+    "tcent 421": {
+      "ref": "REV 8:7",
+      "unit": {
+        "tr": "",
+        "rp": "kai to triton ths ghs katekah"
+      },
+      "why": "The third of the earth burned concerns the added clause."
+    },
+    "tcent 431": {
+      "ref": "REV 9:18",
+      "unit": {
+        "tr": "",
+        "rp": "plhgwn"
+      },
+      "why": "Plagues concerns the added noun."
+    },
+    "tcent 435": {
+      "ref": "REV 10:4",
+      "unit": {
+        "tr": "tas fwnas eautwn",
+        "rp": ""
+      },
+      "why": "Their sounds concerns the omitted voices phrase."
+    },
+    "tcent 436": {
+      "ref": "REV 10:4",
+      "unit": {
+        "tr": "moi",
+        "rp": ""
+      },
+      "why": "To me concerns the omitted pronoun after saying."
+    },
+    "tcent 443": {
+      "ref": "REV 11:9",
+      "unit": {
+        "tr": "mnhmata",
+        "rp": "mnhma"
+      },
+      "why": "Tomb versus tombs concerns the number."
+    },
+    "tcent 448": {
+      "ref": "REV 11:16",
+      "unit": null,
+      "why": "The row adds the throne of before God, but RP2026 main retains enopion tou theou without that addition."
+    },
+    "tcent 452": {
+      "ref": "REV 12:8",
+      "unit": {
+        "tr": "isxusan oute",
+        "rp": "isxusen oude"
+      },
+      "why": "He versus they concerns the combined verb-number and conjunction unit."
+    },
+    "tcent 491": {
+      "ref": "REV 16:5",
+      "unit": [
+        {
+          "tr": "kurie",
+          "rp": ""
+        },
+        {
+          "tr": "kai o esomenos",
+          "rp": "o osios"
+        }
+      ],
+      "why": "The contrast removes Lord and changes the closing designation."
+    },
+    "tcent 494": {
+      "ref": "REV 16:18",
+      "unit": [
+        {
+          "tr": "fwnai",
+          "rp": "astrapai"
+        },
+        {
+          "tr": "astrapai",
+          "rp": "fwnai"
+        },
+        {
+          "tr": "egeneto",
+          "rp": ""
+        }
+      ],
+      "why": "The contrast reorders lightnings and rumblings and drops there was before the earthquake."
+    },
+    "tcent 513": {
+      "ref": "REV 19:8",
+      "unit": {
+        "tr": "kaqaron kai lampron",
+        "rp": "lampron kai kaqaron"
+      },
+      "why": "Bright and clean concerns the adjective order."
+    },
+    "tcent 518": {
+      "ref": "REV 19:17",
+      "unit": {
+        "tr": "tou megalou",
+        "rp": "to mega tou"
+      },
+      "why": "Great supper of God versus supper of the great God concerns the adjective and article construction."
+    },
+    "tcent 545": {
+      "ref": "REV 22:11",
+      "unit": {
+        "tr": "dikaiwqhtw",
+        "rp": "dikaiosunhn poihsatw"
+      },
+      "why": "Be righteous versus do right is the righteousness verb unit."
+    },
+    "web 1CO 15:49#1": {
+      "ref": "1CO 15:49",
+      "unit": {
+        "tr": "foresomen",
+        "rp": "foreswmen"
+      },
+      "why": "We will versus let’s reports the future-indicative versus hortatory-subjunctive change in foresomen/foreswmen."
+    },
+    "web 1TI 5:4#1": {
+      "ref": "1TI 5:4",
+      "unit": {
+        "tr": "kalon kai",
+        "rp": ""
+      },
+      "why": "The note explicitly says TR adds good and, identifying the omitted kalon kai."
+    },
+    "web 2PE 2:2#1": {
+      "ref": "2PE 2:2",
+      "unit": {
+        "tr": "apwleiais",
+        "rp": "aselgeiais"
+      },
+      "why": "Destructive versus immoral reports apwleiais versus aselgeiais."
+    },
+    "web ACT 10:19#1": {
+      "ref": "ACT 10:19",
+      "unit": {
+        "tr": "treis",
+        "rp": ""
+      },
+      "why": "Three is the omitted treis."
+    },
+    "web ACT 10:6#1": {
+      "ref": "ACT 10:6",
+      "unit": {
+        "tr": "outos lalhsei soi ti se dei poiein",
+        "rp": ""
+      },
+      "why": "This one will tell you what is necessary is the omitted clause outos lalhsei soi ti se dei poiein."
+    },
+    "web ACT 12:25#1": {
+      "ref": "ACT 12:25",
+      "unit": {
+        "tr": "ec",
+        "rp": "eis"
+      },
+      "why": "From versus to is ec versus eis."
+    },
+    "web ACT 13:23#1": {
+      "ref": "ACT 13:23",
+      "unit": {
+        "tr": "swthra ihsoun",
+        "rp": "swthrian"
+      },
+      "why": "A Savior, Jesus versus salvation is swthra ihsoun versus swthrian."
+    },
+    "web ACT 13:24#1": {
+      "ref": "ACT 13:24",
+      "unit": {
+        "tr": "panti tw law",
+        "rp": "tw"
+      },
+      "why": "To all the people of Israel versus to Israel is panti tw law versus tw."
+    },
+    "web ACT 17:5#1": {
+      "ref": "ACT 17:5",
+      "unit": {
+        "tr": "zhlwsantes de oi apeiqountes ioudaioi kai proslabomenoi",
+        "rp": "proslabomenoi de oi ioudaioi oi apeiqountes"
+      },
+      "why": "Becoming envious and taking along versus took along is the substituted clause opening."
+    },
+    "web ACT 20:28#1": {
+      "ref": "ACT 20:28",
+      "unit": {
+        "tr": "",
+        "rp": "kuriou kai"
+      },
+      "why": "The Lord and is RP's added kuriou kai."
+    },
+    "web ACT 24:6#1": {
+      "ref": "ACT 24:6",
+      "unit": {
+        "tr": "kai kata ton hmeteron nomon hqelhsamen krinein",
+        "rp": ""
+      },
+      "why": "We wanted to judge him according to our law is the omitted kai kata ton hmeteron nomon hqelhsamen krinein."
+    },
+    "web ACT 24:7#1": {
+      "ref": "ACT 24:7",
+      "unit": {
+        "tr": "parelqwn de lusias o xiliarxos meta pollhs bias ek twn xeirwn hmwn aphgagen",
+        "rp": ""
+      },
+      "why": "The Lysias clause is the structural omission of 24:7."
+    },
+    "web ACT 24:8#1": {
+      "ref": "ACT 24:8",
+      "unit": {
+        "tr": "keleusas tous kathgorous autou erxesqai epi se",
+        "rp": ""
+      },
+      "why": "Commanding his accusers to come is the omitted keleusas tous kathgorous autou erxesqai epi se."
+    },
+    "web ACT 7:37#1": {
+      "ref": "ACT 7:37",
+      "unit": {
+        "tr": "autou akousesqe",
+        "rp": ""
+      },
+      "why": "Him you will hear concerns the omitted closing phrase."
+    },
+    "web ACT 8:37#1": {
+      "ref": "ACT 8:37",
+      "unit": {
+        "tr": "eipen de o filippos ei pisteueis ec olhs ths kardias ecestin apokriqeis de eipen pisteuw ton uion tou qeou einai ton ihsoun xriston",
+        "rp": ""
+      },
+      "why": "TR adds the whole verse, the structural omission of 8:37."
+    },
+    "web ACT 9:28#1": {
+      "ref": "ACT 9:28",
+      "unit": {
+        "tr": "kai ekporeuomenos en",
+        "rp": "eis"
+      },
+      "why": "And going out renders kai ekporeuomenos, which RP replaces."
+    },
+    "web ACT 9:38#1": {
+      "ref": "ACT 9:38",
+      "unit": {
+        "tr": "duo andras",
+        "rp": ""
+      },
+      "why": "Two men is the omitted duo andras."
+    },
+    "web ACT 9:5#1": {
+      "ref": "ACT 9:5",
+      "unit": {
+        "tr": "sklhron soi pros kentra laktizein",
+        "rp": ""
+      },
+      "why": "Kicking against the prods is the omitted sklhron soi pros kentra laktizein."
+    },
+    "web ACT 9:6#1": {
+      "ref": "ACT 9:6",
+      "unit": {
+        "tr": "tremwn te kai qambwn eipen kurie ti me qeleis poihsai kai o kurios pros auton",
+        "rp": "alla"
+      },
+      "why": "TR omitting But is the alla that RP reads in place of the TR clause."
+    },
+    "web EPH 1:18#1": {
+      "ref": "EPH 1:18",
+      "unit": {
+        "tr": "dianoias",
+        "rp": "kardias"
+      },
+      "why": "Understanding versus hearts reports dianoias/kardias; the plural hearts is the WEB rendering of the shared plural possessive, not another Greek unit."
+    },
+    "web EPH 3:9#1": {
+      "ref": "EPH 3:9",
+      "unit": {
+        "tr": "koinwnia",
+        "rp": "oikonomia"
+      },
+      "why": "The explicit fellowship/administration contrast reports koinwnia versus oikonomia."
+    },
+    "web HEB 11:13#1": {
+      "ref": "HEB 11:13",
+      "unit": {
+        "tr": "peisqentes kai",
+        "rp": ""
+      },
+      "why": "And being convinced of reports the omitted peisqentes kai construction."
+    },
+    "web HEB 12:20#1": {
+      "ref": "HEB 12:20",
+      "unit": {
+        "tr": "h bolidi katatoceuqhsetai",
+        "rp": ""
+      },
+      "why": "The row reports omission of being shot with an arrow after stoned, the omitted closing clause."
+    },
+    "web HEB 2:7#1": {
+      "ref": "HEB 2:7",
+      "unit": {
+        "tr": "kai katesthsas auton epi ta erga twn xeirwn sou",
+        "rp": ""
+      },
+      "why": "The row reports omission of setting him over the works of thy hands, the omitted closing clause."
+    },
+    "web JHN 19:28#1": {
+      "ref": "JHN 19:28",
+      "unit": {
+        "tr": "eidws",
+        "rp": "idwn"
+      },
+      "why": "Knowing versus seeing is eidws versus idwn."
+    },
+    "web JUD 1:24#1": {
+      "ref": "JUD 1:24",
+      "unit": {
+        "tr": "umas",
+        "rp": "autous"
+      },
+      "why": "Keep you versus keep them identifies umas versus autous; the same object governs the following presentation clause."
+    },
+    "web LUK 14:24#1": {
+      "ref": "LUK 14:24",
+      "unit": {
+        "tr": "",
+        "rp": "polloi gar eisin klhtoi oligoi de eklektoi"
+      },
+      "why": "WEB explicitly attributes the added final sentence For many are called, but few are chosen to RP; it is the polloi gar eisin klhtoi oligoi de eklektoi addition."
+    },
+    "web LUK 19:29#1": {
+      "ref": "LUK 19:29",
+      "unit": {
+        "tr": "bhqfagh",
+        "rp": "bhqsfagh"
+      },
+      "why": "Bethpage versus Bethsphage reports the bhqfagh/bhqsfagh name difference; the source spelling prevents exact contrast matching."
+    },
+    "web LUK 20:1#1": {
+      "ref": "LUK 20:1",
+      "unit": {
+        "tr": "arxiereis",
+        "rp": "iereis"
+      },
+      "why": "The added chief in the TR renders the prefix of arxiereis, replaced by iereis in RP."
+    },
+    "web LUK 7:31#1": {
+      "ref": "LUK 7:31",
+      "unit": {
+        "tr": "eipen de o kurios",
+        "rp": ""
+      },
+      "why": "But the Lord said reports the omitted introductory clause eipen de o kurios."
+    },
+    "web LUK 9:23#1": {
+      "ref": "LUK 9:23",
+      "unit": {
+        "tr": "kaq hmeran",
+        "rp": ""
+      },
+      "why": "The daily omission reports kath hemeran, the sole Greek difference in this verse."
+    },
+    "web MAT 10:8#1": {
+      "ref": "MAT 10:8",
+      "unit": {
+        "tr": "nekrous egeirete",
+        "rp": ""
+      },
+      "why": "Raise the dead reports the omitted nekrous egeirete."
+    },
+    "web MAT 20:26#1": {
+      "ref": "MAT 20:26",
+      "unit": {
+        "tr": "estw",
+        "rp": "estai"
+      },
+      "why": "Let him be versus shall be reports imperative estw versus future estai."
+    },
+    "web MAT 26:26#1": {
+      "ref": "MAT 26:26",
+      "unit": {
+        "tr": "euloghsas",
+        "rp": "euxaristhsas"
+      },
+      "why": "Blessed versus gave thanks for reports euloghsas versus euxaristhsas, the sole Greek difference in this verse."
+    },
+    "web MAT 27:35#1": {
+      "ref": "MAT 27:35",
+      "unit": {
+        "tr": "ina plhrwqh to rhqen upo tou profhtou diemerisanto ta imatia mou eautois kai epi ton imatismon mou ebalon klhron",
+        "rp": ""
+      },
+      "why": "The TR-adds note quotes the omitted ina plhrwqh fulfilment clause and quotation."
+    },
+    "web MAT 27:41#1": {
+      "ref": "MAT 27:41",
+      "unit": {
+        "tr": "",
+        "rp": "kai farisaiwn"
+      },
+      "why": "The TR-omits Pharisees note reports the added kai farisaiwn."
+    },
+    "web MAT 28:19#1": {
+      "ref": "MAT 28:19",
+      "unit": {
+        "tr": "oun",
+        "rp": ""
+      },
+      "why": "The note identifies therefore as a TR addition, reporting the omitted oun."
+    },
+    "web MAT 3:11#1": {
+      "ref": "MAT 3:11",
+      "unit": {
+        "tr": "kai puri",
+        "rp": ""
+      },
+      "why": "The quoted TR addition and with fire renders the omitted kai puri."
+    },
+    "web MAT 9:36#1": {
+      "ref": "MAT 9:36",
+      "unit": {
+        "tr": "eklelumenoi",
+        "rp": "eskulmenoi"
+      },
+      "why": "Weary versus harassed reports the replacement of eklelumenoi by eskulmenoi."
+    },
+    "web MRK 3:32#1": {
+      "ref": "MRK 3:32",
+      "unit": {
+        "tr": "",
+        "rp": "kai ai adelfai sou"
+      },
+      "why": "The reported sisters addition is kai hai adelphai sou, the only Greek addition in this verse."
+    },
+    "web MRK 4:4#1": {
+      "ref": "MRK 4:4",
+      "unit": {
+        "tr": "tou ouranou",
+        "rp": ""
+      },
+      "why": "The reported of the air omission identifies tou ouranou after the birds."
+    },
+    "web MRK 6:33#1": {
+      "ref": "MRK 6:33",
+      "unit": {
+        "tr": "oi oxloi",
+        "rp": ""
+      },
+      "why": "The multitudes versus They reports the omission of the explicit subject hoi ochloi."
+    },
+    "web REV 11:17#1": {
+      "ref": "REV 11:17",
+      "unit": {
+        "tr": "kai o erxomenos",
+        "rp": ""
+      },
+      "why": "And who is coming is omitted, matching omitted kai ho erchomenos."
+    },
+    "web REV 13:10#1": {
+      "ref": "REV 13:10",
+      "unit": null,
+      "why": "The WEB passive is to go and is to be killed readings are not RP2026 main echei aichmalosian and apoktenei; its killing-clause contrast concerns Greek unchanged between the pinned texts."
+    },
+    "web REV 15:2#1": {
+      "ref": "REV 15:2",
+      "unit": {
+        "tr": "xaragmatos autou ek tou",
+        "rp": ""
+      },
+      "why": "TR adds his mark reports the omitted mark construction; the pinned main proceeds from image to number of his name."
+    },
+    "web REV 17:8#1": {
+      "ref": "REV 17:8",
+      "unit": {
+        "tr": "kaiper estin",
+        "rp": "kai parestai"
+      },
+      "why": "Yet is versus shall be present concerns the closing clause."
+    },
+    "web REV 19:17#1": {
+      "ref": "REV 19:17",
+      "unit": {
+        "tr": "tou megalou",
+        "rp": "to mega tou"
+      },
+      "why": "Great supper of God versus supper of the great God concerns the adjective and article construction."
+    },
+    "web REV 1:11#1": {
+      "ref": "REV 1:11",
+      "unit": {
+        "tr": "egw eimi to a kai to w o prwtos kai o esxatos kai",
+        "rp": ""
+      },
+      "why": "The quoted Alpha and Omega declaration is part of this omitted opening clause, not the separate Asia omission."
+    },
+    "web REV 1:8#1": {
+      "ref": "REV 1:8",
+      "unit": {
+        "tr": "arxh kai telos",
+        "rp": ""
+      },
+      "why": "Beginning and end concerns the omitted phrase."
+    },
+    "web REV 20:2#1": {
+      "ref": "REV 20:2",
+      "unit": {
+        "tr": "satanas",
+        "rp": "o satanas o planwn thn oikoumenhn olhn"
+      },
+      "why": "The added who deceives the whole inhabited earth description belongs to the expanded Satan construction."
+    },
+    "web REV 21:16#1": {
+      "ref": "REV 21:16",
+      "unit": [
+        {
+          "tr": "",
+          "rp": "dwdeka"
+        }
+      ],
+      "why": "The contrast between 12000 and 12012 concerns the added twelve."
+    },
+    "web REV 21:8#1": {
+      "ref": "REV 21:8",
+      "unit": {
+        "tr": "",
+        "rp": "kai amartwlois"
+      },
+      "why": "And sinners concerns the added phrase."
+    },
+    "web REV 22:1#1": {
+      "ref": "REV 22:1",
+      "unit": null,
+      "why": "The row omits pure, but RP2026 main retains katharon and only reorders river and pure; the omission belongs to another edition."
+    },
+    "web REV 2:15#1": {
+      "ref": "REV 2:15",
+      "unit": {
+        "tr": "o misw",
+        "rp": "omoiws"
+      },
+      "why": "Which I hate versus likewise concerns o misw versus omoiws."
+    },
+    "web REV 2:20#1": {
+      "ref": "REV 2:20",
+      "unit": {
+        "tr": "iezabhl thn legousan",
+        "rp": "sou iezabel h legei"
+      },
+      "why": "Your woman and she calls concern the combined possessive, name and relative-clause unit."
+    },
+    "web REV 2:3#1": {
+      "ref": "REV 2:3",
+      "unit": {
+        "tr": "kekopiakas kai ou kekmhkas",
+        "rp": "kai ouk ekopiasas"
+      },
+      "why": "Have labored and concerns the replacement of kekopiakas kai ou kekmekas by kai ouk ekopiasas."
+    },
+    "web REV 3:2#1": {
+      "ref": "REV 3:2",
+      "unit": {
+        "tr": "mellei apoqanein",
+        "rp": "emelles apoballein"
+      },
+      "why": "The you throwing-away contrast concerns the changed death/casting-away predicate."
+    },
+    "web REV 4:11#1": {
+      "ref": "REV 4:11",
+      "unit": {
+        "tr": "kurie",
+        "rp": "o kurios kai o qeos hmwn o agios"
+      },
+      "why": "Our Lord and God the holy one concerns the expanded address."
+    },
+    "web REV 5:14#2": {
+      "ref": "REV 5:14",
+      "unit": {
+        "tr": "zwnti eis tous aiwnas twn aiwnwn",
+        "rp": ""
+      },
+      "why": "The one living forever concerns the omitted phrase."
+    },
+    "web REV 8:7#1": {
+      "ref": "REV 8:7",
+      "unit": {
+        "tr": "",
+        "rp": "kai to triton ths ghs katekah"
+      },
+      "why": "The third of the earth burned concerns the added clause."
+    },
+    "web REV 9:2#1": {
+      "ref": "REV 9:2",
+      "unit": {
+        "tr": "megalhs",
+        "rp": "kaiomenhs"
+      },
+      "why": "The great-furnace report concerns megalhs versus kaiomenhs, not the shared opening of the bottomless pit."
+    },
+    "web ROM 14:26#1": {
+      "ref": "ROM 16:27",
+      "unit": [
+        {
+          "tr": "tw de dunamenw umas sthricai kata to euaggelion mou kai to khrugma ihsou xristou kata apokaluyin musthriou xronois aiwniois sesighmenou",
+          "rp": "tw de dunamenw umas sthricai kata to euaggelion mou kai to khrugma ihsou xristou kata apokaluyin musthriou xronois aiwniois sesighmenou",
+          "ref": "ROM 16:25"
+        },
+        {
+          "tr": "fanerwqentos de nun dia te grafwn profhtikwn kat epitaghn tou aiwniou qeou eis upakohn pistews eis panta ta eqnh gnwrisqentos",
+          "rp": "fanerwqentos de nun dia te grafwn profhtikwn kat epitaghn tou aiwniou qeou eis upakohn pistews eis panta ta eqnh gnwrisqentos",
+          "ref": "ROM 16:26"
+        },
+        {
+          "tr": "monw sofw qew dia ihsou xristou h doca eis tous aiwnas amhn",
+          "rp": "monw sofw qew dia ihsou xristou w h doca eis tous aiwnas amhn"
+        }
+      ],
+      "why": "The row explicitly reports all three doxology verses at both addresses, covering each relocated verse."
+    },
+    "web ROM 16:25#1": {
+      "ref": "ROM 16:25",
+      "unit": [
+        {
+          "tr": "tw de dunamenw umas sthricai kata to euaggelion mou kai to khrugma ihsou xristou kata apokaluyin musthriou xronois aiwniois sesighmenou",
+          "rp": "tw de dunamenw umas sthricai kata to euaggelion mou kai to khrugma ihsou xristou kata apokaluyin musthriou xronois aiwniois sesighmenou"
+        },
+        {
+          "ref": "ROM 16:26",
+          "tr": "fanerwqentos de nun dia te grafwn profhtikwn kat epitaghn tou aiwniou qeou eis upakohn pistews eis panta ta eqnh gnwrisqentos",
+          "rp": "fanerwqentos de nun dia te grafwn profhtikwn kat epitaghn tou aiwniou qeou eis upakohn pistews eis panta ta eqnh gnwrisqentos"
+        },
+        {
+          "ref": "ROM 16:27",
+          "tr": "monw sofw qew dia ihsou xristou h doca eis tous aiwnas amhn",
+          "rp": "monw sofw qew dia ihsou xristou w h doca eis tous aiwnas amhn"
+        }
+      ],
+      "why": "The note explicitly locates all three doxology verses at both addresses."
+    }
+  }
+}

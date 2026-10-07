@@ -147,8 +147,8 @@ def test_a_verse_may_stand_beside_two(
     ]
     assert ("9:2a–f", "8:30–35") in rows("JOS")
     assert ("35:16", "35:16, 21") in rows("GEN")
-    # A verse that is empty here points to the one that has its words.
-    assert ("24:22f; 30:1", "30:1") in rows("PRO")
+    # The Hebrew's chapter 30 stands in lettered verses, which run on.
+    assert ("24:22f–i", "30:1–4") in rows("PRO")
     # Proverbs 8:28 also holds the first part of the King James Bible's 8:29,
     # which the row says without giving 8:29 both.
     assert ("8:28", "8:28–29") in rows("PRO")
@@ -302,7 +302,7 @@ def test_psalms_use_whole_psalms_and_verse_ranges(
 def test_the_page_prints_its_tables(edition: bible.pipeline.Edition) -> None:
     page = usj.serialize(edition.documents[NUMBERING["id"]])
     assert "{" not in page and "}" not in page
-    assert page.count("\\tr\n\\tc1 ") == 485
+    assert page.count("\\tr\n\\tc1 ") == 491
     # A book's table is headed by both Bibles' names for the book.
     assert "\\tr\n\\th1 \\bd Jeremias\\bd*\n\\th2 \\bd Jeremiah\\bd*\n" in page
     assert "\\tr\n\\th1 \\bd Genesis\\bd*\n\\th2 \\bd Genesis\\bd*\n" in page
@@ -312,7 +312,8 @@ def test_the_page_prints_its_tables(edition: bible.pipeline.Edition) -> None:
         for node in usj.walk(edition.documents[NUMBERING["id"]]["content"])
         if usj.is_type(node, "table")
     ]
-    assert len(tables) == 33
+    # The Old Testament's, and four of the New Testament's.
+    assert len(tables) == 37
     for table in tables:
         *named, heading = list(usj.objects(table["content"]))[
             : 1 if table is tables[0] else 2

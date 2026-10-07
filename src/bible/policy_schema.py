@@ -29,6 +29,15 @@ class VersificationRelabel(TypedDict, total=False):
     opens: str
 
 
+class VersificationStub(TypedDict, total=False):
+    why: str
+
+
+class VersificationRelocation(TypedDict, total=False):
+    to: str
+    why: str
+
+
 class Versification(TypedDict, total=False):
     apocrypha: "tuple[VersificationApocrypha, ...]"
     books: Mapping[str, str]
@@ -36,6 +45,8 @@ class Versification(TypedDict, total=False):
     old_testament: tuple[str, ...]
     readings: "Mapping[str, tuple[Run, ...]]"
     relabel: "Mapping[str, VersificationRelabel]"
+    relocations: "Mapping[str, VersificationRelocation | str]"
+    stubs: "Mapping[str, VersificationStub | str]"
     why: str
 
 
@@ -129,6 +140,7 @@ class NoteOverride(TypedDict, total=False):
     lemma: str | None
     note: str | None
     occurrence: int
+    omitted: bool
     widen: bool
     sentence: bool
     quotation: bool
@@ -386,6 +398,100 @@ Decision = TypedDict(
     },
     total=False,
 )
+
+
+class ByzantineUnit(TypedDict, total=False):
+    ref: str
+    tr: str
+    rp: str
+    nth: int
+
+
+ByzantineEdit = TypedDict(
+    "ByzantineEdit",
+    {
+        "ref": str,
+        "from": str,
+        "to": str,
+        "occurrence": int,
+        "after": str,
+        "before": str,
+    },
+    total=False,
+)
+
+
+class ByzantineEvidence(TypedDict, total=False):
+    ref: str
+    entry: str | int
+    field: str
+    quote: str
+
+
+class ByzantineReading(TypedDict, total=False):
+    units: tuple[ByzantineUnit, ...]
+    kind: str
+    edits: tuple[ByzantineEdit, ...]
+    tags: tuple[str, ...]
+    why: str
+    evidence: Mapping[str, ByzantineEvidence]
+
+
+class ByzantineOmitted(TypedDict, total=False):
+    why: str
+
+
+class ByzantineMoved(TypedDict, total=False):
+    to: str
+    why: str
+
+
+class ByzantineStructure(TypedDict, total=False):
+    why: str
+    omitted: Mapping[str, ByzantineOmitted]
+    moved: Mapping[str, ByzantineMoved]
+
+
+class ByzantineLemma(TypedDict, total=False):
+    lemma: str
+    why: str
+
+
+class ByzantineAccent(TypedDict, total=False):
+    tr: str
+    rp: str
+    why: str
+
+
+class ByzantineSide(TypedDict, total=False):
+    unit: ByzantineUnit
+    side: str
+    why: str
+
+
+Byzantine = TypedDict(
+    "Byzantine",
+    {
+        "why": str,
+        "readings": Mapping[str, ByzantineReading],
+        "structure": ByzantineStructure,
+        "accents": Mapping[str, ByzantineAccent],
+        "hodges-farstad": Mapping[str, ByzantineSide],
+        "lemmas": Mapping[str, ByzantineLemma],
+    },
+    total=False,
+)
+
+
+class ByzantinePlacement(TypedDict, total=False):
+    ref: str
+    unit: ByzantineUnit | tuple[ByzantineUnit, ...] | None
+    why: str
+
+
+class ByzantinePlacements(TypedDict, total=False):
+    why: str
+    placements: Mapping[str, ByzantinePlacement]
 
 
 class ClassConflict(TypedDict):

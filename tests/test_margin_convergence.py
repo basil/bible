@@ -87,6 +87,69 @@ def test_crowded_notes_settle_after_their_offsets_are_applied(tmp_path: Path) ->
     assert first.ymin >= second.ymax
 
 
+def test_a_lone_note_stays_within_the_text_block() -> None:
+    # A note beside a page's first line, with no other note to push it down,
+    # would otherwise stand above the block (Genesis 31:2 at a page's top).
+    notes = MarginNotes(top=500, bot=0)
+    note = MarginNote(
+        ref="GEN31.2",
+        marker="f",
+        hpos="inner",
+        vpos="bottom",
+        gap=8.5,
+        width=68.3,
+        height=30,
+        depth=0,
+        xoffset=0,
+        yoffset=0,
+        pnum=0,
+        xpos=100,
+        ypos=502,
+    )
+    notes.pages = [[note]]
+    notes.processpages()
+    assert note.ymax + note.yshift == pytest.approx(500)
+
+
+def test_an_overfull_margin_stays_on_the_page_and_settles(tmp_path: Path) -> None:
+    # Revelation has pages with more notes than the margin holds; their
+    # offsets must not grow on every pass until TeX refuses them.
+    notes = MarginNotes(top=500, bot=100)
+    notes.pages = [
+        [
+            MarginNote(
+                ref=f"REV13.{i}",
+                marker="f",
+                hpos="inner",
+                vpos="bottom",
+                gap=8.5,
+                width=68.3,
+                height=40,
+                depth=0,
+                xoffset=0,
+                yoffset=0,
+                pnum=0,
+                xpos=100,
+                ypos=200 - 5 * i,
+            )
+            for i in range(20)
+        ]
+    ]
+    output = tmp_path / "notes.marginnotes"
+    for _ in range(2):
+        notes.processpages()
+        notes.outfile(output)
+        for note in notes.pages[0]:
+            # Below the block's foot, where the notes overlap, but on the page.
+            assert note.ymin + note.yshift >= -0.001
+            assert note.ymax + note.yshift <= 500.001
+            note.ypos += note.yshift
+            note.yoffset -= note.yshift
+            note.yshift = 0
+    notes.processpages()
+    assert not notes.outfile(output)
+
+
 @pytest.mark.parametrize("unsettled", [False, True])
 def test_typeset_refuses_unsettled_notes_even_with_cli_success(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, unsettled: bool

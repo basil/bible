@@ -2,7 +2,8 @@
   "globs": [
     "*.md",
     "docs/**/*.md",
-    "sources/**/*.md"
+    "sources/**/*.md",
+    "!sources/pierpont.md"
   ],
   "config": {
     "MD013": false,

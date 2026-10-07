@@ -26,6 +26,7 @@ import bible.policy
 from bible import repairs, scripture, usj
 from bible.checks import require, require_fields
 from bible.policy_schema import RevisionChange
+from bible.sources import NEW_TESTAMENT
 from bible.usj import Content, Document, Node
 
 
@@ -57,6 +58,14 @@ def check(policy: bible.policy.Policy) -> None:
             require(
                 re.fullmatch(r"\w{3} \S+:\S+", key) is not None,
                 f"Revision of what is not a verse: {name}: {key}",
+            )
+            # The appendix of readings compares the New Testament as revised
+            # with the King James text as respelt only: a revised verse
+            # would be listed as a reading the Greek does not have.
+            require(
+                key[:3] not in NEW_TESTAMENT,
+                f"Revision of a New Testament verse, which the appendix of"
+                f" readings would list as a Byzantine reading: {name}: {key}",
             )
             require(
                 change["from"]

@@ -38,6 +38,34 @@ def _bible_same_cache(old: str, new: str, extension: str) -> bool:
 
 
 def patch(root: Path) -> None:
+    # PTXprint shifts a note only when it collides with another, so a note
+    # set beside a page's first line, as at a chapter's opening, can stand
+    # above the text block if no other note pushes it down. Hold every note
+    # within the block before the notes are moved apart. The Dockerfile has
+    # already changed this sort to order notes by their tops alone.
+    replace_once(
+        root / "marginnotes.py",
+        "            t.sort(key=lambda n: -n.ymax)\n",
+        "            t.sort(key=lambda n: -n.ymax)\n"
+        "            for n in t:\n"
+        "                if n.ymax + n.yshift > self.top:\n"
+        "                    n.yshift = self.top - n.ymax\n",
+    )
+    # A margin too full for its notes is shifted further on every pass, until
+    # an offset is larger than TeX can take. Once the notes are moved apart,
+    # hold every note below the block's head and above the foot of the page
+    # (y = 0): the notes of an overfull margin then overlap low on the page,
+    # and the next pass finds them where it left them. A margin that fits
+    # never needs either bound, so its notes are placed as before.
+    replace_once(
+        root / "marginnotes.py",
+        "                i += 1\n        return\n",
+        "                i += 1\n"
+        "            for n in t:\n"
+        "                n.yshift = min(n.yshift, self.top - n.ymax)\n"
+        "                n.yshift = max(n.yshift, -n.ymin)\n"
+        "        return\n",
+    )
     replace_once(
         root / "marginnotes.py",
         "                    if s['yshift'] != 0:\n",

@@ -166,6 +166,66 @@
     }
   },
   "decisions": {
+    "PRO 29:27 Heb.": {
+      "source": "24:22f–t, 24:35–53 and 24:54–62",
+      "not_a_citation": true,
+      "why": "Where this edition prints the passages the Hebrew has here, named as numbers rather than cited, as the note at Romans 16:24 names the doxology's: the note is about the Hebrew's order, not a reference to be followed."
+    },
+    "PRO 24:22f Heb.": {
+      "source": "30:1–14",
+      "not_a_citation": true,
+      "why": "The Hebrew's numbers of the passage that stands here, which are the King James Bible's, named as such: not a citation of verses this edition has."
+    },
+    "PRO 24:35 Heb.": {
+      "source": "30:15–33",
+      "not_a_citation": true,
+      "why": "The Hebrew's numbers of the passage that stands here, which are the King James Bible's, named as such: not a citation of verses this edition has."
+    },
+    "PRO 24:54 Heb.": {
+      "source": "31:1–9",
+      "not_a_citation": true,
+      "why": "The Hebrew's numbers of the passage that stands here, which are the King James Bible's, named as such: not a citation of verses this edition has."
+    },
+    "MAT 23:13 TR": {
+      "source": "23:14",
+      "not_a_citation": true,
+      "why": "The King James Bible's number of the verse the Byzantine text prints here, which the note names as such: not a citation of this edition's 23:14."
+    },
+    "MAT 23:14 TR": {
+      "source": "23:13",
+      "not_a_citation": true,
+      "why": "The King James Bible's number of the verse the Byzantine text prints here, which the note names as such: not a citation of this edition's 23:13."
+    },
+    "ROM 14:24 TR": {
+      "source": "16:25–27",
+      "not_a_citation": true,
+      "why": "The King James Bible's numbers of the doxology, which this edition prints here and nowhere else: not a citation of verses the edition lacks."
+    },
+    "ROM 16:24 TR": {
+      "source": "14:24–26",
+      "not_a_citation": true,
+      "why": "Where this edition prints the doxology, named as a number rather than cited: the note is about the verses the King James Bible numbers 16:25–27, not a reference to be followed from them."
+    },
+    "LUK 17:35 TR": {
+      "source": "verse 36",
+      "not_a_citation": true,
+      "why": "The King James Bible's number of the verse the Byzantine text lacks, whose words the note quotes: not a citation of a verse of this edition."
+    },
+    "ACT 8:36 TR": {
+      "source": "verse 37",
+      "not_a_citation": true,
+      "why": "The King James Bible's number of the verse the Byzantine text lacks, whose words the note quotes: not a citation of a verse of this edition."
+    },
+    "ACT 15:33 TR": {
+      "source": "verse 34",
+      "not_a_citation": true,
+      "why": "The King James Bible's number of the verse the Byzantine text lacks, whose words the note quotes: not a citation of a verse of this edition."
+    },
+    "ACT 24:6 TR": {
+      "source": "verse 7",
+      "not_a_citation": true,
+      "why": "The King James Bible's number of the verse the Byzantine text lacks, whose words the note quotes: not a citation of a verse of this edition."
+    },
     "1KI 16:28d": {
       "source": "1 Kings 22. 46-50",
       "unprinted": true,

@@ -32,8 +32,8 @@ def tracked_inputs() -> dict[str, str]:
     }
     for name in (
         *TRACKED_FILES,
-        # Record the local marginal listing alongside its source pin.
-        sources.SOURCES["marginal_notes"]["file"],
+        # Record every loose source file alongside its pin.
+        *(source["file"] for source in sources.SOURCES.values() if "file" in source),
         *toolchain.font_archives(),
     ):
         tracked[name] = file_sha256(paths.ROOT / name)

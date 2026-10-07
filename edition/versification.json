@@ -91,6 +91,27 @@
       "kjv": null
     }
   ],
+  "stubs": {
+    "why": "A chapter eBible's transcription numbers without any words, where Brenton has none: the Greek gives the chapter's sayings elsewhere, and eBible left an empty verse with a remark of its own pointing there. The edition prints neither; the table of chapters and verses and the note at the first of the displaced verses say where the King James Bible's chapter stands. The build verifies that the verse has no words and is its chapter's only verse.",
+    "PRO 30:1": {
+      "why": "eBible's placeholder for the Hebrew's chapter 30, whose sayings the Greek sets in chapter 24 (24:22f-22t and 24:35-53), with its own remark, See chapter 24 for the content of chapter 30, which is not Brenton's. Brenton's text runs from chapter 29 to 31:10."
+    }
+  },
+  "relocations": {
+    "why": "Where the Greek sets a passage in another order than the Hebrew, which the King James Bible follows, a note at the passage's first verse says where the Hebrew has it, and a note at the verse after which the Hebrew has it says where its passages are printed, as the notes on the New Testament's moved verses say where the Received Text has them. Each is keyed by the Hebrew's passage and names the verse where this edition prints its first verse, and is checked against the runs the build works out.",
+    "PRO 30:1-14": {
+      "to": "PRO 24:22f",
+      "why": "The words of Agur, the Hebrew's 30:1-14, which the Greek sets after 24:22, in lettered verses."
+    },
+    "PRO 30:15-33": {
+      "to": "PRO 24:35",
+      "why": "The rest of the Hebrew's chapter 30, which the Greek sets after 24:34."
+    },
+    "PRO 31:1-9": {
+      "to": "PRO 24:54",
+      "why": "The words of Lemuel's mother, the Hebrew's 31:1-9, which the Greek sets after them; Brenton's chapter 31 begins at verse 10."
+    }
+  },
   "readings": {
     "GEN": [
       {
@@ -388,9 +409,9 @@
         "why": "The Greek sets the Hebrew's 20:20-22 after verse 9, in lettered verses; this is the third."
       },
       {
-        "edition": "PRO 24:22f; PRO 30:1",
+        "edition": "PRO 24:22f",
         "kjv": "PRO 30:1",
-        "why": "The Greek sets the Hebrew's 30:1-14 here, in lettered verses: this verse ends with the words of the man, which open that chapter. The edition's own 30:1 is empty, and only points here."
+        "why": "The Greek sets the Hebrew's 30:1-14 here, in lettered verses: this verse ends with the words of the man, which open that chapter."
       },
       {
         "edition": "PRO 24:22g",

@@ -29,6 +29,7 @@ from bible import (
     alexandrinus,
     annotate,
     assembly,
+    byzantine,
     crossrefs,
     matter,
     numbering,
@@ -44,6 +45,7 @@ from bible import (
     usj,
     versification,
 )
+from bible.byzantine import appendix
 from bible.checks import present, require
 from bible.policy import source_id
 from bible.policy_schema import WordingChange
@@ -224,12 +226,36 @@ def read(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Read:
     )
 
 
+@dataclass(frozen=True)
+class Promoted:
+    """The sources with the edition's readings in them: Brenton's books with
+    the Alexandrine decisions carried out, and the King James books conformed
+    to the Byzantine text, with what the reconciliation worked out."""
+
+    brenton: MappingProxyType[str, Document]
+    kjv: MappingProxyType[str, Document]
+    alexandrine: tuple[int, int]
+    byzantine: byzantine.Reconciled
+
+
 def promote(
-    sources: Read, policy: bible.policy.Policy
-) -> tuple[MappingProxyType[str, Document], tuple[int, int]]:
-    """Brenton's books with the Alexandrine decisions carried out."""
+    sources: Read,
+    policy: bible.policy.Policy,
+    inputs: Mapping[str, bible.sources.Content],
+    terms: terminology.Registry,
+) -> Promoted:
+    """Brenton's books with the Alexandrine decisions carried out, and the
+    King James books with the Byzantine readings in them: in each, the
+    chosen text goes into the verse and the displaced reading becomes a
+    note that names its witness."""
     counts = alexandrinus.check(policy, sources.brenton)
-    return (
+    found = byzantine.reconciled(
+        inputs,
+        {code: sources.kjv[code] for code in byzantine.BOOKS},
+        bible.policy.thaw(policy.byzantine),
+        bible.policy.thaw(policy.byzantine_placements),
+    )
+    return Promoted(
         MappingProxyType(
             {
                 code: alexandrinus.promoted(code, doc, policy, sources.kjv)
@@ -237,13 +263,23 @@ def promote(
                 if code != alexandrinus.APPENDIX
             }
         ),
+        MappingProxyType(
+            {
+                code: (
+                    byzantine.promoted(code, found, terms)
+                    if code in byzantine.BOOKS
+                    else doc
+                )
+                for code, doc in sources.kjv.items()
+            }
+        ),
         counts,
+        found,
     )
 
 
 def assemble(
-    read_sources: Read,
-    promoted: Mapping[str, Document],
+    promoted: Promoted,
     policy: bible.policy.Policy,
     sources: bible.sources.Sources,
 ) -> MappingProxyType[str, Document]:
@@ -252,7 +288,7 @@ def assemble(
     units = {
         unit["id"]: assembly.named(
             unit,
-            assembly.scripture_unit(unit, promoted, read_sources.kjv, policy),
+            assembly.scripture_unit(unit, promoted.brenton, promoted.kjv, policy),
             assembly.source_text(unit, sources),
         )
         for unit in policy.scripture
@@ -265,12 +301,14 @@ def placed(
     read_sources: Read,
     policy: bible.policy.Policy,
 ) -> bible.policy.Policy:
-    """The policy with every Old Testament verse's place in the King James
-    Bible, which the notes, the links and the table of chapters and verses
-    then read."""
+    """The policy with every verse's place in the King James Bible, which the
+    notes, the links and the table of chapters and verses then read: the Old
+    Testament's worked out from the table and the words, the New Testament's
+    from the verses the Byzantine text lacks or places elsewhere."""
     runs = places.placed(
         units, read_sources.kjv, read_sources.versification, policy=policy
     )
+    runs.update(versification.byzantine_runs(policy.byzantine["structure"]))
     return policy.replace(versification={**policy.versification, "kjv": runs})
 
 
@@ -423,7 +461,13 @@ def annotated(
                 *(read_sources.mended[c] for c in assembly.source_codes(unit))
             )
             doc, report = annotate.brenton(
-                code, units[code], links.get(code, ()), mended, ctx
+                code,
+                annotate.with_relocation_notes(
+                    code, units[code], read_sources.kjv, ctx
+                ),
+                links.get(code, ()),
+                mended,
+                ctx,
             )
         docs[code] = introduced(code, doc, introductions, links.get(code, ()), ctx)
         reports[code] = report
@@ -432,9 +476,12 @@ def annotated(
 
 
 def authored(
-    ctx: annotate.Context, sources: bible.sources.Sources
-) -> dict[str, Document]:
-    """The edition's own pages, with the passages and tables they ask for."""
+    ctx: annotate.Context,
+    sources: bible.sources.Sources,
+    readings: Sequence[Node],
+) -> tuple[dict[str, Document], int]:
+    """The edition's own pages, with the passages and tables they ask for;
+    and where the readings' blocks begin in the appendix that lists them."""
     policy = ctx.policy
     # Its books have chapters; its prefaces have none.
     facing = {
@@ -451,6 +498,7 @@ def authored(
         require(
             text.startswith(f"\\id {entry['id']}\n"), f"Wrong id in {entry['file']}"
         )
+        listing = entry["id"] == bible.policy.READINGS["id"]
         docs[entry["id"]] = numbering.page(
             text,
             ctx.inventory,
@@ -458,8 +506,14 @@ def authored(
             ctx.books,
             theirs,
             policy=policy,
+            readings=readings if listing else None,
         )
-    return docs
+    page = docs[bible.policy.READINGS["id"]]
+    offset = next(
+        (index for index, block in enumerate(page["content"]) if block is readings[0]),
+        len(page["content"]),
+    )
+    return docs, offset
 
 
 @dataclass(frozen=True)
@@ -480,6 +534,12 @@ class Edition:
     # What reading the sources met: the citation decisions, each dialect's
     # names for books, and the revisions of spelling and punctuation.
     met: Met
+    # What the reconciliation of the New Testament with the Byzantine text
+    # worked out, for the review and the appendix of readings.
+    byzantine: byzantine.Reconciled
+    # The appendix's entries, by book and chapter, with the blocks of its
+    # page that each is: the sample prints those of its chapters.
+    appendix: tuple[tuple[str, int, int, int], ...]
 
 
 def check_met(policy: bible.policy.Policy, met: Met) -> None:
@@ -537,22 +597,46 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
     """The fixed order of the stages; each takes what the ones before it made."""
     revision.check(policy)
     read_sources = read(sources, policy)
-    promoted, counts = promote(read_sources, policy)
-    units = assemble(read_sources, promoted, policy, sources)
+    promoted = promote(
+        read_sources, policy, sources.byzantine, terminology.registry(policy)
+    )
+    units = assemble(promoted, policy, sources)
     policy = placed(units, read_sources, policy)
     ctx = context(units, policy, sources)
     front, introductions, front_report = front_and_back(read_sources, ctx, sources)
     books, reports = annotated(units, read_sources, introductions, ctx)
-    pages = authored(ctx, sources)
-    documents: dict[str, Document] = {}
+    # The revision comes before the edition's own pages, which quote the
+    # books as they print.
     revised: set[str] = set()
-    for entry in policy.entries:
-        code = entry["id"]
-        doc = {**pages, **front, **books}[code]
+    finished: dict[str, Document] = {}
+    for code, doc in {**front, **books}.items():
         if code in books:
             doc = revision.revised(code, doc, policy, revised)
-        if code not in pages:
-            doc = revision.respelt(doc, policy, revised)
+        finished[code] = revision.respelt(doc, policy, revised)
+    labels = {
+        "tr": ctx.terms.display("textus-receptus"),
+        "rp": ctx.terms.display("robinson-pierpont"),
+        "kjv": ctx.terms.display("king-james-version"),
+        "oleb": ctx.terms.display("orthodox-liturgical-english-bible"),
+        "omits": ctx.terms.display("omission"),
+    }
+    # The King James books before the readings, spelt as the edition spells
+    # them (the revision's record of what it met is the books' own).
+    kjv_spelt = {
+        code: revision.respelt(doc, policy, set())
+        for code, doc in promoted.byzantine.context["documents"].items()
+    }
+    rows = appendix.rows(
+        promoted.byzantine.context,
+        kjv_spelt,
+        {code: finished[code] for code in byzantine.BOOKS},
+    )
+    readings, spans = appendix.blocks(rows, ctx.books, labels)
+    pages, offset = authored(ctx, sources, readings)
+    documents: dict[str, Document] = {}
+    for entry in policy.entries:
+        code = entry["id"]
+        doc = {**pages, **finished}[code]
         check_document(
             code, doc, scripture_unit=code in books, authored_page=code in pages
         )
@@ -571,9 +655,19 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
     units_of: Callable[[str], int] = lambda source: sum(
         u["source"] == source for u in policy.scripture
     )
+    byzantine_rows = promoted.byzantine.context["dispositions"]
     summary = dict(
-        alexandrine_notes=counts[0],
-        alexandrine_appendix_paragraphs=counts[1],
+        alexandrine_notes=promoted.alexandrine[0],
+        alexandrine_appendix_paragraphs=promoted.alexandrine[1],
+        byzantine_units=len(promoted.byzantine.context["units"]),
+        byzantine_edits=sum(
+            1 for row in byzantine_rows if row.get("execution") == "applied"
+        ),
+        byzantine_notes=sum(
+            len(usj.notes_of(doc["content"]))
+            for code, doc in promoted.kjv.items()
+            if code in byzantine.BOOKS
+        ),
         scripture_units=len(policy.scripture),
         brenton_units=units_of("brenton"),
         kjv_units=units_of("kjv"),
@@ -590,6 +684,11 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
         MappingProxyType({code: tuple(r.rows) for code, r in reports.items()}),
         MappingProxyType(summary),
         met,
+        promoted.byzantine,
+        tuple(
+            (row.book, row.chapter, offset + start, offset + end)
+            for row, start, end in spans
+        ),
     )
 
 
@@ -629,6 +728,38 @@ def sample_chapters(code: str, doc: Document, wanted: Sequence[int]) -> Document
     return usj.with_blocks(doc, kept)
 
 
+def sample_readings(
+    doc: Document,
+    spans: Sequence[tuple[str, int, int, int]],
+    sample: Mapping[str, Sequence[int]],
+) -> Document:
+    """The appendix of readings with the entries of the sample's chapters
+    alone, under their books' headings, and all of its other blocks."""
+    listed: set[int] = set()
+    kept: set[int] = set()
+    first: dict[str, int] = {}
+    for book, chapter, start, end in spans:
+        listed.update(range(start, end))
+        first[book] = min(first.get(book, start), start)
+        if chapter in sample.get(book, ()):
+            kept.update(range(start, end))
+    # Each book's heading is the block before its first entry.
+    headings = {start - 1: book for book, start in first.items()}
+    books = {book for book, chapter, _, _ in spans if chapter in sample.get(book, ())}
+    return usj.with_blocks(
+        doc,
+        [
+            block
+            for index, block in enumerate(doc["content"])
+            if (
+                headings[index] in books
+                if index in headings
+                else index in kept or index not in listed
+            )
+        ],
+    )
+
+
 def view(edition: Edition, mode: str) -> list[tuple[str, Document]]:
     """The documents a build prints, as (id, document), in order: the whole
     edition, or the sample's chapters; with their typography."""
@@ -640,6 +771,8 @@ def view(edition: Edition, mode: str) -> list[tuple[str, Document]]:
             if code not in sample:
                 continue
             doc = sample_chapters(code, doc, sample[code])
+        if code == bible.policy.READINGS["id"] and mode == "sample":
+            doc = sample_readings(doc, edition.appendix, sample)
         if code not in edition.authored:
             doc = typography.typographic(doc)
         result.append((code, doc))

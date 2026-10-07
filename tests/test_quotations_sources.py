@@ -15,7 +15,8 @@ from bible.checks import CheckFailed
 
 def test_complete_review(policy: bible.policy.Policy) -> None:
     rows = {row["id"]: row for row in quotations.reviewed_rows(policy=policy)}
-    assert len(rows) == 273
+    # Turpie's, less those left out (edition/quotations.json, excluded).
+    assert len(rows) == 272
     # A narrowed head links only its part.
     assert list(map(str, rows["Q052"]["ot"])) == ["ISA 8:17"]
 

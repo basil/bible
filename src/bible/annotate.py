@@ -17,8 +17,17 @@ from typing import TypedDict
 import bible.policy
 import bible.references
 import bible.terminology
-from bible import citations, crossrefs, lemmas, notes, repairs, scripture, usj
-from bible.checks import require
+from bible import (
+    citations,
+    crossrefs,
+    lemmas,
+    notes,
+    repairs,
+    scripture,
+    usj,
+    versification,
+)
+from bible.checks import present, require
 from bible.policy_schema import NoteOverride, WordingChange
 from bible.references import verse_at
 from bible.scripture import word_spans, words_of
@@ -67,6 +76,8 @@ class Read:
     source: str
     text: str
     scope: usj.Scope | None = None
+    # The edition's own notes carry their category to the typesetter.
+    category: str | None = None
 
 
 @dataclass
@@ -82,6 +93,8 @@ class Report:
     # Every printed note's key, and one row of the review for each.
     keys: set[str] = field(default_factory=set)
     rows: list[NoteRow] = field(default_factory=list)
+    # The keys of the source notes a decision leaves out.
+    omitted: list[str] = field(default_factory=list)
 
     def read(
         self,
@@ -140,7 +153,10 @@ def printed(
             style=body.rule,
         )
     )
-    return notes.footnote(read.reference, lemma, runs, **usj.Extra({"x-key": key}))
+    extra = usj.Extra({"x-key": key})
+    if read.category:
+        extra["category"] = read.category
+    return notes.footnote(read.reference, lemma, runs, **extra)
 
 
 def brenton(
@@ -216,6 +232,7 @@ def brenton(
                     source,
                     text,
                     note.get("x-scope"),
+                    note.get("category"),
                 )
             )
     merged = crossrefs.merged_notes(code, found, links, policy=policy)
@@ -344,11 +361,19 @@ def george(
     """
     policy, report = ctx.policy, Report()
     tongue = citations.dialect("george", policy=policy)
+    # The notes the edition wrote on the words it changed stand in the book
+    # already: they are printed first, and the 1611 notes set among them.
+    doc = with_edition_notes(code, doc, tongue, ctx, report)
     verses = scripture.verses(doc)
     changes: list[tuple[scripture.Verse, int, int, Content]] = []
     for note in listed:
         key = note["key"]
         override = policy.kjv_notes["notes"].get(key, {})
+        if override.get("omitted"):
+            # A note whose reading the Byzantine text prints, or which glosses
+            # words of the Received Text the edition no longer has.
+            report.omitted.append(key)
+            continue
         reference = override.get("verse", note["reference"])
         require(reference in verses, f"Marginal note verse missing: {key}")
         verse = verses[reference]
@@ -399,6 +424,177 @@ def george(
         footnote = printed(read, span, glossed, rule, override, ctx, report)
         changes.append((verse, read.offset, read.offset, [footnote]))
     return scripture.edited(doc, changes), report
+
+
+def spanned(verses: Sequence[bible.references.Verse]) -> str:
+    """A run of one chapter's verses as a note names it: "30:1–14", or, in
+    lettered verses, "24:22f–t"."""
+    first, last = verses[0], verses[-1]
+    if first == last:
+        return first.label
+    if first.number == last.number:
+        return f"{first.label}\u2013{last.letter}"
+    return f"{first.label}\u2013{last.number}{last.letter}"
+
+
+def relocation_note(code: str, address: str, label: str, sentence: str) -> Node:
+    """A note the edition sets at a verse to say where a passage stands in
+    another order: labelled with the text whose order it is, as the notes
+    on the New Testament's moved verses are labelled TR, and saying what
+    that text has there."""
+    extra: usj.Extra = {
+        "x-key": f"{code} {address} {label}",
+        "category": "edition",
+        "x-scope": {"declared": None},
+    }
+    return usj.note(
+        "f",
+        usj.char("fr", f"{address} "),
+        usj.char("fl", f"{label} "),
+        usj.char("ft", sentence),
+        caller="+",
+        **extra,
+    )
+
+
+def with_relocation_notes(
+    code: str, doc: Document, kjv: Mapping[str, Document], ctx: Context
+) -> Document:
+    """A book with notes where a passage stands in another order than the
+    Hebrew's, which the King James Bible follows (edition/versification.json,
+    relocations), as the New Testament's are noted where they stand in
+    another order than the Received Text's: at the passage's first verse,
+    where the Hebrew has it; and at the verse after which the Hebrew has it,
+    which passages are printed elsewhere. Each decision is held to the runs
+    the place stage worked out: the Hebrew passage's verses must stand here,
+    beginning at the verse it names."""
+    policy = ctx.policy
+    label = ctx.terms.display("hebrew")
+    found: list[tuple[bible.references.Passage, list[bible.references.Verse]]] = []
+    for reference, entry in policy.versification.get("relocations", {}).items():
+        if isinstance(entry, str) or reference.split()[0] != code:
+            continue
+        require(bool(entry.get("why")), f"Relocation without its reason: {reference}")
+        theirs = bible.references.parse_passage(reference)
+        held = [
+            v
+            for verse in theirs.verses
+            for v in versification.from_kjv(verse, policy=policy)
+        ]
+        first = bible.references.parse_verse(entry["to"])
+        require(
+            bool(held)
+            and all(v.book == code and v.chapter == first.chapter for v in held)
+            and held[0] == first,
+            f"Relocated passage does not begin where it is said to: {reference}",
+        )
+        found.append((theirs, held))
+    if not found:
+        return doc
+    verses = scripture.verses(doc)
+    changes: list[tuple[scripture.Verse, int, int, Content]] = []
+    for theirs, held in found:
+        where = spanned(list(theirs.verses))
+        note = relocation_note(
+            code, held[0].label, label, f"has this passage at {where}."
+        )
+        changes.append((verses[held[0].label], 0, 0, [note]))
+    # Where the Hebrew has them: after the King James verse before the first
+    # of a run of passages that follow one another there.
+    chapters = usj.inventory(kjv[versification.kjv_book(code, policy=policy)])
+    starts = {theirs.first: theirs for theirs, _ in found}
+    ends = {theirs.last: held for theirs, held in found}
+    for theirs, held in sorted(
+        found, key=lambda item: (item[0].first.chapter, item[0].first.number)
+    ):
+        first = theirs.first
+        if first.number > 1:
+            before = bible.references.Verse(first.book, first.chapter, first.number - 1)
+        else:
+            last = chapters[str(first.chapter - 1)][-1]
+            before = bible.references.Verse(first.book, first.chapter - 1, int(last))
+        if before in ends:
+            continue
+        printed = [spanned(held)]
+        end = theirs.last
+        while True:
+            after = bible.references.Verse(end.book, end.chapter, end.number + 1)
+            if str(after.number) not in chapters.get(str(end.chapter), []):
+                after = bible.references.Verse(end.book, end.chapter + 1, 1)
+            if after not in starts:
+                break
+            following = starts[after]
+            printed.append(spanned(ends[following.last]))
+            end = following.last
+        listed = (
+            printed[0]
+            if len(printed) == 1
+            else ", ".join(printed[:-1]) + " and " + printed[-1]
+        )
+        anchor = versification.from_kjv(before, policy=policy)
+        require(bool(anchor), f"Relocated passage follows no verse here: {theirs}")
+        address = anchor[-1].label
+        note = relocation_note(
+            code, address, label, f"has here the verses printed at {listed}."
+        )
+        verse = verses[address]
+        changes.append((verse, len(verse.text), len(verse.text), [note]))
+    return scripture.edited(doc, changes)
+
+
+def with_edition_notes(
+    code: str, doc: Document, tongue: citations.Dialect, ctx: Context, report: Report
+) -> Document:
+    """A book with the notes the edition wrote on it printed: each read as
+    an authored note, cited, its declared lemma anchored where it stands,
+    and set in the edition's form in its place."""
+    policy = ctx.policy
+    replacements: dict[str, Node] = {}
+    for reference, verse in scripture.verses(doc).items():
+        words = word_spans(verse.text)
+        for offset, note in verse.notes:
+            if note.get("category") != "edition":
+                continue
+            key = note["x-key"]
+            body = notes.authored_body(note, None, key)
+            cited = citations.scan(
+                body.plain,
+                tongue,
+                verse_at(code, reference),
+                key,
+                ctx.inventory,
+                policy=policy,
+            )
+            body = notes.bound(body, cited, key)
+            report.read(tongue, key, cited, policy)
+            read = Read(
+                key,
+                "f",
+                reference,
+                verse,
+                words,
+                offset,
+                body,
+                tuple(cited),
+                body.plain,
+                body.plain,
+                note.get("x-scope"),
+                note["category"],
+            )
+            scope = present(read.scope, f"Edition note without its scope: {key}")
+            span, glossed, rule = lemmas.declared(
+                verse.text, words, offset, scope.get("declared"), key
+            )
+            replacements[key] = printed(read, span, glossed, rule, {}, ctx, report)
+    if not replacements:
+        return doc
+
+    def change(item: Node) -> Node | Content | None:
+        if item["type"] == "note" and item.get("x-key") in replacements:
+            return replacements[item["x-key"]]
+        return item
+
+    return usj.with_content(doc, lambda content: usj.mapped(content, change))
 
 
 def at_verse_starts(

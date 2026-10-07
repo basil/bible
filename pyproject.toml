@@ -22,5 +22,5 @@ cache_dir = "build/mypy-cache"
 
 # These pinned upstream libraries publish no typing marker or stub package.
 [[tool.mypy.overrides]]
-module = ["fontTools.*", "smartypants", "ptxprint.*", "usfmtc"]
+module = ["fontTools.*", "lxml.*", "smartypants", "ptxprint.*", "usfmtc"]
 ignore_missing_imports = true

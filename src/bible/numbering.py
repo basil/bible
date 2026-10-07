@@ -36,7 +36,7 @@ MISSING = "missing"
 # to print before it, "{kjv bare PSA 33:13-17}".
 NAMED = re.compile(r"\{((?:[a-z]+ )*)([1-4]?[A-Z]{2,3} [^{}]+)\}")
 # What the table's page asks for, each on a line of its own.
-TABLES = re.compile(r"^\{(names|psalms|books)\}$", re.M)
+TABLES = re.compile(r"^\{(names|psalms|books|readings)\}$", re.M)
 # How a passage that the pages name may print.
 WAYS = {"kjv", "brenton", "bare"}
 
@@ -305,7 +305,7 @@ def books_tables(
     sections: list[Node] = []
     for entry in policy.scripture:
         code = entry["id"]
-        if code not in inventory or code not in policy.versification["old_testament"]:
+        if code not in inventory or code not in policy.versification["kjv"]:
             continue
         if code == "PSA":
             values = psalms_rows(inventory, facing, policy=policy)
@@ -432,14 +432,21 @@ def page(
     theirs: bible.references.Books,
     *,
     policy: bible.policy.Policy,
+    readings: Sequence[Node] | None = None,
 ) -> Document:
     """One of the editor's pages as it prints: the passages it names between
     braces as the edition cites them, or as the King James Bible numbers
-    them, and the tables it asks for, each on a line of its own."""
+    them, and the tables it asks for, each on a line of its own: the three
+    of chapters and verses together, or the readings of the Byzantine text,
+    whose blocks the caller gives."""
     requested = TABLES.findall(text)
     require(
-        sorted(requested) in ([], ["books", "names", "psalms"]),
+        sorted(requested) in ([], ["books", "names", "psalms"], ["readings"]),
         f"Tables asked for, not once each: {requested}",
+    )
+    require(
+        (readings is not None) == (requested == ["readings"]),
+        "Readings given to a page that asks for none, or asked for and not given",
     )
 
     def named(match: re.Match[str]) -> str:
@@ -487,7 +494,10 @@ def page(
                 "Words for the Psalms missing, or not alone, "
                 "between {books} and {psalms}",
             )
-            if asked[1] == "names":
+            if asked[1] == "readings":
+                assert readings is not None
+                blocks.extend(readings)
+            elif asked[1] == "names":
                 blocks.append(
                     names_table(tuple(inventory), facing, ours, theirs, policy=policy)
                 )

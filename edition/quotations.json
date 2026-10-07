@@ -1,5 +1,6 @@
 {
   "excluded": {
+    "Q048": "Matthew 27:35 quoted Psalm 21:19 in the Received Text alone. Turpie, whose Greek is Tischendorf's seventh edition, marks the entry with an asterisk and notes: “This passage is omitted in Tischendorf's text, for the reason noted above. It is given in the received text, and placed here that no one may be disappointed.” The Byzantine text lacks the fulfilment clause as well, and the edition prints it only in the TR note, so the verse no longer quotes the psalm and the link would point from words the page does not have. Brenton's own cross-reference at Psalm 21:19, which the link absorbed, prints again.",
     "Q049": "Turpie explicitly says the 'every man a liar' clause need not be regarded as a quotation; Romans 3:4 has a separate clear quotation of Psalm 50:6.",
     "Q087": "Turpie prints no Septuagint or Hebrew heading for 1 Timothy 5:18, which he calls a quotation of the idea only; his prose cites Lev. XIX. 13 and Deut. XXV. 14–15, the latter about weights, not wages. A link would carry his class to a target he never tabled.",
     "Q178": "Turpie says the source of James 4:5 is difficult to determine and prints no settled Old Testament parallel; no direct reciprocal target can be justified.",

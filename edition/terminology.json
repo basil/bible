@@ -188,5 +188,33 @@
     "period_forms": [],
     "note_forms": [],
     "source_forms": ["Appendix"]
+  },
+  "textus-receptus": {
+    "display": "TR",
+    "meaning": "Textus Receptus, the Received Text of the Greek New Testament, which the King James translators followed",
+    "period_forms": ["TR"],
+    "note_forms": [],
+    "source_forms": ["TR", "Textus Receptus"]
+  },
+  "robinson-pierpont": {
+    "display": "RP",
+    "meaning": "the Byzantine text of the Greek New Testament edited by Robinson and Pierpont, 2026",
+    "period_forms": ["RP"],
+    "note_forms": [],
+    "source_forms": ["RP"]
+  },
+  "king-james-version": {
+    "display": "KJV",
+    "meaning": "King James Version, in the text of the Cambridge Paragraph Bible",
+    "period_forms": ["KJV"],
+    "note_forms": [],
+    "source_forms": ["KJV"]
+  },
+  "orthodox-liturgical-english-bible": {
+    "display": "OLEB",
+    "meaning": "Orthodox Liturgical English Bible, this edition",
+    "period_forms": [],
+    "note_forms": [],
+    "source_forms": []
   }
 }

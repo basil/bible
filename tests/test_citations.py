@@ -246,7 +246,7 @@ def test_a_decision_reads_what_the_grammar_cannot(
         (None, "See Rom. 4. 7.", None, r"can't be read: x \(4. 7\)"),
         # What is cited must be printed, whatever book a decision says it is of.
         ("brenton", "See Rom. 17. 1.", None, r"n't print: x \(Rom. 17. 1: ROM 17\)"),
-        ("brenton", "See Rom. 16. 27,28.", None, r"\(Rom. 16. 27,28: ROM 16:28\)"),
+        ("brenton", "See Rom. 16. 24,28.", None, r"\(Rom. 16. 24,28: ROM 16:28\)"),
         ("brenton", "See ver. 99.", None, r"\(ver. 99: JDG 13:99\)"),
         ("brenton", "Heb. 300. Alex. 500.", None, r"\(Heb. 300: HEB 300\)"),
         ("george", "Jer. 33.14-16", None, "Verses the edition lacks: JER 33:14-16"),

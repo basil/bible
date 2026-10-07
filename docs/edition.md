@@ -4,12 +4,12 @@ The [README](../README.md) describes what is in this Bible. This page gives the 
 
 The edition is the Orthodox Liturgical English Bible, or OLEB. It is Orthodox because its Old Testament is the Septuagint, in the Church of Greece's order. It is liturgical because both translations are in the English of the King James Bible, which English translations of the Orthodox services have commonly used.
 
-The translations are preserved with a few exceptions. In the Old Testament, some readings from Codex Alexandrinus are printed in the text, one missing verse is supplied from the King James Version, and spelling and punctuation are revised. Slips in the transcriptions are corrected. The wording of the New Testament is unchanged. Around the text, the two sources are brought into one style: book names, notes, citations and abbreviations. Whatever is doubtful stays as the source has it.
+The translations are preserved with a few exceptions. In the Old Testament, some readings from Codex Alexandrinus are printed in the text, one missing verse is supplied from the King James Version, and spelling and punctuation are revised. Slips in the transcriptions are corrected. In the New Testament, the King James wording is conformed to the Byzantine text of Robinson and Pierpont (2026) wherever that text differs from the Received Text in a way English can show, and every change carries a note giving the Received Text's words; [the New Testament text](new-testament.md) gives the account. Around the text, the two sources are brought into one style: book names, notes, citations and abbreviations. Whatever is doubtful stays as the source has it.
 
 ## Texts
 
 - **Old Testament:** [eBible's transcription of Brenton](https://ebible.org/eng-Brenton/), which includes eBible's corrections to the 1870 printing. It is neither a facsimile nor the separate "Updated Brenton" translation.
-- **New Testament:** [eBible's Cambridge Paragraph Bible](https://ebible.org/engkjvcpb/), not its standard KJV. Only the 27 books, the translators' dedication to King James, and their preface are used. The text keeps Scrivener's paragraphs and poetry layout.
+- **New Testament:** [eBible's Cambridge Paragraph Bible](https://ebible.org/engkjvcpb/), not its standard KJV. Only the 27 books, the translators' dedication to King James, and their preface are used. The text keeps Scrivener's paragraphs and poetry layout, and is conformed to the Byzantine text as [the New Testament text](new-testament.md) describes, from the Greek texts and witnesses listed in [sources/README.md](../sources/README.md#the-new-testament-greek-and-its-witnesses).
 - **Marginal notes:** [Calvin George's transcription](https://en.literaturabautista.com/exhaustive-listing-marginal-notes-1611-edition-king-james-bible) of the notes in the 1611 King James Bible. Only the New Testament notes are used. The Old Testament notes belong to the KJV's translation from the Hebrew, which this edition does not print.
 
 [sources/README.md](../sources/README.md) has the retrieval dates and original copyright notices, and the [README](../README.md#license) gives the license.
@@ -31,6 +31,8 @@ The edition keeps Brenton's chapters and verses, and divides his text as the Chu
 - **Ezra and Nehemiah.** Brenton's single book of 23 chapters is printed as 2 Esdras (chapters 1–10) and Nehemias (chapters 11–23, numbered 1–13).
 - **Daniel.** Susanna comes before Daniel 1 and Bel and the Dragon after Daniel 12, each as a titled section without a chapter number. The Song of the Three Children gets its own heading but keeps Brenton's numbering as Daniel 3:24–90. The Church of Greece numbers it as verses 1–67, but Brenton merges some of those verses and lacks others, so renumbering would suggest a match that is not there.
 - **Malachias.** Brenton's 3:19–24 is printed as chapter 4, verses 1–6, which matches the [Church of Greece's text](https://apostoliki-diakonia.gr/bible/malachias/?file=42.4). Most English Bibles divide the chapter there too, but order its last three verses otherwise: Brenton has Elias before the law of Moses, so his 4:4–6 are the King James Bible's 4:5, 4:6 and 4:4.
+- **Proverbs.** The Greek sets the Hebrew's 30:1–14, 30:15–33 and 31:1–9 within chapter 24, where Brenton numbers them 24:22f–t, 24:35–53 and 24:54–62, so his chapter 31 begins at verse 10 and he has no chapter 30. eBible's transcription numbers an empty chapter 30 with a remark of its own pointing to chapter 24; the edition prints neither. A note at the first verse of each passage says where the Hebrew, and so the King James Bible, has it ("Heb. has this passage at 30:1–14"), and a note at 29:27 says where the passages the Hebrew has next are printed ("Heb. has here the verses printed at 24:22f–t, 24:35–53 and 24:54–62"). The New Testament's moved passages are noted in the same way, with the Received Text's label. The table of chapters and verses gives the rest.
+- **The New Testament.** The Byzantine text lacks four verses of the Received Text, Luke 17:36, Acts 8:37, 15:34 and 24:7, which are omitted, each quoted in a note on the verse before it; it sets the doxology of Romans at 14:24–26 rather than 16:25–27, where it stands with a note at each place ("TR has this passage at 16:25–27", and at 16:24 "TR has here the verses printed at 14:24–26"); and it exchanges Matthew 23:13 and 14, each noted with where the Received Text has it. The table of chapters and verses lists these too.
 
 ## Front matter and appendices
 
@@ -38,7 +40,7 @@ Each translation's front matter stands before its own testament, so that the int
 
 - **Old Testament:** Brenton's preface (1844), his introduction (1870), and the introduction to the Apocrypha.
 - **New Testament:** the translators' dedication to King James and their preface, "The Translators to the Reader".
-- **After Revelation:** Brenton's remaining notes and supplied passages.
+- **After Revelation:** Brenton's remaining notes and supplied passages, and the readings of the Byzantine text: every New Testament verse in which the two Greek texts differ, with the Greek of both and, where the English changes, the words of both Bibles. The English changes are based on Pierpont's instructions. Where an instruction cannot be applied or its wording does not fit, a fitting KJV parallel is preferred, then Pierpont, the Revised Version of 1881, and Boyd's Byzantine ASV of 2021; Boyd's Text-Critical English New Testament and Thomason's Far Above All are occasionally consulted, in that order.
 
 The introduction to the Apocrypha is not Brenton's. It describes the Hebrew text of Ecclesiasticus found from 1896, so it was written for a later reissue, after his death in 1862. It stands with the Old Testament rather than after Revelation, because those books are part of this Old Testament. Its general paragraphs stay at the front, and its account of each book is printed as a footnote at the start of that book. None of it is omitted.
 
@@ -69,7 +71,7 @@ Doubtful readings are left alone. Genesis 6:2 remains a note, because the manusc
 
 ## Notes
 
-No note on the scripture leaves a mark in the text. The sources' footnotes and marginal notes are printed in the inside margin, beside their verse. Only the front matter and the accounts of the books use footnotes. Each note begins with the verse's number and the words it is about, followed by a colon:
+No note on the scripture leaves a mark in the text. The sources' footnotes and marginal notes, and the edition's own notes on the readings it prints, are printed in the inside margin, beside their verse. Only the front matter and the accounts of the books use footnotes. Each note begins with the verse's number and the words it is about, followed by a colon:
 
 > **20** I doubted of such manner of questions: or, _I was doubtful how to enquire hereof_
 
@@ -83,9 +85,13 @@ The same style applies in both testaments:
 
 For alternative renderings, this convention adheres to the Liskov substitution principle: the rendering in the note must be able to replace the words it is about in the verse without breaking the grammar of the surrounding sentence.
 
+### The Received Text's readings
+
+Where the New Testament's words are changed to the Byzantine text's, a note marked TR gives the Received Text's words, in the style above: "fruit: TR _fruits_" replaces the words it is about, "said: TR adds _by them of old time_" puts words after them, "verily: TR omits" takes them out, and "but who: TR omits _but_" takes out a part of them. An omitted verse is quoted in a note on the verse before it, and a moved passage is noted at both its places. [The New Testament text](new-testament.md#the-notes) explains how the words a note is about are chosen.
+
 ### The 1611 marginal notes
 
-The New Testament has the 775 notes of the 1611 King James Bible. George gives the words each note is about, and the note is placed on those words in its verse.
+The New Testament has the 775 notes of the 1611 King James Bible, less fifteen whose reading is the Byzantine reading the text now prints, or which gloss words of the Received Text that the edition no longer has; each is left out by a decision with its reason. George gives the words each note is about, and the note is placed on those words in its verse.
 
 His text is corrected in a few places. His own bracketed remarks are removed, the Greek he left out at Acts 13:18 and 13:34 is restored from the 1611 margin, and a few slips of transcription are fixed. Two notes that he lists under 1 Corinthians 10:6 and Galatians 4:24 are moved to 10:4 and 4:25, where they belong. Two misprints of the 1611 itself are corrected as later printings have them: "began to wept" at Mark 14:72 becomes "weep", and "Or, hell" at Revelation 20:13 becomes "Or, the grave".
 
@@ -110,15 +116,15 @@ The judgments are David McCalman Turpie's, from _The Old Testament in the New_ (
 
 In class C the Hebrew and the Septuagint agree with each other, and the quotation differs from them. Where it differs only in words, it joins A. Where it differs by whole clauses, as when a verse is abridged or two passages are joined, the reference is printed alone, so as not to claim a match. The meaning of a gloss is the same at both ends of the link.
 
-Of Turpie's 282 entries, nine are left out: eight that he himself doubts or repeats, and 1 Timothy 5:18, for which he gives no Old Testament passage. [Kalvesmaki's chart](https://www.kalvesmaki.com/LXX/NTChart.htm) lists 23 more parallels that Turpie does not list. He gives no judgment on them, so they are not linked.
+Turpie's Greek New Testament is Tischendorf's seventh edition (1859), a critical text which, where the Byzantine text departs from the Received Text, more often reads with the Byzantine. Where such a departure shortens a quotation, as at Romans 13:9, Hebrews 2:7 and 12:20 and Acts 7:37, the words that remain still quote the passage, the TR note gives the words lost, and his class stands, so the link is kept. Of his 282 entries, ten are left out: eight that he himself doubts or repeats, 1 Timothy 5:18, for which he gives no Old Testament passage, and Matthew 27:35, whose quotation of Psalm 21:19 the Byzantine text lacks: Turpie himself marks it as given in the received text alone, and the edition prints it only in the TR note, so that the verse no longer quotes the psalm. [Kalvesmaki's chart](https://www.kalvesmaki.com/LXX/NTChart.htm) lists 23 more parallels that Turpie does not list. He gives no judgment on them, so they are not linked.
 
-Brenton's 150 cross-references mark quotations too, with a note such as "See Rom. 4. 7,8". Where a link names the same verses, his note is dropped so that the reference is not given twice. A note that says more than a link could, such as a gloss or a pointer to the Hebrew, is usually kept.
+Brenton's 150 cross-references mark quotations too, with a note such as "See Rom. 4. 7,8". Where a link names the same verses, his note is dropped so that the reference is not given twice. A note that says more than a link could, such as a gloss or a pointer to the Hebrew, is usually kept. Brenton's cross-reference at Psalm 21:19 to Matthew 27:35, which no link names now, is kept as he wrote it: the psalm's words stand at that verse in the TR note.
 
 ## Numbering
 
 Every reference uses this edition's chapter and verse numbers, because those are the numbers on the page. They are Brenton's, except in Nehemias and Malachias 4. A reference written by another numbering is converted: Turpie's Joel 2:28–32 is Brenton's 3:1–5.
 
-For readers who look verses up in another Bible, the table after the editor's introduction gives the King James Bible's number for every chapter and verse of the Old Testament that it numbers otherwise, and notes the verses that one Bible has and the other lacks. The differences are greatest in two books. Brenton numbers most of the psalms one lower and counts a psalm's title as a verse or two, and from chapter 25 on the chapters of Jeremias follow a different order. The King James column uses that Bible's names for the books, since those are what a reader will look under. Where the Septuagint adds to a verse, Brenton may set the addition apart as a lettered verse, such as Proverbs 22:8a, which the King James Bible lacks.
+For readers who look verses up in another Bible, the table after the editor's introduction gives the King James Bible's number for every chapter and verse that it numbers otherwise, and notes the verses that one Bible has and the other lacks. In the New Testament these are the verses the Byzantine text lacks or places elsewhere. The differences are greatest in two books. Brenton numbers most of the psalms one lower and counts a psalm's title as a verse or two, and from chapter 25 on the chapters of Jeremias follow a different order. The King James column uses that Bible's names for the books, since those are what a reader will look under. Where the Septuagint adds to a verse, Brenton may set the addition apart as a lettered verse, such as Proverbs 22:8a, which the King James Bible lacks.
 
 [sources/README.md](../sources/README.md#versification) explains how the two numberings are compared.
 
@@ -135,7 +141,7 @@ Brenton usually cites by his own numbers, but not always: "Comp. Jer. 9. 24" at 
 
 Abbreviations and numbers follow _The Chicago Manual of Style_:
 
-- Initialisms have no periods. Other abbreviations have standard spacing, capitalization and periods.
+- Initialisms have no periods. Other abbreviations have standard spacing, capitalization and periods. The New Testament's notes and the appendix of readings use TR for the Received Text, RP for the Byzantine text of Robinson and Pierpont, and KJV for the King James Version, all listed.
 - The names of versions and texts are printed in full, such as the Vulgate and the Authorized Version, however Brenton writes them. The witnesses he cites most keep their labels: "Alex.", "Vat." and "Heb.", with "LXX" for his "Sept.".
 - An abbreviation used only once or twice is printed in full where it stands, as in "seven pence halfpenny".
 - Brenton's signs for addition and omission are written "adds" and "omits".

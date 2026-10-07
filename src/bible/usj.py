@@ -25,6 +25,11 @@ class Scope(TypedDict, total=False):
     declared: str | None
     lemma: str | None
     glossed: str | None
+    # While the promote stage finishes a Textus Receptus note: what the note
+    # says the TR has (byzantine.edit.NoteKind), and the verse or passage it
+    # names. The note the edition prints declares only its lemma.
+    kind: str
+    where: str
 
 
 Node = TypedDict(

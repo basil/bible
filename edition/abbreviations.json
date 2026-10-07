@@ -9,7 +9,10 @@
     ["manuscript", "manuscripts"],
     ["page", "pages"],
     ["saint"],
-    ["vatican"]
+    ["vatican"],
+    ["king-james-version"],
+    ["robinson-pierpont"],
+    ["textus-receptus"]
   ],
   "meanings": {
     "why": "Chicago capitalizes a meaning only where it is a proper noun, as \"Hebrew\" and \"Septuagint\" are, so Brenton's other meanings are lowercased to match the added rows.",

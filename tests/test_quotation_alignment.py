@@ -13,6 +13,7 @@ edition/quotations.json with the reason.
 from __future__ import annotations
 
 import collections
+import re
 from collections.abc import Mapping
 from typing import Literal
 
@@ -24,7 +25,7 @@ import bible.pipeline
 import bible.policy
 from bible import quotations, versification
 from bible.alignment import Verses
-from bible.references import Passage, Verse, verses_of
+from bible.references import Passage, Verse, verse_at, verses_of
 
 # How far a neighbour must outscore a target to flag it.
 MARGIN = 0.05
@@ -245,3 +246,27 @@ def test_a_range_run_a_verse_too_far_is_caught(
             total += 1
             caught += ends[f"{row['id']} {beyond}"] < UNSCORED
     assert caught >= 0.6 * total > 0
+
+
+# Turpie's rows at the verses the Byzantine text changes, Matthew 27:35's
+# excluded. Each was read against the words that remain, which still quote
+# the passage while the TR note gives the words lost (docs/edition.md,
+# Quotations). A row new here is one to read the same way.
+AT_CHANGED_VERSES = {
+    "Q002", "Q026", "Q027", "Q058", "Q061", "Q062", "Q066", "Q070", "Q085",
+    "Q088", "Q089", "Q099", "Q132", "Q165", "Q176", "Q194", "Q199", "Q207",
+    "Q208", "Q233", "Q245", "Q253", "Q255", "Q271", "Q275",
+}  # fmt: skip
+
+
+def test_rows_at_verses_the_byzantine_text_changes_are_reviewed(
+    edition: bible.pipeline.Edition, rows: list[quotations.ReviewedRow]
+) -> None:
+    changed = {
+        verse_at(code, row["reference"])
+        for code in edition.scripture
+        for row in edition.notes[code]
+        if re.search(r" TR(#\d+)?$", row["key"])
+    }
+    at_changed = {row["id"] for row in rows if set(verses_of(row["nt"])) & changed}
+    assert at_changed == AT_CHANGED_VERSES

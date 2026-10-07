@@ -27,7 +27,7 @@ from collections.abc import Callable, Iterable, Mapping
 import bible.policy
 import bible.references
 from bible.checks import require
-from bible.policy_schema import Run
+from bible.policy_schema import ByzantineStructure, Run
 from bible.references import Verse, parse_passage, parse_passages, runs, verses_of
 
 # What a run rests on: the table's account of a Bible numbered like this one,
@@ -39,20 +39,61 @@ TITLE = 0
 
 
 def kjv_book(code: str, *, policy: bible.policy.Policy) -> str:
-    """The King James Old Testament's code for one of the edition's books."""
+    """The King James Bible's code for one of the edition's books: the Old
+    Testament's by the table of names, and the New Testament's its own."""
+    if code in policy.versification["old_testament"]:
+        return policy.versification["books"].get(code, code)
     require(
-        code in policy.versification["old_testament"],
+        any(u["id"] == code and u["source"] == "kjv" for u in policy.scripture),
         f"No King James counterpart: {code}",
     )
-    return policy.versification["books"].get(code, code)
+    return code
 
 
 @functools.cache
 def kjv_books(*, policy: bible.policy.Policy) -> dict[str, str]:
-    """The edition's code for each book of the King James Old Testament."""
+    """The edition's code for each book of the King James Bible."""
     return {
         kjv_book(code, policy=policy): code
-        for code in policy.versification["old_testament"]
+        for code in (
+            *policy.versification["old_testament"],
+            *(u["id"] for u in policy.scripture if u["source"] == "kjv"),
+        )
+    }
+
+
+def byzantine_runs(structure: ByzantineStructure) -> dict[str, list[Run]]:
+    """Where the New Testament's verses stand in the King James Bible: every
+    verse at its own number, but for those the Byzantine text lacks or
+    places elsewhere (edition/byzantine.json, structure), each a run with
+    the decision's reason. Only the books with such runs are listed."""
+    found: dict[str, list[tuple[Verse, Run]]] = {}
+    for passage, entry in structure["moved"].items():
+        ours = parse_passage(entry["to"])
+        found.setdefault(ours.first.book, []).append(
+            (
+                ours.first,
+                {
+                    "edition": str(ours),
+                    "kjv": str(parse_passage(passage)),
+                    "by": "reading",
+                    "why": entry["why"],
+                },
+            )
+        )
+    for passage in structure["omitted"]:
+        theirs = parse_passage(passage)
+        found.setdefault(theirs.first.book, []).append(
+            (theirs.first, {"edition": None, "kjv": str(theirs)})
+        )
+    return {
+        code: [
+            run
+            for _, run in sorted(
+                listed, key=lambda item: (item[0].chapter, item[0].number)
+            )
+        ]
+        for code, listed in sorted(found.items())
     }
 
 

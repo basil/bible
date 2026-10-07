@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from collections.abc import Sequence
 from copy import deepcopy
 from typing import Any
@@ -534,16 +535,30 @@ def test_a_sign_after_no_witness_is_refused(
 def test_every_note_of_the_sources_is_printed_or_replaced_by_a_link(
     edition: bible.pipeline.Edition,
 ) -> None:
-    assert edition.summary["printed_notes"] == 3417
+    assert edition.summary["printed_notes"] == 4273
     rows = [row for listed in edition.notes.values() for row in listed]
     assert len({row["key"] for row in rows}) == len(rows)
-    # The 1611 margin is printed whole, on the New Testament alone.
+    # The 1611 margin is printed on the New Testament alone, and whole but
+    # for the notes whose reading the Byzantine text prints, or which gloss
+    # words of the Received Text the edition no longer has; the Textus
+    # Receptus notes stand among them.
     margin = sum(
-        len(edition.notes[u["id"]])
+        len(
+            [
+                row
+                for row in edition.notes[u["id"]]
+                if not re.search(r" TR(#\d+)?$", row["key"])
+            ]
+        )
         for u in edition.policy.scripture
         if u["source"] == "kjv"
     )
-    assert margin == edition.summary["kjv_marginal_notes"] == 775
+    omitted = sum(
+        1 for o in edition.policy.kjv_notes["notes"].values() if o.get("omitted")
+    )
+    assert edition.summary["kjv_marginal_notes"] == 775
+    assert margin == 775 - omitted == 760
+    assert edition.summary["byzantine_notes"] == 867
     # A widened lemma's rendering takes in the same words (Matthew 6:1).
     row = next(row for row in edition.notes["MAT"] if row["key"] == "MAT 6:1 of")
     assert (row["lemma"], row["note"]) == ("of your Father", "or, _with your Father_")
@@ -557,7 +572,7 @@ def test_an_inferred_lemma_has_the_shape_of_its_rendering(
     listed with what was found (edition/brenton-notes.json, "shapes")."""
     read = policy.brenton_notes["shapes"]
     assert all(read.values()), "Unexplained lemma shape"
-    decided = {"override", "Alexandrine reading", "preserved passage note"}
+    decided = {"override", "edition reading", "preserved passage note"}
     brenton = [u["id"] for u in policy.scripture if u["source"] == "brenton"]
     flagged = {
         row["key"]
@@ -821,3 +836,50 @@ def test_a_cross_reference_shows_where_its_quotation_begins(
     verse: str, expected: tuple[None | str, ...]
 ) -> None:
     assert inferred(verse, "See Rom. 1. 1.", kind="x") == expected
+
+
+def test_passages_set_in_another_order_are_noted_alike_in_both_testaments(
+    edition: bible.pipeline.Edition,
+) -> None:
+    # Where the Greek sets a passage in another order than the text the King
+    # James Bible follows, the Hebrew's in the Old Testament and the Received
+    # Text's in the New, a note at its first verse says where that text has
+    # it, and a note where it left says where it is printed: labelled with
+    # the text, and running on without a full stop, as labelled notes do.
+    rows = {
+        row["key"]: (row["reference"], row["note"])
+        for code in ("PRO", "ROM", "MAT")
+        for row in edition.notes[code]
+    }
+    assert rows["PRO 24:22f Heb."] == ("24:22f", "Heb. has this passage at 30:1–14")
+    assert rows["PRO 29:27 Heb."] == (
+        "29:27",
+        "Heb. has here the verses printed at 24:22f–t, 24:35–53 and 24:54–62",
+    )
+    assert rows["ROM 14:24 TR"] == ("14:24", "TR has this passage at 16:25–27")
+    assert rows["ROM 16:24 TR"] == (
+        "16:24",
+        "TR has here the verses printed at 14:24–26",
+    )
+    assert rows["MAT 23:13 TR"] == ("23:13", "TR has this passage at 23:14")
+
+
+def test_an_omission_quotes_only_the_part_of_its_lemma_that_is_omitted(
+    edition: bible.pipeline.Edition,
+) -> None:
+    # Both witnesses leave the words out of the note where the lemma is what
+    # is omitted, since it stands before the label ("Vat. omits", "TR omits"),
+    # and quote the omitted words where they are a part of the lemma.
+    rows = {
+        row["key"]: (row["lemma"], row["note"])
+        for code in ("GEN", "MAT", "JAS")
+        for row in edition.notes[code]
+    }
+    assert rows["GEN 8:7#2"] == ("to see if the water had ceased", "Vat. omits")
+    assert rows["GEN 3:22"] == ("the Lord God said", "Vat. omits _the Lord_")
+    assert rows["MAT 18:19#1 TR"] == ("verily", "TR omits")
+    assert rows["JAS 4:12#1 TR"] == ("but who", "TR omits _but_")
+    for code in edition.scripture:
+        for row in edition.notes[code]:
+            if row["note"].startswith("TR omits _"):
+                assert row["note"] != f"TR omits _{row['lemma']}_", row["key"]

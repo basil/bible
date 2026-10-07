@@ -35,6 +35,8 @@ FILES = (
     "turpie",
     "versification",
     "witnesses",
+    "byzantine",
+    "byzantine-placements",
 )
 
 
@@ -52,6 +54,7 @@ NUMBERING = cast(Entry, freeze({"id": "XXA", "file": "content/numbering.sfm"}))
 OLD_TESTAMENT = cast(Entry, freeze({"id": "XXF", "file": "content/old-testament.sfm"}))
 NEW_TESTAMENT = cast(Entry, freeze({"id": "XXG", "file": "content/new-testament.sfm"}))
 APPENDICES = cast(Entry, freeze({"id": "GLO", "file": "content/appendices.sfm"}))
+READINGS = cast(Entry, freeze({"id": "XXC", "file": "content/byzantine.sfm"}))
 
 
 # Compared and hashed by identity, so that what is worked out from a policy
@@ -73,6 +76,8 @@ class Policy:
     turpie: schema.Turpie
     versification: schema.Versification
     witnesses: tuple[schema.Witnesses, ...]
+    byzantine: schema.Byzantine
+    byzantine_placements: schema.ByzantinePlacements
 
     @property
     def title(self) -> str:
@@ -103,6 +108,8 @@ class Policy:
             *(u for u in scripture if u["section"] == "new_testament"),
             APPENDICES,
             *manifest["appendices"],
+            # The readings of the Byzantine text close the book.
+            READINGS,
         )
 
     def unit(self, code: str) -> Entry:
@@ -201,7 +208,11 @@ def check(policy: Policy) -> None:
     note_fields = {"lemma", "note", "sentence", "occurrence", "quotation"}
     for name, notes, fields in (
         ("Brenton", policy.brenton_notes, note_fields | {"verse", "widen"}),
-        ("1611", policy.kjv_notes, note_fields | {"anchor", "verse", "uncategorized"}),
+        (
+            "1611",
+            policy.kjv_notes,
+            note_fields | {"anchor", "verse", "uncategorized", "omitted"},
+        ),
     ):
         # Brenton's file also lists the lemmas whose shape has been read.
         require_fields(
@@ -213,6 +224,11 @@ def check(policy: Policy) -> None:
         for key, override in notes["notes"].items():
             require_fields(override, {"why"}, fields, f"{name} note exception {key}")
             require(override["why"], f"{name} note exception without a why: {key}")
+            # A note left out is left out whole: nothing else may be said of it.
+            require(
+                not override.get("omitted") or override.keys() == {"omitted", "why"},
+                f"{name} note omitted with other exceptions: {key}",
+            )
             if "quotation" in override:
                 require(
                     override["quotation"] is True and bool(override.get("note")),
@@ -312,6 +328,43 @@ def check(policy: Policy) -> None:
                 f"Prose change to a unit that is no front or back matter: {name}: {change.get('unit')}",
             )
 
+    require_fields(
+        policy.byzantine,
+        {"why", "readings", "structure", "accents", "hodges-farstad", "lemmas"},
+        (),
+        "Byzantine decisions",
+    )
+    require_fields(
+        policy.byzantine["structure"],
+        {"why", "omitted", "moved"},
+        (),
+        "Byzantine structure",
+    )
+    for key, reading in policy.byzantine["readings"].items():
+        require_fields(
+            reading,
+            {"units", "kind", "tags", "why", "evidence"},
+            {"edits"},
+            f"Byzantine reading {key}",
+        )
+    for key, accent in policy.byzantine["accents"].items():
+        require_fields(accent, {"tr", "rp", "why"}, (), f"Byzantine accent {key}")
+        require(bool(accent["why"].strip()), f"Byzantine accent without a why: {key}")
+    for key, side in policy.byzantine["hodges-farstad"].items():
+        what = f"Byzantine Hodges-Farstad side {key}"
+        require_fields(side, {"unit", "side", "why"}, (), what)
+        require_fields(side["unit"], {"ref", "tr", "rp"}, (), what)
+        require(bool(side["why"].strip()), f"{what} without a why")
+    for key, lemma in policy.byzantine["lemmas"].items():
+        require_fields(lemma, {"lemma", "why"}, (), f"Byzantine note lemma {key}")
+    require_fields(
+        policy.byzantine_placements, {"why", "placements"}, (), "Byzantine placements"
+    )
+    for key, placement in policy.byzantine_placements["placements"].items():
+        require_fields(
+            placement, {"ref", "unit", "why"}, (), f"Byzantine placement {key}"
+        )
+
 
 def load() -> Policy:
     """Read and check the edition's decisions."""
@@ -334,6 +387,10 @@ def load() -> Policy:
         turpie=cast(schema.Turpie, data["turpie"]),
         versification=cast(schema.Versification, data["versification"]),
         witnesses=cast(tuple[schema.Witnesses, ...], data["witnesses"]),
+        byzantine=cast(schema.Byzantine, data["byzantine"]),
+        byzantine_placements=cast(
+            schema.ByzantinePlacements, data["byzantine-placements"]
+        ),
     )
     check(policy)
     return policy

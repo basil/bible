@@ -15,7 +15,16 @@ from conftest import changed
 import bible.pipeline
 import bible.policy
 import bible.sources
-from bible import annotate, assembly, paths, pipeline, review, revision, usj
+from bible import (
+    annotate,
+    assembly,
+    paths,
+    pipeline,
+    review,
+    revision,
+    terminology,
+    usj,
+)
 from bible.checks import CheckFailed
 
 
@@ -27,18 +36,23 @@ def test_the_edition_prints_every_unit_once_in_the_manifests_order(
     order = [entry["id"] for entry in policy.entries]
     assert list(edition.documents) == list(exported) == order
     assert edition.scripture == {unit["id"] for unit in policy.scripture}
-    assert edition.authored == {"CNC", "XXA", "XXF", "XXG", "GLO"}
+    assert edition.authored == {"CNC", "XXA", "XXF", "XXG", "GLO", "XXC"}
     # Each is written under its own id, whatever file it was printed from.
     assert all(text.startswith(f"\\id {code}") for code, text in exported.items())
     assert dict(edition.summary) == {
         "alexandrine_notes": 198,
         "alexandrine_appendix_paragraphs": 26,
+        "byzantine_units": 1939,
+        "byzantine_edits": 858,
+        "byzantine_notes": 867,
         "scripture_units": 78,
         "brenton_units": 51,
         "kjv_units": 27,
         "kjv_marginal_notes": 775,
-        "printed_notes": 3417,
-        "verses": 36609,
+        "printed_notes": 4273,
+        # The King James Bible's, less the four verses the Byzantine text
+        # lacks and the empty chapter eBible left in Proverbs.
+        "verses": 36604,
     }
 
 
@@ -49,15 +63,17 @@ def test_no_stage_changes_what_an_earlier_stage_made(
 ) -> None:
     """Documents are shared between stages, so none may be changed in place."""
     before = copy.deepcopy((dict(read.brenton), dict(read.kjv)))
-    promoted, _ = pipeline.promote(read, policy)
-    kept = copy.deepcopy(dict(promoted))
-    units = pipeline.assemble(read, promoted, policy, sources)
+    promoted = pipeline.promote(
+        read, policy, sources.byzantine, terminology.registry(policy)
+    )
+    kept = copy.deepcopy((dict(promoted.brenton), dict(promoted.kjv)))
+    units = pipeline.assemble(promoted, policy, sources)
     assembled = copy.deepcopy(dict(units))
     ctx = pipeline.context(units, policy, sources)
     _, introductions, _ = pipeline.front_and_back(read, ctx, sources)
     pipeline.annotated(units, read, introductions, ctx)
     assert (dict(read.brenton), dict(read.kjv)) == before
-    assert dict(promoted) == kept
+    assert (dict(promoted.brenton), dict(promoted.kjv)) == kept
     assert dict(units) == assembled
 
 
@@ -387,6 +403,10 @@ def test_a_revision_changes_a_lemma_whole_or_is_refused(
             {"verses": group({"verse": "GEN 1:1", "from": "Noe", "to": "Noe"})},
             "changes nothing",
         ),
+        (
+            {"verses": group({"verse": "MAT 1:1", "from": "Noe", "to": "Noah"})},
+            "Revision of a New Testament verse",
+        ),
     ],
 )
 def test_a_malformed_revision_is_refused(
@@ -520,10 +540,13 @@ def test_the_review_is_written_once_and_shows_what_changed(
         "notes.md",
         "alexandrinus.md",
         "numbering.md",
+        "byzantine.md",
+        "byzantine",
         "text",
         "changes.diff",
     }
     assert len(list((base / "text").iterdir())) == len(edition.documents)
+    assert len(list((base / "byzantine").iterdir())) == 27
     notes = (base / "notes.md").read_text(encoding="utf-8")
     assert (
         "- `GEN 1:9` [length; rendering]" in notes and "→ place: Gr. _meeting_" in notes

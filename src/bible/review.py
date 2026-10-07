@@ -3,9 +3,14 @@
     notes.md         every note, with the words it is about marked in its verse
     alexandrinus.md  every Alexandrine decision: its source, the passage before
                      and after, its footnotes, its derivation, and Swete
-    numbering.md     where each Old Testament verse stands in the King James
-                     Bible, with both translations' words for what rests on
-                     the words alone
+    numbering.md     where each verse stands in the King James Bible, with
+                     both translations' words for what rests on the words alone
+    byzantine.md     the reconciliation of the New Testament with the
+                     Byzantine text in figures: dispositions, witnesses, the
+                     invariants, and what matched nothing
+    byzantine/       one file per New Testament book: every place the Greek
+                     texts differ, with its witnesses, its disposition and
+                     the English before and after
     text/            every unit as it is sent to be typeset
     changes.diff     what differs in all of these from the last review
 
@@ -26,6 +31,7 @@ import bible.policy
 import bible.sources
 from bible import assembly, paths, pipeline, places, scripture, versification
 from bible.alexandrinus import APPENDIX
+from bible.byzantine import review as byzantine_review
 from bible.policy import source_id, thaw
 from bible.references import parse_passage
 from bible.usfm import plain_text
@@ -201,6 +207,13 @@ def review(
         "numbering.md": places.report(
             edition.policy.versification["kjv"], edition.documents, read.kjv
         ),
+        "byzantine.md": byzantine_review.summary(edition.byzantine.context),
+        **{
+            f"byzantine/{name}": text
+            for name, text in byzantine_review.packets(
+                edition.byzantine.context
+            ).items()
+        },
         **{f"text/{code}.usfm": text for code, text in pipeline.export(edition, "pdf")},
     }
     base = paths.BUILD_DIR / "review"

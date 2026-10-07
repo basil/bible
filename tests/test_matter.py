@@ -182,10 +182,19 @@ def test_the_list_of_abbreviations_is_completed_from_the_registry(
     assert ("Lit.", "for literally") in rows
     assert not {"+", "—", "adds", "omits"} & set(labels)
     # ...and the edition's rows follow his, in the registry's forms.
-    assert rows[-3:] == [
+    assert rows[-6:] == [
         ("p., pp.", "for page, pages"),
         ("St.", "for saint"),
         ("Vat.", "for Codex Vaticanus"),
+        ("KJV", "for King James Version, in the text of the Cambridge Paragraph Bible"),
+        (
+            "RP",
+            "for the Byzantine text of the Greek New Testament edited by Robinson and Pierpont, 2026",
+        ),
+        (
+            "TR",
+            "for Textus Receptus, the Received Text of the Greek New Testament, which the King James translators followed",
+        ),
     ]
     assert ("AD", "for anno Domini, in the year of our Lord") in rows
     assert all(not meaning.endswith(".") for _, meaning in rows)
@@ -216,10 +225,15 @@ def test_front_and_back_matter_heading_capitalization(
         "XXF": ["\\mt1 The Old Testament", "\\mt2 Brenton’s Septuagint"],
         "XXG": [
             "\\mt1 The New Testament",
-            "\\mt2 Scrivener’s Cambridge Paragraph Bible",
             "\\mt2 King James Version",
+            "\\mt2 Conformed to the Byzantine Text",
         ],
-        "GLO": ["\\mt1 Appendices", "\\mt2 Brenton’s notes and supplied passages"],
+        "GLO": [
+            "\\mt1 Appendices",
+            "\\mt2 Brenton’s notes and supplied passages,",
+            "\\mt2 and the readings of the Byzantine Text",
+        ],
+        "XXC": ["\\mt1 Readings of the Byzantine Text"],
     }
     for code, headings in expected.items():
         assert [
