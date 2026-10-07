@@ -38,4 +38,4 @@ Everything needed to produce the PDF is stored in this repository, including the
 
 Copyright © 2026 Basil Crow. Basil Crow’s original editorial material and the assembled edition, to the extent copyright protects them, are licensed under [Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)](https://creativecommons.org/licenses/by-nc-nd/4.0/).
 
-This edition’s license does not change the status of the source translations. The build scripts and configuration are released under the [MIT License](LICENSE).
+This edition’s license does not change the status of the source translations or other third-party materials. Those materials retain their own public-domain status, licenses, and permissions. CC BY-NC-ND applies only to rights held by Basil Crow. The build scripts and configuration are released under the [MIT License](LICENSE).
