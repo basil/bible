@@ -1,7 +1,7 @@
 # Python dependencies for the PTXprint build environment and its tests.
 black==26.10.0
 fonttools==4.66.1
-isort==8.0.1
+isort==9.0.2
 markdown-it-py==4.2.0
 mbake==1.4.6
 mypy==2.4.0
