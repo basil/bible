@@ -3,7 +3,6 @@ out from the stages before it, in the order of the modules' dependencies."""
 
 from __future__ import annotations
 
-from collections import Counter, defaultdict
 from collections.abc import Callable, Mapping
 from typing import Any, TypedDict
 
@@ -67,6 +66,8 @@ class Context(TypedDict, total=False):
     structure: greek.Structure
     tr: greek.Text
     tr_accented: greek.Text
+    tr_alignment: greek.Alignment
+    rp_alignment: greek.Alignment
     rp: greek.Text
     rp_tags: greek.Tags
     tr_tags: greek.Tags
@@ -107,11 +108,9 @@ class Context(TypedDict, total=False):
     note_lemmas: list[dict[str, Any]]
     decision_errors: list[str]
     witness_rows: dict[str, dict[int | str, Report | Instruction]]
-    # stage_decide, stage_edit and stage_verify: the dispositions, the KJV's
-    # own usage of its words (edit.kjv_usage), the books with the
+    # stage_decide, stage_edit and stage_verify: the dispositions, the books with the
     # dispositions carried out, and the checks.
     dispositions: list[Disposition]
-    kjv_usage: tuple[set[str], defaultdict[str, Counter[str]]]
     prepared: dict[str, Document]
     invariants: dict[str, str]
     finished: dict[str, list[str]]
@@ -167,6 +166,9 @@ def stage_greek(context: Context) -> Context:
     if len(notes_) != 1948:
         raise ValueError(f"TCGNT inventory: {len(notes_)}, expected 1948")
     splits = inventories.word_breaks(context["source_inputs"]["tcgnt"] / "095XXC.usx")
+    rp_alignment = greek.align(
+        {ref: verse["accented"] for ref, verse in printed.items()}, rp
+    )
     ledger, unmatched = units.reconcile(
         tr, rp, collation, notes_, {**checked, **tags}, splits, structure
     )
@@ -179,19 +181,21 @@ def stage_greek(context: Context) -> Context:
         diacritics,
         structure,
         context["decisions"]["accents"],
+        rp_alignment,
     )
     attached = {(a["inventory"], a["entry"]) for u in extra for a in u["inventories"]}
     unmatched = [r for r in unmatched if (r["inventory"], r["entry"]) not in attached]
     ledger = decisions.with_hodges_farstad(
         [*ledger, *extra], context["decisions"]["hodges-farstad"]
     )
+    tr_alignment = greek.accented_scrivener(context["source_inputs"]["accented_tr"], tr)
     context.update(
         {
             "structure": structure,
             "tr": tr,
-            "tr_accented": greek.accented_scrivener(
-                context["source_inputs"]["accented_tr"], tr
-            ),
+            "tr_accented": tr_alignment.text,
+            "tr_alignment": tr_alignment,
+            "rp_alignment": rp_alignment,
             "rp": rp,
             "rp_tags": tags,
             "tr_tags": checked,
@@ -469,22 +473,21 @@ def stage_edit(context: Context) -> Context:
         if selected:
             i = by_entry[(selected["source"], selected["entry"])]
             row["readings"] = [i.get("quotation") or ""]
-    usage = edit.kjv_usage(documents)
-    prepared, rows = edit.execute(documents, rows, BOOKS, usage)
+    prepared, rows = edit.execute(documents, rows, BOOKS)
     prepared, rows = edit.structural(prepared, rows, context["structure"])
     prepared, rows = notes.apply(documents, prepared, rows, context["note_lemmas"])
-    # Say where the executor touched anything beside the edited words.
+    # Say where the executor mended punctuation beside the edited words;
+    # capitals it changes there are not tagged.
     for row in rows:
         seams = [
             seam
             for e in row.get("edits", [])
             for seam in e.get("seams", [])
-            if seam["rule"] in {1, 4}
-            or (seam["rule"] == 2 and seam.get("from", "").strip(" "))
+            if seam["rule"] == 2 and seam.get("from", "").strip(" ")
         ]
         if seams:
             retag(row, Tag.EV_SEAM_ADJUSTED)
-    context.update({"prepared": prepared, "dispositions": rows, "kjv_usage": usage})
+    context.update({"prepared": prepared, "dispositions": rows})
     return context
 
 
@@ -497,12 +500,10 @@ def stage_verify(context: Context) -> Context:
         context["dispositions"],
         context["structure"],
     )
-    common = context["kjv_usage"][0]
     problems = verify.finished_verses(
         context["documents"],
         context["prepared"],
         context["dispositions"],
-        common,
         context["structure"],
     )
     for row in context["dispositions"]:

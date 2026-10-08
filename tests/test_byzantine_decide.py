@@ -231,17 +231,27 @@ class Refusal(rendering.Checker):
 
 
 def test_two_readings_must_merge_even_when_every_instruction_is_refused(
-    context: Context, readings: list[dict[str, Any]]
+    context: Context,
 ) -> None:
-    original = next(o for o in readings if o["id"] == "ACT 9:5#1+ACT 9:6#1")
-    split: dict[str, Any] = {}
-    for key in original["units"]:
-        entry = copy.deepcopy(original)
-        del entry["id"]
-        entry.update(units=[key], kind="nochange", edits=[])
-        entry["evidence"] = {PIERPONT: entry["evidence"][PIERPONT]}
-        split[f"{key['ref']}#1"] = entry
-    units = [u for u in context["units"] if u["id"] in split]
+    units = [u for u in context["units"] if u["id"] in {"ACT 9:5#1", "ACT 9:6#1"}]
+    split = {
+        u["id"]: {
+            "units": [
+                {"ref": u["ref"], "tr": " ".join(u["tr"]), "rp": " ".join(u["rp"])}
+            ],
+            "kind": "nochange",
+            "edits": [],
+            "why": "Test a split construction.",
+            "tags": ["from:editor", "gram:lexical"],
+            "evidence": {
+                PIERPONT: {
+                    "entry": 332,
+                    "quote": "hard for thee to kick against the pricks",
+                }
+            },
+        }
+        for u in units
+    }
     instruction = copy.deepcopy(
         next(
             i
@@ -823,3 +833,188 @@ def test_redundancy_includes_an_instructions_stop() -> None:
 
     assert decide.same_effect(override(". And"), instruction, {ref: text})
     assert not decide.same_effect(override("And"), instruction, {ref: text})
+
+
+def test_compiled_capitalization_keeps_exact_redundancy_and_styles_separate() -> None:
+    ref = "MAT 1:1"
+    text = "And they said."
+    instruction: Instruction = {
+        "edits": [
+            {
+                "ref": ref,
+                "kind": "delete",
+                "word_range": [0, 1],
+                "old": "And",
+                "new": "",
+            }
+        ]
+    }
+    override: Override = {
+        "bound": [{"ref": ref, "start": 0, "end": 8, "old": "And they", "new": "They"}]
+    }
+    assert decide.same_effect(override, instruction, {ref: text})
+    for reading in ("[They]", "He"):
+        changed: Override = {"bound": [{**override["bound"][0], "new": reading}]}
+        assert not decide.same_effect(changed, instruction, {ref: text})
+
+
+def test_case_overrides_execute_as_witnessed_instructions(context: Context) -> None:
+    rows = {r["unit"]: r for r in context["dispositions"]}
+    for ref in ("MAT 26:35#2", "MRK 12:20#1", "REV 9:11#1", "REV 22:17#3"):
+        assert rows[ref]["disposition"] == "witnessed"
+    assert any("ev:instruction-refused" in r["tags"] for r in rows.values())
+
+
+@pytest.mark.parametrize(
+    "text, kind, bounds, old, new, quoted, common, expected, initial",
+    [
+        ("And they spoke.", "delete", [0, 1], "And", "", "And", set(), "", "T"),
+        ("What? know ye?", "delete", [0, 1], "What", "", "What", set(), "", "K"),
+        ("and they spoke", "delete", [0, 1], "and", "", "and", set(), "", None),
+        ("What? and they spoke", "delete", [1, 2], "and", "", "and", set(), "", None),
+        ("His parents spoke.", "insert", [0, 0], "", "And", "", {"his"}, "And", "h"),
+        ("Jesus spoke.", "insert", [0, 0], "", "And", "", {"his"}, "And", None),
+        ("Behold, he comes.", "insert", [0, 0], "", "And", "", set(), "And", None),
+        (
+            "They spoke.",
+            "replace",
+            [0, 1],
+            "They",
+            "[these] men",
+            "they",
+            set(),
+            "[These] men",
+            None,
+        ),
+        (
+            "because strait",
+            "replace",
+            [0, 1],
+            "because",
+            "How",
+            "Because",
+            {"how"},
+            "how",
+            None,
+        ),
+        (
+            "because strait",
+            "replace",
+            [0, 1],
+            "because",
+            "Jesus",
+            "Because",
+            {"how"},
+            "Jesus",
+            None,
+        ),
+        (
+            "They spoke.",
+            "replace",
+            [0, 1],
+            "They",
+            "Jesus",
+            "they",
+            set(),
+            "Jesus",
+            None,
+        ),
+    ],
+)
+def test_contextual_case_compiles_only_initials_without_changing_evidence(
+    text: str,
+    kind: str,
+    bounds: list[int],
+    old: str,
+    new: str,
+    quoted: str,
+    common: set[str],
+    expected: str,
+    initial: str | None,
+) -> None:
+    op = {
+        "ref": REF,
+        "kind": kind,
+        "word_range": bounds,
+        "old": old,
+        "new": new,
+        "quoted_old": quoted,
+    }
+    before = copy.deepcopy(op)
+    compiled = decide.contextual_case(op, text, frozenset(common))
+    assert op == before
+    assert compiled["new"] == expected
+    assert compiled["kind"] == kind
+    assert compiled["old"] == old and compiled["quoted_old"] == quoted
+    assert compiled.get("case", {}).get("to") == initial
+
+
+def test_common_word_lookup_excludes_any_exceptional_capital() -> None:
+    corpus = {
+        "1": "And they judge him.",
+        "2": "He said, Judge him.",
+        "3": "And Jesus spoke to them.",
+        "4": "His parents spoke to him.",
+    }
+    before = dict(corpus)
+    common = decide.common_words(corpus)
+    assert "judge" not in common and "jesus" not in common
+    assert "him" in common and "his" not in common
+    assert corpus == before
+
+
+def test_an_exact_witness_context_establishes_a_lowercase_opening() -> None:
+    edit: InstructionEdit = {
+        "kind": "insert",
+        "ref": REF,
+        "word_range": [0, 0],
+        "old": "",
+        "new": "And",
+        "side": "before",
+        "context_exact": True,
+        "quoted_context": "his parents answered",
+    }
+    before = copy.deepcopy(edit)
+    compiled = decide.operation(edit, {REF: "His parents answered"}, frozenset())
+    assert compiled["case"] == {"range": [0, 1], "from": "H", "to": "h"}
+    assert compiled["kind"] == "insert" and compiled["new"] == "And"
+    assert edit == before
+    assert "case" not in decide.operation(
+        {**edit, "context_exact": False}, {REF: "His parents answered"}, frozenset()
+    )
+
+
+def test_contextual_case_keeps_a_lowercase_clause_after_a_question() -> None:
+    op = {
+        "kind": "replace",
+        "word_range": [1, 2],
+        "old": "know",
+        "new": "Understand",
+        "quoted_old": "Know",
+    }
+    assert (
+        decide.contextual_case(op, "What? know ye not?", frozenset({"understand"}))[
+            "new"
+        ]
+        == "understand"
+    )
+
+
+def test_adjacent_deletions_merge_into_one_quotation() -> None:
+    kjv = {"MAT 1:1": "And he said unto them."}
+
+    def delete(at: int, old: str, stop: str | None = None) -> InstructionEdit:
+        edit = InstructionEdit(
+            kind="delete", ref="MAT 1:1", word_range=[at, at + 1], old=old, new=""
+        )
+        edit["quoted_old"] = old
+        if stop:
+            edit["stop"] = stop
+        return edit
+
+    merged = decide.operations([delete(0, "And"), delete(1, "he")], kjv, frozenset())
+    assert [(op["word_range"], op["quoted_old"]) for op in merged] == [
+        ([0, 2], "And he")
+    ]
+    with pytest.raises(ValueError, match="MAT 1:1"):
+        decide.operations([delete(0, "And"), delete(1, "he", ".")], kjv, frozenset())

@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import re
 from collections import Counter, defaultdict
-from collections.abc import Collection, Iterable, Mapping, Sequence
+from collections.abc import Iterable, Mapping, Sequence
 from typing import Any
 
 from bible import lemmas, scripture, usj
@@ -93,32 +93,39 @@ def closure(source: str, edits: Sequence[Edit]) -> str:
             a, b = seam["range"]
             if not 0 <= a <= b <= len(source):
                 raise ValueError("stale seam offsets")
-            if seam["rule"] == 1 and a == b:
-                before = usj.text_of(supplied_content(seam["from"]))
-                after = usj.text_of(supplied_content(seam["to"]))
-                if before != new or before.casefold() != after.casefold():
-                    raise ValueError("capital seam changes wording")
-                new = after
-            elif seam["rule"] in {1, 4}:
-                if source[a:b] != seam["from"]:
-                    raise ValueError("stale external seam")
-                if (
-                    seam["rule"] == 1
-                    and seam["from"].casefold() != seam["to"].casefold()
-                ):
-                    raise ValueError("capital seam changes wording")
-                if seam["rule"] == 4 and {seam["from"].lower(), seam["to"].lower()} != {
-                    "a",
-                    "an",
-                }:
-                    raise ValueError("article seam changes another word")
-                external.append((a, b, seam["to"]))
-            elif seam["rule"] == 2 and seam.get("external"):
+            if seam["rule"] == 2 and seam.get("external"):
                 if source[a:b] != seam["from"]:
                     raise ValueError("stale external punctuation")
                 if any(c not in ",;:.?!" for c in seam["from"] + seam["to"]):
                     raise ValueError("punctuation seam changes words")
                 external.append((a, b, seam["to"]))
+            elif seam["rule"] == 4 and seam.get("external"):
+                old, initial = seam["from"], seam["to"]
+                if (
+                    b != a + 1
+                    or source[a:b] != old
+                    or len(initial) != 1
+                    or not old.isalpha()
+                    or old == initial
+                    or old.casefold() != initial.casefold()
+                    or (a and source[a - 1].isalpha())
+                ):
+                    raise ValueError("case adjustment changes more than an initial")
+                external.append((a, b, initial))
+            elif seam["rule"] == 4:
+                before, after = seam["from"], seam["to"]
+                first_letter = re.search(r"[A-Za-zÆæ]", before)
+                if (
+                    first_letter is None
+                    or len(before) != len(after)
+                    or before[: first_letter.start()] != after[: first_letter.start()]
+                    or before[first_letter.start() + 1 :]
+                    != after[first_letter.start() + 1 :]
+                    or before[first_letter.start()].casefold()
+                    != after[first_letter.start()].casefold()
+                    or usj.text_of(supplied_content(after)) != new
+                ):
+                    raise ValueError("case adjustment changes more than an initial")
             elif seam["rule"] == 3:
                 continue  # a kept character style changes no words
             elif seam["rule"] != 2:
@@ -466,9 +473,10 @@ def restores(
     return None
 
 
-def lint(finished: str, original: str, common: Collection[str]) -> list[str]:
+def lint(finished: str, original: str, previous: str = "") -> list[str]:
     """Join problems an edit introduced: each pattern counted in the finished
-    verse and the KJV verse; only an increase is reported."""
+    verse and the KJV verse; only an increase is reported. The finished verse
+    before it, if any, says whether it opens a sentence."""
     patterns = {
         "space before a stop": r"\s[,;:.?!]",
         "two stops together": r"[,;:.?!]\s*[,;:.?!]",
@@ -480,23 +488,11 @@ def lint(finished: str, original: str, common: Collection[str]) -> list[str]:
     for name, pattern in patterns.items():
         if len(re.findall(pattern, finished)) > len(re.findall(pattern, original)):
             found.append(name)
-    speech = re.compile(
-        r"\b(said|saith|saying|say|sayest|answered|answering|cried|crying|spake|asked|told|wrote|written)\b",
-        re.I,
-    )
-
-    # A capital that opens direct speech ("Jesus saith unto him, Because") is
-    # the KJV's own style, not a join an edit left.
-    def capitals(t: str) -> int:
-        return sum(
-            1
-            for m in re.finditer(r"[,;:]\s+([A-Z][a-z]+)", t)
-            if m[1].lower() in common
-            and not speech.search(t[max(0, m.start() - 40) : m.start()])
-        )
-
-    if capitals(finished) > capitals(original):
-        found.append("capital after a comma or colon")
+    # A KJV verse that opens a sentence still opens one after the edit.
+    now, was = (re.search(r"[^\W\d_]", text) for text in (finished, original))
+    opening = not previous.strip() or re.search(r"[.?!]\W*$", previous)
+    if opening and now and was and now[0].islower() and was[0].isupper():
+        found.append("lower case at a sentence opening")
     return found
 
 
@@ -504,7 +500,6 @@ def finished_verses(
     original_docs: Mapping[str, Document],
     prepared_docs: Mapping[str, Document],
     dispositions: Iterable[Disposition],
-    common: Collection[str],
     structure: Structure,
 ) -> dict[str, list[str]]:
     """Every edited verse: its join problems and whether its notes restore the
@@ -512,6 +507,10 @@ def finished_verses(
     edited = {e["ref"] for r in dispositions for e in r.get("edits", [])}
     originals = {book: scripture.verses(doc) for book, doc in original_docs.items()}
     prepared = {book: scripture.verses(doc) for book, doc in prepared_docs.items()}
+    preceding = {
+        book: dict(zip(list(verses)[1:], verses.values(), strict=False))
+        for book, verses in prepared.items()
+    }
     result: dict[str, list[str]] = {}
     for ref in sorted(edited):
         book, address = ref.split()
@@ -520,8 +519,11 @@ def finished_verses(
         after = prepared[target_book].get(target_address)
         if before is None or after is None:
             continue
+        previous = preceding[target_book].get(target_address)
         problems = lint(
-            scripture.plain(after.text), scripture.plain(before.text), common
+            scripture.plain(after.text),
+            scripture.plain(before.text),
+            scripture.plain(previous.text) if previous else "",
         )
         notes = [(at, n) for at, n in after.notes if n.get("category") == "edition"]
         failure = restores(after.text, before.text, notes)

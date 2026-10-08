@@ -373,6 +373,59 @@ def bridge(
     return result, failures
 
 
+def presentation_bridge(row: Tagged, tr: Sequence[str], kjv: str) -> Aligned:
+    """Partial, position-checked correspondence for display only.
+
+    A missing or conflicting tag remains unresolved; it cannot shift later
+    positions or borrow its neighbours' evidence. Scripture editing uses bridge.
+    """
+    forms: dict[int, set[str]] = defaultdict(set)
+    for link in row["links"]:
+        for p, form in zip(link["src"], link["forms"]):
+            if p.isdigit() and int(p) > 0:
+                forms[int(p) - 1].add(ascii_greek(form))
+    valid = {p for p, fs in forms.items() if p < len(tr) and fs == {tr[p]}}
+    old, new = spans(row["text"]), spans(kjv)
+    english_map = equal_positions(
+        [SPELLINGS.get(w, w) for w, _, _ in old],
+        [SPELLINGS.get(w, w) for w, _, _ in new],
+    )
+    direct: list[list[int]] = []
+    untagged = []
+    for _, start, end in old:
+        links = [
+            l for l in row["links"] if l["range"][0] <= start < end <= l["range"][1]
+        ]
+        ps = [p for l in links for p in l["src"]]
+        checked = (
+            bool(ps)
+            and all(len(l["src"]) == len(l["forms"]) for l in links)
+            and all(p.isdigit() and int(p) - 1 in valid for p in ps)
+        )
+        direct.append(sorted({int(p) - 1 for p in ps}) if checked else [])
+        untagged.append(not links)
+    mapped = [list(ps) for ps in direct]
+    for i, empty in enumerate(untagged):
+        if empty:
+            left = next(
+                (direct[j] for j in range(i - 1, -1, -1) if not untagged[j]), []
+            )
+            right = next(
+                (direct[j] for j in range(i + 1, len(old)) if not untagged[j]), []
+            )
+            mapped[i] = sorted(set(left + right)) if left and right else left or right
+    target: list[list[int]] = [[] for _ in new]
+    target_direct: list[list[int]] = [[] for _ in new]
+    for i, j in english_map.items():
+        target[j], target_direct[j] = mapped[i], direct[i]
+    return {
+        "positions": target,
+        "direct": target_direct,
+        "greek_length": len(tr),
+        "word_ranges": [[s, e] for _, s, e in new],
+    }
+
+
 def bridged_words(bridge: Aligned, start: int, end: int) -> list[int]:
     """The English words the bridge maps to the Greek positions start to end."""
     return [

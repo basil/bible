@@ -129,7 +129,7 @@ LEGEND: dict[Tag, str] = {
     Tag.EV_RENDERING_UNVERIFIED: "No Greek in the verse is tagged as rendering the changed words; the wording rests on its witness and on review",
     Tag.EV_FINISHED_VERSE: "The finished verse fails a join check, or a note that does not restore the KJV's words",
     Tag.EV_MULTI_UNIT: "The decision covers several Greek units",
-    Tag.EV_SEAM_ADJUSTED: "Capitals or punctuation were adjusted at the edit's edge",
+    Tag.EV_SEAM_ADJUSTED: "Deletion punctuation was adjusted at the edit's edge",
     Tag.EV_UNPLACED_ROW_IN_VERSE: "A witness row in this verse is attached to no unit",
 }
 

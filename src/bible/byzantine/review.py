@@ -14,7 +14,6 @@ import html
 import re
 from collections import Counter, defaultdict
 from collections.abc import Iterable, Mapping, Sequence
-from difflib import SequenceMatcher
 from typing import TypedDict
 
 from bible import scripture, usj
@@ -31,11 +30,24 @@ from bible.byzantine import (
     WEB,
 )
 from bible.byzantine import revisers as revisions
+from bible.byzantine.appendix import (
+    PreparedGreek,
+    passage_ranges,
+    prepare_greek,
+    projected,
+    selections,
+)
 from bible.byzantine.crosswire import edit_offsets, reports_by_unit
 from bible.byzantine.crosswire import spans as word_spans
 from bible.byzantine.decisions import ref_key
 from bible.byzantine.english import verses_of
-from bible.byzantine.greek import greek_letters
+from bible.byzantine.presentation import (
+    anchored,
+    clipped,
+    diff_spans,
+    marked,
+    passage_spans,
+)
 from bible.byzantine.rows import (
     BoydNote,
     Disposition,
@@ -90,14 +102,15 @@ GREEK_INVENTORIES = {
     "rp2026-apparatus": "RP2026 apparatus",
 }
 DIFF_LEGEND = (
-    "Bold in the OLEB verses marks the full Textus Receptus note lemmas. Contextual diffs use ⟦−removed⟧ "
-    "and ⟦+added⟧. Unit comparisons show up to four surrounding words on each "
-    "side, using TR/KJV context and marking only the unit or shared construction. "
-    "Greek diffs ignore accents and whole-verse Greek diffs appear once per verse. "
-    "Witness diffs show up to four surrounding words on each side where their "
+    "Bold in the OLEB verses marks the full Textus Receptus note lemmas. Contextual diffs use [-removed] "
+    "and [+added] inside code spans. Unit comparisons use corresponding Greek and English passages, keeping shared constructions intact. "
+    "Greek-only excerpts retain complete phrases without English alignment. Paired Greek and English ellipses mark corresponding omitted intervals; verified moved passages may be excerpted; uncertain correspondence quotes complete verses. "
+    "Greek diffs mark wording, punctuation and accents as prepared for the appendix, suppressing case-only differences. Shared words use RP capitalization except every inflection of θεός, κύριος and χριστός (including human uses), which keeps TR capitalization even at verse openings; whole-verse Greek diffs appear once per verse. "
+    "Witness diffs show complete touched phrases where their "
     "wording can be located uniquely; … marks clipped context. KJV context shows "
     "an instruction’s proposal; source context shows the reported alternative "
     "in the witness’s own verse wording. Otherwise only the quoted contrast appears. "
+    "Explicit whole-verse comparisons remain complete. The printed appendix gives every entry a TR → RP comparison and adds KJV → OLEB only where the complete English wording changes, including for moved verses, with shared wording once, former readings in upright square brackets, new Greek readings in bold and new English readings in italics. Deleted English and Greek stay upright. Separately labelled apparatus evidence uses the same Greek comparison format. Printed boundary spaces follow ordinary prose spacing outside brackets and bold type in both languages; Markdown marks retain the exact source spaces. "
     "Verse context includes every unit. Witness quotations include excluded "
     "readings; eligibility and attachment labels state their evidential scope."
     " Greek change describes what differs, not whether English must change. "
@@ -128,48 +141,6 @@ class Index(TypedDict):
 def esc(text: object) -> str:
     """Markdown-safe inline text: pipes and leading # neutralized, newlines joined."""
     return " ".join(str(text).replace("|", "\\|").split())
-
-
-def diff_spans(before: str, after: str) -> list[tuple[str, str]]:
-    """Lossless whole-word/punctuation diff.
-
-    Disable difflib's popularity heuristic so repeated biblical phrases remain
-    eligible anchors. Spaces cannot anchor arbitrary word pairs in a phrase
-    replacement. These marks describe the finished text, not edit intent.
-    """
-    token = r"\w+(?:[’']\w+)*|\s+|[^\w\s]"
-    left, right = re.findall(token, before), re.findall(token, after)
-    spans: list[tuple[str, str]] = []
-
-    def append(kind: str, old: str, new: str) -> None:
-        if kind == "equal":
-            spans.append(("equal", old))
-        else:
-            if old:
-                spans.append(("delete", old))
-            if new:
-                spans.append(("insert", new))
-
-    for kind, a, b, c, d in SequenceMatcher(
-        str.isspace, left, right, autojunk=False
-    ).get_opcodes():
-        old, new = "".join(left[a:b]), "".join(right[c:d])
-        # Junk spaces do not anchor the matcher, but a shared trailing space
-        # still belongs to the context rather than either changed reading.
-        suffix = 0
-        if kind == "replace":
-            while (
-                suffix < min(len(old), len(new))
-                and old[-suffix - 1].isspace()
-                and old[-suffix - 1] == new[-suffix - 1]
-            ):
-                suffix += 1
-        if suffix:
-            append(kind, old[:-suffix], new[:-suffix])
-            append("equal", old[-suffix:], new[-suffix:])
-        else:
-            append(kind, old, new)
-    return spans
 
 
 def marked_readings(before: str, after: str, *, verse: bool = False) -> tuple[str, str]:
@@ -242,16 +213,12 @@ def witness_excerpt(
     return label + ": " + context_excerpt(old, new, text, (lo, hi))
 
 
-def context_excerpt(old: str, new: str, text: str, bounds: Sequence[int]) -> str:
-    """Show four words either side; diff only the declared local readings."""
+def context_excerpt(
+    old: str, new: str, text: str, bounds: Sequence[int], *, greek: bool = False
+) -> str:
+    """Show complete touched phrases; diff only the declared local readings."""
     lo, hi = bounds
-    prefix, suffix = re.sub(r"\s+", " ", text[:lo]), re.sub(r"\s+", " ", text[hi:])
-    left = list(re.finditer(r"\w+(?:[’']\w+)*", prefix))
-    right = list(re.finditer(r"\w+(?:[’']\w+)*", suffix))
-    start = left[-4].start() if len(left) > 4 else 0
-    stop = right[4].start() if len(right) > 4 else len(suffix)
-    prefix = ("… " if start else "") + prefix[start:]
-    suffix = suffix[:stop].rstrip() + (" …" if stop < len(suffix) else "")
+    prefix, suffix = text[:lo], text[hi:]
     old, new = scripture.plain(old), scripture.plain(new)
     if not old and new:
         if prefix and not prefix[-1].isspace():
@@ -261,7 +228,11 @@ def context_excerpt(old: str, new: str, text: str, bounds: Sequence[int]) -> str
     elif old and not new and prefix[-1:].isspace() and suffix[:1].isspace():
         old += suffix[0]
         suffix = suffix[1:]
-    return diff_markup([("equal", prefix), *diff_spans(old, new), ("equal", suffix)])
+    return diff_markup(
+        clipped(
+            [("equal", prefix), *diff_spans(old, new, greek=greek), ("equal", suffix)]
+        )
+    )
 
 
 def inline_diff(before: str | None, after: str | None) -> str:
@@ -274,10 +245,7 @@ def inline_diff(before: str | None, after: str | None) -> str:
 
 def diff_markup(spans: Iterable[tuple[str, str]]) -> str:
     """Render difflib spans with one shared notation for every comparison."""
-    marks = {"delete": "−", "insert": "+"}
-    value = "".join(
-        value if kind == "equal" else f"⟦{marks[kind]}{value}⟧" for kind, value in spans
-    )
+    value = marked(list(spans))
     delimiter = "`" * (
         1 + max((len(m[0]) for m in re.finditer(r"`+", value)), default=0)
     )
@@ -291,6 +259,7 @@ def verse_comparison(
     after_label: str,
     *,
     after_verse: Verse | None = None,
+    anchors: Sequence[tuple[int, int, int, int]] = (),
 ) -> list[str]:
     """Contextual source-to-target diff and readable finished verse, in two rows."""
     before, after = scripture.plain(before or ""), scripture.plain(after or "")
@@ -305,60 +274,87 @@ def verse_comparison(
         ]
     return [
         f"English whole verse · {before_label} → {after_label}: "
-        + inline_diff(before, after),
+        + diff_markup(anchored(before, after, anchors)),
         "",
         f"{after_label} (whole verse): {right}  ",
         "",
     ]
 
 
-def unit_greek_excerpt(unit: Unit, context: Context) -> str:
-    """TR context around just this unit, anchored by the ledger's offsets."""
-    words = greek_letters(context["tr"].get(unit["ref"], []))
-    a, b = unit["tr_range"]
-    start, stop = max(0, a - 4), min(len(words), b + 4)
-    prefix = ("… " if start else "") + " ".join(words[start:a])
-    if prefix:
-        prefix += " "
-    suffix = " ".join(words[b:stop]) + (" …" if stop < len(words) else "")
-    old, new = " ".join(greek_letters(unit["tr"])), " ".join(greek_letters(unit["rp"]))
-    # Include the separator in the local diff for additions and omissions.
-    if suffix:
-        old, new = old + " " if old else "", new + " " if new else ""
-    return diff_markup([("equal", prefix), *diff_spans(old, new), ("equal", suffix)])
+def unit_greek_excerpt(
+    unit: Unit,
+    context: Context,
+    prepared: PreparedGreek | None = None,
+    prepared_verses: Mapping[str, Verse] | None = None,
+    passages: Passages | None = None,
+) -> str:
+    """Quote the shared passage containing this unit."""
+    texts, selected, _ = passages or unit_passages(
+        unit, context, prepared, prepared_verses
+    )
+    ranges = passage_ranges(
+        context, unit["ref"], unit["target_ref"], texts[0], texts[1]
+    )
+    return " / ".join(
+        diff_markup(passage_spans(texts, p, 0, ranges, greek=True)) for p in selected
+    )
 
 
-def greek_verses(context: Context, ref: str, target: str | None = None) -> list[str]:
-    """One unaccented verse diff, anchored to the ledger's Greek units.
+Passages = tuple[
+    tuple[str, ...],
+    tuple[tuple[tuple[int, int], ...], ...],
+    tuple[tuple[int, int, int, int], ...],
+]
+
+
+def unit_passages(
+    unit: Unit,
+    context: Context,
+    prepared: PreparedGreek | None = None,
+    prepared_verses: Mapping[str, Verse] | None = None,
+) -> Passages:
+    tr, rp, _ = prepared if prepared is not None else prepare_greek(context)
+    ref, target = unit["ref"], unit["target_ref"]
+    verse = (
+        prepared_verses
+        if prepared_verses is not None
+        else verses_of({target.split()[0]: context["prepared"][target.split()[0]]})
+    ).get(target)
+    texts, selected, english = selections(
+        context,
+        ref,
+        target,
+        " ".join(tr.get(ref, [])),
+        " ".join(rp.get(target, [])),
+        scripture.plain(context["kjv"][ref]),
+        scripture.plain(verse.text if verse else ""),
+        prepared_verses,
+    )
+    offsets = [m.start() for m in re.finditer(r"\S+", texts[0])] + [len(texts[0])]
+    a, b = projected(context, "tr", ref, unit["tr_range"])
+    lo, hi = offsets[a], offsets[b]
+    local = tuple(p for p in selected if p[0][0] <= lo <= hi <= p[0][1])
+    return texts, local or selected, english
+
+
+def greek_verses(
+    context: Context,
+    ref: str,
+    target: str | None = None,
+    prepared: PreparedGreek | None = None,
+) -> list[str]:
+    """One prepared verse diff, anchored to the ledger's Greek units.
 
     Diff each unit and its intervening context separately so repeated words
     cannot pull an alignment across an unrelated part of the verse. Structural
     units describe relocation; the ordinary units carry its wording differences.
     """
     target = target or ref
-    left = " ".join(greek_letters(context["tr"].get(ref, [])))
-    right = " ".join(greek_letters(context["rp"].get(target, [])))
-    left_offsets = [m.start() for m in re.finditer(r"\S+", left)] + [len(left)]
-    right_offsets = [m.start() for m in re.finditer(r"\S+", right)] + [len(right)]
-    units = sorted(
-        (
-            u
-            for u in context["units"]
-            if u["ref"] == ref
-            and u["target_ref"] == target
-            and u["class"] != "structural"
-        ),
-        key=lambda u: (u["tr_range"][0], u["rp_range"][0]),
-    )
-    spans: list[tuple[str, str]] = []
-    lo = ro = 0
-    for unit in units:
-        a, b = (left_offsets[i] for i in unit["tr_range"])
-        c, d = (right_offsets[i] for i in unit["rp_range"])
-        spans.extend(diff_spans(left[lo:a], right[ro:c]))
-        spans.extend(diff_spans(left[a:b], right[c:d]))
-        lo, ro = b, d
-    spans.extend(diff_spans(left[lo:], right[ro:]))
+    tr, rp, _ = prepared if prepared is not None else prepare_greek(context)
+    left = " ".join(tr.get(ref, []))
+    right = " ".join(rp.get(target, []))
+    ranges = passage_ranges(context, ref, target, left, right)
+    spans = anchored(left, right, ranges, greek=True)
     return [
         f"Greek whole verse · TR {ref} → RP2026 {target}: " + diff_markup(spans) + "  ",
         "",
@@ -721,7 +717,11 @@ def calculus(row: Disposition, unit: Unit, index: Index) -> str:
 
 
 def unit_english_lines(
-    unit: Unit, row: Disposition, context: Context, index: Index
+    unit: Unit,
+    row: Disposition,
+    context: Context,
+    index: Index,
+    passages: Passages | None = None,
 ) -> list[str]:
     """The executed English for this unit, preserving shared constructions."""
     covered = row.get("covered_by")
@@ -730,39 +730,26 @@ def unit_english_lines(
     label = "English for shared construction" if shared else "English at this unit"
     if row.get("covered_by"):
         label += f" (executed with {row['covered_by']})"
-    edits = owner.get("edits", []) if owner.get("execution") == "applied" else []
-    lines: list[str] = []
-    for edit in edits:
-        ref = edit["ref"]
-        scope = edit.get("note_scope", {})
-        target = scope.get("ref", ref)
-        verse = index["prepared"].get(target)
-        span, source_span = scope.get("range"), scope.get("source_range")
-        if span and source_span and verse:
-            a, b = source_span
-            c, d = span
-            old, new = context["kjv"][ref][a:b], verse.text[c:d]
-            contrast = context_excerpt(old, new, context["kjv"][ref], (a, b))
-        else:
-            # Executed edits carry the executor's character range in the KJV verse.
-            old, new = edit["old"], edit.get("rendered", edit["new"])
-            contrast = (
-                context_excerpt(old, new, context["kjv"][ref], edit["range"])
-                if edit.get("range")
-                else inline_diff(old, new)
-            )
-        lines.append(f"{label} · KJV {ref} → OLEB {target}: " + contrast)
-    if lines:
-        return list(dict.fromkeys(lines))
-    ref, target = unit["ref"], unit["target_ref"]
-    if row["action"] in {"move", "omit"}:
-        verse = index["prepared"].get(target)
-        contrast = inline_diff(context["kjv"][ref], verse.text if verse else "")
-    else:
+    if not owner.get("edits") and row["action"] not in {"move", "omit"}:
         contrast = "unchanged" + (
             " (executor refused)" if row["action"] == "refused" else ""
         )
-    return [f"{label} · KJV {ref} → OLEB {target}: {contrast}"]
+        return [f"{label} · KJV {unit['ref']} → OLEB {unit['target_ref']}: {contrast}"]
+    texts, selected, anchors = passages or unit_passages(
+        unit, context, prepared_verses=index["prepared"]
+    )
+    comparisons = [passage_spans(texts, p, 2, anchors) for p in selected]
+    changed = [
+        diff_markup(spans)
+        for spans in comparisons
+        if any(k != "equal" for k, _ in spans)
+    ]
+    contrast = (
+        " / ".join(changed)
+        if changed
+        else "unchanged" + (" (executor refused)" if row["action"] == "refused" else "")
+    )
+    return [f"{label} · KJV {unit['ref']} → OLEB {unit['target_ref']}: {contrast}"]
 
 
 def section(
@@ -772,6 +759,7 @@ def section(
     index: Index,
     *,
     greek_context: Mapping[str, str] | None = None,
+    prepared: PreparedGreek | None = None,
 ) -> list[str]:
     uid = unit["id"]
     kjv = context["kjv"]
@@ -807,19 +795,33 @@ def section(
         + (f" · Recorded in: {recorded}" if recorded else "")
     )
     lines.append("")
-    greek = "Greek at this unit · TR → RP2026: " + unit_greek_excerpt(unit, context)
-    # The unaccented diff cannot show an accent-only unit's difference.
-    if unit.get("tr_accented") and unit.get("rp_accented"):
-        greek += f" · printed accents: {esc(unit['tr_accented'])} → {esc(unit['rp_accented'])}"
+    prepared = prepared if prepared is not None else prepare_greek(context)
+    passages = unit_passages(unit, context, prepared, index["prepared"])
+    greek = "Greek at this unit · TR → RP2026: " + unit_greek_excerpt(
+        unit, context, passages=passages
+    )
+    if unit["id"] in prepared[2]:
+        old, new = unit["tr_accented"], unit["rp_accented"]
+        greek += f" · apparatus accent evidence: {esc(old)} → {esc(new)}"
+    addresses = context["tr_alignment"].addresses[ref]
+    source_refs = list(
+        dict.fromkeys(
+            addresses[slice(*projected(context, "tr", ref, unit["tr_range"]))]
+        )
+    )
+    if source_refs and source_refs != [ref]:
+        greek += " · Scrivener source: " + ", ".join(source_refs)
     lines.append(greek)
-    lines.extend(unit_english_lines(unit, row, context, index))
+    lines.extend(unit_english_lines(unit, row, context, index, passages))
     lines.append("")
     if greek_context:
         lines.append(
             f"Greek whole verse · TR {ref} → RP2026 {target}: see {greek_context['unit']}"
         )
     else:
-        lines.extend(line for line in greek_verses(context, ref, target) if line)
+        lines.extend(
+            line for line in greek_verses(context, ref, target, prepared) if line
+        )
     after = index["prepared"].get(target)
     lines.extend(
         verse_comparison(
@@ -828,6 +830,7 @@ def section(
             f"KJV {ref}",
             f"OLEB {target}",
             after_verse=after,
+            anchors=passages[2],
         )[:-1]
     )
     notes = (
@@ -949,6 +952,8 @@ def packets(context: Context) -> dict[str, str]:
     """One review file per book, by its name: every Scrivener-RP2026 unit
     of the book with all its evidence."""
     index = build_index(context)
+    prepared = prepare_greek(context)
+    tr, rp, _ = prepared
     rows = index["rows"]
     by_book: defaultdict[str, list[Unit]] = defaultdict(list)
     for u in context["units"]:
@@ -983,7 +988,7 @@ def packets(context: Context) -> dict[str, str]:
                 "| --- | --- | --- | --- | --- |",
             ]
             lines += [
-                f"| {u['id']} | {u['class']} | {esc(' '.join(u['tr']) or '∅')} → {esc(' '.join(u['rp']) or '∅')} | {score(rows[u['id']])} | {' '.join('`' + t + '`' for t in rows[u['id']]['tags'] if t.startswith('ev:'))} |"
+                f"| {u['id']} | {u['class']} | {esc(' '.join(tr[u['ref']][slice(*projected(context, "tr", u["ref"], u["tr_range"]))]) or '∅')} → {esc(' '.join(rp[u['target_ref']][slice(*projected(context, "rp", u["target_ref"], u["rp_range"]))]) or '∅')} | {score(rows[u['id']])} | {' '.join('`' + t + '`' for t in rows[u['id']]['tags'] if t.startswith('ev:'))} |"
                 for u in neutral
             ]
             lines.append("")
@@ -994,7 +999,12 @@ def packets(context: Context) -> dict[str, str]:
                 continue
             pair = (u["ref"], u["target_ref"])
             lines += section(
-                u, row, context, index, greek_context=greek_contexts.get(pair)
+                u,
+                row,
+                context,
+                index,
+                greek_context=greek_contexts.get(pair),
+                prepared=prepared,
             )
             greek_contexts.setdefault(pair, {"unit": u["id"]})
         # A section shows its verse's loose rows; list the rest after them.

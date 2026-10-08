@@ -706,6 +706,7 @@ def instructions(inventory: Inventory, kjv: Mapping[str, str]) -> list[Instructi
             }
             if b["kind"] == "insert":
                 edit["side"] = b.get("side", "before")
+                edit["quoted_context"] = row.get("quotation", {}).get("text", "")
             edits.append(edit)
         if interpreted.get("stop") and edits:
             edits[0]["stop"] = interpreted["stop"]

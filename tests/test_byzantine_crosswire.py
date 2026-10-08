@@ -350,3 +350,42 @@ def test_sole_report_attachment_refuses_transposition_at_a_substitution(
     assert attach_sole([omit], by_ref["REV 15:4"])[0]["method"] == "sole"
     transpose: Report = {**report, "kind": "transpose", "old": "a b", "new": "b a"}
     assert attach_sole([transpose], by_ref["REV 15:4"])[0]["units"] == []
+
+
+@pytest.mark.parametrize(
+    "bad", ["missing", "conflicting", "wrong", "length", "position"]
+)
+def test_presentation_bridge_leaves_bad_positions_unresolved(bad: str) -> None:
+    from bible.byzantine.crosswire import presentation_bridge
+
+    row: Tagged = {
+        "text": "one two three",
+        "links": [
+            {"range": [0, 3], "src": ["1"], "forms": ["εις"], "strongs": []},
+            {"range": [4, 7], "src": ["2"], "forms": ["δυο"], "strongs": []},
+            {"range": [8, 13], "src": ["3"], "forms": ["τρεις"], "strongs": []},
+        ],
+    }
+    if bad == "missing":
+        row["links"][1]["src"] = []
+        row["links"][1]["forms"] = []
+    elif bad == "conflicting":
+        row["links"].append({**row["links"][1], "forms": ["wrong"]})
+    elif bad == "wrong":
+        row["links"][1]["forms"] = ["wrong"]
+    elif bad == "length":
+        row["links"][1]["forms"] = []
+    else:
+        row["links"][1]["src"] = ["5"]
+    snapshot = copy.deepcopy(row)
+    aligned = presentation_bridge(row, ["eis", "duo", "treis"], row["text"])
+    assert aligned["positions"] == [[0], [], [2]]
+    assert aligned["direct"] == [[0], [], [2]]
+    assert row == snapshot
+    # The strict bridge retains its own full-verse rejection rules.
+    if bad in {"missing", "conflicting", "length", "position"}:
+        assert not bridge(
+            {"MAT 1:1": row},
+            {"MAT 1:1": ["eis", "duo", "treis"]},
+            {"MAT 1:1": row["text"]},
+        )[0]

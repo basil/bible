@@ -203,6 +203,13 @@
     "note_forms": [],
     "source_forms": ["RP"]
   },
+  "apparatus": {
+    "display": "apparatus",
+    "meaning": "the critical apparatus of Robinson and Pierpont's edition, which gives the Textus Receptus where it differs",
+    "period_forms": [],
+    "note_forms": [],
+    "source_forms": []
+  },
   "king-james-version": {
     "display": "KJV",
     "meaning": "King James Version, in the text of the Cambridge Paragraph Bible",

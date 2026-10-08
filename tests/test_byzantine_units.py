@@ -4,6 +4,7 @@ classification, and the supplementary units."""
 from __future__ import annotations
 
 import copy
+import re
 from collections import Counter
 from collections.abc import Iterable, Mapping, Sequence
 from typing import Any
@@ -902,3 +903,25 @@ def test_printed_spot_checks_name_twenty_units(
         "check": "TR letters present in printed apparatus; RP letters present in printed main text",
     }
     assert [c["unit"].split()[0] for c in checks] == BOOKS[:20]
+
+
+def test_duplicate_accent_unit_ids_are_rejected(
+    byzantine: Mapping[str, Any], structure: Structure
+) -> None:
+    _, diacritics = greek.printed(
+        byzantine["printed_xml"], structure.omitted, "REV 22:21"
+    )
+    assert diacritics
+    with pytest.raises(ValueError, match=re.escape(diacritics[0]["ref"] + "#accent")):
+        supplementary_units(
+            byzantine["tr"],
+            byzantine["rp"],
+            byzantine["collation"],
+            byzantine["tcgnt"],
+            byzantine["printed"],
+            [*diacritics, diacritics[0]],
+            structure,
+            byzantine["decisions"]["accents"],
+        )
+    ids = [u["id"] for u in byzantine["units"]]
+    assert len(ids) == len(set(ids))

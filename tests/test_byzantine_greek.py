@@ -6,12 +6,15 @@ from __future__ import annotations
 
 import copy
 import json
+import re
 import unicodedata
+import xml.etree.ElementTree as ET
 from collections.abc import Iterable, Mapping
 from typing import Any
 
 import pytest
 
+from bible.byzantine import BOOKS
 from bible.byzantine.greek import (
     PATCHES,
     Diacritic,
@@ -19,6 +22,7 @@ from bible.byzantine.greek import (
     Structure,
     Tags,
     Text,
+    accent_letters,
     accented_scrivener,
     ascii_greek,
     bp5_line,
@@ -31,7 +35,6 @@ from bible.byzantine.greek import (
     printed,
     rp2018,
     rp2026,
-    with_accents,
 )
 from bible.sources import Content
 
@@ -212,10 +215,10 @@ def test_printed_main_text_equals_rp2026_verse_for_verse(
     assert snapshot["MAT 1:1"]["page"] == 29
     assert snapshot["PHM 1:1"]["page"] == 611
     for ref, row in snapshot.items():
-        assert len(row["accented"]) == len(row["Greek"]), ref
-        assert [ascii_greek(w.replace("ϲ", "σ")) for w in row["accented"]] == row[
-            "Greek"
-        ], ref
+        assert len(byzantine["rp_alignment"].spans[ref]) == len(row["Greek"]), ref
+        assert "".join(
+            ascii_greek("".join(accent_letters(w))) for w in row["accented"]
+        ) == "".join(row["Greek"]), ref
     for ref in structure.omitted:
         assert snapshot[ref] == {"Greek": [], "accented": [], "page": None}
 
@@ -304,25 +307,35 @@ def accented_input(verses: Mapping[str, list[str]]) -> Content:
     return Content({"tr.json": json.dumps(rows).encode()}) / "tr.json"
 
 
-def test_accented_tr_preserves_every_pinned_letter_and_boundary(
+def test_accented_tr_preserves_source_words(
     byzantine: Mapping[str, Any], tr: Text
 ) -> None:
-    marked = byzantine["tr_accented"]
-    assert set(marked) == set(tr)
-    for ref, words in tr.items():
-        assert greek_words(" ".join(marked[ref])) == words, ref
-        assert all(w == w.lower() for w in marked[ref]), ref
-    assert marked["MAT 1:1"][:3] == ["βίβλος", "γενέσεως", "ἰησοῦ"]
-    # The numeral stigma is printed with the pinned sigma, without its stop.
-    assert marked["REV 13:18"][-1] == "χξς"
+    alignment = byzantine["tr_alignment"]
+    original = json.loads(byzantine["source_inputs"]["accented_tr"].read_text())
+    source = {
+        f"{r['book_name_short']} {r['chapter']}:{r['verse']}": [
+            unicodedata.normalize("NFC", w["greek"]) for w in r["words"]
+        ]
+        for r in original
+    }
+    for ref in tr:
+        assert len(alignment.spans[ref]) == len(tr[ref])
+        assert all(
+            w in source[address]
+            for w, address in zip(
+                alignment.text[ref], alignment.addresses[ref], strict=True
+            )
+        )
+    assert alignment.text["MAT 1:1"][:3] == ["Βίβλος", "γενέσεως", "Ἰησοῦ"]
+    assert alignment.text["REV 13:18"][-1] == "χξϛ´."
 
 
 def test_alignment_crosses_word_and_verse_boundaries() -> None:
     tr = {"MAT 1:1": ["dia", "ti", "estin"], "MAT 1:2": ["mhpote", "outws"]}
     supplied = {"MAT 1:1": ["Διατί"], "MAT 1:2": ["ἐστί", "μή", "ποτε", "οὕτω"]}
-    assert accented_scrivener(accented_input(supplied), tr) == {
-        "MAT 1:1": ["δια", "τί", "ἐστίν"],
-        "MAT 1:2": ["μήποτε", "οὕτως"],
+    assert accented_scrivener(accented_input(supplied), tr).text == {
+        "MAT 1:1": ["Διατί", "ἐστί"],
+        "MAT 1:2": ["μή", "ποτε", "οὕτω"],
     }
     assert tr["MAT 1:1"] == ["dia", "ti", "estin"]
 
@@ -330,9 +343,9 @@ def test_alignment_crosses_word_and_verse_boundaries() -> None:
 def test_alignment_keeps_repeated_words_in_source_order() -> None:
     tr = {"MAT 1:1": ["estin", "estin", "estin"]}
     supplied = {"MAT 1:1": ["ἔστι", "ἐστί", "ἐστὶν"]}
-    assert accented_scrivener(accented_input(supplied), tr)["MAT 1:1"] == [
-        "ἔστιν",
-        "ἐστίν",
+    assert accented_scrivener(accented_input(supplied), tr).text["MAT 1:1"] == [
+        "ἔστι",
+        "ἐστί",
         "ἐστὶν",
     ]
 
@@ -363,5 +376,94 @@ def test_alignment_refuses_unknown_characters_and_inventory() -> None:
         accented_scrivener(accented_input({"MAT 1:1": ["kai"]}), {"MAT 1:1": ["kai"]})
     with pytest.raises(ValueError, match="verse inventory"):
         accented_scrivener(accented_input({"MAT 1:2": ["καί"]}), {"MAT 1:1": ["kai"]})
-    assert with_accents(["estin", "outw"], ["ἘΣΤΊΝ", "οὕτω"]) == ["ἐστίν", "οὕτω"]
-    assert greek_letters(greek_words("ἐστίν οὕτω")) == ["εστιν", "ουτω"]
+
+
+@pytest.mark.parametrize(
+    "plain, marked",
+    [
+        (["dia", "ti"], ["(Διατί;)"]),
+        (["mhpote"], ["(Μή", "Ποτε);"]),
+        (["aparti"], ["ἀπ᾽", "άρτι·"]),
+        (["estin"], ["ἘΣΤΊ;"]),
+        (["outw"], ["ΟὝΤΩΣ."]),
+        (["sws"], ["(ϹῶϹ)"]),
+        (["xcs"], ["χξϛ´."]),
+    ],
+)
+def test_alignment_preserves_complete_source_words(
+    plain: list[str], marked: list[str]
+) -> None:
+    alignment = accented_scrivener(
+        accented_input({"MAT 1:1": marked}), {"MAT 1:1": plain}
+    )
+    assert alignment.text == {"MAT 1:1": marked}
+    for at in range(len(plain)):
+        assert alignment.project("MAT 1:1", (at, at + 1)) == (0, len(marked))
+    assert alignment.project("MAT 1:1", (len(plain), len(plain))) == (
+        len(marked),
+        len(marked),
+    )
+    with pytest.raises(ValueError, match="Invalid Greek token range"):
+        alignment.project("MAT 1:1", (0, len(plain) + 1))
+
+
+def test_complete_joined_word_projects_across_verse_boundaries() -> None:
+    alignment = accented_scrivener(
+        accented_input({"MAT 1:1": ["(Διατί;)"], "MAT 1:2": ["ἐστί."]}),
+        {"MAT 1:1": ["dia"], "MAT 1:2": ["ti", "estin"]},
+    )
+    assert alignment.text == {"MAT 1:1": ["(Διατί;)"], "MAT 1:2": ["(Διατί;)", "ἐστί."]}
+    assert alignment.addresses["MAT 1:2"] == ["MAT 1:1", "MAT 1:2"]
+    assert alignment.spans["MAT 1:2"] == [(0, 1), (1, 2)]
+
+
+def test_display_punctuation_matches_pinned_sources(
+    byzantine: Mapping[str, Any],
+) -> None:
+    def punctuation(text: str) -> str:
+        return "".join(
+            c
+            for c in unicodedata.normalize("NFD", text)
+            if not c.isalpha() and not c.isspace() and not unicodedata.combining(c)
+        )
+
+    original = json.loads(byzantine["source_inputs"]["accented_tr"].read_text())
+    for book in BOOKS:
+        source = " ".join(
+            w["greek"]
+            for row in original
+            if row["book_name_short"] == book
+            for w in row["words"]
+        )
+        aligned = " ".join(
+            w
+            for ref, words in byzantine["tr_accented"].items()
+            if ref.split()[0] == book
+            for w in words
+        )
+        assert punctuation(aligned) == punctuation(source), book
+
+        # Only final nu/sigma may differ in letter count; all other letters
+        # retain the raw transcription's case across the whole book.
+        def case_without_finals(text: str) -> list[bool]:
+            return [
+                c[0].isupper()
+                for c in accent_letters(text)
+                if ascii_greek(c) not in ("n", "s")
+            ]
+
+        assert case_without_finals(aligned) == case_without_finals(source), book
+    root = ET.fromstring(byzantine["printed_xml"].read_bytes())
+    source = " ".join(
+        "".join(n.itertext()).strip()
+        for n in root.findall("page/text")
+        if n.get("font") == "25"
+    )
+    source = re.sub(r"-\s+(?=\w)", "", source)
+    aligned = " ".join(
+        w for verse in byzantine["printed"].values() for w in verse["accented"]
+    )
+    assert punctuation(aligned) == punctuation(source)
+    assert [c[0].isupper() for c in accent_letters(aligned)] == [
+        c[0].isupper() for c in accent_letters(source)
+    ]

@@ -36,7 +36,8 @@ from fontTools.pens.transformPen import TransformPen
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.tables.otBase import OTTableWriter
 
-from bible import paths
+from bible import paths, usj
+from bible.pipeline import Edition
 
 FONTS = paths.FONTS / "olebfont"
 EREWHON = paths.FONT_ARCHIVES / "erewhon.zip"
@@ -638,3 +639,28 @@ def test_ghost_hint_markers_and_edges_survive_scaling() -> None:
     assert scaled_stems([21, -21, 218, 43, 389, -20], 2) == [21, -21, 436, 86, 778, -20]
     # An edge following a ghost must use the preserved sentinel in its delta.
     assert scaled_stems([100, -20, 40, 10], 2) == [200, -20, 60, 20]
+
+
+@pytest.mark.parametrize("style", STYLES)
+def test_printed_comparison_symbols_are_covered(style: str) -> None:
+    with TTFont(FONTS / font_file(style)) as font:
+        assert set(map(ord, "[]…→∙")) <= font.getBestCmap().keys()
+
+
+@pytest.mark.parametrize("face", ["GFSDidot.otf", "GFSDidotBold.otf"])
+def test_appendix_greek_font_covers_its_source_characters(
+    edition: Edition, face: str
+) -> None:
+    content = edition.documents["XXC"]["content"]
+    if face == "GFSDidotBold.otf":
+        content = [node for node in usj.walk(content) if node.get("marker") == "bd"]
+    greek_chars = {
+        ord(c)
+        for node in usj.walk(content)
+        if node.get("marker") == "wg"
+        for c in usj.text_of(node.get("content", []))
+        if not c.isspace()
+    }
+    assert greek_chars
+    with TTFont(paths.FONTS / "gfs_didot" / face) as font:
+        assert greek_chars <= font.getBestCmap().keys()

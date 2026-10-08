@@ -115,6 +115,7 @@ COPY scripts/ /opt/scripts/
 RUN /opt/venv/bin/python /opt/scripts/patch_margin_convergence.py \
     /opt/ptxprint/python/lib/ptxprint \
     && /opt/venv/bin/python -c 'import ptxprint; from pathlib import Path; import sys; sys.path.insert(0, "/opt/scripts"); from patch_margin_convergence import patch; patch(Path(ptxprint.__file__).parent)'
+RUN /opt/venv/bin/python /opt/scripts/patch_nested_styles.py
 RUN <<EOF
 set -eu
 # Assemble the normalized text family with separate source hint dictionaries.

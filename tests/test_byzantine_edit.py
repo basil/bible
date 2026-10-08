@@ -12,7 +12,7 @@ import pytest
 import bible.pipeline
 from bible import scripture, usj
 from bible.byzantine import edit
-from bible.byzantine.rows import Disposition, Edit
+from bible.byzantine.rows import Disposition, Edit, InstructionEdit
 from bible.byzantine.stages import Context
 from bible.scripture import Verse
 from bible.usj import Document, Node
@@ -104,22 +104,26 @@ def test_acts_9_5_omission_is_one_construction_with_9_6(
         == "And he said, Who art thou, Lord? And the Lord said, I am Jesus whom thou persecutest."
     )
     ((row, e),) = edits_at["ACT 9:5"]
-    assert row["disposition"] == "override" and row["override"] == "ACT 9:5#1+ACT 9:6#1"
-    assert e["old"] == "persecutest: it is hard for thee to kick against the pricks"
-    assert e["new"] == "persecutest"
+    assert row["disposition"] == "witnessed"
+    assert e["old"] == "it is hard for thee to kick against the pricks"
+    assert e["new"] == ""
 
 
-def test_acts_9_6_override_starts_the_verse_with_a_capital(
+def test_acts_9_6_instruction_starts_the_verse_with_a_capital(
     prepared_verses: Mapping[str, Verse], edits_at: EditsAt
 ) -> None:
     assert (
         prepared_verses["ACT 9:6"].text
         == "But arise, and go into the city, and it shall be told thee what thou must do."
     )
-    ((row, e),) = edits_at["ACT 9:6"]
-    assert row["disposition"] == "override"
-    assert e["old"].startswith("And he trembling and astonished said")
-    assert e["rendered"] == "But arise"
+    (deletion, omitted), (row, e) = edits_at["ACT 9:6"]
+    assert deletion["disposition"] == row["disposition"] == "witnessed"
+    assert omitted["kind"] == "delete"
+    assert omitted["old"].startswith("And he trembling and astonished said")
+    assert e["kind"] == "insert" and e["old"] == "" and e["rendered"] == "But"
+    assert any(
+        s["rule"] == 4 and s["from"] == "A" and s["to"] == "a" for s in e["seams"]
+    )
     assert "it shall be told thee" in prepared_verses["ACT 9:6"].text
 
 
@@ -143,18 +147,15 @@ def test_revelation_22_21_has_two_edits_each_with_its_note(
     assert any("Textus Receptus:  you all" in n for n in notes)
 
 
-def test_seam_capital_rules_on_plain_text() -> None:
-    start, end, new, seams = edit.seam("And he said.", 0, 3, "then")
-    assert (start, end, new) == (0, 3, "Then")
-    assert seams == [{"rule": 1, "range": [0, 0], "from": "then", "to": "Then"}]
-    assert edit.seam("He said. And he went.", 9, 12, "then")[2] == "Then"
-    assert edit.seam("When Jesus came", 5, 10, "he")[2] == "he"
-    assert edit.seam("He said. because", 9, 16, "how")[2] == "How"
-    # A verse continuing the sentence before it keeps the lowercase reading.
-    assert (
-        edit.seam("because strait is the gate", 0, 7, "how", continues_sentence=True)[2]
-        == "how"
-    )
+def test_seam_keeps_exact_replacement_case() -> None:
+    for text, lo, hi, new in [
+        ("And he said.", 0, 3, "then"),
+        ("He said. And he went.", 9, 12, "then"),
+        ("When Jesus came", 5, 10, "he"),
+        ("He said. because", 9, 16, "how"),
+        ("because strait is the gate", 0, 7, "How"),
+    ]:
+        assert edit.seam(text, lo, hi, new) == (lo, hi, new, [])
 
 
 def test_seam_deletion_rules_on_plain_text() -> None:
@@ -554,7 +555,7 @@ def test_deleting_a_lowercase_verse_initial_keeps_the_sentence_continuation() ->
 
 
 @pytest.mark.parametrize("stop", [",", ";", ":", "."])
-def test_replacing_a_verse_initial_name_reads_the_preceding_boundary(
+def test_replacing_a_verse_initial_name_keeps_exact_case_across_boundaries(
     stop: str,
 ) -> None:
     documents = {
@@ -574,13 +575,15 @@ def test_replacing_a_verse_initial_name_reads_the_preceding_boundary(
     )
     prepared, result = edit.execute(documents, [row], ["MAT"])
     assert result[0]["execution"] == "applied"
-    expected = "In" if stop == "." else "in"
+    expected = "in"
     verse = scripture.verses(prepared["MAT"])["1:2"]
     assert verse.text == expected + " the priesthood of Annas."
     assert "Annas was priest" in note_text(verse.notes[0][1])
 
 
-def test_an_override_closing_the_previous_clause_starts_a_new_sentence() -> None:
+def test_an_override_closing_the_previous_clause_does_not_recase_the_next_verse() -> (
+    None
+):
     documents = {
         "MAT": usj.parse(
             "\\id MAT\n\\c 1\n\\p\n\\v 1 He said,\n\\v 2 Annas was priest.\n"
@@ -601,7 +604,7 @@ def test_an_override_closing_the_previous_clause_starts_a_new_sentence() -> None
     assert result[0]["execution"] == "applied"
     verses = scripture.verses(prepared["MAT"])
     assert verses["1:1"].text == "He spake."
-    assert verses["1:2"].text == "In the priesthood of Annas."
+    assert verses["1:2"].text == "in the priesthood of Annas."
 
 
 def test_disjoint_length_changing_edits_use_the_original_offsets() -> None:
@@ -655,8 +658,8 @@ def test_deleting_the_initial_of_a_joined_override_keeps_its_continuation() -> N
     assert verses["1:2"].text == "he went."
 
 
-@pytest.mark.parametrize("original,expected", [("or", "if not"), ("Or", "If not")])
-def test_replacing_a_question_continuation_keeps_source_case(
+@pytest.mark.parametrize("original,expected", [("or", "if not"), ("Or", "if not")])
+def test_replacing_a_question_continuation_keeps_replacement_case(
     original: str, expected: str
 ) -> None:
     text = "Do we begin again to commend ourselves? " + original + " need we letters?"
@@ -681,3 +684,148 @@ def test_deleting_a_lowercase_question_continuation_keeps_following_case() -> No
         scripture.verses(prepared["MAT"])["1:1"].text
         == "Do we begin again? need we letters?"
     )
+
+
+@pytest.mark.parametrize(
+    "source, old, new, expected",
+    [
+        ("And he said.", "And", "then", "then he said."),
+        ("He has a pear.", "pear", "apple", "He has a apple."),
+        ("Jesus went.", "Jesus", "he", "he went."),
+        ("And he went.", "And", "", "he went."),
+        ("Jesus went.", "Jesus", "Then Jesus", "Then Jesus went."),
+    ],
+)
+def test_executor_uses_exact_wording_without_case_or_article_inference(
+    source: str, old: str, new: str, expected: str
+) -> None:
+    documents = execution_fixture(source)
+    original = copy.deepcopy(documents)
+    start = source.index(old)
+    row = execution_row("MAT 1:1#1", start, start + len(old), old, new)
+    if not new:
+        row["ops"][0]["kind"] = "delete"
+    prepared, rows = edit.execute(documents, [row], ["MAT"])
+    assert rows[0]["execution"] == "applied"
+    assert scripture.verses(prepared["MAT"])["1:1"].text == expected
+    assert documents == original
+    assert all(s["rule"] in {2, 3} for e in rows[0]["edits"] for s in e["seams"])
+
+
+def test_compiled_adjacent_deletions_preserve_supplied_words_and_lexical_note() -> None:
+    from bible.byzantine import decide, verify
+
+    document = usj.parse("\\id MAT\n\\c 1\n\\p\n\\v 1 And then \\add they\\add* spoke.")
+    source = scripture.verses(document)["1:1"].text
+    instructions: list[InstructionEdit] = [
+        {
+            "ref": "MAT 1:1",
+            "kind": "delete",
+            "word_range": [0, 1],
+            "old": "And",
+            "new": "",
+        },
+        {
+            "ref": "MAT 1:1",
+            "kind": "delete",
+            "word_range": [1, 2],
+            "old": "then",
+            "new": "",
+        },
+    ]
+    original = copy.deepcopy((document, instructions))
+    ops = decide.operations(instructions, {"MAT 1:1": source}, frozenset())
+    rows: list[Disposition] = [
+        {"unit": "MAT 1:1#1", "ref": "MAT 1:1", "action": "edit", "ops": ops}
+    ]
+    prepared, executed = edit.execute({"MAT": document}, rows, ["MAT"])
+    assert executed[0]["execution"] == "applied"
+    assert scripture.verses(prepared["MAT"])["1:1"].text == "They spoke."
+    assert (
+        "".join(
+            usj.text_of(n["content"])
+            for n in usj.walk(prepared["MAT"]["content"])
+            if n.get("marker") == "add"
+        )
+        == "They"
+    )
+    applied = executed[0]["edits"]
+    assert applied[0]["kind"] == "delete" and applied[0]["old"] == "And then"
+    assert usj.text_of(field(applied[0]["note"], "fq")["content"]) == "And then"
+    assert verify.closure(source, applied) == "They spoke."
+    assert (document, instructions) == original
+
+
+@pytest.mark.parametrize(
+    "bounds, old, new", [([4, 6], "th", "Th"), ([5, 6], "h", "H"), ([4, 5], "t", "X")]
+)
+def test_closure_rejects_case_adjustments_beyond_an_initial(
+    bounds: list[int],
+    old: str,
+    new: str,
+) -> None:
+    from bible.byzantine import verify
+
+    applied: Edit = {
+        "range": [0, 3],
+        "applied_range": [0, 4],
+        "old": "And",
+        "new": "",
+        "rendered": "",
+        "seams": [
+            {"rule": 4, "range": bounds, "from": old, "to": new, "external": True}
+        ],
+    }
+    with pytest.raises(
+        ValueError, match="case adjustment changes more than an initial"
+    ):
+        verify.closure("And they spoke.", [applied])
+
+
+@pytest.mark.parametrize(
+    "before, after", [("[thy] men", "[These] men"), ("[these] men", "[ThesE] men")]
+)
+def test_closure_checks_a_replacements_compiled_initial_independently(
+    before: str,
+    after: str,
+) -> None:
+    from bible.byzantine import verify
+
+    applied: Edit = {
+        "range": [0, 3],
+        "applied_range": [0, 3],
+        "old": "Thy",
+        "new": usj.text_of(edit.supplied_content(after)),
+        "rendered": after,
+        "seams": [{"rule": 4, "range": [0, 3], "from": before, "to": after}],
+    }
+    with pytest.raises(
+        ValueError, match="case adjustment changes more than an initial"
+    ):
+        verify.closure("Thy people", [applied])
+
+
+def test_compiled_replacement_cases_supplied_words_and_preserves_the_witness() -> None:
+    from bible.byzantine import decide, verify
+
+    documents = execution_fixture("Thy people")
+    instruction: InstructionEdit = {
+        "kind": "replace",
+        "ref": "MAT 1:1",
+        "word_range": [0, 1],
+        "old": "Thy",
+        "new": "[these]",
+        "quoted_old": "thy",
+    }
+    op = decide.operation(instruction, {"MAT 1:1": "Thy people"}, frozenset())
+    row: Disposition = {
+        "unit": "MAT 1:1#1",
+        "ref": "MAT 1:1",
+        "action": "edit",
+        "ops": [op],
+    }
+    prepared, executed = edit.execute(documents, [row], ["MAT"])
+    assert executed[0]["execution"] == "applied"
+    assert "\\add These\\add*" in usj.serialize(prepared["MAT"])
+    assert verify.closure("Thy people", executed[0]["edits"]) == "These people"
+    assert instruction["new"] == "[these]" and instruction["quoted_old"] == "thy"

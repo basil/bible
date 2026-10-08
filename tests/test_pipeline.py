@@ -43,7 +43,7 @@ def test_the_edition_prints_every_unit_once_in_the_manifests_order(
         "alexandrine_notes": 198,
         "alexandrine_appendix_paragraphs": 26,
         "byzantine_units": 1939,
-        "byzantine_edits": 858,
+        "byzantine_edits": 859,
         "byzantine_notes": 867,
         "scripture_units": 78,
         "brenton_units": 51,

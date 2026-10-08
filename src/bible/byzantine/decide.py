@@ -16,6 +16,7 @@ from typing import Any
 
 from bible.byzantine import ADDITIONAL, APPARATUS, FAA, PIERPONT, TCENT
 from bible.byzantine.crosswire import (
+    SPAN,
     bracket_kept,
     contrast,
     curly_apostrophes,
@@ -25,6 +26,7 @@ from bible.byzantine.crosswire import (
     unique_moves,
 )
 from bible.byzantine.decisions import Supplied
+from bible.byzantine.edit import seam, sentence_start
 from bible.byzantine.instructions import corroborating, select
 from bible.byzantine.rows import (
     Alarm,
@@ -159,6 +161,7 @@ def decide(
     edit that several units share is executed by the first of them and the
     others are `covered`.
     """
+    common = common_words(kjv)
     by_unit_reports = reports_by_unit(reports)
     by_unit_revisions = reports_by_unit(revision_rows)
     by_unit_instructions = reports_by_unit(instructions)
@@ -255,7 +258,7 @@ def decide(
             if (
                 o["kind"] == "edit"
                 and combined
-                and same_effect(o, {"edits": combined}, kjv, supplied)
+                and same_effect(o, {"edits": combined}, kjv, supplied, common=common)
             ):
                 row["redundant"] = True
             elif (
@@ -341,7 +344,7 @@ def decide(
                 row.update({"action": "covered", "covered_by": owner})
             else:
                 row["action"] = "edit"
-                row["ops"] = [operation(e) for e in owned_edits]
+                row["ops"] = operations(owned_edits, kjv, common)
             tags.update(OP_BY_KIND[e["kind"]] for e in edits)
             tags.add(FROM_BY_SOURCE[selected["source"]])
             rendering = selected.get("rendering")
@@ -423,11 +426,16 @@ def decide(
     return result
 
 
-def operation(edit: InstructionEdit) -> dict[str, Any]:
+def operation(
+    edit: InstructionEdit,
+    kjv: Mapping[str, str],
+    common: frozenset[str] | None = None,
+) -> dict[str, Any]:
     """What the executor needs of an instruction's edit."""
     op: dict[str, Any] = {
         "kind": edit["kind"],
         "ref": edit["ref"],
+        "exact": True,
         "word_range": edit["word_range"],
         "old": edit["old"],
         "new": edit["new"],
@@ -438,7 +446,128 @@ def operation(edit: InstructionEdit) -> dict[str, Any]:
         op["stop"] = edit["stop"]
     if "quoted_old" in edit:
         op["quoted_old"] = edit["quoted_old"]
-    return op
+    if edit.get("context_exact") and edit.get("quoted_context"):
+        op["quoted_context"] = edit["quoted_context"]
+    return contextual_case(
+        op, kjv[edit["ref"]], common_words(kjv) if common is None else common
+    )
+
+
+def operations(
+    edits: Sequence[InstructionEdit], kjv: Mapping[str, str], common: frozenset[str]
+) -> list[dict[str, Any]]:
+    """Compile adjacent deletions together so their exposed initial is outside them."""
+    result: list[dict[str, Any]] = []
+    for edit in sorted(edits, key=lambda e: (e["ref"], e["word_range"])):
+        op = operation(edit, kjv, common)
+        if (
+            result
+            and op["kind"] == result[-1]["kind"] == "delete"
+            and op["ref"] == result[-1]["ref"]
+            and result[-1]["word_range"][1] == op["word_range"][0]
+        ):
+            if "stop" in op:
+                raise ValueError(f"Merged deletion would drop its stop: {op['ref']}")
+            previous = result.pop()
+            quoted = "quoted_old" in previous or "quoted_old" in op
+            op = {
+                **previous,
+                "word_range": [previous["word_range"][0], op["word_range"][1]],
+            }
+            op.pop("case", None)
+            lo, hi = edit_offsets(kjv[op["ref"]], op)
+            op["old"] = kjv[op["ref"]][lo:hi]
+            # As edit.merged_deletions does, quote the KJV words merged.
+            if quoted:
+                op["quoted_old"] = op["old"]
+            op = contextual_case(op, kjv[op["ref"]], common)
+        result.append(op)
+    return result
+
+
+def common_words(kjv: Mapping[str, str]) -> frozenset[str]:
+    """Words used in lowercase, with no capitalized use inside a KJV sentence.
+
+    Any contrary use excludes a word; counts and majority votes play no part.
+    Verse openings are not evidence for lowering a word.
+    """
+    lower: set[str] = set()
+    capital: set[str] = set()
+    for text in kjv.values():
+        for match in SPAN.finditer(text):
+            word, at = match[0], match.start()
+            if sentence_start(text, at):
+                continue
+            (lower if word.islower() else capital).add(word.casefold())
+    return frozenset(lower - capital)
+
+
+def contextual_case(
+    op: Mapping[str, Any], text: str, common: frozenset[str]
+) -> dict[str, Any]:
+    """Compile contextual initials against immutable words, keeping lexical identity.
+
+    Only a replacement's first letter or one following word's first letter can
+    change. An already lowercase verse opening or clause after a question keeps
+    its case. Uncertain capitals remain for an editorial decision.
+    """
+    result = dict(op)
+    lo, hi = edit_offsets(text, op)
+    if op["kind"] == "insert" and op.get("side") == "after":
+        lo = hi = spans(text)[op["word_range"][0] - 1][2] if op["word_range"][0] else 0
+    new = op["new"]
+    original = list(SPAN.finditer(text[lo:hi]))
+    quoted = list(SPAN.finditer(op.get("quoted_old", op["old"])))
+    replacement = list(SPAN.finditer(new))
+    if original and quoted and replacement and op["kind"] == "replace":
+        actual, witness, first = original[0][0], quoted[0][0], replacement[0][0]
+        at = replacement[0].start()
+        if actual[0].isupper() and witness[0].islower() and first[0].islower():
+            new = new[:at] + first[0].upper() + new[at + 1 :]
+        elif (
+            actual[0].islower()
+            and witness[0].isupper()
+            and first[0].isupper()
+            and first.casefold() in common
+        ):
+            new = new[:at] + first[0].lower() + new[at + 1 :]
+        result["new"] = new
+        if new != op["new"]:
+            result["witness_new"] = op["new"]
+    following = list(SPAN.finditer(text[hi:]))
+    if not following:
+        return result
+    word = following[0][0]
+    at = hi + following[0].start()
+    initial = word[0]
+    witness_words = [
+        m[0]
+        for m in SPAN.finditer(op.get("quoted_context", ""))
+        if m[0].casefold() == word.casefold()
+    ]
+    witnessed_lower = bool(witness_words) and all(w.islower() for w in witness_words)
+    if (
+        op["kind"] == "delete"
+        and original
+        and original[0][0][0].isupper()
+        and sentence_start(text, lo)
+    ):
+        # The executor removes opening punctuation too; a lowercase clause
+        # following an undeleted question is not a fresh sentence opening.
+        _, end, _, _ = seam(text, lo, hi, "")
+        if at >= end and initial.islower():
+            initial = initial.upper()
+    elif (
+        op["kind"] == "insert"
+        and (sentence_start(text, lo) or witnessed_lower)
+        and not text[hi:at].strip()
+        and (word.casefold() in common or witnessed_lower)
+    ):
+        if replacement and not new.rstrip().endswith(tuple(".!?")):
+            initial = initial.lower()
+    if initial != word[0]:
+        result["case"] = {"range": [at, at + 1], "from": word[0], "to": initial}
+    return result
 
 
 def surface(text: str) -> str:
@@ -453,13 +582,16 @@ def same_effect(
     selected: Instruction,
     kjv: Mapping[str, str],
     supplied: Supplied | None = None,
+    *,
+    common: frozenset[str] | None = None,
 ) -> bool:
     """Compare words, capitals, stops and supplied-word formatting.
 
     Untouched text keeps its source formatting. Instructions retain supplied
     words they carry over; raw override replacements declare italics explicitly
     with brackets. Transpositions move uniquely identified source words with
-    their original formatting, as the executor does.
+    their original formatting, as the executor does. Contextual capitalization
+    and deletion punctuation are compiled exactly as for execution.
     """
 
     def characters(reading: str) -> list[tuple[str, bool]]:
@@ -481,9 +613,10 @@ def same_effect(
             style for char, style in chars if not char.isspace()
         )
 
-    by_ref: defaultdict[str, list[InstructionEdit]] = defaultdict(list)
-    for e in selected["edits"]:
-        by_ref[e["ref"]].append(e)
+    common = common_words(kjv) if common is None else common
+    by_ref: defaultdict[str, list[dict[str, Any]]] = defaultdict(list)
+    for op in operations(selected["edits"], kjv, common):
+        by_ref[op["ref"]].append(op)
     mine: defaultdict[str, list[BoundEdit]] = defaultdict(list)
     for bound in override["bound"]:
         mine[bound["ref"]].append(bound)
@@ -517,7 +650,12 @@ def same_effect(
                 moves = unique_moves(text[lo:hi], "".join(c for c, _ in replacement))
                 for start, end, a, b in moves:
                     replacement[start:end] = source[lo + a : lo + b]
+            if not new:
+                lo, hi, _, _ = seam(text, lo, hi, new)
             planned.append((lo, hi, [(" ", False)] + replacement + [(" ", False)]))
+            if adjustment := e.get("case"):
+                a, b = adjustment["range"]
+                planned.append((a, b, [(adjustment["to"], source[a][1])]))
             if e.get("stop") and e["word_range"][0]:
                 # The executor ends the preceding sentence with the
                 # instruction's stop (Pierpont's "(Period) + And") unless the
@@ -530,9 +668,11 @@ def same_effect(
             instruction[lo:hi] = chars
         result = list(source)
         for bound in sorted(mine[ref], key=lambda b: b["start"], reverse=True):
-            result[bound["start"] : bound["end"]] = (
-                [(" ", False)] + characters(bound["new"]) + [(" ", False)]
-            )
+            lo, hi = bound["start"], bound["end"]
+            if not bound["new"]:
+                # The executor cleans an override's deletion punctuation too.
+                lo, hi, _, _ = seam(text, lo, hi, "")
+            result[lo:hi] = [(" ", False)] + characters(bound["new"]) + [(" ", False)]
         if comparison(instruction) != comparison(result):
             return False
     return True

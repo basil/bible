@@ -18,9 +18,12 @@ from difflib import SequenceMatcher
 
 from bible.byzantine.greek import (
     PATCHES,
+    Alignment,
     Diacritic,
     PrintedVerse,
     Structure,
+    accent_letters,
+    align,
     ascii_greek,
     occurrences,
 )
@@ -1206,11 +1209,13 @@ def supplementary_units(
     diacritics: Iterable[Diacritic],
     structure: Structure,
     accents: Mapping[str, Mapping[str, str]],
+    alignment: Alignment | None = None,
 ) -> list[Unit]:
     """Verse relocations and accent-only units, with their inventory evidence.
     accents: the editor's accent units (edition/byzantine.json), by unit id,
     each with the TR's and RP's accented words; one that quotes several
-    occurrences of a word, with ellipses, is a TCGNT note's."""
+    occurrences of a word, with ellipses, is a TCGNT note's. alignment: the
+    printed words' alignment to rp (greek.align), if the caller has it."""
     moves: list[Unit] = []
     for ref, target in structure.moved.items():
         inventories: list[UnitInventory] = []
@@ -1319,6 +1324,10 @@ def supplementary_units(
         entries.append(
             {"ref": ref, "from": decision["tr"], "to": decision["rp"], "listed": True}
         )
+    if alignment is None:
+        alignment = align(
+            {ref: verse["accented"] for ref, verse in snapshot.items()}, rp
+        )
     accent_units: list[Unit] = []
     for entry in entries:
         ref = entry["ref"]
@@ -1337,12 +1346,15 @@ def supplementary_units(
         accented = any(mark in unicodedata.normalize("NFD", new) for mark in marks)
 
         def normalized(s: str) -> str:
-            value = unicodedata.normalize("NFD", s.lower())
+            value = unicodedata.normalize(
+                "NFD", " ".join("".join(accent_letters(w)) for w in s.split()).lower()
+            )
             if not accented:
                 value = "".join(c for c in value if c not in marks)
             return value
 
-        if normalized(snapshot[ref]["accented"][in_rp[0]]) != normalized(new):
+        span = alignment.project(ref, (in_rp[0], in_rp[0] + len(words)))
+        if normalized(" ".join(alignment.text[ref][slice(*span)])) != normalized(new):
             raise ValueError(f"Printed accent disagrees: {ref}")
         inventories = []
         for note in boyd:
@@ -1402,7 +1414,18 @@ def supplementary_units(
         if tr[ref][i:j] != rp[ref][k:l] or position is None or position["offset"] != k:
             raise ValueError(f"Changed breathing scope: {ref}")
         if any(
-            unicodedata.normalize("NFD", snapshot[ref]["accented"][at])
+            unicodedata.normalize(
+                "NFD",
+                "".join(
+                    accent_letters(
+                        " ".join(
+                            alignment.text[ref][
+                                slice(*alignment.project(ref, (at, at + 1)))
+                            ]
+                        )
+                    )
+                ),
+            )
             != unicodedata.normalize("NFD", form)
             for at, form in zip(right, marked, strict=True)
         ):
@@ -1430,4 +1453,9 @@ def supplementary_units(
                 "page": printed_page(snapshot, ref),
             }
         )
+    # A unit is keyed by its id, and a verse has one accent unit.
+    ids = Counter(unit["id"] for unit in accent_units)
+    for unit_id, count in ids.items():
+        if count > 1:
+            raise ValueError(f"Two accent readings in one verse: {unit_id}")
     return moves + accent_units

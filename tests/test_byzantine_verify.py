@@ -284,27 +284,15 @@ def test_an_undeclared_change_to_the_new_words_is_caught(
         verify.closure(kjv_text[ref], bad)
 
 
-def test_a_capital_seam_that_changes_wording_is_caught(
+def test_unknown_seams_are_rejected(
     applied: dict[str, list[Edit]], kjv_text: Mapping[str, str]
 ) -> None:
-    ref, edits = next(
-        (r, e)
-        for r, e in applied.items()
-        if any(
-            s["rule"] == 1 and s["range"][0] == s["range"][1]
-            for x in e
-            for s in x["seams"]
-        )
-    )
+    ref, edits = next(iter(applied.items()))
     bad = copy.deepcopy(edits)
-    seam = next(
-        s
-        for x in bad
-        for s in x["seams"]
-        if s["rule"] == 1 and s["range"][0] == s["range"][1]
+    bad[0]["seams"].append(
+        {"rule": 1, "range": [0, 0], "from": "", "to": "Other words"}
     )
-    seam["to"] = "Other words"
-    with pytest.raises(ValueError, match="capital seam changes wording"):
+    with pytest.raises(ValueError, match="unknown seam rule"):
         verify.closure(kjv_text[ref], bad)
 
 
@@ -532,8 +520,8 @@ def test_finished_verses_are_checked_under_their_source_ref_with_offsets_kept(
     original = {"ROM": doc("Bring   fruits.")}
     rows: list[Disposition] = [{"edits": [{"ref": "ROM 16:25"}]}]
     prepared = {"ROM": doc("Bring   fruit.", _note("fruit", "fruits"), "14:24")}
-    assert verify.finished_verses(original, prepared, rows, set(), structure) == {}
+    assert verify.finished_verses(original, prepared, rows, structure) == {}
     prepared = {"ROM": doc("Bring   fruit!", _note("fruit", "fruits"), "14:24")}
-    problems = verify.finished_verses(original, prepared, rows, set(), structure)
+    problems = verify.finished_verses(original, prepared, rows, structure)
     assert "ROM 16:25" in problems
     assert any("restore" in p for p in problems["ROM 16:25"])

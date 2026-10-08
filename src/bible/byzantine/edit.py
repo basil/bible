@@ -1,18 +1,15 @@
 """Apply the dispositions to the KJV: edits at fixed offsets in the USJ, each
 with its Textus Receptus footnote, and the structural moves and omissions.
 
-Only the declared seam rules touch anything beside the edited words: the
-capital of a word that begins or stops beginning a sentence, the punctuation
-an omission leaves behind, the article a or an before a changed word, and the
-supplied-word brackets an instruction writes. An operation the rules cannot
+Only mechanical spacing, deletion punctuation and supplied-word styles
+touch anything beside the exact replacement wording. An operation the rules cannot
 carry out is refused by name, never guessed at.
 """
 
 from __future__ import annotations
 
-import functools
 import re
-from collections import Counter, defaultdict
+from collections import defaultdict
 from collections.abc import Iterable, Mapping, Sequence
 from typing import Any, Literal
 
@@ -160,51 +157,16 @@ def sentence_start(text: str, at: int) -> bool:
     return not before or before[-1] in ".!?"
 
 
-def question_continuation(text: str, lo: int, hi: int) -> bool:
-    """The KJV can continue a question with a lower-case clause."""
-    first = re.search(r"[A-Za-z]", text[lo:hi])
-    return bool(first and first[0].islower() and text[:lo].rstrip().endswith("?"))
-
-
 def seam(
     text: str,
     lo: int,
     hi: int,
     new: str,
-    quoted_old: str = "",
-    continues_sentence: bool = False,
 ) -> tuple[int, int, str, list[Seam]]:
-    """Only the declared capital and punctuation rules, at an edit's edges."""
+    """Keep exact replacement wording; clean deletion punctuation and spaces."""
     start, end = lo, hi
     seams: list[Seam] = []
     if new:
-        first = re.search(r"[A-Za-z]", new)
-        old = re.search(r"[A-Za-z]", text[lo:hi])
-        quoted = re.search(r"[A-Za-z]", quoted_old)
-        capital = None
-        # Transfer an instruction's quotation case to the actual source case.
-        # Capitals supplied as part of the reading (God's, I) stay witnessed.
-        if old and quoted and old[0].isupper() != quoted[0].isupper():
-            capital = old[0].isupper()
-        # A verse may continue a sentence (Matthew 7:14); its initial is
-        # evidence of that boundary, rather than a new sentence by default.
-        # An insertion at the verse's start reads the initial it precedes.
-        initial = old or (None if lo else re.search(r"[A-Za-z]", text[hi:]))
-        if (
-            sentence_start(text, lo)
-            and not (lo == 0 and continues_sentence)
-            and not question_continuation(text, lo, hi)
-        ):
-            if lo or not initial or initial[0].isupper():
-                capital = True
-            elif not old:
-                capital = False
-        if first and capital is not None:
-            letter = first[0].upper() if capital else first[0].lower()
-            changed = new[: first.start()] + letter + new[first.end() :]
-            if changed != new:
-                seams.append({"rule": 1, "range": [lo, lo], "from": new, "to": changed})
-                new = changed
         return start, end, new, seams
     # Remove the omitted phrase's comma when it separates it from the next
     # phrase, or belongs to it. A terminal stop is carried, not discarded.
@@ -230,8 +192,6 @@ def seam(
         seams.append(
             {"rule": 2, "range": [start, end], "from": text[start:end], "to": ""}
         )
-    # A following word that becomes the first is changed independently, so
-    # its capitalization does not enter the displaced-reading quotation.
     return start, end, new, seams
 
 
@@ -257,35 +217,6 @@ def edition_note(
     if key:
         extra["x-key"] = key
     return usj.note("f", *fields, caller="+", **extra)
-
-
-KJV_WORD = r"[A-Za-z]+(?:-[A-Za-z]+)*"
-
-
-def kjv_usage(
-    documents: Mapping[str, Document],
-) -> tuple[set[str], defaultdict[str, Counter[str]]]:
-    """The pinned KJV's own common words, and the article it sets before each.
-
-    A capital after a lowercase word is a name (of God, the Lord), not
-    evidence of a common word; and the article the KJV sets before a word (an
-    hour, a house) is read, not guessed.
-    """
-    lowercase: Counter[str] = Counter()
-    named: Counter[str] = Counter()
-    articles: defaultdict[str, Counter[str]] = defaultdict(Counter)
-    for doc in documents.values():
-        for verse in scripture.verses(doc).values():
-            for match in re.finditer(KJV_WORD, verse.text):
-                before = verse.text[max(0, match.start() - 2) : match.start()]
-                if match[0].islower():
-                    lowercase[match[0]] += 1
-                elif len(before) == 2 and before[0].islower() and before[1] == " ":
-                    named[match[0].lower()] += 1
-            for match in re.finditer(r"\b([Aa]n?) ([A-Za-z]+)", verse.text):
-                articles[match[2].lower()][match[1].lower()] += 1
-    common = {word for word, count in lowercase.items() if count > named[word]}
-    return common, articles
 
 
 def refused(row: Disposition, reason: str) -> Disposition:
@@ -386,46 +317,14 @@ def execute(
     documents: Mapping[str, Document],
     dispositions: Sequence[Disposition],
     books: Sequence[str],
-    usage: tuple[set[str], defaultdict[str, Counter[str]]] | None = None,
 ) -> tuple[dict[str, Document], list[Disposition]]:
     """Apply every `edit` disposition against the immutable source offsets.
 
     Returns (prepared documents, dispositions) where each applied row carries
     its `edits` (offsets, old and new words, note, seams) and each refused row
-    says why. usage: the KJV's own usage (kjv_usage), read once for the
-    article and capital seams, if the caller has read it already.
+    says why.
     """
-    known = functools.cache(lambda: kjv_usage(documents) if usage is None else usage)
     source_verses = {book: scripture.verses(documents[book]) for book in books}
-    following = {
-        (book, left): right
-        for book, verses in source_verses.items()
-        for left, right in zip(verses, list(verses)[1:])
-    }
-    # A proper name at a verse's start need not begin a sentence (Luke 3:2).
-    # Keep the proposed case where the preceding KJV verse joins the clause.
-    source_continuations: set[tuple[str, str | None]] = {
-        (book, right)
-        for (book, left), right in following.items()
-        if source_verses[book][left].text.rstrip().endswith((",", ";", ":"))
-    }
-    # A reviewed construction can join consecutive verses into one sentence.
-    continuations: set[tuple[str | None, str, str | None]] = set()
-    for row in dispositions:
-        if row.get("action") != "edit" or not row.get("override"):
-            continue
-        for op in row["ops"]:
-            book, ref = op["ref"].split()
-            bounds = op.get("range")
-            terminal = (
-                isinstance(bounds, (list, tuple))
-                and len(bounds) == 2
-                and bounds[1] == len(source_verses[book][ref].text)
-            )
-            if terminal and op["new"].rstrip().endswith((",", ";", ":")):
-                continuations.add((row["override"], book, following.get((book, ref))))
-            elif terminal and op["new"].rstrip().endswith((".", "!", "?")):
-                source_continuations.discard((book, following.get((book, ref))))
     occupied: defaultdict[str, list[tuple[int, int]]] = defaultdict(list)
     plans: dict[str, list[Change]] = {}
     result: list[Disposition] = []
@@ -473,6 +372,10 @@ def execute(
                 quote = verse.text[lo:hi]
                 # The KJV prints the apostrophe curly; so does every edit.
                 new = curly_apostrophes(op["new"])
+                if op.get("exact") and scripture.plain(quote) != scripture.plain(
+                    op["old"]
+                ):
+                    raise ValueError("stale exact edit: the KJV characters differ")
                 if op["kind"] != "insert" and words(quote) != words(op["old"]):
                     raise ValueError("stale edit: the KJV words differ")
                 if not op.get("raw_range") and "[" not in new:
@@ -493,12 +396,24 @@ def execute(
                     lo,
                     hi,
                     new,
-                    op.get("quoted_old", op["old"]),
-                    (book, ref) in source_continuations
-                    or (row.get("override"), book, ref) in continuations,
                 )
-                # An addition's note quotes the words as printed, capital seam
-                # included (Luke 6:37 "And judge": the TR omits "And").
+                if "witness_new" in op:
+                    witness = curly_apostrophes(op["witness_new"])
+                    literal = curly_apostrophes(op["new"])
+                    first = re.search(r"[A-Za-zÆæ]", witness)
+                    if (
+                        first is None
+                        or len(witness) != len(literal)
+                        or witness[: first.start()] != literal[: first.start()]
+                        or witness[first.start() + 1 :] != literal[first.start() + 1 :]
+                        or witness[first.start()].casefold()
+                        != literal[first.start()].casefold()
+                    ):
+                        raise ValueError("invalid replacement initial")
+                    seams.append(
+                        {"rule": 4, "range": [lo, hi], "from": witness, "to": literal}
+                    )
+                # An addition's note quotes the exact words printed.
                 quotation = (
                     supplied_content(rendered)
                     if op["kind"] == "insert"
@@ -575,83 +490,37 @@ def execute(
                                 "external": True,
                             }
                         )
-                if new:
-                    first_new = spans(usj.text_of(supplied_content(new)))
-                elif start == lo and verse.text[end : end + 1].isalpha():
-                    first_new = spans(verse.text[end:])[:1]
-                else:
-                    first_new = []
-                article = re.search(r"\b([Aa]n?) $", verse.text[:lo])
-                if article and first_new:
-                    old_article = article[1]
-                    _, articles = known()
-                    count = articles[first_new[0][0]]
-                    wanted = (
-                        max(("a", "an"), key=count.__getitem__)
-                        if count["a"] != count["an"]
-                        else "an" if first_new[0][0][0] in "aeiou" else "a"
+                if adjustment := op.get("case"):
+                    # decide.contextual_case addresses the verse's own
+                    # characters, not their plain form.
+                    a, b = adjustment["range"]
+                    old, new_initial = adjustment["from"], adjustment["to"]
+                    if (
+                        b != a + 1
+                        or verse.text[a:b] != old
+                        or len(new_initial) != 1
+                        or not old.isalpha()
+                        or old == new_initial
+                        or old.casefold() != new_initial.casefold()
+                        or (a and verse.text[a - 1].isalpha())
+                    ):
+                        raise ValueError("invalid contextual initial")
+                    # Keep the following word's styles without extending the
+                    # lexical operation or its Textus Receptus quotation.
+                    initial = usj.substituted(
+                        source_content(documents[book], verse, a, b),
+                        [(0, 1, new_initial)],
                     )
-                    if old_article[0].isupper():
-                        wanted = wanted.capitalize()
-                    if wanted != old_article:
-                        planned.append(
-                            (verse, article.start(1), article.end(1), [wanted])
-                        )
-                        seams.append(
-                            {
-                                "rule": 4,
-                                "range": [article.start(1), article.end(1)],
-                                "from": old_article,
-                                "to": wanted,
-                            }
-                        )
-                if (
-                    new
-                    and op["kind"] == "insert"
-                    and (
-                        sentence_start(verse.text, start)
-                        or verse.text[:start].rstrip().endswith(",")
-                        and first_new
-                        and usj.text_of(supplied_content(new))[0].isupper()
+                    planned.append((verse, a, b, initial))
+                    seams.append(
+                        {
+                            "rule": 4,
+                            "range": [a, b],
+                            "from": old,
+                            "to": new_initial,
+                            "external": True,
+                        }
                     )
-                ):
-                    follower = re.match(r"([A-Z][a-z]+)", verse.text[end:])
-                    if follower and follower[1].lower() in known()[0]:
-                        at = end
-                        planned.append((verse, at, at + 1, [follower[1][0].lower()]))
-                        seams.append(
-                            {
-                                "rule": 1,
-                                "range": [at, at + 1],
-                                "from": follower[1][0],
-                                "to": follower[1][0].lower(),
-                            }
-                        )
-                initial = re.search(r"[A-Za-z]", verse.text)
-                continues = start == 0 and (
-                    (book, ref) in source_continuations
-                    or (row.get("override"), book, ref) in continuations
-                    or initial is not None
-                    and initial[0].islower()
-                )
-                if (
-                    not new
-                    and sentence_start(verse.text, start)
-                    and not continues
-                    and not question_continuation(verse.text, lo, hi)
-                ):
-                    follower = re.match(r"[^A-Za-z]*([a-z])", verse.text[end:])
-                    if follower:
-                        at = end + follower.start(1)
-                        planned.append((verse, at, at + 1, [follower[1].upper()]))
-                        seams.append(
-                            {
-                                "rule": 1,
-                                "range": [at, at + 1],
-                                "from": follower[1],
-                                "to": follower[1].upper(),
-                            }
-                        )
                 edits.append(
                     {
                         "ref": book + " " + ref,

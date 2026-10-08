@@ -123,6 +123,7 @@ class InstructionEdit(TypedDict, total=False):
     old: str
     positions: list[int]
     quoted_old: str
+    quoted_context: str
     ref: str
     scope: str
     side: str

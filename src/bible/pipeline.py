@@ -618,7 +618,7 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
         "rp": ctx.terms.display("robinson-pierpont"),
         "kjv": ctx.terms.display("king-james-version"),
         "oleb": ctx.terms.display("orthodox-liturgical-english-bible"),
-        "omits": ctx.terms.display("omission"),
+        "apparatus": ctx.terms.display("apparatus"),
     }
     # The King James books before the readings, spelt as the edition spells
     # them (the revision's record of what it met is the books' own).

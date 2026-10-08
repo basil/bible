@@ -73,7 +73,7 @@ PARAGRAPHS = BOOK_PARAGRAPHS | frozenset(
     "p m mi nb q1 qc b ip im imi ib iex s1 ms1 is1 is2 d".split()
 )
 CELLS = frozenset("tc1 tc2 th1 th2".split())
-CHARS = frozenset("add it sc vp wg wh".split())
+CHARS = frozenset("add bd it sc vp wg wh".split())
 NOTES = frozenset("f ef x".split())
 # The parts of a note, each of which runs to the next or to the note's end.
 FIELDS = frozenset("fr ft fq fqa fl xo xt xta".split())

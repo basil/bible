@@ -251,12 +251,15 @@ def test_notes_must_restore_the_kjv() -> None:
 
 
 def test_lint_reports_only_what_an_edit_introduced() -> None:
-    common = {"but", "and"}
-    assert lint("to destroy: But who art thou", "to destroy: who art thou", common) == [
-        "capital after a comma or colon"
-    ]
-    assert lint("the seven also: left", "the seven also: and they left", common) == []
-    assert "two stops together" in lint("elders., said", "elders, said", common)
+    assert lint("to destroy: But who art thou", "to destroy: who art thou") == []
+    assert lint("the seven also: left", "the seven also: and they left") == []
+    assert "two stops together" in lint("elders., said", "elders, said")
+    opening = "lower case at a sentence opening"
+    assert opening in lint("and behold, I come", "Behold, I come")
+    assert opening not in lint("and he said", "he said")
+    assert opening not in lint("And behold, I come", "Behold, I come")
+    assert opening in lint("and that ye be", "And be", "your service.")
+    assert opening not in lint("and that ye be", "And be", "your service:")
 
 
 def test_every_finished_verse_problem_is_flagged_for_review(
@@ -328,13 +331,13 @@ def test_a_row_that_does_not_bind_blocks_its_group(
     assert instructions[(PIERPONT, 714)]["compatibility"] == "blocked"
 
 
-def test_an_instruction_across_verses_is_blocked_whole_by_an_override(
+def test_an_instruction_across_verses_remains_one_construction(
     instructions: Instructions,
 ) -> None:
     row = instructions[(PIERPONT, 332)]  # Acts 9:5-6
-    assert row["compatibility"] == "blocked" and row["displaced_by"] == [
-        "ACT 9:5#1+ACT 9:6#1"
-    ]
+    assert row["compatibility"] == "compatible"
+    assert {e["ref"] for e in row["edits"]} == {"ACT 9:5", "ACT 9:6"}
+    assert not row.get("displaced_by")
 
 
 def test_an_override_may_set_supplied_words_in_roman(

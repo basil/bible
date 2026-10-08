@@ -4,9 +4,9 @@ A revision changes text and wording together and does not say which is
 which. Its change is a report only where the CrossWire bridge places it on
 the words of one Greek unit, or where it makes the same contrast on the same
 words as a placed instruction. The RV is read only where Westcott and Hort,
-whose text the revisers mostly adopted, read with RP; Boyd's ASV follows
-RP2018 and is not read in the verses Appendix A changed. Each Boyd row says
-whether he changed the 1901 ASV there or kept its words.
+whose text the revisers mostly adopted, read with RP; Boyd's ASV revision
+targets RP2018 and is not read where Appendix A changes unaccented words.
+Each Boyd row says whether he changed the 1901 ASV there or kept its words.
 """
 
 from __future__ import annotations

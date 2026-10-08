@@ -63,3 +63,10 @@ def test_score_sums_weights_and_is_never_negative() -> None:
     assert scored("from:kjv-retained") == 0
     assert scored(disposition="override") == 1
     assert scored("ev:corroborated", "ev:revision-agrees", disposition="override") == 0
+
+
+def test_refusing_an_instruction_adds_controversy_points() -> None:
+    assert (
+        scored(Tag.EV_INSTRUCTION_REFUSED, disposition="override")
+        == scored(disposition="override") + 3
+    )

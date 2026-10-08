@@ -1524,16 +1524,15 @@
       "edits": [
         {
           "ref": "LUK 6:37",
-          "from": "",
-          "to": "And",
-          "before": "Judge"
+          "from": "Judge",
+          "to": "And judge"
         }
       ],
       "tags": [
         "from:rv",
         "gram:particle"
       ],
-      "why": "RP adds kai at the verse opening; And precedes Judge, whose initial becomes lower case within the joined clause.",
+      "why": "RP adds kai at the verse opening; And precedes Judge, whose initial becomes lower case within the joined clause. The wider edit states the sentence case explicitly.",
       "evidence": {
         "faa": {
           "entry": "LUK 6:37#1",
@@ -3288,48 +3287,6 @@
         "boyd-asv": {
           "ref": "ACT 8:28",
           "quote": "sitting in his chariot, and was reading"
-        }
-      }
-    },
-    "ACT 9:5#1+ACT 9:6#1": {
-      "units": [
-        {
-          "ref": "ACT 9:5",
-          "tr": "sklhron soi pros kentra laktizein",
-          "rp": ""
-        },
-        {
-          "ref": "ACT 9:6",
-          "tr": "tremwn te kai qambwn eipen kurie ti me qeleis poihsai kai o kurios pros auton",
-          "rp": "alla"
-        }
-      ],
-      "kind": "edit",
-      "edits": [
-        {
-          "ref": "ACT 9:5",
-          "from": "persecutest: it is hard for thee to kick against the pricks",
-          "to": "persecutest"
-        },
-        {
-          "ref": "ACT 9:6",
-          "from": "And he trembling and astonished said, Lord, what wilt thou have me to do? And the Lord said unto him, Arise",
-          "to": "But arise"
-        }
-      ],
-      "tags": [
-        "from:pierpont",
-        "gram:lexical"
-      ],
-      "why": "RP omits Saul's reply across 9:5-6 (sklhron … kentra laktizein, then the trembling question) and reads alla before anastethi; one construction, so one override (Pierpont 332, 333).",
-      "evidence": {
-        "pierpont": {
-          "entry": 332,
-          "quote": "hard for thee to kick against the pricks"
-        },
-        "boyd-asv": {
-          "ref": "ACT 9:6",
-          "quote": "but rise"
         }
       }
     },
@@ -6612,7 +6569,7 @@
         {
           "ref": "1PE 3:21",
           "from": "The like figure whereunto even baptism",
-          "to": "which in a like figure, [even] baptism,"
+          "to": "Which in a like figure, [even] baptism,"
         }
       ],
       "tags": [
@@ -11322,15 +11279,15 @@
       "edits": [
         {
           "ref": "REV 21:19",
-          "from": "And",
-          "to": ""
+          "from": "And the",
+          "to": "The"
         }
       ],
       "tags": [
         "from:editor",
         "gram:particle"
       ],
-      "why": "RP omits the opening kai; And goes while the foundations clause stays.",
+      "why": "RP omits the opening kai; And goes while the foundations clause stays. The wider edit states the sentence case explicitly.",
       "evidence": {
         "faa": {
           "entry": "REV 21:19#1",
@@ -11652,6 +11609,34 @@
         "tcent": {
           "entry": 550,
           "quote": "city, which ¦ city and in the things that TR"
+        }
+      }
+    },
+    "REV 22:7#1": {
+      "units": [
+        {
+          "ref": "REV 22:7",
+          "tr": "",
+          "rp": "kai"
+        }
+      ],
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "REV 22:7",
+          "from": "Behold",
+          "to": "And behold"
+        }
+      ],
+      "tags": [
+        "from:pierpont",
+        "gram:particle"
+      ],
+      "why": "Pierpont adds And before Behold, but his quotation keeps Behold capitalized and the KJV also uses that capital within sentences. The editor sets the interjection in lowercase in the joined clause.",
+      "evidence": {
+        "pierpont": {
+          "entry": 948,
+          "quote": "+ Behold, I come quickly: blessed"
         }
       }
     }

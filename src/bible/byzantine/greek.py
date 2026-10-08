@@ -164,85 +164,83 @@ def scrivener(folder: Content) -> Text:
     return result
 
 
+# Lunate sigma and the numeral stigma, in the pinned text's sigma form.
+SIGMAS = str.maketrans("ϲϛϹϚ", "σςΣΣ")
+
+
 def accent_letters(text: str) -> list[str]:
-    """Lowercase letters with their combining marks, without punctuation.
+    """Cased letters with their combining marks, without punctuation.
     Lunate sigma and the numeral stigma use the pinned text's sigma form."""
     result: list[str] = []
-    for letter in unicodedata.normalize("NFD", text.lower()):
+    for letter in unicodedata.normalize("NFD", text):
         if unicodedata.combining(letter):
             if not result:
                 raise ValueError(f"Greek mark without a letter: {text}")
             result[-1] += letter
         elif letter.isalpha():
-            result.append(letter.replace("ϲ", "σ").replace("ϛ", "ς"))
-        elif not letter.isspace() and letter not in ",.;··:!?ʼ’'᾽—-()´":
+            result.append(letter.translate(SIGMAS))
+        elif not letter.isspace() and letter not in ",.;··∙:!?ʼ’'᾽—-()´":
             raise ValueError(f"Unknown Greek character: {text}")
-    if any(ord(c[0]) not in LATIN for c in result):
+    if any(ord(c[0].lower()) not in LATIN for c in result):
         raise ValueError(f"Unknown Greek letters: {text}")
     return result
 
 
-def with_accents(words: Sequence[str], accented: Sequence[str]) -> list[str]:
-    """Transfer only marks onto the pinned letters and word boundaries.
-    The caller has checked any final ν/ς difference before transferring."""
-    letters = accent_letters(" ".join(accented))
-    plain = "".join(words)
-    forms = "".join(ascii_greek(c) for c in letters)
-    if forms != plain:
-        if forms in (plain + "n", plain + "s"):
-            letters.pop()
-        elif plain in (forms + "n", forms + "s"):
-            letters.append(greek_letters([plain[-1]])[0])
-        else:
-            raise ValueError(f"Cannot transfer Greek accents: {words} / {accented}")
-    result = []
-    at = 0
-    for word, greek in zip(words, greek_letters(words), strict=True):
-        marked = "".join(
-            base + "".join(c for c in letter if unicodedata.combining(c))
-            for base, letter in zip(greek, letters[at : at + len(word)], strict=True)
-        )
-        result.append(unicodedata.normalize("NFC", marked))
-        at += len(word)
-    return result
+@dataclasses.dataclass(frozen=True)
+class Alignment:
+    """Checked projection of comparison tokens onto complete source words."""
+
+    text: Text
+    spans: dict[str, list[tuple[int, int]]]
+    addresses: dict[str, list[str]]
+
+    def project(self, ref: str, span: Sequence[int]) -> tuple[int, int]:
+        a, b = span
+        offsets = self.spans[ref]
+        if not 0 <= a <= b <= len(offsets):
+            raise ValueError(f"Invalid Greek token range: {ref} {span}")
+        if a == b:
+            at = offsets[a][0] if a < len(offsets) else len(self.text[ref])
+            return at, at
+        return offsets[a][0], offsets[b - 1][1]
 
 
-def accented_scrivener(path: Content, tr: Mapping[str, list[str]]) -> Text:
-    """Align Honza's accented transcription within each book, ignoring verse
-    boundaries. Only a two-word division or a single final ν/ς may differ;
-    no words may be inserted, dropped or substituted. Refuse ambiguous local
-    alignments, and name both sources' verse addresses in diagnostics."""
-    source: Text = {}
-    for row in json.loads(path.read_text()):
-        ref = f"{row['book_name_short']} {row['chapter']}:{row['verse']}"
-        if ref in source:
-            raise ValueError(f"Duplicate accented Scrivener verse: {ref}")
-        source[ref] = [
-            unicodedata.normalize("NFC", "".join(accent_letters(w["greek"])))
-            for w in row["words"]
-        ]
-        if any(not w for w in source[ref]):
-            raise ValueError(f"Empty accented Scrivener word: {ref}")
-    if set(source) != set(tr):
-        raise ValueError(
-            "Accented Scrivener verse inventory differs from the pinned TR"
-        )
-    result: Text = {ref: [] for ref in tr}
+def align(
+    source: Mapping[str, list[str]], target: Mapping[str, list[str]]
+) -> Alignment:
+    """Align within books, permitting bounded split/join and final ν/ς only.
+
+    Keep the source words intact, even when a ledger boundary cuts a joined
+    word. Repeated words are consumed in source order; ambiguous local groups
+    and unsupported differences are refused with both source addresses.
+    """
+    text: Text = {ref: [] for ref in target}
+    spans: dict[str, list[tuple[int, int]]] = {ref: [] for ref in target}
+    addresses: dict[str, list[str]] = {ref: [] for ref in target}
     for book in BOOKS:
-        target = [
-            (ref, w) for ref, ws in tr.items() if ref.split()[0] == book for w in ws
+        tokens = [
+            (ref, w) for ref, ws in target.items() if ref.split()[0] == book for w in ws
         ]
         supplied = [
             (ref, w) for ref, ws in source.items() if ref.split()[0] == book for w in ws
         ]
-        forms = [ascii_greek(w) for _, w in supplied]
+        forms = [ascii_greek("".join(accent_letters(w))) for _, w in supplied]
+        if any(not w for w in forms):
+            raise ValueError(f"Empty Greek source word in {book}")
+        # Callers address the words by their whitespace-separated offsets.
+        if any(len(w.split()) != 1 for _, w in supplied):
+            raise ValueError(f"Greek source word with a space in {book}")
         i = j = 0
-        while i < len(target) and j < len(supplied):
-            matches: list[tuple[int, int]] = []
+        # One joined source word can project into two ledger verses.
+        included: dict[str, dict[int, int]] = {
+            ref: {} for ref in target if ref.split()[0] == book
+        }
+        while i < len(tokens) and j < len(supplied):
+            matches = []
             for a, b in ((1, 1), (1, 2), (2, 1)):
-                if i + a > len(target) or j + b > len(supplied):
+                if i + a > len(tokens) or j + b > len(supplied):
                     continue
-                left = "".join(w for _, w in target[i : i + a])
+                left = "".join(w for _, w in tokens[i : i + a])
                 right = "".join(forms[j : j + b])
                 if left == right or (
                     a == b == 1
@@ -255,23 +253,40 @@ def accented_scrivener(path: Content, tr: Mapping[str, list[str]]) -> Text:
             if len(matches) != 1:
                 kind = "Ambiguous" if matches else "Unsupported"
                 raise ValueError(
-                    f"{kind} accented Scrivener alignment at {target[i][0]} / "
-                    f"{supplied[j][0]}: {target[i:i+2]} / {supplied[j:j+2]}"
+                    f"{kind} Greek alignment at {tokens[i][0]} / {supplied[j][0]}: {tokens[i:i+2]} / {supplied[j:j+2]}"
                 )
             a, b = matches[0]
-            marked = with_accents(
-                [w for _, w in target[i : i + a]],
-                [w for _, w in supplied[j : j + b]],
-            )
-            for (ref, _), word in zip(target[i : i + a], marked, strict=True):
-                result[ref].append(word)
+            for ref, _ in tokens[i : i + a]:
+                for k in range(j, j + b):
+                    if k not in included[ref]:
+                        included[ref][k] = len(text[ref])
+                        text[ref].append(supplied[k][1])
+                        addresses[ref].append(supplied[k][0])
+                spans[ref].append((included[ref][j], included[ref][j + b - 1] + 1))
             i, j = i + a, j + b
-        if i != len(target) or j != len(supplied):
+        if i != len(tokens) or j != len(supplied):
             raise ValueError(
-                f"Unaligned accented Scrivener tail in {book}: "
-                f"{target[i:i+2]} / {supplied[j:j+2]}"
+                f"Unaligned Greek tail in {book}: {tokens[i:i+2]} / {supplied[j:j+2]}"
             )
-    return result
+    return Alignment(text, spans, addresses)
+
+
+def accented_scrivener(path: Content, tr: Mapping[str, list[str]]) -> Alignment:
+    """Read the accented transcription faithfully and check its alignment."""
+    source: Text = {}
+    for row in json.loads(path.read_text()):
+        ref = f"{row['book_name_short']} {row['chapter']}:{row['verse']}"
+        if ref in source:
+            raise ValueError(f"Duplicate accented Scrivener verse: {ref}")
+        source[ref] = [
+            unicodedata.normalize("NFC", " ".join(w["greek"].split()))
+            for w in row["words"]
+        ]
+    if set(source) != set(tr):
+        raise ValueError(
+            "Accented Scrivener verse inventory differs from the pinned TR"
+        )
+    return align(source, tr)
 
 
 BP5_LINE = re.compile(r"(\d+)\.(\d+)\s*(.*)")
@@ -510,9 +525,11 @@ def printed(
     result: dict[str, PrintedVerse] = {}
     for ref, pieces in chunks.items():
         raw = re.sub(rf"-\s+(?=[{GREEK}])", "", " ".join(pieces))
-        raw = "".join(c if c.isalpha() or c.isspace() else " " for c in raw)
-        words = re.findall(rf"[{GREEK}]+", raw)
-        forms = [ascii_greek(w.replace("ϲ", "σ").replace("Ϲ", "Σ")) for w in words]
+        forms = [
+            ascii_greek("".join(accent_letters(w)))
+            for w in re.findall(rf"[{GREEK}]+", raw)
+        ]
+        words = unicodedata.normalize("NFC", raw).split()
         if any(not re.fullmatch("[a-z]+", w) for w in forms):
             raise ValueError(f"Unknown Greek letters at {ref}")
         result[ref] = {"Greek": forms, "accented": words, "page": pages[ref]}
