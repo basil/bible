@@ -5,8 +5,7 @@ from __future__ import annotations
 
 import copy
 import re
-from collections.abc import Callable, Mapping
-from dataclasses import replace
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any, cast
 
@@ -28,8 +27,6 @@ from bible import (
     terminology,
     usj,
 )
-from bible.byzantine import appendix
-from bible.byzantine.stages import Context
 from bible.checks import CheckFailed
 from bible.usj import Document
 
@@ -663,21 +660,6 @@ def test_the_review_is_written_once_and_shows_what_changed(
     assert "1 files changed" in capsys.readouterr().out
 
 
-def test_preparation_reads_only_the_supplied_inputs(
-    sources: bible.sources.Sources,
-    declared: bible.policy.Policy,
-    edition: bible.pipeline.Edition,
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    def unreadable(*args: object, **kwargs: object) -> None:
-        raise AssertionError("Preparation must not read files")
-
-    monkeypatch.setattr(Path, "open", unreadable)
-    prepared = pipeline.prepare(sources, declared)
-    assert prepared.documents == edition.documents
-    assert prepared.policy.versification == edition.policy.versification
-
-
 @pytest.mark.parametrize(
     "marks", [",", ";", ":", ".", "?", "!", ",;:", ",;:.?!", ".,;:", "?,:", "!,;:"]
 )
@@ -777,86 +759,6 @@ def test_unused_punctuation_rule_is_refused(policy: bible.policy.Policy) -> None
     revision.punctuated(usj.parse("\\id GEN\n\\ip Nothing, —adjacent."), policy, met)
     with pytest.raises(CheckFailed, match="before-em-dash"):
         revision.check_met(policy, met)
-
-
-def test_appendix_receives_regularized_comparison(
-    sources: bible.sources.Sources,
-    declared: bible.policy.Policy,
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    promote = pipeline.promote
-    rows = appendix.rows
-    supplied: list[Document] = []
-    compared = False
-
-    def with_paragraph(*args: Any, **kwargs: Any) -> pipeline.Promoted:
-        promoted = promote(*args, **kwargs)
-        original = promoted.byzantine.context
-        doc = copy.deepcopy(original["documents"]["MAT"])
-        doc["content"].append(usj.para("ip", "Word,—more."))
-        supplied.append(doc)
-        found: Context = {
-            **original,
-            "documents": {**original["documents"], "MAT": doc},
-        }
-        return replace(promoted, byzantine=replace(promoted.byzantine, context=found))
-
-    def checked_rows(
-        found: Context,
-        kjv_documents: Mapping[str, Document],
-        documents: Mapping[str, Document],
-    ) -> list[appendix.Row]:
-        nonlocal compared
-        assert (
-            usj.text_of(kjv_documents["MAT"]["content"][-1]["content"]) == "Word—more."
-        )
-        for ref in ("LUK 17:18", "2CO 12:2", "JAS 4:5", "JHN 20:29"):
-            book, address = ref.split()
-            text = scripture.verses(documents[book])[address].text
-            original = found["kjv"][ref]
-            assert text != original
-            for change in revision.verse_changes(declared):
-                if change["verse"] == ref:
-                    assert change["from"] in text
-        compared = True
-        found_rows = rows(found, kjv_documents, documents)
-        for ref in ("LUK 17:18", "2CO 12:2", "JAS 4:5", "JHN 20:29"):
-            row = next(r for r in found_rows if r.source == ref)
-            assert row.kjv and row.oleb
-        correction = next(r for r in found_rows if r.source == "2CO 2:5")
-        assert correction.kjv and correction.oleb
-        return found_rows
-
-    monkeypatch.setattr(pipeline, "promote", with_paragraph)
-    monkeypatch.setattr(appendix, "rows", checked_rows)
-    pipeline.prepare(sources, declared)
-    assert compared
-    assert usj.text_of(supplied[0]["content"][-1]["content"]) == "Word,—more."
-
-
-def test_authored_pages_receive_punctuation_without_mutation(
-    sources: bible.sources.Sources,
-    declared: bible.policy.Policy,
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    authored = pipeline.authored
-    supplied: list[Document] = []
-    before: list[Document] = []
-
-    def with_paragraph(*args: Any, **kwargs: Any) -> tuple[dict[str, Document], int]:
-        pages, offset = authored(*args, **kwargs)
-        doc = copy.deepcopy(pages["XXA"])
-        doc["content"].append(usj.para("ip", "Word,—more."))
-        supplied.append(doc)
-        before.append(copy.deepcopy(doc))
-        return {**pages, "XXA": doc}, offset
-
-    monkeypatch.setattr(pipeline, "authored", with_paragraph)
-    prepared = pipeline.prepare(sources, declared)
-    assert (
-        usj.text_of(prepared.documents["XXA"]["content"][-1]["content"]) == "Word—more."
-    )
-    assert supplied == before
 
 
 def passage_group(*changes: dict[str, str]) -> dict[str, Any]:

@@ -1708,15 +1708,22 @@ def test_a_real_correction_beside_a_variant_keeps_english(
     assert inputs == original
 
 
-def test_every_shared_greek_correction_is_kept_whole_in_the_appendix(
-    byzantine: Context,
-) -> None:
-    found = {
+@pytest.fixture(scope="module")
+def unpunctuated_rows(byzantine: Context) -> dict[str, appendix.Row]:
+    """The appendix's rows from the books before the punctuation pass, by
+    source verse."""
+    return {
         row.source: row
         for row in appendix.rows(
             byzantine, byzantine["documents"], byzantine["prepared"]
         )
     }
+
+
+def test_every_shared_greek_correction_is_kept_whole_in_the_appendix(
+    byzantine: Context, unpunctuated_rows: dict[str, appendix.Row]
+) -> None:
+    found = unpunctuated_rows
     for disposition in byzantine["dispositions"]:
         if disposition["disposition"] != "shared":
             continue
@@ -1729,14 +1736,10 @@ def test_every_shared_greek_correction_is_kept_whole_in_the_appendix(
 
 @pytest.mark.parametrize("ref", ["LUK 17:18", "2CO 12:2", "JAS 4:5", "JHN 20:29"])
 def test_punctuation_revisions_preserve_wording_comparisons(
-    byzantine: Context, ref: str
+    unpunctuated_rows: dict[str, appendix.Row], ref: str
 ) -> None:
     # The authored appendix consumes wording before the separate punctuation pass.
-    row = next(
-        r
-        for r in appendix.rows(byzantine, byzantine["documents"], byzantine["prepared"])
-        if r.source == ref
-    )
+    row = unpunctuated_rows[ref]
     assert row.kjv and row.oleb and row.kjv != row.oleb
 
 

@@ -4,6 +4,7 @@ edition prepared from them once."""
 from __future__ import annotations
 
 from collections.abc import Callable, Mapping
+from pathlib import Path
 from typing import Any, cast
 
 import pytest
@@ -46,7 +47,15 @@ def read(
 def edition(
     sources: bible.sources.Sources, declared: bible.policy.Policy
 ) -> bible.pipeline.Edition:
-    return pipeline.prepare(sources, declared)
+    """The edition, prepared without reading a file: everything is read
+    before preparation starts."""
+
+    def unreadable(*args: object, **kwargs: object) -> None:
+        raise AssertionError("Preparation must not read files")
+
+    with pytest.MonkeyPatch.context() as patch:
+        patch.setattr(Path, "open", unreadable)
+        return pipeline.prepare(sources, declared)
 
 
 @pytest.fixture(scope="session")
