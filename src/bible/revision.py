@@ -39,6 +39,28 @@ from bible.usj import Content, Document, Node
 type MetRevisions = set[str | tuple[str, str]]
 
 
+def punctuation_only(old: str, new: str) -> bool:
+    """Keep lexical tokens, allowing initial case at a changed sentence end.
+    A word keeps its apostrophes and hyphens, a plural's possessive one too."""
+    pattern = r"\w+(?:['’\-]\w+)*['’]?"
+    before, after = list(re.finditer(pattern, old)), list(re.finditer(pattern, new))
+    if len(before) != len(after):
+        return False
+    for a, b in zip(before, after):
+        if a[0] == b[0]:
+            continue
+        if a[0][1:] != b[0][1:] or a[0][0].casefold() != b[0][0].casefold():
+            return False
+        ended = bool(re.search(r"[.!?]\W*$", old[: a.start()]))
+        ends = bool(re.search(r"[.!?]\W*$", new[: b.start()]))
+        if ended == ends or not (
+            (ends and a[0][0].islower() and b[0][0].isupper())
+            or (ended and a[0][0].isupper() and b[0][0].islower())
+        ):
+            return False
+    return True
+
+
 def check(policy: bible.policy.Policy) -> None:
     data = policy.revisions
     require_fields(
@@ -77,13 +99,13 @@ def check(policy: bible.policy.Policy) -> None:
                 re.fullmatch(r"\w{3} \S+:\S+", key) is not None,
                 f"Revision of what is not a verse: {name}: {key}",
             )
-            # The appendix of readings compares the New Testament as revised
-            # with the King James text as systematically revised: a revised verse
-            # would be listed as a reading the Greek does not have.
+            # NT wording belongs to checked Greek-reading or rendering
+            # decisions. Verse revisions may change its punctuation only;
+            # keep words, numbers and internal apostrophes/hyphens intact.
             require(
-                key[:3] not in NEW_TESTAMENT,
-                f"Revision of a New Testament verse, which the appendix of"
-                f" readings would list as a Byzantine reading: {name}: {key}",
+                key[:3] not in NEW_TESTAMENT
+                or punctuation_only(change["from"], change["to"]),
+                f"Revision changes New Testament words: {name}: {key}",
             )
             require(
                 change["from"]

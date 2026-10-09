@@ -5,6 +5,7 @@ from __future__ import annotations
 import re
 from collections.abc import Sequence
 from copy import deepcopy
+from dataclasses import replace
 from typing import Any
 
 import pytest
@@ -314,7 +315,7 @@ def test_a_note_that_is_a_sentence_takes_a_capital_and_a_full_stop(
             key="MAT 99:2 keeper", reference="99:2", lemma="keeper", note="Or, porter."
         ),
     ]
-    doc, report = annotate.george("MAT", doc, listed, ctx)
+    doc, report = annotate.george("MAT", doc, listed, ctx, original=doc)
     assert verse_lines(doc)["2"] == (
         r"and paid an hundred \f - \fr 99:2 \fq pence: \ft The Roman penny is the eighth "
         r"part of an ounce.\f*pence to the \f - \fr 99:2 \fq keeper: \ft or, \fqa porter\f*"
@@ -329,9 +330,9 @@ def test_a_note_of_the_margin_must_find_its_words_once(
     doc = book("MAT", r"\v 2 of the house of the keeper.")
     note = dict(key="MAT 99:2 of", reference="99:2", lemma="of", note="Or, from.")
     with pytest.raises(CheckFailed, match="not found exactly once"):
-        annotate.george("MAT", doc, [note], ctx)
+        annotate.george("MAT", doc, [note], ctx, original=doc)
     with pytest.raises(CheckFailed, match="verse missing"):
-        annotate.george("MAT", doc, [{**note, "reference": "99:3"}], ctx)
+        annotate.george("MAT", doc, [{**note, "reference": "99:3"}], ctx, original=doc)
 
 
 def test_a_declared_change_of_wording_is_carried_through_a_notes_parts() -> None:
@@ -535,7 +536,7 @@ def test_a_sign_after_no_witness_is_refused(
 def test_every_note_of_the_sources_is_printed_or_replaced_by_a_link(
     edition: bible.pipeline.Edition,
 ) -> None:
-    assert edition.summary["printed_notes"] == 4273
+    assert edition.summary["printed_notes"] == 4272
     rows = [row for listed in edition.notes.values() for row in listed]
     assert len({row["key"] for row in rows}) == len(rows)
     # The 1611 margin is printed on the New Testament alone, and whole but
@@ -557,7 +558,7 @@ def test_every_note_of_the_sources_is_printed_or_replaced_by_a_link(
         1 for o in edition.policy.kjv_notes["notes"].values() if o.get("omitted")
     )
     assert edition.summary["kjv_marginal_notes"] == 775
-    assert margin == 775 - omitted == 760
+    assert margin == 775 - omitted == 759
     assert edition.summary["byzantine_notes"] == 867
     # A widened lemma's rendering takes in the same words (Matthew 6:1).
     row = next(row for row in edition.notes["MAT"] if row["key"] == "MAT 6:1 of")
@@ -883,3 +884,160 @@ def test_an_omission_quotes_only_the_part_of_its_lemma_that_is_omitted(
         for row in edition.notes[code]:
             if row["note"].startswith("TR omits _"):
                 assert row["note"] != f"TR omits _{row['lemma']}_", row["key"]
+
+
+@pytest.mark.parametrize(
+    "key, anchor, former, cited",
+    [
+        ("MAT 25:8 gone out", "going out", "gone out", ""),
+        ("MRK 7:4 pots", "beds", "tables", ""),
+        (
+            "ROM 6:17 which was delivered you",
+            "whereto ye were delivered",
+            "which was delivered you",
+            "",
+        ),
+        ("1CO 8:6 in him", "for him", "in him", ", Rom. 11:36"),
+        (
+            "1TH 1:4 beloved, your election of God",
+            "beloved of God, your election",
+            "beloved, your election of God",
+            "",
+        ),
+        ("1TH 4:6 in any matter", "in the matter", "in any matter", ""),
+        ("HEB 6:7 by", "for whose sake", "by whom", ""),
+        ("2PE 1:3 to", "by glory and virtue", "to glory and virtue", ""),
+    ],
+)
+def test_former_readings_restore_the_eight_marginal_notes(
+    edition: bible.pipeline.Edition,
+    read: bible.pipeline.Read,
+    ctx: bible.annotate.Context,
+    key: str,
+    anchor: str,
+    former: str,
+    cited: str,
+) -> None:
+    code, reference, _ = key.split(" ", 2)
+    source_note = next(n for n in read.marginal[code] if n["key"] == key)
+    row = next(r for r in edition.notes[code] if r["key"] == key)
+    assert row["lemma"] == anchor
+    # The margin's citations stand after the words it gives.
+    assert row["note"] == f"or, _{former}_{cited}"
+    assert row["style"] == "editorial reversal"
+    assert row["source"] == source_note["note"]
+    verse = scripture.verses(edition.documents[code])[reference]
+    printed_note = next(n for _, n in verse.notes if n.get("x-key") == key)
+    assert [
+        usj.text_of(n["content"])
+        for n in usj.walk(printed_note["content"])
+        if usj.is_type(n, "char", "fqa")
+    ] == [former]
+    prepared = book(
+        code,
+        r"\v " + reference.split(":")[1] + " " + verse.text,
+        chapter=int(reference.split(":")[0]),
+    )
+    comparison, report = annotate.george(
+        code, prepared, [source_note], ctx, original=read.kjv[code]
+    )
+    assert scripture.verses(comparison)[reference].text == verse.text
+    assert report.rows[0]["lemma"] == anchor
+    assert report.rows[0]["note"] == row["note"]
+
+
+@pytest.mark.parametrize(
+    "prepared, original, override, error",
+    [
+        (
+            "going out",
+            "gone out",
+            {"former": "went out"},
+            "former not found exactly once",
+        ),
+        ("going out", "gone out gone out", {}, "former not found exactly once"),
+        ("going out", "gone out", {"former": ""}, "former not found exactly once"),
+        (
+            "going out",
+            "gone out",
+            {"anchor": "missing"},
+            "anchor not found exactly once",
+        ),
+        ("going out going out", "gone out", {}, "anchor not found exactly once"),
+        ("gone out", "gone out", {"anchor": "gone out"}, "former changes nothing"),
+        ("going out", "gone out", {"omitted": True}, "omitted with other exceptions"),
+        ("going out", "gone out", {"note": "Or, _gone out_"}, "former conflicts"),
+        ("going out going out", "gone out", {"occurrence": 1}, "former conflicts"),
+        ("going out", "gone out", {"lemma": "going"}, "former conflicts"),
+        # The text prints other words than the margin's alternative.
+        (
+            "falling out",
+            "gone out",
+            {"anchor": "falling out"},
+            "does not print the margin's alternative",
+        ),
+    ],
+)
+def test_former_reading_decisions_refuse_stale_or_conflicting_words(
+    ctx: bible.annotate.Context,
+    prepared: str,
+    original: str,
+    override: dict[str, Any],
+    error: str,
+) -> None:
+    key = "MAT 99:2 gone out"
+    with pytest.raises(CheckFailed, match=error):
+        policy = changed(
+            ctx.policy,
+            "kjv_notes",
+            lambda d: d["notes"].update(
+                {
+                    key: {
+                        "anchor": "going out",
+                        "former": "gone out",
+                        "why": "Test reversal.",
+                        **override,
+                    }
+                }
+            ),
+        )
+        annotate.george(
+            "MAT",
+            book("MAT", r"\v 2 " + prepared),
+            [dict(key=key, reference="99:2", lemma="gone out", note="Or, going out.")],
+            replace(ctx, policy=policy),
+            original=book("MAT", r"\v 2 " + original),
+        )
+
+
+def test_reversing_a_marginal_note_leaves_its_inputs_unchanged(
+    ctx: bible.annotate.Context,
+) -> None:
+    key = "MAT 99:2 gone out"
+    policy = changed(
+        ctx.policy,
+        "kjv_notes",
+        lambda d: d["notes"].update(
+            {
+                key: {
+                    "anchor": "going out",
+                    "former": "gone out",
+                    "why": "Test reversal.",
+                }
+            }
+        ),
+    )
+    prepared = book("MAT", r"\v 2 Our lamps are going out.")
+    original = book("MAT", r"\v 2 Our lamps are gone out.")
+    listed = [dict(key=key, reference="99:2", lemma="gone out", note="Or, going out.")]
+    before = deepcopy((prepared, original, listed))
+    before_policy = bible.policy.thaw(policy.kjv_notes)
+    result, report = annotate.george(
+        "MAT", prepared, listed, replace(ctx, policy=policy), original=original
+    )
+    assert (prepared, original, listed) == before
+    assert bible.policy.thaw(policy.kjv_notes) == before_policy
+    assert (
+        scripture.verses(result)["99:2"].text == scripture.verses(prepared)["99:2"].text
+    )
+    assert report.rows[0]["note"] == "or, _gone out_"

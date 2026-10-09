@@ -43,6 +43,40 @@
     }
   },
   "verses": {
+    "temporal clauses": {
+      "why": "Keep the time of an event distinct from present knowledge of it.",
+      "changes": [
+        {
+          "verse": "2CO 12:2",
+          "from": "Christ fourteen years ago,",
+          "to": "Christ, fourteen years ago",
+          "why": "The fourteen years date the catching up, not Paul's present knowledge of the man. Follow the RV comma placement while preserving the words and the intervening parenthesis."
+        }
+      ]
+    },
+    "rhetorical questions": {
+      "why": "Preserve the interrogative sentence that RP2026 prints.",
+      "changes": [
+        {
+          "verse": "LUK 17:18",
+          "from": "save this stranger.",
+          "to": "save this stranger?",
+          "why": "The question follows Jesus’ two questions in verse 17 and completes his reproach concerning the returning Samaritan."
+        },
+        {
+          "verse": "JAS 4:5",
+          "from": "vain, the spirit",
+          "to": "vain? The spirit",
+          "why": "RP2026 ends the question after λέγει, asking whether scripture speaks in vain, then independently asserts the spirit clause before the contrast with greater grace. The KJV boundary narrows the question to the quoted spirit statement; restore the target construction without resolving the difficult spirit/envy wording."
+        },
+        {
+          "verse": "JAS 4:5",
+          "from": "to envy?",
+          "to": "to envy.",
+          "why": "The spirit clause is an assertion once the question ends at vain; its stop follows the 1611 note on to envy, so it is revised apart from the question."
+        }
+      ]
+    },
     "contextual-dashes": {
       "why": "Set sentence endings and parenthetical continuations according to their syntax, preserving every word. Each decision names the pre-cleanup wording and its sentence structure.",
       "changes": [

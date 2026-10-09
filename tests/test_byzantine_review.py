@@ -8,6 +8,7 @@ import re
 import unicodedata
 from collections import Counter
 from collections.abc import Mapping
+from typing import cast
 
 import pytest
 
@@ -80,12 +81,15 @@ def test_every_non_neutral_unit_has_exactly_one_section(
             if line.startswith("## ") and line not in {
                 "## Neutral units",
                 review.LOOSE_HEADING,
+                "## Corrections of shared Greek",
             }:
                 m = HEADING.match(line)
                 assert m, line
                 headings.append(m["unit"])
     expected = [
-        r["unit"] for r in byzantine["dispositions"] if r["disposition"] != "neutral"
+        r["unit"]
+        for r in byzantine["dispositions"]
+        if r["disposition"] not in {"neutral", "shared"}
     ]
     assert sorted(headings) == sorted(expected)
     assert len(headings) == len(set(headings))
@@ -612,6 +616,24 @@ def test_override_citation_brackets_and_faa_note_labels(
     assert "ACT 28:11 verse note: “ἤχθημεν, we were transported” ✓" in acts
 
 
+def test_a_correction_of_shared_greek_has_its_section_in_its_book(
+    packets: dict[str, str],
+) -> None:
+    packet = packets["LUK.md"]
+    section = packet[packet.index("### LUK 23:42\n") :]
+    assert packet.index("## Corrections of shared Greek") < packet.index(
+        "### LUK 23:42\n"
+    )
+    assert "Greek whole verse · TR LUK 23:42 → RP2026 LUK 23:42" in section
+    assert "KJV LUK 23:42 → OLEB LUK 23:42" in section
+    assert (
+        "- into thy kingdom → in thy kingdom · shared Greek ἐν τῇ βασιλείᾳ σου"
+        in section
+    )
+    # Only the verses corrected are shown, not every verse without a unit.
+    assert "### LUK 23:41\n" not in packet
+
+
 def test_the_summary_counts_the_dispositions(byzantine: Context) -> None:
     text = review.summary(byzantine)
     assert text.startswith("# The Byzantine New Testament\n")
@@ -926,7 +948,7 @@ def test_heli_transcription_and_apparatus_stay_distinct(
     assert contrast.accented is not None and contrast.accented[0] == "Ἡλί,"
     assert contrast.apparatus == ("ἠλι", "ἡλι")
     assert text_of(entries["LUK 3:23"][1]).startswith("TR → RP ")
-    assert text_of(entries["LUK 3:23"][2]) == "apparatus: TR → RP [ἠλι] ἡλι"
+    assert text_of(entries["LUK 3:23"][-1]) == "apparatus: TR → RP [ἠλι] ἡλι"
 
 
 def test_appendix_passages_and_comparisons_keep_source_case_and_punctuation(
@@ -1662,3 +1684,94 @@ def test_appendix_invalid_interior_tags_keep_complete_verse(
         scripture.plain(verses_of(byzantine["prepared"])[ref].text),
     )
     assert selected == (tuple((0, len(t)) for t in texts),)
+
+
+def test_corrections_of_shared_greek_have_english_comparisons(
+    rows: list[appendix.Row],
+) -> None:
+    for ref in ("LUK 23:42", "LUK 23:15", "3JN 1:2"):
+        row = next(r for r in rows if r.source == ref)
+        assert row.kjv and row.oleb and row.kjv != row.oleb
+
+
+def test_a_real_correction_beside_a_variant_keeps_english(
+    byzantine: Context,
+) -> None:
+    inputs = (byzantine["documents"], byzantine["prepared"], byzantine["dispositions"])
+    original = copy.deepcopy(inputs)
+    found = appendix.rows(byzantine, byzantine["documents"], byzantine["prepared"])
+    row = next(r for r in found if r.source == "2JN 1:3")
+    assert row.units and row.kjv and row.oleb
+    assert "Grace be with you" in row.kjv
+    assert "Grace shall be with us" in row.oleb
+    assert row.kjv.replace("be with you", "shall be with us") == row.oleb
+    assert inputs == original
+
+
+def test_every_shared_greek_correction_is_kept_whole_in_the_appendix(
+    byzantine: Context,
+) -> None:
+    found = {
+        row.source: row
+        for row in appendix.rows(
+            byzantine, byzantine["documents"], byzantine["prepared"]
+        )
+    }
+    for disposition in byzantine["dispositions"]:
+        if disposition["disposition"] != "shared":
+            continue
+        for edit in disposition["edits"]:
+            row = found[edit["ref"]]
+            assert row.kjv and row.oleb
+            texts = (row.greek_tr, row.greek_rp, row.kjv, row.oleb)
+            assert row.passages == (tuple((0, len(t)) for t in texts),)
+
+
+@pytest.mark.parametrize("ref", ["LUK 17:18", "2CO 12:2", "JAS 4:5", "JHN 20:29"])
+def test_punctuation_revisions_preserve_wording_comparisons(
+    byzantine: Context, ref: str
+) -> None:
+    # The authored appendix consumes wording before the separate punctuation pass.
+    row = next(
+        r
+        for r in appendix.rows(byzantine, byzantine["documents"], byzantine["prepared"])
+        if r.source == ref
+    )
+    assert row.kjv and row.oleb and row.kjv != row.oleb
+
+
+@pytest.mark.parametrize("ref", ["2JN 1:3", "EPH 4:32"])
+def test_review_separates_corrections_from_variants(
+    byzantine: Context, packets: dict[str, str], index: review.Index, ref: str
+) -> None:
+    assert index["corrected"][ref].text != byzantine["kjv"][ref]
+    packet = packets[f"{ref.split()[0]}.md"]
+    correction = packet[packet.index(f"### {ref}\n") :].split("\n### ", 1)[0]
+    assert f"KJV {ref} → Corrected KJV {ref}" in correction
+    assert f"KJV {ref} → OLEB {ref} (all changes)" in correction
+    for unit in byzantine["units"]:
+        if unit["ref"] != ref:
+            continue
+        row = index["rows"][unit["id"]]
+        if row["disposition"] == "neutral":
+            continue
+        section = section_of(packets, unit["id"])
+        assert f"Corrected KJV {ref} → OLEB {ref}" in section
+        assert f"KJV {ref} → OLEB {ref} (all changes)" in section
+        passages = review.unit_passages(
+            unit,
+            byzantine,
+            appendix.prepare_greek(byzantine),
+            index["prepared"],
+            index["corrected"],
+        )
+        assert passages[0][2] == scripture.plain(index["corrected"][ref].text)
+
+
+def test_review_baseline_preserves_source_documents_and_decisions(
+    byzantine: Context,
+) -> None:
+    inputs = (byzantine["documents"], byzantine["dispositions"], byzantine["overrides"])
+    original = copy.deepcopy(inputs)
+    review.build_index(byzantine)
+    assert inputs == original

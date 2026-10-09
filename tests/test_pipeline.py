@@ -50,12 +50,13 @@ def test_the_edition_prints_every_unit_once_in_the_manifests_order(
         "alexandrine_appendix_paragraphs": 26,
         "byzantine_units": 1939,
         "byzantine_edits": 859,
+        "kjv_corrections": 75,
         "byzantine_notes": 867,
         "scripture_units": 78,
         "brenton_units": 51,
         "kjv_units": 27,
         "kjv_marginal_notes": 775,
-        "printed_notes": 4273,
+        "printed_notes": 4272,
         # The King James Bible's, less the four verses the Byzantine text
         # lacks and the empty chapter eBible left in Proverbs.
         "verses": 36604,
@@ -443,7 +444,7 @@ def test_a_revision_changes_a_lemma_whole_or_is_refused(
         ),
         (
             {"verses": group({"verse": "MAT 1:1", "from": "Noe", "to": "Noah"})},
-            "Revision of a New Testament verse",
+            "Revision changes New Testament words",
         ),
     ],
 )
@@ -478,6 +479,44 @@ def test_a_revision_must_be_met(policy: bible.policy.Policy) -> None:
         CheckFailed, match=r"Revisions that nothing prints: \['Jehoshaphat'\]"
     ):
         revision.check_met(unmet, set())
+
+
+@pytest.mark.parametrize(
+    "old,new",
+    [
+        ("word.", "word?"),
+        ("king's word: 1", "king's word; 1"),
+        ("believed: blessed", "believed? Blessed"),
+        ("believed? Blessed", "believed: blessed"),
+    ],
+)
+def test_nt_verse_revisions_allow_punctuation(
+    policy: bible.policy.Policy, old: str, new: str
+) -> None:
+    decision = {"verse": "MAT 1:1", "from": old, "to": new}
+    revision.check(revisions(policy, verses=group(decision)))
+
+
+@pytest.mark.parametrize(
+    "old,new",
+    [
+        ("1", "2"),
+        ("thy", "thine"),
+        ("king's", "kings"),
+        ("the apostles’ feet", "the apostles feet"),
+        ("market-place", "market place"),
+        ("God", "god"),
+        ("said: god", "said: God"),
+        ("said? God", "said? god"),
+        ("said: god", "said? GOD"),
+    ],
+)
+def test_nt_punctuation_decisions_cannot_change_words(
+    policy: bible.policy.Policy, old: str, new: str
+) -> None:
+    decision = {"verse": "MAT 1:1", "from": old, "to": new}
+    with pytest.raises(CheckFailed, match="Revision changes New Testament words"):
+        revision.check(revisions(policy, verses=group(decision)))
 
 
 def test_a_revision_may_end_a_paragraph_or_leave_a_style_without_words(
@@ -771,8 +810,22 @@ def test_appendix_receives_regularized_comparison(
         assert (
             usj.text_of(kjv_documents["MAT"]["content"][-1]["content"]) == "Word—more."
         )
+        for ref in ("LUK 17:18", "2CO 12:2", "JAS 4:5", "JHN 20:29"):
+            book, address = ref.split()
+            text = scripture.verses(documents[book])[address].text
+            original = found["kjv"][ref]
+            assert text != original
+            for change in revision.verse_changes(declared):
+                if change["verse"] == ref:
+                    assert change["from"] in text
         compared = True
-        return rows(found, kjv_documents, documents)
+        found_rows = rows(found, kjv_documents, documents)
+        for ref in ("LUK 17:18", "2CO 12:2", "JAS 4:5", "JHN 20:29"):
+            row = next(r for r in found_rows if r.source == ref)
+            assert row.kjv and row.oleb
+        correction = next(r for r in found_rows if r.source == "2CO 2:5")
+        assert correction.kjv and correction.oleb
+        return found_rows
 
     monkeypatch.setattr(pipeline, "promote", with_paragraph)
     monkeypatch.setattr(appendix, "rows", checked_rows)

@@ -291,6 +291,8 @@ def apply(
                     locations[key] = book, ref, verse, offset, note
     changed: dict[str, Node | None] = {}
     rows: list[Disposition] = []
+    # The corrections of shared Greek have no notes to finish.
+    corrections = [r for r in dispositions if r.get("disposition") == "shared"]
 
     def full_form(
         book: str,
@@ -452,6 +454,8 @@ def apply(
         return finished, {**scope, "ref": book + " " + ref}
 
     for row in dispositions:
+        if row.get("disposition") == "shared":
+            continue
         updated = row.copy()
         if row.get("edits"):
             updated["edits"] = []
@@ -638,7 +642,23 @@ def apply(
         book: scripture.map_notes(document, finished)
         for book, document in documents.items()
     }
-    return placed(prepared, rows), rows
+    # A TR note whose quotation took in a correction of shared Greek would
+    # give the correction to the TR. A refused correction has no edits; the
+    # build names it once the stages are done.
+    corrected: dict[str, list[tuple[str, int, int]]] = {}
+    for correction in corrections:
+        for change in correction.get("edits", []):
+            lo, hi = change["range"]
+            corrected.setdefault(change["ref"], []).append((correction["unit"], lo, hi))
+    for row in rows:
+        for edit in row.get("edits", []):
+            a, b = edit["note_scope"].get("source_range", edit["range"])
+            for unit, lo, hi in corrected.get(edit["ref"], []):
+                if a < hi and lo < b:
+                    raise ValueError(
+                        f"Byzantine reading {unit} is quoted by TR note {edit['note']['x-key']}"
+                    )
+    return placed(prepared, rows), [*rows, *corrections]
 
 
 def placed(

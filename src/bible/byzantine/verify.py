@@ -179,10 +179,13 @@ def checks(
             and bool(identities(chosen) & identities(owning))
         )
 
-    if Counter(u["id"] for u in units) != Counter(r["unit"] for r in dispositions):
+    if Counter(u["id"] for u in units) != Counter(
+        r["unit"] for r in dispositions if r.get("disposition") != "shared"
+    ):
         fail("I1", "unit coverage differs")
     actions = {
         "override": {"edit", "covered", "nochange", "refused"},
+        "shared": {"edit", "refused"},
         "structural": {"omit", "move", "refused"},
         "witnessed": {"edit", "covered", "nochange", "refused"},
         "conflict": {"nochange"},
@@ -239,6 +242,11 @@ def checks(
         if row.get("source_note"):
             placed_notes[row["source_note_ref"]].append(row["source_note"])
         for edit in row.get("edits", []):
+            if (row.get("disposition") == "shared") == ("note" in edit):
+                fail(
+                    "I3",
+                    f"{row['unit']}: a TR note on shared Greek, or none on a difference",
+                )
             if edit.get("note_scope"):
                 note_scopes[signature(edit["note"])].append(edit["note_scope"])
         if row.get("edits"):
@@ -318,7 +326,7 @@ def checks(
                 e["note"]
                 for row in rows[origin]
                 for e in row.get("edits", [])
-                if e.get("note_owner", True)
+                if e.get("note") and e.get("note_owner", True)
             ]
             # A moved verse carries its notes, the OLEB’s own among them,
             # to its new number (edit.renumber).
@@ -330,6 +338,8 @@ def checks(
             ):
                 fail("I3", f"{target}: notes differ")
             for edit in edits:
+                if "note" not in edit:
+                    continue  # a correction of shared Greek
                 scope = edit.get("note_scope")
                 marker = "fqa" if scope else "fq"
                 quoted = [
@@ -503,8 +513,17 @@ def finished_verses(
     structure: Structure,
 ) -> dict[str, list[str]]:
     """Every edited verse: its join problems and whether its notes restore the
-    KJV. Returns {ref: [problem, ...]} for the verses with problems."""
-    edited = {e["ref"] for r in dispositions for e in r.get("edits", [])}
+    KJV, as the corrections of shared Greek leave it. Returns
+    {ref: [problem, ...]} for the verses with problems."""
+    edited: set[str] = set()
+    corrected: defaultdict[str, list[Edit]] = defaultdict(list)
+    for row in dispositions:
+        if row.get("execution", "applied") != "applied":
+            continue
+        for e in row.get("edits", []):
+            edited.add(e["ref"])
+            if row.get("disposition") == "shared":
+                corrected[e["ref"]].append(e)
     originals = {book: scripture.verses(doc) for book, doc in original_docs.items()}
     prepared = {book: scripture.verses(doc) for book, doc in prepared_docs.items()}
     preceding = {
@@ -520,15 +539,30 @@ def finished_verses(
         if before is None or after is None:
             continue
         previous = preceding[target_book].get(target_address)
-        problems = lint(
-            scripture.plain(after.text),
-            scripture.plain(before.text),
-            scripture.plain(previous.text) if previous else "",
+        try:
+            baseline = closure(before.text, corrected[ref])
+        except ValueError as error:
+            result[ref] = [f"correction: {ref}: {error}"]
+            continue
+        previous_text = scripture.plain(previous.text) if previous else ""
+        problems = [
+            f"correction: {problem}"
+            for problem in lint(
+                scripture.plain(baseline), scripture.plain(before.text), previous_text
+            )
+        ]
+        problems.extend(
+            f"variant: {problem}"
+            for problem in lint(
+                scripture.plain(after.text), scripture.plain(baseline), previous_text
+            )
         )
         notes = [(at, n) for at, n in after.notes if n.get("category") == "edition"]
-        failure = restores(after.text, before.text, notes)
+        failure = restores(after.text, baseline, notes)
         if failure:
-            problems.append(f"note does not restore the KJV ({failure})")
+            problems.append(
+                f"variant: note does not restore the corrected KJV ({failure})"
+            )
         if problems:
             result[ref] = problems
     return result

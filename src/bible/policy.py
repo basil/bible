@@ -211,7 +211,7 @@ def check(policy: Policy) -> None:
         (
             "1611",
             policy.kjv_notes,
-            note_fields | {"anchor", "verse", "uncategorized", "omitted"},
+            note_fields | {"anchor", "former", "verse", "uncategorized", "omitted"},
         ),
     ):
         # Brenton's file also lists the lemmas whose shape has been read.
@@ -343,8 +343,8 @@ def check(policy: Policy) -> None:
     for key, reading in policy.byzantine["readings"].items():
         require_fields(
             reading,
-            {"units", "kind", "tags", "why", "evidence"},
-            {"edits"},
+            {"kind", "why", "evidence"},
+            {"units", "tags", "edits"},
             f"Byzantine reading {key}",
         )
     for key, accent in policy.byzantine["accents"].items():

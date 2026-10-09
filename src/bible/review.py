@@ -10,7 +10,8 @@
                      invariants, and what matched nothing
     byzantine/       one file per New Testament book: every place the Greek
                      texts differ, with its witnesses, its disposition and
-                     the English before and after
+                     the English before and after, and the corrections of
+                     the English where the Greek is shared
     text/            every unit as it is sent to be typeset
     changes.diff     what differs in all of these from the last review
 
@@ -42,6 +43,11 @@ def note_line(row: Mapping[str, object]) -> str:
     return (
         f"- `{row['key']}` [{row['rule']}; {row['style']}] {row['verse']}\n"
         f"  → {row['lemma'] or '(verse)'}: {row['note']}\n"
+        + (
+            f"  Source: {row['source']}\n"
+            if row["style"] == "editorial reversal"
+            else ""
+        )
     )
 
 

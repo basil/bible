@@ -80,6 +80,23 @@ def edit_kind(edit: BoundEdit) -> str:
     )
 
 
+def override_ops(o: Override) -> list[dict[str, Any]]:
+    """What the executor needs of an override's edits."""
+    return [
+        {
+            "kind": edit_kind(e),
+            "ref": e["ref"],
+            "range": [e["start"], e["end"]],
+            "old": e["old"],
+            "new": e["new"],
+            "side": e["side"],
+            "raw_range": True,
+            **({"unstyle": True} if e.get("unstyle") else {}),
+        }
+        for e in o["bound"]
+    ]
+
+
 def unit_tags(unit: Unit) -> set[Tag]:
     tags = set()
     if unit.get("hf") not in {"RP", "unknown"}:
@@ -152,7 +169,8 @@ def decide(
     kjv: Mapping[str, str],
     supplied: Supplied | None = None,
 ) -> list[Disposition]:
-    """Dispositions for every unit, in ledger order.
+    """Dispositions for every unit, in ledger order, then the overrides
+    without units.
 
     instructions: attached and checked instruction rows; reports: the
     apparatus reports; revision_rows: RV and Boyd ASV rows (revision_reports);
@@ -228,19 +246,7 @@ def decide(
                 tags.add(Tag.OP_NOCHANGE)
             elif uid == owner:
                 row["action"] = "edit"
-                row["ops"] = [
-                    {
-                        "kind": edit_kind(e),
-                        "ref": e["ref"],
-                        "range": [e["start"], e["end"]],
-                        "old": e["old"],
-                        "new": e["new"],
-                        "side": e["side"],
-                        "raw_range": True,
-                        **({"unstyle": True} if e.get("unstyle") else {}),
-                    }
-                    for e in o["bound"]
-                ]
+                row["ops"] = override_ops(o)
                 tags.update(OP_BY_KIND[op["kind"]] for op in row["ops"])
             else:
                 row["action"] = "covered"
@@ -423,6 +429,28 @@ def decide(
         row["tags"] = sorted(t.value for t in tags)
         row["flags"] = flags
         result.append(row)
+    # An override without units corrects English where the Greek is shared:
+    # there is nothing to decide, and it is carried out without a TR note.
+    for o in overrides:
+        if not o["unit_ids"]:
+            ops = override_ops(o)
+            result.append(
+                {
+                    "unit": o["id"],
+                    "ref": o["id"],
+                    "disposition": "shared",
+                    "override": o["id"],
+                    "action": "edit",
+                    "ops": ops,
+                    "why": o["why"],
+                    "evidence": o["evidence"],
+                    "tags": sorted(
+                        {OP_BY_KIND[op["kind"]].value for op in ops}
+                        | {t.value for t in o["tag_set"]}
+                    ),
+                    "flags": [],
+                }
+            )
     return result
 
 

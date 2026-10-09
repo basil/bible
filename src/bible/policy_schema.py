@@ -137,6 +137,7 @@ Correction = TypedDict(
 
 class NoteOverride(TypedDict, total=False):
     anchor: ReadOnly[str]
+    former: ReadOnly[str]
     lemma: ReadOnly[str | None]
     note: ReadOnly[str | None]
     occurrence: ReadOnly[int]
@@ -424,6 +425,7 @@ ByzantineEdit = TypedDict(
         "occurrence": ReadOnly[int],
         "after": ReadOnly[str],
         "before": ReadOnly[str],
+        "greek": ReadOnly[str],
     },
     total=False,
 )

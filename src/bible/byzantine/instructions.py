@@ -700,6 +700,8 @@ def constructions(
         str, list[tuple[str, set[str], list[tuple[str, int, int]]]]
     ] = defaultdict(list)
     for o in overrides:
+        if not o["unit_ids"]:
+            continue  # shared Greek: no instruction to take
         book = o["unit_ids"][0].split()[0]
         override_marks[book].append(
             (

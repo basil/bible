@@ -90,6 +90,9 @@ def validate(byzantine: Mapping[str, Any]) -> Validate:
             *arguments(byzantine),
             revision_citations=byzantine["revision_citations"],
             faa_rows=byzantine["faa_rows"],
+            printed=byzantine["printed"],
+            alignment=byzantine["rp_alignment"],
+            structure=byzantine["structure"],
         )
 
     return run
@@ -124,10 +127,11 @@ def test_the_real_readings_compile_one_entry_each(
 ) -> None:
     assert len(byzantine["overrides"]) == len(readings)
     for compiled, written in zip(byzantine["overrides"], readings):
-        assert (
-            compiled["id"]
-            == written["id"]
-            == decisions.override_id(compiled["unit_ids"])
+        assert compiled["id"] == written["id"]
+        assert compiled["id"] == (
+            decisions.override_id(compiled["unit_ids"])
+            if compiled["unit_ids"]
+            else compiled["bound"][0]["ref"]
         )
         assert len(compiled["bound"]) == len(written.get("edits", []))
 
@@ -142,6 +146,8 @@ def test_every_reading_edit_binds_to_the_pinned_kjv(
 
 def test_every_reading_tag_is_asserted_not_computed(readings: list[Entry]) -> None:
     for o in readings:
+        if "units" not in o:
+            continue  # a correction of shared Greek has no difference to tag
         groups = {t.split(":")[0] for t in o["tags"]}
         assert groups <= {"from", "gram"}, o["id"]
         assert "from" in groups and "gram" in groups, o["id"]
@@ -149,7 +155,8 @@ def test_every_reading_tag_is_asserted_not_computed(readings: list[Entry]) -> No
 
 def test_every_reading_why_is_at_most_two_sentences(readings: list[Entry]) -> None:
     for o in readings:
-        assert len(re.findall(r"[.!?](?:\s|$)", o["why"].strip())) <= 2, o["id"]
+        if "units" in o:
+            assert len(re.findall(r"[.!?](?:\s|$)", o["why"].strip())) <= 2, o["id"]
 
 
 # Rejections
@@ -281,7 +288,7 @@ def test_a_duplicate_unit_is_rejected(
 ) -> None:
     compiled, errors = validate([sample(), sample()])
     assert len(compiled) == 1
-    assert len(errors) == 1 and "missing or duplicate unit" in errors[0]
+    assert len(errors) == 1 and "duplicate unit" in errors[0]
 
 
 def test_a_wrong_id_is_rejected(
@@ -424,6 +431,77 @@ def test_loaded_additional_evidence_is_checked(
 
 
 # Revision and Far Above All citations
+
+
+# Corrections of shared Greek: readings without units
+
+
+def correction() -> Entry:
+    return {
+        "id": "LUK 23:42",
+        "kind": "edit",
+        "edits": [
+            {
+                "ref": "LUK 23:42",
+                "from": "into thy kingdom",
+                "to": "in thy kingdom",
+                "greek": "ἐν τῇ βασιλείᾳ σου",
+            }
+        ],
+        "why": "Test.",
+        "evidence": {"rv": {"ref": "LUK 23:42", "quote": "in thy kingdom"}},
+    }
+
+
+def test_a_correction_of_shared_greek_validates_without_units_or_tags(
+    validate: Validate,
+) -> None:
+    compiled, errors = validate([correction()])
+    assert errors == [] and compiled[0]["unit_ids"] == []
+
+
+@pytest.mark.parametrize(
+    "field,value,message",
+    [
+        ("greek", "εἰς τὴν βασιλείαν σου", "greek must occur once"),
+        ("greek", "εν τῇ βασιλείᾳ σου", "greek must occur once"),
+        ("ref", "LUK 23:43", "greek, at its verse"),
+        ("greek", None, "greek, at its verse"),
+    ],
+)
+def test_a_correction_names_the_greek_it_renders(
+    validate: Validate, field: str, value: str | None, message: str
+) -> None:
+    bad = correction()
+    if value is None:
+        del bad["edits"][0][field]
+    else:
+        bad["edits"][0][field] = value
+    _, errors = validate([bad])
+    assert len(errors) == 1 and message in errors[0]
+
+
+def test_a_correction_cannot_claim_a_greek_difference(validate: Validate) -> None:
+    bad = {
+        "id": "MAT 3:8",
+        "kind": "edit",
+        "edits": [
+            {"ref": "MAT 3:8", "from": "fruits", "to": "fruit", "greek": "καρπὸν"}
+        ],
+        "why": "Test.",
+        "evidence": {"rv": {"ref": "MAT 3:8", "quote": "fruit"}},
+    }
+    _, errors = validate([bad])
+    assert len(errors) == 1 and "touches a difference" in errors[0]
+
+
+def test_a_reading_of_a_difference_names_no_greek(
+    validate: Validate, sample: Callable[[], Entry]
+) -> None:
+    bad = sample()
+    bad["edits"][0]["greek"] = "καρπὸν"
+    _, errors = validate([bad])
+    assert len(errors) == 1 and "greek, at its verse" in errors[0]
 
 
 def citation_entry(readings: list[Entry], uid: str, witness: str, quote: str) -> Entry:
@@ -896,3 +974,26 @@ def test_the_build_stops_on_a_stale_placement_a_redundant_reading_or_a_broken_in
     assert invariants["I1"] == "unit coverage differs"
     with pytest.raises(CheckFailed, match="invariants broken.*I1"):
         checked({**context, "invariants": invariants})
+
+
+@pytest.mark.parametrize("mismatch", ["words", "address"])
+def test_shared_greek_refuses_mismatched_alignment(
+    byzantine: Mapping[str, Any], mismatch: str
+) -> None:
+    alignment = copy.deepcopy(byzantine["rp_alignment"])
+    ref = "LUK 23:42"
+    if mismatch == "words":
+        alignment.text[ref] = ["wrong", *alignment.text[ref]]
+        message = "printed words disagree"
+    else:
+        alignment.addresses[ref][0] = "LUK 23:41"
+        message = "cross-verse joined-word"
+    with pytest.raises(ValueError, match=f"{ref}:.*{message}"):
+        decisions.shared_greek(
+            "ἐν τῇ βασιλείᾳ σου",
+            ref,
+            byzantine["units"],
+            byzantine["printed"],
+            alignment,
+            byzantine["structure"],
+        )

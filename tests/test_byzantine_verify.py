@@ -10,7 +10,7 @@ from collections.abc import Mapping, Sequence
 import pytest
 
 from bible import scripture, usj
-from bible.byzantine import decide, stages, tags, verify
+from bible.byzantine import decide, edit, notes, stages, tags, verify
 from bible.byzantine.greek import Structure
 from bible.byzantine.rows import Disposition, Edit, Instruction, Unit
 from bible.byzantine.stages import Context
@@ -144,12 +144,12 @@ def test_the_books_hold_every_verse_and_every_relocation(
 
 
 def test_every_unit_has_one_complete_declaration(byzantine: Context) -> None:
-    rows = byzantine["dispositions"]
+    rows = [r for r in byzantine["dispositions"] if r["disposition"] != "shared"]
     assert len(rows) == len(byzantine["units"]) == 1939
     assert Counter(r["unit"] for r in rows) == Counter(
         u["id"] for u in byzantine["units"]
     )
-    assert _i1(byzantine, rows) == "pass"
+    assert _i1(byzantine, byzantine["dispositions"]) == "pass"
     for row in rows:
         assert row["tags"] and all(tag in tags.Tag for tag in row["tags"])
         if row["disposition"] == "override":
@@ -525,3 +525,125 @@ def test_finished_verses_are_checked_under_their_source_ref_with_offsets_kept(
     problems = verify.finished_verses(original, prepared, rows, structure)
     assert "ROM 16:25" in problems
     assert any("restore" in p for p in problems["ROM 16:25"])
+
+
+def correction_rows() -> tuple[dict[str, Document], list[Disposition]]:
+    """A reading and a correction of shared Greek in one verse, with a
+    source note: "And he came into the kingdom"."""
+    documents = {
+        "MAT": usj.parse(
+            "\\id MAT\n\\c 1\n\\p\n\\v 1 And he \\add came\\add* into the kingdom.\\f + \\ft Source note.\\f*\n"
+        )
+    }
+
+    def row(unit: str, disposition: str, at: int, old: str, new: str) -> Disposition:
+        op = {"kind": "replace", "ref": "MAT 1:1", "old": old, "new": new}
+        return {
+            "unit": unit,
+            "ref": "MAT 1:1",
+            "disposition": disposition,
+            "action": "edit",
+            "ops": [{**op, "range": [at, at + len(old)], "raw_range": True}],
+        }
+
+    return documents, [
+        row("MAT 1:1#1", "override", 4, "he", "they"),
+        row("MAT 1:1", "shared", 12, "into", "within"),
+    ]
+
+
+def test_notes_restore_the_kjv_as_corrected_where_the_greek_is_shared() -> None:
+    documents, rows = correction_rows()
+    original = copy.deepcopy(documents)
+    prepared, rows = edit.execute(documents, rows, ["MAT"])
+    prepared, rows = notes.apply(documents, prepared, rows)
+    verse = scripture.verses(prepared["MAT"])["1:1"]
+    assert verse.text == "And they came within the kingdom."
+    assert "\\add came\\add*" in usj.serialize(prepared["MAT"])
+    assert len(verse.notes) == 2
+    assert verify.finished_verses(documents, prepared, rows, NO_STRUCTURE) == {}
+    assert documents == original
+
+
+def test_stale_correction_offsets_name_the_verse() -> None:
+    documents, rows = correction_rows()
+    prepared, rows = edit.execute(documents, rows, ["MAT"])
+    prepared, rows = notes.apply(documents, prepared, rows)
+    rows[1]["edits"][0]["range"][0] += 1
+    assert verify.finished_verses(documents, prepared, rows, NO_STRUCTURE) == {
+        "MAT 1:1": ["correction: MAT 1:1: stale source offsets"]
+    }
+
+
+@pytest.mark.parametrize("cause", ["correction", "variant"])
+def test_join_problems_are_attributed_to_their_cause(cause: str) -> None:
+    documents, rows = correction_rows()
+    op = rows[1 if cause == "correction" else 0]["ops"][0]
+    op["new"] = "within within" if cause == "correction" else "they they"
+    prepared, rows = edit.execute(documents, rows, ["MAT"])
+    prepared, rows = notes.apply(documents, prepared, rows)
+    assert verify.finished_verses(documents, prepared, rows, NO_STRUCTURE) == {
+        "MAT 1:1": [f"{cause}: doubled word"]
+    }
+
+
+@pytest.mark.parametrize(
+    "kind,at,old,new", [("insert", 4, "", "truly"), ("delete", 4, "he", "")]
+)
+def test_length_changing_correction_beside_variant_anchor(
+    kind: str, at: int, old: str, new: str
+) -> None:
+    documents, rows = correction_rows()
+    op = rows[0]["ops"][0]
+    op.update(kind=kind, range=[at, at + len(old)], old=old, new=new)
+    original = copy.deepcopy(documents)
+    prepared, rows = edit.execute(documents, rows, ["MAT"])
+    prepared, rows = notes.apply(documents, prepared, rows)
+    assert verify.finished_verses(documents, prepared, rows, NO_STRUCTURE) == {}
+    assert documents == original
+    assert "\\add came\\add*" in usj.serialize(prepared["MAT"])
+
+
+@pytest.mark.parametrize("cause", ["correction", "variant"])
+def test_finished_verse_flags_follow_the_cause(cause: str) -> None:
+    documents, rows = correction_rows()
+    op = rows[1 if cause == "correction" else 0]["ops"][0]
+    op["new"] = "within within" if cause == "correction" else "they they"
+    prepared, rows = edit.execute(documents, rows, ["MAT"])
+    prepared, rows = notes.apply(documents, prepared, rows)
+    for row in rows:
+        row["tags"] = []
+    context: Context = {
+        "documents": documents,
+        "prepared": prepared,
+        "units": [],
+        "dispositions": rows,
+        "structure": NO_STRUCTURE,
+    }
+    stages.stage_verify(context)
+    assert bool(rows[1].get("flags")) == (cause == "correction")
+    assert bool(rows[0].get("flags")) == (cause == "variant")
+
+
+def test_correction_baseline_follows_a_moved_verse() -> None:
+    documents, rows = correction_rows()
+    original = copy.deepcopy(documents)
+    prepared, rows = edit.execute(documents, rows, ["MAT"])
+    prepared, rows = notes.apply(documents, prepared, rows)
+    moved = copy.deepcopy(prepared["MAT"])
+    for node in usj.walk(moved["content"]):
+        if node.get("type") == "verse":
+            node["number"] = "2"
+    for block in moved["content"]:
+        if block.get("type") == "para":
+            block["content"] = edit.renumber(block["content"], "1:2")
+    assert (
+        verify.finished_verses(
+            documents,
+            {"MAT": moved},
+            rows,
+            Structure({"MAT 1:1": "MAT 1:2"}, frozenset()),
+        )
+        == {}
+    )
+    assert documents == original

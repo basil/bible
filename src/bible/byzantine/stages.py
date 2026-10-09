@@ -417,6 +417,9 @@ def stage_decisions(context: Context) -> Context:
         context["supplied"],
         revision_citations=context["revision_citations"],
         faa_rows=context["faa_rows"],
+        printed=context["printed"],
+        alignment=context["rp_alignment"],
+        structure=context["structure"],
     )
     # Judge and choose instructions by construction, never in parts.
     rows = instructions.constructions(rows, kjv, context["checker"], overrides)
@@ -508,7 +511,13 @@ def stage_verify(context: Context) -> Context:
     )
     for row in context["dispositions"]:
         refs = {e["ref"] for e in row.get("edits", [])}
-        found = [p for ref in sorted(refs) for p in problems.get(ref, [])]
+        cause = "correction:" if row["disposition"] == "shared" else "variant:"
+        found = [
+            p
+            for ref in sorted(refs)
+            for p in problems.get(ref, [])
+            if p.startswith(cause)
+        ]
         if found:
             row["flags"] = [
                 *row.get("flags", []),

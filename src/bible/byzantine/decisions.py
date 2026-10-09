@@ -2,8 +2,9 @@
 pinned sources.
 
 The readings of edition/byzantine.json (subjective): the wording where no
-instruction settles a unit, or a ruling that a reported difference is not
-applied. edition/byzantine-placements.json (objective): which Greek unit a
+instruction settles a unit, a ruling that a reported difference is not
+applied, or, keyed by a verse rather than units, a correction of the English
+where the TR and RP2026 share the Greek. edition/byzantine-placements.json (objective): which Greek unit a
 witness's row is about where code cannot tell. The lemmas of
 edition/byzantine.json: a footnote lemma widened by hand. Every entry is
 keyed by verse and Greek, so unit numbering may change under it; every quote
@@ -13,12 +14,13 @@ is checked against the source it cites, so nothing can drift unnoticed.
 from __future__ import annotations
 
 import re
+import unicodedata
 from collections import defaultdict
 from collections.abc import Iterable, Mapping, Sequence
 from copy import deepcopy
 from typing import Any, TypeIs, TypeVar
 
-from bible.byzantine import BOOKS, FAA, WITNESSES
+from bible.byzantine import BOOKS, FAA, WITNESSES, greek
 from bible.byzantine.rows import (
     BoundEdit,
     FaaRow,
@@ -38,7 +40,7 @@ from bible.byzantine.units import keyed_units
 Row = TypeVar("Row", Report, SelectedListRow, Instruction)
 
 # The fields of an override's edit; policy.check holds the decisions' own.
-EDIT_KEYS = ("ref", "from", "to", "occurrence", "after", "before")
+EDIT_KEYS = ("ref", "from", "to", "occurrence", "after", "before", "greek")
 
 # A verse's supplied words: the offsets and the words of each.
 type Supplied = Mapping[str, Sequence[tuple[int, int, str]]]
@@ -124,6 +126,57 @@ def bracketed_quote(quote: str) -> tuple[str, list[tuple[int, int]]]:
     return text, ranges
 
 
+def shared_greek(
+    cited: str,
+    ref: str,
+    units: Sequence[Unit],
+    printed: Mapping[str, greek.PrintedVerse],
+    alignment: greek.Alignment,
+    structure: greek.Structure,
+) -> None:
+    """Refuse Greek that is not whole words occurring once in RP2026's
+    printed verse, or that a difference from the TR touches."""
+    if ref in structure.omitted:
+        raise ValueError("the verse is omitted by RP2026")
+    target = structure.rp_ref(ref)
+
+    def key(word: str) -> str:
+        # lower(), not casefold(): casefold erases iota subscripts.
+        return unicodedata.normalize("NFC", "".join(greek.accent_letters(word))).lower()
+
+    if alignment.text.get(target) != printed[target]["accented"]:
+        raise ValueError(f"{ref}: printed words disagree with Greek alignment offsets")
+    if any(address != target for address in alignment.addresses[target]):
+        raise ValueError(f"{ref}: unsupported cross-verse joined-word alignment")
+
+    wanted = [key(w) for w in cited.split()]
+    hits = greek.occurrences([key(w) for w in printed[target]["accented"]], wanted)
+    if len(hits) != 1:
+        raise ValueError(
+            f"greek must occur once at RP2026 {target} ({len(hits)} found)"
+        )
+    a, b = hits[0], hits[0] + len(wanted)
+    tokens = [
+        i for i, (x, y) in enumerate(alignment.spans[target]) if a <= x and y <= b
+    ]
+    if not tokens or alignment.project(target, [tokens[0], tokens[-1] + 1]) != (a, b):
+        raise ValueError("greek cuts an aligned word")
+    start, end = tokens[0], tokens[-1] + 1
+    # Words RP2026 lacks stand between two of its words, and touch the Greek
+    # on either side of them.
+    if any(
+        u["target_ref"] == target
+        and u["class"] != "structural"
+        and (
+            start <= u["rp_range"][0] <= end
+            if u["rp_range"][0] == u["rp_range"][1]
+            else start < u["rp_range"][1] and u["rp_range"][0] < end
+        )
+        for u in units
+    ):
+        raise ValueError("greek touches a difference between the TR and RP2026")
+
+
 def validate_overrides(
     entries: Iterable[Mapping[str, Any]],
     units: Sequence[Unit],
@@ -136,6 +189,9 @@ def validate_overrides(
         Mapping[str, Mapping[str, Mapping[str, Any] | None]] | None
     ) = None,
     faa_rows: Mapping[str, FaaRow] | None = None,
+    printed: Mapping[str, greek.PrintedVerse] | None = None,
+    alignment: greek.Alignment | None = None,
+    structure: greek.Structure | None = None,
 ) -> tuple[list[Override], list[str]]:
     """Each override bound to the pinned KJV and its evidence to its sources.
 
@@ -146,6 +202,8 @@ def validate_overrides(
     apparatus; texts: {witness: verses} for the revisions. Optional
     revision_citations carries normalized text and USJ supplied spans;
     faa_rows supplies verse notes independently of apparatus reports.
+    printed, alignment and structure, RP2026's, check the Greek of an
+    override without units (shared_greek).
     """
     compiled: list[Override] = []
     errors: list[str] = []
@@ -156,25 +214,33 @@ def validate_overrides(
         try:
             found = [resolve(g, units, label) for g in entry.get("units", [])]
             ids = [u["id"] for u in found]
-            if not ids or len(ids) != len(set(ids)) or claimed & set(ids):
-                raise ValueError(f"{label}: missing or duplicate unit")
-            if entry.get("id") != override_id(ids):
+            if len(ids) != len(set(ids)) or claimed & set(ids):
+                raise ValueError(f"{label}: duplicate unit")
+            # Without units, an override corrects the English of Greek the
+            # TR and RP2026 share, keyed by its verse, each edit naming its
+            # Greek: there is no difference to tag and no TR note to write.
+            if ids and entry.get("id") != override_id(ids):
                 raise ValueError(f"{label}: id should be {override_id(ids)}")
+            if not ids and entry.get("id") not in kjv:
+                raise ValueError(f"{label}: without units, the id is a verse")
             kind = entry.get("kind")
             edits = entry.get("edits", [])
             if kind not in {"edit", "nochange"} or (kind == "nochange") == bool(edits):
                 raise ValueError(f"{label}: kind edit needs edits, nochange has none")
+            if not ids and kind != "edit":
+                raise ValueError(f"{label}: without units, the kind is edit")
             why = entry.get("why")
             if not isinstance(why, str) or not why.strip():
                 raise ValueError(f"{label}: why required")
-            if len(re.findall(r"[.!?](?:\s|$)", why.strip())) > 2:
-                raise ValueError(f"{label}: why is at most two sentences")
             tags = asserted(entry.get("tags", []))
-            if not any(t.group == "from" for t in tags) or not any(
-                t.group == "gram" for t in tags
+            if ids and len(re.findall(r"[.!?](?:\s|$)", why.strip())) > 2:
+                raise ValueError(f"{label}: why is at most two sentences")
+            if ids and (
+                not any(t.group == "from" for t in tags)
+                or not any(t.group == "gram" for t in tags)
             ):
                 raise ValueError(f"{label}: one from: and one gram: tag required")
-            refs = {g["ref"] for g in entry["units"]}
+            refs = {g["ref"] for g in entry["units"]} if ids else {entry["id"]}
             books = {r.split()[0] for r in refs}
             if len(books) != 1:
                 raise ValueError(f"{label}: units in more than one book")
@@ -188,6 +254,19 @@ def validate_overrides(
                     raise ValueError(
                         f"{label}: edit at {ref} is not in the units' book"
                     )
+                if ("greek" in edit) == bool(ids) or not ids and ref != entry["id"]:
+                    raise ValueError(
+                        f"{label}: greek, at its verse, for an edit without units only"
+                    )
+                if not ids:
+                    if printed is None or alignment is None or structure is None:
+                        raise ValueError(f"{label}: RP2026 is needed to check greek")
+                    try:
+                        shared_greek(
+                            edit["greek"], ref, units, printed, alignment, structure
+                        )
+                    except ValueError as error:
+                        raise ValueError(f"{label}: {error}") from None
                 if (
                     not isinstance(old, str)
                     or not isinstance(new, str)
@@ -360,9 +439,9 @@ def validate_overrides(
                     raise ValueError(f"{label}: unknown witness {witness}")
             override: Override = {
                 "id": entry["id"],
-                "units": entry["units"],
+                "units": entry.get("units", []),
                 "kind": kind,
-                "tags": entry["tags"],
+                "tags": entry.get("tags", []),
                 "why": why,
                 "evidence": evidence,
                 "unit_ids": ids,

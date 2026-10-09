@@ -119,12 +119,14 @@
       "why": "diligently, with the fist and up to the elbow are the renderings; the rest names the authorities"
     },
     "MRK 7:4 pots": {
-      "lemma": "tables",
-      "why": "beds renders tables (κλινῶν, couches); George swaps the two notes of this verse"
+      "anchor": "beds",
+      "former": "tables",
+      "why": "The rendering correction adopts the 1611 alternative in the text; reverse the margin editorially to quote the former King James wording on the current words, rather than omit it. Preserve the source key pots from the swapped listing; this alternative concerned tables."
     },
     "MRK 7:4 tables": {
-      "lemma": "pots",
-      "why": "sextarius is the measure the Greek calls pots (ξεστῶν); George swaps the two notes of this verse"
+      "why": "Sextarius is the measure the Greek calls pots (ξεστῶν); George swaps the two notes of this verse. Anchor it directly to pots because the shared-Greek correction replaces the source-key word tables with beds.",
+      "anchor": "pots",
+      "uncategorized": true
     },
     "MRK 10:42 are accompted": {
       "anchor": "are accounted",
@@ -417,6 +419,11 @@
       "lemma": "been burdensome",
       "why": "used authority replaces been burdensome"
     },
+    "1TH 4:6 in any matter": {
+      "anchor": "in the matter",
+      "former": "in any matter",
+      "why": "The rendering correction adopts the 1611 alternative in the text; reverse the margin editorially to quote the former King James wording on the current words, rather than omit it."
+    },
     "1TH 4:8 despiseth": {
       "occurrence": 1,
       "why": "he that despiseth, the first of the two"
@@ -626,6 +633,45 @@
     "REV 13:5 to continue": {
       "omitted": true,
       "why": "The 1611 margin's reading is the reading of the Byzantine text, which this edition now prints; the Received Text's words, which the margin was set against, are quoted in the TR note."
+    },
+    "MAT 25:8 gone out": {
+      "anchor": "going out",
+      "former": "gone out",
+      "why": "The rendering correction adopts the 1611 alternative in the text; reverse the margin editorially to quote the former King James wording on the current words, rather than omit it."
+    },
+    "ACT 27:40 taken up the anchors, they committed themselves unto the sea": {
+      "omitted": true,
+      "why": "The correction of the English prints the margin's sense, the anchors left in the sea, in the RV's words cast off rather than the margin's cut; the margin's rendering is no longer an alternative to the text, and the King James words it was set against were never the margin's to quote."
+    },
+    "ROM 6:17 which was delivered you": {
+      "anchor": "whereto ye were delivered",
+      "former": "which was delivered you",
+      "why": "The rendering correction adopts the 1611 alternative in the text; reverse the margin editorially to quote the former King James wording on the current words, rather than omit it."
+    },
+    "1CO 8:6 in him": {
+      "anchor": "for him",
+      "former": "in him",
+      "why": "The rendering correction adopts the 1611 alternative in the text; reverse the margin editorially to quote the former King James wording on the current words, rather than omit it."
+    },
+    "1TH 1:4 beloved, your election of God": {
+      "anchor": "beloved of God, your election",
+      "former": "beloved, your election of God",
+      "why": "The rendering correction adopts the 1611 alternative in the text; reverse the margin editorially to quote the former King James wording on the current words, rather than omit it."
+    },
+    "HEB 2:1 let them slip": {
+      "anchor": "drift away",
+      "uncategorized": true,
+      "why": "The shared-Greek rendering correction changes let them slip to drift away; retain the distinct 1611 Greek gloss run out as leaking vessels on the corrected words."
+    },
+    "HEB 6:7 by": {
+      "anchor": "for whose sake",
+      "former": "by whom",
+      "why": "The rendering correction adopts the 1611 alternative in the text; reverse the margin editorially to quote the former King James wording on the current words, rather than omit it."
+    },
+    "2PE 1:3 to": {
+      "anchor": "by glory and virtue",
+      "former": "to glory and virtue",
+      "why": "The rendering correction adopts the 1611 alternative in the text; reverse the margin editorially to quote the former King James wording on the current words, rather than omit it."
     }
   }
 }

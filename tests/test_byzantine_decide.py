@@ -38,6 +38,8 @@ from bible.byzantine.tags import Tag
 from bible.byzantine.units import NEUTRAL_CLASSES
 
 DISPOSITIONS = {"override", "structural", "witnessed", "conflict", "neutral", "silent"}
+# A correction of shared Greek, after the units' dispositions.
+SHARED = "shared"
 ACTIONS = {"edit", "nochange", "covered", "omit", "move", "refused"}
 
 REF = "MAT 3:8"
@@ -52,10 +54,19 @@ def context(edition: bible.pipeline.Edition) -> Context:
 
 @pytest.fixture(scope="module")
 def readings(context: Context) -> list[dict[str, Any]]:
-    """The readings of edition/byzantine.json, each with its key as its id."""
+    """The readings of edition/byzantine.json about units, each with its key
+    as its id."""
     return [
-        {"id": key, **entry} for key, entry in context["decisions"]["readings"].items()
+        {"id": key, **entry}
+        for key, entry in context["decisions"]["readings"].items()
+        if "units" in entry
     ]
+
+
+@pytest.fixture(scope="module")
+def unit_rows(context: Context) -> list[Disposition]:
+    """The dispositions of the units, without the corrections of shared Greek."""
+    return [r for r in context["dispositions"] if r["disposition"] != SHARED]
 
 
 def unit(uid: str = FIRST, classification: str = "substitution") -> Unit:
@@ -132,8 +143,10 @@ def decided(context: Context) -> list[Disposition]:
     )
 
 
-def test_every_unit_has_exactly_one_disposition(context: Context) -> None:
-    rows = context["dispositions"]
+def test_every_unit_has_exactly_one_disposition(
+    context: Context, unit_rows: list[Disposition]
+) -> None:
+    rows = unit_rows
     assert Counter(r["unit"] for r in rows) == Counter(
         u["id"] for u in context["units"]
     )
@@ -268,6 +281,9 @@ def test_two_readings_must_merge_even_when_every_instruction_is_refused(
     )
     own: Context = {
         "decisions": {"readings": split, "lemmas": {}},
+        "printed": context["printed"],
+        "rp_alignment": context["rp_alignment"],
+        "structure": context["structure"],
         "units": units,
         "kjv": context["kjv"],
         "reports": [],
@@ -348,9 +364,9 @@ def test_a_neutral_unit_with_no_reports_is_neutral(
 
 
 def test_a_neutral_class_unit_a_witness_reports_is_not_neutral(
-    context: Context, by_id: Mapping[str, Unit]
+    context: Context, by_id: Mapping[str, Unit], unit_rows: list[Disposition]
 ) -> None:
-    for row in context["dispositions"]:
+    for row in unit_rows:
         if by_id[row["unit"]]["class"] in NEUTRAL_CLASSES and row["witnesses"]:
             assert row["disposition"] != "neutral"
     reports: list[Report] = [{"witness": TCENT, "units": [{"unit": FIRST}]}]
@@ -616,8 +632,10 @@ def test_a_unit_with_shared_and_private_edits_executes_its_private_edit() -> Non
     assert [[op["new"] for op in r["ops"]] for r in rows] == [["Rise"], ["enter"]]
 
 
-def test_every_unit_has_one_disposition_and_action(context: Context) -> None:
-    rows = context["dispositions"]
+def test_every_unit_has_one_disposition_and_action(
+    context: Context, unit_rows: list[Disposition]
+) -> None:
+    rows = unit_rows
     assert len(rows) == len(context["units"])
     assert {r["disposition"] for r in rows} <= DISPOSITIONS
     tagged = Counter(t for r in rows for t in r["tags"])

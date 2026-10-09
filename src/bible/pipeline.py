@@ -456,7 +456,11 @@ def annotated(
         code = unit["id"]
         if unit["source"] == "kjv":
             doc, report = annotate.george(
-                code, units[code], read_sources.marginal.get(code, ()), ctx
+                code,
+                units[code],
+                read_sources.marginal.get(code, ()),
+                ctx,
+                original=read_sources.kjv[code],
             )
         else:
             mended = frozenset[str]().union(
@@ -610,8 +614,13 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
     # The revision comes before the edition's own pages, which quote the
     # books as they print.
     revised: revision.MetRevisions = set()
+    comparisons: dict[str, Document] = {}
     finished: dict[str, Document] = {}
     for code, doc in {**front, **books}.items():
+        if code in byzantine.BOOKS:
+            comparisons[code] = revision.punctuated(
+                revision.respelt(doc, policy, set()), policy, set()
+            )
         if code in books:
             doc = revision.revised(code, doc, policy, revised)
         doc = revision.passages(code, doc, policy, revised)
@@ -634,7 +643,7 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
     rows = appendix.rows(
         promoted.byzantine.context,
         kjv_regularized,
-        {code: finished[code] for code in byzantine.BOOKS},
+        comparisons,
     )
     readings, spans = appendix.blocks(rows, ctx.books, labels)
     pages, offset = authored(ctx, sources, readings)
@@ -665,14 +674,17 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
     units_of: Callable[[str], int] = lambda source: sum(
         u["source"] == source for u in policy.scripture
     )
-    byzantine_rows = promoted.byzantine.context["dispositions"]
+    applied = [
+        row
+        for row in promoted.byzantine.context["dispositions"]
+        if row.get("execution") == "applied"
+    ]
     summary = dict(
         alexandrine_notes=promoted.alexandrine[0],
         alexandrine_appendix_paragraphs=promoted.alexandrine[1],
         byzantine_units=len(promoted.byzantine.context["units"]),
-        byzantine_edits=sum(
-            1 for row in byzantine_rows if row.get("execution") == "applied"
-        ),
+        byzantine_edits=sum(1 for row in applied if row["disposition"] != "shared"),
+        kjv_corrections=sum(1 for row in applied if row["disposition"] == "shared"),
         byzantine_notes=sum(
             len(usj.notes_of(doc["content"]))
             for code, doc in promoted.kjv.items()

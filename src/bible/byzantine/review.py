@@ -28,6 +28,7 @@ from bible.byzantine import (
     RV,
     TCENT,
     WEB,
+    edit,
 )
 from bible.byzantine import revisers as revisions
 from bible.byzantine.appendix import (
@@ -110,7 +111,7 @@ DIFF_LEGEND = (
     "wording can be located uniquely; … marks clipped context. KJV context shows "
     "an instruction’s proposal; source context shows the reported alternative "
     "in the witness’s own verse wording. Otherwise only the quoted contrast appears. "
-    "Explicit whole-verse comparisons remain complete. The printed appendix gives every entry a TR → RP comparison and adds KJV → OLEB only where the complete English wording changes, including for moved verses, with shared wording once, former readings in upright square brackets, new Greek readings in bold and new English readings in italics. Deleted English and Greek stay upright. Separately labelled apparatus evidence uses the same Greek comparison format. Printed boundary spaces follow ordinary prose spacing outside brackets and bold type in both languages; Markdown marks retain the exact source spaces. "
+    "Unit comparisons start from the corrections-only KJV baseline where needed; correction sections compare original KJV with that baseline. Explicit whole-verse comparisons show all changes and remain complete. The printed appendix gives every entry a TR → RP comparison and adds KJV → OLEB only where the complete English wording changes, including shared-Greek corrections and moved verses, before verse-specific punctuation revisions and with systematic spelling and punctuation applied to both sides, with shared wording once, former readings in upright square brackets, new Greek readings in bold and new English readings in italics. Deleted English and Greek stay upright. Separately labelled apparatus evidence uses the same Greek comparison format. Printed boundary spaces follow ordinary prose spacing outside brackets and bold type in both languages; Markdown marks retain the exact source spaces. "
     "Verse context includes every unit. Witness quotations include excluded "
     "readings; eligibility and attachment labels state their evidential scope."
     " Greek change describes what differs, not whether English must change. "
@@ -134,6 +135,7 @@ class Index(TypedDict):
     loose_in_verse: defaultdict[str, list[str]]
     overrides: dict[str, Override]
     prepared: dict[str, Verse]
+    corrected: dict[str, Verse]
     rows: dict[str, Disposition]
     tcgnt: dict[int, BoydNote]
 
@@ -308,6 +310,7 @@ def unit_passages(
     context: Context,
     prepared: PreparedGreek,
     prepared_verses: Mapping[str, Verse],
+    corrected: Mapping[str, Verse] | None = None,
 ) -> Passages:
     tr, rp, _ = prepared
     ref, target = unit["ref"], unit["target_ref"]
@@ -318,7 +321,9 @@ def unit_passages(
         target,
         " ".join(tr.get(ref, [])),
         " ".join(rp.get(target, [])),
-        scripture.plain(context["kjv"][ref]),
+        scripture.plain(
+            corrected[ref].text if corrected is not None else context["kjv"][ref]
+        ),
         scripture.plain(verse.text if verse else ""),
         prepared_verses,
     )
@@ -716,6 +721,11 @@ def unit_english_lines(
     passages: Passages,
 ) -> list[str]:
     """The executed English for this unit, preserving shared constructions."""
+    baseline = (
+        "Corrected KJV"
+        if index["corrected"][unit["ref"]].text != context["kjv"][unit["ref"]]
+        else "KJV"
+    )
     covered = row.get("covered_by")
     owner = index["rows"].get(covered, row) if covered is not None else row
     shared = bool(row.get("covered_by") or Tag.EV_MULTI_UNIT in owner["tags"])
@@ -726,7 +736,9 @@ def unit_english_lines(
         contrast = "unchanged" + (
             " (executor refused)" if row["action"] == "refused" else ""
         )
-        return [f"{label} · KJV {unit['ref']} → OLEB {unit['target_ref']}: {contrast}"]
+        return [
+            f"{label} · {baseline} {unit['ref']} → OLEB {unit['target_ref']}: {contrast}"
+        ]
     texts, selected, anchors = passages
     comparisons = [passage_spans(texts, p, 2, anchors) for p in selected]
     changed = [
@@ -739,7 +751,9 @@ def unit_english_lines(
         if changed
         else "unchanged" + (" (executor refused)" if row["action"] == "refused" else "")
     )
-    return [f"{label} · KJV {unit['ref']} → OLEB {unit['target_ref']}: {contrast}"]
+    return [
+        f"{label} · {baseline} {unit['ref']} → OLEB {unit['target_ref']}: {contrast}"
+    ]
 
 
 def section(
@@ -785,7 +799,9 @@ def section(
         + (f" · Recorded in: {recorded}" if recorded else "")
     )
     lines.append("")
-    passages = unit_passages(unit, context, prepared, index["prepared"])
+    passages = unit_passages(
+        unit, context, prepared, index["prepared"], index["corrected"]
+    )
     greek = "Greek at this unit · TR → RP2026: " + unit_greek_excerpt(
         unit, context, passages=passages
     )
@@ -817,9 +833,13 @@ def section(
             kjv[ref],
             after.text if after else "",
             f"KJV {ref}",
-            f"OLEB {target}",
+            (
+                f"OLEB {target} (all changes)"
+                if index["corrected"][ref].text != context["kjv"][ref]
+                else f"OLEB {target}"
+            ),
             after_verse=after,
-            anchors=passages[2],
+            anchors=passages[2] if index["corrected"][ref].text == kjv[ref] else (),
         )[:-1]
     )
     notes = (
@@ -858,23 +878,7 @@ def section(
             + "; ".join(esc(p) for p in row["alarm_phrases"])
         )
     if row["disposition"] == "override":
-        lines.append("")
-        o = index["overrides"][row["override"]]
-        lines.append(
-            f"Override {o['id']} · {o['kind']} · "
-            + " ".join(f"`{t}`" for t in o.get("tags", []))
-        )
-        for e in o.get("edits", []):
-            lines.append(
-                f"- {esc(e['from']) or '∅'} → {esc(e['to']) or '∅'}"
-                + (f" ({e['ref']})" if e["ref"] != ref else "")
-            )
-        lines.append(f"- why: {esc(o['why'])}")
-        for w, item in o.get("evidence", {}).items():
-            where = item.get("entry", item.get("ref"))
-            if w == FAA and item.get("field") == "source_notes":
-                where = f"{where} verse note"
-            lines.append(f"- {NAMES.get(w, w)} {esc(where)}: “{esc(item['quote'])}” ✓")
+        lines += ["", *override_lines(index["overrides"][row["override"]], ref)]
     elif row["disposition"] in {"silent", "conflict"} and index["revisions_at"][uid]:
         contrasts = {
             f"{NAMES[r['witness']]} · {attachment_scope(r, uid)}: {inline_change(r['old'], r['new'])}"
@@ -900,8 +904,71 @@ def section(
     return lines
 
 
+def override_lines(o: Override, ref: str) -> list[str]:
+    """An override as the editor wrote it, its evidence ticked as checked."""
+    lines = [
+        " · ".join(
+            [f"Override {o['id']}", o["kind"]]
+            + [" ".join(f"`{t}`" for t in o["tags"])] * bool(o["tags"])
+        )
+    ]
+    for e in o.get("edits", []):
+        lines.append(
+            f"- {esc(e['from']) or '∅'} → {esc(e['to']) or '∅'}"
+            + (f" ({e['ref']})" if e["ref"] != ref else "")
+            + (f" · shared Greek {esc(e['greek'])}" if "greek" in e else "")
+        )
+    lines.append(f"- why: {esc(o['why'])}")
+    for w, item in o.get("evidence", {}).items():
+        where = item.get("entry", item.get("ref"))
+        if w == FAA and item.get("field") == "source_notes":
+            where = f"{where} verse note"
+        lines.append(f"- {NAMES.get(w, w)} {esc(where)}: “{esc(item['quote'])}” ✓")
+    return lines
+
+
+def rendering_section(
+    row: Disposition, context: Context, index: Index, prepared: PreparedGreek
+) -> list[str]:
+    """An override of the English where the TR and RP2026 share the Greek."""
+    ref = row["ref"]
+    target = context["structure"].rp_ref(ref)
+    o = index["overrides"][row["override"]]
+    corrected = index["corrected"][ref]
+    after = index["prepared"].get(target)
+    override = override_lines(o, ref)
+    return [
+        f"### {ref}",
+        "",
+        *greek_verses(context, ref, prepared, target),
+        *verse_comparison(
+            context["kjv"][ref],
+            corrected.text,
+            f"KJV {ref}",
+            f"Corrected KJV {ref}",
+        ),
+        *verse_comparison(
+            context["kjv"][ref],
+            after.text if after else "",
+            f"KJV {ref}",
+            f"OLEB {target} (all changes)",
+            after_verse=after,
+        ),
+        override[0] + "  ",
+        *override[1:],
+        "",
+    ]
+
+
 def build_index(context: Context) -> Index:
     """Lookups the packet renders from."""
+    corrected, rows = edit.execute(
+        context["documents"],
+        [r for r in context["dispositions"] if r["disposition"] == "shared"],
+        list(context["documents"]),
+    )
+    if any(r.get("execution") != "applied" for r in rows):
+        raise ValueError("Review corrections-only baseline could not be executed")
     index: Index = {
         "instructions_at": reports_by_unit(context["instructions"]),
         "reports_at": reports_by_unit(context["reports"]),
@@ -909,6 +976,7 @@ def build_index(context: Context) -> Index:
         "loose_in_verse": defaultdict(list),
         "overrides": {o["id"]: o for o in context["overrides"]},
         "prepared": verses_of(context["prepared"]),
+        "corrected": verses_of(corrected),
         "rows": {r["unit"]: r for r in context["dispositions"]},
         "tcgnt": {n["entry"]: n for n in context["tcgnt"]},
     }
@@ -957,7 +1025,7 @@ def packets(context: Context) -> dict[str, str]:
         lines = [
             f"# {book}",
             "",
-            "Every Scrivener-RP2026 unit in the book. Neutral units are tabled first; other units keep the Greek, verse comparisons, witnesses and disposition together. The tag legend is in src/bible/byzantine/tags.py.",
+            "Every Scrivener-RP2026 unit in the book. Neutral units are tabled first; other units keep the Greek, verse comparisons, witnesses and disposition together. The corrections of shared Greek follow them. The tag legend is in src/bible/byzantine/tags.py.",
             "",
         ]
         lines += [
@@ -996,6 +1064,20 @@ def packets(context: Context) -> dict[str, str]:
                 prepared=prepared,
             )
             greek_contexts.setdefault(pair, {"unit": u["id"]})
+        corrections = [
+            r
+            for r in context["dispositions"]
+            if r["disposition"] == "shared" and r["ref"].split()[0] == book
+        ]
+        if corrections:
+            lines += [
+                "## Corrections of shared Greek",
+                "",
+                "The editor's corrections of the English where the TR and RP2026 have the same Greek, without TR notes.",
+                "",
+            ]
+            for row in corrections:
+                lines += rendering_section(row, context, index, prepared)
         # A section shows its verse's loose rows; list the rest after them.
         sectioned = {
             u["ref"] for u in by_book[book] if rows[u["id"]]["disposition"] != "neutral"
@@ -1026,17 +1108,18 @@ def reading(value: object) -> str:
 
 
 def summary(context: Context) -> str:
-    """The reconciliation in figures, for the review: how many units of
-    each disposition, how each witness's rows were read, the inventory rows
-    that match no unit, and the verses the CrossWire bridge could not align."""
+    """The reconciliation in figures, for the review: how many units (and
+    corrections of shared Greek) of each disposition, how each witness's rows
+    were read, the inventory rows that match no unit, and the verses the
+    CrossWire bridge could not align."""
     c = Counter
     lines = ["# The Byzantine New Testament", ""]
     rows = context["dispositions"]
-    lines += ["## Dispositions", "", "| Disposition | Units |", "| --- | --- |"]
+    lines += ["## Dispositions", "", "| Disposition | Rows |", "| --- | --- |"]
     lines += [
         f"| {d} | {n} |" for d, n in sorted(c(r["disposition"] for r in rows).items())
     ]
-    lines += ["", "| Action | Units |", "| --- | --- |"]
+    lines += ["", "| Action | Rows |", "| --- | --- |"]
     lines += [f"| {a} | {n} |" for a, n in sorted(c(r["action"] for r in rows).items())]
     lines += [
         "",

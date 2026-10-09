@@ -1,5 +1,5 @@
 {
-  "why": "The New Testament is the King James Version conformed to the Robinson-Pierpont Byzantine text of 2026 wherever that text differs translatably from the Received Text it was made from. The build decides every Greek difference from the pinned sources; what it cannot decide, or decides otherwise than the editor, is recorded here. readings: the editor's wording where no published instruction settles a unit, or a ruling that a reported difference is not applied, keyed by the unit's id, with one from: and one gram: tag, a reason of at most two sentences, and evidence quoted from the sources, which the build checks verbatim. structure: the verses the Byzantine text lacks or places elsewhere. accents: a difference of accent or breathing alone, which the unaccented texts cannot show, made a unit, keyed by the unit's id, with the TR's and RP's accented words, which the build checks against the printed RP2026 and Boyd's apparatus. hodges-farstad: the side of Hodges and Farstad's edition where no apparatus the build reads gives it, keyed by the unit's id. lemmas: a Textus Receptus footnote's lemma widened by hand, keyed by the note.",
+  "why": "The New Testament is the King James Version conformed to the Robinson-Pierpont Byzantine text of 2026 wherever that text differs translatably from the Received Text it was made from. The build decides every Greek difference from the pinned sources; what it cannot decide, or decides otherwise than the editor, is recorded here. readings: the editor's wording where no published instruction settles a unit, or a ruling that a reported difference is not applied, keyed by the unit's id, with one from: and one gram: tag, a reason of at most two sentences, and evidence quoted from the sources, which the build checks verbatim; or, keyed by a verse, a correction of the English where TR and RP2026 share the Greek, each edit with the printed RP2026 Greek it renders, which the build checks touches no difference, and no TR note. structure: the verses the Byzantine text lacks or places elsewhere. accents: a difference of accent or breathing alone, which the unaccented texts cannot show, made a unit, keyed by the unit's id, with the TR's and RP's accented words, which the build checks against the printed RP2026 and Boyd's apparatus. hodges-farstad: the side of Hodges and Farstad's edition where no apparatus the build reads gives it, keyed by the unit's id. lemmas: a Textus Receptus footnote's lemma widened by hand, keyed by the note.",
   "readings": {
     "MAT 5:39#1": {
       "units": [
@@ -587,6 +587,50 @@
         }
       }
     },
+    "MAT 24:32": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "MAT 24:32",
+          "from": "yet",
+          "to": "now",
+          "greek": "ἤδη"
+        }
+      ],
+      "why": "ἤδη marks the branch’s already-present tenderness as a sign that summer is near. Affirmative “yet” suggests continuing tenderness; “now” preserves the temporal relation while retaining the King James condition and wording.",
+      "evidence": {
+        "rv": {
+          "ref": "MAT 24:32",
+          "quote": "when her branch is now become tender"
+        },
+        "boyd-asv": {
+          "ref": "MAT 24:32",
+          "quote": "when her branch is now become tender"
+        }
+      }
+    },
+    "MAT 25:8": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "MAT 25:8",
+          "from": "are gone out",
+          "to": "are going out",
+          "greek": "σβέννυνται"
+        }
+      ],
+      "why": "The present passive σβέννυνται describes the lamps going out as their oil fails, rather than extinction already completed. ‘Are going out’ preserves the ongoing condition reported as the reason for seeking oil, without altering the rest of the King James sentence.",
+      "evidence": {
+        "rv": {
+          "ref": "MAT 25:8",
+          "quote": "for our lamps are going out."
+        },
+        "boyd-asv": {
+          "ref": "MAT 25:8",
+          "quote": "for our lamps are going out."
+        }
+      }
+    },
     "MAT 26:33#2": {
       "units": [
         {
@@ -838,6 +882,28 @@
         }
       }
     },
+    "MRK 4:37": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "MRK 4:37",
+          "from": "full",
+          "to": "filling",
+          "greek": "αὐτὸ ἤδη γεμίζεσθαι"
+        }
+      ],
+      "why": "In the result clause, the waves beating into the ship cause it already to be filling with water. “Full” states a completed condition; “filling” preserves the continuing ingress that occasions the disciples’ alarm, while leaving the rest of the KJV narrative unchanged.",
+      "evidence": {
+        "rv": {
+          "ref": "MRK 4:37",
+          "quote": "the boat was now filling."
+        },
+        "boyd-asv": {
+          "ref": "MRK 4:37",
+          "quote": "it was now filling."
+        }
+      }
+    },
     "MRK 5:11#1": {
       "units": [
         {
@@ -887,7 +953,7 @@
         "from:editor",
         "gram:particle"
       ],
-      "why": "RP omits kai before the seeing clause; removing and leaves the KJV’s dependent seeing construction intact.",
+      "why": "RP omits kai before the participles naming them that wept and wailed; removing and retains the KJV’s asyndetic objects of seeth, the tumult and the mourners.",
       "evidence": {
         "faa": {
           "entry": "MRK 5:38#1",
@@ -921,6 +987,42 @@
         "rv": {
           "ref": "MRK 6:9",
           "quote": "put not on two coats."
+        }
+      }
+    },
+    "MRK 6:11": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "MRK 6:11",
+          "from": "Sodom and Gomorrha",
+          "to": "Sodom or Gomorrha",
+          "greek": "Σοδόμοις ἢ Γομόρροις"
+        }
+      ],
+      "why": "The shared Greek disjunction names Sodom or Gomorrha as alternatives in the comparison with the rejecting city; retain that relation rather than coordinating the cities with and. Boyd’s ASV corroborates or, with the existing KJV names retained.",
+      "evidence": {
+        "boyd-asv": {
+          "ref": "MRK 6:11",
+          "quote": "It shall be more tolerable for Sodom or Gomorrah in the day of judgment, than for that city."
+        }
+      }
+    },
+    "MRK 7:4": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "MRK 7:4",
+          "from": "tables",
+          "to": "beds",
+          "greek": "κλινῶν"
+        }
+      ],
+      "why": "κλινῶν names beds or reclining couches among the objects ritually washed. The 1611 margin already offers beds; tables substitutes a different object for the shared Greek.",
+      "evidence": {
+        "boyd-asv": {
+          "ref": "MRK 7:4",
+          "quote": "and couches"
         }
       }
     },
@@ -1204,6 +1306,24 @@
         }
       }
     },
+    "MRK 11:17": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "MRK 11:17",
+          "from": "shall be called of all nations the house of prayer",
+          "to": "shall be called a house of prayer for all nations",
+          "greek": "οἶκος προσευχῆς κληθήσεται πᾶσιν τοῖς ἔθνεσιν"
+        }
+      ],
+      "why": "πᾶσιν τοῖς ἔθνεσιν names those for whom the house is a house of prayer, as in Isaiah 56:7, rather than the agents of its naming. Follow the Revised Version’s articleless predicate rendering “a house of prayer”, also supported by Boyd’s Byzantine ASV, while retaining the King James wording “all nations” in the phrase “for all nations”.",
+      "evidence": {
+        "rv": {
+          "ref": "MRK 11:17",
+          "quote": "My house shall be called a house of prayer for all the nations"
+        }
+      }
+    },
     "MRK 11:32#1": {
       "units": [
         {
@@ -1382,6 +1502,46 @@
         }
       }
     },
+    "MRK 16:1": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "MRK 16:1",
+          "from": "had bought",
+          "to": "bought",
+          "greek": "ἠγόρασαν"
+        }
+      ],
+      "why": "The temporal genitive absolute διαγενομένου τοῦ σαββάτου places the purchase after the sabbath had passed. ‘Bought’ gives the purchase at that point in the narrative; ‘had bought’ instead makes it already completed at the stated time, obscuring the temporal relation. Retain the surrounding King James wording and the separate supplied-word decision for Mary.",
+      "evidence": {
+        "rv": {
+          "ref": "MRK 16:1",
+          "quote": "bought spices"
+        },
+        "boyd-asv": {
+          "ref": "MRK 16:1",
+          "quote": "bought spices"
+        }
+      }
+    },
+    "LUK 2:10": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "LUK 2:10",
+          "from": "all people",
+          "to": "all the people",
+          "greek": "παντὶ τῷ λαῷ"
+        }
+      ],
+      "why": "In the Davidic announcement, παντὶ τῷ λαῷ refers to the whole people, continuing the collective reference of Luke 1:68 and 1:77. “All the people” preserves that scope without naming its recipients more specifically; “all people” suggests an unrestricted reference to persons.",
+      "evidence": {
+        "rv": {
+          "ref": "LUK 2:10",
+          "quote": "which shall be to all the people:"
+        }
+      }
+    },
     "LUK 2:12#1": {
       "units": [
         {
@@ -1428,6 +1588,24 @@
         "rv": {
           "ref": "LUK 3:2",
           "quote": "in the high-priesthood of Annas and Caiaphas"
+        }
+      }
+    },
+    "LUK 3:23": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "LUK 3:23",
+          "from": "And Jesus himself began to be about thirty years of age",
+          "to": "And Jesus himself, when he began, was about thirty years of age",
+          "greek": "Καὶ αὐτὸς ἦν ὁ Ἰησοῦς ὡσεὶ ἐτῶν τριάκοντα ἀρχόμενος"
+        }
+      ],
+      "why": "ἦν states Jesus’ age when he was beginning; ἀρχόμενος does not make him begin to be thirty. Follow the witnessed clause relation while leaving the object of beginning implicit, as the Greek does, and retaining the surrounding King James genealogy.",
+      "evidence": {
+        "boyd-asv": {
+          "ref": "LUK 3:23",
+          "quote": "And Jesus himself, when he began to teach, was about thirty years of age"
         }
       }
     },
@@ -1509,6 +1687,46 @@
         "boyd-asv": {
           "ref": "LUK 5:19",
           "quote": "And not finding by what way they might bring him in because of the multitude"
+        }
+      }
+    },
+    "LUK 5:36": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "LUK 5:36",
+          "from": "the new maketh a rent",
+          "to": "he rendeth the new",
+          "greek": "τὸ καινὸν σχίζει"
+        }
+      ],
+      "why": "The person putting the patch on the old garment remains the subject of σχίζει, and τὸ καινόν names the new garment he rends. The King James wording instead makes the new garment or patch the agent making a rent; retain the surrounding coordination while restoring the subject and object, as Boyd’s Byzantine ASV does.",
+      "evidence": {
+        "boyd-asv": {
+          "ref": "LUK 5:36",
+          "quote": "else he rendeth the new"
+        }
+      }
+    },
+    "LUK 6:16": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "LUK 6:16",
+          "from": "the brother",
+          "to": "[the son]",
+          "greek": "Ἰούδαν Ἰακώβου"
+        }
+      ],
+      "why": "The name followed by a personal genitive supplies the patronymic in this apostolic list, as with James son of Alpheus in the preceding verse. Supply “the son” for Judas’s relation to James, without identifying him with Jude or supplying a different family relationship.",
+      "evidence": {
+        "rv": {
+          "ref": "LUK 6:16",
+          "quote": "Judas the son of James"
+        },
+        "boyd-asv": {
+          "ref": "LUK 6:16",
+          "quote": "Judas the son of James"
         }
       }
     },
@@ -1740,6 +1958,28 @@
         "boyd-asv": {
           "ref": "LUK 10:6",
           "quote": "And if a son of peace be there, your peace shall rest upon him: but if not, it shall turn to you again."
+        }
+      }
+    },
+    "LUK 10:6": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "LUK 10:6",
+          "from": "upon it",
+          "to": "upon him",
+          "greek": "ἐπ’ αὐτὸν"
+        }
+      ],
+      "why": "The masculine αὐτὸν refers to the son of peace, not to the feminine house of verse 5. “Upon him” preserves the personal recipient of the peace, while the later “it” still refers to the peace that returns to the messengers.",
+      "evidence": {
+        "rv": {
+          "ref": "LUK 10:6",
+          "quote": "your peace shall rest upon him"
+        },
+        "boyd-asv": {
+          "ref": "LUK 10:6",
+          "quote": "your peace shall rest upon him"
         }
       }
     },
@@ -2075,6 +2315,24 @@
         }
       }
     },
+    "LUK 17:18": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "LUK 17:18",
+          "from": "There are not found",
+          "to": "Were there none found",
+          "greek": "Οὐχ εὑρέθησαν"
+        }
+      ],
+      "why": "RP2026 prints this as the third reproachful question after the two questions in verse 17. Interrogative order carries that construction, while the aorist passive refers to the failure to find returning men; the exception and the rest of the KJV sentence remain unchanged.",
+      "evidence": {
+        "rv": {
+          "ref": "LUK 17:18",
+          "quote": "Were there none found that returned to give glory to God, save this stranger?"
+        }
+      }
+    },
     "LUK 20:31#2": {
       "units": [
         {
@@ -2213,6 +2471,50 @@
         }
       }
     },
+    "LUK 23:15": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "LUK 23:15",
+          "from": "done unto him",
+          "to": "done by him",
+          "greek": "πεπραγμένον αὐτῷ"
+        }
+      ],
+      "why": "With the perfect passive πεπραγμένον, αὐτῷ names the agent: nothing deserving death has been done by Jesus. Pilate is assessing the charges against him, not describing something done to him; “by him” restores that relation while retaining the KJV clause.",
+      "evidence": {
+        "rv": {
+          "ref": "LUK 23:15",
+          "quote": "nothing worthy of death hath been done by him"
+        },
+        "boyd-asv": {
+          "ref": "LUK 23:15",
+          "quote": "nothing worthy of death hath been done by him"
+        }
+      }
+    },
+    "LUK 23:42": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "LUK 23:42",
+          "from": "into thy kingdom",
+          "to": "in thy kingdom",
+          "greek": "ἐν τῇ βασιλείᾳ σου"
+        }
+      ],
+      "why": "The prepositional phrase qualifies coming in royal power: ἐν with the dative here describes the state in which he comes, rather than entry into the kingdom. “In thy kingdom” preserves the Greek construction and the KJV diction without specifying the time or manner of its fulfilment.",
+      "evidence": {
+        "rv": {
+          "ref": "LUK 23:42",
+          "quote": "when thou comest in thy kingdom"
+        },
+        "boyd-asv": {
+          "ref": "LUK 23:42",
+          "quote": "when thou comest in thy kingdom"
+        }
+      }
+    },
     "LUK 23:54#1": {
       "units": [
         {
@@ -2272,6 +2574,24 @@
         "boyd-asv": {
           "ref": "JHN 3:23",
           "quote": "near to Salem"
+        }
+      }
+    },
+    "JHN 4:29": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "JHN 4:29",
+          "from": "is not this the Christ",
+          "to": "can this be the Christ",
+          "greek": "μήτι οὗτός ἐστιν ὁ χριστός"
+        }
+      ],
+      "why": "μήτι frames the woman’s identification as a tentative question rather than the affirmative-expecting question expressed by “is not this.” The RV wording preserves that uncertainty and her invitation to investigate without settling her belief.",
+      "evidence": {
+        "rv": {
+          "ref": "JHN 4:29",
+          "quote": "can this be the Christ?"
         }
       }
     },
@@ -2335,6 +2655,24 @@
         }
       }
     },
+    "JHN 6:21": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "JHN 6:21",
+          "from": "they willingly received",
+          "to": "they were willing to receive",
+          "greek": "Ἤθελον οὖν λαβεῖν"
+        }
+      ],
+      "why": "Ἤθελον with λαβεῖν states willingness to receive Jesus into the ship; it does not assert completed reception. 'Were willing to receive' leaves that action unstated before the immediate arrival at land, instead of resolving the sequence by translating willingness as accomplished boarding.",
+      "evidence": {
+        "rv": {
+          "ref": "JHN 6:21",
+          "quote": "They were willing therefore to receive him into the boat"
+        }
+      }
+    },
     "JHN 6:39#1": {
       "units": [
         {
@@ -2388,6 +2726,46 @@
         "boyd-asv": {
           "ref": "JHN 6:44",
           "quote": "raise him up in the last day"
+        }
+      }
+    },
+    "JHN 7:22": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "JHN 7:22",
+          "from": "not because",
+          "to": "not that",
+          "greek": "περιτομήν—οὐχ ὅτι"
+        }
+      ],
+      "why": "The parenthetic οὐχ ὅτι ... ἀλλ’ corrects the origin of circumcision, from the fathers rather than Moses, rather than denying a reason for Moses’ giving it. “Not that” preserves that clause relation in King James diction.",
+      "evidence": {
+        "rv": {
+          "ref": "JHN 7:22",
+          "quote": "not that it is of Moses, but of the fathers"
+        },
+        "boyd-asv": {
+          "ref": "JHN 7:22",
+          "quote": "not that it is of Moses, but of the fathers"
+        }
+      }
+    },
+    "JHN 7:52": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "JHN 7:52",
+          "from": "out of Galilee ariseth no prophet",
+          "to": "out of Galilee no prophet hath arisen",
+          "greek": "προφήτης ἐκ τῆς Γαλιλαίας οὐκ ἐγήγερται"
+        }
+      ],
+      "why": "The command to search appeals to the historical record, and the perfect οὐκ ἐγήγερται denies that a prophet has arisen from Galilee. The KJV present ariseth states a general rule instead; no prophet hath arisen retains the retrospective claim without harmonizing or correcting it.",
+      "evidence": {
+        "boyd-asv": {
+          "ref": "JHN 7:52",
+          "quote": "out of Galilee no prophet hath arisen."
         }
       }
     },
@@ -2529,6 +2907,28 @@
         "boyd-asv": {
           "ref": "JHN 8:11",
           "quote": "Neither do I judge thee"
+        }
+      }
+    },
+    "JHN 8:21": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "JHN 8:21",
+          "from": "your sins",
+          "to": "your sin",
+          "greek": "ἐν τῇ ἁμαρτίᾳ ὑμῶν"
+        }
+      ],
+      "why": "The singular ἁμαρτίᾳ here can name collective sin or a particular sin without deciding which; plural sins asserts multiplicity. Preserve that reference and its distinction from the plural in 8:24 without identifying the sin more narrowly than the Greek does.",
+      "evidence": {
+        "rv": {
+          "ref": "JHN 8:21",
+          "quote": "shall die in your sin"
+        },
+        "boyd-asv": {
+          "ref": "JHN 8:21",
+          "quote": "shall die in your sin"
         }
       }
     },
@@ -2803,6 +3203,28 @@
         }
       }
     },
+    "JHN 18:17": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "JHN 18:17",
+          "from": "Art not thou also",
+          "to": "Art thou also",
+          "greek": "Μὴ καὶ σὺ ἐκ τῶν μαθητῶν εἶ τοῦ ἀνθρώπου τούτου"
+        }
+      ],
+      "why": "Μὴ frames the doorkeeper’s question as tentative and negative-expecting; “Art not thou also” instead invites affirmative agreement. Remove “not” using the RV and Boyd wording while retaining the rest of the question and Peter’s denial.",
+      "evidence": {
+        "rv": {
+          "ref": "JHN 18:17",
+          "quote": "Art thou also one of this man’s disciples?"
+        },
+        "boyd-asv": {
+          "ref": "JHN 18:17",
+          "quote": "Art thou also one of this man’s disciples?"
+        }
+      }
+    },
     "JHN 18:20#1": {
       "units": [
         {
@@ -2940,7 +3362,7 @@
         "from:pierpont",
         "gram:name"
       ],
-      "why": "Pierpont 292 omits Thomas; Jesus' words then begin with Because, capitalized as in the RV.",
+      "why": "Pierpont 292 omits Thomas; Jesus' words then begin with Because, capitalized as in the RV. Retain the RV’s declarative construction and the KJV colon before blessed: the perfect indicative πεπίστευκας permits a statement, although RP2026 punctuates it as a question.",
       "evidence": {
         "pierpont": {
           "entry": 292,
@@ -2949,6 +3371,82 @@
         "rv": {
           "ref": "JHN 20:29",
           "quote": "Jesus saith unto him, Because thou hast seen me"
+        }
+      }
+    },
+    "ACT 1:13": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "ACT 1:13",
+          "from": "the brother",
+          "to": "[the son]",
+          "greek": "Ἰούδας Ἰακώβου"
+        }
+      ],
+      "why": "Within the apostolic list, the adjacent bare name genitive in James of Alpheus is patronymic. Judas of James follows the same construction; supplying brother asserts a different relationship unsupported by this context. Supply son without identifying Judas with the author of Jude.",
+      "evidence": {
+        "rv": {
+          "ref": "ACT 1:13",
+          "quote": "Judas the son of James"
+        },
+        "boyd-asv": {
+          "ref": "ACT 1:13",
+          "quote": "Judas the son of James"
+        }
+      }
+    },
+    "ACT 2:47": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "ACT 2:47",
+          "from": "should be saved",
+          "to": "were saved",
+          "greek": "τοὺς σῳζομένους"
+        }
+      ],
+      "why": "The present passive participle identifies those experiencing salvation as the Lord adds them daily to the church, rather than a class defined by prospective or destined salvation. Were saved retains the King James construction such as and states their condition at the narrated addition without imposing a progressive formula.",
+      "evidence": {
+        "boyd-asv": {
+          "ref": "ACT 2:47",
+          "quote": "those that were saved."
+        }
+      }
+    },
+    "ACT 3:19": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "ACT 3:19",
+          "from": "when the times of refreshing shall come",
+          "to": "that [the] times of refreshing may come",
+          "greek": "ὅπως ἂν ἔλθωσιν καιροὶ ἀναψύξεως"
+        }
+      ],
+      "why": "The ὅπως ἂν clause with the subjunctive states the purpose or result of repentance, not the time at which sins are blotted out; its second coordinated verb continues in verse 20. Preserve this clause relation in King James diction.",
+      "evidence": {
+        "rv": {
+          "ref": "ACT 3:19",
+          "quote": "that so there may come seasons of refreshing from the presence of the Lord"
+        }
+      }
+    },
+    "ACT 3:20": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "ACT 3:20",
+          "from": "and he shall send",
+          "to": "and he may send",
+          "greek": "καὶ ἀποστείλῃ"
+        }
+      ],
+      "why": "This subjunctive is coordinated with ἔλθωσιν under the ὅπως purpose clause in verse 19; render the dependence together with the correction of when to that there. The existing foreordination and name-order readings remain separate.",
+      "evidence": {
+        "rv": {
+          "ref": "ACT 3:20",
+          "quote": "and that he may send the Christ who hath been appointed for you, even Jesus:"
         }
       }
     },
@@ -3516,6 +4014,42 @@
         }
       }
     },
+    "ACT 16:22": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "ACT 16:22",
+          "from": "beat them",
+          "to": "beat [them] with rods",
+          "greek": "ῥαβδίζειν"
+        }
+      ],
+      "why": "ῥαβδίζειν specifies beating with rods. Generic beat omits the kind of punishment ordered by the magistrates; restore it in KJV diction while retaining the supplied object.",
+      "evidence": {
+        "rv": {
+          "ref": "ACT 16:22",
+          "quote": "commanded to beat them with rods."
+        }
+      }
+    },
+    "ACT 16:29": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "ACT 16:29",
+          "from": "a light",
+          "to": "lights",
+          "greek": "φῶτα"
+        }
+      ],
+      "why": "The jailor calls for lights: φῶτα is plural, whereas a light presents a singular light source. Preserve the expressed number with the smallest change to the KJV sentence.",
+      "evidence": {
+        "rv": {
+          "ref": "ACT 16:29",
+          "quote": "And he called for lights, and sprang in,"
+        }
+      }
+    },
     "ACT 16:37#1": {
       "units": [
         {
@@ -3656,6 +4190,28 @@
         "boyd-asv": {
           "ref": "ACT 18:21",
           "quote": "He set sail from Ephesus"
+        }
+      }
+    },
+    "ACT 19:20": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "ACT 19:20",
+          "from": "God",
+          "to": "the Lord",
+          "greek": "τοῦ κυρίου"
+        }
+      ],
+      "why": "The shared Greek names the word of the Lord (τοῦ κυρίου), leaving that divine title and its reference intact. God replaces the stated title with another designation and can resolve its reference more narrowly. Restore the Lord while preserving the remaining King James sentence.",
+      "evidence": {
+        "rv": {
+          "ref": "ACT 19:20",
+          "quote": "word of the Lord"
+        },
+        "boyd-asv": {
+          "ref": "ACT 19:20",
+          "quote": "word of the Lord"
         }
       }
     },
@@ -4030,6 +4586,28 @@
         }
       }
     },
+    "ACT 24:3": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "ACT 24:3",
+          "from": "always",
+          "to": "in all ways",
+          "greek": "πάντῃ"
+        }
+      ],
+      "why": "πάντῃ gives the manner or respects in which the benefits are accepted, coordinated with πανταχοῦ for place. Always substitutes a temporal claim; in all ways preserves the two distinct scopes with the smallest change to the KJV sentence.",
+      "evidence": {
+        "rv": {
+          "ref": "ACT 24:3",
+          "quote": "we accept it in all ways and in all places"
+        },
+        "boyd-asv": {
+          "ref": "ACT 24:3",
+          "quote": "we accept it in all ways and in all places"
+        }
+      }
+    },
     "ACT 24:6#1+ACT 24:8#1": {
       "units": [
         {
@@ -4222,6 +4800,24 @@
         "tcent": {
           "entry": 198,
           "quote": "any fault in this 72.6% ¦ anything wrong about the CT 9.3% ¦ anything wrong about this SCR 2.9%"
+        }
+      }
+    },
+    "ACT 25:11": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "ACT 25:11",
+          "from": "or have committed",
+          "to": "and have committed",
+          "greek": "καὶ ἄξιον θανάτου πέπραχά τι"
+        }
+      ],
+      "why": "The conditional coordinates wrongdoing and commission of an offence worthy of death with καί. Or makes either condition sufficient for accepting death; and retains Paul’s concession concerning a capital offence without broadening it to wrongdoing generally.",
+      "evidence": {
+        "rv": {
+          "ref": "ACT 25:11",
+          "quote": "and have committed anything worthy of death"
         }
       }
     },
@@ -4439,6 +5035,30 @@
         }
       }
     },
+    "ACT 27:40": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "ACT 27:40",
+          "from": "taken up the anchors, they committed themselves unto the sea",
+          "to": "cast off the anchors, they left [them] in the sea",
+          "greek": "τὰς ἀγκύρας περιελόντες εἴων εἰς τὴν θάλασσαν"
+        },
+        {
+          "ref": "ACT 27:40",
+          "from": "mainsail",
+          "to": "foresail",
+          "greek": "τὸν ἀρτέμονα"
+        }
+      ],
+      "why": "The anchors are removed from their fastening and left in the sea as the ship heads for shore; εἴων continues their reference, not a new reflexive object denoting the sailors. Replace the whole mistaken construction, marking the necessary resumed English object as supplied. The nautical ἀρτέμονα names the foresail raised to the wind for the approach to shore; mainsail identifies a different sail. Keep the KJV sentence and historical verb hoised.",
+      "evidence": {
+        "rv": {
+          "ref": "ACT 27:40",
+          "quote": "casting off the anchors, they left them in the sea, at the same time loosing the bands of the rudders; and hoisting up the foresail to the wind"
+        }
+      }
+    },
     "ACT 28:11#1": {
       "units": [
         {
@@ -4472,6 +5092,28 @@
         }
       }
     },
+    "ACT 28:14": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "ACT 28:14",
+          "from": "went toward Rome",
+          "to": "came to Rome",
+          "greek": "εἰς τὴν Ῥώμην ἤλθομεν"
+        }
+      ],
+      "why": "The aorist ἤλθομεν with εἰς τὴν Ῥώμην states arrival at Rome, a summary of the journey whose final details follow in verses 15–16. ‘Went toward Rome’ expresses only movement in its direction; ‘came to Rome’ preserves the stated destination and completed arrival.",
+      "evidence": {
+        "rv": {
+          "ref": "ACT 28:14",
+          "quote": "and so we came to Rome."
+        },
+        "boyd-asv": {
+          "ref": "ACT 28:14",
+          "quote": "and so we came to Rome."
+        }
+      }
+    },
     "ACT 28:27#1": {
       "units": [
         {
@@ -4491,6 +5133,28 @@
         "rv": {
           "ref": "ACT 28:27",
           "quote": "And I should heal them."
+        }
+      }
+    },
+    "ROM 5:21": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "ROM 5:21",
+          "from": "unto death",
+          "to": "in death",
+          "greek": "ἐν τῷ θανάτῳ"
+        }
+      ],
+      "why": "ἐν τῷ θανάτῳ places sin's reign in death, whereas εἰς ζωὴν αἰώνιον gives the goal of grace's reign. 'Unto death' changes the former relation into a goal or result; 'in death' preserves the contrast without specifying whether death is understood as the sphere or manifestation of that reign.",
+      "evidence": {
+        "rv": {
+          "ref": "ROM 5:21",
+          "quote": "as sin reigned in death"
+        },
+        "boyd-asv": {
+          "ref": "ROM 5:21",
+          "quote": "as sin reigned in death"
         }
       }
     },
@@ -4523,6 +5187,28 @@
         "boyd-asv": {
           "ref": "ROM 6:1",
           "quote": "Do we continue in sin"
+        }
+      }
+    },
+    "ROM 6:17": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "ROM 6:17",
+          "from": "which was delivered you",
+          "to": "whereto ye were delivered",
+          "greek": "εἰς ὃν παρεδόθητε"
+        }
+      ],
+      "why": "The second-person passive παρεδόθητε makes the believers those delivered to the form of doctrine, not the doctrine something delivered to them. Adopt the 1611 margin’s “whereto ye were delivered,” preserving the direction of εἰς ὃν; RV and Boyd corroborate that construction.",
+      "evidence": {
+        "rv": {
+          "ref": "ROM 6:17",
+          "quote": "whereunto ye were delivered"
+        },
+        "boyd-asv": {
+          "ref": "ROM 6:17",
+          "quote": "whereunto ye were delivered"
         }
       }
     },
@@ -4729,6 +5415,24 @@
         }
       }
     },
+    "ROM 15:30": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "ROM 15:30",
+          "from": "for the Lord Jesus Christ’s sake",
+          "to": "for our Lord Jesus Christ’s sake",
+          "greek": "διὰ τοῦ κυρίου ἡμῶν Ἰησοῦ χριστοῦ"
+        }
+      ],
+      "why": "The appeal to the brethren names Jesus Christ as our Lord (ἡμῶν), explicitly grounding it in their shared relation to him. Restore that relation while retaining the King James for ... sake construction.",
+      "evidence": {
+        "rv": {
+          "ref": "ROM 15:30",
+          "quote": "Now I beseech you, brethren, by our Lord Jesus Christ, and by the love of the Spirit, that ye strive together with me in your prayers to God for me;"
+        }
+      }
+    },
     "ROM 16:27#1": {
       "units": [
         {
@@ -4885,6 +5589,50 @@
         }
       }
     },
+    "1CO 8:6": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "1CO 8:6",
+          "from": "in him",
+          "to": "for him",
+          "greek": "εἰς αὐτόν"
+        }
+      ],
+      "why": "In the contrast with all things being of the Father, εἰς αὐτόν presents believers as directed toward him or existing for him, not located in him. Adopt the pinned 1611 margin’s for him, retaining KJV diction and the distinction from the following by him; the RV and Boyd corroborate the directional relation with unto him.",
+      "evidence": {
+        "rv": {
+          "ref": "1CO 8:6",
+          "quote": "and we unto him"
+        },
+        "boyd-asv": {
+          "ref": "1CO 8:6",
+          "quote": "and we unto him"
+        }
+      }
+    },
+    "1CO 10:5": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "1CO 10:5",
+          "from": "many of them",
+          "to": "most of them",
+          "greek": "τοῖς πλείοσιν αὐτῶν"
+        }
+      ],
+      "why": "The substantivized comparative πλείοσιν identifies the greater part of the group that shared the privileges listed in verses 1–4. Many of them omits this majority relation; most of them preserves it with the smallest change to the KJV sentence.",
+      "evidence": {
+        "rv": {
+          "ref": "1CO 10:5",
+          "quote": "with most of them God was not well pleased"
+        },
+        "boyd-asv": {
+          "ref": "1CO 10:5",
+          "quote": "with most of them God was not well pleased"
+        }
+      }
+    },
     "1CO 11:15#1": {
       "units": [
         {
@@ -4917,6 +5665,28 @@
         }
       }
     },
+    "1CO 11:27": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "1CO 11:27",
+          "from": "and drink",
+          "to": "or drink",
+          "greek": "ἢ πίνῃ"
+        }
+      ],
+      "why": "The shared disjunctive ἢ makes either unworthy eating or unworthy drinking sufficient for the warning; and wrongly joins them as a combined condition. Preserve the existing RP additions and correct only this conjunction.",
+      "evidence": {
+        "rv": {
+          "ref": "1CO 11:27",
+          "quote": "or drink the cup of the Lord"
+        },
+        "boyd-asv": {
+          "ref": "1CO 11:27",
+          "quote": "or drink the cup of the Lord"
+        }
+      }
+    },
     "1CO 12:2#1": {
       "units": [
         {
@@ -4946,6 +5716,24 @@
         "rv": {
           "ref": "1CO 12:2",
           "quote": "when ye were Gentiles ye were led away"
+        }
+      }
+    },
+    "1CO 13:5": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "1CO 13:5",
+          "from": "is not easily provoked",
+          "to": "is not provoked",
+          "greek": "οὐ παροξύνεται"
+        }
+      ],
+      "why": "The shared Greek denies being provoked without a degree qualification; \"easily\" weakens the denial by permitting provocation that is sufficiently difficult. Removing it retains the King James predicate and the parallel unqualified negatives describing charity.",
+      "evidence": {
+        "rv": {
+          "ref": "1CO 13:5",
+          "quote": "doth not behave itself unseemly, seeketh not its own, is not provoked, taketh not account of evil;"
         }
       }
     },
@@ -5097,6 +5885,48 @@
         }
       }
     },
+    "2CO 2:5": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "2CO 2:5",
+          "from": "he hath not grieved me",
+          "to": "he hath caused grief, not to me",
+          "greek": "οὐκ ἐμὲ λελύπηκεν,"
+        },
+        {
+          "ref": "2CO 2:5",
+          "from": "but in part: that I may not overcharge you all.",
+          "to": "but in part (that I may not overcharge) to you all.",
+          "greek": "ἀπὸ μέρους—ἵνα μὴ ἐπιβαρῶ—πάντας ὑμᾶς."
+        }
+      ],
+      "why": "RP2026 makes πάντας ὑμᾶς the contrasting object of λελύπηκεν, with ἵνα μὴ ἐπιβαρῶ parenthetical. Follow the RV’s parallel caused sorrow, not to me ... to you all construction, retaining the KJV’s grief and overcharge; caused grief allows the preposition to and makes the attachment grammatical without leaving you all as the object of overcharge.",
+      "evidence": {
+        "rv": {
+          "ref": "2CO 2:5",
+          "quote": "he hath caused sorrow, not to me, but in part (that I press not too heavily) to you all."
+        }
+      }
+    },
+    "2CO 2:14": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "2CO 2:14",
+          "from": "causeth us to triumph",
+          "to": "leadeth us in triumph",
+          "greek": "θριαμβεύοντι ἡμᾶς"
+        }
+      ],
+      "why": "God is the subject of the transitive θριαμβεύοντι and we are its object, the people led in his triumph, rather than those caused to triumph themselves. Leadeth us in triumph preserves that grammatical relation without specifying the participants’ status in the procession.",
+      "evidence": {
+        "rv": {
+          "ref": "2CO 2:14",
+          "quote": "which always leadeth us in triumph in Christ"
+        }
+      }
+    },
     "2CO 3:1#1": {
       "units": [
         {
@@ -5200,6 +6030,42 @@
         "rv": {
           "ref": "2CO 3:10",
           "quote": "For verily that which hath been made glorious hath not been made glorious in this respect"
+        }
+      }
+    },
+    "2CO 4:15": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "2CO 4:15",
+          "from": "that the abundant grace might through the thanksgiving of many redound",
+          "to": "that the abundant grace might through many cause thanksgiving to redound",
+          "greek": "ἵνα ἡ χάρις πλεονάσασα διὰ τῶν πλειόνων τὴν εὐχαριστίαν περισσεύσῃ"
+        }
+      ],
+      "why": "Grace is the subject of περισσεύσῃ and thanksgiving its accusative object, not the means by which grace redounds. Restore the causative relation and attach through to the many, retaining the surrounding KJV diction and the possible attachment of that phrase within the grace-to-thanksgiving construction.",
+      "evidence": {
+        "rv": {
+          "ref": "2CO 4:15",
+          "quote": "that the grace, being multiplied through the many, may cause the thanksgiving to abound unto the glory of God."
+        }
+      }
+    },
+    "2CO 5:14": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "2CO 5:14",
+          "from": "were all dead",
+          "to": "all died",
+          "greek": "οἱ πάντες ἀπέθανον"
+        }
+      ],
+      "why": "The inference from the one death predicates a death of all, not merely their being in a state of death. All died preserves that event and its relation to the purpose of Christ’s death in verse 15, retaining the KJV conditional and diction.",
+      "evidence": {
+        "boyd-asv": {
+          "ref": "2CO 5:14",
+          "quote": "that if one died for all, then all died;"
         }
       }
     },
@@ -5310,6 +6176,60 @@
         }
       }
     },
+    "2CO 11:3": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "2CO 11:3",
+          "from": "simplicity that is in Christ",
+          "to": "simplicity that is toward Christ",
+          "greek": "τῆς ἁπλότητος τῆς εἰς τὸν χριστόν"
+        }
+      ],
+      "why": "The preceding betrothal image concerns the Corinthians’ sincerity directed toward Christ, carried by the attributive εἰς phrase. In Christ can instead locate simplicity in him; restore the directed relation while retaining historical simplicity and omitting the additional purity that RP2026 does not read.",
+      "evidence": {
+        "rv": {
+          "ref": "2CO 11:3",
+          "quote": "But I fear, lest by any means, as the serpent beguiled Eve in his craftiness, your minds should be corrupted from the simplicity and the purity that is toward Christ."
+        }
+      }
+    },
+    "2CO 12:2": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "2CO 12:2",
+          "from": "I knew a man in Christ above fourteen years ago",
+          "to": "I know a man in Christ fourteen years ago",
+          "greek": "Οἶδα ἄνθρωπον ἐν χριστῷ πρὸ ἐτῶν δεκατεσσάρων—εἴτε"
+        }
+      ],
+      "why": "Οἶδα states present knowledge of the man, and πρὸ ἐτῶν δεκατεσσάρων dates his catching up fourteen years before, without the excess implied by above. Retain the bodily uncertainty and the resumed catching-up construction; the comma placement is revised separately.",
+      "evidence": {
+        "rv": {
+          "ref": "2CO 12:2",
+          "quote": "I know a man in Christ, fourteen years ago"
+        }
+      }
+    },
+    "2CO 12:3": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "2CO 12:3",
+          "from": "knew such a man",
+          "to": "know such a man",
+          "greek": "οἶδα τὸν τοιοῦτον ἄνθρωπον—εἴτε"
+        }
+      ],
+      "why": "Paul asserts present knowledge of this man in contrast with his present ignorance of the bodily circumstances and God’s knowledge; knew makes the knowledge assertion past, whereas the past event itself is narrated by ἡρπάγη in the following verse. Retain the KJV sentence and correct only the knowledge predicate.",
+      "evidence": {
+        "rv": {
+          "ref": "2CO 12:3",
+          "quote": "And I know such a man"
+        }
+      }
+    },
     "2CO 12:21#1": {
       "units": [
         {
@@ -5359,6 +6279,28 @@
         }
       }
     },
+    "GAL 1:6": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "GAL 1:6",
+          "from": "into the grace of Christ",
+          "to": "in the grace of Christ",
+          "greek": "ἐν χάριτι χριστοῦ"
+        }
+      ],
+      "why": "The phrase qualifies God’s calling in Christ’s grace, with sphere or means left open; “into” substitutes a destination for that relation. “In” preserves the shared Greek construction with the least change to the KJV wording.",
+      "evidence": {
+        "rv": {
+          "ref": "GAL 1:6",
+          "quote": "I marvel that ye are so quickly removing from him that called you in the grace of Christ unto a different gospel;"
+        },
+        "boyd-asv": {
+          "ref": "GAL 1:6",
+          "quote": "I marvel that ye are so quickly removing from him that called you in the grace of Christ unto a different gospel;"
+        }
+      }
+    },
     "GAL 2:9#1": {
       "units": [
         {
@@ -5381,6 +6323,24 @@
         "boyd-asv": {
           "ref": "GAL 2:9",
           "quote": "we should go unto the Gentiles, and they unto the circumcision"
+        }
+      }
+    },
+    "GAL 5:12": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "GAL 5:12",
+          "from": "they were even cut off which trouble you",
+          "to": "they which trouble you would even cut themselves off",
+          "greek": "καὶ ἀποκόψονται οἱ ἀναστατοῦντες ὑμᾶς"
+        }
+      ],
+      "why": "The future middle ἀποκόψονται makes the troublers themselves the agents of the cutting wished for after the discussion of circumcision. Restore that agency while retaining the cutting idiom and its interpretive ambiguity, using the RV construction in KJV diction.",
+      "evidence": {
+        "rv": {
+          "ref": "GAL 5:12",
+          "quote": "I would that they which unsettle you would even cut themselves off."
         }
       }
     },
@@ -5409,6 +6369,46 @@
         "faa": {
           "entry": "EPH 2:21#1",
           "quote": "every"
+        }
+      }
+    },
+    "EPH 4:32": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "EPH 4:32",
+          "from": "for Christ’s sake",
+          "to": "in Christ",
+          "greek": "ἐν χριστῷ"
+        }
+      ],
+      "why": "The phrase ἐν χριστῷ qualifies God’s forgiving act as in Christ, leaving its sphere or mediation open. For Christ’s sake recasts that relation as motive or benefit; in Christ restores it while retaining the separate RP pronoun correction to us.",
+      "evidence": {
+        "rv": {
+          "ref": "EPH 4:32",
+          "quote": "even as God also in Christ forgave you."
+        },
+        "boyd-asv": {
+          "ref": "EPH 4:32",
+          "quote": "even as God also in Christ forgave us."
+        }
+      }
+    },
+    "EPH 5:13": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "EPH 5:13",
+          "from": "whatsoever doth make manifest",
+          "to": "whatsoever is made manifest",
+          "greek": "πᾶν γὰρ τὸ φανερούμενον"
+        }
+      ],
+      "why": "The substantival passive participle identifies what is made manifest, continuing the preceding passive φανεροῦται. Doth make manifest instead makes it an agent revealing other things; retain whatsoever and the difficult predicate is light while correcting the voice.",
+      "evidence": {
+        "rv": {
+          "ref": "EPH 5:13",
+          "quote": "for everything that is made manifest is light."
         }
       }
     },
@@ -5467,6 +6467,28 @@
         "faa": {
           "entry": "PHP 1:7#1",
           "quote": "in"
+        }
+      }
+    },
+    "PHP 1:14": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "PHP 1:14",
+          "from": "many of the brethren",
+          "to": "most of the brethren",
+          "greek": "τοὺς πλείονας τῶν ἀδελφῶν"
+        }
+      ],
+      "why": "The substantivized comparative with the partitive genitive identifies the greater part of the brethren encouraged by Paul’s bonds. Most preserves this majority relation with the smallest change to the KJV sentence, as in the existing correction of the same construction at 1 Corinthians 10:5.",
+      "evidence": {
+        "rv": {
+          "ref": "PHP 1:14",
+          "quote": "most of the brethren in the Lord"
+        },
+        "boyd-asv": {
+          "ref": "PHP 1:14",
+          "quote": "most of the brethren in the Lord"
         }
       }
     },
@@ -5642,6 +6664,46 @@
         }
       }
     },
+    "1TH 1:4": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "1TH 1:4",
+          "from": "beloved, your election of God",
+          "to": "beloved of God, your election",
+          "greek": "ἠγαπημένοι ὑπὸ θεοῦ, τὴν ἐκλογὴν ὑμῶν"
+        }
+      ],
+      "why": "Ὑπὸ θεοῦ names the agent of the passive ἠγαπημένοι, identifying the brethren as beloved of God; τὴν ἐκλογὴν ὑμῶν remains the object of knowing. Adopt the pinned 1611 alternative by moving of God to beloved, retaining the rest of the KJV sentence.",
+      "evidence": {
+        "rv": {
+          "ref": "1TH 1:4",
+          "quote": "knowing, brethren beloved of God, your election,"
+        },
+        "boyd-asv": {
+          "ref": "1TH 1:4",
+          "quote": "knowing, brethren beloved of God, your election,"
+        }
+      }
+    },
+    "1TH 1:10": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "1TH 1:10",
+          "from": "delivered",
+          "to": "delivereth",
+          "greek": "τὸν ῥυόμενον ἡμᾶς"
+        }
+      ],
+      "why": "The awaited Jesus is identified by his saving function in relation to the coming wrath; the present participle does not make rescue a completed past event alongside the explicitly past resurrection. Delivereth preserves this characteristic role while leaving the timing of the rescue open.",
+      "evidence": {
+        "rv": {
+          "ref": "1TH 1:10",
+          "quote": "even Jesus, which delivereth us from the wrath to come."
+        }
+      }
+    },
     "1TH 2:12#1": {
       "units": [
         {
@@ -5705,6 +6767,46 @@
         }
       }
     },
+    "1TH 4:6": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "1TH 4:6",
+          "from": "any matter",
+          "to": "the matter",
+          "greek": "ἐν τῷ πράγματι"
+        }
+      ],
+      "why": "The definite τῷ points back to the matter under discussion in 4:3–7, sexual conduct. ‘Any matter’ broadens the prohibition into an unrestricted reference to all business; ‘the matter’ retains Paul's allusion without naming the act more specifically than he does.",
+      "evidence": {
+        "rv": {
+          "ref": "1TH 4:6",
+          "quote": "in the matter"
+        },
+        "boyd-asv": {
+          "ref": "1TH 4:6",
+          "quote": "in the matter"
+        }
+      }
+    },
+    "2TH 2:2": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "2TH 2:2",
+          "from": "is at hand",
+          "to": "is now present",
+          "greek": "ἐνέστηκεν"
+        }
+      ],
+      "why": "The perfect ἐνέστηκεν reports the false claim that the day has arrived and is present, not merely that it is approaching. Verse 3 rejects that claim by naming the events that must precede it; retain Christ from the shared TR–RP text and correct only the temporal predicate.",
+      "evidence": {
+        "rv": {
+          "ref": "2TH 2:2",
+          "quote": "as that the day of the Lord is now present;"
+        }
+      }
+    },
     "1TI 1:2#1": {
       "units": [
         {
@@ -5733,6 +6835,24 @@
         }
       }
     },
+    "1TI 4:2": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "1TI 4:2",
+          "from": "speaking lies in hypocrisy, having their conscience",
+          "to": "through the hypocrisy of men that speak lies, having their conscience",
+          "greek": "ἐν ὑποκρίσει ψευδολόγων, κεκαυτηριασμένων τὴν ἰδίαν συνείδησιν"
+        }
+      ],
+      "why": "The genitive liars and their coordinated participles identify the teachers through whose hypocrisy departure occurs, rather than making speaking lies a nominative continuation of giving heed. Restore this mediating relation while retaining the searing image, the possessive their conscience and their following prohibitions.",
+      "evidence": {
+        "rv": {
+          "ref": "1TI 4:2",
+          "quote": "through the hypocrisy of men that speak lies, branded in their own conscience as with a hot iron;"
+        }
+      }
+    },
     "1TI 6:5#1": {
       "units": [
         {
@@ -5758,6 +6878,28 @@
         "pierpont": {
           "entry": 539,
           "quote": "constant quarrelings"
+        }
+      }
+    },
+    "1TI 6:5": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "1TI 6:5",
+          "from": "gain is godliness",
+          "to": "godliness is gain",
+          "greek": "πορισμὸν εἶναι τὴν εὐσέβειαν"
+        }
+      ],
+      "why": "These teachers regard godliness as gain: the articular τὴν εὐσέβειαν is the subject and πορισμόν its predicate, a relation reversed by the KJV. Restore the relation while retaining gain, which also carries πορισμός in the following contrast with godliness accompanied by contentment.",
+      "evidence": {
+        "rv": {
+          "ref": "1TI 6:5",
+          "quote": "supposing that godliness is a way of gain"
+        },
+        "boyd-asv": {
+          "ref": "1TI 6:5",
+          "quote": "supposing that godliness is a way of gain"
         }
       }
     },
@@ -5808,6 +6950,42 @@
         "rv": {
           "ref": "2TI 1:15",
           "quote": "of whom are Phygelus and Hermogenes."
+        }
+      }
+    },
+    "2TI 3:3": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "2TI 3:3",
+          "from": "trucebreakers",
+          "to": "implacable",
+          "greek": "ἄσπονδοι"
+        }
+      ],
+      "why": "The adjective describes those who will admit no truce or reconciliation, rather than the violation of an existing truce. Implacable preserves this meaning in KJV diction, as also at Romans 1:31, and is corroborated here by the RV and Boyd.",
+      "evidence": {
+        "rv": {
+          "ref": "2TI 3:3",
+          "quote": "without natural affection, implacable, slanderers, without self-control, fierce, no lovers of good,"
+        }
+      }
+    },
+    "2TI 4:6": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "2TI 4:6",
+          "from": "am now ready to be offered",
+          "to": "am now offered",
+          "greek": "ἤδη σπένδομαι"
+        }
+      ],
+      "why": "ἤδη σπένδομαι describes a sacrificial offering already in progress as Paul faces his departure, rather than readiness for a future offering. Removing ready to be retains the King James sacrificial diction and present passive while preserving now for ἤδη.",
+      "evidence": {
+        "rv": {
+          "ref": "2TI 4:6",
+          "quote": "For I am already being offered, and the time of my departure is come."
         }
       }
     },
@@ -5868,6 +7046,28 @@
         }
       }
     },
+    "HEB 2:1": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "HEB 2:1",
+          "from": "let them slip",
+          "to": "drift away",
+          "greek": "παραρρυῶμεν"
+        }
+      ],
+      "why": "The first-person plural intransitive παραρρυῶμεν warns that we may drift away from the things heard. Let them slip instead makes those things an object of a causative predicate; drift away restores the Greek subject and relation while leaving the exhortation and lest clause intact.",
+      "evidence": {
+        "rv": {
+          "ref": "HEB 2:1",
+          "quote": "lest haply we drift away from them."
+        },
+        "boyd-asv": {
+          "ref": "HEB 2:1",
+          "quote": "lest haply we drift away from them."
+        }
+      }
+    },
     "HEB 4:2#1": {
       "units": [
         {
@@ -5893,6 +7093,28 @@
         "tcent": {
           "entry": 270,
           "quote": "they were not united by faith with those who listened ¦ it was not mixed with faith in those who heard it TR"
+        }
+      }
+    },
+    "HEB 4:14": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "HEB 4:14",
+          "from": "passed into the heavens",
+          "to": "passed through the heavens",
+          "greek": "διεληλυθότα τοὺς οὐρανούς"
+        }
+      ],
+      "why": "The shared perfect participle of διέρχομαι with the accusative heavens names the region traversed, not merely a destination entered. Through preserves that spatial relation while leaving the KJV perfect construction and the rest of the sentence intact.",
+      "evidence": {
+        "rv": {
+          "ref": "HEB 4:14",
+          "quote": "who hath passed through the heavens"
+        },
+        "boyd-asv": {
+          "ref": "HEB 4:14",
+          "quote": "who hath passed through the heavens"
         }
       }
     },
@@ -5978,6 +7200,42 @@
         }
       }
     },
+    "HEB 6:7": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "HEB 6:7",
+          "from": "by whom",
+          "to": "for whose sake",
+          "greek": "δι’ οὓς"
+        }
+      ],
+      "why": "The accusative after διά names those for whose sake the land is cultivated, not its cultivators; preserve the beneficiary relation without changing the surrounding KJV agricultural diction.",
+      "evidence": {
+        "rv": {
+          "ref": "HEB 6:7",
+          "quote": "for whose sake it is also tilled"
+        }
+      }
+    },
+    "HEB 9:21": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "HEB 9:21",
+          "from": "sprinkled",
+          "to": "likewise sprinkled",
+          "greek": "ὁμοίως"
+        }
+      ],
+      "why": "The separate adverb ὁμοίως says that the tabernacle and ministry vessels were sprinkled in the same manner as the book and people in verse 19. Moreover already introduces the added statement and does not convey this comparison of manner; restore likewise without changing the sprinkling or its objects.",
+      "evidence": {
+        "rv": {
+          "ref": "HEB 9:21",
+          "quote": "he sprinkled in like manner with the blood"
+        }
+      }
+    },
     "HEB 10:1#1": {
       "units": [
         {
@@ -6007,6 +7265,30 @@
         "rv": {
           "ref": "HEB 10:1",
           "quote": "they can never"
+        }
+      }
+    },
+    "HEB 10:1": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "HEB 10:1",
+          "from": "those sacrifices",
+          "to": "the same sacrifices",
+          "greek": "ταῖς αὐταῖς θυσίαις"
+        },
+        {
+          "ref": "HEB 10:1",
+          "from": "which they offered",
+          "to": "which they offer",
+          "greek": "ἃς προσφέρουσιν"
+        }
+      ],
+      "why": "ταῖς αὐταῖς θυσίαις identifies the same sacrifices, and the present προσφέρουσιν describes their recurring offering year after year, not an offering confined to the past. Restore that identity and present action while preserving the surrounding King James wording and the separate plural-verb reading.",
+      "evidence": {
+        "rv": {
+          "ref": "HEB 10:1",
+          "quote": "with the same sacrifices year by year, which they offer continually"
         }
       }
     },
@@ -6240,6 +7522,30 @@
         }
       }
     },
+    "JAS 4:5": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "JAS 4:5",
+          "from": "Do ye think",
+          "to": "Or do ye think",
+          "greek": "Ἢ δοκεῖτε"
+        },
+        {
+          "ref": "JAS 4:5",
+          "from": "saith",
+          "to": "speaketh",
+          "greek": "λέγει"
+        }
+      ],
+      "why": "The initial disjunctive Ἢ links this rhetorical question to the preceding charge of friendship with the world; restore that explicit alternative. Render λέγει as speaketh, following the RV and Boyd’s ASV: the question asks whether scripture speaks in vain, with the spirit clause set independently by the punctuation decision.",
+      "evidence": {
+        "boyd-asv": {
+          "ref": "JAS 4:5",
+          "quote": "Or think ye that the scripture speaketh in vain?"
+        }
+      }
+    },
     "JAS 4:12#1": {
       "units": [
         {
@@ -6385,6 +7691,24 @@
         "boyd-asv": {
           "ref": "JAS 4:15",
           "quote": "let us both live, and do"
+        }
+      }
+    },
+    "JAS 5:3": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "JAS 5:3",
+          "from": "for the last days",
+          "to": "in the last days",
+          "greek": "ἐν ἐσχάταις ἡμέραις"
+        }
+      ],
+      "why": "The shared temporal phrase locates the rich men's hoarding in the last days, the setting of the imminent judgment, rather than making those days the purpose of their hoarding. Replace only the preposition, retaining the KJV diction.",
+      "evidence": {
+        "rv": {
+          "ref": "JAS 5:3",
+          "quote": "Ye have laid up your treasure in the last days."
         }
       }
     },
@@ -6623,6 +7947,24 @@
         }
       }
     },
+    "1PE 4:12": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "1PE 4:12",
+          "from": "the fiery trial",
+          "to": "the fiery trial among you",
+          "greek": "τῇ ἐν ὑμῖν πυρώσει"
+        }
+      ],
+      "why": "The attributive ἐν ὑμῖν locates the fiery trial among the addressees; the later words about its testing purpose do not render this relation. Restore the location in the existing KJV wording, as RV and Boyd do.",
+      "evidence": {
+        "rv": {
+          "ref": "1PE 4:12",
+          "quote": "the fiery trial among you"
+        }
+      }
+    },
     "1PE 5:10#2": {
       "units": [
         {
@@ -6712,6 +8054,24 @@
         }
       }
     },
+    "2PE 1:3": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "2PE 1:3",
+          "from": "to glory and virtue",
+          "to": "by glory and virtue",
+          "greek": "διὰ δόξης καὶ ἀρετῆς"
+        }
+      ],
+      "why": "With genitive δόξης καὶ ἀρετῆς, διά expresses the means or ground of the calling, not its destination. Adopt the KJV translators’ marginal by to preserve this relation with the smallest change.",
+      "evidence": {
+        "boyd-asv": {
+          "ref": "2PE 1:3",
+          "quote": "called us through glory and virtue"
+        }
+      }
+    },
     "2PE 2:2#1": {
       "units": [
         {
@@ -6797,6 +8157,46 @@
         "boyd-asv": {
           "ref": "2PE 2:14",
           "quote": "exercised in covetousness"
+        }
+      }
+    },
+    "2PE 3:12": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "2PE 3:12",
+          "from": "wherein",
+          "to": "by reason of which",
+          "greek": "δι’ ἣν"
+        }
+      ],
+      "why": "The shared δι’ ἣν uses διά with the accusative to give the coming day of God as the reason for the heavens being dissolved. Wherein reduces this causal relation to time; by reason of which preserves it in the existing KJV sentence, following the RV wording.",
+      "evidence": {
+        "rv": {
+          "ref": "2PE 3:12",
+          "quote": "by reason of which the heavens being on fire shall be dissolved"
+        }
+      }
+    },
+    "1JN 2:8": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "1JN 2:8",
+          "from": "is past",
+          "to": "passeth away",
+          "greek": "παράγεται"
+        }
+      ],
+      "why": "The darkness passes away alongside the true light’s already shining, presenting departure as a current transition rather than the completed state asserted by is past. Passeth away preserves this relation in the KJV diction used for the same verb in 1 John 2:17, without specifying when the transition ends.",
+      "evidence": {
+        "rv": {
+          "ref": "1JN 2:8",
+          "quote": "because the darkness is passing away, and the true light already shineth."
+        },
+        "boyd-asv": {
+          "ref": "1JN 2:8",
+          "quote": "because the darkness is passing away, and the true light already shineth."
         }
       }
     },
@@ -6949,19 +8349,63 @@
       "edits": [
         {
           "ref": "2JN 1:3",
-          "from": "Grace be with you",
-          "to": "Grace be with us"
+          "from": "you",
+          "to": "us"
         }
       ],
       "tags": [
         "from:tcent",
         "gram:pronoun"
       ],
-      "why": "The unit is only umwn/hmwn; estai is shared, so Pierpont's shall re-renders unchanged Greek.",
+      "why": "The unit is only umwn/hmwn; replace the pronoun without absorbing the shared future ἔσται, whose KJV rendering is corrected separately.",
       "evidence": {
         "tcent": {
           "entry": 321,
           "quote": "us ¦ you ANT PCK SCR"
+        }
+      }
+    },
+    "2JN 1:3": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "2JN 1:3",
+          "from": "be",
+          "to": "shall be",
+          "greek": "ἔσται"
+        }
+      ],
+      "why": "ἔσται is future indicative, continuing the future statement of verse 2. The KJV's bare ‘be’ reads as a wish or benediction; ‘shall be’ preserves the assertion without altering the separate TR–RP pronoun difference.",
+      "evidence": {
+        "rv": {
+          "ref": "2JN 1:3",
+          "quote": "Grace, mercy, peace shall be with us"
+        },
+        "boyd-asv": {
+          "ref": "2JN 1:3",
+          "quote": "Grace, mercy, peace shall be with us"
+        }
+      }
+    },
+    "3JN 1:2": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "3JN 1:2",
+          "from": "above all things that",
+          "to": "that in all [things]",
+          "greek": "περὶ πάντων"
+        }
+      ],
+      "why": "περὶ πάντων gives the scope of the prayer, concerning all things, rather than saying that prosperity is wished above everything else. Moving ‘that’ keeps the KJV sentence grammatical and retains its supplied-word style.",
+      "evidence": {
+        "rv": {
+          "ref": "3JN 1:2",
+          "quote": "I pray that in all things thou mayest prosper"
+        },
+        "boyd-asv": {
+          "ref": "3JN 1:2",
+          "quote": "I pray that in all things thou mayest prosper"
         }
       }
     },
@@ -6990,6 +8434,24 @@
         "rv": {
           "ref": "3JN 1:7",
           "quote": "for the sake of the Name"
+        }
+      }
+    },
+    "JUD 1:12": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "JUD 1:12",
+          "from": "trees whose fruit withereth",
+          "to": "autumn trees",
+          "greek": "δένδρα φθινοπωρινά"
+        }
+      ],
+      "why": "The shared adjective φθινοπωρινά identifies the trees by the autumn season, not by the withering of their fruit. Autumn trees preserves this seasonal image and leaves the distinct predicates without fruit, twice dead and plucked up by the roots intact.",
+      "evidence": {
+        "rv": {
+          "ref": "JUD 1:12",
+          "quote": "autumn trees without fruit, twice dead, plucked up by the roots;"
         }
       }
     },
@@ -8833,6 +10295,28 @@
         }
       }
     },
+    "REV 9:1": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "REV 9:1",
+          "from": "fall",
+          "to": "fallen",
+          "greek": "πεπτωκότα"
+        }
+      ],
+      "why": "The perfect participle describes the star as already fallen when John sees it, before the key is given to it and it opens the pit. Fallen preserves that state and sequence; fall instead makes the descent the event John witnesses.",
+      "evidence": {
+        "rv": {
+          "ref": "REV 9:1",
+          "quote": "a star from heaven fallen unto the earth"
+        },
+        "boyd-asv": {
+          "ref": "REV 9:1",
+          "quote": "a star from heaven fallen unto the earth"
+        }
+      }
+    },
     "REV 9:10#1+REV 9:10#2": {
       "units": [
         {
@@ -8912,6 +10396,28 @@
         "rv": {
           "ref": "REV 9:14",
           "quote": "which had the trumpet"
+        }
+      }
+    },
+    "REV 9:14": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "REV 9:14",
+          "from": "in the great river Euphrates",
+          "to": "at the great river Euphrates",
+          "greek": "ἐπὶ τῷ ποταμῷ τῷ μεγάλῳ Εὐφράτῃ"
+        }
+      ],
+      "why": "With the geographic landmark ποταμῷ, ἐπί with the dative locates the bound angels at the Euphrates rather than inside its water. At preserves the location without specifying a bank or manner of binding, and leaves the existing contextual rendering of ὁ ἔχων unchanged.",
+      "evidence": {
+        "rv": {
+          "ref": "REV 9:14",
+          "quote": "the four angels which are bound at the great river Euphrates."
+        },
+        "boyd-asv": {
+          "ref": "REV 9:14",
+          "quote": "the four angels that are bound at the great river Euphrates."
         }
       }
     },
@@ -11637,6 +13143,34 @@
         "pierpont": {
           "entry": 948,
           "quote": "+ Behold, I come quickly: blessed"
+        }
+      }
+    },
+    "REV 13:17#1": {
+      "units": [
+        {
+          "ref": "REV 13:17",
+          "tr": "dunhtai",
+          "rp": "dunatai"
+        }
+      ],
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "REV 13:17",
+          "from": "might buy or sell, save he that had",
+          "to": "can buy or sell, save he that hath"
+        }
+      ],
+      "tags": [
+        "from:pierpont",
+        "gram:inflection"
+      ],
+      "why": "RP’s present indicative makes the trading permission current; carry Pierpont’s might-to-can correction through the connected relative condition, where concurrent holding of the mark makes the KJV’s backshifted had become hath. The whole-construction TR note restores might and its original had together.",
+      "evidence": {
+        "pierpont": {
+          "entry": 818,
+          "quote": "can (T"
         }
       }
     }

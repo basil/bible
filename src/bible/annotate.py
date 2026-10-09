@@ -348,7 +348,12 @@ def anchor_category(lemma: list[str], anchor: list[str]) -> str | None:
 
 
 def george(
-    code: str, doc: Document, listed: Sequence[Mapping[str, str]], ctx: Context
+    code: str,
+    doc: Document,
+    listed: Sequence[Mapping[str, str]],
+    ctx: Context,
+    *,
+    original: Document,
 ) -> tuple[Document, Report]:
     """A book of the Cambridge text with the 1611 marginal notes set on it as
     footnotes without callers.
@@ -357,7 +362,9 @@ def george(
     for it in edition/kjv-notes.json where the spelling differs, the lemma
     occurs more than once, or the reference is wrong. The note names the words
     it is anchored at, widened until they occur only once in the verse, and
-    its renderings take in the same words.
+    its renderings take in the same words. Where the text now prints the
+    margin's alternative, a former-reading decision turns the note round to
+    give the King James words it replaced, on a unique current-text anchor.
     """
     policy, report = ctx.policy, Report()
     tongue = citations.dialect("george", policy=policy)
@@ -365,10 +372,45 @@ def george(
     # already: they are printed first, and the 1611 notes set among them.
     doc = with_edition_notes(code, doc, tongue, ctx, report)
     verses = scripture.verses(doc)
+    original_verses = scripture.verses(original)
     changes: list[tuple[scripture.Verse, int, int, Content]] = []
     for note in listed:
         key = note["key"]
         override = policy.kjv_notes["notes"].get(key, {})
+        former = override.get("former")
+        if former is not None:
+            conflicts = set(override) & {
+                "omitted",
+                "note",
+                "lemma",
+                "occurrence",
+                "widen",
+                "quotation",
+                "sentence",
+                "verse",
+            }
+            require(
+                not conflicts,
+                f"Marginal note former conflicts with {sorted(conflicts)}: {key}",
+            )
+            require(
+                "anchor" in override, f"Marginal note former needs an anchor: {key}"
+            )
+            source_verse = original_verses.get(note["reference"])
+            require(
+                former
+                and source_verse is not None
+                and source_verse.text.count(former) == 1
+                and len(
+                    lemmas.occurrences(word_spans(source_verse.text), words_of(former))
+                )
+                == 1,
+                f"Marginal note former not found exactly once in original verse: {key}",
+            )
+            require(
+                words_of(former) != words_of(override["anchor"]),
+                f"Marginal note former changes nothing: {key}",
+            )
         if override.get("omitted"):
             # A note whose reading the Byzantine text prints, or which glosses
             # words of the Received Text the edition no longer has.
@@ -379,7 +421,7 @@ def george(
         verse = verses[reference]
         words = word_spans(verse.text)
         anchor = words_of(override.get("anchor", note["lemma"]))
-        if "anchor" in override:
+        if "anchor" in override and former is None:
             lemma = words_of(note["lemma"])
             require(anchor != lemma, f"Marginal note anchor changes nothing: {key}")
             repairs.check_category(
@@ -392,16 +434,23 @@ def george(
         span, glossed, rule, first = lemmas.anchored(
             verse.text, words, anchor, override.get("occurrence"), override, key
         )
-        pieces = notes.labelled_pieces(note["note"])
+        text = note["note"]
         cited = citations.scan(
-            note["note"],
-            tongue,
-            verse_at(code, reference),
-            key,
-            ctx.inventory,
-            policy=policy,
+            text, tongue, verse_at(code, reference), key, ctx.inventory, policy=policy
         )
+        if former is not None:
+            text, cited = reversed_margin(text, cited, former, anchor, key)
         report.read(tongue, key, cited, policy)
+        body = notes.source_body(
+            notes.labelled_pieces(text),
+            cited,
+            override.get("note"),
+            key,
+            text,
+            quotation=override.get("quotation", False),
+        )
+        if former is not None:
+            body = replace(body, rule="editorial reversal")
         read = Read(
             key,
             "f",
@@ -409,21 +458,45 @@ def george(
             verse,
             words,
             words[first][1],
-            notes.source_body(
-                pieces,
-                cited,
-                override.get("note"),
-                key,
-                note["note"],
-                quotation=override.get("quotation", False),
-            ),
+            body,
             tuple(cited),
             note["note"],
-            note["note"],
+            text,
         )
         footnote = printed(read, span, glossed, rule, override, ctx, report)
         changes.append((verse, read.offset, read.offset, [footnote]))
     return scripture.edited(doc, changes), report
+
+
+def reversed_margin(
+    text: str,
+    cited: Sequence[citations.Citation],
+    former: str,
+    anchor: list[str],
+    key: str,
+) -> tuple[str, list[citations.Citation]]:
+    """A 1611 note whose alternative the text now prints, turned round to
+    give the King James words it replaced: "Or," and the former words in
+    place of its label and alternative, and its citations kept after them."""
+    pieces = notes.labelled_pieces(text)
+    require(
+        bool(pieces) and pieces[0][0] == "label",
+        f"Marginal note former has no label: {key}",
+    )
+    start = len(pieces[0][1])
+    alternative = text[start : cited[0].start if cited else len(text)].rstrip(" ,.")
+    wanted = words_of(alternative)
+    require(
+        bool(wanted)
+        and any(
+            anchor[i : i + len(wanted)] == wanted
+            for i in range(len(anchor) - len(wanted) + 1)
+        ),
+        f"Marginal note former: the text does not print the margin's alternative: {key}",
+    )
+    turned = f"Or, {former}{text[start + len(alternative):]}"
+    shift = len(turned) - len(text)
+    return turned, [replace(c, start=c.start + shift, end=c.end + shift) for c in cited]
 
 
 def spanned(verses: Sequence[bible.references.Verse]) -> str:

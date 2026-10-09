@@ -419,11 +419,18 @@ def execute(
                     if op["kind"] == "insert"
                     else source_content(documents[book], verse, lo, hi)
                 )
-                note = edition_note(
-                    ref,
-                    NOTE_KINDS[op["kind"]],
-                    quotation,
-                    f"{row['unit']} TR#{len(edits) + 1}",
+                # A correction of shared Greek has no TR reading to note.
+                notes = (
+                    []
+                    if row.get("disposition") == "shared"
+                    else [
+                        edition_note(
+                            ref,
+                            NOTE_KINDS[op["kind"]],
+                            quotation,
+                            f"{row['unit']} TR#{len(edits) + 1}",
+                        )
+                    ]
                 )
                 prefix = suffix = ""
                 content = (
@@ -461,7 +468,7 @@ def execute(
                         if verse.text[end : end + 1] and verse.text[end].isalpha()
                         else ""
                     )
-                    content = usj.joined([prefix], content, [note, suffix])
+                    content = usj.joined([prefix], content, [*notes, suffix])
                     seams.append(
                         {
                             "rule": 2,
@@ -471,7 +478,7 @@ def execute(
                         }
                     )
                 else:
-                    content = usj.joined(content, [note])
+                    content = usj.joined(content, notes)
                 planned.append((verse, start, end, content))
                 if op.get("stop"):
                     # An instruction that ends the preceding sentence with a stop
@@ -532,7 +539,7 @@ def execute(
                         "rendered": rendered,
                         "prefix": prefix,
                         "suffix": suffix,
-                        "note": note,
+                        **({"note": notes[0]} if notes else {}),
                         "seams": seams,
                     }
                 )

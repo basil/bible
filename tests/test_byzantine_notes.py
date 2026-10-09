@@ -11,8 +11,9 @@ from typing import NamedTuple
 
 import pytest
 
+import bible.pipeline
 from bible import lemmas, scripture, usj
-from bible.byzantine import notes
+from bible.byzantine import edit, notes
 from bible.byzantine.edit import NOTE_KINDS, NOTE_LABELS
 from bible.byzantine.rows import Disposition, NoteScope
 from bible.byzantine.stages import Context
@@ -177,6 +178,12 @@ def test_every_note_has_the_agreed_shape(edition_notes: list[Found]) -> None:
             assert f["fqa"].strip(), ref
 
 
+def noted(byzantine: Context) -> list[Disposition]:
+    """The rows whose edits carry TR notes: all but the corrections of
+    shared Greek."""
+    return [r for r in byzantine["dispositions"] if r["disposition"] != "shared"]
+
+
 def test_kinds_follow_the_edits(byzantine: Context) -> None:
     def kind(note: Node) -> str:
         found = note["x-scope"]["kind"]
@@ -184,7 +191,7 @@ def test_kinds_follow_the_edits(byzantine: Context) -> None:
         assert fields(note)["ft"] == NOTE_LABELS[found].format(where=where)
         return found
 
-    for row in byzantine["dispositions"]:
+    for row in noted(byzantine):
         for e in row.get("edits", []):
             if e["note_scope"].get("combined") or e["note_scope"].get("full"):
                 assert kind(e["note"]) == "replace", row["unit"]
@@ -202,7 +209,7 @@ def test_kinds_follow_the_edits(byzantine: Context) -> None:
 
 
 def test_the_lemma_contains_the_changed_words(byzantine: Context) -> None:
-    for row in byzantine["dispositions"]:
+    for row in noted(byzantine):
         for e in row.get("edits", []):
             f = fields(e["note"])
             glossed = e["note"]["x-scope"]["glossed"]
@@ -220,11 +227,13 @@ def test_the_alternative_restores_the_source_words(
 ) -> None:
     """Substituting fqa for the lemma gives the KJV words at a replacement."""
     rows = byzantine["dispositions"]
+    shared = {row["ref"] for row in rows if row["disposition"] == "shared"}
     checked = 0
     for row in rows:
         edits = row.get("edits", [])
         if (
             len(edits) != 1
+            or edits[0]["ref"] in shared
             or edits[0]["kind"] != "replace"
             or edits[0]["note_scope"].get("combined")
         ):
@@ -347,9 +356,11 @@ def normalized_note_restoration(text: str) -> str:
 
 
 def test_notes_restore_every_ordinary_edited_verse(byzantine: Context) -> None:
-    edited = {
-        e["ref"] for row in byzantine["dispositions"] for e in row.get("edits", [])
-    } - set(byzantine["structure"].moved)
+    edited = (
+        {e["ref"] for row in byzantine["dispositions"] for e in row.get("edits", [])}
+        - set(byzantine["structure"].moved)
+        - {r["ref"] for r in byzantine["dispositions"] if r["disposition"] == "shared"}
+    )
     checked = set()
     for book, document in byzantine["prepared"].items():
         for address, verse in scripture.verses(document).items():
@@ -552,7 +563,7 @@ def test_alternatives_preserve_the_pinned_kjv_styles(byzantine: Context) -> None
     """Each alternative has the styles of its source range, short and
     structural notes included."""
     owners: dict[str, Owned] = {}
-    for row in byzantine["dispositions"]:
+    for row in noted(byzantine):
         for edit in row.get("edits", []):
             if edit.get("note_owner", True):
                 owners[edit["note"]["x-key"]] = Owned(
@@ -684,3 +695,69 @@ def test_alternative_style_comparison_detects_plain_text_preserving_corruption(
                     assert styled(corrupted) == expected
                 return
     raise AssertionError("No supplied-word alternative exercised")
+
+
+def kingdom() -> dict[str, usj.Document]:
+    return {
+        "MAT": usj.parse("\\id MAT\n\\c 1\n\\p\n\\v 1 And he came into the kingdom.\n")
+    }
+
+
+def replacing(unit: str, disposition: str, at: int, old: str, new: str) -> Disposition:
+    op = {"kind": "replace", "ref": "MAT 1:1", "old": old, "new": new}
+    return {
+        "unit": unit,
+        "ref": "MAT 1:1",
+        "disposition": disposition,
+        "action": "edit",
+        "ops": [{**op, "range": [at, at + len(old)], "raw_range": True}],
+    }
+
+
+def test_a_tr_note_cannot_quote_a_correction_of_shared_greek() -> None:
+    documents = kingdom()
+    rows = [
+        replacing("MAT 1:1#1", "override", 7, "came", "went"),
+        replacing("MAT 1:1", "shared", 12, "into", "within"),
+    ]
+    prepared, rows = edit.execute(documents, rows, ["MAT"])
+    lemma = {"id": "MAT 1:1#1", "edit": 1, "lemma": "went within", "why": "Test."}
+    with pytest.raises(ValueError, match="is quoted by TR note"):
+        notes.apply(documents, prepared, rows, [lemma])
+
+
+def test_a_refused_correction_of_shared_greek_is_left_to_be_named() -> None:
+    """The notes are finished without it; the build then names the refusal."""
+    documents = kingdom()
+    rows = [
+        replacing("MAT 1:1#1", "override", 7, "came", "went"),
+        replacing("MAT 1:1", "shared", 7, "came into", "went within"),
+    ]
+    prepared, rows = edit.execute(documents, rows, ["MAT"])
+    assert rows[1]["execution"] == "refused"
+    _, rows = notes.apply(documents, prepared, rows)
+    assert [r["execution"] for r in rows] == ["applied", "refused"]
+
+
+def test_corrections_of_shared_greek_leave_the_tr_notes_their_own_words(
+    edition: bible.pipeline.Edition,
+) -> None:
+    # 2 John 1:3: the reading changes the pronoun alone; "shall" is shared.
+    assert scripture.verses(edition.documents["2JN"])["1:3"].text.startswith(
+        "Grace shall be with us, mercy"
+    )
+    assert "\\fq us: \\ft TR \\fqa you" in usj.serialize(edition.documents["2JN"])
+    # 3 John 1:2 keeps its supplied word and its 1611 note on "wish".
+    serialized = usj.serialize(edition.documents["3JN"])
+    assert scripture.verses(edition.documents["3JN"])["1:2"].text.startswith(
+        "Beloved, I wish that in all things thou mayest prosper"
+    )
+    assert "\\fq wish: \\ft or, \\fqa pray" in serialized
+    assert "\\add things\\add*" in serialized
+    # 1 Thessalonians 4:6: reverse the margin to quote the former KJV words.
+    verse = scripture.verses(edition.documents["1TH"])["4:6"]
+    assert "defraud his brother in the matter" in verse.text
+    assert any(n["x-key"] == "1TH 4:6 in any matter" for _, n in verse.notes)
+    assert r"\fq in the matter: \ft or, \fqa in any matter" in usj.serialize(
+        edition.documents["1TH"]
+    )

@@ -491,6 +491,65 @@ def execution_row(
     return row
 
 
+def test_a_correction_of_shared_greek_has_no_tr_note(context: Context) -> None:
+    for address, old, new in (
+        ("23:42", "into thy kingdom", "in thy kingdom"),
+        ("23:15", "done unto him", "done by him"),
+    ):
+        before = scripture.verses(context["documents"]["LUK"])[address]
+        after = scripture.verses(context["prepared"]["LUK"])[address]
+        assert after.text == before.text.replace(old, new)
+        assert after.notes == before.notes
+
+
+def test_a_correction_beside_a_reading_notes_only_the_reading() -> None:
+    documents = execution_fixture()
+    reading = execution_row("MAT 1:1#1", 4, 6, "he", "they")
+    correction = execution_row(
+        "MAT 1:1", 13, 17, "Then", "Afterward", disposition="shared"
+    )
+    prepared, rows = edit.execute(documents, [reading, correction], ["MAT"])
+    verse = scripture.verses(prepared["MAT"])["1:1"]
+    assert verse.text == "And they said. Afterward he went."
+    assert "note" in rows[0]["edits"][0] and "note" not in rows[1]["edits"][0]
+    assert len(verse.notes) == 1
+
+
+def test_a_correction_overlapping_a_reading_is_refused() -> None:
+    documents = execution_fixture()
+    reading = execution_row("MAT 1:1#1", 4, 6, "he", "they")
+    correction = execution_row(
+        "MAT 1:1", 4, 11, "he said", "he spoke", disposition="shared"
+    )
+    _, rows = edit.execute(documents, [reading, correction], ["MAT"])
+    assert rows[1]["execution"] == "refused"
+    assert rows[1]["reasons"] == ["overlapping edits"]
+
+
+def test_a_correction_moves_with_its_verse(context: Context) -> None:
+    text = scripture.verses(context["documents"]["ROM"])["16:25"].text
+    at = text.index("to stablish you")
+    correction = execution_row(
+        "ROM 16:25",
+        at,
+        at + len("to stablish you"),
+        "to stablish you",
+        "to establish you",
+        ref="ROM 16:25",
+        disposition="shared",
+    )
+    move = [
+        r
+        for r in context["dispositions"]
+        if r.get("action") == "move" and r["ref"] == "ROM 16:25"
+    ]
+    documents, rows = edit.execute(
+        context["documents"], [*move, correction], list(context["documents"])
+    )
+    documents, _ = edit.structural(documents, rows[:1], context["structure"])
+    assert "to establish you" in scripture.verses(documents["ROM"])["14:24"].text
+
+
 @pytest.mark.parametrize("bounds", [[-1, 3], [0, 100], [7, 4]])
 def test_invalid_raw_offsets_are_refused(bounds: list[int]) -> None:
     documents = execution_fixture()
