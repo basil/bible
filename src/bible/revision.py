@@ -335,7 +335,10 @@ def _rewritten(
 
 
 def respelt(doc: Document, policy: bible.policy.Policy, met: MetRevisions) -> Document:
-    """A document with the words the file respells, each recorded as met."""
+    """Revise declared words and phrases, recording each as met.
+
+    Notes receive the same changes, including lemmas quoting revised words.
+    """
     words = policy.revisions["words"]
     if not words:
         return doc
@@ -345,7 +348,11 @@ def respelt(doc: Document, policy: bible.policy.Policy, met: MetRevisions) -> Do
         + r")(?!\w)"
     )
 
+    changed = False
+
     def new(match: re.Match[str]) -> str:
+        nonlocal changed
+        changed = True
         met.add(match[0])
         return words[match[0]]["to"]
 
@@ -364,7 +371,10 @@ def respelt(doc: Document, policy: bible.policy.Policy, met: MetRevisions) -> Do
             result += content[end : end + 1]
         return result
 
-    return usj.with_content(doc, respell)
+    result = usj.with_content(doc, respell)
+    if changed:
+        _check_lemmas(doc, result)
+    return result
 
 
 # The source quotations have not yet been tagged for their fonts. Recognize
@@ -471,7 +481,7 @@ def _check_lemmas(before: Document, after: Document) -> None:
             for quoted, kept in zip(lemmas(then), lemmas(now)):
                 if quoted in was and kept not in words:
                     raise CheckFailed(
-                        "Punctuation leaves a lemma its verse no longer has: "
+                        "Revision leaves a lemma its verse no longer has: "
                         f"{usj.book_code(after)} {reference}: {kept}"
                     )
 

@@ -14,7 +14,7 @@ import pytest
 
 import bible.annotate
 import bible.pipeline
-from bible import scripture, usj
+from bible import revision, scripture, usj
 from bible.byzantine import BOOKS, BOYD_ASV, REVISIONS, appendix, review
 from bible.byzantine.decisions import ref_key
 from bible.byzantine.english import verses_of
@@ -663,8 +663,20 @@ def printed(edition: bible.pipeline.Edition) -> dict[str, Document]:
 
 
 @pytest.fixture(scope="module")
-def rows(byzantine: Context, printed: dict[str, Document]) -> list[appendix.Row]:
-    return appendix.rows(byzantine, byzantine["documents"], printed)
+def regularized(byzantine: Context, policy: bible.policy.Policy) -> dict[str, Document]:
+    """The King James books before the readings, with the edition's
+    systematic spelling and punctuation, as the appendix compares them."""
+    return {
+        code: revision.punctuated(revision.respelt(doc, policy, set()), policy, set())
+        for code, doc in byzantine["documents"].items()
+    }
+
+
+@pytest.fixture(scope="module")
+def rows(
+    byzantine: Context, regularized: dict[str, Document], printed: dict[str, Document]
+) -> list[appendix.Row]:
+    return appendix.rows(byzantine, regularized, printed)
 
 
 @pytest.fixture(scope="module")
@@ -703,16 +715,17 @@ def test_johannine_omission_is_one_reading(
     entries: dict[str, list[Node]], packets: dict[str, str]
 ) -> None:
     omitted = (
-        "in heaven, the Father, the Word, and the Holy Ghost: "
-        "and these three are one."
+        "in heaven, the Father, the Word, and the Holy {}: and these three are one."
     )
     english = entries["1JN 5:7"][2]["content"]
+    # The appendix quotes the King James text as the edition spells it; the
+    # review quotes it as the source does.
     assert usj.text_of(english) == (
-        f"KJV → OLEB For there are three that bear record, [{omitted}]"
+        f"KJV → OLEB For there are three that bear record, [{omitted.format('Spirit')}]"
     )
     assert usj.char("it", ",") in english
     section = section_of(packets, "1JN 5:7#1")
-    assert f"bear record[+,][- {omitted}]" in section
+    assert f"bear record[+,][- {omitted.format('Ghost')}]" in section
 
 
 def test_every_verse_with_a_greek_difference_is_listed_once(
@@ -863,7 +876,10 @@ def test_grouped_comparisons_keep_multiple_changes_and_outer_omissions(
 
 
 def test_the_four_omitted_verses_are_listed(
-    byzantine: Context, rows: list[appendix.Row], entries: dict[str, list[Node]]
+    byzantine: Context,
+    regularized: dict[str, Document],
+    rows: list[appendix.Row],
+    entries: dict[str, list[Node]],
 ) -> None:
     omitted = [row for row in rows if row.kind == "omitted"]
     assert (
@@ -871,7 +887,9 @@ def test_the_four_omitted_verses_are_listed(
     )
     for row in omitted:
         assert row.greek_tr and not row.greek_rp and row.oleb is None
-        assert row.kjv == scripture.plain(byzantine["kjv"][row.reference])
+        book, verse = row.reference.split()
+        kjv = scripture.verses(regularized[book])[verse].text
+        assert row.kjv == scripture.plain(kjv)
         lines = [text_of(b) for b in entries[row.reference][1:]]
         assert lines == [
             f"TR → RP [{row.greek_tr}]",
@@ -1361,13 +1379,16 @@ def test_appendix_separates_readings_after_inserted_punctuation(
 
 
 def test_unchanged_english_clips_greek_without_a_bridge(
-    byzantine: Context, rows: list[appendix.Row], entries: dict[str, list[Node]]
+    byzantine: Context,
+    regularized: dict[str, Document],
+    rows: list[appendix.Row],
+    entries: dict[str, list[Node]],
 ) -> None:
     ref = "ACT 13:22"
     row = next(row for row in rows if row.reference == ref)
     assert row.kjv is None and row.oleb is None
     tr, rp, _ = appendix.prepare_greek(byzantine)
-    before = scripture.plain(byzantine["kjv"][ref])
+    before = scripture.plain(scripture.verses(regularized["ACT"])["13:22"].text)
     texts, selected, english = appendix.selections(
         {**byzantine, "aligned": {}},
         ref,

@@ -1,5 +1,5 @@
 {
-  "why": "The spelling, vocabulary and punctuation of the translation, revised by explicit editorial decisions. A word is respelt or modernized wherever the translation, its notes, and its front and back matter print it as a whole word. A verse's change is made to the words of that verse alone, which must have them once, and to the notes that quote them. Verses' changes stand in groups, each group under the reason its changes share. Each gives its reason. Passage changes name a stable note key or a front/back-matter unit and the plain words met once there; only punctuation, associated spacing and sentence-initial capitalization may change.",
+  "why": "The spelling, vocabulary and punctuation of the translation, revised by explicit editorial decisions. A word is respelt or modernized wherever the translation, its notes, and its front and back matter print it as a whole word. A verse's change is made to the words of that verse alone, which must have them once, and to the notes that quote them. Verses' changes stand in groups, each group under the reason its changes share. Each gives its reason. Passage changes name a stable note key or a front/back-matter unit and the plain words met once there; only punctuation, associated spacing and sentence-initial capitalization may change. A phrase is revised as a word is; an stays before a silent h, and mine and thine where they stand alone.",
   "words": {
     "Chanaan": {
       "to": "Canaan",
@@ -76,6 +76,1130 @@
     "Manasseh": {
       "to": "Manasses",
       "why": "Use the spelling in this edition's title for the Prayer of Manasses wherever the name is printed."
+    },
+    "An Historical": {
+      "to": "A Historical",
+      "why": "Use a before a sounded h."
+    },
+    "An hasty": {
+      "to": "A hasty",
+      "why": "Use a before a sounded h."
+    },
+    "An horse": {
+      "to": "A horse",
+      "why": "Use a before a sounded h."
+    },
+    "An hundred": {
+      "to": "A hundred",
+      "why": "Use a before a sounded h."
+    },
+    "Mine anger": {
+      "to": "My anger",
+      "why": "Use my and thy before a noun."
+    },
+    "Mine answer": {
+      "to": "My answer",
+      "why": "Use my and thy before a noun."
+    },
+    "Mine enemies": {
+      "to": "My enemies",
+      "why": "Use my and thy before a noun."
+    },
+    "Mine eye": {
+      "to": "My eye",
+      "why": "Use my and thy before a noun."
+    },
+    "Mine eyes": {
+      "to": "My eyes",
+      "why": "Use my and thy before a noun."
+    },
+    "Mine head": {
+      "to": "My head",
+      "why": "Use my and thy before a noun."
+    },
+    "Thine apostasy": {
+      "to": "Thy apostasy",
+      "why": "Use my and thy before a noun."
+    },
+    "Thine eye": {
+      "to": "Thy eye",
+      "why": "Use my and thy before a noun."
+    },
+    "Thine eyes": {
+      "to": "Thy eyes",
+      "why": "Use my and thy before a noun."
+    },
+    "Thine hand": {
+      "to": "Thy hand",
+      "why": "Use my and thy before a noun."
+    },
+    "Thine handmaid": {
+      "to": "Thy handmaid",
+      "why": "Use my and thy before a noun."
+    },
+    "Thine insolence": {
+      "to": "Thy insolence",
+      "why": "Use my and thy before a noun."
+    },
+    "Thine ordinances": {
+      "to": "Thy ordinances",
+      "why": "Use my and thy before a noun."
+    },
+    "Thine own friend": {
+      "to": "Thy own friend",
+      "why": "Use my and thy before a noun."
+    },
+    "Thine own nation": {
+      "to": "Thy own nation",
+      "why": "Use my and thy before a noun."
+    },
+    "an habit": {
+      "to": "a habit",
+      "why": "Use a before a sounded h."
+    },
+    "an habitation": {
+      "to": "a habitation",
+      "why": "Use a before a sounded h."
+    },
+    "an half": {
+      "to": "a half",
+      "why": "Use a before a sounded h."
+    },
+    "an hand-breadth": {
+      "to": "a hand-breadth",
+      "why": "Use a before a sounded h."
+    },
+    "an handmaid": {
+      "to": "a handmaid",
+      "why": "Use a before a sounded h."
+    },
+    "an harlot": {
+      "to": "a harlot",
+      "why": "Use a before a sounded h."
+    },
+    "an hart": {
+      "to": "a hart",
+      "why": "Use a before a sounded h."
+    },
+    "an hasty": {
+      "to": "a hasty",
+      "why": "Use a before a sounded h."
+    },
+    "an haven": {
+      "to": "a haven",
+      "why": "Use a before a sounded h."
+    },
+    "an headtire": {
+      "to": "a headtire",
+      "why": "Use a before a sounded h."
+    },
+    "an heap": {
+      "to": "a heap",
+      "why": "Use a before a sounded h."
+    },
+    "an heart": {
+      "to": "a heart",
+      "why": "Use a before a sounded h."
+    },
+    "an heavy": {
+      "to": "a heavy",
+      "why": "Use a before a sounded h."
+    },
+    "an heifer": {
+      "to": "a heifer",
+      "why": "Use a before a sounded h."
+    },
+    "an helmet": {
+      "to": "a helmet",
+      "why": "Use a before a sounded h."
+    },
+    "an help": {
+      "to": "a help",
+      "why": "Use a before a sounded h."
+    },
+    "an helper": {
+      "to": "a helper",
+      "why": "Use a before a sounded h."
+    },
+    "an herb": {
+      "to": "a herb",
+      "why": "Use a before a sounded h."
+    },
+    "an heritage": {
+      "to": "a heritage",
+      "why": "Use a before a sounded h."
+    },
+    "an hidden": {
+      "to": "a hidden",
+      "why": "Use a before a sounded h."
+    },
+    "an high": {
+      "to": "a high",
+      "why": "Use a before a sounded h."
+    },
+    "an hin": {
+      "to": "a hin",
+      "why": "Use a before a sounded h."
+    },
+    "an hired": {
+      "to": "a hired",
+      "why": "Use a before a sounded h."
+    },
+    "an hireling": {
+      "to": "a hireling",
+      "why": "Use a before a sounded h."
+    },
+    "an historical": {
+      "to": "a historical",
+      "why": "Use a before a sounded h."
+    },
+    "an hollow": {
+      "to": "a hollow",
+      "why": "Use a before a sounded h."
+    },
+    "an holy": {
+      "to": "a holy",
+      "why": "Use a before a sounded h."
+    },
+    "an homer": {
+      "to": "a homer",
+      "why": "Use a before a sounded h."
+    },
+    "an horse": {
+      "to": "a horse",
+      "why": "Use a before a sounded h."
+    },
+    "an horselitter": {
+      "to": "a horselitter",
+      "why": "Use a before a sounded h."
+    },
+    "an host": {
+      "to": "a host",
+      "why": "Use a before a sounded h."
+    },
+    "an hostage": {
+      "to": "a hostage",
+      "why": "Use a before a sounded h."
+    },
+    "an hostile": {
+      "to": "a hostile",
+      "why": "Use a before a sounded h."
+    },
+    "an house": {
+      "to": "a house",
+      "why": "Use a before a sounded h."
+    },
+    "an huckster": {
+      "to": "a huckster",
+      "why": "Use a before a sounded h."
+    },
+    "an humble": {
+      "to": "a humble",
+      "why": "Use a before a sounded h."
+    },
+    "an hundred": {
+      "to": "a hundred",
+      "why": "Use a before a sounded h."
+    },
+    "an hundredfold": {
+      "to": "a hundredfold",
+      "why": "Use a before a sounded h."
+    },
+    "an husband": {
+      "to": "a husband",
+      "why": "Use a before a sounded h."
+    },
+    "an hypocrite": {
+      "to": "a hypocrite",
+      "why": "Use a before a sounded h."
+    },
+    "mine account": {
+      "to": "my account",
+      "why": "Use my and thy before a noun."
+    },
+    "mine acquaintance": {
+      "to": "my acquaintance",
+      "why": "Use my and thy before a noun."
+    },
+    "mine acquaintances": {
+      "to": "my acquaintances",
+      "why": "Use my and thy before a noun."
+    },
+    "mine act": {
+      "to": "my act",
+      "why": "Use my and thy before a noun."
+    },
+    "mine adversaries": {
+      "to": "my adversaries",
+      "why": "Use my and thy before a noun."
+    },
+    "mine adversary": {
+      "to": "my adversary",
+      "why": "Use my and thy before a noun."
+    },
+    "mine affliction": {
+      "to": "my affliction",
+      "why": "Use my and thy before a noun."
+    },
+    "mine afflictions": {
+      "to": "my afflictions",
+      "why": "Use my and thy before a noun."
+    },
+    "mine age": {
+      "to": "my age",
+      "why": "Use my and thy before a noun."
+    },
+    "mine aid": {
+      "to": "my aid",
+      "why": "Use my and thy before a noun."
+    },
+    "mine altar": {
+      "to": "my altar",
+      "why": "Use my and thy before a noun."
+    },
+    "mine amazement": {
+      "to": "my amazement",
+      "why": "Use my and thy before a noun."
+    },
+    "mine ancestors": {
+      "to": "my ancestors",
+      "why": "Use my and thy before a noun."
+    },
+    "mine angel": {
+      "to": "my angel",
+      "why": "Use my and thy before a noun."
+    },
+    "mine anger": {
+      "to": "my anger",
+      "why": "Use my and thy before a noun."
+    },
+    "mine anointed": {
+      "to": "my anointed",
+      "why": "Use my and thy before a noun."
+    },
+    "mine apostleship": {
+      "to": "my apostleship",
+      "why": "Use my and thy before a noun."
+    },
+    "mine arm": {
+      "to": "my arm",
+      "why": "Use my and thy before a noun."
+    },
+    "mine army": {
+      "to": "my army",
+      "why": "Use my and thy before a noun."
+    },
+    "mine ear": {
+      "to": "my ear",
+      "why": "Use my and thy before a noun."
+    },
+    "mine ears": {
+      "to": "my ears",
+      "why": "Use my and thy before a noun."
+    },
+    "mine elect": {
+      "to": "my elect",
+      "why": "Use my and thy before a noun."
+    },
+    "mine end": {
+      "to": "my end",
+      "why": "Use my and thy before a noun."
+    },
+    "mine enemies": {
+      "to": "my enemies",
+      "why": "Use my and thy before a noun."
+    },
+    "mine enemy": {
+      "to": "my enemy",
+      "why": "Use my and thy before a noun."
+    },
+    "mine eye": {
+      "to": "my eye",
+      "why": "Use my and thy before a noun."
+    },
+    "mine eyelids": {
+      "to": "my eyelids",
+      "why": "Use my and thy before a noun."
+    },
+    "mine eyes": {
+      "to": "my eyes",
+      "why": "Use my and thy before a noun."
+    },
+    "mine hand": {
+      "to": "my hand",
+      "why": "Use my and thy before a noun."
+    },
+    "mine hands": {
+      "to": "my hands",
+      "why": "Use my and thy before a noun."
+    },
+    "mine head": {
+      "to": "my head",
+      "why": "Use my and thy before a noun."
+    },
+    "mine health": {
+      "to": "my health",
+      "why": "Use my and thy before a noun."
+    },
+    "mine heart": {
+      "to": "my heart",
+      "why": "Use my and thy before a noun."
+    },
+    "mine heir": {
+      "to": "my heir",
+      "why": "Use my and thy before a noun."
+    },
+    "mine help": {
+      "to": "my help",
+      "why": "Use my and thy before a noun."
+    },
+    "mine helper": {
+      "to": "my helper",
+      "why": "Use my and thy before a noun."
+    },
+    "mine heritage": {
+      "to": "my heritage",
+      "why": "Use my and thy before a noun."
+    },
+    "mine honour": {
+      "to": "my honour",
+      "why": "Use my and thy before a noun."
+    },
+    "mine host": {
+      "to": "my host",
+      "why": "Use my and thy before a noun."
+    },
+    "mine hour": {
+      "to": "my hour",
+      "why": "Use my and thy before a noun."
+    },
+    "mine house": {
+      "to": "my house",
+      "why": "Use my and thy before a noun."
+    },
+    "mine hypocrisy": {
+      "to": "my hypocrisy",
+      "why": "Use my and thy before a noun."
+    },
+    "mine ignorances": {
+      "to": "my ignorances",
+      "why": "Use my and thy before a noun."
+    },
+    "mine incense": {
+      "to": "my incense",
+      "why": "Use my and thy before a noun."
+    },
+    "mine infants": {
+      "to": "my infants",
+      "why": "Use my and thy before a noun."
+    },
+    "mine infirmities": {
+      "to": "my infirmities",
+      "why": "Use my and thy before a noun."
+    },
+    "mine inheritance": {
+      "to": "my inheritance",
+      "why": "Use my and thy before a noun."
+    },
+    "mine iniquities": {
+      "to": "my iniquities",
+      "why": "Use my and thy before a noun."
+    },
+    "mine iniquity": {
+      "to": "my iniquity",
+      "why": "Use my and thy before a noun."
+    },
+    "mine innocence": {
+      "to": "my innocence",
+      "why": "Use my and thy before a noun."
+    },
+    "mine inward": {
+      "to": "my inward",
+      "why": "Use my and thy before a noun."
+    },
+    "mine oath": {
+      "to": "my oath",
+      "why": "Use my and thy before a noun."
+    },
+    "mine office": {
+      "to": "my office",
+      "why": "Use my and thy before a noun."
+    },
+    "mine oil": {
+      "to": "my oil",
+      "why": "Use my and thy before a noun."
+    },
+    "mine old": {
+      "to": "my old",
+      "why": "Use my and thy before a noun."
+    },
+    "mine only": {
+      "to": "my only",
+      "why": "Use my and thy before a noun."
+    },
+    "mine ordinances": {
+      "to": "my ordinances",
+      "why": "Use my and thy before a noun."
+    },
+    "mine own bowels": {
+      "to": "my own bowels",
+      "why": "Use my and thy before a noun."
+    },
+    "mine own citizens": {
+      "to": "my own citizens",
+      "why": "Use my and thy before a noun."
+    },
+    "mine own country": {
+      "to": "my own country",
+      "why": "Use my and thy before a noun."
+    },
+    "mine own glory": {
+      "to": "my own glory",
+      "why": "Use my and thy before a noun."
+    },
+    "mine own hand": {
+      "to": "my own hand",
+      "why": "Use my and thy before a noun."
+    },
+    "mine own heart": {
+      "to": "my own heart",
+      "why": "Use my and thy before a noun."
+    },
+    "mine own kindred": {
+      "to": "my own kindred",
+      "why": "Use my and thy before a noun."
+    },
+    "mine own life": {
+      "to": "my own life",
+      "why": "Use my and thy before a noun."
+    },
+    "mine own name": {
+      "to": "my own name",
+      "why": "Use my and thy before a noun."
+    },
+    "mine own nation": {
+      "to": "my own nation",
+      "why": "Use my and thy before a noun."
+    },
+    "mine own profit": {
+      "to": "my own profit",
+      "why": "Use my and thy before a noun."
+    },
+    "mine own righteousness": {
+      "to": "my own righteousness",
+      "why": "Use my and thy before a noun."
+    },
+    "mine own sake": {
+      "to": "my own sake",
+      "why": "Use my and thy before a noun."
+    },
+    "mine own self": {
+      "to": "my own self",
+      "why": "Use my and thy before a noun."
+    },
+    "mine own son": {
+      "to": "my own son",
+      "why": "Use my and thy before a noun."
+    },
+    "mine own will": {
+      "to": "my own will",
+      "why": "Use my and thy before a noun."
+    },
+    "mine unbelief": {
+      "to": "my unbelief",
+      "why": "Use my and thy before a noun."
+    },
+    "mine up-rising": {
+      "to": "my up-rising",
+      "why": "Use my and thy before a noun."
+    },
+    "thine Almighty": {
+      "to": "thy Almighty",
+      "why": "Use my and thy before a noun."
+    },
+    "thine Holy": {
+      "to": "thy Holy",
+      "why": "Use my and thy before a noun."
+    },
+    "thine abominations": {
+      "to": "thy abominations",
+      "why": "Use my and thy before a noun."
+    },
+    "thine abundance": {
+      "to": "thy abundance",
+      "why": "Use my and thy before a noun."
+    },
+    "thine accuser": {
+      "to": "thy accuser",
+      "why": "Use my and thy before a noun."
+    },
+    "thine accusers": {
+      "to": "thy accusers",
+      "why": "Use my and thy before a noun."
+    },
+    "thine adultery": {
+      "to": "thy adultery",
+      "why": "Use my and thy before a noun."
+    },
+    "thine adversaries": {
+      "to": "thy adversaries",
+      "why": "Use my and thy before a noun."
+    },
+    "thine adversary": {
+      "to": "thy adversary",
+      "why": "Use my and thy before a noun."
+    },
+    "thine afflicted": {
+      "to": "thy afflicted",
+      "why": "Use my and thy before a noun."
+    },
+    "thine affliction": {
+      "to": "thy affliction",
+      "why": "Use my and thy before a noun."
+    },
+    "thine age": {
+      "to": "thy age",
+      "why": "Use my and thy before a noun."
+    },
+    "thine alliance": {
+      "to": "thy alliance",
+      "why": "Use my and thy before a noun."
+    },
+    "thine allies": {
+      "to": "thy allies",
+      "why": "Use my and thy before a noun."
+    },
+    "thine alms": {
+      "to": "thy alms",
+      "why": "Use my and thy before a noun."
+    },
+    "thine altar": {
+      "to": "thy altar",
+      "why": "Use my and thy before a noun."
+    },
+    "thine altars": {
+      "to": "thy altars",
+      "why": "Use my and thy before a noun."
+    },
+    "thine ancient": {
+      "to": "thy ancient",
+      "why": "Use my and thy before a noun."
+    },
+    "thine angel": {
+      "to": "thy angel",
+      "why": "Use my and thy before a noun."
+    },
+    "thine angels": {
+      "to": "thy angels",
+      "why": "Use my and thy before a noun."
+    },
+    "thine anger": {
+      "to": "thy anger",
+      "why": "Use my and thy before a noun."
+    },
+    "thine anointed": {
+      "to": "thy anointed",
+      "why": "Use my and thy before a noun."
+    },
+    "thine appetites": {
+      "to": "thy appetites",
+      "why": "Use my and thy before a noun."
+    },
+    "thine arm": {
+      "to": "thy arm",
+      "why": "Use my and thy before a noun."
+    },
+    "thine arms": {
+      "to": "thy arms",
+      "why": "Use my and thy before a noun."
+    },
+    "thine army": {
+      "to": "thy army",
+      "why": "Use my and thy before a noun."
+    },
+    "thine array": {
+      "to": "thy array",
+      "why": "Use my and thy before a noun."
+    },
+    "thine arrows": {
+      "to": "thy arrows",
+      "why": "Use my and thy before a noun."
+    },
+    "thine ass": {
+      "to": "thy ass",
+      "why": "Use my and thy before a noun."
+    },
+    "thine asses": {
+      "to": "thy asses",
+      "why": "Use my and thy before a noun."
+    },
+    "thine ear": {
+      "to": "thy ear",
+      "why": "Use my and thy before a noun."
+    },
+    "thine ears": {
+      "to": "thy ears",
+      "why": "Use my and thy before a noun."
+    },
+    "thine ease": {
+      "to": "thy ease",
+      "why": "Use my and thy before a noun."
+    },
+    "thine elbow": {
+      "to": "thy elbow",
+      "why": "Use my and thy before a noun."
+    },
+    "thine elder": {
+      "to": "thy elder",
+      "why": "Use my and thy before a noun."
+    },
+    "thine elders": {
+      "to": "thy elders",
+      "why": "Use my and thy before a noun."
+    },
+    "thine elect": {
+      "to": "thy elect",
+      "why": "Use my and thy before a noun."
+    },
+    "thine enchantments": {
+      "to": "thy enchantments",
+      "why": "Use my and thy before a noun."
+    },
+    "thine end": {
+      "to": "thy end",
+      "why": "Use my and thy before a noun."
+    },
+    "thine enemies": {
+      "to": "thy enemies",
+      "why": "Use my and thy before a noun."
+    },
+    "thine enemy": {
+      "to": "thy enemy",
+      "why": "Use my and thy before a noun."
+    },
+    "thine enmity": {
+      "to": "thy enmity",
+      "why": "Use my and thy before a noun."
+    },
+    "thine enterprizes": {
+      "to": "thy enterprizes",
+      "why": "Use my and thy before a noun."
+    },
+    "thine entrance": {
+      "to": "thy entrance",
+      "why": "Use my and thy before a noun."
+    },
+    "thine espousals": {
+      "to": "thy espousals",
+      "why": "Use my and thy before a noun."
+    },
+    "thine established": {
+      "to": "thy established",
+      "why": "Use my and thy before a noun."
+    },
+    "thine everlasting": {
+      "to": "thy everlasting",
+      "why": "Use my and thy before a noun."
+    },
+    "thine evil": {
+      "to": "thy evil",
+      "why": "Use my and thy before a noun."
+    },
+    "thine eye": {
+      "to": "thy eye",
+      "why": "Use my and thy before a noun."
+    },
+    "thine eyelids": {
+      "to": "thy eyelids",
+      "why": "Use my and thy before a noun."
+    },
+    "thine eyes": {
+      "to": "thy eyes",
+      "why": "Use my and thy before a noun."
+    },
+    "thine habitation": {
+      "to": "thy habitation",
+      "why": "Use my and thy before a noun."
+    },
+    "thine hair": {
+      "to": "thy hair",
+      "why": "Use my and thy before a noun."
+    },
+    "thine hand": {
+      "to": "thy hand",
+      "why": "Use my and thy before a noun."
+    },
+    "thine handmaid": {
+      "to": "thy handmaid",
+      "why": "Use my and thy before a noun."
+    },
+    "thine hands": {
+      "to": "thy hands",
+      "why": "Use my and thy before a noun."
+    },
+    "thine harvest": {
+      "to": "thy harvest",
+      "why": "Use my and thy before a noun."
+    },
+    "thine head": {
+      "to": "thy head",
+      "why": "Use my and thy before a noun."
+    },
+    "thine heart": {
+      "to": "thy heart",
+      "why": "Use my and thy before a noun."
+    },
+    "thine heels": {
+      "to": "thy heels",
+      "why": "Use my and thy before a noun."
+    },
+    "thine heir": {
+      "to": "thy heir",
+      "why": "Use my and thy before a noun."
+    },
+    "thine herd": {
+      "to": "thy herd",
+      "why": "Use my and thy before a noun."
+    },
+    "thine herds": {
+      "to": "thy herds",
+      "why": "Use my and thy before a noun."
+    },
+    "thine heritage": {
+      "to": "thy heritage",
+      "why": "Use my and thy before a noun."
+    },
+    "thine high": {
+      "to": "thy high",
+      "why": "Use my and thy before a noun."
+    },
+    "thine holiness": {
+      "to": "thy holiness",
+      "why": "Use my and thy before a noun."
+    },
+    "thine holy": {
+      "to": "thy holy",
+      "why": "Use my and thy before a noun."
+    },
+    "thine honour": {
+      "to": "thy honour",
+      "why": "Use my and thy before a noun."
+    },
+    "thine hoofs": {
+      "to": "thy hoofs",
+      "why": "Use my and thy before a noun."
+    },
+    "thine hope": {
+      "to": "thy hope",
+      "why": "Use my and thy before a noun."
+    },
+    "thine horns": {
+      "to": "thy horns",
+      "why": "Use my and thy before a noun."
+    },
+    "thine horses": {
+      "to": "thy horses",
+      "why": "Use my and thy before a noun."
+    },
+    "thine host": {
+      "to": "thy host",
+      "why": "Use my and thy before a noun."
+    },
+    "thine house": {
+      "to": "thy house",
+      "why": "Use my and thy before a noun."
+    },
+    "thine houses": {
+      "to": "thy houses",
+      "why": "Use my and thy before a noun."
+    },
+    "thine husbands": {
+      "to": "thy husbands",
+      "why": "Use my and thy before a noun."
+    },
+    "thine ignorance": {
+      "to": "thy ignorance",
+      "why": "Use my and thy before a noun."
+    },
+    "thine incorruptible": {
+      "to": "thy incorruptible",
+      "why": "Use my and thy before a noun."
+    },
+    "thine infancy": {
+      "to": "thy infancy",
+      "why": "Use my and thy before a noun."
+    },
+    "thine infants": {
+      "to": "thy infants",
+      "why": "Use my and thy before a noun."
+    },
+    "thine inheritance": {
+      "to": "thy inheritance",
+      "why": "Use my and thy before a noun."
+    },
+    "thine iniquities": {
+      "to": "thy iniquities",
+      "why": "Use my and thy before a noun."
+    },
+    "thine iniquity": {
+      "to": "thy iniquity",
+      "why": "Use my and thy before a noun."
+    },
+    "thine instruments": {
+      "to": "thy instruments",
+      "why": "Use my and thy before a noun."
+    },
+    "thine oars": {
+      "to": "thy oars",
+      "why": "Use my and thy before a noun."
+    },
+    "thine oath": {
+      "to": "thy oath",
+      "why": "Use my and thy before a noun."
+    },
+    "thine oaths": {
+      "to": "thy oaths",
+      "why": "Use my and thy before a noun."
+    },
+    "thine occupation": {
+      "to": "thy occupation",
+      "why": "Use my and thy before a noun."
+    },
+    "thine offences": {
+      "to": "thy offences",
+      "why": "Use my and thy before a noun."
+    },
+    "thine offering": {
+      "to": "thy offering",
+      "why": "Use my and thy before a noun."
+    },
+    "thine often": {
+      "to": "thy often",
+      "why": "Use my and thy before a noun."
+    },
+    "thine oil": {
+      "to": "thy oil",
+      "why": "Use my and thy before a noun."
+    },
+    "thine ointments": {
+      "to": "thy ointments",
+      "why": "Use my and thy before a noun."
+    },
+    "thine old": {
+      "to": "thy old",
+      "why": "Use my and thy before a noun."
+    },
+    "thine olive": {
+      "to": "thy olive",
+      "why": "Use my and thy before a noun."
+    },
+    "thine olives": {
+      "to": "thy olives",
+      "why": "Use my and thy before a noun."
+    },
+    "thine oliveyard": {
+      "to": "thy oliveyard",
+      "why": "Use my and thy before a noun."
+    },
+    "thine opponents": {
+      "to": "thy opponents",
+      "why": "Use my and thy before a noun."
+    },
+    "thine oracle": {
+      "to": "thy oracle",
+      "why": "Use my and thy before a noun."
+    },
+    "thine oracles": {
+      "to": "thy oracles",
+      "why": "Use my and thy before a noun."
+    },
+    "thine ordinances": {
+      "to": "thy ordinances",
+      "why": "Use my and thy before a noun."
+    },
+    "thine ornaments": {
+      "to": "thy ornaments",
+      "why": "Use my and thy before a noun."
+    },
+    "thine other": {
+      "to": "thy other",
+      "why": "Use my and thy before a noun."
+    },
+    "thine ovens": {
+      "to": "thy ovens",
+      "why": "Use my and thy before a noun."
+    },
+    "thine overseers": {
+      "to": "thy overseers",
+      "why": "Use my and thy before a noun."
+    },
+    "thine own cause": {
+      "to": "thy own cause",
+      "why": "Use my and thy before a noun."
+    },
+    "thine own children": {
+      "to": "thy own children",
+      "why": "Use my and thy before a noun."
+    },
+    "thine own conceit": {
+      "to": "thy own conceit",
+      "why": "Use my and thy before a noun."
+    },
+    "thine own counsel": {
+      "to": "thy own counsel",
+      "why": "Use my and thy before a noun."
+    },
+    "thine own desire": {
+      "to": "thy own desire",
+      "why": "Use my and thy before a noun."
+    },
+    "thine own eye": {
+      "to": "thy own eye",
+      "why": "Use my and thy before a noun."
+    },
+    "thine own head": {
+      "to": "thy own head",
+      "why": "Use my and thy before a noun."
+    },
+    "thine own heart": {
+      "to": "thy own heart",
+      "why": "Use my and thy before a noun."
+    },
+    "thine own house": {
+      "to": "thy own house",
+      "why": "Use my and thy before a noun."
+    },
+    "thine own issue": {
+      "to": "thy own issue",
+      "why": "Use my and thy before a noun."
+    },
+    "thine own kindred": {
+      "to": "thy own kindred",
+      "why": "Use my and thy before a noun."
+    },
+    "thine own knowledge": {
+      "to": "thy own knowledge",
+      "why": "Use my and thy before a noun."
+    },
+    "thine own land": {
+      "to": "thy own land",
+      "why": "Use my and thy before a noun."
+    },
+    "thine own life": {
+      "to": "thy own life",
+      "why": "Use my and thy before a noun."
+    },
+    "thine own lips": {
+      "to": "thy own lips",
+      "why": "Use my and thy before a noun."
+    },
+    "thine own master": {
+      "to": "thy own master",
+      "why": "Use my and thy before a noun."
+    },
+    "thine own mind": {
+      "to": "thy own mind",
+      "why": "Use my and thy before a noun."
+    },
+    "thine own mouth": {
+      "to": "thy own mouth",
+      "why": "Use my and thy before a noun."
+    },
+    "thine own name": {
+      "to": "thy own name",
+      "why": "Use my and thy before a noun."
+    },
+    "thine own people": {
+      "to": "thy own people",
+      "why": "Use my and thy before a noun."
+    },
+    "thine own portion": {
+      "to": "thy own portion",
+      "why": "Use my and thy before a noun."
+    },
+    "thine own power": {
+      "to": "thy own power",
+      "why": "Use my and thy before a noun."
+    },
+    "thine own prudence": {
+      "to": "thy own prudence",
+      "why": "Use my and thy before a noun."
+    },
+    "thine own sake": {
+      "to": "thy own sake",
+      "why": "Use my and thy before a noun."
+    },
+    "thine own seed": {
+      "to": "thy own seed",
+      "why": "Use my and thy before a noun."
+    },
+    "thine own self": {
+      "to": "thy own self",
+      "why": "Use my and thy before a noun."
+    },
+    "thine own signet": {
+      "to": "thy own signet",
+      "why": "Use my and thy before a noun."
+    },
+    "thine own sons": {
+      "to": "thy own sons",
+      "why": "Use my and thy before a noun."
+    },
+    "thine own soul": {
+      "to": "thy own soul",
+      "why": "Use my and thy before a noun."
+    },
+    "thine own springing": {
+      "to": "thy own springing",
+      "why": "Use my and thy before a noun."
+    },
+    "thine own stamp": {
+      "to": "thy own stamp",
+      "why": "Use my and thy before a noun."
+    },
+    "thine own strength": {
+      "to": "thy own strength",
+      "why": "Use my and thy before a noun."
+    },
+    "thine own vessels": {
+      "to": "thy own vessels",
+      "why": "Use my and thy before a noun."
+    },
+    "thine own wisdom": {
+      "to": "thy own wisdom",
+      "why": "Use my and thy before a noun."
+    },
+    "thine ox": {
+      "to": "thy ox",
+      "why": "Use my and thy before a noun."
+    },
+    "thine oxen": {
+      "to": "thy oxen",
+      "why": "Use my and thy before a noun."
+    },
+    "thine unclean": {
+      "to": "thy unclean",
+      "why": "Use my and thy before a noun."
+    },
+    "thine understanding": {
+      "to": "thy understanding",
+      "why": "Use my and thy before a noun."
+    },
+    "thine unfeigned": {
+      "to": "thy unfeigned",
+      "why": "Use my and thy before a noun."
+    },
+    "thine ungodliness": {
+      "to": "thy ungodliness",
+      "why": "Use my and thy before a noun."
+    },
+    "thine unspeakable": {
+      "to": "thy unspeakable",
+      "why": "Use my and thy before a noun."
+    },
+    "thine utter": {
+      "to": "thy utter",
+      "why": "Use my and thy before a noun."
     }
   },
   "verses": {

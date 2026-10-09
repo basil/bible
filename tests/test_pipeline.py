@@ -925,3 +925,108 @@ def test_passage_note_keys_must_select_once(policy: bible.policy.Policy) -> None
     )
     with pytest.raises(CheckFailed, match="not met once"):
         revision.passages("GEN", doc, rules, set())
+
+
+@pytest.mark.parametrize(
+    ("before", "after"),
+    [
+        (
+            "an historical account; An Historical account",
+            "a historical account; A Historical account",
+        ),
+        (
+            "an hundred-fold harvest; an hundredfold harvest",
+            "a hundred-fold harvest; a hundredfold harvest",
+        ),
+        (
+            "an heir; an honest man; an honestly-made answer; an honourable man; an hour",
+            "an heir; an honest man; an honestly-made answer; an honourable man; an hour",
+        ),
+        (
+            "mine honour; thine heir; mine hour; Mine eyes; Thine hand",
+            "my honour; thy heir; my hour; My eyes; Thy hand",
+        ),
+        (
+            "mine own hand; thine own soul; mine own; thine own; mine are thine; thine is the kingdom",
+            "my own hand; thy own soul; mine own; thine own; mine are thine; thine is the kingdom",
+        ),
+        (
+            "no honour; none holy as the Lord; none hath; none of them",
+            "no honour; none holy as the Lord; none hath; none of them",
+        ),
+    ],
+)
+def test_contextual_articles_and_possessives(
+    policy: bible.policy.Policy, before: str, after: str
+) -> None:
+    doc = usj.parse("\\id GEN\n\\c 1\n\\p\n\\v 1 " + before)
+    original = copy.deepcopy(doc)
+    result = revision.respelt(doc, policy, set())
+    assert scripture.verses(result)["1:1"].text == after
+    assert doc == original
+
+
+def test_contextual_phrases_in_styles_notes_and_paragraphs(
+    policy: bible.policy.Policy,
+) -> None:
+    doc = usj.parse(
+        "\\id GEN\n\\c 1\n\\p\n\\v 1 mine \\add honour\\add*"
+        "\\f - \\fq mine \\+it honour\\+it*: \\ft an \\+it hundred\\+it*-fold; thine heir.\\f*."
+        "\n\\ip mine hour; an historical account."
+    )
+    original = copy.deepcopy(doc)
+    result = revision.respelt(doc, policy, set())
+    printed = usj.serialize(result)
+    assert "my \\add honour\\add*" in printed
+    assert "my \\+it honour\\+it*:" in printed
+    assert "a \\+it hundred\\+it*-fold; thy heir." in printed
+    assert "my hour; a historical account." in printed
+    assert doc == original
+
+
+def test_phrase_revision_refuses_a_partial_inconsistent_lemma(
+    policy: bible.policy.Policy,
+) -> None:
+    doc = usj.parse(
+        "\\id GEN\n\\c 1\n\\p\n\\v 1 mine heart\\f - \\fq mine: \\ft or, my.\\f*."
+    )
+    with pytest.raises(CheckFailed, match="lemma .* GEN 1:1: mine"):
+        revision.respelt(doc, policy, set())
+
+
+def test_attributive_none_changes_only_in_a_declared_phrase(
+    policy: bible.policy.Policy,
+) -> None:
+    rules = revisions(
+        policy,
+        words={
+            "none habitation": {
+                "to": "no habitation",
+                "why": "Attributive none before aspirated h.",
+            }
+        },
+    )
+    doc = usj.parse(
+        "\\id GEN\n\\c 1\n\\p\n\\v 1 none habitation; none holy; none hath; no honour."
+    )
+    assert scripture.verses(revision.respelt(doc, rules, set()))["1:1"].text == (
+        "no habitation; none holy; none hath; no honour."
+    )
+
+
+@pytest.mark.parametrize(
+    ("code", "reference", "phrase"),
+    [
+        ("GEN", "15:2", "my heir"),
+        ("GEN", "15:4", "thy heir"),
+        ("MAL", "1:6", "my honour"),
+        ("JHN", "2:4", "my hour"),
+        ("JOB", "34:19", "an honourable"),
+        ("ISA", "56:5", "an honourable"),
+        ("MRK", "15:43", "an honourable"),
+    ],
+)
+def test_confirmed_article_and_possessive_passages(
+    edition: bible.pipeline.Edition, code: str, reference: str, phrase: str
+) -> None:
+    assert phrase in scripture.verses(edition.documents[code])[reference].text
