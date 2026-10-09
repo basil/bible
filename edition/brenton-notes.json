@@ -1,5 +1,11 @@
 {
   "corrections": {
+    "NUM 1:1": {
+      "from": "And the Lord spoke to Moses in the wilderness of Sina, in the tabernacle of witness,",
+      "to": "\\sc And\\sc* the Lord spoke to Moses in the wilderness of Sina, in the tabernacle of witness,",
+      "why": "Supply the opening small capitals missing from eBible's transcription of Numbers, matching the other book openings without changing the words.",
+      "uncategorized": true
+    },
     "XXB There is": {
       "from": "\\f*is little doubt",
       "to": "\\f* is little doubt",
