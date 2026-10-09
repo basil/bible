@@ -152,7 +152,9 @@ Every abbreviation the edition prints is in the list of abbreviations. Brenton's
 
 The edition keeps the words of its text and regularizes how they are spelt and pointed.
 
-So far eight words are revised, all of them names. Brenton writes the prophet's name "Jezekiel" at Ezekiel 1:3 and 24:24, transliterating the Greek Ἰεζεκιήλ; the edition prints "Ezekiel". His Osee, Michæas, Obdias, Naum and Ambacum are printed as the edition's titles spell them: Hosea, Michaias, Abdias, Nahum and Abbacum.
+The systematic respellings regularize names. Brenton writes the prophet's name "Jezekiel" at Ezekiel 1:3 and 24:24, transliterating the Greek Ἰεζεκιήλ; the edition prints "Ezekiel". His Osee, Michæas, Obdias, Naum and Ambacum are printed as the edition's titles spell them: Hosea, Michaias, Abdias, Nahum and Abbacum.
+
+In English, adjacent runs of commas, semicolons and colons immediately before an em dash are removed. Periods (including abbreviation periods), question marks and exclamation marks are preserved by default. Sentence endings, parenthetical continuations and ordinary-period removals are explicit, reasoned decisions in `edition/revisions.json`: scripture under `verses`, and keyed notes or front/back-matter paragraphs under `passages`. Passage decisions match their plain text exactly once, preserve words and markup, and allow only punctuation, its spacing and sentence-initial capitalization. Stale, overlapping and unused decisions stop the build. The translations are revised after source-dependent decisions; the edition’s own pages quote the revised text and receive the same punctuation treatment while retaining the source names they discuss.
 
 ## Typography
 

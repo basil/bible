@@ -5,7 +5,8 @@ from __future__ import annotations
 
 import copy
 import re
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
+from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
@@ -20,12 +21,17 @@ from bible import (
     assembly,
     paths,
     pipeline,
+    places,
     review,
     revision,
+    scripture,
     terminology,
     usj,
 )
+from bible.byzantine import appendix
+from bible.byzantine.stages import Context
 from bible.checks import CheckFailed
+from bible.usj import Document
 
 
 def test_the_edition_prints_every_unit_once_in_the_manifests_order(
@@ -241,7 +247,15 @@ def test_the_editions_spelling_is_revised_wherever_a_word_is_printed(
 ) -> None:
     words = policy.revisions["words"]
     assert words["Jezekiel"]["to"] == "Ezekiel"
-    assert edition.met["revisions"] == set(words)
+    assert edition.met["revisions"] == (
+        set(words)
+        | set(policy.revisions["punctuation"])
+        | {c["verse"] for c in revision.verse_changes(policy)}
+        | {
+            (c.get("note", c.get("unit")), c["from"])
+            for c in revision.passage_changes(policy)
+        }
+    )
     pattern = re.compile(r"(?<!\w)(?:" + "|".join(map(re.escape, words)) + r")(?!\w)")
     # The editor's own pages name the sources' books, rather than respelling
     # the translations: the introduction explains Brenton's names, and the
@@ -268,7 +282,7 @@ def revisions(
     policy: bible.policy.Policy, **sections: dict[str, Any]
 ) -> bible.policy.Policy:
     def change(data: dict[str, Any]) -> None:
-        data.update(words={}, verses={})
+        data.update(words={}, verses={}, passages={}, punctuation={})
         data.update(sections)
 
     return changed(policy, "revisions", change)
@@ -278,7 +292,7 @@ def test_a_word_is_respelt_whole_in_the_text_and_its_notes(
     policy: bible.policy.Policy,
 ) -> None:
     words = revisions(policy, words={"Noe": {"to": "Noah", "why": "the English name"}})
-    met: set[str] = set()
+    met: revision.MetRevisions = set()
     text = usj.serialize(revision.respelt(usj.parse(NOE), words, met))
     assert (
         "\\v 1 Noah’s sons and Noeman \\f - \\fr 1:1 \\fq went with Noah: \\ft or, "
@@ -304,7 +318,7 @@ def test_a_word_is_respelt_whatever_styles_divide_it(
         "Noe\\add man\\add* and \\it Sem\\it*s and \\it thus \\it*ham and Noe\n"
         "\\v 2 begat Sem.\n"
     )
-    met: set[str] = set()
+    met: revision.MetRevisions = set()
     text = usj.serialize(revision.respelt(doc, words, met))
     # Each letter keeps the style it stood in, and what is added takes the
     # style of the word it joins.
@@ -328,7 +342,7 @@ def test_a_verse_is_revised_in_its_own_words_and_the_notes_that_quote_them(
     change = {"verse": "GEN 1:1", "from": "went with Noe.", "to": "went with Noe:"}
     verses = revisions(policy, verses=group(change))
     revision.check(verses)
-    met: set[str] = set()
+    met: revision.MetRevisions = set()
     text = usj.serialize(revision.revised("GEN", usj.parse(NOE), verses, met))
     # The words change in the styles they stand in; the other verse is as it was.
     assert "\\fqa Noe\\f*went \\add with\\add* Noe:\n\\v 2 And Noe went.\n" in text
@@ -360,6 +374,28 @@ def test_a_note_quotes_a_verse_whatever_styles_divide_its_words(
     text = usj.serialize(revision.revised("GEN", doc, verses, set()))
     assert "\\v 1 He went \\add beside\\add* Noe " in text
     assert "\\fq went \\+it beside\\+it* Noe: \\ft or, \\fqa beside\\f*then." in text
+
+
+def test_a_revision_across_a_style_or_note_is_refused(
+    policy: bible.policy.Policy,
+) -> None:
+    doc = usj.parse(
+        "\\id GEN\n\\c 1\n\\p\n\\v 1 He went,—\\add with\\add* Noe,—"
+        "\\f - \\fr 1:1 \\ft Gr. went\\f* then.\n"
+    )
+    # The supplied word would be set in the plain words before it.
+    styled = {"verse": "GEN 1:1", "from": "went,—with Noe,—", "to": "went with Noe "}
+    with pytest.raises(CheckFailed, match="across a style or note: GEN 1:1"):
+        revision.revised("GEN", doc, revisions(policy, verses=group(styled)), set())
+    # The note would stand after the words that followed it.
+    noted = {"verse": "GEN 1:1", "from": "Noe,— then", "to": "Noe; Then"}
+    with pytest.raises(CheckFailed, match="across a style or note: GEN 1:1"):
+        revision.revised("GEN", doc, revisions(policy, verses=group(noted)), set())
+    within = {"verse": "GEN 1:1", "from": "went,—", "to": "went "}
+    text = usj.serialize(
+        revision.revised("GEN", doc, revisions(policy, verses=group(within)), set())
+    )
+    assert "\\v 1 He went \\add with\\add* Noe,—" in text
 
 
 def test_a_revision_changes_a_lemma_whole_or_is_refused(
@@ -599,3 +635,336 @@ def test_preparation_reads_only_the_supplied_inputs(
     prepared = pipeline.prepare(sources, declared)
     assert prepared.documents == edition.documents
     assert prepared.policy.versification == edition.policy.versification
+
+
+@pytest.mark.parametrize(
+    "marks", [",", ";", ":", ".", "?", "!", ",;:", ",;:.?!", ".,;:", "?,:", "!,;:"]
+)
+def test_punctuation_before_a_dash_across_styles(
+    policy: bible.policy.Policy, marks: str
+) -> None:
+    doc = usj.parse(f"\\id GEN\n\\c 1\n\\p\n\\v 1 Word{marks}\\it —more\\it*.")
+    before = copy.deepcopy(doc)
+    met: revision.MetRevisions = set()
+    result = revision.punctuated(doc, policy, met)
+    expected = re.sub(r"[,;:]+$", "", marks)
+    assert scripture_text(result) == f"Word{expected}—more."
+    assert "\\it —more\\it*" in usj.serialize(result)
+    assert doc == before
+    assert revision.punctuated(result, policy, set()) == result
+    assert met == ({"before-em-dash"} if expected != marks else set())
+
+
+def scripture_text(doc: usj.Document) -> str:
+    return usj.text_of(doc["content"][2]["content"])
+
+
+def test_punctuation_in_notes_and_matter(policy: bible.policy.Policy) -> None:
+    doc = usj.parse(
+        "\\id GEN\n\\ip Preface:—words.\n\\c 1\n\\p\n\\v 1 Word,\\f - \\fr 1:1 \\fq Word,—more: \\ft Gr. Witness;—reading.\\f*—more."
+    )
+    note = usj.notes_of(doc["content"])[0]
+    note.update({"x-key": "GEN 1:1#1"})
+    before = copy.deepcopy(doc)
+    result = revision.punctuated(doc, policy, set())
+    assert "Preface—words." in usj.serialize(result)
+    new_note = usj.notes_of(result["content"])[0]
+    assert new_note["x-key"] == note["x-key"]
+    assert usj.text_of(new_note["content"]) == "1:1 Word—more: Gr. Witness—reading."
+    assert doc == before
+
+
+def test_dash_rule_respects_boundaries_and_foreign_words(
+    policy: bible.policy.Policy,
+) -> None:
+    doc = usj.parse(
+        "\\id GEN\n\\c 1\n\\p\n\\v 1 End,\n\\v 2 —start, —spaced;–en.—?! after,‘—quote [,—bracket] λόγος\\it ,—\\it* שָׁלוֹם.— λόγος.,— שָׁלוֹם?.:— \\wg λόγος,—\\wg* \\it \\+wh שָׁלוֹם.—\\+wh*\\it*.\n\\p —paragraph.\n\\tr \\tc1 Cell, \\tc2 —next"
+    )
+    before = copy.deepcopy(doc)
+    result = revision.punctuated(doc, policy, set())
+    assert "—?! after,‘—quote [—bracket]" in usj.serialize(result)
+    assert "λόγος\\it ,—\\it* שָׁלוֹם.—" in usj.serialize(result)
+    assert "\\wg λόγος,—\\wg*" in usj.serialize(result)
+    assert "\\+wh שָׁלוֹם.—\\+wh*" in usj.serialize(result)
+    assert "λόγος.,— שָׁלוֹם?.:—" in usj.serialize(result)
+    assert "End," in usj.serialize(result)
+    assert "Cell," in usj.serialize(result)
+    assert ", —spaced;–en.—" in usj.serialize(result)
+    assert doc == before
+
+
+@pytest.mark.parametrize(
+    "verse",
+    ["\\wg λόγος\\wg*,—and", "\\it \\+wg λόγος\\+wg*,—and\\it*"],
+)
+def test_punctuation_after_a_tagged_foreign_word_is_refused(
+    policy: bible.policy.Policy, verse: str
+) -> None:
+    doc = usj.parse(f"\\id GEN\n\\c 1\n\\p\n\\v 1 The word {verse} more.")
+    with pytest.raises(CheckFailed, match="tagged foreign word: GEN: ,—and"):
+        revision.punctuated(doc, policy, set())
+
+
+def test_punctuation_that_leaves_a_lemma_is_refused(
+    policy: bible.policy.Policy,
+) -> None:
+    doc = usj.parse(
+        "\\id GEN\n\\c 1\n\\p\n\\v 1 O king,\\f + \\fq O king, \\ft Or, lord.\\f*—the eyes."
+    )
+    with pytest.raises(CheckFailed, match="lemma .* GEN 1:1: O king,"):
+        revision.punctuated(doc, policy, set())
+
+
+@pytest.mark.parametrize(
+    "rule",
+    [
+        {"unknown": {"why": "x"}},
+        {"before-em-dash": {"why": ""}},
+        {"before-em-dash": {"why": "x", "from": ","}},
+    ],
+)
+def test_bad_punctuation_rules_are_refused(
+    policy: bible.policy.Policy, rule: dict[str, Any]
+) -> None:
+    with pytest.raises(CheckFailed):
+        revision.check(revisions(policy, punctuation=rule))
+
+
+def test_unused_punctuation_rule_is_refused(policy: bible.policy.Policy) -> None:
+    policy = revisions(policy, punctuation={"before-em-dash": {"why": "x"}})
+    met: revision.MetRevisions = set()
+    revision.punctuated(usj.parse("\\id GEN\n\\ip Nothing, —adjacent."), policy, met)
+    with pytest.raises(CheckFailed, match="before-em-dash"):
+        revision.check_met(policy, met)
+
+
+def test_appendix_receives_regularized_comparison(
+    sources: bible.sources.Sources,
+    declared: bible.policy.Policy,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    promote = pipeline.promote
+    rows = appendix.rows
+    supplied: list[Document] = []
+    compared = False
+
+    def with_paragraph(*args: Any, **kwargs: Any) -> pipeline.Promoted:
+        promoted = promote(*args, **kwargs)
+        original = promoted.byzantine.context
+        doc = copy.deepcopy(original["documents"]["MAT"])
+        doc["content"].append(usj.para("ip", "Word,—more."))
+        supplied.append(doc)
+        found: Context = {
+            **original,
+            "documents": {**original["documents"], "MAT": doc},
+        }
+        return replace(promoted, byzantine=replace(promoted.byzantine, context=found))
+
+    def checked_rows(
+        found: Context,
+        kjv_documents: Mapping[str, Document],
+        documents: Mapping[str, Document],
+    ) -> list[appendix.Row]:
+        nonlocal compared
+        assert (
+            usj.text_of(kjv_documents["MAT"]["content"][-1]["content"]) == "Word—more."
+        )
+        compared = True
+        return rows(found, kjv_documents, documents)
+
+    monkeypatch.setattr(pipeline, "promote", with_paragraph)
+    monkeypatch.setattr(appendix, "rows", checked_rows)
+    pipeline.prepare(sources, declared)
+    assert compared
+    assert usj.text_of(supplied[0]["content"][-1]["content"]) == "Word,—more."
+
+
+def test_authored_pages_receive_punctuation_without_mutation(
+    sources: bible.sources.Sources,
+    declared: bible.policy.Policy,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    authored = pipeline.authored
+    supplied: list[Document] = []
+    before: list[Document] = []
+
+    def with_paragraph(*args: Any, **kwargs: Any) -> tuple[dict[str, Document], int]:
+        pages, offset = authored(*args, **kwargs)
+        doc = copy.deepcopy(pages["XXA"])
+        doc["content"].append(usj.para("ip", "Word,—more."))
+        supplied.append(doc)
+        before.append(copy.deepcopy(doc))
+        return {**pages, "XXA": doc}, offset
+
+    monkeypatch.setattr(pipeline, "authored", with_paragraph)
+    prepared = pipeline.prepare(sources, declared)
+    assert (
+        usj.text_of(prepared.documents["XXA"]["content"][-1]["content"]) == "Word—more."
+    )
+    assert supplied == before
+
+
+def passage_group(*changes: dict[str, str]) -> dict[str, Any]:
+    return {
+        "dashes": {
+            "why": "The explanation continues after the dash.",
+            "changes": changes,
+        }
+    }
+
+
+def test_passage_revisions_keep_styles_metadata_and_inputs(
+    policy: bible.policy.Policy,
+) -> None:
+    doc = usj.parse(
+        "\\id GEN\n\\c 1\n\\p\n\\v 1 Text.\\f - \\fr 1:1 \\ft a \\it note.\\it*—The words.\\f*"
+    )
+    note = usj.notes_of(doc["content"])[0]
+    note.update(
+        {"x-key": "GEN 1:1#1", "x-scope": {"lemma": "Text"}, "category": "edition"}
+    )
+    before = copy.deepcopy(doc)
+    change = {"note": "GEN 1:1#1", "from": "note.—The words", "to": "note—The words"}
+    initial = {"note": "GEN 1:1#1", "from": "a ", "to": "A "}
+    rules = revisions(policy, passages=passage_group(change, initial))
+    revision.check(rules)
+    met: revision.MetRevisions = set()
+    result = revision.passages("GEN", doc, rules, met)
+    after = usj.notes_of(result["content"])[0]
+    assert {k: v for k, v in after.items() if k != "content"} == {
+        k: v for k, v in note.items() if k != "content"
+    }
+    assert "\\it note\\it*—The words" in usj.serialize(result)
+    assert doc == before
+    assert usj.text_of(after["content"]).startswith("1:1 A note")
+    assert met == {("GEN 1:1#1", "note.—The words"), ("GEN 1:1#1", "a ")}
+    revision.check_met(rules, met)
+
+
+def test_passage_revisions_in_matter_and_capitalization(
+    policy: bible.policy.Policy,
+) -> None:
+    doc = usj.parse(
+        "\\id XXB\n\\ip Word. \\it more\\it*;—and another.\n\\ip Word.—Elsewhere."
+    )
+    before = copy.deepcopy(doc)
+    change = {"unit": "XXB", "from": "more;—and", "to": "more. And"}
+    rules = revisions(policy, passages=passage_group(change))
+    revision.check(rules)
+    result = revision.passages("XXB", doc, rules, set())
+    assert "\\it more\\it*. And another." in usj.serialize(result)
+    assert "Word.—Elsewhere." in usj.serialize(result)
+    assert doc == before
+    invalid = revisions(
+        policy,
+        passages=passage_group({"unit": "XXB", "from": "another", "to": "Another"}),
+    )
+    revision.check(invalid)
+    with pytest.raises(CheckFailed, match="noninitial capitalization"):
+        revision.passages("XXB", doc, invalid, set())
+
+
+@pytest.mark.parametrize(
+    "change",
+    [
+        {"from": "Word.—", "to": "Word—"},
+        {"unit": "GEN", "from": "Word.—", "to": "Word—"},
+        {"unit": "XXB", "note": "GEN 1:1", "from": "Word.—", "to": "Word—"},
+        {"note": "invalid", "from": "Word.—", "to": "Word—"},
+        {"unit": "XXB", "from": "Word.—", "to": "Word.—"},
+        {"unit": "XXB", "from": "Word.—", "to": "Other—"},
+        {"unit": "XXB", "from": "two words", "to": "twowords"},
+        {"unit": "XXB", "from": "door-post", "to": "door post"},
+        {"unit": "XXB", "from": "word and", "to": "word And"},
+        {"unit": "XXB", "from": "Word.—", "to": "Word—", "why": ""},
+        {"unit": "XXB", "from": "Word.—", "to": "\\it Word\\it*—"},
+    ],
+)
+def test_invalid_passage_revisions_are_refused(
+    policy: bible.policy.Policy, change: dict[str, str]
+) -> None:
+    with pytest.raises(CheckFailed):
+        revision.check(revisions(policy, passages=passage_group(change)))
+
+
+@pytest.mark.parametrize("text", ["Absent.", "Word.—Word.—", "Word.—\n\\ip Word.—"])
+def test_passage_revisions_must_match_once(
+    policy: bible.policy.Policy, text: str
+) -> None:
+    rules = revisions(
+        policy, passages=passage_group({"unit": "XXB", "from": "Word.—", "to": "Word—"})
+    )
+    with pytest.raises(CheckFailed, match="not met once"):
+        revision.passages("XXB", usj.parse("\\id XXB\n\\ip " + text), rules, set())
+
+
+def test_overlapping_and_unused_passage_revisions_are_refused(
+    policy: bible.policy.Policy,
+) -> None:
+    first = {"unit": "XXB", "from": "Word.—more", "to": "Word—more"}
+    second = {"unit": "XXB", "from": ".—more", "to": "—more"}
+    rules = revisions(policy, passages=passage_group(first, second))
+    doc = usj.parse("\\id XXB\n\\ip Word.—more")
+    with pytest.raises(CheckFailed, match="Overlapping"):
+        revision.passages("XXB", doc, rules, set())
+    with pytest.raises(CheckFailed, match="nothing prints"):
+        revision.check_met(rules, {("XXB", first["from"])})
+    with pytest.raises(CheckFailed, match="Overlapping"):
+        revision.passages(
+            "XXB", doc, revisions(policy, passages=passage_group(first, first)), set()
+        )
+
+
+def test_prepared_contextual_dashes_and_derived_quotations(
+    edition: bible.pipeline.Edition,
+    policy: bible.policy.Policy,
+    read: bible.pipeline.Read,
+) -> None:
+    for change in revision.verse_changes(policy):
+        code, reference = change["verse"].split()
+        words = scripture.verses(edition.documents[code])[reference].text
+        assert change["to"] in words
+        assert change["from"] not in words
+    for passage_change in revision.passage_changes(policy):
+        if "note" in passage_change:
+            code = passage_change["note"].split()[0]
+            note = next(
+                n
+                for n in usj.notes_of(edition.documents[code]["content"])
+                if n.get("x-key") == passage_change["note"]
+            )
+            words = usj.text_of(note["content"])
+        else:
+            words = usj.text_of(edition.documents[passage_change["unit"]]["content"])
+        assert passage_change["to"] in words
+        assert passage_change["from"] not in words
+    assert (
+        "expressly were appointed"
+        in scripture.verses(edition.documents["2CH"])["31:19"].text
+    )
+    assert "dead?—" in scripture.verses(edition.documents["2SA"])["12:18"].text
+    note = next(
+        n
+        for n in usj.notes_of(edition.documents["DEU"]["content"])
+        if n.get("x-key") == "DEU 17:20"
+    )
+    assert "Heb.—" in usj.text_of(note["content"])
+    quoted = places.report(policy.versification["kjv"], edition.documents, read.kjv)
+    assert "Artaxerxes (this Artaxerxes" in quoted
+    assert "save Israel.—" not in quoted
+
+
+def test_passage_note_keys_must_select_once(policy: bible.policy.Policy) -> None:
+    doc = usj.parse(
+        "\\id GEN\n\\c 1\n\\p\n\\v 1 Text.\\f - \\ft Word.—more\\f*\\f - \\ft Other.\\f*"
+    )
+    for note in usj.notes_of(doc["content"]):
+        note["x-key"] = "GEN 1:1#1"
+    rules = revisions(
+        policy,
+        passages=passage_group(
+            {"note": "GEN 1:1#1", "from": "Word.—more", "to": "Word—more"}
+        ),
+    )
+    with pytest.raises(CheckFailed, match="not met once"):
+        revision.passages("GEN", doc, rules, set())

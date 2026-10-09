@@ -1,5 +1,5 @@
 {
-  "why": "The spelling and punctuation of the translation, regularized without changing its words. A word is respelt wherever the translation, its notes, and its front and back matter print it as a whole word. A verse's change is made to the words of that verse alone, which must have them once, and to the notes that quote them. Verses' changes stand in groups, each group under the reason its changes share. Each gives its reason.",
+  "why": "The spelling and punctuation of the translation, regularized without changing its words. A word is respelt wherever the translation, its notes, and its front and back matter print it as a whole word. A verse's change is made to the words of that verse alone, which must have them once, and to the notes that quote them. Verses' changes stand in groups, each group under the reason its changes share. Each gives its reason. Passage changes name a stable note key or a front/back-matter unit and the plain words met once there; only punctuation, associated spacing and sentence-initial capitalization may change.",
   "words": {
     "Osee": {
       "to": "Hosea",
@@ -42,5 +42,136 @@
       "why": "Use the spelling in this edition's title for the Prayer of Manasses wherever the name is printed."
     }
   },
-  "verses": {}
+  "verses": {
+    "contextual-dashes": {
+      "why": "Set sentence endings and parenthetical continuations according to their syntax, preserving every word. Each decision names the pre-cleanup wording and its sentence structure.",
+      "changes": [
+        {
+          "verse": "1KI 8:53",
+          "from": "O Lord God.—",
+          "to": "O Lord God.",
+          "why": "The invocation completes this sentence of Solomon's prayer; retain its full stop without a trailing dash."
+        },
+        {
+          "verse": "2CH 31:19",
+          "from": "office,—even those from their cities, the men in each several city who were named expressly,—",
+          "to": "office (even those from their cities), the men in each several city who were named expressly ",
+          "why": "The short qualification is parenthetical; the men named expressly continue the clause rather than form a second parenthesis. A separating space before the supplied were appointed preserves the word boundary formerly marked by the dash."
+        },
+        {
+          "verse": "ESG 1:1s",
+          "from": "Artaxerxes,—(this Artaxerxes ruled over a hundred and twenty-seven provinces from India)—",
+          "to": "Artaxerxes (this Artaxerxes ruled over a hundred and twenty-seven provinces from India),",
+          "why": "Parentheses already enclose the explanation of Artaxerxes; a comma resumes the surrounding sentence in the next verse."
+        },
+        {
+          "verse": "2SA 21:2",
+          "from": "said to them;—(now",
+          "to": "said to them: (now",
+          "why": "The colon keeps the speech introduction connected to David's words in verse 3 across the parenthetical explanation of the Gabaonites; retain the parenthesis's lowercase opening."
+        },
+        {
+          "verse": "ESG 4:17b",
+          "from": "save Israel.—",
+          "to": "save Israel.",
+          "why": "The opening declaration of the prayer is a complete sentence; the next verse begins its supporting reason, For thou hast made the heaven and the earth."
+        },
+        {
+          "verse": "EXO 21:6",
+          "from": "to the door,—to the door-post, and",
+          "to": "to the door, to the door-post, and",
+          "why": "The door-post specifies the door in the continuing instruction; a comma suffices."
+        },
+        {
+          "verse": "GEN 31:49",
+          "from": "depart from each other,—",
+          "to": "depart from each other.",
+          "why": "The invocation ends here before the next verse begins a conditional sentence."
+        },
+        {
+          "verse": "NUM 22:4",
+          "from": "of the field:—and Balac",
+          "to": "of the field. And Balac",
+          "why": "The comparison ends before the narrative identifies Balac; begin that narrative sentence with a capital."
+        }
+      ]
+    }
+  },
+  "punctuation": {
+    "before-em-dash": {
+      "why": "An em dash supplies the break marked by an adjacent comma, colon or semicolon. Remove only adjacent runs of these three marks before it in English; preserve periods (including abbreviation periods), question marks and exclamation marks. Sentence endings and contextual dash changes require explicit decisions."
+    }
+  },
+  "passages": {
+    "preface-continuation": {
+      "why": "The three objects of consideration form one coordinated list; commas separate them without interrupting the parallel construction.",
+      "changes": [
+        {
+          "unit": "XXB",
+          "from": "original text,—of the fidelity of the version, and also,—of the correctness",
+          "to": "original text, of the fidelity of the version, and also of the correctness"
+        }
+      ]
+    },
+    "reference-label-dashes": {
+      "why": "These appendix reference labels introduce their explanations with a dash; the period after the verse number is not an abbreviation or a sentence ending.",
+      "changes": [
+        {
+          "unit": "BAK",
+          "from": "2 Kgdms. 5:18.—",
+          "to": "2 Kgdms. 5:18—"
+        },
+        {
+          "unit": "BAK",
+          "from": "Job 25:2.—",
+          "to": "Job 25:2—"
+        },
+        {
+          "unit": "BAK",
+          "from": "Job 39:13.—",
+          "to": "Job 39:13—"
+        },
+        {
+          "unit": "BAK",
+          "from": "Ps. 41:5.—",
+          "to": "Ps. 41:5—"
+        },
+        {
+          "unit": "BAK",
+          "from": "Prov. 8:5.—",
+          "to": "Prov. 8:5—"
+        },
+        {
+          "unit": "BAK",
+          "from": "Esai. 2:6.—",
+          "to": "Esai. 2:6—"
+        },
+        {
+          "unit": "BAK",
+          "from": "Ezek. 16:44.—",
+          "to": "Ezek. 16:44—"
+        }
+      ]
+    },
+    "note-introduction-dashes": {
+      "why": "The dash introduces the explanation in these notes without ending a sentence; remove the ordinary period while retaining abbreviation periods.",
+      "changes": [
+        {
+          "note": "GEN 35:16",
+          "from": "note.—The words",
+          "to": "note—The words"
+        },
+        {
+          "note": "JOS 21:13",
+          "from": "above.—q.d.",
+          "to": "above—q.d."
+        },
+        {
+          "note": "PSA 9:22",
+          "from": "Note.—Here begins",
+          "to": "Note—Here begins"
+        }
+      ]
+    }
+  }
 }

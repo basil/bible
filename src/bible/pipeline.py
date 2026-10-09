@@ -1,18 +1,20 @@
 """The edition, prepared: every stage in the order its inputs allow.
 
     read        the pinned sources, their transcription corrected, as USJ
-    promote     the Alexandrine readings, in Brenton's own numbering
+    promote     the Alexandrine and Byzantine readings in their source texts
     assemble    the edition's books from the sources' chapters
-    place       where each Old Testament verse stands in the King James Bible
+    place       where each verse stands in the King James Bible
     matter      the translations' front and back matter
     annotate    notes, quotation links and book introductions
-    authored    the edition's own pages
-    revise      the edition's spelling and punctuation
+    revise      the translations' spelling and punctuation
+    authored    the edition's own pages, quoting the revised translations
     view        the full edition, or the sample's chapters, with typography
     export      USFM for PTXprint
 
 Each stage is a function of the stages before it and of the policy. Nothing
-is read after the first, and no document is changed in place.
+is read after the first, and no document is changed in place. Revision finishes
+the translations after source-dependent decisions; authored pages consume that
+text and receive their own punctuation finishing pass.
 """
 
 from __future__ import annotations
@@ -607,12 +609,15 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
     books, reports = annotated(units, read_sources, introductions, ctx)
     # The revision comes before the edition's own pages, which quote the
     # books as they print.
-    revised: set[str] = set()
+    revised: revision.MetRevisions = set()
     finished: dict[str, Document] = {}
     for code, doc in {**front, **books}.items():
         if code in books:
             doc = revision.revised(code, doc, policy, revised)
-        finished[code] = revision.respelt(doc, policy, revised)
+        doc = revision.passages(code, doc, policy, revised)
+        finished[code] = revision.punctuated(
+            revision.respelt(doc, policy, revised), policy, revised
+        )
     labels = {
         "tr": ctx.terms.display("textus-receptus"),
         "rp": ctx.terms.display("robinson-pierpont"),
@@ -620,19 +625,24 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
         "oleb": ctx.terms.display("orthodox-liturgical-english-bible"),
         "apparatus": ctx.terms.display("apparatus"),
     }
-    # The King James books before the readings, spelt as the edition spells
-    # them (the revision's record of what it met is the books' own).
-    kjv_spelt = {
-        code: revision.respelt(doc, policy, set())
+    # The King James books before the readings, with the same systematic
+    # spelling and punctuation (only printed documents record what was met).
+    kjv_regularized = {
+        code: revision.punctuated(revision.respelt(doc, policy, set()), policy, set())
         for code, doc in promoted.byzantine.context["documents"].items()
     }
     rows = appendix.rows(
         promoted.byzantine.context,
-        kjv_spelt,
+        kjv_regularized,
         {code: finished[code] for code in byzantine.BOOKS},
     )
     readings, spans = appendix.blocks(rows, ctx.books, labels)
     pages, offset = authored(ctx, sources, readings)
+    # These pages discuss source names, so retain their spelling. Finish
+    # punctuation after their passages and tables have been filled in.
+    pages = {
+        code: revision.punctuated(doc, policy, revised) for code, doc in pages.items()
+    }
     documents: dict[str, Document] = {}
     for entry in policy.entries:
         code = entry["id"]

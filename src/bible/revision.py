@@ -2,17 +2,21 @@
 (edition/revisions.json): its words are kept, and how they are spelt and
 pointed is regularized.
 
-Two kinds of change are declared, each with its reason:
+Four kinds of change are declared, each with its reason:
 
     words    a word respelt wherever it is printed as a whole word: in the
              translation, its notes, and the front and back matter
+    passages punctuation in a keyed note or front/back-matter paragraph
+    punctuation systematic English punctuation rules
     verses   changes to the words of single verses, each naming its verse,
              as "EZK 1:3", which must have the words once: its punctuation,
              or a spelling particular to it. They stand in groups, by the
              reason they share
 
-The revision is made last, to the edition as prepared, so that the sources
-are read, and every other decision is met, in the sources' own words. A
+Revision finishes the translations after source-dependent decisions, so
+that the sources are read and those decisions are met in the sources' own
+words. Authored pages then consume the revised text and receive their own
+punctuation finishing pass, retaining the source names they discuss. A
 change that nothing meets is refused.
 """
 
@@ -21,18 +25,32 @@ from __future__ import annotations
 import re
 from collections.abc import Callable
 from collections.abc import Set as AbstractSet
+from difflib import SequenceMatcher
 
 import bible.policy
-from bible import repairs, scripture, usj
-from bible.checks import require, require_fields
-from bible.policy_schema import RevisionChange
+from bible import repairs, scripture, usfm, usj
+from bible.checks import CheckFailed, require, require_fields
+from bible.policy_schema import RevisionChange, WordingChange
 from bible.sources import NEW_TESTAMENT
 from bible.usj import Content, Document, Node
+
+# What revision has met: a word, verse or punctuation rule by its key, and a
+# passage change by its selector and words.
+type MetRevisions = set[str | tuple[str, str]]
 
 
 def check(policy: bible.policy.Policy) -> None:
     data = policy.revisions
-    require_fields(data, {"why", "words", "verses"}, (), "Revisions file")
+    require_fields(
+        data,
+        {"why", "words", "verses", "passages", "punctuation"},
+        (),
+        "Revisions file",
+    )
+    for name, rule in data["punctuation"].items():
+        require(name == "before-em-dash", f"Unknown punctuation rule: {name}")
+        require_fields(rule, {"why"}, (), f"Punctuation rule {name}")
+        require(bool(rule["why"]), f"Punctuation rule without a why: {name}")
     for word, entry in data["words"].items():
         require_fields(entry, {"to", "why"}, (), f"Respelling of {word}")
         require(
@@ -60,7 +78,7 @@ def check(policy: bible.policy.Policy) -> None:
                 f"Revision of what is not a verse: {name}: {key}",
             )
             # The appendix of readings compares the New Testament as revised
-            # with the King James text as respelt only: a revised verse
+            # with the King James text as systematically revised: a revised verse
             # would be listed as a reading the Greek does not have.
             require(
                 key[:3] not in NEW_TESTAMENT,
@@ -73,6 +91,193 @@ def check(policy: bible.policy.Policy) -> None:
                 and change.get("why", True),
                 f"Revision that changes nothing, or with an empty why: {name}: {key}",
             )
+
+    matter = {e["id"] for e in policy.entries if "file" not in e and "section" not in e}
+    for name, passage_group in data["passages"].items():
+        require_fields(
+            passage_group, {"why", "changes"}, (), f"Passage revisions {name}"
+        )
+        require(
+            passage_group["why"] and passage_group["changes"],
+            f"Passage revisions without a why or change: {name}",
+        )
+        for passage_change in passage_group["changes"]:
+            require_fields(
+                passage_change,
+                {"from", "to"},
+                {"note", "unit", "why"},
+                f"Passage revision {name}",
+            )
+            require(
+                ("note" in passage_change) != ("unit" in passage_change),
+                f"Passage revision needs one selector: {name}",
+            )
+            selector = _selector(passage_change)
+            require(bool(selector), f"Empty passage selector: {name}")
+            require(
+                "unit" not in passage_change or passage_change["unit"] in matter,
+                f"Passage revision unit is not front or back matter: {selector}",
+            )
+            require(
+                "note" not in passage_change
+                or re.fullmatch(r"\w{3} \S+:\S+(?: .+)?", selector) is not None,
+                f"Invalid passage note selector: {selector}",
+            )
+            require(
+                passage_change["from"]
+                and passage_change["from"] != passage_change["to"]
+                and passage_change.get("why", True),
+                f"Passage revision changes nothing or has an empty why: {selector}",
+            )
+            require(
+                re.fullmatch(
+                    r"[\w\s.,;:?!—–\-()'’‘\"“”\[\]]*",
+                    passage_change["from"] + passage_change["to"],
+                )
+                is not None,
+                f"Passage revision is not plain punctuation: {selector}",
+            )
+            require(
+                _same_words(passage_change["from"], passage_change["to"]),
+                f"Passage revision changes wording or noninitial capitalization: {selector}",
+            )
+
+
+def _same_words(old: str, new: str) -> bool:
+    pattern = r"\w+(?:[-'’]\w+)*"
+    before, after = list(re.finditer(pattern, old)), list(re.finditer(pattern, new))
+    return len(before) == len(after) and all(
+        a[0] == b[0]
+        or (
+            a[0][:1].islower()
+            and b[0] == a[0][:1].upper() + a[0][1:]
+            and (
+                not new[: b.start()].strip(' \n\t("‘“')
+                or new[: b.start()].rstrip(' \n\t("‘“').endswith((".", "?", "!"))
+            )
+        )
+        for a, b in zip(before, after)
+    )
+
+
+def _selector(change: WordingChange) -> str:
+    """The note key or the unit a passage revision names."""
+    return change.get("note", change.get("unit", ""))
+
+
+def passage_changes(policy: bible.policy.Policy) -> list[WordingChange]:
+    return [
+        change
+        for group in policy.revisions["passages"].values()
+        for change in group["changes"]
+    ]
+
+
+def passages(
+    code: str,
+    doc: Document,
+    policy: bible.policy.Policy,
+    met: MetRevisions,
+) -> Document:
+    """Revise a keyed note or one paragraph, keeping its words and metadata.
+
+    Find every change in the original document, so overlapping decisions
+    cannot consume one another. Matches are recorded by selector and words.
+    A note is found by its key wherever it is printed: a note keyed in its
+    source's book may stand in another (Nehemias holds Esdras's notes, and
+    Daniel those of Susanna and Bel), so its key's book does not say which.
+    """
+    changes = [
+        c for c in passage_changes(policy) if "note" in c or c.get("unit") == code
+    ]
+    if not changes:
+        return doc
+
+    def skip(node: Node) -> bool:
+        return usj.is_note(node) or usj.is_label(node)
+
+    targets: list[tuple[str | None, Content]] = []
+
+    def collect(content: Content) -> Content:
+        targets.append((None, content))
+        targets.extend(
+            (note.get("x-key"), note["content"])
+            for note in usj.notes_of(content)
+            if "x-key" in note
+        )
+        return content
+
+    usj.with_content(doc, collect)
+    edits: dict[int, list[tuple[int, int, str]]] = {}
+    ranges: dict[int, list[tuple[int, int]]] = {}
+    for change in changes:
+        old, new = change["from"], change["to"]
+        selector = _selector(change)
+        selected = [
+            content
+            for key, content in targets
+            if (key == change["note"] if "note" in change else key is None)
+        ]
+        if "note" in change and not selected:
+            # Printed elsewhere, or nowhere, which check_met refuses.
+            continue
+        found = [
+            (content, match.start())
+            for content in selected
+            for match in re.finditer(
+                "(?=" + re.escape(old) + ")", usj.text_of(content, skip=skip)
+            )
+        ]
+        require(
+            len(found) == 1 and ("note" not in change or len(selected) == 1),
+            f"Passage revision not met once: {selector}: {old}",
+        )
+        content, at = found[0]
+        words = usj.text_of(content, skip=skip)
+        require(
+            _same_words(words, words[:at] + new + words[at + len(old) :]),
+            f"Passage revision changes wording or noninitial capitalization: {selector}: {old}",
+        )
+        spans = ranges.setdefault(id(content), [])
+        require(
+            all(at + len(old) <= start or end <= at for start, end in spans),
+            f"Overlapping passage revisions: {selector}: {old}",
+        )
+        spans.append((at, at + len(old)))
+        # Only changed characters give way; unchanged words retain their styles.
+        edits.setdefault(id(content), []).extend(
+            (at + a, at + b, new[c:d])
+            for tag, a, b, c, d in SequenceMatcher(
+                None, old, new, autojunk=False
+            ).get_opcodes()
+            if tag != "equal"
+        )
+        met.add((selector, old))
+    if not edits:
+        return doc
+
+    def rewrite(content: Content) -> Content:
+        revised = content
+        if id(content) in edits:
+            revised = usj.substituted(content, edits[id(content)], skip=skip)
+            require(
+                _same_words(
+                    usj.text_of(content, skip=skip), usj.text_of(revised, skip=skip)
+                ),
+                "Combined passage revisions change wording or noninitial "
+                f"capitalization: {code}",
+            )
+        result: Content = []
+        for item in revised:
+            if isinstance(item, dict) and "content" in item:
+                item = {**item, "content": rewrite(item["content"])}
+            result.append(item)
+        return result
+
+    result = usj.with_content(doc, rewrite)
+    # A note's lemma must still quote its verse.
+    _check_lemmas(doc, result)
+    return result
 
 
 def verse_changes(policy: bible.policy.Policy) -> list[RevisionChange]:
@@ -108,7 +313,7 @@ def _rewritten(
     return usj.substituted(content, edits) if edits else content
 
 
-def respelt(doc: Document, policy: bible.policy.Policy, met: set[str]) -> Document:
+def respelt(doc: Document, policy: bible.policy.Policy, met: MetRevisions) -> Document:
     """A document with the words the file respells, each recorded as met."""
     words = policy.revisions["words"]
     if not words:
@@ -141,8 +346,120 @@ def respelt(doc: Document, policy: bible.policy.Policy, met: set[str]) -> Docume
     return usj.with_content(doc, respell)
 
 
+# The source quotations have not yet been tagged for their fonts. Recognize
+# their letters too, and the stops that close them, so that their punctuation
+# is not revised as English.
+FOREIGN_END = re.compile(f"[{usfm.GREEK}{usfm.HEBREW}][\u0300-\u036f]*[.?!]*$")
+BEFORE_DASH = re.compile(r"[,;:]+(?=—)")
+# What a tagged foreign word or a label stands as in the English it interrupts.
+FOREIGN, LABEL = "\1", "\0"
+
+
+def punctuated(
+    doc: Document, policy: bible.policy.Policy, met: MetRevisions
+) -> Document:
+    """Regularize English punctuation across styles, within each text unit.
+
+    Notes have their own words; verses, labels and foreign styles interrupt
+    a unit. The dash keeps its style because only the punctuation is deleted.
+    Punctuation after a tagged foreign word is refused, as it may be the
+    foreign text's own, and so is a change that leaves a lemma its verse no
+    longer has.
+    """
+    if "before-em-dash" not in policy.revisions["punctuation"]:
+        return doc
+    changed = False
+
+    def english(content: Content) -> str:
+        parts = []
+        for item in content:
+            if isinstance(item, str):
+                parts.append(item)
+            elif "content" in item and not usj.is_note(item):
+                words = english(item["content"])
+                parts.append(
+                    FOREIGN * len(words)
+                    if item.get("marker") in ("wg", "wh")
+                    else LABEL * len(words) if usj.is_label(item) else words
+                )
+        return "".join(parts)
+
+    def rewrite(content: Content, after: str = "") -> Content:
+        nonlocal changed
+        text = after + english(content)
+        edits = []
+        for match in BEFORE_DASH.finditer(text, len(after)):
+            if text[match.start() - 1 : match.start()] == FOREIGN:
+                raise CheckFailed(
+                    "Punctuation before a dash after a tagged foreign word: "
+                    f"{usj.book_code(doc)}: {text[match.start() : match.start() + 30]}"
+                )
+            if not FOREIGN_END.search(text, 0, match.start()):
+                edits.append((match.start() - len(after), match.end() - len(after), ""))
+        if edits:
+            changed = True
+            met.add("before-em-dash")
+            return usj.substituted(content, edits)
+        return content
+
+    def inline(content: Content, *, separate: bool = True) -> Content:
+        result: Content = []
+        run: Content = []
+        after = ""
+        for item in content:
+            if isinstance(item, dict) and (
+                item["type"] == "verse"
+                or usj.is_label(item)
+                or item.get("marker") in ("wg", "wh")
+            ):
+                result += rewrite(run, after) if separate else run
+                run = []
+                result.append(item)
+                after = FOREIGN if item.get("marker") in ("wg", "wh") else ""
+                continue
+            if isinstance(item, dict) and "content" in item:
+                # Character styles share their parent's words. Rewrite their
+                # children first to find notes and protected spans within them.
+                item = {
+                    **item,
+                    "content": inline(item["content"], separate=item["type"] == "note"),
+                }
+            run.append(item)
+        return result + (rewrite(run, after) if separate else run)
+
+    result = usj.with_content(doc, inline)
+    if changed:
+        _check_lemmas(doc, result)
+    return result
+
+
+def _check_lemmas(before: Document, after: Document) -> None:
+    """Refuse a lemma its verse had before a change and no longer has."""
+
+    def lemmas(note: Node) -> list[str]:
+        return [
+            scripture.plain(usj.text_of(item["content"])).removesuffix(":")
+            for item in usj.walk(note["content"])
+            if usj.is_type(item, "char", "fq")
+        ]
+
+    old = scripture.verses(before)
+    for reference, verse in scripture.verses(after).items():
+        was, words = scripture.plain(old[reference].text), scripture.plain(verse.text)
+        for (_, then), (_, now) in zip(old[reference].notes, verse.notes):
+            for quoted, kept in zip(lemmas(then), lemmas(now)):
+                if quoted in was and kept not in words:
+                    raise CheckFailed(
+                        "Punctuation leaves a lemma its verse no longer has: "
+                        f"{usj.book_code(after)} {reference}: {kept}"
+                    )
+
+
 def revised(
-    code: str, doc: Document, policy: bible.policy.Policy, met: set[str]
+    code: str,
+    doc: Document,
+    policy: bible.policy.Policy,
+    met: MetRevisions,
 ) -> Document:
     """A book with the changes the file declares for its verses. A verse's
     words give way where they stand, in the styles they stand in, and the
@@ -165,6 +482,17 @@ def revised(
             f"Revision not met once in its verse: {key}: {old}",
         )
         start, end, new = _edit(verse.text.index(old), old, change["to"])
+        # New words take the style of the first words they replace, so words
+        # set across a style or a note would lose it; words only deleted
+        # lose nothing.
+        index, local = verse.part_at(start, at_end=start == end)
+        block, lo, hi, _ = verse.parts[index]
+        strings = usj.leaves(doc["content"][block]["content"][lo:hi])
+        require(
+            not new
+            or sum(a < local + end - start and local < b for a, b in strings) <= 1,
+            f"Revision across a style or note: {key}: {old}",
+        )
         edits.append((verse, start, end, new, change))
         met.add(key)
     # Two groups may revise one verse, but not the same words of it.
@@ -234,5 +562,9 @@ def check_met(
 ) -> None:
     data = policy.revisions
     verses = {change["verse"] for change in verse_changes(policy)}
-    unused = sorted((set(data["words"]) | verses) - met)
+    passages = {(_selector(c), c["from"]) for c in passage_changes(policy)}
+    unused = sorted(
+        (set(data["words"]) | verses | set(data["punctuation"]) | passages) - met,
+        key=str,
+    )
     require(not unused, f"Revisions that nothing prints: {unused}")

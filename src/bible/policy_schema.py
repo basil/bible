@@ -330,7 +330,13 @@ class RevisionsWords(TypedDict, total=False):
     why: str
 
 
+class PunctuationRule(TypedDict, total=False):
+    why: str
+
+
 class Revisions(TypedDict, total=False):
+    passages: "Mapping[str, Prose]"
+    punctuation: "Mapping[str, PunctuationRule]"
     verses: "Mapping[str, RevisionGroup]"
     why: str
     words: "Mapping[str, RevisionsWords]"
