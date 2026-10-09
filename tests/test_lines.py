@@ -385,9 +385,9 @@ def test_the_psalter_is_set_in_the_updates_lines(
 ) -> None:
     psalms = scripture.verses(unit(edition, "PSA"))
     assert psalms["1:1"].text == (
-        "Blessed is the man who has not walked in the counsel of the ungodly,\n"
-        "and has not stood in the way of sinners,\n"
-        "and has not sat in the seat of evil men."
+        "Blessed is the man who hath not walked in the counsel of the ungodly,\n"
+        "and hath not stood in the way of sinners,\n"
+        "and hath not sat in the seat of evil men."
     )
     assert markers(unit(edition, "PSA"))[:11] == ["q1"] * 9 + ["b", "q1"]
     # The update numbers Psalm 12 otherwise; the chapter's words place its lines.
@@ -406,7 +406,7 @@ def test_the_hebrew_letters_of_lamentations_head_their_lines(
 ) -> None:
     doc = unit(edition, "LAM")
     verses = scripture.verses(doc)
-    assert verses["1:2"].text.startswith("Beth. She weeps sore in the night,\n")
+    assert verses["1:2"].text.startswith("Beth. She weepeth sore in the night,\n")
     assert verses["3:21a"].text.startswith("Heth. It is the mercies of the Lord,\n")
     assert verses["4:17"].text == (
         "Phe. While we yet lived our eyes failed,\n"
