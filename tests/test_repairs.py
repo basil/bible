@@ -101,5 +101,5 @@ def test_the_editions_corrections_all_apply(
 ) -> None:
     """Each is made once, to a file the edition prints; reading refused otherwise."""
     corrections = policy.brenton_notes["corrections"]
-    assert len(corrections) == 83
+    assert len(corrections) == 84
     assert read.mended["1KI"] and "21:11" in read.mended["GEN"]
