@@ -1,6 +1,30 @@
 {
   "why": "The spelling, vocabulary and punctuation of the translation, revised by explicit editorial decisions. A word is respelt or modernized wherever the translation, its notes, and its front and back matter print it as a whole word. A verse's change is made to the words of that verse alone, which must have them once, and to the notes that quote them. Verses' changes stand in groups, each group under the reason its changes share. Each gives its reason. Passage changes name a stable note key or a front/back-matter unit and the plain words met once there; only punctuation, associated spacing and sentence-initial capitalization may change.",
   "words": {
+    "Chanaan": {
+      "to": "Canaan",
+      "why": "Use Canaan consistently throughout the printed edition, as requested by the user: no h and two a's, including notes and quotations."
+    },
+    "Chanaanite": {
+      "to": "Canaanite",
+      "why": "Use Canaanite consistently throughout the printed edition, as requested by the user: no h and two a's, including notes and quotations."
+    },
+    "Chananite": {
+      "to": "Canaanite",
+      "why": "Use Canaanite consistently throughout the printed edition, as requested by the user: no h and two a's, including notes and quotations."
+    },
+    "Chananites": {
+      "to": "Canaanites",
+      "why": "Use the plural of Canaanite consistently throughout the printed edition, as requested by the user: no h and two a's, preserving the plural."
+    },
+    "Chananitish": {
+      "to": "Canaanite",
+      "why": "Use Canaanite consistently throughout the printed edition, as requested by the user, replacing the older adjective in descriptions of a man, woman or king."
+    },
+    "Pharao": {
+      "to": "Pharaoh",
+      "why": "Use Pharaoh consistently throughout the printed edition, as requested by the user, including notes, quotations and possessives."
+    },
     "Timotheus": {
       "to": "Timothy",
       "why": "Use one consistent spelling throughout scripture, notes and front and back matter, including quotations and references to people other than Paul's companion."
