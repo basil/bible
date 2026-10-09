@@ -66,19 +66,25 @@ def test_no_stage_changes_what_an_earlier_stage_made(
     read: bible.pipeline.Read,
 ) -> None:
     """Documents are shared between stages, so none may be changed in place."""
-    before = copy.deepcopy((dict(read.brenton), dict(read.kjv)))
+    before = copy.deepcopy(
+        (dict(read.brenton), dict(read.kjv), dict(read.updated_brenton))
+    )
     promoted = pipeline.promote(
         read, policy, sources.byzantine, terminology.registry(policy)
     )
     kept = copy.deepcopy((dict(promoted.brenton), dict(promoted.kjv)))
     units = pipeline.assemble(promoted, policy, sources)
     assembled = copy.deepcopy(dict(units))
-    ctx = pipeline.context(units, policy, sources)
+    placed = pipeline.placed(units, read, policy)
+    lined = pipeline.lined(units, read, placed)
+    line_documents = copy.deepcopy(dict(lined))
+    ctx = pipeline.context(lined, placed, sources)
     _, introductions, _ = pipeline.front_and_back(read, ctx, sources)
-    pipeline.annotated(units, read, introductions, ctx)
-    assert (dict(read.brenton), dict(read.kjv)) == before
+    pipeline.annotated(lined, read, introductions, ctx)
+    assert (dict(read.brenton), dict(read.kjv), dict(read.updated_brenton)) == before
     assert (dict(promoted.brenton), dict(promoted.kjv)) == kept
     assert dict(units) == assembled
+    assert dict(lined) == line_documents
 
 
 def test_the_policy_is_read_once_and_cannot_be_changed(
@@ -597,6 +603,15 @@ def test_greek_and_hebrew_are_set_in_the_styles_of_their_fonts() -> None:
     )
     # Only the form of what prints changes.
     assert usj.text_of(pipeline.font_runs(content)) == "Gr. ἀλλ’ ἐγώ, Heb. א, or β"
+
+
+def test_lines_that_go_on_with_a_verse_are_indented() -> None:
+    doc = usj.parse(
+        "\\id PSA\n\\c 1\n\\p \\v 1 He said:\n\\q1 One,\n\\q1 two.\n"
+        "\\q1 \\v 2 Three,\n\\q1 four.\n\\b\n\\q1 five.\n"
+    )
+    markers = [b.get("marker") for b in pipeline.indented(doc)["content"]]
+    assert markers == ["id", "c", "p", "q1", "q2", "q1", "q2", "b", "q1"]
 
 
 def test_the_review_is_written_once_and_shows_what_changed(

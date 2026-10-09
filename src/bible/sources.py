@@ -53,6 +53,14 @@ SOURCES: Mapping[str, Pinned] = {
         "retrieved": "2026-09-23",
         "sha256": "7940a2d164513b2bd2dbec2c8570b89ef8673621ed4f30f3099218a7ddd04936",
     },
+    # Adam Boyd's Updated Brenton: read for where its lines of poetry fall in
+    # Brenton's words, and for nothing else (bible.lines).
+    "updated_brenton": {
+        "archive": "sources/englxxup_usfm.zip",
+        "url": "https://ebible.org/Scriptures/englxxup_usfm.zip",
+        "retrieved": "2026-10-09",
+        "sha256": "ff634ca56e906cf726df3006db5088509a35186ed069e282be40cc2fe9e7f564",
+    },
     "versification": {
         "file": "sources/TVTMS - Translators Versification Traditions with Methodology for Standardisation for Eng+Heb+Lat+Grk+Others - STEPBible.org CC BY.txt",
         "url": "https://github.com/STEPBible/STEPBible-Data/blob/1f342173b881ba5d1a5a4cae6e7c6c3fcc7cac51/Versification/",
@@ -270,6 +278,7 @@ class Sources:
 
     brenton: MappingProxyType[str, str]
     kjv: MappingProxyType[str, str]
+    updated_brenton: MappingProxyType[str, str]
     authored: MappingProxyType[str, str]
     marginal: str
     versification: str
@@ -453,7 +462,8 @@ def load() -> Sources:
         for name, source in SOURCES.items()
     }
     archives = {
-        name: read_archive(io.BytesIO(pinned[name])) for name in ("brenton", "kjv")
+        name: read_archive(io.BytesIO(pinned[name]))
+        for name in ("brenton", "kjv", "updated_brenton")
     }
     authored = {
         str(path.relative_to(paths.ROOT)): path.read_text(encoding="utf-8")
@@ -462,6 +472,7 @@ def load() -> Sources:
     return Sources(
         archives["brenton"],
         archives["kjv"],
+        archives["updated_brenton"],
         MappingProxyType(authored),
         pinned["marginal_notes"].decode("utf-8"),
         pinned["versification"].decode("utf-8-sig"),

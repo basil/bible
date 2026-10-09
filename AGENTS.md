@@ -31,12 +31,13 @@ Every departure from the sources is a decision recorded in `edition/*.json`, and
 2. **Promote:** the readings from Codex Alexandrinus are put into Brenton's text, and the readings of the Byzantine text into the King James text: the Greek texts are compared unit by unit, the witnesses attached, the decisions validated against them, every unit given its disposition, the edits and the structural changes carried out, and the Textus Receptus notes set (`src/bible/byzantine/`). In both, the chosen text goes into the verse and the displaced reading becomes a note that names its witness; the editor's corrections of the English where the Greek texts agree are carried out without one.
 3. **Assemble:** the edition's books are made from the sources' chapters, under the edition's names: Nehemias from the file that holds Esdras, Daniel with Susanna and Bel and the Dragon, the close of Malachias as its fourth chapter, and without the empty chapter eBible left in Proverbs. What the edition prints is read from the assembled books.
 4. **Place:** each verse is matched to its place in the King James Bible: the Old Testament's from the table and the words, the New Testament's from the verses the Byzantine text lacks or places elsewhere. The notes, the links and the table of chapters and verses read it.
-5. **Matter:** the translations' front and back matter is brought into the edition's style, citing and abbreviating as the edition does.
-6. **Annotate:** Brenton's notes, the 1611 margin and the edition's own notes are set as footnotes on the words they are about, with the quotation links and the books' introductions.
-7. **Revise:** spelling and punctuation are revised.
-8. **Authored:** the edition's own pages are filled in with the passages and tables they ask for, among them the appendix of readings, which quotes the books as revised.
-9. **View:** the whole edition or the sample is selected, and typographic quotes are applied.
-10. **Export:** USFM is written for PTXprint, with the few things only it needs, and PTXprint typesets it.
+5. **Line:** the poetry is set in lines after the Updated Brenton (`src/bible/lines.py`): each of its chapters is aligned word by word with Brenton's, and its lines and stanza breaks are placed in Brenton's words, in the verses Scrivener's King James Bible sets as verse too or has no say in; the breaks the words cannot place are in `edition/lines.json`. The New Testament keeps Scrivener's paragraphs and poetry.
+6. **Matter:** the translations' front and back matter is brought into the edition's style, citing and abbreviating as the edition does.
+7. **Annotate:** Brenton's notes, the 1611 margin and the edition's own notes are set as footnotes on the words they are about, with the quotation links and the books' introductions.
+8. **Revise:** spelling and punctuation are revised.
+9. **Authored:** the edition's own pages are filled in with the passages and tables they ask for, among them the appendix of readings, which quotes the books as revised.
+10. **View:** the whole edition or the sample is selected, and typographic quotes are applied.
+11. **Export:** USFM is written for PTXprint, with the few things only it needs, and PTXprint typesets it.
 
 The stages are in `src/bible/pipeline.py`, which is the place to start reading the code.
 
@@ -91,6 +92,7 @@ A correction to a slip in transcription must match the source text exactly once,
 | A quotation link, or Turpie's judgment of it | `edition/quotations.json`, `edition/turpie.json` |
 | Where a verse stands in the King James Bible, an empty chapter of a transcription, or a note saying where a passage stands | `edition/versification.json` |
 | The spelling of a word, or the punctuation of a verse, a note or a paragraph of front or back matter | `edition/revisions.json` |
+| Where a line of verse begins, when the words of the Updated Brenton and the source do not place it | `edition/lines.json` |
 | The editor's introduction, the numbering table, the divider pages and the appendix of readings | `content/` |
 | Page layout, styles and TeX | `config/` |
 
@@ -100,7 +102,7 @@ A page in `content/` names a passage between braces, by its code, and the build 
 
 The rest of the repository:
 
-- `sources/`: the Bible texts, the 1611 marginal notes, the Greek New Testament in both its texts with its collations and apparatus, the English witnesses to its differences, and the fonts, committed as downloaded. [sources/README.md](sources/README.md) says where each came from.
+- `sources/`: the Bible texts, the Updated Brenton (read for its lines of verse alone), the 1611 marginal notes, the Greek New Testament in both its texts with its collations and apparatus, the English witnesses to its differences, and the fonts, committed as downloaded. [sources/README.md](sources/README.md) says where each came from.
 - `src/bible/`: the Python package that prepares the edition; `src/bible/byzantine/` is the reconciliation of the New Testament with the Byzantine text, run by the promote stage.
 - `tests/`: the tests.
 - `scripts/`: the font assembly and the PTXprint patch, run when the image is built.

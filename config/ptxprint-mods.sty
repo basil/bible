@@ -24,6 +24,16 @@
 \Superscript -
 \Raise 0pt
 
+% Indent a line that goes on with a verse well past the line that opens it,
+% as PTXprint's WSG and aArp samples do; ptx2pdf.sty sets them 0.15 unit
+% apart. A line too long for the page wraps to the shared left margin.
+\Marker q1
+\LeftMargin 0.6
+
+\Marker q2
+\LeftMargin 0.6
+\FirstLineIndent -0.225
+
 % Set added words in ordinary roman type, as docs/edition.md describes, not
 % the bold italic of usfm_sb.sty.
 \Marker add

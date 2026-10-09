@@ -327,6 +327,10 @@ def _tidy(content: Iterable[str | Node], *, edges: bool) -> Content:
             item = _spaces(item)
             if not item:
                 continue
+            # A space never doubles across a character style's close: the
+            # style's words give up a space they end with when one follows.
+            if item.startswith(" ") and result and _ends_with_space(result[-1]):
+                result[-1] = _without_trailing_space(result[-1])
         elif "content" in item:
             item = {**item, "content": _tidy(item["content"], edges=False)}
         result.append(item)
@@ -351,7 +355,33 @@ def _tidy(content: Iterable[str | Node], *, edges: bool) -> Content:
         elif not is_type(item, "note"):
             opening = False
         trimmed.append(item)
+    # Nor does a character style that closes the paragraph.
+    if trimmed and _ends_with_space(trimmed[-1]):
+        trimmed[-1] = _without_trailing_space(trimmed[-1])
     return trimmed
+
+
+def trimmed(content: Iterable[str | Node]) -> Content:
+    """Content with single spaces, and none at its edges or before a verse
+    number: a paragraph's words as the parser leaves them."""
+    return _tidy(content, edges=True)
+
+
+def _ends_with_space(item: str | Node) -> bool:
+    """Whether a character style's words, outside a note, end with a space."""
+    if not is_type(item, "char") or item["marker"] in FIELDS or not item["content"]:
+        return False
+    last = item["content"][-1]
+    return isinstance(last, str) and last.endswith(" ")
+
+
+def _without_trailing_space(item: str | Node) -> Node:
+    assert isinstance(item, dict)
+    content = item["content"]
+    last = content[-1]
+    assert isinstance(last, str)
+    trimmed = last.rstrip(" ")
+    return {**item, "content": [*content[:-1], *([trimmed] if trimmed else [])]}
 
 
 def _tidy_block(node: Node) -> Node:

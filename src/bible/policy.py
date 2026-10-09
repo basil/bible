@@ -34,6 +34,7 @@ FILES = (
     "quotations",
     "turpie",
     "versification",
+    "lines",
     "witnesses",
     "byzantine",
     "byzantine-placements",
@@ -75,6 +76,7 @@ class Policy:
     quotations: schema.Quotations
     turpie: schema.Turpie
     versification: schema.Versification
+    lines: schema.Lines
     witnesses: tuple[schema.Witnesses, ...]
     byzantine: schema.Byzantine
     byzantine_placements: schema.ByzantinePlacements
@@ -386,6 +388,7 @@ def load() -> Policy:
         quotations=cast(schema.Quotations, data["quotations"]),
         turpie=cast(schema.Turpie, data["turpie"]),
         versification=cast(schema.Versification, data["versification"]),
+        lines=cast(schema.Lines, data["lines"]),
         witnesses=cast(tuple[schema.Witnesses, ...], data["witnesses"]),
         byzantine=cast(schema.Byzantine, data["byzantine"]),
         byzantine_placements=cast(

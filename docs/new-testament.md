@@ -86,6 +86,10 @@ Facts about the Received Text that affect the reading of any list: in 152 units 
 
 **Capitals and supplied words.** The King James capitals stay unless a changed expression or sentence boundary needs another; no new reverential capitals. A King James supplied word for which RP2026 now has Greek is no longer marked supplied; necessary supplied English is marked, judged by the Greek construction and King James usage; supplied words that served only an omitted construction go with it. (The edition prints supplied words in ordinary type, so the marking shows only in the sources sent to be typeset.)
 
+## Lines of verse
+
+The text keeps Scrivener's paragraphs, and the lines he gave the Beatitudes, the canticles of Luke 1–2, the tribes sealed in Revelation 7 and the fall of Babylon in Revelation 18.
+
 ## The cases
 
 The verses that test the executor's seam rules and the trust model, with what the edition does at each. The reading probes in `tests/test_byzantine_cases.py` hold the edition to them.

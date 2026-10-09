@@ -50,6 +50,17 @@ class Versification(TypedDict, total=False):
     why: ReadOnly[str]
 
 
+class LineBreak(TypedDict, total=False):
+    follows: ReadOnly[str]
+    line: ReadOnly[str | None]
+    why: ReadOnly[str]
+
+
+class Lines(TypedDict, total=False):
+    breaks: ReadOnly[Mapping[str, tuple[LineBreak, ...]]]
+    why: ReadOnly[str]
+
+
 class BookIntroductionsGlosses(TypedDict, total=False):
     after: ReadOnly[str]
     insert: ReadOnly[str]

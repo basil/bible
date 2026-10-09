@@ -4,6 +4,7 @@
     promote     the Alexandrine and Byzantine readings in their source texts
     assemble    the edition's books from the sources' chapters
     place       where each verse stands in the King James Bible
+    line        Old Testament poetry, retaining Scrivener's New Testament
     matter      the translations' front and back matter
     annotate    notes, quotation links and book introductions
     revise      the translations' spelling and punctuation
@@ -33,6 +34,7 @@ from bible import (
     assembly,
     byzantine,
     crossrefs,
+    lines,
     matter,
     numbering,
     places,
@@ -68,6 +70,8 @@ class Read:
 
     brenton: MappingProxyType[str, Document]
     kjv: MappingProxyType[str, Document]
+    # The Updated Brenton, read for the division of its poetry into lines.
+    updated_brenton: MappingProxyType[str, Document]
     mended: MappingProxyType[str, frozenset[str]]
     marginal: MappingProxyType[str, tuple[Mapping[str, str], ...]]
     versification: tuple[tvtms.Row, ...]
@@ -222,6 +226,9 @@ def read(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Read:
     return Read(
         MappingProxyType(brenton),
         MappingProxyType(kjv),
+        MappingProxyType(
+            {code: usj.parse(text) for code, text in sources.updated_brenton.items()}
+        ),
         MappingProxyType(mended),
         marginal_notes(sources.marginal, policy),
         tvtms.rows(sources.versification)[0],
@@ -278,6 +285,34 @@ def promote(
         counts,
         found,
     )
+
+
+def lined(
+    units: Mapping[str, Document],
+    read_sources: Read,
+    policy: bible.policy.Policy,
+) -> MappingProxyType[str, Document]:
+    """Brenton's poems set in the update's lines where Scrivener sets the
+    verse as verse too or has no say; New Testament documents unchanged.
+    After the verses are placed, through which the witnesses are read."""
+    lines.check(policy)
+    old_testament = {
+        code: doc for code, doc in units.items() if code not in byzantine.BOOKS
+    }
+    unknown = sorted(
+        key for key in policy.lines["breaks"] if key[:3] not in old_testament
+    )
+    require(
+        not unknown,
+        f"Line decisions in no Old Testament book the edition prints: {unknown}",
+    )
+    brenton = lines.old_testament(
+        old_testament,
+        read_sources.updated_brenton,
+        policy,
+        lines.scrivener(read_sources.kjv, policy),
+    )
+    return MappingProxyType({**units, **brenton})
 
 
 def assemble(
@@ -608,6 +643,7 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
     )
     units = assemble(promoted, policy, sources)
     policy = placed(units, read_sources, policy)
+    units = lined(units, read_sources, policy)
     ctx = context(units, policy, sources)
     front, introductions, front_report = front_and_back(read_sources, ctx, sources)
     books, reports = annotated(units, read_sources, introductions, ctx)
@@ -840,11 +876,31 @@ def font_runs(content: Content) -> Content:
     return [item for item in result if item != ""]
 
 
+def indented(doc: Document) -> Document:
+    """Poetry indented for PTXprint: a line that opens a verse, a
+    poem or a stanza at the first level, and a line that goes on with a verse
+    at the second. The line stage uses q1; Scrivener's existing markers
+    survive it. This export step supplies continuation indentation."""
+    result: list[Node] = []
+    for block in doc["content"]:
+        first = next(iter(block.get("content", [])), None)
+        if (
+            usj.is_type(block, "para", "q1")
+            and result
+            and usj.is_type(result[-1], "para")
+            and result[-1]["marker"] in ("q1", "q2")
+            and not usj.is_type(first, "verse")
+        ):
+            block = {**block, "marker": "q2"}
+        result.append(block)
+    return usj.with_blocks(doc, result)
+
+
 def exported(code: str, doc: Document, edition: Edition) -> str:
     """A document as PTXprint takes it: under its project id; its notes'
     origins without their chapter, which the chapter figure and running head
-    supply; and its Greek and Hebrew tagged for their fonts. The edition's own
-    pages are sent as the editor wrote them."""
+    supply; its lines of verse indented; and its Greek and Hebrew tagged for
+    their fonts. The edition's own pages are sent as the editor wrote them."""
 
     def origin(item: Node) -> Node:
         if item["type"] == "char" and item["marker"] in ("fr", "xo"):
@@ -860,7 +916,7 @@ def exported(code: str, doc: Document, edition: Edition) -> str:
 
     # A unit printed from a file that holds another, or under an id that
     # PTXprint would take for its own front matter, is a unit of its own.
-    return usj.serialize(usj.with_code(usj.with_content(doc, content), code))
+    return usj.serialize(usj.with_code(usj.with_content(indented(doc), content), code))
 
 
 def export(edition: Edition, mode: str) -> list[tuple[str, str]]:

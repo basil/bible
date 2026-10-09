@@ -548,8 +548,8 @@ def replacement(
 ) -> Replacement:
     reference = verse.reference
     # The words as the verse has them, however a note among them parts
-    # their spaces.
-    old = usj.text_of(usj.parse(entry["from"], fragment=True))
+    # their spaces, and whatever space a style's close carried at the end.
+    old = usj.text_of(usj.parse(entry["from"], fragment=True)).strip(" ")
     found = list(
         re.finditer(" +".join(map(re.escape, re.split(" +", old))), verse.text)
     )

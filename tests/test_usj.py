@@ -243,3 +243,21 @@ def test_changes_to_a_verse_are_made_together_by_their_offsets() -> None:
     )
     with pytest.raises(CheckFailed, match="Overlapping"):
         scripture.edited(doc, [(verse, 0, 5, ["a"]), (verse, 3, 8, ["b"])])
+
+
+def test_a_space_never_doubles_across_a_character_styles_close() -> None:
+    # eBible's Brenton has "\\add for \\add* teeth" 44 times: the space inside
+    # the style and the one after it would print as two in a ragged line.
+    doc = usj.parse(
+        "\\id GEN\n\\c 1\n\\p\n\\v 1 Swords \\add for \\add* teeth, \\add as\\add* knives.\n"
+    )
+    assert usj.serialize(doc).splitlines()[-1] == (
+        "\\v 1 Swords \\add for\\add* teeth, \\add as\\add* knives."
+    )
+    # A note's fields keep the space that parts one from the next.
+    note = usj.parse("\\f + \\fr 1:1 \\fqa Gr. \\ft word.\\f*", fragment=True)
+    assert usj.serialize(note) == "\\f + \\fr 1:1 \\fqa Gr. \\ft word.\\f*"
+    # Nor does a style that closes the paragraph keep a space at its end, as
+    # when a line of verse divides one.
+    half = usj.trimmed(["for the ancient ", usj.char("add", "heavens? ")])
+    assert half == ["for the ancient ", usj.char("add", "heavens?")]

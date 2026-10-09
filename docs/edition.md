@@ -8,7 +8,7 @@ The translations are preserved with a few exceptions. In the Old Testament, some
 
 ## Texts
 
-- **Old Testament:** [eBible's transcription of Brenton](https://ebible.org/eng-Brenton/), which includes eBible's corrections to the 1870 printing. It is neither a facsimile nor the separate "Updated Brenton" translation.
+- **Old Testament:** [eBible's transcription of Brenton](https://ebible.org/eng-Brenton/), which includes eBible's corrections to the 1870 printing. It is neither a facsimile nor the separate "Updated Brenton" translation, whose words are not printed; its lines of verse are, as [the lines of verse](#lines-of-verse) explains.
 - **New Testament:** [eBible's Cambridge Paragraph Bible](https://ebible.org/engkjvcpb/), not its standard KJV. Only the 27 books, the translators' dedication to King James, and their preface are used. The text keeps Scrivener's paragraphs and poetry layout, and is conformed to the Byzantine text as [the New Testament text](new-testament.md) describes, from the Greek texts and witnesses listed in [sources/README.md](../sources/README.md#the-new-testament-greek-and-its-witnesses).
 - **Marginal notes:** [Calvin George's transcription](https://en.literaturabautista.com/exhaustive-listing-marginal-notes-1611-edition-king-james-bible) of the notes in the 1611 King James Bible. Only the New Testament notes are used. The Old Testament notes belong to the KJV's translation from the Hebrew, which this edition does not print.
 
@@ -33,6 +33,18 @@ The edition keeps Brenton's chapters and verses, and divides his text as the Chu
 - **Malachias.** Brenton's 3:19–24 is printed as chapter 4, verses 1–6, which matches the [Church of Greece's text](https://apostoliki-diakonia.gr/bible/malachias/?file=42.4). Most English Bibles divide the chapter there too, but order its last three verses otherwise: Brenton has Elias before the law of Moses, so his 4:4–6 are the King James Bible's 4:5, 4:6 and 4:4.
 - **Proverbs.** The Greek sets the Hebrew's 30:1–14, 30:15–33 and 31:1–9 within chapter 24, where Brenton numbers them 24:22f–t, 24:35–53 and 24:54–62, so his chapter 31 begins at verse 10 and he has no chapter 30. eBible's transcription numbers an empty chapter 30 with a remark of its own pointing to chapter 24; the edition prints neither. A note at the first verse of each passage says where the Hebrew, and so the King James Bible, has it ("Heb. has this passage at 30:1–14"), and a note at 29:27 says where the passages the Hebrew has next are printed ("Heb. has here the verses printed at 24:22f–t, 24:35–53 and 24:54–62"). The New Testament's moved passages are noted in the same way, with the Received Text's label. The table of chapters and verses gives the rest.
 - **The New Testament.** The Byzantine text lacks four verses of the Received Text, Luke 17:36, Acts 8:37, 15:34 and 24:7, which are omitted, each quoted in a note on the verse before it; it sets the doxology of Romans at 14:24–26 rather than 16:25–27, where it stands with a note at each place ("TR has this passage at 16:25–27", and at 16:24 "TR has here the verses printed at 14:24–26"); and it exchanges Matthew 23:13 and 14, each noted with where the Received Text has it. The table of chapters and verses lists these too.
+
+## Lines of verse
+
+Brenton printed his Old Testament as prose. The edition sets a verse in lines where Adam Boyd's [Updated Brenton](https://ebible.org/englxxup/) (2020) does, provided Scrivener's Cambridge Paragraph Bible sets its King James counterpart in lines too, or has no say. Boyd supplies word-level boundaries because his text can be aligned with Brenton's; Scrivener supplies verse-level classification because the King James translation's wording differs.
+
+Scrivener has a say in the books of the King James Old Testament that he sets partly in lines, wherever a verse has a counterpart there. He has none in books he sets wholly as prose, in verses without a counterpart, or in the Apocrypha, which the table of chapters and verses does not map: there Boyd's lines stand alone, though Scrivener sets only a few prayers and songs of Tobit, Judith and Baruch in lines. A Septuagint addition lettered to a verse goes as that verse goes. Thus Job's narrative and most of Ecclesiastes stay prose despite Boyd's lines, while Isaiah and the minor prophets stay prose despite Scrivener's lines.
+
+The build aligns each update chapter word by word with Brenton's, retaining Boyd's line and stanza boundaries. A break stands before the matched first word of a line or after the matched last word of the preceding line. Verse openings retain Brenton's leading Hebrew letters; prose resumes under Boyd's paragraph marker. The update supplies no wording, spelling, punctuation, headings or verse numbering.
+
+The few breaks the alignment cannot place are decisions in `edition/lines.json`. Each names the update line being followed and the opening words of the edition's line, met once in its source verse, or says that the source has no such line. Unused, repeated, invalid or redundant decisions stop the build.
+
+The New Testament keeps Scrivener's paragraphs and poetry; [the New Testament text](new-testament.md#lines-of-verse) lists the passages. The documents preserve semantic lines; export supplies their indentation for PTXprint, with continuation lines indented farther. Neither step changes the words or their capitalization.
 
 ## Front matter and appendices
 

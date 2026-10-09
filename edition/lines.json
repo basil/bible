@@ -1,0 +1,99 @@
+{
+  "why": "The Old Testament poetry is set in lines where the Updated Brenton sets it in lines and Scrivener's King James Bible sets the verse as verse too or has no say, divided as the update divides it, by aligning its words with Brenton's. A line the words do not place, or place two ways, or would place wrongly, is given here: the source's verse it opens, the words the update's line begins with, so the build knows which line is meant, and the words the source's line begins with, met once in that verse, or null where the source has no words for the line.",
+  "breaks": {
+    "JOB 2:11": [
+      {
+        "follows": "Bildad sovereign of the Shuhites",
+        "line": "Baldad sovereign of the Saucheans",
+        "why": "The update respells the names of Job's friends and their peoples, so the words place neither line of the list; the line begins at the name, as the update's does."
+      },
+      {
+        "follows": "Zophar king of the Minaeans",
+        "line": "Sophar king of the Minæans",
+        "why": "The update respells the names of Job's friends and their peoples, so the words place neither line of the list; the line begins at the name, as the update's does."
+      }
+    ],
+    "JOB 42:17e": [
+      {
+        "follows": "Bildad sovereign of the Shuhites",
+        "line": "Baldad sovereign of the Sauchæans",
+        "why": "The update respells the names of Job's friends and their peoples, so the words place neither line of the list; the line begins at the name, as the update's does."
+      },
+      {
+        "follows": "Zophar king of the Naamathites",
+        "line": "Sophar king of the Minæans",
+        "why": "The update respells the names of Job's friends and their peoples, so the words place neither line of the list; the line begins at the name, as the update's does."
+      }
+    ],
+    "PSA 87:19": [
+      {
+        "follows": "And mine acquaintances because of my wretchedness",
+        "line": "and mine acquaintances because of my wretchedness",
+        "why": "The Alexandrine reading printed here (\"friend and neighbour\" for \"every friend\") stands between the two lines, so both words beside the break are matched with the reading between them. The reading closes the first line, whose words it extends."
+      }
+    ],
+    "PSA 91:10": [
+      {
+        "follows": "For, behold, thine enemies shall perish",
+        "line": "For, behold thine enemies, O Lord",
+        "why": "The Alexandrine reading printed here opens the verse by repeating its first words (\"For, behold thine enemies, O Lord,\"), so the words place the line at the second \"For, behold\", inside the verse. The line opens the verse, with the reading."
+      }
+    ],
+    "PSA 94:3": [
+      {
+        "follows": "For the Lord will not cast off his people",
+        "line": null,
+        "why": "The edition prints the verse as Codex Alexandrinus has it, without this clause (edition/alexandrinus.json), so the update's third line has no words here and is no line."
+      }
+    ],
+    "PSA 138:1": [
+      {
+        "follows": "O Lord, thou hast proved me, and known me",
+        "line": "O Lord, thou hast proved me, and known me",
+        "why": "The Alexandrine reading printed here lengthens the title (\"of Zacharias in the dispersion\"), which stands between the title and the first line, so both words beside the break are matched with the reading between them. The reading belongs to the title."
+      }
+    ],
+    "PRO 8:32": [
+      {
+        "follows": "Blessed is the man who shall hearken to me",
+        "line": "Blessed is the man who shall hearken to me",
+        "why": "The passage supplied from Codex Alexandrinus (\"And blessed are they that keep my ways. Hear wisdom and be wise, and be not strangers to it.\") stands between the first two lines, so both words beside the break are matched with the passage between them. It closes the first line, after the words it follows in the manuscript; the update has no lines for it."
+      }
+    ],
+    "PRO 9:6": [
+      {
+        "follows": "And improve understanding by knowledge",
+        "line": "and improve understanding by knowledge",
+        "why": "The Alexandrine reading printed here (\"that ye may live\" after \"seek wisdom\") stands between the two lines, so both words beside the break are matched with the reading between them. The reading closes the line it extends."
+      }
+    ],
+    "LAM 3:21a": [
+      {
+        "follows": "It is the mercies of the Lord",
+        "line": "Heth. It is the mercies of the Lord",
+        "why": "Brenton prints the Hebrew letter inside the verse, where the update's numbering begins a new verse, so both words beside the break are matched but the letter stands between them. The letter heads the line it names, as it heads the verses of chapters 1, 2 and 4."
+      }
+    ],
+    "LAM 3:45": [
+      {
+        "follows": "Thou hast set us alone",
+        "line": "Ain. Thou hast set us alone",
+        "why": "Brenton prints the Hebrew letter inside the verse, where the update's numbering begins a new verse, so both words beside the break are matched but the letter stands between them. The letter heads the line it names, as it heads the verses of chapters 1, 2 and 4."
+      }
+    ],
+    "LAM 4:17": [
+      {
+        "follows": "We looked to a nation",
+        "line": "Tsade. We looked to a nation",
+        "why": "Brenton prints the Hebrew letter inside the verse, where the update's numbering begins a new verse, so both words beside the break are matched but the letter stands between them. The letter heads the line it names, as it heads the verses of chapters 1, 2 and 4."
+      }
+    ],
+    "LAM 4:18": [
+      {
+        "follows": "Our time has drawn nigh",
+        "line": "Koph. Our time has drawn nigh",
+        "why": "Brenton prints the Hebrew letter inside the verse, where the update's numbering begins a new verse, so both words beside the break are matched but the letter stands between them. The letter heads the line it names, as it heads the verses of chapters 1, 2 and 4."
+      }
+    ]
+  }
+}
