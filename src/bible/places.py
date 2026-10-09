@@ -680,10 +680,14 @@ def written(
     declared_pairs = {
         (run["edition"], run["kjv"]): run["pairs"] for run in readings if "pairs" in run
     }
-    for run in written_runs:
-        pair = (run["edition"], run["kjv"])
-        if pair in declared_pairs:
-            run["pairs"] = declared_pairs[pair]
+    written_runs = [
+        (
+            {**run, "pairs": pairs}
+            if (pairs := declared_pairs.get((run["edition"], run["kjv"]))) is not None
+            else run
+        )
+        for run in written_runs
+    ]
     return written_runs + [
         {"edition": None, "kjv": str(passage)} for passage in runs(missing)
     ]

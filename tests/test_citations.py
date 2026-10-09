@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Callable, Sequence
 from dataclasses import replace
-from typing import Any, Protocol, Unpack
+from typing import Any, Protocol, Unpack, cast
 
 import pytest
 from conftest import changed
@@ -51,7 +51,11 @@ def cite(policy: bible.policy.Policy, ctx: bible.annotate.Context) -> Cite:
         tongue = citations.dialect(dialect, policy=policy)
         more = MORE.get(dialect, {}) if dialect else {}
         tongue = replace(tongue, books={**tongue.books, **more})
-        selected = [decided] if isinstance(decided, dict) else decided
+        selected = (
+            [cast(CitationsDecisions, decided)]
+            if isinstance(decided, dict)
+            else cast(Sequence[CitationsDecisions] | None, decided)
+        )
         return citations.scan(
             text, tongue, home, "x", ctx.inventory, selected, policy=policy
         )
@@ -61,6 +65,36 @@ def cite(policy: bible.policy.Policy, ctx: bible.annotate.Context) -> Cite:
 
 def decision(**fields: Unpack[CitationsDecisions]) -> CitationsDecisions:
     return {"why": "x", **fields}
+
+
+def test_unprinted_decision_requires_home(cite: Cite) -> None:
+    decided = decision(source="Ver. 99", unprinted=True, print="Verse 99")
+    found = cite("Ver. 99", decided=decided)
+    assert len(found) == 1
+    assert found[0].book == HOME.book
+    assert found[0].printed == "Verse 99"
+    with pytest.raises(
+        CheckFailed, match="Unprinted citation decision without a home: x"
+    ):
+        cite("Ver. 99", decided=decided, home=None)
+
+
+@pytest.mark.parametrize(
+    "text,decided,expected",
+    [
+        ("Heb. 300", decision(source="Heb. 300", not_a_citation=True), ""),
+        ("Jer. 9. 24", decision(source="Jer. 9. 24", numbering="kjv"), "JER 9:23"),
+        (
+            "13. 22",
+            decision(source="13. 22", passages="ISA 13:22", print="13:22"),
+            "ISA 13:22",
+        ),
+    ],
+)
+def test_other_decisions_need_no_home(
+    cite: Cite, text: str, decided: CitationsDecisions, expected: str
+) -> None:
+    assert named(cite(text, decided=decided, home=None)) == expected
 
 
 def named(found: list[bible.citations.Citation]) -> str:

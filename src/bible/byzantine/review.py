@@ -170,9 +170,9 @@ def marked_readings(before: str, after: str, *, verse: bool = False) -> tuple[st
     return "".join(left) or "∅", "".join(right) or "∅"
 
 
-def inline_change(before: str | None, after: str | None) -> str:
+def inline_change(before: str, after: str) -> str:
     """One contextual diff for a witness phrase, with shared wording once."""
-    before, after = scripture.plain(before or ""), scripture.plain(after or "")
+    before, after = scripture.plain(before), scripture.plain(after)
     return esc(before) if before == after else inline_diff(before, after)
 
 
@@ -235,9 +235,9 @@ def context_excerpt(
     )
 
 
-def inline_diff(before: str | None, after: str | None) -> str:
+def inline_diff(before: str, after: str) -> str:
     """The contextual difflib comparison, with explicit removal/addition marks."""
-    before, after = scripture.plain(before or ""), scripture.plain(after or "")
+    before, after = scripture.plain(before), scripture.plain(after)
     if before == after:
         return "unchanged"
     return diff_markup(diff_spans(before, after))
@@ -253,8 +253,8 @@ def diff_markup(spans: Iterable[tuple[str, str]]) -> str:
 
 
 def verse_comparison(
-    before: str | None,
-    after: str | None,
+    before: str,
+    after: str,
     before_label: str,
     after_label: str,
     *,
@@ -262,7 +262,7 @@ def verse_comparison(
     anchors: Sequence[tuple[int, int, int, int]] = (),
 ) -> list[str]:
     """Contextual source-to-target diff and readable finished verse, in two rows."""
-    before, after = scripture.plain(before or ""), scripture.plain(after or "")
+    before, after = scripture.plain(before), scripture.plain(after)
     if after_verse is not None:
         right = lemma_reading(after_verse)
     else:
@@ -284,14 +284,10 @@ def verse_comparison(
 def unit_greek_excerpt(
     unit: Unit,
     context: Context,
-    prepared: PreparedGreek | None = None,
-    prepared_verses: Mapping[str, Verse] | None = None,
-    passages: Passages | None = None,
+    passages: Passages,
 ) -> str:
     """Quote the shared passage containing this unit."""
-    texts, selected, _ = passages or unit_passages(
-        unit, context, prepared, prepared_verses
-    )
+    texts, selected, _ = passages
     ranges = passage_ranges(
         context, unit["ref"], unit["target_ref"], texts[0], texts[1]
     )
@@ -310,16 +306,12 @@ Passages = tuple[
 def unit_passages(
     unit: Unit,
     context: Context,
-    prepared: PreparedGreek | None = None,
-    prepared_verses: Mapping[str, Verse] | None = None,
+    prepared: PreparedGreek,
+    prepared_verses: Mapping[str, Verse],
 ) -> Passages:
-    tr, rp, _ = prepared if prepared is not None else prepare_greek(context)
+    tr, rp, _ = prepared
     ref, target = unit["ref"], unit["target_ref"]
-    verse = (
-        prepared_verses
-        if prepared_verses is not None
-        else verses_of({target.split()[0]: context["prepared"][target.split()[0]]})
-    ).get(target)
+    verse = prepared_verses.get(target)
     texts, selected, english = selections(
         context,
         ref,
@@ -340,8 +332,8 @@ def unit_passages(
 def greek_verses(
     context: Context,
     ref: str,
+    prepared: PreparedGreek,
     target: str | None = None,
-    prepared: PreparedGreek | None = None,
 ) -> list[str]:
     """One prepared verse diff, anchored to the ledger's Greek units.
 
@@ -350,7 +342,7 @@ def greek_verses(
     units describe relocation; the ordinary units carry its wording differences.
     """
     target = target or ref
-    tr, rp, _ = prepared if prepared is not None else prepare_greek(context)
+    tr, rp, _ = prepared
     left = " ".join(tr.get(ref, []))
     right = " ".join(rp.get(target, []))
     ranges = passage_ranges(context, ref, target, left, right)
@@ -721,7 +713,7 @@ def unit_english_lines(
     row: Disposition,
     context: Context,
     index: Index,
-    passages: Passages | None = None,
+    passages: Passages,
 ) -> list[str]:
     """The executed English for this unit, preserving shared constructions."""
     covered = row.get("covered_by")
@@ -735,9 +727,7 @@ def unit_english_lines(
             " (executor refused)" if row["action"] == "refused" else ""
         )
         return [f"{label} · KJV {unit['ref']} → OLEB {unit['target_ref']}: {contrast}"]
-    texts, selected, anchors = passages or unit_passages(
-        unit, context, prepared_verses=index["prepared"]
-    )
+    texts, selected, anchors = passages
     comparisons = [passage_spans(texts, p, 2, anchors) for p in selected]
     changed = [
         diff_markup(spans)
@@ -759,7 +749,7 @@ def section(
     index: Index,
     *,
     greek_context: Mapping[str, str] | None = None,
-    prepared: PreparedGreek | None = None,
+    prepared: PreparedGreek,
 ) -> list[str]:
     uid = unit["id"]
     kjv = context["kjv"]
@@ -795,7 +785,6 @@ def section(
         + (f" · Recorded in: {recorded}" if recorded else "")
     )
     lines.append("")
-    prepared = prepared if prepared is not None else prepare_greek(context)
     passages = unit_passages(unit, context, prepared, index["prepared"])
     greek = "Greek at this unit · TR → RP2026: " + unit_greek_excerpt(
         unit, context, passages=passages
@@ -820,7 +809,7 @@ def section(
         )
     else:
         lines.extend(
-            line for line in greek_verses(context, ref, target, prepared) if line
+            line for line in greek_verses(context, ref, prepared, target) if line
         )
     after = index["prepared"].get(target)
     lines.extend(

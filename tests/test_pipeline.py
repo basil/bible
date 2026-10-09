@@ -8,7 +8,7 @@ import re
 from collections.abc import Callable, Mapping
 from dataclasses import replace
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import pytest
 from conftest import changed
@@ -87,13 +87,15 @@ def test_the_policy_is_read_once_and_cannot_be_changed(
     policy: bible.policy.Policy,
 ) -> None:
     with pytest.raises(TypeError):
-        policy.manifest["title"] = "Another"
+        cast(dict[str, Any], policy.manifest)["title"] = "Another"
     with pytest.raises(TypeError):
-        policy.brenton_notes["notes"]["GEN 1:9#2"]["lemma"] = "other words"
+        cast(dict[str, Any], policy.brenton_notes["notes"]["GEN 1:9#2"])[
+            "lemma"
+        ] = "other words"
     for entry in policy.entries:
         if "file" in entry:
             with pytest.raises(TypeError):
-                entry["id"] = "XYZ"
+                cast(dict[str, Any], entry)["id"] = "XYZ"
     # A test declares another policy; the one it started from is as it was.
     other = changed(policy, "sample", lambda data: data.pop("GEN"))
     assert "GEN" in policy.sample and "GEN" not in other.sample

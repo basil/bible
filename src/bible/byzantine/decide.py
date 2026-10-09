@@ -429,7 +429,7 @@ def decide(
 def operation(
     edit: InstructionEdit,
     kjv: Mapping[str, str],
-    common: frozenset[str] | None = None,
+    common: frozenset[str],
 ) -> dict[str, Any]:
     """What the executor needs of an instruction's edit."""
     op: dict[str, Any] = {
@@ -448,9 +448,7 @@ def operation(
         op["quoted_old"] = edit["quoted_old"]
     if edit.get("context_exact") and edit.get("quoted_context"):
         op["quoted_context"] = edit["quoted_context"]
-    return contextual_case(
-        op, kjv[edit["ref"]], common_words(kjv) if common is None else common
-    )
+    return contextual_case(op, kjv[edit["ref"]], common)
 
 
 def operations(

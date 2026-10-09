@@ -183,7 +183,7 @@ def assert_greek_preserved(
     prepared: appendix.PreparedGreek | None = None,
 ) -> None:
     prepared = prepared if prepared is not None else appendix.prepare_greek(byzantine)
-    lines = review.greek_verses(byzantine, ref, target, prepared)
+    lines = review.greek_verses(byzantine, ref, prepared, target)
     diff = lines[0].split(": ", 1)[1].rstrip()
     before = re.sub(r"\[\+[^\]]*\]", "", diff)
     before = re.sub(r"\[-([^\]]*)\]", r"\1", before)
@@ -200,7 +200,7 @@ def assert_greek_preserved(
 def test_greek_comparison_marks_difference_and_keeps_context(
     byzantine: Context, packets: dict[str, str]
 ) -> None:
-    lines = review.greek_verses(byzantine, "MAT 3:8")
+    lines = review.greek_verses(byzantine, "MAT 3:8", appendix.prepare_greek(byzantine))
     assert "[-καρποὺς ἀξίους][+καρπὸν ἄξιον]" in lines[0]
     section = section_of(packets, "MAT 3:8#1")
     for line in lines:
@@ -294,7 +294,7 @@ def test_real_verse_diffs_preserve_both_texts(byzantine: Context) -> None:
 
 
 def test_greek_diff_marks_accents(byzantine: Context) -> None:
-    lines = review.greek_verses(byzantine, "PHP 3:5")
+    lines = review.greek_verses(byzantine, "PHP 3:5", appendix.prepare_greek(byzantine))
     assert "[-περιτομὴ][+περιτομῇ]" in lines[0]
 
 
@@ -311,7 +311,9 @@ def test_no_table_row_is_broken_by_its_content(
 def test_greek_context_uses_ledger_and_is_shown_once(
     byzantine: Context, packets: dict[str, str]
 ) -> None:
-    lines = review.greek_verses(byzantine, "PHM 1:17")
+    lines = review.greek_verses(
+        byzantine, "PHM 1:17", appendix.prepare_greek(byzantine)
+    )
     assert "` Εἰ οὖν [-ἐμὲ][+με] ἔχεις κοινωνόν, προσλαβοῦ αὐτὸν ὡς ἐμέ. `" in lines[0]
     text = packets["JAS.md"]
     assert text.count("Greek whole verse · TR JAS 2:11 → RP2026 JAS 2:11: `") == 1
@@ -401,11 +403,13 @@ def test_instruction_witness_lines_show_the_proposal_in_kjv_context(
 def test_unit_greek_context_uses_corresponding_passage(
     byzantine: Context,
 ) -> None:
-    excerpt = review.unit_greek_excerpt(unit_of(byzantine, "JAS 2:11#1"), byzantine)
+    prepared = appendix.prepare_greek(byzantine)
+    verses = verses_of(byzantine["prepared"])
+    unit = unit_of(byzantine, "JAS 2:11#1")
+    passages = review.unit_passages(unit, byzantine, prepared, verses)
+    excerpt = review.unit_greek_excerpt(unit, byzantine, passages)
     assert "[-μοιχεύσῃς][+μοιχεύσεις]" in excerpt
-    texts, selected, _ = review.unit_passages(
-        unit_of(byzantine, "JAS 2:11#1"), byzantine
-    )
+    texts, selected, _ = passages
     assert excerpt == " / ".join(
         review.diff_markup(
             passage_spans(
@@ -421,7 +425,9 @@ def test_unit_greek_context_uses_corresponding_passage(
         for p in selected
     )
     omitted = unit_of(byzantine, "JAS 1:13#1")
-    assert "[-τοῦ ]" in review.unit_greek_excerpt(omitted, byzantine)
+    assert "[-τοῦ ]" in review.unit_greek_excerpt(
+        omitted, byzantine, review.unit_passages(omitted, byzantine, prepared, verses)
+    )
 
 
 def test_every_greek_diff_preserves_pinned_verses_except_display_normalization(
@@ -1089,7 +1095,14 @@ def test_appendix_and_review_share_all_prepared_readings(
             )
         else:
             section = section_of(packets, unit["id"])
-            assert review.unit_greek_excerpt(unit, byzantine, prepared) in section
+            assert (
+                review.unit_greek_excerpt(
+                    unit,
+                    byzantine,
+                    review.unit_passages(unit, byzantine, prepared, index["prepared"]),
+                )
+                in section
+            )
             if unit["id"] in contrasts:
                 old, new = unit["tr_accented"], unit["rp_accented"]
                 assert (
@@ -1190,7 +1203,9 @@ def test_rp_dot_is_normalized_inside_the_greek_font() -> None:
 def test_acts_13_41_keeps_the_word_change_without_dot_changes(
     byzantine: Context, entries: dict[str, list[Node]]
 ) -> None:
-    markdown = review.greek_verses(byzantine, "ACT 13:41")[0]
+    markdown = review.greek_verses(
+        byzantine, "ACT 13:41", appendix.prepare_greek(byzantine)
+    )[0]
     assert "[-ἔργον ᾧ][+ὃ]" in markdown
     assert "[-·]" not in markdown and "[+∙]" not in markdown
     content = entries["ACT 13:41"][1]["content"]

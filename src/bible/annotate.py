@@ -589,7 +589,7 @@ def with_edition_notes(
     if not replacements:
         return doc
 
-    def change(item: Node) -> Node | Content | None:
+    def change(item: Node) -> Node:
         if item["type"] == "note" and item.get("x-key") in replacements:
             return replacements[item["x-key"]]
         return item

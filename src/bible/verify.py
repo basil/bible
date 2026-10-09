@@ -333,7 +333,7 @@ def margin_overflow(base: Path, top: float, bottom: float) -> list[str]:
 
 
 def check_added_words_roman(
-    pdf: str | Path, reading_text: str, project: Path, ids: Sequence[str], sample: bool
+    pdf: Path, reading_text: str, project: Path, ids: Sequence[str], sample: bool
 ) -> None:
     # Malachias 4:2 has "\\add shall be\\add* in his wings". Check the added
     # words against their roman neighbours; "healing" may break as "heal- / ing".

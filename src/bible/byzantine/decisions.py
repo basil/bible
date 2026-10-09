@@ -130,7 +130,7 @@ def validate_overrides(
     kjv: Mapping[str, str],
     witness_rows: Mapping[str, Mapping[int | str, Mapping[str, Any]]],
     texts: Mapping[str, Mapping[str, str]],
-    supplied: Supplied | None = None,
+    supplied: Supplied,
     *,
     revision_citations: (
         Mapping[str, Mapping[str, Mapping[str, Any] | None]] | None
@@ -223,8 +223,7 @@ def validate_overrides(
                     # some of them in italics and RP2026 has Greek for them:
                     # the override sets them in roman (John 19:17 "the place").
                     unstyle = old == new and any(
-                        a < end and start < b
-                        for a, b, _ in (supplied or {}).get(ref, [])
+                        a < end and start < b for a, b, _ in supplied.get(ref, [])
                     )
                     if old == new and not unstyle:
                         raise ValueError(f"{label}: from equals to at {ref}")

@@ -138,7 +138,7 @@ class Table:
             result.append(Verse(self.code, int(chapter), int(number), letter))
         return result
 
-    def whole(self, chapter: str | int) -> int | None:
+    def whole(self, chapter: str) -> int | None:
         """The King James chapter that an edition chapter is, verse for verse
         under the same numbers, if it is one and not the same chapter, and
         no other chapter of the edition holds any of it."""

@@ -9,12 +9,11 @@ from pathlib import Path
 from typing import Any
 
 
-def read_json(path: str | Path) -> Any:
-    return json.loads(Path(path).read_text(encoding="utf-8"))
+def read_json(path: Path) -> Any:
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
-def write_json(path: str | Path, data: object) -> None:
-    path = Path(path)
+def write_json(path: Path, data: object) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
 
     def plain(value: object) -> object:

@@ -19,7 +19,7 @@ import re
 from collections import Counter
 from collections.abc import Iterator, Mapping, Sequence
 from dataclasses import dataclass
-from typing import Literal
+from typing import Literal, cast
 
 import bible.policy
 from bible import lemmas, notes, scripture, terminology, usfm, usj
@@ -236,10 +236,14 @@ def further(entry: Decision, item: Decision) -> Decision:
     """A decision's further replacement: its own words, derivation and note
     position, and the decision's reason, note and lemma unless it has its
     own. Only the decision itself may omit a verse."""
-    inherited: Decision = {**entry}
-    inherited.pop("english", None)
-    inherited.pop("note_at", None)
-    inherited.pop("omit_verse", None)
+    inherited = cast(
+        Decision,
+        {
+            key: value
+            for key, value in entry.items()
+            if key not in {"english", "note_at", "omit_verse"}
+        },
+    )
     return {**inherited, **item}
 
 

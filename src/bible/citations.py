@@ -26,7 +26,7 @@ from dataclasses import dataclass
 import bible.policy
 import bible.references
 from bible import scripture, versification
-from bible.checks import require
+from bible.checks import present, require
 from bible.policy_schema import CitationsDecisions
 from bible.references import (
     EDITION,
@@ -385,7 +385,7 @@ def _decided(
     decision: CitationsDecisions,
     plain: str,
     tongue: Dialect,
-    home: Verse | Citation | None,
+    home: Verse | None,
     key: str,
     *,
     policy: bible.policy.Policy,
@@ -413,7 +413,7 @@ def _decided(
     if kind == "unprinted":
         # What the edition doesn't print, as a verse its Greek lacks.
         require(decision.get("print"), f"Citation decision prints nothing: {key}")
-        assert home is not None
+        home = present(home, f"Unprinted citation decision without a home: {key}")
         book, items, relative = home.book, (), None
     elif kind == "numbering":
         match = tongue.pattern.fullmatch(source)
@@ -533,7 +533,7 @@ def parse(
     found: list[UnresolvedCitation] = []
     for decision in decisions(key, policy=policy) if decided is None else decided:
         start, end, citation = _decided(
-            decision, plain, tongue, home or Verse("", 0, 0), key, policy=policy
+            decision, plain, tongue, home, key, policy=policy
         )
         require(
             not any(s < end and start < e for s, e in taken),

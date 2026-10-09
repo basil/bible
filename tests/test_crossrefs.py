@@ -179,7 +179,7 @@ def test_a_see_note_that_names_more_than_its_link_needs_a_decision(
             ctx,
             policy.replace(quotations={**policy.quotations, "note_merges": merged}),
         )
-    merged["ISA 99:3"]["drops"] = ("JHN 1:23",)
+    merged["ISA 99:3"] = {**merged["ISA 99:3"], "drops": ("JHN 1:23",)}
     line, _ = linked(
         verse,
         ctx,

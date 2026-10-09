@@ -6,500 +6,502 @@ apply only to some entries; no defaults are introduced here.
 """
 
 from collections.abc import Mapping
-from typing import TypedDict
+from typing import ReadOnly, TypedDict
 
 
 class VersificationApocrypha(TypedDict, total=False):
-    chapter: int
-    edition: str
-    kjv: str | None
-    title: str
+    chapter: ReadOnly[int]
+    edition: ReadOnly[str]
+    kjv: ReadOnly[str | None]
+    title: ReadOnly[str]
 
 
 class Run(TypedDict, total=False):
-    by: str
-    edition: str | None
-    kjv: str | None
-    pairs: Mapping[str, str]
-    why: str
+    by: ReadOnly[str]
+    edition: ReadOnly[str | None]
+    kjv: ReadOnly[str | None]
+    pairs: ReadOnly[Mapping[str, str]]
+    why: ReadOnly[str]
 
 
 class VersificationRelabel(TypedDict, total=False):
-    edition: str
-    opens: str
+    edition: ReadOnly[str]
+    opens: ReadOnly[str]
 
 
 class VersificationStub(TypedDict, total=False):
-    why: str
+    why: ReadOnly[str]
 
 
 class VersificationRelocation(TypedDict, total=False):
-    to: str
-    why: str
+    to: ReadOnly[str]
+    why: ReadOnly[str]
 
 
 class Versification(TypedDict, total=False):
-    apocrypha: "tuple[VersificationApocrypha, ...]"
-    books: Mapping[str, str]
-    kjv: "Mapping[str, tuple[Run, ...]]"
-    old_testament: tuple[str, ...]
-    readings: "Mapping[str, tuple[Run, ...]]"
-    relabel: "Mapping[str, VersificationRelabel]"
-    relocations: "Mapping[str, VersificationRelocation | str]"
-    stubs: "Mapping[str, VersificationStub | str]"
-    why: str
+    apocrypha: ReadOnly[tuple[VersificationApocrypha, ...]]
+    books: ReadOnly[Mapping[str, str]]
+    kjv: ReadOnly[Mapping[str, tuple[Run, ...]]]
+    old_testament: ReadOnly[tuple[str, ...]]
+    readings: ReadOnly[Mapping[str, tuple[Run, ...]]]
+    relabel: ReadOnly[Mapping[str, VersificationRelabel]]
+    relocations: ReadOnly[Mapping[str, VersificationRelocation | str]]
+    stubs: ReadOnly[Mapping[str, VersificationStub | str]]
+    why: ReadOnly[str]
 
 
 class BookIntroductionsGlosses(TypedDict, total=False):
-    after: str
-    insert: str
-    replace: str
-    why: str
+    after: ReadOnly[str]
+    insert: ReadOnly[str]
+    replace: ReadOnly[str]
+    why: ReadOnly[str]
 
 
 WordingChange = TypedDict(
     "WordingChange",
     {
-        "from": "str",
-        "note": "str",
-        "to": "str",
-        "unit": "str",
-        "why": "str",
+        "from": ReadOnly[str],
+        "note": ReadOnly[str],
+        "to": ReadOnly[str],
+        "unit": ReadOnly[str],
+        "why": ReadOnly[str],
     },
     total=False,
 )
 
 
 class BookIntroductionsSections(TypedDict, total=False):
-    heading: str
-    paragraphs: tuple[str, ...]
+    heading: ReadOnly[str]
+    paragraphs: ReadOnly[tuple[str, ...]]
 
 
 class BookIntroductions(TypedDict, total=False):
-    books: Mapping[str, tuple[str, ...]]
-    front: tuple[str, ...]
-    glosses: "Mapping[str, tuple[BookIntroductionsGlosses, ...]]"
-    names: "Mapping[str, tuple[WordingChange, ...]]"
-    omit: Mapping[str, str]
-    sections: "Mapping[str, Mapping[str, BookIntroductionsSections]]"
-    source: str
+    books: ReadOnly[Mapping[str, tuple[str, ...]]]
+    front: ReadOnly[tuple[str, ...]]
+    glosses: ReadOnly[Mapping[str, tuple[BookIntroductionsGlosses, ...]]]
+    names: ReadOnly[Mapping[str, tuple[WordingChange, ...]]]
+    omit: ReadOnly[Mapping[str, str]]
+    sections: ReadOnly[Mapping[str, Mapping[str, BookIntroductionsSections]]]
+    source: ReadOnly[str]
 
 
 class QuotationsAlignment(TypedDict, total=False):
-    outscored: Mapping[str, str]
-    passages: Mapping[str, str]
-    range_ends: Mapping[str, str]
-    unscored: Mapping[str, str]
+    outscored: ReadOnly[Mapping[str, str]]
+    passages: ReadOnly[Mapping[str, str]]
+    range_ends: ReadOnly[Mapping[str, str]]
+    unscored: ReadOnly[Mapping[str, str]]
 
 
 class QuotationsLxxToEdition(TypedDict, total=False):
-    numbering: str
-    target: str
-    why: str
+    numbering: ReadOnly[str]
+    target: ReadOnly[str]
+    why: ReadOnly[str]
 
 
 class QuotationsNarrowed(TypedDict, total=False):
-    lxx: str
-    why: str
+    lxx: ReadOnly[str]
+    why: ReadOnly[str]
 
 
 class QuotationsNoteMerges(TypedDict, total=False):
-    action: str
-    drops: tuple[str, ...]
-    why: str
+    action: ReadOnly[str]
+    drops: ReadOnly[tuple[str, ...]]
+    why: ReadOnly[str]
 
 
 class Quotations(TypedDict, total=False):
-    alignment: "QuotationsAlignment"
-    class_conflicts: "tuple[ClassConflict, ...]"
-    excluded: Mapping[str, str]
-    lxx_to_edition: "Mapping[str, QuotationsLxxToEdition]"
-    narrowed: "Mapping[str, QuotationsNarrowed]"
-    note_merges: "Mapping[str, QuotationsNoteMerges]"
+    alignment: ReadOnly[QuotationsAlignment]
+    class_conflicts: ReadOnly[tuple[ClassConflict, ...]]
+    excluded: ReadOnly[Mapping[str, str]]
+    lxx_to_edition: ReadOnly[Mapping[str, QuotationsLxxToEdition]]
+    narrowed: ReadOnly[Mapping[str, QuotationsNarrowed]]
+    note_merges: ReadOnly[Mapping[str, QuotationsNoteMerges]]
 
 
 class Prose(TypedDict, total=False):
-    changes: "tuple[WordingChange, ...]"
-    why: str
+    changes: ReadOnly[tuple[WordingChange, ...]]
+    why: ReadOnly[str]
 
 
 Correction = TypedDict(
     "Correction",
     {
-        "from": "str",
-        "to": "str",
-        "uncategorized": "bool",
-        "why": "str",
+        "from": ReadOnly[str],
+        "to": ReadOnly[str],
+        "uncategorized": ReadOnly[bool],
+        "why": ReadOnly[str],
     },
     total=False,
 )
 
 
 class NoteOverride(TypedDict, total=False):
-    anchor: str
-    lemma: str | None
-    note: str | None
-    occurrence: int
-    omitted: bool
-    widen: bool
-    sentence: bool
-    quotation: bool
-    uncategorized: bool
-    verse: str
-    why: str
+    anchor: ReadOnly[str]
+    lemma: ReadOnly[str | None]
+    note: ReadOnly[str | None]
+    occurrence: ReadOnly[int]
+    omitted: ReadOnly[bool]
+    widen: ReadOnly[bool]
+    sentence: ReadOnly[bool]
+    quotation: ReadOnly[bool]
+    uncategorized: ReadOnly[bool]
+    verse: ReadOnly[str]
+    why: ReadOnly[str]
 
 
 class BrentonNotes(TypedDict, total=False):
-    corrections: "Mapping[str, tuple[Correction, ...] | Correction]"
-    notes: "Mapping[str, NoteOverride]"
-    shapes: Mapping[str, str]
+    corrections: ReadOnly[Mapping[str, tuple[Correction, ...] | Correction]]
+    notes: ReadOnly[Mapping[str, NoteOverride]]
+    shapes: ReadOnly[Mapping[str, str]]
 
 
 class Entry(TypedDict, total=False):
-    abbreviated_singly: str
-    abbreviation: str
-    chapters: tuple[int, ...]
-    cited_singly: str
-    file: str
-    heading: tuple[tuple[str, str], ...]
-    id: str
-    section: str
-    short_title: str
-    source: str
-    source_id: str
-    title: str
+    abbreviated_singly: ReadOnly[str]
+    abbreviation: ReadOnly[str]
+    chapters: ReadOnly[tuple[int, ...]]
+    cited_singly: ReadOnly[str]
+    file: ReadOnly[str]
+    heading: ReadOnly[tuple[tuple[str, str], ...]]
+    id: ReadOnly[str]
+    section: ReadOnly[str]
+    short_title: ReadOnly[str]
+    source: ReadOnly[str]
+    source_id: ReadOnly[str]
+    title: ReadOnly[str]
 
 
 class ManifestExcluded(TypedDict, total=False):
-    brenton: tuple[str, ...]
+    brenton: ReadOnly[tuple[str, ...]]
 
 
 class Manifest(TypedDict, total=False):
-    appendices: "tuple[Entry, ...]"
-    excluded: "ManifestExcluded"
-    front_matter: "tuple[Entry, ...]"
-    new_testament_front: "tuple[Entry, ...]"
-    old_testament_front: "tuple[Entry, ...]"
-    scripture: "tuple[Entry, ...]"
-    title: str
+    appendices: ReadOnly[tuple[Entry, ...]]
+    excluded: ReadOnly[ManifestExcluded]
+    front_matter: ReadOnly[tuple[Entry, ...]]
+    new_testament_front: ReadOnly[tuple[Entry, ...]]
+    old_testament_front: ReadOnly[tuple[Entry, ...]]
+    scripture: ReadOnly[tuple[Entry, ...]]
+    title: ReadOnly[str]
 
 
 class Witnesses(TypedDict, total=False):
-    chapter: str
-    id: str
-    phrase: str
+    chapter: ReadOnly[str]
+    id: ReadOnly[str]
+    phrase: ReadOnly[str]
 
 
 class Swete(TypedDict, total=False):
-    agrees: bool | None
-    evidence: str
-    page: int
-    reading: str
-    volume: int
+    agrees: ReadOnly[bool | None]
+    evidence: ReadOnly[str]
+    page: ReadOnly[int]
+    reading: ReadOnly[str]
+    volume: ReadOnly[int]
 
 
 class EnglishEdit(TypedDict, total=False):
-    span: tuple[int, int]
-    to: str
-    why: str
+    span: ReadOnly[tuple[int, int]]
+    to: ReadOnly[str]
+    why: ReadOnly[str]
 
 
 class English(TypedDict, total=False):
-    edits: "tuple[EnglishEdit, ...]"
-    source: str
-    span: tuple[int, int]
+    edits: ReadOnly[tuple[EnglishEdit, ...]]
+    source: ReadOnly[str]
+    span: ReadOnly[tuple[int, int]]
 
 
 class AlexandrinusPassagesInsertions(TypedDict, total=False):
-    after: str
-    before: str
-    verses: "tuple[Decision, ...]"
+    after: ReadOnly[str]
+    before: ReadOnly[str]
+    verses: ReadOnly[tuple[Decision, ...]]
 
 
 AlexandrinusReadingsNoteEdits = TypedDict(
     "AlexandrinusReadingsNoteEdits",
     {
-        "from": "str",
-        "lemma": "str",
-        "to": "str",
-        "why": "str",
+        "from": ReadOnly[str],
+        "lemma": ReadOnly[str],
+        "to": ReadOnly[str],
+        "why": ReadOnly[str],
     },
     total=False,
 )
 
 
 class AlexandrinusReadingsWitnesses(TypedDict, total=False):
-    adopted: tuple[str, ...]
-    displaced: str
+    adopted: ReadOnly[tuple[str, ...]]
+    displaced: ReadOnly[str]
 
 
 class Alexandrinus(TypedDict, total=False):
-    kept: "Mapping[str, Decision]"
-    passages: "Mapping[str, Decision]"
-    readings: "Mapping[str, Decision]"
-    swete: Mapping[str, str]
-    witness_evidence: Mapping[str, str]
+    kept: ReadOnly[Mapping[str, Decision]]
+    passages: ReadOnly[Mapping[str, Decision]]
+    readings: ReadOnly[Mapping[str, Decision]]
+    swete: ReadOnly[Mapping[str, str]]
+    witness_evidence: ReadOnly[Mapping[str, str]]
 
 
 class Terminology(TypedDict, total=False):
-    display: str
-    meaning: str
-    note_forms: tuple[str, ...]
-    period_forms: tuple[str, ...]
-    plural: str
-    source_forms: tuple[str, ...]
+    display: ReadOnly[str]
+    meaning: ReadOnly[str]
+    note_forms: ReadOnly[tuple[str, ...]]
+    period_forms: ReadOnly[tuple[str, ...]]
+    plural: ReadOnly[str]
+    source_forms: ReadOnly[tuple[str, ...]]
 
 
 class TurpieRowsAdditionalSourceHeadings(TypedDict, total=False):
-    hebrew_normalized: tuple[str, ...]
-    hebrew_printed: tuple[str, ...]
-    lxx_normalized: tuple[str, ...]
-    printed: tuple[str, ...]
-    scope: str
+    hebrew_normalized: ReadOnly[tuple[str, ...]]
+    hebrew_printed: ReadOnly[tuple[str, ...]]
+    lxx_normalized: ReadOnly[tuple[str, ...]]
+    printed: ReadOnly[tuple[str, ...]]
+    scope: ReadOnly[str]
 
 
 class TurpieHeading(TypedDict, total=False):
-    alternative_normalized: tuple[str, ...]
-    evidence_pages: tuple[int, ...]
-    normalized: str | None
-    printed: str
-    reference_location: str
+    alternative_normalized: ReadOnly[tuple[str, ...]]
+    evidence_pages: ReadOnly[tuple[int, ...]]
+    normalized: ReadOnly[str | None]
+    printed: ReadOnly[str]
+    reference_location: ReadOnly[str]
 
 
 TurpieRows = TypedDict(
     "TurpieRows",
     {
-        "additional_source_headings": "TurpieRowsAdditionalSourceHeadings",
-        "class": "str | None",
-        "hebrew": "TurpieHeading",
-        "id": "str",
-        "kind": "str",
-        "lxx": "TurpieHeading",
-        "note": "str",
-        "nt": "TurpieHeading",
-        "part_markers": "tuple[str, ...]",
-        "pdf_page": "int",
-        "printed_sequence": "str",
-        "source_headings": "str",
-        "table_code": "str",
+        "additional_source_headings": ReadOnly[TurpieRowsAdditionalSourceHeadings],
+        "class": ReadOnly[str | None],
+        "hebrew": ReadOnly[TurpieHeading],
+        "id": ReadOnly[str],
+        "kind": ReadOnly[str],
+        "lxx": ReadOnly[TurpieHeading],
+        "note": ReadOnly[str],
+        "nt": ReadOnly[TurpieHeading],
+        "part_markers": ReadOnly[tuple[str, ...]],
+        "pdf_page": ReadOnly[int],
+        "printed_sequence": ReadOnly[str],
+        "source_headings": ReadOnly[str],
+        "table_code": ReadOnly[str],
     },
     total=False,
 )
 
 
 class Turpie(TypedDict, total=False):
-    edition: str
-    pdf_page_numbering: str
-    rows: "tuple[TurpieRows, ...]"
-    transcription_scope: str
+    edition: ReadOnly[str]
+    pdf_page_numbering: ReadOnly[str]
+    rows: ReadOnly[tuple[TurpieRows, ...]]
+    transcription_scope: ReadOnly[str]
 
 
 CitationsDecisions = TypedDict(
     "CitationsDecisions",
     {
-        "not_a_citation": "bool",
-        "numbering": "str",
-        "passages": "str",
-        "print": "str",
-        "relative": "str",
-        "source": "str",
-        "unprinted": "bool",
-        "why": "str",
+        "not_a_citation": ReadOnly[bool],
+        "numbering": ReadOnly[str],
+        "passages": ReadOnly[str],
+        "print": ReadOnly[str],
+        "relative": ReadOnly[str],
+        "source": ReadOnly[str],
+        "unprinted": ReadOnly[bool],
+        "why": ReadOnly[str],
     },
     total=False,
 )
 
 
 class CitationsDialects(TypedDict, total=False):
-    books: Mapping[str, str]
-    chapter_verse: str
-    entries: Mapping[str, str]
-    numbering: str
-    numerals: str
+    books: ReadOnly[Mapping[str, str]]
+    chapter_verse: ReadOnly[str]
+    entries: ReadOnly[Mapping[str, str]]
+    numbering: ReadOnly[str]
+    numerals: ReadOnly[str]
 
 
 class Citations(TypedDict, total=False):
-    decisions: "Mapping[str, CitationsDecisions | tuple[CitationsDecisions, ...]]"
-    dialects: "Mapping[str, CitationsDialects]"
-    names: "Mapping[str, tuple[WordingChange, ...]]"
-    units: Mapping[str, str | None]
+    decisions: ReadOnly[
+        Mapping[str, CitationsDecisions | tuple[CitationsDecisions, ...]]
+    ]
+    dialects: ReadOnly[Mapping[str, CitationsDialects]]
+    names: ReadOnly[Mapping[str, tuple[WordingChange, ...]]]
+    units: ReadOnly[Mapping[str, str | None]]
 
 
 class RevisionsWords(TypedDict, total=False):
-    to: str
-    why: str
+    to: ReadOnly[str]
+    why: ReadOnly[str]
 
 
 class PunctuationRule(TypedDict, total=False):
-    why: str
+    why: ReadOnly[str]
 
 
 class Revisions(TypedDict, total=False):
-    passages: "Mapping[str, Prose]"
-    punctuation: "Mapping[str, PunctuationRule]"
-    verses: "Mapping[str, RevisionGroup]"
-    why: str
-    words: "Mapping[str, RevisionsWords]"
+    passages: ReadOnly[Mapping[str, Prose]]
+    punctuation: ReadOnly[Mapping[str, PunctuationRule]]
+    verses: ReadOnly[Mapping[str, RevisionGroup]]
+    why: ReadOnly[str]
+    words: ReadOnly[Mapping[str, RevisionsWords]]
 
 
 class AbbreviationsExpanded(TypedDict, total=False):
-    removed: tuple[str, ...]
-    why: str
+    removed: ReadOnly[tuple[str, ...]]
+    why: ReadOnly[str]
 
 
 class Abbreviations(TypedDict, total=False):
-    added: tuple[tuple[str, ...], ...]
-    expanded: "AbbreviationsExpanded"
-    meanings: "Prose"
-    source_rows: Mapping[str, str]
-    why: str
+    added: ReadOnly[tuple[tuple[str, ...], ...]]
+    expanded: ReadOnly[AbbreviationsExpanded]
+    meanings: ReadOnly[Prose]
+    source_rows: ReadOnly[Mapping[str, str]]
+    why: ReadOnly[str]
 
 
 class KjvNotes(TypedDict, total=False):
-    corrections: "Mapping[str, Correction]"
-    notes: "Mapping[str, NoteOverride]"
+    corrections: ReadOnly[Mapping[str, Correction]]
+    notes: ReadOnly[Mapping[str, NoteOverride]]
 
 
 RevisionChange = TypedDict(
     "RevisionChange",
     {
-        "from": "str",
-        "to": "str",
-        "verse": "str",
-        "why": "str",
+        "from": ReadOnly[str],
+        "to": ReadOnly[str],
+        "verse": ReadOnly[str],
+        "why": ReadOnly[str],
     },
     total=False,
 )
 
 
 class RevisionGroup(TypedDict, total=False):
-    changes: "tuple[RevisionChange, ...]"
-    why: str
+    changes: ReadOnly[tuple[RevisionChange, ...]]
+    why: ReadOnly[str]
 
 
 Decision = TypedDict(
     "Decision",
     {
-        "appendix": "str",
-        "edits": "tuple[Decision, ...]",
-        "english": "English",
-        "from": "str",
-        "insertions": "tuple[AlexandrinusPassagesInsertions, ...]",
-        "kjv": "bool",
-        "lemma": "str | None",
-        "note": "str | None",
-        "note_at": "int",
-        "note_edits": "Mapping[str, AlexandrinusReadingsNoteEdits]",
-        "note_target": "str",
-        "omit_verse": "bool",
-        "reference": "str",
-        "source_note": "str",
-        "source_notes": "Mapping[str, str]",
-        "supplied": "tuple[str, ...]",
-        "swete": "Swete",
-        "target": "str",
-        "todo": "bool",
-        "why": "str",
-        "witnesses": "AlexandrinusReadingsWitnesses",
+        "appendix": ReadOnly[str],
+        "edits": ReadOnly["tuple[Decision, ...]"],
+        "english": ReadOnly[English],
+        "from": ReadOnly[str],
+        "insertions": ReadOnly[tuple[AlexandrinusPassagesInsertions, ...]],
+        "kjv": ReadOnly[bool],
+        "lemma": ReadOnly[str | None],
+        "note": ReadOnly[str | None],
+        "note_at": ReadOnly[int],
+        "note_edits": ReadOnly[Mapping[str, AlexandrinusReadingsNoteEdits]],
+        "note_target": ReadOnly[str],
+        "omit_verse": ReadOnly[bool],
+        "reference": ReadOnly[str],
+        "source_note": ReadOnly[str],
+        "source_notes": ReadOnly[Mapping[str, str]],
+        "supplied": ReadOnly[tuple[str, ...]],
+        "swete": ReadOnly[Swete],
+        "target": ReadOnly[str],
+        "todo": ReadOnly[bool],
+        "why": ReadOnly[str],
+        "witnesses": ReadOnly[AlexandrinusReadingsWitnesses],
     },
     total=False,
 )
 
 
 class ByzantineUnit(TypedDict, total=False):
-    ref: str
-    tr: str
-    rp: str
-    nth: int
+    ref: ReadOnly[str]
+    tr: ReadOnly[str]
+    rp: ReadOnly[str]
+    nth: ReadOnly[int]
 
 
 ByzantineEdit = TypedDict(
     "ByzantineEdit",
     {
-        "ref": str,
-        "from": str,
-        "to": str,
-        "occurrence": int,
-        "after": str,
-        "before": str,
+        "ref": ReadOnly[str],
+        "from": ReadOnly[str],
+        "to": ReadOnly[str],
+        "occurrence": ReadOnly[int],
+        "after": ReadOnly[str],
+        "before": ReadOnly[str],
     },
     total=False,
 )
 
 
 class ByzantineEvidence(TypedDict, total=False):
-    ref: str
-    entry: str | int
-    field: str
-    quote: str
+    ref: ReadOnly[str]
+    entry: ReadOnly[str | int]
+    field: ReadOnly[str]
+    quote: ReadOnly[str]
 
 
 class ByzantineReading(TypedDict, total=False):
-    units: tuple[ByzantineUnit, ...]
-    kind: str
-    edits: tuple[ByzantineEdit, ...]
-    tags: tuple[str, ...]
-    why: str
-    evidence: Mapping[str, ByzantineEvidence]
+    units: ReadOnly[tuple[ByzantineUnit, ...]]
+    kind: ReadOnly[str]
+    edits: ReadOnly[tuple[ByzantineEdit, ...]]
+    tags: ReadOnly[tuple[str, ...]]
+    why: ReadOnly[str]
+    evidence: ReadOnly[Mapping[str, ByzantineEvidence]]
 
 
 class ByzantineOmitted(TypedDict, total=False):
-    why: str
+    why: ReadOnly[str]
 
 
 class ByzantineMoved(TypedDict, total=False):
-    to: str
-    why: str
+    to: ReadOnly[str]
+    why: ReadOnly[str]
 
 
 class ByzantineStructure(TypedDict, total=False):
-    why: str
-    omitted: Mapping[str, ByzantineOmitted]
-    moved: Mapping[str, ByzantineMoved]
+    why: ReadOnly[str]
+    omitted: ReadOnly[Mapping[str, ByzantineOmitted]]
+    moved: ReadOnly[Mapping[str, ByzantineMoved]]
 
 
 class ByzantineLemma(TypedDict, total=False):
-    lemma: str
-    why: str
+    lemma: ReadOnly[str]
+    why: ReadOnly[str]
 
 
 class ByzantineAccent(TypedDict, total=False):
-    tr: str
-    rp: str
-    why: str
+    tr: ReadOnly[str]
+    rp: ReadOnly[str]
+    why: ReadOnly[str]
 
 
 class ByzantineSide(TypedDict, total=False):
-    unit: ByzantineUnit
-    side: str
-    why: str
+    unit: ReadOnly[ByzantineUnit]
+    side: ReadOnly[str]
+    why: ReadOnly[str]
 
 
 Byzantine = TypedDict(
     "Byzantine",
     {
-        "why": str,
-        "readings": Mapping[str, ByzantineReading],
-        "structure": ByzantineStructure,
-        "accents": Mapping[str, ByzantineAccent],
-        "hodges-farstad": Mapping[str, ByzantineSide],
-        "lemmas": Mapping[str, ByzantineLemma],
+        "why": ReadOnly[str],
+        "readings": ReadOnly[Mapping[str, ByzantineReading]],
+        "structure": ReadOnly[ByzantineStructure],
+        "accents": ReadOnly[Mapping[str, ByzantineAccent]],
+        "hodges-farstad": ReadOnly[Mapping[str, ByzantineSide]],
+        "lemmas": ReadOnly[Mapping[str, ByzantineLemma]],
     },
     total=False,
 )
 
 
 class ByzantinePlacement(TypedDict, total=False):
-    ref: str
-    unit: ByzantineUnit | tuple[ByzantineUnit, ...] | None
-    why: str
+    ref: ReadOnly[str]
+    unit: ReadOnly[ByzantineUnit | tuple[ByzantineUnit, ...] | None]
+    why: ReadOnly[str]
 
 
 class ByzantinePlacements(TypedDict, total=False):
-    why: str
-    placements: Mapping[str, ByzantinePlacement]
+    why: ReadOnly[str]
+    placements: ReadOnly[Mapping[str, ByzantinePlacement]]
 
 
 class ClassConflict(TypedDict):
-    rows: tuple[str, ...]
-    why: str
+    rows: ReadOnly[tuple[str, ...]]
+    why: ReadOnly[str]

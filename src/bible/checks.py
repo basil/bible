@@ -20,7 +20,7 @@ def present[T](value: T | None, message: str) -> T:
 
 
 def require_fields(
-    entry: Mapping[str, object],
+    entry: object,
     required: Collection[str],
     optional: Collection[str],
     what: str,
@@ -28,7 +28,7 @@ def require_fields(
     """A declaration must have its fields and no others: a misspelt one would
     otherwise be read as absent."""
     require(
-        hasattr(entry, "keys")
+        isinstance(entry, Mapping)
         and set(required) <= set(entry) <= set(required) | set(optional),
         f"{what} has missing or unknown fields",
     )
