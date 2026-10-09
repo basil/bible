@@ -4,7 +4,10 @@ punctuation (edition/revisions.json), by explicit editorial decisions.
 Four kinds of change are declared, each with its reason:
 
     words    a word respelt or modernized wherever it is printed as a whole
-             word: in the translation, its notes, and front and back matter
+             word: in the translation, its notes, and front and back matter,
+             or, with a scope of "scripture", in a book's verses and the
+             lemmas and readings of their notes alone, preserving source
+             prose's grammar
     passages punctuation in a keyed note or front/back-matter paragraph
     punctuation systematic English punctuation rules
     verses   changes to the words of single verses, each naming its verse,
@@ -22,7 +25,7 @@ change that nothing meets is refused.
 from __future__ import annotations
 
 import re
-from collections.abc import Callable
+from collections.abc import Callable, Iterable
 from collections.abc import Set as AbstractSet
 from difflib import SequenceMatcher
 
@@ -31,11 +34,20 @@ from bible import repairs, scripture, usfm, usj
 from bible.checks import CheckFailed, require, require_fields
 from bible.policy_schema import RevisionChange, WordingChange
 from bible.sources import NEW_TESTAMENT
-from bible.usj import Content, Document, Node
+from bible.usj import Content, Document, Node, Predicate
 
-# What revision has met: a word, verse or punctuation rule by its key, and a
-# passage change by its selector and words.
+# What revision has met: a word, verse or punctuation rule by its key, a
+# passage change by its selector and words, and a word confined to notes by
+# the note's key and the word.
 type MetRevisions = set[str | tuple[str, str]]
+
+# What scoped grammar does not read among the words: notes, labels, the
+# fields that quote or cite, and foreign words.
+UNREVISED = frozenset("xt fl fq fqa wg wh".split())
+
+
+def _unrevised(item: Node) -> bool:
+    return usj.is_note(item) or usj.is_label(item) or item.get("marker") in UNREVISED
 
 
 def punctuation_only(old: str, new: str) -> bool:
@@ -73,9 +85,28 @@ def check(policy: bible.policy.Policy) -> None:
         require_fields(rule, {"why"}, (), f"Punctuation rule {name}")
         require(bool(rule["why"]), f"Punctuation rule without a why: {name}")
     for word, entry in data["words"].items():
-        require_fields(entry, {"to", "why"}, (), f"Respelling of {word}")
+        require_fields(
+            entry, {"to", "why"}, {"scope", "notes"}, f"Respelling of {word}"
+        )
         require(
-            re.fullmatch(r"\w(?:[\w’' -]*\w)?", word) is not None,
+            entry.get("scope", "scripture") == "scripture",
+            f"Respelling with a scope that is not scripture: {word}",
+        )
+        require(
+            "notes" not in entry
+            or (
+                entry.get("scope") == "scripture"
+                and bool(entry["notes"])
+                and len(set(entry["notes"])) == len(entry["notes"])
+                and all(
+                    re.fullmatch(r"\w{3} \S+:\S+(?: .+)?", key) is not None
+                    for key in entry["notes"]
+                )
+            ),
+            f"Invalid note context for grammar revision: {word}",
+        )
+        require(
+            re.fullmatch(r"\w(?:[\w’', -]*\w)?", word) is not None,
             f"Respelling of what is not a word: {word}",
         )
         require(
@@ -322,59 +353,160 @@ def _edit(at: int, old: str, new: str) -> tuple[int, int, str]:
 
 
 def _rewritten(
-    content: Content, pattern: re.Pattern[str], new: Callable[[re.Match[str]], str]
+    content: Content,
+    pattern: re.Pattern[str],
+    new: Callable[[re.Match[str]], str],
+    *,
+    skip: Predicate = usj.is_note,
 ) -> Content:
     """Content with every match of a pattern in its words giving way to what
     new makes of it. The words are read as one, whatever styles divide them;
     a note's words are its own, not those of the content it stands in."""
-    edits = [
-        _edit(match.start(), match[0], new(match))
-        for match in pattern.finditer(usj.text_of(content))
-    ]
-    return usj.substituted(content, edits) if edits else content
+    edits: list[tuple[int, int, str]] = []
+    for match in pattern.finditer(usj.text_of(content, skip=skip)):
+        replacement = new(match)
+        before = list(re.finditer(r"\S+", match[0]))
+        after = list(re.finditer(r"\S+", replacement))
+        # Contextual decisions can change several words. Keep each word in
+        # its own inline style rather than moving the whole phrase into one.
+        if len(before) == len(after) and re.findall(r"\s+", match[0]) == re.findall(
+            r"\s+", replacement
+        ):
+            edits.extend(
+                _edit(match.start() + old.start(), old[0], changed[0])
+                for old, changed in zip(before, after)
+                if old[0] != changed[0]
+            )
+        else:
+            edits.append(_edit(match.start(), match[0], replacement))
+    return usj.substituted(content, edits, skip=skip) if edits else content
 
 
-def respelt(doc: Document, policy: bible.policy.Policy, met: MetRevisions) -> Document:
-    """Revise declared words and phrases, recording each as met.
-
-    Notes receive the same changes, including lemmas quoting revised words.
-    """
-    words = policy.revisions["words"]
-    if not words:
-        return doc
-    pattern = re.compile(
-        r"(?<!\w)(?:"
-        + "|".join(map(re.escape, sorted(words, key=len, reverse=True)))
-        + r")(?!\w)"
+def _words(words: Iterable[str]) -> re.Pattern[str]:
+    """The whole words given, the longest first, in one alternation."""
+    alternatives = sorted(words, key=len, reverse=True)
+    if not alternatives:
+        return re.compile(r"(?!)")
+    return re.compile(
+        r"(?<!\w)(?:" + "|".join(map(re.escape, alternatives)) + r")(?!\w)"
     )
 
+
+def respelt(
+    doc: Document,
+    policy: bible.policy.Policy,
+    met: MetRevisions,
+    *,
+    book: bool = True,
+) -> Document:
+    """Spell first, then revise grammar in scripture.
+
+    Each pass is one longest-match sweep. Spelling, vocabulary and participle
+    changes apply wherever a word is printed, source prose included. Grammar,
+    the words scoped to scripture, applies to a book's verses alone: their
+    words, and the lemmas (fq) and readings (fqa) of the notes set in them. A
+    verse runs to the next verse number, or to the end of its book. The titles,
+    headings and introductions it spans keep their grammar, and so do the
+    notes set in them, whose lemmas quote them. Plain quotation marks do not
+    establish scope.
+    """
+    words = policy.revisions["words"]
     changed = False
 
-    def new(match: re.Match[str]) -> str:
+    def new(match: re.Match[str], key: str | None = None) -> str:
         nonlocal changed
         changed = True
         met.add(match[0])
+        if key is not None and "notes" in words[match[0]]:
+            met.add((key, match[0]))
         return words[match[0]]["to"]
 
-    def note(item: Node) -> Node:
-        if item["type"] != "note":
-            return item
-        return {**item, "content": _rewritten(item["content"], pattern, new)}
+    spelling = _words(word for word, entry in words.items() if "scope" not in entry)
 
-    def respell(content: Content) -> Content:
-        # A verse's number parts its words from those of the verse before.
+    def spell(content: Content) -> Content:
+        # Verse numbers separate neighboring verses. Notes have their own
+        # words; inline styles do not interrupt a phrase.
         numbers = [i for i, item in enumerate(content) if usj.is_type(item, "verse")]
         starts, ends = [0, *(i + 1 for i in numbers)], [*numbers, len(content)]
-        result = []
+        output: Content = []
         for start, end in zip(starts, ends):
-            result += usj.mapped(_rewritten(content[start:end], pattern, new), note)
-            result += content[end : end + 1]
-        return result
+            part = _rewritten(content[start:end], spelling, new)
+            part = usj.mapped(
+                part,
+                lambda item: (
+                    {**item, "content": _rewritten(item["content"], spelling, new)}
+                    if usj.is_note(item)
+                    else item
+                ),
+            )
+            output += part + content[end : end + 1]
+        return output
 
-    result = usj.with_content(doc, respell)
+    grammar = {word: entry for word, entry in words.items() if "scope" in entry}
+    general = _words(word for word, entry in grammar.items() if "notes" not in entry)
+    # A word confined to some notes is revised in their lemmas and readings.
+    confined = {
+        key: _words(
+            word for word, entry in grammar.items() if key in entry.get("notes", (key,))
+        )
+        for entry in grammar.values()
+        for key in entry.get("notes", ())
+    }
+
+    def quoted(content: Content, key: str | None = None) -> Content:
+        output: Content = []
+        for item in content:
+            if isinstance(item, dict) and "content" in item:
+                if item.get("marker") in {"fq", "fqa"}:
+                    inner = _rewritten(
+                        item["content"],
+                        confined.get(key, general) if key is not None else general,
+                        lambda match: new(match, key),
+                        skip=_unrevised,
+                    )
+                else:
+                    inner = quoted(item["content"], item.get("x-key", key))
+                item = {**item, "content": inner}
+            output.append(item)
+        return output
+
+    def scoped(doc: Document) -> list[Node]:
+        # The shared inventory includes headings between verse numbers.
+        # Exclude their prose here, wherever they stand, while keeping
+        # numbered scripture in d paragraphs (including Psalm superscriptions).
+        parts: dict[int, list[tuple[int, int]]] = {}
+        for verse in scripture.verses(doc).values():
+            for block_index, lo, hi, _ in verse.parts:
+                parts.setdefault(block_index, []).append((lo, hi))
+        blocks = []
+        for index, block in enumerate(doc["content"]):
+            if index in parts and not prose(block.get("marker", "")):
+                content = block["content"]
+                output: Content = []
+                at = 0
+                for lo, hi in parts[index]:
+                    output += content[at:lo]
+                    output += quoted(
+                        _rewritten(content[lo:hi], general, new, skip=_unrevised)
+                    )
+                    at = hi
+                output += content[at:]
+                block = {**block, "content": output}
+            blocks.append(block)
+        return blocks
+
+    result = usj.with_content(doc, spell)
+    if book and grammar:
+        result = usj.with_blocks(result, scoped(result))
     if changed:
         _check_lemmas(doc, result)
     return result
+
+
+def prose(marker: str) -> bool:
+    """Whether a paragraph keeps its source grammar though a verse spans it:
+    a book's titles, its headings and its introduction."""
+    return marker in usj.BOOK_PARAGRAPHS | {"s1", "ms1"} or marker.startswith("i")
 
 
 # The source quotations have not yet been tagged for their fonts. Recognize
@@ -594,8 +726,14 @@ def check_met(
     data = policy.revisions
     verses = {change["verse"] for change in verse_changes(policy)}
     passages = {(_selector(c), c["from"]) for c in passage_changes(policy)}
+    notes = {
+        (key, word)
+        for word, entry in data["words"].items()
+        for key in entry.get("notes", ())
+    }
     unused = sorted(
-        (set(data["words"]) | verses | set(data["punctuation"]) | passages) - met,
+        (set(data["words"]) | verses | set(data["punctuation"]) | passages | notes)
+        - met,
         key=str,
     )
     require(not unused, f"Revisions that nothing prints: {unused}")

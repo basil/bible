@@ -661,7 +661,9 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
             doc = revision.revised(code, doc, policy, revised)
         doc = revision.passages(code, doc, policy, revised)
         finished[code] = revision.punctuated(
-            revision.respelt(doc, policy, revised), policy, revised
+            revision.respelt(doc, policy, revised, book=code in books),
+            policy,
+            revised,
         )
     labels = {
         "tr": ctx.terms.display("textus-receptus"),

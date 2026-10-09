@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import copy
 import re
-from collections.abc import Callable
+from collections.abc import Callable, Iterable
 from pathlib import Path
 from typing import Any, cast
 
@@ -255,6 +255,11 @@ def test_the_editions_spelling_is_revised_wherever_a_word_is_printed(
     assert words["Jezekiel"]["to"] == "Ezekiel"
     assert edition.met["revisions"] == (
         set(words)
+        | {
+            (key, word)
+            for word, entry in words.items()
+            for key in entry.get("notes", ())
+        }
         | set(policy.revisions["punctuation"])
         | {c["verse"] for c in revision.verse_changes(policy)}
         | {
@@ -262,7 +267,13 @@ def test_the_editions_spelling_is_revised_wherever_a_word_is_printed(
             for c in revision.passage_changes(policy)
         }
     )
-    pattern = re.compile(r"(?<!\w)(?:" + "|".join(map(re.escape, words)) + r")(?!\w)")
+
+    def pattern(keys: Iterable[str]) -> re.Pattern[str]:
+        return re.compile(r"(?<!\w)(?:" + "|".join(map(re.escape, keys)) + r")(?!\w)")
+
+    # Scoped grammar can remain in explanatory prose and ambiguous nouns.
+    unscoped = pattern(word for word, entry in words.items() if "scope" not in entry)
+    assert any("scope" in entry for entry in words.values())
     # The editor's own pages name the sources' books, rather than respelling
     # the translations: the introduction explains Brenton's names, and the
     # table names the KJV's.
@@ -271,7 +282,23 @@ def test_the_editions_spelling_is_revised_wherever_a_word_is_printed(
         "XXA": ["Nehemiah", "Nehemiah"],
     }
     for code, doc in edition.documents.items():
-        assert pattern.findall(usj.serialize(doc)) == source_names.get(code, []), code
+        found = unscoped.findall(usj.serialize(doc))
+        assert found == source_names.get(code, []), code
+    # A scoped word that stands alone is a verb wherever it is printed, so
+    # none is left in the verses of the books, outside their headings.
+    alone = pattern(
+        word
+        for word, entry in words.items()
+        if "scope" in entry and "notes" not in entry and " " not in word
+    )
+    for code in edition.scripture:
+        blocks = edition.documents[code]["content"]
+        for reference, verse in scripture.verses(edition.documents[code]).items():
+            for block, lo, hi, _ in verse.parts:
+                if not revision.prose(blocks[block]["marker"]):
+                    text = usj.text_of(blocks[block]["content"][lo:hi])
+                    assert not alone.findall(text), (code, reference)
+    assert "has been" in usj.serialize(edition.documents["XXB"])
     ezekiel = usj.serialize(edition.documents["EZK"])
     assert "the word of the Lord came to Ezekiel the priest" in ezekiel
     assert "And Ezekiel shall be for a sign to you" in ezekiel
@@ -305,6 +332,36 @@ def test_a_word_is_respelt_whole_in_the_text_and_its_notes(
         "\\fqa Noah\\f*went \\add with\\add* Noah.\n\\v 2 And Noah went.\n"
     ) in text
     assert "\\mt1 NOE" in text and met == {"Noe"}
+
+
+def test_a_word_scoped_to_scripture_spares_front_and_back_matter(
+    policy: bible.policy.Policy,
+) -> None:
+    words = revisions(
+        policy,
+        words={
+            "Noe": {"to": "Noah", "why": "the English name"},
+            "went": {"to": "goeth", "why": "the tense", "scope": "scripture"},
+        },
+    )
+    met: revision.MetRevisions = set()
+    book = usj.serialize(revision.respelt(usj.parse(NOE), words, met))
+    assert "goeth with Noah: \\ft or, \\fqa Noah\\f*goeth" in book
+    assert "\\v 2 And Noah goeth.\n" in book and met == {"Noe", "went"}
+    met = set()
+    matter = usj.serialize(
+        revision.respelt(
+            usj.parse(
+                "\\id XXB\n\\ip Noe went.\\f + \\ft Noe went; \\fqa Noe went\\f*"
+            ),
+            words,
+            met,
+            book=False,
+        )
+    )
+    assert "\\ip Noah went." in matter
+    assert "\\ft Noah went; \\fqa Noah went" in matter
+    assert met == {"Noe"}
 
 
 def test_a_word_is_respelt_whatever_styles_divide_it(
@@ -431,6 +488,10 @@ def test_a_revision_changes_a_lemma_whole_or_is_refused(
             "changes nothing, or without a why",
         ),
         ({"words": {"Noe.": {"to": "Noah", "why": "x"}}}, "not a word"),
+        (
+            {"words": {"Noe": {"to": "Noah", "why": "x", "scope": "notes"}}},
+            "scope that is not scripture",
+        ),
         (
             {"verses": {"GEN 1:1": [{"from": "Noe", "to": "Noah"}]}},
             "missing or unknown fields",
@@ -1045,3 +1106,272 @@ def test_confirmed_article_and_possessive_passages(
     edition: bible.pipeline.Edition, code: str, reference: str, phrase: str
 ) -> None:
     assert phrase in scripture.verses(edition.documents[code])[reference].text
+
+
+@pytest.mark.parametrize(
+    ("before", "after"),
+    [
+        ("has shewed", "hath shown"),
+        ("has showed", "hath shown"),
+        ("has the Lord God shewed", "hath the Lord God shown"),
+        ("does not; stags and does", "doth not; stags and does"),
+        ("meats and drinks; eats and drinks", "meats and drinks; eateth and drinketh"),
+        ("and fears shall be; and fears not", "and fears shall be; and feareth not"),
+        ("king wishes; good wishes", "king wisheth; good wishes"),
+        ("that remains; the remains", "that remaineth; the remains"),
+        ("Lord supports; the supports", "Lord supporteth; the supports"),
+        (
+            "and works in stone; and works mercy",
+            "and works in stone; and worketh mercy",
+        ),
+        ("hast not shewed", "hast not shown"),
+        ("hast thou shewed", "hast thou shown"),
+        ("have I shewed", "have I shown"),
+        ("is not shewed", "is not shown"),
+        ("pattern shewed", "pattern shown"),
+        ("he shewed", "he showed"),
+        ("strake of the gall", "strake of the gall"),
+        ("strake sail", "struck sail"),
+        ("Oh, oh", "Oh, oh"),
+        ("Oh how desirable", "O how desirable"),
+        ("that flies; flies", "that flieth; flies"),
+        ("he that walks; public walks", "he that walketh; public walks"),
+        ("he holds; strong holds", "he holdeth; strong holds"),
+    ],
+)
+def test_reviewed_grammar_and_exceptions(
+    declared: bible.policy.Policy, before: str, after: str
+) -> None:
+    doc = usj.parse("\\id GEN\n\\c 1\n\\p\n\\v 1 " + before)
+    original = copy.deepcopy(doc)
+    result = revision.respelt(doc, declared, set())
+    assert scripture.verses(result)["1:1"].text == after
+    assert doc == original
+
+
+@pytest.mark.parametrize(
+    ("code", "reference", "phrase"),
+    [
+        ("1KI", "1:41", "What meaneth"),
+        ("EXO", "30:8", "Aaron lighteth"),
+        ("JER", "6:29", "silversmith worketh"),
+        ("JOB", "11:12", "man vainly buoyeth"),
+        ("JOB", "22:3", "what mattereth it"),
+        ("JOB", "33:29", "Mighty One worketh"),
+        ("PRO", "16:27", "and treasureth fire"),
+        ("PRO", "17:13", "Whoso rewardeth"),
+        ("PSA", "135:7", "great lights"),
+        ("PSA", "8:7", "works of thy hands"),
+        ("PRO", "2:4", "as for treasures"),
+        ("1KI", "11:22", "By all means"),
+    ],
+)
+def test_reviewed_verbs_and_preserved_nouns(
+    edition: bible.pipeline.Edition, code: str, reference: str, phrase: str
+) -> None:
+    assert phrase in scripture.verses(edition.documents[code])[reference].text
+
+
+def test_reviewed_verb_phrases_preserve_nouns_and_commentary(
+    declared: bible.policy.Policy,
+) -> None:
+    words = "means; lights; works; buoys; matters; treasures; rewards"
+    commentary = "Aaron lights; silversmith works; what matters it; Whoso rewards"
+    doc = usj.parse("\\id GEN\n\\ip " + commentary + "\n\\c 1\n\\p\n\\v 1 " + words)
+    original = copy.deepcopy(doc)
+    result = revision.respelt(doc, declared, set())
+    assert scripture.verses(result)["1:1"].text == words
+    assert usj.text_of(result["content"]) == usj.text_of(doc["content"])
+    assert doc == original
+
+
+def test_grammar_pass_spares_commentary_and_keeps_note_metadata(
+    declared: bible.policy.Policy,
+) -> None:
+    doc = usj.parse(
+        "\\id GEN\n\\ip He has shewed it.\n\\c 1\n\\p\n\\v 1 He has \\add shewed\\add* it. As he \\add does\\add*"
+        "\\f - \\fr 1:1 \\fq has \\+it shewed\\+it*: \\ft He has shewed it; "
+        "\\fqa he has \\+it shewed\\+it* it\\ft ; \\fl has\\xt has\\f*"
+    )
+    note = usj.notes_of(doc["content"])[0]
+    note.update(
+        {
+            "x-key": "GEN 1:1#1",
+            "x-scope": {"lemma": "has shewed"},
+            "category": "edition",
+        }
+    )
+    original = copy.deepcopy(doc)
+    result = revision.respelt(doc, declared, set())
+    text = usj.serialize(result)
+    assert "\\ip He has shown it." in text
+    assert "He hath \\add shown\\add* it." in text
+    assert "As he \\add doth\\add*" in text
+    assert "\\fq hath \\+it shown\\+it*:" in text
+    assert "\\ft He has shown it;" in text
+    assert "\\fqa he hath \\+it shown\\+it* it" in text
+    assert "\\fl has\\xt has" in text
+    after = usj.notes_of(result["content"])[0]
+    assert {k: v for k, v in after.items() if k != "content"} == {
+        k: v for k, v in note.items() if k != "content"
+    }
+    assert doc == original
+
+
+@pytest.mark.parametrize(
+    "marker",
+    [
+        "h",
+        "toc1",
+        "toc2",
+        "toc3",
+        "mt1",
+        "mt2",
+        "mt3",
+        "s1",
+        "ms1",
+        "ip",
+        "im",
+        "imi",
+        "iex",
+        "is1",
+        "is2",
+    ],
+)
+@pytest.mark.parametrize("position", ["before", "between", "after"])
+def test_scoped_grammar_spares_excluded_paragraphs_wherever_they_stand(
+    declared: bible.policy.Policy, marker: str, position: str
+) -> None:
+    paragraph = (
+        f'\\{marker} He has shewed it; says "has shewed".'
+        "\\f - \\fq has shewed: \\ft He has shewed it; "
+        "\\fqa has shewed\\f*\n"
+    )
+    first = "\\c 1\n\\p\n\\v 1 He has shewed it.\n"
+    second = "\\p\n\\v 2 He has shewed it.\n"
+    parts = {
+        "before": paragraph + first + second,
+        "between": first + paragraph + second,
+        "after": first + second + paragraph,
+    }
+    doc = usj.parse("\\id GEN\n" + parts[position])
+    note = usj.notes_of(doc["content"])[0]
+    note.update(
+        {
+            "x-key": "GEN 1:1#1",
+            "x-scope": {"lemma": "has shewed"},
+            "category": "edition",
+        }
+    )
+    original = copy.deepcopy(doc)
+    result = revision.respelt(doc, declared, set())
+    block = next(b for b in result["content"] if b.get("marker") == marker)
+    assert usj.text_of(block["content"]) == 'He has shown it; says "has shown".'
+    printed = usj.serialize(result)
+    # The note quotes the paragraph it is set in, and keeps its grammar.
+    assert "\\fq has shown:" in printed
+    assert "\\ft He has shown it;" in printed
+    assert "\\fqa has shown" in printed
+    assert "\\v 1 He hath shown it." in printed
+    assert "\\v 2 He hath shown it." in printed
+    after = usj.notes_of(result["content"])[0]
+    assert {k: v for k, v in after.items() if k != "content"} == {
+        k: v for k, v in note.items() if k != "content"
+    }
+    assert doc == original
+
+
+def test_scoped_grammar_in_numbered_psalm_superscriptions(
+    declared: bible.policy.Policy,
+) -> None:
+    doc = usj.parse(
+        "\\id PSA\n\\c 1\n\\d He has shewed it.\n"
+        "\\d \\v 1 He has shewed it.\n\\q1 \\v 2 He has shewed it."
+    )
+    original = copy.deepcopy(doc)
+    result = revision.respelt(doc, declared, set())
+    printed = usj.serialize(result)
+    assert "\\d He has shown it." in printed
+    assert scripture.verses(result)["1:1"].text == "He hath shown it."
+    assert scripture.verses(result)["1:2"].text == "He hath shown it."
+    assert doc == original
+
+
+def test_scoped_pass_is_one_sweep_and_quotations_share_it(
+    declared: bible.policy.Policy,
+) -> None:
+    rules = revisions(
+        declared,
+        words={
+            "shewed": {"to": "showed", "why": "spelling"},
+            "has showed": {"to": "hath shown", "why": "grammar", "scope": "scripture"},
+            "hath": {"to": "had", "why": "prove one sweep", "scope": "scripture"},
+        },
+    )
+    doc = usj.parse(
+        "\\id GEN\n\\c 1\n\\p\n\\v 1 has shewed; "
+        "\\f + \\ft commentary; \\fqa has \\+it shewed\\+it*\\f*"
+    )
+    result = revision.respelt(doc, rules, set())
+    assert scripture.verses(result)["1:1"].text == "hath shown; "
+    assert "\\fqa hath \\+it shown\\+it*" in usj.serialize(result)
+
+
+def test_isolated_alternative_uses_its_source_note_context(
+    declared: bible.policy.Policy,
+) -> None:
+    doc = usj.parse(
+        "\\id 1SA\n\\c 22\n\\p\n\\v 9 He answered with answers."
+        "\\f - \\ft present, \\fqa answers\\f*"
+        "\\f - \\ft commentary answers; \\fqa answers\\f*"
+    )
+    notes = usj.notes_of(doc["content"])
+    notes[0]["x-key"] = "1SA 22:9"
+    notes[1]["x-key"] = "1SA 22:9#2"
+    before = copy.deepcopy(doc)
+    result = revision.respelt(doc, declared, set())
+    assert scripture.verses(result)["22:9"].text == "He answered with answers."
+    printed = usj.serialize(result)
+    assert "\\fqa answereth" in printed
+    assert "\\ft commentary answers; \\fqa answers" in printed
+    assert doc == before
+
+
+def test_note_contexts_must_each_be_met(declared: bible.policy.Policy) -> None:
+    rules = revisions(
+        declared,
+        words={
+            "answers": {
+                "to": "answereth",
+                "why": "alternative",
+                "scope": "scripture",
+                "notes": ("GEN 1:1", "GEN 1:2"),
+            }
+        },
+    )
+    doc = usj.parse(
+        "\\id GEN\n\\c 1\n\\p\n\\v 1 answers\\f - \\ft present, \\fqa answers\\f*"
+    )
+    usj.notes_of(doc["content"])[0]["x-key"] = "GEN 1:1"
+    met: revision.MetRevisions = set()
+    result = revision.respelt(doc, rules, met)
+    assert scripture.verses(result)["1:1"].text == "answers"
+    assert "\\fqa answereth" in usj.serialize(result)
+    with pytest.raises(CheckFailed, match="GEN 1:2"):
+        revision.check_met(rules, met)
+
+
+def test_corpus_grammar_exceptions_and_quoted_readings(
+    edition: bible.pipeline.Edition,
+) -> None:
+    assert (
+        "strake of the gall" in scripture.verses(edition.documents["TOB"])["11:11"].text
+    )
+    assert "Oh, oh" in scripture.verses(edition.documents["NUM"])["24:23"].text
+    assert (
+        "hath the Lord God shown me"
+        in scripture.verses(edition.documents["AMO"])["7:1"].text
+    )
+    assert "What hast thou to say" in usj.serialize(edition.documents["JOS"])
+    assert "\\fqa mounteth" in usj.serialize(edition.documents["PSA"])
+    assert "singeth to thee" in scripture.verses(edition.documents["MAN"])["1:15"].text

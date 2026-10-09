@@ -76,6 +76,29 @@ def test_complete_explanations_keep_their_final_stop(
         assert row["note"].startswith("or,")
 
 
+def test_psalm_explanation_keeps_commentary_grammar_and_note_identity(
+    edition: bible.pipeline.Edition,
+) -> None:
+    key = "PSA 24:14"
+    rows = [row for row in edition.notes["PSA"] if row["key"] == key]
+    assert len(rows) == 1
+    assert rows[0]["lemma"] == "truth"
+    assert rows[0]["note"] == "or, _it_, sc. what has just been stated"
+    verse = scripture.verses(edition.documents["PSA"])["24:14"]
+    matching = [note for _, note in verse.notes if note.get("x-key") == key]
+    assert len(matching) == 1
+    note = matching[0]
+    assert usj.text_of(note["content"]).endswith(
+        "truth: or, it, sc. what has just been stated"
+    )
+    alternatives = [
+        usj.text_of(node["content"])
+        for node in usj.walk(note["content"])
+        if node.get("marker") == "fqa"
+    ]
+    assert alternatives == ["it"]
+
+
 def test_editorial_note_styles_and_punctuation(
     edition: bible.pipeline.Edition,
 ) -> None:

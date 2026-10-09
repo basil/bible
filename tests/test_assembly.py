@@ -99,7 +99,7 @@ def test_the_close_of_malachias_is_a_chapter_of_its_own(
     assert edition.inventory["MAL"]["3"] == [str(v) for v in range(1, 19)]
     assert edition.inventory["MAL"]["4"] == [str(v) for v in range(1, 7)]
     text = usj.serialize(edition.documents["MAL"])
-    assert "\\c 4\n\\p\n\\v 1 For, behold, a day comes burning as an oven" in text
+    assert "\\c 4\n\\p\n\\v 1 For, behold, a day cometh burning as an oven" in text
 
 
 def test_a_chapter_is_opened_only_at_the_words_the_file_names(

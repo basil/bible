@@ -6,7 +6,7 @@ apply only to some entries; no defaults are introduced here.
 """
 
 from collections.abc import Mapping
-from typing import ReadOnly, TypedDict
+from typing import Literal, ReadOnly, TypedDict
 
 
 class VersificationApocrypha(TypedDict, total=False):
@@ -340,6 +340,8 @@ class Citations(TypedDict, total=False):
 
 
 class RevisionsWords(TypedDict, total=False):
+    notes: ReadOnly[tuple[str, ...]]
+    scope: ReadOnly[Literal["scripture"]]
     to: ReadOnly[str]
     why: ReadOnly[str]
 
