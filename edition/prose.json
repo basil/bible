@@ -361,6 +361,16 @@
       }
     ]
   },
+  "reversed-margin-citation": {
+    "why": "Romans 11:36 supports the 1611 margin's for him, now printed in the main text at 1 Corinthians 8:6. Remove its citation from the reversed note so it does not appear to support the former King James in him; the source note retains the original citation in the review.",
+    "changes": [
+      {
+        "note": "1CO 8:6 in him",
+        "from": ", Rom. 11.36",
+        "to": ""
+      }
+    ]
+  },
   "note-quotation-marks": {
     "why": "Quoted words in notes are italic without enclosing quotation marks; remove the unmatched mark before the appendix quotation.",
     "changes": [

@@ -1,11 +1,10 @@
-"""The edition's revision of the translation's spelling and punctuation
-(edition/revisions.json): its words are kept, and how they are spelt and
-pointed is regularized.
+"""The edition's revision of the translation's spelling, vocabulary and
+punctuation (edition/revisions.json), by explicit editorial decisions.
 
 Four kinds of change are declared, each with its reason:
 
-    words    a word respelt wherever it is printed as a whole word: in the
-             translation, its notes, and the front and back matter
+    words    a word respelt or modernized wherever it is printed as a whole
+             word: in the translation, its notes, and front and back matter
     passages punctuation in a keyed note or front/back-matter paragraph
     punctuation systematic English punctuation rules
     verses   changes to the words of single verses, each naming its verse,

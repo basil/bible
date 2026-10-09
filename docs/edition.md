@@ -148,9 +148,9 @@ Abbreviations and numbers follow _The Chicago Manual of Style_:
 
 Every abbreviation the edition prints is in the list of abbreviations. Brenton's list gives only twelve, so the others that the notes use are added to it.
 
-## Spelling and punctuation
+## Spelling, vocabulary and punctuation
 
-The edition keeps the words of its text and regularizes how they are spelt and pointed.
+The edition regularizes spelling and punctuation and records explicit editorial vocabulary changes in `edition/revisions.json`. Throughout the printed edition, including notes and front and back matter, whole-word "ghost" becomes "spirit" and "Ghost" becomes "Spirit": "Holy Ghost" becomes "Holy Spirit", and "yielded up the ghost" becomes "yielded up the spirit". Capitalization and surrounding wording are preserved. Generated quotations and the appendix use the revised wording.
 
 The systematic respellings regularize names. Brenton writes the prophet's name "Jezekiel" at Ezekiel 1:3 and 24:24, transliterating the Greek Ἰεζεκιήλ; the edition prints "Ezekiel". His Osee, Michæas, Obdias, Naum and Ambacum are printed as the edition's titles spell them: Hosea, Michaias, Abdias, Nahum and Abbacum.
 

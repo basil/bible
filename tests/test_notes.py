@@ -897,7 +897,7 @@ def test_an_omission_quotes_only_the_part_of_its_lemma_that_is_omitted(
             "which was delivered you",
             "",
         ),
-        ("1CO 8:6 in him", "for him", "in him", ", Rom. 11:36"),
+        ("1CO 8:6 in him", "for him", "in him", ""),
         (
             "1TH 1:4 beloved, your election of God",
             "beloved of God, your election",
@@ -922,7 +922,7 @@ def test_former_readings_restore_the_eight_marginal_notes(
     source_note = next(n for n in read.marginal[code] if n["key"] == key)
     row = next(r for r in edition.notes[code] if r["key"] == key)
     assert row["lemma"] == anchor
-    # The margin's citations stand after the words it gives.
+    # Retained citations stand after the words the margin gives.
     assert row["note"] == f"or, _{former}_{cited}"
     assert row["style"] == "editorial reversal"
     assert row["source"] == source_note["note"]

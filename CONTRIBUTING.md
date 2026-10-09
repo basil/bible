@@ -43,11 +43,11 @@ The build works out where each verse stands in the King James Bible: the Old Tes
 
 `build/review/numbering.md` lists every run of verses and what it rests on. To correct a run, read both translations and add a reading with its reason. A chapter that a transcription numbers without words (eBible's Proverbs 30) is a `stub` in `edition/versification.json`, and a passage that stands at other numbers than the King James Bible's may be given a note saying so, as a `relocation` there; both are checked against the source and the runs.
 
-### Revising spelling and punctuation
+### Revising spelling, vocabulary and punctuation
 
 `edition/revisions.json` holds the edition's revision of the translation. It has two sections, `words` and `verses`.
 
-A word is respelt wherever it is printed as a whole word: in the translation, its notes, and the front and back matter. Changes to single verses are grouped under the reason they share, and a change may add a `why` of its own. A verse's change is made to that verse alone, as the edition numbers it; the verse must have the words once, only what differs gives way, and a note of the verse that quotes the words changes with them. Two changes may revise one verse, but not the same words of it.
+A word is respelt or modernized by an explicit editorial vocabulary decision wherever it is printed as a whole word: in the translation, its notes, and the front and back matter. Each decision gives its reason and preserves the surrounding wording. Changes to single verses are grouped under the reason they share, and a change may add a `why` of its own. A verse's change is made to that verse alone, as the edition numbers it; the verse must have the words once, only what differs gives way, and a note of the verse that quotes the words changes with them. Two changes may revise one verse, but not the same words of it.
 
 As the principles say, the revision is made last, so a lemma or a `from` names "Jezekiel" if the source does.
 
