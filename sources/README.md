@@ -15,11 +15,11 @@ echo 'e60c13a1075f7639ddcb60ab4bca58d959e01614b250daad21029429079f692b  oldtesta
 
 The archives below were retrieved from eBible.org on the dates shown.
 
-| File                   | Downloaded from                                              | Retrieved | Copyright notice                                 |
+| File | Downloaded from | Retrieved | Copyright notice |
 | ---------------------- | ------------------------------------------------------------ | ---------- | ------------------------------------------------ |
 | `eng-Brenton_usfm.zip` | [eBible](https://ebible.org/Scriptures/eng-Brenton_usfm.zip) | 2026-09-23 | `copr.htm` in the archive; `brenton-notice.html` |
-| `engkjvcpb_usfm.zip`   | [eBible](https://ebible.org/Scriptures/engkjvcpb_usfm.zip)   | 2026-09-23 | `copr.htm` in the archive; `kjv-notice.html` |
-| `englxxup_usfm.zip`    | [eBible](https://ebible.org/Scriptures/englxxup_usfm.zip) | 2026-10-09 | `copr.htm` in the archive; `englxxup-notice.html` |
+| `engkjvcpb_usfm.zip` | [eBible](https://ebible.org/Scriptures/engkjvcpb_usfm.zip) | 2026-09-23 | `copr.htm` in the archive; `kjv-notice.html` |
+| `englxxup_usfm.zip` | [eBible](https://ebible.org/Scriptures/englxxup_usfm.zip) | 2026-10-09 | `copr.htm` in the archive; `englxxup-notice.html` |
 
 `englxxup_usfm.zip` is Adam Boyd's Updated Brenton, the same translation with its spelling and formatting updated (CC0 for his changes, 2020). It is read for one thing: where its lines of poetry fall, which [the editorial notes](../docs/edition.md#lines-of-verse) explain. None of its words is printed. `englxxup-notice.html` is an unaltered copy of its [copyright page](https://ebible.org/englxxup/copyright.htm).
 
