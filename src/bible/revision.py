@@ -392,6 +392,16 @@ def _words(words: Iterable[str]) -> re.Pattern[str]:
     )
 
 
+def _phrase(words: str) -> re.Pattern[str]:
+    """The words given, not as part of a longer word: an edge that is a
+    letter or digit must not run on into another."""
+    return re.compile(
+        (r"(?<!\w)" if re.match(r"\w", words) else "")
+        + re.escape(words)
+        + (r"(?!\w)" if re.search(r"\w$", words) else "")
+    )
+
+
 def respelt(
     doc: Document,
     policy: bible.policy.Policy,
@@ -640,11 +650,12 @@ def revised(
         require(reference in verses, f"Revision of a verse the edition lacks: {key}")
         verse = verses[reference]
         old = change["from"]
+        found = list(_phrase(old).finditer(verse.text))
         require(
-            verse.text.count(old) == 1,
+            len(found) == 1,
             f"Revision not met once in its verse: {key}: {old}",
         )
-        start, end, new = _edit(verse.text.index(old), old, change["to"])
+        start, end, new = _edit(found[0].start(), old, change["to"])
         # New words take the style of the first words they replace, so words
         # set across a style or a note would lose it; words only deleted
         # lose nothing.
@@ -678,17 +689,14 @@ def revised(
     replacements: dict[int, Node] = {}
     for reference, listed in revised_notes.items():
         words = scripture.plain(verses[reference].text)
+        phrases = [(_phrase(change["from"]), change["to"]) for change in listed]
 
         def lemma(item: Node) -> Node:
             if not usj.is_type(item, "char", "fq"):
                 return item
             content = item["content"]
-            for change in listed:
-                content = _rewritten(
-                    content,
-                    re.compile(re.escape(change["from"])),
-                    lambda match: change["to"],
-                )
+            for pattern, to in phrases:
+                content = _rewritten(content, pattern, lambda match: to)
             quoted = scripture.plain(usj.text_of(content)).removesuffix(":")
             require(
                 quoted in words,

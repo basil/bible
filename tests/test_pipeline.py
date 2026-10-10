@@ -439,6 +439,20 @@ def test_a_note_quotes_a_verse_whatever_styles_divide_its_words(
     assert "\\fq went \\+it beside\\+it* Noe: \\ft or, \\fqa beside\\f*then." in text
 
 
+def test_a_revision_meets_its_words_whole(policy: bible.policy.Policy) -> None:
+    doc = usj.parse(
+        "\\id GEN\n\\c 1\n\\p\n\\v 1 He had besides them, beside Noe \\f - \\fr 1:1 "
+        "\\fq beside Noe: \\ft or, \\fqa besides\\f*then.\n"
+    )
+    # "besides" holds "beside", but not as a whole word.
+    change = {"verse": "GEN 1:1", "from": "beside", "to": "besides"}
+    text = usj.serialize(
+        revision.revised("GEN", doc, revisions(policy, verses=group(change)), set())
+    )
+    assert "\\v 1 He had besides them, besides Noe " in text
+    assert "\\fq besides Noe: \\ft or, \\fqa besides\\f*then." in text
+
+
 def test_a_revision_across_a_style_or_note_is_refused(
     policy: bible.policy.Policy,
 ) -> None:
@@ -965,7 +979,9 @@ def test_prepared_contextual_dashes_and_derived_quotations(
         code, reference = change["verse"].split()
         words = scripture.verses(edition.documents[code])[reference].text
         assert change["to"] in words
-        assert change["from"] not in words
+        # A respelling can retain its source as a substring (beside → besides),
+        # so its words are matched whole.
+        assert revision._phrase(change["from"]).search(words) is None
     for passage_change in revision.passage_changes(policy):
         if "note" in passage_change:
             code = passage_change["note"].split()[0]

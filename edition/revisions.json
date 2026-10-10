@@ -5886,6 +5886,64 @@
       "to": "Whoso rewardeth",
       "scope": "scripture",
       "why": "In PRO 17:13 whoso takes the singular verb rewards; retain rewards as a plural noun elsewhere."
+    },
+    "amongst": {
+      "to": "among",
+      "why": "Use the approved among spelling throughout translations, notes and front and back matter."
+    },
+    "Amongst": {
+      "to": "Among",
+      "why": "Use the approved Among spelling throughout translations, notes and front and back matter."
+    },
+    "beside women and children": {
+      "to": "besides women and children",
+      "scope": "scripture",
+      "why": "Use besides for addition in scripture and marked note quotations; retain spatial and idiomatic beside."
+    },
+    "beside all this": {
+      "to": "besides all this",
+      "scope": "scripture",
+      "why": "Use besides for addition in scripture and marked note quotations; retain spatial and idiomatic beside."
+    },
+    "beside this": {
+      "to": "besides this",
+      "scope": "scripture",
+      "why": "Use besides for addition in scripture and marked note quotations; retain spatial and idiomatic beside."
+    },
+    "gone a little further": {
+      "to": "gone a little farther",
+      "scope": "scripture",
+      "why": "Use farther for physical distance in scripture and marked note quotations."
+    },
+    "gone further": {
+      "to": "gone farther",
+      "scope": "scripture",
+      "why": "Use farther for physical distance in scripture and marked note quotations."
+    },
+    "went a little further": {
+      "to": "went a little farther",
+      "scope": "scripture",
+      "why": "Use farther for physical distance in scripture and marked note quotations, including the MAT 26:39 TR reading."
+    },
+    "who sometimes were": {
+      "to": "who sometime were",
+      "scope": "scripture",
+      "why": "Use sometime for formerly in scripture and marked note quotations; sometimes means occasionally, and some time expresses duration."
+    },
+    "were sometimes darkness": {
+      "to": "were sometime darkness",
+      "scope": "scripture",
+      "why": "Use sometime for formerly in scripture and marked note quotations; sometimes means occasionally, and some time expresses duration."
+    },
+    "were sometimes alienated": {
+      "to": "were sometime alienated",
+      "scope": "scripture",
+      "why": "Use sometime for formerly in scripture and marked note quotations; sometimes means occasionally, and some time expresses duration."
+    },
+    "were sometimes foolish": {
+      "to": "were sometime foolish",
+      "scope": "scripture",
+      "why": "Use sometime for formerly in scripture and marked note quotations; sometimes means occasionally, and some time expresses duration."
     }
   },
   "verses": {
@@ -5990,6 +6048,366 @@
           "from": "of the field:—and Balac",
           "to": "of the field. And Balac",
           "why": "The comparison ends before the narrative identifies Balac; begin that narrative sentence with a capital."
+        }
+      ]
+    },
+    "addition and exclusion": {
+      "why": "Use besides for addition or exclusion; retain beside for spatial and idiomatic uses.",
+      "changes": [
+        {
+          "verse": "EXO 20:3",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "NUM 5:20",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "NUM 6:20",
+          "from": "beside the breast",
+          "to": "besides the breast"
+        },
+        {
+          "verse": "NUM 6:20",
+          "from": "beside the shoulder",
+          "to": "besides the shoulder"
+        },
+        {
+          "verse": "NUM 28:15",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "NUM 28:23",
+          "from": "Beside",
+          "to": "Besides"
+        },
+        {
+          "verse": "NUM 28:24",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "NUM 28:30",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "NUM 29:6",
+          "from": "Beside",
+          "to": "Besides"
+        },
+        {
+          "verse": "NUM 29:11",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "NUM 29:16",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "NUM 29:19",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "NUM 29:22",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "NUM 29:25",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "NUM 29:28",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "NUM 29:31",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "NUM 29:34",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "NUM 29:38",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "NUM 31:22",
+          "from": "Beside",
+          "to": "Besides"
+        },
+        {
+          "verse": "DEU 4:35",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "DEU 32:39",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "JOS 8:27",
+          "from": "Beside",
+          "to": "Besides"
+        },
+        {
+          "verse": "RUT 4:4",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "1SA 2:2",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "1KI 8:60",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "2KI 21:16",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "1CH 17:20",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "1ES 5:41",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "TOB 1:20",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "JDT 7:2",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "1MA 6:37",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "1MA 8:5",
+          "from": "Beside",
+          "to": "Besides"
+        },
+        {
+          "verse": "2MA 12:2",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "2MA 15:11",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "PSA 72:25",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "SIR 17:11",
+          "from": "Beside",
+          "to": "Besides"
+        },
+        {
+          "verse": "HOS 13:4",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "JOL 2:27",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "ISA 26:13",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "ISA 43:11",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "ISA 44:6",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "ISA 44:8",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "ISA 45:5",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "ISA 45:6",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "ISA 45:14",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "ISA 45:18",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "ISA 45:21",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "ISA 46:9",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "ISA 64:3",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "DAG 11:4",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "DAG 13:10",
+          "from": "beside",
+          "to": "besides"
+        },
+        {
+          "verse": "DAG 13:41",
+          "from": "beside",
+          "to": "besides"
+        }
+      ]
+    },
+    "garments": {
+      "why": "The purple garments are clothes worn by the kings, rather than pieces of cloth.",
+      "changes": [
+        {
+          "verse": "JDG 8:26",
+          "from": "purple cloths",
+          "to": "purple clothes"
+        }
+      ]
+    },
+    "differing measures": {
+      "why": "Use diverse for weights or measures differing in size; retain divers for various or several things.",
+      "changes": [
+        {
+          "verse": "DEU 25:13",
+          "from": "divers",
+          "to": "diverse"
+        },
+        {
+          "verse": "DEU 25:14",
+          "from": "divers",
+          "to": "diverse"
+        },
+        {
+          "verse": "PRO 20:10",
+          "from": "divers",
+          "to": "diverse"
+        }
+      ]
+    },
+    "continuation and addition": {
+      "why": "Use further for continuation or addition rather than physical distance.",
+      "changes": [
+        {
+          "verse": "GEN 2:19",
+          "from": "farther",
+          "to": "further"
+        },
+        {
+          "verse": "NUM 21:30",
+          "from": "farther",
+          "to": "further"
+        },
+        {
+          "verse": "NUM 32:14",
+          "from": "farther",
+          "to": "further"
+        },
+        {
+          "verse": "1CH 29:3",
+          "from": "farther",
+          "to": "further"
+        },
+        {
+          "verse": "2CH 31:11",
+          "from": "farther",
+          "to": "further"
+        },
+        {
+          "verse": "NEH 9:18",
+          "from": "farther",
+          "to": "further"
+        },
+        {
+          "verse": "ISA 16:3",
+          "from": "farther",
+          "to": "further"
+        }
+      ]
+    },
+    "physical distance": {
+      "why": "Use farther for physical distance from the city.",
+      "changes": [
+        {
+          "verse": "2MA 10:27",
+          "from": "further",
+          "to": "farther"
+        }
+      ]
+    },
+    "occasional action": {
+      "why": "Use sometimes for occasional action rather than a former period.",
+      "changes": [
+        {
+          "verse": "WIS 16:18",
+          "from": "sometime",
+          "to": "sometimes"
+        },
+        {
+          "verse": "SIR 37:14",
+          "from": "sometime",
+          "to": "sometimes"
         }
       ]
     }
