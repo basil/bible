@@ -6063,6 +6063,16 @@
           "to": "Note—Here begins"
         }
       ]
+    },
+    "mark-fist-margin": {
+      "why": "Separate the unattributed alternative from Theophylact’s interpretation with a semicolon.",
+      "changes": [
+        {
+          "note": "MRK 7:3 oft",
+          "from": "diligently, Theophylact",
+          "to": "diligently; Theophylact"
+        }
+      ]
     }
   }
 }

@@ -498,66 +498,75 @@ def source_plain(markup: str | None) -> str | None:
     return html.unescape(re.sub(r"<[^>]*>", "", markup)) if markup else markup
 
 
+def instruction_line(i: Instruction, context: Context, uid: str | None = None) -> str:
+    """A recommendation with its proposal, binding and exclusion reason."""
+    name = NAMES.get(i["source"], i["source"])
+    bits = [f"{name} {i['entry']}"]
+    if i.get("strength") and i["source"] != PIERPONT:
+        bits.append(f"strength {i['strength']}")
+    if i["source"] == PIERPONT:
+        w = i.get("weight") or {}
+        bits.append(
+            f"weight {w.get('raw', '?')}"
+            + (f" ({i['strength']})" if i.get("strength") else "")
+        )
+        berry = i.get("berry") or {}
+        if berry.get("raw"):
+            bits.append(f"Berry {berry['raw']}")
+    bits.append(f"bound {i.get('bind')}")
+    bits.append(
+        "attachment: " + (attachment_scope(i, uid) if uid else i.get("scope", "?"))
+    )
+    bits.append(
+        i.get("compatibility", "?")
+        + (
+            f" ({i['compatibility_reason']})"
+            if i.get("compatibility_reason")
+            and i.get("compatibility") not in {"compatible"}
+            else ""
+        )
+    )
+    if i.get("rendering"):
+        bits.append(
+            "lexical support found"
+            if i["rendering"] == "verified"
+            else f"lexical support: {i['rendering']}"
+        )
+    if i.get("method") == "hand":
+        bits.append("placed by hand")
+    proposals: list[str] = []
+    for e in i.get("edits", []):
+        at = e.get("ref")
+        text = context["kjv"].get(at) if at is not None else None
+        bounds = (
+            kjv_bounds(text, e)
+            if text is not None and e.get("word_range") is not None
+            else None
+        )
+        proposals.append(
+            witness_excerpt(
+                e["old"],
+                e["new"],
+                text,
+                bounds=bounds,
+                label="KJV context (proposal)",
+            )
+        )
+    contrasts = "; ".join(proposals)
+    return (
+        f"- {esc(bits[0])}: "
+        + (contrasts + " · " if contrasts else "")
+        + esc(" · ".join(bits[1:]))
+        + f"  \n  `{esc(i['raw'])}`"
+    )
+
+
 def witness_lines(unit: Unit, context: Context, index: Index) -> list[str]:
     """One line per witness that speaks to the unit, in its own words."""
     uid = unit["id"]
     lines: list[str] = []
     for i in index["instructions_at"][uid]:
-        name = NAMES.get(i["source"], i["source"])
-        bits = [f"{name} {i['entry']}"]
-        if i["source"] == PIERPONT:
-            w = i.get("weight") or {}
-            bits.append(
-                f"weight {w.get('raw', '?')}"
-                + (f" ({i['strength']})" if i.get("strength") else "")
-            )
-            berry = i.get("berry") or {}
-            if berry.get("raw"):
-                bits.append(f"Berry {berry['raw']}")
-        bits.append(f"bound {i.get('bind')}")
-        bits.append("attachment: " + attachment_scope(i, uid))
-        bits.append(
-            i.get("compatibility", "?")
-            + (
-                f" ({i['compatibility_reason']})"
-                if i.get("compatibility_reason")
-                and i.get("compatibility") not in {"compatible"}
-                else ""
-            )
-        )
-        if i.get("rendering"):
-            bits.append(
-                "lexical support found"
-                if i["rendering"] == "verified"
-                else f"lexical support: {i['rendering']}"
-            )
-        if i.get("method") == "hand":
-            bits.append("placed by hand")
-        proposals: list[str] = []
-        for e in i.get("edits", []):
-            at = e.get("ref")
-            text = context["kjv"].get(at) if at is not None else None
-            bounds = (
-                kjv_bounds(text, e)
-                if text is not None and e.get("word_range") is not None
-                else None
-            )
-            proposals.append(
-                witness_excerpt(
-                    e["old"],
-                    e["new"],
-                    text,
-                    bounds=bounds,
-                    label="KJV context (proposal)",
-                )
-            )
-        contrasts = "; ".join(proposals)
-        lines.append(
-            f"- {esc(bits[0])}: "
-            + (contrasts + " · " if contrasts else "")
-            + esc(" · ".join(bits[1:]))
-            + f"  \n  `{esc(i['raw'])}`"
-        )
+        lines.append(instruction_line(i, context, uid))
     for r in index["reports_at"][uid]:
         name = NAMES.get(r["witness"], r["witness"])
         # Boyd's passages are escaped USX markup; compare their plain wording.
@@ -981,11 +990,11 @@ def build_index(context: Context) -> Index:
         "tcgnt": {n["entry"]: n for n in context["tcgnt"]},
     }
     for i in context["instructions"]:
-        if i.get("scope") == "verse":
+        if i.get("scope") == "verse" or (
+            i.get("scope") == "out-of-scope" and i.get("role") != "agrees"
+        ):
             for ref in i.get("refs", []):
-                index["loose_in_verse"][ref].append(
-                    f"- {NAMES.get(i['source'], i['source'])} {i['entry']} · bound {i.get('bind')} · {i.get('compatibility')}: `{esc(i['raw'])}`"
-                )
+                index["loose_in_verse"][ref].append(instruction_line(i, context))
     for r in context["reports"]:
         if r.get("scope") == "verse":
             extracted = (
@@ -1107,6 +1116,63 @@ def reading(value: object) -> str:
     return str(value) if value else "∅"
 
 
+def wording(text: str) -> list[str]:
+    """A passage's words, compared without case, punctuation or brackets."""
+    return [w for w, _, _ in word_spans(text)]
+
+
+def addressed(i: Instruction, context: Context) -> bool:
+    """Whether an execution or a recorded correction covers the recommendation."""
+    if i.get("displaced_by"):
+        return True
+    # A verse moved or omitted is carried out by the structural decisions.
+    units = {u["unit"] for u in i.get("units", [])}
+    if i.get("bind") == "structural" and units:
+        moved = {
+            r["unit"]
+            for r in context["dispositions"]
+            if r["disposition"] == "structural" and r["action"] != "refused"
+        }
+        if units <= moved:
+            return True
+
+    def covered(e: InstructionEdit) -> bool:
+        ref = e.get("ref")
+        if ref is None or e.get("word_range") is None:
+            return False
+        lo, hi = kjv_bounds(context["kjv"][ref], e)
+        for o in context["overrides"]:
+            for b in o["bound"]:
+                if b["ref"] != ref:
+                    continue
+                start, end = lo, hi
+                if start == end:
+                    # A bound insertion can stand on either side of a space.
+                    text = context["kjv"][ref]
+                    if b["end"] <= start and not text[b["end"] : start].strip():
+                        start = end = b["end"]
+                    elif end <= b["start"] and not text[end : b["start"]].strip():
+                        start = end = b["start"]
+                if not b["start"] <= start <= end <= b["end"]:
+                    continue
+                # Compare the words of the entire declared replacement,
+                # including the unchanged words around the recommendation's
+                # own span, apart from punctuation and italic brackets.
+                proposed = " ".join(
+                    (
+                        b["old"][: start - b["start"]],
+                        e["new"],
+                        b["old"][end - b["start"] :],
+                    )
+                )
+                if wording(proposed) == wording(b["new"]):
+                    return True
+        return False
+
+    edits = i.get("edits", [])
+    return bool(edits) and all(covered(e) for e in edits)
+
+
 def summary(context: Context) -> str:
     """The reconciliation in figures, for the review: how many units (and
     corrections of shared Greek) of each disposition, how each witness's rows
@@ -1136,6 +1202,14 @@ def summary(context: Context) -> str:
         lines.append(
             f"| {NAMES.get(name, name)} | {len(scopes)} | {', '.join(f'{k}: {n}' for k, n in sorted(c(scopes).items(), key=lambda kv: str(kv[0])))} |"
         )
+    lines += ["", "## Unaddressed recommendations", ""]
+    lines += [
+        f"- {', '.join(i.get('refs', []))}: " + instruction_line(i, context)[2:]
+        for i in context["instructions"]
+        if i.get("role") != "agrees"
+        and i.get("compatibility") not in {"compatible", "agrees"}
+        and not addressed(i, context)
+    ] or ["- none"]
     lines += [
         "",
         "## Invariants",

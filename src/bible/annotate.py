@@ -381,12 +381,10 @@ def george(
         if former is not None:
             conflicts = set(override) & {
                 "omitted",
-                "note",
                 "lemma",
                 "occurrence",
                 "widen",
                 "quotation",
-                "sentence",
                 "verse",
             }
             require(
@@ -477,26 +475,36 @@ def reversed_margin(
 ) -> tuple[str, list[citations.Citation]]:
     """A 1611 note whose alternative the text now prints, turned round to
     give the King James words it replaced: "Or," and the former words in
-    place of its label and alternative, and its citations kept after them."""
+    place of its label and alternative, and its citations kept after them.
+    Where the alternative the text prints is not the note's first, the
+    former words are given first, as another alternative, and the note's
+    own words follow; a prose change can then drop the adopted one."""
     pieces = notes.labelled_pieces(text)
     require(
         bool(pieces) and pieces[0][0] == "label",
         f"Marginal note former has no label: {key}",
     )
     start = len(pieces[0][1])
-    alternative = text[start : cited[0].start if cited else len(text)].rstrip(" ,.")
-    wanted = words_of(alternative)
-    require(
-        bool(wanted)
-        and any(
-            anchor[i : i + len(wanted)] == wanted
-            for i in range(len(anchor) - len(wanted) + 1)
-        ),
-        f"Marginal note former: the text does not print the margin's alternative: {key}",
-    )
-    turned = f"Or, {former}{text[start + len(alternative):]}"
+    end = cited[0].start if cited else len(text)
+    alternative = text[start:end].rstrip(" ,.")
+    if contains(anchor, words_of(alternative)):
+        turned = f"Or, {former}{text[start + len(alternative):]}"
+    else:
+        require(
+            contains(words_of(alternative), anchor),
+            f"Marginal note former: the text does not print the margin's alternative: {key}",
+        )
+        turned = f"Or, {former}; or, {text[start:]}"
     shift = len(turned) - len(text)
     return turned, [replace(c, start=c.start + shift, end=c.end + shift) for c in cited]
+
+
+def contains(words: list[str], wanted: list[str]) -> bool:
+    """Whether the words hold the wanted words together, in order."""
+    return bool(wanted) and any(
+        words[i : i + len(wanted)] == wanted
+        for i in range(len(words) - len(wanted) + 1)
+    )
 
 
 def spanned(verses: Sequence[bible.references.Verse]) -> str:

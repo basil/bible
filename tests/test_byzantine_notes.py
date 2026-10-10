@@ -56,7 +56,7 @@ def test_the_edition_adds_notes(edition_notes: list[Found]) -> None:
     assert len(edition_notes) > 700
     # A note for each edit and each structural change, the doxology of
     # Romans 16 noted at both ends.
-    assert len(edition_notes) == 867
+    assert len(edition_notes) == 866
 
 
 def test_structural_notes_stand_where_the_verses_were(

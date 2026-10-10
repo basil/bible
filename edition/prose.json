@@ -395,5 +395,15 @@
         "to": "you' etc."
       }
     ]
+  },
+  "mark-fist-margin": {
+    "why": "The text adopts with the fist, so remove that repeated rendering and its in the Original introduction from the turned margin, retaining the former oft, diligently and Theophylact’s up to the elbow.",
+    "changes": [
+      {
+        "note": "MRK 7:3 oft",
+        "from": "in the Original, with the fist, ",
+        "to": ""
+      }
+    ]
   }
 }

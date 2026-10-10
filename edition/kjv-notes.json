@@ -115,8 +115,11 @@
       "why": "as many as touched him, that is, the border of his garment"
     },
     "MRK 7:3 oft": {
-      "note": "Or, _diligently_, in the Original, _with the fist_, Theophylact, _up to the elbow_",
-      "why": "diligently, with the fist and up to the elbow are the renderings; the rest names the authorities"
+      "anchor": "with the fist",
+      "former": "oft",
+      "note": "Or, _oft_; or, _diligently_, in the Original, _with the fist_, Theophylact, _up to the elbow_",
+      "sentence": true,
+      "why": "The text adopts the margin’s with the fist; turn the note round to quote the former King James oft first, ahead of its own renderings diligently and up to the elbow, whose authorities it names, and close it with a full stop."
     },
     "MRK 7:4 pots": {
       "anchor": "beds",

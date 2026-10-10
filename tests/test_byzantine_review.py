@@ -1741,6 +1741,24 @@ def unpunctuated_rows(byzantine: Context) -> dict[str, appendix.Row]:
     }
 
 
+def test_john_first_cast_retains_the_king_james_wording(
+    byzantine: Context,
+    index: review.Index,
+    unpunctuated_rows: dict[str, appendix.Row],
+) -> None:
+    ref = "JHN 8:7"
+    verse = index["prepared"][ref]
+    assert "let him first cast a stone at her" in verse.text
+    assert scripture.plain(verse.text) == byzantine["kjv"][ref]
+    row = index["rows"][f"{ref}#1"]
+    assert row["disposition"] == "override"
+    assert row["kind"] == row["action"] == "nochange"
+    assert not any(n.get("x-key", "").endswith(" TR") for _, n in verse.notes)
+    appendix_row = unpunctuated_rows[ref]
+    assert appendix_row.kind == "same"
+    assert appendix_row.kjv is None and appendix_row.oleb is None
+
+
 def test_every_shared_greek_correction_is_kept_whole_in_the_appendix(
     byzantine: Context, unpunctuated_rows: dict[str, appendix.Row]
 ) -> None:
@@ -1799,3 +1817,82 @@ def test_review_baseline_preserves_source_documents_and_decisions(
     original = copy.deepcopy(inputs)
     review.build_index(byzantine)
     assert inputs == original
+
+
+@pytest.mark.parametrize(
+    "ref, old, new",
+    [
+        ("MRK 7:3", "oft", "with the fist"),
+        ("MRK 14:69", "a maid", "the maid"),
+        ("JHN 10:16", "one fold", "one flock"),
+        ("ACT 10:20", "arise therefore", "but arise"),
+        ("ROM 4:24", "if we", "who"),
+        ("1TH 2:16", "for the wrath", "but the wrath"),
+        ("2TI 1:18", "unto me ", ""),
+        ("1PE 2:13", "Submit yourselves", "Submit yourselves therefore"),
+    ],
+)
+def test_eight_shared_greek_corrections(
+    byzantine: Context, index: review.Index, ref: str, old: str, new: str
+) -> None:
+    before = byzantine["kjv"][ref]
+    after = index["corrected"][ref]
+    assert scripture.plain(after.text) == before.replace(old, new)
+    correction = index["rows"][ref]
+    assert correction["disposition"] == "shared"
+    assert correction["execution"] == "applied"
+    assert not correction.get("note")
+    if ref == "JHN 10:16":
+        assert "this fold" in after.text
+
+
+def test_excluded_recommendations_are_visible(
+    byzantine: Context, packets: dict[str, str], index: review.Index
+) -> None:
+    excluded = [
+        i
+        for i in byzantine["instructions"]
+        if i["scope"] == "out-of-scope" and i["role"] != "agrees"
+    ]
+    assert excluded
+    for i in excluded:
+        for ref in i["refs"]:
+            line = review.instruction_line(i, byzantine)
+            assert line in packets[f"{ref.split()[0]}.md"]
+            assert line in index["loose_in_verse"][ref]
+            assert f"bound {i['bind']}" in line
+            assert review.esc(i["compatibility_reason"]) in line
+            strength = i.get("strength")
+            if strength:
+                assert strength in line
+    for ref in (
+        "MRK 7:3",
+        "MRK 14:69",
+        "JHN 10:16",
+        "ACT 10:20",
+        "ROM 4:24",
+        "1TH 2:16",
+        "2TI 1:18",
+        "1PE 2:13",
+    ):
+        recommendation = next(i for i in excluded if i["refs"] == [ref])
+        assert review.addressed(recommendation, byzantine)
+
+
+def test_summary_lists_unaddressed_exclusions(byzantine: Context) -> None:
+    text = review.summary(byzantine).split("## Unaddressed recommendations", 1)[1]
+    text = text.split("## Invariants", 1)[0]
+    excluded = [
+        i
+        for i in byzantine["instructions"]
+        if i["scope"] == "out-of-scope"
+        and i["role"] != "agrees"
+        and i["compatibility"] != "agrees"
+    ]
+    addressed = [i for i in excluded if review.addressed(i, byzantine)]
+    unaddressed = [i for i in excluded if not review.addressed(i, byzantine)]
+    assert addressed and unaddressed
+    for i in unaddressed:
+        assert review.instruction_line(i, byzantine)[2:] in text
+    for i in addressed:
+        assert review.instruction_line(i, byzantine)[2:] not in text

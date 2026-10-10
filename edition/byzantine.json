@@ -1008,6 +1008,24 @@
         }
       }
     },
+    "MRK 7:3": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "MRK 7:3",
+          "from": "oft",
+          "to": "with the fist",
+          "greek": "πυγμῇ"
+        }
+      ],
+      "why": "The shared dative πυγμῇ names the fist as the manner or instrument of washing, not its frequency. Adopt Pierpont’s with the fist, also offered by the existing 1611 margin, while retaining that note’s alternatives.",
+      "evidence": {
+        "pierpont": {
+          "entry": 88,
+          "quote": "with the fist"
+        }
+      }
+    },
     "MRK 7:4": {
       "kind": "edit",
       "edits": [
@@ -1414,6 +1432,28 @@
         "boyd-asv": {
           "ref": "MRK 14:30",
           "quote": "And Jesus saith unto him, Verily I say unto thee, that thou today, even in this night, before the cock crow twice, shalt deny me thrice."
+        }
+      }
+    },
+    "MRK 14:69": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "MRK 14:69",
+          "from": "a maid",
+          "to": "the maid",
+          "greek": "ἡ παιδίσκη"
+        }
+      ],
+      "why": "The shared definite article identifies the maid already introduced in verse 66. Boyd and the RV both retain that reference with the maid.",
+      "evidence": {
+        "boyd-asv": {
+          "ref": "MRK 14:69",
+          "quote": "And the maid saw him again"
+        },
+        "rv": {
+          "ref": "MRK 14:69",
+          "quote": "And the maid saw him"
         }
       }
     },
@@ -2830,27 +2870,16 @@
           "rp": "prwton ep authn ton liqon"
         }
       ],
-      "kind": "edit",
-      "edits": [
-        {
-          "ref": "JHN 8:7",
-          "from": "first cast a stone",
-          "to": "cast the first stone"
-        }
-      ],
+      "kind": "nochange",
       "tags": [
-        "from:boyd-asv",
+        "from:kjv-retained",
         "gram:lexical"
       ],
-      "why": "RP's accusative prwton with ton lithon replaces TR's nominative prwtos, so first no longer marks the thrower but goes with the stone, as Boyd and TCENT render it; the stone keeps its article, which both texts print (step 3).",
+      "why": "RP2026’s πρῶτον is adverbial, marking the first act of casting, rather than TR’s nominative πρῶτος identifying the first thrower. Retain let him first cast a stone at her, also printed by the RV: first modifies cast and renders RP2026’s adverb without changing the King James English or claiming agreement between the RV’s underlying Greek text and RP2026.",
       "evidence": {
-        "boyd-asv": {
+        "rv": {
           "ref": "JHN 8:7",
-          "quote": "let him cast the first stone at her"
-        },
-        "tcent": {
-          "entry": 124,
-          "quote": "throw the first ¦ be the first to throw a ANT BYZ HF NA PCK TR WH"
+          "quote": "let him first cast a stone at her"
         }
       }
     },
@@ -2957,6 +2986,28 @@
         "boyd-asv": {
           "ref": "JHN 8:54",
           "quote": "of whom ye say, He is our God;"
+        }
+      }
+    },
+    "JHN 10:16": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "JHN 10:16",
+          "from": "one fold",
+          "to": "one flock",
+          "greek": "μία ποίμνη"
+        }
+      ],
+      "why": "The shared ποίμνη names the flock of sheep, distinct from the enclosure αὐλή earlier in the verse. Follow Boyd’s ASV and the RV with one flock, retaining this fold for the earlier enclosure.",
+      "evidence": {
+        "boyd-asv": {
+          "ref": "JHN 10:16",
+          "quote": "one flock, one shepherd."
+        },
+        "rv": {
+          "ref": "JHN 10:16",
+          "quote": "one flock, one shepherd."
         }
       }
     },
@@ -3813,6 +3864,28 @@
         "pierpont": {
           "entry": 344,
           "quote": "some"
+        }
+      }
+    },
+    "ACT 10:20": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "ACT 10:20",
+          "from": "arise therefore",
+          "to": "but arise",
+          "greek": "ἀλλὰ ἀναστὰς"
+        }
+      ],
+      "why": "The shared ἀλλά introduces a contrasting command, not the inference therefore. But arise follows Boyd and the RV while retaining the rest of the King James command.",
+      "evidence": {
+        "boyd-asv": {
+          "ref": "ACT 10:20",
+          "quote": "But arise, and get thee down"
+        },
+        "rv": {
+          "ref": "ACT 10:20",
+          "quote": "But arise, and get thee down"
         }
       }
     },
@@ -5133,6 +5206,28 @@
         "rv": {
           "ref": "ACT 28:27",
           "quote": "And I should heal them."
+        }
+      }
+    },
+    "ROM 4:24": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "ROM 4:24",
+          "from": "if we",
+          "to": "who",
+          "greek": "τοῖς πιστεύουσιν"
+        }
+      ],
+      "why": "The shared substantival participle identifies those who believe; it does not introduce a conditional if clause. Who preserves that relation to us with the least change, following Boyd and the RV.",
+      "evidence": {
+        "boyd-asv": {
+          "ref": "ROM 4:24",
+          "quote": "who believe on him"
+        },
+        "rv": {
+          "ref": "ROM 4:24",
+          "quote": "who believe on him"
         }
       }
     },
@@ -6746,6 +6841,28 @@
         }
       }
     },
+    "1TH 2:16": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "1TH 2:16",
+          "from": "for the wrath",
+          "to": "but the wrath",
+          "greek": "ἔφθασεν δὲ"
+        }
+      ],
+      "why": "The shared δέ contrasts the coming wrath with their continuing accumulation of sins. But expresses that relation rather than the causal for, as Boyd and the RV render it.",
+      "evidence": {
+        "boyd-asv": {
+          "ref": "1TH 2:16",
+          "quote": "but the wrath is come upon them to the uttermost."
+        },
+        "rv": {
+          "ref": "1TH 2:16",
+          "quote": "but the wrath is come upon them to the uttermost."
+        }
+      }
+    },
     "1TH 4:1#1": {
       "units": [
         {
@@ -6950,6 +7067,28 @@
         "rv": {
           "ref": "2TI 1:15",
           "quote": "of whom are Phygelus and Hermogenes."
+        }
+      }
+    },
+    "2TI 1:18": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "2TI 1:18",
+          "from": "unto me",
+          "to": "",
+          "greek": "ἐν Ἐφέσῳ διηκόνησεν"
+        }
+      ],
+      "why": "The shared clause reports his ministry at Ephesus without naming its recipient. Omit the supplied unto me, which narrows the service to Paul; Boyd and the RV likewise leave the recipient unspecified.",
+      "evidence": {
+        "boyd-asv": {
+          "ref": "2TI 1:18",
+          "quote": "he ministered at Ephesus"
+        },
+        "rv": {
+          "ref": "2TI 1:18",
+          "quote": "he ministered at Ephesus"
         }
       }
     },
@@ -7803,6 +7942,24 @@
         "rv": {
           "ref": "1PE 2:6",
           "quote": "Because it is contained"
+        }
+      }
+    },
+    "1PE 2:13": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "1PE 2:13",
+          "from": "Submit yourselves",
+          "to": "Submit yourselves therefore",
+          "greek": "Ὑποτάγητε οὖν"
+        }
+      ],
+      "why": "The shared οὖν marks the command as following from the preceding exhortation. Restore therefore, as Boyd does, retaining the King James imperative.",
+      "evidence": {
+        "boyd-asv": {
+          "ref": "1PE 2:13",
+          "quote": "Be subject therefore to every ordinance of man"
         }
       }
     },

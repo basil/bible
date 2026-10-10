@@ -559,7 +559,7 @@ def test_a_sign_after_no_witness_is_refused(
 def test_every_note_of_the_sources_is_printed_or_replaced_by_a_link(
     edition: bible.pipeline.Edition,
 ) -> None:
-    assert edition.summary["printed_notes"] == 4272
+    assert edition.summary["printed_notes"] == 4271
     rows = [row for listed in edition.notes.values() for row in listed]
     assert len({row["key"] for row in rows}) == len(rows)
     # The 1611 margin is printed on the New Testament alone, and whole but
@@ -582,7 +582,7 @@ def test_every_note_of_the_sources_is_printed_or_replaced_by_a_link(
     )
     assert edition.summary["kjv_marginal_notes"] == 775
     assert margin == 775 - omitted == 759
-    assert edition.summary["byzantine_notes"] == 867
+    assert edition.summary["byzantine_notes"] == 866
     # A widened lemma's rendering takes in the same words (Matthew 6:1).
     row = next(row for row in edition.notes["MAT"] if row["key"] == "MAT 6:1 of")
     assert (row["lemma"], row["note"]) == ("of your Father", "or, _with your Father_")
@@ -989,7 +989,6 @@ def test_former_readings_restore_the_eight_marginal_notes(
         ("going out going out", "gone out", {}, "anchor not found exactly once"),
         ("gone out", "gone out", {"anchor": "gone out"}, "former changes nothing"),
         ("going out", "gone out", {"omitted": True}, "omitted with other exceptions"),
-        ("going out", "gone out", {"note": "Or, _gone out_"}, "former conflicts"),
         ("going out going out", "gone out", {"occurrence": 1}, "former conflicts"),
         ("going out", "gone out", {"lemma": "going"}, "former conflicts"),
         # The text prints other words than the margin's alternative.
@@ -1064,3 +1063,29 @@ def test_reversing_a_marginal_note_leaves_its_inputs_unchanged(
         scripture.verses(result)["99:2"].text == scripture.verses(prepared)["99:2"].text
     )
     assert report.rows[0]["note"] == "or, _gone out_"
+
+
+def test_mark_fist_correction_preserves_the_marginal_note(
+    edition: bible.pipeline.Edition, read: bible.pipeline.Read
+) -> None:
+    key = "MRK 7:3 oft"
+    row = next(r for r in edition.notes["MRK"] if r["key"] == key)
+    original = next(n for n in read.marginal["MRK"] if n["key"] == key)
+    assert row["lemma"] == "with the fist"
+    assert row["source"] == original["note"]
+    assert row["style"] == "editorial reversal"
+    verse = scripture.verses(edition.documents["MRK"])["7:3"]
+    note = next(n for _, n in verse.notes if n.get("x-key") == key)
+    alternatives = [
+        usj.text_of(n["content"])
+        for n in usj.walk(note["content"])
+        if usj.is_type(n, "char", "fqa")
+    ]
+    # The former King James words are given first, then the margin's own.
+    assert alternatives == ["oft", "diligently", "up to the elbow"]
+    assert note["x-key"] == original["key"]
+    offset = next(offset for offset, n in verse.notes if n is note)
+    assert verse.text[offset:].startswith("with the fist")
+    assert usj.text_of(note["content"]).endswith(
+        "with the fist: or, oft; or, diligently; Theophylact, up to the elbow."
+    )
