@@ -50,11 +50,6 @@
 }
 \gdef\BibleEndNote#1{%
   \ifBibleMarginNote
-    % Reuse PTXprint's globally incremented note ID: its marginal occurrence
-    % counter is local and can repeat IDs for notes on the same verse.
-    % n@te@nd increments this seed once; the resulting suffix stays unique.
-    \expandafter\global\expandafter\let\csname nm-cref-#1\endcsname\c@rref
-    \expandafter\global\csname nm-count-#1\endcsname=\n@teid\relax
     \n@te@nd{#1}%
   \fi
 }

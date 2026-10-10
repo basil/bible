@@ -72,8 +72,8 @@ ARG USFMTC_BRANCH=main
 ARG USFMTC_COMMIT=f1e4f23e83953032c0a9574a1df9ab4b4ec89a22
 # renovate: datasource=git-tags depName=ptxprint
 ARG PTXPRINT_URL=https://github.com/sillsdev/ptx2pdf.git
-ARG PTXPRINT_TAG=3.0.44
-ARG PTXPRINT_COMMIT=4f8dee1cf6f3de2e5ecba9473cc2e92ddf72bbb6
+ARG PTXPRINT_TAG=3.1.2
+ARG PTXPRINT_COMMIT=2b10e5a7dc984ee2be836ecd5d07253c77ada0b1
 # Fetching and building several projects in one layer requires their directories.
 # hadolint ignore=DL3003
 RUN <<EOF
@@ -91,17 +91,6 @@ fetch() {
 fetch utopia "$UTOPIA_URL" "$UTOPIA_COMMIT"
 fetch usfmtc "$USFMTC_URL" "$USFMTC_COMMIT"
 fetch ptxprint "$PTXPRINT_URL" "$PTXPRINT_COMMIT"
-# Two fixes to how PTXprint moves the notes of a crowded margin apart. It
-# orders notes by their tops and then puts the shorter first, so notes on one
-# line of text can print out of the text's order: keep its stable sort to the
-# tops alone. And when it lifts a block of notes, it checks the note above the
-# block against the top of the page, or none, and can lift the block off the
-# page. Each grep fails the build if an upgrade has rewritten the line.
-notes=/opt/ptxprint/python/lib/ptxprint/marginnotes.py
-grep -qF 't.sort(key=lambda n:(-n.ymax, -n.ymin))' $notes
-grep -qx '                            start = k' $notes
-sed -i -e 's/t\.sort(key=lambda n:(-n\.ymax, -n\.ymin))/t.sort(key=lambda n: -n.ymax)/' \
-    -e 's/^\( *start = k\)$/\1 + 1/' $notes
 cd /opt/utopia
 ./build.sh
 # The venv already holds requirements.txt. PTXprint's metadata names usfmtc's
@@ -113,9 +102,7 @@ EOF
 # Font assembly changes should not refetch upstream projects or Python wheels.
 COPY scripts/ /opt/scripts/
 RUN /opt/venv/bin/python /opt/scripts/patch_margin_convergence.py \
-    /opt/ptxprint/python/lib/ptxprint \
-    && /opt/venv/bin/python -c 'import ptxprint; from pathlib import Path; import sys; sys.path.insert(0, "/opt/scripts"); from patch_margin_convergence import patch; patch(Path(ptxprint.__file__).parent)'
-RUN /opt/venv/bin/python /opt/scripts/patch_nested_styles.py
+    && /opt/venv/bin/python /opt/scripts/patch_nested_styles.py
 RUN <<EOF
 set -eu
 # Assemble the normalized text family with separate source hint dictionaries.

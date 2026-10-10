@@ -90,7 +90,7 @@ The base image is an Ubuntu LTS tag, and its packages come from Ubuntu's live re
 When upgrading PTXprint, check the places that depend on its internals:
 
 - `config/protrusion.tex` and `config/ptxprint-mods.tex` wrap PTXprint's private macros for fonts, tables and margin notes. The TeX tests run outside PTXprint, so only the build exercises them.
-- The `Dockerfile` and `scripts/patch_margin_convergence.py` patch PTXprint's placement of margin notes. The image build fails if the patched lines have changed upstream. Drop each patch once PTXprint has the fix.
+- `scripts/patch_margin_convergence.py`, run when the image is built, patches PTXprint's placement of margin notes and its checks for another pass. The image build fails if the patched lines have changed upstream. Drop each patch once PTXprint has the fix.
 
 Then look at the sample: the notes should stand beside their verses in the margin, the front matter's footnotes at the foot of the page, and the numbering and abbreviations tables should be intact.
 

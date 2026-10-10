@@ -44,12 +44,12 @@ def test_rerun_requires_more_than_one_scaled_point(
     ]
     output = tmp_path / "notes.marginnotes"
     assert notes.outfile(output) == (abs(shift_sp) > 1)
-    # All notes and their positions remain available to TeX and verification.
+    # All notes and their positions remain available to TeX and verification;
+    # an offset that moves by one sp at most is kept as it was.
     restored = MarginNotes(output)
     assert len(restored.pages[0]) == 4
-    assert restored.pages[0][0].yoffset == pytest.approx(
-        offset - shift_sp / 65536, abs=0.0000051
-    )
+    moved = shift_sp / 65536 if abs(shift_sp) > 1 else 0
+    assert restored.pages[0][0].yoffset == pytest.approx(offset - moved, abs=0.0000051)
 
 
 def test_crowded_notes_settle_after_their_offsets_are_applied(tmp_path: Path) -> None:
@@ -88,8 +88,9 @@ def test_crowded_notes_settle_after_their_offsets_are_applied(tmp_path: Path) ->
 
 
 def test_a_lone_note_stays_within_the_text_block() -> None:
-    # A note beside a page's first line, with no other note to push it down,
-    # would otherwise stand above the block (Genesis 31:2 at a page's top).
+    # The bound set once the notes are moved apart keeps a lone note below
+    # the block's head, though nothing pushes it down (Genesis 31:2 at a
+    # page's top).
     notes = MarginNotes(top=500, bot=0)
     note = MarginNote(
         ref="GEN31.2",
@@ -224,11 +225,13 @@ def test_note_reruns_and_cap(
     def xetex(*args: object, **kwargs: object) -> int:
         passes.append(args)
         # A different byte representation every pass must not override the
-        # note solver's decision that the layout has settled.
+        # note solver's decision that the layout has settled. A changing
+        # layout adds a line to parlocs on every pass.
         (tmp_path / "Bible.marginnotes").write_text(str(len(passes)))
         (tmp_path / "Bible.parlocs").write_text(
-            rf"\@noteid{{7}}{{f}}{{n}}{{43}}{{1678212}}{{{16998254 + len(passes) % 2}}}"
-            + (f"\npage={len(passes)}" if layout_changes else "")
+            r"\@noteid{7}{f}{n}{43}{1678212}{16998254}"
+            + "\n"
+            + ("page\n" * len(passes) if layout_changes else "")
         )
         return 0
 
@@ -246,28 +249,3 @@ def test_note_reruns_and_cap(
     assert job.res == (0 if success else 1)
     assert ("Margin notes did not converge after" in caplog.text) == (not settles)
     assert ("Typesetting did not converge after" in caplog.text) == layout_changes
-
-
-@pytest.mark.parametrize(
-    "after, same",
-    [
-        (r"\@noteid{7}{f}{n}{43}{1678212}{16998255}", True),
-        (r"\@noteid{7}{f}{n}{43}{1678211}{16998253}", True),
-        (r"\@noteid{7}{f}{n}{43}{1678212}{16998256}", False),
-        (r"\@noteid{8}{f}{n}{43}{1678212}{16998254}", False),
-        (r"\@noteid{7}{x}{n}{43}{1678212}{16998254}", False),
-        (r"\@noteid{7}{f}{n}{44}{1678212}{16998254}", False),
-        ("", False),
-        (r"\@noteid{7}{f}{n}{43}{1678212}{16998254}" + "\nextra", False),
-    ],
-)
-def test_parloc_note_coordinate_tolerance(after: str, same: bool) -> None:
-    before = r"\@noteid{7}{f}{n}{43}{1678212}{16998254}"
-    assert runjob._bible_same_cache(before, after, "parlocs") == same
-    assert not runjob._bible_same_cache(before, after, "toc")
-
-
-def test_parloc_other_coordinates_remain_exact() -> None:
-    before = r"\@parend {0}{20517504}{27714133}{0.0pt}"
-    after = r"\@parend {0}{20517504}{27714134}{0.0pt}"
-    assert not runjob._bible_same_cache(before, after, "parlocs")
