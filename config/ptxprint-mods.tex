@@ -128,3 +128,11 @@
   \BibleStartTable
 }
 \endgroup
+
+% Empty paragraphs do not enter the start hook. Put the rule in the
+% heading box through the before hook, with fixed spacing in TeX points.
+\sethook{before}{sd2}{%
+  \vskip6pt
+  \hbox to \hsize{\hfil\vrule width .25\hsize height .5pt depth 0pt\hfil}%
+  \nobreak\vskip6pt
+}

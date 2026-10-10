@@ -38,6 +38,7 @@ from bible import (
     matter,
     numbering,
     places,
+    psalter,
     quotations,
     repairs,
     revision,
@@ -312,6 +313,8 @@ def lined(
         policy,
         lines.scrivener(read_sources.kjv, policy),
     )
+    require("PSA" in brenton, "Psalter decisions without the Psalms")
+    brenton["PSA"] = psalter.divided(brenton["PSA"], policy.psalter)
     return MappingProxyType({**units, **brenton})
 
 
@@ -766,7 +769,7 @@ def sample_chapters(code: str, doc: Document, wanted: Sequence[int]) -> Document
         at = len(blocks)
         # Not a \d paragraph, which is its own chapter's and may hold verses,
         # as the close of Psalm 71 does.
-        while at > 0 and blocks[at - 1].get("marker") in ("s1", "ms1"):
+        while at > 0 and blocks[at - 1].get("marker") in usj.HEADINGS:
             at -= 1
         parts[index + 1] = blocks[at:] + parts[index + 1]
         parts[index] = blocks[:at]

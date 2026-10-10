@@ -471,9 +471,9 @@ def respelt(
         return output
 
     def scoped(doc: Document) -> list[Node]:
-        # The shared inventory includes headings between verse numbers.
-        # Exclude their prose here, wherever they stand, while keeping
-        # numbered scripture in d paragraphs (including Psalm superscriptions).
+        # Exclude the prose of titles and introductions, wherever they stand,
+        # while keeping numbered scripture in d paragraphs (including Psalm
+        # superscriptions).
         parts: dict[int, list[tuple[int, int]]] = {}
         for verse in scripture.verses(doc).values():
             for block_index, lo, hi, _ in verse.parts:
@@ -505,8 +505,8 @@ def respelt(
 
 def prose(marker: str) -> bool:
     """Whether a paragraph keeps its source grammar though a verse spans it:
-    a book's titles, its headings and its introduction."""
-    return marker in usj.BOOK_PARAGRAPHS | {"s1", "ms1"} or marker.startswith("i")
+    a book's titles and its introduction. Headings are no part of a verse."""
+    return marker in usj.BOOK_PARAGRAPHS or marker.startswith("i")
 
 
 # The source quotations have not yet been tagged for their fonts. Recognize

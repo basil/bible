@@ -608,12 +608,20 @@ def test_the_sample_prints_selected_chapters_as_the_full_edition_has_them(
     full = dict(pipeline.view(edition, "pdf"))
     sample = dict(pipeline.view(edition, "sample"))
     assert set(sample) == set(full) - (edition.scripture - set(policy.sample))
+
+    # Separators belong to the next chapter; assembly groups them with
+    # the preceding one. Their selection is checked in test_psalter.
+    def without_divisions(doc: Document) -> Document:
+        return usj.with_blocks(
+            doc, [b for b in doc["content"] if b.get("marker") != "sd2"]
+        )
+
     for code, chapters in policy.sample.items():
-        _, wanted = assembly.chapters_of(sample[code])
+        _, wanted = assembly.chapters_of(without_divisions(sample[code]))
         assert [int(blocks[0]["number"]) for blocks in wanted] == sorted(chapters)
         whole = {
             blocks[0]["number"]: blocks
-            for blocks in assembly.chapters_of(full[code])[1]
+            for blocks in assembly.chapters_of(without_divisions(full[code]))[1]
         }
         for blocks in wanted:
             # A chapter that followed an omitted one may open a paragraph of its own.

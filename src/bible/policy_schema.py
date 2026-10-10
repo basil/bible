@@ -50,6 +50,12 @@ class Versification(TypedDict, total=False):
     why: ReadOnly[str]
 
 
+class Psalter(TypedDict):
+    why: ReadOnly[str]
+    kathismata: ReadOnly[tuple[tuple[int | str, ...], ...]]
+    middle: ReadOnly[str]
+
+
 class LineBreak(TypedDict, total=False):
     follows: ReadOnly[str]
     line: ReadOnly[str | None]

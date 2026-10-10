@@ -90,10 +90,10 @@ def _noted(content: usj.Content, at: int, found: list[tuple[int, usj.Node]]) -> 
 def verses(doc: usj.Document) -> dict[str, Verse]:
     """Every verse of a document, by "chapter:verse", in order.
 
-    What stands between one verse number and the next is the verse's, a
-    heading set within it included. A paragraph that holds nothing of the
-    verse is no part of it: a blank line, or the paragraph the next verse
-    opens.
+    What stands between one verse number and the next is the verse's, but
+    for the headings and divisions set among its paragraphs. A paragraph that
+    holds nothing of the verse is no part of it: a blank line, or the
+    paragraph the next verse opens.
     """
     result: dict[str, Verse] = {}
     chapter: str | None = None
@@ -128,7 +128,7 @@ def verses(doc: usj.Document) -> dict[str, Verse]:
         if block["type"] == "chapter":
             close()
             chapter, reference, parts = block["number"], None, []
-        elif block["type"] == "para":
+        elif block["type"] == "para" and block["marker"] not in usj.HEADINGS:
             start = 0
             for at, item in enumerate(block["content"]):
                 if usj.is_type(item, "verse"):
@@ -144,14 +144,19 @@ def verses(doc: usj.Document) -> dict[str, Verse]:
 
 def heads(doc: usj.Document) -> dict[str, list[usj.Node]]:
     """What stands before each chapter's first verse, by chapter: its
-    paragraphs, the one that holds the verse as far as its number."""
+    introductory paragraphs, the one that holds the verse as far as its
+    number. Section headings and divisions are no part of the introduction."""
     result: dict[str, list[usj.Node]] = {}
     chapter: str | None = None
     for block in doc["content"]:
         if block["type"] == "chapter":
             chapter = block["number"]
             result[chapter] = []
-        elif chapter is not None and block["type"] == "para":
+        elif (
+            chapter is not None
+            and block["type"] == "para"
+            and block["marker"] not in usj.HEADINGS
+        ):
             content = block["content"]
             first = next(
                 (i for i, item in enumerate(content) if usj.is_type(item, "verse")),

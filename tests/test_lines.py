@@ -56,7 +56,7 @@ def markers(doc: Document) -> list[str]:
     return [
         block["marker"]
         for block in doc["content"][chapters[0] :]
-        if block["type"] == "para"
+        if block["type"] == "para" and block["marker"] not in {"ms1", "s2", "s3", "sd2"}
     ]
 
 
