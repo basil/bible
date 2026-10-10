@@ -173,8 +173,9 @@ def selections(
     greek_only = before == after
     sides = 2 if greek_only else 4
     whole = (tuple((0, len(t)) for t in texts),)
-    # Rendering corrections have no TR note to anchor a shortened comparison.
-    # Quote the verse whole so that every correction and variant stays visible.
+    # A correction's "Or," note does not anchor a shortened comparison of the
+    # Greek texts. Quote the verse whole so that every correction and variant
+    # stays visible.
     if not greek_only and any(
         row["disposition"] == "shared"
         and any(edit["ref"] == ref for edit in row.get("edits", []))
@@ -253,7 +254,7 @@ def selections(
                 )
             )[target].text
             # A verse with a correction of shared Greek was quoted whole above,
-            # so every edit here is a reading's, with its TR note.
+            # so every edit here is a reading's, with its TR note or none.
             edits = [
                 edit
                 for row in found["dispositions"]
@@ -261,6 +262,8 @@ def selections(
                 if edit["ref"] == ref
             ]
             for edit in edits:
+                if "note" not in edit:
+                    continue  # the supplied marking alone changed
                 scope = edit.get("note_scope", {})
                 if scope.get("ref", ref) != target or not scope.get("range"):
                     return texts, whole, ()

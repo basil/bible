@@ -13,20 +13,22 @@ import pytest
 
 import bible.pipeline
 from bible import lemmas, scripture, usj
-from bible.byzantine import edit, notes
+from bible.byzantine import edit, notes, verify
 from bible.byzantine.edit import NOTE_KINDS, NOTE_LABELS
+from bible.byzantine.greek import Structure
 from bible.byzantine.rows import Disposition, NoteScope
 from bible.byzantine.stages import Context
 from bible.scripture import Verse
 from bible.usj import Content, Document, Node
 
 SHAPES = re.compile(
-    r"^(Textus Receptus: |Textus Receptus adds: |Textus Receptus omits: "
+    r"^(Textus Receptus: |Or, |Textus Receptus adds: |Textus Receptus omits: "
     r"|Textus Receptus adds verse \d+: |Textus Receptus has this passage at [0-9:–]+\."
     r"|Textus Receptus has here the verses printed at [0-9:–]+\.)$"
 )
 # The notes that name where a passage stands, with no lemma.
 PLACED = ("has this passage", "has here the verses printed")
+NO_STRUCTURE = Structure({}, frozenset())
 
 type Found = tuple[str, Verse, int, Node]
 
@@ -54,9 +56,10 @@ def edition_notes(byzantine: Context) -> list[Found]:
 
 def test_the_edition_adds_notes(edition_notes: list[Found]) -> None:
     assert len(edition_notes) > 700
-    # A note for each edit and each structural change, the doxology of
-    # Romans 16 noted at both ends.
-    assert len(edition_notes) == 866
+    # A note for each edit that changes words, a TR note or an "Or," note,
+    # and each structural change, the doxology of Romans 16 noted at both
+    # ends.
+    assert len(edition_notes) == 943
 
 
 def test_structural_notes_stand_where_the_verses_were(
@@ -95,31 +98,54 @@ def test_insertion_before_sentence_stop_keeps_its_short_note(
     assert verse.text[offset:].startswith(". And")
 
 
-def test_declared_clause_lemma_restores_omission_before_it(
-    edition_notes: list[Found],
+@pytest.mark.parametrize(
+    "ref,lemma,before,after",
+    [
+        ("JHN 8:4", "tempting him", "tempting him,", " Master"),
+        ("LUK 14:24", "For many are called, but few are chosen", "chosen.", ""),
+    ],
+)
+def test_an_inserted_phrase_with_its_stop_keeps_its_short_note(
+    edition_notes: list[Found], ref: str, lemma: str, before: str, after: str
 ) -> None:
-    _, verse, offset, note = next(row for row in edition_notes if row[0] == "LUK 4:8")
-    f = fields(note)
-    assert f["fq"] == "it is written: "
-    assert f["ft"] == "Textus Receptus: "
-    assert f["fqa"] == "for it is written"
-    assert verse.text[:offset].endswith("Satan: it is written")
-    assert verse.text[offset:].startswith(", Thou shalt worship")
-
-
-def test_declared_phrase_after_comma_restores_initial_conjunction(
-    edition_notes: list[Found],
-) -> None:
-    f = next(
-        fields(note)
-        for ref, _, _, note in edition_notes
-        if ref == "REV 13:17" and fields(note)["fq"] == "the name of the beast: "
+    # The lemma is the whole phrase added; taking it out, stop and all,
+    # gives back the KJV, so the note stands after the stop and says only
+    # that the TR omits it.
+    _, verse, offset, note = next(
+        row
+        for row in edition_notes
+        if row[0] == ref and fields(row[3])["fq"] == lemma + ": "
     )
-    assert f["ft"] == "Textus Receptus: "
-    assert f["fqa"] == "or the name of the beast"
+    f = fields(note)
+    assert f["ft"] == "Textus Receptus omits: "
+    assert f["fqa"] == lemma
+    assert verse.text[:offset].endswith(before)
+    assert verse.text[offset:].startswith(after)
 
 
-def test_disjoint_declared_lemmas_separate_one_owners_edits(
+def test_an_omissions_lemma_stays_on_one_side_of_the_gap(
+    edition_notes: list[Found],
+) -> None:
+    """The words after the gap where a stop or a linking word precedes it,
+    with the TR's words put back before them; the words before it otherwise,
+    in the short form where that gives back the KJV."""
+    by_ref: dict[str, list[tuple[Verse, int, dict[str, str]]]] = {}
+    for ref, verse, offset, note in edition_notes:
+        by_ref.setdefault(ref, []).append((verse, offset, fields(note)))
+    verse, offset, f = by_ref["LUK 4:8"][0]
+    assert (f["fq"], f["ft"], f["fqa"]) == ("it: ", "Textus Receptus: ", "for it")
+    assert verse.text[:offset].endswith("Satan: it")
+    f = next(f for _, _, f in by_ref["REV 13:17"] if f["fq"] == "the name: ")
+    assert (f["ft"], f["fqa"]) == ("Textus Receptus: ", "or the name")
+    f = next(f for _, _, f in by_ref["REV 2:24"] if f["fq"] == "put: ")
+    assert f["fqa"] == "will put"
+    f = next(f for _, _, f in by_ref["REV 2:24"] if f["fq"] == "unto the rest: ")
+    assert f["fqa"] == "and unto the rest"
+    f = next(f for _, _, f in by_ref["1TI 6:12"] if f["fq"] == "art: ")
+    assert (f["ft"], f["fqa"]) == ("Textus Receptus adds: ", "also")
+
+
+def test_a_declared_lemma_spans_a_changed_clause_boundary(
     edition_notes: list[Found],
 ) -> None:
     found = [fields(note) for ref, _, _, note in edition_notes if ref == "REV 14:8"]
@@ -139,6 +165,175 @@ def test_declared_lemma_keeps_moved_pronoun_in_one_restoring_note(
     assert len(found) == 1
     assert found[0]["fq"].startswith("That thou this day,")
     assert found[0]["fqa"].endswith("thou shalt deny me thrice")
+
+
+def construction(declared: list[dict[str, object]]) -> list[tuple[int, Node]]:
+    """The notes of one construction of two replacements, finished under
+    the declared lemmas."""
+    documents = {
+        "MAT": usj.parse(
+            "\\id MAT\n\\c 1\n\\p\n\\v 1 He said unto them, Go ye into the city.\n"
+        )
+    }
+    text = scripture.verses(documents["MAT"])["1:1"].text
+    row: Disposition = {
+        "unit": "MAT 1:1#1",
+        "ref": "MAT 1:1",
+        "disposition": "override",
+        "action": "edit",
+        "flags": [],
+        "ops": [
+            {
+                "kind": "replace",
+                "ref": "MAT 1:1",
+                "range": [text.index(old), text.index(old) + len(old)],
+                "old": old,
+                "new": new,
+                "raw_range": True,
+            }
+            for old, new in (("He", "Jesus"), ("them", "him"))
+        ],
+    }
+    prepared, rows = edit.execute(documents, [row], ["MAT"])
+    prepared, _ = notes.apply(documents, prepared, rows, declared)
+    return list(scripture.verses(prepared["MAT"])["1:1"].notes)
+
+
+def test_a_constructions_edits_keep_their_own_notes_unless_a_lemma_spans_them() -> None:
+    apart = construction([])
+    assert [fields(n)["fqa"] for _, n in apart] == ["He", "them"]
+    # A lemma spanning both splices joins them, by declaration.
+    spanning = construction(
+        [{"id": "MAT 1:1#1", "edit": 2, "lemma": "Jesus said unto him", "why": "Both."}]
+    )
+    assert len(spanning) == 1
+    assert fields(spanning[0][1])["fqa"] == "He said unto them"
+
+
+def corrected(
+    text: str, operations: list[tuple[str, str, str]], *readings: tuple[str, str]
+) -> tuple[Document, Document, list[Disposition]]:
+    """A verse with corrections of shared Greek carried out, and the
+    readings' edits beside them, through the executor and the notes."""
+    source = usj.parse("\\id MAT\n\\c 1\n\\p\n\\v 1 " + text + "\n")
+    verse = scripture.verses(source)["1:1"]
+
+    def row(
+        unit: str, disposition: str, ops: list[tuple[str, str, str]]
+    ) -> Disposition:
+        return {
+            "unit": unit,
+            "ref": "MAT 1:1",
+            "disposition": disposition,
+            "action": "edit",
+            "flags": [],
+            "ops": [
+                {
+                    "kind": kind,
+                    "ref": "MAT 1:1",
+                    "range": [verse.text.index(old), verse.text.index(old) + len(old)],
+                    "old": old,
+                    "new": new,
+                    "raw_range": True,
+                }
+                for old, new, kind in ops
+            ],
+        }
+
+    rows = [row("MAT 1:1", "shared", operations)]
+    rows += [
+        row("MAT 1:1#1", "override", [(old, new, "replace")]) for old, new in readings
+    ]
+    documents = {"MAT": source}
+    prepared, rows = edit.execute(documents, rows, ["MAT"])
+    assert all(r["execution"] == "applied" for r in rows)
+    prepared, rows = notes.apply(documents, prepared, rows)
+    return source, prepared["MAT"], rows
+
+
+def renderings_of(doc: Document) -> list[tuple[str, str]]:
+    """(lemma, former words) of each "Or," note of the verse."""
+    return [
+        (f["fq"].removesuffix(": "), f["fqa"])
+        for _, n in scripture.verses(doc)["1:1"].notes
+        for f in [fields(n)]
+        if "rendering" in n.get("x-key", "")
+    ]
+
+
+@pytest.mark.parametrize(
+    "text,ops,expected",
+    [
+        ("He spoke unto them.", [("spoke", "said", "replace")], [("said", "spoke")]),
+        (
+            "He spoke unto them.",
+            [("unto", "to", "replace")],
+            [("to them", "unto them")],
+        ),
+        (
+            "He spoke unto them.",
+            [("spoke unto", "", "delete")],
+            [("He", "He spoke unto")],
+        ),
+        # Each correction names its own Greek: independent notes.
+        (
+            "He spoke unto them.",
+            [("He", "They", "replace"), ("them", "him", "replace")],
+            [("They", "He"), ("him", "them")],
+        ),
+        # The former words have no short form.
+        ("He spoke unto them.", [("", "Then", "insert")], [("Then He", "He")]),
+        # A shared final stop belongs to neither reading.
+        (
+            "He spoke unto them.",
+            [("unto them.", "to him.", "replace")],
+            [("to him", "unto them")],
+        ),
+    ],
+)
+def test_a_correction_of_shared_greek_notes_the_former_words(
+    text: str, ops: list[tuple[str, str, str]], expected: list[tuple[str, str]]
+) -> None:
+    source, doc, rows = corrected(text, ops)
+    assert renderings_of(doc) == expected
+    for _, n in scripture.verses(doc)["1:1"].notes:
+        assert fields(n)["ft"] == "Or, " and n["x-scope"]["kind"] == "rendering"
+    assert (
+        verify.finished_verses({"MAT": source}, {"MAT": doc}, rows, NO_STRUCTURE) == {}
+    )
+
+
+def test_a_repeated_lemma_widens_both_readings_of_a_correction() -> None:
+    _, doc, _ = corrected(
+        "He spoke, and he said again.", [("spoke", "said", "replace")]
+    )
+    [(lemma, former)] = renderings_of(doc)
+    assert lemma != "said" and lemma.replace("said", "spoke", 1) == former
+
+
+def test_supplied_words_are_quoted_as_the_former_rendering() -> None:
+    _, doc, _ = corrected("He \\add was\\add* there.", [("was", "stood", "replace")])
+    note = scripture.verses(doc)["1:1"].notes[0][1]
+    assert renderings_of(doc) == [("stood", "was")]
+    assert note["category"] == "edition"
+    assert "Textus Receptus" not in usj.text_of(note["content"])
+
+
+def test_a_correction_and_a_reading_keep_their_own_notes() -> None:
+    _, doc, _ = corrected(
+        "He spoke unto them.", [("spoke", "said", "replace")], ("them", "him")
+    )
+    found = [fields(n) for _, n in scripture.verses(doc)["1:1"].notes]
+    assert [(f["fq"], f["ft"], f["fqa"]) for f in found] == [
+        ("said: ", "Or, ", "spoke"),
+        ("him: ", "Textus Receptus: ", "them"),
+    ]
+
+
+def test_a_rendering_note_may_not_quote_a_byzantine_reading() -> None:
+    # The correction's lemma widens over the reading's words.
+    with pytest.raises(ValueError, match="is quoted by rendering note"):
+        corrected("He spoke unto them.", [("unto", "to", "replace")], ("them", "him"))
 
 
 def test_every_note_key_is_unique(edition_notes: list[Found]) -> None:
@@ -193,6 +388,8 @@ def test_kinds_follow_the_edits(byzantine: Context) -> None:
 
     for row in noted(byzantine):
         for e in row.get("edits", []):
+            if "note" not in e:
+                continue
             if e["note_scope"].get("combined") or e["note_scope"].get("full"):
                 assert kind(e["note"]) == "replace", row["unit"]
             else:
@@ -211,6 +408,8 @@ def test_kinds_follow_the_edits(byzantine: Context) -> None:
 def test_the_lemma_contains_the_changed_words(byzantine: Context) -> None:
     for row in noted(byzantine):
         for e in row.get("edits", []):
+            if "note" not in e:
+                continue
             f = fields(e["note"])
             glossed = e["note"]["x-scope"]["glossed"]
             lemma = f["fq"].removesuffix(": ")
@@ -233,6 +432,7 @@ def test_the_alternative_restores_the_source_words(
         edits = row.get("edits", [])
         if (
             len(edits) != 1
+            or "note" not in edits[0]
             or edits[0]["ref"] in shared
             or edits[0]["kind"] != "replace"
             or edits[0]["note_scope"].get("combined")
@@ -298,16 +498,6 @@ def test_readable_span_widens_to_a_unique_phrase(byzantine: Context) -> None:
     assert len(lemmas.occurrences(words, phrase)) == 1
 
 
-def test_readable_span_prefers_a_surviving_reading(byzantine: Context) -> None:
-    verse = scripture.verses(byzantine["prepared"]["MAT"])["3:8"]
-    words = scripture.word_spans(verse.text)
-    at = next(i for i, (w, *_) in enumerate(words) if w == "fruit")
-    assert notes.readable_span(verse.text, words, at, at, ["therefore fruit meet"]) == (
-        at - 1,
-        at + 1,
-    )
-
-
 def restored_verse(verse: Verse) -> str:
     """Read only the note fields and positions, without execution metadata."""
     text = verse.text
@@ -332,6 +522,9 @@ def restored_verse(verse: Verse) -> str:
         alternative = f["fqa"]
         if label.endswith("adds: "):
             changes.append((end, end, " " + alternative))
+        elif label.endswith("omits: ") and alternative == lemma:
+            # The whole lemma omitted, with the stops up to its note.
+            changes.append((start, offset, ""))
         elif label.endswith("omits: "):
             matches = list(
                 re.finditer(
@@ -565,7 +758,7 @@ def test_alternatives_preserve_the_pinned_kjv_styles(byzantine: Context) -> None
     owners: dict[str, Owned] = {}
     for row in noted(byzantine):
         for edit in row.get("edits", []):
-            if edit.get("note_owner", True):
+            if "note" in edit and edit.get("note_owner", True):
                 owners[edit["note"]["x-key"]] = Owned(
                     edit["ref"],
                     edit["kind"],

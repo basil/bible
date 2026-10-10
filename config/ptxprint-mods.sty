@@ -65,20 +65,27 @@
 \Bold -
 
 % Narrow marginal notes need a ragged right edge to avoid stretched words.
-% Keep PTXprint's existing note size and leading. Zero SpaceBeside removes
-% its implicit extra 1 pt, leaving the 6 mm gap specified in mods.tex.
+% Set them at 6.7 pt (8 units of the 10 pt body) on 8.4 pt leading (0.67 of
+% the body's 12.5 pt), smaller than PTXprint's 8.3 pt on 10.4 pt, so that
+% the pages of Revelation crowded with Textus Receptus notes hold them.
+% Zero SpaceBeside removes its implicit extra 1 pt, leaving the 6 mm gap
+% specified in mods.tex.
 \Marker f
+\FontSize 8
+\LineSpacing 0.67
 \Justification Left
 \SpaceBeside 0
 
 % Match cross references to the footnotes sharing the inner-margin column.
 \Marker x
+\FontSize 8
+\LineSpacing 0.67
 \Justification Left
 \SpaceBeside 0
 
 % Book and section introductions use the native extended-footnote class,
-% which stays below the text. Match the ordinary footnote size and leading
-% from ptx2pdf.sty; ef otherwise inherits the larger USFM default size.
+% which stays below the text. Keep the ordinary footnote size and leading
+% of ptx2pdf.sty; ef otherwise inherits the larger USFM default size.
 \Marker ef
 \FontSize 10
 \LineSpacing 0.833

@@ -253,9 +253,9 @@ def test_a_range_run_a_verse_too_far_is_caught(
 # the passage while the TR note gives the words lost (docs/edition.md,
 # Quotations). A row new here is one to read the same way.
 AT_CHANGED_VERSES = {
-    "Q002", "Q026", "Q027", "Q058", "Q061", "Q062", "Q066", "Q070", "Q085",
-    "Q088", "Q089", "Q099", "Q132", "Q165", "Q176", "Q194", "Q199", "Q207",
-    "Q208", "Q233", "Q245", "Q253", "Q255", "Q271", "Q275",
+    "Q026", "Q027", "Q058", "Q061", "Q062", "Q066", "Q070", "Q085", "Q132",
+    "Q165", "Q176", "Q199", "Q207", "Q208", "Q233", "Q245", "Q253", "Q255",
+    "Q271", "Q275",
 }  # fmt: skip
 
 

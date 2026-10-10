@@ -1036,3 +1036,50 @@ def test_adjacent_deletions_merge_into_one_quotation() -> None:
     ]
     with pytest.raises(ValueError, match="MAT 1:1"):
         decide.operations([delete(0, "And"), delete(1, "he", ".")], kjv, frozenset())
+
+
+@pytest.mark.parametrize(
+    "text,supplied,old,new,expected",
+    [
+        # Words kept at either end stay outside the operation.
+        ("he spoke unto them", "", "spoke unto them", "said unto them", ["spoke>said"]),
+        # Three kept words part two operations; fewer join them.
+        ("A B C D E F", "", "A B C D E F", "X B C D Y F", ["A>X", "E>Y"]),
+        ("A B C D E F", "", "A B C D E F", "X B C Y E F", ["A B C D>X B C Y"]),
+        # A straight apostrophe is the KJV's curly one, and changes nothing.
+        (
+            "the Lamb’s wife and the holy city",
+            "",
+            "the Lamb’s wife and the holy city",
+            "the Lamb's wife and the holy town",
+            ["city>town"],
+        ),
+        # A moved word keeps the replacement whole.
+        ("he said unto them", "", "he said unto them", "unto them he said", ["*"]),
+        # A supplied span is changed whole, and takes no words inside it.
+        ("and the brother of him", "the brother", "and the brother of him",
+         "and [the son] of him", ["the brother>[the son]"]),
+        ("as it were the voice", "it were", "it were", "[it truly were]",
+         ["it were>[it truly were]"]),
+    ],
+)  # fmt: skip
+def test_an_overrides_replacement_is_narrowed_to_the_words_it_changes(
+    text: str, supplied: str, old: str, new: str, expected: list[str]
+) -> None:
+    start = text.index(old)
+    edit = BoundEdit(
+        ref="MAT 1:1",
+        start=start,
+        end=start + len(old),
+        old=old,
+        new=new,
+        side="before",
+    )
+    spans = [(text.index(supplied), text.index(supplied) + len(supplied), supplied)]
+    ops = decide.narrowed(edit, spans if supplied else [])
+    if expected == ["*"]:
+        assert ops == [("replace", start, start + len(old), old, new)]
+        return
+    assert [f"{o}>{n}" for _, _, _, o, n in ops] == expected
+    for _, a, b, o, _ in ops:
+        assert text[a:b] == o

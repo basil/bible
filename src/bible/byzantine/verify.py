@@ -242,10 +242,11 @@ def checks(
         if row.get("source_note"):
             placed_notes[row["source_note_ref"]].append(row["source_note"])
         for edit in row.get("edits", []):
-            if (row.get("disposition") == "shared") == ("note" in edit):
+            if (edit["old"] != edit["new"]) != ("note" in edit):
                 fail(
                     "I3",
-                    f"{row['unit']}: a TR note on shared Greek, or none on a difference",
+                    f"{row['unit']}: a note on words that do not change, or none "
+                    "on a change",
                 )
             if edit.get("note_scope"):
                 note_scopes[signature(edit["note"])].append(edit["note_scope"])
@@ -339,7 +340,7 @@ def checks(
                 fail("I3", f"{target}: notes differ")
             for edit in edits:
                 if "note" not in edit:
-                    continue  # a correction of shared Greek
+                    continue  # the supplied marking alone changed
                 scope = edit.get("note_scope")
                 marker = "fqa" if scope else "fq"
                 quoted = [
@@ -356,7 +357,14 @@ def checks(
                     if "source_range" in scope:
                         a, b = scope["source_range"]
                         lo, hi = edit["range"]
-                        if not 0 <= a <= lo <= hi <= b <= len(source[old_ref].text):
+                        text = source[old_ref].text
+                        # The quotation spans the edit, but not the space an
+                        # insertion's seam puts beside it.
+                        if not (
+                            0 <= a <= b <= len(text)
+                            and (a <= lo or not text[lo:a].strip())
+                            and (hi <= b or not text[b:hi].strip())
+                        ):
                             fail("I3", f"{target}: stale TR quotation extent")
                         expected_quote = source[old_ref].text[a:b]
                 if (
@@ -388,6 +396,10 @@ def checks(
                     fail("I3", f"{target}: TR note leaves a caller")
                 if scope["range"] is not None:
                     a, b = scope["range"]
+                    # A lemma is words of one paragraph or line of verse.
+                    if "\n" in verse.text[a:b]:
+                        fail("I3", f"{target}: TR lemma crosses a paragraph or line")
+                        continue
                     expected = scripture.plain(verse.text[a:b]) + ": "
                     if (
                         len(fields) != 1
@@ -418,6 +430,11 @@ def checks(
 # The finished verse: does it read, and does each note restore the KJV?
 
 STOPS = ",;:.?!"
+# The problem of a verse whose "Or," notes do not give back the King James
+# words, which stops the build (bible.byzantine.checked).
+UNRESTORED_RENDERING = (
+    "correction: rendering notes do not restore the King James wording"
+)
 
 
 def _note_parts(note: Node) -> tuple[str, str]:
@@ -444,12 +461,13 @@ def restores(
     them; a note stands at the end of its lemma. A note of words the TR adds
     puts them after the lemma, one of words it omits takes them out of it,
     and a replacement's alternative replaces its lemma; a note of a verse
-    added or a passage moved restores no words. Returns None when the KJV
+    added or a passage moved restores no words; a rendering note's former
+    words replace its lemma as a replacement's do. Returns None when the KJV
     comes back, else what comes back instead."""
     text = finished
     for offset, note in sorted(notes, key=lambda n: n[0], reverse=True):
         kind = note.get("x-scope", {}).get("kind")
-        if kind not in {"replace", "adds", "omits"}:
+        if kind not in {"replace", "adds", "omits", "rendering"}:
             continue
         lemma, alternative = _note_parts(note)
         # The lemma is plain; the verse keeps its line breaks between parts.
@@ -464,6 +482,9 @@ def restores(
         lo, hi = spans[0]
         if kind == "adds":
             text = text[:hi] + " " + alternative + text[hi:]
+        elif kind == "omits" and lemma.split() == alternative.split():
+            # The whole lemma omitted, with the stops up to its note.
+            text = text[:lo] + text[offset:]
         elif kind == "omits":
             found = list(
                 re.finditer(
@@ -512,9 +533,10 @@ def finished_verses(
     dispositions: Iterable[Disposition],
     structure: Structure,
 ) -> dict[str, list[str]]:
-    """Every edited verse: its join problems and whether its notes restore the
-    KJV, as the corrections of shared Greek leave it. Returns
-    {ref: [problem, ...]} for the verses with problems."""
+    """Every edited verse: its join problems, whether its TR notes restore
+    the KJV as the corrections of shared Greek leave it, and whether its
+    rendering notes then restore the KJV itself. Returns {ref: [problem,
+    ...]} for the verses with problems."""
     edited: set[str] = set()
     corrected: defaultdict[str, list[Edit]] = defaultdict(list)
     for row in dispositions:
@@ -558,11 +580,21 @@ def finished_verses(
             )
         )
         notes = [(at, n) for at, n in after.notes if n.get("category") == "edition"]
-        failure = restores(after.text, baseline, notes)
+        witnessed = [
+            (at, n)
+            for at, n in notes
+            if n.get("x-scope", {}).get("kind") != "rendering"
+        ]
+        failure = restores(after.text, baseline, witnessed)
         if failure:
             problems.append(
                 f"variant: note does not restore the corrected KJV ({failure})"
             )
+        if corrected[ref]:
+            # The rendering notes then take the corrections back.
+            failure = restores(after.text, before.text, notes)
+            if failure:
+                problems.append(f"{UNRESTORED_RENDERING} ({failure})")
         if problems:
             result[ref] = problems
     return result

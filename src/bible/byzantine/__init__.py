@@ -108,8 +108,10 @@ def checked(context: Context) -> None:
     """The reconciliation holds to its decisions and its invariants: a
     decision that does not fit its source, a placement the code now makes
     on its own, a reading the build would carry out alike without it, an
-    instruction it could not carry out, or a broken invariant stops the
-    build and names itself."""
+    instruction it could not carry out, a broken invariant, or an "Or,"
+    note that does not give back the King James words stops the build and
+    names itself."""
+    from bible.byzantine.verify import UNRESTORED_RENDERING
     from bible.checks import require
 
     require(
@@ -132,6 +134,15 @@ def checked(context: Context) -> None:
     require(not refused, f"Byzantine readings the build could not carry out: {refused}")
     failed = {k: v for k, v in context["invariants"].items() if v != "pass"}
     require(not failed, f"Byzantine invariants broken: {failed}")
+    unrestored = sorted(
+        ref
+        for ref, problems in context["finished"].items()
+        if any(p.startswith(UNRESTORED_RENDERING) for p in problems)
+    )
+    require(
+        not unrestored,
+        f"Rendering notes that do not restore the King James wording: {unrestored}",
+    )
 
 
 def promoted(code: str, found: Reconciled, terms: Registry) -> Document:

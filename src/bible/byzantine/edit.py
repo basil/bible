@@ -35,10 +35,13 @@ type Change = tuple[Verse, int, int, Content]
 
 # What a Textus Receptus note says the TR has: other words for its lemma,
 # words added or omitted, a verse added after it, the passage it stands on
-# elsewhere, or here the verses printed elsewhere. A note carries its kind,
-# and the verse or passage it names (`where`), in its x-scope; nothing reads
-# its label.
-type NoteKind = Literal["replace", "adds", "omits", "adds-verse", "moved", "moved-out"]
+# elsewhere, or here the verses printed elsewhere; or, where the Greek is
+# shared and the English corrected, the King James rendering the correction
+# displaced. A note carries its kind, and the verse or passage it names
+# (`where`), in its x-scope; nothing reads its label.
+type NoteKind = Literal[
+    "replace", "adds", "omits", "adds-verse", "moved", "moved-out", "rendering"
+]
 # What the TR has where the passage is, or where the verses are, as the
 # edition words it.
 PASSAGE_NOTES = {
@@ -48,6 +51,7 @@ PASSAGE_NOTES = {
 # The labels the reconciliation gives its notes, for the review.
 NOTE_LABELS: dict[str, str] = {
     "replace": "Textus Receptus: ",
+    "rendering": "Or, ",
     "adds": "Textus Receptus adds: ",
     "omits": "Textus Receptus omits: ",
     "adds-verse": "Textus Receptus adds verse {where}: ",
@@ -419,16 +423,21 @@ def execute(
                     if op["kind"] == "insert"
                     else source_content(documents[book], verse, lo, hi)
                 )
-                # A correction of shared Greek has no TR reading to note.
+                # Words that do not change, only their supplied marking, need
+                # no note: the edition prints supplied words in roman. A
+                # reading's note names the TR's words; a correction of shared
+                # Greek keeps the King James words as another rendering.
+                shared = row.get("disposition") == "shared"
                 notes = (
                     []
-                    if row.get("disposition") == "shared"
+                    if quote == usj.text_of(supplied_content(new))
                     else [
                         edition_note(
                             ref,
-                            NOTE_KINDS[op["kind"]],
+                            "rendering" if shared else NOTE_KINDS[op["kind"]],
                             quotation,
-                            f"{row['unit']} TR#{len(edits) + 1}",
+                            f"{row['unit']} {'rendering' if shared else 'TR'}"
+                            f"#{sum('note' in e for e in edits) + 1}",
                         )
                     ]
                 )

@@ -16,7 +16,7 @@ import bible.pipeline
 import bible.policy
 from bible import annotate, crossrefs, lemmas, notes, scripture, terminology, usj
 from bible.checks import CheckFailed
-from bible.usj import Content
+from bible.usj import Content, Document, Node
 
 
 def test_prose_quotations_span_styles_and_preserve_apostrophes() -> None:
@@ -347,6 +347,61 @@ def test_a_note_that_is_a_sentence_takes_a_capital_and_a_full_stop(
     assert [row["rule"] for row in report.rows] == ["anchor", "anchor"]
 
 
+def rendering_note(verse: str, lemma: str, former: str) -> Node:
+    return usj.note(
+        "f",
+        usj.char("fr", verse + " "),
+        usj.char("ft", "Or, "),
+        usj.char("fqa", former),
+        caller="+",
+        **usj.Extra(
+            {
+                "x-key": f"MAT {verse} rendering",
+                "category": "edition",
+                "x-scope": {"declared": lemma},
+            }
+        ),
+    )
+
+
+def test_a_reversed_margin_stands_for_the_rendering_note_it_repeats(
+    ctx: bible.annotate.Context,
+) -> None:
+    """Matthew 25:8 adopts the margin's "going out"; the margin, turned round,
+    says what the edition's own note on the correction says, and stands for
+    it. A former-reading decision that covers no such note is stale."""
+    text = r"\v 8 Give us of your oil; for our lamps are going out."
+    original = book("MAT", text.replace("going", "gone"), chapter=25)
+    margin = dict(
+        key="MAT 25:8 gone out",
+        reference="25:8",
+        lemma="gone out",
+        note="Or, going out.",
+    )
+
+    def corrected(note: Node) -> Document:
+        doc = book("MAT", text, chapter=25)
+        verse = scripture.verses(doc)["25:8"]
+        at = verse.text.index("going")
+        return scripture.edited(doc, [(verse, at, at, [note])])
+
+    doc = corrected(rendering_note("25:8", "going out", "gone out"))
+    printed, report = annotate.george("MAT", doc, [margin], ctx, original=original)
+    assert report.covered == ["MAT 25:8 rendering"]
+    assert [n["x-key"] for _, n in scripture.verses(printed)["25:8"].notes] == [
+        "MAT 25:8 gone out"
+    ]
+    assert "or, \\fqa gone out" in verse_lines(printed)["8"]
+    # A lemma widened past the anchor says the same.
+    doc = corrected(rendering_note("25:8", "lamps are going out", "lamps are gone out"))
+    _, report = annotate.george("MAT", doc, [margin], ctx, original=original)
+    assert report.covered == ["MAT 25:8 rendering"]
+    # A note saying something else is not covered, and the decision is stale.
+    doc = corrected(rendering_note("25:8", "going out", "burning"))
+    with pytest.raises(CheckFailed, match="covers no rendering note"):
+        annotate.george("MAT", doc, [margin], ctx, original=original)
+
+
 def test_a_note_of_the_margin_must_find_its_words_once(
     ctx: bible.annotate.Context,
 ) -> None:
@@ -559,7 +614,7 @@ def test_a_sign_after_no_witness_is_refused(
 def test_every_note_of_the_sources_is_printed_or_replaced_by_a_link(
     edition: bible.pipeline.Edition,
 ) -> None:
-    assert edition.summary["printed_notes"] == 4349
+    assert edition.summary["printed_notes"] == 4339
     rows = [row for listed in edition.notes.values() for row in listed]
     assert len({row["key"] for row in rows}) == len(rows)
     # The 1611 margin is printed on the New Testament alone, and whole but
@@ -582,7 +637,7 @@ def test_every_note_of_the_sources_is_printed_or_replaced_by_a_link(
     )
     assert edition.summary["kjv_marginal_notes"] == 775
     assert margin == 775 - omitted == 759
-    assert edition.summary["byzantine_notes"] == 866
+    assert edition.summary["byzantine_notes"] == 943
     # A widened lemma's rendering takes in the same words (Matthew 6:1).
     row = next(row for row in edition.notes["MAT"] if row["key"] == "MAT 6:1 of")
     assert (row["lemma"], row["note"]) == ("of your Father", "or, _with your Father_")

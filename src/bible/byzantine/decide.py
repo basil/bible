@@ -9,6 +9,7 @@ the tags give the unit its controversy score.
 
 from __future__ import annotations
 
+import difflib
 import re
 from collections import defaultdict
 from collections.abc import Mapping, Sequence
@@ -25,7 +26,7 @@ from bible.byzantine.crosswire import (
     spans,
     unique_moves,
 )
-from bible.byzantine.decisions import Supplied
+from bible.byzantine.decisions import Supplied, bracketed_quote
 from bible.byzantine.edit import seam, sentence_start
 from bible.byzantine.instructions import corroborating, select
 from bible.byzantine.rows import (
@@ -80,21 +81,132 @@ def edit_kind(edit: BoundEdit) -> str:
     )
 
 
-def override_ops(o: Override) -> list[dict[str, Any]]:
-    """What the executor needs of an override's edits."""
+def override_ops(o: Override, supplied: Supplied | None = None) -> list[dict[str, Any]]:
+    """What the executor needs of an override's edits: each narrowed to the
+    words it changes, so that its note is about those words alone."""
     return [
         {
-            "kind": edit_kind(e),
+            "kind": kind,
             "ref": e["ref"],
-            "range": [e["start"], e["end"]],
-            "old": e["old"],
-            "new": e["new"],
+            "range": [start, end],
+            "old": old,
+            "new": new,
             "side": e["side"],
             "raw_range": True,
             **({"unstyle": True} if e.get("unstyle") else {}),
         }
         for e in o["bound"]
+        for kind, start, end, old, new in narrowed(
+            e, (supplied or {}).get(e["ref"], [])
+        )
     ]
+
+
+def narrowed(
+    e: BoundEdit, supplied: Sequence[tuple[int, int, str]] = ()
+) -> list[tuple[str, int, int, str, str]]:
+    """The operations of a bound edit, each on the words it changes: words a
+    replacement keeps at either end, or three or more between its changes,
+    stay outside its operations, as (kind, start, end, old, new). A word is
+    kept only with its supplied marking (supplied: the verse's italic
+    spans), and words it moves keep it whole, since no part of it says what
+    the TR has."""
+    if e.get("unstyle") or edit_kind(e) != "replace":
+        return [(edit_kind(e), e["start"], e["end"], e["old"], e["new"])]
+    old_words = marked_words(
+        e["old"], [(lo - e["start"], hi - e["start"]) for lo, hi, _ in supplied]
+    )
+    old_tokens = [m for m, _ in old_words]
+    a = [(m[0], marked) for m, marked in old_words]
+    # The new words as the KJV prints them, with the curly apostrophe, and
+    # their brackets read as its supplied words.
+    b = [
+        (m[0], marked)
+        for m, marked in marked_words(*bracketed_quote(curly_apostrophes(e["new"])))
+    ]
+    blocks = [
+        list(op[1:])
+        for op in difflib.SequenceMatcher(None, a, b, autojunk=False).get_opcodes()
+        if op[0] != "equal"
+    ]
+
+    def bare(word: str) -> str:
+        return re.sub(r"[^A-Za-z’']", "", word).casefold()
+
+    removed = {bare(w) for i1, i2, _, _ in blocks for w, _ in a[i1:i2]}
+    added = {bare(w) for _, _, j1, j2 in blocks for w, _ in b[j1:j2]}
+    if removed & added:
+        return [("replace", e["start"], e["end"], e["old"], e["new"])]
+    # A supplied span of the KJV's is changed whole, so that it is not split
+    # ("the brother" to "[the son]", not "the [son]"), nor has words put
+    # inside it.
+
+    def within(i: int) -> bool:
+        # Whether the KJV supplies the words on both sides of boundary i.
+        return 0 < i < len(a) and a[i - 1][1] and a[i][1]
+
+    for block in blocks:
+        while within(block[0]):
+            block[0] -= 1
+            block[2] -= 1
+        while within(block[1]):
+            block[1] += 1
+            block[3] += 1
+    merged: list[list[int]] = []
+    for block in blocks:
+        if merged and block[0] - merged[-1][1] < KEPT_BETWEEN:
+            merged[-1][1], merged[-1][3] = block[1], block[3]
+        else:
+            merged.append(block)
+    ops = []
+    for i1, i2, j1, j2 in merged:
+        old = " ".join(w for w, _ in a[i1:i2])
+        new = bracketed(b[j1:j2])
+        if i1 < i2:
+            start = e["start"] + old_tokens[i1].start()
+            end = e["start"] + old_tokens[i2 - 1].end()
+        else:
+            start = end = e["start"] + (old_tokens[i1 - 1].end() if i1 else 0)
+        kind = "replace" if old and new else "insert" if new else "delete"
+        ops.append((kind, start, end, old, new))
+    return ops
+
+
+# Changes of one replacement with fewer kept words between them than this
+# are one operation, and one note.
+KEPT_BETWEEN = 3
+
+
+def marked_words(
+    text: str, spans: Sequence[tuple[int, int]]
+) -> list[tuple[re.Match[str], bool]]:
+    """The words of a text, each with whether it is supplied: whether the
+    word, without the stops about it, lies within one of the spans."""
+    found = []
+    for m in re.finditer(r"\S+", text):
+        core = re.fullmatch(r"(\W*)(.*?)(\W*)", m[0], re.DOTALL)
+        assert core is not None
+        start, end = m.start() + len(core[1]), m.end() - len(core[3])
+        found.append((m, any(lo <= start and end <= hi for lo, hi in spans)))
+    return found
+
+
+def bracketed(words: Sequence[tuple[str, bool]]) -> str:
+    """The words with each run of supplied words in brackets, their stops
+    outside: "[the kingdom] of"."""
+    out: list[str] = []
+    for word, marked in words:
+        if not marked:
+            out.append(word)
+            continue
+        m = re.fullmatch(r"(\W*)(.*?)(\W*)", word, re.DOTALL)
+        assert m is not None
+        if out and out[-1].endswith("]") and not m[1]:
+            out[-1] = out[-1][:-1]
+            out.append(f"{m[2]}]{m[3]}")
+        else:
+            out.append(f"{m[1]}[{m[2]}]{m[3]}")
+    return " ".join(out)
 
 
 def unit_tags(unit: Unit) -> set[Tag]:
@@ -246,12 +358,13 @@ def decide(
                 tags.add(Tag.OP_NOCHANGE)
             elif uid == owner:
                 row["action"] = "edit"
-                row["ops"] = override_ops(o)
+                row["ops"] = override_ops(o, supplied)
                 tags.update(OP_BY_KIND[op["kind"]] for op in row["ops"])
             else:
                 row["action"] = "covered"
                 row["covered_by"] = owner
-                tags.update(OP_BY_KIND[edit_kind(e)] for e in o["bound"])
+                # Tagged with the operations its owner carries out.
+                tags.update(OP_BY_KIND[op["kind"]] for op in override_ops(o, supplied))
             if len(o["unit_ids"]) > 1:
                 tags.add(Tag.EV_MULTI_UNIT)
             # Compare the override with what would execute without it: the
@@ -433,7 +546,7 @@ def decide(
     # there is nothing to decide, and it is carried out without a TR note.
     for o in overrides:
         if not o["unit_ids"]:
-            ops = override_ops(o)
+            ops = override_ops(o, supplied)
             result.append(
                 {
                     "unit": o["id"],

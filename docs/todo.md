@@ -9,7 +9,6 @@ The sections:
 1. [Errors in the printed notes](#1-errors-in-the-printed-notes): the book prints something wrong, or probably wrong.
 2. [Rules to decide](#2-rules-to-decide): one decision settles many notes.
 3. [Readings from Codex Alexandrinus](#3-readings-from-codex-alexandrinus): readings not yet printed in the text, and readings already printed that need another look.
-4. [Layout](#4-layout): pages the typesetting does not yet fit.
 
 **Keys.** Brenton's notes are named by their keys, the `x-key` the build gives each source note ([AGENTS.md](../AGENTS.md#the-document-model)), which a decision in `edition/` is filed under:
 
@@ -248,10 +247,6 @@ These readings are in the text now. Each needs a check against Brenton's printin
 - **ZEC 11:14**: the text adopts Brenton's "covenant", but A also adds "my", and the note gives only the displaced "possession", although the decision says the addition is noted. Decide how to disclose the partial adoption and the possessive without supplying new English.
 - **PRO 15:33**: the Appendix's original label, "16 (Alex.15) 33", is kept in the decision. Printing a note with it is optional; the moved saying is already in the text.
 
-## 4. Layout
-
-1. **TR notes overflow the margin.** The TR notes stand in the inside margin with the 1611 notes and Brenton's, as every note on the scripture does, and in Revelation they are more than the margin holds. In the full build 41 notes do not fit, 40 of them in Revelation (chapters 2, 4–6, 10, 11, 13, 14, 19 and 21) and one at 2 Corinthians 6:16; on those pages the notes overlap one another, away from their verses. The build lists them in `build/pdf/margin-overflow.txt` and goes on, where it used to refuse them. Decide how to fit them (a smaller size for the notes, a wider margin, or another place for the TR notes), then make the margin check a refusal again, as the comment above its call in `src/bible/verify.py` says.
-
-## 5. Code
+## 4. Code
 
 1. **The reconciliation refuses with `ValueError`.** `src/bible/byzantine/` raises `ValueError` where the rest of the build raises `CheckFailed` through `bible.checks.require`, at about 180 sites, with the tests asserting `ValueError` to match. The command line treats both as a refusal, so the build stops and names the problem either way. Convert the package to `CheckFailed` in a change of its own, tests included.

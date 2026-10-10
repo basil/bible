@@ -1,4 +1,5 @@
-"""Give each Textus Receptus footnote a unique lemma in the finished verse.
+"""Give each Textus Receptus footnote, and each "Or," note on a correction of
+shared Greek, a unique lemma in the finished verse.
 
 Edits keep their offsets and quotations; this stage changes only their notes,
 after all wording and verse moves are settled. A note names enough of the
@@ -11,7 +12,6 @@ hand where the rule chooses badly.
 from __future__ import annotations
 
 import re
-from collections import Counter
 from collections.abc import Mapping, Sequence
 from typing import TYPE_CHECKING, Any
 
@@ -54,21 +54,7 @@ def with_field(note: Node, marker: str, content: Content) -> Node:
     }
 
 
-def readable_span(
-    text: str, words: Words, first: int, last: int, readings: Sequence[str] = ()
-) -> Span:
-    # Prefer the witness's complete phrase when it survives verbatim here.
-    found: list[tuple[int, int, int]] = []
-    for priority, reading in enumerate(readings):
-        tokens = scripture.words_of(usj.text_of(supplied_content(reading)))
-        if not tokens:
-            continue
-        for at in lemmas.occurrences(words, tokens):
-            end = at + len(tokens) - 1
-            if at <= first <= last <= end:
-                found.append((priority, at, end))
-    if found:
-        _, first, last = min(found, key=lambda s: (s[0], s[2] - s[1]))
+def readable_span(text: str, words: Words, first: int, last: int) -> Span:
     # Articles, possessives and other determiners need the words they govern.
     open_words = (
         lemmas.LINKING_WORDS
@@ -121,6 +107,15 @@ def source_range(a: int, b: int, edits: Sequence[Edit]) -> tuple[int, int]:
     return boundary(a, False), boundary(b, True)
 
 
+def unspaced(text: str, a: int, b: int) -> tuple[int, int]:
+    """The range without the spaces at its ends."""
+    while a < b and text[a].isspace():
+        a += 1
+    while a < b and text[b - 1].isspace():
+        b -= 1
+    return a, b
+
+
 def placeable(document: Document, verse: Verse, at: int) -> bool:
     """Whether a note can stand at this offset: never inside a character style."""
     index, local = verse.part_at(at, at_end=True)
@@ -170,32 +165,53 @@ def phrase_of(note: Node) -> str | None:
 def adjacent_lemma(text: str, words: Words, offset: int) -> Span:
     """The lemma for words the Textus Receptus adds at `offset`: the words
     just before the gap, grown leftwards until they are unique in the verse;
-    or, where a stop stands between them and the gap (the omission began a
-    sentence or clause), the words just after it. Never words on both sides,
-    so the TR's words go back exactly where the lemma ends or begins."""
-    before = [i for i, (_, a, b) in enumerate(words) if b <= offset]
-    after = [i for i, (_, a, b) in enumerate(words) if a >= offset]
-    stop = bool(before) and any(
-        c in ".;:?!" for c in text[words[before[-1]][2] : offset]
-    )
+    or, where a stop stands between them and the gap, or the gap begins the
+    verse, the words just after it, grown rightwards. Never words on both
+    sides, so the TR's words go back exactly where the lemma ends or begins.
+    A lemma within its clause is preferred to one that crosses a stop, and
+    one that ends on a word like "the" grows to the word after it."""
+    # The verse's parts (paragraphs, lines) are parted by newlines; a lemma
+    # stays in the gap's part.
+    lo = text.rfind("\n", 0, offset) + 1
+    hi = text.find("\n", offset)
+    hi = len(text) if hi < 0 else hi
+    before = [i for i, (_, a, b) in enumerate(words) if lo <= a and b <= offset]
+    after = [i for i, (_, a, b) in enumerate(words) if a >= offset and b <= hi]
+    stop = bool(before) and any(c in STOPS for c in text[words[before[-1]][2] : offset])
 
     def unique(first: int, last: int) -> bool:
         phrase = scripture.words_of(text[words[first][1] : words[last][2]])
         return len(lemmas.occurrences(words, phrase)) == 1
 
+    # A lemma that ends on "the" or "and" is no lemma: the words after
+    # the gap serve instead.
+    linking = bool(before) and words[before[-1]][0] in lemmas.LINKING_WORDS
     sides: list[tuple[str, list[int]]] = (
         [("after", after), ("before", before)]
-        if stop or not before
+        if stop or linking or not before
         else [("before", before), ("after", after)]
     )
-    for side, indices in sides:
-        for k in range(1, min(len(indices), 10) + 1):
-            first, last = (
-                (indices[-k], indices[-1])
-                if side == "before"
-                else (indices[0], indices[k - 1])
-            )
-            if unique(first, last):
+    for crossing in (False, True):
+        for side, indices in sides:
+            for k in range(1, min(len(indices), 10) + 1):
+                first, last = (
+                    (indices[-k], indices[-1])
+                    if side == "before"
+                    else (indices[0], indices[k - 1])
+                )
+                if not crossing and lemmas.crosses_clause(text, words, first, last):
+                    break
+                if not unique(first, last):
+                    continue
+                if side == "after":
+                    while (
+                        words[last][0] in lemmas.OPEN_WORDS
+                        and last + 1 < len(words)
+                        and words[last + 1][2] <= hi
+                        and last - first < k + 1
+                        and not lemmas.ends_clause(text, words, last)
+                    ):
+                        last += 1
                 return first, last
     raise ValueError("no unique lemma beside an omission")
 
@@ -206,7 +222,6 @@ def scoped_note(
     note: Node,
     edit: Edit | None = None,
     omitted: str | None = None,
-    readings: Sequence[str] = (),
 ) -> tuple[Node, NoteScope]:
     text, words = verse.text, scripture.word_spans(verse.text)
     fields = {n["marker"]: n for n in note["content"] if isinstance(n, dict)}
@@ -223,13 +238,16 @@ def scoped_note(
         if not touched:
             raise ValueError(f"TR note reading has no words: {note['x-key']}")
         glossed = touched[0], touched[-1]
-        span = readable_span(text, words, *glossed, readings)
+        span = readable_span(text, words, *glossed)
         # Carry a changed sentence/clause boundary inside the lemma where the
         # verse continues, rather than leave two stops after substitution.
+        # An insertion changes no stop of the KJV's: a stop ending its words
+        # is its own.
         old_stop = edit["old"][-1:]
         new_stop = rendered[-1:]
         if (
-            span[1] == glossed[1]
+            edit["kind"] != "insert"
+            and span[1] == glossed[1]
             and glossed[1] + 1 < len(words)
             and old_stop != new_stop
             and (old_stop in STOPS or new_stop in STOPS)
@@ -275,8 +293,9 @@ def apply(
     decisions: Sequence[Mapping[str, Any]] = (),
 ) -> tuple[dict[str, Document], list[Disposition]]:
     """Finish every OLEB note. decisions: the lemmas of edition/byzantine.json,
-    as rows keyed by unit id and 1-based edit index. A decision whose edit does
-    not exist is stale and refused."""
+    as rows keyed by unit id and the 1-based number of the note among the
+    unit's notes (an edit of the supplied marking alone has none). A decision
+    whose note does not exist is stale and refused."""
     declared = {f"{d['id']} TR#{d['edit']}": d for d in decisions}
     if len(declared) != len(decisions):
         raise ValueError("Duplicate TR note lemma decision")
@@ -298,8 +317,6 @@ def apply(
                     locations[key] = book, ref, verse, offset, note
     changed: dict[str, Node | None] = {}
     rows: list[Disposition] = []
-    # The corrections of shared Greek have no notes to finish.
-    corrections = [r for r in dispositions if r.get("disposition") == "shared"]
 
     def full_form(
         book: str,
@@ -308,14 +325,18 @@ def apply(
         finished: Node,
         scope: NoteScope,
         edit: Edit,
-        declared_lemma: bool = False,
+        rendering: bool = False,
     ) -> tuple[Node, NoteScope]:
         """Keep "adds: X" or "omits: X" only where it gives back the KJV's
         words exactly, case and stops included, in the lemma and the word on
         either side of it: X has no stop, and an addition's lemma stands just
-        before the gap. Otherwise the note quotes the KJV's own words for a
-        lemma that spans the change: across the gap of an omission, and on to
-        the next word after an addition (whose capital may change)."""
+        before the gap; or the lemma is the whole inserted phrase, whatever
+        stops it carries, since taking the insertion out gives back the KJV
+        by construction. Otherwise the note quotes the KJV's own words for
+        the lemma: an omission's stays on its side of the gap, and the TR's
+        words go back before or after it; an addition's takes in the next
+        word (whose capital may change). A rendering note has no short form:
+        another rendering stands for its lemma whole."""
         source_book, source_ref = edit["ref"].split()
         source = source_verses[source_book][source_ref]
         words = scripture.word_spans(verse.text)
@@ -331,7 +352,10 @@ def apply(
         ca = max([w[1] for w in same if w[2] <= a] or [a])
         cb = min([w[2] for w in same if w[1] >= b] or [b])
         text = verse.text
+        # Whether the lemma ends where its note stands, but for stops.
+        closes = b <= offset and not text[b:offset].strip("".join(STOPS) + " ")
         restored: str | None
+        whole = False
         if edit["kind"] == "delete":
             reading = scripture.plain(edit["old"])
             restored = (
@@ -340,34 +364,44 @@ def apply(
                 else None
             )
         else:
-            reading = scripture.plain(usj.text_of(supplied_content(edit["rendered"])))
-            at = text.rfind(reading, a, b)
-            restored = (
-                scripture.plain(text[ca:at] + " " + text[at + len(reading) : cb])
-                if at >= 0
-                else None
-            )
+            rendered = usj.text_of(supplied_content(edit["rendered"]))
+            reading = scripture.plain(rendered)
+            start = offset - len(rendered)
+            whole = a == start and closes
+            if whole:
+                restored = scripture.plain(text[ca:start] + text[offset:cb])
+            else:
+                at = text.rfind(reading, a, b)
+                restored = (
+                    scripture.plain(text[ca:at] + " " + text[at + len(reading) : cb])
+                    if at >= 0
+                    else None
+                )
         if (
-            restored is not None
+            not rendering
+            and restored is not None
             and re.sub(r"\s+([,;:.!?])", r"\1", restored) == kjv(ca, cb)
-            and not any(c in STOPS for c in reading)
+            and (whole or not any(c in STOPS for c in reading))
         ):
             return finished, scope
-        if edit["kind"] == "delete":
-            if b <= offset:
-                b = min([w[2] for w in same if w[1] >= offset] or [b])
-            # A declared phrase after an unchanged stop can quote the omitted
-            # opening word without carrying the preceding phrase into its lemma.
-            clause_start = text[:a].rstrip().endswith((".", ";", ":", "!", "?", ","))
-            if a >= offset and not (declared_lemma and clause_start):
-                a = max([w[1] for w in same if w[2] <= offset] or [a])
-        elif b == offset:
-            b = cb
+        # An omission's lemma stays on its side of the gap: the TR's words go
+        # back before or after it.
+        if edit["kind"] != "delete" and closes:
+            # An addition's lemma takes in the next word, whose capital may
+            # have changed, past any stop the added words end with; where no
+            # word follows in its clause, the word before instead, so that
+            # the KJV's words for it are words, not nothing or a stop.
+            following = text[offset:cb] if cb > offset else ""
+            if ca < a and following.lstrip()[:1] in {"", *STOPS}:
+                a = ca
+            else:
+                b = cb
         b = lemma_end(documents[book], verse, b)
         finished = relemma(finished, text, a, b)
+        kind = "rendering" if rendering else "replace"
         finished = {
-            **with_field(finished, "ft", [NOTE_LABELS["replace"]]),
-            "x-scope": {**finished["x-scope"], "kind": "replace"},
+            **with_field(finished, "ft", [NOTE_LABELS[kind]]),
+            "x-scope": {**finished["x-scope"], "kind": kind},
         }
         return finished, {**scope, "range": [a, b], "full": True}
 
@@ -375,10 +409,10 @@ def apply(
         note: Node,
         edit: Edit | None = None,
         omitted: str | None = None,
-        readings: Sequence[str] = (),
+        rendering: bool = False,
     ) -> tuple[Node, NoteScope]:
         book, ref, verse, offset, actual = locations[note["x-key"]]
-        finished, scope = scoped_note(verse, offset, actual, edit, omitted, readings)
+        finished, scope = scoped_note(verse, offset, actual, edit, omitted)
         if note["x-key"] in declared:
             decision = declared[note["x-key"]]
             if not decision.get("why", "").strip():
@@ -416,7 +450,7 @@ def apply(
                 finished,
                 scope,
                 edit,
-                declared_lemma=note["x-key"] in declared,
+                rendering=rendering,
             )
         if edit and (edit["kind"] not in {"insert", "delete"} or scope.get("full")):
             source_book, source_ref = edit["ref"].split()
@@ -438,7 +472,13 @@ def apply(
                 for i, (_, start, _) in enumerate(scripture.word_spans(verse.text))
                 if start > end
             ]
-            if old_stop != new_stop and (old_stop in STOPS or new_stop in STOPS):
+            # An omission's alternative carries the omitted words with their
+            # stops, so the lemma need not reach a changed boundary.
+            if (
+                edit["kind"] != "delete"
+                and old_stop != new_stop
+                and (old_stop in STOPS or new_stop in STOPS)
+            ):
                 if after:
                     words = scripture.word_spans(verse.text)
                     last = lemmas.clause_after(verse.text, words, after[0], [])[-1]
@@ -451,8 +491,10 @@ def apply(
                 lemma[1] = end
                 a, b = source_range(lemma[0], lemma[1], by_ref[edit["ref"]])
             # Keep punctuation included in the witnessed source fragment even
-            # when the displayed lemma ends at its final word.
+            # when the displayed lemma ends at its final word; the space an
+            # insertion's seam maps into the range is nobody's words.
             a, b = min(a, edit["range"][0]), max(b, edit["range"][1])
+            a, b = unspaced(source.text, a, b)
             quote = source_content(original[source_book], source, a, b)
             quote = without_notes(quote)
             finished = with_field(finished, "fqa", quote)
@@ -461,17 +503,16 @@ def apply(
         return finished, {**scope, "ref": book + " " + ref}
 
     for row in dispositions:
-        if row.get("disposition") == "shared":
-            continue
         updated = row.copy()
         if row.get("edits"):
             updated["edits"] = []
-            # A published phrase that survives verbatim can supply lemma
-            # context (an instruction's quotation). It
-            # cannot change the wording.
-            readings = [r for r in row.get("readings", []) if r]
+            rendering = row.get("disposition") == "shared"
             for edit in row["edits"]:
-                note, scope = finish(edit["note"], edit, readings=readings)
+                # An edit that changes only the supplied marking has no note.
+                if "note" not in edit:
+                    updated["edits"].append(edit)
+                    continue
+                note, scope = finish(edit["note"], edit, rendering=rendering)
                 updated["edits"].append({**edit, "note": note, "note_scope": scope})
         held = row.get("note")
         if held:
@@ -486,26 +527,17 @@ def apply(
         raise ValueError(
             f"Stale TR note lemma decisions: {sorted(set(declared) - used)}"
         )
-    # One construction can take several splices (a moved pronoun, for example).
-    # Explicit, disjoint lemmas can separate independent replacements;
-    # words moved between edits still restore together.
-    # Notes whose context overlaps must not repeat each other's readings.
-    by_verse: dict[tuple[str, int], list[tuple[int, Edit, int, int]]] = {}
-    moving_owners: set[int] = set()
+    # Notes whose context overlaps share one note, so that neither repeats
+    # the other's reading. A construction's splices stand apart otherwise,
+    # each with its own note; a move the editor wants restored in one note
+    # is declared by a lemma that spans both splices. A TR note and a
+    # rendering note never join, since each names another witness.
+    by_verse: dict[tuple[str, int, bool], list[tuple[int, Edit, int, int]]] = {}
     for owner, row in enumerate(rows):
-        deltas: list[tuple[Counter[str], Counter[str]]] = []
+        construction = row.get("disposition") != "shared"
         for edit in row.get("edits", []):
-            old = Counter(scripture.words_of(edit["old"].lower()))
-            new = Counter(scripture.words_of(edit["new"].lower()))
-            deltas.append((old - new, new - old))
-        if any(
-            removed & added
-            for i, (removed, _) in enumerate(deltas)
-            for j, (_, added) in enumerate(deltas)
-            if i != j
-        ):
-            moving_owners.add(owner)
-        for edit in row.get("edits", []):
+            if "note" not in edit:
+                continue
             scope = edit["note_scope"]
             lemma = lemma_range(scope)
             a, b = source_range(lemma[0], lemma[1], by_ref[edit["ref"]])
@@ -514,10 +546,10 @@ def apply(
             # poetry line: a note's quotation must stand in one part.
             source_book, source_ref = edit["ref"].split()
             part = source_verses[source_book][source_ref].part_at(lo)[0]
-            by_verse.setdefault((scope["ref"], part), []).append(
+            by_verse.setdefault((scope["ref"], part, construction), []).append(
                 (owner, edit, min(a, lo), max(b, hi))
             )
-    for (address, _), entries in by_verse.items():
+    for (address, _, construction), entries in by_verse.items():
         groups: list[list[tuple[int, Edit, int, int]]] = []
         for entry in entries:
             merged = [entry]
@@ -526,16 +558,7 @@ def apply(
                 touching = [
                     g
                     for g in groups
-                    if (
-                        {e[0] for e in merged} & {e[0] for e in g}
-                        and not (
-                            any(e[1]["note"]["x-key"] in declared for e in merged + g)
-                            and all(e[1]["kind"] == "replace" for e in merged + g)
-                            and not any(e[0] in moving_owners for e in merged + g)
-                        )
-                    )
-                    or lo < max(e[3] for e in g)
-                    and min(e[2] for e in g) < hi
+                    if lo < max(e[3] for e in g) and min(e[2] for e in g) < hi
                 ]
                 if not touching:
                     break
@@ -553,6 +576,7 @@ def apply(
             source_book, source_ref = group[0][1]["ref"].split()
             lo, hi = min(e[2] for e in group), max(e[3] for e in group)
             source = source_verses[source_book][source_ref]
+            lo, hi = unspaced(source.text, lo, hi)
             quote = source_content(original[source_book], source, lo, hi)
             quote = without_notes(quote)
             primary = min(group, key=lambda e: e[1]["note_scope"]["offset"])[1]
@@ -565,20 +589,21 @@ def apply(
                 "offset": offset,
                 "combined": True,
             }
+            kind = "replace" if construction else "rendering"
             extra: usj.Extra = {
                 "x-key": key,
-                "x-scope": {"kind": "replace", "lemma": phrase, "glossed": phrase},
+                "x-scope": {"kind": kind, "lemma": phrase, "glossed": phrase},
                 "category": "edition",
             }
             note = usj.note(
                 "f",
                 usj.char("fr", ref + " "),
                 usj.char("fq", phrase + ": "),
-                usj.char("ft", NOTE_LABELS["replace"]),
+                usj.char("ft", NOTE_LABELS[kind]),
                 usj.char("fqa", *quote),
                 **extra,
             )
-            for _, edit, _, _ in group:
+            for _, edit, *_ in group:
                 old_key = edit["note"]["x-key"]
                 changed[old_key] = note if old_key == key else None
                 edit["note"] = note
@@ -600,11 +625,16 @@ def apply(
         book, ref = scope["ref"].split()
         verse = document_verses[book][ref]
         following = verse.text[scope["range"][1] :] if scope["range"] else ""
-        # A short form's words carry no stop; a full form's final stop is
+        # A short form's words carry no stop, unless the whole lemma is
+        # omitted with the stop that ends it; a full form's final stop is
         # dropped where the same stop is printed after its lemma, so that
         # putting the alternative back restores that one stop. An omitted
         # verse's quotation keeps its stop.
-        short = kind in {"delete", "insert"} and not scope.get("full")
+        short = (
+            kind in {"delete", "insert"}
+            and not scope.get("full")
+            and not scope.get("combined")
+        )
         if (
             body
             and not omit
@@ -612,7 +642,7 @@ def apply(
             and quote
             and not quote.endswith("..")
             and (bool(following) and following[:1] == quote[-1:] or short)
-            and quote[:-1].rstrip() != phrase_of(note)
+            and (short or quote[:-1].rstrip() != phrase_of(note))
         ):
             scope["terminal_stop"] = quote[-1]
             note = with_field(
@@ -625,7 +655,7 @@ def apply(
 
     for row in rows:
         for edit in row.get("edits", []):
-            if edit.get("note_owner", True):
+            if "note" in edit and edit.get("note_owner", True):
                 edit["note"] = stopped(
                     edit["note"], edit["note_scope"], edit.get("kind"), False
                 )
@@ -637,9 +667,10 @@ def apply(
     # All participants retain the same finished note for the independent check.
     for row in rows:
         for edit in row.get("edits", []):
-            edit["note"] = present(
-                changed[edit["note"]["x-key"]], f"A note lost: {edit['note']}"
-            )
+            if "note" in edit:
+                edit["note"] = present(
+                    changed[edit["note"]["x-key"]], f"A note lost: {edit['note']}"
+                )
 
     def finished(note: Node) -> Node | None:
         key = note.get("x-key")
@@ -650,22 +681,34 @@ def apply(
         for book, document in documents.items()
     }
     # A TR note whose quotation took in a correction of shared Greek would
-    # give the correction to the TR. A refused correction has no edits; the
-    # build names it once the stages are done.
-    corrected: dict[str, list[tuple[str, int, int]]] = {}
-    for correction in corrections:
-        for change in correction.get("edits", []):
-            lo, hi = change["range"]
-            corrected.setdefault(change["ref"], []).append((correction["unit"], lo, hi))
+    # give the correction to the TR, and a rendering note that took in a
+    # Byzantine reading would give the reading to the King James
+    # translators. A refused correction has no edits; the build names it
+    # once the stages are done.
+    # An edit of the supplied marking alone changes no words to give away.
+    changes: dict[str, list[tuple[bool, str, int, int]]] = {}
     for row in rows:
         for edit in row.get("edits", []):
+            if "note" in edit:
+                lo, hi = edit["range"]
+                changes.setdefault(edit["ref"], []).append(
+                    (row.get("disposition") == "shared", row["unit"], lo, hi)
+                )
+    for row in rows:
+        shared = row.get("disposition") == "shared"
+        for edit in row.get("edits", []):
+            if "note" not in edit:
+                continue
             a, b = edit["note_scope"].get("source_range", edit["range"])
-            for unit, lo, hi in corrected.get(edit["ref"], []):
-                if a < hi and lo < b:
+            for other, unit, lo, hi in changes.get(edit["ref"], []):
+                if other != shared and a < hi and lo < b:
+                    quoted = "Correction" if other else "Byzantine reading"
+                    label = "rendering" if shared else "TR"
                     raise ValueError(
-                        f"Byzantine reading {unit} is quoted by TR note {edit['note']['x-key']}"
+                        f"{quoted} {unit} is quoted by {label} note "
+                        f"{edit['note']['x-key']}"
                     )
-    return placed(prepared, rows), [*rows, *corrections]
+    return placed(prepared, rows), rows
 
 
 def placed(
@@ -677,7 +720,7 @@ def placed(
     owners: dict[str, tuple[Node, NoteScope]] = {}
     for row in rows:
         for edit in row.get("edits", []):
-            if edit.get("note_owner", True):
+            if "note" in edit and edit.get("note_owner", True):
                 owners[edit["note"]["x-key"]] = edit["note"], edit["note_scope"]
         held = row.get("note")
         if held and row.get("note_scope"):
@@ -696,9 +739,14 @@ def placed(
             a, b = lemma_range(scope)
             lemma = without_notes(source_content(prepared[book], verses[ref], a, b))
             note = with_field(owned, "fq", usj.joined(lemma, [": "]))
-            scope["offset"] = b
+            # A note omitting its whole lemma with the stop that ends it
+            # stands after that stop, which goes with the words.
+            at = b
+            if owned["x-scope"].get("kind") == "omits" and not scope.get("full"):
+                at += len(scope.get("terminal_stop", ""))
+            scope["offset"] = at
             finished[note["x-key"]] = note
-            moved.append((ref, b, note))
+            moved.append((ref, at, note))
         document = scripture.map_notes(
             prepared[book], lambda n: None if n.get("x-key") in finished else n
         )
@@ -720,7 +768,8 @@ def placed(
     # Every participant of a combined note holds the same finished note.
     for row in rows:
         for edit in row.get("edits", []):
-            edit["note"] = finished.get(edit["note"]["x-key"], edit["note"])
+            if "note" in edit:
+                edit["note"] = finished.get(edit["note"]["x-key"], edit["note"])
         held = row.get("note")
         if held:
             row["note"] = finished.get(held["x-key"], held)
@@ -736,10 +785,13 @@ def for_edition(document: Document, terms: Registry) -> Document:
     for words added or omitted as a quotation (none where the whole lemma is
     omitted, since it stands before the label), the lemma declared for the
     annotate stage to set, and the note at the start of its lemma, as every
-    edition note stands. A verse-level note stands at its verse's start.
+    edition note stands. A verse-level note stands at its verse's start. A
+    rendering note gives the former King James words after "Or,", with no
+    witness, since the Greek is unchanged.
 
-    The reconciliation names its notes "unit TR#n"; the edition's key is
-    "unit TR" for a unit's one note, and "unit TR#n" for a second."""
+    The reconciliation names its notes "unit TR#n" and "verse rendering#n";
+    the edition's key is "unit TR" for a unit's one note, and "unit TR#n"
+    for a second."""
     verses = scripture.verses(document)
     moved: list[tuple[str, int, int, Node]] = []
     for ref, verse in verses.items():
@@ -751,13 +803,17 @@ def for_edition(document: Document, terms: Registry) -> Document:
             lemma = phrase_of(note)
             scope = note["x-scope"]
             kind, where = scope["kind"], scope.get("where")
-            content: Content = [
-                fields["fr"],
-                usj.char("fl", terms.display("textus-receptus") + " "),
-            ]
             quotation = usj.text_of(fields.get("fqa", {}).get("content", []))
             adds, omits = terms.display("addition"), terms.display("omission")
-            if kind == "replace":
+            content: Content = [fields["fr"]]
+            if kind != "rendering":
+                content.append(usj.char("fl", terms.display("textus-receptus") + " "))
+            if kind == "rendering":
+                # A correction of shared Greek: the former King James words
+                # as another rendering, with no witness to name.
+                content.append(usj.char("ft", NOTE_LABELS["rendering"]))
+                content.append(usj.char("fqa", quotation))
+            elif kind == "replace":
                 # A replaced reading: the note's words stand for the lemma.
                 content.append(usj.char("fqa", quotation))
             elif kind == "omits" and quotation == lemma:

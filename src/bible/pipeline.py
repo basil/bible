@@ -52,7 +52,6 @@ from bible import (
     versification,
 )
 from bible.byzantine import appendix
-from bible.byzantine.rows import Disposition
 from bible.checks import present, require
 from bible.policy import source_id
 from bible.policy_schema import WordingChange
@@ -498,7 +497,6 @@ def annotated(
     read_sources: Read,
     introductions: Mapping[str, Sequence[Content]],
     ctx: annotate.Context,
-    applied: Sequence[Disposition],
 ) -> tuple[dict[str, Document], dict[str, annotate.Report]]:
     """The books with their notes, introductions and quotation links."""
     policy = ctx.policy
@@ -509,13 +507,7 @@ def annotated(
         if unit["source"] == "kjv":
             doc, report = annotate.george(
                 code,
-                renderings.kjv(
-                    code,
-                    units[code],
-                    read_sources.kjv[code],
-                    applied,
-                    policy.kjv_notes["notes"],
-                ),
+                units[code],
                 read_sources.marginal.get(code, ()),
                 ctx,
                 original=read_sources.kjv[code],
@@ -669,13 +661,7 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
     units = lined(units, read_sources, policy)
     ctx = context(units, policy, sources)
     front, introductions, front_report = front_and_back(read_sources, ctx, sources)
-    books, reports = annotated(
-        units,
-        read_sources,
-        introductions,
-        ctx,
-        promoted.byzantine.context["dispositions"],
-    )
+    books, reports = annotated(units, read_sources, introductions, ctx)
     # The revision comes before the edition's own pages, which quote the
     # books as they print.
     revised: revision.MetRevisions = set()

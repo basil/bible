@@ -493,6 +493,48 @@ def test_note_lemma_italics_are_checked_independently() -> None:
     assert results["I3"] == "TST 1:1: TR lemma italics differ from its span"
 
 
+def test_a_note_lemma_across_a_paragraph_fails_i3() -> None:
+    document = usj.document(
+        [
+            {"type": "book", "marker": "id", "code": "TST", "content": []},
+            {"type": "chapter", "marker": "c", "number": "1"},
+            usj.para("p", {"type": "verse", "marker": "v", "number": "1"}, "Lo the"),
+            usj.para("p", "word."),
+        ]
+    )
+    verse = scripture.verses(document)["1:1"]
+    assert verse.text == "Lo the\nword."
+    note: Node = {
+        "type": "note",
+        "marker": "f",
+        "caller": "-",
+        "content": [
+            usj.char("fq", "the word: "),
+            usj.char("ft", "Textus Receptus: "),
+            usj.char("fqa", "a word"),
+        ],
+    }
+    prepared = scripture.edited(document, [(verse, 11, 11, [note])])
+    row: Disposition = {
+        "unit": "TST 1:1#1",
+        "ref": "TST 1:1",
+        "disposition": "override",
+        "action": "edit",
+        "execution": "applied",
+        "note": note,
+        "note_ref": "TST 1:1",
+        "note_scope": {"ref": "TST 1:1", "range": [3, 11], "offset": 11},
+    }
+    results = verify.checks(
+        {"TST": document},
+        {"TST": prepared},
+        [{"id": row["unit"]}],
+        [row],
+        NO_STRUCTURE,
+    )
+    assert results["I3"] == "TST 1:1: TR lemma crosses a paragraph or line"
+
+
 def test_restore_keeps_terminal_punctuation() -> None:
     note = _note("fruit", "fruits")
     assert verify.restores("Bring fruit.", "Bring fruits.", [(11, note)]) is None
@@ -560,7 +602,8 @@ def test_notes_restore_the_kjv_as_corrected_where_the_greek_is_shared() -> None:
     verse = scripture.verses(prepared["MAT"])["1:1"]
     assert verse.text == "And they came within the kingdom."
     assert "\\add came\\add*" in usj.serialize(prepared["MAT"])
-    assert len(verse.notes) == 2
+    # The source note, the TR note and the "Or," note of the correction.
+    assert len(verse.notes) == 3
     assert verify.finished_verses(documents, prepared, rows, NO_STRUCTURE) == {}
     assert documents == original
 

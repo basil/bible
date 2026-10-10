@@ -289,22 +289,26 @@ def test_margin_notes_that_fit_in_order_pass(tmp_path: Path) -> None:
 
 
 @pytest.mark.parametrize(
-    "notes",
+    "notes,found",
     [
         # Off the foot of the text block, and off its head.
-        [("GEN2.19", 46, 561, 20), ("GEN2.20", 46, 70, 20)],
-        [("GEN2.20", 46, 562, 20)],
-        # Over the note before it, and above it.
-        [("GEN2.19", 46, 561, 20), ("GEN2.20", 46, 551, 10)],
-        [("GEN2.19", 46, 551, 20), ("GEN2.20", 46, 561, 10)],
+        ([("GEN2.19", 46, 561, 20), ("GEN2.20", 46, 70, 20)], "GEN2.20"),
+        ([("GEN2.20", 46, 562, 20)], "GEN2.20"),
+        # Over the note before it, and over the note placed above it.
+        ([("GEN2.19", 46, 561, 20), ("GEN2.20", 46, 551, 10)], "GEN2.20"),
+        ([("GEN2.19", 46, 551, 20), ("GEN2.20", 46, 560, 20)], "GEN2.19"),
     ],
 )
-def test_a_margin_note_that_does_not_fit_is_reported(
-    tmp_path: Path, notes: list[tuple[str, int, float, float]]
+def test_a_margin_note_that_does_not_fit_is_found(
+    tmp_path: Path, notes: list[tuple[str, int, float, float]], found: str
 ) -> None:
-    # TEMPORARY: reported, not refused, until the TR notes fit the margins
-    # (see the check's caller in verify.py); then expect CheckFailed again.
-    assert check_notes(tmp_path, *notes) == ["page 46 GEN2.20"]
+    assert check_notes(tmp_path, *notes) == [f"page 46 {found}"]
+
+
+def test_a_later_note_placed_above_an_earlier_one_fits(tmp_path: Path) -> None:
+    """PTXprint may set a note of a chapter's opening paragraph above an
+    earlier verse's; the notes are checked in the order they stand."""
+    assert not check_notes(tmp_path, ("GEN2.19", 46, 541, 20), ("GEN2.20", 46, 561, 20))
 
 
 def test_a_margin_note_record_in_another_form_is_refused(tmp_path: Path) -> None:

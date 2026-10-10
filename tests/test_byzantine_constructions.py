@@ -360,8 +360,8 @@ def test_an_override_may_set_supplied_words_in_roman(
 
     text = [i for i in content if isinstance(i, str) or not usj.is_note(i)]
     assert "the place" not in supplied(text)  # roman in the text
-    # italic in the note's KJV alternative
-    assert "the place" in supplied(usj.notes_of(content))
+    # The words are the KJV's, so there is nothing for a note to say.
+    assert not usj.notes_of(content)
 
 
 def test_edits_print_the_curly_apostrophe(

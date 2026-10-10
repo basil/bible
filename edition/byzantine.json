@@ -1165,8 +1165,9 @@
       "edits": [
         {
           "ref": "MRK 8:31",
-          "from": "scribes",
-          "to": "[of] the scribes"
+          "from": "",
+          "to": "[of] the",
+          "before": "scribes"
         }
       ],
       "tags": [
@@ -1547,8 +1548,8 @@
       "edits": [
         {
           "ref": "MRK 16:1",
-          "from": "had bought",
-          "to": "bought",
+          "from": "had",
+          "to": "",
           "greek": "ἠγόρασαν"
         }
       ],
@@ -2214,8 +2215,9 @@
       "edits": [
         {
           "ref": "LUK 14:24",
-          "from": "supper.",
-          "to": "supper. For many are called, but few [are] chosen."
+          "from": "",
+          "to": "For many are called, but few [are] chosen.",
+          "after": "supper."
         }
       ],
       "tags": [
@@ -2821,8 +2823,9 @@
       "edits": [
         {
           "ref": "JHN 8:4",
-          "from": "they say unto him,",
-          "to": "they say unto him, tempting [him],"
+          "from": "",
+          "to": "tempting [him],",
+          "after": "they say unto him,"
         }
       ],
       "tags": [
@@ -4010,8 +4013,9 @@
       "edits": [
         {
           "ref": "ACT 13:41",
-          "from": "a work which you",
-          "to": "which you"
+          "from": "a work",
+          "to": "",
+          "occurrence": 2
         }
       ],
       "tags": [
@@ -4703,8 +4707,8 @@
         },
         {
           "ref": "ACT 24:8",
-          "from": "commanding his accusers to come unto thee: by examining",
-          "to": "by examining"
+          "from": "commanding his accusers to come unto thee:",
+          "to": ""
         }
       ],
       "tags": [
@@ -5890,8 +5894,8 @@
       "edits": [
         {
           "ref": "1CO 15:39",
-          "from": "one kind of flesh",
-          "to": "one"
+          "from": "kind of flesh",
+          "to": ""
         }
       ],
       "tags": [
@@ -5956,8 +5960,8 @@
         },
         {
           "ref": "2CO 1:7",
-          "from": "And our hope of you is stedfast, knowing",
-          "to": "knowing"
+          "from": "And our hope of you is stedfast,",
+          "to": ""
         }
       ],
       "tags": [
@@ -7362,8 +7366,9 @@
       "edits": [
         {
           "ref": "HEB 9:21",
-          "from": "sprinkled",
-          "to": "likewise sprinkled",
+          "from": "",
+          "to": "likewise",
+          "before": "sprinkled",
           "greek": "ὁμοίως"
         }
       ],
@@ -7387,8 +7392,9 @@
       "edits": [
         {
           "ref": "HEB 10:1",
-          "from": "can never",
-          "to": "they can never"
+          "from": "",
+          "to": "they",
+          "before": "can never"
         }
       ],
       "tags": [
@@ -7950,8 +7956,9 @@
       "edits": [
         {
           "ref": "1PE 2:13",
-          "from": "Submit yourselves",
-          "to": "Submit yourselves therefore",
+          "from": "",
+          "to": "therefore",
+          "after": "Submit yourselves",
           "greek": "Ὑποτάγητε οὖν"
         }
       ],
@@ -8109,8 +8116,9 @@
       "edits": [
         {
           "ref": "1PE 4:12",
-          "from": "the fiery trial",
-          "to": "the fiery trial among you",
+          "from": "",
+          "to": "among you",
+          "after": "the fiery trial",
           "greek": "τῇ ἐν ὑμῖν πυρώσει"
         }
       ],
@@ -8474,8 +8482,8 @@
         },
         {
           "ref": "1JN 5:8",
-          "from": "And there are three that bear witness in earth, the Spirit",
-          "to": "the Spirit"
+          "from": "And there are three that bear witness in earth,",
+          "to": ""
         }
       ],
       "tags": [
@@ -8527,8 +8535,9 @@
       "edits": [
         {
           "ref": "2JN 1:3",
-          "from": "be",
-          "to": "shall be",
+          "from": "",
+          "to": "shall",
+          "before": "be",
           "greek": "ἔσται"
         }
       ],
@@ -8884,8 +8893,9 @@
       "edits": [
         {
           "ref": "REV 2:14",
-          "from": "to eat things sacrificed unto idols",
-          "to": "and to eat things sacrificed unto idols"
+          "from": "",
+          "to": "and",
+          "before": "to eat things sacrificed unto idols"
         }
       ],
       "tags": [
@@ -9592,8 +9602,9 @@
       "edits": [
         {
           "ref": "REV 4:11",
-          "from": "O Lord",
-          "to": "O Lord and our God, the Holy One"
+          "from": "",
+          "to": "and our God, the Holy One",
+          "after": "O Lord"
         }
       ],
       "tags": [
@@ -9774,8 +9785,9 @@
       "edits": [
         {
           "ref": "REV 5:11",
-          "from": "the voice",
-          "to": "as [it were] the voice"
+          "from": "",
+          "to": "as [it were]",
+          "before": "the voice"
         }
       ],
       "tags": [
@@ -9823,8 +9835,9 @@
         },
         {
           "ref": "REV 5:13",
-          "from": "for ever and ever.",
-          "to": "for ever and ever. Amen."
+          "from": "",
+          "to": "Amen.",
+          "after": "for ever and ever."
         },
         {
           "ref": "REV 5:14",
@@ -11328,8 +11341,9 @@
       "edits": [
         {
           "ref": "REV 13:7",
-          "from": "all kindreds,",
-          "to": "all kindreds, and people,"
+          "from": "",
+          "to": "and people,",
+          "after": "all kindreds,"
         }
       ],
       "tags": [
@@ -11716,8 +11730,8 @@
       "edits": [
         {
           "ref": "REV 15:2",
-          "from": "and over his mark, and",
-          "to": "and"
+          "from": "over his mark, and",
+          "to": ""
         }
       ],
       "tags": [
@@ -11900,8 +11914,9 @@
       "edits": [
         {
           "ref": "REV 17:4",
-          "from": "and decked",
-          "to": "decked"
+          "from": "and",
+          "to": "",
+          "occurrence": 2
         }
       ],
       "tags": [
@@ -12532,8 +12547,9 @@
       "edits": [
         {
           "ref": "REV 20:2",
-          "from": "and Satan,",
-          "to": "and Satan, which deceiveth the whole world,"
+          "from": "",
+          "to": "which deceiveth the whole world,",
+          "after": "and Satan,"
         }
       ],
       "tags": [
@@ -12713,8 +12729,9 @@
       "edits": [
         {
           "ref": "REV 21:8",
-          "from": "and unbelieving,",
-          "to": "and unbelieving, and sinners,"
+          "from": "",
+          "to": "and sinners,",
+          "after": "and unbelieving,"
         }
       ],
       "tags": [
@@ -13258,8 +13275,8 @@
       "edits": [
         {
           "ref": "REV 22:19",
-          "from": "and from the",
-          "to": "the"
+          "from": "and from",
+          "to": ""
         }
       ],
       "tags": [
@@ -13323,7 +13340,7 @@
         "from:pierpont",
         "gram:inflection"
       ],
-      "why": "RP’s present indicative makes the trading permission current; carry Pierpont’s might-to-can correction through the connected relative condition, where concurrent holding of the mark makes the KJV’s backshifted had become hath. The whole-construction TR note restores might and its original had together.",
+      "why": "RP’s present indicative makes the trading permission current; carry Pierpont’s might-to-can correction through the connected relative condition, where concurrent holding of the mark makes the KJV’s backshifted had become hath.",
       "evidence": {
         "pierpont": {
           "entry": 818,
@@ -13392,25 +13409,9 @@
     }
   },
   "lemmas": {
-    "1CO 15:39#1 TR": {
-      "lemma": "one of men",
-      "why": "Including of men identifies the complete flesh comparison and restores the supplied kind of with the omitted flesh."
-    },
-    "1TI 6:12#1 TR": {
-      "lemma": "art called",
-      "why": "The omitted also stood between art and called; including the participle completes the verbal phrase and restores art also called exactly."
-    },
     "2TI 2:19#1 TR": {
       "lemma": "the name of the Lord",
       "why": "The complete noun phrase uniquely identifies the changed referent without taking depart from the next predicate into the lemma, and restores the name of Christ exactly."
-    },
-    "ACT 17:26#1 TR": {
-      "lemma": "the times appointed",
-      "why": "The complete noun phrase keeps appointed with the times and restores the times before appointed without ending the lemma before its modifier."
-    },
-    "ACT 7:22#1 TR": {
-      "lemma": "words and deeds",
-      "why": "The complete coordinated phrase identifies the scope of the shared preposition and restores words and in deeds exactly."
     },
     "HEB 12:24#1 TR": {
       "lemma": "a better thing than Abel",
@@ -13424,61 +13425,21 @@
       "lemma": "shall give eternal life",
       "why": "The changed auxiliary needs its predicate; shall give eternal life identifies the complete verbal construction."
     },
-    "JHN 17:20#1 TR": {
-      "lemma": "which believe on me",
-      "why": "The omitted shall stood before believe; including the relative clause completes the lemma instead of ending on which."
-    },
-    "JHN 1:39#1 TR": {
-      "lemma": "day: it was about the tenth hour",
-      "why": "The omitted for joins the time clause to day; including that clause completes the lemma while restoring day: for it was about the tenth hour."
-    },
-    "JHN 1:42#1 TR": {
-      "lemma": "Jesus. When Jesus beheld him",
-      "why": "The omitted And begins the next sentence; the full when clause completes the seam lemma instead of ending on When."
-    },
     "JHN 1:43#2 TR": {
       "lemma": "Jesus saith",
       "why": "The added Jesus is the subject of saith; once the first note restores Jesus earlier in the verse, Jesus alone no longer identifies this edit."
-    },
-    "JHN 7:41#1 TR": {
-      "lemma": "Christ. Some said",
-      "why": "The omitted But begins the next sentence; including said completes the subject and predicate instead of ending on Some."
-    },
-    "JHN 8:9#1 TR": {
-      "lemma": "eldest: and Jesus was left alone",
-      "why": "The omission joins the eldest to the following clause; including that clause completes the lemma instead of ending on and."
     },
     "JHN 8:9#2 TR": {
       "lemma": "the woman being in the midst",
       "why": "The changed copular participle being requires in the midst; including the woman keeps its determiner and completes the participial construction instead of ending on being."
     },
-    "LUK 10:20#1 TR": {
-      "lemma": "rejoice, because",
-      "why": "The omitted rather stood before rejoice; a lemma beginning there lets the note restore but rather rejoice."
-    },
-    "LUK 13:35#1 TR": {
-      "lemma": "I say unto you",
-      "why": "The omitted verily stood before I say; a lemma beginning there lets the note restore and verily I say."
-    },
-    "LUK 20:1#1 TR": {
-      "lemma": "priests",
-      "why": "The omitted chief qualifies priests; a lemma beginning there lets the note restore the chief priests."
-    },
     "LUK 20:31#1 TR": {
       "lemma": "the third likewise took her",
       "why": "This complete published clause identifies the edit without taking in the following in like manner construction or its separate edit."
     },
-    "LUK 20:9#1 TR": {
-      "lemma": "man planted",
-      "why": "The omitted certain qualifies man; a lemma beginning there lets the note restore A certain man."
-    },
     "LUK 22:36#1 TR": {
       "lemma": "he shall sell his garment",
       "why": "The clause through its object identifies the changed auxiliary; replacing it with let him sell his garment restores the KJV while leaving the unchanged coordination outside the note."
-    },
-    "LUK 4:8#1 TR": {
-      "lemma": "it is written",
-      "why": "The complete clause identifies the omitted for without repeating Satan; the note restores for it is written exactly at the clause’s beginning."
     },
     "MAT 20:22#1 TR": {
       "lemma": "or to be baptized with the baptism that I am baptized with",
@@ -13492,13 +13453,9 @@
       "lemma": "the lame and the blind",
       "why": "The reordered pair begins with a supplied determiner; including the first the keeps each determiner with its noun and restores the complete KJV pair with its italics."
     },
-    "MRK 10:33#1 TR": {
-      "lemma": "scribes",
-      "why": "The omitted unto the stood before scribes, after and; a lemma beginning at scribes lets the TR's words go back in their place."
-    },
     "MRK 14:30#1 TR#2": {
-      "lemma": "twice, shalt deny me thrice",
-      "why": "The auxiliary shalt needs its following predicate; this note joins the earlier splice that moves thou within the same construction."
+      "lemma": "That thou this day, even in this night, before the cock crow twice, shalt deny me thrice",
+      "why": "One construction moves thou from before shalt to after That; the lemma spans both splices, so that one note restores the KJV's order whole."
     },
     "MRK 9:42#2 TR": {
       "lemma": "the little ones",
@@ -13508,21 +13465,9 @@
       "lemma": "a mighty angel",
       "why": "Including angel completes the changed noun phrase instead of ending the lemma on mighty, and restores another mighty angel exactly."
     },
-    "REV 10:10#1 TR": {
-      "lemma": "the book",
-      "why": "The complete noun phrase identifies the change; replacing the book with the little book restores the KJV exactly without including the unchanged phrase out of the angel’s hand."
-    },
-    "REV 10:2#2 TR": {
-      "lemma": "a book",
-      "why": "The omitted little modifies book; including the noun makes the lemma identify the changed expression instead of naming only its article and restores a little book exactly."
-    },
     "REV 12:12#2 TR": {
       "lemma": "to the earth and the sea",
       "why": "The complete coordinated phrase keeps the second determiner with sea instead of ending the lemma on the, and restores to the inhabiters of the earth and of the sea exactly."
-    },
-    "REV 13:17#2 TR": {
-      "lemma": "the name of the beast",
-      "why": "The complete noun phrase restores or the name of the beast at the omitted conjunction without carrying the preceding mark into the lemma."
     },
     "REV 14:1#3 TR": {
       "lemma": "his name and his Father’s name",
@@ -13532,49 +13477,13 @@
       "lemma": "Babylon the great is fallen: she made all nations drink of the wine of the wrath of her fornication",
       "why": "The changed clause boundary leaves the default lemma ending on the subject she; including its whole clause identifies the construction and restores the KJV wording and stops exactly."
     },
-    "REV 15:5#1 TR": {
-      "lemma": "the temple",
-      "why": "The omitted behold stood before the temple; a lemma beginning there lets the alternative restore the KJV's and behold, the temple."
-    },
-    "REV 15:6#3 TR": {
-      "lemma": "white linen",
-      "why": "The omitted and stood between pure and white; beginning at white keeps the lemma clear of the added who were and restores pure and white linen."
-    },
-    "REV 17:13#3 TR": {
-      "lemma": "give their power",
-      "why": "The omitted shall stood before give; this phrase lets the alternative restore the KJV's shall give their power."
-    },
     "REV 20:4#3 TR": {
       "lemma": "the thousand years",
       "why": "The added article determines the duration thousand years; including years completes the numeral-and-noun phrase and restores a thousand years exactly."
     },
-    "REV 21:16#1 TR": {
-      "lemma": "is as large as the breadth",
-      "why": "The complete comparison identifies the supplied copula after RP omits estin; its disjoint scope keeps this typography note separate from the repeated measure."
-    },
-    "REV 22:9#1 TR": {
-      "lemma": "I am thy fellowservant",
-      "why": "The omitted for begins the explanatory clause after an unchanged colon; the complete predicate identifies that clause and restores for I am thy fellowservant without carrying the preceding prohibition into the lemma."
-    },
     "REV 2:16#1 TR": {
       "lemma": "Repent therefore",
       "why": "The full command makes a complete lemma and restores Repent without a punctuation fragment."
-    },
-    "REV 2:24#4 TR": {
-      "lemma": "put upon you",
-      "why": "The omitted will stood between I and put; a lemma beginning at put lets it be read back in its place."
-    },
-    "REV 2:7#1 TR": {
-      "lemma": "in the paradise",
-      "why": "The prepositional phrase identifies the omitted midst of while keeping the separate my God addition outside this lemma."
-    },
-    "REV 3:4#2 TR": {
-      "lemma": "thou hast a few names in Sardis",
-      "why": "The deleted even qualifies in Sardis; retaining that phrase makes the combined source alternative complete."
-    },
-    "REV 4:4#3 TR": {
-      "lemma": "on their heads",
-      "why": "The omitted they had stood before on their heads; the default lemma enclosed the gap."
     },
     "REV 5:5#3 TR": {
       "lemma": "the seven seals",
@@ -13583,26 +13492,6 @@
     "REV 5:6#3 TR": {
       "lemma": "being sent forth",
       "why": "The complete participial phrase identifies the aspect change instead of isolating its auxiliary."
-    },
-    "REV 6:11#2 TR": {
-      "lemma": "season",
-      "why": "The omitted little stood before season; a lemma ending at season puts it back in place."
-    },
-    "REV 6:12#1 TR": {
-      "lemma": "there was a great earthquake",
-      "why": "The omitted lo stood before there was; a lemma spanning and there cannot take it back."
-    },
-    "REV 6:15#3 TR": {
-      "lemma": "free man",
-      "why": "The omitted every qualifies free man; a lemma spanning and free cannot take it back."
-    },
-    "REV 9:16#2 TR": {
-      "lemma": "the horse were an hundred thousand thousand: I heard the number of them",
-      "why": "The adjacent deleted and joins I heard the number of them; including that clause completes the combined TR alternative."
-    },
-    "REV 9:4#1 TR": {
-      "lemma": "those men",
-      "why": "The omitted only stood before those men; a lemma beginning at but cannot take it back."
     },
     "ROM 2:5#1 TR": {
       "lemma": "and of the righteous judgment of God",

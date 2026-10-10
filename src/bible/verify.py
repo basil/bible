@@ -8,7 +8,6 @@ import configparser
 import io
 import re
 import subprocess
-import sys
 import unicodedata
 import xml.etree.ElementTree as ET
 from collections.abc import Mapping, Sequence
@@ -322,10 +321,12 @@ def stream_text(
 
 
 def margin_overflow(base: Path, top: float, bottom: float) -> list[str]:
-    """The margin notes that are not in the text block, below the note before
-    it: PTXprint has nowhere else to put the notes of an overfull margin, and
-    lets them overlap at its foot. top and bottom are the block's edges, in
-    TeX points from the foot of the page."""
+    """The margin notes that are not in the text block, below the note placed
+    above it: PTXprint has nowhere else to put the notes of an overfull
+    margin, and lets them overlap at its foot. The notes are taken in the
+    order they stand on the page, since PTXprint may set a note of a
+    chapter's opening paragraph above an earlier verse's. top and bottom are
+    the block's edges, in TeX points from the foot of the page."""
     files = list(base.rglob("*_ptxp.marginnotes"))
     require(len(files) == 1, "Missing/ambiguous margin note positions")
     records = files[0].read_text(encoding="utf-8")
@@ -335,18 +336,19 @@ def margin_overflow(base: Path, top: float, bottom: float) -> list[str]:
         len(notes) == records.count("\\@marginnote"),
         "Could not read every margin note position",
     )
-    last_page: str | None = None
-    ceiling = top
-    overflow = []
+    pages: dict[str, list[tuple[float, float, str]]] = {}
     for ref, height, depth, page, y in notes:
-        if page != last_page:
-            last_page, ceiling = page, top
         note_top = int(y) / 65536
         note_bottom = note_top - float(height) - float(depth)
-        # A twentieth of a point allows for rounding.
-        if not (note_top <= ceiling + 0.05 and note_bottom >= bottom - 0.05):
-            overflow.append(f"page {page} {ref}")
-        ceiling = note_bottom
+        pages.setdefault(page, []).append((note_top, note_bottom, ref))
+    overflow = []
+    for page, placed in pages.items():
+        ceiling = top
+        for note_top, note_bottom, ref in sorted(placed, reverse=True):
+            # A twentieth of a point allows for rounding.
+            if not (note_top <= ceiling + 0.05 and note_bottom >= bottom - 0.05):
+                overflow.append(f"page {page} {ref}")
+            ceiling = note_bottom
     return overflow
 
 
@@ -482,24 +484,8 @@ def inspect_pdf(
     (base / "reading.txt").write_text(reading_text, encoding="utf-8")
     check_added_words_roman(pdf, reading_text, project, ids, sample)
     check_citations(reading_text)
-    # TEMPORARY: the TR notes overflow the margins of Revelation and of one
-    # page of 2 Corinthians (docs/todo.md, "Layout"). Until they fit, the
-    # overflow is reported here, not refused. Once a full build reports no
-    # overflow, tighten the check again: replace the file and the warning
-    # below with
-    #     require(not overflow, f"Margin note does not fit: {overflow[0]}")
-    # and make test_a_margin_note_that_does_not_fit_is_reported in
-    # tests/test_verify.py expect CheckFailed again.
     overflow = margin_overflow(base, (height - top) * TEX_POINTS, bottom * TEX_POINTS)
-    (base / "margin-overflow.txt").write_text(
-        "".join(f"{note}\n" for note in overflow), encoding="utf-8"
-    )
-    if overflow:
-        print(
-            f"WARNING: {len(overflow)} margin notes do not fit; "
-            f"see {base / 'margin-overflow.txt'}",
-            file=sys.stderr,
-        )
+    require(not overflow, f"Margin note does not fit: {overflow[:5]}")
     logs = "\n".join(
         p.read_text(encoding="utf-8", errors="replace") for p in base.rglob("*.log")
     )

@@ -21,6 +21,7 @@ from copy import deepcopy
 from typing import Any, TypeIs, TypeVar
 
 from bible.byzantine import BOOKS, FAA, WITNESSES, greek
+from bible.byzantine.crosswire import curly_apostrophes
 from bible.byzantine.rows import (
     BoundEdit,
     FaaRow,
@@ -276,6 +277,10 @@ def validate_overrides(
                     raise ValueError(f"{label}: from and to are plain strings")
                 if new != new.strip() or "  " in new:
                     raise ValueError(f"{label}: to has stray spaces")
+                try:
+                    bracketed_quote(new)
+                except ValueError as error:
+                    raise ValueError(f"{label}: to has {error} at {ref}") from None
                 text = kjv[ref]
                 if old:
                     if old.strip() == text.strip():
@@ -298,6 +303,21 @@ def validate_overrides(
                     end = start + len(old)
                     if cuts_word(text, start, end):
                         raise ValueError(f"{label}: from cuts through a word at {ref}")
+                    # Words added before or after the KJV's, or dropped from
+                    # one end of them, are an insertion or a deletion, whose
+                    # note says what the TR omits or adds; written as a
+                    # replacement they would quote the kept words too.
+                    a, b = old.split(), curly_apostrophes(new).split()
+                    if len(a) < len(b) and a in (b[: len(a)], b[-len(a) :]):
+                        raise ValueError(
+                            f"{label}: from is a prefix or suffix of to at {ref}: an "
+                            'insertion in disguise; write from "" with after or before'
+                        )
+                    if b and len(b) < len(a) and b in (a[: len(b)], a[-len(b) :]):
+                        raise ValueError(
+                            f"{label}: to is a prefix or suffix of from at {ref}: a "
+                            'deletion in disguise; write to "" on the words dropped'
+                        )
                     # The same words are a change only when the KJV supplies
                     # some of them in italics and RP2026 has Greek for them:
                     # the override sets them in roman (John 19:17 "the place").
@@ -586,7 +606,7 @@ def validate_lemmas(
         if not isinstance(unit_id, str) or unit_id not in by_id:
             errors.append(f"{label}: no such unit")
         if type(edit_index) is not int or edit_index < 1:
-            errors.append(f"{label}: edit is a 1-based index")
+            errors.append(f"{label}: edit is the note's 1-based index")
         if (
             not isinstance(entry.get("lemma"), str)
             or not entry["lemma"].strip()

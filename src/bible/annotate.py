@@ -95,6 +95,9 @@ class Report:
     rows: list[NoteRow] = field(default_factory=list)
     # The keys of the source notes a decision leaves out.
     omitted: list[str] = field(default_factory=list)
+    # The keys of the edition's rendering notes a reversed 1611 margin
+    # stands for.
+    covered: list[str] = field(default_factory=list)
 
     def read(
         self,
@@ -369,7 +372,10 @@ def george(
     policy, report = ctx.policy, Report()
     tongue = citations.dialect("george", policy=policy)
     # The notes the edition wrote on the words it changed stand in the book
-    # already: they are printed first, and the 1611 notes set among them.
+    # already: they are printed first, and the 1611 notes set among them. A
+    # margin turned round stands for the edition's own note on the same
+    # correction.
+    doc = without_covered_renderings(doc, listed, policy, report)
     doc = with_edition_notes(code, doc, tongue, ctx, report)
     verses = scripture.verses(doc)
     original_verses = scripture.verses(original)
@@ -466,6 +472,93 @@ def george(
     return scripture.edited(doc, changes), report
 
 
+def covers(
+    lemma: list[str], former: list[str], anchor: list[str], old: list[str]
+) -> bool:
+    """Whether a rendering note, whose lemma the former King James words
+    replace, says what a reversed margin says: the margin's anchor with the
+    note's lemma turned back is the margin's former words, or the note's
+    lemma with the anchor turned back is the note's former words."""
+
+    def turned(text: list[str], part: list[str], into: list[str]) -> list[str] | None:
+        at = found(text, part)
+        return None if at is None else text[:at] + into + text[at + len(part) :]
+
+    return turned(anchor, lemma, former) == old or turned(lemma, anchor, old) == former
+
+
+def without_covered_renderings(
+    doc: Document,
+    listed: Sequence[Mapping[str, str]],
+    policy: bible.policy.Policy,
+    report: Report,
+) -> Document:
+    """The book without the rendering notes that a 1611 margin turned round
+    stands for: where its verse has such notes, a former-reading decision
+    must cover one of them, saying the same, and that note is left out. (The
+    margin's own checks hold its words to the text either way.) Each such
+    note is covered by one margin at most."""
+    reversed_margins = [
+        (note["key"], note, override)
+        for note in listed
+        for override in [policy.kjv_notes["notes"].get(note["key"], {})]
+        # The margin's own checks name what is missing.
+        if override.get("former") is not None and "anchor" in override
+    ]
+    if not reversed_margins:
+        return doc
+    verses = scripture.verses(doc)
+    covered: list[str] = []
+    for key, note, override in reversed_margins:
+        former = override["former"]
+        verse = present(
+            verses.get(note["reference"]), f"Marginal note verse missing: {key}"
+        )
+        anchor, old = words_of(str(override["anchor"])), words_of(str(former))
+        renderings = [
+            n
+            for _, n in verse.notes
+            if n.get("category") == "edition"
+            and n.get("x-key", "").split(" ")[-1].startswith("rendering")
+        ]
+        if not renderings:
+            continue
+        found = [
+            n
+            for n in renderings
+            if covers(
+                words_of(str(n["x-scope"]["declared"])),
+                words_of(
+                    usj.text_of(
+                        next(
+                            (
+                                c["content"]
+                                for c in n["content"]
+                                if isinstance(c, dict) and c.get("marker") == "fqa"
+                            ),
+                            [],
+                        )
+                    )
+                ),
+                anchor,
+                old,
+            )
+        ]
+        require(
+            len(found) == 1,
+            f"Marginal note former covers no rendering note, or more than one: {key}",
+        )
+        require(
+            found[0]["x-key"] not in covered,
+            f"Marginal note former covers a rendering note another covers: {key}",
+        )
+        covered.append(found[0]["x-key"])
+    report.covered.extend(covered)
+    if not covered:
+        return doc
+    return scripture.map_notes(doc, lambda n: None if n.get("x-key") in covered else n)
+
+
 def reversed_margin(
     text: str,
     cited: Sequence[citations.Citation],
@@ -499,12 +592,23 @@ def reversed_margin(
     return turned, [replace(c, start=c.start + shift, end=c.end + shift) for c in cited]
 
 
+def found(words: list[str], wanted: list[str]) -> int | None:
+    """Where the words first hold the wanted words together, in order."""
+    if not wanted:
+        return None
+    return next(
+        (
+            i
+            for i in range(len(words) - len(wanted) + 1)
+            if words[i : i + len(wanted)] == wanted
+        ),
+        None,
+    )
+
+
 def contains(words: list[str], wanted: list[str]) -> bool:
     """Whether the words hold the wanted words together, in order."""
-    return bool(wanted) and any(
-        words[i : i + len(wanted)] == wanted
-        for i in range(len(words) - len(wanted) + 1)
-    )
+    return found(words, wanted) is not None
 
 
 def spanned(verses: Sequence[bible.references.Verse]) -> str:

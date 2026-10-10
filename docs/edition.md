@@ -99,7 +99,7 @@ For alternative renderings, this convention adheres to the Liskov substitution p
 
 ### The Received Text's readings
 
-Where the New Testament's words are changed to the Byzantine text's, a note marked TR gives the Received Text's words, in the style above: "fruit: TR _fruits_" replaces the words it is about, "said: TR adds _by them of old time_" puts words after them, "verily: TR omits" takes them out, and "but who: TR omits _but_" takes out a part of them. An omitted verse is quoted in a note on the verse before it, and a moved passage is noted at both its places. [The New Testament text](new-testament.md#the-notes) explains how the words a note is about are chosen.
+Where the New Testament's words are changed to the Byzantine text's, a note marked TR gives the Received Text's words, in the style above: "fruit: TR _fruits_" replaces the words it is about, "said: TR adds _by them of old time_" puts words after them, "verily: TR omits" takes them out, and "but who: TR omits _but_" takes out a part of them. An omitted verse is quoted in a note on the verse before it, and a moved passage is noted at both its places. Where the King James English is corrected and the Greek is the same in both texts, the note gives the former words after "or," with no witness ("in thy kingdom: or, _into thy kingdom_"). [The New Testament text](new-testament.md#the-notes) explains how the words a note is about are chosen.
 
 ### The 1611 marginal notes
 

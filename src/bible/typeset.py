@@ -34,6 +34,8 @@ def typeset(base: Path, project: Path) -> Path:
         "INFO",
         "--logfile",
         str(base / "ptxprint.log"),
+        # The contents and delayed chapter positions settle on the fifth
+        # pass in the full edition (Genesis 24 is the last to settle).
         "-R",
         "5",
         "-to",

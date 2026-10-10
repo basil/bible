@@ -224,6 +224,36 @@ def test_from_equal_to_to_is_rejected(
     assert len(errors) == 1 and "from equals to" in errors[0]
 
 
+def test_an_insertion_or_deletion_in_disguise_is_rejected(
+    validate: Validate, readings: list[Entry]
+) -> None:
+    """Words added at either end of the King James words, or dropped from
+    one end, are written as an insertion or a deletion, so that the note
+    says what the TR omits or adds instead of quoting the kept words."""
+    entry = next(
+        o
+        for o in readings
+        if o.get("edits")
+        and len(o["edits"][0]["from"].split()) > 1
+        and o["edits"][0]["to"]
+    )
+    bad = copy.deepcopy(entry)
+    bad["edits"][0]["to"] = bad["edits"][0]["from"] + " verily"
+    _, errors = validate([bad])
+    assert len(errors) == 1 and "an insertion in disguise" in errors[0]
+    bad["edits"][0]["to"] = "Verily " + bad["edits"][0]["from"]
+    _, errors = validate([bad])
+    assert len(errors) == 1 and "an insertion in disguise" in errors[0]
+    bad["edits"][0]["to"] = bad["edits"][0]["from"].split()[0]
+    _, errors = validate([bad])
+    assert len(errors) == 1 and "a deletion in disguise" in errors[0]
+    # Words added inside the King James words are a replacement still.
+    first, *rest = bad["edits"][0]["from"].split()
+    bad["edits"][0]["to"] = " ".join([first, "verily", *rest])
+    _, errors = validate([bad])
+    assert not errors
+
+
 def test_a_fragment_cutting_through_a_word_is_rejected(
     validate: Validate, sample: Callable[[], Entry], kjv_text: Mapping[str, str]
 ) -> None:

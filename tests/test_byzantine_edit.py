@@ -491,18 +491,26 @@ def execution_row(
     return row
 
 
-def test_a_correction_of_shared_greek_has_no_tr_note(context: Context) -> None:
-    for address, old, new in (
-        ("23:42", "into thy kingdom", "in thy kingdom"),
-        ("23:15", "done unto him", "done by him"),
+def test_a_correction_of_shared_greek_keeps_the_former_words_in_a_note(
+    context: Context,
+) -> None:
+    # The note is about the words that change, not the whole replacement.
+    for address, old, new, former in (
+        ("23:42", "into thy kingdom", "in thy kingdom", "into thy kingdom"),
+        ("23:15", "done unto him", "done by him", "unto him"),
     ):
         before = scripture.verses(context["documents"]["LUK"])[address]
         after = scripture.verses(context["prepared"]["LUK"])[address]
         assert after.text == before.text.replace(old, new)
-        assert after.notes == before.notes
+        added = [n for _, n in after.notes if n not in [m for _, m in before.notes]]
+        assert len(added) == 1 and added[0]["x-key"] == f"LUK {address} rendering#1"
+        text = usj.text_of(added[0]["content"])
+        assert (
+            "Or, " in text and text.endswith(former) and "Textus Receptus" not in text
+        )
 
 
-def test_a_correction_beside_a_reading_notes_only_the_reading() -> None:
+def test_a_correction_beside_a_reading_takes_its_own_label() -> None:
     documents = execution_fixture()
     reading = execution_row("MAT 1:1#1", 4, 6, "he", "they")
     correction = execution_row(
@@ -511,7 +519,37 @@ def test_a_correction_beside_a_reading_notes_only_the_reading() -> None:
     prepared, rows = edit.execute(documents, [reading, correction], ["MAT"])
     verse = scripture.verses(prepared["MAT"])["1:1"]
     assert verse.text == "And they said. Afterward he went."
-    assert "note" in rows[0]["edits"][0] and "note" not in rows[1]["edits"][0]
+    assert rows[0]["edits"][0]["note"]["x-key"] == "MAT 1:1#1 TR#1"
+    assert rows[1]["edits"][0]["note"]["x-key"] == "MAT 1:1 rendering#1"
+    labels = [
+        usj.text_of(n["content"]).split(" ", 1)[1].split(":")[0] for _, n in verse.notes
+    ]
+    assert labels == ["Textus Receptus", "Or, Then"]
+
+
+def test_an_edit_of_the_supplied_marking_alone_has_no_note() -> None:
+    """Words the Byzantine text now has Greek for, or no longer has, keep
+    their place and lose or gain their italics: nothing to note, and the
+    unit's notes are numbered without them."""
+    documents = execution_fixture()
+    row = execution_row("MAT 1:1#1", 4, 6, "he", "[he]")
+    row["ops"].append(
+        {
+            "kind": "replace",
+            "ref": "MAT 1:1",
+            "range": [18, 20],
+            "old": "he",
+            "new": "they",
+            "raw_range": True,
+        }
+    )
+    prepared, rows = edit.execute(documents, [row], ["MAT"])
+    verse = scripture.verses(prepared["MAT"])["1:1"]
+    assert verse.text == "And he said. Then they went."
+    assert "\\add he\\add*" in usj.serialize(prepared["MAT"])
+    first, second = rows[0]["edits"]
+    assert "note" not in first and first["old"] == first["new"] == "he"
+    assert second["note"]["x-key"] == "MAT 1:1#1 TR#1"
     assert len(verse.notes) == 1
 
 
