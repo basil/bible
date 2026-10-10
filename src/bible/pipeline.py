@@ -40,6 +40,7 @@ from bible import (
     places,
     psalter,
     quotations,
+    renderings,
     repairs,
     revision,
     scripture,
@@ -51,6 +52,7 @@ from bible import (
     versification,
 )
 from bible.byzantine import appendix
+from bible.byzantine.rows import Disposition
 from bible.checks import present, require
 from bible.policy import source_id
 from bible.policy_schema import WordingChange
@@ -258,6 +260,13 @@ def promote(
     King James books with the Byzantine readings in them: in each, the
     chosen text goes into the verse and the displaced reading becomes a
     note that names its witness."""
+    unused = sorted(
+        key
+        for key in policy.brenton_notes.get("renderings", {})
+        if key.split()[0] not in sources.brenton
+        or key.split()[0] == alexandrinus.APPENDIX
+    )
+    require(not unused, f"Unused Brenton renderings: {unused}")
     counts = alexandrinus.check(policy, sources.brenton)
     found = byzantine.reconciled(
         inputs,
@@ -268,7 +277,11 @@ def promote(
     return Promoted(
         MappingProxyType(
             {
-                code: alexandrinus.promoted(code, doc, policy, sources.kjv)
+                code: renderings.brenton(
+                    code,
+                    alexandrinus.promoted(code, doc, policy, sources.kjv),
+                    policy.brenton_notes.get("renderings", {}),
+                )
                 for code, doc in sources.brenton.items()
                 if code != alexandrinus.APPENDIX
             }
@@ -485,6 +498,7 @@ def annotated(
     read_sources: Read,
     introductions: Mapping[str, Sequence[Content]],
     ctx: annotate.Context,
+    applied: Sequence[Disposition],
 ) -> tuple[dict[str, Document], dict[str, annotate.Report]]:
     """The books with their notes, introductions and quotation links."""
     policy = ctx.policy
@@ -495,7 +509,13 @@ def annotated(
         if unit["source"] == "kjv":
             doc, report = annotate.george(
                 code,
-                units[code],
+                renderings.kjv(
+                    code,
+                    units[code],
+                    read_sources.kjv[code],
+                    applied,
+                    policy.kjv_notes["notes"],
+                ),
                 read_sources.marginal.get(code, ()),
                 ctx,
                 original=read_sources.kjv[code],
@@ -649,7 +669,13 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
     units = lined(units, read_sources, policy)
     ctx = context(units, policy, sources)
     front, introductions, front_report = front_and_back(read_sources, ctx, sources)
-    books, reports = annotated(units, read_sources, introductions, ctx)
+    books, reports = annotated(
+        units,
+        read_sources,
+        introductions,
+        ctx,
+        promoted.byzantine.context["dispositions"],
+    )
     # The revision comes before the edition's own pages, which quote the
     # books as they print.
     revised: revision.MetRevisions = set()

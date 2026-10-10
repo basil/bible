@@ -2737,10 +2737,6 @@
       "lemma": "kept very close",
       "why": "been glued renders kept very close"
     },
-    "PSA 67:16": {
-      "lemma": "swelling",
-      "why": "curdled like cheese renders swelling alone"
-    },
     "PSA 70:6": {
       "lemma": "praise",
       "why": "hymn singing renders praise"
@@ -3388,5 +3384,14 @@
     "ZEC 11:16": "wring their necks renders dislocate the joints of their necks",
     "ISA 8:19": "ventriloquists renders the whole phrase for those with a divining spirit",
     "ISA 44:25": "ventriloquists renders the whole phrase for those with divining spirits"
+  },
+  "renderings": {
+    "PSA 67:16": {
+      "from": "a swelling mountain",
+      "to": "a mountain curdled like cheese",
+      "source_note": "\\fqa Gr. \\ft curdled like cheese.",
+      "lemma": "mountain curdled like cheese",
+      "why": "Promote Brenton’s full literal gloss of the Septuagint’s τετυρωμένον, “curdled like cheese”, in place of his freer “swelling”; preserve the former rendering in the same source note. This is an alternative translation of the same Greek, not a reading from another witness."
+    }
   }
 }

@@ -5905,9 +5905,15 @@
       "changes": [
         {
           "verse": "2CO 12:2",
-          "from": "Christ fourteen years ago,",
-          "to": "Christ, fourteen years ago",
-          "why": "The fourteen years date the catching up, not Paul's present knowledge of the man. Follow the RV comma placement while preserving the words and the intervening parenthesis."
+          "from": "Christ fourteen",
+          "to": "Christ, fourteen",
+          "why": "Separate the time of the catching up from Paul’s present knowledge of the man, following the RV comma placement. State this insertion separately from the comma after ago so that notes quoting either part receive its punctuation."
+        },
+        {
+          "verse": "2CO 12:2",
+          "from": "ago,",
+          "to": "ago",
+          "why": "Remove the former closing comma of the temporal phrase after placing its opening comma after Christ; keep the parenthesis and every word."
         }
       ]
     },

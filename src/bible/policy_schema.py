@@ -167,9 +167,22 @@ class NoteOverride(TypedDict, total=False):
     why: ReadOnly[str]
 
 
+Rendering = TypedDict(
+    "Rendering",
+    {
+        "from": ReadOnly[str],
+        "to": ReadOnly[str],
+        "source_note": ReadOnly[str],
+        "lemma": ReadOnly[str],
+        "why": ReadOnly[str],
+    },
+)
+
+
 class BrentonNotes(TypedDict, total=False):
     corrections: ReadOnly[Mapping[str, tuple[Correction, ...] | Correction]]
     notes: ReadOnly[Mapping[str, NoteOverride]]
+    renderings: ReadOnly[Mapping[str, Rendering]]
     shapes: ReadOnly[Mapping[str, str]]
 
 

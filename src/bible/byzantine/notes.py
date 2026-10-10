@@ -80,12 +80,9 @@ def readable_span(
     return lemmas.unique_span(text, words, first, last)
 
 
-def source_range(a: int, b: int, edits: Sequence[Edit]) -> tuple[int, int]:
-    """Map finished-verse boundaries through the declared splices and seams.
-
-    A boundary inside a replacement includes its whole source reading.
-    No word alignment or guess about the English enters this mapping.
-    """
+def splices(edits: Sequence[Edit]) -> list[tuple[int, int, int]]:
+    """The declared splices and external seams of a verse's edits: the
+    source offsets each replaces, and the length of what stands there now."""
     changes: list[tuple[int, int, int]] = []
     for edit in edits:
         lo, hi = edit["applied_range"]
@@ -99,6 +96,16 @@ def source_range(a: int, b: int, edits: Sequence[Edit]) -> tuple[int, int]:
             if seam.get("external"):
                 start, end = seam["range"]
                 changes.append((start, end, len(seam["to"])))
+    return changes
+
+
+def source_range(a: int, b: int, edits: Sequence[Edit]) -> tuple[int, int]:
+    """Map finished-verse boundaries through the declared splices and seams.
+
+    A boundary inside a replacement includes its whole source reading.
+    No word alignment or guess about the English enters this mapping.
+    """
+    changes = splices(edits)
 
     def boundary(at: int, closing: bool) -> int:
         shift = 0

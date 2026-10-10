@@ -53,7 +53,7 @@ def test_the_edition_prints_every_unit_once_in_the_manifests_order(
         "brenton_units": 51,
         "kjv_units": 27,
         "kjv_marginal_notes": 775,
-        "printed_notes": 4271,
+        "printed_notes": 4349,
         # The King James Bible's, less the four verses the Byzantine text
         # lacks and the empty chapter eBible left in Proverbs.
         "verses": 36604,
@@ -80,7 +80,9 @@ def test_no_stage_changes_what_an_earlier_stage_made(
     line_documents = copy.deepcopy(dict(lined))
     ctx = pipeline.context(lined, placed, sources)
     _, introductions, _ = pipeline.front_and_back(read, ctx, sources)
-    pipeline.annotated(lined, read, introductions, ctx)
+    pipeline.annotated(
+        lined, read, introductions, ctx, promoted.byzantine.context["dispositions"]
+    )
     assert (dict(read.brenton), dict(read.kjv), dict(read.updated_brenton)) == before
     assert (dict(promoted.brenton), dict(promoted.kjv)) == kept
     assert dict(units) == assembled

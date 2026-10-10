@@ -208,6 +208,19 @@ def check(policy: Policy) -> None:
         ),
         "Invalid sample chapter selection",
     )
+    for key, rendering in policy.brenton_notes.get("renderings", {}).items():
+        require_fields(
+            rendering,
+            {"from", "to", "source_note", "lemma", "why"},
+            (),
+            f"Brenton rendering {key}",
+        )
+        require(
+            all(
+                isinstance(value, str) and value.strip() for value in rendering.values()
+            ),
+            f"Empty Brenton rendering: {key}",
+        )
     # A misspelt field would be read as no override, and the entry as used.
     # The 1611 notes also say where George's lemma is found in the verse; a
     # note of either source may say which verse it belongs to.
@@ -224,7 +237,7 @@ def check(policy: Policy) -> None:
         require_fields(
             notes,
             {"notes", "corrections"},
-            {"shapes"} if name == "Brenton" else (),
+            {"shapes", "renderings"} if name == "Brenton" else (),
             f"{name} note file",
         )
         for key, override in notes["notes"].items():

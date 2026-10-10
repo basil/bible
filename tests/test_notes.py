@@ -559,7 +559,7 @@ def test_a_sign_after_no_witness_is_refused(
 def test_every_note_of_the_sources_is_printed_or_replaced_by_a_link(
     edition: bible.pipeline.Edition,
 ) -> None:
-    assert edition.summary["printed_notes"] == 4271
+    assert edition.summary["printed_notes"] == 4349
     rows = [row for listed in edition.notes.values() for row in listed]
     assert len({row["key"] for row in rows}) == len(rows)
     # The 1611 margin is printed on the New Testament alone, and whole but
@@ -571,7 +571,7 @@ def test_every_note_of_the_sources_is_printed_or_replaced_by_a_link(
             [
                 row
                 for row in edition.notes[u["id"]]
-                if not re.search(r" TR(#\d+)?$", row["key"])
+                if not re.search(r" (TR|rendering)(#\d+)?$", row["key"])
             ]
         )
         for u in edition.policy.scripture
