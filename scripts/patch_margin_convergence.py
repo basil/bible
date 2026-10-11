@@ -15,20 +15,17 @@ def replace_once(path: Path, old: str, new: str) -> None:
 
 
 def patch(root: Path) -> None:
-    # A margin too full for its notes is shifted further on every pass, until
-    # an offset is larger than TeX can take. Once the notes are moved apart,
-    # hold every note below the block's head and above the foot of the page
-    # (y = 0): the notes of an overfull margin then overlap low on the page,
-    # and the next pass finds them where it left them. The head also holds
-    # a note beside a page's first line that no other note pushes down. The
-    # other notes of a margin that fits are placed as before.
+    # A note keeps its offset when its verse moves to another page, and the
+    # solver moves only notes that collide: a note lifted clear of one page's
+    # foot can stand above the next page's head, alone beside its first line
+    # (Genesis 4:15). Once the notes are moved apart, hold every note below
+    # the block's head. The other notes are placed as before.
     replace_once(
         root / "marginnotes.py",
         "                i += 1\n        return\n",
         "                i += 1\n"
         "            for n in t:\n"
         "                n.yshift = min(n.yshift, self.top - n.ymax)\n"
-        "                n.yshift = max(n.yshift, -n.ymin)\n"
         "        return\n",
     )
     # Compare the offsets at TeX's integer scaled-point precision. A change

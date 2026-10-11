@@ -89,11 +89,11 @@ def test_crowded_notes_settle_after_their_offsets_are_applied(tmp_path: Path) ->
 
 def test_a_lone_note_stays_within_the_text_block() -> None:
     # The bound set once the notes are moved apart keeps a lone note below
-    # the block's head, though nothing pushes it down (Genesis 31:2 at a
-    # page's top).
+    # the block's head, though nothing pushes it down (Genesis 4:15, whose
+    # offset from the page before lifts it at a page's top).
     notes = MarginNotes(top=500, bot=0)
     note = MarginNote(
-        ref="GEN31.2",
+        ref="GEN4.15",
         marker="f",
         hpos="inner",
         vpos="bottom",
@@ -114,7 +114,9 @@ def test_a_lone_note_stays_within_the_text_block() -> None:
 
 def test_an_overfull_margin_stays_on_the_page_and_settles(tmp_path: Path) -> None:
     # Revelation has pages with more notes than the margin holds; their
-    # offsets must not grow on every pass until TeX refuses them.
+    # offsets must not grow on every pass until TeX refuses them. PTXprint
+    # sets the first pass's notes below the page, then lifts them into the
+    # text block, where they overlap.
     notes = MarginNotes(top=500, bot=100)
     notes.pages = [
         [
@@ -137,13 +139,12 @@ def test_an_overfull_margin_stays_on_the_page_and_settles(tmp_path: Path) -> Non
         ]
     ]
     output = tmp_path / "notes.marginnotes"
-    for _ in range(2):
+    for later in (False, True):
         notes.processpages()
         notes.outfile(output)
         for note in notes.pages[0]:
-            # Below the block's foot, where the notes overlap, but on the page.
-            assert note.ymin + note.yshift >= -0.001
-            assert note.ymax + note.yshift <= 500.001
+            assert note.ymin + note.yshift >= notes.bot - 0.001 or not later
+            assert note.ymax + note.yshift <= notes.top + 0.001
             note.ypos += note.yshift
             note.yoffset -= note.yshift
             note.yshift = 0
