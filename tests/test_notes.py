@@ -893,7 +893,6 @@ def test_surviving_additions_keep_their_printed_words(
             "Alex. adds _for those whose cause this evil is upon us_",
             "addition before",
         ),
-        "PSA 130:1": ("A Song of Degrees", "Alex. adds _for David_", "explanatory"),
         "PSA 132:1": ("A Song of Degrees", "Alex. adds _for David_", "explanatory"),
     }
     for key, values in expected.items():

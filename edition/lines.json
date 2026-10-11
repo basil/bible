@@ -46,6 +46,13 @@
         "why": "The edition prints the verse as Codex Alexandrinus has it, without this clause (edition/alexandrinus.json), so the update's third line has no words here and is no line."
       }
     ],
+    "PSA 130:1": [
+      {
+        "follows": "O Lord, my heart is not exalted, neither have mine eyes been",
+        "line": "O Lord, my heart is not exalted, neither have mine eyes been",
+        "why": "The Alexandrine reading printed here lengthens the title (\"for David\"), which stands between the title and the first line, so both words beside the break are matched with the reading between them. The reading belongs to the title."
+      }
+    ],
     "PSA 138:1": [
       {
         "follows": "O Lord, thou hast proved me, and known me",

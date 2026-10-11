@@ -72,7 +72,7 @@ Brenton translated the Vatican text, and gave the readings of Codex Alexandrinus
 
 When a reading is printed:
 
-- The words it displaces become a note, marked "Vat." where that attribution is supported and "Brenton's text" where it is not. An addition is marked "Vat. omits".
+- The words it displaces become a note marked "Vat.", Brenton's name for the text he translated, which follows Codex Vaticanus and supplies what it lacks from other copies (Genesis before 46:28, Psalms 105:27–137:6); each decision records what Swete shows of the codex. An addition is marked "Vat. omits". Where Brenton says the Hebrew reads with Alexandrinus, the note begins "Heb. agrees." (or "nearly agrees", in his qualification), with his "nearer the Heb." and "compare the Heb." kept after the Vat. words.
 - The new words are Brenton's English. Swete's other variants, for which Brenton gives no English, are not translated.
 - The words go where Alexandrinus has them, under Brenton's verse numbers.
 - A passage taken from the Appendix is removed from it, so that its English prints once.

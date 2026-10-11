@@ -49,13 +49,13 @@ ORDINAL = dict(
 SCALE = {"hundred": 100, "thousand": 1000, "million": 1000000}
 SWETE = {"volume", "page", "evidence", "reading", "agrees"}
 COMMON = {"why", "swete", "supplied"}
-REPLACEMENT = {"from", "note", "witnesses", "lemma", "target", "english", "note_at"}
+REPLACEMENT = {"from", "note", "lemma", "target", "english", "note_at"}
 FIELDS = {
     "readings": COMMON
     | REPLACEMENT
     | {"edits", "note_edits", "source_note", "omit_verse", "note_target"},
     "passages": COMMON | {"appendix", "kjv", "edits", "insertions", "source_notes"},
-    "kept": COMMON | {"appendix", "todo", "source_note", "note", "witnesses"},
+    "kept": COMMON | {"appendix", "todo", "source_note", "note"},
 }
 
 
@@ -296,7 +296,7 @@ def check(
     data = policy.alexandrinus
     require_fields(
         data,
-        {"swete", "witness_evidence", "readings", "passages", "kept"},
+        {"swete", "readings", "passages", "kept"},
         (),
         "Alexandrine file",
     )
@@ -803,7 +803,7 @@ def with_insertions(
                 require_fields(
                     verse,
                     {"reference"},
-                    {"note", "witnesses", "english"},
+                    {"note", "english"},
                     f"Inserted verse of {key}",
                 )
                 label = verse["reference"]

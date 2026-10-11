@@ -259,17 +259,11 @@ AlexandrinusReadingsNoteEdits = TypedDict(
 )
 
 
-class AlexandrinusReadingsWitnesses(TypedDict, total=False):
-    adopted: ReadOnly[tuple[str, ...]]
-    displaced: ReadOnly[str]
-
-
 class Alexandrinus(TypedDict, total=False):
     kept: ReadOnly[Mapping[str, Decision]]
     passages: ReadOnly[Mapping[str, Decision]]
     readings: ReadOnly[Mapping[str, Decision]]
     swete: ReadOnly[Mapping[str, str]]
-    witness_evidence: ReadOnly[Mapping[str, str]]
 
 
 class Terminology(TypedDict, total=False):
@@ -442,7 +436,6 @@ Decision = TypedDict(
         "target": ReadOnly[str],
         "todo": ReadOnly[bool],
         "why": ReadOnly[str],
-        "witnesses": ReadOnly[AlexandrinusReadingsWitnesses],
     },
     total=False,
 )

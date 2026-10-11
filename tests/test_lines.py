@@ -544,6 +544,7 @@ def test_the_decisions_are_the_few_the_words_do_not_place(
         "PSA 87:19",
         "PSA 91:10",
         "PSA 94:3",
+        "PSA 130:1",
         "PSA 138:1",
         "PRO 8:32",
         "PRO 9:6",
