@@ -358,11 +358,18 @@ class Citations(TypedDict, total=False):
     units: ReadOnly[Mapping[str, str | None]]
 
 
-class RevisionsWords(TypedDict, total=False):
-    notes: ReadOnly[tuple[str, ...]]
-    scope: ReadOnly[Literal["scripture"]]
-    to: ReadOnly[str]
-    why: ReadOnly[str]
+# Functional, as except is a keyword.
+RevisionsWords = TypedDict(
+    "RevisionsWords",
+    {
+        "except": ReadOnly[tuple[str, ...]],
+        "notes": ReadOnly[tuple[str, ...]],
+        "scope": ReadOnly[Literal["scripture"]],
+        "to": ReadOnly[str],
+        "why": ReadOnly[str],
+    },
+    total=False,
+)
 
 
 class PunctuationRule(TypedDict, total=False):

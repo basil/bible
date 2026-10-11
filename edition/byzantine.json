@@ -13413,6 +13413,14 @@
       "lemma": "the name of the Lord",
       "why": "The complete noun phrase uniquely identifies the changed referent without taking depart from the next predicate into the lemma, and restores the name of Christ exactly."
     },
+    "ACT 10:6#1 TR": {
+      "lemma": "sea side",
+      "why": "The complete source phrase lets the spelling revision join sea side in both the lemma and its Received Text alternative, keeping the note on the whole word."
+    },
+    "ACT 25:5#1 TR": {
+      "lemma": "any thing",
+      "why": "The complete source phrase lets the spelling revision join any thing in the lemma while deriving the complete Received Text alternative any wickedness, keeping the note on the whole word."
+    },
     "HEB 12:24#1 TR": {
       "lemma": "a better thing than Abel",
       "why": "The source comparison continues through Abel; the overlapping omission of that of belongs to the same comparison."

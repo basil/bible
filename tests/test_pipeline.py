@@ -234,6 +234,11 @@ def test_the_editions_spelling_is_revised_wherever_a_word_is_printed(
             for word, entry in words.items()
             for key in entry.get("notes", ())
         }
+        | {
+            (word, phrase)
+            for word, entry in words.items()
+            for phrase in entry.get("except", ())
+        }
         | set(policy.revisions["punctuation"])
         | {c["verse"] for c in revision.verse_changes(policy)}
         | {
@@ -245,8 +250,24 @@ def test_the_editions_spelling_is_revised_wherever_a_word_is_printed(
     def pattern(keys: Iterable[str]) -> re.Pattern[str]:
         return re.compile(r"(?<!\w)(?:" + "|".join(map(re.escape, keys)) + r")(?!\w)")
 
-    # Scoped grammar can remain in explanatory prose and ambiguous nouns.
-    unscoped = pattern(word for word, entry in words.items() if "scope" not in entry)
+    def printed(phrase: str) -> str:
+        doc = usj.parse("\\id GEN\n\\c 1\n\\p\n\\v 1 " + phrase)
+        return scripture.verses(revision.respelt(doc, policy, set()))["1:1"].text
+
+    # Scoped grammar can remain in explanatory prose and ambiguous nouns, and
+    # a word that excepts phrases survives in them alone, as the source has
+    # them or as the grammar of scripture revises their other words, or where
+    # a style divides it.
+    excepting = {
+        pattern([word]): pattern([*entry["except"], *map(printed, entry["except"])])
+        for word, entry in words.items()
+        if "except" in entry
+    }
+    unscoped = pattern(
+        word
+        for word, entry in words.items()
+        if "scope" not in entry and "except" not in entry
+    )
     assert any("scope" in entry for entry in words.values())
     # The editor's own pages name the sources' books, rather than respelling
     # the translations: the introduction explains Brenton's names, and the
@@ -255,8 +276,95 @@ def test_the_editions_spelling_is_revised_wherever_a_word_is_printed(
         "CNC": ["Nehemiah", "Osee", "Naum"],
         "XXA": ["Nehemiah", "Nehemiah"],
     }
+    spelling = pattern(
+        sorted(
+            [word for word, entry in words.items() if "scope" not in entry]
+            + [
+                phrase for entry in words.values() for phrase in entry.get("except", ())
+            ],
+            key=len,
+            reverse=True,
+        )
+    )
+    comparisons = {
+        id(block)
+        for _, _, start, end in edition.appendix
+        for block in edition.documents["XXC"]["content"][start:end]
+        if block.get("marker") == "ili1"
+    }
+
+    def marks(content: usj.Content) -> tuple[set[int], list[tuple[int, usj.Node]]]:
+        """Where a character style opens or closes in the words, and each
+        note with its place in them."""
+        bounds: set[int] = set()
+        notes: list[tuple[int, usj.Node]] = []
+        at = 0
+
+        def visit(items: usj.Content) -> None:
+            nonlocal at
+            for item in items:
+                if isinstance(item, str):
+                    at += len(item)
+                elif usj.is_note(item):
+                    notes.append((at, item))
+                elif "content" in item:
+                    styled = item["type"] == "char"
+                    bounds.update([at] if styled else [])
+                    visit(item["content"])
+                    bounds.update([at] if styled else [])
+
+        visit(content)
+        return bounds, notes
+
     for code, doc in edition.documents.items():
-        found = unscoped.findall(usj.serialize(doc))
+        found: list[str] = []
+        for paragraph in usj.walk(doc["content"]):
+            if paragraph["type"] not in {"para", "table:cell"}:
+                continue
+            content = paragraph["content"]
+            # Appendix comparisons reconstruct their particular source
+            # readings in test_appendix_comparisons_preserve_changes_and_retained_source_passages.
+            # Check their actual authored blocks against those entries there,
+            # rather than exempt a phrase everywhere it happens to occur.
+            if code == "XXC" and id(paragraph) in comparisons:
+                continue
+            words_of = usj.text_of(content)
+            bounds, notes = marks(content)
+
+            def kept(text: str, at: int) -> list[tuple[int, int]]:
+                # A compound may stand unrevised where the printed words at
+                # its place have it with a style dividing it.
+                return [
+                    match.span()
+                    for match in spelling.finditer(text)
+                    if match[0] in words
+                    and words_of[at + match.start() : at + match.end()] == match[0]
+                    and any(at + match.start() < b < at + match.end() for b in bounds)
+                ]
+
+            passages = [(words_of, kept(words_of, 0))]
+            for at, note in notes:
+                # Note lemmas alone can inherit a kept occurrence; a reading
+                # or a comment with the same words cannot.
+                protected: list[tuple[int, int]] = []
+                offset = 0
+                for item in note["content"]:
+                    text = usj.text_of([item])
+                    quoted = text.rstrip(": ")
+                    if usj.is_type(item, "char", "fq") and words_of.startswith(
+                        quoted, at
+                    ):
+                        protected += [
+                            (offset + a, offset + b) for a, b in kept(quoted, at)
+                        ]
+                    offset += len(text)
+                passages.append((usj.text_of(note["content"]), protected))
+            for text, protected in passages:
+                for a, b in sorted(protected, reverse=True):
+                    text = text[:a] + " " * (b - a) + text[b:]
+                found.extend(unscoped.findall(text))
+                for word, phrases in excepting.items():
+                    assert not word.search(phrases.sub("", text)), (code, word.pattern)
         assert found == source_names.get(code, []), code
     # A scoped word that stands alone is a verb wherever it is printed, so
     # none is left in the verses of the books, outside their headings.
@@ -306,6 +414,26 @@ def test_a_word_is_respelt_whole_in_the_text_and_its_notes(
         "\\fqa Noah\\f*went \\add with\\add* Noah.\n\\v 2 And Noah went.\n"
     ) in text
     assert "\\mt1 NOE" in text and met == {"Noe"}
+
+
+def test_a_word_excepts_the_phrases_it_stands_in(
+    policy: bible.policy.Policy,
+) -> None:
+    words = revisions(
+        policy,
+        words={
+            "Noe": {"to": "Noah", "why": "the English name", "except": ["with Noe"]}
+        },
+    )
+    met: revision.MetRevisions = set()
+    text = usj.serialize(revision.respelt(usj.parse(NOE), words, met))
+    # The excepted phrase stands as it is, whatever styles divide it, and
+    # the word is respelt everywhere else.
+    assert (
+        "\\v 1 Noah’s sons and Noeman \\f - \\fr 1:1 \\fq went with Noe: \\ft or, "
+        "\\fqa Noah\\f*went \\add with\\add* Noe.\n\\v 2 And Noah went.\n"
+    ) in text
+    assert met == {"Noe", ("Noe", "with Noe")}
 
 
 def test_a_word_scoped_to_scripture_spares_front_and_back_matter(
@@ -479,6 +607,32 @@ def test_a_revision_changes_a_lemma_whole_or_is_refused(
         (
             {"words": {"Noe": {"to": "Noah", "why": "x", "scope": "notes"}}},
             "scope that is not scripture",
+        ),
+        (
+            {"words": {"Noe": {"to": "Noah", "why": "x", "except": ["Noeman"]}}},
+            "Invalid exception",
+        ),
+        (
+            {
+                "words": {
+                    "Noe": {"to": "Noah", "why": "x", "except": ["Noe went"]},
+                    "went": {"to": "goeth", "why": "x"},
+                }
+            },
+            "Invalid exception",
+        ),
+        (
+            {
+                "words": {
+                    "went": {
+                        "to": "goeth",
+                        "why": "x",
+                        "scope": "scripture",
+                        "except": ["went with"],
+                    }
+                }
+            },
+            "Invalid exception",
         ),
         (
             {"verses": {"GEN 1:1": [{"from": "Noe", "to": "Noah"}]}},
@@ -1073,7 +1227,9 @@ def test_confirmed_article_and_possessive_passages(
         ("Oh how desirable", "O how desirable"),
         ("that flies; flies", "that flieth; flies"),
         ("he that walks; public walks", "he that walketh; public walks"),
-        ("he holds; strong holds", "he holdeth; strong holds"),
+        ("he holds; strong holds", "he holdeth; strongholds"),
+        ("any one of you; any one that", "any one of you; anyone that"),
+        ("from day to day; to day", "from day to day; today"),
     ],
 )
 def test_reviewed_grammar_and_exceptions(
@@ -1084,6 +1240,71 @@ def test_reviewed_grammar_and_exceptions(
     result = revision.respelt(doc, declared, set())
     assert scripture.verses(result)["1:1"].text == after
     assert doc == original
+
+
+def test_a_compound_divided_by_a_style_stays_divided(
+    declared: bible.policy.Policy,
+) -> None:
+    doc = usj.parse(
+        "\\id GEN\n\\c 1\n\\p\n\\v 1 \\f - \\fr 1 \\fq any thing: \\ft "
+        "any thing; Gr. \\fqa any thing\\f*any \\add thing\\add* and "
+        "\\f - \\fr 1 \\fq any thing: \\ft Gr. \\fqa any thing\\f*any thing"
+    )
+    original = copy.deepcopy(doc)
+    result = revision.respelt(doc, declared, set())
+    verse = scripture.verses(result)["1:1"]
+    assert verse.text == "any thing and anything"
+    assert usj.serialize(result).count("\\add thing\\add*") == 1
+    assert [usj.text_of(note["content"]) for _, note in verse.notes] == [
+        "1 any thing: anything; Gr. anything",
+        "1 anything: Gr. anything",
+    ]
+    assert doc == original
+
+
+def test_words_a_style_divides_are_not_redivided_or_met(
+    policy: bible.policy.Policy,
+) -> None:
+    words = revisions(
+        policy,
+        words={
+            "whole burnt-offering": {"to": "whole-burnt offering", "why": "x"},
+            "any thing": {"to": "anything", "why": "x"},
+        },
+    )
+    met: revision.MetRevisions = set()
+    # Moving burnt between the words would move it out of the style.
+    text = "\\v 1 the whole \\add burnt-offering\\add* and any \\add thing\\add*"
+    doc = usj.parse("\\id GEN\n\\c 1\n\\p\n" + text)
+    assert usj.serialize(revision.respelt(doc, words, met)).endswith(text + "\n")
+    # A word that only a style keeps changes nothing, so is not met.
+    assert met == set()
+
+
+def test_string_seams_and_notes_do_not_prevent_compound_spelling(
+    declared: bible.policy.Policy,
+) -> None:
+    note = usj.parse("\\id GEN\n\\c 1\n\\p\n\\v 1 \\f - \\fr 1 \\ft A comment.\\f*x")
+    annotation = usj.notes_of(note["content"])[0]
+    seams: list[usj.Content] = [["any ", "thing"], ["any ", annotation, "thing"]]
+    for content in seams:
+        doc = usj.parse("\\id GEN\n\\c 1\n\\p\n\\v 1 x")
+        doc["content"][-1]["content"][1:] = content
+        result = revision.respelt(doc, declared, set())
+        assert scripture.verses(result)["1:1"].text == "anything"
+        if annotation in content:
+            assert usj.notes_of(result["content"]) == [annotation]
+
+
+def test_a_note_inside_a_compound_requires_a_whole_word_lemma(
+    declared: bible.policy.Policy,
+) -> None:
+    doc = usj.parse(
+        "\\id GEN\n\\c 1\n\\p\n\\v 1 any \\f - \\fr 1 \\fq thing: "
+        "\\ft A comment.\\f*thing and a thing"
+    )
+    with pytest.raises(CheckFailed, match="lemma its verse no longer has"):
+        revision.respelt(doc, declared, set())
 
 
 @pytest.mark.parametrize(

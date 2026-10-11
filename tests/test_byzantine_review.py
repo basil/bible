@@ -1151,9 +1151,19 @@ def test_appendix_and_review_share_all_prepared_readings(
                 )
 
 
+@pytest.mark.parametrize("authored", [False, True])
 def test_appendix_comparisons_preserve_changes_and_retained_source_passages(
-    rows: list[appendix.Row], entries: dict[str, list[Node]]
+    rows: list[appendix.Row],
+    entries: dict[str, list[Node]],
+    edition: bible.pipeline.Edition,
+    authored: bool,
 ) -> None:
+    if authored:
+        entries = {
+            f"{book} {usj.text_of(blocks[0]['content'][:1])}": blocks
+            for book, _, start, end in edition.appendix
+            for blocks in [edition.documents["XXC"]["content"][start:end]]
+        }
     for row in rows:
         lines = [
             line
@@ -1166,8 +1176,17 @@ def test_appendix_comparisons_preserve_changes_and_retained_source_passages(
                 if text_of(line).startswith("TR")
                 else (row.kjv or "", row.oleb or "")
             )
+            is_greek = text_of(line).startswith("TR")
+            if authored and not is_greek:
+                # The appendix precedes verse-specific revision. Undo only
+                # those declared edits in the finished verse used by this fixture.
+                for change in reversed(revision.verse_changes(edition.policy)):
+                    if change["verse"] == row.reference:
+                        # The verse has the words once, as when they were made.
+                        assert after.count(change["to"]) == 1, (row.reference, change)
+                        after = after.replace(change["to"], change["from"])
             content = line["content"][1:]  # Leave the paragraph's label out.
-            insertion_style = "bd" if before == row.greek_tr else "it"
+            insertion_style = "bd" if is_greek else "it"
             old: list[str] = []
             new: list[str] = []
             deleted = False
@@ -1197,20 +1216,25 @@ def test_appendix_comparisons_preserve_changes_and_retained_source_passages(
             ):
                 at = 0
                 source_chars = "".join(source.split())
-                if before == row.greek_tr:
+                if is_greek:
                     source_chars = greek_display(source_chars).lower()
                 for passage in reconstructed.split("…"):
                     chars = "".join(passage.split())
-                    if before == row.greek_tr:
+                    if is_greek:
                         chars = chars.lower()
                     if chars:
+                        assert chars in source_chars[at:], (
+                            row.reference,
+                            source,
+                            reconstructed,
+                        )
                         at = source_chars.index(chars, at) + len(chars)
 
             # Source spans still reconstruct both originals exactly; clipping
             # retains exact passages, including their internal whitespace.
             spans = (
                 anchored(before, after, row.greek_ranges)
-                if before == row.greek_tr
+                if is_greek
                 else diff_spans(before, after)
             )
             for source, absent in ((before, "insert"), (after, "delete")):
@@ -1896,3 +1920,18 @@ def test_summary_lists_unaddressed_exclusions(byzantine: Context) -> None:
         assert review.instruction_line(i, byzantine)[2:] in text
     for i in addressed:
         assert review.instruction_line(i, byzantine)[2:] not in text
+
+
+def test_english_comparison_keeps_hyphenated_compounds_whole() -> None:
+    before = "if they have found any evil-doing in me"
+    after = "what evil-doing they have found in me"
+    spans = diff_spans(before, after)
+    assert spans == [
+        ("delete", "if"),
+        ("insert", "what evil-doing"),
+        ("equal", " they have found "),
+        ("delete", "any evil-doing "),
+        ("equal", "in me"),
+    ]
+    for source, absent in ((before, "insert"), (after, "delete")):
+        assert "".join(value for kind, value in spans if kind != absent) == source

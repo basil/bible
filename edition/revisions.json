@@ -1,5 +1,5 @@
 {
-  "why": "The spelling, vocabulary and punctuation of the translation, revised by explicit editorial decisions. A word is respelt or modernized wherever the translation, its notes, and its front and back matter print it as a whole word; a word with a scope of scripture is revised only in numbered scripture and marked note lemmas (fq) and readings (fqa), wherever they stand. Book titles and metadata, headings, introduction paragraphs and explanatory commentary retain source grammar. Numbered scripture in d paragraphs, including Psalm superscriptions, remains in scope. Plain quotation marks do not establish scope. Global spelling, vocabulary and participle decisions affect source prose and run first, followed by a separate single sweep of scoped grammar decisions. A verse's change is made to the words of that verse alone, which must have them once, and to the notes that quote them. Verses' changes stand in groups, each group under the reason its changes share. Each gives its reason. An isolated alternative whose word is also a plural noun may name its stable source note as its exact context. Passage changes name a stable note key or a front/back-matter unit and the plain words met once there; only punctuation, associated spacing and sentence-initial capitalization may change. A phrase is revised as a word is; an stays before a silent h, and mine and thine where they stand alone.",
+  "why": "The spelling, vocabulary and punctuation of the translation, revised by explicit editorial decisions. A word is respelt or modernized wherever the translation, its notes, and its front and back matter print it as a whole word; a word with a scope of scripture is revised only in numbered scripture and marked note lemmas (fq) and readings (fqa), wherever they stand. Book titles and metadata, headings, introduction paragraphs and explanatory commentary retain source grammar. Numbered scripture in d paragraphs, including Psalm superscriptions, remains in scope. Plain quotation marks do not establish scope. Global spelling, vocabulary and participle decisions affect source prose and run first, followed by a separate single sweep of scoped grammar decisions. A verse's change is made to the words of that verse alone, which must have them once, and to the notes that quote them. Verses' changes stand in groups, each group under the reason its changes share. Each gives its reason. An isolated alternative whose word is also a plural noun may name its stable source note as its exact context. Passage changes name a stable note key or a front/back-matter unit and the plain words met once there; only punctuation, associated spacing and sentence-initial capitalization may change. A phrase is revised as a word is; an stays before a silent h, and mine and thine where they stand alone. A word may except the phrases it must not change, which the edition must print. Words that a character style divides keep their division, and so does the lemma that quotes them at its note.",
   "words": {
     "Hereticks": {
       "to": "Heretics",
@@ -5944,6 +5944,297 @@
       "to": "were sometime foolish",
       "scope": "scripture",
       "why": "Use sometime for formerly in scripture and marked note quotations; sometimes means occasionally, and some time expresses duration."
+    },
+    "any thing": {
+      "to": "anything",
+      "why": "Spell the compound anything consistently throughout the printed edition, as requested by the user."
+    },
+    "every thing": {
+      "to": "everything",
+      "why": "Spell the compound everything consistently throughout the printed edition, as requested by the user."
+    },
+    "every where": {
+      "to": "everywhere",
+      "why": "Spell the compound everywhere consistently throughout the printed edition, as requested by the user."
+    },
+    "any where": {
+      "to": "anywhere",
+      "why": "Spell the compound anywhere consistently throughout the printed edition, as requested by the user."
+    },
+    "hand-maid": {
+      "to": "handmaid",
+      "why": "Spell the compound handmaid consistently throughout the printed edition, as requested by the user."
+    },
+    "now-a-days": {
+      "to": "nowadays",
+      "why": "Spell the compound nowadays consistently throughout the printed edition, as requested by the user."
+    },
+    "store-house": {
+      "to": "storehouse",
+      "why": "Spell the compound storehouse consistently throughout the printed edition, as requested by the user."
+    },
+    "strong hold": {
+      "to": "stronghold",
+      "except": [
+        "very strong hold"
+      ],
+      "why": "Spell the compound stronghold consistently throughout the printed edition, as requested by the user; very strong hold retains the degree adverb modifying strong."
+    },
+    "strong-hold": {
+      "to": "stronghold",
+      "why": "Spell the compound stronghold consistently throughout the printed edition, as requested by the user."
+    },
+    "strong holds": {
+      "to": "strongholds",
+      "except": [
+        "high and strong holds"
+      ],
+      "why": "Spell the compound strongholds consistently throughout the printed edition, as requested by the user; high and strong holds retains the coordinated adjectives modifying holds."
+    },
+    "strong-holds": {
+      "to": "strongholds",
+      "why": "Spell the compound strongholds consistently throughout the printed edition, as requested by the user."
+    },
+    "to-day": {
+      "to": "today",
+      "why": "Spell the compound today consistently throughout the printed edition, as requested by the user."
+    },
+    "To-day": {
+      "to": "Today",
+      "why": "Spell the compound Today consistently throughout the printed edition, as requested by the user."
+    },
+    "To day": {
+      "to": "Today",
+      "why": "Spell the compound Today consistently throughout the printed edition, as requested by the user."
+    },
+    "to-morrow": {
+      "to": "tomorrow",
+      "why": "Spell the compound tomorrow consistently throughout the printed edition, as requested by the user."
+    },
+    "to morrow": {
+      "to": "tomorrow",
+      "why": "Spell the compound tomorrow consistently throughout the printed edition, as requested by the user."
+    },
+    "To-morrow": {
+      "to": "Tomorrow",
+      "why": "Spell the compound Tomorrow consistently throughout the printed edition, as requested by the user."
+    },
+    "To morrow": {
+      "to": "Tomorrow",
+      "why": "Spell the compound Tomorrow consistently throughout the printed edition, as requested by the user."
+    },
+    "way side": {
+      "to": "wayside",
+      "why": "Spell the compound wayside consistently throughout the printed edition, as requested by the user."
+    },
+    "way-side": {
+      "to": "wayside",
+      "why": "Spell the compound wayside consistently throughout the printed edition, as requested by the user."
+    },
+    "sea side": {
+      "to": "seaside",
+      "why": "Spell the compound seaside consistently throughout the printed edition, as requested by the user."
+    },
+    "sea-side": {
+      "to": "seaside",
+      "why": "Spell the compound seaside consistently throughout the printed edition, as requested by the user."
+    },
+    "mean while": {
+      "to": "meanwhile",
+      "why": "Spell the compound meanwhile consistently throughout the printed edition, as requested by the user."
+    },
+    "plough-shares": {
+      "to": "ploughshares",
+      "why": "Spell the compound ploughshares consistently throughout the printed edition, as requested by the user."
+    },
+    "first fruits": {
+      "to": "first-fruits",
+      "why": "Spell the compound first-fruits consistently throughout the printed edition, as requested by the user."
+    },
+    "firstfruits": {
+      "to": "first-fruits",
+      "why": "Spell the compound first-fruits consistently throughout the printed edition, as requested by the user."
+    },
+    "evildoers": {
+      "to": "evil-doers",
+      "why": "Spell the compound evil-doers consistently throughout the printed edition, as requested by the user."
+    },
+    "evildoer": {
+      "to": "evil-doer",
+      "why": "Spell the compound evil-doer consistently throughout the printed edition, as requested by the user."
+    },
+    "evil doer": {
+      "to": "evil-doer",
+      "why": "Spell the compound evil-doer consistently throughout the printed edition, as requested by the user."
+    },
+    "evil doing": {
+      "to": "evil-doing",
+      "why": "Spell the compound evil-doing consistently throughout the printed edition, as requested by the user."
+    },
+    "evil doings": {
+      "to": "evil-doings",
+      "why": "Spell the compound evil-doings consistently throughout the printed edition, as requested by the user."
+    },
+    "he goats": {
+      "to": "he-goats",
+      "why": "Spell the compound he-goats consistently throughout the printed edition, as requested by the user."
+    },
+    "burying place": {
+      "to": "burying-place",
+      "why": "Spell the compound burying-place consistently throughout the printed edition, as requested by the user."
+    },
+    "mercy seat": {
+      "to": "mercy-seat",
+      "why": "Spell the compound mercy-seat consistently throughout the printed edition, as requested by the user."
+    },
+    "corner stone": {
+      "to": "corner-stone",
+      "why": "Spell the compound corner-stone consistently throughout the printed edition, as requested by the user."
+    },
+    "stone bow": {
+      "to": "stone-bow",
+      "why": "Spell the compound stone-bow consistently throughout the printed edition, as requested by the user."
+    },
+    "right aiming": {
+      "to": "right-aiming",
+      "why": "Spell the compound right-aiming consistently throughout the printed edition, as requested by the user."
+    },
+    "well drawn": {
+      "to": "well-drawn",
+      "why": "Spell the compound well-drawn consistently throughout the printed edition, as requested by the user."
+    },
+    "double minded": {
+      "to": "double-minded",
+      "why": "Spell the compound double-minded consistently throughout the printed edition, as requested by the user."
+    },
+    "sober minded": {
+      "to": "sober-minded",
+      "why": "Spell the compound sober-minded consistently throughout the printed edition, as requested by the user."
+    },
+    "master builder": {
+      "to": "master-builder",
+      "why": "Spell the compound master-builder consistently throughout the printed edition, as requested by the user."
+    },
+    "masterbuilder": {
+      "to": "master-builder",
+      "why": "Spell the compound master-builder consistently throughout the printed edition, as requested by the user."
+    },
+    "well doing": {
+      "to": "well-doing",
+      "why": "Spell the compound well-doing consistently throughout the printed edition, as requested by the user."
+    },
+    "well-pleasing to": {
+      "to": "well pleasing to",
+      "why": "Leave well pleasing open in predicative use after a verb or after the noun it describes; hyphenate it directly before a noun. Every source occurrence followed by to is predicative, so this phrase revision preserves attributive compounds."
+    },
+    "well-pleasing before": {
+      "to": "well pleasing before",
+      "why": "Leave well pleasing open in predicative use after a verb; hyphenate it directly before a noun. Every source occurrence followed by before is predicative, so this phrase revision preserves attributive compounds."
+    },
+    "wellpleasing": {
+      "to": "well pleasing",
+      "why": "Leave well pleasing open after a verb, reserving the hyphen for use directly before a noun. The closed source form occurs only in the predicative that which is wellpleasing unto him at Sirach 2:16."
+    },
+    "twoedged": {
+      "to": "two-edged",
+      "why": "Spell the compound two-edged consistently throughout the printed edition, as requested by the user."
+    },
+    "two edged": {
+      "to": "two-edged",
+      "why": "Spell the compound two-edged consistently throughout the printed edition, as requested by the user."
+    },
+    "sweetsmelling": {
+      "to": "sweet-smelling",
+      "why": "Spell the compound sweet-smelling consistently throughout the printed edition, as requested by the user."
+    },
+    "tender hearted": {
+      "to": "tender-hearted",
+      "why": "Spell the compound tender-hearted consistently throughout the printed edition, as requested by the user."
+    },
+    "first begotten": {
+      "to": "first-begotten",
+      "why": "Spell the compound first-begotten consistently throughout the printed edition, as requested by the user."
+    },
+    "firstbegotten": {
+      "to": "first-begotten",
+      "why": "Spell the compound first-begotten consistently throughout the printed edition, as requested by the user."
+    },
+    "threshingfloor": {
+      "to": "threshing-floor",
+      "why": "Spell the compound threshing-floor consistently throughout the printed edition, as requested by the user."
+    },
+    "threshing floor": {
+      "to": "threshing-floor",
+      "why": "Spell the compound threshing-floor consistently throughout the printed edition, as requested by the user."
+    },
+    "resting place": {
+      "to": "resting-place",
+      "why": "Spell the compound resting-place consistently throughout the printed edition, as requested by the user."
+    },
+    "dwelling place": {
+      "to": "dwelling-place",
+      "why": "Spell the compound dwelling-place consistently throughout the printed edition, as requested by the user."
+    },
+    "broken hearted": {
+      "to": "broken-hearted",
+      "why": "Spell the compound broken-hearted consistently throughout the printed edition, as requested by the user."
+    },
+    "burnt-offering": {
+      "to": "burnt offering",
+      "why": "Spell the compound burnt offering consistently throughout the printed edition, as requested by the user."
+    },
+    "burnt-offerings": {
+      "to": "burnt offerings",
+      "why": "Spell the compound burnt offerings consistently throughout the printed edition, as requested by the user."
+    },
+    "choice-offering": {
+      "to": "choice offering",
+      "why": "Spell the compound choice offering consistently throughout the printed edition, as requested by the user."
+    },
+    "whole-burnt-offering": {
+      "to": "whole-burnt offering",
+      "why": "Spell the compound whole-burnt offering consistently throughout the printed edition, as requested by the user."
+    },
+    "whole burnt-offering": {
+      "to": "whole-burnt offering",
+      "why": "Spell the compound whole-burnt offering consistently throughout the printed edition, as requested by the user."
+    },
+    "whole-burnt-offerings": {
+      "to": "whole-burnt offerings",
+      "why": "Spell the compound whole-burnt offerings consistently throughout the printed edition, as requested by the user."
+    },
+    "whole burnt-offerings": {
+      "to": "whole-burnt offerings",
+      "why": "Spell the compound whole-burnt offerings consistently throughout the printed edition, as requested by the user."
+    },
+    "whole burnt offerings": {
+      "to": "whole-burnt offerings",
+      "why": "Spell the compound whole-burnt offerings consistently throughout the printed edition, as requested by the user."
+    },
+    "to day": {
+      "to": "today",
+      "except": [
+        "day to day",
+        "Day to day"
+      ],
+      "why": "Spell the compound today consistently throughout the printed edition, as requested by the user; from day to day is not the adverb, and keeps its words."
+    },
+    "any one": {
+      "to": "anyone",
+      "except": [
+        "any one of",
+        "any one tribe",
+        "any one among the idols"
+      ],
+      "why": "Spell the compound anyone consistently throughout the printed edition, as requested by the user; any one of keeps the partitive one, any one tribe counts a tribe rather than naming a person, and any one among the idols at Jeremiah 14:22 counts an idol rather than naming a person."
+    },
+    "herdman": {
+      "to": "herdsman",
+      "why": "Spell herdsman, the source's own form at Genesis 46:34, consistently throughout the printed edition, as requested by the user."
+    },
+    "herdmen": {
+      "to": "herdsmen",
+      "why": "Spell herdsmen, the source's own form at Genesis 46:34, consistently throughout the printed edition, as requested by the user."
     }
   },
   "verses": {

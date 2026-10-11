@@ -7,7 +7,11 @@ Four kinds of change are declared, each with its reason:
              word: in the translation, its notes, and front and back matter,
              or, with a scope of "scripture", in a book's verses and the
              lemmas and readings of their notes alone, preserving source
-             prose's grammar
+             prose's grammar. A word may except phrases it stands in, which
+             spelling leaves as they are, though the grammar of scripture
+             still revises their other words. Words that a character style
+             divides are not joined, divided or re-divided, and nor are
+             they in the lemma that quotes them
     passages punctuation in a keyed note or front/back-matter paragraph
     punctuation systematic English punctuation rules
     verses   changes to the words of single verses, each naming its verse,
@@ -38,8 +42,9 @@ from bible.sources import NEW_TESTAMENT
 from bible.usj import Content, Document, Node, Predicate
 
 # What revision has met: a word, verse or punctuation rule by its key, a
-# passage change by its selector and words, and a word confined to notes by
-# the note's key and the word.
+# passage change by its selector and words, a word confined to notes by the
+# note's key and the word, and a phrase a word excepts by the word and the
+# phrase.
 type MetRevisions = set[str | tuple[str, str]]
 # The words to revise, letter by letter; an empty key ends a word.
 type Trie = dict[str, "Trie"]
@@ -47,6 +52,9 @@ type Trie = dict[str, "Trie"]
 # What scoped grammar does not read among the words: notes, labels, the
 # fields that quote or cite, and foreign words.
 UNREVISED = frozenset("xt fl fq fqa wg wh".split())
+
+# A word or phrase revised, or excepted: whole words, and what joins them.
+WORD = re.compile(r"\w(?:[\w’', -]*\w)?")
 
 
 def _unrevised(item: Node) -> bool:
@@ -87,13 +95,33 @@ def check(policy: bible.policy.Policy) -> None:
         require(name == "before-em-dash", f"Unknown punctuation rule: {name}")
         require_fields(rule, {"why"}, (), f"Punctuation rule {name}")
         require(bool(rule["why"]), f"Punctuation rule without a why: {name}")
-    for word, entry in data["words"].items():
+    words = data["words"]
+    everywhere = {word for word, entry in words.items() if "scope" not in entry}
+    for word, entry in words.items():
         require_fields(
-            entry, {"to", "why"}, {"scope", "notes"}, f"Respelling of {word}"
+            entry, {"to", "why"}, {"scope", "notes", "except"}, f"Respelling of {word}"
         )
         require(
             entry.get("scope", "scripture") == "scripture",
             f"Respelling with a scope that is not scripture: {word}",
+        )
+        # Spelling alone excepts. An excepted phrase holds its word whole and
+        # no other word respelt wherever it is printed, which it would leave
+        # unrevised, so no other word excepts it.
+        require(
+            "except" not in entry
+            or (
+                "scope" not in entry
+                and bool(entry["except"])
+                and len(set(entry["except"])) == len(entry["except"])
+                and all(
+                    phrase not in words
+                    and WORD.fullmatch(phrase) is not None
+                    and _spans(phrase) & everywhere == {word}
+                    for phrase in entry["except"]
+                )
+            ),
+            f"Invalid exception to a respelling: {word}",
         )
         require(
             "notes" not in entry
@@ -109,7 +137,7 @@ def check(policy: bible.policy.Policy) -> None:
             f"Invalid note context for grammar revision: {word}",
         )
         require(
-            re.fullmatch(r"\w(?:[\w’', -]*\w)?", word) is not None,
+            WORD.fullmatch(word) is not None,
             f"Respelling of what is not a word: {word}",
         )
         require(
@@ -355,26 +383,79 @@ def _edit(at: int, old: str, new: str) -> tuple[int, int, str]:
     return start, start + len(gone), came
 
 
+def _style_runs(
+    content: Content, *, skip: Predicate = usj.is_note
+) -> list[tuple[int, int]]:
+    """Runs with the same character styles, ignoring notes and string seams."""
+    runs: list[tuple[int, int]] = []
+    previous: tuple[str, ...] | None = None
+    at = 0
+
+    def visit(items: Content, styles: tuple[str, ...] = ()) -> None:
+        nonlocal at, previous
+        for item in items:
+            if isinstance(item, str):
+                end = at + len(item)
+                if item:
+                    if styles == previous:
+                        runs[-1] = (runs[-1][0], end)
+                    else:
+                        runs.append((at, end))
+                    previous = styles
+                at = end
+            elif "content" in item and not skip(item):
+                inner = (*styles, item["marker"]) if item["type"] == "char" else styles
+                visit(item["content"], inner)
+
+    visit(content)
+    return runs
+
+
+def _separators(words: str) -> list[str]:
+    """What divides words: spaces and hyphens."""
+    return re.findall(r"[\s\-]+", words)
+
+
+def _keeps_styles(
+    match: re.Match[str],
+    replacement: str,
+    runs: Callable[[], list[tuple[int, int]]],
+) -> bool:
+    """Whether a replacement keeps the character styles of the words it
+    replaces: it respells each word in place, or the words stand in one
+    style. Joining, dividing or re-dividing words that a style divides would
+    erase the distinction, so such words are left as they are. Notes and
+    adjacent strings alone do not divide them."""
+    return _separators(match[0]) == _separators(replacement) or any(
+        a <= match.start() and match.end() <= b for a, b in runs()
+    )
+
+
 def _rewritten(
     content: Content,
     pattern: re.Pattern[str],
     new: Callable[[re.Match[str]], str],
     *,
     skip: Predicate = usj.is_note,
+    done: Callable[[re.Match[str]], object] | None = None,
 ) -> Content:
     """Content with every match of a pattern in its words giving way to what
-    new makes of it. The words are read as one, whatever styles divide them;
-    a note's words are its own, not those of the content it stands in."""
+    new makes of it, and done told of each match that gives way. The words
+    are read as one, whatever styles divide them, unless the replacement
+    would not keep the styles; a note's words are its own, not those of the
+    content it stands in."""
     edits: list[tuple[int, int, str]] = []
+    runs = functools.cache(lambda: _style_runs(content, skip=skip))
     for match in pattern.finditer(usj.text_of(content, skip=skip)):
         replacement = new(match)
-        before = list(re.finditer(r"\S+", match[0]))
-        after = list(re.finditer(r"\S+", replacement))
-        # Contextual decisions can change several words. Keep each word in
-        # its own inline style rather than moving the whole phrase into one.
-        if len(before) == len(after) and re.findall(r"\s+", match[0]) == re.findall(
-            r"\s+", replacement
-        ):
+        if replacement == match[0] or not _keeps_styles(match, replacement, runs):
+            continue
+        if _separators(match[0]) == _separators(replacement):
+            # Contextual decisions can change several words. Keep each word
+            # in its own inline style rather than moving the whole phrase
+            # into one.
+            before = re.finditer(r"\S+", match[0])
+            after = re.finditer(r"\S+", replacement)
             edits.extend(
                 _edit(match.start() + old.start(), old[0], changed[0])
                 for old, changed in zip(before, after)
@@ -382,6 +463,8 @@ def _rewritten(
             )
         else:
             edits.append(_edit(match.start(), match[0], replacement))
+        if done is not None:
+            done(match)
     return usj.substituted(content, edits, skip=skip) if edits else content
 
 
@@ -432,6 +515,23 @@ def _phrase(words: str) -> re.Pattern[str]:
     )
 
 
+def _spans(phrase: str) -> set[str]:
+    """Every run of whole words in a phrase: what a word revised in it
+    would match."""
+    starts = [match.start() for match in re.finditer(r"(?<!\w)\w", phrase)]
+    ends = [match.end() for match in re.finditer(r"\w(?!\w)", phrase)]
+    return {phrase[start:end] for start in starts for end in ends if start < end}
+
+
+def exceptions(policy: bible.policy.Policy) -> dict[str, str]:
+    """The phrases the words except, each with the word it holds."""
+    return {
+        phrase: word
+        for word, entry in policy.revisions["words"].items()
+        for phrase in entry.get("except", ())
+    }
+
+
 def respelt(
     doc: Document,
     policy: bible.policy.Policy,
@@ -451,17 +551,104 @@ def respelt(
     establish scope.
     """
     words = policy.revisions["words"]
+    excepted = exceptions(policy)
     changed = False
 
-    def new(match: re.Match[str], key: str | None = None) -> str:
+    def to(match: re.Match[str]) -> str:
+        return words[match[0]]["to"]
+
+    def done(match: re.Match[str], key: str | None = None) -> None:
+        # A word is met where it is changed, not where a style keeps it.
         nonlocal changed
         changed = True
         met.add(match[0])
         if key is not None and "notes" in words[match[0]]:
             met.add((key, match[0]))
-        return words[match[0]]["to"]
 
-    spelling = _words(word for word, entry in words.items() if "scope" not in entry)
+    def spelt(match: re.Match[str]) -> str:
+        # A phrase a word excepts stands as it is, and is met for the word.
+        if match[0] in excepted:
+            met.add((excepted[match[0]], match[0]))
+            return match[0]
+        return to(match)
+
+    spelling = _words(
+        [word for word, entry in words.items() if "scope" not in entry] + list(excepted)
+    )
+
+    def spelt_note(
+        items: Content, text: str, at: int, divided: list[tuple[int, int]]
+    ) -> Content:
+        """A note's words respelt. Its readings and commentary stand alone;
+        its lemma, where it quotes the words at the note's place, keeps the
+        compounds a style keeps divided there."""
+
+        def lemmas(items: Content) -> Content:
+            output: Content = []
+            for item in items:
+                if isinstance(item, dict) and "content" in item:
+                    if item.get("marker") == "fq":
+                        quoted = usj.text_of(item["content"]).rstrip(": ")
+                        kept = (
+                            [
+                                (a - at, b - at)
+                                for a, b in divided
+                                if at <= a < b <= at + len(quoted)
+                            ]
+                            if text.startswith(quoted, at)
+                            else []
+                        )
+                        inner = _rewritten(
+                            item["content"],
+                            spelling,
+                            lambda match: (
+                                match[0] if match.span() in kept else spelt(match)
+                            ),
+                            done=done,
+                        )
+                    else:
+                        inner = lemmas(item["content"])
+                    item = {**item, "content": inner}
+                output.append(item)
+            return output
+
+        return _rewritten(
+            lemmas(items),
+            spelling,
+            spelt,
+            skip=lambda item: usj.is_note(item) or item.get("marker") == "fq",
+            done=done,
+        )
+
+    def spelt_notes(segment: Content) -> Content:
+        """A verse with its notes respelt, each read at its place."""
+        text = usj.text_of(segment)
+        runs = functools.cache(lambda: _style_runs(segment))
+        divided = [
+            match.span()
+            for match in spelling.finditer(text)
+            if match[0] in words
+            and not _keeps_styles(match, words[match[0]]["to"], runs)
+        ]
+        at = 0
+
+        def visit(items: Content) -> Content:
+            nonlocal at
+            output: Content = []
+            for item in items:
+                if isinstance(item, str):
+                    at += len(item)
+                elif usj.is_note(item):
+                    item = {
+                        **item,
+                        "content": spelt_note(item["content"], text, at, divided),
+                    }
+                elif "content" in item:
+                    item = {**item, "content": visit(item["content"])}
+                output.append(item)
+            return output
+
+        return visit(segment)
 
     def spell(content: Content) -> Content:
         # Verse numbers separate neighboring verses. Notes have their own
@@ -470,15 +657,10 @@ def respelt(
         starts, ends = [0, *(i + 1 for i in numbers)], [*numbers, len(content)]
         output: Content = []
         for start, end in zip(starts, ends):
-            part = _rewritten(content[start:end], spelling, new)
-            part = usj.mapped(
-                part,
-                lambda item: (
-                    {**item, "content": _rewritten(item["content"], spelling, new)}
-                    if usj.is_note(item)
-                    else item
-                ),
-            )
+            segment = content[start:end]
+            if usj.notes_of(segment):
+                segment = spelt_notes(segment)
+            part = _rewritten(segment, spelling, spelt, done=done)
             output += part + content[end : end + 1]
         return output
 
@@ -501,8 +683,9 @@ def respelt(
                     inner = _rewritten(
                         item["content"],
                         confined.get(key, general) if key is not None else general,
-                        lambda match: new(match, key),
+                        to,
                         skip=_unrevised,
+                        done=lambda match: done(match, key),
                     )
                 else:
                     inner = quoted(item["content"], item.get("x-key", key))
@@ -527,7 +710,9 @@ def respelt(
                 for lo, hi in parts[index]:
                     output += content[at:lo]
                     output += quoted(
-                        _rewritten(content[lo:hi], general, new, skip=_unrevised)
+                        _rewritten(
+                            content[lo:hi], general, to, skip=_unrevised, done=done
+                        )
                     )
                     at = hi
                 output += content[at:]
@@ -637,7 +822,7 @@ def punctuated(
 
 
 def _check_lemmas(before: Document, after: Document) -> None:
-    """Refuse a lemma its verse had before a change and no longer has."""
+    """Refuse a lost lemma, preserving its whole-word edges when it had them."""
 
     def lemmas(note: Node) -> list[str]:
         return [
@@ -649,9 +834,22 @@ def _check_lemmas(before: Document, after: Document) -> None:
     old = scripture.verses(before)
     for reference, verse in scripture.verses(after).items():
         was, words = scripture.plain(old[reference].text), scripture.plain(verse.text)
-        for (_, then), (_, now) in zip(old[reference].notes, verse.notes):
+        for (at, then), (now_at, now) in zip(old[reference].notes, verse.notes):
+            # Normalize the caller's offset without dropping its trailing space.
+            start = len(scripture.plain(old[reference].text[:at] + "\0")) - 1
+            now_start = len(scripture.plain(verse.text[:now_at] + "\0")) - 1
             for quoted, kept in zip(lemmas(then), lemmas(now)):
-                if quoted in was and kept not in words:
+                if quoted not in was:
+                    continue
+                if _phrase(quoted).match(was, start):
+                    lost = _phrase(kept).match(words, now_start) is None
+                else:
+                    lost = (
+                        _phrase(kept).search(words) is None
+                        if _phrase(quoted).search(was)
+                        else kept not in words
+                    )
+                if lost:
                     raise CheckFailed(
                         "Revision leaves a lemma its verse no longer has: "
                         f"{usj.book_code(after)} {reference}: {kept}"
@@ -769,8 +967,16 @@ def check_met(
         for word, entry in data["words"].items()
         for key in entry.get("notes", ())
     }
+    excepted = {(word, phrase) for phrase, word in exceptions(policy).items()}
     unused = sorted(
-        (set(data["words"]) | verses | set(data["punctuation"]) | passages | notes)
+        (
+            set(data["words"])
+            | verses
+            | set(data["punctuation"])
+            | passages
+            | notes
+            | excepted
+        )
         - met,
         key=str,
     )

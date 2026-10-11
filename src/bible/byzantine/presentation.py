@@ -42,7 +42,11 @@ def diff_spans(
     """
     if greek:
         before, after = greek_display(before), greek_display(after)
-    token = r"\w+(?:[’']\w+)*|\s+|[^\w\s]"
+    # English compounds are one anchor, rather than three competing with
+    # a shared clause such as "they have found". Greek tokenization stays put.
+    token = (
+        r"\w+(?:[’']\w+)*|\s+|[^\w\s]" if greek else r"\w+(?:[’'\-]\w+)*|\s+|[^\w\s]"
+    )
     left, right = re.findall(token, before), re.findall(token, after)
     # lower(), not casefold(): casefold erases Greek iota subscripts.
     keys_left = [word.lower() for word in left] if greek else left
