@@ -116,8 +116,15 @@ def test_editorial_note_styles_and_punctuation(
     assert rows["1SA 14:29"]["lemma"] == "destroyed the land"
     assert rows["PSA 113:24"]["note"] == "Gr. sing."
     assert "_suburbs_ above" in rows["JOS 21:13"]["note"]
+    assert rows["JOS 20:7#2"]["note"] == "or, _of Nephthali_"
     assert "_Lo! a blessing from you_ etc." in rows["1SA 30:26"]["note"]
-    assert rows["JHN 18:13 year"]["note"].startswith("_And Annas sent Christ")
+    assert rows["JHN 18:13 year"]["lemma"] is None
+    assert rows["JHN 18:13 year"]["note"] == (
+        "_And Annas sent Christ bound unto Caiaphas the high priest_, v. 24"
+    )
+    assert rows["2CO 4:8 in despair"]["note"] == (
+        "or, _altogether without help, or means_"
+    )
 
 
 @pytest.mark.parametrize(
@@ -1350,6 +1357,48 @@ def test_finished_readings_preserve_boundary_punctuation(
             "interposed himself by an oath",
         ),
         ("1PE 2:9 peculiar people", "peculiar", "purchased", "a purchased people"),
+        (
+            "MAT 17:27 a piece of money",
+            "a piece of money",
+            "a stater",
+            "thou shalt find a stater: that take",
+        ),
+        (
+            "LUK 1:45 that believed, for there",
+            "that believed, for there",
+            "which believed that there",
+            "she which believed that there shall be a performance",
+        ),
+        (
+            "LUK 4:41 to speak, for they knew that he was Christ",
+            "to speak: for they knew that he was Christ",
+            "to say that they knew him to be Christ",
+            "suffered them not to say that they knew him to be Christ.",
+        ),
+        (
+            "2CO 4:8 in despair",
+            "in despair",
+            "altogether without help, or means",
+            "we are perplexed, but not altogether without help, or means;",
+        ),
+        (
+            "TIT 2:9 answering again",
+            "answering again",
+            "gainsaying",
+            "not gainsaying;",
+        ),
+        (
+            "2PE 2:11 against them",
+            "against them",
+            "against themselves",
+            "bring not railing accusation against themselves before the Lord.",
+        ),
+        (
+            "REV 14:13 from henceforth, yea, saith the Spirit",
+            "from henceforth: Yea, saith the Spirit",
+            "from henceforth saith the Spirit, Yea",
+            "die in the Lord from henceforth saith the Spirit, Yea, that they may rest",
+        ),
     ],
 )
 def test_final_replacement_scopes_restore_the_former_construction(

@@ -1,6 +1,10 @@
 {
   "why": "The spelling, vocabulary and punctuation of the translation, revised by explicit editorial decisions. A word is respelt or modernized wherever the translation, its notes, and its front and back matter print it as a whole word; a word with a scope of scripture is revised only in numbered scripture and marked note lemmas (fq) and readings (fqa), wherever they stand. Book titles and metadata, headings, introduction paragraphs and explanatory commentary retain source grammar. Numbered scripture in d paragraphs, including Psalm superscriptions, remains in scope. Plain quotation marks do not establish scope. Global spelling, vocabulary and participle decisions affect source prose and run first, followed by a separate single sweep of scoped grammar decisions. A verse's change is made to the words of that verse alone, which must have them once, and to the notes that quote them. Verses' changes stand in groups, each group under the reason its changes share. Each gives its reason. An isolated alternative whose word is also a plural noun may name its stable source note as its exact context. Passage changes name a stable note key or a front/back-matter unit and the plain words met once there; only punctuation, associated spacing and sentence-initial capitalization may change. A phrase is revised as a word is; an stays before a silent h, and mine and thine where they stand alone. A word may except the phrases it must not change, which the edition must print. Words that a character style divides keep their division, and so does the lemma that quotes them at its note.",
   "words": {
+    "Pilats": {
+      "to": "Pilate's",
+      "why": "The house is Pilate’s; George has Pilats."
+    },
     "Hereticks": {
       "to": "Heretics",
       "why": "Apply the approved spelling modernization throughout the printed edition, including both capitalized occurrences in the King James preface."
@@ -6235,9 +6239,31 @@
         "JOS 15:18"
       ],
       "why": "The quoted alternative is a question, printed with its capital in Brenton (1844 p. 271; 1879 p. 316; 1900 p. 312); the note's first word is otherwise lowercased after its lemma."
+    },
+    "gain saying": {
+      "to": "gainsaying",
+      "why": "The participle of gainsay, printed as two words in the note on Titus 2:9."
+    },
+    "yea": {
+      "to": "Yea",
+      "scope": "scripture",
+      "notes": [
+        "REV 14:13 from henceforth, yea, saith the Spirit"
+      ],
+      "why": "In this alternative Yea opens what the Spirit says, as it does in the verse; this note alone."
     }
   },
   "verses": {
+    "luke-belief-clause": {
+      "why": "A comma rather than a colon before the reason, as George’s 1611 margin quotes the verse, so that the note’s lemma does not print two colons.",
+      "changes": [
+        {
+          "verse": "LUK 1:45",
+          "from": "that believed: for there",
+          "to": "that believed, for there"
+        }
+      ]
+    },
     "approved wording correction": {
       "why": "Apply the approved correction to the English through an explicit verse revision, preserving the pinned source transcription.",
       "changes": [
@@ -7067,6 +7093,36 @@
           "note": "MRK 7:3 oft",
           "from": "diligently, Theophylact",
           "to": "diligently; Theophylact"
+        }
+      ]
+    },
+    "second-batch-margin-punctuation": {
+      "why": "A comma after ‘some read’, as the other 1611 notes print it, and none between the subject ‘The word choenix’ and its verb.",
+      "changes": [
+        {
+          "note": "2PE 2:11 against them",
+          "from": "some read against",
+          "to": "some read, against"
+        },
+        {
+          "note": "REV 6:6 A measure",
+          "from": "choenix, signifieth",
+          "to": "choenix signifieth"
+        }
+      ]
+    },
+    "final-batch-margin-punctuation": {
+      "why": "No comma between ‘believed’ and ‘that there’, which says what she believed; a comma between ‘help’ and ‘or means’, which share ‘without’ in one rendering.",
+      "changes": [
+        {
+          "note": "2CO 4:8 in despair",
+          "from": "help or means",
+          "to": "help, or means"
+        },
+        {
+          "note": "LUK 1:45 that believed, for there",
+          "from": "which believed, that there",
+          "to": "which believed that there"
         }
       ]
     }

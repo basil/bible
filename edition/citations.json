@@ -301,7 +301,7 @@
       "source": "Rom. 1.19",
       "passages": "ROM 15:19",
       "print": "{ROM} 15:19",
-      "why": "The margin of 1611 has 1.19, and George after it, which is a slip of its printer's: 'fully to preach' is the 'fully preached' of Romans 15:19, and what may be known of God, in 1:19, is nothing to it."
+      "why": "'Fully to preach' is the 'fully preached' of Romans 15:19; Romans 1:19 is about what may be known of God. George has 1.19."
     },
     "ISA 26:19": {
       "source": "Ps. 110",
@@ -481,6 +481,12 @@
       "passages": "ROM 3:14",
       "print": "{ROM} 3:14",
       "why": "eBible’s misreading of 3. 14, which Brenton prints (1844 p. 82; 1879 p. 719; 1900 p. 715) and which quotes the next verse, ‘Whose mouth is full of cursing and bitterness’; his caller stands before that verse’s number. A link replaces this note, so the slip is recorded here rather than mended in the source."
+    },
+    "JHN 18:13 year": {
+      "source": "ver. 24",
+      "passages": "JHN 18:24",
+      "print": "v. 24",
+      "why": "The margin’s ‘ver. 24’ is John 18:24, printed as the edition prints a verse of the same chapter."
     }
   },
   "names": {

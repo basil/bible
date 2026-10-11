@@ -38,45 +38,29 @@ Most of these are probably slips of transcription, by eBible or George, but some
 - A note copied from elsewhere, or with eBible's words in it: its `note` override in `notes`, or an uncategorized `corrections` entry.
 - Words missing from the scripture itself: a correction there may mend only word spacing, so this needs its own decision, with evidence.
 
-### 1.1 References with the wrong number
-
-| Note | Prints | Probably |
-| --- | --- | --- |
-| COL 1:25 (1611) | Rom. 1.19 | Rom. 15.19 |
-
 Leave alone the references that count in the Hebrew or English way, as Brenton printed them: ISA 26:19 "Ps. 110" (109. 3 in the Greek); PSA 88:21#2 and PSA 91:11, which each point one verse low; and 2KI 12:15 "vide v. 13" (v. 14 here).
 
-### 1.2 Notes on the wrong verse or the wrong words
+### 1.1 Notes on the wrong verse or the wrong words
 
-- **Swapped pair.** MRK 7:4 (1611): George swaps the notes. "Or, beds" belongs to "tables", and the sextarius note to "pots". The lemmas already put them right; check the 1611 to confirm.
 - **A lemma on the wrong words.** JOS 18:5: "came to him: Gr. _went through_" should be on "came" alone, if the Greek has πρὸς αὐτόν. Brenton's caller stands before "came" in every printing.
 - **A note beside its own link.** PSA 9:27: Brenton's "Rom. 3. 14" (corrected from eBible's 8. 14 by a decision in `citations.json`) stands at the end of 9:27 in eBible, but his caller is before 9:28, whose link names Romans 3:14 too, so the page prints the reference twice. The build counts the note as merged into the link and so refuses a `verse` override on it; decide how to move or drop it.
 
-### 1.3 Notes copied or repeated from elsewhere
-
-- MAT 17:27 (1611): George's note ends "is 7.d. ob.", apparently copied from 18:28.
-
-### 1.4 Words missing
+### 1.2 Words missing
 
 - LAM 3:21: eBible has no note here, but Brenton prints "Gr. commit to." on "lay up" (1879 p. 992 of the scan), the note that GEN 19:13's "See Note, Lam. 3. 21" points to. A correction in the scripture itself may mend only word spacing, so supplying the note needs its own decision.
 
-### 1.5 Misspellings and misreadings
+### 1.3 Misspellings and misreadings
 
-- **1611.** GAL 5:16 (1611) has "fulfill", where the text has "fulfil". To check against a facsimile: JHN 18:28 (1611) "Pilats house"; TIT 2:9 (1611) "gain saying" (one word?); REV 6:6 (1611) "The word choenix, signifieth"; 2PE 2:11 (1611) "some read", in lowercase.
-
-### 1.6 Italics to check
-
-- 1CO 14:27 (1611): the override italicizes "by two or three sentences separately". Is it an alternative rendering, and so italic, or a paraphrase, and so roman?
+- **1611.** GAL 5:16 has "fulfill", where the text has "fulfil". Check against a facsimile.
 
 ## 2. Rules to decide
 
 Each of these is a question about a rule. One decision settles every note it covers.
 
-1. **1611 notes on a whole verse.** JHN 18:13 (1611), a note on the order of events, prints under "year". `kjv-notes.json` allows `"lemma": null`, as `brenton-notes.json` does. Decide whether to give the note no lemma. (The note on LUK 17:36 now stands at 17:35 as a note on the verse, beside the TR note that quotes the omitted verse.)
-2. **Notes on "the words in italics".** 2SA 17:8, 2SA 21:11 [also 2.3], 1SA 17:43 and 1KI 14:26#2 refer to words Brenton set in italics, which this edition prints in square brackets. Either print the bracketed words in italics too, or accept the mismatch.
-3. **Lemmas on a long passage.** HAG 2:14 ("Not in Hebrew.") and 2SA 21:11 [also 2.2] are about a whole bracketed passage, but their lemmas cover only its first clause. Decide whether a lemma that long is acceptable.
-4. **"or" inside one rendering.** The rules split "_X_ or _Y_" into two italic runs, which is wrong when the "or" belongs to a single rendering. Overrides join EXO 21:28, NUM 1:52, 1SA 20:6, PSA 25:12, PSA 32:4, PSA 50:21 and ACT 25:6 (1611). Still split: EXO 14:15 "_harness_ or _yoke the horses again_", 2CO 4:8 (1611) "_altogether without help_ or _means_", where the 1611 has a comma before "or", and 1SA 30:12 "_staid_ or _established in him_". Decide whether these three should be joined.
-5. **Two colons.** A lemma that keeps the verse's own colon prints two: "that believed: for there: or, …" (LUK 1:45 (1611); also LUK 4:41 (1611) and REV 14:13 (1611)). Decide whether the lemma should drop its colon.
+1. **Notes on "the words in italics".** 2SA 17:8, 2SA 21:11 [also 2.2], 1SA 17:43 and 1KI 14:26#2 refer to words Brenton set in italics, which this edition prints in square brackets. Either print the bracketed words in italics too, or accept the mismatch.
+2. **Lemmas on a long passage.** HAG 2:14 ("Not in Hebrew.") and 2SA 21:11 [also 2.1] are about a whole bracketed passage, but their lemmas cover only its first clause. Decide whether a lemma that long is acceptable.
+3. **"or" inside one rendering.** The rules split "_X_ or _Y_" into two italic runs, which is wrong when the "or" belongs to a single rendering. Overrides join EXO 21:28, NUM 1:52, 1SA 20:6, PSA 25:12, PSA 32:4, PSA 50:21 and ACT 25:6 (1611). Still split: EXO 14:15 "_harness_ or _yoke the horses again_", 1SA 30:12 "_staid_ or _established in him_". Decide whether these two should be joined.
+4. **Two colons.** A lemma that keeps the verse’s own colon prints two: "to speak: for they knew that he was Christ: or, …" (LUK 4:41 (1611)) and "from henceforth: Yea, saith the Spirit: or, …" (REV 14:13 (1611)). Decide whether these lemmas should keep their internal colon.
 
 ## 3. Readings from Codex Alexandrinus
 

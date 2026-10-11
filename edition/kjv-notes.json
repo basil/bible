@@ -203,7 +203,8 @@
     "JHN 18:13 year": {
       "note": "_And Annas sent Christ bound unto Caiaphas the high priest_, ver. 24",
       "quotation": true,
-      "why": "The words cite verse 24 rather than render year; preserve the quotation’s opening capital and set it in italic, with the reference roman"
+      "why": "The note quotes verse 24 on the order of events and renders nothing here, so it has no lemma. The quotation keeps its capital and is italic, the reference roman.",
+      "lemma": null
     },
     "JHN 18:22 with the palm": {
       "lemma": "with the palm of his hand",
@@ -330,7 +331,7 @@
     },
     "1CO 14:27 two...": {
       "lemma": "by two, or at the most by three, and that by course",
-      "why": "George's two... marks a span; the italic paraphrase stands for the whole phrase",
+      "why": "George’s two... marks a span; ‘by two or three sentences separately’ renders the whole of it, so it is italic.",
       "note": "_by two or three sentences separately_"
     },
     "1CO 15:2 what I preached": {
@@ -578,7 +579,7 @@
       "why": "George has Thine; the verse reads thyine"
     },
     "MAT 17:27 a piece of money": {
-      "why": "The note ends with a complete explanatory sentence, which retains its final full stop.",
+      "why": "‘A stater’ renders the whole of ‘a piece of money’, which stays the lemma; the explanation after it is a sentence and keeps its full stop.",
       "sentence": true
     },
     "ACT 17:19 Areopagus": {
@@ -695,6 +696,15 @@
     "HEB 6:17 confirmed it by an oath": {
       "lemma": "confirmed it",
       "why": "Scope only the unique changed words; the common context stays in the verse and is removed from the paired alternative."
+    },
+    "REV 6:6 A measure": {
+      "note": "The word _choenix_, signifieth a measure containing one wine quart, and the twelfth part of a quart",
+      "quotation": true,
+      "why": "The note explains the Greek word choenix, which is italic as a quotation. It is a sentence and keeps its capital and stop; revisions.json removes the comma before signifieth."
+    },
+    "2CO 4:8 in despair": {
+      "note": "Or, _altogether without help or means_",
+      "why": "‘Without’ governs both ‘help’ and ‘means’, so ‘altogether without help or means’ is one rendering of ‘in despair’, after the verse’s ‘not’, and one italic run. revisions.json adds its comma."
     }
   }
 }

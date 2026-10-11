@@ -1,4 +1,14 @@
 {
+  "matthew-stater-explanation": {
+    "why": "Half an ounce at five shillings the ounce is two shillings six pence, as the note says; the closing ‘is 7.d. ob.’, the Roman penny of the note on 18:28, contradicts it.",
+    "changes": [
+      {
+        "note": "MAT 17:27 a piece of money",
+        "from": " is 7.d. ob.",
+        "to": "."
+      }
+    ]
+  },
   "appendix-chapter-labels": {
     "why": "The chapter labels in the appendix's 3 Kingdoms section have no full stop after their numbers.",
     "changes": [
@@ -213,12 +223,6 @@
         "from": ".li 10.",
         "to": " pounds 10 shilling",
         "why": "the note is a sentence of its own, which keeps its full stop"
-      },
-      {
-        "note": "MAT 17:27 a piece of money",
-        "from": "7.d. ob.",
-        "to": "seven pence halfpenny.",
-        "why": "the sum as the notes on Matthew 20:2 and 22:19 and Mark 6:37 and 12:15 write it"
       },
       {
         "note": "MAT 18:28 pence",
