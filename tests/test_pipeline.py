@@ -35,12 +35,12 @@ def test_the_edition_prints_every_unit_once_in_the_manifests_order(
         "byzantine_units": 1939,
         "byzantine_edits": 858,
         "kjv_corrections": 83,
-        "byzantine_notes": 943,
+        "byzantine_notes": 941,
         "scripture_units": 78,
         "brenton_units": 51,
         "kjv_units": 27,
         "kjv_marginal_notes": 775,
-        "printed_notes": 4339,
+        "printed_notes": 4332,
         # The King James Bible's, less the four verses the Byzantine text
         # lacks and the empty chapter eBible left in Proverbs.
         "verses": 36604,
@@ -174,7 +174,12 @@ def test_a_decision_that_nothing_meets_is_refused(
 ) -> None:
     reports = [
         annotate.Report(
-            keys={row["key"] for rows in edition.notes.values() for row in rows},
+            keys={row["key"] for rows in edition.notes.values() for row in rows}
+            | {
+                key
+                for key, decision in policy.brenton_notes["notes"].items()
+                if decision.get("omitted")
+            },
             edited=[
                 change["note"]
                 for group in policy.prose.values()

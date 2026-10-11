@@ -51,7 +51,7 @@
       "source_note": "\\fqa Alex. \\ft their."
     },
     "GEN 5:25": {
-      "why": "Print the corrected Alexandrine age with the matching lifespan in 5:26; note the apparent original age of 167.",
+      "why": "Print the corrected Alexandrine age with the matching lifespan in 5:26; note the apparent original age of 167. The unique changed numeral alone gives the paired eighty / sixty reading; the common age wording stays outside the note.",
       "swete": {
         "volume": 1,
         "page": 8,
@@ -60,7 +60,7 @@
         "agrees": true
       },
       "from": "an hundred and sixty and seven years",
-      "note": "\\fl Vat. \\fq an hundred and sixty and seven years\\ft .",
+      "note": "\\fl Vat. \\fqa sixty\\ft .",
       "english": {
         "source": "brenton",
         "span": [15, 24],
@@ -71,7 +71,8 @@
           }
         ]
       },
-      "source_note": "\\fqa Alex. \\ft 187 years."
+      "source_note": "\\fqa Alex. \\ft 187 years.",
+      "lemma": "eighty"
     },
     "GEN 5:26": {
       "why": "Print the corrected Alexandrine lifespan with the matching age in 5:25.",
@@ -209,7 +210,7 @@
       "source_note": "\\fqa Alex. \\ft 79 years."
     },
     "GEN 11:25": {
-      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. The unique changed numeral alone gives the paired twenty-nine / twenty-five reading; the common age wording stays outside the note.",
       "swete": {
         "volume": 1,
         "page": 18,
@@ -228,7 +229,9 @@
           }
         ]
       },
-      "source_note": "\\fqa Alex. \\ft 129 years."
+      "source_note": "\\fqa Alex. \\ft 129 years.",
+      "lemma": "twenty-nine",
+      "note": "\\fl Vat. \\fqa twenty-five\\ft ."
     },
     "GEN 12:5": {
       "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",

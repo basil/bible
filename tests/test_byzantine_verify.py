@@ -662,6 +662,7 @@ def test_finished_verse_flags_follow_the_cause(cause: str) -> None:
         "units": [],
         "dispositions": rows,
         "structure": NO_STRUCTURE,
+        "note_lemmas": [],
     }
     stages.stage_verify(context)
     assert bool(rows[1].get("flags")) == (cause == "correction")

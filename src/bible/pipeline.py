@@ -667,6 +667,8 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
     revised: revision.MetRevisions = set()
     comparisons: dict[str, Document] = {}
     finished: dict[str, Document] = {}
+    # A row of the review for every note, read from the books as finished.
+    note_rows: dict[str, list[annotate.NoteRow]] = {}
     for code, doc in {**front, **books}.items():
         if code in byzantine.BOOKS:
             comparisons[code] = revision.punctuated(
@@ -680,6 +682,10 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
             policy,
             revised,
         )
+        if code in books:
+            note_rows[code] = annotate.finished_rows(
+                finished[code], reports[code].rows, policy.brenton_notes["notes"]
+            )
     labels = {
         "tr": ctx.terms.display("textus-receptus"),
         "rp": ctx.terms.display("robinson-pierpont"),
@@ -747,7 +753,7 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
         brenton_units=units_of("brenton"),
         kjv_units=units_of("kjv"),
         kjv_marginal_notes=sum(len(n) for n in read_sources.marginal.values()),
-        printed_notes=sum(len(r.rows) for r in reports.values()),
+        printed_notes=sum(len(rows) for rows in note_rows.values()),
         verses=sum(len(v) for c in ctx.inventory.values() for v in c.values()),
     )
     return Edition(
@@ -756,7 +762,7 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
         frozenset(books),
         frozenset(pages),
         MappingProxyType(ctx.inventory),
-        MappingProxyType({code: tuple(r.rows) for code, r in reports.items()}),
+        MappingProxyType({code: tuple(rows) for code, rows in note_rows.items()}),
         MappingProxyType(summary),
         met,
         promoted.byzantine,

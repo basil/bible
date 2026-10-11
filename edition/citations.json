@@ -445,6 +445,12 @@
       "passages": "PSA 144:13",
       "print": "144:13",
       "why": "Of the Psalms, which the sentence names."
+    },
+    "ISA 29:13": {
+      "source": "Mat. 8. 9",
+      "passages": "MAT 15:8-9",
+      "print": "{MAT} 15:8–9",
+      "why": "The quotation of Isaiah 29:13 is Matthew 15:8–9, not Matthew 8:9 (the centurion’s command). Correct this note’s reference alone, preserving the source form for comparison."
     }
   },
   "names": {

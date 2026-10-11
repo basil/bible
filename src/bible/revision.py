@@ -35,7 +35,7 @@ from collections.abc import Set as AbstractSet
 from difflib import SequenceMatcher
 
 import bible.policy
-from bible import repairs, scripture, usfm, usj
+from bible import notes, repairs, scripture, usfm, usj
 from bible.checks import CheckFailed, require, require_fields
 from bible.policy_schema import RevisionChange, WordingChange
 from bible.sources import NEW_TESTAMENT
@@ -988,6 +988,7 @@ def revised(
         return doc
     verses = scripture.verses(doc)
     edits = []
+    boundaries: dict[str, str] = {}
     for change in changes:
         key = change["verse"]
         reference = key.split()[1]
@@ -1000,6 +1001,16 @@ def revised(
             f"Revision not met once in its verse: {key}: {old}",
         )
         start, end, new = _edit(found[0].start(), old, change["to"])
+        # A stop inserted just after a replacement lemma belongs to the scope
+        # the note declares, not to its printed lemma (notes.boundary_stop).
+        # The lemma is plain, as the verse's line breaks are not.
+        if start == end and len(new) == 1 and new in notes.BOUNDARY_STOPS:
+            for offset, note in verse.notes:
+                if note.get("category") != "edition":
+                    continue
+                phrase = notes.lemma_of(note)
+                if phrase and scripture.plain(verse.text[offset:start]) == phrase:
+                    boundaries[note["x-key"]] = new
         # New words take the style of the first words they replace, so words
         # set across a style or a note would lose it; words only deleted
         # lose nothing.
@@ -1050,10 +1061,15 @@ def revised(
             return {**item, "content": content}
 
         for _, note in verses[reference].notes:
-            replacements[id(note)] = {
-                **note,
-                "content": usj.mapped(note["content"], lemma),
-            }
+            changed: Node = {**note, "content": usj.mapped(note["content"], lemma)}
+            if note.get("x-key") in boundaries:
+                phrase = notes.lemma_of(changed)
+                assert phrase is not None
+                changed["x-scope"] = {
+                    **note.get("x-scope", {}),
+                    "declared": phrase + boundaries[note["x-key"]],
+                }
+            replacements[id(note)] = changed
 
     def swap(content: Content) -> Content:
         return [
@@ -1069,7 +1085,43 @@ def revised(
             for item in content
         ]
 
-    return usj.with_content(doc, swap)
+    result = usj.with_content(doc, swap)
+    check_revised_notes(code, doc, result)
+    return result
+
+
+def check_revised_notes(code: str, before: Document, after: Document) -> None:
+    """A verse revision may change a note's lemma, and the scope declared for
+    it, and nothing else: its readings, explanations, labels, witness and
+    category are the source's or the editor's words, not the verse's."""
+
+    def keyed(doc: Document) -> dict[str, Node]:
+        return {n["x-key"]: n for n in usj.notes_of(doc["content"]) if "x-key" in n}
+
+    def body(note: Node) -> Content:
+        return [
+            part
+            for part in note["content"]
+            if not usj.is_type(part, "char", "fr")
+            and not usj.is_type(part, "char", "fq")
+        ]
+
+    was, now = keyed(before), keyed(after)
+    require(was.keys() == now.keys(), f"Revision changed the notes of a book: {code}")
+    for key, note in now.items():
+        old = was[key]
+        scope, former = note.get("x-scope", {}), old.get("x-scope", {})
+        require(
+            body(note) == body(old)
+            and note.get("category") == old.get("category")
+            and {k: v for k, v in scope.items() if k != "declared"}
+            == {k: v for k, v in former.items() if k != "declared"}
+            and (
+                not former.get("declared")
+                or scope.get("declared") == former["declared"]
+            ),
+            f"Revision changed a note's construction: {code} {key}",
+        )
 
 
 def check_met(

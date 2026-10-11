@@ -405,5 +405,52 @@
         "to": ""
       }
     ]
+  },
+  "footnote-scopes": {
+    "why": "Keep each inherited gloss on its own words, without repeating unrelated apparatus. The source wording is retained where it belongs.",
+    "changes": [
+      {
+        "note": "DEU 9:22",
+        "from": "Taberah, Massah, and Kibroth Hattavah",
+        "to": "Taberah",
+        "why": "The three source callers gloss burning, temptation, and graves of lust respectively; each note gives only its corresponding Hebrew place name."
+      },
+      {
+        "note": "DEU 9:22#2",
+        "from": "Taberah, Massah, and Kibroth Hattavah",
+        "to": "Massah",
+        "why": "The three source callers gloss burning, temptation, and graves of lust respectively; each note gives only its corresponding Hebrew place name."
+      },
+      {
+        "note": "DEU 9:22#3",
+        "from": "Taberah, Massah, and Kibroth Hattavah",
+        "to": "Kibroth Hattavah",
+        "why": "The three source callers gloss burning, temptation, and graves of lust respectively; each note gives only its corresponding Hebrew place name."
+      },
+      {
+        "note": "GEN 3:15#2",
+        "from": " Other readings of the passage are πλήξει and πλήξεις and τειρήσει and τειρήσεις. See Parkhurst in שף.",
+        "to": "",
+        "why": "The same apparatus is printed in the first note of this verse; retain the second verb gloss without repeating it."
+      },
+      {
+        "note": "2TI 2:6 The husbandman that laboureth, must be first partaker of the fruits",
+        "from": "the husbandman laboring first must be partaker of the fruits",
+        "to": "laboring first must be",
+        "why": "Shorten both sides together, retaining the source comparison and the common words outside the replacement."
+      },
+      {
+        "note": "HEB 6:17 confirmed it by an oath",
+        "from": "interposed himself by an oath",
+        "to": "interposed himself",
+        "why": "Shorten both sides together, retaining the source comparison and the common words outside the replacement."
+      },
+      {
+        "note": "1PE 2:9 peculiar people",
+        "from": "a purchased people",
+        "to": "purchased",
+        "why": "Shorten both sides together, retaining the source comparison and the common words outside the replacement."
+      }
+    ]
   }
 }

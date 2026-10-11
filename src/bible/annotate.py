@@ -34,17 +34,27 @@ from bible.scripture import word_spans, words_of
 from bible.usj import Content, Document, Node
 
 
-class NoteRow(TypedDict):
+class NoteDerivation(TypedDict):
+    """How a note was read: recorded as it is set, for its row of the review."""
+
     key: str
     reference: str
     rule: str
-    verse: str
-    lemma: str | None
+    # The words glossed, which a lemma widens until they occur once, and the
+    # rendering that measured them.
     glossed: str | None
     reading: str | None
-    note: str
     source: str
     style: str
+
+
+class NoteRow(NoteDerivation):
+    """A note's row of the review, with the verse, the lemma and the note as
+    the finished book prints them."""
+
+    verse: str
+    lemma: str | None
+    note: str
 
 
 @dataclass(frozen=True)
@@ -90,9 +100,10 @@ class Report:
     # The keys of the citation decisions and prose changes that were met.
     decided: set[str] = field(default_factory=set)
     edited: list[str] = field(default_factory=list)
-    # Every printed note's key, and one row of the review for each.
+    # Every printed or omitted note's key, which a decision may name, and
+    # how each printed note was read, for the review.
     keys: set[str] = field(default_factory=set)
-    rows: list[NoteRow] = field(default_factory=list)
+    rows: list[NoteDerivation] = field(default_factory=list)
     # The keys of the source notes a decision leaves out.
     omitted: list[str] = field(default_factory=list)
     # The keys of the edition's rendering notes a reversed 1611 margin
@@ -120,38 +131,34 @@ def printed(
     ctx: Context,
     report: Report,
 ) -> Node:
-    """A note as the edition prints it, and its row of the review."""
+    """A note as the edition prints it, and how it was read for its row of
+    the review (finished_rows)."""
     key, verse, words = read.key, read.verse, read.words
     body = notes.with_terms(read.body, ctx.terms)
     for edit in ctx.prose.get(key, ()):
         body = notes.edited(body, edit["from"], edit["to"], key)
         report.edited.append(key)
     lemma = lemmas.lemma_text(verse.text, words, span) if span else None
+    # A changed boundary stop belongs to the scope the note declares, not to
+    # its printed lemma (notes.boundary_stop): it follows the words declared,
+    # so a lemma widened past them takes in none.
+    boundary = ""
+    if span and glossed and span[1] == glossed[1]:
+        stop, end = notes.boundary_stop(read.scope), words[span[1]][2]
+        if stop and verse.text[end : end + 1] == stop:
+            boundary = stop
     runs, terms, original = notes.displayed(
         body, *lemmas.echoes(verse.text, words, span, glossed), books=ctx.books
     )
     runs = notes.finished(runs, terms, lemma, exception.get("sentence"), ctx.terms, key)
     report.keys.add(key)
-    marks = {read.offset: "‸"}
-    if span:
-        first, last = words[span[0]][1], words[span[1]][2]
-        marks[first] = marks.get(first, "") + "**"
-        marks[last] = "**" + marks.get(last, "")
-    shown = verse.text
-    for at in sorted(marks, reverse=True):
-        shown = shown[:at] + marks[at] + shown[at:]
     report.rows.append(
         dict(
             key=key,
             reference=read.reference,
             rule=rule,
-            verse=scripture.plain(shown),
-            lemma=lemma,
-            # The words glossed, which a lemma widens until they occur once,
-            # and the rendering that measured them.
             glossed=lemmas.lemma_text(verse.text, words, glossed) if glossed else None,
             reading=read.body.alternative,
-            note=notes.underscored(runs),
             source=scripture.plain(read.source),
             style=body.rule,
         )
@@ -159,6 +166,9 @@ def printed(
     extra = usj.Extra({"x-key": key})
     if read.category:
         extra["category"] = read.category
+    if boundary:
+        assert lemma is not None
+        extra["x-scope"] = {"declared": lemma + boundary}
     return notes.footnote(read.reference, lemma, runs, **extra)
 
 
@@ -182,6 +192,10 @@ def brenton(
         for offset, note in source_verse.notes:
             key = note["x-key"]
             exception = exceptions.get(key, {})
+            if exception.get("omitted"):
+                report.keys.add(key)
+                report.omitted.append(key)
+                continue
             override = exception.get("note")
             reference, verse = source_reference, source_verse
             if "verse" in exception:
@@ -247,7 +261,7 @@ def brenton(
     )
     corrected = sorted(k for k in merged if k.partition(" ")[2] in mended)
     require(not corrected, f"Brenton correction to a note a link replaces: {corrected}")
-    replacements: dict[str, Node | None] = {}
+    replacements: dict[str, Node | None] = {key: None for key in report.omitted}
     moved: list[tuple[str, int, Node]] = []
     for read in found:
         if read.key in merged:
@@ -814,3 +828,107 @@ def check_notes(policy: bible.policy.Policy, reports: Iterable[Report]) -> None:
         edited == declared,
         f"Prose changes to notes not met once each: {sorted((declared - edited) + (edited - declared))}",
     )
+
+
+def marked(text: str, offset: int, span: tuple[int, int] | None) -> str:
+    """The verse for the review: ‸ where the note stands, and ** about the
+    words it is about."""
+    marks = {offset: "‸"}
+    if span:
+        start, end = span
+        marks[start] = marks.get(start, "") + "**"
+        marks[end] = "**" + marks.get(end, "")
+    for at in sorted(marks, reverse=True):
+        text = text[:at] + marks[at] + text[at:]
+    return text
+
+
+def scope_span(
+    text: str,
+    words: lemmas.Words,
+    offset: int,
+    note: Node,
+    occurrence: int | None = None,
+) -> tuple[int, int]:
+    """The words a finished note is about, as offsets of its verse: its
+    lemma, which occurs once (or at the named occurrence, where a deliberately
+    narrow note stands), and the boundary stop its scope declares."""
+    key = note.get("x-key")
+    lemma = present(notes.lemma_of(note), f"Finished note without a lemma: {key}")
+    tokens = words_of(lemma)
+    hits = lemmas.occurrences(words, tokens)
+    if occurrence is not None:
+        require(
+            0 < occurrence <= len(hits) and words[hits[occurrence - 1]][1] == offset,
+            f"Finished narrow note lost its occurrence: {key}",
+        )
+        first = hits[occurrence - 1]
+    else:
+        require(len(hits) == 1, f"Finished note lemma is not unique: {key}")
+        first = hits[0]
+    start, end = words[first][1], words[first + len(tokens) - 1][2]
+    stop = notes.boundary_stop(note.get("x-scope"))
+    require(
+        not stop or text[end : end + 1] == stop,
+        f"Finished note boundary stop is missing: {key}",
+    )
+    require(
+        scripture.plain(text[start:end]) == scripture.plain(lemma),
+        f"Finished note lemma does not match its verse: {key}",
+    )
+    return start, end + len(stop)
+
+
+def finished_rows(
+    document: Document,
+    rows: Sequence[NoteDerivation],
+    exceptions: Mapping[str, NoteOverride] | None = None,
+) -> list[NoteRow]:
+    """The rows of the review, each note's verse, lemma and text read from
+    the finished book, with how annotation read it. A finished lemma must
+    still identify one passage, with any boundary stop it declares."""
+    by_key = {row["key"]: row for row in rows}
+    found: dict[str, NoteRow] = {}
+    for reference, verse in scripture.verses(document).items():
+        # The verse's words, read once if a note of it has a lemma.
+        words: lemmas.Words | None = None
+        for offset, note in verse.notes:
+            key = note.get("x-key")
+            if key not in by_key:
+                continue
+            require(key not in found, f"Duplicate finished note: {key}")
+            lemma = notes.lemma_of(note)
+            span = None
+            if lemma:
+                words = word_spans(verse.text) if words is None else words
+                decision = (exceptions or {}).get(key, {})
+                occurrence = (
+                    decision["occurrence"] if decision.get("widen") is False else None
+                )
+                span = scope_span(verse.text, words, offset, note, occurrence)
+            # A marker takes the space after it, so a reading's field ends
+            # with the space before the next words; the row gives it back.
+            runs: list[tuple[str, str]] = []
+            for n in note["content"]:
+                if not isinstance(n, dict) or n.get("marker") in {"fr", "fq"}:
+                    continue
+                value = usj.text_of(n["content"])
+                if n.get("marker") != "fqa":
+                    runs.append(("commentary", value))
+                    continue
+                kept = value.rstrip()
+                runs.append(("reading", kept))
+                if kept != value:
+                    runs.append(("commentary", value[len(kept) :]))
+            found[key] = {
+                **by_key[key],
+                "reference": reference,
+                "verse": scripture.plain(marked(verse.text, offset, span)),
+                "lemma": lemma,
+                "note": notes.underscored(runs),
+            }
+    require(
+        set(found) == set(by_key),
+        f"Finished notes lost: {sorted(set(by_key) - set(found))}",
+    )
+    return [found[row["key"]] for row in rows]

@@ -157,9 +157,8 @@
       "why": "meet for renders worthy of (fruits meet for repentance)"
     },
     "LUK 10:22 All these": {
-      "anchor": "All things",
-      "why": "the note concerns the words introducing the verse, which reads All things",
-      "uncategorized": true
+      "omitted": true,
+      "why": "The edition already prints the turning to the disciples; this inherited addition notice is stale, and the TR omission is recorded in the edition note."
     },
     "LUK 11:33 bushell": {
       "anchor": "bushel",
@@ -382,8 +381,9 @@
     "GAL 4:24 answereth...which now is": {
       "verse": "4:25",
       "anchor": "answereth",
-      "why": "the words are in 4:25, and answereth to Jerusalem which now is",
-      "uncategorized": true
+      "why": "the words are in 4:25, and answereth to Jerusalem which now is; is in the same rank with replaces answereth to, so the lemma takes in to and substitution leaves no second to",
+      "uncategorized": true,
+      "lemma": "answereth to"
     },
     "GAL 5:16 ye shall not fulfill": {
       "anchor": "ye shall not fulfil",
@@ -542,8 +542,8 @@
       "why": "wood renders matter (how great a wood)"
     },
     "1PE 2:9 peculiar people": {
-      "lemma": "a peculiar people",
-      "why": "the rendering has its own a"
+      "lemma": "peculiar",
+      "why": "Scope only the unique changed words; the common context stays in the verse and is removed from the paired alternative."
     },
     "1PE 2:17 Honour": {
       "occurrence": 1,
@@ -675,6 +675,26 @@
       "anchor": "by glory and virtue",
       "former": "to glory and virtue",
       "why": "The rendering correction adopts the 1611 alternative in the text; reverse the margin editorially to quote the former King James wording on the current words, rather than omit it."
+    },
+    "GAL 4:20 stand in doubt of you": {
+      "lemma": "I stand in doubt of you",
+      "why": "The source alternative replaces this whole phrase; include its subject or governed preposition so substitution does not repeat I or leave a second to or of."
+    },
+    "HEB 11:22 made mention": {
+      "lemma": "made mention of",
+      "why": "The source alternative replaces this whole phrase; include its subject or governed preposition so substitution does not repeat I or leave a second to or of."
+    },
+    "ACT 5:3 to lie": {
+      "lemma": "to lie to",
+      "why": "to deceive renders to lie to (to deceive the Holy Spirit)"
+    },
+    "2TI 2:6 The husbandman that laboureth, must be first partaker of the fruits": {
+      "lemma": "that laboureth must be first",
+      "why": "Scope only the unique changed words; the common context stays in the verse and is removed from the paired alternative."
+    },
+    "HEB 6:17 confirmed it by an oath": {
+      "lemma": "confirmed it",
+      "why": "Scope only the unique changed words; the common context stays in the verse and is removed from the paired alternative."
     }
   }
 }

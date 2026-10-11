@@ -226,7 +226,7 @@ def check(policy: Policy) -> None:
     # note of either source may say which verse it belongs to.
     note_fields = {"lemma", "note", "sentence", "occurrence", "quotation"}
     for name, notes, fields in (
-        ("Brenton", policy.brenton_notes, note_fields | {"verse", "widen"}),
+        ("Brenton", policy.brenton_notes, note_fields | {"verse", "widen", "omitted"}),
         (
             "1611",
             policy.kjv_notes,

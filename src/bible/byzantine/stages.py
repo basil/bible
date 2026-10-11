@@ -502,6 +502,7 @@ def stage_verify(context: Context) -> Context:
         context["units"],
         context["dispositions"],
         context["structure"],
+        context["note_lemmas"],
     )
     problems = verify.finished_verses(
         context["documents"],

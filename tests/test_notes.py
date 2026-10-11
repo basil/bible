@@ -14,7 +14,16 @@ from conftest import book, changed, verse_lines
 import bible.annotate
 import bible.pipeline
 import bible.policy
-from bible import annotate, crossrefs, lemmas, notes, scripture, terminology, usj
+from bible import (
+    annotate,
+    crossrefs,
+    lemmas,
+    notes,
+    revision,
+    scripture,
+    terminology,
+    usj,
+)
 from bible.checks import CheckFailed
 from bible.usj import Content, Document, Node
 
@@ -611,10 +620,10 @@ def test_a_sign_after_no_witness_is_refused(
     assert terminology.recognize(words, registry, note=False)
 
 
-def test_every_note_of_the_sources_is_printed_or_replaced_by_a_link(
+def test_every_note_is_printed_replaced_by_a_link_or_explicitly_omitted(
     edition: bible.pipeline.Edition,
 ) -> None:
-    assert edition.summary["printed_notes"] == 4339
+    assert edition.summary["printed_notes"] == 4332
     rows = [row for listed in edition.notes.values() for row in listed]
     assert len({row["key"] for row in rows}) == len(rows)
     # The 1611 margin is printed on the New Testament alone, and whole but
@@ -636,8 +645,8 @@ def test_every_note_of_the_sources_is_printed_or_replaced_by_a_link(
         1 for o in edition.policy.kjv_notes["notes"].values() if o.get("omitted")
     )
     assert edition.summary["kjv_marginal_notes"] == 775
-    assert margin == 775 - omitted == 759
-    assert edition.summary["byzantine_notes"] == 943
+    assert margin == 775 - omitted == 758
+    assert edition.summary["byzantine_notes"] == 941
     # A widened lemma's rendering takes in the same words (Matthew 6:1).
     row = next(row for row in edition.notes["MAT"] if row["key"] == "MAT 6:1 of")
     assert (row["lemma"], row["note"]) == ("of your Father", "or, _with your Father_")
@@ -1020,8 +1029,9 @@ def test_former_readings_restore_the_eight_marginal_notes(
         code, prepared, [source_note], ctx, original=read.kjv[code]
     )
     assert scripture.verses(comparison)[reference].text == verse.text
-    assert report.rows[0]["lemma"] == anchor
-    assert report.rows[0]["note"] == row["note"]
+    finished = annotate.finished_rows(comparison, report.rows)
+    assert finished[0]["lemma"] == anchor
+    assert finished[0]["note"] == row["note"]
 
 
 @pytest.mark.parametrize(
@@ -1117,7 +1127,7 @@ def test_reversing_a_marginal_note_leaves_its_inputs_unchanged(
     assert (
         scripture.verses(result)["99:2"].text == scripture.verses(prepared)["99:2"].text
     )
-    assert report.rows[0]["note"] == "or, _gone out_"
+    assert annotate.finished_rows(result, report.rows)[0]["note"] == "or, _gone out_"
 
 
 def test_mark_fist_correction_preserves_the_marginal_note(
@@ -1144,3 +1154,273 @@ def test_mark_fist_correction_preserves_the_marginal_note(
     assert usj.text_of(note["content"]).endswith(
         "with the fist: or, oft; or, diligently; Theophylact, up to the elbow."
     )
+
+
+@pytest.mark.parametrize(
+    "key,lemma,alternative",
+    [
+        (
+            "GAL 4:20 stand in doubt of you",
+            "I stand in doubt of you",
+            "I am perplexed for you",
+        ),
+        (
+            "GAL 4:24 answereth...which now is",
+            "answereth to",
+            "is in the same rank with",
+        ),
+        ("HEB 11:22 made mention", "made mention of", "remembered"),
+        ("LUK 2:21#1 TR", "circumcising him", "the circumcising of the child"),
+        ("REV 21:16#1 TR", "equal, each twelve thousand furlongs", "equal"),
+        ("LUK 20:31#1 TR", "likewise", "omits"),
+    ],
+)
+def test_repaired_footnotes_replace_their_whole_construction(
+    edition: bible.pipeline.Edition, key: str, lemma: str, alternative: str
+) -> None:
+    row = next(r for rows in edition.notes.values() for r in rows if r["key"] == key)
+    assert row["lemma"] == lemma
+    assert alternative in row["note"]
+
+
+def test_unrelated_and_stale_source_notes_are_omitted(
+    edition: bible.pipeline.Edition,
+) -> None:
+    keys = {r["key"] for rows in edition.notes.values() for r in rows}
+    assert not keys & {
+        "EXO 32:14",
+        "2SA 22:27",
+        "1KI 11:27",
+        "LUK 10:22 All these",
+        "LUK 2:21#1 TR#2",
+    }
+    judges = {r["key"]: r for r in edition.notes["JDG"]}
+    assert judges["JDG 20:10"]["reference"] == "20:13"
+    assert judges["JDG 20:13"]["reference"] == "20:11"
+    places = [
+        r["note"] for r in edition.notes["DEU"] if r["key"].startswith("DEU 9:22")
+    ]
+    assert places == ["Heb. _Taberah_", "Heb. _Massah_", "Heb. _Kibroth Hattavah_"]
+
+
+@pytest.mark.parametrize(
+    "key,lemma,expected",
+    [
+        ("JOS 21:13", "Chebron, and the suburbs", "q.d. _glebe_."),
+        ("ISA 14:2#2", "they shall be multiplied", "i.e., _the Gentiles_"),
+        (
+            "1KI 11:33#2",
+            "the abomination of the children of Ammon",
+            "or, _provocation_",
+        ),
+        ("1KI 7:43", "porch of the pillars", "or, _portico_"),
+        ("2KI 19:23#2", "height of his cedar", "Gr. _bulk_ or _size_"),
+        ("GEN 4:14", "and I shall be hidden", "or, _then shall I be_"),
+        ("1SA 14:40", "will be under subjection", "Gr. _become slaves_"),
+        ("1SA 23:11", "Will the place be shut up", "i.e., _besieged_"),
+        ("JOS 21:4", "out of the tribe of Juda", "Gr. _from_"),
+        ("1SA 26:24#2", "be precious", "Gr. _magnified_"),
+        ("ISA 6:13", "there shall be", "Gr. _is_"),
+    ],
+)
+def test_identifying_lemmas_do_not_add_words_to_explanations(
+    edition: bible.pipeline.Edition, key: str, lemma: str, expected: str
+) -> None:
+    # A lemma may be widened to identify its place, but the explanation
+    # prints Brenton's own words, neither echoed with the lemma's context nor
+    # completed into a substitution.
+    row = next(r for rows in edition.notes.values() for r in rows if r["key"] == key)
+    assert row["lemma"] == lemma
+    assert expected in row["note"]
+
+
+@pytest.mark.parametrize(
+    "key",
+    [
+        "1KI 22:41",
+        "2KI 15:13",
+        "JOL 2:3",
+    ],
+)
+def test_historical_glosses_are_explanations(
+    edition: bible.pipeline.Edition,
+    key: str,
+) -> None:
+    row = next(r for rows in edition.notes.values() for r in rows if r["key"] == key)
+    assert row["reading"] is None
+    assert row["note"]
+
+
+@pytest.mark.parametrize("mutation", ["alternative", "ambiguous", "boundary"])
+def test_finished_checks_refuse_damaged_notes(
+    edition: bible.pipeline.Edition,
+    mutation: str,
+) -> None:
+    original = edition.documents["ROM"]
+    document = deepcopy(original)
+    rows = edition.notes["ROM"]
+    note = next(
+        n
+        for n in usj.notes_of(document["content"])
+        if n.get("x-key") == "ROM 12:2#1 TR"
+    )
+    # The punctuation edit in 12:1 shares the unit's key with its next note.
+    if mutation == "alternative":
+        field = next(n for n in note["content"] if usj.is_type(n, "char", "fqa"))
+        field["content"] = ["damaged alternative"]
+        with pytest.raises(CheckFailed, match="changed a note's construction"):
+            revision.check_revised_notes("ROM", original, document)
+    elif mutation == "ambiguous":
+        field = next(n for n in note["content"] if usj.is_type(n, "char", "fq"))
+        field["content"] = ["God: "]
+        with pytest.raises(CheckFailed, match="not unique"):
+            annotate.finished_rows(document, rows)
+    else:
+        verse = scripture.verses(document)["12:1"]
+        document = scripture.edited(
+            document,
+            [(verse, len(verse.text.rstrip()) - 1, len(verse.text.rstrip()), [])],
+        )
+        with pytest.raises(CheckFailed, match="boundary stop"):
+            annotate.finished_rows(document, rows)
+
+
+@pytest.mark.parametrize(
+    "key,boundary,stop",
+    [
+        ("ROM 12:2#1 TR", ":", "."),
+        ("COL 1:24#1 TR", ".", ";"),
+        ("ACT 24:6#1 TR", ":", "."),
+        ("2CO 1:6#1 TR", ";", "."),
+        ("1JN 5:7#1 TR", ",", "."),
+    ],
+)
+def test_finished_readings_preserve_boundary_punctuation(
+    edition: bible.pipeline.Edition,
+    key: str,
+    boundary: str,
+    stop: str,
+) -> None:
+    code = key.split()[0]
+    note = next(
+        n
+        for n in usj.notes_of(edition.documents[code]["content"])
+        if n.get("x-key") == key
+    )
+    fields = {
+        n["marker"]: usj.text_of(n["content"])
+        for n in note["content"]
+        if isinstance(n, dict)
+    }
+    declared = note["x-scope"]["declared"]
+    assert declared is not None and declared.endswith(boundary)
+    assert fields["fqa"].endswith(stop)
+    assert not fields["fq"].endswith(boundary + ": ")
+
+
+@pytest.mark.parametrize(
+    "key,lemma,alternative,former",
+    [
+        ("2CO 12:2 rendering#2", "Christ", "Christ above", "in Christ above fourteen"),
+        ("ZEC 3:4", "long", "full length", "with a full length robe"),
+        (
+            "JHN 17:11#2 TR",
+            "them through thy own name which",
+            "through thy own name those whom",
+            "keep through thy own name those whom thou hast given me",
+        ),
+        (
+            "REV 4:4#1 TR",
+            "upon the seats",
+            "upon the seats I saw",
+            "upon the seats I saw four and twenty elders",
+        ),
+        ("GEN 5:25", "eighty", "sixty", "a hundred and sixty and seven years"),
+        ("GEN 11:25", "twenty-nine", "twenty-five", "a hundred and twenty-five years"),
+        (
+            "2TI 2:6 The husbandman that laboureth, must be first partaker of the fruits",
+            "that laboureth must be first",
+            "labouring first must be",
+            "The husbandman labouring first must be partaker of the fruits",
+        ),
+        (
+            "HEB 6:17 confirmed it by an oath",
+            "confirmed it",
+            "interposed himself",
+            "interposed himself by an oath",
+        ),
+        ("1PE 2:9 peculiar people", "peculiar", "purchased", "a purchased people"),
+    ],
+)
+def test_final_replacement_scopes_restore_the_former_construction(
+    edition: bible.pipeline.Edition,
+    key: str,
+    lemma: str,
+    alternative: str,
+    former: str,
+) -> None:
+    code = key.split()[0]
+    row = next(r for r in edition.notes[code] if r["key"] == key)
+    verse = scripture.verses(edition.documents[code])[row["reference"]]
+    offset, note = next((at, n) for at, n in verse.notes if n.get("x-key") == key)
+    words = scripture.word_spans(verse.text)
+    fields = {
+        n["marker"]: usj.text_of(n["content"]).rstrip()
+        for n in note["content"]
+        if isinstance(n, dict)
+    }
+    assert fields["fq"] == lemma + ":"
+    assert fields["fqa"] == alternative
+
+    def restored(note: Node) -> str:
+        # The alternative in place of the words the note's scope takes in,
+        # with enough unchanged context to show a repeated or missing word
+        # or a stop left outside a replacement's scope.
+        start, end = annotate.scope_span(verse.text, words, offset, note)
+        return verse.text[:start] + alternative + verse.text[end:]
+
+    assert former in restored(note)
+    if key == "2CO 12:2 rendering#2":
+        assert note["x-scope"]["declared"] == "Christ,"
+        damaged: Node = {**note, "x-scope": {"declared": "Christ"}}
+        assert former not in restored(damaged)
+    if key == "JHN 17:11#2 TR":
+        assert not any(n.get("x-key") == key + "#2" for _, n in verse.notes)
+
+
+def test_the_1611_margins_alternatives_keep_their_label(
+    edition: bible.pipeline.Edition,
+) -> None:
+    expected = {
+        "ACT 5:3 to lie": ("to lie to", "or, _to deceive_"),
+        "ROM 9:20 repliest against God?": (
+            "repliest against God",
+            "or, _answereth again_, or _disputest with God_?",
+        ),
+        "HEB 7:19 but the bringing in": (
+            "but the bringing in",
+            "or, _but it was the bringing in_",
+        ),
+        "HEB 7:24 unchangeable": (
+            "unchangeable",
+            "or, _which passeth not from one to another_",
+        ),
+        "JAS 5:9 Grudge not": ("Grudge not", "or, _groan_, or _grieve not_"),
+    }
+    for key, (lemma, text) in expected.items():
+        row = next(
+            r for rows in edition.notes.values() for r in rows if r["key"] == key
+        )
+        assert (row["lemma"], row["note"]) == (lemma, text)
+
+
+def test_corrected_transcriptions_print_without_their_slips(
+    edition: bible.pipeline.Edition,
+) -> None:
+    for key in ["1SA 29:3#2", "1SA 29:4", "1SA 29:5", "1SA 29:8"]:
+        row = next(r for r in edition.notes["1SA"] if r["key"] == key)
+        assert "_to_ or" not in row["note"]
+    # The corrected reference agrees with the quotation link and is merged.
+    assert not any(r["key"] == "ISA 29:13" for r in edition.notes["ISA"])
+    verse = scripture.verses(edition.documents["ISA"])["29:13"]
+    assert any("Matt. 15:8–9" in usj.text_of(n["content"]) for _, n in verse.notes)

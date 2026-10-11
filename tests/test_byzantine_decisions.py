@@ -1027,3 +1027,20 @@ def test_shared_greek_refuses_mismatched_alignment(
             alignment,
             byzantine["structure"],
         )
+
+
+def test_the_build_stops_on_ordinary_tr_restoration_failures(
+    edition: bible.pipeline.Edition,
+) -> None:
+    context = edition.byzantine.context
+    with pytest.raises(CheckFailed, match="Notes that do not restore.*LUK 2:21"):
+        checked(
+            {
+                **context,
+                "finished": {
+                    "LUK 2:21": [
+                        "variant: note does not restore the corrected KJV (damaged coupled alternative)"
+                    ]
+                },
+            }
+        )

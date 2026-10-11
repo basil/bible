@@ -9470,8 +9470,13 @@
       "edits": [
         {
           "ref": "REV 4:4",
-          "from": "four and twenty seats: and upon the seats I saw four and twenty elders",
-          "to": "four [and] twenty seats: and upon the seats four [and] twenty elders"
+          "from": "four and twenty seats",
+          "to": "four [and] twenty seats"
+        },
+        {
+          "ref": "REV 4:4",
+          "from": "upon the seats I saw four and twenty elders",
+          "to": "upon the seats four [and] twenty elders"
         }
       ],
       "tags": [
@@ -12917,8 +12922,8 @@
         },
         {
           "ref": "REV 21:16",
-          "from": "The length and the breadth and the height of it are equal",
-          "to": "The length and the breadth and the height of it are equal, [each] twelve [thousand furlongs]"
+          "from": "equal",
+          "to": "equal, [each] twelve [thousand furlongs]"
         }
       ],
       "tags": [
@@ -13441,10 +13446,6 @@
       "lemma": "the woman being in the midst",
       "why": "The changed copular participle being requires in the midst; including the woman keeps its determiner and completes the participial construction instead of ending on being."
     },
-    "LUK 20:31#1 TR": {
-      "lemma": "the third likewise took her",
-      "why": "This complete published clause identifies the edit without taking in the following in like manner construction or its separate edit."
-    },
     "LUK 22:36#1 TR": {
       "lemma": "he shall sell his garment",
       "why": "The clause through its object identifies the changed auxiliary; replacing it with let him sell his garment restores the KJV while leaving the unchanged coordination outside the note."
@@ -13512,6 +13513,18 @@
     "ROM 7:6#1 TR": {
       "lemma": "being dead to that wherein we were held",
       "why": "The complete participial construction identifies the changed subject and restores that being dead wherein we were held exactly."
+    },
+    "LUK 2:21#1 TR": {
+      "lemma": "circumcising him",
+      "why": "The coupled determiner and object changes form one construction: the circumcising of the child replaces circumcising him together."
+    },
+    "JHN 17:11#2 TR": {
+      "lemma": "them through thine own name which",
+      "why": "The coupled insertion of them and replacement of those whom by which must restore together: them through thine own name which / through thine own name those whom. Span both splices so one note restores the complete construction."
+    },
+    "REV 4:4#1 TR": {
+      "lemma": "upon the seats",
+      "why": "Only I saw is removed from the English construction; the unique common prefix gives upon the seats / upon the seats I saw, while the common numeral and elders stay outside both sides."
     }
   }
 }

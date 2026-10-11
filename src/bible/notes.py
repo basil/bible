@@ -928,6 +928,12 @@ def finished(
     stop = re.search(r"(?<!\.)\.(?=['’”\"]?$)", text)
     terminal = stop.start() if stop else None
     lexical = bool(stop and ABBREVIATION.search(text[: stop.end()]))
+    # Punctuation inside a quoted reading belongs to its substitution.
+    offset = 0
+    for role, value in runs:
+        if terminal is not None and offset <= terminal < offset + len(value):
+            lexical = lexical or role in {"reading", "quotation"}
+        offset += len(value)
     initial = None
     continuation = not complete or LABEL_START.match(text) is not None
     if not continuation and re.match("[a-z]", text):
@@ -1026,6 +1032,29 @@ def finished(
         )
         for i, (role, value) in enumerate(runs)
     )
+
+
+# The stops a note's scope may take in past its printed lemma.
+BOUNDARY_STOPS = ",;:.!?"
+
+
+def lemma_of(note: Node) -> str | None:
+    """The words a printed note names, without the colon that ends the field."""
+    field = next((n for n in note["content"] if usj.is_type(n, "char", "fq")), None)
+    return usj.text_of(field["content"]).removesuffix(": ") if field else None
+
+
+def boundary_stop(scope: usj.Scope | None) -> str:
+    """The stop a note's scope takes in past its printed lemma, or none.
+
+    The rule, in one place: a note's x-scope "declared" is its lemma followed
+    by the one stop its replacement takes in, where the words it stands for
+    end on a stop the lemma leaves out; the printed lemma never carries a
+    stop, since the colon that ends its field is the note's. Annotation and
+    verse revision write it, and annotation, the review and its checks read
+    it here."""
+    declared = (scope or {}).get("declared") or ""
+    return declared[-1] if declared and declared[-1] in BOUNDARY_STOPS else ""
 
 
 def underscored(runs: Sequence[tuple[str, str]]) -> str:

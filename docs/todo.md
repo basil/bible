@@ -42,7 +42,6 @@ Most of these are probably slips of transcription, by eBible or George, but some
 
 | Note | Prints | Probably |
 | --- | --- | --- |
-| ISA 29:13 | Mat. 8. 9 | Mat. 15. 8, 9 |
 | ISA 53:5#2 | 1 Pet. 2. 22 | 1 Pet. 2. 24 |
 | DEU 32:21 | Rom. 10. 9 | Rom. 10. 19; the quotation starts at "I will provoke them to jealousy" |
 | NUM 36:7 | Acts 5. 26 | Acts 5. 13 |
@@ -66,7 +65,7 @@ Leave alone the references that count in the Hebrew or English way, as Brenton p
 
 - **Swapped pairs.**
   - JDG 8:7 and 8:9: the Vatican text has ἀλοήσω ("thresh") at 8:7 and κατασκάψω ("dig down") at 8:9, but 8:7 has "Gr. dig down." and 8:9 "Gr. thresh.". So 8:9 prints "break: Gr. _thresh_", and 8:7 has a lemma override, "tear", fitted to the note as it stands. If Brenton printed them the right way round, swap the two notes' texts back with two uncategorized `corrections`, then check whether the override on 8:7 is still needed.
-  - JDG 20:10 and 20:13: "Heb. sons of Belial" belongs on "sons of transgressors" in 20:13, and "Gr. it, sc. Gabas" (a typo for Gabaa) on "they" in 20:10.
+  - JDG 20:13: the moved note reads "Gr. it, sc. Gabas", apparently for Gabaa. Check Brenton's printing before correcting it: a slip of eBible's is a `correction`, but Brenton's own misprint is not a slip of transcription.
   - ISA 61:3: the verse's two notes are swapped. "Alex. reads καταστολὴν as one word" belongs on "the garment of glory", and "Or, anointing" on "oil". [also 3.6]
   - MRK 7:4 (1611): George swaps the notes. "Or, beds" belongs to "tables", and the sextarius note to "pots". The lemmas already put them right; check the 1611 to confirm.
 - **A note on the neighbouring verse.**
@@ -81,15 +80,10 @@ Leave alone the references that count in the Hebrew or English way, as Brenton p
   - DEU 21:5: "bless in his name: Gr. _his name_. Hebraism." fits only if the mark stands before "in".
   - JOS 18:5: "came to him: Gr. _went through_" should be on "came" alone, if the Greek has πρὸς αὐτόν.
   - 2KI 19:25: "destruction: Gr. _captivities_": "captivities" (ἀποικεσιῶν) is what Brenton renders "bands of warlike prisoners". Check where the mark stands.
-  - 1KI 11:27: the lemma and the rendering are the same: "of his lifting: Gr. _of his lifting_". The mark stands before "of his lifting up". Perhaps the note means that the Greek lacks "up his hands", and its lemma should say so; perhaps it is about "the occasion" before the mark; or words of the note were lost. Check the printing.
   - PRO 21:29: the marked word already reads "ungodly", so "See Alex. ungodly." changes nothing where it stands. Was it meant for "impudently"? [also 3.4]
 
 ### 1.3 Notes copied or repeated from elsewhere
 
-- EXO 32:14 "Gr. dost." is a copy of the note on 32:32; the Greek has ἱλάσθη.
-- 2SA 22:27 repeats "Or, upon the haughty" from 22:28, where it belongs.
-- DEU 9:22: three notes print the same "Heb. Taberah, Massah, and Kibroth Hattavah."
-- 1SA 29:3#2, 29:4, 29:5 and 29:8 all begin "to or", which makes sense only in 29:2.
 - MAT 17:27 (1611): George's note ends "is 7.d. ob.", apparently copied from 18:28.
 - 2KI 23:36: the note says "a son of 23 years", but the verse and the Greek say twenty-five. Perhaps copied from 23:31.
 

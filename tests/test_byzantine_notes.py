@@ -59,7 +59,7 @@ def test_the_edition_adds_notes(edition_notes: list[Found]) -> None:
     # A note for each edit that changes words, a TR note or an "Or," note,
     # and each structural change, the doxology of Romans 16 noted at both
     # ends.
-    assert len(edition_notes) == 943
+    assert len(edition_notes) == 941
 
 
 def test_structural_notes_stand_where_the_verses_were(
@@ -472,7 +472,8 @@ def test_the_lemma_decisions_apply(
     entries = byzantine["note_lemmas"]
     assert entries
     for d in entries:
-        e = dispositions[d["id"]]["edits"][d["edit"] - 1]
+        edits = [e for e in dispositions[d["id"]]["edits"] if "note" in e]
+        e = edits[d["edit"] - 1]
         lemma = fields(e["note"])["fq"].removesuffix(": ")
         assert lemmas.occurrences(
             scripture.word_spans(lemma), scripture.words_of(d["lemma"])

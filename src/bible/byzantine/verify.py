@@ -15,7 +15,7 @@ from collections import Counter, defaultdict
 from collections.abc import Iterable, Mapping, Sequence
 from typing import Any
 
-from bible import lemmas, scripture, usj
+from bible import lemmas, repairs, scripture, usj
 from bible.byzantine.edit import renumber, supplied_content
 from bible.byzantine.greek import Structure
 from bible.byzantine.rows import Disposition, Edit, NoteScope, Unit
@@ -157,8 +157,12 @@ def checks(
     units: Sequence[Unit],
     dispositions: Sequence[Disposition],
     structure: Structure,
+    note_lemmas: Sequence[Mapping[str, Any]] = (),
 ) -> dict[str, str]:
-    """One result per invariant: "pass" or the first failure, by name."""
+    """One result per invariant: "pass" or the first failure, by name.
+    note_lemmas: the TR note lemma decisions (decisions.lemma_entries), whose
+    notes alone may quote less than their whole edit."""
+    narrowed = {f"{d['id']} TR#{d['edit']}" for d in note_lemmas}
     results = {f"I{i}": "pass" for i in range(1, 5)}
 
     def fail(key: str, label: str) -> None:
@@ -358,6 +362,12 @@ def checks(
                         a, b = scope["source_range"]
                         lo, hi = edit["range"]
                         text = source[old_ref].text
+                        if edit["note"].get("x-key") in narrowed:
+                            rendered = usj.text_of(supplied_content(edit["rendered"]))
+                            prefix, changed, _ = repairs.change(edit["old"], rendered)
+                            # A declared pair may omit identical outer context,
+                            # but must quote every changed source character.
+                            lo, hi = lo + prefix, lo + prefix + len(changed)
                         # The quotation spans the edit, but not the space an
                         # insertion's seam puts beside it.
                         if not (
@@ -430,8 +440,10 @@ def checks(
 # The finished verse: does it read, and does each note restore the KJV?
 
 STOPS = ",;:.?!"
-# The problem of a verse whose "Or," notes do not give back the King James
-# words, which stops the build (bible.byzantine.checked).
+# The problems of a verse whose TR notes do not give back the King James
+# words as the corrections leave them, or whose "Or," notes do not give back
+# the King James words, which stop the build (bible.byzantine.checked).
+UNRESTORED_VARIANT = "variant: note does not restore the corrected KJV"
 UNRESTORED_RENDERING = (
     "correction: rendering notes do not restore the King James wording"
 )
@@ -587,9 +599,7 @@ def finished_verses(
         ]
         failure = restores(after.text, baseline, witnessed)
         if failure:
-            problems.append(
-                f"variant: note does not restore the corrected KJV ({failure})"
-            )
+            problems.append(f"{UNRESTORED_VARIANT} ({failure})")
         if corrected[ref]:
             # The rendering notes then take the corrections back.
             failure = restores(after.text, before.text, notes)

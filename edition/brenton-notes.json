@@ -471,6 +471,30 @@
       "to": "on ἐτροφοφόρησεν.",
       "why": "the Authorized Version's margin at Acts 13:18 gives ἐτροφοφόρησεν, from τροφοφορέω, which the Septuagint has here",
       "uncategorized": true
+    },
+    "1SA 29:3#2": {
+      "from": "\\fr 29:3 \\fqa Gr. \\ft to \\fqa or \\ft ",
+      "to": "\\fr 29:3 \\fqa Gr. \\ft ",
+      "uncategorized": true,
+      "why": "Brenton’s 1879 printing, p. 397 (https://archive.org/details/septuagintversio1879bren/page/n412/mode/1up), prints no to or here; eBible repeated the fragment from 29:2. Remove that exact transcription fragment, retaining the printed gloss."
+    },
+    "1SA 29:4": {
+      "from": "\\fr 29:4 \\fqa Or, \\ft to \\fqa or \\ft ",
+      "to": "\\fr 29:4 \\fqa Or, \\ft ",
+      "uncategorized": true,
+      "why": "Brenton’s 1879 printing, p. 397 (https://archive.org/details/septuagintversio1879bren/page/n412/mode/1up), prints no to or here; eBible repeated the fragment from 29:2. Remove that exact transcription fragment, retaining the printed gloss."
+    },
+    "1SA 29:5": {
+      "from": "\\fr 29:5 \\fqa Gr. \\ft to \\fqa or \\ft ",
+      "to": "\\fr 29:5 \\fqa Gr. \\ft ",
+      "uncategorized": true,
+      "why": "Brenton’s 1879 printing, p. 397 (https://archive.org/details/septuagintversio1879bren/page/n412/mode/1up), prints no to or here; eBible repeated the fragment from 29:2. Remove that exact transcription fragment, retaining the printed gloss."
+    },
+    "1SA 29:8": {
+      "from": "\\fr 29:8 \\fqa Gr. \\ft to \\fqa or \\ft ",
+      "to": "\\fr 29:8 \\fqa Gr. \\ft ",
+      "uncategorized": true,
+      "why": "Brenton’s 1879 printing, p. 397 (https://archive.org/details/septuagintversio1879bren/page/n412/mode/1up), prints no to or here; eBible repeated the fragment from 29:2. Remove that exact transcription fragment, retaining the printed gloss."
     }
   },
   "notes": {
@@ -675,8 +699,8 @@
       "why": "the note is on the form of the name Juda"
     },
     "GEN 50:26": {
-      "lemma": "they prepared his corpse",
-      "why": "buried him renders prepared his corpse"
+      "lemma": "prepared his corpse",
+      "why": "Brenton's source gloss concerns prepared his corpse, rather than all of they prepared his corpse; the narrower scope retains the surrounding words, and occurrence widening echoes any context needed for a unique lemma."
     },
     "EXO 2:3": {
       "note": "i. e. a peculiar kind, more resembling vegetable pitch.",
@@ -1330,10 +1354,6 @@
       "lemma": "metropolis",
       "why": "parent city renders metropolis"
     },
-    "JOS 21:13": {
-      "lemma": "Chebron, and the suburbs",
-      "why": "glebe, after q. d., renders suburbs alone"
-    },
     "JOS 22:24": {
       "lemma": "hereafter",
       "why": "to-morrow renders hereafter"
@@ -1757,10 +1777,6 @@
       "lemma": "that pass by",
       "why": "the note is on that pass by, which renders the one Hebrew word"
     },
-    "1SA 29:4": {
-      "lemma": "a traitor in the camp",
-      "why": "a plotter against the camp renders a traitor in the camp; with traitor alone the substitution doubles a and the camp"
-    },
     "1SA 29:8": {
       "lemma": "and war",
       "why": "warring renders and war (that I should not come warring)"
@@ -1924,7 +1940,9 @@
     },
     "1KI 1:47": {
       "lemma": "make the name of Solomon better",
-      "why": "do good renders make better"
+      "why": "The Greek gloss describes the discontinuous make ... better construction; print it as an explanation, retaining the name of Solomon between the verbs.",
+      "note": "Gr. _do good_ or _make good_.",
+      "quotation": true
     },
     "1KI 2:37#2": {
       "lemma": "know assuredly",
@@ -2026,10 +2044,6 @@
       "lemma": "formed the house",
       "why": "wainscoted the house renders formed the house"
     },
-    "1KI 7:43": {
-      "lemma": "porch of the pillars",
-      "why": "portico renders porch, not made the porch"
-    },
     "1KI 8:7": {
       "note": "pass. part. _spread out with their wings_.",
       "why": "spread out with their wings is the literal rendering"
@@ -2076,10 +2090,6 @@
       "note": "This word more commonly means '_spoil_' in the O.T.",
       "why": "spoil is another rendering of the word. The complete explanation retains its final full stop.",
       "sentence": true
-    },
-    "1KI 11:33#2": {
-      "lemma": "the abomination of the children of Ammon",
-      "why": "provocation renders abomination"
     },
     "1KI 11:37": {
       "lemma": "as thy soul desires",
@@ -2348,7 +2358,9 @@
     },
     "2KI 8:26": {
       "lemma": "Twenty and two years old was Ochozias when he began to reign",
-      "why": "a son of 22 years in his reigning renders the whole clause"
+      "why": "The source gives a grammatical gloss, rather than a continuous replacement; print its words as an explanation so the subject and retained words remain in the verse.",
+      "note": "Gr. _a son of 22 years in his reigning_.",
+      "quotation": true
     },
     "2KI 8:28#2": {
       "lemma": "king of the Syrians",
@@ -2432,8 +2444,8 @@
       "why": "offered in way of incense renders offered"
     },
     "2KI 16:15": {
-      "lemma": "all the blood of the whole-burnt-offering",
-      "why": "the blood of every renders all the blood of the, not pour"
+      "lemma": "all the blood of the",
+      "why": "Brenton's source gloss concerns all the blood of the, rather than all of all the blood of the whole-burnt-offering; the narrower scope retains the surrounding words, and occurrence widening echoes any context needed for a unique lemma."
     },
     "2KI 17:9": {
       "lemma": "secretly practised customs",
@@ -2478,10 +2490,6 @@
     "2KI 19:23": {
       "lemma": "By",
       "why": "Brenton's caller follows by, the word by the hand of renders"
-    },
-    "2KI 19:23#2": {
-      "lemma": "height of his cedar",
-      "why": "bulk or size renders height, after the caller"
     },
     "2KI 19:26": {
       "lemma": "by him that stands upon it",
@@ -2540,8 +2548,8 @@
       "why": "in fire renders through fire"
     },
     "2KI 23:11#2": {
-      "lemma": "Nathan the king's eunuch",
-      "why": "the note gives the Hebrew name, Nathan-melech"
+      "lemma": "Nathan",
+      "why": "Brenton’s Heb. Nathan-melech glosses Nathan; the king’s eunuch is his office and remains when the personal name is replaced."
     },
     "2KI 23:26": {
       "lemma": "because of",
@@ -3013,15 +3021,9 @@
       "lemma": "have abolished",
       "why": "disfigured renders have abolished"
     },
-    "JOL 2:3": {
-      "lemma": "Before them is a consuming fire",
-      "note": "Gr. _it_, sc. _the people_.",
-      "why": "Gr. it renders them; the people names it, like sc. Zabulon"
-    },
     "JOL 2:3#2": {
-      "lemma": "none of them",
       "note": "Lit. _to him_, sc. _the people_.",
-      "why": "to him renders of them; the people names him, like sc. Zabulon"
+      "why": "Lit. to him renders of them alone, which the inferred lemma now finds; retain none, and italicize the people as the explanation of him."
     },
     "JOL 2:20": {
       "lemma": "sink",
@@ -3160,7 +3162,8 @@
     "ISA 10:23": {
       "lemma": "He will finish the work, and cut it short",
       "note": "Gr. _finishing_ — _cutting_.",
-      "why": "finishing and cutting are both renderings, of finish and cut"
+      "why": "The source gives a grammatical gloss, rather than a continuous replacement; print its words as an explanation so the subject and retained words remain in the verse.",
+      "quotation": true
     },
     "ISA 10:25": {
       "lemma": "their council",
@@ -3366,6 +3369,64 @@
       "note": "_E medio sustulit_. עכר probably read as עבר.",
       "why": "E medio sustulit is the Latin rendering and is italic; the following explanation keeps its sentence punctuation.",
       "sentence": true
+    },
+    "1KI 22:41": {
+      "note": "Gr. _reigned_.",
+      "quotation": true,
+      "why": "The source gives a grammatical gloss, rather than a continuous replacement; print its words as an explanation so the subject and retained words remain in the verse."
+    },
+    "2KI 15:13": {
+      "note": "Gr. _reigned_.",
+      "quotation": true,
+      "why": "The source gives a grammatical gloss, rather than a continuous replacement; print its words as an explanation so the subject and retained words remain in the verse."
+    },
+    "EXO 32:14": {
+      "omitted": true,
+      "why": "The inherited Gr. dost does not gloss prevailed upon to preserve his people; it has no corresponding words in this verse."
+    },
+    "2SA 22:27": {
+      "omitted": true,
+      "why": "The inherited upon the haughty belongs to the haughty in the next verse, whose source note already supplies that gloss."
+    },
+    "1KI 11:27": {
+      "omitted": true,
+      "why": "The source gloss of his lifting repeats the exact words already printed and gives no alternative."
+    },
+    "JDG 20:10": {
+      "verse": "20:13",
+      "lemma": "sons of transgressors",
+      "why": "The source Heb. sons of Belial glosses sons of transgressors in verse 13; eBible puts it in verse 10, which has neither expression."
+    },
+    "JDG 20:13": {
+      "verse": "20:11",
+      "lemma": "the city",
+      "why": "The source Gr. it, sc. Gabas explains the city in verse 11; eBible places it beside sons in verse 13."
+    },
+    "JOL 2:3": {
+      "note": "Gr. _it_, sc. _the people_.",
+      "why": "Gr. it explains the singular Greek behind them; sc. the people names its referent. These grammatical glosses explain the clause, rather than replace the whole clause or echo it into the referent.",
+      "lemma": "Before them is a consuming fire",
+      "quotation": true
+    },
+    "ZEC 3:4": {
+      "lemma": "long",
+      "why": "The source Or, full length renders long alone; retain robe as the noun after either adjective."
+    },
+    "JOS 21:13": {
+      "lemma": "Chebron, and the suburbs",
+      "why": "glebe, after q. d., renders suburbs alone"
+    },
+    "1KI 11:33#2": {
+      "lemma": "the abomination of the children of Ammon",
+      "why": "provocation renders abomination"
+    },
+    "1KI 7:43": {
+      "lemma": "porch of the pillars",
+      "why": "portico renders porch, not made the porch"
+    },
+    "2KI 19:23#2": {
+      "lemma": "height of his cedar",
+      "why": "bulk or size renders height, after the caller"
     }
   },
   "shapes": {
@@ -3376,10 +3437,8 @@
     "1SA 25:38": "there were about ten days renders it came to pass after about ten days",
     "1SA 28:9": "ventriloquists renders the whole phrase for those with divining spirits",
     "1KI 7:5": "nets renders ornaments of net-work",
-    "1KI 22:41": "reigned renders began to reign, about the king's name",
     "2KI 2:3#2": "takes renders is going to take",
     "2KI 14:8": "appear to faces renders look one another in the face",
-    "2KI 15:13": "reigned renders began to reign, about the king's name",
     "PSA 7:7": "the Hebrew's because of mine enemies stands for the whole phrase",
     "ZEC 11:16": "wring their necks renders dislocate the joints of their necks",
     "ISA 8:19": "ventriloquists renders the whole phrase for those with a divining spirit",

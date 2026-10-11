@@ -5,8 +5,8 @@ Edits keep their offsets and quotations; this stage changes only their notes,
 after all wording and verse moves are settled. A note names enough of the
 verse to be unambiguous, and its alternative can replace those words without
 breaking the sentence, following the convention of the Orthodox Liturgical
-English Bible (OLEB). The lemmas of edition/byzantine.json widen a lemma by
-hand where the rule chooses badly.
+English Bible (OLEB). The lemmas of edition/byzantine.json set a lemma by
+hand where the rule chooses badly, keeping its paired source quotation.
 """
 
 from __future__ import annotations
@@ -15,7 +15,7 @@ import re
 from collections.abc import Mapping, Sequence
 from typing import TYPE_CHECKING, Any
 
-from bible import lemmas, scripture, usj
+from bible import lemmas, notes, repairs, scripture, usj
 from bible.byzantine.edit import (
     NOTE_LABELS,
     PASSAGE_NOTES,
@@ -107,6 +107,33 @@ def source_range(a: int, b: int, edits: Sequence[Edit]) -> tuple[int, int]:
     return boundary(a, False), boundary(b, True)
 
 
+# A declared lemma that quotes part of a replacement: where the replacement's
+# words begin and end in the verse, how many characters they share with the
+# KJV's words before they part, how many of the KJV's they change, and how
+# many stand in their place.
+Pair = tuple[int, int, int, int, int]
+
+
+def quoted_range(
+    a: int, b: int, edit: Edit, edits: Sequence[Edit], pair: Pair | None
+) -> tuple[int, int]:
+    """The source words a note's lemma at [a, b) stands for. Its quotation
+    takes in the entire edit, even when an omission's lemma ends immediately
+    before its source fragment; but a lemma paired with part of a
+    replacement quotes the source words it stands for, and the context the
+    two share stays outside both."""
+    lo, hi = source_range(a, b, edits)
+    if pair is None:
+        return min(lo, edit["range"][0]), max(hi, edit["range"][1])
+    start, end, prefix, removed, added = pair
+    base = edit["range"][0]
+    if a >= start:
+        lo = base + a - start
+    if b <= end:
+        hi = base + max(prefix + removed, b - start + removed - added)
+    return lo, hi
+
+
 def unspaced(text: str, a: int, b: int) -> tuple[int, int]:
     """The range without the spaces at its ends."""
     while a < b and text[a].isspace():
@@ -152,14 +179,6 @@ def relemma(note: Node, text: str, a: int, b: int) -> Node:
 
 def without_notes(content: Content) -> Content:
     return usj.mapped(content, lambda n: None if n["type"] == "note" else n)
-
-
-def phrase_of(note: Node) -> str | None:
-    field = next(
-        (n for n in note["content"] if isinstance(n, dict) and n.get("marker") == "fq"),
-        None,
-    )
-    return usj.text_of(field["content"]).removesuffix(": ") if field else None
 
 
 def adjacent_lemma(text: str, words: Words, offset: int) -> Span:
@@ -413,6 +432,7 @@ def apply(
     ) -> tuple[Node, NoteScope]:
         book, ref, verse, offset, actual = locations[note["x-key"]]
         finished, scope = scoped_note(verse, offset, actual, edit, omitted)
+        pair: Pair | None = None
         if note["x-key"] in declared:
             decision = declared[note["x-key"]]
             if not decision.get("why", "").strip():
@@ -420,12 +440,20 @@ def apply(
             words = scripture.word_spans(verse.text)
             span = lemmas.phrase_span(words, decision["lemma"], note["x-key"])
             a, b = words[span[0]][1], words[span[1]][2]
-            start = (
-                offset - len(usj.text_of(supplied_content(edit["rendered"])))
-                if edit
-                else offset
-            )
-            if not edit or not a <= start <= offset <= b:
+            rendered = usj.text_of(supplied_content(edit["rendered"])) if edit else ""
+            start = offset - len(rendered)
+            contains = bool(edit and a <= start <= offset <= b)
+            if edit and not contains and edit["kind"] not in {"insert", "delete"}:
+                prefix, old, new = repairs.change(edit["old"], rendered)
+                # Common context can stay outside both sides of a declared
+                # pair. The scope must still enclose every changed character;
+                # whitespace at the splice belongs to its seam.
+                left = start + prefix
+                right = left + len(new)
+                contains = a <= left and (right <= b or not verse.text[b:right].strip())
+                if contains:
+                    pair = start, offset, prefix, len(old), len(new)
+            if not contains:
                 raise ValueError(
                     f"TR note lemma does not contain its reading: {note['x-key']}"
                 )
@@ -435,6 +463,12 @@ def apply(
                     f"TR note lemma decision changes nothing: {note['x-key']}"
                 )
             finished = with_lemma(finished, phrase)
+            if pair is not None:
+                # The lemma glosses only part of the reading's words.
+                finished = {
+                    **finished,
+                    "x-scope": {**finished["x-scope"], "glossed": phrase},
+                }
             scope["range"] = [a, b]
             used.add(note["x-key"])
         if scope["range"]:
@@ -456,11 +490,9 @@ def apply(
             source_book, source_ref = edit["ref"].split()
             source = source_verses[source_book][source_ref]
             lemma = lemma_range(scope)
-            a, b = source_range(lemma[0], lemma[1], by_ref[edit["ref"]])
-            # The alternative includes the entire edit, even when an
-            # omission's lemma ends immediately before its source fragment.
-            # Compare its outer boundary, not a stop inside that fragment.
-            b = max(b, edit["range"][1])
+            # Compare the quotation's outer boundary, not a stop inside the
+            # edit's source fragment.
+            a, b = quoted_range(lemma[0], lemma[1], edit, by_ref[edit["ref"]], pair)
             # An edit whose KJV words end with a stop keeps that stop inside
             # the alternative's substitution.
             end = lemma[1]
@@ -489,14 +521,13 @@ def apply(
                     end += 1
                 finished = relemma(finished, verse.text, lemma[0], end)
                 lemma[1] = end
-                a, b = source_range(lemma[0], lemma[1], by_ref[edit["ref"]])
-            # Keep punctuation included in the witnessed source fragment even
-            # when the displayed lemma ends at its final word; the space an
-            # insertion's seam maps into the range is nobody's words.
-            a, b = min(a, edit["range"][0]), max(b, edit["range"][1])
+                a, b = quoted_range(lemma[0], lemma[1], edit, by_ref[edit["ref"]], pair)
+            # The quotation keeps the punctuation of the witnessed source
+            # fragment even when the displayed lemma ends at its final word;
+            # the space an insertion's seam maps into the range is nobody's
+            # words.
             a, b = unspaced(source.text, a, b)
-            quote = source_content(original[source_book], source, a, b)
-            quote = without_notes(quote)
+            quote = without_notes(source_content(original[source_book], source, a, b))
             finished = with_field(finished, "fqa", quote)
             scope["source_range"] = [a, b]
         changed[note["x-key"]] = finished
@@ -642,7 +673,7 @@ def apply(
             and quote
             and not quote.endswith("..")
             and (bool(following) and following[:1] == quote[-1:] or short)
-            and (short or quote[:-1].rstrip() != phrase_of(note))
+            and (short or quote[:-1].rstrip() != notes.lemma_of(note))
         ):
             scope["terminal_stop"] = quote[-1]
             note = with_field(
@@ -800,7 +831,7 @@ def for_edition(document: Document, terms: Registry) -> Document:
             if note.get("category") != "edition":
                 continue
             fields = {n["marker"]: n for n in note["content"] if isinstance(n, dict)}
-            lemma = phrase_of(note)
+            lemma = notes.lemma_of(note)
             scope = note["x-scope"]
             kind, where = scope["kind"], scope.get("where")
             quotation = usj.text_of(fields.get("fqa", {}).get("content", []))
