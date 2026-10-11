@@ -30,6 +30,7 @@ from bible.byzantine.presentation import (
     passage_spans,
 )
 from bible.byzantine.stages import Context
+from bible.checks import require
 from bible.references import parse_verse
 from bible.scripture import Verse
 from bible.usj import Document, Node
@@ -104,8 +105,10 @@ def prepare_greek(found: Context) -> PreparedGreek:
                 forms = {ascii_greek(part) for part in quoted.split(" … ")}
                 plain = found["tr"] if side == "tr" else found["rp"]
                 positions = [at for at in range(*span) if plain[ref][at] in forms]
-                if len(forms) != 1 or len(positions) != len(quoted.split(" … ")):
-                    raise ValueError(f"Ambiguous appendix accent scope: {ref}")
+                require(
+                    len(forms) == 1 and len(positions) == len(quoted.split(" … ")),
+                    f"Ambiguous appendix accent scope: {ref}",
+                )
                 pair.append(
                     " … ".join(
                         " ".join(
@@ -372,8 +375,9 @@ def selections(
         greek_targets: list[list[int]] = [[] for _ in greek_words]
         for word_index, positions in enumerate(bridge["positions"]):
             for position in positions:
-                if not 0 <= position < len(greek_words):
-                    raise ValueError("Invalid correspondence position")
+                require(
+                    0 <= position < len(greek_words), "Invalid correspondence position"
+                )
                 greek_targets[position].append(word_index)
         for passage in selected:
             if any(a < passage[2][1] and passage[2][0] < b for a, b in invalid):

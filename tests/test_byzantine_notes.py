@@ -18,6 +18,7 @@ from bible.byzantine.edit import NOTE_KINDS, NOTE_LABELS
 from bible.byzantine.greek import Structure
 from bible.byzantine.rows import Disposition, NoteScope
 from bible.byzantine.stages import Context
+from bible.checks import CheckFailed
 from bible.scripture import Verse
 from bible.usj import Content, Document, Node
 
@@ -332,7 +333,7 @@ def test_a_correction_and_a_reading_keep_their_own_notes() -> None:
 
 def test_a_rendering_note_may_not_quote_a_byzantine_reading() -> None:
     # The correction's lemma widens over the reading's words.
-    with pytest.raises(ValueError, match="is quoted by rendering note"):
+    with pytest.raises(CheckFailed, match="is quoted by rendering note"):
         corrected("He spoke unto them.", [("unto", "to", "replace")], ("them", "him"))
 
 
@@ -484,7 +485,7 @@ def test_a_stale_lemma_decision_is_refused(byzantine: Context) -> None:
     row = next(r for r in byzantine["dispositions"] if r.get("edits"))
     rows: list[Disposition] = [{**row, "edits": [e.copy() for e in row["edits"]]}]
     stale = {"id": "MAT 0:0#1", "edit": 1, "lemma": "nothing", "why": "Test."}
-    with pytest.raises(ValueError, match="Stale TR note lemma decisions"):
+    with pytest.raises(CheckFailed, match="Stale TR note lemma decisions"):
         notes.apply(byzantine["documents"], byzantine["prepared"], rows, [stale])
 
 
@@ -916,7 +917,7 @@ def test_a_tr_note_cannot_quote_a_correction_of_shared_greek() -> None:
     ]
     prepared, rows = edit.execute(documents, rows, ["MAT"])
     lemma = {"id": "MAT 1:1#1", "edit": 1, "lemma": "went within", "why": "Test."}
-    with pytest.raises(ValueError, match="is quoted by TR note"):
+    with pytest.raises(CheckFailed, match="is quoted by TR note"):
         notes.apply(documents, prepared, rows, [lemma])
 
 

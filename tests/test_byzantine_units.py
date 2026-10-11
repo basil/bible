@@ -44,6 +44,7 @@ from bible.byzantine.units import (
     reconcile,
     supplementary_units,
 )
+from bible.checks import CheckFailed
 from bible.sources import Content
 
 # Synthetic texts move and omit no verse.
@@ -203,11 +204,11 @@ def test_a_hodges_farstad_side_must_name_its_unit_and_change_it(
         if u["ref"] == "PHM 1:1"
     ]
     assert unit["hf"] == "TR"
-    with pytest.raises(ValueError, match="changes nothing"):
+    with pytest.raises(CheckFailed, match="changes nothing"):
         with_hodges_farstad(units, {"PHM 1:1#1": side})
-    with pytest.raises(ValueError, match="the unit is PHM 1:1#1"):
+    with pytest.raises(CheckFailed, match="the unit is PHM 1:1#1"):
         with_hodges_farstad(plain, {"PHM 1:1#2": side})
-    with pytest.raises(ValueError, match="names 0 units"):
+    with pytest.raises(CheckFailed, match="names 0 units"):
         with_hodges_farstad(plain, {"PHM 1:1#1": {**side, "unit": {**key, "tr": "x"}}})
 
 
@@ -833,13 +834,13 @@ def test_supplementary_units_refuse_a_changed_printed_reading_or_scope(
     assert (tr, rp, coll, notes, printed, diacritics) == before
     snapshot = copy.deepcopy(printed)
     snapshot["MRK 4:8"]["accented"][19] = "ἕν"
-    with pytest.raises(ValueError, match="Printed breathing disagrees: MRK 4:8"):
+    with pytest.raises(CheckFailed, match="Printed breathing disagrees: MRK 4:8"):
         supplementary_units(
             tr, rp, coll, notes, snapshot, diacritics, structure, accents
         )
     snapshot = copy.deepcopy(printed)
     snapshot["1CO 5:13"]["accented"][rp["1CO 5:13"].index("krinei")] = "κρίνει"
-    with pytest.raises(ValueError, match="Printed accent disagrees: 1CO 5:13"):
+    with pytest.raises(CheckFailed, match="Printed accent disagrees: 1CO 5:13"):
         supplementary_units(
             tr, rp, coll, notes, snapshot, diacritics, structure, accents
         )
@@ -847,7 +848,7 @@ def test_supplementary_units_refuse_a_changed_printed_reading_or_scope(
     position = next(r for r in changed if r["entry"] == 173)["position"]
     assert position is not None
     position["offset"] += 1
-    with pytest.raises(ValueError, match="Changed breathing scope"):
+    with pytest.raises(CheckFailed, match="Changed breathing scope"):
         supplementary_units(
             tr, rp, coll, changed, printed, diacritics, structure, accents
         )
@@ -877,7 +878,7 @@ def printed_checks(
         if not occurrences(streams[0], unit["tr"]) or not occurrences(
             streams[1], unit["rp"]
         ):
-            raise ValueError(f"Printed Greek spot check changed: {key}, page {page}")
+            raise CheckFailed(f"Printed Greek spot check changed: {key}, page {page}")
         result.append(
             {
                 "unit": key,
@@ -912,7 +913,7 @@ def test_duplicate_accent_unit_ids_are_rejected(
         byzantine["printed_xml"], structure.omitted, "REV 22:21"
     )
     assert diacritics
-    with pytest.raises(ValueError, match=re.escape(diacritics[0]["ref"] + "#accent")):
+    with pytest.raises(CheckFailed, match=re.escape(diacritics[0]["ref"] + "#accent")):
         supplementary_units(
             byzantine["tr"],
             byzantine["rp"],

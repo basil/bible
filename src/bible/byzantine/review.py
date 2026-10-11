@@ -61,6 +61,7 @@ from bible.byzantine.rows import (
 )
 from bible.byzantine.stages import Context
 from bible.byzantine.tags import Tag, score
+from bible.checks import require
 from bible.scripture import Verse
 from bible.usj import Node
 
@@ -976,8 +977,10 @@ def build_index(context: Context) -> Index:
         [r for r in context["dispositions"] if r["disposition"] == "shared"],
         list(context["documents"]),
     )
-    if any(r.get("execution") != "applied" for r in rows):
-        raise ValueError("Review corrections-only baseline could not be executed")
+    require(
+        all(r.get("execution") == "applied" for r in rows),
+        "Review corrections-only baseline could not be executed",
+    )
     index: Index = {
         "instructions_at": reports_by_unit(context["instructions"]),
         "reports_at": reports_by_unit(context["reports"]),

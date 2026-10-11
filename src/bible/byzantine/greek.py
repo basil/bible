@@ -19,6 +19,7 @@ from typing import TypedDict, cast
 
 from bible.byzantine import BOOKS
 from bible.byzantine.rows import Token
+from bible.checks import CheckFailed, present, require
 from bible.sources import BYZTXT_BOOKS, Content
 from bible.usfm import GREEK
 
@@ -149,18 +150,17 @@ def scrivener(folder: Content) -> Text:
         raw = (folder / f"{filename}.SCV").read_text()
         raw = re.sub(r"\[[^]]*\]", "", raw)
         chunks = re.split(r"(\d+:\d+)", raw)
-        if chunks[0].strip():
-            raise ValueError(f"Unparsed Scrivener header: {filename}")
+        require(not chunks[0].strip(), f"Unparsed Scrivener header: {filename}")
         for ref, body in zip(chunks[1::2], chunks[2::2], strict=True):
             body = body.lower().translate(str.maketrans("vycqx", "sqxyc"))
-            if re.search(r"[^a-z\s]", body):
-                raise ValueError(f"Unparsed Scrivener verse: {book} {ref}")
+            require(
+                not re.search(r"[^a-z\s]", body),
+                f"Unparsed Scrivener verse: {book} {ref}",
+            )
             key = f"{book} {ref}"
-            if key in result:
-                raise ValueError(f"Duplicate Scrivener verse: {key}")
+            require(key not in result, f"Duplicate Scrivener verse: {key}")
             result[key] = body.split()
-    if len(result) != 7957:
-        raise ValueError(f"Scrivener inventory: {len(result)}, expected 7957")
+    require(len(result) == 7957, f"Scrivener inventory: {len(result)}, expected 7957")
     return result
 
 
@@ -175,14 +175,14 @@ def accent_letters(text: str) -> list[str]:
     for letter in unicodedata.normalize("NFD", text):
         if unicodedata.combining(letter):
             if not result:
-                raise ValueError(f"Greek mark without a letter: {text}")
+                raise CheckFailed(f"Greek mark without a letter: {text}")
             result[-1] += letter
         elif letter.isalpha():
             result.append(letter.translate(SIGMAS))
         elif not letter.isspace() and letter not in ",.;··∙:!?ʼ’'᾽—-()´":
-            raise ValueError(f"Unknown Greek character: {text}")
+            raise CheckFailed(f"Unknown Greek character: {text}")
     if any(ord(c[0].lower()) not in LATIN for c in result):
-        raise ValueError(f"Unknown Greek letters: {text}")
+        raise CheckFailed(f"Unknown Greek letters: {text}")
     return result
 
 
@@ -197,8 +197,7 @@ class Alignment:
     def project(self, ref: str, span: Sequence[int]) -> tuple[int, int]:
         a, b = span
         offsets = self.spans[ref]
-        if not 0 <= a <= b <= len(offsets):
-            raise ValueError(f"Invalid Greek token range: {ref} {span}")
+        require(0 <= a <= b <= len(offsets), f"Invalid Greek token range: {ref} {span}")
         if a == b:
             at = offsets[a][0] if a < len(offsets) else len(self.text[ref])
             return at, at
@@ -226,11 +225,12 @@ def align(
     for book in BOOKS:
         tokens, supplied = by_book[book]
         forms = [ascii_greek("".join(accent_letters(w))) for _, w in supplied]
-        if any(not w for w in forms):
-            raise ValueError(f"Empty Greek source word in {book}")
+        require(all(forms), f"Empty Greek source word in {book}")
         # Callers address the words by their whitespace-separated offsets.
-        if any(len(w.split()) != 1 for _, w in supplied):
-            raise ValueError(f"Greek source word with a space in {book}")
+        require(
+            all(len(w.split()) == 1 for _, w in supplied),
+            f"Greek source word with a space in {book}",
+        )
         i = j = 0
         # One joined source word can project into two ledger verses.
         included: dict[str, dict[int, int]] = {ref: {} for ref, _ in tokens}
@@ -251,7 +251,7 @@ def align(
                     matches.append((a, b))
             if len(matches) != 1:
                 kind = "Ambiguous" if matches else "Unsupported"
-                raise ValueError(
+                raise CheckFailed(
                     f"{kind} Greek alignment at {tokens[i][0]} / {supplied[j][0]}: {tokens[i:i+2]} / {supplied[j:j+2]}"
                 )
             a, b = matches[0]
@@ -263,10 +263,10 @@ def align(
                         addresses[ref].append(supplied[k][0])
                 spans[ref].append((included[ref][j], included[ref][j + b - 1] + 1))
             i, j = i + a, j + b
-        if i != len(tokens) or j != len(supplied):
-            raise ValueError(
-                f"Unaligned Greek tail in {book}: {tokens[i:i+2]} / {supplied[j:j+2]}"
-            )
+        require(
+            i == len(tokens) and j == len(supplied),
+            f"Unaligned Greek tail in {book}: {tokens[i:i+2]} / {supplied[j:j+2]}",
+        )
     return Alignment(text, spans, addresses)
 
 
@@ -275,16 +275,15 @@ def accented_scrivener(path: Content, tr: Mapping[str, list[str]]) -> Alignment:
     source: Text = {}
     for row in json.loads(path.read_text()):
         ref = f"{row['book_name_short']} {row['chapter']}:{row['verse']}"
-        if ref in source:
-            raise ValueError(f"Duplicate accented Scrivener verse: {ref}")
+        require(ref not in source, f"Duplicate accented Scrivener verse: {ref}")
         source[ref] = [
             unicodedata.normalize("NFC", " ".join(w["greek"].split()))
             for w in row["words"]
         ]
-    if set(source) != set(tr):
-        raise ValueError(
-            "Accented Scrivener verse inventory differs from the pinned TR"
-        )
+    require(
+        set(source) == set(tr),
+        "Accented Scrivener verse inventory differs from the pinned TR",
+    )
     return align(source, tr)
 
 
@@ -295,23 +294,20 @@ BP5_NUMBER = re.compile(r"\d+")
 
 
 def bp5_line(line: str) -> tuple[str, list[Token]]:
-    match = BP5_LINE.fullmatch(line)
-    if not match:
-        raise ValueError(f"Unparsed BP5 line: {line}")
+    match = present(BP5_LINE.fullmatch(line), f"Unparsed BP5 line: {line}")
     body = match[3]
     tokens: list[Token] = []
     at = 0
     for word in BP5_TOKEN.finditer(body):
         if body[at : word.start()].strip():
-            raise ValueError(f"Unparsed BP5 token: {body[at:word.start()]}")
+            raise CheckFailed(f"Unparsed BP5 token: {body[at:word.start()]}")
         parses = BP5_PARSE.findall(word[2])
         strong = [int(n) for n in BP5_NUMBER.findall(BP5_PARSE.sub("", word[2]))]
         if not parses or not strong:
-            raise ValueError(f"Missing BP5 annotation: {word[0]}")
+            raise CheckFailed(f"Missing BP5 annotation: {word[0]}")
         tokens.append({"word": word[1], "strong": strong, "parse": parses})
         at = word.end()
-    if body[at:].strip():
-        raise ValueError(f"Unparsed BP5 tail: {body[at:]}")
+    require(not body[at:].strip(), f"Unparsed BP5 tail: {body[at:]}")
     return f"{int(match[1])}:{int(match[2])}", tokens
 
 
@@ -320,17 +316,14 @@ def rp2018(folder: Content) -> tuple[Text, Tags]:
     tags: Tags = {}
     for number, book in enumerate(BOOKS, 1):
         paths = list(folder.glob(f"{number:02d}_*.BP5"))
-        if len(paths) != 1:
-            raise ValueError(f"Expected one BP5 file for {book}: {paths}")
+        require(len(paths) == 1, f"Expected one BP5 file for {book}: {paths}")
         for line in paths[0].read_text().splitlines():
             ref, tokens = bp5_line(line)
             key = f"{book} {ref}"
-            if key in text:
-                raise ValueError(f"Duplicate RP verse: {key}")
+            require(key not in text, f"Duplicate RP verse: {key}")
             text[key] = [t["word"] for t in tokens]
             tags[key] = tokens
-    if len(text) != 7957:
-        raise ValueError("Unexpected RP2018 verse inventory")
+    require(len(text) == 7957, "Unexpected RP2018 verse inventory")
     return text, tags
 
 
@@ -339,8 +332,7 @@ def rp2026(text: Mapping[str, list[str]], printed: Mapping[str, PrintedVerse]) -
     result = dict(text)
     for ref, (old, new) in PATCHES.items():
         positions = occurrences(text[ref], old)
-        if len(positions) != 1:
-            raise ValueError(f"Stale Appendix A patch: {ref}")
+        require(len(positions) == 1, f"Stale Appendix A patch: {ref}")
         at = positions[0]
         result[ref] = text[ref][:at] + new + text[ref][at + len(old) :]
     differences = [
@@ -348,10 +340,10 @@ def rp2026(text: Mapping[str, list[str]], printed: Mapping[str, PrintedVerse]) -
         for ref in result
         if ref not in printed or result[ref] != printed[ref]["Greek"]
     ]
-    if differences or set(printed) != set(result):
-        raise ValueError(
-            f"RP2026 disagrees with the printed Guardian text: {differences[:10]}"
-        )
+    require(
+        not differences and set(printed) == set(result),
+        f"RP2026 disagrees with the printed Guardian text: {differences[:10]}",
+    )
     return result
 
 
@@ -368,19 +360,16 @@ def parsed_scrivener(folder: Content) -> tuple[Text, Tags]:
         raw = re.sub(r"\(\d+:\d+\)", "", raw)
         raw = re.sub(r"\|([^|]*)\|([^|]*)\|", lambda m: m[2], raw)
         chunks = re.split(r"(\d+:\d+)", raw)
-        if chunks[0].strip():
-            raise ValueError(f"Unparsed UTR header: {filename}")
+        require(not chunks[0].strip(), f"Unparsed UTR header: {filename}")
         for ref, body in zip(chunks[1::2], chunks[2::2], strict=True):
             if "[" in body:
                 body = body[: body.index("[")]
             body = body.translate(str.maketrans("vxc", "scx"))
             _, tokens = bp5_line(ref.replace(":", ".") + " " + " ".join(body.split()))
             key = f"{book} {ref}"
-            if key in text:
-                raise ValueError(f"Duplicate UTR verse: {key}")
+            require(key not in text, f"Duplicate UTR verse: {key}")
             text[key], tags[key] = [t["word"] for t in tokens], tokens
-    if len(text) != 7957:
-        raise ValueError(f"UTR inventory: {len(text)}, expected 7957")
+    require(len(text) == 7957, f"UTR inventory: {len(text)}, expected 7957")
     return text, tags
 
 
@@ -464,12 +453,12 @@ def printed(
     text ends with its last verse, which RP2018 also ends with."""
     root = tree(path)
     spec = root.find(".//fontspec[@id='25']")
-    if (
-        spec is None
-        or spec.get("size") != "17"
-        or not (spec.get("family") or "").endswith("+RPTimesNewRoman")
-    ):
-        raise ValueError("Changed Guardian scripture font")
+    require(
+        spec is not None
+        and spec.get("size") == "17"
+        and (spec.get("family") or "").endswith("+RPTimesNewRoman"),
+        "Changed Guardian scripture font",
+    )
     book = -1
     ref: str | None = None
     ch = 0
@@ -483,8 +472,9 @@ def printed(
             text = "".join(node.itertext()).strip()
             if font == "23" and re.search("[Α-Ω]", text):
                 book += 1
-                if book >= len(BOOKS):
-                    raise ValueError("Unexpected additional Guardian book heading")
+                require(
+                    book < len(BOOKS), "Unexpected additional Guardian book heading"
+                )
                 ch = 0
                 ref = None
             elif font == "24" and re.fullmatch("[0-9]+", text):
@@ -511,16 +501,14 @@ def printed(
                 if ref == last and chunks[ref]:
                     continue
                 if pending_ch is not None:
-                    if text != "1":
-                        raise ValueError("Chapter boundary lacks expected verse 1")
+                    require(text == "1", "Chapter boundary lacks expected verse 1")
                     ch = pending_ch
                     pending_ch = None
                 ref = f"{BOOKS[book]} {ch}:{int(text)}"
                 pages[ref] = int(cast(str, page.get("number")))
             elif font == "25" and ref is not None:
                 chunks[ref].append(text)
-    if book != 26:
-        raise ValueError(f"Expected 27 book openings, got {book + 1}")
+    require(book == 26, f"Expected 27 book openings, got {book + 1}")
     result: dict[str, PrintedVerse] = {}
     for ref, pieces in chunks.items():
         raw = re.sub(rf"-\s+(?=[{GREEK}])", "", " ".join(pieces))
@@ -530,14 +518,14 @@ def printed(
         ]
         words = unicodedata.normalize("NFC", raw).split()
         if any(not re.fullmatch("[a-z]+", w) for w in forms):
-            raise ValueError(f"Unknown Greek letters at {ref}")
+            raise CheckFailed(f"Unknown Greek letters at {ref}")
         result[ref] = {"Greek": forms, "accented": words, "page": pages[ref]}
     for ref in omitted:
-        if ref in result:
-            raise ValueError(f"Unexpected printed omitted verse: {ref}")
+        require(ref not in result, f"Unexpected printed omitted verse: {ref}")
         result[ref] = {"Greek": [], "accented": [], "page": None}
-    if len(result) != 7957:
-        raise ValueError(f"Printed RP2026 inventory: {len(result)}, expected 7957")
+    require(
+        len(result) == 7957, f"Printed RP2026 inventory: {len(result)}, expected 7957"
+    )
     return result, apparatus_diacritics(root)
 
 
@@ -559,8 +547,7 @@ def marginal_alternates(folder: Content) -> dict[str, list[MarginalAlternate]]:
     result: dict[str, list[MarginalAlternate]] = {}
     for number, book in enumerate(BOOKS, 1):
         paths = list(folder.glob(f"{number:02d}_*.TXT"))
-        if len(paths) != 1:
-            raise ValueError(f"Expected one CCAT file for {book}: {paths}")
+        require(len(paths) == 1, f"Expected one CCAT file for {book}: {paths}")
         for line in paths[0].read_text(encoding="latin-1").splitlines():
             m = re.match(r"(\d+):(\d+)\s*(.*)", line)
             if not m or "{B" not in m[3]:

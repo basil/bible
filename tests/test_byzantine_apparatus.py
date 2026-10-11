@@ -30,6 +30,7 @@ from bible.byzantine.rows import (
     SelectedListRow,
     Unit,
 )
+from bible.checks import CheckFailed
 from bible.sources import Content
 
 
@@ -370,9 +371,12 @@ def test_faa_priorities_are_local_and_colons_remain_reading_text() -> None:
     text = "a {RP TR: first} [RP2018: second] b {RP: third: fourth} [TR: fifth]"
     assert apparatus.faa_reading(text, "RP")[0] == "a second b third: fourth"
     assert apparatus.faa_reading(text, "TR")[0] == "a first b fifth"
-    with pytest.raises(ValueError, match="no TR reading"):
-        apparatus.faa_reading("{RP S1550: - } [P1904 E1624: the]", "TR")
-    with pytest.raises(ValueError, match="Unparsed FAA markup"):
+    assert apparatus.faa_reading("{RP S1550: - } [P1904 E1624: the]", "TR") == (
+        None,
+        [],
+        "FAA group has no TR reading: {RP S1550: - }",
+    )
+    with pytest.raises(CheckFailed, match="Unparsed FAA markup"):
         apparatus.faa_reading("{RP TR: word} [unlabelled]", "RP")
 
 
@@ -827,7 +831,7 @@ def test_attach_contrasts_needs_an_exact_two_sided_greek_bound_match(
     assert placed["units"] == faa["units"] and "reason" not in placed
     # Attaching again starts from the source row, never from its attachment.
     assert apparatus.attach_contrasts([row], [faa])[0] == placed
-    with pytest.raises(ValueError, match="already attached"):
+    with pytest.raises(CheckFailed, match="already attached"):
         apparatus.attach_contrasts([placed], [faa])
     removed = apparatus.attach_contrasts([row], [{**faa, "units": []}])[0]
     assert (removed["units"], removed["scope"]) == ([], "verse")

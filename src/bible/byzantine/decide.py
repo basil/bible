@@ -42,6 +42,7 @@ from bible.byzantine.rows import (
 )
 from bible.byzantine.tags import Tag
 from bible.byzantine.units import NEUTRAL_CLASSES
+from bible.checks import require
 
 HYPER_LITERAL = set(APPARATUS) - {TCENT}
 GRAM_BY_CLASS = {
@@ -605,8 +606,9 @@ def operations(
             and op["ref"] == result[-1]["ref"]
             and result[-1]["word_range"][1] == op["word_range"][0]
         ):
-            if "stop" in op:
-                raise ValueError(f"Merged deletion would drop its stop: {op['ref']}")
+            require(
+                "stop" not in op, f"Merged deletion would drop its stop: {op['ref']}"
+            )
             previous = result.pop()
             quoted = "quoted_old" in previous or "quoted_old" in op
             op = {

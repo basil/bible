@@ -25,6 +25,7 @@ from bible.byzantine.crosswire import attach_sole, equal_positions, spans, words
 from bible.byzantine.english import surface_words, usj_markup, verse_markup
 from bible.byzantine.greek import Structure, greek_words, occurrences
 from bible.byzantine.rows import BoydNote, FaaRow, Report, SelectedListRow, Unit
+from bible.checks import CheckFailed, require
 from bible.sources import Content
 from bible.usfm import GREEK
 
@@ -233,8 +234,12 @@ def tcent_reports(
 VARIANT = re.compile(r"\{([^:{}\[\]]*):([^{}\[\]]*)\}|\[([^:{}\[\]]*):([^{}\[\]]*)\]")
 
 
-def faa_reading(text: str, witness: str) -> tuple[str, list[dict[str, Any]]]:
-    """Resolve FAA labels separately in every group, retaining its offsets."""
+def faa_reading(
+    text: str, witness: str
+) -> tuple[str | None, list[dict[str, Any]], str | None]:
+    """One witness's reading of an FAA cell, with FAA labels resolved
+    separately in every group and its offsets retained, and why it is
+    unavailable if FAA gives that witness no reading."""
     matches = list(VARIANT.finditer(text))
     batches: list[list[re.Match[str]]] = []
     at = 0
@@ -268,7 +273,7 @@ def faa_reading(text: str, witness: str) -> tuple[str, list[dict[str, Any]]]:
             (p for p in priority if any(p in v["sigla"] for v in variants)), None
         )
         if selector is None:
-            raise ValueError(f"FAA group has no {witness} reading: {batch[0][0]}")
+            return None, [], f"FAA group has no {witness} reading: {batch[0][0]}"
         chosen = [v["reading"] for v in variants if selector in v["sigla"]]
         # FAA splits Luke 17:36's one reading into adjacent labelled chunks.
         value = " ".join(v for v in chosen if v not in {"-", "–", "—"})
@@ -285,22 +290,7 @@ def faa_reading(text: str, witness: str) -> tuple[str, list[dict[str, Any]]]:
         cursor = batch[-1].end()
     output.append(text[cursor:])
     resolved = "".join(output)
-    if re.search(r"[{}\[\]]", resolved):
-        raise ValueError(f"Unparsed FAA markup: {resolved}")
-    return resolved, groups
-
-
-def faa_side(
-    text: str, witness: str
-) -> tuple[str | None, list[dict[str, Any]], str | None]:
-    """One witness's reading of an FAA cell, its groups, and why it is
-    unavailable if FAA gives that witness no reading."""
-    try:
-        resolved, groups = faa_reading(text, witness)
-    except ValueError as error:
-        if "group has no" not in str(error):
-            raise
-        return None, [], str(error)
+    require(not re.search(r"[{}\[\]]", resolved), f"Unparsed FAA markup: {resolved}")
     return resolved, groups, None
 
 
@@ -319,10 +309,9 @@ def faa(path: Content) -> dict[str, FaaRow]:
             continue
         match = re.fullmatch(r"(.+) (\d+:\d+)", cells[0])
         if not match or match[1] not in books:
-            raise ValueError(f"Unparsed FAA address: {cells[0]}")
+            raise CheckFailed(f"Unparsed FAA address: {cells[0]}")
         ref = books[match[1]] + " " + match[2]
-        if ref in result:
-            raise ValueError(f"Duplicate FAA address: {ref}")
+        require(ref not in result, f"Duplicate FAA address: {ref}")
         row: FaaRow = {
             "raw_Greek": cells[1],
             "raw_English": cells[2],
@@ -333,27 +322,27 @@ def faa(path: Content) -> dict[str, FaaRow]:
             "source_table_html": cast(str, html.tostring(node, encoding="unicode")),
             "source_table_text": "\n".join(cells),
         }
-        resolved, groups, unavailable = faa_side(cells[1], "TR")
+        resolved, groups, unavailable = faa_reading(cells[1], "TR")
         if unavailable is not None:
             row["TR_Greek_unavailable"] = unavailable
         row["TR_Greek"], row["TR_Greek_groups"] = resolved, groups
-        resolved, groups, unavailable = faa_side(cells[1], "RP")
+        resolved, groups, unavailable = faa_reading(cells[1], "RP")
         if unavailable is not None:
             row["RP_Greek_unavailable"] = unavailable
         row["RP_Greek"], row["RP_Greek_groups"] = resolved, groups
-        resolved, groups, unavailable = faa_side(cells[2], "TR")
+        resolved, groups, unavailable = faa_reading(cells[2], "TR")
         if unavailable is not None:
             row["TR_English_unavailable"] = unavailable
         row["TR_English"], row["TR_English_groups"] = resolved, groups
-        resolved, groups, unavailable = faa_side(cells[2], "RP")
+        resolved, groups, unavailable = faa_reading(cells[2], "RP")
         if unavailable is not None:
             row["RP_English_unavailable"] = unavailable
         row["RP_English"], row["RP_English_groups"] = resolved, groups
         result[ref] = row
-    if len(result) != 7960:
-        raise ValueError(
-            f"FAA inventory: {len(result)}, expected 7960 (both doxology locations)"
-        )
+    require(
+        len(result) == 7960,
+        f"FAA inventory: {len(result)}, expected 7960 (both doxology locations)",
+    )
     return result
 
 
@@ -728,21 +717,20 @@ def msb(main: Content, tables: Content, structure: Structure) -> list[SelectedLi
         match = re.fullmatch(r"(.+) (\d+:\d+)", address)
         if tab and match and match[1] in BOOKS_BY_NAME:
             ref = BOOKS_BY_NAME[match[1]] + " " + match[2]
-            if ref in main_text:
-                raise ValueError(f"Duplicate MSB main passage: {ref}")
+            require(ref not in main_text, f"Duplicate MSB main passage: {ref}")
             main_text[ref] = text
-    if len(main_text) != 7957:
-        raise ValueError("MSB main text: expected 7,957 NT source verse markers")
+    require(
+        len(main_text) == 7957, "MSB main text: expected 7,957 NT source verse markers"
+    )
     with tables.open_text(newline="") as stream:
         source = csv.reader(stream, delimiter="\t")
         next(source)
         for line, cells in enumerate(source, 2):
-            if len(cells) != 23:
-                raise ValueError(f"MSB line {line}: expected 23 columns")
+            require(len(cells) == 23, f"MSB line {line}: expected 23 columns")
             if cells[12]:
                 match = re.fullmatch(r"(.+) (\d+:\d+)", cells[12])
                 if not match or match[1] not in BOOKS_BY_NAME:
-                    raise ValueError(f"MSB address: {cells[12]}")
+                    raise CheckFailed(f"MSB address: {cells[12]}")
                 current = BOOKS_BY_NAME[match[1]] + " " + match[2]
                 chunks = []
             chunks.append("".join(cells[16:21]))
@@ -751,7 +739,7 @@ def msb(main: Content, tables: Content, structure: Structure) -> list[SelectedLi
             if not re.search(r"\bTR\b", cells[21]):
                 continue
             if current is None:
-                raise ValueError(f"MSB note without verse at {line}")
+                raise CheckFailed(f"MSB note without verse at {line}")
             raw = " ".join(
                 cast(
                     str, html.fromstring("<div>" + cells[21] + "</div>").text_content()
@@ -898,7 +886,7 @@ def attach_contrasts(
     result: list[Report] = []
     for row in rows:
         if row.get("method") == "english":
-            raise ValueError(
+            raise CheckFailed(
                 f"{row['witness']} {row['entry']} is already attached by English"
             )
         found = []

@@ -14,6 +14,7 @@ from lxml import html
 
 from bible import scripture, usj
 from bible.byzantine import BOOKS, BOYD_ASV, english
+from bible.checks import CheckFailed
 from bible.sources import Content
 from bible.usj import Document
 
@@ -79,14 +80,14 @@ def test_kjv_reader_is_pure(
 def test_kjv_reader_checks_its_inventory(byzantine: Mapping[str, Any]) -> None:
     documents = byzantine["kjv_documents"]
     empty = usj.document([{"type": "book", "marker": "id", "code": "JUD"}])
-    with pytest.raises(ValueError, match="KJV inventory"):
+    with pytest.raises(CheckFailed, match="KJV inventory"):
         english.kjv({**documents, "JUD": empty})
     # A subscription that is not the close of its book is refused.
     unclosed = usj.with_blocks(
         documents["ROM"],
         [*documents["ROM"]["content"][:-2], documents["ROM"]["content"][-1]],
     )
-    with pytest.raises(ValueError, match="subscription is not the book's close"):
+    with pytest.raises(CheckFailed, match="subscription is not the book's close"):
         english.kjv({**documents, "ROM": unclosed})
 
 
@@ -138,7 +139,7 @@ def test_supplied_spans_keep_punctuation_paragraph_offsets_and_ignore_notes() ->
     assert all(verse.text[lo:hi] == text for lo, hi, text in spans)
     assert spans[1][0] == verse.text.index("again")
     assert doc == before
-    with pytest.raises(ValueError, match="context differs"):
+    with pytest.raises(CheckFailed, match="context differs"):
         english.supplied_spans(doc, replace(verse, text="Changed " + verse.text))
 
 
@@ -276,16 +277,16 @@ def test_boyd_supplied_words_are_semantic_and_numbers_are_not_verse_text() -> No
 def test_boyd_unknown_markup_and_malformed_markers_fail(
     fragment: str, message: str
 ) -> None:
-    with pytest.raises(ValueError, match=message):
+    with pytest.raises(CheckFailed, match=message):
         english.boyd_paragraph(html.fromstring(fragment))
 
 
 def test_missing_books_and_chapters_fail() -> None:
-    with pytest.raises(ValueError, match="Expected one pinned RV book"):
+    with pytest.raises(CheckFailed, match="Expected one pinned RV book"):
         english.rv(Content({}))
-    with pytest.raises(ValueError, match="Expected one pinned ASV book"):
+    with pytest.raises(CheckFailed, match="Expected one pinned ASV book"):
         english.asv(Content({}))
-    with pytest.raises(ValueError, match="Boyd ASV inventory"):
+    with pytest.raises(CheckFailed, match="Boyd ASV inventory"):
         english.boyd_asv(Content({}))
 
 

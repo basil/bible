@@ -25,7 +25,7 @@ from bible.byzantine.crosswire import (
 )
 from bible.byzantine.greek import Structure, occurrences
 from bible.byzantine.rows import Disposition, Edit, Seam
-from bible.checks import CheckFailed
+from bible.checks import CheckFailed, require
 from bible.scripture import Verse
 from bible.usj import Content, Document, Node
 
@@ -81,8 +81,10 @@ def raw_bounds(raw: str, normalized: str, start: int, end: int) -> tuple[int, in
         text += token[0]
         starts.extend(range(token.start(), token.end()))
         ends.extend(range(token.start() + 1, token.end() + 1))
-    if text != normalized or not 0 <= start <= end <= len(text):
-        raise ValueError("Stale normalized source or invalid offset")
+    require(
+        text == normalized and 0 <= start <= end <= len(text),
+        "Stale normalized source or invalid offset",
+    )
     lo = starts[start] if start < len(starts) else len(raw.rstrip())
     return lo, ends[end - 1] if end > start else lo
 
@@ -95,8 +97,10 @@ def source_content(document: Document, verse: Verse, lo: int, hi: int) -> Conten
     """The source's own content of a stretch of a verse's words, its styles
     kept, which must lie in one paragraph."""
     index, start = verse.part_at(lo, at_end=lo == hi)
-    if verse.part_at(hi, at_end=True)[0] != index:
-        raise ValueError("Source quotation crosses paragraphs")
+    require(
+        verse.part_at(hi, at_end=True)[0] == index,
+        "Source quotation crosses paragraphs",
+    )
     block, a, b, _ = verse.parts[index]
     _, tail = usj.split(
         document["content"][block]["content"][a:b], start, notes_left=False
@@ -138,8 +142,10 @@ def supplied_content(text: str) -> Content:
         result.extend([text[at : match.start()], usj.char("add", match[1])])
         at = match.end()
     result.append(text[at:])
-    if any("[" in item or "]" in item for item in result if isinstance(item, str)):
-        raise ValueError("Malformed supplied-word brackets")
+    require(
+        not any("[" in item or "]" in item for item in result if isinstance(item, str)),
+        "Malformed supplied-word brackets",
+    )
     return usj.joined(result)
 
 
@@ -301,16 +307,16 @@ def char_range(
         or len(bounds) != 2
         or any(type(offset) is not int for offset in bounds)
     ):
-        raise ValueError("invalid source offset")
+        raise CheckFailed("invalid source offset")
     if op.get("raw_range"):
         lo, hi = bounds
         if not 0 <= lo <= hi <= len(verse_text):
-            raise ValueError("invalid source offset")
+            raise CheckFailed("invalid source offset")
         return lo, hi
     tokens = spans(plain_text)
     a, b = bounds
     if not 0 <= a <= b <= len(tokens):
-        raise ValueError("invalid source offset")
+        raise CheckFailed("invalid source offset")
     lo, hi = edit_offsets(plain_text, op, tokens)
     if op["kind"] == "insert" and op.get("side") == "after":
         lo = hi = tokens[a - 1][2] if a else 0
@@ -348,8 +354,10 @@ def execute(
         try:
             # Validate before adjacent deletions index the word ledger too.
             for op in row["ops"]:
-                if op["kind"] not in {"replace", "delete", "insert", "transpose"}:
-                    raise ValueError("operation not implemented")
+                require(
+                    op["kind"] in {"replace", "delete", "insert", "transpose"},
+                    "operation not implemented",
+                )
                 source_book, source_ref = op["ref"].split()
                 source_text = source_verses[source_book][source_ref].text
                 char_range(op, source_text, scripture.plain(source_text))
@@ -376,12 +384,15 @@ def execute(
                 quote = verse.text[lo:hi]
                 # The KJV prints the apostrophe curly; so does every edit.
                 new = curly_apostrophes(op["new"])
-                if op.get("exact") and scripture.plain(quote) != scripture.plain(
-                    op["old"]
-                ):
-                    raise ValueError("stale exact edit: the KJV characters differ")
-                if op["kind"] != "insert" and words(quote) != words(op["old"]):
-                    raise ValueError("stale edit: the KJV words differ")
+                require(
+                    not op.get("exact")
+                    or scripture.plain(quote) == scripture.plain(op["old"]),
+                    "stale exact edit: the KJV characters differ",
+                )
+                require(
+                    op["kind"] == "insert" or words(quote) == words(op["old"]),
+                    "stale edit: the KJV words differ",
+                )
                 if not op.get("raw_range") and "[" not in new:
                     # Words an instruction keeps keep the KJV's italics (Rev 3:8
                     # "no man"): bracket each supplied word it carries over.
@@ -393,8 +404,7 @@ def execute(
                         if n.get("marker") in {"add", "+add"}
                     ]
                     new = bracket_kept(new, kept)
-                if quote == new and not op.get("unstyle"):
-                    raise ValueError("edit changes nothing")
+                require(quote != new or op.get("unstyle"), "edit changes nothing")
                 start, end, rendered, seams = seam(
                     verse.text,
                     lo,
@@ -405,15 +415,15 @@ def execute(
                     witness = curly_apostrophes(op["witness_new"])
                     literal = curly_apostrophes(op["new"])
                     first = re.search(r"[A-Za-zÆæ]", witness)
-                    if (
-                        first is None
-                        or len(witness) != len(literal)
-                        or witness[: first.start()] != literal[: first.start()]
-                        or witness[first.start() + 1 :] != literal[first.start() + 1 :]
-                        or witness[first.start()].casefold()
-                        != literal[first.start()].casefold()
-                    ):
-                        raise ValueError("invalid replacement initial")
+                    require(
+                        first is not None
+                        and len(witness) == len(literal)
+                        and witness[: first.start()] == literal[: first.start()]
+                        and witness[first.start() + 1 :] == literal[first.start() + 1 :]
+                        and witness[first.start()].casefold()
+                        == literal[first.start()].casefold(),
+                        "invalid replacement initial",
+                    )
                     seams.append(
                         {"rule": 4, "range": [lo, hi], "from": witness, "to": literal}
                     )
@@ -511,16 +521,18 @@ def execute(
                     # characters, not their plain form.
                     a, b = adjustment["range"]
                     old, new_initial = adjustment["from"], adjustment["to"]
-                    if (
-                        b != a + 1
-                        or verse.text[a:b] != old
-                        or len(new_initial) != 1
-                        or not old.isalpha()
-                        or old == new_initial
-                        or old.casefold() != new_initial.casefold()
-                        or (a and verse.text[a - 1].isalpha())
-                    ):
-                        raise ValueError("invalid contextual initial")
+                    require(
+                        not (
+                            b != a + 1
+                            or verse.text[a:b] != old
+                            or len(new_initial) != 1
+                            or not old.isalpha()
+                            or old == new_initial
+                            or old.casefold() != new_initial.casefold()
+                            or (a and verse.text[a - 1].isalpha())
+                        ),
+                        "invalid contextual initial",
+                    )
                     # Keep the following word's styles without extending the
                     # lexical operation or its Textus Receptus quotation.
                     initial = usj.substituted(
@@ -556,10 +568,11 @@ def execute(
                 taken = {address: list(ranges) for address, ranges in occupied.items()}
                 for verse, a, b, _ in planned:
                     ranges = taken.setdefault(book + " " + verse.reference, [])
-                    if any(a < y and x < b for x, y in ranges):
-                        raise ValueError("overlapping edits")
+                    require(
+                        not any(a < y and x < b for x, y in ranges), "overlapping edits"
+                    )
                     ranges.append((a, b))
-        except (ValueError, CheckFailed) as error:
+        except CheckFailed as error:
             refusal = str(error)
         if refusal:
             result.append(refused(row, refusal))
@@ -722,8 +735,10 @@ def structural(
                 omitted.add(ref)
                 continue
             target = row["target_ref"].split()[1]
-            if structure.moved.get(row["ref"]) != row["target_ref"]:
-                raise ValueError(f'Unrecognized structural move: {row["unit"]}')
+            require(
+                structure.moved.get(row["ref"]) == row["target_ref"],
+                f'Unrecognized structural move: {row["unit"]}',
+            )
             if split_move:
                 refuse(row, "structural move crosses paragraphs")
                 continue

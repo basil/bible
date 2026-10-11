@@ -7,6 +7,8 @@ import unicodedata
 from collections.abc import Sequence
 from difflib import SequenceMatcher
 
+from bible.checks import require
+
 # All case/number forms, including vocatives and duals. Diacritics are
 # ignored only when identifying these families, never when matching readings.
 TR_CASE_FORMS = frozenset(
@@ -223,8 +225,10 @@ def anchored(
         else:
             merged.append((a, b, c, d))
     for a, b, c, d in merged:
-        if a < lo or c < ro or not a <= b <= len(left) or not c <= d <= len(right):
-            raise ValueError("Invalid projected Greek comparison ranges")
+        require(
+            a >= lo and c >= ro and a <= b <= len(left) and c <= d <= len(right),
+            "Invalid projected Greek comparison ranges",
+        )
         spans.extend(diff_spans(left[lo:a], right[ro:c], greek=greek))
         spans.extend(diff_spans(left[a:b], right[c:d], greek=greek))
         lo, ro = b, d

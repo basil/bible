@@ -45,6 +45,7 @@ from bible.byzantine.rows import (
     Unmatched,
 )
 from bible.byzantine.tags import Tag, retag
+from bible.checks import require
 from bible.references import parse_passage
 from bible.scripture import Verse
 from bible.sources import Content
@@ -124,11 +125,11 @@ def structure_of(
     every address one text has and the other lacks."""
     omitted = greek.empty_verses(rp)
     declared = frozenset(decided["omitted"])
-    if declared != omitted:
-        raise ValueError(
-            f"Structural decisions disagree with the Byzantine text: omitted "
-            f"{sorted(omitted ^ declared)}"
-        )
+    require(
+        declared == omitted,
+        f"Structural decisions disagree with the Byzantine text: omitted "
+        f"{sorted(omitted ^ declared)}",
+    )
     moved: dict[str, str] = {}
     for ref, entry in decided["moved"].items():
         for source, destination in zip(
@@ -137,16 +138,17 @@ def structure_of(
             moved[str(source)] = str(destination)
     kjv_only = set(tr) - set(rp)
     rp_only = set(rp) - set(tr)
-    if kjv_only != {ref for ref in moved if moved[ref] not in tr} or rp_only != {
-        target for target in moved.values() if target not in tr
-    }:
-        raise ValueError(
-            f"Structural decisions do not account for the verses one text lacks: "
-            f"{sorted(kjv_only)} {sorted(rp_only)}"
-        )
+    require(
+        kjv_only == {ref for ref in moved if moved[ref] not in tr}
+        and rp_only == {target for target in moved.values() if target not in tr},
+        f"Structural decisions do not account for the verses one text lacks: "
+        f"{sorted(kjv_only)} {sorted(rp_only)}",
+    )
     for ref, target in moved.items():
-        if ref in tr and target in tr and moved.get(target) != ref:
-            raise ValueError(f"Exchanged verses must be moved both ways: {ref}")
+        require(
+            ref not in tr or target not in tr or moved.get(target) == ref,
+            f"Exchanged verses must be moved both ways: {ref}",
+        )
     return greek.Structure(moved, omitted)
 
 
@@ -163,8 +165,7 @@ def stage_greek(context: Context) -> Context:
     rp = greek.rp2026(rp, printed)
     collation = inventories.collation(context["source_inputs"]["collation"])
     notes_ = inventories.boyd(context["source_inputs"]["tcgnt"])
-    if len(notes_) != 1948:
-        raise ValueError(f"TCGNT inventory: {len(notes_)}, expected 1948")
+    require(len(notes_) == 1948, f"TCGNT inventory: {len(notes_)}, expected 1948")
     splits = inventories.word_breaks(context["source_inputs"]["tcgnt"] / "095XXC.usx")
     rp_alignment = greek.align(
         {ref: verse["accented"] for ref, verse in printed.items()}, rp

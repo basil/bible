@@ -13,6 +13,7 @@ from collections.abc import Collection
 from enum import StrEnum
 
 from bible.byzantine.rows import Disposition
+from bible.checks import CheckFailed, require
 
 
 class Tag(StrEnum):
@@ -176,8 +177,15 @@ def retag(row: Disposition, tag: Tag) -> None:
 
 def asserted(tags: Collection[str]) -> list[Tag]:
     """Fail on a tag the editor may not write: unknown, or computed by the build."""
+    result = []
     for t in tags:
-        tag = Tag(t)
-        if tag.group not in ASSERTED_GROUPS:
-            raise ValueError(f"tag is computed by the build, not asserted: {t}")
-    return [Tag(t) for t in tags]
+        try:
+            tag = Tag(t)
+        except ValueError:
+            raise CheckFailed(f"unknown tag: {t}") from None
+        require(
+            tag.group in ASSERTED_GROUPS,
+            f"tag is computed by the build, not asserted: {t}",
+        )
+        result.append(tag)
+    return result

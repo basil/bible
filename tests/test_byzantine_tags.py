@@ -6,6 +6,7 @@ import pytest
 
 from bible.byzantine import tags
 from bible.byzantine.tags import LEGEND, WEIGHTS, Tag
+from bible.checks import CheckFailed
 
 
 def test_legend_covers_every_tag_and_nothing_else() -> None:
@@ -38,14 +39,14 @@ def test_asserted_accepts_from_and_gram_tags() -> None:
     "tag", ["op:omit", "ev:corroborated", "op:nochange", "ev:single-witness"]
 )
 def test_asserted_rejects_computed_tags(tag: str) -> None:
-    with pytest.raises(ValueError, match="computed by the build"):
+    with pytest.raises(CheckFailed, match="computed by the build"):
         tags.asserted([tag])
 
 
 def test_asserted_rejects_an_unknown_tag() -> None:
-    with pytest.raises(ValueError):
+    with pytest.raises(CheckFailed):
         tags.asserted(["from:nowhere"])
-    with pytest.raises(ValueError):
+    with pytest.raises(CheckFailed):
         tags.asserted(["tier:A"])
 
 

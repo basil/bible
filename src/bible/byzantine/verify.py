@@ -19,7 +19,7 @@ from bible import lemmas, repairs, scripture, usj
 from bible.byzantine.edit import renumber, supplied_content
 from bible.byzantine.greek import Structure
 from bible.byzantine.rows import Disposition, Edit, NoteScope, Unit
-from bible.checks import present
+from bible.checks import CheckFailed, present, require
 from bible.scripture import Verse
 from bible.usj import Content, Document, Node
 
@@ -81,60 +81,69 @@ def closure(source: str, edits: Sequence[Edit]) -> str:
         external: list[tuple[int, int, str]] = []
         lo, hi = edit["range"]
         start, end = edit["applied_range"]
-        if source[lo:hi] != edit["old"] or not 0 <= start <= lo <= hi <= end <= len(
-            source
-        ):
-            raise ValueError("stale source offsets")
-        if any(c not in " \n\t,;:.!?" for c in source[start:lo] + source[hi:end]):
-            raise ValueError("punctuation seam changes words")
+        require(
+            source[lo:hi] == edit["old"]
+            and 0 <= start <= lo <= hi <= end <= len(source),
+            "stale source offsets",
+        )
+        require(
+            not any(c not in " \n\t,;:.!?" for c in source[start:lo] + source[hi:end]),
+            "punctuation seam changes words",
+        )
         new = edit["new"]
         rendered = usj.text_of(supplied_content(edit["rendered"]))
         for seam in edit["seams"]:
             a, b = seam["range"]
-            if not 0 <= a <= b <= len(source):
-                raise ValueError("stale seam offsets")
+            require(0 <= a <= b <= len(source), "stale seam offsets")
             if seam["rule"] == 2 and seam.get("external"):
-                if source[a:b] != seam["from"]:
-                    raise ValueError("stale external punctuation")
-                if any(c not in ",;:.?!" for c in seam["from"] + seam["to"]):
-                    raise ValueError("punctuation seam changes words")
+                require(source[a:b] == seam["from"], "stale external punctuation")
+                require(
+                    not any(c not in ",;:.?!" for c in seam["from"] + seam["to"]),
+                    "punctuation seam changes words",
+                )
                 external.append((a, b, seam["to"]))
             elif seam["rule"] == 4 and seam.get("external"):
                 old, initial = seam["from"], seam["to"]
-                if (
-                    b != a + 1
-                    or source[a:b] != old
-                    or len(initial) != 1
-                    or not old.isalpha()
-                    or old == initial
-                    or old.casefold() != initial.casefold()
-                    or (a and source[a - 1].isalpha())
-                ):
-                    raise ValueError("case adjustment changes more than an initial")
+                require(
+                    not (
+                        b != a + 1
+                        or source[a:b] != old
+                        or len(initial) != 1
+                        or not old.isalpha()
+                        or old == initial
+                        or old.casefold() != initial.casefold()
+                        or (a and source[a - 1].isalpha())
+                    ),
+                    "case adjustment changes more than an initial",
+                )
                 external.append((a, b, initial))
             elif seam["rule"] == 4:
                 before, after = seam["from"], seam["to"]
                 first_letter = re.search(r"[A-Za-zÆæ]", before)
-                if (
-                    first_letter is None
-                    or len(before) != len(after)
-                    or before[: first_letter.start()] != after[: first_letter.start()]
-                    or before[first_letter.start() + 1 :]
-                    != after[first_letter.start() + 1 :]
-                    or before[first_letter.start()].casefold()
-                    != after[first_letter.start()].casefold()
-                    or usj.text_of(supplied_content(after)) != new
-                ):
-                    raise ValueError("case adjustment changes more than an initial")
+                require(
+                    first_letter is not None
+                    and len(before) == len(after)
+                    and before[: first_letter.start()] == after[: first_letter.start()]
+                    and before[first_letter.start() + 1 :]
+                    == after[first_letter.start() + 1 :]
+                    and before[first_letter.start()].casefold()
+                    == after[first_letter.start()].casefold()
+                    and usj.text_of(supplied_content(after)) == new,
+                    "case adjustment changes more than an initial",
+                )
             elif seam["rule"] == 3:
                 continue  # a kept character style changes no words
             elif seam["rule"] != 2:
-                raise ValueError("unknown seam rule")
-        if new != rendered:
-            raise ValueError("undeclared change to new words")
+                raise CheckFailed("unknown seam rule")
+        require(new == rendered, "undeclared change to new words")
         prefix, suffix = edit.get("prefix", ""), edit.get("suffix", "")
-        if (prefix or suffix) and (lo != hi or any(c != " " for c in prefix + suffix)):
-            raise ValueError("insertion seam changes words")
+        require(
+            not (
+                (prefix or suffix)
+                and (lo != hi or any(c != " " for c in prefix + suffix))
+            ),
+            "insertion seam changes words",
+        )
         changes.append((start, end, prefix + rendered + suffix))
         # The source model declares the splice before its external seams.
         # Keep that order for two insertions at the same immutable offset.
@@ -143,8 +152,10 @@ def closure(source: str, edits: Sequence[Edit]) -> str:
     # applying text backwards needs the reverse order to reproduce that.
     ordered = sorted(changes, key=lambda c: (c[0], c[1] > c[0]), reverse=True)
     for i, (a, b, _) in enumerate(ordered):
-        if any(a < y and x < b for x, y, _ in ordered[i + 1 :]):
-            raise ValueError("overlapping declared changes")
+        require(
+            not any(a < y and x < b for x, y, _ in ordered[i + 1 :]),
+            "overlapping declared changes",
+        )
     text = source
     for a, b, new in ordered:
         text = text[:a] + new + text[b:]
@@ -324,7 +335,7 @@ def checks(
                 expected = closure(source[old_ref].text, edits)
                 if expected != verse.text:
                     fail("I2", f"{target}: unaccounted character difference")
-            except ValueError as error:
+            except CheckFailed as error:
                 fail("I2", f"{target}: {error}")
             expected_notes: Content = [n for _, n in source[old_ref].notes]
             expected_notes += [
@@ -575,7 +586,7 @@ def finished_verses(
         previous = preceding[target_book].get(target_address)
         try:
             baseline = closure(before.text, corrected[ref])
-        except ValueError as error:
+        except CheckFailed as error:
             result[ref] = [f"correction: {ref}: {error}"]
             continue
         previous_text = scripture.plain(previous.text) if previous else ""

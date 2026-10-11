@@ -939,7 +939,7 @@ def test_lemma_entries_read_the_unit_and_the_note_from_the_key() -> None:
         ("1CO 15:39#1", 1, "one"),
         ("1CO 15:39#1", 2, "two"),
     ]
-    with pytest.raises(ValueError, match="key is not a TR note's"):
+    with pytest.raises(CheckFailed, match="key is not a TR note's"):
         decisions.lemma_entries({"1CO 15:39#1 RP": {"lemma": "x", "why": "y"}})
 
 
@@ -1018,7 +1018,7 @@ def test_shared_greek_refuses_mismatched_alignment(
     else:
         alignment.addresses[ref][0] = "LUK 23:41"
         message = "cross-verse joined-word"
-    with pytest.raises(ValueError, match=f"{ref}:.*{message}"):
+    with pytest.raises(CheckFailed, match=f"{ref}:.*{message}"):
         decisions.shared_greek(
             "ἐν τῇ βασιλείᾳ σου",
             ref,

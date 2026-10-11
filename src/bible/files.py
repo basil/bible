@@ -8,9 +8,14 @@ from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
 
+from bible.checks import CheckFailed
+
 
 def read_json(path: Path) -> Any:
-    return json.loads(path.read_text(encoding="utf-8"))
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except ValueError as error:  # malformed JSON or not UTF-8
+        raise CheckFailed(f"{path}: {error}") from None
 
 
 def write_json(path: Path, data: object) -> None:

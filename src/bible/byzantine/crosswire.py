@@ -19,6 +19,7 @@ from bible import scripture
 from bible.byzantine import BOOKS
 from bible.byzantine.greek import ascii_greek
 from bible.byzantine.rows import Report, Unit
+from bible.checks import require
 from bible.sources import Content
 
 
@@ -205,8 +206,7 @@ def crosswire(path: Content) -> dict[str, Tagged]:
                 ref = f"{books[book]} {chapter}:{verse}" if book in books else None
                 chunks, links, length = [], [], 0
             elif ref and node.get("eID"):
-                if ref in result:
-                    raise ValueError(f"Duplicate CrossWire verse: {ref}")
+                require(ref not in result, f"Duplicate CrossWire verse: {ref}")
                 result[ref] = {"text": "".join(chunks), "links": links}
                 ref = None
             return
@@ -234,8 +234,9 @@ def crosswire(path: Content) -> dict[str, Tagged]:
     for div in ET.fromstring(path.read_bytes()).iter(f"{namespace}div"):
         if div.get("type") == "book" and div.get("osisID") in books:
             walk(div)
-    if len(result) != 7957:
-        raise ValueError(f"CrossWire NT inventory: {len(result)}, expected 7957")
+    require(
+        len(result) == 7957, f"CrossWire NT inventory: {len(result)}, expected 7957"
+    )
     return result
 
 

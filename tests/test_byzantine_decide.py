@@ -36,6 +36,7 @@ from bible.byzantine.rows import (
 from bible.byzantine.stages import Context
 from bible.byzantine.tags import Tag
 from bible.byzantine.units import NEUTRAL_CLASSES
+from bible.checks import CheckFailed
 
 DISPOSITIONS = {"override", "structural", "witnessed", "conflict", "neutral", "silent"}
 # A correction of shared Greek, after the units' dispositions.
@@ -1034,7 +1035,7 @@ def test_adjacent_deletions_merge_into_one_quotation() -> None:
     assert [(op["word_range"], op["quoted_old"]) for op in merged] == [
         ([0, 2], "And he")
     ]
-    with pytest.raises(ValueError, match="MAT 1:1"):
+    with pytest.raises(CheckFailed, match="MAT 1:1"):
         decide.operations([delete(0, "And"), delete(1, "he", ".")], kjv, frozenset())
 
 

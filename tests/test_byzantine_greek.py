@@ -36,6 +36,7 @@ from bible.byzantine.greek import (
     rp2018,
     rp2026,
 )
+from bible.checks import CheckFailed
 from bible.sources import Content
 
 Printed = tuple[dict[str, PrintedVerse], list[Diacritic]]
@@ -147,9 +148,9 @@ def test_multiple_annotations_are_one_word(rp18: tuple[Text, Tags]) -> None:
         "1:1",
         [{"word": "logos", "strong": [3056], "parse": ["N-NSM"]}],
     )
-    with pytest.raises(ValueError, match="Unparsed BP5"):
+    with pytest.raises(CheckFailed, match="Unparsed BP5"):
         bp5_line("01.01 logos 3056 {N-NSM} ?")
-    with pytest.raises(ValueError, match="Missing BP5 annotation"):
+    with pytest.raises(CheckFailed, match="Missing BP5 annotation"):
         bp5_line("01.01 logos 3056")
 
 
@@ -190,17 +191,17 @@ def test_rp2026_refuses_stale_patches_and_a_changed_printed_text(
 ) -> None:
     text, _ = rp18
     snapshot, _ = guardian
-    with pytest.raises(ValueError, match="Stale Appendix A patch"):
+    with pytest.raises(CheckFailed, match="Stale Appendix A patch"):
         rp2026({**text, "MAT 26:29": []}, snapshot)
     changed = {
         **snapshot,
         "MAT 1:1": PrintedVerse({**snapshot["MAT 1:1"], "Greek": ["x"]}),
     }
     with pytest.raises(
-        ValueError, match="disagrees with the printed Guardian text.*MAT 1:1"
+        CheckFailed, match="disagrees with the printed Guardian text.*MAT 1:1"
     ):
         rp2026(text, changed)
-    with pytest.raises(ValueError, match="disagrees with the printed Guardian text"):
+    with pytest.raises(CheckFailed, match="disagrees with the printed Guardian text"):
         rp2026(text, {ref: row for ref, row in snapshot.items() if ref != "JUD 1:25"})
 
 
@@ -262,7 +263,7 @@ def test_printed_reader_refuses_a_changed_scripture_font(
     )
     assert changed != source
     path = Content({"changed.xml": changed.encode()}) / "changed.xml"
-    with pytest.raises(ValueError, match="Changed Guardian scripture font"):
+    with pytest.raises(CheckFailed, match="Changed Guardian scripture font"):
         printed(path, structure.omitted, "REV 22:21")
 
 
@@ -360,21 +361,21 @@ def test_alignment_keeps_repeated_words_in_source_order() -> None:
     ],
 )
 def test_alignment_refuses_other_changes(plain: list[str], marked: list[str]) -> None:
-    with pytest.raises(ValueError, match="(Unsupported|Unaligned).*MAT"):
+    with pytest.raises(CheckFailed, match="(Unsupported|Unaligned).*MAT"):
         accented_scrivener(accented_input({"MAT 1:1": marked}), {"MAT 1:1": plain})
 
 
 def test_alignment_refuses_ambiguous_word_division() -> None:
-    with pytest.raises(ValueError, match="Ambiguous.*MAT 1:1 / MAT 1:1"):
+    with pytest.raises(CheckFailed, match="Ambiguous.*MAT 1:1 / MAT 1:1"):
         accented_scrivener(accented_input({"MAT 1:1": ["ἄν"]}), {"MAT 1:1": ["a", "n"]})
 
 
 def test_alignment_refuses_unknown_characters_and_inventory() -> None:
-    with pytest.raises(ValueError, match="Unknown Greek"):
+    with pytest.raises(CheckFailed, match="Unknown Greek"):
         accented_scrivener(accented_input({"MAT 1:1": ["καί@"]}), {"MAT 1:1": ["kai"]})
-    with pytest.raises(ValueError, match="Unknown Greek"):
+    with pytest.raises(CheckFailed, match="Unknown Greek"):
         accented_scrivener(accented_input({"MAT 1:1": ["kai"]}), {"MAT 1:1": ["kai"]})
-    with pytest.raises(ValueError, match="verse inventory"):
+    with pytest.raises(CheckFailed, match="verse inventory"):
         accented_scrivener(accented_input({"MAT 1:2": ["καί"]}), {"MAT 1:1": ["kai"]})
 
 
@@ -403,7 +404,7 @@ def test_alignment_preserves_complete_source_words(
         len(marked),
         len(marked),
     )
-    with pytest.raises(ValueError, match="Invalid Greek token range"):
+    with pytest.raises(CheckFailed, match="Invalid Greek token range"):
         alignment.project("MAT 1:1", (0, len(plain) + 1))
 
 

@@ -14,6 +14,7 @@ from bible import scripture, usj
 from bible.byzantine import edit
 from bible.byzantine.rows import Disposition, Edit, InstructionEdit
 from bible.byzantine.stages import Context
+from bible.checks import CheckFailed
 from bible.scripture import Verse
 from bible.usj import Document, Node
 
@@ -210,7 +211,7 @@ def test_supplied_content_turns_brackets_into_add_characters() -> None:
     assert usj.text_of(content) == "for I behold them as trees"
     assert "\\add them\\add*" in usj.serialize(content)
     assert edit.supplied_content("plain words") == ["plain words"]
-    with pytest.raises(ValueError):
+    with pytest.raises(CheckFailed):
         edit.supplied_content("a [broken bracket")
 
 
@@ -874,7 +875,7 @@ def test_closure_rejects_case_adjustments_beyond_an_initial(
         ],
     }
     with pytest.raises(
-        ValueError, match="case adjustment changes more than an initial"
+        CheckFailed, match="case adjustment changes more than an initial"
     ):
         verify.closure("And they spoke.", [applied])
 
@@ -897,7 +898,7 @@ def test_closure_checks_a_replacements_compiled_initial_independently(
         "seams": [{"rule": 4, "range": [0, 3], "from": before, "to": after}],
     }
     with pytest.raises(
-        ValueError, match="case adjustment changes more than an initial"
+        CheckFailed, match="case adjustment changes more than an initial"
     ):
         verify.closure("Thy people", [applied])
 

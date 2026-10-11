@@ -36,6 +36,7 @@ from bible.byzantine.rows import (
     Report,
     Unit,
 )
+from bible.checks import require
 
 # Classes that a KJV-worded change cannot be about: orthography the English
 # cannot show. A proper name's spelling can show (Bethphage, Bethsphage).
@@ -52,11 +53,15 @@ def bind_plain(edit: Mapping[str, Any], text: str) -> dict[str, Any]:
     tokens = words(text)
     kind = edit["kind"]
     occurrence = edit.get("occurrence")
-    if "occurrence" in edit and (type(occurrence) is not int or occurrence < 1):
-        raise ValueError("instruction occurrence must be a positive integer")
+    require(
+        "occurrence" not in edit or (type(occurrence) is int and occurrence >= 1),
+        "instruction occurrence must be a positive integer",
+    )
     if kind == "insert":
-        if edit.get("side", "after") not in {"before", "after"}:
-            raise ValueError("instruction insertion side must be before or after")
+        require(
+            edit.get("side", "after") in {"before", "after"},
+            "instruction insertion side must be before or after",
+        )
         anchor = words(edit.get("anchor", ""))
         hits = occurrences(tokens, anchor) if anchor else []
         if occurrence is not None:

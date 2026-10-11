@@ -148,7 +148,7 @@ def test_malformed_archive_xml_names_its_member() -> None:
         "",
         ("*MAT.usx",),
     )
-    with pytest.raises(ValueError, match=r"witness.zip/one-MAT.usx"):
+    with pytest.raises(CheckFailed, match=r"witness.zip/one-MAT.usx"):
         boyd(content)
 
 

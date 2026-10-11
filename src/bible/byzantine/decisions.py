@@ -35,6 +35,7 @@ from bible.byzantine.rows import (
 )
 from bible.byzantine.tags import asserted
 from bible.byzantine.units import keyed_units
+from bible.checks import CheckFailed, present, require
 
 # A witness's row that a placement can attach: an apparatus report, a
 # selected list's footnote, or an instruction.
@@ -56,18 +57,22 @@ def ref_key(ref: str) -> tuple[int, int, int]:
 def resolve(greek: Mapping[str, Any], units: Sequence[Unit], label: str) -> Unit:
     """The one unit a Greek key names: verse, tr and rp words, optional nth."""
     for field in ("ref", "tr", "rp"):
-        if not isinstance(greek.get(field), str):
-            raise ValueError(f"{label}: Greek key needs ref, tr and rp strings")
+        require(
+            isinstance(greek.get(field), str),
+            f"{label}: Greek key needs ref, tr and rp strings",
+        )
     found = keyed_units(units, greek["ref"], greek["tr"], greek["rp"])
     if "nth" in greek:
         nth = greek["nth"]
-        if type(nth) is not int or not 1 <= nth <= len(found):
-            raise ValueError(f"{label}: nth does not select a unit")
-        found = [found[nth - 1]]
-    if len(found) != 1:
-        raise ValueError(
-            f"{label}: Greek key {greek['ref']} {greek['tr']!r} -> {greek['rp']!r} names {len(found)} units"
+        require(
+            type(nth) is int and 1 <= nth <= len(found),
+            f"{label}: nth does not select a unit",
         )
+        found = [found[nth - 1]]
+    require(
+        len(found) == 1,
+        f"{label}: Greek key {greek['ref']} {greek['tr']!r} -> {greek['rp']!r} names {len(found)} units",
+    )
     return found[0]
 
 
@@ -85,10 +90,8 @@ def with_hodges_farstad(
     for key, decision in sides.items():
         label = f"Hodges-Farstad side {key}"
         unit = resolve(decision["unit"], result, label)
-        if unit["id"] != key:
-            raise ValueError(f"{label}: the unit is {unit['id']}")
-        if unit["hf"] == decision["side"]:
-            raise ValueError(f"{label} changes nothing")
+        require(unit["id"] == key, f"{label}: the unit is {unit['id']}")
+        require(unit["hf"] != decision["side"], f"{label} changes nothing")
         result[result.index(unit)] = {**unit, "hf": decision["side"]}
     return result
 
@@ -113,17 +116,17 @@ def bracketed_quote(quote: str) -> tuple[str, list[tuple[int, int]]]:
     for char in quote:
         if char == "[":
             if start is not None:
-                raise ValueError("malformed supplied-word brackets")
+                raise CheckFailed("malformed supplied-word brackets")
             start = len(text)
         elif char == "]":
             if start is None or start == len(text) or not text[start:].strip():
-                raise ValueError("malformed supplied-word brackets")
+                raise CheckFailed("malformed supplied-word brackets")
             ranges.append((start, len(text)))
             start = None
         else:
             text += char
     if start is not None:
-        raise ValueError("malformed supplied-word brackets")
+        raise CheckFailed("malformed supplied-word brackets")
     return text, ranges
 
 
@@ -137,45 +140,51 @@ def shared_greek(
 ) -> None:
     """Refuse Greek that is not whole words occurring once in RP2026's
     printed verse, or that a difference from the TR touches."""
-    if ref in structure.omitted:
-        raise ValueError("the verse is omitted by RP2026")
+    require(ref not in structure.omitted, "the verse is omitted by RP2026")
     target = structure.rp_ref(ref)
 
     def key(word: str) -> str:
         # lower(), not casefold(): casefold erases iota subscripts.
         return unicodedata.normalize("NFC", "".join(greek.accent_letters(word))).lower()
 
-    if alignment.text.get(target) != printed[target]["accented"]:
-        raise ValueError(f"{ref}: printed words disagree with Greek alignment offsets")
-    if any(address != target for address in alignment.addresses[target]):
-        raise ValueError(f"{ref}: unsupported cross-verse joined-word alignment")
+    require(
+        alignment.text.get(target) == printed[target]["accented"],
+        f"{ref}: printed words disagree with Greek alignment offsets",
+    )
+    require(
+        all(address == target for address in alignment.addresses[target]),
+        f"{ref}: unsupported cross-verse joined-word alignment",
+    )
 
     wanted = [key(w) for w in cited.split()]
     hits = greek.occurrences([key(w) for w in printed[target]["accented"]], wanted)
-    if len(hits) != 1:
-        raise ValueError(
-            f"greek must occur once at RP2026 {target} ({len(hits)} found)"
-        )
+    require(
+        len(hits) == 1, f"greek must occur once at RP2026 {target} ({len(hits)} found)"
+    )
     a, b = hits[0], hits[0] + len(wanted)
     tokens = [
         i for i, (x, y) in enumerate(alignment.spans[target]) if a <= x and y <= b
     ]
-    if not tokens or alignment.project(target, [tokens[0], tokens[-1] + 1]) != (a, b):
-        raise ValueError("greek cuts an aligned word")
+    require(
+        tokens and alignment.project(target, [tokens[0], tokens[-1] + 1]) == (a, b),
+        "greek cuts an aligned word",
+    )
     start, end = tokens[0], tokens[-1] + 1
     # Words RP2026 lacks stand between two of its words, and touch the Greek
     # on either side of them.
-    if any(
-        u["target_ref"] == target
-        and u["class"] != "structural"
-        and (
-            start <= u["rp_range"][0] <= end
-            if u["rp_range"][0] == u["rp_range"][1]
-            else start < u["rp_range"][1] and u["rp_range"][0] < end
-        )
-        for u in units
-    ):
-        raise ValueError("greek touches a difference between the TR and RP2026")
+    require(
+        not any(
+            u["target_ref"] == target
+            and u["class"] != "structural"
+            and (
+                start <= u["rp_range"][0] <= end
+                if u["rp_range"][0] == u["rp_range"][1]
+                else start < u["rp_range"][1] and u["rp_range"][0] < end
+            )
+            for u in units
+        ),
+        "greek touches a difference between the TR and RP2026",
+    )
 
 
 def validate_overrides(
@@ -215,141 +224,156 @@ def validate_overrides(
         try:
             found = [resolve(g, units, label) for g in entry.get("units", [])]
             ids = [u["id"] for u in found]
-            if len(ids) != len(set(ids)) or claimed & set(ids):
-                raise ValueError(f"{label}: duplicate unit")
+            require(
+                len(ids) == len(set(ids)) and not claimed & set(ids),
+                f"{label}: duplicate unit",
+            )
             # Without units, an override corrects the English of Greek the
             # TR and RP2026 share, keyed by its verse, each edit naming its
             # Greek: there is no difference to tag and no TR note to write.
             if ids and entry.get("id") != override_id(ids):
-                raise ValueError(f"{label}: id should be {override_id(ids)}")
-            if not ids and entry.get("id") not in kjv:
-                raise ValueError(f"{label}: without units, the id is a verse")
+                raise CheckFailed(f"{label}: id should be {override_id(ids)}")
+            require(
+                ids or entry.get("id") in kjv,
+                f"{label}: without units, the id is a verse",
+            )
             kind = entry.get("kind")
             edits = entry.get("edits", [])
             if kind not in {"edit", "nochange"} or (kind == "nochange") == bool(edits):
-                raise ValueError(f"{label}: kind edit needs edits, nochange has none")
-            if not ids and kind != "edit":
-                raise ValueError(f"{label}: without units, the kind is edit")
+                raise CheckFailed(f"{label}: kind edit needs edits, nochange has none")
+            require(ids or kind == "edit", f"{label}: without units, the kind is edit")
             why = entry.get("why")
             if not isinstance(why, str) or not why.strip():
-                raise ValueError(f"{label}: why required")
+                raise CheckFailed(f"{label}: why required")
             tags = asserted(entry.get("tags", []))
-            if ids and len(re.findall(r"[.!?](?:\s|$)", why.strip())) > 2:
-                raise ValueError(f"{label}: why is at most two sentences")
-            if ids and (
-                not any(t.group == "from" for t in tags)
-                or not any(t.group == "gram" for t in tags)
-            ):
-                raise ValueError(f"{label}: one from: and one gram: tag required")
+            require(
+                not ids or len(re.findall(r"[.!?](?:\s|$)", why.strip())) <= 2,
+                f"{label}: why is at most two sentences",
+            )
+            require(
+                not ids
+                or (
+                    any(t.group == "from" for t in tags)
+                    and any(t.group == "gram" for t in tags)
+                ),
+                f"{label}: one from: and one gram: tag required",
+            )
             refs = {g["ref"] for g in entry["units"]} if ids else {entry["id"]}
             books = {r.split()[0] for r in refs}
-            if len(books) != 1:
-                raise ValueError(f"{label}: units in more than one book")
+            require(len(books) == 1, f"{label}: units in more than one book")
             bound: list[BoundEdit] = []
             for edit in edits:
                 unknown = set(edit) - set(EDIT_KEYS)
-                if unknown:
-                    raise ValueError(f"{label}: unknown edit fields {sorted(unknown)}")
+                require(not unknown, f"{label}: unknown edit fields {sorted(unknown)}")
                 ref, old, new = edit["ref"], edit["from"], edit["to"]
-                if ref not in kjv or ref.split()[0] not in books:
-                    raise ValueError(
-                        f"{label}: edit at {ref} is not in the units' book"
-                    )
-                if ("greek" in edit) == bool(ids) or not ids and ref != entry["id"]:
-                    raise ValueError(
-                        f"{label}: greek, at its verse, for an edit without units only"
-                    )
+                require(
+                    ref in kjv and ref.split()[0] in books,
+                    f"{label}: edit at {ref} is not in the units' book",
+                )
+                require(
+                    not (
+                        ("greek" in edit) == bool(ids) or not ids and ref != entry["id"]
+                    ),
+                    f"{label}: greek, at its verse, for an edit without units only",
+                )
                 if not ids:
                     if printed is None or alignment is None or structure is None:
-                        raise ValueError(f"{label}: RP2026 is needed to check greek")
+                        raise CheckFailed(f"{label}: RP2026 is needed to check greek")
                     try:
                         shared_greek(
                             edit["greek"], ref, units, printed, alignment, structure
                         )
-                    except ValueError as error:
-                        raise ValueError(f"{label}: {error}") from None
-                if (
-                    not isinstance(old, str)
-                    or not isinstance(new, str)
-                    or "\\" in old + new
-                    or "\n" in old + new
-                ):
-                    raise ValueError(f"{label}: from and to are plain strings")
-                if new != new.strip() or "  " in new:
-                    raise ValueError(f"{label}: to has stray spaces")
+                    except CheckFailed as error:
+                        raise CheckFailed(f"{label}: {error}") from None
+                require(
+                    isinstance(old, str)
+                    and isinstance(new, str)
+                    and "\\" not in old + new
+                    and "\n" not in old + new,
+                    f"{label}: from and to are plain strings",
+                )
+                require(
+                    new == new.strip() and "  " not in new,
+                    f"{label}: to has stray spaces",
+                )
                 try:
                     bracketed_quote(new)
-                except ValueError as error:
-                    raise ValueError(f"{label}: to has {error} at {ref}") from None
+                except CheckFailed as error:
+                    raise CheckFailed(f"{label}: to has {error} at {ref}") from None
                 text = kjv[ref]
                 if old:
-                    if old.strip() == text.strip():
-                        raise ValueError(
-                            f"{label}: an override is a fragment, not the verse"
-                        )
+                    require(
+                        old.strip() != text.strip(),
+                        f"{label}: an override is a fragment, not the verse",
+                    )
                     hits = [m.start() for m in re.finditer(re.escape(old), text)]
                     if "occurrence" in edit:
                         n = edit["occurrence"]
-                        if type(n) is not int or not 1 <= n <= len(hits):
-                            raise ValueError(
-                                f"{label}: occurrence does not select a match at {ref}"
-                            )
-                        hits = [hits[n - 1]]
-                    if len(hits) != 1:
-                        raise ValueError(
-                            f"{label}: from must occur exactly once at {ref} ({len(hits)} found)"
+                        require(
+                            type(n) is int and 1 <= n <= len(hits),
+                            f"{label}: occurrence does not select a match at {ref}",
                         )
+                        hits = [hits[n - 1]]
+                    require(
+                        len(hits) == 1,
+                        f"{label}: from must occur exactly once at {ref} ({len(hits)} found)",
+                    )
                     start = hits[0]
                     end = start + len(old)
-                    if cuts_word(text, start, end):
-                        raise ValueError(f"{label}: from cuts through a word at {ref}")
+                    require(
+                        not cuts_word(text, start, end),
+                        f"{label}: from cuts through a word at {ref}",
+                    )
                     # Words added before or after the KJV's, or dropped from
                     # one end of them, are an insertion or a deletion, whose
                     # note says what the TR omits or adds; written as a
                     # replacement they would quote the kept words too.
                     a, b = old.split(), curly_apostrophes(new).split()
-                    if len(a) < len(b) and a in (b[: len(a)], b[-len(a) :]):
-                        raise ValueError(
-                            f"{label}: from is a prefix or suffix of to at {ref}: an "
-                            'insertion in disguise; write from "" with after or before'
-                        )
-                    if b and len(b) < len(a) and b in (a[: len(b)], a[-len(b) :]):
-                        raise ValueError(
-                            f"{label}: to is a prefix or suffix of from at {ref}: a "
-                            'deletion in disguise; write to "" on the words dropped'
-                        )
+                    require(
+                        len(a) >= len(b) or a not in (b[: len(a)], b[-len(a) :]),
+                        f"{label}: from is a prefix or suffix of to at {ref}: an "
+                        'insertion in disguise; write from "" with after or before',
+                    )
+                    require(
+                        not b
+                        or len(b) >= len(a)
+                        or b not in (a[: len(b)], a[-len(b) :]),
+                        f"{label}: to is a prefix or suffix of from at {ref}: a "
+                        'deletion in disguise; write to "" on the words dropped',
+                    )
                     # The same words are a change only when the KJV supplies
                     # some of them in italics and RP2026 has Greek for them:
                     # the override sets them in roman (John 19:17 "the place").
                     unstyle = old == new and any(
                         a < end and start < b for a, b, _ in supplied.get(ref, [])
                     )
-                    if old == new and not unstyle:
-                        raise ValueError(f"{label}: from equals to at {ref}")
+                    require(old != new or unstyle, f"{label}: from equals to at {ref}")
                 else:
                     anchor = edit.get("after") or edit.get("before")
-                    if not anchor or not new or ("after" in edit and "before" in edit):
-                        raise ValueError(
-                            f"{label}: an insertion needs to and one of after/before"
-                        )
+                    require(
+                        anchor and new and not ("after" in edit and "before" in edit),
+                        f"{label}: an insertion needs to and one of after/before",
+                    )
                     hits = [m.start() for m in re.finditer(re.escape(anchor), text)]
-                    if len(hits) != 1:
-                        raise ValueError(
-                            f"{label}: anchor must occur exactly once at {ref}"
-                        )
-                    if cuts_word(text, hits[0], hits[0] + len(anchor)):
-                        raise ValueError(
-                            f"{label}: anchor cuts through a word at {ref}"
-                        )
+                    require(
+                        len(hits) == 1,
+                        f"{label}: anchor must occur exactly once at {ref}",
+                    )
+                    require(
+                        not cuts_word(text, hits[0], hits[0] + len(anchor)),
+                        f"{label}: anchor cuts through a word at {ref}",
+                    )
                     start = end = hits[0] + (len(anchor) if "after" in edit else 0)
-                if any(
-                    start < b and a < end or (start == end == a == b)
-                    for a, b in [
-                        *occupied[ref],
-                        *((e["start"], e["end"]) for e in bound if e["ref"] == ref),
-                    ]
-                ):
-                    raise ValueError(f"{label}: overlaps another edit at {ref}")
+                require(
+                    not any(
+                        start < b and a < end or (start == end == a == b)
+                        for a, b in [
+                            *occupied[ref],
+                            *((e["start"], e["end"]) for e in bound if e["ref"] == ref),
+                        ]
+                    ),
+                    f"{label}: overlaps another edit at {ref}",
+                )
                 binding: BoundEdit = {
                     "ref": ref,
                     "start": start,
@@ -362,32 +386,31 @@ def validate_overrides(
                     binding["unstyle"] = True
                 bound.append(binding)
             evidence = entry.get("evidence", {})
-            if not isinstance(evidence, dict) or not evidence:
-                raise ValueError(f"{label}: evidence required")
+            require(
+                isinstance(evidence, dict) and evidence, f"{label}: evidence required"
+            )
             permitted = refs | {e["ref"] for e in bound}
             for witness, item in evidence.items():
                 quote = item.get("quote") if isinstance(item, dict) else None
                 if not isinstance(quote, str) or not quote.strip():
-                    raise ValueError(f"{label}: evidence {witness} needs a quote")
+                    raise CheckFailed(f"{label}: evidence {witness} needs a quote")
                 if witness == FAA and ("ref" in item or "field" in item):
-                    if (
-                        set(item) != {"ref", "field", "quote"}
-                        or item.get("field") != "source_notes"
-                    ):
-                        raise ValueError(
-                            f"{label}: faa verse note needs ref, field source_notes and quote only"
-                        )
+                    require(
+                        set(item) == {"ref", "field", "quote"}
+                        and item.get("field") == "source_notes",
+                        f"{label}: faa verse note needs ref, field source_notes and quote only",
+                    )
                     ref = item["ref"]
                     faa_row = (faa_rows or {}).get(ref)
                     if ref not in permitted or faa_row is None:
-                        raise ValueError(
+                        raise CheckFailed(
                             f"{label}: faa verse note is about another or missing verse"
                         )
                     notes = " ".join(faa_row.get("source_notes", "").split())
-                    if quote not in notes:
-                        raise ValueError(
-                            f"{label}: faa verse note does not contain the quote"
-                        )
+                    require(
+                        quote in notes,
+                        f"{label}: faa verse note does not contain the quote",
+                    )
                 elif witness in texts:
                     ref = item.get("ref")
                     verse = " ".join(texts[witness].get(ref, "").split())
@@ -399,14 +422,14 @@ def validate_overrides(
                     wording, marked = (
                         bracketed_quote(normalized) if bracketed else (normalized, [])
                     )
-                    if ref not in permitted or verse.count(wording) != 1:
-                        raise ValueError(
-                            f"{label}: {witness} quote is not in the verse once"
-                        )
+                    require(
+                        ref in permitted and verse.count(wording) == 1,
+                        f"{label}: {witness} quote is not in the verse once",
+                    )
                     if bracketed:
                         metadata = (revision_citations or {}).get(witness, {}).get(ref)
                         if metadata is None or metadata["text"] != verse:
-                            raise ValueError(
+                            raise CheckFailed(
                                 f"{label}: {witness} supplied-word metadata missing or stale"
                             )
                         start = verse.index(wording)
@@ -416,20 +439,19 @@ def validate_overrides(
                             for a, b in metadata["supplied"]
                             if a < end and start < b
                         ]
-                        if marked != expected:
-                            raise ValueError(
-                                f"{label}: {witness} brackets differ from source supplied words"
-                            )
+                        require(
+                            marked == expected,
+                            f"{label}: {witness} brackets differ from source supplied words",
+                        )
                 elif witness in witness_rows:
-                    if witness == FAA and set(item) != {"entry", "quote"}:
-                        raise ValueError(
-                            f"{label}: faa report needs entry and quote only"
-                        )
-                    cited = witness_rows[witness].get(item.get("entry"))
-                    if cited is None:
-                        raise ValueError(
-                            f"{label}: {witness} has no entry {item.get('entry')}"
-                        )
+                    require(
+                        witness != FAA or set(item) == {"entry", "quote"},
+                        f"{label}: faa report needs entry and quote only",
+                    )
+                    cited = present(
+                        witness_rows[witness].get(item.get("entry")),
+                        f"{label}: {witness} has no entry {item.get('entry')}",
+                    )
                     haystack = " ".join(
                         str(cited.get(k) or "")
                         for k in (
@@ -441,22 +463,21 @@ def validate_overrides(
                             "source_notes",
                         )
                     )
-                    if quote not in haystack:
-                        raise ValueError(
-                            f"{label}: {witness} {item.get('entry')} does not contain the quote"
-                        )
-                    if cited.get("ref") not in permitted and not (
-                        set(cited.get("refs", [])) & refs
-                    ):
-                        raise ValueError(
-                            f"{label}: {witness} {item.get('entry')} is about another verse"
-                        )
+                    require(
+                        quote in haystack,
+                        f"{label}: {witness} {item.get('entry')} does not contain the quote",
+                    )
+                    require(
+                        cited.get("ref") in permitted
+                        or set(cited.get("refs", [])) & refs,
+                        f"{label}: {witness} {item.get('entry')} is about another verse",
+                    )
                 elif witness in WITNESSES:
-                    raise ValueError(
+                    raise CheckFailed(
                         f"{label}: {witness} is not loaded; its quote cannot be checked"
                     )
                 else:
-                    raise ValueError(f"{label}: unknown witness {witness}")
+                    raise CheckFailed(f"{label}: unknown witness {witness}")
             override: Override = {
                 "id": entry["id"],
                 "units": entry.get("units", []),
@@ -474,7 +495,7 @@ def validate_overrides(
             claimed.update(ids)
             for e in bound:
                 occupied[e["ref"]].append((e["start"], e["end"]))
-        except (ValueError, KeyError, TypeError, AttributeError) as error:
+        except (CheckFailed, ValueError, KeyError, TypeError, AttributeError) as error:
             errors.append(
                 str(error)
                 if str(error).startswith(label)
@@ -512,13 +533,14 @@ def place(
         label = f"placement {decision.get('witness')}:{decision.get('entry')}"
         try:
             key = decision["witness"], decision["entry"]
-            if not decision.get("why", "").strip():
-                raise ValueError(f"{label}: missing reason")
+            require(decision.get("why", "").strip(), f"{label}: missing reason")
             if key not in index:
-                raise ValueError(f"{label}: no such witness row")
+                raise CheckFailed(f"{label}: no such witness row")
             row = result[index[key]]
-            if row.get("ref") != decision["ref"]:
-                raise ValueError(f"{label}: the row is at {row.get('ref')}")
+            require(
+                row.get("ref") == decision["ref"],
+                f"{label}: the row is at {row.get('ref')}",
+            )
             wanted = decision["unit"]
             keys: list[GreekKey] = (
                 []
@@ -530,8 +552,7 @@ def place(
                 for g in keys
             ]
             ids = [u["id"] for u in found]
-            if len(ids) != len(set(ids)):
-                raise ValueError(f"{label}: duplicate unit")
+            require(len(ids) == len(set(ids)), f"{label}: duplicate unit")
             current = [a["unit"] for a in row.get("units", [])]
             # Stale: the code already puts the row where the placement does.
             # A null placement is stale only if the row was already out of scope.
@@ -579,7 +600,7 @@ def place(
                 row["reason"] = decision["why"]
             row["method"] = "hand"
             row["placement"] = decision["why"]
-        except (ValueError, KeyError, TypeError, AttributeError) as error:
+        except (CheckFailed, ValueError, KeyError, TypeError, AttributeError) as error:
             errors.append(
                 str(error)
                 if str(error).startswith(label)
@@ -629,8 +650,10 @@ def lemma_entries(lemmas: Mapping[str, Mapping[str, Any]]) -> list[dict[str, Any
     rows: list[dict[str, Any]] = []
     for key, entry in lemmas.items():
         unit_id, _, tail = key.rpartition(" ")
-        if not tail.startswith("TR") or not re.fullmatch(r"TR(#[1-9]\d*)?", tail):
-            raise ValueError(f"note lemma {key}: key is not a TR note's")
+        require(
+            re.fullmatch(r"TR(#[1-9]\d*)?", tail),
+            f"note lemma {key}: key is not a TR note's",
+        )
         rows.append(
             {"id": unit_id, "edit": int(tail[3:]) if "#" in tail else 1, **entry}
         )

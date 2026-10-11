@@ -240,7 +240,3 @@ These readings are in the text now. Each needs a check against Brenton's printin
 - **PSA 138:9**: the note as received gives ὄρθον, where Swete has A's ὄρθρον. Check which spelling Brenton printed; the note distinguishes the two forms meanwhile.
 - **ZEC 11:14**: the text adopts Brenton's "covenant", but A also adds "my", and the note gives only the displaced "possession", although the decision says the addition is noted. Decide how to disclose the partial adoption and the possessive without supplying new English.
 - **PRO 15:33**: the Appendix's original label, "16 (Alex.15) 33", is kept in the decision. Printing a note with it is optional; the moved saying is already in the text.
-
-## 4. Code
-
-1. **The reconciliation refuses with `ValueError`.** `src/bible/byzantine/` raises `ValueError` where the rest of the build raises `CheckFailed` through `bible.checks.require`, at about 180 sites, with the tests asserting `ValueError` to match. The command line treats both as a refusal, so the build stops and names the problem either way. Convert the package to `CheckFailed` in a change of its own, tests included.

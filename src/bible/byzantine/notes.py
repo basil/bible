@@ -23,7 +23,7 @@ from bible.byzantine.edit import (
     supplied_content,
 )
 from bible.byzantine.rows import Disposition, Edit, NoteScope
-from bible.checks import CheckFailed, present
+from bible.checks import CheckFailed, present, require
 from bible.lemmas import Span, Words
 from bible.scripture import Verse
 from bible.usj import Content, Document, Node
@@ -232,7 +232,7 @@ def adjacent_lemma(text: str, words: Words, offset: int) -> Span:
                     ):
                         last += 1
                 return first, last
-    raise ValueError("no unique lemma beside an omission")
+    raise CheckFailed("no unique lemma beside an omission")
 
 
 def scoped_note(
@@ -251,11 +251,12 @@ def scoped_note(
     if edit and edit["kind"] != "delete":
         rendered = usj.text_of(supplied_content(edit["rendered"]))
         start = offset - len(rendered)
-        if text[start:offset] != rendered:
-            raise ValueError(f"TR note is not beside its reading: {note['x-key']}")
+        require(
+            text[start:offset] == rendered,
+            f"TR note is not beside its reading: {note['x-key']}",
+        )
         touched = [i for i, (_, a, b) in enumerate(words) if a < offset and start < b]
-        if not touched:
-            raise ValueError(f"TR note reading has no words: {note['x-key']}")
+        require(touched, f"TR note reading has no words: {note['x-key']}")
         glossed = touched[0], touched[-1]
         span = readable_span(text, words, *glossed)
         # Carry a changed sentence/clause boundary inside the lemma where the
@@ -281,8 +282,10 @@ def scoped_note(
         )
     # A relocation comment applies to the whole verse, rather than a rendering.
     phrase = lemmas.lemma_text(text, words, span) if span else None
-    if phrase and len(lemmas.occurrences(words, scripture.words_of(phrase))) != 1:
-        raise ValueError(f"TR note lemma is not unique: {note['x-key']}")
+    require(
+        not phrase or len(lemmas.occurrences(words, scripture.words_of(phrase))) == 1,
+        f"TR note lemma is not unique: {note['x-key']}",
+    )
     content: Content = [fields["fr"]]
     if phrase:
         content.append(usj.char("fq", phrase + ": "))
@@ -316,8 +319,7 @@ def apply(
     unit's notes (an edit of the supplied marking alone has none). A decision
     whose note does not exist is stale and refused."""
     declared = {f"{d['id']} TR#{d['edit']}": d for d in decisions}
-    if len(declared) != len(decisions):
-        raise ValueError("Duplicate TR note lemma decision")
+    require(len(declared) == len(decisions), "Duplicate TR note lemma decision")
     used: set[str] = set()
     source_verses = {book: scripture.verses(doc) for book, doc in original.items()}
     by_ref: dict[str, list[Edit]] = {}
@@ -331,8 +333,7 @@ def apply(
             for offset, note in verse.notes:
                 key = note.get("x-key")
                 if note.get("category") == "edition" and key:
-                    if key in locations:
-                        raise ValueError(f"Duplicate TR note key: {key}")
+                    require(key not in locations, f"Duplicate TR note key: {key}")
                     locations[key] = book, ref, verse, offset, note
     changed: dict[str, Node | None] = {}
     rows: list[Disposition] = []
@@ -435,8 +436,10 @@ def apply(
         pair: Pair | None = None
         if note["x-key"] in declared:
             decision = declared[note["x-key"]]
-            if not decision.get("why", "").strip():
-                raise ValueError(f"TR note lemma lacks a reason: {note['x-key']}")
+            require(
+                decision.get("why", "").strip(),
+                f"TR note lemma lacks a reason: {note['x-key']}",
+            )
             words = scripture.word_spans(verse.text)
             span = lemmas.phrase_span(words, decision["lemma"], note["x-key"])
             a, b = words[span[0]][1], words[span[1]][2]
@@ -453,15 +456,14 @@ def apply(
                 contains = a <= left and (right <= b or not verse.text[b:right].strip())
                 if contains:
                     pair = start, offset, prefix, len(old), len(new)
-            if not contains:
-                raise ValueError(
-                    f"TR note lemma does not contain its reading: {note['x-key']}"
-                )
+            require(
+                contains, f"TR note lemma does not contain its reading: {note['x-key']}"
+            )
             phrase = lemmas.lemma_text(verse.text, words, span)
-            if phrase == finished["x-scope"]["lemma"]:
-                raise ValueError(
-                    f"TR note lemma decision changes nothing: {note['x-key']}"
-                )
+            require(
+                phrase != finished["x-scope"]["lemma"],
+                f"TR note lemma decision changes nothing: {note['x-key']}",
+            )
             finished = with_lemma(finished, phrase)
             if pair is not None:
                 # The lemma glosses only part of the reading's words.
@@ -554,10 +556,10 @@ def apply(
             updated["note"] = note
             updated["note_scope"] = scope
         rows.append(updated)
-    if set(declared) != used:
-        raise ValueError(
-            f"Stale TR note lemma decisions: {sorted(set(declared) - used)}"
-        )
+    require(
+        set(declared) == used,
+        f"Stale TR note lemma decisions: {sorted(set(declared) - used)}",
+    )
     # Notes whose context overlaps share one note, so that neither repeats
     # the other's reading. A construction's splices stand apart otherwise,
     # each with its own note; a move the editor wants restored in one note
@@ -735,7 +737,7 @@ def apply(
                 if other != shared and a < hi and lo < b:
                     quoted = "Correction" if other else "Byzantine reading"
                     label = "rendering" if shared else "TR"
-                    raise ValueError(
+                    raise CheckFailed(
                         f"{quoted} {unit} is quoted by {label} note "
                         f"{edit['note']['x-key']}"
                     )
@@ -788,10 +790,11 @@ def placed(
             # A lemma ending inside an italic span ("thing;") puts its note
             # after the span's closing stops.
             while not placeable(document, verse, at):
-                if verse.text[at : at + 1] not in STOPS:
-                    raise ValueError(
-                        f"{ref} {at} {verse.text[max(0,at-30):at]!r}|{verse.text[at:at+30]!r} {note['x-key']}"
-                    )
+                require(
+                    verse.text[at : at + 1] in STOPS,
+                    f"{ref}: cannot place {note['x-key']} at "
+                    f"{verse.text[max(0, at - 30) : at]!r}|{verse.text[at : at + 30]!r}",
+                )
                 at += 1
             changes.append((verse, at, at, [note]))
             owners[note["x-key"]][1]["offset"] = at
@@ -868,8 +871,7 @@ def for_edition(document: Document, terms: Registry) -> Document:
                 at = 0
             else:
                 hits = lemmas.occurrences(words, scripture.words_of(lemma))
-                if len(hits) != 1:
-                    raise ValueError(f"TR note lemma is not unique: {key}")
+                require(len(hits) == 1, f"TR note lemma is not unique: {key}")
                 at = words[hits[0]][1]
             extra: usj.Extra = {
                 "x-key": key,

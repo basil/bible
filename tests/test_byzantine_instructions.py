@@ -19,6 +19,7 @@ from bible.byzantine.rows import (
     Report,
     Unit,
 )
+from bible.checks import CheckFailed
 
 Instructions = dict[tuple[str, int | str], Instruction]
 
@@ -485,13 +486,13 @@ def test_explicit_occurrence_cannot_fall_back_to_a_unique_word() -> None:
         2,
     ]
     for occurrence in (0, -1, True, 1.5, "1", None):
-        with pytest.raises(ValueError, match="positive integer"):
+        with pytest.raises(CheckFailed, match="positive integer"):
             inst.bind_plain({**edit, "occurrence": occurrence}, "a witness")
 
 
 def test_insertion_cannot_silently_treat_an_unknown_side_as_before() -> None:
     edit = {"kind": "insert", "anchor": "witness", "new": "faithful", "side": "befroe"}
-    with pytest.raises(ValueError, match="side must be before or after"):
+    with pytest.raises(CheckFailed, match="side must be before or after"):
         inst.bind_plain(edit, "a witness")
     for side, position in (("before", 1), ("after", 2)):
         assert inst.bind_plain({**edit, "side": side}, "a witness")["word_range"] == [

@@ -16,6 +16,7 @@ from lxml import html
 
 from bible import scripture, usj
 from bible.byzantine import BOOKS
+from bible.checks import CheckFailed, require
 from bible.sources import Content
 
 
@@ -93,11 +94,14 @@ def supplied_spans(
     offset = 0
     for block, lo, hi, length in verse.parts:
         content = document["content"][block]["content"][lo:hi]
-        if usj.text_of(content) != verse.text[offset : offset + length]:
-            raise ValueError(f"Supplied-word context differs at {verse.reference}")
+        require(
+            usj.text_of(content) == verse.text[offset : offset + length],
+            f"Supplied-word context differs at {verse.reference}",
+        )
         end = walk(content, offset)
-        if end != offset + length:
-            raise ValueError(f"Supplied-word offsets differ at {verse.reference}")
+        require(
+            end == offset + length, f"Supplied-word offsets differ at {verse.reference}"
+        )
         offset = end + 1
     return found
 
@@ -168,16 +172,18 @@ def kjv(
         if removed:
             # The subscription closes the book: a blank line and its paragraph.
             tail = document["content"][-removed - 1 :]
-            if tail[0].get("marker") != "b" or len(tail) != removed + 1:
-                raise ValueError(f"{book}: subscription is not the book's close")
+            require(
+                tail[0].get("marker") == "b" and len(tail) == removed + 1,
+                f"{book}: subscription is not the book's close",
+            )
             kept = usj.with_blocks(document, document["content"][: -removed - 1])
             taken[book] = tail
         clean[book] = kept
     verses = verses_of(clean)
-    if len(verses) != 7957 or len(taken) != 14:
-        raise ValueError(
-            f"KJV inventory: {len(verses)} verses, {len(taken)} subscriptions"
-        )
+    require(
+        len(verses) == 7957 and len(taken) == 14,
+        f"KJV inventory: {len(verses)} verses, {len(taken)} subscriptions",
+    )
     return clean, verses, taken
 
 
@@ -194,19 +200,16 @@ def surface_usfm(
     documents: dict[str, usj.Document] = {}
     for book in BOOKS:
         paths = list(folder.glob(f"*-{book}*.usfm"))
-        if len(paths) != 1:
-            raise ValueError(f"Expected one pinned {name} book: {book}")
+        require(len(paths) == 1, f"Expected one pinned {name} book: {book}")
         text = paths[0].read_text(encoding="utf-8-sig")
         # Unrecognized or malformed metadata still reaches the strict parser.
         documents[book] = usj.parse(source(surface_words(text)))
     verses = verses_of(documents)
-    if (
-        len(verses) != 7957
-        or sum(not verse.text.strip() for verse in verses.values()) != 16
-    ):
-        raise ValueError(
-            f"{name} inventory: expected 7,957 markers with sixteen empty verses"
-        )
+    require(
+        len(verses) == 7957
+        and sum(not verse.text.strip() for verse in verses.values()) == 16,
+        f"{name} inventory: expected 7,957 markers with sixteen empty verses",
+    )
     return documents, verses
 
 
@@ -243,24 +246,23 @@ def boyd_paragraph(node: html.HtmlElement) -> usj.Node:
         node.get("class")
     )
     if node.tag != "div" or marker is None:
-        raise ValueError("Unknown Boyd scripture paragraph")
+        raise CheckFailed("Unknown Boyd scripture paragraph")
 
     def content(element: html.HtmlElement) -> usj.Content:
         items: usj.Content = []
         if element.text:
             items.append(re.sub(r"\s+", " ", element.text))
         for child in element:
-            if child.tag != "span":
-                raise ValueError(f"Unknown Boyd scripture child: {child.tag}")
+            require(child.tag == "span", f"Unknown Boyd scripture child: {child.tag}")
             if child.get("class") == "verse":
                 match = re.fullmatch(r"V([1-9]\d*)", child.get("id", ""))
                 if not match or len(child) or child.text_content().strip() != match[1]:
-                    raise ValueError("Malformed Boyd verse marker")
+                    raise CheckFailed("Malformed Boyd verse marker")
                 items.append({"type": "verse", "marker": "v", "number": match[1]})
             elif child.get("class") == "add":
                 items.append(usj.char("add", *content(child)))
             else:
-                raise ValueError(f'Unknown Boyd scripture span: {child.get("class")}')
+                raise CheckFailed(f'Unknown Boyd scripture span: {child.get("class")}')
             if child.tail:
                 items.append(re.sub(r"\s+", " ", child.tail))
         return items
@@ -284,14 +286,12 @@ def boyd_asv(
         if not match or match[1] not in documents:
             continue
         chapter = int(match[2])
-        if chapter < 1:
-            raise ValueError(f"Invalid Boyd chapter: {path.name}")
+        require(chapter >= 1, f"Invalid Boyd chapter: {path.name}")
         roots = cast(
             list[html.HtmlElement],
             html.fromstring(path.read_bytes()).xpath('//div[@class="main"]'),
         )
-        if len(roots) != 1:
-            raise ValueError(f"Expected one Boyd main region: {path.name}")
+        require(len(roots) == 1, f"Expected one Boyd main region: {path.name}")
         root = roots[0]
         doc = documents[match[1]]
         doc["content"].append(
@@ -309,17 +309,19 @@ def boyd_asv(
             ) or (node.tag == "ul" and node.get("class") == "tnav"):
                 continue
             else:
-                raise ValueError(
+                raise CheckFailed(
                     f'Unknown Boyd main block: {path.name}: {node.tag} {node.get("class")}'
                 )
-        if seen != len(root.xpath('.//span[@class="verse"]')) or not seen:
-            raise ValueError(f"Unconsumed Boyd verse markers: {path.name}")
+        require(
+            seen == len(root.xpath('.//span[@class="verse"]')) and seen,
+            f"Unconsumed Boyd verse markers: {path.name}",
+        )
         count += 1
     verses = verses_of(documents)
-    if (
-        count != 260
-        or len(verses) != 7953
-        or any(not verse.text.strip() for verse in verses.values())
-    ):
-        raise ValueError(f"Boyd ASV inventory: {count} chapters, {len(verses)} verses")
+    require(
+        count == 260
+        and len(verses) == 7953
+        and not any(not verse.text.strip() for verse in verses.values()),
+        f"Boyd ASV inventory: {count} chapters, {len(verses)} verses",
+    )
     return documents, verses

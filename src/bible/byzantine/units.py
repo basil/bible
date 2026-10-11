@@ -36,6 +36,7 @@ from bible.byzantine.rows import (
     UnitInventory,
     Unmatched,
 )
+from bible.checks import present, require
 
 # The Greek texts' words, and their parsed tokens, by "BOOK c:v" (the RP
 # text's tokens by its address, the TR's by "TR BOOK c:v").
@@ -1194,10 +1195,7 @@ def verses_described(refs: Sequence[str]) -> str:
 
 def printed_page(snapshot: Mapping[str, PrintedVerse], ref: str) -> int:
     """The page of the printed RP2026 a verse stands on; an omitted verse has none."""
-    page = snapshot[ref]["page"]
-    if page is None:
-        raise ValueError(f"RP2026 does not print {ref}")
-    return page
+    return present(snapshot[ref]["page"], f"RP2026 does not print {ref}")
 
 
 def supplementary_units(
@@ -1312,15 +1310,19 @@ def supplementary_units(
 
     declared: dict[str, Mapping[str, str]] = {}
     for unit_id, decision in accents.items():
-        if not unit_id.endswith("#accent"):
-            raise ValueError(f"Accent decision not keyed by its unit: {unit_id}")
+        require(
+            unit_id.endswith("#accent"),
+            f"Accent decision not keyed by its unit: {unit_id}",
+        )
         declared[unit_id.removesuffix("#accent")] = decision
     entries: list[Diacritic] = list(diacritics)
     for ref, decision in declared.items():
         if " … " in decision["rp"]:
             continue
-        if any(entry["ref"] == ref for entry in entries):
-            raise ValueError(f"Accent decision the printed apparatus makes: {ref}")
+        require(
+            not any(entry["ref"] == ref for entry in entries),
+            f"Accent decision the printed apparatus makes: {ref}",
+        )
         entries.append(
             {"ref": ref, "from": decision["tr"], "to": decision["rp"], "listed": True}
         )
@@ -1333,11 +1335,9 @@ def supplementary_units(
         ref = entry["ref"]
         old, new = entry["from"], entry["to"]
         words = ascii_greek(old).split()
-        if words != ascii_greek(new).split():
-            raise ValueError(f"Not an accent-only reading: {ref}")
+        require(words == ascii_greek(new).split(), f"Not an accent-only reading: {ref}")
         in_tr, in_rp = occurrences(tr[ref], words), occurrences(rp[ref], words)
-        if len(in_tr) != 1 or len(in_rp) != 1:
-            raise ValueError(f"Ambiguous accent reading: {ref}")
+        require(len(in_tr) == 1 and len(in_rp) == 1, f"Ambiguous accent reading: {ref}")
 
         # Compare at the precision the entry quotes: one that quotes only a
         # breathing (Heli, Luke 3:23) says nothing of the accent the printed
@@ -1354,8 +1354,10 @@ def supplementary_units(
             return value
 
         span = alignment.project(ref, (in_rp[0], in_rp[0] + len(words)))
-        if normalized(" ".join(alignment.text[ref][slice(*span)])) != normalized(new):
-            raise ValueError(f"Printed accent disagrees: {ref}")
+        require(
+            normalized(" ".join(alignment.text[ref][slice(*span)])) == normalized(new),
+            f"Printed accent disagrees: {ref}",
+        )
         inventories = []
         for note in boyd:
             if note["target_ref"] == ref and normalized(note["rp"]) == normalized(new):
@@ -1396,40 +1398,48 @@ def supplementary_units(
         candidates = [
             n for n in boyd if n["target_ref"] == ref and n["rp"] == decision["rp"]
         ]
-        if len(candidates) != 1:
-            raise ValueError(f"Missing breathing inventory: {ref}")
+        require(len(candidates) == 1, f"Missing breathing inventory: {ref}")
         note = candidates[0]
-        if note["tr"][0]["reading"] != decision["tr"]:
-            raise ValueError(f"Changed breathing inventory: {ref}")
+        require(
+            note["tr"][0]["reading"] == decision["tr"],
+            f"Changed breathing inventory: {ref}",
+        )
         marked = decision["rp"].split(" … ")
         forms = {ascii_greek(w) for w in [*marked, *decision["tr"].split(" … ")]}
-        if len(forms) != 1:
-            raise ValueError(f"Not one word's breathing: {ref}")
+        require(len(forms) == 1, f"Not one word's breathing: {ref}")
         word = forms.pop()
         left, right = occurrences(tr[ref], [word]), occurrences(rp[ref], [word])
-        if len(left) != len(marked) or len(right) != len(marked):
-            raise ValueError(f"Ambiguous breathing reading: {ref}")
+        require(
+            len(left) == len(marked) and len(right) == len(marked),
+            f"Ambiguous breathing reading: {ref}",
+        )
         i, j, k, l = left[0], left[-1] + 1, right[0], right[-1] + 1
         position = note["position"]
-        if tr[ref][i:j] != rp[ref][k:l] or position is None or position["offset"] != k:
-            raise ValueError(f"Changed breathing scope: {ref}")
-        if any(
-            unicodedata.normalize(
-                "NFD",
-                "".join(
-                    accent_letters(
-                        " ".join(
-                            alignment.text[ref][
-                                slice(*alignment.project(ref, (at, at + 1)))
-                            ]
+        require(
+            tr[ref][i:j] == rp[ref][k:l]
+            and position is not None
+            and position["offset"] == k,
+            f"Changed breathing scope: {ref}",
+        )
+        require(
+            not any(
+                unicodedata.normalize(
+                    "NFD",
+                    "".join(
+                        accent_letters(
+                            " ".join(
+                                alignment.text[ref][
+                                    slice(*alignment.project(ref, (at, at + 1)))
+                                ]
+                            )
                         )
-                    )
-                ),
-            )
-            != unicodedata.normalize("NFD", form)
-            for at, form in zip(right, marked, strict=True)
-        ):
-            raise ValueError(f"Printed breathing disagrees: {ref}")
+                    ),
+                )
+                != unicodedata.normalize("NFD", form)
+                for at, form in zip(right, marked, strict=True)
+            ),
+            f"Printed breathing disagrees: {ref}",
+        )
         accent_units.append(
             {
                 "id": ref + "#accent",
@@ -1456,6 +1466,5 @@ def supplementary_units(
     # A unit is keyed by its id, and a verse has one accent unit.
     ids = Counter(unit["id"] for unit in accent_units)
     for unit_id, count in ids.items():
-        if count > 1:
-            raise ValueError(f"Two accent readings in one verse: {unit_id}")
+        require(count <= 1, f"Two accent readings in one verse: {unit_id}")
     return moves + accent_units

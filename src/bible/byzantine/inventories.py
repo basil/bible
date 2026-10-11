@@ -13,6 +13,7 @@ from typing import Any
 from bible.byzantine import BOOKS
 from bible.byzantine.greek import ascii_greek, greek_words
 from bible.byzantine.rows import BoydNote, BoydReading, CollationRow
+from bible.checks import CheckFailed, require
 from bible.sources import Content
 from bible.usfm import GREEK
 
@@ -86,14 +87,18 @@ def word_breaks(path: Content) -> dict[str, list[str]]:
             )
             readings.extend(reading_words(r) for r in text.split("|"))
         words = [r for r in readings if r is not None]
-        if len(words) != len(readings) or len({"".join(r) for r in words}) != 1:
-            raise ValueError("Unparsed Appendix C word break")
+        require(
+            len(words) == len(readings) and len({"".join(r) for r in words}) == 1,
+            "Unparsed Appendix C word break",
+        )
         canonical = max(words, key=len)
         for reading in words:
             if len(reading) == 1 and len(canonical) > 1:
                 word = reading[0]
-                if word in splits and splits[word] != canonical:
-                    raise ValueError(f"Ambiguous Appendix C split: {word}")
+                require(
+                    word not in splits or splits[word] == canonical,
+                    f"Ambiguous Appendix C split: {word}",
+                )
                 splits[word] = canonical
     prose = " ".join(" ".join(p.itertext()) for p in root.iter("para"))
     match = re.search(
@@ -101,13 +106,12 @@ def word_breaks(path: Content) -> dict[str, list[str]]:
         prose,
     )
     if not match:
-        raise ValueError("Missing Appendix C numeral explanation")
+        raise CheckFailed("Missing Appendix C numeral explanation")
     word, divided = ascii_greek(match[1]), reading_words(match[2])
     if divided is None or word != "".join(divided):
-        raise ValueError("Changed Appendix C numeral explanation")
+        raise CheckFailed("Changed Appendix C numeral explanation")
     splits[word] = divided
-    if len(list(root.iter("row"))) != 38:
-        raise ValueError("Changed Appendix C table inventory")
+    require(len(list(root.iter("row"))) == 38, "Changed Appendix C table inventory")
     return splits
 
 
@@ -123,7 +127,7 @@ def collation(path: Content) -> list[CollationRow]:
         if not pending:
             return
         if pending.count("]") != 1 or not ref:
-            raise ValueError(f"Unparsed collation entry: {pending}")
+            raise CheckFailed(f"Unparsed collation entry: {pending}")
         raw = pending
         pending = ""
         if "(RP 2005)" in raw:
@@ -131,8 +135,10 @@ def collation(path: Content) -> list[CollationRow]:
         text = re.sub(r"\([^)]*\)", "", raw)
         rp, tr = [s.strip().replace("―", "") for s in text.split("]")]
         forms = [ascii_greek(s).split() for s in (tr, rp)]
-        if any(re.search(r"[^a-z\s]", ascii_greek(s)) for s in (tr, rp)):
-            raise ValueError(f"Unparsed collation reading: {raw}")
+        require(
+            not any(re.search(r"[^a-z\s]", ascii_greek(s)) for s in (tr, rp)),
+            f"Unparsed collation reading: {raw}",
+        )
         rows.append(
             {
                 "entry": len(rows) + 1,
@@ -161,8 +167,7 @@ def collation(path: Content) -> list[CollationRow]:
         else:
             pending = (pending + " " + line).strip()
     finish()
-    if len(rows) != 1885:
-        raise ValueError(f"Collation inventory: {len(rows)}, expected 1885")
+    require(len(rows) == 1885, f"Collation inventory: {len(rows)}, expected 1885")
     return rows
 
 
@@ -264,12 +269,11 @@ def boyd(folder: Content, *, greek: bool = True) -> list[BoydNote]:
     rows: list[BoydNote] = []
     for book in BOOKS:
         paths = list(folder.glob(f"*{book}.usx"))
-        if len(paths) != 1:
-            raise ValueError(f"{folder}: expected one Boyd USX file: {book}")
+        require(len(paths) == 1, f"{folder}: expected one Boyd USX file: {book}")
         try:
             root = ET.fromstring(paths[0].read_bytes())
         except ET.ParseError as error:
-            raise ValueError(f"{paths[0]}: {error}") from error
+            raise CheckFailed(f"{paths[0]}: {error}") from error
         positions = note_positions(root) if greek else {}
         passages = {} if greek else boyd_passages(root)
         for note in root.iter("note"):
@@ -341,8 +345,10 @@ def boyd(folder: Content, *, greek: bool = True) -> list[BoydNote]:
             tr = [v for v in variants if {"TR", "SCR"}.intersection(v["sigla"])]
             if not tr:
                 continue
-            if not re.fullmatch(r"\d+:\d+(?:[–\-,]\d+)*", fr):
-                raise ValueError(f"Unparsed Boyd reference: {book} {fr}")
+            require(
+                re.fullmatch(r"\d+:\d+(?:[–\-,]\d+)*", fr),
+                f"Unparsed Boyd reference: {book} {fr}",
+            )
             target = f"{book} {re.split('[–,-]', fr)[0]}"
             passage_refs = [target]
             if not greek and re.fullmatch(r"\d+:\d+[–-]\d+", fr):
@@ -383,14 +389,18 @@ def boyd(folder: Content, *, greek: bool = True) -> list[BoydNote]:
 
 def tcent(folder: Content) -> list[BoydNote]:
     rows = boyd(folder, greek=False)
-    if len(rows) != 552 or len({r["target_ref"] for r in rows}) != 489:
-        raise ValueError("Changed TCENT inventory: expected 552 notes in 489 verses")
+    require(
+        len(rows) == 552 and len({r["target_ref"] for r in rows}) == 489,
+        "Changed TCENT inventory: expected 552 notes in 489 verses",
+    )
     for (book, fr), (wrong, _) in TCENT_ERRATA.items():
         found = [
             (r["target_ref"], r["fr"])
             for r in rows
             if re.search(rf"(?<!\w){wrong}(?!\w)", r["raw"])
         ]
-        if found != [(f"{book} {fr}", fr)]:
-            raise ValueError(f"Changed TCENT erratum {wrong}: found at {found}")
+        require(
+            found == [(f"{book} {fr}", fr)],
+            f"Changed TCENT erratum {wrong}: found at {found}",
+        )
     return rows

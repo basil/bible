@@ -14,6 +14,7 @@ from bible.byzantine import decide, edit, notes, stages, tags, verify
 from bible.byzantine.greek import Structure
 from bible.byzantine.rows import Disposition, Edit, Instruction, Unit
 from bible.byzantine.stages import Context
+from bible.checks import CheckFailed
 from bible.scripture import Verse
 from bible.usj import Content, Document, Node
 
@@ -265,7 +266,7 @@ def test_corrupting_old_makes_closure_raise(
     )
     stale = copy.deepcopy(edits)
     stale[0]["old"] = stale[0]["old"] + "x"
-    with pytest.raises(ValueError, match="stale source offsets"):
+    with pytest.raises(CheckFailed, match="stale source offsets"):
         verify.closure(kjv_text[ref], stale)
 
 
@@ -280,7 +281,7 @@ def test_an_undeclared_change_to_the_new_words_is_caught(
     bad = copy.deepcopy(edits)
     e = next(x for x in bad if x["kind"] == "replace" and not x["seams"])
     e["rendered"] = e["rendered"] + " more"
-    with pytest.raises(ValueError, match="undeclared change to new words"):
+    with pytest.raises(CheckFailed, match="undeclared change to new words"):
         verify.closure(kjv_text[ref], bad)
 
 
@@ -292,7 +293,7 @@ def test_unknown_seams_are_rejected(
     bad[0]["seams"].append(
         {"rule": 1, "range": [0, 0], "from": "", "to": "Other words"}
     )
-    with pytest.raises(ValueError, match="unknown seam rule"):
+    with pytest.raises(CheckFailed, match="unknown seam rule"):
         verify.closure(kjv_text[ref], bad)
 
 
@@ -312,7 +313,7 @@ def test_an_external_punctuation_seam_may_not_add_words() -> None:
         }
 
     assert verify.closure("A and", [declared(".")]) == "B. and"
-    with pytest.raises(ValueError, match="punctuation seam changes words"):
+    with pytest.raises(CheckFailed, match="punctuation seam changes words"):
         verify.closure("A and", [declared("word")])
 
 
@@ -424,10 +425,10 @@ def test_source_ranges_cannot_escape_the_verse() -> None:
         "rendered": "B",
         "seams": [],
     }
-    with pytest.raises(ValueError, match="stale source offsets"):
+    with pytest.raises(CheckFailed, match="stale source offsets"):
         verify.closure("A.", [edit])
     edit["applied_range"] = [0, 3]
-    with pytest.raises(ValueError, match="stale source offsets"):
+    with pytest.raises(CheckFailed, match="stale source offsets"):
         verify.closure("A.", [edit])
 
 
@@ -442,7 +443,7 @@ def test_external_seams_cannot_escape_the_verse() -> None:
             {"range": [2, 3], "rule": 2, "external": True, "from": "", "to": "."}
         ],
     }
-    with pytest.raises(ValueError, match="stale seam offsets"):
+    with pytest.raises(CheckFailed, match="stale seam offsets"):
         verify.closure("A.", [edit])
 
 

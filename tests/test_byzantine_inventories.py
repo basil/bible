@@ -20,6 +20,7 @@ from bible.byzantine.inventories import (
     word_breaks,
 )
 from bible.byzantine.rows import BoydNote, CollationRow, Unit
+from bible.checks import CheckFailed
 from bible.sources import Content
 
 
@@ -109,7 +110,7 @@ def test_collation_reader_refuses_a_changed_count(
     source = path.read_text()
     shorter = re.sub(r"^1:1\s+δαυιδ \] δαβιδ$", "", source, count=1, flags=re.M)
     assert shorter != source
-    with pytest.raises(ValueError, match="Collation inventory"):
+    with pytest.raises(CheckFailed, match="Collation inventory"):
         collation(changed(path, shorter))
 
 
@@ -281,7 +282,7 @@ def test_tcent_reads_its_one_misprinted_siglum_as_its_tcgnt_note(
 
 
 def test_tcent_refuses_the_greek_folder(tcgnt: Content) -> None:
-    with pytest.raises(ValueError, match="Changed TCENT inventory"):
+    with pytest.raises(CheckFailed, match="Changed TCENT inventory"):
         tcent(tcgnt)
 
 
@@ -299,7 +300,7 @@ def test_appendix_c_splits_preserve_every_letter(splits: dict[str, list[str]]) -
 def test_appendix_c_reader_refuses_a_changed_table(tcgnt: Content) -> None:
     path = tcgnt / "095XXC.usx"
     source = path.read_text()
-    with pytest.raises(ValueError, match="Missing Appendix C numeral explanation"):
+    with pytest.raises(CheckFailed, match="Missing Appendix C numeral explanation"):
         word_breaks(
             changed(
                 path,
