@@ -4735,14 +4735,6 @@
       "why": "Use the archaic third-person verb in this context; retain seats where it is a noun, a plural or an idiom. Commentary retains its source grammar.",
       "scope": "scripture"
     },
-    "what has thou to say": {
-      "to": "What hast thou to say",
-      "scope": "scripture",
-      "notes": [
-        "JOS 15:18"
-      ],
-      "why": "Correct the quoted alternative in Joshua 15:18 to the idiomatic question What hast thou to say? The source-dependent note decision remains in its source wording."
-    },
     "smites": {
       "to": "smiteth",
       "why": "Use the archaic third-person verb in scripture and quoted readings; preserve explanatory prose and the noun supplies.",
@@ -6235,6 +6227,14 @@
     "herdmen": {
       "to": "herdsmen",
       "why": "Spell herdsmen, the source's own form at Genesis 46:34, consistently throughout the printed edition, as requested by the user."
+    },
+    "what hast thou to say": {
+      "to": "What hast thou to say",
+      "scope": "scripture",
+      "notes": [
+        "JOS 15:18"
+      ],
+      "why": "The quoted alternative is a question, printed with its capital in Brenton (1844 p. 271; 1879 p. 316; 1900 p. 312); the note's first word is otherwise lowercased after its lemma."
     }
   },
   "verses": {

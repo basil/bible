@@ -440,9 +440,10 @@ def test_a_book_cited_alone_keeps_its_abbreviations_period(
     edition: bible.pipeline.Edition,
 ) -> None:
     proverbs = usj.serialize(edition.documents["PRO"])
-    # Brenton's "See 1 Pet." names the book alone: the period is its name's.
-    assert "\\fr 11:31 \\ft See \\xt 1 Pet.\\f*" in proverbs
-    # After a number, the period closed the note, and goes as any does.
+    # eBible's "See 1 Pet." named the book alone; Brenton prints 1 Pet. 4. 18,
+    # which a correction restores. After a number, the period closed the note,
+    # and goes as any does.
+    assert "\\fr 11:31 \\ft See \\xt 1 Pet. 4:18\\f*" in proverbs
     assert "\\fr 3:34 \\ft See \\xt 1 Pet. 5:5\\f*" in proverbs
 
 

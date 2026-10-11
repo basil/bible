@@ -127,11 +127,6 @@
     "why": "Appendix is a full word, so these references have no abbreviation period after it.",
     "changes": [
       {
-        "note": "2SA 5:18",
-        "from": "Appendix. which",
-        "to": "Appendix which"
-      },
-      {
         "note": "PRO 21:16",
         "from": "Appendix. Note",
         "to": "Appendix Note"
@@ -371,16 +366,6 @@
       }
     ]
   },
-  "note-quotation-marks": {
-    "why": "Quoted words in notes are italic without enclosing quotation marks; remove the unmatched mark before the appendix quotation.",
-    "changes": [
-      {
-        "note": "ISA 2:6",
-        "from": "has: “ISAIAH",
-        "to": "has: ISAIAH"
-      }
-    ]
-  },
   "note-quotation-punctuation": {
     "why": "Removing quotation marks leaves these stops inside a sentence or before etc.; the cited words retain the surrounding sentence punctuation.",
     "changes": [
@@ -413,25 +398,25 @@
         "note": "DEU 9:22",
         "from": "Taberah, Massah, and Kibroth Hattavah",
         "to": "Taberah",
-        "why": "The three source callers gloss burning, temptation, and graves of lust respectively; each note gives only its corresponding Hebrew place name."
+        "why": "Brenton prints one note, Heb. Taberah, Massah, and Kibroth Hattaavah., keyed at the three callers burning, temptation and graves of lust (1844 p. 225; 1879 p. 260; 1900 p. 256), and eBible copies it at each; the edition gives each caller its own place name instead."
       },
       {
         "note": "DEU 9:22#2",
         "from": "Taberah, Massah, and Kibroth Hattavah",
         "to": "Massah",
-        "why": "The three source callers gloss burning, temptation, and graves of lust respectively; each note gives only its corresponding Hebrew place name."
+        "why": "Brenton prints one note, Heb. Taberah, Massah, and Kibroth Hattaavah., keyed at the three callers burning, temptation and graves of lust (1844 p. 225; 1879 p. 260; 1900 p. 256), and eBible copies it at each; the edition gives each caller its own place name instead."
       },
       {
         "note": "DEU 9:22#3",
         "from": "Taberah, Massah, and Kibroth Hattavah",
-        "to": "Kibroth Hattavah",
-        "why": "The three source callers gloss burning, temptation, and graves of lust respectively; each note gives only its corresponding Hebrew place name."
+        "to": "Kibroth Hattaavah",
+        "why": "Brenton prints one note, Heb. Taberah, Massah, and Kibroth Hattaavah., keyed at the three callers burning, temptation and graves of lust (1844 p. 225; 1879 p. 260; 1900 p. 256), and eBible copies it at each; the edition gives each caller its own place name instead. Hattavah is eBible’s slip for the printed Hattaavah."
       },
       {
         "note": "GEN 3:15#2",
         "from": " Other readings of the passage are πλήξει and πλήξεις and τειρήσει and τειρήσεις. See Parkhurst in שף.",
         "to": "",
-        "why": "The same apparatus is printed in the first note of this verse; retain the second verb gloss without repeating it."
+        "why": "Brenton prints one note, Gr. keep. with its apparatus, keyed at both callers (1844 p. 28; 1879 p. 20; 1900 p. 16), and eBible copies it at each; the second keeps the verb gloss without repeating the apparatus."
       },
       {
         "note": "2TI 2:6 The husbandman that laboureth, must be first partaker of the fruits",
@@ -450,6 +435,47 @@
         "from": "a purchased people",
         "to": "purchased",
         "why": "Shorten both sides together, retaining the source comparison and the common words outside the replacement."
+      }
+    ]
+  },
+  "names-written-out": {
+    "why": "Brenton names the scholars he cites by surname or initial, as his printings show; the edition writes each name in full, as his preface gives it, so a reader needs no key to the notes. These are the edition’s wording, not slips of eBible’s transcription. Each name is changed within its own words, so that it keeps the style it stands in.",
+    "changes": [
+      {
+        "note": "GEN 33:18",
+        "from": "Bos",
+        "to": "Lambert Bos",
+        "why": "Brenton prints Bos (1879 p. 60; 1900 p. 56)"
+      },
+      {
+        "note": "GEN 33:18",
+        "from": "P. Junius",
+        "to": "Patrick Junius",
+        "why": "Brenton prints P. Junius (1879 p. 60; 1900 p. 56): Patrick Young, who wrote his name Patricius Junius and edited the readings of Codex Alexandrinus that Brenton cites"
+      },
+      {
+        "note": "NUM 1:18",
+        "from": "L. Bos.",
+        "to": "Lambert Bos.",
+        "why": "Brenton prints L. Bos. (1844 p. 164; 1879 p. 186; 1900 p. 182)"
+      },
+      {
+        "note": "NUM 25:8",
+        "from": "Trom.",
+        "to": "Abraham Trommius",
+        "why": "Brenton prints Trom. (1844 p. 197; 1879 p. 226; 1900 p. 222): Abraham Trommius, whose concordance to the Septuagint (1718) glosses each Hebrew word in Latin"
+      },
+      {
+        "note": "1KI 20:10",
+        "from": "Prof. Lee",
+        "to": "Professor Samuel Lee",
+        "why": "Brenton prints Prof. Lee (1844 p. 417; 1879 p. 496; 1900 p. 492): Samuel Lee, Regius Professor of Hebrew at Cambridge, whose Hebrew Grammar the note cites"
+      },
+      {
+        "unit": "BAK",
+        "from": "C. Pridham",
+        "to": "Charles Pridham",
+        "why": "Brenton prints C. Pridham; his preface gives Mr. Charles Pridham"
       }
     ]
   }

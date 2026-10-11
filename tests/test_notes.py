@@ -63,7 +63,6 @@ def test_prose_quotations_span_styles_and_preserve_apostrophes() -> None:
         "JDG 2:18",
         "1SA 15:11",
         "2KI 12:14",
-        "ISA 2:6",
         "1KI 10:22a",
         "MAT 17:27 a piece of money",
         "ACT 17:19 Areopagus",
@@ -78,7 +77,6 @@ def test_complete_explanations_keep_their_final_stop(
         assert row["note"].startswith("This word")
     if key in (
         "GEN 15:11",
-        "ISA 2:6",
         "MAT 17:27 a piece of money",
         "ACT 17:19 Areopagus",
     ):
@@ -623,7 +621,7 @@ def test_a_sign_after_no_witness_is_refused(
 def test_every_note_is_printed_replaced_by_a_link_or_explicitly_omitted(
     edition: bible.pipeline.Edition,
 ) -> None:
-    assert edition.summary["printed_notes"] == 4332
+    assert edition.summary["printed_notes"] == 4335
     rows = [row for listed in edition.notes.values() for row in listed]
     assert len({row["key"] for row in rows}) == len(rows)
     # The 1611 margin is printed on the New Testament alone, and whole but
@@ -1187,19 +1185,22 @@ def test_unrelated_and_stale_source_notes_are_omitted(
 ) -> None:
     keys = {r["key"] for rows in edition.notes.values() for r in rows}
     assert not keys & {
-        "EXO 32:14",
-        "2SA 22:27",
-        "1KI 11:27",
         "LUK 10:22 All these",
         "LUK 2:21#1 TR#2",
     }
+    # Notes eBible garbled, restored as Brenton printed them.
+    assert keys >= {"EXO 32:14", "2SA 22:27", "1KI 11:27"}
+    # eBible swapped the texts of Judges 20's two notes; corrected, each stays
+    # at its own verse, as Brenton printed them.
     judges = {r["key"]: r for r in edition.notes["JDG"]}
-    assert judges["JDG 20:10"]["reference"] == "20:13"
-    assert judges["JDG 20:13"]["reference"] == "20:11"
+    assert judges["JDG 20:10"]["reference"] == "20:10"
+    assert judges["JDG 20:10"]["note"] == "Gr. _it_, sc. _Gabaa_"
+    assert judges["JDG 20:13"]["reference"] == "20:13"
+    assert judges["JDG 20:13"]["note"] == "Heb. _sons of Belial_"
     places = [
         r["note"] for r in edition.notes["DEU"] if r["key"].startswith("DEU 9:22")
     ]
-    assert places == ["Heb. _Taberah_", "Heb. _Massah_", "Heb. _Kibroth Hattavah_"]
+    assert places == ["Heb. _Taberah_", "Heb. _Massah_", "Heb. _Kibroth Hattaavah_"]
 
 
 @pytest.mark.parametrize(

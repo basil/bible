@@ -55,7 +55,7 @@ OTHER_LABELS = {
     *("Appendix.", "Appendix", "App.", "Comp.", "Note.", "Vide supra,", "vide"),
     *("See", "Of course"),
     *("nom.", "voc.", "pl.", "singular.", "ver.", "bis."),
-    *("Lambert Bos", "Patrick Junius", "Tertullian"),
+    *("Bos", "P. Junius", "Tertullian"),
 }
 LABELS = RENDERING_LABELS | OTHER_LABELS
 # George's notes are plain text; a label opens a note or a sentence in it.

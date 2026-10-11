@@ -1806,7 +1806,7 @@
       "source_note": "\\ft the remainder of this verse (here shown in italics) is not in \\fqa Heb. \\ft or \\fqa Alex."
     },
     "1KI 15:2": {
-      "why": "Swete confirms the Alexandrine reading. Brenton’s displaced wording differs from Swete’s Vatican text and still needs a source check. Swete’s Vatican main text reads six (ἓξ) years and A prefixes ten, giving sixteen. Brenton’s displaced English reads three; label it Vat., with Swete’s Vatican reading separately identified. The origin of three still requires checking Brenton’s printing.",
+      "why": "Swete confirms the Alexandrine reading: his Vatican text reads six (ἓξ) years and A prefixes ten, giving sixteen. Brenton’s displaced English reads three, and three is his own: every printing has three years with the note Alex. 16 years (1844 p. 409; 1879 p. 486; 1884 p. 455; 1900 p. 482). Label it Vat., as his Vatican text, with Swete’s Vatican reading separately identified.",
       "swete": {
         "volume": 1,
         "page": 716,
@@ -2447,7 +2447,7 @@
       "source_note": "\\fqa Alex. \\ft + of Zacharias in the dispersion."
     },
     "PSA 138:9": {
-      "why": "Swete supports “toward the dawn”. Note the rewritten letter; Brenton’s reported Greek spelling still needs checking. Swete distinguishes Vatican ὄρθον from A ὄρθρον. The inherited English-source note reports κατ᾿ ὄρθον as Alexandrine; identify it as the former note’s spelling alongside the confirmed A form pending inspection of Brenton’s printing.",
+      "why": "Swete supports “toward the dawn”, distinguishing Vatican ὄρθον from A ὄρθρον, with a rewritten letter. Brenton prints κατ᾿ ὄρθρον too (1879 p. 797; 1900 p. 793; the 1844, p. 143, has Alex. ὄρθρον dawn.); eBible’s ὄρθον was its slip, now corrected.",
       "swete": {
         "volume": 2,
         "page": 401,
@@ -2459,9 +2459,9 @@
       "note": "\\fl Vat. \\fqa straight forward\\ft .",
       "english": {
         "source": "brenton",
-        "span": [27, 42]
+        "span": [28, 43]
       },
-      "source_note": "\\fqa Alex. \\ft κατ᾿ ὄρθον, toward the dawn."
+      "source_note": "\\fqa Alex. \\ft κατ᾿ ὄρθρον, toward the dawn."
     },
     "PSA 142:10": {
       "why": "Print Brenton’s alternative, confirmed by Swete: his text reads ἐν τῇ εὐθείᾳ, and ART read γῇ εὐθείᾳ, adding the word for land, which Brenton’s “land of uprightness” renders. The displaced translation is labelled Vat.",
@@ -4118,7 +4118,7 @@
         }
       ],
       "source_notes": {
-        "PRO 1:15": "\\ft For ver 16, see Appendix."
+        "PRO 1:15": "\\ft For ver. 16, see Appendix."
       }
     },
     "PRO 13:6": {
@@ -4153,7 +4153,7 @@
         }
       ],
       "source_notes": {
-        "PRO 13:5": "\\ft See Appendix for Alexandrine text shown as: “Righteousness preserves the simple in the way, but sin makes worthless the ungodly.”"
+        "PRO 13:5": "\\ft See Appendix."
       }
     },
     "EZK 33:25": {
@@ -4239,7 +4239,7 @@
         }
       ],
       "source_notes": {
-        "PRO 4:5": "\\ft See Appendix - Alexandrian codex has: “Get wisdom, get understanding, forget not, nor decline from the words of my mouth.”"
+        "PRO 4:5": "\\ft See App."
       }
     },
     "PRO 8:29-33": {
@@ -4301,7 +4301,7 @@
       ],
       "source_notes": {
         "PRO 8:29": "\\ft See Appendix.",
-        "PRO 8:32": "\\ft appendix has Alexandrine text as: “And blessed are they that keep my ways.”"
+        "PRO 8:32": "\\ft See Appendix."
       }
     },
     "PRO 11:3-4": {
@@ -4337,8 +4337,7 @@
         }
       ],
       "source_notes": {
-        "PRO 11:2": "\\ft See Appendix.",
-        "PRO 11:3": "\\ft the Alexandrine text reads: “The integrity of the upright shall guide them, but the overthrow of the rebellious shall spoil them.”"
+        "PRO 11:2": "\\ft See Appendix."
       }
     },
     "PRO 11:10-11": {
@@ -4390,7 +4389,7 @@
         }
       ],
       "source_notes": {
-        "PRO 11:10": "\\ft See Appendix which gives the Alexandrine text as: “— but at the destruction of the wicked there is exultation.”"
+        "PRO 11:10": "\\ft See Appendix."
       }
     },
     "PRO 15:33": {
@@ -4454,7 +4453,7 @@
   },
   "kept": {
     "GEN 5:32": {
-      "why": "Keep Brenton’s main-text Cham and his Chaph footnote: the apparent Alexandrine scribal error should not interrupt the identity of Noe’s son in the narrative.",
+      "why": "Keep Brenton’s Cham in the text and his Chaph footnote. Swete confirms Χαφ in A here and at 6:10 (p. 9) and records no variant of A at the name’s later mentions (7:13, 9:18, 9:22, 10:1, 10:6, 10:20), so Chaph is a slip of the scribe against the manuscript’s own spelling, not a reading.",
       "swete": {
         "volume": 1,
         "page": 9,
@@ -4465,7 +4464,7 @@
       "source_note": "\\fqa Alex. \\ft Chaph."
     },
     "GEN 6:10": {
-      "why": "Keep Brenton’s main-text Cham and his Chaph footnote: the apparent Alexandrine scribal error should not interrupt the identity of Noe’s son in the narrative.",
+      "why": "Keep Brenton’s Cham in the text and his Chaph footnote. Swete confirms Χαφ in A at 5:32 and here (p. 9) and records no variant of A at the name’s later mentions (7:13, 9:18, 9:22, 10:1, 10:6, 10:20), so Chaph is a slip of the scribe against the manuscript’s own spelling, not a reading.",
       "swete": {
         "volume": 1,
         "page": 9,
@@ -4484,11 +4483,10 @@
         "agrees": true
       },
       "source_note": "\\fqa Alex. \\ft two days.",
-      "why": "Retain seven days in the body, consistent with the seven-day feast and offerings at 28:17 and 28:19. Keep two days, a corrected Alexandrine reading over an erasure, in the footnote."
+      "why": "Keep seven days in the text and two days in the footnote. The corrector’s δύο contradicts the seven days of unleavened bread at 28:17 and the verse’s own “daily”, so it is a slip, not a reading; that it is a correction over an erasure does not count against it, since corrected readings are printed elsewhere (GEN 5:26)."
     },
     "NUM 4:48": {
-      "why": "Keep as a note pending correction: Brenton reports 450; Swete’s Alexandrinus reads 8,550. Swete’s A supports fifty, giving 8,550; retain the discrepancy with Brenton’s 450 for a note.",
-      "todo": true,
+      "why": "Keep as a note: Brenton reports 450 in every printing (1844 p. 171; 1879 p. 194; 1900 p. 190), while Swete’s A reads fifty for eighty, giving 8,550. His figure does not state A’s number, so there is no English to print; the note records his report as he made it.",
       "swete": {
         "volume": 1,
         "page": 264,
@@ -4520,7 +4518,7 @@
         "reading": "παρενέβαλεν",
         "agrees": true
       },
-      "source_note": "\\fqa Or, \\ft pitched his tent. \\fqa Alex. \\ft παρενέβαλε, for which probably παρενέλαβε is a mere mistake. So \\fqa Lambert Bos \\ft and \\fqa Patrick Junius \\ft thought."
+      "source_note": "\\fqa Or, \\ft pitched his tent. \\fqa Alex. \\ft παρενέβαλε, for which probably παρενέλαβε is a mere mistake. So \\fqa Bos \\ft and \\fqa P. Junius \\ft thought."
     },
     "JDG 9:6": {
       "why": "The omitted Greek εὐρετῆ already has no separate English words in Brenton’s verse; his text “of Sedition” follows Alexandrinus here.",
@@ -4532,7 +4530,7 @@
         "reading": "om τῇ εὑρετῇ A",
         "agrees": true
       },
-      "source_note": "\\fqa Heb. \\ft מעכ. this is an instance of double translation, στάσεως being given for מעכ, and εὐρετῆ having reference to the word מעא \\fqa to find; \\ft but \\fqa Alex. \\ft rightly omits εὐρετῆ."
+      "source_note": "\\fqa Heb. \\ft מצב. This is an instance of double translation, στάσεως being given for מצב, and εὐρετῆ having reference to the word מצא \\fqa to find; \\ft but \\fqa Alex. \\ft rightly omits εὐρετῆ."
     },
     "JDG 9:27#2": {
       "why": "Brenton gives Alexandrinus in Greek alone.",
@@ -4592,7 +4590,7 @@
         "agrees": true
       },
       "todo": true,
-      "source_note": "\\ft in the \\fqa Alex. \\ft ἀργός is substituted for βερσεχθάν."
+      "source_note": "\\ft In the \\fqa Alex. \\ft ἀργός is substituted for βερσεχθάν."
     },
     "1SA 30:26": {
       "why": "Brenton’s “from you” contradicts A’s ὑμῖν (“to you”); retain for editorial correction.",
@@ -4607,7 +4605,7 @@
       "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft 'Lo! a blessing from you.' etc."
     },
     "2SA 5:18": {
-      "why": "A pointer to Govett’s Isaiah discussion, with no Alexandrine English variant.",
+      "why": "The note stays a note: Brenton’s Bagster printings end it See Appendix. (1879 p. 423; 1884 p. 392; 1900 p. 419), and the Appendix discusses Govett on Isaiah without giving English for A; eBible’s paraphrase of the Appendix is corrected away.",
       "swete": {
         "volume": 1,
         "page": 621,
@@ -4615,8 +4613,7 @@
         "reading": "Τειτανων B* (Τιτ. BᵇA item 22)",
         "agrees": true
       },
-      "todo": true,
-      "source_note": "\\fqa Lit. \\ft Titans. \\fqa Heb. \\ft Rephaim. See also \\fqa Appendix. \\ft which refers us to Govett's work on the book of the prophet Isaiah."
+      "source_note": "\\fqa Lit. \\ft Titans. \\fqa Heb. \\ft Rephaim. See \\fqa Appendix."
     },
     "2SA 11:25": {
       "why": "Brenton’s verse already prints “strengthen him”, following A.",
@@ -4847,7 +4844,7 @@
       "source_note": "\\ft From these words in \\fqa Alex. \\ft to \\xt Ps. 79. 11, \\ft thirty psalms are wanting."
     },
     "PSA 118:151": {
-      "why": "Swete reads ways (ὁδοί) and cites no Alexandrinus substitution “commands” at this verse.",
+      "why": "Keep as a note: Brenton reports ἐντολαί, commands, for A in every printing (1844 p. 138; 1879 p. 790; 1900 p. 786), but Swete reads ways (ὁδοί) and cites no Alexandrine substitution at this verse, so the reading has no support beyond his report.",
       "swete": {
         "volume": 2,
         "page": 385,
@@ -4855,11 +4852,10 @@
         "reading": "151 εἶ] + συ AT; text αἱ ὁδοί σου",
         "agrees": false
       },
-      "todo": true,
       "source_note": "\\fqa Alex. \\ft ἐντολαί, commands."
     },
     "PSA 132:1": {
-      "why": "Swete says A omits “for David”, contradicting Brenton’s reported addition.",
+      "why": "Keep as a note: Brenton reports the addition in every printing (1844 p. 141; 1879 p. 795; 1900 p. 791), but Swete says A’s first hand omits “for David”, as far as can be seen, so the addition has no support beyond his report. eBible’s quotation marks, copied from 131:1’s note, are corrected away.",
       "swete": {
         "volume": 2,
         "page": 395,
@@ -4867,11 +4863,10 @@
         "reading": "om τῷ Δαυείδ A*vidT",
         "agrees": false
       },
-      "todo": true,
-      "source_note": "\\fqa Alex. \\ft + 'for David.'"
+      "source_note": "\\fqa Alex. \\ft + for David."
     },
     "PRO 5:13": {
-      "why": "Swete retains οὐκ ἤκουον and cites no A variant at 13; A omits μή at 5:10 and 5:16 instead.",
+      "why": "Keep as a note: Brenton’s note stands at verse 13, before I heard not, in every printing, with no note at 5:10 or 5:16 (1844 p. 152; 1879 p. 808; 1900 p. 804), but Swete retains οὐκ ἤκουον and cites no A variant at 13; A omits μή at 5:10 and 5:16 instead. The report is Brenton’s own and has no support in Swete.",
       "swete": {
         "volume": 2,
         "page": 425,
@@ -4879,7 +4874,6 @@
         "reading": "13 παρέβαλον ℵ; 10 om μή A; 16 om μή ℵ?A",
         "agrees": false
       },
-      "todo": true,
       "source_note": "\\fqa Alex. \\ft omits 'not.'"
     },
     "PRO 8:5": {
@@ -4907,7 +4901,7 @@
       "source_note": "\\fqa Heb. \\ft Rephaim. see Appendix. Note on \\xt 2 Kings 5. 18."
     },
     "PRO 21:29": {
-      "why": "The verse already says ungodly at the marked word; Swete has no A substitution there.",
+      "why": "Keep as a note: Brenton’s caller stands before impudently in every printing (1844 pp. 164–165; 1879 p. 824; 1900 p. 820), after An ungodly man, so the note reports A’s reading of that clause, not of the word ungodly; Swete has no A variant in the verse, and the report has no support beyond Brenton’s.",
       "swete": {
         "volume": 2,
         "page": 457,
@@ -4915,12 +4909,10 @@
         "reading": "29 no A variant; text ἀσεβὴς ἀνὴρ ἀναιδῶς",
         "agrees": null
       },
-      "todo": true,
       "source_note": "\\ft See \\fqa Alex. \\ft ungodly."
     },
     "ISA 2:6": {
-      "why": "The Appendix note explains the LXX rendering Philistines rather than giving an Alexandrine variant.",
-      "todo": true,
+      "why": "The note stays a note: Brenton’s note is Or, aliens, see Appendix. in every printing (1844 p. 188; 1879 p. 853; 1900 p. 849), and the Appendix explains the LXX rendering Philistines rather than giving a reading of A; eBible’s paste of the Appendix into it is corrected away.",
       "swete": {
         "volume": 3,
         "page": 104,
@@ -4928,7 +4920,7 @@
         "reading": "6 ανηκε Q^a; no A variant in the verse (7 η γη] + αυτων A)",
         "agrees": null
       },
-      "source_note": "\\fqa Or, \\ft aliens, see \\fqa Appendix \\ft which has: “ISAIAH 2. 6. — Philistines. The LXX. generally render by Φιλιστεὶμ or Φυλιστιὶμ till about the middle of Judges, after which the word almost always used is ἀλλόφυλοι. In this there was probably some accommodation of sound to tense."
+      "source_note": "\\fqa Or, \\ft aliens, see \\fqa Appendix."
     },
     "ISA 7:18": {
       "why": "Brenton explicitly says the verse’s existing wording is already the Alexandrine reading.",
@@ -4979,7 +4971,7 @@
       "source_note": "\\fqa Gr. \\ft from murders, but \\fqa Alex. \\ft reads ἀφρόνων."
     },
     "ISA 61:3": {
-      "why": "The note is about Greek word division, with no alternative English wording.",
+      "why": "The note is about Greek word division, with no alternative English wording. eBible has it as the verse’s first note; in every printing it is the second, on the garment of glory, and Or, anointing. the first (1844 p. 236; 1879 p. 912; 1900 p. 908), so the note overrides swap the printed texts.",
       "todo": true,
       "swete": {
         "volume": 3,
@@ -5027,7 +5019,7 @@
       "source_note": "\\fqa Alex. \\ft ψύχος, cold, probably the right reading."
     },
     "MAL 3:11": {
-      "why": "The marked alternative “give a charge for you to be fed” has no clear English correspondence to A’s noun-case change; retain for an editor’s translation review.",
+      "why": "Brenton’s note has two parts: his alternative rendering, Or, give a charge for you to be fed, and A’s reading, τὴν βρῶσιν, given in Greek alone (1844 p. 429; 1879 p. 1145; 1900 p. 1141; eBible had dropped the Greek). Swete confirms the case change, but Brenton gives no English for it, so printing it needs English of the edition’s own.",
       "swete": {
         "volume": 3,
         "page": 98,
@@ -5036,10 +5028,10 @@
         "agrees": null
       },
       "todo": true,
-      "source_note": "\\fqa Or, \\ft give a charge for you to be fed. \\fqa Alex."
+      "source_note": "\\fqa Or, \\ft give a charge for you to be fed. \\fqa Alex. \\ft τὴν βρῶσιν."
     },
     "GEN 6:2": {
-      "why": "Keep as a note: “angels” is written over an erasure, and the reading and hand remain uncertain. The recorded reading is over an erasure with an uncertain A attribution (A?vid). Its qualification needs resolution before the English alternative is promoted.",
+      "why": "Keep as a note: “angels” is written over an erasure, and the reading and hand remain uncertain. The recorded reading is over an erasure with an uncertain A attribution (A?vid). Its qualification needs resolution before the English alternative is promoted. Brenton prints the note so in every printing (1844 p. 30; 1879 p. 23; 1900 p. 19).",
       "swete": {
         "volume": 1,
         "page": 9,
@@ -5051,7 +5043,7 @@
       "source_note": "\\fqa Alex. \\ft angels of God."
     },
     "2KI 3:21#2": {
-      "why": "Keep as a note: “and above” lacks a stated threshold, and the Greek spelling needs checking. The apparatus records ἐπάνω A where Brenton’s body has they said, Ho; the inherited note instead gives καὶ ἐπάνα. Establish the integrated English threshold and the source spelling before changing the body.",
+      "why": "Keep as a note: “and above” lacks a stated threshold. The apparatus records ἐπάνω A where Brenton’s body has they said, Ho; Brenton’s note gives καὶ ἐπάνα in every printing (1844 p. 426; 1879 p. 507; 1884 p. 474; 1900 p. 503), his own spelling, so the note keeps it. Establish the integrated English threshold before changing the body.",
       "swete": {
         "volume": 1,
         "page": 746,

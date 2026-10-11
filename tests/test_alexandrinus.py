@@ -315,7 +315,7 @@ def test_a_passage_supplies_verses_from_the_appendix_or_the_king_james_bible(
 def test_every_alexandrine_note_and_supplied_passage_has_its_decision(
     policy: bible.policy.Policy, read: bible.pipeline.Read
 ) -> None:
-    assert alexandrinus.check(policy, read.brenton) == (198, 26)
+    assert alexandrinus.check(policy, read.brenton) == (197, 26)
     # A note left without a decision, or a decision without its note, is refused.
     undecided = decided(
         policy,

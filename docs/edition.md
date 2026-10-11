@@ -79,7 +79,9 @@ When a reading is printed:
 
 One verse is not Brenton's English. His note at 1 Kingdoms 23:12 announces the verse but gives no English, so the verse is borrowed word for word from the King James Version's 1 Samuel 23:12, and a note says so.
 
-Doubtful readings are left alone. Genesis 6:2 remains a note, because the manuscript's reading stands over an erasure. Genesis 5:32 and 6:10 keep "Cham" in the text, because Alexandrinus's "Chaph" is an apparent scribal error. The readings still to be decided are listed in [the open notes](todo.md).
+Doubtful readings are left alone. Genesis 6:2 remains a note, because the manuscript's reading stands over an erasure and Swete is unsure of the hand.
+
+An evident slip of the scribe stays a note too, though Swete is sure of it: a name spelt against the manuscript's own spelling elsewhere, or a number that contradicts its context. Genesis 5:32 and 6:10 keep "Cham", because Alexandrinus writes "Chaph" there alone and "Cham" at every later mention; Numbers 28:24 keeps "seven days", because the corrector's "two days" contradicts the seven days of the feast at 28:17 and the verse's own "daily". The readings still to be decided are listed in [the open notes](todo.md).
 
 ## Notes
 

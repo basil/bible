@@ -41,10 +41,7 @@
     },
     "DEU 5:16": {
       "action": "merge",
-      "drops": [
-        "EPH 6:1"
-      ],
-      "why": "Brenton’s note names Matthew 15:4 and Ephesians 6:1. Turpie’s quotations of Deuteronomy 5:16 include Matthew 15:4 (Q088) and Ephesians 6:2-3 (Q205), which the links name; Ephesians 6:1 is Paul’s own command to children and quotes nothing."
+      "why": "Brenton’s note names Matthew 15:4 and Ephesians 6:2 (his printed 6. 1 is corrected by a citation decision: 6:1 is Paul’s own command to children and quotes nothing). Turpie’s quotations of Deuteronomy 5:16 include Matthew 15:4 (Q088) and Ephesians 6:2-3 (Q205), which the links name."
     },
     "PSA 8:5": {
       "action": "merge",
@@ -104,6 +101,10 @@
     "ISA 52:7": {
       "action": "preserve",
       "why": "Beside Romans 10:15 the note gives another reading, a literal rendering and a reference to Joel 2:2, none of which a link carries."
+    },
+    "ISA 53:5#2": {
+      "action": "preserve",
+      "why": "The note glosses ‘bruise’ before it cites 1 Peter 2:24 (Brenton’s printed reference, which eBible had as 2. 22), and merging would lose Brenton’s rendering; the reference repeats the link."
     }
   },
   "alignment": {

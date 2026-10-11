@@ -14,7 +14,7 @@
     "XXB the Hebrew In Genesis": {
       "from": "Introduction to Bos’s edition",
       "to": "Introduction to Lambert Bos’s edition",
-      "why": "the name is written in full, as the preface's other note on his edition gives it",
+      "why": "Brenton prints Bos’s; the edition writes the name in full, as the preface’s other note on his edition gives it. The preface’s notes are beyond the reach of a prose change, so this editorial wording is made here.",
       "uncategorized": true
     },
     "XXB Genesis Avith which": {
@@ -38,11 +38,18 @@
       "to": "",
       "why": "an empty note: eBible's text has a reference and no note"
     },
-    "EXO 12:3": {
-      "from": "\\fqa lamb\\ft is",
-      "to": "\\fqa lamb \\ft is",
-      "why": "the word space after lamb is missing"
-    },
+    "EXO 12:3": [
+      {
+        "from": "\\fqa lamb\\ft is",
+        "to": "\\fqa lamb \\ft is",
+        "why": "the word space after lamb is missing"
+      },
+      {
+        "from": "admissable",
+        "to": "admissible",
+        "why": "Brenton’s printings read admissible (1879 p. 100; 1900 p. 96)."
+      }
+    ],
     "EXO 18:11": {
       "from": "appeaars",
       "to": "appears",
@@ -123,9 +130,10 @@
       "why": "the full stop after Gr is missing"
     },
     "PRO 11:10": {
-      "from": "“[note - Part of verse 10.]— but",
-      "to": "“— but",
-      "why": "eBible's own remark inside the note"
+      "from": "See Appendix which gives the Alexandrine text as: “[note - Part of verse 10.]— but at the destruction of the wicked there is exultation.”",
+      "to": "See Appendix.",
+      "why": "Brenton’s printings read See Appendix. (1844 p. 157; 1879 p. 814; 1900 p. 810); the rest, with its bracketed remark, is eBible’s paraphrase of the Appendix.",
+      "uncategorized": true
     },
     "PRO 12:2": {
       "from": "\\ft Or. better",
@@ -284,7 +292,7 @@
     "2KI 2:14": {
       "from": "אח הו",
       "to": "אף־הוא",
-      "why": "the printed Hebrew is אף־הוא",
+      "why": "the printed Hebrew is אף־הוא, with a maqaf (1844 p. 425; 1879 p. 505; 1900 p. 501), pointed אַף־הוּא in 1844; eBible has ח for ף and drops the final א",
       "uncategorized": true
     },
     "2KI 12:16": {
@@ -340,11 +348,18 @@
       "to": "χοροὺς",
       "why": "the printed Greek reads χοροὺς"
     },
-    "JDG 9:37": {
-      "from": "ὐπὸ",
-      "to": "ἀπὸ",
-      "why": "the printed Greek reads ἀπὸ"
-    },
+    "JDG 9:37": [
+      {
+        "from": "ὐπὸ",
+        "to": "ἀπὸ",
+        "why": "the printed Greek reads ἀπὸ"
+      },
+      {
+        "from": "מעס",
+        "to": "מעם",
+        "why": "Brenton’s printings read מעם with a final mem (1844 p. 295; 1879 p. 346; 1900 p. 342)."
+      }
+    ],
     "JDG 13:5#2": {
       "from": "Ναζίραῖον",
       "to": "Ναζειραῖον",
@@ -356,11 +371,19 @@
       "to": "θαυμαστὰ",
       "why": "the printed Greek reads θαυμαστὰ"
     },
-    "JDG 18:7": {
-      "from": "θησανροὺς",
-      "to": "θησαυροὺς",
-      "why": "the printed Greek reads θησαυροὺς"
-    },
+    "JDG 18:7": [
+      {
+        "from": "θησανροὺς",
+        "to": "θησαυροὺς",
+        "why": "the printed Greek reads θησαυροὺς"
+      },
+      {
+        "from": "מבליס",
+        "to": "מכלים",
+        "why": "Brenton’s printings read מכלים (1844 p. 304; 1879 p. 358; 1900 p. 354); eBible has ב for כ and ס for ם.",
+        "uncategorized": true
+      }
+    ],
     "2SA 15:12": {
       "from": "σὺστρεμμα",
       "to": "σύστρεμμα",
@@ -417,44 +440,34 @@
     "DEU 24:13": {
       "from": "\\fqa ie. ",
       "to": "\\fqa i. e. ",
-      "why": "ie. is a slip for i. e., as every other note has it",
+      "why": "ie. is eBible’s slip for i. e., which Brenton’s printings have (1844 p. 241; 1879 p. 279; 1900 p. 275), as every other note has it",
       "uncategorized": true
     },
-    "GEN 33:18": {
-      "from": "\\fqa Bos \\ft and \\fqa P. Junius ",
-      "to": "\\fqa Lambert Bos \\ft and \\fqa Patrick Junius ",
-      "why": "the names are written in full: Lambert Bos, as Brenton's preface gives him, and Patrick Young, who wrote his name Patricius Junius, the editor of the Codex Alexandrinus",
-      "uncategorized": true
-    },
-    "NUM 1:18": {
-      "from": "L. Bos.",
-      "to": "Lambert Bos.",
-      "why": "the name is written in full, as Brenton's preface gives it",
-      "uncategorized": true
-    },
-    "1KI 20:10": {
-      "from": "\\fqa Prof. Lee ",
-      "to": "\\fqa Professor Samuel Lee ",
-      "why": "the name is written in full: Samuel Lee, Regius Professor of Hebrew at Cambridge, whose Hebrew Grammar the note cites",
-      "uncategorized": true
-    },
-    "1SA 31:9": {
-      "from": "\\fqa Comp. \\ft reads",
-      "to": "\\fqa Complut. \\ft reads",
-      "why": "Comp. here is the Complutensian Text, as the reading it gives shows, not Compare, so it is written Complut. as Brenton's other notes write it, and printed in full",
-      "uncategorized": true
-    },
+    "NUM 1:18": [
+      {
+        "from": "tabulae publicae",
+        "to": "tabulæ publicæ",
+        "why": "Brenton’s printings read tabulæ publicæ (1844 p. 164; 1879 p. 186; 1900 p. 182).",
+        "uncategorized": true
+      }
+    ],
+    "1SA 31:9": [
+      {
+        "from": "\\fqa Comp. \\ft reads",
+        "to": "\\fqa Complut. \\ft reads",
+        "why": "Brenton prints Comp. (1844 p. 352; 1884 p. 384), which here is the Complutensian text, as the reading it gives shows, not Compare; the edition writes it Complut. as his Appendix does. This is editorial wording made at the source, because the build expands the abbreviation Comp. to Compare before a prose change could reach it.",
+        "uncategorized": true
+      },
+      {
+        "from": "so in",
+        "to": "So in",
+        "why": "Brenton’s printings read So in Heb. (1844 p. 352; 1884 p. 384)."
+      }
+    ],
     "NUM 25:8": {
       "from": "Trom renders",
-      "to": "Abraham Trommius renders",
-      "why": "the name is written in full: Abraham Trommius, whose concordance to the Septuagint (1718) glosses each Hebrew word in Latin, קבה here as lupanar",
-      "uncategorized": true
-    },
-    "BAK C. Pridham": {
-      "from": "\\it C. Pridham\\it*",
-      "to": "\\it Charles Pridham\\it*",
-      "why": "the name is written in full, as Brenton's preface gives it: Mr. Charles Pridham",
-      "uncategorized": true
+      "to": "Trom. renders",
+      "why": "Brenton prints Trom. (1844 p. 197; 1879 p. 226; 1900 p. 222), and eBible drops its stop."
     },
     "BAK Alex 15": {
       "from": "\\it Alex. \\it*. 15",
@@ -476,25 +489,426 @@
       "from": "\\fr 29:3 \\fqa Gr. \\ft to \\fqa or \\ft ",
       "to": "\\fr 29:3 \\fqa Gr. \\ft ",
       "uncategorized": true,
-      "why": "Brenton’s 1879 printing, p. 397 (https://archive.org/details/septuagintversio1879bren/page/n412/mode/1up), prints no to or here; eBible repeated the fragment from 29:2. Remove that exact transcription fragment, retaining the printed gloss."
+      "why": "Brenton’s printings print no to or here: 1844 pp. 349–350, 1879 pp. 412–413 (https://archive.org/details/septuagintversio1879bren/page/n412/mode/1up), 1884 p. 382 and 1900 pp. 408–409. eBible repeated the fragment from 29:2. Remove that exact transcription fragment, retaining the printed gloss."
     },
     "1SA 29:4": {
       "from": "\\fr 29:4 \\fqa Or, \\ft to \\fqa or \\ft ",
       "to": "\\fr 29:4 \\fqa Or, \\ft ",
       "uncategorized": true,
-      "why": "Brenton’s 1879 printing, p. 397 (https://archive.org/details/septuagintversio1879bren/page/n412/mode/1up), prints no to or here; eBible repeated the fragment from 29:2. Remove that exact transcription fragment, retaining the printed gloss."
+      "why": "Brenton’s printings print no to or here: 1844 pp. 349–350, 1879 pp. 412–413 (https://archive.org/details/septuagintversio1879bren/page/n412/mode/1up), 1884 p. 382 and 1900 pp. 408–409. eBible repeated the fragment from 29:2. Remove that exact transcription fragment, retaining the printed gloss."
     },
     "1SA 29:5": {
       "from": "\\fr 29:5 \\fqa Gr. \\ft to \\fqa or \\ft ",
       "to": "\\fr 29:5 \\fqa Gr. \\ft ",
       "uncategorized": true,
-      "why": "Brenton’s 1879 printing, p. 397 (https://archive.org/details/septuagintversio1879bren/page/n412/mode/1up), prints no to or here; eBible repeated the fragment from 29:2. Remove that exact transcription fragment, retaining the printed gloss."
+      "why": "Brenton’s printings print no to or here: 1844 pp. 349–350, 1879 pp. 412–413 (https://archive.org/details/septuagintversio1879bren/page/n412/mode/1up), 1884 p. 382 and 1900 pp. 408–409. eBible repeated the fragment from 29:2. Remove that exact transcription fragment, retaining the printed gloss."
     },
     "1SA 29:8": {
       "from": "\\fr 29:8 \\fqa Gr. \\ft to \\fqa or \\ft ",
       "to": "\\fr 29:8 \\fqa Gr. \\ft ",
       "uncategorized": true,
-      "why": "Brenton’s 1879 printing, p. 397 (https://archive.org/details/septuagintversio1879bren/page/n412/mode/1up), prints no to or here; eBible repeated the fragment from 29:2. Remove that exact transcription fragment, retaining the printed gloss."
+      "why": "Brenton’s printings print no to or here: 1844 pp. 349–350, 1879 pp. 412–413 (https://archive.org/details/septuagintversio1879bren/page/n412/mode/1up), 1884 p. 382 and 1900 pp. 408–409. eBible repeated the fragment from 29:2. Remove that exact transcription fragment, retaining the printed gloss."
+    },
+    "NUM 36:7": {
+      "from": "Acts 5. 26",
+      "to": "Acts 5. 36",
+      "why": "Brenton’s printings read Acts 5. 36 (1844 p. 212; 1879 p. 244; 1900 p. 240); 26 is eBible’s misreading.",
+      "uncategorized": true
+    },
+    "DEU 16:8": {
+      "from": "Lev. 23. 6;",
+      "to": "Lev. 23. 36;",
+      "why": "Brenton’s printings read Lev. 23. 36 (1844 p. 232; 1879 p. 269; 1900 p. 265); eBible dropped the 3.",
+      "uncategorized": true
+    },
+    "ISA 53:5#2": {
+      "from": "bruise. \\xt 1 Pet. 2. 22.",
+      "to": "bruise. \\xt 1 Pet. 2. 24.",
+      "why": "Brenton’s printings read 1 Pe. 2. 24 (1844 p. 231; 1879 p. 905; 1900 p. 901), the verse that quotes this one; 22 is eBible’s misreading.",
+      "uncategorized": true
+    },
+    "PRO 11:31": {
+      "from": "\\xt 1 Pet.\\f*",
+      "to": "\\xt 1 Pet. 4. 18.\\f*",
+      "why": "Brenton’s printings read See 1 Pet. 4. 18. (1844 p. 157; 1879 p. 814; 1900 p. 810); eBible dropped the chapter and verse.",
+      "uncategorized": true
+    },
+    "PRO 11:3": {
+      "from": "\\f + \\fr 11:3 \\ft the Alexandrine text reads: “The integrity of the upright shall guide them, but the overthrow of the rebellious shall spoil them.”\\f*",
+      "to": "",
+      "why": "Brenton has one caller here, at the end of 11:2, whose note reads See Appendix. (1844 vol. 2 p. 157; 1879 p. 654; 1900 p. 650), which eBible keeps at 11:2; this note at 11:3 is eBible’s paraphrase of the Appendix, which Brenton did not print.",
+      "uncategorized": true
+    },
+    "PRO 11:5": {
+      "from": "right divides.",
+      "to": "rightly divides. See \\xt 2 Tim. 2. 15.",
+      "why": "Brenton’s printings read Gr. rightly divides. See 2 Tim. 2. 15. (1879 p. 813; 1900 p. 809); eBible dropped the reference and a syllable.",
+      "uncategorized": true
+    },
+    "JDG 8:7": {
+      "from": "\\fr 8:7 \\fqa Gr. \\ft dig down.",
+      "to": "\\fr 8:7 \\fqa Gr. \\ft thresh.",
+      "why": "eBible swaps the notes of 8:7 and 8:9: Brenton’s printings have Gr. thresh. before tear in 8:7 and Gr. dig down. before break down in 8:9 (1844 p. 292; 1879 p. 343; 1900 p. 339).",
+      "uncategorized": true
+    },
+    "JDG 8:9": {
+      "from": "\\fr 8:9 \\fqa Gr. \\ft thresh.",
+      "to": "\\fr 8:9 \\fqa Gr. \\ft dig down.",
+      "why": "eBible swaps the notes of 8:7 and 8:9: Brenton’s printings have Gr. thresh. before tear in 8:7 and Gr. dig down. before break down in 8:9 (1844 p. 292; 1879 p. 343; 1900 p. 339).",
+      "uncategorized": true
+    },
+    "JDG 20:10": {
+      "from": "\\fqa Heb. \\ft sons of Belial.",
+      "to": "\\fqa Gr. \\ft it, \\fqa sc. \\ft Gabaa.",
+      "why": "eBible swaps the texts of the notes at 20:10 and 20:13 and misspells the name: Brenton’s printings have Gr. it, sc. Gabaa. before they wrought in 20:10 and Heb. sons of Belial. before sons of transgressors in 20:13 (1844 p. 308; 1879 p. 362; 1900 p. 358).",
+      "uncategorized": true
+    },
+    "JDG 20:13": {
+      "from": "\\fqa Gr. \\ft it, \\fqa sc. \\ft Gabas.",
+      "to": "\\fqa Heb. \\ft sons of Belial.",
+      "why": "eBible swaps the texts of the notes at 20:10 and 20:13: Brenton’s printings have Gr. it, sc. Gabaa. before they wrought in 20:10 and Heb. sons of Belial. before sons of transgressors in 20:13 (1844 p. 308; 1879 p. 362; 1900 p. 358).",
+      "uncategorized": true
+    },
+    "EXO 32:14": {
+      "from": "\\fr 32:14 \\fqa Gr. \\ft dost.",
+      "to": "\\fr 32:14 \\fqa Gr. \\ft propitiated.",
+      "why": "Brenton’s printings read Gr. propitiated. before prevailed (1844 p. 118; 1879 p. 130; 1900 p. 126); eBible’s Gr. dost. is copied from 32:32.",
+      "uncategorized": true
+    },
+    "NUM 30:7": {
+      "from": "relative in respect of οὓς",
+      "to": "relative οὓς",
+      "why": "in respect of belongs to the verse, where the caller stands before it; the note in Brenton’s printings reads It would seem that the relative οὓς must refer to ὁρισμοὺς, understood. (1844 p. 204; 1879 p. 234; 1900 p. 230).",
+      "uncategorized": true
+    },
+    "EXO 19:22": {
+      "from": "\\ft lest he remove",
+      "to": "\\ft remove",
+      "why": "Brenton’s printings read q. d. remove by destroying. (1844 p. 103; 1879 p. 111; 1900 p. 107); lest he is eBible’s, repeated from the verse.",
+      "uncategorized": true
+    },
+    "GEN 18:12": {
+      "from": "\\fqa Gr. \\ft The difference",
+      "to": "\\ft The difference",
+      "why": "the note opens The difference turns on the word in Brenton’s printings (1844 p. 40; 1879 p. 36; 1900 p. 32); the label Gr. is eBible’s.",
+      "uncategorized": true
+    },
+    "DEU 21:5": {
+      "from": "\\fqa Gr. \\ft his name",
+      "to": "\\fqa Or, \\ft his name",
+      "why": "Brenton’s printings read Or, his name. Hebraism. (1844 p. 237; 1879 p. 275; 1900 p. 271); Gr. is eBible’s misreading.",
+      "uncategorized": true
+    },
+    "2SA 5:18": {
+      "from": "See also \\fqa Appendix. \\ft which refers us to Govett's work on the book of the prophet Isaiah.",
+      "to": "See \\fqa Appendix.",
+      "why": "the note ends See Appendix. in Brenton’s Bagster printings (1879 p. 423; 1884 p. 392; 1900 p. 419), and the 1844 (p. 358) has no pointer at all; the sentence about Govett is eBible’s paraphrase of the Appendix.",
+      "uncategorized": true
+    },
+    "1SA 20:41": {
+      "from": "\\fqa Gr. \\ft See v. 19.",
+      "to": "\\ft See v. 19.",
+      "why": "Brenton’s printings read See v. 19. (1844 p. 340; 1879 p. 401; 1884 p. 370; 1900 p. 397); the label Gr. is eBible’s.",
+      "uncategorized": true
+    },
+    "1SA 20:15": {
+      "from": "\\fqa Gr. \\ft The meaning",
+      "to": "\\ft The meaning",
+      "why": "the note opens The meaning of the Heb. in Brenton’s printings (1844 p. 338; 1879 p. 400; 1884 p. 369; 1900 p. 396); the label Gr. is eBible’s.",
+      "uncategorized": true
+    },
+    "PSA 79:17": {
+      "from": "\\fqa Gr. \\ft See",
+      "to": "\\ft See",
+      "why": "Brenton’s printings read See Ps. 20. 9. (1844 p. 117; 1879 p. 763; 1900 p. 759); the label Gr. is eBible’s.",
+      "uncategorized": true
+    },
+    "1SA 13:21": {
+      "from": "\\fqa Gr. \\ft Such is the meaning of ὀδοὺς according to the old interpretors.",
+      "to": "\\ft Such is the meaning of ὀδοὺς, according to the old interpreters.",
+      "why": "Brenton’s printings read Such is the meaning of ὀδοὺς, according to the old interpreters. (1844 p. 329; 1879 p. 388; 1884 p. 357; 1900 p. 384); the label Gr., the missing comma and interpretors are eBible’s.",
+      "uncategorized": true
+    },
+    "2SA 22:27": {
+      "from": "\\fr 22:27 \\fqa Or, \\ft upon the haughty.",
+      "to": "\\fr 22:27 \\fqa Gr. \\ft choice or elect.",
+      "why": "Brenton’s printings read Gr. choice or elect. on excellent (1844 p. 380; 1879 p. 451; 1884 p. 420; 1900 p. 447); eBible repeats 22:28’s note here.",
+      "uncategorized": true
+    },
+    "1KI 11:27": {
+      "from": "of his lifting.",
+      "to": "as he lifted up hands.",
+      "why": "Brenton’s printings read Gr. as he lifted up hands. (1844 p. 403; 1879 p. 479; 1884 p. 448; 1900 p. 475); eBible’s of his lifting repeats the verse.",
+      "uncategorized": true
+    },
+    "1KI 1:47": {
+      "from": "do good \\fqa or",
+      "to": "do good to, \\fqa or",
+      "why": "Brenton’s printings read Gr. do good to, or make good. (1844 p. 386; 1884 p. 427); eBible dropped to,.",
+      "uncategorized": true
+    },
+    "PSA 51:1": {
+      "from": "\\fr 51:1 \\fqa Gr. \\ft governing.",
+      "to": "\\fr 51:1 \\fqa Gr. \\ft understanding.",
+      "why": "Brenton’s printings read Gr. understanding. at the title (1844 p. 102; 1879 p. 745; 1900 p. 741); eBible’s governing is copied from 50:14’s note.",
+      "uncategorized": true
+    },
+    "PSA 101:17": {
+      "from": "then shall be.",
+      "to": "then shall he.",
+      "why": "Brenton’s printings read Or, then shall he. (1844 p. 126; 1879 p. 775; 1900 p. 771)."
+    },
+    "2KI 23:36": {
+      "from": "a son of 23 years was Joakim",
+      "to": "a son of 25 years was Joakim",
+      "why": "Brenton’s printings read a son of 25 years (1844 p. 456; 1879 p. 542; 1900 p. 538), as the verse says; 23 is copied from 23:31’s note.",
+      "uncategorized": true
+    },
+    "MAL 3:11": {
+      "from": "\\fqa Alex.\\f*",
+      "to": "\\fqa Alex. \\ft τὴν βρῶσιν.\\f*",
+      "why": "Brenton’s printings read Alex. τὴν βρῶσιν. (1844 p. 429; 1879 p. 1145; 1900 p. 1141); eBible dropped the Greek.",
+      "uncategorized": true
+    },
+    "PSA 132:1": {
+      "from": "\\fr 132:1 \\fqa Alex. \\ft + 'for David.'",
+      "to": "\\fr 132:1 \\fqa Alex. \\ft + for David.",
+      "why": "Brenton’s printings read Alex. + for David. without quotation marks (1844 p. 141; 1879 p. 795; 1900 p. 791); the marks are 131:1’s note’s.",
+      "uncategorized": true
+    },
+    "PRO 4:5": {
+      "from": "See Appendix - Alexandrian codex has: “Get wisdom, get understanding, forget not, nor decline from the words of my mouth.”",
+      "to": "See App.",
+      "why": "Brenton’s printings read See App. (1844 p. 151; 1879 p. 807; 1900 p. 803); the rest is eBible’s paraphrase of the Appendix.",
+      "uncategorized": true
+    },
+    "PRO 8:32": {
+      "from": "appendix has Alexandrine text as: “And blessed are they that keep my ways.”",
+      "to": "See Appendix.",
+      "why": "Brenton’s printings read See Appendix. (1844 p. 155; 1879 p. 811; 1900 p. 807); the rest is eBible’s paraphrase of the Appendix.",
+      "uncategorized": true
+    },
+    "PRO 13:5": {
+      "from": "See Appendix for Alexandrine text shown as: “Righteousness preserves the simple in the way, but sin makes worthless the ungodly.”",
+      "to": "See Appendix.",
+      "why": "Brenton’s printings read See Appendix. (1844 p. 158; 1879 p. 815; 1900 p. 811); the rest is eBible’s paraphrase of the Appendix.",
+      "uncategorized": true
+    },
+    "ISA 2:6": {
+      "from": "\\fqa Appendix \\ft which has: “ISAIAH 2. 6. — Philistines. The LXX. generally render by Φιλιστεὶμ or Φυλιστιὶμ till about the middle of Judges, after which the word almost always used is ἀλλόφυλοι. In this there was probably some accommodation of sound to tense.",
+      "to": "\\fqa Appendix.",
+      "why": "Brenton’s printings read Or, aliens, see Appendix. (1844 p. 188; 1879 p. 853; 1900 p. 849); the rest is eBible’s paraphrase of the Appendix, with tense for its sense.",
+      "uncategorized": true
+    },
+    "DEU 28:49": {
+      "from": "bear.",
+      "to": "hear.",
+      "why": "Brenton’s printings read Gr. hear. (1844 p. 246; 1879 p. 286; 1900 p. 282)."
+    },
+    "GEN 41:51": {
+      "from": "things belong to",
+      "to": "things belonging to",
+      "why": "Brenton’s printings read things belonging to my father (1844 p. 70; 1879 p. 72; 1900 p. 68).",
+      "uncategorized": true
+    },
+    "JOS 15:18": {
+      "from": "has thou",
+      "to": "hast thou",
+      "why": "Brenton’s printings read What hast thou to say? (1844 p. 271; 1879 p. 316; 1900 p. 312)."
+    },
+    "EXO 39:22": {
+      "from": "posession",
+      "to": "possession",
+      "why": "Brenton’s printings read possession (1879 p. 140; 1900 p. 136)."
+    },
+    "JOS 10:34": {
+      "from": "vigourously",
+      "to": "vigorously",
+      "why": "Brenton’s printings read vigorously (1844 p. 266; 1879 p. 310; 1900 p. 306)."
+    },
+    "2SA 15:20": {
+      "from": "\\fr 15:20 \\fqa Gr. \\ft it.",
+      "to": "\\fr 15:20 \\fqa Gr. \\ft if.",
+      "why": "Brenton’s printings read Gr. if. (1844 p. 370; 1879 p. 438; 1884 p. 407; 1900 p. 434)."
+    },
+    "2KI 3:17": {
+      "from": "posessions",
+      "to": "possessions",
+      "why": "Brenton’s printings read possessions (1844 p. 426; 1879 p. 506; 1884 p. 473; 1900 p. 502)."
+    },
+    "1SA 21:8": {
+      "from": "repitition",
+      "to": "repetition",
+      "why": "Brenton’s printings read repetition (1844 p. 340; 1879 p. 401; 1884 p. 370; 1900 p. 397)."
+    },
+    "2KI 4:39": {
+      "from": "colosynth",
+      "to": "colocynth",
+      "why": "Brenton’s printings read colocynth (1844 p. 428; 1879 p. 509; 1884 p. 476; 1900 p. 505)."
+    },
+    "2KI 24:10": {
+      "from": "seige",
+      "to": "siege",
+      "why": "Brenton’s printings read siege (1844 p. 456; 1879 p. 543; 1884 p. 510; 1900 p. 539).",
+      "uncategorized": true
+    },
+    "2SA 13:12": {
+      "from": "fasciendum",
+      "to": "faciendum",
+      "why": "Brenton’s printings read faciendum (1844 p. 366; 1879 p. 433; 1884 p. 402; 1900 p. 429)."
+    },
+    "1SA 6:8": {
+      "from": "\\fr 6:8 \\ft in the",
+      "to": "\\fr 6:8 \\ft In the",
+      "why": "the note begins In the Alex. in Brenton’s printings (1844 p. 321; 1879 p. 378; 1884 p. 347; 1900 p. 374)."
+    },
+    "EXO 16:35": {
+      "from": "οἰκοuμένη",
+      "to": "οἰκουμένη",
+      "why": "a Latin u for the Greek υ; Brenton’s printings read οἰκουμένη (1844 p. 100; 1879 p. 108; 1900 p. 104)."
+    },
+    "PSA 138:9": {
+      "from": "ὄρθον",
+      "to": "ὄρθρον",
+      "why": "Brenton’s printings read κατ᾿ ὄρθρον (1844 p. 143; 1879 p. 797; 1900 p. 793), as Swete reads A."
+    },
+    "ISA 51:3": {
+      "from": "שוב",
+      "to": "ערב",
+      "why": "Brenton’s printings read ערב (1844 p. 229; 1879 p. 904; 1900 p. 900).",
+      "uncategorized": true
+    },
+    "JDG 9:6": {
+      "from": "מעכ. this is an instance of double translation, στάσεως being given for מעכ, and εὐρετῆ having reference to the word מעא",
+      "to": "מצב. This is an instance of double translation, στάσεως being given for מצב, and εὐρετῆ having reference to the word מצא",
+      "why": "Brenton’s printings read מצב and מצא, and This (1844 p. 293; 1879 p. 344; 1900 p. 340); eBible has ע for צ and כ for ב.",
+      "uncategorized": true
+    },
+    "JDG 17:10": {
+      "from": "ימיס",
+      "to": "ימים",
+      "why": "Brenton’s printings read ימים with a final mem (1844 p. 304; 1879 p. 357; 1900 p. 353)."
+    },
+    "1SA 21:3": {
+      "from": "מקוצ",
+      "to": "מקום",
+      "why": "Brenton’s printings read מקום with a final mem (1844 p. 340; 1879 p. 401; 1900 p. 397)."
+    },
+    "1SA 21:3#2": {
+      "from": "פלכי אלמבי",
+      "to": "פלני אלמני",
+      "why": "Brenton’s printings read פלני אלמני (1844 p. 340; 1879 p. 401; 1900 p. 397); eBible has כ and ב for נ.",
+      "uncategorized": true
+    },
+    "2SA 5:23": {
+      "from": "בכאיס",
+      "to": "בכאים",
+      "why": "Brenton’s printings read בכאים with a final mem (1844 p. 358; 1879 p. 423; 1900 p. 419)."
+    },
+    "JDG 21:4": {
+      "from": "See chap \\xt 20. 26.",
+      "to": "See chap. \\xt 20. 26.",
+      "why": "Brenton abbreviates with a full stop: his printings read chap. 20. 26. (1844 p. 310; 1879 p. 364; 1900 p. 360)."
+    },
+    "1SA 15:3": {
+      "from": "See v 8.",
+      "to": "See v. 8.",
+      "why": "Brenton abbreviates with a full stop: his printings read See v. 8. (1879 p. 391; 1884 p. 360; 1900 p. 387)."
+    },
+    "PSA 146:8": {
+      "from": "Ps \\xt",
+      "to": "Ps. \\xt",
+      "why": "Brenton abbreviates with a full stop: his printings read See Ps. 103. (104) 14. (1844 p. 147; 1879 p. 802; 1900 p. 798)."
+    },
+    "PSA 49:18": {
+      "from": "1 Pe 4",
+      "to": "1 Pe. 4",
+      "why": "Brenton abbreviates with a full stop: his printings read See 1 Pe. 4. 4. (1844 p. 101; 1879 p. 743; 1900 p. 739)."
+    },
+    "PSA 90:6": {
+      "from": "ver 3",
+      "to": "ver. 3",
+      "why": "Brenton abbreviates with a full stop: his printings read See ver. 3. (1844 p. 122; 1879 p. 770; 1900 p. 766)."
+    },
+    "PRO 1:15": {
+      "from": "ver 16",
+      "to": "ver. 16",
+      "why": "Brenton abbreviates with a full stop: his printings read For ver. 16, see Appendix. (1844 p. 149; 1879 p. 804; 1900 p. 800)."
+    },
+    "PRO 3:6": {
+      "from": "2 Tim 2",
+      "to": "2 Tim. 2",
+      "why": "Brenton abbreviates with a full stop: his printings read See 2 Tim. 2. 13. (1844 p. 150; 1879 p. 806; 1900 p. 802)."
+    },
+    "PRO 4:11": {
+      "from": "see chap \\xt 2. 18",
+      "to": "see chap. \\xt 2. 18",
+      "why": "Brenton abbreviates with a full stop: his printings read see chap. 2. 18. (1844 p. 151; 1879 p. 807; 1900 p. 803)."
+    },
+    "PRO 11:13": {
+      "from": "See chap \\xt 20. 27",
+      "to": "See chap. \\xt 20. 27",
+      "why": "Brenton abbreviates with a full stop: his printings read See chap. 20. 27. (1844 p. 157; 1879 p. 814; 1900 p. 810)."
+    },
+    "PRO 20:27": {
+      "from": "Comp. chap \\xt 11. 13",
+      "to": "Comp. chap. \\xt 11. 13",
+      "why": "Brenton abbreviates with a full stop: his printings read Comp. chap. 11. 13. (1844 p. 164; 1879 p. 823; 1900 p. 819)."
+    },
+    "PRO 27:20a": {
+      "from": "ver 21",
+      "to": "ver. 21",
+      "why": "Brenton abbreviates with a full stop: his printings read Heb. omits to ver. 21. (1844 p. 171; 1879 p. 831; 1900 p. 827)."
+    },
+    "JOL 2:15": {
+      "from": "ch \\xt",
+      "to": "ch. \\xt",
+      "why": "Brenton abbreviates with a full stop: his printings read See ch. 1. 14. (1879 p. 1098; 1900 p. 1094); the 1844 (p. 388) has chap."
+    },
+    "JOL 4:18": {
+      "from": "chap \\xt",
+      "to": "chap. \\xt",
+      "why": "Brenton abbreviates with a full stop: his printings read See chap. 1. 20. (1844 p. 390; 1879 p. 1100; 1900 p. 1096)."
+    },
+    "MAL 3:10": {
+      "from": "Gen 7",
+      "to": "Gen. 7",
+      "why": "Brenton abbreviates with a full stop: his printings read see Gen. 7. 11 (1844 p. 429; 1879 p. 1145; 1900 p. 1141)."
+    },
+    "ISA 2:19": {
+      "from": "ver 10",
+      "to": "ver. 10",
+      "why": "Brenton abbreviates with a full stop: his printings read See ver. 10. (1879 p. 853; 1900 p. 849); the 1844 (p. 189) has v."
+    },
+    "ISA 14:16": {
+      "from": "chap \\xt 5. 25.",
+      "to": "chap. \\xt 5. 25.",
+      "why": "Brenton abbreviates with a full stop: his printings read See chap. 5. 25. (1844 p. 198; 1879 p. 866; 1900 p. 862)."
+    },
+    "ISA 23:11": {
+      "from": "chap \\xt 5. 25;",
+      "to": "chap. \\xt 5. 25;",
+      "why": "Brenton abbreviates with a full stop: his printings read See chap. 5. 25; 14. 16. (1844 p. 204; 1879 p. 873; 1900 p. 869)."
+    },
+    "ISA 45:16": {
+      "from": "chap \\xt 41. 1.",
+      "to": "chap. \\xt 41. 1.",
+      "why": "Brenton abbreviates with a full stop: his printings read See chap. 41. 1. (1844 p. 224; 1879 p. 897; 1900 p. 893)."
+    },
+    "ISA 57:21": {
+      "from": "chap \\xt 48. 22.",
+      "to": "chap. \\xt 48. 22.",
+      "why": "Brenton abbreviates with a full stop: his printings read See chap. 48. 22 (1844 p. 234; 1879 p. 910; 1900 p. 906)."
+    },
+    "ZEC 12:2": {
+      "from": "porches \\fqa or,",
+      "to": "porches, \\fqa or,",
+      "why": "Brenton’s printings read Or, porches, or, door-posts (1844 p. 424; 1879 p. 1139; 1900 p. 1135); eBible dropped the comma."
+    },
+    "1SA 17:52#3": {
+      "from": "שעריס",
+      "to": "שערים",
+      "why": "Brenton’s printings read שערים with a final mem (1844 p. 336; 1879 p. 396; 1884 p. 365; 1900 p. 392)."
     }
   },
   "notes": {
@@ -748,7 +1162,7 @@
     },
     "EXO 12:3": {
       "lemma": "each man a lamb",
-      "note": "πρόβατον, _sheep_ generally but ver. 5 seems to show that the word _lamb_ is admissable in this passage.",
+      "note": "πρόβατον, _sheep_ generally but ver. 5 seems to show that the word _lamb_ is admissible in this passage.",
       "why": "the note is on the word lamb; according to the houses is not part of it; sheep renders πρόβατον, generally is comment"
     },
     "EXO 12:16": {
@@ -912,19 +1326,14 @@
       "lemma": "that which is to be set forth",
       "why": "the phrase runs to set forth"
     },
-    "EXO 40:15": {
-      "lemma": "everlasting anointing of priesthood",
-      "note": "See 1 John 2. 27; _The anointing abideth_, etc.",
-      "why": "The anointing abideth quotes the cited verse and is italic; the note remains on everlasting anointing of priesthood"
-    },
     "EXO 40:20": {
       "lemma": "by the sides of",
       "why": "Gr. under renders by the sides of"
     },
     "NUM 1:18": {
       "lemma": "registered them",
-      "note": "ἄξονες dicebantur olim tabulae publicae; atque inde ἐπαξοοῦν, quod videtur esse, _in tabulas referre_. Lambert Bos.",
-      "why": "Lambert Bos names the source of the note; in tabulas referre renders registered them, not after"
+      "note": "ἄξονες dicebantur olim tabulæ publicæ; atque inde ἐπαξοοῦν, quod videtur esse, _in tabulas referre_. L. Bos.",
+      "why": "L. Bos names the source of the note; in tabulas referre renders registered them, not after"
     },
     "NUM 1:52": {
       "note": "Or, _headship_, i. e. _according to the situation of his captain or prince_.",
@@ -1038,10 +1447,6 @@
     "NUM 28:13": {
       "lemma": "burnt-offering",
       "why": "the note is on κάρπωμα, burnt-offering"
-    },
-    "NUM 30:7": {
-      "note": "It would seem that the relative _in respect of_ οὓς must refer to ὁρισμοὺς, understood.",
-      "why": "The cited words and lexical glosses are italic; the surrounding explanation stays roman"
     },
     "NUM 30:9": {
       "lemma": "straitly",
@@ -1313,7 +1718,7 @@
       "why": "Kirjath-sepher is the city of Letters"
     },
     "JOS 15:18": {
-      "note": "_What has thou to say_? or _of what hast thou need_?",
+      "note": "_What hast thou to say_? or _of what hast thou need_?",
       "why": "both are renderings"
     },
     "JOS 18:6": {
@@ -1436,10 +1841,6 @@
       "note": "Gr. _is the hand_.",
       "why": "is the hand renders are the hands"
     },
-    "JDG 8:7": {
-      "lemma": "tear",
-      "why": "dig down renders tear; your flesh is its object"
-    },
     "JDG 8:21": {
       "note": "i. e. round like the moon; perhaps circular, or in the form of a crescent.",
       "why": "the note explains rather than renders"
@@ -1514,7 +1915,7 @@
       "why": "survey and examine it render search it"
     },
     "JDG 18:7": {
-      "note": "Here probably διατρέπων and ἐκπιέζων both come under the Heb. מבליס and ἐκπιέζων and θησαυροὺς both under עצר.",
+      "note": "Here probably διατρέπων and ἐκπιέζων both come under the Heb. מכלים and ἐκπιέζων and θησαυροὺς both under עצר.",
       "why": "both under is Brenton's comment"
     },
     "JDG 18:10": {
@@ -1714,7 +2115,7 @@
     },
     "1SA 21:3": {
       "lemma": "The faithfulness of God",
-      "note": "This is another instance of double translation, מקוצ suggesting probably both the idea of _place_ and _faithfulness_.",
+      "note": "This is another instance of double translation, מקום suggesting probably both the idea of _place_ and _faithfulness_.",
       "why": "The cited words and lexical glosses are italic; the surrounding explanation stays roman; retain the existing scope of the note"
     },
     "1SA 21:8": {
@@ -1827,7 +2228,7 @@
       "why": "the comma between the two cited names is not italic"
     },
     "2SA 5:23": {
-      "note": "Heb. בכאיס lit. _mulberries_.",
+      "note": "Heb. בכאים lit. _mulberries_.",
       "why": "mulberries is the literal rendering of the Hebrew"
     },
     "2SA 8:1": {
@@ -1940,8 +2341,8 @@
     },
     "1KI 1:47": {
       "lemma": "make the name of Solomon better",
-      "why": "The Greek gloss describes the discontinuous make ... better construction; print it as an explanation, retaining the name of Solomon between the verbs.",
-      "note": "Gr. _do good_ or _make good_.",
+      "why": "The Greek gloss describes the discontinuous make ... better construction; print it as an explanation, retaining the name of Solomon between the verbs. Brenton’s printings read do good to, or make good (1844 p. 386; 1884 p. 427).",
+      "note": "Gr. _do good to_, or _make good_.",
       "quotation": true
     },
     "1KI 2:37#2": {
@@ -2213,7 +2614,7 @@
     },
     "1KI 20:10": {
       "lemma": "blessed",
-      "note": "See Professor Samuel Lee on the word ברך in Job 2. 9. Heb. Gram. p. 92.",
+      "note": "See Prof. Lee on the word ברך in Job 2. 9. Heb. Gram. p. 92.",
       "why": "the note is a reference on the word blessed, ברך"
     },
     "1KI 20:15": {
@@ -2802,8 +3203,8 @@
       "why": "πειρασμοῦ is a reading for irritation alone"
     },
     "PSA 101:17": {
-      "lemma": "and shall appear",
-      "why": "then shall be renders and shall appear"
+      "lemma": "and shall",
+      "why": "then shall he renders and shall (then shall he appear in his glory)"
     },
     "PSA 101:26": {
       "lemma": "beginning",
@@ -3117,11 +3518,6 @@
       "lemma": "afflict",
       "why": "beat with the fist renders afflict"
     },
-    "ISA 2:6": {
-      "note": "Or, _aliens_, see Appendix which has: “ISAIAH 2. 6. — _Philistines_. The LXX. generally render by Φιλιστεὶμ or Φυλιστιὶμ till about the middle of Judges, after which the word almost always used is ἀλλόφυλοι. In this there was probably some accommodation of sound to tense.",
-      "why": "The cited words and lexical glosses are italic; the surrounding explanation stays roman. The complete explanation retains its final full stop.",
-      "sentence": true
-    },
     "ISA 5:1": {
       "lemma": "high hill",
       "why": "horn renders high hill"
@@ -3376,28 +3772,6 @@
       "quotation": true,
       "why": "The source gives a grammatical gloss, rather than a continuous replacement; print its words as an explanation so the subject and retained words remain in the verse."
     },
-    "EXO 32:14": {
-      "omitted": true,
-      "why": "The inherited Gr. dost does not gloss prevailed upon to preserve his people; it has no corresponding words in this verse."
-    },
-    "2SA 22:27": {
-      "omitted": true,
-      "why": "The inherited upon the haughty belongs to the haughty in the next verse, whose source note already supplies that gloss."
-    },
-    "1KI 11:27": {
-      "omitted": true,
-      "why": "The source gloss of his lifting repeats the exact words already printed and gives no alternative."
-    },
-    "JDG 20:10": {
-      "verse": "20:13",
-      "lemma": "sons of transgressors",
-      "why": "The source Heb. sons of Belial glosses sons of transgressors in verse 13; eBible puts it in verse 10, which has neither expression."
-    },
-    "JDG 20:13": {
-      "verse": "20:11",
-      "lemma": "the city",
-      "why": "The source Gr. it, sc. Gabas explains the city in verse 11; eBible places it beside sons in verse 13."
-    },
     "JOL 2:3": {
       "note": "Gr. _it_, sc. _the people_.",
       "why": "Gr. it explains the singular Greek behind them; sc. the people names its referent. These grammatical glosses explain the clause, rather than replace the whole clause or echo it into the referent.",
@@ -3423,6 +3797,26 @@
     "2KI 19:23#2": {
       "lemma": "height of his cedar",
       "why": "bulk or size renders height, after the caller"
+    },
+    "DEU 21:5": {
+      "lemma": "in his name",
+      "why": "Brenton’s caller stands before in (1844 p. 237; 1879 p. 275; 1900 p. 271), where eBible’s stands before bless; his name renders in his name"
+    },
+    "EXO 21:17": {
+      "lemma": "let him certainly die",
+      "why": "Brenton’s caller stands before let him (1844 p. 105; 1879 p. 113; 1900 p. 109); eBible’s stands after it"
+    },
+    "ISA 61:3": {
+      "lemma": "the garment of glory",
+      "why": "eBible swaps the callers of the verse’s two notes: Brenton’s printings have Or, anointing. before oil of joy and Alex. reads καταστολὴν as one word. before the garment of glory (1844 p. 236; 1879 p. 912; 1900 p. 908). The two notes share their verse marker, so no correction can tell them apart; each is set on the words Brenton’s caller marks instead."
+    },
+    "ISA 61:3#2": {
+      "lemma": "oil",
+      "why": "eBible swaps the callers of the verse’s two notes: Brenton’s printings have Or, anointing. before oil of joy and Alex. reads καταστολὴν as one word. before the garment of glory (1844 p. 236; 1879 p. 912; 1900 p. 908). The two notes share their verse marker, so no correction can tell them apart; each is set on the words Brenton’s caller marks instead. anointing renders oil."
+    },
+    "JDG 20:10": {
+      "lemma": "they",
+      "why": "Brenton’s caller stands before they wrought (1844 p. 295; 1879 p. 353; 1900 p. 349), and his it, sc. Gabaa, renders they: the Greek verb’s subject is the city."
     }
   },
   "shapes": {
