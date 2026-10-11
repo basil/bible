@@ -1,88 +1,58 @@
 # Notes: open questions
 
-The open questions left over from the footnote reviews of September 2026. None of them is settled yet: each needs a decision, a check of the Greek, or a 1611 facsimile, before anything changes. Brenton's printings of 1844, 1879 and 1900 have been checked for every note that turned on them; what remains does not.
+The open questions left over from the footnote reviews of September 2026. None of them is settled yet: each needs a decision or a check of the Greek before anything changes. Brenton's printings of 1844, 1879 and 1900 have been checked for every note that turned on them; what remains does not.
 
 ## How to read this list
 
 The sections:
 
-1. [Errors in the printed notes](#1-errors-in-the-printed-notes): the book prints something wrong, or probably wrong.
-2. [Rules to decide](#2-rules-to-decide): one decision settles many notes.
-3. [Readings from Codex Alexandrinus](#3-readings-from-codex-alexandrinus): readings not yet printed in the text, and readings already printed that need another look.
+1. [Rules to decide](#1-rules-to-decide): one decision settles many notes.
+2. [Readings from Codex Alexandrinus](#2-readings-from-codex-alexandrinus): readings not yet printed in the text.
 
 **Keys.** Brenton's notes are named by their keys, the `x-key` the build gives each source note ([AGENTS.md](../AGENTS.md#the-document-model)), which a decision in `edition/` is filed under:
 
 - Books are USFM codes: `1SA`–`2KI` are 1–4 Kingdoms, `PRO` Proverbs, `JOL` Joel, and `BAK` Brenton's Appendix, whose entries in `alexandrinus.json` are named by the verse they concern, as `BAK 1KI 2:35a`.
 - Chapters and verses are Brenton's, so the Psalms and Joel are numbered as in the Greek, and some verses are lettered, as `1KI 5:14a`.
 - `#2` is a verse's second note; a key without it is the verse's first or only note.
-- A note may be a footnote or a cross-reference (`\x` in the source). Some of the references in 1.1 and 1.2 are cross-references; most are footnotes that cite a passage.
 
 A 1611 marginal note is named by its verse and `(1611)`, as `1CO 14:27 (1611)`; its key in `edition/kjv-notes.json` adds the words George prints it under, as `1CO 14:27 two...`.
 
-**Cross-references.** A note with more than one problem is listed under each, and each listing names the others in brackets, as [also 3.6].
+**Cross-references.** A note with more than one problem is listed under each, and each listing names the others in brackets, as [also 1.2].
 
 **Sources.** eBible is the transcription of Brenton that the build reads, and George is Calvin George's transcription of the 1611 notes ([sources/README.md](../sources/README.md)). Swete is the Greek edition whose apparatus checks Brenton's reports of Codex Alexandrinus. In its sigla, A is Codex Alexandrinus, A¹ its first hand and Aᵃ a corrector, "vid" marks an uncertain reading, and Q and Γ are other manuscripts; Vat. is the Vatican text Brenton translates, Codex Vaticanus supplied from other copies where it is lacking.
 
 **Closing an item.** Record the decision in `edition/` with its reason, as [AGENTS.md](../AGENTS.md#where-a-change-goes) says, and delete the item here in the same commit.
 
-## 1. Errors in the printed notes
-
-Most of these are probably slips of transcription, by eBible or George, but some may be slips of the printing, Brenton's or the 1611's, so check the printing first. How each is mended:
-
-- A slip in the transcription: an entry in `corrections`, in `edition/brenton-notes.json` or `edition/kjv-notes.json`.
-- Brenton's own slip of spelling or punctuation: `edition/revisions.json`.
-- A wrong reference: a `corrections` entry, or a decision in `edition/citations.json` if Brenton printed it so.
-- A note on the wrong words: its `lemma` in `notes`.
-- Italics: the note's `note` override in `notes`, where `_…_` marks an italic run.
-- A note on the wrong verse: a `verse` override in `notes`, as GEN 43:13 has.
-- A note copied from elsewhere, or with eBible's words in it: its `note` override in `notes`, or an uncategorized `corrections` entry.
-- Words missing from the scripture itself: a correction there may mend only word spacing, so this needs its own decision, with evidence.
-
-Leave alone the references that count in the Hebrew or English way, as Brenton printed them: ISA 26:19 "Ps. 110" (109. 3 in the Greek); PSA 88:21#2 and PSA 91:11, which each point one verse low; and 2KI 12:15 "vide v. 13" (v. 14 here).
-
-### 1.1 Notes on the wrong verse or the wrong words
-
-- **A lemma on the wrong words.** JOS 18:5: "came to him: Gr. _went through_" should be on "came" alone, if the Greek has πρὸς αὐτόν. Brenton's caller stands before "came" in every printing.
-- **A note beside its own link.** PSA 9:27: Brenton's "Rom. 3. 14" (corrected from eBible's 8. 14 by a decision in `citations.json`) stands at the end of 9:27 in eBible, but his caller is before 9:28, whose link names Romans 3:14 too, so the page prints the reference twice. The build counts the note as merged into the link and so refuses a `verse` override on it; decide how to move or drop it.
-
-### 1.2 Words missing
-
-- LAM 3:21: eBible has no note here, but Brenton prints "Gr. commit to." on "lay up" (1879 p. 992 of the scan), the note that GEN 19:13's "See Note, Lam. 3. 21" points to. A correction in the scripture itself may mend only word spacing, so supplying the note needs its own decision.
-
-### 1.3 Misspellings and misreadings
-
-- **1611.** GAL 5:16 has "fulfill", where the text has "fulfil". Check against a facsimile.
-
-## 2. Rules to decide
+## 1. Rules to decide
 
 Each of these is a question about a rule. One decision settles every note it covers.
 
-1. **Notes on "the words in italics".** 2SA 17:8, 2SA 21:11 [also 2.2], 1SA 17:43 and 1KI 14:26#2 refer to words Brenton set in italics, which this edition prints in square brackets. Either print the bracketed words in italics too, or accept the mismatch.
-2. **Lemmas on a long passage.** HAG 2:14 ("Not in Hebrew.") and 2SA 21:11 [also 2.1] are about a whole bracketed passage, but their lemmas cover only its first clause. Decide whether a lemma that long is acceptable.
+1. **Notes on "the words in italics".** 2SA 17:8, 2SA 21:11 [also 1.2], 1SA 17:43 and 1KI 14:26#2 refer to words Brenton set in italics, which this edition prints in square brackets. Either print the bracketed words in italics too, or accept the mismatch.
+2. **Lemmas on a long passage.** HAG 2:14 ("Not in Hebrew.") and 2SA 21:11 [also 1.1] are about a whole bracketed passage, but their lemmas cover only its first clause. Decide whether a lemma that long is acceptable.
 3. **"or" inside one rendering.** The rules split "_X_ or _Y_" into two italic runs, which is wrong when the "or" belongs to a single rendering. Overrides join EXO 21:28, NUM 1:52, 1SA 20:6, PSA 25:12, PSA 32:4, PSA 50:21 and ACT 25:6 (1611). Still split: EXO 14:15 "_harness_ or _yoke the horses again_", 1SA 30:12 "_staid_ or _established in him_". Decide whether these two should be joined.
 4. **Two colons.** A lemma that keeps the verse’s own colon prints two: "to speak: for they knew that he was Christ: or, …" (LUK 4:41 (1611)) and "from henceforth: Yea, saith the Spirit: or, …" (REV 14:13 (1611)). Decide whether these lemmas should keep their internal colon.
 
-## 3. Readings from Codex Alexandrinus
+## 2. Readings from Codex Alexandrinus
 
-The 46 decisions in `kept` in `edition/alexandrinus.json` that carry `"todo": true` are readings that are still only notes. Each is settled by printing the reading, which moves its decision to `readings` or `passages`, or by keeping the note for good, which removes its `todo` and updates its `why`. Sections 3.1–3.6 group them by what stands in the way; 3.7 lists readings already printed.
+The 46 decisions in `kept` in `edition/alexandrinus.json` that carry `"todo": true` are readings that are still only notes. Each is settled by printing the reading, which moves its decision to `readings` or `passages`, or by keeping the note for good, which removes its `todo` and updates its `why`. Sections 2.1–2.6 group them by what stands in the way.
 
-### 3.1 Greek with no English from Brenton (13)
+### 2.1 Greek with no English from Brenton (13)
 
 Swete confirms the Greek, but Brenton gives it only in Greek, so printing it needs English of the edition's own. One policy decision settles the group: whether the edition ever supplies its own English.
 
 GEN 1:11#2, JDG 9:27#2, JDG 13:5#2, JDG 13:19, 1SA 6:8, 2SA 17:16, 1KI 5:18, 1KI 8:59#3, 2KI 19:24, 2KI 21:6#2, PSA 31:9, ISA 59:7#2, MAL 3:11 (A's τὴν βρῶσιν, which Brenton gives after his own alternative rendering).
 
-### 3.2 A pointer with no English (3)
+### 2.2 A pointer with no English (3)
 
-A has a different reading, but Brenton only points to it, and gives no English to print. The policy decision in 3.1 bears on these too.
+A has a different reading, but Brenton only points to it, and gives no English to print. The policy decision in 2.1 bears on these too.
 
 | Decision | What stands in the way |
 | --- | --- |
-| BAK 1KI 2:35a | Brenton reports variation here without translating it. Swete records omissions and an addition, but applying them needs English that Brenton doesn't give. 1KI 2:35a, in 3.6, is the note that points here. |
+| BAK 1KI 2:35a | Brenton reports variation here without translating it. Swete records omissions and an addition, but applying them needs English that Brenton doesn't give. 1KI 2:35a, in 2.6, is the note that points here. |
 | PSA 41:5 | Brenton gives a reference to the Appendix rather than English, and the Appendix discusses the Hebrew behind the verse. Swete cites no variant of A here: εἰσελεύσομαι is R's. Decide whether there is an Alexandrine reading at all. |
 | ISA 40:4 | Brenton refers to Luke without giving English. Swete supports the Greek, but borrowing English from Luke needs its own decision. |
 
-### 3.3 Placement and duplicated passages (5)
+### 2.3 Placement and duplicated passages (5)
 
 | Decision | What stands in the way |
 | --- | --- |
@@ -92,13 +62,13 @@ A has a different reading, but Brenton only points to it, and gives no English t
 | BAK 1KI 14:1-20 | Brenton says the substance is already at 12:24 in the Vatican text, and Swete confirms A's passage at 14:1–20. The Appendix gives no separate English. Resolve the overlap before moving or inserting anything. |
 | 1KI 14:21 | The note that points to BAK 1KI 14:1-20; its Appendix explains the structure rather than translating. Settle the two together. |
 
-### 3.4 Brenton and Swete disagree (1)
+### 2.4 Brenton and Swete disagree (1)
 
 | Decision | Brenton | Swete |
 | --- | --- | --- |
 | GEN 6:2 | A has "angels of God" for "sons of God", in every printing | ἄγγελοι stands over an erasure, and the attribution to A is doubtful (A^{?vid}, confirmed on the scan); establish the reading and the hand |
 
-### 3.5 English to correct or clarify (7)
+### 2.5 English to correct or clarify (7)
 
 Brenton's English for the reading is wrong, incomplete or unclear, and his printings read as eBible has them. Record a correction of the English with its reason before printing the reading.
 
@@ -112,7 +82,7 @@ Brenton's English for the reading is wrong, incomplete or unclear, and his print
 | ISA 30:8 | A's Greek changes case and order; "days in seasons" would supply a new "in" and drop "many long", with no settled English. |
 | JON 1:8 | Swete confirms an addition in A, but Brenton's "for those whose cause" is ungrammatical and doesn't match the Greek question. |
 
-### 3.6 Probably keep as a note (17)
+### 2.6 Probably keep as a note (17)
 
 Nothing here needs printing: the text already follows A, or the note explains rather than offering other English. Confirm each, then remove its `todo`.
 
@@ -124,7 +94,7 @@ Nothing here needs printing: the text already follows A, or the note explains ra
 | 2SA 11:25 | The verse already prints "strengthen him", following A. |
 | 2SA 15:12 | The verse already follows A's reading of the conspiracy. |
 | 1KI 1:9 | The verse already follows A: "by the stone of Zoelethi". |
-| 1KI 2:35a | The note points to the Appendix; the passage is BAK 1KI 2:35a in 3.2. |
+| 1KI 2:35a | The note points to the Appendix; the passage is BAK 1KI 2:35a in 2.2. |
 | 1KI 5:14a | Brenton reports a chapter division, which Swete's layout supports. It changes the numbering, not the words, and the edition keeps Brenton's verse numbers. |
 | BAK PRO 21:16-17 | Brenton points to an explanatory note in the Appendix, with no other English, and Swete reports no difference in A at the words cited. |
 | PSA 49:19 | The note reports a gap in the manuscript, not English. |
@@ -135,12 +105,3 @@ Nothing here needs printing: the text already follows A, or the note explains ra
 | ISA 61:3 | The note is about how the Greek divides words, with no other English. |
 | ISA 66:5 | The verse already says "our", A's reading. |
 | ZEC 14:7 | The verse already translates A's ψύχος as "cold"; the note explains it. |
-
-### 3.7 Readings already printed that need another look
-
-These readings are in the text now, as Brenton printed them. Each needs an editorial decision; leave the text and notes as they are until then.
-
-- **DEU 32:42**: the English has "their Gentiles". Decide what "their" refers to before keeping or removing the supplied word.
-- **ZEC 11:14**: the text adopts Brenton's "covenant", but A also adds "my", and the note gives only the displaced "possession", although the decision says the addition is noted. Decide how to disclose the partial adoption and the possessive without supplying new English.
-- **ZEC 13:7**: Swete records A's singular "shepherd" at both occurrences; Brenton's note marks the first alone, so only "against my shepherd" is printed and "smite the shepherds" keeps his plural. Decide whether the second should follow A too, which would need English of the edition's own.
-- **PRO 15:33**: the Appendix's original label, "16 (Alex.15) 33", is kept in the decision. Printing a note with it is optional; the moved saying is already in the text.

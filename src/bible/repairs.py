@@ -1,7 +1,8 @@
 """Corrections to the sources' transcription, made before anything reads them.
 
 eBible's text of Brenton and Calvin George's transcription of the 1611 margin
-have slips: a missing word space, a doubled label, a transcriber's remark.
+have slips: a missing word space, a doubled label, a transcriber's remark, a
+dropped note.
 edition/brenton-notes.json and edition/kjv-notes.json mend them, each with its
 reason. A correction is made to the source's own text, where it must be found
 once, and must fit one of the kinds of slip below unless it is marked
@@ -81,6 +82,10 @@ def category(before: str, after: str) -> str | None:
             return "remark"
         if EMPTY_NOTE.fullmatch(old):
             return "empty note"
+    # One note and nothing else: a lazy fullmatch would take two notes with
+    # words between them for one.
+    if not old and (note := NOTE.match(new)) and note.end() == len(new):
+        return "missing note"
     if old == "[Greek characters]" and re.fullmatch(rf"[{GREEK}\s,.;]+", new):
         return "omitted Greek"
     return None
@@ -128,8 +133,9 @@ def in_a_note(text: str, snippet: str) -> bool:
 
 def in_its_place(text: str, key: str, snippet: str) -> bool:
     """Whether the snippet's one occurrence lies where its key says: in the verse
-    it names, or in a file without verses, in a note standing among the words it
-    names, or outside the notes, in the words it names."""
+    it names, which it may begin with that verse's marker, or in a file without
+    verses, in a note standing among the words it names, or outside the notes,
+    in the words it names."""
     start = text.index(snippet)
     end = start + len(snippet)
     place = key.partition(" ")[2]
@@ -143,6 +149,8 @@ def in_its_place(text: str, key: str, snippet: str) -> bool:
                 and matching[index].start() <= start
                 and end <= matching[index].end()
             )
+        if marker := re.match(rf"\\v {reference.partition(':')[2]}\s+", snippet):
+            start += marker.end()
         return any(
             ref == reference and first <= start and end <= last
             for ref, first, last in verse_spans(text)
@@ -192,8 +200,9 @@ def brenton(
     names the nth note in a verse. Several corrections in one note form a list
     under one key. In a file without verses, the key names the words the note
     stands among, or outside the notes, the words it mends. Outside notes a
-    correction may mend only word spaces in translation, so the translation
-    stays eBible's. A preface, an introduction, or the appendix's notes and
+    correction may only mend word spaces in translation or restore a whole note
+    Brenton printed that the transcription lacks, so the translation stays
+    eBible's. A preface, an introduction, or the appendix's notes and
     labels may have their words mended.
     """
     mended = set()
@@ -207,8 +216,13 @@ def brenton(
                 f"Brenton correction is not where its key says: {key}",
             )
             in_note = in_a_note(text, correction["from"])
+            restored = category(correction["from"], correction["to"]) == "missing note"
+            require(
+                not (in_note and restored), f"Brenton note restored in a note: {key}"
+            )
             require(
                 in_note
+                or restored
                 or not in_translation(text, correction["from"])
                 or canonical_text(correction["from"])
                 == canonical_text(correction["to"]),

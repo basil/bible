@@ -254,8 +254,18 @@ def brenton(
             )
     merged = crossrefs.merged_notes(code, found, links, policy=policy)
     # A merged note doesn't print, so an exception or a correction to it
-    # would go unused unnoticed.
-    excepted = sorted(merged & set(exceptions))
+    # would go unused unnoticed, unless the exception only moved the note to
+    # the verse of the link that replaces it, saying it is about no words.
+    excepted = sorted(
+        key
+        for key in merged
+        if (excepting := exceptions.get(key))
+        and not (
+            "verse" in excepting
+            and excepting.get("lemma") is None
+            and not set(excepting) - {"verse", "lemma", "why"}
+        )
+    )
     require(
         not excepted, f"Brenton note exception for a note a link replaces: {excepted}"
     )
@@ -266,6 +276,8 @@ def brenton(
     for read in found:
         if read.key in merged:
             replacements[read.key] = None
+            if read.key in exceptions:
+                report.keys.add(read.key)
             continue
         key, verse, words = read.key, read.verse, read.words
         exception = exceptions.get(key, {})
@@ -274,6 +286,11 @@ def brenton(
             require(
                 read.scope is None,
                 f"Alexandrine lemma also has a Brenton exception: {key}",
+            )
+            # A note about no words is moved onto the link that replaces it.
+            require(
+                exception.get("lemma") is not None,
+                f"Note moved about no words with no link to replace it: {key}",
             )
             span, glossed, rule = lemmas.overridden_lemma(
                 verse.text,

@@ -591,7 +591,7 @@
       "source_note": "\\fqa Alex. \\ft 600."
     },
     "DEU 32:42": {
-      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Brenton supplied their for enemies; it does not fit Gentiles, so the article stands in its place.",
       "swete": {
         "volume": 1,
         "page": 414,
@@ -599,11 +599,17 @@
         "reading": "ἐχθρῶν] ἐθνῶν A",
         "agrees": true
       },
-      "from": "enemies",
-      "note": "\\fl Vat. \\fqa enemies\\ft .",
+      "from": "the heads of \\add their\\add* enemies",
+      "note": "\\fl Vat. \\fqa the heads of their enemies\\ft .",
       "english": {
         "source": "brenton",
-        "span": [22, 30]
+        "span": [22, 30],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "the heads of the "
+          }
+        ]
       },
       "source_note": "\\fqa Alex. \\ft ἐθνῶν, Gentiles."
     },
@@ -2952,7 +2958,7 @@
       "source_note": "\\fqa Alex. \\ft the altar as bowls."
     },
     "ZEC 11:14": {
-      "why": "Print Brenton’s “covenant”, confirmed by Swete. Alexandrinus also adds “my”, which Brenton does not supply here. Promote Brenton’s English covenant only. The apparatus also records + μου A; it is noted explicitly rather than silently translated, under the Brenton-English-only scope.",
+      "why": "Print Brenton’s covenant, confirmed by Swete. Alexandrinus also adds μου, for which Brenton gives no English; the note discloses it rather than the text supplying my.",
       "swete": {
         "volume": 3,
         "page": 88,
@@ -2961,7 +2967,7 @@
         "agrees": true
       },
       "from": "possession",
-      "note": "\\fl Vat. \\fqa possession\\ft ; compare the \\fl Heb.",
+      "note": "\\fl Vat. \\fqa possession\\ft ; compare the \\fl Heb. \\fl Alex. \\ft adds μου, \\fq my\\ft .",
       "english": {
         "source": "brenton",
         "span": [50, 58]
@@ -2991,7 +2997,7 @@
       "source_note": "\\fqa Alex. \\ft The house of my beloved."
     },
     "ZEC 13:7": {
-      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Swete records the singular in A at both occurrences; Brenton’s note marks the first alone and gives English for it alone, so the second “smite the shepherds” keeps his plural.",
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Swete records the singular in A at both occurrences; Brenton’s note marks the first alone and gives English for it alone, so the second “smite the shepherds” keeps his plural. A also reads παταξον, αὐτοῦ for μου and adds τῆς ποίμνης, none of which Brenton translates, so the verse cannot follow A throughout.",
       "swete": {
         "volume": 3,
         "page": 91,

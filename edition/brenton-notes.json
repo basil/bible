@@ -909,7 +909,19 @@
       "from": "שעריס",
       "to": "שערים",
       "why": "Brenton’s printings read שערים with a final mem (1844 p. 336; 1879 p. 396; 1884 p. 365; 1900 p. 392)."
-    }
+    },
+    "LAM 3:21": [
+      {
+        "from": "\\v 21 This",
+        "to": "\\v 21 \\f + \\fr 3:21 \\ft Possibly πικρίαν agrees with ταύτην but the LXX. frequently give a literal rendering of a Heb. feminine, whether a Gr. feminine noun occurs or not. See \\xt Job 6. 17.\\f*This",
+        "why": "Brenton’s 1844 printing has this note on This (p. 798), which the Bagster printings and eBible lack, though GEN 19:13’s See Note, Lam. 3. 21 refers to it (1879 p. 21; 1900 p. 21)."
+      },
+      {
+        "from": "I lay up",
+        "to": "I \\f + \\fr 3:21 \\ft Gr. commit to.\\f*lay up",
+        "why": "eBible dropped the note: Brenton’s printings give Gr. commit to. on lay up (1844 p. 798; 1879 p. 976; 1900 p. 976)."
+      }
+    ]
   },
   "notes": {
     "GEN 1:9#2": {
@@ -1720,6 +1732,10 @@
     "JOS 15:18": {
       "note": "_What hast thou to say_? or _of what hast thou need_?",
       "why": "both are renderings"
+    },
+    "JOS 18:5": {
+      "lemma": "came",
+      "why": "Gr. went through renders came alone (διήλθοσαν πρὸς αὐτόν, Swete i. 457); to him stays"
     },
     "JOS 18:6": {
       "lemma": "give",
@@ -3008,6 +3024,11 @@
       "lemma": null,
       "why": "the note is on the numbering of the psalm that begins here"
     },
+    "PSA 9:27": {
+      "verse": "9:28",
+      "lemma": null,
+      "why": "eBible sets the reference at the end of 9:27, but Brenton’s caller stands before 28 (1844 p. 82; 1879 p. 719; 1900 p. 715), the verse Rom. 3. 14 quotes; there the quotation link replaces it"
+    },
     "PSA 10:2": {
       "lemma": "privily",
       "why": "in dark moon renders privily"
@@ -3740,6 +3761,11 @@
     "ISA 66:14": {
       "lemma": "thrive",
       "why": "spring up renders thrive"
+    },
+    "LAM 3:21": {
+      "lemma": "This",
+      "sentence": true,
+      "why": "the note is on ταύτην, This; Brenton’s caller stands before This (1844 p. 798), and his note is a sentence"
     },
     "2KI 3:21#2": {
       "lemma": "and they said, Ho",

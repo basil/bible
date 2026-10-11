@@ -138,6 +138,54 @@ def test_a_see_note_that_a_link_covers_is_replaced_by_it(
         )
 
 
+def test_a_see_note_moved_onto_its_link_is_replaced_by_it(
+    ctx: bible.annotate.Context, policy: bible.policy.Policy
+) -> None:
+    """eBible sets a reference at the end of the verse before the one Brenton's
+    caller stands at; moved there, the link replaces it, and only an exception
+    that does no more than move it is allowed on it."""
+    verses = (
+        "\\v 2 He has said in his heart. \\x + \\xo 99:2 \\xt Mat. 3. 3.\\x*\n"
+        "\\v 3 The voice of one crying."
+    )
+    link = crossrefs.Link(
+        parse_passage("ISA 99:3").first,
+        parse_passage("ISA 99:3"),
+        (parse_passage("MAT 3:3"),),
+        ("Q999",),
+        "A",
+    )
+
+    def moved(
+        *links: crossrefs.Link, **more: Any
+    ) -> tuple[dict[str, str], bible.annotate.Report]:
+        exception = {"verse": "99:3", "lemma": None, "why": "the caller is before 3"}
+        changed_policy = changed(
+            policy,
+            "brenton_notes",
+            lambda data: data["notes"].update({"ISA 99:2": {**exception, **more}}),
+        )
+        moved_ctx = annotate.Context(
+            changed_policy, ctx.inventory, ctx.books, ctx.terms, ctx.prose
+        )
+        doc, report = annotate.brenton(
+            "ISA", book("ISA", verses), list(links), frozenset(), moved_ctx
+        )
+        return verse_lines(doc), report
+
+    lines, report = moved(link)
+    assert lines == {"2": "He has said in his heart. ", "3": "The voice of one crying."}
+    assert report.keys == {"ISA 99:2"}
+    for more in ({"sentence": True}, {"lemma": "heart"}):
+        with pytest.raises(
+            CheckFailed, match=r"a note a link replaces: \['ISA 99:2'\]"
+        ):
+            moved(link, **more)
+    # Without the link, the note would stand in its verse about no words.
+    with pytest.raises(CheckFailed, match="no link to replace it: ISA 99:2"):
+        moved()
+
+
 def test_a_see_note_that_names_more_than_its_link_needs_a_decision(
     ctx: bible.annotate.Context, policy: bible.policy.Policy
 ) -> None:

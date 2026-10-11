@@ -278,11 +278,12 @@ def check(policy: Policy) -> None:
     require(
         not pointless, f"Note exceptions with an occurrence but no lemma: {pointless}"
     )
-    # A note set in another verse has no caller there to say what it is about.
+    # A note set in another verse has no caller there to say what it is about,
+    # so its exception says, or says it is about no words (a reference).
     unplaced = sorted(
         k
         for k, v in policy.brenton_notes["notes"].items()
-        if "verse" in v and v.get("lemma") is None
+        if "verse" in v and "lemma" not in v
     )
     require(not unplaced, f"Note exceptions with a verse but no lemma: {unplaced}")
     # Only an anchor is categorized, so the flag on any other exception is unused.

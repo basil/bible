@@ -628,7 +628,7 @@ def test_a_sign_after_no_witness_is_refused(
 def test_every_note_is_printed_replaced_by_a_link_or_explicitly_omitted(
     edition: bible.pipeline.Edition,
 ) -> None:
-    assert edition.summary["printed_notes"] == 4335
+    assert edition.summary["printed_notes"] == 4336
     rows = [row for listed in edition.notes.values() for row in listed]
     assert len({row["key"] for row in rows}) == len(rows)
     # The 1611 margin is printed on the New Testament alone, and whole but
@@ -1473,3 +1473,14 @@ def test_corrected_transcriptions_print_without_their_slips(
     assert not any(r["key"] == "ISA 29:13" for r in edition.notes["ISA"])
     verse = scripture.verses(edition.documents["ISA"])["29:13"]
     assert any("Matt. 15:8–9" in usj.text_of(n["content"]) for _, n in verse.notes)
+    # A reference eBible sets at the end of the verse before Brenton's caller is
+    # moved to the caller's verse, where its link replaces it.
+    assert not any(r["key"] == "PSA 9:27" for r in edition.notes["PSA"])
+    verses = scripture.verses(edition.documents["PSA"])
+    romans = [
+        usj.text_of(n["content"])
+        for reference in ("9:27", "9:28")
+        for _, n in verses[reference].notes
+        if "Rom. 3:14" in usj.text_of(n["content"])
+    ]
+    assert len(romans) == 1 and romans[0].startswith("9:28 ")

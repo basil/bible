@@ -31,6 +31,13 @@ BOOK = (
         ("\\fqa Gr. \\fqa Gr. ", "\\fqa Gr. ", "doubled text"),
         ("note [sic] here", "note here", "remark"),
         ("\\f + \\fr 6:1 \\f*", "", "empty note"),
+        ("I lay", "I \\f + \\fr 3:21 \\ft Gr. commit to.\\f*lay", "missing note"),
+        # Two notes with words between them are not one missing note.
+        (
+            "I lay",
+            "I \\f + \\fr 3:21 \\ft Gr.\\f* up \\f + \\fr 3:21 \\ft to.\\f*lay",
+            None,
+        ),
         ("[Greek characters]", "λόγος", "omitted Greek"),
     ],
 )
@@ -96,10 +103,32 @@ def test_a_correction_that_does_not_fit_is_refused(
         corrected(key, **correction)
 
 
+def test_a_dropped_note_is_restored_but_not_inside_another() -> None:
+    note = "\\f + \\fr 1:1 \\ft Or, at.\\f*"
+    text, _ = corrected(
+        "GEN 1:1", **Correction({"from": "In the", "to": f"In {note}the"})
+    )
+    assert f"In {note}the begin ning" in text
+    # A note at a verse's start is restored after the verse's marker.
+    text, _ = corrected(
+        "GEN 1:2", **Correction({"from": "\\v 2 But", "to": f"\\v 2 {note}But"})
+    )
+    assert f"\\v 2 {note}But the" in text
+    with pytest.raises(CheckFailed, match="not where its key says"):
+        corrected(
+            "GEN 1:1", **Correction({"from": "\\v 2 But", "to": f"\\v 2 {note}But"})
+        )
+    with pytest.raises(CheckFailed, match="restored in a note"):
+        corrected(
+            "GEN 1:2#2",
+            **Correction({"from": "\\ft secnd", "to": f"\\ft {note}secnd"}),
+        )
+
+
 def test_the_editions_corrections_all_apply(
     read: bible.pipeline.Read, policy: bible.policy.Policy
 ) -> None:
     """Each is made once, to a file the edition prints; reading refused otherwise."""
     corrections = policy.brenton_notes["corrections"]
-    assert len(corrections) == 158
+    assert len(corrections) == 159
     assert read.mended["1KI"] and "21:11" in read.mended["GEN"]
