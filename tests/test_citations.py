@@ -456,7 +456,7 @@ def test_a_book_cited_alone_keeps_its_abbreviations_period(
         # Decisions, keyed by the unit and the words they decide.
         ("XXB", "The Septuagint rendering of Ps. 4:5, is"),
         ("XXB", "the first Epistle of Peter, 4:18."),
-        ("XXB", "one of the acrostic Psalms, (144:13), where"),
+        ("XXB", "one of the acrostic Psalms (144:13), where"),
         ("XXB", "In Acts 17:28, we find"),
         ("NDX", "studied them. Acts 17:11 and 8:28, 29. They"),
         ("NDX", "See Judg. 8:2. \\it Joash\\it* the king"),

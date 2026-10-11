@@ -45,7 +45,7 @@ The build works out where each verse stands in the King James Bible: the Old Tes
 
 ### Revising spelling, vocabulary and punctuation
 
-`edition/revisions.json` holds the edition's revision of the translation. It has two sections, `words` and `verses`.
+`edition/revisions.json` holds the edition's revision of the translation. It has four sections: `words`, `verses`, `passages`, which revises the punctuation of a keyed note or a paragraph of front or back matter, and `punctuation`, the systematic rules, each with its reason.
 
 A word is respelled or modernized by an explicit editorial vocabulary decision wherever it is printed as a whole word: in the translation, its notes, and the front and back matter. Each decision gives its reason and preserves the surrounding wording. A word with `"scope": "scripture"` changes only in numbered verses, Psalm titles among them, and in the lemmas (`fq`) and readings (`fqa`) of notes; titles, headings, introductions and commentary keep the source's grammar, even where they quote it. If such a word also lists `notes`, keys like `1SA 22:9`, it changes only in those notes' lemmas and readings, each of which must have it; this is for a word that is elsewhere a noun. Unscoped words are revised before scoped ones, and the longest match wins. Changes to single verses are grouped under the reason they share, and a change may add a `why` of its own. A verse's change is made to that verse alone, as the edition numbers it; the verse must have the words once, only what differs gives way, and a note of the verse that quotes the words changes with them. Two changes may revise one verse, but not the same words of it.
 

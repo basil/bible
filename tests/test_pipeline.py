@@ -926,6 +926,197 @@ def test_unused_punctuation_rule_is_refused(policy: bible.policy.Policy) -> None
         revision.check_met(policy, met)
 
 
+BEFORE, INSIDE = "before-parenthesis", "inside-parenthesis"
+
+
+@pytest.mark.parametrize(
+    ("verse", "expected", "rules"),
+    [
+        ("Word, (aside) more.", "Word (aside) more.", {BEFORE}),
+        ("Word; (aside,) more.", "Word (aside), more.", {BEFORE, INSIDE}),
+        ("Word:(aside;) more.", "Word(aside); more.", {BEFORE, INSIDE}),
+        ("Word, (aside,:) more.", "Word (aside),: more.", {BEFORE, INSIDE}),
+        ("Word, (aside:)—more.", "Word (aside)—more.", {BEFORE, INSIDE}),
+        ("Word, (aside.) More.", "Word (aside.) More.", {BEFORE}),
+        ("Word, (aside?) more.", "Word (aside?) more.", {BEFORE}),
+        ("Word, (aside!) more.", "Word (aside!) more.", {BEFORE}),
+        ("Word. (Aside.) More.", "Word. (Aside.) More.", set()),
+        ("Word, (λόγος,) more.", "Word (λόγος,) more.", {BEFORE}),
+        # A moved mark is read by the rules after the move.
+        ("Word (a,) (bee) more.", "Word (a) (bee) more.", {BEFORE, INSIDE}),
+        ("Word (a,);—more.", "Word (a)—more.", {"before-em-dash", INSIDE}),
+        ("Word (a (b,)) more.", "Word (a (b)), more.", {INSIDE}),
+    ],
+)
+def test_punctuation_beside_parentheses(
+    policy: bible.policy.Policy, verse: str, expected: str, rules: set[str]
+) -> None:
+    doc = usj.parse(f"\\id GEN\n\\c 1\n\\p\n\\v 1 {verse}")
+    before = copy.deepcopy(doc)
+    met: revision.MetRevisions = set()
+    result = revision.punctuated(doc, policy, met)
+    assert scripture_text(result) == expected
+    assert doc == before
+    assert revision.punctuated(result, policy, set()) == result
+    assert met == rules
+
+
+@pytest.mark.parametrize(
+    "usfm",
+    [
+        # A mark already stands where the run would move.
+        "\\c 1\n\\p\n\\v 1 Word (aside,); more.",
+        "\\c 1\n\\p\n\\v 1 Word (aside,). More.",
+        # The "Or," of an alternative, and the separator before an item.
+        "\\c 1\n\\p\n\\v 1 Word.\\f + \\fr 1:1 \\ft Or, (as some read) smoke.\\f*",
+        "\\ip These: (1) one, (2) two.",
+        # A join across a heading, a chapter's heading, or onto an introduction.
+        "\\c 1\n\\p\n\\v 1 He said:\n\\s1 Head\n\\p\n\\v 2 (Aside.)",
+        "\\c 1\n\\p\n\\v 1 He said:\n\\c 2\n\\s1 Head\n\\p\n\\v 1 (Aside.)",
+        "\\c 1\n\\p\n\\v 1 He said:\n\\ip (An introduction.)",
+    ],
+)
+def test_punctuation_not_understood_is_refused(
+    policy: bible.policy.Policy, usfm: str
+) -> None:
+    doc = usj.parse(f"\\id GEN\n{usfm}")
+    with pytest.raises(CheckFailed, match="to be decided"):
+        revision.punctuated(doc, policy, set())
+
+
+def test_mark_ending_a_chapter_before_a_parenthesis(
+    policy: bible.policy.Policy,
+) -> None:
+    doc = usj.parse("\\id GEN\n\\c 1\n\\p\n\\v 1 He said:\n\\c 2\n\\p\n\\v 1 (Aside.)")
+    result = revision.punctuated(doc, policy, set())
+    assert scripture.plain(scripture.verses(result)["1:1"].text) == "He said"
+
+
+def test_parenthesis_marks_keep_their_styles_and_notes(
+    policy: bible.policy.Policy,
+) -> None:
+    doc = usj.parse(
+        "\\id GEN\n\\c 1\n\\p\n\\v 1 Word,\\f + \\fr 1:1 \\ft Note, (aside;) more.\\f*"
+        " (\\add aside\\add*,) more;\\it (again:)\\it* on."
+    )
+    before = copy.deepcopy(doc)
+    result = revision.punctuated(doc, policy, set())
+    assert usj.serialize(result).endswith(
+        "\\v 1 Word\\f + \\fr 1:1 \\ft Note (aside); more.\\f*"
+        " (\\add aside\\add*), more\\it (again):\\it* on.\n"
+    )
+    assert doc == before
+
+
+def test_mark_ending_a_verse_before_a_parenthesis(
+    policy: bible.policy.Policy,
+) -> None:
+    doc = usj.parse(
+        "\\id JOB\n\\c 1\n\\q1\n\\v 1 If one:\n\\q1\n\\v 2 (for two:)\n\\p\n"
+        "\\v 3 then three,\\f + \\fr 1:3 \\ft Note.\\f*\n\\v 4 (and four.) Five;\n"
+        "\\p\n\\v 5 (Six.) Seven: \\v 6 λόγος; \\v 7 (eight,) \\v 8 (nine.)"
+    )
+    before = copy.deepcopy(doc)
+    met: revision.MetRevisions = set()
+    result = revision.punctuated(doc, policy, met)
+    assert {
+        reference: scripture.plain(verse.text)
+        for reference, verse in scripture.verses(result).items()
+    } == {
+        "1:1": "If one",
+        "1:2": "(for two):",
+        "1:3": "then three",
+        "1:4": "(and four.) Five",
+        "1:5": "(Six.) Seven:",
+        "1:6": "λόγος;",
+        "1:7": "(eight)",
+        "1:8": "(nine.)",
+    }
+    assert "then three\\f + \\fr 1:3 \\ft Note.\\f*" in usj.serialize(result)
+    assert met == {"before-parenthesis", "inside-parenthesis"}
+    assert doc == before
+    assert revision.punctuated(result, policy, set()) == result
+
+
+def test_parenthesis_mark_after_a_tagged_foreign_word_is_refused(
+    policy: bible.policy.Policy,
+) -> None:
+    doc = usj.parse("\\id GEN\n\\c 1\n\\p\n\\v 1 The word (\\wg λόγος\\wg*,) more.")
+    with pytest.raises(CheckFailed, match=r"tagged foreign word: GEN: ,\) more"):
+        revision.punctuated(doc, policy, set())
+
+
+@pytest.mark.parametrize(
+    ("ending", "expected"),
+    [("heard;", "heard"), ("λόγος;", "λόγος;")],
+)
+def test_parenthesis_after_a_poetry_line(
+    policy: bible.policy.Policy, ending: str, expected: str
+) -> None:
+    doc = usj.parse(
+        f"\\id JOB\n\\c 33\n\\q1\n\\v 8 I {ending}"
+        "\\f + \\fr 33:8 \\ft Note.\\f*\n\\q1\n(in mine ears;) more."
+    )
+    before = copy.deepcopy(doc)
+    result = revision.punctuated(doc, policy, set())
+    assert (
+        scripture.verses(result)["33:8"].text == f"I {expected}\n(in mine ears); more."
+    )
+    assert "\\fr 33:8 \\ft Note.\\f*" in usj.serialize(result)
+    assert [b["marker"] for b in result["content"] if b["type"] == "para"] == [
+        "q1",
+        "q1",
+    ]
+    assert doc == before
+    assert revision.punctuated(result, policy, set()) == result
+
+
+@pytest.mark.parametrize("boundary", ["\n\\q1\n", " \\v 9 "])
+def test_tagged_foreign_word_before_a_parenthesis_across_boundaries(
+    policy: bible.policy.Policy, boundary: str
+) -> None:
+    doc = usj.parse(
+        "\\id JOB\n\\c 33\n\\q1\n\\v 8 \\wg λόγος\\wg*;" + boundary + "(aside) more."
+    )
+    with pytest.raises(CheckFailed, match="tagged foreign word"):
+        revision.punctuated(doc, policy, set())
+
+
+def test_poetry_line_punctuation_cannot_leave_a_lemma(
+    policy: bible.policy.Policy,
+) -> None:
+    doc = usj.parse(
+        "\\id JOB\n\\c 33\n\\q1\n\\v 8 I heard;"
+        "\\f + \\fq heard; \\ft Or, listened.\\f*\n\\q1\n(aside) more."
+    )
+    with pytest.raises(CheckFailed, match="lemma .* JOB 33:8: heard;"):
+        revision.punctuated(doc, policy, set())
+
+
+@pytest.mark.parametrize("mark", [",", ":", ";"])
+def test_closing_parenthesis_outside_supplied_words(
+    policy: bible.policy.Policy, mark: str
+) -> None:
+    doc = usj.parse(
+        "\\id ROM\n\\c 10\n\\p\n\\v 6 (that is, \\add to bring Christ down"
+        + mark
+        + "\\add*\\f + \\ft Note.\\f*) more."
+    )
+    before = copy.deepcopy(doc)
+    result = revision.punctuated(doc, policy, set())
+    assert usj.serialize(result).endswith(
+        "\\v 6 (that is, \\add to bring Christ down\\add*"
+        "\\f + \\ft Note.\\f*)" + mark + " more.\n"
+    )
+    assert doc == before
+    assert revision.punctuated(result, policy, set()) == result
+
+
+def test_every_punctuation_rule_is_accepted(policy: bible.policy.Policy) -> None:
+    rules = {name: {"why": "x"} for name in revision.RULES}
+    revision.check(revisions(policy, punctuation=rules))
+
+
 def passage_group(*changes: dict[str, str]) -> dict[str, Any]:
     return {
         "dashes": {
@@ -1045,10 +1236,18 @@ def test_prepared_contextual_dashes_and_derived_quotations(
     for change in revision.verse_changes(policy):
         code, reference = change["verse"].split()
         words = scripture.verses(edition.documents[code])[reference].text
-        assert change["to"] in words
+        # Respelling follows the verse decisions, so a decision's words may
+        # be respelt (4MA 12:7 "says"); its space may stand at a line break.
+        respelt = revision.respelt(
+            usj.parse(f"\\id {code}\n\\c 1\n\\p\n\\v 1 {change['to']}"), policy, set()
+        )
+        expected = scripture.plain(scripture_text(respelt))
+        assert expected in scripture.plain(words), (change, words)
         # A respelling can retain its source as a substring (beside → besides),
         # so its words are matched whole.
-        assert revision._phrase(change["from"]).search(words) is None
+        # An added stop can retain the entire former phrase (God?) → God?);).
+        if revision._phrase(change["from"]).search(expected) is None:
+            assert revision._phrase(change["from"]).search(words) is None
     for passage_change in revision.passage_changes(policy):
         if "note" in passage_change:
             code = passage_change["note"].split()[0]

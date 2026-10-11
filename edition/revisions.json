@@ -6256,13 +6256,7 @@
           "verse": "2CO 12:2",
           "from": "Christ fourteen",
           "to": "Christ, fourteen",
-          "why": "Separate the time of the catching up from Paul’s present knowledge of the man, following the RV comma placement. State this insertion separately from the comma after ago so that notes quoting either part receive its punctuation."
-        },
-        {
-          "verse": "2CO 12:2",
-          "from": "ago,",
-          "to": "ago",
-          "why": "Remove the former closing comma of the temporal phrase after placing its opening comma after Christ; keep the parenthesis and every word."
+          "why": "Separate the time of the catching up from Paul’s present knowledge of the man, following the RV comma placement. The comma that closed the phrase before the parenthesis goes by the rule before a parenthesis."
         }
       ]
     },
@@ -6313,8 +6307,8 @@
         {
           "verse": "2SA 21:2",
           "from": "said to them;—(now",
-          "to": "said to them: (now",
-          "why": "The colon keeps the speech introduction connected to David's words in verse 3 across the parenthetical explanation of the Gabaonites; retain the parenthesis's lowercase opening."
+          "to": "said to them (now",
+          "why": "The dash and the semicolon go: the parenthetical explanation of the Gabaonites marks its own boundary and closes the narrative sentence before David's speech in verse 3; retain the parenthesis's lowercase opening."
         },
         {
           "verse": "ESG 4:17b",
@@ -6701,11 +6695,298 @@
           "to": "sometimes"
         }
       ]
+    },
+    "parenthesis marks dropped": {
+      "why": "A comma, colon or semicolon inside a closing parenthesis moves after it by rule. Here it goes instead: the parenthesis interrupts a subject and its verb, a verb and its complement, or a phrase and the words it governs, and a mark after it would divide them.",
+      "changes": [
+        {
+          "verse": "EXO 9:19",
+          "from": "them,) shall",
+          "to": "them) shall",
+          "why": "The long subject all the men and cattle … shall not enter into a house takes shall die."
+        },
+        {
+          "verse": "1KI 11:34",
+          "from": "life,) for",
+          "to": "life) for",
+          "why": "For David my servant's sake gives the reason for not taking the kingdom."
+        },
+        {
+          "verse": "1CH 9:31",
+          "from": "Corite,) was",
+          "to": "Corite) was",
+          "why": "Matthathias of the Levites was set in charge."
+        },
+        {
+          "verse": "ESG 3:13b",
+          "from": "gentleness,) to",
+          "to": "gentleness) to",
+          "why": "I was minded to make."
+        },
+        {
+          "verse": "PSA 118:60",
+          "from": "terrified,)",
+          "to": "terrified)",
+          "why": "I prepared myself to keep."
+        },
+        {
+          "verse": "ISA 16:12",
+          "from": "altars,) that",
+          "to": "altars) that",
+          "why": "It shall be to thy shame that he shall go in."
+        },
+        {
+          "verse": "JER 45:7",
+          "from": "household,) that",
+          "to": "household) that",
+          "why": "Abdemelech heard that they had put Jeremias into the dungeon."
+        },
+        {
+          "verse": "JER 36:2",
+          "from": "Jerusalem;)",
+          "to": "Jerusalem)",
+          "why": "The epistle of verse 1 goes by the hand of Eleasan in verse 3; the parenthesis is a time phrase within that sentence."
+        },
+        {
+          "verse": "2MA 9:14",
+          "from": "place,) he",
+          "to": "place) he",
+          "why": "The holy city, the fronted object, he would set at liberty."
+        },
+        {
+          "verse": "ROM 7:18",
+          "from": "flesh,) dwelleth",
+          "to": "flesh) dwelleth",
+          "why": "In me dwelleth no good thing."
+        },
+        {
+          "verse": "ROM 11:8",
+          "from": "hear;) unto",
+          "to": "hear) unto",
+          "why": "The rest were blinded unto this day."
+        },
+        {
+          "verse": "COL 2:22",
+          "from": "using;) after",
+          "to": "using) after",
+          "why": "Subject to ordinances after the commandments and doctrines of men."
+        },
+        {
+          "verse": "HEB 10:7",
+          "from": "me,) to",
+          "to": "me) to",
+          "why": "I come to do thy will."
+        },
+        {
+          "verse": "1PE 3:21",
+          "from": "God,) by",
+          "to": "God) by",
+          "why": "Baptism doth also now save us by the resurrection of Jesus Christ."
+        },
+        {
+          "verse": "DAG 4:21",
+          "from": "branches:)",
+          "to": "branches)",
+          "why": "The tree which thou sawest in verse 20 is the subject of is thyself, O king in verse 22; the parenthesis completes its description without dividing the subject from its verb."
+        }
+      ]
+    },
+    "parenthesis marks changed": {
+      "why": "The mark the containing sentence needs after the aside is not the one the source set inside it: a participle or the main clause follows, which takes a comma.",
+      "changes": [
+        {
+          "verse": "JER 25:4",
+          "from": "ears;) saying",
+          "to": "ears), saying",
+          "why": "I sent my servants the prophets, saying."
+        },
+        {
+          "verse": "1MA 6:53",
+          "from": "store;)",
+          "to": "store),",
+          "why": "The absolute construction their vessels being without victuals introduces there were but a few left in verse 54."
+        },
+        {
+          "verse": "1MA 10:20",
+          "from": "gold:) and",
+          "to": "gold), and",
+          "why": "We ordain thee … and require thee: one sentence coordinates the two."
+        },
+        {
+          "verse": "JHN 2:9",
+          "from": "knew;) the",
+          "to": "knew), the",
+          "why": "When the ruler of the feast had tasted the water … the governor of the feast called the bridegroom."
+        },
+        {
+          "verse": "1TI 2:7",
+          "from": "not;) a",
+          "to": "not), a",
+          "why": "A preacher, and an apostle …, a teacher of the Gentiles: one apposition."
+        }
+      ]
+    },
+    "parenthesis periods": {
+      "why": "The parenthesis is attached to its sentence, so the period that ends the sentence stands after it. The rule leaves a period inside a parenthesis, where an independent parenthetical sentence keeps it.",
+      "changes": [
+        {
+          "verse": "JOS 22:14",
+          "from": "Israel.)",
+          "to": "Israel).",
+          "why": "There was one chief of every household out of all the tribes of Israel."
+        },
+        {
+          "verse": "2KI 18:10",
+          "from": "taken.)",
+          "to": "taken).",
+          "why": "He took it in the sixth year of Ezekias."
+        },
+        {
+          "verse": "JOB 31:18",
+          "from": "womb.)",
+          "to": "womb).",
+          "why": "The parenthesis gives the reason within the condition of verse 17; verse 19 begins a new sentence."
+        },
+        {
+          "verse": "LUK 23:19",
+          "from": "prison.)",
+          "to": "prison).",
+          "why": "Release unto us Barabbas, who was cast into prison."
+        },
+        {
+          "verse": "JHN 9:7",
+          "from": "Sent.)",
+          "to": "Sent).",
+          "why": "Go, wash in the pool of Siloam, which is by interpretation, Sent."
+        },
+        {
+          "verse": "ACT 8:16",
+          "from": "Jesus.)",
+          "to": "Jesus).",
+          "why": "They prayed for them, that they might receive the Holy Spirit; verse 17 begins a new sentence."
+        },
+        {
+          "verse": "2SA 21:2",
+          "from": "Juda.)",
+          "to": "Juda).",
+          "why": "The king called the Gabaonites and said to them; the parenthesis explains their standing in Israel and Saul's attack on them, closing the narrative sentence before David's speech in verse 3."
+        },
+        {
+          "verse": "ACT 5:14",
+          "from": "women.)",
+          "to": "women).",
+          "why": "The multitude both of men and women explains the believers added to the Lord and closes the sentence begun in verse 12, with the aside beginning in verse 12 and continuing through verses 13 and 14."
+        }
+      ]
+    },
+    "parenthesis marks added": {
+      "why": "The sentence needs a mark after the aside that the source never set there, having put its mark before the parenthesis or none at all: the clause or participle that follows is set off as it would be without the aside.",
+      "changes": [
+        {
+          "verse": "1KI 3:26",
+          "from": "son) and",
+          "to": "son), and",
+          "why": "The independent clause and she said follows."
+        },
+        {
+          "verse": "PSA 44:6",
+          "from": "thee) they",
+          "to": "thee); they",
+          "why": "Thy weapons are sharpened and they are in the heart are independent clauses; the vocative Mighty One stays with the first."
+        },
+        {
+          "verse": "JER 36:3",
+          "from": "Babylon) saying",
+          "to": "Babylon), saying",
+          "why": "The participle saying closes the sentence of verses 1 to 3."
+        },
+        {
+          "verse": "1ES 4:13",
+          "from": "Zorobabel) began",
+          "to": "Zorobabel), began",
+          "why": "The nonrestrictive clause who had spoken of women, and of the truth closes after the aside."
+        },
+        {
+          "verse": "4MA 12:7",
+          "from": "relate) says",
+          "to": "relate), says",
+          "why": "The after-clause between he and says is set off on both sides."
+        },
+        {
+          "verse": "NEH 3:34",
+          "from": "Samaritans) Is",
+          "to": "Samaritans), Is",
+          "why": "He said before his brethren, Is it true: speech follows."
+        },
+        {
+          "verse": "REV 2:9",
+          "from": "rich) and",
+          "to": "rich), and",
+          "why": "The list thy works, and tribulation, and poverty sets a comma before each and."
+        },
+        {
+          "verse": "1TI 3:5",
+          "from": "God?)",
+          "to": "God?);",
+          "why": "The question is an aside explaining the requirement to rule his own house in verse 4; the list of qualifications resumes with Not a novice in verse 6."
+        }
+      ]
+    },
+    "subject and verb": {
+      "why": "A comma between a subject and its verb goes where a parenthesis already delimits the aside between them.",
+      "changes": [
+        {
+          "verse": "1CH 7:9",
+          "from": "might), was",
+          "to": "might) was"
+        }
+      ]
+    },
+    "quotation marks": {
+      "why": "The edition sets names and speech without quotation marks. These six pairs are the only ones in Brenton's scripture: five around names given by called, one around speech reported within speech.",
+      "changes": [
+        {
+          "verse": "JOS 5:3",
+          "from": "“Hill of Foreskins.”",
+          "to": "Hill of Foreskins."
+        },
+        {
+          "verse": "JDG 15:19",
+          "from": "‘The well of the invoker,’",
+          "to": "The well of the invoker,"
+        },
+        {
+          "verse": "RUT 1:20",
+          "from": "‘Bitter,’",
+          "to": "Bitter,"
+        },
+        {
+          "verse": "2CH 3:17",
+          "from": "‘Stability,’",
+          "to": "Stability,"
+        },
+        {
+          "verse": "2CH 3:17",
+          "from": "‘Strength.’",
+          "to": "Strength."
+        },
+        {
+          "verse": "1KI 3:27",
+          "from": "‘Give it to her, and by no means slay it:’",
+          "to": "Give it to her, and by no means slay it:"
+        }
+      ]
     }
   },
   "punctuation": {
     "before-em-dash": {
       "why": "An em dash supplies the break marked by an adjacent comma, colon or semicolon. Remove only adjacent runs of these three marks before it in English; preserve periods (including abbreviation periods), question marks and exclamation marks. Sentence endings and contextual dash changes require explicit decisions."
+    },
+    "before-parenthesis": {
+      "why": "A parenthesis marks its own boundary. Remove the adjacent run of commas, colons and semicolons before an opening parenthesis, within a verse and at the end of a verse whose next verse opens one; a period, question mark or exclamation mark before it ends a sentence and stays."
+    },
+    "inside-parenthesis": {
+      "why": "A comma, colon or semicolon inside a closing parenthesis belongs to the containing sentence: move it after the parenthesis, or remove it where an em dash follows and supplies the break. A period, question mark or exclamation mark inside stays as the end of the parenthesis's own sentence. Where the containing sentence needs a different mark after the aside, or none, that is a decision."
     }
   },
   "passages": {

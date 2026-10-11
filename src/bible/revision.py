@@ -92,7 +92,7 @@ def check(policy: bible.policy.Policy) -> None:
         "Revisions file",
     )
     for name, rule in data["punctuation"].items():
-        require(name == "before-em-dash", f"Unknown punctuation rule: {name}")
+        require(name in RULES, f"Unknown punctuation rule: {name}")
         require_fields(rule, {"why"}, (), f"Punctuation rule {name}")
         require(bool(rule["why"]), f"Punctuation rule without a why: {name}")
     words = data["words"]
@@ -507,10 +507,11 @@ def _branches(trie: Trie) -> str:
 
 def _phrase(words: str) -> re.Pattern[str]:
     """The words given, not as part of a longer word: an edge that is a
-    letter or digit must not run on into another."""
+    letter or digit must not run on into another. A space among them is a
+    space or the line break that sets verse in lines."""
     return re.compile(
         (r"(?<!\w)" if re.match(r"\w", words) else "")
-        + re.escape(words)
+        + re.escape(words).replace("\\ ", "[ \n]")
         + (r"(?!\w)" if re.search(r"\w$", words) else "")
     )
 
@@ -738,9 +739,125 @@ def prose(marker: str) -> bool:
 # their letters too, and the stops that close them, so that their punctuation
 # is not revised as English.
 FOREIGN_END = re.compile(f"[{usfm.GREEK}{usfm.HEBREW}][\u0300-\u036f]*[.?!]*$")
-BEFORE_DASH = re.compile(r"[,;:]+(?=—)")
+# The systematic rules, each a pattern over a unit's English, in the order
+# they apply: a run of commas, colons and semicolons duplicates the break an
+# em dash or a parenthesis marks. Inside closing parentheses the run moves
+# after the last, or goes when a dash follows; before a dash or an opening
+# parenthesis it goes. The move comes first, so that a run it sets before a
+# dash or a parenthesis goes too, and a second pass changes nothing. A
+# period, question mark or exclamation mark inside a parenthesis ends the
+# parenthesis's own sentence, and stays.
+RULES: dict[str, re.Pattern[str]] = {
+    "inside-parenthesis": re.compile(r"([,;:]+)\)+(—?)"),
+    "before-em-dash": re.compile(r"[,;:]+(?=—)"),
+    "before-parenthesis": re.compile(r"[,;:]+(?=\s?\()"),
+}
+# A run that ends a verse, before a verse that opens a parenthesis.
+VERSE_END = re.compile(r"[,;:]+(?=\s*$)")
+# What the rules do not understand, and refuse: a mark already standing where
+# a run would move, unless a dash follows to clear it; the comma of the "Or,"
+# that opens a note's alternative; and the separator before an item's label,
+# as "(1)" or "(a)".
+FOLLOWING = re.compile(r"(?![,;:]*—)[,;:.?!]")
+ALTERNATIVE = re.compile(r"(?<!\w)Or$")
+ITEM = re.compile(r"\s?\((?:\d+|[a-z])\)")
 # What a tagged foreign word or a label stands as in the English it interrupts.
 FOREIGN, LABEL = "\1", "\0"
+
+
+def _english(content: Content) -> str:
+    parts = []
+    for item in content:
+        if isinstance(item, str):
+            parts.append(item)
+        elif "content" in item and not usj.is_note(item):
+            words = _english(item["content"])
+            parts.append(
+                FOREIGN * len(words)
+                if item.get("marker") in ("wg", "wh")
+                else LABEL * len(words) if usj.is_label(item) else words
+            )
+    return "".join(parts)
+
+
+def _revisable(text: str, match: re.Match[str], doc: Document) -> bool:
+    """Whether marks matched in a unit's English are to be revised. Marks
+    after a tagged foreign word are refused, as they may be the foreign
+    text's own; those after an untagged Greek or Hebrew quotation are left."""
+    if text[match.start() - 1 : match.start()] == FOREIGN:
+        raise CheckFailed(
+            "Punctuation revised after a tagged foreign word: "
+            f"{usj.book_code(doc)}: {text[match.start() : match.start() + 30]}"
+        )
+    return not FOREIGN_END.search(text, 0, match.start())
+
+
+def _understood(name: str, text: str, match: re.Match[str], doc: Document) -> None:
+    """Refuse marks that a rule would revise without understanding them."""
+    if name == "inside-parenthesis":
+        refused = not match[2] and bool(FOLLOWING.match(text, match.end()))
+    else:
+        refused = name == "before-parenthesis" and bool(
+            ALTERNATIVE.search(text, 0, match.start()) or ITEM.match(text, match.end())
+        )
+    if refused:
+        raise CheckFailed(
+            f"Punctuation {name} not understood, to be decided: "
+            f"{usj.book_code(doc)}: {text[max(0, match.start() - 30) : match.end() + 10]}"
+        )
+
+
+def _between(doc: Document, start: int, end: int, verse: str) -> None:
+    """Refuse a join of lines across a heading, or onto an introduction."""
+    blocks = doc["content"]
+    if any(
+        blocks[i].get("marker") in usj.HEADINGS for i in range(start + 1, end)
+    ) or prose(blocks[end].get("marker", "")):
+        raise CheckFailed(
+            "Punctuation before-parenthesis across a heading or introduction, "
+            f"to be decided: {usj.book_code(doc)} {verse}"
+        )
+
+
+def _joined(doc: Document, met: MetRevisions) -> Document:
+    """The document with the run of marks that ends a verse removed where the
+    next verse opens a parenthesis, or the parenthesis opens the next line
+    of the same verse. Read protected words at verse offsets, and delete only
+    the marks, preserving the lines and their notes."""
+    verses = list(scripture.verses(doc).values())
+    edits = []
+    texts = [
+        "\n".join(
+            _english(doc["content"][block]["content"][lo:hi])
+            for block, lo, hi, _ in verse.parts
+        )
+        for verse in verses
+    ]
+    for index, (verse, text) in enumerate(zip(verses, texts)):
+        matches = []
+        for match in re.finditer(r"[,;:]+(?=\n\s*\()", text):
+            line = text.count("\n", 0, match.end())
+            _between(
+                doc, verse.parts[line][0], verse.parts[line + 1][0], verse.reference
+            )
+            matches.append(match)
+        if index + 1 < len(verses) and texts[index + 1].lstrip().startswith("("):
+            end = VERSE_END.search(text)
+            if end is not None:
+                # A chapter may stand between, as a sentence runs across it.
+                following = verses[index + 1]
+                _between(
+                    doc, verse.parts[-1][0], following.parts[0][0], following.reference
+                )
+                matches.append(end)
+        for match in matches:
+            if _revisable(text, match, doc):
+                _understood("before-parenthesis", text, match, doc)
+                edits.append((verse, match.start(), match.end(), ""))
+    if not edits:
+        return doc
+    met.add("before-parenthesis")
+    return scripture.rewritten(doc, edits)
 
 
 def punctuated(
@@ -749,45 +866,39 @@ def punctuated(
     """Regularize English punctuation across styles, within each text unit.
 
     Notes have their own words; verses, labels and foreign styles interrupt
-    a unit. The dash keeps its style because only the punctuation is deleted.
-    Punctuation after a tagged foreign word is refused, as it may be the
-    foreign text's own, and so is a change that leaves a lemma its verse no
-    longer has.
+    a unit. The dash and the parenthesis keep their style because only the
+    punctuation beside them changes. Punctuation after a tagged foreign word
+    is refused, as it may be the foreign text's own, and so is a change that
+    leaves a lemma its verse no longer has.
     """
-    if "before-em-dash" not in policy.revisions["punctuation"]:
+    rules = [name for name in RULES if name in policy.revisions["punctuation"]]
+    if not rules:
         return doc
     changed = False
 
-    def english(content: Content) -> str:
-        parts = []
-        for item in content:
-            if isinstance(item, str):
-                parts.append(item)
-            elif "content" in item and not usj.is_note(item):
-                words = english(item["content"])
-                parts.append(
-                    FOREIGN * len(words)
-                    if item.get("marker") in ("wg", "wh")
-                    else LABEL * len(words) if usj.is_label(item) else words
-                )
-        return "".join(parts)
-
     def rewrite(content: Content, after: str = "") -> Content:
         nonlocal changed
-        text = after + english(content)
-        edits = []
-        for match in BEFORE_DASH.finditer(text, len(after)):
-            if text[match.start() - 1 : match.start()] == FOREIGN:
-                raise CheckFailed(
-                    "Punctuation before a dash after a tagged foreign word: "
-                    f"{usj.book_code(doc)}: {text[match.start() : match.start() + 30]}"
-                )
-            if not FOREIGN_END.search(text, 0, match.start()):
-                edits.append((match.start() - len(after), match.end() - len(after), ""))
-        if edits:
-            changed = True
-            met.add("before-em-dash")
-            return usj.substituted(content, edits)
+        # Each rule reads what the one before it left.
+        for name in rules:
+            text = after + _english(content)
+            edits = []
+            for match in RULES[name].finditer(text, len(after)):
+                if not _revisable(text, match, doc):
+                    continue
+                _understood(name, text, match, doc)
+                start, end = match.start() - len(after), match.end() - len(after)
+                if name == "inside-parenthesis":
+                    # Move only the marks: replacing the whole match would
+                    # pull the parenthesis into the marks' character style.
+                    edits.append((start, start + len(match[1]), ""))
+                    if not match[2]:
+                        edits.append((end, end, match[1]))
+                else:
+                    edits.append((start, end, ""))
+            if edits:
+                changed = True
+                met.add(name)
+                content = usj.substituted(content, sorted(edits))
         return content
 
     def inline(content: Content, *, separate: bool = True) -> Content:
@@ -816,6 +927,11 @@ def punctuated(
         return result + (rewrite(run, after) if separate else run)
 
     result = usj.with_content(doc, inline)
+    # Across verses and lines, after the marks have moved out of parentheses.
+    if "before-parenthesis" in rules:
+        joined = _joined(result, met)
+        changed = changed or joined is not result
+        result = joined
     if changed:
         _check_lemmas(doc, result)
     return result

@@ -657,9 +657,15 @@ OMITTED = {"LUK 17:36", "ACT 8:37", "ACT 15:34", "ACT 24:7"}
 
 
 @pytest.fixture(scope="module")
-def printed(edition: bible.pipeline.Edition) -> dict[str, Document]:
-    """The New Testament's books as the edition prints them."""
-    return {code: edition.documents[code] for code in BOOKS}
+def printed(byzantine: Context, policy: bible.policy.Policy) -> dict[str, Document]:
+    """The New Testament's books after the readings, with the edition's
+    systematic spelling and punctuation but before its verse-specific
+    revisions, as the appendix quotes them."""
+    return {
+        code: revision.punctuated(revision.respelt(doc, policy, set()), policy, set())
+        for code, doc in byzantine["prepared"].items()
+        if code in BOOKS
+    }
 
 
 @pytest.fixture(scope="module")
@@ -1177,14 +1183,6 @@ def test_appendix_comparisons_preserve_changes_and_retained_source_passages(
                 else (row.kjv or "", row.oleb or "")
             )
             is_greek = text_of(line).startswith("TR")
-            if authored and not is_greek:
-                # The appendix precedes verse-specific revision. Undo only
-                # those declared edits in the finished verse used by this fixture.
-                for change in reversed(revision.verse_changes(edition.policy)):
-                    if change["verse"] == row.reference:
-                        # The verse has the words once, as when they were made.
-                        assert after.count(change["to"]) == 1, (row.reference, change)
-                        after = after.replace(change["to"], change["from"])
             content = line["content"][1:]  # Leave the paragraph's label out.
             insertion_style = "bd" if is_greek else "it"
             old: list[str] = []
