@@ -24,6 +24,7 @@ change that nothing meets is refused.
 
 from __future__ import annotations
 
+import functools
 import re
 from collections.abc import Callable, Iterable
 from collections.abc import Set as AbstractSet
@@ -40,6 +41,8 @@ from bible.usj import Content, Document, Node, Predicate
 # passage change by its selector and words, and a word confined to notes by
 # the note's key and the word.
 type MetRevisions = set[str | tuple[str, str]]
+# The words to revise, letter by letter; an empty key ends a word.
+type Trie = dict[str, "Trie"]
 
 # What scoped grammar does not read among the words: notes, labels, the
 # fields that quote or cite, and foreign words.
@@ -383,13 +386,40 @@ def _rewritten(
 
 
 def _words(words: Iterable[str]) -> re.Pattern[str]:
-    """The whole words given, the longest first, in one alternation."""
-    alternatives = sorted(words, key=len, reverse=True)
-    if not alternatives:
+    """The whole words given, the longest at a place first, in one pattern."""
+    return _pattern(tuple(words))
+
+
+@functools.cache
+def _pattern(words: tuple[str, ...]) -> re.Pattern[str]:
+    """The words set out as a trie, so that the text is scanned once however
+    many there are: a plain alternation of a thousand words tries each of them
+    at every letter, ten times slower on the whole edition. Each document is
+    respelt with the same few sets of words, so each trie is built once."""
+    trie: Trie = {}
+    for word in words:
+        node = trie
+        for char in word:
+            node = node.setdefault(char, {})
+        node[""] = {}
+    if not trie:
         return re.compile(r"(?!)")
-    return re.compile(
-        r"(?<!\w)(?:" + "|".join(map(re.escape, alternatives)) + r")(?!\w)"
+    return re.compile(r"(?<!\w)" + _branches(trie) + r"(?!\w)")
+
+
+def _branches(trie: Trie) -> str:
+    """A trie as a regular expression. A longer word is tried before a
+    shorter one it begins with, as the ending is optional and greedy."""
+    ends = "" in trie
+    alternatives = [
+        re.escape(char) + _branches(node) for char, node in trie.items() if char
+    ]
+    if not alternatives:
+        return ""
+    group = (
+        alternatives[0] if len(alternatives) == 1 else f"(?:{'|'.join(alternatives)})"
     )
+    return f"(?:{group})?" if ends else group
 
 
 def _phrase(words: str) -> re.Pattern[str]:

@@ -3,7 +3,9 @@ edition prepared from them once."""
 
 from __future__ import annotations
 
+import copy
 from collections.abc import Callable, Mapping
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, cast
 
@@ -17,6 +19,7 @@ from bible import pipeline
 from bible import policy as decisions
 from bible import scripture
 from bible import sources as source_files
+from bible import terminology
 from bible.byzantine.rows import Disposition, Instruction, Report, Unit
 from bible.byzantine.stages import Context
 from bible.sources import Content
@@ -68,6 +71,59 @@ def policy(edition: bible.pipeline.Edition) -> bible.policy.Policy:
 def exported(edition: bible.pipeline.Edition) -> dict[str, str]:
     """The full edition as it is sent to be typeset, by unit."""
     return dict(pipeline.export(edition, "pdf"))
+
+
+@dataclass(frozen=True)
+class Staged:
+    """The stages from promotion to annotation run once on the whole corpus,
+    with a deep copy of each stage's result taken before the next ran, for
+    the tests that check the stages against each other."""
+
+    # Brenton's and the King James books as promoted, without the rest of
+    # the reconciliation, which the session need not keep.
+    promoted: tuple[dict[str, Document], ...]
+    units: dict[str, Document]
+    lined: dict[str, Document]
+    # The copies: the sources before promotion, the promoted books before
+    # assembly, the assembled books before lining, the lined before annotation.
+    read_before: tuple[dict[str, Document], ...]
+    promoted_before: tuple[dict[str, Document], ...]
+    assembled: dict[str, Document]
+    line_documents: dict[str, Document]
+
+
+@pytest.fixture(scope="session")
+def staged(
+    sources: bible.sources.Sources,
+    declared: bible.policy.Policy,
+    read: bible.pipeline.Read,
+) -> Staged:
+    # The decisions as declared, as pipeline.prepare gives them: the stages
+    # before placement must not see the places it works out.
+    read_before = copy.deepcopy(
+        (dict(read.brenton), dict(read.kjv), dict(read.updated_brenton))
+    )
+    promoted = pipeline.promote(
+        read, declared, sources.byzantine, terminology.registry(declared)
+    )
+    promoted_before = copy.deepcopy((dict(promoted.brenton), dict(promoted.kjv)))
+    units = pipeline.assemble(promoted, declared, sources)
+    assembled = copy.deepcopy(dict(units))
+    placed = pipeline.placed(units, read, declared)
+    lined = pipeline.lined(units, read, placed)
+    line_documents = copy.deepcopy(dict(lined))
+    ctx = pipeline.context(lined, placed, sources)
+    _, introductions, _ = pipeline.front_and_back(read, ctx, sources)
+    pipeline.annotated(lined, read, introductions, ctx)
+    return Staged(
+        (dict(promoted.brenton), dict(promoted.kjv)),
+        dict(units),
+        dict(lined),
+        read_before,
+        promoted_before,
+        assembled,
+        line_documents,
+    )
 
 
 def changed(

@@ -217,13 +217,14 @@ def align(
     text: Text = {ref: [] for ref in target}
     spans: dict[str, list[tuple[int, int]]] = {ref: [] for ref in target}
     addresses: dict[str, list[str]] = {ref: [] for ref in target}
+    by_book: collections.defaultdict[
+        str, tuple[list[tuple[str, str]], list[tuple[str, str]]]
+    ] = collections.defaultdict(lambda: ([], []))
+    for side, words in enumerate((target, source)):
+        for ref, ws in words.items():
+            by_book[ref.split()[0]][side].extend((ref, w) for w in ws)
     for book in BOOKS:
-        tokens = [
-            (ref, w) for ref, ws in target.items() if ref.split()[0] == book for w in ws
-        ]
-        supplied = [
-            (ref, w) for ref, ws in source.items() if ref.split()[0] == book for w in ws
-        ]
+        tokens, supplied = by_book[book]
         forms = [ascii_greek("".join(accent_letters(w))) for _, w in supplied]
         if any(not w for w in forms):
             raise ValueError(f"Empty Greek source word in {book}")
@@ -232,9 +233,7 @@ def align(
             raise ValueError(f"Greek source word with a space in {book}")
         i = j = 0
         # One joined source word can project into two ledger verses.
-        included: dict[str, dict[int, int]] = {
-            ref: {} for ref in target if ref.split()[0] == book
-        }
+        included: dict[str, dict[int, int]] = {ref: {} for ref, _ in tokens}
         while i < len(tokens) and j < len(supplied):
             matches = []
             for a, b in ((1, 1), (1, 2), (2, 1)):

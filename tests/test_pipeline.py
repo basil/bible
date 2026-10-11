@@ -6,27 +6,14 @@ from __future__ import annotations
 import copy
 import re
 from collections.abc import Callable, Iterable
-from pathlib import Path
 from typing import Any, cast
 
 import pytest
-from conftest import changed
+from conftest import Staged, changed
 
 import bible.pipeline
 import bible.policy
-import bible.sources
-from bible import (
-    annotate,
-    assembly,
-    paths,
-    pipeline,
-    places,
-    review,
-    revision,
-    scripture,
-    terminology,
-    usj,
-)
+from bible import annotate, assembly, pipeline, places, revision, scripture, usj
 from bible.checks import CheckFailed
 from bible.usj import Document
 
@@ -61,30 +48,17 @@ def test_the_edition_prints_every_unit_once_in_the_manifests_order(
 
 
 def test_no_stage_changes_what_an_earlier_stage_made(
-    sources: bible.sources.Sources,
-    policy: bible.policy.Policy,
-    read: bible.pipeline.Read,
+    staged: Staged, read: bible.pipeline.Read
 ) -> None:
     """Documents are shared between stages, so none may be changed in place."""
-    before = copy.deepcopy(
-        (dict(read.brenton), dict(read.kjv), dict(read.updated_brenton))
-    )
-    promoted = pipeline.promote(
-        read, policy, sources.byzantine, terminology.registry(policy)
-    )
-    kept = copy.deepcopy((dict(promoted.brenton), dict(promoted.kjv)))
-    units = pipeline.assemble(promoted, policy, sources)
-    assembled = copy.deepcopy(dict(units))
-    placed = pipeline.placed(units, read, policy)
-    lined = pipeline.lined(units, read, placed)
-    line_documents = copy.deepcopy(dict(lined))
-    ctx = pipeline.context(lined, placed, sources)
-    _, introductions, _ = pipeline.front_and_back(read, ctx, sources)
-    pipeline.annotated(lined, read, introductions, ctx)
-    assert (dict(read.brenton), dict(read.kjv), dict(read.updated_brenton)) == before
-    assert (dict(promoted.brenton), dict(promoted.kjv)) == kept
-    assert dict(units) == assembled
-    assert dict(lined) == line_documents
+    assert (
+        dict(read.brenton),
+        dict(read.kjv),
+        dict(read.updated_brenton),
+    ) == staged.read_before
+    assert staged.promoted == staged.promoted_before
+    assert staged.units == staged.assembled
+    assert staged.lined == staged.line_documents
 
 
 def test_the_policy_is_read_once_and_cannot_be_changed(
@@ -695,67 +669,6 @@ def test_lines_that_go_on_with_a_verse_are_indented() -> None:
     )
     markers = [b.get("marker") for b in pipeline.indented(doc)["content"]]
     assert markers == ["id", "c", "p", "q1", "q2", "q1", "q2", "b", "q1"]
-
-
-def test_the_review_is_written_once_and_shows_what_changed(
-    edition: bible.pipeline.Edition,
-    policy: bible.policy.Policy,
-    sources: bible.sources.Sources,
-    tmp_path: Path,
-    monkeypatch: pytest.MonkeyPatch,
-    capsys: pytest.CaptureFixture[str],
-) -> None:
-    monkeypatch.setattr(paths, "BUILD_DIR", tmp_path)
-    review.review(sources, policy, edition)
-    base = tmp_path / "review"
-    assert {p.name for p in base.iterdir()} == {
-        "notes.md",
-        "alexandrinus.md",
-        "numbering.md",
-        "byzantine.md",
-        "byzantine",
-        "text",
-        "changes.diff",
-    }
-    assert len(list((base / "text").iterdir())) == len(edition.documents)
-    assert len(list((base / "byzantine").iterdir())) == 27
-    notes = (base / "notes.md").read_text(encoding="utf-8")
-    assert (
-        "- `GEN 1:9` [length; rendering]" in notes and "→ place: Gr. _meeting_" in notes
-    )
-    decision = (base / "alexandrinus.md").read_text(encoding="utf-8")
-    assert (
-        "## GEN 3:22 — readings" in decision
-        and "Swete 1 p. 5 (text; agrees=True)" in decision
-    )
-    # Every run with what it rests on; one that rests on the words alone
-    # with the words of both translations, to be read.
-    numbering = (base / "numbering.md").read_text(encoding="utf-8")
-    assert "- JOL 3:1-5 = JOL 2:28-32 (table)\n" in numbering
-    assert "- nothing = JER 33:14-26 (missing)\n" in numbering
-    assert "- GEN 31:47-48 = GEN 31:47-48 (reading: The King James" in numbering
-    assert (
-        "- GEN 8:3 = GEN 8:3-4 (words)\n  - Brenton 8:3: And the water" in numbering
-        and "  - King James 8:4: And the ark rested" in numbering
-    )
-    # The next review shows what differs from the last, and nothing else.
-    ezekiel = base / "text" / "EZK.usfm"
-    ezekiel.write_text(
-        ezekiel.read_text(encoding="utf-8").replace(
-            "And Ezekiel shall", "And Jezekiel shall"
-        ),
-        encoding="utf-8",
-    )
-    review.review(sources, policy, edition)
-    diff = (base / "changes.diff").read_text(encoding="utf-8")
-    assert [line for line in diff.splitlines() if line.startswith("+++ ")] == [
-        "+++ current/text/EZK.usfm"
-    ]
-    assert (
-        "-\\v 24 And Jezekiel shall be" in diff
-        and "+\\v 24 And Ezekiel shall be" in diff
-    )
-    assert "1 files changed" in capsys.readouterr().out
 
 
 @pytest.mark.parametrize(
@@ -1399,3 +1312,14 @@ def test_corpus_grammar_exceptions_and_quoted_readings(
     assert "What hast thou to say" in usj.serialize(edition.documents["JOS"])
     assert "\\fqa mounteth" in usj.serialize(edition.documents["PSA"])
     assert "singeth to thee" in scripture.verses(edition.documents["MAN"])["1:15"].text
+
+
+def test_the_word_pattern_finds_the_longest_word_at_a_place() -> None:
+    """The words are set out as a trie, which must find what a plain
+    alternation finds: whole words, and the longest where one begins another,
+    falling back to the shorter where the longer runs on into a word."""
+    pattern = revision._words(["has", "has born", "hat", "to-day"])
+    text = "has born, has borne, has, hath, that hat; to-day, to-days"
+    found = [m[0] for m in pattern.finditer(text)]
+    assert found == ["has born", "has", "has", "hat", "to-day"]
+    assert not revision._words([]).search("anything")

@@ -4,16 +4,14 @@ Testament paragraphs and poetry preserved from Scrivener."""
 from __future__ import annotations
 
 import re
-from copy import deepcopy
 from typing import Any
 
 import pytest
-from conftest import changed
+from conftest import Staged, changed
 
 import bible.pipeline
 import bible.policy
-import bible.sources
-from bible import byzantine, lines, scripture, terminology, usj
+from bible import byzantine, lines, scripture, usj
 from bible.checks import CheckFailed
 from bible.usj import Document
 
@@ -503,17 +501,10 @@ def parts(doc: Document, label: str) -> list[str]:
 
 
 def test_the_line_stage_preserves_verses_notes_and_new_testament_documents(
-    read: bible.pipeline.Read,
-    sources: bible.sources.Sources,
-    declared: bible.policy.Policy,
+    staged: Staged,
 ) -> None:
-    promoted = bible.pipeline.promote(
-        read, declared, sources.byzantine, terminology.registry(declared)
-    )
-    units = bible.pipeline.assemble(promoted, declared, sources)
-    policy = bible.pipeline.placed(units, read, declared)
-    before = {code: deepcopy(units[code]) for code in byzantine.BOOKS}
-    after = bible.pipeline.lined(units, read, policy)
+    units, after = staged.units, staged.lined
+    before = {code: staged.assembled[code] for code in byzantine.BOOKS}
     assert list(after) == list(units)
     for code, original in units.items():
         before_verses = scripture.verses(original)

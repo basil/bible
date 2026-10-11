@@ -120,7 +120,7 @@ make review-diff BASE=HEAD  # every line of the edition that the working tree ch
 make sample       # the selected chapters, typeset
 ```
 
-`make test` runs the Python tests, the font tests and the TeX tests side by side, in about two minutes. To run some of the Python tests, use `make test-python PYTEST_ARGS="-k marginal"`.
+`make test` runs the Python tests, the font tests and the TeX tests side by side, in about two and a half minutes. To run some of the Python tests, use `make test-python PYTEST_ARGS="-k marginal"`.
 
 `make review-diff` compares the edition as the working tree prepares it with the edition at `BASE`, by default `origin/master`, and writes every line that differs to `build/review.diff`. Read the diff after any change to a rule or a decision: an unintended effect shows there as an extra line. Explain every intended difference when you report the work.
 
