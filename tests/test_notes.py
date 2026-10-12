@@ -1225,7 +1225,7 @@ def test_unrelated_and_stale_source_notes_are_omitted(
         ("GEN 4:14", "and I shall be hidden", "or, _then shall I be_"),
         ("1SA 14:40", "will be under subjection", "Gr. _become slaves_"),
         ("1SA 23:11", "Will the place be shut up", "i.e., _besieged_"),
-        ("JOS 21:4", "out of the tribe of Juda", "Gr. _from_"),
+        ("JOS 21:4", "out of the tribe of Judah", "Gr. _from_"),
         ("1SA 26:24#2", "be precious", "Gr. _magnified_"),
         ("ISA 6:13", "there shall be", "Gr. _is_"),
     ],

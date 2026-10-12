@@ -233,9 +233,23 @@ def test_the_editions_spelling_is_revised_wherever_a_word_is_printed(
     edition: bible.pipeline.Edition, policy: bible.policy.Policy
 ) -> None:
     words = policy.revisions["words"]
-    assert words["Jezekiel"]["to"] == "Ezekiel"
+    assert words["Chanaan"]["to"] == "Canaan"
+    decisions = policy.revisions["names"]["decisions"]
+    assert decisions["Pharaoh, Egyptian royal title"]["to"] == "Pharaoh"
     assert edition.met["revisions"] == (
         set(words)
+        | {
+            ("name", key, form)
+            for decision in decisions.values()
+            for form, keys in decision["forms"].items()
+            for key in keys
+        }
+        | {
+            ("kept", key, kept["form"])
+            for decision in decisions.values()
+            for kept in decision.get("keep", ())
+            for key in kept["verses"]
+        }
         | {
             (key, word)
             for word, entry in words.items()
@@ -278,10 +292,18 @@ def test_the_editions_spelling_is_revised_wherever_a_word_is_printed(
     assert any("scope" in entry for entry in words.values())
     # The editor's own pages name the sources' books, rather than respelling
     # the translations: the introduction explains Brenton's names, and the
-    # table names the KJV's.
+    # table names the KJV's. The names decided by their bearers are not words
+    # respelt wherever they are printed, so the introduction's Osee and Naum
+    # stand on their own account.
     source_names = {
-        "CNC": ["Nehemiah", "Osee", "Naum"],
+        "CNC": ["Nehemiah"],
         "XXA": ["Nehemiah", "Nehemiah"],
+    }
+    assert re.search(
+        r"\bOsee and Naum\b", usj.text_of(edition.documents["CNC"]["content"])
+    )
+    assert {"Osee", "Naum"} <= {
+        form for decision in decisions.values() for form in decision["forms"]
     }
     spelling = pattern(
         sorted(
@@ -404,7 +426,13 @@ def revisions(
     policy: bible.policy.Policy, **sections: dict[str, Any]
 ) -> bible.policy.Policy:
     def change(data: dict[str, Any]) -> None:
-        data.update(words={}, verses={}, passages={}, punctuation={})
+        data.update(
+            words={},
+            verses={},
+            passages={},
+            punctuation={},
+            names={"why": "names", "decisions": {}},
+        )
         data.update(sections)
 
     return changed(policy, "revisions", change)
@@ -694,6 +722,129 @@ def test_a_revision_must_be_met(policy: bible.policy.Policy) -> None:
         revision.check_met(unmet, set())
 
 
+def names(*decisions: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "why": "the bearers",
+        "decisions": {f"bearer {i}": d for i, d in enumerate(decisions)},
+    }
+
+
+NOAH = {
+    "to": "Noah",
+    "why": "the spelling of the New Testament",
+    "forms": {"Noe": ["GEN 1:1"]},
+    "keep": [{"form": "Noe", "who": "another Noe", "verses": ["GEN 1:2"]}],
+}
+
+
+def test_a_name_is_respelt_in_its_listed_verses_and_their_lemmas(
+    policy: bible.policy.Policy,
+) -> None:
+    decided = revisions(policy, names=names(NOAH))
+    revision.check(decided)
+    met: revision.MetRevisions = set()
+    text = usj.serialize(revision.named("GEN", usj.parse(NOE), decided, met))
+    # Every whole word of the listed verse, and the lemma that quotes it; the
+    # kept verse, the reading and the longer word are as they were.
+    assert text.endswith(
+        "\\v 1 Noah’s sons and Noeman \\f - \\fr 1:1 \\fq went with Noah: \\ft or, "
+        "\\fqa Noe\\f*went \\add with\\add* Noah.\n\\v 2 And Noe went.\n"
+    )
+    assert met == {("name", "GEN 1:1", "Noe"), ("kept", "GEN 1:2", "Noe")}
+    revision.check_met(decided, met)
+    # A form of two words is met across the line break that sets verse in
+    # lines, and in a New Testament book, whose words no verse revision may
+    # change.
+    sea = {"to": "Red Sea", "why": "x", "forms": {"Red sea": ["MAT 1:1"]}}
+    doc = usj.parse("\\id MAT\n\\c 1\n\\q1\n\\v 1 By the Red\n\\q1 sea.\n")
+    decided = revisions(policy, names=names(sea))
+    revision.check(decided)
+    text = usj.serialize(revision.named("MAT", doc, decided, set()))
+    assert text.endswith("\\v 1 By the Red\n\\q1 Sea.\n")
+    with pytest.raises(CheckFailed, match="changes New Testament words"):
+        revision.check(
+            revisions(
+                policy,
+                verses=group({"verse": "MAT 1:1", "from": "sea", "to": "Sea"}),
+            )
+        )
+
+
+def test_a_name_prints_only_where_a_decision_says(
+    policy: bible.policy.Policy,
+) -> None:
+    doc = usj.parse(NOE)
+    unlisted = revisions(policy, names=names({**NOAH, "keep": []}))
+    with pytest.raises(CheckFailed, match="Name without a decision: GEN 1:2: Noe"):
+        revision.named("GEN", doc, unlisted, set())
+    absent = {"to": "Lamek", "why": "x", "forms": {"Lamech": ["GEN 1:1"]}}
+    with pytest.raises(CheckFailed, match="Name not met: GEN 1:1: Lamech"):
+        revision.named("GEN", doc, revisions(policy, names=names(NOAH, absent)), set())
+    # A form within a longer one is the longer one's, and is not respelt there.
+    peor = usj.parse("\\id GEN\n\\c 1\n\\p\n\\v 1 Baal Peor and Baal.\n")
+    within = names(
+        {"to": "Bael", "why": "x", "forms": {"Baal": ["GEN 1:1"]}},
+        {"to": "Baal-peor", "why": "x", "forms": {"Baal Peor": ["GEN 1:1"]}},
+    )
+    with pytest.raises(CheckFailed, match="Name within another name: GEN 1:1: Baal"):
+        revision.named("GEN", peor, revisions(policy, names=within), set())
+    # One decision owns a form. A word respelt wherever it is printed would
+    # respell a name behind the decision's back, or print one where no
+    # decision says: as the word, in a phrase, or in what it respells, all of
+    # which the check refuses. A verse's own change to a kept name is refused
+    # by the kept verse after the fact.
+    with pytest.raises(CheckFailed, match="decided for two bearers: Noe"):
+        revision.check(revisions(policy, names=names(NOAH, {**NOAH, "keep": []})))
+    for word, to in [("Noe", "Noah"), ("Noe went", "Noah went"), ("Noë", "Noe")]:
+        shared = revisions(
+            policy, names=names(NOAH), words={word: {"to": to, "why": "x"}}
+        )
+        with pytest.raises(
+            CheckFailed, match=f"Name also respelt as a word: {word}: Noe"
+        ):
+            revision.check(shared)
+    own = revisions(
+        policy,
+        names=names(NOAH),
+        verses=group({"verse": "GEN 1:2", "from": "Noe went", "to": "Noah went"}),
+    )
+    named = revision.named("GEN", doc, own, set())
+    with pytest.raises(CheckFailed, match="Kept name respelt: GEN 1:2: Noe"):
+        revision.check_kept(
+            "GEN", named, revision.revised("GEN", named, own, set()), own
+        )
+    with pytest.raises(
+        CheckFailed,
+        match=r"nothing prints: \[\('kept', 'GEN 1:2', 'Noe'\), \('name', 'GEN 1:1', 'Noe'\)\]",
+    ):
+        revision.check_met(revisions(policy, names=names(NOAH)), set())
+
+
+@pytest.mark.parametrize(
+    "decision,message",
+    [
+        ({**NOAH, "to": "Noe"}, "changes nothing: Noe"),
+        ({**NOAH, "why": ""}, "without a target, a why or a form"),
+        ({**NOAH, "forms": {"Noe": ["GEN 1"]}}, "not a verse: bearer 0: Noe: GEN 1"),
+        ({**NOAH, "forms": {"Noe": ["GEN 1:1", "GEN 1:1"]}}, "listed twice"),
+        ({**NOAH, "forms": {"Noe": ["GEN 1:2"]}}, "listed twice for a name"),
+        (
+            {**NOAH, "keep": [{"form": "Noah", "who": "x", "verses": ["GEN 1:2"]}]},
+            "Kept name without its decision",
+        ),
+        (
+            {**NOAH, "keep": [{"form": "Noe", "verses": ["GEN 1:2"]}]},
+            "Kept name bearer 0",
+        ),
+    ],
+)
+def test_a_malformed_name_decision_is_refused(
+    policy: bible.policy.Policy, decision: dict[str, Any], message: str
+) -> None:
+    with pytest.raises(CheckFailed, match=message):
+        revision.check(revisions(policy, names=names(decision)))
+
+
 @pytest.mark.parametrize(
     "old,new",
     [
@@ -788,7 +939,7 @@ def test_the_sample_prints_selected_chapters_as_the_full_edition_has_them(
     assert daniel.count("\\s1 Susanna\n\\c 0\n\\cp ​\n") == 1
     # A chapter's own closing paragraph stays with it: Psalm 71 ends in a \d
     # that holds its last verse.
-    close = "\\d\n\\v 20 The hymns of David the son of Jessæ are ended.\n"
+    close = "\\d\n\\v 20 The hymns of David the son of Jesse are ended.\n"
     psalms = edition.documents["PSA"]
     assert usj.serialize(pipeline.sample_chapters("PSA", psalms, [71])).endswith(close)
     assert close not in usj.serialize(pipeline.sample_chapters("PSA", psalms, [72]))

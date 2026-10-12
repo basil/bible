@@ -370,7 +370,26 @@ class PunctuationRule(TypedDict, total=False):
     why: ReadOnly[str]
 
 
+class NameKept(TypedDict, total=False):
+    form: ReadOnly[str]
+    verses: ReadOnly[tuple[str, ...]]
+    who: ReadOnly[str]
+
+
+class NameDecision(TypedDict, total=False):
+    forms: ReadOnly[Mapping[str, tuple[str, ...]]]
+    keep: ReadOnly[tuple[NameKept, ...]]
+    to: ReadOnly[str]
+    why: ReadOnly[str]
+
+
+class Names(TypedDict, total=False):
+    decisions: ReadOnly[Mapping[str, NameDecision]]
+    why: ReadOnly[str]
+
+
 class Revisions(TypedDict, total=False):
+    names: ReadOnly[Names]
     passages: ReadOnly[Mapping[str, Prose]]
     punctuation: ReadOnly[Mapping[str, PunctuationRule]]
     verses: ReadOnly[Mapping[str, RevisionGroup]]

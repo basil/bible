@@ -57,7 +57,7 @@ from bible.policy import source_id
 from bible.policy_schema import WordingChange
 from bible.usj import Content, Document, Node
 
-type MetValue = str | tuple[str, str | None]
+type MetValue = str | tuple[str | None, ...]
 type Met = Mapping[str, frozenset[MetValue]]
 
 
@@ -670,6 +670,9 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
     # A row of the review for every note, read from the books as finished.
     note_rows: dict[str, list[annotate.NoteRow]] = {}
     for code, doc in {**front, **books}.items():
+        if code in books:
+            doc = revision.named(code, doc, policy, revised)
+        named = doc
         if code in byzantine.BOOKS:
             comparisons[code] = revision.punctuated(
                 revision.respelt(doc, policy, set()), policy, set()
@@ -683,6 +686,7 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
             revised,
         )
         if code in books:
+            revision.check_kept(code, named, finished[code], policy)
             note_rows[code] = annotate.finished_rows(
                 finished[code], reports[code].rows, policy.brenton_notes["notes"]
             )
@@ -695,6 +699,8 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
     }
     # The King James books before the readings, with the same systematic
     # spelling and punctuation (only printed documents record what was met).
+    # The names are the edition's verses' and are not applied to them, so a
+    # respelt name shows in the appendix beside the reading it stands near.
     kjv_regularized = {
         code: revision.punctuated(revision.respelt(doc, policy, set()), policy, set())
         for code, doc in promoted.byzantine.context["documents"].items()

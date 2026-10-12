@@ -662,7 +662,11 @@ def printed(byzantine: Context, policy: bible.policy.Policy) -> dict[str, Docume
     systematic spelling and punctuation but before its verse-specific
     revisions, as the appendix quotes them."""
     return {
-        code: revision.punctuated(revision.respelt(doc, policy, set()), policy, set())
+        code: revision.punctuated(
+            revision.respelt(revision.named(code, doc, policy, set()), policy, set()),
+            policy,
+            set(),
+        )
         for code, doc in byzantine["prepared"].items()
         if code in BOOKS
     }

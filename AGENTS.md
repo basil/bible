@@ -51,7 +51,7 @@ The stages are in `src/bible/pipeline.py`, which is the place to start reading t
 - **Run transformations in the order of their dependencies.** A new transformation goes in the stage where everything it reads is ready, and nothing reaches back to an earlier stage's work. Revision finishes the translations after source-dependent decisions, so those decisions are still written in the sources' own words. Authored pages then consume the revised text and receive their own punctuation finishing pass, retaining the source names they discuss.
 - **Use semantic markup, not hard-coded strings.** Build USJ nodes rather than backslash markers in strings. Take terms and abbreviations from `edition/terminology.json`, and books and their names from `edition/manifest.json` and `edition/citations.json`.
 - **Keep checked-in data normalized.** State each fact once. Do not check in what the build can derive, and do not copy a source's words into a decision unless the build verifies the copy against the source, so that it cannot drift unnoticed. Keys are the short source keys (`GEN 1:9#2`), not hashes or positions.
-- **Revise spelling and punctuation in one place.** That place is `edition/revisions.json`. Do not respell the sources, the other decision files or the code.
+- **Revise spelling and punctuation in one place.** That place is `edition/revisions.json`. Do not respell the sources, the other decision files or the code. A proper name is respelt by its bearer, in the verses its decision lists and nowhere else; the verses that keep the source form are listed too, with who keeps it, and the build refuses an occurrence listed neither way.
 - **Leave the sources and the build output alone.** Do not edit the files in `sources/` or anything in `build/`. A change to the English needs its own decision, with evidence, exact scope and a before-and-after comparison in the review diff. A formatting rule must not change the English, or the witness a reading is attributed to.
 
 ## The document model
@@ -92,6 +92,7 @@ A correction to a slip in transcription must match the source text exactly once,
 | A quotation link, or Turpie's judgment of it | `edition/quotations.json`, `edition/turpie.json` |
 | Where a verse stands in the King James Bible, an empty chapter of a transcription, or a note saying where a passage stands | `edition/versification.json` |
 | The spelling of a word, or the punctuation of a verse, a note or a paragraph of front or back matter | `edition/revisions.json` |
+| The spelling of a proper name, by its bearer: the verses that respell it and the verses that keep the source form | `names` in `edition/revisions.json` |
 | The Psalter's kathismata and stasis divisions | `edition/psalter.json` |
 | Where a line of verse begins, when the words of the Updated Brenton and the source do not place it | `edition/lines.json` |
 | The editor's introduction, the numbering table, the divider pages and the appendix of readings | `content/` |
