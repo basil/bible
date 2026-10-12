@@ -40,7 +40,7 @@ def test_the_edition_prints_every_unit_once_in_the_manifests_order(
         "brenton_units": 51,
         "kjv_units": 27,
         "kjv_marginal_notes": 775,
-        "printed_notes": 4348,
+        "printed_notes": 4349,
         # Every verse of the assembled books: Brenton's, with the passages
         # supplied from Codex Alexandrinus and the King James Bible's
         # 1 Kingdoms 23:12 and 3 Kingdoms 14:1-20, less the verses
@@ -131,7 +131,9 @@ def test_the_policy_is_read_once_and_cannot_be_changed(
         ),
         (
             "citations",
-            lambda d: d["names"]["BAK"][0].update(whyy="x"),
+            lambda d: d["names"].update(
+                BAK=[{"from": "x", "to": "{GEN}", "why": "x", "whyy": "x"}]
+            ),
             "Citation name change BAK has missing or unknown fields",
         ),
         (

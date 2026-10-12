@@ -256,7 +256,7 @@ AlexandrinusReadingsNoteEdits = TypedDict(
     "AlexandrinusReadingsNoteEdits",
     {
         "from": ReadOnly[str],
-        "lemma": ReadOnly[str],
+        "lemma": ReadOnly[str | None],
         "to": ReadOnly[str],
         "why": ReadOnly[str],
     },
@@ -447,6 +447,7 @@ Decision = TypedDict(
         "insertions": ReadOnly[tuple[AlexandrinusPassagesInsertions, ...]],
         "kjv": ReadOnly[bool],
         "lemma": ReadOnly[str | None],
+        "moved_to": ReadOnly[str],
         "moves": ReadOnly[tuple[AlexandrinusPassagesMoves, ...]],
         "note": ReadOnly[str | None],
         "note_at": ReadOnly[int],

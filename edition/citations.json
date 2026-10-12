@@ -283,29 +283,16 @@
       "print": "{2SA} 5:18",
       "why": "Brenton names the book both ways; it is this edition's Second Book of Kingdoms."
     },
-    "BAK II. Kings (II. Sam.) 5. 18": {
-      "passages": "2SA 5:18",
-      "print": "{2SA} 5:18",
-      "why": "Brenton names the book both ways; it is this edition's Second Book of Kingdoms."
-    },
     "BAK Psalm 41 (42):4": {
       "passages": "PSA 41:5",
       "print": "{PSA} 41:5",
       "why": "The place of the wondrous tabernacle, which the note is on, is the fourth verse of the psalm as the Hebrew and the English number it, whose number for the psalm Brenton gives beside the Greek's; it is his fifth, since he counts the title."
-    },
-    "BAK Verses 16, 17": {
-      "not_a_citation": true,
-      "why": "The label of a passage that the appendix supplies, not a citation of one: Brenton's own number for the verse."
     },
     "BAK and 11. 19": {
       "source": "11. 19",
       "passages": "HEB 11:19",
       "print": "11:19",
       "why": "Of Hebrews, which the citation before names."
-    },
-    "BAK verse 1": {
-      "not_a_citation": true,
-      "why": "The label of a passage that the appendix supplies, not a citation of one: Brenton's own number for the verse."
     },
     "COL 1:25 to fulfill the word of God": {
       "source": "Rom. 1.19",
@@ -499,18 +486,5 @@
       "why": "The margin’s ‘ver. 24’ is John 18:24, printed as the edition prints a verse of the same chapter."
     }
   },
-  "names": {
-    "BAK": [
-      {
-        "from": "KINGS III. (\\sc Kings\\sc* I)",
-        "to": "{1KI}",
-        "why": "Brenton's Third Book of Kings is this edition's Third Book of Kingdoms."
-      },
-      {
-        "from": ", page 1131",
-        "to": "",
-        "why": "The page of the printing of 1870, where the note isn't to be found in this one."
-      }
-    ]
-  }
+  "names": {}
 }

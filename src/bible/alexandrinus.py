@@ -68,7 +68,7 @@ FIELDS = {
     | {"edits", "note_edits", "source_note", "omit_verse", "note_target"},
     "passages": COMMON
     | {"appendix", "kjv", "edits", "insertions", "moves", "source_notes"},
-    "kept": COMMON | {"appendix", "todo", "source_note", "note"},
+    "kept": COMMON | {"appendix", "todo", "source_note", "note", "lemma", "moved_to"},
 }
 
 
@@ -294,13 +294,16 @@ def companions(
             found[key] = edit
     for key, entry in data["kept"].items():
         if key.split()[0] == code and "note" in entry:
-            found[key] = {
+            words: AlexandrinusReadingsNoteEdits = {
                 "from": entry["source_note"],
                 "to": present(
                     entry["note"], f"Kept Alexandrine note without its words: {key}"
                 ),
                 "why": entry["why"],
             }
+            if "lemma" in entry:
+                words = {**words, "lemma": entry["lemma"]}
+            found[key] = words
     return found
 
 
@@ -344,6 +347,13 @@ def check(
                     and ("appendix" in entry) != ("source_note" in entry)
                     and not entry.get("supplied"),
                     f"Invalid retained Alexandrine decision: {key}",
+                )
+                # A lemma places the words a kept note is given, and nothing
+                # else: without them it would be accepted and never read.
+                require(
+                    "lemma" not in entry
+                    or ("note" in entry and isinstance(entry["lemma"], str | None)),
+                    f"Kept Alexandrine lemma without the note it places: {key}",
                 )
             elif section == "passages":
                 require(
@@ -441,6 +451,17 @@ def check(
         found == declared,
         f"Alexandrine notes not exhaustive; missing: {sorted(found - declared)}; unused: {sorted(declared - found)}",
     )
+    # An Appendix paragraph that supplies nothing may move into the note on
+    # its verse: that note is then given its words, in the same book.
+    for key, entry in data["kept"].items():
+        if "moved_to" in entry:
+            target = data["kept"].get(entry["moved_to"], {})
+            require(
+                "appendix" in entry
+                and entry["moved_to"].split()[0] == key.split()[1]
+                and "note" in target,
+                f"Appendix paragraph moved to a note not given its words: {key}",
+            )
     spans = [
         usj.parse(entry["appendix"])["content"][0]
         for section in ("passages", "kept")
@@ -476,15 +497,22 @@ def supplied_paragraphs(doc: Document) -> list[Node]:
 
 
 def pruned_appendix(doc: Document, policy: bible.policy.Policy) -> Document:
-    """The Appendix without the passages the edition prints in their books,
-    the sections left empty by their going, and the blank lines left doubled."""
+    """The Appendix without the passages the edition prints in their books
+    and the paragraphs moved into notes, the sections left empty by their
+    going, the heading left with nothing under it, and the blank lines left
+    doubled."""
+    data = policy.alexandrinus
+    leaving = [
+        *data["passages"].values(),
+        *(entry for entry in data["kept"].values() if "moved_to" in entry),
+    ]
     promoted = [
         usj.parse(entry["appendix"])["content"][0]
-        for entry in policy.alexandrinus["passages"].values()
+        for entry in leaving
         if "appendix" in entry
     ]
     start = supplied_heading(doc)
-    blocks = doc["content"][: start + 1]
+    blocks = list(doc["content"][:start])
     rest = list(doc["content"][start + 1 :])
     for paragraph in promoted:
         matches = [i for i, block in enumerate(rest) if block == paragraph]
@@ -506,8 +534,16 @@ def pruned_appendix(doc: Document, policy: bible.policy.Policy) -> Document:
         if not (usj.is_type(section[0], "para", "is2") and empty):
             kept += section
         index = end
+    if any(usj.is_type(block, "para", "ip") for block in kept):
+        blocks.append(doc["content"][start])
+    else:
+        kept = []
     for block in kept:
-        if usj.is_type(block, "para", "ib") and usj.is_type(blocks[-1], "para", "ib"):
+        if (
+            usj.is_type(block, "para", "ib")
+            and blocks
+            and usj.is_type(blocks[-1], "para", "ib")
+        ):
             continue
         blocks.append(block)
     return usj.with_blocks(doc, blocks)

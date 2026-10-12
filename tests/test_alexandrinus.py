@@ -208,6 +208,63 @@ def test_a_kept_note_declared_without_its_words_is_refused(
         alexandrinus.companions(decided(policy, kept=kept), "GEN")
 
 
+def test_an_appendix_paragraph_may_move_into_a_kept_note(
+    policy: bible.policy.Policy,
+) -> None:
+    paragraph = "\\ip 99. Considerable variation here.\n"
+    doc = usj.parse(
+        "\\id BAK\n\\is1 ———————\n"
+        "\\is1 The Following Passages are Supplied From the Alexandrine Text\n"
+        f"\\is2 GENESIS\n{paragraph}\\ib\n"
+    )
+    kept: dict[str, Any] = {
+        "GEN 99:22#1": {
+            "source_note": NOTE,
+            "note": r"\fqa Alex. \ft Considerable variation here.",
+            "why": "Keep it, with the Appendix's words.",
+            "swete": SWETE,
+        },
+        "BAK GEN 99:22": {
+            "appendix": paragraph,
+            "moved_to": "GEN 99:22#1",
+            "why": "A remark, moved into the note.",
+            "swete": SWETE,
+        },
+    }
+    # The paragraph goes, with the section and the heading left empty.
+    moved = usj.serialize(alexandrinus.pruned_appendix(doc, decided(policy, kept=kept)))
+    assert moved == "\\id BAK\n\\is1 ———————\n"
+    # Without the move, the paragraph stays under its headings.
+    staying = {
+        key: {field: value for field, value in entry.items() if field != "moved_to"}
+        for key, entry in kept.items()
+    }
+    stayed = usj.serialize(
+        alexandrinus.pruned_appendix(doc, decided(policy, kept=staying))
+    )
+    assert "Supplied From the Alexandrine Text" in stayed and paragraph in stayed
+
+
+def test_an_appendix_paragraph_moved_to_a_note_without_words_is_refused(
+    policy: bible.policy.Policy, read: bible.pipeline.Read
+) -> None:
+    wordless = changed(
+        policy, "alexandrinus", lambda d: d["kept"]["PRO 21:16"].pop("note")
+    )
+    with pytest.raises(CheckFailed, match="not given its words: BAK PRO 21:16-17"):
+        alexandrinus.check(wordless, read.brenton)
+
+
+def test_a_kept_lemma_without_the_note_it_places_is_refused(
+    policy: bible.policy.Policy, read: bible.pipeline.Read
+) -> None:
+    stale = changed(
+        policy, "alexandrinus", lambda d: d["kept"]["GEN 33:18"].update(lemma=None)
+    )
+    with pytest.raises(CheckFailed, match="without the note it places: GEN 33:18"):
+        alexandrinus.check(stale, read.brenton)
+
+
 def test_a_note_within_replaced_words_keeps_the_words_it_was_about(
     policy: bible.policy.Policy,
 ) -> None:
@@ -346,7 +403,21 @@ def test_the_edition_prints_its_readings_and_supplied_passages(
     # What the edition promotes leaves the appendix; what it keeps stays.
     appendix = usj.serialize(edition.documents["BAK"])
     assert "And the Philistine advanced and drew nigh" not in appendix
-    assert "Considerable variation here rather than omission" in appendix
+    # What moves into a note leaves too, and the list's heading with its last entry.
+    assert "Considerable variation here rather than omission" not in appendix
+    assert alexandrinus.SUPPLIED not in appendix
+    assert "\\is2" not in appendix
+    # Its words stand in the note on the verse, in the edition's own style.
+    kingdoms = usj.serialize(edition.documents["1KI"])
+    assert (
+        r"\v 35a \f - \fr 2:35a \ft Alex. Considerable variation here rather than omission\f*and"
+        in kingdoms
+    )
+    proverbs = usj.serialize(edition.documents["PRO"])
+    assert (
+        r"\fq giants: \ft Heb. \fqa Rephaim\ft . See Appendix, note on \xt 2 Kgdms. 5:18\f*giants"
+        in proverbs
+    )
 
 
 def test_a_passage_may_omit_a_verse_and_note_it_on_the_verse_before(

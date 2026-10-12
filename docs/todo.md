@@ -34,7 +34,7 @@ Each of these is a question about a rule. One decision settles every note it cov
 
 ## 2. Readings from Codex Alexandrinus
 
-The 30 decisions in `kept` in `edition/alexandrinus.json` that carry `"todo": true` are readings that are still only notes. Each is settled by printing the reading, which moves its decision to `readings` or `passages`, or by keeping the note for good, which removes its `todo` and updates its `why`. Sections 2.1–2.5 group them by what stands in the way.
+The 26 decisions in `kept` in `edition/alexandrinus.json` that carry `"todo": true` are readings that are still only notes. Each is settled by printing the reading, which moves its decision to `readings` or `passages`, or by keeping the note for good, which removes its `todo` and updates its `why`. Sections 2.1–2.5 group them by what stands in the way.
 
 ### 2.1 Greek with no English from Brenton (9)
 
@@ -42,13 +42,12 @@ Swete confirms the Greek, but Brenton gives it only in Greek. The edition suppli
 
 GEN 1:11#2, JDG 9:27#2, JDG 13:5#2, JDG 13:19, 1SA 6:8, 2KI 19:24, 2KI 21:6#2, PSA 31:9, MAL 3:11 (A's τὴν βρῶσιν, which Brenton gives after his own alternative rendering).
 
-### 2.2 A pointer with no English (2)
+### 2.2 A pointer with no English (1)
 
 A has a different reading, but Brenton only points to it, and gives no English to print. The rule of 2.1 bears on these too.
 
 | Decision | What stands in the way |
 | --- | --- |
-| BAK 1KI 2:35a | Brenton reports variation here without translating it. Swete records omissions and an addition, but applying them needs English that Brenton doesn't give. 1KI 2:35a, in 2.5, is the note that points here. |
 | PSA 41:5 | Brenton gives a reference to the Appendix rather than English, and the Appendix discusses the Hebrew behind the verse. Swete cites no variant of A here: εἰσελεύσομαι is R's. Decide whether there is an Alexandrine reading at all. |
 
 ### 2.3 Brenton and Swete disagree (1)
@@ -65,7 +64,7 @@ Brenton's English for the reading is wrong, incomplete or unclear, and his print
 | --- | --- |
 | 2KI 3:21#2 | Printed in the verse, the alternative "and above" would need a starting point (above what?), which Brenton doesn't give. Brenton spells A's Greek ἐπάνα in every printing, where Swete has ἐπάνω; the note keeps his spelling. Settle the whole clause. |
 
-### 2.5 Probably keep as a note (17)
+### 2.5 Probably keep as a note (14)
 
 Nothing here needs printing: the text already follows A, or the note explains rather than offering other English. Confirm each, then remove its `todo`.
 
@@ -77,12 +76,9 @@ Nothing here needs printing: the text already follows A, or the note explains ra
 | 2SA 11:25 | The verse already prints "strengthen him", following A. |
 | 2SA 15:12 | The verse already follows A's reading of the conspiracy. |
 | 1KI 1:9 | The verse already follows A: "by the stone of Zoelethi". |
-| 1KI 2:35a | The note points to the Appendix; the passage is BAK 1KI 2:35a in 2.2. |
 | 1KI 5:14a | Brenton reports a chapter division, which Swete's layout supports. It changes the numbering, not the words, and the edition keeps Brenton's verse numbers. |
-| BAK PRO 21:16-17 | Brenton points to an explanatory note in the Appendix, with no other English, and Swete reports no difference in A at the words cited. |
 | PSA 49:19 | The note reports a gap in the manuscript, not English. |
 | PRO 8:5 | Brenton's Appendix discusses the Greek vocabulary with no other English, and Swete reports no variant in A. |
-| PRO 21:16 | Brenton's pointer concerns Rephaim and 2 Kingdoms, with no other English, and Swete reports no variant in A. Settle with BAK PRO 21:16-17. |
 | ISA 7:18 | Brenton says the verse's wording is already A's. |
 | ISA 54:10 | Brenton says the verse already adopts A's reading. |
 | ISA 61:3 | The note is about how the Greek divides words, with no other English. |

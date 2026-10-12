@@ -133,16 +133,6 @@
       }
     ]
   },
-  "appendix-references": {
-    "why": "Appendix is a full word, so these references have no abbreviation period after it.",
-    "changes": [
-      {
-        "note": "PRO 21:16",
-        "from": "Appendix. Note",
-        "to": "Appendix Note"
-      }
-    ]
-  },
   "expanded": {
     "why": "Text names are printed in full in the notes, apart from the Alexandrine and Vatican Texts, which stay Alex. and Vat., and their other rows are removed from his list, as is his row for Comp. as Compare, which is printed in full. LXX remains in the text, and is listed by a row added. The Authorized Version is printed in full, whether Brenton writes it A. V., Eng. Ver., the English Version or, in a note, English Bible, and his row for A. V. is removed. Other abbreviations used only once or twice are also printed in full where they stand and not listed, but for those that Chicago prints (AD, MS, MSS, p., pp.), which are listed. Where one ends a note, its period goes, as a note ends with no full stop, unless the note is a sentence of its own, which keeps it.",
     "changes": [
@@ -341,16 +331,6 @@
         "unit": "TDX",
         "from": "JESUS CHRIST our Lord.",
         "to": "Jesus Christ our Lord."
-      },
-      {
-        "unit": "BAK",
-        "from": "The Following Passages are Supplied From the Alexandrine Text",
-        "to": "The Following Passages Are Supplied from the Alexandrine Text"
-      },
-      {
-        "unit": "BAK",
-        "from": "PROVERBS.",
-        "to": "Proverbs."
       }
     ]
   },

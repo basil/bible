@@ -461,16 +461,13 @@ def test_a_book_cited_alone_keeps_its_abbreviations_period(
         ("XXB", "In Acts 17:28, we find"),
         ("NDX", "studied them. Acts 17:11 and 8:28, 29. They"),
         ("NDX", "See Judg. 8:2. \\it Joash\\it* the king"),
+        # The Appendix's cross-reference, moved into the note on its verse.
+        ("PRO", "See Appendix, note on \\xt 2 Kgdms. 5:18\\f*giants."),
         ("BAK", "\\ip 2 Kgdms. 5:18—Giants."),
         ("BAK", "\\ip Ps. 41:5—There are"),
         ("BAK", "Mark 4:30; in Heb. 9:9 and 11:19 it is"),
         # A paragraph that names no book is of the book last cited.
         ("BAK", "see chapter 1:4, 22; 8:5; 14:15; 21:11. For πανοῦργος, 12:16; 13:1,"),
-        ("BAK", "see \\it Appendix\\it*. Note on 2 Kgdms. 5:18."),
-        # A book that is named and not cited is renamed.
-        ("BAK", "\\is2 3 Kingdoms"),
-        # The label of a passage retained for editorial review is no citation.
-        ("BAK", "\\ip 21. \\it Verses\\it* 16, 17, see \\it Appendix\\it*."),
         # A book's introduction, set as a note on the book, cites the book.
         ("BAR", "ending at 3:8, was in all probability originally written in Hebrew"),
     ],

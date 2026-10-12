@@ -241,7 +241,7 @@ def test_front_and_back_matter_heading_capitalization(
         ] == headings
 
 
-@pytest.mark.parametrize("unit", ["XXD", "OTH", "TDX", "BAK"])
+@pytest.mark.parametrize("unit", ["XXD", "OTH", "TDX"])
 @pytest.mark.parametrize("source", ["missing heading", "changed capitalization"])
 def test_heading_decisions_reject_changed_or_missing_source(
     unit: str,
@@ -275,7 +275,9 @@ def test_matter_cites_and_names_as_the_edition_does(
     # A declared change keeps the style of the words it replaces.
     assert "\\im \\it Authorized Version\\it* bowed himself" in preface
     appendix = lines(edition, "BAK")
-    assert "\\is2 3 Kingdoms" in appendix and "\\is2 Proverbs" in appendix
+    assert any(line.startswith("\\ip 2 Kgdms. 5:18—Giants.") for line in appendix)
+    # The list of passages supplied from Alexandrinus is empty, and gone.
+    assert not [line for line in appendix if line.startswith("\\is2")]
     # Titles and headings drop their closing full stops.
     assert not [
         line

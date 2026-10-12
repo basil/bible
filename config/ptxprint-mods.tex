@@ -27,6 +27,8 @@
 % 24 mm of notes, and 12 mm clear at the binding. PTXprint's
 % marginnoteswidth includes the gap, so the allocation is 30 mm, not 24 mm.
 \newif\ifBibleMarginNote
+\newbox\BibleHeadingNoteBox
+\let\BiblePrimitiveVadjust\vadjust
 \begingroup
 \catcode`\@=11
 \marginaln@te{x}
@@ -38,19 +40,47 @@
   \BibleMarginNotetrue
   \ifx\ch@pter\empty\BibleMarginNotefalse\fi
   \ifx\ch@pter\z@ro\BibleMarginNotefalse\fi
-  \ifhe@dings\BibleMarginNotefalse\fi
   \ifBibleMarginNote
+    % A note in a heading (a Psalm's title) is set inside the heading box,
+    % which forbids hyphenation and minimizes lines; the narrow column needs
+    % both as elsewhere.
+    \ifhe@dings\hyphenpenalty=50 \exhyphenpenalty=50 \linepenalty=10 \fi
     \n@test@rt{#1}%
   \else
-    % Separate paragraphs keep front-matter/heading notes readable;
-    % PTXprint's normal insertions reserve space and can split long notes.
+    % The front matter has no chapters, so its notes go to the foot, in
+    % separate paragraphs: PTXprint's paragraphed notes reserve space and
+    % can split long notes. The stylesheet's Left justification is for the
+    % margin column; at the foot a note is justified like the text. This
+    % local assignment is read by PTXprint's side-skip setup inside its note
+    % box, a group nested in this one, and is undone when the note ends.
+    \expandafter\let\csname #1:justification\endcsname\relax
     \global\p@ranotesfalse
     \expandafter\insert\csname note-#1\endcsname
   \fi
 }
 \gdef\BibleEndNote#1{%
   \ifBibleMarginNote
+    % A note in a heading (a Psalm's title) ends inside the box PTXprint
+    % keeps for the heading's notes, where \vadjust is not allowed. Hold what
+    % the note would adjust, and attach it to the heading's line once that
+    % box closes and the heading's paragraph resumes, as a verse's note is
+    % attached to its line. PTXprint closes the note's own box before it
+    % places the note, so the swap must outlive that group.
+    \ifhe@dings\global\let\vadjust\BibleHeadingAdjust\fi
     \n@te@nd{#1}%
+    \ifhe@dings
+      \global\let\vadjust\BiblePrimitiveVadjust
+      \aftergroup\BibleHeadingAttach
+    \fi
+  \fi
+}
+\gdef\BibleHeadingAdjust#1{%
+  \global\setbox\BibleHeadingNoteBox=\vbox{\unvbox\BibleHeadingNoteBox #1}%
+}
+\gdef\BibleHeadingAttach{%
+  \ifvoid\BibleHeadingNoteBox\else
+    \ifhmode\BiblePrimitiveVadjust{\unvbox\BibleHeadingNoteBox}%
+    \else\unvbox\BibleHeadingNoteBox\fi
   \fi
 }
 \expandafter\gdef\csname note-no-insert-f\endcsname{\BibleStartNote{f}}

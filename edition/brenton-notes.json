@@ -33,6 +33,11 @@
       "to": "\\ft he \\fl or",
       "why": "the word space before or is missing"
     },
+    "1KI 2:35b": {
+      "from": "\\v 35b And the wisdom of Solomon abounded exceedingly beyond the wisdom of all the ancients,",
+      "to": "\\v 35b And the wisdom of Solomon abounded exceedingly beyond the wisdom of all the \\f + \\fr 2:35b \\fqa Gr. \\ft ancient sons.\\f*ancients,",
+      "why": "Brenton’s printings have Gr. ancient sons. on ancients (1879 p. 445; 1844 vol. 1 p. 364), which eBible lacks."
+    },
     "1KI 5:30": {
       "from": "wrought in the works.  \n",
       "to": "wrought in the works.\\f + \\fr 5:30 \\ft See \\fqa Appendix.\\f*  \n",

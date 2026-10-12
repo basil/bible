@@ -5315,33 +5315,34 @@
       "source_note": "\\fqa Alex. \\ft θελητὴν."
     },
     "1KI 2:35a": {
-      "why": "Appendix pointer; passage handled separately.",
-      "todo": true,
+      "why": "Keep as a note, given the Appendix’s words: Brenton’s printings have See Appendix here, at sea-shore, and again at And the wisdom (1879 p. 445; 1844 vol. 1 p. 364, where his chapter 3 begins at 35b), and the Appendix’s entry, 2 ult. 3. verse 1, says only Considerable variation here rather than omission. Swete bears it out: A varies through 35a–o, omits 46a–l, and has the Hebrew’s 2:46b–3:1 before 3:2, and Brenton reports none of it in words, so nothing is printed. The entry now stands here, and the second caller, whose target is gone, is not restored.",
       "swete": {
         "volume": 1,
-        "page": 677,
+        "page": 676,
         "evidence": "apparatus",
-        "reading": "II 35l ἔτι ζῆν Δαδ A",
+        "reading": "35a τω Σαλ. φρονησιν A | 35c τον οικον] pr τον οικον αυτου και A | om εν 2° A | 35d ην] ησαν A | om αιροντες αρσιν και ογδοηκοντα χιλιαδες A",
         "agrees": true
       },
-      "source_note": "\\ft See \\fqa Appendix."
+      "source_note": "\\ft See \\fqa Appendix.",
+      "note": "\\fl Alex. \\ft Considerable variation here rather than omission.",
+      "lemma": null
     },
     "BAK 1KI 2:35a": {
       "appendix": "\\ip 2 \\it ult\\it*. 3. \\it verse\\it* 1. Considerable variation here rather than omission.  \n",
-      "why": "The Appendix reports variation without translating an Alexandrine reading.",
-      "todo": true,
+      "why": "A remark, not a supplied passage: Brenton’s 2 ult. and 3 verse 1 are this edition’s 2:35a and 35b, and the variation he reports is what Swete shows of A at the seam of the chapters. It is moved into the note at 2:35a, and the Appendix’s list of supplied passages, emptied, goes with it.",
+      "moved_to": "1KI 2:35a",
       "swete": {
         "volume": 1,
         "page": 678,
         "evidence": "apparatus",
-        "reading": "46 a–l om καὶ ἦν ὁ βασιλεὺς ... ἐν Ιερουσαλημ A; III 2 θυμιῶντες] pr τῆς δὲ βασιλείας ἑδρασθείσης ... A",
+        "reading": "46 a–l om και ην ο βασιλευς…εν Ιερουσαλημ A | III 2 θυμιωντες] pr της δε βασιλειας εδρασθεισης…πλην ο λαος ησαν A",
         "agrees": true
       }
     },
     "BAK PRO 21:16-17": {
       "appendix": "\\ip 21. \\it Verses\\it* 16, 17, see \\it Appendix\\it*, page 1131. Note on II. Kings (II. Sam.) 5. 18.  \n",
-      "why": "Cross-reference to an explanatory Appendix note; no Alexandrine English is supplied.",
-      "todo": true,
+      "why": "A cross-reference to Brenton’s note on Giants, which stands in the Appendix under 2 Kingdoms 5:18, not a supplied passage; it is moved into the note at 21:16, which it had already reached in eBible’s transcription. Swete reports nothing of A at the words.",
+      "moved_to": "PRO 21:16",
       "swete": {
         "volume": 2,
         "page": 456,
@@ -5432,16 +5433,16 @@
       "source_note": "\\ft For the use of ἄκακος and πανοῦργος in this book, see Appendix."
     },
     "PRO 21:16": {
-      "why": "The Appendix pointer concerns Rephaim and 2 Kings; it gives no Alexandrine verse reading.",
+      "why": "Keep as a note, given the Appendix’s cross-reference: Brenton’s printings read Heb. Rephaim. See Appendix. (1844 vol. 2 p. 662; 1879 p. 807; 1884 p. 807), and eBible added Note on 2 Kings 5. 18 from the Appendix’s entry for the verses, which the edition removes; the note names that entry’s target, Brenton’s note on Giants, so that the reader finds it. Swete cites no reading of A at the words.",
       "swete": {
         "volume": 2,
         "page": 456,
         "evidence": "silence",
-        "reading": "21:16 no A variant; text γιγάντων",
+        "reading": "ἐν συναγωγῇ γιγάντων ἀναπαύσεται (no A variant cited)",
         "agrees": null
       },
-      "todo": true,
-      "source_note": "\\fqa Heb. \\ft Rephaim. see Appendix. Note on \\xt 2 Kings 5. 18."
+      "source_note": "\\fqa Heb. \\ft Rephaim. see Appendix. Note on \\xt 2 Kings 5. 18.",
+      "note": "\\fl Heb. \\fqa Rephaim\\ft . See Appendix, note on \\xt 2 Kings 5. 18."
     },
     "PRO 21:29": {
       "why": "Keep as a note: Brenton’s caller stands before impudently in every printing (1844 pp. 164–165; 1879 p. 824; 1900 p. 820), after An ungodly man, so the note reports A’s reading of that clause, not of the word ungodly; Swete has no A variant in the verse, and the report has no support beyond Brenton’s.",
