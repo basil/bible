@@ -89,7 +89,7 @@ def check_processed(project: Path, base: Path, ids: list[str]) -> None:
     tex = texfiles[0].read_text(encoding="utf-8")
     require("%\\OmitCallerInNote{f}" in tex, "Footnote callers unexpectedly suppressed")
     require("\\AutoCallers{f}{1,2," in tex, "Footnote callers not numbered")
-    # The books' introductions and the notes of Brenton's Appendix are ef
+    # Sentences, long notes, introductions and Appendix notes are ef
     # footnotes, whose callers stand in the text.
     require(
         "%\\OmitCallerInNote{ef}" in tex,

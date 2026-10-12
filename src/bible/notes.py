@@ -9,9 +9,10 @@ here tell them apart; edition/brenton-notes.json and edition/kjv-notes.json
 say what to print where the rules go wrong, and why. The notes that
 edition/alexandrinus.json writes say what each of their parts is themselves.
 
-A note is printed as a footnote without a caller: its verse, the words it is
-about, and its text, which runs on from them unless it is a sentence of its
-own. Besides corrections, the "See" that opens a cross-reference, the words a
+A note prints its verse, the words it is about, and its text, which runs on
+from them unless it is a sentence of its own. Sentences and long notes go
+below the text with callers; short fragments stay in the margin without them.
+Besides corrections, the "See" that opens a cross-reference, the words a
 widened lemma adds to its renderings, and the decisions of edition/prose.json,
 the edition changes nothing of a note's words but its quotation marks,
 citations and abbreviations, which print in the edition's forms.
@@ -20,7 +21,7 @@ citations and abbreviations, which print in the edition's forms.
 from __future__ import annotations
 
 import re
-from collections.abc import Iterable, Sequence
+from collections.abc import Collection, Iterable, Sequence
 from dataclasses import dataclass, replace
 from difflib import SequenceMatcher
 from typing import Unpack
@@ -33,7 +34,7 @@ from bible.citations import Citation
 from bible.repairs import change
 from bible.scripture import plain, word_spans
 from bible.usfm import GREEK, HEBREW
-from bible.usj import Content, Node
+from bible.usj import Content, Document, Node
 
 # Labels that introduce another rendering of the glossed words, which is italic.
 RENDERING_LABELS = {
@@ -145,6 +146,9 @@ AUTHORED = {
     "fq": "quotation",
     "xt": "citation",
 }
+# Maximum visible length of a fragment kept in the margin.
+MARGIN_NOTE_LIMIT = 100
+
 # How a part of a printed note is marked.
 PRINTED = {"commentary": "ft", "reading": "fqa", "quotation": "fqa", "citation": "xt"}
 
@@ -1132,3 +1136,43 @@ def footnote(
         content.append(usj.char("fq", f"{lemma}: "))
     content += [usj.char(marker, value) for marker, value in parts]
     return usj.note("f", *content, **extra)
+
+
+def below(note: Node) -> Node:
+    """A note set below the text, as a full-width footnote with a caller."""
+    return {**note, "marker": "ef", "caller": "+"}
+
+
+def long_notes(doc: Document, placed: Collection[str] = ()) -> Document:
+    """Put scripture notes over 100 visible characters below the text, and
+    the notes whose keys are placed there.
+
+    Count the lemma and body after revision, excluding only the verse origin.
+    Existing full-width notes keep their callers and placement.
+    Explicit placements must match once and change the automatic placement.
+    """
+    found: set[str] = set()
+
+    def place(node: Node) -> Node:
+        if node["type"] == "note":
+            key = node.get("x-key")
+            text = usj.text_of(node["content"], skip=usj.is_origin)
+            long = len(text.strip()) > MARGIN_NOTE_LIMIT
+            if key in placed:
+                assert key is not None
+                require(key not in found, f"Duplicate footnote placement: {key}")
+                require(
+                    node["marker"] in ("f", "x") and not long,
+                    f"Footnote placement changes nothing: {key}",
+                )
+                found.add(key)
+            if node["marker"] in ("f", "x") and (long or key in placed):
+                return below(node)
+        return node
+
+    result = usj.with_content(doc, lambda content: usj.mapped(content, place))
+    require(
+        found == set(placed),
+        f"Unused footnote placements: {sorted(set(placed) - found)}",
+    )
+    return result

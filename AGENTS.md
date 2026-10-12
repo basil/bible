@@ -83,6 +83,7 @@ A correction to a slip in transcription must match the source text exactly once,
 | A reading from Codex Alexandrinus, a supplied passage, a verse omitted or moved after it, a kept note, or an Appendix entry moved into the note on its verse | `edition/alexandrinus.json` |
 | A Byzantine reading the build does not decide, a ruling that a difference is not applied, a verse omitted or moved, a difference of accent alone, Hodges–Farstad's side where no apparatus gives it, or the lemma of a TR note | `edition/byzantine.json` |
 | A correction of the King James English where TR and RP2026 share the Greek | `readings` in `edition/byzantine.json`, keyed by the verse |
+| A New Testament note placed below the text despite the length rule | `footnotes` in `edition/byzantine.json`, keyed by the note, with its reason |
 | Which Greek unit a witness's row is about | `edition/byzantine-placements.json` |
 | A 1611 note left out, or set on other words, because the text changed | `notes` in `edition/kjv-notes.json` |
 | How a citation is read or printed | `edition/citations.json` |

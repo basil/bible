@@ -561,6 +561,7 @@ Byzantine = TypedDict(
         "accents": ReadOnly[Mapping[str, ByzantineAccent]],
         "hodges-farstad": ReadOnly[Mapping[str, ByzantineSide]],
         "lemmas": ReadOnly[Mapping[str, ByzantineLemma]],
+        "footnotes": ReadOnly[Mapping[str, str]],
     },
     total=False,
 )

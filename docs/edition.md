@@ -89,7 +89,7 @@ An evident slip of the scribe stays a note too, though Swete is sure of it: a na
 
 ## Notes
 
-No margin note on the scripture leaves a mark in the text. The sources' footnotes and marginal notes, and the edition's own notes on the readings it prints, are printed in the inside margin, beside their verse. Only the front matter, the accounts of the books and the notes of Brenton's Appendix use footnotes, with numbered callers. Each note begins with the verse's number and the words it is about, followed by a colon:
+Short notes stand in the inside margin beside their verse, without callers. Complete explanatory sentences and notes longer than 100 characters stand in full-width footnotes with automatic callers, restarting on each page. A `sentence` override in `edition/brenton-notes.json` or `edition/kjv-notes.json` decides the placement of a note of 100 characters or fewer as well as the capital and full stop. Explicit placements of New Testament notes to relieve crowded pages are recorded by their note keys under `footnotes` in `edition/byzantine.json`, with reasons; each must match once and change the automatic placement. The length counts the visible lemma and text after revision, including cross-references, but excludes the verse origin. Both placements use PTXprint’s ordinary note size and leading. Front matter, accounts of the books and notes of Brenton's Appendix keep their footnote placement. Bottom notes print under their callers alone, without verse numbers. Margin notes begin with the verse's number and the words they are about, followed by a colon:
 
 > **20** I doubted of such manner of questions: or, *I was doubtful how to enquire hereof*
 

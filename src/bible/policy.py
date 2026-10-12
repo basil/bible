@@ -19,6 +19,7 @@ from bible import policy_schema as schema
 from bible.checks import require, require_fields
 from bible.files import read_json
 from bible.policy_schema import Entry
+from bible.sources import NEW_TESTAMENT as NEW_TESTAMENT_BOOKS
 
 FILES = (
     "manifest",
@@ -391,7 +392,7 @@ def check(policy: Policy) -> None:
     require_fields(
         policy.byzantine,
         {"why", "readings", "structure", "accents", "hodges-farstad", "lemmas"},
-        (),
+        {"footnotes"},
         "Byzantine decisions",
     )
     require_fields(
@@ -417,6 +418,16 @@ def check(policy: Policy) -> None:
         require(bool(side["why"].strip()), f"{what} without a why")
     for key, lemma in policy.byzantine["lemmas"].items():
         require_fields(lemma, {"lemma", "why"}, (), f"Byzantine note lemma {key}")
+    for key, why in policy.byzantine.get("footnotes", {}).items():
+        require(
+            isinstance(why, str) and bool(why.strip()),
+            f"Footnote placement without a reason: {key}",
+        )
+        book, _, rest = key.partition(" ")
+        require(
+            book in NEW_TESTAMENT_BOOKS and bool(rest),
+            f"Footnote placement outside the New Testament: {key}",
+        )
     require_fields(
         policy.byzantine_placements, {"why", "placements"}, (), "Byzantine placements"
     )

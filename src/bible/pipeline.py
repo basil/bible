@@ -36,6 +36,7 @@ from bible import (
     crossrefs,
     lines,
     matter,
+    notes,
     numbering,
     places,
     psalter,
@@ -677,9 +678,12 @@ def check_document(
         )
         for reference, verse in scripture.verses(doc).items():
             for _, note in verse.notes:
+                # Only the introductions and the Appendix's notes name no
+                # verse; a note moved below the text still names its own.
+                named = bool(note["content"]) and usj.is_origin(note["content"][0])
                 origin = note_origin(note)
                 require(
-                    note["marker"] == "ef" or origin == reference,
+                    (note["marker"] == "ef" and not named) or origin == reference,
                     f"Note reference disagrees with its verse: {code} {origin}",
                 )
     if authored_page:
@@ -720,6 +724,7 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
     revised: revision.MetRevisions = set()
     comparisons: dict[str, Document] = {}
     finished: dict[str, Document] = {}
+    footnotes = policy.byzantine.get("footnotes", {})
     # A row of the review for every note, read from the books as finished.
     note_rows: dict[str, list[annotate.NoteRow]] = {}
     for code, doc in {**front, **books}.items():
@@ -739,6 +744,9 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
             revised,
         )
         if code in books:
+            finished[code] = notes.long_notes(
+                finished[code], [key for key in footnotes if key.startswith(code + " ")]
+            )
             revision.check_kept(code, named, finished[code], policy)
             note_rows[code] = annotate.finished_rows(
                 finished[code], reports[code].rows, policy.brenton_notes["notes"]
@@ -1044,13 +1052,19 @@ def opened(doc: Document) -> Document:
 
 def exported(code: str, doc: Document, edition: Edition) -> str:
     """A document as PTXprint takes it: under its project id; its notes'
-    origins without their chapter, which the chapter figure and running head
-    supply; its lines of verse indented, its chapters opened in paragraphs
-    of their own and its blank lines set; and its Greek and Hebrew tagged for
-    their fonts. The edition's own pages are sent as the editor wrote them."""
+    margin origins without their chapter, which the chapter figure and running
+    head supply, and bottom notes under their callers alone; its lines of verse
+    indented, its chapters opened in paragraphs of their own and its blank
+    lines set; and its Greek and Hebrew tagged for their fonts. The edition's
+    own pages are sent as the editor wrote them."""
 
     def origin(item: Node) -> Node:
-        if item["type"] == "char" and item["marker"] in ("fr", "xo"):
+        if usj.is_type(item, "note", "ef"):
+            return {
+                **item,
+                "content": [p for p in item["content"] if not usj.is_origin(p)],
+            }
+        if item["type"] == "char" and usj.is_origin(item):
             values = item["content"]
             assert all(isinstance(v, str) for v in values)
             value = "".join(v for v in values if isinstance(v, str))

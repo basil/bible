@@ -158,6 +158,10 @@ def lemma_end(document: Document, verse: Verse, end: int) -> int:
     """The end of a lemma, widened to the last word of any italic span it ends
     inside, so that its note can stand right after it (or after the span's
     closing stops)."""
+    # A retained style may continue past the note already at this boundary.
+    # Its following words do not belong to the reading the note declares.
+    if any(offset == end for offset, _ in verse.notes):
+        return end
     at = end
     while at < len(verse.text) and not placeable(document, verse, at):
         at += 1
@@ -767,6 +771,7 @@ def placed(
     for book, items in by_book.items():
         verses = scripture.verses(prepared[book])
         moved: list[tuple[str, int, Node]] = []
+        kept: set[str] = set()
         for owned, scope in items:
             ref = scope["ref"].split()[1]
             a, b = lemma_range(scope)
@@ -779,9 +784,20 @@ def placed(
                 at += len(scope.get("terminal_stop", ""))
             scope["offset"] = at
             finished[note["x-key"]] = note
-            moved.append((ref, at, note))
+            if any(
+                offset == at and n.get("x-key") == note["x-key"]
+                for offset, n in verses[ref].notes
+            ):
+                kept.add(note["x-key"])
+            else:
+                moved.append((ref, at, note))
         document = scripture.map_notes(
-            prepared[book], lambda n: None if n.get("x-key") in finished else n
+            prepared[book],
+            lambda n: (
+                finished[n["x-key"]]
+                if n.get("x-key") in kept
+                else None if n.get("x-key") in finished else n
+            ),
         )
         verses = scripture.verses(document)
         changes: list[tuple[Verse, int, int, Content]] = []

@@ -56,14 +56,18 @@ def test_grouped_notes_keep_categories_and_sort_all_targets(
 ) -> None:
     psalm = scripture.verses(edition.documents["PSA"])["117:22"]
     assert [
-        usj.text_of(note["content"]) for _, note in psalm.notes if note["marker"] == "x"
+        usj.text_of(note["content"])
+        for _, note in psalm.notes
+        if usj.is_type(note["content"][0], "char", "xo")
     ] == [
         "117:22 Matt. 21:42; Mark 12:10–11; Luke 20:17; 1 Pet. 2:7 (LXX\u00a0≠ Heb.)",
         "117:22 Acts 4:11",
     ]
     mark = scripture.verses(edition.documents["MRK"])["10:19"]
     assert [
-        usj.text_of(note["content"]) for _, note in mark.notes if note["marker"] == "x"
+        usj.text_of(note["content"])
+        for _, note in mark.notes
+        if usj.is_type(note["content"][0], "char", "xo")
     ] == ["10:19 Ex. 20:12, 13–17; Deut. 5:16, 17–21 (Heb.\u00a0+ LXX)"]
 
 
@@ -75,10 +79,12 @@ def test_one_note_per_printed_agreement_across_the_edition(
         for link in listed:
             expected.setdefault(str(link.origin), set()).add(link.agreement)
     printed = {
-        f"{code} {reference}": sum(note["marker"] == "x" for _, note in verse.notes)
+        f"{code} {reference}": sum(
+            usj.is_type(note["content"][0], "char", "xo") for _, note in verse.notes
+        )
         for code in edition.scripture
         for reference, verse in scripture.verses(edition.documents[code]).items()
-        if any(note["marker"] == "x" for _, note in verse.notes)
+        if any(usj.is_type(note["content"][0], "char", "xo") for _, note in verse.notes)
     }
     assert printed == {
         origin: len(agreements) for origin, agreements in expected.items()

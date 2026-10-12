@@ -459,19 +459,13 @@ def _inline(content: Iterable[str | Node], *, nested: bool, in_note: bool) -> st
             body = _inline(item["content"], nested=False, in_note=True)
             marker = item["marker"]
             parts.append(f"\\{marker} {item['caller']} {body}\\{marker}*")
-        elif item["type"] == "char" and item["marker"] in FIELDS:
-            parts.append(
-                f"\\{item['marker']} "
-                + _inline(item["content"], nested=True, in_note=in_note)
-            )
         elif item["type"] == "char":
-            plus = "+" if nested else ""
-            marker = item["marker"]
-            parts.append(
-                f"\\{plus}{marker} "
-                + _inline(item["content"], nested=True, in_note=in_note)
-                + f"\\{plus}{marker}*"
-            )
+            body = _inline(item["content"], nested=True, in_note=in_note)
+            if item["marker"] in FIELDS:
+                parts.append(f"\\{item['marker']} {body}")
+            else:
+                marker = ("+" if nested else "") + item["marker"]
+                parts.append(f"\\{marker} {body}\\{marker}*")
         elif item["type"] == "ref":
             parts.append(_inline(item["content"], nested=nested, in_note=in_note))
         else:
@@ -487,11 +481,16 @@ def is_note(node: Node) -> bool:
     return node["type"] == "note"
 
 
+def is_origin(node: object) -> bool:
+    """A note's origin: the verse it names as its own."""
+    return isinstance(node, dict) and node.get("marker") in ("fr", "xo")
+
+
 def is_label(node: Node) -> bool:
     """What stands in a paragraph without being its prose: a note's origin and
     the number of a verse that a supplied passage prints, in the text or in a
     note."""
-    return node.get("marker") in ("fr", "xo", "vp", "fv")
+    return is_origin(node) or node.get("marker") in ("vp", "fv")
 
 
 def text_of(content: Iterable[str | Node], *, skip: Predicate = is_note) -> str:
@@ -646,6 +645,29 @@ def split(
 def replaced(content: Content, start: int, end: int, new: Content) -> Content:
     """The content with the words from start to end, and the notes among
     them, giving way to new content."""
+    # A replacement explicitly retaining a style keeps its following words
+    # in that span. Its start stays a boundary where a note can be placed.
+    at = 0
+    for index, item in enumerate(content):
+        length = len(text_of([item]))
+        if (
+            is_type(item, "char")
+            and item["marker"] not in FIELDS | {"add"}
+            and new
+            and is_type(new[0], "char", item["marker"])
+            and at <= start < end <= at + length
+        ):
+            before, rest = split(item["content"], start - at, notes_left=False)
+            _, after = split(rest, end - start, notes_left=True)
+            head: Content = [{**item, "content": before}] if before else []
+            inner = joined(new[0]["content"], new[1:], after)
+            return joined(
+                content[:index],
+                head,
+                [{**item, "content": inner}],
+                content[index + 1 :],
+            )
+        at += length
     head, rest = split(content, start, notes_left=False)
     _, tail = split(rest, end - start, notes_left=True)
     return joined(head, new, tail)
@@ -738,6 +760,30 @@ def substituted(
                 ):
                     result = joined(result, inner)
                 elif inner or not had_words:
+                    # Note fields consume their opening separator. A deletion
+                    # can expose a word space there; keep it at the end of the
+                    # preceding field, as when the note was first constructed.
+                    if (
+                        item["type"] == "char"
+                        and item["marker"] in FIELDS
+                        and inner != item["content"]
+                        and inner
+                        and isinstance(inner[0], str)
+                        and result
+                        and is_type(result[-1], "char")
+                        and result[-1]["marker"] in FIELDS
+                    ):
+                        first = inner[0]
+                        spaces = len(first) - len(first.lstrip(" "))
+                        if spaces:
+                            previous = result[-1]
+                            result[-1] = {
+                                **previous,
+                                "content": joined(
+                                    previous["content"], [first[:spaces]]
+                                ),
+                            }
+                            inner = joined([first[spaces:]], inner[1:])
                     result.append({**item, "content": inner})
             else:
                 result.append(item)

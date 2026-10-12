@@ -260,6 +260,42 @@ def test_changes_to_a_verse_are_made_together_by_their_offsets() -> None:
         scripture.edited(doc, [(verse, 0, 5, ["a"]), (verse, 3, 8, ["b"])])
 
 
+def test_serializing_preserves_a_styles_leading_space() -> None:
+    content: usj.Content = [usj.char("sc", " sabachthani"), "?"]
+    assert usj.serialize(content) == "\\sc  sabachthani\\sc*?"
+    assert usj.parse(usj.serialize(content), fragment=True) == content
+
+
+@pytest.mark.parametrize("old", ["lama", "lamma"])
+def test_a_replacement_retaining_a_style_does_not_split_it(old: str) -> None:
+    content: usj.Content = [usj.char("sc", f"Eli, Eli, {old} sabachthani"), "?"]
+    note = usj.note("f", usj.char("ft", old))
+    changed = usj.replaced(content, 10, 10 + len(old), [usj.char("sc", "lima"), note])
+    assert changed == [
+        usj.char("sc", "Eli, Eli, "),
+        usj.char("sc", "lima", note, " sabachthani"),
+        "?",
+    ]
+    assert usj.parse(usj.serialize(changed), fragment=True) == changed
+    assert content == [usj.char("sc", f"Eli, Eli, {old} sabachthani"), "?"]
+
+
+def test_a_revision_keeps_a_notes_word_separator_before_its_next_field() -> None:
+    content: usj.Content = [
+        usj.char("ft", "The word "),
+        usj.char("fqa", "choenix"),
+        usj.char("ft", ", signifieth"),
+    ]
+    changed = usj.substituted(content, [(16, 17, "")], skip=usj.is_label)
+    assert changed == [
+        usj.char("ft", "The word "),
+        usj.char("fqa", "choenix "),
+        usj.char("ft", "signifieth"),
+    ]
+    assert usj.parse(usj.serialize(changed), fragment=True) == changed
+    assert content[-1] == usj.char("ft", ", signifieth")
+
+
 def test_a_space_never_doubles_across_a_character_styles_close() -> None:
     # eBible's Brenton has "\\add for \\add* teeth" 44 times: the space inside
     # the style and the one after it would print as two in a ragged line.
@@ -276,3 +312,78 @@ def test_a_space_never_doubles_across_a_character_styles_close() -> None:
     # when a line of verse divides one.
     half = usj.trimmed(["for the ancient ", usj.char("add", "heavens? ")])
     assert half == ["for the ancient ", usj.char("add", "heavens?")]
+
+
+def test_choenix_spacing_and_italics_survive_preparation_and_export(
+    edition: bible.pipeline.Edition, exported: dict[str, str], tmp_path: Path
+) -> None:
+    import usfmtc
+
+    note = next(
+        n
+        for n in usj.notes_of(edition.documents["REV"]["content"])
+        if n.get("x-key") == "REV 6:6 A measure"
+    )
+    assert "choenix signifieth" in usj.text_of(note["content"])
+    assert any(
+        usj.is_type(n, "char", "fqa") and usj.text_of(n["content"]).endswith("choenix ")
+        for n in usj.walk(note["content"])
+    )
+    text = exported["REV"]
+    assert "choenix \\ft signifieth" in text
+    passage = usj.parse("\\id REV\n\\c 6\n\\p\n\\v 6 A measure of wheat.\n")
+    block = passage["content"][-1]
+    block["content"].append(note)
+    text = bible.pipeline.exported("REV", passage, edition)
+    doc = usj.parse(text)
+    path = tmp_path / "REV.usfm"
+    path.write_text(text, encoding="utf-8")
+    for parsed in [doc, usfmtc.readFile(str(path)).outUsj(None)]:
+        found = next(
+            n
+            for n in usj.notes_of(parsed["content"])
+            if "choenix" in usj.text_of(n["content"])
+        )
+        assert "choenix signifieth" in usj.text_of(found["content"])
+        assert any(
+            "choenix" in usj.text_of(n["content"])
+            for n in usj.walk(found["content"])
+            if n.get("marker") in ("fqa", "it")
+        )
+
+
+@pytest.mark.parametrize("book,reference", [("MAT", "27:46"), ("MRK", "15:34")])
+def test_transliteration_keeps_its_span_and_spacing(
+    book: str, reference: str, edition: bible.pipeline.Edition, exported: dict[str, str]
+) -> None:
+    for doc in [edition.documents[book], usj.parse(exported[book])]:
+        verse = scripture.verses(doc)[reference]
+        spans = [
+            n
+            for block, lo, hi, _ in verse.parts
+            for n in usj.walk(doc["content"][block]["content"][lo:hi])
+            if usj.is_type(n, "char", "sc")
+        ]
+        assert any(usj.text_of(n["content"]) == "lima sabachthani" for n in spans)
+        assert all(not usj.text_of(n["content"]).startswith(" ") for n in spans)
+        note = next(n for _, n in verse.notes if "TR" in usj.text_of(n["content"]))
+        assert (
+            usj.text_of(
+                next(
+                    n["content"]
+                    for n in usj.objects(note["content"])
+                    if n["marker"] == "fq"
+                )
+            )
+            == "lima: "
+        )
+        assert (
+            usj.text_of(
+                next(
+                    n["content"]
+                    for n in usj.objects(note["content"])
+                    if n["marker"] == "fqa"
+                )
+            )
+            == "lama"
+        )

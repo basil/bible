@@ -941,7 +941,7 @@ def test_the_sample_prints_selected_chapters_as_the_full_edition_has_them(
     assert close not in usj.serialize(pipeline.sample_chapters("PSA", psalms, [72]))
 
 
-def test_what_is_typeset_carries_no_callers_and_prints_notes_by_their_verses(
+def test_what_is_typeset_prints_margin_origins_and_bottom_callers(
     exported: dict[str, str], edition: bible.pipeline.Edition
 ) -> None:
     for code in edition.scripture:
@@ -952,6 +952,26 @@ def test_what_is_typeset_carries_no_callers_and_prints_notes_by_their_verses(
         assert not re.search(r"\\ef (?!\+ )", text), code
         # The chapter is the page's to supply: an origin is its verse alone.
         assert not re.search(r"\\(?:fr|xo) \d+:", text), code
+        for note in re.findall(r"\\ef \+ (.*?)\\ef\*", text, re.DOTALL):
+            assert not re.search(r"\\(?:fr|xo) ", note), (code, note)
+    assert (
+        r"\ef + \fq even fire, that it should come down from heaven upon the earth: "
+    ) in exported["REV"]
+    # Supplied verses within the Complutensian note keep their own labels.
+    passage = next(
+        line for line in exported["EXO"].splitlines() if "Complutensian" in line
+    )
+    exodus = usj.parse("\\id EXO\n\\c 28\n\\p\n" + passage)
+    complutensian = next(
+        note
+        for note in usj.notes_of(exodus["content"])
+        if "Complutensian" in usj.text_of(note["content"])
+    )
+    assert [
+        usj.text_of(part["content"])
+        for part in usj.walk(complutensian["content"])
+        if part.get("marker") == "fv"
+    ] == [str(number) for number in range(23, 29)]
     # Front matter's notes are numbered, and print under their callers alone.
     assert "\\f + \\ft See Preface to Lambert Bos’s edition" in exported["XXB"]
     # Greek and Hebrew are tagged for their fonts, single letters too: within
