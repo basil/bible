@@ -3,6 +3,7 @@ Testament paragraphs and poetry preserved from Scrivener."""
 
 from __future__ import annotations
 
+import copy
 import re
 from typing import Any
 
@@ -62,15 +63,15 @@ def test_a_source_paragraph_is_divided_as_the_update_divides_it(
     declared: bible.policy.Policy,
 ) -> None:
     doc = lined(SOURCE, UPDATE, declared)
-    assert markers(doc) == ["p", "q1", "q1", "b", "q1", "q1", "m", "p"]
+    assert markers(doc) == ["p", "q1", "q1", "b", "q1", "q1", "p", "p"]
     verses = scripture.verses(doc)
     # The words that introduce the poem end their paragraph of prose; a
     # break after a respelt word (to-day) is placed by the line's first word.
     assert verses["1:1"].text == (
         "And he said,\nHear my voice, ye wives of Lamech;\nto-day I have slain a man."
     )
-    # Prose resumes in the same paragraph, flush left, and the next verse
-    # keeps the source's own paragraph.
+    # Prose resumes in a paragraph of its own, as the Berean Standard Bible
+    # sets it, and the next verse keeps the source's own paragraph.
     assert (
         verses["1:2"].text
         == "Cursed be Canaan,\na slave shall he be:\nand he went away."
@@ -95,7 +96,7 @@ def test_a_poem_after_a_dropped_line_opens_without_its_stanza_break(
         declared,
         lambda code, label: label != "1:1",
     )["TST"]
-    assert markers(doc) == ["p", "q1", "q1", "m", "p"]
+    assert markers(doc) == ["p", "q1", "q1", "p", "p"]
 
 
 def test_a_note_at_a_break_stays_with_the_word_it_is_set_against(
@@ -404,25 +405,26 @@ def test_the_hebrew_letters_of_lamentations_head_their_lines(
 ) -> None:
     doc = unit(edition, "LAM")
     verses = scripture.verses(doc)
-    assert verses["1:2"].text.startswith("Beth. She weepeth sore in the night,\n")
-    assert verses["3:21a"].text.startswith("Heth. It is the mercies of the Lord,\n")
+    assert verses["1:2"].text.startswith("Beth.\nShe weepeth sore in the night,\n")
+    assert verses["3:21a"].text.startswith("Heth.\nIt is the mercies of the Lord,\n")
     assert verses["4:17"].text == (
-        "Phe. While we yet lived our eyes failed,\n"
+        "Phe.\nWhile we yet lived our eyes failed,\n"
         "while we looked in vain for our help.\n"
-        "Tsade. We looked to a nation that could not save."
+        "Tsade.\nWe looked to a nation that could not save."
     )
 
 
-def test_prose_resumes_as_the_update_resumes_it(
+def test_prose_resumes_in_a_paragraph_of_its_own(
     edition: bible.pipeline.Edition,
 ) -> None:
+    # Prose resumes in a paragraph of its own, within a verse too.
     judges = unit(edition, "JDG")
     verse = scripture.verses(judges)["14:18"]
     assert [judges["content"][block]["marker"] for block, *_ in verse.parts] == [
         "p",
         "q1",
         "q1",
-        "m",
+        "p",
         "q1",
         "q1",
     ]
@@ -431,7 +433,7 @@ def test_prose_resumes_as_the_update_resumes_it(
     assert [
         unit(edition, "EXO")["content"][block]["marker"]
         for block, *_ in exodus["15:19"].parts
-    ] == ["m"]
+    ] == ["p"]
 
 
 def test_chapters_the_source_continued_open_with_their_lines(
@@ -472,7 +474,7 @@ def test_scrivener_says_which_verses_are_verse(
     assert parts(unit(edition, "PRO"), "24:22g") == ["q1", "q1"]
     # A lettered verse with a counterpart of its own goes as that goes:
     # Proverbs 24:22f is the Hebrew's 30:1, which Scrivener sets as prose.
-    assert parts(unit(edition, "PRO"), "24:22f") == ["m", "p"]
+    assert parts(unit(edition, "PRO"), "24:22f") == ["p", "p"]
     ecclesiastes = unit(edition, "ECC")
     assert parts(ecclesiastes, "1:2") == ["p"] and parts(ecclesiastes, "12:13") == ["p"]
     assert parts(ecclesiastes, "3:2") == ["q1", "q1"]
@@ -591,3 +593,177 @@ def test_quotation_extent_decisions_are_refused(
     decided = changed(declared, "lines", lambda data: data.update(extents={}))
     with pytest.raises(CheckFailed, match="Lines file has missing or unknown fields"):
         lines.check(decided)
+
+
+@pytest.mark.parametrize(
+    "body,expected",
+    [
+        ("\\q1 \\v 1 Sing. Pause.", ["q1", "qr"]),
+        ("\\q1 \\v 1 Pause.", ["qr"]),
+        ("\\q1 \\v 1 Sing. A song of Pause.", ["q1"]),
+        ("\\q1 \\v 1 A song of Pause.", ["q1"]),
+    ],
+)
+def test_pause_instructions(body: str, expected: list[str]) -> None:
+    source = usj.parse("\\id PSA\n\\c 1\n" + body)
+    before = copy.deepcopy(source)
+    result = lines.pauses(source)
+    assert markers(result) == expected
+    assert source == before and lines.pauses(result) == result
+    assert {
+        key: scripture.plain(verse.text)
+        for key, verse in scripture.verses(result).items()
+    } == {
+        key: scripture.plain(verse.text)
+        for key, verse in scripture.verses(source).items()
+    }
+
+
+@pytest.mark.parametrize(
+    "body",
+    [
+        "\\p \\v 1 Sing. Pause.",
+        "\\q1 \\v 1 Sing Pause.",
+        "\\q1 \\v 1 Pause. Sing.",
+        "\\q1 \\v 1 Sing; Pause: words.",
+    ],
+)
+def test_an_unexpected_pause_is_refused(body: str) -> None:
+    source = usj.parse("\\id PSA\n\\c 2\n" + body)
+    with pytest.raises(CheckFailed, match="Unexpected Pause instruction: PSA 2:1"):
+        lines.pauses(source)
+
+
+def test_an_inline_pause_is_declared_and_met() -> None:
+    kept = usj.parse("\\id PSA\n\\c 67\n\\q1 \\v 7 Sing.\n\\q1 \\v 8 Go; Pause: on.")
+    assert lines.pauses(kept) == kept
+    moved = usj.parse("\\id PSA\n\\c 67\n\\q1 \\v 8 Go. Pause.")
+    with pytest.raises(CheckFailed, match="no Pause meets: \\['PSA 67:8'\\]"):
+        lines.pauses(moved)
+
+
+def test_pause_keeps_its_explanation_and_styles() -> None:
+    source = usj.parse(
+        "\\id PSA\n\\c 3\n\\q1 \\v 3 Sing. "
+        "\\f + \\fr 3:3 \\ft Pause explained.\\f*\\it Pause.\\it*\n"
+        "\\q1 \\v 4 Words.\\f + \\ft Pause.\\f*"
+    )
+    result = lines.pauses(source)
+    assert markers(result) == ["q1", "qr", "q1"]
+    instruction = next(b for b in result["content"] if b.get("marker") == "qr")
+    assert instruction["content"] == source["content"][2]["content"][2:]
+    assert (
+        scripture.verses(result)["3:3"].notes[0][1]
+        == scripture.verses(source)["3:3"].notes[0][1]
+    )
+
+
+def acrostic_source(chapter: str) -> Document:
+    """All source labels, with opening and mid-verse placements exercised."""
+    content = ""
+    previous = ""
+    for verse, name in lines.acrostic_inventory(chapter):
+        if verse != previous:
+            content += f"\n\\q1 \\v {verse} "
+        if (chapter, verse, name) in {("3", "45", "Ain."), ("4", "18", "Koph.")}:
+            content += "Before. "
+        content += f"\\sc {name}\\sc* Words. "
+        previous = verse
+    return usj.parse(f"\\id LAM\n\\c {chapter}\n" + content)
+
+
+@pytest.mark.parametrize("chapter,count", [("1", 22), ("2", 22), ("3", 23), ("4", 22)])
+def test_acrostic_headings_preserve_content(chapter: str, count: int) -> None:
+    source = acrostic_source(chapter)
+    before = copy.deepcopy(source)
+    result = lines.acrostics(source)
+    headings = [b for b in result["content"] if b.get("marker") == "qa"]
+    assert len(headings) == count
+    assert all(
+        len([i for i in b["content"] if usj.is_type(i, "char", "sc")]) == 1
+        for b in headings
+    )
+    assert source == before and lines.acrostics(result) == result
+    assert {
+        key: scripture.plain(verse.text)
+        for key, verse in scripture.verses(result).items()
+    } == {
+        key: scripture.plain(verse.text)
+        for key, verse in scripture.verses(source).items()
+    }
+    assert [
+        i
+        for b in result["content"]
+        for i in b.get("content", [])
+        if usj.is_type(i, "verse")
+    ] == [
+        i
+        for b in source["content"]
+        for i in b.get("content", [])
+        if usj.is_type(i, "verse")
+    ]
+
+
+@pytest.mark.parametrize(
+    "old,new,match",
+    [
+        ("Aleph.", "Alef.", "label: LAM 1:1"),
+        ("\\sc Aleph.", "Before. \\sc Aleph.", "placement: LAM 1:1"),
+        ("\\sc Beth.\\sc*", "", "inventory: LAM 1:22"),
+        ("\\v 2", "\\v 23", "label: LAM 1:23"),
+    ],
+)
+def test_changed_acrostic_source_is_refused(old: str, new: str, match: str) -> None:
+    source = usj.parse(usj.serialize(acrostic_source("1")).replace(old, new, 1))
+    with pytest.raises(CheckFailed, match=match):
+        lines.acrostics(source)
+
+
+def test_a_name_declared_within_its_verse_that_opens_it_is_refused() -> None:
+    # The declaration would go stale unnoticed.
+    text = usj.serialize(acrostic_source("3"))
+    assert "Before. \\sc Ain." in text
+    source = usj.parse(text.replace("Before. \\sc Ain.", "\\sc Ain.", 1))
+    with pytest.raises(CheckFailed, match="placement: LAM 3:45"):
+        lines.acrostics(source)
+
+
+def test_source_instructions_across_the_corpus(
+    staged: Staged, read: bible.pipeline.Read, edition: bible.pipeline.Edition
+) -> None:
+    aligned = lines.old_testament(
+        {code: staged.assembled[code] for code in ("PSA", "HAB", "LAM")},
+        read.updated_brenton,
+        edition.policy,
+        lines.scrivener(read.kjv, edition.policy),
+    )
+    for code, transform, marker, count in (
+        ("PSA", lines.pauses, "qr", 70),
+        ("HAB", lines.pauses, "qr", 3),
+        ("LAM", lines.acrostics, "qa", 89),
+    ):
+        before = aligned[code]
+        # Isolate the two rules from alignment, which may split styled spans.
+        source = staged.line_documents[code]
+        assert sum(b.get("marker") == marker for b in source["content"]) == count
+        assert transform(source) == source
+        originals = scripture.verses(before)
+        for key, verse in scripture.verses(source).items():
+            original = originals[key]
+            assert [note for _, note in verse.notes] == [
+                note for _, note in original.notes
+            ]
+        assert [
+            item
+            for block in source["content"]
+            for item in block.get("content", [])
+            if usj.is_type(item, "char") or usj.is_type(item, "verse")
+        ] == [
+            item
+            for block in before["content"]
+            for item in block.get("content", [])
+            if usj.is_type(item, "char") or usj.is_type(item, "verse")
+        ]
+        assert {
+            k: scripture.plain(v.text) for k, v in scripture.verses(source).items()
+        } == {k: scripture.plain(v.text) for k, v in scripture.verses(before).items()}

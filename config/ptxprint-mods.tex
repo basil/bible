@@ -176,9 +176,18 @@
 \endgroup
 
 % Empty paragraphs do not enter the start hook. Put the rule in the
-% heading box through the before hook, with fixed spacing in TeX points.
+% heading box through the before hook. PTXprint sets that box, with the
+% chapter and the title that follow every rule, on the line grid and pads it
+% above. A quarter line on either side of the rule takes it a line deeper
+% than the rule and title need, and that padding with the quarter line above
+% matches the quarter line below with the empty paragraph PTXprint sets
+% there, so that the rule stands midway between the poem and the title.
+\begingroup
+\catcode`\@=11
 \sethook{before}{sd2}{%
-  \vskip6pt
+  \vskip.25\onel@neunit
   \hbox to \hsize{\hfil\vrule width .25\hsize height .5pt depth 0pt\hfil}%
-  \nobreak\vskip6pt
+  \nobreak
+  \vskip.25\onel@neunit
 }
+\endgroup

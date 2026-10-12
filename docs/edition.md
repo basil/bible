@@ -40,21 +40,23 @@ Brenton printed his Old Testament as prose. The edition sets a verse in lines wh
 
 Scrivener has a say in the books of the King James Old Testament that he sets partly in lines, wherever a verse has a counterpart there. He has none in books he sets wholly as prose, in verses without a counterpart, or in the Apocrypha, which the table of chapters and verses does not map: there Boyd's lines stand alone, though Scrivener sets only a few prayers and songs of Tobit, Judith and Baruch in lines. A Septuagint addition lettered to a verse goes as that verse goes. Thus Job's narrative and most of Ecclesiastes stay prose despite Boyd's lines, while Isaiah and the minor prophets stay prose despite Scrivener's lines.
 
-The build aligns each update chapter word by word with Brenton's, retaining Boyd's line and stanza boundaries. A break stands before the matched first word of a line or after the matched last word of the preceding line. Verse openings retain Brenton's leading Hebrew letters; prose resumes under Boyd's paragraph marker. The update supplies no wording, spelling, punctuation, headings or verse numbering.
+The build aligns each update chapter word by word with Brenton's, retaining Boyd's line and stanza boundaries. A break stands before the matched first word of a line or after the matched last word of the preceding line. Verse openings retain Brenton's leading Hebrew letters; prose resumes under Boyd's paragraph marker, and where he resumes it flush left it opens a paragraph, as the Berean Standard Bible sets it. The update supplies no wording, spelling, punctuation, headings or verse numbering.
+
+After alignment, a terminal standalone “Pause.” instruction in a poetic line of the Psalms or Habakkuk stands on its own right-aligned line (`\qr`), with its explanatory note. “A song of Pause.”, prose and notes retain their form, and so does the “Pause:” Brenton sets within Psalm 67:8; the build refuses any other. Lamentations 1–4 give Brenton’s existing small-cap acrostic names their own headings (`\qa`), retaining their punctuation and verse association, including names inside verses. These source instructions and labels are separated from the poem for clarity; neither rule supplies words or Hebrew letters. The build checks the labels’ spellings, order, verse placements and chapter counts against the pinned source. An acrostic heading opens its poem as a line would, set apart from prose or a chapter before it, but adds no stanza break within the poem; existing breaks remain.
 
 The few breaks the alignment cannot place are decisions in `edition/lines.json`. Each names the update line being followed and the opening words of the edition's line, met once in its source verse, or says that the source has no such line. Unused, repeated, invalid or redundant decisions stop the build.
 
-The New Testament keeps Scrivener's paragraphs and poetry; [the New Testament text](new-testament.md#lines-of-verse) lists the passages. The documents preserve semantic lines; export supplies their indentation for PTXprint, with continuation lines indented farther. Neither step changes the words or their capitalization.
+The New Testament keeps Scrivener's paragraphs and poetry; [the New Testament text](new-testament.md#lines-of-verse) lists the passages. The documents preserve semantic lines; export supplies their indentation for PTXprint, with continuation lines indented farther, opens every chapter in a paragraph of its own as the Berean Standard Bible does, and sets blank lines: before and after a poem within prose, before the chapter where a poem begins or ends one, before a chapter that opens with a title, before a title within a chapter, and after a title, so that a title stands one line from its poem as stanzas stand from each other, and as far from the words before it. A heading supplies its own space, so no blank line stands before one. Neither step changes the words or their capitalization.
 
 ## Front matter and appendices
 
 Each translation's front matter stands before its own testament, so that the introductions sit next to the text they describe. Their wording is kept apart from the omissions recorded in `edition/book-introductions.json` and `edition/prose.json`; their citations, abbreviations and book names are brought into this edition's style.
 
-- **Old Testament:** Brenton's preface (1844), his introduction (1870), and the introduction to the Apocrypha.
+- **Old Testament:** Brenton's preface (1844), his introduction (1870), and the revised introduction to the Apocrypha (1906).
 - **New Testament:** the translators' dedication to King James and their preface, "The Translators to the Reader".
 - **After Revelation:** the readings of the Byzantine text: every New Testament verse in which the two Greek texts differ, with the Greek of both and, where the English changes, the words of both Bibles. The English changes are based on Pierpont's instructions. Where an instruction cannot be applied or its wording does not fit, a fitting KJV parallel is preferred, then Pierpont, the Revised Version of 1881, and Boyd's Byzantine ASV of 2021; Boyd's Text-Critical English New Testament and Thomason's Far Above All are occasionally consulted, in that order.
 
-The introduction to the Apocrypha is not Brenton's. It describes the Hebrew text of Ecclesiasticus found from 1896, so it was written for a later reissue, after his death in 1862. It stands with the Old Testament rather than after Revelation, because those books are part of this Old Testament. Its general paragraphs stay at the front, and its account of each book is printed as a footnote at the start of that book. The comparison of First Esdras with the sixth Article of Religion, the sentence about the Western Church’s canon of Maccabees, and the sentence about translations of Third and Fourth Maccabees made for the original edition are omitted.
+The introduction to the Apocrypha is the revision published in Bagster's second edition of *The Apocrypha: Greek and English, in Parallel Columns* (1906), after Brenton's death in 1862. The [source documentation](../sources/README.md#apocrypha-introduction) records the contemporary evidence for this attribution. It stands with the Old Testament rather than after Revelation, because those books are part of this Old Testament. Its general paragraphs stay at the front, and its account of each book is printed as a footnote at the start of that book. The comparison of First Esdras with the sixth Article of Religion, the sentence about the Western Church’s canon of Maccabees, and the sentence about translations of Third and Fourth Maccabees made for the original edition are omitted.
 
 Brenton's Appendix is not printed as a unit. The passages it supplies from Codex Alexandrinus stand in their books, and its eight notes (on 2 Kingdoms 5:18, Job 25:2 and 39:13, Psalm 41:5, Proverbs 8:5, Esaias 2:6, Jezekiel 16:44 and the Complutensian verses of Exodus 28) are printed as footnotes at the foot of the page, with a numbered caller before the word discussed or at the start of the verse for notes on the whole verse; the labels that named the verses are dropped. The margin notes that only sent the reader to the Appendix are left out, and the pointer is dropped from those that say more; the three margin notes of 1844 that the Bagster printings dropped in favour of the Appendix (Job 25:2, Job 39:13, Jezekiel 16:44) are restored.
 
@@ -89,7 +91,7 @@ An evident slip of the scribe stays a note too, though Swete is sure of it: a na
 
 No margin note on the scripture leaves a mark in the text. The sources' footnotes and marginal notes, and the edition's own notes on the readings it prints, are printed in the inside margin, beside their verse. Only the front matter, the accounts of the books and the notes of Brenton's Appendix use footnotes, with numbered callers. Each note begins with the verse's number and the words it is about, followed by a colon:
 
-> **20** I doubted of such manner of questions: or, _I was doubtful how to enquire hereof_
+> **20** I doubted of such manner of questions: or, *I was doubtful how to enquire hereof*
 
 The same style applies in both testaments:
 
@@ -97,13 +99,13 @@ The same style applies in both testaments:
 - Labels, references and explanatory comments are in roman.
 - A note runs on from its colon in lowercase, except for names and the opening capital of a quotation.
 - A complete sentence is capitalized and punctuated as one. A fragment has no final full stop.
-- A note quotes enough of the verse to be unambiguous. If that takes more words, the same words are added to the rendering: "of: or, _with_" in Matthew 6:1 becomes "of your Father: or, _with your Father_".
+- A note quotes enough of the verse to be unambiguous. If that takes more words, the same words are added to the rendering: "of: or, *with*" in Matthew 6:1 becomes "of your Father: or, *with your Father*".
 
 For alternative renderings, this convention adheres to the Liskov substitution principle: the rendering in the note must be able to replace the words it is about in the verse without breaking the grammar of the surrounding sentence.
 
 ### The Received Text's readings
 
-Where the New Testament's words are changed to the Byzantine text's, a note marked TR gives the Received Text's words, in the style above: "fruit: TR _fruits_" replaces the words it is about, "said: TR adds _by them of old time_" puts words after them, "verily: TR omits" takes them out, and "but who: TR omits _but_" takes out a part of them. An omitted verse is quoted in a note on the verse before it, and a moved passage is noted at both its places. Where the King James English is corrected and the Greek is the same in both texts, the note gives the former words after "or," with no witness ("in thy kingdom: or, _into thy kingdom_"). [The New Testament text](new-testament.md#the-notes) explains how the words a note is about are chosen.
+Where the New Testament's words are changed to the Byzantine text's, a note marked TR gives the Received Text's words, in the style above: "fruit: TR *fruits*" replaces the words it is about, "said: TR adds *by them of old time*" puts words after them, "verily: TR omits" takes them out, and "but who: TR omits *but*" takes out a part of them. An omitted verse is quoted in a note on the verse before it, and a moved passage is noted at both its places. Where the King James English is corrected and the Greek is the same in both texts, the note gives the former words after "or," with no witness ("in thy kingdom: or, *into thy kingdom*"). [The New Testament text](new-testament.md#the-notes) explains how the words a note is about are chosen.
 
 ### The 1611 marginal notes
 
@@ -121,7 +123,7 @@ Brenton's source sets labels and cited words alike in italic; the edition tells 
 
 Where the New Testament quotes the Old, both ends are linked: the first verse of the quotation names the passage it quotes, and the first verse of that passage names the quotation. A gloss after the reference says which text the quotation follows.
 
-The judgments are David McCalman Turpie's, from _The Old Testament in the New_ (1868). It is in the public domain, covers every quotation, and judges the underlying Hebrew and Greek texts rather than either English version. Turpie gives each quotation one of five classes, A–E, according to its agreement with the Hebrew and the Septuagint ([introductory remarks, p. XVI](https://archive.org/download/oldtestamentinne00turp/oldtestamentinne00turp.pdf#page=22)).
+The judgments are David McCalman Turpie's, from *The Old Testament in the New* (1868). It is in the public domain, covers every quotation, and judges the underlying Hebrew and Greek texts rather than either English version. Turpie gives each quotation one of five classes, A–E, according to its agreement with the Hebrew and the Septuagint ([introductory remarks, p. XVI](https://archive.org/download/oldtestamentinne00turp/oldtestamentinne00turp.pdf#page=22)).
 
 | Turpie's class | Gloss | Meaning |
 | --- | --- | --- |
@@ -155,7 +157,7 @@ Every citation, in the notes and in the front and back matter, is printed one wa
 
 Brenton usually cites by his own numbers, but not always: "Comp. Jer. 9. 24" at 1 Kingdoms 2:10 is the English number of his own 9:23. The translators of 1611 cite by the King James Bible's numbers. Both are converted, as under [Numbering](#numbering).
 
-Abbreviations and numbers follow _The Chicago Manual of Style_:
+Abbreviations and numbers follow *The Chicago Manual of Style*:
 
 - Initialisms have no periods. Other abbreviations have standard spacing, capitalization and periods. The New Testament's notes and the appendix of readings use TR for the Received Text, RP for the Byzantine text of Robinson and Pierpont, and KJV for the King James Version, all listed.
 - The names of versions and texts are printed in full, such as the Vulgate and the Authorized Version, however Brenton writes them. The witnesses he cites most keep their labels: "Alex.", "Vat." and "Heb.", with "LXX" for his "Sept.".
@@ -183,7 +185,7 @@ In English, a comma, semicolon or colon that duplicates the break another mark m
 
 ## Typography
 
-- Words the translators supplied, which many Bibles print in italics, are set in ordinary type.
+- Words the translators supplied, which many Bibles print in italics, are set in ordinary type. In a title set in italic, such as a Psalm's superscription, they are set in italic with the rest.
 - Running prose uses typographic quotation marks. In the notes, italic takes their place around cited words.
 - Greek is set in GFS Didot and Hebrew in Ezra SIL.
 

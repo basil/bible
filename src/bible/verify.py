@@ -39,8 +39,8 @@ POINTS_PER_MM = 72 / 25.4
 # TeX points (72.27 to the inch) in a PDF point.
 TEX_POINTS = 72.27 / 72
 XHTML = "{http://www.w3.org/1999/xhtml}"
-# Notes, character styles, table cells and the Psalter's headings, which
-# PTXprint must keep.
+# Notes, character styles, table cells, the Psalter's headings, and the
+# Pause lines and acrostic headings, which PTXprint must keep.
 KEPT_MARKERS = {
     *(
         "f",
@@ -60,6 +60,8 @@ KEPT_MARKERS = {
         "s2",
         "s3",
         "sd2",
+        "qr",
+        "qa",
     )
 }
 # PTXprint's record of where the final run set a margin note: its reference,

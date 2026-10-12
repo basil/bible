@@ -326,6 +326,9 @@ def lined(
         lines.scrivener(read_sources.kjv, policy),
     )
     require("PSA" in brenton, "Psalter decisions without the Psalms")
+    require("LAM" in brenton, "Acrostic names without Lamentations")
+    brenton = {code: lines.pauses(doc) for code, doc in brenton.items()}
+    brenton["LAM"] = lines.acrostics(brenton["LAM"])
     brenton["PSA"] = psalter.divided(brenton["PSA"], policy.psalter)
     return MappingProxyType({**units, **brenton})
 
@@ -833,8 +836,8 @@ def sample_chapters(code: str, doc: Document, wanted: Sequence[int]) -> Document
     """The header and the wanted chapters of a book, for the typesetting sample.
 
     A heading set just before a chapter (Susanna, Bel and the Dragon) opens
-    that chapter, so it is kept or dropped with it. A chapter cannot continue
-    the paragraph of an omitted chapter, so its nb becomes p.
+    that chapter, so it is kept or dropped with it. Export opens every
+    chapter in a paragraph of its own, so none continues an omitted one's.
     """
     header, chapters = assembly.chapters_of(doc)
     parts = [list(header), *(list(chapter) for chapter in chapters)]
@@ -847,20 +850,13 @@ def sample_chapters(code: str, doc: Document, wanted: Sequence[int]) -> Document
             at -= 1
         parts[index + 1] = blocks[at:] + parts[index + 1]
         parts[index] = blocks[:at]
-    kept, previous, seen = [*parts[0]], True, set()
+    kept, seen = [*parts[0]], set()
     for blocks in parts[1:]:
         at = next(i for i, block in enumerate(blocks) if block["type"] == "chapter")
         number = int(blocks[at]["number"])
         if number in wanted:
             seen.add(number)
-            if not previous and usj.is_type(blocks[at + 1], "para", "nb"):
-                blocks = [
-                    *blocks[: at + 1],
-                    {**blocks[at + 1], "marker": "p"},
-                    *blocks[at + 2 :],
-                ]
             kept += blocks
-        previous = number in wanted
     require(seen == set(wanted), f"Sample chapters missing from {code}: {list(wanted)}")
     return usj.with_blocks(doc, kept)
 
@@ -955,19 +951,27 @@ def font_runs(content: Content) -> Content:
     return [item for item in result if item != ""]
 
 
+# The paragraphs of the body: prose, and the lines of a poem.
+PROSE = frozenset("p m mi nb".split())
+POEM = frozenset("q1 q2 qr".split())
+BODY = PROSE | POEM
+# What a poem opens with: a line, or an acrostic heading.
+OPENING = POEM | {"qa"}
+
+
 def indented(doc: Document) -> Document:
     """Poetry indented for PTXprint: a line that opens a verse, a
     poem or a stanza at the first level, and a line that goes on with a verse
     at the second. The line stage uses q1; Scrivener's existing markers
-    survive it. This export step supplies continuation indentation."""
+    survive it. An acrostic heading starts the following line at the first
+    level. This export step supplies continuation indentation."""
     result: list[Node] = []
     for block in doc["content"]:
         first = next(iter(block.get("content", [])), None)
         if (
             usj.is_type(block, "para", "q1")
             and result
-            and usj.is_type(result[-1], "para")
-            and result[-1]["marker"] in ("q1", "q2")
+            and paragraph(result[-1]) in POEM
             and not usj.is_type(first, "verse")
         ):
             block = {**block, "marker": "q2"}
@@ -975,10 +979,74 @@ def indented(doc: Document) -> Document:
     return usj.with_blocks(doc, result)
 
 
+def paragraph(node: Node | None) -> str | None:
+    """A paragraph's marker; None for any other block, or for none."""
+    return node["marker"] if usj.is_type(node, "para") else None
+
+
+def spaced(doc: Document) -> Document:
+    """Blank lines for PTXprint: a poem gets one where it begins after prose
+    and where prose resumes after it, and a title where it follows the body
+    and before its own words, so that it stands as far from them as from
+    those before it. A chapter that opens with a poem or a title gets one
+    before it, and so does a chapter where prose resumes after a poem. A
+    heading supplies its own space, so a blank line directly before one goes.
+    An acrostic heading opens its poem as a line would, and adds no space
+    within the poem; existing blanks remain. Only the form of what prints
+    changes, never the words."""
+    blocks = doc["content"]
+    result: list[Node] = []
+    for at, block in enumerate(blocks):
+        marker = paragraph(block)
+        before = paragraph(result[-1]) if result else None
+        after = paragraph(blocks[at + 1]) if at + 1 < len(blocks) else None
+        if marker == "b":
+            blank = after not in usj.HEADINGS and after != "d"
+        elif usj.is_type(block, "chapter"):
+            blank = before in BODY and (
+                after in OPENING or after == "d" or (before in POEM and after in PROSE)
+            )
+        elif marker == "d":
+            blank = before in BODY
+        elif marker in OPENING:
+            blank = before in PROSE or before == "d"
+        elif marker in PROSE:
+            blank = before in POEM or before == "d"
+        else:
+            blank = False
+        if blank and before != "b":
+            result.append(usj.para("b"))
+        if marker != "b":
+            result.append(block)
+    return usj.with_blocks(doc, result)
+
+
+def opened(doc: Document) -> Document:
+    """Each chapter opening in a paragraph of its own, as the Berean Standard
+    Bible sets it: a chapter that goes on with its source's paragraph, or
+    opens one flush left, opens it as any other. The chapter figure sets its
+    first line alike either way."""
+    blocks = doc["content"]
+    return usj.with_blocks(
+        doc,
+        [
+            (
+                {**block, "marker": "p"}
+                if at
+                and usj.is_type(blocks[at - 1], "chapter")
+                and paragraph(block) in ("m", "nb")
+                else block
+            )
+            for at, block in enumerate(blocks)
+        ],
+    )
+
+
 def exported(code: str, doc: Document, edition: Edition) -> str:
     """A document as PTXprint takes it: under its project id; its notes'
     origins without their chapter, which the chapter figure and running head
-    supply; its lines of verse indented; and its Greek and Hebrew tagged for
+    supply; its lines of verse indented, its chapters opened in paragraphs
+    of their own and its blank lines set; and its Greek and Hebrew tagged for
     their fonts. The edition's own pages are sent as the editor wrote them."""
 
     def origin(item: Node) -> Node:
@@ -993,9 +1061,12 @@ def exported(code: str, doc: Document, edition: Edition) -> str:
         items = usj.mapped(items, origin)
         return items if code in edition.authored else font_runs(items)
 
+    doc = indented(doc)
+    if code not in edition.authored:
+        doc = spaced(opened(doc))
     # A unit printed from a file that holds another, or under an id that
     # PTXprint would take for its own front matter, is a unit of its own.
-    return usj.serialize(usj.with_code(usj.with_content(indented(doc), content), code))
+    return usj.serialize(usj.with_code(usj.with_content(doc, content), code))
 
 
 def export(edition: Edition, mode: str) -> list[tuple[str, str]]:

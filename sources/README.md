@@ -25,6 +25,12 @@ The archives below were retrieved from eBible.org on the dates shown.
 
 The Brenton and King James texts in `eng-Brenton_usfm.zip` and `engkjvcpb_usfm.zip` are in the public domain outside the United Kingdom. Brenton's is also in the public domain in the UK, where the right to print and publish the King James Version belongs to the Crown and is licensed only to certain publishers under letters patent. See the [UK Intellectual Property Office's guidance](https://www.gov.uk/government/publications/copyright-notice-duration-of-copyright-term/copyright-notice-duration-of-copyright-term). `brenton-notice.html` and `kjv-notice.html` are unaltered copies of eBible's [Brenton](https://ebible.org/eng-Brenton/copyright.htm) and [KJV](https://ebible.org/engkjvcpb/copyright.htm) copyright pages, saved the same day.
 
+### Apocrypha introduction
+
+The introduction headed “THE BOOKS OF THE APOCRYPHA” in `98-OTHeng-Brenton.usfm`, within `eng-Brenton_usfm.zip`, contains the revised introduction published in Samuel Bagster & Sons' *The Apocrypha: Greek and English, in Parallel Columns*, second edition (1906), after Brenton's death in 1862. The [catalogue record](https://openlibrary.org/books/OL58281461M/The_Apocrypha) identifies the edition and records the introduction as signed “H.P.”.
+
+A contemporary review in *The University Review*, vol. IV, October 1906, pp. 74–75, names the second edition and its year, describes its introduction as revised, and quotes the paragraph beginning “It forms a portion of the Bible of Christendom”, which appears in the pinned eBible introduction. See the [review scan](https://archive.org/details/universityrevie00unkngoog/page/74/mode/2up). This edition retains the general introduction as front matter and places its accounts of individual books and sections in opening footnotes, as recorded in `edition/book-introductions.json`.
+
 ## Swete’s Greek edition
 
 `edition/alexandrinus.json` cites Henry Barclay Swete, *The Old Testament in Greek according to the Septuagint*, third edition: volume I (1901), volume II (1907), and volume III (1905). The decisions cite printed page numbers. Swete’s apparatus checks Brenton’s reports of Codex Alexandrinus and settles the placement of supplied English passages; it is not an additional English translation printed in the edition.

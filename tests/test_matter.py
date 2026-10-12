@@ -183,14 +183,14 @@ def test_an_appendix_note_stands_at_words_found_once(
         alexandrinus.anchor(verse, "fear and beginning", "JOB 25:2")
 
 
-def test_front_matter_notes_drop_the_origin_that_names_no_verse() -> None:
+def test_front_matter_notes_are_numbered_without_origins_that_name_no_verse() -> None:
     # eBible gives the notes of its front matter, which has no verses, the
     # origin "1:0": they print under their callers alone. A real origin stays.
     doc = usj.parse(
         "\\id XXB\n\\ip Words\\f + \\fr 1:0 \\ft A title\\f* and"
-        "\\f + \\fr 3:12 \\ft Cited\\f* more.\n"
+        "\\f * \\fr 3:12 \\ft Cited\\f* more.\n"
     )
-    assert usj.serialize(matter.without_empty_origins(doc)) == (
+    assert usj.serialize(matter.numbered_notes(doc)) == (
         "\\id XXB\n\\ip Words\\f + \\ft A title\\f* and"
         "\\f + \\fr 3:12 \\ft Cited\\f* more.\n"
     )

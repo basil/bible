@@ -148,6 +148,21 @@ def test_usj_agrees_with_the_reference_parser(
     )
 
 
+@pytest.mark.parametrize("marker", ["qr", "qa"])
+def test_source_instruction_markers_agree_with_reference_parser(
+    marker: str, tmp_path: Path
+) -> None:
+    import usfmtc
+
+    text = f"\\id LAM\n\\c 1\n\\{marker}\n\\v 1 \\sc Aleph.\\sc*\n"
+    path = tmp_path / "LAM.usfm"
+    path.write_text(text, encoding="utf-8")
+    ours = usj.parse(text)
+    theirs = usfmtc.readFile(str(path)).outUsj(None)
+    assert ours["content"][2]["marker"] == theirs["content"][2]["marker"] == marker
+    assert usj.parse(usj.serialize(ours)) == ours
+
+
 CONTENT = usj.parse(
     r"the straight \add way\add* of \f + \fr 1:1 \ft a note\f*life \it ends\it*.",
     fragment=True,

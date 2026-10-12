@@ -651,18 +651,20 @@ def renamed(
     return unit
 
 
-def without_empty_origins(doc: Document) -> Document:
-    """A unit without the origins of its notes that name no verse: those
-    notes print under their callers alone."""
+def numbered_notes(doc: Document) -> Document:
+    """A unit whose notes use automatic numbered callers, without origins
+    that name no verse: those notes print under their callers alone."""
 
-    def origin(item: Node) -> Node | None:
+    def numbered(item: Node) -> Node | None:
+        if usj.is_type(item, "note"):
+            return {**item, "caller": "+"}
         if usj.is_type(item, "char", "fr") and EMPTY_ORIGIN.fullmatch(
             usj.text_of(item["content"])
         ):
             return None
         return item
 
-    return usj.with_content(doc, lambda content: usj.mapped(content, origin))
+    return usj.with_content(doc, lambda content: usj.mapped(content, numbered))
 
 
 def unpunctuated(unit: Unit) -> Unit:
@@ -798,7 +800,7 @@ def unit(
     shown = unpunctuated(shown)
     shown = renamed(shown, code, ctx.books, policy)
     shown = with_terms(shown, ctx.terms)
-    result = without_empty_origins(usj.with_blocks(doc, [block for block, _ in shown]))
+    result = numbered_notes(usj.with_blocks(doc, [block for block, _ in shown]))
     if is_glossary(entry):
         result = terminology.completed_glossary(
             result, terminology.dropped_rows(source, policy), policy

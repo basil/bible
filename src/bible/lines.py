@@ -9,6 +9,10 @@ before. A break the words do not place, or place two ways, is given in
 edition/lines.json or stops the build; a decision there may also set a line
 where the words would place it otherwise.
 
+After alignment, terminal “Pause.” instructions stand in right-aligned
+lines, and Brenton’s existing small-cap Lamentations acrostic names in
+headings. Both preserve the source wording, styles, notes and verse nodes.
+
 The New Testament keeps Scrivener's paragraphs and poetry unchanged.
 """
 
@@ -32,8 +36,12 @@ from bible.usj import Content, Document, Node
 type Witness = Callable[[str, str], bool | None]
 
 # The paragraph markers of a line and of a stanza break, and of the prose
-# that resumes after a poem without a paragraph of its own.
-LINE, STANZA, RESUMED = "q1", "b", "m"
+# that resumes after a poem without a paragraph of its own: a new paragraph,
+# within a verse too, as the Berean Standard Bible sets it.
+LINE, STANZA, RESUMED = "q1", "b", "p"
+# The update's marker for prose that goes on flush left, which resumes as
+# RESUMED does.
+FLUSH = "m"
 # A block whose marker these are keeps it whatever the update has: a psalm's
 # title, a heading.
 FIXED = frozenset({"d", "s1", "ms1"})
@@ -423,7 +431,9 @@ def update_spans(chapter: Chapter, doc: Document) -> list[Span]:
                 f"Unsupported line marker \\{marker}: chapter {chapter.number}",
             )
             if start is not None:
-                resume = None if marker in FIXED else marker
+                resume = (
+                    None if marker in FIXED else RESUMED if marker == FLUSH else marker
+                )
                 spans.append(Span(start, tuple(lines), first, resume, start_stanza))
                 start, lines = None, []
         stanza = False
@@ -528,7 +538,7 @@ def witnessed(
 ) -> list[Span]:
     """The poems' lines that a second witness sets as verse too: each run
     of them a poem, with prose resuming after it under the source's own
-    paragraph where one begins there, or flush left where none does. A
+    paragraph where one begins there, or a new one where none does. A
     poem that opens after a dropped line opens without the stanza break
     that followed it, which stood between two lines of verse."""
     result: list[Span] = []
@@ -726,6 +736,196 @@ def _pieces(
         at = offset
     pieces.append((*previous, usj.trimmed(rest)))
     return pieces
+
+
+def _divided(block: Node, cuts: Sequence[tuple[int, str, bool]]) -> list[Node]:
+    """A block divided at its cuts, each piece under the marker of its cut."""
+    return [
+        {**block, "marker": marker or block["marker"], "content": content}
+        for marker, _, content in _pieces(block["content"], cuts)
+        if content
+    ]
+
+
+# Source instructions and acrostic names, after the lines have been placed.
+
+
+# The instructions Brenton leaves within their verses, which stay inline.
+INLINE_PAUSES = frozenset({"PSA 67:8"})
+
+
+def _verses_at(content: Iterable[str | Node]) -> list[tuple[int, str]]:
+    """Where each verse of some content begins among its words."""
+    starts: list[tuple[int, str]] = []
+    offset = 0
+    for item in content:
+        if isinstance(item, str):
+            offset += len(item)
+        elif usj.is_type(item, "verse"):
+            starts.append((offset, item["number"]))
+        elif "content" in item and not usj.is_note(item):
+            offset += len(usj.text_of(item["content"]))
+    return starts
+
+
+def pauses(doc: Document) -> Document:
+    """Set a terminal Pause instruction on its own right-aligned line.
+
+    Only a standalone sentence in poetry qualifies; a song's attribution,
+    prose and notes keep their form. The existing caller stays with Pause.
+    Refuse any other Pause in the words unless its verse is declared to keep
+    it inline, and a declaration in the document's chapters that no Pause
+    meets.
+    """
+    book = usj.book_code(doc)
+    blocks: list[Node] = []
+    chapter, verse = "", ""
+    kept: set[str] = set()
+    chapters: set[str] = set()
+    for block in doc["content"]:
+        if usj.is_type(block, "chapter"):
+            chapter, verse = block["number"], ""
+            chapters.add(f"{book} {chapter}")
+        content = block.get("content", [])
+        text = usj.text_of(content)
+        starts = _verses_at(content)
+        cut = None
+        for match in re.finditer(r"\bPause\b", text):
+            number = next(
+                (v for at, v in reversed(starts) if at <= match.start()), verse
+            )
+            here = f"{book} {chapter}:{number}"
+            before = text[: match.start()].rstrip()
+            terminal = re.fullmatch(r"Pause\.\s*", text[match.start() :])
+            if before.endswith("A song of") or (
+                block.get("marker") == "qr" and terminal and not before
+            ):
+                continue
+            if (
+                block.get("marker") in {"q1", "q2"}
+                and terminal
+                and (not before or before[-1] in ".!?")
+            ):
+                cut = match.start()
+            elif here in INLINE_PAUSES:
+                kept.add(here)
+            else:
+                require(False, f"Unexpected Pause instruction: {here}")
+        if starts:
+            verse = starts[-1][1]
+        blocks += _divided(block, [(cut, "qr", False)]) if cut is not None else [block]
+    declared = {key for key in INLINE_PAUSES if key.split(":")[0] in chapters}
+    require(
+        kept == declared,
+        f"Inline Pause declarations no Pause meets: {sorted(declared - kept)}",
+    )
+    return usj.with_blocks(doc, blocks)
+
+
+# These are Brenton's spellings and placements, including the repeated Teth
+# in chapter 3 and the names inside verses. They describe the pinned source,
+# not a reconstructed Hebrew alphabet; no absent label is supplied.
+ACROSTIC_NAMES = tuple(
+    "Aleph. Beth. Gimel. Daleth. He. Vau. Zain. Heth. Teth. Jod. "
+    "Chaph. Lamed. Mem. Nun. Samech. Ain. Phe. Tsade. Koph. Rhechs. "
+    "Chsen. Thau.".split()
+)
+
+
+def acrostic_inventory(chapter: str) -> list[tuple[str, str]]:
+    """Brenton's acrostic names in a chapter, with their verses: none
+    outside Lamentations 1–4."""
+    if chapter not in ("1", "2", "3", "4"):
+        return []
+    names = list(ACROSTIC_NAMES)
+    labels = [str(n) for n in range(1, 23)]
+    if chapter == "3":
+        names[19] = "Rechs."
+        names.insert(9, "Teth.")
+        labels = (
+            "1 5 8 9 12 15 19 21a 25 27 30 32 34 39 40 43 45 49 52 55 58 61 65".split()
+        )
+    elif chapter == "4":
+        names[19] = "Rechs."
+        labels = "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 17 18 20 21 22".split()
+    return list(zip(labels, names, strict=True))
+
+
+# The names Brenton sets inside their verses rather than at their openings.
+WITHIN_VERSE = frozenset(
+    {("3", "45", "Ain."), ("4", "17", "Tsade."), ("4", "18", "Koph.")}
+)
+
+
+def acrostics(doc: Document) -> Document:
+    """Give the existing small-cap names of Lamentations 1–4 qa headings.
+
+    Split at word offsets, keeping each verse node before the words it
+    governed. Headings add no stanza breaks and preserve the sc spans.
+    Refuse a changed inventory, an unexpected placement in its verse, or a
+    declared placement that is no longer met.
+    """
+    blocks: list[Node] = []
+    chapter, verse = "", ""
+    expected: list[tuple[str, str]] = []
+    seen: list[tuple[str, str]] = []
+    within: set[tuple[str, str, str]] = set()
+    # Whether the verse's words have begun before the place reached.
+    begun = False
+
+    def check_chapter() -> None:
+        require(
+            seen == expected,
+            f"Unexpected acrostic inventory: LAM {chapter}:{verse}: {seen!r}",
+        )
+        declared = {name for name in WITHIN_VERSE if name[0] == chapter}
+        require(
+            within == declared,
+            "Unexpected acrostic placement: "
+            + ", ".join(f"LAM {c}:{v}: {t!r}" for c, v, t in sorted(within ^ declared)),
+        )
+
+    for block in doc["content"]:
+        if usj.is_type(block, "chapter"):
+            check_chapter()
+            chapter, verse = block["number"], ""
+            expected = acrostic_inventory(chapter)
+            seen, within, begun = [], set(), False
+        cuts: list[tuple[int, str, bool]] = []
+        offset = 0
+        for item in block.get("content", []):
+            if usj.is_type(item, "verse"):
+                verse, begun = item["number"], False
+            elif isinstance(item, str):
+                offset += len(item)
+                begun = begun or bool(item.strip())
+            elif "content" in item and not usj.is_note(item):
+                text = usj.text_of(item["content"])
+                if item.get("marker") == "sc" and verse:
+                    address = f"LAM {chapter}:{verse}"
+                    require(
+                        (verse, text) in expected,
+                        f"Unexpected acrostic label: {address}: {text!r}",
+                    )
+                    seen.append((verse, text))
+                    if begun:
+                        within.add((chapter, verse, text))
+                    if block.get("marker") != "qa":
+                        require(
+                            block.get("marker") in {"q1", "q2"},
+                            f"Acrostic outside poetry: {address}",
+                        )
+                        cuts.extend(
+                            [
+                                (offset, "qa", False),
+                                (offset + len(text), block["marker"], False),
+                            ]
+                        )
+                offset += len(text)
+                begun = begun or bool(text.strip())
+        blocks += _divided(block, cuts) if cuts else [block]
+    check_chapter()
+    return usj.with_blocks(doc, blocks)
 
 
 def check(policy: bible.policy.Policy) -> None:

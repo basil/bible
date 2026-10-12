@@ -929,16 +929,7 @@ def test_the_sample_prints_selected_chapters_as_the_full_edition_has_them(
             for blocks in assembly.chapters_of(without_divisions(full[code]))[1]
         }
         for blocks in wanted:
-            # A chapter that followed an omitted one may open a paragraph of its own.
-            first = [
-                b if b.get("marker") != "p" else {**b, "marker": "nb"}
-                for b in blocks[:2]
-            ]
-            assert blocks[2:] == whole[blocks[0]["number"]][2:], code
-            assert blocks[:2] == whole[blocks[0]["number"]][:2] or first == [
-                b if b.get("marker") != "p" else {**b, "marker": "nb"}
-                for b in whole[blocks[0]["number"]][:2]
-            ], code
+            assert blocks == whole[blocks[0]["number"]], code
     # A heading set before a chapter is kept with it.
     daniel = usj.serialize(sample["DAG"])
     assert daniel.count("\\s1 Susanna\n\\c 0\n\\cp ​\n") == 1
@@ -961,7 +952,7 @@ def test_what_is_typeset_carries_no_callers_and_prints_notes_by_their_verses(
         assert not re.search(r"\\ef (?!\+ )", text), code
         # The chapter is the page's to supply: an origin is its verse alone.
         assert not re.search(r"\\(?:fr|xo) \d+:", text), code
-    # Front matter's notes keep their callers, and print under them alone.
+    # Front matter's notes are numbered, and print under their callers alone.
     assert "\\f + \\ft See Preface to Lambert Bos’s edition" in exported["XXB"]
     # Greek and Hebrew are tagged for their fonts, single letters too: within
     # a note's words, and among a paragraph's.
@@ -988,6 +979,101 @@ def test_lines_that_go_on_with_a_verse_are_indented() -> None:
     )
     markers = [b.get("marker") for b in pipeline.indented(doc)["content"]]
     assert markers == ["id", "c", "p", "q1", "q2", "q1", "q2", "b", "q1"]
+
+
+def test_a_chapter_opens_in_a_paragraph_of_its_own() -> None:
+    # Matthew 5 goes on with the paragraph before it, and Scrivener opens
+    # each epistle flush left; a paragraph within a chapter keeps its marker.
+    doc = usj.parse(
+        "\\id MAT\n\\c 4\n\\p \\v 1 Prose.\n\\m and on.\n"
+        "\\c 5\n\\nb \\v 1 Prose.\n\\c 6\n\\m \\v 1 Prose.\n"
+    )
+    markers = [b.get("marker") for b in pipeline.opened(doc)["content"]]
+    assert markers == ["id", "c", "p", "m", "c", "p", "c", "p"]
+
+
+def spaced_markers(usfm: str) -> list[str | None]:
+    return [b.get("marker") for b in pipeline.spaced(usj.parse(usfm))["content"]]
+
+
+def test_a_poem_within_prose_gets_a_blank_line_before_and_after_it() -> None:
+    assert spaced_markers(
+        "\\id PRO\n\\c 25\n\\p \\v 1 Prose.\n\\q1 \\v 2 Line,\n\\q1 line.\n"
+        "\\p \\v 3 Prose again.\n"
+    ) == ["id", "c", "p", "b", "q1", "q1", "b", "p"]
+
+
+def test_a_blank_line_the_source_sets_before_a_poem_is_not_doubled() -> None:
+    assert spaced_markers(
+        "\\id SIR\n\\c 1\n\\p \\v 1 Prose.\n\\b\n\\q1 \\v 2 Line.\n"
+    ) == ["id", "c", "p", "b", "q1"]
+
+
+def test_a_title_is_set_a_line_from_its_poem_and_from_the_chapter_before() -> None:
+    assert spaced_markers(
+        "\\id PSA\n\\c 3\n\\q1 \\v 1 Line.\n\\c 4\n\\d \\v 1 A Psalm.\n"
+        "\\q1 \\v 2 Line.\n\\c 5\n\\d \\v 1 A Psalm.\n\\p \\v 2 Prose.\n"
+    ) == ["id", "c", "q1", "b", "c", "d", "b", "q1", "b", "c", "d", "b", "p"]
+
+
+def test_a_title_within_a_chapter_is_set_a_line_from_the_words_before_it() -> None:
+    # Esaias 21:11 opens a passage with a title within its chapter, and
+    # Psalm 71 closes with one.
+    assert spaced_markers(
+        "\\id ISA\n\\c 21\n\\p \\v 10 Prose.\n\\d \\v 11 A Vision.\n\\p Prose.\n"
+        "\\c 22\n\\q1 \\v 1 Line.\n\\d \\v 2 The hymns are ended.\n"
+    ) == ["id", "c", "p", "b", "d", "b", "p", "b", "c", "q1", "b", "d"]
+
+
+def test_a_chapter_between_a_poem_and_prose_gets_a_blank_line_before_it() -> None:
+    # Before a chapter that opens with a poem, and before one where prose
+    # resumes after a poem; not between two chapters of prose.
+    assert spaced_markers(
+        "\\id PRO\n\\c 8\n\\q1 \\v 1 Line.\n\\c 9\n\\q1 \\v 1 Line.\n"
+        "\\c 10\n\\p \\v 1 Prose.\n\\c 11\n\\p \\v 1 Prose.\n"
+    ) == ["id", "c", "q1", "b", "c", "q1", "b", "c", "p", "c", "p"]
+
+
+def test_headings_and_rules_supply_their_own_space() -> None:
+    assert spaced_markers(
+        "\\id PSA\n\\c 1\n\\ms1 The First Kathisma\n\\q1 \\v 1 Line.\n"
+        "\\sd2\n\\c 4\n\\d \\v 1 A Psalm.\n\\q1 \\v 2 Line.\n"
+        "\\b\n\\s2 Second Stasis\n\\q1 \\v 3 Line.\n"
+        "\\c 9\n\\ms1 The Second Kathisma\n\\d \\v 1 A Psalm.\n\\q1 \\v 2 Line.\n"
+    ) == [
+        "id",
+        "c",
+        "ms1",
+        "q1",
+        "sd2",
+        "c",
+        "d",
+        "b",
+        "q1",
+        "s2",
+        "q1",
+        "c",
+        "ms1",
+        "d",
+        "b",
+        "q1",
+    ]
+
+
+def test_a_title_keeps_the_marking_of_its_supplied_words(
+    exported: dict[str, str],
+) -> None:
+    # Psalm 4's title supplies "the", and Sirach's prologue heading most of
+    # its words; the stylesheet sets them in the title's italic.
+    psalms = exported["PSA"]
+    assert (
+        "\\v 1 For the end, a Song of David among \\add the \\add*Psalms.\n" in psalms
+    )
+    assert (
+        "\\d \\add The Prologue to the Wisdom of\\add* Jesus \\add the son of\\add* Sirach\n"
+        in exported["SIR"]
+    )
+    assert "\\v 3 \\add saying\\add*, Let us break through their bonds," in psalms
 
 
 @pytest.mark.parametrize(
@@ -2231,3 +2317,37 @@ def test_the_word_pattern_finds_the_longest_word_at_a_place() -> None:
     found = [m[0] for m in pattern.finditer(text)]
     assert found == ["has born", "has", "has", "hat", "to-day"]
     assert not revision._words([]).search("anything")
+
+
+def test_source_instructions_keep_their_export_markers_and_spacing() -> None:
+    doc = usj.parse(
+        "\\id LAM\n\\c 1\n\\q1 \\v 1 Words.\n\\qr Pause.\n"
+        "\\qa \\v 2 \\sc Beth.\\sc*\n\\q1 Words.\n\\q1 More.\n"
+        "\\b\n\\qa \\sc Gimel.\\sc*\n\\q1 Words.\n\\p Prose."
+    )
+    result = pipeline.spaced(pipeline.indented(doc))
+    assert [b.get("marker") for b in result["content"]] == [
+        "id",
+        "c",
+        "q1",
+        "qr",
+        "qa",
+        "q1",
+        "q2",
+        "b",
+        "qa",
+        "q1",
+        "b",
+        "p",
+    ]
+    assert "\\qr Pause." in usj.serialize(result)
+    assert "\\qa" in usj.serialize(result)
+
+
+def test_a_poem_that_opens_with_an_acrostic_heading_is_spaced_as_any_poem() -> None:
+    # Lamentations 1 opens its poem after a paragraph of prose, and its
+    # chapters 2 to 4 with their first names, as chapter 5 opens with a line.
+    assert spaced_markers(
+        "\\id LAM\n\\c 1\n\\p Prose.\n\\qa \\v 1 \\sc Aleph.\\sc*\n\\q1 Line.\n"
+        "\\c 2\n\\qa \\v 1 \\sc Aleph.\\sc*\n\\q1 Line.\n\\c 5\n\\q1 \\v 1 Line.\n"
+    ) == ["id", "c", "p", "b", "qa", "q1", "b", "c", "qa", "q1", "b", "c", "q1"]
