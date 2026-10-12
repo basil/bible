@@ -6,11 +6,11 @@
 
 ### Reviewing the readings from Codex Alexandrinus
 
-Each reading printed in the text is a decision in `edition/alexandrinus.json`. It records the note of Brenton's that it rests on, the words it replaces, how its English is derived from Brenton's, and Swete's evidence. The English must be Brenton's own: every change of wording, order or punctuation is declared, and the build rejects a word that is neither his nor declared as supplied.
+Each reading printed in the text is a decision in `edition/alexandrinus.json`. It records the note of Brenton's that it rests on, the words it replaces, how its English is derived, and Swete's evidence. The English must be Brenton's own, or supplied from the translations [the editorial notes](docs/edition.md#readings-from-codex-alexandrinus) name, in King James English, with the source in the reason: every change of wording, order or punctuation is declared, and the build rejects a word that is neither his nor declared as supplied.
 
 After changing a decision, run `make review` and read its entry in `build/review/alexandrinus.md`: the passage before and after with its neighbours, the footnote printed, and the Swete record. Check grammar, punctuation, names, numbers, and the words the note identifies.
 
-Print a reading when Swete gives an unambiguous position and Brenton supplies the English without substantive rewriting. Agreement with Swete does not by itself settle the English or the point of insertion, so consult the page image whenever Swete changes the placement or the interpretation. Keep a doubtful reading as a note, with its reason and a `todo`, rather than supply an unresolved English reconstruction.
+Print a reading when Swete gives an unambiguous position and the English is supported by Brenton or the translations named in the editorial notes. Agreement with Swete does not by itself settle the English or the point of insertion, so consult the page image whenever Swete changes the placement or the interpretation. Keep a doubtful reading as a note, with its reason and a `todo`, rather than supply an unresolved English reconstruction.
 
 ### Reviewing the Byzantine readings
 

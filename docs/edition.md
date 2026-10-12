@@ -68,16 +68,16 @@ The traditional notes at the ends of the epistles, such as "Written to the Roman
 
 ## Readings from Codex Alexandrinus
 
-Brenton translated the Vatican text, and gave the readings of Codex Alexandrinus in English in his notes and Appendix. Such a reading is printed in the text where Swete's edition of the Septuagint supports both the reading and its place in the verse, and Brenton supplies the English. Swete records the manuscript's later corrections along with its first writing, and a corrected reading may be printed. Otherwise the reading stays where Brenton left it.
+Brenton translated the Vatican text, and gave readings of Codex Alexandrinus in his notes and Appendix. Such a reading is printed in the text where Swete's edition of the Septuagint supports both the reading and its place in the verse, and the English is supported by Brenton or the translations named below. Swete records the manuscript's later corrections along with its first writing, and a corrected reading may be printed. Otherwise the reading stays where Brenton left it.
 
 When a reading is printed:
 
 - The words it displaces become a note marked "Vat.", Brenton's name for the text he translated, which follows Codex Vaticanus and supplies what it lacks from other copies (Genesis before 46:28, Psalms 105:27–137:6); each decision records what Swete shows of the codex. An addition is marked "Vat. omits". Where Brenton says the Hebrew reads with Alexandrinus, the note begins "Heb. agrees." (or "nearly agrees", in his qualification), with his "nearer the Heb." and "compare the Heb." kept after the Vat. words.
-- The new words are Brenton's English. Swete's other variants, for which Brenton gives no English, are not translated.
+- The new words normally come from Brenton's English. Where he gives the reading only in Greek, or his English for it is wrong or incomplete, the words his English lacks are supplied from a public-domain translation that renders the same text, and the decision declares each supplied word and names its source: R. R. Ottley's translation of Isaiah from Codex Alexandrinus (1909), or, where the Hebrew reads with Alexandrinus, the King James Version, and the Revised Version of 1885 where the King James Version does not render the idiom. Wording borrowed from Ottley or the Revised Version is adapted into King James English. Variants that Brenton does not report are not translated.
 - The words go where Alexandrinus has them, under Brenton's verse numbers.
 - A passage taken from the Appendix is removed from it, so that its English prints once.
 
-One verse is not Brenton's English. His note at 1 Kingdoms 23:12 announces the verse but gives no English, so the verse is borrowed word for word from the King James Version's 1 Samuel 23:12, and a note says so.
+One verse is borrowed whole. Brenton's note at 1 Kingdoms 23:12 announces the verse but gives no English, so the verse is taken word for word from the King James Version's 1 Samuel 23:12, and a note says so.
 
 Doubtful readings are left alone. Genesis 6:2 remains a note, because the manuscript's reading stands over an erasure and Swete is unsure of the hand.
 

@@ -31,6 +31,15 @@ The Brenton and King James texts in `eng-Brenton_usfm.zip` and `engkjvcpb_usfm.z
 
 The scans are consulted editorial evidence. The build reads the recorded decisions and citations in `edition/alexandrinus.json` and does not require the images or network access. See [Readings from Codex Alexandrinus](../docs/edition.md#readings-from-codex-alexandrinus) for the limits of this use, and [CONTRIBUTING.md](../CONTRIBUTING.md#reviewing-the-readings-from-codex-alexandrinus) for the review of each decision.
 
+## English for the readings from Codex Alexandrinus
+
+Where Brenton gives a reading of Codex Alexandrinus with no English of his own, or with English that is wrong or incomplete, a decision in `edition/alexandrinus.json` supplies the words from one of the following public-domain translations, in King James English, and names the source in its reason; [the editorial notes](../docs/edition.md#readings-from-codex-alexandrinus) say when.
+
+| Work | Where | Consulted |
+| --- | --- | --- |
+| R. R. Ottley, *The Book of Isaiah according to the Septuagint (Codex Alexandrinus)*, vol. I, Introduction and Translation, 2nd ed., Cambridge, 1909 | Internet Archive item [bookofisaiahacco00ottl](https://archive.org/details/bookofisaiahacco00ottl); the decisions cite its printed pages | 2026-10-11 |
+| The King James Version, and the Revised Version of 1885 where the King James Version does not render the idiom; both render the Hebrew, and are used where the Hebrew reads with Alexandrinus | `engkjvcpb_usfm.zip` and `eng-rv_usfm.zip` in this directory, described above and below; the decisions cite their chapters and verses | 2026-10-11 |
+
 ## Versification
 
 [`TVTMS - Translators Versification Traditions with Methodology for Standardisation for Eng+Heb+Lat+Grk+Others - STEPBible.org CC BY.txt`](<TVTMS - Translators Versification Traditions with Methodology for Standardisation for Eng+Heb+Lat+Grk+Others - STEPBible.org CC BY.txt>) is [STEP Bible](https://www.STEPBible.org)'s table of the ways Bibles number their chapters and verses, retrieved on 2026-09-28 from [STEPBible-Data](https://github.com/STEPBible/STEPBible-Data/tree/1f342173b881ba5d1a5a4cae6e7c6c3fcc7cac51/Versification) at commit `1f34217`. Data created by <www.STEPBible.org> based on work at Tyndale House Cambridge (CC BY 4.0). The file is unaltered. Its header asks users to refer others to [github.com/STEPBible](https://github.com/STEPBible) rather than redistribute it; it is committed here, as its licence allows, so that the checks that read it never need the network. Look there for the current version.

@@ -541,6 +541,7 @@ def test_the_decisions_are_the_few_the_words_do_not_place(
     assert list(policy.lines["breaks"]) == [
         "JOB 2:11",
         "JOB 42:17e",
+        "PSA 41:9",
         "PSA 87:19",
         "PSA 91:10",
         "PSA 94:3",

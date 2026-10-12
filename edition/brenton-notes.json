@@ -921,7 +921,13 @@
         "to": "I \\f + \\fr 3:21 \\ft Gr. commit to.\\f*lay up",
         "why": "eBible dropped the note: Brenton’s printings give Gr. commit to. on lay up (1844 p. 798; 1879 p. 976; 1900 p. 976)."
       }
-    ]
+    ],
+    "JON 1:8": {
+      "from": "for those whose cause",
+      "to": "for whose cause",
+      "why": "Brenton prints ‘for whose cause this evil is upon us’ (1879, physical page 1110); those is a stray word",
+      "uncategorized": true
+    }
   },
   "notes": {
     "GEN 1:9#2": {
@@ -2206,10 +2212,6 @@
       "lemma": "inferior",
       "why": "Gr. an inferior thing renders inferior; to us stays"
     },
-    "1SA 30:26": {
-      "note": "Heb. and Alex. '_Lo! a blessing from you_.' etc.",
-      "why": "the rendering runs to the closing quotation mark"
-    },
     "2SA 1:18": {
       "lemma": "gave orders",
       "why": "Gr. told renders gave orders"
@@ -2390,10 +2392,6 @@
     "1KI 5:17#2": {
       "lemma": "because of",
       "why": "from the face of renders because of"
-    },
-    "1KI 5:18": {
-      "lemma": "trespass",
-      "why": "the Alex. word is for trespass"
     },
     "1KI 5:23": {
       "lemma": "land them",

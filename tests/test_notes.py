@@ -117,7 +117,7 @@ def test_editorial_note_styles_and_punctuation(
     assert rows["PSA 113:24"]["note"] == "Gr. sing."
     assert "_suburbs_ above" in rows["JOS 21:13"]["note"]
     assert rows["JOS 20:7#2"]["note"] == "or, _of Nephthali_"
-    assert "_Lo! a blessing from you_ etc." in rows["1SA 30:26"]["note"]
+    assert rows["1SA 30:26"]["note"] == "Heb. agrees. Vat. _Behold some_"
     assert rows["JHN 18:13 year"]["lemma"] is None
     assert rows["JHN 18:13 year"]["note"] == (
         "_And Annas sent Christ bound unto Caiaphas the high priest_, v. 24"
@@ -628,7 +628,7 @@ def test_a_sign_after_no_witness_is_refused(
 def test_every_note_is_printed_replaced_by_a_link_or_explicitly_omitted(
     edition: bible.pipeline.Edition,
 ) -> None:
-    assert edition.summary["printed_notes"] == 4336
+    assert edition.summary["printed_notes"] == 4337
     rows = [row for listed in edition.notes.values() for row in listed]
     assert len({row["key"] for row in rows}) == len(rows)
     # The 1611 margin is printed on the New Testament alone, and whole but
@@ -894,9 +894,9 @@ def test_surviving_additions_keep_their_printed_words(
             "override",
         ),
         "JON 1:8": (
-            "Tell us",
-            "Alex. adds _for those whose cause this evil is upon us_",
-            "addition before",
+            "for whose cause this evil is upon us",
+            "Vat. omits",
+            "edition reading",
         ),
         "PSA 132:1": ("A Song of Degrees", "Alex. adds _for David_", "explanatory"),
     }

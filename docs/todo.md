@@ -34,23 +34,22 @@ Each of these is a question about a rule. One decision settles every note it cov
 
 ## 2. Readings from Codex Alexandrinus
 
-The 46 decisions in `kept` in `edition/alexandrinus.json` that carry `"todo": true` are readings that are still only notes. Each is settled by printing the reading, which moves its decision to `readings` or `passages`, or by keeping the note for good, which removes its `todo` and updates its `why`. Sections 2.1–2.6 group them by what stands in the way.
+The 35 decisions in `kept` in `edition/alexandrinus.json` that carry `"todo": true` are readings that are still only notes. Each is settled by printing the reading, which moves its decision to `readings` or `passages`, or by keeping the note for good, which removes its `todo` and updates its `why`. Sections 2.1–2.6 group them by what stands in the way.
 
-### 2.1 Greek with no English from Brenton (13)
+### 2.1 Greek with no English from Brenton (9)
 
-Swete confirms the Greek, but Brenton gives it only in Greek, so printing it needs English of the edition's own. One policy decision settles the group: whether the edition ever supplies its own English.
+Swete confirms the Greek, but Brenton gives it only in Greek. The edition supplies such English from Ottley's translation of Alexandrinus Isaiah or from the King James Version or the Revised Version where they render A's text ([docs/edition.md](edition.md#readings-from-codex-alexandrinus)); each of these needs that English found and shown to render A, or a ruling that none does.
 
-GEN 1:11#2, JDG 9:27#2, JDG 13:5#2, JDG 13:19, 1SA 6:8, 2SA 17:16, 1KI 5:18, 1KI 8:59#3, 2KI 19:24, 2KI 21:6#2, PSA 31:9, ISA 59:7#2, MAL 3:11 (A's τὴν βρῶσιν, which Brenton gives after his own alternative rendering).
+GEN 1:11#2, JDG 9:27#2, JDG 13:5#2, JDG 13:19, 1SA 6:8, 2KI 19:24, 2KI 21:6#2, PSA 31:9, MAL 3:11 (A's τὴν βρῶσιν, which Brenton gives after his own alternative rendering).
 
-### 2.2 A pointer with no English (3)
+### 2.2 A pointer with no English (2)
 
-A has a different reading, but Brenton only points to it, and gives no English to print. The policy decision in 2.1 bears on these too.
+A has a different reading, but Brenton only points to it, and gives no English to print. The rule of 2.1 bears on these too.
 
 | Decision | What stands in the way |
 | --- | --- |
 | BAK 1KI 2:35a | Brenton reports variation here without translating it. Swete records omissions and an addition, but applying them needs English that Brenton doesn't give. 1KI 2:35a, in 2.6, is the note that points here. |
 | PSA 41:5 | Brenton gives a reference to the Appendix rather than English, and the Appendix discusses the Hebrew behind the verse. Swete cites no variant of A here: εἰσελεύσομαι is R's. Decide whether there is an Alexandrine reading at all. |
-| ISA 40:4 | Brenton refers to Luke without giving English. Swete supports the Greek, but borrowing English from Luke needs its own decision. |
 
 ### 2.3 Placement and duplicated passages (5)
 
@@ -68,19 +67,13 @@ A has a different reading, but Brenton only points to it, and gives no English t
 | --- | --- | --- |
 | GEN 6:2 | A has "angels of God" for "sons of God", in every printing | ἄγγελοι stands over an erasure, and the attribution to A is doubtful (A^{?vid}, confirmed on the scan); establish the reading and the hand |
 
-### 2.5 English to correct or clarify (7)
+### 2.5 English to correct or clarify (1)
 
 Brenton's English for the reading is wrong, incomplete or unclear, and his printings read as eBible has them. Record a correction of the English with its reason before printing the reading.
 
 | Decision | What stands in the way |
 | --- | --- |
-| 1SA 30:26 | Brenton gives "from you", but A's reading in Swete means "to you". Copying his English would reverse the Greek. |
 | 2KI 3:21#2 | Printed in the verse, the alternative "and above" would need a starting point (above what?), which Brenton doesn't give. Brenton spells A's Greek ἐπάνα in every printing, where Swete has ἐπάνω; the note keeps his spelling. Settle the whole clause. |
-| BAK 2CH 27:8 | Brenton's English gives both twenty-five and sixteen as years reigned, while verse 1 distinguishes age at accession from length of reign. Swete's A reads "he was twenty-five years old when he began to reign, and reigned sixteen years in Jerusalem", so the English needs correcting before it is printed. |
-| PSA 41:9 | Brenton's alternative gives "his song shall be, etc.", not a whole clause. Swete has A read ᾠδὴ αὐτοῦ for δηλώσει and join παρ' ἐμοί to it, so A reads "and by night his song with me: prayer to the God of my life"; printing that means dropping "is" and supplying a verb, which needs a decision. |
-| ISA 8:1 | The χάρτου added after τόμον doesn't settle what "great new" attaches to, or justify replacing "book" with "a volume of great new paper". |
-| ISA 30:8 | A's Greek changes case and order; "days in seasons" would supply a new "in" and drop "many long", with no settled English. |
-| JON 1:8 | Swete confirms an addition in A, but Brenton's "for those whose cause" is ungrammatical and doesn't match the Greek question. |
 
 ### 2.6 Probably keep as a note (17)
 

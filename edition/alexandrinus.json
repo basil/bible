@@ -1207,6 +1207,36 @@
       "note_at": 22,
       "source_note": "\\fqa Alex. \\ft and \\fqa Heb. \\ft + 'And Abiathar brought the ephod to David.'"
     },
+    "1SA 30:26": {
+      "why": "Print Codex Alexandrinus’s addition ὑμῖν εὐλογία after ἰδού (Swete, vol. I, p. 608, confirmed on the scan). Brenton’s note gives “a blessing” and “you”, but his “from you” reverses the dative; the 1879 printing (physical page 415) reads the same, so the slip is his, and “for” is supplied from the King James Version (1 Samuel 30:26 “Behold a present for you of the spoil of the enemies of the Lord”), which renders the Hebrew לָכֶם that A follows, as Brenton’s note says. Brenton’s supplied “some” went with the partitive of the Vatican text; the note replaces the whole opening so that it restores his “Behold some” and its punctuation.",
+      "swete": {
+        "volume": 1,
+        "page": 608,
+        "evidence": "apparatus",
+        "reading": "ἰδού] + ὑμῖν εὐλογία A",
+        "agrees": true
+      },
+      "from": "Behold \\add some\\add* of the spoils",
+      "note": "\\fl Heb. \\ft agrees. \\fl Vat. \\fqa Behold some\\ft .",
+      "lemma": "Behold, a blessing for you",
+      "supplied": ["for"],
+      "english": {
+        "source": "brenton",
+        "span": [38, 48],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "Behold, "
+          },
+          {
+            "span": [10, 10],
+            "to": " for you of the spoils",
+            "why": "The King James Version’s “for you” for ὑμῖν, in place of Brenton’s “from you”."
+          }
+        ]
+      },
+      "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft 'Lo! a blessing from you.' etc."
+    },
     "1SA 30:27": {
       "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
       "swete": {
@@ -1653,6 +1683,31 @@
       "note_at": 14,
       "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft insert 'priest.'"
     },
+    "1KI 5:18": {
+      "why": "Print Codex Alexandrinus’s ἀπάντημα for ἁμάρτημα (Swete, vol. I, p. 683, at his 5:4, confirmed on the scan). Brenton gives the Greek alone and compares συναντήματα; “occurrent” is the King James Version’s word at 1 Kings 5:4 (“neither adversary nor evil occurrent”), rendering the Hebrew פֶּגַע רָע that A follows. Brenton’s “incident or occurrence” for συνάντημα at 3 Kings 8:37 supports the sense. His supplied “against me” belonged to the Vatican trespass.",
+      "swete": {
+        "volume": 1,
+        "page": 683,
+        "evidence": "apparatus",
+        "reading": "ἁμάρτημα] ἀπάντημα A",
+        "agrees": true
+      },
+      "from": "evil trespass \\add against me\\add*",
+      "note": "\\fl Vat. \\fqa trespass against me\\ft .",
+      "supplied": ["occurrent"],
+      "english": {
+        "source": "from",
+        "edits": [
+          {
+            "span": [5, 34],
+            "to": "occurrent",
+            "why": "The King James Version’s occurrent for ἀπάντημα."
+          }
+        ]
+      },
+      "note_at": 5,
+      "source_note": "\\fqa Alex. \\ft ἀπάντημα. See συναντήματα, \\xt Ex. 9. 14."
+    },
     "1KI 5:30": {
       "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
       "swete": {
@@ -1787,6 +1842,30 @@
       },
       "note_at": 22,
       "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft with (or against) the walls of the house round about."
+    },
+    "1KI 8:59#3": {
+      "why": "Print Codex Alexandrinus’s ῥῆμα ἡμέρας ἐν ἡμέρᾳ αὐτοῦ for the Vatican ἐνιαυτοῦ (Swete, vol. I, p. 696). Brenton gives the Greek alone and says it agrees with the Hebrew, whose דְּבַר־יוֹם בְּיוֹמוֹ it renders word for word; the English is supplied from the Revised Version (1 Kings 8:59 “as every day shall require”), which renders the idiom where the King James Version has “as the matter shall require”, in place of Brenton’s “for ever” for the Vatican phrase. His literal gloss on that phrase stays in the note.",
+      "swete": {
+        "volume": 1,
+        "page": 696,
+        "evidence": "apparatus",
+        "reading": "ἐνιαυτοῦ] αὐτοῦ A",
+        "agrees": true
+      },
+      "from": "for ever",
+      "note": "\\fl Vat. \\fqa for ever\\ft . \\fl Gr. \\fqa a thing \\ft or \\fqa word of a day in a day of a year\\ft .",
+      "supplied": ["as", "every", "shall", "require"],
+      "english": {
+        "source": "from",
+        "edits": [
+          {
+            "span": [0, 8],
+            "to": "as every day shall require",
+            "why": "The Revised Version’s rendering of the idiom A has."
+          }
+        ]
+      },
+      "source_note": "\\fqa Gr. \\ft a thing \\fqa or \\ft word of a day in a day of a year. But \\fqa Alex. \\ft reads ἡμέρᾳ αὐτοῦ, which agrees with the \\fqa Heb."
     },
     "1KI 14:26#2": {
       "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Codex Vaticanus’s first hand ends the verse at “golden shields”; a corrector’s margin adds both Solomon’s manufacture and the removal to Egypt, and A adds the manufacture only. Vat. is Brenton’s Vatican text, which carries both clauses.",
@@ -1982,6 +2061,39 @@
         ]
       },
       "source_note": "\\fqa Alex. \\ft a span long."
+    },
+    "PSA 41:9": {
+      "why": "Print Codex Alexandrinus’s reading: ᾠδὴ αὐτοῦ for δηλώσει, with παρ’ ἐμοί joined to it (Swete, vol. II, p. 267, confirmed on the scan), so that A reads “and by night his song with me: prayer to the God of my life”. Brenton’s note gives “his song shall be”, as the 1879 printing (physical page 739) has it, and the copula is bracketed as he brackets “is” in the Vatican clause; the King James Version (Psalm 42:8 “And in the night his song shall be with me, And my prayer unto the God of my life”) renders the Hebrew that A follows. The Vatican “manifest it” and “is” go with its construction; the lemma includes by night and prayer so that substituting the note restores the whole former construction without repeating either.",
+      "swete": {
+        "volume": 2,
+        "page": 267,
+        "evidence": "apparatus",
+        "reading": "δηλωσει] ωδη αυτω ℵ^c.a ω. αυτου A | om παρ εμοι ℵ* (hab ℵ^c.a sed ipse rursus del vid) c praec coniung A",
+        "agrees": true
+      },
+      "from": "manifest \\add it\\add* by night: with me \\add is\\add* prayer",
+      "note": "\\fl Heb. \\ft agrees. \\fl Vat. \\fqa manifest it by night: with me is prayer\\ft .",
+      "lemma": "by night his song shall be with me: prayer",
+      "english": {
+        "source": "brenton",
+        "span": [33, 50],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "by night "
+          },
+          {
+            "span": [9, 9],
+            "to": "\\add "
+          },
+          {
+            "span": [17, 17],
+            "to": "\\add* with me: prayer",
+            "why": "The copula supplied in brackets, as Brenton supplies it."
+          }
+        ]
+      },
+      "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft his song shall be, etc."
     },
     "PSA 44:14": {
       "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Keep the note of Hebrew agreement.",
@@ -2610,6 +2722,31 @@
       },
       "source_note": "\\fqa Alex. \\ft ποιεῖν, 'giving.'"
     },
+    "ISA 8:1": {
+      "why": "Print Codex Alexandrinus’s χάρτου in Brenton’s English: his note gives paper for it. Swete’s base already has the genitive adjectives καινοῦ μεγάλου; A adds χάρτου after τόμον, giving τόμον χάρτου καινοῦ μεγάλου (vol. III, p. 114, confirmed on the scan), so “great new” qualifies the paper. Ottley (vol. I, p. 91, Isaiah 8:1 “a leaf of a new great sheet”) supports that relation, but his leaf and sheet are lexical choices, not further changes recorded by Swete. Retain Brenton’s volume and his note’s paper. His supplied “book” goes, and his article with it, since paper is a material: the alternative “a volume of a great new paper” would read as a document. The note restores the whole former phrase, including its article and supplied book, rather than describing only the Greek addition.",
+      "swete": {
+        "volume": 3,
+        "page": 114,
+        "evidence": "apparatus",
+        "reading": "τόμον] + χάρτου A",
+        "agrees": true
+      },
+      "from": "a great new \\add book\\add*",
+      "note": "\\fl Vat. \\fqa a great new book\\ft .",
+      "lemma": "great new paper",
+      "english": {
+        "source": "brenton",
+        "span": [15, 20],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "great new ",
+            "why": "Brenton’s adjectives, without his article."
+          }
+        ]
+      },
+      "source_note": "\\fqa Alex. \\ft paper, \\fqa or, \\ft parchment."
+    },
     "ISA 8:16": {
       "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
       "swete": {
@@ -2810,6 +2947,54 @@
       },
       "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft ‘in’."
     },
+    "ISA 30:8": {
+      "why": "Print Codex Alexandrinus’s reading, εἰς ἡμέρας καιρῶν ταῦτα καὶ εἰς τὸν αἰῶνα (Swete, vol. III, p. 153, confirmed on the scan: καιρῶν ταῦτα with ℵOQ, and A alone omits ἕως). Brenton’s note gives seasons for καιρῶν and his literal “for days” for εἰς ἡμέρας; the genitive takes “of”, supplied after Ottley (vol. I, p. 177, Isaiah 30:8 “for days of times”). Ottley’s commentary (vol. II, pp. 253–254) explains καιρῶν as occasions that are future here, possibly times of crisis, in contrast to the Hebrew’s more general after day. Keep Brenton’s seasons in the difficult genitive rather than replace A’s construction with the KJV and RV’s Hebrew-based “for the time to come”; seasons here is not restricted to calendar seasons. His supplied “many long” glossed the Vatican dative, and his “even” rendered ἕως, which A lacks; Ottley keeps “even” against A’s text. Retain Brenton’s Vatican gloss in source_note, but omit it from the printed note because its Gr. label could be mistaken for a gloss of the Alexandrine main text.",
+      "swete": {
+        "volume": 3,
+        "page": 153,
+        "evidence": "apparatus",
+        "reading": "ταυτα καιρω] καιρων ταυτα ℵAOQ | om εως A",
+        "agrees": true
+      },
+      "from": "for \\add many long\\add* days, and even for ever",
+      "note": "\\fl Vat. \\fqa for many long days, and even for ever\\ft .",
+      "supplied": ["of"],
+      "english": {
+        "source": "brenton",
+        "span": [13, 21],
+        "edits": [
+          {
+            "span": [8, 8],
+            "to": " of seasons, and for ever",
+            "why": "Brenton’s seasons in the genitive, and the verse’s own close without even."
+          }
+        ]
+      },
+      "source_note": "\\fqa Gr. \\ft for days in time. \\fqa Alex. \\ft seasons."
+    },
+    "ISA 40:4": {
+      "why": "Print Codex Alexandrinus’s ὁδοὺς λείας for πεδία (Swete, vol. III, p. 173, with ℵc Q*). Brenton’s note only points to Luke 3:5, where the same Greek is the King James Version’s “the rough ways shall be made smooth”; “smooth ways” is Ottley’s rendering of A (vol. I, p. 219, Isaiah 40:4 “and the rough land smooth ways”), and both words are supplied from them.",
+      "swete": {
+        "volume": 3,
+        "page": 173,
+        "evidence": "apparatus",
+        "reading": "πεδια (-αν ℵ*)] οδους λιας ℵ^{c.a, c.b} A (ο. λειας) Q*",
+        "agrees": true
+      },
+      "from": "plains",
+      "supplied": ["smooth", "ways"],
+      "english": {
+        "source": "from",
+        "edits": [
+          {
+            "span": [0, 6],
+            "to": "smooth ways",
+            "why": "Ottley’s and Luke 3:5’s English for ὁδοὺς λείας."
+          }
+        ]
+      },
+      "source_note": "\\ft See \\xt Luke 3. 5, \\ft with which \\fqa Alex. \\ft agrees."
+    },
     "ISA 40:14": {
       "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
       "swete": {
@@ -2872,6 +3057,31 @@
       },
       "source_note": "\\ft Not in \\fqa Heb. \\ft or \\fqa Alex."
     },
+    "ISA 59:7#2": {
+      "why": "Print Codex Alexandrinus’s ἀφρόνων for ἀπὸ φόνων (Swete, vol. III, p. 209, with ℵ*; A also has the repeated διαλογισμοί that Brenton’s “thoughts of” already renders). Brenton gives the Greek alone; “fools” is Ottley’s rendering of A (vol. I, p. 297, Isaiah 59:7 “their reasonings are the reasonings of fools”). Brenton’s gloss on the Vatican reading stays in the note.",
+      "swete": {
+        "volume": 3,
+        "page": 209,
+        "evidence": "apparatus",
+        "reading": "ἀπὸ φόνων] ἀφρόνων ℵ* (ἀπὸ φον. ℵcb) A",
+        "agrees": true
+      },
+      "from": "thoughts of murder",
+      "note": "\\fl Vat. \\fqa of murder\\ft . \\fl Gr. \\fqa from murders\\ft .",
+      "supplied": ["fools"],
+      "english": {
+        "source": "from",
+        "edits": [
+          {
+            "span": [12, 18],
+            "to": "fools",
+            "why": "Ottley’s English for ἀφρόνων."
+          }
+        ]
+      },
+      "note_at": 9,
+      "source_note": "\\fqa Gr. \\ft from murders, but \\fqa Alex. \\ft reads ἀφρόνων."
+    },
     "ISA 63:19": {
       "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Swete places the addition after σου in verse 18; append the English to Brenton’s 63:18 rather than the beginning of 63:19.",
       "swete": {
@@ -2900,6 +3110,35 @@
       },
       "note_at": 19,
       "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft + 'our adversaries have trodden down the sanctuary.'"
+    },
+    "JON 1:8": {
+      "why": "Print Codex Alexandrinus’s addition τίνος ἕνεκεν ἡ κακία αὕτη ἐστὶν ἐν ἡμῖν after ἡμῖν (Swete, vol. III, p. 49, with Q), in Brenton’s English; the 1879 printing (physical page 1110) reads “for whose cause”, and eBible’s “those” is corrected in brenton-notes.json. The King James Version (Jonah 1:8 “Tell us, we pray thee, for whose cause this evil is upon us; What is thine occupation?”) renders the Hebrew that A follows with the same words. The clause stands first among the things asked, as in A.",
+      "swete": {
+        "volume": 3,
+        "page": 49,
+        "evidence": "apparatus",
+        "reading": "ἡμῖν] + τίνος ἕνεκεν ἡ κακία αὕτη ἐστὶν ἐν ἡμῖν AQ",
+        "agrees": true
+      },
+      "from": "Tell us what is thine occupation",
+      "note": "\\fl Vat. \\ft omits.",
+      "lemma": "for whose cause this evil is upon us",
+      "english": {
+        "source": "brenton",
+        "span": [18, 54],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "Tell us "
+          },
+          {
+            "span": [36, 36],
+            "to": ", what is thine occupation"
+          }
+        ]
+      },
+      "note_at": 8,
+      "source_note": "\\fqa Alex. \\ft + 'for whose cause this evil is upon us'."
     },
     "ZEC 4:10": {
       "why": "Print Brenton’s Alexandrine reading, confirmed by Swete.",
@@ -4455,6 +4694,45 @@
       "source_notes": {
         "1SA 23:11#2": "\\ft Verse 12 is here supplied by \\fqa Alex."
       }
+    },
+    "2CH 27:8": {
+      "appendix": "\\ip 27. \\vp 8\\vp*And he reigned twenty-five years, and sixteen years he reigned in Jerusalem.  \n",
+      "why": "Print Codex Alexandrinus’s verse 8 after verse 7 (Swete, vol. II, p. 105, confirmed on the scan: καὶ εἴκοσι καὶ πέντε ἐτῶν ἦν βασιλεύσας· καὶ ἓξ καὶ δέκα ἔτη ἐβασίλευσεν ἐν Ἰερουσαλήμ). Brenton’s Appendix makes both numbers years reigned, where A gives his age at accession and then his reign, as verse 1 does; the English is corrected to A with the words of the King James Version (2 Chronicles 27:8 “He was five and twenty years old when he began to reign, and reigned sixteen years in Jerusalem”), which renders the Hebrew verse A supplies, and which are Brenton’s own words at 27:1. ἦν is in the Greek, so “was” is not bracketed.",
+      "swete": {
+        "volume": 2,
+        "page": 105,
+        "evidence": "apparatus",
+        "reading": "7 Ισραηλ] + (8) και εικοσι και πεντε ετων ην βασιλευσας· και εξ και δεκα ετη εβασιλευσεν εν Ι̅λ̅η̅μ̅ A",
+        "agrees": true
+      },
+      "supplied": ["was", "old", "when", "began", "to", "reign"],
+      "insertions": [
+        {
+          "after": "27:7",
+          "verses": [
+            {
+              "reference": "27:8",
+              "note": "\\fl Vat. \\ft omits this verse.",
+              "english": {
+                "source": "brenton",
+                "span": [17, 93],
+                "edits": [
+                  {
+                    "span": [7, 32],
+                    "to": "was twenty-five years old when he began to reign",
+                    "why": "A gives the age at accession."
+                  },
+                  {
+                    "span": [38, 62],
+                    "to": "he reigned sixteen years",
+                    "why": "Brenton’s words in the order of verse 1."
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
     }
   },
   "kept": {
@@ -4598,18 +4876,6 @@
       "todo": true,
       "source_note": "\\ft In the \\fqa Alex. \\ft ἀργός is substituted for βερσεχθάν."
     },
-    "1SA 30:26": {
-      "why": "Brenton’s “from you” contradicts A’s ὑμῖν (“to you”); retain for editorial correction.",
-      "swete": {
-        "volume": 1,
-        "page": 608,
-        "evidence": "apparatus",
-        "reading": "ἰδού] + ὑμῖν εὐλογία A",
-        "agrees": false
-      },
-      "todo": true,
-      "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft 'Lo! a blessing from you.' etc."
-    },
     "2SA 5:18": {
       "why": "The note stays a note: Brenton’s Bagster printings end it See Appendix. (1879 p. 423; 1884 p. 392; 1900 p. 419), and the Appendix discusses Govett on Isaiah without giving English for A; eBible’s paraphrase of the Appendix is corrected away.",
       "swete": {
@@ -4646,7 +4912,7 @@
       "source_note": "\\ft So the \\fqa Alex. \\ft which reads σύστρεμμα. See \\xt Acts 23. 12."
     },
     "2SA 17:16": {
-      "why": "Greek alone; no English variant given.",
+      "why": "Keep as a note: the verse already translates A’s καταπίῃ, “swallow up”, which Swete confirms (vol. I, p. 647); the Vatican καταπείσῃ would be “persuade”, and Brenton’s note gives the Greek his rendering rests on. A’s omission of πάντα there, which Brenton does not report, is not translated.",
       "swete": {
         "volume": 1,
         "page": 647,
@@ -4654,7 +4920,6 @@
         "reading": "καταπειση] καταπιη A",
         "agrees": true
       },
-      "todo": true,
       "source_note": "\\fqa Alex. \\ft καταπίῃ."
     },
     "1KI 1:9": {
@@ -4680,30 +4945,6 @@
       },
       "todo": true,
       "source_note": "\\ft Here the chapter ends, according to \\fqa Heb. \\ft and \\fqa Alex."
-    },
-    "1KI 5:18": {
-      "why": "Greek alone; no English Alexandrine translation given.",
-      "swete": {
-        "volume": 1,
-        "page": 683,
-        "evidence": "apparatus",
-        "reading": "ἁμάρτημα] ἀπάντημα A",
-        "agrees": true
-      },
-      "todo": true,
-      "source_note": "\\fqa Alex. \\ft ἀπάντημα. See συναντήματα, \\xt Ex. 9. 14."
-    },
-    "1KI 8:59#3": {
-      "why": "Greek only; Brenton gives no English A translation.",
-      "swete": {
-        "volume": 1,
-        "page": 696,
-        "evidence": "apparatus",
-        "reading": "ἐνιαυτοῦ] αὐτοῦ A",
-        "agrees": true
-      },
-      "todo": true,
-      "source_note": "\\fqa Gr. \\ft a thing \\fqa or \\ft word of a day in a day of a year. But \\fqa Alex. \\ft reads ἡμέρᾳ αὐτοῦ, which agrees with the \\fqa Heb."
     },
     "2KI 19:24": {
       "why": "Greek alone; no English Alexandrine translation supplied.",
@@ -4940,18 +5181,6 @@
       },
       "source_note": "\\fqa Or, \\ft which part \\fqa of the enemy, etc. shall rule over the river of Egypt; but according to \\fqa Alex. \\ft the reading in the text is the right one."
     },
-    "ISA 40:4": {
-      "why": "A cross-reference to Luke supplies no English Alexandrine variant in Brenton’s note.",
-      "swete": {
-        "volume": 3,
-        "page": 173,
-        "evidence": "apparatus",
-        "reading": "πεδια (-αν ℵ*)] οδους λιας ℵ^{c.a, c.b} A (ο. λειας) Q*",
-        "agrees": true
-      },
-      "todo": true,
-      "source_note": "\\ft See \\xt Luke 3. 5, \\ft with which \\fqa Alex. \\ft agrees."
-    },
     "ISA 54:10": {
       "why": "Brenton explicitly adopts the Alexandrine reading already in the verse.",
       "todo": true,
@@ -4963,18 +5192,6 @@
         "agrees": true
       },
       "source_note": "\\fqa Alex. \\ft κύριος for κύριε adopted here. Compare \\xt Mat. 16. 22, \\ft with this passage."
-    },
-    "ISA 59:7#2": {
-      "why": "Brenton gives the Greek alone without English to promote.",
-      "swete": {
-        "volume": 3,
-        "page": 209,
-        "evidence": "apparatus",
-        "reading": "ἀπὸ φόνων] ἀφρόνων ℵ* (ἀπὸ φον. ℵcb) A",
-        "agrees": true
-      },
-      "todo": true,
-      "source_note": "\\fqa Gr. \\ft from murders, but \\fqa Alex. \\ft reads ἀφρόνων."
     },
     "ISA 61:3": {
       "why": "The note is about Greek word division, with no alternative English wording. eBible has it as the verse’s first note; in every printing it is the second, on the garment of glory, and Or, anointing. the first (1844 p. 236; 1879 p. 912; 1900 p. 908), so the note overrides swap the printed texts.",
@@ -4999,18 +5216,6 @@
         "agrees": true
       },
       "source_note": "\\fqa Alex. \\ft ἡμῶν, but \\fqa Heb. \\ft and \\fqa Vat. \\ft 'your.'"
-    },
-    "JON 1:8": {
-      "why": "Brenton’s “for those whose cause” is grammatically defective and does not match τίνος; retain pending source correction.",
-      "swete": {
-        "volume": 3,
-        "page": 49,
-        "evidence": "apparatus",
-        "reading": "ἡμῖν] + τίνος ἕνεκεν ἡ κακία αὕτη ἐστὶν ἐν ἡμῖν AQ",
-        "agrees": true
-      },
-      "todo": true,
-      "source_note": "\\fqa Alex. \\ft + 'for those whose cause this evil is upon us'."
     },
     "ZEC 14:7": {
       "why": "The verse already translates A’s ψύχος as cold; the footnote explains the adopted reading.",
@@ -5060,42 +5265,6 @@
       "todo": true,
       "source_note": "\\fqa Alex. \\ft καὶ ἐπάνα, 'and above.'"
     },
-    "PSA 41:9": {
-      "why": "Keep as a note: Brenton gives an incomplete clause, “his song shall be, etc.” Swete has A read ᾠδὴ αὐτοῦ for δηλώσει and join παρ’ ἐμοί to it, so that A reads “and by night his song with me: prayer to the God of my life”; but the English that would print it, dropping “is” and supplying a verb, is not Brenton’s to copy.",
-      "swete": {
-        "volume": 2,
-        "page": 267,
-        "evidence": "apparatus",
-        "reading": "δηλωσει] ωδη αυτω ℵ^c.a ω. αυτου A | om παρ εμοι ℵ* (hab ℵ^c.a sed ipse rursus del vid) c praec coniung A",
-        "agrees": true
-      },
-      "todo": true,
-      "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft his song shall be, etc."
-    },
-    "ISA 8:1": {
-      "why": "Keep as a note: Swete confirms “paper”, but its connection to “great new” needs an English reconstruction. A adds χάρτου after τόμον. Brenton supplies paper or parchment, but the record does not settle how great new attaches or establish the proposed replacement of his supplied book.",
-      "swete": {
-        "volume": 3,
-        "page": 114,
-        "evidence": "apparatus",
-        "reading": "τόμον] + χάρτου A",
-        "agrees": true
-      },
-      "todo": true,
-      "source_note": "\\fqa Alex. \\ft paper, \\fqa or, \\ft parchment."
-    },
-    "ISA 30:8": {
-      "why": "Keep as a note: the Greek changes case and word order, leaving the English construction unresolved. The record says A retains ἡμέρας, reads plural καιρῶν, and omits ἕως. These changes do not establish days in seasons as usable English; keep the alternative in its note until the full construction is resolved.",
-      "swete": {
-        "volume": 3,
-        "page": 153,
-        "evidence": "apparatus",
-        "reading": "ταυτα καιρω] καιρων ταυτα ℵAOQ | om εως A",
-        "agrees": true
-      },
-      "todo": true,
-      "source_note": "\\fqa Gr. \\ft for days in time. \\fqa Alex. \\ft seasons."
-    },
     "BAK 1KI 6:11-22": {
       "why": "Keep in the Appendix until both insertion points are checked. Swete hangs the first addition on κεδρίνοις at the end of verse 15 and the second on οἴκου in verse 21 (p. 686); the mapping of the first to Brenton’s verse 6:10 has not been demonstrated. Keep both Appendix portions pending separate placement checks.",
       "swete": {
@@ -5107,18 +5276,6 @@
       },
       "todo": true,
       "appendix": "\\ip 6. \\vp 11\\vp*And the word of the Lord came to Solomon, saying, \\vp 12\\vp*As \\add for\\add* this house which thou art building, if thou wilt walk in my ordinances and execute my judgments, and keep all my commandments to walk in them, I will establish my word with thee which I spoke to David thy father. \\vp 13\\vp*And I will dwell in the midst of the children of Israel, and will not forsake my people Israel. \\vp 14\\vp*So Solomon built the house, and finished it. \\vp 22\\vp*And all inside the oracle he overlaid with gold.  \n"
-    },
-    "BAK 2CH 27:8": {
-      "why": "Keep in the Appendix: Brenton’s English calls both twenty-five and sixteen years of reign, where Swete’s A says he was twenty-five years old when he began to reign and reigned sixteen years in Jerusalem. Printing the verse needs a correction of Brenton’s English, with its reason.",
-      "swete": {
-        "volume": 2,
-        "page": 105,
-        "evidence": "apparatus",
-        "reading": "7 Ισραηλ] + (8) και εικοσι και πεντε ετων ην βασιλευσας· και εξ και δεκα ετη εβασιλευσεν εν Ι̅λ̅η̅μ̅ A",
-        "agrees": true
-      },
-      "todo": true,
-      "appendix": "\\ip 27. \\vp 8\\vp*And he reigned twenty-five years, and sixteen years he reigned in Jerusalem.  \n"
     }
   }
 }

@@ -275,7 +275,7 @@ def test_matter_cites_and_names_as_the_edition_does(
     # A declared change keeps the style of the words it replaces.
     assert "\\im \\it Authorized Version\\it* bowed himself" in preface
     appendix = lines(edition, "BAK")
-    assert "\\is2 3 Kingdoms" in appendix and "\\is2 2 Chronicles" in appendix
+    assert "\\is2 3 Kingdoms" in appendix and "\\is2 Proverbs" in appendix
     # Titles and headings drop their closing full stops.
     assert not [
         line
