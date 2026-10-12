@@ -7,6 +7,24 @@
 % This also sets the standard minimum fragments: 2 letters left, 3 right.
 \uselanguage{USenglish}
 
+% Omit the label of a chapter's first verse when it is exactly 1, even in
+% Psalm titles, where PTXprint's chapter-drop-cap check does not apply.
+% PTXprint empties \oldv@rse only for a chapter's first verse, so a verse 1
+% set later in its chapter (3 Kingdoms 7, which opens with 7:38-50 after
+% Alexandrinus) keeps its number. Keep its reference and verse hooks.
+% Detokenizing compares the label whatever catcode PTXprint read its digits
+% with.
+\begingroup
+\catcode`\@=11
+\gdef\BibleVerseOne{1}
+\addtopreversehooks{%
+  \ifOmitVerseNumberOne\ifx\oldv@rse\empty
+    \edef\BibleVerseLabel{\detokenize\expandafter{\v@rse}}%
+    \ifx\BibleVerseLabel\BibleVerseOne\c@ncelfirstversetrue\fi
+  \fi\fi
+}
+\endgroup
+
 % Give note origin numbers a compact fixed 1 pt separation in the margin.
 % Remove the source's trailing space/NBSP inside the origin style, then add
 % the kern after the style closes. Keeping both hooks avoids an extra word
