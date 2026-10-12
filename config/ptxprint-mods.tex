@@ -66,13 +66,12 @@
     \n@test@rt{#1}%
   \else
     % The front matter has no chapters, so its notes go to the foot, in
-    % separate paragraphs: PTXprint's paragraphed notes reserve space and
+    % separate paragraphs: PTXprint's separate notes reserve space and
     % can split long notes. The stylesheet's Left justification is for the
     % margin column; at the foot a note is justified like the text. This
     % local assignment is read by PTXprint's side-skip setup inside its note
     % box, a group nested in this one, and is undone when the note ends.
     \expandafter\let\csname #1:justification\endcsname\relax
-    \global\p@ranotesfalse
     \expandafter\insert\csname note-#1\endcsname
   \fi
 }
