@@ -22,7 +22,16 @@ from dataclasses import dataclass
 from typing import Literal, cast
 
 import bible.policy
-from bible import lemmas, notes, scripture, terminology, usfm, usj
+from bible import (
+    annotate,
+    lemmas,
+    notes,
+    references,
+    scripture,
+    terminology,
+    usfm,
+    usj,
+)
 from bible.checks import present, require, require_fields
 from bible.policy_schema import AlexandrinusReadingsNoteEdits, Decision
 from bible.scripture import plain, word_spans, words_of
@@ -50,11 +59,15 @@ SCALE = {"hundred": 100, "thousand": 1000, "million": 1000000}
 SWETE = {"volume", "page", "evidence", "reading", "agrees"}
 COMMON = {"why", "swete", "supplied"}
 REPLACEMENT = {"from", "note", "lemma", "target", "english", "note_at"}
+# A verse omitted whole, noted on the verse before it.
+OMISSION = {"omit_verse", "note_target"}
+MOVE = {"verses", "before"}
 FIELDS = {
     "readings": COMMON
     | REPLACEMENT
     | {"edits", "note_edits", "source_note", "omit_verse", "note_target"},
-    "passages": COMMON | {"appendix", "kjv", "edits", "insertions", "source_notes"},
+    "passages": COMMON
+    | {"appendix", "kjv", "edits", "insertions", "moves", "source_notes"},
     "kept": COMMON | {"appendix", "todo", "source_note", "note"},
 }
 
@@ -227,21 +240,25 @@ def operations(
     for key, entry in data["passages"].items():
         if key.split()[0] != code:
             continue
+        # A King James passage's Appendix paragraph only points to it: the
+        # words its edits print are the King James words and those supplied.
+        source = "" if "kjv" in entry else entry["appendix"]
         for index, item in enumerate(entry.get("edits", ()), 1):
             verse = item["target"].split()[-1]
-            yield key, further(entry, item), entry["appendix"], verse, f"{key}@{index}"
+            yield key, further(entry, item), source, verse, f"{key}@{index}"
 
 
 def further(entry: Decision, item: Decision) -> Decision:
     """A decision's further replacement: its own words, derivation and note
     position, and the decision's reason, note and lemma unless it has its
-    own. Only the decision itself may omit a verse."""
+    own. A verse is omitted by the decision itself, or by a passage's
+    further replacement, each naming the verse its note stands on."""
     inherited = cast(
         Decision,
         {
             key: value
             for key, value in entry.items()
-            if key not in {"english", "note_at", "omit_verse"}
+            if key not in {"english", "note_at", "omit_verse", "note_target"}
         },
     )
     return {**inherited, **item}
@@ -330,23 +347,73 @@ def check(
                 )
             elif section == "passages":
                 require(
-                    ("appendix" in entry) != ("kjv" in entry)
-                    and bool(entry.get("edits") or entry.get("insertions")),
-                    f"Alexandrine passage needs one English source and an operation: {key}",
+                    ("appendix" in entry or "kjv" in entry)
+                    and bool(
+                        entry.get("edits")
+                        or entry.get("insertions")
+                        or entry.get("moves")
+                    ),
+                    f"Alexandrine passage needs an English source and an operation: {key}",
                 )
                 require(
-                    entry.get("kjv", True) is True
-                    and not (
-                        "kjv" in entry and (entry.get("edits") or entry.get("supplied"))
-                    ),
-                    f"KJV passage must preserve its source verse: {key}",
+                    entry.get("kjv", True) is True,
+                    f"Invalid KJV passage: {key}",
                 )
+                for move in entry.get("moves", ()):
+                    require_fields(move, MOVE, (), f"Move of {key}")
+            allowed = REPLACEMENT | COMMON
+            if section == "passages":
+                allowed |= OMISSION
             for item in entry.get("edits", ()):
                 require(
-                    set(item) <= REPLACEMENT | COMMON and "target" in item,
+                    set(item) <= allowed and "target" in item,
                     f"Invalid Alexandrine edit: {key}",
                 )
                 check_swete(key, {**entry, **item}, policy)
+            edits = entry.get("edits", ())
+            for item in (entry, *edits):
+                # A verse omitted whole is noted on a verse named for it: by
+                # its own note, or by the note of the decision's edit of that
+                # verse, which then quotes it.
+                require(
+                    bool(item.get("omit_verse")) == ("note_target" in item),
+                    f"Omission without the verse its note stands on: {key}",
+                )
+                if not item.get("omit_verse") or (
+                    {**entry, **item}.get("note") is not None
+                ):
+                    continue
+                # The quotation is the omitted verse's words, so that it
+                # cannot drift from them.
+                words = plain(usj.text_of(usj.parse(item["from"], fragment=True)))
+                quoting = [
+                    note
+                    for other in edits
+                    if other["target"] == item["note_target"]
+                    and (note := other.get("note")) is not None
+                ]
+                require(
+                    any(
+                        words.strip().rstrip(".")
+                        in plain(usj.text_of(usj.parse(note, fragment=True)))
+                        for note in quoting
+                    ),
+                    f"Omission without its note: {key}",
+                )
+            if section == "passages" and "kjv" in entry:
+                # The King James words are conformed to Alexandrinus in the
+                # verses the passage supplies, and nowhere else; the words
+                # they displace are not the Vatican's, so each edit says
+                # whose they are.
+                supplied = {str(v) for v in references.parse_passage(key).verses}
+                require(
+                    all(item["target"] in supplied for item in entry.get("edits", ())),
+                    f"KJV passage edits a verse it does not supply: {key}",
+                )
+                require(
+                    all("note" in item for item in entry.get("edits", ())),
+                    f"KJV passage edit without its own note: {key}",
+                )
     consumed = [
         k for entry in data["passages"].values() for k in entry.get("source_notes", ())
     ]
@@ -575,9 +642,8 @@ def replacement(
         require(
             not usj.text_of(new)
             and plain(verse.text) == plain(old)
-            and entry.get("lemma", "") is None
-            and body is not None,
-            f"Whole-verse omission leaves surviving text, or no note: {key}",
+            and entry.get("lemma", "") is None,
+            f"Whole-verse omission leaves surviving text: {key}",
         )
         require(
             all(note["x-key"] in consumed for _, note in verse.notes),
@@ -619,7 +685,12 @@ def shifted(position: int, changes: list[Replacement], strict: bool = False) -> 
 def promoted(
     code: str, doc: Document, policy: bible.policy.Policy, kjv: Mapping[str, Document]
 ) -> Document:
-    """A book of Brenton's with its Alexandrine decisions carried out."""
+    """A book of Brenton's with its Alexandrine decisions carried out: the
+    verses its passages supply are set first, so that a King James verse may
+    be conformed to Alexandrinus; then the words of verses are replaced and
+    verses omitted; and the verses Alexandrinus orders otherwise are moved
+    last, by whole paragraphs."""
+    doc = with_insertions(code, doc, policy, kjv)
     verses = scripture.verses(doc)
     placed = {
         note["x-key"]: (verse, offset, note)
@@ -640,7 +711,7 @@ def promoted(
             )
         )
     if not replacements and not rewritten:
-        return with_insertions(code, doc, policy, kjv)
+        return with_moves(code, doc, policy, terms)
     omitted = {r.verse for r in replacements if r.omits_verse}
     # Every note of a verse the decisions touch is taken up, and set again
     # where it belongs once the words have changed.
@@ -671,6 +742,10 @@ def promoted(
                 scope = {"declared": companion["lemma"]}
             elif any(r.start <= offset < r.end for r in changes):
                 # A note within replaced words keeps the words it was about.
+                require(
+                    note.get("category") != "edition",
+                    f"Alexandrine replacement covers an edition note: {key}",
+                )
                 lemma, glossed = surviving_scope(note, verse, offset, policy)
                 scope = {"lemma": lemma, "glossed": glossed}
             if companion is not None:
@@ -704,7 +779,6 @@ def promoted(
         doc, [(verses[r.verse], r.start, r.end, list(r.content)) for r in replacements]
     )
     doc = without_verses(doc, omitted)
-    doc = with_insertions(code, doc, policy, kjv)
     verses = scripture.verses(doc)
     note_changes: list[tuple[scripture.Verse, int, int, Content]] = []
     for reference, listed in again.items():
@@ -722,7 +796,7 @@ def promoted(
             set_again.append((position, rank, note))
         for position, _, note in sorted(set_again, key=lambda e: e[:2]):
             note_changes.append((verse, position, position, [note]))
-    return scripture.edited(doc, note_changes)
+    return with_moves(code, scripture.edited(doc, note_changes), policy, terms)
 
 
 def pinned(
@@ -773,12 +847,27 @@ def with_insertions(
     code: str, doc: Document, policy: bible.policy.Policy, kjv: Mapping[str, Document]
 ) -> Document:
     """The document with the verses its passages supply, each from Brenton's
-    Appendix by a declared derivation, or verbatim from the King James Bible."""
+    Appendix by a declared derivation, or from the King James Bible, without
+    its small capitals, to be conformed to Alexandrinus by the passage's
+    edits. Verses set before a verse that opens a paragraph are a paragraph
+    of their own."""
     for key, entry in policy.alexandrinus["passages"].items():
         if key.split()[0] != code:
             continue
-        # The King James verses a passage supplies verbatim.
+        # The King James verses a passage supplies, before its edits.
         source = scripture.verses(kjv[code]) if "kjv" in entry else {}
+        if "kjv" in entry:
+            # The verses borrowed are those the decision is keyed by.
+            supplied = [v.label for v in references.parse_passage(key).verses]
+            require(
+                [
+                    verse["reference"]
+                    for insertion in entry.get("insertions", ())
+                    for verse in insertion.get("verses", ())
+                ]
+                == supplied,
+                f"KJV passage must supply the verses it is keyed by: {key}",
+            )
         for insertion in entry.get("insertions", ()):
             require_fields(
                 insertion, {"verses"}, {"before", "after"}, f"Insertion of {key}"
@@ -815,15 +904,22 @@ def with_insertions(
                 )
                 if "kjv" in entry:
                     require(
-                        f"{code} {label}" == key and "english" not in verse,
+                        "english" not in verse,
                         f"KJV insertion changed its source verse: {key}",
                     )
                     require(label in source, f"KJV source verse missing: {key}")
-                    words = [
-                        item
-                        for b, lo, hi, _ in source[label].parts
-                        for item in kjv[code]["content"][b]["content"][lo:hi]
-                    ]
+                    # The King James small capitals go, wherever they stand,
+                    # as Brenton's text around them has none.
+                    words = usj.mapped(
+                        [
+                            item
+                            for b, lo, hi, _ in source[label].parts
+                            for item in kjv[code]["content"][b]["content"][lo:hi]
+                        ],
+                        lambda node: (
+                            node["content"] if usj.is_type(node, "char", "sc") else node
+                        ),
+                    )
                 else:
                     english = derived(
                         key, verse, entry["appendix"], entry.get("supplied", ())
@@ -848,9 +944,138 @@ def with_insertions(
                 items += words
             blocks = list(doc["content"])
             content = blocks[block]["content"]
-            blocks[block] = {
-                **blocks[block],
-                "content": usj.joined(content[:at], items, content[at:]),
-            }
+            if "before" in insertion and at == 0:
+                # Before a verse that opens its paragraph, the verses are a
+                # paragraph of their own, and the verse keeps its break; a
+                # line of verse or a continued paragraph would not say which.
+                require(
+                    blocks[block]["marker"] == "p",
+                    f"Alexandrine insertion before a {blocks[block]['marker']}: {key}",
+                )
+                blocks.insert(block, usj.para("p", *items))
+            else:
+                blocks[block] = {
+                    **blocks[block],
+                    "content": usj.joined(content[:at], items, content[at:]),
+                }
             doc = usj.with_blocks(doc, blocks)
+    return doc
+
+
+def with_moves(
+    code: str, doc: Document, policy: bible.policy.Policy, terms: terminology.Registry
+) -> Document:
+    """The document with the verses its passages move, each run set before
+    the verse Alexandrinus has it before, under its own numbers, by whole
+    paragraphs: the run opens a paragraph and closes one, and nothing else
+    stands in the paragraphs between. A section heading (usj.HEADINGS) before
+    the run or before the verse it goes before is refused, since neither
+    place says which way it goes. The run, the verse it goes before and the
+    verse it leaves behind must be Brenton's, neither inserted by a passage
+    nor with inserted verses beside them, so that the notes name the Vatican
+    order. A note at its head says where the Vatican text has the verses,
+    and one on the verse it leaves behind says where they are printed, as
+    the Hebrew's relocated passages are noted, in words made from the
+    move."""
+    label = terms.display("vatican")
+    insertions = [
+        insertion
+        for key, entry in policy.alexandrinus["passages"].items()
+        if key.split()[0] == code
+        for insertion in entry.get("insertions", ())
+    ]
+    # The verses passages insert, and the verses they are set beside.
+    inserted = {verse["reference"] for i in insertions for verse in i["verses"]}
+    anchors = {i.get("before", i.get("after")) for i in insertions}
+    for key, entry in policy.alexandrinus["passages"].items():
+        if key.split()[0] != code:
+            continue
+        for move in entry.get("moves", ()):
+            verses = scripture.verses(doc)
+            passage = references.parse_passage(f"{code} {move['verses']}")
+            labels = [v.label for v in passage.verses]
+            target = move["before"]
+            require(
+                all(label in verses for label in labels)
+                and target in verses
+                and target not in labels
+                and target.split(":")[0] == labels[0].split(":")[0],
+                f"Alexandrine move names verses the book lacks: {key}",
+            )
+            first, last = verses[labels[0]], verses[labels[-1]]
+            lo, hi = first.parts[0][0], last.parts[-1][0]
+            held = {block for label in labels for block, *_ in verses[label].parts}
+            blocks = list(doc["content"])
+            at = verses[target].parts[0][0]
+            require(
+                first.parts[0][1] == 1
+                and last.parts[-1][2] == len(blocks[hi]["content"])
+                and held == set(range(lo, hi + 1))
+                and all(
+                    block not in held
+                    for label, verse in verses.items()
+                    if label not in labels
+                    for block, *_ in verse.parts
+                )
+                and verses[target].parts[0][1] == 1
+                and at < lo
+                and not any(
+                    usj.is_type(blocks[i], "para")
+                    and blocks[i]["marker"] in usj.HEADINGS
+                    for i in (at - 1, lo - 1)
+                    if i >= 0
+                ),
+                f"Alexandrine move is not of whole paragraphs to an earlier verse: {key}",
+            )
+            # The verse the run leaves behind: the one before it in order,
+            # which must be the Vatican's verse before it by number, so that
+            # no omission or earlier move has shifted it.
+            ordered = list(verses)
+            behind = verses[ordered[ordered.index(labels[0]) - 1]]
+            chapter, number = labels[0].split(":")
+            require(
+                number.isdigit() and behind.reference == f"{chapter}:{int(number) - 1}",
+                f"Alexandrine move leaves no verse before it by number: {key}",
+            )
+            require(
+                not {*labels, target, behind.reference} & (inserted | anchors),
+                f"Alexandrine move beside an inserted verse: {key}",
+            )
+            which = "this verse" if len(labels) == 1 else "this passage"
+            these = "the verse" if len(labels) == 1 else "the verses"
+            after = behind.reference.partition(":")[2]
+            run = annotate.spanned(passage.verses)
+            notes_set: list[tuple[scripture.Verse, int, int, Content]] = [
+                (
+                    first,
+                    0,
+                    0,
+                    [
+                        annotate.relocation_note(
+                            code,
+                            first.reference,
+                            label,
+                            f"has {which} after verse {after}.",
+                        )
+                    ],
+                ),
+                (
+                    behind,
+                    len(behind.text),
+                    len(behind.text),
+                    [
+                        annotate.relocation_note(
+                            code,
+                            behind.reference,
+                            label,
+                            f"has here {these} printed at {run}.",
+                        )
+                    ],
+                ),
+            ]
+            blocks = list(scripture.edited(doc, notes_set)["content"])
+            doc = usj.with_blocks(
+                doc,
+                blocks[:at] + blocks[lo : hi + 1] + blocks[at:lo] + blocks[hi + 1 :],
+            )
     return doc

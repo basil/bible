@@ -30,7 +30,7 @@ def test_the_edition_prints_every_unit_once_in_the_manifests_order(
     # Each is written under its own id, whatever file it was printed from.
     assert all(text.startswith(f"\\id {code}") for code, text in exported.items())
     assert dict(edition.summary) == {
-        "alexandrine_notes": 197,
+        "alexandrine_notes": 199,
         "alexandrine_appendix_paragraphs": 26,
         "byzantine_units": 1939,
         "byzantine_edits": 858,
@@ -40,12 +40,13 @@ def test_the_edition_prints_every_unit_once_in_the_manifests_order(
         "brenton_units": 51,
         "kjv_units": 27,
         "kjv_marginal_notes": 775,
-        "printed_notes": 4337,
+        "printed_notes": 4348,
         # Every verse of the assembled books: Brenton's, with the passages
         # supplied from Codex Alexandrinus and the King James Bible's
-        # 1 Kingdoms 23:12, and the King James New Testament less the four
+        # 1 Kingdoms 23:12 and 3 Kingdoms 14:1-20, less the verses
+        # Alexandrinus lacks, and the King James New Testament less the four
         # verses the Byzantine text lacks.
-        "verses": 36605,
+        "verses": 36629,
     }
 
 

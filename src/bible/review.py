@@ -30,7 +30,15 @@ from collections.abc import Mapping
 import bible.pipeline
 import bible.policy
 import bible.sources
-from bible import assembly, paths, pipeline, places, scripture, versification
+from bible import (
+    assembly,
+    paths,
+    pipeline,
+    places,
+    references,
+    scripture,
+    versification,
+)
 from bible.alexandrinus import APPENDIX
 from bible.byzantine import review as byzantine_review
 from bible.policy import source_id, thaw
@@ -123,10 +131,20 @@ def alexandrinus_report(
                 anchor = insertion.get("after", insertion.get("before"))
                 assert anchor is not None
                 wanted.add(anchor)
+            for move in decision.get("moves", ()):
+                moved = references.parse_passage(f"{code} {move['verses']}")
+                # The verse the run leaves behind, where its other note stands.
+                order = list(verses(sources, read.brenton, code))
+                behind = order[order.index(moved.first.label) - 1]
+                wanted.update(
+                    {behind, moved.first.label, moved.last.label, move["before"]}
+                )
             wanted = {w for w in wanted if ":" in w and "-" not in w}
             source = decision.get("appendix", decision.get("source_note", ""))
             if "kjv" in decision:
-                source = "Authorized Version, " + key
+                source = f"Authorized Version, {key}" + (
+                    f"; {source}" if source else ""
+                )
             targets: dict[str, set[str]] = {}
             for reference in wanted:
                 where = placed(policy, code, reference)

@@ -118,7 +118,11 @@ class Bible:
                 self.length[book, chapter, label] = len(scripture.words_of(verse.text))
                 match = re.match(r"\d+", label)
                 assert match is not None
-                self.last[book, chapter] = int(match[0])
+                # The chapter's greatest number: a verse printed in another
+                # order than the Vatican text's keeps its number.
+                self.last[book, chapter] = max(
+                    self.last.get((book, chapter), 0), int(match[0])
+                )
 
     def passes(self, tests: str) -> bool | None:
         """Whether every test holds, or None if one can't be read."""

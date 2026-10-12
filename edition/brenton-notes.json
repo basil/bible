@@ -33,10 +33,21 @@
       "to": "\\ft he \\fl or",
       "why": "the word space before or is missing"
     },
+    "1KI 5:30": {
+      "from": "wrought in the works.  \n",
+      "to": "wrought in the works.\\f + \\fr 5:30 \\ft See \\fqa Appendix.\\f*  \n",
+      "why": "Brenton’s printings end the verse with See Appendix (1879 p. 466; 1844 vol. 1 p. 392), the caller of the Appendix’s 5:17, which eBible lacks."
+    },
     "1KI 6:1#2": {
       "from": "\\f + \\fr 6:1 \\f*",
       "to": "",
       "why": "an empty note: eBible's text has a reference and no note"
+    },
+    "1KI 7:1": {
+      "from": "\\f + \\fr 7:1 \\fqa Verse 1, etc. \\ft See the first 12 verses of this chapter placed at the end of it in the Vatican copy. See below.\\f*",
+      "to": "\\f + \\fr 7:1 \\ft See \\fqa Appendix.\\f*",
+      "why": "Brenton’s printings have only See Appendix here (1879 p. 468; 1844 vol. 1 p. 394); eBible pasted the Appendix’s entry into the note and added See below.",
+      "uncategorized": true
     },
     "EXO 12:3": [
       {
@@ -2413,11 +2424,6 @@
       "lemma": "from the tip of one wing to the tip of the other wing",
       "why": "the rendering covers both tips"
     },
-    "1KI 7:1": {
-      "lemma": null,
-      "note": "Verse 1, etc. See the first 12 verses of this chapter placed at the end of it in the Vatican copy. See below.",
-      "why": "the note is about the verse and its place in the chapter; the note comments rather than renders"
-    },
     "1KI 7:6": {
       "lemma": "formed with net-work",
       "why": "netted renders formed with net-work"
@@ -2529,10 +2535,6 @@
     "1KI 13:33": {
       "lemma": "this",
       "why": "this word renders this; after stands in the Greek too (μετὰ τὸ ῥῆμα τοῦτο)"
-    },
-    "1KI 14:21": {
-      "lemma": null,
-      "why": "the note is about the chapter, not these words"
     },
     "1KI 14:21#2": {
       "lemma": "was forty and one years old when he began to reign",

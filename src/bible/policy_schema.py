@@ -247,6 +247,11 @@ class AlexandrinusPassagesInsertions(TypedDict, total=False):
     verses: ReadOnly[tuple[Decision, ...]]
 
 
+class AlexandrinusPassagesMoves(TypedDict, total=False):
+    before: ReadOnly[str]
+    verses: ReadOnly[str]
+
+
 AlexandrinusReadingsNoteEdits = TypedDict(
     "AlexandrinusReadingsNoteEdits",
     {
@@ -442,6 +447,7 @@ Decision = TypedDict(
         "insertions": ReadOnly[tuple[AlexandrinusPassagesInsertions, ...]],
         "kjv": ReadOnly[bool],
         "lemma": ReadOnly[str | None],
+        "moves": ReadOnly[tuple[AlexandrinusPassagesMoves, ...]],
         "note": ReadOnly[str | None],
         "note_at": ReadOnly[int],
         "note_edits": ReadOnly[Mapping[str, AlexandrinusReadingsNoteEdits]],

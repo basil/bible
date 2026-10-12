@@ -19,7 +19,7 @@ make validate  # prepare the whole edition, checking every source and decision, 
 make clean     # delete build/ and dist/
 ```
 
-The sample prints the chapters listed in `edition/sample.json`, which were picked to cover the awkward cases: Psalm 151, the additions to Esther and Daniel, the join between 2 Esdras and Nehemias, the end of Malachias, the displaced passages of Proverbs 24, quoted Greek and Hebrew, the verses the Byzantine text lacks or moves (Luke 17, Acts 24, Romans 14, Matthew 23, 1 John 5), Revelation 13 with its many readings, and pages crowded with notes. The appendix of readings prints the entries of the sampled chapters alone.
+The sample prints the chapters listed in `edition/sample.json`, which were picked to cover the awkward cases: Psalm 151, the additions to Esther and Daniel, the join between 2 Esdras and Nehemias, the end of Malachias, the verses of 3 Kingdoms 5–7 and 14 supplied or reordered after Codex Alexandrinus, the displaced passages of Proverbs 24, quoted Greek and Hebrew, the verses the Byzantine text lacks or moves (Luke 17, Acts 24, Romans 14, Matthew 23, 1 John 5), Revelation 13 with its many readings, and pages crowded with notes. The appendix of readings prints the entries of the sampled chapters alone.
 
 Alongside the PDF, the build writes `dist/bible.provenance.json`, which records the packages and fonts that produced it. Logs and intermediate files go to `build/`, which is regenerated on every run.
 
@@ -80,7 +80,7 @@ A correction to a slip in transcription must match the source text exactly once,
 | Which books are printed, their order, names and headings | `edition/manifest.json` |
 | A slip in a source's transcription | `corrections` in `edition/brenton-notes.json` or `edition/kjv-notes.json` |
 | The words a note is about, its italics, or whether it is a sentence | `notes` in the same files |
-| A reading from Codex Alexandrinus, a supplied passage, or a kept note | `edition/alexandrinus.json` |
+| A reading from Codex Alexandrinus, a supplied passage, a verse omitted or moved after it, or a kept note | `edition/alexandrinus.json` |
 | A Byzantine reading the build does not decide, a ruling that a difference is not applied, a verse omitted or moved, a difference of accent alone, Hodges–Farstad's side where no apparatus gives it, or the lemma of a TR note | `edition/byzantine.json` |
 | A correction of the King James English where TR and RP2026 share the Greek | `readings` in `edition/byzantine.json`, keyed by the verse |
 | Which Greek unit a witness's row is about | `edition/byzantine-placements.json` |

@@ -225,6 +225,31 @@
       "not_a_citation": true,
       "why": "The King James Bible's number of the verse the Byzantine text lacks, whose words the note quotes: not a citation of a verse of this edition."
     },
+    "1KI 5:31": {
+      "source": "6:1",
+      "not_a_citation": true,
+      "why": "Where the Vatican text has its form of the verse, named as a number rather than cited, as the notes on the Hebrew's and the Received Text's order name theirs."
+    },
+    "1KI 5:31@1": {
+      "source": "5:31",
+      "not_a_citation": true,
+      "why": "Where this edition prints the verse Alexandrinus has, named as a number rather than cited, as the note at Romans 16:24 names the doxology's."
+    },
+    "1KI 7:37 Vat.": {
+      "source": "7:38–50",
+      "not_a_citation": true,
+      "why": "Where this edition prints the passage the Vatican text has here, named as a number rather than cited, as the note at Romans 16:24 names the doxology's."
+    },
+    "1KI 7:38 Vat.": {
+      "source": "verse 37",
+      "not_a_citation": true,
+      "why": "The verse after which the Vatican text has this passage, named as a number rather than cited, as the notes on the Hebrew's and the Received Text's order name theirs."
+    },
+    "1KI 14:1": {
+      "source": "12:24g–n",
+      "not_a_citation": true,
+      "why": "Where the Vatican text has their substance, named as a number rather than cited, as the note at Romans 16:24 names where the doxology stands: the note is about the two texts' telling of the story, not a reference to be followed."
+    },
     "1KI 16:28d": {
       "source": "1 Kings 22. 46-50",
       "unprinted": true,
@@ -268,15 +293,6 @@
       "print": "{PSA} 41:5",
       "why": "The place of the wondrous tabernacle, which the note is on, is the fourth verse of the psalm as the Hebrew and the English number it, whose number for the psalm Brenton gives beside the Greek's; it is his fifth, since he counts the title."
     },
-    "BAK Verse 1,": {
-      "source": "Verse 1",
-      "not_a_citation": true,
-      "why": "The label of a passage that the appendix supplies, not a citation of one: Brenton's own number for the verse."
-    },
-    "BAK Verses 1 to 20": {
-      "not_a_citation": true,
-      "why": "The label of a passage that the appendix supplies, not a citation of one: Brenton's own number for the verse."
-    },
     "BAK Verses 16, 17": {
       "not_a_citation": true,
       "why": "The label of a passage that the appendix supplies, not a citation of one: Brenton's own number for the verse."
@@ -286,11 +302,6 @@
       "passages": "HEB 11:19",
       "print": "11:19",
       "why": "Of Hebrews, which the citation before names."
-    },
-    "BAK v. 24, chap. 12": {
-      "passages": "1KI 12:24",
-      "print": "chapter 12:24",
-      "why": "Brenton gives the verse before the chapter."
     },
     "BAK verse 1": {
       "not_a_citation": true,

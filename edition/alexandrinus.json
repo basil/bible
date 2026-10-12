@@ -4733,6 +4733,350 @@
           ]
         }
       ]
+    },
+    "1KI 5:31": {
+      "appendix": "\\ip 5. \\vp 17\\vp*And the king commanded and they brought great stones, precious stones for the foundation of the house, and unhewn stones.  \n",
+      "why": "Print Brenton’s Appendix passage, confirmed by Swete (vol. I, p. 684: A sets καὶ ἐνετείλατο ὁ βασιλεὺς καὶ αἴρουσιν λίθους μεγάλους λίθους τιμίους εἰς τὸν θεμέλιον τοῦ οἴκου καὶ λίθους ἀπελεκήτους before 5:17, and omits 6:2–5). Brenton’s printings number chapter 5 by the King James numbers and set the Appendix’s caller, See Appendix, at the end of their verse 16, eBible’s 5:30 (1879 p. 466; 1844 vol. 1 p. 392); eBible numbers the chapter by the Hebrew, where the verse is 31, the gap between its 5:30 and 5:32. The Vatican’s form of the verse, Brenton’s 6:1a, is omitted as Alexandrinus omits it and quoted in a note on 6:1, which A completes instead with the words that he began to build the house to the Lord, the note quoting the Vatican’s in their place; Swete’s VI 2–5 om A covers 6:1a–d, but 6:1b–d stay, since Brenton reports no reading there: A has the matter of 6:1b, with the Giblites, in its addition before 5:17, and that of 6:1c–d, with and he built it in seven years, after κέδρου in 6:36 (p. 687: 34 κεδρου] + εν τω ετει τω τεταρτω εθεμελιωσεν τον οικον κ̅υ̅ … A), where it also lacks κυκλόθεν … ναοῦ (om κυκλοθεν...ναου A).",
+      "swete": {
+        "volume": 1,
+        "page": 684,
+        "evidence": "apparatus",
+        "reading": "17 και ητοιμασαν] pr και ενετειλατο ο βασιλευς και αιρουσιν λιθους μεγαλους λιθους τιμιους εις τον θεμελιον του οικου· και λιθους απελεκητους· και επελεκησαν οι υιοι Σαλωμων· και οι υιοι Χειραμ· και οι Βιβλιοι· A | VI 2–5 om A",
+        "agrees": true
+      },
+      "supplied": ["that", "he", "began", "build", "to", "Lord"],
+      "insertions": [
+        {
+          "after": "5:30",
+          "verses": [
+            {
+              "reference": "5:31",
+              "note": "\\fl Vat. \\ft omits this verse, and has another form of it at 6:1.",
+              "english": {
+                "source": "brenton",
+                "span": [17, 138]
+              }
+            }
+          ]
+        }
+      ],
+      "edits": [
+        {
+          "target": "1KI 6:1",
+          "from": "over Israel,",
+          "note": "\\fl Vat. \\fq that the king commanded that they should take great and costly stones for the foundation of the house, and hewn stones\\ft , its form of 5:31.",
+          "why": "Swete, vol. I, p. 684: Ισραηλ 2°] + και ωκοδομει τον οικον τω κω A, which completes the verse where the Vatican’s 1a is omitted; rendered in Brenton’s words at 6:2, the house which the king built to the Lord, with his that for καί after it came to pass, and began to build for the imperfect, as the work is finished in the eleventh year (p. 687).",
+          "english": {
+            "source": "from",
+            "edits": [
+              {
+                "span": [12, 12],
+                "to": " that he began to build the house to the Lord."
+              }
+            ]
+          },
+          "note_at": 13
+        },
+        {
+          "target": "1KI 6:1a",
+          "omit_verse": true,
+          "note_target": "1KI 6:1",
+          "lemma": null,
+          "from": "that the king commanded that they should take great \\add and\\add* costly stones for the foundation of the house, and hewn stones.",
+          "note": null,
+          "why": "Swete, vol. I, p. 684: VI 2–5 om A; its verse 2 is Brenton’s 1a, the Vatican’s form of the verse printed at 5:31, which the note on 6:1 quotes.",
+          "english": {
+            "source": "from",
+            "edits": [
+              {
+                "span": [0, 129],
+                "to": ""
+              }
+            ]
+          }
+        }
+      ],
+      "source_notes": {
+        "1KI 5:30#3": "\\ft See \\fqa Appendix."
+      }
+    },
+    "1KI 6:11-22": {
+      "appendix": "\\ip 6. \\vp 11\\vp*And the word of the Lord came to Solomon, saying, \\vp 12\\vp*As \\add for\\add* this house which thou art building, if thou wilt walk in my ordinances and execute my judgments, and keep all my commandments to walk in them, I will establish my word with thee which I spoke to David thy father. \\vp 13\\vp*And I will dwell in the midst of the children of Israel, and will not forsake my people Israel. \\vp 14\\vp*So Solomon built the house, and finished it. \\vp 22\\vp*And all inside the oracle he overlaid with gold.  \n",
+      "why": "Print Brenton’s Appendix passage, confirmed by Swete (vol. I, pp. 685–686). The first addition hangs on κεδρίνοις at the end of Swete’s verse 15, which he numbers (10) after the Hebrew: Brenton’s 6:10, ending with cedar boards, so verses 11–14 follow it, as in the Hebrew. The second hangs on οἴκου at the end of Swete’s 21 (22), Brenton’s 6:22, whose last words it follows. No printing has a note at either place (1879 p. 467; 1844 vol. 1 p. 393).",
+      "swete": {
+        "volume": 1,
+        "page": 685,
+        "evidence": "apparatus",
+        "reading": "15 κεδρινοις] + και εγενετο λογος κ̅υ̅ προς Σαλωμων ... A; p. 686 21 οικου] + και ολον το εσω του δαβειρ επεταλωσεν χρυσιω· A",
+        "agrees": true
+      },
+      "insertions": [
+        {
+          "before": "6:15",
+          "verses": [
+            {
+              "reference": "6:11",
+              "note": "\\fl Vat. \\ft omits verses 11–14.",
+              "english": {
+                "source": "brenton",
+                "span": [17, 66]
+              }
+            },
+            {
+              "reference": "6:12",
+              "english": {
+                "source": "brenton",
+                "span": [77, 306]
+              }
+            },
+            {
+              "reference": "6:13",
+              "english": {
+                "source": "brenton",
+                "span": [317, 412]
+              }
+            },
+            {
+              "reference": "6:14",
+              "english": {
+                "source": "brenton",
+                "span": [423, 467]
+              }
+            }
+          ]
+        }
+      ],
+      "edits": [
+        {
+          "target": "1KI 6:22",
+          "from": "the whole house.",
+          "note": "\\fl Vat. \\ft omits.",
+          "english": {
+            "source": "brenton",
+            "span": [478, 526],
+            "edits": [
+              {
+                "span": [0, 0],
+                "to": "the whole house. "
+              }
+            ]
+          },
+          "note_at": 17
+        }
+      ]
+    },
+    "1KI 7:38-50": {
+      "appendix": "\\ip 7. \\it Verse\\it* 1, etc. See the first 12 verses of this chapter placed at the end of it in the Vatican copy.  \n",
+      "why": "Print the chapter in the order of Alexandrinus, confirmed by Swete (vol. I, p. 687: VII 38–50 anteponit A): Solomon’s house, Brenton’s 7:38–50, before the works of Chiram, as the Hebrew orders them. Brenton’s printings number the chapter by the King James numbers, so his Appendix calls them the first 12 verses; eBible’s numbers are Swete’s, and the verses keep them. A also words both ends otherwise, as the Hebrew does: at 38 it adds that he finished all his house (p. 690: ετη] αιτεσιν· και συνετελεσεν ολον τον οικον αυτου· A), and at 50 it has instead the court of the porch, which it leaves out at 6:36–36a (p. 687: om κυκλοθεν...ναου A; p. 691: 50 συνετελεσεν… αυτου] οικοδομησε αυλην οικου κ̅υ̅ την εσωτατην των αιλαμ του οικου του κατα προσωπον του ναου· A); Brenton reports neither, so the verses keep his words. Brenton printed only See Appendix at 7:1 (1879 p. 468; 1844 vol. 1 p. 394), restored by a correction and taken up here; the edition’s notes stand at each place, as the New Testament’s moved verses are noted.",
+      "swete": {
+        "volume": 1,
+        "page": 687,
+        "evidence": "apparatus",
+        "reading": "VII 38–50 anteponit A",
+        "agrees": true
+      },
+      "moves": [
+        {
+          "verses": "7:38-50",
+          "before": "7:1"
+        }
+      ],
+      "source_notes": {
+        "1KI 7:1": "\\ft See \\fqa Appendix."
+      }
+    },
+    "1KI 14:1-20": {
+      "appendix": "\\ip 14. \\it Verses\\it* 1 to 20. The substance of these verses is found in the Vatican copy after \\it v\\it*. 24, \\it chap\\it*. 12.  \n",
+      "kjv": true,
+      "why": "Supply the twenty verses from the King James Version, as 1 Kingdoms 23:12 is supplied: Brenton gives no English, saying only that the Alexandrine text has them (his 14:21 note, 1879 p. 486; 1844 vol. 1 p. 408) and, in his Appendix, that the Vatican text has their substance after 12:24, and Swete prints A’s Greek entire (vol. I, pp. 714–715), which renders the Hebrew. Where A departs from the Hebrew the King James words are conformed to it, the displaced words noted as the Hebrew’s: at 14:2 A lacks the Hebrew’s I pray thee (ἀνάστηθι καὶ ἀλλοιωθήσῃ), at 14:8 its only (ποιῆσαι ἕκαστος τὸ εὐθές), and at 14:10 its behold (διὰ τοῦτο ἐγὼ ἄγω); at 14:3 A reads τῷ ἀνθρώπῳ τοῦ θεοῦ ἄρτους καὶ κολλυρίδα τοῖς τέκνοις αὐτοῦ καὶ σταφίδα καὶ στάμνον μέλιτος, rendered with Brenton’s words for the Vatican’s form of the verse at 12:24h (loaves for the man of God, and cakes for his children, and grapes, and a pot of honey), but a cake for A’s singular κολλυρίδα, and raisins, Brenton’s word for σταφίς at 2 Kingdoms 16:1, for grapes; at 14:10 A adds πρὸς σέ, rendered upon thee; at 14:17 A reads εἰς γῆν Σαριρά, Brenton’s the land of Sarira (11:43), for the Hebrew’s Tirzah. The King James words are also kept at 14:9, where A has θεοὺς ἑτέρους χωνευτά, other molten gods; at 14:15, where A has ὁ ἄνεμος, the wind, for the reed, and ἐκτελεῖ, make an end of, for root up; and at 14:16, where A names the Lord as the one who gives Israel up. The names are respelt by their bearers to Brenton’s forms in this book (revisions.json): Abia, Achia, Selom, and Nabat for Nadab, as Brenton names him at 15:25 and 15:31 and A at 14:20 (Swete p. 715), though A writes Ναδαβ at 15:25 and 15:31 (pp. 717–718). A’s ἐπιλέξω οἴκου Ἰεροβοάμ at 14:10, for the Hebrew’s taking away of the remnant, and its πλήξει at 14:14, shall smite, for the Hebrew’s cut off, are left as the King James has them, as are 14:4, where A has ὁ ἄνθρωπος πρεσβύτερος τοῦ ἰδεῖν, the man was too old to see, and 14:5, where A tells her coming in as past (καὶ ἐγένετο ἐν τῷ εἰσέρχεσθαι αὐτὴν καὶ αὐτὴ ἀπεξενοῦτο) where the King James has the Lord’s it shall be; at 14:10 the King James him that pisseth against the wall, which A and the Hebrew both have, is Brenton’s every male, as he renders it in the Vatican’s telling at 12:24m. The Vatican’s 12:24a–z stay as Brenton has them: he reports only that Alexandrinus supplies these verses.",
+      "swete": {
+        "volume": 1,
+        "page": 714,
+        "evidence": "apparatus",
+        "reading": "XIV 1–20 εν τω καιρω εκεινω ηρρωστησεν Αβια υιος Ιεροβοαμ ... A",
+        "agrees": true
+      },
+      "supplied": ["for", "the", "man", "of", "God", "cake", "his", "children", "raisins", "pot", "thee", "land", "Sarira", "every", "male"],
+      "insertions": [
+        {
+          "before": "14:21",
+          "verses": [
+            {
+              "reference": "14:1",
+              "note": "\\fl Alex. \\ft has verses 1–20. \\fl Vat. \\ft omits them, and has their substance at 12:24g–n; the English is supplied from the Authorized Version, conformed to \\fl Alex. \\ft where noted."
+            },
+            {
+              "reference": "14:2"
+            },
+            {
+              "reference": "14:3"
+            },
+            {
+              "reference": "14:4"
+            },
+            {
+              "reference": "14:5"
+            },
+            {
+              "reference": "14:6"
+            },
+            {
+              "reference": "14:7"
+            },
+            {
+              "reference": "14:8"
+            },
+            {
+              "reference": "14:9"
+            },
+            {
+              "reference": "14:10"
+            },
+            {
+              "reference": "14:11"
+            },
+            {
+              "reference": "14:12"
+            },
+            {
+              "reference": "14:13"
+            },
+            {
+              "reference": "14:14"
+            },
+            {
+              "reference": "14:15"
+            },
+            {
+              "reference": "14:16"
+            },
+            {
+              "reference": "14:17"
+            },
+            {
+              "reference": "14:18"
+            },
+            {
+              "reference": "14:19"
+            },
+            {
+              "reference": "14:20"
+            }
+          ]
+        }
+      ],
+      "edits": [
+        {
+          "target": "1KI 14:2",
+          "from": "Arise, I pray thee,",
+          "note": "\\fl Heb. \\ft adds \\fq I pray thee\\ft .",
+          "why": "A lacks the Hebrew’s particle of entreaty.",
+          "english": {
+            "source": "from",
+            "edits": [
+              {
+                "span": [6, 19],
+                "to": ""
+              }
+            ]
+          }
+        },
+        {
+          "target": "1KI 14:3",
+          "from": "ten loaves, and cracknels, and a cruse of honey",
+          "note": "\\fl Heb. \\fq ten loaves, and cracknels, and a cruse of honey\\ft .",
+          "why": "A’s list is the Vatican’s at 12:24h, with a cake for his children, singular, and raisins for grapes.",
+          "english": {
+            "source": "from",
+            "edits": [
+              {
+                "span": [0, 47],
+                "to": "loaves for the man of God, and a cake for his children, and raisins, and a pot of honey"
+              }
+            ]
+          }
+        },
+        {
+          "target": "1KI 14:8",
+          "from": "\\add that\\add* only which",
+          "lemma": "that",
+          "note": "\\fl Heb. \\ft adds \\fq only\\ft .",
+          "why": "A reads ποιῆσαι ἕκαστος τὸ εὐθές, without the Hebrew’s only.",
+          "english": {
+            "source": "from",
+            "edits": [
+              {
+                "span": [14, 19],
+                "to": ""
+              }
+            ]
+          }
+        },
+        {
+          "target": "1KI 14:10",
+          "from": "therefore, behold,",
+          "note": "\\fl Heb. \\ft adds \\fq behold\\ft .",
+          "why": "A reads διὰ τοῦτο ἐγὼ ἄγω, without the Hebrew’s behold.",
+          "english": {
+            "source": "from",
+            "edits": [
+              {
+                "span": [9, 18],
+                "to": ""
+              }
+            ]
+          }
+        },
+        {
+          "target": "1KI 14:10",
+          "from": "upon the house of Jeroboam",
+          "lemma": "upon thee",
+          "note": "\\fl Heb. \\ft omits.",
+          "why": "A adds πρὸς σέ.",
+          "english": {
+            "source": "from",
+            "edits": [
+              {
+                "span": [0, 0],
+                "to": "upon thee, "
+              }
+            ]
+          }
+        },
+        {
+          "target": "1KI 14:10",
+          "from": "\\add him that\\add* pisseth against the wall",
+          "note": null,
+          "why": "Brenton renders ουρουντα προς τοιχον by male, without a note: every male in the Vatican’s telling of this prophecy (12:24m), at 20:21 and at 4 Kingdoms 9:8, and one male at 1 Kingdoms 25:22 and 25:34; the Hebrew and A agree, so nothing is displaced.",
+          "english": {
+            "source": "from",
+            "edits": [
+              {
+                "span": [0, 43],
+                "to": "every male"
+              }
+            ]
+          }
+        },
+        {
+          "target": "1KI 14:17",
+          "from": "Tirzah",
+          "note": "\\fl Heb. \\fq Tirzah\\ft .",
+          "why": "A reads εἰς γῆν Σαριρά, the name Brenton’s text has for Jeroboam’s city.",
+          "english": {
+            "source": "from",
+            "edits": [
+              {
+                "span": [0, 6],
+                "to": "the land of Sarira"
+              }
+            ]
+          }
+        }
+      ],
+      "source_notes": {
+        "1KI 14:21": "\\ft The first 20 verses of this chapter are supplied by the \\fqa Alex. \\ft See \\fqa App."
+      }
     }
   },
   "kept": {
@@ -4982,18 +5326,6 @@
       },
       "source_note": "\\ft See \\fqa Appendix."
     },
-    "1KI 14:21": {
-      "why": "Bare appendix pointer without English passage; retain for later editor.",
-      "swete": {
-        "volume": 1,
-        "page": 714,
-        "evidence": "apparatus",
-        "reading": "XIV 1–20 in A (om B)",
-        "agrees": true
-      },
-      "todo": true,
-      "source_note": "\\ft The first 20 verses of this chapter are supplied by the \\fqa Alex. \\ft See \\fqa App."
-    },
     "BAK 1KI 2:35a": {
       "appendix": "\\ip 2 \\it ult\\it*. 3. \\it verse\\it* 1. Considerable variation here rather than omission.  \n",
       "why": "The Appendix reports variation without translating an Alexandrine reading.",
@@ -5003,42 +5335,6 @@
         "page": 678,
         "evidence": "apparatus",
         "reading": "46 a–l om καὶ ἦν ὁ βασιλεὺς ... ἐν Ιερουσαλημ A; III 2 θυμιῶντες] pr τῆς δὲ βασιλείας ἑδρασθείσης ... A",
-        "agrees": true
-      }
-    },
-    "BAK 1KI 5:17": {
-      "appendix": "\\ip 5. \\vp 17\\vp*And the king commanded and they brought great stones, precious stones for the foundation of the house, and unhewn stones.  \n",
-      "why": "Promotion would duplicate 6:1a–b; Swete alone cannot authorize deletion of Brenton’s unmarked Vatican words.",
-      "todo": true,
-      "swete": {
-        "volume": 1,
-        "page": 684,
-        "evidence": "apparatus",
-        "reading": "17 καὶ ἠτοίμασαν] pr καὶ ἐνετείλατο ὁ βασιλεὺς ... A; VI 2–5 om A",
-        "agrees": true
-      }
-    },
-    "BAK 1KI 7:1-12": {
-      "appendix": "\\ip 7. \\it Verse\\it* 1, etc. See the first 12 verses of this chapter placed at the end of it in the Vatican copy.  \n",
-      "why": "Structural pointer gives no separate English passage; moving existing verses requires a later editorial decision.",
-      "todo": true,
-      "swete": {
-        "volume": 1,
-        "page": 687,
-        "evidence": "apparatus",
-        "reading": "VII 38–50 anteponit A",
-        "agrees": true
-      }
-    },
-    "BAK 1KI 14:1-20": {
-      "appendix": "\\ip 14. \\it Verses\\it* 1 to 20. The substance of these verses is found in the Vatican copy after \\it v\\it*. 24, \\it chap\\it*. 12.  \n",
-      "why": "The Appendix gives a structural pointer to Vatican 12:24, no separate English to promote.",
-      "todo": true,
-      "swete": {
-        "volume": 1,
-        "page": 714,
-        "evidence": "apparatus",
-        "reading": "XIV 1–20 ἐν τῷ καιρῷ ἐκείνῳ ἠρρωστήσεν Αβια υἱὸς Ιεροβοαμ ... A",
         "agrees": true
       }
     },
@@ -5264,18 +5560,6 @@
       },
       "todo": true,
       "source_note": "\\fqa Alex. \\ft καὶ ἐπάνα, 'and above.'"
-    },
-    "BAK 1KI 6:11-22": {
-      "why": "Keep in the Appendix until both insertion points are checked. Swete hangs the first addition on κεδρίνοις at the end of verse 15 and the second on οἴκου in verse 21 (p. 686); the mapping of the first to Brenton’s verse 6:10 has not been demonstrated. Keep both Appendix portions pending separate placement checks.",
-      "swete": {
-        "volume": 1,
-        "page": 685,
-        "evidence": "apparatus",
-        "reading": "15 κεδρινοις] + και εγενετο λογος κ̅υ̅ προς Σαλωμων ... A; p. 686 21 οικου] + και ολον το εσω του δαβειρ επεταλωσεν χρυσιω· A",
-        "agrees": true
-      },
-      "todo": true,
-      "appendix": "\\ip 6. \\vp 11\\vp*And the word of the Lord came to Solomon, saying, \\vp 12\\vp*As \\add for\\add* this house which thou art building, if thou wilt walk in my ordinances and execute my judgments, and keep all my commandments to walk in them, I will establish my word with thee which I spoke to David thy father. \\vp 13\\vp*And I will dwell in the midst of the children of Israel, and will not forsake my people Israel. \\vp 14\\vp*So Solomon built the house, and finished it. \\vp 22\\vp*And all inside the oracle he overlaid with gold.  \n"
     }
   }
 }

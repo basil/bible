@@ -489,9 +489,10 @@ def _last_verse(
     labels = inventory.get(book, {}).get(str(chapter))
     require(labels, f"No such chapter: {book} {chapter}")
     assert labels
-    match = re.match(r"\d+", labels[-1])
-    assert match is not None
-    return int(match[0])
+    # The chapter's greatest number, not the label printed last: verses
+    # printed in Alexandrinus's order keep the Vatican text's numbers.
+    numbers = [re.match(r"\d+", label) for label in labels]
+    return max(int(match[0]) for match in numbers if match is not None)
 
 
 def missing(citation: Citation, inventory: scripture.Inventory) -> list[str]:

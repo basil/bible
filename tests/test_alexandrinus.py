@@ -303,7 +303,8 @@ def test_a_passage_supplies_verses_from_the_appendix_or_the_king_james_bible(
         promoted(decided(policy, passages={"GEN 99:22b": borrowed}), kjv=kjv)
     )
     assert list(lines) == ["21", "22", "22b", "23"]
-    assert lines["22b"] == r"Then said \sc David\sc*, Will they?"
+    # Without the King James small capitals, as Brenton has none.
+    assert lines["22b"] == "Then said David, Will they?"
     # A note declared without its words is refused by name.
     english = {"source": "brenton", "span": [22, 61]}
     verse = {"reference": "99:22a", "note": None, "english": english}
@@ -315,7 +316,7 @@ def test_a_passage_supplies_verses_from_the_appendix_or_the_king_james_bible(
 def test_every_alexandrine_note_and_supplied_passage_has_its_decision(
     policy: bible.policy.Policy, read: bible.pipeline.Read
 ) -> None:
-    assert alexandrinus.check(policy, read.brenton) == (197, 26)
+    assert alexandrinus.check(policy, read.brenton) == (199, 26)
     # A note left without a decision, or a decision without its note, is refused.
     undecided = decided(
         policy,
@@ -335,10 +336,10 @@ def test_the_edition_prints_its_readings_and_supplied_passages(
         in usj.serialize(edition.documents["GEN"])
     )
     kingdoms = usj.serialize(edition.documents["1SA"])
-    # Supplied verbatim from the Authorized Version, whose small capitals it keeps.
+    # Supplied from the Authorized Version, with Brenton's form of the name.
     assert (
         r"\v 12 \f - \fr 23:12 \ft Alex. has the verse. Vat. omits; the English is supplied "
-        r"from the Authorized Version\f*Then said David, Will the men of Keilah deliver me"
+        r"from the Authorized Version\f*Then said David, Will the men of Keila deliver me"
     ) in kingdoms
     # The names the Alexandrine text omits are noted on the verse before.
     assert "\\v 16a" not in usj.serialize(edition.documents["2SA"])
@@ -346,3 +347,233 @@ def test_the_edition_prints_its_readings_and_supplied_passages(
     appendix = usj.serialize(edition.documents["BAK"])
     assert "And the Philistine advanced and drew nigh" not in appendix
     assert "Considerable variation here rather than omission" in appendix
+
+
+def test_a_passage_may_omit_a_verse_and_note_it_on_the_verse_before(
+    policy: bible.policy.Policy,
+) -> None:
+    body = r"\v 21 And they were clothed." "\n" r"\v 22 So he sent him forth."
+    passage = {
+        "appendix": r"\ip \it Verse\it* 21a. And the Lord spoke.",
+        "why": "Alexandrinus has the verse here, and lacks 22.",
+        "swete": SWETE,
+        "insertions": [
+            {
+                "after": "99:21",
+                "verses": [
+                    {
+                        "reference": "99:21a",
+                        "note": r"\fl Vat. \ft omits this verse.",
+                        "english": {"source": "brenton", "span": [23, 42]},
+                    }
+                ],
+            }
+        ],
+        "edits": [
+            {
+                "target": "GEN 99:22",
+                "omit_verse": True,
+                "note_target": "GEN 99:21a",
+                "lemma": None,
+                "from": "So he sent him forth.",
+                "note": r"\fl Vat. \ft adds \fq So he sent him forth\ft .",
+                "why": "Alexandrinus lacks the verse.",
+                "english": {"source": "from", "edits": [{"span": [0, 21], "to": ""}]},
+            }
+        ],
+    }
+    lines = verse_lines(
+        promoted(decided(policy, passages={"GEN 99:21a": passage}), body)
+    )
+    assert list(lines) == ["21", "21a"]
+    assert lines["21a"] == (
+        r"\f + \fr 99:21a \fl Vat. \ft omits this verse.\f*And the Lord spoke."
+        r"\f + \fr 99:21a \fl Vat. \ft adds \fq So he sent him forth\ft .\f*"
+    )
+
+
+def test_an_omission_is_noted_by_itself_or_by_a_note_quoting_it(
+    policy: bible.policy.Policy, read: bible.pipeline.Read
+) -> None:
+    omission = {
+        "target": "GEN 99:22",
+        "omit_verse": True,
+        "note_target": "GEN 99:21",
+        "lemma": None,
+        "from": "So he sent him forth.",
+        "note": None,
+        "why": "Alexandrinus lacks the verse.",
+        "english": {"source": "from", "edits": [{"span": [0, 21], "to": ""}]},
+    }
+
+    def passage(*edits: dict[str, Any]) -> dict[str, Any]:
+        return {
+            "appendix": r"\ip \it Verse\it* 22. Omitted.",
+            "why": "Alexandrinus lacks the verse.",
+            "swete": SWETE,
+            "edits": [omission, *edits],
+        }
+
+    def quoting(words: str) -> dict[str, Any]:
+        return {
+            "target": "GEN 99:21",
+            "from": "clothed.",
+            "note": rf"\fl Vat. \fq {words}\ft .",
+            "why": "The verse ends otherwise.",
+            "english": {"source": "from", "edits": [{"span": [7, 8], "to": "!"}]},
+        }
+
+    # Neither its own note nor another quoting it, nor one that misquotes it.
+    for edits in ((), (quoting("So he went forth"),)):
+        with pytest.raises(CheckFailed, match="Omission without its note"):
+            alexandrinus.check(
+                decided(policy, passages={"GEN 99:22": passage(*edits)}), read.brenton
+            )
+
+
+def test_a_king_james_passage_may_span_verses_and_be_conformed(
+    policy: bible.policy.Policy, read: bible.pipeline.Read
+) -> None:
+    kjv = {
+        "GEN": book(
+            "GEN",
+            r"\v 24 Then said \sc David\sc*, Will they?"
+            "\n"
+            r"\v 25 And the \sc Lord\sc* said, Go to Tirzah.",
+        )
+    }
+    borrowed: dict[str, Any] = {
+        "kjv": True,
+        "why": "The verses are missing; Alexandrinus reads Sarira at 25.",
+        "swete": SWETE,
+        "supplied": ["Sarira"],
+        "insertions": [
+            {
+                "after": "99:23",
+                "verses": [{"reference": "99:24"}, {"reference": "99:25"}],
+            }
+        ],
+        "edits": [
+            {
+                "target": "GEN 99:25",
+                "from": "Tirzah",
+                "note": r"\fl Heb. \fq Tirzah\ft .",
+                "why": "Alexandrinus reads Sarira.",
+                "english": {
+                    "source": "from",
+                    "edits": [{"span": [0, 6], "to": "Sarira"}],
+                },
+            }
+        ],
+    }
+    lines = verse_lines(
+        promoted(decided(policy, passages={"GEN 99:24-25": borrowed}), kjv=kjv)
+    )
+    assert list(lines) == ["21", "22", "23", "24", "25"]
+    assert lines["24"] == "Then said David, Will they?"
+    assert lines["25"] == (
+        r"And the Lord said, Go to \f + \fr 99:25 \fl Heb. \fq Tirzah\ft .\f*Sarira."
+    )
+    # The verses borrowed are those the decision is keyed by, and only they
+    # may be conformed.
+    short = {
+        **borrowed,
+        "insertions": [{"after": "99:23", "verses": [{"reference": "99:24"}]}],
+    }
+    with pytest.raises(CheckFailed, match="must supply the verses it is keyed by"):
+        promoted(decided(policy, passages={"GEN 99:24-25": short}), kjv=kjv)
+    astray = {**borrowed, "edits": [{**borrowed["edits"][0], "target": "GEN 99:23"}]}
+    with pytest.raises(CheckFailed, match="edits a verse it does not supply"):
+        alexandrinus.check(
+            decided(policy, passages={"GEN 99:24-25": astray}), read.brenton
+        )
+    # The words displaced are the King James Bible's, never noted as the
+    # Vatican's by default.
+    unnoted = {
+        **borrowed,
+        "edits": [{k: v for k, v in borrowed["edits"][0].items() if k != "note"}],
+    }
+    with pytest.raises(CheckFailed, match="KJV passage edit without its own note"):
+        alexandrinus.check(
+            decided(policy, passages={"GEN 99:24-25": unnoted}), read.brenton
+        )
+
+
+def test_verses_inserted_before_a_paragraph_are_a_paragraph_of_their_own(
+    policy: bible.policy.Policy,
+) -> None:
+    """The verse they stand before keeps its break."""
+    kjv = {"GEN": book("GEN", r"\v 20 Then said \add the \+sc Lord\+sc*\add*, Go.")}
+    passage: dict[str, Any] = {
+        "kjv": True,
+        "why": "The verse is missing.",
+        "swete": SWETE,
+        "insertions": [{"before": "99:21", "verses": [{"reference": "99:20"}]}],
+    }
+    doc = promoted(decided(policy, passages={"GEN 99:20": passage}), kjv=kjv)
+    paragraphs = [b["content"] for b in doc["content"] if usj.is_type(b, "para")]
+    numbers = [[i["number"] for i in p if usj.is_type(i, "verse")] for p in paragraphs]
+    assert numbers == [["20"], ["21", "22", "23"]]
+    # Small capitals go, even within another style.
+    assert verse_lines(doc)["20"] == r"Then said \add the Lord\add*, Go."
+    # Before a line of verse, a paragraph of prose would not say which it is.
+    poem = r"\q1" "\n" r"\v 21 A line." "\n" r"\v 22 B." "\n" r"\v 23 C."
+    with pytest.raises(CheckFailed, match="insertion before a q1"):
+        promoted(decided(policy, passages={"GEN 99:20": passage}), poem, kjv=kjv)
+
+
+def test_a_passage_moves_whole_paragraphs_before_a_verse_and_notes_both_places(
+    policy: bible.policy.Policy,
+) -> None:
+    body = r"\v 21 A." "\n" r"\p" "\n" r"\v 22 B." "\n" r"\p" "\n" r"\v 23 C."
+    passage: dict[str, Any] = {
+        "appendix": r"\ip \it Verse\it* 23. See it placed at the end in the Vatican copy.",
+        "why": "Alexandrinus sets 23 before 22.",
+        "swete": SWETE,
+        "moves": [{"verses": "99:23", "before": "99:22"}],
+    }
+    lines = verse_lines(
+        promoted(decided(policy, passages={"GEN 99:23": passage}), body)
+    )
+    assert list(lines) == ["21", "23", "22"]
+    assert (
+        lines["23"]
+        == r"\f + \fr 99:23 \fl Vat. \ft has this verse after verse 22.\f*C."
+    )
+    assert lines["22"] == (
+        r"B.\f + \fr 99:22 \fl Vat. \ft has here the verse printed at 99:23.\f*"
+    )
+    # A run that does not fill its paragraphs, or that would move later, is refused.
+    joined = r"\v 21 A. \v 22 B." "\n" r"\p" "\n" r"\v 23 C."
+    together = {
+        **passage,
+        "moves": [{**passage["moves"][0], "verses": "99:22-23", "before": "99:21"}],
+    }
+    with pytest.raises(CheckFailed, match="not of whole paragraphs"):
+        promoted(decided(policy, passages={"GEN 99:22-23": together}), joined)
+    later = {
+        **passage,
+        "moves": [{**passage["moves"][0], "verses": "99:21", "before": "99:23"}],
+    }
+    with pytest.raises(CheckFailed, match="not of whole paragraphs"):
+        promoted(decided(policy, passages={"GEN 99:21": later}), body)
+    # Nor is a heading carried along or left behind by guess.
+    headed = body.replace(r"\p" "\n" r"\v 23", r"\s1 C" "\n" r"\p" "\n" r"\v 23")
+    with pytest.raises(CheckFailed, match="not of whole paragraphs"):
+        promoted(decided(policy, passages={"GEN 99:23": passage}), headed)
+    # The verse left behind must be the Vatican's verse before the run.
+    gapped = body.replace(r"\v 23", r"\v 24")
+    gap = {**passage, "moves": [{"verses": "99:24", "before": "99:22"}]}
+    with pytest.raises(CheckFailed, match="no verse before it by number"):
+        promoted(decided(policy, passages={"GEN 99:24": gap}), gapped)
+    # Nor may the move stand beside a verse a passage inserts.
+    beside = {
+        "kjv": True,
+        "why": "The verse is missing.",
+        "swete": SWETE,
+        "insertions": [{"before": "99:22", "verses": [{"reference": "99:20"}]}],
+    }
+    kjv = {"GEN": book("GEN", r"\v 20 Go.")}
+    both = {"GEN 99:23": passage, "GEN 99:20": beside}
+    with pytest.raises(CheckFailed, match="beside an inserted verse"):
+        promoted(decided(policy, passages=both), body, kjv=kjv)

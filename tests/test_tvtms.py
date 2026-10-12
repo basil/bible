@@ -109,3 +109,11 @@ def test_the_account_is_of_the_rows_the_bible_passes(
         "JOL 3:1": [["JOL 2:28"], ["JOL 2:28"]],
         "JOL 3:2a": [["JOL 2:29"]],
     }
+
+
+def test_the_last_verse_is_the_greatest_number_whatever_the_order() -> None:
+    """Verses Alexandrinus orders otherwise keep their numbers, so a chapter
+    may print its last verse first."""
+    bible = Bible({"1KI": usj.parse("\\id 1KI\n\\c 7\n\\p\n\\v 38 A.\n\\v 1 B.\n")})
+    assert bible.passes("1Ki.7:38=Last") is True
+    assert bible.passes("1Ki.7:1=Last") is False

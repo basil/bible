@@ -218,5 +218,15 @@
   {
     "id": "XXC",
     "phrase": "This appendix lists every verse in which the two Greek texts differ"
+  },
+  {
+    "id": "1KI",
+    "chapter": "7",
+    "phrase": "And Solomon built a house for himself in thirteen years"
+  },
+  {
+    "id": "1KI",
+    "chapter": "14",
+    "phrase": "At that time Abia the son of Jeroboam fell sick"
   }
 ]

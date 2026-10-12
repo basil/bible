@@ -470,7 +470,7 @@ def test_a_book_cited_alone_keeps_its_abbreviations_period(
         # A book that is named and not cited is renamed.
         ("BAK", "\\is2 3 Kingdoms"),
         # The label of a passage retained for editorial review is no citation.
-        ("BAK", "\\ip 5 \\vp 17\\vp*And the king commanded"),
+        ("BAK", "\\ip 21. \\it Verses\\it* 16, 17, see \\it Appendix\\it*."),
         # A book's introduction, set as a note on the book, cites the book.
         ("BAR", "ending at 3:8, was in all probability originally written in Hebrew"),
     ],

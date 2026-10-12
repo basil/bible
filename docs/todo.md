@@ -34,7 +34,7 @@ Each of these is a question about a rule. One decision settles every note it cov
 
 ## 2. Readings from Codex Alexandrinus
 
-The 35 decisions in `kept` in `edition/alexandrinus.json` that carry `"todo": true` are readings that are still only notes. Each is settled by printing the reading, which moves its decision to `readings` or `passages`, or by keeping the note for good, which removes its `todo` and updates its `why`. Sections 2.1–2.6 group them by what stands in the way.
+The 30 decisions in `kept` in `edition/alexandrinus.json` that carry `"todo": true` are readings that are still only notes. Each is settled by printing the reading, which moves its decision to `readings` or `passages`, or by keeping the note for good, which removes its `todo` and updates its `why`. Sections 2.1–2.5 group them by what stands in the way.
 
 ### 2.1 Greek with no English from Brenton (9)
 
@@ -48,26 +48,16 @@ A has a different reading, but Brenton only points to it, and gives no English t
 
 | Decision | What stands in the way |
 | --- | --- |
-| BAK 1KI 2:35a | Brenton reports variation here without translating it. Swete records omissions and an addition, but applying them needs English that Brenton doesn't give. 1KI 2:35a, in 2.6, is the note that points here. |
+| BAK 1KI 2:35a | Brenton reports variation here without translating it. Swete records omissions and an addition, but applying them needs English that Brenton doesn't give. 1KI 2:35a, in 2.5, is the note that points here. |
 | PSA 41:5 | Brenton gives a reference to the Appendix rather than English, and the Appendix discusses the Hebrew behind the verse. Swete cites no variant of A here: εἰσελεύσομαι is R's. Decide whether there is an Alexandrine reading at all. |
 
-### 2.3 Placement and duplicated passages (5)
-
-| Decision | What stands in the way |
-| --- | --- |
-| BAK 1KI 5:17 | Brenton gives English, and Swete supports its place here, but the same material already stands at 6:1a–b. Printing it would duplicate the passage, and Brenton doesn't mark the existing words for removal. Decide which copy to print. |
-| BAK 1KI 6:11-22 | Both portions stay in the Appendix for now. Swete hangs the first addition on κεδρίνοις at the end of verse 15 and the second on οἴκου in verse 21, but the earlier work placed 6:11–14 after Brenton's 6:10 without recording why. Check that placement, and the second addition's, separately; the record doesn't show that the earlier placement was wrong. |
-| BAK 1KI 7:1-12 | Brenton points to verses already printed elsewhere, and Swete confirms A's different order. There is no separate English to insert; moving the existing verses is a structural decision. |
-| BAK 1KI 14:1-20 | Brenton says the substance is already at 12:24 in the Vatican text, and Swete confirms A's passage at 14:1–20. The Appendix gives no separate English. Resolve the overlap before moving or inserting anything. |
-| 1KI 14:21 | The note that points to BAK 1KI 14:1-20; its Appendix explains the structure rather than translating. Settle the two together. |
-
-### 2.4 Brenton and Swete disagree (1)
+### 2.3 Brenton and Swete disagree (1)
 
 | Decision | Brenton | Swete |
 | --- | --- | --- |
 | GEN 6:2 | A has "angels of God" for "sons of God", in every printing | ἄγγελοι stands over an erasure, and the attribution to A is doubtful (A^{?vid}, confirmed on the scan); establish the reading and the hand |
 
-### 2.5 English to correct or clarify (1)
+### 2.4 English to correct or clarify (1)
 
 Brenton's English for the reading is wrong, incomplete or unclear, and his printings read as eBible has them. Record a correction of the English with its reason before printing the reading.
 
@@ -75,7 +65,7 @@ Brenton's English for the reading is wrong, incomplete or unclear, and his print
 | --- | --- |
 | 2KI 3:21#2 | Printed in the verse, the alternative "and above" would need a starting point (above what?), which Brenton doesn't give. Brenton spells A's Greek ἐπάνα in every printing, where Swete has ἐπάνω; the note keeps his spelling. Settle the whole clause. |
 
-### 2.6 Probably keep as a note (17)
+### 2.5 Probably keep as a note (17)
 
 Nothing here needs printing: the text already follows A, or the note explains rather than offering other English. Confirm each, then remove its `todo`.
 
