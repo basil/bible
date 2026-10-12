@@ -113,8 +113,8 @@ def staged(
     lined = pipeline.lined(units, read, placed)
     line_documents = copy.deepcopy(dict(lined))
     ctx = pipeline.context(lined, placed, sources)
-    _, introductions, _ = pipeline.front_and_back(read, ctx, sources)
-    pipeline.annotated(lined, read, introductions, ctx)
+    _, introductions, appendix_notes, _ = pipeline.front_and_back(read, ctx, sources)
+    pipeline.annotated(lined, read, introductions, appendix_notes, ctx)
     return Staged(
         (dict(promoted.brenton), dict(promoted.kjv)),
         dict(units),

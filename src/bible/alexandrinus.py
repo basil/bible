@@ -451,9 +451,12 @@ def check(
         found == declared,
         f"Alexandrine notes not exhaustive; missing: {sorted(found - declared)}; unused: {sorted(declared - found)}",
     )
-    # An Appendix paragraph that supplies nothing may move into the note on
-    # its verse: that note is then given its words, in the same book.
+    # An Appendix paragraph that supplies nothing moves into the note on its
+    # verse: that note is then given its words, in the same book. The list it
+    # stands in prints nowhere, so a paragraph kept but not moved is lost.
     for key, entry in data["kept"].items():
+        if "appendix" in entry:
+            require("moved_to" in entry, f"Appendix paragraph moved nowhere: {key}")
         if "moved_to" in entry:
             target = data["kept"].get(entry["moved_to"], {})
             require(
@@ -496,57 +499,10 @@ def supplied_paragraphs(doc: Document) -> list[Node]:
     ]
 
 
-def pruned_appendix(doc: Document, policy: bible.policy.Policy) -> Document:
-    """The Appendix without the passages the edition prints in their books
-    and the paragraphs moved into notes, the sections left empty by their
-    going, the heading left with nothing under it, and the blank lines left
-    doubled."""
-    data = policy.alexandrinus
-    leaving = [
-        *data["passages"].values(),
-        *(entry for entry in data["kept"].values() if "moved_to" in entry),
-    ]
-    promoted = [
-        usj.parse(entry["appendix"])["content"][0]
-        for entry in leaving
-        if "appendix" in entry
-    ]
-    start = supplied_heading(doc)
-    blocks = list(doc["content"][:start])
-    rest = list(doc["content"][start + 1 :])
-    for paragraph in promoted:
-        matches = [i for i, block in enumerate(rest) if block == paragraph]
-        require(len(matches) == 1, "Alexandrine appendix span not found once")
-        del rest[matches[0]]
-    # A section holds what follows its heading, up to the next heading.
-    kept, index = [], 0
-    while index < len(rest):
-        end = next(
-            (
-                i
-                for i in range(index + 1, len(rest))
-                if usj.is_type(rest[i], "para") and rest[i]["marker"] in ("is1", "is2")
-            ),
-            len(rest),
-        )
-        section = rest[index:end]
-        empty = all(usj.is_type(b, "para", "ib") for b in section[1:])
-        if not (usj.is_type(section[0], "para", "is2") and empty):
-            kept += section
-        index = end
-    if any(usj.is_type(block, "para", "ip") for block in kept):
-        blocks.append(doc["content"][start])
-    else:
-        kept = []
-    for block in kept:
-        if (
-            usj.is_type(block, "para", "ib")
-            and blocks
-            and usj.is_type(blocks[-1], "para", "ib")
-        ):
-            continue
-        blocks.append(block)
-    return usj.with_blocks(doc, blocks)
+def appendix_notes(doc: Document) -> Document:
+    """The Appendix's notes: what stands before the heading of the passages
+    it supplies, which the books print."""
+    return usj.with_blocks(doc, doc["content"][: supplied_heading(doc)])
 
 
 def surviving_scope(
@@ -588,7 +544,7 @@ def anchor(verse: scripture.Verse, phrase: str | None, key: str) -> int:
     hits = lemmas.occurrences(words, words_of(phrase))
     require(
         words_of(phrase) and len(hits) == 1,
-        f"Surviving note lemma not anchored once: {key} ({len(hits)})",
+        f"Note lemma not anchored once: {key} ({len(hits)})",
     )
     return words[hits[0]][1]
 

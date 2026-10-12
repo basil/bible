@@ -140,10 +140,6 @@
       "chapter_verse": "\\.\\s?",
       "books": {
         "Job": "JOB",
-        "Proverbs": "PRO",
-        "Isaiah": "ISA",
-        "Jezekiel": "EZK",
-        "Exodus": "EXO",
         "John": "JHN",
         "Mark": "MRK",
         "Luke": "LUK",
@@ -273,22 +269,12 @@
       "relative": "chapter",
       "why": "Brenton's notes number chapters in Arabic, and this one alone in Roman: the chapter of this book where Gr. breach is noted twice, at 12:8 and 12:13."
     },
-    "BAK 12. 16; 13. 1, 16; 14. 8, 15, 18; 15. 5; 21. 11; 22. 3; 27. 12; 28. 2": {
+    "BAK PRO 12. 16; 13. 1, 16; 14. 8, 15, 18; 15. 5; 21. 11; 22. 3; 27. 12; 28. 2": {
       "passages": "PRO 12:16; PRO 13:1; PRO 13:16; PRO 14:8; PRO 14:15; PRO 14:18; PRO 15:5; PRO 21:11; PRO 22:3; PRO 27:12; PRO 28:2",
       "print": "12:16; 13:1, 16; 14:8, 15, 18; 15:5; 21:11; 22:3; 27:12; 28:2",
       "why": "Of Proverbs, as the list before it, which names the chapter."
     },
-    "BAK 2 Kings (2 Sam.) 5. 18": {
-      "passages": "2SA 5:18",
-      "print": "{2SA} 5:18",
-      "why": "Brenton names the book both ways; it is this edition's Second Book of Kingdoms."
-    },
-    "BAK Psalm 41 (42):4": {
-      "passages": "PSA 41:5",
-      "print": "{PSA} 41:5",
-      "why": "The place of the wondrous tabernacle, which the note is on, is the fourth verse of the psalm as the Hebrew and the English number it, whose number for the psalm Brenton gives beside the Greek's; it is his fifth, since he counts the title."
-    },
-    "BAK and 11. 19": {
+    "BAK EZK and 11. 19": {
       "source": "11. 19",
       "passages": "HEB 11:19",
       "print": "11:19",

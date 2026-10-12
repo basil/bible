@@ -128,7 +128,8 @@ def test_a_dropped_note_is_restored_but_not_inside_another() -> None:
 def test_the_editions_corrections_all_apply(
     read: bible.pipeline.Read, policy: bible.policy.Policy
 ) -> None:
-    """Each is made once, to a file the edition prints; reading refused otherwise."""
+    """Each is made once, to a file the edition prints or reads; reading refused
+    otherwise."""
     corrections = policy.brenton_notes["corrections"]
-    assert len(corrections) == 177
+    assert len(corrections) == 185
     assert read.mended["1KI"] and "21:11" in read.mended["GEN"]

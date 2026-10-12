@@ -13,7 +13,7 @@ The volume is arranged as follows:
 1. The title page, the table of contents, a list of abbreviations, the editor's introduction, and a table of chapters and verses whose numbers differ from the King James Bible’s
 2. The Old Testament, opening with Brenton's preface (1844) and introduction (1870) and a later introduction to the Apocrypha
 3. The New Testament, opening with the King James translators' dedication to the king and their preface, "The Translators to the Reader"
-4. Appendices: Brenton's notes and supplied passages, and the readings of the Byzantine text, every New Testament verse in which the Greek texts differ
+4. The appendix: the readings of the Byzantine text, every New Testament verse in which the Greek texts differ
 
 Most Old Testament books use their Septuagint names: Esaias rather than Isaiah; Jesus, the Son of Navi rather than Joshua; and 1-4 Kingdoms rather than Samuel and Kings. The books that English Bibles set apart as the Apocrypha are printed in their Greek places, so there is no separate Apocrypha section: the Prayer of Manasses follows 2 Chronicles, 4 Maccabees follows 3 Maccabees, and the additions to Esther and Daniel and Psalm 151 stand within the text.
 

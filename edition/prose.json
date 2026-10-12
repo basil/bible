@@ -9,36 +9,6 @@
       }
     ]
   },
-  "appendix-chapter-labels": {
-    "why": "The chapter labels in the appendix's 3 Kingdoms section have no full stop after their numbers.",
-    "changes": [
-      {
-        "unit": "BAK",
-        "from": "2 ult. 3. verse 1.",
-        "to": "2 ult. 3 verse 1."
-      },
-      {
-        "unit": "BAK",
-        "from": "5. And the king commanded",
-        "to": "5 And the king commanded"
-      },
-      {
-        "unit": "BAK",
-        "from": "6. And the word of the Lord came to Solomon",
-        "to": "6 And the word of the Lord came to Solomon"
-      },
-      {
-        "unit": "BAK",
-        "from": "7. Verse 1, etc.",
-        "to": "7 Verse 1, etc."
-      },
-      {
-        "unit": "BAK",
-        "from": "14. Verses 1 to 20.",
-        "to": "14 Verses 1 to 20."
-      }
-    ]
-  },
   "numbers": {
     "why": "Chicago sets no period after a number within a sentence. The number stays in figures, as the source writes it, unless the notes around it write theirs in words, and an ordinal takes its suffix. Each change names its unit and the words it changes there, once.",
     "changes": [
@@ -119,11 +89,6 @@
         "note": "PSA 68:1",
         "from": "44. title",
         "to": "44 title"
-      },
-      {
-        "unit": "BAK",
-        "from": "4. 23. proverb,",
-        "to": "4. 23 proverb,"
       },
       {
         "unit": "OTH",
@@ -234,11 +199,6 @@
         "unit": "BAK",
         "from": "part. niph. fem.",
         "to": "participle Niphal feminine"
-      },
-      {
-        "unit": "BAK",
-        "from": "ult.",
-        "to": "last verse."
       },
       {
         "unit": "BAK",
@@ -449,6 +409,51 @@
         "from": "C. Pridham",
         "to": "Charles Pridham",
         "why": "Brenton prints C. Pridham; his preface gives Mr. Charles Pridham"
+      }
+    ]
+  },
+  "esdras-introduction": {
+    "why": "Omit the comparison with the sixth Article of Religion, as requested by the editor; this note introduces the First Book of Esdras under this edition’s title.",
+    "changes": [
+      {
+        "unit": "OTH",
+        "from": ", which the sixth Article of Religion styles the third book,",
+        "to": ""
+      }
+    ]
+  },
+  "note-substitution-dependencies": {
+    "why": "Complete the source alternatives with the words and grammatical dependencies their full lemmas take in, as required by the marginal notes’ substitution rule. Each from is checked against its source note; the supplied object and clause context come from the verse named by the key, and the plural verb agrees with Brenton’s Abodes. Scripture wording and witness attribution are retained.",
+    "changes": [
+      {
+        "note": "GEN 4:26",
+        "from": "trusted",
+        "to": "trusted to call",
+        "why": "Repeat the verse’s to call in the first alternative after the lemma takes in that infinitive, so both trusted to call and had faith to call replace hoped to call as a whole."
+      },
+      {
+        "note": "EXO 32:6",
+        "from": "Set upon the altar",
+        "to": "he Set upon the altar",
+        "why": "Repeat the source verse’s he in the alternative because its unique lemma takes in that subject. The source rendering retains its initial capital here; edition/revisions.json lowercases Set in this note."
+      },
+      {
+        "note": "DEU 2:3",
+        "from": "Let it suffice you to compass",
+        "to": "Let it suffice you to compass this mount",
+        "why": "The lemma quotes this mount; restore that same object after compass in the alternative."
+      },
+      {
+        "note": "PRO 16:16",
+        "from": "Abodes",
+        "to": "Abodes of wisdom are",
+        "why": "Brenton’s Abodes renders brood. Repeat of wisdom, which identifies the first of the verse’s two broods, and use are for the is now included in the lemma, preserving plural agreement."
+      },
+      {
+        "note": "2TH 3:14 by this Epistle note that man",
+        "from": "signify that man by an Epistle",
+        "to": "our word, signify that man by an Epistle",
+        "why": "Repeat the verse’s our word with the comma separating the conditional from the imperative, after the note’s lemma takes those words in."
       }
     ]
   }

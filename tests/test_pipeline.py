@@ -40,7 +40,7 @@ def test_the_edition_prints_every_unit_once_in_the_manifests_order(
         "brenton_units": 51,
         "kjv_units": 27,
         "kjv_marginal_notes": 775,
-        "printed_notes": 4349,
+        "printed_notes": 4350,
         # Every verse of the assembled books: Brenton's, with the passages
         # supplied from Codex Alexandrinus and the King James Bible's
         # 1 Kingdoms 23:12 and 3 Kingdoms 14:1-20, less the verses
@@ -955,8 +955,10 @@ def test_what_is_typeset_carries_no_callers_and_prints_notes_by_their_verses(
 ) -> None:
     for code in edition.scripture:
         text = exported[code]
-        # Any caller, "*" as well as "+"; only "-" sets none.
-        assert not re.search(r"\\(?:ef|[fx]) (?!- )", text), code
+        # A note in the margin has no caller: any, "*" as well as "+", would
+        # stand in the text. A note at the foot of the page has its number.
+        assert not re.search(r"\\[fx] (?!- )", text), code
+        assert not re.search(r"\\ef (?!\+ )", text), code
         # The chapter is the page's to supply: an origin is its verse alone.
         assert not re.search(r"\\(?:fr|xo) \d+:", text), code
     # Front matter's notes keep their callers, and print under them alone.
@@ -964,7 +966,7 @@ def test_what_is_typeset_carries_no_callers_and_prints_notes_by_their_verses(
     # Greek and Hebrew are tagged for their fonts, single letters too: within
     # a note's words, and among a paragraph's.
     assert "\\+wg εἰς ὁμοιότητα\\+wg*" in exported["GEN"]
-    assert "\\wh רפאים\\wh*" in exported["BAK"]
+    assert "\\+wh רפאים\\+wh*" in exported["2SA"]
     # The edition's own pages are sent as the editor wrote them.
     assert not re.search(r"\\\+?w[gh] ", exported["CNC"])
 
@@ -1340,6 +1342,76 @@ def test_passage_revisions_in_matter_and_capitalization(
         revision.passages("XXB", doc, invalid, set())
 
 
+def test_keyed_note_fragments_can_lower_initials_across_semantic_runs(
+    policy: bible.policy.Policy,
+) -> None:
+    doc = usj.parse(
+        "\\id GEN\n\\c 1\n\\p\n\\v 1 Text.\\f - \\fr 1:1 \\fq Text: "
+        "\\ft Gr. \\fqa Ancient\\ft . Or, \\fqa everlasting\\ft ; so the Heb.\\f*"
+    )
+    note = usj.notes_of(doc["content"])[0]
+    note["x-key"] = "GEN 1:1"
+    before = copy.deepcopy(doc)
+    change = {"note": "GEN 1:1", "from": "Ancient. Or,", "to": "ancient, or,"}
+    rules = revisions(policy, passages=passage_group(change))
+    revision.check(rules)
+    met: revision.MetRevisions = set()
+    result = revision.passages("GEN", doc, rules, met)
+    revised = usj.notes_of(result["content"])[0]
+    assert usj.text_of(revised["content"]) == (
+        "1:1 Text: Gr. ancient, or, everlasting; so the Heb."
+    )
+    assert [
+        usj.text_of(n["content"])
+        for n in usj.walk(revised["content"])
+        if usj.is_type(n, "char", "fqa")
+    ] == ["ancient", "everlasting"]
+    assert doc == before
+    revision.check_met(rules, met)
+
+
+@pytest.mark.parametrize(
+    "old,new",
+    [
+        ("Ancient", "different"),
+        ("McDonald", "Mcdonald"),
+        ("ancient trees", "ancient Trees"),
+        ("1-18", "1–19"),
+        ("a1-18b", "a1–18b"),
+    ],
+)
+def test_note_capitalization_cannot_change_words_or_internal_case(
+    policy: bible.policy.Policy, old: str, new: str
+) -> None:
+    doc = usj.parse("\\id GEN\n\\c 1\n\\p\n\\v 1 Text.\\f - \\ft Gr. " + old + "\\f*")
+    usj.notes_of(doc["content"])[0]["x-key"] = "GEN 1:1"
+    rules = revisions(
+        policy, passages=passage_group({"note": "GEN 1:1", "from": old, "to": new})
+    )
+    with pytest.raises(CheckFailed, match="capitalization"):
+        revision.check(rules)
+        revision.passages("GEN", doc, rules, set())
+
+
+def test_note_number_ranges_can_use_an_en_dash(policy: bible.policy.Policy) -> None:
+    doc = usj.parse("\\id GEN\n\\c 1\n\\p\n\\v 1 Text.\\f - \\ft Numbered 1-18.\\f*")
+    usj.notes_of(doc["content"])[0]["x-key"] = "GEN 1:1"
+    before = copy.deepcopy(doc)
+    rules = revisions(
+        policy,
+        passages=passage_group({"note": "GEN 1:1", "from": "1-18", "to": "1–18"}),
+    )
+    revision.check(rules)
+    met: revision.MetRevisions = set()
+    result = revision.passages("GEN", doc, rules, met)
+    assert usj.text_of(usj.notes_of(result["content"])[0]["content"]) == (
+        "Numbered 1–18."
+    )
+    assert scripture.verses(result)["1:1"].text == scripture.verses(doc)["1:1"].text
+    assert doc == before
+    revision.check_met(rules, met)
+
+
 @pytest.mark.parametrize(
     "spelling,old,new",
     [
@@ -1380,17 +1452,45 @@ def test_foreign_spelling_is_confined_to_its_key_and_keeps_metadata(
 def test_foreign_spelling_in_matter_can_share_a_paragraph_with_punctuation(
     policy: bible.policy.Policy,
 ) -> None:
-    doc = usj.parse("\\id BAK\n\\ip English ἐπαξοοῦν.—More.")
+    doc = usj.parse("\\id XXE\n\\ip English ἐπαξοοῦν.—More.")
     rules = revisions(
         policy,
         passages=passage_group(
-            {"unit": "BAK", "spelling": "greek", "from": "ἐπαξοοῦν", "to": "ἐπαξονοῦν"},
-            {"unit": "BAK", "from": ".—More", "to": "—More"},
+            {"unit": "XXE", "spelling": "greek", "from": "ἐπαξοοῦν", "to": "ἐπαξονοῦν"},
+            {"unit": "XXE", "from": ".—More", "to": "—More"},
         ),
     )
     revision.check(rules)
-    result = revision.passages("BAK", doc, rules, set())
+    result = revision.passages("XXE", doc, rules, set())
     assert usj.text_of(result["content"]) == "English ἐπαξονοῦν—More."
+
+
+def test_foreign_spelling_can_share_a_note_with_lowercase_fragments(
+    policy: bible.policy.Policy,
+) -> None:
+    doc = usj.parse(
+        "\\id NUM\n\\c 1\n\\p\n\\v 18 Text.\\f - \\fr 1:18 " "\\ft Greek ἐπαξοοῦν.\\f*"
+    )
+    usj.notes_of(doc["content"])[0]["x-key"] = "NUM 1:18"
+    rules = revisions(
+        policy,
+        passages=passage_group(
+            {"note": "NUM 1:18", "from": "Greek", "to": "greek"},
+            {
+                "note": "NUM 1:18",
+                "spelling": "greek",
+                "from": "ἐπαξοοῦν",
+                "to": "ἐπαξονοῦν",
+            },
+        ),
+    )
+    revision.check(rules)
+    met: revision.MetRevisions = set()
+    result = revision.passages("NUM", doc, rules, met)
+    assert usj.text_of(usj.notes_of(result["content"])[0]["content"]) == (
+        "1:18 greek ἐπαξονοῦν."
+    )
+    revision.check_met(rules, met)
 
 
 def test_foreign_spelling_sets_letters_before_a_word_in_its_style(
@@ -1549,15 +1649,15 @@ def test_foreign_spelling_refuses_a_note_moved_into_the_new_testament(
 def test_foreign_spelling_refuses_stale_and_overlapping_matches(
     policy: bible.policy.Policy,
 ) -> None:
-    change = {"unit": "BAK", "spelling": "greek", "from": "ἐπαξοοῦν", "to": "ἐπαξονοῦν"}
+    change = {"unit": "XXE", "spelling": "greek", "from": "ἐπαξοοῦν", "to": "ἐπαξονοῦν"}
     rules = revisions(policy, passages=passage_group(change))
     for text in ("Absent.", "ἐπαξοοῦν ἐπαξοοῦν"):
         with pytest.raises(CheckFailed, match="not met once"):
-            revision.passages("BAK", usj.parse("\\id BAK\n\\ip " + text), rules, set())
+            revision.passages("XXE", usj.parse("\\id XXE\n\\ip " + text), rules, set())
     with pytest.raises(CheckFailed, match="Overlapping"):
         revision.passages(
-            "BAK",
-            usj.parse("\\id BAK\n\\ip ἐπαξοοῦν"),
+            "XXE",
+            usj.parse("\\id XXE\n\\ip ἐπαξοοῦν"),
             revisions(policy, passages=passage_group(change, change)),
             set(),
         )

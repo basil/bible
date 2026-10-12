@@ -6,17 +6,20 @@
     "In more recent times",
     "The second book of Esdras"
   ],
-  "omit": {},
+  "omit": {
+    "There are four books": "Omit the introductory sentence about the Western Church’s canon, as requested by the editor; the note begins with the account of the First Book of the Maccabees.",
+    "The third and fourth books": "Omit the sentence about translations made for the original edition of the Apocrypha, as requested by the editor; it does not describe this edition."
+  },
   "books": {
     "MAN": ["This purports"],
     "1ES": ["The first book of Esdras"],
     "TOB": ["The book of Tobit"],
     "JDT": ["The story of Judith"],
     "ESG": ["These additions to the Canonical Esther"],
-    "1MA": ["There are four books", "The first book of the Maccabees"],
+    "1MA": ["The first book of the Maccabees"],
     "2MA": ["The second book of the Maccabees"],
     "3MA": ["The third book of the Maccabees"],
-    "4MA": ["The fourth book of the Maccabees", "The third and fourth books"],
+    "4MA": ["The fourth book of the Maccabees"],
     "WIS": ["This book is one of the most beautiful", "The book was, without doubt"],
     "SIR": [
       "This book was originally written",
@@ -79,13 +82,6 @@
         "replace": "Canonical Daniel",
         "insert": "[Book of Daniel]",
         "why": "Use this edition's title for the book, which includes the additions and which the Church of Greece, whose order the edition follows, receives; “Canonical” carries a meaning the title would lose, so the title is the editor's and bracketed"
-      }
-    ],
-    "The third and fourth books": [
-      {
-        "after": "this edition of the Apocrypha",
-        "insert": " [for which this introduction was written]",
-        "why": "Printed here, “this edition” would mean this volume, which reprints the translation but was not the edition it was made for"
       }
     ],
     "These additions to the Canonical Esther": [

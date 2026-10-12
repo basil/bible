@@ -55,6 +55,7 @@ KEPT_MARKERS = {
         "tc1",
         "tc2",
         "vp",
+        "fv",
         "ms1",
         "s2",
         "s3",
@@ -86,6 +87,12 @@ def check_processed(project: Path, base: Path, ids: list[str]) -> None:
     tex = texfiles[0].read_text(encoding="utf-8")
     require("%\\OmitCallerInNote{f}" in tex, "Footnote callers unexpectedly suppressed")
     require("\\AutoCallers{f}{1,2," in tex, "Footnote callers not numbered")
+    # The books' introductions and the notes of Brenton's Appendix are ef
+    # footnotes, whose callers stand in the text.
+    require(
+        "%\\OmitCallerInNote{ef}" in tex,
+        "Extended note callers unexpectedly suppressed",
+    )
     for code in ids:
         source = project_usfm(project, code).read_text(encoding="utf-8")
         processed = processed_usfm(project, code)

@@ -19,6 +19,7 @@ Five kinds of change are declared, each with its reason:
              divides are not joined, divided or re-divided, and nor are
              they in the lemma that quotes them
     passages punctuation in a keyed note or front/back-matter paragraph,
+             and lowercase word initials in a keyed note's fragments,
              or Greek/Hebrew spelling in Old Testament notes and matter
     punctuation systematic English punctuation rules
     verses   changes to the words of single verses, each naming its verse,
@@ -223,6 +224,9 @@ def check(policy: bible.policy.Policy) -> None:
                 f"Revision that changes nothing, or with an empty why: {name}: {key}",
             )
 
+    # The front and back matter that prints: a unit read only for what it
+    # sends to the books, as Brenton's Appendix, is never revised as a unit,
+    # and its notes are revised at their verses, by their keys.
     matter = {e["id"] for e in policy.entries if "file" not in e and "section" not in e}
     # Brenton's units, and the files their notes are keyed by: Daniel's
     # include those of Susanna and Bel.
@@ -312,7 +316,11 @@ def check(policy: bible.policy.Policy) -> None:
                 f"Passage revision is not plain punctuation: {selector}",
             )
             require(
-                _same_words(passage_change["from"], passage_change["to"]),
+                _same_words(
+                    passage_change["from"],
+                    passage_change["to"],
+                    note="note" in passage_change,
+                ),
                 f"Passage revision changes wording or noninitial capitalization: {selector}",
             )
 
@@ -395,11 +403,18 @@ def _starts_word(text: str, at: int, spelling: str) -> bool:
     return _foreign_mask(text[: at + 1], spelling) == before + f"\0{spelling}\0"
 
 
-def _same_words(old: str, new: str) -> bool:
+def _same_words(old: str, new: str, *, note: bool = False) -> bool:
+    """Keep lexical tokens and internal case. Keyed notes may lower a word's
+    initial; other capitalization must begin a sentence."""
+    # A separator between whole numbers is punctuation, not a word's hyphen.
+    old, new = (
+        re.sub(r"(?<!\w)(\d+)-(\d+)(?!\w)", r"\1–\2", text) for text in (old, new)
+    )
     pattern = r"\w+(?:[-'’]\w+)*"
     before, after = list(re.finditer(pattern, old)), list(re.finditer(pattern, new))
     return len(before) == len(after) and all(
         a[0] == b[0]
+        or (note and a[0][:1].isupper() and b[0] == a[0][:1].lower() + a[0][1:])
         or (
             a[0][:1].islower()
             and b[0] == a[0][:1].upper() + a[0][1:]
@@ -506,7 +521,7 @@ def passages(
             )
         else:
             require(
-                _same_words(words, after),
+                _same_words(words, after, note="note" in change),
                 "Passage revision changes wording or noninitial capitalization: "
                 f"{selector}: {old}",
             )
@@ -532,6 +547,8 @@ def passages(
     if not edits:
         return doc
 
+    note_contents = {id(content) for key, content in targets if key is not None}
+
     def rewrite(content: Content) -> Content:
         revised = content
         if id(content) in edits:
@@ -542,7 +559,9 @@ def passages(
                 before_words = _foreign_mask(before_words, spelling)
                 after_words = _foreign_mask(after_words, spelling)
             require(
-                _same_words(before_words, after_words),
+                _same_words(
+                    before_words, after_words, note=id(content) in note_contents
+                ),
                 "Combined passage revisions change wording or noninitial "
                 f"capitalization: {code}",
             )

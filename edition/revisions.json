@@ -1,5 +1,5 @@
 {
-  "why": "The spelling, vocabulary and punctuation of the translation, revised by explicit editorial decisions. A word is respelt or modernized wherever the translation, its notes, and its front and back matter print it as a whole word; a word with a scope of scripture is revised only in numbered scripture and marked note lemmas (fq) and readings (fqa), wherever they stand. Book titles and metadata, headings, introduction paragraphs and explanatory commentary retain source grammar. Numbered scripture in d paragraphs, including Psalm superscriptions, remains in scope. Plain quotation marks do not establish scope. Names are respelt first. Global spelling, vocabulary and participle decisions affect source prose and run next, followed by a separate single sweep of scoped grammar decisions. A verse's change is made to the words of that verse alone, which must have them once, as the names leave them, and to the notes that quote them. Verses' changes stand in groups, each group under the reason its changes share. Each gives its reason. An isolated alternative whose word is also a plural noun may name its stable source note as its exact context. Passage changes name a stable note key or a front/back-matter unit and the plain words met once there; only punctuation, associated spacing and sentence-initial capitalization may change. A phrase is revised as a word is; an stays before a silent h, and mine and thine where they stand alone. A word may except the phrases it must not change, which the edition must print. Words that a character style divides keep their division, and so does the lemma that quotes them at its note.",
+  "why": "The spelling, vocabulary and punctuation of the translation, revised by explicit editorial decisions. A word is respelt or modernized wherever the translation, its notes, and its front and back matter print it as a whole word; a word with a scope of scripture is revised only in numbered scripture and marked note lemmas (fq) and readings (fqa), wherever they stand. Book titles and metadata, headings, introduction paragraphs and explanatory commentary retain source grammar. Numbered scripture in d paragraphs, including Psalm superscriptions, remains in scope. Plain quotation marks do not establish scope. Names are respelt first. Global spelling, vocabulary and participle decisions affect source prose and run next, followed by a separate single sweep of scoped grammar decisions. A verse's change is made to the words of that verse alone, which must have them once, as the names leave them, and to the notes that quote them. Verses' changes stand in groups, each group under the reason its changes share. Each gives its reason. An isolated alternative whose word is also a plural noun may name its stable source note as its exact context. Passage changes name a stable note key or a front/back-matter unit and the plain words met once there; only punctuation, associated spacing and sentence-initial capitalization may change, with lowercase word initials also allowed in keyed notes. A phrase is revised as a word is; an stays before a silent h, and mine and thine where they stand alone. A word may except the phrases it must not change, which the edition must print. Words that a character style divides keep their division, and so does the lemma that quotes them at its note.",
   "names": {
     "why": "Proper names of persons and places, respelt where their bearer is identified. A decision respells every whole-word occurrence of its forms in the verses it lists, as the edition numbers them, and in the lemmas that quote them, and nowhere else. Every other verse of the printed books that has a decided form is listed under keep, with who keeps it. The build refuses an occurrence listed neither way, a listed verse without its form, and a kept verse that another revision respells. A note's commentary and the front and back matter keep the source's names. The king of Judah retains both source names: Azarias for Greek Ἀζαρίας in 4 Kgdms and 1 Chr 3:12, and Ozias for Greek Ὀζίας, including 2 Chr. These names are not harmonized; other bearers and the related forms Azaria, Azariu, Ozia and Ozi retain their source forms.",
     "decisions": {
@@ -9968,6 +9968,14 @@
         "REV 14:13 from henceforth, yea, saith the Spirit"
       ],
       "why": "In this alternative Yea opens what the Spirit says, as it does in the verse; this note alone."
+    },
+    "Cesars": {
+      "to": "Cesar’s",
+      "scope": "scripture",
+      "notes": [
+        "PHP 1:13 palace"
+      ],
+      "why": "The 1611 alternative names Cesar’s court: supply the singular possessive apostrophe in this source note alone, preserving the name’s spelling and the source wording."
     }
   },
   "verses": {
@@ -10836,7 +10844,7 @@
           "why": "Brenton 1879 and 1884 Introduction p. iii print an erroneous medial grave. Swete vol. 2 (1907) p. 644, verified on the scan, confirms βιβλίων with acute in this same Sirach prologue quotation."
         },
         {
-          "unit": "BAK",
+          "note": "JOB 39:13 Appendix",
           "spelling": "hebrew",
           "from": "נעלסּה",
           "to": "נעלסה",
@@ -10851,46 +10859,6 @@
           "unit": "XXB",
           "from": "original text,—of the fidelity of the version, and also,—of the correctness",
           "to": "original text, of the fidelity of the version, and also of the correctness"
-        }
-      ]
-    },
-    "reference-label-dashes": {
-      "why": "These appendix reference labels introduce their explanations with a dash; the period after the verse number is not an abbreviation or a sentence ending.",
-      "changes": [
-        {
-          "unit": "BAK",
-          "from": "2 Kgdms. 5:18.—",
-          "to": "2 Kgdms. 5:18—"
-        },
-        {
-          "unit": "BAK",
-          "from": "Job 25:2.—",
-          "to": "Job 25:2—"
-        },
-        {
-          "unit": "BAK",
-          "from": "Job 39:13.—",
-          "to": "Job 39:13—"
-        },
-        {
-          "unit": "BAK",
-          "from": "Ps. 41:5.—",
-          "to": "Ps. 41:5—"
-        },
-        {
-          "unit": "BAK",
-          "from": "Prov. 8:5.—",
-          "to": "Prov. 8:5—"
-        },
-        {
-          "unit": "BAK",
-          "from": "Esai. 2:6.—",
-          "to": "Esai. 2:6—"
-        },
-        {
-          "unit": "BAK",
-          "from": "Ezek. 16:44.—",
-          "to": "Ezek. 16:44—"
         }
       ]
     },
@@ -10951,6 +10919,261 @@
           "note": "LUK 1:45 that believed, for there",
           "from": "which believed, that there",
           "to": "which believed that there"
+        }
+      ]
+    },
+    "note-fragment-capitals": {
+      "why": "Common words in marginal glosses continue the lemma in lowercase; proper names, titles, the pronoun I and complete quotations retain their capitals. Each change names its source note and leaves the wording and italics intact.",
+      "changes": [
+        {
+          "note": "GEN 6:13",
+          "from": "The time",
+          "to": "the time"
+        },
+        {
+          "note": "EXO 6:2",
+          "from": "The Lord",
+          "to": "the Lord"
+        },
+        {
+          "note": "EXO 32:6",
+          "from": "Set upon",
+          "to": "set upon"
+        },
+        {
+          "note": "NUM 8:4",
+          "from": "Appointment",
+          "to": "appointment"
+        },
+        {
+          "note": "NUM 33:8",
+          "from": "Bitternesses",
+          "to": "bitternesses"
+        },
+        {
+          "note": "DEU 1:35",
+          "from": "If one",
+          "to": "if one"
+        },
+        {
+          "note": "DEU 2:3",
+          "from": "Let it suffice",
+          "to": "let it suffice"
+        },
+        {
+          "note": "DEU 28:21",
+          "from": "May the Lord",
+          "to": "may the Lord"
+        },
+        {
+          "note": "JOS 24:26",
+          "from": "Properly",
+          "to": "properly"
+        },
+        {
+          "note": "JDG 5:14",
+          "from": "Rather",
+          "to": "rather"
+        },
+        {
+          "note": "JDG 13:19",
+          "from": "According to",
+          "to": "according to"
+        },
+        {
+          "note": "1SA 30:26",
+          "from": "Behold some",
+          "to": "behold some"
+        },
+        {
+          "note": "1KI 15:9",
+          "from": "In the four",
+          "to": "in the four"
+        },
+        {
+          "note": "PSA 79:11",
+          "from": "Cedars",
+          "to": "cedars"
+        },
+        {
+          "note": "PRO 16:16",
+          "from": "Abodes",
+          "to": "abodes"
+        },
+        {
+          "note": "PRO 26:10",
+          "from": "Great variation",
+          "to": "great variation"
+        },
+        {
+          "note": "ISA 5:25",
+          "from": "High",
+          "to": "high"
+        },
+        {
+          "note": "ISA 18:2",
+          "from": "He that",
+          "to": "he that"
+        },
+        {
+          "note": "MAT 24:31 with a great sound of a trumpet",
+          "from": "Trumpet",
+          "to": "trumpet"
+        },
+        {
+          "note": "MRK 2:14 at the receipt of Custom",
+          "from": "Custom",
+          "to": "custom"
+        },
+        {
+          "note": "JHN 1:21 that Prophet?",
+          "from": "Prophet",
+          "to": "prophet"
+        },
+        {
+          "note": "JHN 7:23 that the Law of Moses should not be broken",
+          "from": "Law",
+          "to": "law"
+        },
+        {
+          "note": "JHN 11:33 was troubled",
+          "from": "He troubled",
+          "to": "he troubled"
+        },
+        {
+          "note": "JHN 13:19 Now",
+          "from": "From henceforth",
+          "to": "from henceforth"
+        },
+        {
+          "note": "JHN 21:5 Children",
+          "from": "Sirs",
+          "to": "sirs"
+        },
+        {
+          "note": "ACT 2:6 when this was noised",
+          "from": "When this",
+          "to": "when this"
+        },
+        {
+          "note": "ACT 11:26 with the Church",
+          "from": "Church",
+          "to": "church"
+        },
+        {
+          "note": "ACT 13:34 mercies",
+          "from": "Mercies",
+          "to": "mercies"
+        },
+        {
+          "note": "ACT 19:38 the law is open",
+          "from": "Court days",
+          "to": "court days"
+        },
+        {
+          "note": "1CO 10:11 ensamples",
+          "from": "Types",
+          "to": "types"
+        },
+        {
+          "note": "1CO 12:3 accursed",
+          "from": "Anathema",
+          "to": "anathema"
+        },
+        {
+          "note": "1CO 14:9 easy",
+          "from": "Significant",
+          "to": "significant"
+        },
+        {
+          "note": "PHP 1:13 palace",
+          "from": "Court",
+          "to": "court"
+        },
+        {
+          "note": "2TH 3:14 by this Epistle note that man",
+          "from": "Epistle",
+          "to": "epistle"
+        },
+        {
+          "note": "HEB 2:16 took not on him the nature of Angels, but he took on him the seed of Abraham",
+          "from": "Angels",
+          "to": "angels"
+        },
+        {
+          "note": "HEB 4:6 it was first preached",
+          "from": "Gospel",
+          "to": "gospel"
+        },
+        {
+          "note": "HEB 8:4 there are Priests",
+          "from": "Priests",
+          "to": "priests"
+        },
+        {
+          "note": "HEB 8:6 Covenant",
+          "from": "Testament",
+          "to": "testament"
+        },
+        {
+          "note": "HEB 11:18 Of",
+          "from": "To",
+          "to": "to"
+        },
+        {
+          "note": "HEB 12:24 Covenant",
+          "from": "Testament",
+          "to": "testament"
+        },
+        {
+          "note": "HEB 13:20 Covenant",
+          "from": "Testament",
+          "to": "testament"
+        },
+        {
+          "note": "JAS 2:11 that said",
+          "from": "Law",
+          "to": "law"
+        },
+        {
+          "note": "REV 9:11 Apollyon",
+          "from": "A destroyer",
+          "to": "a destroyer"
+        }
+      ]
+    },
+    "note-alternative-separators": {
+      "why": "Repeated alternative renderings are fragments of one gloss, separated by commas rather than sentence stops or semicolons. Theophylact’s attribution in Mark retains its separate semicolon.",
+      "changes": [
+        {
+          "note": "MRK 7:3 oft",
+          "from": "oft; or,",
+          "to": "oft, or,"
+        },
+        {
+          "note": "ISA 54:4",
+          "from": "ancient. Or,",
+          "to": "ancient, or,"
+        },
+        {
+          "note": "ZEC 10:3",
+          "from": "oversee. or,",
+          "to": "oversee, or,"
+        },
+        {
+          "note": "ZEC 10:3#2",
+          "from": "oversee. or,",
+          "to": "oversee, or,"
+        }
+      ]
+    },
+    "note-number-ranges": {
+      "why": "Use an en dash in the verse-number range quoted within this explanatory note, as in its adjacent range.",
+      "changes": [
+        {
+          "note": "PSA 9:22",
+          "from": "1-18",
+          "to": "1–18"
         }
       ]
     }

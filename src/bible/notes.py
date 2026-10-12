@@ -749,12 +749,15 @@ def edited(body: Body, before: str, after: str, key: str) -> Body:
     start = text.index(before) + prefix
     end = start + len(removed)
     leaves = body.leaves
-    # What is added belongs to the first stretch the change touches, or to
-    # the one that ends where words are only added.
+    # What is added belongs to the first stretch the change touches. An
+    # inserted prefix belongs to the following words; a suffix to those before.
     touched = [
         n
         for n, (a, b, _, _) in enumerate(leaves)
-        if a < end and start < b or start == end and a < start <= b
+        if a < end
+        and start < b
+        or start == end
+        and (a <= start < b if prefix == 0 else a < start <= b)
     ]
     owner = touched[0] if touched else 0
     require(touched or start == 0, f"Prose edit has no words to change: {key}")

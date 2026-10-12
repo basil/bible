@@ -208,41 +208,14 @@ def test_a_kept_note_declared_without_its_words_is_refused(
         alexandrinus.companions(decided(policy, kept=kept), "GEN")
 
 
-def test_an_appendix_paragraph_may_move_into_a_kept_note(
-    policy: bible.policy.Policy,
-) -> None:
-    paragraph = "\\ip 99. Considerable variation here.\n"
+def test_the_appendix_is_read_for_its_notes_alone(policy: bible.policy.Policy) -> None:
     doc = usj.parse(
-        "\\id BAK\n\\is1 ———————\n"
+        "\\id BAK\n\\ip Job 25. 2.—A note.\n\\is1 ———————\n"
         "\\is1 The Following Passages are Supplied From the Alexandrine Text\n"
-        f"\\is2 GENESIS\n{paragraph}\\ib\n"
+        "\\is2 GENESIS\n\\ip 99. Considerable variation here.\n\\ib\n"
     )
-    kept: dict[str, Any] = {
-        "GEN 99:22#1": {
-            "source_note": NOTE,
-            "note": r"\fqa Alex. \ft Considerable variation here.",
-            "why": "Keep it, with the Appendix's words.",
-            "swete": SWETE,
-        },
-        "BAK GEN 99:22": {
-            "appendix": paragraph,
-            "moved_to": "GEN 99:22#1",
-            "why": "A remark, moved into the note.",
-            "swete": SWETE,
-        },
-    }
-    # The paragraph goes, with the section and the heading left empty.
-    moved = usj.serialize(alexandrinus.pruned_appendix(doc, decided(policy, kept=kept)))
-    assert moved == "\\id BAK\n\\is1 ———————\n"
-    # Without the move, the paragraph stays under its headings.
-    staying = {
-        key: {field: value for field, value in entry.items() if field != "moved_to"}
-        for key, entry in kept.items()
-    }
-    stayed = usj.serialize(
-        alexandrinus.pruned_appendix(doc, decided(policy, kept=staying))
-    )
-    assert "Supplied From the Alexandrine Text" in stayed and paragraph in stayed
+    notes_only = usj.serialize(alexandrinus.appendix_notes(doc))
+    assert notes_only == "\\id BAK\n\\ip Job 25. 2.—A note.\n\\is1 ———————\n"
 
 
 def test_an_appendix_paragraph_moved_to_a_note_without_words_is_refused(
@@ -253,6 +226,12 @@ def test_an_appendix_paragraph_moved_to_a_note_without_words_is_refused(
     )
     with pytest.raises(CheckFailed, match="not given its words: BAK PRO 21:16-17"):
         alexandrinus.check(wordless, read.brenton)
+    # The list it stands in prints nowhere: kept but not moved, it would be lost.
+    unmoved = changed(
+        policy, "alexandrinus", lambda d: d["kept"]["BAK PRO 21:16-17"].pop("moved_to")
+    )
+    with pytest.raises(CheckFailed, match="moved nowhere: BAK PRO 21:16-17"):
+        alexandrinus.check(unmoved, read.brenton)
 
 
 def test_a_kept_lemma_without_the_note_it_places_is_refused(
@@ -396,17 +375,12 @@ def test_the_edition_prints_its_readings_and_supplied_passages(
     # Supplied from the Authorized Version, with Brenton's form of the name.
     assert (
         r"\v 12 \f - \fr 23:12 \ft Alex. has the verse. Vat. omits; the English is supplied "
-        r"from the Authorized Version\f*Then said David, Will the men of Keila deliver me"
+        r"from the Authorized Version.\f*Then said David, Will the men of Keila deliver me"
     ) in kingdoms
     # The names the Alexandrine text omits are noted on the verse before.
     assert "\\v 16a" not in usj.serialize(edition.documents["2SA"])
-    # What the edition promotes leaves the appendix; what it keeps stays.
-    appendix = usj.serialize(edition.documents["BAK"])
-    assert "And the Philistine advanced and drew nigh" not in appendix
-    # What moves into a note leaves too, and the list's heading with its last entry.
-    assert "Considerable variation here rather than omission" not in appendix
-    assert alexandrinus.SUPPLIED not in appendix
-    assert "\\is2" not in appendix
+    # The appendix prints nowhere: its passages stand in their books.
+    assert "BAK" not in edition.documents
     # Its words stand in the note on the verse, in the edition's own style.
     kingdoms = usj.serialize(edition.documents["1KI"])
     assert (
@@ -415,7 +389,7 @@ def test_the_edition_prints_its_readings_and_supplied_passages(
     )
     proverbs = usj.serialize(edition.documents["PRO"])
     assert (
-        r"\fq giants: \ft Heb. \fqa Rephaim\ft . See Appendix, note on \xt 2 Kgdms. 5:18\f*giants"
+        r"\fq giants: \ft Heb. \fqa Rephaim\ft . See note on \xt 2 Kgdms. 5:18\f*giants"
         in proverbs
     )
 

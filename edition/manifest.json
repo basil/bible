@@ -1084,15 +1084,7 @@
       "title": "The Translators to the Reader"
     }
   ],
-  "appendices": [
-    {
-      "source": "brenton",
-      "id": "BAK",
-      "title": "Notes and Supplied Passages",
-      "short_title": "Notes and Supplied Passages",
-      "abbreviation": "Notes"
-    }
-  ],
+  "appendices": [],
   "excluded": {
     "brenton": [
       "NEH",

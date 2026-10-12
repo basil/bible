@@ -43,6 +43,21 @@
       "to": "\\ft he \\fl or",
       "why": "the word space before or is missing"
     },
+    "JOB 25:2": {
+      "from": "\\v 2 What beginning",
+      "to": "\\v 2 What \\f + \\fr 25:2 \\ft Compare \\xt chap. 27. 1. \\ft προοίμιον, exordium, is in Job used in the sense of παροιμία, parable.\\f*beginning",
+      "why": "Brenton’s 1844 printing has this note on beginning, ending See Appendix (vol. 2 p. 65); the Bagster printings drop it and keep only the Appendix’s note, which this edition prints at the word, so the pointer is left out."
+    },
+    "JOB 39:13": {
+      "from": "\\v 13 The peacock",
+      "to": "\\v 13 \\f + \\fr 39:13 \\fqa Gr. \\ft a wing of delighted ones \\fqa is \\ft the peacock.\\f*The peacock",
+      "why": "Brenton’s 1844 printing has this note at the head of the verse, ending See Appendix (vol. 2 p. 75); the Bagster printings drop it and keep only the Appendix’s note, which this edition prints at the verse, so the pointer is left out."
+    },
+    "EZK 16:44": {
+      "from": "in a proverb, saying,",
+      "to": "in a \\f + \\fr 16:44 \\fqa Or, \\ft perhaps, parable.\\f*proverb, saying,",
+      "why": "Brenton’s 1844 printing has this note on proverb, ending See Appendix (vol. 2 p. 318); the Bagster printings drop it and keep only the Appendix’s note, which this edition prints at the word, so the pointer is left out."
+    },
     "1KI 2:35b": {
       "from": "\\v 35b And the wisdom of Solomon abounded exceedingly beyond the wisdom of all the ancients,",
       "to": "\\v 35b And the wisdom of Solomon abounded exceedingly beyond the wisdom of all the \\f + \\fr 2:35b \\fqa Gr. \\ft ancient sons.\\f*ancients,",
@@ -548,6 +563,35 @@
       "from": "Trom renders",
       "to": "Trom. renders",
       "why": "Brenton prints Trom. (1844 p. 197; 1879 p. 226; 1900 p. 222), and eBible drops its stop."
+    },
+    "BAK See note on Job 25. 2, about": {
+      "from": "See note on Job 25. 2, about.",
+      "to": "See note on Job 25. 2, above.",
+      "why": "Brenton’s printings read above (1879 p. 1131; 1900 p. 1131)",
+      "uncategorized": true
+    },
+    "BAK in Luke 4. 23. proverb": {
+      "from": "in Luke 4. 23. \\it proverb\\it*",
+      "to": "in Luke 4. 23, \\it proverb\\it*",
+      "why": "Brenton’s printings set a comma after the verse (1879 p. 1131; 1900 p. 1131)"
+    },
+    "BAK in Heb. 9. 9": {
+      "from": "in \\it Heb. \\it* 9. 9",
+      "to": "in Heb. 9. 9",
+      "why": "Brenton’s printings set Heb. roman, as the Mark and Luke beside it (1879 p. 1131; 1900 p. 1131)",
+      "uncategorized": true
+    },
+    "BAK νεέλασσα—Hebrew נעלסּה": {
+      "from": "νεέλασσα—Hebrew נעלסּה",
+      "to": "νεέλασσα—\\it Hebrew\\it* נעלסּה",
+      "why": "Brenton’s printings set Hebrew in italics (1879 p. 1131; 1900 p. 1131)",
+      "uncategorized": true
+    },
+    "BAK qy. item struthiocamelus": {
+      "from": "(qy. item struthiocamelus)",
+      "to": "(\\it qy.\\it* item struthiocamelus)",
+      "why": "Brenton’s printings set qy. in italics (1879 p. 1131; 1900 p. 1131)",
+      "uncategorized": true
     },
     "BAK Alex 15": {
       "from": "\\it Alex. \\it*. 15",
@@ -1427,11 +1471,13 @@
     },
     "EXO 31:6#2": {
       "lemma": "make",
-      "why": "work in or at renders make alone"
+      "why": "Work is shared by in and at: keep work in or at as one italic rendering of make, so neither preposition becomes an independent alternative without its verb. The complete explanatory sentence keeps its final full stop.",
+      "sentence": true,
+      "note": "Or, _work in or at_. One reading is ποιήσουσι."
     },
     "EXO 32:6": {
       "lemma": "he offered",
-      "why": "set upon the altar renders offered; whole burnt-offerings stays"
+      "why": "Set upon the altar renders offered, but the verse has offered twice. Keep he offered as the unique lemma and include the same subject in its alternative (edition/prose.json), leaving whole-burnt offerings outside the substitution."
     },
     "EXO 32:20": {
       "note": "Gr. _sowed it under the water_, but another reading is ἐπὶ.",
@@ -1549,7 +1595,8 @@
     },
     "NUM 18:11": {
       "lemma": "wave-offerings",
-      "why": "the note is on the one word"
+      "why": "the note is on the one word. The note includes a complete explanatory sentence after its opening label or gloss, which keeps its final full stop.",
+      "sentence": true
     },
     "NUM 18:19": {
       "lemma": "of salt for ever",
@@ -1637,7 +1684,7 @@
     },
     "DEU 2:3": {
       "lemma": "Ye have compassed this mount long enough",
-      "why": "the phrase ends at enough"
+      "why": "The rendering is of the whole clause through enough; retain this mount in the alternative too (edition/prose.json), so its infinitive compass keeps the object that the lemma takes in."
     },
     "DEU 3:11": {
       "note": "Or, _acropolis, citadel_: or _extremity_ of the land of the Ammonites.",
@@ -1927,8 +1974,9 @@
       "why": "whereas renders because"
     },
     "JOS 24:26": {
-      "note": "Gr. Properly _a pine_ or _turpentine tree_. So chap. 17. 9.",
-      "why": "the note is on oak; Properly is Brenton's comment"
+      "lemma": "the oak",
+      "note": "Gr. Properly _a pine or turpentine tree_. So chap. 17. 9.",
+      "why": "Brenton’s a governs pine and turpentine tree together. Keep the shared-article phrase as one italic rendering and include the verse’s the in the lemma, so either tree-name replaces the whole noun phrase without a doubled or missing article; Properly remains commentary."
     },
     "JDG 1:30": {
       "lemma": "to them",
@@ -1960,9 +2008,8 @@
       "why": "noisy ones renders disturbers"
     },
     "JDG 5:14": {
-      "note": "Gr. Rather, _draw_ or _handle the scribe's pen_, etc.",
-      "lemma": "draw with the scribe's pen",
-      "why": "Rather is Brenton's comment; the rendering replaces draw with the scribe's pen"
+      "note": "Gr. Rather, _draw or handle the scribe's pen_, etc.",
+      "why": "Rather is Brenton’s comment. Draw and handle share the scribe’s pen as their object: keep the whole phrase in one italic run, so draw cannot stand alone as a replacement for draw with the scribe’s pen."
     },
     "JDG 5:26": {
       "lemma": "nail",
@@ -1994,7 +2041,8 @@
     },
     "JDG 9:6": {
       "lemma": "Sedition",
-      "why": "the note is on Sedition, the double translation of the Hebrew name"
+      "why": "the note is on Sedition, the double translation of the Hebrew name. The note includes a complete explanatory sentence after its opening label or gloss, which keeps its final full stop.",
+      "sentence": true
     },
     "JDG 9:23": {
       "lemma": "dealt treacherously",
@@ -2038,7 +2086,7 @@
     },
     "JDG 13:19": {
       "note": "According to the Heb. _a wonderful work_. Alex. reads τῷ θαυμαστὰ ποιοῦντι κυρίῳ.",
-      "why": "a wonderful work is the Hebrew's rendering"
+      "why": "a wonderful work is the Hebrew's rendering. Alex. reads introduces a complete sentence about the witness, so its final full stop stays; the opening Hebrew gloss remains a lowercase fragment (edition/revisions.json)."
     },
     "JDG 14:1": {
       "note": "Observe, ἀλλόφυλοι here and elsewhere is rendered _Philistines_.",
@@ -2456,7 +2504,8 @@
     },
     "2SA 21:20": {
       "note": "Gr. The original is Hebrew in Greek letters.",
-      "why": "the note comments rather than renders"
+      "why": "the note comments rather than renders. The note includes a complete explanatory sentence after its opening label or gloss, which keeps its final full stop.",
+      "sentence": true
     },
     "2SA 22:30": {
       "lemma": "a girded man",
@@ -3114,6 +3163,20 @@
       "lemma": "men who had deserted",
       "why": "deserters renders men who had deserted"
     },
+    "JOB 25:2": {
+      "lemma": "beginning",
+      "why": "Brenton’s caller stands before beginning, his rendering of προοίμιον (1844 vol. 2 p. 65). Exordium and parable gloss the cited Greek words, not beginning as replacement English; print those lexical quotations in italics and keep the explanation roman.",
+      "note": "Compare chap. 27. 1. προοίμιον, _exordium_, is in Job used in the sense of παροιμία, _parable_.",
+      "quotation": true
+    },
+    "JOB 39:13": {
+      "lemma": "The peacock has a beautiful wing",
+      "why": "Gr. a wing of delighted ones is the peacock renders the clause, at whose head Brenton’s caller stands (1844 vol. 2 p. 75)"
+    },
+    "EZK 16:44": {
+      "note": "Or, perhaps, _parable_.",
+      "why": "The rendering is parable, after the qualifier perhaps, which Brenton sets with Or, (1844 vol. 2 p. 318)"
+    },
     "PSA 2:9": {
       "lemma": "rule them",
       "why": "tend them as a shepherd renders rule them"
@@ -3136,12 +3199,17 @@
     },
     "PSA 9:22": {
       "lemma": null,
-      "why": "the note is on the numbering of the psalm that begins here"
+      "why": "the note is on the numbering of the psalm that begins here. The note includes a complete explanatory sentence after its opening label or gloss, which keeps its final full stop.",
+      "sentence": true
     },
     "PSA 9:27": {
       "verse": "9:28",
       "lemma": null,
       "why": "eBible sets the reference at the end of 9:27, but Brenton’s caller stands before 28 (1844 p. 82; 1879 p. 719; 1900 p. 715), the verse Rom. 3. 14 quotes; there the quotation link replaces it"
+    },
+    "PSA 41:5": {
+      "omitted": true,
+      "why": "The note only says See Appendix; the Appendix’s note on the verse is now the footnote at its end (edition/appendix.json), so the pointer has nothing to point to"
     },
     "PSA 10:2": {
       "lemma": "privily",
@@ -3446,6 +3514,10 @@
     "PRO 5:4": {
       "lemma": "more bitter",
       "why": "a more bitter thing renders more bitter (Gr. πικρότερον χολῆς)"
+    },
+    "PRO 8:5": {
+      "omitted": true,
+      "why": "The note only sends the reader to the Appendix for the use of ἄκακος and πανοῦργος; the Appendix’s note is now the footnote at the word (edition/appendix.json), so the pointer has nothing to point to"
     },
     "PRO 9:12a": {
       "lemma": null,
@@ -3957,6 +4029,65 @@
     "JDG 20:10": {
       "lemma": "they",
       "why": "Brenton’s caller stands before they wrought (1844 p. 295; 1879 p. 353; 1900 p. 349), and his it, sc. Gabaa, renders they: the Greek verb’s subject is the city."
+    },
+    "GEN 4:26": {
+      "lemma": "hoped to call",
+      "sentence": true,
+      "why": "The paraphrase had faith to call renders hoped to call, so the lemma includes the infinitive and the alternative trusted repeats it (edition/prose.json); either rendering then replaces the whole phrase without duplicating to call. The complete explanatory sentence keeps its final full stop."
+    },
+    "GEN 33:18": {
+      "sentence": true,
+      "why": "The note includes a complete explanatory sentence after its opening label or gloss, which keeps its final full stop."
+    },
+    "GEN 35:16": {
+      "sentence": true,
+      "why": "The note includes a complete explanatory sentence after its opening label or gloss, which keeps its final full stop."
+    },
+    "EXO 34:5": {
+      "sentence": true,
+      "why": "The note includes a complete explanatory sentence after its opening label or gloss, which keeps its final full stop."
+    },
+    "NUM 18:17": {
+      "sentence": true,
+      "why": "The note includes a complete explanatory sentence after its opening label or gloss, which keeps its final full stop."
+    },
+    "NUM 34:7": {
+      "sentence": true,
+      "why": "The note includes a complete explanatory sentence after its opening label or gloss, which keeps its final full stop."
+    },
+    "NUM 35:3": {
+      "sentence": true,
+      "why": "The note includes a complete explanatory sentence after its opening label or gloss, which keeps its final full stop."
+    },
+    "1SA 23:12": {
+      "sentence": true,
+      "why": "The note includes a complete explanatory sentence after its opening label or gloss, which keeps its final full stop."
+    },
+    "1KI 7:24": {
+      "sentence": true,
+      "why": "The note includes a complete explanatory sentence after its opening label or gloss, which keeps its final full stop."
+    },
+    "1KI 14:1": {
+      "sentence": true,
+      "why": "The note includes a complete explanatory sentence after its opening label or gloss, which keeps its final full stop."
+    },
+    "PSA 2:12": {
+      "sentence": true,
+      "why": "The note includes a complete explanatory sentence after its opening label or gloss, which keeps its final full stop."
+    },
+    "2SA 15:12": {
+      "sentence": false,
+      "why": "The finite verb belongs to a witness’s reading statement, not a complete explanatory sentence; the note remains a fragment without a closing sentence period."
+    },
+    "PRO 16:16": {
+      "lemma": "brood of wisdom is",
+      "why": "The plural alternative Abodes of wisdom requires are; take the dependent verb is into the lemma and supply are in the alternative (edition/prose.json), so the substitution keeps subject–verb agreement."
+    },
+    "ISA 18:2": {
+      "lemma": "He sends",
+      "note": "Gr. _He that sends_.",
+      "quotation": true,
+      "why": "He that sends quotes the literal Greek construction, not continuous replacement English for He sends: substituting it would remove the clause’s main predicate. Mark it as a grammatical explanation, retaining Brenton’s words and the exact phrase they explain."
     }
   },
   "shapes": {

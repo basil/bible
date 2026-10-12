@@ -5221,7 +5221,7 @@
       "source_note": "\\ft In the \\fqa Alex. \\ft ἀργός is substituted for βερσεχθάν."
     },
     "2SA 5:18": {
-      "why": "The note stays a note: Brenton’s Bagster printings end it See Appendix. (1879 p. 423; 1884 p. 392; 1900 p. 419), and the Appendix discusses Govett on Isaiah without giving English for A; eBible’s paraphrase of the Appendix is corrected away.",
+      "why": "The note stays a note: Brenton’s Bagster printings end it See Appendix. (1879 p. 423; 1884 p. 392; 1900 p. 419), and the Appendix discusses Govett on Isaiah without giving English for A; eBible’s paraphrase of the Appendix is corrected away. The Appendix’s note now stands as the footnote at the word (edition/appendix.json), so the pointer goes, and the note reads as his 1844 printing has it (vol. 1 p. 358).",
       "swete": {
         "volume": 1,
         "page": 621,
@@ -5229,7 +5229,8 @@
         "reading": "Τειτανων B* (Τιτ. BᵇA item 22)",
         "agrees": true
       },
-      "source_note": "\\fqa Lit. \\ft Titans. \\fqa Heb. \\ft Rephaim. See \\fqa Appendix."
+      "source_note": "\\fqa Lit. \\ft Titans. \\fqa Heb. \\ft Rephaim. See \\fqa Appendix.",
+      "note": "\\fl Lit. \\fqa Titans\\ft . \\fl Heb. \\fqa Rephaim\\ft ."
     },
     "2SA 11:25": {
       "why": "Brenton’s verse already prints “strengthen him”, following A.",
@@ -5364,7 +5365,7 @@
       "source_note": "\\ft See \\fqa Alex. \\ft ἄγξεις."
     },
     "PSA 41:5": {
-      "why": "Appendix cross-reference supplies no Alexandrine English in this note; the Appendix discusses the Hebrew behind the verse, and Swete cites no A variant in it.",
+      "why": "Keep as it is, with nothing of A to print: the note only says See Appendix, and the Appendix’s note discusses the Hebrew behind the verse, without a reading of A; Swete cites no variant of A in the verse, εἰσελεύσομαι being R’s. The Appendix’s note now stands as the footnote at the end of the verse (edition/appendix.json), and the pointer is left out (edition/brenton-notes.json).",
       "swete": {
         "volume": 2,
         "page": 267,
@@ -5372,7 +5373,6 @@
         "reading": "διελευσομαι] εισελευσομαι R*; A not cited",
         "agrees": null
       },
-      "todo": true,
       "source_note": "\\ft See \\fqa Appendix."
     },
     "PSA 49:19": {
@@ -5421,7 +5421,7 @@
       "source_note": "\\fqa Alex. \\ft omits 'not.'"
     },
     "PRO 8:5": {
-      "why": "This Appendix pointer discusses Greek vocabulary without supplying a distinct English Alexandrine reading.",
+      "why": "Keep as it is, with nothing of A to print: the note only sends the reader to the Appendix, whose note discusses the use of ἄκακος and πανοῦργος in Proverbs, without a reading of A; Swete cites no variant of A in the verse. The Appendix’s note now stands as the footnote at the word (edition/appendix.json), and the pointer is left out (edition/brenton-notes.json).",
       "swete": {
         "volume": 2,
         "page": 430,
@@ -5429,11 +5429,10 @@
         "reading": "8:5 no A apparatus entry; text ἄκακοι...ἀπαίδευτοι",
         "agrees": null
       },
-      "todo": true,
       "source_note": "\\ft For the use of ἄκακος and πανοῦργος in this book, see Appendix."
     },
     "PRO 21:16": {
-      "why": "Keep as a note, given the Appendix’s cross-reference: Brenton’s printings read Heb. Rephaim. See Appendix. (1844 vol. 2 p. 662; 1879 p. 807; 1884 p. 807), and eBible added Note on 2 Kings 5. 18 from the Appendix’s entry for the verses, which the edition removes; the note names that entry’s target, Brenton’s note on Giants, so that the reader finds it. Swete cites no reading of A at the words.",
+      "why": "Keep as a note, given the Appendix’s cross-reference: Brenton’s printings read Heb. Rephaim. See Appendix. (1844 vol. 2 p. 662; 1879 p. 807; 1884 p. 807), and eBible added Note on 2 Kings 5. 18 from the Appendix’s entry for the verses, which the edition removes; the note names that entry’s target, Brenton’s note on Giants, which now stands as the footnote at 2 Kingdoms 5:18 (edition/appendix.json), so that the reader finds it. Swete cites no reading of A at the words.",
       "swete": {
         "volume": 2,
         "page": 456,
@@ -5442,7 +5441,7 @@
         "agrees": null
       },
       "source_note": "\\fqa Heb. \\ft Rephaim. see Appendix. Note on \\xt 2 Kings 5. 18.",
-      "note": "\\fl Heb. \\fqa Rephaim\\ft . See Appendix, note on \\xt 2 Kings 5. 18."
+      "note": "\\fl Heb. \\fqa Rephaim\\ft . See note on \\xt 2 Kings 5. 18."
     },
     "PRO 21:29": {
       "why": "Keep as a note: Brenton’s caller stands before impudently in every printing (1844 pp. 164–165; 1879 p. 824; 1900 p. 820), after An ungodly man, so the note reports A’s reading of that clause, not of the word ungodly; Swete has no A variant in the verse, and the report has no support beyond Brenton’s.",
@@ -5456,7 +5455,7 @@
       "source_note": "\\ft See \\fqa Alex. \\ft ungodly."
     },
     "ISA 2:6": {
-      "why": "The note stays a note: Brenton’s note is Or, aliens, see Appendix. in every printing (1844 p. 188; 1879 p. 853; 1900 p. 849), and the Appendix explains the LXX rendering Philistines rather than giving a reading of A; eBible’s paste of the Appendix into it is corrected away.",
+      "why": "The note stays a note: Brenton’s note is Or, aliens, see Appendix. in every printing (1844 p. 188; 1879 p. 853; 1900 p. 849), and the Appendix explains the LXX rendering Philistines rather than giving a reading of A; eBible’s paste of the Appendix into it is corrected away. The Appendix’s note now stands as the footnote at the word (edition/appendix.json), so the pointer goes.",
       "swete": {
         "volume": 3,
         "page": 104,
@@ -5464,7 +5463,8 @@
         "reading": "6 ανηκε Q^a; no A variant in the verse (7 η γη] + αυτων A)",
         "agrees": null
       },
-      "source_note": "\\fqa Or, \\ft aliens, see \\fqa Appendix."
+      "source_note": "\\fqa Or, \\ft aliens, see \\fqa Appendix.",
+      "note": "\\fl Or, \\fqa aliens\\ft ."
     },
     "ISA 7:18": {
       "why": "Brenton explicitly says the verse’s existing wording is already the Alexandrine reading.",

@@ -8,6 +8,7 @@ departure from the sources.
 
 from __future__ import annotations
 
+import re
 from collections.abc import Mapping
 from dataclasses import dataclass
 from types import MappingProxyType
@@ -26,6 +27,7 @@ FILES = (
     "brenton-notes",
     "kjv-notes",
     "book-introductions",
+    "appendix",
     "abbreviations",
     "terminology",
     "prose",
@@ -69,6 +71,7 @@ class Policy:
     brenton_notes: schema.BrentonNotes
     kjv_notes: schema.KjvNotes
     introductions: schema.BookIntroductions
+    appendix: schema.Appendix
     abbreviations: schema.Abbreviations
     terminology: Mapping[str, schema.Terminology]
     prose: Mapping[str, schema.Prose]
@@ -115,6 +118,24 @@ class Policy:
             # The readings of the Byzantine text close the book.
             READINGS,
         )
+
+    @property
+    def unprinted(self) -> tuple[Entry, ...]:
+        """The source units read for what they send to the books, and
+        printed nowhere: Brenton's Appendix."""
+        return (
+            cast(Entry, freeze({"id": self.appendix["source"], "source": "brenton"})),
+        )
+
+    @property
+    def matter(self) -> set[str]:
+        """The units of front and back matter a decision may name: the
+        translations' own, printed or read for the books."""
+        return {
+            e["id"]
+            for e in (*self.entries, *self.unprinted)
+            if "file" not in e and "section" not in e
+        }
 
     def unit(self, code: str) -> Entry:
         return next(u for u in self.scripture if u["id"] == code)
@@ -302,7 +323,26 @@ def check(policy: Policy) -> None:
     # A change of wording names its note, or the front or back matter it is
     # made in: one that named neither, or a unit that nothing reads, would be
     # met by nothing, unnoticed.
-    matter = {e["id"] for e in policy.entries if "file" not in e and "section" not in e}
+    require_fields(policy.appendix, {"source", "why", "notes"}, (), "Appendix file")
+    require(policy.appendix["why"], "Appendix file without a why")
+    for key, note in policy.appendix["notes"].items():
+        require_fields(
+            note,
+            {"paragraphs", "why"},
+            {"label", "before", "at"},
+            f"Appendix note {key}",
+        )
+        require(
+            re.fullmatch(r"[A-Z0-9]{3} \d+:\d+[a-z]?", key)
+            and note["paragraphs"]
+            and all(note["paragraphs"])
+            and note["why"]
+            and ("before" in note) != ("at" in note)
+            and note.get("before", "x")
+            and note.get("at", "start") in {"start", "end"},
+            f"Invalid Appendix note: {key}",
+        )
+    matter = policy.matter
     require_fields(
         policy.citations,
         {"units", "dialects", "decisions", "names"},
@@ -398,6 +438,7 @@ def load() -> Policy:
         brenton_notes=cast(schema.BrentonNotes, data["brenton-notes"]),
         kjv_notes=cast(schema.KjvNotes, data["kjv-notes"]),
         introductions=cast(schema.BookIntroductions, data["book-introductions"]),
+        appendix=cast(schema.Appendix, data["appendix"]),
         abbreviations=cast(schema.Abbreviations, data["abbreviations"]),
         terminology=cast(Mapping[str, schema.Terminology], data["terminology"]),
         prose=cast(Mapping[str, schema.Prose], data["prose"]),

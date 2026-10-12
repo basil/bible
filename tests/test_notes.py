@@ -117,7 +117,7 @@ def test_editorial_note_styles_and_punctuation(
     assert rows["PSA 113:24"]["note"] == "Gr. sing."
     assert "_suburbs_ above" in rows["JOS 21:13"]["note"]
     assert rows["JOS 20:7#2"]["note"] == "or, _of Nephthali_"
-    assert rows["1SA 30:26"]["note"] == "Heb. agrees. Vat. _Behold some_"
+    assert rows["1SA 30:26"]["note"] == "Heb. agrees. Vat. _behold some_"
     assert rows["JHN 18:13 year"]["lemma"] is None
     assert rows["JHN 18:13 year"]["note"] == (
         "_And Annas sent Christ bound unto Caiaphas the high priest_, v. 24"
@@ -441,6 +441,29 @@ def test_a_declared_change_of_wording_is_carried_through_a_notes_parts() -> None
 
 
 @pytest.mark.parametrize(
+    "source,before,after,expected",
+    [
+        (
+            "Or, signify that man.",
+            "signify that man",
+            "our word, signify that man",
+            "our word, signify that man",
+        ),
+        ("Or, Abodes.", "Abodes", "Abodes of wisdom are", "Abodes of wisdom are"),
+    ],
+)
+def test_inserted_note_context_keeps_the_renderings_style(
+    source: str, before: str, after: str, expected: str
+) -> None:
+    body = notes.source_body(notes.labelled_pieces(source), [], None, "key", source)
+    edited = notes.edited(body, before, after, "key")
+    assert edited.alternative == expected
+    runs, _, _ = notes.displayed(edited)
+    assert [value for role, value in runs if role == "reading"] == [expected]
+    assert body.plain == source
+
+
+@pytest.mark.parametrize(
     "words, expected",
     [
         ("Alex. omits 'not.'", "Alex. omits _not_"),
@@ -628,7 +651,7 @@ def test_a_sign_after_no_witness_is_refused(
 def test_every_note_is_printed_replaced_by_a_link_or_explicitly_omitted(
     edition: bible.pipeline.Edition,
 ) -> None:
-    assert edition.summary["printed_notes"] == 4349
+    assert edition.summary["printed_notes"] == 4350
     rows = [row for listed in edition.notes.values() for row in listed]
     assert len({row["key"] for row in rows}) == len(rows)
     # The 1611 margin is printed on the New Testament alone, and whole but
@@ -1156,8 +1179,42 @@ def test_mark_fist_correction_preserves_the_marginal_note(
     offset = next(offset for offset, n in verse.notes if n is note)
     assert verse.text[offset:].startswith("with the fist")
     assert usj.text_of(note["content"]).endswith(
-        "with the fist: or, oft; or, diligently; Theophylact, up to the elbow."
+        "with the fist: or, oft, or, diligently; Theophylact, up to the elbow"
     )
+
+
+@pytest.mark.parametrize(
+    "key,expected",
+    [
+        ("ISA 54:4", "Gr. _ancient_, or, _everlasting_"),
+        ("ZEC 10:3", "or, _will oversee_, or, _will look upon_"),
+        ("ZEC 10:3#2", "or, _shall oversee_, or, _shall look upon_"),
+        ("NUM 8:4", "or, _appointment_, or _arrangement_"),
+        ("1CO 10:11 ensamples", "or, _types_"),
+        ("1CO 14:9 easy", "Gr. _significant_"),
+        ("PSA 79:11", "Gr. _cedars of God_, see Gen. 30:8; Jonas 3:3; Acts 7:20"),
+        (
+            "JDG 13:19",
+            "according to the Heb. _a wonderful work_. Alex. reads τῷ θαυμαστὰ ποιοῦντι κυρίῳ.",
+        ),
+        ("GEN 1:11#2", "Gr. Alex. adds εἰς ὁμοιότητα"),
+        ("GEN 8:7#2", "Vat. omits"),
+        ("GEN 6:7", "Vat. _I am grieved_. Gr. _I have thought_ or _reasoned_"),
+        (
+            "LUK 17:35 TR",
+            "TR adds verse 36 _Two men shall be in the field; the one shall be taken, and the other left._",
+        ),
+        (
+            "JOB 25:2",
+            "Compare chapter 27:1. προοίμιον, _exordium_, is in Job used in the sense of παροιμία, _parable_.",
+        ),
+    ],
+)
+def test_margin_fragments_keep_glosses_witnesses_and_sentence_punctuation(
+    edition: bible.pipeline.Edition, key: str, expected: str
+) -> None:
+    row = next(r for rows in edition.notes.values() for r in rows if r["key"] == key)
+    assert row["note"] == expected
 
 
 @pytest.mark.parametrize(

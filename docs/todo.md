@@ -11,7 +11,7 @@ The sections:
 
 **Keys.** Brenton's notes are named by their keys, the `x-key` the build gives each source note ([AGENTS.md](../AGENTS.md#the-document-model)), which a decision in `edition/` is filed under:
 
-- Books are USFM codes: `1SA`–`2KI` are 1–4 Kingdoms, `PRO` Proverbs, `JOL` Joel, and `BAK` Brenton's Appendix, whose entries in `alexandrinus.json` are named by the verse they concern, as `BAK 1KI 2:35a`.
+- Books are USFM codes: `1SA`–`2KI` are 1–4 Kingdoms, `PRO` Proverbs, `JOL` Joel, and `BAK` Brenton's Appendix, whose entries in `alexandrinus.json` are named by the verse they concern, as `BAK 1KI 2:35a`, and whose notes `appendix.json` names by the verse they stand at.
 - Chapters and verses are Brenton's, so the Psalms and Joel are numbered as in the Greek, and some verses are lettered, as `1KI 5:14a`.
 - `#2` is a verse's second note; a key without it is the verse's first or only note.
 
@@ -34,7 +34,7 @@ Each of these is a question about a rule. One decision settles every note it cov
 
 ## 2. Readings from Codex Alexandrinus
 
-The 26 decisions in `kept` in `edition/alexandrinus.json` that carry `"todo": true` are readings that are still only notes. Each is settled by printing the reading, which moves its decision to `readings` or `passages`, or by keeping the note for good, which removes its `todo` and updates its `why`. Sections 2.1–2.5 group them by what stands in the way.
+The 24 decisions in `kept` in `edition/alexandrinus.json` that carry `"todo": true` are readings that are still only notes. Each is settled by printing the reading, which moves its decision to `readings` or `passages`, or by keeping the note for good, which removes its `todo` and updates its `why`. Sections 2.1–2.4 group them by what stands in the way.
 
 ### 2.1 Greek with no English from Brenton (9)
 
@@ -42,21 +42,13 @@ Swete confirms the Greek, but Brenton gives it only in Greek. The edition suppli
 
 GEN 1:11#2, JDG 9:27#2, JDG 13:5#2, JDG 13:19, 1SA 6:8, 2KI 19:24, 2KI 21:6#2, PSA 31:9, MAL 3:11 (A's τὴν βρῶσιν, which Brenton gives after his own alternative rendering).
 
-### 2.2 A pointer with no English (1)
-
-A has a different reading, but Brenton only points to it, and gives no English to print. The rule of 2.1 bears on these too.
-
-| Decision | What stands in the way |
-| --- | --- |
-| PSA 41:5 | Brenton gives a reference to the Appendix rather than English, and the Appendix discusses the Hebrew behind the verse. Swete cites no variant of A here: εἰσελεύσομαι is R's. Decide whether there is an Alexandrine reading at all. |
-
-### 2.3 Brenton and Swete disagree (1)
+### 2.2 Brenton and Swete disagree (1)
 
 | Decision | Brenton | Swete |
 | --- | --- | --- |
 | GEN 6:2 | A has "angels of God" for "sons of God", in every printing | ἄγγελοι stands over an erasure, and the attribution to A is doubtful (A^{?vid}, confirmed on the scan); establish the reading and the hand |
 
-### 2.4 English to correct or clarify (1)
+### 2.3 English to correct or clarify (1)
 
 Brenton's English for the reading is wrong, incomplete or unclear, and his printings read as eBible has them. Record a correction of the English with its reason before printing the reading.
 
@@ -64,7 +56,7 @@ Brenton's English for the reading is wrong, incomplete or unclear, and his print
 | --- | --- |
 | 2KI 3:21#2 | Printed in the verse, the alternative "and above" would need a starting point (above what?), which Brenton doesn't give. Brenton spells A's Greek ἐπάνα in every printing, where Swete has ἐπάνω; the note keeps his spelling. Settle the whole clause. |
 
-### 2.5 Probably keep as a note (14)
+### 2.4 Probably keep as a note (13)
 
 Nothing here needs printing: the text already follows A, or the note explains rather than offering other English. Confirm each, then remove its `todo`.
 
@@ -78,7 +70,6 @@ Nothing here needs printing: the text already follows A, or the note explains ra
 | 1KI 1:9 | The verse already follows A: "by the stone of Zoelethi". |
 | 1KI 5:14a | Brenton reports a chapter division, which Swete's layout supports. It changes the numbering, not the words, and the edition keeps Brenton's verse numbers. |
 | PSA 49:19 | The note reports a gap in the manuscript, not English. |
-| PRO 8:5 | Brenton's Appendix discusses the Greek vocabulary with no other English, and Swete reports no variant in A. |
 | ISA 7:18 | Brenton says the verse's wording is already A's. |
 | ISA 54:10 | Brenton says the verse already adopts A's reading. |
 | ISA 61:3 | The note is about how the Greek divides words, with no other English. |

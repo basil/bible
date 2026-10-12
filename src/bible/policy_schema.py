@@ -103,6 +103,20 @@ class BookIntroductions(TypedDict, total=False):
     source: ReadOnly[str]
 
 
+class AppendixNote(TypedDict, total=False):
+    at: ReadOnly[str]
+    before: ReadOnly[str]
+    label: ReadOnly[str]
+    paragraphs: ReadOnly[tuple[str, ...]]
+    why: ReadOnly[str]
+
+
+class Appendix(TypedDict, total=False):
+    notes: ReadOnly[Mapping[str, AppendixNote]]
+    source: ReadOnly[str]
+    why: ReadOnly[str]
+
+
 class QuotationsAlignment(TypedDict, total=False):
     outscored: ReadOnly[Mapping[str, str]]
     passages: ReadOnly[Mapping[str, str]]

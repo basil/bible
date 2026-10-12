@@ -29,7 +29,8 @@ def processed(tmp_path: Path) -> Callable[[str], None]:
     local.mkdir(parents=True)
     project.project_usfm(root, "GEN").write_text(SOURCE_USFM, encoding="utf-8")
     (local / "Bible_ptxp.tex").write_text(
-        "%\\OmitCallerInNote{f}\n\\AutoCallers{f}{1,2,3}\n", encoding="utf-8"
+        "%\\OmitCallerInNote{f}\n\\AutoCallers{f}{1,2,3}\n%\\OmitCallerInNote{ef}\n",
+        encoding="utf-8",
     )
 
     def write(output: str) -> None:

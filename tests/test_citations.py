@@ -462,12 +462,11 @@ def test_a_book_cited_alone_keeps_its_abbreviations_period(
         ("NDX", "studied them. Acts 17:11 and 8:28, 29. They"),
         ("NDX", "See Judg. 8:2. \\it Joash\\it* the king"),
         # The Appendix's cross-reference, moved into the note on its verse.
-        ("PRO", "See Appendix, note on \\xt 2 Kgdms. 5:18\\f*giants."),
-        ("BAK", "\\ip 2 Kgdms. 5:18—Giants."),
-        ("BAK", "\\ip Ps. 41:5—There are"),
-        ("BAK", "Mark 4:30; in Heb. 9:9 and 11:19 it is"),
-        # A paragraph that names no book is of the book last cited.
-        ("BAK", "see chapter 1:4, 22; 8:5; 14:15; 21:11. For πανοῦργος, 12:16; 13:1,"),
+        ("PRO", "See note on \\xt 2 Kgdms. 5:18\\f*giants."),
+        # The Appendix's notes, at their verses, cite as the edition does.
+        ("EZK", "Mark 4:30; in Heb. 9:9 and 11:19 it is"),
+        # A citation that names no book is of the book the note stands in.
+        ("PRO", "see chapter 1:4, 22; 8:5; 14:15; 21:11. For πανοῦργος, 12:16; 13:1,"),
         # A book's introduction, set as a note on the book, cites the book.
         ("BAR", "ending at 3:8, was in all probability originally written in Hebrew"),
     ],
@@ -526,9 +525,7 @@ def test_a_unit_says_how_it_cites_and_meets_each_decision_once(
     [preface] = [entry for entry in policy.entries if entry["id"] == "XXB"]
     doc, text = read.brenton["XXB"], sources.brenton["XXB"]
     with pytest.raises(CheckFailed, match=refusal):
-        matter.unit(
-            preface, doc, doc, text, replace(ctx, policy=policy), annotate.Report()
-        )
+        matter.unit(preface, doc, text, replace(ctx, policy=policy), annotate.Report())
 
 
 def test_markup_within_a_citation_goes_with_it(

@@ -1,0 +1,71 @@
+{
+  "source": "BAK",
+  "why": "Brenton’s Appendix opens with eight notes too long for the margin column. Each prints as a footnote at the foot of the page, at the verse it discusses, with a numbered caller at the words it is about, as the front matter’s notes are set; the label naming the verse goes, since the note stands there. The passages the Appendix supplies from Codex Alexandrinus stand in their books (edition/alexandrinus.json), so nothing of it prints after Revelation.",
+  "notes": {
+    "EXO 28:29": {
+      "label": "Exodus 28.",
+      "paragraphs": [
+        "The following verses are found",
+        "And thou shalt make upon the oracle two golden rings"
+      ],
+      "at": "start",
+      "why": "The Complutensian verses 23–28 fall between Brenton’s 22 and 29, where his caller stands in 1844 (vol. 1 p. 113: Alex. + See Appendix.); their numbers print as the note’s own."
+    },
+    "2SA 5:18": {
+      "label": "2 Kings (2 Sam.) 5. 18.—",
+      "paragraphs": [
+        "Giants."
+      ],
+      "before": "giants",
+      "why": "Brenton’s margin note, Lit. Titans. Heb. Rephaim. See Appendix., stands before the word in the Bagster printings (1879 p. 423), and in 1844 (vol. 1 p. 358) without the pointer; the note takes the same place, and the margin note keeps its other words."
+    },
+    "JOB 25:2": {
+      "label": "Job 25. 2.—",
+      "paragraphs": [
+        "In the New Testament παροιμία"
+      ],
+      "before": "beginning",
+      "why": "Brenton’s caller stands before beginning, his rendering of προοίμιον, in 1844 (vol. 2 p. 65), where his margin note also says See Appendix."
+    },
+    "JOB 39:13": {
+      "label": "Job 39. 13.—",
+      "paragraphs": [
+        "τερπομένων."
+      ],
+      "at": "start",
+      "why": "Brenton’s caller stands at the head of the verse in 1844 (vol. 2 p. 75), where his margin note also says See Appendix."
+    },
+    "PSA 41:5": {
+      "label": "Psalm 41 (42):4.—",
+      "paragraphs": [
+        "There are several difficulties"
+      ],
+      "at": "start",
+      "why": "The note discusses the whole verse, so its caller stands at the start, consistently with the other whole-verse Appendix notes. Brenton’s margin note, See Appendix., stands at the end of the verse in the Bagster printings; his 1844 text (vol. 2 p. 97) leaves the verse unmarked. The fourth verse by the Hebrew’s count, which the Appendix’s label gives, is his fifth, since he counts the title."
+    },
+    "PRO 8:5": {
+      "label": "Proverbs 8. 5.—",
+      "paragraphs": [
+        "It is frequently the case in Proverbs"
+      ],
+      "before": "understand",
+      "why": "Brenton’s margin note, which only sent the reader to the Appendix, stands before understand in the Bagster printings; in 1844 (vol. 2 p. 154) it stands at the end of 8:4."
+    },
+    "ISA 2:6": {
+      "label": "Isaiah 2. 6.—",
+      "paragraphs": [
+        "Philistines."
+      ],
+      "before": "Philistines",
+      "why": "Brenton’s margin note, Or, aliens, see Appendix., stands before the word in every printing (1844 vol. 2 p. 188; 1879 p. 853; 1900 p. 849); the note takes the same place, and the margin note keeps its other words."
+    },
+    "EZK 16:44": {
+      "label": "Jezekiel 16. 44.—",
+      "paragraphs": [
+        "The most obvious meaning of παραβολὴ"
+      ],
+      "before": "proverb",
+      "why": "Brenton’s caller stands before proverb, his rendering of παραβολή, in 1844 (vol. 2 p. 318), where his margin note also says See Appendix."
+    }
+  }
+}

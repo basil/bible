@@ -178,12 +178,12 @@
   {
     "id": "1MA",
     "chapter": "1",
-    "phrase": "the Western Church receives only the first two as canonical"
+    "phrase": "The First Book of the Maccabees contains a trustworthy history of the Maccabean revolt"
   },
   {
     "id": "4MA",
     "chapter": "1",
-    "phrase": "[for which this introduction was written]"
+    "phrase": "Eusebius and Jerome attributed this book to Josephus"
   },
   {
     "id": "GEN",
@@ -228,5 +228,20 @@
     "id": "1KI",
     "chapter": "14",
     "phrase": "At that time Abia the son of Jeroboam fell sick"
+  },
+  {
+    "id": "2SA",
+    "chapter": "5",
+    "phrase": "Govett"
+  },
+  {
+    "id": "JOB",
+    "chapter": "25",
+    "phrase": "a mistake of the transcriber"
+  },
+  {
+    "id": "EXO",
+    "chapter": "28",
+    "phrase": "appear thus in the Complutensian text"
   }
 ]

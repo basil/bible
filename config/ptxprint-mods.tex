@@ -107,12 +107,15 @@
 \expandafter\gdef\csname endnote-no-insert-x\endcsname{\BibleEndNote{x}}
 \endgroup
 
-% Introduction notes use the native ef class in the generated USFM. Leaving
+% Introduction notes and the notes of Brenton's Appendix use the native ef
+% class in the generated USFM. Leaving
 % that class out of marginaln@te keeps them below without a placement lookup.
 % Including ef enables study-note formatting in the template; use its native
 % switch to retain ordinary full-width bottom notes for these introductions.
 % NotStudyNotes assigns locally, so call it outside the temporary group above.
 \NotStudyNotes{ef}
+% Restart their callers on each page, as the f notes' do.
+\PageResetCallers{ef}
 
 % BSB numbers ordinary/no-verse pages in the center header and opening
 % pages in the center footer. Put every visible folio at the outer bottom

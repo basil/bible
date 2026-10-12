@@ -118,8 +118,7 @@
       "anchor": "with the fist",
       "former": "oft",
       "note": "Or, _oft_; or, _diligently_, in the Original, _with the fist_, Theophylact, _up to the elbow_",
-      "sentence": true,
-      "why": "The text adopts the margin’s with the fist; turn the note round to quote the former King James oft first, ahead of its own renderings diligently and up to the elbow, whose authorities it names, and close it with a full stop."
+      "why": "The text adopts the margin’s with the fist; turn the note round to quote the former King James oft first, ahead of its own renderings diligently and up to the elbow, whose authorities it names."
     },
     "MRK 7:4 pots": {
       "anchor": "beds",
@@ -479,7 +478,8 @@
     },
     "HEB 2:16 took not on him the nature of Angels, but he took on him the seed of Abraham": {
       "note": "Gr. _he taketh not hold of Angels, but of the seed of Abraham he taketh hold_",
-      "why": "the rendering runs to the end of the note"
+      "why": "The rendering begins he taketh, so its lemma includes the preceding he as well as the two clauses. Replacing it then restores one subject, rather than For verily he he taketh; the rendering runs to the end of the note.",
+      "lemma": "he took not on him the nature of Angels, but he took on him the seed of Abraham"
     },
     "HEB 4:2 not being mixed with faith in them": {
       "omitted": true,
@@ -705,6 +705,14 @@
     "2CO 4:8 in despair": {
       "note": "Or, _altogether without help or means_",
       "why": "‘Without’ governs both ‘help’ and ‘means’, so ‘altogether without help or means’ is one rendering of ‘in despair’, after the verse’s ‘not’, and one italic run. revisions.json adds its comma."
+    },
+    "PHP 1:13 palace": {
+      "lemma": "the palace",
+      "why": "Cesars Court is a proper-name possessive phrase. It replaces the palace, including the article, so the verse does not become in all the Cesar’s court; the possessive punctuation is revised in edition/revisions.json."
+    },
+    "2TH 3:14 by this Epistle note that man": {
+      "lemma": "our word by this epistle, note that man",
+      "why": "The alternative moves by this epistle after the imperative. Include our word in the lemma and repeat it with its clause-ending comma in the rendering (edition/prose.json), so the conditional obey not our word remains separate from signify that man."
     }
   }
 }

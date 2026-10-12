@@ -194,14 +194,14 @@ def read(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Read:
     corrections = policy.brenton_notes["corrections"]
     printed = {
         code
-        for e in policy.entries
+        for e in (*policy.entries, *policy.unprinted)
         if e.get("source") == "brenton"
         for code in assembly.source_codes(e)
     }
     unprinted = sorted({k.split(" ")[0] for k in corrections} - printed)
     require(
         not unprinted,
-        f"Brenton corrections name a source the edition doesn't print: {unprinted}",
+        f"Brenton corrections name a source the edition doesn't read: {unprinted}",
     )
     brenton, mended = {}, {}
     for code, text in sources.brenton.items():
@@ -406,12 +406,20 @@ def context(
 
 def front_and_back(
     read_sources: Read, ctx: annotate.Context, sources: bible.sources.Sources
-) -> tuple[dict[str, Document], dict[str, list[Content]], annotate.Report]:
-    """The translations' front and back matter, and the introductions it
-    sends to the books, by where each goes."""
+) -> tuple[
+    dict[str, Document],
+    dict[str, list[Content]],
+    dict[str, list[Content]],
+    annotate.Report,
+]:
+    """The translations' front and back matter, and the paragraphs it sends
+    to the books, by where each goes: the introductions to the books of the
+    Apocrypha, and the notes of Brenton's Appendix, which is read for them
+    and printed nowhere."""
     policy, report = ctx.policy, annotate.Report()
-    docs, introductions = {}, {}
-    for entry in policy.entries:
+    docs, introductions, appendix_notes = {}, {}, {}
+    unprinted = {e["id"] for e in policy.unprinted}
+    for entry in (*policy.entries, *policy.unprinted):
         if "file" in entry or "section" in entry:
             continue
         family, code = entry["source"], source_id(entry)
@@ -420,13 +428,17 @@ def front_and_back(
             if family == "brenton"
             else read_sources.kjv[code]
         )
-        # The appendix prints without the passages the books now print.
-        appendix = (family, code) == ("brenton", alexandrinus.APPENDIX)
-        doc = alexandrinus.pruned_appendix(source, policy) if appendix else source
-        docs[entry["id"]], moved = matter.unit(
-            entry, doc, source, assembly.source_text(entry, sources), ctx, report
+        # Of the Appendix, the notes alone: the books print its passages.
+        appendix = entry["id"] in unprinted
+        doc = alexandrinus.appendix_notes(source) if appendix else source
+        doc, moved = matter.unit(
+            entry, doc, assembly.source_text(entry, sources), ctx, report
         )
-        introductions.update(moved)
+        if appendix:
+            appendix_notes.update(moved)
+        else:
+            docs[entry["id"]] = doc
+            introductions.update(moved)
     front = [
         source_id(e)
         for e in policy.entries
@@ -438,18 +450,23 @@ def front_and_back(
         front.count(policy.introductions["source"]) == 1,
         "The introduction to the Apocrypha is not printed once as front matter",
     )
-    return docs, introductions, report
+    # The Appendix's notes print at their verses, so printed as well they
+    # would print twice.
+    require(not unprinted & set(front), "Brenton's Appendix is printed as well as sent")
+    return docs, introductions, appendix_notes, report
 
 
 def introduced(
     code: str,
     doc: Document,
     introductions: Mapping[str, Sequence[Content]],
+    appendix_notes: Mapping[str, Sequence[Content]],
     links: Sequence[crossrefs.Link],
     ctx: annotate.Context,
 ) -> Document:
     """A book with its introduction, and its sections', as footnotes on their
-    opening verses, and its quotation links, each at the start of its verse."""
+    opening verses, its quotation links, each at the start of its verse, and
+    the notes of Brenton's Appendix, each at the words its decision names."""
     policy = ctx.policy
     verses = scripture.verses(doc)
     placed: dict[str, Content] = {}
@@ -489,13 +506,37 @@ def introduced(
     )
     for reference, notes in crossrefs.link_notes(links, ctx.books, ctx.terms).items():
         placed.setdefault(reference, []).extend(notes)
-    return annotate.at_verse_starts(doc, verses, placed) if placed else doc
+    if placed:
+        doc = annotate.at_verse_starts(doc, verses, placed)
+    # At the words the decision names, found once, or at the verse's start or
+    # end, after the notes already there.
+    sent = {
+        place.removeprefix(f"{code}@"): paragraphs
+        for place, paragraphs in appendix_notes.items()
+        if place.startswith(f"{code}@")
+    }
+    if not sent:
+        return doc
+    verses = scripture.verses(doc)
+    anchored: list[tuple[scripture.Verse, int, int, Content]] = []
+    for reference, paragraphs in sent.items():
+        key = f"{code} {reference}"
+        require(reference in verses, f"Appendix note verse missing: {key}")
+        note = matter.appendix_note(paragraphs, f"{key} Appendix")
+        decision, verse = policy.appendix["notes"][key], verses[reference]
+        if "before" in decision:
+            at = alexandrinus.anchor(verse, decision["before"], key)
+        else:
+            at = 0 if decision["at"] == "start" else len(verse.text)
+        anchored.append((verse, at, at, [note]))
+    return scripture.edited(doc, anchored)
 
 
 def annotated(
     units: Mapping[str, Document],
     read_sources: Read,
     introductions: Mapping[str, Sequence[Content]],
+    appendix_notes: Mapping[str, Sequence[Content]],
     ctx: annotate.Context,
 ) -> tuple[dict[str, Document], dict[str, annotate.Report]]:
     """The books with their notes, introductions and quotation links."""
@@ -525,7 +566,9 @@ def annotated(
                 mended,
                 ctx,
             )
-        docs[code] = introduced(code, doc, introductions, links.get(code, ()), ctx)
+        docs[code] = introduced(
+            code, doc, introductions, appendix_notes, links.get(code, ()), ctx
+        )
         reports[code] = report
     annotate.check_notes(policy, reports.values())
     return docs, reports
@@ -619,10 +662,15 @@ def check_document(
 ) -> None:
     """What every prepared document must hold to."""
     if scripture_unit:
-        # Any caller, "*" as well as "+"; only "-" sets none.
+        # A note in the margin has no caller: any caller, "*" as well as "+",
+        # would stand in the text. A note at the foot of the page has its
+        # caller, and only that.
         require(
-            all(note["caller"] == "-" for note in usj.notes_of(doc["content"])),
-            f"Note with a caller left in the text: {code}",
+            all(
+                note["caller"] == ("+" if note["marker"] == "ef" else "-")
+                for note in usj.notes_of(doc["content"])
+            ),
+            f"Note with a caller left in the text, or a footnote without one: {code}",
         )
         for reference, verse in scripture.verses(doc).items():
             for _, note in verse.notes:
@@ -660,8 +708,10 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
     policy = placed(units, read_sources, policy)
     units = lined(units, read_sources, policy)
     ctx = context(units, policy, sources)
-    front, introductions, front_report = front_and_back(read_sources, ctx, sources)
-    books, reports = annotated(units, read_sources, introductions, ctx)
+    front, introductions, appendix_notes, front_report = front_and_back(
+        read_sources, ctx, sources
+    )
+    books, reports = annotated(units, read_sources, introductions, appendix_notes, ctx)
     # The revision comes before the edition's own pages, which quote the
     # books as they print.
     revised: revision.MetRevisions = set()

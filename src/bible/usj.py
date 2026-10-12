@@ -75,7 +75,7 @@ PARAGRAPHS = BOOK_PARAGRAPHS | frozenset(
 # Headings and divisions: no part of the verses or the introduction they stand among.
 HEADINGS = frozenset("s1 s2 s3 ms1 sd2".split())
 CELLS = frozenset("tc1 tc2 th1 th2".split())
-CHARS = frozenset("add bd it sc vp wg wh".split())
+CHARS = frozenset("add bd fv it sc vp wg wh".split())
 NOTES = frozenset("f ef x".split())
 # The parts of a note, each of which runs to the next or to the note's end.
 FIELDS = frozenset("fr ft fq fqa fl xo xt xta".split())
@@ -489,8 +489,9 @@ def is_note(node: Node) -> bool:
 
 def is_label(node: Node) -> bool:
     """What stands in a paragraph without being its prose: a note's origin and
-    the number of a verse that a supplied passage prints."""
-    return node.get("marker") in ("fr", "xo", "vp")
+    the number of a verse that a supplied passage prints, in the text or in a
+    note."""
+    return node.get("marker") in ("fr", "xo", "vp", "fv")
 
 
 def text_of(content: Iterable[str | Node], *, skip: Predicate = is_note) -> str:
