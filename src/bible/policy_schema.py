@@ -79,6 +79,7 @@ WordingChange = TypedDict(
     {
         "from": ReadOnly[str],
         "note": ReadOnly[str],
+        "spelling": ReadOnly[Literal["greek", "hebrew"]],
         "to": ReadOnly[str],
         "unit": ReadOnly[str],
         "why": ReadOnly[str],

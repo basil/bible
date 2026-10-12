@@ -18,7 +18,8 @@ Five kinds of change are declared, each with its reason:
              still revises their other words. Words that a character style
              divides are not joined, divided or re-divided, and nor are
              they in the lemma that quotes them
-    passages punctuation in a keyed note or front/back-matter paragraph
+    passages punctuation in a keyed note or front/back-matter paragraph,
+             or Greek/Hebrew spelling in Old Testament notes and matter
     punctuation systematic English punctuation rules
     verses   changes to the words of single verses, each naming its verse,
              as "EZK 1:3", which must have the words once: its punctuation,
@@ -36,11 +37,12 @@ from __future__ import annotations
 
 import functools
 import re
+import unicodedata
 from collections.abc import Callable, Container, Iterable
 from difflib import SequenceMatcher
 
 import bible.policy
-from bible import notes, repairs, scripture, usfm, usj
+from bible import assembly, notes, repairs, scripture, usfm, usj
 from bible.checks import CheckFailed, require, require_fields
 from bible.policy_schema import RevisionChange, WordingChange
 from bible.sources import NEW_TESTAMENT
@@ -222,6 +224,11 @@ def check(policy: bible.policy.Policy) -> None:
             )
 
     matter = {e["id"] for e in policy.entries if "file" not in e and "section" not in e}
+    # Brenton's units, and the files their notes are keyed by: Daniel's
+    # include those of Susanna and Bel.
+    brenton = [e for e in policy.entries if e.get("source") == "brenton"]
+    brenton_units = {e["id"] for e in brenton}
+    brenton_files = {code for e in brenton for code in assembly.source_codes(e)}
     for name, passage_group in data["passages"].items():
         require_fields(
             passage_group, {"why", "changes"}, (), f"Passage revisions {name}"
@@ -234,7 +241,7 @@ def check(policy: bible.policy.Policy) -> None:
             require_fields(
                 passage_change,
                 {"from", "to"},
-                {"note", "unit", "why"},
+                {"note", "unit", "why", "spelling"},
                 f"Passage revision {name}",
             )
             require(
@@ -258,6 +265,44 @@ def check(policy: bible.policy.Policy) -> None:
                 and passage_change.get("why", True),
                 f"Passage revision changes nothing or has an empty why: {selector}",
             )
+            if "spelling" in passage_change:
+                spelling = passage_change["spelling"]
+                require(
+                    spelling in {"greek", "hebrew"},
+                    f"Unknown passage spelling: {selector}: {spelling}",
+                )
+                require(
+                    (
+                        selector.split()[0] in brenton_files
+                        if "note" in passage_change
+                        else selector in brenton_units
+                    ),
+                    f"Foreign spelling is not Old Testament matter or a note: {selector}",
+                )
+                old, new = passage_change["from"], passage_change["to"]
+                masked = _foreign_mask(old, spelling)
+                require(
+                    "\0" not in old + new
+                    and masked != old
+                    and masked == _foreign_mask(new, spelling),
+                    f"Foreign spelling changes other words, spacing or punctuation: {selector}",
+                )
+                require(
+                    new == unicodedata.normalize("NFC", new),
+                    f"Foreign spelling is not in composed form: {selector}",
+                )
+                require(
+                    all(
+                        _one_letter_apart(a, b)
+                        for a, b in zip(
+                            _foreign_words(old, spelling),
+                            _foreign_words(new, spelling),
+                            strict=True,
+                        )
+                    ),
+                    f"Foreign spelling changes more than one letter of a word: {selector}",
+                )
+                continue
             require(
                 re.fullmatch(
                     r"[\w\s.,;:?!—–\-()'’‘\"“”\[\]]*",
@@ -284,6 +329,70 @@ def _check_name_verses(keys: Iterable[str], seen: set[str], label: str) -> None:
         )
         require(key not in seen, f"Verse listed twice for a name: {label}: {key}")
         seen.add(key)
+
+
+def _foreign_mask(text: str, spelling: str) -> str:
+    """One token per foreign word, retaining every other character exactly.
+
+    Marks belong to a preceding foreign letter. A bare mark, punctuation,
+    spaces and letters of another script cannot be changed as spelling.
+    """
+    return _foreign_scan(text, spelling)[0]
+
+
+def _foreign_words(text: str, spelling: str) -> list[str]:
+    """The foreign words in order, as _foreign_mask reads them."""
+    return _foreign_scan(text, spelling)[1]
+
+
+def _foreign_scan(text: str, spelling: str) -> tuple[str, list[str]]:
+    result: list[str] = []
+    words: list[str] = []
+    inside = False
+    for char in text:
+        name = unicodedata.name(char, "")
+        foreign = name.startswith(spelling.upper() + " ")
+        category = unicodedata.category(char)
+        if foreign and category.startswith("L"):
+            if not inside:
+                result.append("\0" + spelling + "\0")
+                words.append("")
+            words[-1] += char
+            inside = True
+        elif (
+            inside
+            and category.startswith("M")
+            and (foreign or name.startswith("COMBINING "))
+        ):
+            words[-1] += char
+        else:
+            result.append(char)
+            inside = False
+    return "".join(result), words
+
+
+def _one_letter_apart(old: str, new: str) -> bool:
+    """Whether two words differ in their marks and at most one letter."""
+    a, b = (
+        "".join(
+            c
+            for c in unicodedata.normalize("NFD", word)
+            if not unicodedata.category(c).startswith("M")
+        )
+        for word in (old, new)
+    )
+    if len(a) == len(b):
+        return sum(x != y for x, y in zip(a, b, strict=True)) <= 1
+    short, long = sorted((a, b), key=len)
+    return len(long) == len(short) + 1 and any(
+        long[:i] + long[i + 1 :] == short for i in range(len(long))
+    )
+
+
+def _starts_word(text: str, at: int, spelling: str) -> bool:
+    """Whether a foreign word begins at the offset, as _foreign_mask reads it."""
+    before = _foreign_mask(text[:at], spelling)
+    return _foreign_mask(text[: at + 1], spelling) == before + f"\0{spelling}\0"
 
 
 def _same_words(old: str, new: str) -> bool:
@@ -322,7 +431,8 @@ def passages(
     policy: bible.policy.Policy,
     met: MetRevisions,
 ) -> Document:
-    """Revise a keyed note or one paragraph, keeping its words and metadata.
+    """Revise a keyed note or one paragraph, keeping its words and metadata,
+    but for the Greek or Hebrew words a spelling change respells.
 
     Find every change in the original document, so overlapping decisions
     cannot consume one another. Matches are recorded by selector and words.
@@ -353,6 +463,10 @@ def passages(
     usj.with_content(doc, collect)
     edits: dict[int, list[tuple[int, int, str]]] = {}
     ranges: dict[int, list[tuple[int, int]]] = {}
+    spellings: dict[int, set[str]] = {}
+    brenton = any(
+        e["id"] == code and e.get("source") == "brenton" for e in policy.entries
+    )
     for change in changes:
         old, new = change["from"], change["to"]
         selector = _selector(change)
@@ -377,10 +491,25 @@ def passages(
         )
         content, at = found[0]
         words = usj.text_of(content, skip=skip)
-        require(
-            _same_words(words, words[:at] + new + words[at + len(old) :]),
-            f"Passage revision changes wording or noninitial capitalization: {selector}: {old}",
-        )
+        after = words[:at] + new + words[at + len(old) :]
+        spelling = change.get("spelling")
+        if spelling:
+            require(
+                brenton,
+                f"Foreign spelling applied outside Old Testament: {code}: {selector}",
+            )
+            spellings.setdefault(id(content), set()).add(spelling)
+            require(
+                _foreign_mask(words, spelling) == _foreign_mask(after, spelling),
+                "Foreign spelling changes other words, spacing or punctuation: "
+                f"{selector}: {old}",
+            )
+        else:
+            require(
+                _same_words(words, after),
+                "Passage revision changes wording or noninitial capitalization: "
+                f"{selector}: {old}",
+            )
         spans = ranges.setdefault(id(content), [])
         require(
             all(at + len(old) <= start or end <= at for start, end in spans),
@@ -388,13 +517,17 @@ def passages(
         )
         spans.append((at, at + len(old)))
         # Only changed characters give way; unchanged words retain their styles.
-        edits.setdefault(id(content), []).extend(
-            (at + a, at + b, new[c:d])
-            for tag, a, b, c, d in SequenceMatcher(
-                None, old, new, autojunk=False
-            ).get_opcodes()
-            if tag != "equal"
-        )
+        for tag, a, b, c, d in SequenceMatcher(
+            None, old, new, autojunk=False
+        ).get_opcodes():
+            if tag == "equal":
+                continue
+            edit = (at + a, at + b, new[c:d])
+            # An edit of no stretch adds to the string before it: letters set
+            # before a word go with the word's first, to stand in its style.
+            if spelling and a == b < len(old) and _starts_word(words, at + a, spelling):
+                edit = (at + a, at + a + 1, new[c:d] + old[a])
+            edits.setdefault(id(content), []).append(edit)
         met.add((selector, old))
     if not edits:
         return doc
@@ -403,10 +536,13 @@ def passages(
         revised = content
         if id(content) in edits:
             revised = usj.substituted(content, edits[id(content)], skip=skip)
+            before_words = usj.text_of(content, skip=skip)
+            after_words = usj.text_of(revised, skip=skip)
+            for spelling in spellings.get(id(content), ()):
+                before_words = _foreign_mask(before_words, spelling)
+                after_words = _foreign_mask(after_words, spelling)
             require(
-                _same_words(
-                    usj.text_of(content, skip=skip), usj.text_of(revised, skip=skip)
-                ),
+                _same_words(before_words, after_words),
                 "Combined passage revisions change wording or noninitial "
                 f"capitalization: {code}",
             )

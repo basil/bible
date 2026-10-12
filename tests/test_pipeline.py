@@ -1341,6 +1341,231 @@ def test_passage_revisions_in_matter_and_capitalization(
 
 
 @pytest.mark.parametrize(
+    "spelling,old,new",
+    [
+        ("greek", "ἐπαξοοῦν", "ἐπαξονοῦν"),
+        ("greek", "ἠχος", "ἦχος"),
+        ("hebrew", "תנפה", "תְּנוּפָה"),
+    ],
+)
+def test_foreign_spelling_is_confined_to_its_key_and_keeps_metadata(
+    policy: bible.policy.Policy, spelling: str, old: str, new: str
+) -> None:
+    doc = usj.parse(
+        f"\\id NUM\n\\c 1\n\\p\n\\v 18 Text.\\f - \\fr 1:18 \\ft English \\it {old}\\it*.\\f*"
+        f"\n\\v 19 Other.\\f - \\fr 1:19 \\ft English {old}.\\f*"
+    )
+    notes = usj.notes_of(doc["content"])
+    notes[0].update(
+        {"x-key": "NUM 1:18", "x-scope": {"lemma": "Text"}, "category": "edition"}
+    )
+    notes[1]["x-key"] = "NUM 1:19"
+    before = copy.deepcopy(doc)
+    change = {"note": "NUM 1:18", "spelling": spelling, "from": old, "to": new}
+    rules = revisions(policy, passages=passage_group(change))
+    revision.check(rules)
+    met: revision.MetRevisions = set()
+    result = revision.passages("NUM", doc, rules, met)
+    after = usj.notes_of(result["content"])
+    assert usj.text_of(after[0]["content"]) == f"1:18 English {new}."
+    assert f"\\it {new}\\it*" in usj.serialize(result)
+    assert {k: v for k, v in after[0].items() if k != "content"} == {
+        k: v for k, v in notes[0].items() if k != "content"
+    }
+    assert after[1] == notes[1]
+    assert doc == before
+    revision.check_met(rules, met)
+
+
+def test_foreign_spelling_in_matter_can_share_a_paragraph_with_punctuation(
+    policy: bible.policy.Policy,
+) -> None:
+    doc = usj.parse("\\id BAK\n\\ip English ἐπαξοοῦν.—More.")
+    rules = revisions(
+        policy,
+        passages=passage_group(
+            {"unit": "BAK", "spelling": "greek", "from": "ἐπαξοοῦν", "to": "ἐπαξονοῦν"},
+            {"unit": "BAK", "from": ".—More", "to": "—More"},
+        ),
+    )
+    revision.check(rules)
+    result = revision.passages("BAK", doc, rules, set())
+    assert usj.text_of(result["content"]) == "English ἐπαξονοῦν—More."
+
+
+def test_foreign_spelling_sets_letters_before_a_word_in_its_style(
+    policy: bible.policy.Policy,
+) -> None:
+    doc = usj.parse(
+        "\\id NUM\n\\c 1\n\\p\n\\v 18 Text.\\f - \\fr 1:18 \\fqa Alex. "
+        "\\ft ὑρετῆ, or \\it μαρτία\\it* or λέγε.\\f*"
+    )
+    usj.notes_of(doc["content"])[0]["x-key"] = "NUM 1:18"
+    rules = revisions(
+        policy,
+        passages=passage_group(
+            {"note": "NUM 1:18", "spelling": "greek", "from": "ὑρετῆ", "to": "εὑρετῆ"},
+            {
+                "note": "NUM 1:18",
+                "spelling": "greek",
+                "from": "μαρτία",
+                "to": "ἁμαρτία",
+            },
+            {"note": "NUM 1:18", "spelling": "greek", "from": "λέγε.", "to": "λέγει."},
+        ),
+    )
+    revision.check(rules)
+    result = usj.serialize(revision.passages("NUM", doc, rules, set()))
+    assert "\\fqa Alex. \\ft εὑρετῆ, or \\it ἁμαρτία\\it* or λέγει.\\f*" in result
+
+
+def test_foreign_spelling_reaches_the_parts_of_daniel(
+    policy: bible.policy.Policy,
+) -> None:
+    change = {"note": "SUS 1:5", "spelling": "greek", "from": "λέγει", "to": "λέγε"}
+    revision.check(revisions(policy, passages=passage_group(change)))
+
+
+@pytest.mark.parametrize(
+    "change,refusal",
+    [
+        (
+            {"note": "MAT 1:1", "spelling": "greek", "from": "λέγει", "to": "λέγε"},
+            "not Old Testament",
+        ),
+        (
+            {"unit": "NDX", "spelling": "greek", "from": "λέγει", "to": "λέγε"},
+            "not Old Testament",
+        ),
+        (
+            {
+                "note": "NUM 1:18",
+                "spelling": "greek",
+                "from": "English λέγει",
+                "to": "Changed λέγε",
+            },
+            "changes other words",
+        ),
+        (
+            {"note": "NUM 1:18", "spelling": "greek", "from": "λέγει", "to": "ל"},
+            "changes other words",
+        ),
+        (
+            {
+                "note": "NUM 1:18",
+                "spelling": "greek",
+                "from": "λέγει",
+                "to": "λέγει λέγε",
+            },
+            "changes other words",
+        ),
+        (
+            {"note": "NUM 1:18", "spelling": "greek", "from": "λέγει.", "to": "λέγε!"},
+            "changes other words",
+        ),
+        (
+            {
+                "note": "NUM 1:18",
+                "spelling": "greek",
+                "from": "λέγει",
+                "to": "λέγει\u05b0",
+            },
+            "changes other words",
+        ),
+        (
+            {"note": "NUM 1:18", "spelling": "greek", "from": "λέγει", "to": "_greek_"},
+            "changes other words",
+        ),
+        (
+            {
+                "note": "NUM 1:18",
+                "spelling": "greek",
+                "from": "λέγει",
+                "to": "\0greek\0",
+            },
+            "changes other words",
+        ),
+        (
+            {
+                "note": "NUM 1:18",
+                "spelling": "greek",
+                "from": "λέγει",
+                "to": "\\it λέγε\\it*",
+            },
+            "changes other words",
+        ),
+        (
+            {"note": "NUM 1:18", "spelling": "latin", "from": "word", "to": "words"},
+            "Unknown passage spelling",
+        ),
+        (
+            {
+                "note": "NUM 1:18",
+                "spelling": "greek",
+                "from": "οἴκον",
+                "to": "βασιλεία",
+            },
+            "more than one letter",
+        ),
+        (
+            {"note": "NUM 1:18", "spelling": "greek", "from": "λέγει", "to": "λέγη"},
+            "more than one letter",
+        ),
+        (
+            {
+                "note": "NUM 1:18",
+                "spelling": "greek",
+                "from": "ἠχος",
+                "to": "η\u0313\u0342χος",
+            },
+            "composed form",
+        ),
+    ],
+)
+def test_foreign_spelling_refuses_other_changes(
+    policy: bible.policy.Policy, change: dict[str, str], refusal: str
+) -> None:
+    rules = revisions(policy, passages=passage_group(change))
+    with pytest.raises(CheckFailed, match=refusal):
+        revision.check(rules)
+
+
+def test_foreign_spelling_refuses_a_note_moved_into_the_new_testament(
+    policy: bible.policy.Policy,
+) -> None:
+    doc = usj.parse("\\id MAT\n\\c 1\n\\p\n\\v 1 Text.\\f - \\fr 1:1 \\ft λέγει.\\f*")
+    usj.notes_of(doc["content"])[0]["x-key"] = "NUM 1:18"
+    rules = revisions(
+        policy,
+        passages=passage_group(
+            {"note": "NUM 1:18", "spelling": "greek", "from": "λέγει", "to": "λέγε"},
+        ),
+    )
+    revision.check(rules)
+    with pytest.raises(CheckFailed, match="outside Old Testament"):
+        revision.passages("MAT", doc, rules, set())
+
+
+def test_foreign_spelling_refuses_stale_and_overlapping_matches(
+    policy: bible.policy.Policy,
+) -> None:
+    change = {"unit": "BAK", "spelling": "greek", "from": "ἐπαξοοῦν", "to": "ἐπαξονοῦν"}
+    rules = revisions(policy, passages=passage_group(change))
+    for text in ("Absent.", "ἐπαξοοῦν ἐπαξοοῦν"):
+        with pytest.raises(CheckFailed, match="not met once"):
+            revision.passages("BAK", usj.parse("\\id BAK\n\\ip " + text), rules, set())
+    with pytest.raises(CheckFailed, match="Overlapping"):
+        revision.passages(
+            "BAK",
+            usj.parse("\\id BAK\n\\ip ἐπαξοοῦν"),
+            revisions(policy, passages=passage_group(change, change)),
+            set(),
+        )
+    with pytest.raises(CheckFailed, match="nothing prints"):
+        revision.check_met(rules, set())
+
+
+@pytest.mark.parametrize(
     "change",
     [
         {"from": "Word.—", "to": "Word—"},

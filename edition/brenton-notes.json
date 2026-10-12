@@ -23,10 +23,20 @@
       "why": "Avith is a misreading of with",
       "uncategorized": true
     },
+    "GEN 18:21": {
+      "from": "עשי כלה",
+      "to": "עשו כלה",
+      "why": "Brenton prints עשו כלה, with final vav in עשו (1879 and 1900 p. 20; confirmed by the pointed Hebrew in 1844 vol. 1 p. 17); the transcription has yod instead."
+    },
     "GEN 21:11": {
       "from": "\\fr 21:11 \\fqa Gr. \\fqa Gr. ",
       "to": "\\fr 21:11 \\fqa Gr. ",
       "why": "the label Gr. is doubled"
+    },
+    "GEN 49:3": {
+      "from": "ὁ θεὸς",
+      "to": "ὁ Θεὸς",
+      "why": "Brenton prints ὁ Θεὸς with capital theta (1879 and 1900 p. 67; 1844 vol. 1 p. 55); the transcription has lowercase theta."
     },
     "EXO 21:28": {
       "from": "\\ft he\\fl or",
@@ -95,12 +105,12 @@
       {
         "from": "מעולס",
         "to": "מעולם",
-        "why": "the printed Hebrew is מעולם"
+        "why": "Brenton prints מעולם (1879 and 1900 p. 395)."
       },
       {
         "from": "שוה",
-        "to": "שור",
-        "why": "the printed Hebrew is שור, Shur"
+        "to": "שורה",
+        "why": "Brenton prints שורה, including the directional he (1879 and 1900 p. 395; confirmed pointed in 1844 vol. 1 p. 324); the transcription drops resh. Preserve the final he rather than substitute שור."
       }
     ],
     "2SA 17:8": {
@@ -171,6 +181,25 @@
       "to": "this \\add city",
       "why": "the word space before city is missing, so it prints thiscity"
     },
+    "ISA 17:12": {
+      "from": "ἠχος",
+      "to": "ἦχος",
+      "why": "Brenton prints ἦχος with smooth breathing and circumflex (1879 and 1900 p. 852; 1844 vol. 2 p. 698); the transcription loses the circumflex."
+    },
+    "PSA 128:3": [
+      {
+        "from": "שיך",
+        "to": "עון",
+        "why": "Brenton prints עון, ayin–waw–final nun (1879 and 1900 p. 777; 1844 vol. 2 p. 637); the transcription misreads all three letters.",
+        "uncategorized": true
+      },
+      {
+        "from": "שוכה",
+        "to": "עונה",
+        "why": "Brenton prints עונה (1879 and 1900 p. 777; 1844 vol. 2 p. 637); restore the printed letters without conjecturing a different word for the gloss a furrow.",
+        "uncategorized": true
+      }
+    ],
     "ISA 54:4": {
       "from": "\\ft ancient \\fqa Or,",
       "to": "\\ft ancient. \\fqa Or,",
@@ -184,9 +213,8 @@
     },
     "NUM 18:11": {
       "from": "חנפה",
-      "to": "תנופה",
-      "why": "the printed Hebrew is תנופה, wave-offering",
-      "uncategorized": true
+      "to": "תנפה",
+      "why": "Brenton prints תנפה with initial taw (1879 and 1900 p. 200); the transcription has heth. Preserve the legitimate defective spelling without waw, rather than harmonizing it to the plene form in 1844 vol. 1 p. 165 (Gesenius, Hebrew Grammar §§8c, 8i–l, 25b)."
     },
     "DEU 33:2": {
       "from": "קרש",
@@ -283,6 +311,11 @@
       "why": "the printed Hebrew is תחתו",
       "uncategorized": true
     },
+    "2SA 24:12": {
+      "from": "εἰμὶ",
+      "to": "εἰμι",
+      "why": "Brenton prints the unaccented enclitic εἰμι (1879 and 1900 p. 439; 1844 vol. 1 p. 359); the transcription adds a grave on its final iota."
+    },
     "1KI 5:25": {
       "from": "מכרח",
       "to": "מכלת",
@@ -339,6 +372,11 @@
       "to": "כבד liver",
       "why": "the printed Hebrew is כבד, liver"
     },
+    "1SA 19:9#2": {
+      "from": "ישך",
+      "to": "ישן",
+      "why": "Brenton prints ישן with final nun, not kaf (1879 and 1900 p. 382; confirmed pointed in 1844 vol. 1 p. 313)."
+    },
     "2KI 15:5#3": {
       "from": "החפשיח",
       "to": "החפשית",
@@ -382,10 +420,24 @@
       "why": "the printed note reads Ναζειραῖον",
       "uncategorized": true
     },
-    "JDG 13:19": {
-      "from": "θανμαστὰ",
-      "to": "θαυμαστὰ",
-      "why": "the printed Greek reads θαυμαστὰ"
+    "JDG 13:19": [
+      {
+        "from": "θανμαστὰ",
+        "to": "θαυμαστὰ",
+        "why": "Brenton prints θαυμαστὰ with upsilon and grave (1879 and 1900 p. 336). The 1844 vol. 1 p. 276 note confirms the same letters but prints an acute, θαυμαστά; retain the later printings' accent."
+      },
+      {
+        "from": "κυριῷ",
+        "to": "κυρίῳ",
+        "why": "Brenton prints κυρίῳ: 1844 vol. 1 p. 276 clearly; 1900 p. 336 shows the acute on damaged type, 1879 p. 336 has worn it away. No printing has the transcription's circumflex on omega. Swete vol. 1 p. 513 confirms the dative.",
+        "uncategorized": true
+      }
+    ],
+    "JDG 14:6": {
+      "from": "חעלח",
+      "to": "תצלח",
+      "why": "Brenton prints תצלח (1879 and 1900 p. 337; the same consonants pointed in 1844 vol. 1 p. 276); the transcription misreads taw and tsadi.",
+      "uncategorized": true
     },
     "JDG 18:7": [
       {
@@ -443,15 +495,27 @@
       "why": "the printed note reads ἀλλόφυλοι",
       "uncategorized": true
     },
-    "2KI 17:21": {
-      "from": "ἀπ᾿οἴκου",
-      "to": "ἀπ᾿ οἴκου",
-      "why": "the printed Greek separates ἀπ᾿ and οἴκου"
+    "2KI 13:6": {
+      "from": "ἀμαρτία",
+      "to": "ἁμαρτία",
+      "why": "Brenton prints rough breathing in ἁμαρτία (1879 and 1900 p. 507; 1844 vol. 1 p. 416); the transcription gives smooth breathing."
     },
+    "2KI 17:21": [
+      {
+        "from": "ἀπ᾿οἴκου",
+        "to": "ἀπ᾿ οἴκου",
+        "why": "Brenton separates ἀπ᾿ and οἴκου (1879 and 1900 p. 514; 1844 vol. 1 p. 422)."
+      },
+      {
+        "from": "ἐῤῤάγη",
+        "to": "ἐῤῥάγη",
+        "why": "Brenton prints smooth breathing on the first rho and rough on the second (1879 and 1900 p. 514; 1844 vol. 1 p. 422); the transcription gives two smooth breathings. Preserve this historical double-rho spelling."
+      }
+    ],
     "2KI 19:30#2": {
-      "from": "οἴκον",
-      "to": "οἴκου",
-      "why": "the printed Greek reads οἴκου"
+      "from": "διασες.",
+      "to": "διασεσ.",
+      "why": "Brenton prints the legitimate abbreviation διασεσ. with medial sigma before its stop (1879 and 1900 p. 519; 1844 vol. 1 p. 426); the transcription substitutes final sigma. The printed case error in οἴκον is corrected separately in revisions.json."
     },
     "DEU 24:13": {
       "from": "\\fqa ie. ",
@@ -497,8 +561,8 @@
     },
     "DEU 1:31": {
       "from": "on ἐτροφόρησεν.",
-      "to": "on ἐτροφοφόρησεν.",
-      "why": "the Authorized Version's margin at Acts 13:18 gives ἐτροφοφόρησεν, from τροφοφορέω, which the Septuagint has here",
+      "to": "on ἐτροποφόρησεν.",
+      "why": "Brenton prints ἐτροποφόρησεν in his reference to the Authorized Version's margin at Acts 13:18 (1879 and 1900 p. 230; 1844 vol. 1 p. 190); the transcription drops πο. Restore this historical quotation: τροποφορέω means to bear someone's ways, while τροφοφορέω means to carry or nurse, so the forms are distinct verbs.",
       "uncategorized": true
     },
     "1SA 29:3#2": {
@@ -752,11 +816,18 @@
       "to": "possessions",
       "why": "Brenton’s printings read possessions (1844 p. 426; 1879 p. 506; 1884 p. 473; 1900 p. 502)."
     },
-    "1SA 21:8": {
-      "from": "repitition",
-      "to": "repetition",
-      "why": "Brenton’s printings read repetition (1844 p. 340; 1879 p. 401; 1884 p. 370; 1900 p. 397)."
-    },
+    "1SA 21:8": [
+      {
+        "from": "repitition",
+        "to": "repetition",
+        "why": "Brenton’s printings read repetition (1844 p. 340; 1879 p. 401; 1884 p. 370; 1900 p. 397)."
+      },
+      {
+        "from": "בעצר",
+        "to": "נעצר",
+        "why": "Brenton prints נעצר with initial nun, not bet (1879 and 1900 p. 385; confirmed pointed in 1844 vol. 1 p. 316)."
+      }
+    ],
     "2KI 4:39": {
       "from": "colosynth",
       "to": "colocynth",
@@ -794,16 +865,33 @@
       "why": "Brenton’s printings read ערב (1844 p. 229; 1879 p. 904; 1900 p. 900).",
       "uncategorized": true
     },
-    "JDG 9:6": {
-      "from": "מעכ. this is an instance of double translation, στάσεως being given for מעכ, and εὐρετῆ having reference to the word מעא",
-      "to": "מצב. This is an instance of double translation, στάσεως being given for מצב, and εὐρετῆ having reference to the word מצא",
-      "why": "Brenton’s printings read מצב and מצא, and This (1844 p. 293; 1879 p. 344; 1900 p. 340); eBible has ע for צ and כ for ב.",
-      "uncategorized": true
+    "JDG 6:13": {
+      "from": "כי a particle of entreaty",
+      "to": "בי a particle of entreaty",
+      "why": "Brenton prints בי with initial bet, not kaf (1879 and 1900 p. 323; 1844 vol. 1 p. 265)."
     },
+    "JDG 9:6": [
+      {
+        "from": "מעכ. this is an instance of double translation, στάσεως being given for מעכ, and εὐρετῆ having reference to the word מעא",
+        "to": "מצב. This is an instance of double translation, στάσεως being given for מצב, and εὑρετῆ having reference to the word מצא",
+        "why": "Brenton prints מצב and מצא, and This, and rough breathing in εὑρετῆ (1879 and 1900 p. 328; 1844 vol. 1 p. 269); the transcription misreads the Hebrew letters and the Greek breathing. The printed missing iota subscript is corrected separately in revisions.json.",
+        "uncategorized": true
+      },
+      {
+        "from": "rightly omits εὐρετῆ",
+        "to": "rightly omits εὑρετῆ",
+        "why": "Brenton's second quotation also prints rough breathing (1879 and 1900 p. 328; 1844 vol. 1 p. 269); the transcription has smooth breathing."
+      }
+    ],
     "JDG 17:10": {
       "from": "ימיס",
       "to": "ימים",
       "why": "Brenton’s printings read ימים with a final mem (1844 p. 304; 1879 p. 357; 1900 p. 353)."
+    },
+    "JDG 10:17": {
+      "from": "מעפה",
+      "to": "מצפה",
+      "why": "Brenton prints מצפה (1879 and 1900 p. 332); the transcription mistakes tsadi for ayin."
     },
     "1SA 21:3": {
       "from": "מקוצ",
@@ -943,6 +1031,27 @@
       "to": "for whose cause",
       "why": "Brenton prints ‘for whose cause this evil is upon us’ (1879, physical page 1110); those is a stray word",
       "uncategorized": true
+    },
+    "ISA 54:10": {
+      "from": "κύριος for κύριε",
+      "to": "Κύριος for Κύριε",
+      "why": "Brenton prints both Greek forms with capital kappa (1879 and 1900 p. 890); restore the printed capitals.",
+      "uncategorized": true
+    },
+    "INT μεταξθῇ": {
+      "from": "μεταξθῇ",
+      "to": "μεταχθῇ",
+      "why": "Brenton 1879 Introduction p. iii prints chi in μεταχθῇ, not xi; 1884 Introduction p. iii and Swete vol. 2 p. 644 agree."
+    },
+    "INT αὐτος": {
+      "from": "αὐτος",
+      "to": "αὐτὸς",
+      "why": "Brenton 1879 and 1884 Introduction p. iii print a grave on omicron in αὐτὸς; the transcription omits the accent."
+    },
+    "BAK עלם": {
+      "from": "עלם",
+      "to": "עלס",
+      "why": "Brenton 1879 and 1900, unnumbered first Appendix page, print samekh in the root עלס in the Job 39:13 entry; the transcription misreads it as final mem."
     }
   },
   "notes": {
@@ -1928,7 +2037,7 @@
       "why": "the note is on the Greek word for Nazarite"
     },
     "JDG 13:19": {
-      "note": "According to the Heb. _a wonderful work_. Alex. reads τῷ θαυμαστὰ ποιοῦντι κυριῷ.",
+      "note": "According to the Heb. _a wonderful work_. Alex. reads τῷ θαυμαστὰ ποιοῦντι κυρίῳ.",
       "why": "a wonderful work is the Hebrew's rendering"
     },
     "JDG 14:1": {
@@ -2367,7 +2476,7 @@
     },
     "2SA 24:12": {
       "lemma": "I bring",
-      "why": "the redundant εἰμὶ stands with I bring"
+      "why": "the redundant Greek verb stands with I bring"
     },
     "2SA 24:24": {
       "lemma": "fifty shekels of silver",
@@ -3275,7 +3384,7 @@
     "PSA 128:3": {
       "sentence": false,
       "why": "The lexical glosses iniquity and a furrow are italic; read is a participle, so the note stays without sentence styling",
-      "note": "שיך _iniquity_, easily read for שוכה _a furrow_."
+      "note": "עון _iniquity_, easily read for עונה _a furrow_."
     },
     "PSA 131:18": {
       "lemma": "holiness",

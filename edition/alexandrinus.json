@@ -5149,7 +5149,7 @@
       "source_note": "\\fqa Or, \\ft pitched his tent. \\fqa Alex. \\ft παρενέβαλε, for which probably παρενέλαβε is a mere mistake. So \\fqa Bos \\ft and \\fqa P. Junius \\ft thought."
     },
     "JDG 9:6": {
-      "why": "The omitted Greek εὐρετῆ already has no separate English words in Brenton’s verse; his text “of Sedition” follows Alexandrinus here.",
+      "why": "The omitted Greek word already has no separate English words in Brenton’s verse; his text “of Sedition” follows Alexandrinus here.",
       "todo": true,
       "swete": {
         "volume": 1,
@@ -5158,7 +5158,7 @@
         "reading": "om τῇ εὑρετῇ A",
         "agrees": true
       },
-      "source_note": "\\fqa Heb. \\ft מצב. This is an instance of double translation, στάσεως being given for מצב, and εὐρετῆ having reference to the word מצא \\fqa to find; \\ft but \\fqa Alex. \\ft rightly omits εὐρετῆ."
+      "source_note": "\\fqa Heb. \\ft מצב. This is an instance of double translation, στάσεως being given for מצב, and εὑρετῆ having reference to the word מצא \\fqa to find; \\ft but \\fqa Alex. \\ft rightly omits εὑρετῆ."
     },
     "JDG 9:27#2": {
       "why": "Brenton gives Alexandrinus in Greek alone.",
@@ -5194,7 +5194,7 @@
         "reading": "καὶ διεχώρισεν ποιῆσαι] τῷ θαυμαστὰ ποιοῦντι κῷ A",
         "agrees": true
       },
-      "source_note": "\\ft According to the \\fqa Heb. \\ft a wonderful work. \\fqa Alex. \\ft reads τῷ θαυμαστὰ ποιοῦντι κυριῷ."
+      "source_note": "\\ft According to the \\fqa Heb. \\ft a wonderful work. \\fqa Alex. \\ft reads τῷ θαυμαστὰ ποιοῦντι κυρίῳ."
     },
     "JDG 21:22": {
       "why": "Brenton expressly says the existing English “according to the occasion” is translated from Alexandrinus.",
@@ -5488,7 +5488,7 @@
         "reading": "ιλεως σοι Κυριε] κ̅ς̅ ιλεως σοι ℵAQ",
         "agrees": true
       },
-      "source_note": "\\fqa Alex. \\ft κύριος for κύριε adopted here. Compare \\xt Mat. 16. 22, \\ft with this passage."
+      "source_note": "\\fqa Alex. \\ft Κύριος for Κύριε adopted here. Compare \\xt Mat. 16. 22, \\ft with this passage."
     },
     "ISA 61:3": {
       "why": "The note is about Greek word division, with no alternative English wording. eBible has it as the verse’s first note; in every printing it is the second, on the garment of glory, and Or, anointing. the first (1844 p. 236; 1879 p. 912; 1900 p. 908), so the note overrides swap the printed texts.",

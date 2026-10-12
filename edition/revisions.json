@@ -10783,6 +10783,67 @@
     }
   },
   "passages": {
+    "foreign-spelling": {
+      "why": "Correct printed Greek and Hebrew spelling errors in the Old Testament notes and matter, preserving their English and their witnesses.",
+      "changes": [
+        {
+          "note": "NUM 1:18",
+          "spelling": "greek",
+          "from": "ἐπαξοοῦν",
+          "to": "ἐπαξονοῦν",
+          "why": "Brenton's 1844 vol. 1 p. 140 prints ἐπαξονοῦν in this note; the 1879 and 1900 printings omit nu (p. 170). Swete vol. 1 p. 252 confirms the stem in ἐπηξονοῦσαν."
+        },
+        {
+          "note": "JDG 9:6",
+          "spelling": "greek",
+          "from": "and εὑρετῆ having reference",
+          "to": "and εὑρετῇ having reference",
+          "why": "Brenton's note omits the iota subscript (1879 and 1900 p. 328). Swete vol. 1 p. 500 prints the complete dative εὑρετῇ in Judges 9:6 and records its omission in A; both were verified on the scan."
+        },
+        {
+          "note": "JDG 9:6",
+          "spelling": "greek",
+          "from": "rightly omits εὑρετῆ",
+          "to": "rightly omits εὑρετῇ",
+          "why": "The second quotation repeats the printed missing iota subscript (1879 and 1900 p. 328); Swete vol. 1 p. 500 supplies εὑρετῇ and confirms A's omission on the scan."
+        },
+        {
+          "note": "1SA 1:15",
+          "spelling": "greek",
+          "from": "σκληρᾳ",
+          "to": "σκληρᾷ",
+          "why": "Brenton's 1844 vol. 1 p. 292 prints σκληρᾷ in this same comparison; the 1879 and 1900 notes omit its circumflex (p. 356). Restore the accent while preserving the comparison and its English."
+        },
+        {
+          "note": "2KI 3:21#2",
+          "spelling": "greek",
+          "from": "καὶ ἐπάνα",
+          "to": "καὶ ἐπάνω",
+          "why": "Brenton prints terminal alpha (1879 and 1900 p. 491; 1844 vol. 1 p. 402). Swete vol. 1 p. 746 records ειπον ω] επανω A, verified on the scan, establishing omega in the Alexandrine reading; Brenton's English gloss and above agrees."
+        },
+        {
+          "note": "2KI 19:30#2",
+          "spelling": "greek",
+          "from": "οἴκον",
+          "to": "οἴκου",
+          "why": "Brenton prints accusative οἴκον (1879 and 1900 p. 519; 1844 vol. 1 p. 426). Swete vol. 1 p. 788 gives genitive οἴκου; within this phrase its apparatus changes only the article and participle in A. Both were checked on the scan, establishing the printed case error without changing the English."
+        },
+        {
+          "unit": "XXE",
+          "spelling": "greek",
+          "from": "βιβλὶων",
+          "to": "βιβλίων",
+          "why": "Brenton 1879 and 1884 Introduction p. iii print an erroneous medial grave. Swete vol. 2 (1907) p. 644, verified on the scan, confirms βιβλίων with acute in this same Sirach prologue quotation."
+        },
+        {
+          "unit": "BAK",
+          "spelling": "hebrew",
+          "from": "נעלסּה",
+          "to": "נעלסה",
+          "why": "Brenton 1879 and 1900, unnumbered first Appendix page, print an erroneous dagesh inside samekh in the Job 39:13 quotation. Brown–Driver–Briggs p. 763, under עלס, gives the Job 39:13 form without that point; retain the otherwise unpointed printed form."
+        }
+      ]
+    },
     "preface-continuation": {
       "why": "The three objects of consideration form one coordinated list; commas separate them without interrupting the parallel construction.",
       "changes": [
