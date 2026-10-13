@@ -1,5 +1,5 @@
 import { manifest, chapterURL, SECTIONS } from "../.vitepress/lib/library.ts";
-export default {
+const loader = {
   load() {
     const books = manifest().books;
     return Object.entries(SECTIONS).map(([section, title]) => ({
@@ -16,3 +16,6 @@ export default {
     }));
   },
 };
+declare const data: ReturnType<typeof loader.load>;
+export { data };
+export default loader;

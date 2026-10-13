@@ -8,19 +8,26 @@
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
+    "@types/jsdom": "30.0.0",
+    "@types/node": "22.20.5",
     "eslint": "10.12.0",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-vue": "10.11.1",
     "jsdom": "30.1.2",
     "minisearch": "7.2.0",
     "prettier": "3.9.10",
+    "typescript": "6.0.3",
     "typescript-eslint": "8.71.2",
-    "vitest": "5.0.4"
+    "vitest": "5.0.4",
+    "vue-eslint-parser": "10.4.1",
+    "vue-tsc": "3.3.12"
   },
   "scripts": {
     "dev": "vitepress dev",
     "build": "vitepress build",
     "preview": "vitepress preview",
-    "lint": "prettier --check . && eslint .",
-    "lint:fix": "prettier --write . && eslint --fix .",
+    "lint": "eslint . && prettier --check . && vue-tsc --noEmit",
+    "lint:fix": "eslint --fix . && prettier --write . && vue-tsc --noEmit",
     "test": "vitest run tests/unit",
     "test:watch": "vitest tests/unit",
     "test:integration": "vitest run tests/integration"

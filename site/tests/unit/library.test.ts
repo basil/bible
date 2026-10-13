@@ -27,7 +27,7 @@ const books: Book[] = [
 ];
 const inventory = { books };
 const files = () =>
-  new Map([
+  new Map<string, unknown>([
     ["manifest.json", inventory],
     ...books.flatMap((book) =>
       book.chapters.map(

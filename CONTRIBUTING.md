@@ -73,7 +73,7 @@ The Latin typeface is OLEBFont, which is Utopia with the characters it lacks add
 
 ## Code style
 
-`make lint` checks the Python with Black, isort and strict mypy, and checks the Makefile and Dockerfile. `make lint-fix` applies the formatting.
+`make lint` checks the Python with Black, isort and strict mypy, and checks the Makefile and Dockerfile. `make lint-fix` applies the formatting. The website is checked separately with `npm --prefix site run lint`: ESLint, Prettier and vue-tsc, once `npm --prefix site ci` has installed them. `npm --prefix site run lint:fix` applies automatic fixes and checks types.
 
 Annotate every Python function, and do not suppress type errors. Keep the shapes of the decision files in `policy_schema.py` and of USJ in `usj.py`, and keep dynamic typing and casts at the JSON and upstream-library boundaries.
 
@@ -81,7 +81,7 @@ The tests share one prepared edition (`edition` in `tests/conftest.py`). A test 
 
 ## Updating dependencies
 
-Renovate opens pull requests for the Python packages in `requirements.txt`, and for the base image and the PTXprint, usfmtc and Utopia commits in the `Dockerfile`. The font archives in `sources/` are updated by hand, each with its hash in the `Dockerfile`. Renovate also covers the exact Node package versions in `site/package.json`; commit `site/package-lock.json` with dependency changes, then run `npm --prefix site test`, `make site`, and `npm --prefix site run test:integration`. Unit tests need no generated files; integration tests require the scripture export and built site. Use `npm --prefix site run test:watch` while developing unit tests.
+Renovate opens pull requests for the Python packages in `requirements.txt`, and for the base image and the PTXprint, usfmtc and Utopia commits in the `Dockerfile`. The font archives in `sources/` are updated by hand, each with its hash in the `Dockerfile`. Renovate also covers the exact Node package versions in `site/package.json`; commit `site/package-lock.json` with dependency changes, then run `npm --prefix site run lint`, `npm --prefix site test`, `make site`, and `npm --prefix site run test:integration`. Unit tests need no generated files; integration tests require the scripture export and built site. Use `npm --prefix site run test:watch` while developing unit tests.
 
 The build refuses to run in an image made from a different `Dockerfile`, `requirements.txt`, font script or font archive, so run `make bootstrap` after changing any of them.
 
