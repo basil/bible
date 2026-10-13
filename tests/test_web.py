@@ -106,12 +106,14 @@ def test_comparisons(sources: Sources, edition: pipeline.Edition) -> None:
     documents = dict(pipeline.view(edition, "pdf"))
     compared = {c["reference"]: c for c in web.comparisons(edition, documents, sources)}
     assert len(compared) == len(edition.policy.comparisons["passages"])
-    psalm = compared["Psalm 22:2"]
-    assert psalm["kjvReference"] == "Psalm 23:2"
+    psalm = compared["Psalm 23:7"]
+    assert psalm["kjvReference"] == "Psalm 24:7"
     assert "".join(s["text"] for s in psalm["kjv"]) == scripture.plain(
-        scripture.verses(usj.parse(sources.kjv["PSA"]))["23:2"].text
+        scripture.verses(usj.parse(sources.kjv["PSA"]))["24:7"].text
     )
-    assert [s["text"] for s in psalm["oleb"] if s["changed"]] == ["the water of rest."]
+    assert [s["text"] for s in psalm["oleb"] if s["changed"]] == [
+        "your gates, ye princes,"
+    ]
     assert compared["Esaias 40:13–14"]["kjvReference"] == "Isaiah 40:13–14"
     assert {ref for ref, row in compared.items() if "osb" in row} == {
         "Esaias 40:13–14",
