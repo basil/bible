@@ -32,8 +32,8 @@ const about = [
   ["Overview", "/about/"],
   ["Compare Translations", "/about/compare"],
   ["Endorsements", "/about/endorsements"],
-  ["Report an Issue", "/about/contact"],
-  ["Licensing", "/about/licensing"],
+  ["Contact", "/about/contact"],
+  ["License", "/about/license"],
 ].map(([text, link]) => ({ text, link }));
 const resources = [
   {
@@ -71,7 +71,7 @@ export default defineConfig({
     typographer: true,
   },
   themeConfig: {
-    siteTitle: "OLEB",
+    siteTitle: "Orthodox Liturgical English Bible",
     sidebarMenuLabel: "Contents",
     nav: [
       { text: "Home", link: "/" },

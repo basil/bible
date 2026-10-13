@@ -10,7 +10,7 @@ import { data as sections } from './books.data.ts'
 
 # Read Online
 
-Choose a book, then a chapter. Verse numbers link directly to their verses; numbered callers open the notes below the chapter. The text is under editorial review.
+Choose a book, then a chapter. Verse numbers link directly to their verses.
 
 <section v-for="section in sections" :key="section.title">
 <h2>{{ section.title }}</h2>
