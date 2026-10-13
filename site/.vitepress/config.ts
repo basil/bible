@@ -1,6 +1,33 @@
 import { defineConfig } from "vitepress";
 import { resolve } from "node:path";
-import { chapterSearchContent, directory } from "./lib/library.ts";
+import {
+  manifest,
+  chapterURL,
+  chapterSearchContent,
+  directory,
+  SECTIONS,
+  type Book,
+} from "./lib/library.ts";
+const books = manifest().books;
+function contents(current?: Book) {
+  return Object.entries(SECTIONS).map(([section, text]) => ({
+    text,
+    collapsed: current !== undefined && current.section !== section,
+    items: books
+      .filter((b) => b.section === section)
+      .map((b) =>
+        b === current
+          ? {
+              text: b.short,
+              items: b.chapters.map((c) => ({
+                text: c.label,
+                link: chapterURL(b, c),
+              })),
+            }
+          : { text: b.short, link: chapterURL(b, b.chapters[0]) },
+      ),
+  }));
+}
 const about = [
   ["Overview", "/about/"],
   ["Compare Translations", "/about/compare"],
@@ -53,17 +80,24 @@ export default defineConfig({
       { text: "About", items: about },
       { text: "Resources", items: resources },
     ],
-    sidebar: [
-      {
-        text: "OLEB",
-        items: [
-          { text: "Read Online", link: "/read/" },
-          { text: "Download PDF", link: "/bible.pdf" },
-        ],
-      },
-      { text: "About", items: about },
-      { text: "Resources", items: resources },
-    ],
+    sidebar: {
+      "/": [
+        {
+          text: "OLEB",
+          items: [
+            { text: "Read Online", link: "/read/" },
+            { text: "Download PDF", link: "/bible.pdf" },
+          ],
+        },
+        { text: "About", items: about },
+        { text: "Resources", items: resources },
+      ],
+      "/read/": contents(),
+      // Include chapter links only for the current book to keep pages small.
+      ...Object.fromEntries(
+        books.map((b) => [`/read/${b.id.toLowerCase()}/`, contents(b)]),
+      ),
+    },
     socialLinks: [{ icon: "github", link: "https://github.com/basil/bible" }],
     search: {
       provider: "local",

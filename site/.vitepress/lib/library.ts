@@ -93,7 +93,7 @@ export function chapterSearchContent(relativePath: string): string | undefined {
   const found = pages().find((p) => chapterURL(p.book, p.chapter) === url);
   return found && `# ${found.title} {#chapter}\n\n${found.html}`;
 }
-// The pager runs through the whole Bible.
+// The pager runs through the whole Bible, while the sidebar opens one book.
 export function readerPages() {
   const all = pages();
   const neighbour = (p?: Page) => (p ? chapterLink(p.book, p.chapter) : false);

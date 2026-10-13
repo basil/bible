@@ -23,6 +23,27 @@ function builtFile(path: string): string {
   }
 }
 
+test.each([
+  ["read/index", ["Old Testament", "New Testament"]],
+  ["read/gen/1", ["Old Testament", "New Testament"]],
+  ["read/mat/1", ["Old Testament", "New Testament"]],
+  ["about/index", ["OLEB", "About", "Resources"]],
+  ["resources/liturgical-english", ["OLEB", "About", "Resources"]],
+])("sidebar groups for %s", (path, headings) => {
+  const page = JSDOM.fragment(builtFile(`${path}.html`));
+  expect(
+    [...page.querySelectorAll(".VPSidebar h2")].map((e) => e.textContent),
+  ).toEqual(headings);
+});
+
+test("reader sidebar lists chapters of the current book", () => {
+  const page = JSDOM.fragment(builtFile("read/gen/1.html"));
+  const sidebar = page.querySelector(".VPSidebar")!;
+  expect(sidebar.querySelector('a[href="/read/gen/2"]')).not.toBeNull();
+  expect(sidebar.querySelector('a[href="/read/exo/1"]')).not.toBeNull();
+  expect(sidebar.querySelector('a[href="/read/exo/2"]')).toBeNull();
+});
+
 test("comparison keeps the full OSB quotations between KJV and OLEB", () => {
   const quoted = comparisons.load().filter((quote) => quote.osb);
   expect(quoted).not.toHaveLength(0);
