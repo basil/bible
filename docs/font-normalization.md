@@ -61,6 +61,15 @@ these alternate glyphs can still be copied and searched.
 
 The assembler corrects the advance of Erewhon Italic's tabular oldstyle zero
 from 498 to 500 units, and makes the superscripts accept every numeral form.
+It recentres Regular `zero.oldstyle`, `six.oldstyle`, and `eight.oldstyle`
+because their round outlines had markedly unequal sidebearings. It also
+recentres Regular `three.oldstyle` by eight units toward the left. Their
+advances stay unchanged. Between proportional `.oldstyle` figures, Regular
+and Italic add shared left and right spacing allowances, and all four faces
+add their own pair exceptions. These allowances are pair positioning, not
+changes to glyph metrics; tabular figures remain unkerned. The shifts are in
+`font_sources.py`, and the allowances and exceptions are in `FIGURE_SPACING`
+and `FIGURE_KERNS` in `build_olebfont.py`.
 
 `config/word-spacing.tex` multiplies OLEBFont's word space, stretch and shrink
 by 6/5, which keeps Utopia's proportions: about 0.27em, 0.135em and 0.09em.

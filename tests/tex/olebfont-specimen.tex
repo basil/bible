@@ -53,4 +53,21 @@ Math donor symbols: ∑ ∏ ∫ √ ∞ ≠ ≤ ≥ ⟶ ⟹ ℵ ℝ ℤ 𝔄 �
 \textbf{Bold face: ∑ ∏ ∫ √ ∞ ≠ ≤ ≥ ⟶ ⟹ ℵ ℝ ℤ 𝔄 𝐀 𝑎.}\par
 \textbf{\textit{Bold italic: ∑ ∏ ∫ √ ∞ ≠ ≤ ≥ ⟶ ⟹ ℵ ℝ ℤ 𝔄 𝐀 𝑎.}}\par
 
+
+% A repeatable spacing proof, without hand-picked trial strings.
+\ExplSyntaxOn
+\NewDocumentCommand\figurepairs{mm}{
+  \clearpage\section*{#1~---~all~100~pairs}
+  {#2\fontsize{16}{22}\selectfont
+    \int_step_inline:nnn{0}{9}{
+      \int_step_inline:nnn{0}{9}{##1####1\enspace}
+      \par
+    }
+  }
+}
+\ExplSyntaxOff
+\figurepairs{Regular}{\normalfont}
+\figurepairs{Italic}{\itshape}
+\figurepairs{Bold}{\bfseries}
+\figurepairs{Bold~Italic}{\bfseries\itshape}
 \end{document}

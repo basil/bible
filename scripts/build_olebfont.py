@@ -47,6 +47,108 @@ SUPERIOR_CODES = (0x00B9, 0x00B2, 0x00B3)
 FEATURES = ("onum", "lnum", "pnum", "tnum", "sups", "smcp", "c2sc")
 EREWHON_MEMBER = "erewhon/opentype/Erewhon-{}.otf"
 
+# Common (left, right) allowances between proportional oldstyle figures, in
+# output units. These affect pair positioning, never the glyph advances.
+FIGURE_SPACING = {
+    "Regular": {
+        "zero.oldstyle": (10, 0),
+        "one.oldstyle": (15, 15),
+        "two.oldstyle": (30, 15),
+        "three.oldstyle": (30, 0),
+        "six.oldstyle": (30, 0),
+        "eight.oldstyle": (30, 0),
+        "nine.oldstyle": (0, 25),
+    },
+    "Italic": {
+        "one.oldstyle": (0, 10),
+        "two.oldstyle": (20, 0),
+        "three.oldstyle": (15, 0),
+        "six.oldstyle": (20, 0),
+        "eight.oldstyle": (20, 0),
+        "nine.oldstyle": (0, 10),
+    },
+}
+
+# Pair exceptions, added to the common allowances; columns follow STYLES.
+# Digit pairs identify the proportional .oldstyle glyphs only.
+FIGURE_KERNS = {
+    "02": (-20, -30, 0, 0),
+    "06": (0, 15, 0, 15),
+    "10": (-30, -25, -30, -15),
+    "12": (-30, -30, 0, 0),
+    "13": (-30, -15, 0, 0),
+    "16": (-50, -35, -20, -15),
+    "17": (-30, -40, -15, -15),
+    "18": (-50, -45, -20, -15),
+    "19": (-40, -30, -30, -20),
+    "20": (5, 0, 0, 0),
+    "26": (20, 0, 0, 0),
+    "32": (0, -15, 20, 15),
+    "34": (40, 15, 20, 0),
+    "38": (0, -20, 0, 0),
+    "42": (15, 0, 20, 20),
+    "44": (15, 15, 20, 15),
+    "49": (-20, -15, -20, -15),
+    "54": (20, 0, 0, 0),
+    "56": (30, 15, 0, 0),
+    "58": (0, -20, 0, 0),
+    "59": (-15, -15, -15, -15),
+    "60": (20, 15, 0, 15),
+    "63": (-15, -15, -15, 0),
+    "69": (20, 0, 0, 0),
+    "70": (-15, -15, -15, -15),
+    "71": (-15, -15, -15, -15),
+    "72": (-10, -10, 0, 0),
+    "73": (-10, -10, 0, 0),
+    "74": (-70, -70, -55, -55),
+    "75": (-5, -5, 0, 0),
+    "76": (-15, -5, -15, -15),
+    "78": (-25, -35, -15, -15),
+    "79": (-5, 5, -15, -15),
+    "80": (20, 15, 0, 0),
+    "86": (-20, -10, 0, 0),
+    "87": (10, 0, 0, 0),
+    "89": (20, 0, 0, 0),
+    "90": (5, 0, 0, 0),
+    "91": (-15, -25, -15, -15),
+    "93": (-15, -15, -15, -15),
+    "94": (-5, -15, -15, -15),
+    "95": (-15, -15, -15, -15),
+    "96": (-15, 0, 0, 0),
+    "97": (-15, -15, -15, -15),
+    "98": (-5, 10, 0, 0),
+}
+
+
+def figure_kerns(style: str) -> dict[tuple[str, str], int]:
+    # Refuse a misspelt face or figure, and an allowance of nothing.
+    assert set(FIGURE_SPACING) <= set(STYLES)
+    assert all(
+        set(allowances) <= {d + ".oldstyle" for d in DIGITS}
+        and all(map(any, allowances.values()))
+        for allowances in FIGURE_SPACING.values()
+    )
+    assert all(
+        len(pair) == 2
+        and set(pair) <= set("0123456789")
+        and len(values) == len(STYLES)
+        and any(values)
+        for pair, values in FIGURE_KERNS.items()
+    )
+    spacing, column = FIGURE_SPACING.get(style, {}), STYLES.index(style)
+    pairs = {}
+    for i, a in enumerate(DIGITS):
+        for j, b in enumerate(DIGITS):
+            left, right = a + ".oldstyle", b + ".oldstyle"
+            value = (
+                spacing.get(left, (0, 0))[1]
+                + spacing.get(right, (0, 0))[0]
+                + FIGURE_KERNS.get(f"{i}{j}", (0, 0, 0, 0))[column]
+            )
+            if value:
+                pairs[left, right] = value
+    return pairs
+
 
 def rename(value: Any, names: Mapping[str, str]) -> Any:
     """Remap glyph references throughout decoded OpenType structures."""
@@ -235,6 +337,22 @@ def donor_positioning(
     return table
 
 
+def figure_positioning(
+    style: str, names: Mapping[str, str], inventory: Sequence[str]
+) -> Any:
+    pairs = figure_kerns(style)
+    fea = "languagesystem DFLT dflt;\nlanguagesystem latn dflt;\nfeature kern {\n"
+    fea += "".join(
+        f" pos {names[left]} {names[right]} {value};\n"
+        for (left, right), value in pairs.items()
+    )
+    fea += "} kern;\n"
+    extra = TTFont()
+    extra.setGlyphOrder(list(inventory))
+    addOpenTypeFeaturesFromString(extra, fea)
+    return extra["GPOS"].table
+
+
 def substitutions(base: TTFont, donor: TTFont, names: Mapping[str, str]) -> None:
     """Rebuild numeral transitions and retain the donor's small-cap mappings.
 
@@ -335,6 +453,9 @@ def assemble(
     )
     cmap.update({code: names[g] for code, g in donor_cmap.items() if code not in cmap})
     substitutions(base, donor, names)
+    # Before the donor's layout: the Latin languages it imports then inherit
+    # these pairs with the rest of the default's kerning.
+    append_layout(base["GPOS"].table, figure_positioning(style, names, inventory))
     append_layout(
         base["GPOS"].table, donor_positioning(donor, names, original, inventory)
     )

@@ -24,13 +24,15 @@ from build_olebfont import (
     append_layout,
     assemble,
     donor_names,
+    figure_kerns,
     font_file,
     rename,
 )
-from font_sources import MATH_MEMBERS, archive_font, normalized_donor
+from font_sources import MATH_MEMBERS, OLDSTYLE_SHIFTS, archive_font, normalized_donor
 from fontTools.cffLib.specializer import programToCommands
 from fontTools.feaLib.builder import addOpenTypeFeaturesFromString
 from fontTools.misc.fixedTools import otRound
+from fontTools.pens.boundsPen import BoundsPen
 from fontTools.pens.recordingPen import RecordingPen
 from fontTools.pens.transformPen import TransformPen
 from fontTools.ttLib import TTFont
@@ -322,6 +324,48 @@ def test_numerals_smallcaps_and_shaping(style: str, scaled_donor: Path) -> None:
 
 
 @pytest.mark.parametrize("style", STYLES)
+def test_oldstyle_figure_kerning(style: str) -> None:
+    path = FONTS / font_file(style)
+    kerns = figure_kerns(style)
+    digits = list("0123456789")
+    pairs = [a + b for a in digits for b in digits]
+    for features in (
+        "onum=1,pnum=1",
+        "onum=1,tnum=1",
+        "lnum=1,pnum=1",
+        "onum=1,pnum=1,sups=1",
+    ):
+        singles = shape_lines(path, digits, features)
+        shaped = shape_lines(path, pairs, features)
+        for pair, items in zip(pairs, shaped, strict=True):
+            separate = sum(singles[int(d)][0]["ax"] for d in pair)
+            left, right = (DIGITS[int(d)] + ".oldstyle" for d in pair)
+            expected = kerns.get((left, right), 0) if features == "onum=1,pnum=1" else 0
+            assert sum(item["ax"] for item in items) - separate == expected, pair
+
+
+def test_regular_oldstyle_figures_are_centred() -> None:
+    path = FONTS / font_file("Regular")
+    with path.with_suffix(".glyphs.csv").open() as stream:
+        names = {
+            row["SourceGlyph"]: row["Glyph"]
+            for row in csv.DictReader(stream)
+            if row["SourceFont"] == "Erewhon-Regular"
+        }
+    with TTFont(path) as font:
+        glyphs = font.getGlyphSet()
+        for name in OLDSTYLE_SHIFTS:
+            target = names[name]
+            width, lsb = font["hmtx"].metrics[target]
+            bounds = BoundsPen(glyphs)
+            glyphs[target].draw(bounds)
+            assert bounds.bounds is not None
+            x0, _, x1, _ = bounds.bounds
+            assert abs(x0 - lsb) <= 1
+            assert abs(width - x1 - x0) <= 1, name
+
+
+@pytest.mark.parametrize("style", STYLES)
 def test_added_glyphs_are_positioned_as_the_donor_positions_them(
     style: str, scaled_donor: Path
 ) -> None:
@@ -453,8 +497,9 @@ def test_every_selected_glyph_has_correct_source_and_scale(style: str) -> None:
         g, target = row["SourceGlyph"], row["Glyph"]
         factor = 1 if row["SizeType"] == "Utopia" else 100 / 94
         pen = RecordingPen()
+        dx = OLDSTYLE_SHIFTS.get(g, 0) if row["SourceFont"] == "Erewhon-Regular" else 0
         glyph_sets[row["SourceFont"]][g].draw(
-            TransformPen(pen, (factor, 0, 0, factor, 0, 0))
+            TransformPen(pen, (factor, 0, 0, factor, dx, 0))
         )
         assert_outlines(pen.value, outline(result_glyphs, target))
         width, bearing = source["hmtx"][g]
@@ -466,7 +511,7 @@ def test_every_selected_glyph_has_correct_source_and_scale(style: str) -> None:
             width = 500
         assert result["hmtx"][target] == (
             otRound(width * factor),
-            otRound(bearing * factor),
+            otRound(bearing * factor) + dx,
         )
         if factor != 1:
             source_commands = programToCommands(
@@ -481,9 +526,18 @@ def test_every_selected_glyph_has_correct_source_and_scale(style: str) -> None:
             assert target_commands[0][0] == ""
             target_commands = target_commands[1:]
             assert len(source_commands) == len(target_commands)
-            for (a, args), (b, actual) in zip(source_commands, target_commands):
+            moved = False
+            for i, ((a, args), (b, actual)) in enumerate(
+                zip(source_commands, target_commands)
+            ):
                 assert a == b
-                if a in ("hstem", "hstemhm", "vstem", "vstemhm"):
+                shifted_vertical = a in ("vstem", "vstemhm") or (
+                    a == ""
+                    and i + 1 < len(source_commands)
+                    and all(isinstance(v, (int, float)) for v in args)
+                    and source_commands[i + 1][0] in ("hintmask", "cntrmask")
+                )
+                if a in ("hstem", "hstemhm", "vstem", "vstemhm") or shifted_vertical:
                     # Decode absolute hint edges independently of the builder's
                     # delta re-encoding, including both ghost directions.
                     source_edge = target_edge = 0
@@ -491,15 +545,16 @@ def test_every_selected_glyph_has_correct_source_and_scale(style: str) -> None:
                     for j in range(0, len(args), 2):
                         source_edge += args[j]
                         target_edge += actual[j]
+                        shift = dx if shifted_vertical else 0
                         width, actual_width = args[j + 1], actual[j + 1]
                         if width == -21:
                             assert actual_width == -21
                             assert target_edge - 21 == pytest.approx(
-                                (source_edge - 21) * factor, abs=0.002
+                                (source_edge - 21) * factor + shift, abs=0.002
                             )
                         else:
                             assert target_edge == pytest.approx(
-                                source_edge * factor, abs=0.002
+                                source_edge * factor + shift, abs=0.002
                             )
                             assert actual_width == pytest.approx(
                                 -20 if width == -20 else width * factor,
@@ -508,13 +563,14 @@ def test_every_selected_glyph_has_correct_source_and_scale(style: str) -> None:
                         source_edge += width
                         target_edge += actual_width
                 else:
-                    assert_programs(
-                        [
-                            v * factor if isinstance(v, (int, float)) else v
-                            for v in args
-                        ],
-                        actual,
-                    )
+                    scaled = [
+                        v * factor if isinstance(v, (int, float)) else v for v in args
+                    ]
+                    # Only the first move carries the shift; later ones are relative.
+                    if a.endswith("moveto") and not moved:
+                        scaled[0] += dx
+                        moved = True
+                    assert_programs(scaled, actual)
             assert target_cs.width == pytest.approx(
                 result["hmtx"][target][0], abs=1 / 65536
             )

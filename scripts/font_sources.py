@@ -19,6 +19,13 @@ from fontTools.ttLib.scaleUpem import ScalerVisitor
 
 UTOPIA_STD_TO_UTOPIA = 100 / 94
 MATH_MEMBERS = ("erewhon-math/Erewhon-Math.otf", "erewhon-math/Erewhon-Math-Bold.otf")
+# Regular's near-round proportional figures have visibly lopsided bearings.
+OLDSTYLE_SHIFTS = {
+    "zero.oldstyle": -15,
+    "three.oldstyle": -8,
+    "six.oldstyle": -10,
+    "eight.oldstyle": -12,
+}
 
 
 def archive_font(archive: str | Path, member: str) -> TTFont:
@@ -107,25 +114,44 @@ def normalized_donor(font: TTFont, style: str | None = None) -> TTFont:
     for name in font.getGlyphOrder():
         cs = top.CharStrings[name]
         commands = programToCommands(cs.program)
+        dx = OLDSTYLE_SHIFTS.get(name, 0) if style == "Regular" else 0
+        moved = False
         for index, (op, args) in enumerate(commands):
             assert op not in ("callsubr", "callgsubr", "blend", "vsindex")
             if op in ("hstem", "hstemhm", "vstem", "vstemhm"):
                 args[:] = scaled_stems(args, UTOPIA_STD_TO_UTOPIA)
+                if op in ("vstem", "vstemhm") and args:
+                    args[0] += dx
                 continue
             # Operands left on the stack before the first mask are implicit
             # vertical stems. Scaling them linearly below is correct only
             # without ghost sentinels; the pinned sources have none there.
-            if (
+            vertical = (
                 op == ""
+                and index > 0
                 and index + 1 < len(commands)
+                and all(isinstance(v, (int, float)) for v in args)
                 and commands[index + 1][0] in ("hintmask", "cntrmask")
-            ):
+            )
+            if vertical:
+                assert len(args) % 2 == 0
                 assert not any(w in (-20, -21) for w in args[1::2]), (name, args)
             for i, value in enumerate(args):
                 if isinstance(value, (int, float)):
                     args[i] = value * UTOPIA_STD_TO_UTOPIA
                 else:
                     assert isinstance(value, bytes), (name, op, value)
+            if vertical and args:
+                args[0] += dx
+            # The first move places the outline; later moves are relative.
+            if dx and not moved and op.endswith("moveto"):
+                assert op != "vmoveto", name
+                args[0] += dx
+                moved = True
+        if dx:
+            assert moved, name
+            width, lsb = font["hmtx"].metrics[name]
+            font["hmtx"].metrics[name] = width, lsb + dx
         # The initial empty command is the optional advance-width operand.
         if commands and commands[0][0] == "":
             assert len(commands[0][1]) == 1
