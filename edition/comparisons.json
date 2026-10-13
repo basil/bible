@@ -2,15 +2,6 @@
   "why": "The comparison page quotes each passage in full from the pinned King James text and the edition as revised; the highlights name the phrases that differ in meaning or text, and must each occur exactly once in their quotation. The full OSB quotations are the text supplied by the editor for the comparisons that carry one; their highlights follow the same contrasts as the King James quotations.",
   "passages": [
     {
-      "passage": "PSA 22:2",
-      "kjv": [
-        "the still waters"
-      ],
-      "oleb": [
-        "the water of rest"
-      ]
-    },
-    {
       "passage": "PSA 23:7",
       "kjv": [
         "your heads, O ye gates"

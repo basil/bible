@@ -1,46 +1,19 @@
 import { defineConfig } from "vitepress";
 import { resolve } from "node:path";
-import {
-  manifest,
-  chapterURL,
-  chapterSearchContent,
-  directory,
-  SECTIONS,
-  type Book,
-} from "./lib/library.ts";
-const books = manifest().books;
-function contents(current?: Book) {
-  return Object.entries(SECTIONS).map(([section, text]) => ({
-    text,
-    collapsed: current !== undefined && current.section !== section,
-    items: books
-      .filter((b) => b.section === section)
-      .map((b) =>
-        b === current
-          ? {
-              text: b.short,
-              items: b.chapters.map((c) => ({
-                text: c.label,
-                link: chapterURL(b, c),
-              })),
-            }
-          : { text: b.short, link: chapterURL(b, b.chapters[0]) },
-      ),
-  }));
-}
+import { chapterSearchContent, directory } from "./lib/library.ts";
 const about = [
-  ["About the OLEB", "/about/"],
+  ["Overview", "/about/"],
   ["Compare Translations", "/about/compare"],
   ["Endorsements", "/about/endorsements"],
+  ["Report an Issue", "/about/contact"],
   ["Licensing", "/about/licensing"],
-  ["Contact", "/about/contact"],
 ].map(([text, link]) => ({ text, link }));
 const resources = [
   {
     text: "Apology for the Septuagint",
     link: "/resources/apology-for-the-septuagint",
   },
-  { text: "Improvements to the KJV", link: "/resources/improvements-kjv" },
+  { text: "Pierpont’s KJV Improvements", link: "/resources/improvements-kjv" },
   { text: "On Liturgical English", link: "/resources/liturgical-english" },
 ];
 export default defineConfig({
@@ -74,22 +47,23 @@ export default defineConfig({
     siteTitle: "OLEB",
     sidebarMenuLabel: "Contents",
     nav: [
-      { text: "Read Online", link: "/read/", activeMatch: "^/read/" },
-      { text: "Download PDF", link: "/bible.pdf" },
-      { text: "About OLEB", items: about },
+      { text: "Home", link: "/" },
+      { text: "Read", link: "/read/", activeMatch: "^/read/" },
+      { text: "Download", link: "/bible.pdf" },
+      { text: "About", items: about },
       { text: "Resources", items: resources },
     ],
-    sidebar: {
-      "/about/": about,
-      "/resources/": resources,
-      // Every page lists the whole Bible by section and book, and opens only
-      // the chapters of the book it is in: the chapters of every book would
-      // be prerendered into every page.
-      "/read/": contents(),
-      ...Object.fromEntries(
-        books.map((b) => [`/read/${b.id.toLowerCase()}/`, contents(b)]),
-      ),
-    },
+    sidebar: [
+      {
+        text: "OLEB",
+        items: [
+          { text: "Read Online", link: "/read/" },
+          { text: "Download PDF", link: "/bible.pdf" },
+        ],
+      },
+      { text: "About", items: about },
+      { text: "Resources", items: resources },
+    ],
     socialLinks: [{ icon: "github", link: "https://github.com/basil/bible" }],
     search: {
       provider: "local",
