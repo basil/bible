@@ -113,9 +113,9 @@ def test_divisions_and_scripture_are_preserved(declared: policy.Policy) -> None:
         if block["type"] == "chapter":
             chapter = block["number"]
         if block.get("marker") == "ms1":
-            major.append(int(chapter))
-            assert blocks[at - 1]["type"] == "chapter"
-            assert blocks[at + 1] == usj.para("d", "Introduction.")
+            assert blocks[at + 1]["type"] == "chapter"
+            major.append(int(blocks[at + 1]["number"]))
+            assert blocks[at + 2] == usj.para("d", "Introduction.")
             assert block == usj.para(
                 "ms1", f"The {psalter.ORDINALS[len(major)-1]} Kathisma"
             )

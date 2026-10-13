@@ -11,7 +11,7 @@ from patch_margin_convergence import patch
 from ptxprint import runjob
 from ptxprint.marginnotes import MarginNote, MarginNotes
 
-from bible import typeset
+from bible import project, typeset
 from bible.checks import CheckFailed
 
 
@@ -153,13 +153,35 @@ def test_an_overfull_margin_stays_on_the_page_and_settles(tmp_path: Path) -> Non
 
 
 @pytest.mark.parametrize("unsettled", [False, True])
+@pytest.mark.parametrize(
+    "output,pdfs,finished",
+    [
+        ("Screen", ["Bible.pdf"], "Bible.pdf"),
+        ("Gray", ["Bible.pdf", "Bible_gray.pdf"], "Bible_gray.pdf"),
+        ("CMYK", ["Bible.pdf", "Bible_cmyk_2up.pdf"], "Bible_cmyk_2up.pdf"),
+        # A conversion that failed, and one that was not asked for.
+        ("Gray", ["Bible.pdf"], None),
+        ("Screen", ["Bible.pdf", "Bible_gray.pdf"], None),
+        ("Gray", ["Bible.pdf", "Other.pdf"], None),
+        ("Gray", ["Bible.pdf", "Bible_gray.pdf", "Bible_cmyk.pdf"], None),
+    ],
+)
 def test_typeset_refuses_unsettled_notes_even_with_cli_success(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, unsettled: bool
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    unsettled: bool,
+    output: str,
+    pdfs: list[str],
+    finished: str | None,
 ) -> None:
-    project = tmp_path / "projects/BIBLE"
-    project.mkdir(parents=True)
-    pdf = project / "Bible.pdf"
-    pdf.write_bytes(b"test PDF")
+    project_dir = tmp_path / project.PROJECT_DIR
+    settings = project_dir / project.SETTINGS_DIR
+    settings.mkdir(parents=True)
+    (settings / "ptxprint.cfg").write_text(
+        f"[snippets]\npdfoutput = {output}\n", encoding="utf-8"
+    )
+    for name in pdfs:
+        (project_dir / name).write_bytes(b"test PDF")
 
     def run(*args: object, **kwargs: object) -> subprocess.CompletedProcess[bytes]:
         (tmp_path / "ptxprint.log").write_text(
@@ -175,9 +197,12 @@ def test_typeset_refuses_unsettled_notes_even_with_cli_success(
     monkeypatch.setattr(subprocess, "run", run)
     if unsettled:
         with pytest.raises(CheckFailed, match="Typesetting did not converge"):
-            typeset.typeset(tmp_path, project)
+            typeset.typeset(tmp_path, project_dir)
+    elif finished is None:
+        with pytest.raises(CheckFailed, match="Expected XeTeX's PDF"):
+            typeset.typeset(tmp_path, project_dir)
     else:
-        assert typeset.typeset(tmp_path, project) == pdf
+        assert typeset.typeset(tmp_path, project_dir) == project_dir / finished
 
 
 def test_patch_refuses_changed_upstream(tmp_path: Path) -> None:

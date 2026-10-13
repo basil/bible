@@ -226,6 +226,7 @@ class Entry(TypedDict, total=False):
     file: ReadOnly[str]
     heading: ReadOnly[tuple[tuple[str, str], ...]]
     id: ReadOnly[str]
+    labelled_chapters: ReadOnly[bool]
     section: ReadOnly[str]
     short_title: ReadOnly[str]
     source: ReadOnly[str]

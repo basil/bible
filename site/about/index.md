@@ -21,6 +21,6 @@ The translations are preserved with a few exceptions. Brenton translated the Vat
 
 ## How it looks
 
-The page size is ISO B5 (176 × 250 mm). Scripture is set in one column in [Utopia](<https://en.wikipedia.org/wiki/Utopia_(typeface)>) at 10 pt, with the short notes in the inside margin and the sentences and longer notes at the foot of the page. The design is based on the Berean Standard Bible layout that comes with [PTXprint](https://software.sil.org/ptxprint/), a free program for typesetting Bibles.
+The page size is ISO B5 (176 × 250 mm). Scripture is set in one column in [Utopia](<https://en.wikipedia.org/wiki/Utopia_(typeface)>) at 9 pt, with the short notes in the inside margin and the sentences and longer notes at the foot of the page. The design is based on the Berean Standard Bible layout that comes with [PTXprint](https://software.sil.org/ptxprint/), a free program for typesetting Bibles.
 
 The online reader presents the same prepared scripture, with notes below each chapter.

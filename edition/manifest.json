@@ -391,6 +391,7 @@
       "source": "brenton",
       "section": "old_testament",
       "cited_singly": "Psalm",
+      "labelled_chapters": true,
       "abbreviation": "Pss.",
       "abbreviated_singly": "Ps.",
       "title": "The Book of Psalms"

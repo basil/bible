@@ -55,7 +55,7 @@ from bible import (
 from bible.byzantine import appendix
 from bible.checks import present, require
 from bible.policy import source_id
-from bible.policy_schema import WordingChange
+from bible.policy_schema import Entry, WordingChange
 from bible.usj import Content, Document, Node
 
 type MetValue = str | tuple[str | None, ...]
@@ -842,7 +842,8 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
 
 def headed_chapters(doc: Document) -> tuple[list[Node], list[list[Node]]]:
     """A book's header and each chapter's blocks, a heading set just before a
-    chapter (Susanna, Bel and the Dragon, a stasis rule) opening that chapter."""
+    chapter (Susanna, Bel and the Dragon, a stasis rule, a kathisma) opening
+    that chapter."""
     header, chapters = assembly.chapters_of(doc)
     parts = [list(header), *(list(chapter) for chapter in chapters)]
     for index in range(len(parts) - 1):
@@ -1056,13 +1057,26 @@ def opened(doc: Document) -> Document:
     )
 
 
+def labelled(doc: Document, entry: Entry) -> Document:
+    """The chapter label the manifest asks for, by which the book cites a
+    chapter singly, set once before the first chapter: PTXprint prints it
+    before every chapter's number in place of the figure."""
+    if not entry.get("labelled_chapters"):
+        return doc
+    blocks = doc["content"]
+    at = next(i for i, block in enumerate(blocks) if usj.is_type(block, "chapter"))
+    label = usj.para("cl", entry["cited_singly"])
+    return usj.with_blocks(doc, [*blocks[:at], label, *blocks[at:]])
+
+
 def exported(code: str, doc: Document, edition: Edition) -> str:
     """A document as PTXprint takes it: under its project id; its notes'
     margin origins without their chapter, which the chapter figure and running
     head supply, and bottom notes under their callers alone; its chapters
-    opened in paragraphs of their own and its blank lines set; and its Greek
-    and Hebrew tagged for their fonts. The edition's own pages are sent as the
-    editor wrote them."""
+    opened in paragraphs of their own and its blank lines set; its chapter
+    label, where the manifest asks for one, set once before its first chapter
+    as PTXprint takes it; and its Greek and Hebrew tagged for their fonts.
+    The edition's own pages are sent as the editor wrote them."""
 
     def origin(item: Node) -> Node:
         if usj.is_type(item, "note", "ef"):
@@ -1083,6 +1097,8 @@ def exported(code: str, doc: Document, edition: Edition) -> str:
 
     if code not in edition.authored:
         doc = spaced(opened(doc))
+    if code in edition.scripture:
+        doc = labelled(doc, edition.policy.unit(code))
     # A unit printed from a file that holds another, or under an id that
     # PTXprint would take for its own front matter, is a unit of its own.
     return usj.serialize(usj.with_code(usj.with_content(doc, content), code))

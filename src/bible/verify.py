@@ -32,8 +32,8 @@ POINTS_PER_MM = 72 / 25.4
 # TeX points (72.27 to the inch) in a PDF point.
 TEX_POINTS = 72.27 / 72
 XHTML = "{http://www.w3.org/1999/xhtml}"
-# Notes, character styles, table cells, the Psalter's headings, and the
-# Pause lines and acrostic headings, which PTXprint must keep.
+# Notes, character styles, table cells, the Psalter's chapter label and
+# headings, and the Pause lines and acrostic headings, which PTXprint must keep.
 KEPT_MARKERS = {
     *(
         "f",
@@ -50,6 +50,7 @@ KEPT_MARKERS = {
         "vp",
         "fv",
         "ms1",
+        "cl",
         "s2",
         "s3",
         "sd2",
@@ -120,19 +121,20 @@ def check_processed(project: Path, base: Path, ids: list[str]) -> None:
     write_json(base / "processed-integrity.json", records)
 
 
-def numbered(page: str, entries: Sequence[tuple[str, str]]) -> bool:
+def numbered(page: str, entries: Sequence[tuple[str, str, str]]) -> bool:
     """Whether a contents page, read as one string of its letters and
     figures, gives its entries their page numbers: as one block of numbers
     after the titles, which is how a full page's columns read, or each
-    number after its title, which is how a short page reads."""
-    if page.endswith("".join(number for _, number in entries)):
+    number after its title and abbreviation, which is how a short page reads."""
+    if page.endswith("".join(number for _, _, number in entries)):
         return True
     at = 0
-    for title, number in entries:
+    for title, abbreviation, number in entries:
         found = page.find(title, at)
-        if found < 0 or not page.startswith(number, found + len(title)):
+        expected = title + abbreviation + number
+        if found < 0 or not page.startswith(expected, found):
             return False
-        at = found + len(title) + len(number)
+        at = found + len(expected)
     return True
 
 
@@ -148,14 +150,14 @@ def check_boundaries(
     tocfiles = list(base.rglob("*_ptxp.toc"))
     require(len(tocfiles) == 1, "Missing/ambiguous contents file")
 
-    def readtoc(path: Path) -> list[tuple[str, str, str]]:
+    def readtoc(path: Path) -> list[tuple[str, str, str, str]]:
         main = (
             path.read_text(encoding="utf-8")
             .split("\\defTOC{main}{", 1)[1]
             .split("\n}", 1)[0]
         )
         return re.findall(
-            r"\\doTOCline\{([^}]+)\}\{([^}]+)\}\{[^}]*\}\{[^}]*\}\{(\d+)\}", main
+            r"\\doTOCline\{([^}]+)\}\{([^}]+)\}\{[^}]*\}\{([^}]*)\}\{(\d+)\}", main
         )
 
     toc = readtoc(tocfiles[0])
@@ -194,15 +196,18 @@ def check_boundaries(
         ),
         "First unit heading missing from PDF",
     )
-    page_offset = first_physical - int(toc[0][2])
+    page_offset = first_physical - int(toc[0][3])
     require(page_offset >= 3, "Front matter page offset is invalid")
     # A contents page reads by its columns: the titles with the abbreviations,
     # then the page numbers, which must be those of the titles on that page.
     contents = [key(page) for page in page_text[2 : first_physical - 1]]
     listed = 0
-    entries: list[tuple[str, str]] = []
+    entries: list[tuple[str, str, str]] = []
+    abbreviations = project_settings(project).getboolean(
+        "document", "usetoc3", fallback=False
+    )
     previous = 0
-    for code, title, printed_page in toc:
+    for code, title, abbreviation, printed_page in toc:
         page = int(printed_page) + page_offset
         require(previous < page <= pages, f"Invalid boundary page: {code} {page}")
         previous = page
@@ -216,7 +221,15 @@ def check_boundaries(
             listed < len(contents) and key(title) in contents[listed],
             f"Contents entry missing in PDF: {code}",
         )
-        entries.append((key(title), printed_page))
+        # PTXprint writes an empty cell for a unit without \toc3; TeX in the
+        # cell would not read as the letters it prints.
+        require(
+            not abbreviations or (abbreviation and not abbreviation.startswith("\\")),
+            f"Unit without \\toc3: {code}",
+        )
+        entries.append(
+            (key(title), key(abbreviation) if abbreviations else "", printed_page)
+        )
         words = heading(usfm[code])
         require(words, f"Missing heading: {code}")
         require(
@@ -231,10 +244,10 @@ def check_boundaries(
         base / "book-boundaries.json",
         [
             {"id": b, "title": t, "page": int(p) + page_offset, "printed_page": int(p)}
-            for b, t, p in toc
+            for b, t, _, p in toc
         ],
     )
-    by_code = {b: (i, int(p) + page_offset) for i, (b, t, p) in enumerate(toc)}
+    by_code = {b: (i, int(p) + page_offset) for i, (b, t, _, p) in enumerate(toc)}
 
     for witness in witnesses:
         code = witness["id"]
@@ -247,7 +260,7 @@ def check_boundaries(
             continue
         index, start = by_code[code]
         end = (
-            int(toc[index + 1][2]) + page_offset - 1 if index + 1 < len(toc) else pages
+            int(toc[index + 1][3]) + page_offset - 1 if index + 1 < len(toc) else pages
         )
         require(
             key(witness["phrase"]) in key("".join(page_text[start - 1 : end])),

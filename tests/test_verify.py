@@ -95,6 +95,20 @@ def test_printed_origins_lose_their_chapter(declared: bible.policy.Policy) -> No
 # Rendered PDF
 
 
+@pytest.mark.parametrize(
+    "page,accepted",
+    [
+        ("appendixappendix1480readingsreadings1481", True),
+        ("appendixappendixreadingsreadings14801481", True),
+        ("appendixappendix1480readingsreadings1482", False),
+        ("appendixappendixreadingsreadings14801482", False),
+    ],
+)
+def test_contents_page_numbers_with_abbreviations(page: str, accepted: bool) -> None:
+    entries = [("appendix", "appendix", "1480"), ("readings", "readings", "1481")]
+    assert verify.numbered(page, entries) == accepted
+
+
 # The publication page as the layout's settings give it, and as pdftotext
 # reads it: the license notice broken across lines.
 SETTINGS = configparser.ConfigParser(interpolation=None)

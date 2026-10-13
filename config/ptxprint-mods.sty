@@ -56,7 +56,7 @@
 \Italic -
 
 % Match note origin numbers to the body verse figures: OLEBFont's Erewhon-derived designed
-% superscripts at the same nominal 10 pt (12 stylesheet units). FontSize
+% superscripts at the same nominal 9 pt (12 stylesheet units). FontSize
 % clears the inherited note-relative FontScale; disable extra scaling and
 % raising so the glyphs keep their designed size and position. Keep them roman.
 \Marker fr
@@ -121,6 +121,15 @@
 
 \Marker cat:reference|th2
 \FontSize 11.4
+
+% A kathisma heading stands above the psalms it holds, so it is set larger
+% than their chapter labels. The stasis rule's spacing in ptxprint-mods.tex
+% is measured against the label's size.
+\Marker ms1
+\FontSize 18
+
+\Marker cl
+\FontSize 14
 
 % Ordinary stasis divisions use the standard semantic division paragraph.
 \Marker sd2

@@ -108,9 +108,9 @@ def divided(doc: Document, policy: Psalter) -> Document:
             chapter = block["number"]
             if int(chapter) in rules:
                 blocks.append(usj.para("sd2"))
-            blocks.append(block)
             if int(chapter) in major:
                 blocks.append(usj.para("ms1", major[int(chapter)]))
+            blocks.append(block)
         elif block["type"] == "para":
             start = 0
             for at, item in enumerate(block["content"]):

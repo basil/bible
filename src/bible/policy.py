@@ -209,6 +209,7 @@ def check(policy: Policy) -> None:
                     "chapters",
                     "cited_singly",
                     "abbreviated_singly",
+                    "labelled_chapters",
                 }
             require_fields(
                 unit_entry,
@@ -216,6 +217,14 @@ def check(policy: Policy) -> None:
                 optional,
                 f"Manifest {manifest_group} entry {unit_entry.get('id')}",
             )
+            # Only true labels anything: false would be a decision that changes nothing.
+            if "labelled_chapters" in unit_entry:
+                require(
+                    unit_entry["labelled_chapters"] is True
+                    and "cited_singly" in unit_entry,
+                    "Labelled chapters not true or without a singular name: "
+                    f"{unit_entry['id']}",
+                )
             require(
                 unit_entry["source"] in {"brenton", "kjv"},
                 f"Unknown source: {unit_entry['id']}",

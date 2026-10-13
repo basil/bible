@@ -123,6 +123,18 @@ def test_the_policy_is_read_once_and_cannot_be_changed(
             "Manifest front_matter.*missing or unknown fields",
         ),
         (
+            "manifest",
+            lambda d: d["scripture"][0].update(labelled_chapters=True),
+            "Labelled chapters not true or without a singular name: GEN",
+        ),
+        (
+            "manifest",
+            lambda d: d["scripture"][0].update(
+                labelled_chapters=False, cited_singly="Genesis"
+            ),
+            "Labelled chapters not true or without a singular name: GEN",
+        ),
+        (
             "citations",
             lambda d: d["names"].update(
                 XYZ=[{"from": "Never present", "to": "{GEN}", "why": "x"}]
@@ -914,11 +926,12 @@ def test_the_sample_prints_selected_chapters_as_the_full_edition_has_them(
     sample = dict(pipeline.view(edition, "sample"))
     assert set(sample) == set(full) - (edition.scripture - set(policy.sample))
 
-    # Separators belong to the next chapter; assembly groups them with
-    # the preceding one. Their selection is checked in test_psalter.
+    # Stasis rules and kathisma headings belong to the next chapter; assembly
+    # groups them with the preceding one. Their selection is checked in
+    # test_psalter.
     def without_divisions(doc: Document) -> Document:
         return usj.with_blocks(
-            doc, [b for b in doc["content"] if b.get("marker") != "sd2"]
+            doc, [b for b in doc["content"] if b.get("marker") not in {"sd2", "ms1"}]
         )
 
     for code, chapters in policy.sample.items():
@@ -1056,14 +1069,14 @@ def test_a_chapter_between_a_poem_and_prose_gets_a_blank_line_before_it() -> Non
 
 def test_headings_and_rules_supply_their_own_space() -> None:
     assert spaced_markers(
-        "\\id PSA\n\\c 1\n\\ms1 The First Kathisma\n\\q1 \\v 1 Line.\n"
+        "\\id PSA\n\\ms1 The First Kathisma\n\\c 1\n\\q1 \\v 1 Line.\n"
         "\\sd2\n\\c 4\n\\d \\v 1 A Psalm.\n\\q1 \\v 2 Line.\n"
         "\\b\n\\s2 Second Stasis\n\\q1 \\v 3 Line.\n"
-        "\\c 9\n\\ms1 The Second Kathisma\n\\d \\v 1 A Psalm.\n\\q1 \\v 2 Line.\n"
+        "\\ms1 The Second Kathisma\n\\c 9\n\\d \\v 1 A Psalm.\n\\q1 \\v 2 Line.\n"
     ) == [
         "id",
-        "c",
         "ms1",
+        "c",
         "q1",
         "sd2",
         "c",
@@ -1072,12 +1085,19 @@ def test_headings_and_rules_supply_their_own_space() -> None:
         "q1",
         "s2",
         "q1",
-        "c",
         "ms1",
+        "c",
         "d",
         "b",
         "q1",
     ]
+
+
+def test_the_psalter_alone_carries_one_chapter_label(exported: dict[str, str]) -> None:
+    psalms = exported["PSA"]
+    assert psalms.count("\\cl ") == 1
+    assert "\\cl Psalm\n\\c 1\n" in psalms
+    assert all("\\cl " not in text for code, text in exported.items() if code != "PSA")
 
 
 def test_a_title_keeps_the_marking_of_its_supplied_words(

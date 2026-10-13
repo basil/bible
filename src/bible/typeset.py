@@ -8,6 +8,7 @@ from pathlib import Path
 
 from bible import paths
 from bible.checks import require
+from bible.project import project_settings
 
 
 def typeset(base: Path, project: Path) -> Path:
@@ -59,6 +60,18 @@ def typeset(base: Path, project: Path) -> Path:
         not in (base / "ptxprint.log").read_text(encoding="utf-8"),
         f"Typesetting did not converge; see {base}/ptxprint.log",
     )
-    pdfs = list(project.rglob("*.pdf"))
-    require(len(pdfs) == 1, f"Expected one PDF, found {pdfs}; see {base}/console.log")
-    return pdfs[0]
+    pdfs = sorted(project.rglob("*.pdf"), key=lambda pdf: len(pdf.name))
+    # A colour conversion leaves XeTeX's PDF beside the finished one, which
+    # PTXprint names after it with a suffix: Bible.pdf and Bible_gray.pdf.
+    # A conversion that fails writes nothing, and must not pass for one.
+    converted = (
+        project_settings(project).get("snippets", "pdfoutput", fallback="Screen")
+        != "Screen"
+    )
+    require(
+        len(pdfs) == 1 + converted
+        and (not converted or pdfs[1].name.startswith(pdfs[0].stem + "_")),
+        f"Expected XeTeX's PDF{' and its conversion' if converted else ''}, "
+        f"found {pdfs}; see {base}/console.log",
+    )
+    return pdfs[-1]

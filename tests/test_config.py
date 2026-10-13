@@ -121,7 +121,7 @@ def test_style_mods_override_only_non_default_fields() -> None:
         for field, value in fields.items()
         if field != "marker" and field in base.get(marker, {})
         # An explicit FontSize clears an inherited FontScale in PTXprint.
-        # Note origins need that reset to stay 10 pt inside smaller notes,
+        # Note origins need that reset to stay 9 pt inside smaller notes,
         # even when the numeric FontSize equals the underlying declaration.
         and not (field == "fontsize" and "fontscale" in base.get(marker, {}))
         and style_value(value) == style_value(base[marker][field])
