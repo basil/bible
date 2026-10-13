@@ -2849,6 +2849,46 @@
           ]
         }
       },
+      "Nun, father of Joshua": {
+        "to": "Navi",
+        "why": "The Orthodox spelling used in the edition's title Jesus, the Son of Navi, for Greek Ναυη (Ναυῆ, Ναυή or Ναυὴ) at these places in Apostoliki Diakonia's text (https://apostoliki-diakonia.gr/holybible/). Numbers 13:8 and 13:16 correspond to its 13:9 and 13:17. Nun in 1 Chr 7:27 is retained: that text has the distinct form Νοὺμ.",
+        "forms": {
+          "Naue": [
+            "EXO 33:11",
+            "NUM 11:28",
+            "NUM 13:8",
+            "NUM 13:16",
+            "NUM 14:6",
+            "NUM 14:30",
+            "NUM 14:38",
+            "NUM 26:65",
+            "NUM 27:18",
+            "NUM 32:12",
+            "NUM 32:28",
+            "NUM 34:17",
+            "DEU 1:38",
+            "DEU 32:44",
+            "DEU 34:9",
+            "JOS 1:1",
+            "JOS 2:1",
+            "JOS 2:23",
+            "JOS 5:9",
+            "JOS 6:6",
+            "JOS 14:1",
+            "JOS 19:49",
+            "JOS 19:51",
+            "JOS 21:1",
+            "JOS 24:30",
+            "JDG 2:8",
+            "JDG 2:21",
+            "1KI 16:34",
+            "NEH 8:17"
+          ],
+          "Nave": [
+            "SIR 46:1"
+          ]
+        }
+      },
       "Obadiah, prophet": {
         "to": "Abdias",
         "why": "The spelling of the King James Apocrypha (2 Esd 1:39).",
