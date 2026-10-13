@@ -840,13 +840,9 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
     )
 
 
-def sample_chapters(code: str, doc: Document, wanted: Sequence[int]) -> Document:
-    """The header and the wanted chapters of a book, for the typesetting sample.
-
-    A heading set just before a chapter (Susanna, Bel and the Dragon) opens
-    that chapter, so it is kept or dropped with it. Export opens every
-    chapter in a paragraph of its own, so none continues an omitted one's.
-    """
+def headed_chapters(doc: Document) -> tuple[list[Node], list[list[Node]]]:
+    """A book's header and each chapter's blocks, a heading set just before a
+    chapter (Susanna, Bel and the Dragon, a stasis rule) opening that chapter."""
     header, chapters = assembly.chapters_of(doc)
     parts = [list(header), *(list(chapter) for chapter in chapters)]
     for index in range(len(parts) - 1):
@@ -858,8 +854,18 @@ def sample_chapters(code: str, doc: Document, wanted: Sequence[int]) -> Document
             at -= 1
         parts[index + 1] = blocks[at:] + parts[index + 1]
         parts[index] = blocks[:at]
-    kept, seen = [*parts[0]], set()
-    for blocks in parts[1:]:
+    return parts[0], parts[1:]
+
+
+def sample_chapters(code: str, doc: Document, wanted: Sequence[int]) -> Document:
+    """The header and the wanted chapters of a book, for the typesetting sample.
+
+    A heading that opens a chapter is kept or dropped with it. Export opens
+    every chapter in a paragraph of its own, so none continues an omitted one's.
+    """
+    header, chapters = headed_chapters(doc)
+    kept, seen = [*header], set()
+    for blocks in chapters:
         at = next(i for i, block in enumerate(blocks) if block["type"] == "chapter")
         number = int(blocks[at]["number"])
         if number in wanted:
@@ -903,7 +909,8 @@ def sample_readings(
 
 def view(edition: Edition, mode: str) -> list[tuple[str, Document]]:
     """The documents a build prints, as (id, document), in order: the whole
-    edition, or the sample's chapters; with their typography."""
+    edition, or the sample's chapters; with their typography and their lines
+    of verse indented."""
     require(mode in ("pdf", "sample"), f"Unknown output mode: {mode}")
     sample = edition.policy.sample
     result = []
@@ -916,7 +923,7 @@ def view(edition: Edition, mode: str) -> list[tuple[str, Document]]:
             doc = sample_readings(doc, edition.appendix, sample)
         if code not in edition.authored:
             doc = typography.typographic(doc)
-        result.append((code, doc))
+        result.append((code, indented(doc)))
     return result
 
 
@@ -968,11 +975,10 @@ OPENING = POEM | {"qa"}
 
 
 def indented(doc: Document) -> Document:
-    """Poetry indented for PTXprint: a line that opens a verse, a
-    poem or a stanza at the first level, and a line that goes on with a verse
-    at the second. The line stage uses q1; Scrivener's existing markers
-    survive it. An acrostic heading starts the following line at the first
-    level. This export step supplies continuation indentation."""
+    """Poetry indented: a line that opens a verse, a poem or a stanza at the
+    first level, and a line that goes on with a verse at the second. The line
+    stage uses q1; Scrivener's existing markers survive it. An acrostic
+    heading starts the following line at the first level."""
     result: list[Node] = []
     for block in doc["content"]:
         first = next(iter(block.get("content", [])), None)
@@ -1053,10 +1059,10 @@ def opened(doc: Document) -> Document:
 def exported(code: str, doc: Document, edition: Edition) -> str:
     """A document as PTXprint takes it: under its project id; its notes'
     margin origins without their chapter, which the chapter figure and running
-    head supply, and bottom notes under their callers alone; its lines of verse
-    indented, its chapters opened in paragraphs of their own and its blank
-    lines set; and its Greek and Hebrew tagged for their fonts. The edition's
-    own pages are sent as the editor wrote them."""
+    head supply, and bottom notes under their callers alone; its chapters
+    opened in paragraphs of their own and its blank lines set; and its Greek
+    and Hebrew tagged for their fonts. The edition's own pages are sent as the
+    editor wrote them."""
 
     def origin(item: Node) -> Node:
         if usj.is_type(item, "note", "ef"):
@@ -1075,7 +1081,6 @@ def exported(code: str, doc: Document, edition: Edition) -> str:
         items = usj.mapped(items, origin)
         return items if code in edition.authored else font_runs(items)
 
-    doc = indented(doc)
     if code not in edition.authored:
         doc = spaced(opened(doc))
     # A unit printed from a file that holds another, or under an id that

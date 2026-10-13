@@ -3,7 +3,9 @@
     "*.md",
     "docs/**/*.md",
     "sources/**/*.md",
-    "!sources/pierpont.md"
+    "!sources/pierpont.md",
+    "site/**/*.md",
+    "!site/node_modules/**"
   ],
   "config": {
     "MD013": false,

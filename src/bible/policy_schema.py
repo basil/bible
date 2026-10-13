@@ -56,6 +56,17 @@ class Psalter(TypedDict):
     middle: ReadOnly[str]
 
 
+class Comparison(TypedDict):
+    passage: ReadOnly[str]
+    kjv: ReadOnly[tuple[str, ...]]
+    oleb: ReadOnly[tuple[str, ...]]
+
+
+class Comparisons(TypedDict):
+    why: ReadOnly[str]
+    passages: ReadOnly[tuple[Comparison, ...]]
+
+
 class LineBreak(TypedDict, total=False):
     follows: ReadOnly[str]
     line: ReadOnly[str | None]

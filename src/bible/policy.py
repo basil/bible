@@ -39,6 +39,7 @@ FILES = (
     "versification",
     "lines",
     "psalter",
+    "comparisons",
     "witnesses",
     "byzantine",
     "byzantine-placements",
@@ -82,6 +83,7 @@ class Policy:
     turpie: schema.Turpie
     versification: schema.Versification
     psalter: schema.Psalter
+    comparisons: schema.Comparisons
     lines: schema.Lines
     witnesses: tuple[schema.Witnesses, ...]
     byzantine: schema.Byzantine
@@ -168,6 +170,9 @@ def thaw(value: object) -> Any:
 def check(policy: Policy) -> None:
     require_fields(policy.psalter, {"why", "kathismata", "middle"}, (), "Psalter")
     require(bool(policy.psalter["why"].strip()), "Psalter without a why")
+    require_fields(policy.comparisons, {"why", "passages"}, (), "Comparisons")
+    for comparison in policy.comparisons["passages"]:
+        require_fields(comparison, {"passage", "kjv", "oleb"}, (), "Comparison")
     manifest_fields = {
         "title",
         "scripture",
@@ -460,6 +465,7 @@ def load() -> Policy:
         versification=cast(schema.Versification, data["versification"]),
         lines=cast(schema.Lines, data["lines"]),
         psalter=cast(schema.Psalter, data["psalter"]),
+        comparisons=cast(schema.Comparisons, data["comparisons"]),
         witnesses=cast(tuple[schema.Witnesses, ...], data["witnesses"]),
         byzantine=cast(schema.Byzantine, data["byzantine"]),
         byzantine_placements=cast(

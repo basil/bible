@@ -1,5 +1,6 @@
 ---
-name: Build PDF
+name: Build
+
 on:
   push:
     branches:
@@ -10,50 +11,42 @@ on:
       - reopened
       - synchronize
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
+    name: Build
     runs-on: ubuntu-26.04
-    # A newer push supersedes this build. Scoped to the job, not the workflow,
-    # so that it never cancels a Pages deployment already in progress.
-    concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}
-      cancel-in-progress: true
     permissions:
       contents: read
     steps:
       - uses: actions/checkout@v7.0.1
       - run: make bootstrap
       - run: make lint
+      - uses: DavidAnson/markdownlint-cli2-action@v24.2.0
       - run: make validate
       - run: make test
-      - uses: DavidAnson/markdownlint-cli2-action@v24.2.0
-      # What the change does to the edition, line by line, for the reviewer.
-      # A base that cannot write a review, as one from before `make review`,
-      # has nothing to compare with: that is said, and fails no build.
-      - name: Review against the base branch
-        if: github.event_name == 'pull_request'
-        run: |
-          git fetch --depth 1 origin "$GITHUB_BASE_REF"
-          if make review-diff BASE=FETCH_HEAD; then
-            {
-              echo '```diff'
-              head -c 60000 build/review.diff
-              echo '```'
-            } >> "$GITHUB_STEP_SUMMARY"
-          else
-            echo "No review diff: the base branch or this one could not write a review." >> "$GITHUB_STEP_SUMMARY"
-          fi
       - run: make pdf
-      - name: Prepare Pages site
-        if: github.ref == 'refs/heads/master'
-        run: |
-          mkdir -p _site
-          cp site/index.html dist/bible.pdf _site/
+      - run: make web
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 24
+          package-manager-cache: false
+      - run: npm --prefix site ci
+      - run: npm --prefix site run lint
+      - run: npm --prefix site test
+      - run: npm --prefix site run build
+      - run: npm --prefix site run test:integration
+      - name: Include PDF downloads
+        run: cp dist/bible.pdf site/.vitepress/dist/
       - name: Upload Pages artifact
         if: github.ref == 'refs/heads/master'
         uses: actions/upload-pages-artifact@v5.0.0
         with:
-          path: _site/
+          path: site/.vitepress/dist/
   deploy:
     if: github.ref == 'refs/heads/master'
     needs: build
@@ -61,9 +54,6 @@ jobs:
     permissions:
       pages: write
       id-token: write
-    concurrency:
-      group: pages
-      cancel-in-progress: false
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

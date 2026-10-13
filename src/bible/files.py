@@ -36,7 +36,3 @@ def write_json(path: Path, data: object) -> None:
 
 def sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
-
-
-def file_sha256(path: str | Path) -> str:
-    return sha256(Path(path).read_bytes())

@@ -9,7 +9,7 @@ The build runs in this order:
 3. ``project``: write the PTXprint project for those texts.
 4. ``typeset``: run PTXprint in the pinned container (``toolchain``).
 5. ``verify``: check PTXprint's processed text and the rendered PDF.
-6. ``publish``: copy the checked PDF to dist/ with its provenance.
+6. ``publish``: copy the checked PDF to dist/.
 
 ``cli`` chains them; ``review`` writes what the decisions come to.
 """

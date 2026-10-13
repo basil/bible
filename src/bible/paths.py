@@ -9,6 +9,7 @@ CONTENT_DIR = ROOT / "content"
 EDITION_DIR = ROOT / "edition"
 BUILD_DIR = ROOT / "build"
 DIST_DIR = ROOT / "dist"
+WEB_DIR = BUILD_DIR / "web"
 # The PDF each command publishes under dist/; it builds in build/<command>.
 OUTPUTS = {"sample": "sample.pdf", "pdf": "bible.pdf"}
 

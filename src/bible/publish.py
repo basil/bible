@@ -1,75 +1,18 @@
-"""Publishing a checked PDF to dist/ with a provenance record of what produced it."""
+"""Publishing a checked PDF to dist/."""
 
 from __future__ import annotations
 
 import shutil
-import sys
-from collections.abc import Sequence
 from pathlib import Path
 
-from bible import paths, sources, toolchain
-from bible.files import file_sha256, write_json
-from bible.verify import PdfReport
-
-# The checkout's folders and files that the provenance record hashes.
-TRACKED_FOLDERS = ("config", "content", "edition", "src", "scripts")
-TRACKED_FILES = (
-    "Dockerfile",
-    "compose.yaml",
-    "Makefile",
-    "pyproject.toml",
-    "requirements.txt",
-)
+from bible import paths
 
 
-def tracked_inputs() -> dict[str, str]:
-    """The hash of every input in the checkout, by its path in the checkout."""
-    tracked = {
-        p.relative_to(paths.ROOT).as_posix(): file_sha256(p)
-        for folder in TRACKED_FOLDERS
-        for p in sorted((paths.ROOT / folder).rglob("*"))
-        if p.is_file() and "__pycache__" not in p.parts
-    }
-    for name in (
-        *TRACKED_FILES,
-        # Record every loose source file alongside its pin.
-        *(source["file"] for source in sources.SOURCES.values() if "file" in source),
-        *toolchain.font_archives(),
-    ):
-        tracked[name] = file_sha256(paths.ROOT / name)
-    return tracked
-
-
-def publish(
-    mode: str, pdf: Path, ids: Sequence[str], report: PdfReport, title: str
-) -> None:
-    """Copy a checked PDF to dist/ with a record of what produced it."""
+def publish(mode: str, pdf: Path) -> None:
+    """Stage a checked PDF and atomically replace the published copy."""
     target = paths.DIST_DIR / paths.OUTPUTS[mode]
     paths.DIST_DIR.mkdir(exist_ok=True)
-    provenance = {
-        "title": title,
-        "pdf_sha256": file_sha256(pdf),
-        "upstream_commits": toolchain.upstream_commits(),
-        "source_archives": {
-            k: {x: v[x] for x in ("url", "sha256", "retrieved") if x in v}
-            for k, v in sources.SOURCES.items()
-        },
-        "inputs": tracked_inputs(),
-        "order": ids,
-        "checks": report,
-        "fonts": toolchain.installed_fonts(),
-        "os_release": toolchain.os_release(),
-        "python_version": sys.version,
-        "os_packages": toolchain.os_packages(),
-    }
-    # Stage both outputs, then swap them in together so a failure never pairs a new
-    # PDF with an old provenance record.
-    provenance_target = target.with_suffix(".provenance.json")
     staged_pdf = target.with_suffix(".pdf.tmp")
-    staged_provenance = target.with_suffix(".provenance.json.tmp")
     shutil.copyfile(pdf, staged_pdf)
-    write_json(staged_provenance, provenance)
-    provenance_target.unlink(missing_ok=True)
     staged_pdf.replace(target)
-    staged_provenance.replace(provenance_target)
     print("Wrote", target, flush=True)

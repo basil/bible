@@ -2,14 +2,14 @@ UIDGID := $(shell id -u):$(shell id -g)
 # Run as the invoking uid/gid so that files written into the bind mount
 # are not owned by root. -T and --interactive=false keep the terminal
 # detached, as with plain docker run: otherwise stderr merges into stdout
-# and a backgrounded make stops on terminal access. -f skips any
-# compose.override.yaml or COMPOSE_FILE that provenance would not record.
+# and a backgrounded make stops on terminal access. -f prevents
+# compose.override.yaml or COMPOSE_FILE from changing the build configuration.
 COMPOSE := docker compose -f compose.yaml
 TOOLCHAIN := $(COMPOSE) run --rm -T --interactive=false --user $(UIDGID) toolchain
 DOCKERFMT := $(COMPOSE) run --rm -T --interactive=false --user $(UIDGID) dockerfmt
 HADOLINT := $(COMPOSE) run --rm -T --interactive=true hadolint
 PIPELINE := $(TOOLCHAIN) python3 -m bible
-.PHONY: bootstrap validate review review-diff test test-python test-fonts test-tex test-tex-save font-specimen sample pdf clean lint lint-fix
+.PHONY: bootstrap validate review review-diff test test-python test-fonts test-tex test-tex-save font-specimen sample pdf web site site-dev clean lint lint-fix
 bootstrap:
 	$(COMPOSE) pull dockerfmt hadolint
 	$(COMPOSE) build --pull
@@ -48,8 +48,15 @@ sample:
 	$(PIPELINE) sample
 pdf:
 	$(PIPELINE) pdf
+web:
+	$(PIPELINE) web
+site: web
+	npm --prefix site ci
+	npm --prefix site run build
+site-dev:
+	npm --prefix site run dev
 clean:
-	rm -rf build dist
+	rm -rf build dist site/.vitepress/dist site/.vitepress/cache site/.vitepress/.temp
 # All Python code, excluding generated files and review worktrees.
 lint:
 	$(TOOLCHAIN) sh -c 'black --check src scripts tests && isort --check-only src scripts tests && mypy && mbake format --check Makefile'

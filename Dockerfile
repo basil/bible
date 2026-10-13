@@ -18,8 +18,7 @@ RUN apt-get update \
         qpdf \
         texlive-xetex \
         unzip \
-    && apt-get clean && rm -rf /var/lib/apt/lists/* \
-    && dpkg-query -W >/opt/os-packages.tsv
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 # Layers from the least to the most often changed.
 # PTXprint's fontconfig template rejects OpenType files, but it includes the
 # system configuration, where an acceptfont rule takes precedence.

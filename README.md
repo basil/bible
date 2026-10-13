@@ -2,7 +2,7 @@
 
 The Orthodox Liturgical English Bible (OLEB) is a complete English Bible in one volume, ready to print or read on screen. Its Old Testament is the Septuagint, with its books in the order of the Church of Greece, and both testaments are in the style of English of the King James Bible.
 
-**[Read the finished Bible (PDF)](https://basil.github.io/bible/bible.pdf)**
+**[Read the Bible online](https://oleb.bible) · [Download the PDF](https://oleb.bible/bible.pdf)**
 
 ## What is in it
 

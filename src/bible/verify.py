@@ -12,7 +12,6 @@ import unicodedata
 import xml.etree.ElementTree as ET
 from collections.abc import Mapping, Sequence
 from pathlib import Path
-from typing import TypedDict
 
 from bible.checks import CheckFailed, present, require
 from bible.files import sha256, write_json
@@ -28,12 +27,6 @@ from bible.scripture import plain
 from bible.toolchain import capture as capture
 from bible.toolchain import run
 from bible.usfm import canonical_text, heading, inventory
-
-
-class PdfReport(TypedDict):
-    pages: int
-    text_sha256: str
-
 
 POINTS_PER_MM = 72 / 25.4
 # TeX points (72.27 to the inch) in a PDF point.
@@ -428,7 +421,7 @@ def inspect_pdf(
     ids: Sequence[str],
     sample: bool,
     witnesses: Sequence[Witnesses],
-) -> PdfReport:
+) -> None:
     with (base / "qpdf.log").open("w", encoding="utf-8") as log:
         run("qpdf", "--check", pdf, stdout=log, stderr=subprocess.STDOUT)
     info = capture("pdfinfo", "-box", pdf)
@@ -506,7 +499,3 @@ def inspect_pdf(
         "Missing glyph or TeX error; inspect logs",
     )
     check_boundaries(base, project, ids, pages, reading_text, sample, witnesses)
-    return {
-        "pages": pages,
-        "text_sha256": sha256(text.encode()),
-    }

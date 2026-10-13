@@ -1,0 +1,311 @@
+:root {
+  --vp-font-family-base: "OLEBible", Georgia, "Times New Roman", serif;
+
+  --vp-c-brand-1: #76512f;
+  --vp-c-brand-2: #8b6039;
+  --vp-c-brand-3: #a4774c;
+  --vp-c-brand-soft: rgba(164, 119, 76, 0.12);
+  --vp-home-hero-name-color: #76512f;
+
+  font-size: 112.5%;
+  font-kerning: normal;
+  font-variant-numeric: oldstyle-nums;
+}
+
+.dark {
+  --vp-c-brand-1: #deb98b;
+  --vp-c-brand-2: #cfa06b;
+  --vp-c-brand-3: #a4774c;
+  --vp-home-hero-name-color: #deb98b;
+}
+
+.scripture {
+  max-width: 65ch;
+  font-size: 1.2rem;
+  line-height: 1.8;
+}
+
+.scripture p {
+  margin: 0.65em 0;
+  line-height: inherit;
+}
+
+.scripture .q1 {
+  margin: 0.15em 0 0.15em 1.2em;
+}
+
+.scripture .q2 {
+  margin: 0.15em 0 0.15em 2.4em;
+}
+
+.scripture .qr {
+  margin: 0.15em 0;
+  text-align: right;
+}
+
+.scripture .qa {
+  margin: 0.8em 0 0.15em;
+}
+
+.scripture .qc {
+  text-align: center;
+}
+
+.scripture .d {
+  font-style: italic;
+}
+
+.scripture .fv,
+.scripture .vp {
+  vertical-align: super;
+  font-size: 0.7em;
+}
+
+.scripture .sc {
+  font-variant: small-caps;
+}
+
+.scripture .verse,
+.scripture .note {
+  font-size: 0.65em;
+  line-height: 0;
+}
+
+.scripture .verse a,
+.scripture .note a {
+  text-decoration: none;
+}
+
+.scripture .note a {
+  color: var(--vp-c-text-2);
+}
+
+.scripture .verse:target,
+.scripture .notes li:target {
+  background: var(--vp-c-brand-soft);
+  outline: 3px solid var(--vp-c-brand-soft);
+  scroll-margin-top: 6rem;
+}
+
+.scripture .notes {
+  border-top: 1px solid var(--vp-c-divider);
+  padding-top: 1rem;
+  font-size: 0.85em;
+  line-height: 1.6;
+}
+
+.scripture .stanza {
+  height: 0.8em;
+}
+
+.chapters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin: 1rem 0 2rem;
+}
+
+.chapters a {
+  display: inline-block;
+  min-width: 2.25rem;
+  padding: 0.2rem 0.45rem;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 0.2rem;
+  text-align: center;
+  text-decoration: none;
+}
+
+.chapters a:hover {
+  background: var(--vp-c-brand-soft);
+  border-color: var(--vp-c-brand-1);
+}
+
+.book-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
+  gap: 1rem;
+}
+
+.book-card {
+  padding: 1rem;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 0.3rem;
+}
+
+.book-card h3 {
+  margin-top: 0;
+}
+
+.book-card p {
+  font-size: 0.9rem;
+  color: var(--vp-c-text-2);
+}
+
+.book-card .chapters {
+  margin-bottom: 0;
+}
+
+.comparisons {
+  margin: 2rem 0;
+  border-top: 1px solid var(--vp-c-divider);
+}
+
+.comparison {
+  border-bottom: 1px solid var(--vp-c-divider);
+  interpolate-size: allow-keywords;
+}
+
+.comparison-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  padding: 1rem 0.75rem;
+  text-align: left;
+  font: inherit;
+  font-size: 1.15rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 180ms ease;
+}
+
+.comparison-toggle:hover,
+.comparison[open] .comparison-toggle {
+  background: var(--vp-c-brand-soft);
+}
+
+.comparison-toggle:focus-visible {
+  outline: 2px solid var(--vp-c-brand-1);
+  outline-offset: -2px;
+}
+
+.comparison-chevron {
+  width: 0.5rem;
+  height: 0.5rem;
+  margin-right: 0.3rem;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform 240ms ease;
+}
+
+.comparison[open] .comparison-chevron {
+  transform: rotate(225deg);
+}
+
+/* Native disclosures still open normally in browsers without this animation. */
+.comparison::details-content {
+  block-size: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition:
+    block-size 240ms ease,
+    opacity 240ms ease,
+    content-visibility 240ms allow-discrete;
+}
+
+.comparison[open]::details-content {
+  block-size: auto;
+  opacity: 1;
+}
+
+.comparison dl {
+  margin: 0;
+  padding: 0.75rem 0;
+}
+
+.comparison-reading {
+  padding: 1rem;
+  border-left: 3px solid var(--comparison-color);
+  background: var(--comparison-background);
+}
+
+.comparison-old {
+  --comparison-color: #9a3838;
+  --comparison-background: #fcf5f4;
+  --comparison-highlight: #f4dbd6;
+}
+
+.comparison-new {
+  --comparison-color: #17675d;
+  --comparison-background: #f1f8f5;
+  --comparison-highlight: #cde9df;
+}
+
+.comparison-reading + .comparison-reading {
+  margin-top: 0.6rem;
+}
+
+.dark .comparison-old {
+  --comparison-color: #f0b0a7;
+  --comparison-background: #302326;
+  --comparison-highlight: #583438;
+}
+
+.dark .comparison-new {
+  --comparison-color: #92d9c3;
+  --comparison-background: #1c2c29;
+  --comparison-highlight: #284d43;
+}
+
+.comparison dt {
+  color: var(--vp-c-text-2);
+  font-size: 0.85rem;
+}
+
+.comparison-label {
+  margin-right: 0.4rem;
+  color: var(--comparison-color);
+  font-weight: 700;
+}
+
+.comparison dd {
+  margin: 0.6rem 0 0;
+  font-size: 1.15rem;
+  line-height: 1.8;
+}
+
+.comparison-changed {
+  color: var(--comparison-color);
+  background: var(--comparison-highlight);
+  font-weight: 600;
+  border-radius: 0.15rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .comparison-toggle,
+  .comparison-chevron,
+  .comparison::details-content {
+    transition: none;
+  }
+}
+
+.VPFeature .title {
+  font-size: 1.25rem;
+}
+
+.VPFeature .details {
+  font-size: 1rem;
+}
+
+.VPNavBarTitle .title {
+  font-size: 1.125rem;
+  line-height: 1.3333333;
+}
+
+/*
+ * Restore spacing between consecutive blockquote paragraphs; VitePress sets
+ * blockquote > p margin to 0.
+ */
+.vp-doc blockquote > p + p {
+  margin-top: 1rem;
+}
+
+/*
+ * Keep letter spacing natural site-wide; !important overrides VitePress's
+ * scoped component styles.
+ */
+* {
+  letter-spacing: normal !important;
+}

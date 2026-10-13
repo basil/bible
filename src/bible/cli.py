@@ -10,7 +10,7 @@ import subprocess
 import sys
 from collections.abc import Sequence
 
-from bible import paths, pipeline, policy, sources
+from bible import paths, pipeline, policy, sources, web
 from bible.project import write_project
 from bible.publish import publish
 from bible.review import review
@@ -18,7 +18,7 @@ from bible.toolchain import check_image
 from bible.typeset import typeset
 from bible.verify import check_processed, inspect_pdf
 
-COMMANDS = ("validate", "review", *paths.OUTPUTS)
+COMMANDS = ("validate", "review", "web", *paths.OUTPUTS)
 
 
 def prepared() -> tuple[sources.Sources, policy.Policy, pipeline.Edition]:
@@ -45,8 +45,8 @@ def render(mode: str) -> None:
     project, ids = write_project(mode, base, documents, decisions, read)
     pdf = typeset(base, project)
     check_processed(project, base, ids)
-    report = inspect_pdf(pdf, base, project, ids, mode == "sample", decisions.witnesses)
-    publish(mode, pdf, ids, report, decisions.title)
+    inspect_pdf(pdf, base, project, ids, mode == "sample", decisions.witnesses)
+    publish(mode, pdf)
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -58,6 +58,10 @@ def main(argv: Sequence[str] | None = None) -> int:
             validate()
         elif args.command == "review":
             review(*prepared())
+        elif args.command == "web":
+            check_image()
+            read, _, edition = prepared()
+            web.write(read, edition, paths.WEB_DIR)
         else:
             render(args.command)
     except (RuntimeError, subprocess.CalledProcessError) as exc:

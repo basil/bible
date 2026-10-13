@@ -16,12 +16,19 @@ Run `make bootstrap` first, and again when the build says the image is stale. Th
 ```sh
 make sample    # a short PDF of selected chapters, for checking layout quickly
 make validate  # prepare the whole edition, checking every source and decision, without typesetting it
+make web       # write prepared scripture as USJ JSON in build/web/
+make site      # export scripture and build the VitePress website (Node >= 22)
+make site-dev  # serve the site locally after make web and npm --prefix site ci
 make clean     # delete build/ and dist/
 ```
 
 The sample prints the chapters listed in `edition/sample.json`, which were picked to cover the awkward cases: Psalm 151, the additions to Esther and Daniel, the join between 2 Esdras and Nehemias, the end of Malachias, the verses of 3 Kingdoms 5–7 and 14 supplied or reordered after Codex Alexandrinus, the displaced passages of Proverbs 24, quoted Greek and Hebrew, the verses the Byzantine text lacks or moves (Luke 17, Acts 24, Romans 14, Matthew 23, 1 John 5), Revelation 13 with its many readings, and pages crowded with notes. The appendix of readings prints the entries of the sampled chapters alone.
 
-Alongside the PDF, the build writes `dist/bible.provenance.json`, which records the packages and fonts that produced it. Logs and intermediate files go to `build/`, which is regenerated on every run.
+Logs and intermediate files go to `build/`, which is regenerated on every run.
+
+The `web` command writes the prepared scripture as USJ JSON, one file per chapter, each with its book, and an ordered chapter manifest with each book's names and each chapter's label, marking the chapters whose heading stands for their number, the passages of the comparison page, quoted from the edition and from the King James verses the place stage pairs with them, with their highlights, and the four assembled OLEBFont faces as complete WOFF files in `build/web/fonts/`. The website in `site/` is its only consumer; it renders one static page per chapter. Run `make web` before developing or building the site directly with npm; `make site` does this automatically. Node runs on the host, while preparing the scripture and fonts still runs in the container. If the image is stale or its fonts are missing, run `make bootstrap` again.
+
+For the website, `npm --prefix site run lint` checks formatting with Prettier and JavaScript and TypeScript with ESLint. `npm --prefix site run lint:fix` applies their automatic fixes. Generated files are excluded from formatting. `npm --prefix site test` runs isolated unit tests without generated scripture or a site build; `npm --prefix site run test:watch` watches them. `npm --prefix site run test:integration` checks the exported corpus and built site; run `make web` and `npm --prefix site run build` first. `npm --prefix site run dev` serves with hot reload; `preview` serves the last static build.
 
 ## How the edition is prepared
 
@@ -96,9 +103,11 @@ A correction to a slip in transcription must match the source text exactly once,
 | The spelling of a word, or the punctuation of a verse, a note or a paragraph of front or back matter | `edition/revisions.json` |
 | The spelling of a proper name, by its bearer: the verses that respell it and the verses that keep the source form | `names` in `edition/revisions.json` |
 | The Psalter's kathismata and stasis divisions | `edition/psalter.json` |
+| A passage the website compares with the King James Bible, and the phrases it highlights | `edition/comparisons.json` |
 | Where a line of verse begins, when the words of the Updated Brenton and the source do not place it | `edition/lines.json` |
 | The editor's introduction, the numbering table, the divider pages and the appendix of readings | `content/` |
 | Page layout, styles and TeX | `config/` |
+| The website | `site/` |
 
 A page in `content/` names a passage between braces, by its code, and the build prints it; `numbering.sfm` also says where its tables go, which the build writes.
 

@@ -81,11 +81,11 @@ The tests share one prepared edition (`edition` in `tests/conftest.py`). A test 
 
 ## Updating dependencies
 
-Renovate opens pull requests for the Python packages in `requirements.txt`, and for the base image and the PTXprint, usfmtc and Utopia commits in the `Dockerfile`. The font archives in `sources/` are updated by hand, each with its hash in the `Dockerfile`.
+Renovate opens pull requests for the Python packages in `requirements.txt`, and for the base image and the PTXprint, usfmtc and Utopia commits in the `Dockerfile`. The font archives in `sources/` are updated by hand, each with its hash in the `Dockerfile`. Renovate also covers the exact Node package versions in `site/package.json`; commit `site/package-lock.json` with dependency changes, then run `npm --prefix site test`, `make site`, and `npm --prefix site run test:integration`. Unit tests need no generated files; integration tests require the scripture export and built site. Use `npm --prefix site run test:watch` while developing unit tests.
 
 The build refuses to run in an image made from a different `Dockerfile`, `requirements.txt`, font script or font archive, so run `make bootstrap` after changing any of them.
 
-The base image is an Ubuntu LTS tag, and its packages come from Ubuntu's live repositories. Rebuilding the image later can bring in a newer TeX, which may change pagination. The provenance file lists the packages each PDF was built with, so that such a change can be traced. After a new Ubuntu release, run `make test` and look at the sample.
+The base image is an Ubuntu LTS tag, and its packages come from Ubuntu's live repositories. Rebuilding the image later can bring in a newer TeX, which may change pagination. After a new Ubuntu release, run `make test` and look at the sample.
 
 When upgrading PTXprint, check the places that depend on its internals:
 
@@ -104,4 +104,4 @@ Replace a source archive only on purpose. Download the new one somewhere else fi
 2. Explain every intended difference there, in the commit message or pull request. Commit configuration, dependency and source changes together.
 3. Open a pull request. CI must pass before merging.
 
-CI runs the lint, the tests and the full build on pull requests and on pushes to `master`, and publishes the PDF from `master`. On a pull request, it writes the review diff into the run's summary. It also lints the Markdown, which no Make target does.
+CI runs the lint, the tests and the full build on pull requests and on pushes to `master`, builds the VitePress site on pull requests too, and publishes the site and PDF from `master`. It also lints the Markdown, which no Make target does.

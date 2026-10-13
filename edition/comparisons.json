@@ -1,0 +1,125 @@
+{
+  "why": "The comparison page quotes each passage in full from the pinned King James text and the edition as revised; the highlights name the phrases that differ in meaning or text, and must each occur exactly once in their quotation.",
+  "passages": [
+    {
+      "passage": "PSA 22:2",
+      "kjv": [
+        "the still waters"
+      ],
+      "oleb": [
+        "the water of rest"
+      ]
+    },
+    {
+      "passage": "PSA 23:7",
+      "kjv": [
+        "your heads, O ye gates"
+      ],
+      "oleb": [
+        "your gates, ye princes"
+      ]
+    },
+    {
+      "passage": "PSA 67:16",
+      "kjv": [
+        "A high hill as the hill of Bashan"
+      ],
+      "oleb": [
+        "a mountain curdled like cheese"
+      ]
+    },
+    {
+      "passage": "EXO 15:3",
+      "kjv": [
+        "is a man of war"
+      ],
+      "oleb": [
+        "bringing wars to nought"
+      ]
+    },
+    {
+      "passage": "1SA 17:4",
+      "kjv": [
+        "six cubits"
+      ],
+      "oleb": [
+        "four cubits"
+      ]
+    },
+    {
+      "passage": "JOB 38:17",
+      "kjv": [
+        "Or hast thou seen the doors of the shadow of death"
+      ],
+      "oleb": [
+        "and did the porters of hell quake when they saw thee"
+      ]
+    },
+    {
+      "passage": "ISA 5:2",
+      "kjv": [
+        "wild grapes"
+      ],
+      "oleb": [
+        "thorns"
+      ]
+    },
+    {
+      "passage": "ISA 40:13-14",
+      "kjv": [],
+      "oleb": [
+        "Or who hath first given to him, and it shall be recompensed to him again"
+      ]
+    },
+    {
+      "passage": "HAB 1:5",
+      "kjv": [],
+      "oleb": [
+        "and vanish"
+      ]
+    },
+    {
+      "passage": "LUK 23:42",
+      "kjv": [
+        "into thy kingdom"
+      ],
+      "oleb": [
+        "in thy kingdom"
+      ]
+    },
+    {
+      "passage": "JHN 8:11",
+      "kjv": [
+        "condemn thee"
+      ],
+      "oleb": [
+        "judge thee"
+      ]
+    },
+    {
+      "passage": "1JN 5:7-8",
+      "kjv": [
+        "in heaven, the Father, the Word, and the Holy Ghost: and these three are one. And there are three that bear witness in earth"
+      ],
+      "oleb": []
+    },
+    {
+      "passage": "REV 21:6",
+      "kjv": [
+        "It is done. I am Alpha and Omega"
+      ],
+      "oleb": [
+        "I am become Alpha and Omega"
+      ]
+    },
+    {
+      "passage": "REV 22:19",
+      "kjv": [
+        "the book of life"
+      ],
+      "oleb": [
+        "the tree of life"
+      ]
+    }
+  ]
+}
