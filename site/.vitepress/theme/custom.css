@@ -281,6 +281,59 @@
   }
 }
 
+/* Keep h1 native and responsive; preserve a distinct hierarchy below it. */
+.vp-doc h2 {
+  line-height: 1.3333333;
+  font-size: 1.5rem;
+}
+
+.vp-doc h3 {
+  line-height: 1.4;
+  font-size: 1.25rem;
+}
+
+.vp-doc h4 {
+  line-height: 1.3333333;
+  font-size: 1.125rem;
+}
+
+.vp-doc h5 {
+  line-height: 1.5;
+  font-size: 1rem;
+}
+
+.vp-doc h6 {
+  line-height: 1.5;
+  font-size: 0.875rem;
+}
+
+@media (min-width: 48rem) {
+  .vp-doc h2 {
+    line-height: 1.3333333;
+    font-size: 1.75rem;
+  }
+
+  .vp-doc h3 {
+    line-height: 1.3333333;
+    font-size: 1.5rem;
+  }
+
+  .vp-doc h4 {
+    line-height: 1.4;
+    font-size: 1.25rem;
+  }
+
+  .vp-doc h5 {
+    line-height: 1.3333333;
+    font-size: 1.125rem;
+  }
+
+  .vp-doc h6 {
+    line-height: 1.5;
+    font-size: 1rem;
+  }
+}
+
 .VPFeature .title {
   font-size: 1.25rem;
 }
