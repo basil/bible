@@ -12,6 +12,14 @@ const dist = new URL("../../.vitepress/dist/", import.meta.url);
 const assets = new URL("assets/", dist);
 const fonts = pathToFileURL(`${directory}/fonts/`);
 const books = manifest().books;
+test("citation links retain spacing before their witness labels", () => {
+  const page = JSDOM.fragment(builtFile("read/jhn/2.html"));
+  const note = [...page.querySelectorAll(".notes li")].find((li) =>
+    li.textContent.includes("Ps. 68:10"),
+  )!;
+  expect(note.textContent).toContain("Ps. 68:10 (Heb.");
+  expect(note.querySelector('a[href="/read/psa/68#v10"]')).not.toBeNull();
+});
 function builtFile(path: string): string {
   try {
     return readFileSync(new URL(path, dist), "utf8");

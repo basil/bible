@@ -170,7 +170,9 @@ def printed(
     if boundary:
         assert lemma is not None
         extra["x-scope"] = {"declared": lemma + boundary}
-    note = notes.footnote(read.reference, lemma, runs, **extra)
+    note = notes.linked(
+        notes.footnote(read.reference, lemma, runs, **extra), body, ctx.books
+    )
     return notes.below(note) if sentence else note
 
 

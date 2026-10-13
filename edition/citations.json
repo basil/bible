@@ -380,6 +380,12 @@
       "numbering": "kjv-verses",
       "why": "Brenton gives the Greek psalm's number and the English verse's: he counts the title, and the verse he means is one later."
     },
+    "PSA 79:1": {
+      "source": "68",
+      "passages": "PSA 68:1",
+      "print": "68",
+      "why": "Of the Psalms, which the citation before names; Brenton counts the title as the first verse, and the title is what the note cites."
+    },
     "PSA 79:17": {
       "source": "Ps. 20. 9",
       "numbering": "kjv-verses",

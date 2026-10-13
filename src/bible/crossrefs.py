@@ -15,9 +15,9 @@ import bible.annotate
 import bible.policy
 import bible.references
 import bible.terminology
-from bible import quotations, usj
+from bible import citations, quotations, usj
 from bible.checks import require
-from bible.references import EDITION, Passage, Verse
+from bible.references import Passage, Verse
 from bible.usj import Node
 from bible.versification import mapped_passages
 
@@ -327,12 +327,13 @@ def link_note(
     terms: bible.terminology.Registry,
 ) -> Node:
     """Ordered references sharing one origin and printed agreement."""
-    target = EDITION.listed(targets, books.abbreviated)
+    linked = citations.listed(targets, books.abbreviated)
+    target = usj.text_of(linked)
     require(not set(target) & set("\\\n("), f"Malformed link target: {target}")
     glossed = gloss(agreement, terms)
     content = [usj.char("xo", f"{origin.label} ")]
     if glossed:
-        content += [usj.char("xt", f"{target} "), usj.char("xta", f"({glossed})")]
+        content += [usj.char("xt", *linked, " "), usj.char("xta", f"({glossed})")]
     else:
-        content.append(usj.char("xt", target))
+        content.append(usj.char("xt", *linked))
     return usj.note("x", *content)

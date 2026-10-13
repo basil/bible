@@ -15,7 +15,7 @@ import bible.pipeline
 import bible.policy
 import bible.references
 import bible.sources
-from bible import annotate, citations, matter, notes, pipeline, usj
+from bible import annotate, citations, matter, notes, pipeline, terminology, usj
 from bible.checks import CheckFailed
 from bible.policy_schema import CitationsDecisions
 from bible.references import parse_verse
@@ -592,4 +592,179 @@ def test_several_decisions_on_one_note_form_a_list(
     )
     assert [(c.source, str(c.passages[0])) for c in found] == [
         ("Jer. 9. 24", "JER 9:23")
+    ]
+
+
+@pytest.mark.parametrize(
+    "book,items,relative,custom,text,targets",
+    [
+        (
+            "EXO",
+            (
+                (bible.references.Item(4, 9, 11), bible.references.Item(4, 16, 16)),
+                (bible.references.Item(5, 1, 1),),
+            ),
+            None,
+            None,
+            "Exodus 4:9–11, 16; 5:1",
+            ["EXO 4:9", "EXO 4:16", "EXO 5:1"],
+        ),
+        (
+            "EXO",
+            ((bible.references.Item(4, 9, 9),),),
+            "verse",
+            None,
+            "verse 9",
+            ["EXO 4:9"],
+        ),
+        (
+            "EXO",
+            ((bible.references.Item(4),),),
+            "chapter",
+            None,
+            "chapter 4",
+            ["EXO 4"],
+        ),
+        (
+            "PRO",
+            ((bible.references.Item(22, 8, 8, "a"),),),
+            None,
+            None,
+            "Proverbs 22:8a",
+            ["PRO 22:8a"],
+        ),
+        (
+            "EXO",
+            ((bible.references.Item(3, 9, 22),), (bible.references.Item(4, 1, 4),)),
+            None,
+            "3:9–4:4",
+            "3:9–4:4",
+            ["EXO 3:9"],
+        ),
+        ("", (), None, "verse 99", "verse 99", []),
+    ],
+)
+def test_linked_citations(
+    book: str,
+    items: tuple[tuple[bible.references.Item, ...], ...],
+    relative: str | None,
+    custom: str | None,
+    text: str,
+    targets: list[str],
+) -> None:
+    citation = citations.Citation(
+        0, 1, "source", book, items, "edition", relative=relative, printed=custom
+    )
+    before = repr(citation)
+    books = bible.references.Books({"EXO": "Exodus", "PRO": "Proverbs"})
+    linked = citations.linked(citation, books)
+    assert usj.text_of(linked) == text == citations.printed(citation, books)
+    assert [node["loc"] for node in linked if isinstance(node, dict)] == targets
+    assert repr(citation) == before
+    # References inside a citation field add no printed USFM.
+    assert usj.serialize([usj.char("xt", *linked)]) == usj.serialize(
+        [usj.char("xt", text)]
+    )
+
+
+def test_custom_print_links_each_book_it_names() -> None:
+    citation = citations.Citation(
+        0,
+        1,
+        "source",
+        "ZEC",
+        ((bible.references.Item(3, 8, 8),),),
+        "edition",
+        others=(("ISA", ((bible.references.Item(11, 1, 1),),)),),
+        printed="{ZEC} 3:8; {ISA} 11:1",
+    )
+    books = bible.references.Books({"ZEC": "Zacharias", "ISA": "Esaias"})
+    linked = citations.linked(citation, books)
+    assert usj.text_of(linked) == "Zacharias 3:8; Esaias 11:1"
+    assert [(n["content"], n["loc"]) for n in linked if isinstance(n, dict)] == [
+        (["Zacharias 3:8"], "ZEC 3:8"),
+        (["Esaias 11:1"], "ISA 11:1"),
+    ]
+    # Whatever parts one book from the next stays outside both links.
+    joined = citations.linked(
+        replace(citation, printed="{ZEC} 3:8, and {ISA} 11:1"), books
+    )
+    assert [n["content"] for n in joined if isinstance(n, dict)] == [
+        ["Zacharias 3:8"],
+        ["Esaias 11:1"],
+    ]
+
+
+def test_a_sentence_capital_keeps_its_citation_link(
+    declared: bible.policy.Policy,
+) -> None:
+    citation = citations.Citation(
+        0,
+        6,
+        "ver. 9",
+        "JDG",
+        ((bible.references.Item(13, 9, 9),),),
+        "brenton",
+        relative="verse",
+    )
+    body = notes.bound(
+        notes.interpreted([("xt", "ver. 9"), ("text", " is wanting")], "x"),
+        [citation],
+        "x",
+    )
+    books = bible.references.Books({"JDG": "Judges"})
+    runs, terms, _ = notes.displayed(body, books=books)
+    registry = terminology.registry(declared)
+    runs = notes.finished(runs, terms, None, True, registry, "x")
+    note = notes.linked(notes.footnote("13:8", None, runs), body, books)
+    assert [n for n in usj.walk(note["content"]) if n["type"] == "ref"] == [
+        {"type": "ref", "loc": "JDG 13:9", "content": ["Verse 9"]}
+    ]
+
+
+def test_corrected_numbering_keeps_resolved_link(
+    cite: Cite, ctx: bible.annotate.Context
+) -> None:
+    [citation] = cite(
+        "Jer. 9. 24", decided=decision(source="Jer. 9. 24", numbering="kjv")
+    )
+    nodes = citations.linked(citation, ctx.books)
+    assert usj.text_of(nodes) == "Jer. 9:23"
+    assert isinstance(nodes[0], dict)
+    assert nodes[0]["loc"] == "JER 9:23"
+
+
+def test_finished_note_retains_link_targets_and_input(
+    cite: Cite, ctx: bible.annotate.Context
+) -> None:
+    from copy import deepcopy
+
+    text = "See v 8, 9."
+    body = notes.bound(notes.interpreted([("text", text)], "x"), cite(text), "x")
+    runs, terms, _ = notes.displayed(body, books=ctx.books)
+    runs = notes.finished(runs, terms, None, None, ctx.terms, "x")
+    original = notes.footnote("13:8", None, runs)
+    saved = deepcopy(original)
+    linked = notes.linked(original, body, ctx.books)
+    assert original == saved
+    assert usj.serialize([linked]) == usj.serialize([original])
+    assert usj.text_of(linked["content"]) == usj.text_of(original["content"])
+    assert [n["loc"] for n in usj.walk(linked["content"]) if "loc" in n] == [
+        "JDG 13:8",
+        "JDG 13:9",
+    ]
+
+
+def test_generated_list_links_each_item() -> None:
+    passages = bible.references.parse_passages(
+        "EXO 4:9-11; EXO 4:16; EXO 5:1; PRO 22:8a"
+    )
+    books = bible.references.Books({"EXO": "Exodus", "PRO": "Proverbs"})
+    result = citations.listed(passages, books)
+    assert usj.text_of(result) == bible.references.EDITION.listed(passages, books)
+    assert [n["loc"] for n in result if isinstance(n, dict)] == [
+        "EXO 4:9",
+        "EXO 4:16",
+        "EXO 5:1",
+        "PRO 22:8a",
     ]

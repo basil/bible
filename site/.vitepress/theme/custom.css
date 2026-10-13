@@ -34,7 +34,7 @@
 
 .scripture {
   max-width: 65ch;
-  font-size: 1.2rem;
+  font-size: 1.15rem;
   line-height: 1.8;
 }
 
@@ -43,12 +43,16 @@
   line-height: inherit;
 }
 
-.scripture .q1 {
-  margin: 0.15em 0 0.15em 1.2em;
+/* Both poetry levels wrap beyond the start of a q2 line, as in print. */
+.scripture .q1,
+.scripture .q2 {
+  margin: 0.15em 0;
+  padding-left: 3.6em;
+  text-indent: -2.4em;
 }
 
 .scripture .q2 {
-  margin: 0.15em 0 0.15em 2.4em;
+  text-indent: -1.2em;
 }
 
 .scripture .qr {
@@ -93,7 +97,13 @@
   color: var(--vp-c-text-2);
 }
 
+.scripture .note a:hover,
+.scripture .note a:focus-visible {
+  color: var(--vp-c-brand-1);
+}
+
 .scripture .verse:target,
+.scripture .note:target,
 .scripture .notes li:target {
   background: var(--vp-c-brand-soft);
   outline: 3px solid var(--vp-c-brand-soft);
@@ -101,9 +111,8 @@
 }
 
 .scripture .notes {
-  border-top: 1px solid var(--vp-c-divider);
-  padding-top: 1rem;
-  font-size: 0.85em;
+  padding-left: 1.75em;
+  font-size: 1rem;
   line-height: 1.6;
 }
 

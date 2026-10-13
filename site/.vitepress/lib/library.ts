@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { renderChapter, escape, type Document } from "./usj.ts";
+import { renderChapter, escape, chapterPath, type Document } from "./usj.ts";
 export type Chapter = {
   number: string;
   label: string;
@@ -47,7 +47,7 @@ export const document = (book: Book, chapter: Chapter) =>
     ),
   ) as Document;
 export const chapterURL = (book: Book, chapter: Chapter) =>
-  `/read/${book.id.toLowerCase()}/${chapter.number}`;
+  chapterPath(book.id, chapter.number);
 // Every chapter of the edition, in order.
 export const chapters = () =>
   manifest().books.flatMap((book) =>

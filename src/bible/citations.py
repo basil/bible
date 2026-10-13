@@ -25,7 +25,7 @@ from dataclasses import dataclass
 
 import bible.policy
 import bible.references
-from bible import scripture, versification
+from bible import scripture, usj, versification
 from bible.checks import present, require
 from bible.policy_schema import CitationsDecisions
 from bible.references import (
@@ -758,10 +758,20 @@ def named(words: str, names: Mapping[str, str]) -> str:
 
 
 def printed(citation: Citation, books: bible.references.Books) -> str:
-    """A citation as the edition prints it: under the edition's abbreviation for the
-    book, or as a verse or chapter of the note's own book, which it names as
-    its source does, by no name."""
+    """The citation's printed wording, without its resolved links."""
+    return usj.text_of(linked(citation, books))
+
+
+def linked(citation: Citation, books: bible.references.Books) -> usj.Content:
+    """Printed citation spans, each a reference to its first resolved target.
+
+    Separators remain plain text. A custom rendering that names each of its
+    books by its code refers each book's words to that book's first target;
+    any other names its first target as a whole. A citation without a
+    target remains plain text.
+    """
     books = books.abbreviated
+
     if citation.printed is not None:
         # A decision names the books by their codes, and the edition's names
         # for them print. What a page without verses doesn't print stands in
@@ -771,31 +781,75 @@ def printed(citation: Citation, books: bible.references.Books) -> str:
             for book, runs in citation.targets
             if book
         }
-        return named(citation.printed, names)
+        firsts = [
+            (book, runs[0][0]) for book, runs in citation.targets if book and runs
+        ]
+        parts = re.split(r"(?=\{)", citation.printed)
+        codes = [re.match(r"\{(\w+)", part) for part in parts[1:]]
+        if not parts[0] and [code and code[1] for code in codes] == [
+            book for book, _ in firsts
+        ]:
+            spans: usj.Content = []
+            for part, (book, item) in zip(parts[1:], firsts):
+                words = named(part, names)
+                # A book's words end at its last figure; what follows parts
+                # it from the next book.
+                cited = re.match(r".*\d[a-z]?", words, re.S)
+                end = cited.end() if cited else len(words)
+                spans += [_linked_span(words[:end], book, item), words[end:]]
+            return usj.joined(spans)
+        text = named(citation.printed, names)
+        return [_linked_span(text, *firsts[0])] if firsts else [text]
     chapters = [item.chapter for run in citation.items for item in run]
     verses = [item for run in citation.items for item in run if item.first is not None]
     if citation.relative == "verse":
         (run,) = citation.items
         word = "verse" if len(run) == 1 and run[0].first == run[0].last else "verses"
-        body = EDITION.verses.join(_printed_item(item) for item in run)
+    elif citation.relative == "chapter":
+        word = "chapter" if verses or len(chapters) == 1 else "chapters"
     else:
-        runs: list[str] = []
-        for run in citation.items:
-            chapter = str(run[0].chapter)
-            if run[0].first is not None:
-                chapter += EDITION.chapter_verse + EDITION.verses.join(
-                    _printed_item(item) for item in run
-                )
-            runs.append(chapter)
-        body = EDITION.passages.join(runs)
-        if citation.relative == "chapter":
-            word = "chapter" if verses or len(chapters) == 1 else "chapters"
-        else:
-            return f"{books.name(citation.book, chapters)} {body}"
-    # A note that opens with the word keeps its capital.
-    if citation.source[0].isupper():
+        word = books.name(citation.book, chapters)
+    if citation.relative and citation.source[0].isupper():
         word = word.capitalize()
-    return f"{word} {body}"
+    result: usj.Content = []
+    for n, run in enumerate(citation.items):
+        if n:
+            result.append(EDITION.passages)
+        for m, item in enumerate(run):
+            if m:
+                result.append(EDITION.verses)
+            if m or citation.relative == "verse":
+                text = _printed_item(item)
+            elif item.first is None:
+                text = str(item.chapter)
+            else:
+                text = f"{item.chapter}{EDITION.chapter_verse}{_printed_item(item)}"
+            if n == m == 0:
+                text = word + " " + text
+            result.append(_linked_span(text, citation.book, item))
+    return result
+
+
+def _linked_span(text: str, book: str, item: Item) -> str | usj.Node:
+    """The words of a passage, as a reference to its first verse or chapter."""
+    if not book:
+        return text
+    loc = f"{book} {item.chapter}"
+    if item.first is not None:
+        loc += f":{item.first}{item.letter}"
+    return {"type": "ref", "loc": loc, "content": [text]}
+
+
+def listed(passages: Sequence[Passage], books: bible.references.Books) -> usj.Content:
+    """A generated list, each printed item a reference to its first verse."""
+    result: usj.Content = []
+    for passage, (separator, words) in zip(
+        passages, EDITION.listing(passages, books), strict=True
+    ):
+        first, last = passage.first, passage.last
+        item = Item(first.chapter, first.number, last.number, first.letter)
+        result += [separator, _linked_span(words, first.book, item)]
+    return usj.joined(result)
 
 
 def _printed_item(item: Item) -> str:

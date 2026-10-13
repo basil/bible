@@ -1138,6 +1138,49 @@ def footnote(
     return usj.note("f", *content, **extra)
 
 
+def linked(note: Node, body: Body, books: bible.references.Books) -> Node:
+    """Carry resolved citations into the finished note's citation fields.
+
+    Finishing changes commentary and its punctuation, leaving the citation's
+    words intact but for the capital of a sentence that opens with one.
+    Match those words in order within the semantic fields.
+    """
+    pending = [
+        citations.linked(citation, books)
+        for _, _, citation in body.citations
+        if citation.items
+    ]
+    if not pending:
+        return note
+    content: Content = []
+    for field in note["content"]:
+        if not pending or not usj.is_type(field, "char", "xt"):
+            content.append(field)
+            continue
+        text = usj.text_of(field["content"])
+        inner: Content = []
+        at = 0
+        while pending:
+            # The citation's own figures, not the start of longer ones.
+            value = usj.text_of(pending[0])
+            head, rest = re.escape(value[:1]), re.escape(value[1:])
+            found = re.compile(rf"(?<!\w)(?i:{head}){rest}(?!\w)").search(text, at)
+            if found is None:
+                break
+            cited = pending.pop(0)
+            if found[0] != value:
+                cited = usj.substituted(cited, [(0, 1, found[0][0])])
+            inner += [text[at : found.start()], *cited]
+            at = found.end()
+        inner.append(text[at:])
+        content.append({**field, "content": usj.joined(inner)} if at else field)
+    require(
+        not pending,
+        f"Citation wording changed while finishing a note: {note.get('x-key')}",
+    )
+    return {**note, "content": content}
+
+
 def below(note: Node) -> Node:
     """A note set below the text, as a full-width footnote with a caller."""
     return {**note, "marker": "ef", "caller": "+"}

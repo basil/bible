@@ -4,6 +4,7 @@ export type Node = {
   marker?: string;
   number?: string;
   pubnumber?: string;
+  loc?: string;
   content?: (string | Node)[];
 };
 export type Document = { content: Node[] };
@@ -15,6 +16,18 @@ export const escape = (text: string) =>
         c
       ]!,
   );
+// The site's route to a chapter, by its book's code.
+export const chapterPath = (book: string, chapter: string) =>
+  `/read/${book.toLowerCase()}/${chapter}`;
+// A reference to a chapter, or to a verse by its anchor.
+function refURL(loc: string) {
+  const match = /^(\w+) (\d+)(?::(\d+[a-z]?))?$/.exec(loc);
+  if (!match) {
+    throw new Error(`Unknown reference ${loc}`);
+  }
+  const [, book, chapter, verse] = match;
+  return chapterPath(book!, chapter!) + (verse ? `#v${verse}` : "");
+}
 // A chapter's document opens with its book.
 const blocksOf = (doc: Document) =>
   doc.content.filter((n) => n.type !== "book" && n.type !== "chapter");
@@ -90,6 +103,9 @@ export function renderChapter(doc: Document, titled = false) {
       return `<sup class="note" id="caller${k}"><a href="#n${k}" aria-label="Note ${k}">[${k}]</a></sup>`;
     }
     const body = (item.content || []).map((n) => inline(n, inNote)).join("");
+    if (item.type === "ref") {
+      return `<a href="${escape(refURL(item.loc || ""))}">${body}</a>`;
+    }
     if (item.type === "char") {
       if (Object.hasOwn(NOTE_TAGS, marker) && !inNote) {
         throw new Error(`Note field outside note: ${marker}`);
@@ -97,6 +113,14 @@ export function renderChapter(doc: Document, titled = false) {
       const tag = NOTE_TAGS[marker] ?? CHAR_TAGS[marker];
       if (!tag) {
         throw new Error(`Unknown character marker ${marker}`);
+      }
+      if (marker === "xt") {
+        // Vue drops whitespace-only fragments at an element's edges.
+        // Move edge spaces outside the citation wrapper, keeping styles inside.
+        const before = body.match(/^\s*/)?.[0] || "";
+        const after = body.slice(before.length).match(/\s*$/)?.[0] || "";
+        const cited = body.slice(before.length, body.length - after.length);
+        return `${before}<${tag} class="${marker}">${cited}</${tag}>${after}`;
       }
       return `<${tag} class="${marker}">${body}</${tag}>`;
     }

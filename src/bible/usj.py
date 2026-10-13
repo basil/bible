@@ -44,6 +44,7 @@ Node = TypedDict(
         "pubnumber": str,
         "align": str,
         "category": str,
+        "loc": str,
         "x-key": str,
         "x-scope": Scope,
     },
