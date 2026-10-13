@@ -2,24 +2,6 @@
   "why": "The comparison page quotes each passage in full from the pinned King James text and the edition as revised; the highlights name the phrases that differ in meaning or text, and must each occur exactly once in their quotation. The full OSB quotations are the text supplied by the editor for the comparisons that carry one; their highlights follow the same contrasts as the King James quotations.",
   "passages": [
     {
-      "passage": "PSA 23:7",
-      "kjv": [
-        "your heads, O ye gates"
-      ],
-      "oleb": [
-        "your gates, ye princes"
-      ]
-    },
-    {
-      "passage": "PSA 67:16",
-      "kjv": [
-        "A high hill as the hill of Bashan"
-      ],
-      "oleb": [
-        "a mountain curdled like cheese"
-      ]
-    },
-    {
       "passage": "EXO 15:3",
       "kjv": [
         "is a man of war"
@@ -38,12 +20,48 @@
       ]
     },
     {
+      "passage": "ESG 1:1s",
+      "kjv": [
+        "in the days of Ahasuerus"
+      ],
+      "oleb": [
+        "in the days of Artaxerxes"
+      ]
+    },
+    {
+      "passage": "PSA 23:7",
+      "kjv": [
+        "your heads, O ye gates"
+      ],
+      "oleb": [
+        "your gates, ye princes"
+      ]
+    },
+    {
+      "passage": "PSA 67:16",
+      "kjv": [
+        "A high hill"
+      ],
+      "oleb": [
+        "a mountain curdled like cheese"
+      ]
+    },
+    {
       "passage": "JOB 38:17",
       "kjv": [
         "Or hast thou seen the doors of the shadow of death"
       ],
       "oleb": [
         "and did the porters of hell quake when they saw thee"
+      ]
+    },
+    {
+      "passage": "HAB 1:5",
+      "kjv": [
+        "ye among the heathen"
+      ],
+      "oleb": [
+        "ye despisers"
       ]
     },
     {
@@ -67,10 +85,21 @@
       }
     },
     {
-      "passage": "HAB 1:5",
-      "kjv": [],
+      "passage": "ISA 44:28",
+      "kjv": [
+        "That saith of Cyrus, He is my shepherd"
+      ],
       "oleb": [
-        "and vanish"
+        "Who biddeth Cyrus be wise"
+      ]
+    },
+    {
+      "passage": "ISA 60:1",
+      "kjv": [
+        "Arise, shine"
+      ],
+      "oleb": [
+        "Be enlightened, be enlightened, O Jerusalem"
       ]
     },
     {
