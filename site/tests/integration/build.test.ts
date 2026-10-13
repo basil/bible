@@ -6,6 +6,7 @@ import { expect, test } from "vitest";
 import { JSDOM } from "jsdom";
 import MiniSearch from "minisearch";
 import { chapters, directory, manifest } from "../../.vitepress/lib/library.ts";
+import comparisons from "../../about/compare.data.ts";
 
 const dist = new URL("../../.vitepress/dist/", import.meta.url);
 const assets = new URL("assets/", dist);
@@ -21,6 +22,29 @@ function builtFile(path: string): string {
     );
   }
 }
+
+test("comparison keeps the full OSB quotations between KJV and OLEB", () => {
+  const quoted = comparisons.load().filter((quote) => quote.osb);
+  expect(quoted).not.toHaveLength(0);
+  const page = JSDOM.fragment(builtFile("about/compare.html"));
+  const shown = [...page.querySelectorAll("details.comparison")];
+  for (const quote of quoted) {
+    const entry = shown.find(
+      (details) =>
+        details.querySelector("summary")?.textContent.trim() ===
+        quote.reference,
+    );
+    expect(entry, quote.reference).toBeDefined();
+    expect(
+      [...entry!.querySelectorAll("dt .comparison-label")].map(
+        (e) => e.textContent,
+      ),
+    ).toEqual(["KJV", "OSB", "OLEB"]);
+    expect(entry!.querySelectorAll("dd")[1].textContent).toBe(
+      quote.osb!.map((span) => span.text).join(""),
+    );
+  }
+});
 function entries(directory: URL, instruction: string): string[] {
   try {
     const names = readdirSync(directory);

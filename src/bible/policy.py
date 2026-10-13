@@ -172,7 +172,15 @@ def check(policy: Policy) -> None:
     require(bool(policy.psalter["why"].strip()), "Psalter without a why")
     require_fields(policy.comparisons, {"why", "passages"}, (), "Comparisons")
     for comparison in policy.comparisons["passages"]:
-        require_fields(comparison, {"passage", "kjv", "oleb"}, (), "Comparison")
+        require_fields(comparison, {"passage", "kjv", "oleb"}, {"osb"}, "Comparison")
+        if "osb" in comparison:
+            osb = comparison["osb"]
+            passage = comparison["passage"]
+            require_fields(osb, {"text", "highlights"}, (), f"OSB quotation {passage}")
+            require(
+                isinstance(osb["text"], str) and bool(osb["text"].strip()),
+                f"Empty OSB quotation: {passage}",
+            )
     manifest_fields = {
         "title",
         "scripture",

@@ -113,6 +113,20 @@ def test_comparisons(sources: Sources, edition: pipeline.Edition) -> None:
     )
     assert [s["text"] for s in psalm["oleb"] if s["changed"]] == ["the water of rest."]
     assert compared["Esaias 40:13–14"]["kjvReference"] == "Isaiah 40:13–14"
+    assert {ref for ref, row in compared.items() if "osb" in row} == {
+        "Esaias 40:13–14",
+        "Luke 23:42",
+        "John 8:11",
+        "1 John 5:7–8",
+        "Revelation 21:6",
+        "Revelation 22:19",
+    }
+    assert "".join(s["text"] for s in compared["Luke 23:42"]["osb"]) == (
+        "Then he said to Jesus, ‘Lord, remember me when You come into Your kingdom.’"
+    )
+    assert [s["text"] for s in compared["Revelation 22:19"]["osb"] if s["changed"]] == [
+        "the Book of Life,"
+    ]
 
 
 @pytest.mark.parametrize(

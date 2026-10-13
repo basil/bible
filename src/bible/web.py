@@ -4,7 +4,7 @@ import shutil
 import unicodedata
 from collections.abc import Mapping, Sequence
 from pathlib import Path
-from typing import TypedDict
+from typing import NotRequired, TypedDict
 
 from fontTools.ttLib import TTFont
 
@@ -62,6 +62,7 @@ class Compared(TypedDict):
     kjvReference: str
     kjv: list[Span]
     oleb: list[Span]
+    osb: NotRequired[list[Span]]
 
 
 def spans(text: str, phrases: Sequence[str]) -> list[Span]:
@@ -98,7 +99,8 @@ def comparisons(
 ) -> list[Compared]:
     """The comparison page's passages: each quoted in full from the edition
     and from the King James Bible at the place the edition's verses hold
-    there, both named as the edition cites them, with their highlights."""
+    there, both named as the edition cites them, and from the editor's OSB
+    quotation where the decision gives one, each with its highlights."""
     policy = edition.policy
     ours, theirs = assembly.books(policy, sources), assembly.kjv_books(policy, sources)
     kjv: dict[str, dict[str, scripture.Verse]] = {}
@@ -129,16 +131,15 @@ def comparisons(
             )
             for v in placed
         )
-        result.append(
-            {
-                "reference": references.EDITION.listed([passage], ours),
-                "kjvReference": references.EDITION.listed(
-                    references.runs(placed), theirs
-                ),
-                "kjv": spans(counterpart, entry["kjv"]),
-                "oleb": spans(quote, entry["oleb"]),
-            }
-        )
+        compared: Compared = {
+            "reference": references.EDITION.listed([passage], ours),
+            "kjvReference": references.EDITION.listed(references.runs(placed), theirs),
+            "kjv": spans(counterpart, entry["kjv"]),
+            "oleb": spans(quote, entry["oleb"]),
+        }
+        if "osb" in entry:
+            compared["osb"] = spans(entry["osb"]["text"], entry["osb"]["highlights"])
+        result.append(compared)
     return result
 
 

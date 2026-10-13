@@ -6,7 +6,7 @@ apply only to some entries; no defaults are introduced here.
 """
 
 from collections.abc import Mapping
-from typing import Literal, ReadOnly, TypedDict
+from typing import Literal, NotRequired, ReadOnly, TypedDict
 
 
 class VersificationApocrypha(TypedDict, total=False):
@@ -56,10 +56,16 @@ class Psalter(TypedDict):
     middle: ReadOnly[str]
 
 
+class ComparisonQuote(TypedDict):
+    text: ReadOnly[str]
+    highlights: ReadOnly[tuple[str, ...]]
+
+
 class Comparison(TypedDict):
     passage: ReadOnly[str]
     kjv: ReadOnly[tuple[str, ...]]
     oleb: ReadOnly[tuple[str, ...]]
+    osb: NotRequired[ReadOnly[ComparisonQuote]]
 
 
 class Comparisons(TypedDict):

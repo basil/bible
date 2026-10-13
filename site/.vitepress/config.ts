@@ -6,8 +6,28 @@ import {
   chapterSearchContent,
   directory,
   SECTIONS,
+  type Book,
 } from "./lib/library.ts";
 const books = manifest().books;
+function contents(current?: Book) {
+  return Object.entries(SECTIONS).map(([section, text]) => ({
+    text,
+    collapsed: current !== undefined && current.section !== section,
+    items: books
+      .filter((b) => b.section === section)
+      .map((b) =>
+        b === current
+          ? {
+              text: b.short,
+              items: b.chapters.map((c) => ({
+                text: c.label,
+                link: chapterURL(b, c),
+              })),
+            }
+          : { text: b.short, link: chapterURL(b, b.chapters[0]) },
+      ),
+  }));
+}
 const about = [
   ["About the OLEB", "/about/"],
   ["Compare Translations", "/about/compare"],
@@ -62,27 +82,12 @@ export default defineConfig({
     sidebar: {
       "/about/": about,
       "/resources/": resources,
-      // The books, and each book's chapters on its own pages: the whole
-      // Bible's chapters would be prerendered into every page.
-      "/read/": Object.entries(SECTIONS).map(([section, text]) => ({
-        text,
-        items: books
-          .filter((b) => b.section === section)
-          .map((b) => ({ text: b.short, link: chapterURL(b, b.chapters[0]) })),
-      })),
+      // Every page lists the whole Bible by section and book, and opens only
+      // the chapters of the book it is in: the chapters of every book would
+      // be prerendered into every page.
+      "/read/": contents(),
       ...Object.fromEntries(
-        books.map((b) => [
-          `/read/${b.id.toLowerCase()}/`,
-          [
-            {
-              text: b.short,
-              items: b.chapters.map((c) => ({
-                text: c.label,
-                link: chapterURL(b, c),
-              })),
-            },
-          ],
-        ]),
+        books.map((b) => [`/read/${b.id.toLowerCase()}/`, contents(b)]),
       ),
     },
     socialLinks: [{ icon: "github", link: "https://github.com/basil/bible" }],
