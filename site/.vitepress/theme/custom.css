@@ -19,6 +19,19 @@
   --vp-home-hero-name-color: #deb98b;
 }
 
+/* Tighten VitePress's relaxed line heights. */
+.vp-doc p,
+.vp-doc .custom-block p,
+.custom-block,
+.VPNavMenuLink.VPNavScreenMenuLink,
+.VPNavScreenMenuGroup .button,
+.VPFeature .details,
+.VPFooter .message,
+.VPFooter .copyright,
+.VPSidebarItem .text {
+  line-height: 1.59;
+}
+
 .scripture {
   max-width: 65ch;
   font-size: 1.2rem;
