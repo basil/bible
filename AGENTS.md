@@ -118,7 +118,7 @@ The rest of the repository:
 - `sources/`: the Bible texts, the Updated Brenton (read for its lines of verse alone), the 1611 marginal notes, the Greek New Testament in both its texts with its collations and apparatus, the English witnesses to its differences, and the fonts, committed as downloaded. [sources/README.md](sources/README.md) says where each came from.
 - `src/bible/`: the Python package that prepares the edition; `src/bible/byzantine/` is the reconciliation of the New Testament with the Byzantine text, run by the promote stage.
 - `tests/`: the tests.
-- `scripts/`: the font assembly and the PTXprint patch, run when the image is built.
+- `scripts/`: the font assembly and the PTXprint patches, run when the image is built.
 - `Dockerfile`: the tool image, with the pinned versions of PTXprint and the fonts.
 
 ## Checking a change

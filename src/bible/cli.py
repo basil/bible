@@ -28,8 +28,10 @@ def prepared() -> tuple[sources.Sources, policy.Policy, pipeline.Edition]:
 
 
 def validate() -> None:
-    """Prepare the whole edition, which checks every source and decision."""
+    """Prepare the whole edition and write it as USFM, which checks every
+    source and decision."""
     _, _, edition = prepared()
+    pipeline.export(edition, "pdf")
     print("Validated the sources and the edition:", dict(edition.summary), flush=True)
 
 

@@ -11,7 +11,7 @@ from bible.checks import CheckFailed
 
 def curled(body: str) -> str:
     doc = usj.parse(f"\\id GEN\n\\c 1\n\\p\n{body}\n")
-    return usj.serialize(typography.typographic(doc)).split("\n", 3)[3].rstrip("\n")
+    return usj.serialize(typography.typographic(doc)).split("\n", 4)[4].rstrip("\n")
 
 
 @pytest.mark.parametrize(

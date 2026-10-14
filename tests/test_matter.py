@@ -51,7 +51,7 @@ def test_the_introduction_keeps_its_general_paragraphs_and_sends_the_rest(
     edition: bible.pipeline.Edition,
 ) -> None:
     front = lines(edition, "OTH")
-    assert [line[:28] for line in front[6:]] == [
+    assert [line[:28] for line in front[7:]] == [
         "\\ip The Alexandrian Jews pos",
         "\\ip During the Reformation p",
         "\\ip In more recent times it ",
@@ -62,7 +62,7 @@ def test_the_introduction_keeps_its_general_paragraphs_and_sends_the_rest(
     # A gloss is bracketed, and a book is called by the edition's name for it.
     assert (
         "save 1 and 2 Esdras [of the English Apocrypha] and the Prayer of Manasses"
-        in front[7]
+        in front[8]
     )
 
 
@@ -191,7 +191,7 @@ def test_front_matter_notes_are_numbered_without_origins_that_name_no_verse() ->
         "\\f * \\fr 3:12 \\ft Cited\\f* more.\n"
     )
     assert usj.serialize(matter.numbered_notes(doc)) == (
-        "\\id XXB\n\\ip Words\\f + \\ft A title\\f* and"
+        "\\id XXB\n\\usfm 3.1\n\\ip Words\\f + \\ft A title\\f* and"
         "\\f + \\fr 3:12 \\ft Cited\\f* more.\n"
     )
 

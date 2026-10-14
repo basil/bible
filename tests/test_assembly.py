@@ -27,9 +27,10 @@ def test_every_book_prints_under_the_editions_name_and_heading(
         assert headings == [
             tuple(line) for line in entry.get("heading", (("mt1", entry["title"]),))
         ]
-    genesis = usj.serialize(edition.documents["GEN"]).splitlines()[:7]
+    genesis = usj.serialize(edition.documents["GEN"]).splitlines()[:8]
     assert genesis == [
         "\\id GEN - Brenton English Septuagint",
+        "\\usfm 3.1",
         "\\h Genesis",
         "\\toc1 The First Book of Moses, Called Genesis",
         "\\toc2 Genesis",

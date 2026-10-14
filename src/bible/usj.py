@@ -81,7 +81,8 @@ NOTES = frozenset("f ef x".split())
 # The parts of a note, each of which runs to the next or to the note's end.
 FIELDS = frozenset("fr ft fq fqa fl xo xt xta".split())
 LABEL = re.compile(r"\d+[a-z]?(?:-\d+[a-z]?)?")
-# What follows a marker that takes one: a note's caller, a book's code.
+# What follows a marker that takes one: a note's caller, a book's code, a
+# document's USFM version.
 TOKEN = re.compile(r"(\S+) ?")
 SPACES = re.compile(r"\s+")
 
@@ -186,6 +187,7 @@ def parse(text: str, *, fragment: bool = False) -> Document | Content:
         return any(kind == "note" for kind, _ in inline)
 
     cursor = 0
+    versioned = False
     for match in MARKER.finditer(text):
         if match.start() < cursor:
             continue
@@ -235,9 +237,8 @@ def parse(text: str, *, fragment: bool = False) -> Document | Content:
                 )
                 inline.pop()
                 continue
-            # Within a note, an unnested style ends the part of the note it follows.
-            if not plus and inline and inline[-1][0] == "field":
-                inline.pop()
+            # A style nests in the one it stands in, with its + or without,
+            # and within a note in the part of the note it stands in.
             node = char(name)
             content().append(node)
             inline.append(("char", node))
@@ -282,6 +283,19 @@ def parse(text: str, *, fragment: bool = False) -> Document | Content:
                 cursor = code.end()
                 block = {"type": "book", "marker": "id", "code": code[1], "content": []}
                 root.append(block)
+            elif name == "usfm":
+                # The version a document declares, once, which is its USJ version.
+                require(not versioned, f"USFM version declared twice: {where(at)}")
+                require(
+                    len(root) == 1 and is_type(root[0], "book"),
+                    f"USFM version not after the book: {where(at)}",
+                )
+                version = present(
+                    TOKEN.match(text, end), f"Missing USFM version: {where(at)}"
+                )
+                require(version[1] == VERSION, f"Unsupported USFM version: {where(at)}")
+                cursor = version.end()
+                versioned = True
             elif name == "c":
                 label = present(
                     LABEL.match(text, end), f"Missing chapter number: {where(at)}"
@@ -407,12 +421,17 @@ def _tidy_block(node: Node) -> Node:
 def serialize(node: Document | Content) -> str:
     """Write USFM: a document, or a list of inline content."""
     if isinstance(node, list):
-        return _inline(node, nested=False, in_note=False)
+        return _inline(node, nested=False)
+    # The writer nests and closes styles as this version does.
+    require(node["version"] == VERSION, f"Unsupported USJ version: {node['version']}")
     lines = []
     for block in node["content"]:
         kind = block["type"]
         if kind == "book":
             lines.append(_line(f"\\id {block['code']}", block["content"]))
+            # Declared once, after the book that opens the document.
+            if len(lines) == 1:
+                lines.append(f"\\usfm {VERSION}")
         elif kind == "chapter":
             lines.append(f"\\c {block['number']}")
             if "pubnumber" in block:
@@ -447,28 +466,38 @@ def _split_verses(content: Content) -> tuple[Content, list[tuple[Node, Content]]
 
 
 def _line(marker: str, content: Iterable[str | Node]) -> str:
-    text = _inline(content, nested=False, in_note=False)
+    text = _inline(content, nested=False)
     return f"{marker} {text}" if text else marker
 
 
-def _inline(content: Iterable[str | Node], *, nested: bool, in_note: bool) -> str:
+def _inline(content: Iterable[str | Node], *, nested: bool) -> str:
     parts = []
     for item in content:
         if isinstance(item, str):
             parts.append(item)
         elif item["type"] == "note":
-            body = _inline(item["content"], nested=False, in_note=True)
+            # A part of a note runs to the next, so only parts can follow one.
+            fields = [
+                is_type(part, "char") and part["marker"] in FIELDS
+                for part in item["content"]
+            ]
+            require(
+                fields == sorted(fields),
+                f"Content after a part of a note {item.get('x-key', 'without a key')}:"
+                f" {item['content']!r}",
+            )
+            body = _inline(item["content"], nested=False)
             marker = item["marker"]
             parts.append(f"\\{marker} {item['caller']} {body}\\{marker}*")
         elif item["type"] == "char":
-            body = _inline(item["content"], nested=True, in_note=in_note)
+            body = _inline(item["content"], nested=True)
             if item["marker"] in FIELDS:
                 parts.append(f"\\{item['marker']} {body}")
             else:
                 marker = ("+" if nested else "") + item["marker"]
                 parts.append(f"\\{marker} {body}\\{marker}*")
         elif item["type"] == "ref":
-            parts.append(_inline(item["content"], nested=nested, in_note=in_note))
+            parts.append(_inline(item["content"], nested=nested))
         else:
             require(False, f"Unsupported inline content: {item['type']}")
     return "".join(parts)

@@ -215,7 +215,9 @@ def test_the_appendix_is_read_for_its_notes_alone(policy: bible.policy.Policy) -
         "\\is2 GENESIS\n\\ip 99. Considerable variation here.\n\\ib\n"
     )
     notes_only = usj.serialize(alexandrinus.appendix_notes(doc))
-    assert notes_only == "\\id BAK\n\\ip Job 25. 2.—A note.\n\\is1 ———————\n"
+    assert (
+        notes_only == "\\id BAK\n\\usfm 3.1\n\\ip Job 25. 2.—A note.\n\\is1 ———————\n"
+    )
 
 
 def test_an_appendix_paragraph_moved_to_a_note_without_words_is_refused(

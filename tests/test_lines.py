@@ -78,7 +78,7 @@ def test_a_source_paragraph_is_divided_as_the_update_divides_it(
     )
     assert verses["1:3"].text == "So they parted."
     # A note standing at a break goes with the line it glosses.
-    assert usj.serialize(doc).splitlines()[7:9] == [
+    assert usj.serialize(doc).splitlines()[8:10] == [
         "\\q1",
         "\\v 2 Cursed be \\f + \\fr 1:2 \\fqa Gr. \\ft accursed.\\f*Canaan,",
     ]
@@ -111,7 +111,7 @@ def test_a_note_at_a_break_stays_with_the_word_it_is_set_against(
     )
     update = "\\id TST\n\\c 1\n\\q1\n\\v 1 One two.\n\\q1 Three four.\n"
     exported = usj.serialize(lined(source, update, declared)).splitlines()
-    assert exported[2:] == [
+    assert exported[3:] == [
         "\\q1",
         "\\v 1 One two.\\f + \\fr 1:1 \\ft after.\\f*",
         "\\q1 \\x + \\xo 1:1 \\xt See.\\x*Three four.",

@@ -1529,7 +1529,7 @@ def test_passage_revisions_keep_styles_metadata_and_inputs(
     assert {k: v for k, v in after.items() if k != "content"} == {
         k: v for k, v in note.items() if k != "content"
     }
-    assert "\\it note\\it*—The words" in usj.serialize(result)
+    assert "\\+it note\\+it*—The words" in usj.serialize(result)
     assert doc == before
     assert usj.text_of(after["content"]).startswith("1:1 A note")
     assert met == {("GEN 1:1#1", "note.—The words"), ("GEN 1:1#1", "a ")}
@@ -1657,7 +1657,7 @@ def test_foreign_spelling_is_confined_to_its_key_and_keeps_metadata(
     result = revision.passages("NUM", doc, rules, met)
     after = usj.notes_of(result["content"])
     assert usj.text_of(after[0]["content"]) == f"1:18 English {new}."
-    assert f"\\it {new}\\it*" in usj.serialize(result)
+    assert f"\\+it {new}\\+it*" in usj.serialize(result)
     assert {k: v for k, v in after[0].items() if k != "content"} == {
         k: v for k, v in notes[0].items() if k != "content"
     }
@@ -1733,7 +1733,7 @@ def test_foreign_spelling_sets_letters_before_a_word_in_its_style(
     )
     revision.check(rules)
     result = usj.serialize(revision.passages("NUM", doc, rules, set()))
-    assert "\\fqa Alex. \\ft εὑρετῆ, or \\it ἁμαρτία\\it* or λέγει.\\f*" in result
+    assert "\\fqa Alex. \\ft εὑρετῆ, or \\+it ἁμαρτία\\+it* or λέγει.\\f*" in result
 
 
 def test_foreign_spelling_reaches_the_parts_of_daniel(

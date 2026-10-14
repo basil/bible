@@ -63,7 +63,7 @@ def test_a_document_is_plain_usj() -> None:
 
 def test_writing_gives_each_verse_a_line_and_nests_styles_in_notes() -> None:
     assert usj.serialize(usj.parse(BOOK)) == (
-        "\\id GEN - Brenton\n\\h Genesis\n\\mt1 GENESIS\n\\c 1\n\\p\n"
+        "\\id GEN - Brenton\n\\usfm 3.1\n\\h Genesis\n\\mt1 GENESIS\n\\c 1\n\\p\n"
         "\\v 1 \\sc In\\sc* the beginning \\add was\\add* light \\f + \\fr 1:1 \\fqa Gr. \\ft a \\+it note\\+it*.\\f*and day.\n"
         "\\v 2 Poetry,\n\\q1 line two\n\\c 2\n\\cp A\n\\p\n\\v 1 Next.\n"
     )
@@ -77,15 +77,20 @@ def test_every_source_book_survives_reading_and_writing(
     def unspaced(text: str) -> str:
         return "".join(text.split())
 
+    def versioned(source: str) -> str:
+        """A source as written: its version declared after its book."""
+        book, rest = source.split("\n", 1)
+        return f"{book}\n\\usfm {usj.VERSION}\n{rest}"
+
     # The corrections to Brenton's transcription are made before it is read.
     for code, doc in read.kjv.items():
         written = usj.serialize(doc)
-        assert unspaced(written) == unspaced(sources.kjv[code]), code
+        assert unspaced(written) == unspaced(versioned(sources.kjv[code])), code
         assert usj.parse(written) == doc, code
     for code in ("RUT", "PSA", "SIR", "XXA"):
         doc = usj.parse(sources.brenton[code])
         written = usj.serialize(doc)
-        assert unspaced(written) == unspaced(sources.brenton[code]), code
+        assert unspaced(written) == unspaced(versioned(sources.brenton[code])), code
         assert usj.parse(written) == doc, code
 
 
@@ -103,11 +108,57 @@ def test_every_source_book_survives_reading_and_writing(
             "not at the head of a chapter",
         ),
         ("\\id GEN\n\\c 1\n\\cp 11\n\\cp 12\n", "not at the head of a chapter"),
+        ("\\id GEN\n\\usfm 3.0\n", "Unsupported USFM version"),
+        ("\\id GEN\n\\h Genesis\n\\usfm 3.1\n", "USFM version not after the book"),
+        ("\\id GEN\n\\usfm 3.1\n\\usfm 3.1\n", "USFM version declared twice"),
     ],
 )
 def test_malformed_usfm_is_refused(text: str, refusal: str) -> None:
     with pytest.raises(CheckFailed, match=refusal):
         usj.parse(text)
+
+
+def test_the_version_is_declared_once_after_the_opening_book() -> None:
+    books = usj.parse("\\id GEN\n\\id EXO\n")
+    written = usj.serialize(books)
+    assert written == "\\id GEN\n\\usfm 3.1\n\\id EXO\n"
+    assert usj.parse(written) == books
+
+
+def test_a_document_of_another_version_is_not_written() -> None:
+    doc: usj.Document = {**usj.parse("\\id GEN\n"), "version": "3.0"}
+    with pytest.raises(CheckFailed, match="Unsupported USJ version"):
+        usj.serialize(doc)
+
+
+def test_a_style_in_a_part_of_a_note_nests_in_it_without_its_plus() -> None:
+    """As USFM 3.1 reads it, and as usfmtc writes it for PTXprint."""
+    nested = r"\f + \fr 1:1 \ft a \+it note\+it*.\f*"
+    assert usj.parse(nested.replace("+it", "it"), fragment=True) == usj.parse(
+        nested, fragment=True
+    )
+
+
+def test_nothing_but_a_part_of_a_note_is_written_after_one() -> None:
+    # It would be read back as part of the field before it.
+    loose = usj.note("f", usj.char("fr", "1:1 "), usj.char("it", "note"))
+    with pytest.raises(CheckFailed, match="Content after a part of a note"):
+        usj.serialize([loose])
+
+
+def test_what_ptxprint_writes_reads_back_the_same(tmp_path: Path) -> None:
+    import usfmtc
+    from ptxprint.usxutils import PTXEmitter
+
+    doc = usj.parse(BOOK)
+    path = tmp_path / "GEN.usfm"
+    path.write_text(usj.serialize(doc), encoding="utf-8")
+    upstream = usfmtc.readFile(str(path))
+    for emitter in (None, PTXEmitter):
+        options = {"emitter": emitter} if emitter else {}
+        processed = upstream.outUsfm(None, **options)
+        assert "\\ft a \\it note\\it*." in processed
+        assert usj.parse(processed) == doc
 
 
 def test_usj_agrees_with_the_reference_parser(
@@ -252,7 +303,7 @@ def test_changes_to_a_verse_are_made_together_by_their_offsets() -> None:
         doc,
         [(verse, 3, 16, ["the start"]), (verse, 27, 27, [note]), (verse, 0, 0, ["["])],
     )
-    assert usj.serialize(changed).splitlines()[5] == (
+    assert usj.serialize(changed).splitlines()[6] == (
         "\\v 1 [\\sc In\\sc* the start \\add was\\add* light "
         "\\f + \\fr 1:1 \\fqa Gr. \\ft a \\+it note\\+it*.\\f*\\f - \\ft new\\f*and day."
     )

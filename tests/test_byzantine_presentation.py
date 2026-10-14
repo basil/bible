@@ -211,7 +211,7 @@ def test_greek_bold_export_keeps_punctuation_in_the_greek_font(tmp_path: Path) -
     ]
     written = usj.serialize(content)
     assert written == "[\\wg καί,\\wg*] \\bd \\+wg καί·\\+wg*\\bd*"
-    document = "\\id XXC\n\\ip " + written + "\n"
+    document = f"\\id XXC\n\\usfm {usj.VERSION}\n\\ip " + written + "\n"
     parsed = usj.parse(document)
     assert parsed["content"][1]["content"] == [
         "[",
@@ -227,11 +227,13 @@ def test_greek_bold_export_keeps_punctuation_in_the_greek_font(tmp_path: Path) -
         node for node in usj.walk(theirs["content"]) if node.get("marker") == "bd"
     )
     assert bold["content"] == [usj.char("wg", "καί·")]
-    # PTXprint reads and writes peripheral books before TeX sees them.
+    # PTXprint reads and writes peripheral books before TeX sees them, in
+    # USFM 3.1, which nests a style without its +.
     for emitter in (None, PTXEmitter):
         options = {"emitter": emitter} if emitter else {}
         processed = upstream.outUsfm(None, **options)
-        assert "\\bd \\+wg καί·\\+wg*\\bd*" in processed
+        assert "\n\\usfm 3.1\n" in processed
+        assert "\\bd \\wg καί·\\wg*\\bd*" in processed
         assert usj.parse(processed) == parsed
 
 
@@ -341,7 +343,7 @@ def test_greek_font_boundary_spaces_survive_ptxprint(
     written = usj.serialize(content)
     marker = "+wg" if bold else "wg"
     assert f"\\{marker} {first}\\{marker}* \\{marker} {second}\\{marker}*" in written
-    document = "\\id XXC\n\\ip " + written + "\n"
+    document = f"\\id XXC\n\\usfm {usj.VERSION}\n\\ip " + written + "\n"
     parsed = usj.parse(document)
     assert usj.text_of(parsed["content"][1]["content"]) == words
     path = tmp_path / "XXC.usfm"
@@ -350,9 +352,7 @@ def test_greek_font_boundary_spaces_survive_ptxprint(
     for emitter in (None, PTXEmitter):
         options = {"emitter": emitter} if emitter else {}
         processed = upstream.outUsfm(None, **options)
-        assert (
-            f"\\{marker} {first}\\{marker}* \\{marker} {second}\\{marker}*" in processed
-        )
+        assert f"\\wg {first}\\wg* \\wg {second}\\wg*" in processed
         assert usj.parse(processed) == parsed
 
 
