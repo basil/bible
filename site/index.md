@@ -15,7 +15,7 @@ hero:
       link: /about/compare
 features:
   - title: Septuagint Old Testament
-    details: Brenton’s translation, with readings from Codex Alexandrinus in the main text and the books in the order of the Orthodox Church.
+    details: Brenton’s translation of the Septuagint, with readings from Codex Alexandrinus in the main text and the books in the order of the Orthodox Church.
   - title: Byzantine KJV New Testament
     details: The King James New Testament conformed to the Byzantine text (Robinson–Pierpont 2026), with notes preserving the displaced Received Text readings for comparison.
   - title: A unified English Bible
