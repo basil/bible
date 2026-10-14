@@ -42,6 +42,12 @@ const resources = [
   },
   { text: "Pierpont’s KJV Improvements", link: "/resources/improvements-kjv" },
   { text: "On Liturgical English", link: "/resources/liturgical-english" },
+  {
+    text: "Byzantine Music",
+    link: "https://byzantinemusic.org",
+    rel: "noopener",
+    target: "_blank",
+  },
 ];
 export default defineConfig({
   vite: {
