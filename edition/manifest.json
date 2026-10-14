@@ -141,8 +141,12 @@
       "abbreviation": "1 Kgdms.",
       "heading": [
         [
+          "mt2",
+          "The First Book of"
+        ],
+        [
           "mt1",
-          "The First Book of Kingdoms,"
+          "Kingdoms,"
         ],
         [
           "mt2",
@@ -163,8 +167,12 @@
       "abbreviation": "2 Kgdms.",
       "heading": [
         [
+          "mt2",
+          "The Second Book of"
+        ],
+        [
           "mt1",
-          "The Second Book of Kingdoms,"
+          "Kingdoms,"
         ],
         [
           "mt2",
@@ -185,8 +193,12 @@
       "abbreviation": "3 Kgdms.",
       "heading": [
         [
+          "mt2",
+          "The Third Book of"
+        ],
+        [
           "mt1",
-          "The Third Book of Kingdoms,"
+          "Kingdoms,"
         ],
         [
           "mt2",
@@ -207,8 +219,12 @@
       "abbreviation": "4 Kgdms.",
       "heading": [
         [
+          "mt2",
+          "The Fourth Book of"
+        ],
+        [
           "mt1",
-          "The Fourth Book of Kingdoms,"
+          "Kingdoms,"
         ],
         [
           "mt2",
@@ -271,7 +287,11 @@
         ],
         [
           "mt2",
-          "When He Was Holden Captive in Babylon"
+          "When He Was Holden Captive"
+        ],
+        [
+          "mt2",
+          "in Babylon"
         ]
       ]
     },
