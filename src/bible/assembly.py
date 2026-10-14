@@ -126,13 +126,14 @@ def heading_lines(entry: Entry, found: Mapping[str, str]) -> list[tuple[str, str
 
     As in the Cambridge KJV, the heading is the contents title itself. The
     manifest's optional "heading" says how to break it into lines and which
-    line is the main one; without it the whole title is one mt1 line.
+    line is the main one; without it the whole title is one mt1 line. The
+    edition sets its titles in two sizes, so a line is mt1 or mt2, never mt3.
     """
     lines = entry.get("heading", (("mt1", found["title"]),))
     require(
         all(
             len(line) == 2
-            and line[0] in usfm.HEADING_MARKERS
+            and line[0] in ("mt1", "mt2")
             and isinstance(line[1], str)
             and line[1].strip() == line[1] != ""
             for line in lines

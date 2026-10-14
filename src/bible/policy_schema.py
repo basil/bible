@@ -223,6 +223,7 @@ class Entry(TypedDict, total=False):
     abbreviation: ReadOnly[str]
     chapters: ReadOnly[tuple[int, ...]]
     cited_singly: ReadOnly[str]
+    continues: ReadOnly[str]
     file: ReadOnly[str]
     heading: ReadOnly[tuple[tuple[str, str], ...]]
     id: ReadOnly[str]

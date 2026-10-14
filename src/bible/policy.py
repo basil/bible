@@ -200,9 +200,10 @@ def check(policy: Policy) -> None:
         "new_testament_front",
         "appendices",
     ):
-        for unit_entry in policy.manifest[manifest_group]:
+        units = policy.manifest[manifest_group]
+        for at, unit_entry in enumerate(units):
             required = {"id", "source"}
-            optional = names
+            optional = names | {"continues"}
             if manifest_group == "scripture":
                 required = required | {"section", "title"}
                 optional = (names - {"title"}) | {
@@ -217,6 +218,19 @@ def check(policy: Policy) -> None:
                 optional,
                 f"Manifest {manifest_group} entry {unit_entry.get('id')}",
             )
+            if "continues" in unit_entry:
+                require(
+                    at > 0
+                    and units[at - 1]["id"] == unit_entry["continues"]
+                    and "continues" not in units[at - 1],
+                    f"Front matter must continue the preceding unit: {unit_entry['id']}",
+                )
+                # The unit it continues heads both, so these would print nowhere.
+                require(
+                    not {"short_title", "abbreviation"} & set(unit_entry),
+                    f"Running head or abbreviation of continuing front matter: "
+                    f"{unit_entry['id']}",
+                )
             # Only true labels anything: false would be a decision that changes nothing.
             if "labelled_chapters" in unit_entry:
                 require(
@@ -238,6 +252,11 @@ def check(policy: Policy) -> None:
     require(not unplaced, f"Scripture units outside both testaments: {unplaced}")
     ids = [entry["id"] for entry in policy.entries]
     require(len(ids) == len(set(ids)), "Duplicate project id")
+    # The rendered PDF is searched by the contents' units, and continuing
+    # front matter has no entry there: its witness would never be read.
+    printed = {entry["id"] for entry in policy.entries if "continues" not in entry}
+    unread = sorted({witness["id"] for witness in policy.witnesses} - printed)
+    require(not unread, f"Witnesses of units without a contents entry: {unread}")
     codes = {u["id"] for u in scripture}
     require(
         set(policy.sample) <= codes,

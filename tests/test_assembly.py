@@ -57,6 +57,10 @@ def test_heading_lines_must_spell_the_contents_title() -> None:
         assembly.heading_lines(
             {"id": "RUT", "heading": (("mt2", "The Book of Ruth"),)}, names
         )
+    with pytest.raises(CheckFailed, match="Invalid heading"):
+        assembly.heading_lines(
+            {"id": "RUT", "heading": (("mt3", "The Book of"), ("mt1", "Ruth"))}, names
+        )
 
 
 def test_nehemias_is_the_close_of_the_file_that_holds_esdras(

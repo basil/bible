@@ -911,10 +911,16 @@ def sample_readings(
 def view(edition: Edition, mode: str) -> list[tuple[str, Document]]:
     """The documents a build prints, as (id, document), in order: the whole
     edition, or the sample's chapters; with their typography and their lines
-    of verse indented."""
+    of verse indented. Front matter that continues another unit is appended
+    under a subsection heading, without its own document or contents entry."""
     require(mode in ("pdf", "sample"), f"Unknown output mode: {mode}")
     sample = edition.policy.sample
-    result = []
+    continuations = {
+        entry["id"]: entry["continues"]
+        for entry in edition.policy.entries
+        if "continues" in entry
+    }
+    result: list[tuple[str, Document]] = []
     for code, doc in edition.documents.items():
         if code in edition.scripture and mode == "sample":
             if code not in sample:
@@ -924,7 +930,40 @@ def view(edition: Edition, mode: str) -> list[tuple[str, Document]]:
             doc = sample_readings(doc, edition.appendix, sample)
         if code not in edition.authored:
             doc = typography.typographic(doc)
-        result.append((code, indented(doc)))
+        doc = indented(doc)
+        if code in continuations:
+            require(
+                bool(result) and result[-1][0] == continuations[code],
+                f"Front matter cannot continue absent unit: {code}",
+            )
+            # Its one title line becomes a heading in the unit it continues;
+            # another line of title would stand there as a book's title.
+            require(
+                [
+                    block["marker"]
+                    for block in doc["content"]
+                    if block.get("marker") in usfm.HEADING_MARKERS
+                ]
+                == ["mt1"],
+                f"Continuing front matter without a single title line: {code}",
+            )
+            blocks: list[Node] = [
+                (
+                    {**block, "marker": "is1"}
+                    if usj.is_type(block, "para", "mt1")
+                    else block
+                )
+                for block in doc["content"]
+                if block["type"] != "book"
+                and block.get("marker") not in {"h", "toc1", "toc2", "toc3"}
+            ]
+            previous, combined = result[-1]
+            result[-1] = (
+                previous,
+                usj.with_blocks(combined, [*combined["content"], *blocks]),
+            )
+        else:
+            result.append((code, doc))
     return result
 
 

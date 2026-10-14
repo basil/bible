@@ -4,8 +4,10 @@ typeset."""
 from __future__ import annotations
 
 import copy
+import dataclasses
 import re
 from collections.abc import Callable, Iterable
+from types import MappingProxyType
 from typing import Any, cast
 
 import pytest
@@ -13,7 +15,16 @@ from conftest import Staged, changed
 
 import bible.pipeline
 import bible.policy
-from bible import annotate, assembly, pipeline, places, revision, scripture, usj
+from bible import (
+    annotate,
+    assembly,
+    pipeline,
+    places,
+    revision,
+    scripture,
+    typography,
+    usj,
+)
 from bible.checks import CheckFailed
 from bible.usj import Document
 
@@ -24,7 +35,10 @@ def test_the_edition_prints_every_unit_once_in_the_manifests_order(
     exported: dict[str, str],
 ) -> None:
     order = [entry["id"] for entry in policy.entries]
-    assert list(edition.documents) == list(exported) == order
+    assert list(edition.documents) == order
+    assert list(exported) == [
+        entry["id"] for entry in policy.entries if "continues" not in entry
+    ]
     assert edition.scripture == {unit["id"] for unit in policy.scripture}
     assert edition.authored == {"CNC", "XXA", "XXF", "XXG", "GLO", "XXC"}
     # Each is written under its own id, whatever file it was printed from.
@@ -48,6 +62,60 @@ def test_the_edition_prints_every_unit_once_in_the_manifests_order(
         # verses the Byzantine text lacks.
         "verses": 36629,
     }
+
+
+@pytest.mark.parametrize("mode", ["pdf", "sample"])
+def test_apocrypha_front_matter_continues_the_introduction(
+    edition: bible.pipeline.Edition, mode: str
+) -> None:
+    before = copy.deepcopy(dict(edition.documents))
+    view = dict(pipeline.view(edition, mode))
+    assert "OTH" not in view
+    introduction = view["XXE"]
+    assert [
+        usj.text_of(block["content"])
+        for block in introduction["content"]
+        if block.get("marker") == "mt1"
+    ] == ["Introduction (1870)"]
+    assert [
+        usj.text_of(block["content"])
+        for block in introduction["content"]
+        if block.get("marker") == "is1"
+    ] == [
+        "A Historical Account of the Septuagint Version",
+        "The Books of the Apocrypha",
+    ]
+    # Every paragraph and note is appended once, after its usual typography.
+    apocrypha = pipeline.indented(typography.typographic(edition.documents["OTH"]))
+    paragraphs = [b for b in apocrypha["content"] if b.get("marker") == "ip"]
+    assert introduction["content"][-len(paragraphs) :] == paragraphs
+    assert all(introduction["content"].count(b) == 1 for b in paragraphs)
+    exported = dict(pipeline.export(edition, mode))
+    assert "OTH" not in exported
+    text = exported["XXE"]
+    assert text.count("\\id ") == 1
+    assert text.count("\\toc1 ") == 1
+    assert "\\toc1 Introduction (1870)\n" in text
+    assert "\\is1 The Books of the Apocrypha\n" in text
+    assert edition.documents == before
+
+
+def test_continuing_front_matter_has_one_title_line(
+    edition: bible.pipeline.Edition,
+) -> None:
+    apocrypha = edition.documents["OTH"]
+    at = next(i for i, b in enumerate(apocrypha["content"]) if b.get("marker") == "mt1")
+    subtitled = usj.with_blocks(
+        apocrypha,
+        [
+            *apocrypha["content"][: at + 1],
+            usj.para("mt2", "A Subtitle"),
+            *apocrypha["content"][at + 1 :],
+        ],
+    )
+    documents = MappingProxyType({**edition.documents, "OTH": subtitled})
+    with pytest.raises(CheckFailed, match="without a single title line: OTH"):
+        pipeline.view(dataclasses.replace(edition, documents=documents), "pdf")
 
 
 def test_no_stage_changes_what_an_earlier_stage_made(
@@ -85,6 +153,31 @@ def test_the_policy_is_read_once_and_cannot_be_changed(
 @pytest.mark.parametrize(
     "name, change, refusal",
     [
+        (
+            "manifest",
+            lambda d: d["old_testament_front"][-1].update(continues="XXB"),
+            "must continue the preceding unit",
+        ),
+        (
+            "manifest",
+            lambda d: d["old_testament_front"][0].update(continues="XXE"),
+            "must continue the preceding unit",
+        ),
+        (
+            "manifest",
+            lambda d: d["scripture"][1].update(continues="GEN"),
+            "missing or unknown fields",
+        ),
+        (
+            "manifest",
+            lambda d: d["old_testament_front"][-1].update(short_title="Apocrypha"),
+            "Running head or abbreviation of continuing front matter",
+        ),
+        (
+            "witnesses",
+            lambda d: d.append({"id": "OTH", "phrase": "The Alexandrian Jews"}),
+            "Witnesses of units without a contents entry",
+        ),
         (
             "brenton_notes",
             lambda d: d["notes"]["GEN 1:9#2"].update(lema="place"),

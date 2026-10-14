@@ -88,19 +88,49 @@
       "section": "old_testament",
       "title": "The Book of Jesus, the Son of Navi",
       "short_title": "Jesus, the Son of Navi",
-      "abbreviation": "Jes. Navi"
+      "abbreviation": "Jes. Navi",
+      "heading": [
+        [
+          "mt2",
+          "The Book of"
+        ],
+        [
+          "mt1",
+          "Jesus, the Son of Navi"
+        ]
+      ]
     },
     {
       "id": "JDG",
       "source": "brenton",
       "section": "old_testament",
-      "title": "The Book of Judges"
+      "title": "The Book of Judges",
+      "heading": [
+        [
+          "mt2",
+          "The Book of"
+        ],
+        [
+          "mt1",
+          "Judges"
+        ]
+      ]
     },
     {
       "id": "RUT",
       "source": "brenton",
       "section": "old_testament",
-      "title": "The Book of Ruth"
+      "title": "The Book of Ruth",
+      "heading": [
+        [
+          "mt2",
+          "The Book of"
+        ],
+        [
+          "mt1",
+          "Ruth"
+        ]
+      ]
     },
     {
       "id": "1SA",
@@ -115,7 +145,7 @@
           "The First Book of Kingdoms,"
         ],
         [
-          "mt3",
+          "mt2",
           "Otherwise Called,"
         ],
         [
@@ -137,7 +167,7 @@
           "The Second Book of Kingdoms,"
         ],
         [
-          "mt3",
+          "mt2",
           "Otherwise Called,"
         ],
         [
@@ -159,7 +189,7 @@
           "The Third Book of Kingdoms,"
         ],
         [
-          "mt3",
+          "mt2",
           "Otherwise Called,"
         ],
         [
@@ -181,7 +211,7 @@
           "The Fourth Book of Kingdoms,"
         ],
         [
-          "mt3",
+          "mt2",
           "Otherwise Called,"
         ],
         [
@@ -240,7 +270,7 @@
           "King of Judah,"
         ],
         [
-          "mt3",
+          "mt2",
           "When He Was Holden Captive in Babylon"
         ]
       ]
@@ -295,20 +325,50 @@
       "chapters": [
         11,
         23
+      ],
+      "heading": [
+        [
+          "mt2",
+          "The Book of"
+        ],
+        [
+          "mt1",
+          "Nehemias"
+        ]
       ]
     },
     {
       "id": "TOB",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Tobit",
-      "abbreviation": "Tobit"
+      "title": "The Book of Tobit",
+      "abbreviation": "Tobit",
+      "heading": [
+        [
+          "mt2",
+          "The Book of"
+        ],
+        [
+          "mt1",
+          "Tobit"
+        ]
+      ]
     },
     {
       "id": "JDT",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Judith"
+      "title": "The Book of Judith",
+      "heading": [
+        [
+          "mt2",
+          "The Book of"
+        ],
+        [
+          "mt1",
+          "Judith"
+        ]
+      ]
     },
     {
       "id": "ESG",
@@ -316,7 +376,17 @@
       "section": "old_testament",
       "title": "The Book of Esther",
       "short_title": "Esther",
-      "abbreviation": "Esth."
+      "abbreviation": "Esth.",
+      "heading": [
+        [
+          "mt2",
+          "The Book of"
+        ],
+        [
+          "mt1",
+          "Esther"
+        ]
+      ]
     },
     {
       "id": "1MA",
@@ -394,13 +464,33 @@
       "labelled_chapters": true,
       "abbreviation": "Pss.",
       "abbreviated_singly": "Ps.",
-      "title": "The Book of Psalms"
+      "title": "The Book of Psalms",
+      "heading": [
+        [
+          "mt2",
+          "The Book of"
+        ],
+        [
+          "mt1",
+          "Psalms"
+        ]
+      ]
     },
     {
       "id": "JOB",
       "source": "brenton",
       "section": "old_testament",
-      "title": "The Book of Job"
+      "title": "The Book of Job",
+      "heading": [
+        [
+          "mt2",
+          "The Book of"
+        ],
+        [
+          "mt1",
+          "Job"
+        ]
+      ]
     },
     {
       "id": "PRO",
@@ -463,88 +553,208 @@
       "id": "HOS",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Hosea",
-      "short_title": "Hosea"
+      "title": "The Book of the Prophet Hosea",
+      "short_title": "Hosea",
+      "heading": [
+        [
+          "mt2",
+          "The Book of the Prophet"
+        ],
+        [
+          "mt1",
+          "Hosea"
+        ]
+      ]
     },
     {
       "id": "AMO",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Amos",
-      "abbreviation": "Amos"
+      "title": "The Book of the Prophet Amos",
+      "abbreviation": "Amos",
+      "heading": [
+        [
+          "mt2",
+          "The Book of the Prophet"
+        ],
+        [
+          "mt1",
+          "Amos"
+        ]
+      ]
     },
     {
       "id": "MIC",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Michaias",
+      "title": "The Book of the Prophet Michaias",
       "short_title": "Michaias",
-      "abbreviation": "Mich."
+      "abbreviation": "Mich.",
+      "heading": [
+        [
+          "mt2",
+          "The Book of the Prophet"
+        ],
+        [
+          "mt1",
+          "Michaias"
+        ]
+      ]
     },
     {
       "id": "JOL",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Joel"
+      "title": "The Book of the Prophet Joel",
+      "heading": [
+        [
+          "mt2",
+          "The Book of the Prophet"
+        ],
+        [
+          "mt1",
+          "Joel"
+        ]
+      ]
     },
     {
       "id": "OBA",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Abdias",
+      "title": "The Book of the Prophet Abdias",
       "short_title": "Abdias",
-      "abbreviation": "Abd."
+      "abbreviation": "Abd.",
+      "heading": [
+        [
+          "mt2",
+          "The Book of the Prophet"
+        ],
+        [
+          "mt1",
+          "Abdias"
+        ]
+      ]
     },
     {
       "id": "JON",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Jonas",
-      "abbreviation": "Jonas"
+      "title": "The Book of the Prophet Jonas",
+      "abbreviation": "Jonas",
+      "heading": [
+        [
+          "mt2",
+          "The Book of the Prophet"
+        ],
+        [
+          "mt1",
+          "Jonas"
+        ]
+      ]
     },
     {
       "id": "NAM",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Nahum",
+      "title": "The Book of the Prophet Nahum",
       "short_title": "Nahum",
-      "abbreviation": "Nahum"
+      "abbreviation": "Nahum",
+      "heading": [
+        [
+          "mt2",
+          "The Book of the Prophet"
+        ],
+        [
+          "mt1",
+          "Nahum"
+        ]
+      ]
     },
     {
       "id": "HAB",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Abbacum",
+      "title": "The Book of the Prophet Abbacum",
       "short_title": "Abbacum",
-      "abbreviation": "Abb."
+      "abbreviation": "Abb.",
+      "heading": [
+        [
+          "mt2",
+          "The Book of the Prophet"
+        ],
+        [
+          "mt1",
+          "Abbacum"
+        ]
+      ]
     },
     {
       "id": "ZEP",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Sophonias",
-      "abbreviation": "Soph."
+      "title": "The Book of the Prophet Sophonias",
+      "abbreviation": "Soph.",
+      "heading": [
+        [
+          "mt2",
+          "The Book of the Prophet"
+        ],
+        [
+          "mt1",
+          "Sophonias"
+        ]
+      ]
     },
     {
       "id": "HAG",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Aggeus",
+      "title": "The Book of the Prophet Aggeus",
       "short_title": "Aggeus",
-      "abbreviation": "Agg."
+      "abbreviation": "Agg.",
+      "heading": [
+        [
+          "mt2",
+          "The Book of the Prophet"
+        ],
+        [
+          "mt1",
+          "Aggeus"
+        ]
+      ]
     },
     {
       "id": "ZEC",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Zacharias",
-      "abbreviation": "Zach."
+      "title": "The Book of the Prophet Zacharias",
+      "abbreviation": "Zach.",
+      "heading": [
+        [
+          "mt2",
+          "The Book of the Prophet"
+        ],
+        [
+          "mt1",
+          "Zacharias"
+        ]
+      ]
     },
     {
       "id": "MAL",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Malachias"
+      "title": "The Book of the Prophet Malachias",
+      "heading": [
+        [
+          "mt2",
+          "The Book of the Prophet"
+        ],
+        [
+          "mt1",
+          "Malachias"
+        ]
+      ]
     },
     {
       "id": "ISA",
@@ -583,21 +793,51 @@
       "id": "BAR",
       "source": "brenton",
       "section": "old_testament",
-      "title": "Baruch",
-      "abbreviation": "Baruch"
+      "title": "The Book of the Prophet Baruch",
+      "abbreviation": "Baruch",
+      "heading": [
+        [
+          "mt2",
+          "The Book of the Prophet"
+        ],
+        [
+          "mt1",
+          "Baruch"
+        ]
+      ]
     },
     {
       "id": "LAM",
       "source": "brenton",
       "section": "old_testament",
-      "title": "The Lamentations of Jeremias"
+      "title": "The Lamentations of Jeremias",
+      "heading": [
+        [
+          "mt1",
+          "The Lamentations"
+        ],
+        [
+          "mt2",
+          "of Jeremias"
+        ]
+      ]
     },
     {
       "id": "LJE",
       "source": "brenton",
       "section": "old_testament",
       "title": "The Epistle of Jeremias",
-      "short_title": "Epistle of Jeremias"
+      "short_title": "Epistle of Jeremias",
+      "heading": [
+        [
+          "mt1",
+          "The Epistle"
+        ],
+        [
+          "mt2",
+          "of Jeremias"
+        ]
+      ]
     },
     {
       "id": "EZK",
@@ -620,8 +860,18 @@
       "id": "DAG",
       "source": "brenton",
       "section": "old_testament",
-      "title": "The Book of Daniel",
-      "short_title": "Daniel"
+      "title": "The Book of the Prophet Daniel",
+      "short_title": "Daniel",
+      "heading": [
+        [
+          "mt2",
+          "The Book of the Prophet"
+        ],
+        [
+          "mt1",
+          "Daniel"
+        ]
+      ]
     },
     {
       "id": "MAT",
@@ -1070,7 +1320,8 @@
     },
     {
       "source": "brenton",
-      "id": "OTH"
+      "id": "OTH",
+      "continues": "XXE"
     }
   ],
   "new_testament_front": [
