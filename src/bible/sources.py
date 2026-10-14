@@ -169,10 +169,10 @@ SOURCES: Mapping[str, Pinned] = {
         "sha256": "d87e7f69d7f6c1c0331bf30872969f03914a871765548c6fcdb0b54db5a136cb",
     },
     "faa": {
-        "file": "sources/NTinHTML_AVorder_Unicode.html",
+        "archive": "sources/NTinHTML_AVorder_Unicode.zip",
         "url": "https://www.faraboveall.com/050_BibleTranslation/NTinHTML_AVorder_Unicode.html",
         "retrieved": "2026-10-03",
-        "sha256": "b00cadd25c57890ff68a201786debd37a81e7330bfa4f08b7e83310544422de4",
+        "sha256": "2e0bf18bc1900c07ba3d3af8d255d7ae3cdef9684f009b741a4a0c3439ab9ff6",
     },
     "msb": {
         "file": "sources/msb.txt",
@@ -415,6 +415,7 @@ def byzantine_inputs(pinned: Mapping[str, bytes]) -> MappingProxyType[str, Conte
         "web": ("web", "", usfm),
         "boyd_asv": ("boyd_asv", "", ()),
         "crosswire": ("crosswire", "", ("kjv.tr.xml",)),
+        "faa": ("faa", "", ("NTinHTML_AVorder_Unicode.html",)),
     }
     wanted: dict[str, list[str]] = {}
     for archive, directory, patterns in selected.values():
@@ -429,12 +430,16 @@ def byzantine_inputs(pinned: Mapping[str, bytes]) -> MappingProxyType[str, Conte
         name: members(archives[archive], directory, patterns)
         for name, (archive, directory, patterns) in selected.items()
     }
-    for name, single in (("accented_tr", "gnt.flat.json"), ("crosswire", "kjv.tr.xml")):
+    for name, single in (
+        ("accented_tr", "gnt.flat.json"),
+        ("crosswire", "kjv.tr.xml"),
+        ("faa", "NTinHTML_AVorder_Unicode.html"),
+    ):
         inputs[name] = inputs[name] / single
     loose = {
         name: Content({Path(SOURCES[name]["file"]).name: pinned[name]})
         / Path(SOURCES[name]["file"]).name
-        for name in ("faa", "pierpont", "msb", "msb_tables")
+        for name in ("pierpont", "msb", "msb_tables")
     }
     # The Greek New Testament and Robinson's collation are published as PDFs:
     # Poppler reads them, once, and the texts it read are the inputs.
