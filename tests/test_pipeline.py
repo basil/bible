@@ -118,14 +118,12 @@ def test_continuing_front_matter_has_one_title_line(
         pipeline.view(dataclasses.replace(edition, documents=documents), "pdf")
 
 
-def test_no_stage_changes_what_an_earlier_stage_made(
-    staged: Staged, read: bible.pipeline.Read
-) -> None:
+def test_no_stage_changes_what_an_earlier_stage_made(staged: Staged) -> None:
     """Documents are shared between stages, so none may be changed in place."""
     assert (
-        dict(read.brenton),
-        dict(read.kjv),
-        dict(read.updated_brenton),
+        dict(staged.read.brenton),
+        dict(staged.read.kjv),
+        dict(staged.read.updated_brenton),
     ) == staged.read_before
     assert staged.promoted == staged.promoted_before
     assert staged.units == staged.assembled

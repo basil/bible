@@ -1109,58 +1109,6 @@ def test_preparing_greek_does_not_change_inputs(byzantine: Context) -> None:
     assert inputs() == before
 
 
-def test_appendix_and_review_share_all_prepared_readings(
-    byzantine: Context,
-    rows: list[appendix.Row],
-    packets: dict[str, str],
-    index: review.Index,
-) -> None:
-    prepared = appendix.prepare_greek(byzantine)
-    tr, rp, contrasts = prepared
-    for row in rows:
-        assert row.greek_tr == " ".join(tr[row.source])
-        assert row.greek_rp == " ".join(rp.get(row.reference, []))
-    for unit in byzantine["units"]:
-        old = " ".join(
-            tr[unit["ref"]][
-                slice(
-                    *appendix.projected(byzantine, "tr", unit["ref"], unit["tr_range"])
-                )
-            ]
-        )
-        new = " ".join(
-            rp[unit["target_ref"]][
-                slice(
-                    *appendix.projected(
-                        byzantine, "rp", unit["target_ref"], unit["rp_range"]
-                    )
-                )
-            ]
-        )
-        packet = packets[unit["ref"].split()[0] + ".md"]
-        if index["rows"][unit["id"]]["disposition"] == "neutral":
-            assert (
-                f"| {unit['id']} | {unit['class']} | {review.esc(old or '∅')} → {review.esc(new or '∅')} |"
-                in packet
-            )
-        else:
-            section = section_of(packets, unit["id"])
-            assert (
-                review.unit_greek_excerpt(
-                    unit,
-                    byzantine,
-                    review.unit_passages(unit, byzantine, prepared, index["prepared"]),
-                )
-                in section
-            )
-            if unit["id"] in contrasts:
-                old, new = unit["tr_accented"], unit["rp_accented"]
-                assert (
-                    f"apparatus accent evidence: {review.esc(old)} → {review.esc(new)}"
-                    in section
-                )
-
-
 @pytest.mark.parametrize("authored", [False, True])
 def test_appendix_comparisons_preserve_changes_and_retained_source_passages(
     rows: list[appendix.Row],

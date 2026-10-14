@@ -19,7 +19,6 @@ from bible import pipeline
 from bible import policy as decisions
 from bible import scripture
 from bible import sources as source_files
-from bible import terminology
 from bible.byzantine.rows import Disposition, Instruction, Report, Unit
 from bible.byzantine.stages import Context
 from bible.sources import Content
@@ -47,21 +46,6 @@ def read(
 
 
 @pytest.fixture(scope="session")
-def edition(
-    sources: bible.sources.Sources, declared: bible.policy.Policy
-) -> bible.pipeline.Edition:
-    """The edition, prepared without reading a file: everything is read
-    before preparation starts."""
-
-    def unreadable(*args: object, **kwargs: object) -> None:
-        raise AssertionError("Preparation must not read files")
-
-    with pytest.MonkeyPatch.context() as patch:
-        patch.setattr(Path, "open", unreadable)
-        return pipeline.prepare(sources, declared)
-
-
-@pytest.fixture(scope="session")
 def policy(edition: bible.pipeline.Edition) -> bible.policy.Policy:
     """The decisions, with the places of the verses that the build works out."""
     return edition.policy
@@ -75,12 +59,11 @@ def exported(edition: bible.pipeline.Edition) -> dict[str, str]:
 
 @dataclass(frozen=True)
 class Staged:
-    """The stages from promotion to annotation run once on the whole corpus,
-    with a deep copy of each stage's result taken before the next ran, for
-    the tests that check the stages against each other."""
+    """Stages retained from edition preparation, with snapshots taken before
+    the next stage ran, for the checks of preservation and immutability."""
 
-    # Brenton's and the King James books as promoted, without the rest of
-    # the reconciliation, which the session need not keep.
+    read: bible.pipeline.Read
+    # Brenton's and the King James books as promoted.
     promoted: tuple[dict[str, Document], ...]
     units: dict[str, Document]
     lined: dict[str, Document]
@@ -93,29 +76,52 @@ class Staged:
 
 
 @pytest.fixture(scope="session")
-def staged(
+def prepared_edition(
     sources: bible.sources.Sources,
     declared: bible.policy.Policy,
-    read: bible.pipeline.Read,
-) -> Staged:
-    # The decisions as declared, as pipeline.prepare gives them: the stages
-    # before placement must not see the places it works out.
-    read_before = copy.deepcopy(
-        (dict(read.brenton), dict(read.kjv), dict(read.updated_brenton))
-    )
-    promoted = pipeline.promote(
-        read, declared, sources.byzantine, terminology.registry(declared)
-    )
-    promoted_before = copy.deepcopy((dict(promoted.brenton), dict(promoted.kjv)))
-    units = pipeline.assemble(promoted, declared, sources)
-    assembled = copy.deepcopy(dict(units))
-    placed = pipeline.placed(units, read, declared)
-    lined = pipeline.lined(units, read, placed)
-    line_documents = copy.deepcopy(dict(lined))
-    ctx = pipeline.context(lined, placed, sources)
-    _, introductions, appendix_notes, _ = pipeline.front_and_back(read, ctx, sources)
-    pipeline.annotated(lined, read, introductions, appendix_notes, ctx)
-    return Staged(
+) -> tuple[bible.pipeline.Edition, Staged]:
+    """Prepare once, keeping what four stages made, each with a copy taken
+    as it finished, before the next stage ran."""
+    made: dict[str, tuple[Any, Any]] = {}
+
+    def kept(name: str, copied: Callable[[Any], object]) -> Callable[..., object]:
+        stage = getattr(pipeline, name)
+
+        def run(*args: object) -> object:
+            assert name not in made, f"pipeline.{name} ran twice"
+            result = stage(*args)
+            made[name] = (result, copy.deepcopy(copied(result)))
+            return result
+
+        return run
+
+    def unreadable(*args: object, **kwargs: object) -> None:
+        raise AssertionError("Preparation must not read files")
+
+    with pytest.MonkeyPatch.context() as patch:
+        patch.setattr(Path, "open", unreadable)
+        patch.setattr(
+            pipeline,
+            "read",
+            kept(
+                "read",
+                lambda r: (dict(r.brenton), dict(r.kjv), dict(r.updated_brenton)),
+            ),
+        )
+        patch.setattr(
+            pipeline,
+            "promote",
+            kept("promote", lambda p: (dict(p.brenton), dict(p.kjv))),
+        )
+        patch.setattr(pipeline, "assemble", kept("assemble", dict))
+        patch.setattr(pipeline, "lined", kept("lined", dict))
+        edition = pipeline.prepare(sources, declared)
+    read_sources, read_before = made["read"]
+    promoted, promoted_before = made["promote"]
+    units, assembled = made["assemble"]
+    lined, line_documents = made["lined"]
+    return edition, Staged(
+        read_sources,
         (dict(promoted.brenton), dict(promoted.kjv)),
         dict(units),
         dict(lined),
@@ -124,6 +130,20 @@ def staged(
         assembled,
         line_documents,
     )
+
+
+@pytest.fixture(scope="session")
+def edition(
+    prepared_edition: tuple[bible.pipeline.Edition, Staged],
+) -> bible.pipeline.Edition:
+    """The edition, prepared without reading a file: everything is read
+    before preparation starts."""
+    return prepared_edition[0]
+
+
+@pytest.fixture(scope="session")
+def staged(prepared_edition: tuple[bible.pipeline.Edition, Staged]) -> Staged:
+    return prepared_edition[1]
 
 
 def changed(
