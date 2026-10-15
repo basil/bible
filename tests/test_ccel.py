@@ -691,10 +691,10 @@ def test_the_real_pages_supply_the_notes_ebible_lacks(
     )
     report = read.ccel
     assert (report.pages, report.bodies) == (708, 4116)
-    assert report.inserted == 1823
+    assert report.inserted == 1824
     assert report.duplicates == 2193
     assert len(report.held) == 0
-    assert len(report.left_out) == 93
+    assert len(report.left_out) == 92
     # The Alexandrine note that was once unreadable is decided, not left out.
     assert "JER 52:32 CCEL" in declared.alexandrinus["readings"]
     assert not any(item.key == "13.lii#10" for item in report.left_out)

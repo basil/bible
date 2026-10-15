@@ -560,6 +560,12 @@
       "to": "Gr.</i> in his kingdom.",
       "why": "Brenton 1879 physical page 489 and 1900 physical page 485 (printed 473 in both) print “ρ Gr. in his kingdom.”, with ρ immediately before “in the beginning of his reign” in the unnumbered paragraph after III Kings 16:28 that eBible numbers 1KI 16:28a. CCEL sets a colon after Gr, capitalizes “in” and drops the closing period. Once mended, the note has eBible’s wording at the same caller word, so the build accounts for it as eBible’s note 1KI 16:28a#2 rather than printing a second copy. The correction mends CCEL’s transcription alone.",
       "uncategorized": true
+    },
+    "v.7#32": {
+      "from": "<p> Probably Moloch. <i id=\"v.7.p0.175\">Heb.</i> ���</p>",
+      "to": "<p> Probably Moloch. <i id=\"v.7.p0.175\">Heb.</i> מלך.</p>",
+      "why": "Brenton 1900 physical p. 165 and 1879 physical p. 169 (both printed p. 153) print β Probably Moloch. Heb. מלך. with the caller before a ruler in Leviticus 18:21. CCEL’s three bytes are not UTF-8; read as Windows-1255 they spell סלך, with samekh for mem. Set Brenton’s letters and the closing stop. This mends CCEL’s note transcription alone.",
+      "uncategorized": true
     }
   },
   "notes": {
