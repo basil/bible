@@ -310,6 +310,8 @@ def test_margin_notes_that_fit_in_order_pass(tmp_path: Path) -> None:
         # Off the foot of the text block, and off its head.
         ([("GEN2.19", 46, 561, 20), ("GEN2.20", 46, 70, 20)], "GEN2.20"),
         ([("GEN2.20", 46, 562, 20)], "GEN2.20"),
+        # Pushed off the foot of the page itself.
+        ([("GEN2.19", 46, 561, 20), ("GEN2.20", 46, -10, 20)], "GEN2.20"),
         # Over the note before it, and over the note placed above it.
         ([("GEN2.19", 46, 561, 20), ("GEN2.20", 46, 551, 10)], "GEN2.20"),
         ([("GEN2.19", 46, 551, 20), ("GEN2.20", 46, 560, 20)], "GEN2.19"),

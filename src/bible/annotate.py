@@ -150,7 +150,6 @@ def printed(
     runs, terms, original = notes.displayed(
         body, *lemmas.echoes(verse.text, words, span, glossed), books=ctx.books
     )
-    sentence = exception.get("sentence", notes.is_sentence(runs))
     runs = notes.finished(runs, terms, lemma, exception.get("sentence"), ctx.terms, key)
     report.keys.add(key)
     report.rows.append(
@@ -170,10 +169,9 @@ def printed(
     if boundary:
         assert lemma is not None
         extra["x-scope"] = {"declared": lemma + boundary}
-    note = notes.linked(
+    return notes.linked(
         notes.footnote(read.reference, lemma, runs, **extra), body, ctx.books
     )
-    return notes.below(note) if sentence else note
 
 
 def brenton(
@@ -184,9 +182,8 @@ def brenton(
     ctx: Context,
 ) -> tuple[Document, Report]:
     """A book of Brenton's with his notes and cross-references set as
-    notes, each naming its lemma; sentences take full-width footnotes and
-    callers. A cross-reference becomes a note of "See" and what it cites;
-    those the quotation links replace are left out."""
+    notes, each naming its lemma. A cross-reference becomes a note of "See"
+    and what it cites; those the quotation links replace are left out."""
     policy, report = ctx.policy, Report()
     tongue = citations.dialect("brenton", policy=policy)
     exceptions = policy.brenton_notes["notes"]
@@ -394,7 +391,7 @@ def george(
     original: Document,
 ) -> tuple[Document, Report]:
     """A book of the Cambridge text with the 1611 marginal notes set on it as
-    notes; sentences take full-width footnotes and callers.
+    notes.
 
     Each note is anchored at George's lemma, or at the Cambridge words recorded
     for it in edition/kjv-notes.json where the spelling differs, the lemma

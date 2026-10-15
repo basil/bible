@@ -2,7 +2,7 @@
 
 Each note names the words it glosses, after its verse's number in the
 margin: "25:20 I doubted of such manner of questions: or, I was doubtful how
-to enquire hereof"; a sentence or a long note, set below the text, prints
+to enquire hereof"; a note edition/margin.json sets below the text prints
 under its caller alone. The rules
 here find those words from the place of Brenton's caller, or of George's
 lemma, and the rendering the note gives; edition/brenton-notes.json and

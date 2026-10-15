@@ -84,6 +84,11 @@ class Lines(TypedDict, total=False):
     why: ReadOnly[str]
 
 
+class Margin(TypedDict):
+    why: ReadOnly[str]
+    below: ReadOnly[Mapping[str, str]]
+
+
 class BookIntroductionsGlosses(TypedDict, total=False):
     after: ReadOnly[str]
     insert: ReadOnly[str]
@@ -596,7 +601,6 @@ Byzantine = TypedDict(
         "accents": ReadOnly[Mapping[str, ByzantineAccent]],
         "hodges-farstad": ReadOnly[Mapping[str, ByzantineSide]],
         "lemmas": ReadOnly[Mapping[str, ByzantineLemma]],
-        "footnotes": ReadOnly[Mapping[str, str]],
     },
     total=False,
 )

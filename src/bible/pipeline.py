@@ -741,7 +741,7 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
     revised: revision.MetRevisions = set()
     comparisons: dict[str, Document] = {}
     finished: dict[str, Document] = {}
-    footnotes = policy.byzantine.get("footnotes", {})
+    below, set_down = set(policy.margin["below"]), set[str]()
     # A row of the review for every note, read from the books as finished.
     note_rows: dict[str, list[annotate.NoteRow]] = {}
     for code, doc in {**front, **books}.items():
@@ -761,13 +761,18 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
             revised,
         )
         if code in books:
-            finished[code] = notes.long_notes(
-                finished[code], [key for key in footnotes if key.startswith(code + " ")]
-            )
+            # A note is keyed by its source's book, which need not be the
+            # unit's: Nehemias's notes are keyed as 2 Esdras's.
+            here = below & {
+                note.get("x-key") for note in usj.notes_of(finished[code]["content"])
+            }
+            finished[code] = notes.set_below(finished[code], here)
+            set_down |= here
             revision.check_kept(code, named, finished[code], policy)
             note_rows[code] = annotate.finished_rows(
                 finished[code], reports[code].rows, policy.brenton_notes["notes"]
             )
+    require(set_down == below, f"Unused note placements: {sorted(below - set_down)}")
     labels = {
         "tr": ctx.terms.display("textus-receptus"),
         "rp": ctx.terms.display("robinson-pierpont"),

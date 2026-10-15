@@ -95,7 +95,7 @@ When upgrading PTXprint, check the places that depend on its internals:
 
 The image build fails if the patched lines have changed upstream. Drop each patch once PTXprint has the fix.
 
-Then look at the sample: the short notes should stand beside their verses in the margin, the sentences, long notes and front matter's footnotes at the foot of the page, and the numbering and abbreviations tables should be intact.
+Then look at the sample: the notes should stand beside their verses in the margin, those that would crowd it and the front matter's footnotes at the foot of the page, and the numbering and abbreviations tables should be intact.
 
 ## Updating source texts
 

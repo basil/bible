@@ -19,7 +19,6 @@ from bible import policy_schema as schema
 from bible.checks import require, require_fields
 from bible.files import read_json
 from bible.policy_schema import Entry
-from bible.sources import NEW_TESTAMENT as NEW_TESTAMENT_BOOKS
 
 FILES = (
     "manifest",
@@ -39,6 +38,7 @@ FILES = (
     "turpie",
     "versification",
     "lines",
+    "margin",
     "psalter",
     "comparisons",
     "witnesses",
@@ -87,6 +87,7 @@ class Policy:
     psalter: schema.Psalter
     comparisons: schema.Comparisons
     lines: schema.Lines
+    margin: schema.Margin
     witnesses: tuple[schema.Witnesses, ...]
     byzantine: schema.Byzantine
     byzantine_placements: schema.ByzantinePlacements
@@ -172,6 +173,18 @@ def thaw(value: object) -> Any:
 def check(policy: Policy) -> None:
     require_fields(policy.psalter, {"why", "kathismata", "middle"}, (), "Psalter")
     require(bool(policy.psalter["why"].strip()), "Psalter without a why")
+    require_fields(policy.margin, {"why", "below"}, (), "Margin")
+    require(
+        isinstance(policy.margin["why"], str)
+        and bool(policy.margin["why"].strip())
+        and isinstance(policy.margin["below"], Mapping),
+        "Margin without a why, or without its placements by note",
+    )
+    for key, why in policy.margin["below"].items():
+        require(
+            isinstance(why, str) and bool(why.strip()),
+            f"Note placement without a why: {key}",
+        )
     require_fields(policy.comparisons, {"why", "passages"}, (), "Comparisons")
     for comparison in policy.comparisons["passages"]:
         require_fields(comparison, {"passage", "kjv", "oleb"}, {"osb"}, "Comparison")
@@ -474,7 +487,7 @@ def check(policy: Policy) -> None:
     require_fields(
         policy.byzantine,
         {"why", "readings", "structure", "accents", "hodges-farstad", "lemmas"},
-        {"footnotes"},
+        (),
         "Byzantine decisions",
     )
     require_fields(
@@ -500,16 +513,6 @@ def check(policy: Policy) -> None:
         require(bool(side["why"].strip()), f"{what} without a why")
     for key, lemma in policy.byzantine["lemmas"].items():
         require_fields(lemma, {"lemma", "why"}, (), f"Byzantine note lemma {key}")
-    for key, why in policy.byzantine.get("footnotes", {}).items():
-        require(
-            isinstance(why, str) and bool(why.strip()),
-            f"Footnote placement without a reason: {key}",
-        )
-        book, _, rest = key.partition(" ")
-        require(
-            book in NEW_TESTAMENT_BOOKS and bool(rest),
-            f"Footnote placement outside the New Testament: {key}",
-        )
     require_fields(
         policy.byzantine_placements, {"why", "placements"}, (), "Byzantine placements"
     )
@@ -542,6 +545,7 @@ def load() -> Policy:
         turpie=cast(schema.Turpie, data["turpie"]),
         versification=cast(schema.Versification, data["versification"]),
         lines=cast(schema.Lines, data["lines"]),
+        margin=cast(schema.Margin, data["margin"]),
         psalter=cast(schema.Psalter, data["psalter"]),
         comparisons=cast(schema.Comparisons, data["comparisons"]),
         witnesses=cast(tuple[schema.Witnesses, ...], data["witnesses"]),

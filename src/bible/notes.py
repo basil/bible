@@ -10,8 +10,9 @@ say what to print where the rules go wrong, and why. The notes that
 edition/alexandrinus.json writes say what each of their parts is themselves.
 
 A note prints its verse, the words it is about, and its text, which runs on
-from them unless it is a sentence of its own. Sentences and long notes go
-below the text with callers; short fragments stay in the margin without them.
+from them unless it is a sentence of its own. The notes stand in the margin
+without callers, but for the few that edition/margin.json sets below the text
+with callers, to relieve a crowded page.
 Besides corrections, the "See" that opens a cross-reference, the words a
 widened lemma adds to its renderings, and the decisions of edition/prose.json,
 the edition changes nothing of a note's words but its quotation marks,
@@ -147,8 +148,6 @@ AUTHORED = {
     "fq": "quotation",
     "xt": "citation",
 }
-# Maximum visible length of a fragment kept in the margin.
-MARGIN_NOTE_LIMIT = 100
 
 # How a part of a printed note is marked.
 PRINTED = {"commentary": "ft", "reading": "fqa", "quotation": "fqa", "citation": "xt"}
@@ -1186,41 +1185,29 @@ def linked(note: Node, body: Body, books: bible.references.Books) -> Node:
     return {**note, "content": content}
 
 
-def below(note: Node) -> Node:
-    """A note set below the text, as a full-width footnote with a caller."""
-    return {**note, "marker": "ef", "caller": "+"}
+def set_below(doc: Document, placed: Collection[str]) -> Document:
+    """The document with the scripture notes keyed in placed set below the
+    text. Every other note stays in the margin, whatever its length or form:
+    PTXprint moves crowded notes up and down within their page, and only a
+    page whose notes overrun its margin needs any of them below.
 
-
-def long_notes(doc: Document, placed: Collection[str] = ()) -> Document:
-    """Put scripture notes over 100 visible characters below the text, and
-    the notes whose keys are placed there.
-
-    Count the lemma and body after revision, excluding only the verse origin.
-    Existing full-width notes keep their callers and placement.
-    Explicit placements must match once and change the automatic placement.
+    Each placement must match one note in the margin, which it sets as a
+    full-width footnote with a caller.
     """
-    found: set[str] = set()
+    wanted, found = set(placed), set[str]()
+    if not wanted:
+        return doc
 
     def place(node: Node) -> Node:
-        if node["type"] == "note":
-            key = node.get("x-key")
-            text = usj.text_of(node["content"], skip=usj.is_origin)
-            long = len(text.strip()) > MARGIN_NOTE_LIMIT
-            if key in placed:
-                assert key is not None
-                require(key not in found, f"Duplicate footnote placement: {key}")
-                require(
-                    node["marker"] in ("f", "x") and not long,
-                    f"Footnote placement changes nothing: {key}",
-                )
-                found.add(key)
-            if node["marker"] in ("f", "x") and (long or key in placed):
-                return below(node)
+        key = node.get("x-key")
+        if node["type"] == "note" and key in wanted:
+            assert key is not None
+            require(key not in found, f"Duplicate note placement: {key}")
+            require(node["marker"] == "f", f"Note placement changes nothing: {key}")
+            found.add(key)
+            return {**node, "marker": "ef", "caller": "+"}
         return node
 
     result = usj.with_content(doc, lambda content: usj.mapped(content, place))
-    require(
-        found == set(placed),
-        f"Unused footnote placements: {sorted(set(placed) - found)}",
-    )
+    require(found == wanted, f"Unused note placements: {sorted(wanted - found)}")
     return result

@@ -1,0 +1,11 @@
+{
+  "why": "Every note stands in the inside margin beside its verse. PTXprint moves crowded notes up and down within their page but cannot carry them to the next, so where a page's notes overrun its margin, the tallest of them are set below the text, as footnotes with callers, each keyed by the note, with the passage it relieves.",
+  "below": {
+    "REV 5:6#1 TR": "The tallest note where Revelation 5:5 to 6:9 overruns the margin of its page by some nineteen lines.",
+    "REV 5:13#3 TR#2": "The third tallest note where Revelation 5:5 to 6:9 overruns the margin of its page.",
+    "REV 6:6 A measure": "The second tallest note where Revelation 5:5 to 6:9 overruns the margin of its page.",
+    "REV 13:10#1 TR": "The third tallest note where Revelation 12:17 to 14:6 overruns the margin of its page.",
+    "REV 13:13#1 TR": "The tallest note where Revelation 12:17 to 14:6 overruns the margin of its page by some seventeen lines.",
+    "REV 13:14#3 TR": "The second tallest note where Revelation 12:17 to 14:6 overruns the margin of its page."
+  }
+}

@@ -59,10 +59,11 @@ KEPT_MARKERS = {
     )
 }
 # PTXprint's record of where the final run set a margin note: its reference,
-# height, depth, page, and top (in scaled points from the foot of the page).
+# height, depth, page, and top (in scaled points from the foot of the page,
+# negative for a note an overfull margin pushes off the page).
 MARGIN_NOTE = re.compile(
     r"\\@marginnote\{([^}]*)\}(?:\{[^}]*\}){5}\{([\d.]+)pt\}\{([\d.]+)pt\}"
-    r"(?:\{[^}]*\}){2}\{(\d+)\}\{\d+\}\{(\d+)\}"
+    r"(?:\{[^}]*\}){2}\{(\d+)\}\{\d+\}\{(-?\d+)\}"
 )
 
 
@@ -83,7 +84,7 @@ def check_processed(project: Path, base: Path, ids: list[str]) -> None:
     tex = texfiles[0].read_text(encoding="utf-8")
     require("%\\OmitCallerInNote{f}" in tex, "Footnote callers unexpectedly suppressed")
     require("\\AutoCallers{f}{1,2," in tex, "Footnote callers not numbered")
-    # Sentences, long notes, introductions and Appendix notes are ef
+    # The notes set below the text, introductions and Appendix notes are ef
     # footnotes, whose callers stand in the text.
     require(
         "%\\OmitCallerInNote{ef}" in tex,
@@ -500,7 +501,12 @@ def inspect_pdf(
     check_added_words_roman(pdf, reading_text, project, ids, sample)
     check_citations(reading_text)
     overflow = margin_overflow(base, (height - top) * TEX_POINTS, bottom * TEX_POINTS)
-    require(not overflow, f"Margin note does not fit: {overflow[:5]}")
+    # An overrun page pushes many notes off at once: name every such page,
+    # for edition/margin.json to relieve, with the first note that does not fit.
+    overrun: dict[str, str] = {}
+    for entry in overflow:
+        overrun.setdefault(entry.rsplit(" ", 1)[0], entry)
+    require(not overflow, f"Margin notes do not fit: {list(overrun.values())}")
     logs = "\n".join(
         p.read_text(encoding="utf-8", errors="replace") for p in base.rglob("*.log")
     )

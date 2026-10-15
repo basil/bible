@@ -398,8 +398,8 @@ def test_the_edition_prints_its_readings_and_supplied_passages(
     kingdoms = usj.serialize(edition.documents["1SA"])
     # Supplied from the Authorized Version, with Brenton's form of the name.
     assert (
-        r"\v 12 \ef + \fr 23:12 \ft Alex. has the verse. Vat. omits; the English is supplied "
-        r"from the Authorized Version.\ef*Then said David, Will the men of Keila deliver me"
+        r"\v 12 \f - \fr 23:12 \ft Alex. has the verse. Vat. omits; the English is supplied "
+        r"from the Authorized Version.\f*Then said David, Will the men of Keila deliver me"
     ) in kingdoms
     # The names the Alexandrine text omits are noted on the verse before.
     assert "\\v 16a" not in usj.serialize(edition.documents["2SA"])

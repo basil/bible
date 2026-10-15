@@ -356,8 +356,8 @@ def test_a_note_that_is_a_sentence_takes_a_capital_and_a_full_stop(
     result, report = annotate.george("MAT", doc, listed, ctx, original=doc)
     assert doc == before and listed == listed_before
     assert verse_lines(result)["2"] == (
-        r"and paid an hundred \ef + \fr 99:2 \fq pence: \ft The Roman penny is the eighth "
-        r"part of an ounce.\ef*pence to the \f - \fr 99:2 \fq keeper: \ft or, \fqa porter\f*"
+        r"and paid an hundred \f - \fr 99:2 \fq pence: \ft The Roman penny is the eighth "
+        r"part of an ounce.\f*pence to the \f - \fr 99:2 \fq keeper: \ft or, \fqa porter\f*"
         "keeper of the house."
     )
     assert [row["rule"] for row in report.rows] == ["anchor", "anchor"]
@@ -1598,90 +1598,72 @@ def test_corrected_transcriptions_print_without_their_slips(
     assert len(romans) == 1 and romans[0].startswith("9:28 ")
 
 
-@pytest.mark.parametrize("marker", ["f", "x"])
-@pytest.mark.parametrize("offset", [-1, 0, 1])
-def test_long_notes_count_lemma_and_body_without_origin(
-    marker: str, offset: int
-) -> None:
-    length = notes.MARGIN_NOTE_LIMIT + offset
-    origin, body = ("xo", "xt") if marker == "x" else ("fr", "fqa")
-    note = usj.note(
-        marker,
-        usj.char(origin, "123:456 "),
-        usj.char("fq", "lemma: "),
-        usj.char(body, usj.char("it", "a" * (length - 7))),
-        **usj.Extra(
-            {
-                "x-key": "GEN 1:1#1",
-                "x-scope": {"declared": "lemma"},
-                "category": "edition",
-            }
-        ),
-    )
-    doc = usj.document([usj.para("p", "before", note, "after")])
-    before = deepcopy(doc)
-    result = notes.long_notes(doc)
-    assert doc == before
-    moved = usj.notes_of(result["content"])[0]
-    assert moved == {
-        **note,
-        "marker": "ef" if length > notes.MARGIN_NOTE_LIMIT else marker,
-        "caller": "+" if length > notes.MARGIN_NOTE_LIMIT else "-",
-    }
-    assert usj.text_of(result["content"]) == usj.text_of(doc["content"])
-
-
-def test_existing_full_width_notes_keep_their_placement() -> None:
-    note = usj.note("ef", usj.char("ft", "Appendix " * 20), caller="+")
-    doc = usj.document([usj.para("p", note, "words")])
-    assert notes.long_notes(doc) == doc
-
-
-def test_explanations_use_callers_and_short_glosses_stay_in_margin(
+def test_notes_stay_in_the_margin_whatever_their_length_or_form(
     edition: bible.pipeline.Edition,
 ) -> None:
-    for code, key in [("GEN", "GEN 15:11"), ("REV", "REV 6:6 A measure")]:
-        note = next(
+    def note(key: str) -> Node:
+        return next(
             n
-            for n in usj.notes_of(edition.documents[code]["content"])
+            for n in usj.notes_of(edition.documents[key.split(" ")[0]]["content"])
             if n.get("x-key") == key
         )
-        assert (note["marker"], note["caller"]) == ("ef", "+")
-    gloss = next(
-        n
-        for n in usj.notes_of(edition.documents["GEN"]["content"])
-        if n.get("x-key") == "GEN 1:9"
+
+    # A sentence of Brenton's, and a gloss.
+    for key in ["GEN 15:11", "GEN 1:9"]:
+        assert (note(key)["marker"], note(key)["caller"]) == ("f", "-")
+    assert any(
+        n["marker"] == "f" and len(usj.text_of(n["content"])) > 200
+        for n in usj.notes_of(edition.documents["REV"]["content"])
     )
-    assert (gloss["marker"], gloss["caller"]) == ("f", "-")
+    # Only a decision sets a note below the text: every other keyed note
+    # there is one of Brenton's Appendix.
+    assert note("REV 6:6 A measure")["marker"] == "ef"
+    assert {
+        n["x-key"]
+        for code in edition.scripture
+        for n in usj.notes_of(edition.documents[code]["content"])
+        if n["marker"] == "ef" and "x-key" in n and not n["x-key"].endswith(" Appendix")
+    } == set(edition.policy.margin["below"])
 
 
 @pytest.mark.parametrize(
-    "body, sentence", [("This is light.", False), ("Or, light.", True)]
+    "body, sentence, expected",
+    [
+        ("This is light.", False, r"\f - \fr 99:1 \fq light: \ft this is light\f*"),
+        ("Or, light.", True, r"\f - \fr 99:1 \fq light: \ft or, \fqa light\ft .\f*"),
+    ],
 )
-def test_sentence_override_controls_placement(
-    ctx: bible.annotate.Context, body: str, sentence: bool
+def test_a_sentence_override_sets_the_capital_and_full_stop(
+    ctx: bible.annotate.Context, body: str, sentence: bool, expected: str
 ) -> None:
-    policy = changed(
-        ctx.policy,
-        "brenton_notes",
-        lambda data: data["notes"].update(
-            {
-                "GEN 99:1": {
-                    "sentence": sentence,
-                    "why": "test the declared classification",
+    def overridden(sentence: bool) -> bible.annotate.Context:
+        policy = changed(
+            ctx.policy,
+            "brenton_notes",
+            lambda data: data["notes"].update(
+                {
+                    "GEN 99:1": {
+                        "sentence": sentence,
+                        "why": "test the declared classification",
+                    }
                 }
-            }
-        ),
-    )
-    context = replace(ctx, policy=policy)
+            ),
+        )
+        return replace(ctx, policy=policy)
+
     verse = r"\v 1 Let there be \f + \fr 99:1 \ft " + body + r"\f*light."
-    text = printed(verse, context)["1"]
-    assert (r"\ef + " if sentence else r"\f - ") in text
+    # The note stays in the margin either way.
+    assert expected in printed(verse, overridden(sentence))["1"]
+    with pytest.raises(CheckFailed, match="sentence override changes nothing"):
+        printed(verse, overridden(not sentence))
 
 
-def test_manual_footnote_placement_preserves_the_note_and_rejects_stale_decisions() -> (
-    None
-):
+def test_a_note_placement_needs_its_reason(declared: bible.policy.Policy) -> None:
+    with pytest.raises(CheckFailed, match="Note placement without a why: REV 1:1"):
+        changed(declared, "margin", lambda data: data["below"].update({"REV 1:1": ""}))
+
+
+def test_a_note_set_below_keeps_its_words_and_stale_placements_stop_the_build() -> None:
     key = "REV 13:1#1 TR"
     note = notes.footnote(
         "13:1",
@@ -1697,16 +1679,14 @@ def test_manual_footnote_placement_preserves_the_note_and_rejects_stale_decision
     )
     doc = usj.document([usj.para("p", "before", note, "after")])
     before = deepcopy(doc)
-    placements = {key: "relieve the crowded opening"}
-    placed = notes.long_notes(doc, placements)
+    placed = notes.set_below(doc, [key])
     assert doc == before
     assert usj.notes_of(placed["content"]) == [{**note, "marker": "ef", "caller": "+"}]
     assert usj.text_of(placed["content"]) == usj.text_of(doc["content"])
+    assert notes.set_below(doc, []) == doc
     with pytest.raises(CheckFailed, match="changes nothing.*REV 13:1#1 TR"):
-        notes.long_notes(placed, placements)
-    with pytest.raises(CheckFailed, match="Unused footnote placements.*REV 13:1#2 TR"):
-        notes.long_notes(doc, {"REV 13:1#2 TR": "no matching key"})
-    with pytest.raises(
-        CheckFailed, match="Duplicate footnote placement.*REV 13:1#1 TR"
-    ):
-        notes.long_notes(usj.document([usj.para("p", note, note)]), placements)
+        notes.set_below(placed, [key])
+    with pytest.raises(CheckFailed, match="Unused note placements.*REV 13:1#2 TR"):
+        notes.set_below(doc, ["REV 13:1#2 TR"])
+    with pytest.raises(CheckFailed, match="Duplicate note placement.*REV 13:1#1 TR"):
+        notes.set_below(usj.document([usj.para("p", note, note)]), [key])
