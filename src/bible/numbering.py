@@ -423,7 +423,7 @@ def _apocryphal(part: VersificationApocrypha, theirs: bible.references.Books) ->
     name = theirs.names[part["kjv"]]
     if "chapter" in part:
         name += f" {part['chapter']}"
-    return f"{name}, in the Apocrypha"
+    return f"{name} (Apocrypha)"
 
 
 def page(

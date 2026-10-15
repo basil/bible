@@ -101,26 +101,16 @@
 \Superscript -
 \Raise 0pt
 
-% Front-matter reference tables have stable columns, a clear gutter, and
-% slightly smaller type than the surrounding prose. PTXprint uses tc's
-% SpaceBefore as a fixed column width in twelfths of the text width.
-\Marker cat:reference|tr
-\LineSpacing 1.04
-
+% The numbering tables have fixed columns, so that every book's table lines
+% up the same. PTXprint uses tc's SpaceBefore as a fixed column width in
+% twelfths of the text width. The King James side is wide enough for "Song
+% of the Three Holy Children (Apocrypha)" on one line, with a little space
+% before the edition's side, which holds its widest heading.
 \Marker cat:reference|tc1
-\FontSize 11.4
-\SpaceBefore 6.48
-\RightMargin 0.15
+\SpaceBefore 7
 
 \Marker cat:reference|tc2
-\FontSize 11.4
-\SpaceBefore 5.52
-
-\Marker cat:reference|th1
-\FontSize 11.4
-
-\Marker cat:reference|th2
-\FontSize 11.4
+\SpaceBefore 5
 
 % A kathisma heading stands above the psalms it holds, so it is set larger
 % than their chapter labels. The stasis rule's spacing in ptxprint-mods.tex

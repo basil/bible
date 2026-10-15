@@ -331,8 +331,8 @@ def test_the_page_prints_its_tables(edition: bible.pipeline.Edition) -> None:
     assert "the word \\it missing\\it* stands on its side." in page
     for ours, theirs in (
         ("3 Kingdoms", "1 Kings"),
-        ("Epistle of Jeremias", "Baruch 6, in the Apocrypha"),
-        ("Tobit", "Tobit, in the Apocrypha"),
+        ("Epistle of Jeremias", "Baruch 6 (Apocrypha)"),
+        ("Tobit", "Tobit (Apocrypha)"),
         ("3 Maccabees", "(\\it missing\\it*)"),
     ):
         assert f"\\tr\n\\tc1 {theirs}\n\\tc2 {ours}\n" in page
@@ -340,10 +340,7 @@ def test_the_page_prints_its_tables(edition: bible.pipeline.Edition) -> None:
     assert "the Song of the Three Children runs from Daniel 3:24 to 3:90." in page
     assert "as 32:1–32 beside 32:2–33, they answer" in page
     # Esther's verses that are the King James Bible's Rest of Esther.
-    assert (
-        "\\tc1 The Rest of Esther, in the Apocrypha\n\\tc2 Esther, the additions\n"
-        in page
-    )
+    assert "\\tc1 The Rest of Esther (Apocrypha)\n\\tc2 Esther, the additions\n" in page
     assert "\\tc1 one lower" not in page and "\\tc1 two lower" not in page
     assert "\\tr\n\\tc1 (\\it missing\\it*)\n\\tc2 151\n" in page
     blocks = list(usj.objects(edition.documents[NUMBERING["id"]]["content"]))
@@ -489,13 +486,13 @@ def test_a_page_is_written_of_the_books_and_verses_it_is_given(
         ]
 
     full = named(edition.inventory)
-    tobit = ("Tobit, in the Apocrypha", "Tobit")
+    tobit = ("Tobit (Apocrypha)", "Tobit")
     assert tobit in full
     # A book that the edition lacks is missing on its side.
-    assert full[-1] == ("2 Esdras, in the Apocrypha", "(missing)")
+    assert full[-1] == ("2 Esdras (Apocrypha)", "(missing)")
     assert named(c for c in edition.inventory if c != "TOB") == [
         *(row for row in full[:-1] if row != tobit),
-        ("Tobit, in the Apocrypha", "(missing)"),
+        ("Tobit (Apocrypha)", "(missing)"),
         full[-1],
     ]
     proverbs = {**edition.inventory["PRO"], "22": ["1", "2"]}
