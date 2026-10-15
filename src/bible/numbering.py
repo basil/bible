@@ -258,8 +258,10 @@ def table_rows(
     *,
     policy: bible.policy.Policy,
 ) -> Node:
-    """A table: its headings, and a row for each pair of cells. A book's
-    table is headed by both Bibles' names for the book, over the headings."""
+    """A table: its headings, and a row for each pair of cells, given as
+    (edition, King James) and printed with the King James Bible on the left.
+    A book's table is headed by both Bibles' names for the book, over the
+    headings."""
 
     heads = (
         policy.title.rsplit(": ", 1)[-1],
@@ -276,7 +278,7 @@ def table_rows(
         return usj.row(
             *(
                 usj.cell(f"{kind}{n}", *content(cell, style))
-                for n, cell in enumerate(cells, 1)
+                for n, cell in enumerate(reversed(cells), 1)
             )
         )
 

@@ -305,7 +305,7 @@ def test_the_page_prints_its_tables(edition: bible.pipeline.Edition) -> None:
     # Supplying Ezekiel 1:14 removes its former missing-verse row.
     assert page.count("\\tr\n\\tc1 ") == 485
     # A book's table is headed by both Bibles' names for the book.
-    assert "\\tr\n\\th1 \\bd Jeremias\\bd*\n\\th2 \\bd Jeremiah\\bd*\n" in page
+    assert "\\tr\n\\th1 \\bd Jeremiah\\bd*\n\\th2 \\bd Jeremias\\bd*\n" in page
     assert "\\tr\n\\th1 \\bd Genesis\\bd*\n\\th2 \\bd Genesis\\bd*\n" in page
     assert "\\is2" not in page
     tables = [
@@ -325,8 +325,8 @@ def test_the_page_prints_its_tables(edition: bible.pipeline.Edition) -> None:
         cells = list(usj.objects(heading["content"]))
         assert [cell["marker"] for cell in cells] == ["th1", "th2"]
         assert [cell["content"] for cell in cells] == [
-            ["Orthodox Liturgical English Bible"],
             ["King James Bible"],
+            ["Orthodox Liturgical English Bible"],
         ]
     assert "the word \\it missing\\it* stands on its side." in page
     for ours, theirs in (
@@ -335,17 +335,17 @@ def test_the_page_prints_its_tables(edition: bible.pipeline.Edition) -> None:
         ("Tobit", "Tobit, in the Apocrypha"),
         ("3 Maccabees", "(\\it missing\\it*)"),
     ):
-        assert f"\\tr\n\\tc1 {ours}\n\\tc2 {theirs}\n" in page
+        assert f"\\tr\n\\tc1 {theirs}\n\\tc2 {ours}\n" in page
     assert "as Proverbs 22:8a, is usually an addition" in page
     assert "the Song of the Three Children runs from Daniel 3:24 to 3:90." in page
-    assert "as 32:2–33 beside 32:1–32, they answer" in page
+    assert "as 32:1–32 beside 32:2–33, they answer" in page
     # Esther's verses that are the King James Bible's Rest of Esther.
     assert (
-        "\\tc1 Esther, the additions\n\\tc2 The Rest of Esther, in the Apocrypha\n"
+        "\\tc1 The Rest of Esther, in the Apocrypha\n\\tc2 Esther, the additions\n"
         in page
     )
-    assert "\\tc2 one lower" not in page and "\\tc2 two lower" not in page
-    assert "\\tr\n\\tc1 151\n\\tc2 (\\it missing\\it*)\n" in page
+    assert "\\tc1 one lower" not in page and "\\tc1 two lower" not in page
+    assert "\\tr\n\\tc1 (\\it missing\\it*)\n\\tc2 151\n" in page
     blocks = list(usj.objects(edition.documents[NUMBERING["id"]]["content"]))
     headings = [
         usj.text_of(next(usj.objects(table["content"]))["content"][:1])
@@ -489,13 +489,13 @@ def test_a_page_is_written_of_the_books_and_verses_it_is_given(
         ]
 
     full = named(edition.inventory)
-    tobit = ("Tobit", "Tobit, in the Apocrypha")
+    tobit = ("Tobit, in the Apocrypha", "Tobit")
     assert tobit in full
     # A book that the edition lacks is missing on its side.
-    assert full[-1] == ("(missing)", "2 Esdras, in the Apocrypha")
+    assert full[-1] == ("2 Esdras, in the Apocrypha", "(missing)")
     assert named(c for c in edition.inventory if c != "TOB") == [
         *(row for row in full[:-1] if row != tobit),
-        ("(missing)", "Tobit, in the Apocrypha"),
+        ("Tobit, in the Apocrypha", "(missing)"),
         full[-1],
     ]
     proverbs = {**edition.inventory["PRO"], "22": ["1", "2"]}
@@ -515,6 +515,6 @@ def test_generated_names_share_the_body_heading_registry(
     ours = assembly.books(changed(policy, "manifest", rename), sources)
     written = sources.authored[NUMBERING["file"]] + "\\ip {JER 38:31}\n"
     page = printed(written, ours=ours)
-    assert "\\tr\n\\tc1 Renamed Jeremias\n\\tc2 Jeremiah\n" in page
-    assert "\\th1 \\bd Renamed Jeremias\\bd*\n\\th2 \\bd Jeremiah\\bd*\n" in page
+    assert "\\tr\n\\tc1 Jeremiah\n\\tc2 Renamed Jeremias\n" in page
+    assert "\\th1 \\bd Jeremiah\\bd*\n\\th2 \\bd Renamed Jeremias\\bd*\n" in page
     assert page.endswith("\\ip Renamed Jeremias 38:31\n")
