@@ -105,6 +105,18 @@
     "ISA 53:5#2": {
       "action": "preserve",
       "why": "The note glosses ‘bruise’ before it cites 1 Peter 2:24 (Brenton’s printed reference, which eBible had as 2. 22), and merging would lose Brenton’s rendering; the reference repeats the link."
+    },
+    "HAB 2:3 CCEL": {
+      "action": "preserve",
+      "why": "CCEL's transcription has Brenton's reference to Hebrews 10:37–39, the whole passage that quotes Habakkuk 2:3–4 and draws its lesson; the link here names only the verse that quotes this verse, so the reference stands beside it."
+    },
+    "JER 38:31 CCEL": {
+      "action": "preserve",
+      "why": "CCEL's transcription has Brenton's reference to Hebrews 8:8 and 8:13: the verse that opens the quotation of this passage, and the verse that draws its lesson from the new covenant. The link here names the quotation, 8:8–12, and not 8:13, so the reference stands beside it."
+    },
+    "ZEC 9:9": {
+      "action": "preserve",
+      "why": "The restored note, confirmed in Brenton’s 1879 and 1900 printings, cites Matthew 21:5 and John 12:15 together. Preserve the complete printed reference beside the edition’s quotation links, rather than losing its second citation."
     }
   },
   "alignment": {

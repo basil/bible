@@ -302,7 +302,8 @@ def test_psalms_use_whole_psalms_and_verse_ranges(
 def test_the_page_prints_its_tables(edition: bible.pipeline.Edition) -> None:
     page = usj.serialize(edition.documents[NUMBERING["id"]])
     assert "{" not in page and "}" not in page
-    assert page.count("\\tr\n\\tc1 ") == 486
+    # Supplying Ezekiel 1:14 removes its former missing-verse row.
+    assert page.count("\\tr\n\\tc1 ") == 485
     # A book's table is headed by both Bibles' names for the book.
     assert "\\tr\n\\th1 \\bd Jeremias\\bd*\n\\th2 \\bd Jeremiah\\bd*\n" in page
     assert "\\tr\n\\th1 \\bd Genesis\\bd*\n\\th2 \\bd Genesis\\bd*\n" in page

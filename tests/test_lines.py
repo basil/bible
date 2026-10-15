@@ -12,7 +12,7 @@ from conftest import Staged, changed
 
 import bible.pipeline
 import bible.policy
-from bible import byzantine, lines, scripture, usj
+from bible import alignment, byzantine, lines, scripture, usj
 from bible.checks import CheckFailed
 from bible.usj import Document
 
@@ -264,12 +264,12 @@ def test_punctuation_is_not_a_line_selector(
 
 
 def test_conflicting_anchors_do_not_place_a_break() -> None:
-    alignment = lines.Alignment.of(
+    aligned = alignment.Alignment.of(
         ["one", "two", "three", "four"],
         ["one", "two", "extra", "three", "four"],
     )
     with pytest.raises(lines.Unplaced):
-        lines.placed(2, alignment, None)
+        lines.placed(2, aligned, None)
 
 
 @pytest.mark.parametrize(
@@ -284,23 +284,23 @@ def test_isolated_matches_need_a_nearby_run(
         near = 10 + direction * distance
         position = 10 + direction * source_distance
         solid = {near: position, near + direction: position + direction}
-        alignment = lines.Alignment({10: 10, **solid}, solid, {})
-        assert alignment.anchored(10) == expected
+        aligned = alignment.Alignment({10: 10, **solid}, solid, {})
+        assert aligned.anchored(10) == expected
 
 
 @pytest.mark.parametrize("previous", [2, 3])
 def test_a_break_cannot_go_back_to_an_already_begun_line(previous: int) -> None:
-    alignment = lines.Alignment.of(
+    aligned = alignment.Alignment.of(
         ["one", "two", "three", "four"], ["one", "two", "three", "four"]
     )
     with pytest.raises(lines.Disordered):
-        lines.placed(2, alignment, previous)
+        lines.placed(2, aligned, previous)
 
 
 def test_new_line_words_cannot_stand_before_the_break() -> None:
-    alignment = lines.Alignment({2: 3}, {2: 3}, {1: 3, 3: 2})
+    aligned = alignment.Alignment({2: 3}, {2: 3}, {1: 3, 3: 2})
     with pytest.raises(lines.Unplaced):
-        lines.placed(2, alignment, 0)
+        lines.placed(2, aligned, 0)
 
 
 def test_a_chapter_opening_inside_a_poem_opens_with_its_line(
@@ -542,12 +542,12 @@ def test_the_decisions_are_the_few_the_words_do_not_place(
 ) -> None:
     assert list(policy.lines["breaks"]) == [
         "JOB 2:11",
+        "JOB 42:16",
         "JOB 42:17e",
         "PSA 41:9",
         "PSA 87:19",
         "PSA 91:10",
         "PSA 94:3",
-        "PSA 130:1",
         "PSA 138:1",
         "PRO 8:32",
         "PRO 9:6",

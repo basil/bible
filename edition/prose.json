@@ -77,8 +77,8 @@
       },
       {
         "note": "ISA 19:6",
-        "from": "1. 9. also",
-        "to": "1. 9 also"
+        "from": "1. 9: also",
+        "to": "1. 9; also"
       },
       {
         "note": "ISA 52:7",
@@ -95,6 +95,12 @@
         "from": "I. and II.",
         "to": "1 and 2",
         "why": "the numbers of books, in the figures of the edition's names for them"
+      },
+      {
+        "note": "JOB 21:23 CCEL",
+        "from": ". in Heb.",
+        "to": ", in Heb.",
+        "why": "The qualification in Hebrew, Greek and the Authorized Version continues the same cross-reference sentence; separate it with a comma rather than leaving a period after the cited verse number."
       }
     ]
   },
@@ -133,7 +139,7 @@
       },
       {
         "note": "2SA 1:19#2",
-        "from": ". viz.",
+        "from": ", viz.",
         "to": ", namely"
       },
       {
@@ -329,19 +335,19 @@
     "changes": [
       {
         "note": "DEU 9:22",
-        "from": "Taberah, Massah, and Kibroth Hattavah",
+        "from": "Taberah, Massah, and Kibroth Hattaavah",
         "to": "Taberah",
         "why": "Brenton prints one note, Heb. Taberah, Massah, and Kibroth Hattaavah., keyed at the three callers burning, temptation and graves of lust (1844 p. 225; 1879 p. 260; 1900 p. 256), and eBible copies it at each; the edition gives each caller its own place name instead."
       },
       {
         "note": "DEU 9:22#2",
-        "from": "Taberah, Massah, and Kibroth Hattavah",
+        "from": "Taberah, Massah, and Kibroth Hattaavah",
         "to": "Massah",
         "why": "Brenton prints one note, Heb. Taberah, Massah, and Kibroth Hattaavah., keyed at the three callers burning, temptation and graves of lust (1844 p. 225; 1879 p. 260; 1900 p. 256), and eBible copies it at each; the edition gives each caller its own place name instead."
       },
       {
         "note": "DEU 9:22#3",
-        "from": "Taberah, Massah, and Kibroth Hattavah",
+        "from": "Taberah, Massah, and Kibroth Hattaavah",
         "to": "Kibroth Hattaavah",
         "why": "Brenton prints one note, Heb. Taberah, Massah, and Kibroth Hattaavah., keyed at the three callers burning, temptation and graves of lust (1844 p. 225; 1879 p. 260; 1900 p. 256), and eBible copies it at each; the edition gives each caller its own place name instead. Hattavah is eBible’s slip for the printed Hattaavah."
       },
@@ -454,6 +460,26 @@
         "from": "signify that man by an Epistle",
         "to": "our word, signify that man by an Epistle",
         "why": "Repeat the verse’s our word with the comma separating the conditional from the imperative, after the note’s lemma takes those words in."
+      }
+    ]
+  },
+  "jeremiah-numbering-table-pointer": {
+    "why": "The edition relocates the table of chapter and verse numbers after its introduction; the source pointer to the end of Jeremiah no longer leads to a table.",
+    "changes": [
+      {
+        "note": "JER 25:13 CCEL",
+        "from": "see the end of Jeremiah",
+        "to": "see the table of chapters and verses after the introduction"
+      }
+    ]
+  },
+  "isaiah-66-5-base-attribution": {
+    "why": "Brenton’s printed Vat. your report refers to his facing Valpy Greek ἀδελφοὶ ὑμῶν; Swete III p. 220 B positively reads ἀδελφοὶ ἡμῶν. Clarify the source of your rather than falsely ascribing it to Codex Vaticanus. Preserve the source_note pin and the historical Alexandrinus report without using a later accusative variant as possessive evidence.",
+    "changes": [
+      {
+        "note": "ISA 66:5",
+        "from": "but Heb. and Vat.",
+        "to": "but Heb. and Brenton’s facing Greek"
       }
     ]
   }

@@ -18,7 +18,6 @@ The New Testament keeps Scrivener's paragraphs and poetry unchanged.
 
 from __future__ import annotations
 
-import difflib
 import re
 from collections.abc import Callable, Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
@@ -26,6 +25,7 @@ from functools import cached_property
 
 import bible.policy
 from bible import scripture, usj, versification
+from bible.alignment import Alignment
 from bible.checks import CheckFailed, require, require_fields
 from bible.references import Verse, verse_at
 from bible.usj import Content, Document, Node
@@ -171,44 +171,6 @@ class Span:
 
 
 # Placing the update's breaks.
-
-
-@dataclass(frozen=True)
-class Alignment:
-    """The update's words matched to the source's: every match, and the
-    matches in runs of two or more words, which anchor nearby isolated
-    matches as well as placing lines themselves."""
-
-    mapped: Mapping[int, int]
-    solid: Mapping[int, int]
-    # The matches in runs, from the target's side.
-    back: Mapping[int, int]
-
-    @classmethod
-    def of(cls, source: Sequence[str], target: Sequence[str]) -> Alignment:
-        matcher = difflib.SequenceMatcher(a=source, b=target, autojunk=False)
-        mapped, solid = {}, {}
-        for i, j, n in matcher.get_matching_blocks():
-            for k in range(n):
-                mapped[i + k] = j + k
-                if n >= 2:
-                    solid[i + k] = j + k
-        return cls(mapped, solid, {j: i for i, j in solid.items()})
-
-    def anchored(self, index: int) -> int | None:
-        """The match of a word in a run, or an isolated match within five
-        update words of a run and no more than that distance plus two
-        source words away. The allowance accommodates small wording changes."""
-        if index in self.solid:
-            return self.solid[index]
-        position = self.mapped.get(index)
-        if position is None:
-            return None
-        for step in range(1, 6):
-            for near in (index + step, index - step):
-                if near in self.solid and abs(self.solid[near] - position) <= step + 2:
-                    return position
-        return None
 
 
 class Unplaced(Exception):

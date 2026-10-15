@@ -25,6 +25,34 @@ The archives below were retrieved from eBible.org on the dates shown.
 
 The Brenton and King James texts in `eng-Brenton_usfm.zip` and `engkjvcpb_usfm.zip` are in the public domain outside the United Kingdom. Brenton's is also in the public domain in the UK, where the right to print and publish the King James Version belongs to the Crown and is licensed only to certain publishers under letters patent. See the [UK Intellectual Property Office's guidance](https://www.gov.uk/government/publications/copyright-notice-duration-of-copyright-term/copyright-notice-duration-of-copyright-term). `brenton-notice.html` and `kjv-notice.html` are unaltered copies of eBible's [Brenton](https://ebible.org/eng-Brenton/copyright.htm) and [KJV](https://ebible.org/engkjvcpb/copyright.htm) copyright pages, saved the same day.
 
+### CCEL Brenton HTML edition
+
+`ccel-brenton-lxx.zip` mirrors the edition starting at
+<https://ccel.org/b/brenton/lxx/htm/TOC.htm>, retrieved on 2026-10-13.
+It contains the edition's 709 HTML pages under their original `ccel.org/`
+paths, preserved exactly as downloaded, without link conversion. The build reads
+the pages for Brenton's footnotes alone, which this transcription has far more
+fully than eBible's, and sets in eBible's verses those eBible lacks
+(`src/bible/ccel.py`). None of its scripture text is printed, but the notes it
+supplies are.
+
+SHA-256: `6825ea6ba8b5c1e1ee680130d9ec02b9e1b845b3182cc9a6e23bfc8d8655524a`.
+
+The edition was downloaded in a temporary directory with GNU Wget 1.25.0:
+
+```sh
+wget --mirror --force-directories --domains=ccel.org \
+  --accept-regex='^https://ccel\.org/b/brenton/lxx/' \
+  https://ccel.org/b/brenton/lxx/htm/TOC.htm
+```
+
+Only the pages, `ccel.org/b/brenton/lxx/htm/*.htm`, were zipped.
+
+Brenton's historical published note wording is in the public domain under U.S.
+copyright law. CCEL is credited as the transcription source, here and in the
+edition's introduction. CCEL's site stylesheets, script and images are not
+included.
+
 ### Apocrypha introduction
 
 The introduction headed “THE BOOKS OF THE APOCRYPHA” in `98-OTHeng-Brenton.usfm`, within `eng-Brenton_usfm.zip`, contains the revised introduction published in Samuel Bagster & Sons' *The Apocrypha: Greek and English, in Parallel Columns*, second edition (1906), after Brenton's death in 1862. The [catalogue record](https://openlibrary.org/books/OL58281461M/The_Apocrypha) identifies the edition and records the introduction as signed “H.P.”.
@@ -93,6 +121,8 @@ The Boyd scrape is a local package, not a publisher download: its members are th
 [`exhaustive-listing-marginal-notes-1611-edition-king-james-bible.md`](exhaustive-listing-marginal-notes-1611-edition-king-james-bible.md) is a Markdown copy of Calvin George's ["An exhaustive listing of the marginal notes of the 1611 edition of the King James Bible"](https://en.literaturabautista.com/exhaustive-listing-marginal-notes-1611-edition-king-james-bible), from Literatura Bautista. It covers the translators' notes on both testaments: alternative translations, literal meanings, and variant readings. It leaves out the Apocrypha, the chapter summaries, and the cross-references. George counts 6,566 notes in the Old Testament and 775 in the New; Scrivener counted 6,637 and 767.
 
 George modernized much of the spelling and sometimes had to judge which words a note refers to, so this is an edited transcription, not a facsimile. The build uses only the New Testament notes. The [editorial notes](../docs/edition.md#the-1611-marginal-notes) explain how they're placed and corrected.
+
+The historical published note wording is in the public domain under U.S. copyright law. Calvin George and Literatura Bautista are credited as the transcription source. This statement does not cover modern editorial additions or website assets.
 
 ## Fonts
 

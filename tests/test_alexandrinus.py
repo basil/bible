@@ -87,12 +87,34 @@ def test_a_reading_replaces_the_vatican_words_and_notes_them(
     )
 
 
-def test_a_reading_without_a_note_of_its_own_quotes_the_vatican_words(
+def test_a_reading_without_a_note_of_its_own_quotes_brentons_words(
     policy: bible.policy.Policy,
 ) -> None:
     reading = {k: v for k, v in READING.items() if k != "note"}
     doc = promoted(decided(policy, {"GEN 99:22": reading}))
+    assert r"\fl Brenton \fq God said\ft ." in verse_lines(doc)["22"]
+
+
+def test_a_reading_without_a_note_names_the_witness_its_label_declares(
+    policy: bible.policy.Policy,
+) -> None:
+    reading = {k: v for k, v in READING.items() if k != "note"} | {"label": "vatican"}
+    doc = promoted(decided(policy, {"GEN 99:22": reading}))
     assert r"\fl Vat. \fq God said\ft ." in verse_lines(doc)["22"]
+
+
+@pytest.mark.parametrize(
+    "label,message",
+    [("brenton", "label changes nothing"), ("vatican", "label beside a note")],
+)
+def test_a_reading_label_must_change_something_and_stand_alone(
+    policy: bible.policy.Policy, label: str, message: str
+) -> None:
+    reading = dict(READING) | {"label": label}
+    if label == "brenton":
+        del reading["note"]
+    with pytest.raises(CheckFailed, match=message):
+        promoted(decided(policy, {"GEN 99:22": reading}))
 
 
 @pytest.mark.parametrize("override", [False, True])
@@ -354,7 +376,7 @@ def test_a_passage_supplies_verses_from_the_appendix_or_the_king_james_bible(
 def test_every_alexandrine_note_and_supplied_passage_has_its_decision(
     policy: bible.policy.Policy, read: bible.pipeline.Read
 ) -> None:
-    assert alexandrinus.check(policy, read.brenton) == (199, 26)
+    assert alexandrinus.check(policy, read.brenton) == (415, 26)
     # A note left without a decision, or a decision without its note, is refused.
     undecided = decided(
         policy,
@@ -370,7 +392,7 @@ def test_the_edition_prints_its_readings_and_supplied_passages(
     edition: bible.pipeline.Edition,
 ) -> None:
     assert (
-        r"\v 22 And \f - \fr 3:22 \fq the Lord God said: \ft Vat. omits"
+        r"\v 22 And \f - \fr 3:22 \fq the Lord God said: \ft Brenton omits"
         in usj.serialize(edition.documents["GEN"])
     )
     kingdoms = usj.serialize(edition.documents["1SA"])
@@ -569,8 +591,10 @@ def test_verses_inserted_before_a_paragraph_are_a_paragraph_of_their_own(
         promoted(decided(policy, passages={"GEN 99:20": passage}), poem, kjv=kjv)
 
 
+@pytest.mark.parametrize("label", [None, "vatican"])
 def test_a_passage_moves_whole_paragraphs_before_a_verse_and_notes_both_places(
     policy: bible.policy.Policy,
+    label: str | None,
 ) -> None:
     body = r"\v 21 A." "\n" r"\p" "\n" r"\v 22 B." "\n" r"\p" "\n" r"\v 23 C."
     passage: dict[str, Any] = {
@@ -579,16 +603,19 @@ def test_a_passage_moves_whole_paragraphs_before_a_verse_and_notes_both_places(
         "swete": SWETE,
         "moves": [{"verses": "99:23", "before": "99:22"}],
     }
+    if label is not None:
+        passage["moves"][0]["label"] = label
+    witness = "Vat." if label else "Brenton"
     lines = verse_lines(
         promoted(decided(policy, passages={"GEN 99:23": passage}), body)
     )
     assert list(lines) == ["21", "23", "22"]
     assert (
         lines["23"]
-        == r"\f + \fr 99:23 \fl Vat. \ft has this verse after verse 22.\f*C."
+        == rf"\f + \fr 99:23 \fl {witness} \ft has this verse after verse 22.\f*C."
     )
     assert lines["22"] == (
-        r"B.\f + \fr 99:22 \fl Vat. \ft has here the verse printed at 99:23.\f*"
+        rf"B.\f + \fr 99:22 \fl {witness} \ft has here the verse printed at 99:23.\f*"
     )
     # A run that does not fill its paragraphs, or that would move later, is refused.
     joined = r"\v 21 A. \v 22 B." "\n" r"\p" "\n" r"\v 23 C."

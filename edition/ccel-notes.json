@@ -1,0 +1,1422 @@
+{
+  "corrections": {
+    "1#6": {
+      "from": "<p> The LXX. take <font face=\"SIL Ezra\" size=\"2\" id=\"1.i.p0.20_1\">ych</font> as from <font face=\"SIL Ezra\" size=\"2\" id=\"1.i.p0.21_1\">bcg</font>, the <i id=\"1.i.p0.22_1\">A.V.</i> from <font face=\"SIL Ezra\" size=\"2\" id=\"1.i.p0.23_1\">ybc</font>. </p>",
+      "to": "<p> The LXX. take <font face=\"SIL Ezra\" size=\"2\" id=\"1.i.p0.20_1\">ybch</font> as from <font face=\"SIL Ezra\" size=\"2\" id=\"1.i.p0.21_1\">bcn</font>, the <i id=\"1.i.p0.22_1\">A.V.</i> from <font face=\"SIL Ezra\" size=\"2\" id=\"1.i.p0.23_1\">ybc</font>. </p>",
+      "why": "Brenton prints the corrected note in 1879 physical page 417; 1900 physical page 413. The correction mends CCEL’s transcription alone.",
+      "uncategorized": true
+    },
+    "1#7": {
+      "from": "<p> Two words here are used, as is often the case in the LXX. to express one, <i id=\"1.i.p0.24_1\">viz.</i> <font face=\"SIL Galatia\" size=\"2\" id=\"1.i.p0.25_1\">tequjkçtwn</font> and  <font face=\"SIL Galatia\" size=\"2\" id=\"1.i.p0.26_1\">traumatiòn</font> to express <font face=\"SIL Ezra\" size=\"2\" id=\"1.i.p0.27_1\">llx</font>. </p>",
+      "to": "<p> Two words here are used, as is often the case in the LXX. to express one, <i id=\"1.i.p0.24_1\">viz.</i> <font face=\"SIL Galatia\" size=\"2\" id=\"1.i.p0.25_1\">teqnjkçtwn</font> and  <font face=\"SIL Galatia\" size=\"2\" id=\"1.i.p0.26_1\">traumatiòn</font> to express <font face=\"SIL Ezra\" size=\"2\" id=\"1.i.p0.27_1\">llx</font>. </p>",
+      "why": "Brenton prints the corrected note in 1879 physical page 417; 1900 physical page 413. The correction mends CCEL’s transcription alone."
+    },
+    "1.ii#2": {
+      "from": "<p> Observe the active use of <font face=\"SIL Galatia\" size=\"2\" id=\"1.ii.p0.8_1\">basileÀsen</font>, common in LXX.</p>",
+      "to": "<p> Observe the active use of <font face=\"SIL Galatia\" size=\"2\" id=\"1.ii.p0.8_1\">ἐβασίλευσεν</font>, common in LXX.</p>",
+      "why": "Brenton prints the corrected note in 1879 physical page 418; 1900 physical page 414. The correction mends CCEL’s transcription alone.",
+      "uncategorized": true
+    },
+    "1.ii#3": {
+      "from": "<p> A literal version of the Hebrew, <font face=\"SIL Ezra\" size=\"2\" id=\"1.ii.p0.14_1\">yhxh. </font> <i id=\"1.ii.p0.15_1\">q.d.</i>: sur le champ. </p>",
+      "to": "<p> A literal version of the Hebrew, <font face=\"SIL Ezra\" size=\"2\" id=\"1.ii.p0.14_1\">wtxt. </font> <i id=\"1.ii.p0.15_1\">q.d.</i> sur le champ. </p>",
+      "why": "Brenton prints the corrected note in 1879 physical page 418; 1879 physical page 419; 1900 physical page 414; 1900 physical page 415. The correction mends CCEL’s transcription alone.",
+      "uncategorized": true
+    },
+    "1.xiii#4": {
+      "from": "<p> <i id=\"1.xiii.p0.18_1\">a. d.</i> a two-year of days.</p>",
+      "to": "<p> <i id=\"1.xiii.p0.18_1\">q. d.</i> a two-year of days.</p>",
+      "why": "Brenton prints the corrected note in 1879 physical page 434; 1900 physical page 430. The correction mends CCEL’s transcription alone."
+    },
+    "1.xvii#14": {
+      "from": "<p>  <i id=\"1.xvii.p0.37\">Alex.</i> Gad.</p>",
+      "to": "<p>  <i id=\"1.xvii.p0.37\">Alex.</i> Gai.</p>",
+      "why": "Brenton prints the corrected note in 1879 physical page 396; 1900 physical page 392. The correction mends CCEL’s transcription alone."
+    },
+    "1.xx#4": {
+      "from": "<p> <i>Gr. </i>Who will give me death for thee</p>",
+      "to": "<p> <i>Gr. </i>Who will give my death for thee</p>",
+      "why": "Brenton prints the corrected note in 1879 physical page 445; 1900 physical page 441. The correction mends CCEL’s transcription alone."
+    },
+    "1.xxi#7": {
+      "from": "<p> <i id=\"1.xxi.p0.23\">Gr.</i> man epileptic.</p>",
+      "to": "<p> <i id=\"1.xxi.p0.23\">Gr.</i> or man epileptic.</p>",
+      "why": "Brenton’s 1879 physical page 402; 1900 physical page 398. Both printings have the same ζ caller before mad and the same note wording. CCEL omits the printed word “or”; the existing eBible note matches the print. Printed verse numbering is XXI.14 for the wording assigned as source verse 1SA 21:15. This mends CCEL’s note transcription alone.",
+      "uncategorized": true
+    },
+    "1.xxiii#3": {
+      "from": "<p> Verse 13 is here supplied by <i id=\"1.xxiii.p0.8\">Alex.</i> </p>",
+      "to": "<p> Verse 12 is here supplied by <i id=\"1.xxiii.p0.8\">Alex.</i> </p>",
+      "why": "Brenton’s 1879 physical page 404; 1900 physical page 400. Both 1879 and 1900 print “Verse 12”, not CCEL’s “Verse 13”. Both place caller δ after “Israel, tell thy servant.” and before “And the Lord said”. The eBible note wording matches the printings, but eBible sets its caller before “servant has heard?”; CCEL sets it before “And the Lord said”, as printed. This is the same printed note, with a CCEL number error and an eBible caller-placement discrepancy. This mends CCEL’s note transcription alone.",
+      "uncategorized": true
+    },
+    "1.xxiii#4": {
+      "from": "<p> The Hebrew <font face=\"SIL Ezra\" size=\"2\" id=\"1.xxiii.p0.11\">Srh  </font> has here been read as if <font face=\"SIL Ezra\" size=\"2\" id=\"1.xxiii.p0.12\">  Sdx</font>.</p>",
+      "to": "<p> The Hebrew <font face=\"SIL Ezra\" size=\"2\" id=\"1.xxiii.p0.11\">Srx  </font> has here been read as if <font face=\"SIL Ezra\" size=\"2\" id=\"1.xxiii.p0.12\">  Sdx</font>.</p>",
+      "why": "Brenton’s 1879 physical page 404; 1900 physical page 400. Both printings agree with eBible, including the Hebrew sequence חרש. CCEL transcribes the first Hebrew word as הרש, replacing the initial heth with he. Both refer to the same caller before New; this is a duplicate note with a CCEL transcription error, not a distinct note. This mends CCEL’s note transcription alone."
+    },
+    "1.xxix#2": {
+      "from": "<p> The word<font face=\"SIL Ezra\" size=\"2\" id=\"1.xxix.p0.5\">  rbc</font> is here translated;  as in <scripref id=\"1.xxix.p0.6\">Gen. xiv.13.</scripref></p>",
+      "to": "<p> The word<font face=\"SIL Ezra\" size=\"2\" id=\"1.xxix.p0.5\">  rbv</font> is here translated;  as in <scripref id=\"1.xxix.p0.6\">Gen. xiv.13.</scripref></p>",
+      "why": "Brenton’s 1879 physical page 412; 1900 physical page 408. Both printings have עבר (eBible’s עכר is mended by its own correction), with the caller before “that pass by”. CCEL has misread the Hebrew initial ע as צ. There is no additional note or content to restore; the Genesis references differ only in numeral formatting. This mends CCEL’s note transcription alone."
+    },
+    "1.xxvii#3": {
+      "from": "<p> The LXX. have rendered <font face=\"SIL Ezra\" size=\"2\" id=\"1.xxvii.p0.7\">hrwS. . . £lwcm  </font> <i id=\"1.xxvii.p0.8\">of old to Shur</i>, by <font face=\"SIL Galatia\" size=\"2\" id=\"1.xxvii.p0.9\">  pè GelamyoÁr.</font></p>",
+      "to": "<p> The LXX. have rendered <font face=\"SIL Ezra\" size=\"2\" id=\"1.xxvii.p0.7\">hrwS. . . £lwvm  </font> <i id=\"1.xxvii.p0.8\">of old to Shur</i>, by <font face=\"SIL Galatia\" size=\"2\" id=\"1.xxvii.p0.9\">  pè GelamyoÁr.</font></p>",
+      "why": "Brenton’s 1879 physical page 411; 1900 physical page 407. Both printings have the same note and caller. CCEL mistranscribes the second letter of מעולם as צ; eBible has the printed Hebrew. This is the same existing note, not an additional note or different printing. This mends CCEL’s note transcription alone."
+    },
+    "12.liii#10": {
+      "from": "<p> <i>Alex. </i><span lang=\"EL\" class=\"Greek\">Κύριος</span> for <span lang=\"EL\" class=\"Greek\">Κύριε</span> \nadopted her. Compare <scripref passage=\"Matthew 16:22\" id=\"12.liv.p3.1\">Mat. 16. 22</scripref>, with this passage.</p>",
+      "to": "<p> <i>Alex. </i><span lang=\"EL\" class=\"Greek\">Κύριος</span> for <span lang=\"EL\" class=\"Greek\">Κύριε</span> \nadopted here. Compare <scripref passage=\"Matthew 16:22\" id=\"12.liv.p3.1\">Mat. 16. 22</scripref>, with this passage.</p>",
+      "why": "Brenton’s 1879 physical page 906; 1900 physical page 902. Both printings have the same note wording and gamma caller before “the Lord”. CCEL dropped the final e of “here”; eBible preserves the printed wording. This is the same note, not a distinct caller or additional reference. This mends CCEL’s note transcription alone."
+    },
+    "12.xxx#2": {
+      "from": "<p> <i>Or</i>, wait.</p>",
+      "to": "<p> <i>Or</i>, wait for.</p>",
+      "why": "Brenton’s 1879 physical page 880; 1900 physical page 876. Both printings read “Or, wait for.” with the γ caller immediately before “stay themselves upon him” in Isaiah 30:18. CCEL drops “for”; eBible preserves the printed note. This is the same note and caller, not an additional note or a difference between printings. This mends CCEL’s note transcription alone.",
+      "uncategorized": true
+    },
+    "12.xxxvii#2": {
+      "from": "<p> <i>Gr</i>. \neat.</p>",
+      "to": "<p> <i>Gr</i>. \ncut.</p>",
+      "why": "Brenton’s 1879 physical page 887; 1900 physical page 883. Both printings clearly read cut, agreeing with eBible. CCEL's eat is a transcription error. Both printed callers match the supplied transcriptions' caller before cropped. This mends CCEL’s note transcription alone.",
+      "uncategorized": true
+    },
+    "2.ii#1": {
+      "from": "<p> Gr. The Lords if, etc.</p>",
+      "to": "<p> Gr. The Lord lives if, etc.</p>",
+      "why": "Brenton’s 1879 physical page 504; 1900 physical page 500. Both 1879 and 1900 print the same note, Gr. The Lord lives if, etc., with delta caller immediately before As in verse 2. CCEL has lost lives and joined a stray s to Lord. The eBible note preserves the wording apart from lowercase the. This is the same note at the same caller, not a second note or a printing difference. This mends CCEL’s note transcription alone.",
+      "uncategorized": true
+    },
+    "2.xiv#9": {
+      "from": "<p> Gr. glorify thyself sitting in thy home.</p>",
+      "to": "<p> Gr. glorify thyself sitting in thy house.</p>",
+      "why": "Brenton’s 1879 physical page 525; 1900 physical page 521. Both the 1879 and 1900 images print the same μ note and put its caller immediately before “stay”. eBible preserves the printed note; CCEL substitutes home for house. This mends CCEL’s note transcription alone.",
+      "uncategorized": true
+    },
+    "2.xxiii#8": {
+      "from": "<p> <i>Or</i>, the twelve signs. <i>Heb. </i><span lang=\"HE\" class=\"Hebrew\">ולמזלות</span> \ncompare <scripref passage=\"Job 38:22\" id=\"2.xxiii.p2.1\">Job 38. 22.</scripref></p>",
+      "to": "<p> <i>Or</i>, the twelve signs. <i>Heb. </i><span lang=\"HE\" class=\"Hebrew\">ולמזלות</span> \ncompare <scripref passage=\"Job 38:22\" id=\"2.xxiii.p2.1\">Job 38. 32.</scripref></p>",
+      "why": "Brenton’s 1879 physical page 540; 1900 physical page 536. Both printings show the same π caller immediately before Mazuroth in verse 5 and the same note citing Job 38. 32. CCEL has 22 in place of printed 32; eBible agrees with both printings. The Hebrew is ולמזלות in both. This mends CCEL’s note transcription alone.",
+      "uncategorized": true
+    },
+    "27.x#10": {
+      "from": "<p> <i>Or</i>, falls.</p>",
+      "to": "<p> <i>Or</i>, fails.</p>",
+      "why": "Brenton’s 1879 physical page 1139; 1900 physical page 1135. Both printings (printed page 1123) read “Or, fails.” and place gamma before “falls” in the first “falls off” of verse 9. eBible matches the printed note; CCEL substitutes “falls” for “fails”. This mends CCEL’s note transcription alone."
+    },
+    "27.x#12": {
+      "from": "<p> Compare <i>Heb. Alex. </i><span lang=\"EL\" class=\"Greek\">διαθικην</span>, covenant.</p>",
+      "to": "<p> Compare <i>Heb. Alex. </i><span lang=\"EL\" class=\"Greek\">διαθήκην</span>, covenant.</p>",
+      "why": "Brenton’s 1879 physical page 1139; 1900 physical page 1135. Both examined printings have the same single zeta caller immediately before possession in Zechariah 11:14 and the same note: Compare Heb. Alex. διαθήκην, covenant. The printed Greek has eta with acute after theta, not CCEL’s unaccented iota. eBible has the correct Greek but omits the comma after it. This is the same printed note, not an additional note. This verifies Brenton’s transcription only; any substantive judgment about the Alexandrinus reading requires Swete. This mends CCEL’s note transcription alone."
+    },
+    "29#5": {
+      "from": "<p> <i>Gr</i>. according to these words. See \n<scripref passage=\"1Kings 17:8\" version=\"LXX\" id=\"29.p13.1\">vers. 8.</scripref></p>",
+      "to": "<p> <i>Gr</i>. according to these words. See \n<scripref passage=\"1Kings 17:8\" version=\"LXX\" id=\"29.p13.1\">ver. 8.</scripref></p>",
+      "why": "Brenton’s 1879 physical page 395; 1879 physical page 1148; 1900 physical page 391; 1900 physical page 1144. Both printings have one note on “as before”, including the reference to verse 8. eBible retains the gloss but drops the supplemental reference; CCEL preserves the reference, expanding printed “ver.” to “vers.”. This is additional content of the existing note, not a second distinct note. The passage appears in Brenton’s Alexandrine Appendix; no Greek target ruling is made here. Any substantive Alexandrinus decision would require Swete. This mends CCEL’s note transcription alone."
+    },
+    "9.ci#1": {
+      "from": "<p> <i>Or</i>, then shall be.</p>",
+      "to": "<p> <i>Or</i>, then shall he.</p>",
+      "why": "Brenton’s 1879 physical page 775; 1900 physical page 771. Both printings read “he”, not CCEL’s “be”, at the same caller before “and”. eBible’s “then shall be.” is corrected to “then shall he.” among the Brenton corrections, as the printings read. This mends CCEL’s note transcription alone."
+    },
+    "9.clxxiii#2": {
+      "from": "<p> See <scripref passage=\"1Peter 8:15\" id=\"9.clxxiii.p5.1\">1 Peter 8. 15</scripref>.</p>",
+      "to": "<p> See <scripref passage=\"1Peter 8:15\" id=\"9.clxxiii.p5.1\">1 Peter 3. 15</scripref>.</p>",
+      "why": "Brenton’s 1879 physical page 825; 1900 physical page 821. Both printings agree: chapter 3, verse 15, with the caller before question. CCEL misreads 3 as 8 in both display text and scripref; eBible has the correct reference and caller, abbreviating Peter to Pet. This mends CCEL’s note transcription alone.",
+      "uncategorized": true
+    },
+    "9.cvi#1": {
+      "from": "<p> <i>Gr</i>. gave commandment.</p>",
+      "to": "<p> <i>Or</i>, gave commandment.</p>",
+      "why": "Brenton’s 1879 physical page 779; 1900 physical page 775. Both printings agree with eBible in wording and caller. CCEL substitutes “Gr.” for printed “Or,”. This is the same existing note, not an additional note. This mends CCEL’s note transcription alone.",
+      "uncategorized": true
+    },
+    "9.cxxvii#1": {
+      "from": "<p> <i>Alex</i>. \nfruits of thy labour.</p>",
+      "to": "<p> <i>Alex</i>. \nfruits of thy labours.</p>",
+      "why": "Brenton’s 1879 physical page 793; 1900 physical page 789. Both printings have plural labours and the same γ caller before labours. CCEL drops the final s. The eBible note agrees with both printed witnesses; this is the same note, not additional content. Existing Alexandrinus decision PSA 127:2 source_note preserves the printed plural, so no contradiction was found. Its substantive reading invokes Swete; printed Brenton evidence confirms only wording and caller, not the Greek target. This mends CCEL’s note transcription alone."
+    },
+    "9.liii#1": {
+      "from": "<p> <scripref passage=\"Romans 8:10-12\" id=\"9.liii.p2.1\">Rom. 8. 10-12</scripref>.</p>",
+      "to": "<p> <scripref passage=\"Romans 8:10-12\" id=\"9.liii.p2.1\">Rom. 3. 10-12</scripref>.</p>",
+      "why": "Brenton’s 1879 physical page 745; 1900 physical page 741. Both printings cite Romans chapter 3, not chapter 8, and place the caller before They at the beginning of the assigned verse. eBible agrees with both printed wording and caller. CCEL has misread the chapter numeral. The current ccel-notes omission correctly retains eBible but its unresolved-disagreement rationale can now be replaced. No source correction or citation correction for this note was found in brenton-notes.json or citations.json; no contradiction with an existing correction was found. This mends CCEL’s note transcription alone.",
+      "uncategorized": true
+    },
+    "iii.11#1": {
+      "from": "<p> <i>Alex.</i> 480 years.</p>",
+      "to": "<p> <i>Alex.</i> 430 years.</p>",
+      "why": "Brenton’s 1879 physical page 29; 1900 physical page 25. Both printings give the same Alexandrinus note, Alex. 430 years., at the same caller before four hundred years. CCEL misreads the middle numeral as 8; eBible agrees with print. There is no additional note or distinct caller. The GEN 11:13 Alexandrinus decision quotes Alex. 430 years. and promotes four hundred and thirty; the scanned Brenton note supports its quoted source_note, with no contradiction. That decision also cites Swete 1:17; the Greek target rests on Swete, not on Brenton alone. This mends CCEL’s note transcription alone.",
+      "uncategorized": true
+    },
+    "iii.14#2": {
+      "from": "<p> <i>Gr. </i>passer. <i>Heb.</i> <font face=\"SIL Ezra\" size=\"2\" id=\"iii.14.p1.1\">ryv</font>.</p>",
+      "to": "<p> <i>Gr. </i>passer. <i>Heb.</i> <font face=\"SIL Ezra\" size=\"2\" id=\"iii.14.p1.1\">עֹבֹר</font>.</p>",
+      "why": "Brenton’s 1879 physical page 32; 1900 physical page 28. Both printings identify one note on Hebrew and agree with eBible’s Hebrew עֹבֹר. CCEL’s עיר substitutes yod for bet and drops both holam points. This is the same note, not additional content. This mends CCEL’s note transcription alone.",
+      "uncategorized": true
+    },
+    "iii.15#2": {
+      "from": "<p> <scripref id=\"iii.15.p1.2\">Rom. 4. 8.</scripref> </p>",
+      "to": "<p> <scripref id=\"iii.15.p1.2\">Rom. 4. 3.</scripref> </p>",
+      "why": "Brenton’s 1879 physical page 32; 1900 physical page 28. Both printings agree with eBible: Rom. 4. 3. CCEL misreads the final numeral as 8. There is one note with the same caller, not an additional reference. This mends CCEL’s note transcription alone.",
+      "uncategorized": true
+    },
+    "iii.18#3": {
+      "from": "<p> <i>Gr. </i> <font face=\"SIL Galatia\" size=\"2\" id=\"iii.18.p0.6\">sunteloÂntai</font> <i>Heb.</i>\n<font face=\"SIL Ezra\" size=\"2\" id=\"iii.18.p0.7\">hlk ySv</font> <i id=\"iii.18.p0.8\">A.V.</i> have done altogether.</p>",
+      "to": "<p> <i>Gr. </i> <font face=\"SIL Galatia\" size=\"2\" id=\"iii.18.p0.6\">sunteloÂntai</font> <i>Heb.</i>\n<font face=\"SIL Ezra\" size=\"2\" id=\"iii.18.p0.7\">hlk wSv</font> <i id=\"iii.18.p0.8\">A.V.</i> have done altogether.</p>",
+      "why": "Brenton’s 1879 physical page 36; 1900 physical page 32. Both printings agree. CCEL reads the final vav in עשו as yod, producing עשי. The Brenton correction at GEN 18:21 (עשי כלה to עשו כלה) agrees with the printings. This is the same note at the same caller, not a second note. This mends CCEL’s note transcription alone."
+    },
+    "iii.2#1": {
+      "from": "<p> <i>Or</i> order. See <scripref id=\"iii.2.p0.1\">John 2.19</scripref>.</p>",
+      "to": "<p> <i>Or</i> order. See <scripref id=\"iii.2.p0.1\">John 1. 10</scripref>.</p>",
+      "why": "Brenton’s 1879 physical page 18; 1900 physical page 14. Both printings have the same μ caller immediately before world in Genesis 2:1, and the same note citing John 1. 10. CCEL misreads the reference as John 2.19; eBible preserves the printed wording and caller. No specific existing source or citation correction for this reference was found. This mends CCEL’s note transcription alone.",
+      "uncategorized": true
+    },
+    "iii.22#5": {
+      "from": "<p> <scripref id=\"iii.22.p0.12\">Acts 8.26.</scripref></p>",
+      "to": "<p> <scripref id=\"iii.22.p0.12\">Acts 3. 25.</scripref></p>",
+      "why": "Brenton’s 1879 physical page 42; 1900 physical page 38. Both printings agree with eBible on Acts 3. 25. and place the caller before in, after And. CCEL substitutes both chapter and verse digits. This mends CCEL’s note transcription alone.",
+      "uncategorized": true
+    },
+    "iii.33#3": {
+      "from": "<p> <i>Gr.</i> pitched his tent.  <i>Alex.</i> <font face=\"SIL Galatia\" size=\"2\" id=\"iii.33.p0.4\">parenbale</font> for which probably <font face=\"SIL Galatia\" size=\"2\" id=\"iii.33.p0.5\">parenlabe</font> is a mere mistake.  So <i>Bos</i> and <i>P. Junius</i> thought. </p>",
+      "to": "<p> <i>Or,</i> pitched his tent.  <i>Alex.</i> <font face=\"SIL Galatia\" size=\"2\" id=\"iii.33.p0.4\">parenbale,</font> for which probably <font face=\"SIL Galatia\" size=\"2\" id=\"iii.33.p0.5\">parenlabe</font> is a mere mistake.  So <i>Bos</i> and <i>P. Junius</i> thought. </p>",
+      "why": "Brenton’s 1879 physical page 60; 1900 physical page 56. Both examined printings support eBible exactly. CCEL changes Or, to Gr. and omits the comma after παρενέβαλε. The Alexandrinus discussion itself is identical and this transcription correction does not require a new Greek target decision. Swete would be needed only if reconsidering the existing Alexandrinus disposition. Physical pages 60 and 56 contain the verse and footnote. This mends CCEL’s note transcription alone.",
+      "uncategorized": true
+    },
+    "iii.37#4": {
+      "from": "<p> <i id=\"iii.37.p0.8\">Gr.</i> statce.</p>",
+      "to": "<p> <i id=\"iii.37.p0.8\">Gr.</i> stacte.</p>",
+      "why": "Brenton’s 1879 physical page 66; 1900 physical page 62. Both printings support eBible stacte; CCEL reverses the c and t in statce. Caller agrees at myrrh. This mends CCEL’s note transcription alone.",
+      "uncategorized": true
+    },
+    "iii.4#10": {
+      "from": "<p> <i>Or,</i> trusted, <i>q. d.</i> had faith to call, &amp;c. The LXX. seem to have read <font face=\"SIL Ezra\" size=\"2\" id=\"iii.4.p1.1\">rxwh</font> as a part of <font face=\"SIL Ezra\" size=\"2\" id=\"iii.4.p1.2\">lxy</font>.</p>",
+      "to": "<p> <i>Or,</i> trusted, <i>q. d.</i> had faith to call, &amp;c. The LXX. seem to have read <font face=\"SIL Ezra\" size=\"2\" id=\"iii.4.p1.1\">lxwh</font> as a part of <font face=\"SIL Ezra\" size=\"2\" id=\"iii.4.p1.2\">lxy</font>.</p>",
+      "why": "Brenton’s 1879 physical page 22; 1900 physical page 18. Both printings agree with eBible. CCEL mistranscribes the first quoted Hebrew word with resh instead of lamed. The note and caller otherwise match. No Alexandrinus or Appendix question arises. The initially located 1879 page 23 was too late; page 22 contains the target verse and note. This mends CCEL’s note transcription alone."
+    },
+    "iii.47#1": {
+      "from": "<p> <i id=\"iii.47.p0.4\">Gr. let us dwell. See <scripref id=\"iii.47.p0.5\">1 Tim. 6.8</scripref>.</i></p>",
+      "to": "<p> <i id=\"iii.47.p0.4\">Or, let us dwell. See <scripref id=\"iii.47.p0.5\">1 Tim. 6.8</scripref>.</i></p>",
+      "why": "Brenton’s 1879 physical page 80; 1900 physical page 76. Both printings label the gloss Or, not Gr. eBible preserves the correct wording and citation, and both callers are before we will dwell. This mends CCEL’s note transcription alone.",
+      "uncategorized": true
+    },
+    "iii.49#1": {
+      "from": "<p> <i id=\"iii.49.p0.3\">Gr.  thou my first-born, etc., <i id=\"iii.49.p0.4\">nom.</i> and <i id=\"iii.49.p0.5\">voc.</i> not being always regularly distinguished in the LXX. <i id=\"iii.49.p0.6\">See</i> <scripref id=\"iii.49.p0.7\">Heb 1.8</scripref> <font face=\"SIL Galatia\" size=\"2\" id=\"iii.49.p0.8\">Ό Θεος </font></i></p>",
+      "to": "<p> <i id=\"iii.49.p0.3\">Or,  thou my first-born, etc., <i id=\"iii.49.p0.4\">nom.</i> and <i id=\"iii.49.p0.5\">voc.</i> not being always regularly distinguished in the LXX. <i id=\"iii.49.p0.6\">See</i> <scripref id=\"iii.49.p0.7\">Heb 1.8</scripref> <font face=\"SIL Galatia\" size=\"2\" id=\"iii.49.p0.8\">ὁ Θεὸς. </font></i></p>",
+      "why": "Brenton’s 1879 physical page 83; 1900 physical page 79. Both Brenton printings agree with eBible: Or, rather than Gr.; article is lowercase rough-breathed ὁ, and noun has grave accent Θεὸς. The CCEL note is the same note at the same caller with transcription errors, not a distinct grammatical gloss. The 1879 note is on physical page 83. This mends CCEL’s note transcription alone.",
+      "uncategorized": true
+    },
+    "iv.16#4": {
+      "from": "<p> <i id=\"iv.16.p0.18\">Gr.</i> <font face=\"SIL Galatia\" size=\"2\" id=\"iv.16.p0.19\">o¸koumnjn.</font></p>",
+      "to": "<p> <i id=\"iv.16.p0.18\">Gr.</i> <font face=\"SIL Galatia\" size=\"2\" id=\"iv.16.p0.19\">οἰκουμένη.</font></p>",
+      "why": "Brenton’s 1879 physical page 108; 1900 physical page 104. Both printings support eBible’s nominative οἰκουμένη, even though the Greek scripture column has accusative οἰκουμένην. CCEL appears to have supplied a final nu absent from the printed footnote. Preserve the footnote as printed rather than silently harmonizing it to the scripture Greek. This mends CCEL’s note transcription alone.",
+      "uncategorized": true
+    },
+    "iv.29#3": {
+      "from": "<p> <i id=\"iv.29.p0.10\">Gr.</i> the shields.</p>",
+      "to": "<p> <i id=\"iv.29.p0.10\">Gr.</i> little shields.</p>",
+      "why": "Brenton’s 1879 physical page 123; 1900 physical page 119. Both printings agree with the existing eBible note. CCEL substitutes the for little in this gloss at the same caller word. This mends CCEL’s note transcription alone.",
+      "uncategorized": true
+    },
+    "iv.33#1": {
+      "from": "<p> <i id=\"iv.33.p0.5\">Or,</i> the name of the Lord, <i id=\"iv.33.p0.6\">Hebraism.</i> Another reading is <font face=\"SIL Galatia\" size=\"2\" id=\"iv.33.p0.7\">n onçmati  </font></p>",
+      "to": "<p> <i id=\"iv.33.p0.5\">Or,</i> the name of the Lord, <i id=\"iv.33.p0.6\">Hebraism.</i> Another reading is <font face=\"SIL Galatia\" size=\"2\" id=\"iv.33.p0.7\">ἐν ὀνόματι.  </font></p>",
+      "why": "Brenton’s 1879 physical page 132; 1900 physical page 128. Both printings agree with eBible. CCEL substitutes rough breathing on ἑν and loses the smooth breathing in ονόματι; its body also omits the printed final period. This is one note at the same caller, not distinct content. This mends CCEL’s note transcription alone.",
+      "uncategorized": true
+    },
+    "iv.9#8": {
+      "from": "<p> <i id=\"iv.9.p0.17\">Gr.</i> in the ear.</p>",
+      "to": "<p> <i id=\"iv.9.p0.17\">Or,</i> in the ear.</p>",
+      "why": "Brenton’s 1879 physical page 97; 1900 physical page 93. Both Bagster printings agree with eBible label Or, rather than CCEL Gr. Same caller and gloss; no distinct note or Alexandrinus issue. This mends CCEL’s note transcription alone.",
+      "uncategorized": true
+    },
+    "ix#4": {
+      "from": "<p> <i>Gr</i>. seed of \nman.</p>",
+      "to": "<p> <i>Gr</i>. seed of \nmen.</p>",
+      "why": "Brenton’s 1879 physical page 371; 1900 physical page 367. Both 1879 and 1900 print men, matching the retained eBible note. CCEL substitutes singular man. Both callers precede man-child, so there is no distinct scope or missing note. The note is at the opening of I Kings on printed page 355. This mends CCEL’s note transcription alone."
+    },
+    "vi.16#6": {
+      "from": "<p> <i id=\"vi.16.p4.3\">Gr.</i> vision. Some copies read<font face=\"SIL Galatia\" id=\"vi.16.p4.4\"> csmati</font>.</p>",
+      "to": "<p> <i id=\"vi.16.p4.3\">Or,</i> vision. Some copies read<font face=\"SIL Galatia\" id=\"vi.16.p4.4\"> csmati</font>.</p>",
+      "why": "Brenton’s 1879 physical page 214; 1900 physical page 210. Both 1879 and 1900 print Or, vision, not Gr. vision. Caller beta immediately precedes wonder in verse 30. The Greek variant χάσματι and remainder of the note agree with eBible. This mends CCEL’s note transcription alone.",
+      "uncategorized": true
+    },
+    "vi.25#4": {
+      "from": "<p> <i id=\"vi.25.p0.6\">Gr.</i> furnace, <font face=\"SIL Galatia\" id=\"vi.25.p0.7\"> kminon</font>. Trom. renders <i id=\"vi.25.p0.8\">lumpanar. Heb.</i> </p>",
+      "to": "<p> <i id=\"vi.25.p0.6\">Gr.</i> furnace, <font face=\"SIL Galatia\" id=\"vi.25.p0.7\"> kminon</font>. Trom. renders <i id=\"vi.25.p0.8\">lupanar. Heb.</i> הקבה. </p>",
+      "why": "Brenton’s 1879 physical page 226; 1900 physical page 222. The two Bagster printings support the complete eBible note at the same caller. CCEL introduces m in lupanar and omits the Hebrew following Heb.; its note is a defective transcription of this existing note, not a second gloss. Greek κάμινον agrees. No Alexandrinus or Appendix question. This mends CCEL’s note transcription alone.",
+      "uncategorized": true
+    },
+    "vi.37.iv#17": {
+      "from": "<p> <i>Or</i>, the quarried rock.\n<i>Heb</i>. Ashdoh Pisgah.</p>",
+      "to": "<p> <i>Or</i>, the quarried rock.\n<i>Heb</i>. Ashdoth Pisgah.</p>",
+      "why": "Brenton’s 1879 physical page 253; 1900 physical page 249. Both printings agree with eBible: CCEL drops t from Ashdoth. The caller and full gloss are otherwise identical. No Alexandrinus or Appendix issue. This mends CCEL’s note transcription alone."
+    },
+    "vi.37.xxvii#2": {
+      "from": "<p> <scripref passage=\"Galatian 3:10\" id=\"vi.37.xxvii.p4.1\">Gal. \n3. 30.</scripref></p>",
+      "to": "<p> <scripref passage=\"Galatian 3:10\" id=\"vi.37.xxvii.p4.1\">Gal. \n3. 10.</scripref></p>",
+      "why": "Brenton’s 1879 physical page 283; 1900 physical page 279. Both printings agree with eBible: Galatians 3:10. CCEL body has 30, although its own link target correctly names 3:10. This mends CCEL’s note transcription alone.",
+      "uncategorized": true
+    },
+    "vi.37.xxxiii#1": {
+      "from": "<p> <i>Heb. </i>\n<span lang=\"HE\" class=\"Hebrew\">קרש</span>, saints.</p>",
+      "to": "<p> <i>Heb. </i>\n<span lang=\"HE\" class=\"Hebrew\">קדש</span>, saints.</p>",
+      "why": "Brenton’s 1879 physical page 294; 1900 physical page 290. Both Bagster printings show קדש: the middle letter is daleth, with its projecting roof, not resh. The beta caller stands immediately before Cades in verse 2 in both printings. The eBible text and caller are correct. The 1879 note is on physical page 294. This mends CCEL’s note transcription alone."
+    },
+    "vi#2": {
+      "from": "<p> dicebantur olim tabulae publicae; atque inde quod videtur esse, <i id=\"vi.i.p3.1\">in tabulas referre. L. Bos.</i></p>",
+      "to": "<p> ἄξονες dicebantur olim tabulæ publicæ; atque inde ἐπαξοοῦν, quod videtur esse, <i id=\"vi.i.p3.1\">in tabulas referre. L. Bos.</i></p>",
+      "why": "Brenton’s 1879 physical page 186; 1900 physical page 182. CCEL dropped both Greek terms from this Latin lexical explanation. Both Bagster printings match the retained eBible note including its caller. Ligatures tabulæ/publicæ are also present in both scans; ae in CCEL is a typographic expansion, not a separate reading. No Alexandrinus/Appendix issue. The note is after the opening of Numbers 1:18, printed p. 170. This mends CCEL’s note transcription alone.",
+      "uncategorized": true
+    },
+    "vii.xii#3": {
+      "from": "<p> <i>Heb. </i><span lang=\"HE\" class=\"Hebrew\">הר ישרךל</span> \nprobably <span lang=\"HE\" class=\"Hebrew\">הר</span> for <span lang=\"HE\" class=\"Hebrew\">דור</span> a mountain, not \na generation.</p>",
+      "to": "<p> <i>Heb. </i><span lang=\"HE\" class=\"Hebrew\">הר ישראל</span> \nprobably <span lang=\"HE\" class=\"Hebrew\">הר</span> for <span lang=\"HE\" class=\"Hebrew\">דור</span> a mountain, not \na generation.</p>",
+      "why": "Brenton’s 1879 physical page 311; 1900 physical page 307. Both Bagster printings agree with the eBible note. CCEL substituted final kaf for aleph in the Hebrew name Israel; the former ASCII normalization concealed this character error. Same caller before race, with no additional content. This mends CCEL’s note transcription alone."
+    },
+    "vii.xlii#9": {
+      "from": "<p> <i>Heb</i>. \nUlamlaiah, or Laish of old.</p>",
+      "to": "<p> <i>Heb</i>. \nUlamlaish, or Laish of old.</p>",
+      "why": "Brenton’s 1879 physical page 359; 1900 physical page 355. Both transcriptions differ from both printings: CCEL misreads the final sh as ah, while eBible drops the second l. Both printings agree on Ulamlaish and one caller at Ulamais. No substantive Alexandrinus issue. This mends CCEL’s note transcription alone."
+    },
+    "vii.xlvi#6": {
+      "from": "<p> <i>Or</i>, it pleased them thus.</p>",
+      "to": "<p> <i>Gr</i>. it pleased them thus.</p>",
+      "why": "Brenton’s 1879 physical page 365; 1900 physical page 361. Both Bagster printings use Gr., agreeing with eBible. CCEL changed the label to Or,. The wording and caller otherwise identify the same note. This mends CCEL’s note transcription alone.",
+      "uncategorized": true
+    },
+    "vii.xvi#2": {
+      "from": "<p> So the Greek. There seems to have been a reading of the word <span lang=\"HE\" class=\"Hebrew\">דנוה</span> as if part of <span lang=\"HE\" class=\"Hebrew\">רנע</span>.</p>",
+      "to": "<p> So the Greek. There seems to have been a reading of the word <span lang=\"HE\" class=\"Hebrew\">דברה</span> as if part of <span lang=\"HE\" class=\"Hebrew\">רבע</span>.</p>",
+      "why": "Brenton’s 1879 physical page 315; 1900 physical page 311. Both printings agree. CCEL preserves the correct English “have been” but corrupts both Hebrew words; eBible preserves the correct Hebrew but abbreviates “have been” to “be”. Thus both transcriptions need corrections before strict duplicate comparison. No Alexandrinus issue. This mends CCEL’s note transcription alone.",
+      "uncategorized": true
+    },
+    "vii.xxvii#4": {
+      "from": "<p> Gr. repented. This word seems generally to stand for \n<span lang=\"HE\" class=\"Hebrew\">נהם</span></p>",
+      "to": "<p> Gr. repented. This word seems generally to stand for \n<span lang=\"HE\" class=\"Hebrew\">נהם</span>.</p>",
+      "why": "Brenton’s 1879 physical page 333; 1900 physical page 329. Both 1879 and 1900 print נהם, agreeing with CCEL’s letters. eBible silently gives נחם; whatever Hebrew root was intended, the visible middle character in both impressions is he, with its separate lower left leg. CCEL alone drops the final period. The caller is the same in both printings and both transcriptions. This mends CCEL’s note transcription alone."
+    },
+    "vii.xxviii#1": {
+      "from": "<p> <i>Gr</i>. inherited.</p>",
+      "to": "<p> <i>Gr</i>. it inherited.</p>",
+      "why": "Brenton’s 1879 physical page 334; 1900 physical page 330. Both printings support eBible exactly. CCEL dropped the subject pronoun it from the gloss; same caller and no additional reading. This mends CCEL’s note transcription alone.",
+      "uncategorized": true
+    },
+    "vii.xxxi#4": {
+      "from": "<p> <i>Heb</i>. <span lang=\"HE\" class=\"Hebrew\">ני</span> a particle of entreaty, here rendered literally.</p>",
+      "to": "<p> <i>Heb</i>. <span lang=\"HE\" class=\"Hebrew\">בי</span> a particle of entreaty, here rendered literally.</p>",
+      "why": "Brenton’s 1879 physical page 339; 1900 physical page 335. Both Bagster printings support eBible בי. CCEL substituted nun for the printed bet. The English wording and caller coincide. This mends CCEL’s note transcription alone."
+    },
+    "vii.xxxiv#1": {
+      "from": "<p> <span lang=\"HE\" class=\"Hebrew\">מצנ</span>. This is an instance of double translation, \n<span lang=\"EL\" class=\"Greek\">στάσεως</span> being given for <span lang=\"HE\" class=\"Hebrew\">מצנ</span>, and \n<span lang=\"EL\" class=\"Greek\">εὑρετῆ</span> having reference to the word <span lang=\"HE\" class=\"Hebrew\">מצא </span><i>to find; </i>but \n<i>Alex</i>. rightly omits <span lang=\"EL\" class=\"Greek\">εὑρετῆ</span>.</p>",
+      "to": "<p> <i>Heb.</i> <span lang=\"HE\" class=\"Hebrew\">מצב</span>. This is an instance of double translation, \n<span lang=\"EL\" class=\"Greek\">στάσεως</span> being given for <span lang=\"HE\" class=\"Hebrew\">מצב</span>, and \n<span lang=\"EL\" class=\"Greek\">εὑρετῆ</span> having reference to the word <span lang=\"HE\" class=\"Hebrew\">מצא </span><i>to find; </i>but \n<i>Alex</i>. rightly omits <span lang=\"EL\" class=\"Greek\">εὑρετῆ</span>.</p>",
+      "why": "Brenton’s 1879 physical page 344; 1900 physical page 340. Both Bagster impressions print Heb. followed by מצב and repeat מצב later. The final Hebrew letter has the broad lower stroke of beth, not nun. CCEL twice writes מצנ and drops the initial Heb. label. The explanatory English and the Greek otherwise agree with eBible, including the circumflex in εὑρετῆ. This is the same printed caller and note, not new content. This mends CCEL’s note transcription alone.",
+      "uncategorized": true
+    },
+    "4.xiv#2": {
+      "from": "<p> The LXX. \nseem to have read <span class=\"Hebrew\">עונו</span>as <span lang=\"HE\" class=\"Hebrew\">אדני</span><i> Alex. </i><span lang=\"EL\" class=\"Greek\">ἐν ᾧ</span> for \n<span lang=\"EL\" class=\"Greek\">ἐνώπιον</span>.</p>",
+      "to": "<p> The LXX. \nseem to have read <span class=\"Hebrew\">עודנו</span> as <span lang=\"HE\" class=\"Hebrew\">אדני</span><i> Alex. </i><span lang=\"EL\" class=\"Greek\">ἐν ᾧ</span> for \n<span lang=\"EL\" class=\"Greek\">ἐνώπιον</span>.</p>",
+      "why": "Brenton 1879 physical p. 600 and 1900 physical p. 596, printed p. 584, both print עודנו with ד and a separate following “as”. Restore that letter and space omitted by CCEL in this unique note; the Greek and the printed Hebrew comparison אדני remain as printed. This corrects CCEL transcription alone.",
+      "uncategorized": true
+    },
+    "8.xxii#2": {
+      "from": "<p> <i>Alex. </i><span lang=\"EL\" class=\"Greek\">ἐλεγξει σε</span>,<i> i.e. </i>will he reprove thee because he takes account of thee?</p>",
+      "to": "<p> <i>Alex. </i><span lang=\"EL\" class=\"Greek\">ἐλέγξει σε</span>,<i> i.e. </i>will he reprove thee because he takes account of thee?</p>",
+      "why": "Brenton 1879 physical p. 697 and 1900 physical p. 693 (printed p. 681) print ἐλέγξει σε in this note. Restore the accent CCEL dropped from ἐλέγξει; the printed English and attribution remain unchanged."
+    },
+    "8.xxxv#11": {
+      "from": "<p> <i>Alex</i>. whenever they set.</p>",
+      "to": "<p> <i>Alex</i>. whenever they act.</p>",
+      "why": "Brenton 1879 physical p. 708 and 1900 physical p. 704 (printed p. 692 in both), clearly print “Alex. whenever they act.” with θ before for in Job 36:9. Correct CCEL’s set to the printed act; this mends the note transcription alone.",
+      "uncategorized": true
+    },
+    "8.xl#4": {
+      "from": "<p> <i>Alex. </i><span lang=\"EL\" class=\"Greek\">ἄγνου</span>.</p>",
+      "to": "<p> <i>Alex. </i><span lang=\"EL\" class=\"Greek\">ἄγνου</span>, willow.</p>",
+      "why": "Brenton 1879 physical p. 712 and 1900 physical p. 708 (printed p. 696) print “Alex. ἄγνου, willow.” at ζ before field in printed Job 40:17 (the edition’s 40:22). CCEL 8.xl#4 drops the comma and English gloss willow. Restore this exact printed note transcription alone; the Greek and caller are correct. This dropped English gloss is not a recognized repairs.category transformation.",
+      "uncategorized": true
+    },
+    "10.vi#7": {
+      "from": "<p> <i>Alex</i>. he that fears God \nshall come forth well in all reports.</p>",
+      "to": "<p> <i>Alex</i>. he that fears God \nshall come forth well in all respects.</p>",
+      "uncategorized": true,
+      "why": "Brenton 1879 physical p. 841 and 1900 physical p. 837 (printed p. 825), γ before for at Greek 7:19, the edition’s 7:18, both print “Alex. he that fears God shall come forth well in all respects.” CCEL 10.vi#7 incorrectly transcribes reports. Restore printed respects in this note alone; Docker repairs.category on this exact HTML pair returns None, requiring uncategorized:true. This mends the transcription, not Brenton’s wording."
+    },
+    "10.x#2": {
+      "from": "<p> Alex. for <span lang=\"EL\" class=\"Greek\">τῷ ἀνδρὶ οὐ</span> reads \n<span lang=\"EL\" class=\"Greek\">τοῦ ἀνδρεὶου</span>. Wisdom is the advantage of an energetic man.</p>",
+      "to": "<p> Alex. for <span lang=\"EL\" class=\"Greek\">τῷ ἀνδρὶ οὐ</span> reads \n<span lang=\"EL\" class=\"Greek\">τοῦ ἀνδρείου</span>. Wisdom is the advantage of an energetic man.</p>",
+      "why": "Brenton 1879 physical p. 844 and 1900 physical p. 840 (printed p. 828) print τοῦ ἀνδρείου in the β note after Ecclesiastes 10:10; CCEL transcribes its acute-accented ί as grave-accented ὶ. Mend this one-letter transcription slip only; preserve the printed reading and English."
+    },
+    "13.xxix#3": {
+      "from": "<p> <i>Alex</i>. + or \nthou shalt surely drink of it.</p>",
+      "to": "<p> <i>Alex</i>. + for \nthou shalt surely drink of it.</p>",
+      "why": "Brenton 1879 physical p. 957 and 1900 physical p. 953 (printed p. 941 in both) print “Alex. + for thou shalt surely drink of it.” with δ immediately after cleared: and before the next verse numeral. This is printed Jeremiah 29:12, edition JER 30:6, Swete 29:13. CCEL 13.xxix#3 drops the f of for, giving or; restore the missing letter in this note alone. The closing caller stands at the end of JER 30:6, where the Alexandrinus addition is printed."
+    },
+    "13.xxxi#4": {
+      "from": "<p> \n<i>Alex</i>. Elcale.</p>",
+      "to": "<p> \n<i>Alex</i>. Eleale.</p>",
+      "why": "Mend CCEL’s wrong-letter transcription alone: Brenton 1879 physical p. 960 and 1900 physical p. 956, printed p. 944, both print Alex. Eleale. with δ before Ætam at Jeremiah 31:34. CCEL 13.xxxi#4 has Elcale. This substitutes c with printed e and changes no source scripture wording; Swete III p. 296 unqualified A Ελεαλη independently supports the name."
+    },
+    "15#6": {
+      "from": "<p> <i>Alex</i>. and <i>Heb</i>. supply <i>ver</i>. \n14. 'And the living creatures ran and returned at the appearance of \nBezee.'</p>",
+      "to": "<p> <i>Alex</i>. and <i>Heb</i>. supply <i>ver</i>. \n14. 'And the living creatures ran and returned at the appearance of \nBezec.'</p>",
+      "why": "Brenton 1879 physical p. 996 and 1900 physical p. 992 (printed p. 980), with θ after “lightning.” in 1:13, both print Bezec with final c; CCEL 15#6 misreads it as Bezee. Repair this recognized wrong-letter transcription slip alone."
+    },
+    "15#10": {
+      "from": "<p> \nOr, clapping or making a noise. <i>Alex</i>. + <span lang=\"EL\" class=\"Greek\">συνεζευγμέναι</span>, joined with,</p>",
+      "to": "<p> \nOr, clapping or making a noise. <i>Alex</i>. + <span lang=\"EL\" class=\"Greek\">συνεζευγμέναι</span>, joined with.</p>",
+      "why": "Brenton 1879 physical p. 996 and 1900 physical p. 992, printed p. 980 in both, the π footnote before reaching at Ezekiel 1:23 ends joined with. CCEL 15#10 incorrectly ends it with a comma. Restore the printed period, preserving every printed word and Greek accent."
+    },
+    "15.viii#4": {
+      "from": "<p> <i>Alex</i>. <span lang=\"EL\" class=\"Greek\">αὐτοῦ</span></p>",
+      "to": "<p> <i>Alex</i>. <span lang=\"EL\" class=\"Greek\">αὐτοῦ</span>.</p>",
+      "why": "Brenton 1879 physical p. 1003 and 1900 physical p. 999 (printed p. 987), with ζ before them, both print Alex. αὐτοῦ. CCEL 15.viii#4 drops its terminal full stop; restore that punctuation alone."
+    },
+    "15.xvii#6": {
+      "from": "<p> Alex. <span lang=\"EL\" class=\"Greek\">ἐν ῷ ὁ βασιλεὺς</span>, in which the king is.</p>",
+      "to": "<p> Alex. <span lang=\"EL\" class=\"Greek\">ἐν ᾧ ὁ βασιλεὺς</span>, in which the king is.</p>",
+      "why": "Brenton 1879 physical p. 1015 and 1900 physical p. 1011 (printed p. 999), ζ before where, prints ἐν ᾧ ὁ βασιλεὺς with rough breathing on the relative pronoun. CCEL 15.xvii#6 drops that breathing, transcribing ῷ. Restore the printed Greek character alone; no English is altered."
+    },
+    "15.xix#8": {
+      "from": "<p> <i>Heb</i>. spied. <i>Alex</i>. aware.</p>",
+      "to": "<p> <i>Heb</i>. spied. <i>Alex</i>. sware.</p>",
+      "why": "Brenton 1879 physical p. 1018 and 1900 physical p. 1014 (printed p. 1002 in both) print θ “Heb. spied. Alex. sware.” with θ immediately before prepared at Ezekiel 20:6. CCEL 15.xix#8 misreads the initial s of sware as a in aware. Restore the printed word by a recognized wrong-letter correction; no uncategorized flag is needed. Swete III p. 422 explicitly records ητοιμασα] ωμοσα A, confirming the restored English verb and giving no A hand, lacuna or uncertainty qualification. This repairs CCEL’s transcription alone, before the separate promotion."
+    },
+    "19#4": {
+      "from": "<p> <i>Heb. </i><span lang=\"HE\" class=\"Hebrew\">רהם</span><i> Alex. </i><span lang=\"EL\" class=\"Greek\">μήτραν</span>.</p>",
+      "to": "<p> <i>Heb. </i><span lang=\"HE\" class=\"Hebrew\">רחם</span><i> Alex. </i><span lang=\"EL\" class=\"Greek\">μήτραν</span>.</p>",
+      "why": "Brenton 1879 physical p. 1101 and 1900 physical p. 1097 (printed p. 1085 in both), δ immediately before the in destroyed the mother upon the earth, both print Heb. רחם Alex. μήτραν. CCEL 19#4 miscopies Hebrew ח as ה. Correct this recognized single wrong-letter transcription slip only; preserve the printed Greek and English. Swete III p. 17 explicitly μητερα] μητραν AQ establishes A’s report without hand/lacuna/uncertainty, but supplies no additional English."
+    },
+    "13.lii#10": {
+      "from": "<p> <i>Alex</i>. + �the thrones of.�</p>",
+      "to": "<p> <i>Alex</i>. + ‘the thrones of’</p>",
+      "why": "Brenton 1879 printed p. 971 (physical 987) and 1900 printed p. 971 (physical 983) both print δ Alex. + ‘the thrones of’ and place δ immediately before the kings in Jeremiah 52:32. CCEL replaces quotation marks with unreadable characters and inserts a stop inside the quotation. This restores the printed note only.",
+      "uncategorized": true
+    },
+    "v.7#15": {
+      "from": "<p> The words [greek should go here] are of doubtful authority.</p>",
+      "to": "<p> The words κατὰ πρόσωπον are of doubtful authority.</p>",
+      "why": "Brenton 1879 physical page 155 and 1900 physical page 151 (printed page 139) both print “The words κατὰ πρόσωπον are of doubtful authority.” The γ caller stands immediately before italic “before the Lord” in Leviticus 10:18. This restores Greek omitted by CCEL’s transcription; no scripture wording changes.",
+      "uncategorized": true
+    },
+    "1.xxi#5": {
+      "from": "<p>  <i id=\"1.xxi.p0.17\">Alex.</i> + behind the ephod (or shoulder-piece�so the <i id=\"1.xxi.p0.18\">Heb</i>.</p>",
+      "to": "<p>  <i id=\"1.xxi.p0.17\">Alex.</i> + behind the ephod (or shoulder-piece)—so the <i id=\"1.xxi.p0.18\">Heb</i>.</p>",
+      "why": "Brenton 1879 physical p. 402 and 1900 physical p. 398 (printed p. 386), γ before cloth in 1SA21:9, print behind the ephod (or shoulder-piece)—so the Heb. Restore the missing closing parenthesis and em dash.",
+      "uncategorized": true
+    },
+    "iii.34#1": {
+      "from": "<p> <i id=\"iii.34.p0.3\">Alex.</i> the Chorrh�an. </p>",
+      "to": "<p> <i id=\"iii.34.p0.3\">Alex.</i> the Chorrhæan. </p>",
+      "why": "Brenton 1879 physical page 61 and 1900 physical page 57 (both printed page 45) print “Alex. the Chorrhæan.” with caller β before “Evite” in Genesis 34:2. This restores the æ ligature lost in CCEL’s transcription; it changes no printed wording.",
+      "uncategorized": true
+    },
+    "iv.30#1": {
+      "from": "<p> <i id=\"iv.30.p0.5\">Gr.</i> named</p>",
+      "to": "<p> <i id=\"iv.30.p0.5\">Or.</i> named.</p>",
+      "why": "Brenton 1879 physical page 127 and 1900 physical page 123, printed p. 111, both print beta Or. named. before called upon in Exodus 29:45. This corrects the CCEL label and punctuation, not the word named.",
+      "uncategorized": true
+    },
+    "v.7#19": {
+      "from": "<p> <i id=\"v.7.p0.63\">Gr.</i> ernetant, see Ps. 44.1, in LXX. also in Neb.</p>",
+      "to": "<p> <i id=\"v.7.p0.63\">Gr.</i> eructant, see Ps. 44.1, in LXX. also in Heb.</p>",
+      "why": "Brenton 1879 physical p. 155/printed p. 139 and 1900 physical p. 151/printed p. 139 both clearly print eructant and Heb.; CCEL misreads them ernetant and Neb. The θ caller precedes produce inLEV11:10 inbothprintings.",
+      "uncategorized": true
+    },
+    "v.7#7": {
+      "from": "<p> <i id=\"v.7.p0.29\">Gr.</i> complete your hands.</p>",
+      "to": "<p> <i id=\"v.7.p0.29\">Gr.</i> complete your hands. <i>Heb.</i> fill your hands.</p>",
+      "why": "Brenton 1879 physical p. 152 and 1900 physical p. 148 (printed p. 136) show one beta footnote before consecrate you at Leviticus 8:33: Gr. complete your hands. Heb. fill your hands. CCEL splits its Hebrew sentence into body 8 and assigns that body to the different gamma caller at 8:35. Restore the complete printed beta note here.",
+      "uncategorized": true
+    },
+    "v.8#3": {
+      "from": "<p> \n<i>B Or,</i> afflict.</p>",
+      "to": "<p> \n<i>Or,</i> afflict.</p>",
+      "why": "Brenton’s 1879 physical page 177 (printed page 161); 1900 physical page 173 (printed page 161). Both printings read “β Or, afflict.” with the β caller immediately before “humble your souls” in Leviticus 23:32. CCEL’s leading “B” is that Greek caller transcribed as a Latin letter and left in the body, not a witness label. eBible has no note here. This mends CCEL’s note transcription alone.",
+      "uncategorized": true
+    },
+    "19.v#5": {
+      "from": "<p> <i>Gr</i>. fat.</p>",
+      "to": "<p> <i>Gr</i>. fut.</p>",
+      "why": "Brenton prints the corrected note in 1879 physical page 1105; 1900 physical page 1101. The correction mends CCEL’s transcription alone."
+    },
+    "13.xlii#1": {
+      "from": "<p> <i>Gr</i>. in.</p>",
+      "to": "<p> <i>Gr</i>. is.</p>",
+      "why": "Brenton’s 1879 physical page 974; 1900 physical page 970 (printed page 958 in both). Both printings read “Gr. is.” at caller β before dwells; CCEL’s “in” is a one-letter transcription slip. Same caller, no eBible note at the verse. This mends CCEL’s note transcription alone."
+    },
+    "13.xxvi#4": {
+      "from": "<p> See verse <span lang=\"EL\" class=\"Greek\">ὃ, ὅπλον</span> apparently means shield in LXX.</p>",
+      "to": "<p> See verse 3, <span lang=\"EL\" class=\"Greek\">ὅπλον</span> apparently means shield in LXX.</p>",
+      "why": "Brenton prints the corrected note in 1879 physical page 950; 1900 physical page 946 (printed page 934 in both): the reference is the numeral 3, in a flat-topped form CCEL transcribed as Greek ὃ, pointing to the note 'Or, shields' on 'arms' at verse 3. The correction mends CCEL’s transcription alone.",
+      "uncategorized": true
+    },
+    "v.6#1": {
+      "from": "<p> <i id=\"v.6.p0.3\">Gr.</i> overlooking overlooked. <i id=\"v.6.p0.4\">i.e.</i> very decidedly, which in the end is guiltitly or wilfully. <i id=\"v.6.p0.5\">Hebraism</i> </p>",
+      "to": "<p> <i id=\"v.6.p0.3\">Gr.</i> overlooking overlooked. <i id=\"v.6.p0.4\">i.e.</i> very decidedly, which in the end is guiltily or wilfully. <i id=\"v.6.p0.5\">Hebraism</i> </p>",
+      "why": "Brenton prints the corrected note in 1879 physical page 147; 1900 physical page 143. The correction mends CCEL’s transcription alone."
+    },
+    "v.7#20": {
+      "from": "<p> <i id=\"v.7.p0.64\">Or,</i> scalark.</p>",
+      "to": "<p> <i id=\"v.7.p0.64\">Or,</i> sealark.</p>",
+      "why": "Brenton 1879 physical page 156 and 1900 physical page 152 (both printed page 140) print β Or, sealark., with β immediately before lapwing in Leviticus 11:19. CCEL misreads sealark as scalark. This mends CCEL’s transcription alone."
+    },
+    "4.xxvi#6": {
+      "from": "<p> <i>Gr</i>. to destory.</p>",
+      "to": "<p> <i>Gr</i>. to destroy.</p>",
+      "why": "Brenton’s 1879 physical page 616 (printed page 600); 1900 physical page 612 (printed page 600). Both printings read “β Gr. to destroy.” with the β caller immediately before “to his destruction” in 2 Chronicles 26:16. CCEL’s “destory” transposes two letters in transcription. eBible has no note here. This mends CCEL’s note transcription alone.",
+      "uncategorized": true
+    },
+    "1.xxxii#12": {
+      "from": "<p> <i>Gr. </i>its length fouty in cubit, etc.</p>",
+      "to": "<p> <i>Gr. </i>its length forty in cubit, etc.</p>",
+      "why": "Brenton prints “β Gr. its length forty in cubit, etc.”, with β immediately before “was” in III Kings 6:2, in 1879 physical page 467 and 1900 physical page 463 (both printed 451). CCEL misreads “forty” as “fouty”. Once mended, the note has eBible’s wording at the same caller word, so the build accounts for it as eBible’s note 1KI 6:2 rather than printing a second copy. The correction mends CCEL’s transcription alone."
+    },
+    "1.xxxii#13": {
+      "from": "<p>  <i>Heb.</i> and <i>Alex. </i>60 cubit. </p>",
+      "to": "<p>  <i>Heb.</i> and <i>Alex. </i>60 cubits. </p>",
+      "why": "Brenton 1879 physical p. 467 and 1900 physical p. 463 (printed p. 451) both print γ Heb. and Alex. 60 cubits. immediately before “forty cubits” in III Kings 6:2; CCEL drops the s. Once mended, the note is eBible’s 1KI 6:2#2 at the same caller, which alexandrinus.json already decides. This mends CCEL’s transcription alone."
+    },
+    "4.xxii#4": {
+      "from": "<p> i.e.with Jodac, but another reading is <span lang=\"EL\" class=\"Greek\">μετ᾽ αὐτῆς</span>.</p>",
+      "to": "<p> i.e. with Jodae, but another reading is <span lang=\"EL\" class=\"Greek\">μετ᾽ αὐτῆς</span>.</p>",
+      "why": "Brenton’s 1879 physical page 610 and 1900 physical page 606 (printed page 594 in both). Both printings have the γ caller immediately before “with him hid” in 2 Chronicles 22:12, and the note “i.e. with Jodae, but another reading is μετ᾽ αὐτῆς.”, with the same spelling Jodae as the verse. The 1900 plates are worn, so their e's look like c's throughout the line; CCEL’s Jodac reproduces that wear, and it also drops the space after i.e. This mends CCEL’s note transcription alone.",
+      "uncategorized": true
+    },
+    "1.xxxii#14": {
+      "from": "<p> <i>Heb.</i> and <i>Alex.</i> 50 cubits. </p>",
+      "to": "<p> <i>Heb.</i> and <i>Alex.</i> 30 cubits. </p>",
+      "why": "Brenton 1879 physical p. 467 and 1900 physical p. 463 (printed p. 451) both print δ Heb. and Alex. 30 cubits. immediately before “five and twenty cubits” in III Kings 6:2; CCEL misreads the 3 as 5. Once mended, the note is eBible’s 1KI 6:2#3 at the same caller, which alexandrinus.json already decides. This mends CCEL’s transcription alone.",
+      "uncategorized": true
+    },
+    "1.xxxii#16": {
+      "from": "<p> <i>Heb. </i> or <i>Alex. </i> with (or against) the walls of the house round about. </p>",
+      "to": "<p> <i>Heb. </i> and <i>Alex. </i> with (or against) the walls of the house round about. </p>",
+      "why": "Brenton 1879 physical p. 467 and 1900 physical p. 463 (printed p. 451) both print θ Heb. and Alex. with (or against) the walls of the house round about. immediately before “the temple” in III Kings 6:5; CCEL reads “or” for “and”. Once mended, the note is eBible’s 1KI 6:5#2 at the same caller, which alexandrinus.json already decides. This mends CCEL’s transcription alone.",
+      "uncategorized": true
+    },
+    "1.xxxii#19": {
+      "from": "<p> <i>Or. </i> shrine. </p>",
+      "to": "<p> <i>Or, </i> shrine. </p>",
+      "why": "Brenton 1879 physical page 467 and 1900 physical page 463 (printed page 451 in both) print μ Or, shrine. with μ immediately before “oracle” in III Kings 6:16, which eBible numbers 1KI 6:16 and gives the same note at the same caller. CCEL sets a period after Or where the print has a comma. This mends CCEL’s transcription alone, so the build accounts for the note by eBible’s."
+    },
+    "1.xxxii#24": {
+      "from": "<p> See ch. 10.12. </p>",
+      "to": "<p> See ch. 10. 12. </p>",
+      "why": "Brenton 1879 physical page 468 and 1900 physical page 464 (printed page 452 in both) print β See ch. 10. 12. with β immediately before “hewn stones” in III Kings 6:36, which eBible numbers 1KI 6:36 and gives the same note at the same caller. CCEL drops the space after 10. This mends CCEL’s transcription alone, so the build accounts for the note by eBible’s."
+    },
+    "15.xiv#2": {
+      "from": "<p> <i>Gr</i>. have \nbeen alientated.</p>",
+      "to": "<p> <i>Gr</i>. have \nbeen alienated.</p>",
+      "why": "Brenton’s 1879 physical page 1010; 1900 physical page 1006 (printed page 994). Both printings read “Gr. have been alienated.” with the β caller immediately before “separate himself from me” in Ezekiel 14:7. CCEL adds a stray t (“alientated”); eBible has no note here. This mends CCEL’s note transcription alone."
+    },
+    "15.xv#12": {
+      "from": "<p> <i>Gr</i>. the vessels or articles of they glory.</p>",
+      "to": "<p> <i>Gr</i>. the vessels or articles of thy glory.</p>",
+      "why": "Brenton’s 1879 physical page 1013 (printed page 997); 1900 physical page 1009 (printed page 997). Both printings read “θ Gr. the vessels or articles of thy glory.” with the θ caller immediately before “thy proud ornaments” in Ezekiel 16:39. CCEL’s “they” is a stray letter in its transcription. eBible has no note here. This mends CCEL’s note transcription alone."
+    },
+    "15.xliii#6": {
+      "from": "<p> <i>Gr</i>. Ariel, <i>Heb</i>. Arci, <i>i.e</i>. the mountain of God.</p>",
+      "to": "<p> <i>Gr</i>. Ariel, <i>Heb</i>. Arel, <i>i.e</i>. the mountain of God.</p>",
+      "why": "Brenton’s 1879 physical page 1055; 1900 physical page 1051 (printed page 1039 in both). Both printings read “Gr. Ariel, Heb. Arel, i. e. the mountain of God.” with the λ caller immediately before the first “altar” in Ezekiel 43:15. CCEL’s “Arci” misreads the printed “Arel” (two letters, e as c and l as i). eBible has no note here. This mends CCEL’s note transcription alone.",
+      "uncategorized": true
+    },
+    "16.vii#7": {
+      "from": "<p> <i>Or</i>, certainly.</p>",
+      "to": "<p> <i>Or</i>, certainty.</p>",
+      "why": "Brenton’s 1879 physical page 1077; 1900 physical page 1073 (printed page 1061 in both). Both printings read “Or, certainty.” with the θ caller immediately before the first “truth” of Daniel 7:16. CCEL misreads certainty as certainly; eBible lacks the note. This mends CCEL’s note transcription alone."
+    },
+    "1.xxxii#33": {
+      "from": "<p> <i id=\"1.xxxiii.p2.145\">Gr.</i> give them to oompassions.</p>",
+      "to": "<p> <i id=\"1.xxxiii.p2.145\">Gr.</i> give them to compassions.</p>",
+      "why": "Brenton 1879 physical page 473 and 1900 physical page 469 (printed 457 in both) print “γ Gr. give them to compassions.”, with γ immediately before “cause them to be pitied” in III Kings 8:50. CCEL reads “oompassions”, following the worn 1900 plate, in which the c looks like o; 1879 plainly has the c. Once mended, the note has eBible’s wording at the same caller word, so the build accounts for it as eBible’s note 1KI 8:50. The correction mends CCEL’s transcription alone."
+    },
+    "17.iii#2": {
+      "from": "Urim and Thummin probably meant,",
+      "to": "Urim and Thummim probably meant,",
+      "why": "Brenton’s 1879 physical page 1088 (printed page 1072); 1900 physical page 1084 (printed page 1072). Both printings read “λ Gr. δήλων, Urim and Thummim probably meant, or rather Urim only.” with the λ caller immediately before “manifestations” in Osee 3:4. CCEL’s “Thummin” is a one-letter transcription slip for the printed “Thummim”. eBible has no note here. This mends CCEL’s note transcription alone."
+    },
+    "v.7#8": {
+      "from": "<p> <i id=\"v.7.p0.30\">Heb.</i> fill your hands.</p>",
+      "to": "<p> <i id=\"v.7.p0.30\">Gr.</i> sit.</p>",
+      "why": "Brenton 1879 physical p. 152 and 1900 physical p. 148 (both printed p. 136) print γ Gr. sit. with the γ caller immediately before remain seven days in Leviticus 8:35; 1844 vol. 1 physical p. 137 (printed p. 113) has the margin note † Gr. sit. at the same word. CCEL's caller 8 stands at that word, but CCEL gave it the Hebrew sentence of the β note on 8:33, which correction v.7#7 restores there, and dropped γ's own body. Give body 8 its printed text.",
+      "uncategorized": true
+    },
+    "1.xxxii#35": {
+      "from": "<p> <i id=\"1.xxxiii.p2.363\">Heb.</i> and <i id=\"1.xxxiii.p2.364\">Alex.</i> insert 'in the 37th year of Asa king of Juda.'</p>",
+      "to": "<p> <i id=\"1.xxxiii.p2.363\">Heb.</i> and <i id=\"1.xxxiii.p2.364\">Alex.</i> insert 'in the 27th year of Asa king of Juda.'</p>",
+      "why": "Brenton 1879 physical page 489 and 1900 physical page 485 (printed 473 in both) print “β Heb. and Alex. insert ‘in the 27th year of Asa king of Juda.’”, with β immediately before “and reigned” in III Kings 16:10. CCEL misreads the 2 as 3. Once mended, the note is eBible’s 1KI 16:10 at the same caller, which alexandrinus.json already decides. This mends CCEL’s transcription alone.",
+      "uncategorized": true
+    },
+    "1.xxxii#43": {
+      "from": "The word is redundant",
+      "to": "The word ἔτει is redundant.",
+      "why": "Brenton 1879 physical page 489 and 1900 physical page 485 (printed 473 in both) print “π The word ἔτει is redundant.”, with π immediately before “year” in “And in the eleventh year of Ambri Josaphat”, the unnumbered paragraph after III Kings 16:28 that eBible numbers 1KI 16:28a. CCEL drops the Greek word ἔτει and the closing period. Once mended, the note has eBible’s wording at the same caller word, so the build accounts for it as eBible’s note 1KI 16:28a rather than printing a second copy. The correction mends CCEL’s transcription alone.",
+      "uncategorized": true
+    },
+    "1.xxxii#44": {
+      "from": "Gr:</i> In his kingdom",
+      "to": "Gr.</i> in his kingdom.",
+      "why": "Brenton 1879 physical page 489 and 1900 physical page 485 (printed 473 in both) print “ρ Gr. in his kingdom.”, with ρ immediately before “in the beginning of his reign” in the unnumbered paragraph after III Kings 16:28 that eBible numbers 1KI 16:28a. CCEL sets a colon after Gr, capitalizes “in” and drops the closing period. Once mended, the note has eBible’s wording at the same caller word, so the build accounts for it as eBible’s note 1KI 16:28a#2 rather than printing a second copy. The correction mends CCEL’s transcription alone.",
+      "uncategorized": true
+    }
+  },
+  "notes": {
+    "vi.37.ix#4": {
+      "omitted": true,
+      "why": "eBible has Brenton's note on the three names at Deuteronomy 9:22 as one note thrice, which the note decisions give each name's words; CCEL's note on this name alone is the same note, too unlike the combined one for the build to pass over."
+    },
+    "vi.37.ix#5": {
+      "omitted": true,
+      "why": "eBible has Brenton's note on the three names at Deuteronomy 9:22 as one note thrice, which the note decisions give each name's words; CCEL's note on this name alone is the same note, too unlike the combined one for the build to pass over."
+    },
+    "1.iv#6": {
+      "duplicate": "2SA 5:20",
+      "why": "Brenton 1879 physical page 423 and 1900 physical page 419 print the δ note; the two transcriptions reflect different printed forms of it. The 1879 image supports eBible’s Baal-perazim; the 1900 image supports CCEL’s Baal-perazh. Both callers precede Upper Breaches in 2 Samuel 5:20. Retain the existing eBible note; this is not a second note."
+    },
+    "1.xvii#2": {
+      "duplicate": "1SA 17:7",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same the-spear gloss. Brenton 1879 physical p. 395 and 1900 physical p. 391 (printed p. 379) set γ before the, as CCEL does; the lemma the spear’s head already covers it."
+    },
+    "1.xvii#10": {
+      "duplicate": "1SA 17:43",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Both say the same passage after the caller is absent from Alexandrinus/Hebrew; brackets versus italics describes how that passage is marked, and Heb. is merely abbreviated."
+    },
+    "1.xxi#3": {
+      "duplicate": "1SA 21:8",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same Greek repetition and Hebrew word; acute versus grave accent is a contextual accent difference. Brenton 1879 (printed p. 385) prints Νεεσσαρὰν with a grave accent, as eBible does."
+    },
+    "1.xxiii#2": {
+      "duplicate": "1SA 23:11",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same besieged explanation; Brenton 1879 physical p. 404 and 1900 physical p. 400 (printed p. 388) end the note with a period, as eBible does, and set γ before shut, where CCEL has it; the lemma shut up covers it."
+    },
+    "1.xxiii#3": {
+      "duplicate": "1SA 23:11#2",
+      "why": "Brenton’s 1879 physical page 404; 1900 physical page 400. Both 1879 and 1900 print “Verse 12”, not CCEL’s “Verse 13”. Both place caller δ after “Israel, tell thy servant.” and before “And the Lord said”. The eBible note wording matches the printings, but eBible sets its caller before “servant has heard?”; CCEL sets it before “And the Lord said”, as printed. This is the same printed note, with a CCEL number error and an eBible caller-placement discrepancy. Retain the existing eBible note; this is not a second note."
+    },
+    "1.xxix#2": {
+      "duplicate": "1SA 29:3",
+      "why": "Brenton’s 1879 physical page 412; 1900 physical page 408. Both printings have עבר, with the caller before “that pass by”. CCEL has misread the Hebrew initial ע as צ, and eBible’s עכר, mended by its own correction, misreads ב as כ. The Genesis references differ only in numeral formatting. Retain the existing eBible note; this is not a second note."
+    },
+    "1.xxv#1": {
+      "duplicate": "1SA 25:1#2",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same assemble-and-bewail gloss as second existing note, despite swapped caller offsets."
+    },
+    "1.xxv#2": {
+      "duplicate": "1SA 25:1",
+      "why": "Brenton’s 1879 physical page 406; 1900 physical page 402. Both 1879 and 1900 print the same note and caller. CCEL preserves its wording; eBible drops the final h of Hebrew Ramah and places that note before assembled rather than Armathaim. CCEL’s caller stands before Armathaim, as printed. Retain the existing eBible note; this is not a second note."
+    },
+    "1.xxv#4": {
+      "duplicate": "1SA 25:2",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same flocks/troops explanation; thousands-separator punctuation only."
+    },
+    "1.xxv#5": {
+      "duplicate": "1SA 25:5",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same concerning-peace gloss; CCEL sets the caller before how, eBible before he, and the lemma how he is covers both."
+    },
+    "1.xxv#19": {
+      "duplicate": "1SA 25:39",
+      "why": "The two transcriptions give the same note, once eBible’s missing closing quotation mark is corrected: Heb. and Alex. insert ‘that Nabal was dead.’ Their callers differ: CCEL’s stands before “it”, eBible’s before “and said”, where Brenton 1879 physical p. 408 and 1900 physical p. 404 set λ. Retain eBible’s note."
+    },
+    "1.xxvii#11": {
+      "duplicate": "1SA 28:20#2",
+      "why": "The two transcriptions give the same words, Gr. ate. Their callers differ: CCEL’s stands before “had”, as Brenton 1879 physical p. 412 and 1900 physical p. 408 set ζ, and eBible’s before “eaten”. Retain eBible’s note, whose lemma is widened to “had eaten”."
+    },
+    "12.l#1": {
+      "duplicate": "ISA 50:4",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same repeated-Lord gloss and 3 Kingdoms 8:53 citation; Ki. versus Kings is an equivalent abbreviation."
+    },
+    "12.l#5": {
+      "duplicate": "ISA 51:9",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. The words are identical; CCEL's caller stands one word later, before the early time rather than before in."
+    },
+    "12.lxi#2": {
+      "duplicate": "ISA 61:3#2",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Exact wording of eBible's second note, despite exchanged caller offsets."
+    },
+    "12.lxi#3": {
+      "duplicate": "ISA 61:3",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Exact wording, including Greek, of eBible's first note, despite exchanged caller offsets."
+    },
+    "12.vi#4": {
+      "duplicate": "ISA 6:11",
+      "why": "Brenton’s 1879 physical page 857; 1900 physical page 853. The same ζ note at the same caller as eBible’s, whose “(33)” is restored by the correction on ISA 6:11; the transcriptions now differ only in the space after the commas of “10, 12” and “15, 16”. Retain the eBible note; this is not a second note."
+    },
+    "12.viii#9": {
+      "duplicate": "ISA 8:20",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same instruction; 'Heb.' abbreviates 'Hebrew'."
+    },
+    "12.xii#2": {
+      "duplicate": "ISA 13:4",
+      "why": "The same note, “Lit. fighting with armour or weapons.”, in both transcriptions; CCEL sets its caller before war-like, eBible before a war-like. Retain eBible’s note, whose lemma a war-like nation covers both."
+    },
+    "12.xiv#1": {
+      "duplicate": "ISA 14:2",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same Israelites gloss as eBible's first note, differing only in the spacing of i. e.; CCEL's caller stands one word earlier, before shall inherit."
+    },
+    "12.xlii#1": {
+      "duplicate": "ISA 42:1",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same reference. Brenton 1879 physical p. 892 and 1900 physical p. 888 (printed p. 876) print “Mat. 12. 18, etc.” without eBible’s See; the edition prints the quotation link to Matthew 12:18–21 in its place either way."
+    },
+    "12.xliii#1": {
+      "duplicate": "ISA 43:4",
+      "why": "The two transcriptions give the same note, “Gr. head.”; CCEL’s caller stands before life and eBible’s before thy life. The note is printed on life, which head renders."
+    },
+    "12.xliii#2": {
+      "duplicate": "ISA 43:17",
+      "why": "Brenton’s 1879 physical page 894; 1900 physical page 890. Both printings confirm this is the same note at the same caller. eBible omits the printed alternate Psalm chapter (76) and substitutes a semicolon for the printed period after sleep. CCEL preserves the reference but omits the final period in its supplied transcription. Retain the existing eBible note; this is not a second note."
+    },
+    "12.xlvi#3": {
+      "duplicate": "ISA 47:10",
+      "why": "The two transcriptions give the same note, “Gr. the hope of thy wickedness.”; CCEL’s caller stands before thy trusting and eBible’s before trusting. The note is printed on thy trusting in wickedness, which it renders."
+    },
+    "12.xviii#4": {
+      "duplicate": "ISA 19:3",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Identical ventriloquists gloss despite caller displacement."
+    },
+    "12.xxii#3": {
+      "duplicate": "ISA 22:22",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Identical Revelation 3:7 reference despite caller displacement."
+    },
+    "12.xxvii#8": {
+      "duplicate": "ISA 28:28#2",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same words as the verse's second note, bitterness trample you; CCEL's caller stands one word later, after my."
+    },
+    "12.xxxiii#2": {
+      "duplicate": "ISA 33:20",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Identical alternative, salvation; CCEL's caller stands one word later, after our."
+    },
+    "12.xxxv#2": {
+      "duplicate": "ISA 36:2",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Identical Greek gloss: in, despite caller displacement."
+    },
+    "18#3": {
+      "duplicate": "JOL 1:4",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Identical caution about Greek meaning, repeated at another caller in the same verse."
+    },
+    "18#4": {
+      "duplicate": "JOL 1:4",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Identical caution about Greek meaning, repeated at another caller in the same verse."
+    },
+    "18#10": {
+      "duplicate": "JOL 1:20",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same issues gloss and references; Ki./Kings abbreviation and punctuation only."
+    },
+    "18.ii#1": {
+      "duplicate": "JOL 2:2",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Identical Greek gloss age; CCEL's caller stands before the, eBible's before beginning, the word the gloss renders."
+    },
+    "18.ii#9": {
+      "duplicate": "JOL 2:20",
+      "why": "The two transcriptions give the same note, Gr. cause to disappear; retain eBible's complete transcription. The callers differ: CCEL sets it before sink, eBible before his face. The note glosses sink, and the lemma decision on JOL 2:20 sets it there."
+    },
+    "2.iv#9": {
+      "duplicate": "2KI 4:26",
+      "why": "The two transcriptions give the same note, “Gr. peace.”; retain eBible's complete transcription. Brenton 1879 physical p. 508 and 1900 physical p. 504 (printed p. 492) set θ before the first question, Is it well with thee, where CCEL sets its caller; eBible sets its caller before the second, and the lemma decision on 2KI 4:26 follows the printings."
+    },
+    "2.iv#12": {
+      "duplicate": "2KI 4:39",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Identical singular colocynth gloss despite caller offset difference."
+    },
+    "2.vi#1": {
+      "duplicate": "2KI 6:2",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Identical inhabiting gloss despite caller offset difference."
+    },
+    "2.xiv#6": {
+      "duplicate": "2KI 14:7",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same wording once eBible's Hebrew is corrected; CCEL sets the caller before “the valley of salt”, eBible before “valley of salt”."
+    },
+    "2.xix#7": {
+      "duplicate": "2KI 19:14#2",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same wording; CCEL sets the caller before “it”, eBible before “read it”."
+    },
+    "2.xvi#6": {
+      "duplicate": "2KI 16:13",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same wording and reference; Ch./Chr. abbreviation only."
+    },
+    "2.xvii#10": {
+      "duplicate": "2KI 17:21",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same Greek wording; accent and apostrophe typography only."
+    },
+    "2.xvii#11": {
+      "duplicate": "2KI 17:23",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same wording; CCEL sets the caller before “by”, eBible before “all his servants”, and the lemma “by” is the word the note renders."
+    },
+    "2.xxiii#11": {
+      "duplicate": "2KI 23:10",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same wording; CCEL sets the caller before “through fire”, eBible before “fire”, and the lemma “through fire” is what the note renders."
+    },
+    "27.ii#2": {
+      "duplicate": "ZEC 3:2",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same note and reading; differences, if any, are harmless punctuation, capitalization, spacing or reference abbreviation."
+    },
+    "27.ii#3": {
+      "duplicate": "ZEC 3:3",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same note and reading; differences, if any, are harmless punctuation, capitalization, spacing or reference abbreviation."
+    },
+    "27.iv#1": {
+      "duplicate": "ZEC 4:7",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same note and reading; differences, if any, are harmless punctuation, capitalization, spacing or reference abbreviation."
+    },
+    "28.ii#3": {
+      "duplicate": "MAL 2:5#2",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same note. Brenton 1879 physical p. 1144 and 1900 physical p. 1140 (printed p. 1128) set ζ before awe-struck, where CCEL has it; the lemma decision on MAL 2:5#2 follows it."
+    },
+    "9.ci#2": {
+      "duplicate": "PSA 101:25",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same Hebrews 1:11,13 citation; spacing only."
+    },
+    "9.cliv#7": {
+      "duplicate": "PRO 3:34",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same 1 Peter 5:5 reference; CCEL scripref identifies 1 Peter despite display omitting 1."
+    },
+    "9.clix#1": {
+      "duplicate": "PRO 8:5",
+      "why": "Both notes give the same Appendix pointer; the printed plural uses is restored to eBible. Retain the explicit duplicate because eBible’s caller stands before understand whereas print and CCEL stand before simple. Existing eBible PRO 8:5 accounts for the report; its pointer is omitted and its Appendix paragraph now takes the printed simple caller."
+    },
+    "9.clix#6": {
+      "duplicate": "PRO 8:32",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same Appendix reference in the same verse; caller position differs but no additional information."
+    },
+    "9.clxix#2": {
+      "duplicate": "PRO 18:16",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same Psalm 118:32 reference; CCEL additionally displays its equivalent Hebrew numbering (119)."
+    },
+    "9.clxvii#2": {
+      "duplicate": "PRO 16:16",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same abodes gloss, Hebrew comparison and Luke 13:35 reference; capitalization and abbreviation only."
+    },
+    "9.clxxii#2": {
+      "duplicate": "PRO 21:16",
+      "why": "The two transcriptions give the same note; retain eBible's note, whose added “Note on 2 Kings 5. 18.” Brenton did not print; the decision on PRO 21:16 in alexandrinus.json redirects it."
+    },
+    "9.clxxii#3": {
+      "duplicate": "PRO 21:18",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same off-scouring/ransom gloss; quote style and q.d. spacing only."
+    },
+    "9.clxxiii#2": {
+      "duplicate": "PRO 22:21",
+      "why": "Brenton’s 1879 physical page 825; 1900 physical page 821. Both printings agree: chapter 3, verse 15, with the caller before question. CCEL misreads 3 as 8 in both display text and scripref; eBible has the correct reference and caller, abbreviating Peter to Pet. Retain the existing eBible note; this is not a second note."
+    },
+    "9.clxxiii#3": {
+      "duplicate": "PRO 22:28",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same eternal gloss; slight caller-offset difference only."
+    },
+    "9.clxxix#1": {
+      "duplicate": "PRO 26:9",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same Hebrew comparison in the verse; Brenton 1879 physical p. 830 and 1900 physical p. 826 (printed p. 814) set β before grow, as eBible does."
+    },
+    "9.clxxvi#2": {
+      "duplicate": "PRO 24:31",
+      "why": "The two transcriptions give the same note, “Gr. grass.”; CCEL sets its caller before “weeds”, eBible after it. Retain eBible's note, whose lemma weeds is right either way."
+    },
+    "9.clxxxii#1": {
+      "duplicate": "PRO 29:14",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same Hebrew reading and references; Amos/Am. and Mich./Mic. abbreviations only."
+    },
+    "9.clxxxii#3": {
+      "duplicate": "PRO 29:25",
+      "why": "The two transcriptions give the same note, “Possibly, 'in the Lord.' See 2 Pet. 2. 1.”; CCEL sets its caller before “in his master”, eBible before “his master”. Retain eBible's note, whose lemma in his master is right either way."
+    },
+    "9.cxliv#1": {
+      "duplicate": "PSA 143:7",
+      "why": "The two transcriptions give the same note, Gr. many., in the same words; CCEL's caller stands before great and eBible's before waters. Retain eBible's note, whose lemma the notes decision sets on great."
+    },
+    "9.cxxx#5": {
+      "duplicate": "PSA 131:18",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same Psalm 88:39 reference; parenthetical Hebrew Psalm 89 numbering is citation formatting."
+    },
+    "9.cxxxvi#4": {
+      "duplicate": "PSA 136:7",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Both read Gr. empty, empty.; CCEL's caller stands before the first Rase and eBible's before the second, and the note's lemma Rase it, rase it covers both."
+    },
+    "9.cxxxviii#4": {
+      "duplicate": "PSA 138:9",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same Alexandrinus Greek phrase and English gloss; Greek elision apostrophe glyph only."
+    },
+    "9.liii#4": {
+      "duplicate": "PSA 54:22",
+      "why": "The two transcriptions give the same note, Compare Heb. and A. V., word for word; retain eBible's complete transcription. CCEL sets the caller before nigh and eBible before them; the lemma his heart drew nigh them covers both."
+    },
+    "9.lxix#3": {
+      "duplicate": "PSA 68:10",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Both cite John 2:17 and Romans 15:3; CCEL’s added “also” supplies no new information."
+    },
+    "9.lxxix#3": {
+      "duplicate": "PSA 79:11",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same cedars gloss and all three references; “Jonah” versus “Jon.” is an abbreviation only."
+    },
+    "9.lxxxix#5": {
+      "duplicate": "PSA 88:21#2",
+      "why": "Brenton’s 1879 physical page 768; 1900 physical page 764. Both printings have the parenthesized Hebrew psalm number (92), as CCEL does; eBible omits it, and CCEL drops the printed period after 91. This is one note with the same caller as eBible PSA 88:21#2. Retain the existing eBible note; this is not a second note."
+    },
+    "9.xc#3": {
+      "duplicate": "PSA 89:10",
+      "why": "Same words; CCEL puts the caller after the, before greater, eBible before the greater part of them. The note renders the whole phrase, so the eBible note stands."
+    },
+    "9.xciv#1": {
+      "duplicate": "PSA 93:1",
+      "why": "Same words; CCEL puts the caller before the second vengeance, eBible after it. The note is on vengeance, plural in the Greek in both clauses, and its lemma covers both, so the eBible note stands."
+    },
+    "9.xlv#1": {
+      "duplicate": "PSA 44:1",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same Psalms 68 and 79 titles and Hebrew explanation; conjunction versus semicolon joins the same references."
+    },
+    "9.xlv#6": {
+      "duplicate": "PSA 44:18",
+      "why": "The two transcriptions give the same note, Gr. to the age of the age, word for word; retain eBible's complete transcription. eBible sets the caller before the first for ever and CCEL before the final for ever and ever; the lemma for ever and ever covers the words the note renders."
+    },
+    "9.xxxii#1": {
+      "duplicate": "PSA 31:1",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same for/of alternatives; the callers differ: CCEL's stands before by, where Brenton 1879 and 1900 (printed p. 715) print γ, and eBible's before instruction."
+    },
+    "9.xxxii#3": {
+      "duplicate": "PSA 31:4",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Heb. abbreviates Hebrew; same instruction to consult it."
+    },
+    "9.xxxvi#6": {
+      "duplicate": "PSA 36:28",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same cleared-in-judgment gloss; spelling judgment/judgement differs."
+    },
+    "iii.13#2": {
+      "duplicate": "GEN 13:5",
+      "why": "The two transcriptions give the same note, Alex. cattle.; CCEL sets its caller before tents and eBible before and tents. The Alexandrinus reading at GEN 13:5 replaces tents with cattle either way."
+    },
+    "iii.2#10": {
+      "duplicate": "GEN 2:19",
+      "why": "The two transcriptions give the same note, Gr. soul.; CCEL sets its caller before creature and eBible after it, before that was. The lemma creature covers either."
+    },
+    "iii.2#15": {
+      "duplicate": "GEN 2:23#3",
+      "why": "The two transcriptions give the same note; CCEL sets its caller before her and eBible before of. Brenton 1879 physical p. 19 and 1900 physical p. 15 (printed p. 3) set τ before her, as CCEL does; the lemma her husband covers it."
+    },
+    "iii.21#5": {
+      "duplicate": "GEN 21:19",
+      "why": "The two transcriptions give the same note: CCEL sets its caller before springing and eBible before of springing; a correction removes eBible’s Or, (Brenton 1879 physical p. 40 and 1900 physical p. 36, printed p. 24, print θ “Gr. living.” before springing)."
+    },
+    "iii.21#6": {
+      "duplicate": "GEN 21:22",
+      "why": "The two transcriptions give the same note; CCEL runs Heb. into friend and sets its caller before friend, eBible before his friend. Brenton 1879 physical p. 40 and 1900 physical p. 36 (printed p. 24) set λ before friend, where the note's lemma stands."
+    },
+    "iii.22#2": {
+      "duplicate": "GEN 22:6",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same dagger term and its defence/sacrifice uses; accent, spelling and a dropped conjunction do not add information."
+    },
+    "iii.26#4": {
+      "duplicate": "GEN 26:34",
+      "why": "The two transcriptions give the same note, Alex. Hivite.; CCEL sets its caller before the second Chettite (Helon’s) and eBible before the first (Beoch’s). Brenton 1879 physical p. 49 and 1900 physical p. 45 (printed p. 33) set γ before the second, as CCEL does."
+    },
+    "iii.28#2": {
+      "duplicate": "GEN 28:18",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. The callers stand a word apart, CCEL's before “had laid” and eBible's before “he had laid”, and only the citation's spacing differs."
+    },
+    "iii.3#6": {
+      "duplicate": "GEN 3:16",
+      "why": "The two transcriptions give the same note, Gr. turning.; CCEL sets its caller before submission and eBible after it, before shall be. The lemma submission covers either."
+    },
+    "iii.35#2": {
+      "duplicate": "GEN 35:16",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same Hebrew verse-number explanation; eBible merely prefixes Note. Brenton 1879 and 1900 (printed p. 47) and 1844 (p. 38) all print Note.—, as eBible does."
+    },
+    "iii.38#1": {
+      "duplicate": "GEN 38:16",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Identical literal rendering; small caller-offset difference."
+    },
+    "iii.4#4": {
+      "duplicate": "GEN 4:15",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Identical seven-penalties rendering; small caller-offset difference."
+    },
+    "iii.5#1": {
+      "duplicate": "GEN 5:1",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Identical book-of-generation rendering; caller-offset difference only."
+    },
+    "iii.6#5": {
+      "duplicate": "GEN 6:13",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Identical time-of-every-man rendering; small caller-offset difference."
+    },
+    "iii.6#7": {
+      "duplicate": "GEN 6:16",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same out-of-the-side rendering at same caller; eBible prefixes Gr."
+    },
+    "iii#2": {
+      "duplicate": "GEN 1:9",
+      "why": "The two transcriptions give the same note, Gr. meeting.; CCEL sets its caller before was so and eBible before place, which meeting renders. The plural meetings note is separate."
+    },
+    "iii#3": {
+      "duplicate": "GEN 1:9#2",
+      "why": "The two transcriptions give the same note, Gr. their meetings.; CCEL sets its caller before its places and eBible after it, before and the dry land. The lemma its places covers either. The singular meeting note is separate."
+    },
+    "iv.11#7": {
+      "duplicate": "EXO 12:42",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same Greek ὥστε, Hebrew ל and explanation; Gr. prefix and quotation punctuation only."
+    },
+    "iv.13#4": {
+      "duplicate": "EXO 13:12",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same separate gloss at the same caller; Gr./Or label differs. Brenton 1879 physical p. 103 and 1900 physical p. 99 (printed p. 87) print δ “Or, separate.”, as eBible does; CCEL’s Gr. is a misreading."
+    },
+    "iv.21#3": {
+      "duplicate": "EXO 21:17",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same Matthew 15:4 citation despite slight caller displacement."
+    },
+    "iv.22#5": {
+      "duplicate": "EXO 22:14",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same borrower/hireling question; Qy./Qu. abbreviation only."
+    },
+    "iv.3#2": {
+      "duplicate": "EXO 3:6",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same Matthew 22:32 citation; abbreviation and stray closing angle bracket only."
+    },
+    "iv.30#6": {
+      "duplicate": "EXO 30:18",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same wash-oneself gloss; oneself/one's self spelling only."
+    },
+    "iv.30#9": {
+      "duplicate": "EXO 32:20",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same under-the-water gloss and alternate Greek word επί/ἐπὶ; diacritics only."
+    },
+    "iv.30#11": {
+      "duplicate": "EXO 32:23",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same done-to-him gloss. Brenton 1879 and 1900 (printed p. 114) print it with no label, “Done to him.”; a correction removes eBible’s Lit."
+    },
+    "iv.30#13": {
+      "duplicate": "EXO 31:6#2",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same work-in-or-at gloss and ποιήσουσι reading; Brenton 1879 physical p. 129 and 1900 physical p. 125 (printed p. 113) print γ “Or, work in or at.”, as eBible does; CCEL’s Gr., as in the β note “Gr. given.” before it, is a misreading."
+    },
+    "iv.4#1": {
+      "duplicate": "EXO 4:10",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Identical literal gloss; nearby caller offset supports identity."
+    },
+    "iv.4#2": {
+      "duplicate": "EXO 4:12",
+      "why": "The two transcriptions give the same note at the same caller: Brenton 1879 and 1900 (printed p. 74) print γ “See 1 Cor. 2. 16, Gr.”, as eBible now reads after its correction; CCEL writes the citation 1Cor. 2.16, which the edition cannot read."
+    },
+    "iv.4#3": {
+      "duplicate": "EXO 4:21",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same literal gloss; thy/thine is an equivalent possessive form."
+    },
+    "iv.5#1": {
+      "duplicate": "EXO 5:2",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same Greek gloss; don't is the contraction of do not, with missing label spacing."
+    },
+    "iv.9#2": {
+      "duplicate": "EXO 9:4",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same Greek ῥητον/ῥητόν and Hebrew דבר; Greek accent and spacing only."
+    },
+    "iv.9#4": {
+      "duplicate": "EXO 9:14",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Identical occurrences gloss despite nearby caller offset."
+    },
+    "vi.11#8": {
+      "duplicate": "NUM 11:32#3",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same Greek and Hebrew English glosses at the same caller; eBible additionally preserves Hebrew וישטחו שטוח, so no CCEL information is lost."
+    },
+    "vi.12#3": {
+      "duplicate": "NUM 11:5",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Identical pumpkins gloss despite nearby caller offset."
+    },
+    "vi.14#4": {
+      "duplicate": "NUM 14:35",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same 2 Corinthians 11:28 reference at the same caller; eBible also supplies ἐπισύστασις, and loses no CCEL information."
+    },
+    "vi.16#5": {
+      "duplicate": "NUM 16:15",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. CCEL surviving fragment \"for\" matches eBible's Hebrew substitution note at the same caller; eBible preserves both Hebrew terms."
+    },
+    "vi.17#3": {
+      "duplicate": "NUM 18:11",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same Hebrew explanation at the same caller; eBible also preserves תנפה, so no CCEL information is lost."
+    },
+    "vi.21#3": {
+      "duplicate": "NUM 21:13",
+      "why": "The two transcriptions give the same note, “Gr. Amorite.”; retain eBible's. CCEL's caller stands before the last Amorites, where Brenton 1879 physical p. 220 and 1900 physical p. 216 print it, and eBible's before the first; the note exception on NUM 21:13 sets it on the last."
+    },
+    "vi.21#5": {
+      "duplicate": "NUM 21:19",
+      "why": "The same note in two printings: Brenton 1879 physical p. 221 prints γ “Or, Jané, but the reading is uncertain.”, as eBible does, and 1900 physical p. 217 (printed p. 205 in both) prints “Janb”, apparently a damaged é, as CCEL does. Retain eBible's."
+    },
+    "vi.22#3": {
+      "duplicate": "NUM 22:39",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Identical cities-of-villages gloss despite nearby caller offset."
+    },
+    "vi.23#1": {
+      "duplicate": "NUM 23:3",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Identical meeting gloss despite nearby caller offset."
+    },
+    "vi.25#1": {
+      "duplicate": "NUM 25:1",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same Hebrew verbal gloss and caller; eBible also supplies the Hebrew חלל absent from CCEL, so no CCEL information is lost."
+    },
+    "vi.25#2": {
+      "duplicate": "NUM 25:4",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same alternative rendering and caller; existing note additionally retains the Hebrews 6:6 reference."
+    },
+    "vi.31#9": {
+      "duplicate": "NUM 31:54",
+      "why": "The two transcriptions give the same note, Gr. them.; CCEL’s caller stands before the vessels, eBible’s between the and vessels."
+    },
+    "vi.32#3": {
+      "duplicate": "NUM 32:14",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same alternative rendering and caller; eBible preserves the Greek σύστρεμμα, missing after CCEL’s “some read,”; the two also differ in the stop after “a destruction” (CCEL “;”, eBible “,”)."
+    },
+    "vi.37.ix#6": {
+      "duplicate": "DEU 9:22#3",
+      "why": "Brenton’s 1879 physical page 260; 1900 physical page 256. Both Bagster printings give one shared Hebrew-name footnote called at all three phrases. CCEL has split it into local Hebrew-name notes, but the third name Hattaavah faithfully reflects the printed spelling. eBible has lost one a in Hattavah in each of the three replicated combined notes. CCEL adds no independent content or distinct caller scope here. Retain the existing eBible note; this is not a second note."
+    },
+    "vi.37.v#2": {
+      "duplicate": "DEU 5:16",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same Matthew and Ephesians references; abbreviation and punctuation only."
+    },
+    "vi.37.xvi#2": {
+      "duplicate": "DEU 16:8",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same Leviticus, Numbers and 2 Chronicles references; abbreviation and separators only."
+    },
+    "vi.37.xvi#6": {
+      "duplicate": "DEU 16:21",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same Greek make gloss on repeated plant wording; caller differs but no additional reading."
+    },
+    "vi.37.xxi#3": {
+      "duplicate": "DEU 21:5",
+      "why": "The two transcriptions give the same note, Or, his name. Hebraism., once eBible’s Gr. is corrected to Or,; CCEL’s caller stands before in his name, eBible’s before bless."
+    },
+    "vi.37.xxi#8": {
+      "duplicate": "DEU 21:17",
+      "why": "The two transcriptions give the same note, Gr. the beginning or chief.; CCEL’s caller stands before the first, eBible’s before first, and the lemma the first covers both."
+    },
+    "vi.37.xxiv#4": {
+      "duplicate": "DEU 24:7",
+      "why": "The two transcriptions give the same note at the same caller; CCEL’s Or, is its slip for Gr. Brenton 1879 physical p. 279 and 1900 physical p. 275 (printed p. 263) print ζ “Gr. a soul.”, as eBible does."
+    },
+    "vii.ii#4": {
+      "duplicate": "JOS 2:18",
+      "why": "The two transcriptions give the same note, Gr. do enter.; retain eBible's transcription. CCEL’s caller stands before shall enter, eBible’s one word earlier before we; the lemma shall enter covers both."
+    },
+    "vii.iii#3": {
+      "duplicate": "JOS 3:15",
+      "why": "The two transcriptions give the same note, Gr. its whole channel.; retain eBible's transcription. CCEL’s caller stands before all its banks, eBible’s one word earlier before overflowed; the lemma all its banks covers the gloss."
+    },
+    "vii.iv#3": {
+      "duplicate": "JOS 4:6",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same tomorrow gloss; hyphenation alone differs."
+    },
+    "vii.iv#4": {
+      "duplicate": "JOS 4:7",
+      "why": "The two transcriptions give the same note, Gr. failed.; retain eBible's transcription. CCEL’s caller stands before was, where Brenton 1879 physical p. 299 and 1900 physical p. 295 (printed p. 283) print π; eBible’s stands one word later, before dried."
+    },
+    "vii.ix#5": {
+      "duplicate": "JOS 8:29#2",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same gloss and chapter/verse reference; spacing and punctuation alone differ."
+    },
+    "vii.xi#2": {
+      "duplicate": "JOS 10:4",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same they gloss; CCEL lacks the final full stop and sets its caller before the, eBible before Gabaonites, and Brenton 1879 and 1900 (printed p. 292) set γ before the."
+    },
+    "vii.xiii#1": {
+      "duplicate": "JOS 12:2",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same Greek alternative and English gloss; introductory Gr. and punctuation differ."
+    },
+    "vii.xiii#3": {
+      "duplicate": "JOS 13:1",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same text Gr. days; CCEL sets its caller before the first years, eBible before the second, and Brenton 1879 and 1900 (printed p. 296) set δ before the first."
+    },
+    "vii.xlii#4": {
+      "duplicate": "JDG 18:7",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same Greek/Hebrew explanation and terms; the transcriptions differ only in the last accent of the Greek word, CCEL θησαυροὐς with a breathing and eBible θησαυροὺς with a grave."
+    },
+    "vii.xliv#3": {
+      "duplicate": "JDG 19:1#3",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same woman/concubine gloss and offset; eBible supplies an indefinite article."
+    },
+    "vii.xlvi#8": {
+      "duplicate": "JDG 21:19",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same days-to-days Hebraism gloss; nearby caller placement differs."
+    },
+    "vii.xvi#4": {
+      "duplicate": "JOS 15:18",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same two questions; has versus hast is an evident grammar/transcription typo with no different gloss."
+    },
+    "vii.xx#1": {
+      "duplicate": "JOS 19:11",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same at or towards alternative gloss; nearby caller placement differs."
+    },
+    "vii.xxvi#5": {
+      "duplicate": "JDG 1:27",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same daughters gloss; CCEL's caller stands before the first towns, as Brenton prints it, eBible's before the towns after Thanac."
+    },
+    "vii.xxviii#2": {
+      "duplicate": "JDG 3:15",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Benjaminite and Benjamite identify the same tribe."
+    },
+    "vii.xxxiv#11": {
+      "duplicate": "JDG 9:37",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same sea gloss, Hebrew and both Greek phrases; article, punctuation and accent encoding differ."
+    },
+    "vii.xxxiv#15": {
+      "duplicate": "JDG 9:50",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same in gloss on against Thebes; caller shifts within that phrase."
+    },
+    "vii.xxxix#4": {
+      "duplicate": "JDG 14:6",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Leaped and leapt give the same gloss; Hebrew תצלח matches."
+    },
+    "vii.xxxix#10": {
+      "duplicate": "JDG 14:19",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same them gloss on the inhabitants; caller shifts within the same phrase."
+    },
+    "vii.xxxviii#8": {
+      "duplicate": "JDG 13:19",
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same Hebrew gloss and Alexandrinus Greek words; κυριῳ versus κυρίῳ differs only by a missing accent. The callers also differ by one word: CCEL’s stands before distinct, eBible’s before a distinct."
+    },
+    "iii#6": {
+      "omitted": true,
+      "why": "Brenton’s 1879 physical page 17 and 1900 physical page 13. Both print the caller before “on the earth” in Genesis 1:11, with “Alex. + εἰς ὁμοιότητα.”; neither prints this caller in 1:12. CCEL puts caller iii#6 in 1:12 and corrupts ὁμοιότητα as ὁμοιότητο. The printed note is already accounted for by GEN 1:11#2 and its Alexandrinus decision. Omit this misattached copy so it cannot print a second note or imply an addition in 1:12. Swete volume 1 page 1, checked text based on A, prints εἰς ὁμοιότητα in 1:11 and not 1:12."
+    },
+    "1.xvii#8": {
+      "omitted": true,
+      "why": "Brenton 1879 physical p. 396 and 1900 physical p. 392 (printed p. 380) both set the γ “See Appendix.” caller after “the Philistine” at the end of 17:40. CCEL preserves this pointer but alignment attaches its terminal caller to the opening of 17:42. The existing Alexandrinus passage decision for 1SA 17:41 already consumes the expanded eBible 1SA 17:40 source note and supplies the Appendix verse with its Vatican omission note. Omit this second transcription of the same printed pointer; it is not the distinct 17:42 “with beauty of eyes” gloss and adds no further reading or note."
+    },
+    "1.xvii#12": {
+      "omitted": true,
+      "why": "Brenton 1879 physical p. 396 and 1900 physical p. 392 (printed p. 380) set the σ “See App.” caller after “ground” at the end of 17:49. CCEL expands the pointer to “See Appendix.” and alignment attaches its terminal caller to the opening of 17:51. The existing Alexandrinus passage decision for 1SA 17:50 already consumes the expanded eBible 1SA 17:49 source note and supplies the Appendix verse with its Vatican omission note, supported by Swete I p. 581, A (om B). Omit this second transcription of the same printed pointer; it gives no separate reading of 17:51."
+    },
+    "1.xvii#18": {
+      "omitted": true,
+      "why": "CCEL’s caller for See App. follows the end of 17:54 in 1.xvii.htm and aligns to the opening of 18:6 only because the intervening verses are absent from that transcription. Brenton 1879 physical p. 396 and 1900 physical p. 392 (printed p. 380) put the σ caller before armour in 17:54 and print See App. The existing 1SA 17:55-58 Appendix decision supplies the passage and consumes eBible’s expanded 1SA 17:54 source note. Omit this redundant misattached pointer rather than print an Appendix reference at 18:6."
+    },
+    "1.vii#4": {
+      "omitted": true,
+      "why": "Brenton 1879 physical p. 426 and 1900 physical p. 422 (printed p. 410) both place caller δ after “for ever.” at the end of 2 Kingdoms 7:26, before verse 27, and print “Heb. and Alex. add, 'and let the house of thy servant David be established before thee.'” CCEL 1.vii#4 drops “David” and aligns this boundary caller with 7:27. The complete note already survives as eBible 2SA 7:26 and is consumed by its existing Alexandrinus reading. Swete I p. 626 explicitly records the house-of-David clause as an A addition after εως αιωνος at 7:26; B lacks it. Omit this misplaced, truncated copy rather than print a second reading at 7:27."
+    },
+    "9.clxii#4": {
+      "omitted": true,
+      "why": "Account for CCEL 9.clxii#4 (PRO 11:11 CCEL) as the redundant boundary-assigned copy of the existing eBible PRO 11:10 Appendix pointer, already consumed by the PRO 11:10-11 passage decision. Brenton 1879 physical p. 814 and 1900 physical p. 810 (printed p. 798 in both) print “See Appendix.” with β immediately after prospers: ending 11:10 and before but by the mouths introducing 11:11. CCEL assigns its offset-zero caller to 11:11, whereas eBible keeps the same printed pointer at the end of 11:10. Its exact serialized CCEL body is \\ft See \\fqa Appendix. Omit this copy rather than import or consume a second source note for the one printed caller. Swete II p. 437 explicitly records πολις] + και επ απωλεια ασεβων αγαλλιαμα (11) εν ευλογιαις δικαιων υψωθησεται πολις B^{b mg sup} + και εν απωλια (-λεια A) ασ. αγαλλ. (11) εν ευλογια (-γεια A) ευθιων (-θειων A) υψ. πολις ℵ^c.a A, establishing A’s addition without a hand or uncertainty qualifier. B main positively lacks both clauses; B correcting hand b adds them in the margin, with δικαιων instead of A’s ευθειων in the second clause. No lacuna is marked. The pointer itself reports no Greek or English alternative and names no manuscript; omitting this copy changes neither the PRO 11:10-11 passage, its English derivation nor its Vat. first hand labels."
+    },
+    "15.xvii#9": {
+      "verse": "EZK 17:20",
+      "anchor": "snare",
+      "why": "Brenton's caller μ stands before In, opening Ezekiel 17:21 (1879 physical p. 1015, 1900 physical p. 1011, printed p. 999), but the addition it reports closes 17:20, after αυτου, where A has it (Swete III p. 417) and the Alexandrine reading EZK 17:20 CCEL carries it out."
+    },
+    "15.xxxiv#1": {
+      "verse": "EZK 34:9",
+      "anchor": "shepherds",
+      "why": "Relocate and promote Brenton’s complete Alexandrinus addition at Ezekiel 34:9. Brenton 1879 physical p. 1041 and 1900 physical p. 1037 (printed p. 1025 in both) print “Alex. + ‘Hear the word of the Lord.’” with β immediately after the closing shepherds, of verse 9 and before the verse 10 number and thus. CCEL 15.xxxiv#1 incorrectly aligns this boundary caller to 34:10 offset 0; restore its proper verse 34:9. Swete III p. 458 explicitly records at 9 ποιμενες] + ακουσατε λογον κ̅υ̅ A et (sub αʹ θʹ σʹ ✣) Q. A is unqualified, without correcting hand, lacuna or uncertainty; the Aquila/Theodotion/Symmachus and asterisk qualification belongs to Q. A adds the complete imperative after shepherds, before verse 10 τάδε λέγει. Select serialized source_note[18:43] exactly, excluding labels, plus, quote marks and source full stop; retain shepherds and its comma before the addition, lowercase Hear after the vocative, and close with a colon introducing the unchanged lower-case thus saith in verse 10. Every lexical word comes from Brenton or unchanged scripture; no external translation is supplied. Brenton’s facing Greek Αντι τουτου ποιμενες, ταδε λεγει and Swete B main ἀντὶ τούτου, ποιμένες, followed by τάδε λέγει positively lack the imperative. The Vat. omits. note therefore has independent local B support; retain this label pending the separate issue39 attribution pass."
+    },
+    "15.xliii#5": {
+      "verse": "EZK 43:12",
+      "anchor": "most holy",
+      "why": "Promote Brenton’s complete English sentence at the end of Ezekiel 43:12, correcting CCEL 15.xliii#5 alignment to 43:13. Brenton 1879 physical p. 1055 and 1900 physical p. 1051 (printed p. 1039) place θ immediately before And at verse 13 opening, after most holy. ending verse 12, and print Alex. + ‘this is the law of the house.’ Swete III p. 482 B main explicitly records αγιων]+ εισιν. ουτος ο νομος του οικου A + εισιν. (θʹ ✣) ουτος ο ν. τ. οικου Q at verse 12. A is unqualified, with no hand, lacuna or uncertainty; Q’s Theodotion/asterisk qualification belongs only to Q. A’s preceding εισιν supplies the copula already rendered by Brenton’s shall be most holy, so do not duplicate it. Append the complete printed sentence after the existing sentence, capitalizing its initial letter and removing report framing and quotes by exact source selection. Facing Valpy-derived Greek and Swete B main both end at ἅγια ἁγίων, positively supporting the omission; retain Vat. on the new omission note pending separate issue39 attribution work."
+    },
+    "15.xlvii#9": {
+      "verse": "EZK 47:17",
+      "anchor": "northern coasts",
+      "why": "Promote Brenton’s English addition at its printed chapter-internal boundary and complete it with the licensed KJV northward. Brenton 1879 physical p. 1062 and 1900 physical p. 1058 (printed p. 1046 in both) print θ “Alex. + 'and the border of Amath shall be the northern border.'” with θ immediately after the closing northern coasts. of Ezekiel 47:17, before 18 And; CCEL 15.xlvii#9 aligns the note incorrectly to 47:18. Swete III p. 493 explicitly records βορραν] + κατα βορραν και το οριον Αιμαθ (+ και Q) το οριον Βορρα (-ραν Q) A et (sub θʹ ✣) Q. A is unqualified, without correcting hand, lacuna or uncertainty; the Theodotion/asterisk qualification and second και and Βορραν belong only to Q. A adds the whole construction after northern coasts in verse 17, not inside verse 18. Brenton’s printed English report lacks κατα βορραν; preserve its exact pin and record this source omission here. Pinned sources/engkjvcpb_usfm.zip:27-EZKengkjvcpb.usfm 47:17 renders the same Hebrew direction as and the north northward, and the border of Hamath; supply the single lexical word northward from that licensed KJV parallel to complete A’s directional construction. Pinned RV47:17 confirms northward but supplies no additional word. Select serialized source_note[18:70] exactly, excluding attribution, markup, plus, quotation marks and final stop; prefix the retained northern coasts, KJV northward, and a comma. The whole verse now ends and the northern coasts northward, and the border of Amath shall be the northern border. Preserve the source closing period. Extant Swete B and Brenton’s facing Greek both end καὶ τὰ πρὸς Βορρᾶν without this addition, positively supporting the local omission independently of the Vat. omits label; no existing label changes."
+    },
+    "2.xv#2": {
+      "verse": "2KI 15:2",
+      "anchor": "Sixteen years old",
+      "why": "CCEL sets this caller before the verse 2 number, but the note is on the opening words of 2 Kingdoms 15:2, where eBible's 2KI 15:2 carries the same note; set it there, where it is accounted for as that note's duplicate."
+    },
+    "15.xix#10": {
+      "verse": "EZK 20:10",
+      "anchor": "And I brought them into",
+      "why": "Brenton's caller closes Ezekiel 20:9, but the addition it reports opens 20:10, where A has it and the Alexandrine reading EZK 20:10 CCEL carries it out."
+    },
+    "15.xxviii#1": {
+      "verse": "EZK 28:10",
+      "anchor": "Thou shalt perish",
+      "why": "CCEL sets this caller before the verse 10 number, but Brenton 1879 physical p. 1032 and 1900 physical p. 1028 put β before Thou shalt perish in Ezekiel 28:10, as the kept decision EZK 28:10 CCEL records."
+    },
+    "9.x#5": {
+      "verse": "PSA 9:28",
+      "anchor": "Whose mouth",
+      "why": "CCEL sets this caller before the verse 28 number, but Rom. 3. 14 quotes 9:28, where Brenton's caller stands (as the decision on eBible's PSA 9:27 records); set it there, where the quotation link replaces it."
+    },
+    "8.xxxi#3": {
+      "verse": "JOB 31:35",
+      "anchor": "Oh that I had a hearer",
+      "why": "CCEL sets this caller before the verse 35 number, but the note renders Oh that I had a hearer, which opens 31:35; set it there."
+    },
+    "iv.36#8": {
+      "verse": "EXO 38:17",
+      "anchor": "the candlestick",
+      "why": "Pinned CCEL iv.36#8 is before candlestick in its chapter 37:17, which corresponds by exact English to eBible Exodus 38:17. eBible already has Gr. it at the candlestick; moving it to the verified caller allows automatic duplicate detection."
+    },
+    "iii.25#2": {
+      "duplicate": "GEN 25:23",
+      "why": "Brenton 1879 physical p. 47 and 1900 physical p. 43 (printed p. 31) print one gamma caller before elder and the complete gloss with Romans 9:12. eBible preserves the same printed note as GEN 25:23; CCEL misreads 12 as l2. Retain the existing complete gloss and its quotation-preservation decision, rather than import a duplicate."
+    },
+    "iv.30#1": {
+      "verse": "EXO 29:45",
+      "anchor": "called upon",
+      "why": "The current EXO32:10 placement is wrong. Both printings show the footnote beta Or. named. on called upon at EXO29:45. Print numbers the next verse 46, whereas CCEL repeats sup 45. Existing EXO29:45 source note renders or, named at the same lemma, so this is a duplicate, not a new very-angry gloss. No change of named is justified."
+    },
+    "1.xxxii#1": {
+      "verse": "1KI 5:17",
+      "anchor": "because of",
+      "why": "Brenton 1879 physical page 466 (printed 450), corroborated by 1900 physical page 462, prints beta immediately before “because of” in III Kings 5:3, with “Gr. from the face of. Hebraism.” The same verse is numbered 1KI 5:17 in pinned eBible, whose second note has that complete wording at the same caller. The malformed CCEL chapter run must not attach this note to 1KI 2. It is an existing-note duplicate, not an additional note."
+    },
+    "1.xxxii#2": {
+      "verse": "1KI 5:17",
+      "anchor": "soles of his feet",
+      "why": "Brenton 1879 physical p466 and 1900 physical p462 (printed p450) both place gamma before feet and print Or, steps. in III Kings 5:3, which eBible numbers 1KI 5:17. CCEL and eBible place their callers before soles of his feet and preserve the identical body; eBible's note is 1KI 5:17#3. The malformed CCEL chapter heading merges several chapters, so place this note in its verified eBible verse and account for it by that existing note, rather than inserting another copy."
+    },
+    "1.xxxii#46": {
+      "duplicate": "1KI 16:28d",
+      "why": "Brenton 1879 physical p. 490 and 1900 physical p. 486 (printed p. 474) print γ immediately before “which they practised” in the unnumbered addition after III Kings 16:28 (eBible 1KI 16:28d), with “See 1 Kings 22. 46..50. A.V.” CCEL drops one point of the range (46.50) and eBible renders it 46-50 and spaces A. V., so the texts differ only in transcription; the reference and the version are the same. Account for it by eBible’s note at the same caller, whose citation decision identifies the Authorized Version’s book and numbering."
+    },
+    "29#9": {
+      "verse": "1SA 18:1",
+      "anchor": "as his own soul",
+      "supplied": true,
+      "why": "Brenton’s Appendix, 1879 physical p. 1149 and 1900 physical p. 1145 (printed p. 1133), prints β Gr. according to. with β immediately before “as” in “loved him as his own soul”, in the Appendix paragraph that the edition supplies as 1 Samuel 18:1. eBible’s Appendix lacks the note; set it on the supplied verse, separately from the verse’s omission note."
+    },
+    "29#11": {
+      "verse": "1SA 18:5",
+      "anchor": "acted wisely",
+      "supplied": true,
+      "why": "Brenton’s Appendix, 1879 physical p. 1149 and 1900 physical p. 1145 (printed p. 1133), prints δ Gr. understood ; or, was wise. with δ immediately before “acted wisely” in the paragraph the Appendix numbers 6 and the edition supplies as 1 Samuel 18:5 (appendix-18-5-delta.json). eBible’s Appendix lacks the note; keep both renderings."
+    },
+    "29#12": {
+      "verse": "1SA 18:10",
+      "anchor": "on the morrow",
+      "supplied": true,
+      "why": "Brenton’s Appendix, 1879 physical p. 1149 and 1900 physical p. 1145 (printed p. 1133), prints ζ Or, after; Gr. from. with ζ immediately before “on” in “And it came to pass on the morrow”, supplied 1 Samuel 18:10, not verse 9 (appendix-18-9-zeta.json). eBible’s Appendix lacks the note; set it apart from the verse’s omission note."
+    },
+    "29#13": {
+      "verse": "1SA 18:30",
+      "anchor": "the sufficiency of their expedition",
+      "supplied": true,
+      "why": "Brenton’s Appendix, 1879 physical p. 1149 and 1900 physical p. 1145 (printed p. 1133), prints θ Gr. their sufficient expedition. with θ immediately before “the sufficiency of their expedition” in Appendix verse 30, supplied as 1 Samuel 18:30 (appendix-18-30-theta.json). eBible’s Appendix lacks this ordinary gloss; it is separate from the whole-verse omission note."
+    },
+    "29#14": {
+      "verse": "1KI 5:31",
+      "anchor": "brought",
+      "supplied": true,
+      "why": "Brenton’s Appendix, 1879 physical p. 1149 and 1900 physical p. 1145 (printed p. 1133), prints λ Gr. bring. with λ immediately before “brought” in Appendix 3 Kingdoms 5:17, which the edition supplies as 1 Kings 5:31 (appendix-0112-lambda.json). eBible’s Appendix lacks this ordinary gloss; it is independent of the displaced-reading note."
+    },
+    "29#15": {
+      "verse": "1CH 1:11",
+      "anchor": "was father",
+      "supplied": true,
+      "why": "Brenton’s Appendix, 1879 physical p. 1150 and 1900 physical p. 1146 (printed p. 1134), prints β Gr. begot. with β immediately before “was father” in “And Mesraim was father of the Lodiim”, supplied as 1 Chronicles 1:11 (appendix-0133-beta.json). eBible’s Appendix lacks this ordinary gloss; it is independent of the supplied passage’s omission note."
+    },
+    "2.ii#5": {
+      "duplicate": "2KI 2:5",
+      "why": "Both Bagster printings (1879 physical page 504, 1900 physical page 500, printed page 488 in both) set δ before Dost thou know at 4 Kingdoms 2:5, the letter already used at 2:2 and 2:4, and their only δ footnote is Gr. The Lord lives if, etc., which CCEL faithfully gives here. The caller letter is the printer’s slip for ζ, the letter of the same gloss at 2:3: the 1844 edition (vol. 1 physical page 424, printed page 400) glosses Dost thou know at 2:5 Gr. if thou knowest. That note is restored in eBible’s text at this caller, so CCEL’s mis-keyed copy is the same printed note, not a second one."
+    },
+    "1.xxxii#3": {
+      "verse": "1KI 5:18",
+      "anchor": "evil trespass",
+      "duplicate": "1KI 5:18",
+      "why": "Brenton 1879 physical p. 466 and 1900 physical p. 462 (printed p. 450) both print δ immediately before evil in III Kings 5:4, which eBible numbers 1KI 5:18, with “Alex. ἀπάντημα. See συναντήματα, Ex. 9. 14.” eBible’s note 1KI 5:18 has that wording at the same caller word (its accent mended by the brenton-notes correction). CCEL lost the Greek font, leaving apantyma and svnantimata, so the texts do not compare equal, and its malformed chapter heading would attach the note to 1KI 2. Account for it by the existing note, which alexandrinus.json already decides; it is not an additional note."
+    },
+    "1.xxxii#4": {
+      "verse": "1KI 5:23",
+      "anchor": "land them",
+      "duplicate": "1KI 5:23",
+      "why": "Brenton 1879 physical p. 466 and 1900 physical p. 462 (printed p. 450) both print ζ immediately before “land them there” in III Kings 5:9, which eBible numbers 1KI 5:23, with “ζ Lit. shake them off.” CCEL’s caller stands at the same word, and its “Lv.” misreads the italic “Lit.” (battered in 1900); eBible’s note 1KI 5:23 has the printed wording at the same caller. The malformed CCEL chapter heading merges several chapters, so place the note in its verified verse and account for it by that existing note rather than adding another copy."
+    },
+    "1.xxxii#6": {
+      "verse": "1KI 5:26",
+      "anchor": "promised him",
+      "why": "Brenton 1879 physical page 466 (printed 450), corroborated by 1900 physical page 462 (printed 450), prints lambda immediately before “promised him” in III Kings 5:12, with “Gr. spoke to him.” The same verse is numbered 1KI 5:26 in pinned eBible, whose first note has that wording at the same caller. The malformed CCEL chapter run must not attach this note to 1KI 2. It is an existing-note duplicate, not an additional note."
+    },
+    "1.xxxii#5": {
+      "verse": "1KI 5:25",
+      "anchor": "as food",
+      "duplicate": "1KI 5:25",
+      "why": "Brenton 1879 physical p. 466 and 1900 physical p. 462 (printed p. 450) both print θ immediately before “as food for his house” in III Kings 5:11, which eBible numbers 1KI 5:25, with “θ Some read μαχὰλ, or μαχὰθ, as if from מכלת cibus.” CCEL’s caller stands at the same word, but it lost the Greek font (mayal, maxath) and the Hebrew; eBible’s note 1KI 5:25 has the printed wording at the same caller (its Hebrew mended by the brenton-notes correction). The malformed CCEL chapter heading merges several chapters, so place the note in its verified verse and account for it by that existing note rather than adding another copy."
+    },
+    "1.xxxii#7": {
+      "verse": "1KI 5:27",
+      "anchor": "a levy",
+      "why": "Brenton 1879 physical p. 466 and 1900 physical p. 462 (printed p. 450) both print μ immediately before “a levy” in III Kings 5:13, which eBible numbers 1KI 5:27, with “μ Gr. tribute, etc.”; 1844 vol. 1 p. 368 has the same margin note, “Gr. tribute, &c.” CCEL has the printed wording at the same caller. eBible’s note 1KI 5:27 is the same note at the same caller but reads Lit. for Gr., which the brenton-notes correction mends. The malformed CCEL chapter heading merges several chapters, so place the note in its verified verse where, once eBible’s label is mended, the build accounts for it by that existing note rather than adding another copy."
+    },
+    "1.xxxii#8": {
+      "verse": "1KI 5:30",
+      "anchor": "six hundred",
+      "duplicate": "1KI 5:30",
+      "why": "Brenton 1879 physical p. 466 and 1900 physical p. 462 (printed p. 450) both print ξ immediately before “six hundred” in III Kings 5:16, which eBible numbers 1KI 5:30, with “Heb. 300. Alex. 500.”; 1844 vol. 1 p. 368 has the same margin note. CCEL’s “Heb. 800.” copies the closed-up 3 that the 1900 impression shows; 1879, 1844 and the Hebrew’s 3300 give 300. eBible’s note 1KI 5:30 has the printed wording at the same caller, and alexandrinus.json already decides it. The malformed CCEL chapter heading merges several chapters, so place the note in its verified verse and account for it by that existing note rather than adding another copy."
+    },
+    "1.xxxii#9": {
+      "verse": "1KI 5:30",
+      "anchor": "masters",
+      "why": "Brenton 1879 physical p. 466 and 1900 physical p. 462 (printed p. 450) both print π immediately before “masters” in III Kings 5:16, which eBible numbers 1KI 5:30, with “π Heb. and Alex. overseers of the people.” eBible’s note 1KI 5:30#2 has that wording at the same caller word, and alexandrinus.json already decides it. The malformed CCEL chapter heading merges several chapters, so place the note in its verified verse, where the build accounts for it by that existing note rather than adding another copy."
+    },
+    "1.xxxii#11": {
+      "verse": "1KI 6:1",
+      "anchor": "of the reign of king Solomon",
+      "why": "Brenton 1879 physical page 466 and 1900 physical page 462 (both printed 450) print sigma immediately before “of the reign of king Solomon” in III Kings 6:1, with “Gr. of Solomon reigning.” Pinned eBible numbers the verse 1KI 6:1, and its first note there has the same wording at the same caller, so the build accounts for it as that note. The malformed CCEL chapter heading leaves this run in no chapter; this places it in its verified verse rather than leaving it out."
+    },
+    "1.xxxii#10": {
+      "verse": "1KI 5:30",
+      "anchor": "in the works",
+      "duplicate": "1KI 5:30#3",
+      "why": "Brenton 1879 physical p. 466 and 1900 physical p. 462 (printed p. 450) both print ρ “See Appendix.” with ρ after “masters who wrought in the works.” at the end of III Kings 5:16, before verse 18; 1844 vol. 1 p. 368 has the same pointer in the margin. eBible numbers the verse 1KI 5:30, where the brenton-notes correction restores the same pointer at the verse’s end as 1KI 5:30#3, which the 1KI 5:31 Appendix decision in alexandrinus.json consumes. CCEL’s caller also closes the verse, but its malformed chapter heading leaves the note in no chapter, and an anchor cannot stand after the last word, so the identical texts are not matched by caller. Account for it by that existing note rather than adding a second pointer."
+    },
+    "17.iii#8": {
+      "omitted": true,
+      "why": "Brenton 1879 physical page 1089 and 1900 physical page 1085 (printed page 1073 in both) print one footnote, “θ Gr. him, his, sc. the people.”, with the θ caller repeated before “them” and before “their staves” in Osee 4:12, because one note glosses both pronouns. CCEL gives the shared footnote a second number and repeats its body word for word. Note 17.iii#7 already carries it over “them by their staves”, so leave out this second copy."
+    },
+    "1.xxxii#25": {
+      "duplicate": "1KI 7:1",
+      "why": "Brenton 1879 physical p. 468 and 1900 physical p. 464 (printed p. 452 in both) print γ “See Appendix.” with γ immediately before “king” in “And king Solomon sent” at III Kings 7:13, which eBible numbers 1KI 7:1; CCEL places its caller at the same word. eBible’s single note there, 1KI 7:1, is the same pointer once the brenton-notes correction restores it from the pasted Appendix paragraph, and the 1KI 7:38-50 passage decision in alexandrinus.json consumes it. eBible’s caller stands before “And” rather than “king”, so the identical texts are not matched by caller. Account for it by that existing note rather than printing a second pointer."
+    },
+    "1.xxxii#31": {
+      "verse": "1KI 7:10",
+      "anchor": "completely circular round about",
+      "why": "Brenton 1879 physical page 468 and 1900 physical page 464 (printed page 452 in both) print ξ immediately before “completely circular round about” in III Kings 7:23, with “ξ Gr. round in a circle.” Pinned eBible numbers the verse 1KI 7:10, and its note there has the same wording at the same caller, so the build accounts for it as that note. The malformed CCEL chapter heading leaves this run in no chapter; this places it in its verified verse rather than leaving it out."
+    },
+    "1.xxxii#32": {
+      "verse": "1KI 8:44",
+      "anchor": "toward",
+      "why": "Brenton 1879 physical page 473 and 1900 physical page 469 (printed 457 in both) print beta immediately before “toward the city” in III Kings 8:44, with “Gr. by way of.” Pinned eBible numbers the verse 1KI 8:44, and its note there has the same wording at the same caller, so the build accounts for it as that note. The malformed CCEL chapter heading leaves this run in no chapter; this places it in its verified verse rather than leaving it out."
+    },
+    "1.xxxii#34": {
+      "verse": "1KI 8:53",
+      "anchor": "O Lord God",
+      "why": "Brenton 1879 physical page 473 and 1900 physical page 469 (printed page 457 in both) print δ immediately before “O Lord God” in III Kings 8:53, with “δ Gr. Lord, Lord, i. e. according to the Heb. Lord Jehovah.” Pinned eBible numbers the verse 1KI 8:53, and its note there has the same wording at the same caller, so the build accounts for it as that note. The malformed CCEL chapter heading leaves this run in no chapter; this places it in its verified verse rather than leaving it out."
+    },
+    "1.xxxii#33": {
+      "verse": "1KI 8:50",
+      "anchor": "cause them to be pitied",
+      "why": "Brenton 1879 physical page 473 and 1900 physical page 469 (printed 457 in both) print γ immediately before “cause them to be pitied” in III Kings 8:50, with “Gr. give them to compassions.” Pinned eBible numbers the verse 1KI 8:50, and its note there has the same wording at the same caller, so once CCEL’s slip is mended the build accounts for it as that note. The malformed CCEL chapter heading leaves this run in no chapter; this places it in its verified verse rather than leaving it out."
+    },
+    "1.xxxii#35": {
+      "verse": "1KI 16:10",
+      "anchor": "and reigned",
+      "why": "Brenton 1879 physical page 489 and 1900 physical page 485 (printed 473 in both) print β immediately before “and reigned” in III Kings 16:10, with “Heb. and Alex. insert ‘in the 27th year of Asa king of Juda.’” Pinned eBible numbers the verse 1KI 16:10, and once CCEL’s slip is mended its note there has the same wording at the same caller, so the build accounts for it as that note, which alexandrinus.json already decides. The malformed CCEL chapter heading leaves this run in no chapter; this places it in its verified verse rather than leaving it out."
+    },
+    "29#10": {
+      "verse": "1SA 18:4",
+      "anchor": "upper garment",
+      "supplied": true,
+      "why": "Brenton’s Appendix, 1879 physical p. 1149 and 1900 physical p. 1145 (printed p. 1133), prints γ See Jno. 21. with γ immediately before “upper garment” in “stripped himself of his upper garment”, Appendix verse 4, which the edition supplies as 1 Samuel 18:4; the 1844 margin (vol. 2 p. 929) has † See John 21. at the same word. Not verse 2: no caller stands at “house”. eBible’s Appendix lacks the note."
+    },
+    "29#16": {
+      "verse": "PRO 8:28",
+      "anchor": "decree",
+      "supplied": true,
+      "why": "Brenton’s Appendix, 1879 physical p. 1150 and 1900 physical p. 1146 (printed p. 1134), prints γ Gr. mouth. with γ immediately before “decree” in “the waters shall not pass his decree”. The Appendix labels the paragraph Proverbs 8. 29, and the edition supplies it at the end of Proverbs 8:28 (alexandrinus.json PRO 8:29-33). eBible’s Appendix lacks this ordinary gloss. It is independent of the passage’s Vat. omits. note."
+    },
+    "1.xxxii#41": {
+      "duplicate": "1KI 16:22",
+      "why": "Brenton 1879 physical page 489 and 1900 physical page 485 (printed 473 in both) print one note in III Kings 16:22, “μ Gr. was after.”, with μ immediately before “followed Ambri”. CCEL has the same words at the same caller; eBible's note 1KI 16:22 has the same words but sets its caller before “followed Thamni”, so the identical texts are not matched by caller. It is the same note, which the Brenton note decision moves to the printed caller; account for it by that note rather than printing a second copy."
+    },
+    "29#17": {
+      "verse": "PRO 8:32",
+      "anchor": "be not strangers to it",
+      "supplied": true,
+      "why": "Brenton’s Appendix, 1879 physical p. 1150 and 1900 physical p. 1146 (printed p. 1134), prints δ More lit., do not separate yourselves from it. with δ immediately before “be not strangers to it” in “Hear wisdom and be wise, and be not strangers to it”. The Appendix labels this Proverbs 8. 33, and the edition supplies it within Proverbs 8:32 (alexandrinus.json PRO 8:29-33). eBible’s Appendix lacks this ordinary gloss. It is independent of the passage’s Vat. omits. note."
+    },
+    "1.xxxii#45": {
+      "duplicate": "1KI 16:28c",
+      "why": "Brenton 1879 physical page 490 and 1900 physical page 486 (printed 474 in both) print “β Gr. might.” with β immediately before “mighty deeds” in the unnumbered paragraph after III Kings 16:28 that eBible numbers 1KI 16:28c, where eBible's note has the same wording at the same caller. CCEL sets its caller one word early, before “his”, leaving the printed β as a stray “is” after it, and drops the closing period. It is the same note, not an additional one."
+    },
+    "iv.26#1": {
+      "verse": "EXO 25:40",
+      "anchor": "according to the pattern",
+      "why": "Pinned CCEL iv.26#1 is before according to the pattern shewed thee in the mount at Exodus 25:40, not 29:41. eBible already preserves the identical Hebrews 8:5 reference at 25:40; only source citation spacing differs."
+    }
+  }
+}

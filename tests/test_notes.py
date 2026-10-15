@@ -442,6 +442,60 @@ def test_a_declared_change_of_wording_is_carried_through_a_notes_parts() -> None
         notes.edited(body, "6.", "six", "key")
 
 
+def test_a_change_that_rewrites_a_term_drops_it(
+    ctx: bible.annotate.Context,
+) -> None:
+    source = "Alex. ours, but Heb. and Vat. 'your.'"
+    body = notes.with_terms(
+        notes.source_body(notes.labelled_pieces(source), [], None, "key", source),
+        ctx.terms,
+    )
+    edited = notes.edited(
+        body, "Heb. and Vat.", "Heb. and Brenton’s facing Greek", "key"
+    )
+    assert [edited.plain[t.start : t.end] for t in edited.terms] == ["Alex.", "Heb."]
+    runs, terms, _ = notes.displayed(edited)
+    printed = notes.text_of(notes.finished(runs, terms, None, None, ctx.terms, "key"))
+    assert "Brenton’s facing Greek" in printed and "Vat." not in printed
+
+
+@pytest.mark.parametrize(
+    "before,after", [("Heb.", "Heb. lit."), ("but Heb.", "but the Heb.")]
+)
+def test_words_added_beside_a_term_are_not_its_own(
+    ctx: bible.annotate.Context, before: str, after: str
+) -> None:
+    source = "Alex. ours, but Heb. and Vat. 'your.'"
+    body = notes.with_terms(
+        notes.source_body(notes.labelled_pieces(source), [], None, "key", source),
+        ctx.terms,
+    )
+    edited = notes.edited(body, before, after, "key")
+    assert [edited.plain[t.start : t.end] for t in edited.terms] == [
+        "Alex.",
+        "Heb.",
+        "Vat.",
+    ]
+    runs, terms, _ = notes.displayed(edited)
+    printed = notes.text_of(notes.finished(runs, terms, None, None, ctx.terms, "key"))
+    assert after in printed
+
+
+def test_witness_names_keep_their_capital_after_a_lemma(
+    ctx: bible.annotate.Context,
+) -> None:
+    for source in ("Cotton Genesis his.", "Sinaiticus correcting hand c.a thine."):
+        body = notes.with_terms(
+            notes.source_body(notes.labelled_pieces(source), [], None, "key", source),
+            ctx.terms,
+        )
+        runs, terms, _ = notes.displayed(body)
+        printed = notes.text_of(
+            notes.finished(runs, terms, "their", None, ctx.terms, "key")
+        )
+        assert printed.startswith(source.split()[0])
+
+
 @pytest.mark.parametrize(
     "source,before,after,expected",
     [
@@ -653,7 +707,7 @@ def test_a_sign_after_no_witness_is_refused(
 def test_every_note_is_printed_replaced_by_a_link_or_explicitly_omitted(
     edition: bible.pipeline.Edition,
 ) -> None:
-    assert edition.summary["printed_notes"] == 4350
+    assert edition.summary["printed_notes"] == 6165
     rows = [row for listed in edition.notes.values() for row in listed]
     assert len({row["key"] for row in rows}) == len(rows)
     # The 1611 margin is printed on the New Testament alone, and whole but
@@ -914,8 +968,8 @@ def test_surviving_additions_keep_their_printed_words(
     rows = {r["key"]: r for listed in edition.notes.values() for r in listed}
     expected = {
         "GEN 1:11#2": (
-            "according to its likeness",
-            "Gr. Alex. adds εἰς ὁμοιότητα",
+            "according to its kind on the earth",
+            "Alex. adds εἰς ὁμοιότητα",
             "override",
         ),
         "JON 1:8": (
@@ -930,7 +984,7 @@ def test_surviving_additions_keep_their_printed_words(
     assert "JON 1:8" not in policy.brenton_notes["notes"]
     assert (
         policy.brenton_notes["notes"]["GEN 1:11#2"]["lemma"]
-        == "according to its likeness"
+        == "according to its kind on the earth"
     )
 
 
@@ -992,8 +1046,8 @@ def test_an_omission_quotes_only_the_part_of_its_lemma_that_is_omitted(
         for code in ("GEN", "MAT", "JAS")
         for row in edition.notes[code]
     }
-    assert rows["GEN 8:7#2"] == ("to see if the water had ceased", "Vat. omits")
-    assert rows["GEN 3:22"] == ("the Lord God said", "Vat. omits _the Lord_")
+    assert rows["GEN 8:7#2"] == ("to see if the water had ceased", "Brenton omits")
+    assert rows["GEN 3:22"] == ("the Lord God said", "Brenton omits _the Lord_")
     assert rows["MAT 18:19#1 TR"] == ("verily", "TR omits")
     assert rows["JAS 4:12#1 TR"] == ("but who", "TR omits _but_")
     for code in edition.scripture:
@@ -1199,9 +1253,9 @@ def test_mark_fist_correction_preserves_the_marginal_note(
             "JDG 13:19",
             "according to the Heb. _a wonderful work_. Alex. reads τῷ θαυμαστὰ ποιοῦντι κυρίῳ.",
         ),
-        ("GEN 1:11#2", "Gr. Alex. adds εἰς ὁμοιότητα"),
-        ("GEN 8:7#2", "Vat. omits"),
-        ("GEN 6:7", "Vat. _I am grieved_. Gr. _I have thought_ or _reasoned_"),
+        ("GEN 1:11#2", "Alex. adds εἰς ὁμοιότητα"),
+        ("GEN 8:7#2", "Brenton omits"),
+        ("GEN 6:7", "Brenton _I am grieved_. Gr. _I have thought_ or _reasoned_"),
         (
             "LUK 17:35 TR",
             "TR adds verse 36 _Two men shall be in the field; the one shall be taken, and the other left._",
@@ -1283,7 +1337,7 @@ def test_unrelated_and_stale_source_notes_are_omitted(
         ("2KI 19:23#2", "height of his cedar", "Gr. _bulk_ or _size_"),
         ("GEN 4:14", "and I shall be hidden", "or, _then shall I be_"),
         ("1SA 14:40", "will be under subjection", "Gr. _become slaves_"),
-        ("1SA 23:11", "Will the place be shut up", "i.e., _besieged_"),
+        ("1SA 23:11", "shut up", "i.e., _besieged_"),
         ("JOS 21:4", "out of the tribe of Judah", "Gr. _from_"),
         ("1SA 26:24#2", "be precious", "Gr. _magnified_"),
         ("ISA 6:13", "there shall be", "Gr. _is_"),
@@ -1401,7 +1455,6 @@ def test_finished_readings_preserve_boundary_punctuation(
             "upon the seats I saw",
             "upon the seats I saw four and twenty elders",
         ),
-        ("GEN 5:25", "eighty", "sixty", "a hundred and sixty and seven years"),
         ("GEN 11:25", "twenty-nine", "twenty-five", "a hundred and twenty-five years"),
         (
             "2TI 2:6 The husbandman that laboureth, must be first partaker of the fruits",

@@ -106,7 +106,7 @@ RENDERING_SEPARATOR = re.compile(r",?\s+or,?\s+|,?\s*(?:\betc\b|&c\b)")
 COMMENTARY = re.compile(
     r"\s*(?:(?:also\s+)?(?:probably|perhaps|possibly|see|compare|comp|cf"
     r"|ha(?:s|ve)(?=\s+(?:the|a|an|this|these|those|no|nothing|only|here|it|them)\b)"
-    r"|plural|singular|sing|participle|infin"
+    r"|plural|singular|sing|participle|infin|fut"
     r"|adds|add(?=\s*[,:])|omits?|reads?|inserts?|wants?|translates?"
     r"|ends(?=\s+the\s+verse\b)|includes(?=\s+the\s+clause\b))\b|[—(-])",
     re.I,
@@ -117,12 +117,13 @@ TRIM = " \n.,;:?!+'‘’“”\"`"
 # languages, texts, versions and people, and the pronoun "I".
 NAMES = re.compile(
     r"(?:Gr|Heb|Hebrew|Hebraism|Syr|Sept|Alex|Vat|Complut|Ald|Vulg|A\. V|App|Appendix"
-    r"|Lambert Bos|Patrick Junius|Tertullian|Professor Samuel Lee|Brenton|Swete|Vatican|I)(?!\w)"
+    r"|Lambert Bos|Patrick Junius|Tertullian|Professor Samuel Lee|Brenton|Swete|Vatican"
+    r"|Sinaiticus|Cotton Genesis|Bodleian Genesis|Ambrosian Pentateuch|I)(?!\w)"
 )
 # Abbreviations, whose full stop stays at the end of a note ("so the Heb.").
 # Not those the edition prints without one, or in full.
 ABBREVIATION = re.compile(
-    r"(?<![\w'’])(?:etc|&c|Gr|Heb|Syr|Alex|lit|Lit|i\. e|q\. d|sc|scil|Gr\. sing)\.$"
+    r"(?<![\w'’])(?:etc|&c|Gr|Heb|Syr|Alex|lit|Lit|i\. e|q\. d|sc|scil|Gr\. sing|fut)\.$"
 )
 # Labels at the start of a note, which it runs on from.
 LABEL_START = re.compile(
@@ -798,8 +799,12 @@ def edited(body: Body, before: str, after: str, key: str) -> Body:
             else (moved(body.reading[0]), moved(body.reading[1], True))
         ),
         citations=tuple(bound_citations),
+        # A term whose words the change rewrites is no longer there to render;
+        # words added beside one are not its own.
         terms=tuple(
-            replace(t, start=moved(t.start), end=moved(t.end, True)) for t in body.terms
+            replace(t, start=moved(t.start, True), end=moved(t.end))
+            for t in body.terms
+            if not (t.start < end and start < t.end)
         ),
     )
 

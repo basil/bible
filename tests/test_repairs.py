@@ -72,7 +72,7 @@ def test_corrections_are_made_where_their_keys_say() -> None:
     [
         ("GEN 1:1", {"from": "earthwas", "to": "earth was"}, "not where its key says"),
         ("GEN 1:2", {"from": "secnd", "to": "second"}, "not where its key says"),
-        ("GEN 1:2", {"from": "the", "to": "this"}, "does not apply"),
+        ("GEN 1:1", {"from": "the", "to": "this"}, "does not apply"),
         ("GEN 1:2", {"from": "unsightly", "to": "unsightly"}, "no-op"),
         # Outside a note, only a word space may be mended in the translation.
         (
@@ -103,6 +103,42 @@ def test_a_correction_that_does_not_fit_is_refused(
         corrected(key, **correction)
 
 
+def test_identical_notes_are_corrected_one_by_one_within_each_note() -> None:
+    note = "\\f + \\fr 1:1 \\ft secnd.\\f*"
+    book = f"\\id GEN\n\\c 1\n\\p\n\\v 1 In {note}the {note}beginning.\n"
+    slip = Correction({"from": "secnd", "to": "second", "why": "A slip."})
+    text, mended = repairs.brenton("GEN", book, {"GEN 1:1": slip, "GEN 1:1#2": slip})
+    assert text.count("\\ft second.") == 2
+    assert mended == {"1:1", "1:1#2"}
+    assert repairs.NOTE.sub("", text) == repairs.NOTE.sub("", book)
+    # A correction to a note may not reach beyond it into the scripture.
+    with pytest.raises(CheckFailed, match="reaches beyond its note"):
+        repairs.brenton(
+            "GEN",
+            book,
+            {
+                "GEN 1:1#2": {
+                    "from": "secnd.\\f*beginning",
+                    "to": "second.\\f*beginning",
+                    "why": "A slip.",
+                }
+            },
+        )
+    with pytest.raises(CheckFailed, match="reaches beyond its note"):
+        repairs.brenton(
+            "GEN",
+            book,
+            {
+                "GEN 1:1#2": {
+                    "from": "secnd.\\f*",
+                    "to": "second.",
+                    "why": "A slip.",
+                    "uncategorized": True,
+                }
+            },
+        )
+
+
 def test_a_dropped_note_is_restored_but_not_inside_another() -> None:
     note = "\\f + \\fr 1:1 \\ft Or, at.\\f*"
     text, _ = corrected(
@@ -131,5 +167,5 @@ def test_the_editions_corrections_all_apply(
     """Each is made once, to a file the edition prints or reads; reading refused
     otherwise."""
     corrections = policy.brenton_notes["corrections"]
-    assert len(corrections) == 185
+    assert len(corrections) == 258
     assert read.mended["1KI"] and "21:11" in read.mended["GEN"]

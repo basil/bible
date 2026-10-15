@@ -223,5 +223,40 @@
     "period_forms": [],
     "note_forms": [],
     "source_forms": []
+  },
+  "brenton": {
+    "display": "Brenton",
+    "meaning": "Brenton’s English translation of Valpy’s printed Greek edition",
+    "period_forms": [],
+    "note_forms": [],
+    "source_forms": ["Brenton"]
+  },
+  "cotton-genesis": {
+    "display": "Cotton Genesis",
+    "meaning": "Codex Cottonianus of Genesis",
+    "period_forms": [],
+    "note_forms": [],
+    "source_forms": ["Cotton Genesis"]
+  },
+  "bodleian-genesis": {
+    "display": "Bodleian Genesis",
+    "meaning": "Bodleian manuscript of Genesis (Swete E)",
+    "period_forms": [],
+    "note_forms": [],
+    "source_forms": ["Bodleian Genesis"]
+  },
+  "ambrosian-pentateuch": {
+    "display": "Ambrosian Pentateuch",
+    "meaning": "Codex Ambrosianus of the Pentateuch (Swete F)",
+    "period_forms": [],
+    "note_forms": [],
+    "source_forms": ["Ambrosian Pentateuch"]
+  },
+  "sinaiticus": {
+    "display": "Sinaiticus",
+    "meaning": "Codex Sinaiticus",
+    "period_forms": [],
+    "note_forms": [],
+    "source_forms": ["Sinaiticus"]
   }
 }

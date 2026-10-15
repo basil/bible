@@ -31,6 +31,12 @@ CLASSES = {"A", "B", "C", "D", "E"}
 # conflicts, and Brenton note merges.
 
 
+def note_verse(key: str) -> str:
+    """The verse a note's key names: its book and reference, whatever number
+    or source follows them ("HAB 2:3#2", "HAB 2:3 CCEL")."""
+    return " ".join(key.split()[:2]).partition("#")[0]
+
+
 def scope(table_code: str) -> str | None:
     """The first Roman numeral component of a Turpie table code, if any."""
     match = re.match(r"^[A-E]\.(?:[sd]\.)?(I{1,3})(?:\.|$)", table_code)
@@ -193,7 +199,5 @@ def reviewed_rows(*, policy: bible.policy.Policy) -> list[ReviewedRow]:
             or (decision["action"] == "merge" and decision["drops"]),
             f"Note merge decision's drops without a merge: {key}",
         )
-        require(
-            key.partition("#")[0] in linked, f"Note merge decision at no link: {key}"
-        )
+        require(note_verse(key) in linked, f"Note merge decision at no link: {key}")
     return rows

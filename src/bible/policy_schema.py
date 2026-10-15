@@ -282,6 +282,7 @@ class AlexandrinusPassagesInsertions(TypedDict, total=False):
 
 
 class AlexandrinusPassagesMoves(TypedDict, total=False):
+    label: ReadOnly[str]
     before: ReadOnly[str]
     verses: ReadOnly[str]
 
@@ -454,6 +455,20 @@ class KjvNotes(TypedDict, total=False):
     notes: ReadOnly[Mapping[str, NoteOverride]]
 
 
+class CcelNote(TypedDict, total=False):
+    anchor: ReadOnly[str]
+    duplicate: ReadOnly[str]
+    omitted: ReadOnly[bool]
+    verse: ReadOnly[str]
+    supplied: ReadOnly[bool]
+    why: ReadOnly[str]
+
+
+class CcelNotes(TypedDict, total=False):
+    corrections: ReadOnly[Mapping[str, Correction]]
+    notes: ReadOnly[Mapping[str, CcelNote]]
+
+
 RevisionChange = TypedDict(
     "RevisionChange",
     {
@@ -480,6 +495,7 @@ Decision = TypedDict(
         "from": ReadOnly[str],
         "insertions": ReadOnly[tuple[AlexandrinusPassagesInsertions, ...]],
         "kjv": ReadOnly[bool],
+        "label": ReadOnly[str],
         "lemma": ReadOnly[str | None],
         "moved_to": ReadOnly[str],
         "moves": ReadOnly[tuple[AlexandrinusPassagesMoves, ...]],

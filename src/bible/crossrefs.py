@@ -275,7 +275,7 @@ def merged_notes(
             merges.append(note.key)
     linked_verses = {f"{code} {reference}" for reference in nt_rows}
     require(
-        {k for k in decisions if k.partition("#")[0] in linked_verses}
+        {k for k in decisions if quotations.note_verse(k) in linked_verses}
         <= used_decisions,
         f"Unused note merge decisions in {code}",
     )

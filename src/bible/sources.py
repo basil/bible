@@ -61,6 +61,14 @@ SOURCES: Mapping[str, Pinned] = {
         "retrieved": "2026-10-09",
         "sha256": "ff634ca56e906cf726df3006db5088509a35186ed069e282be40cc2fe9e7f564",
     },
+    # CCEL's HTML transcription of Brenton: read for the footnotes eBible's
+    # transcription lacks, and for nothing else (bible.ccel).
+    "ccel": {
+        "archive": "sources/ccel-brenton-lxx.zip",
+        "url": "https://ccel.org/b/brenton/lxx/htm/TOC.htm",
+        "retrieved": "2026-10-13",
+        "sha256": "6825ea6ba8b5c1e1ee680130d9ec02b9e1b845b3182cc9a6e23bfc8d8655524a",
+    },
     "versification": {
         "file": "sources/TVTMS - Translators Versification Traditions with Methodology for Standardisation for Eng+Heb+Lat+Grk+Others - STEPBible.org CC BY.txt",
         "url": "https://github.com/STEPBible/STEPBible-Data/blob/1f342173b881ba5d1a5a4cae6e7c6c3fcc7cac51/Versification/",
@@ -200,6 +208,10 @@ BYZTXT_BOOKS = (
 ).split()
 
 
+# The directory of the CCEL archive that holds the pages of the edition.
+CCEL_PAGES = "ccel.org/b/brenton/lxx/htm/"
+
+
 class Content:
     """A view of one file, or one directory, of an in-memory snapshot of
     files by their names: what a reader needs of a path, and no more.
@@ -283,6 +295,8 @@ class Sources:
     marginal: str
     versification: str
     byzantine: MappingProxyType[str, Content]
+    # CCEL's pages of Brenton, by their names in the archive.
+    ccel: Content
 
     def __getitem__(self, family: str) -> Mapping[str, str]:
         return {"brenton": self.brenton, "kjv": self.kjv}[family]
@@ -482,4 +496,10 @@ def load() -> Sources:
         pinned["marginal_notes"].decode("utf-8"),
         pinned["versification"].decode("utf-8-sig"),
         byzantine_inputs(pinned),
+        archive_content(
+            pinned["ccel"],
+            Path(SOURCES["ccel"]["archive"]).name,
+            (f"{CCEL_PAGES}*.htm",),
+        )
+        / CCEL_PAGES.rstrip("/"),
     )

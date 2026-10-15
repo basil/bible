@@ -85,6 +85,7 @@ def test_printed_origins_lose_their_chapter(declared: bible.policy.Policy) -> No
         none,
         cast(Any, None),
         (),
+        cast(Any, None),
     )
     assert pipeline.exported("GEN", doc, unit).split("\\v 12 ")[1] == (
         "And God\\f - \\fr 12 \\ft See \\xt Hebrews 12:29\\f* said"

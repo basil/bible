@@ -131,30 +131,17 @@ def in_a_note(text: str, snippet: str) -> bool:
     return any(m.start() <= start and end <= m.end() for m in NOTE.finditer(text))
 
 
+# A key that names a verse, or with #n the verse's nth note.
+VERSE_KEY = re.compile(r"(\d+:\d+[a-z]?)(?:#([2-9]|[1-9]\d+))?")
+
+
 def in_its_place(text: str, key: str, snippet: str) -> bool:
-    """Whether the snippet's one occurrence lies where its key says: in the verse
-    it names, which it may begin with that verse's marker, or in a file without
-    verses, in a note standing among the words it names, or outside the notes,
-    in the words it names."""
+    """Whether the snippet's one occurrence, keyed by words rather than a verse,
+    lies where its key says: in a file without verses, in a note standing among
+    the words it names, or outside the notes, in the words it names."""
     start = text.index(snippet)
     end = start + len(snippet)
     place = key.partition(" ")[2]
-    if verse := re.fullmatch(r"(\d+:\d+[a-z]?)(?:#([2-9]|[1-9]\d+))?", place):
-        reference, number = verse.groups()
-        matching = [m for m in NOTE.finditer(text) if m[2] == reference]
-        if number is not None or in_a_note(text, snippet):
-            index = int(number or 1) - 1
-            return (
-                index < len(matching)
-                and matching[index].start() <= start
-                and end <= matching[index].end()
-            )
-        if marker := re.match(rf"\\v {reference.partition(':')[2]}\s+", snippet):
-            start += marker.end()
-        return any(
-            ref == reference and first <= start and end <= last
-            for ref, first, last in verse_spans(text)
-        )
     if "#" in place:
         return False
     touched = [m for m in NOTE.finditer(text) if m.start() < end and start < m.end()]
@@ -172,6 +159,33 @@ def in_its_place(text: str, key: str, snippet: str) -> bool:
         before[len(before) - k :] + after[: len(named) - k] == named
         for k in range(1, len(named))
     )
+
+
+def target(text: str, key: str, snippet: str) -> tuple[int, int, bool]:
+    """Where a correction keyed by a verse applies, and whether it is a note:
+    the note #n names, or with no number the verse's first note where the
+    snippet is in it, or else the verse from its marker."""
+    reference, number = VERSE_KEY.fullmatch(key.partition(" ")[2]).groups()  # type: ignore[union-attr]
+    notes = [m for m in NOTE.finditer(text) if m[2] == reference]
+    spans = [
+        (first, last) for ref, first, last in verse_spans(text) if ref == reference
+    ]
+    if number is not None or (notes and snippet in notes[0][0]):
+        # Words in the first note and in the verse's own words as well do
+        # not say which a key without a number means.
+        require(
+            number is not None
+            or not any(snippet in NOTE.sub("", text[a:b]) for a, b in spans),
+            f"Brenton correction is ambiguous between a note and its verse: {key}",
+        )
+        index = int(number or 1) - 1
+        require(
+            index < len(notes), f"Brenton correction is not where its key says: {key}"
+        )
+        return notes[index].start(), notes[index].end(), True
+    require(len(spans) == 1, f"Brenton correction is not where its key says: {key}")
+    first, last = spans[0]
+    return text.rfind("\\v ", 0, first), last, False
 
 
 def in_translation(text: str, snippet: str) -> bool:
@@ -197,38 +211,96 @@ def brenton(
     they mend, without the file's code.
 
     A correction is keyed by the file's code and the verse or note it mends; #n
-    names the nth note in a verse. Several corrections in one note form a list
-    under one key. In a file without verses, the key names the words the note
-    stands among, or outside the notes, the words it mends. Outside notes a
-    correction may only mend word spaces in translation or restore a whole note
-    Brenton printed that the transcription lacks, so the translation stays
-    eBible's. A preface, an introduction, or the appendix's notes and
-    labels may have their words mended.
+    names the nth note in a verse, and a key without it the verse's first note
+    where the correction's words are in it. A correction to a note is made
+    within that note alone, where its words must be found once, and may not
+    reach beyond it. Outside notes a correction may only mend word spaces in
+    translation or restore a whole note Brenton printed that the transcription
+    lacks, so the translation stays eBible's. In a file without verses, the key
+    names the words the note stands among, or outside the notes, the words it
+    mends, which are found once in the file; a preface, an introduction, or
+    the appendix's notes and labels may have their words mended.
     """
     mended = set()
     for key, group in corrections.items():
         if key.split(" ")[0] != code:
             continue
+        place = key.partition(" ")[2]
         for correction in group if isinstance(group, tuple) else (group,):
+            source = correction["from"]
+            restored = category(source, correction["to"]) == "missing note"
+            if VERSE_KEY.fullmatch(place):
+                start, end, in_note = target(text, key, source)
+                found = [m.start() for m in re.finditer(re.escape(source), text)]
+                within = text[start:end]
+                require(
+                    not in_note
+                    or not any(
+                        at < start < at + len(source) or at < end < at + len(source)
+                        for at in found
+                    ),
+                    f"Brenton correction reaches beyond its note: {key}",
+                )
+                require(
+                    source in within or not found,
+                    f"Brenton correction is not where its key says: {key}",
+                )
+                after = corrected(within, correction, "Brenton correction", key)
+                if in_note:
+                    require(not restored, f"Brenton note restored in a note: {key}")
+                    # It leaves one whole note, or removes the note whole.
+                    require(
+                        NOTE.fullmatch(after) is not None or not after,
+                        f"Brenton correction reaches beyond its note: {key}",
+                    )
+                    mended.add(place)
+                else:
+                    at = start + within.index(source)
+                    touched = [
+                        m
+                        for m in NOTE.finditer(text)
+                        if m.start() < at + len(source) and at < m.end()
+                    ]
+                    require(
+                        all(
+                            m.start() <= at and at + len(source) <= m.end()
+                            for m in touched
+                        ),
+                        f"Brenton correction reaches beyond its note: {key}",
+                    )
+                    require(
+                        not touched,
+                        f"Brenton correction is not where its key says: {key}",
+                    )
+                    require(
+                        restored
+                        or canonical_text(source) == canonical_text(correction["to"]),
+                        f"Brenton correction changes the wording outside a note: {key}",
+                    )
+                text = text[:start] + after + text[end:]
+                continue
             after = corrected(text, correction, "Brenton correction", key)
             require(
-                in_its_place(text, key, correction["from"]),
+                in_its_place(text, key, source),
                 f"Brenton correction is not where its key says: {key}",
             )
-            in_note = in_a_note(text, correction["from"])
-            restored = category(correction["from"], correction["to"]) == "missing note"
+            in_note = in_a_note(text, source)
             require(
                 not (in_note and restored), f"Brenton note restored in a note: {key}"
             )
+            in_scripture = not (in_note or restored or not in_translation(text, source))
             require(
-                in_note
-                or restored
-                or not in_translation(text, correction["from"])
-                or canonical_text(correction["from"])
-                == canonical_text(correction["to"]),
+                not in_scripture
+                or canonical_text(NOTE.sub("", source))
+                == canonical_text(NOTE.sub("", correction["to"])),
                 f"Brenton correction changes the wording outside a note: {key}",
             )
+            require(
+                not in_scripture
+                or len(NOTE.findall(source)) == len(NOTE.findall(correction["to"])),
+                f"Brenton correction adds or drops a note outside a note: {key}",
+            )
             if in_note:
-                mended.add(key.partition(" ")[2])
+                mended.add(place)
             text = after
     return text, frozenset(mended)

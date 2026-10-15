@@ -6955,11 +6955,6 @@
       "why": "Use the archaic third-person singular in scripture and quoted readings. Every occurrence of this whole word in those regions is a present-tense verb; explanatory prose retains its source grammar.",
       "scope": "scripture"
     },
-    "pities": {
-      "to": "pitieth",
-      "why": "Use the archaic third-person singular in scripture and quoted readings. Every occurrence of this whole word in those regions is a present-tense verb; explanatory prose retains its source grammar.",
-      "scope": "scripture"
-    },
     "pleads": {
       "to": "pleadeth",
       "why": "Use the archaic third-person singular in scripture and quoted readings. Every occurrence of this whole word in those regions is a present-tense verb; explanatory prose retains its source grammar.",
@@ -10893,6 +10888,52 @@
           "why": "Words supplied from the King James Version (1KI 14:1-20); Brenton’s telling of the same prophecy has the birds of the air (12:24m)."
         }
       ]
+    },
+    "isaiah-40-14-alexandrinus-question": {
+      "why": "End the promoted Isaiah 40:14 question with the question mark that Brenton prints in his Alexandrinus note, rather than inheriting the base verse’s terminal semicolon. Brenton 1879 physical p. 890 and 1900 physical p. 886 (printed p. 874), θ after understanding;, both print the complete added question ending again?; Swete III p. 174 explicitly supports its full clause in unqualified A. No English word or witness label changes.",
+      "changes": [
+        {
+          "verse": "ISA 40:14",
+          "from": "recompensed to him again;",
+          "to": "recompensed to him again?"
+        }
+      ]
+    },
+    "alexandrinus-city-name-quotation": {
+      "why": "The quoted phrase is the city’s name, so its opening and closing marks are a typographic quotation pair, not possessive apostrophes.",
+      "changes": [
+        {
+          "verse": "EZK 48:35",
+          "from": "'the Lord is there'",
+          "to": "‘the Lord is there’",
+          "why": "Brenton1879physical1064/1900 physical p. 1060 printed p. 1048 quotes the complete city-name rendering. Preserve every word and mark the name as a quoted phrase."
+        }
+      ]
+    },
+    "pities-verb-contexts": {
+      "why": "Revise pities only where it is the present-tense verb. EZR11:11 CCEL gives the plural noun pities in give him to pities and must retain it.",
+      "changes": [
+        {
+          "verse": "PSA 102:13",
+          "from": "father pities",
+          "to": "father pitieth"
+        },
+        {
+          "verse": "PSA 102:13",
+          "from": "Lord pities",
+          "to": "Lord pitieth"
+        },
+        {
+          "verse": "PSA 111:5",
+          "from": "pities and",
+          "to": "pitieth and"
+        },
+        {
+          "verse": "PRO 28:8",
+          "from": "pities the poor",
+          "to": "pitieth the poor"
+        }
+      ]
     }
   },
   "punctuation": {
@@ -10939,13 +10980,6 @@
           "why": "Brenton's 1844 vol. 1 p. 292 prints σκληρᾷ in this same comparison; the 1879 and 1900 notes omit its circumflex (p. 356). Restore the accent while preserving the comparison and its English."
         },
         {
-          "note": "2KI 3:21#2",
-          "spelling": "greek",
-          "from": "καὶ ἐπάνα",
-          "to": "καὶ ἐπάνω",
-          "why": "Brenton prints terminal alpha (1879 and 1900 p. 491; 1844 vol. 1 p. 402). Swete vol. 1 p. 746 records ειπον ω] επανω A, verified on the scan, establishing omega in the Alexandrine reading; Brenton's English gloss and above agrees."
-        },
-        {
           "note": "2KI 19:30#2",
           "spelling": "greek",
           "from": "οἴκον",
@@ -10965,6 +10999,13 @@
           "from": "נעלסּה",
           "to": "נעלסה",
           "why": "Brenton 1879 and 1900, unnumbered first Appendix page, print an erroneous dagesh inside samekh in the Job 39:13 quotation. Brown–Driver–Briggs p. 763, under עלס, gives the Job 39:13 form without that point; retain the otherwise unpointed printed form."
+        },
+        {
+          "note": "JOB 30:30 CCEL",
+          "spelling": "greek",
+          "from": "συνεφρύτη",
+          "to": "συνεφρύγη",
+          "why": "Brenton prints συνεφρύτη, τ for γ, in every printing (1844 vol. 2 p. 565; 1879 and 1900 p. 687), and CCEL copies it. Swete vol. 2 p. 575 gives καυματος] + συνεφρυγη A, the aorist passive of συμφρύγω; checked on the scan, it establishes the printed letter error without changing the English or the witness."
         }
       ]
     },
@@ -11080,16 +11121,6 @@
           "note": "DEU 28:21",
           "from": "May the Lord",
           "to": "may the Lord"
-        },
-        {
-          "note": "JOS 24:26",
-          "from": "Properly",
-          "to": "properly"
-        },
-        {
-          "note": "JDG 5:14",
-          "from": "Rather",
-          "to": "rather"
         },
         {
           "note": "JDG 13:19",
@@ -11283,13 +11314,14 @@
         }
       ]
     },
-    "note-number-ranges": {
-      "why": "Use an en dash in the verse-number range quoted within this explanatory note, as in its adjacent range.",
+    "alexandrinus-note-verse-parenthesis": {
+      "why": "A parenthesized inline verse number marks the following clause of a retained Alexandrinus report; it is not an item-list aside requiring the preceding comma.",
       "changes": [
         {
-          "note": "PSA 9:22",
-          "from": "1-18",
-          "to": "1–18"
+          "note": "EZK 40:38 CCEL",
+          "from": "offering, (39)",
+          "to": "offering (39)",
+          "why": "Brenton1879physical1051/1900 physical p. 1047 printed p. 1035 reports a continuous washing-and-tables clause with inline (39). Remove only the comma before that verse marker, preserving the number and every English word; the general before-parenthesis rule deliberately refuses numbered items."
         }
       ]
     }

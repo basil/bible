@@ -9,8 +9,10 @@ counterpart in another translation than with the verses around it.
 from __future__ import annotations
 
 import collections
+import difflib
 import math
-from collections.abc import Iterable, Mapping
+from collections.abc import Iterable, Mapping, Sequence
+from dataclasses import dataclass
 
 from bible import scripture, usj
 from bible.references import Verse, verse_at
@@ -127,3 +129,46 @@ def similarity(weight: Mapping[str, float], a: set[str], b: set[str]) -> float:
     """The weight of the words two bags share, as a share of both bags'."""
     total = sum(weight[w] for w in a) * sum(weight[w] for w in b)
     return sum(weight[w] for w in a & b) / math.sqrt(total) if total else 0
+
+
+# Matching one text's words to another's, to place a thing that stands
+# before a word of the one before the same word of the other: a line of the
+# Updated Brenton, or a note caller of another transcription.
+
+
+@dataclass(frozen=True)
+class Alignment:
+    """The update's words matched to the source's: every match, and the
+    matches in runs of two or more words, which anchor nearby isolated
+    matches as well as placing lines themselves."""
+
+    mapped: Mapping[int, int]
+    solid: Mapping[int, int]
+    # The matches in runs, from the target's side.
+    back: Mapping[int, int]
+
+    @classmethod
+    def of(cls, source: Sequence[str], target: Sequence[str]) -> Alignment:
+        matcher = difflib.SequenceMatcher(a=source, b=target, autojunk=False)
+        mapped, solid = {}, {}
+        for i, j, n in matcher.get_matching_blocks():
+            for k in range(n):
+                mapped[i + k] = j + k
+                if n >= 2:
+                    solid[i + k] = j + k
+        return cls(mapped, solid, {j: i for i, j in solid.items()})
+
+    def anchored(self, index: int) -> int | None:
+        """The match of a word in a run, or an isolated match within five
+        update words of a run and no more than that distance plus two
+        source words away. The allowance accommodates small wording changes."""
+        if index in self.solid:
+            return self.solid[index]
+        position = self.mapped.get(index)
+        if position is None:
+            return None
+        for step in range(1, 6):
+            for near in (index + step, index - step):
+                if near in self.solid and abs(self.solid[near] - position) <= step + 2:
+                    return position
+        return None

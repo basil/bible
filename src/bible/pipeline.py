@@ -22,7 +22,7 @@ from __future__ import annotations
 
 import re
 from collections.abc import Callable, Mapping, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from types import MappingProxyType
 
 import bible.annotate
@@ -33,6 +33,7 @@ from bible import (
     annotate,
     assembly,
     byzantine,
+    ccel,
     crossrefs,
     lines,
     matter,
@@ -68,8 +69,9 @@ EXPECTED_NT_MARGINAL_NOTES = 775
 @dataclass(frozen=True)
 class Read:
     """The sources as documents: Brenton's files and the King James Bible's
-    by their codes, the notes that corrections mend, and George's listing of
-    the 1611 margin by book, and the parsed versification table."""
+    by their codes, the notes that corrections mend, George's listing of
+    the 1611 margin by book, the parsed versification table, and the report
+    of the notes CCEL's transcription supplied."""
 
     brenton: MappingProxyType[str, Document]
     kjv: MappingProxyType[str, Document]
@@ -78,6 +80,9 @@ class Read:
     mended: MappingProxyType[str, frozenset[str]]
     marginal: MappingProxyType[str, tuple[Mapping[str, str], ...]]
     versification: tuple[tvtms.Row, ...]
+    # What came of CCEL's notes: how many were set in Brenton's verses, and
+    # which were held back or left out, and why.
+    ccel: ccel.Report
 
 
 def note_key(code: str, reference: str, number: int) -> str:
@@ -226,8 +231,11 @@ def read(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Read:
                 not usj.notes_of(kjv[unit["id"]]["content"]),
                 f"Cambridge text already has footnotes: {unit['id']}",
             )
+    # The notes eBible's transcription lacks, from CCEL's, set in its verses
+    # after its own notes are keyed, so that their keys never shift.
+    supplemented, ccel_report = ccel.supplemented(brenton, sources.ccel, policy)
     return Read(
-        MappingProxyType(brenton),
+        supplemented,
         MappingProxyType(kjv),
         MappingProxyType(
             {code: usj.parse(text) for code, text in sources.updated_brenton.items()}
@@ -235,6 +243,7 @@ def read(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Read:
         MappingProxyType(mended),
         marginal_notes(sources.marginal, policy),
         tvtms.rows(sources.versification)[0],
+        ccel_report,
     )
 
 
@@ -643,6 +652,9 @@ class Edition:
     # The appendix's entries, by book and chapter, with the blocks of its
     # page that each is: the sample prints those of its chapters.
     appendix: tuple[tuple[str, int, int, int], ...]
+    # What came of CCEL's notes, with those set in the verses promotion
+    # supplied.
+    ccel: ccel.Report
 
 
 def check_met(policy: bible.policy.Policy, met: Met) -> None:
@@ -711,6 +723,11 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
     promoted = promote(
         read_sources, policy, sources.byzantine, terminology.registry(policy)
     )
+    supplemented, ccel_report = ccel.supplied(
+        promoted.brenton, read_sources.ccel, policy
+    )
+    promoted = replace(promoted, brenton=supplemented)
+    read_sources = replace(read_sources, ccel=ccel_report)
     units = assemble(promoted, policy, sources)
     policy = placed(units, read_sources, policy)
     units = lined(units, read_sources, policy)
@@ -837,6 +854,7 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
             (row.book, row.chapter, offset + start, offset + end)
             for row, start, end in spans
         ),
+        read_sources.ccel,
     )
 
 

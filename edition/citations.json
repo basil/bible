@@ -57,7 +57,23 @@
         "Mic": "MIC",
         "Hab": "HAB",
         "Zeph": "ZEP",
-        "Zech": "ZEC"
+        "Zech": "ZEC",
+        "Matt": "MAT",
+        "Exodus": "EXO",
+        "Ex": "EXO",
+        "Jud": "JDG",
+        "Ju": "JDG",
+        "Ruth": "RUT",
+        "1 Kings": "1SA",
+        "Psalm": "PSA",
+        "Prov": "PRO",
+        "Isa": "ISA",
+        "Isaiah": "ISA",
+        "Esai": "ISA",
+        "Jeremiah": "JER",
+        "Daniel": "DAG",
+        "Dan": "DAG",
+        "Nahum": "NAM"
       }
     },
     "george": {
@@ -231,16 +247,6 @@
       "not_a_citation": true,
       "why": "Where this edition prints the verse Alexandrinus has, named as a number rather than cited, as the note at Romans 16:24 names the doxology's."
     },
-    "1KI 7:37 Vat.": {
-      "source": "7:38–50",
-      "not_a_citation": true,
-      "why": "Where this edition prints the passage the Vatican text has here, named as a number rather than cited, as the note at Romans 16:24 names the doxology's."
-    },
-    "1KI 7:38 Vat.": {
-      "source": "verse 37",
-      "not_a_citation": true,
-      "why": "The verse after which the Vatican text has this passage, named as a number rather than cited, as the notes on the Hebrew's and the Received Text's order name theirs."
-    },
     "1KI 14:1": {
       "source": "12:24g–n",
       "not_a_citation": true,
@@ -287,9 +293,10 @@
       "why": "'Fully to preach' is the 'fully preached' of Romans 15:19; Romans 1:19 is about what may be known of God. George has 1.19."
     },
     "ISA 26:19": {
-      "source": "Ps. 110",
-      "numbering": "hebrew",
-      "why": "The dew of the morning is in the Hebrew's Psalm 110:3, which is Brenton's 109."
+      "source": "Ps. 110. (109)",
+      "passages": "PSA 109:1-7",
+      "print": "{PSA} 109",
+      "why": "The restored printed note gives both Greek and Hebrew chapter numbers; these name the same passage. Print the edition’s chapter and verse numbering. The Brenton scan evidence is recorded in the source-note correction."
     },
     "ISA 34:11": {
       "source": "13. 22",
@@ -298,9 +305,10 @@
       "why": "Above, in this book: Brenton names no book."
     },
     "ISA 43:17": {
-      "source": "Ps. 75. 5,6",
-      "numbering": "kjv-verses",
-      "why": "Brenton gives the Greek psalm's number and the English verse's: he counts the title, and the verse he means is one later."
+      "source": "Ps. 75. (76) 5,6",
+      "passages": "PSA 75:6-7",
+      "print": "{PSA} 75:6, 7",
+      "why": "The restored printed note gives both Greek and Hebrew chapter numbers; these name the same passage. Print the edition’s chapter and verse numbering. The Brenton scan evidence is recorded in the source-note correction."
     },
     "JDG 13:18": {
       "source": "Is. 9. 6",
@@ -459,12 +467,6 @@
       "print": "{HEB} 1:10–12",
       "why": "Brenton’s own reference, printed so in 1844, 1879 and 1900 as Heb. 1. 11, 13 (1844 p. 126; 1879 p. 775; 1900 p. 771): the quotation of verses 25–27 is Hebrews 1:10–12; 1:13 is the next quotation, of Psalm 109."
     },
-    "DEU 32:21": {
-      "source": "Rom. 10. 9",
-      "passages": "ROM 10:19",
-      "print": "{ROM} 10:19",
-      "why": "eBible’s slip for 10. 19, which Brenton prints (1844 p. 251; 1879 p. 292; 1900 p. 288) and which quotes the verse, ‘I will provoke you to jealousy by them that are no people’; Turpie heads the quotation so. A link replaces this note, so the slip is recorded here rather than mended in the source."
-    },
     "PSA 9:27": {
       "source": "Rom. 8. 14",
       "passages": "ROM 3:14",
@@ -476,6 +478,70 @@
       "passages": "JHN 18:24",
       "print": "v. 24",
       "why": "The margin’s ‘ver. 24’ is John 18:24, printed as the edition prints a verse of the same chapter."
+    },
+    "2CH 22:1 CCEL#2": {
+      "source": "chap. 14.15",
+      "passages": "2CH 14:14",
+      "print": "14:14",
+      "why": "The slaughter of the Ethiopians' herdsmen is the King James Bible's 14:15, which is Brenton's 14:14; the note, from CCEL's transcription, cites it by the King James number, and names no book."
+    },
+    "ISA 6:11": {
+      "source": "Jer. 40. (33) 10,12",
+      "passages": "JER 40:10; JER 40:12",
+      "print": "{JER} 40:10, 12",
+      "why": "The restored printed note gives both Greek and Hebrew chapter numbers; these name the same passage. Print the edition’s chapter and verse numbering. The Brenton scan evidence is recorded in the source-note correction."
+    },
+    "ISA 19:6": {
+      "source": "Jer. 28. (51) 32",
+      "passages": "JER 28:32",
+      "print": "{JER} 28:32",
+      "why": "The restored printed note gives both Greek and Hebrew chapter numbers; these name the same passage. Print the edition’s chapter and verse numbering. The Brenton scan evidence is recorded in the source-note correction."
+    },
+    "ZEC 9:9": {
+      "source": "Jno. 12. 15",
+      "passages": "JHN 12:15",
+      "print": "{JHN} 12:15",
+      "why": "Brenton’s 1879 and 1900 note cites both Matthew 21:5 and John 12:15; eBible dropped the second citation. Jno. is John, printed under the edition’s abbreviation."
+    },
+    "DEU 32:21": {
+      "source": "Rom. 10. 9",
+      "passages": "ROM 10:19",
+      "print": "{ROM} 10:19",
+      "why": "eBible’s slip for 10. 19, which Brenton prints (1844 p. 251; 1879 p. 292; 1900 p. 288) and which quotes the verse, ‘I will provoke you to jealousy by them that are no people’; Turpie heads the quotation so. A link replaces this note, so the slip is recorded here rather than mended in the source."
+    },
+    "EZR 17:73 CCEL#2": {
+      "source": "chap. vii.",
+      "passages": "NEH 7:1-67; NEH 7:69-73",
+      "print": "chapter 7",
+      "relative": "chapter",
+      "why": "The restored general note refers to Nehemiah chapter 7, source Esdras chapter 17; print its Roman chapter number in the edition’s citation style, as the existing 2KI 22:5#2 decision does. The ranges cover the chapter’s printed verses; verse 68 is absent from the Greek edition."
+    },
+    "HAB 3:3 CCEL": {
+      "source": "Psalm 3. 2",
+      "numbering": "kjv-verses",
+      "why": "CCEL 24.iii#1 cites Psalm 3:2 using English verse numbers. The edition counts the Psalm title, so this is PSA3:3, whose note explicitly explains Pause."
+    },
+    "1KI 7:37 Brenton": {
+      "source": "7:38–50",
+      "not_a_citation": true,
+      "why": "Where this edition prints the passage Brenton’s source text has here, named as a number rather than cited, as the note at Romans 16:24 names the doxology's."
+    },
+    "1KI 7:38 Brenton": {
+      "source": "verse 37",
+      "not_a_citation": true,
+      "why": "The verse after which Brenton’s source text has this passage, named as a number rather than cited, as the notes on the Hebrew's and the Received Text's order name theirs."
+    },
+    "LEV 24:20 CCEL": {
+      "source": "Matt. 5. 21",
+      "passages": "MAT 5:38",
+      "print": "{MAT} 5:38",
+      "why": "Brenton’s own reference, printed so in 1844, 1879 and 1900 (1844 p. 131; 1879 p. 162; 1900 p. 162): a slip for 5. 38, ‘An eye for an eye, and a tooth for a tooth’, which Brenton cites for the same words at Exodus 21:24; 5. 21 is ‘Thou shalt not kill’, his reference at Exodus 20:15."
+    },
+    "1SA 18:4 CCEL": {
+      "source": "Jno. 21",
+      "passages": "JHN 21:1-25",
+      "print": "{JHN} 21",
+      "why": "Brenton’s Appendix note (1879 p. 1149, 1900 p. 1145, printed p. 1133; 1844 vol. 2 p. 929 “See John 21.”) cites John 21 as a whole chapter, with no verse. Jno. is John, as at ZEC 9:9. The range is the whole chapter, as at EZR 17:73 CCEL#2, and prints as the chapter alone."
     }
   },
   "names": {}

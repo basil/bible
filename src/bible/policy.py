@@ -27,6 +27,7 @@ FILES = (
     "alexandrinus",
     "brenton-notes",
     "kjv-notes",
+    "ccel-notes",
     "book-introductions",
     "appendix",
     "abbreviations",
@@ -72,6 +73,7 @@ class Policy:
     alexandrinus: schema.Alexandrinus
     brenton_notes: schema.BrentonNotes
     kjv_notes: schema.KjvNotes
+    ccel_notes: schema.CcelNotes
     introductions: schema.BookIntroductions
     appendix: schema.Appendix
     abbreviations: schema.Abbreviations
@@ -332,6 +334,45 @@ def check(policy: Policy) -> None:
                     f"{name} correction {key}",
                 )
                 require(entry["why"], f"{name} correction without a why: {key}")
+    # A CCEL decision names its existing duplicate, leaves it out, or places
+    # it before its anchor words; its corrections are as the other sources' are.
+    require_fields(policy.ccel_notes, {"notes", "corrections"}, (), "CCEL note file")
+    for key, decision in policy.ccel_notes["notes"].items():
+        require_fields(
+            decision,
+            {"why"},
+            {"omitted", "duplicate", "verse", "anchor", "supplied"},
+            f"CCEL note decision {key}",
+        )
+        require(decision["why"], f"CCEL note decision without a why: {key}")
+        require(
+            (decision.get("omitted") is True and decision.keys() == {"omitted", "why"})
+            or (
+                decision.keys() == {"duplicate", "why"}
+                and isinstance(decision["duplicate"], str)
+                and bool(decision["duplicate"])
+            )
+            or (
+                "omitted" not in decision
+                and isinstance(decision.get("verse"), str)
+                and isinstance(decision.get("anchor"), str)
+                and (
+                    "duplicate" not in decision
+                    or (
+                        "supplied" not in decision
+                        and isinstance(decision["duplicate"], str)
+                        and bool(decision["duplicate"])
+                    )
+                )
+                and ("supplied" not in decision or decision["supplied"] is True)
+            ),
+            f"CCEL note decision neither omits, duplicates nor places its note: {key}",
+        )
+    for key, entry in policy.ccel_notes["corrections"].items():
+        require_fields(
+            entry, {"from", "to", "why"}, {"uncategorized"}, f"CCEL correction {key}"
+        )
+        require(entry["why"], f"CCEL correction without a why: {key}")
     # A Brenton exception's occurrence says which of a repeated lemma is meant.
     pointless = sorted(
         k
@@ -489,6 +530,7 @@ def load() -> Policy:
         alexandrinus=cast(schema.Alexandrinus, data["alexandrinus"]),
         brenton_notes=cast(schema.BrentonNotes, data["brenton-notes"]),
         kjv_notes=cast(schema.KjvNotes, data["kjv-notes"]),
+        ccel_notes=cast(schema.CcelNotes, data["ccel-notes"]),
         introductions=cast(schema.BookIntroductions, data["book-introductions"]),
         appendix=cast(schema.Appendix, data["appendix"]),
         abbreviations=cast(schema.Abbreviations, data["abbreviations"]),

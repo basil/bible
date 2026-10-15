@@ -53,7 +53,7 @@ As the principles say, the revision is made last, so a lemma or a `from` names "
 
 ### Outstanding editorial work
 
-The open questions are listed in [the open notes](docs/todo.md), including the readings from Codex Alexandrinus that carry a `todo`.
+The open questions are listed in [the open notes](docs/todo.md), among them Brenton's reports of Codex Alexandrinus that the evidence does not settle.
 
 ## Changing the layout
 

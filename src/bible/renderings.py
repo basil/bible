@@ -27,10 +27,11 @@ def alternative(ref: str, key: str, lemma: str, content: usj.Content) -> Node:
 def brenton(code: str, doc: Document, decisions: Mapping[str, Rendering]) -> Document:
     """Promote a pinned alternative, retaining the source key for its reversal."""
     for key, decision in decisions.items():
-        book, address = key.split()
+        book, address = key.split()[:2]
         if book != code:
             continue
-        # A note's key is its verse, numbered after the verse's first note.
+        # A note's key is its verse, numbered after the verse's first note,
+        # or with the source it came from after it (GEN 1:2 CCEL).
         ref = address.partition("#")[0]
         verses = scripture.verses(doc)
         require(ref in verses, f"Rendering verse missing: {key}")

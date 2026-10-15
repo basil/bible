@@ -1,6 +1,9 @@
 """The review: what the edition prints, for reading through, in build/review/.
 
     notes.md         every note, with the words it is about marked in its verse
+    ccel.md          what came of CCEL's notes: the counts, the notes held
+                     back for a decision about Codex Alexandrinus, and the
+                     notes left out, each with its reason
     alexandrinus.md  every Alexandrine decision: its source, the passage before
                      and after, its footnotes, its derivation, and Swete
     numbering.md     where each verse stands in the King James Bible, with
@@ -27,6 +30,7 @@ import json
 import shutil
 from collections.abc import Mapping
 
+import bible.ccel
 import bible.pipeline
 import bible.policy
 import bible.sources
@@ -35,6 +39,7 @@ from bible import (
     paths,
     pipeline,
     places,
+    quotations,
     references,
     scripture,
     versification,
@@ -65,6 +70,56 @@ def notes_report(edition: bible.pipeline.Edition) -> str:
         for code, rows in edition.notes.items()
         if rows
     )
+
+
+def ccel_line(item: bible.ccel.Listed) -> str:
+    place = f" {item.place}" if item.place else ""
+    return f"- `{item.key}`{place}: {item.text}\n" + (
+        f"  Source: `{item.source}`\n" if item.source else ""
+    )
+
+
+def ccel_report(report: bible.ccel.Report) -> str:
+    """CCEL's notes: how many were set in Brenton's verses, and each that
+    was not, with its reason, its would-be key or the chapter the words
+    suggest, and its source for a correction to name."""
+    reasons: dict[str, list[bible.ccel.Listed]] = {}
+    for item in report.left_out:
+        reasons.setdefault(item.reason, []).append(item)
+    lines = [
+        "# CCEL notes\n\n",
+        f"- Pages read: {report.pages}\n",
+        f"- Note bodies read: {report.bodies}\n",
+        f"- Notes set in Brenton's verses: {report.inserted}, "
+        f"{len(report.supplied)} of them in verses promotion supplied\n",
+        f"- Notes eBible already has: {report.duplicates}\n",
+        f"- Notes held back for a decision about Codex Alexandrinus: {len(report.held)}\n",
+        f"- Notes left out: {len(report.left_out)}\n",
+        "\n## Notes accounted for by eBible\n\n",
+    ]
+    for match in report.matched:
+        lines.extend(
+            [
+                f"- `{match.key}` (`{match.place}`) retains `{match.retained}`: {match.reason}\n",
+                f"  CCEL caller before {match.scope!r} (offset {match.offset}): {match.text}\n",
+                f"  eBible caller before {match.retained_scope!r} (offset {match.retained_offset}): {match.other}\n",
+                f"  Source: `{match.source}`\n",
+            ]
+        )
+    lines.append("\n## Set in verses promotion supplied\n\n")
+    lines += (f"- `{key}` as `{printed}`\n" for key, printed in report.supplied)
+    lines.extend(
+        [
+            "\n## Held back for a decision about Codex Alexandrinus\n\n",
+            "Each would be set under the key shown; a decision in alexandrinus.json "
+            "under that key brings it in.\n\n",
+            *map(ccel_line, report.held),
+        ]
+    )
+    for reason, items in sorted(reasons.items()):
+        lines.append(f"\n## Left out: {reason}\n\n")
+        lines += map(ccel_line, items)
+    return "".join(lines)
 
 
 def placed(
@@ -123,7 +178,10 @@ def alexandrinus_report(
     for section in ("readings", "passages", "kept"):
         for key, decision in data[section].items():
             code = key.removeprefix(f"{APPENDIX} ").split()[0]
-            wanted = {decision.get("target", key).split()[-1].split("#")[0]}
+            # The verse a decision's note stands in, whatever source follows
+            # its reference (GEN 1:2#2, 2CH 2:12 CCEL, BAK 1KI 2:35a).
+            target = decision.get("target", key).removeprefix(f"{APPENDIX} ")
+            wanted = {quotations.note_verse(target).split()[1]}
             for edit in decision.get("edits", ()):
                 wanted.add(edit["target"].split()[-1])
             for insertion in decision.get("insertions", ()):
@@ -227,6 +285,7 @@ def review(
     read = pipeline.read(sources, policy)
     files = {
         "notes.md": notes_report(edition),
+        "ccel.md": ccel_report(edition.ccel),
         "alexandrinus.md": alexandrinus_report(read, edition),
         "numbering.md": places.report(
             edition.policy.versification["kjv"], edition.documents, read.kjv
@@ -271,7 +330,8 @@ def review(
     )
     changed = len({line for line in changes if line.startswith("+++ ")})
     print(
-        f"Reviewed {notes} notes, {decisions} Alexandrine decisions and "
+        f"Reviewed {notes} notes ({edition.ccel.inserted} from CCEL), "
+        f"{decisions} Alexandrine decisions and "
         f"{len(edition.documents)} units; {changed} files changed since the last review:",
         base,
         flush=True,

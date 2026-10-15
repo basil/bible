@@ -1,8 +1,8 @@
 """Declared Alexandrine readings, checked against Brenton and audited to Swete
 (edition/alexandrinus.json).
 
-The decision file owns every departure from the Vatican translation: a
-reading printed in place of the Vatican's words, a passage supplied from
+The decision file owns every departure from Brenton’s translation: a
+reading printed in place of Brenton’s words, a passage supplied from
 Brenton's Appendix, a note kept as it is. Each decision pins the note or
 Appendix paragraph it rests on, derives its English from those words by
 declared edits, and records Swete's evidence and its reason.
@@ -58,7 +58,7 @@ ORDINAL = dict(
 SCALE = {"hundred": 100, "thousand": 1000, "million": 1000000}
 SWETE = {"volume", "page", "evidence", "reading", "agrees"}
 COMMON = {"why", "swete", "supplied"}
-REPLACEMENT = {"from", "note", "lemma", "target", "english", "note_at"}
+REPLACEMENT = {"from", "note", "label", "lemma", "target", "english", "note_at"}
 # A verse omitted whole, noted on the verse before it.
 OMISSION = {"omit_verse", "note_target"}
 MOVE = {"verses", "before"}
@@ -199,14 +199,20 @@ def note_content(
     entry: Decision, key: str, terms: terminology.Registry
 ) -> Content | None:
     """The note a decision leaves on the words it displaces: the one it
-    declares, or the Vatican's words quoted; None if it declares none."""
+    declares, or the displaced words quoted under the witness its label
+    names, Brenton unless a manuscript is shown to read them; None if it
+    declares none."""
     if "note" in entry:
+        require("label" not in entry, f"Alexandrine label beside a note: {key}")
         if entry["note"] is None:
             return None
         return usj.parse(entry["note"], fragment=True)
+    require(
+        entry.get("label") != "brenton", f"Alexandrine label changes nothing: {key}"
+    )
     words = plain(usj.text_of(usj.parse(entry["from"], fragment=True)))
     return [
-        usj.char("fl", f"{terms.display('vatican')} "),
+        usj.char("fl", f"{terms.display(entry.get('label', 'brenton'))} "),
         usj.char("fq", words.strip().rstrip(".")),
         usj.char("ft", "."),
     ]
@@ -294,6 +300,10 @@ def companions(
             found[key] = edit
     for key, entry in data["kept"].items():
         if key.split()[0] == code and "note" in entry:
+            require(
+                entry["note"] != entry.get("source_note") or "lemma" in entry,
+                f"Kept Alexandrine note changes nothing: {key}",
+            )
             words: AlexandrinusReadingsNoteEdits = {
                 "from": entry["source_note"],
                 "to": present(
@@ -370,7 +380,13 @@ def check(
                     f"Invalid KJV passage: {key}",
                 )
                 for move in entry.get("moves", ()):
-                    require_fields(move, MOVE, (), f"Move of {key}")
+                    require_fields(move, MOVE, {"label"}, f"Move of {key}")
+                    if "label" in move:
+                        require(
+                            move["label"] != "brenton",
+                            f"Alexandrine label changes nothing: {key}",
+                        )
+                        terminology.registry(policy).display(move["label"])
             allowed = REPLACEMENT | COMMON
             if section == "passages":
                 allowed |= OMISSION
@@ -964,12 +980,11 @@ def with_moves(
     the run or before the verse it goes before is refused, since neither
     place says which way it goes. The run, the verse it goes before and the
     verse it leaves behind must be Brenton's, neither inserted by a passage
-    nor with inserted verses beside them, so that the notes name the Vatican
-    order. A note at its head says where the Vatican text has the verses,
+    nor with inserted verses beside them, so that the notes name Brenton’s
+    order. A note at its head says where the source has the verses,
     and one on the verse it leaves behind says where they are printed, as
     the Hebrew's relocated passages are noted, in words made from the
     move."""
-    label = terms.display("vatican")
     insertions = [
         insertion
         for key, entry in policy.alexandrinus["passages"].items()
@@ -983,6 +998,7 @@ def with_moves(
         if key.split()[0] != code:
             continue
         for move in entry.get("moves", ()):
+            label = terms.display(move.get("label", "brenton"))
             verses = scripture.verses(doc)
             passage = references.parse_passage(f"{code} {move['verses']}")
             labels = [v.label for v in passage.verses]
@@ -1020,7 +1036,7 @@ def with_moves(
                 f"Alexandrine move is not of whole paragraphs to an earlier verse: {key}",
             )
             # The verse the run leaves behind: the one before it in order,
-            # which must be the Vatican's verse before it by number, so that
+            # which must be Brenton's verse before it by number, so that
             # no omission or earlier move has shifted it.
             ordered = list(verses)
             behind = verses[ordered[ordered.index(labels[0]) - 1]]
