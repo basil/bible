@@ -31,6 +31,7 @@ from bible.byzantine.rows import (
     Report,
     Unit,
 )
+from bible.byzantine.units import QUOTED
 from bible.checks import CheckFailed
 
 type Entry = dict[str, Any]
@@ -743,7 +744,11 @@ def test_the_real_placements_apply_to_the_reports_and_instructions(
         for r in [*byzantine["reports"], *byzantine["instructions"]]
         if r.get("method") == "hand"
     ]
-    assert len(hand) == len(placements)
+    # The Greek apparatuses' rows are placed on the units themselves, or
+    # nowhere (received.py's tests).
+    greek = [p for p in placements if p["witness"] in QUOTED]
+    assert len(greek) == 26
+    assert len(hand) == len(placements) - len(greek)
 
 
 def test_place_rejects_an_unknown_row(

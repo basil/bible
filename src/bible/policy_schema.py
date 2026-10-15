@@ -586,6 +586,13 @@ class ByzantineAccent(TypedDict, total=False):
     why: ReadOnly[str]
 
 
+ByzantineCorrection = TypedDict(
+    "ByzantineCorrection",
+    {"from": ReadOnly[str], "to": ReadOnly[str], "why": ReadOnly[str]},
+    total=False,
+)
+
+
 class ByzantineSide(TypedDict, total=False):
     unit: ReadOnly[ByzantineUnit]
     side: ReadOnly[str]
@@ -601,6 +608,7 @@ Byzantine = TypedDict(
         "accents": ReadOnly[Mapping[str, ByzantineAccent]],
         "hodges-farstad": ReadOnly[Mapping[str, ByzantineSide]],
         "lemmas": ReadOnly[Mapping[str, ByzantineLemma]],
+        "scrivener": ReadOnly[Mapping[str, ByzantineCorrection]],
     },
     total=False,
 )

@@ -29,6 +29,7 @@ from bible.byzantine import (
     TCENT,
     WEB,
     edit,
+    received,
 )
 from bible.byzantine import revisers as revisions
 from bible.byzantine.appendix import (
@@ -128,7 +129,8 @@ type Attached = Instruction | Report | RevisionRow
 class Index(TypedDict):
     """Lookups the packet renders from: each unit's instructions, reports and
     revision rows, the rows attached to no unit by verse, the readings by id,
-    the prepared verses, the dispositions by unit, and Boyd's Greek notes."""
+    the prepared verses, the dispositions by unit, Boyd's Greek notes, and
+    the rows of both Greek apparatuses that give the Received Text a reading."""
 
     instructions_at: dict[str, list[Instruction]]
     reports_at: dict[str, list[Report]]
@@ -139,6 +141,7 @@ class Index(TypedDict):
     corrected: dict[str, Verse]
     rows: dict[str, Disposition]
     tcgnt: dict[int, BoydNote]
+    received: received.Rows
 
 
 def esc(text: object) -> str:
@@ -799,6 +802,13 @@ def section(
             else "TR reading not recorded"
         ),
         "Patriarchal: " + patriarchal_status(unit, index),
+        "Received Text: "
+        + {
+            "TR": "established (TR)",
+            "SCR": "Scrivener alone (SCR)",
+            "disputed": "the apparatuses disagree",
+            None: "no apparatus row",
+        }[received.status(unit, index["received"])],
     ]
     recorded = ", ".join(
         GREEK_INVENTORIES.get(name, name) for name in unit.get("found_in", [])
@@ -991,6 +1001,7 @@ def build_index(context: Context) -> Index:
         "corrected": verses_of(corrected),
         "rows": {r["unit"]: r for r in context["dispositions"]},
         "tcgnt": {n["entry"]: n for n in context["tcgnt"]},
+        "received": received.rows(context["tcgnt"], context["apparatus"]),
     }
     for i in context["instructions"]:
         if i.get("scope") == "verse" or (

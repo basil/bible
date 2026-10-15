@@ -291,7 +291,7 @@ def test_the_list_of_abbreviations_is_completed_from_the_registry(
         ),
         (
             "TR",
-            "for Textus Receptus, the Received Text of the Greek New Testament, which the King James translators followed",
+            "for Textus Receptus, the Received Text of the Greek New Testament, which the King James translators followed, where Scrivener's reconstruction of it and Stephanus's edition agree",
         ),
     ]
     assert ("AD", "for anno Domini, in the year of our Lord") in rows

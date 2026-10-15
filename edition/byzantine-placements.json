@@ -1,5 +1,5 @@
 {
-  "why": "Which Greek unit a witness's row is about, where the code cannot tell: an objective decision with one right answer, keyed by the witness and its row. unit names a unit by its verse and its Greek, several units, or null where the row is about Greek both texts share or about no Greek at all. A placement the code now makes on its own is stale and stops the build.",
+  "why": "Which Greek unit a witness's row is about, where the code cannot tell: an objective decision with one right answer, keyed by the witness and its row: an English apparatus's or instruction source's, or a row of Boyd's Greek apparatus (tcgnt) or of the printed RP2026's (rp2026-apparatus) that gives the Received Text a reading, which must each stand at a unit or here. unit names a unit by its verse and its Greek, several units, or null where the row is about Greek both texts share or about no Greek at all. A placement the code now makes on its own is stale and stops the build.",
   "placements": {
     "faa 1PE 5:10#2": {
       "ref": "1PE 5:10",
@@ -3571,21 +3571,6 @@
       ],
       "why": "The published contrast includes both appointed versus proclaimed and Christ Jesus versus Jesus Christ."
     },
-    "tcent 157": {
-      "ref": "ACT 9:5",
-      "unit": [
-        {
-          "tr": "sklhron soi pros kentra laktizein",
-          "rp": ""
-        },
-        {
-          "ref": "ACT 9:6",
-          "tr": "tremwn te kai qambwn eipen kurie ti me qeleis poihsai kai o kurios pros auton",
-          "rp": "alla"
-        }
-      ],
-      "why": "The published dialogue contrast spans both verses five and six."
-    },
     "tcent 168": {
       "ref": "ACT 13:23",
       "unit": [
@@ -3762,36 +3747,6 @@
       },
       "why": "Saw versus looked and behold concerns omitted kai idou, not the gender of which after the seven eyes."
     },
-    "tcent 393": {
-      "ref": "REV 6:1",
-      "unit": [
-        {
-          "tr": "blepe",
-          "rp": "ide"
-        },
-        {
-          "ref": "REV 6:2",
-          "tr": "eidon kai",
-          "rp": ""
-        }
-      ],
-      "why": "The paired Greek note spans both verses, replacing blepe kai eidon with ide across the boundary."
-    },
-    "tcent 397": {
-      "ref": "REV 6:7",
-      "unit": [
-        {
-          "tr": "blepe",
-          "rp": "ide"
-        },
-        {
-          "ref": "REV 6:8",
-          "tr": "eidon kai",
-          "rp": ""
-        }
-      ],
-      "why": "The paired Greek note spans both verses, replacing blepe kai eidon with ide across the boundary."
-    },
     "tcent 416": {
       "ref": "REV 7:9",
       "unit": {
@@ -3852,14 +3807,6 @@
       "ref": "REV 11:16",
       "unit": null,
       "why": "The row adds the throne of before God, but RP2026 main retains enopion tou theou without that addition."
-    },
-    "tcent 452": {
-      "ref": "REV 12:8",
-      "unit": {
-        "tr": "isxusan oute",
-        "rp": "isxusen oude"
-      },
-      "why": "He versus they concerns the combined verb-number and conjunction unit."
     },
     "tcent 491": {
       "ref": "REV 16:5",
@@ -4440,6 +4387,379 @@
         }
       ],
       "why": "The note explicitly locates all three doxology verses at both addresses."
+    },
+    "rp2026-apparatus 16": {
+      "ref": "MAT 5:44",
+      "unit": {
+        "tr": "tous misountas",
+        "rp": "tois misousin"
+      },
+      "why": "The entry quotes the TR's whole clause about them that hate you, whose one difference from RP is the participle."
+    },
+    "rp2026-apparatus 110": {
+      "ref": "MAT 22:42",
+      "unit": [
+        {
+          "ref": "MAT 22:42",
+          "tr": "dabid",
+          "rp": "dauid"
+        },
+        {
+          "ref": "MAT 22:43",
+          "tr": "dabid",
+          "rp": "dauid"
+        }
+      ],
+      "why": "The entry quotes David's name at 22:42 and 22:43 together, one unit in each verse."
+    },
+    "rp2026-apparatus 113": {
+      "ref": "MAT 23:13",
+      "unit": [
+        {
+          "ref": "MAT 23:14",
+          "tr": "",
+          "rp": "de"
+        },
+        {
+          "ref": "MAT 23:14",
+          "tr": "ouai umin grammateis kai farisaioi upokritai oti katesqiete tas oikias twn xhrwn kai profasei makra proseuxomenoi dia touto lhyesqe perissoteron krima",
+          "rp": "ouai de umin grammateis kai farisaioi upokritai oti katesqiete tas oikias twn xhrwn kai profasei makra proseuxomenoi dia touto lhyesqe perissoteron krima"
+        }
+      ],
+      "why": "RP's verse 13 is the woe on those who devour widows' houses, which Scrivener prints at 23:14 without de: the exchange, and its de."
+    },
+    "rp2026-apparatus 114": {
+      "ref": "MAT 23:14",
+      "unit": [
+        {
+          "ref": "MAT 23:13",
+          "tr": "de",
+          "rp": ""
+        },
+        {
+          "ref": "MAT 23:13",
+          "tr": "ouai de umin grammateis kai farisaioi upokritai oti kleiete thn basileian twn ouranwn emprosqen twn anqrwpwn umeis gar ouk eiserxesqe oude tous eiserxomenous afiete eiselqein",
+          "rp": "ouai umin grammateis kai farisaioi upokritai oti kleiete thn basileian twn ouranwn emprosqen twn anqrwpwn umeis gar ouk eiserxesqe oude tous eiserxomenous afiete eiselqein"
+        }
+      ],
+      "why": "RP's verse 14 is the woe on those who shut up the kingdom, which Scrivener prints at 23:13 with de: the exchange, and its de."
+    },
+    "rp2026-apparatus 148": {
+      "ref": "MAT 27:45",
+      "unit": [
+        {
+          "ref": "MAT 27:45",
+          "tr": "ennaths",
+          "rp": "enaths"
+        },
+        {
+          "ref": "MAT 27:46",
+          "tr": "ennathn",
+          "rp": "enathn"
+        }
+      ],
+      "why": "The entry quotes the ninth hour's spelling at 27:45 and 27:46 together, one unit in each verse."
+    },
+    "rp2026-apparatus 237": {
+      "ref": "MRK 10:47",
+      "unit": [
+        {
+          "ref": "MRK 10:47",
+          "tr": "dabid",
+          "rp": "dauid"
+        },
+        {
+          "ref": "MRK 10:48",
+          "tr": "dabid",
+          "rp": "dauid"
+        }
+      ],
+      "why": "The entry quotes David's name at 10:47 and 10:48 together, one unit in each verse."
+    },
+    "rp2026-apparatus 433": {
+      "ref": "LUK 14:24",
+      "unit": {
+        "tr": "",
+        "rp": "polloi gar eisin klhtoi oligoi de eklektoi"
+      },
+      "why": "The entry says the TR omits the sentence many are called, but few chosen, quoted by its first and last words."
+    },
+    "rp2026-apparatus 857": {
+      "ref": "ACT 24:7",
+      "unit": {
+        "tr": "parelqwn de lusias o xiliarxos meta pollhs bias ek twn xeirwn hmwn aphgagen",
+        "rp": ""
+      },
+      "why": "The entry gives the TR's words that RP lacks from 24:6 to 24:8; at 24:7 they are the verse RP omits."
+    },
+    "rp2026-apparatus 928": {
+      "ref": "ROM 14:24",
+      "unit": {
+        "ref": "ROM 16:25",
+        "tr": "tw de dunamenw umas sthricai kata to euaggelion mou kai to khrugma ihsou xristou kata apokaluyin musthriou xronois aiwniois sesighmenou",
+        "rp": "tw de dunamenw umas sthricai kata to euaggelion mou kai to khrugma ihsou xristou kata apokaluyin musthriou xronois aiwniois sesighmenou"
+      },
+      "why": "The entry says the TR prints the doxology at 16:25–27, which RP prints here: the passage's move."
+    },
+    "rp2026-apparatus 929": {
+      "ref": "ROM 14:26",
+      "unit": {
+        "ref": "ROM 16:27",
+        "tr": "",
+        "rp": "w"
+      },
+      "why": "The entry says Scrivener omits the relative at the doxology's close, which he prints at 16:27."
+    },
+    "rp2026-apparatus 939": {
+      "ref": "ROM 16:25",
+      "unit": {
+        "ref": "ROM 16:25",
+        "tr": "tw de dunamenw umas sthricai kata to euaggelion mou kai to khrugma ihsou xristou kata apokaluyin musthriou xronois aiwniois sesighmenou",
+        "rp": "tw de dunamenw umas sthricai kata to euaggelion mou kai to khrugma ihsou xristou kata apokaluyin musthriou xronois aiwniois sesighmenou"
+      },
+      "why": "The entry says the TR prints the doxology here, where RP has it at 14:24–26: the passage's move."
+    },
+    "rp2026-apparatus 983": {
+      "ref": "2CO 1:6",
+      "unit": {
+        "tr": "eite parakaloumeqa uper ths umwn paraklhsews kai swthrias kai h elpis hmwn bebaia uper umwn",
+        "rp": "kai h elpis hmwn bebaia uper umwn eite parakaloumeqa uper ths umwn paraklhsews kai swthrias"
+      },
+      "why": "The entry gives the TR's order of the clauses of 1:6–7, the one unit there."
+    },
+    "rp2026-apparatus 1148": {
+      "ref": "HEB 11:23",
+      "unit": [
+        {
+          "ref": "HEB 11:23",
+          "tr": "mwshs",
+          "rp": "mwushs"
+        },
+        {
+          "ref": "HEB 11:24",
+          "tr": "mwshs",
+          "rp": "mwushs"
+        }
+      ],
+      "why": "The entry quotes Moses' name at 11:23 and 11:24 together, one unit in each verse."
+    },
+    "rp2026-apparatus 1287": {
+      "ref": "REV 2:2",
+      "unit": [
+        {
+          "tr": "epeirasw",
+          "rp": "epeirasas"
+        },
+        {
+          "tr": "faskontas einai apostolous",
+          "rp": "legontas eautous apostolous einai"
+        }
+      ],
+      "why": "The entry quotes the TR's tried them which say, two units: the verb, and the participle with its object."
+    },
+    "rp2026-apparatus 1381": {
+      "ref": "REV 5:3",
+      "unit": [
+        {
+          "tr": "oude",
+          "rp": "anw oute"
+        },
+        {
+          "tr": "oude",
+          "rp": "oute",
+          "nth": 1
+        },
+        {
+          "tr": "oude",
+          "rp": "oute",
+          "nth": 2
+        }
+      ],
+      "why": "The entry quotes the three conjunctions together, one unit each."
+    },
+    "rp2026-apparatus 1412": {
+      "ref": "REV 6:1",
+      "unit": [
+        {
+          "tr": "blepe",
+          "rp": "ide"
+        },
+        {
+          "ref": "REV 6:2",
+          "tr": "eidon kai",
+          "rp": ""
+        }
+      ],
+      "why": "The TR's come and see, and I saw runs on into REV 6:2, where RP lacks I saw: the imperative, and the added words."
+    },
+    "rp2026-apparatus 1424": {
+      "ref": "REV 6:7",
+      "unit": [
+        {
+          "tr": "blepe",
+          "rp": "ide"
+        },
+        {
+          "ref": "REV 6:8",
+          "tr": "eidon kai",
+          "rp": ""
+        }
+      ],
+      "why": "The TR's come and see, and I saw runs on into REV 6:8, where RP lacks I saw: the imperative, and the added words."
+    },
+    "rp2026-apparatus 1456": {
+      "ref": "REV 7:5",
+      "unit": [
+        {
+          "tr": "roubhn ib xiliades esfragismenoi",
+          "rp": "roubim dwdeka xiliades"
+        },
+        {
+          "tr": "ib xiliades esfragismenoi",
+          "rp": "dwdeka xiliades",
+          "nth": 1
+        },
+        {
+          "ref": "REV 7:6",
+          "tr": "ib xiliades esfragismenoi",
+          "rp": "dwdeka xiliades",
+          "nth": 1
+        },
+        {
+          "ref": "REV 7:6",
+          "tr": "ib xiliades esfragismenoi",
+          "rp": "dwdeka xiliades",
+          "nth": 2
+        },
+        {
+          "ref": "REV 7:6",
+          "tr": "ib xiliades esfragismenoi",
+          "rp": "dwdeka xiliades",
+          "nth": 3
+        },
+        {
+          "ref": "REV 7:7",
+          "tr": "ib xiliades esfragismenoi",
+          "rp": "dwdeka xiliades",
+          "nth": 1
+        },
+        {
+          "ref": "REV 7:7",
+          "tr": "ib xiliades esfragismenoi",
+          "rp": "dwdeka xiliades",
+          "nth": 2
+        },
+        {
+          "ref": "REV 7:7",
+          "tr": "ib xiliades esfragismenoi",
+          "rp": "dwdeka xiliades",
+          "nth": 3
+        },
+        {
+          "ref": "REV 7:8",
+          "tr": "ib xiliades esfragismenoi",
+          "rp": "dwdeka xiliades",
+          "nth": 1
+        },
+        {
+          "ref": "REV 7:8",
+          "tr": "ib xiliades esfragismenoi",
+          "rp": "dwdeka xiliades",
+          "nth": 2
+        }
+      ],
+      "why": "The entry says the TR adds sealed after each tribe's thousands from 7:5 to 7:8, where RP lacks it: every unit that adds it."
+    },
+    "rp2026-apparatus 1497": {
+      "ref": "REV 9:11",
+      "unit": [
+        {
+          "tr": "kai exousin",
+          "rp": "exousai basilea"
+        },
+        {
+          "tr": "basilea ton",
+          "rp": ""
+        }
+      ],
+      "why": "Scrivener's and they had a king over them reorders RP's words, two units: the verb, and the moved king."
+    },
+    "tcgnt 739": {
+      "ref": "ACT 9:5",
+      "unit": [
+        {
+          "tr": "sklhron soi pros kentra laktizein",
+          "rp": ""
+        },
+        {
+          "ref": "ACT 9:6",
+          "tr": "tremwn te kai qambwn eipen kurie ti me qeleis poihsai kai o kurios pros auton",
+          "rp": "alla"
+        }
+      ],
+      "why": "The note gives the TR's words that RP lacks from 9:5 to 9:6, a unit in each verse."
+    },
+    "tcgnt 937": {
+      "ref": "ROM 13:9",
+      "unit": null,
+      "why": "RP2026's Appendix A changed σεαυτόν to Scrivener's ἑαυτόν, which Boyd's RP2018 lacked; the texts no longer differ."
+    },
+    "tcgnt 1334": {
+      "ref": "REV 2:20",
+      "unit": [
+        {
+          "tr": "oliga oti eas",
+          "rp": "oti afeis"
+        },
+        {
+          "tr": "didaskein kai planasqai",
+          "rp": "kai didaskei kai plana tous"
+        }
+      ],
+      "why": "The note quotes the TR's sufferest and to teach and to seduce, the first and third units of the verse; the ellipsis spans the second, on which other notes stand."
+    },
+    "tcgnt 1438": {
+      "ref": "REV 6:1",
+      "unit": [
+        {
+          "tr": "blepe",
+          "rp": "ide"
+        },
+        {
+          "ref": "REV 6:2",
+          "tr": "eidon kai",
+          "rp": ""
+        }
+      ],
+      "why": "The TR's come and see, and I saw runs on into REV 6:2, where RP lacks I saw: the imperative, and the added words."
+    },
+    "tcgnt 1450": {
+      "ref": "REV 6:7",
+      "unit": [
+        {
+          "tr": "blepe",
+          "rp": "ide"
+        },
+        {
+          "ref": "REV 6:8",
+          "tr": "eidon kai",
+          "rp": ""
+        }
+      ],
+      "why": "The TR's come and see, and I saw runs on into REV 6:8, where RP lacks I saw: the imperative, and the added words."
+    },
+    "tcgnt 1614": {
+      "ref": "REV 11:16",
+      "unit": null,
+      "why": "RP2026's Appendix A removed the throne of, which Boyd's RP2018 has, so that RP2026 reads with Scrivener; the texts no longer differ."
+    },
+    "tcgnt 1627": {
+      "ref": "REV 12:8",
+      "unit": {
+        "tr": "isxusan oute",
+        "rp": "isxusen oude"
+      },
+      "why": "Boyd's lemma misprints RP's ισχυσεν as ισχυσενε; the note is about the verb's number."
     }
   }
 }

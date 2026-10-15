@@ -191,10 +191,17 @@
   },
   "textus-receptus": {
     "display": "TR",
-    "meaning": "Textus Receptus, the Received Text of the Greek New Testament, which the King James translators followed",
+    "meaning": "Textus Receptus, the Received Text of the Greek New Testament, which the King James translators followed, where Scrivener's reconstruction of it and Stephanus's edition agree",
     "period_forms": ["TR"],
     "note_forms": [],
     "source_forms": ["TR", "Textus Receptus"]
+  },
+  "scrivener": {
+    "display": "Scrivener",
+    "meaning": "Scrivener's reconstruction of the Received Text the King James translators followed, 1894",
+    "period_forms": [],
+    "note_forms": [],
+    "source_forms": []
   },
   "robinson-pierpont": {
     "display": "RP",

@@ -18,7 +18,7 @@ import unicodedata
 from collections import defaultdict
 from collections.abc import Iterable, Mapping, Sequence
 from copy import deepcopy
-from typing import Any, TypeIs, TypeVar
+from typing import Any, TypeIs, TypeVar, cast
 
 from bible.byzantine import BOOKS, FAA, WITNESSES, greek
 from bible.byzantine.crosswire import curly_apostrophes
@@ -32,9 +32,11 @@ from bible.byzantine.rows import (
     Report,
     SelectedListRow,
     Unit,
+    UnitInventory,
+    Unmatched,
 )
 from bible.byzantine.tags import asserted
-from bible.byzantine.units import keyed_units
+from bible.byzantine.units import keyed_units, record_side
 from bible.checks import CheckFailed, present, require
 
 # A witness's row that a placement can attach: an apparatus report, a
@@ -74,6 +76,21 @@ def resolve(greek: Mapping[str, Any], units: Sequence[Unit], label: str) -> Unit
         f"{label}: Greek key {greek['ref']} {greek['tr']!r} -> {greek['rp']!r} names {len(found)} units",
     )
     return found[0]
+
+
+def placed_units(decision: Placement, units: Sequence[Unit], label: str) -> list[Unit]:
+    """The units a placement names: one Greek key, several, or none (`unit:
+    null`), each key's verse the placement's unless it names its own."""
+    wanted = decision["unit"]
+    keys: list[GreekKey] = (
+        [] if wanted is None else wanted if isinstance(wanted, list) else [wanted]
+    )
+    found = [
+        resolve({**g, "ref": g.get("ref", decision["ref"])}, units, label) for g in keys
+    ]
+    ids = [u["id"] for u in found]
+    require(len(ids) == len(set(ids)), f"{label}: duplicate unit")
+    return found
 
 
 def override_id(unit_ids: Iterable[str]) -> str:
@@ -541,18 +558,8 @@ def place(
                 row.get("ref") == decision["ref"],
                 f"{label}: the row is at {row.get('ref')}",
             )
-            wanted = decision["unit"]
-            keys: list[GreekKey] = (
-                []
-                if wanted is None
-                else wanted if isinstance(wanted, list) else [wanted]
-            )
-            found = [
-                resolve({**g, "ref": g.get("ref", decision["ref"])}, units, label)
-                for g in keys
-            ]
+            found = placed_units(decision, units, label)
             ids = [u["id"] for u in found]
-            require(len(ids) == len(set(ids)), f"{label}: duplicate unit")
             current = [a["unit"] for a in row.get("units", [])]
             # Stale: the code already puts the row where the placement does.
             # A null placement is stale only if the row was already out of scope.
@@ -607,6 +614,63 @@ def place(
                 else f"{label}: malformed ({error})"
             )
     return result, errors, stale
+
+
+def place_inventories(
+    units: Sequence[Unit],
+    unmatched: Sequence[Unmatched],
+    placements: Iterable[Placement],
+) -> tuple[list[Unit], list[Unmatched], list[str]]:
+    """Attach by hand the rows of the Greek apparatuses that give the Received
+    Text a reading (Boyd's and the printed RP2026's) which the code cannot
+    place on a unit. A placement names the row by its inventory and entry and
+    the units by their Greek keys, or none (`unit: null`: the row is about no
+    difference of the two texts). Returns the units, the rows still
+    unmatched, and what is wrong: a placement of a row the code places on
+    its own, or of no row, or one that names no unit."""
+    result = deepcopy(list(units))
+    rows = {(r["inventory"], r["entry"]): r for r in unmatched}
+    errors: list[str] = []
+    placed: set[tuple[str, int]] = set()
+    for decision in placements:
+        label = f"placement {decision.get('witness')} {decision.get('entry')}"
+        try:
+            key = (decision["witness"], cast(int, decision["entry"]))
+            require(decision.get("why", "").strip(), f"{label}: missing reason")
+            require(
+                key in rows,
+                f"{label}: the code places the row, or there is no such row",
+            )
+            require(
+                rows[key]["target_ref"] == decision["ref"],
+                f"{label}: the row is at {rows[key]['target_ref']}",
+            )
+            row = rows[key]
+            for unit in placed_units(decision, result, label):
+                attachment: UnitInventory = {
+                    "inventory": key[0],
+                    "entry": key[1],
+                    "scope": "constituent",
+                    "method": "hand",
+                }
+                # Hodges and Farstad's side is Boyd's to report, as where the
+                # code places his note (units.reconcile).
+                if key[0] == "tcgnt":
+                    attachment["hf"] = row["hf"]
+                unit["inventories"].append(attachment)
+                if key[0] == "tcgnt":
+                    record_side(unit, row)
+                if key[0] not in unit["found_in"]:
+                    unit["found_in"] = [*unit["found_in"], key[0]]
+            placed.add(key)
+        except (CheckFailed, ValueError, KeyError, TypeError, AttributeError) as error:
+            errors.append(
+                str(error)
+                if str(error).startswith(label)
+                else f"{label}: malformed ({error})"
+            )
+    remaining = [r for r in unmatched if (r["inventory"], r["entry"]) not in placed]
+    return result, remaining, errors
 
 
 # Note lemmas

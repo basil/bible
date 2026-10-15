@@ -18,7 +18,7 @@ from collections.abc import Iterable, Mapping, Sequence
 from typing import TypedDict, cast
 
 from bible.byzantine import BOOKS
-from bible.byzantine.rows import Token
+from bible.byzantine.rows import BoydNote, BoydReading, Token
 from bible.checks import CheckFailed, present, require
 from bible.sources import BYZTXT_BOOKS, Content
 from bible.usfm import GREEK
@@ -30,11 +30,14 @@ Tags = dict[str, list[Token]]
 
 class PrintedVerse(TypedDict):
     """A verse of the printed RP2026: its unaccented forms, its accented
-    words, and its page (none for a verse the text omits)."""
+    words, and its page (none for a verse the text omits); and where the
+    callers of its apparatus entries stand, as "page letter" to the number
+    of its words before them."""
 
     Greek: list[str]
     accented: list[str]
     page: int | None
+    callers: dict[str, int]
 
 
 Diacritic = TypedDict(
@@ -164,6 +167,31 @@ def scrivener(folder: Content) -> Text:
     return result
 
 
+def corrected(
+    text: Text, corrections: Mapping[str, Mapping[str, str]], accented: bool = False
+) -> Text:
+    """A Scrivener text with the editor's corrections of its transcription
+    (edition/byzantine.json, scrivener): in each verse named, the words from
+    stand once and become the words to. The unaccented text compares them by
+    their letters, the accented as written."""
+    result = dict(text)
+    for ref, correction in corrections.items():
+        old, new = (
+            (
+                unicodedata.normalize("NFC", correction[side]).split()
+                if accented
+                else greek_words(correction[side])
+            )
+            for side in ("from", "to")
+        )
+        words = present(result.get(ref), f"Scrivener correction of no verse: {ref}")
+        found = occurrences(words, old)
+        require(len(found) == 1, f"Scrivener correction does not fit its verse: {ref}")
+        at = found[0]
+        result[ref] = [*words[:at], *new, *words[at + len(old) :]]
+    return result
+
+
 # Lunate sigma and the numeral stigma, in the pinned text's sigma form.
 SIGMAS = str.maketrans("ϲϛϹϚ", "σςΣΣ")
 
@@ -270,8 +298,13 @@ def align(
     return Alignment(text, spans, addresses)
 
 
-def accented_scrivener(path: Content, tr: Mapping[str, list[str]]) -> Alignment:
-    """Read the accented transcription faithfully and check its alignment."""
+def accented_scrivener(
+    path: Content,
+    tr: Mapping[str, list[str]],
+    corrections: Mapping[str, Mapping[str, str]] | None = None,
+) -> Alignment:
+    """Read the accented transcription faithfully, with the editor's
+    corrections of it (corrected), and check its alignment."""
     source: Text = {}
     for row in json.loads(path.read_text()):
         ref = f"{row['book_name_short']} {row['chapter']}:{row['verse']}"
@@ -284,7 +317,7 @@ def accented_scrivener(path: Content, tr: Mapping[str, list[str]]) -> Alignment:
         set(source) == set(tr),
         "Accented Scrivener verse inventory differs from the pinned TR",
     )
-    return align(source, tr)
+    return align(corrected(source, corrections or {}, accented=True), tr)
 
 
 BP5_LINE = re.compile(r"(\d+)\.(\d+)\s*(.*)")
@@ -426,6 +459,146 @@ def apparatus_diacritics(root: ET.Element) -> list[Diacritic]:
     return found
 
 
+# An apparatus entry's letter: a to z, then aa, bb; c and j as the font maps them.
+CALLER = "[a-zϲϳ]{1,2}"
+# The printed apparatus's fonts: an entry's letter, its reference, the
+# editions' sigla, its Greek, and its italic (om.).
+APPARATUS_FONTS = {
+    "11": "RPTimesNewRoman",
+    "4": "RPTimesNewRomanBold",
+    "27": "Gentium",
+    "3": "RPTimesNewRoman",
+    "9": "RPTimesNewRomanItalic",
+}
+
+
+def apparatus(path: Content, verses: Mapping[str, PrintedVerse]) -> list[BoydNote]:
+    """The printed apparatus's entries that give the Received Text a reading
+    (TR or SCR), in the shape of Boyd's notes (inventories.boyd): the reference
+    and the main text's words, each other reading with its sigla, the page,
+    and the place of the entry's caller among its verse's printed words (as
+    printed reads them). An entry opens with its letter and reference; the
+    manuscript apparatus below it names no edition and so gives no such
+    reading."""
+    called = {key: ref for ref, verse in verses.items() for key in verse["callers"]}
+    root = tree(path)
+    for code, family in APPARATUS_FONTS.items():
+        spec = root.find(f".//fontspec[@id='{code}']")
+        require(
+            spec is not None and (spec.get("family") or "").endswith("+" + family),
+            f"Changed Guardian apparatus font: {code}",
+        )
+    book = -1
+    entries: list[tuple[str, str, str, list[tuple[bool, str]]]] = []
+    for page in root.findall("page"):
+        nodes = page.findall("text")
+        current: list[tuple[bool, str]] | None = None
+        for index, node in enumerate(nodes):
+            font, words = node.get("font"), "".join(node.itertext()).strip()
+            if font == "23" and re.search("[Α-Ω]", words):
+                book += 1
+                current = None
+                continue
+            following = nodes[index + 1].get("font") if index + 1 < len(nodes) else None
+            if font == "11" and following == "4" and book >= 0:
+                current = []
+                ref = "".join(nodes[index + 1].itertext()).strip()
+                entries.append(
+                    (BOOKS[book], ref, f"{page.get('number')} {words}", current)
+                )
+            elif current is None or font == "4" and not current:
+                continue
+            elif font == "27":
+                current.extend((True, s) for s in words.split())
+            elif (
+                font == "11"
+                and words == "mg"
+                and current
+                and current[-1] == (True, "RP")
+            ):
+                current[-1] = (True, "RPmg")
+            elif font in ("3", "9"):
+                current.extend((False, t) for t in words.replace("¦", " ¦ ").split())
+            elif font in ("24", "25", "26"):
+                current = None
+    rows: list[BoydNote] = []
+    for book_code, ref, caller, tokens in entries:
+        parts: list[list[tuple[bool, str]]] = [[]]
+        for is_siglum, token in joined(tokens):
+            if not is_siglum and token == "¦":
+                parts.append([])
+            else:
+                parts[-1].append((is_siglum, token))
+        if len(parts) < 2:
+            continue
+        variants: list[BoydReading] = [
+            {"reading": reading(part), "sigla": [t for s, t in part if s]}
+            for part in parts[1:]
+        ]
+        tr = [v for v in variants if {"TR", "SCR"}.intersection(v["sigla"])]
+        if not tr:
+            continue
+        require(
+            re.fullmatch(r"\d+:\d+(?:–\d+(?::\d+)?)?", ref),
+            f"Unparsed RP2026 apparatus reference: {book_code} {ref}",
+        )
+        at = called.get(caller)
+        rows.append(
+            {
+                "entry": len(rows) + 1,
+                "position": (
+                    None
+                    if at is None
+                    else {
+                        "ref": at,
+                        "words": verses[at]["Greek"],
+                        "offset": verses[at]["callers"][caller],
+                    }
+                ),
+                "target_ref": f"{book_code} {ref.split('–')[0]}",
+                "fr": ref,
+                "rp": reading(parts[0]),
+                "variants": variants,
+                "tr": tr,
+                "raw": " ".join(t for _, t in tokens),
+                "page": int(caller.split()[0]),
+            }
+        )
+    return rows
+
+
+def joined(tokens: list[tuple[bool, str]]) -> list[tuple[bool, str]]:
+    """An entry's words, with those broken at a line end put together."""
+    result: list[tuple[bool, str]] = []
+    for is_siglum, token in tokens:
+        if (
+            result
+            and not is_siglum
+            and not result[-1][0]
+            and result[-1][1].endswith("-")
+        ):
+            result[-1] = (False, result[-1][1][:-1] + token)
+        else:
+            result.append((is_siglum, token))
+    return result
+
+
+def reading(part: list[tuple[bool, str]]) -> str:
+    """A reading of the printed apparatus as Boyd writes his: its words without
+    the editors' sigla, brackets or remarks, an omission as ---, and the
+    numeral sign as Boyd's."""
+    words = " ".join(t for s, t in part if not s)
+    # Square brackets mark an edition that brackets the words; a remark in
+    # parentheses refers the reader elsewhere.
+    words = re.sub(r"\[+\s*\]+|\(\s*(?:ϲf\.|See)[^)]*\)", "", words).strip()
+    # A verse's number stands bare among Boyd's words, and a letter that may
+    # stand is in parentheses.
+    words = re.sub(r"\[(\d+)\]", r"\1", words)
+    words = re.sub(r"\(([νς])\)", r"\1", words)
+    words = re.sub("[\u0374\u02b9]", "\u0384", words)
+    return "---" if words == "om." else words
+
+
 def tree(path: Content) -> ET.Element:
     """The Guardian PDF as pdftohtml XML."""
     return ET.fromstring(path.read_bytes())
@@ -467,10 +640,24 @@ def printed(
     pages: dict[str, int] = {}
     for page in root.findall("page"):
         nodes = page.findall("text")
+        number = int(cast(str, page.get("number")))
+        below = False
         for index, node in enumerate(nodes):
             font = node.get("font")
             text = "".join(node.itertext()).strip()
-            if font == "23" and re.search("[Α-Ω]", text):
+            following = nodes[index + 1].get("font") if index + 1 < len(nodes) else None
+            # The apparatus begins with its first entry; no caller stands
+            # below it, though its Greek has the same font.
+            below |= font == "11" and following == "4"
+            if (
+                font == "3"
+                and not below
+                and ref is not None
+                and re.fullmatch(CALLER, text)
+            ):
+                # An entry's caller, in the text before the words it is about.
+                chunks[ref].append(f"\0{number} {text}\0")
+            elif font == "23" and re.search("[Α-Ω]", text):
                 book += 1
                 require(
                     book < len(BOOKS), "Unexpected additional Guardian book heading"
@@ -510,19 +697,43 @@ def printed(
                 chunks[ref].append(text)
     require(book == 26, f"Expected 27 book openings, got {book + 1}")
     result: dict[str, PrintedVerse] = {}
+    # Where the text omits a verse or moves it away, it may print its number
+    # and the caller of the entry that gives its words, and nothing else.
+    held: dict[str, dict[str, int]] = {}
     for ref, pieces in chunks.items():
-        raw = re.sub(rf"-\s+(?=[{GREEK}])", "", " ".join(pieces))
+        marked = re.sub(rf"-\s+(?=[{GREEK}])", "", " ".join(pieces))
+        # The text and the callers alternate; c and j map to Greek letters.
+        pieces = re.split("\0([^\0]*)\0", marked)
+        callers: dict[str, int] = {}
+        for at in range(1, len(pieces), 2):
+            callers[pieces[at]] = len(
+                re.findall(rf"[{GREEK}]+", " ".join(pieces[0:at:2]))
+            )
+        raw = " ".join(pieces[0::2])
         forms = [
             ascii_greek("".join(accent_letters(w)))
             for w in re.findall(rf"[{GREEK}]+", raw)
         ]
         words = unicodedata.normalize("NFC", raw).split()
+        if not words:
+            held[ref] = callers
+            continue
         if any(not re.fullmatch("[a-z]+", w) for w in forms):
             raise CheckFailed(f"Unknown Greek letters at {ref}")
-        result[ref] = {"Greek": forms, "accented": words, "page": pages[ref]}
+        result[ref] = {
+            "Greek": forms,
+            "accented": words,
+            "page": pages[ref],
+            "callers": callers,
+        }
     for ref in omitted:
         require(ref not in result, f"Unexpected printed omitted verse: {ref}")
-        result[ref] = {"Greek": [], "accented": [], "page": None}
+        result[ref] = {
+            "Greek": [],
+            "accented": [],
+            "page": None,
+            "callers": held.get(ref, {}),
+        }
     require(
         len(result) == 7957, f"Printed RP2026 inventory: {len(result)}, expected 7957"
     )

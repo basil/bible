@@ -1,5 +1,5 @@
 {
-  "why": "The New Testament is the King James Version conformed to the Robinson-Pierpont Byzantine text of 2026 wherever that text differs translatably from the Received Text it was made from. The build decides every Greek difference from the pinned sources; what it cannot decide, or decides otherwise than the editor, is recorded here. readings: the editor's wording where no published instruction settles a unit, or a ruling that a reported difference is not applied, keyed by the unit's id, with one from: and one gram: tag, a reason of at most two sentences, and evidence quoted from the sources, which the build checks verbatim; or, keyed by a verse, a correction of the English where TR and RP2026 share the Greek, each edit with the printed RP2026 Greek it renders, which the build checks touches no difference, and no TR note. structure: the verses the Byzantine text lacks or places elsewhere. accents: a difference of accent or breathing alone, which the unaccented texts cannot show, made a unit, keyed by the unit's id, with the TR's and RP's accented words, which the build checks against the printed RP2026 and Boyd's apparatus. hodges-farstad: the side of Hodges and Farstad's edition where no apparatus the build reads gives it, keyed by the unit's id. lemmas: a Textus Receptus footnote's lemma widened by hand, keyed by the note.",
+  "why": "The New Testament is the King James Version conformed to the Robinson-Pierpont Byzantine text of 2026 wherever that text differs translatably from the Received Text it was made from. The build decides every Greek difference from the pinned sources; what it cannot decide, or decides otherwise than the editor, is recorded here. readings: the editor's wording where no published instruction settles a unit, or a ruling that a reported difference is not applied, keyed by the unit's id, with one from: and one gram: tag, a reason of at most two sentences, and evidence quoted from the sources, which the build checks verbatim; or, keyed by a verse, a correction of the English where TR and RP2026 share the Greek, each edit with the printed RP2026 Greek it renders, which the build checks touches no difference, and no TR note. structure: the verses the Byzantine text lacks or places elsewhere. accents: a difference of accent or breathing alone, which the unaccented texts cannot show, made a unit, keyed by the unit's id, with the TR's and RP's accented words, which the build checks against the printed RP2026 and Boyd's apparatus. hodges-farstad: the side of Hodges and Farstad's edition where no apparatus the build reads gives it, keyed by the unit's id. lemmas: a Textus Receptus footnote's lemma widened by hand, keyed by the note. scrivener: a slip in the electronic transcriptions of Scrivener's text, keyed by the verse, with the words they have and the words he printed; the build applies it to the unaccented and the accented transcription alike, and stops unless Boyd's apparatus and the printed RP2026's both give the words as Scrivener's.",
   "readings": {
     "MAT 5:39#1": {
       "units": [
@@ -13525,6 +13525,13 @@
     "REV 4:4#1 TR": {
       "lemma": "upon the seats",
       "why": "Only I saw is removed from the English construction; the unique common prefix gives upon the seats / upon the seats I saw, while the common numeral and elders stay outside both sides."
+    }
+  },
+  "scrivener": {
+    "EPH 1:7": {
+      "from": "τὸν πλοῦτον",
+      "to": "τὸ πλοῦτον",
+      "why": "The printed RP2026 (p. 551) and Boyd's apparatus both give Scrivener τὸ πλοῦτον, against the τὸν πλοῦτον of Stephanus and RP2026; Robinson's electronic text, the accented transcription that follows it and his 2018 collation have τὸν. The English is unaffected."
     }
   }
 }

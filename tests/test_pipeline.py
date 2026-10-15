@@ -46,7 +46,7 @@ def test_the_edition_prints_every_unit_once_in_the_manifests_order(
     assert dict(edition.summary) == {
         "alexandrine_notes": 415,
         "alexandrine_appendix_paragraphs": 26,
-        "byzantine_units": 1939,
+        "byzantine_units": 1940,
         "byzantine_edits": 858,
         "kjv_corrections": 83,
         "byzantine_notes": 941,

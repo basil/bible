@@ -779,6 +779,7 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
         "kjv": ctx.terms.display("king-james-version"),
         "oleb": ctx.terms.display("orthodox-liturgical-english-bible"),
         "apparatus": ctx.terms.display("apparatus"),
+        "scrivener": ctx.terms.display("scrivener"),
     }
     # The King James books before the readings, with the same systematic
     # spelling and punctuation (only printed documents record what was met).

@@ -487,7 +487,7 @@ def check(policy: Policy) -> None:
     require_fields(
         policy.byzantine,
         {"why", "readings", "structure", "accents", "hodges-farstad", "lemmas"},
-        (),
+        {"scrivener"},
         "Byzantine decisions",
     )
     require_fields(
@@ -511,6 +511,11 @@ def check(policy: Policy) -> None:
         require_fields(side, {"unit", "side", "why"}, (), what)
         require_fields(side["unit"], {"ref", "tr", "rp"}, (), what)
         require(bool(side["why"].strip()), f"{what} without a why")
+    for key, correction in policy.byzantine.get("scrivener", {}).items():
+        what = f"Scrivener correction {key}"
+        require_fields(correction, {"from", "to", "why"}, (), what)
+        require(bool(correction["why"].strip()), f"{what} without a why")
+        require(correction["from"] != correction["to"], f"{what} changes nothing")
     for key, lemma in policy.byzantine["lemmas"].items():
         require_fields(lemma, {"lemma", "why"}, (), f"Byzantine note lemma {key}")
     require_fields(

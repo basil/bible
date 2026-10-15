@@ -652,8 +652,15 @@ LABELS = {
     "kjv": "KJV",
     "oleb": "OLEB",
     "apparatus": "apparatus",
+    "scrivener": "Scrivener",
 }
 OMITTED = {"LUK 17:36", "ACT 8:37", "ACT 15:34", "ACT 24:7"}
+
+
+def greek_label(row: appendix.Row) -> str:
+    """The Received Text's, or Scrivener's where the apparatuses do not
+    establish its readings as the Received Text's (received.py)."""
+    return "TR" if row.received else "Scrivener"
 
 
 @pytest.fixture(scope="module")
@@ -762,7 +769,7 @@ def test_a_changed_verse_has_one_aligned_comparison_per_language(
         assert heading["marker"] == "im"
         assert all(line["marker"] == "ili1" for line in lines)
         labels = [text_of(line).split(" ", 1)[0] for line in lines]
-        assert labels == ["TR", "KJV"], row.reference
+        assert labels == [greek_label(row), "KJV"], row.reference
         greek, english = (text_of(line) for line in lines)
         assert greek.count("…") == english.count("…"), row.reference
         for text in (greek, english):
@@ -771,7 +778,9 @@ def test_a_changed_verse_has_one_aligned_comparison_per_language(
             assert len([part for part in body.split("…") if part.strip()]) == len(
                 row.passages
             ), row.reference
-        assert greek.startswith("TR → RP …") == english.startswith("KJV → OLEB …")
+        assert greek.startswith(f"{greek_label(row)} → RP …") == english.startswith(
+            "KJV → OLEB …"
+        )
         assert greek.endswith("…") == english.endswith("…")
     fruit = next(row for row in rows if row.reference == "MAT 3:8")
     assert "καρποὺς ἀξίους" in fruit.greek_tr
@@ -834,7 +843,7 @@ def test_a_verse_whose_english_stands_has_a_greek_comparison(
         assert heading["marker"] == "im"
         assert text_of(heading) == row.reference.split()[1]
         assert greek["marker"] == "ili1"
-        assert text_of(greek).startswith("TR → RP ")
+        assert text_of(greek).startswith(f"{greek_label(row)} → RP ")
         assert all(text_of(line).startswith("apparatus: TR → RP ") for line in evidence)
     accents = [unit for row in same for unit in row.units if unit.accented]
     assert accents
@@ -902,7 +911,7 @@ def test_the_four_omitted_verses_are_listed(
         assert row.kjv == scripture.plain(kjv)
         lines = [text_of(b) for b in entries[row.reference][1:]]
         assert lines == [
-            f"TR → RP [{row.greek_tr}]",
+            f"{greek_label(row)} → RP [{row.greek_tr}]",
             f"KJV → OLEB [{row.kjv}]",
         ]
 
@@ -1129,12 +1138,12 @@ def test_appendix_comparisons_preserve_changes_and_retained_source_passages(
             if not text_of(line).startswith("apparatus:")
         ]
         for line in lines:
+            is_greek = text_of(line).startswith(greek_label(row) + " ")
             before, after = (
                 (row.greek_tr, row.greek_rp)
-                if text_of(line).startswith("TR")
+                if is_greek
                 else (row.kjv or "", row.oleb or "")
             )
-            is_greek = text_of(line).startswith("TR")
             content = line["content"][1:]  # Leave the paragraph's label out.
             insertion_style = "bd" if is_greek else "it"
             old: list[str] = []

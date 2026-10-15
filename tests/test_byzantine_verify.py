@@ -146,7 +146,7 @@ def test_the_books_hold_every_verse_and_every_relocation(
 
 def test_every_unit_has_one_complete_declaration(byzantine: Context) -> None:
     rows = [r for r in byzantine["dispositions"] if r["disposition"] != "shared"]
-    assert len(rows) == len(byzantine["units"]) == 1939
+    assert len(rows) == len(byzantine["units"]) == 1940
     assert Counter(r["unit"] for r in rows) == Counter(
         u["id"] for u in byzantine["units"]
     )

@@ -829,8 +829,11 @@ def placed(
 # The notes as the edition prints them.
 
 
-def for_edition(document: Document, terms: Registry) -> Document:
-    """The finished notes in the edition's form: the witness's label, the
+def for_edition(
+    document: Document, terms: Registry, witnesses: Mapping[str, str]
+) -> Document:
+    """The finished notes in the edition's form: the witness's label (the
+    term of received.labels, by the note's key), the
     words that stand in the note for a replaced reading as an alternative and
     for words added or omitted as a quotation (none where the whole lemma is
     omitted, since it stands before the label), the lemma declared for the
@@ -857,7 +860,11 @@ def for_edition(document: Document, terms: Registry) -> Document:
             adds, omits = terms.display("addition"), terms.display("omission")
             content: Content = [fields["fr"]]
             if kind != "rendering":
-                content.append(usj.char("fl", terms.display("textus-receptus") + " "))
+                witness = present(
+                    witnesses.get(note["x-key"]),
+                    f"A note without its witness: {note['x-key']}",
+                )
+                content.append(usj.char("fl", terms.display(witness) + " "))
             if kind == "rendering":
                 # A correction of shared Greek: the former King James words
                 # as another rendering, with no witness to name.

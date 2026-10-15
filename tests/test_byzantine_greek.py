@@ -111,7 +111,10 @@ def test_parsed_scrivener_selects_second_reading_and_shared_tags(
 ) -> None:
     text, tags = parsed_scrivener(byzantine_inputs["parsed_tr"])
     assert len(text) == 7957
-    assert sum(text[ref] == tr[ref] for ref in text) == 7921
+    # The UTR file has Robinson's τὸν at Ephesians 1:7, which the edition
+    # corrects in Scrivener's text (edition/byzantine.json, scrivener).
+    assert sum(text[ref] == tr[ref] for ref in text) == 7920
+    assert text["EPH 1:7"] != tr["EPH 1:7"]
     # Stephanus: found; Scrivener: saw. Both branches have their own tags.
     assert "eidon" in text["MAT 2:11"]
     assert "euron" not in text["MAT 2:11"]
@@ -127,7 +130,8 @@ def test_parsed_scrivener_selects_second_reading_and_shared_tags(
 def test_annotation_mismatches_are_excluded_from_the_checked_tags(
     byzantine: Mapping[str, Any],
 ) -> None:
-    assert len(byzantine["annotation_mismatches"]) == 36
+    assert len(byzantine["annotation_mismatches"]) == 37
+    assert "EPH 1:7" in byzantine["annotation_mismatches"]
     assert "MAT 15:5" in byzantine["annotation_mismatches"]
     assert "TR MAT 15:5" not in byzantine["tr_tags"]
     assert "TR MAT 1:1" in byzantine["tr_tags"]
@@ -221,7 +225,8 @@ def test_printed_main_text_equals_rp2026_verse_for_verse(
             ascii_greek("".join(accent_letters(w))) for w in row["accented"]
         ) == "".join(row["Greek"]), ref
     for ref in structure.omitted:
-        assert snapshot[ref] == {"Greek": [], "accented": [], "page": None}
+        verse = snapshot[ref]
+        assert (verse["Greek"], verse["accented"], verse["page"]) == ([], [], None)
 
 
 def test_printed_pages_run_forward_through_the_canon(guardian: Printed) -> None:
@@ -319,6 +324,8 @@ def test_accented_tr_preserves_source_words(
         ]
         for r in original
     }
+    # The words the edition corrects are its own.
+    source["EPH 1:7"] = [w if w != "τὸν" else "τὸ" for w in source["EPH 1:7"]]
     for ref in tr:
         assert len(alignment.spans[ref]) == len(tr[ref])
         assert all(

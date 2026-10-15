@@ -941,7 +941,8 @@ def test_corrections_of_shared_greek_leave_the_tr_notes_their_own_words(
     assert scripture.verses(edition.documents["2JN"])["1:3"].text.startswith(
         "Grace shall be with us, mercy"
     )
-    assert "\\fq us: \\ft TR \\fqa you" in usj.serialize(edition.documents["2JN"])
+    # Stephanus reads with RP, so the note gives the King James words.
+    assert "\\fq us: \\ft KJV \\fqa you" in usj.serialize(edition.documents["2JN"])
     # 3 John 1:2 keeps its supplied word and its 1611 note on "wish".
     serialized = usj.serialize(edition.documents["3JN"])
     assert scripture.verses(edition.documents["3JN"])["1:2"].text.startswith(

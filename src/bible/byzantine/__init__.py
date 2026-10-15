@@ -148,13 +148,16 @@ def checked(context: Context) -> None:
 
 
 def promoted(code: str, found: Reconciled, terms: Registry) -> Document:
-    """A King James book with the Byzantine readings in it and the Textus
-    Receptus notes on them in the edition's form, labelled with the witness's
-    abbreviation, and its subscription put back after its verses."""
+    """A King James book with the Byzantine readings in it and the notes on
+    them in the edition's form, labelled with the abbreviation of the witness
+    they name (received.labels), and its subscription put back after its
+    verses."""
     from bible import usj
     from bible.byzantine import notes
 
-    doc = notes.for_edition(found.context["prepared"][code], terms)
+    doc = notes.for_edition(
+        found.context["prepared"][code], terms, found.context["note_witnesses"]
+    )
     tail = found.context["subscriptions"].get(code, ())
     if not tail:
         return doc

@@ -3,7 +3,8 @@ out from the stages before it, in the order of the modules' dependencies."""
 
 from __future__ import annotations
 
-from collections.abc import Callable, Mapping
+import collections
+from collections.abc import Callable, Mapping, Sequence
 from typing import Any, TypedDict
 
 from bible.byzantine import (
@@ -24,6 +25,7 @@ from bible.byzantine import (
     inventories,
     notes,
     pierpont,
+    received,
     rendering,
 )
 from bible.byzantine import revisers as revisions
@@ -76,6 +78,7 @@ class Context(TypedDict, total=False):
     printed_xml: Content
     collation: list[CollationRow]
     tcgnt: list[BoydNote]
+    apparatus: list[BoydNote]
     units: list[Unit]
     unmatched: list[Unmatched]
     annotation_mismatches: list[str]
@@ -113,6 +116,7 @@ class Context(TypedDict, total=False):
     # dispositions carried out, and the checks.
     dispositions: list[Disposition]
     prepared: dict[str, Document]
+    note_witnesses: dict[str, str]
     invariants: dict[str, str]
     finished: dict[str, list[str]]
 
@@ -152,9 +156,40 @@ def structure_of(
     return greek.Structure(moved, omitted)
 
 
+def evidenced(
+    corrections: Mapping[str, Mapping[str, str]],
+    ledger: Sequence[Unit],
+    tcgnt: Sequence[BoydNote],
+    printed: Sequence[BoydNote],
+) -> None:
+    """A correction of the Scrivener transcription stands only where both
+    apparatuses give its words as Scrivener's, at a unit it makes."""
+    rows = received.rows(tcgnt, printed)
+    for ref, correction in corrections.items():
+        words = greek.greek_words(correction["to"])
+        found = {
+            a["inventory"]
+            for u in ledger
+            if u["ref"] == ref
+            for a in u["inventories"]
+            if (a["inventory"], a["entry"]) in rows
+            and inventories.reading_words(
+                rows[(a["inventory"], a["entry"])]["tr"][0]["reading"]
+            )
+            == words
+        }
+        require(
+            found == {"tcgnt", units.PRINTED_APPARATUS},
+            f"Scrivener correction the apparatuses do not give: {ref}",
+        )
+
+
 def stage_greek(context: Context) -> Context:
     """The Greek texts and the unit ledger."""
-    tr = greek.scrivener(context["source_inputs"]["scrivener"])
+    corrections = context["decisions"].get("scrivener", {})
+    tr = greek.corrected(
+        greek.scrivener(context["source_inputs"]["scrivener"]), corrections
+    )
     parsed, tr_tags = greek.parsed_scrivener(context["source_inputs"]["parsed_tr"])
     mismatches = [ref for ref in tr if parsed[ref] != tr[ref]]
     checked = {f"TR {ref}": t for ref, t in tr_tags.items() if ref not in mismatches}
@@ -170,8 +205,23 @@ def stage_greek(context: Context) -> Context:
     rp_alignment = greek.align(
         {ref: verse["accented"] for ref, verse in printed.items()}, rp
     )
+    printed_apparatus = greek.apparatus(xml, printed)
+    sides = collections.Counter(
+        "SCR" if "SCR" in n["tr"][0]["sigla"] else "TR" for n in printed_apparatus
+    )
+    require(
+        sides == {"TR": 1735, "SCR": 150},
+        f"RP2026 apparatus inventory: {dict(sides)}, expected 1735 TR and 150 SCR",
+    )
     ledger, unmatched = units.reconcile(
-        tr, rp, collation, notes_, {**checked, **tags}, splits, structure
+        tr,
+        rp,
+        collation,
+        notes_,
+        {**checked, **tags},
+        splits,
+        structure,
+        printed_apparatus,
     )
     extra = units.supplementary_units(
         tr,
@@ -183,13 +233,32 @@ def stage_greek(context: Context) -> Context:
         structure,
         context["decisions"]["accents"],
         rp_alignment,
+        printed_apparatus,
     )
     attached = {(a["inventory"], a["entry"]) for u in extra for a in u["inventories"]}
     unmatched = [r for r in unmatched if (r["inventory"], r["entry"]) not in attached]
-    ledger = decisions.with_hodges_farstad(
-        [*ledger, *extra], context["decisions"]["hodges-farstad"]
+    ledger, unmatched, errors = decisions.place_inventories(
+        [*ledger, *extra],
+        unmatched,
+        [p for p in context["placements"] if p["witness"] in units.QUOTED],
     )
-    tr_alignment = greek.accented_scrivener(context["source_inputs"]["accented_tr"], tr)
+    require(not errors, f"Byzantine placements of Greek apparatus rows: {errors}")
+    unplaced = [
+        f"{r['inventory']} {r['entry']} at {r['target_ref']}"
+        for r in unmatched
+        if r["inventory"] in units.QUOTED
+    ]
+    require(
+        not unplaced,
+        f"Rows of the Greek apparatuses that give the Received Text a reading at no unit: {unplaced}",
+    )
+    evidenced(corrections, ledger, notes_, printed_apparatus)
+    ledger = decisions.with_hodges_farstad(
+        ledger, context["decisions"]["hodges-farstad"]
+    )
+    tr_alignment = greek.accented_scrivener(
+        context["source_inputs"]["accented_tr"], tr, corrections
+    )
     context.update(
         {
             "structure": structure,
@@ -204,6 +273,7 @@ def stage_greek(context: Context) -> Context:
             "printed_xml": xml,
             "collation": collation,
             "tcgnt": notes_,
+            "apparatus": printed_apparatus,
             "units": ledger,
             "unmatched": unmatched,
             "annotation_mismatches": mismatches,
@@ -298,7 +368,7 @@ def stage_reports(context: Context) -> Context:
         [
             p
             for p in context["placements"]
-            if p["witness"] not in {TCENT, FAA, *INSTRUCTION_SOURCES}
+            if p["witness"] not in {TCENT, FAA, *INSTRUCTION_SOURCES, *units.QUOTED}
         ],
     )
     context.update(
@@ -491,7 +561,12 @@ def stage_edit(context: Context) -> Context:
         ]
         if seams:
             retag(row, Tag.EV_SEAM_ADJUSTED)
-    context.update({"prepared": prepared, "dispositions": rows})
+    witnesses = received.labels(
+        rows, context["units"], received.rows(context["tcgnt"], context["apparatus"])
+    )
+    context.update(
+        {"prepared": prepared, "dispositions": rows, "note_witnesses": witnesses}
+    )
     return context
 
 

@@ -100,7 +100,7 @@ def test_class_histogram_and_unmatched_inventory_entries(
     assert Counter(u["class"] for u in units) == {
         "substitution": 516,
         "inflection": 273,
-        "article": 212,
+        "article": 213,
         "omission": 203,
         "spelling": 176,
         "particle": 140,
@@ -114,29 +114,24 @@ def test_class_histogram_and_unmatched_inventory_entries(
         "accent": 5,
         "prefix": 2,
     }
-    assert len(units) == 1939
-    assert len({u["id"] for u in units}) == 1939
+    assert len(units) == 1940
+    assert len({u["id"] for u in units}) == 1940
+    # The rows of the Greek apparatuses that give the Received Text a reading
+    # all stand at units, by the code or by placements; the collation's left
+    # over are RP2018's, which RP2026 changed.
     assert [(r["inventory"], r["entry"]) for r in byzantine["unmatched"]] == [
         ("collation", 927),
         ("collation", 1571),
         ("collation", 1810),
-        ("tcgnt", 739),
-        ("tcgnt", 937),
-        ("tcgnt", 1035),
-        ("tcgnt", 1334),
-        ("tcgnt", 1438),
-        ("tcgnt", 1450),
-        ("tcgnt", 1614),
-        ("tcgnt", 1627),
     ]
     assert Counter(u["hf"] for u in units) == {
-        "RP": 1723,
+        "RP": 1730,
         "TR": 127,
-        "unknown": 66,
+        "unknown": 60,
         "other": 23,
     }
     absent = Counter(tuple(sorted(u.get("inventory_absence", {}))) for u in units)
-    assert absent == {(): 1889, ("collation", "tcgnt"): 50}
+    assert absent == {(): 1890, ("collation", "tcgnt"): 50}
     assert all(
         u["class"] in {"movable", "word-division"}
         or u["ref"] in {"MAT 23:13", "MAT 23:14"}
@@ -171,7 +166,7 @@ def test_collation_bounds_preserve_every_greek_token(
     omission = next(u for u in units if u["ref"] == "ACT 23:7")
     assert omission["tr"] == ["kai", "twn", "saddoukaiwn"]
     assert omission["rp"] == []
-    assert omission["found_in"] == ["collation", "diff", "tcgnt"]
+    assert omission["found_in"] == ["collation", "diff", "rp2026-apparatus", "tcgnt"]
 
 
 def test_rp2026_philemon_order_is_one_printed_unit(
@@ -183,7 +178,10 @@ def test_rp2026_philemon_order_is_one_printed_unit(
         ("order", ["xristou", "ihsou"], ["ihsou", "xristou"])
     ]
     unit = next(u for u in units if u["ref"] == "PHM 1:1")
-    assert (unit["hf"], unit["found_in"]) == ("TR", ["diff", "rp2026-appendix-a"])
+    assert (unit["hf"], unit["found_in"]) == (
+        "TR",
+        ["diff", "rp2026-apparatus", "rp2026-appendix-a"],
+    )
     assert keyed_units(units, "PHM 1:1", "xristou ihsou", "ihsou xristou") == [unit]
     assert [
         u["id"] for u in keyed_units(units, "MAT 3:8", "karpous acious", "karpon acion")
@@ -321,7 +319,7 @@ def test_mixed_and_unnumbered_quotes_stay_unmatched(
         assert tr[following][:2] == ["kai", "eidon"]
 
 
-def test_source_discrepancies_stay_unmatched(
+def test_a_misprinted_lemma_stays_unmatched_until_placed(
     byzantine: Mapping[str, Any], tags: Tagged, structure: Structure
 ) -> None:
     tr, rp = byzantine["tr"], byzantine["rp"]
@@ -334,9 +332,10 @@ def test_source_discrepancies_stay_unmatched(
         structure=structure,
     )
     rows = {r["entry"]: r for r in unmatched if r["inventory"] == "tcgnt"}
-    assert set(rows) == {1035, 1627}
+    assert set(rows) == {1627}
     assert rows[1627]["rp"] == "ισχυσενε"
-    assert tr["EPH 1:7"] == rp["EPH 1:7"]
+    # Scrivener's text, as the edition corrects it, has the reading Boyd gives.
+    assert (tr["EPH 1:7"][-5], rp["EPH 1:7"][-5]) == ("to", "ton")
 
 
 def test_ellipsis_matches_real_published_order_and_omission_notes(
@@ -770,16 +769,25 @@ def test_relocations_carry_both_inventories_and_stay_apart_from_wording(
         "ROM 16:26",
         "ROM 16:27",
     ]
-    assert all(
-        u["found_in"] == ["placement", "collation", "tcgnt"]
-        and u["class"] == "structural"
-        for u in moves
-    )
+    # The printed RP2026 describes a move at its first verse, which a
+    # placement puts on the move.
+    assert {u["ref"]: u["found_in"] for u in moves if u["class"] == "structural"} == {
+        "MAT 23:13": ["placement", "collation", "tcgnt", "rp2026-apparatus"],
+        "MAT 23:14": ["placement", "collation", "tcgnt", "rp2026-apparatus"],
+        "ROM 16:25": ["placement", "collation", "tcgnt", "rp2026-apparatus"],
+        "ROM 16:26": ["placement", "collation", "tcgnt"],
+        "ROM 16:27": ["placement", "collation", "tcgnt"],
+    }
     assert (
         len({(a["inventory"], a["entry"]) for u in moves for a in u["inventories"]})
-        == 11
+        == 15
     )
-    assert all(a["scope"] == "relocation" for u in moves for a in u["inventories"])
+    assert all(
+        a["scope"] == "relocation"
+        for u in moves
+        for a in u["inventories"]
+        if a["inventory"] != "rp2026-apparatus"
+    )
     last = next(u for u in moves if u["ref"] == "ROM 16:27")
     assert last["tr"] != last["rp"]
     # A move cannot absorb the doxology's independent added pronoun.
@@ -794,12 +802,27 @@ def test_accent_units_check_the_printed_target_and_keep_equal_letters(
     accents = {u["ref"]: u for u in units if u.get("kind") == "accent"}
     assert set(accents) == {"LUK 3:23", "PHP 3:5", "1CO 5:13", "MRK 4:8", "MRK 4:20"}
     assert all(u["tr"] == u["rp"] and u["class"] == "accent" for u in accents.values())
-    assert accents["1CO 5:13"]["found_in"] == ["rp2026-printed", "tcgnt"]
-    assert accents["1CO 5:13"]["inventories"] == [
-        {"inventory": "tcgnt", "entry": 962, "scope": "unit"}
+    assert accents["1CO 5:13"]["found_in"] == [
+        "rp2026-printed",
+        "tcgnt",
+        "rp2026-apparatus",
     ]
+    assert [a["inventory"] for a in accents["1CO 5:13"]["inventories"]] == [
+        "tcgnt",
+        "rp2026-apparatus",
+    ]
+    assert accents["1CO 5:13"]["inventories"][0] == {
+        "inventory": "tcgnt",
+        "entry": 962,
+        "scope": "unit",
+    }
     assert accents["LUK 3:23"]["found_in"] == ["rp2026-apparatus", "tcgnt"]
     assert accents["PHP 3:5"]["found_in"] == ["rp2026-apparatus"]
+    # Every accent unit has the printed apparatus's entry on it.
+    assert all(
+        any(a["inventory"] == "rp2026-apparatus" for a in u["inventories"])
+        for u in accents.values()
+    )
     start, end = accents["MRK 4:8"]["tr_range"]
     assert (accents["MRK 4:8"]["hf"], accents["MRK 4:8"]["tr"]) == (
         "TR",

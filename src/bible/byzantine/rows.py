@@ -65,6 +65,7 @@ class UnitInventory(TypedDict, total=False):
     entry: int
     hf: str
     inventory: str
+    method: str
     quotation_normalization: str
     quotation_span: list[str]
     scope: str
@@ -376,6 +377,7 @@ class Unmatched(TypedDict, total=False):
     entry: int
     fr: str
     hf: str
+    page: int
     inventory: str
     patriarchal: bool
     position: dict[str, Any] | None
@@ -410,6 +412,7 @@ class BoydNote(TypedDict, total=False):
     entry: int
     fr: str
     hf: str
+    page: int
     patriarchal: bool
     position: dict[str, Any] | None
     raw: str

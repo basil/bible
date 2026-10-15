@@ -18,6 +18,7 @@ from difflib import SequenceMatcher
 
 import bible.references
 from bible import scripture, usj
+from bible.byzantine import received
 from bible.byzantine.crosswire import presentation_bridge
 from bible.byzantine.decisions import ref_key
 from bible.byzantine.english import verses_of, without_subscriptions
@@ -70,6 +71,9 @@ class Row:
     greek_ranges: tuple[tuple[int, int, int, int], ...] = ()
     passages: tuple[tuple[tuple[int, int], ...], ...] = ()
     english_ranges: tuple[tuple[int, int, int, int], ...] = ()
+    # Whether the apparatuses establish the Received Text's reading at every
+    # difference of the verse (received.status), or only Scrivener's.
+    received: bool = True
 
     @property
     def book(self) -> str:
@@ -440,6 +444,18 @@ def rows(
     kjv = {ref: verse.text for ref, verse in verses_of(kjv_documents).items()}
     units_at: dict[str, list[Unit]] = {}
     accents: dict[str, list[Unit]] = {}
+    evidence = received.rows(found["tcgnt"], found["apparatus"])
+    # A unit of a kind the apparatuses do not record (inventory_absence),
+    # and on which they say nothing, says nothing either way. The verses are
+    # the edition's, where the units are listed (target_ref); an omitted
+    # verse keeps its own number there.
+    statuses = {u["id"]: received.status(u, evidence) for u in found["units"]}
+    unreceived = {
+        unit["target_ref"]
+        for unit in found["units"]
+        if statuses[unit["id"]] != "TR"
+        and not (statuses[unit["id"]] is None and unit.get("inventory_absence"))
+    }
     for unit in found["units"]:
         if unit["class"] == "structural":
             continue
@@ -515,6 +531,7 @@ def rows(
                 ranges,
                 selected,
                 english_ranges,
+                ref not in unreceived,
             )
         )
     for ref in sorted(structure.omitted, key=ref_key):
@@ -528,6 +545,7 @@ def rows(
                 (),
                 scripture.plain(kjv[ref]),
                 None,
+                received=ref not in unreceived,
             )
         )
     return sorted(result, key=lambda row: ref_key(row.reference))
@@ -661,8 +679,8 @@ def blocks(
     result: list[Node] = []
     spans: list[tuple[Row, int, int]] = []
     current = None
-    tr, rp, kjv, oleb, apparatus = (
-        labels[k] for k in ("tr", "rp", "kjv", "oleb", "apparatus")
+    tr, rp, kjv, oleb, apparatus, scrivener = (
+        labels[k] for k in ("tr", "rp", "kjv", "oleb", "apparatus", "scrivener")
     )
     for row in listed:
         if row.book != current:
@@ -679,7 +697,7 @@ def blocks(
         result.append(
             usj.para(
                 "ili1",
-                f"{tr} → {rp} ",
+                f"{tr if row.received else scrivener} → {rp} ",
                 *joined_comparison(texts, selected, 0, row.greek_ranges),
             )
         )

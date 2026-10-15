@@ -657,8 +657,8 @@ def spanned(verses: Sequence[bible.references.Verse]) -> str:
 def relocation_note(code: str, address: str, label: str, sentence: str) -> Node:
     """A note the edition sets at a verse to say where a passage stands in
     another order: labelled with the text whose order it is, as the notes
-    on the New Testament's moved verses are labelled TR, and saying what
-    that text has there."""
+    on the New Testament's moved verses are labelled TR or KJV, and saying
+    what that text has there."""
     extra: usj.Extra = {
         "x-key": f"{code} {address} {label}",
         "category": "edition",

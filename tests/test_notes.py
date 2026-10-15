@@ -1032,7 +1032,8 @@ def test_passages_set_in_another_order_are_noted_alike_in_both_testaments(
         "16:24",
         "TR has here the verses printed at 14:24–26",
     )
-    assert rows["MAT 23:13 TR"] == ("23:13", "TR has this passage at 23:14")
+    # Scrivener alone has the two woes in this order (received.py).
+    assert rows["MAT 23:13 TR"] == ("23:13", "KJV has this passage at 23:14")
 
 
 def test_an_omission_quotes_only_the_part_of_its_lemma_that_is_omitted(
@@ -1258,7 +1259,7 @@ def test_mark_fist_correction_preserves_the_marginal_note(
         ("GEN 6:7", "Brenton _I am grieved_. Gr. _I have thought_ or _reasoned_"),
         (
             "LUK 17:35 TR",
-            "TR adds verse 36 _Two men shall be in the field; the one shall be taken, and the other left._",
+            "KJV adds verse 36 _Two men shall be in the field; the one shall be taken, and the other left._",
         ),
         (
             "JOB 25:2",

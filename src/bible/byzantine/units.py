@@ -52,6 +52,10 @@ TRANSLITERATED = {"lama", "lima"}
 # Classes the English cannot show unless a witness says so: orthography only.
 NEUTRAL_CLASSES = frozenset({"movable", "word-division", "spelling", "name-spelling"})
 
+# The printed RP2026 apparatus, as an inventory; it and Boyd's quote their readings.
+PRINTED_APPARATUS = "rp2026-apparatus"
+QUOTED = frozenset({"tcgnt", PRINTED_APPARATUS})
+
 ARTICLES = set("o h to tou ths tw th ton thn oi ai ta twn tois tais tous tas".split())
 PARTICLES = set("kai de gar oun te men an".split())
 # Unambiguous first/second-person forms, not a lexicon-based synonym rule.
@@ -757,10 +761,10 @@ def cross_verse_attachments(
     result = deepcopy(units)
     remaining: list[Unmatched] = []
     for row in unmatched:
-        if row["inventory"] != "tcgnt" or len(row["tr"]) != 1:
+        if row["inventory"] not in QUOTED or len(row["tr"]) != 1:
             remaining.append(row)
             continue
-        # A TCGNT row quotes its readings as text.
+        # A TCGNT row or printed entry quotes its readings as text.
         reading, right = row["tr"][0], row["rp"]
         if isinstance(reading, str) or not isinstance(right, str):
             remaining.append(row)
@@ -861,19 +865,21 @@ def cross_verse_attachments(
             whole = any(
                 x <= i <= j <= x + len(qa) for x in occurrences(na, nqa)
             ) and any(x <= k <= l <= x + len(qb) for x in occurrences(nb, nqb))
-            unit["inventories"].append(
-                {
-                    "inventory": "tcgnt",
-                    "entry": row["entry"],
-                    "scope": "unit" if whole else "constituent",
-                    "hf": row["hf"],
-                    "quotation_span": refs,
-                }
-            )
-            if "tcgnt" not in unit["found_in"]:
-                unit["found_in"].append("tcgnt")
+            witness = row["inventory"]
+            attachment: UnitInventory = {
+                "inventory": witness,
+                "entry": row["entry"],
+                "scope": "unit" if whole else "constituent",
+                "quotation_span": refs,
+            }
+            if witness == "tcgnt":
+                attachment["hf"] = row["hf"]
+            unit["inventories"].append(attachment)
+            if witness not in unit["found_in"]:
+                unit["found_in"].append(witness)
                 unit["found_in"].sort()
-            record_side(unit, row)
+            if witness == "tcgnt":
+                record_side(unit, row)
     return result, remaining
 
 
@@ -894,8 +900,11 @@ def reconcile(
     tags: Tagged | None = None,
     splits: Mapping[str, list[str]] | None = None,
     structure: Structure | None = None,
+    printed: Sequence[BoydNote] = (),
 ) -> tuple[list[Unit], list[Unmatched]]:
-    """The units, with their inventory attachments, and the unmatched entries."""
+    """The units, with their inventory attachments, and the unmatched entries.
+    printed: the entries of RP2026's printed apparatus that give the Received
+    Text a reading (greek.apparatus), attached as Boyd's notes are."""
     assert structure is not None
     forms = quotation_forms(tags or {})
     rows = blocks(tr, rp, structure, collation, tags)
@@ -912,9 +921,10 @@ def reconcile(
         qb: list[str] | None,
         note: BoydNote | None,
     ) -> str | None:
-        """Attach an inventory's entry (a collation row, or a TCGNT note with
-        its one Scrivener reading) to the units it locates; or the reason it
-        is unmatched."""
+        """Attach an inventory's entry (a collation row, or a TCGNT note or
+        printed apparatus entry with its one Scrivener reading) to the units
+        it locates; or the reason it is unmatched."""
+        quoted = witness != "collation"
         break_scope: set[int] | None = None
         rp_start: int | None = None
         ref = structure.kjv_ref(target)
@@ -952,8 +962,9 @@ def reconcile(
                 # Boyd's main text is RP2018. Apply only Appendix A's
                 # named pair to locate a note against RP2026, requiring
                 # exact whole-verse agreement afterwards. A note inside
-                # the changed pair has no transferable position.
-                if target in PATCHES:
+                # the changed pair has no transferable position. The
+                # printed apparatus's callers already stand in RP2026.
+                if witness == "tcgnt" and target in PATCHES:
                     old, new = PATCHES[target]
                     normalized_source = normal(source, forms)
                     starts = occurrences(normalized_source, normal(old, forms))
@@ -993,7 +1004,7 @@ def reconcile(
                 qb,
                 units,
                 rp_start,
-                forms if witness == "tcgnt" else None,
+                forms if quoted else None,
             )
             if not match and note is not None and splits:
                 match, break_scope = word_break_match(
@@ -1012,11 +1023,11 @@ def reconcile(
                 return f"RP2026 Appendix A changed {' '.join(old)} to {' '.join(new) or '∅'}"
             return "no unique exact content match"
         located_tr, located_rp, located_qa, located_qb = [
-            normal(side, forms) if witness == "tcgnt" else side
+            normal(side, forms) if quoted else side
             for side in (tr[ref], rp[target], qa, qb)
         ]
         normalized = (
-            witness == "tcgnt"
+            quoted
             and break_scope is None
             and not matching_blocks(tr[ref], rp[target], qa, qb, units, rp_start)
         )
@@ -1057,10 +1068,11 @@ def reconcile(
                 attachment["word_break_normalization"] = (
                     "Boyd Appendix C and closed movable quotation forms"
                 )
-            if note is not None:
+            # Hodges and Farstad's side is Boyd's to report.
+            if witness == "tcgnt" and note is not None:
                 attachment["hf"] = note["hf"]
             unit["inventories"].append(attachment)
-            if note is not None:
+            if witness == "tcgnt" and note is not None:
                 record_side(unit, note)
         return None
 
@@ -1100,6 +1112,23 @@ def reconcile(
         )
         if reason:
             unmatched.append({"inventory": "tcgnt", **note, "reason": reason})
+    for entry_row in printed:
+        reason = (
+            "multiple Scrivener readings"
+            if len(entry_row["tr"]) != 1
+            else place(
+                PRINTED_APPARATUS,
+                entry_row["target_ref"],
+                entry_row["entry"],
+                reading_words(entry_row["tr"][0]["reading"]),
+                reading_words(entry_row["rp"]),
+                entry_row,
+            )
+        )
+        if reason:
+            unmatched.append(
+                {"inventory": PRINTED_APPARATUS, **entry_row, "reason": reason}
+            )
     # Merge blocks covered by one collation entry; this preserves a
     # transposition as one unit. Overlapping entry ranges merge together.
     merged: list[Unit] = []
@@ -1208,12 +1237,15 @@ def supplementary_units(
     structure: Structure,
     accents: Mapping[str, Mapping[str, str]],
     alignment: Alignment | None = None,
+    printed: Sequence[BoydNote] = (),
 ) -> list[Unit]:
     """Verse relocations and accent-only units, with their inventory evidence.
     accents: the editor's accent units (edition/byzantine.json), by unit id,
     each with the TR's and RP's accented words; one that quotes several
     occurrences of a word, with ellipses, is a TCGNT note's. alignment: the
-    printed words' alignment to rp (greek.align), if the caller has it."""
+    printed words' alignment to rp (greek.align), if the caller has it.
+    printed: the printed apparatus's entries (greek.apparatus); one that
+    quotes an accent unit's words with their accents is about it."""
     moves: list[Unit] = []
     for ref, target in structure.moved.items():
         inventories: list[UnitInventory] = []
@@ -1463,6 +1495,28 @@ def supplementary_units(
                 "page": printed_page(snapshot, ref),
             }
         )
+    for unit in accent_units:
+        for entry_row in printed:
+            reading = entry_row["tr"][0]["reading"]
+            if (
+                entry_row["target_ref"] == unit["ref"]
+                and len(entry_row["tr"]) == 1
+                and ascii_greek(reading) == ascii_greek(unit["tr_accented"])
+                and ascii_greek(entry_row["rp"]) == ascii_greek(unit["rp_accented"])
+                and any(
+                    unicodedata.combining(c)
+                    for c in unicodedata.normalize("NFD", reading)
+                )
+            ):
+                unit["inventories"].append(
+                    {
+                        "inventory": PRINTED_APPARATUS,
+                        "entry": entry_row["entry"],
+                        "scope": "unit",
+                    }
+                )
+                if PRINTED_APPARATUS not in unit["found_in"]:
+                    unit["found_in"] = [*unit["found_in"], PRINTED_APPARATUS]
     # A unit is keyed by its id, and a verse has one accent unit.
     ids = Counter(unit["id"] for unit in accent_units)
     for unit_id, count in ids.items():
