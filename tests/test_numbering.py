@@ -348,7 +348,7 @@ def test_the_page_prints_its_tables(edition: bible.pipeline.Edition) -> None:
     assert "\\tr\n\\tc1 (\\it missing\\it*)\n\\tc2 151\n" in page
     blocks = list(usj.objects(edition.documents[NUMBERING["id"]]["content"]))
     headings = [
-        usj.text_of(next(usj.objects(table["content"]))["content"][:1])
+        usj.text_of(next(usj.objects(table["content"]))["content"][1:2])
         for table in tables[1:]
     ]
     # The Psalms' table stands at their place, under the editor's words, and
