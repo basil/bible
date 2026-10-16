@@ -38,6 +38,7 @@ from bible.byzantine.rows import (
 from bible.byzantine.tags import asserted
 from bible.byzantine.units import keyed_units, record_side
 from bible.checks import CheckFailed, present, require
+from bible.scripture import plain
 
 # A witness's row that a placement can attach: an apparatus report, a
 # selected list's footnote, or an instruction.
@@ -430,8 +431,8 @@ def validate_overrides(
                     )
                 elif witness in texts:
                     ref = item.get("ref")
-                    verse = " ".join(texts[witness].get(ref, "").split())
-                    normalized = " ".join(quote.split())
+                    verse = plain(texts[witness].get(ref, ""))
+                    normalized = plain(quote)
                     # A bracket the source itself prints is quoted verbatim.
                     bracketed = (
                         "[" in normalized or "]" in normalized

@@ -27,7 +27,7 @@ import bible.policy
 from bible import scripture, usj, versification
 from bible.alignment import Alignment
 from bible.checks import CheckFailed, require, require_fields
-from bible.references import Verse, verse_at
+from bible.references import Verse, book_of, verse_at
 from bible.usj import Content, Document, Node
 
 # Whether a second witness sets a verse of a book in lines: True or False
@@ -239,7 +239,7 @@ class Decisions:
         found = [
             d
             for d in self.entries
-            if d.verse.split(" ")[0] == code
+            if book_of(d.verse) == code
             and d.verse.split(" ")[1].split(":")[0] == chapter.number
             and tuple(words[index : index + len(d.follows)]) == d.follows
         ]
@@ -540,12 +540,15 @@ def old_testament(
         if code not in update:
             continue
         source = chapters(update[code])
-        target = chapters(doc)
+        target: dict[str, Chapter] | None = None
         spans: dict[str, list[Span]] = {}
         for number, chapter in source.items():
             found = update_spans(chapter, update[code])
             if not found:
                 continue
+            # Half of the books have no poem: their chapters are never read.
+            if target is None:
+                target = chapters(doc)
             require(
                 number in target, f"Update chapter the source lacks: {code} {number}"
             )
@@ -557,7 +560,7 @@ def old_testament(
 
             spans[number] = witnessed(placed_spans, target[number], keep)
         spans = {number: found for number, found in spans.items() if found}
-        if not spans:
+        if not spans or target is None:
             continue
         result[code] = relined(doc, target, spans)
     decisions.check_all_taken()
@@ -716,18 +719,13 @@ def _divided(block: Node, cuts: Sequence[tuple[int, str, bool]]) -> list[Node]:
 INLINE_PAUSES = frozenset({"PSA 67:8"})
 
 
-def _verses_at(content: Iterable[str | Node]) -> list[tuple[int, str]]:
+def _verses_at(content: Content) -> list[tuple[int, str]]:
     """Where each verse of some content begins among its words."""
-    starts: list[tuple[int, str]] = []
-    offset = 0
-    for item in content:
-        if isinstance(item, str):
-            offset += len(item)
-        elif usj.is_type(item, "verse"):
-            starts.append((offset, item["number"]))
-        elif "content" in item and not usj.is_note(item):
-            offset += len(usj.text_of(item["content"]))
-    return starts
+    return [
+        (start, label)
+        for label, start, _ in _segments(content)[1:]
+        if label is not None
+    ]
 
 
 def pauses(doc: Document) -> Document:

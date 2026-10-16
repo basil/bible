@@ -842,7 +842,7 @@ def test_supplementary_units_refuse_a_changed_printed_reading_or_scope(
         byzantine["printed"],
     )
     _, diacritics = greek.printed(
-        byzantine["printed_xml"], structure.omitted, "REV 22:21"
+        greek.tree(byzantine["printed_xml"]), structure.omitted, "REV 22:21"
     )
     accents = byzantine["decisions"]["accents"]
     before = copy.deepcopy((tr, rp, coll, notes, printed, diacritics))
@@ -933,7 +933,7 @@ def test_duplicate_accent_unit_ids_are_rejected(
     byzantine: Mapping[str, Any], structure: Structure
 ) -> None:
     _, diacritics = greek.printed(
-        byzantine["printed_xml"], structure.omitted, "REV 22:21"
+        greek.tree(byzantine["printed_xml"]), structure.omitted, "REV 22:21"
     )
     assert diacritics
     with pytest.raises(CheckFailed, match=re.escape(diacritics[0]["ref"] + "#accent")):

@@ -528,9 +528,9 @@ def test_a_unit_says_how_it_cites_and_meets_each_decision_once(
 ) -> None:
     policy = changed(policy, "citations", change)
     [preface] = [entry for entry in policy.entries if entry["id"] == "XXB"]
-    doc, text = read.brenton["XXB"], sources.brenton["XXB"]
+    doc = read.brenton["XXB"]
     with pytest.raises(CheckFailed, match=refusal):
-        matter.unit(preface, doc, text, replace(ctx, policy=policy), annotate.Report())
+        matter.unit(preface, doc, replace(ctx, policy=policy), annotate.Report())
 
 
 def test_markup_within_a_citation_goes_with_it(
@@ -538,7 +538,7 @@ def test_markup_within_a_citation_goes_with_it(
 ) -> None:
     def cited(text: str, dialect: str = "kjv-preface") -> str:
         content = usj.parse(text, fragment=True)
-        words = matter.words(content)
+        words = usj.unlabelled(content)
         reading = matter.Reading(words, tuple(cite(words, dialect, home=None)))
         return usj.serialize(matter.cited(content, reading, ctx.books, "x"))
 

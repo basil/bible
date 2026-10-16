@@ -43,6 +43,7 @@ from bible.byzantine.rows import (
 from bible.byzantine.tags import Tag
 from bible.byzantine.units import NEUTRAL_CLASSES
 from bible.checks import require
+from bible.scripture import plain
 
 HYPER_LITERAL = set(APPARATUS) - {TCENT}
 GRAM_BY_CLASS = {
@@ -715,7 +716,7 @@ def surface(text: str) -> str:
     """A verse's text for comparison: spacing normalized, everything else
     kept, supplied-word brackets, capitals and stops included."""
     text = curly_apostrophes(text)
-    return re.sub(r"\s+([,;:.!?])", r"\1", " ".join(text.split()))
+    return re.sub(r"\s+([,;:.!?])", r"\1", plain(text))
 
 
 def same_effect(

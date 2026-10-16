@@ -18,10 +18,11 @@ read stage parsed; `promoted` gives one book as the promote stage prints it.
 from __future__ import annotations
 
 from collections.abc import Mapping
-from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 
+from bible import usj
 from bible.byzantine.rows import Placement
+from bible.checks import require
 from bible.sources import NEW_TESTAMENT, Content
 from bible.usj import Document
 
@@ -61,26 +62,17 @@ REVISIONS = (RV, BOYD_ASV)
 WITNESSES = (*INSTRUCTION_SOURCES, *APPARATUS, *REVISIONS)
 
 
-@dataclass(frozen=True)
-class Reconciled:
-    """Everything the reconciliation worked out, for the promotion, the
-    review and the appendix: the Greek ledger, the witnesses attached to it,
-    the dispositions, and the King James books with the dispositions carried
-    out (before their subscriptions are put back), by the names the
-    stages give them (stages.Context)."""
-
-    context: Context
-
-
 def reconciled(
     inputs: Mapping[str, Content],
     kjv: Mapping[str, Document],
     decisions: Mapping[str, Any],
     placements: Mapping[str, Any],
-) -> Reconciled:
+) -> Context:
     """Every stage of the reconciliation, in order, from the read sources and
     the editor's decisions (edition/byzantine.json, thawed) and placements
-    (edition/byzantine-placements.json, thawed)."""
+    (edition/byzantine-placements.json, thawed): everything it worked out,
+    for the promotion, the review and the appendix, by the names the stages
+    give it (stages.Context)."""
     from bible.byzantine import stages
 
     placed: list[Placement] = []
@@ -101,7 +93,7 @@ def reconciled(
     for stage in stages.STAGES:
         stage(context)
     checked(context)
-    return Reconciled(context)
+    return context
 
 
 def checked(context: Context) -> None:
@@ -112,7 +104,6 @@ def checked(context: Context) -> None:
     note that does not give back the King James words stops the build and
     names itself."""
     from bible.byzantine.verify import UNRESTORED_RENDERING, UNRESTORED_VARIANT
-    from bible.checks import require
 
     require(
         not context["decision_errors"],
@@ -147,18 +138,15 @@ def checked(context: Context) -> None:
     )
 
 
-def promoted(code: str, found: Reconciled, terms: Registry) -> Document:
+def promoted(code: str, found: Context, terms: Registry) -> Document:
     """A King James book with the Byzantine readings in it and the notes on
     them in the edition's form, labelled with the abbreviation of the witness
     they name (received.labels), and its subscription put back after its
     verses."""
-    from bible import usj
     from bible.byzantine import notes
 
-    doc = notes.for_edition(
-        found.context["prepared"][code], terms, found.context["note_witnesses"]
-    )
-    tail = found.context["subscriptions"].get(code, ())
+    doc = notes.for_edition(found["prepared"][code], terms, found["note_witnesses"])
+    tail = found["subscriptions"].get(code, ())
     if not tail:
         return doc
     return usj.with_blocks(doc, [*doc["content"], *tail])

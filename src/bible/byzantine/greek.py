@@ -20,6 +20,7 @@ from typing import TypedDict, cast
 from bible.byzantine import BOOKS
 from bible.byzantine.rows import BoydNote, BoydReading, Token
 from bible.checks import CheckFailed, present, require
+from bible.scripture import plain
 from bible.sources import BYZTXT_BOOKS, Content
 from bible.usfm import GREEK
 
@@ -310,8 +311,7 @@ def accented_scrivener(
         ref = f"{row['book_name_short']} {row['chapter']}:{row['verse']}"
         require(ref not in source, f"Duplicate accented Scrivener verse: {ref}")
         source[ref] = [
-            unicodedata.normalize("NFC", " ".join(w["greek"].split()))
-            for w in row["words"]
+            unicodedata.normalize("NFC", plain(w["greek"])) for w in row["words"]
         ]
     require(
         set(source) == set(tr),
@@ -398,7 +398,7 @@ def parsed_scrivener(folder: Content) -> tuple[Text, Tags]:
             if "[" in body:
                 body = body[: body.index("[")]
             body = body.translate(str.maketrans("vxc", "scx"))
-            _, tokens = bp5_line(ref.replace(":", ".") + " " + " ".join(body.split()))
+            _, tokens = bp5_line(ref.replace(":", ".") + " " + plain(body))
             key = f"{book} {ref}"
             require(key not in text, f"Duplicate UTR verse: {key}")
             text[key], tags[key] = [t["word"] for t in tokens], tokens
@@ -472,7 +472,7 @@ APPARATUS_FONTS = {
 }
 
 
-def apparatus(path: Content, verses: Mapping[str, PrintedVerse]) -> list[BoydNote]:
+def apparatus(root: ET.Element, verses: Mapping[str, PrintedVerse]) -> list[BoydNote]:
     """The printed apparatus's entries that give the Received Text a reading
     (TR or SCR), in the shape of Boyd's notes (inventories.boyd): the reference
     and the main text's words, each other reading with its sigla, the page,
@@ -481,7 +481,6 @@ def apparatus(path: Content, verses: Mapping[str, PrintedVerse]) -> list[BoydNot
     manuscript apparatus below it names no edition and so gives no such
     reading."""
     called = {key: ref for ref, verse in verses.items() for key in verse["callers"]}
-    root = tree(path)
     for code, family in APPARATUS_FONTS.items():
         spec = root.find(f".//fontspec[@id='{code}']")
         require(
@@ -619,12 +618,11 @@ def page_text(pages: Iterable[ET.Element], main: bool = True) -> str:
 
 
 def printed(
-    path: Content, omitted: frozenset[str], last: str
+    root: ET.Element, omitted: frozenset[str], last: str
 ) -> tuple[dict[str, PrintedVerse], list[Diacritic]]:
     """The printed RP2026: per verse, ascii forms, accented words and page; and
     the same-letter accent contrasts its apparatus prints against the TR. The
     text ends with its last verse, which RP2018 also ends with."""
-    root = tree(path)
     spec = root.find(".//fontspec[@id='25']")
     require(
         spec is not None

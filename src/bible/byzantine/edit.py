@@ -23,7 +23,7 @@ from bible.byzantine.crosswire import (
     unique_moves,
     words,
 )
-from bible.byzantine.greek import Structure, occurrences
+from bible.byzantine.greek import Structure
 from bible.byzantine.rows import Disposition, Edit, Seam
 from bible.checks import CheckFailed, require
 from bible.scripture import Verse
@@ -654,7 +654,7 @@ def renumber(content: Content, ref: str) -> Content:
     """A verse's content with the references of its notes made ref."""
 
     def change(node: Node) -> Node:
-        if node.get("marker") in {"fr", "xo"}:
+        if usj.is_origin(node):
             return {**node, "content": [ref + " "]}
         return node
 

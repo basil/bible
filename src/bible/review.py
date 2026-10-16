@@ -31,11 +31,10 @@ import shutil
 from collections.abc import Mapping
 
 import bible.ccel
-import bible.pipeline
 import bible.policy
-import bible.sources
 from bible import (
     assembly,
+    export,
     paths,
     pipeline,
     places,
@@ -64,7 +63,7 @@ def note_line(row: Mapping[str, object]) -> str:
     )
 
 
-def notes_report(edition: bible.pipeline.Edition) -> str:
+def notes_report(edition: pipeline.Edition) -> str:
     return "# Notes\n\n" + "".join(
         f"## {code}\n\n" + "".join(map(note_line, rows)) + "\n"
         for code, rows in edition.notes.items()
@@ -150,9 +149,7 @@ def context(verses: Mapping[str, scripture.Verse], wanted: set[str]) -> str:
     )
 
 
-def alexandrinus_report(
-    read: bible.pipeline.Read, edition: bible.pipeline.Edition
-) -> str:
+def alexandrinus_report(read: pipeline.Read, edition: pipeline.Edition) -> str:
     policy = edition.policy
     data = policy.alexandrinus
     sources: dict[str, dict[str, scripture.Verse]] = {}
@@ -167,11 +164,23 @@ def alexandrinus_report(
             cache[code] = scripture.verses(docs[code])
         return cache[code]
 
+    # Every note's row, by its key, by the key before the "@" of one that
+    # has it, and by its unit and verse, in the order the review lists them.
+    listed = [(unit, row) for unit, rows in edition.notes.items() for row in rows]
+    by_key: dict[str, list[int]] = {}
+    by_stem: dict[str, list[int]] = {}
+    by_verse: dict[tuple[str, str], list[int]] = {}
+    for index, (unit, row) in enumerate(listed):
+        by_key.setdefault(row["key"], []).append(index)
+        stem, at, _ = row["key"].partition("@")
+        if at:
+            by_stem.setdefault(stem, []).append(index)
+        by_verse.setdefault((unit, row["reference"]), []).append(index)
     lines = ["# Alexandrine readings\n\n"]
     audit = []
     for section in ("readings", "passages", "kept"):
         for key, decision in data[section].items():
-            code = key.removeprefix(f"{APPENDIX} ").split()[0]
+            code = references.book_of(key.removeprefix(f"{APPENDIX} "))
             # The verse a decision's note stands in, whatever source follows
             # its reference (GEN 1:2#2, 2CH 2:12 CCEL, BAK 1KI 2:35a).
             target = decision.get("target", key).removeprefix(f"{APPENDIX} ")
@@ -207,14 +216,17 @@ def alexandrinus_report(
                 *decision.get("note_edits", ()),
                 *decision.get("source_notes", ()),
             }
-            footnotes = [
-                row
-                for unit, rows in edition.notes.items()
-                for row in rows
-                if row["key"] in keys
-                or row["key"].startswith(key + "@")
-                or row["reference"] in targets.get(unit, ())
-            ]
+            found = {
+                *(index for k in keys for index in by_key.get(k, ())),
+                *by_stem.get(key, ()),
+                *(
+                    index
+                    for unit, references_ in targets.items()
+                    for reference in references_
+                    for index in by_verse.get((unit, reference), ())
+                ),
+            }
+            footnotes = [listed[index][1] for index in sorted(found)]
             derivations = [
                 {"target": item.get("target", key), **item["english"]}
                 for item in ([decision] if "english" in decision else [])
@@ -270,13 +282,9 @@ def alexandrinus_report(
     return "".join(lines + audit)
 
 
-def review(
-    sources: bible.sources.Sources,
-    policy: bible.policy.Policy,
-    edition: bible.pipeline.Edition,
-) -> None:
+def review(edition: pipeline.Edition) -> None:
     """Write the review, and what differs in it from the last one."""
-    read = pipeline.read(sources, policy)
+    read, policy = edition.read, edition.policy
     files = {
         "notes.md": notes_report(edition),
         "ccel.md": ccel_report(edition.ccel),
@@ -284,14 +292,12 @@ def review(
         "numbering.md": places.report(
             edition.policy.versification["kjv"], edition.documents, read.kjv
         ),
-        "byzantine.md": byzantine_review.summary(edition.byzantine.context),
+        "byzantine.md": byzantine_review.summary(edition.byzantine),
         **{
             f"byzantine/{name}": text
-            for name, text in byzantine_review.packets(
-                edition.byzantine.context
-            ).items()
+            for name, text in byzantine_review.packets(edition.byzantine).items()
         },
-        **{f"text/{code}.usfm": text for code, text in pipeline.export(edition, "pdf")},
+        **{f"text/{code}.usfm": text for code, text in export.export(edition, "pdf")},
     }
     base = paths.BUILD_DIR / "review"
     changes: list[str] = []

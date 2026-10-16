@@ -32,7 +32,6 @@ from __future__ import annotations
 import bisect
 import re
 import unicodedata
-from collections import Counter
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass, replace
 from types import MappingProxyType
@@ -50,11 +49,12 @@ from bible import (
     repairs,
     scripture,
     terminology,
+    usfm,
     usj,
     versification,
 )
 from bible.alexandrinus import ALEX, APPENDIX
-from bible.checks import CheckFailed, require
+from bible.checks import CheckFailed, require, require_used
 from bible.policy_schema import CcelNote, Correction
 from bible.sources import Content
 from bible.usj import Document, Node
@@ -73,7 +73,9 @@ SKIPPED = {"script", "style", "table", "center"}
 HEADINGS = {"h1", "h2", "h3", "h4", "h5", "h6"}
 BARE_LETTER = re.compile(r"[α-ω]")
 STOP = re.compile(r"\s+([.,;:?!])")
-LABEL_STOP = re.compile(r"\.$")
+# A letter of each alphabet, with its combining marks.
+GREEK_LETTER = re.compile(f"[{usfm.COMBINING}{usfm.GREEK}]")
+HEBREW_LETTER = re.compile(f"[{usfm.HEBREW}]")
 
 
 # SIL's published conversion tables, consulted 2026-10-13:
@@ -188,7 +190,7 @@ def font_words(element: html.HtmlElement) -> str:
         text = re.sub(pattern, hebrew, text)
         require(
             not any(
-                (c.isalpha() or ord(c) > 127) and not "\u0590" <= c <= "\u05ff"
+                (c.isalpha() or ord(c) > 127) and not HEBREW_LETTER.fullmatch(c)
                 for c in text
             ),
             "undecodable SIL Ezra characters",
@@ -206,9 +208,7 @@ def font_words(element: html.HtmlElement) -> str:
                 c
                 if c.isspace()
                 or c in "!&()*+,-./0123456789:<=>[]{}"
-                or "\u0300" <= c <= "\u036f"
-                or "\u0370" <= c <= "\u03ff"
-                or "\u1f00" <= c <= "\u1fff"
+                or GREEK_LETTER.fullmatch(c)
                 else "�"
             ),
         )
@@ -294,7 +294,6 @@ class Report:
     pages: int
     bodies: int
     inserted: int
-    duplicates: int
     held: tuple[Listed, ...]
     left_out: tuple[Listed, ...]
     matched: tuple[Duplicate, ...]
@@ -304,6 +303,11 @@ class Report:
     # How many keys each verse's placed notes took, whatever became of them,
     # so that a note set after promotion is numbered after them all.
     numbered: tuple[tuple[str, int], ...] = ()
+
+    @property
+    def duplicates(self) -> int:
+        """How many notes eBible already had."""
+        return len(self.matched)
 
 
 # Reading the pages.
@@ -820,12 +824,7 @@ def outside_styles(doc: Document, verse: scripture.Verse, offset: int) -> int:
 
 def note_words(note: Node) -> str:
     """A note's complete text after its origin, preserving Unicode and labels."""
-    content = [
-        item
-        for item in note["content"]
-        if not usj.is_type(item, "char", "fr") and not usj.is_type(item, "char", "xo")
-    ]
-    return usj.text_of(content)
+    return usj.text_of([item for item in note["content"] if not usj.is_origin(item)])
 
 
 def canonical_note(text: str) -> str:
@@ -1046,8 +1045,7 @@ def supplemented(
                 body.source,
             )
         )
-    unused = sorted(set(decisions) - taken)
-    require(not unused, f"Unused CCEL note decisions: {unused}")
+    require_used(decisions, taken, "CCEL note decisions")
     # The notes of a verse, in the order of their places, each with its key;
     # Every placed candidate is numbered before its disposition is decided,
     # including duplicates and omissions: changing one cannot rename another.
@@ -1057,7 +1055,7 @@ def supplemented(
     changes: dict[str, list[tuple[scripture.Verse, int, int, usj.Content]]] = {}
     held: list[Listed] = []
     matched: list[Duplicate] = []
-    inserted = duplicates = 0
+    inserted = 0
     # eBible's notes that a decision sets in another verse, where a CCEL note
     # there is the same note. The decision names that verse as the edition
     # numbers the note's unit, and a candidate stands in eBible's verse of its
@@ -1073,7 +1071,7 @@ def supplemented(
 
     moved_in: dict[references.Verse, list[Node]] = {}
     for note_key, override in policy.brenton_notes["notes"].items():
-        if "verse" not in override or note_key.split()[0] not in books:
+        if "verse" not in override or references.book_of(note_key) not in books:
             continue
         code, _, noted = note_key.partition("#")[0].partition(" ")
         unit = assembly.unit_verse(policy, code, noted)
@@ -1158,7 +1156,6 @@ def supplemented(
                         body.source,
                     )
                 )
-                duplicates += 1
                 continue
             if ALEX.search(body.text) and not decided_alexandrine(policy, key):
                 held.append(
@@ -1185,7 +1182,6 @@ def supplemented(
         count,
         len(bodies),
         inserted,
-        duplicates,
         tuple(held),
         tuple(sorted(listed, key=lambda item: item.key)),
         tuple(matched),
@@ -1209,7 +1205,12 @@ def supplied(
     if not report.deferred:
         return MappingProxyType(dict(documents)), report
     terms = terminology.registry(policy)
-    books = books_of(documents)
+    # The books the decisions name, read for their verses and words.
+    named = {
+        references.book_of(policy.ccel_notes["notes"][body.key]["verse"])
+        for body in report.deferred
+    }
+    books = books_of({code: documents[code] for code in named if code in documents})
     candidates: dict[tuple[str, str], list[Candidate]] = {}
     for body in report.deferred:
         decision = policy.ccel_notes["notes"][body.key]

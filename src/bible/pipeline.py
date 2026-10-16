@@ -21,11 +21,11 @@ text and receive their own punctuation finishing pass.
 from __future__ import annotations
 
 import re
-from collections.abc import Callable, Mapping, Sequence
-from dataclasses import dataclass, replace
+from collections import Counter
+from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
 from types import MappingProxyType
 
-import bible.annotate
 import bible.policy
 import bible.references
 import bible.sources
@@ -38,7 +38,6 @@ from bible import (
     crossrefs,
     lines,
     matter,
-    notes,
     numbering,
     places,
     psalter,
@@ -54,10 +53,9 @@ from bible import (
     usj,
     versification,
 )
-from bible.byzantine import appendix
-from bible.checks import present, require
+from bible.byzantine import appendix, stages
+from bible.checks import present, require, require_used
 from bible.policy import source_id
-from bible.policy_schema import Entry, WordingChange
 from bible.usj import Content, Document, Node
 
 type MetValue = str | tuple[str | None, ...]
@@ -84,6 +82,15 @@ class Read:
     # What came of CCEL's notes: how many were set in Brenton's verses, and
     # which were held back or left out, and why.
     ccel: ccel.Report
+    # The King James Bible's books under its names, and every book's
+    # chapters, for the table of chapters and verses: read from the files'
+    # text, since only the books the edition needs are parsed.
+    kjv_books: bible.references.Books
+    kjv_chapters: MappingProxyType[str, Mapping[str, Sequence[str]]]
+    # The editor's own pages, filled in and parsed by the authored stage.
+    authored: MappingProxyType[str, str]
+    # The New Testament's Greek texts and witnesses, for the reconciliation.
+    byzantine: MappingProxyType[str, bible.sources.Content]
 
 
 def note_key(code: str, reference: str, number: int) -> str:
@@ -101,7 +108,7 @@ def keyed(code: str, doc: Document) -> Document:
     """A source book with each note keyed by its source verse."""
     seen: dict[str, int] = {}
     verses = scripture.verses(doc)
-    keys = {}
+    noted: list[tuple[Node, str]] = []
     for reference, verse in verses.items():
         for _, note in verse.notes:
             origin = note_origin(note)
@@ -110,27 +117,12 @@ def keyed(code: str, doc: Document) -> Document:
                 f"Note reference disagrees with its verse: {code} {origin}",
             )
             seen[reference] = seen.get(reference, 0) + 1
-            keys[id(note)] = note_key(code, reference, seen[reference])
-    if not keys:
+            noted.append((note, note_key(code, reference, seen[reference])))
+    if not noted:
         return doc
-
-    # The notes are keyed by their identity, so they are found in place
-    # rather than rebuilt by usj.mapped.
-    def visit(content: Content) -> Content:
-        return [
-            (
-                {**item, "x-key": keys[id(item)]}
-                if isinstance(item, dict) and id(item) in keys
-                else (
-                    {**item, "content": visit(item["content"])}
-                    if isinstance(item, dict) and "content" in item
-                    else item
-                )
-            )
-            for item in content
-        ]
-
-    return usj.with_content(doc, visit)
+    return usj.replaced_by_identity(
+        doc, {id(note): {**note, "x-key": key} for note, key in noted}
+    )
 
 
 def marginal_notes(
@@ -183,8 +175,7 @@ def marginal_notes(
         )
     require(not corrections, f"Unused marginal note corrections: {sorted(corrections)}")
     keys = {n["key"] for listed in result.values() for n in listed}
-    unused = set(policy.kjv_notes["notes"]) - keys
-    require(not unused, f"Unused marginal note exceptions: {sorted(unused)}")
+    require_used(policy.kjv_notes["notes"], keys, "marginal note exceptions")
     require(
         len(keys) == EXPECTED_NT_MARGINAL_NOTES,
         f"Expected {EXPECTED_NT_MARGINAL_NOTES} New Testament marginal notes, found {len(keys)}",
@@ -205,7 +196,7 @@ def read(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Read:
         if e.get("source") == "brenton"
         for code in assembly.source_codes(e)
     }
-    unprinted = sorted({k.split(" ")[0] for k in corrections} - printed)
+    unprinted = sorted({bible.references.book_of(k) for k in corrections} - printed)
     require(
         not unprinted,
         f"Brenton corrections name a source the edition doesn't read: {unprinted}",
@@ -219,7 +210,7 @@ def read(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Read:
     wanted = (
         {source_id(e) for e in policy.entries if e.get("source") == "kjv"}
         | {
-            key.split()[0]
+            bible.references.book_of(key)
             for key, e in policy.alexandrinus["passages"].items()
             if "kjv" in e
         }
@@ -235,16 +226,26 @@ def read(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Read:
     # The notes eBible's transcription lacks, from CCEL's, set in its verses
     # after its own notes are keyed, so that their keys never shift.
     supplemented, ccel_report = ccel.supplemented(brenton, sources.ccel, policy)
+    # Its books have chapters; its prefaces have none.
+    facing = {
+        code: chapters
+        for code, text in sources.kjv.items()
+        if (chapters := usfm.inventory(text)["chapters"])
+    }
     return Read(
-        supplemented,
-        MappingProxyType(kjv),
-        MappingProxyType(
+        brenton=supplemented,
+        kjv=MappingProxyType(kjv),
+        updated_brenton=MappingProxyType(
             {code: usj.parse(text) for code, text in sources.updated_brenton.items()}
         ),
-        MappingProxyType(mended),
-        marginal_notes(sources.marginal, policy),
-        tvtms.rows(sources.versification)[0],
-        ccel_report,
+        mended=MappingProxyType(mended),
+        marginal=marginal_notes(sources.marginal, policy),
+        versification=tvtms.rows(sources.versification)[0],
+        ccel=ccel_report,
+        kjv_books=assembly.kjv_books(policy, sources.kjv),
+        kjv_chapters=MappingProxyType(facing),
+        authored=sources.authored,
+        byzantine=sources.byzantine,
     )
 
 
@@ -257,15 +258,13 @@ class Promoted:
     brenton: MappingProxyType[str, Document]
     kjv: MappingProxyType[str, Document]
     alexandrine: tuple[int, int]
-    byzantine: byzantine.Reconciled
+    byzantine: stages.Context
+    # What came of CCEL's notes, with those set in the verses the promotion
+    # supplied.
+    ccel: ccel.Report
 
 
-def promote(
-    sources: Read,
-    policy: bible.policy.Policy,
-    inputs: Mapping[str, bible.sources.Content],
-    terms: terminology.Registry,
-) -> Promoted:
+def promote(sources: Read, policy: bible.policy.Policy) -> Promoted:
     """Brenton's books with the Alexandrine decisions carried out, and the
     King James books with the Byzantine readings in them: in each, the
     chosen text goes into the verse and the displaced reading becomes a
@@ -273,29 +272,31 @@ def promote(
     unused = sorted(
         key
         for key in policy.brenton_notes.get("renderings", {})
-        if key.split()[0] not in sources.brenton
-        or key.split()[0] == alexandrinus.APPENDIX
+        if bible.references.book_of(key) not in sources.brenton
+        or bible.references.book_of(key) == alexandrinus.APPENDIX
     )
     require(not unused, f"Unused Brenton renderings: {unused}")
     counts = alexandrinus.check(policy, sources.brenton)
+    terms = terminology.registry(policy)
     found = byzantine.reconciled(
-        inputs,
+        sources.byzantine,
         {code: sources.kjv[code] for code in byzantine.BOOKS},
         bible.policy.thaw(policy.byzantine),
         bible.policy.thaw(policy.byzantine_placements),
     )
+    brenton = {
+        code: renderings.brenton(
+            code,
+            alexandrinus.promoted(code, doc, policy, sources.kjv),
+            policy.brenton_notes.get("renderings", {}),
+        )
+        for code, doc in sources.brenton.items()
+        if code != alexandrinus.APPENDIX
+    }
+    # The CCEL notes on words the promotion supplies, which waited for them.
+    supplied, report = ccel.supplied(brenton, sources.ccel, policy)
     return Promoted(
-        MappingProxyType(
-            {
-                code: renderings.brenton(
-                    code,
-                    alexandrinus.promoted(code, doc, policy, sources.kjv),
-                    policy.brenton_notes.get("renderings", {}),
-                )
-                for code, doc in sources.brenton.items()
-                if code != alexandrinus.APPENDIX
-            }
-        ),
+        supplied,
         MappingProxyType(
             {
                 code: (
@@ -308,6 +309,7 @@ def promote(
         ),
         counts,
         found,
+        report,
     )
 
 
@@ -321,7 +323,7 @@ def lined(
     After the verses are placed, through which the witnesses are read."""
     lines.check(policy)
     old_testament = {
-        code: doc for code, doc in units.items() if code not in byzantine.BOOKS
+        code: doc for code, doc in units.items() if code not in policy.kjv_units
     }
     unknown = sorted(
         key for key in policy.lines["breaks"] if key[:3] not in old_testament
@@ -350,17 +352,15 @@ def lined(
 
 
 def assemble(
-    promoted: Promoted,
-    policy: bible.policy.Policy,
-    sources: bible.sources.Sources,
+    promoted: Promoted, policy: bible.policy.Policy, read_sources: Read
 ) -> MappingProxyType[str, Document]:
     """The edition's books under their names, and what they print."""
-    assembly.check_divided(policy, sources)
+    assembly.check_divided(
+        policy, {"brenton": read_sources.brenton, "kjv": read_sources.kjv}
+    )
     units = {
         unit["id"]: assembly.named(
-            unit,
-            assembly.scripture_unit(unit, promoted.brenton, promoted.kjv, policy),
-            assembly.source_text(unit, sources),
+            unit, assembly.scripture_unit(unit, promoted.brenton, promoted.kjv, policy)
         )
         for unit in policy.scripture
     }
@@ -369,7 +369,7 @@ def assemble(
     numbered = {
         *versification.renumberings(policy=policy),
         *(
-            reference.split()[0]
+            bible.references.book_of(reference)
             for reference in policy.versification.get("unnumbered", {})
             if reference != "why"
         ),
@@ -402,16 +402,6 @@ def placed(
     return policy.replace(versification={**policy.versification, "kjv": runs})
 
 
-def note_prose(policy: bible.policy.Policy) -> dict[str, list[WordingChange]]:
-    """The declared changes to the words of notes, by the note's key."""
-    found: dict[str, list[WordingChange]] = {}
-    for group in policy.prose.values():
-        for change in group["changes"]:
-            if "note" in change:
-                found.setdefault(change["note"], []).append(change)
-    return found
-
-
 def quotation_links(ctx: annotate.Context) -> dict[str, list[crossrefs.Link]]:
     """The reviewed quotation links, by book, each side in the edition."""
     policy = ctx.policy
@@ -432,22 +422,18 @@ def quotation_links(ctx: annotate.Context) -> dict[str, list[crossrefs.Link]]:
 
 
 def context(
-    units: Mapping[str, Document],
-    policy: bible.policy.Policy,
-    sources: bible.sources.Sources,
-) -> bible.annotate.Context:
+    units: Mapping[str, Document], policy: bible.policy.Policy
+) -> annotate.Context:
+    """What reading a note needs: the policy, what the edition prints, and
+    its books under the names the assembled units carry."""
     return annotate.Context(
         policy,
         {code: usj.inventory(doc) for code, doc in units.items()},
-        assembly.books(policy, sources),
-        terminology.registry(policy),
-        note_prose(policy),
+        assembly.books(policy, units),
     )
 
 
-def front_and_back(
-    read_sources: Read, ctx: annotate.Context, sources: bible.sources.Sources
-) -> tuple[
+def front_and_back(read_sources: Read, ctx: annotate.Context) -> tuple[
     dict[str, Document],
     dict[str, list[Content]],
     dict[str, list[Content]],
@@ -472,9 +458,7 @@ def front_and_back(
         # Of the Appendix, the notes alone: the books print its passages.
         appendix = entry["id"] in unprinted
         doc = alexandrinus.appendix_notes(source) if appendix else source
-        doc, moved = matter.unit(
-            entry, doc, assembly.source_text(entry, sources), ctx, report
-        )
+        doc, moved = matter.unit(entry, doc, ctx, report)
         if appendix:
             appendix_notes.update(moved)
         else:
@@ -549,6 +533,7 @@ def introduced(
         placed.setdefault(reference, []).extend(notes)
     if placed:
         doc = annotate.at_verse_starts(doc, verses, placed)
+        verses = scripture.verses(doc)
     # At the words the decision names, found once, or at the verse's start or
     # end, after the notes already there.
     sent = {
@@ -558,7 +543,6 @@ def introduced(
     }
     if not sent:
         return doc
-    verses = scripture.verses(doc)
     anchored: list[tuple[scripture.Verse, int, int, Content]] = []
     for reference, paragraphs in sent.items():
         key = f"{code} {reference}"
@@ -615,45 +599,123 @@ def annotated(
     return docs, reports
 
 
+@dataclass(frozen=True)
+class Revised:
+    """The translations revised: every unit of front matter and every book
+    as it prints; the books as their names alone were respelt, which the
+    kept-name check and the appendix of readings read; and the revisions
+    met, which the authored pages' own finishing pass adds to."""
+
+    finished: MappingProxyType[str, Document]
+    named: MappingProxyType[str, Document]
+    met: revision.MetRevisions
+
+
+def finished_book(
+    code: str, doc: Document, policy: bible.policy.Policy, met: revision.MetRevisions
+) -> tuple[Document, Document]:
+    """A book as revised, and as its names alone were respelt: the names
+    come first, then the declared changes to its verses and notes, then the
+    systematic spelling and punctuation; a kept name must survive them."""
+    named = revision.named(code, doc, policy, met)
+    doc = revision.revised(code, named, policy, met)
+    doc = revision.passages(code, doc, policy, met)
+    doc = revision.punctuated(revision.respelt(doc, policy, met), policy, met)
+    revision.check_kept(code, named, doc, policy)
+    return doc, named
+
+
+def finished_matter(
+    code: str, doc: Document, policy: bible.policy.Policy, met: revision.MetRevisions
+) -> Document:
+    """A unit of front or back matter as revised: its declared passages,
+    then the systematic spelling and punctuation."""
+    doc = revision.passages(code, doc, policy, met)
+    return revision.punctuated(
+        revision.respelt(doc, policy, met, book=False), policy, met
+    )
+
+
+def revise(
+    front: Mapping[str, Document],
+    books: Mapping[str, Document],
+    policy: bible.policy.Policy,
+) -> Revised:
+    """The translations' spelling and punctuation revised, after the
+    source-dependent decisions and before the edition's own pages, which
+    quote the books as they print."""
+    met: revision.MetRevisions = set()
+    finished = {
+        code: finished_matter(code, doc, policy, met) for code, doc in front.items()
+    }
+    named = {}
+    for code, doc in books.items():
+        finished[code], named[code] = finished_book(code, doc, policy, met)
+    return Revised(MappingProxyType(finished), MappingProxyType(named), met)
+
+
 def authored(
     ctx: annotate.Context,
-    sources: bible.sources.Sources,
-    readings: Sequence[Node],
-) -> tuple[dict[str, Document], int]:
-    """The edition's own pages, with the passages and tables they ask for;
-    and where the readings' blocks begin in the appendix that lists them."""
+    read_sources: Read,
+    revised: Revised,
+    found: stages.Context,
+) -> tuple[dict[str, Document], tuple[tuple[str, int, int, int], ...]]:
+    """The edition's own pages, with the passages and tables they ask for,
+    among them the appendix of readings; and each reading's run of that
+    page's blocks, by book and chapter, for the sample to choose by."""
     policy = ctx.policy
-    # Its books have chapters; its prefaces have none.
-    facing = {
-        code: chapters
-        for code, text in sources.kjv.items()
-        if (chapters := usfm.inventory(text)["chapters"])
-    }
-    theirs = assembly.kjv_books(policy, sources)
-    docs = {}
+    # The appendix quotes the King James books before the readings and the
+    # New Testament after them with the same systematic spelling and
+    # punctuation, before the verse-specific revisions, so that it shows the
+    # readings' differences alone. The names are the edition's verses' and
+    # are not applied to the King James books, so a respelt name shows in
+    # the appendix beside the reading it stands near.
+    rows = appendix.rows(
+        found,
+        {
+            code: revision.regularized(doc, policy)
+            for code, doc in found["documents"].items()
+        },
+        {
+            code: revision.regularized(doc, policy)
+            for code, doc in revised.named.items()
+            if code in policy.kjv_units
+        },
+    )
+    readings, spans = appendix.blocks(rows, ctx.books, ctx.terms)
+    pages = {}
     for entry in policy.entries:
         if "file" not in entry:
             continue
-        text = sources.authored[entry["file"]]
+        text = read_sources.authored[entry["file"]]
         require(
             text.startswith(f"\\id {entry['id']}\n"), f"Wrong id in {entry['file']}"
         )
         listing = entry["id"] == bible.policy.READINGS["id"]
-        docs[entry["id"]] = numbering.page(
+        pages[entry["id"]] = numbering.page(
             text,
             ctx.inventory,
-            facing,
+            read_sources.kjv_chapters,
             ctx.books,
-            theirs,
+            read_sources.kjv_books,
             policy=policy,
             readings=readings if listing else None,
         )
-    page = docs[bible.policy.READINGS["id"]]
+    page = pages[bible.policy.READINGS["id"]]
     offset = next(
         (index for index, block in enumerate(page["content"]) if block is readings[0]),
         len(page["content"]),
     )
-    return docs, offset
+    # These pages discuss source names, so retain their spelling. Finish
+    # punctuation after their passages and tables have been filled in.
+    docs = {
+        code: revision.punctuated(doc, policy, revised.met)
+        for code, doc in pages.items()
+    }
+    return docs, tuple(
+        (row.book, row.chapter, offset + start, offset + end)
+        for row, start, end in spans
+    )
 
 
 @dataclass(frozen=True)
@@ -663,10 +725,16 @@ class Edition:
 
     # The decisions, with the places of the verses that the build works out.
     policy: bible.policy.Policy
+    # The sources as read, which the review and the website quote.
+    read: Read
     documents: MappingProxyType[str, Document]
     # Which units are books of scripture, and which are the edition's own pages.
     scripture: frozenset[str]
     authored: frozenset[str]
+    # Every unit's contents title, running-head title and abbreviation, and
+    # the books of scripture under the names citations print.
+    names: MappingProxyType[str, Mapping[str, str]]
+    books: bible.references.Books
     inventory: MappingProxyType[str, Mapping[str, Sequence[str]]]
     # A row of the review for every note, by book, and a summary of the sources.
     notes: MappingProxyType[str, tuple[annotate.NoteRow, ...]]
@@ -676,7 +744,7 @@ class Edition:
     met: Met
     # What the reconciliation of the New Testament with the Byzantine text
     # worked out, for the review and the appendix of readings.
-    byzantine: byzantine.Reconciled
+    byzantine: stages.Context
     # The appendix's entries, by book and chapter, with the blocks of its
     # page that each is: the sample prints those of its chapters.
     appendix: tuple[tuple[str, int, int, int], ...]
@@ -689,8 +757,7 @@ def check_met(policy: bible.policy.Policy, met: Met) -> None:
     """Every citation decision, every name a dialect has for a book, and
     every revision must have been met: one that nothing meets would
     go stale unnoticed."""
-    unused = sorted(set(policy.citations["decisions"]) - met["decisions"])
-    require(not unused, f"Unused citation decisions: {unused}")
+    require_used(policy.citations["decisions"], met["decisions"], "citation decisions")
     names = sorted(
         (name, book)
         for name, tongue in policy.citations["dialects"].items()
@@ -730,113 +797,48 @@ def check_document(
         return
     for block in doc["content"]:
         for _, content in matter.regions(block):
-            if scripture_unit:
-                for note in usj.notes_of(content):
-                    terminology.check_forms(
-                        code, usj.text_of(note["content"], skip=usj.is_label), note=True
-                    )
-            else:
-                terminology.check_forms(code, matter.words(content), note=False)
-                # A footnote among its words is a note like any other.
-                for note in usj.notes_of(content):
-                    terminology.check_forms(
-                        code, usj.text_of(note["content"], skip=usj.is_label), note=True
-                    )
+            if not scripture_unit:
+                terminology.check_forms(code, usj.unlabelled(content), note=False)
+            # A footnote among prose is a note like any other.
+            for note in usj.notes_of(content):
+                terminology.check_forms(
+                    code, usj.unlabelled(note["content"]), note=True
+                )
 
 
 def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edition:
     """The fixed order of the stages; each takes what the ones before it made."""
     revision.check(policy)
     read_sources = read(sources, policy)
-    promoted = promote(
-        read_sources, policy, sources.byzantine, terminology.registry(policy)
-    )
-    supplemented, ccel_report = ccel.supplied(
-        promoted.brenton, read_sources.ccel, policy
-    )
-    promoted = replace(promoted, brenton=supplemented)
-    read_sources = replace(read_sources, ccel=ccel_report)
-    units = assemble(promoted, policy, sources)
+    promoted = promote(read_sources, policy)
+    units = assemble(promoted, policy, read_sources)
     policy = placed(units, read_sources, policy)
     units = lined(units, read_sources, policy)
-    ctx = context(units, policy, sources)
+    ctx = context(units, policy)
     front, introductions, appendix_notes, front_report = front_and_back(
-        read_sources, ctx, sources
+        read_sources, ctx
     )
     books, reports = annotated(units, read_sources, introductions, appendix_notes, ctx)
-    # The revision comes before the edition's own pages, which quote the
-    # books as they print.
-    revised: revision.MetRevisions = set()
-    comparisons: dict[str, Document] = {}
-    finished: dict[str, Document] = {}
-    below, set_down = set(policy.margin["below"]), set[str]()
-    # A row of the review for every note, read from the books as finished.
-    note_rows: dict[str, list[annotate.NoteRow]] = {}
-    for code, doc in {**front, **books}.items():
-        if code in books:
-            doc = revision.named(code, doc, policy, revised)
-        named = doc
-        if code in byzantine.BOOKS:
-            comparisons[code] = revision.punctuated(
-                revision.respelt(doc, policy, set()), policy, set()
-            )
-        if code in books:
-            doc = revision.revised(code, doc, policy, revised)
-        doc = revision.passages(code, doc, policy, revised)
-        finished[code] = revision.punctuated(
-            revision.respelt(doc, policy, revised, book=code in books),
-            policy,
-            revised,
-        )
-        if code in books:
-            # A note is keyed by its source's book, which need not be the
-            # unit's: Nehemias's notes are keyed as 2 Esdras's.
-            here = below & {
-                note.get("x-key") for note in usj.notes_of(finished[code]["content"])
-            }
-            finished[code] = notes.set_below(finished[code], here)
-            set_down |= here
-            revision.check_kept(code, named, finished[code], policy)
-            note_rows[code] = annotate.finished_rows(
-                finished[code], reports[code].rows, policy.brenton_notes["notes"]
-            )
-    require(set_down == below, f"Unused note placements: {sorted(below - set_down)}")
-    labels = {
-        "tr": ctx.terms.display("textus-receptus"),
-        "rp": ctx.terms.display("robinson-pierpont"),
-        "kjv": ctx.terms.display("king-james-version"),
-        "oleb": ctx.terms.display("orthodox-liturgical-english-bible"),
-        "apparatus": ctx.terms.display("apparatus"),
-        "scrivener": ctx.terms.display("scrivener"),
-    }
-    # The King James books before the readings, with the same systematic
-    # spelling and punctuation (only printed documents record what was met).
-    # The names are the edition's verses' and are not applied to them, so a
-    # respelt name shows in the appendix beside the reading it stands near.
-    kjv_regularized = {
-        code: revision.punctuated(revision.respelt(doc, policy, set()), policy, set())
-        for code, doc in promoted.byzantine.context["documents"].items()
-    }
-    rows = appendix.rows(
-        promoted.byzantine.context,
-        kjv_regularized,
-        comparisons,
-    )
-    readings, spans = appendix.blocks(rows, ctx.books, labels)
-    pages, offset = authored(ctx, sources, readings)
-    # These pages discuss source names, so retain their spelling. Finish
-    # punctuation after their passages and tables have been filled in.
-    pages = {
-        code: revision.punctuated(doc, policy, revised) for code, doc in pages.items()
-    }
+    revised = revise(front, books, policy)
+    pages, spans = authored(ctx, read_sources, revised, promoted.byzantine)
+    prepared = {**pages, **revised.finished}
     documents: dict[str, Document] = {}
     for entry in policy.entries:
         code = entry["id"]
-        doc = {**pages, **finished}[code]
         check_document(
-            code, doc, scripture_unit=code in books, authored_page=code in pages
+            code,
+            prepared[code],
+            scripture_unit=code in books,
+            authored_page=code in pages,
         )
-        documents[code] = doc
+        documents[code] = prepared[code]
+    # A row of the review for every note, read from the books as finished.
+    note_rows = {
+        code: annotate.finished_rows(
+            revised.finished[code], reports[code].rows, policy.brenton_notes["notes"]
+        )
+        for code in books
+    }
     read_reports = [front_report, *reports.values()]
     met: Met = MappingProxyType(
         dict(
@@ -844,22 +846,20 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
             names=frozenset[tuple[str, str | None]]().union(
                 *(r.names for r in read_reports)
             ),
-            revisions=frozenset(revised),
+            revisions=frozenset(revised.met),
         )
     )
     check_met(policy, met)
-    units_of: Callable[[str], int] = lambda source: sum(
-        u["source"] == source for u in policy.scripture
-    )
+    units_of = Counter(u["source"] for u in policy.scripture)
     applied = [
         row
-        for row in promoted.byzantine.context["dispositions"]
+        for row in promoted.byzantine["dispositions"]
         if row.get("execution") == "applied"
     ]
     summary = dict(
         alexandrine_notes=promoted.alexandrine[0],
         alexandrine_appendix_paragraphs=promoted.alexandrine[1],
-        byzantine_units=len(promoted.byzantine.context["units"]),
+        byzantine_units=len(promoted.byzantine["units"]),
         byzantine_edits=sum(1 for row in applied if row["disposition"] != "shared"),
         kjv_corrections=sum(1 for row in applied if row["disposition"] == "shared"),
         byzantine_notes=sum(
@@ -868,27 +868,32 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
             if code in byzantine.BOOKS
         ),
         scripture_units=len(policy.scripture),
-        brenton_units=units_of("brenton"),
-        kjv_units=units_of("kjv"),
+        brenton_units=units_of["brenton"],
+        kjv_units=units_of["kjv"],
         kjv_marginal_notes=sum(len(n) for n in read_sources.marginal.values()),
         printed_notes=sum(len(rows) for rows in note_rows.values()),
         verses=sum(len(v) for c in ctx.inventory.values() for v in c.values()),
     )
     return Edition(
-        policy,
-        MappingProxyType(documents),
-        frozenset(books),
-        frozenset(pages),
-        MappingProxyType(ctx.inventory),
-        MappingProxyType({code: tuple(rows) for code, rows in note_rows.items()}),
-        MappingProxyType(summary),
-        met,
-        promoted.byzantine,
-        tuple(
-            (row.book, row.chapter, offset + start, offset + end)
-            for row, start, end in spans
+        policy=policy,
+        read=read_sources,
+        documents=MappingProxyType(documents),
+        scripture=frozenset(books),
+        authored=frozenset(pages),
+        names=MappingProxyType(
+            {
+                entry["id"]: assembly.names(entry, documents[entry["id"]])
+                for entry in policy.entries
+            }
         ),
-        read_sources.ccel,
+        books=ctx.books,
+        inventory=MappingProxyType(ctx.inventory),
+        notes=MappingProxyType({code: tuple(rows) for code, rows in note_rows.items()}),
+        summary=MappingProxyType(summary),
+        met=met,
+        byzantine=promoted.byzantine,
+        appendix=spans,
+        ccel=promoted.ccel,
     )
 
 
@@ -1019,53 +1024,6 @@ def view(edition: Edition, mode: str) -> list[tuple[str, Document]]:
     return result
 
 
-ORIGIN = re.compile(r"^\d+:")
-
-
-# GFS Didot does not encode U+02BC, the Greek elision mark; it does encode the
-# typographic apostrophe.
-ELISION = re.compile(f"(?<=[{usfm.GREEK}])\u02bc")
-# A run of Greek or of Hebrew words, by the character style that sets its
-# font. The Greek apostrophe stays in the Greek font.
-FONT_RUNS = re.compile(
-    "|".join(
-        f"(?P<{marker}>{word}(?: +{word})*)"
-        for marker, word in (
-            ("wh", f"[{usfm.HEBREW}][\u0300-\u036f{usfm.HEBREW}]*"),
-            ("wg", f"[{usfm.GREEK}][\u0300-\u036f\u2019{usfm.GREEK}]*"),
-        )
-    )
-)
-
-
-def font_runs(content: Content) -> Content:
-    """Content as PTXprint's fonts need it: every run of Greek and Hebrew in
-    the style of its font, single letters too, which PTXprint's own heuristic
-    misses. Only the form of what prints changes, never its substance."""
-    result: Content = []
-    for item in content:
-        if isinstance(item, str):
-            item, at = ELISION.sub("\u2019", item), 0
-            for run in FONT_RUNS.finditer(item):
-                assert run.lastgroup is not None
-                result += [item[at : run.start()], usj.char(run.lastgroup, run[0])]
-                at = run.end()
-            result.append(item[at:])
-        elif "content" in item:
-            result.append({**item, "content": font_runs(item["content"])})
-        else:
-            result.append(item)
-    return [item for item in result if item != ""]
-
-
-# The paragraphs of the body: prose, and the lines of a poem.
-PROSE = frozenset("p m mi nb".split())
-POEM = frozenset("q1 q2 qr".split())
-BODY = PROSE | POEM
-# What a poem opens with: a line, or an acrostic heading.
-OPENING = POEM | {"qa"}
-
-
 def indented(doc: Document) -> Document:
     """Poetry indented: a line that opens a verse, a poem or a stanza at the
     first level, and a line that goes on with a verse at the second. The line
@@ -1077,198 +1035,9 @@ def indented(doc: Document) -> Document:
         if (
             usj.is_type(block, "para", "q1")
             and result
-            and paragraph(result[-1]) in POEM
+            and usj.paragraph(result[-1]) in usj.POEM
             and not usj.is_type(first, "verse")
         ):
             block = {**block, "marker": "q2"}
         result.append(block)
     return usj.with_blocks(doc, result)
-
-
-def paragraph(node: Node | None) -> str | None:
-    """A paragraph's marker; None for any other block, or for none."""
-    return node["marker"] if usj.is_type(node, "para") else None
-
-
-def spaced(doc: Document) -> Document:
-    """Blank lines for PTXprint: a poem gets one where it begins after prose
-    and where prose resumes after it, and a title where it follows the body
-    and before its own words, so that it stands as far from them as from
-    those before it. A chapter that opens with a poem or a title gets one
-    before it, and so does a chapter where prose resumes after a poem. A
-    heading supplies its own space, so a blank line directly before one goes.
-    An acrostic heading opens its poem as a line would, and adds no space
-    within the poem; existing blanks remain. Only the form of what prints
-    changes, never the words."""
-    blocks = doc["content"]
-    result: list[Node] = []
-    for at, block in enumerate(blocks):
-        marker = paragraph(block)
-        before = paragraph(result[-1]) if result else None
-        after = paragraph(blocks[at + 1]) if at + 1 < len(blocks) else None
-        if marker == "b":
-            blank = after not in usj.HEADINGS and after != "d"
-        elif usj.is_type(block, "chapter"):
-            blank = before in BODY and (
-                after in OPENING or after == "d" or (before in POEM and after in PROSE)
-            )
-        elif marker == "d":
-            blank = before in BODY
-        elif marker in OPENING:
-            blank = before in PROSE or before == "d"
-        elif marker in PROSE:
-            blank = before in POEM or before == "d"
-        else:
-            blank = False
-        if blank and before != "b":
-            result.append(usj.para("b"))
-        if marker != "b":
-            result.append(block)
-    return usj.with_blocks(doc, result)
-
-
-def opened(doc: Document) -> Document:
-    """Each chapter opening in a paragraph of its own, as the Berean Standard
-    Bible sets it: a chapter that goes on with its source's paragraph, or
-    opens one flush left, opens it as any other. The chapter figure sets its
-    first line alike either way."""
-    blocks = doc["content"]
-    return usj.with_blocks(
-        doc,
-        [
-            (
-                {**block, "marker": "p"}
-                if at
-                and usj.is_type(blocks[at - 1], "chapter")
-                and paragraph(block) in ("m", "nb")
-                else block
-            )
-            for at, block in enumerate(blocks)
-        ],
-    )
-
-
-def labelled(doc: Document, entry: Entry) -> Document:
-    """The chapter label the manifest asks for, by which the book cites a
-    chapter singly, set once before the first chapter: PTXprint prints it
-    before every chapter's number in place of the figure."""
-    if not entry.get("labelled_chapters"):
-        return doc
-    blocks = doc["content"]
-    at = next(i for i, block in enumerate(blocks) if usj.is_type(block, "chapter"))
-    label = usj.para("cl", entry["cited_singly"])
-    return usj.with_blocks(doc, [*blocks[:at], label, *blocks[at:]])
-
-
-def printed_origin(value: str, labels: Mapping[str, str]) -> str:
-    """A note's origin under the label its verse prints, where that is not
-    the verse's own; an origin the printed labels cannot name is refused."""
-    address = value.strip()
-    if address in labels:
-        require(bool(labels[address]), f"Note at an unnumbered verse: {address}")
-        return value.replace(address, labels[address])
-    first, _, last = address.partition("-")
-    chapter, _, _ = first.rpartition(":")
-    require(
-        first not in labels and f"{chapter}:{last}" not in labels,
-        f"Note origin over verses with printed labels: {address}",
-    )
-    return value
-
-
-def printed_labels(doc: Document) -> dict[str, str]:
-    """The label each verse of a book prints, where it is not the verse's
-    own. A verse that prints its own label in full, as 24:23 after the
-    passages, is named as it always is."""
-    return {
-        address: label
-        for address, label in scripture.printed(doc).items()
-        if label != address
-    }
-
-
-def named_in_full(doc: Document) -> set[str]:
-    """The verses of a book whose printed label names a chapter, as "30:1"
-    does in Proverbs 24, by their own."""
-    found = set()
-    chapter = None
-    for block in doc["content"]:
-        if block["type"] == "chapter":
-            chapter = block["number"]
-        elif block["type"] == "para":
-            found |= {
-                f"{chapter}:{item['number']}"
-                for item in block["content"]
-                if usj.is_type(item, "verse") and ":" in item.get("pubnumber", "")
-            }
-    return found
-
-
-def with_printed_origins(doc: Document) -> Document:
-    """A book with each note's origin under the label its verse prints,
-    where that is not the verse's own."""
-    labels = printed_labels(doc)
-    if not labels:
-        return doc
-
-    def origin(item: Node) -> Node:
-        if item["type"] != "char" or not usj.is_origin(item):
-            return item
-        return {
-            **item,
-            "content": [printed_origin(usj.text_of(item["content"]), labels)],
-        }
-
-    return usj.with_content(doc, lambda items: usj.mapped(items, origin))
-
-
-def exported(code: str, doc: Document, edition: Edition) -> str:
-    """A document as PTXprint takes it: under its project id; its notes'
-    margin origins without their chapter, which the chapter figure and running
-    head supply, unless the verse's printed label names one, and bottom notes
-    under their callers alone; its chapters opened in paragraphs of their own
-    and its blank lines set; its chapter label, where the manifest asks for
-    one, set once before its first chapter as PTXprint takes it; and its
-    Greek and Hebrew tagged for their fonts.
-    The edition's own pages are sent as the editor wrote them. A note at a
-    verse that prints another label than its own is set under that label."""
-
-    def bottom(item: Node) -> Node:
-        if usj.is_type(item, "note", "ef"):
-            return {
-                **item,
-                "content": [p for p in item["content"] if not usj.is_origin(p)],
-            }
-        return item
-
-    def origin(item: Node) -> Node:
-        if item["type"] == "char" and usj.is_origin(item):
-            values = item["content"]
-            assert all(isinstance(v, str) for v in values)
-            value = "".join(v for v in values if isinstance(v, str))
-            shown = printed_origin(value, labels)
-            if value.strip() not in full:
-                shown = ORIGIN.sub("", shown)
-            return {**item, "content": [shown]}
-        return item
-
-    def content(items: Content) -> Content:
-        # A note's children are mapped before it, so a bottom note's origin,
-        # which does not print, goes before any origin is set as it prints.
-        items = usj.mapped(usj.mapped(items, bottom), origin)
-        return items if code in edition.authored else font_runs(items)
-
-    labels = printed_labels(doc) if code in edition.scripture else {}
-    full = named_in_full(doc) if code in edition.scripture else set()
-    if code not in edition.authored:
-        doc = spaced(opened(doc))
-    if code in edition.scripture:
-        doc = labelled(doc, edition.policy.unit(code))
-    # A unit printed from a file that holds another, or under an id that
-    # PTXprint would take for its own front matter, is a unit of its own.
-    return usj.serialize(usj.with_code(usj.with_content(doc, content), code))
-
-
-def export(edition: Edition, mode: str) -> list[tuple[str, str]]:
-    """Every document of a view as USFM, by its project id, in order."""
-    return [(code, exported(code, doc, edition)) for code, doc in view(edition, mode)]

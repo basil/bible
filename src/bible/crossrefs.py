@@ -11,11 +11,10 @@ import re
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 
-import bible.annotate
 import bible.policy
 import bible.references
 import bible.terminology
-from bible import citations, quotations, usj
+from bible import citations, notes, quotations, usj
 from bible.checks import require
 from bible.references import Passage, Verse
 from bible.usj import Node
@@ -182,7 +181,7 @@ def planned_links(
     return dict(by_book)
 
 
-def bare(note: bible.annotate.Read) -> bool:
+def bare(note: notes.Read) -> bool:
     """Whether a note is nothing but "See" and what it cites: only such a
     note can be merged whole, since merging drops the note."""
     plain = note.text
@@ -191,7 +190,7 @@ def bare(note: bible.annotate.Read) -> bool:
     return bool(note.citations) and re.fullmatch(r"\s*[Ss]ee[\s;.]*", plain) is not None
 
 
-def cited_verses(note: bible.annotate.Read) -> list[Verse] | None:
+def cited_verses(note: notes.Read) -> list[Verse] | None:
     """Every verse a note cites, or None if it cites what names no verse, as
     a chapter: even beside verses, as "Ps. 22; 23. 4", since a merge would
     drop it unnamed."""
@@ -211,7 +210,7 @@ def cited_verses(note: bible.annotate.Read) -> list[Verse] | None:
 
 def merged_notes(
     code: str,
-    found: Sequence[bible.annotate.Read],
+    found: Sequence[notes.Read],
     links: Sequence[Link],
     *,
     policy: bible.policy.Policy,

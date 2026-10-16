@@ -421,9 +421,10 @@ def test_a_renumbering_must_match_the_source(
 
 
 def test_a_divided_source_must_be_printed_whole(
-    policy: bible.policy.Policy, sources: bible.sources.Sources
+    policy: bible.policy.Policy, read: bible.pipeline.Read
 ) -> None:
-    assembly.check_divided(policy, sources)
+    documents = {"brenton": read.brenton, "kjv": read.kjv}
+    assembly.check_divided(policy, documents)
 
     def shorter(data: dict[str, Any]) -> None:
         next(u for u in data["scripture"] if u["id"] == "NEH")["chapters"] = [11, 22]
@@ -431,7 +432,7 @@ def test_a_divided_source_must_be_printed_whole(
     with pytest.raises(
         CheckFailed, match="Divided source not printed whole: brenton/EZR"
     ):
-        assembly.check_divided(changed(policy, "manifest", shorter), sources)
+        assembly.check_divided(changed(policy, "manifest", shorter), documents)
 
 
 def test_a_relocation_is_carried_out_in_the_book_that_prints_it(

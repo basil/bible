@@ -7,7 +7,7 @@ from __future__ import annotations
 import copy
 import re
 from collections.abc import Callable, Mapping
-from typing import Any
+from typing import Any, cast
 
 import pytest
 
@@ -31,6 +31,7 @@ from bible.byzantine.rows import (
     Report,
     Unit,
 )
+from bible.byzantine.stages import Context
 from bible.byzantine.units import QUOTED
 from bible.checks import CheckFailed
 
@@ -954,13 +955,13 @@ def test_lemma_entries_read_the_unit_and_the_note_from_the_key() -> None:
 def test_the_build_stops_on_a_stale_placement_a_redundant_reading_or_a_broken_invariant(
     edition: bible.pipeline.Edition, by_id: Mapping[str, Unit]
 ) -> None:
-    context = edition.byzantine.context
+    context = edition.byzantine
     reports, ledger = context["reports"], context["units"]
     checked(context)
     # A placement the code now makes on its own.
     _, _, stale = decisions.place(reports, ledger, [stale_placement(reports, by_id)])
     with pytest.raises(CheckFailed, match="placements the code now makes"):
-        checked({**context, "stale_placements": stale})
+        checked(altered(context, stale_placements=stale))
     # A reading that keeps the KJV where nothing would change it anyway.
     witnessed = {
         a["unit"]
@@ -997,7 +998,7 @@ def test_the_build_stops_on_a_stale_placement_a_redundant_reading_or_a_broken_in
     with pytest.raises(
         CheckFailed, match=f"readings that change nothing.*{quiet['id']}"
     ):
-        checked({**context, "dispositions": [*context["dispositions"], *rows]})
+        checked(altered(context, dispositions=[*context["dispositions"], *rows]))
     # A unit the dispositions lose.
     invariants = verify.checks(
         context["documents"],
@@ -1008,7 +1009,7 @@ def test_the_build_stops_on_a_stale_placement_a_redundant_reading_or_a_broken_in
     )
     assert invariants["I1"] == "unit coverage differs"
     with pytest.raises(CheckFailed, match="invariants broken.*I1"):
-        checked({**context, "invariants": invariants})
+        checked(altered(context, invariants=invariants))
 
 
 @pytest.mark.parametrize("mismatch", ["words", "address"])
@@ -1037,15 +1038,20 @@ def test_shared_greek_refuses_mismatched_alignment(
 def test_the_build_stops_on_ordinary_tr_restoration_failures(
     edition: bible.pipeline.Edition,
 ) -> None:
-    context = edition.byzantine.context
+    context = edition.byzantine
     with pytest.raises(CheckFailed, match="Notes that do not restore.*LUK 2:21"):
         checked(
-            {
-                **context,
-                "finished": {
+            altered(
+                context,
+                finished={
                     "LUK 2:21": [
                         "variant: note does not restore the corrected KJV (damaged coupled alternative)"
                     ]
                 },
-            }
+            )
         )
+
+
+def altered(context: Context, **changes: Any) -> Context:
+    """The reconciliation's context with some of what it worked out replaced."""
+    return cast(Context, {**context, **changes})

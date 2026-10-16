@@ -38,6 +38,12 @@ class Verse:
         return f"{self.book} {self.label}"
 
 
+def book_of(key: str) -> str:
+    """The book a key or reference names: its code, before the first space
+    ("GEN 1:9#2", "MAT 6:1 of", "BAK 1KI 2:35a" after its prefix)."""
+    return key.split()[0]
+
+
 @dataclass(frozen=True)
 class Passage:
     first: Verse

@@ -23,7 +23,6 @@ from typing import Literal, cast
 
 import bible.policy
 from bible import (
-    annotate,
     lemmas,
     notes,
     references,
@@ -234,7 +233,7 @@ def operations(
     source words, verse, the key of its note)."""
     data = policy.alexandrinus
     for key, entry in data["readings"].items():
-        if key.split()[0] != code:
+        if references.book_of(key) != code:
             continue
         verse = entry.get("target", key).split()[1].split("#")[0]
         yield key, entry, entry["source_note"], verse, key
@@ -244,7 +243,7 @@ def operations(
                 "source_note"
             ], verse, f"{key}@{index}"
     for key, entry in data["passages"].items():
-        if key.split()[0] != code:
+        if references.book_of(key) != code:
             continue
         # A King James passage's Appendix paragraph only points to it: the
         # words its edits print are the King James words and those supplied.
@@ -273,9 +272,9 @@ def further(entry: Decision, item: Decision) -> Decision:
 def consumed_notes(policy: bible.policy.Policy, code: str) -> set[str]:
     """The keys of the notes a book's decisions replace or take up."""
     data = policy.alexandrinus
-    keys = {key for key in data["readings"] if key.split()[0] == code}
+    keys = {key for key in data["readings"] if references.book_of(key) == code}
     for key, entry in data["passages"].items():
-        if key.split()[0] == code:
+        if references.book_of(key) == code:
             keys.update(entry.get("source_notes", ()))
     return keys
 
@@ -288,7 +287,7 @@ def companions(
     data = policy.alexandrinus
     found: dict[str, AlexandrinusReadingsNoteEdits] = {}
     for owner, entry in data["readings"].items():
-        if owner.split()[0] != code:
+        if references.book_of(owner) != code:
             continue
         for key, edit in entry.get("note_edits", {}).items():
             require_fields(
@@ -299,7 +298,7 @@ def companions(
             )
             found[key] = edit
     for key, entry in data["kept"].items():
-        if key.split()[0] == code and "note" in entry:
+        if references.book_of(key) == code and "note" in entry:
             require(
                 entry["note"] != entry.get("source_note") or "lemma" in entry,
                 f"Kept Alexandrine note changes nothing: {key}",
@@ -342,12 +341,9 @@ def check(
     )
     for section in sections_to_check:
         for key, entry in data[section].items():
-            require(
-                set(entry) <= FIELDS[section],
-                f"Unknown Alexandrine decision fields: {key}",
-            )
+            require_fields(entry, (), FIELDS[section], f"Alexandrine decision {key}")
             check_swete(key, entry, policy, section == "kept")
-            code = key.removeprefix(f"{APPENDIX} ").split()[0]
+            code = references.book_of(key.removeprefix(f"{APPENDIX} "))
             require(
                 code in books and code != APPENDIX, f"Alexandrine book missing: {key}"
             )
@@ -581,10 +577,10 @@ def check_pins(
         )
     for section in ("readings", "kept"):
         for key, entry in data[section].items():
-            if key.split()[0] == code and "source_note" in entry:
+            if references.book_of(key) == code and "source_note" in entry:
                 pinned(key, entry["source_note"], placed)
     for key, entry in data["passages"].items():
-        if key.split()[0] == code:
+        if references.book_of(key) == code:
             for identity, body in entry.get("source_notes", {}).items():
                 pinned(identity, body, placed)
     for key, edit in rewritten.items():
@@ -860,7 +856,7 @@ def with_insertions(
     edits. Verses set before a verse that opens a paragraph are a paragraph
     of their own."""
     for key, entry in policy.alexandrinus["passages"].items():
-        if key.split()[0] != code:
+        if references.book_of(key) != code:
             continue
         # The King James verses a passage supplies, before its edits.
         source = scripture.verses(kjv[code]) if "kjv" in entry else {}
@@ -988,14 +984,14 @@ def with_moves(
     insertions = [
         insertion
         for key, entry in policy.alexandrinus["passages"].items()
-        if key.split()[0] == code
+        if references.book_of(key) == code
         for insertion in entry.get("insertions", ())
     ]
     # The verses passages insert, and the verses they are set beside.
     inserted = {verse["reference"] for i in insertions for verse in i["verses"]}
     anchors = {i.get("before", i.get("after")) for i in insertions}
     for key, entry in policy.alexandrinus["passages"].items():
-        if key.split()[0] != code:
+        if references.book_of(key) != code:
             continue
         for move in entry.get("moves", ()):
             label = terms.display(move.get("label", "brenton"))
@@ -1052,14 +1048,14 @@ def with_moves(
             which = "this verse" if len(labels) == 1 else "this passage"
             these = "the verse" if len(labels) == 1 else "the verses"
             after = behind.reference.partition(":")[2]
-            run = annotate.spanned(passage.verses)
+            run = notes.spanned(passage.verses)
             notes_set: list[tuple[scripture.Verse, int, int, Content]] = [
                 (
                     first,
                     0,
                     0,
                     [
-                        annotate.relocation_note(
+                        notes.relocation_note(
                             code,
                             first.reference,
                             label,
@@ -1072,7 +1068,7 @@ def with_moves(
                     len(behind.text),
                     len(behind.text),
                     [
-                        annotate.relocation_note(
+                        notes.relocation_note(
                             code,
                             behind.reference,
                             label,

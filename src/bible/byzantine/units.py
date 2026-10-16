@@ -1097,12 +1097,13 @@ def reconcile(
                     "reason": reason,
                 }
             )
-    for note in boyd:
+    apparatuses = (("tcgnt", boyd), (PRINTED_APPARATUS, printed))
+    for inventory, note in ((name, n) for name, rows in apparatuses for n in rows):
         reason = (
             "multiple Scrivener readings"
             if len(note["tr"]) != 1
             else place(
-                "tcgnt",
+                inventory,
                 note["target_ref"],
                 note["entry"],
                 reading_words(note["tr"][0]["reading"]),
@@ -1111,24 +1112,7 @@ def reconcile(
             )
         )
         if reason:
-            unmatched.append({"inventory": "tcgnt", **note, "reason": reason})
-    for entry_row in printed:
-        reason = (
-            "multiple Scrivener readings"
-            if len(entry_row["tr"]) != 1
-            else place(
-                PRINTED_APPARATUS,
-                entry_row["target_ref"],
-                entry_row["entry"],
-                reading_words(entry_row["tr"][0]["reading"]),
-                reading_words(entry_row["rp"]),
-                entry_row,
-            )
-        )
-        if reason:
-            unmatched.append(
-                {"inventory": PRINTED_APPARATUS, **entry_row, "reason": reason}
-            )
+            unmatched.append({"inventory": inventory, **note, "reason": reason})
     # Merge blocks covered by one collation entry; this preserves a
     # transposition as one unit. Overlapping entry ranges merge together.
     merged: list[Unit] = []

@@ -41,6 +41,7 @@ from bible.byzantine.appendix import (
 )
 from bible.byzantine.crosswire import edit_offsets, reports_by_unit
 from bible.byzantine.crosswire import spans as word_spans
+from bible.byzantine.crosswire import words
 from bible.byzantine.decisions import ref_key
 from bible.byzantine.english import verses_of
 from bible.byzantine.presentation import (
@@ -219,9 +220,7 @@ def witness_excerpt(
     return label + ": " + context_excerpt(old, new, text, (lo, hi))
 
 
-def context_excerpt(
-    old: str, new: str, text: str, bounds: Sequence[int], *, greek: bool = False
-) -> str:
+def context_excerpt(old: str, new: str, text: str, bounds: Sequence[int]) -> str:
     """Show complete touched phrases; diff only the declared local readings."""
     lo, hi = bounds
     prefix, suffix = text[:lo], text[hi:]
@@ -235,9 +234,7 @@ def context_excerpt(
         old += suffix[0]
         suffix = suffix[1:]
     return diff_markup(
-        clipped(
-            [("equal", prefix), *diff_spans(old, new, greek=greek), ("equal", suffix)]
-        )
+        clipped([("equal", prefix), *diff_spans(old, new), ("equal", suffix)])
     )
 
 
@@ -1130,11 +1127,6 @@ def reading(value: object) -> str:
     return str(value) if value else "∅"
 
 
-def wording(text: str) -> list[str]:
-    """A passage's words, compared without case, punctuation or brackets."""
-    return [w for w, _, _ in word_spans(text)]
-
-
 def addressed(i: Instruction, context: Context) -> bool:
     """Whether an execution or a recorded correction covers the recommendation."""
     if i.get("displaced_by"):
@@ -1179,7 +1171,7 @@ def addressed(i: Instruction, context: Context) -> bool:
                         b["old"][end - b["start"] :],
                     )
                 )
-                if wording(proposed) == wording(b["new"]):
+                if words(proposed) == words(b["new"]):
                     return True
         return False
 

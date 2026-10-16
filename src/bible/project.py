@@ -11,8 +11,7 @@ import zipfile
 from collections.abc import Sequence
 from pathlib import Path
 
-import bible.policy
-import bible.sources
+import bible.pipeline
 from bible import assembly, paths
 from bible.checks import require
 from bible.files import write_json
@@ -57,15 +56,11 @@ def text_font(cfg: configparser.ConfigParser) -> str:
     return cfg["document"]["fontregular"].split("|")[0]
 
 
-def book_names(
-    policy: bible.policy.Policy, sources: bible.sources.Sources, ids: Sequence[str]
-) -> ET.Element:
+def book_names(edition: bible.pipeline.Edition, ids: Sequence[str]) -> ET.Element:
     """PTXprint's BookNames.xml for the units a project prints."""
     root = ET.Element("BookNames")
-    entries = {entry["id"]: entry for entry in policy.entries}
     for code in ids:
-        entry = entries[code]
-        names = assembly.names(entry, assembly.source_text(entry, sources))
+        names = edition.names[code]
         ET.SubElement(
             root,
             "book",
@@ -84,8 +79,7 @@ def write_project(
     mode: str,
     base: Path,
     documents: Sequence[tuple[str, str]],
-    policy: bible.policy.Policy,
-    sources: bible.sources.Sources,
+    edition: bible.pipeline.Edition,
 ) -> tuple[Path, list[str]]:
     """Write the exported documents, as (id, USFM), and PTXprint's
     configuration; the project's directory, and the ids it prints."""
@@ -109,7 +103,7 @@ def write_project(
     root = ET.Element("ScriptureText")
     # Only the settings PTXprint reads; without a Guid it would write its own.
     settings = {
-        "FullName": policy.title,
+        "FullName": edition.policy.title,
         "Guid": "407badbc319745d4b3cc9f242039a5ab",
         "Encoding": "65001",
         "LanguageIsoCode": "en",
@@ -125,7 +119,7 @@ def write_project(
     ET.ElementTree(root).write(
         project / "Settings.xml", encoding="utf-8", xml_declaration=True
     )
-    ET.ElementTree(book_names(policy, sources, ids)).write(
+    ET.ElementTree(book_names(edition, ids)).write(
         project / "BookNames.xml", encoding="utf-8", xml_declaration=True
     )
     # BSB's import selections describe copying from its project; our generated

@@ -438,14 +438,14 @@ def inspect_pdf(
 ) -> None:
     with (base / "qpdf.log").open("w", encoding="utf-8") as log:
         run("qpdf", "--check", pdf, stdout=log, stderr=subprocess.STDOUT)
-    info = capture("pdfinfo", "-box", pdf)
+    # Every page's boxes, not just the first MediaBox: a last page past the
+    # end stops at the end.
+    info = capture("pdfinfo", "-f", 1, "-l", 10**6, "-box", pdf)
     (base / "pdfinfo.txt").write_text(info, encoding="utf-8")
     page_count = re.search(r"Pages:\s+(\d+)", info)
     assert page_count is not None
     pages = int(page_count[1])
-    # Check every page, not just the first MediaBox.
-    boxes = capture("pdfinfo", "-f", 1, "-l", pages, "-box", pdf)
-    sizes = re.findall(r"(?:Page\s+\d+ size:|Page size:)\s+([\d.]+) x ([\d.]+)", boxes)
+    sizes = re.findall(r"(?:Page\s+\d+ size:|Page size:)\s+([\d.]+) x ([\d.]+)", info)
     require(len(sizes) == pages, "Could not inspect every PDF page")
     require(
         all(

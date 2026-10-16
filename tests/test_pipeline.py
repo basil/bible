@@ -13,11 +13,13 @@ from typing import Any, cast
 import pytest
 from conftest import Staged, changed
 
+import bible.export
 import bible.pipeline
 import bible.policy
 from bible import (
     annotate,
     assembly,
+    export,
     pipeline,
     places,
     revision,
@@ -91,7 +93,7 @@ def test_apocrypha_front_matter_continues_the_introduction(
     paragraphs = [b for b in apocrypha["content"] if b.get("marker") == "ip"]
     assert introduction["content"][-len(paragraphs) :] == paragraphs
     assert all(introduction["content"].count(b) == 1 for b in paragraphs)
-    exported = dict(pipeline.export(edition, mode))
+    exported = dict(export.export(edition, mode))
     assert "OTH" not in exported
     text = exported["XXE"]
     assert text.count("\\id ") == 1
@@ -1089,12 +1091,12 @@ def test_what_is_typeset_prints_margin_origins_and_bottom_callers(
 
 def test_greek_and_hebrew_are_set_in_the_styles_of_their_fonts() -> None:
     content = usj.parse("Gr. ἀλλʼ ἐγώ, \\it Heb.\\it* א, \\it or β\\it*", fragment=True)
-    assert usj.serialize(pipeline.font_runs(content)) == (
+    assert usj.serialize(export.font_runs(content)) == (
         "Gr. \\wg ἀλλ’ ἐγώ\\wg*, \\it Heb.\\it* \\wh א\\wh*, "
         "\\it or \\+wg β\\+wg*\\it*"
     )
     # Only the form of what prints changes.
-    assert usj.text_of(pipeline.font_runs(content)) == "Gr. ἀλλ’ ἐγώ, Heb. א, or β"
+    assert usj.text_of(export.font_runs(content)) == "Gr. ἀλλ’ ἐγώ, Heb. א, or β"
 
 
 def test_lines_that_go_on_with_a_verse_are_indented() -> None:
@@ -1113,12 +1115,12 @@ def test_a_chapter_opens_in_a_paragraph_of_its_own() -> None:
         "\\id MAT\n\\c 4\n\\p \\v 1 Prose.\n\\m and on.\n"
         "\\c 5\n\\nb \\v 1 Prose.\n\\c 6\n\\m \\v 1 Prose.\n"
     )
-    markers = [b.get("marker") for b in pipeline.opened(doc)["content"]]
+    markers = [b.get("marker") for b in export.opened(doc)["content"]]
     assert markers == ["id", "c", "p", "m", "c", "p", "c", "p"]
 
 
 def spaced_markers(usfm: str) -> list[str | None]:
-    return [b.get("marker") for b in pipeline.spaced(usj.parse(usfm))["content"]]
+    return [b.get("marker") for b in export.spaced(usj.parse(usfm))["content"]]
 
 
 def test_a_poem_within_prose_gets_a_blank_line_before_and_after_it() -> None:
@@ -2457,7 +2459,7 @@ def test_source_instructions_keep_their_export_markers_and_spacing() -> None:
         "\\qa \\v 2 \\sc Beth.\\sc*\n\\q1 Words.\n\\q1 More.\n"
         "\\b\n\\qa \\sc Gimel.\\sc*\n\\q1 Words.\n\\p Prose."
     )
-    result = pipeline.spaced(pipeline.indented(doc))
+    result = export.spaced(pipeline.indented(doc))
     assert [b.get("marker") for b in result["content"]] == [
         "id",
         "c",
@@ -2487,18 +2489,18 @@ def test_a_poem_that_opens_with_an_acrostic_heading_is_spaced_as_any_poem() -> N
 
 def test_a_note_is_set_under_the_label_its_verse_prints() -> None:
     labels = {"24:35": "30:15", "0:1": ""}
-    assert bible.pipeline.printed_origin("24:35 ", labels) == "30:15 "
-    assert bible.pipeline.printed_origin("24:34 ", labels) == "24:34 "
+    assert bible.export.printed_origin("24:35 ", labels) == "30:15 "
+    assert bible.export.printed_origin("24:34 ", labels) == "24:34 "
     with pytest.raises(CheckFailed, match="unnumbered verse"):
-        bible.pipeline.printed_origin("0:1 ", labels)
+        bible.export.printed_origin("0:1 ", labels)
     with pytest.raises(CheckFailed, match="verses with printed labels"):
-        bible.pipeline.printed_origin("24:35-36 ", labels)
+        bible.export.printed_origin("24:35-36 ", labels)
 
 
 def test_exported_proverbs_sets_the_hebrews_labels(
     edition: bible.pipeline.Edition,
 ) -> None:
-    text = bible.pipeline.exported("PRO", edition.documents["PRO"], edition)
+    text = bible.export.exported("PRO", edition.documents["PRO"], edition)
     assert "\\v 22f \\vp 30:1\\vp* " in text
     assert "\\v 23 \\vp 24:23\\vp* " in text
 
@@ -2514,7 +2516,7 @@ def test_a_margin_note_names_another_chapters_label_in_full(
         "\\v 22g \\vp 2\\vp* said\\f + \\fr 24:22g \\ft B\\f*\n"
         "\\v 23 back\\f + \\fr 24:23 \\ft C\\f*\n"
     )
-    text = bible.pipeline.exported("PRO", doc, edition)
+    text = bible.export.exported("PRO", doc, edition)
     assert [
         line.split("\\fr ")[1].split(" \\ft")[0]
         for line in text.split("\n")

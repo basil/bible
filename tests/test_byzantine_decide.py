@@ -50,7 +50,7 @@ KJV = {REF: "Bring forth therefore fruits meet for repentance:"}
 
 @pytest.fixture(scope="module")
 def context(edition: bible.pipeline.Edition) -> Context:
-    return edition.byzantine.context
+    return edition.byzantine
 
 
 @pytest.fixture(scope="module")

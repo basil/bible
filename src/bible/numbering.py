@@ -459,7 +459,9 @@ def names_table(
     )
     for code in printed:
         name = ours.names[code]
-        here = [part for part in parts if part["edition"].split(" ")[0] == code]
+        here = [
+            part for part in parts if bible.references.book_of(part["edition"]) == code
+        ]
         held.update(part["kjv"] for part in here if part["kjv"])
         if policy.unit(code)["source"] == "kjv":
             continue

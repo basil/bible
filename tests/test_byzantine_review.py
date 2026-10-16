@@ -646,14 +646,6 @@ def test_the_summary_counts_the_dispositions(byzantine: Context) -> None:
 
 # The appendix of readings.
 
-LABELS = {
-    "tr": "TR",
-    "rp": "RP",
-    "kjv": "KJV",
-    "oleb": "OLEB",
-    "apparatus": "apparatus",
-    "scrivener": "Scrivener",
-}
 OMITTED = {"LUK 17:36", "ACT 8:37", "ACT 15:34", "ACT 24:7"}
 
 
@@ -669,11 +661,7 @@ def printed(byzantine: Context, policy: bible.policy.Policy) -> dict[str, Docume
     systematic spelling and punctuation but before its verse-specific
     revisions, as the appendix quotes them."""
     return {
-        code: revision.punctuated(
-            revision.respelt(revision.named(code, doc, policy, set()), policy, set()),
-            policy,
-            set(),
-        )
+        code: revision.regularized(revision.named(code, doc, policy, set()), policy)
         for code, doc in byzantine["prepared"].items()
         if code in BOOKS
     }
@@ -684,7 +672,7 @@ def regularized(byzantine: Context, policy: bible.policy.Policy) -> dict[str, Do
     """The King James books before the readings, with the edition's
     systematic spelling and punctuation, as the appendix compares them."""
     return {
-        code: revision.punctuated(revision.respelt(doc, policy, set()), policy, set())
+        code: revision.regularized(doc, policy)
         for code, doc in byzantine["documents"].items()
     }
 
@@ -701,7 +689,7 @@ def entries(
     rows: list[appendix.Row], ctx: bible.annotate.Context
 ) -> dict[str, list[Node]]:
     """Each row's run of the appendix's blocks, by the verse it is about."""
-    blocks, spans = appendix.blocks(rows, ctx.books, LABELS)
+    blocks, spans = appendix.blocks(rows, ctx.books, ctx.terms)
     return {row.reference: blocks[start:end] for row, start, end in spans}
 
 
@@ -882,7 +870,7 @@ def test_grouped_comparisons_keep_multiple_changes_and_outer_omissions(
         texts[3],
         passages=selected,
     )
-    blocks, spans = appendix.blocks([row], ctx.books, LABELS)
+    blocks, spans = appendix.blocks([row], ctx.books, ctx.terms)
     heading, greek, english = blocks[spans[0][1] : spans[0][2]]
     assert text_of(heading) == "1:1"
     assert text_of(greek) == "TR → RP … [παλαιόν] νέον ἕν; … [παλαιόν] νέον δύο; …"
@@ -1067,7 +1055,7 @@ def test_unchanged_english_and_accent_only_entries_use_normal_comparisons(
         "πρῶτον; τό τέλος.",
         (appendix.Unit("τὸ", "τό", ("τὸ", "τό")),),
     )
-    blocks, spans = appendix.blocks([row], ctx.books, LABELS)
+    blocks, spans = appendix.blocks([row], ctx.books, ctx.terms)
     heading, greek = blocks[spans[0][1] : spans[0][2]]
     assert text_of(heading) == "1:1"
     assert text_of(greek) == "TR → RP πρῶτον; [τὸ] τό τέλος."
@@ -1214,7 +1202,7 @@ def test_appendix_blocks_leave_rows_unchanged(
     rows: list[appendix.Row], ctx: bible.annotate.Context
 ) -> None:
     original = copy.deepcopy(rows)
-    appendix.blocks(rows, ctx.books, LABELS)
+    appendix.blocks(rows, ctx.books, ctx.terms)
     assert rows == original
 
 

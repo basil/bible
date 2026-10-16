@@ -12,6 +12,7 @@ import pytest
 from conftest import book, changed, verse_lines
 
 import bible.annotate
+import bible.export
 import bible.pipeline
 import bible.policy
 from bible import (
@@ -1618,15 +1619,19 @@ def test_notes_stay_in_the_margin_whatever_their_length_or_form(
         n["marker"] == "f" and len(usj.text_of(n["content"])) > 200
         for n in usj.notes_of(edition.documents["REV"]["content"])
     )
-    # Only a decision sets a note below the text: every other keyed note
-    # there is one of Brenton's Appendix.
-    assert note("REV 6:6 A measure")["marker"] == "ef"
-    assert {
-        n["x-key"]
+    # A decision sets a note below the text at export, for the page whose
+    # margin it relieves: in the prepared books, the only keyed notes below
+    # the text are Brenton's Appendix's.
+    assert note("REV 6:6 A measure")["marker"] == "f"
+    assert all(
+        n["x-key"].endswith(" Appendix")
         for code in edition.scripture
         for n in usj.notes_of(edition.documents[code]["content"])
-        if n["marker"] == "ef" and "x-key" in n and not n["x-key"].endswith(" Appendix")
-    } == set(edition.policy.margin["below"])
+        if n["marker"] == "ef" and "x-key" in n
+    )
+    placed = bible.export.notes_below(edition)
+    assert set[str]().union(*placed.values()) == set(edition.policy.margin["below"])
+    assert "REV 6:6 A measure" in placed["REV"]
 
 
 @pytest.mark.parametrize(

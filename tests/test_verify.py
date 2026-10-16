@@ -11,7 +11,7 @@ from typing import Any, cast
 import pytest
 
 import bible.policy
-from bible import pipeline, project, usj, verify
+from bible import export, pipeline, project, usj, verify
 from bible.checks import CheckFailed
 from bible.files import read_json
 
@@ -75,19 +75,22 @@ def test_printed_origins_lose_their_chapter(declared: bible.policy.Policy) -> No
     # An edition of no books: exporting reads only which units are scripture.
     none: MappingProxyType[str, Any] = MappingProxyType({})
     unit = pipeline.Edition(
-        declared,
-        none,
-        frozenset({"GEN"}),
-        frozenset(),
-        none,
-        none,
-        none,
-        none,
-        cast(Any, None),
-        (),
-        cast(Any, None),
+        policy=declared,
+        read=cast(Any, None),
+        documents=none,
+        scripture=frozenset({"GEN"}),
+        authored=frozenset(),
+        names=none,
+        books=cast(Any, None),
+        inventory=none,
+        notes=none,
+        summary=none,
+        met=none,
+        byzantine=cast(Any, None),
+        appendix=(),
+        ccel=cast(Any, None),
     )
-    assert pipeline.exported("GEN", doc, unit).split("\\v 12 ")[1] == (
+    assert export.exported("GEN", doc, unit).split("\\v 12 ")[1] == (
         "And God\\f - \\fr 12 \\ft See \\xt Hebrews 12:29\\f* said"
         "\\x - \\xo 12a \\xt Psalm 1:2\\x* to Noe.\\f + \\fr 0 \\ft A title\\f*\n"
     )

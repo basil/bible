@@ -23,7 +23,7 @@ type EditsAt = dict[str, list[tuple[Disposition, Edit]]]
 
 @pytest.fixture(scope="module")
 def context(edition: bible.pipeline.Edition) -> Context:
-    return edition.byzantine.context
+    return edition.byzantine
 
 
 @pytest.fixture(scope="module")

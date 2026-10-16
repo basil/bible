@@ -881,13 +881,19 @@ def report(
     ours = _plain(
         {
             code: books[code]
-            for code in {run["edition"].split()[0] for run in unread if run["edition"]}
+            for code in {
+                bible.references.book_of(run["edition"])
+                for run in unread
+                if run["edition"]
+            }
         }
     )
     theirs = _plain(
         {
             code: kjv[code]
-            for code in {run["kjv"].split()[0] for run in unread if run["kjv"]}
+            for code in {
+                bible.references.book_of(run["kjv"]) for run in unread if run["kjv"]
+            }
         }
     )
     lines = ["# Numbering\n\n"]

@@ -15,10 +15,10 @@ end, nor before a verse number; the line breaks of the USFM are the writer's.
 """
 
 import re
-from collections.abc import Callable, Iterable, Iterator, Sequence
-from typing import Literal, TypedDict, TypeGuard, Unpack, overload
+from collections.abc import Callable, Iterable, Iterator, Mapping, Sequence
+from typing import Literal, NoReturn, TypedDict, TypeGuard, Unpack, overload
 
-from bible.checks import present, require
+from bible.checks import CheckFailed, present, require
 
 
 class Scope(TypedDict, total=False):
@@ -78,6 +78,12 @@ HEADINGS = frozenset("s1 s2 s3 ms1 sd2".split())
 CELLS = frozenset("tc1 tc2 th1 th2".split())
 CHARS = frozenset("add bd fv it sc vp wg wh".split())
 NOTES = frozenset("f ef x".split())
+# The paragraphs of the body: prose, and the lines of a poem.
+PROSE = frozenset("p m mi nb".split())
+POEM = frozenset("q1 q2 qr".split())
+BODY = PROSE | POEM
+# What a poem opens with: a line, or an acrostic heading.
+OPENING = POEM | {"qa"}
 # The parts of a note, each of which runs to the next or to the note's end.
 FIELDS = frozenset("fr ft fq fqa fl xo xt xta".split())
 LABEL = re.compile(r"\d+[a-z]?(?:-\d+[a-z]?)?")
@@ -162,8 +168,9 @@ def parse(text: str, *, fragment: bool = False) -> Document | Content:
     inline: list[tuple[str, Node]] = []
     table: Node | None = None
 
-    def where(at: int) -> str:
-        return f"{text[max(0, at - 30) : at + 50]!r}"
+    def fail(message: str, at: int) -> NoReturn:
+        """Refuse the text, showing where."""
+        raise CheckFailed(f"{message}: {text[max(0, at - 30) : at + 50]!r}")
 
     def content() -> Content:
         if inline:
@@ -175,9 +182,11 @@ def parse(text: str, *, fragment: bool = False) -> Document | Content:
     def add_text(value: str, at: int) -> None:
         if not value:
             return
-        require("\\" not in value, f"Malformed marker: {where(at)}")
+        if "\\" in value:
+            fail("Malformed marker", at)
         if block is None and not inline and not fragment:
-            require(not value.strip(), f"Text outside a paragraph: {where(at)}")
+            if value.strip():
+                fail("Text outside a paragraph", at)
             return
         items = content()
         if items and isinstance(items[-1], str):
@@ -203,40 +212,41 @@ def parse(text: str, *, fragment: bool = False) -> Document | Content:
             if closing:
                 while inline and inline[-1][0] != "note":
                     kind, node = inline.pop()
-                    require(
-                        kind == "field", f"Unclosed \\{node['marker']}: {where(at)}"
-                    )
-                require(
-                    inline and inline[-1][1]["marker"] == name,
-                    f"Unmatched note end: {where(at)}",
-                )
+                    if kind != "field":
+                        fail(f"Unclosed \\{node['marker']}", at)
+                if not (inline and inline[-1][1]["marker"] == name):
+                    fail("Unmatched note end", at)
                 inline.pop()
                 continue
-            require(not in_note(), f"Nested note: {where(at)}")
-            caller = present(
-                TOKEN.match(text, end), f"Missing note caller: {where(at)}"
-            )
+            if in_note():
+                fail("Nested note", at)
+            caller = TOKEN.match(text, end)
+            if caller is None:
+                fail("Missing note caller", at)
             cursor = caller.end()
             node = note(name, caller=caller[1])
             content().append(node)
             inline.append(("note", node))
         elif name in FIELDS:
-            require(not closing and not plus, f"Invalid note field: {where(at)}")
-            require(in_note() or fragment, f"Note field outside a note: {where(at)}")
+            if closing or plus:
+                fail("Invalid note field", at)
+            if not (in_note() or fragment):
+                fail("Note field outside a note", at)
             while inline and inline[-1][0] != "note":
                 kind, node = inline.pop()
-                require(kind == "field", f"Unclosed \\{node['marker']}: {where(at)}")
+                if kind != "field":
+                    fail(f"Unclosed \\{node['marker']}", at)
             node = char(name)
             content().append(node)
             inline.append(("field", node))
         elif name in CHARS:
             if closing:
-                require(
+                if not (
                     inline
                     and inline[-1][0] == "char"
-                    and inline[-1][1]["marker"] == name,
-                    f"Unmatched character style: {where(at)}",
-                )
+                    and inline[-1][1]["marker"] == name
+                ):
+                    fail("Unmatched character style", at)
                 inline.pop()
                 continue
             # A style nests in the one it stands in, with its + or without,
@@ -245,17 +255,18 @@ def parse(text: str, *, fragment: bool = False) -> Document | Content:
             content().append(node)
             inline.append(("char", node))
         else:
-            require(not closing and not plus, f"Invalid marker: {where(at)}")
-            require(not fragment, f"Block marker in a fragment: {where(at)}")
-            require(not inline, f"Unclosed span or note: {where(at)}")
+            if closing or plus:
+                fail("Invalid marker", at)
+            if fragment:
+                fail("Block marker in a fragment", at)
+            if inline:
+                fail("Unclosed span or note", at)
             if name == "v":
-                require(
-                    block is not None and block["type"] == "para",
-                    f"Verse outside a paragraph: {where(at)}",
-                )
-                label = present(
-                    LABEL.match(text, end), f"Missing verse number: {where(at)}"
-                )
+                if not (block is not None and block["type"] == "para"):
+                    fail("Verse outside a paragraph", at)
+                label = LABEL.match(text, end)
+                if label is None:
+                    fail("Missing verse number", at)
                 cursor = label.end() + (text[label.end() : label.end() + 1] == " ")
                 verse: Node = {"type": "verse", "marker": "v", "number": label[0]}
                 # The number a verse prints, in place of its own, stands
@@ -267,7 +278,8 @@ def parse(text: str, *, fragment: bool = False) -> Document | Content:
                 block["content"].append(verse)
                 continue
             if name in CELLS:
-                require(table is not None, f"Table cell outside a row: {where(at)}")
+                if table is None:
+                    fail("Table cell outside a row", at)
                 block = cell(name)
                 assert table is not None
                 current = table["content"][-1]
@@ -283,47 +295,48 @@ def parse(text: str, *, fragment: bool = False) -> Document | Content:
                 continue
             table = None
             if name == "id":
-                code = present(
-                    TOKEN.match(text, end), f"Missing book code: {where(at)}"
-                )
+                code = TOKEN.match(text, end)
+                if code is None:
+                    fail("Missing book code", at)
                 cursor = code.end()
                 block = {"type": "book", "marker": "id", "code": code[1], "content": []}
                 root.append(block)
             elif name == "usfm":
                 # The version a document declares, once, which is its USJ version.
-                require(not versioned, f"USFM version declared twice: {where(at)}")
-                require(
-                    len(root) == 1 and is_type(root[0], "book"),
-                    f"USFM version not after the book: {where(at)}",
-                )
-                version = present(
-                    TOKEN.match(text, end), f"Missing USFM version: {where(at)}"
-                )
-                require(version[1] == VERSION, f"Unsupported USFM version: {where(at)}")
+                if versioned:
+                    fail("USFM version declared twice", at)
+                if not (len(root) == 1 and is_type(root[0], "book")):
+                    fail("USFM version not after the book", at)
+                version = TOKEN.match(text, end)
+                if version is None:
+                    fail("Missing USFM version", at)
+                if version[1] != VERSION:
+                    fail("Unsupported USFM version", at)
                 cursor = version.end()
                 versioned = True
             elif name == "c":
-                label = present(
-                    LABEL.match(text, end), f"Missing chapter number: {where(at)}"
-                )
+                label = LABEL.match(text, end)
+                if label is None:
+                    fail("Missing chapter number", at)
                 cursor = label.end()
                 root.append({"type": "chapter", "marker": "c", "number": label[0]})
             elif name == "cp":
                 # The number a chapter prints, in place of its own. One set
                 # further into its chapter would be moved to its head.
-                require(
+                if not (
                     bool(root)
                     and is_type(root[-1], "chapter")
-                    and "pubnumber" not in root[-1],
-                    f"Published chapter number not at the head of a chapter: {where(at)}",
-                )
+                    and "pubnumber" not in root[-1]
+                ):
+                    fail("Published chapter number not at the head of a chapter", at)
                 line = re.match(r"[^\n\\]*", text[end:])
                 chapter_node = root[-1]
                 assert isinstance(chapter_node, dict) and line is not None
                 root[-1] = {**chapter_node, "pubnumber": line[0].strip(" ")}
                 cursor = end + line.end()
             else:
-                require(name in PARAGRAPHS, f"Unsupported marker \\{name}: {where(at)}")
+                if name not in PARAGRAPHS:
+                    fail(f"Unsupported marker \\{name}", at)
                 block = para(name)
                 root.append(block)
     add_text(text[cursor:], cursor)
@@ -527,6 +540,11 @@ def is_origin(node: object) -> bool:
     return isinstance(node, dict) and node.get("marker") in ("fr", "xo")
 
 
+def unlabelled(content: Iterable[str | Node]) -> str:
+    """The words of content without its labels (is_label)."""
+    return text_of(content, skip=is_label)
+
+
 def is_label(node: Node) -> bool:
     """What stands in a paragraph without being its prose: a note's origin and
     the number of a verse that a supplied passage prints, in the text or in a
@@ -620,15 +638,21 @@ def with_content(doc: Document, change: Callable[[Content], Content]) -> Documen
 # Changing content, by the offsets of its words.
 
 
+def extended(content: Content, items: Iterable[str | Node]) -> None:
+    """Items appended to content in place, adjacent strings run together
+    and empty strings left out."""
+    for item in items:
+        if isinstance(item, str) and content and isinstance(content[-1], str):
+            content[-1] += item
+        elif item != "":
+            content.append(item)
+
+
 def joined(*parts: Iterable[str | Node]) -> Content:
     """Content lists as one, adjacent strings run together."""
     result: Content = []
     for part in parts:
-        for item in part:
-            if isinstance(item, str) and result and isinstance(result[-1], str):
-                result[-1] += item
-            elif item != "":
-                result.append(item)
+        extended(result, part)
     return result
 
 
@@ -791,7 +815,7 @@ def substituted(
                 at += len(item)
                 for start, end, words in sorted(changes[index], reverse=True):
                     item = item[:start] + words + item[end:]
-                result = joined(result, [item])
+                extended(result, [item])
             elif "content" in item and not skip(item):
                 opened = at
                 had_words = bool(text_of(item["content"], skip=skip))
@@ -799,7 +823,7 @@ def substituted(
                 if item["type"] == "char" and any(
                     a <= opened and at <= b for a, b in unwrap
                 ):
-                    result = joined(result, inner)
+                    extended(result, inner)
                 elif inner or not had_words:
                     # Note fields consume their opening separator. A deletion
                     # can expose a word space there; keep it at the end of the
@@ -846,11 +870,33 @@ def mapped(content: Iterable[str | Node], change: Change) -> Content:
             if changed is None:
                 continue
             if isinstance(changed, list):
-                result = joined(result, changed)
+                extended(result, changed)
                 continue
             item = changed
-        result = joined(result, [item])
+        extended(result, [item])
     return result
+
+
+def replaced_by_identity(doc: Document, replacements: Mapping[int, Node]) -> Document:
+    """The document with the objects in replacements, by their identity,
+    replaced in place: mapped rebuilds every object, so an object found in
+    the document is known by its identity alone."""
+
+    def visit(content: Content) -> Content:
+        return [
+            (
+                replacements[id(item)]
+                if isinstance(item, dict) and id(item) in replacements
+                else (
+                    {**item, "content": visit(item["content"])}
+                    if isinstance(item, dict) and "content" in item
+                    else item
+                )
+            )
+            for item in content
+        ]
+
+    return with_content(doc, visit)
 
 
 def objects(content: Iterable[str | Node]) -> Iterator[Node]:
@@ -858,3 +904,8 @@ def objects(content: Iterable[str | Node]) -> Iterator[Node]:
     for item in content:
         assert isinstance(item, dict)
         yield item
+
+
+def paragraph(node: Node | None) -> str | None:
+    """A paragraph's marker; None for any other block, or for none."""
+    return node["marker"] if is_type(node, "para") else None

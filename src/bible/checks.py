@@ -1,6 +1,6 @@
 """The build's refusal: every check raises CheckFailed."""
 
-from collections.abc import Collection, Mapping
+from collections.abc import Collection, Iterable, Mapping
 
 
 class CheckFailed(RuntimeError):
@@ -17,6 +17,13 @@ def present[T](value: T | None, message: str) -> T:
     if value is None:
         raise CheckFailed(message)
     return value
+
+
+def require_used(declared: Iterable[str], used: Collection[object], what: str) -> None:
+    """Every declared decision must have been used: one that nothing meets
+    would go stale unnoticed."""
+    unused = sorted(set(declared) - set(used))
+    require(not unused, f"Unused {what}: {unused}")
 
 
 def require_fields(

@@ -8,6 +8,7 @@ departure from the sources.
 
 from __future__ import annotations
 
+import functools
 import re
 from collections.abc import Mapping
 from dataclasses import dataclass
@@ -16,7 +17,7 @@ from typing import Any, cast
 
 from bible import paths
 from bible import policy_schema as schema
-from bible.checks import require, require_fields
+from bible.checks import require, require_fields, require_used
 from bible.files import read_json
 from bible.policy_schema import Entry
 
@@ -145,6 +146,12 @@ class Policy:
 
     def unit(self, code: str) -> Entry:
         return next(u for u in self.scripture if u["id"] == code)
+
+    @functools.cached_property
+    def kjv_units(self) -> frozenset[str]:
+        """The books printed from the King James Bible: the New Testament,
+        which the promote stage conforms to the Byzantine text."""
+        return frozenset(u["id"] for u in self.scripture if u["source"] == "kjv")
 
     def replace(self, **files: object) -> Policy:
         """A policy with some of its files replaced: as a test declares them,
@@ -445,8 +452,7 @@ def check(policy: Policy) -> None:
         (),
         "Citations file",
     )
-    unused_names = sorted(set(policy.citations["names"]) - matter)
-    require(not unused_names, f"Unused citation name changes: {unused_names}")
+    require_used(policy.citations["names"], matter, "citation name changes")
     for code, changes in policy.citations["names"].items():
         require(changes, f"Empty citation name changes: {code}")
         for change in changes:
@@ -527,37 +533,21 @@ def check(policy: Policy) -> None:
         )
 
 
+# The field of the policy each decision file fills.
+FIELD_OF = {name: name.replace("-", "_") for name in FILES} | {
+    "book-introductions": "introductions"
+}
+
+
 def load() -> Policy:
     """Read and check the edition's decisions."""
-    data = {
-        name: freeze(read_json(paths.EDITION_DIR / f"{name}.json")) for name in FILES
-    }
     policy = Policy(
-        manifest=cast(schema.Manifest, data["manifest"]),
-        sample=cast(Mapping[str, tuple[int, ...]], data["sample"]),
-        alexandrinus=cast(schema.Alexandrinus, data["alexandrinus"]),
-        brenton_notes=cast(schema.BrentonNotes, data["brenton-notes"]),
-        kjv_notes=cast(schema.KjvNotes, data["kjv-notes"]),
-        ccel_notes=cast(schema.CcelNotes, data["ccel-notes"]),
-        introductions=cast(schema.BookIntroductions, data["book-introductions"]),
-        appendix=cast(schema.Appendix, data["appendix"]),
-        abbreviations=cast(schema.Abbreviations, data["abbreviations"]),
-        terminology=cast(Mapping[str, schema.Terminology], data["terminology"]),
-        prose=cast(Mapping[str, schema.Prose], data["prose"]),
-        revisions=cast(schema.Revisions, data["revisions"]),
-        citations=cast(schema.Citations, data["citations"]),
-        quotations=cast(schema.Quotations, data["quotations"]),
-        turpie=cast(schema.Turpie, data["turpie"]),
-        versification=cast(schema.Versification, data["versification"]),
-        lines=cast(schema.Lines, data["lines"]),
-        margin=cast(schema.Margin, data["margin"]),
-        psalter=cast(schema.Psalter, data["psalter"]),
-        comparisons=cast(schema.Comparisons, data["comparisons"]),
-        witnesses=cast(tuple[schema.Witnesses, ...], data["witnesses"]),
-        byzantine=cast(schema.Byzantine, data["byzantine"]),
-        byzantine_placements=cast(
-            schema.ByzantinePlacements, data["byzantine-placements"]
-        ),
+        **{
+            FIELD_OF[name]: cast(
+                Any, freeze(read_json(paths.EDITION_DIR / f"{name}.json"))
+            )
+            for name in FILES
+        }
     )
     check(policy)
     return policy

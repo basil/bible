@@ -46,7 +46,7 @@ import bible.policy
 from bible import assembly, notes, repairs, scripture, usfm, usj
 from bible.checks import CheckFailed, require, require_fields
 from bible.policy_schema import RevisionChange, WordingChange
-from bible.sources import NEW_TESTAMENT
+from bible.references import book_of
 from bible.usj import Content, Document, Node, Predicate
 
 # What revision has met: a word, verse or punctuation rule by its key, a
@@ -213,7 +213,7 @@ def check(policy: bible.policy.Policy) -> None:
             # decisions. Verse revisions may change its punctuation only;
             # keep words, numbers and internal apostrophes/hyphens intact.
             require(
-                key[:3] not in NEW_TESTAMENT
+                key[:3] not in policy.kjv_units
                 or punctuation_only(change["from"], change["to"]),
                 f"Revision changes New Testament words: {name}: {key}",
             )
@@ -720,6 +720,7 @@ def _branches(trie: Trie) -> str:
     return f"(?:{group})?" if ends else group
 
 
+@functools.cache
 def _phrase(words: str) -> re.Pattern[str]:
     """The words given, not as part of a longer word: an edge that is a
     letter or digit must not run on into another. A space among them is a
@@ -954,7 +955,7 @@ def prose(marker: str) -> bool:
 # The source quotations have not yet been tagged for their fonts. Recognize
 # their letters too, and the stops that close them, so that their punctuation
 # is not revised as English.
-FOREIGN_END = re.compile(f"[{usfm.GREEK}{usfm.HEBREW}][\u0300-\u036f]*[.?!]*$")
+FOREIGN_END = re.compile(f"[{usfm.GREEK}{usfm.HEBREW}][{usfm.COMBINING}]*[.?!]*$")
 # The systematic rules, each a pattern over a unit's English, in the order
 # they apply: a run of commas, colons and semicolons duplicates the break an
 # em dash or a parenthesis marks. Inside closing parentheses the run moves
@@ -1165,6 +1166,9 @@ def _check_lemmas(before: Document, after: Document) -> None:
 
     old = scripture.verses(before)
     for reference, verse in scripture.verses(after).items():
+        # A verse whose words and notes the revision left alone keeps its lemmas.
+        if old[reference].text == verse.text and old[reference].notes == verse.notes:
+            continue
         was, words = scripture.plain(old[reference].text), scripture.plain(verse.text)
         for (at, then), (now_at, now) in zip(old[reference].notes, verse.notes):
             # Normalize the caller's offset without dropping its trailing space.
@@ -1188,6 +1192,13 @@ def _check_lemmas(before: Document, after: Document) -> None:
                     )
 
 
+def regularized(doc: Document, policy: bible.policy.Policy) -> Document:
+    """A document with the systematic spelling and punctuation alone,
+    recording nothing: the appendix of readings quotes both Bibles so, to
+    show the readings' differences and not the edition's finishing."""
+    return punctuated(respelt(doc, policy, set()), policy, set())
+
+
 def revised(
     code: str,
     doc: Document,
@@ -1199,7 +1210,7 @@ def revised(
     lemma of a note of the verse that quotes them changes with them. A lemma
     that quotes them in part would be left as the verse no longer reads, so
     it is refused."""
-    changes = [c for c in verse_changes(policy) if c["verse"].split()[0] == code]
+    changes = [c for c in verse_changes(policy) if book_of(c["verse"]) == code]
     if not changes:
         return doc
     doc = _reworded(
@@ -1214,7 +1225,7 @@ def revised(
 
 def _in_book(keys: Iterable[str], code: str) -> list[str]:
     """The references among the verse keys that are in a book."""
-    return [key.split()[1] for key in keys if key.split()[0] == code]
+    return [key.split()[1] for key in keys if book_of(key) == code]
 
 
 @functools.cache
@@ -1420,21 +1431,7 @@ def _reworded(
                 }
             replacements[id(note)] = changed_note
 
-    def swap(content: Content) -> Content:
-        return [
-            (
-                replacements.get(id(item), item)
-                if isinstance(item, dict) and item["type"] == "note"
-                else (
-                    {**item, "content": swap(item["content"])}
-                    if isinstance(item, dict) and "content" in item
-                    else item
-                )
-            )
-            for item in content
-        ]
-
-    result = usj.with_content(doc, swap)
+    result = usj.replaced_by_identity(doc, replacements)
     check_revised_notes(code, doc, result)
     return result
 

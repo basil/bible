@@ -17,6 +17,7 @@ from dataclasses import dataclass
 from difflib import SequenceMatcher
 
 import bible.references
+import bible.terminology
 from bible import scripture, usj
 from bible.byzantine import received
 from bible.byzantine.crosswire import presentation_bridge
@@ -670,7 +671,7 @@ def joined_comparison(
 def blocks(
     listed: Sequence[Row],
     books: bible.references.Books,
-    labels: Mapping[str, str],
+    terms: bible.terminology.Registry,
 ) -> tuple[list[Node], list[tuple[Row, int, int]]]:
     """The appendix's blocks: a heading for each book, and under it one
     entry per verse, with a Greek comparison and, where its complete wording
@@ -680,7 +681,15 @@ def blocks(
     spans: list[tuple[Row, int, int]] = []
     current = None
     tr, rp, kjv, oleb, apparatus, scrivener = (
-        labels[k] for k in ("tr", "rp", "kjv", "oleb", "apparatus", "scrivener")
+        terms.display(k)
+        for k in (
+            "textus-receptus",
+            "robinson-pierpont",
+            "king-james-version",
+            "orthodox-liturgical-english-bible",
+            "apparatus",
+            "scrivener",
+        )
     )
     for row in listed:
         if row.book != current:

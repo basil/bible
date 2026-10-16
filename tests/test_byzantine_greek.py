@@ -35,6 +35,7 @@ from bible.byzantine.greek import (
     printed,
     rp2018,
     rp2026,
+    tree,
 )
 from bible.checks import CheckFailed
 from bible.sources import Content
@@ -66,7 +67,7 @@ def rp18(byzantine_inputs: Mapping[str, Content]) -> tuple[Text, Tags]:
 
 @pytest.fixture(scope="module")
 def guardian(byzantine_inputs: Mapping[str, Content], structure: Structure) -> Printed:
-    return printed(byzantine_inputs["rp2026"], structure.omitted, "REV 22:21")
+    return printed(tree(byzantine_inputs["rp2026"]), structure.omitted, "REV 22:21")
 
 
 # Alphabet and helpers.
@@ -269,7 +270,7 @@ def test_printed_reader_refuses_a_changed_scripture_font(
     assert changed != source
     path = Content({"changed.xml": changed.encode()}) / "changed.xml"
     with pytest.raises(CheckFailed, match="Changed Guardian scripture font"):
-        printed(path, structure.omitted, "REV 22:21")
+        printed(tree(path), structure.omitted, "REV 22:21")
 
 
 # The structural decisions, omissions and the patches.

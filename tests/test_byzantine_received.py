@@ -122,7 +122,9 @@ def test_an_entry_opens_with_its_letter_and_reference_and_reads_to_the_next() ->
             "callers": {"2 a": 1},
         },
     }
-    rows = greek.apparatus(Content({"x.xml": xml.encode()}) / "x.xml", verses)
+    rows = greek.apparatus(
+        greek.tree(Content({"x.xml": xml.encode()}) / "x.xml"), verses
+    )
     assert [(r["target_ref"], r["rp"], r["tr"]) for r in rows] == [
         ("MAT 1:6", "σολομωνα", [{"reading": "σολομωντα", "sigla": ["TR"]}]),
         ("MAT 1:8", "και", [{"reading": "---", "sigla": ["RPmg", "SCR"]}]),

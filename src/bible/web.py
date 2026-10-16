@@ -8,9 +8,9 @@ from typing import NotRequired, TypedDict
 
 from fontTools.ttLib import TTFont
 
-import bible.sources
 from bible import (
     assembly,
+    export,
     files,
     paths,
     pipeline,
@@ -98,16 +98,14 @@ def spans(text: str, phrases: Sequence[str]) -> list[Span]:
 
 
 def comparisons(
-    edition: pipeline.Edition,
-    documents: Mapping[str, usj.Document],
-    sources: bible.sources.Sources,
+    edition: pipeline.Edition, documents: Mapping[str, usj.Document]
 ) -> list[Compared]:
     """The comparison page's passages: each quoted in full from the edition
     and from the King James Bible at the place the edition's verses hold
     there, both named as the edition cites them, and from the editor's OSB
     quotation where the decision gives one, each with its highlights."""
     policy = edition.policy
-    ours, theirs = assembly.books(policy, sources), assembly.kjv_books(policy, sources)
+    ours, theirs = edition.books, edition.read.kjv_books
     kjv: dict[str, dict[str, scripture.Verse]] = {}
     result: list[Compared] = []
     for entry in policy.comparisons["passages"]:
@@ -126,7 +124,12 @@ def comparisons(
         require(placed, f"No King James counterpart: {entry['passage']}")
         for verse in placed:
             if verse.book not in kjv:
-                kjv[verse.book] = scripture.verses(usj.parse(sources.kjv[verse.book]))
+                kjv[verse.book] = scripture.verses(
+                    present(
+                        edition.read.kjv.get(verse.book),
+                        f"King James book not read: {verse.book}",
+                    )
+                )
         quote = " ".join(
             scripture.plain(
                 present(verses.get(v.label), f"No verse {v} to compare").text
@@ -151,9 +154,7 @@ def comparisons(
     return result
 
 
-def write(
-    sources: bible.sources.Sources, edition: pipeline.Edition, directory: Path
-) -> None:
+def write(edition: pipeline.Edition, directory: Path) -> None:
     """Write one document per chapter, each opening with its book, their
     ordered chapter inventory, with the book's names and whether a heading
     stands for a chapter's number, and the comparison page's passages."""
@@ -161,13 +162,11 @@ def write(
         shutil.rmtree(directory)
     write_fonts(directory / "fonts")
     documents = dict(pipeline.view(edition, "pdf"))
-    files.write_json(
-        directory / "comparisons.json", comparisons(edition, documents, sources)
-    )
+    files.write_json(directory / "comparisons.json", comparisons(edition, documents))
     books = []
     for unit in edition.policy.scripture:
         code = unit["id"]
-        doc = pipeline.with_printed_origins(documents[code])
+        doc = export.with_printed_origins(documents[code])
         (book, *header), parts = pipeline.headed_chapters(doc)
         # A book's introduction is a note on its opening; before the first
         # chapter stand only the book's names, which the manifest carries.

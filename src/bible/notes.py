@@ -28,9 +28,8 @@ from difflib import SequenceMatcher
 from typing import Unpack
 
 import bible.references
-import bible.terminology
-from bible import citations, lemmas, terminology, usfm, usj
-from bible.checks import require
+from bible import citations, lemmas, scripture, terminology, usfm, usj
+from bible.checks import require, require_used
 from bible.citations import Citation
 from bible.repairs import change
 from bible.scripture import plain, word_spans
@@ -318,14 +317,7 @@ def labelled_pieces(text: str) -> list[tuple[str, str]]:
 def source_text(note: Node) -> str:
     """A source note's words after its origin, as its source marks them up:
     what the decision files pin and the review shows."""
-    return usj.serialize(
-        [
-            item
-            for item in note["content"]
-            if not usj.is_type(item, "char", "fr")
-            and not usj.is_type(item, "char", "xo")
-        ]
-    )
+    return usj.serialize([item for item in note["content"] if not usj.is_origin(item)])
 
 
 def source_pieces(note: Node) -> list[tuple[str, str]]:
@@ -344,7 +336,7 @@ def source_pieces(note: Node) -> list[tuple[str, str]]:
                 pieces.append((kind, item))
                 continue
             marker = item.get("marker")
-            if marker in ("fr", "xo"):
+            if usj.is_origin(item):
                 continue
             if marker == "ft":
                 visit(item["content"], "text")
@@ -706,7 +698,7 @@ def authored_body(
     at either end; the space is the text's beside it."""
     runs = []
     for item in note["content"]:
-        if isinstance(item, str) or item.get("marker") in ("fr", "xo"):
+        if isinstance(item, str) or usj.is_origin(item):
             require(
                 not isinstance(item, str), f"Unmarked words in an edition note: {key}"
             )
@@ -740,7 +732,7 @@ def authored_body(
     return body
 
 
-def with_terms(body: Body, terms: bible.terminology.Registry) -> Body:
+def with_terms(body: Body, terms: terminology.Registry) -> Body:
     return replace(body, terms=terminology.recognize(body.plain, terms))
 
 
@@ -1201,7 +1193,7 @@ def set_below(doc: Document, placed: Collection[str]) -> Document:
 
     def place(node: Node) -> Node:
         key = node.get("x-key")
-        if node["type"] == "note" and key in wanted:
+        if key in wanted:
             assert key is not None
             require(key not in found, f"Duplicate note placement: {key}")
             require(node["marker"] == "f", f"Note placement changes nothing: {key}")
@@ -1209,6 +1201,57 @@ def set_below(doc: Document, placed: Collection[str]) -> Document:
             return {**node, "marker": "ef", "caller": "+"}
         return node
 
-    result = usj.with_content(doc, lambda content: usj.mapped(content, place))
-    require(found == wanted, f"Unused note placements: {sorted(wanted - found)}")
+    result = scripture.map_notes(doc, place)
+    require_used(wanted, found, "note placements")
     return result
+
+
+@dataclass(frozen=True)
+class Read:
+    """A source note as read: where it stands and what it says."""
+
+    key: str
+    kind: str
+    reference: str
+    verse: scripture.Verse
+    # The verse's words with their offsets, read once for every note in it.
+    words: lemmas.Words
+    offset: int
+    body: Body
+    citations: tuple[Citation, ...]
+    source: str
+    text: str
+    scope: usj.Scope | None = None
+    # The edition's own notes carry their category to the typesetter.
+    category: str | None = None
+
+
+def spanned(verses: Sequence[bible.references.Verse]) -> str:
+    """A run of one chapter's verses as a note names it: "30:1–14", or, in
+    lettered verses, "24:22f–t"."""
+    first, last = verses[0], verses[-1]
+    if first == last:
+        return first.label
+    if first.number == last.number:
+        return f"{first.label}\u2013{last.letter}"
+    return f"{first.label}\u2013{last.number}{last.letter}"
+
+
+def relocation_note(code: str, address: str, label: str, sentence: str) -> Node:
+    """A note the edition sets at a verse to say where a passage stands in
+    another order: labelled with the text whose order it is, as the notes
+    on the New Testament's moved verses are labelled TR or KJV, and saying
+    what that text has there."""
+    extra: usj.Extra = {
+        "x-key": f"{code} {address} {label}",
+        "category": "edition",
+        "x-scope": {"declared": None},
+    }
+    return usj.note(
+        "f",
+        usj.char("fr", f"{address} "),
+        usj.char("fl", f"{label} "),
+        usj.char("ft", sentence),
+        caller="+",
+        **extra,
+    )

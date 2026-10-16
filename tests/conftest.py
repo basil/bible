@@ -15,7 +15,7 @@ import bible.annotate
 import bible.pipeline
 import bible.policy
 import bible.sources
-from bible import pipeline
+from bible import export, pipeline
 from bible import policy as decisions
 from bible import scripture
 from bible import sources as source_files
@@ -54,7 +54,7 @@ def policy(edition: bible.pipeline.Edition) -> bible.policy.Policy:
 @pytest.fixture(scope="session")
 def exported(edition: bible.pipeline.Edition) -> dict[str, str]:
     """The full edition as it is sent to be typeset, by unit."""
-    return dict(pipeline.export(edition, "pdf"))
+    return dict(export.export(edition, "pdf"))
 
 
 @dataclass(frozen=True)
@@ -158,20 +158,12 @@ def changed(
 
 @pytest.fixture(scope="session")
 def ctx(
-    edition: bible.pipeline.Edition,
-    policy: bible.policy.Policy,
-    sources: bible.sources.Sources,
+    edition: bible.pipeline.Edition, policy: bible.policy.Policy
 ) -> bible.annotate.Context:
     """What reading a note needs: the policy and what the edition prints."""
-    from bible import annotate, assembly, terminology
+    from bible import annotate
 
-    return annotate.Context(
-        policy,
-        edition.inventory,
-        assembly.books(policy, sources),
-        terminology.registry(policy),
-        pipeline.note_prose(policy),
-    )
+    return annotate.Context(policy, edition.inventory, edition.books)
 
 
 def book(code: str, body: str, chapter: int = 99) -> Document:
@@ -202,7 +194,7 @@ def byzantine(edition: bible.pipeline.Edition) -> Context:
     (overrides), every unit's disposition (dispositions), the King James
     books before (documents) and after (prepared) the edits, the verses'
     texts (kjv), and the checks (invariants, finished)."""
-    return edition.byzantine.context
+    return edition.byzantine
 
 
 @pytest.fixture(scope="session")

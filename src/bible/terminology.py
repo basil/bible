@@ -275,7 +275,7 @@ def found(content: Content, terms: Registry, *, note: bool) -> tuple[Term, ...]:
     """The terms in a paragraph of prose, or in an introduction set as a
     note, each where it stands in the paragraph's words. The words of a
     footnote within prose are read as a note's."""
-    text = usj.text_of(content, skip=usj.is_label)
+    text = usj.unlabelled(content)
     styles, _, noted = _outline(content)
     result = list(recognize(text, terms, note=note))
     if noted and not note:
@@ -313,7 +313,7 @@ def found(content: Content, terms: Registry, *, note: bool) -> tuple[Term, ...]:
 
 def printed(content: Content, found_terms: Iterable[Term], terms: Registry) -> Content:
     """A paragraph with the terms found in it as the edition prints them."""
-    text = usj.text_of(content, skip=usj.is_label)
+    text = usj.unlabelled(content)
     styles, fields, _ = _outline(content)
     edits, commas, eras = [], [], []
     for term in found_terms:

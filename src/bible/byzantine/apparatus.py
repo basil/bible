@@ -313,14 +313,8 @@ def faa(path: Content) -> dict[str, FaaRow]:
         ref = books[match[1]] + " " + match[2]
         require(ref not in result, f"Duplicate FAA address: {ref}")
         row: FaaRow = {
-            "raw_Greek": cells[1],
-            "raw_English": cells[2],
-            "source_English_html": cast(
-                str, html.tostring(source_cells[2], encoding="unicode")
-            ),
             "source_notes": cells[3],
             "source_table_html": cast(str, html.tostring(node, encoding="unicode")),
-            "source_table_text": "\n".join(cells),
         }
         resolved, groups, unavailable = faa_reading(cells[1], "TR")
         if unavailable is not None:
@@ -763,7 +757,6 @@ def msb(main: Content, tables: Content, structure: Structure) -> list[SelectedLi
                     source_original_html=cells[21],
                     english_context=context,
                     greek=cells[6],
-                    greek_order=cells[5],
                     english=token_reading,
                     new_scope=(
                         "unavailable"
@@ -845,7 +838,7 @@ def web(folder: Content, structure: Structure) -> list[SelectedListRow]:
                     for n in note["content"]
                     if isinstance(n, dict) and n.get("marker") in {"ft", "fq", "fqa"}
                 ]
-                raw = " ".join(usj.text_of(body).split())
+                raw = scripture.plain(usj.text_of(body))
                 if not re.search(r"\bTR\b", raw):
                     continue
                 old, new = web_contrast(raw)

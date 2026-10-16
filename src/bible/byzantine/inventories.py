@@ -14,6 +14,7 @@ from bible.byzantine import BOOKS
 from bible.byzantine.greek import ascii_greek, greek_words
 from bible.byzantine.rows import BoydNote, BoydReading, CollationRow
 from bible.checks import CheckFailed, require
+from bible.scripture import plain
 from bible.sources import Content
 from bible.usfm import GREEK
 
@@ -257,7 +258,7 @@ def boyd_passages(root: ET.Element) -> dict[str, str]:
             append(escape(child.tail or ""))
 
     walk(root)
-    return {ref: " ".join(value.split()) for ref, value in passages.items()}
+    return {ref: plain(value) for ref, value in passages.items()}
 
 
 def boyd(folder: Content, *, greek: bool = True) -> list[BoydNote]:
@@ -290,7 +291,7 @@ def boyd(folder: Content, *, greek: bool = True) -> list[BoydNote]:
                 + (c.tail or "")
                 for c in note
             )
-            body = re.sub(r"\s+", " ", body).strip()
+            body = plain(body)
             original = body
             body = re.sub(r"[\[{]Note:.*?[\]}]", "", body).strip()
             if "¦" not in body:

@@ -42,11 +42,9 @@ def facing(sources: bible.sources.Sources) -> Inventory:
 
 
 @pytest.fixture(scope="module")
-def names(
-    policy: bible.policy.Policy, sources: bible.sources.Sources
-) -> tuple[bible.references.Books, ...]:
+def names(edition: bible.pipeline.Edition) -> tuple[bible.references.Books, ...]:
     """Both Bibles' names for their books: the edition's, and the King James."""
-    return assembly.books(policy, sources), assembly.kjv_books(policy, sources)
+    return edition.books, edition.read.kjv_books
 
 
 @pytest.fixture(scope="module")
@@ -510,12 +508,13 @@ def test_generated_names_share_the_body_heading_registry(
     policy: bible.policy.Policy,
     sources: bible.sources.Sources,
     printed: Printed,
+    edition: bible.pipeline.Edition,
 ) -> None:
     def rename(data: dict[str, Any]) -> None:
         unit = next(unit for unit in data["scripture"] if unit["id"] == "JER")
         unit["short_title"] = "Renamed Jeremias"
 
-    ours = assembly.books(changed(policy, "manifest", rename), sources)
+    ours = assembly.books(changed(policy, "manifest", rename), edition.documents)
     written = sources.authored[NUMBERING["file"]] + "\\ip {JER 38:31}\n"
     page = printed(written, ours=ours)
     assert "\\tr\n\\tc1 Jeremiah\n\\tc2 Renamed Jeremias\n" in page

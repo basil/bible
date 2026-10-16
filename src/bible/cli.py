@@ -10,7 +10,7 @@ import subprocess
 import sys
 from collections.abc import Sequence
 
-from bible import paths, pipeline, policy, sources, web
+from bible import export, paths, pipeline, policy, sources, web
 from bible.project import write_project
 from bible.publish import publish
 from bible.review import review
@@ -21,33 +21,31 @@ from bible.verify import check_processed, inspect_pdf
 COMMANDS = ("validate", "review", "web", *paths.OUTPUTS)
 
 
-def prepared() -> tuple[sources.Sources, policy.Policy, pipeline.Edition]:
-    read = sources.load()
-    decisions = policy.load()
-    return read, decisions, pipeline.prepare(read, decisions)
+def prepared() -> pipeline.Edition:
+    return pipeline.prepare(sources.load(), policy.load())
 
 
 def validate() -> None:
     """Prepare the whole edition and write it as USFM, which checks every
     source and decision."""
-    _, _, edition = prepared()
-    pipeline.export(edition, "pdf")
+    edition = prepared()
+    export.export(edition, "pdf")
     print("Validated the sources and the edition:", dict(edition.summary), flush=True)
 
 
 def render(mode: str) -> None:
     """Typeset one edition in build/<mode>, check it, and publish it to dist/."""
-    read, decisions, edition = prepared()
-    documents = pipeline.export(edition, mode)
+    edition = prepared()
+    documents = export.export(edition, mode)
     check_image()
     base = paths.BUILD_DIR / mode
     if base.exists():
         shutil.rmtree(base)
     base.mkdir(parents=True)
-    project, ids = write_project(mode, base, documents, decisions, read)
+    project, ids = write_project(mode, base, documents, edition)
     pdf = typeset(base, project)
     check_processed(project, base, ids)
-    inspect_pdf(pdf, base, project, ids, mode == "sample", decisions.witnesses)
+    inspect_pdf(pdf, base, project, ids, mode == "sample", edition.policy.witnesses)
     publish(mode, pdf)
 
 
@@ -59,11 +57,10 @@ def main(argv: Sequence[str] | None = None) -> int:
         if args.command == "validate":
             validate()
         elif args.command == "review":
-            review(*prepared())
+            review(prepared())
         elif args.command == "web":
             check_image()
-            read, _, edition = prepared()
-            web.write(read, edition, paths.WEB_DIR)
+            web.write(prepared(), paths.WEB_DIR)
         else:
             render(args.command)
     except (RuntimeError, subprocess.CalledProcessError) as exc:

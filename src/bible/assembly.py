@@ -18,7 +18,6 @@ from typing import Literal
 
 import bible.policy
 import bible.references
-import bible.sources
 from bible import scripture, usfm, usj, versification
 from bible.checks import present, require
 from bible.policy import source_id
@@ -40,20 +39,13 @@ SONG = (
 )
 
 
-def source_marker(text: str, marker: str) -> str:
-    """The words of a source file's first line of a kind."""
-    match = present(
-        re.search(r"^\\" + marker + r"\s+([^\n]+)", text, re.M),
+def header(doc: Document, marker: str) -> str:
+    """The words of a document's first header paragraph of a kind."""
+    block = present(
+        next((b for b in doc["content"] if usj.is_type(b, "para", marker)), None),
         f"Missing source {marker} marker",
     )
-    return match[1].strip()
-
-
-def source_text(entry: Entry, sources: bible.sources.Sources) -> str:
-    """The text an entry is prepared from: its source file, or the edition's own."""
-    if "file" in entry:
-        return sources.authored[entry["file"]]
-    return sources[entry["source"]][source_id(entry)]
+    return usj.text_of(block["content"]).strip()
 
 
 def source_codes(entry: Entry) -> tuple[str, ...]:
@@ -65,32 +57,31 @@ def source_codes(entry: Entry) -> tuple[str, ...]:
     return (code,)
 
 
-def names(entry: Entry, text: str) -> dict[str, str]:
-    """The contents title, running-head title, and abbreviation of an entry.
+def names(entry: Entry, doc: Document) -> dict[str, str]:
+    """The contents title, running-head title, and abbreviation of an entry,
+    from its header where the manifest gives none.
 
     The edition's names replace the source's. Front matter that the edition
     does not rename keeps its source names, as preparation prints them.
     """
     if "title" not in entry and "section" not in entry:
-        return {
-            field: source_marker(text, marker) for field, marker in NAME_MARKERS.items()
-        }
+        return {field: header(doc, marker) for field, marker in NAME_MARKERS.items()}
     require(entry.get("title"), f"Missing title: {entry['id']}")
     return {
         "title": entry["title"],
-        "short_title": entry.get("short_title") or source_marker(text, "toc2"),
-        "abbreviation": entry.get("abbreviation") or source_marker(text, "toc3"),
+        "short_title": entry.get("short_title") or header(doc, "toc2"),
+        "abbreviation": entry.get("abbreviation") or header(doc, "toc3"),
     }
 
 
 def books(
-    policy: bible.policy.Policy, sources: bible.sources.Sources
+    policy: bible.policy.Policy, documents: Mapping[str, Document]
 ) -> bible.references.Books:
     """The edition's books, in its order, under their running-head names,
     the names by which one of a book's chapters is cited, and the
     abbreviations of both that citations print."""
     found = {
-        unit["id"]: names(unit, source_text(unit, sources)) for unit in policy.scripture
+        unit["id"]: names(unit, documents[unit["id"]]) for unit in policy.scripture
     }
     return Books(
         ((code, name["short_title"]) for code, name in found.items()),
@@ -103,14 +94,15 @@ def books(
 
 
 def kjv_books(
-    policy: bible.policy.Policy, sources: bible.sources.Sources
+    policy: bible.policy.Policy, texts: Mapping[str, str]
 ) -> bible.references.Books:
     """The King James Bible's books, in its order, under its own names for
-    them, which a reader's other Bible has."""
+    them, which a reader's other Bible has: read from every file's text by
+    the read stage, which parses only the books the edition needs."""
     return Books(
         (
-            (code, source_marker(text, "toc2"))
-            for code, text in sources.kjv.items()
+            (code, usfm.header(text, "toc2"))
+            for code, text in texts.items()
             if re.search(r"^\\toc2\s", text, re.M)
         ),
         _singly(policy, "cited_singly"),
@@ -157,9 +149,9 @@ def heading_lines(entry: Entry, found: Mapping[str, str]) -> list[tuple[str, str
     return [(marker, text) for marker, text in lines]
 
 
-def named(entry: Entry, doc: Document, text: str) -> Document:
+def named(entry: Entry, doc: Document) -> Document:
     """A document with the edition's names and heading in place of the source's."""
-    found = names(entry, text)
+    found = names(entry, doc)
     replacements = {
         "h": found["short_title"],
         **{marker: found[field] for field, marker in NAME_MARKERS.items()},
@@ -370,7 +362,7 @@ def divided(
                 node: Node = {
                     "type": "verse",
                     "marker": "v",
-                    "number": verse.label.split(":")[1],
+                    "number": f"{verse.number}{verse.letter}",
                 }
                 marked[id(node)] = verse
                 if (b, offset) in standing:
@@ -545,7 +537,7 @@ def renumbered(
                 blocks.extend(held)
                 held.clear()
             pending = None
-            content.append({**item, "number": target.label.split(":")[1]})
+            content.append({**item, "number": f"{target.number}{target.letter}"})
         close(block, content)
     if pending is not None:
         blocks.append(pending)
@@ -573,7 +565,7 @@ def renumbered(
                 else [labels.get(verse, verse)]
             ):
                 expected.setdefault(str(target.chapter), []).append(
-                    target.label.split(":")[1]
+                    f"{target.number}{target.letter}"
                 )
     found = usj.inventory(doc)
     first = int(next(iter(found)))
@@ -661,7 +653,7 @@ def printed(code: str, doc: Document, policy: bible.policy.Policy) -> Document:
     unnumbered = {
         reference: entry
         for reference, entry in policy.versification.get("unnumbered", {}).items()
-        if not isinstance(entry, str) and reference.split()[0] == code
+        if not isinstance(entry, str) and bible.references.book_of(reference) == code
     }
     if not relocations and not unnumbered:
         return doc
@@ -726,7 +718,7 @@ def without_stubs(code: str, doc: Document, policy: bible.policy.Policy) -> Docu
     empty Proverbs 30): the chapter and its one empty verse go, with any
     remark of the transcriber's in it. A stub that has words is refused."""
     for reference, entry in policy.versification.get("stubs", {}).items():
-        if isinstance(entry, str) or reference.split()[0] != code:
+        if isinstance(entry, str) or bible.references.book_of(reference) != code:
             continue
         require(bool(entry.get("why")), f"Stub without its reason: {reference}")
         address = reference.split()[1]
@@ -750,8 +742,11 @@ def without_stubs(code: str, doc: Document, policy: bible.policy.Policy) -> Docu
     return doc
 
 
-def check_divided(policy: bible.policy.Policy, sources: bible.sources.Sources) -> None:
-    """A source divided between units must be printed whole, each chapter once."""
+def check_divided(
+    policy: bible.policy.Policy, documents: Mapping[str, Mapping[str, Document]]
+) -> None:
+    """A source divided between units must be printed whole, each chapter
+    once; the sources' documents by their family, as read."""
     divided: dict[tuple[str, str], list[str]] = {}
     for unit in policy.scripture:
         if "chapters" in unit:
@@ -760,5 +755,5 @@ def check_divided(policy: bible.policy.Policy, sources: bible.sources.Sources) -
                 str(c) for c in range(first, last + 1)
             )
     for (source, code), chapters in divided.items():
-        found = list(usfm.inventory(sources[source][code])["chapters"])
+        found = list(usj.inventory(documents[source][code]))
         require(chapters == found, f"Divided source not printed whole: {source}/{code}")

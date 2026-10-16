@@ -26,9 +26,8 @@ from types import MappingProxyType
 import bible.annotate
 import bible.policy
 import bible.references
-import bible.terminology
 from bible import assembly, citations, notes, repairs, scripture, terminology, usj
-from bible.checks import CheckFailed, require
+from bible.checks import CheckFailed, require, require_fields
 from bible.policy import source_id
 from bible.policy_schema import BookIntroductionsGlosses, Entry, WordingChange
 from bible.references import Verse, verse_at
@@ -101,9 +100,11 @@ def placements(entry: Entry, policy: bible.policy.Policy) -> Placements | None:
             assign("Book introduction", book, keys)
         for book, sections in data["sections"].items():
             for verse, section in sections.items():
-                require(
-                    set(section) == {"heading", "paragraphs"},
-                    f"Book introduction section with missing or unknown fields: {book}@{verse}",
+                require_fields(
+                    section,
+                    {"heading", "paragraphs"},
+                    (),
+                    f"Book introduction section {book}@{verse}",
                 )
                 assign("Book introduction", f"{book}@{verse}", section["paragraphs"])
         return Placements(
@@ -126,10 +127,6 @@ def placements(entry: Entry, policy: bible.policy.Policy) -> Placements | None:
 
 def is_glossary(entry: Entry) -> bool:
     return (entry["source"], source_id(entry)) == ("brenton", terminology.GLOSSARY)
-
-
-def words(content: Iterable[str | Node]) -> str:
-    return usj.text_of(content, skip=usj.is_label)
 
 
 def rebased(reading: Reading, text: str) -> Reading:
@@ -222,7 +219,7 @@ def unlabelled(doc: Document, places: Placements) -> Document:
             (index, text)
             for index, block in enumerate(blocks)
             if usj.is_type(block, "para", "ip")
-            and (text := words(block["content"])).lstrip().startswith(label)
+            and (text := usj.unlabelled(block["content"])).lstrip().startswith(label)
             and text.lstrip()[len(label) :].lstrip(" ").startswith(key)
         ]
         require(len(found) == 1, f"Appendix label not found once: {label}")
@@ -259,7 +256,7 @@ def read(
     for block in doc["content"]:
         readings: dict[Address, Reading] = {}
         for address, content in regions(block):
-            text = words(content)
+            text = usj.unlabelled(content)
             if not text.strip():
                 continue
             destination = next(
@@ -314,7 +311,7 @@ def changed(unit: Unit, index: int, address: Address, content: Content) -> Unit:
     unit = list(unit)
     unit[index] = (
         with_region(block, address, content),
-        {**readings, address: rebased(readings[address], words(content))},
+        {**readings, address: rebased(readings[address], usj.unlabelled(content))},
     )
     return unit
 
@@ -330,7 +327,7 @@ def rewritten(
 ) -> Content:
     """Content with words changed without disturbing its character styles,
     but for those whose words lie wholly within a stretch to unwrap."""
-    text = words(content)
+    text = usj.unlabelled(content)
     if start is None:
         require(
             text.count(before) == 1, f"Decision does not apply once: {key}: {before}"
@@ -369,7 +366,7 @@ def placed(unit: Unit, places: Placements, policy: bible.policy.Policy) -> Unit:
         for index, (block, _) in enumerate(unit)
         if usj.is_type(block, "para", "ip")
     ]
-    bodies = [words(unit[index][0]["content"]).strip() for index in paragraphs]
+    bodies = [usj.unlabelled(unit[index][0]["content"]).strip() for index in paragraphs]
     require(
         not any("[" in body or "]" in body for body in bodies),
         "Book introduction brackets not a gloss's",
@@ -432,7 +429,7 @@ def placed(unit: Unit, places: Placements, policy: bible.policy.Policy) -> Unit:
                 replaces != ("after" in gloss)
                 and before
                 and once_in_words(original, before)
-                and once_in_words(words(content), before),
+                and once_in_words(usj.unlabelled(content), before),
                 f"Gloss does not apply: {key}",
             )
             assert before is not None
@@ -462,7 +459,7 @@ def placed(unit: Unit, places: Placements, policy: bible.policy.Policy) -> Unit:
             # The source's words, so that no change alters or removes a gloss.
             require(
                 once_in_words(original, before)
-                and once_in_words(words(content), before),
+                and once_in_words(usj.unlabelled(content), before),
                 f"Name change does not apply once: {key}",
             )
             # The editor's own words are bracketed, and only a gloss adds them.
@@ -494,11 +491,11 @@ def edited(
             (index, address)
             for index, (block, readings) in enumerate(unit)
             for address, content in regions(block)
-            if address in readings and change["from"] in words(content)
+            if address in readings and change["from"] in usj.unlabelled(content)
         ]
         require(
             len(found) == 1
-            and words(dict(regions(unit[found[0][0]][0]))[found[0][1]]).count(
+            and usj.unlabelled(dict(regions(unit[found[0][0]][0]))[found[0][1]]).count(
                 change["from"]
             )
             == 1,
@@ -509,7 +506,7 @@ def edited(
         # One stretch gives way, so that what replaces it stays in the style
         # of the words it replaces.
         prefix, removed, added = repairs.change(change["from"], change["to"])
-        start = words(content).index(change["from"]) + prefix
+        start = usj.unlabelled(content).index(change["from"]) + prefix
         unit = changed(
             unit,
             index,
@@ -572,7 +569,7 @@ def cited(
 ) -> Content:
     """Content with what it cites as the edition prints it. The source's
     italics within a citation give way to the edition's way of citing."""
-    text = words(content)
+    text = usj.unlabelled(content)
     reading = rebased(reading, text)
     edits, unwrap = [], []
     for citation in reading.citations:
@@ -623,7 +620,7 @@ def renamed(
             (index, address, match)
             for index, (block, _) in enumerate(unit)
             for address, content in regions(block)
-            for match in pattern.finditer(words(content))
+            for match in pattern.finditer(usj.unlabelled(content))
         ]
         require(len(found) == 1, f"Change of name not met once: {code} ({before})")
         index, address, match = found[0]
@@ -686,7 +683,7 @@ def unpunctuated(unit: Unit) -> Unit:
     return result
 
 
-def with_terms(unit: Unit, registry: bible.terminology.Registry) -> Unit:
+def with_terms(unit: Unit, registry: terminology.Registry) -> Unit:
     """A unit with the terms read in its prose as the edition prints them."""
     result: Unit = []
     for block, readings in unit:
@@ -694,7 +691,7 @@ def with_terms(unit: Unit, registry: bible.terminology.Registry) -> Unit:
             reading = readings.get(address)
             if reading is None:
                 continue
-            reading = rebased(reading, words(content))
+            reading = rebased(reading, usj.unlabelled(content))
             block = with_region(
                 block, address, terminology.printed(content, reading.terms, registry)
             )
@@ -705,7 +702,6 @@ def with_terms(unit: Unit, registry: bible.terminology.Registry) -> Unit:
 def unit(
     entry: Entry,
     doc: Document,
-    text: str,
     ctx: bible.annotate.Context,
     report: bible.annotate.Report,
 ) -> tuple[Document, dict[str, list[Content]]]:
@@ -784,7 +780,7 @@ def unit(
             place: [
                 terminology.printed(
                     block["content"],
-                    rebased(reading, words(block["content"])).terms,
+                    rebased(reading, usj.unlabelled(block["content"])).terms,
                     ctx.terms,
                 )
                 for block, reading in paragraphs
@@ -793,7 +789,7 @@ def unit(
         }
     if "title" in entry:
         named = assembly.named(
-            entry, usj.with_blocks(doc, [block for block, _ in shown]), text
+            entry, usj.with_blocks(doc, [block for block, _ in shown])
         )
         by_id = {id(block): readings for block, readings in shown}
         shown = [(block, by_id.get(id(block), {})) for block in named["content"]]

@@ -124,7 +124,7 @@ def linked(
         "A",
     )
     if policy is not None:
-        ctx = annotate.Context(policy, ctx.inventory, ctx.books, ctx.terms, ctx.prose)
+        ctx = annotate.Context(policy, ctx.inventory, ctx.books)
     doc, report = annotate.brenton("ISA", book("ISA", verse), [link], frozenset(), ctx)
     return verse_lines(doc)["3"], report
 
@@ -171,9 +171,7 @@ def test_a_see_note_moved_onto_its_link_is_replaced_by_it(
             "brenton_notes",
             lambda data: data["notes"].update({"ISA 99:2": {**exception, **more}}),
         )
-        moved_ctx = annotate.Context(
-            changed_policy, ctx.inventory, ctx.books, ctx.terms, ctx.prose
-        )
+        moved_ctx = annotate.Context(changed_policy, ctx.inventory, ctx.books)
         doc, report = annotate.brenton(
             "ISA", book("ISA", verses), list(links), frozenset(), moved_ctx
         )

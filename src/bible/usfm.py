@@ -11,6 +11,7 @@ import re
 from typing import TypedDict
 
 from bible import scripture
+from bible.checks import CheckFailed
 
 
 class Inventory(TypedDict):
@@ -21,6 +22,7 @@ class Inventory(TypedDict):
 # Unicode source alphabets.
 GREEK = "\u0370-\u03ff\u1f00-\u1fff"
 HEBREW = "\u0590-\u05ff"
+COMBINING = "\u0300-\u036f"
 # A marker as printing removes it: a closing one ends at its asterisk, and an
 # opening one takes one space.
 MARKUP = re.compile(r"\\\+?[\w-]+(?:\*| ?)")
@@ -52,6 +54,14 @@ def inventory(text: str) -> Inventory:
     for marker in re.findall(r"\\(\+?[\w-]+\*?)", text):
         markers[marker] = markers.get(marker, 0) + 1
     return {"chapters": chapters, "markers": markers}
+
+
+def header(text: str, marker: str) -> str:
+    """The words of a text's first line of a kind: its \\toc2 name, say."""
+    match = re.search(r"^\\" + marker + r"\s+([^\n]+)", text, re.M)
+    if match is None:
+        raise CheckFailed(f"Missing source {marker} marker")
+    return match[1].strip()
 
 
 def heading(text: str) -> str:

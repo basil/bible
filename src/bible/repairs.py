@@ -17,6 +17,7 @@ from collections.abc import Mapping
 
 from bible.checks import require
 from bible.policy_schema import Correction
+from bible.references import book_of
 from bible.usfm import GREEK, canonical_text, verse_spans, words_of
 
 # A bracketed remark of the transcriber's or eBible's, with a space beside it.
@@ -223,7 +224,7 @@ def brenton(
     """
     mended = set()
     for key, group in corrections.items():
-        if key.split(" ")[0] != code:
+        if book_of(key) != code:
             continue
         place = key.partition(" ")[2]
         for correction in group if isinstance(group, tuple) else (group,):

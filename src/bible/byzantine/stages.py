@@ -184,7 +184,7 @@ def evidenced(
         )
 
 
-def stage_greek(context: Context) -> Context:
+def stage_greek(context: Context) -> None:
     """The Greek texts and the unit ledger."""
     corrections = context["decisions"].get("scrivener", {})
     tr = greek.corrected(
@@ -196,7 +196,8 @@ def stage_greek(context: Context) -> Context:
     rp, tags = greek.rp2018(context["source_inputs"]["rp2018"])
     structure = structure_of(context["decisions"]["structure"], tr, rp)
     xml = context["source_inputs"]["rp2026"]
-    printed, diacritics = greek.printed(xml, structure.omitted, list(rp)[-1])
+    root = greek.tree(xml)
+    printed, diacritics = greek.printed(root, structure.omitted, list(rp)[-1])
     rp = greek.rp2026(rp, printed)
     collation = inventories.collation(context["source_inputs"]["collation"])
     notes_ = inventories.boyd(context["source_inputs"]["tcgnt"])
@@ -205,7 +206,7 @@ def stage_greek(context: Context) -> Context:
     rp_alignment = greek.align(
         {ref: verse["accented"] for ref, verse in printed.items()}, rp
     )
-    printed_apparatus = greek.apparatus(xml, printed)
+    printed_apparatus = greek.apparatus(root, printed)
     sides = collections.Counter(
         "SCR" if "SCR" in n["tr"][0]["sigla"] else "TR" for n in printed_apparatus
     )
@@ -279,10 +280,9 @@ def stage_greek(context: Context) -> Context:
             "annotation_mismatches": mismatches,
         }
     )
-    return context
 
 
-def stage_english(context: Context) -> Context:
+def stage_english(context: Context) -> None:
     """The KJV and the three English witnesses, and the CrossWire bridge."""
     documents, verses, subscriptions = english.kjv(context["kjv_documents"])
     kjv = {ref: v.text for ref, v in verses.items()}
@@ -330,10 +330,9 @@ def stage_english(context: Context) -> Context:
             "crosswire": aligned_source,
         }
     )
-    return context
 
 
-def stage_reports(context: Context) -> Context:
+def stage_reports(context: Context) -> None:
     """The modern-English apparatuses attached to units."""
     tcent = inventories.tcent(context["source_inputs"]["tcent"])
     faa_rows = apparatus.faa(context["source_inputs"]["faa"])
@@ -379,10 +378,9 @@ def stage_reports(context: Context) -> Context:
             "stale_placements": [*stale_a, *stale_s],
         }
     )
-    return context
 
 
-def stage_instructions(context: Context) -> Context:
+def stage_instructions(context: Context) -> None:
     """The KJV-worded instruction source, bound, attached and checked."""
     kjv = context["kjv"]
     inventory = pierpont.read(context["source_inputs"]["pierpont"].read_text(), kjv)
@@ -425,10 +423,9 @@ def stage_instructions(context: Context) -> Context:
             "stale_placements": [*context["stale_placements"], *stale],
         }
     )
-    return context
 
 
-def stage_revisions(context: Context) -> Context:
+def stage_revisions(context: Context) -> None:
     """The RV and Boyd's ASV as witnesses, and the revision alarm."""
     kjv, aligned, ledger = context["kjv"], context["aligned"], context["units"]
     admitted = revisions.readable(ledger, context["tcgnt"])
@@ -464,10 +461,9 @@ def stage_revisions(context: Context) -> Context:
             ),
         }
     )
-    return context
 
 
-def stage_decisions(context: Context) -> Context:
+def stage_decisions(context: Context) -> None:
     """The editor's readings and lemmas, validated against the placed rows."""
     ledger, kjv = context["units"], context["kjv"]
     reports, rows = context["reports"], context["instructions"]
@@ -518,10 +514,9 @@ def stage_decisions(context: Context) -> Context:
             "witness_rows": witness_rows,
         }
     )
-    return context
 
 
-def stage_decide(context: Context) -> Context:
+def stage_decide(context: Context) -> None:
     """One disposition per unit."""
     rows = decide.decide(
         context["units"],
@@ -534,10 +529,9 @@ def stage_decide(context: Context) -> Context:
         supplied=context["supplied"],
     )
     context["dispositions"] = rows
-    return context
 
 
-def stage_edit(context: Context) -> Context:
+def stage_edit(context: Context) -> None:
     """Apply the dispositions to the KJV, then the structural changes, then
     finish the notes."""
     documents, rows = context["documents"], context["dispositions"]
@@ -567,10 +561,9 @@ def stage_edit(context: Context) -> Context:
     context.update(
         {"prepared": prepared, "dispositions": rows, "note_witnesses": witnesses}
     )
-    return context
 
 
-def stage_verify(context: Context) -> Context:
+def stage_verify(context: Context) -> None:
     """Check the invariants on what was prepared."""
     results = verify.checks(
         context["documents"],
@@ -602,10 +595,9 @@ def stage_verify(context: Context) -> Context:
             ]
             retag(row, Tag.EV_FINISHED_VERSE)
     context.update({"invariants": results, "finished": problems})
-    return context
 
 
-STAGES: tuple[Callable[[Context], Context], ...] = (
+STAGES: tuple[Callable[[Context], None], ...] = (
     stage_greek,
     stage_english,
     stage_reports,

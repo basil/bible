@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 from fontTools.ttLib import TTFont
 
-from bible import files, paths, pipeline, scripture, usj, web
+from bible import export, files, paths, pipeline, scripture, usj, web
 from bible.checks import CheckFailed
 from bible.sources import Sources
 
@@ -52,10 +52,10 @@ def test_missing_web_fonts(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> N
     assert not (tmp_path / "output").exists()
 
 
-def test_web(sources: Sources, edition: pipeline.Edition, tmp_path: Path) -> None:
+def test_web(edition: pipeline.Edition, tmp_path: Path) -> None:
     stale = tmp_path / "stale.json"
     stale.write_text("{}")
-    web.write(sources, edition, tmp_path)
+    web.write(edition, tmp_path)
     assert not stale.exists()
     manifest = files.read_json(tmp_path / "manifest.json")
     assert [b["id"] for b in manifest["books"]] == [
@@ -72,7 +72,7 @@ def test_web(sources: Sources, edition: pipeline.Edition, tmp_path: Path) -> Non
         # The chapters, less the book node each repeats, are the whole book
         # but for the names the manifest carries, its notes under the labels
         # their verses print.
-        doc = pipeline.with_printed_origins(documents[code])
+        doc = export.with_printed_origins(documents[code])
         doc = usj.with_blocks(
             doc,
             [
@@ -106,16 +106,16 @@ def test_web(sources: Sources, edition: pipeline.Edition, tmp_path: Path) -> Non
     )
 
 
-def test_comparisons(sources: Sources, edition: pipeline.Edition) -> None:
+def test_comparisons(edition: pipeline.Edition) -> None:
     """Each passage is quoted from the edition and from the King James verses
     the place stage pairs with it, under the names the edition cites by."""
     documents = dict(pipeline.view(edition, "pdf"))
-    compared = {c["reference"]: c for c in web.comparisons(edition, documents, sources)}
+    compared = {c["reference"]: c for c in web.comparisons(edition, documents)}
     assert len(compared) == len(edition.policy.comparisons["passages"])
     psalm = compared["Psalm 23:7"]
     assert psalm["kjvReference"] == "Psalm 24:7"
     assert "".join(s["text"] for s in psalm["kjv"]) == scripture.plain(
-        scripture.verses(usj.parse(sources.kjv["PSA"]))["24:7"].text
+        scripture.verses(edition.read.kjv["PSA"])["24:7"].text
     )
     assert [s["text"] for s in psalm["oleb"] if s["changed"]] == [
         "your gates, ye princes,"

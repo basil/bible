@@ -7,6 +7,7 @@ from pathlib import Path
 
 import pytest
 
+import bible.export
 import bible.pipeline
 import bible.sources
 from bible import scripture, usj
@@ -99,7 +100,8 @@ def test_every_source_book_survives_reading_and_writing(
 @pytest.mark.parametrize(
     "text, refusal",
     [
-        ("\\id GEN\n\\zz odd\n", "Unsupported marker"),
+        ("\\id GEN\n\\zz odd\n", r"Unsupported marker \\zz: "),
+        ("\\id GEN\n\\p words \\f + \\ft a \\it b\\f*\n", r"Unclosed \\it: "),
         ("\\id GEN\n\\p\n\\add open\n\\p\n", "Unclosed"),
         ("\\id GEN\n\\p words \\f + \\fr 1:1 \\ft note\n\\p\n", "Unclosed"),
         ("\\id GEN\n\\p\n\\ft stray\n", "Note field outside a note"),
@@ -387,7 +389,7 @@ def test_choenix_spacing_and_italics_survive_preparation_and_export(
     passage = usj.parse("\\id REV\n\\c 6\n\\p\n\\v 6 A measure of wheat.\n")
     block = passage["content"][-1]
     block["content"].append(note)
-    text = bible.pipeline.exported("REV", passage, edition)
+    text = bible.export.exported("REV", passage, edition)
     doc = usj.parse(text)
     path = tmp_path / "REV.usfm"
     path.write_text(text, encoding="utf-8")

@@ -152,7 +152,6 @@ class Report(TypedDict, total=False):
     greek_entry: int
     greek_group: int
     greek_note: bool
-    greek_order: str
     kind: str
     method: str
     new: None | str
@@ -450,12 +449,8 @@ class FaaRow(TypedDict, total=False):
     TR_Greek: None | str
     TR_Greek_groups: list[dict[str, Any]]
     TR_Greek_unavailable: str
-    raw_English: str
-    raw_Greek: str
-    source_English_html: str
     source_notes: str
     source_table_html: str
-    source_table_text: str
 
 
 class SelectedListRow(TypedDict, total=False):
@@ -465,7 +460,6 @@ class SelectedListRow(TypedDict, total=False):
     english_context: str
     entry: int | str
     greek: str
-    greek_order: str
     method: str
     new: None | str
     new_scope: str

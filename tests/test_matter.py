@@ -28,23 +28,14 @@ def prepared(
     code: str,
     policy: bible.policy.Policy,
     read: bible.pipeline.Read,
-    sources: bible.sources.Sources,
     ctx: bible.annotate.Context,
 ) -> tuple[Document, dict[str, list[Content]]]:
     """One unit prepared again under a changed policy."""
     entry = next(e for e in policy.entries if e["id"] == code)
     family = read.brenton if entry["source"] == "brenton" else read.kjv
     doc = family[source_id(entry)]
-    changed_ctx = annotate.Context(
-        policy, ctx.inventory, ctx.books, terminology.registry(policy), ctx.prose
-    )
-    return matter.unit(
-        entry,
-        doc,
-        assembly.source_text(entry, sources),
-        changed_ctx,
-        annotate.Report(),
-    )
+    changed_ctx = annotate.Context(policy, ctx.inventory, ctx.books)
+    return matter.unit(entry, doc, changed_ctx, annotate.Report())
 
 
 def test_the_introduction_keeps_its_general_paragraphs_and_sends_the_rest(
@@ -145,20 +136,8 @@ def test_an_appendix_note_must_be_placed_where_its_decision_says(
 
     def prepare(change: Callable[[dict[str, Any]], object]) -> None:
         changed_policy = changed(policy, "appendix", change)
-        changed_ctx = annotate.Context(
-            changed_policy,
-            ctx.inventory,
-            ctx.books,
-            terminology.registry(changed_policy),
-            ctx.prose,
-        )
-        matter.unit(
-            entry,
-            appendix,
-            assembly.source_text(entry, sources),
-            changed_ctx,
-            annotate.Report(),
-        )
+        changed_ctx = annotate.Context(changed_policy, ctx.inventory, ctx.books)
+        matter.unit(entry, appendix, changed_ctx, annotate.Report())
 
     def relabelled(data: dict[str, Any]) -> None:
         data["notes"]["JOB 25:2"]["label"] = "Job 25. 3.—"
@@ -245,7 +224,7 @@ def test_every_paragraph_of_the_introduction_is_placed_once(
         data["books"]["TOB"] = []
 
     with pytest.raises(CheckFailed, match="paragraphs not placed|with no paragraphs"):
-        prepared("OTH", changed(policy, "introductions", unplaced), read, sources, ctx)
+        prepared("OTH", changed(policy, "introductions", unplaced), read, ctx)
 
     def stale(data: dict[str, Any]) -> None:
         data["glosses"]["The book of Tobit"] = [
@@ -253,14 +232,14 @@ def test_every_paragraph_of_the_introduction_is_placed_once(
         ]
 
     with pytest.raises(CheckFailed, match="Gloss does not apply"):
-        prepared("OTH", changed(policy, "introductions", stale), read, sources, ctx)
+        prepared("OTH", changed(policy, "introductions", stale), read, ctx)
 
     # A gloss that names no words of the source, as by a misspelt field.
     def placeless(data: dict[str, Any]) -> None:
         data["glosses"]["The book of Tobit"] = [{"insert": " [sic]", "why": "x"}]
 
     with pytest.raises(CheckFailed, match="Gloss does not apply"):
-        prepared("OTH", changed(policy, "introductions", placeless), read, sources, ctx)
+        prepared("OTH", changed(policy, "introductions", placeless), read, ctx)
 
 
 def test_the_list_of_abbreviations_is_completed_from_the_registry(
@@ -356,7 +335,7 @@ def test_heading_decisions_reject_changed_or_missing_source(
         else f"Prose change not met once: {unit}"
     )
     with pytest.raises(CheckFailed, match=refusal):
-        prepared(unit, changed(policy, "prose", stale), read, sources, ctx)
+        prepared(unit, changed(policy, "prose", stale), read, ctx)
 
 
 def test_matter_cites_and_names_as_the_edition_does(
@@ -396,7 +375,7 @@ def test_a_declared_change_must_be_the_units_words_once(
         )
 
     with pytest.raises(CheckFailed, match="Prose change not met once: XXB the Hebrew"):
-        prepared("XXB", changed(policy, "prose", twice), read, sources, ctx)
+        prepared("XXB", changed(policy, "prose", twice), read, ctx)
 
 
 def test_what_was_read_is_carried_through_a_change_of_words() -> None:
@@ -487,7 +466,7 @@ def test_introduction_and_appendix_share_a_verse_without_overwriting(
     ctx: bible.annotate.Context,
 ) -> None:
     def prepare(
-        entry: Any, doc: Any, text: Any, context: Any, report: Any
+        entry: Any, doc: Any, context: Any, report: Any
     ) -> tuple[Document, dict[str, list[Content]]]:
         moved: dict[str, list[Content]] = {}
         if source_id(entry) == "OTH":
@@ -497,9 +476,7 @@ def test_introduction_and_appendix_share_a_verse_without_overwriting(
         return doc, moved
 
     monkeypatch.setattr(matter, "unit", prepare)
-    _, introductions, appendix_notes, _ = bible.pipeline.front_and_back(
-        read, ctx, sources
-    )
+    _, introductions, appendix_notes, _ = bible.pipeline.front_and_back(read, ctx)
     changed_policy = changed(
         policy,
         "introductions",
@@ -507,9 +484,7 @@ def test_introduction_and_appendix_share_a_verse_without_overwriting(
             EXO={"28:23": {"heading": "Section", "paragraphs": ["Introduction."]}}
         ),
     )
-    changed_ctx = annotate.Context(
-        changed_policy, ctx.inventory, ctx.books, ctx.terms, ctx.prose
-    )
+    changed_ctx = annotate.Context(changed_policy, ctx.inventory, ctx.books)
     doc = usj.parse(
         "\\id EXO\n\\c 28\n\\s1 Section\n\\p\n" "\\v 23 \\f + \\ft Existing.\\f*Text."
     )
