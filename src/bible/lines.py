@@ -31,8 +31,7 @@ from bible.references import Verse, book_of, verse_at
 from bible.usj import Content, Document, Node
 
 # Whether a second witness sets a verse of a book in lines: True or False
-# where it has the verse, None where it has no counterpart of the verse, or
-# sets the whole book as prose.
+# where it has the verse, None where it has no counterpart of the verse.
 type Witness = Callable[[str, str], bool | None]
 
 # The paragraph markers of a line and of a stanza break, and of the prose
@@ -450,16 +449,17 @@ def place_spans(
 
 def scrivener(kjv: Mapping[str, Document], policy: bible.policy.Policy) -> Witness:
     """Scrivener's King James Bible as a witness to which verses are verse:
-    whether its counterpart of an edition verse stands in his lines, in a
-    book he sets partly in lines; None in a book he sets wholly as prose,
-    for a verse without a counterpart, and in the Apocrypha, which the
-    table does not map. A Septuagint addition lettered to a verse
+    whether its counterpart of an edition verse stands in his lines or his
+    prose; None for a verse without a counterpart, and in the Apocrypha,
+    whose lines are the update's alone: the table does not place their
+    verses, and the King James Tobit and Sirach follow another text and
+    order. A Septuagint addition lettered to a verse
     (Job 42:17a) goes as that verse goes; a lettered verse the table gives
     a counterpart of its own (Proverbs 24:22f, the Hebrew's 30:1) goes as
     that counterpart goes."""
     # Read before the verses are placed, every verse would have no say.
     require("kjv" in policy.versification, "The verses are not yet placed")
-    lined: dict[str, set[str] | None] = {}
+    lined: dict[str, set[str]] = {}
     for code, doc in kjv.items():
         found = {
             label
@@ -469,7 +469,7 @@ def scrivener(kjv: Mapping[str, Document], policy: bible.policy.Policy) -> Witne
                 for block, _, _, _ in verse.parts
             )
         }
-        lined[code] = found or None
+        lined[code] = found
 
     def witness(code: str, label: str) -> bool | None:
         if code not in policy.versification["old_testament"]:
@@ -487,9 +487,7 @@ def scrivener(kjv: Mapping[str, Document], policy: bible.policy.Policy) -> Witne
             return None
         if not counterparts:
             return None
-        verses = lined.get(counterparts[0].book)
-        if verses is None:
-            return None
+        verses = lined[counterparts[0].book]
         return any(v.label in verses for v in counterparts)
 
     return witness
