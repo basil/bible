@@ -72,10 +72,15 @@ const PARAGRAPH_TAGS: Record<string, string> = {
   is1: "h2",
   is2: "h3",
 };
-// A titled chapter's heading stands for its number, and so is the page title.
+// A zero-width space stands for a number that a chapter or verse doesn't print.
+const HIDDEN = "\u200b";
+// A titled chapter's heading, a section's or a title's, stands for its number,
+// and so is the page title.
 export function renderChapter(doc: Document, titled = false) {
   const blocks = blocksOf(doc);
-  const title = titled ? blocks.find((n) => n.marker === "s1") : undefined;
+  const title = titled
+    ? blocks.find((n) => n.marker === "s1" || n.marker === "d")
+    : undefined;
   const notes: string[] = [];
   const verses: string[] = [];
   function inline(item: string | Node, inNote = false): string {
@@ -88,6 +93,10 @@ export function renderChapter(doc: Document, titled = false) {
         throw new Error("Unexpected verse milestone");
       }
       verses.push(item.number);
+      if (item.pubnumber === HIDDEN) {
+        // An unnumbered verse keeps its anchor, for the links to it.
+        return `<span class="verse" id="v${escape(item.number)}"></span>`;
+      }
       return ` <sup class="verse" id="v${escape(item.number)}"><a href="#v${escape(item.number)}">${escape(item.pubnumber || item.number)}</a></sup> `;
     }
     if (item.type === "note") {

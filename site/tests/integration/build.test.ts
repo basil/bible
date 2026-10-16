@@ -134,7 +134,7 @@ test("every chapter reaches the static output with its verse anchors", () => {
       `read/${book.id.toLowerCase()}/${chapter.number}.html`,
     );
     const anchors = Array.from(
-      html.matchAll(/<sup class="verse" id="v([^"]+)"/g),
+      html.matchAll(/<(?:sup|span) class="verse" id="v([^"]+)"/g),
       (match) => match[1],
     );
     expect(anchors, `${book.id} ${chapter.number}`).toEqual(chapter.verses);

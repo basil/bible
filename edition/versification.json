@@ -1,9 +1,1142 @@
 {
-  "why": "Where the Old Testament's verses stand in the King James Bible is worked out by the build, from STEP Bible's table and the words of both translations. This file holds what they cannot give: the verses the edition relabels, the books and parts of books the King James Bible names otherwise or sets apart, and the editor's readings, each with its reason, which stand whatever the witnesses give.",
+  "why": "Where the Old Testament's verses stand in the King James Bible is worked out by the build, from STEP Bible's table and the words of both translations. This file holds what they cannot give: the verses the edition numbers otherwise than eBible, relabelled or divided again as the Greek editions number them, by the rule in docs/numbering.md, the books and parts of books the King James Bible names otherwise or sets apart, and the editor's readings, each with its reason, which stand whatever the witnesses give.",
   "relabel": {
+    "GEN 31:50a": {
+      "edition": "GEN 31:51",
+      "why": "eBible letters the verse 50a. Brenton's printing (1879, p. 58, printed p. 42) and the Church of Greece's text number it 51, and Swete leaves 51 for it: his Codex A, the text of Genesis there, omits it (vol. 1, p. 60)."
+    },
+    "GEN 32:1-33": {
+      "edition": "GEN 31:55; GEN 32:1-32",
+      "opens": {
+        "GEN 32:1": "And Jacob departed"
+      },
+      "why": "eBible numbers this as the Hebrew does. The Church of Greece's text, Brenton's printing (1879, p. 58, printed p. 42) and Swete (vol. 1, p. 60) all end chapter 31 with Laban's departure as 31:55 and begin chapter 32 at \"And Jacob departed\"."
+    },
+    "EXO 21:37": {
+      "edition": "EXO 22:1",
+      "opens": {
+        "EXO 22:1": "And if one steal"
+      },
+      "why": "eBible numbers the theft of an ox as the Hebrew does, 21:37. The Church of Greece's text, Brenton's printing (1879, p. 114, printed p. 98) and Swete (vol. 1, p. 147) all begin chapter 22 there."
+    },
+    "EXO 22:1-30": {
+      "edition": "EXO 22:2-31",
+      "why": "The chapter follows from its new first verse. The Church of Greece's text, Brenton's printing (1879, pp. 114–116, printed pp. 98–100) and Swete (vol. 1, pp. 147-148) number it 2-31."
+    },
+    "EXO 25:7-35": {
+      "edition": "EXO 25:6-34",
+      "why": "The Church of Greece's text and Swete (vol. 1, pp. 152-154) lack the verse of the oil, which keeps eBible's 5a, and number the sardius stones 6 and the following verses one lower than eBible, through the verse of the knop, 34. Brenton (1879, p. 119, printed p. 103) prints the clause that they number 35 inside that verse, so it stays one verse, under the number of its opening words."
+    },
+    "EXO 28:29": {
+      "edition": "EXO 28:23",
+      "why": "eBible numbers Brenton's verses here by the Hebrew's 29 and leaves out 23-28, which the Greek lacks. The Church of Greece's text, Brenton's printing (1879, p. 123, printed p. 107) and Swete (vol. 1, p. 160) number on from 22: Aaron's bearing the names is 23."
+    },
+    "EXO 28:29a": {
+      "edition": "EXO 28:24",
+      "why": "The Church of Greece's text, Brenton's printing (1879, p. 123, printed p. 107) and Swete (vol. 1, p. 160) number the fringes on the oracle 24, with no letter."
+    },
+    "EXO 28:31-43": {
+      "edition": "EXO 28:27-39",
+      "why": "The Church of Greece's text, Brenton's printing (1879, p. 124, printed p. 108) and Swete (vol. 1, pp. 160-161) number the rest of the chapter 27-39, four lower than eBible."
+    },
+    "EXO 35:9-12": {
+      "edition": "EXO 35:8-11",
+      "why": "eBible leaves out 8. The Church of Greece's text, Brenton's printing (1879, p. 134, printed p. 118) and Swete (vol. 1, p. 176) number the list straight on: the sardine stones are 8, and the ark of the testimony 11."
+    },
+    "EXO 35:13-14": {
+      "edition": "EXO 35:15-16",
+      "why": "The Church of Greece's text, Brenton's printing (1879, p. 134, printed p. 118) and Swete (vol. 1, p. 176) number the table 15 and the candlestick 16."
+    },
+    "EXO 35:16": {
+      "edition": "EXO 35:17",
+      "why": "The Church of Greece's text, Brenton's printing (1879, p. 134, printed p. 118) and Swete (vol. 1, p. 176) number the altar 17."
+    },
+    "EXO 36:26-36": {
+      "edition": "EXO 36:27-37",
+      "why": "The Church of Greece's text, Brenton's printing (1879, pp. 136–137, printed pp. 120–121) and Swete (vol. 1, pp. 179-180) number these verses one higher than eBible, after the verses eBible joins at 23."
+    },
+    "EXO 36:38": {
+      "edition": "EXO 36:40",
+      "why": "The Church of Greece's text, Brenton's printing (1879, p. 137, printed p. 121) and Swete (vol. 1, p. 180) number the last verse 40."
+    },
+    "EXO 40:9": {
+      "edition": "EXO 40:7",
+      "why": "eBible numbers this chapter as the Hebrew does. The Church of Greece's text and Swete (vol. 1, p. 186) number the Greek's verses straight through: the anointing oil is 7."
+    },
+    "EXO 40:10": {
+      "edition": "EXO 40:8",
+      "why": "The Church of Greece's text and Swete (vol. 1, p. 186) begin 8 at the anointing of the altar and set its hallowing apart as 9. Brenton (1879, p. 140, printed p. 124) prints both in one verse, so it stays one verse, under the number of its opening words."
+    },
+    "EXO 40:12-27": {
+      "edition": "EXO 40:10-25",
+      "why": "The Church of Greece's text and Swete (vol. 1, pp. 186-187) number these verses 10-25."
+    },
+    "EXO 40:29": {
+      "edition": "EXO 40:26",
+      "why": "The Church of Greece's text and Swete (vol. 1, p. 187) number the altar of burnt-offerings 26."
+    },
+    "EXO 40:33-38": {
+      "edition": "EXO 40:27-32",
+      "why": "The Church of Greece's text and Swete (vol. 1, p. 187) number the court and the cloud 27-32."
+    },
+    "NUM 12:16": {
+      "edition": "NUM 13:1",
+      "opens": {
+        "NUM 13:1": "And afterwards the people set forth"
+      },
+      "why": "eBible ends chapter 12 with the people's setting out from Aseroth, as the Hebrew does. The Church of Greece's text, Brenton's printing (1879, p. 207, printed p. 191) and Swete (vol. 1, p. 282) all begin chapter 13 there."
+    },
+    "NUM 13:1-33": {
+      "edition": "NUM 13:2-34",
+      "why": "The chapter follows from its new first verse. The Church of Greece's text, Brenton's printing (1879, pp. 207–208, printed pp. 191–192) and Swete (vol. 1, pp. 282-284) number it 2-34."
+    },
+    "JOS 9:14-27": {
+      "edition": "JOS 9:20-33",
+      "why": "eBible numbers these verses 14-27, as Rahlfs does. The Church of Greece's text numbers them 20-33, and so does Swete (vol. 1, pp. 438–439). Swete sets the passage the Hebrew has at 8:30–35 within this chapter as verses 3–8, so his count runs six higher, and he gives the Hebrew's 14 only as a second number in parentheses. The edition keeps that passage as lettered verses after verse 2, and its 3–13 as Rahlfs and the Church of Greece number them, so 14–19 are left unused. Brenton's printing (1879, pp. 306–308, printed pp. 290–292) numbers them 14–27, as Rahlfs does, and gives the Hebrew's passage its numbers, 30–35, after verse 2."
+    },
+    "2SA 19:1-44": {
+      "edition": "2SA 18:33; 2SA 19:1-43",
+      "opens": {
+        "2SA 19:1": "And they brought Joab word"
+      },
+      "why": "eBible begins chapter 19 with David's lament, as the Hebrew does. The Church of Greece's text, Brenton's printing (1879, pp. 445–447, printed pp. 429–431) and Swete (vol. 1, pp. 651-655) all end chapter 18 with it as 18:33 and number chapter 19 1-43."
+    },
+    "2SA 23:37a; 2SA 23:37b": {
+      "edition": "2SA 23:30-31",
+      "why": "eBible letters Adroi and Gadabiel after Elie. Brenton's printing (1879, p. 454, printed p. 438) numbers them 30 and 31 where they stand, out of sequence, Swete (vol. 1, p. 666) numbers them 30 and 31 at the end of the list, after 39, and the Church of Greece's text numbers their counterparts 30 and 31, in the Hebrew's order and each with one more man, Banaias and Azmoth."
+    },
+    "1CH 16:23a": {
+      "edition": "1CH 16:24",
+      "why": "eBible letters this verse 23a, since Rahlfs lacks it. The Church of Greece's text and Brenton's printing (1879, p. 566, printed p. 550, in both the English and the Greek margin) number it 24, the number that Swete (vol. 2, p. 36), whose text lacks the verse, leaves vacant between 23 and 25."
+    },
+    "2CH 1:18": {
+      "edition": "2CH 2:1",
+      "opens": {
+        "2CH 2:1": "And Solomon said that he would build"
+      },
+      "why": "eBible numbers this as the Hebrew does. The Church of Greece's text, Brenton's printing (1879, p. 585, printed p. 569) and Swete (vol. 2, p. 62) all begin chapter 2 at \"And Solomon said that he would build\"."
+    },
+    "2CH 2:1-17": {
+      "edition": "2CH 2:2-18",
+      "why": "eBible numbers this as the Hebrew does. The Church of Greece's text, Brenton's printing (1879, pp. 585–586, printed pp. 569–570) and Swete (vol. 2, pp. 62–64) all number these verses 2–18, since chapter 2 begins one verse earlier."
+    },
+    "2CH 13:23": {
+      "edition": "2CH 14:1",
+      "opens": {
+        "2CH 14:1": "And Abia died with his fathers"
+      },
+      "why": "eBible numbers this as the Hebrew does. The Church of Greece's text, Brenton's printing (1879, p. 600, printed p. 584) and Swete (vol. 2, p. 83) all begin chapter 14 at \"And Abia died with his fathers\"."
+    },
+    "2CH 14:1-14": {
+      "edition": "2CH 14:2-15",
+      "why": "eBible numbers this as the Hebrew does. The Church of Greece's text, Brenton's printing (1879, pp. 600–601, printed pp. 584–585) and Swete (vol. 2, pp. 83–84) all number these verses 2–15, since chapter 14 begins one verse earlier."
+    },
+    "1ES 1:14-16": {
+      "edition": "1ES 1:13-15",
+      "why": "eBible numbers these as the King James Bible does, and so does Brenton's printing (1900, pp. 1151–1152, printed Apocrypha pp. 1–2), which has no vote here. The Church of Greece's text and Swete (vol. 2, p. 130) number them 13–15, following the joins above; Rahlfs divides 1:10–15 otherwise and numbers them differently."
+    },
+    "1ES 1:19-50": {
+      "edition": "1ES 1:17-48",
+      "why": "eBible numbers these as the King James Bible does, and so does Brenton's printing (1900, pp. 1152–1153, printed Apocrypha pp. 2–3), which has no vote here. The Church of Greece's text and Swete (vol. 2, pp. 130–133) number them 17–48, and so does Rahlfs."
+    },
+    "1ES 1:53-58": {
+      "edition": "1ES 1:50-55",
+      "why": "eBible numbers these as the King James Bible does, and so does Brenton's printing (1900, pp. 1153–1154, printed Apocrypha pp. 3–4), which has no vote here. The Church of Greece's text and Swete (vol. 2, p. 133) number them 50–55, and so does Rahlfs."
+    },
+    "1ES 2:8-18": {
+      "edition": "1ES 2:7-17",
+      "why": "eBible numbers these as the King James Bible does, and so does Brenton's printing (1900, pp. 1154–1155, printed Apocrypha pp. 4–5), which has no vote here. The Church of Greece's text and Swete (vol. 2, pp. 134–135) number them 7–17; Rahlfs divides this chapter otherwise and numbers them 5–14."
+    },
+    "1ES 2:24-27": {
+      "edition": "1ES 2:20-23",
+      "why": "eBible numbers these as the King James Bible does, and so does Brenton's printing (1900, p. 1155, printed Apocrypha p. 5), which has no vote here. The Church of Greece's text and Swete (vol. 2, p. 135) number them 20–23; Rahlfs divides them otherwise, as 18–22."
+    },
+    "1ES 2:30": {
+      "edition": "1ES 2:25",
+      "why": "eBible numbers this as the King James Bible does, and so does Brenton's printing (1900, p. 1155, printed Apocrypha p. 5), which has no vote here. The Church of Greece's text and Swete (vol. 2, pp. 135–136) number it 25; Rahlfs numbers it 25 and 26, beginning 26 at \"and the building of the temple\"."
+    },
+    "1ES 3:16": {
+      "edition": "1ES 3:15",
+      "why": "eBible numbers this as the King James Bible does, and so does Brenton's printing (1900, p. 1156, printed Apocrypha p. 6), which has no vote here. The Church of Greece's text, Swete (vol. 2, p. 137) and Rahlfs all number it 15."
+    },
+    "1ES 3:19-24": {
+      "edition": "1ES 3:18-23",
+      "why": "eBible numbers these as the King James Bible does, and so does Brenton's printing (1900, p. 1156, printed Apocrypha p. 6), which has no vote here. The Church of Greece's text and Swete (vol. 2, p. 137) number them 18–23; Rahlfs numbers them 19–24, as eBible does."
+    },
+    "1ES 5:43-53": {
+      "edition": "1ES 5:42-52",
+      "why": "eBible numbers these as the King James Bible does, and so does Brenton's printing (1900, pp. 1161–1162, printed Apocrypha pp. 11–12), which has no vote here. The Church of Greece's text, Swete (vol. 2, pp. 144–145) and Rahlfs all number them 42–52."
+    },
+    "1ES 5:56-58": {
+      "edition": "1ES 5:54-56",
+      "why": "eBible numbers these as the King James Bible does, and so does Brenton's printing (1900, p. 1162, printed Apocrypha p. 12), which has no vote here. The Church of Greece's text and Swete (vol. 2, pp. 145–146) number them 54–56, and so does Rahlfs, though it ends 56 a clause earlier."
+    },
+    "1ES 5:61-73": {
+      "edition": "1ES 5:58-70",
+      "why": "eBible numbers these as the King James Bible does, and so does Brenton's printing (1900, pp. 1162–1163, printed Apocrypha pp. 12–13), which has no vote here. The Church of Greece's text and Swete (vol. 2, pp. 146–147) number them 58–70, and so does Rahlfs, though it divides 70 in two."
+    },
+    "1ES 6:10-34": {
+      "edition": "1ES 6:9-33",
+      "why": "eBible numbers these as the King James Bible does, and so does Brenton's printing (1900, pp. 1163–1165, printed Apocrypha pp. 13–15), which has no vote here. The Church of Greece's text, Swete (vol. 2, pp. 147–149) and Rahlfs all number them 9–33."
+    },
+    "1ES 8:45-49": {
+      "edition": "1ES 8:44-48",
+      "why": "eBible numbers these as the King James Bible does, and so does Brenton's printing (1900, pp. 1167–1168, printed Apocrypha pp. 17–18), which has no vote here. The Church of Greece's text, Swete (vol. 2, p. 154) and Rahlfs all number them 44–48."
+    },
+    "1ES 8:50": {
+      "edition": "1ES 8:49",
+      "why": "eBible prints this as one verse, as the King James Bible does, and so does Brenton's printing (1900, p. 1168, printed Apocrypha p. 18), which has no vote here. The Church of Greece's text and Swete (vol. 2, p. 154) number it 49, and with Rahlfs begin a verse 50 at \"to desire of him\". That would begin a verse inside Brenton's clause, after his comma, so the verse stays whole and 50 is left unused."
+    },
+    "1ES 8:58-62": {
+      "edition": "1ES 8:57-61",
+      "why": "eBible numbers these as the King James Bible does, and so does Brenton's printing (1900, p. 1168, printed Apocrypha p. 18), which has no vote here. The Church of Greece's text, Swete (vol. 2, p. 155) and Rahlfs all number them 57–61."
+    },
+    "1ES 8:67-72": {
+      "edition": "1ES 8:64-69",
+      "why": "eBible numbers these as the King James Bible does, and so does Brenton's printing (1900, pp. 1168–1169, printed Apocrypha pp. 18–19), which has no vote here. The Church of Greece's text, Swete (vol. 2, p. 156) and Rahlfs all number them 64–69."
+    },
+    "1ES 8:75-78": {
+      "edition": "1ES 8:72-75",
+      "why": "eBible numbers these as the King James Bible does, and so does Brenton's printing (1900, p. 1169, printed Apocrypha p. 19), which has no vote here. The Church of Greece's text, Swete (vol. 2, pp. 156–157) and Rahlfs all number them 72–75."
+    },
+    "1ES 8:81-92": {
+      "edition": "1ES 8:78-89",
+      "why": "eBible numbers these as the King James Bible does, and so does Brenton's printing (1900, pp. 1169–1170, printed Apocrypha pp. 19–20), which has no vote here. The Church of Greece's text and Swete (vol. 2, pp. 157–158) number them 78–89, and so does Rahlfs, though it begins 78 and 84 a clause earlier."
+    },
+    "1ES 8:95-96": {
+      "edition": "1ES 8:91-92",
+      "why": "eBible numbers these as the King James Bible does, and so does Brenton's printing (1900, p. 1170, printed Apocrypha p. 20), which has no vote here. The Church of Greece's text, Swete (vol. 2, p. 158) and Rahlfs all number them 91–92."
+    },
+    "NEH 3:6a": {
+      "edition": "NEH 3:7",
+      "why": "eBible letters this verse because Codex Vaticanus lacks it. Brenton's printing (1879, p. 650, printed p. 634) numbers it 7 in both columns, as the Church of Greece's text does, and Swete (vol. 2, pp. 185–186) leaves the number 7 for it."
+    },
+    "NEH 10:1-14": {
+      "edition": "NEH 9:38; NEH 10:1-13",
+      "opens": {
+        "NEH 10:1": "And over them that sealed"
+      },
+      "why": "eBible numbers this as the Hebrew does. The Church of Greece's text, Brenton's printing (1879, pp. 660–661, printed pp. 644–645) and Swete (vol. 2, p. 202) all end chapter 9 with \"And in regard to all these circumstances\" as verse 38. They begin chapter 10 at \"And over them that sealed\". Brenton numbers \"Micha, Roob, Asebias\" 11, as the Church of Greece does, and Swete leaves 11 for it."
+    },
+    "NEH 10:15-40": {
+      "edition": "NEH 10:14-39",
+      "why": "The count runs one lower once 10:1 has become 9:38, as in the Church of Greece's text, Brenton's printing (1879, pp. 661–662, printed pp. 645–646) and Swete (vol. 2, pp. 203–204). The edition keeps its own division at \"the sons of Bani\", as Brenton's page has it; the Church of Greece's text and Swete end verse 14 with those words (υἱοὶ Βανί), and Rahlfs ends it at \"the sons\" (υἱοὶ), so no third witness agrees with them, and the difference is a phrase."
+    },
+    "TOB 4:7a; TOB 4:7b; TOB 4:7c; TOB 4:7d; TOB 4:7e; TOB 4:7f; TOB 4:7g; TOB 4:7h; TOB 4:7i; TOB 4:7k; TOB 4:7l": {
+      "edition": "TOB 4:8-18",
+      "why": "eBible letters these verses after 7. The Church of Greece's text, Swete (vol. 2, pp. 824–825) and Brenton's printing (1900, pp. 1176–1177, printed Apocrypha pp. 26–27) number them 8 to 18."
+    },
+    "TOB 5:9-21": {
+      "edition": "TOB 5:10-22",
+      "why": "The Church of Greece's text and Swete (vol. 2, pp. 826–828) number these verses 10 to 22, and so does Rahlfs. Brenton's numbers follow the King James Bible and have no vote."
+    },
+    "TOB 5:22": {
+      "edition": "TOB 5:23",
+      "why": "Rahlfs numbers \"Then she made an end of weeping\" 23. The Church of Greece's text joins it to 22, and Swete (vol. 2, p. 828) makes it 6:1, so no two agree. It keeps its own verse, as every witness but the Church of Greece has it, under Rahlfs's number, since 22 is now the verse before. Brenton's numbers follow the King James Bible and have no vote."
+    },
+    "TOB 6:6-9": {
+      "edition": "TOB 6:7-10",
+      "why": "The Church of Greece's text and Swete (vol. 2, p. 829) number these verses 7 to 10, and so does Rahlfs. Brenton's numbers follow the King James Bible."
+    },
+    "TOB 6:13-16": {
+      "edition": "TOB 6:14-17",
+      "why": "The Church of Greece's text and Swete (vol. 2, p. 830) number these verses 14 to 17, and so does Rahlfs. Brenton's numbers follow the King James Bible."
+    },
+    "TOB 7:13-18": {
+      "edition": "TOB 7:12-17",
+      "why": "The Church of Greece's text and Swete (vol. 2, p. 833) number these verses 12 to 17. Rahlfs numbers 7:12–14 differently. Brenton's numbers follow the King James Bible."
+    },
+    "TOB 10:9-13": {
+      "edition": "TOB 10:8-12",
+      "why": "The Church of Greece's text and Swete (vol. 2, pp. 837-838) number these verses 8 to 12, as the King James Bible does. Rahlfs divides them otherwise. Brenton (1900, p. 1181, printed Apocrypha p. 31) numbers them 9 to 13, after a verse 8 of his own at \"Let me go\", but in the Apocrypha his printing has no vote."
+    },
+    "TOB 13:7a; TOB 13:7b; TOB 13:7c": {
+      "edition": "TOB 13:8-10",
+      "why": "eBible letters these verses after 7. The Church of Greece's text, Swete (vol. 2, p. 844) and Brenton's printing (1900, p. 1183, printed Apocrypha p. 33) number them 8, 9 and 10."
+    },
+    "JDT 16:1": {
+      "edition": "JDT 15:14",
+      "why": "The Church of Greece's text, Swete (vol. 2, p. 812) and Rahlfs end chapter 15 with \"Then Judith began to sing this thanksgiving\" as verse 14. Brenton's English (1900, p. 1204, printed Apocrypha p. 54) follows the King James Bible."
+    },
+    "JDT 16:2-7": {
+      "edition": "JDT 16:1-6",
+      "opens": {
+        "JDT 16:1": "And Judith said"
+      },
+      "why": "The Church of Greece's text, Swete (vol. 2, p. 812) and Rahlfs begin chapter 16 at \"And Judith said, Begin\". The chapter numeral in Brenton's Greek column (1900, p. 1204, printed Apocrypha p. 54) stands there too."
+    },
+    "JDT 16:8": {
+      "edition": "JDT 16:7",
+      "why": "The Church of Greece's text, Swete (vol. 2, pp. 812–813) and Rahlfs number the verse 7, as the chapter is renumbered. They begin 8 at \"and bound her hair\", but that would begin a verse with a second verb of Brenton's clause, after his comma, so the verse stays whole and 8 is left unused."
+    },
+    "ESG 1:1s": {
+      "edition": "ESG 1:1",
+      "why": "eBible letters the Hebrew's first verse as 1s, after the addition. The Church of Greece's text and Swete (vol. 2, p. 756) number \"And it came to pass after these things\" as verse 1, and so does Brenton's printing (1879, p. 667, printed p. 651), whose English begins it unnumbered after the bracketed addition, as he begins a chapter, and numbers the next verse 2."
+    },
+    "ESG 1:1": {
+      "edition": "ESG 1:1a",
+      "why": "Once \"And it came to pass\" is verse 1, the first verse of the addition takes the letter that heads the series 1b–1r. The Church of Greece's text implies this letter, and Swete (vol. 2, p. 755) numbers the addition separately, starting from 1."
+    },
+    "ESG 9:31-32": {
+      "edition": "ESG 9:30-31",
+      "why": "eBible skips 30 because the Greek lacks the Hebrew's verse 30. The Church of Greece's text and Swete (vol. 2, p. 779) number the two verses that follow 30 and 31. Brenton's printing (1879, p. 679, printed p. 663) keeps the Hebrew's gap."
+    },
+    "4MA 8:2-26": {
+      "edition": "4MA 8:3-27",
+      "why": "The Church of Greece's text and Rahlfs begin chapter 8 two verses earlier than Brenton does, and Swete (vol. 3, pp. 742–744) one, so all three number these verses 3 to 27, except that the Church of Greece's text and Rahlfs begin 6 a clause later, at \"for I possess the power\". Brenton's printing keeps his chapter break (1900, p. 1386, printed Apocrypha p. 236), and his numbers in 4 Maccabees are his own, so the chapter keeps it and its first verse keeps 1. Since Swete divides that verse from the one before it, as the Church of Greece's text and Rahlfs do not, 2 is left unused. The edition keeps its division at 8:5, where Swete divides as eBible does."
+    },
+    "4MA 10:3a": {
+      "edition": "4MA 10:4",
+      "why": "eBible letters this verse 3a. The Church of Greece's text, Swete (vol. 3, p. 746) and Brenton's printing (1900, p. 1388, printed Apocrypha p. 238) number it 4."
+    },
+    "4MA 11:6a; 4MA 11:6b": {
+      "edition": "4MA 11:7-8",
+      "why": "eBible letters these verses 6a and 6b. The Church of Greece's text, Swete (vol. 3, p. 747) and Brenton's printing (1900, p. 1389, printed Apocrypha p. 239) number them 7 and 8."
+    },
+    "PSA 115:4a": {
+      "edition": "PSA 115:5",
+      "why": "eBible letters the verse 4a. The Church of Greece's text numbers it 5, and Swete, whose text here is Codex Sinaiticus, Codex B being lacking, leaves 5 for it (vol. 2, p. 373)."
+    },
+    "JOB 23:15; JOB 23:15a": {
+      "edition": "JOB 23:14-15",
+      "why": "eBible skips 14 and letters the next verse 15a. The Church of Greece's text, Brenton's printing (1879, p. 698, printed p. 682, in both columns) and Swete (vol. 2, p. 563) number these verses 14 and 15."
+    },
+    "WIS 17:11-16": {
+      "edition": "WIS 17:10-15",
+      "why": "eBible numbers these verses 11–16, as the King James Apocrypha does. The Church of Greece's text numbers them 10–15, having joined verse 10 to 9, and so does Rahlfs, which supplies the agreement. Swete (vol. 2, pp. 637–638) keeps eBible's numbers and gives 10–15 only in parentheses."
+    },
+    "WIS 17:20-21": {
+      "edition": "WIS 17:19-20",
+      "why": "eBible numbers these verses 20 and 21, as the King James Apocrypha does. The Church of Greece's text numbers them 19 and 20, and so does Rahlfs, which supplies the agreement; Swete (vol. 2, p. 638) numbers them 20 and 21."
+    },
+    "SIR 1:1h": {
+      "edition": "SIR 1:1",
+      "opens": {
+        "SIR 1:1": "All wisdom"
+      },
+      "why": "With the Prologue set apart, the book's first verse, \"All wisdom cometh from the Lord\", is 1:1, as the Church of Greece's text, Swete (vol. 2, p. 645) and Rahlfs number it."
+    },
+    "SIR 6:2a; SIR 6:2b": {
+      "edition": "SIR 6:1-2",
+      "why": "eBible letters these verses 2a and 2b. The Church of Greece's text and Swete (vol. 2, p. 654) number them 1 and 2. So does Brenton's printing (1900, p. 1228, printed Apocrypha p. 78), but his numbers there are the King James Apocrypha's and have no vote."
+    },
+    "SIR 22:9-10": {
+      "edition": "SIR 22:7-8",
+      "why": "eBible numbers these verses 9 and 10, as Rahlfs does. The Church of Greece's text and Swete (vol. 2, p. 687) number them 7 and 8. So does Brenton's printing (1900, p. 1242, printed Apocrypha p. 92), but his numbers there are the King James Apocrypha's and have no vote."
+    },
+    "SIR 41:22-24": {
+      "edition": "SIR 41:24; SIR 41:26-27",
+      "why": "eBible numbers these verses 22–24, as the King James Apocrypha does. Swete (vol. 2, pp. 730–731) and Brenton's printing (1900, p. 1261, printed Apocrypha p. 111), which here departs from the King James division and in any case has no vote, begin chapter 42 at \"Or of iterating\". The Church of Greece's text and Rahlfs number them 24, 26 and 27, in chapter 41, which is enough in Sirach. They begin a verse 25 at \"or of upbraiding speeches\", but that would begin a verse with an item of Brenton's list, after his semicolon, so the first verse holds their 24 and 25, and 25 is left unused, as 22 and 23 are."
+    },
+    "AMO 6:11-14": {
+      "edition": "AMO 6:12-15",
+      "why": "The Church of Greece's text and Brenton's printing (1879, pp. 1105–1106, printed pp. 1089–1090) begin a verse 11 at \"And he shall say, No one else\" and number the four verses after it 12-15. Swete (vol. 3, pp. 23–24) and Rahlfs keep those words in verse 10 and number the four verses 11–14, so the verse is not divided and 11 is left vacant."
+    },
     "MAL 3:19-24": {
       "edition": "MAL 4:1-6",
-      "opens": "For, behold"
+      "opens": {
+        "MAL 4:1": "For, behold"
+      },
+      "why": "eBible numbers the close of the book as the Hebrew does, 3:19-24. Swete begins chapter 4 here and numbers it 1-6 (vol. 3, pp. 99–100), as the Church of Greece's text does, and Brenton's printing (1879, p. 1146, printed p. 1130) begins it at \"For, behold\" too."
+    },
+    "ISA 8:23": {
+      "edition": "ISA 9:1",
+      "opens": {
+        "ISA 9:1": "Drink this first"
+      },
+      "why": "eBible ends chapter 8 with \"Drink this first\", as Rahlfs does. The Church of Greece's text, Brenton's printing (1879, p. 860, printed p. 844) and Swete (vol. 3, p. 116) all begin chapter 9 with it."
+    },
+    "ISA 9:1-20": {
+      "edition": "ISA 9:2-21",
+      "why": "The count runs one higher once \"Drink this first\" opens chapter 9, as Brenton numbers it (1879, pp. 860–861, printed pp. 844–845), and as Swete does (vol. 3, pp. 116–118), except that his 15 begins at \"and the prophet\". The Church of Greece's text agrees through 9:14 (\"So the Lord took away\"). It then joins Swete's 14 and 15, which it alone does, and numbers the rest one lower."
+    },
+    "ISA 64:1-11": {
+      "edition": "ISA 64:2-12",
+      "why": "eBible numbers these verses as Rahlfs does, one less than the Church of Greece's text, Brenton's printing (1879, p. 914, printed p. 898) and Swete (vol. 3, pp. 216–217), which all begin chapter 64 a verse earlier, at \"If thou wouldest open the heaven\"."
+    },
+    "JER 8:23": {
+      "edition": "JER 9:1",
+      "opens": {
+        "JER 9:1": "Who will give water"
+      },
+      "why": "eBible ends chapter 8 with \"Who will give water to my head\", as Rahlfs and the Hebrew do. The Church of Greece's text, Brenton's printing (1879, p. 930, printed p. 914) and Swete (vol. 3, p. 243) all begin chapter 9 there."
+    },
+    "JER 9:1-25": {
+      "edition": "JER 9:2-26",
+      "why": "The chapter follows from its new first verse. The Church of Greece's text, Brenton's printing (1879, pp. 930–931, printed pp. 914–915) and Swete (vol. 3, pp. 243-245) number it 2-26."
+    },
+    "JER 23:40a": {
+      "edition": "JER 23:7",
+      "why": "eBible letters this verse 40a. The Church of Greece's text, Brenton's printing (1879, p. 948, printed p. 932) and Swete (vol. 3, p. 274) all number it 7 and print it after verse 40."
+    },
+    "JER 23:40b": {
+      "edition": "JER 23:8",
+      "why": "eBible letters this verse 40b. The Church of Greece's text, Brenton's printing (1879, p. 948, printed p. 932) and Swete (vol. 3, p. 274) all number it 8 and print it after verse 7."
+    },
+    "JER 32:15-18": {
+      "edition": "JER 32:1-4",
+      "why": "eBible numbers this chapter by the Hebrew's verses, 15-38, as Rahlfs does. The Church of Greece's text and Swete (vol. 3, pp. 297-300, where 15 stands only in parentheses) number it 1-24."
+    },
+    "JER 32:19-20": {
+      "edition": "JER 32:5-6",
+      "why": "The Church of Greece's text and Swete (vol. 3, p. 298) number these verses 5 and 6, as the rest of the chapter is renumbered; Brenton's printing (1879, p. 961, printed p. 945) prints the Hebrew's 19 and 20, which have no vote. The Church of Greece's text and Swete begin 6 one item earlier, at \"and all his people\", but that would begin a verse with an item of Brenton's list, so his division, at \"and all the mingled people\", is kept."
+    },
+    "JER 32:21-38": {
+      "edition": "JER 32:7-24",
+      "why": "eBible numbers this chapter by the Hebrew's verses, 15-38, as Rahlfs does. The Church of Greece's text and Swete (vol. 3, pp. 297-300, where 15 stands only in parentheses) number it 1-24."
+    },
+    "BAR 3:35-37": {
+      "edition": "BAR 3:36-38",
+      "why": "eBible numbers these verses as the King James Bible does. The Church of Greece's text and Swete (vol. 3, p. 357) number them 36 to 38, as Rahlfs does. Brenton's numbers follow the King James Bible here, so they are not counted."
+    },
+    "LAM 3:21a; LAM 3:21b; LAM 3:21c": {
+      "edition": "LAM 3:22-24",
+      "why": "eBible letters these verses 21a to 21c, since Rahlfs lacks them. The Church of Greece's text and Brenton's printing (1879, p. 992, printed p. 976, in both the English and the Greek column) number them 22 to 24. These are the numbers Swete (vol. 3, p. 370) leaves vacant between 21 and 25 and gives to them in his apparatus."
+    },
+    "LJE 1:1-4; LJE 1:7-9; LJE 1:18-25; LJE 1:28-39; LJE 1:42; LJE 1:52-55; LJE 1:58-61; LJE 1:64-73": {
+      "edition": "LJE 1:0-3; LJE 1:6-8; LJE 1:17-24; LJE 1:27-38; LJE 1:41; LJE 1:51-54; LJE 1:57-60; LJE 1:63-72",
+      "why": "eBible counts the Epistle's title, \"A copy of an epistle\", as verse 1, as the King James Apocrypha does, and so numbers the Epistle 2–73. The Church of Greece's text and Swete (vol. 3, pp. 379–384) print the title unnumbered and number the Epistle 1–72, and Rahlfs numbers the title 0. The title is 1:0, and is unnumbered; the verses that the Greek editions divide otherwise are divided again by their own decisions."
+    },
+    "EZK 21:1-16": {
+      "edition": "EZK 20:45-49; EZK 21:1-11",
+      "opens": {
+        "EZK 21:1": "And the word of the Lord came to me, saying,"
+      },
+      "why": "eBible numbers this as the Hebrew does, beginning chapter 21 at the prophecy against Thæman. The Church of Greece's text, Brenton's printing (1879, pp. 1021–1022, printed pp. 1005–1006) and Swete (vol. 3, pp. 425-428) all end chapter 20 with it as 45-49 and number chapter 21 from \"And the word of the Lord came to me\" as 1-32."
+    },
+    "EZK 21:17-18": {
+      "edition": "EZK 21:12-13",
+      "why": "eBible numbers these verses 17 and 18, as the Hebrew does. The Church of Greece's text, Swete (vol. 3, pp. 426–427) and Brenton's printing (1879, p. 1021, printed p. 1005) number them 12 and 13. The Church of Greece's text and Swete begin 13 a clause earlier, at \"for sentence hath been passed\", where Rahlfs begins his 18, but Brenton's own division, at \"and what if even the tribe be rejected?\", is kept, since the difference is a clause."
+    },
+    "EZK 21:19-20": {
+      "edition": "EZK 21:14-15",
+      "why": "eBible numbers these verses 19 and 20, as the Hebrew does. The Church of Greece's text, Swete (vol. 3, p. 427) and Brenton's printing (1879, pp. 1021–1022, printed pp. 1005–1006) number them 14 and 15. The Church of Greece's text and Swete begin 15, and Rahlfs his 20, a clause earlier, at \"lest the heart should faint\", but Brenton's own division is kept, since the difference is a clause."
+    },
+    "EZK 21:21-29": {
+      "edition": "EZK 21:16-24",
+      "why": "eBible numbers this chapter as the Hebrew does. The Church of Greece's text, Brenton's printing (1879, p. 1022, printed p. 1006) and Swete (vol. 3, pp. 427-428) number these verses 16-24."
+    },
+    "EZK 21:30-31": {
+      "edition": "EZK 21:25-26",
+      "why": "eBible numbers these verses 30 and 31, as the Hebrew does. The Church of Greece's text, Swete (vol. 3, p. 428) and Brenton's printing (1879, p. 1022, printed p. 1006) number them 25 and 26. The Church of Greece's text and Swete begin 26, and Rahlfs his 31, a clause earlier, at \"thus saith the Lord\", but Brenton's own division is kept, since the difference is a clause."
+    },
+    "EZK 21:32-37": {
+      "edition": "EZK 21:27-32",
+      "why": "eBible numbers this chapter as the Hebrew does. The Church of Greece's text, Brenton's printing (1879, p. 1022, printed p. 1006) and Swete (vol. 3, p. 428) number these verses 27-32."
+    },
+    "EZK 32:20": {
+      "edition": "EZK 32:19",
+      "why": "The Church of Greece's text and Brenton's printing (1879, p. 1038, printed p. 1022) number \"They shall fall with him\" 19. The Church of Greece's text, Swete (vol. 3, p. 453) and Rahlfs begin 21 a clause earlier, at \"the giants also shall say to thee\", but Brenton's own division, at \"Be thou in the depth of the pit\", is kept, since the difference is a clause; the verse keeps the number 21 that all three give the verse holding those words, and 20 is left vacant."
+    },
+    "DAG 3:58-59": {
+      "edition": "DAG 3:59; DAG 3:58",
+      "why": "Swete prints B's Theodotion with the heavens before the angels and labels them by content, out of sequence: 59 οὐρανοί, then 58 ἄγγελοι (vol. 3, p. 521). Rahlfs does the same."
+    },
+    "DAG 3:72a; DAG 3:72b": {
+      "edition": "DAG 3:69-70",
+      "why": "eBible letters these verses after 72. Swete prints them in the same place, after 71 and 72, as 69 ψῦχος καὶ καῦμα and 70 πάχνη καὶ χιόνες (vol. 3, p. 521). B lacks 67–68, A's ψῦχος καὶ καύσων and δρόσοι καὶ νιφετοί, which Swete gives in the apparatus at 66."
+    },
+    "DAG 3:77-78": {
+      "edition": "DAG 3:78; DAG 3:77",
+      "why": "Swete prints the seas before the fountains and labels them by content: 78 θάλασσαι καὶ ποταμοί, then 77 αἱ πηγαί (vol. 3, p. 523). Brenton's printed Song numbers them 55, then 54 (1900, p. 1283, printed Apocrypha p. 133), and Rahlfs agrees."
+    },
+    "DAG 4:1-12": {
+      "edition": "DAG 3:98-100; DAG 4:1-9",
+      "opens": {
+        "DAG 4:1": "I Nabuchodonosor was thriving"
+      },
+      "why": "Swete ends chapter 3 with the decree as 98–100 and begins chapter 4 at Ἐγὼ Ναβουχοδονοσὸρ εὐθηνῶν (vol. 3, p. 527). Brenton's printed Daniel begins chapter IV at the same words (1879, physical 1071, printed 1055)."
+    },
+    "DAG 4:13-14": {
+      "edition": "DAG 4:10-11",
+      "why": "eBible numbers these verses 13 and 14, as Rahlfs and the King James Bible do. The Church of Greece's text, Swete (vol. 3, p. 527) and Brenton's printing (1879, p. 1071, printed p. 1055) number them 10 and 11, as the Hebrew does. The Church of Greece's text, Swete and Rahlfs begin that verse a clause earlier, at \"and cried aloud\", but Brenton's own division, at \"Cut down the tree\", is kept, since the difference is a clause."
+    },
+    "DAG 4:15-37": {
+      "edition": "DAG 4:12-34",
+      "why": "Swete numbers chapter 4 from Ἐγὼ Ναβουχοδονοσὸρ, so his verses stand three below eBible's, through 34 (vol. 3, pp. 527–533). Brenton's printed page agrees (1879, physical 1071–1073, printed 1055–1057)."
+    },
+    "DAG 6:1-29": {
+      "edition": "DAG 5:31; DAG 6:1-28",
+      "opens": {
+        "DAG 6:1": "And it pleased Darius"
+      },
+      "why": "eBible begins chapter 6 with \"And Darius the Mede succeeded to the kingdom\", as the Hebrew does. The Church of Greece's text, Brenton's printing (1879, pp. 1075–1076, printed pp. 1059–1060) and Swete (vol. 3, pp. 541-545) all end chapter 5 with it as 5:31 and number chapter 6 from \"And it pleased Darius\" as 1-28."
+    }
+  },
+  "breaks": {
+    "GEN 8:3-5": {
+      "edition": {
+        "GEN 8:3": "And the water subsided",
+        "GEN 8:4": "and the ark rested",
+        "GEN 8:5": "And the water continued to decrease"
+      },
+      "why": "eBible ends verse 3 with the ark's resting on Ararat and begins verse 5 at \"And in the tenth month\", as Brenton's printing (1879, p. 25, printed p. 9) does. The Church of Greece's text, Swete (vol. 1, p. 12) and Rahlfs all begin verse 4 at \"and the ark rested\" and verse 5 at \"And the water continued to decrease\". Brenton's division would put the ark's resting, a whole verse of the Greek, under 3, so the verses fall out of step."
+    },
+    "GEN 35:22": {
+      "edition": {
+        "GEN 35:21": "And it came to pass when Israel dwelt",
+        "GEN 35:22": "And the sons of Jacob were twelve"
+      },
+      "why": "eBible leaves out 21 and prints Ruben's sin and the sons of Jacob together as 22. The Church of Greece's text, Brenton's printing (1879, p. 63, printed p. 47) and Swete (vol. 1, p. 67) all number Ruben's sin 21 and begin 22 at \"And the sons of Jacob were twelve\"."
+    },
+    "EXO 28:30": {
+      "edition": {
+        "EXO 28:25": "and thou shalt put the two circlets",
+        "EXO 28:26": "And thou shalt put the Manifestation"
+      },
+      "why": "eBible prints the two circlets and the Manifestation and the Truth as one verse. The Church of Greece's text, Brenton's printing (1879, p. 123, printed p. 107) and Swete (vol. 1, p. 160) number them 25 and 26."
+    },
+    "EXO 35:12a": {
+      "edition": {
+        "EXO 35:12": "and the curtains of the court",
+        "EXO 35:13": "and the emerald stones",
+        "EXO 35:14": "and the incense"
+      },
+      "why": "eBible prints the curtains of the court, the emerald stones, and the incense and anointing oil as one lettered verse. The Church of Greece's text, Brenton's printing (1879, p. 134, printed p. 118) and Swete (vol. 1, p. 176) number them 12, 13 and 14."
+    },
+    "EXO 35:19": {
+      "edition": {
+        "EXO 35:18": "and the holy garments of Aaron",
+        "EXO 35:19": "and the garments of priesthood"
+      },
+      "why": "eBible prints Aaron's garments and his sons' as one verse. The Church of Greece's text, Brenton's printing (1879, p. 134, printed p. 118) and Swete (vol. 1, p. 176) number them 18 and 19."
+    },
+    "EXO 36:23": {
+      "edition": {
+        "EXO 36:23": "and they made two golden circlets",
+        "EXO 36:24": "And they put the two golden rings"
+      },
+      "why": "eBible prints the making of the circlets and rings and their putting on the oracle as one verse. The Church of Greece's text, Brenton's printing (1879, p. 136, printed p. 120) and Swete (vol. 1, p. 179) number them 23 and 24."
+    },
+    "EXO 36:24-25": {
+      "edition": {
+        "EXO 36:25": "and they put the golden wreaths",
+        "EXO 36:26": "And they put them on the two circlets"
+      },
+      "why": "The Church of Greece's text, Brenton's printing (1879, p. 136, printed p. 120) and Swete (vol. 1, p. 179) end 25 with the two wreaths in the two couplings and begin 26 at \"And they put them on the two circlets\"."
+    },
+    "EXO 36:37": {
+      "edition": {
+        "EXO 36:38": "And they made the golden plate",
+        "EXO 36:39": "and he wrote upon it"
+      },
+      "why": "eBible prints the plate and its inscription as one verse. The Church of Greece's text, Brenton's printing (1879, p. 137, printed p. 121) and Swete (vol. 1, p. 180) number them 38 and 39."
+    },
+    "EXO 40:6; EXO 40:8": {
+      "edition": {
+        "EXO 40:6": "And thou shalt put the altar of burnt-offerings"
+      },
+      "why": "eBible sets the setting up of the tabernacle apart as the Hebrew's 8. The Church of Greece's text, Brenton's printing (1879, p. 140, printed p. 124) and Swete (vol. 1, p. 186) all keep it in 6."
+    },
+    "LEV 8:18-30": {
+      "edition": {
+        "LEV 8:18": "And Moses brought near the ram",
+        "LEV 8:19": "And Moses slew the ram",
+        "LEV 8:20": "And he divided the ram",
+        "LEV 8:21": "and he washed the belly",
+        "LEV 8:22": "And Moses brought the second ram",
+        "LEV 8:23": "and he slew him",
+        "LEV 8:24": "And Moses brought near the sons of Aaron",
+        "LEV 8:25": "And he took the fat",
+        "LEV 8:26": "And from the basket of consecration",
+        "LEV 8:27": "and put them all",
+        "LEV 8:28": "And Moses took them at their hands",
+        "LEV 8:29": "And Moses took the breast",
+        "LEV 8:30": "And Moses took of the anointing oil"
+      },
+      "why": "eBible numbers 8:18-30 as Brenton's printing (1879, pp. 151-152, printed pp. 135-136) does, one verse behind the Greek: it keeps the slaying of the first ram in 18, the washing in 19 and the slaying of the second ram in 21, and divides the sprinkling and the sanctifying as 29 and 30. The Church of Greece's text, Swete (vol. 1, pp. 202-203) and Rahlfs all begin 19 at \"And Moses slew the ram\", 21 at \"and he washed the belly\", 22 at \"And Moses brought the second ram\", 23 at \"and he slew him\" and 29 at \"And Moses took the breast\", and number the sprinkling 30; the Church of Greece's text and Rahlfs set the sanctifying in it, and Swete's text lacks it. Brenton's division runs a whole verse behind the Greek through the passage, so the Greek editions' division is printed."
+    },
+    "JOS 6:5": {
+      "edition": {
+        "JOS 6:4": "And it shall be",
+        "JOS 6:5": "And when they have shouted"
+      },
+      "why": "eBible leaves out 4 and prints the trumpet and the falling of the walls as one verse. The Church of Greece's text, Brenton's printing (1879, p. 301, printed p. 285) and Swete (vol. 1, p. 429) all begin 4 at \"And it shall be\" and 5 at \"And when they have shouted\"."
+    },
+    "JOS 13:7-8": {
+      "edition": {
+        "JOS 13:7": "And now divide this land",
+        "JOS 13:8": "But to the two tribes"
+      },
+      "why": "eBible begins verse 8 at \"From Jordan to the great sea\". The Church of Greece's text, Swete (vol. 1, p. 447) and Rahlfs all keep those words, to \"the great sea shall be the boundary\", in verse 7 and begin 8 at \"to the two tribes\". Brenton's printing (1879, p. 313, printed p. 297) prints 8 twice, before \"From Jordan\" and before \"to Ruben\", a phrase after the Greek editions' 8, where his English cannot begin a verse, so his page has no division of its own to stand against them."
+    },
+    "1SA 20:15-16": {
+      "edition": {
+        "1SA 20:15": "thou shalt not withdraw"
+      },
+      "why": "eBible numbers a verse 16 at \"should it happen that the name of Jonathan\", as Rahlfs does. The Church of Greece's text, Brenton's printing (1879, pp. 399–400, printed pp. 383–384; 1844, vol. 1, p. 338) and Swete (vol. 1, p. 587, whose margin runs from 15 to 17 and who sets the 16 only in parentheses) all print these words within verse 15."
+    },
+    "1SA 30:28a; 1SA 30:29": {
+      "edition": {
+        "1SA 30:29": "and to those in Geth"
+      },
+      "why": "eBible letters the words beginning \"and to those in Geth\" as 28a, as Rahlfs does, and begins 29 at \"and to those in Carmel\". The Church of Greece's text, Brenton's printing (1879, p. 415, printed p. 399) and Swete (vol. 1, p. 608) all begin verse 29 at \"and to those in Geth\" and have no 28a."
+    },
+    "1KI 11:22; 1KI 11:25": {
+      "edition": {
+        "1KI 11:22": "And Pharao said to Ader"
+      },
+      "why": "eBible numbers \"this is the mischief which Ader did\" as verse 25, as Rahlfs does. The Church of Greece's text and Swete (vol. 1, p. 704, who sets the Hebrew 25 only in parentheses and goes from 22 to 26) both print these words within verse 22. So does Brenton's printing (1879, pp. 478–479, printed pp. 462–463), which goes on from 22 to 26, but in 3 Kingdoms 4–11 his numbers have no vote."
+    },
+    "1KI 12:24p; 1KI 12:24q": {
+      "edition": {
+        "1KI 12:24p": "And the people said to Roboam",
+        "1KI 12:24q": "and Roboam said, Bring in"
+      },
+      "why": "eBible begins verse 24q at \"And Roboam said to the people, Wait three days\". The Church of Greece's text, Swete (vol. 1, p. 709) and Rahlfs all keep those words in 24p and begin 24q at \"and Roboam said, Bring in\"; Brenton's printing letters none of these verses."
+    },
+    "1ES 1:4-5": {
+      "edition": {
+        "1ES 1:4": "and said, Ye shall no more",
+        "1ES 1:5": "and standing in the temple"
+      },
+      "why": "eBible divides these verses as the King James Bible does, and so does Brenton's printing (1900, p. 1151, printed Apocrypha p. 1), which has no vote here. The Church of Greece's text and Swete (vol. 2, p. 129) both begin verse 5 at \"and standing in the temple\", and so does Rahlfs."
+    },
+    "1ES 1:10-13": {
+      "edition": {
+        "1ES 1:10": "And when these things were done",
+        "1ES 1:11": "And they roasted the passover",
+        "1ES 1:12": "and afterward they prepared"
+      },
+      "why": "eBible divides these verses as the King James Bible does, and so does Brenton's printing (1900, p. 1151, printed Apocrypha p. 1), which has no vote here. The Church of Greece's text and Swete (vol. 2, p. 130) both make one verse 10 through \"in the morning\", and begin 11 at \"And they roasted the passover\" and 12 at \"and afterward they prepared\". Rahlfs begins verses at those two places too, but divides the first verse in three."
+    },
+    "1ES 1:17-18": {
+      "edition": {
+        "1ES 1:16": "Thus were the things"
+      },
+      "why": "eBible divides this as the King James Bible does, and so does Brenton's printing (1900, p. 1152, printed Apocrypha p. 2), which has no vote here. The Church of Greece's text and Swete (vol. 2, p. 130) both make one verse 16 of \"Thus were the things\" through \"king Josias\", and so does Rahlfs."
+    },
+    "1ES 1:51-52": {
+      "edition": {
+        "1ES 1:49": "But they had his messengers"
+      },
+      "why": "eBible divides this as the King James Bible does, and so does Brenton's printing (1900, p. 1153, printed Apocrypha p. 3), which has no vote here. The Church of Greece's text and Swete (vol. 2, p. 133) both make one verse 49 of \"But they had his messengers\" through \"to come up against them\", and so does Rahlfs."
+    },
+    "1ES 2:2-3": {
+      "edition": {
+        "1ES 2:2": "the Lord raised up the spirit",
+        "1ES 2:3": "Thus saith Cyrus"
+      },
+      "why": "eBible divides these verses as the King James Bible does, and so does Brenton's printing (1900, p. 1154, printed Apocrypha p. 4), which has no vote here. The Church of Greece's text and Swete (vol. 2, p. 133) both end verse 2 with \"saying\" and begin 3 at \"Thus saith Cyrus\". Rahlfs also ends a verse at \"saying\", though it makes one verse of 1 and 2."
+    },
+    "1ES 2:6-7": {
+      "edition": {
+        "1ES 2:6": "Whosoever then dwell"
+      },
+      "why": "eBible divides this as the King James Bible does, and so does Brenton's printing (1900, p. 1154, printed Apocrypha p. 4), which has no vote here. The Church of Greece's text and Swete (vol. 2, pp. 133–134) both make one verse 6 of \"Whosoever then dwell\" through \"the temple of the Lord at Jerusalem\", and Rahlfs also makes one verse of them."
+    },
+    "1ES 2:19-21": {
+      "edition": {
+        "1ES 2:18": "Now if this city"
+      },
+      "why": "eBible divides this as the King James Bible does, and so does Brenton's printing (1900, p. 1155, printed Apocrypha p. 5), which has no vote here. The Church of Greece's text and Swete (vol. 2, p. 135) both make one verse 18 of \"Now if this city\" through \"the books of thy fathers\". Rahlfs keeps the first of the three apart."
+    },
+    "1ES 2:22-23": {
+      "edition": {
+        "1ES 2:19": "and thou shalt find"
+      },
+      "why": "eBible divides this as the King James Bible does, and so does Brenton's printing (1900, p. 1155, printed Apocrypha p. 5), which has no vote here. The Church of Greece's text and Swete (vol. 2, p. 135) both make one verse 19 of \"and thou shalt find\" through \"made desolate\", and Rahlfs also makes one verse of them."
+    },
+    "1ES 2:28-29": {
+      "edition": {
+        "1ES 2:24": "Now therefore I have commanded"
+      },
+      "why": "eBible divides this as the King James Bible does, and so does Brenton's printing (1900, p. 1155, printed Apocrypha p. 5), which has no vote here. The Church of Greece's text and Swete (vol. 2, p. 135) both make one verse 24 of \"Now therefore I have commanded\" through \"annoyance of kings\". Rahlfs divides them otherwise, as 23 and 24, beginning 24 at \"and heed to be taken\"."
+    },
+    "1ES 3:14-15": {
+      "edition": {
+        "1ES 3:14": "and sending forth"
+      },
+      "why": "eBible divides this as the King James Bible does, and so does Brenton's printing (1900, p. 1156, printed Apocrypha p. 6), which has no vote here. The Church of Greece's text and Swete (vol. 2, pp. 136–137) both make one verse 14 of \"and sending forth\" through \"read before them\", and so does Rahlfs."
+    },
+    "1ES 3:17-18": {
+      "edition": {
+        "1ES 3:16": "And he said unto them",
+        "1ES 3:17": "Then began the first"
+      },
+      "why": "eBible divides these verses as the King James Bible does, and so does Brenton's printing (1900, p. 1156, printed Apocrypha p. 6), which has no vote here. The Church of Greece's text and Rahlfs both end verse 16 at \"concerning the writings\" and begin 17 at \"Then began the first\"; Rahlfs supplies the agreement. The Church of Greece's text and Swete (vol. 2, p. 137) both begin 18 at \"it maketh the mind\". Swete makes \"Then began the first\" part of 16 and begins 17 at \"O ye men\"."
+    },
+    "1ES 5:41-42": {
+      "edition": {
+        "1ES 5:41": "So of Israel"
+      },
+      "why": "eBible divides this as the King James Bible does, and so does Brenton's printing (1900, p. 1161, printed Apocrypha p. 11), which has no vote here. The Church of Greece's text and Swete (vol. 2, p. 144, who sets 42 only in parentheses) both make one verse 41 of \"So of Israel\" through \"two hundred forty and five\", and so does Rahlfs."
+    },
+    "1ES 5:54-55": {
+      "edition": {
+        "1ES 5:53": "And they gave unto the masons"
+      },
+      "why": "eBible divides this as the King James Bible does, and so does Brenton's printing (1900, p. 1162, printed Apocrypha p. 12), which has no vote here. The Church of Greece's text and Swete (vol. 2, p. 145) both make one verse 53 of \"And they gave unto the masons\" through \"king of the Persians\", and so does Rahlfs."
+    },
+    "1ES 5:59-60": {
+      "edition": {
+        "1ES 5:57": "And the priests stood arrayed"
+      },
+      "why": "eBible divides this as the King James Bible does, and so does Brenton's printing (1900, p. 1162, printed Apocrypha p. 12), which has no vote here. The Church of Greece's text and Swete (vol. 2, p. 146) both make one verse 57 of \"And the priests stood arrayed\" through \"king of Israel had ordained\". Rahlfs also ends its 57 there, though it begins it a clause earlier."
+    },
+    "1ES 6:8-9": {
+      "edition": {
+        "1ES 6:8": "Let all things be known"
+      },
+      "why": "eBible divides this as Brenton's printing does (1900, p. 1163, printed Apocrypha p. 13), which has no vote here, and as the King James Bible does, except that the King James Bible begins 8 at \"To king Darius, greeting\". The Church of Greece's text and Swete (vol. 2, p. 147) both make one verse 8 of \"Let all things be known\" through \"laid upon the walls\". Rahlfs also ends its 8 there, though, like the King James Bible, it begins it at \"To king Darius, greeting\"."
+    },
+    "1ES 8:13-14": {
+      "edition": {
+        "1ES 8:13": "and carry the gifts",
+        "1ES 8:14": "and that silver and gold may be collected"
+      },
+      "why": "eBible divides these verses as the King James Bible does, and so does Brenton's printing (1900, p. 1166, printed Apocrypha p. 16), which has no vote here. The Church of Greece's text and Swete (vol. 2, pp. 151–152) both begin verse 14 at \"and that silver and gold may be collected\", and so does Rahlfs."
+    },
+    "1ES 8:43-44": {
+      "edition": {
+        "1ES 8:43": "then sent I unto Eleazar"
+      },
+      "why": "eBible divides this as the King James Bible does, and so does Brenton's printing (1900, p. 1167, printed Apocrypha p. 17), which has no vote here. The Church of Greece's text and Swete (vol. 2, p. 154) both make one verse 43 of \"then sent I unto Eleazar\" through \"principal men and learned\", and so does Rahlfs."
+    },
+    "1ES 8:56-57": {
+      "edition": {
+        "1ES 8:56": "And when I had weighed it"
+      },
+      "why": "eBible divides this as the King James Bible does, and so does Brenton's printing (1900, p. 1168, printed Apocrypha p. 18), which has no vote here. The Church of Greece's text and Swete (vol. 2, p. 155) both make one verse 56 of \"And when I had weighed it\" through \"glittering like gold\", and so does Rahlfs."
+    },
+    "1ES 8:63-64": {
+      "edition": {
+        "1ES 8:62": "And with him was Eleazar"
+      },
+      "why": "eBible divides this as the King James Bible does, and so does Brenton's printing (1900, p. 1168, printed Apocrypha p. 18), which has no vote here. The Church of Greece's text and Swete (vol. 2, p. 155) both make one verse 62 of \"And with him was Eleazar\" through \"the same hour\", and so does Rahlfs."
+    },
+    "1ES 8:65-66": {
+      "edition": {
+        "1ES 8:63": "Moreover they that were come out"
+      },
+      "why": "eBible divides this as the King James Bible does, and so does Brenton's printing (1900, p. 1168, printed Apocrypha p. 18), which has no vote here. The Church of Greece's text and Swete (vol. 2, pp. 155–156) both make one verse 63 of \"Moreover they that were come out\" through \"a sacrifice to the Lord\", and so does Rahlfs."
+    },
+    "1ES 8:73-74": {
+      "edition": {
+        "1ES 8:70": "Then rising up from the fast",
+        "1ES 8:71": "O Lord, I am confounded"
+      },
+      "why": "eBible divides these verses as the King James Bible does, and so does Brenton's printing (1900, p. 1169, printed Apocrypha p. 19), which has no vote here. The Church of Greece's text and Swete (vol. 2, p. 156) both end verse 70 with \"I said\" (ἔλεγον) and begin 71 at \"O Lord, I am confounded\", and so does Rahlfs."
+    },
+    "1ES 8:79-80": {
+      "edition": {
+        "1ES 8:76": "and to discover unto us a light",
+        "1ES 8:77": "but he made us favoured"
+      },
+      "why": "eBible divides these verses as the King James Bible does, and so does Brenton's printing (1900, p. 1169, printed Apocrypha p. 19), which has no vote here. The Church of Greece's text and Swete (vol. 2, p. 157) both end verse 76 at \"we were not forsaken of our Lord\" and begin 77 at \"but he made us favoured\". Rahlfs divides 76–78 otherwise."
+    },
+    "1ES 8:93-94": {
+      "edition": {
+        "1ES 8:90": "Let us make an oath"
+      },
+      "why": "eBible divides this as the King James Bible does, and so does Brenton's printing (1900, p. 1170, printed Apocrypha p. 20), which has no vote here. The Church of Greece's text and Swete (vol. 2, p. 158) both make one verse 90 of \"Let us make an oath\" through \"obey the law of the Lord\", and so does Rahlfs."
+    },
+    "NEH 12:8-9": {
+      "edition": {
+        "NEH 12:8": "And the Levites"
+      },
+      "why": "eBible divides here as the Hebrew does. The Church of Greece's text, Brenton's printing (1879, p. 663, printed p. 647) and Swete (vol. 2, p. 207) all end verse 8 with \"were appointed to the daily courses\" and number no verse 9. Rahlfs has a verse 9."
+    },
+    "TOB 5:4-5": {
+      "edition": {
+        "TOB 5:4": "Therefore when he went",
+        "TOB 5:5": "and he said unto him, Canst thou"
+      },
+      "why": "The Church of Greece's text and Rahlfs end verse 4 with \"But he knew not\" and begin 5 at \"and he said unto him\", and so does Swete (vol. 2, p. 826). Brenton's division (1900, p. 1177, printed Apocrypha p. 27) follows the King James Bible and has no vote."
+    },
+    "TOB 5:8": {
+      "edition": {
+        "TOB 5:8": "Then he said unto him, Go",
+        "TOB 5:9": "So he went in"
+      },
+      "why": "The Church of Greece's text and Swete (vol. 2, p. 826) begin verse 9 at \"So he went in\", and so does Rahlfs. Brenton's division follows the King James Bible and has no vote."
+    },
+    "TOB 6:5": {
+      "edition": {
+        "TOB 6:5": "So the young man did",
+        "TOB 6:6": "then they both went on their way"
+      },
+      "why": "The Church of Greece's text and Rahlfs begin verse 6 at \"then they both went on their way\"; Rahlfs supplies the agreement. Swete (vol. 2, p. 829) prints the whole as his verse 6, since he begins the chapter a verse earlier. Brenton's division follows the King James Bible and has no vote."
+    },
+    "TOB 6:10-12": {
+      "edition": {
+        "TOB 6:11": "the angel said to the young man",
+        "TOB 6:12": "I will speak for her",
+        "TOB 6:13": "now therefore hear me"
+      },
+      "why": "The Church of Greece's text and Swete (vol. 2, pp. 829–830) begin verse 12 at \"I will speak for her\" and verse 13 at \"now therefore hear me\", and so does Rahlfs. Brenton's division (1900, p. 1178, printed Apocrypha p. 28) follows the King James Bible and has no vote."
+    },
+    "TOB 6:17; TOB 7:1": {
+      "edition": {
+        "TOB 6:18": "and the devil shall smell it",
+        "TOB 6:19": "Now when Tobias had heard",
+        "TOB 7:1": "And he came to Ecbatane"
+      },
+      "why": "The Church of Greece's text and Swete (vol. 2, p. 831) begin chapter 7 at \"And he came to Ecbatane\", and so does Rahlfs. The Church of Greece's text and Rahlfs also begin verse 19 at \"Now when Tobias had heard\", which Swete keeps in 18; Rahlfs supplies the agreement. The Church of Greece's text and Swete begin verse 18 at \"and the devil shall smell it\", which Rahlfs keeps in 17. Brenton's division (1900, p. 1179, printed Apocrypha p. 29) follows the King James Bible but for the chapter break, where he ends 6:17 with \"And he came to Ecbatane\"; it has no vote."
+    },
+    "TOB 7:8-12": {
+      "edition": {
+        "TOB 7:8": "And likewise Edna",
+        "TOB 7:9": "and after that they had killed a ram",
+        "TOB 7:10": "So he communicated",
+        "TOB 7:11": "I have given my daughter"
+      },
+      "why": "The Church of Greece's text and Swete (vol. 2, pp. 832–833) begin verse 9 at \"and after that they had killed a ram\". They run \"So he communicated\" to \"the truth\" as verse 10, and \"I have given my daughter\" to \"in all things\" as verse 11. Rahlfs begins verses 10 and 11 at the same words, but numbers \"and after that they had killed a ram\" 8 and begins verse 12 at \"But Tobias said\". Brenton's division (1900, p. 1179, printed Apocrypha p. 29) follows the King James Bible and has no vote."
+    },
+    "TOB 8:9-10": {
+      "edition": {
+        "TOB 8:9": "So they slept both",
+        "TOB 8:10": "And Raguel arose"
+      },
+      "why": "eBible begins verse 10 at \"saying, I fear lest he also be dead\", as the King James Bible and Swete (vol. 2, p. 834) do. The Church of Greece's text and Rahlfs both end verse 9 with ἐκοιμήθησαν ἀμφότεροι τὴν νύκτα and begin verse 10 at καὶ ἀναστὰς Ραγουηλ, \"And Raguel arose\", so Rahlfs supplies the agreement. Brenton's division follows the King James Bible here (1900, p. 1180, printed Apocrypha p. 30), so it has no vote."
+    },
+    "TOB 10:7-8": {
+      "edition": {
+        "TOB 10:7": "But she said, Hold thy peace"
+      },
+      "why": "The Church of Greece's text and Swete (vol. 2, p. 837) both make one verse 7 of \"But she said, Hold thy peace\" through \"look no more to see me\", as the King James Bible does. Rahlfs begins its 8 at \"Then Tobias said to Raguel\". Brenton (1900, p. 1181, printed Apocrypha p. 31) begins a verse 8 at \"Let me go\", but in the Apocrypha his printing has no vote."
+    },
+    "TOB 11:1-2": {
+      "edition": {
+        "TOB 11:1": "After these things"
+      },
+      "why": "The Church of Greece's text and Rahlfs end chapter 10 at \"Edna his wife\" and begin 11 at \"and went on his way\", but Brenton's English runs both in one clause (\"Tobias went his way, …, and blessed Raguel and Edna his wife, and went on his way till …\"), so the chapter break stands where eBible and Swete (vol. 2, p. 838) have it. The Church of Greece's text and Rahlfs keep \"Then Raphael said to Tobias\" in verse 1, so it is joined there; only the Church of Greece numbers \"let us haste\" 2, which Rahlfs and Swete number 3, so 11:2 is left vacant."
+    },
+    "TOB 11:12-15": {
+      "edition": {
+        "TOB 11:12": "And when his eyes began",
+        "TOB 11:13": "and when he saw his son",
+        "TOB 11:14": "And he wept",
+        "TOB 11:15": "And his son went in rejoicing"
+      },
+      "why": "The Church of Greece's text and Rahlfs make one verse of \"And when his eyes began to smart\" through \"the corners of his eyes\", and begin verses at \"and when he saw his son\" and at \"And his son went in rejoicing\"; Rahlfs supplies the agreement. The Church of Greece's text and Swete (vol. 2, p. 839) begin a verse at \"And he wept\". The numbers are Rahlfs's and Swete's; the Church of Greece's, one lower through the chapter, are its own. Brenton's division follows the King James Bible and has no vote."
+    },
+    "JDT 4:11-12": {
+      "edition": {
+        "JDT 4:11": "Thus every man and woman",
+        "JDT 4:12": "also they put sackcloth about the altar"
+      },
+      "why": "eBible divides these verses as the King James Bible does, and so does Brenton's printing (1900, p. 1189, printed Apocrypha p. 39), which has no vote here. The Church of Greece's text and Swete (vol. 2, p. 787) begin verse 12 at \"also they put sackcloth about the altar\", and so does Rahlfs."
+    },
+    "4MA 8:27": {
+      "edition": {
+        "4MA 8:28": "For they were well aware",
+        "4MA 8:29": "So that as soon as"
+      },
+      "why": "eBible prints the young men's mastery of their pains and their answer to the tyrant as one verse, as Brenton's printing does (1900, p. 1387, printed Apocrypha p. 237). The Church of Greece's text, Swete (vol. 3, p. 744) and Rahlfs all number them 28 and 29, beginning 29 at \"So that as soon as\"."
+    },
+    "PRO 7:6-9": {
+      "edition": {
+        "PRO 7:6": "For she looks from a window",
+        "PRO 7:8": "passing by the corner",
+        "PRO 7:9": "and speaking, in the dark"
+      },
+      "why": "eBible joins the woman at the window and the young man she sees in verse 6, and begins 7, 8 and 9 at \"passing by the corner\", \"and speaking\" and \"when there happens\", as Brenton's printing (1879, p. 810, printed p. 794) divides. The Church of Greece's text, Swete (vol. 2, p. 429) and Rahlfs all begin 7 at \"at one whom she may see\" and 8 at \"passing by the corner\", and none begins a verse at \"when there happens\". Rahlfs begins 9 at \"and speaking\" (καὶ λαλοῦντα), where Brenton begins a verse; the Church of Greece's text and Swete begin it a phrase later, at \"in the dark\" (ἐν σκότει), so his break stands as 9. Brenton's own division, which joins the Greek's verses 6 and 7 and divides its verse 9 in two, falls out of step with them, so it yields; but the Greek's 7 would begin inside his clause, at \"at one whom she may see\", after his comma, so 6 runs on and 7 is left unused."
+    },
+    "PRO 9:10; PRO 9:10a": {
+      "edition": {
+        "PRO 9:10": "The fear of the Lord"
+      },
+      "why": "eBible letters the clause \"for to know the law\" as 10a, as Rahlfs does. The Church of Greece's text, Brenton's printing (1879, p. 812, printed p. 796) and Swete (vol. 2, p. 433) all print it within verse 10."
+    },
+    "PRO 24:56-57": {
+      "edition": {
+        "PRO 24:56": "Give not thy wealth",
+        "PRO 24:57": "Do all things with counsel"
+      },
+      "why": "eBible ends verse 56 (the Hebrew's 31:3) with \"Do all things with counsel: drink wine with counsel\", as Brenton's printing (1879, p. 829, printed p. 813) does with King James numbers. The Church of Greece's text, Swete (vol. 2, p. 467, his 72) and Rahlfs all begin the Hebrew's 31:4 at those words."
+    },
+    "PRO 31:24-28": {
+      "edition": {
+        "PRO 31:24": "She makes fine linens",
+        "PRO 31:26": "she opens her mouth heedfully",
+        "PRO 31:25": "She puts on strength",
+        "PRO 31:27": "The ways of her household",
+        "PRO 31:28": "But she opens her mouth wisely"
+      },
+      "why": "eBible divides 31:24-28 as Brenton's printing (1879, p. 834, printed p. 818) does with King James numbers (27, 26, 28). The Church of Greece's text, Swete (vol. 2, pp. 478–479, his 29:42-46) and Rahlfs all begin a verse at \"she opens her mouth heedfully\", and none begins one at \"And her kindness\"; Rahlfs and the Church of Greece keep it in 28 with \"But she opens her mouth wisely\", which Swete runs into the verse before. The Church of Greece's text numbers \"She puts on strength\" 25, as eBible does, and \"she opens her mouth heedfully\" 26, the Hebrew's numbers for them, which Swete gives in his margin; only Rahlfs numbers them 25 and 26 in Brenton's order. The edition keeps eBible's 25 and prints 26 before it, as Brenton's page prints 27 before 26."
+    },
+    "WIS 2:14-15": {
+      "edition": {
+        "WIS 2:14": "He was made to reprove",
+        "WIS 2:15": "for his life is not like"
+      },
+      "why": "eBible begins verse 15 at \"He is grievous unto us\". The Church of Greece's text and Swete (vol. 2, pp. 606–607) keep that clause in verse 14 and begin 15 at \"for his life is not like\", and so does Rahlfs. Brenton's division follows the King James Bible here, so it is not counted."
+    },
+    "WIS 3:12-13": {
+      "edition": {
+        "WIS 3:12": "their wives are foolish",
+        "WIS 3:13": "Wherefore blessed is the barren"
+      },
+      "why": "eBible begins verse 13 at \"Their offspring is cursed\", as the King James Apocrypha does. The Church of Greece's text, Swete (vol. 2, p. 608) and Rahlfs all keep that clause (ἐπικατάρατος ἡ γένεσις αὐτῶν) in verse 12 and begin 13 at \"Wherefore blessed\" (ὅτι μακαρία). Brenton's division (1900, p. 1208, Apocrypha p. 58) follows the King James Bible and has no vote."
+    },
+    "WIS 4:18-19": {
+      "edition": {
+        "WIS 4:18": "They shall see him, and despise him",
+        "WIS 4:19": "and they shall hereafter be"
+      },
+      "why": "The Church of Greece's text and Swete (vol. 2, p. 610) end verse 18 at \"laugh them to scorn\" and begin 19 at \"and they shall hereafter be a vile carcase\", and so does Rahlfs. Brenton's division follows the King James Bible and has no vote."
+    },
+    "WIS 5:3-4": {
+      "edition": {
+        "WIS 5:3": "And they repenting",
+        "WIS 5:4": "This was he, whom we had"
+      },
+      "why": "eBible begins verse 4 at \"we fools accounted\", as the King James Apocrypha does. The Church of Greece's text begins it at \"This was he\" (οὗτος ἦν), and so does Rahlfs, which supplies the agreement. Swete (vol. 2, p. 611) keeps eBible's division."
+    },
+    "WIS 7:21-22": {
+      "edition": {
+        "WIS 7:21": "and all such things",
+        "WIS 7:22": "for in her is an understanding spirit"
+      },
+      "why": "eBible begins verse 22 at \"For wisdom, which is the worker of all things\", as the King James Apocrypha does. The Church of Greece's text keeps that clause in verse 21 and begins verse 22 at \"for in her is an understanding spirit\" (Ἔστι γὰρ ἐν αὐτῇ), and so does Rahlfs, which supplies the agreement. Swete (vol. 2, p. 616) begins 22 where eBible does and gives this division only as a second number in parentheses."
+    },
+    "WIS 13:17-18": {
+      "edition": {
+        "WIS 13:17": "Then maketh he prayer for his goods",
+        "WIS 13:18": "for life prayeth to that which is dead"
+      },
+      "why": "eBible begins verse 18 at \"For health he calleth upon that which is weak\", as the King James Apocrypha does. The Church of Greece's text, Swete (vol. 2, p. 628) and Rahlfs all keep that clause (περὶ μὲν ὑγιείας) in verse 17 and begin 18 at \"for life prayeth\" (περὶ δὲ ζωῆς). Brenton's division (1900, p. 1217, Apocrypha p. 67) follows the King James Bible and has no vote."
+    },
+    "WIS 17:9-10": {
+      "edition": {
+        "WIS 17:9": "For though no terrible thing"
+      },
+      "why": "eBible begins verse 10 at \"they died for fear\", as Swete does (vol. 2, p. 637). The Church of Greece's text and Rahlfs both print those words within verse 9, and Rahlfs supplies the agreement."
+    },
+    "WIS 17:17-19": {
+      "edition": {
+        "WIS 17:16": "For whether he were husbandman",
+        "WIS 17:17": "for they were all bound"
+      },
+      "why": "eBible divides these verses as the King James Apocrypha does. The Church of Greece's text begins a verse at \"for they were all bound\", as Swete does (vol. 2, p. 638), and joins \"Whether it were a whistling wind\" to it, as Swete does too. It and Rahlfs then begin a verse 18 at \"or a running that could not be seen\", but that would begin a verse with an item of Brenton's list, after his comma, so 17 runs on and 18 is left unused. The numbers 16 and 17 follow the join at verse 9."
+    },
+    "SIR 1:1; SIR 1:1a; SIR 1:1b; SIR 1:1c; SIR 1:1d; SIR 1:1e; SIR 1:1f; SIR 1:1g": {
+      "edition": {
+        "SIR 0:1": "Whereas many"
+      },
+      "why": "eBible divides the translator's Prologue into verses 1:1 and 1:1a-1g, so that the book's first verse is 1:1h. The Church of Greece's text prints the Prologue as one unnumbered block before chapter 1, and Swete (vol. 2, p. 644) prints it as one paragraph, numbering only its lines in the margin, as Rahlfs does; neither divides it into verses. It stands as one verse of a chapter 0 that prints no number, as Susanna does in Daniel, and is unnumbered."
+    },
+    "SIR 13:13": {
+      "edition": {
+        "SIR 13:13": "Observe, and take good heed",
+        "SIR 13:14": "when thou hearest these things"
+      },
+      "why": "eBible ends verse 13 with \"when thou hearest these things, awake in thy sleep\", as the King James Apocrypha does, and has no verse 14. The Church of Greece's text numbers those words 14, and Swete (vol. 2, p. 670), whose Codex B lacks them, leaves 14 vacant for them between 13 and 15."
+    },
+    "SIR 20:2-3": {
+      "edition": {
+        "SIR 20:2": "It is much better to reprove"
+      },
+      "why": "eBible numbers \"and he that confesseth his fault\" as verse 3, as Rahlfs does. The Church of Greece's text and Swete (vol. 2, pp. 682–683, whose next verse is 4) print it within verse 2. Brenton's division follows the King James Bible here, so it is not counted."
+    },
+    "SIR 23:16-17": {
+      "edition": {
+        "SIR 23:16": "Two sorts of men multiply sin",
+        "SIR 23:17": "a hot mind is as a burning fire"
+      },
+      "why": "eBible begins verse 17 at \"All bread is sweet to a whoremonger\", as the King James Bible and Swete (vol. 2, p. 691) do. The Church of Greece's text and Rahlfs both begin it at \"a hot mind is as a burning fire\", and their agreement settles the division in Sirach."
+    },
+    "SIR 29:16-18": {
+      "edition": {
+        "SIR 29:16": "A sinner will overthrow the good estate",
+        "SIR 29:17": "Suretyship hath undone many",
+        "SIR 29:18": "mighty men hath it driven"
+      },
+      "why": "eBible numbers \"and he that is of an unthankful mind\" as verse 17 and \"Suretyship hath undone many\" as 18, as the King James Bible and Swete (vol. 2, p. 703) do. The Church of Greece's text and Rahlfs both print the first within verse 16 and begin verse 17 at \"Suretyship hath undone many\". Rahlfs begins 18 at \"mighty men hath it driven\", where the Church of Greece's text runs on without a numeral, one of its dropped numbers."
+    },
+    "SIR 33:1-2": {
+      "edition": {
+        "SIR 33:1": "Have mercy upon us, O Lord God of all"
+      },
+      "why": "eBible begins verse 2 at \"and send thy fear upon all the nations\", as the King James Apocrypha does. The Church of Greece's text and Rahlfs both print those words within the verse \"Have mercy upon us\" (their 36:1, by the Latin order of the chapters), which is enough in Sirach; Swete (vol. 2, p. 716) divides a clause earlier, at \"and behold us\". Brenton's division follows the King James Bible and has no vote. The verse is joined and 2 is left unused."
+    },
+    "SIR 41:3-4": {
+      "edition": {
+        "SIR 41:3": "Fear not the sentence of death",
+        "SIR 41:4": "for this is the sentence of the Lord"
+      },
+      "why": "eBible ends verse 3 with \"for this is the sentence of the Lord over all flesh\", as the King James Bible does. The Church of Greece's text and Swete (vol. 2, p. 729) both begin verse 4 at those words, and so does Rahlfs. Brenton's printing follows the King James division in Sirach, so it has no vote here."
+    },
+    "SIR 43:17-18": {
+      "edition": {
+        "SIR 43:17": "The noise of the thunder",
+        "SIR 43:18": "as birds flying"
+      },
+      "why": "eBible ends verse 17 with \"as birds flying he scattereth the snow, and the falling down thereof is as the lighting of grasshoppers\", as the King James Bible and Swete (vol. 2, p. 734) do. The Church of Greece's text and Rahlfs both begin verse 18 at ὡς πετεινὰ καθιπτάμενα, so Rahlfs supplies the agreement. Brenton's division follows the King James Bible in Sirach, so it has no vote."
+    },
+    "OBA 1:1-3": {
+      "edition": {
+        "OBA 1:1": "The vision of Obdias",
+        "OBA 1:2": "Behold, I have made thee small",
+        "OBA 1:3": "The pride of thine heart"
+      },
+      "why": "eBible numbers \"Arise ye, and let us rise up against her to war\" as verse 2 and begins verse 3 at \"Behold, I have made thee small\", as Brenton's printing does (1879, p. 1108, printed p. 1092). The Church of Greece's text, Swete (vol. 3, p. 45) and Rahlfs all end verse 1 with \"Arise ye\" (ἀνάστητε), begin verse 2 at \"Behold\" (ἰδοὺ ὀλιγοστόν) and verse 3 at \"The pride of thine heart\" (ὑπερηφανία). Brenton's division puts the Greek's whole verse 2, \"Behold, I have made thee small\", under 3, so the verses fall out of step; his own Greek column divides as the Greek editions do."
+    },
+    "ISA 38:14-15": {
+      "edition": {
+        "ISA 38:14": "As a swallow"
+      },
+      "why": "eBible numbers \"and removed the sorrow of my soul\" as verse 15, as Rahlfs does. The Church of Greece's text, Brenton's printing (1879, p. 889, printed p. 873) and Swete (vol. 3, p. 171) all print it within verse 14 and go on to 16."
+    },
+    "ISA 63:19": {
+      "edition": {
+        "ISA 63:19": "We are become",
+        "ISA 64:1": "If thou wouldest open"
+      },
+      "why": "eBible ends chapter 63 with \"If thou wouldest open the heaven\", as Rahlfs does. The Church of Greece's text, Brenton's printing (1879, p. 914, printed p. 898) and Swete (vol. 3, p. 216) all begin chapter 64 there."
+    },
+    "JER 7:27-28": {
+      "edition": {
+        "JER 7:28": "Therefore thou shalt speak"
+      },
+      "why": "eBible sets \"Therefore thou shalt speak this word to them;\" apart as verse 27. The Church of Greece's text, Swete (vol. 3, p. 240) and Rahlfs all print it in one verse with \"This is the nation\", which the Church of Greece and Swete number 28, leaving 27 vacant as the Greek lacks it. Brenton's printing (1879, p. 928, printed p. 912) numbers 27 and 28 as eBible does in its English column, though its Greek column sets them together."
+    },
+    "JER 34:16": {
+      "edition": {
+        "JER 34:16": "I spoke to you",
+        "JER 34:17": "I sent them not."
+      },
+      "why": "eBible runs \"I sent them not.\" into verse 16 and has no verse 17. The Church of Greece's text, Brenton's printing (1879, p. 964, printed p. 948) and Swete (vol. 3, p. 304, his verse 14) all set it apart, as Brenton's 17 and the Church of Greece's."
+    },
+    "JER 34:18-19": {
+      "edition": {
+        "JER 34:18": "If they are prophets",
+        "JER 34:19": "for thus has the Lord said"
+      },
+      "why": "eBible ends verse 18 with \"for thus has the Lord said\". The Church of Greece's text, Swete (vol. 3, p. 304, his verse 16) and Rahlfs all begin 19 at those words; Brenton's printing (1879, p. 964, printed p. 948) divides as eBible does."
+    },
+    "JER 36:12-13": {
+      "edition": {
+        "JER 36:12": "And do ye pray to me",
+        "JER 36:13": "and do ye earnestly seek me"
+      },
+      "why": "eBible begins verse 13 at \"for ye shall seek me\", as Brenton's printing (1879, p. 965, printed p. 949) does in its English, though his Greek column, the Hebrew and the King James Bible begin it where the Greek editions do. The Church of Greece's text, Swete (vol. 3, p. 307) and Rahlfs all begin 13 at \"and do ye earnestly seek me\". Brenton's numbers in this chapter are the Hebrew's, so they are not counted."
+    },
+    "BAR 3:34": {
+      "edition": {
+        "BAR 3:34": "The stars shined",
+        "BAR 3:35": "when he calleth them"
+      },
+      "why": "eBible keeps \"when he calleth them\" in verse 34, as the King James Bible does. The Church of Greece's text and Swete (vol. 3, p. 357) begin verse 35 there, as Rahlfs does. Brenton's division follows the King James Bible here (1900, p. 1275, printed Apocrypha p. 125), so it is not counted."
+    },
+    "LJE 1:5-6": {
+      "edition": {
+        "LJE 1:4": "Beware therefore",
+        "LJE 1:5": "when ye see the multitude"
+      },
+      "why": "eBible ends its verse 5 with \"when ye see the multitude before them and behind them, worshipping them\", as the King James Bible does, and so does Brenton's printing (1900, p. 1278, printed Apocrypha p. 128), which has no vote here. The Church of Greece's text, Swete (vol. 3, p. 379) and Rahlfs all begin verse 5 at those words and end it with \"we must worship thee\"."
+    },
+    "LJE 1:10-17": {
+      "edition": {
+        "LJE 1:9": "Sometimes also the priests",
+        "LJE 1:10": "Yea, they will give thereof",
+        "LJE 1:11": "though they be covered with purple raiment",
+        "LJE 1:12": "And he that cannot put to death",
+        "LJE 1:13": "He hath also in his right hand",
+        "LJE 1:14": "Whereby they are known",
+        "LJE 1:15": "For like as a vessel"
+      },
+      "why": "eBible divides these verses as the King James Bible does. The Church of Greece's text and Rahlfs begin 11 at \"though they be covered with purple raiment\", keep \"They wipe their faces\" in 11, and number the sceptre, the dagger and \"Whereby they are known\" 12 to 14; Swete (vol. 3, pp. 379-380) divides otherwise. They also begin 10 at \"and deck them as men\" and 16 at \"their eyes be full of dust\", but each would begin a verse inside Brenton's clause, after his comma, so 10 begins at Brenton's sentence \"Yea, they will give thereof\", 15 runs on to the end of eBible's verse, and 16 is left unused. Brenton's division follows the King James Bible and has no vote."
+    },
+    "LJE 1:26-27": {
+      "edition": {
+        "LJE 1:25": "They are borne upon shoulders",
+        "LJE 1:26": "for if they fall to the ground"
+      },
+      "why": "eBible begins verse 27 at \"They also that serve them are ashamed\", as the King James Bible does, and so does Brenton's printing (1900, p. 1278, printed Apocrypha p. 128), which has no vote here. The Church of Greece's text and Swete (vol. 3, pp. 380-381) end verse 25 with those words and begin 26 at \"for if they fall to the ground\"; Rahlfs begins 26 at \"neither, if one set them upright\"."
+    },
+    "LJE 1:40-41": {
+      "edition": {
+        "LJE 1:39": "How should a man then think",
+        "LJE 1:40": "when even the Chaldeans"
+      },
+      "why": "eBible ends verse 40 with \"when even the Chaldeans themselves dishonour them\", as the King James Bible does. The Church of Greece's text, Swete (vol. 3, p. 381) and Rahlfs all begin verse 40 at those words, with \"Who if they shall see one dumb\". Brenton's division follows the King James Bible and has no vote."
+    },
+    "LJE 1:43": {
+      "edition": {
+        "LJE 1:42": "The women also with cords",
+        "LJE 1:43": "but if any of them"
+      },
+      "why": "eBible prints the women with cords as one verse, as the King James Bible does. The Church of Greece's text, Swete (vol. 3, p. 382) and Rahlfs all begin verse 43 at \"but if any of them\", and so number \"Whatsoever is done among them\" 44. Brenton's division follows the King James Bible and has no vote."
+    },
+    "LJE 1:46-47": {
+      "edition": {
+        "LJE 1:46": "And they themselves that made them",
+        "LJE 1:47": "how should then the things"
+      },
+      "why": "eBible begins verse 47 at \"For they left lies\", as the King James Bible does. The Church of Greece's text and Swete (vol. 3, p. 382) begin 47 at \"how should then the things that are made of them be gods\"; Rahlfs divides as eBible does. Brenton's division follows the King James Bible and has no vote."
+    },
+    "LJE 1:50-51": {
+      "edition": {
+        "LJE 1:50": "For seeing they be but of wood"
+      },
+      "why": "eBible divides \"For seeing they be but of wood\" from \"and it shall manifestly appear\", as the King James Bible does. The Church of Greece's text, Swete (vol. 3, p. 382) and Rahlfs all print them as one verse, 50, and so number \"Who then may not know\" 51. Brenton's division follows the King James Bible and has no vote."
+    },
+    "LJE 1:56-57": {
+      "edition": {
+        "LJE 1:55": "Moreover they cannot withstand",
+        "LJE 1:56": "how can it then be thought"
+      },
+      "why": "eBible ends verse 56 with \"how can it then be thought or said that they be gods?\", as the King James Bible does, and so does Brenton's printing (1900, p. 1280, printed Apocrypha p. 130), which has no vote here. The Church of Greece's text and Swete (vol. 3, p. 383) begin verse 56 at those words and keep \"Neither are those gods of wood\" in it; Rahlfs begins 57 there."
+    },
+    "LJE 1:62-63": {
+      "edition": {
+        "LJE 1:61": "And when God commandeth the clouds",
+        "LJE 1:62": "but these are like unto them"
+      },
+      "why": "eBible begins verse 63 at \"And the fire sent from above\", as the King James Bible does. The Church of Greece's text and Rahlfs keep the fire in verse 61 with the clouds and begin 62 at \"but these are like unto them\"; Swete (vol. 3, p. 383) begins his 62 with the fire. Brenton's division follows the King James Bible and has no vote."
+    },
+    "DAG 0:13-14": {
+      "edition": {
+        "DAG 0:13": "And the one said to the other",
+        "DAG 0:14": "and turning back again"
+      },
+      "why": "eBible begins verse 14 at \"So when they were gone out\", as the King James Bible does. The Church of Greece's text and Swete (vol. 3, p. 579) both begin it at \"and turning back again\", and so does Rahlfs. Brenton's printing follows the King James division in Susanna (1900, p. 1284, printed Apocrypha p. 134), so it has no vote here."
+    },
+    "DAG 0:28-29": {
+      "edition": {
+        "DAG 0:28": "And it came to pass the next day",
+        "DAG 0:29": "Send for Susanna"
+      },
+      "why": "eBible begins verse 29 at \"and said before the people\", as the King James Bible and Rahlfs do. The Church of Greece's text and Swete (vol. 3, p. 581) both begin it at \"Send for Susanna\". Brenton's printing follows the King James division in Susanna, so it has no vote here."
+    },
+    "DAG 0:40-41": {
+      "edition": {
+        "DAG 0:40": "But having taken this woman",
+        "DAG 0:41": "but she would not tell us"
+      },
+      "why": "eBible begins verse 41 at \"Then the assembly believed them\", as the King James Bible does. The Church of Greece's text and Swete (vol. 3, p. 581) both begin it at \"but she would not tell us\", and so does Rahlfs. Brenton's printing follows the King James division in Susanna (1900, p. 1285, printed Apocrypha p. 135), so it has no vote here."
+    },
+    "DAG 3:39-40": {
+      "edition": {
+        "DAG 3:39": "Nevertheless",
+        "DAG 3:40": "Like as in the burnt offerings"
+      },
+      "why": "Swete's 3:40 opens at ὡς ἐν ὁλοκαυτώσει κριῶν (vol. 3, p. 517), and the Church of Greece's text begins a verse of the Song there too, as Brenton's printed Song 16 does (1900, p. 1281, printed Apocrypha p. 131), though his division there is the King James Apocrypha's and has no vote."
+    },
+    "DAG 3:41-42": {
+      "edition": {
+        "DAG 3:41": "And now we follow thee",
+        "DAG 3:42": "Put us not to shame"
+      },
+      "why": "Swete's 3:42 opens at μὴ καταισχύνῃς ἡμᾶς (vol. 3, p. 517), and the Church of Greece's text begins a verse of the Song there too, as Brenton's printed Song 18 does (1900, pp. 1281–1282, printed Apocrypha pp. 131–132), though his division there is the King James Apocrypha's and has no vote."
+    },
+    "DAG 13:11-14": {
+      "edition": {
+        "DAG 13:11": "So Bel's priests said",
+        "DAG 13:12": "And they little regarded it",
+        "DAG 13:13": "So when they were gone forth",
+        "DAG 13:14": "Now Daniel had commanded"
+      },
+      "why": "eBible divides the priests' challenge and the setting of the meat as the King James Bible and Swete (vol. 3, p. 589) do. The Church of Greece's text and Rahlfs both take \"and to-morrow when thou comest in\" into verse 11, number \"And they little regarded it\" 12, and divide verse 14 at \"Now Daniel had commanded\", so Rahlfs supplies the agreement. Brenton's printing follows the King James division in Bel, so it has no vote here."
+    },
+    "DAG 13:20-21": {
+      "edition": {
+        "DAG 13:20": "And the king said, I see",
+        "DAG 13:21": "And then the king was angry"
+      },
+      "why": "eBible begins verse 21 at \"and took the priests\", as the King James Bible does. The Church of Greece's text and Swete (vol. 3, p. 589) both begin it at \"And then the king was angry\", and so does Rahlfs. Brenton's printing follows the King James division in Bel (1900, p. 1288, printed Apocrypha p. 138), so it has no vote here."
     }
   },
   "old_testament": [
@@ -68,7 +1201,7 @@
       "kjv": "BEL"
     },
     {
-      "edition": "ESG 1:1; ESG 5:1; ESG 5:1c; ESG 5:2",
+      "edition": "ESG 1:1a; ESG 5:1; ESG 5:1c; ESG 5:2",
       "title": "Esther, the additions",
       "kjv": "ESG"
     },
@@ -97,11 +1230,20 @@
       "why": "eBible's placeholder for the Hebrew's chapter 30, whose sayings the Greek sets in chapter 24 (24:22f-22t and 24:35-53), with its own remark, See chapter 24 for the content of chapter 30, which is not Brenton's. Brenton's text runs from chapter 29 to 31:10."
     }
   },
+  "unnumbered": {
+    "why": "A verse the Greek editions print without a number: it prints none, and a chapter all of whose verses print none prints no number either, as Susanna's and Bel's do. Its own label stays, for the notes and links that name it.",
+    "SIR 0:1": {
+      "why": "Sirach's Prologue, the translator's preface, which the Church of Greece's text and Swete print unnumbered before chapter 1."
+    },
+    "LJE 1:0": {
+      "why": "The Epistle's title, which the Church of Greece's text and Swete print unnumbered, and Rahlfs numbers 0."
+    }
+  },
   "relocations": {
-    "why": "Where the Greek sets a passage in another order than the Hebrew, which the King James Bible follows, a note at the passage's first verse says where the Hebrew has it, and a note at the verse after which the Hebrew has it says where its passages are printed, as the notes on the New Testament's moved verses say where the Received Text has them. Each is keyed by the Hebrew's passage and names the verse where this edition prints its first verse, and is checked against the runs the build works out.",
+    "why": "Where the Greek sets a passage in another order than the Hebrew, which the King James Bible follows, the passage's verses print the Hebrew's numbers where they stand, as Rahlfs numbers them, Swete marks them in his margin, the Church of Greece's text marks each passage's first verse in parentheses and numbers the rest by the Hebrew, and Brenton's printing numbers them, though his chapter 30 begins one sentence later: the first verse with its chapter, the rest numbered on, and the first verse after the passage, back in its own chapter, with that chapter. Their own labels stay the edition's, for notes, links and decisions, and no citation names them. A note at the verse after which the Hebrew has the passages says where they are printed, as the notes on the New Testament's moved verses say where the Received Text has them. Each is keyed by the Hebrew's passage and names the verse where this edition prints its first verse, and is checked against the runs the build works out.",
     "PRO 30:1-14": {
       "to": "PRO 24:22f",
-      "why": "The words of Agur, the Hebrew's 30:1-14, which the Greek sets after 24:22, in lettered verses."
+      "why": "The words of Agur, the Hebrew's 30:1-14, which the Greek sets after 24:22e, in eBible's lettered verses 24:22f-t."
     },
     "PRO 30:15-33": {
       "to": "PRO 24:35",
@@ -127,9 +1269,54 @@
     ],
     "EXO": [
       {
+        "edition": "EXO 28:23",
+        "kjv": "EXO 28:29",
+        "why": "Aaron's bearing the names on the oracle of judgment, which the Greek tells before the fringes and circlets and the Hebrew after the rings the Greek lacks."
+      },
+      {
+        "edition": "EXO 28:26",
+        "kjv": "EXO 28:30",
+        "why": "The Manifestation and the Truth, the Hebrew's Urim and Thummim, in the verse after the circlets."
+      },
+      {
+        "edition": "EXO 35:12",
+        "kjv": "EXO 35:17",
+        "why": "The Greek lists the curtains of the court before the stones and the incense; the Hebrew lists them after the altar."
+      },
+      {
+        "edition": "EXO 35:13",
+        "kjv": null,
+        "why": "The emerald stones, which the Greek lists again after the court; the Hebrew names the stones once, in 35:9, which faces verse 8 here."
+      },
+      {
+        "edition": "EXO 35:15-16",
+        "kjv": "EXO 35:13-14",
+        "why": "The table and the candlestick, which the Greek lists after the incense."
+      },
+      {
+        "edition": "EXO 35:17",
+        "kjv": "EXO 35:16",
+        "why": "The altar, which the Greek lists after the candlestick."
+      },
+      {
+        "edition": "EXO 35:18-19",
+        "kjv": "EXO 35:19",
+        "why": "The Greek tells Aaron's garments and his sons' in two verses, the Hebrew in one."
+      },
+      {
         "edition": "EXO 36:8; EXO 39:13",
         "kjv": "EXO 39:1",
         "why": "Both tell what the Hebrew tells in one verse: the garments of ministry made of the blue, purple and scarlet, and Aaron's holy garments made as the Lord commanded Moses."
+      },
+      {
+        "edition": "EXO 36:23-24",
+        "kjv": "EXO 39:16",
+        "why": "The Greek tells the making of the circlets and rings and the putting of the rings in two verses, the Hebrew in one."
+      },
+      {
+        "edition": "EXO 36:38-39",
+        "kjv": "EXO 39:30",
+        "why": "The Greek tells the plate and what was written on it in two verses, the Hebrew in one."
       },
       {
         "edition": "EXO 38:4",
@@ -162,9 +1349,14 @@
         "why": "The remaining silver made into hooks for the pillars and used to overlay their chapiters, after the hundred talents accounted for in the two verses before."
       },
       {
-        "edition": "EXO 39:19",
-        "kjv": "EXO 39:41",
-        "why": "The garments of Aaron and of his sons, in the list of what was brought to Moses, which the Greek orders otherwise."
+        "edition": "EXO 39:10",
+        "kjv": null,
+        "why": "The brazen appendage and the vessels of the altar, in the list of what was made of the brass of the offering. The King James Bible gives them within 38:30, which faces verse 8 here, so this verse has no place of its own there. STEP Bible's table, which numbers the Greek chapter as this edition does, sets it at 38:2, the horns of the altar."
+      },
+      {
+        "edition": "EXO 39:16",
+        "kjv": "EXO 39:38",
+        "why": "The anointing oil and the incense, in the list of what was brought to Moses, which the Hebrew names with the golden altar and the hanging for the door; the Greek names the candlestick with them, which the Hebrew names in the verse before."
       }
     ],
     "LEV": [
@@ -333,9 +1525,9 @@
     ],
     "JOB": [
       {
-        "edition": "JOB 23:15; JOB 23:15a",
+        "edition": "JOB 23:14-15",
         "kjv": "JOB 23:15",
-        "why": "Brenton gives the verse in two renderings, of which the lettered one is the second; the Greek lacks the verse before."
+        "why": "The Greek renders the Hebrew's verse twice, as 14 and 15 here, and lacks the verse before it, the Hebrew's 14."
       }
     ],
     "PRO": [
@@ -343,16 +1535,6 @@
         "edition": "PRO 7:6",
         "kjv": "PRO 7:6-7",
         "why": "The Greek makes the woman look out, and joins the youth she sees to the same verse."
-      },
-      {
-        "edition": "PRO 7:7",
-        "kjv": "PRO 7:8",
-        "why": "The Greek makes the woman look out, and joins the youth she sees to the same verse."
-      },
-      {
-        "edition": "PRO 7:8-9",
-        "kjv": "PRO 7:9",
-        "why": "Brenton divides the verse in two."
       },
       {
         "edition": "PRO 8:28-29",
@@ -414,25 +1596,6 @@
         "why": "The second verse of the Hebrew's chapter 30, which the Greek sets here."
       }
     ],
-    "OBA": [
-      {
-        "edition": "OBA 1:1-2",
-        "kjv": "OBA 1:1",
-        "why": "Brenton divides the call to war from the vision."
-      },
-      {
-        "edition": "OBA 1:3",
-        "kjv": "OBA 1:2-3",
-        "why": "Brenton joins the Hebrew's second and third verses."
-      }
-    ],
-    "ISA": [
-      {
-        "edition": "ISA 63:19",
-        "kjv": "ISA 63:19; ISA 64:1",
-        "why": "Brenton ends chapter 63 with the opening of the heaven, as the Hebrew does; the King James Bible begins chapter 64 with it."
-      }
-    ],
     "JER": [
       {
         "edition": "JER 10:5; JER 10:9a",
@@ -475,6 +1638,13 @@
         "edition": "EZK 40:29",
         "kjv": "EZK 40:29",
         "why": "The Greek lacks the verse after, which is worded like this one."
+      }
+    ],
+    "JOS": [
+      {
+        "edition": "JOS 6:4-5",
+        "kjv": "JOS 6:5",
+        "why": "The Greek lacks the Hebrew's seven priests with their trumpets, and tells in two verses what the Hebrew tells in its next: the shout at the trumpet's sound, and the walls' fall."
       }
     ]
   }

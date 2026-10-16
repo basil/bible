@@ -805,7 +805,7 @@ def acrostic_inventory(chapter: str) -> list[tuple[str, str]]:
         names[19] = "Rechs."
         names.insert(9, "Teth.")
         labels = (
-            "1 5 8 9 12 15 19 21a 25 27 30 32 34 39 40 43 45 49 52 55 58 61 65".split()
+            "1 5 8 9 12 15 19 22 25 27 30 32 34 39 40 43 45 49 52 55 58 61 65".split()
         )
     elif chapter == "4":
         names[19] = "Rechs."

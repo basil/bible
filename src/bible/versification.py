@@ -1,10 +1,11 @@
 """Where the edition's chapters and verses stand in other numberings
 (edition/versification.json, and the runs the build works out in places.py).
 
-Two numberings meet the edition's. Brenton's own, as eBible labels it, which
-the edition relabels in a few places, as Malachias 3:19-24; and the King
-James Bible's, which a reader's other Bible follows, and in which some of the
-edition's sources cite the Old Testament.
+Two numberings meet the edition's. eBible's, which is Rahlfs's, and which the
+edition relabels and divides again where it prints the Septuagint's numbers
+otherwise (docs/numbering.md); and the King James Bible's, which a reader's
+other Bible follows, and in which some of the edition's sources cite the Old
+Testament.
 
 A verse that no run lists keeps its number in the King James Bible, unless
 Brenton letters it: a lettered verse is a Septuagint addition, and has no
@@ -23,12 +24,20 @@ from __future__ import annotations
 
 import functools
 from collections.abc import Callable, Iterable, Mapping
+from dataclasses import dataclass
 
 import bible.policy
 import bible.references
 from bible.checks import require
-from bible.policy_schema import ByzantineStructure, Run
-from bible.references import Verse, parse_passage, parse_passages, runs, verses_of
+from bible.policy_schema import ByzantineStructure, Run, VersificationRelocation
+from bible.references import (
+    Verse,
+    parse_passage,
+    parse_passages,
+    parse_verse,
+    runs,
+    verses_of,
+)
 
 # What a run rests on: the table's account of a Bible numbered like this one,
 # the words of both translations, its place between verses that they fix, or
@@ -252,39 +261,152 @@ def edition_passages(
     return _mapped(passage, lambda v: from_kjv(v, policy=policy))
 
 
+@dataclass(frozen=True)
+class Break:
+    """Verses eBible divides otherwise than the edition: its verses, and the
+    printed verses their words divide into, each by the words it opens with."""
+
+    source: tuple[Verse, ...]
+    printed: tuple[tuple[Verse, str], ...]
+
+    def pairs(self) -> list[tuple[Verse, Verse]]:
+        """Each of its verses whose printed verse the labels alone tell, with
+        that verse: all of them where the count is kept or the verses are
+        joined into one, otherwise only the first. A verse divided is its
+        first part."""
+        ours, theirs = self.source, [v for v, _ in self.printed]
+        if len(ours) == len(theirs):
+            return list(zip(ours, theirs))
+        if len(theirs) == 1:
+            return [(v, theirs[0]) for v in ours]
+        return [(ours[0], theirs[0])]
+
+
+@dataclass(frozen=True)
+class Renumbering:
+    """How a book's verses are printed where they are not eBible's."""
+
+    labels: Mapping[Verse, Verse]
+    opens: Mapping[Verse, str]
+    breaks: tuple[Break, ...]
+
+    def relabelled(self) -> dict[Verse, Verse]:
+        """The printed verse of each verse the labels alone place."""
+        return {
+            **self.labels,
+            **{v: t for division in self.breaks for v, t in division.pairs()},
+        }
+
+
+@functools.cache
+def renumberings(*, policy: bible.policy.Policy) -> dict[str, Renumbering]:
+    """Each book's renumbering, every decision checked: a verse relabelled
+    once, by a run as long as its own, never also divided, and a chapter's
+    opening words given only for a verse it relabels."""
+    labels: dict[Verse, Verse] = {}
+    opens: dict[Verse, str] = {}
+    breaks: list[Break] = []
+    for source, printed in policy.versification["relabel"].items():
+        ours, theirs = verses(source), verses(printed["edition"])
+        require(
+            len(ours) == len(theirs)
+            and printed.get("why")
+            and len({v.book for v in (*ours, *theirs)}) == 1,
+            f"Misaligned or unjustified relabelling: {source}",
+        )
+        require(ours != theirs, f"Relabelling that changes nothing: {source}")
+        for verse, target in zip(ours, theirs):
+            require(verse not in labels, f"Verse relabelled twice: {verse}")
+            labels[verse] = target
+        for label, words in printed.get("opens", {}).items():
+            verse = parse_verse(label)
+            require(
+                verse in theirs and bool(words.strip()),
+                f"Opening words for a verse the relabelling lacks: {label}",
+            )
+            opens[verse] = words
+    for source, decided in policy.versification.get("breaks", {}).items():
+        ours = verses(source)
+        parts = [(parse_verse(label), w) for label, w in decided["edition"].items()]
+        require(
+            bool(parts)
+            and all(words.strip() for _, words in parts)
+            and decided.get("why")
+            and len({v.book for v in ours} | {v.book for v, _ in parts}) == 1,
+            f"Incomplete or unjustified verse division: {source}",
+        )
+        for verse in ours:
+            require(verse not in labels, f"Verse relabelled and divided: {verse}")
+        breaks.append(Break(tuple(ours), tuple(parts)))
+    divided = [v for b in breaks for v in b.source]
+    require(len(divided) == len(set(divided)), "Verse divided twice")
+    books = {v.book for v in labels} | {b.source[0].book for b in breaks}
+    return {
+        code: Renumbering(
+            {v: t for v, t in labels.items() if v.book == code},
+            {v: w for v, w in opens.items() if v.book == code},
+            tuple(b for b in breaks if b.source[0].book == code),
+        )
+        for code in books
+    }
+
+
+def renumbering(code: str, *, policy: bible.policy.Policy) -> Renumbering:
+    """A book's renumbering; none where the edition prints eBible's numbers."""
+    return renumberings(policy=policy).get(code, Renumbering({}, {}, ()))
+
+
 @functools.cache
 def relabelled(*, policy: bible.policy.Policy) -> dict[Verse, Verse]:
-    """Each verse the edition relabels, by Brenton's label for it."""
-    found: dict[Verse, Verse] = {}
-    for source, printed in policy.versification["relabel"].items():
-        labels, targets = verses(source), verses(printed["edition"])
-        require(len(labels) == len(targets), f"Misaligned relabelling: {source}")
-        found.update(zip(labels, targets))
-    return found
+    """The printed verse of each verse eBible numbers otherwise, by eBible's
+    label for it. A boundary moved keeps each verse's number; verses joined
+    are the verse they make; a verse divided is its first part. Of verses
+    divided again into a different number of verses, only the first has a
+    printed verse that the labels alone tell (see `undivided`)."""
+    return {
+        v: t
+        for found_in in renumberings(policy=policy).values()
+        for v, t in found_in.relabelled().items()
+        if v != t
+    }
 
 
-def new_chapters(
-    code: str, *, policy: bible.policy.Policy
-) -> list[tuple[list[Verse], list[Verse], str]]:
-    """The chapters a book's relabelling opens, as (Brenton's verses, the
-    printed ones, the words the first opens with).
-
-    The edition relabels only the close of a chapter, as a chapter of its
-    own; the words witness that the verse is the one meant.
-    """
-    found = []
-    for source, printed in policy.versification["relabel"].items():
-        labels, targets = verses(source), verses(printed["edition"])
-        if labels[0].book != code:
-            continue
-        require(
-            printed.get("opens")
-            and [v.number for v in targets] == list(range(1, len(targets) + 1))
-            and targets[0].chapter == labels[0].chapter + 1,
-            f"Relabelling that opens no chapter: {source}",
+@functools.cache
+def renumbered(*, policy: bible.policy.Policy) -> frozenset[Verse]:
+    """The verses of eBible's that the edition numbers otherwise: each that a
+    decision relabels, and each of a run divided again, whether or not its
+    number changes, since its words may."""
+    return frozenset(
+        verse
+        for found_in in renumberings(policy=policy).values()
+        for verse in (
+            *found_in.labels,
+            *(v for division in found_in.breaks for v in division.source),
         )
-        found.append((labels, targets, printed["opens"]))
-    return found
+    )
+
+
+@functools.cache
+def renumbered_chapters(*, policy: bible.policy.Policy) -> frozenset[tuple[str, int]]:
+    """The chapters, by book, that eBible numbers otherwise than the edition."""
+    return frozenset(
+        (verse.book, verse.chapter)
+        for pair in relabelled(policy=policy).items()
+        for verse in pair
+    ) | {(v.book, v.chapter) for v in undivided(policy=policy)}
+
+
+@functools.cache
+def undivided(*, policy: bible.policy.Policy) -> frozenset[Verse]:
+    """The verses of eBible's whose printed verse depends on the words: those
+    of a division into a different number of verses, none of them one, that
+    `relabelled` lacks."""
+    return frozenset(
+        v
+        for found_in in renumberings(policy=policy).values()
+        for division in found_in.breaks
+        for v in division.source[len(division.pairs()) :]
+    )
 
 
 @functools.cache
@@ -351,3 +473,51 @@ def unused_exceptions(
         for source in policy.quotations["lxx_to_edition"]
         if not reached.intersection(parse_passage(source).verses)
     )
+
+
+def relocations(
+    code: str, *, policy: bible.policy.Policy
+) -> dict[str, VersificationRelocation]:
+    """The passages a book prints in another order than the Hebrew's, by the
+    Hebrew's reference, which may name another book than the one that
+    prints them."""
+    return {
+        reference: entry
+        for reference, entry in policy.versification.get("relocations", {}).items()
+        if not isinstance(entry, str) and parse_verse(entry["to"]).book == code
+    }
+
+
+@functools.cache
+def printed_as(*, policy: bible.policy.Policy) -> dict[Verse, Verse]:
+    """The verse each verse of a relocated passage prints as (see
+    assembly.printed): the Hebrew's, which is the King James Bible's."""
+    return {
+        v: verse
+        for reference, entry in policy.versification.get("relocations", {}).items()
+        if not isinstance(entry, str)
+        for verse in parse_passage(reference).verses
+        for v in from_kjv(verse, policy=policy)
+    }
+
+
+@functools.cache
+def printed_otherwise(*, policy: bible.policy.Policy) -> frozenset[Verse]:
+    """The verses that print another label than their own (see
+    assembly.printed): a relocated passage's, under the Hebrew's numbers, and
+    the unnumbered. A citation of one would name a number the page does not
+    show, so none may be cited."""
+    return frozenset(printed_as(policy=policy)) | {
+        parse_verse(reference)
+        for reference, entry in policy.versification.get("unnumbered", {}).items()
+        if not isinstance(entry, str)
+    }
+
+
+def require_own_labels(
+    verses: Iterable[Verse], what: str, *, policy: bible.policy.Policy
+) -> None:
+    """Refuse a reference to verses that print another label than their own,
+    which would name a number the page does not show."""
+    shown = sorted(map(str, set(verses) & printed_otherwise(policy=policy)))
+    require(not shown, f"{what} of verses printed under other labels: {shown}")

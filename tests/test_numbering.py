@@ -108,7 +108,7 @@ def test_a_chapter_that_stands_whole_elsewhere_is_one_row(
     # the King James chapter: the rest of chapter 25 keeps its number.
     assert ("32", "25") not in jeremias
     assert {
-        ("32:15–38", "25:15–38"),
+        ("32:1–24", "25:15–38"),
         ("38:1–34", "31:1–34"),
         ("51:1–30", "44:1–30"),
         ("51:31–35", "45:1–5"),
@@ -138,17 +138,15 @@ def test_what_either_bible_lacks_is_missing(
 def test_a_verse_may_stand_beside_two(
     rows: Callable[[str], list[tuple[str, str]]],
 ) -> None:
-    assert rows("LEV")[:5] == [
+    assert rows("LEV")[:2] == [
         ("5:20–26", "6:1–7"),
         ("6:1–23", "6:8–30"),
-        ("8:18", "8:18–19"),
-        ("8:19–28", "8:20–29"),
-        ("8:29–30", "8:30"),
     ]
     assert ("9:2a–f", "8:30–35") in rows("JOS")
     assert ("35:16", "35:16, 21") in rows("GEN")
-    # The Hebrew's chapter 30 stands in lettered verses, which run on.
-    assert ("24:22f–i", "30:1–4") in rows("PRO")
+    # The Hebrew's chapter 30 stands in chapter 24 under the Hebrew's labels,
+    # which print alike on both sides, so no row names it.
+    assert not any("22f" in ours or ours.startswith("30:") for ours, _ in rows("PRO"))
     # Proverbs 8:28 also holds the first part of the King James Bible's 8:29,
     # which the row says without giving 8:29 both.
     assert ("8:28", "8:28–29") in rows("PRO")
@@ -181,6 +179,8 @@ def read_cell(cell: str, book: str) -> list[bible.references.Verse]:
     """The verses a cell names, read back from what it prints; none, if it
     names a whole chapter or says that its verses are missing."""
     verses = []
+    # A run printed out of the order of its numbers says what it follows.
+    cell = re.sub(rf" \({numbering.AFTER} \w+\)$", "", cell)
     for part in cell.split("; ") if ":" in cell else ():
         chapter, _, listed = part.partition(":")
         for stretch in listed.split(", "):
@@ -263,6 +263,10 @@ def test_the_table_says_what_the_runs_say(
                     assert verse not in told
                 elif verse in told:
                     assert told[verse] == found, (str(verse), told[verse], found)
+                elif verse in versification.printed_as(policy=policy):
+                    # A verse that prints its King James label tells it itself.
+                    shown = versification.printed_as(policy=policy)[verse]
+                    assert found == (Verse(kjv, shown.chapter, shown.number),)
                 elif verse.letter:
                     assert found == (), str(verse)
                 else:
@@ -292,7 +296,7 @@ def test_psalms_use_whole_psalms_and_verse_ranges(
     assert ("113:1–8", "114:1–8") in psalms
     assert ("113:9–26", "115:1–18") in psalms
     assert ("114:1–9", "116:1–9") in psalms
-    assert ("115:4a", "116:14") in psalms
+    assert ("115:1–10", "116:10–19") in psalms
     assert ("146:1–11", "147:1–11") in psalms
     assert ("147:1–9", "147:12–20") in psalms
     assert ("114", "116") not in psalms
@@ -303,7 +307,10 @@ def test_the_page_prints_its_tables(edition: bible.pipeline.Edition) -> None:
     page = usj.serialize(edition.documents[NUMBERING["id"]])
     assert "{" not in page and "}" not in page
     # Supplying Ezekiel 1:14 removes its former missing-verse row.
-    assert page.count("\\tr\n\\tc1 ") == 485
+    assert page.count("\\tr\n\\tc1 ") == 475
+    # A run that keeps its numbers but stands out of their order says where.
+    assert "\\tr\n\\tc1 23:7–8\n\\tc2 23:7–8 (after 40)\n" in page
+    assert "\\tr\n\\tc1 31:25\n\\tc2 31:25 (after 26)\n" in page
     # A book's table is headed by both Bibles' names for the book.
     assert "\\tr\n\\th1 \\bd Jeremiah\\bd*\n\\th2 \\bd Jeremias\\bd*\n" in page
     assert "\\tr\n\\th1 \\bd Genesis\\bd*\n\\th2 \\bd Genesis\\bd*\n" in page
@@ -314,7 +321,7 @@ def test_the_page_prints_its_tables(edition: bible.pipeline.Edition) -> None:
         if usj.is_type(node, "table")
     ]
     # The Old Testament's, and four of the New Testament's.
-    assert len(tables) == 37
+    assert len(tables) == 35
     for table in tables:
         *named, heading = list(usj.objects(table["content"]))[
             : 1 if table is tables[0] else 2
@@ -338,7 +345,7 @@ def test_the_page_prints_its_tables(edition: bible.pipeline.Edition) -> None:
         assert f"\\tr\n\\tc1 {theirs}\n\\tc2 {ours}\n" in page
     assert "as Proverbs 22:8a, is usually an addition" in page
     assert "the Song of the Three Children runs from Daniel 3:24 to 3:90." in page
-    assert "as 32:1–32 beside 32:2–33, they answer" in page
+    assert "as 2:28–32 beside 3:1–5, they answer" in page
     # Esther's verses that are the King James Bible's Rest of Esther.
     assert "\\tc1 The Rest of Esther (Apocrypha)\n\\tc2 Esther, the additions\n" in page
     assert "\\tc1 one lower" not in page and "\\tc1 two lower" not in page
@@ -392,7 +399,6 @@ def test_the_psalms_have_their_words_between_the_books_and_their_table(
         ("{kjv PSA 33:13-17}", "Psalm 34:12–16"),
         ("{kjv bare PSA 33:13-17}", "34:12–16"),
         ("{bare MAL 4:1-6}", "4:1–6"),
-        ("{brenton MAL 3:19-24}", "Malachias 3:19–24"),
         ("{JER 38:31-34}", "Jeremias 38:31–34"),
         ("{kjv JER 38:31-34}", "Jeremiah 31:31–34"),
         ("{kjv MIC 5:1}", "Micah 5:2"),
@@ -414,7 +420,7 @@ def test_a_passage_named_prints_as_the_files_have_it(
     [
         ("{PSA 33:13-99}", "doesn't print"),
         ("{MAL 3:19-24}", "doesn't print"),
-        ("{brenton MAL 3:1-5}", "doesn't relabel"),
+        ("{brenton MAL 3:19-24}", "no known way"),
         ("{kjv PRO 22:8a}", "King James Bible lacks"),
         ("{hebrew PSA 33:13}", "no known way"),
         ("{PSA 33}", "Malformed passage"),
@@ -442,7 +448,7 @@ def test_the_introduction_names_its_passages(
     assert "\\tr " not in written
     assert "so that Psalm 33:13–17 is the King James Bible’s 34:12–16." in page
     assert "so that Jeremias 38:31–34 is the King James Bible’s 31:31–34." in page
-    assert "and Malachias 3:19–24 is numbered 4:1–6, as in" in page
+    assert "and the chapters and verses are numbered as in the Greek." in page
     # A Septuagint addition that Brenton letters has no King James number,
     # so the introduction names the one that a link stands at.
     linked = {

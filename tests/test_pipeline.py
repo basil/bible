@@ -54,13 +54,14 @@ def test_the_edition_prints_every_unit_once_in_the_manifests_order(
         "brenton_units": 51,
         "kjv_units": 27,
         "kjv_marginal_notes": 775,
-        "printed_notes": 6198,
+        "printed_notes": 6194,
         # Every verse of the assembled books: Brenton's, with the passages
         # supplied from Codex Alexandrinus and the King James Bible's
         # 1 Kingdoms 23:12 and 3 Kingdoms 14:1-20, less the verses
-        # Alexandrinus lacks, and the King James New Testament less the four
-        # verses the Byzantine text lacks.
-        "verses": 36630,
+        # Alexandrinus lacks, and divided as the edition's numbering divides
+        # them; and the King James New Testament less the four verses the
+        # Byzantine text lacks.
+        "verses": 36604,
     }
 
 
@@ -2482,3 +2483,40 @@ def test_a_poem_that_opens_with_an_acrostic_heading_is_spaced_as_any_poem() -> N
         "\\id LAM\n\\c 1\n\\p Prose.\n\\qa \\v 1 \\sc Aleph.\\sc*\n\\q1 Line.\n"
         "\\c 2\n\\qa \\v 1 \\sc Aleph.\\sc*\n\\q1 Line.\n\\c 5\n\\q1 \\v 1 Line.\n"
     ) == ["id", "c", "p", "b", "qa", "q1", "b", "c", "qa", "q1", "b", "c", "q1"]
+
+
+def test_a_note_is_set_under_the_label_its_verse_prints() -> None:
+    labels = {"24:35": "30:15", "0:1": ""}
+    assert bible.pipeline.printed_origin("24:35 ", labels) == "30:15 "
+    assert bible.pipeline.printed_origin("24:34 ", labels) == "24:34 "
+    with pytest.raises(CheckFailed, match="unnumbered verse"):
+        bible.pipeline.printed_origin("0:1 ", labels)
+    with pytest.raises(CheckFailed, match="verses with printed labels"):
+        bible.pipeline.printed_origin("24:35-36 ", labels)
+
+
+def test_exported_proverbs_sets_the_hebrews_labels(
+    edition: bible.pipeline.Edition,
+) -> None:
+    text = bible.pipeline.exported("PRO", edition.documents["PRO"], edition)
+    assert "\\v 22f \\vp 30:1\\vp* " in text
+    assert "\\v 23 \\vp 24:23\\vp* " in text
+
+
+def test_a_margin_note_names_another_chapters_label_in_full(
+    edition: bible.pipeline.Edition,
+) -> None:
+    # The margin drops the chapter the running head supplies, but names a
+    # verse as it prints: with its chapter where its label names one.
+    doc = usj.parse(
+        "\\id PRO\n\\c 24\n\\p\n"
+        "\\v 22f \\vp 30:1\\vp* Agur\\f + \\fr 24:22f \\ft A\\f*\n"
+        "\\v 22g \\vp 2\\vp* said\\f + \\fr 24:22g \\ft B\\f*\n"
+        "\\v 23 back\\f + \\fr 24:23 \\ft C\\f*\n"
+    )
+    text = bible.pipeline.exported("PRO", doc, edition)
+    assert [
+        line.split("\\fr ")[1].split(" \\ft")[0]
+        for line in text.split("\n")
+        if "\\fr " in line
+    ] == ["30:1", "2", "23"]

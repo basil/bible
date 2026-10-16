@@ -59,7 +59,6 @@
         "Zeph": "ZEP",
         "Zech": "ZEC",
         "Matt": "MAT",
-        "Exodus": "EXO",
         "Ex": "EXO",
         "Jud": "JDG",
         "Ju": "JDG",
@@ -178,24 +177,9 @@
   },
   "decisions": {
     "PRO 29:27 Heb.": {
-      "source": "24:22f–t, 24:35–53 and 24:54–62",
+      "source": "30:1–14, 30:15–33 and 31:1–9",
       "not_a_citation": true,
-      "why": "Where this edition prints the passages the Hebrew has here, named as numbers rather than cited, as the note at Romans 16:24 names the doxology's: the note is about the Hebrew's order, not a reference to be followed."
-    },
-    "PRO 24:22f Heb.": {
-      "source": "30:1–14",
-      "not_a_citation": true,
-      "why": "The Hebrew's numbers of the passage that stands here, which are the King James Bible's, named as such: not a citation of verses this edition has."
-    },
-    "PRO 24:35 Heb.": {
-      "source": "30:15–33",
-      "not_a_citation": true,
-      "why": "The Hebrew's numbers of the passage that stands here, which are the King James Bible's, named as such: not a citation of verses this edition has."
-    },
-    "PRO 24:54 Heb.": {
-      "source": "31:1–9",
-      "not_a_citation": true,
-      "why": "The Hebrew's numbers of the passage that stands here, which are the King James Bible's, named as such: not a citation of verses this edition has."
+      "why": "The Hebrew's numbers of the passages it has here, which this edition prints in chapter 24 under those same labels: named as the verses are labelled, not cited, as the note at Romans 16:24 names the doxology's. The note is about the Hebrew's order, not a reference to be followed."
     },
     "MAT 23:13 TR": {
       "source": "23:14",
@@ -266,7 +250,13 @@
     "1SA 2:10": {
       "source": "Jer. 9. 24",
       "numbering": "kjv",
-      "why": "'Let him that boasts boast in this' is the King James Bible's verse 24, which is Brenton's 23."
+      "why": "'Let him that boasts boast in this' is verse 24 in Brenton's printing, as in the King James Bible and this edition. eBible's transcription numbers the chapter as Rahlfs does, and makes it 23."
+    },
+    "2KI 12:15": {
+      "source": "v. 13",
+      "passages": "2KI 12:14",
+      "print": "verse 14",
+      "why": "Brenton's printing (1879, pp. 522–523, printed pp. 506–507) numbers this chapter one lower than the edition, as Swete (vol. 1, p. 769) and the King James Bible do; his verse 13, \"Only there were not to be made for the house of the Lord\", is the edition's 12:14."
     },
     "2KI 22:5#2": {
       "source": "ch. xii",
@@ -313,7 +303,7 @@
     "JDG 13:18": {
       "source": "Is. 9. 6",
       "numbering": "kjv",
-      "why": "The name that is wonderful is in the King James Bible's verse 6, which is Brenton's 5."
+      "why": "The name Wonderful is at verse 6 in Brenton's printing (1879, p. 860, printed p. 844), in his note giving Codex Alexandrinus's addition, which this edition prints in the verse; the King James Bible has it at 9:6 too. eBible's transcription numbers the chapter as Rahlfs does, and makes it 5."
     },
     "JOS 8:29#2": {
       "source": "vv. 30-35",
@@ -481,9 +471,9 @@
     },
     "2CH 22:1 CCEL#2": {
       "source": "chap. 14.15",
-      "passages": "2CH 14:14",
-      "print": "14:14",
-      "why": "The slaughter of the Ethiopians' herdsmen is the King James Bible's 14:15, which is Brenton's 14:14; the note, from CCEL's transcription, cites it by the King James number, and names no book."
+      "passages": "2CH 14:15",
+      "print": "14:15",
+      "why": "The Alimazons, destroyed with the tents of cattle after Asa's victory over the Ethiopians, are in 14:15 in Brenton's printing (1879, p. 601, printed p. 585), as in the King James Bible's verse and this edition. The note, from CCEL's transcription, names no book."
     },
     "ISA 6:11": {
       "source": "Jer. 40. (33) 10,12",
@@ -542,6 +532,12 @@
       "passages": "JHN 21:1-25",
       "print": "{JHN} 21",
       "why": "Brenton’s Appendix note (1879 p. 1149, 1900 p. 1145, printed p. 1133; 1844 vol. 2 p. 929 “See John 21.”) cites John 21 as a whole chapter, with no verse. Jno. is John, as at ZEC 9:9. The range is the whole chapter, as at EZR 17:73 CCEL#2, and prints as the chapter alone."
+    },
+    "JER 28:27 CCEL": {
+      "source": "Exodus 22. 29",
+      "passages": "EXO 22:29",
+      "print": "{EXO} 22:29",
+      "why": "Brenton cites Exodus by his printed numbers, which here are the King James Bible's and this edition's. His 22:29 gives the first-born to the Lord; eBible's transcription numbers that verse 22:28, as Rahlfs does."
     }
   },
   "names": {}

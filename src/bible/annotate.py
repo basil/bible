@@ -677,20 +677,22 @@ def relocation_note(code: str, address: str, label: str, sentence: str) -> Node:
 def with_relocation_notes(
     code: str, doc: Document, kjv: Mapping[str, Document], ctx: Context
 ) -> Document:
-    """A book with notes where a passage stands in another order than the
-    Hebrew's, which the King James Bible follows (edition/versification.json,
-    relocations), as the New Testament's are noted where they stand in
-    another order than the Received Text's: at the passage's first verse,
-    where the Hebrew has it; and at the verse after which the Hebrew has it,
-    which passages are printed elsewhere. Each decision is held to the runs
-    the place stage worked out: the Hebrew passage's verses must stand here,
-    beginning at the verse it names."""
+    """A book with a note where the Hebrew, which the King James Bible
+    follows, has passages that the Greek sets in another order
+    (edition/versification.json, relocations): at the verse after which the
+    Hebrew has them, which passages are printed elsewhere, and in what
+    chapter. Their verses print the Hebrew's labels where they stand (see
+    assembly.printed), so no note at them says so again. Each decision is
+    held to the runs the place stage worked out: the Hebrew passage's
+    verses must stand here, beginning at the verse it names."""
     policy = ctx.policy
     label = ctx.terms.display("hebrew")
     found: list[tuple[bible.references.Passage, list[bible.references.Verse]]] = []
-    for reference, entry in policy.versification.get("relocations", {}).items():
-        if isinstance(entry, str) or reference.split()[0] != code:
-            continue
+    relocations = versification.relocations(code, policy=policy)
+    if not relocations:
+        return doc
+    shown = scripture.printed(doc)
+    for reference, entry in relocations.items():
         require(bool(entry.get("why")), f"Relocation without its reason: {reference}")
         theirs = bible.references.parse_passage(reference)
         held = [
@@ -705,17 +707,16 @@ def with_relocation_notes(
             and held[0] == first,
             f"Relocated passage does not begin where it is said to: {reference}",
         )
+        # The labels its verses print are the Hebrew's verses the runs put
+        # them at, one by one.
+        require(
+            [shown.get(v.label) for v in held] == [v.label for v in theirs.verses],
+            f"Relocated passage printed under other labels than its runs give: "
+            f"{reference}",
+        )
         found.append((theirs, held))
-    if not found:
-        return doc
     verses = scripture.verses(doc)
     changes: list[tuple[scripture.Verse, int, int, Content]] = []
-    for theirs, held in found:
-        where = spanned(list(theirs.verses))
-        note = relocation_note(
-            code, held[0].label, label, f"has this passage at {where}."
-        )
-        changes.append((verses[held[0].label], 0, 0, [note]))
     # Where the Hebrew has them: after the King James verse before the first
     # of a run of passages that follow one another there.
     chapters = usj.inventory(kjv[versification.kjv_book(code, policy=policy)])
@@ -732,7 +733,8 @@ def with_relocation_notes(
             before = bible.references.Verse(first.book, first.chapter - 1, int(last))
         if before in ends:
             continue
-        printed = [spanned(held)]
+        printed = [spanned(list(theirs.verses))]
+        chapters_held = {held[0].chapter}
         end = theirs.last
         while True:
             after = bible.references.Verse(end.book, end.chapter, end.number + 1)
@@ -741,7 +743,8 @@ def with_relocation_notes(
             if after not in starts:
                 break
             following = starts[after]
-            printed.append(spanned(ends[following.last]))
+            printed.append(spanned(list(following.verses)))
+            chapters_held.add(ends[following.last][0].chapter)
             end = following.last
         listed = (
             printed[0]
@@ -751,8 +754,15 @@ def with_relocation_notes(
         anchor = versification.from_kjv(before, policy=policy)
         require(bool(anchor), f"Relocated passage follows no verse here: {theirs}")
         address = anchor[-1].label
+        require(
+            len(chapters_held) == 1,
+            f"Relocated passages printed in more than one chapter: {theirs}",
+        )
         note = relocation_note(
-            code, address, label, f"has here the verses printed at {listed}."
+            code,
+            address,
+            label,
+            f"has here {listed}, printed in chapter {chapters_held.pop()}.",
         )
         verse = verses[address]
         changes.append((verse, len(verse.text), len(verse.text), [note]))

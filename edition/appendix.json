@@ -2,7 +2,7 @@
   "source": "BAK",
   "why": "Brenton’s Appendix opens with eight notes too long for the margin column. Each prints as a footnote at the foot of the page, at the verse it discusses, with a numbered caller at the words it is about, as the front matter’s notes are set; the label naming the verse goes, since the note stands there. The passages the Appendix supplies from Codex Alexandrinus stand in their books (edition/alexandrinus.json), so nothing of it prints after Revelation.",
   "notes": {
-    "EXO 28:29": {
+    "EXO 28:23": {
       "label": "Exodus 28.",
       "paragraphs": [
         "The following verses are found",

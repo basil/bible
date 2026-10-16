@@ -46,8 +46,8 @@ from bible import (
 )
 from bible.alexandrinus import APPENDIX
 from bible.byzantine import review as byzantine_review
-from bible.policy import source_id, thaw
-from bible.references import parse_passage
+from bible.checks import require
+from bible.policy import thaw
 from bible.usfm import plain_text
 from bible.usj import Document
 
@@ -127,21 +127,15 @@ def placed(
 ) -> tuple[str, str] | None:
     """Where the edition prints a verse of one of Brenton's files: its unit
     and the verse's reference there."""
-    for part, number, _ in assembly.DANIEL:
-        if code == part:
-            return "DAG", f"{number}:{reference.split(':')[1]}"
-    chapter, _, verse = reference.partition(":")
-    for unit in policy.scripture:
-        if source_id(unit) != code or unit["source"] != "brenton":
-            continue
-        first, last = unit.get("chapters", (1, 10**6))
-        if first <= int(chapter) <= last:
-            where = f"{unit['id']} {int(chapter) - first + 1}:{verse}"
-            moved = versification.relabelled(policy=policy).get(
-                parse_passage(where).first
-            )
-            return (unit["id"], moved.label if moved else where.split()[1])
-    return None
+    ebible = assembly.unit_verse(policy, code, reference)
+    if ebible is None:
+        return None
+    require(
+        ebible not in versification.undivided(policy=policy),
+        f"Review of a verse whose printed verse depends on its words: {ebible}",
+    )
+    moved = versification.relabelled(policy=policy).get(ebible, ebible)
+    return ebible.book, moved.label
 
 
 def context(verses: Mapping[str, scripture.Verse], wanted: set[str]) -> str:

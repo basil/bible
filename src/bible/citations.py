@@ -266,33 +266,31 @@ def _edition(
 ) -> tuple[str, tuple[tuple[Item, ...], ...]]:
     """A book's items as the edition numbers them, from a source's numbering.
 
-    Brenton's verse is the edition's unless the edition relabels it. The King
-    James Bible's is carried verse by verse, and may come to rest in more than
-    one place, or none.
+    Brenton's verse is the edition's where the edition keeps eBible's number.
+    The King James Bible's is carried verse by verse, and may come to rest in
+    more than one place, or none.
     """
     if numbering == "brenton":
-        relabelled = versification.relabelled(policy=policy)
-        runs = []
+        # Brenton cites by his printed numbers, which are eBible's in most
+        # chapters but not in all, so a verse the edition numbers otherwise
+        # than eBible is cited by a decision that names it.
+        renumbered = versification.renumbered(policy=policy)
         for run in items:
-            moved = []
             for item in run:
                 if item.first is None:
-                    moved.append(item)
                     continue
                 assert isinstance(item.first, int) and isinstance(item.last, int)
-                ends = [
-                    relabelled.get(
-                        Verse(book, item.chapter, n), Verse(book, item.chapter, n)
-                    )
-                    for n in (item.first, item.last)
+                cited = [
+                    str(v)
+                    for n in range(item.first, item.last + 1)
+                    if (v := Verse(book, item.chapter, n)) in renumbered
                 ]
                 require(
-                    ends[0].chapter == ends[1].chapter,
-                    f"Citation across a relabelled chapter: {book} {item}",
+                    not cited,
+                    f"Citation of verses the edition numbers otherwise, "
+                    f"which a decision must name: {book} {item} ({', '.join(cited)})",
                 )
-                moved.append(Item(ends[0].chapter, ends[0].number, ends[1].number))
-            runs += _by_chapter(moved)
-        return book, tuple(runs)
+        return book, items
     if numbering == "kjv-verses":
         ours, theirs = book, versification.kjv_book(book, policy=policy)
     elif book not in versification.kjv_books(policy=policy):
@@ -486,6 +484,13 @@ def _last_verse(
         ),
         f"Last verse by the King James Bible's numbering: {book} {chapter}",
     )
+    # Brenton's chapter is eBible's, whose last verse the edition's inventory
+    # does not tell where the edition numbers the chapter otherwise.
+    require(
+        numbering != "brenton"
+        or (book, chapter) not in versification.renumbered_chapters(policy=policy),
+        f"Last verse of a chapter the edition numbers otherwise: {book} {chapter}",
+    )
     labels = inventory.get(book, {}).get(str(chapter))
     require(labels, f"No such chapter: {book} {chapter}")
     assert labels
@@ -669,6 +674,9 @@ def resolve(
         not lacking,
         f"Citation of what the edition doesn't print: {key} "
         f"({citation.source}: {', '.join(lacking)})",
+    )
+    versification.require_own_labels(
+        citation.verses, f"Citation {key} ({citation.source})", policy=policy
     )
     return citation
 

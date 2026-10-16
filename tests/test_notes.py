@@ -707,7 +707,7 @@ def test_a_sign_after_no_witness_is_refused(
 def test_every_note_is_printed_replaced_by_a_link_or_explicitly_omitted(
     edition: bible.pipeline.Edition,
 ) -> None:
-    assert edition.summary["printed_notes"] == 6198
+    assert edition.summary["printed_notes"] == 6194
     rows = [row for listed in edition.notes.values() for row in listed]
     assert len({row["key"] for row in rows}) == len(rows)
     # The 1611 margin is printed on the New Testament alone, and whole but
@@ -1022,10 +1022,12 @@ def test_passages_set_in_another_order_are_noted_alike_in_both_testaments(
         for code in ("PRO", "ROM", "MAT")
         for row in edition.notes[code]
     }
-    assert rows["PRO 24:22f Heb."] == ("24:22f", "Heb. has this passage at 30:1–14")
+    # In the Old Testament the passages print the Hebrew's labels where they
+    # stand, so only the note where they left is set.
+    assert "PRO 24:22f Heb." not in rows
     assert rows["PRO 29:27 Heb."] == (
         "29:27",
-        "Heb. has here the verses printed at 24:22f–t, 24:35–53 and 24:54–62",
+        "Heb. has here 30:1–14, 30:15–33 and 31:1–9, printed in chapter 24",
     )
     assert rows["ROM 14:24 TR"] == ("14:24", "TR has this passage at 16:25–27")
     assert rows["ROM 16:24 TR"] == (

@@ -131,6 +131,19 @@ describe("chapter renderer", () => {
       ["#v24", "24"],
     ]);
   });
+  test("keeps an unnumbered verse's anchor without a label", () => {
+    const doc = chapter(
+      para("p", { type: "verse", number: "0", pubnumber: "​" }, "title"),
+    );
+    expect(renderChapter(doc).verses).toEqual(["0"]);
+    const page = dom(doc);
+    expect(page.querySelector("#v0")!.textContent).toBe("");
+    expect(page.querySelectorAll(".verse a")).toHaveLength(0);
+  });
+  test("takes a title as a titled chapter's heading", () => {
+    const doc = chapter(para("d", "The Prologue"), para("p", "words"));
+    expect(renderChapter(doc, true).html).not.toContain("The Prologue");
+  });
   test.each(["f", "ef", "x"])(
     "links %s note callers and backlinks",
     (marker) => {

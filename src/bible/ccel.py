@@ -51,6 +51,7 @@ from bible import (
     scripture,
     terminology,
     usj,
+    versification,
 )
 from bible.alexandrinus import ALEX, APPENDIX
 from bible.checks import CheckFailed, require
@@ -1057,6 +1058,33 @@ def supplemented(
     held: list[Listed] = []
     matched: list[Duplicate] = []
     inserted = duplicates = 0
+    # eBible's notes that a decision sets in another verse, where a CCEL note
+    # there is the same note. The decision names that verse as the edition
+    # numbers the note's unit, and a candidate stands in eBible's verse of its
+    # file, so both are compared where the edition prints them.
+    relabelled = versification.relabelled(policy=policy)
+    undivided = versification.undivided(policy=policy)
+
+    def printed_at(code: str, reference: str) -> references.Verse | None:
+        verse = assembly.unit_verse(policy, code, reference)
+        if verse is None or verse in undivided:
+            return None
+        return relabelled.get(verse, verse)
+
+    moved_in: dict[references.Verse, list[Node]] = {}
+    for note_key, override in policy.brenton_notes["notes"].items():
+        if "verse" not in override or note_key.split()[0] not in books:
+            continue
+        code, _, noted = note_key.partition("#")[0].partition(" ")
+        unit = assembly.unit_verse(policy, code, noted)
+        if noted in books[code].verses and unit is not None:
+            moved_in.setdefault(
+                references.verse_at(unit.book, override["verse"]), []
+            ).extend(
+                note
+                for _, note in books[code].verses[noted].notes
+                if note.get("x-key") == note_key
+            )
     for (code, reference), found in by_verse.items():
         verse = books[code].verses[reference]
         for number, candidate in enumerate(sorted(found, key=lambda c: c.offset), 1):
@@ -1079,6 +1107,15 @@ def supplemented(
             same, reason = same_notes(
                 verse, (candidate.offset, printed), body, key, policy
             )
+            if not same and moved_in:
+                here = printed_at(code, reference)
+                same = [
+                    (candidate.offset, note)
+                    for note in (moved_in.get(here, []) if here is not None else [])
+                    if canonical_note(note_words(note)) == canonical_note(body.text)
+                ]
+                if same:
+                    reason = "Same Unicode text, which a decision sets in this verse"
             if decision is not None and decision.get("omitted"):
                 require(
                     not same, f"CCEL note decision omits a note eBible has: {body.key}"

@@ -16,6 +16,7 @@ that what the pages say of a number is what the runs say.
 from __future__ import annotations
 
 import collections
+import functools
 import re
 from collections.abc import Iterable, Mapping, Sequence
 
@@ -32,13 +33,15 @@ from bible.usj import Document, Node
 type Side = range | list[Verse]
 
 MISSING = "missing"
+# A run printed out of the order of its numbers, after the verse it follows.
+AFTER = "after"
 # A passage that the editor's pages name: "{PSA 33:13-17}", or with how it is
 # to print before it, "{kjv bare PSA 33:13-17}".
 NAMED = re.compile(r"\{((?:[a-z]+ )*)([1-4]?[A-Z]{2,3} [^{}]+)\}")
 # What the table's page asks for, each on a line of its own.
 TABLES = re.compile(r"^\{(names|psalms|books|readings)\}$", re.M)
 # How a passage that the pages name may print.
-WAYS = {"kjv", "brenton", "bare"}
+WAYS = {"kjv", "bare"}
 
 
 def _letters(verses: list[bible.references.Verse]) -> str:
@@ -161,8 +164,56 @@ class Table:
         return there
 
     def rows(self) -> list[tuple[str, str]]:
-        """The book's rows as (edition cell, King James cell)."""
-        return row_cells(self.sides())
+        """The book's rows as (edition cell, King James cell), the edition's
+        verses under the labels they print. A run that keeps its numbers but
+        is printed out of their order says which verse it follows."""
+        shown = versification.printed_as(policy=self.policy)
+        displaced = self.displaced
+        found = []
+        for ours, theirs in self.sides():
+            if isinstance(ours, range):
+                found += row_cells([(ours, theirs)])
+                continue
+            cells = row_cells([([shown.get(v, v) for v in ours], theirs)])
+            if not cells and ours and ours[0] in displaced:
+                assert isinstance(theirs, list)
+                before = displaced[ours[0]]
+                cells = [
+                    (
+                        f"{within(ours)} ({AFTER} {before.number}{before.letter})",
+                        within(theirs),
+                    )
+                ]
+            found += cells
+        return found
+
+    @functools.cached_property
+    def displaced(self) -> dict[Verse, Verse]:
+        """Each verse that the edition prints out of the order of its numbers,
+        as the Greek sets Jeremias 23:7-8 after verse 40, with the verse it
+        follows: those off the longest run of its chapter that keeps their
+        order. A lettered verse, or one the King James Bible sets apart, is
+        not compared, and a verse that opens its chapter follows none."""
+        apart = versification.apocryphal(policy=self.policy)
+        found: dict[Verse, Verse] = {}
+        for chapter in self.ours:
+            verses = self.verses(chapter)
+            compared = [v for v in verses if not v.letter and v not in apart]
+            longest = [1] * len(compared)
+            back = [-1] * len(compared)
+            for i, verse in enumerate(compared):
+                for j in range(i):
+                    if compared[j].number < verse.number and longest[j] >= longest[i]:
+                        longest[i], back[i] = longest[j] + 1, j
+            kept: set[int] = set()
+            at = max(range(len(compared)), key=longest.__getitem__, default=-1)
+            while at >= 0:
+                kept.add(at)
+                at = back[at]
+            for i, verse in enumerate(compared):
+                if i not in kept and (at := verses.index(verse)):
+                    found[verse] = verses[at - 1]
+        return found
 
     def sides(self) -> list[tuple[Side, Side]]:
         """The book's rows as (the edition's side, the King James Bible's),
@@ -231,6 +282,28 @@ class Table:
                 last[2].extend(theirs)
                 continue
             found.append((place, list(ours), list(theirs)))
+        # A run printed out of the order of its numbers that keeps them in
+        # the King James Bible, which the runs don't list.
+        covered = {v for _, ours, _ in found if isinstance(ours, list) for v in ours}
+        for verse in self.displaced:
+            kept = Verse(self.kjv, verse.chapter, verse.number)
+            if verse in covered or versification.to_kjv(verse, policy=self.policy) != (
+                kept,
+            ):
+                continue
+            last = found[-1] if found else None
+            if (
+                last
+                and isinstance(last[1], list)
+                and isinstance(last[2], list)
+                and last[1]
+                and _next(last[1][-1], verse)
+                and last[0] == order[verse] - len(last[1])
+            ):
+                last[1].append(verse)
+                last[2].append(kept)
+            else:
+                found.append((order[verse], [verse], [kept]))
         return [
             (ours, theirs) for _, ours, theirs in sorted(found, key=lambda row: row[0])
         ]
@@ -453,23 +526,15 @@ def page(
 
     def named(match: re.Match[str]) -> str:
         ways = frozenset(match[1].split())
-        require(
-            ways <= WAYS and not {"brenton", "kjv"} <= ways,
-            f"Passage named to print no known way: {match[0]}",
-        )
+        require(ways <= WAYS, f"Passage named to print no known way: {match[0]}")
         passage = parse_passage(match[2])
-        if "brenton" in ways:
-            require(
-                all(
-                    v in versification.relabelled(policy=policy) for v in passage.verses
-                ),
-                f"Passage that the edition doesn't relabel: {match[0]}",
-            )
-        else:
-            lacking = [
-                str(v) for v in passage.verses if not scripture.has_verse(inventory, v)
-            ]
-            require(not lacking, f"Passage that the edition doesn't print: {lacking}")
+        lacking = [
+            str(v) for v in passage.verses if not scripture.has_verse(inventory, v)
+        ]
+        require(not lacking, f"Passage that the edition doesn't print: {lacking}")
+        versification.require_own_labels(
+            passage.verses, f"Passage {match[0]}", policy=policy
+        )
         targets = (
             tuple(versification.kjv_passages(passage, policy=policy))
             if "kjv" in ways

@@ -1,7 +1,9 @@
 """The edition's books, assembled from the sources' (edition/manifest.json):
 a book's chapters selected from a file that holds two, Daniel grouped with
-Susanna and Bel and the Dragon, the close of Malachias opened as a chapter of
-its own, and each book under the edition's name and heading.
+Susanna and Bel and the Dragon, its verses numbered as the Septuagint numbers
+them where eBible numbers them otherwise (edition/versification.json,
+docs/numbering.md), the label a verse prints set where it is not its own, and
+each book under the edition's name and heading.
 
 What the edition prints is read from the assembled books themselves: nothing
 predicts which chapters and verses a manuscript decision or a grouping leaves.
@@ -9,8 +11,9 @@ predicts which chapters and verses a manuscript decision or a grouping leaves.
 
 from __future__ import annotations
 
+import functools
 import re
-from collections.abc import Iterator, Mapping
+from collections.abc import Container, Iterator, Mapping
 from typing import Literal
 
 import bible.policy
@@ -20,13 +23,14 @@ from bible import scripture, usfm, usj, versification
 from bible.checks import present, require
 from bible.policy import source_id
 from bible.policy_schema import Entry
-from bible.references import Books
-from bible.usj import Document, Node
+from bible.references import Books, Verse
+from bible.scripture import HIDDEN
+from bible.usj import Content, Document, Node
 
+# The paragraphs of prose that a continued paragraph can go on in.
+PROSE_PARAGRAPHS = frozenset({"p", "m", "nb"})
 NAME_MARKERS = {"title": "toc1", "short_title": "toc2", "abbreviation": "toc3"}
 NAME_ATTRIBUTES = {"abbreviation": "abbr", "short_title": "short", "title": "long"}
-# A hidden chapter number: the chapter is one for citing, and prints none.
-HIDDEN = "​"
 # Daniel's parts that the Greek sets about it, each under a heading.
 DANIEL = (("SUS", "0", "Susanna"), ("BEL", "13", "Bel and the Dragon"))
 SONG = (
@@ -249,61 +253,335 @@ def daniel(doc: Document, brenton: Mapping[str, Document]) -> Document:
     return usj.with_blocks(doc, blocks)
 
 
-def opened_chapters(code: str, doc: Document, policy: bible.policy.Policy) -> Document:
-    """A book with the close of a chapter opened as a chapter of its own,
-    where the edition relabels it, as Malachias 3:19-24 is its chapter 4."""
-    for labels, printed, opens in versification.new_chapters(code, policy=policy):
-        first, chapter = labels[0], printed[0].chapter
-        targets: Mapping[tuple[str | None, str], bible.references.Verse] = {
-            (str(v.chapter), f"{v.number}{v.letter}"): t
-            for v, t in zip(labels, printed)
+@functools.cache
+def verse_at(code: str, chapter: int | None, number: str) -> Verse:
+    """The verse a marker numbers in its chapter."""
+    return bible.references.verse_at(
+        code, f"{present(chapter, 'Verse before a chapter')}:{number}"
+    )
+
+
+def markers(doc: Document) -> list[tuple[Verse, int, int]]:
+    """Every verse marker of a book, with its block and its place in it."""
+    code = usj.book_code(doc)
+    found = []
+    chapter: int | None = None
+    for b, block in enumerate(doc["content"]):
+        if block["type"] == "chapter":
+            chapter = int(block["number"])
+        elif block["type"] == "para":
+            for i, item in enumerate(block["content"]):
+                if usj.is_type(item, "verse"):
+                    found.append((verse_at(code, chapter, item["number"]), b, i))
+    return found
+
+
+def divided(
+    doc: Document, division: versification.Break, placed: Container[int]
+) -> tuple[Document, dict[int, Verse]]:
+    """A book with the words of some verses divided again, each part opening
+    at the words its decision gives, and each new marker by its printed verse.
+
+    The first part keeps the first marker, and must open where it stands; no
+    part opens inside a character style.
+    """
+    first_verse = division.source[0]
+    every = markers(doc)
+    # A marker another division set is already printed, not eBible's.
+    places = [
+        (v, b, i)
+        for v, b, i in every
+        if id(doc["content"][b]["content"][i]) not in placed
+    ]
+    names = [v for v, _, _ in places]
+    at = names.index(first_verse) if first_verse in names else -1
+    after = at + len(division.source)
+    require(
+        at >= 0 and tuple(names[at:after]) == division.source,
+        f"Verses to divide not found together: {first_verse}",
+    )
+    start, last = places[at][1:], places[after - 1][1:]
+    # The verses end at the next marker, whichever division set it.
+    end: tuple[int, int | None] = next(
+        (place[1:] for place in every if place[1:] > last),
+        (len(doc["content"]) - 1, None),
+    )
+    # The words of the verses, paragraph by paragraph, from their first marker
+    # to the marker after them, without the headings set among them.
+    spans: dict[int, tuple[int, str]] = {}
+    for b in range(start[0], end[0] + 1):
+        block = doc["content"][b]
+        if block["type"] != "para" or block["marker"] in usj.HEADINGS:
+            continue
+        words_of = block["content"]
+        text = usj.text_of(words_of)
+        low = len(usj.text_of(words_of[: start[1]])) if b == start[0] else 0
+        high = len(usj.text_of(words_of[: end[1]])) if b == end[0] else len(text)
+        spans[b] = (low, text[low:high])
+    found: list[tuple[int, int]] = []
+    for verse, words in division.printed:
+        # The words as words of their own, not the end of a longer one.
+        opening = re.compile(
+            (r"(?<!\w)" if re.match(r"\w", words) else "")
+            + re.escape(words)
+            + (r"(?!\w)" if re.search(r"\w$", words) else "")
+        )
+        hits = [
+            (b, low + m.start())
+            for b, (low, text) in spans.items()
+            for m in opening.finditer(text)
+        ]
+        require(len(hits) == 1, f"Words that don't open one place: {verse}: {words!r}")
+        found.extend(hits)
+    low, text = spans[start[0]]
+    require(
+        found[0] == (start[0], low + len(text) - len(text.lstrip()))
+        and found == sorted(found)
+        and len(set(found)) == len(found),
+        f"Verse division out of order: {first_verse}",
+    )
+    require(
+        [v for v, _ in division.printed] != list(division.source)
+        or found
+        != [
+            (b, len(usj.text_of(doc["content"][b]["content"][:i])))
+            for _, b, i in places[at:after]
+        ],
+        f"Verse division that changes nothing: {first_verse}",
+    )
+    old = {id(doc["content"][b]["content"][i]) for _, b, i in places[at + 1 : after]}
+    # An eBible marker that stands where a part opens: the part's marker takes
+    # its place, so that a note closing the verse before stays in it.
+    standing = {
+        (b, len(usj.text_of(doc["content"][b]["content"][:i]))): (
+            doc["content"][b]["content"][i]
+        )
+        for _, b, i in places[at + 1 : after]
+    }
+    kept = doc["content"][start[0]]["content"][start[1]]
+    marked = {id(kept): division.printed[0][0]}
+    blocks = list(doc["content"])
+    for b in spans:
+        content: Content = list(blocks[b]["content"])
+        for (where, offset), (verse, _) in reversed(
+            list(zip(found[1:], division.printed[1:]))
+        ):
+            if where == b:
+                node: Node = {
+                    "type": "verse",
+                    "marker": "v",
+                    "number": verse.label.split(":")[1],
+                }
+                marked[id(node)] = verse
+                if (b, offset) in standing:
+                    replaced = standing[(b, offset)]
+                    content = [node if item is replaced else item for item in content]
+                    continue
+                # A note at the words glosses the first of them, so it opens
+                # the verse too.
+                content = usj.inserted(content, offset, [node], after_notes=False)
+        # A verse joined to the one before is parted from it by a space,
+        # which eBible's line break gave; the paragraph's spaces are then as
+        # the parser leaves them.
+        kept_items: Content = []
+        for item in content:
+            if id(item) not in old:
+                kept_items.append(item)
+            elif kept_items:
+                kept_items.append(" ")
+        blocks[b] = {**blocks[b], "content": usj.trimmed(usj.joined(kept_items))}
+    return usj.with_blocks(doc, blocks), marked
+
+
+def renumbered(
+    code: str, doc: Document, policy: bible.policy.Policy, *, words: bool = True
+) -> Document:
+    """A book under the edition's numbers where they are not eBible's: its
+    verses divided anew and relabelled, and each chapter begun before its
+    first verse, a paragraph divided there if need be.
+
+    A chapter begun at a relabelled verse that began none in eBible names the
+    words it opens with, as a division does. Of another text numbered like
+    eBible, as the Updated Brenton, only the labels are read: a verse divided
+    is its first part, and verses joined are the first of them.
+    """
+    numbering = versification.renumbering(code, policy=policy)
+    if not numbering.labels and not numbering.breaks:
+        return doc
+    before: dict[str, list[str]] = {}
+    marked: dict[int, Verse] = {}
+    crossing: set[Verse] = set()
+    if words:
+        before = usj.inventory(doc)
+        labels: Mapping[Verse, Verse] = numbering.labels
+        for division in numbering.breaks:
+            doc, placed = divided(doc, division, marked)
+            marked.update(placed)
+    else:
+        labels = numbering.relabelled()
+        # Words that a division sets in another chapter stay in their own,
+        # so a poem's lines could not be placed in them.
+        crossing = {
+            v
+            for division in numbering.breaks
+            if len({t.chapter for t, _ in division.printed}) > 1
+            for v in division.source
         }
-        blocks: list[Node] = []
-        current: str | None = None
-        opened = False
-        for block in doc["content"]:
-            if block["type"] == "chapter":
-                current = block["number"]
-            elif block["type"] == "para":
-                numbers = [
-                    (n, item)
+    blocks: list[Node] = []
+    held: list[Node] = []
+    pending: Node | None = None
+    chapter: int | None = None
+    current: int | None = None
+    seen: set[Verse] = set()
+    used: set[Verse] = set()
+    continued = False
+    opened: set[Verse] = set()
+    # The verse whose words run on into a paragraph that opens without a number.
+    running: Verse | None = None
+
+    def unpoetic(block: Node, source: Verse | None) -> None:
+        """Refuse a poem's line that holds words a division sets in another
+        chapter."""
+        require(
+            source not in crossing or not block["marker"].startswith("q"),
+            f"Verse divided across a chapter in a poem of a text numbered "
+            f"like eBible: {source}",
+        )
+
+    def close(block: Node, content: Content) -> None:
+        """Set a paragraph down, or run it on in the paragraph before where it
+        went on across a chapter break the edition does not make, its spaces
+        then as the parser leaves them."""
+        nonlocal continued
+        if continued:
+            last = blocks.pop()
+            block, content = last, usj.trimmed([*last["content"], " ", *content])
+            continued = False
+        blocks.append({**block, "content": usj.joined(content)})
+
+    for block in doc["content"]:
+        if block["type"] == "chapter":
+            if pending is not None:
+                blocks.append(pending)
+            blocks.extend(held)
+            held.clear()
+            pending, chapter = block, int(block["number"])
+            continue
+        if crossing and block["type"] == "para":
+            first = next(
+                (
+                    n
                     for n, item in enumerate(block["content"])
                     if usj.is_type(item, "verse")
-                ]
-                if any((current, item["number"]) in targets for _, item in numbers):
-                    content = list(block["content"])
-                    for n, item in numbers:
-                        target = targets.get((current, item["number"]))
-                        if target is None:
-                            continue
-                        if target == printed[0]:
-                            # Open the chapter before its paragraph, not inside it.
-                            require(
-                                n == 0
-                                and block["marker"] == "p"
-                                and usj.text_of(content[1:]).startswith(opens),
-                                f"{code} chapter {chapter} boundary changed",
-                            )
-                            blocks.append(
-                                {
-                                    "type": "chapter",
-                                    "marker": "c",
-                                    "number": str(chapter),
-                                }
-                            )
-                            opened = True
-                        content[n] = {**item, "number": str(target.number)}
-                    block = {**block, "content": content}
-            blocks.append(block)
-        require(opened, f"{code} chapter boundary changed")
-        doc = usj.with_blocks(doc, blocks)
-        found = usj.inventory(doc)
-        require(
-            list(found) == [str(c) for c in range(1, chapter + 1)]
-            and found[str(first.chapter)] == [str(i) for i in range(1, first.number)]
-            and found[str(chapter)] == [str(v.number) for v in printed],
-            f"Wrong {code} {first.chapter}-{chapter} verse labels",
-        )
+                ),
+                len(block["content"]),
+            )
+            if usj.text_of(block["content"][:first]).strip():
+                unpoetic(block, running)
+        if block["type"] != "para" or not any(
+            usj.is_type(item, "verse") for item in block["content"]
+        ):
+            (held if pending is not None else blocks).append(block)
+            continue
+        content: list[str | Node] = []
+        items = block["content"]
+        for n, item in enumerate(items):
+            if not usj.is_type(item, "verse"):
+                content.append(item)
+                continue
+            source = running = verse_at(code, chapter, item["number"])
+            unpoetic(block, source)
+            if id(item) in marked:
+                # A division's marker, by its printed verse: no relabelling
+                # applies to it.
+                target = marked[id(item)]
+            else:
+                target = labels.get(source, source)
+                if source in labels:
+                    used.add(source)
+            if target in seen:
+                require(not words, f"Verse printed twice: {target}")
+                # A verse joined to the one before is parted from it by a
+                # space, as a division parts it.
+                if content:
+                    content.append(" ")
+                continue
+            seen.add(target)
+            if target.chapter != current:
+                if (
+                    words
+                    and pending is None
+                    and source in labels
+                    and id(item) not in marked
+                ):
+                    opens = numbering.opens.get(target)
+                    require(
+                        opens is not None
+                        and usj.text_of(items[n + 1 :]).lstrip().startswith(opens),
+                        f"{code} chapter {target.chapter} boundary changed",
+                    )
+                    opened.add(target)
+                head: Node = {
+                    **(pending or {"type": "chapter", "marker": "c"}),
+                    "number": str(target.chapter),
+                }
+                if usj.text_of(content).strip() or usj.notes_of(content):
+                    close(block, content)
+                    content = []
+                blocks.extend([head, *held])
+                held.clear()
+                current = target.chapter
+            elif pending is not None:
+                # A paragraph that went on across a chapter break the edition
+                # does not make goes on in the paragraph before it.
+                continued = (
+                    not held
+                    and block["marker"] == "nb"
+                    and not usj.text_of(content).strip()
+                    and bool(blocks)
+                    and blocks[-1]["type"] == "para"
+                    and blocks[-1]["marker"] in PROSE_PARAGRAPHS
+                )
+                blocks.extend(held)
+                held.clear()
+            pending = None
+            content.append({**item, "number": target.label.split(":")[1]})
+        close(block, content)
+    if pending is not None:
+        blocks.append(pending)
+    blocks.extend(held)
+    doc = usj.with_blocks(doc, blocks)
+    if not words:
+        return doc
+    require(
+        used == set(labels) and opened == set(numbering.opens),
+        f"{code} relabelling that matches nothing: "
+        f"{sorted(map(str, (set(labels) - used) | (set(numbering.opens) - opened)))}",
+    )
+    expected: dict[str, list[str]] = {}
+    divisions = {d.source[0]: d for d in numbering.breaks}
+    joined = {v for d in numbering.breaks for v in d.source[1:]}
+    for number, verses in before.items():
+        for label in verses:
+            verse = verse_at(code, int(number), label)
+            if verse in joined:
+                continue
+            found_division = divisions.get(verse)
+            for target in (
+                [v for v, _ in found_division.printed]
+                if found_division
+                else [labels.get(verse, verse)]
+            ):
+                expected.setdefault(str(target.chapter), []).append(
+                    target.label.split(":")[1]
+                )
+    found = usj.inventory(doc)
+    first = int(next(iter(found)))
+    require(
+        list(found.items()) == list(expected.items())
+        and list(found) == [str(c) for c in range(first, first + len(found))],
+        f"Wrong {code} verse labels after renumbering",
+    )
     return doc
 
 
@@ -347,8 +625,99 @@ def scripture_unit(
             "Wrong chapter grouping: DAG",
         )
     # A book printed from a file that holds another is a unit of its own.
-    doc = opened_chapters(code, usj.with_code(doc, code), policy)
-    return without_stubs(code, doc, policy)
+    doc = renumbered(code, usj.with_code(doc, code), policy)
+    return printed(code, without_stubs(code, doc, policy), policy)
+
+
+def unit_verse(policy: bible.policy.Policy, code: str, reference: str) -> Verse | None:
+    """A verse of one of Brenton's files, by eBible's reference, in the unit
+    that prints its chapter, still numbered as eBible numbers it; none where
+    no unit prints it."""
+    for part, number, _ in DANIEL:
+        if code == part:
+            return bible.references.verse_at(
+                "DAG", f"{number}:{reference.split(':')[1]}"
+            )
+    chapter, _, verse = reference.partition(":")
+    for unit in policy.scripture:
+        if source_id(unit) != code or unit["source"] != "brenton":
+            continue
+        first, last = unit.get("chapters", (1, 10**6))
+        if first <= int(chapter) <= last:
+            return bible.references.verse_at(
+                unit["id"], f"{int(chapter) - first + 1}:{verse}"
+            )
+    return None
+
+
+def printed(code: str, doc: Document, policy: bible.policy.Policy) -> Document:
+    """A book with the label each verse prints where it is not the verse's
+    own (edition/versification.json): a passage the Greek sets in another
+    order than the Hebrew under the Hebrew's numbers (`relocations`), its
+    first verse with its chapter, as is the verse after it back in its own
+    chapter; and no label for a verse the Greek prints unnumbered
+    (`unnumbered`), nor for a chapter all of whose verses are unnumbered."""
+    relocations = versification.relocations(code, policy=policy)
+    unnumbered = {
+        reference: entry
+        for reference, entry in policy.versification.get("unnumbered", {}).items()
+        if not isinstance(entry, str) and reference.split()[0] == code
+    }
+    if not relocations and not unnumbered:
+        return doc
+    order = [verse for verse, _, _ in markers(doc)]
+    labels: dict[Verse, str] = {}
+    passages: list[list[Verse]] = []
+    for reference, relocation in relocations.items():
+        theirs = bible.references.parse_passage(reference).verses
+        first = bible.references.parse_verse(relocation["to"])
+        require(first in order, f"Relocated passage not printed: {reference}")
+        at = order.index(first)
+        ours = order[at : at + len(theirs)]
+        require(
+            len(ours) == len(theirs) and all(v.chapter == first.chapter for v in ours),
+            f"Relocated passage runs past its chapter: {reference}",
+        )
+        for n, (verse, hebrew) in enumerate(zip(ours, theirs)):
+            require(verse not in labels, f"Verse printed under two labels: {verse}")
+            labels[verse] = hebrew.label if n == 0 else str(hebrew.number)
+        passages.append(ours)
+    for ours in passages:
+        at = order.index(ours[-1]) + 1
+        if at < len(order) and order[at].chapter == ours[0].chapter:
+            labels.setdefault(order[at], order[at].label)
+    for reference, entry in unnumbered.items():
+        require(
+            bool(entry.get("why")),
+            f"Unnumbered verse without its reason: {reference}",
+        )
+        verse = bible.references.parse_verse(reference)
+        require(verse in order, f"Unnumbered verse not printed: {reference}")
+        require(verse not in labels, f"Verse printed under two labels: {verse}")
+        labels[verse] = HIDDEN
+    hidden = {v.chapter for v in order} - {
+        v.chapter for v in order if labels.get(v) != HIDDEN
+    }
+    blocks: list[Node] = []
+    chapter: int | None = None
+    for block in doc["content"]:
+        if block["type"] == "chapter":
+            chapter = int(block["number"])
+            if chapter in hidden:
+                block = {**block, "pubnumber": HIDDEN}
+        elif block["type"] == "para":
+            content: Content = []
+            for item in block["content"]:
+                if (
+                    usj.is_type(item, "verse")
+                    and (shown := labels.get(verse_at(code, chapter, item["number"])))
+                    is not None
+                ):
+                    item = {**item, "pubnumber": shown}
+                content.append(item)
+            block = {**block, "content": content}
+        blocks.append(block)
+    return usj.with_blocks(doc, blocks)
 
 
 def without_stubs(code: str, doc: Document, policy: bible.policy.Policy) -> Document:

@@ -26,7 +26,13 @@ class Run(TypedDict, total=False):
 
 class VersificationRelabel(TypedDict, total=False):
     edition: ReadOnly[str]
-    opens: ReadOnly[str]
+    opens: ReadOnly[Mapping[str, str]]
+    why: ReadOnly[str]
+
+
+class VersificationBreak(TypedDict, total=False):
+    edition: ReadOnly[Mapping[str, str]]
+    why: ReadOnly[str]
 
 
 class VersificationStub(TypedDict, total=False):
@@ -41,12 +47,14 @@ class VersificationRelocation(TypedDict, total=False):
 class Versification(TypedDict, total=False):
     apocrypha: ReadOnly[tuple[VersificationApocrypha, ...]]
     books: ReadOnly[Mapping[str, str]]
+    breaks: ReadOnly[Mapping[str, VersificationBreak]]
     kjv: ReadOnly[Mapping[str, tuple[Run, ...]]]
     old_testament: ReadOnly[tuple[str, ...]]
     readings: ReadOnly[Mapping[str, tuple[Run, ...]]]
     relabel: ReadOnly[Mapping[str, VersificationRelabel]]
     relocations: ReadOnly[Mapping[str, VersificationRelocation | str]]
     stubs: ReadOnly[Mapping[str, VersificationStub | str]]
+    unnumbered: ReadOnly[Mapping[str, VersificationStub | str]]
     why: ReadOnly[str]
 
 

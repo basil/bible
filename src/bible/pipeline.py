@@ -27,6 +27,7 @@ from types import MappingProxyType
 
 import bible.annotate
 import bible.policy
+import bible.references
 import bible.sources
 from bible import (
     alexandrinus,
@@ -329,9 +330,14 @@ def lined(
         not unknown,
         f"Line decisions in no Old Testament book the edition prints: {unknown}",
     )
+    # The update numbers its verses as eBible does.
+    update = {
+        code: assembly.renumbered(code, doc, policy, words=False)
+        for code, doc in read_sources.updated_brenton.items()
+    }
     brenton = lines.old_testament(
         old_testament,
-        read_sources.updated_brenton,
+        update,
         policy,
         lines.scrivener(read_sources.kjv, policy),
     )
@@ -358,6 +364,25 @@ def assemble(
         )
         for unit in policy.scripture
     }
+    # A numbering decision is carried out book by book, so one that names no
+    # book the edition prints would match nothing unnoticed.
+    numbered = {
+        *versification.renumberings(policy=policy),
+        *(
+            reference.split()[0]
+            for reference in policy.versification.get("unnumbered", {})
+            if reference != "why"
+        ),
+        *(
+            bible.references.parse_verse(entry["to"]).book
+            for entry in policy.versification.get("relocations", {}).values()
+            if not isinstance(entry, str)
+        ),
+    }
+    unknown = sorted(numbered - set(units))
+    require(
+        not unknown, f"Numbering decisions in no book the edition prints: {unknown}"
+    )
     return MappingProxyType(units)
 
 
@@ -400,6 +425,9 @@ def quotation_links(ctx: annotate.Context) -> dict[str, list[crossrefs.Link]]:
                     scripture.has_verse(ctx.inventory, verse),
                     f"Quotation verse missing from assembled edition: {relation.id}: {verse}",
                 )
+            versification.require_own_labels(
+                passage.verses, f"Quotation {relation.id}", policy=policy
+            )
     return crossrefs.planned_links(relations, ctx.books, policy=policy)
 
 
@@ -1132,32 +1160,106 @@ def labelled(doc: Document, entry: Entry) -> Document:
     return usj.with_blocks(doc, [*blocks[:at], label, *blocks[at:]])
 
 
+def printed_origin(value: str, labels: Mapping[str, str]) -> str:
+    """A note's origin under the label its verse prints, where that is not
+    the verse's own; an origin the printed labels cannot name is refused."""
+    address = value.strip()
+    if address in labels:
+        require(bool(labels[address]), f"Note at an unnumbered verse: {address}")
+        return value.replace(address, labels[address])
+    first, _, last = address.partition("-")
+    chapter, _, _ = first.rpartition(":")
+    require(
+        first not in labels and f"{chapter}:{last}" not in labels,
+        f"Note origin over verses with printed labels: {address}",
+    )
+    return value
+
+
+def printed_labels(doc: Document) -> dict[str, str]:
+    """The label each verse of a book prints, where it is not the verse's
+    own. A verse that prints its own label in full, as 24:23 after the
+    passages, is named as it always is."""
+    return {
+        address: label
+        for address, label in scripture.printed(doc).items()
+        if label != address
+    }
+
+
+def named_in_full(doc: Document) -> set[str]:
+    """The verses of a book whose printed label names a chapter, as "30:1"
+    does in Proverbs 24, by their own."""
+    found = set()
+    chapter = None
+    for block in doc["content"]:
+        if block["type"] == "chapter":
+            chapter = block["number"]
+        elif block["type"] == "para":
+            found |= {
+                f"{chapter}:{item['number']}"
+                for item in block["content"]
+                if usj.is_type(item, "verse") and ":" in item.get("pubnumber", "")
+            }
+    return found
+
+
+def with_printed_origins(doc: Document) -> Document:
+    """A book with each note's origin under the label its verse prints,
+    where that is not the verse's own."""
+    labels = printed_labels(doc)
+    if not labels:
+        return doc
+
+    def origin(item: Node) -> Node:
+        if item["type"] != "char" or not usj.is_origin(item):
+            return item
+        return {
+            **item,
+            "content": [printed_origin(usj.text_of(item["content"]), labels)],
+        }
+
+    return usj.with_content(doc, lambda items: usj.mapped(items, origin))
+
+
 def exported(code: str, doc: Document, edition: Edition) -> str:
     """A document as PTXprint takes it: under its project id; its notes'
     margin origins without their chapter, which the chapter figure and running
-    head supply, and bottom notes under their callers alone; its chapters
-    opened in paragraphs of their own and its blank lines set; its chapter
-    label, where the manifest asks for one, set once before its first chapter
-    as PTXprint takes it; and its Greek and Hebrew tagged for their fonts.
-    The edition's own pages are sent as the editor wrote them."""
+    head supply, unless the verse's printed label names one, and bottom notes
+    under their callers alone; its chapters opened in paragraphs of their own
+    and its blank lines set; its chapter label, where the manifest asks for
+    one, set once before its first chapter as PTXprint takes it; and its
+    Greek and Hebrew tagged for their fonts.
+    The edition's own pages are sent as the editor wrote them. A note at a
+    verse that prints another label than its own is set under that label."""
 
-    def origin(item: Node) -> Node:
+    def bottom(item: Node) -> Node:
         if usj.is_type(item, "note", "ef"):
             return {
                 **item,
                 "content": [p for p in item["content"] if not usj.is_origin(p)],
             }
+        return item
+
+    def origin(item: Node) -> Node:
         if item["type"] == "char" and usj.is_origin(item):
             values = item["content"]
             assert all(isinstance(v, str) for v in values)
             value = "".join(v for v in values if isinstance(v, str))
-            return {**item, "content": [ORIGIN.sub("", value)]}
+            shown = printed_origin(value, labels)
+            if value.strip() not in full:
+                shown = ORIGIN.sub("", shown)
+            return {**item, "content": [shown]}
         return item
 
     def content(items: Content) -> Content:
-        items = usj.mapped(items, origin)
+        # A note's children are mapped before it, so a bottom note's origin,
+        # which does not print, goes before any origin is set as it prints.
+        items = usj.mapped(usj.mapped(items, bottom), origin)
         return items if code in edition.authored else font_runs(items)
 
+    labels = printed_labels(doc) if code in edition.scripture else {}
+    full = named_in_full(doc) if code in edition.scripture else set()
     if code not in edition.authored:
         doc = spaced(opened(doc))
     if code in edition.scripture:

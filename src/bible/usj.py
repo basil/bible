@@ -81,6 +81,8 @@ NOTES = frozenset("f ef x".split())
 # The parts of a note, each of which runs to the next or to the note's end.
 FIELDS = frozenset("fr ft fq fqa fl xo xt xta".split())
 LABEL = re.compile(r"\d+[a-z]?(?:-\d+[a-z]?)?")
+# A verse's printed number, right after the verse's own.
+PRINTED = re.compile(r"\\vp ([^\\]*)\\vp\* ?")
 # What follows a marker that takes one: a note's caller, a book's code, a
 # document's USFM version.
 TOKEN = re.compile(r"(\S+) ?")
@@ -255,10 +257,14 @@ def parse(text: str, *, fragment: bool = False) -> Document | Content:
                     LABEL.match(text, end), f"Missing verse number: {where(at)}"
                 )
                 cursor = label.end() + (text[label.end() : label.end() + 1] == " ")
+                verse: Node = {"type": "verse", "marker": "v", "number": label[0]}
+                # The number a verse prints, in place of its own, stands
+                # right after it, as usfmtc reads it.
+                if printed := PRINTED.match(text, cursor):
+                    verse["pubnumber"] = printed[1]
+                    cursor = printed.end()
                 assert block is not None
-                block["content"].append(
-                    {"type": "verse", "marker": "v", "number": label[0]}
-                )
+                block["content"].append(verse)
                 continue
             if name in CELLS:
                 require(table is not None, f"Table cell outside a row: {where(at)}")
@@ -446,10 +452,15 @@ def serialize(node: Document | Content) -> str:
             # Each verse opens a line of its own.
             head, verses = _split_verses(block["content"])
             lines.append(_line(f"\\{block['marker']}", head))
-            lines.extend(
-                _line(f"\\v {verse['number']}", rest) for verse, rest in verses
-            )
+            lines.extend(_line(_verse_marker(verse), rest) for verse, rest in verses)
     return "\n".join(lines) + "\n"
+
+
+def _verse_marker(verse: Node) -> str:
+    # PTXprint reads a printed number only right after the verse's own.
+    if "pubnumber" in verse:
+        return f"\\v {verse['number']} \\vp {verse['pubnumber']}\\vp*"
+    return f"\\v {verse['number']}"
 
 
 def _split_verses(content: Content) -> tuple[Content, list[tuple[Node, Content]]]:

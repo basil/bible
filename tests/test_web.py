@@ -70,8 +70,9 @@ def test_web(sources: Sources, edition: pipeline.Edition, tmp_path: Path) -> Non
             edition.inventory[code]
         )
         # The chapters, less the book node each repeats, are the whole book
-        # but for the names the manifest carries.
-        doc = documents[code]
+        # but for the names the manifest carries, its notes under the labels
+        # their verses print.
+        doc = pipeline.with_printed_origins(documents[code])
         doc = usj.with_blocks(
             doc,
             [
@@ -91,6 +92,11 @@ def test_web(sources: Sources, edition: pipeline.Edition, tmp_path: Path) -> Non
     daniel = next(b for b in manifest["books"] if b["id"] == "DAG")
     labels = [c["label"] for c in daniel["chapters"] if c["titled"]]
     assert labels == ["Susanna", "Bel and the Dragon"]
+    # Sirach's Prologue is a chapter its title stands for.
+    sirach = next(b for b in manifest["books"] if b["id"] == "SIR")
+    prologue = sirach["chapters"][0]
+    assert (prologue["number"], prologue["titled"]) == ("0", True)
+    assert prologue["label"].startswith("The Prologue to the Wisdom of Jesus")
     # The stasis rule set before Psalm 4 opens it, not the close of Psalm 3.
     psalms = tmp_path / "books" / "PSA"
     rule, chapter = files.read_json(psalms / "4.json")["content"][1:3]

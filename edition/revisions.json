@@ -132,7 +132,7 @@
             "GEN 28:13",
             "GEN 31:42",
             "GEN 31:53",
-            "GEN 32:10",
+            "GEN 32:9",
             "GEN 35:12",
             "GEN 35:27",
             "GEN 48:15",
@@ -837,7 +837,7 @@
             "form": "Gaddi",
             "who": "Gaddi the spy of Manasse (Num 13:11) and the father of Manaem (4 Kgdms 15:14, 17).",
             "verses": [
-              "NUM 13:11",
+              "NUM 13:12",
               "2KI 15:14",
               "2KI 15:17"
             ]
@@ -997,7 +997,7 @@
               "TOB 1:20",
               "TOB 2:1",
               "TOB 2:11",
-              "TOB 5:17",
+              "TOB 5:18",
               "TOB 11:5",
               "TOB 11:9",
               "TOB 14:12",
@@ -1197,7 +1197,7 @@
             "verses": [
               "1SA 6:14",
               "1SA 6:18",
-              "NEH 10:24"
+              "NEH 10:23"
             ]
           }
         ]
@@ -1316,15 +1316,15 @@
             "MAT 27:9"
           ],
           "Jeremy": [
-            "1ES 1:28",
-            "1ES 1:32",
-            "1ES 1:47",
-            "1ES 1:57",
+            "1ES 1:26",
+            "1ES 1:30",
+            "1ES 1:45",
+            "1ES 1:54",
             "1ES 2:1",
             "2MA 2:1",
             "2MA 2:5",
             "2MA 2:7",
-            "LJE 1:1"
+            "LJE 1:0"
           ]
         }
       },
@@ -1449,7 +1449,7 @@
         "why": "The spelling of the King James New Testament (Acts 9:36).",
         "forms": {
           "Joppe": [
-            "1ES 5:55",
+            "1ES 5:53",
             "1MA 10:75",
             "1MA 10:76",
             "1MA 11:6",
@@ -1482,7 +1482,7 @@
             "EXO 32:17",
             "EXO 33:11",
             "NUM 11:28",
-            "NUM 13:16",
+            "NUM 13:17",
             "NUM 14:6",
             "NUM 14:30",
             "NUM 14:38",
@@ -1573,11 +1573,11 @@
             "JOS 9:2f",
             "JOS 9:6",
             "JOS 9:8",
-            "JOS 9:15",
-            "JOS 9:22",
-            "JOS 9:24",
-            "JOS 9:26",
-            "JOS 9:27",
+            "JOS 9:21",
+            "JOS 9:28",
+            "JOS 9:30",
+            "JOS 9:32",
+            "JOS 9:33",
             "JOS 10:1",
             "JOS 10:4",
             "JOS 10:6",
@@ -1776,13 +1776,13 @@
             "2SA 6:2",
             "2SA 11:11",
             "2SA 12:8",
+            "2SA 19:14",
             "2SA 19:15",
             "2SA 19:16",
-            "2SA 19:17",
+            "2SA 19:40",
             "2SA 19:41",
             "2SA 19:42",
             "2SA 19:43",
-            "2SA 19:44",
             "2SA 20:2",
             "2SA 20:4",
             "2SA 20:5",
@@ -1945,7 +1945,7 @@
             "1CH 21:5",
             "1CH 27:18",
             "1CH 28:4",
-            "2CH 2:6",
+            "2CH 2:7",
             "2CH 9:11",
             "2CH 10:17",
             "2CH 11:1",
@@ -1964,13 +1964,13 @@
             "2CH 13:15",
             "2CH 13:16",
             "2CH 13:18",
-            "2CH 13:23",
-            "2CH 14:3",
+            "2CH 14:1",
             "2CH 14:4",
             "2CH 14:5",
             "2CH 14:6",
             "2CH 14:7",
-            "2CH 14:11",
+            "2CH 14:8",
+            "2CH 14:12",
             "2CH 15:2",
             "2CH 15:8",
             "2CH 15:9",
@@ -2092,7 +2092,7 @@
             "2CH 36:8",
             "2CH 36:10",
             "2CH 36:14",
-            "1ES 5:66",
+            "1ES 5:63",
             "1ES 9:5",
             "EZR 1:5",
             "EZR 1:8",
@@ -2211,7 +2211,7 @@
             "ISA 7:1",
             "ISA 7:17",
             "ISA 8:8",
-            "ISA 9:20",
+            "ISA 9:21",
             "ISA 11:12",
             "ISA 11:13",
             "ISA 22:8",
@@ -2239,7 +2239,7 @@
             "JER 7:30",
             "JER 7:34",
             "JER 8:1",
-            "JER 9:10",
+            "JER 9:11",
             "JER 10:22",
             "JER 11:2",
             "JER 11:6",
@@ -2287,7 +2287,7 @@
             "JER 27:33",
             "JER 28:5",
             "JER 28:59",
-            "JER 32:18",
+            "JER 32:4",
             "JER 33:10",
             "JER 33:18",
             "JER 33:19",
@@ -2429,12 +2429,12 @@
             "2KI 14:9",
             "2KI 19:23",
             "1CH 5:23",
-            "2CH 2:7",
-            "2CH 2:15",
+            "2CH 2:8",
+            "2CH 2:16",
             "2CH 8:6",
             "2CH 25:18",
             "1ES 4:48",
-            "1ES 5:55",
+            "1ES 5:53",
             "EZR 3:7",
             "JDT 1:7",
             "PSA 28:5",
@@ -2602,7 +2602,7 @@
             "PSA 82:10",
             "JOB 42:17d",
             "HAB 3:7",
-            "ISA 9:3",
+            "ISA 9:4",
             "ISA 10:26",
             "ISA 60:6"
           ]
@@ -2837,7 +2837,7 @@
             "GEN 10:1",
             "GEN 10:32",
             "1CH 1:4",
-            "TOB 4:7e",
+            "TOB 4:12",
             "ISA 54:9",
             "EZK 14:14",
             "EZK 14:20",
@@ -2856,8 +2856,8 @@
           "Naue": [
             "EXO 33:11",
             "NUM 11:28",
-            "NUM 13:8",
-            "NUM 13:16",
+            "NUM 13:9",
+            "NUM 13:17",
             "NUM 14:6",
             "NUM 14:30",
             "NUM 14:38",
@@ -3155,7 +3155,7 @@
             "JER 26:2",
             "JER 26:17",
             "JER 26:25",
-            "JER 32:19",
+            "JER 32:5",
             "JER 44:5",
             "JER 44:7",
             "JER 44:11",
@@ -3207,7 +3207,7 @@
             "1SA 14:3",
             "1ES 5:5",
             "1ES 8:29",
-            "1ES 8:63",
+            "1ES 8:62",
             "EZR 8:2",
             "EZR 8:33"
           ]
@@ -3227,19 +3227,19 @@
         "why": "The region.",
         "forms": {
           "Phenice": [
-            "1ES 2:17",
-            "1ES 2:24",
-            "1ES 2:25",
-            "1ES 2:27",
+            "1ES 2:16",
+            "1ES 2:20",
+            "1ES 2:21",
+            "1ES 2:23",
             "1ES 4:48",
             "1ES 6:3",
             "1ES 6:7",
-            "1ES 6:27",
-            "1ES 6:29",
+            "1ES 6:26",
+            "1ES 6:28",
             "1ES 7:1",
             "1ES 8:19",
             "1ES 8:23",
-            "1ES 8:67",
+            "1ES 8:64",
             "2MA 3:5",
             "2MA 3:8",
             "2MA 4:4",
@@ -3293,7 +3293,7 @@
           "Ruben": [
             "GEN 29:32",
             "GEN 30:14",
-            "GEN 35:22",
+            "GEN 35:21",
             "GEN 35:23",
             "GEN 37:21",
             "GEN 37:22",
@@ -3313,7 +3313,7 @@
             "NUM 2:16",
             "NUM 7:30",
             "NUM 10:18",
-            "NUM 13:4",
+            "NUM 13:5",
             "NUM 16:1",
             "NUM 26:5",
             "NUM 26:7",
@@ -3530,12 +3530,12 @@
               "JOS 18:22",
               "TOB 3:7",
               "TOB 3:17",
-              "TOB 6:10",
+              "TOB 6:11",
               "TOB 7:1",
               "TOB 7:8",
-              "TOB 7:13",
-              "TOB 10:11",
-              "TOB 10:13",
+              "TOB 7:12",
+              "TOB 10:10",
+              "TOB 10:12",
               "TOB 11:17",
               "TOB 12:12",
               "TOB 12:14"
@@ -3617,7 +3617,7 @@
         "why": "The spelling of the King James New Testament (Matt 11:21).",
         "forms": {
           "Zidon": [
-            "1ES 5:55"
+            "1ES 5:53"
           ]
         }
       },
@@ -3783,7 +3783,7 @@
             "ISA 30:4"
           ],
           "Tanin": [
-            "NUM 13:22"
+            "NUM 13:23"
           ]
         }
       }
@@ -10161,7 +10161,7 @@
           "why": "The short qualification is parenthetical; the men named expressly continue the clause rather than form a second parenthesis. A separating space before the supplied were appointed preserves the word boundary formerly marked by the dash."
         },
         {
-          "verse": "ESG 1:1s",
+          "verse": "ESG 1:1",
           "from": "Artaxerxes,—(this Artaxerxes ruled over a hundred and twenty-seven provinces from India)—",
           "to": "Artaxerxes (this Artaxerxes ruled over a hundred and twenty-seven provinces from India),",
           "why": "Parentheses already enclose the explanation of Artaxerxes; a comma resumes the surrounding sentence in the next verse."
@@ -10442,7 +10442,7 @@
           "to": "besides"
         },
         {
-          "verse": "ISA 64:3",
+          "verse": "ISA 64:4",
           "from": "beside",
           "to": "besides"
         },
@@ -10646,7 +10646,7 @@
           "why": "Baptism doth also now save us by the resurrection of Jesus Christ."
         },
         {
-          "verse": "DAG 4:21",
+          "verse": "DAG 4:18",
           "from": "branches:)",
           "to": "branches)",
           "why": "The tree which thou sawest in verse 20 is the subject of is thyself, O king in verse 22; the parenthesis completes its description without dividing the subject from its verb."

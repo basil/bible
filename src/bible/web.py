@@ -40,13 +40,18 @@ def write_fonts(directory: Path) -> None:
             font.save(directory / f"OLEBFont-{style}.woff")
 
 
+# The headings that stand for an unnumbered chapter's number: a section's,
+# as Susanna's, or a title's, as Sirach's Prologue's.
+TITLES = ("s1", "d")
+
+
 def label(chapter: usj.Node, blocks: list[usj.Node]) -> str:
     """The number a chapter prints, or the heading that stands for it."""
     shown = chapter.get("pubnumber", chapter["number"])
-    if shown != assembly.HIDDEN:
+    if shown != scripture.HIDDEN:
         return shown
     heading = present(
-        next((block for block in blocks if block.get("marker") == "s1"), None),
+        next((block for block in blocks if block.get("marker") in TITLES), None),
         f"Unnumbered chapter has no heading: {chapter}",
     )
     return scripture.plain(usj.text_of(heading.get("content", [])))
@@ -107,6 +112,9 @@ def comparisons(
     result: list[Compared] = []
     for entry in policy.comparisons["passages"]:
         passage = references.parse_passage(entry["passage"])
+        versification.require_own_labels(
+            passage.verses, f"Comparison {entry['passage']}", policy=policy
+        )
         verses = scripture.verses(documents[passage.first.book])
         placed = list(
             dict.fromkeys(
@@ -159,7 +167,7 @@ def write(
     books = []
     for unit in edition.policy.scripture:
         code = unit["id"]
-        doc = documents[code]
+        doc = pipeline.with_printed_origins(documents[code])
         (book, *header), parts = pipeline.headed_chapters(doc)
         # A book's introduction is a note on its opening; before the first
         # chapter stand only the book's names, which the manifest carries.
@@ -179,7 +187,7 @@ def write(
                 {
                     "number": number,
                     "label": label(chapter, blocks),
-                    "titled": chapter.get("pubnumber") == assembly.HIDDEN,
+                    "titled": chapter.get("pubnumber") == scripture.HIDDEN,
                     "verses": edition.inventory[code][number],
                 }
             )

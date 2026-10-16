@@ -406,7 +406,7 @@ def test_the_hebrew_letters_of_lamentations_head_their_lines(
     doc = unit(edition, "LAM")
     verses = scripture.verses(doc)
     assert verses["1:2"].text.startswith("Beth.\nShe weepeth sore in the night,\n")
-    assert verses["3:21a"].text.startswith("Heth.\nIt is the mercies of the Lord,\n")
+    assert verses["3:22"].text.startswith("Heth.\nIt is the mercies of the Lord,\n")
     assert verses["4:17"].text == (
         "Phe.\nWhile we yet lived our eyes failed,\n"
         "while we looked in vain for our help.\n"
@@ -551,7 +551,6 @@ def test_the_decisions_are_the_few_the_words_do_not_place(
         "PSA 138:1",
         "PRO 8:32",
         "PRO 9:6",
-        "LAM 3:21a",
         "LAM 3:45",
         "LAM 4:17",
         "LAM 4:18",

@@ -13,7 +13,7 @@ The sections:
 **Keys.** Brenton's notes are named by their keys, the `x-key` the build gives each source note ([AGENTS.md](../AGENTS.md#the-document-model)), which a decision in `edition/` is filed under:
 
 - Books are USFM codes: `1SA`–`2KI` are 1–4 Kingdoms, `PRO` Proverbs, `JOL` Joel, and `BAK` Brenton's Appendix, whose entries in `alexandrinus.json` are named by the verse they concern, as `BAK 1KI 2:35a`, and whose notes `appendix.json` names by the verse they stand at.
-- Chapters and verses are Brenton's, so the Psalms and Joel are numbered as in the Greek, and some verses are lettered, as `1KI 5:14a`.
+- Chapters and verses are eBible's, as its transcription of Brenton numbers them, so the Psalms and Joel are numbered as in the Greek, and some verses are lettered, as `1KI 5:14a`. Where the edition numbers a verse otherwise, by [docs/numbering.md](numbering.md), a key still names it by eBible's number.
 - `#2` is a verse's second note; a key without it is the verse's first or only note.
 
 A 1611 marginal note is named by its verse and `(1611)`, as `1CO 14:27 (1611)`; its key in `edition/kjv-notes.json` adds the words George prints it under, as `1CO 14:27 two...`.

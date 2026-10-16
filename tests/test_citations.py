@@ -83,7 +83,7 @@ def test_unprinted_decision_requires_home(cite: Cite) -> None:
     "text,decided,expected",
     [
         ("Heb. 300", decision(source="Heb. 300", not_a_citation=True), ""),
-        ("Jer. 9. 24", decision(source="Jer. 9. 24", numbering="kjv"), "JER 9:23"),
+        ("Joel 2. 28", decision(source="Joel 2. 28", numbering="kjv"), "JOL 3:1"),
         (
             "13. 22",
             decision(source="13. 22", passages="ISA 13:22", print="13:22"),
@@ -143,10 +143,9 @@ BRENTON = [
     ("See also Ps. 68; 79, titles", "PSA 68; PSA 79", "See also Pss. 68; 79, titles"),
     ("See Ps. 118. 32.", "PSA 118:32", "See Ps. 118:32."),
     ("See Col. 2. ult.", "COL 2:23", "See Col. 2:23."),
-    # By Brenton's number for a verse the edition relabels, and for one that
-    # a decision could say is cited by the King James Bible's.
-    ("See Mal. 3. 23.", "MAL 4:5", "See Mal. 4:5."),
-    ("Comp. Jer. 9. 24.", "JER 9:24", "Comp. Jer. 9:24."),
+    # By Brenton's number for a verse that a decision could say is cited by
+    # the King James Bible's.
+    ("Comp. Jer. 2. 24.", "JER 2:24", "Comp. Jer. 2:24."),
     # A note cites its own book by a verse or chapter, and keeps its capital.
     ("See ver. 6.", "JDG 13:6", "See verse 6."),
     ("See v 8, 9.", "JDG 13:8; JDG 13:9", "See verses 8, 9."),
@@ -175,7 +174,7 @@ GEORGE = [
     # edition has the verses apart.
     ("Joel 2.28-32", "JOL 3:1-5", "Joel 3:1–5"),
     ("Psal. 34.12-16", "PSA 33:13-17", "Ps. 33:13–17"),
-    ("Jer. 25.13-16", "JER 25:13; JER 32:15-16", "Jer. 25:13; 32:15–16"),
+    ("Jer. 25.13-16", "JER 25:13; JER 32:1-2", "Jer. 25:13; 32:1–2"),
     ("Mal. 4.4-6", "MAL 4:6; MAL 4:4-5", "Mal. 4:6, 4–5"),
 ]
 
@@ -214,9 +213,9 @@ SEVERAL: CitationsDecisions = {
         # By another numbering than the source's: the King James Bible's, the
         # Greek psalm with the English verse, and the Hebrew psalm.
         (
-            "Comp. Jer. 9. 24.",
-            decision(source="Jer. 9. 24", numbering="kjv"),
-            "Comp. Jer. 9:23.",
+            "Comp. Joel 2. 28.",
+            decision(source="Joel 2. 28", numbering="kjv"),
+            "Comp. Joel 3:1.",
         ),
         (
             "see Ps. 91. 10.",
@@ -283,6 +282,12 @@ def test_a_decision_reads_what_the_grammar_cannot(
         ("brenton", "See Rom. 16. 24,28.", None, r"\(Rom. 16. 24,28: ROM 16:28\)"),
         ("brenton", "See ver. 99.", None, r"\(ver. 99: JDG 13:99\)"),
         ("brenton", "Heb. 300. Alex. 500.", None, r"\(Heb. 300: HEB 300\)"),
+        # Brenton's number for a verse the edition numbers otherwise may be his
+        # printed one or eBible's, so a decision names the verse: one
+        # relabelled, one divided, and one whose division keeps its number.
+        ("brenton", "See Mal. 3. 23.", None, r"numbers otherwise.*\(MAL 3:23\)"),
+        ("brenton", "See Ex. 28. 29-30.", None, r"\(EXO 28:29, EXO 28:30\)"),
+        ("brenton", "See Gen. 8. 4.", None, r"numbers otherwise.*\(GEN 8:4\)"),
         ("george", "Jer. 33.14-16", None, "Verses the edition lacks: JER 33:14-16"),
         (
             "brenton",
@@ -578,12 +583,12 @@ def test_several_decisions_on_one_note_form_a_list(
     def both(data: dict[str, Any]) -> None:
         data["decisions"]["JDG 13:8"] = [
             decision(source="Heb. 300", not_a_citation=True),
-            decision(source="Jer. 9. 24", numbering="kjv"),
+            decision(source="Joel 2. 28", numbering="kjv"),
         ]
 
     decided = changed(policy, "citations", both)
     found = citations.scan(
-        "Heb. 300. Comp. Jer. 9. 24.",
+        "Heb. 300. Comp. Joel 2. 28.",
         citations.dialect("brenton", policy=decided),
         HOME,
         "JDG 13:8",
@@ -591,7 +596,7 @@ def test_several_decisions_on_one_note_form_a_list(
         policy=decided,
     )
     assert [(c.source, str(c.passages[0])) for c in found] == [
-        ("Jer. 9. 24", "JER 9:23")
+        ("Joel 2. 28", "JOL 3:1")
     ]
 
 
@@ -726,12 +731,12 @@ def test_corrected_numbering_keeps_resolved_link(
     cite: Cite, ctx: bible.annotate.Context
 ) -> None:
     [citation] = cite(
-        "Jer. 9. 24", decided=decision(source="Jer. 9. 24", numbering="kjv")
+        "Joel 2. 28", decided=decision(source="Joel 2. 28", numbering="kjv")
     )
     nodes = citations.linked(citation, ctx.books)
-    assert usj.text_of(nodes) == "Jer. 9:23"
+    assert usj.text_of(nodes) == "Joel 3:1"
     assert isinstance(nodes[0], dict)
-    assert nodes[0]["loc"] == "JER 9:23"
+    assert nodes[0]["loc"] == "JOL 3:1"
 
 
 def test_finished_note_retains_link_targets_and_input(

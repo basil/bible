@@ -18,7 +18,7 @@ type Shape = str | tuple[str, str | None, str | None, list[Shape]]
 BOOK = (
     "\\id GEN - Brenton\n\\h Genesis\n\\mt1 GENESIS\n\\c 1  \n\\p\n"
     "\\v 1 \\sc In\\sc* the beginning \\add was\\add* light \\f + \\fr 1:1 \\fqa Gr. \\ft a \\+it note\\+it*.\\f*and day.  \n"
-    "\\v 2 Poetry,\n\\q1 line two\n\\c 2\n\\cp A\n\\p\n\\v 1 Next.\n"
+    "\\v 2 \\vp 1:2\\vp* Poetry,\n\\q1 line two\n\\c 2\n\\cp A\n\\p\n\\v 1 Next.\n"
 )
 
 
@@ -36,6 +36,8 @@ def test_a_document_is_plain_usj() -> None:
     assert second == {"type": "chapter", "marker": "c", "number": "2", "pubnumber": "A"}
     verse, small, text, added, more, note, rest, verse2, poetry = para["content"]
     assert verse == {"type": "verse", "marker": "v", "number": "1"}
+    # The number a verse prints is the verse's own, as usfmtc reads it.
+    assert verse2 == {"type": "verse", "marker": "v", "number": "2", "pubnumber": "1:2"}
     assert small == {"type": "char", "marker": "sc", "content": ["In"]}
     assert (text, more, rest, poetry) == (
         " the beginning ",
@@ -65,7 +67,7 @@ def test_writing_gives_each_verse_a_line_and_nests_styles_in_notes() -> None:
     assert usj.serialize(usj.parse(BOOK)) == (
         "\\id GEN - Brenton\n\\usfm 3.1\n\\h Genesis\n\\mt1 GENESIS\n\\c 1\n\\p\n"
         "\\v 1 \\sc In\\sc* the beginning \\add was\\add* light \\f + \\fr 1:1 \\fqa Gr. \\ft a \\+it note\\+it*.\\f*and day.\n"
-        "\\v 2 Poetry,\n\\q1 line two\n\\c 2\n\\cp A\n\\p\n\\v 1 Next.\n"
+        "\\v 2 \\vp 1:2\\vp* Poetry,\n\\q1 line two\n\\c 2\n\\cp A\n\\p\n\\v 1 Next.\n"
     )
 
 

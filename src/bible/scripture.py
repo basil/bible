@@ -19,6 +19,8 @@ from bible.references import Verse as Reference
 
 type Inventory = Mapping[str, Mapping[str, Sequence[str]]]
 
+# A hidden number: the chapter or verse is one for citing, and prints none.
+HIDDEN = "\u200b"
 WORD = re.compile(r"[^\W\d_]+(?:[’'][^\W\d_]+)*")
 
 
@@ -254,3 +256,33 @@ def map_notes(doc: usj.Document, change: usj.Change) -> usj.Document:
         return change(item) if item["type"] == "note" else item
 
     return usj.with_content(doc, lambda content: usj.mapped(content, visit))
+
+
+def printed(doc: usj.Document) -> dict[str, str]:
+    """The label each verse prints where it is not the verse's own, by the
+    verse's own: in full, its chapter taken from the last printed label that
+    names one ("30:2" after "30:1"), or empty where it prints none."""
+    result: dict[str, str] = {}
+    chapter: str | None = None
+    shown: str | None = None
+    for block in doc["content"]:
+        if block["type"] == "chapter":
+            chapter, shown = block["number"], None
+        elif block["type"] == "para":
+            for item in block["content"]:
+                if not usj.is_type(item, "verse"):
+                    continue
+                label = item.get("pubnumber")
+                if label is None:
+                    shown = None
+                    continue
+                require(chapter is not None, "Printed verse label before a chapter")
+                if not label.strip(f"{HIDDEN} "):
+                    result[f"{chapter}:{item['number']}"] = ""
+                    continue
+                if ":" in label:
+                    shown = label.split(":")[0]
+                result[f"{chapter}:{item['number']}"] = (
+                    label if ":" in label else f"{shown or chapter}:{label}"
+                )
+    return result

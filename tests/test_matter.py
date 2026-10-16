@@ -105,7 +105,7 @@ def test_the_appendix_notes_are_footnotes_at_their_verses(
     # The verses it supplies carry their numbers in the note.
     exodus = next(line for line in lines(edition, "EXO") if "Complutensian" in line)
     assert exodus.startswith(
-        "\\v 29 \\ef + \\ft The following verses are found neither in the Vatican"
+        "\\v 23 \\ef + \\ft The following verses are found neither in the Vatican"
     )
     assert "\\+fv 23\\+fv*And thou shalt make upon the oracle" in exodus
     # A note that only sent the reader to the Appendix gives way to it.
@@ -491,9 +491,9 @@ def test_introduction_and_appendix_share_a_verse_without_overwriting(
     ) -> tuple[Document, dict[str, list[Content]]]:
         moved: dict[str, list[Content]] = {}
         if source_id(entry) == "OTH":
-            moved["EXO@28:29"] = [["Introduction."]]
+            moved["EXO@28:23"] = [["Introduction."]]
         elif source_id(entry) == "BAK":
-            moved["EXO@28:29"] = [["Appendix."]]
+            moved["EXO@28:23"] = [["Appendix."]]
         return doc, moved
 
     monkeypatch.setattr(matter, "unit", prepare)
@@ -504,23 +504,23 @@ def test_introduction_and_appendix_share_a_verse_without_overwriting(
         policy,
         "introductions",
         lambda d: d["sections"].update(
-            EXO={"28:29": {"heading": "Section", "paragraphs": ["Introduction."]}}
+            EXO={"28:23": {"heading": "Section", "paragraphs": ["Introduction."]}}
         ),
     )
     changed_ctx = annotate.Context(
         changed_policy, ctx.inventory, ctx.books, ctx.terms, ctx.prose
     )
     doc = usj.parse(
-        "\\id EXO\n\\c 28\n\\s1 Section\n\\p\n" "\\v 29 \\f + \\ft Existing.\\f*Text."
+        "\\id EXO\n\\c 28\n\\s1 Section\n\\p\n" "\\v 23 \\f + \\ft Existing.\\f*Text."
     )
     result = bible.pipeline.introduced(
         "EXO", doc, introductions, appendix_notes, (), changed_ctx
     )
-    notes_at_start = bible.scripture.verses(result)["28:29"].notes
+    notes_at_start = bible.scripture.verses(result)["28:23"].notes
     assert [(at, usj.text_of(n["content"])) for at, n in notes_at_start] == [
         (0, "Introduction."),
         (0, "Existing."),
         (0, "Appendix."),
     ]
     assert [n["caller"] for _, n in notes_at_start] == ["+", "+", "+"]
-    assert notes_at_start[-1][1]["x-key"] == "EXO 28:29 Appendix"
+    assert notes_at_start[-1][1]["x-key"] == "EXO 28:23 Appendix"

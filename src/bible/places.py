@@ -94,6 +94,18 @@ class Texts:
             {code: kjv[code] for code in self.books.values()}, titled=True
         )
         self.weight = alignment.weights(self.edition.words, self.kjv.words)
+        # Each verse that a decision makes by joining eBible's verses, with
+        # the King James verses of the numbers it absorbed, which it holds.
+        self.joined: dict[Verse, tuple[Verse, ...]] = {}
+        for code, kjv_code in self.books.items():
+            for division in versification.renumbering(code, policy=policy).breaks:
+                if len(division.printed) == 1:
+                    ((made, _),) = division.printed
+                    self.joined[made] = tuple(
+                        Verse(kjv_code, v.chapter, v.number)
+                        for v in division.source
+                        if v != made and not v.letter
+                    )
 
     @functools.cached_property
     def norms(self) -> tuple[dict[Verse, float], dict[Verse, float]]:
@@ -467,7 +479,9 @@ def tabled(
 ) -> dict[Verse, tuple[Verse, ...] | None]:
     """Each verse's counterparts by the table, or None where its rows disagree.
 
-    A verse the table says nothing of keeps its number.
+    A verse the table says nothing of keeps its number, and so does each
+    verse of eBible's that a decision joins into another: the verse they
+    make has their counterparts too.
     """
     names = {code: TABLE_NAMES.get(code, [kjv]) for code, kjv in texts.books.items()}
     bible = tvtms.Bible(
@@ -491,6 +505,12 @@ def tabled(
             result[verse] = ()
         else:
             result[verse] = (Verse(kjv, verse.chapter, verse.number),)
+        found = result[verse]
+        if found is not None and verse in texts.joined:
+            result[verse] = (
+                *found,
+                *(v for v in texts.joined[verse] if v not in found),
+            )
     return result
 
 
@@ -610,6 +630,18 @@ def proposal(
                 # Two verses that face one verse are each given it by the table.
                 agreed = said is not None and set(said) == set(theirs)
                 by = "table" if agreed else block["by"]
+                rest = {v for verse in ours for v in texts.joined.get(verse, ())}
+                rest -= set(theirs)
+                if (
+                    rest
+                    and len(real) == len(said or ())
+                    and set(theirs) | rest == set(real)
+                    and not claimed & rest
+                ):
+                    # The words are silent on what a joined verse absorbed,
+                    # which no other verse has.
+                    theirs, by = real, "table"
+                    claimed |= rest
             elif real and len(real) == len(said or ()) and not claimed & set(real):
                 theirs, by = real, "table"
                 claimed |= set(real)

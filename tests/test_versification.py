@@ -16,7 +16,6 @@ import bible.pipeline
 import bible.places
 import bible.policy
 import bible.references
-import bible.sources
 from bible import (
     alignment,
     assembly,
@@ -24,7 +23,7 @@ from bible import (
     pipeline,
     places,
     quotations,
-    usfm,
+    review,
     usj,
     versification,
 )
@@ -308,7 +307,7 @@ def test_a_malformed_run_is_refused(
     [
         # Never by its ends: Jeremias 25:13-16 stands in two places.
         ("kjv", "JER 25:13-16", "JER 25:13; JER 49:34-36"),
-        ("edition", "JER 25:13-16", "JER 25:13; JER 32:15-16"),
+        ("edition", "JER 25:13-16", "JER 25:13; JER 32:1-2"),
         ("edition", "JER 31:31-34", "JER 38:31-34"),
         # A psalm's title is counted, and the psalm numbered one lower.
         ("kjv", "PSA 33:13-17", "PSA 34:12-16"),
@@ -460,9 +459,61 @@ def test_the_words_bear_out_every_run(
 def test_every_relabelled_verse_is_printed_under_its_new_label(
     policy: bible.policy.Policy,
     edition: bible.pipeline.Edition,
-    sources: bible.sources.Sources,
 ) -> None:
-    for source, printed_as in versification.relabelled(policy=policy).items():
-        labels = usfm.inventory(sources.brenton[source.book])["chapters"]
-        assert str(source.number) in labels[str(source.chapter)]
-        assert printed(printed_as, edition) and not printed(source, edition)
+    relabelled = versification.relabelled(policy=policy)
+    # An old label is printed again only where another verse now bears it.
+    taken = set(relabelled.values()) | {
+        verse
+        for numbering in versification.renumberings(policy=policy).values()
+        for division in numbering.breaks
+        for verse, _ in division.printed
+    }
+    for source, printed_as in relabelled.items():
+        assert printed(printed_as, edition)
+        assert source in taken or not printed(source, edition)
+
+
+def test_a_reference_to_a_verse_printed_under_another_label_is_refused(
+    policy: bible.policy.Policy,
+) -> None:
+    # Proverbs 24:35 prints as 30:15, and Sirach's Prologue prints no number.
+    versification.require_own_labels(
+        [parse_verse("PRO 24:34")], "Citation", policy=policy
+    )
+    for verse in ("PRO 24:35", "SIR 0:1"):
+        with pytest.raises(CheckFailed, match=f"Citation of verses printed .*{verse}"):
+            versification.require_own_labels(
+                [parse_verse(verse)], "Citation", policy=policy
+            )
+
+
+@pytest.mark.parametrize(
+    "source,printed,starts",
+    [
+        # A boundary moved, and verses joined: each verse is placed.
+        ("1:1-2", "1:1-2", ["1:1", "1:2"]),
+        ("1:1-2", "1:1", ["1:1", "1:1"]),
+        # A verse divided starts in its first part.
+        ("1:1", "1:1-3", ["1:1"]),
+        # Verses divided again: only the first starts where the labels tell.
+        ("1:1-2", "1:1-3", ["1:1"]),
+    ],
+)
+def test_a_division_places_where_its_verses_start(
+    source: str, printed: str, starts: list[str]
+) -> None:
+    division = versification.Break(
+        tuple(parse_passage(f"GEN {source}").verses),
+        tuple((v, "x") for v in parse_passage(f"GEN {printed}").verses),
+    )
+    assert [str(t) for _, t in division.pairs()] == [f"GEN {v}" for v in starts]
+
+
+def test_the_review_names_a_verse_by_its_printed_number_or_refuses(
+    policy: bible.policy.Policy,
+) -> None:
+    assert review.placed(policy, "GEN", "32:1") == ("GEN", "31:55")
+    # Where eBible's verse is divided again into more verses, which printed
+    # verse holds its words the labels cannot tell.
+    with pytest.raises(CheckFailed, match="depends on its words: TOB 7:9"):
+        review.placed(policy, "TOB", "7:9")
