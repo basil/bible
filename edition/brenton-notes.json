@@ -23,6 +23,51 @@
       "why": "Avith is a misreading of with",
       "uncategorized": true
     },
+    "XXB attributed to Aristsæas": {
+      "from": "attributed to Aristsæas",
+      "to": "attributed to Aristæas",
+      "why": "Brenton's 1844 preface, vol. 1 physical p. 15 (printed p. vii), prints Aristæas; eBible adds an s after the t."
+    },
+    "XXB settled All that he has to do": {
+      "from": "settled. All that he has to do",
+      "to": "settled.\n\\ip All that he has to do",
+      "why": "Brenton's 1844 preface, vol. 1 physical p. 15 (printed p. vii), begins a new indented paragraph at All that he has to do; eBible joins it to the paragraph beginning Happily.",
+      "uncategorized": true
+    },
+    "XXB staff The following is": {
+      "from": "staff). The following is",
+      "to": "staff).\n\\ip The following is",
+      "why": "Brenton's 1844 preface, vol. 1 physical p. 16 (printed p. viii), begins a new indented paragraph at The following is a literal quotation; eBible joins it to the preceding paragraph.",
+      "uncategorized": true
+    },
+    "XXB Ἐι ὁ μὲν δίκαιος": {
+      "from": "Ἐι ὁ μὲν δίκαιος",
+      "to": "Εἰ ὁ μὲν δίκαιος",
+      "why": "Brenton's 1844 preface, vol. 1 physical p. 16 (printed p. viii), prints ’Ει with the breathing set before the capital, the period's way of printing the diphthong Εἰ; eBible puts the breathing on the epsilon.",
+      "uncategorized": true
+    },
+    "XXB Hebrew The question": {
+      "from": "not exactly the Old Testament",
+      "to": "not \\+it exactly\\+it* the Old Testament",
+      "why": "Brenton's 1844 preface, vol. 1 physical p. 16 (printed p. viii), italicizes exactly in the footnote after Hebrew; eBible leaves it unmarked.",
+      "uncategorized": true
+    },
+    "XXB a Hellenistic thing": {
+      "from": "a \\it Hellenistic thing\\it*",
+      "to": "\\it a Hellenistic thing\\it*",
+      "why": "Brenton's 1844 preface, vol. 1 physical p. 17 (printed p. ix), italicizes a Hellenistic thing in full; eBible leaves the article in roman type.",
+      "uncategorized": true
+    },
+    "XXB Hebrew In Genesis": {
+      "from": "\\f*In Genesis",
+      "to": "\\f* In Genesis",
+      "why": "Brenton's 1844 preface, vol. 1 physical p. 17 (printed p. ix), separates In Genesis from the preceding footnote caller; eBible omits the word space after the note."
+    },
+    "XXB writers Our readers": {
+      "from": "\\f*Our readers",
+      "to": "\\f* Our readers",
+      "why": "Brenton's 1844 preface, vol. 1 physical p. 18 (printed p. x), separates Our readers from the preceding footnote caller; eBible omits the word space after the note."
+    },
     "GEN 18:21": {
       "from": "עשי כלה",
       "to": "עשו כלה",
