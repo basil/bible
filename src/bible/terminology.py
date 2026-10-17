@@ -16,7 +16,7 @@ from __future__ import annotations
 
 import functools
 import re
-from collections.abc import Iterable, Mapping
+from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass, replace
 from typing import Literal
 
@@ -41,6 +41,22 @@ LATIN = re.compile(r"_([^_]+)_")
 GLOSSARY = "FRT"
 # The witnesses whose additions and omissions the sources mark with a sign.
 WITNESSES = ("hebrew", "alexandrine", "vatican")
+# The labels that introduce what follows them, so that their stop never ends
+# a sentence: "Gr. lit. them" continues the label, and so does "Sept. lit.".
+LABELS = (
+    *WITNESSES,
+    "greek",
+    "septuagint",
+    "vulgate",
+    "authorized-version",
+    "complutensian",
+    "aldine",
+    "scilicet",
+    "id-est",
+    "quasi-dicat",
+)
+# A sentence's end before a word: a stop, with any closing quotes, and space.
+BEFORE_SENTENCE = re.compile(r"[.?!]['’”)]*\s+$")
 
 
 @dataclass(frozen=True)
@@ -166,9 +182,11 @@ def recognize(text: str, terms: Registry, *, note: bool = True) -> tuple[Term, .
     for term in candidates:
         if not any(term.start < t.end and t.start < term.end for t in result):
             result.append(term)
-    # A sign following a witness label introduces its added or omitted
-    # words, and agrees with the labels before it: "Alex. adds", "Heb. and
-    # Alex. add". Other dashes are punctuation, including "Heb.—מ". A sign
+    result = list(literally_decided(text, result))
+    # A sign following a witness label, spaced on both sides as Brenton sets
+    # it, introduces its added or omitted words, and agrees with the labels
+    # before it: "Alex. adds", "Heb. and Alex. add". Other dashes are
+    # punctuation, including "Heb.—מ", which he closes up. A sign
     # after any other term, or a sign of addition anywhere else, is not
     # understood.
     if note:
@@ -178,7 +196,7 @@ def recognize(text: str, terms: Registry, *, note: bool = True) -> tuple[Term, .
             for identity in ("addition", "omission"):
                 for alias in terms.terms[identity]["source_forms"]:
                     match = re.match(
-                        r"\s*" + re.escape(alias) + r"(?=\s)", text[term.end :]
+                        r"\s+" + re.escape(alias) + r"(?=\s)", text[term.end :]
                     )
                     if not match:
                         continue
@@ -199,12 +217,83 @@ def recognize(text: str, terms: Registry, *, note: bool = True) -> tuple[Term, .
                     )
         for alias in terms.terms["addition"]["source_forms"]:
             for found in re.finditer(re.escape(alias), text):
-                require(
-                    any(s.start == found.start() for s in signs),
-                    f"Sign after no witness: {text}",
-                )
+                if any(s.start == found.start() for s in signs):
+                    continue
+                if any(w.end == found.start() for w in witnesses):
+                    reason = "Sign closed up to its witness"
+                elif any(text[w.end : found.start()].isspace() for w in witnesses):
+                    reason = "Sign closed up to its words"
+                else:
+                    reason = "Sign after no witness"
+                require(False, f"{reason}: {text}")
         result += signs
     return tuple(sorted(result, key=lambda t: t.start))
+
+
+def literally_decided(text: str, terms: Sequence[Term]) -> tuple[Term, ...]:
+    """The terms with "lit." as it prints where it now stands. "lit." is
+    lowercase, as Chicago sets it, and capitalized only where it begins a
+    sentence, after a stop that is no label's. Brenton capitalizes it after
+    "Gr.", which it continues, and lowercases it after a full stop, so the
+    source's capital decides nothing, except at the start of a note, whose
+    first word the note's opening sets. A label's stop that "lit." continues
+    ends no sentence either, whatever capital the source gives "lit."."""
+    result = list(terms)
+    ordered = sorted(terms, key=lambda t: t.start)
+    for n, term in enumerate(result):
+        if term.identity == "literally":
+            result[n] = replace(term, form=_literally_form(text, term, terms))
+        elif term.identity in LABELS and term.closure:
+            following = next((t for t in ordered if t.start >= term.end), None)
+            if (
+                following is not None
+                and following.identity == "literally"
+                and text[term.end : following.start].isspace()
+            ):
+                result[n] = replace(term, closure=False)
+    return tuple(result)
+
+
+def _literally_form(text: str, term: Term, others: Sequence[Term]) -> str:
+    """How "lit." prints where it stands: as the source has it at the start
+    of the text, capitalized after a sentence's end that is not a label's
+    stop, and lowercase elsewhere."""
+    before = text[: term.start]
+    if not before.strip():
+        return "literal"
+    end = BEFORE_SENTENCE.search(before)
+    if not end:
+        return "display"
+    # The stop itself, before any closing quote or bracket: "(Heb.) lit."
+    # continues the label.
+    stop = end.start() + 1
+    labelled = any(
+        t.identity in LABELS and t.end == stop for t in others if t is not term
+    )
+    return "display" if labelled else "capital"
+
+
+def _literally_placed(
+    text: str, notes: Sequence[tuple[int, int]], terms: Iterable[Term]
+) -> list[Term]:
+    """A paragraph's terms with "lit." decided where it now stands: in its
+    prose, and in the words of each footnote, read on their own."""
+    result = list(terms)
+    parts: dict[tuple[int, int], list[int]] = {}
+    for n, term in enumerate(result):
+        part = next(((a, b) for a, b in notes if a <= term.start < b), (0, len(text)))
+        parts.setdefault(part, []).append(n)
+    for (a, b), members in parts.items():
+        decided = literally_decided(
+            text[a:b],
+            [
+                replace(result[n], start=result[n].start - a, end=result[n].end - a)
+                for n in members
+            ],
+        )
+        for n, term in zip(members, decided, strict=True):
+            result[n] = replace(term, start=term.start + a, end=term.end + a)
+    return result
 
 
 def render(term: Term, terms: Registry, text: str) -> str:
@@ -242,32 +331,33 @@ def _outline(
 ) -> tuple[list[tuple[int, str, bool]], list[int], list[tuple[int, int]]]:
     """A paragraph's prose with what bounds its words: where each character
     style opens and closes, where a part of a note begins, and where the
-    words of its notes lie."""
+    words of each of its notes lie."""
     styles: list[tuple[int, str, bool]] = []
     fields: list[int] = []
     noted: list[tuple[int, int]] = []
     at = 0
 
-    def visit(items: Content, in_note: bool) -> None:
+    def visit(items: Content) -> None:
         nonlocal at
         for item in items:
             if isinstance(item, str):
-                if in_note:
-                    noted.append((at, at + len(item)))
                 at += len(item)
             elif usj.is_label(item) or "content" not in item:
                 continue
             elif item["type"] == "note":
-                visit(item["content"], True)
+                start = at
+                visit(item["content"])
+                if at > start:
+                    noted.append((start, at))
             elif item["marker"] in usj.FIELDS:
                 fields.append(at)
-                visit(item["content"], in_note)
+                visit(item["content"])
             else:
                 styles.append((at, item["marker"], False))
-                visit(item["content"], in_note)
+                visit(item["content"])
                 styles.append((at, item["marker"], True))
 
-    visit(content, False)
+    visit(content)
     return styles, fields, noted
 
 
@@ -276,15 +366,17 @@ def found(content: Content, terms: Registry, *, note: bool) -> tuple[Term, ...]:
     note, each where it stands in the paragraph's words. The words of a
     footnote within prose are read as a note's."""
     text = usj.unlabelled(content)
-    styles, _, noted = _outline(content)
-    result = list(recognize(text, terms, note=note))
-    if noted and not note:
-        known = {(t.start, t.end, t.identity) for t in result}
+    # Each footnote's words are read on their own.
+    styles, _, spans = _outline(content)
+    result = [
+        t
+        for t in recognize(text, terms, note=note)
+        if not any(a <= t.start < b for a, b in spans)
+    ]
+    for a, b in spans:
         result += [
-            t
-            for t in recognize(text, terms, note=True)
-            if (t.start, t.end, t.identity) not in known
-            and any(a <= t.start < b for a, b in noted)
+            replace(t, start=t.start + a, end=t.end + a)
+            for t in recognize(text[a:b], terms, note=True)
         ]
     # The Translators to the Reader's saints: "S. \it Augustine\it*", and one
     # inside an italic quotation: "\it The doctrine of S\it*. John".
@@ -300,11 +392,7 @@ def found(content: Content, terms: Registry, *, note: bool) -> tuple[Term, ...]:
             if m and re.match(r"\. [A-Z]", text[position:]):
                 result.append(Term("saint", m[0], m.start(), m.end(), "stem"))
     # A period that ends a footnote ends its sentence.
-    note_ends = {
-        b
-        for n, (a, b) in enumerate(noted)
-        if n + 1 == len(noted) or noted[n + 1][0] != b
-    }
+    note_ends = {b for _, b in spans}
     return tuple(
         replace(t, closure=True) if t.end in note_ends and t.lexeme.endswith(".") else t
         for t in result
@@ -312,11 +400,12 @@ def found(content: Content, terms: Registry, *, note: bool) -> tuple[Term, ...]:
 
 
 def printed(content: Content, found_terms: Iterable[Term], terms: Registry) -> Content:
-    """A paragraph with the terms found in it as the edition prints them."""
+    """A paragraph with the terms found in it as the edition prints them,
+    "lit." as it prints where the words now stand."""
     text = usj.unlabelled(content)
-    styles, fields, _ = _outline(content)
+    styles, fields, noted = _outline(content)
     edits, commas, eras = [], [], []
-    for term in found_terms:
+    for term in _literally_placed(text, noted, found_terms):
         # A source period outside italic is roman punctuation of its own, as
         # after the Reader's italic "&c".
         if (
@@ -421,9 +510,10 @@ def glossary_table(doc: Document) -> Node:
     return tables[0]
 
 
-def dropped_rows(doc: Document, policy: bible.policy.Policy) -> set[int]:
-    """The rows of Brenton's list for what the edition prints in full, by
-    their place in his table as its source has it."""
+def glossary_terms(doc: Document, policy: bible.policy.Policy) -> list[str | None]:
+    """The term each row of Brenton's list stands for, by its place in his
+    table as its source has it, or None where the edition prints the term in
+    full and drops the row."""
     data = policy.abbreviations
     labels = []
     for row in usj.objects(glossary_table(doc)["content"]):
@@ -435,27 +525,51 @@ def dropped_rows(doc: Document, policy: bible.policy.Policy) -> set[int]:
         sorted(labels) == sorted(data["source_rows"]),
         "Source glossary disagrees with bound rows",
     )
-    return {n for n, label in enumerate(labels) if label in data["expanded"]["removed"]}
+    return [
+        None if label in data["expanded"]["removed"] else data["source_rows"][label]
+        for label in labels
+    ]
+
+
+def alphabetical(abbreviation: str) -> tuple[bool, str]:
+    """The order of the list of abbreviations: by their letters alone, and
+    the signs, which have none, after them, in the order of their characters."""
+    letters = "".join(c for c in abbreviation.casefold() if c.isalpha())
+    return not letters, letters or abbreviation
 
 
 def completed_glossary(
-    doc: Document, dropped: set[int], policy: bible.policy.Policy
+    doc: Document, identities: list[str | None], policy: bible.policy.Policy
 ) -> Document:
-    """Brenton's list of abbreviations without the rows dropped, and with the
-    edition's rows after his, set as his are: the abbreviation in italic, and
-    "for" its meaning, without a final full stop."""
+    """Brenton's list of abbreviations without the rows dropped, each of his
+    labelled as the registry prints it, and with the edition's rows set as
+    his are: the abbreviation in italic, a sign in roman, and "for" its
+    meaning, without a final full stop. The rows are in alphabetical order."""
+    terms = registry(policy)
     table = glossary_table(doc)
-    rows: Content = []
-    for n, row in enumerate(usj.objects(table["content"])):
-        if n in dropped:
+
+    def label(abbreviation: str) -> str | Node:
+        sign, _ = alphabetical(abbreviation)
+        return abbreviation if sign else usj.char("it", abbreviation)
+
+    rows: list[tuple[str, Node]] = []
+    for identity, row in zip(identities, usj.objects(table["content"]), strict=True):
+        if identity is None:
             continue
-        label, meaning_cell = list(usj.objects(row["content"]))
+        label_cell, meaning_cell = list(usj.objects(row["content"]))
+        abbreviation = terms.display(identity)
+        label_cell = {**label_cell, "content": [label(abbreviation)]}
         meaning_text = usj.text_of(meaning_cell["content"]).rstrip()
         require(meaning_text.endswith("."), "Source glossary meaning has no full stop")
         content = usj.substituted(
             meaning_cell["content"], [(len(meaning_text) - 1, len(meaning_text), "")]
         )
-        rows.append({**row, "content": [label, {**meaning_cell, "content": content}]})
+        rows.append(
+            (
+                abbreviation,
+                {**row, "content": [label_cell, {**meaning_cell, "content": content}]},
+            )
+        )
     for abbreviation, meaning in glossary_rows(policy):
         cells: Content = ["for "]
         at = 0
@@ -464,12 +578,18 @@ def completed_glossary(
             at = match.end()
         cells.append(meaning[at:])
         rows.append(
-            usj.row(
-                usj.cell("tc1", usj.char("it", abbreviation)),
-                usj.cell("tc2", *usj.joined(cells)),
+            (
+                abbreviation,
+                usj.row(
+                    usj.cell("tc1", label(abbreviation)),
+                    usj.cell("tc2", *usj.joined(cells)),
+                ),
             )
         )
-    return usj.with_blocks(doc, [*doc["content"][:-1], {**table, "content": rows}])
+    rows.sort(key=lambda labelled: alphabetical(labelled[0]))
+    return usj.with_blocks(
+        doc, [*doc["content"][:-1], {**table, "content": [row for _, row in rows]}]
+    )
 
 
 def check_glossary(doc: Document, policy: bible.policy.Policy) -> None:
@@ -494,9 +614,7 @@ def check_glossary(doc: Document, policy: bible.policy.Policy) -> None:
     ]
     added = glossary_rows(policy)
     require(
-        len(printed_rows) == len(kept) + len(added)
-        and sorted(printed_rows[: len(kept)]) == sorted(expected(kept))
-        and printed_rows[len(kept) :] == expected(added),
+        sorted(printed_rows) == sorted(expected([*kept, *added])),
         "Printed glossary disagrees with terminology registry",
     )
 
@@ -509,7 +627,7 @@ UNPRINTED = re.compile(
     r"\bi\. e\.|\bq\. d\.|\b[Ss]cil\.|\bSept\b|\b[Cc]omp\.|\d AD\b|&c\b|\b[ab]\.[dc]\."
     r"|(?<![\w.])(?:[ON]\. ?T|A\. V|Ald|Complut|Vulg)(?!\w)|\bAV\b"
     r"|\b(?:App|Chrysost|Gram|Qu|om|nom|voc|absol|infin|imper|pl|qy|viz|niph"
-    r"|fem|ob)\.|\bRom\.(?! \d)|\bCateches\b|\bult\b|\b4to\b|\bEng\. Ver\b|\d\.(?:li|[sd])\b"
+    r"|fem|ob|sing|fut|Conf)\.|\bRom\.(?! \d)|\bCateches\b|\bult\b|\b4to\b|\bEng\. Ver\b|\d\.(?:li|[sd])\b"
 )
 # A number with a period within a note's sentence, which edition/prose.json
 # must decide: "after 5. shillings".

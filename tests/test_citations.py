@@ -274,7 +274,9 @@ def test_a_decision_reads_what_the_grammar_cannot(
         ("brenton", "See Nowhere 1. 1", None, r"can't be read: x \(1. 1\)"),
         ("brenton", "See Heb. 2. 6-9-11", None, r"can't be read: x \(2. 6\)"),
         ("brenton", "Vide supra, 13. 22.", None, r"can't be read: x \(13. 22\)"),
-        ("brenton", "See chap. x. 9", None, r"can't be read: x \(x. 9\)"),
+        ("brenton", "See chap. x. 9", None, r"can't be read: x \(chap. x. 9\)"),
+        ("brenton", "as in ch. xii.", None, r"can't be read: x \(ch. xii\)"),
+        ("brenton", "to the end of chap. iv.", None, r"can't be read: x \(chap. iv\)"),
         # A unit that cites nothing has no dialect, which reads no book.
         (None, "See Rom. 4. 7.", None, r"can't be read: x \(4. 7\)"),
         # What is cited must be printed, whatever book a decision says it is of.

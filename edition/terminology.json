@@ -153,11 +153,11 @@
     "source_forms": ["Gr.", "Greek"]
   },
   "literally": {
-    "display": "Lit.",
+    "display": "lit.",
     "meaning": "literally",
     "period_forms": [],
     "note_forms": [],
-    "source_forms": ["Lit.", "lit."]
+    "source_forms": ["lit.", "Lit."]
   },
   "alexandrine": {
     "display": "Alex.",
@@ -204,11 +204,11 @@
     "source_forms": []
   },
   "robinson-pierpont": {
-    "display": "RP",
+    "display": "RP26",
     "meaning": "the Byzantine text of the Greek New Testament edited by Robinson and Pierpont, 2026",
-    "period_forms": ["RP"],
+    "period_forms": ["RP26"],
     "note_forms": [],
-    "source_forms": ["RP"]
+    "source_forms": ["RP26"]
   },
   "apparatus": {
     "display": "apparatus",
@@ -265,5 +265,19 @@
     "period_forms": [],
     "note_forms": [],
     "source_forms": ["Sinaiticus"]
+  },
+  "turpie-agreement": {
+    "display": "+",
+    "meaning": "Turpie's sign that a quotation follows both texts named",
+    "period_forms": [],
+    "note_forms": [],
+    "source_forms": []
+  },
+  "turpie-difference": {
+    "display": "≠",
+    "meaning": "Turpie's sign that a quotation follows the text named first and differs from the second",
+    "period_forms": [],
+    "note_forms": [],
+    "source_forms": []
   }
 }

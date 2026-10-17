@@ -346,26 +346,37 @@ def test_the_list_of_abbreviations_is_completed_from_the_registry(
         for row in usj.objects(table["content"])
     ]
     labels = [label for label, _ in rows]
-    # Brenton's rows for what the edition prints in full are dropped...
-    assert not set(policy.abbreviations["expanded"]["removed"]) & set(labels)
+    # Brenton's rows for what the edition prints in full are dropped (the +
+    # listed is Turpie's, below)...
+    assert not (set(policy.abbreviations["expanded"]["removed"]) - {"+"}) & set(labels)
     # ...his meanings are lowercased where they aren't proper nouns...
-    assert ("Lit.", "for literally") in rows
-    assert not {"+", "—", "adds", "omits"} & set(labels)
-    # ...and the edition's rows follow his, in the registry's forms.
-    assert rows[-6:] == [
+    assert ("lit.", "for literally") in rows
+    assert not {"—", "adds", "omits"} & set(labels)
+    # Brenton's sign of addition is gone; the + listed is Turpie's.
+    assert [meaning for label, meaning in rows if label == "+"] == [
+        "for Turpie's sign that a quotation follows both texts named"
+    ]
+    # ...the edition's rows join his, in the registry's forms...
+    assert {
         ("p., pp.", "for page, pages"),
         ("St.", "for saint"),
         ("Vat.", "for Codex Vaticanus"),
         ("KJV", "for King James Version, in the text of the Cambridge Paragraph Bible"),
+        ("OLEB", "for Orthodox Liturgical English Bible, this edition"),
         (
-            "RP",
+            "RP26",
             "for the Byzantine text of the Greek New Testament edited by Robinson and Pierpont, 2026",
         ),
         (
             "TR",
             "for Textus Receptus, the Received Text of the Greek New Testament, which the King James translators followed, where Scrivener's reconstruction of it and Stephanus's edition agree",
         ),
-    ]
+    } <= set(rows)
+    # ...and all are in alphabetical order, by their letters alone, with
+    # Turpie's signs after them.
+    assert labels == sorted(labels, key=terminology.alphabetical)
+    assert labels[:3] == ["AD", "Alex.", "BC"]
+    assert labels[-2:] == ["+", "≠"]
     assert ("AD", "for anno Domini, in the year of our Lord") in rows
     assert all(not meaning.endswith(".") for _, meaning in rows)
     latin = usj.serialize(edition.documents["XXD"])
@@ -468,6 +479,36 @@ def test_a_declared_change_must_be_the_units_words_once(
 
     with pytest.raises(CheckFailed, match="Prose change not met once: XXB the Hebrew"):
         prepared("XXB", changed(policy, "prose", twice), read, ctx)
+
+
+@pytest.mark.parametrize(
+    "prose",
+    [
+        "Words end here.\\f + \\ft Lit. a note.\\f*",
+        "Words run on\\f + \\ft Lit. a note.\\f*",
+        "Words run on\\f + \\ft A note.\\f*\\f + \\ft Lit. a note.\\f*",
+    ],
+)
+def test_a_footnote_within_prose_is_read_as_a_note_of_its_own(
+    policy: bible.policy.Policy, prose: str
+) -> None:
+    registry = terminology.registry(policy)
+
+    def paragraph(words: str) -> usj.Node:
+        doc = usj.parse(f"\\id XXB\n\\ip {words} and more.")
+        return next(b for b in doc["content"] if b.get("type") == "para")
+
+    source = paragraph(prose)
+    reading = matter.Reading(
+        usj.unlabelled(source["content"]),
+        (),
+        terminology.found(source["content"], registry, note=False),
+    )
+    # "Lit." opens the note, whatever the prose before it, so it stays as
+    # the source has it, and still does once the prose has changed.
+    for block in (source, paragraph("Some " + prose)):
+        [(printed, _)] = matter.with_terms([(block, {None: reading})], registry)
+        assert "\\ft Lit. a note." in usj.serialize(printed["content"])
 
 
 def test_what_was_read_is_carried_through_a_change_of_words() -> None:

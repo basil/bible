@@ -811,7 +811,7 @@ def test_a_changed_verse_has_one_aligned_comparison_per_language(
             assert len([part for part in body.split("…") if part.strip()]) == len(
                 row.passages
             ), row.reference
-        assert greek.startswith(f"{greek_label(row)} → RP …") == english.startswith(
+        assert greek.startswith(f"{greek_label(row)} → RP26 …") == english.startswith(
             "KJV → OLEB …"
         )
         assert greek.endswith("…") == english.endswith("…")
@@ -841,7 +841,7 @@ def test_revelation_grouped_comparisons_include_unchanged_english_context(
     assert text_of(heading) == ref.split()[1]
     assert len(row.passages) == 2
     greek_text, english_text = text_of(greek), text_of(english)
-    assert greek_text.count("TR → RP") == english_text.count("KJV → OLEB") == 1
+    assert greek_text.count("TR → RP26") == english_text.count("KJV → OLEB") == 1
     assert greek_text.count("…") == english_text.count("…") == 1
     assert " … " in greek_text and " … " in english_text
     if ref == "REV 13:6":
@@ -876,8 +876,10 @@ def test_a_verse_whose_english_stands_has_a_greek_comparison(
         assert heading["marker"] == "im"
         assert text_of(heading) == row.reference.split()[1]
         assert greek["marker"] == "ili1"
-        assert text_of(greek).startswith(f"{greek_label(row)} → RP ")
-        assert all(text_of(line).startswith("apparatus: TR → RP ") for line in evidence)
+        assert text_of(greek).startswith(f"{greek_label(row)} → RP26 ")
+        assert all(
+            text_of(line).startswith("apparatus: TR → RP26 ") for line in evidence
+        )
     accents = [unit for row in same for unit in row.units if unit.accented]
     assert accents
 
@@ -918,7 +920,7 @@ def test_grouped_comparisons_keep_multiple_changes_and_outer_omissions(
     blocks, spans = appendix.blocks([row], ctx.books, ctx.terms)
     heading, greek, english = blocks[spans[0][1] : spans[0][2]]
     assert text_of(heading) == "1:1"
-    assert text_of(greek) == "TR → RP … [παλαιόν] νέον ἕν; … [παλαιόν] νέον δύο; …"
+    assert text_of(greek) == "TR → RP26 … [παλαιόν] νέον ἕν; … [παλαιόν] νέον δύο; …"
     assert text_of(english) == "KJV → OLEB … [old] new … one; … [old] new two; …"
     assert [
         usj.text_of(node["content"])
@@ -946,7 +948,7 @@ def test_the_four_omitted_verses_are_listed(
         assert row.kjv == scripture.plain(kjv)
         lines = [text_of(b) for b in entries[row.reference][1:]]
         assert lines == [
-            f"{greek_label(row)} → RP [{row.greek_tr}]",
+            f"{greek_label(row)} → RP26 [{row.greek_tr}]",
             f"KJV → OLEB [{row.kjv}]",
         ]
 
@@ -1019,8 +1021,8 @@ def test_heli_transcription_and_apparatus_stay_distinct(
     contrast = next(u for u in row.units if u.accented)
     assert contrast.accented is not None and contrast.accented[0] == "Ἡλί,"
     assert contrast.apparatus == ("ἠλι", "ἡλι")
-    assert text_of(entries["LUK 3:23"][1]).startswith("TR → RP ")
-    assert text_of(entries["LUK 3:23"][-1]) == "apparatus: TR → RP [ἠλι] ἡλι"
+    assert text_of(entries["LUK 3:23"][1]).startswith("TR → RP26 ")
+    assert text_of(entries["LUK 3:23"][-1]) == "apparatus: TR → RP26 [ἠλι] ἡλι"
 
 
 def test_appendix_passages_and_comparisons_keep_source_case_and_punctuation(
@@ -1105,7 +1107,7 @@ def test_unchanged_english_and_accent_only_entries_use_normal_comparisons(
     blocks, spans = appendix.blocks([row], ctx.books, ctx.terms)
     heading, greek = blocks[spans[0][1] : spans[0][2]]
     assert text_of(heading) == "1:1"
-    assert text_of(greek) == "TR → RP πρῶτον; [τὸ] τό τέλος."
+    assert text_of(greek) == "TR → RP26 πρῶτον; [τὸ] τό τέλος."
     assert any(node.get("marker") == "bd" for node in usj.walk(greek["content"]))
 
 
@@ -1278,7 +1280,7 @@ def test_acts_13_41_keeps_the_word_change_without_dot_changes(
     assert "[ἔργον ᾧ] ὃ οὐ μὴ πιστεύσητε," in usj.text_of(content)
     assert "ἐν ταῖς ἡμέραις ὑμῶν," not in usj.text_of(content)
     assert usj.char("bd", usj.char("wg", "ὃ")) in content
-    assert usj.text_of(content).startswith("TR → RP … [ἔργον ᾧ]")
+    assert usj.text_of(content).startswith("TR → RP26 … [ἔργον ᾧ]")
     english = entries["ACT 13:41"][2]["content"]
     assert usj.text_of(english).startswith("KJV → OLEB … [a work]")
     assert "for I work" not in usj.text_of(entries["ACT 13:41"])

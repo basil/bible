@@ -11314,6 +11314,16 @@
           "why": "Brenton1879physical1051/1900 physical p. 1047 printed p. 1035 reports a continuous washing-and-tables clause with inline (39). Remove only the comma before that verse marker, preserving the number and every English word; the general before-parenthesis rule deliberately refuses numbered items."
         }
       ]
+    },
+    "written-out-name-punctuation": {
+      "why": "Brenton's M. is written out as Mardochæus (edition/prose.json), so the abbreviation's full stop goes, and etc. follows the name after a comma, as the other notes set it.",
+      "changes": [
+        {
+          "note": "ESG 6:13 CCEL",
+          "from": "Mardochæus. etc.",
+          "to": "Mardochæus, etc."
+        }
+      ]
     }
   }
 }

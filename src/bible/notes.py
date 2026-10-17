@@ -21,16 +21,19 @@ citations and abbreviations, which print in the edition's forms.
 
 from __future__ import annotations
 
+import functools
 import re
-from collections.abc import Collection, Iterable, Sequence
+from collections.abc import Collection, Iterable, Mapping, Sequence
 from dataclasses import dataclass, replace
 from difflib import SequenceMatcher
 from typing import Unpack
 
+import bible.policy
 import bible.references
 from bible import citations, lemmas, scripture, terminology, usfm, usj
 from bible.checks import require, require_used
 from bible.citations import Citation
+from bible.policy_schema import WordingChange
 from bible.repairs import change
 from bible.scripture import plain, word_spans
 from bible.usfm import GREEK, HEBREW
@@ -736,6 +739,19 @@ def with_terms(body: Body, terms: terminology.Registry) -> Body:
     return replace(body, terms=terminology.recognize(body.plain, terms))
 
 
+@functools.cache
+def note_prose(
+    policy: bible.policy.Policy,
+) -> Mapping[str, Sequence[WordingChange]]:
+    """The declared changes to the words of notes, by the note's key."""
+    found: dict[str, list[WordingChange]] = {}
+    for group in policy.prose.values():
+        for change in group["changes"]:
+            if "note" in change:
+                found.setdefault(change["note"], []).append(change)
+    return found
+
+
 def edited(body: Body, before: str, after: str, key: str) -> Body:
     """A body with a declared change to its words, its roles, reading,
     citations and terms carried through the change."""
@@ -781,9 +797,10 @@ def edited(body: Body, before: str, after: str, key: str) -> Body:
             return at + len(added) - (end - start)
         return start + (len(added) if closing else 0)
 
+    plain = text[:start] + added + text[end:]
     return replace(
         body,
-        plain=text[:start] + added + text[end:],
+        plain=plain,
         roles=tuple(roles),
         reading=(
             None
@@ -792,11 +809,15 @@ def edited(body: Body, before: str, after: str, key: str) -> Body:
         ),
         citations=tuple(bound_citations),
         # A term whose words the change rewrites is no longer there to render;
-        # words added beside one are not its own.
-        terms=tuple(
-            replace(t, start=moved(t.start, True), end=moved(t.end))
-            for t in body.terms
-            if not (t.start < end and start < t.end)
+        # words added beside one are not its own. Where "lit." stands is
+        # decided again on the changed words.
+        terms=terminology.literally_decided(
+            plain,
+            [
+                replace(t, start=moved(t.start, True), end=moved(t.end))
+                for t in body.terms
+                if not (t.start < end and start < t.end)
+            ],
         ),
     )
 

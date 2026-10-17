@@ -14,10 +14,19 @@ import bible.pipeline
 import bible.policy
 import bible.references
 import bible.sources
-from bible import assembly, numbering, quotations, usfm, usj, versification
+from bible import (
+    assembly,
+    crossrefs,
+    numbering,
+    quotations,
+    terminology,
+    usfm,
+    usj,
+    versification,
+)
 from bible.checks import CheckFailed
 from bible.numbering import MISSING, Table, within
-from bible.policy import EDITOR, NUMBERING
+from bible.policy import EDITOR, NUMBERING, READINGS
 from bible.references import Verse, parse_verse
 from bible.scripture import Inventory
 
@@ -457,6 +466,28 @@ def test_the_introduction_names_its_passages(
     }
     assert linked == {"PRO 22:8a"}
     assert "of 2 Corinthians 9:7 is found at Proverbs 22:8a." in page
+
+
+def test_the_editors_pages_write_the_registrys_terms(
+    policy: bible.policy.Policy, edition: bible.pipeline.Edition
+) -> None:
+    # The editor's pages write their abbreviations by hand, so they are held
+    # to the registry: the glosses of the quotation links as the links print
+    # them, and the labels of the appendix of readings.
+    terms = terminology.registry(policy)
+    introduction = usj.serialize(edition.documents[EDITOR["id"]])
+    for agreement in ("A", "B", "D"):
+        gloss = crossrefs.gloss(agreement, terms)
+        assert gloss is not None
+        assert gloss.replace("\u00a0", " ") in introduction
+    readings = usj.serialize(edition.documents[READINGS["id"]])
+    for identity in (
+        "textus-receptus",
+        "robinson-pierpont",
+        "king-james-version",
+        "orthodox-liturgical-english-bible",
+    ):
+        assert f"({terms.display(identity)})" in readings
 
 
 def test_every_exception_is_in_the_table(

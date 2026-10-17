@@ -254,7 +254,14 @@
       "passages": "2KI 12:1-22",
       "print": "chapter 12",
       "relative": "chapter",
-      "why": "Brenton's notes number chapters in Arabic, and this one alone in Roman: the chapter of this book where Gr. breach is noted twice, at 12:8 and 12:13."
+      "why": "Brenton's notes number chapters in Arabic, and this note and 2KI 22:6 CCEL alone in this book in Roman: the chapter of this book where Gr. breach is noted twice, at 12:8 and 12:13."
+    },
+    "2KI 22:6 CCEL": {
+      "source": "ch. xii",
+      "passages": "2KI 12:1-22",
+      "print": "chapter 12",
+      "relative": "chapter",
+      "why": "Brenton prints the note of 22:5 again at 22:6 (CCEL 2.xxii, notes 4 and 5), with the same Roman chapter: the chapter of this book where Gr. breach is noted twice, at 12:8 and 12:13."
     },
     "BAK 12. 16; 13. 1, 16; 14. 8, 15, 18; 15. 5; 21. 11; 22. 3; 27. 12; 28. 2": {
       "passages": "PRO 12:16; PRO 13:1; PRO 13:16; PRO 14:8; PRO 14:15; PRO 14:18; PRO 15:5; PRO 21:11; PRO 22:3; PRO 27:12; PRO 28:2",
@@ -427,7 +434,7 @@
     "JHN 18:13 year": {
       "source": "ver. 24",
       "passages": "JHN 18:24",
-      "print": "v. 24",
+      "print": "verse 24",
       "why": "The margin’s ‘ver. 24’ is John 18:24, printed as the edition prints a verse of the same chapter."
     },
     "2CH 22:1 CCEL#2": {
@@ -466,6 +473,11 @@
       "print": "chapter 7",
       "relative": "chapter",
       "why": "The restored general note refers to Nehemiah chapter 7, source Esdras chapter 17; print its Roman chapter number in the edition’s citation style, as the existing 2KI 22:5#2 decision does. The ranges cover the chapter’s printed verses; verse 68 is absent from the Greek edition."
+    },
+    "ESG 4:17a CCEL": {
+      "source": "chap. iv.",
+      "not_a_citation": true,
+      "why": "Brenton's chapter iv, to whose end his brackets run (1900 physical p. 668, note β): not this edition's chapter 4, which ends sooner, since the bracketed passage is the edition's 4:17a–5:2b. The prose decision on this note names those verses in place of his chapter, so his number is not read as a citation."
     },
     "HAB 3:3 CCEL": {
       "source": "Psalm 3. 2",

@@ -970,7 +970,9 @@ def finished_note(
     a form the edition does not print and no term renders: such a note is
     left out, for a correction to bring in, rather than stopping the build
     as a note of eBible's would. What a citation names is resolved when the
-    notes are set, as for any note, where a citation decision answers for it.
+    notes are set, as for any note, where a citation decision answers for it,
+    and a prose decision on the note's words answers for its abbreviations
+    the same way: the forms printed are checked once the notes are finished.
     """
     text = notes.text_of(notes.source_pieces(usj.note("f", *body.content)))
     rest = text
@@ -978,8 +980,9 @@ def finished_note(
         rest = rest[: term.start] + rest[term.end :]
     # The finished note lowers its first letter where it runs on after its
     # lemma, so an abbreviation that opens the note counts as well.
-    if terminology.UNPRINTED.search(rest) or terminology.UNPRINTED.search(
-        rest[:1].lower() + rest[1:]
+    if key not in notes.note_prose(policy) and (
+        terminology.UNPRINTED.search(rest)
+        or terminology.UNPRINTED.search(rest[:1].lower() + rest[1:])
     ):
         return None, "abbreviation in a form the edition does not print"
     extra = usj.Extra({"x-key": key})

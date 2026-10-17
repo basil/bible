@@ -28,10 +28,12 @@ def gloss(agreement: str | None, terms: bible.terminology.Registry) -> str | Non
     the symbol but not before it, as TeX breaks a formula after a binary
     operation or a relation."""
     hebrew, septuagint = terms.display("hebrew"), terms.display("septuagint")
+    both = terms.display("turpie-agreement")
+    differs = terms.display("turpie-difference")
     return {
-        "A": f"{hebrew}\u00a0+ {septuagint}",
-        "B": f"{hebrew}\u00a0≠ {septuagint}",
-        "D": f"{septuagint}\u00a0≠ {hebrew}",
+        "A": f"{hebrew}\u00a0{both} {septuagint}",
+        "B": f"{hebrew}\u00a0{differs} {septuagint}",
+        "D": f"{septuagint}\u00a0{differs} {hebrew}",
     }.get(agreement or "")
 
 

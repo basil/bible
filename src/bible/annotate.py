@@ -8,7 +8,6 @@ it. Everything it needs is in the assembled book and the policy.
 
 from __future__ import annotations
 
-import functools
 from collections import Counter
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass, field, replace
@@ -57,19 +56,6 @@ class NoteRow(NoteDerivation):
     note: str
 
 
-@functools.cache
-def note_prose(
-    policy: bible.policy.Policy,
-) -> Mapping[str, Sequence[WordingChange]]:
-    """The declared changes to the words of notes, by the note's key."""
-    found: dict[str, list[WordingChange]] = {}
-    for group in policy.prose.values():
-        for change in group["changes"]:
-            if "note" in change:
-                found.setdefault(change["note"], []).append(change)
-    return found
-
-
 @dataclass(frozen=True)
 class Context:
     """What reading a note needs beside its book."""
@@ -86,7 +72,7 @@ class Context:
     @property
     def prose(self) -> Mapping[str, Sequence[WordingChange]]:
         """Each note's declared changes of wording, by its key."""
-        return note_prose(self.policy)
+        return notes.note_prose(self.policy)
 
 
 @dataclass
@@ -811,7 +797,7 @@ def check_notes(policy: bible.policy.Policy, reports: Iterable[Report]) -> None:
     require_used(policy.brenton_notes["notes"], keys, "Brenton note exceptions")
     edited = Counter(key for r in reports for key in r.edited)
     declared = Counter(
-        {key: len(changes) for key, changes in note_prose(policy).items()}
+        {key: len(changes) for key, changes in notes.note_prose(policy).items()}
     )
     require(
         edited == declared,

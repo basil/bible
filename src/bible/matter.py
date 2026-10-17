@@ -604,7 +604,7 @@ def unit(
     result = numbered_notes(usj.with_blocks(doc, [block for block, _ in shown]))
     if is_glossary(entry):
         result = terminology.completed_glossary(
-            result, terminology.dropped_rows(source, policy), policy
+            result, terminology.glossary_terms(source, policy), policy
         )
         terminology.check_glossary(result, policy)
     return result, sent

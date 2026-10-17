@@ -68,10 +68,12 @@ VERSES = rf"{RANGE}(?:,\s?{RANGE})*"
 VERSE_WORD = r"(?:[Vv]erses?|[Vv]er|[Vv]v|[Vv])(?:\.\s?|\s)"
 CHAPTER_WORD = r"(?:[Cc]hapter|[Cc]hap|[Cc]h)(?:\.\s?|\s)"
 # What a citation looks like, whatever its dialect: figures on either side of
-# a stop or colon, or a word for a verse or chapter before a figure.
+# a stop or colon, a word for a verse before a figure, or a word for a chapter
+# before a figure or a Roman numeral, as "ch. xii", with any verse after it.
 SHAPE = re.compile(
     rf"(?<![\w.])(?:\d+|[ivxlc]+|[IVXLC]+)(?:\.\s?|:)\d+"
-    rf"|(?<![\w.])(?:{VERSE_WORD}|{CHAPTER_WORD})\d+"
+    rf"|(?<![\w.])(?:{VERSE_WORD}\d+"
+    rf"|{CHAPTER_WORD}(?:\d+|[ivxlc]+(?![a-z]))(?:\.\s?\d+)?)"
 )
 
 

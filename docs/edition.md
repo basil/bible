@@ -159,12 +159,12 @@ Brenton cites by his own printed numbers, and the build reads them as eBible num
 
 Abbreviations and numbers follow *The Chicago Manual of Style*:
 
-- Initialisms have no periods. Other abbreviations have standard spacing, capitalization and periods. The New Testament's notes and the appendix of readings use TR for the Received Text, RP for the Byzantine text of Robinson and Pierpont, and KJV for the King James Version, all listed.
+- Initialisms have no periods. Other abbreviations have standard spacing, capitalization and periods. The New Testament's notes and the appendix of readings use TR for the Received Text, RP26 for the Byzantine text of Robinson and Pierpont (2026), KJV for the King James Version, and OLEB for this edition, all listed. "lit." is lowercase, and capitalized only where it begins a sentence.
 - The names of versions and texts are printed in full, such as the Vulgate and the Authorized Version, however Brenton writes them. The witnesses he cites most keep their labels: "Alex.", "Vat." and "Heb.", with "LXX" for his "Sept.".
 - An abbreviation used only once or twice is printed in full where it stands, as in "seven pence halfpenny".
-- Brenton's signs for addition and omission are written "adds" and "omits".
+- Brenton's signs for addition and omission are written "adds" and "omits". A dash after a witness is his sign of omission only where he spaces it on both sides, as in "Heb. — Isaac being troubled"; closed up, as in "Heb.—מ", it is punctuation. CCEL's transcription closes the sign up, so a dash in a note of CCEL's is never read as the sign; the omission such a note reports is carried out by its decision in `edition/alexandrinus.json`, which holds back every CCEL note that names Codex Alexandrinus.
 
-Every abbreviation the edition prints is in the list of abbreviations. Brenton's list gives only twelve, so the others that the notes use are added to it.
+Every abbreviation the edition prints is in the list of abbreviations, and so are Turpie's signs in the quotation links, + and ≠. Brenton's list gives only twelve, so the others that the notes use are added to it, and the whole list is set in alphabetical order, with the signs after the abbreviations.
 
 ## Spelling, vocabulary and punctuation
 

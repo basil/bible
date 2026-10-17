@@ -3795,7 +3795,7 @@
       "lemma": "wisdom is the advantage of an energetic man"
     },
     "ECC 10:19 CCEL": {
-      "why": "Promote Brenton’s reported omission of humbly, not a replacement rendering. Brenton 1879 physical p. 844 and 1900 physical p. 840 (printed p. 828 in both) print δ before to money in Ecclesiastes 10:19 and the note “Heb. doubly translated. Alex.—‘humbly.’”; the minus sign reports omission. CCEL 10.x#4 preserves the unique missing note and correct verse. Swete II p. 502 explicitly records om ταπεινωσει ℵ^{c.a}AC, confirming A’s omission without an A correcting-hand or uncertainty qualification; c.a belongs to Sinaiticus. B main positively prints ταπεινώσει and Brenton’s facing Greek does too, supporting the displaced humbly independently of the witness convention. Remove only humbly and its trailing space from Brenton’s existing English, leaving the complete sentence grammatical. Preserve the separate printed Hebrew report verbatim in the resulting note; it is not an assertion of Hebrew agreement with A. Add the required displaced Vat. adds humbly note, whose B support here is explicit.",
+      "why": "Promote Brenton’s reported omission of humbly, not a replacement rendering. Brenton 1879 physical p. 844 and 1900 physical p. 840 (printed p. 828 in both) print δ before to money in Ecclesiastes 10:19 and the note “Heb. doubly translated. Alex. — ‘humbly.’”, the sign of omission spaced as Brenton sets it; CCEL 10.x#4 closes it up, and preserves the unique missing note and correct verse. Swete II p. 502 explicitly records om ταπεινωσει ℵ^{c.a}AC, confirming A’s omission without an A correcting-hand or uncertainty qualification; c.a belongs to Sinaiticus. B main positively prints ταπεινώσει and Brenton’s facing Greek does too, supporting the displaced humbly independently of the witness convention. Remove only humbly and its trailing space from Brenton’s existing English, leaving the complete sentence grammatical. Preserve the separate printed Hebrew report verbatim in the resulting note; it is not an assertion of Hebrew agreement with A. Add the required displaced Vat. adds humbly note, whose B support here is explicit.",
       "swete": {
         "volume": 2,
         "page": 502,
@@ -4501,7 +4501,7 @@
       "source_note": "\\fqa Heb. q. d. \\ft her sabbatism; \\fqa A. V. \\ft her sabbaths; \\fqa Alex. \\ft her captivity."
     },
     "LAM 3:52 CCEL": {
-      "why": "Promote the omission Brenton reports in his own English. Brenton 1879 physical p. 993 and 1900 physical p. 989 (printed p. 977 in both) print “Heb. and Alex.—all.” with δ immediately before all mine enemies in Lamentations 3:52. CCEL 14.iii#11 preserves that missing note at its correct caller and eBible has no note. Swete III p. 372 explicitly records om παντες AQ, without a correcting hand, lacuna or uncertainty qualification at this unit. B main πάντες οἱ ἐχθροί μου and Brenton’s facing base Greek πάντες οἱ ἐχθροί μου positively support the displaced all. Delete only all and its following separator space from all mine enemies; retain mine enemies and the full sentence, including the source’s combined verse 52/53 wording. This is Brenton’s own English omission instruction and supplies no translated words. Preserve the printed Hebrew agreement. Swete’s B main text positively supports the displaced all; the note names Vat.",
+      "why": "Promote the omission Brenton reports in his own English. Brenton 1879 physical p. 993 and 1900 physical p. 989 (printed p. 977 in both) print “Heb. and Alex. — all.” with δ immediately before all mine enemies in Lamentations 3:52, the sign of omission spaced as Brenton sets it; CCEL 14.iii#11 closes it up, and preserves that missing note at its correct caller; eBible has no note. Swete III p. 372 explicitly records om παντες AQ, without a correcting hand, lacuna or uncertainty qualification at this unit. B main πάντες οἱ ἐχθροί μου and Brenton’s facing base Greek πάντες οἱ ἐχθροί μου positively support the displaced all. Delete only all and its following separator space from all mine enemies; retain mine enemies and the full sentence, including the source’s combined verse 52/53 wording. This is Brenton’s own English omission instruction and supplies no translated words. Preserve the printed Hebrew agreement. Swete’s B main text positively supports the displaced all; the note names Vat.",
       "swete": {
         "volume": 3,
         "page": 372,
@@ -5974,6 +5974,33 @@
       "note": "\\fl Vat. \\ft omits.",
       "lemma": "in breadth"
     },
+    "EZK 48:28 CCEL": {
+      "why": "Promote Brenton’s reported omission of from the eastern. Brenton 1879 physical p. 1064 and 1900 physical p. 1060 (printed p. 1048 in both) place θ immediately before from the eastern in Ezekiel 48:28 and print “Alex. — ‘from the eastern.’”, the sign of omission spaced as Brenton sets it (his punctuation dash is closed up, as in “Heb.—מ” at Deuteronomy 17:20); CCEL 15.xlviii#12 closes it up. His facing Greek reads καὶ ἀπὸ τῶν ὁρίων τῶν Γὰδ, ἀπὸ τῶν πρὸς ἀνατολὰς, ἕως τῶν πρὸς λίβα. Swete III p. 496, checked on the scan, prints B as καὶ ἀπὸ τῶν ὁρίων τῶν Γὰδ ἕως τῶν πρὸς λίβα, without the phrase verses 23–27 all have, and cites A unqualified at both words beside the gap, των Γαδ] om των AQ and εως των] και εως A, with no addition: A is extant here and lacks the phrase, as Brenton reports. Γ begins later, at ἀπὸ Θαιμὰν, and no witness Swete reports has the phrase, so the displaced words are attributed to Brenton, not Vat. Remove only the comma and from the eastern, leaving from the borders of Gad to the south-western parts. A’s και before εως is not reported by Brenton and supplies no English.",
+      "swete": {
+        "volume": 3,
+        "page": 496,
+        "evidence": "apparatus",
+        "reading": "των Γαδ] om των AQ | εως των] και εως A",
+        "agrees": true
+      },
+      "from": "Gad, from the eastern to the south-western parts",
+      "english": {
+        "source": "from",
+        "edits": [
+          {
+            "span": [
+              3,
+              21
+            ],
+            "to": "",
+            "why": "Remove from the eastern and the comma before it, the words Brenton’s sign of omission says A lacks."
+          }
+        ]
+      },
+      "note_at": 4,
+      "source_note": "\\fqa Alex.\\ft —'from the eastern.'",
+      "note": "\\fl Brenton \\ft adds \\fq from the eastern\\ft ."
+    },
     "EZK 48:35 CCEL#2": {
       "why": "Promote Brenton’s own English city-name rendering, retaining both renderings as Alexandrinus does. Brenton 1879 physical p. 1064 and 1900 physical p. 1060 (printed p. 1048 in both) place ξ immediately before shall in Ezekiel 48:35 and print “Heb. Jehovah Shammah, ‘the Lord is there.’ Alex. gives both renderings.” CCEL 15.xlviii#15 preserves this unique missing note with its correct caller. Checked diplomatic Swete III p. 497 explicitly records εσται] pr κ̅ς̅ εκει AQ; the A and Q witnesses are unqualified, with no hand, lacuna or uncertainty at this unit. Its B main reads ἔσται τὸ ὄνομα αὐτῆς and positively lacks the city-name phrase, as does Brenton’s facing Greek. Select the quoted English exactly from serialized source-note offsets 31–51, remove its internal terminal period when putting the quotation into the sentence, and append the unchanged closing shall be the name thereof. The complete result retains Alexandrinus’s name phrase followed by shall be the name thereof; no translation word is newly supplied. Retain Brenton’s informative Hebrew transliteration in the displaced omission note, with the required Vat. label, independently supported here by B. The metalinguistic Alex. gives both renderings report is consumed by the promotion, which now prints both. Scope the omission note to the added quoted name alone, excluding the retained closing clause.",
       "swete": {
@@ -6055,6 +6082,33 @@
       "note": "\\fl Vat. \\fq Smite the mercy-seat\\ft .",
       "source_note": "\\fqa Alex. \\ft altar.",
       "lemma": "altar"
+    },
+    "MIC 4:10 CCEL": {
+      "why": "Promote Brenton’s reported omission of draw near. Brenton 1879 physical p. 1116 and 1900 physical p. 1112 (printed p. 1100 in both) place γ immediately before draw near in Micah 4:10 and print “sc. the time, but Alex. — ‘draw near.’”, the sign of omission spaced as Brenton sets it; CCEL 22.iv#5 closes it up. Swete III p. 33 explicitly records om και εγγιζε A, unqualified, without a correcting hand, lacuna or uncertainty: A lacks the conjunction and the verb, so and goes with draw near. B main positively reads ὤδινε καὶ ἀνδρίζου καὶ ἔγγιζε, supporting the displaced words, and the note names Vat. Brenton’s sc. the time explains his facing Greek καὶ ἤγγισε, whose subject is the time; B’s ἔγγιζε is an imperative addressed to the daughter of Sion, like ὤδινε before it, so the gloss does not belong to the displaced words and is not carried into the note.",
+      "swete": {
+        "volume": 3,
+        "page": 33,
+        "evidence": "apparatus",
+        "reading": "om και εγγιζε A",
+        "agrees": true
+      },
+      "from": "and draw near, O daughter of Sion",
+      "english": {
+        "source": "from",
+        "edits": [
+          {
+            "span": [
+              0,
+              15
+            ],
+            "to": "",
+            "why": "Remove and draw near with its comma and following space, the conjunction and verb Swete reports A omits."
+          }
+        ]
+      },
+      "note_at": 0,
+      "source_note": "\\fqa sc. \\ft the time, but \\fqa Alex.\\ft —'draw near.'",
+      "note": "\\fl Vat. \\ft adds \\fq and draw near\\ft ."
     },
     "NAM 3:14 CCEL#2": {
       "why": "Promote Brenton’s own English tread thou, replacing the passive be thou trodden. Brenton 1879 physical p. 1121 and 1900 physical p. 1117 (printed p. 1105 in both) print “Alex. tread thou.” with μ immediately before be thou trodden in Nahum 3:14. CCEL 23.iii#7 preserves the printed note and caller; eBible lacks this distinct note. Swete III p. 56 explicitly records συμπατηθητι (συνπ. Q*)] συνπατει A, with unqualified A and no uncertainty or correcting-hand qualification at this unit. A’s active imperative gives Brenton’s tread thou; retain the surrounding conjunction and in the chaff, completing enter into the clay, and tread thou in the chaff. B main positively prints καὶ συμπατήθητι ἐν ἀχύροις, and Brenton’s facing base Greek likewise has συμπατήθητι, supporting the displaced passive. No other A difference in the verse is translated or promoted by this note. Swete’s B main text positively supports the displaced passive; the note names Vat.",
@@ -9320,17 +9374,6 @@
       },
       "source_note": "\\fqa Alex. \\ft καὶ τάξουσιν, 'and they shall appoint.'"
     },
-    "EZK 48:28 CCEL": {
-      "why": "Retain Brenton’s printed report without changing scripture. Brenton 1879 physical p. 1064 and 1900 physical p. 1060 (printed p. 1048), caller before from the eastern, already print that phrase in English and facing Greek. Swete III p. 496 B lacks the eastern phrase. Its explicit εως των] και εως A establishes only conjunction wording, not an A eastern reading; Swete’s Appendix III p. 882 likewise supplies none. A is unqualified at its explicit units; Γ begins later at ἀπὸ Θαιμὰν. Set no new attribution: agrees remains null, and no displaced note is generated.",
-      "swete": {
-        "volume": 3,
-        "page": 496,
-        "evidence": "apparatus",
-        "reading": "εως των] και εως A",
-        "agrees": null
-      },
-      "source_note": "\\fqa Alex.\\ft —'from the eastern.'"
-    },
     "HOS 5:3 CCEL": {
       "why": "Keep the exact printed Lit. has not departed. Alex. ἄπεστιν report. Brenton 1879 physical p. 1089 and 1900 physical p. 1085 (printed p. 1073), caller before is not far from me, have facing Greek ἀπέστη. Swete III p. 5 prints ἄπεστιν in its text, against απεστην B* (-τη B^b), the first hand’s and correcting hand b’s forms; A is not cited. Neither this unit nor Swete’s Appendix III p. 837 establishes the reported A verb; apparatus silence is not agreement. Preserve agrees:null, the English and source note; no displaced witness attribution is created.",
       "swete": {
@@ -9363,17 +9406,6 @@
         "agrees": null
       },
       "source_note": "\\fqa Alex. \\ft ἐπικροτοῦντες, 'applauding.'"
-    },
-    "MIC 4:10 CCEL": {
-      "why": "Keep the authentic sc. the time, but Alex.—draw near report. Brenton 1879 physical p. 1116 and 1900 physical p. 1112 (printed p. 1100), caller before draw near, facing Greek καὶ ἤγγισε. Swete III p. 33 B retains καὶ ἔγγιζε; explicit om και εγγιζε A gives unqualified A omission of both conjunction and verb, without lacuna or uncertainty. Thus agrees:false is required for Brenton’s reported A construction. B supports the local approaching sense but differs in verbal form from Valpy; retain the source report and scripture without a displaced witness note.",
-      "swete": {
-        "volume": 3,
-        "page": 33,
-        "evidence": "apparatus",
-        "reading": "om και εγγιζε A",
-        "agrees": false
-      },
-      "source_note": "\\fqa sc. \\ft the time, but \\fqa Alex.\\ft —'draw near.'"
     },
     "DAG 1:17 CCEL": {
       "why": "Keep the printed report without changing Daniel 1:17. Brenton 1879 physical p. 1066 and 1900 physical p. 1062 (printed p. 1050 in both) print “Alex. to these four children.” with γ immediately before italic as for. Their facing Greek is Theodotion, not Old Greek, and has καὶ τὰ παιδάρια ταῦτα οἱ τέσσαρες αὐτοί, ἔδωκεν αὐτοῖς. Swete III p. 501, Daniel (Theodotion), B main, explicitly records και τα παιδαρια ταυτα οι τεσσαρες αυτοι] τοις τεσσαρσιν παιδαριοις· και A και τα παιδαρια ταυτα τα τεσσαρα Q. A is unqualified, with no correcting hand or uncertainty; Γ is lacunose after 1:11, not A or B. A replaces the entire topical nominative construction, including initial και and demonstratives ταυτα/αυτοι, by a dative without these and then και before the retained verb. Brenton’s gloss contains unsupported these and omits the conjunction belonging to the complete A construction. His base English already expresses the same recipients and giving as A, so an accurate idiomatic reformulation cannot be obtained by simply substituting the printed gloss: retaining initial And and these or suppressing A’s following conjunction would misstate the complete reported unit. Checked pinned KJV Daniel 1:17 has “As for these four children, God gave them”, and pinned RV has “Now as for these four youths, God gave them”; both retain the demonstrative and topical construction and supply no English for A’s entire differing construction. The Hebrew rendering therefore does not license this A unit; Ottley covers Isaiah alone. No licensed English supports a complete distinct A rendering without editorial invention. Preserve the exact source pin and transparent source-report discrepancy, with agrees:false for the printed gloss, not a denial of A’s explicit dative. This note is not a source transcription correction. B positively supports Brenton’s facing local base construction; no displaced Vat. note or label change is made.",

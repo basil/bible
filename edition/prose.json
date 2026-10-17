@@ -127,9 +127,35 @@
         "to": "singular"
       },
       {
+        "note": "PSA 113:24",
+        "from": "sing.",
+        "to": "singular"
+      },
+      {
+        "note": "JER 38:20 CCEL",
+        "from": "Conf.",
+        "to": "Compare"
+      },
+      {
         "note": "2KI 4:7",
         "from": "pl.",
         "to": "plural."
+      },
+      {
+        "note": "ESG 6:13 CCEL",
+        "from": "be M",
+        "to": "be Mardochæus",
+        "why": "Brenton's M. is the Mardochæus of the verse, written out in the italic of the rendering; revisions.json then mends the punctuation after it."
+      },
+      {
+        "note": "AMO 5:24 CCEL",
+        "from": "fut.",
+        "to": "future"
+      },
+      {
+        "note": "AMO 7:2 CCEL",
+        "from": "fut.",
+        "to": "future"
       },
       {
         "note": "2SA 1:19#2",

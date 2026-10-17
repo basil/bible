@@ -89,13 +89,13 @@ def test_editorial_note_styles_and_punctuation(
     assert "_then_" in rows["GEN 30:41"]["note"]
     assert rows["1SA 14:29"]["note"].startswith("_E medio sustulit_.")
     assert rows["1SA 14:29"]["lemma"] == "destroyed the land"
-    assert rows["PSA 113:24"]["note"] == "Gr. sing."
+    assert rows["PSA 113:24"]["note"] == "Gr. singular"
     assert "_suburbs_ above" in rows["JOS 21:13"]["note"]
     assert rows["JOS 20:7#2"]["note"] == "or, _of Nephthali_"
     assert rows["1SA 30:26"]["note"] == "Heb. agrees. Vat. _behold some_"
     assert rows["JHN 18:13 year"]["lemma"] is None
     assert rows["JHN 18:13 year"]["note"] == (
-        "_And Annas sent Christ bound unto Caiaphas the high priest_, v. 24"
+        "_And Annas sent Christ bound unto Caiaphas the high priest_, verse 24"
     )
     assert rows["2CO 4:8 in despair"]["note"] == (
         "or, _altogether without help, or means_"
@@ -456,6 +456,34 @@ def test_words_added_beside_a_term_are_not_its_own(
     assert after in printed
 
 
+@pytest.mark.parametrize(
+    "source, before, after, expected",
+    [
+        ("Or, forbid; lit. take away.", "forbid;", "forbid.", "forbid. Lit. take"),
+        ("Heb. Marah. lit. Bitternesses.", "Marah.", "Marah;", "Marah; lit. Bit"),
+    ],
+)
+def test_a_change_of_words_decides_where_lit_stands_again(
+    ctx: bible.annotate.Context, source: str, before: str, after: str, expected: str
+) -> None:
+    body = notes.with_terms(
+        notes.source_body(notes.labelled_pieces(source), [], None, "key", source),
+        ctx.terms,
+    )
+    edited = notes.edited(body, before, after, "key")
+    runs, terms, _ = notes.displayed(edited)
+    printed = notes.text_of(notes.finished(runs, terms, None, None, ctx.terms, "key"))
+    assert expected in printed
+
+
+@pytest.mark.parametrize("words", ["Gr. sing.", "Gr. fut.", "Conf. Luke 15:20"])
+def test_an_abbreviation_written_out_by_a_decision_is_refused_where_it_stays(
+    words: str,
+) -> None:
+    with pytest.raises(CheckFailed, match="Abbreviations not in Chicago's forms"):
+        terminology.check_forms("GEN", words, note=True)
+
+
 def test_witness_names_keep_their_capital_after_a_lemma(
     ctx: bible.annotate.Context,
 ) -> None:
@@ -640,6 +668,21 @@ def test_the_notes_the_edition_writes_say_what_each_part_is() -> None:
         ("Heb. — Isaac being troubled.", "Heb. omits Isaac being troubled."),
         ("Alex. — 'not.'", "Alex. omits 'not.'"),
         ("Gr. from. Heb.—מ.", "Gr. from. Heb.—מ."),
+        # CCEL closes up the sign of omission; its decision writes the note.
+        ("Alex.—'humbly.'", "Alex.—'humbly.'"),
+        # "lit." is capitalized where it begins a sentence, and nowhere else.
+        ("Gr. Lit. them.", "Gr. lit. them."),
+        ("Heb. Marah. lit. Bitternesses.", "Heb. Marah. Lit. Bitternesses."),
+        ("Or, forbid; lit. take away.", "Or, forbid; lit. take away."),
+        ("etc. Lit. Why have.", "etc. Lit. Why have."),
+        ("Lit. beams.", "Lit. beams."),
+        ("lit. beams.", "lit. beams."),
+        # A label's stop that "lit." continues ends no sentence, whatever
+        # capital the source gives "lit.", and takes no stop of its own.
+        ("Sept. Lit. them.", "LXX lit. them."),
+        ("Vulg. lit. them.", "Vulgate lit. them."),
+        ("A. V. Lit. them.", "Authorized Version lit. them."),
+        ("(Heb.) lit. them.", "(Heb.) lit. them."),
         ("Gr. finishing — cutting.", "Gr. finishing — cutting."),
         ("Note. - This rendering.", "Note. - This rendering."),
     ],
@@ -659,19 +702,20 @@ def test_terms_print_in_the_editions_forms(
 
 
 @pytest.mark.parametrize(
-    "words",
+    "words, message",
     [
-        "Complut. + and they went.",
-        "Complut. — and they went.",
-        "Alex. +'and they went.'",
-        "Gr. one + one.",
+        ("Complut. + and they went.", "Sign after no witness"),
+        ("Complut. — and they went.", "Sign after no witness"),
+        ("Alex. +'and they went.'", "Sign closed up to its words"),
+        ("Gr. one + one.", "Sign after no witness"),
+        ("Alex.+ 'and they went.'", "Sign closed up to its witness"),
     ],
 )
 def test_a_sign_after_no_witness_is_refused(
-    words: str, policy: bible.policy.Policy
+    words: str, message: str, policy: bible.policy.Policy
 ) -> None:
     registry = terminology.registry(policy)
-    with pytest.raises(CheckFailed, match="Sign after no witness"):
+    with pytest.raises(CheckFailed, match=message):
         terminology.recognize(words, registry)
     # Prose has no signs to read.
     assert terminology.recognize(words, registry, note=False)

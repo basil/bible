@@ -264,6 +264,7 @@ def test_a_note_ebible_already_has_in_the_verse_is_passed_over(
         ("<note><i>Gr.</i> be cemented.</note>", "unknown markup <note>"),
         ("See ver. 5. and 7.", "a number with a period within a sentence"),
         ("<i>Fem.</i> gen.", "abbreviation in a form the edition does not print"),
+        ("<i>Gr.</i> fut.", "abbreviation in a form the edition does not print"),
         ("See 2 Kings (2 Sam.) 17. 19.", "citation the edition cannot read"),
     ],
 )
@@ -285,6 +286,34 @@ def test_a_note_the_reader_does_not_understand_is_left_out_and_listed(
         ("iii_2#1", reason, "GEN 99:1 CCEL")
     ]
     assert report.left_out[0].source.startswith("<p>")
+
+
+def test_a_prose_decision_answers_for_an_abbreviation_the_edition_writes_out(
+    page_policy: bible.policy.Policy,
+) -> None:
+    def written_out(data: dict[str, Any]) -> None:
+        group = next(
+            g
+            for g in data.values()
+            if any(c.get("from") == "fut." for c in g["changes"])
+        )
+        group["changes"].append(
+            {"note": "GEN 99:1 CCEL", "from": "fut.", "to": "future"}
+        )
+
+    docs, report = supplemented(
+        changed(page_policy, "prose", written_out),
+        {"GEN": genesis()},
+        iii_2=page(
+            f"<sup>1</sup>And the heavens and the earth were finished, and the whole "
+            f"{caller(1)}world of them. And God finished on the sixth day his works.",
+            footnote(1, "<i>Gr.</i> fut."),
+        ),
+    )
+    # The note is set with its source words; the decision writes them out
+    # when the notes are finished, and the printed forms are checked then.
+    assert ccel_notes(docs["GEN"]) == {"GEN 99:1 CCEL": "\\fr 99:1 \\fqa Gr. \\ft fut."}
+    assert not report.left_out
 
 
 def test_a_body_whose_caller_is_in_skipped_markup_is_left_out_and_listed(

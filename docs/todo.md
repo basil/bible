@@ -98,7 +98,6 @@ Supplied passages, omitted verses and words moved across verses.
 Whether Swete settles a report well enough to print it, or it stays a note.
 
 - `JER 51:28 CCEL`: Brenton's “Alex. ‘who go down to’” is kept; promoting it would leave A's unreported και untranslated. Decide whether to promote it.
-- `EZK 48:28 CCEL`: Brenton's “Alex.—‘from the eastern.’” uses his dash for omission (as at ISA 8:16, ECC 10:19, LAM 3:52). Swete III p. 496 has B without the phrase and A cited only at the next unit (εως των] και εως A). Decide whether A's lack is established enough to print the omission with a “Brenton adds” note.
 - `EZK 43:7 CCEL#2`: The kept entry rests on Swete's silence at XLIII 7 (III p. 481); Swete's Appendix (III p. 881) is still rough and has not been read there. Decide whether to have it read for an orthographic entry of A.
 - `1CH 1:11-23`: The passage prints 1:12, which Swete writes as wholly over an erasure, perhaps by A^a (“sup ras A^a?”), without a note; the doubtful-reading rule keeps such a reading as a note. Decide whether 1:12 prints with a note saying so, is omitted, or is recorded as an exception.
 
