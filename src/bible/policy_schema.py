@@ -158,8 +158,16 @@ class Quotations(TypedDict, total=False):
     note_merges: ReadOnly[Mapping[str, QuotationsNoteMerges]]
 
 
+class ProseAddition(TypedDict):
+    unit: ReadOnly[str]
+    after: ReadOnly[str]
+    # USJ paragraphs, frozen as the rest of the policy is.
+    paragraphs: ReadOnly[tuple[Mapping[str, object], ...]]
+
+
 class Prose(TypedDict, total=False):
     changes: ReadOnly[tuple[WordingChange, ...]]
+    additions: ReadOnly[tuple[ProseAddition, ...]]
     why: ReadOnly[str]
 
 

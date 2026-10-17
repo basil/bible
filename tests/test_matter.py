@@ -3,6 +3,7 @@ them, and the notes of Brenton's Appendix that go to the books."""
 
 from __future__ import annotations
 
+import copy
 from collections.abc import Callable
 from typing import Any
 
@@ -18,6 +19,164 @@ from bible import alexandrinus, annotate, matter, notes, terminology, usj
 from bible.checks import CheckFailed
 from bible.policy import source_id
 from bible.usj import Content, Document
+
+
+def test_prose_additions_preserve_order_styles_and_inputs(
+    declared: bible.policy.Policy,
+) -> None:
+    doc = usj.parse("\\id XXB\n\\ip Before.\n\\ip After.\n")
+    policy = declared.replace(
+        prose={
+            "restored": {
+                "why": "Restore a missing paragraph.",
+                "changes": [],
+                "additions": [
+                    {
+                        "unit": "XXB",
+                        "after": "Before.",
+                        "paragraphs": [
+                            usj.para("ib"),
+                            usj.para(
+                                "ip", "An ", usj.char("it", "important"), " reading."
+                            ),
+                        ],
+                    }
+                ],
+            }
+        }
+    )
+    before, decisions = copy.deepcopy(doc), bible.policy.thaw(policy.prose)
+    result = matter.supplemented("XXB", doc, policy)
+    assert usj.serialize(result).splitlines() == [
+        "\\id XXB",
+        "\\usfm 3.1",
+        "\\ip Before.",
+        "\\ib",
+        "\\ip An \\it important\\it* reading.",
+        "\\ip After.",
+    ]
+    # The inserted objects are independent of the frozen decision, too.
+    result["content"][3]["content"].append(" Changed.")
+    assert doc == before
+    assert bible.policy.thaw(policy.prose) == decisions
+
+
+def test_prose_additions_after_one_paragraph_keep_their_order(
+    declared: bible.policy.Policy,
+) -> None:
+    doc = usj.parse("\\id XXB\n\\ip Before.\n\\ip After.\n")
+    additions = [
+        {"unit": "XXB", "after": "Before.", "paragraphs": [usj.para("ip", text)]}
+        for text in ("First.", "Second.")
+    ]
+    policy = declared.replace(
+        prose={
+            "restored": {
+                "why": "Restore missing prose.",
+                "changes": [],
+                "additions": additions,
+            }
+        }
+    )
+    assert usj.serialize(matter.supplemented("XXB", doc, policy)).splitlines()[2:] == [
+        "\\ip Before.",
+        "\\ip First.",
+        "\\ip Second.",
+        "\\ip After.",
+    ]
+
+
+@pytest.mark.parametrize("anchor", ["not present", "ambiguous"])
+def test_prose_additions_require_one_exact_paragraph(
+    declared: bible.policy.Policy, anchor: str
+) -> None:
+    policy = declared.replace(
+        prose={
+            "restored": {
+                "why": "Restore missing prose.",
+                "changes": [],
+                "additions": [
+                    {
+                        "unit": "XXB",
+                        "after": anchor,
+                        "paragraphs": [usj.para("ip", "Restored.")],
+                    }
+                ],
+            }
+        }
+    )
+    doc = usj.parse("\\id XXB\n\\ip ambiguous\n\\ip ambiguous\n")
+    with pytest.raises(CheckFailed, match="Prose addition not met once: XXB: restored"):
+        matter.supplemented("XXB", doc, policy)
+
+
+@pytest.mark.parametrize(
+    "addition, error",
+    [
+        ({"unit": "GEN"}, "not front or back matter"),
+        ({"after": " "}, "empty anchor"),
+        ({"after": "Before. "}, "anchor with surrounding space"),
+        ({"paragraphs": []}, "empty addition"),
+        ({"paragraphs": [usj.para("ip", " ")]}, "blank paragraph"),
+        ({"paragraphs": [usj.para("ib", "Words.")]}, "blank line takes no content"),
+        (
+            {"paragraphs": [{"type": "para", "marker": "ib", "content": None}]},
+            "blank line takes no content",
+        ),
+        ({"paragraphs": [usj.para("p", "Scripture.")]}, "introductory paragraph"),
+        (
+            {"paragraphs": [usj.para("ip", usj.para("ip", "Nested."))]},
+            "character style",
+        ),
+        (
+            {"paragraphs": [usj.para("ip", usj.char("ft", "A note's field."))]},
+            "character style",
+        ),
+        ({"paragraphs": [usj.para("ip", "\\it Raw markup.")]}, "markup in text"),
+    ],
+)
+def test_invalid_prose_additions_are_refused(
+    declared: bible.policy.Policy, addition: dict[str, Any], error: str
+) -> None:
+    with pytest.raises(CheckFailed, match=error):
+        declared.replace(
+            prose={
+                "restored": {
+                    "why": "Restore missing prose.",
+                    "changes": [],
+                    "additions": [
+                        {
+                            "unit": "XXB",
+                            "after": "Before.",
+                            "paragraphs": [usj.para("ip", "Restored.")],
+                            **addition,
+                        }
+                    ],
+                }
+            }
+        )
+
+
+def test_brentons_introduction_includes_the_1851_continuation(
+    edition: bible.pipeline.Edition, read: bible.pipeline.Read
+) -> None:
+    introduction = usj.serialize(edition.documents["XXE"])
+    assert "The earliest version of the Old Testament Scriptures" in introduction
+    assert introduction.count("The principal translations based on the Septuagint") == 1
+    assert "as much among Protestants as among those" in introduction
+    assert "Petri and Pauli" in introduction
+    assert "\\it intentionally\\it*" in introduction
+    assert introduction.index("The Old Latin.") < introduction.index("The Gothic.")
+    assert introduction.index("The Gothic.") < introduction.index("Cardinal Caraffa")
+    assert introduction.index("Cardinal Caraffa") < introduction.index("Tischendorf")
+    assert introduction.rstrip().endswith("have been subjoined to the Roman text.")
+    assert "Apocryphal books" not in introduction
+    # The input still ends where eBible's transcription ends.
+    assert (
+        usj.serialize(read.brenton["INT"])
+        .rstrip()
+        .endswith("formed at once from the Hebrew.")
+    )
 
 
 def lines(edition: bible.pipeline.Edition, code: str) -> list[str]:

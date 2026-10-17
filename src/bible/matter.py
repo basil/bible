@@ -498,6 +498,31 @@ def with_terms(unit: Unit, registry: terminology.Registry) -> Unit:
     return result
 
 
+def supplemented(code: str, doc: Document, policy: bible.policy.Policy) -> Document:
+    """Restore declared paragraphs after their exact, unique source paragraph,
+    in the order they are declared."""
+    after: dict[int, list[Node]] = {}
+    for name, group in policy.prose.items():
+        for addition in group.get("additions", ()):
+            if addition["unit"] != code:
+                continue
+            found = [
+                index
+                for index, block in enumerate(doc["content"])
+                if usj.is_type(block, "para", "ip")
+                and usj.unlabelled(block["content"]).strip() == addition["after"]
+            ]
+            require(len(found) == 1, f"Prose addition not met once: {code}: {name}")
+            after.setdefault(found[0], []).extend(
+                bible.policy.thaw(addition["paragraphs"])
+            )
+    blocks: list[Node] = []
+    for index, block in enumerate(doc["content"]):
+        blocks.append(block)
+        blocks.extend(after.get(index, ()))
+    return usj.with_blocks(doc, blocks)
+
+
 def unit(
     entry: Entry,
     doc: Document,
@@ -508,6 +533,7 @@ def unit(
     paragraphs it sends to the books, by where each goes."""
     code, policy = entry["id"], ctx.policy
     source = doc
+    doc = supplemented(code, doc, policy)
     taken_apart = placements(entry, policy)
     if taken_apart:
         doc = unlabelled(doc, taken_apart)

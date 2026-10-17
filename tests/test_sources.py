@@ -44,6 +44,7 @@ def pinned_copy(
 @pytest.mark.parametrize(
     "name",
     [
+        "brenton_1851",
         "marginal_notes",
         "versification",
         "scrivener",

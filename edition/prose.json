@@ -501,5 +501,449 @@
         "to": "appear thus in the Complutensian text, here numbered as in the Hebrew:"
       }
     ]
+  },
+  "brenton-1851-introduction": {
+    "why": "Complete eBible’s introduction, which ends where the 1870 printing breaks it off (p. vi in the 1879 reprint of its plates), from Brenton’s 1851 printing, pp. viii–xiii, whose words agree with eBible’s closing paragraphs where the scanned pages overlap them, after the paragraph on translations from the Septuagint and before the separate Apocrypha heading. Transcribed from https://ccat.sas.upenn.edu/ioscs/brenton/brenton1851.pdf (PDF pages 1–6), consulted 2026-10-17; retain its wording, including its dates and the printed “Petri and Pauli” in the Latin decree. Preserve the blank-line separations between the translation entries and before the groups beginning “The principal translations”, “In later periods”, “The first printed edition” and “In the latter part”.",
+    "changes": [],
+    "additions": [
+      {
+        "unit": "XXE",
+        "after": "As the Septuagint was held in such honour in the East, it is no cause for surprise that this version was the basis of the other translations which were made in early times into vernacular tongues. There was, however, also another reason;—the general ignorance of the original Hebrew amongst the early Christians prevented their forming their translations from the fountain itself. The especial exception to this remark is the Syriac version of the Old Testament formed at once from the Hebrew.",
+        "paragraphs": [
+          {
+            "type": "para",
+            "marker": "ib",
+            "content": []
+          },
+          {
+            "type": "para",
+            "marker": "ip",
+            "content": [
+              "The principal translations based on the Septuagint were the following:"
+            ]
+          },
+          {
+            "type": "para",
+            "marker": "ib",
+            "content": []
+          },
+          {
+            "type": "para",
+            "marker": "ip",
+            "content": [
+              {
+                "type": "char",
+                "marker": "it",
+                "content": [
+                  "The Old Latin."
+                ]
+              },
+              "—This version was executed in very early times, probably in the north of Africa. At the end of the fourth century Jerome made his translation direct from the Hebrew—a work of which many expressed alarm, as though it were a dangerous innovation: however, by degrees the version of Jerome obtained such a footing in the Latin Church that (except in the book of Psalms) it displaced its predecessor. The ",
+              {
+                "type": "char",
+                "marker": "it",
+                "content": [
+                  "old"
+                ]
+              },
+              " Latin only exists in fragments, which were carefully collected and edited by Sabatier, in 1749."
+            ]
+          },
+          {
+            "type": "para",
+            "marker": "ib",
+            "content": []
+          },
+          {
+            "type": "para",
+            "marker": "ip",
+            "content": [
+              {
+                "type": "char",
+                "marker": "it",
+                "content": [
+                  "The Memphitic (or Coptic) version."
+                ]
+              },
+              "—This was probably executed at an early period. Many books of the Old Testament in this translation have been printed."
+            ]
+          },
+          {
+            "type": "para",
+            "marker": "ib",
+            "content": []
+          },
+          {
+            "type": "para",
+            "marker": "ip",
+            "content": [
+              {
+                "type": "char",
+                "marker": "it",
+                "content": [
+                  "The Thebaic (or Sahidic)."
+                ]
+              },
+              "—The version into the language of Upper Egypt exists only in fragments."
+            ]
+          },
+          {
+            "type": "para",
+            "marker": "ib",
+            "content": []
+          },
+          {
+            "type": "para",
+            "marker": "ip",
+            "content": [
+              {
+                "type": "char",
+                "marker": "it",
+                "content": [
+                  "The Æthiopic."
+                ]
+              },
+              "—This was probably made in the fourth century: it has not been all printed."
+            ]
+          },
+          {
+            "type": "para",
+            "marker": "ib",
+            "content": []
+          },
+          {
+            "type": "para",
+            "marker": "ip",
+            "content": [
+              {
+                "type": "char",
+                "marker": "it",
+                "content": [
+                  "The Gothic."
+                ]
+              },
+              "—This translation was executed by Ulphilas in the fourth century. But few fragments of the Old Testament have been discovered, and a portion of Nehemiah is all that has been printed."
+            ]
+          },
+          {
+            "type": "para",
+            "marker": "ib",
+            "content": []
+          },
+          {
+            "type": "para",
+            "marker": "ip",
+            "content": [
+              {
+                "type": "char",
+                "marker": "it",
+                "content": [
+                  "The Armenian."
+                ]
+              },
+              "—In the early part of the fifth century Miesrob, the inventor of the Armenian alphabet, undertook the translation of the Scriptures into that tongue. The version has always been in use in the Armenian Church; and as that nation are so scattered through the East, the translation has become known in many countries in which they have settled. The best edition of this version is that of Zohrab (Venice, 1805), formed wholly on the authority of MSS."
+            ]
+          },
+          {
+            "type": "para",
+            "marker": "ib",
+            "content": []
+          },
+          {
+            "type": "para",
+            "marker": "ip",
+            "content": [
+              "In later periods versions, either whole or in part, were formed from the Septuagint into Arabic, Georgian, and Sclavonic. The Syriac version from the Hexaplar text has already been mentioned."
+            ]
+          },
+          {
+            "type": "para",
+            "marker": "ip",
+            "content": [
+              "These secondary translations, based on the Septuagint, must be taken into consideration if we would estimate the extensive use of that version: they ",
+              {
+                "type": "char",
+                "marker": "it",
+                "content": [
+                  "might"
+                ]
+              },
+              " also be turned to good critical account, were any competent scholar to examine them carefully; for they would thus be important witnesses as to the condition of the version at particular times; and also in conjunction with ancient MSS. they would help in the restoration of the text."
+            ]
+          },
+          {
+            "type": "para",
+            "marker": "ip",
+            "content": [
+              "These, then, are the principal points in the history of the Septuagint prior to the text having been printed."
+            ]
+          },
+          {
+            "type": "para",
+            "marker": "ib",
+            "content": []
+          },
+          {
+            "type": "para",
+            "marker": "ip",
+            "content": [
+              "The first printed edition of the Septuagint which was published was the Aldine, which appeared at Venice, in 1518, in one volume folio. Appended to it was the Greek New Testament, in which the text was printed from the first edition of Erasmus. It is not certainly known what MSS. were used by Andreas Asulanus, the editor of the Aldine Septuagint. It is probable, however, that they were but few in number; for the fact that the New Testament was simply a text borrowed from Erasmus does not favour the idea of any extensive stock of Greek MSS. being at the editor’s disposal. The ",
+              {
+                "type": "char",
+                "marker": "it",
+                "content": [
+                  "character"
+                ]
+              },
+              " of the MSS. is a more important question. It appears that the Aldine text pretty fairly represents the text found in the later Greek MSS. of the Septuagint, such in fact as were in circulation in the Greek Church at the time when the taking of Constantinople by the Turks (May 29, 1453) dispersed so many Greeks, who carried their MSS. and the knowledge of their tongue into Western Europe."
+            ]
+          },
+          {
+            "type": "para",
+            "marker": "ip",
+            "content": [
+              "Before the Aldine Septuagint had been printed, an impression of this ancient version was inserted by the editors of the Complutensian Polyglot, as one portion of that work. The publication, however, of the Complutensian Polyglot did not take place until 1552. This work was carried on under the direction and at the expense of Cardinal Ximenes, who caused it to be printed at Alcalà (Complutum), where he had founded a University. The Complutensian text of the Septuagint has often been supposed to have been adapted by the editors so as to suit the Hebrew original in some measure. Others however consider that the passages in which this text approaches more closely to the Hebrew than is the case with other copies of the Septuagint, were not corrupted by the editors, but that the readings were actually taken from Greek MSS. in which Origen’s Hexaplar text was contained. These questions might now be mostly answered by any scholar who has the opportunity of examining MSS. at Madrid; for it is now known that the MSS. of the Septuagint used by the Complutensian editors (with the exception of that containing the Pentateuch) are now preserved in that city, together with the rest of the library formerly at Alcalà."
+            ]
+          },
+          {
+            "type": "para",
+            "marker": "ip",
+            "content": [
+              "The Aldine text was the first that obtained general circulation, and it was repeated in many editions; so that it seemed probable that it might become the ",
+              {
+                "type": "char",
+                "marker": "it",
+                "content": [
+                  "Textus Receptus"
+                ]
+              },
+              " of the Septuagint. This however did not prove to be the fact; a more ancient text, of which we shall immediately speak, almost entirely supplanted it. The Complutensian text, unlike the Aldine, never obtained any general circulation."
+            ]
+          },
+          {
+            "type": "para",
+            "marker": "ip",
+            "content": [
+              "It had long been known that an ancient Greek MS. of the Old and New Testaments was preserved in the Vatican Library, and a wish was expressed by many that the text of this MS. might be used as the basis of an edition of the Septuagint. This MS. became the basis of the Roman or Vatican edition of the Septuagint which appeared in 1587."
+            ]
+          },
+          {
+            "type": "para",
+            "marker": "ip",
+            "content": [
+              "The edition was edited by Cardinal Caraffa and others, and it appeared with the sanction of Pope Sixtus V., to whom it was dedicated by the cardinal. He says, in the Dedicatory Epistle, that the pope (when Cardinal Peretti da Montalto) had eight years before urged Pope Gregory XIII. to print the Septuagint from the Vatican MS., and that this had been the origin of the edition: he speaks very decidedly of the fidelity with which he and his associates had followed their MS., “verbo ad verbum,”—an expression which goes rather too far: before he had said, “curavi . . . . hujus libri editionem ad Vaticanum exemplar ",
+              {
+                "type": "char",
+                "marker": "it",
+                "content": [
+                  "emendandam"
+                ]
+              },
+              ",” and this more accurately describes the mode of procedure."
+            ]
+          },
+          {
+            "type": "para",
+            "marker": "ip",
+            "content": [
+              "In the Preface the editors speak of other MSS. which they consulted; what use they made of them they do not state; they mention, however, that the parts in which the Vatican MS. is defective were supplied from other MSS."
+            ]
+          },
+          {
+            "type": "para",
+            "marker": "ip",
+            "content": [
+              "This edition was sanctioned by a “Decretum” of Pope Sixtus V. The pope recites what had been done in the preparation and completion of the edition, and then he goes on to say:—“Volumus et sancimus ad Dei gloriam et Ecclesiæ utilitatem, ut Vetus Græcum Testamentum juxta Septuaginta ita recognitum et expolitum ab omnibus recipiatur ac retineatur, quo potissimum ad Latinæ vulgatæ editionis et veterum sanctorum Patrum intelligentiam utantur. Prohibentes ne quis de hac nova Græca editione audeat in posterum vel addendo vel demendo quicquam immutare. Si quis autem aliter fecerit quam hac nostra sanctione comprehensum est, noverit se in Dei Omnipotentis beatorumque Apostolorum Petri and Pauli indignationem incursurum.” Of course this sanction would be enough to bind the consciences of all who own the papal authority. It was not, however, considered to extend to minute points; for the printed copies are corrected with a pen in several places, and also discrepancies from the MS. were pointed out very shortly after by Flaminio Nobili and others. The editions based on the Roman commonly adopt the corrections."
+            ]
+          },
+          {
+            "type": "para",
+            "marker": "ip",
+            "content": [
+              "This edition has become the basis of what may be considered the Textus Receptus of the Septuagint: it therefore becomes important to know what the value is of the MS. authority from which it sprung, and how far the editors have accurately followed their MS. The editors boast much of the antiquity and value of the Vatican MS.: they seem indeed to have shown considerable critical tact on this subject; for they commend not merely their MS. on the score of its antiquity, but also the ",
+              {
+                "type": "char",
+                "marker": "it",
+                "content": [
+                  "text"
+                ]
+              },
+              " which it contains. This latter particular was not grounded on any mere examination of the materials of the MS., the form of the letters, the colour of the ink, etc., but on a comparison of the citations found in early Ecclesiastical writers with this MS., and also with the Aldine text then commonly in use. The researches of scholars for the last two centuries and a half have confirmed the verdict of the Roman editors in favour of the Vatican MS. The text as published appears to present the actual Septuagint version such as it stood before the labours of Origen, with at least but few attempts at correction or revision."
+            ]
+          },
+          {
+            "type": "para",
+            "marker": "ip",
+            "content": [
+              "It still remains to be inquired whether the editors faithfully followed the MS. before them. To this it may be said, that there appears no ground for supposing that they departed from their MS. ",
+              {
+                "type": "char",
+                "marker": "it",
+                "content": [
+                  "intentionally"
+                ]
+              },
+              ", unless in points of mere orthography and the like. But that they did at times desert their MS. is certain. This probably arose from the Vatican MS. not having been copied for the press, but instead of taking that labour they seem to have ",
+              {
+                "type": "char",
+                "marker": "it",
+                "content": [
+                  "corrected"
+                ]
+              },
+              " a printed copy of the Aldine so as to represent the Roman Codex; hence, in every place in which they overlooked a reading in the MS., the passage stands as it did in the Aldine. In this there seems to have been no want of good faith on the part of the editors, but merely that kind of oversight to which every eye is more or less liable, especially when occupied with reading MSS. in ancient uncial writing without divisions between the words."
+            ]
+          },
+          {
+            "type": "para",
+            "marker": "ip",
+            "content": [
+              "The proof that the Roman edition does sometimes differ from the Vatican MS. is found in the collation of part of the latter which was made for Dr. Holmes."
+            ]
+          },
+          {
+            "type": "para",
+            "marker": "ip",
+            "content": [
+              "The Roman text of the Septuagint has become that in general use, as much amongst Protestants as amongst those who might feel bound by the pope’s decree. And this was not the result of any mere blind acceptance of a Textus Receptus, as had been the case with the Elzevir New Testament, for the Aldine Septuagint ",
+              {
+                "type": "char",
+                "marker": "it",
+                "content": [
+                  "then"
+                ]
+              },
+              " held that place: it was rather as if the Textus Receptus of the New Testament could be dislodged from the place which it occupies in this country, by a text resting on a really ancient basis."
+            ]
+          },
+          {
+            "type": "para",
+            "marker": "ip",
+            "content": [
+              "Perhaps the Aldine text as such would have been even more thoroughly forgotten had it not been made (as it stands in the edition of Wechel, 1597) the ground of the Concordances of Kircher and Trommius. The former used the Aldine text before the Roman had altogether taken its place; the latter, as he wrought as a remodeller and amplifier of Kircher, was almost compelled to use the same text, unless indeed he had chosen to encounter a labour for which his years were unfitted."
+            ]
+          },
+          {
+            "type": "para",
+            "marker": "ip",
+            "content": [
+              "The Alexandrian MS. has become the basis of a fourth principal text of the Septuagint. Bishop Walton, in his Polyglot Bible, indicated variations found in this MS. at the foot of the column in which the Roman Septuagint was printed."
+            ]
+          },
+          {
+            "type": "para",
+            "marker": "ip",
+            "content": [
+              "The Alexandrian MS. was the basis of an edition which was prepared by Grabe, who lived only to publish two volumes, of which the first appeared in 1707: the two later volumes were edited by Lee and Wigan; the work was completed in 1720."
+            ]
+          },
+          {
+            "type": "para",
+            "marker": "ip",
+            "content": [
+              "Grabe, however, did not simply follow the MS. before him; wherever he disapproved of its readings, he placed them in the margin, and gave what he considered a corrected reading in the text in a different type. He also endeavoured to restore the critical marks of Origen; hence he was obliged to make many additions in smaller type of passages which the Alexandrian MS. does not contain: these additions were intended to correspond with the passages which Origen introduced from other versions marked with an asterisk. Grabe took these supplementary passages from the Complutensian or Aldine texts, or from MSS."
+            ]
+          },
+          {
+            "type": "para",
+            "marker": "ip",
+            "content": [
+              "It was the intention of this learned editor to publish copious notes in justification of the alterations which he made in the text, and also in explanation of the readings which he added or obelised. All this, however, was prevented by his death."
+            ]
+          },
+          {
+            "type": "para",
+            "marker": "ip",
+            "content": [
+              "The text of Grabe was reprinted by Breitinger at Zurich, who added the various readings of the Roman edition; but this text has never acquired any ",
+              {
+                "type": "char",
+                "marker": "it",
+                "content": [
+                  "general"
+                ]
+              },
+              " use. The Alexandrian readings, however, have subsequently been ",
+              {
+                "type": "char",
+                "marker": "it",
+                "content": [
+                  "often"
+                ]
+              },
+              " an accompaniment of the Roman text."
+            ]
+          },
+          {
+            "type": "para",
+            "marker": "ip",
+            "content": [
+              "These, then, are the leading texts of the Septuagint,—the forms in which it has been multiplied by means of the art of printing. No critical text has ever yet been formed, nor is it likely that the obstacles which stand in the way of this will be soon surmounted."
+            ]
+          },
+          {
+            "type": "para",
+            "marker": "ib",
+            "content": []
+          },
+          {
+            "type": "para",
+            "marker": "ip",
+            "content": [
+              "In the latter part of the last century Dr. Holmes, dean of Winchester, drew public attention to the condition of the text of the Septuagint, and to the fact that very numerous MSS. of that version remained uncollated in the principal libraries of Europe."
+            ]
+          },
+          {
+            "type": "para",
+            "marker": "ip",
+            "content": [
+              "Dr. Holmes’s appeal was responded to by a liberal subscription of many thousand pounds; so that he was able to procure collations of very many MSS. In fact such a mass of various readings were brought together, that it seemed as if patience and attention must alike fail before they could be brought into any arrangement."
+            ]
+          },
+          {
+            "type": "para",
+            "marker": "ip",
+            "content": [
+              "The publication of Dr. Holmes’s edition commenced in 1798. The death of the editor a few years afterwards threw hindrances in the way of its continuance. After some years, however, the materials were placed in the hands of the late Dr. Parsons, who continued the publication: the last volume appeared in 1827."
+            ]
+          },
+          {
+            "type": "para",
+            "marker": "ip",
+            "content": [
+              "This edition thus published by Holmes and Parsons may be regarded as a storehouse of materials for the criticism of the Septuagint. There are, however, several serious defects in the execution, the arrangement is often far from clear, and readings even of important MSS., such as the Alexandrian, are imperfectly stated."
+            ]
+          },
+          {
+            "type": "para",
+            "marker": "ip",
+            "content": [
+              "For this edition the Vatican MS. was in part collated; hence there became a manifest proof that the Roman editors did not always accurately follow their MS. This portion of Holmes’s critical materials is very valuable: it is much to be regretted, however, that the collation extends to only part of the MS."
+            ]
+          },
+          {
+            "type": "para",
+            "marker": "ip",
+            "content": [
+              "Whenever critical industry shall be directed to the revision of the text of the Septuagint, Holmes’s collected materials will require to be assorted and used; one portion of these might be comprised in a comparatively small compass, namely, the readings of the uncial MSS. It is a great inconvenience that some of these are not distinguished as such by Holmes and Parsons."
+            ]
+          },
+          {
+            "type": "para",
+            "marker": "ip",
+            "content": [
+              "Other valuable materials have been brought to light by Tischendorf: this learned examiner of ancient MSS. published the text of the valuable Palimpsest MS. at Paris, the Codex Ephraemi; he has since discovered and published other fragments of the Septuagint (the Codex Friderico-Augustanus, now at Leipzig) of extreme antiquity."
+            ]
+          },
+          {
+            "type": "para",
+            "marker": "ip",
+            "content": [
+              "In the edition which has recently appeared under his care, the variations of these MSS., together with the more important of the Alexandrian, have been subjoined to the Roman text."
+            ]
+          }
+        ]
+      }
+    ]
   }
 }

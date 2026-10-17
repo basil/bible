@@ -17,6 +17,7 @@ from typing import Any, cast
 
 from bible import paths
 from bible import policy_schema as schema
+from bible import usj
 from bible.checks import require, require_fields, require_used
 from bible.files import read_json
 from bible.policy_schema import Entry
@@ -173,6 +174,27 @@ def thaw(value: object) -> Any:
     if isinstance(value, (tuple, list)):
         return [thaw(v) for v in value]
     return value
+
+
+def check_prose_content(content: object, label: str) -> None:
+    """Added prose is nonempty text with USJ character styles."""
+    require(
+        isinstance(content, (list, tuple)) and bool(content), f"{label}: empty content"
+    )
+    assert isinstance(content, (list, tuple))
+    for item in content:
+        if isinstance(item, str):
+            require(bool(item), f"{label}: empty text")
+            require("\\" not in item, f"{label}: markup in text")
+        else:
+            require(isinstance(item, Mapping), f"{label}: invalid content")
+            assert isinstance(item, Mapping)
+            require_fields(item, {"type", "marker", "content"}, (), label)
+            require(
+                item["type"] == "char" and item["marker"] in usj.CHARS,
+                f"{label}: expected a character style",
+            )
+            check_prose_content(item["content"], label)
 
 
 def check(policy: Policy) -> None:
@@ -445,8 +467,35 @@ def check(policy: Policy) -> None:
                 f"Citation name change that changes nothing: {code}",
             )
     for name, prose_group in policy.prose.items():
-        require_fields(prose_group, {"why", "changes"}, (), f"Prose changes {name}")
+        require_fields(
+            prose_group, {"why", "changes"}, {"additions"}, f"Prose changes {name}"
+        )
         require(prose_group["why"], f"Prose changes without a why: {name}")
+        for addition in prose_group.get("additions", ()):
+            label = f"Prose addition in {name}"
+            require_fields(addition, {"unit", "after", "paragraphs"}, (), label)
+            require(addition["unit"] in matter, f"{label}: not front or back matter")
+            after = addition["after"]
+            require(bool(after.strip()), f"{label}: empty anchor")
+            require(after == after.strip(), f"{label}: anchor with surrounding space")
+            require(bool(addition["paragraphs"]), f"{label}: empty addition")
+            for paragraph in addition["paragraphs"]:
+                require_fields(paragraph, {"type", "marker", "content"}, (), label)
+                require(
+                    paragraph["type"] == "para" and paragraph["marker"] in {"ip", "ib"},
+                    f"{label}: expected an introductory paragraph",
+                )
+                if paragraph["marker"] == "ib":
+                    require(
+                        paragraph["content"] == (),
+                        f"{label}: a blank line takes no content",
+                    )
+                    continue
+                check_prose_content(paragraph["content"], label)
+                require(
+                    bool(usj.unlabelled(thaw(paragraph["content"])).strip()),
+                    f"{label}: blank paragraph",
+                )
         for change in prose_group["changes"]:
             require_fields(
                 change,

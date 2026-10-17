@@ -25,6 +25,20 @@ The archives below were retrieved from eBible.org on the dates shown.
 
 The Brenton and King James texts in `eng-Brenton_usfm.zip` and `engkjvcpb_usfm.zip` are in the public domain outside the United Kingdom. Brenton's is also in the public domain in the UK, where the right to print and publish the King James Version belongs to the Crown and is licensed only to certain publishers under letters patent. See the [UK Intellectual Property Office's guidance](https://www.gov.uk/government/publications/copyright-notice-duration-of-copyright-term/copyright-notice-duration-of-copyright-term). `brenton-notice.html` and `kjv-notice.html` are unaltered copies of eBible's [Brenton](https://ebible.org/eng-Brenton/copyright.htm) and [KJV](https://ebible.org/engkjvcpb/copyright.htm) copyright pages, saved the same day.
 
+### Brenton's 1851 introduction
+
+[`brenton1851.pdf`](brenton1851.pdf) is the unchanged ten-page scan downloaded
+from [the University of Pennsylvania](https://ccat.sas.upenn.edu/ioscs/brenton/brenton1851.pdf)
+on 2026-10-17. Printed pages viii–xiii supply the rest of Brenton's
+introduction, which the 1870 printing that eBible transcribes breaks off after
+the paragraph on early translations, ending before the separate “Apocrypha”
+heading. The restored paragraphs and their source emphasis are
+recorded in `edition/prose.json`. The scan is retained as public-domain editorial
+evidence; the build verifies its checksum with the other pinned sources but
+does not OCR it.
+
+SHA-256: `ad6b4a197cc4de799c3fe2ebf768ad382443581b7239c9328e3a42e6a58e5484`.
+
 ### CCEL Brenton HTML edition
 
 `ccel-brenton-lxx.zip` mirrors the edition starting at

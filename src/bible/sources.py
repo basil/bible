@@ -47,6 +47,15 @@ SOURCES: Mapping[str, Pinned] = {
         "retrieved": "2026-09-23",
         "sha256": "93496ef23f7ff2427c32f5d353089dee73e82975ab92c80a00663fb333c57e32",
     },
+    # The rest of the introduction, which the 1870 printing breaks off, is
+    # transcribed in prose.json.
+    # Keep its scan as evidence and verify its bytes, without runtime OCR.
+    "brenton_1851": {
+        "file": "sources/brenton1851.pdf",
+        "url": "https://ccat.sas.upenn.edu/ioscs/brenton/brenton1851.pdf",
+        "retrieved": "2026-10-17",
+        "sha256": "ad6b4a197cc4de799c3fe2ebf768ad382443581b7239c9328e3a42e6a58e5484",
+    },
     "kjv": {
         "archive": "sources/engkjvcpb_usfm.zip",
         "url": "https://ebible.org/Scriptures/engkjvcpb_usfm.zip",
