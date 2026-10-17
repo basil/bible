@@ -4,11 +4,13 @@ CCEL's HTML edition of Brenton (sources/ccel-brenton-lxx.zip) transcribes
 the text worse than eBible's archive and the notes far more fully. The build
 reads it for the notes alone, and never for a word of the text: each page's
 words are read with the note callers among them and parted into the runs of
-one chapter each; a run's chapter is found among eBible's by the words they
-share, since the archive's page names, contents and chapter markup mislead;
-the run's words are aligned with the chapter's; and each note is set in
-eBible's verse before the word its caller stands before, as Brenton's callers
-stand. A note eBible's verse already has is passed over.
+one chapter each; a run's chapter is found among eBible's by the words, since
+the archive's page names, contents and chapter markup mislead: of the chapters
+that share the run's rarer words, the one whose words the run's align with
+best, and the build stops where two align alike and would set the notes
+differently; and each note is set in eBible's verse before the word its
+caller stands before, as Brenton's callers stand. A note eBible's verse
+already has is passed over.
 
 Legacy SIL Galatia Greek and unpointed SIL Ezra Hebrew are decoded from
 SIL's published tables below. The reader preserves their raw font codes
@@ -59,9 +61,10 @@ from bible.policy_schema import CcelNote, Correction
 from bible.sources import Content
 from bible.usj import Document, Node
 
-# How much of a run's weighted vocabulary its chapter must have, and how
-# many of the run's words must then be matched in runs of two or more with
-# the chapter and its neighbours, for the run to be read as that chapter's.
+# How much of a run's weighted vocabulary a chapter must have to be aligned
+# with the run, and how many of the run's words must then be matched in runs
+# of two or more with the chapter and its neighbours, for the run to be read
+# as that chapter's; of the chapters that pass, the best aligned.
 CHAPTER_SHARE = 0.5
 MATCHED_SHARE = 0.5
 
@@ -630,9 +633,10 @@ def bag(words: Iterable[str]) -> set[str]:
 
 
 class Finder:
-    """Which chapter a run belongs to, by the rarer words they share: the
-    chapter that has most of the run's, by weight, since a run may be a
-    fragment of its chapter."""
+    """Which chapters a run may belong to, by the rarer words they share:
+    those that have enough of the run's, by weight, since a run may be a
+    fragment of its chapter. The run's chapter is the one of them whose
+    words the run's align with best."""
 
     def __init__(self, books: Mapping[str, Book], runs: Sequence[Run]) -> None:
         self.chapters = [
@@ -649,23 +653,25 @@ class Finder:
             for word in words:
                 self.index.setdefault(word, []).append(i)
 
-    def find(self, run: Run) -> tuple[Book, int, float] | None:
-        """The run's book and chapter, and how much of the run's vocabulary
-        the chapter has, for the likest chapter; None where none shares a
-        word."""
+    def candidates(self, run: Run) -> list[tuple[Book, int, float]]:
+        """Every chapter that shares a word of the run's vocabulary, with its
+        book and how much of the vocabulary it has, by weight, the likest
+        first."""
         # In a fixed order, whatever the hash seed, so that the sums and the
-        # choice among chapters that tie are the same on every build.
+        # order of chapters that tie are the same on every build.
         words = sorted(bag(run.words))
         total = sum(self.weight[w] for w in words)
         shared: dict[int, float] = {}
         for word in words:
             for i in self.index.get(word, ()):
                 shared[i] = shared.get(i, 0) + self.weight[word]
-        if not shared or not total:
-            return None
-        best = max(sorted(shared), key=lambda i: shared[i])
-        book, index = self.chapters[best]
-        return book, index, shared[best] / total
+        if not total:
+            return []
+        # Ranked by share, not by the weight shared: a word every bag has
+        # weighs less than nothing, and so may the whole vocabulary.
+        share = {i: weight / total for i, weight in shared.items()}
+        ranked = sorted(sorted(share), key=lambda i: -share[i])
+        return [(*self.chapters[i], share[i]) for i in ranked]
 
 
 # Placing the notes.
@@ -708,6 +714,73 @@ def caller_position(caller: Caller, aligned: alignment.Alignment) -> int | None:
     return before + 1 if before is not None else None
 
 
+Place = tuple[str, str, int] | None
+
+
+def destinations(
+    run: Run, chapter: Chapter, aligned: alignment.Alignment, book: Book
+) -> list[tuple[Place, str]]:
+    """Where each caller of the run stands in eBible's verses by the words
+    of a window: the verse and offset, or None with why not."""
+    result: list[tuple[Place, str]] = []
+    previous: int | None = None
+    for caller in run.callers:
+        position = caller_position(caller, aligned)
+        if position is None:
+            result.append((None, "caller the words do not place"))
+        elif previous is not None and position < previous:
+            result.append((None, "caller out of order"))
+        else:
+            previous = position
+            # A caller that closes its verse stays in the verse of the
+            # word before it, at its end, though the next word begins
+            # another.
+            if position < len(chapter.places) and not (
+                caller.closing
+                and chapter.places[position][0] != chapter.places[position - 1][0]
+            ):
+                reference, offset = chapter.places[position]
+            else:
+                reference, _ = chapter.places[position - 1]
+                offset = len(book.verses[reference].text)
+            result.append(((book.code, reference, offset), ""))
+    return result
+
+
+def chapter_of(run: Run, finder: Finder) -> tuple[str, list[tuple[Place, str]] | None]:
+    """The chapter the run's words place it in, as the review names it, and
+    where they set its callers: of the chapters that share enough of its
+    vocabulary, the one its words align with best. Two that align alike must
+    set the callers alike, or the build stops: it does not choose between
+    them."""
+    candidates = finder.candidates(run)
+    aligned: list[tuple[int, str, list[tuple[Place, str]]]] = []
+    for book, index, share in candidates:
+        if share < CHAPTER_SHARE:
+            break
+        window = book.window(index)
+        matched = alignment.Alignment.of(run.words, window.words)
+        if len(matched.solid) >= MATCHED_SHARE * len(run.words):
+            places = destinations(run, window, matched, book)
+            aligned.append((len(matched.solid), f"{book.code} {window.number}", places))
+    if not aligned:
+        if not candidates:
+            return "", None
+        book, index, _ = candidates[0]
+        return f"{book.code} {book.chapters[index].number}", None
+    best = max(count for count, _, _ in aligned)
+    tied = [(label, places) for count, label, places in aligned if count == best]
+    # Where the notes are set, not why one is not.
+    settings = {tuple(place for place, _ in places) for _, places in tied}
+    keys = ", ".join(f"{run.page}#{caller.number}" for caller in run.callers)
+    require(
+        len(settings) == 1,
+        f"CCEL run's chapter is ambiguous: {keys}: "
+        f"{', '.join(label for label, _ in tied)} align alike and place its notes differently",
+    )
+    return tied[0]
+
+
 def place_run(
     run: Run,
     bodies: Mapping[str, Body],
@@ -718,22 +791,19 @@ def place_run(
     listed: list[Listed],
 ) -> list[Candidate]:
     """Each note of a run at its place in eBible's verse, by the words."""
-    found = finder.find(run)
-    guess = ""
-    chapter: Chapter | None = None
-    aligned: alignment.Alignment | None = None
-    code = ""
-    if found is not None:
-        book, index, share = found
-        code = book.code
-        guess = f"{code} {book.chapters[index].number}"
-        if share >= CHAPTER_SHARE:
-            window = book.window(index)
-            matched = alignment.Alignment.of(run.words, window.words)
-            if len(matched.solid) >= MATCHED_SHARE * len(run.words):
-                chapter, aligned = window, matched
+    if not run.callers:
+        return []
+    # The words place the callers that have a body, but not those a decision
+    # sets on supplied words, which eBible's verses lack.
+    placed = tuple(
+        caller
+        for caller in run.callers
+        if (key := f"{run.page}#{caller.number}") in bodies
+        and not (key in decisions and decisions[key].get("supplied"))
+    )
+    guess, places = chapter_of(replace(run, callers=placed), finder)
+    found = dict(zip(placed, places or ()))
     result = []
-    previous: int | None = None
     for caller in run.callers:
         key = f"{run.page}#{caller.number}"
         body = bodies.get(key)
@@ -745,28 +815,7 @@ def place_run(
             taken.add(key)
             if decision.get("supplied"):
                 continue
-        place: tuple[str, str, int] | None = None
-        problem = "run of no chapter"
-        if chapter is not None and aligned is not None:
-            position = caller_position(caller, aligned)
-            if position is None:
-                problem = "caller the words do not place"
-            elif previous is not None and position < previous:
-                problem = "caller out of order"
-            else:
-                previous = position
-                # A caller that closes its verse stays in the verse of the
-                # word before it, at its end, though the next word begins
-                # another.
-                if position < len(chapter.places) and not (
-                    caller.closing
-                    and chapter.places[position][0] != chapter.places[position - 1][0]
-                ):
-                    reference, offset = chapter.places[position]
-                else:
-                    reference, _ = chapter.places[position - 1]
-                    offset = len(books[code].verses[reference].text)
-                place = (code, reference, offset)
+        place, problem = found.get(caller, (None, "run of no chapter"))
         if decision is not None and "verse" in decision:
             book_code, _, label = decision["verse"].partition(" ")
             require(book_code in books, f"CCEL note decision names no book: {key}")

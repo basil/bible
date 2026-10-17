@@ -8,7 +8,6 @@ The sections:
 
 - [Rules to decide](#1-rules-to-decide): one decision settles many notes.
 - [Questions from the source review](#2-questions-from-the-source-review): Brenton's reports of Codex Alexandrinus that the evidence does not settle, printed oddities, witness labels and lemmas left for a decision.
-- [CCEL importer correctness](#3-ccel-importer-correctness): reproduced code edge cases whose effect on the current corpus has not been established.
 
 **Keys.** Brenton's notes are named by their keys, the `x-key` the build gives each source note ([AGENTS.md](../AGENTS.md#the-document-model)), which a decision in `edition/` is filed under:
 
@@ -111,7 +110,7 @@ Callers and lemmas.
 #### Notes the words do not place
 
 - `JER 50:10 CCEL` (`13.l#3`): “Or, such as are, and so on.” is confirmed as printed (1879 physical 983 / 1900 physical 979, printed 967; 1844 vol. 2 physical 293, printed 790), with caller δ (1844 †) before “lift up weapons against them” in all three. The gloss renders verse 11: “such as are” is the KJV's wording at the parallel Jer. 43:11 for οὓς εἰς θάνατον, which Brenton renders “delivering some for death to death” with “delivering” supplied in italics; nothing in verse 10 (Swete III p. 342) fits it. Decide whether to keep Brenton's caller or to move the note before “delivering some” in 50:11 with a placement in `ccel-notes.json`, as at EZK 17:20.
-- CCEL notes the words do not place: of the twenty listed in the review as left out, seventeen are already in eBible at their verses. Three are not: `iv.30#2` (“Gr. named”, EXO 29:46, before “called upon by them”), `iv.39#1` (“Setting forth of it.”, EXO 40, at “shalt set forth that which is to be set forth”) and `14#1` (“Words bracketed not in Heb.”, on the bracketed prologue that eBible prints before Lamentations 1:1). Decide whether to bring the first two in with placements in `ccel-notes.json`, and how a note on the Lamentations prologue, which is not a verse, should stand.
+- CCEL notes the words do not place: of the ten listed in the review as left out, eight are already in eBible at their verses. Two are not: `iv.39#1` (“Setting forth of it.”, EXO 40, at “shalt set forth that which is to be set forth”) and `14#1` (“Words bracketed not in Heb.”, on the bracketed prologue that eBible prints before Lamentations 1:1). Decide whether to bring the first in with a placement in `ccel-notes.json`, and how a note on the Lamentations prologue, which is not a verse, should stand.
 
 #### How much a lemma covers
 
@@ -133,12 +132,3 @@ Wording and punctuation.
 - `EZK 40:38 CCEL`: The printed note splits Brenton's quotation into two italic runs and drops his comma before “(39)”. Decide whether to keep the comma.
 - `JDG 13:5#2`: Brenton's “Matt. 2 ult.” prints as “Matt. 2:23. Ναζειραῖον”, keeping the full stop of “ult.” Decide whether to drop it by a revision.
 - `EZK 48:35 CCEL#2`: The city's name keeps Brenton's quotation marks (“‘the Lord is there’ shall be the name thereof”). Decide whether it prints bare, as the King James's does.
-
-## 3. CCEL importer correctness
-
-- **The chapter a run is placed in is chosen by shared vocabulary, not by alignment.** `Finder.find` in `src/bible/ccel.py` takes the chapter that has most of a run's rarer words, settling a tie by chapter order, and `place_run` aligns the run with that chapter's window alone. A survey of the pinned corpus (875 runs with callers) found no run whose best-aligned windows tie with distinct destinations; in the 28 runs where two windows both pass the thresholds with distinct destinations (parallel passages of Kings and Chronicles, Isaiah 36–39 and 2 Kings, Jeremiah 52, Psalm 17 and 2 Samuel 22, and others) the chosen window aligns far better. But in three runs the vocabulary winner aligns worse than another window, or not at all, and its notes are left out:
-  - `iv.30` (32 words): twenty-four chapters tie at full vocabulary share; GEN 12, first by order, does not align, while the EXO 29 window aligns all 32 words and would place `iv.30#2` (“Gr. named”) at EXO 29:46, the note listed under 2.4 as not in eBible.
-  - `iv.36` (600 words): EXO 36's window aligns 315 words and places one caller; EXO 38's aligns 377 and places all eight. `#3`–`#7`, `#9` and `#10` are left out, and `#8` needs a placement decision that the words would then make, so it would go stale.
-  - `vi.11` (252 words): NUM 11 fails alignment; NUM 9's window aligns 207 words and would place `#2` and `#3` at 9:20 and 9:22.
-
-  Decide whether to choose among the chapters past `CHAPTER_SHARE` by alignment, stopping the build where the best-aligned windows tie with distinct destinations, and settle the notes it would place (most are probably duplicates of eBible's).

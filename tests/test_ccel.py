@@ -404,6 +404,48 @@ def test_a_runs_chapter_is_found_by_its_words_whatever_the_page_says(
     ]
 
 
+def test_a_runs_chapter_is_the_best_aligned_of_those_sharing_its_words(
+    page_policy: bible.policy.Policy,
+) -> None:
+    # Genesis has every rarer word of the run, in another order; Exodus
+    # lacks one, but its words stand in the run's order. (Two books of
+    # other words give the words the three share a weight.) The chapter
+    # that has most of the vocabulary is not the run's: the one the words
+    # align with is.
+    scrambled = " ".join(reversed(VERSE_2.split())) + "."
+    exodus = VERSE_2.replace("generation", "making")
+    text = f"<sup>1</sup>{VERSE_2.replace('sanctified', caller(1) + 'sanctified')}"
+    docs, report = supplemented(
+        page_policy,
+        {
+            "GEN": genesis(VERSE_1, scrambled),
+            "EXO": book("EXO", f"\\v 1 {exodus}"),
+            "LEV": book("LEV", "\\v 1 In the land of Egypt."),
+            "NUM": book("NUM", "\\v 1 Moses numbered the tribes."),
+        },
+        iii_2=page(text, footnote(1, "<i>Gr.</i> hallowed.")),
+    )
+    assert list(ccel_notes(docs["EXO"])) == ["EXO 99:1 CCEL"]
+    assert ccel_notes(docs["GEN"]) == {}
+    assert report.inserted == 1 and report.left_out == ()
+
+
+def test_chapters_that_align_alike_and_place_the_notes_differently_stop_the_build(
+    page_policy: bible.policy.Policy,
+) -> None:
+    # The run's words stand whole in both books, so neither aligns better,
+    # and the caller's word stands in a verse of each. The build does not
+    # choose. (Two windows of one book that hold the run whole, as where a
+    # run crosses eBible's chapter division, place the notes alike.)
+    text = f"<sup>1</sup>{VERSE_1.replace('world', caller(1) + 'world')}"
+    with pytest.raises(CheckFailed, match="CCEL run's chapter is ambiguous: iii_2"):
+        supplemented(
+            page_policy,
+            {"GEN": genesis(), "EXO": book("EXO", f"\\v 1 {VERSE_1}")},
+            iii_2=page(text, footnote(1, "<i>Or</i>, order.")),
+        )
+
+
 def test_a_note_that_mentions_alexandrinus_is_held_back_until_decided(
     page_policy: bible.policy.Policy,
 ) -> None:
@@ -692,9 +734,9 @@ def test_the_real_pages_supply_the_notes_ebible_lacks(
     report = read.ccel
     assert (report.pages, report.bodies) == (708, 4116)
     assert report.inserted == 1823
-    assert report.duplicates == 2194
+    assert report.duplicates == 2204
     assert len(report.held) == 0
-    assert len(report.left_out) == 92
+    assert len(report.left_out) == 82
     # A note that a decision sets in another verse is the same note there.
     assert [
         (item.place, item.retained) for item in report.matched if item.key == "2.xi#5"
@@ -711,7 +753,6 @@ def test_the_real_pages_supply_the_notes_ebible_lacks(
         "citation the edition cannot read",
         "empty",
         "omitted by decision",
-        "run of no chapter",
         "undecodable characters",
     ]
     # The Appendix's notes on supplied verses wait for promotion to supply them.

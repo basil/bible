@@ -1256,6 +1256,10 @@
       "anchor": "called upon",
       "why": "The current EXO32:10 placement is wrong. Both printings show the footnote beta Or. named. on called upon at EXO29:45. Print numbers the next verse 46, whereas CCEL repeats sup 45. Existing EXO29:45 source note renders or, named at the same lemma, so this is a duplicate, not a new very-angry gloss. No change of named is justified."
     },
+    "iv.30#2": {
+      "duplicate": "EXO 29:46",
+      "why": "Brenton 1879 physical p. 127 and 1900 physical p. 123 (printed p. 111 in both) print one footnote, “β Or, named.”, with β before “called upon” in Exodus 29:45 and again in 29:46. CCEL’s “Gr.” misreads the italic “Or,”, as its note on 29:45 does; eBible’s note EXO 29:46 has the printed wording at the same caller word. It is the same note, not an additional one."
+    },
     "1.xxxii#1": {
       "verse": "1KI 5:17",
       "anchor": "because of",
