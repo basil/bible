@@ -51,21 +51,18 @@ The New Testament keeps Scrivener's paragraphs and poetry; [the New Testament te
 
 ## Front matter and appendices
 
-Each translation's front matter stands before its own testament, so that the introductions sit next to the text they describe. Their wording is kept apart from the omissions recorded in `edition/book-introductions.json` and `edition/prose.json`; their citations, abbreviations and book names are brought into this edition's style.
+Each translation's front matter stands before its own testament, so that the introductions sit next to the text they describe. Their wording is kept apart from the omissions recorded in `edition/prose.json`; their citations, abbreviations and book names are brought into this edition's style.
 
-- **Old Testament:** Brenton's preface (1844), his introduction (1870), and the revised introduction to the Apocrypha (1906).
+- **Old Testament:** Brenton's preface and his introduction.
 - **New Testament:** the translators' dedication to King James and their preface, "The Translators to the Reader".
 - **After Revelation:** the readings of the Byzantine text: every New Testament verse in which the two Greek texts differ, with the Greek of both and, where the English changes, the words of both Bibles. The English changes are based on Pierpont's instructions. Where an instruction cannot be applied or its wording does not fit, a fitting KJV parallel is preferred, then Pierpont, the Revised Version of 1881, and Boyd's Byzantine ASV of 2021; Boyd's Text-Critical English New Testament and Thomason's Far Above All are occasionally consulted, in that order.
 
-The introduction to the Apocrypha is the revision published in Bagster's second edition of *The Apocrypha: Greek and English, in Parallel Columns* (1906), after Brenton's death in 1862. The [source documentation](../sources/README.md#apocrypha-introduction) records the contemporary evidence for this attribution. It stands with the Old Testament rather than after Revelation, because those books are part of this Old Testament. Its general paragraphs stay at the front, and its account of each book is printed as a footnote at the start of that book. The comparison of First Esdras with the sixth Article of Religion, the sentence about the Western Church’s canon of Maccabees, and the sentence about translations of Third and Fourth Maccabees made for the original edition are omitted.
-
 Brenton's Appendix is not printed as a unit. The passages it supplies from Codex Alexandrinus stand in their books, with the footnotes Brenton prints within them set on the supplied words, and its eight notes (on 2 Kingdoms 5:18, Job 25:2 and 39:13, Psalm 41:5, Proverbs 8:5, Esaias 2:6, Jezekiel 16:44 and the Complutensian verses of Exodus 28) are printed as footnotes at the foot of the page, with a numbered caller before the word discussed or at the start of the verse for notes on the whole verse; the labels that named the verses are dropped. The margin notes that only sent the reader to the Appendix are left out, and the pointer is dropped from those that say more; the three margin notes of 1844 that the Bagster printings dropped in favour of the Appendix (Job 25:2, Job 39:13, Jezekiel 16:44) are restored.
 
-In those accounts, a book's name becomes this edition's where the paragraph now points into this edition: "Joshua Ben Sira" becomes "Jesus, the Son of Sirach". Where a new name would lose the meaning, a gloss is added instead: the second book of Esdras that is not included is that "of the English Apocrypha", which is not this edition's 2 Esdras.
-
-Three things are left out:
+Four things are left out:
 
 - eBible's list of corrections.
+- The introduction to the books of the Apocrypha in eBible's transcription.
 - Brenton's table of the chapters of Jeremias, which does not match eBible's text. The table of chapters and verses replaces it.
 - The Cambridge Paragraph Bible's 1873 title page, which advertises an introduction and appendices by Scrivener that are not in the online text.
 
@@ -90,7 +87,7 @@ An evident slip of the scribe stays a note too, though Swete is sure of it: a na
 
 ## Notes
 
-Notes stand in the inside margin beside their verse, without callers, whatever their length or form. PTXprint moves crowded notes up and down within their page but cannot carry them to the next, so where a page's notes overrun its margin, the tallest of them are set below the text by decisions in `edition/margin.json`, keyed by the note, as full-width footnotes with automatic callers, restarting on each page. Each must match one note in the margin. The check after typesetting that every margin note stands within its page names any page that overruns. Both placements use PTXprint’s ordinary note size and leading. Front matter, accounts of the books and notes of Brenton's Appendix keep their footnote placement. Bottom notes print under their callers alone, without verse numbers. Margin notes begin with the verse's number and the words they are about, followed by a colon:
+Notes stand in the inside margin beside their verse, without callers, whatever their length or form. PTXprint moves crowded notes up and down within their page but cannot carry them to the next, so where a page's notes overrun its margin, the tallest of them are set below the text by decisions in `edition/margin.json`, keyed by the note, as full-width footnotes with automatic callers, restarting on each page. Each must match one note in the margin. The check after typesetting that every margin note stands within its page names any page that overruns. Both placements use PTXprint’s ordinary note size and leading. Front matter and the notes of Brenton's Appendix keep their footnote placement. Bottom notes print under their callers alone, without verse numbers. Margin notes begin with the verse's number and the words they are about, followed by a colon:
 
 > **20** I doubted of such manner of questions: or, *I was doubtful how to enquire hereof*
 

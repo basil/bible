@@ -2,7 +2,6 @@
   "units": {
     "XXB": "brenton-preface",
     "XXE": null,
-    "OTH": "apocrypha-introduction",
     "XXD": null,
     "TDX": null,
     "NDX": "kjv-preface",
@@ -141,14 +140,6 @@
         "Rom": "ROM"
       }
     },
-    "apocrypha-introduction": {
-      "numbering": "brenton",
-      "numerals": "arabic",
-      "chapter_verse": "\\.\\s?",
-      "books": {
-        "2. Chronicles": "2CH"
-      }
-    },
     "brenton-appendix": {
       "numbering": "brenton",
       "numerals": "arabic",
@@ -265,12 +256,12 @@
       "relative": "chapter",
       "why": "Brenton's notes number chapters in Arabic, and this one alone in Roman: the chapter of this book where Gr. breach is noted twice, at 12:8 and 12:13."
     },
-    "BAK PRO 12. 16; 13. 1, 16; 14. 8, 15, 18; 15. 5; 21. 11; 22. 3; 27. 12; 28. 2": {
+    "BAK 12. 16; 13. 1, 16; 14. 8, 15, 18; 15. 5; 21. 11; 22. 3; 27. 12; 28. 2": {
       "passages": "PRO 12:16; PRO 13:1; PRO 13:16; PRO 14:8; PRO 14:15; PRO 14:18; PRO 15:5; PRO 21:11; PRO 22:3; PRO 27:12; PRO 28:2",
       "print": "12:16; 13:1, 16; 14:8, 15, 18; 15:5; 21:11; 22:3; 27:12; 28:2",
       "why": "Of Proverbs, as the list before it, which names the chapter."
     },
-    "BAK EZK and 11. 19": {
+    "BAK and 11. 19": {
       "source": "11. 19",
       "passages": "HEB 11:19",
       "print": "11:19",
@@ -327,36 +318,6 @@
       "passages": "ACT 8:28; ACT 8:29",
       "print": "8:28, 29",
       "why": "Of the Acts, which the citation before names."
-    },
-    "OTH BAR 1. 1–14": {
-      "passages": "BAR 1:1-14",
-      "print": "1:1–14",
-      "why": "A portion of the book that the note is on, by its first and last verses; the introduction names no book."
-    },
-    "OTH WIS 1–11. 4": {
-      "passages": "WIS 1:1; WIS 11:4",
-      "print": "1:1–11:4",
-      "why": "A portion of the book that the note is on, by its first and last verses; the introduction names no book."
-    },
-    "OTH BAR 3. 8": {
-      "passages": "BAR 3:8",
-      "print": "3:8",
-      "why": "A portion of the book that the note is on, by its first and last verses; the introduction names no book."
-    },
-    "OTH BAR 3. 9–4. 4": {
-      "passages": "BAR 3:9; BAR 4:4",
-      "print": "3:9–4:4",
-      "why": "A portion of the book that the note is on, by its first and last verses; the introduction names no book."
-    },
-    "OTH 1ES 3–5. 6": {
-      "passages": "1ES 3:1; 1ES 5:6",
-      "print": "3:1–5:6",
-      "why": "A portion of the book that the note is on, by its first and last verses; the introduction names no book."
-    },
-    "OTH BAR 4. 5–5. 9": {
-      "passages": "BAR 4:5; BAR 5:9",
-      "print": "4:5–5:9",
-      "why": "A portion of the book that the note is on, by its first and last verses; the introduction names no book."
     },
     "PRO 1:33": {
       "source": "Ps. 16",

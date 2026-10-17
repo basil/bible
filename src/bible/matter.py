@@ -1,14 +1,11 @@
 """The translations' own front and back matter: Brenton's list of
-abbreviations, preface and introduction, the introduction to the Apocrypha,
-the King James translators' dedication and preface, and Brenton's appendix.
+abbreviations, preface and introduction, the King James translators'
+dedication and preface, and Brenton's appendix.
 
 Each prints under the edition's names, citing as the edition cites, with its
-abbreviations in the edition's forms. The introduction to the Apocrypha is
-taken apart (edition/book-introductions.json): its account of each book is a
-footnote on the book's first verse, and only its general paragraphs stay at
-the front. Brenton's appendix is taken apart whole (edition/appendix.json):
-each of its notes is a footnote at the verse it discusses, and nothing of it
-prints after Revelation.
+abbreviations in the edition's forms. Brenton's appendix is taken apart
+(edition/appendix.json): each of its notes is a footnote at the verse it
+discusses, and nothing of it prints after Revelation.
 
 A paragraph is read once, as its source writes it: what it cites, and the
 terms it uses. What is read is carried through each declared change of its
@@ -26,11 +23,11 @@ from types import MappingProxyType
 import bible.annotate
 import bible.policy
 import bible.references
-from bible import assembly, citations, notes, repairs, scripture, terminology, usj
-from bible.checks import CheckFailed, require, require_fields
+from bible import assembly, citations, repairs, scripture, terminology, usj
+from bible.checks import CheckFailed, require
 from bible.policy import source_id
-from bible.policy_schema import BookIntroductionsGlosses, Entry, WordingChange
-from bible.references import Verse, verse_at
+from bible.policy_schema import Entry, WordingChange
+from bible.references import parse_verse
 from bible.usj import Content, Document, Node
 
 type Address = tuple[int, int] | None
@@ -54,73 +51,36 @@ class Reading:
     citations: tuple[citations.Citation | citations.UnresolvedCitation, ...] = ()
     terms: tuple[terminology.Term, ...] = ()
     decisions: tuple[str, ...] = ()
-    # Where an introduction's paragraph goes: a book, or "book@verse".
+    # The verse a paragraph taken apart goes to, as its decision is keyed.
     destination: str | None = None
-    key: str | None = None
     # Why its citations couldn't be read, which matters only if it prints.
     issue: str | None = None
 
 
 @dataclass(frozen=True)
 class Placements:
-    """Where a source's paragraphs go, by their opening words: a book, or a
-    verse of a book as "book@verse"; the paragraphs that stay at the front,
-    if the source keeps a front; those left out, with their reasons; the
-    labels dropped from paragraphs before anything reads them; and the
-    glosses and changes of name made on the way."""
+    """Where a source's paragraphs go, by their opening words: a verse, as
+    its decision is keyed ("EZK 16:44"); and the labels dropped from
+    paragraphs before anything reads them."""
 
     destinations: Mapping[str, str]
-    front: tuple[str, ...] = ()
-    omit: Mapping[str, str] = MappingProxyType({})
     labels: Mapping[str, str] = MappingProxyType({})
-    glosses: Mapping[str, tuple[BookIntroductionsGlosses, ...]] = MappingProxyType({})
-    names: Mapping[str, tuple[WordingChange, ...]] = MappingProxyType({})
 
 
 def placements(entry: Entry, policy: bible.policy.Policy) -> Placements | None:
-    """Where a unit's paragraphs go, if it is one taken apart: the
-    introduction to the Apocrypha, or Brenton's appendix."""
-    if entry["source"] != "brenton":
+    """Where a unit's paragraphs go, if it is the one taken apart: Brenton's
+    appendix."""
+    if (entry["source"], source_id(entry)) != ("brenton", policy.appendix["source"]):
         return None
-    code = source_id(entry)
     found: dict[str, str] = {}
-
-    def assign(what: str, destination: str, keys: Sequence[str]) -> None:
-        require(bool(keys), f"{what} with no paragraphs: {destination}")
-        for key in keys:
-            require(key not in found, f"{what} paragraphs placed twice: {key}")
-            found[key] = destination
-
-    if code == policy.introductions["source"]:
-        data = policy.introductions
-        require(bool(data["front"]), "Book introductions with no paragraphs: front")
-        for book, keys in data["books"].items():
-            assign("Book introduction", book, keys)
-        for book, sections in data["sections"].items():
-            for verse, section in sections.items():
-                require_fields(
-                    section,
-                    {"heading", "paragraphs"},
-                    (),
-                    f"Book introduction section {book}@{verse}",
-                )
-                assign("Book introduction", f"{book}@{verse}", section["paragraphs"])
-        return Placements(
-            MappingProxyType(found),
-            data["front"],
-            data["omit"],
-            glosses=data["glosses"],
-            names=data["names"],
-        )
-    if code == policy.appendix["source"]:
-        labels = {}
-        for place, note in policy.appendix["notes"].items():
-            book, verse = place.split()
-            assign("Appendix note", f"{book}@{verse}", note["paragraphs"])
-            if "label" in note:
-                labels[note["paragraphs"][0]] = note["label"]
-        return Placements(MappingProxyType(found), labels=MappingProxyType(labels))
-    return None
+    labels = {}
+    for place, note in policy.appendix["notes"].items():
+        for key in note["paragraphs"]:
+            require(key not in found, f"Appendix note paragraphs placed twice: {key}")
+            found[key] = place
+        if "label" in note:
+            labels[note["paragraphs"][0]] = note["label"]
+    return Placements(MappingProxyType(found), MappingProxyType(labels))
 
 
 def is_glossary(entry: Entry) -> bool:
@@ -265,13 +225,8 @@ def read(
                 ),
                 None,
             )
-            book = destination.split("@")[0] if destination else None
-            home = (
-                verse_at(book or "", (destination or "").split("@")[1])
-                if "@" in (destination or "")
-                else Verse(book, 0, 1) if book else None
-            )
-            decisions = citations.unit_decisions(code, text, book, policy=policy)
+            home = parse_verse(destination) if destination else None
+            decisions = citations.unit_decisions(code, text, policy=policy)
             issue = None
             try:
                 found = tuple(
@@ -314,159 +269,32 @@ def changed(unit: Unit, index: int, address: Address, content: Content) -> Unit:
     return unit
 
 
-def rewritten(
-    content: Content,
-    before: str,
-    after: str,
-    key: str,
-    *,
-    start: int | None = None,
-    unwrap: Iterable[tuple[int, int]] = (),
-) -> Content:
-    """Content with words changed without disturbing its character styles,
-    but for those whose words lie wholly within a stretch to unwrap."""
-    text = usj.unlabelled(content)
-    if start is None:
-        require(
-            text.count(before) == 1, f"Decision does not apply once: {key}: {before}"
-        )
-        start = text.index(before)
-    require(
-        text[start : start + len(before)] == before, f"Decision's words changed: {key}"
-    )
-    edits = [
-        (start + a, start + b, after[c:d])
-        for kind, a, b, c, d in SequenceMatcher(
-            None, before, after, autojunk=False
-        ).get_opcodes()
-        if kind != "equal"
-    ]
-    return usj.substituted(content, edits, skip=usj.is_label, right=True, unwrap=unwrap)
-
-
-def once_in_words(text: str, wanted: str) -> bool:
-    """Whether the words occur once in the text, and not as part of a longer word."""
-    return (
-        text.count(wanted) == 1
-        and re.search(rf"(?<!\w){re.escape(wanted)}(?!\w)", text) is not None
-    )
-
-
-def placed(unit: Unit, places: Placements, policy: bible.policy.Policy) -> Unit:
-    """A unit taken apart, each of its paragraphs placed, glossed and renamed
-    as its file declares.
-
-    Every paragraph must be placed or explicitly omitted exactly once, and
-    every gloss and change of name must apply once.
-    """
+def check_placed(unit: Unit, places: Placements, policy: bible.policy.Policy) -> None:
+    """Refuse a unit taken apart unless every paragraph is placed exactly
+    once, in a book of the edition, and the paragraphs at one verse in their
+    source's order."""
     paragraphs = [
         index
         for index, (block, _) in enumerate(unit)
         if usj.is_type(block, "para", "ip")
     ]
     bodies = [usj.unlabelled(unit[index][0]["content"]).strip() for index in paragraphs]
-    listed = [("front", key) for key in places.front] + [
-        (place, key) for key, place in places.destinations.items()
-    ]
-    require(all(places.omit.values()), "Omitted book introductions need a reason")
-    accounted = listed + [(None, key) for key in places.omit]
+    listed = [(place, key) for key, place in places.destinations.items()]
     books = {u["id"] for u in policy.scripture if u["source"] == "brenton"}
-    unknown = sorted({p.split("@")[0] for p in places.destinations.values()} - books)
-    require(not unknown, f"Book introductions for books outside the edition: {unknown}")
+    unknown = sorted({parse_verse(p).book for p, _ in listed} - books)
+    require(not unknown, f"Paragraphs placed in books outside the edition: {unknown}")
     indices = []
-    for _, key in accounted:
+    for _, key in listed:
         matches = [n for n, body in enumerate(bodies) if body.startswith(key)]
-        require(
-            len(matches) == 1, f"Book introduction key names no one paragraph: {key}"
-        )
+        require(len(matches) == 1, f"Placement key names no one paragraph: {key}")
         indices.append(matches[0])
-    require(
-        len(set(indices)) == len(indices), "Book introduction paragraphs placed twice"
-    )
-    require(
-        set(indices) == set(range(len(paragraphs))),
-        "Book introduction paragraphs not placed",
-    )
-    keys = {key for _, key in listed}
-    require(not set(places.glosses) - keys, "Glosses on no placed paragraph")
-    require(not set(places.names) - keys, "Name changes on no placed paragraph")
-    require(
-        all(places.glosses.values()) and all(places.names.values()),
-        "Glosses or name changes that change nothing",
-    )
+    require(len(set(indices)) == len(indices), "Paragraphs placed twice")
+    require(set(indices) == set(range(len(paragraphs))), "Paragraphs not placed")
     for destination in {place for place, _ in listed}:
-        order = [i for (where, _), i in zip(accounted, indices) if where == destination]
+        order = [i for (where, _), i in zip(listed, indices) if where == destination]
         require(
-            order == sorted(order),
-            f"Book introduction out of source order: {destination}",
+            order == sorted(order), f"Paragraphs out of source order: {destination}"
         )
-    for (place, key), n in zip(accounted, indices):
-        index = paragraphs[n]
-        block, readings = unit[index]
-        unit = list(unit)
-        unit[index] = (block, {None: replace(readings[None], key=key)})
-        if place is None:
-            continue
-        original = bodies[n]
-        for gloss in places.glosses.get(key, ()):
-            require(gloss.get("why"), f"Gloss without a why: {key}")
-            # Words, after at most the one space that parts them from the
-            # source's, so that a gloss leaves no space doubled.
-            words = gloss.get("insert", "").removeprefix(" ")
-            require(
-                words and words == words.strip(),
-                f"Gloss is not words after at most one space: {key}",
-            )
-            # A gloss follows the source's words, or replaces them. Once in
-            # the source as well, so that no gloss falls inside another.
-            replaces = "replace" in gloss
-            before = gloss.get("replace") if replaces else gloss.get("after")
-            content = unit[index][0]["content"]
-            require(
-                replaces != ("after" in gloss)
-                and before
-                and once_in_words(original, before)
-                and once_in_words(usj.unlabelled(content), before),
-                f"Gloss does not apply: {key}",
-            )
-            assert before is not None
-            require(
-                gloss["insert"].startswith(" ") != replaces,
-                f"Gloss and the space before it disagree: {key}",
-            )
-            after = gloss["insert"] if replaces else before + gloss["insert"]
-            unit = changed(unit, index, None, rewritten(content, before, after, key))
-        for name in places.names.get(key, ()):
-            require(name.get("why"), f"Name change without a why: {key}")
-            require(
-                name.get("from") and name.get("to") and name["from"] != name["to"],
-                f"Name change that changes nothing: {key}",
-            )
-            # A name is written with its source's styling, which stays.
-            old_content, new_content = (
-                usj.parse(name[side], fragment=True) for side in ("from", "to")
-            )
-            require(
-                [n["marker"] for n in usj.walk(old_content)]
-                == [n["marker"] for n in usj.walk(new_content)],
-                f"Name change alters the markup: {key}",
-            )
-            before, after = usj.text_of(old_content), usj.text_of(new_content)
-            content = unit[index][0]["content"]
-            # The source's words, so that no change alters or removes a gloss.
-            require(
-                once_in_words(original, before)
-                and once_in_words(usj.unlabelled(content), before),
-                f"Name change does not apply once: {key}",
-            )
-            unit = changed(unit, index, None, rewritten(content, before, after, key))
-        # The edition prints no brackets, and nothing explains one.
-        text = usj.text_of(unit[index][0]["content"])
-        require(
-            "[" not in text and "]" not in text,
-            f"Book introduction prints a bracket: {key}",
-        )
-    return unit
 
 
 def edited(
@@ -522,38 +350,15 @@ def edited(
 def resolved(
     unit: Unit, code: str, inventory: scripture.Inventory, policy: bible.policy.Policy
 ) -> Unit:
-    """A unit's citations as the edition numbers them. A paragraph that
-    introduces a book cites as from the book's first verse, or its section's."""
+    """A unit's citations as the edition numbers them."""
     result: Unit = []
     for block, readings in unit:
         settled = {}
         for address, reading in readings.items():
             require(reading.issue is None, reading.issue or "")
-            home = None
-            if reading.destination:
-                book, _, reference = reading.destination.partition("@")
-                if reference:
-                    home = verse_at(book, reference)
-                else:
-                    chapter = next(iter(inventory[book]))
-                    home = verse_at(book, f"{chapter}:{inventory[book][chapter][0]}")
             found: list[citations.Citation] = []
             for citation in reading.citations:
                 assert isinstance(citation, citations.UnresolvedCitation)
-                if (
-                    home is not None
-                    and citation.relative
-                    and isinstance(citation.context, Verse)
-                ):
-                    items = citation.items
-                    if citation.relative == "verse":
-                        items = tuple(
-                            tuple(replace(item, chapter=home.chapter) for item in run)
-                            for run in items
-                        )
-                    citation = replace(
-                        citation, book=home.book, items=items, context=home
-                    )
                 found.append(
                     citations.resolve(citation, inventory, code, policy=policy)
                 )
@@ -626,23 +431,19 @@ def renamed(
         content = dict(regions(block))[address]
         after = citations.named(declaration["to"], books.names)
         require(before != after, f"Change of name changes nothing: {code} ({before})")
+        edits = [
+            (match.start() + a, match.start() + b, after[c:d])
+            for kind, a, b, c, d in SequenceMatcher(
+                None, before, after, autojunk=False
+            ).get_opcodes()
+            if kind != "equal"
+        ]
         # The name's own styling gives way to what the edition's name has.
-        unit = list(unit)
-        unit[index] = (
-            with_region(
-                block,
-                address,
-                rewritten(
-                    content,
-                    before,
-                    after,
-                    key=f"{code} ({before})",
-                    start=match.start(),
-                    unwrap=[match.span()],
-                ),
-            ),
-            readings,
+        content = usj.substituted(
+            content, edits, skip=usj.is_label, right=True, unwrap=[match.span()]
         )
+        unit = list(unit)
+        unit[index] = (with_region(block, address, content), readings)
     return unit
 
 
@@ -713,7 +514,7 @@ def unit(
     destinations = taken_apart.destinations if taken_apart else {}
     read_unit, tongue = read(code, doc, destinations, ctx)
     if taken_apart:
-        read_unit = placed(read_unit, taken_apart, policy)
+        check_placed(read_unit, taken_apart, policy)
     changes = [
         c
         for group in policy.prose.values()
@@ -750,41 +551,21 @@ def unit(
                     block, address, cited(content, readings[address], ctx.books, code)
                 )
         shown.append((block, readings))
-    introductions = {}
+    sent: dict[str, list[Content]] = {}
     if taken_apart:
-        front: Unit = []
-        moved: dict[str, list[tuple[Node, Reading]]] = {}
         for block, readings in shown:
-            current_reading = readings.get(None)
-            if usj.is_type(block, "para") and block["marker"].startswith("is"):
-                # The books' titles replace the chapter's headings.
-                continue
             if usj.is_type(block, "para", "ip"):
-                require(
-                    current_reading is not None and current_reading.key is not None,
-                    "Unaccounted introduction paragraph",
-                )
-                assert current_reading is not None
-                if current_reading.destination:
-                    moved.setdefault(current_reading.destination, []).append(
-                        (block, current_reading)
+                # Every paragraph is placed, or the unit was refused.
+                reading = readings[None]
+                assert reading.destination is not None
+                sent.setdefault(reading.destination, []).append(
+                    terminology.printed(
+                        block["content"],
+                        rebased(reading, usj.unlabelled(block["content"])).terms,
+                        ctx.terms,
                     )
-                    continue
-                if current_reading.key not in taken_apart.front:
-                    continue
-            front.append((block, readings))
-        shown = front
-        introductions = {
-            place: [
-                terminology.printed(
-                    block["content"],
-                    rebased(reading, usj.unlabelled(block["content"])).terms,
-                    ctx.terms,
                 )
-                for block, reading in paragraphs
-            ]
-            for place, paragraphs in moved.items()
-        }
+        shown = [(b, r) for b, r in shown if not usj.is_type(b, "para", "ip")]
     if "title" in entry:
         named = assembly.named(
             entry, usj.with_blocks(doc, [block for block, _ in shown])
@@ -800,35 +581,23 @@ def unit(
             result, terminology.dropped_rows(source, policy), policy
         )
         terminology.check_glossary(result, policy)
-    return result, introductions
-
-
-def joined_paragraphs(paragraphs: Sequence[Content]) -> Content:
-    content: Content = []
-    for paragraph in paragraphs:
-        content = usj.joined(content, [" "] if content else [], paragraph)
-    return content
-
-
-def introduction_note(paragraphs: Sequence[Content]) -> Node:
-    """A book's introduction as a footnote with a numbered caller, set below
-    the text among the extended notes while the ordinary notes keep the
-    margin."""
-    content = joined_paragraphs(paragraphs)
-    return usj.note("ef", usj.char("ft", *notes.prose(content)), caller="+")
+    return result, sent
 
 
 def appendix_note(paragraphs: Sequence[Content], key: str) -> Node:
     """A note of Brenton's appendix as a footnote with a numbered caller, set
-    below the text as a book's introduction is. Its words keep his italics,
-    which mention words and gloss them in Latin; the numbers of the verses
-    it supplies are its own."""
+    below the text among the extended notes while the ordinary notes keep the
+    margin. Its words keep his italics, which mention words and gloss them in
+    Latin; the numbers of the verses it supplies are its own."""
 
     def own_numbers(node: Node) -> Node:
         if usj.is_type(node, "char", "vp"):
             return usj.char("fv", *node["content"])
         return node
 
-    content = usj.mapped(joined_paragraphs(paragraphs), own_numbers)
+    joined: Content = []
+    for paragraph in paragraphs:
+        joined = usj.joined(joined, [" "] if joined else [], paragraph)
+    content = usj.mapped(joined, own_numbers)
     extra: usj.Extra = {"x-key": key}
     return usj.note("ef", usj.char("ft", *content), caller="+", **extra)

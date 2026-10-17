@@ -272,7 +272,7 @@ def _outline(
 
 
 def found(content: Content, terms: Registry, *, note: bool) -> tuple[Term, ...]:
-    """The terms in a paragraph of prose, or in an introduction set as a
+    """The terms in a paragraph of prose, or in one sent to a verse as a
     note, each where it stands in the paragraph's words. The words of a
     footnote within prose are read as a note's."""
     text = usj.unlabelled(content)

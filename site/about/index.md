@@ -11,7 +11,7 @@ This volume brings together two English translations that have long been read ap
 The volume is arranged as follows:
 
 1. The title page, the table of contents, a list of abbreviations, the editor's introduction, and a table of chapters and verses whose numbers differ from the King James Bible’s
-2. The Old Testament, opening with Brenton's preface (1844) and introduction (1870) and the introduction to the Apocrypha revised for Bagster’s second edition (1906)
+2. The Old Testament, opening with Brenton's preface and introduction
 3. The New Testament, opening with the King James translators' dedication to the king and their preface, "The Translators to the Reader"
 4. The appendix: the readings of the Byzantine text, every New Testament verse in which the Greek texts differ
 

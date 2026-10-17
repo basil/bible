@@ -346,22 +346,16 @@ def decisions(key: str, *, policy: bible.policy.Policy) -> list[CitationsDecisio
 
 
 def unit_decisions(
-    unit: str, plain: str, book: str | None = None, *, policy: bible.policy.Policy
+    unit: str, plain: str, *, policy: bible.policy.Policy
 ) -> dict[str, CitationsDecisions]:
     """The decisions on a paragraph of a unit without verses, by key.
 
     Such a decision is keyed by its unit and the words it decides, as "XXB
-    Psalm iv. 4", which must be the unit's once. A unit read into each book in
-    turn, as the introductions are, keys them by the book as well, as "OTH BAR
-    3. 8", that the same words in another book's paragraph not be decided so.
+    Psalm iv. 4", which must be the unit's once.
     """
     found: dict[str, CitationsDecisions] = {}
     for key, decision in policy.citations["decisions"].items():
         code, _, words = key.partition(" ")
-        if book is not None:
-            within, _, words = words.partition(" ")
-            if within != book:
-                continue
         if code == unit and not re.fullmatch(rf"\d+:{VERSE_LABEL}.*", words):
             assert not isinstance(decision, tuple)
             source = decision.get("source", words)
@@ -533,7 +527,7 @@ def parse(
     """Interpret source expressions without needing an edition inventory.
 
     ``home`` and ``before`` are immutable semantic context, not the location
-    at which an introduction or annotation eventually prints.
+    at which an annotation eventually prints.
     """
     taken: list[tuple[int, int]] = []
     found: list[UnresolvedCitation] = []

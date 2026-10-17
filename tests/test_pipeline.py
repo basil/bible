@@ -4,10 +4,8 @@ typeset."""
 from __future__ import annotations
 
 import copy
-import dataclasses
 import re
 from collections.abc import Callable, Iterable
-from types import MappingProxyType
 from typing import Any, cast
 
 import pytest
@@ -16,6 +14,7 @@ from conftest import Staged, changed, plain
 import bible.export
 import bible.pipeline
 import bible.policy
+import bible.sources
 from bible import (
     annotate,
     assembly,
@@ -24,7 +23,6 @@ from bible import (
     places,
     revision,
     scripture,
-    typography,
     usj,
 )
 from bible.checks import CheckFailed
@@ -38,9 +36,7 @@ def test_the_edition_prints_every_unit_once_in_the_manifests_order(
 ) -> None:
     order = [entry["id"] for entry in policy.entries]
     assert list(edition.documents) == order
-    assert list(exported) == [
-        entry["id"] for entry in policy.entries if "continues" not in entry
-    ]
+    assert list(exported) == order
     assert edition.scripture == {unit["id"] for unit in policy.scripture}
     assert edition.authored == {"CNC", "XXA", "XXF", "XXG", "GLO", "XXC"}
     # Each is written under its own id, whatever file it was printed from.
@@ -65,60 +61,6 @@ def test_the_edition_prints_every_unit_once_in_the_manifests_order(
         # Byzantine text lacks.
         "verses": 36604,
     }
-
-
-@pytest.mark.parametrize("mode", ["pdf", "sample"])
-def test_apocrypha_front_matter_continues_the_introduction(
-    edition: bible.pipeline.Edition, mode: str
-) -> None:
-    before = copy.deepcopy(dict(edition.documents))
-    view = dict(pipeline.view(edition, mode))
-    assert "OTH" not in view
-    introduction = view["XXE"]
-    assert [
-        usj.text_of(block["content"])
-        for block in introduction["content"]
-        if block.get("marker") == "mt1"
-    ] == ["Introduction (1870)"]
-    assert [
-        usj.text_of(block["content"])
-        for block in introduction["content"]
-        if block.get("marker") == "is1"
-    ] == [
-        "A Historical Account of the Septuagint Version",
-        "The Books of the Apocrypha",
-    ]
-    # Every paragraph and note is appended once, after its usual typography.
-    apocrypha = pipeline.indented(typography.typographic(edition.documents["OTH"]))
-    paragraphs = [b for b in apocrypha["content"] if b.get("marker") == "ip"]
-    assert introduction["content"][-len(paragraphs) :] == paragraphs
-    assert all(introduction["content"].count(b) == 1 for b in paragraphs)
-    exported = dict(export.export(edition, mode))
-    assert "OTH" not in exported
-    text = exported["XXE"]
-    assert text.count("\\id ") == 1
-    assert text.count("\\toc1 ") == 1
-    assert "\\toc1 Introduction (1870)\n" in text
-    assert "\\is1 The Books of the Apocrypha\n" in text
-    assert edition.documents == before
-
-
-def test_continuing_front_matter_has_one_title_line(
-    edition: bible.pipeline.Edition,
-) -> None:
-    apocrypha = edition.documents["OTH"]
-    at = next(i for i, b in enumerate(apocrypha["content"]) if b.get("marker") == "mt1")
-    subtitled = usj.with_blocks(
-        apocrypha,
-        [
-            *apocrypha["content"][: at + 1],
-            usj.para("mt2", "A Subtitle"),
-            *apocrypha["content"][at + 1 :],
-        ],
-    )
-    documents = MappingProxyType({**edition.documents, "OTH": subtitled})
-    with pytest.raises(CheckFailed, match="without a single title line: OTH"):
-        pipeline.view(dataclasses.replace(edition, documents=documents), "pdf")
 
 
 def test_no_stage_changes_what_an_earlier_stage_made(staged: Staged) -> None:
@@ -168,23 +110,8 @@ def test_the_policy_is_read_once_and_cannot_be_changed(
     [
         (
             "manifest",
-            lambda d: d["old_testament_front"][-1].update(continues="XXB"),
-            "must continue the preceding unit",
-        ),
-        (
-            "manifest",
-            lambda d: d["old_testament_front"][0].update(continues="XXE"),
-            "must continue the preceding unit",
-        ),
-        (
-            "manifest",
             lambda d: d["scripture"][1].update(continues="GEN"),
             "missing or unknown fields",
-        ),
-        (
-            "manifest",
-            lambda d: d["old_testament_front"][-1].update(short_title="Apocrypha"),
-            "Running head or abbreviation of continuing front matter",
         ),
         (
             "witnesses",
@@ -350,6 +277,27 @@ def test_a_decision_that_nothing_meets_is_refused(
 
     with pytest.raises(CheckFailed, match="Unused names for books"):
         pipeline.check_met(changed(policy, "citations", name), edition.met)
+
+
+@pytest.mark.parametrize(
+    "excluded,refusal",
+    [
+        (["NEH", "XXA", "XXC"], r"neither read nor excluded: \['OTH'\]"),
+        (["NEH", "OTH", "OTX", "XXA", "XXC"], r"missing or read: \['OTX'\]"),
+        (["GEN", "NEH", "OTH", "XXA", "XXC"], r"missing or read: \['GEN'\]"),
+    ],
+)
+def test_every_brenton_source_is_read_or_excluded(
+    sources: bible.sources.Sources,
+    declared: bible.policy.Policy,
+    excluded: list[str],
+    refusal: str,
+) -> None:
+    def exclude(data: dict[str, Any]) -> None:
+        data["excluded"]["brenton"] = excluded
+
+    with pytest.raises(CheckFailed, match=refusal):
+        pipeline.read(sources, changed(declared, "manifest", exclude))
 
 
 def test_the_editions_spelling_is_revised_wherever_a_word_is_printed(
@@ -1640,14 +1588,6 @@ def test_the_edition_prints_no_brackets_of_brentons(
         "against him; and the name of Chebron before was Cariatharbocsepher: and they"
         in scripture.verses(edition.documents["JDG"])["1:10"].text
     )
-    # The gloss that names Daniel's additions does not read as four books.
-    assert any(
-        usj.text_of(note["content"]).startswith(
-            "The Song of the Three Children, Susanna, and Bel and the Dragon, the "
-            "three additions to the Book of Daniel, were probably composed"
-        )
-        for note in usj.notes_of(edition.documents["DAG"]["content"])
-    )
     # A note's own bracket, Brenton quoting the Authorized Version, stays.
     verse = scripture.verses(edition.documents["ISA"])["52:7"]
     assert any("[spread]" in usj.text_of(note["content"]) for _, note in verse.notes)
@@ -2156,8 +2096,8 @@ def test_passage_note_keys_must_select_once(policy: bible.policy.Policy) -> None
     ("before", "after"),
     [
         (
-            "an historical account; An Historical account",
-            "a historical account; A Historical account",
+            "an holy place; An Historical account",
+            "a holy place; A Historical account",
         ),
         (
             "an hundred-fold harvest; an hundredfold harvest",
@@ -2197,7 +2137,7 @@ def test_contextual_phrases_in_styles_notes_and_paragraphs(
     doc = usj.parse(
         "\\id GEN\n\\c 1\n\\p\n\\v 1 mine \\add honour\\add*"
         "\\f - \\fq mine \\+it honour\\+it*: \\ft an \\+it hundred\\+it*-fold; thine heir.\\f*."
-        "\n\\ip mine hour; an historical account."
+        "\n\\ip mine hour; an holy place."
     )
     original = copy.deepcopy(doc)
     result = revision.respelt(doc, policy, set())
@@ -2205,7 +2145,7 @@ def test_contextual_phrases_in_styles_notes_and_paragraphs(
     assert "my \\add honour\\add*" in printed
     assert "my \\+it honour\\+it*:" in printed
     assert "a \\+it hundred\\+it*-fold; thy heir." in printed
-    assert "my hour; a historical account." in printed
+    assert "my hour; a holy place." in printed
     assert doc == original
 
 

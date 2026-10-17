@@ -113,6 +113,22 @@ def test_contents_page_numbers_with_abbreviations(page: str, accepted: bool) -> 
     assert verify.numbered(page, entries) == accepted
 
 
+# Two contents pages, as pdftotext reads them, ending and beginning with
+# "Introduction", which "Editor's Introduction" contains.
+CONTENTS = [
+    ("CNC", "editorsintroduction", "", "1"),
+    ("XXB", "preface", "", "5"),
+    ("XXE", "introduction", "", "9"),
+]
+
+
+def test_a_title_within_another_on_the_page_before_is_not_taken_for_it() -> None:
+    verify.check_contents(["editorsintroductionpreface15", "introduction9"], CONTENTS)
+    verify.check_contents(["editorsintroductionprefaceintroduction159"], CONTENTS)
+    with pytest.raises(CheckFailed, match="missing in PDF: XXE"):
+        verify.check_contents(["editorsintroductionpreface15", "9"], CONTENTS)
+
+
 # The publication page as the layout's settings give it, and as pdftotext
 # reads it: the license notice broken across lines.
 SETTINGS = configparser.ConfigParser(interpolation=None)

@@ -53,12 +53,6 @@ copyright law. CCEL is credited as the transcription source, here and in the
 edition's introduction. CCEL's site stylesheets, script and images are not
 included.
 
-### Apocrypha introduction
-
-The introduction headed “THE BOOKS OF THE APOCRYPHA” in `98-OTHeng-Brenton.usfm`, within `eng-Brenton_usfm.zip`, contains the revised introduction published in Samuel Bagster & Sons' *The Apocrypha: Greek and English, in Parallel Columns*, second edition (1906), after Brenton's death in 1862. The [catalogue record](https://openlibrary.org/books/OL58281461M/The_Apocrypha) identifies the edition and records the introduction as signed “H.P.”.
-
-A contemporary review in *The University Review*, vol. IV, October 1906, pp. 74–75, names the second edition and its year, describes its introduction as revised, and quotes the paragraph beginning “It forms a portion of the Bible of Christendom”, which appears in the pinned eBible introduction. See the [review scan](https://archive.org/details/universityrevie00unkngoog/page/74/mode/2up). This edition retains the general introduction as front matter and places its accounts of individual books and sections in opening footnotes, as recorded in `edition/book-introductions.json`.
-
 ## Swete’s Greek edition
 
 `edition/alexandrinus.json` cites Henry Barclay Swete, *The Old Testament in Greek according to the Septuagint*, third edition: volume I (1901), volume II (1907), and volume III (1905). The decisions cite printed page numbers. Swete’s apparatus checks Brenton’s reports of Codex Alexandrinus and settles the placement of supplied English passages; it is not an additional English translation printed in the edition.

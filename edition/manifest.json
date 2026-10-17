@@ -1328,20 +1328,15 @@
     {
       "source": "brenton",
       "id": "XXB",
-      "title": "Preface (1844)",
-      "short_title": "Preface (1844)"
+      "title": "Preface",
+      "short_title": "Preface"
     },
     {
       "source": "brenton",
       "id": "XXE",
       "source_id": "INT",
-      "title": "Introduction (1870)",
-      "short_title": "Introduction (1870)"
-    },
-    {
-      "source": "brenton",
-      "id": "OTH",
-      "continues": "XXE"
+      "title": "Introduction",
+      "short_title": "Introduction"
     }
   ],
   "new_testament_front": [
@@ -1361,6 +1356,7 @@
   "excluded": {
     "brenton": [
       "NEH",
+      "OTH",
       "XXA",
       "XXC"
     ]

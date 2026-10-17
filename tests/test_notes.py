@@ -26,33 +26,7 @@ from bible import (
     usj,
 )
 from bible.checks import CheckFailed
-from bible.usj import Content, Document, Node
-
-
-def test_prose_quotations_span_styles_and_preserve_apostrophes() -> None:
-    content: Content = [
-        "He quotes “The ",
-        usj.char("it", "fathers’"),
-        " words: ‘we are his offspring.’” ",
-        usj.char("it", "This"),
-        " is commentary. See ",
-        usj.char("xt", "Acts 17:28"),
-        ".",
-    ]
-    source = deepcopy(content)
-    printed = notes.prose(content)
-    assert content == source
-    assert usj.text_of(printed) == (
-        "He quotes The fathers’ words: we are his offspring. "
-        "This is commentary. See Acts 17:28."
-    )
-    italic = [
-        usj.text_of(n["content"])
-        for n in usj.walk(printed)
-        if usj.is_type(n, "char", "it")
-    ]
-    assert italic == ["The fathers’ words: we are his offspring"]
-    assert usj.char("xt", "Acts 17:28") in printed
+from bible.usj import Document, Node
 
 
 @pytest.mark.parametrize(
@@ -567,8 +541,6 @@ def test_quotation_marks_that_pair_in_two_ways_are_refused(words: str) -> None:
     body = notes.interpreted(notes.labelled_pieces(words), "key")
     with pytest.raises(CheckFailed, match="Ambiguous quotation marks"):
         notes.displayed(body)
-    with pytest.raises(CheckFailed, match="Ambiguous quotation marks"):
-        notes.prose([words])
 
 
 def test_a_label_opens_a_note_only_as_a_whole_word() -> None:

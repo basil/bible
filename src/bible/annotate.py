@@ -1,7 +1,6 @@
 """The notes of the assembled books, set as the edition prints them: Brenton's
 notes and cross-references and the 1611 margin as footnotes that name the
-words they are about, the quotation links at their verses, and the
-introductions to the books of the Apocrypha as footnotes on their openings.
+words they are about, and the quotation links at their verses.
 
 A note is read once, against the verse it stands in as the edition numbers
 it. Everything it needs is in the assembled book and the policy.

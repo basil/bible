@@ -28,7 +28,6 @@ FILES = (
     "brenton-notes",
     "kjv-notes",
     "ccel-notes",
-    "book-introductions",
     "appendix",
     "abbreviations",
     "terminology",
@@ -75,7 +74,6 @@ class Policy:
     brenton_notes: schema.BrentonNotes
     kjv_notes: schema.KjvNotes
     ccel_notes: schema.CcelNotes
-    introductions: schema.BookIntroductions
     appendix: schema.Appendix
     abbreviations: schema.Abbreviations
     terminology: Mapping[str, schema.Terminology]
@@ -223,9 +221,9 @@ def check(policy: Policy) -> None:
         "appendices",
     ):
         units = policy.manifest[manifest_group]
-        for at, unit_entry in enumerate(units):
+        for unit_entry in units:
             required = {"id", "source"}
-            optional = names | {"continues"}
+            optional = names
             if manifest_group == "scripture":
                 required = required | {"section", "title"}
                 optional = (names - {"title"}) | {
@@ -240,19 +238,6 @@ def check(policy: Policy) -> None:
                 optional,
                 f"Manifest {manifest_group} entry {unit_entry.get('id')}",
             )
-            if "continues" in unit_entry:
-                require(
-                    at > 0
-                    and units[at - 1]["id"] == unit_entry["continues"]
-                    and "continues" not in units[at - 1],
-                    f"Front matter must continue the preceding unit: {unit_entry['id']}",
-                )
-                # The unit it continues heads both, so these would print nowhere.
-                require(
-                    not {"short_title", "abbreviation"} & set(unit_entry),
-                    f"Running head or abbreviation of continuing front matter: "
-                    f"{unit_entry['id']}",
-                )
             # Only true labels anything: false would be a decision that changes nothing.
             if "labelled_chapters" in unit_entry:
                 require(
@@ -274,10 +259,8 @@ def check(policy: Policy) -> None:
     require(not unplaced, f"Scripture units outside both testaments: {unplaced}")
     ids = [entry["id"] for entry in policy.entries]
     require(len(ids) == len(set(ids)), "Duplicate project id")
-    # The rendered PDF is searched by the contents' units, and continuing
-    # front matter has no entry there: its witness would never be read.
-    printed = {entry["id"] for entry in policy.entries if "continues" not in entry}
-    unread = sorted({witness["id"] for witness in policy.witnesses} - printed)
+    # The rendered PDF is searched by the contents' units.
+    unread = sorted({witness["id"] for witness in policy.witnesses} - set(ids))
     require(not unread, f"Witnesses of units without a contents entry: {unread}")
     codes = {u["id"] for u in scripture}
     require(
@@ -417,12 +400,6 @@ def check(policy: Policy) -> None:
         if "uncategorized" in v and "anchor" not in v
     )
     require(not unused, f"Uncategorized flag without an anchor: {unused}")
-    require_fields(
-        policy.introductions,
-        {"source", "front", "books", "sections", "glosses", "names", "omit"},
-        (),
-        "Book introductions file",
-    )
     # A change of wording names its note, or the front or back matter it is
     # made in: one that named neither, or a unit that nothing reads, would be
     # met by nothing, unnoticed.
@@ -533,17 +510,12 @@ def check(policy: Policy) -> None:
         )
 
 
-# The field of the policy each decision file fills.
-FIELD_OF = {name: name.replace("-", "_") for name in FILES} | {
-    "book-introductions": "introductions"
-}
-
-
 def load() -> Policy:
-    """Read and check the edition's decisions."""
+    """Read and check the edition's decisions, each file into the field of
+    its name."""
     policy = Policy(
         **{
-            FIELD_OF[name]: cast(
+            name.replace("-", "_"): cast(
                 Any, freeze(read_json(paths.EDITION_DIR / f"{name}.json"))
             )
             for name in FILES

@@ -1,5 +1,5 @@
 """Front and back matter: the translations' own pages as the edition prints
-them, and the introductions that go to the books."""
+them, and the notes of Brenton's Appendix that go to the books."""
 
 from __future__ import annotations
 
@@ -14,7 +14,7 @@ import bible.pipeline
 import bible.policy
 import bible.scripture
 import bible.sources
-from bible import alexandrinus, annotate, assembly, matter, notes, terminology, usj
+from bible import alexandrinus, annotate, matter, notes, terminology, usj
 from bible.checks import CheckFailed
 from bible.policy import source_id
 from bible.usj import Content, Document
@@ -36,45 +36,6 @@ def prepared(
     doc = family[source_id(entry)]
     changed_ctx = annotate.Context(policy, ctx.inventory, ctx.books)
     return matter.unit(entry, doc, changed_ctx, annotate.Report())
-
-
-def test_the_introduction_keeps_its_general_paragraphs_and_sends_the_rest(
-    edition: bible.pipeline.Edition,
-) -> None:
-    front = lines(edition, "OTH")
-    assert [line[:28] for line in front[7:]] == [
-        "\\ip The Alexandrian Jews pos",
-        "\\ip During the Reformation p",
-        "\\ip In more recent times it ",
-        "\\ip The second book of Esdra",
-    ]
-    # Its headings, which the books' titles replace, are dropped.
-    assert not [line for line in front if line.startswith("\\is")]
-    # A gloss stands in the edition's own voice, and a book is called by the
-    # edition's name for it.
-    assert (
-        "save 1 and 2 Esdras of the English Apocrypha and the Prayer of Manasses"
-        in front[8]
-    )
-
-
-def test_a_books_introduction_is_a_footnote_on_its_first_verse(
-    edition: bible.pipeline.Edition,
-) -> None:
-    tobit = next(line for line in lines(edition, "TOB") if line.startswith("\\v 1 "))
-    assert tobit.startswith(
-        "\\v 1 \\ef + \\ft The book of Tobit is one of the most perfect"
-    )
-    # The opening canon comparison is omitted; the book name is roman.
-    first = next(line for line in lines(edition, "1MA") if line.startswith("\\v 1 "))
-    assert first.startswith("\\v 1 \\ef + \\ft The First Book of the Maccabees")
-    assert "first two as canonical" not in first
-    # A section's introduction stands at the section's first verse, under its heading.
-    daniel = lines(edition, "DAG")
-    song = daniel.index("\\s1 The Song of the Three Children")
-    assert daniel[song + 2].startswith(
-        "\\v 25 \\ef + \\ft The Song of the Three Children contains"
-    )
 
 
 def test_the_appendix_notes_are_footnotes_at_their_verses(
@@ -149,7 +110,7 @@ def test_an_appendix_note_must_be_placed_where_its_decision_says(
     def unplaced(data: dict[str, Any]) -> None:
         del data["notes"]["EZK 16:44"]
 
-    with pytest.raises(CheckFailed, match="Book introduction paragraphs not placed"):
+    with pytest.raises(CheckFailed, match="Paragraphs not placed"):
         prepare(unplaced)
     with pytest.raises(CheckFailed, match="Invalid Appendix note: JOB 25:2"):
         changed(policy, "appendix", lambda d: d["notes"]["JOB 25:2"].update(at="start"))
@@ -176,8 +137,8 @@ def test_front_matter_notes_are_numbered_without_origins_that_name_no_verse() ->
     )
 
 
-@pytest.mark.parametrize("code", ["1ES", "JDT", "SIR", "DAG"])
-def test_prose_footnotes_quote_in_italic_without_marks(
+@pytest.mark.parametrize("code", ["2SA", "EXO", "DAG"])
+def test_footnotes_quote_in_italic_without_marks(
     edition: bible.pipeline.Edition, code: str
 ) -> None:
     footnotes = usj.notes_of(edition.documents[code]["content"])
@@ -213,52 +174,6 @@ def test_brenton_introduction_preserves_emphasis_and_nested_quotation(
         "“As certain also of your own poets have said, ‘For we are also his offspring.’”"
         in usj.text_of(content)
     )
-
-
-def test_every_paragraph_of_the_introduction_is_placed_once(
-    policy: bible.policy.Policy,
-    read: bible.pipeline.Read,
-    sources: bible.sources.Sources,
-    ctx: bible.annotate.Context,
-) -> None:
-    def unplaced(data: dict[str, Any]) -> None:
-        data["books"]["TOB"] = []
-
-    with pytest.raises(CheckFailed, match="paragraphs not placed|with no paragraphs"):
-        prepared("OTH", changed(policy, "introductions", unplaced), read, ctx)
-
-    def stale(data: dict[str, Any]) -> None:
-        data["glosses"]["The book of Tobit"] = [
-            {"after": "Hebrew idols", "insert": " [sic]", "why": "no such words"}
-        ]
-
-    with pytest.raises(CheckFailed, match="Gloss does not apply"):
-        prepared("OTH", changed(policy, "introductions", stale), read, ctx)
-
-    # A gloss that names no words of the source, as by a misspelt field.
-    def placeless(data: dict[str, Any]) -> None:
-        data["glosses"]["The book of Tobit"] = [{"insert": " [sic]", "why": "x"}]
-
-    with pytest.raises(CheckFailed, match="Gloss does not apply"):
-        prepared("OTH", changed(policy, "introductions", placeless), read, ctx)
-
-    # The edition prints no brackets, so a gloss may not add one.
-    def bracketed(data: dict[str, Any]) -> None:
-        data["glosses"]["The book of Tobit"] = [
-            {"after": "The book of Tobit", "insert": " [sic]", "why": "x"}
-        ]
-
-    with pytest.raises(CheckFailed, match="prints a bracket"):
-        prepared("OTH", changed(policy, "introductions", bracketed), read, ctx)
-
-    # Nor leave a space doubled.
-    def spaced(data: dict[str, Any]) -> None:
-        data["glosses"]["The book of Tobit"] = [
-            {"after": "The book of Tobit", "insert": " of the Apocrypha ", "why": "x"}
-        ]
-
-    with pytest.raises(CheckFailed, match="Gloss is not words"):
-        prepared("OTH", changed(policy, "introductions", spaced), read, ctx)
 
 
 def test_the_list_of_abbreviations_is_completed_from_the_registry(
@@ -304,9 +219,8 @@ def test_front_and_back_matter_heading_capitalization(
 ) -> None:
     expected = {
         "XXD": ["\\mt1 Abbreviations and Signs Used in the Notes"],
-        "XXB": ["\\mt1 Preface (1844)"],
-        "XXE": ["\\mt1 Introduction (1870)"],
-        "OTH": ["\\mt1 The Books of the Apocrypha"],
+        "XXB": ["\\mt1 Preface"],
+        "XXE": ["\\mt1 Introduction"],
         "TDX": [
             "\\mt2 To the Most High and Mighty Prince",
             "\\mt1 James,",
@@ -332,7 +246,7 @@ def test_front_and_back_matter_heading_capitalization(
         ] == headings
 
 
-@pytest.mark.parametrize("unit", ["XXD", "OTH", "TDX"])
+@pytest.mark.parametrize("unit", ["XXD", "TDX"])
 @pytest.mark.parametrize("source", ["missing heading", "changed capitalization"])
 def test_heading_decisions_reject_changed_or_missing_source(
     unit: str,
@@ -442,42 +356,18 @@ def test_a_prose_edit_that_changes_nothing_is_refused() -> None:
         )
 
 
-@pytest.mark.parametrize("destination", ["front", "book", "section"])
-def test_empty_introduction_destinations_are_rejected(
-    policy: bible.policy.Policy, destination: str
-) -> None:
-    def empty(data: dict[str, Any]) -> None:
-        if destination == "front":
-            data["front"] = []
-        elif destination == "book":
-            data["books"]["TOB"] = []
-        else:
-            data["sections"]["DAG"]["3:25"]["paragraphs"] = []
-
-    entry = next(e for e in policy.entries if source_id(e) == "OTH")
-    with pytest.raises(CheckFailed, match="with no paragraphs"):
-        matter.placements(entry, changed(policy, "introductions", empty))
-
-
-@pytest.mark.parametrize("destination", ["same book", "another book", "section"])
-def test_duplicate_paragraph_assignments_are_rejected_before_flattening(
-    policy: bible.policy.Policy, destination: str
+def test_a_paragraph_sent_to_two_verses_is_rejected(
+    policy: bible.policy.Policy,
 ) -> None:
     def duplicate(data: dict[str, Any]) -> None:
-        key = data["books"]["TOB"][0]
-        if destination == "same book":
-            data["books"]["TOB"].append(key)
-        elif destination == "another book":
-            data["books"]["JDT"].append(key)
-        else:
-            data["sections"]["DAG"]["3:25"]["paragraphs"].append(key)
+        key = data["notes"]["JOB 25:2"]["paragraphs"][0]
+        data["notes"]["JOB 39:13"]["paragraphs"].append(key)
 
-    entry = next(e for e in policy.entries if source_id(e) == "OTH")
     with pytest.raises(CheckFailed, match="paragraphs placed twice"):
-        matter.placements(entry, changed(policy, "introductions", duplicate))
+        matter.placements(policy.unprinted[0], changed(policy, "appendix", duplicate))
 
 
-def test_introduction_and_appendix_share_a_verse_without_overwriting(
+def test_an_appendix_note_follows_the_notes_at_the_start_of_its_verse(
     monkeypatch: pytest.MonkeyPatch,
     policy: bible.policy.Policy,
     read: bible.pipeline.Read,
@@ -488,33 +378,18 @@ def test_introduction_and_appendix_share_a_verse_without_overwriting(
         entry: Any, doc: Any, context: Any, report: Any
     ) -> tuple[Document, dict[str, list[Content]]]:
         moved: dict[str, list[Content]] = {}
-        if source_id(entry) == "OTH":
-            moved["EXO@28:23"] = [["Introduction."]]
-        elif source_id(entry) == "BAK":
-            moved["EXO@28:23"] = [["Appendix."]]
+        if source_id(entry) == "BAK":
+            moved["EXO 28:23"] = [["Appendix."]]
         return doc, moved
 
     monkeypatch.setattr(matter, "unit", prepare)
-    _, introductions, appendix_notes, _ = bible.pipeline.front_and_back(read, ctx)
-    changed_policy = changed(
-        policy,
-        "introductions",
-        lambda d: d["sections"].update(
-            EXO={"28:23": {"heading": "Section", "paragraphs": ["Introduction."]}}
-        ),
-    )
-    changed_ctx = annotate.Context(changed_policy, ctx.inventory, ctx.books)
-    doc = usj.parse(
-        "\\id EXO\n\\c 28\n\\s1 Section\n\\p\n" "\\v 23 \\f + \\ft Existing.\\f*Text."
-    )
-    result = bible.pipeline.introduced(
-        "EXO", doc, introductions, appendix_notes, (), changed_ctx
-    )
+    _, appendix_notes, _ = bible.pipeline.front_and_back(read, ctx)
+    doc = usj.parse("\\id EXO\n\\c 28\n\\p\n\\v 23 \\f + \\ft Existing.\\f*Text.")
+    result = bible.pipeline.linked("EXO", doc, appendix_notes, (), ctx)
     notes_at_start = bible.scripture.verses(result)["28:23"].notes
     assert [(at, usj.text_of(n["content"])) for at, n in notes_at_start] == [
-        (0, "Introduction."),
         (0, "Existing."),
         (0, "Appendix."),
     ]
-    assert [n["caller"] for _, n in notes_at_start] == ["+", "+", "+"]
+    assert [n["caller"] for _, n in notes_at_start] == ["+", "+"]
     assert notes_at_start[-1][1]["x-key"] == "EXO 28:23 Appendix"

@@ -97,13 +97,6 @@ class Margin(TypedDict):
     below: ReadOnly[Mapping[str, str]]
 
 
-class BookIntroductionsGlosses(TypedDict, total=False):
-    after: ReadOnly[str]
-    insert: ReadOnly[str]
-    replace: ReadOnly[str]
-    why: ReadOnly[str]
-
-
 WordingChange = TypedDict(
     "WordingChange",
     {
@@ -116,21 +109,6 @@ WordingChange = TypedDict(
     },
     total=False,
 )
-
-
-class BookIntroductionsSections(TypedDict, total=False):
-    heading: ReadOnly[str]
-    paragraphs: ReadOnly[tuple[str, ...]]
-
-
-class BookIntroductions(TypedDict, total=False):
-    books: ReadOnly[Mapping[str, tuple[str, ...]]]
-    front: ReadOnly[tuple[str, ...]]
-    glosses: ReadOnly[Mapping[str, tuple[BookIntroductionsGlosses, ...]]]
-    names: ReadOnly[Mapping[str, tuple[WordingChange, ...]]]
-    omit: ReadOnly[Mapping[str, str]]
-    sections: ReadOnly[Mapping[str, Mapping[str, BookIntroductionsSections]]]
-    source: ReadOnly[str]
 
 
 class AppendixNote(TypedDict, total=False):
@@ -236,7 +214,6 @@ class Entry(TypedDict, total=False):
     abbreviation: ReadOnly[str]
     chapters: ReadOnly[tuple[int, ...]]
     cited_singly: ReadOnly[str]
-    continues: ReadOnly[str]
     file: ReadOnly[str]
     heading: ReadOnly[tuple[tuple[str, str], ...]]
     id: ReadOnly[str]

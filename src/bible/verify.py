@@ -84,8 +84,8 @@ def check_processed(project: Path, base: Path, ids: list[str]) -> None:
     tex = texfiles[0].read_text(encoding="utf-8")
     require("%\\OmitCallerInNote{f}" in tex, "Footnote callers unexpectedly suppressed")
     require("\\AutoCallers{f}{1,2," in tex, "Footnote callers not numbered")
-    # The notes set below the text, introductions and Appendix notes are ef
-    # footnotes, whose callers stand in the text.
+    # The notes set below the text and the Appendix notes are ef footnotes,
+    # whose callers stand in the text.
     require(
         "%\\OmitCallerInNote{ef}" in tex,
         "Extended note callers unexpectedly suppressed",
@@ -137,6 +137,35 @@ def numbered(page: str, entries: Sequence[tuple[str, str, str]]) -> bool:
             return False
         at = found + len(expected)
     return True
+
+
+def check_contents(
+    contents: Sequence[str], toc: Sequence[tuple[str, str, str, str]]
+) -> None:
+    """Refuse contents pages, each read as one string of its letters and
+    figures, unless they list the units in order, each page giving its own
+    units their page numbers. A contents page reads by its columns: the
+    titles with the abbreviations, then the page numbers. A title is sought
+    after the one before it on its page, since one title may be part of
+    another's ("Introduction" of "Editor's Introduction")."""
+    listed = at = 0
+    entries: list[tuple[str, str, str]] = []
+    for code, title, abbreviation, number in toc:
+        found = contents[listed].find(title, at) if listed < len(contents) else -1
+        if found < 0 and listed < len(contents):
+            require(
+                entries and numbered(contents[listed], entries),
+                f"Contents page numbers wrong in PDF before: {code}",
+            )
+            listed, entries = listed + 1, []
+            found = contents[listed].find(title) if listed < len(contents) else -1
+        require(found >= 0, f"Contents entry missing in PDF: {code}")
+        at = found + len(title)
+        entries.append((title, abbreviation, number))
+    require(
+        numbered(contents[listed], entries),
+        "Contents page numbers wrong in PDF on the last page of the contents",
+    )
 
 
 def check_boundaries(
@@ -199,37 +228,26 @@ def check_boundaries(
     )
     page_offset = first_physical - int(toc[0][3])
     require(page_offset >= 3, "Front matter page offset is invalid")
-    # A contents page reads by its columns: the titles with the abbreviations,
-    # then the page numbers, which must be those of the titles on that page.
-    contents = [key(page) for page in page_text[2 : first_physical - 1]]
-    listed = 0
-    entries: list[tuple[str, str, str]] = []
     abbreviations = project_settings(project).getboolean(
         "document", "usetoc3", fallback=False
+    )
+    check_contents(
+        [key(page) for page in page_text[2 : first_physical - 1]],
+        [
+            (code, key(title), key(abbreviation) if abbreviations else "", number)
+            for code, title, abbreviation, number in toc
+        ],
     )
     previous = 0
     for code, title, abbreviation, printed_page in toc:
         page = int(printed_page) + page_offset
         require(previous < page <= pages, f"Invalid boundary page: {code} {page}")
         previous = page
-        if listed < len(contents) and key(title) not in contents[listed]:
-            require(
-                entries and numbered(contents[listed], entries),
-                f"Contents page numbers wrong in PDF before: {code}",
-            )
-            listed, entries = listed + 1, []
-        require(
-            listed < len(contents) and key(title) in contents[listed],
-            f"Contents entry missing in PDF: {code}",
-        )
         # PTXprint writes an empty cell for a unit without \toc3; TeX in the
         # cell would not read as the letters it prints.
         require(
             not abbreviations or (abbreviation and not abbreviation.startswith("\\")),
             f"Unit without \\toc3: {code}",
-        )
-        entries.append(
-            (key(title), key(abbreviation) if abbreviations else "", printed_page)
         )
         words = heading(usfm[code])
         require(words, f"Missing heading: {code}")
@@ -237,10 +255,6 @@ def check_boundaries(
             key(canonical_text(words)) in key(page_text[page - 1]),
             f"Book heading not on advertised PDF page: {code} {page}",
         )
-    require(
-        numbered(contents[listed], entries),
-        "Contents page numbers wrong in PDF on the last page of the contents",
-    )
     write_json(
         base / "book-boundaries.json",
         [

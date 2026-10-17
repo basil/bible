@@ -472,8 +472,6 @@ def test_a_book_cited_alone_keeps_its_abbreviations_period(
         ("EZK", "Mark 4:30; in Heb. 9:9 and 11:19 it is"),
         # A citation that names no book is of the book the note stands in.
         ("PRO", "see chapter 1:4, 22; 8:5; 14:15; 21:11. For πανοῦργος, 12:16; 13:1,"),
-        # A book's introduction, set as a note on the book, cites the book.
-        ("BAR", "ending at 3:8, was in all probability originally written in Hebrew"),
     ],
 )
 def test_the_front_and_back_matter_cite_as_the_edition_does(
@@ -491,10 +489,6 @@ def test_a_decision_on_a_unit_is_keyed_by_its_words(
     assert found["XXB cxliv. 13"]["source"] == "cxliv. 13"
     # Nor is one met where its words are part of others' words.
     assert citations.unit_decisions("XXB", "Psalm cxliv. 130", policy=policy) == {}
-    # The introductions are one unit, read into each book in turn.
-    found = citations.unit_decisions("OTH", "ch. 3. 8.", "BAR", policy=policy)
-    assert list(found) == ["OTH BAR 3. 8"]
-    assert citations.unit_decisions("OTH", "ch. 3. 8.", "TOB", policy=policy) == {}
 
 
 @pytest.mark.parametrize(

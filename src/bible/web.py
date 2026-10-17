@@ -168,8 +168,8 @@ def write(edition: pipeline.Edition, directory: Path) -> None:
         code = unit["id"]
         doc = export.with_printed_origins(documents[code])
         (book, *header), parts = pipeline.headed_chapters(doc)
-        # A book's introduction is a note on its opening; before the first
-        # chapter stand only the book's names, which the manifest carries.
+        # Before the first chapter stand only the book's names, which the
+        # manifest carries.
         require(
             book["type"] == "book"
             and all(node.get("marker") in usj.BOOK_PARAGRAPHS for node in header),

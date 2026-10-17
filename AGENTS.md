@@ -40,7 +40,7 @@ Every departure from the sources is a decision recorded in `edition/*.json`, and
 4. **Place:** each verse is matched to its place in the King James Bible: the Old Testament's from the table and the words, the New Testament's from the verses the Byzantine text lacks or places elsewhere. The notes, the links and the table of chapters and verses read it.
 5. **Line:** the poetry is set in lines after the Updated Brenton (`src/bible/lines.py`): each of its chapters is aligned word by word with Brenton's, and its lines and stanza breaks are placed in Brenton's words, in the verses Scrivener's King James Bible sets as verse too or has no counterpart of, and throughout the Apocrypha, where the Updated Brenton's lines stand alone; the breaks the words cannot place are in `edition/lines.json`. The New Testament keeps Scrivener's paragraphs and poetry. The Psalter's kathismata and stases are then marked from `edition/psalter.json`.
 6. **Matter:** the translations' front and back matter is brought into the edition's style, citing and abbreviating as the edition does; Brenton's Appendix is read for its notes and printed nowhere.
-7. **Annotate:** Brenton's notes, the 1611 margin and the edition's own notes are set as footnotes on the words they are about, with the quotation links, the books' introductions and the notes of Brenton's Appendix.
+7. **Annotate:** Brenton's notes, the 1611 margin and the edition's own notes are set as footnotes on the words they are about, with the quotation links and the notes of Brenton's Appendix.
 8. **Revise:** spelling and punctuation are revised.
 9. **Authored:** the edition's own pages are filled in with the passages and tables they ask for, among them the appendix of readings, which quotes both Bibles with the edition's systematic spelling and punctuation, before the verse-specific revisions, so that it shows the readings' differences alone.
 10. **View:** the whole edition or the sample is selected, and typographic quotes are applied.
@@ -70,7 +70,7 @@ Every document between the sources and PTXprint is USJ: plain objects, lists and
 
 A stage decides on a document's words, not on its markup. `usj.py` and `scripture.py` read the words of a verse or a paragraph as one string, whatever notes and styles stand among them, and make a change at its offsets: `replaced` and `inserted` set content in place of words, and `substituted` rewrites words in the styles they stand in.
 
-USFM as text is read at the two ends: `repairs.py` corrects a source's transcription before it is parsed, the read stage takes the King James Bible's names and chapters for the table of chapters and verses from the files it does not parse, and `verify.py` reads what PTXprint wrote (`usfm.py` holds the helpers all three use). Two things between them still meet it, and nothing else should. The editor's own pages are parsed once the passages and tables they ask for have been filled in (`numbering.page`). And a decision that gives words with their markup is written in USFM and parsed where it is carried out: the `from`, `note`, `appendix`, `to` and `source_note` of a decision about Codex Alexandrinus, for which a source's note is written out to be compared with it (`notes.source_text`), and the `from` and `to` of a name change in `edition/book-introductions.json` or `edition/citations.json`.
+USFM as text is read at the two ends: `repairs.py` corrects a source's transcription before it is parsed, the read stage takes the King James Bible's names and chapters for the table of chapters and verses from the files it does not parse, and `verify.py` reads what PTXprint wrote (`usfm.py` holds the helpers all three use). Two things between them still meet it, and nothing else should. The editor's own pages are parsed once the passages and tables they ask for have been filled in (`numbering.page`). And a decision that gives words with their markup is written in USFM and parsed where it is carried out: the `from`, `note`, `appendix`, `to` and `source_note` of a decision about Codex Alexandrinus, for which a source's note is written out to be compared with it (`notes.source_text`), and the `from` and `to` of a name change in `edition/citations.json`.
 
 ## Decisions
 
@@ -99,7 +99,6 @@ A correction to a slip in transcription must match the source text exactly once,
 | How a citation is read or printed | `edition/citations.json` |
 | The wording of a note or of front matter | `edition/prose.json` |
 | An abbreviation, or the list of abbreviations | `edition/terminology.json`, `edition/abbreviations.json` |
-| Where a book's introduction goes | `edition/book-introductions.json` |
 | Where a note of Brenton's Appendix stands, and the words its caller stands before | `edition/appendix.json` |
 | A quotation link, or Turpie's judgment of it | `edition/quotations.json`, `edition/turpie.json` |
 | How a chapter or verse is numbered where eBible numbers it otherwise than the Septuagint (`relabel`, `breaks`), by the rule in [docs/numbering.md](docs/numbering.md), and a verse that prints no number (`unnumbered`) | `edition/versification.json` |

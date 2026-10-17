@@ -91,12 +91,6 @@
         "to": "44 title"
       },
       {
-        "unit": "OTH",
-        "from": "I. and II.",
-        "to": "1 and 2",
-        "why": "the numbers of books, in the figures of the edition's names for them"
-      },
-      {
         "note": "JOB 21:23 CCEL",
         "from": ". in Heb.",
         "to": ", in Heb.",
@@ -269,11 +263,6 @@
         "to": "Abbreviations and Signs Used in the Notes"
       },
       {
-        "unit": "OTH",
-        "from": "THE BOOKS OF THE APOCRYPHA",
-        "to": "The Books of the Apocrypha"
-      },
-      {
         "unit": "TDX",
         "from": "TO THE MOST HIGH AND MIGHTY PRINCE",
         "to": "To the Most High and Mighty Prince"
@@ -420,16 +409,6 @@
         "from": "C. Pridham",
         "to": "Charles Pridham",
         "why": "Brenton prints C. Pridham; his preface gives Mr. Charles Pridham"
-      }
-    ]
-  },
-  "esdras-introduction": {
-    "why": "Omit the comparison with the sixth Article of Religion, as requested by the editor; this note introduces the First Book of Esdras under this edition’s title.",
-    "changes": [
-      {
-        "unit": "OTH",
-        "from": ", which the sixth Article of Religion styles the third book,",
-        "to": ""
       }
     ]
   },

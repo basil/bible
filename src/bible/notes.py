@@ -1072,41 +1072,6 @@ def underscored(runs: Sequence[tuple[str, str]]) -> str:
     return "".join(result) + ("_" if reading else "")
 
 
-def prose(content: Content) -> Content:
-    """Prose footnotes use roman commentary and italic quotations, including
-    nested quotations, without their enclosing marks. Keep other semantic
-    styles, citations and the punctuation beside the quoted words."""
-
-    def roman(node: Node) -> Node | Content:
-        return node["content"] if usj.is_type(node, "char", "it") else node
-
-    content = usj.mapped(content, roman)
-    text = usj.text_of(content)
-    for quote in reversed(list(ENGLISH_QUOTE.finditer(text))):
-        assert quote.lastgroup is not None
-        first, last = trimmed(text, *quote.span(quote.lastgroup))
-        if first < last:
-            _, rest = usj.split(content, first)
-            inner, _ = usj.split(rest, last - first)
-            content = usj.replaced(content, first, last, [usj.char("it", *inner)])
-
-    removed: list[tuple[int, int, str]] = []
-
-    def delimiters(value: str, offset: int = 0) -> None:
-        check_quotes(value)
-        for quote in ENGLISH_QUOTE.finditer(value):
-            assert quote.lastgroup is not None
-            removed.extend(
-                (offset + at, offset + at + 1, "")
-                for at in (quote.start(), quote.end() - 1)
-            )
-            first, last = quote.span(quote.lastgroup)
-            delimiters(value[first:last], offset + first)
-
-    delimiters(text)
-    return usj.substituted(content, removed)
-
-
 def footnote(
     reference: str,
     lemma: str | None,

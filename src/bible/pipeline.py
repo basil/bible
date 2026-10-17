@@ -6,7 +6,7 @@
     place       where each verse stands in the King James Bible
     line        Old Testament poetry, retaining Scrivener's New Testament
     matter      the translations' front and back matter
-    annotate    notes, quotation links and book introductions
+    annotate    notes, quotation links and the notes of Brenton's Appendix
     revise      the translations' spelling and punctuation
     authored    the edition's own pages, quoting the revised translations
     view        the full edition, or the sample's chapters, with typography
@@ -243,6 +243,14 @@ def read(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Read:
         not unprinted,
         f"Brenton corrections name a source the edition doesn't read: {unprinted}",
     )
+    # Every source file is taken by an entry or excluded, and an exclusion
+    # names a file that exists and that no entry takes. An excluded file is
+    # still parsed with the rest; the edition takes nothing from it.
+    excluded = set(policy.manifest["excluded"]["brenton"])
+    stale = sorted((excluded - set(sources.brenton)) | (excluded & printed))
+    require(not stale, f"Excluded Brenton sources missing or read: {stale}")
+    unread = sorted(set(sources.brenton) - printed - excluded)
+    require(not unread, f"Brenton sources neither read nor excluded: {unread}")
     brenton, mended = {}, {}
     for code, text in sources.brenton.items():
         text, mended[code] = repairs.brenton(code, text, corrections)
@@ -478,15 +486,13 @@ def context(
 def front_and_back(read_sources: Read, ctx: annotate.Context) -> tuple[
     dict[str, Document],
     dict[str, list[Content]],
-    dict[str, list[Content]],
     annotate.Report,
 ]:
-    """The translations' front and back matter, and the paragraphs it sends
-    to the books, by where each goes: the introductions to the books of the
-    Apocrypha, and the notes of Brenton's Appendix, which is read for them
-    and printed nowhere."""
+    """The translations' front and back matter, and the notes of Brenton's
+    Appendix, which is read for them and printed nowhere, by the verse each
+    goes to."""
     policy, report = ctx.policy, annotate.Report()
-    docs, introductions, appendix_notes = {}, {}, {}
+    docs, appendix_notes = {}, {}
     unprinted = {e["id"] for e in policy.unprinted}
     for entry in (*policy.entries, *policy.unprinted):
         if "file" in entry or "section" in entry:
@@ -505,64 +511,29 @@ def front_and_back(read_sources: Read, ctx: annotate.Context) -> tuple[
             appendix_notes.update(moved)
         else:
             docs[entry["id"]] = doc
-            introductions.update(moved)
-    front = [
+    front = {
         source_id(e)
         for e in policy.entries
         if "section" not in e and e.get("source") == "brenton"
-    ]
-    # Its general paragraphs print only in its own front matter, so without
-    # that entry they would vanish while the books' notes still printed.
-    require(
-        front.count(policy.introductions["source"]) == 1,
-        "The introduction to the Apocrypha is not printed once as front matter",
-    )
+    }
     # The Appendix's notes print at their verses, so printed as well they
     # would print twice.
-    require(not unprinted & set(front), "Brenton's Appendix is printed as well as sent")
-    return docs, introductions, appendix_notes, report
+    require(not unprinted & front, "Brenton's Appendix is printed as well as sent")
+    return docs, appendix_notes, report
 
 
-def introduced(
+def linked(
     code: str,
     doc: Document,
-    introductions: Mapping[str, Sequence[Content]],
     appendix_notes: Mapping[str, Sequence[Content]],
     links: Sequence[crossrefs.Link],
     ctx: annotate.Context,
 ) -> Document:
-    """A book with its introduction, and its sections', as footnotes on their
-    opening verses, its quotation links, each at the start of its verse, and
+    """A book with its quotation links, each at the start of its verse, and
     the notes of Brenton's Appendix, each at the words its decision names."""
     policy = ctx.policy
     verses = scripture.verses(doc)
     placed: dict[str, Content] = {}
-    for place, paragraphs in introductions.items():
-        book, _, reference = place.partition("@")
-        if book != code:
-            continue
-        if reference:
-            require(
-                reference in verses,
-                f"Book introduction verse missing: {code} {reference}",
-            )
-            expected = policy.introductions["sections"][code][reference]["heading"]
-            block = verses[reference].parts[0][0]
-            heading = next(
-                (
-                    usj.text_of(b["content"]).strip()
-                    for b in reversed(doc["content"][:block])
-                    if usj.is_type(b, "para", "s1")
-                ),
-                None,
-            )
-            require(
-                heading == expected,
-                f"Book introduction heading changed: {code} {reference}",
-            )
-        else:
-            reference = next(iter(verses))
-        placed.setdefault(reference, []).append(matter.introduction_note(paragraphs))
     require(
         all(link.origin.book == code for link in links),
         f"Links for another book passed to {code}",
@@ -579,15 +550,15 @@ def introduced(
     # At the words the decision names, found once, or at the verse's start or
     # end, after the notes already there.
     sent = {
-        place.removeprefix(f"{code}@"): paragraphs
-        for place, paragraphs in appendix_notes.items()
-        if place.startswith(f"{code}@")
+        key: paragraphs
+        for key, paragraphs in appendix_notes.items()
+        if key.startswith(f"{code} ")
     }
     if not sent:
         return doc
     anchored: list[tuple[scripture.Verse, int, int, Content]] = []
-    for reference, paragraphs in sent.items():
-        key = f"{code} {reference}"
+    for key, paragraphs in sent.items():
+        reference = key.removeprefix(f"{code} ")
         require(reference in verses, f"Appendix note verse missing: {key}")
         note = matter.appendix_note(paragraphs, f"{key} Appendix")
         decision, verse = policy.appendix["notes"][key], verses[reference]
@@ -602,11 +573,10 @@ def introduced(
 def annotated(
     units: Mapping[str, Document],
     read_sources: Read,
-    introductions: Mapping[str, Sequence[Content]],
     appendix_notes: Mapping[str, Sequence[Content]],
     ctx: annotate.Context,
 ) -> tuple[dict[str, Document], dict[str, annotate.Report]]:
-    """The books with their notes, introductions and quotation links."""
+    """The books with their notes and quotation links."""
     policy = ctx.policy
     links = quotation_links(ctx)
     docs, reports = {}, {}
@@ -633,9 +603,7 @@ def annotated(
                 mended,
                 ctx,
             )
-        docs[code] = introduced(
-            code, doc, introductions, appendix_notes, links.get(code, ()), ctx
-        )
+        docs[code] = linked(code, doc, appendix_notes, links.get(code, ()), ctx)
         reports[code] = report
     annotate.check_notes(policy, reports.values())
     return docs, reports
@@ -829,8 +797,8 @@ def check_document(
         )
         for reference, verse in scripture.verses(doc).items():
             for _, note in verse.notes:
-                # Only the introductions and the Appendix's notes name no
-                # verse; a note moved below the text still names its own.
+                # Only the Appendix's notes name no verse; a note moved
+                # below the text still names its own.
                 named = bool(note["content"]) and usj.is_origin(note["content"][0])
                 origin = note_origin(note)
                 require(
@@ -859,10 +827,8 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
     policy = placed(units, read_sources, policy)
     units = lined(units, read_sources, policy)
     ctx = context(units, policy)
-    front, introductions, appendix_notes, front_report = front_and_back(
-        read_sources, ctx
-    )
-    books, reports = annotated(units, read_sources, introductions, appendix_notes, ctx)
+    front, appendix_notes, front_report = front_and_back(read_sources, ctx)
+    books, reports = annotated(units, read_sources, appendix_notes, ctx)
     revised = revise(front, books, policy)
     pages, spans = authored(ctx, read_sources, revised, promoted.byzantine)
     prepared = {**pages, **revised.finished}
@@ -1012,15 +978,9 @@ def sample_readings(
 def view(edition: Edition, mode: str) -> list[tuple[str, Document]]:
     """The documents a build prints, as (id, document), in order: the whole
     edition, or the sample's chapters; with their typography and their lines
-    of verse indented. Front matter that continues another unit is appended
-    under a subsection heading, without its own document or contents entry."""
+    of verse indented."""
     require(mode in ("pdf", "sample"), f"Unknown output mode: {mode}")
     sample = edition.policy.sample
-    continuations = {
-        entry["id"]: entry["continues"]
-        for entry in edition.policy.entries
-        if "continues" in entry
-    }
     result: list[tuple[str, Document]] = []
     for code, doc in edition.documents.items():
         if code in edition.scripture and mode == "sample":
@@ -1031,40 +991,7 @@ def view(edition: Edition, mode: str) -> list[tuple[str, Document]]:
             doc = sample_readings(doc, edition.appendix, sample)
         if code not in edition.authored:
             doc = typography.typographic(doc)
-        doc = indented(doc)
-        if code in continuations:
-            require(
-                bool(result) and result[-1][0] == continuations[code],
-                f"Front matter cannot continue absent unit: {code}",
-            )
-            # Its one title line becomes a heading in the unit it continues;
-            # another line of title would stand there as a book's title.
-            require(
-                [
-                    block["marker"]
-                    for block in doc["content"]
-                    if block.get("marker") in usfm.HEADING_MARKERS
-                ]
-                == ["mt1"],
-                f"Continuing front matter without a single title line: {code}",
-            )
-            blocks: list[Node] = [
-                (
-                    {**block, "marker": "is1"}
-                    if usj.is_type(block, "para", "mt1")
-                    else block
-                )
-                for block in doc["content"]
-                if block["type"] != "book"
-                and block.get("marker") not in {"h", "toc1", "toc2", "toc3"}
-            ]
-            previous, combined = result[-1]
-            result[-1] = (
-                previous,
-                usj.with_blocks(combined, [*combined["content"], *blocks]),
-            )
-        else:
-            result.append((code, doc))
+        result.append((code, indented(doc)))
     return result
 
 
