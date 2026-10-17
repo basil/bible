@@ -40,8 +40,6 @@ type Unit = list[tuple[Node, dict[Address, Reading]]]
 # The titles and headings that drop a closing full stop. Not mt2: the Epistle
 # Dedicatory's are its address ("ETC.") and salutation.
 PERIOD_FREE = ("h", "toc1", "mt1", "is1", "is2")
-# An editorial gloss, which the edition's introduction says is bracketed.
-GLOSS = re.compile(r" ?\[[^\[\]]+\]")
 # The origin eBible gives a note of its front matter, which has no verses:
 # it names nothing.
 EMPTY_ORIGIN = re.compile(r"\d+:0 ")
@@ -367,10 +365,6 @@ def placed(unit: Unit, places: Placements, policy: bible.policy.Policy) -> Unit:
         if usj.is_type(block, "para", "ip")
     ]
     bodies = [usj.unlabelled(unit[index][0]["content"]).strip() for index in paragraphs]
-    require(
-        not any("[" in body or "]" in body for body in bodies),
-        "Book introduction brackets not a gloss's",
-    )
     listed = [("front", key) for key in places.front] + [
         (place, key) for key, place in places.destinations.items()
     ]
@@ -416,9 +410,12 @@ def placed(unit: Unit, places: Placements, policy: bible.policy.Policy) -> Unit:
         original = bodies[n]
         for gloss in places.glosses.get(key, ()):
             require(gloss.get("why"), f"Gloss without a why: {key}")
+            # Words, after at most the one space that parts them from the
+            # source's, so that a gloss leaves no space doubled.
+            words = gloss.get("insert", "").removeprefix(" ")
             require(
-                GLOSS.fullmatch(gloss.get("insert", "")),
-                f"Gloss is not one bracketed insertion: {key}",
+                words and words == words.strip(),
+                f"Gloss is not words after at most one space: {key}",
             )
             # A gloss follows the source's words, or replaces them. Once in
             # the source as well, so that no gloss falls inside another.
@@ -462,12 +459,13 @@ def placed(unit: Unit, places: Placements, policy: bible.policy.Policy) -> Unit:
                 and once_in_words(usj.unlabelled(content), before),
                 f"Name change does not apply once: {key}",
             )
-            # The editor's own words are bracketed, and only a gloss adds them.
-            require(
-                "[" not in after and "]" not in after,
-                f"Name change adds brackets, which are a gloss's: {key}",
-            )
             unit = changed(unit, index, None, rewritten(content, before, after, key))
+        # The edition prints no brackets, and nothing explains one.
+        text = usj.text_of(unit[index][0]["content"])
+        require(
+            "[" not in text and "]" not in text,
+            f"Book introduction prints a bracket: {key}",
+        )
     return unit
 
 

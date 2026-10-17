@@ -10937,6 +10937,9 @@
     }
   },
   "punctuation": {
+    "brackets": {
+      "why": "Brenton's square brackets are not printed. In a book the Hebrew has, they mark the words of the Greek that the Hebrew or Codex Alexandrinus lacks (the additions to Esther, the prologue of Lamentations, Genesis 35:16, Proverbs 24:22a–f), passages that may run on over verses and chapters, with notes among them. This edition presents the Greek as its Old Testament, so it does not mark them: the brackets go from the scripture text, and the notes that explain what the Hebrew lacks stay, on those words or verses. Twice in those books they mark something else, and go all the same: at Exodus 5:14 English supplied from the Hebrew, italic within the brackets in every printing (1844 physical p. 86, 1900 physical p. 87), which eBible tags as supplied words and which print in ordinary type like the translators' others, with the note that says where they come from; at Judges 1:10 a parenthesis the Bagster printings added (1900 physical p. 327) and the 1844 printing (physical p. 282) does without. In a book the Hebrew lacks, they mark English words with no Greek behind them, which the Authorized Version prints in italics in the books it has, and the read stage takes those for supplied words. His printings of 1844, 1879 and 1900 all set both kinds (1900 physical pp. 59, 662, 984, 1126, 1220, 1228). A note's own brackets, and the appendix of readings' around a former reading, are not scripture text and stay."
+    },
     "before-em-dash": {
       "why": "An em dash supplies the break marked by an adjacent comma, colon or semicolon. Remove only adjacent runs of these three marks before it in English; preserve periods (including abbreviation periods), question marks and exclamation marks. Sentence endings and contextual dash changes require explicit decisions."
     },
@@ -11022,11 +11025,6 @@
     "note-introduction-dashes": {
       "why": "The dash introduces the explanation in these notes without ending a sentence; remove the ordinary period while retaining abbreviation periods.",
       "changes": [
-        {
-          "note": "GEN 35:16",
-          "from": "note.—The words",
-          "to": "note—The words"
-        },
         {
           "note": "JOS 21:13",
           "from": "above.—q.d.",

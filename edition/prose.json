@@ -488,6 +488,31 @@
       }
     ]
   },
+  "unbracketed-notes": {
+    "why": "The edition does not print Brenton's square brackets (the brackets rule of revisions.json), so a note that explains the Hebrew's lack by them says it of its lemma instead, which the note decisions widen to the whole passage, or, where the passage runs over verses, of the verses, which the note decisions leave without a lemma; the wording is the edition's, in the form of Brenton's own notes on such verses (Proverbs 4:27a, “Heb. omits.”) and of the edition's on verses Vat. omits (“Vat. omits verses 12–31.”). Esther's two notes are CCEL's: 1900 physical p. 666 (printed p. 654) prints “Note.—The part in brackets is not in Heb.” with the caller γ before “[And the following is the copy”, and eBible's bracket closes at 3:13g; 1900 physical p. 668 (printed p. 656) prints “Note.—The part between brackets, i.e. to the end of chap. iv., is not in the Heb.” with the caller β before “[And he besought the Lord”, and the bracket closes at 5:2b, since Brenton's chapter v begins at the edition's 5:3, so the note names the edition's verses.",
+    "changes": [
+      {
+        "note": "GEN 35:16",
+        "from": "Note.—The words between brackets form the 21st verse of this chapter in the Hebrew.",
+        "to": "Heb. has these words as verse 21."
+      },
+      {
+        "note": "2SA 21:11",
+        "from": "omits the words in brackets.",
+        "to": "omits."
+      },
+      {
+        "note": "ESG 3:13a CCEL",
+        "from": "Note.—The part in brackets is not in Heb.",
+        "to": "Heb. omits verses 13a–13g."
+      },
+      {
+        "note": "ESG 4:17a CCEL",
+        "from": "Note.—The part between brackets, i. e. to the end of chap. iv., is not in the Heb.",
+        "to": "Heb. omits verses 4:17a–5:2b."
+      }
+    ]
+  },
   "appendix-hebrew-verse-numbers": {
     "why": "Brenton's Appendix note on Exodus 28 quotes the Complutensian verses under the Hebrew's numbers, 23–28, but the edition numbers Exodus 28 as the Greek does, so its own 28:23–28 are other verses, and the note itself stands at 28:23. The note says whose numbers it prints, so that a reader does not take them for the edition's.",
     "changes": [

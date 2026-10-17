@@ -195,6 +195,12 @@
       "why": "hands is misspelled",
       "uncategorized": true
     },
+    "2SA 21:11": {
+      "from": "omits the words in italics.",
+      "to": "omits the words in brackets.",
+      "why": "Brenton 1900 physical p. 446 (printed p. 434) prints “Heb. omits the words in brackets.”, with the caller β before “[and they were faint”; the transcription substitutes italics for brackets, as it does at 2SA 17:8.",
+      "uncategorized": true
+    },
     "2SA 24:20": {
       "from": "1 Pet. 1. 12.; \\ft",
       "to": "1 Pet. 1. 12; \\ft",
@@ -3179,6 +3185,10 @@
       "lemma": "his bloody murder",
       "why": "the rendering has its own his"
     },
+    "2SA 21:11": {
+      "lemma": "and they were faint, and Dan the son of Joa of the offspring of the giants overtook them",
+      "why": "Heb. omits the whole clause Brenton brackets, to the end of the verse; the edition prints no brackets, so the lemma says what is omitted"
+    },
     "2SA 21:20": {
       "note": "Gr. The original is Hebrew in Greek letters.",
       "why": "the note comments rather than renders. The note includes a complete explanatory sentence after its opening label or gloss, which keeps its final full stop.",
@@ -4380,6 +4390,10 @@
       "lemma": "nothing",
       "why": "not existing renders nothing"
     },
+    "HAG 2:14": {
+      "lemma": "because of their early burdens: they shall be pained because of their toils; and ye have hated him that reproved in the gates",
+      "why": "Not in Hebrew is said of the whole passage Brenton brackets, to the end of the verse (1900 physical p. 1126, caller β before “[because”); the edition prints no brackets, so the lemma says what the Hebrew lacks"
+    },
     "ZEC 6:10": {
       "note": "Heb. proper names. See A. V.",
       "why": "proper names describes the Hebrew rather than renders it"
@@ -4731,8 +4745,9 @@
       "why": "The note includes a complete explanatory sentence after its opening label or gloss, which keeps its final full stop."
     },
     "GEN 35:16": {
+      "lemma": "And Jacob removed from Bæthel, and pitched his tent beyond the tower of Gader",
       "sentence": true,
-      "why": "The note includes a complete explanatory sentence after its opening label or gloss, which keeps its final full stop."
+      "why": "The note is on the whole passage Brenton brackets, which the Hebrew has as verse 21 (1900 physical p. 59); the edition prints no brackets, so the lemma says which words. The note is a complete sentence after its label, which keeps its final full stop."
     },
     "EXO 34:5": {
       "sentence": true,
@@ -4979,6 +4994,14 @@
     "2CH 18:13 CCEL": {
       "lemma": "As the Lord lives",
       "why": "CCEL 4.xviii#3 reads 'Gr. the Lord liveth, that.'. Set the note on the complete words it explains in this verse, excluding adjacent predicates or counts; retain the source's words without invented lemma echoes."
+    },
+    "ESG 3:13a CCEL": {
+      "lemma": null,
+      "why": "Heb. omits the whole passage Brenton brackets, verses 13a–13g (1900 physical p. 666, caller γ before “[And the following”); the edition prints no brackets, so the note stands on the verse and names the verses"
+    },
+    "ESG 4:17a CCEL": {
+      "lemma": null,
+      "why": "Heb. omits the whole passage Brenton brackets, to the end of his chapter iv, which is the edition's 4:17a–5:2b (1900 physical p. 668, caller β before “[And he besought”); the edition prints no brackets, so the note stands on the verse and names the verses"
     },
     "ESG 3:7 CCEL": {
       "lemma": "decree",

@@ -50,9 +50,10 @@ def test_the_introduction_keeps_its_general_paragraphs_and_sends_the_rest(
     ]
     # Its headings, which the books' titles replace, are dropped.
     assert not [line for line in front if line.startswith("\\is")]
-    # A gloss is bracketed, and a book is called by the edition's name for it.
+    # A gloss stands in the edition's own voice, and a book is called by the
+    # edition's name for it.
     assert (
-        "save 1 and 2 Esdras [of the English Apocrypha] and the Prayer of Manasses"
+        "save 1 and 2 Esdras of the English Apocrypha and the Prayer of Manasses"
         in front[8]
     )
 
@@ -240,6 +241,24 @@ def test_every_paragraph_of_the_introduction_is_placed_once(
 
     with pytest.raises(CheckFailed, match="Gloss does not apply"):
         prepared("OTH", changed(policy, "introductions", placeless), read, ctx)
+
+    # The edition prints no brackets, so a gloss may not add one.
+    def bracketed(data: dict[str, Any]) -> None:
+        data["glosses"]["The book of Tobit"] = [
+            {"after": "The book of Tobit", "insert": " [sic]", "why": "x"}
+        ]
+
+    with pytest.raises(CheckFailed, match="prints a bracket"):
+        prepared("OTH", changed(policy, "introductions", bracketed), read, ctx)
+
+    # Nor leave a space doubled.
+    def spaced(data: dict[str, Any]) -> None:
+        data["glosses"]["The book of Tobit"] = [
+            {"after": "The book of Tobit", "insert": " of the Apocrypha ", "why": "x"}
+        ]
+
+    with pytest.raises(CheckFailed, match="Gloss is not words"):
+        prepared("OTH", changed(policy, "introductions", spaced), read, ctx)
 
 
 def test_the_list_of_abbreviations_is_completed_from_the_registry(

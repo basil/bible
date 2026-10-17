@@ -42,53 +42,48 @@
     "During the Reformation": [
       {
         "after": "I. and II. Esdras",
-        "insert": " [of the English Apocrypha]",
+        "insert": " of the English Apocrypha",
         "why": "This edition prints Ezra as The Second Book of Esdras, which Rome accepted as canonical"
       }
     ],
     "The second book of Esdras": [
       {
         "after": "The second book of Esdras",
-        "insert": " [of the English Apocrypha]",
+        "insert": " of the English Apocrypha",
         "why": "This edition prints Ezra as The Second Book of Esdras, the book Brenton says is not included"
       }
     ],
     "This pseudepigraphal epistle": [
       {
         "replace": "This pseudepigraphal epistle",
-        "insert": "[The Epistle of Jeremias]",
+        "insert": "The Epistle of Jeremias",
         "why": "The heading that named the epistle is dropped, so the gloss names it, by this edition's title, in place of the words that pointed to the heading"
       },
       {
         "after": "the last chapter of Baruch",
-        "insert": " [in the English Apocrypha]",
+        "insert": " in the English Apocrypha",
         "why": "This edition prints the Epistle of Jeremias as a book of its own, after Lamentations"
       }
     ],
     "The second book of the Maccabees": [
       {
         "after": "the first book",
-        "insert": " [of the Maccabees]",
+        "insert": " of the Maccabees",
         "why": "The paragraph no longer follows the one on the first book under a shared heading, so the gloss names the book it is compared with"
       }
     ],
     "These three additions": [
       {
-        "after": "These three additions",
-        "insert": " [the Song of the Three Children, Susanna, and Bel and the Dragon]",
-        "why": "The heading that named the three additions is dropped, and the note stands at the head of Daniel, before the reader has met the Song of the Three Children"
-      },
-      {
-        "replace": "Canonical Daniel",
-        "insert": "[Book of Daniel]",
-        "why": "Use this edition's title for the book, which includes the additions and which the Church of Greece, whose order the edition follows, receives; “Canonical” carries a meaning the title would lose, so the title is the editor's and bracketed"
+        "replace": "These three additions to the Canonical Daniel",
+        "insert": "The Song of the Three Children, Susanna, and Bel and the Dragon, the three additions to the Book of Daniel,",
+        "why": "Use this edition's title for the book, which includes the additions and which the Church of Greece, whose order the edition follows, receives; “Canonical” carries a meaning the title would lose, so the title is the editor's. The heading that named the three additions is dropped, and the note stands at the head of Daniel, before the reader has met the Song of the Three Children, so the gloss names them, first, so that they do not read as a list of four books"
       }
     ],
     "These additions to the Canonical Esther": [
       {
         "replace": "Canonical Esther",
-        "insert": "[Book of Esther]",
-        "why": "Use this edition's title for the book, which includes the additions and which the Church of Greece, whose order the edition follows, receives; “Canonical” carries a meaning the title would lose, so the title is the editor's and bracketed"
+        "insert": "Book of Esther",
+        "why": "Use this edition's title for the book, which includes the additions and which the Church of Greece, whose order the edition follows, receives; “Canonical” carries a meaning the title would lose, so the title is the editor's"
       }
     ]
   },

@@ -61,7 +61,7 @@ The introduction to the Apocrypha is the revision published in Bagster's second 
 
 Brenton's Appendix is not printed as a unit. The passages it supplies from Codex Alexandrinus stand in their books, with the footnotes Brenton prints within them set on the supplied words, and its eight notes (on 2 Kingdoms 5:18, Job 25:2 and 39:13, Psalm 41:5, Proverbs 8:5, Esaias 2:6, Jezekiel 16:44 and the Complutensian verses of Exodus 28) are printed as footnotes at the foot of the page, with a numbered caller before the word discussed or at the start of the verse for notes on the whole verse; the labels that named the verses are dropped. The margin notes that only sent the reader to the Appendix are left out, and the pointer is dropped from those that say more; the three margin notes of 1844 that the Bagster printings dropped in favour of the Appendix (Job 25:2, Job 39:13, Jezekiel 16:44) are restored.
 
-In those accounts, a book's name becomes this edition's where the paragraph now points into this edition: "Joshua Ben Sira" becomes "Jesus, the Son of Sirach". Where a new name would lose the meaning, a gloss in square brackets is added instead: the second book of Esdras that is not included is that "[of the English Apocrypha]", which is not this edition's 2 Esdras. In these accounts, words in square brackets are the editor's.
+In those accounts, a book's name becomes this edition's where the paragraph now points into this edition: "Joshua Ben Sira" becomes "Jesus, the Son of Sirach". Where a new name would lose the meaning, a gloss is added instead: the second book of Esdras that is not included is that "of the English Apocrypha", which is not this edition's 2 Esdras.
 
 Three things are left out:
 
@@ -187,6 +187,7 @@ In English, a comma, semicolon or colon that duplicates the break another mark m
 ## Typography
 
 - Words the translators supplied, which many Bibles print in italics, are set in ordinary type. In a title set in italic, such as a Psalm's superscription, they are set in italic with the rest.
+- Brenton's square brackets are not printed. In a book the Hebrew Bible has, they mark the Greek that the Hebrew lacks, as in Genesis 35:16, Proverbs 4:27a and the additions to Esther, and are dropped; the notes that explain what the Hebrew lacks stay, on those words, or name the verses where the passage runs over them. The two there that mark something else go too: at Exodus 5:14 they hold English supplied from the Hebrew, which prints as supplied words with its note, and at Judges 1:10 a parenthesis the Bagster printings added, which the 1844 printing does without. In a book it lacks, they mark English words with no Greek behind them, which the Authorized Version prints in italics in the books it has, and are marked as supplied words (`\add`) like the translators' others.
 - Running prose uses typographic quotation marks. In the notes, italic takes their place around cited words.
 - Greek is set in GFS Didot and Hebrew in Ezra SIL.
 

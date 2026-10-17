@@ -1311,6 +1311,66 @@ def test_unused_punctuation_rule_is_refused(policy: bible.policy.Policy) -> None
         revision.check_met(policy, met)
 
 
+def test_brackets_go_from_the_text_but_not_from_a_note(
+    policy: bible.policy.Policy,
+) -> None:
+    policy = revisions(policy, punctuation={revision.BRACKETS: {"why": "x"}})
+    doc = usj.parse(
+        "\\id ESG\n\\c 1\n\\p [\\sc In\\sc* the year, Mardochæus\\f + \\fr 1:1 "
+        "\\ft 'the morning [spread] upon' (\\fqa Heb.\\ft )\\f* the \\add son\\add*"
+        "\n\\v 1a of Jairus\n\\c 2\n\\p\n\\v 1 dreamed]: and [he said], [Lo]."
+    )
+    met: revision.MetRevisions = set()
+    result = revision.unbracketed(doc, policy, met)
+    assert met == {revision.BRACKETS}
+    text = usj.serialize(result)
+    assert "\\p \\sc In\\sc* the year, Mardochæus\\f + " in text
+    assert "\\v 1 dreamed: and he said, Lo." in text
+    assert "'the morning [spread] upon'" in text
+    # The spans close chapters later, so they must pair across the book,
+    # one at a time and in order.
+    for unpaired in ("[In the year.", "In] the [year.", "[In [the] year.]"):
+        with pytest.raises(CheckFailed, match="do not pair"):
+            revision.unbracketed(
+                usj.parse(f"\\id ESG\n\\c 1\n\\p\n\\v 1 {unpaired}"), policy, met
+            )
+    # One between letters would join two words, and is refused.
+    with pytest.raises(CheckFailed, match="between letters"):
+        revision.unbracketed(
+            usj.parse("\\id ESG\n\\c 1\n\\p\n\\v 1 [In the]year."), policy, met
+        )
+    # A book without them is shared, and the rule is not met by it.
+    unchanged = usj.parse("\\id GEN\n\\c 1\n\\p\n\\v 1 In the beginning.")
+    assert revision.unbracketed(unchanged, policy, set()) is unchanged
+    # The rule applies by decision.
+    assert revision.unbracketed(doc, revisions(policy, punctuation={}), met) is doc
+
+
+def test_brackets_in_a_book_the_hebrew_lacks_are_supplied_words(
+    policy: bible.policy.Policy,
+) -> None:
+    doc = usj.parse(
+        "\\id SIR\n\\c 6\n\\p\n\\v 2 for [thereby] thou\\f + \\fr 6:2 \\ft [sic]\\f* "
+        "\\add shalt\\add* inherit [an ill name]."
+    )
+    text = usj.serialize(bible.pipeline.bracketed("SIR", doc, policy))
+    assert "\\v 2 for \\add thereby\\add* thou\\f + \\fr 6:2 \\ft [sic]\\f*" in text
+    assert "inherit \\add an ill name\\add*." in text
+    # The rule that drops the others decides these too.
+    unruled = revisions(policy, punctuation={})
+    assert bible.pipeline.bracketed("SIR", doc, unruled) is doc
+    # In a book the Hebrew has, they are left for revision to drop.
+    doc = usj.parse("\\id GEN\n\\c 35\n\\p\n\\v 16 [And Jacob removed,] and")
+    assert bible.pipeline.bracketed("GEN", doc, policy) is doc
+    # A span the read cannot take for a run of words is refused.
+    with pytest.raises(CheckFailed, match="more than a run of words"):
+        bible.pipeline.bracketed(
+            "SIR",
+            usj.parse("\\id SIR\n\\c 6\n\\p\n\\v 2 for [thereby\n\\v 3 thou]"),
+            policy,
+        )
+
+
 BEFORE, INSIDE = "before-parenthesis", "inside-parenthesis"
 
 
@@ -1498,8 +1558,87 @@ def test_closing_parenthesis_outside_supplied_words(
 
 
 def test_every_punctuation_rule_is_accepted(policy: bible.policy.Policy) -> None:
-    rules = {name: {"why": "x"} for name in revision.RULES}
+    rules = {name: {"why": "x"} for name in (*revision.RULES, revision.BRACKETS)}
     revision.check(revisions(policy, punctuation=rules))
+
+
+def test_the_edition_prints_no_brackets_of_brentons(
+    edition: bible.pipeline.Edition,
+) -> None:
+    # The additions to Esther, a verse the Hebrew lacks, and the Authorized
+    # Version's supplied words in the Apocrypha, which Brenton brackets.
+    assert scripture.verses(edition.documents["ESG"])["1:1a"].text.startswith(
+        "In the second year"
+    )
+    assert "crooked:" in scripture.verses(edition.documents["PRO"])["4:27a"].text
+    assert "for thereby thou" in scripture.verses(edition.documents["SIR"])["6:1"].text
+    for code in edition.scripture:
+        for block in edition.documents[code]["content"]:
+            if "content" in block:
+                text = usj.text_of(block["content"])
+                assert "[" not in text and "]" not in text, code
+
+    # In a book the Hebrew lacks, they are the translators' supplied words.
+    doc = edition.documents["SIR"]
+    assert [
+        usj.text_of(node["content"])
+        for index, lo, hi, _ in scripture.verses(doc)["6:1"].parts
+        for node in usj.walk(doc["content"][index]["content"][lo:hi])
+        if usj.is_type(node, "char", "add")
+    ] == ["thereby"]
+    # The notes that explained what the Hebrew lacks by the brackets say it of
+    # their words instead.
+    verse = scripture.verses(edition.documents["GEN"])["35:16"]
+    assert usj.text_of(verse.notes[0][1]["content"]).endswith(
+        "And Jacob removed from Bethel, and pitched his tent beyond the tower of "
+        "Gader: Heb. has these words as verse 21."
+    )
+    verse = scripture.verses(edition.documents["2SA"])["21:11"]
+    assert usj.text_of(verse.notes[0][1]["content"]).endswith(
+        "the offspring of the giants overtook them: Heb. omits"
+    )
+    # Where the passage runs over verses, the note names them and has no lemma.
+    for reference, said in (
+        ("3:13a", "Heb. omits verses 13a–13g"),
+        ("4:17a", "Heb. omits verses 4:17a–5:2b"),
+    ):
+        verse = scripture.verses(edition.documents["ESG"])[reference]
+        (_, note), *_ = verse.notes
+        assert usj.text_of(note["content"]).endswith(said)
+        assert not [
+            n for n in usj.walk(note["content"]) if usj.is_type(n, "char", "fq")
+        ]
+    # The brackets that marked something else go too: Exodus 5:14's supplied
+    # words, which the read marks and the note explains, and Judges 1:10's
+    # parenthesis, which the 1844 printing does without.
+    doc = edition.documents["EXO"]
+    verse = scripture.verses(doc)["5:14"]
+    assert "scourged, and questioned, men saying" in verse.text
+    assert "and questioned" in [
+        usj.text_of(node["content"])
+        for index, lo, hi, _ in verse.parts
+        for node in usj.walk(doc["content"][index]["content"][lo:hi])
+        if usj.is_type(node, "char", "add")
+    ]
+    assert any(
+        "and questioned: supplied from the Hebrew" in usj.text_of(note["content"])
+        for _, note in verse.notes
+    )
+    assert (
+        "against him; and the name of Chebron before was Cariatharbocsepher: and they"
+        in scripture.verses(edition.documents["JDG"])["1:10"].text
+    )
+    # The gloss that names Daniel's additions does not read as four books.
+    assert any(
+        usj.text_of(note["content"]).startswith(
+            "The Song of the Three Children, Susanna, and Bel and the Dragon, the "
+            "three additions to the Book of Daniel, were probably composed"
+        )
+        for note in usj.notes_of(edition.documents["DAG"]["content"])
+    )
+    # A note's own bracket, Brenton quoting the Authorized Version, stays.
+    verse = scripture.verses(edition.documents["ISA"])["52:7"]
+    assert any("[spread]" in usj.text_of(note["content"]) for _, note in verse.notes)
 
 
 def passage_group(*changes: dict[str, str]) -> dict[str, Any]:

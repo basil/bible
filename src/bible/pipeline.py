@@ -93,6 +93,10 @@ class Read:
     byzantine: MappingProxyType[str, bible.sources.Content]
 
 
+# Words Brenton brackets within a run of text.
+SUPPLIED = re.compile(r"\[([^\[\]]+)\]")
+
+
 def note_key(code: str, reference: str, number: int) -> str:
     """A Brenton note's key: its verse, then after its verse's first note, its
     number there."""
@@ -123,6 +127,44 @@ def keyed(code: str, doc: Document) -> Document:
     return usj.replaced_by_identity(
         doc, {id(note): {**note, "x-key": key} for note, key in noted}
     )
+
+
+def bracketed(code: str, doc: Document, policy: bible.policy.Policy) -> Document:
+    """A source book with the words Brenton brackets in a book the Hebrew
+    lacks read as supplied: English with no Greek behind it, which the
+    Authorized Version prints in italics in the books it has, as the
+    translators' other supplied words are. In a book the Hebrew has, his
+    brackets mark the Greek it lacks, a passage that may run on over verses
+    and chapters, and revision drops them. Both by the one rule of
+    revisions.json, which leaves them all in print without it."""
+    if (
+        revision.BRACKETS not in policy.revisions["punctuation"]
+        or code in policy.versification["old_testament"]
+        or not any(usj.is_type(block, "chapter") for block in doc["content"])
+    ):
+        return doc
+    found = False
+
+    def supplied(content: Content) -> Content:
+        nonlocal found
+        result: Content = []
+        for item in content:
+            parts = SUPPLIED.split(item) if isinstance(item, str) else [item]
+            found = found or len(parts) > 1
+            for n, part in enumerate(parts):
+                usj.extended(result, [usj.char("add", part) if n % 2 else part])
+        return result
+
+    result = usj.with_content(doc, supplied)
+    for block in result["content"]:
+        text = usj.text_of(block.get("content", ()))
+        at = next((n for n, mark in enumerate(text) if mark in "[]"), -1)
+        require(
+            at < 0,
+            f"Bracket around more than a run of words in {code}: "
+            f"{text[max(0, at - 30) : at + 30]}",
+        )
+    return result if found else doc
 
 
 def marginal_notes(
@@ -204,7 +246,7 @@ def read(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Read:
     brenton, mended = {}, {}
     for code, text in sources.brenton.items():
         text, mended[code] = repairs.brenton(code, text, corrections)
-        brenton[code] = keyed(code, usj.parse(text))
+        brenton[code] = keyed(code, bracketed(code, usj.parse(text), policy))
     # Of the King James Bible, only what the edition prints or borrows, and
     # the Old Testament, in which its own is placed.
     wanted = (
@@ -616,10 +658,12 @@ def finished_book(
 ) -> tuple[Document, Document]:
     """A book as revised, and as its names alone were respelt: the names
     come first, then the declared changes to its verses and notes, then the
-    systematic spelling and punctuation; a kept name must survive them."""
+    source's brackets go, then the systematic spelling and punctuation; a
+    kept name must survive them."""
     named = revision.named(code, doc, policy, met)
     doc = revision.revised(code, named, policy, met)
     doc = revision.passages(code, doc, policy, met)
+    doc = revision.unbracketed(doc, policy, met)
     doc = revision.punctuated(revision.respelt(doc, policy, met), policy, met)
     revision.check_kept(code, named, doc, policy)
     return doc, named

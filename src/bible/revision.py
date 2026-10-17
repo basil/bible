@@ -100,7 +100,7 @@ def check(policy: bible.policy.Policy) -> None:
         "Revisions file",
     )
     for name, rule in data["punctuation"].items():
-        require(name in RULES, f"Unknown punctuation rule: {name}")
+        require(name in RULES or name == BRACKETS, f"Unknown punctuation rule: {name}")
         require_fields(rule, {"why"}, (), f"Punctuation rule {name}")
         require(bool(rule["why"]), f"Punctuation rule without a why: {name}")
     words = data["words"]
@@ -971,6 +971,13 @@ RULES: dict[str, re.Pattern[str]] = {
 }
 # A run that ends a verse, before a verse that opens a parenthesis.
 VERSE_END = re.compile(r"[,;:]+(?=\s*$)")
+# The rule that drops Brenton's square brackets from a book's text. Not a
+# pattern over a unit's English like RULES: a note's brackets, and the
+# appendix of readings' around a former reading, are not scripture text and
+# stay, so the rule reads a book's paragraphs alone (unbracketed).
+BRACKETS = "brackets"
+# A bracket between two letters, which dropping it would join.
+INSIDE_WORD = re.compile(r"\w[\[\]]+\w")
 # What the rules do not understand, and refuse: a mark already standing where
 # a run would move, unless a dash follows to clear it; the comma of the "Or,"
 # that opens a note's alternative; and the separator before an item's label,
@@ -1151,6 +1158,51 @@ def punctuated(
         result = joined
     if changed:
         _check_lemmas(doc, result)
+    return result
+
+
+def unbracketed(
+    doc: Document, policy: bible.policy.Policy, met: MetRevisions
+) -> Document:
+    """A book without Brenton's square brackets around the Greek that the
+    Hebrew lacks: the marks go from its paragraphs' text, and nothing else
+    changes, since a bracket stands beside a space or a stop; one between
+    two letters is refused. A note keeps its own. The brackets of a passage may
+    close verses or a chapter later, so they must pair across the book, one
+    passage at a time. (In a book the Hebrew lacks, the read stage has already
+    taken them for supplied words.)"""
+    if BRACKETS not in policy.revisions["punctuation"]:
+        return doc
+    code = usj.book_code(doc)
+    opened = depth = 0
+
+    def dropped(content: Content) -> Content:
+        nonlocal opened, depth
+        result: Content = []
+        for item in content:
+            if isinstance(item, str):
+                for mark in item:
+                    if mark in "[]":
+                        depth += 1 if mark == "[" else -1
+                        opened += mark == "["
+                        require(0 <= depth <= 1, f"Brackets of {code} do not pair")
+                inside = INSIDE_WORD.search(item)
+                require(
+                    inside is None,
+                    f"Bracket of {code} between letters: {inside and inside[0]}",
+                )
+                item = item.replace("[", "").replace("]", "")
+            elif "content" in item and not usj.is_note(item):
+                item = {**item, "content": dropped(item["content"])}
+            usj.extended(result, [item])
+        return result
+
+    result = usj.with_content(doc, dropped)
+    require(depth == 0, f"Brackets of {code} do not pair: one is left open")
+    if not opened:
+        return doc
+    met.add(BRACKETS)
+    _check_lemmas(doc, result)
     return result
 
 
