@@ -34,6 +34,7 @@ import bible.ccel
 import bible.policy
 from bible import (
     assembly,
+    byzantine,
     export,
     paths,
     pipeline,
@@ -295,7 +296,10 @@ def review(edition: pipeline.Edition) -> None:
         "byzantine.md": byzantine_review.summary(edition.byzantine),
         **{
             f"byzantine/{name}": text
-            for name, text in byzantine_review.packets(edition.byzantine).items()
+            for name, text in byzantine_review.packets(
+                edition.byzantine,
+                {code: edition.documents[code] for code in byzantine.BOOKS},
+            ).items()
         },
         **{f"text/{code}.usfm": text for code, text in export.export(edition, "pdf")},
     }

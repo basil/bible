@@ -29,6 +29,7 @@ from bible.byzantine import (
     TCENT,
     WEB,
     edit,
+    notes,
     received,
 )
 from bible.byzantine import revisers as revisions
@@ -43,7 +44,7 @@ from bible.byzantine.crosswire import edit_offsets, reports_by_unit
 from bible.byzantine.crosswire import spans as word_spans
 from bible.byzantine.crosswire import words
 from bible.byzantine.decisions import ref_key
-from bible.byzantine.english import verses_of
+from bible.byzantine.english import verses_of, without_subscriptions
 from bible.byzantine.presentation import (
     anchored,
     clipped,
@@ -63,9 +64,9 @@ from bible.byzantine.rows import (
 )
 from bible.byzantine.stages import Reconciliation
 from bible.byzantine.tags import Tag, score
-from bible.checks import require
+from bible.checks import present, require
 from bible.scripture import Verse
-from bible.usj import Node
+from bible.usj import Document, Node
 
 NAMES = {
     PIERPONT: "Pierpont",
@@ -106,7 +107,8 @@ GREEK_INVENTORIES = {
     "rp2026-apparatus": "RP2026 apparatus",
 }
 DIFF_LEGEND = (
-    "Bold in the OLEB verses marks the full Textus Receptus note lemmas. Contextual diffs use [-removed] "
+    "Where a verse's words change, the OLEB whole verse is as the edition prints it, before typographic quotes, with the full lemmas of its notes on the readings in bold; a verse whose words do not change is quoted once, as compared, before its spelling and punctuation are revised and without bold. The notes are as the edition prints them. "
+    "English diffs compare the King James words with the edition's before their spelling and punctuation are revised. Contextual diffs use [-removed] "
     "and [+added] inside code spans. Unit comparisons use corresponding Greek and English passages, keeping shared constructions intact. "
     "Greek-only excerpts retain complete phrases without English alignment. Paired Greek and English ellipses mark corresponding omitted intervals; verified moved passages may be excerpted; uncertain correspondence quotes complete verses. "
     "Greek diffs mark wording, punctuation and accents as prepared for the appendix, suppressing case-only differences. Shared words use RP capitalization except every inflection of θεός, κύριος and χριστός (including human uses), which keeps TR capitalization even at verse openings; whole-verse Greek diffs appear once per verse. "
@@ -130,7 +132,8 @@ type Attached = Instruction | Report | RevisionRow
 class Index(TypedDict):
     """Lookups the packet renders from: each unit's instructions, reports and
     revision rows, the rows attached to no unit by verse, the readings by id,
-    the prepared verses, the dispositions by unit, Boyd's Greek notes, and
+    the prepared verses, the verses and the notes on the readings as the
+    edition prints them, the dispositions by unit, Boyd's Greek notes, and
     the rows of both Greek apparatuses that give the Received Text a reading."""
 
     instructions_at: dict[str, list[Instruction]]
@@ -139,6 +142,8 @@ class Index(TypedDict):
     loose_in_verse: defaultdict[str, list[str]]
     overrides: dict[str, Override]
     prepared: dict[str, Verse]
+    finished: dict[str, Verse]
+    printed: dict[str, Node]
     corrected: dict[str, Verse]
     rows: dict[str, Disposition]
     tcgnt: dict[int, BoydNote]
@@ -264,17 +269,20 @@ def verse_comparison(
     after_verse: Verse | None = None,
     anchors: Sequence[tuple[int, int, int, int]] = (),
 ) -> list[str]:
-    """Contextual source-to-target diff and readable finished verse, in two rows."""
+    """Contextual source-to-target diff and readable finished verse, in two
+    rows; or, where the words compared are the same, the one verse they are."""
     before, after = scripture.plain(before), scripture.plain(after)
-    if after_verse is not None:
-        right = lemma_reading(after_verse)
-    else:
-        right = marked_readings(before, after, verse=True)[1]
     if before == after:
+        same = marked_readings(before, after, verse=True)[1]
         return [
-            f"English whole verse · {before_label} = {after_label} · unchanged: {right}",
+            f"English whole verse · {before_label} = {after_label} · unchanged: {same}",
             "",
         ]
+    right = (
+        marked_readings(before, after, verse=True)[1]
+        if after_verse is None
+        else lemma_reading(after_verse)
+    )
     return [
         f"English whole verse · {before_label} → {after_label}: "
         + diff_markup(anchored(before, after, anchors)),
@@ -359,15 +367,10 @@ def greek_verses(
     ]
 
 
-def note_text(note: Node | None) -> str:
-    return (
-        " ".join(
-            usj.text_of(n["content"]) if isinstance(n, dict) else n
-            for n in note["content"]
-        ).strip()
-        if note
-        else ""
-    )
+def note_text(note: Node) -> str:
+    """A note as the edition prints it, whose fields carry their own spacing
+    (notes.footnote)."""
+    return usj.text_of(note["content"]).strip()
 
 
 def edition_notes(verse: Verse) -> list[str]:
@@ -402,8 +405,9 @@ def lemma_reading(verse: Verse) -> str:
             else []
         )
         if matches:
+            # A printed note stands at the start of its lemma.
             at = len(scripture.plain(verse.text[:offset]))
-            match = min(matches, key=lambda m: abs(m.end() - at))
+            match = min(matches, key=lambda m: abs(m.start() - at))
             ranges.append(match.span())
     merged: list[tuple[int, int]] = []
     for lo, hi in sorted(set(ranges)):
@@ -768,6 +772,17 @@ def unit_english_lines(
     ]
 
 
+def finished_verse(target: str, index: Index) -> tuple[Verse | None, Verse | None]:
+    """A verse as the reconciliation prepared it, whose words the diffs
+    compare, and as the edition prints it."""
+    after, printed = index["prepared"].get(target), index["finished"].get(target)
+    require(
+        (after is None) == (printed is None),
+        f"Review verse prepared but not printed, or printed but not prepared: {target}",
+    )
+    return after, printed
+
+
 def section(
     unit: Unit,
     row: Disposition,
@@ -846,7 +861,7 @@ def section(
         lines.extend(
             line for line in greek_verses(context, ref, prepared, target) if line
         )
-    after = index["prepared"].get(target)
+    after, printed = finished_verse(target, index)
     lines.extend(
         verse_comparison(
             kjv[ref],
@@ -857,17 +872,20 @@ def section(
                 if index["corrected"][ref].text != context.english.kjv[ref]
                 else f"OLEB {target}"
             ),
-            after_verse=after,
+            after_verse=printed,
             anchors=passages[2] if index["corrected"][ref].text == kjv[ref] else (),
         )[:-1]
     )
-    notes = (
-        edition_notes(after)
-        if after
-        else ([note_text(row["note"])] if row.get("note") else [])
-    )
-    if notes:
-        lines.append("⁺ " + "; ".join(esc(n) for n in notes))
+    # A verse the edition omits has its note at the verse it stands at.
+    held = row.get("note")
+    found: list[str] = []
+    if printed:
+        found = edition_notes(printed)
+    elif held:
+        note = index["printed"].get(notes.edition_key(held["x-key"]))
+        found = [note_text(present(note, f"Review note not printed: {held['x-key']}"))]
+    if found:
+        lines.append("⁺ " + "; ".join(esc(n) for n in found))
     if row["action"] == "refused":
         lines.append(f"Executor refused: {esc(row['reasons'][0])}")
     # Hard breaks keep comparison rows readable without blank paragraphs.
@@ -954,7 +972,7 @@ def rendering_section(
     target = context.greek.structure.rp_ref(ref)
     o = index["overrides"][row["override"]]
     corrected = index["corrected"][ref]
-    after = index["prepared"].get(target)
+    after, printed = finished_verse(target, index)
     override = override_lines(o, ref)
     return [
         f"### {ref}",
@@ -971,7 +989,7 @@ def rendering_section(
             after.text if after else "",
             f"KJV {ref}",
             f"OLEB {target} (all changes)",
-            after_verse=after,
+            after_verse=printed,
         ),
         override[0] + "  ",
         *override[1:],
@@ -979,8 +997,9 @@ def rendering_section(
     ]
 
 
-def build_index(context: Reconciliation) -> Index:
-    """Lookups the packet renders from."""
+def build_index(context: Reconciliation, finished: Mapping[str, Document]) -> Index:
+    """Lookups the packet renders from, with the New Testament's books as the
+    edition finished them."""
     corrected, rows = edit.execute(
         context.english.documents,
         [r for r in context.verified.dispositions if r["disposition"] == "shared"],
@@ -990,6 +1009,8 @@ def build_index(context: Reconciliation) -> Index:
         all(r.get("execution") == "applied" for r in rows),
         "Review corrections-only baseline could not be executed",
     )
+    # An epistle's subscription is matter, not its last verse.
+    finished = {code: without_subscriptions(doc) for code, doc in finished.items()}
     index: Index = {
         "instructions_at": reports_by_unit(context.decisions.instructions),
         "reports_at": reports_by_unit(context.apparatuses.reports),
@@ -997,6 +1018,13 @@ def build_index(context: Reconciliation) -> Index:
         "loose_in_verse": defaultdict(list),
         "overrides": {o["id"]: o for o in context.decisions.overrides},
         "prepared": verses_of(context.edited.prepared),
+        "finished": verses_of(finished),
+        "printed": {
+            n["x-key"]: n
+            for doc in finished.values()
+            for n in usj.notes_of(doc["content"])
+            if n.get("category") == "edition"
+        },
         "corrected": verses_of(corrected),
         "rows": {r["unit"]: r for r in context.verified.dispositions},
         "tcgnt": {n["entry"]: n for n in context.greek.tcgnt},
@@ -1027,10 +1055,13 @@ def build_index(context: Reconciliation) -> Index:
     return index
 
 
-def packets(context: Reconciliation) -> dict[str, str]:
+def packets(
+    context: Reconciliation, finished: Mapping[str, Document]
+) -> dict[str, str]:
     """One review file per book, by its name: every Scrivener-RP2026 unit
-    of the book with all its evidence."""
-    index = build_index(context)
+    of the book with all its evidence, and the verses and notes as the
+    edition prints them, from its finished books."""
+    index = build_index(context, finished)
     prepared = prepare_greek(context)
     tr, rp, _ = prepared
     rows = index["rows"]

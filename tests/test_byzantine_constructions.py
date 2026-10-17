@@ -11,7 +11,7 @@ from test_byzantine_instructions import additional_instruction
 
 from bible import usj
 from bible.byzantine import ADDITIONAL, PIERPONT
-from bible.byzantine.edit import NOTE_LABELS, NoteKind
+from bible.byzantine.edit import NoteKind
 from bible.byzantine.instructions import constructions, select
 from bible.byzantine.rendering import Checker
 from bible.byzantine.rows import Disposition, Instruction, InstructionEdit
@@ -165,7 +165,6 @@ def note(lemma: str, kind: NoteKind, alternative: str) -> usj.Node:
     return usj.note(
         "f",
         usj.char("fq", lemma + ": "),
-        usj.char("ft", NOTE_LABELS[kind]),
         usj.char("fqa", alternative),
         **extra,
     )

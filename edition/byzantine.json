@@ -4262,7 +4262,7 @@
         "from:boyd-asv",
         "gram:particle"
       ],
-      "why": "RP omits kai before anechthe, and Boyd's ASV begins the sentence He set sail. Taking the whole clause as the lemma lets the note read Textus Receptus: And he sailed.",
+      "why": "RP omits kai before anechthe, and Boyd's ASV begins the sentence He set sail. Taking the whole clause as the lemma lets the note give the former reading, And he sailed, whole.",
       "evidence": {
         "boyd-asv": {
           "ref": "ACT 18:21",

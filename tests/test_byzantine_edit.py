@@ -42,6 +42,26 @@ def note_text(note: Node) -> str:
     )
 
 
+def described(note: Node) -> tuple[str, str, str]:
+    """What a note says the TR has (its kind), its lemma and its quotation,
+    with their spacing closed up."""
+
+    def text(marker: str) -> str:
+        found = [n for n in note["content"] if isinstance(n, dict)]
+        return " ".join(
+            " ".join(
+                usj.text_of(n["content"]) for n in found if n["marker"] == marker
+            ).split()
+        )
+
+    return note["x-scope"]["kind"], text("fq"), text("fqa")
+
+
+def placed(note: Node) -> tuple[str, str | None]:
+    """What a note says the TR has, and the verse or passage it names."""
+    return note["x-scope"]["kind"], note["x-scope"].get("where")
+
+
 def field(note: Node, marker: str) -> Node:
     """The first of a note's fields with the marker."""
     return next(
@@ -66,9 +86,7 @@ def test_matthew_3_11_removal_takes_its_comma_and_the_supplied_with(
     assert "\\+add with\\+add*" in usj.serialize([e["note"]])
     # "adds: and with fire" would lose the KJV's comma: the note quotes the
     # KJV's own words for a lemma that spans the gap.
-    assert "Ghost: Textus Receptus: Ghost, and with fire" in " ".join(
-        note_text(e["note"]).split()
-    )
+    assert described(e["note"]) == ("replace", "Ghost:", "Ghost, and with fire")
 
 
 def test_matthew_7_14_stays_lowercase_after_the_colon_of_7_13(
@@ -93,7 +111,8 @@ def test_luke_6_9_replaces_destroy_it_with_kill(
     assert prepared_verses["LUK 6:9"].text.endswith("or to kill?")
     ((row, e),) = edits_at["LUK 6:9"]
     assert (e["kind"], e["old"], e["new"]) == ("replace", "destroy it", "kill")
-    assert note_text(e["note"]).endswith("Textus Receptus:  destroy it")
+    kind, _, quotation = described(e["note"])
+    assert (kind, quotation) == ("replace", "destroy it")
 
 
 def test_acts_9_5_omission_is_one_construction_with_9_6(
@@ -143,9 +162,9 @@ def test_revelation_22_21_has_two_edits_each_with_its_note(
     )
     changes = sorted((e["old"], e["new"]) for _, e in edits_at["REV 22:21"])
     assert changes == [("our", "the"), ("you all", "all the saints")]
-    notes = [note_text(n) for _, n in prepared_verses["REV 22:21"].notes]
-    assert any("Textus Receptus:  our Lord" in n for n in notes)
-    assert any("Textus Receptus:  you all" in n for n in notes)
+    notes = [described(n) for _, n in prepared_verses["REV 22:21"].notes]
+    for former in ("our Lord", "you all"):
+        assert any(k == "replace" and q.startswith(former) for k, _, q in notes)
 
 
 def test_seam_keeps_exact_replacement_case() -> None:
@@ -248,9 +267,7 @@ def test_the_four_omitted_verses_are_absent_and_noted_on_the_verse_before(
         chapter, number = address.split(":")
         before = f"{book} {chapter}:{int(number) - 1}"
         notes = [n for _, n in prepared_verses[before].notes]
-        assert any(
-            f"Textus Receptus adds verse {number}:" in note_text(n) for n in notes
-        ), (ref, notes)
+        assert any(placed(n) == ("adds-verse", number) for n in notes), (ref, notes)
         # The note is keyed by the verse it stands at.
         assert f"{before} TR" in [n.get("x-key") for n in notes]
         row = dispositions[f"{ref}#1"]
@@ -291,18 +308,15 @@ def test_romans_doxology_stands_at_14_24_to_26_with_a_note_at_each_end(
     assert verses["14:24"].text == kjv_text["ROM 16:25"]
     assert list(verses).index("14:26") + 1 == list(verses).index("15:1")
     location = [
-        note_text(n)
+        (a, *placed(n))
         for a in ("14:24", "14:25", "14:26")
         for _, n in verses[a].notes
-        if "has this passage" in note_text(n)
+        if placed(n)[0] == "moved"
     ]
-    assert location == ["14:24  Textus Receptus has this passage at 16:25–27."]
+    assert location == [("14:24", "moved", "16:25–27")]
     # Where the passage stood, the chapter keeps a note of where it went.
-    assert [(n.get("x-key"), note_text(n)) for _, n in verses["16:24"].notes] == [
-        (
-            "ROM 16:24 TR",
-            "16:24  Textus Receptus has here the verses printed at 14:24–26.",
-        )
+    assert [(n.get("x-key"), *placed(n)) for _, n in verses["16:24"].notes] == [
+        ("ROM 16:24 TR", "moved-out", "14:24–26")
     ]
     # The moved passage is one paragraph of its own, and none is left empty.
     held = {verses[a].parts[0][0] for a in ("14:24", "14:25", "14:26")}
@@ -336,11 +350,8 @@ def test_matthew_23_13_and_14_exchange_places_with_a_note_at_each(
         and "shut up the kingdom" in prepared_verses["MAT 23:14"].text
     )
     for target, source in [("23:13", "23:14"), ("23:14", "23:13")]:
-        notes = [note_text(n) for _, n in prepared_verses["MAT " + target].notes]
-        assert any(
-            n == f"{target}  Textus Receptus has this passage at {source}."
-            for n in notes
-        ), notes
+        notes = [placed(n) for _, n in prepared_verses["MAT " + target].notes]
+        assert ("moved", source) in notes, notes
 
 
 def test_structural_alone_on_the_pinned_kjv(
@@ -507,13 +518,11 @@ def test_a_correction_of_shared_greek_keeps_the_former_words_in_a_note(
         assert after.text == before.text.replace(old, new)
         added = [n for _, n in after.notes if n not in [m for _, m in before.notes]]
         assert len(added) == 1 and added[0]["x-key"] == f"LUK {address} rendering#1"
-        text = usj.text_of(added[0]["content"])
-        assert (
-            "Or, " in text and text.endswith(former) and "Textus Receptus" not in text
-        )
+        assert added[0]["x-scope"]["kind"] == "rendering"
+        assert usj.text_of(added[0]["content"]).endswith(former)
 
 
-def test_a_correction_beside_a_reading_takes_its_own_label() -> None:
+def test_a_correction_beside_a_reading_takes_its_own_kind() -> None:
     documents = execution_fixture()
     reading = execution_row("MAT 1:1#1", 4, 6, "he", "they")
     correction = execution_row(
@@ -524,10 +533,7 @@ def test_a_correction_beside_a_reading_takes_its_own_label() -> None:
     assert verse.text == "And they said. Afterward he went."
     assert rows[0]["edits"][0]["note"]["x-key"] == "MAT 1:1#1 TR#1"
     assert rows[1]["edits"][0]["note"]["x-key"] == "MAT 1:1 rendering#1"
-    labels = [
-        usj.text_of(n["content"]).split(" ", 1)[1].split(":")[0] for _, n in verse.notes
-    ]
-    assert labels == ["Textus Receptus", "Or, Then"]
+    assert [n["x-scope"]["kind"] for _, n in verse.notes] == ["replace", "rendering"]
 
 
 def test_an_edit_of_the_supplied_marking_alone_has_no_note() -> None:

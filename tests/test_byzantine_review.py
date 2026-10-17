@@ -38,13 +38,19 @@ HEADING = re.compile(
 
 
 @pytest.fixture(scope="module")
-def packets(byzantine: Reconciliation) -> dict[str, str]:
-    return review.packets(byzantine)
+def finished(edition: bible.pipeline.Edition) -> dict[str, Document]:
+    """The New Testament's books as the edition finished them."""
+    return {code: edition.documents[code] for code in BOOKS}
 
 
 @pytest.fixture(scope="module")
-def index(byzantine: Reconciliation) -> review.Index:
-    return review.build_index(byzantine)
+def packets(byzantine: Reconciliation, finished: dict[str, Document]) -> dict[str, str]:
+    return review.packets(byzantine, finished)
+
+
+@pytest.fixture(scope="module")
+def index(byzantine: Reconciliation, finished: dict[str, Document]) -> review.Index:
+    return review.build_index(byzantine, finished)
 
 
 def section_of(packets: Mapping[str, str], uid: str) -> str:
@@ -269,7 +275,7 @@ def test_james_keeps_contextual_diff_and_compact_witnesses(
     assert "Thou shalt" in section
     assert "Μὴ [-φονεύσῃς][+φονεύσεις]·" in section
     assert "English for shared construction (executed with JAS 2:11#1)" in section
-    assert "Textus Receptus" in section
+    assert "Thou shalt not kill: TR Do not kill" in section
     assert "### " not in section
     assert len(text.splitlines()) < 900
     assert (
@@ -279,6 +285,35 @@ def test_james_keeps_contextual_diff_and_compact_witnesses(
     witnesses = review.witness_lines(unit_of(byzantine, "JAS 2:5#1"), byzantine, index)
     assert all(line.startswith("- ") and line.count("\n") <= 1 for line in witnesses)
     assert not any("| Before" in line for line in witnesses)
+
+
+def test_a_note_names_the_witness_the_edition_prints(
+    packets: dict[str, str], index: review.Index
+) -> None:
+    # Scrivener alone has "joy", so the note names the King James Version.
+    section = section_of(packets, "PHM 1:7#1")
+    assert "Received Text: Scrivener alone (SCR)" in section
+    assert "thankfulness: KJV joy" in section
+    # Every note the packets show is one the edition prints, an omitted
+    # verse's included.
+    printed = sorted(
+        {review.esc(review.note_text(n)) for n in index["printed"].values()},
+        key=len,
+        reverse=True,
+    )
+    for text in packets.values():
+        for line in text.splitlines():
+            rest = line.removeprefix("⁺ ").rstrip() if line.startswith("⁺ ") else ""
+            while rest:
+                note = next(
+                    (p for p in printed if rest == p or rest.startswith(p + "; ")),
+                    None,
+                )
+                assert note, line
+                rest = rest[len(note) + 2 :]
+    assert "⁺ 17:35 " in section_of(packets, "LUK 17:36#1")
+    # An epistle's subscription is no part of its last verse.
+    assert index["finished"]["PHP 4:23"].text.endswith("Amen.")
 
 
 def test_real_verse_diffs_preserve_both_texts(byzantine: Reconciliation) -> None:
@@ -1814,7 +1849,7 @@ def test_review_separates_corrections_from_variants(
 
 
 def test_review_baseline_preserves_source_documents_and_decisions(
-    byzantine: Reconciliation,
+    byzantine: Reconciliation, finished: dict[str, Document]
 ) -> None:
     inputs = (
         dict(byzantine.english.documents),
@@ -1822,7 +1857,7 @@ def test_review_baseline_preserves_source_documents_and_decisions(
         byzantine.decisions.overrides,
     )
     original = copy.deepcopy(inputs)
-    review.build_index(byzantine)
+    review.build_index(byzantine, finished)
     assert inputs == original
 
 

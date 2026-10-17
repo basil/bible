@@ -26,7 +26,14 @@ from bible.usj import Content, Document, Node
 
 
 def signature(note: str | Node) -> str:
-    return usj.serialize([note])
+    """A note as written, with what it says the TR has and the verse or
+    passage it names: these stand in its x-scope, not its words, and the
+    edition prints its label from them (notes.for_edition)."""
+    written = usj.serialize([note])
+    if isinstance(note, str):
+        return written
+    scope = note.get("x-scope") or {}
+    return f"{written} {scope.get('kind')} {scope.get('where')}"
 
 
 def _italic_content(

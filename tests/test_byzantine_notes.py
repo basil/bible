@@ -14,7 +14,7 @@ import pytest
 import bible.pipeline
 from bible import lemmas, scripture, usj
 from bible.byzantine import edit, notes, verify
-from bible.byzantine.edit import NOTE_KINDS, NOTE_LABELS
+from bible.byzantine.edit import NOTE_KINDS
 from bible.byzantine.greek import Structure
 from bible.byzantine.rows import Disposition, NoteScope
 from bible.byzantine.stages import Reconciliation
@@ -22,16 +22,25 @@ from bible.checks import CheckFailed
 from bible.scripture import Verse
 from bible.usj import Content, Document, Node
 
-SHAPES = re.compile(
-    r"^(Textus Receptus: |Or, |Textus Receptus adds: |Textus Receptus omits: "
-    r"|Textus Receptus adds verse \d+: |Textus Receptus has this passage at [0-9:–]+\."
-    r"|Textus Receptus has here the verses printed at [0-9:–]+\.)$"
-)
 # The notes that name where a passage stands, with no lemma.
-PLACED = ("has this passage", "has here the verses printed")
+PLACED = frozenset({"moved", "moved-out"})
+# The notes that name a verse or passage.
+NAMING = PLACED | {"adds-verse"}
 NO_STRUCTURE = Structure({}, frozenset())
 
 type Found = tuple[str, Verse, int, Node]
+
+
+def kind_of(note: Node) -> str | None:
+    """What an edition note says the TR has (edit.NoteKind), or None for
+    another note."""
+    return note["x-scope"]["kind"] if note.get("category") == "edition" else None
+
+
+def received(note: Node) -> bool:
+    """Whether a note is a Textus Receptus note, not an "Or," note or
+    another's."""
+    return kind_of(note) not in {None, "rendering"}
 
 
 def fields(note: Node) -> dict[str, str]:
@@ -66,22 +75,30 @@ def test_the_edition_adds_notes(edition_notes: list[Found]) -> None:
 def test_structural_notes_stand_where_the_verses_were(
     edition_notes: list[Found],
 ) -> None:
-    by_key = {note["x-key"]: (ref, fields(note)) for ref, _, _, note in edition_notes}
+    by_key = {
+        note["x-key"]: (
+            ref,
+            fields(note),
+            note["x-scope"]["kind"],
+            note["x-scope"].get("where"),
+        )
+        for ref, _, _, note in edition_notes
+    }
     # An omitted verse is noted at the verse before it.
-    ref, found = by_key["LUK 17:35 TR"]
-    assert ref == "LUK 17:35"
-    assert found["ft"] == "Textus Receptus adds verse 36: "
+    ref, _, kind, where = by_key["LUK 17:35 TR"]
+    assert (ref, kind, where) == ("LUK 17:35", "adds-verse", "36")
     # A passage moved out of its chapter is noted at both ends.
     assert by_key["ROM 14:24 TR"] == (
         "ROM 14:24",
-        {"fr": "14:24 ", "ft": "Textus Receptus has this passage at 16:25–27."},
+        {"fr": "14:24 "},
+        "moved",
+        "16:25–27",
     )
     assert by_key["ROM 16:24 TR"] == (
         "ROM 16:24",
-        {
-            "fr": "16:24 ",
-            "ft": "Textus Receptus has here the verses printed at 14:24–26.",
-        },
+        {"fr": "16:24 "},
+        "moved-out",
+        "14:24–26",
     )
 
 
@@ -93,7 +110,7 @@ def test_insertion_before_sentence_stop_keeps_its_short_note(
     _, verse, offset, note = next(row for row in edition_notes if row[0] == "MRK 15:32")
     f = fields(note)
     assert f["fq"] == "believe him: "
-    assert f["ft"] == "Textus Receptus omits: "
+    assert kind_of(note) == "omits"
     assert f["fqa"] == "him"
     assert verse.text[:offset].endswith("believe him")
     assert verse.text[offset:].startswith(". And")
@@ -117,9 +134,8 @@ def test_an_inserted_phrase_with_its_stop_keeps_its_short_note(
         for row in edition_notes
         if row[0] == ref and fields(row[3])["fq"] == lemma + ": "
     )
-    f = fields(note)
-    assert f["ft"] == "Textus Receptus omits: "
-    assert f["fqa"] == lemma
+    assert kind_of(note) == "omits"
+    assert fields(note)["fqa"] == lemma
     assert verse.text[:offset].endswith(before)
     assert verse.text[offset:].startswith(after)
 
@@ -132,18 +148,20 @@ def test_an_omissions_lemma_stays_on_one_side_of_the_gap(
     in the short form where that gives back the KJV."""
     by_ref: dict[str, list[tuple[Verse, int, dict[str, str]]]] = {}
     for ref, verse, offset, note in edition_notes:
-        by_ref.setdefault(ref, []).append((verse, offset, fields(note)))
+        by_ref.setdefault(ref, []).append(
+            (verse, offset, {**fields(note), "kind": note["x-scope"]["kind"]})
+        )
     verse, offset, f = by_ref["LUK 4:8"][0]
-    assert (f["fq"], f["ft"], f["fqa"]) == ("it: ", "Textus Receptus: ", "for it")
+    assert (f["fq"], f["kind"], f["fqa"]) == ("it: ", "replace", "for it")
     assert verse.text[:offset].endswith("Satan: it")
     f = next(f for _, _, f in by_ref["REV 13:17"] if f["fq"] == "the name: ")
-    assert (f["ft"], f["fqa"]) == ("Textus Receptus: ", "or the name")
+    assert (f["kind"], f["fqa"]) == ("replace", "or the name")
     f = next(f for _, _, f in by_ref["REV 2:24"] if f["fq"] == "put: ")
     assert f["fqa"] == "will put"
     f = next(f for _, _, f in by_ref["REV 2:24"] if f["fq"] == "unto the rest: ")
     assert f["fqa"] == "and unto the rest"
     f = next(f for _, _, f in by_ref["1TI 6:12"] if f["fq"] == "art: ")
-    assert (f["ft"], f["fqa"]) == ("Textus Receptus adds: ", "also")
+    assert (f["kind"], f["fqa"]) == ("adds", "also")
 
 
 def test_a_declared_lemma_spans_a_changed_clause_boundary(
@@ -298,7 +316,7 @@ def test_a_correction_of_shared_greek_notes_the_former_words(
     source, doc, rows = corrected(text, ops)
     assert renderings_of(doc) == expected
     for _, n in scripture.verses(doc)["1:1"].notes:
-        assert fields(n)["ft"] == "Or, " and n["x-scope"]["kind"] == "rendering"
+        assert kind_of(n) == "rendering"
     assert (
         verify.finished_verses({"MAT": source}, {"MAT": doc}, rows, NO_STRUCTURE) == {}
     )
@@ -316,18 +334,17 @@ def test_supplied_words_are_quoted_as_the_former_rendering() -> None:
     _, doc, _ = corrected("He \\add was\\add* there.", [("was", "stood", "replace")])
     note = scripture.verses(doc)["1:1"].notes[0][1]
     assert renderings_of(doc) == [("stood", "was")]
-    assert note["category"] == "edition"
-    assert "Textus Receptus" not in usj.text_of(note["content"])
+    assert kind_of(note) == "rendering"
 
 
 def test_a_correction_and_a_reading_keep_their_own_notes() -> None:
     _, doc, _ = corrected(
         "He spoke unto them.", [("spoke", "said", "replace")], ("them", "him")
     )
-    found = [fields(n) for _, n in scripture.verses(doc)["1:1"].notes]
-    assert [(f["fq"], f["ft"], f["fqa"]) for f in found] == [
-        ("said: ", "Or, ", "spoke"),
-        ("him: ", "Textus Receptus: ", "them"),
+    found = [(fields(n), kind_of(n)) for _, n in scripture.verses(doc)["1:1"].notes]
+    assert [(f["fq"], kind, f["fqa"]) for f, kind in found] == [
+        ("said: ", "rendering", "spoke"),
+        ("him: ", "replace", "them"),
     ]
 
 
@@ -346,7 +363,7 @@ def test_every_lemma_is_unique_in_its_verse(edition_notes: list[Found]) -> None:
     for ref, verse, offset, note in edition_notes:
         f = fields(note)
         if "fq" not in f:
-            assert any(placed in f["ft"] for placed in PLACED), ref
+            assert kind_of(note) in PLACED, ref
             continue
         phrase = f["fq"].removesuffix(": ")
         assert phrase, ref
@@ -360,17 +377,22 @@ def test_every_lemma_is_unique_in_its_verse(edition_notes: list[Found]) -> None:
 def test_every_note_has_the_agreed_shape(edition_notes: list[Found]) -> None:
     for ref, verse, offset, note in edition_notes:
         f = fields(note)
+        scope = note["x-scope"]
         # The note at a passage's old place is the edition's own, not a
         # Textus Receptus note on a lemma.
-        if "has here the verses printed" not in f["ft"]:
+        if scope["kind"] != "moved-out":
             assert note["caller"] == "-", ref
         assert f["fr"] == ref.split()[1] + " ", ref
-        assert SHAPES.match(f["ft"]), (ref, f["ft"])
+        assert ("where" in scope) == (scope["kind"] in NAMING), (ref, scope)
+        if "where" in scope:
+            shape = r"\d+" if scope["kind"] == "adds-verse" else r"[0-9:–]+"
+            assert re.fullmatch(shape, scope["where"]), (ref, scope)
+        # A note has no label: the edition gives it its witness's term.
         markers = [n["marker"] for n in note["content"] if isinstance(n, dict)]
-        if any(placed in f["ft"] for placed in PLACED):
-            assert markers == ["fr", "ft"]
+        if scope["kind"] in PLACED:
+            assert markers == ["fr"]
         else:
-            assert markers == ["fr", "fq", "ft", "fqa"], (ref, markers)
+            assert markers == ["fr", "fq", "fqa"], (ref, markers)
             assert f["fqa"].strip(), ref
 
 
@@ -382,10 +404,8 @@ def noted(byzantine: Reconciliation) -> list[Disposition]:
 
 def test_kinds_follow_the_edits(byzantine: Reconciliation) -> None:
     def kind(note: Node) -> str:
-        found = note["x-scope"]["kind"]
-        where = note["x-scope"].get("where")
-        assert fields(note)["ft"] == NOTE_LABELS[found].format(where=where)
-        return found
+        assert "ft" not in fields(note)
+        return note["x-scope"]["kind"]
 
     for row in noted(byzantine):
         for e in row.get("edits", []):
@@ -507,13 +527,8 @@ def restored_verse(verse: Verse) -> str:
     text = verse.text
     changes: list[tuple[int, int, str]] = []
     for offset, note in verse.notes:
-        f = fields(note)
-        label = f.get("ft", "")
-        if (
-            not label.startswith("Textus Receptus")
-            or " verse " in label
-            or any(placed in label for placed in PLACED)
-        ):
+        f, kind = fields(note), kind_of(note)
+        if kind not in {"replace", "adds", "omits"}:
             continue
         lemma = f["fq"].removesuffix(": ")
         end = offset
@@ -524,12 +539,12 @@ def restored_verse(verse: Verse) -> str:
             start = end - len(lemma)
         assert text[start:end] == lemma, (lemma, offset)
         alternative = f["fqa"]
-        if label.endswith("adds: "):
+        if kind == "adds":
             changes.append((end, end, " " + alternative))
-        elif label.endswith("omits: ") and alternative == lemma:
+        elif kind == "omits" and alternative == lemma:
             # The whole lemma omitted, with the stops up to its note.
             changes.append((start, offset, ""))
-        elif label.endswith("omits: "):
+        elif kind == "omits":
             matches = list(
                 re.finditer(
                     r"(?<![A-Za-z])" + re.escape(alternative) + r"(?![A-Za-z])",
@@ -591,11 +606,7 @@ def test_restoration_detects_mutations(
     original = normalized_note_restoration(byzantine.english.kjv["MAT 3:8"])
     assert normalized_note_restoration(restored_verse(verse)) == original
     edited_notes = list(copy.deepcopy(verse.notes))
-    offset, note = next(
-        (at, note)
-        for at, note in edited_notes
-        if fields(note).get("ft", "").startswith("Textus Receptus")
-    )
+    offset, note = next((at, note) for at, note in edited_notes if received(note))
     if mutation in {"lemma", "alternative"}:
         marker = "fq" if mutation == "lemma" else "fqa"
         field = next(
@@ -632,11 +643,7 @@ def test_changed_terminal_stop_belongs_to_lemma(
 ) -> None:
     book, address = ref.split()
     verse = scripture.verses(byzantine.edited.prepared[book])[address]
-    note = next(
-        note
-        for _, note in reversed(verse.notes)
-        if fields(note).get("ft", "").startswith("Textus Receptus")
-    )
+    note = next(note for _, note in reversed(verse.notes) if received(note))
     f = fields(note)
     assert f["fq"].removesuffix(": ").endswith(finished_stop)
     assert f["fqa"].endswith(original_stop)
@@ -653,9 +660,10 @@ def omitted_quotation(byzantine: Reconciliation, ref: str) -> str:
     )
     book, address = row["note_scope"]["ref"].split()
     verse = scripture.verses(byzantine.edited.prepared[book])[address]
-    label = f"Textus Receptus adds verse {ref.split(':')[1]}: "
     return next(
-        fields(n)["fqa"] for _, n in verse.notes if fields(n).get("ft") == label
+        fields(n)["fqa"]
+        for _, n in verse.notes
+        if kind_of(n) == "adds-verse" and n["x-scope"]["where"] == ref.split(":")[1]
     )
 
 
@@ -745,7 +753,7 @@ def test_lemmas_end_at_the_note_with_the_verse_italics(
     for document in byzantine.edited.prepared.values():
         for verse in scripture.verses(document).values():
             for offset, note in verse.notes:
-                if "Textus Receptus" not in usj.text_of(note["content"]):
+                if not received(note):
                     continue
                 assert_lemma_ends_at_note(document, verse, offset, note)
                 body = field_nodes(note)
@@ -801,7 +809,7 @@ def test_alternatives_preserve_the_pinned_kjv_styles(byzantine: Reconciliation) 
         for address, verse in scripture.verses(document).items():
             by_offset: dict[int, list[Node]] = {}
             for offset, note in verse.notes:
-                if "Textus Receptus" in usj.text_of(note["content"]):
+                if received(note):
                     by_offset.setdefault(offset, []).append(note)
             for item in by_ref.get(f"{book} {address}", []):
                 scope = item.scope
@@ -809,11 +817,9 @@ def test_alternatives_preserve_the_pinned_kjv_styles(byzantine: Reconciliation) 
                 candidates = [
                     n
                     for n in by_offset[scope["offset"]]
-                    if all(
-                        usj.text_of(field_nodes(n).get(f, []))
-                        == usj.text_of(declared.get(f, []))
-                        for f in ("fq", "ft")
-                    )
+                    if usj.text_of(field_nodes(n).get("fq", []))
+                    == usj.text_of(declared.get("fq", []))
+                    and kind_of(n) == kind_of(item.note)
                 ]
                 assert len(candidates) == 1, (item.ref, scope["offset"])
                 body = field_nodes(candidates[0])
@@ -853,7 +859,7 @@ def test_lemma_style_check_detects_plain_text_preserving_italic_corruption(
     for document in byzantine.edited.prepared.values():
         for verse in scripture.verses(document).values():
             for offset, original in verse.notes:
-                if "Textus Receptus" not in usj.text_of(original["content"]):
+                if not received(original):
                     continue
                 body = field_nodes(original)
                 if "fq" not in body or not any(i for _, i in styled(body["fq"])):
@@ -878,9 +884,7 @@ def test_lemma_position_check_detects_a_note_moved_before_its_lemma(
     for document in byzantine.edited.prepared.values():
         for verse in scripture.verses(document).values():
             for offset, note in verse.notes:
-                if "Textus Receptus" not in usj.text_of(
-                    note["content"]
-                ) or "fq" not in field_nodes(note):
+                if not received(note) or "fq" not in field_nodes(note):
                     continue
                 with pytest.raises(AssertionError):
                     assert_lemma_ends_at_note(document, verse, 0, note)
@@ -894,7 +898,7 @@ def test_alternative_style_comparison_detects_plain_text_preserving_corruption(
     for document in byzantine.edited.prepared.values():
         for verse in scripture.verses(document).values():
             for _, note in verse.notes:
-                if "Textus Receptus" not in usj.text_of(note["content"]):
+                if not received(note):
                     continue
                 quote = field_nodes(note).get("fqa", [])
                 expected = styled(quote)

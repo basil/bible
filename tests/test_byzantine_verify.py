@@ -66,7 +66,6 @@ def _note(lemma: str, alternative: str) -> Node:
         "x-scope": {"kind": "replace"},
         "content": [
             usj.char("fq", lemma + ": "),
-            usj.char("ft", "Textus Receptus: "),
             usj.char("fqa", alternative),
         ],
     }
@@ -81,7 +80,7 @@ def _with_verse_note(
     (key,) = [
         note["x-key"]
         for _, note in verse.notes
-        if "Textus Receptus" in usj.text_of(note["content"])
+        if note.get("category") == "edition" and note["x-scope"]["kind"] != "rendering"
     ]
 
     def changed(note: Node) -> Node:
@@ -340,7 +339,9 @@ def test_a_changed_note_fails_i3(byzantine: Reconciliation) -> None:
     document = byzantine.edited.prepared["MAT"]
     verse = scripture.verses(document)["3:8"]
     (note,) = [
-        n for _, n in verse.notes if "Textus Receptus" in usj.text_of(n["content"])
+        n
+        for _, n in verse.notes
+        if n.get("category") == "edition" and n["x-scope"]["kind"] != "rendering"
     ]
     quote = usj.text_of(
         next(
@@ -474,7 +475,6 @@ def test_note_lemma_italics_are_checked_independently() -> None:
         "caller": "-",
         "content": [
             usj.char("fq", "the: "),
-            usj.char("ft", "Textus Receptus: "),
             usj.char("fqa", "a"),
         ],
     }
@@ -519,7 +519,6 @@ def test_a_note_lemma_across_a_paragraph_fails_i3() -> None:
         "caller": "-",
         "content": [
             usj.char("fq", "the word: "),
-            usj.char("ft", "Textus Receptus: "),
             usj.char("fqa", "a word"),
         ],
     }

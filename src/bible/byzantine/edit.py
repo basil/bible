@@ -38,25 +38,11 @@ type Change = tuple[Verse, int, int, Content]
 # elsewhere, or here the verses printed elsewhere; or, where the Greek is
 # shared and the English corrected, the King James rendering the correction
 # displaced. A note carries its kind, and the verse or passage it names
-# (`where`), in its x-scope; nothing reads its label.
+# (`where`), in its x-scope, and no label: notes.for_edition words it,
+# naming the witness (received.labels), or "Or," for a rendering.
 type NoteKind = Literal[
     "replace", "adds", "omits", "adds-verse", "moved", "moved-out", "rendering"
 ]
-# What the TR has where the passage is, or where the verses are, as the
-# edition words it.
-PASSAGE_NOTES = {
-    "moved": "has this passage at {where}.",
-    "moved-out": "has here the verses printed at {where}.",
-}
-# The labels the reconciliation gives its notes, for the review.
-NOTE_LABELS: dict[str, str] = {
-    "replace": "Textus Receptus: ",
-    "rendering": "Or, ",
-    "adds": "Textus Receptus adds: ",
-    "omits": "Textus Receptus omits: ",
-    "adds-verse": "Textus Receptus adds verse {where}: ",
-    **{kind: "Textus Receptus " + sentence for kind, sentence in PASSAGE_NOTES.items()},
-}
 # The kind of note each operation on the KJV's words takes: the TR's words
 # that an omission takes out, it adds; those an insertion puts in, it omits.
 NOTE_KINDS: dict[str, NoteKind] = {
@@ -212,12 +198,9 @@ def edition_note(
     key: str | None = None,
     where: str | None = None,
 ) -> Node:
-    """A Textus Receptus footnote: reference, label, and the displaced words,
-    with its kind and the verse or passage it names."""
-    fields = [
-        usj.char("fr", ref + " "),
-        usj.char("ft", NOTE_LABELS[kind].format(where=where)),
-    ]
+    """A Textus Receptus footnote: reference and the displaced words, with
+    its kind and the verse or passage it names."""
+    fields = [usj.char("fr", ref + " ")]
     if quotation is not None:
         fields.append(usj.char("fq", *quotation))
     scope: usj.Scope = {"kind": kind}

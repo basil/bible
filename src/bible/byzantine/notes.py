@@ -16,12 +16,7 @@ from collections.abc import Mapping, Sequence
 from typing import TYPE_CHECKING, Any
 
 from bible import lemmas, notes, repairs, scripture, usj
-from bible.byzantine.edit import (
-    NOTE_LABELS,
-    PASSAGE_NOTES,
-    source_content,
-    supplied_content,
-)
+from bible.byzantine.edit import source_content, supplied_content
 from bible.byzantine.rows import Disposition, Edit, NoteScope
 from bible.checks import CheckFailed, present, require
 from bible.lemmas import Span, Words
@@ -248,7 +243,6 @@ def scoped_note(
 ) -> tuple[Node, NoteScope]:
     text, words = verse.text, scripture.word_spans(verse.text)
     fields = {n["marker"]: n for n in note["content"] if isinstance(n, dict)}
-    label = usj.text_of(fields["ft"]["content"])
     quotation = fields.get("fq", {}).get("content", [])
     span: Span | None = None
     glossed: Span | None = None
@@ -293,7 +287,6 @@ def scoped_note(
     content: Content = [fields["fr"]]
     if phrase:
         content.append(usj.char("fq", phrase + ": "))
-    content.append(usj.char("ft", label))
     if "fq" in fields:
         content.append(usj.char("fqa", *quotation))
     extra: usj.Extra = {
@@ -423,10 +416,7 @@ def apply(
         b = lemma_end(documents[book], verse, b)
         finished = relemma(finished, text, a, b)
         kind = "rendering" if rendering else "replace"
-        finished = {
-            **with_field(finished, "ft", [NOTE_LABELS[kind]]),
-            "x-scope": {**finished["x-scope"], "kind": kind},
-        }
+        finished = {**finished, "x-scope": {**finished["x-scope"], "kind": kind}}
         return finished, {**scope, "range": [a, b], "full": True}
 
     def finish(
@@ -636,7 +626,6 @@ def apply(
                 "f",
                 usj.char("fr", ref + " "),
                 usj.char("fq", phrase + ": "),
-                usj.char("ft", NOTE_LABELS[kind]),
                 usj.char("fqa", *quote),
                 **extra,
             )
@@ -828,6 +817,20 @@ def placed(
 
 # The notes as the edition prints them.
 
+# What the TR has where the passage is, or where the verses are, as the
+# edition words it.
+PASSAGE_NOTES = {
+    "moved": "has this passage at {where}.",
+    "moved-out": "has here the verses printed at {where}.",
+}
+
+
+def edition_key(key: str) -> str:
+    """The edition's key for a note the reconciliation names "unit TR#n" or
+    "verse rendering#n": "unit TR" for a unit's one note, "unit TR#n" for a
+    second."""
+    return key.removesuffix("#1")
+
 
 def for_edition(
     document: Document, terms: Registry, witnesses: Mapping[str, str]
@@ -840,11 +843,7 @@ def for_edition(
     annotate stage to set, and the note at the start of its lemma, as every
     edition note stands. A verse-level note stands at its verse's start. A
     rendering note gives the former King James words after "Or,", with no
-    witness, since the Greek is unchanged.
-
-    The reconciliation names its notes "unit TR#n" and "verse rendering#n";
-    the edition's key is "unit TR" for a unit's one note, and "unit TR#n"
-    for a second."""
+    witness, since the Greek is unchanged. The note takes its edition_key."""
     verses = scripture.verses(document)
     moved: list[tuple[str, int, int, Node]] = []
     for ref, verse in verses.items():
@@ -868,7 +867,7 @@ def for_edition(
             if kind == "rendering":
                 # A correction of shared Greek: the former King James words
                 # as another rendering, with no witness to name.
-                content.append(usj.char("ft", NOTE_LABELS["rendering"]))
+                content.append(usj.char("ft", "Or, "))
                 content.append(usj.char("fqa", quotation))
             elif kind == "replace":
                 # A replaced reading: the note's words stand for the lemma.
@@ -889,7 +888,7 @@ def for_edition(
                 content.append(usj.char("fq", quotation))
             else:
                 content.append(usj.char("ft", PASSAGE_NOTES[kind].format(where=where)))
-            key = note["x-key"].removesuffix("#1")
+            key = edition_key(note["x-key"])
             if lemma is None:
                 at = 0
             else:
