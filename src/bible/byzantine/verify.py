@@ -19,6 +19,7 @@ from bible import lemmas, repairs, scripture, usj
 from bible.byzantine.edit import renumber, supplied_content
 from bible.byzantine.greek import Structure
 from bible.byzantine.rows import Disposition, Edit, NoteScope, Unit
+from bible.byzantine.tags import Tag, tagged
 from bible.checks import CheckFailed, present, require
 from bible.scripture import Verse
 from bible.usj import Content, Document, Node
@@ -453,7 +454,7 @@ def checks(
 STOPS = ",;:.?!"
 # The problems of a verse whose TR notes do not give back the King James
 # words as the corrections leave them, or whose "Or," notes do not give back
-# the King James words, which stop the build (bible.byzantine.checked).
+# the King James words, which stop the build (held).
 UNRESTORED_VARIANT = "variant: note does not restore the corrected KJV"
 UNRESTORED_RENDERING = (
     "correction: rendering notes do not restore the King James wording"
@@ -619,3 +620,45 @@ def finished_verses(
         if problems:
             result[ref] = problems
     return result
+
+
+def held(invariants: Mapping[str, str], finished: Mapping[str, Sequence[str]]) -> None:
+    """The invariants all pass, and every TR or "Or," note gives back the
+    King James words; otherwise the build stops and names what failed."""
+    failed = {k: v for k, v in invariants.items() if v != "pass"}
+    require(not failed, f"Byzantine invariants broken: {failed}")
+    unrestored = sorted(
+        ref
+        for ref, problems in finished.items()
+        if any(
+            p.startswith((UNRESTORED_RENDERING, UNRESTORED_VARIANT)) for p in problems
+        )
+    )
+    require(
+        not unrestored,
+        f"Notes that do not restore the King James wording: {unrestored}",
+    )
+
+
+def flagged(
+    dispositions: Sequence[Disposition], problems: Mapping[str, Sequence[str]]
+) -> tuple[Disposition, ...]:
+    """The dispositions flagged with the problems of the verses they edited:
+    a correction of shared Greek with the corrections' problems, any other
+    row with the variants'."""
+    result: list[Disposition] = []
+    for row in dispositions:
+        cause = "correction:" if row["disposition"] == "shared" else "variant:"
+        flags = [
+            f"finished verse: {p}"
+            for ref in sorted({e["ref"] for e in row.get("edits", [])})
+            for p in problems.get(ref, [])
+            if p.startswith(cause)
+        ]
+        if flags:
+            row = tagged(
+                {**row, "flags": [*row.get("flags", []), *flags]},
+                Tag.EV_FINISHED_VERSE,
+            )
+        result.append(row)
+    return tuple(result)

@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import Any, cast
 
 import pytest
 
@@ -11,12 +10,13 @@ from bible.byzantine import BOYD_ASV, RV, revisers
 from bible.byzantine.greek import PATCHES
 from bible.byzantine.instructions import bind_plain
 from bible.byzantine.rows import BoydNote, Instruction, InstructionEdit, Unit
+from bible.byzantine.stages import Reconciliation
 from bible.byzantine.units import NEUTRAL_CLASSES
 
 
 @pytest.fixture(scope="module")
-def texts(byzantine: Mapping[str, Any]) -> Mapping[str, Mapping[str, str]]:
-    return cast(Mapping[str, Mapping[str, str]], byzantine["texts"])
+def texts(byzantine: Reconciliation) -> Mapping[str, Mapping[str, str]]:
+    return byzantine.english.texts
 
 
 def test_asv_reads_its_poetry_and_indented_paragraphs(
@@ -87,9 +87,9 @@ def test_westcott_hort_side_from_boyd_sigla() -> None:
 
 
 def test_readable_units_follow_westcott_hort_and_the_patches(
-    units: list[Unit], byzantine: Mapping[str, Any]
+    units: list[Unit], byzantine: Reconciliation
 ) -> None:
-    admitted = revisers.readable(units, byzantine["tcgnt"])
+    admitted = revisers.readable(units, byzantine.greek.tcgnt)
     assert "MAT 3:8#1" in admitted[RV] and "MAT 3:8#1" in admitted[BOYD_ASV]
     patched = {u["id"] for u in units if u["ref"] in PATCHES}
     assert patched and not patched & admitted[BOYD_ASV]
@@ -100,7 +100,7 @@ def test_readable_units_follow_westcott_hort_and_the_patches(
 def test_boyd_own_change_attaches_to_its_unit(
     kjv_text: Mapping[str, str],
     texts: Mapping[str, Mapping[str, str]],
-    byzantine: Mapping[str, Any],
+    byzantine: Reconciliation,
 ) -> None:
     # ACT 21:33: TR τοτε εγγισας, RP εγγισας δε. Boyd changed the ASV's "Then"
     # to "And"; the ASV's other differences from the KJV are style.
@@ -120,7 +120,7 @@ def test_boyd_own_change_attaches_to_its_unit(
         BOYD_ASV,
         kjv_text,
         texts[BOYD_ASV],
-        byzantine["aligned"],
+        byzantine.english.aligned,
         units,
         {"ACT 21:33#1"},
         base=texts["asv"],
@@ -135,7 +135,7 @@ def test_boyd_own_change_attaches_to_its_unit(
             BOYD_ASV,
             kjv_text,
             texts[BOYD_ASV],
-            byzantine["aligned"],
+            byzantine.english.aligned,
             units,
             set(),
             base=texts["asv"],
@@ -147,7 +147,7 @@ def test_boyd_own_change_attaches_to_its_unit(
 def test_boyd_is_read_at_rps_address(
     kjv_text: Mapping[str, str],
     texts: Mapping[str, Mapping[str, str]],
-    byzantine: Mapping[str, Any],
+    byzantine: Reconciliation,
 ) -> None:
     # Boyd's MAT 23:13 is the KJV's 23:14, "devour widows' houses"; his 23:14
     # is the KJV's 23:13, "shut up the kingdom of heaven".
@@ -156,7 +156,7 @@ def test_boyd_is_read_at_rps_address(
     moved = revisers.at_kjv_addresses(
         {"MAT 23:13": "a", "MAT 23:14": "b", "ROM 14:24": "c"},
         {"MAT 23:13": "", "MAT 23:14": "", "ROM 16:25": "", "ROM 16:26": ""},
-        byzantine["structure"],
+        byzantine.greek.structure,
     )
     assert moved == {
         "MAT 23:13": "b",
@@ -171,7 +171,7 @@ def test_boyd_is_read_at_rps_address(
             "ref": ref,
             "tr": ["x"],
             "rp": ["y"],
-            "tr_range": [0, byzantine["aligned"][ref]["greek_length"]],
+            "tr_range": [0, byzantine.english.aligned[ref]["greek_length"]],
             "rp_range": [0, 1],
             "hf": "RP",
             "class": "substitution",
@@ -181,7 +181,7 @@ def test_boyd_is_read_at_rps_address(
         BOYD_ASV,
         kjv_text,
         texts[BOYD_ASV],
-        byzantine["aligned"],
+        byzantine.english.aligned,
         units,
         {ref + "#1"},
         base=texts["asv"],
@@ -192,7 +192,7 @@ def test_boyd_is_read_at_rps_address(
 def test_a_change_making_a_placed_instructions_contrast_takes_its_unit(
     kjv_text: Mapping[str, str],
     texts: Mapping[str, Mapping[str, str]],
-    byzantine: Mapping[str, Any],
+    byzantine: Reconciliation,
 ) -> None:
     # MAT 21:7 επεκαθισαν -> επεκαθισεν: CrossWire does not carry "they set
     # him" onto the verb; an instruction placed there lends its unit to the
@@ -230,7 +230,7 @@ def test_a_change_making_a_placed_instructions_contrast_takes_its_unit(
             RV,
             kjv_text,
             texts[RV],
-            byzantine["aligned"],
+            byzantine.english.aligned,
             units,
             {ref + "#1"},
             instructions=instructions,
@@ -246,27 +246,27 @@ def test_a_change_making_a_placed_instructions_contrast_takes_its_unit(
 def test_agreeing_instructions_do_not_hide_revision_reports(
     kjv_text: Mapping[str, str],
     texts: Mapping[str, Mapping[str, str]],
-    byzantine: Mapping[str, Any],
+    byzantine: Reconciliation,
 ) -> None:
     # Two instructions place "he sat" on the singular RP verb.
     # CrossWire cannot place these KJV words, so the English fallback must
     # count their shared attachment once rather than call it ambiguous.
     instructions: list[Instruction] = [
-        i for i in byzantine["instructions"] if i["ref"] == "MAT 21:7"
+        i for i in byzantine.decisions.instructions if i["ref"] == "MAT 21:7"
     ]
     assert {i["source"] for i in instructions} == {"pierpont"}
     instructions = [
         *instructions,
         {**instructions[0], "source": "additional", "entry": 1},
     ]
-    ledger = [u for u in byzantine["units"] if u["ref"] == "MAT 21:7"]
-    admitted = revisers.readable(ledger, byzantine["tcgnt"])
+    ledger = [u for u in byzantine.greek.units if u["ref"] == "MAT 21:7"]
+    admitted = revisers.readable(ledger, byzantine.greek.tcgnt)
     for witness in (RV, BOYD_ASV):
         rows = revisers.revision_reports(
             witness,
             kjv_text,
             texts[witness],
-            byzantine["aligned"],
+            byzantine.english.aligned,
             ledger,
             admitted[witness],
             instructions=instructions,
@@ -284,7 +284,7 @@ def test_agreeing_instructions_do_not_hide_revision_reports(
             witness,
             kjv_text,
             texts[witness],
-            byzantine["aligned"],
+            byzantine.english.aligned,
             ledger,
             admitted[witness],
             instructions=instructions * 2,
@@ -294,13 +294,13 @@ def test_agreeing_instructions_do_not_hide_revision_reports(
 def test_different_units_with_the_same_contrast_remain_ambiguous(
     kjv_text: Mapping[str, str],
     texts: Mapping[str, Mapping[str, str]],
-    byzantine: Mapping[str, Any],
+    byzantine: Reconciliation,
 ) -> None:
-    original: Unit = next(u for u in byzantine["units"] if u["id"] == "MAT 21:7#1")
+    original: Unit = next(u for u in byzantine.greek.units if u["id"] == "MAT 21:7#1")
     other: Unit = {**original, "id": "MAT 21:7#ambiguous"}
     source: Instruction = next(
         i
-        for i in byzantine["instructions"]
+        for i in byzantine.decisions.instructions
         if i["ref"] == "MAT 21:7" and i["source"] == "pierpont"
     )
     competing: Instruction = {
@@ -312,7 +312,7 @@ def test_different_units_with_the_same_contrast_remain_ambiguous(
             RV,
             kjv_text,
             texts[RV],
-            byzantine["aligned"],
+            byzantine.english.aligned,
             [original, other],
             {original["id"], other["id"]},
             instructions=[source, source, competing],
@@ -324,7 +324,7 @@ def test_different_units_with_the_same_contrast_remain_ambiguous(
 def test_revision_change_on_a_neutral_unit_is_not_read(
     kjv_text: Mapping[str, str],
     texts: Mapping[str, Mapping[str, str]],
-    byzantine: Mapping[str, Any],
+    byzantine: Reconciliation,
 ) -> None:
     # REV 2:4 αλλ -> αλλα is spelling; the RV's "But" for "Nevertheless" is style.
     units: list[Unit] = [
@@ -341,7 +341,7 @@ def test_revision_change_on_a_neutral_unit_is_not_read(
     ]
     assert (
         revisers.revision_reports(
-            RV, kjv_text, texts[RV], byzantine["aligned"], units, {"REV 2:4#1"}
+            RV, kjv_text, texts[RV], byzantine.english.aligned, units, {"REV 2:4#1"}
         )
         == []
     )
@@ -349,10 +349,10 @@ def test_revision_change_on_a_neutral_unit_is_not_read(
 
 
 def test_built_revision_rows(
-    byzantine: Mapping[str, Any], units: list[Unit], by_id: dict[str, Unit]
+    byzantine: Reconciliation, units: list[Unit], by_id: dict[str, Unit]
 ) -> None:
-    rows = byzantine["revision_rows"]
-    admitted = revisers.readable(units, byzantine["tcgnt"])
+    rows = byzantine.revisions.rows
+    admitted = revisers.readable(units, byzantine.greek.tcgnt)
     assert {r["witness"] for r in rows} == {RV, BOYD_ASV}
     assert (
         sum(r["witness"] == RV for r in rows) >= 450
@@ -399,11 +399,11 @@ def test_built_revision_rows(
     ],
 )
 def test_boyd_rows_record_whether_he_kept_or_revised(
-    byzantine: Mapping[str, Any], ref: str, old: str, new: str, reviser: str
+    byzantine: Reconciliation, ref: str, old: str, new: str, reviser: str
 ) -> None:
     rows = [
         row
-        for row in byzantine["revision_rows"]
+        for row in byzantine.revisions.rows
         if row["witness"] == BOYD_ASV
         and (row["ref"], row["old"], row["new"]) == (ref, old, new)
     ]
@@ -420,7 +420,7 @@ def test_boyd_rows_record_whether_he_kept_or_revised(
     ],
 )
 def test_null_placements_keep_revision_rows_off_their_words(
-    byzantine: Mapping[str, Any],
+    byzantine: Reconciliation,
     witness: str,
     ref: str,
     old: str,
@@ -433,20 +433,20 @@ def test_null_placements_keep_revision_rows_off_their_words(
     assert not any(
         (r["witness"], r["ref"], r["old"], r["new"], r["word_range"])
         == (witness, ref, old, new, word_range)
-        for r in byzantine["revision_rows"]
+        for r in byzantine.revisions.rows
     )
 
 
 def test_shared_greek_wording_does_not_borrow_a_nearby_unit(
-    byzantine: Mapping[str, Any],
+    byzantine: Reconciliation,
 ) -> None:
     # The only unit removes the article before Jesus. Both texts already
     # have singular logon, so the revisions' "word" is a rendering change.
-    assert not [r for r in byzantine["revision_rows"] if r["ref"] == "JHN 14:23"]
+    assert not [r for r in byzantine.revisions.rows if r["ref"] == "JHN 14:23"]
 
 
 def test_repeated_conjunctions_keep_their_separate_units(
-    byzantine: Mapping[str, Any],
+    byzantine: Reconciliation,
     kjv_text: Mapping[str, str],
     texts: Mapping[str, Mapping[str, str]],
 ) -> None:
@@ -488,14 +488,14 @@ def test_repeated_conjunctions_keep_their_separate_units(
                 "edits": [edit],
             }
         )
-    ledger = [u for u in byzantine["units"] if u["ref"] == ref]
-    admitted = revisers.readable(ledger, byzantine["tcgnt"])
+    ledger = [u for u in byzantine.greek.units if u["ref"] == ref]
+    admitted = revisers.readable(ledger, byzantine.greek.tcgnt)
     for witness in (RV, BOYD_ASV):
         rows = revisers.revision_reports(
             witness,
             kjv_text,
             texts[witness],
-            byzantine["aligned"],
+            byzantine.english.aligned,
             ledger,
             admitted[witness],
             instructions=proposals,
@@ -506,12 +506,12 @@ def test_repeated_conjunctions_keep_their_separate_units(
 
 
 def test_revision_alarms(
-    byzantine: Mapping[str, Any],
+    byzantine: Reconciliation,
     kjv_text: Mapping[str, str],
     by_id: dict[str, Unit],
     texts: Mapping[str, Mapping[str, str]],
 ) -> None:
-    alarms = byzantine["alarms"]
+    alarms = byzantine.revisions.alarms
     assert set(alarms) == set(by_id)
     fruit = alarms["MAT 3:8#1"]
     assert (
@@ -559,7 +559,7 @@ def test_revision_alarms(
     )
     assert partial["MAT 3:8#1"] == {"applicable": True, "available": False}
     missing = revisers.alarms(
-        [unit], byzantine["aligned"], kjv_text, {RV: texts[RV], BOYD_ASV: {}}
+        [unit], byzantine.english.aligned, kjv_text, {RV: texts[RV], BOYD_ASV: {}}
     )
     assert (missing["MAT 3:8#1"]["available"], missing["MAT 3:8#1"]["alarm"]) == (
         False,
@@ -567,7 +567,7 @@ def test_revision_alarms(
     )
     kept = revisers.alarms(
         [unit],
-        byzantine["aligned"],
+        byzantine.english.aligned,
         kjv_text,
         {RV: {"MAT 3:8": kjv_text["MAT 3:8"]}, BOYD_ASV: texts[BOYD_ASV]},
     )
@@ -576,7 +576,7 @@ def test_revision_alarms(
 
 @pytest.mark.parametrize("included", [(), (RV,), (BOYD_ASV,)])
 def test_both_revision_maps_are_required_for_an_alarm(
-    byzantine: Mapping[str, Any],
+    byzantine: Reconciliation,
     kjv_text: Mapping[str, str],
     texts: Mapping[str, Mapping[str, str]],
     by_id: dict[str, Unit],
@@ -585,7 +585,7 @@ def test_both_revision_maps_are_required_for_an_alarm(
     unit = by_id["MAT 3:8#1"]
     alarm = revisers.alarms(
         [unit],
-        byzantine["aligned"],
+        byzantine.english.aligned,
         kjv_text,
         {name: texts[name] for name in included},
     )[unit["id"]]
@@ -613,7 +613,7 @@ def test_both_revision_maps_are_required_for_an_alarm(
     ],
 )
 def test_an_alarm_can_report_restyling_of_retained_content(
-    byzantine: Mapping[str, Any],
+    byzantine: Reconciliation,
     kjv_text: Mapping[str, str],
     texts: Mapping[str, Mapping[str, str]],
     by_id: dict[str, Unit],
@@ -627,13 +627,13 @@ def test_an_alarm_can_report_restyling_of_retained_content(
     assert phrase in kjv_text[ref]
     for witness in (RV, BOYD_ASV):
         assert retained in texts[witness][ref]
-    alarm = byzantine["alarms"][uid]
+    alarm = byzantine.revisions.alarms[uid]
     assert alarm["available"] and alarm["alarm"]
     assert phrase in alarm["missing"]
 
 
 def test_phrase_presence_is_literal_and_can_match_elsewhere_in_a_verse(
-    byzantine: Mapping[str, Any], texts: Mapping[str, Mapping[str, str]]
+    byzantine: Reconciliation, texts: Mapping[str, Mapping[str, str]]
 ) -> None:
     # "burnt"/"burned" are compared alike by revision reports but remain
     # different literal words for the alarm.
@@ -642,7 +642,7 @@ def test_phrase_presence_is_literal_and_can_match_elsewhere_in_a_verse(
     # MAT 20:22 changes the conjunction before baptism to "or" in Boyd,
     # while RV omits that clause. Both retain "and" earlier in the verse,
     # so the whole-verse presence test does not raise this local alarm.
-    alarm = byzantine["alarms"]["MAT 20:22#1"]
+    alarm = byzantine.revisions.alarms["MAT 20:22#1"]
     assert alarm["phrases"] == ["and"] and alarm["alarm"] is False
     for witness in (RV, BOYD_ASV):
         assert "answered and said" in texts[witness]["MAT 20:22"]

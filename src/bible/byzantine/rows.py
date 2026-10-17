@@ -101,7 +101,7 @@ class Instruction(TypedDict, total=False):
     reason: str
     ref: None | str
     refs: list[str]
-    refused_by: str
+    refused_by: None | str
     rendering: None | str
     role: str
     scope: str
@@ -110,6 +110,17 @@ class Instruction(TypedDict, total=False):
     strength: None | str
     units: list[Attachment]
     weight: dict[str, Any] | None
+
+
+class Verdict(TypedDict):
+    """Whether an instruction may execute as its unit's RP2026 reading
+    (instructions.compatibility): its status and reason, what refused it,
+    and whether its rendering of the Greek is verified."""
+
+    compatibility: str
+    compatibility_reason: None | str
+    refused_by: None | str
+    rendering: None | str
 
 
 class InstructionEdit(TypedDict, total=False):
@@ -221,7 +232,6 @@ Disposition = TypedDict(
         "old": "str",
         "ops": "list[dict[str, Any]]",
         "override": "str",
-        "readings": "list[str]",
         "reason": "str",
         "reasons": "list[str]",
         "redundant": "bool",

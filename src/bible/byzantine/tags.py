@@ -170,9 +170,9 @@ def score(row: Disposition) -> int:
     return max(total + (row["disposition"] == "override"), 0)
 
 
-def retag(row: Disposition, tag: Tag) -> None:
-    """Add a computed tag to a disposition row."""
-    row["tags"] = sorted(set(row["tags"]) | {tag.value})
+def tagged(row: Disposition, tag: Tag) -> Disposition:
+    """The disposition row with a computed tag added."""
+    return {**row, "tags": sorted(set(row["tags"]) | {tag.value})}
 
 
 def asserted(tags: Collection[str]) -> list[Tag]:

@@ -61,7 +61,7 @@ from bible.byzantine.rows import (
     RevisionRow,
     Unit,
 )
-from bible.byzantine.stages import Context
+from bible.byzantine.stages import Reconciliation
 from bible.byzantine.tags import Tag, score
 from bible.checks import require
 from bible.scripture import Verse
@@ -286,7 +286,7 @@ def verse_comparison(
 
 def unit_greek_excerpt(
     unit: Unit,
-    context: Context,
+    context: Reconciliation,
     passages: Passages,
 ) -> str:
     """Quote the shared passage containing this unit."""
@@ -308,7 +308,7 @@ Passages = tuple[
 
 def unit_passages(
     unit: Unit,
-    context: Context,
+    context: Reconciliation,
     prepared: PreparedGreek,
     prepared_verses: Mapping[str, Verse],
     corrected: Mapping[str, Verse] | None = None,
@@ -323,7 +323,7 @@ def unit_passages(
         " ".join(tr.get(ref, [])),
         " ".join(rp.get(target, [])),
         scripture.plain(
-            corrected[ref].text if corrected is not None else context["kjv"][ref]
+            corrected[ref].text if corrected is not None else context.english.kjv[ref]
         ),
         scripture.plain(verse.text if verse else ""),
         prepared_verses,
@@ -336,7 +336,7 @@ def unit_passages(
 
 
 def greek_verses(
-    context: Context,
+    context: Reconciliation,
     ref: str,
     prepared: PreparedGreek,
     target: str | None = None,
@@ -428,12 +428,12 @@ def attachment_scope(row: Attached, uid: str) -> str:
 def revision_status(
     name: str,
     unit: Unit,
-    context: Context,
+    context: Reconciliation,
     index: Index,
     rows: Sequence[RevisionRow],
 ) -> str:
     """Keep eligibility, an attached contrast and corroboration distinct."""
-    if unit["id"] in context["revision_admitted"][name]:
+    if unit["id"] in context.revisions.admitted[name]:
         return "eligible reading; " + (
             "English contrast attached" if rows else "no English contrast attached"
         )
@@ -499,7 +499,9 @@ def source_plain(markup: str | None) -> str | None:
     return html.unescape(re.sub(r"<[^>]*>", "", markup)) if markup else markup
 
 
-def instruction_line(i: Instruction, context: Context, uid: str | None = None) -> str:
+def instruction_line(
+    i: Instruction, context: Reconciliation, uid: str | None = None
+) -> str:
     """A recommendation with its proposal, binding and exclusion reason."""
     name = NAMES.get(i["source"], i["source"])
     bits = [f"{name} {i['entry']}"]
@@ -538,7 +540,7 @@ def instruction_line(i: Instruction, context: Context, uid: str | None = None) -
     proposals: list[str] = []
     for e in i.get("edits", []):
         at = e.get("ref")
-        text = context["kjv"].get(at) if at is not None else None
+        text = context.english.kjv.get(at) if at is not None else None
         bounds = (
             kjv_bounds(text, e)
             if text is not None and e.get("word_range") is not None
@@ -562,7 +564,7 @@ def instruction_line(i: Instruction, context: Context, uid: str | None = None) -
     )
 
 
-def witness_lines(unit: Unit, context: Context, index: Index) -> list[str]:
+def witness_lines(unit: Unit, context: Reconciliation, index: Index) -> list[str]:
     """One line per witness that speaks to the unit, in its own words."""
     uid = unit["id"]
     lines: list[str] = []
@@ -576,7 +578,7 @@ def witness_lines(unit: Unit, context: Context, index: Index) -> list[str]:
         ) or r.get("source_main_text")
         reading = "new"
         if r["witness"] == FAA:
-            faa = context["faa_rows"].get(r["ref"], {})
+            faa = context.apparatuses.faa_rows.get(r["ref"], {})
             reading = "new" if r.get("new") else "old"
             source_text = (
                 faa.get("RP_English") if reading == "new" else faa.get("TR_English")
@@ -590,7 +592,7 @@ def witness_lines(unit: Unit, context: Context, index: Index) -> list[str]:
         )
         extra = ""
         if r["witness"] == FAA and r.get("greek_group"):
-            faa = context["faa_rows"].get(r["ref"], {})
+            faa = context.apparatuses.faa_rows.get(r["ref"], {})
             g = r["greek_group"] - 1
             try:
                 label = (
@@ -611,7 +613,7 @@ def witness_lines(unit: Unit, context: Context, index: Index) -> list[str]:
             f"- {name} {esc(r['entry'])}{method}: {contrast}{extra} · attachment: {attachment_scope(r, uid)}{raw}"
         )
     for name in REVISIONS:
-        verse = context["texts"][name].get(unit["ref"])
+        verse = context.english.texts[name].get(unit["ref"])
         rows = [row for row in index["revisions_at"][uid] if row["witness"] == name]
         if not verse:
             continue
@@ -621,7 +623,7 @@ def witness_lines(unit: Unit, context: Context, index: Index) -> list[str]:
             origin = {"kept": "ASV inherited", "revised": "includes Boyd revision"}.get(
                 row.get("reviser") or "", ""
             )
-            kjv = context["kjv"][row["ref"]]
+            kjv = context.english.kjv[row["ref"]]
             excerpt = revision_excerpt(row, kjv)
             revised.append(
                 "KJV contrast "
@@ -631,8 +633,8 @@ def witness_lines(unit: Unit, context: Context, index: Index) -> list[str]:
                 + (f" ({origin})" if origin else "")
             )
         details = "; ".join(revised)
-        if name == BOYD_ASV and unit["ref"] in context["texts"]["asv"]:
-            base = context["texts"]["asv"][unit["ref"]]
+        if name == BOYD_ASV and unit["ref"] in context.english.texts["asv"]:
+            base = context.english.texts["asv"][unit["ref"]]
             reading = "ASV 1901 → Boyd ASV 2021 (whole verse): " + diff_markup(
                 diff_spans(scripture.plain(base), scripture.plain(verse))
             )
@@ -726,14 +728,14 @@ def calculus(row: Disposition, unit: Unit, index: Index) -> str:
 def unit_english_lines(
     unit: Unit,
     row: Disposition,
-    context: Context,
+    context: Reconciliation,
     index: Index,
     passages: Passages,
 ) -> list[str]:
     """The executed English for this unit, preserving shared constructions."""
     baseline = (
         "Corrected KJV"
-        if index["corrected"][unit["ref"]].text != context["kjv"][unit["ref"]]
+        if index["corrected"][unit["ref"]].text != context.english.kjv[unit["ref"]]
         else "KJV"
     )
     covered = row.get("covered_by")
@@ -769,14 +771,14 @@ def unit_english_lines(
 def section(
     unit: Unit,
     row: Disposition,
-    context: Context,
+    context: Reconciliation,
     index: Index,
     *,
     greek_context: Mapping[str, str] | None = None,
     prepared: PreparedGreek,
 ) -> list[str]:
     uid = unit["id"]
-    kjv = context["kjv"]
+    kjv = context.english.kjv
     ref, target = unit["ref"], unit["target_ref"]
     lines = [
         f"## {uid} · {row['disposition']}"
@@ -825,7 +827,7 @@ def section(
     if unit["id"] in prepared[2]:
         old, new = unit["tr_accented"], unit["rp_accented"]
         greek += f" · apparatus accent evidence: {esc(old)} → {esc(new)}"
-    addresses = context["tr_alignment"].addresses[ref]
+    addresses = context.greek.tr_alignment.addresses[ref]
     source_refs = list(
         dict.fromkeys(
             addresses[slice(*projected(context, "tr", ref, unit["tr_range"]))]
@@ -852,7 +854,7 @@ def section(
             f"KJV {ref}",
             (
                 f"OLEB {target} (all changes)"
-                if index["corrected"][ref].text != context["kjv"][ref]
+                if index["corrected"][ref].text != context.english.kjv[ref]
                 else f"OLEB {target}"
             ),
             after_verse=after,
@@ -945,11 +947,11 @@ def override_lines(o: Override, ref: str) -> list[str]:
 
 
 def rendering_section(
-    row: Disposition, context: Context, index: Index, prepared: PreparedGreek
+    row: Disposition, context: Reconciliation, index: Index, prepared: PreparedGreek
 ) -> list[str]:
     """An override of the English where the TR and RP2026 share the Greek."""
     ref = row["ref"]
-    target = context["structure"].rp_ref(ref)
+    target = context.greek.structure.rp_ref(ref)
     o = index["overrides"][row["override"]]
     corrected = index["corrected"][ref]
     after = index["prepared"].get(target)
@@ -959,13 +961,13 @@ def rendering_section(
         "",
         *greek_verses(context, ref, prepared, target),
         *verse_comparison(
-            context["kjv"][ref],
+            context.english.kjv[ref],
             corrected.text,
             f"KJV {ref}",
             f"Corrected KJV {ref}",
         ),
         *verse_comparison(
-            context["kjv"][ref],
+            context.english.kjv[ref],
             after.text if after else "",
             f"KJV {ref}",
             f"OLEB {target} (all changes)",
@@ -977,36 +979,36 @@ def rendering_section(
     ]
 
 
-def build_index(context: Context) -> Index:
+def build_index(context: Reconciliation) -> Index:
     """Lookups the packet renders from."""
     corrected, rows = edit.execute(
-        context["documents"],
-        [r for r in context["dispositions"] if r["disposition"] == "shared"],
-        list(context["documents"]),
+        context.english.documents,
+        [r for r in context.verified.dispositions if r["disposition"] == "shared"],
+        list(context.english.documents),
     )
     require(
         all(r.get("execution") == "applied" for r in rows),
         "Review corrections-only baseline could not be executed",
     )
     index: Index = {
-        "instructions_at": reports_by_unit(context["instructions"]),
-        "reports_at": reports_by_unit(context["reports"]),
-        "revisions_at": reports_by_unit(context["revision_rows"]),
+        "instructions_at": reports_by_unit(context.decisions.instructions),
+        "reports_at": reports_by_unit(context.apparatuses.reports),
+        "revisions_at": reports_by_unit(context.revisions.rows),
         "loose_in_verse": defaultdict(list),
-        "overrides": {o["id"]: o for o in context["overrides"]},
-        "prepared": verses_of(context["prepared"]),
+        "overrides": {o["id"]: o for o in context.decisions.overrides},
+        "prepared": verses_of(context.edited.prepared),
         "corrected": verses_of(corrected),
-        "rows": {r["unit"]: r for r in context["dispositions"]},
-        "tcgnt": {n["entry"]: n for n in context["tcgnt"]},
-        "received": received.rows(context["tcgnt"], context["apparatus"]),
+        "rows": {r["unit"]: r for r in context.verified.dispositions},
+        "tcgnt": {n["entry"]: n for n in context.greek.tcgnt},
+        "received": received.rows(context.greek.tcgnt, context.greek.apparatus),
     }
-    for i in context["instructions"]:
+    for i in context.decisions.instructions:
         if i.get("scope") == "verse" or (
             i.get("scope") == "out-of-scope" and i.get("role") != "agrees"
         ):
             for ref in i.get("refs", []):
                 index["loose_in_verse"][ref].append(instruction_line(i, context))
-    for r in context["reports"]:
+    for r in context.apparatuses.reports:
         if r.get("scope") == "verse":
             extracted = (
                 r.get("old") is not None
@@ -1025,7 +1027,7 @@ def build_index(context: Context) -> Index:
     return index
 
 
-def packets(context: Context) -> dict[str, str]:
+def packets(context: Reconciliation) -> dict[str, str]:
     """One review file per book, by its name: every Scrivener-RP2026 unit
     of the book with all its evidence."""
     index = build_index(context)
@@ -1033,7 +1035,7 @@ def packets(context: Context) -> dict[str, str]:
     tr, rp, _ = prepared
     rows = index["rows"]
     by_book: defaultdict[str, list[Unit]] = defaultdict(list)
-    for u in context["units"]:
+    for u in context.greek.units:
         by_book[u["ref"].split()[0]].append(u)
     loose_by_book: defaultdict[str, list[str]] = defaultdict(list)
     for ref in sorted(
@@ -1086,7 +1088,7 @@ def packets(context: Context) -> dict[str, str]:
             greek_contexts.setdefault(pair, {"unit": u["id"]})
         corrections = [
             r
-            for r in context["dispositions"]
+            for r in context.verified.dispositions
             if r["disposition"] == "shared" and r["ref"].split()[0] == book
         ]
         if corrections:
@@ -1127,7 +1129,7 @@ def reading(value: object) -> str:
     return str(value) if value else "∅"
 
 
-def addressed(i: Instruction, context: Context) -> bool:
+def addressed(i: Instruction, context: Reconciliation) -> bool:
     """Whether an execution or a recorded correction covers the recommendation."""
     if i.get("displaced_by"):
         return True
@@ -1136,7 +1138,7 @@ def addressed(i: Instruction, context: Context) -> bool:
     if i.get("bind") == "structural" and units:
         moved = {
             r["unit"]
-            for r in context["dispositions"]
+            for r in context.verified.dispositions
             if r["disposition"] == "structural" and r["action"] != "refused"
         }
         if units <= moved:
@@ -1146,15 +1148,15 @@ def addressed(i: Instruction, context: Context) -> bool:
         ref = e.get("ref")
         if ref is None or e.get("word_range") is None:
             return False
-        lo, hi = kjv_bounds(context["kjv"][ref], e)
-        for o in context["overrides"]:
+        lo, hi = kjv_bounds(context.english.kjv[ref], e)
+        for o in context.decisions.overrides:
             for b in o["bound"]:
                 if b["ref"] != ref:
                     continue
                 start, end = lo, hi
                 if start == end:
                     # A bound insertion can stand on either side of a space.
-                    text = context["kjv"][ref]
+                    text = context.english.kjv[ref]
                     if b["end"] <= start and not text[b["end"] : start].strip():
                         start = end = b["end"]
                     elif end <= b["start"] and not text[end : b["start"]].strip():
@@ -1179,14 +1181,14 @@ def addressed(i: Instruction, context: Context) -> bool:
     return bool(edits) and all(covered(e) for e in edits)
 
 
-def summary(context: Context) -> str:
+def summary(context: Reconciliation) -> str:
     """The reconciliation in figures, for the review: how many units (and
     corrections of shared Greek) of each disposition, how each witness's rows
     were read, the inventory rows that match no unit, and the verses the
     CrossWire bridge could not align."""
     c = Counter
     lines = ["# The Byzantine New Testament", ""]
-    rows = context["dispositions"]
+    rows = context.verified.dispositions
     lines += ["## Dispositions", "", "| Disposition | Rows |", "| --- | --- |"]
     lines += [
         f"| {d} | {n} |" for d, n in sorted(c(r["disposition"] for r in rows).items())
@@ -1200,9 +1202,9 @@ def summary(context: Context) -> str:
     ]
     lines += ["## Witnesses", "", "| Witness | Rows | Scope |", "| --- | --- | --- |"]
     witnesses: defaultdict[str, list[str | None]] = defaultdict(list)
-    for r in context["reports"]:
+    for r in context.apparatuses.reports:
         witnesses[r["witness"]].append(r.get("scope"))
-    for i in context["instructions"]:
+    for i in context.decisions.instructions:
         witnesses[i["source"]].append(i.get("scope"))
     for name, scopes in sorted(witnesses.items()):
         lines.append(
@@ -1211,7 +1213,7 @@ def summary(context: Context) -> str:
     lines += ["", "## Unaddressed recommendations", ""]
     lines += [
         f"- {', '.join(i.get('refs', []))}: " + instruction_line(i, context)[2:]
-        for i in context["instructions"]
+        for i in context.decisions.instructions
         if i.get("role") != "agrees"
         and i.get("compatibility") not in {"compatible", "agrees"}
         and not addressed(i, context)
@@ -1220,7 +1222,7 @@ def summary(context: Context) -> str:
         "",
         "## Invariants",
         "",
-        *(f"- {k}: {v}" for k, v in context["invariants"].items()),
+        *(f"- {k}: {v}" for k, v in context.verified.invariants.items()),
         "",
     ]
     lines += [
@@ -1229,7 +1231,7 @@ def summary(context: Context) -> str:
         *(
             f"- {ref}: {'; '.join(problems)}"
             for ref, problems in sorted(
-                context["finished"].items(), key=lambda kv: ref_key(kv[0])
+                context.verified.finished.items(), key=lambda kv: ref_key(kv[0])
             )
         ),
         "",
@@ -1237,15 +1239,15 @@ def summary(context: Context) -> str:
     lines += ["## Inventory rows matching no unit", ""]
     lines += [
         f"- {r['inventory']} {r.get('entry')} at {r.get('target_ref')}: {esc(reading(r.get('tr')))} → {esc(reading(r.get('rp')))}"
-        for r in context["unmatched"]
+        for r in context.greek.unmatched
     ] or ["- none"]
     lines += ["", "## Verses the CrossWire bridge could not align", ""]
-    lines += [f"- {ref}" for ref in context["bridge_failures"]] or ["- none"]
+    lines += [f"- {ref}" for ref in context.english.bridge_failures] or ["- none"]
     lines += ["", "## Pierpont's rows", "", "| Role | Rows |", "| --- | --- |"]
     lines += [
         f"| {role} | {n} |"
         for role, n in sorted(
-            c(r["role"] for r in context["pierpont_inventory"]["rows"]).items()
+            c(r["role"] for r in context.instructions.inventory["rows"]).items()
         )
     ]
     return "\n".join(lines) + "\n"

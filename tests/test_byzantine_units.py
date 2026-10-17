@@ -30,6 +30,7 @@ from bible.byzantine.rows import (
     UnitInventory,
     Unmatched,
 )
+from bible.byzantine.stages import Reconciliation
 from bible.byzantine.units import (
     NEUTRAL_CLASSES,
     annotated_class,
@@ -54,15 +55,15 @@ Tagged = dict[str, list[Token]]
 
 
 @pytest.fixture(scope="module")
-def structure(byzantine: Mapping[str, Any]) -> Structure:
-    result = byzantine["structure"]
+def structure(byzantine: Reconciliation) -> Structure:
+    result = byzantine.greek.structure
     assert isinstance(result, Structure)
     return result
 
 
 @pytest.fixture(scope="module")
-def tags(byzantine: Mapping[str, Any]) -> Tagged:
-    return {**byzantine["tr_tags"], **byzantine["rp_tags"]}
+def tags(byzantine: Reconciliation) -> Tagged:
+    return {**byzantine.greek.tr_tags, **byzantine.greek.rp_tags}
 
 
 @pytest.fixture(scope="module")
@@ -70,8 +71,8 @@ def splits(byzantine_inputs: Mapping[str, Content]) -> dict[str, list[str]]:
     return word_breaks(byzantine_inputs["tcgnt"] / "095XXC.usx")
 
 
-def selected(byzantine: Mapping[str, Any], *entries: int) -> list[BoydNote]:
-    return [r for r in byzantine["tcgnt"] if r["entry"] in entries]
+def selected(byzantine: Reconciliation, *entries: int) -> list[BoydNote]:
+    return [r for r in byzantine.greek.tcgnt if r["entry"] in entries]
 
 
 def attached(
@@ -95,7 +96,7 @@ def ranges(tr: list[int], rp: list[int]) -> Unit:
 
 
 def test_class_histogram_and_unmatched_inventory_entries(
-    byzantine: Mapping[str, Any], units: list[Unit]
+    byzantine: Reconciliation, units: list[Unit]
 ) -> None:
     assert Counter(u["class"] for u in units) == {
         "substitution": 516,
@@ -119,7 +120,7 @@ def test_class_histogram_and_unmatched_inventory_entries(
     # The rows of the Greek apparatuses that give the Received Text a reading
     # all stand at units, by the code or by placements; the collation's left
     # over are RP2018's, which RP2026 changed.
-    assert [(r["inventory"], r["entry"]) for r in byzantine["unmatched"]] == [
+    assert [(r["inventory"], r["entry"]) for r in byzantine.greek.unmatched] == [
         ("collation", 927),
         ("collation", 1571),
         ("collation", 1810),
@@ -142,9 +143,9 @@ def test_class_histogram_and_unmatched_inventory_entries(
 
 
 def test_collation_bounds_preserve_every_greek_token(
-    byzantine: Mapping[str, Any], units: list[Unit], structure: Structure
+    byzantine: Reconciliation, units: list[Unit], structure: Structure
 ) -> None:
-    tr, rp = byzantine["tr"], byzantine["rp"]
+    tr, rp = byzantine.greek.tr, byzantine.greek.rp
     byref: dict[str, list[Unit]] = {}
     for unit in units:
         if not unit.get("kind"):
@@ -170,9 +171,9 @@ def test_collation_bounds_preserve_every_greek_token(
 
 
 def test_rp2026_philemon_order_is_one_printed_unit(
-    byzantine: Mapping[str, Any], units: list[Unit]
+    byzantine: Reconciliation, units: list[Unit]
 ) -> None:
-    tr, rp = byzantine["tr"], byzantine["rp"]
+    tr, rp = byzantine.greek.tr, byzantine.greek.rp
     rows = blocks({"PHM 1:1": tr["PHM 1:1"]}, {"PHM 1:1": rp["PHM 1:1"]}, PLAIN)
     assert [(r["class"], r["tr"], r["rp"]) for r in rows] == [
         ("order", ["xristou", "ihsou"], ["ihsou", "xristou"])
@@ -251,12 +252,12 @@ ATTACHMENTS: list[dict[int, tuple[str, str, str]]] = [
 
 @pytest.mark.parametrize("expected", ATTACHMENTS, ids=lambda e: ",".join(map(str, e)))
 def test_published_notes_attach_with_their_scope_and_side(
-    byzantine: Mapping[str, Any],
+    byzantine: Reconciliation,
     tags: Tagged,
     structure: Structure,
     expected: dict[int, tuple[str, str, str]],
 ) -> None:
-    tr, rp, coll = byzantine["tr"], byzantine["rp"], byzantine["collation"]
+    tr, rp, coll = byzantine.greek.tr, byzantine.greek.rp, byzantine.greek.collation
     rows = selected(byzantine, *expected)
     before = copy.deepcopy(rows)
     units, unmatched = reconcile(tr, rp, coll, rows, tags, structure=structure)
@@ -275,9 +276,9 @@ def test_published_notes_attach_with_their_scope_and_side(
 
 
 def test_a_changed_main_text_position_cannot_donate_a_match(
-    byzantine: Mapping[str, Any], tags: Tagged, structure: Structure
+    byzantine: Reconciliation, tags: Tagged, structure: Structure
 ) -> None:
-    tr, rp, coll = byzantine["tr"], byzantine["rp"], byzantine["collation"]
+    tr, rp, coll = byzantine.greek.tr, byzantine.greek.rp, byzantine.greek.collation
     changed = copy.deepcopy(selected(byzantine, 484, 1664))
     position = changed[1]["position"]
     assert position is not None
@@ -297,13 +298,13 @@ def test_a_changed_main_text_position_cannot_donate_a_match(
 
 
 def test_mixed_and_unnumbered_quotes_stay_unmatched(
-    byzantine: Mapping[str, Any], tags: Tagged, structure: Structure
+    byzantine: Reconciliation, tags: Tagged, structure: Structure
 ) -> None:
-    tr = byzantine["tr"]
+    tr = byzantine.greek.tr
     _, unmatched = reconcile(
         tr,
-        byzantine["rp"],
-        byzantine["collation"],
+        byzantine.greek.rp,
+        byzantine.greek.collation,
         selected(byzantine, 739, 1334, 1438, 1450),
         tags,
         structure=structure,
@@ -320,13 +321,13 @@ def test_mixed_and_unnumbered_quotes_stay_unmatched(
 
 
 def test_a_misprinted_lemma_stays_unmatched_until_placed(
-    byzantine: Mapping[str, Any], tags: Tagged, structure: Structure
+    byzantine: Reconciliation, tags: Tagged, structure: Structure
 ) -> None:
-    tr, rp = byzantine["tr"], byzantine["rp"]
+    tr, rp = byzantine.greek.tr, byzantine.greek.rp
     _, unmatched = reconcile(
         tr,
         rp,
-        byzantine["collation"],
+        byzantine.greek.collation,
         selected(byzantine, 1035, 1627),
         tags,
         structure=structure,
@@ -339,12 +340,12 @@ def test_a_misprinted_lemma_stays_unmatched_until_placed(
 
 
 def test_ellipsis_matches_real_published_order_and_omission_notes(
-    byzantine: Mapping[str, Any], tags: Tagged, structure: Structure
+    byzantine: Reconciliation, tags: Tagged, structure: Structure
 ) -> None:
     _, unmatched = reconcile(
-        byzantine["tr"],
-        byzantine["rp"],
-        byzantine["collation"],
+        byzantine.greek.tr,
+        byzantine.greek.rp,
+        byzantine.greek.collation,
         selected(byzantine, 383, 660),
         tags,
         structure=structure,
@@ -380,12 +381,12 @@ def test_terminal_nu_quotations_use_morphology_without_changing_units(
 
 
 def test_appendix_c_locates_constituents_without_rewriting_units(
-    byzantine: Mapping[str, Any],
+    byzantine: Reconciliation,
     tags: Tagged,
     splits: dict[str, list[str]],
     structure: Structure,
 ) -> None:
-    tr, rp, coll = byzantine["tr"], byzantine["rp"], byzantine["collation"]
+    tr, rp, coll = byzantine.greek.tr, byzantine.greek.rp, byzantine.greek.collation
     rows = selected(byzantine, 81, 82, 450, 451, 580, 581, 1432)
     before = copy.deepcopy((rows, splits))
     plain, _ = reconcile(tr, rp, coll, rows, tags, structure=structure)
@@ -407,11 +408,11 @@ def test_appendix_c_locates_constituents_without_rewriting_units(
 
 
 def test_cross_verse_quotation_checks_the_embedded_verse_number(
-    byzantine: Mapping[str, Any], tags: Tagged, structure: Structure
+    byzantine: Reconciliation, tags: Tagged, structure: Structure
 ) -> None:
-    tr, rp, coll = byzantine["tr"], byzantine["rp"], byzantine["collation"]
+    tr, rp, coll = byzantine.greek.tr, byzantine.greek.rp, byzantine.greek.collation
     note: BoydNote = copy.deepcopy(
-        next(r for r in byzantine["tcgnt"] if r["target_ref"] == "ACT 8:36")
+        next(r for r in byzantine.greek.tcgnt if r["target_ref"] == "ACT 8:36")
     )
     units, unmatched = reconcile(tr, rp, coll, [note], tags, structure=structure)
     assert unmatched_entries(unmatched) == []
@@ -429,11 +430,11 @@ def test_cross_verse_quotation_checks_the_embedded_verse_number(
 
 
 def test_two_collation_entries_for_one_change_make_one_unit(
-    byzantine: Mapping[str, Any],
+    byzantine: Reconciliation,
 ) -> None:
     ref = "MAT 3:8"
     entry: CollationRow = next(
-        c for c in byzantine["collation"] if c["target_ref"] == ref
+        c for c in byzantine.greek.collation if c["target_ref"] == ref
     )
     wider: CollationRow = {
         **entry,
@@ -441,7 +442,10 @@ def test_two_collation_entries_for_one_change_make_one_unit(
         "rp": ["oun", *entry["rp"]],
     }
     rows = blocks(
-        {ref: byzantine["tr"][ref]}, {ref: byzantine["rp"][ref]}, PLAIN, [entry, wider]
+        {ref: byzantine.greek.tr[ref]},
+        {ref: byzantine.greek.rp[ref]},
+        PLAIN,
+        [entry, wider],
     )
     assert [(r["tr_range"], r["rp_range"]) for r in rows] == [([2, 4], [2, 4])]
 
@@ -718,7 +722,7 @@ def test_annotation_classes_require_complete_exact_address_evidence() -> None:
 
 
 def test_disjunctive_eta_is_not_an_article(
-    byzantine: Mapping[str, Any], units: list[Unit], tags: Tagged
+    byzantine: Reconciliation, units: list[Unit], tags: Tagged
 ) -> None:
     by_id = {u["id"]: u for u in units}
     for uid in ("MRK 6:15#1", "ACT 24:11#1", "1CO 6:16#1", "REV 13:17#2"):
@@ -729,7 +733,7 @@ def test_disjunctive_eta_is_not_an_article(
         assert by_id[uid]["class"] == "article"
     # A homograph without exact, unambiguous source tags keeps its form class.
     unit = {**by_id["MRK 6:15#1"], "class": "article"}
-    tr, rp = byzantine["tr"], byzantine["rp"]
+    tr, rp = byzantine.greek.tr, byzantine.greek.rp
     assert annotated_class(unit, tr, rp, {})["class"] == "article"
     ambiguous = copy.deepcopy(tags)
     ambiguous["TR MRK 6:15"][unit["tr_range"][0]]["strong"].append(3588)
@@ -737,9 +741,9 @@ def test_disjunctive_eta_is_not_an_article(
 
 
 def test_real_morphology_classes_and_prefix_guard(
-    byzantine: Mapping[str, Any], tags: Tagged
+    byzantine: Reconciliation, tags: Tagged
 ) -> None:
-    tr, rp = byzantine["tr"], byzantine["rp"]
+    tr, rp = byzantine.greek.tr, byzantine.greek.rp
     for ref, expected in [
         ("MAT 1:1", "name-spelling"),
         ("MAT 8:13", "spelling"),
@@ -797,7 +801,7 @@ def test_relocations_carry_both_inventories_and_stay_apart_from_wording(
 
 
 def test_accent_units_check_the_printed_target_and_keep_equal_letters(
-    byzantine: Mapping[str, Any], units: list[Unit]
+    byzantine: Reconciliation, units: list[Unit]
 ) -> None:
     accents = {u["ref"]: u for u in units if u.get("kind") == "accent"}
     assert set(accents) == {"LUK 3:23", "PHP 3:5", "1CO 5:13", "MRK 4:8", "MRK 4:20"}
@@ -826,25 +830,25 @@ def test_accent_units_check_the_printed_target_and_keep_equal_letters(
     start, end = accents["MRK 4:8"]["tr_range"]
     assert (accents["MRK 4:8"]["hf"], accents["MRK 4:8"]["tr"]) == (
         "TR",
-        byzantine["tr"]["MRK 4:8"][start:end],
+        byzantine.greek.tr["MRK 4:8"][start:end],
     )
     assert accents["MRK 4:8"]["tr"].count("en") == 3
 
 
 def test_supplementary_units_refuse_a_changed_printed_reading_or_scope(
-    byzantine: Mapping[str, Any], structure: Structure
+    byzantine: Reconciliation, structure: Structure
 ) -> None:
     tr, rp, coll, notes, printed = (
-        byzantine["tr"],
-        byzantine["rp"],
-        byzantine["collation"],
-        byzantine["tcgnt"],
-        byzantine["printed"],
+        dict(byzantine.greek.tr),
+        dict(byzantine.greek.rp),
+        byzantine.greek.collation,
+        byzantine.greek.tcgnt,
+        dict(byzantine.greek.printed),
     )
     _, diacritics = greek.printed(
-        greek.tree(byzantine["printed_xml"]), structure.omitted, "REV 22:21"
+        greek.tree(byzantine.inputs.sources["rp2026"]), structure.omitted, "REV 22:21"
     )
-    accents = byzantine["decisions"]["accents"]
+    accents = byzantine.inputs.decisions["accents"]
     before = copy.deepcopy((tr, rp, coll, notes, printed, diacritics))
     assert (
         len(
@@ -867,7 +871,7 @@ def test_supplementary_units_refuse_a_changed_printed_reading_or_scope(
         supplementary_units(
             tr, rp, coll, notes, snapshot, diacritics, structure, accents
         )
-    changed: list[BoydNote] = copy.deepcopy(notes)
+    changed: list[BoydNote] = copy.deepcopy(list(notes))
     position = next(r for r in changed if r["entry"] == 173)["position"]
     assert position is not None
     position["offset"] += 1
@@ -915,9 +919,11 @@ def printed_checks(
 
 
 def test_printed_spot_checks_name_twenty_units(
-    byzantine: Mapping[str, Any], units: list[Unit]
+    byzantine: Reconciliation, units: list[Unit]
 ) -> None:
-    checks = printed_checks(units, byzantine["printed"], byzantine["printed_xml"])
+    checks = printed_checks(
+        units, byzantine.greek.printed, byzantine.inputs.sources["rp2026"]
+    )
     assert len(checks) == 20
     assert checks[0] == {
         "unit": "MAT 1:1#1",
@@ -930,22 +936,22 @@ def test_printed_spot_checks_name_twenty_units(
 
 
 def test_duplicate_accent_unit_ids_are_rejected(
-    byzantine: Mapping[str, Any], structure: Structure
+    byzantine: Reconciliation, structure: Structure
 ) -> None:
     _, diacritics = greek.printed(
-        greek.tree(byzantine["printed_xml"]), structure.omitted, "REV 22:21"
+        greek.tree(byzantine.inputs.sources["rp2026"]), structure.omitted, "REV 22:21"
     )
     assert diacritics
     with pytest.raises(CheckFailed, match=re.escape(diacritics[0]["ref"] + "#accent")):
         supplementary_units(
-            byzantine["tr"],
-            byzantine["rp"],
-            byzantine["collation"],
-            byzantine["tcgnt"],
-            byzantine["printed"],
+            byzantine.greek.tr,
+            byzantine.greek.rp,
+            byzantine.greek.collation,
+            byzantine.greek.tcgnt,
+            byzantine.greek.printed,
             [*diacritics, diacritics[0]],
             structure,
-            byzantine["decisions"]["accents"],
+            byzantine.inputs.decisions["accents"],
         )
-    ids = [u["id"] for u in byzantine["units"]]
+    ids = [u["id"] for u in byzantine.greek.units]
     assert len(ids) == len(set(ids))

@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import copy
+import re
 from collections import Counter, defaultdict
 from collections.abc import Iterable, Mapping, Sequence
+from dataclasses import replace
 from typing import Any
 
 import pytest
@@ -33,7 +35,7 @@ from bible.byzantine.rows import (
     RevisionRow,
     Unit,
 )
-from bible.byzantine.stages import Context
+from bible.byzantine.stages import Reconciliation
 from bible.byzantine.tags import Tag
 from bible.byzantine.units import NEUTRAL_CLASSES
 from bible.checks import CheckFailed
@@ -49,25 +51,25 @@ KJV = {REF: "Bring forth therefore fruits meet for repentance:"}
 
 
 @pytest.fixture(scope="module")
-def context(edition: bible.pipeline.Edition) -> Context:
+def context(edition: bible.pipeline.Edition) -> Reconciliation:
     return edition.byzantine
 
 
 @pytest.fixture(scope="module")
-def readings(context: Context) -> list[dict[str, Any]]:
+def readings(context: Reconciliation) -> list[dict[str, Any]]:
     """The readings of edition/byzantine.json about units, each with its key
     as its id."""
     return [
         {"id": key, **entry}
-        for key, entry in context["decisions"]["readings"].items()
+        for key, entry in context.inputs.decisions["readings"].items()
         if "units" in entry
     ]
 
 
 @pytest.fixture(scope="module")
-def unit_rows(context: Context) -> list[Disposition]:
+def unit_rows(context: Reconciliation) -> list[Disposition]:
     """The dispositions of the units, without the corrections of shared Greek."""
-    return [r for r in context["dispositions"] if r["disposition"] != SHARED]
+    return [r for r in context.verified.dispositions if r["disposition"] != SHARED]
 
 
 def unit(uid: str = FIRST, classification: str = "substitution") -> Unit:
@@ -130,36 +132,33 @@ def bound(edit: Mapping[str, Any], ref: str, text: str) -> InstructionEdit:
     return result
 
 
-def decided(context: Context) -> list[Disposition]:
+def decided(context: Reconciliation) -> tuple[Disposition, ...]:
     """The dispositions decided again from the context's own inputs."""
-    return decide.decide(
-        context["units"],
-        context["instructions"],
-        context["reports"],
-        context["revision_rows"],
-        context["overrides"],
-        context["alarms"],
-        context["kjv"],
-        supplied=context["supplied"],
+    return stages.stage_decide(
+        context.greek,
+        context.english,
+        context.apparatuses,
+        context.revisions,
+        context.decisions,
     )
 
 
 def test_every_unit_has_exactly_one_disposition(
-    context: Context, unit_rows: list[Disposition]
+    context: Reconciliation, unit_rows: list[Disposition]
 ) -> None:
     rows = unit_rows
     assert Counter(r["unit"] for r in rows) == Counter(
-        u["id"] for u in context["units"]
+        u["id"] for u in context.greek.units
     )
     assert all(r["disposition"] in DISPOSITIONS for r in rows)
     assert all(r["action"] in ACTIONS for r in rows)
-    assert [r["unit"] for r in rows] == [u["id"] for u in context["units"]]
+    assert [r["unit"] for r in rows] == [u["id"] for u in context.greek.units]
 
 
-def test_decide_is_a_function_of_its_inputs(context: Context) -> None:
+def test_decide_is_a_function_of_its_inputs(context: Reconciliation) -> None:
     """Running the stage again gives the same rows (before execution adds to them)."""
     again = decided(context)
-    now = {r["unit"]: r for r in context["dispositions"]}
+    now = {r["unit"]: r for r in context.verified.dispositions}
     assert len(again) == len(now)
     for row in again:
         # Execution adds the seam and finished-verse tags afterwards.
@@ -177,12 +176,12 @@ def test_decide_is_a_function_of_its_inputs(context: Context) -> None:
 
 
 def test_an_overridden_unit_is_override(
-    context: Context,
+    context: Reconciliation,
     dispositions: Mapping[str, Disposition],
     readings: list[dict[str, Any]],
 ) -> None:
     assert readings
-    for o in context["overrides"]:
+    for o in context.decisions.overrides:
         for uid in o["unit_ids"]:
             row = dispositions[uid]
             assert row["disposition"] == "override" and row["override"] == o["id"]
@@ -203,7 +202,7 @@ def test_an_overridden_unit_is_override(
         "disposition"
     ] == "override" or any(
         dispositions[uid]["override"] == first["id"]
-        for uid in context["overrides"][0]["unit_ids"]
+        for uid in context.decisions.overrides[0]["unit_ids"]
     )
 
 
@@ -245,9 +244,9 @@ class Refusal(rendering.Checker):
 
 
 def test_two_readings_must_merge_even_when_every_instruction_is_refused(
-    context: Context,
+    context: Reconciliation,
 ) -> None:
-    units = [u for u in context["units"] if u["id"] in {"ACT 9:5#1", "ACT 9:6#1"}]
+    units = [u for u in context.greek.units if u["id"] in {"ACT 9:5#1", "ACT 9:6#1"}]
     split = {
         u["id"]: {
             "units": [
@@ -269,40 +268,41 @@ def test_two_readings_must_merge_even_when_every_instruction_is_refused(
     instruction = copy.deepcopy(
         next(
             i
-            for i in context["instructions"]
+            for i in context.decisions.instructions
             if i["source"] == PIERPONT and i["entry"] == 332
         )
     )
-    instruction["compatibility"], instruction["compatibility_reason"] = compatibility(
-        instruction,
-        {u["id"]: u for u in units},
-        context["kjv"],
-        context["supplied"],
-        Refusal(),
-    )
-    own: Context = {
-        "decisions": {"readings": split, "lemmas": {}},
-        "printed": context["printed"],
-        "rp_alignment": context["rp_alignment"],
-        "structure": context["structure"],
-        "units": units,
-        "kjv": context["kjv"],
-        "reports": [],
-        "placement_errors": [],
-        "instructions": [instruction],
-        "supplied": context["supplied"],
-        "checker": Refusal(),
-        "texts": {w: context["texts"][w] for w in (RV, BOYD_ASV)},
-        "revision_citations": context["revision_citations"],
-        "faa_rows": context["faa_rows"],
+    instruction = {
+        **instruction,
+        **compatibility(
+            instruction,
+            {u["id"]: u for u in units},
+            context.english.kjv,
+            context.english.supplied,
+            Refusal(),
+        ),
     }
-    stages.stage_decisions(own)
-    assert len(own["overrides"]) == 2  # Both entries individually validate.
-    assert len(own["instructions"]) == 1
-    assert own["instructions"][0]["compatibility"] == "incompatible"
-    assert own["decision_errors"] == [
-        "ACT#c1: taken by overrides ACT 9:5#1 and ACT 9:6#1; merge them into one"
-    ]
+    assert instruction["compatibility"] == "incompatible"
+    # Both entries validate on their own, so the build names one error: that
+    # together they take one construction.
+    with pytest.raises(
+        CheckFailed,
+        match=re.escape(
+            "fit their sources: ['ACT#c1: taken by overrides ACT 9:5#1 and "
+            "ACT 9:6#1; merge them into one']"
+        ),
+    ):
+        stages.stage_decisions(
+            replace(context.inputs, decisions={"readings": split, "lemmas": {}}),
+            replace(context.greek, units=tuple(units)),
+            replace(
+                context.english,
+                texts={w: context.english.texts[w] for w in (RV, BOYD_ASV)},
+            ),
+            replace(context.apparatuses, reports=()),
+            replace(context.instructions, rows=(instruction,)),
+            Refusal(),
+        )
 
 
 def test_matthew_23_move_units_are_structural(
@@ -349,13 +349,15 @@ def test_matthew_3_8_is_witnessed_from_pierpont_with_remaining_corroboration(
 
 
 def test_a_neutral_unit_with_no_reports_is_neutral(
-    context: Context,
+    context: Reconciliation,
     dispositions: Mapping[str, Disposition],
     by_id: Mapping[str, Unit],
 ) -> None:
-    rows = [r for r in context["dispositions"] if r["disposition"] == "neutral"]
+    rows = [r for r in context.verified.dispositions if r["disposition"] == "neutral"]
     assert rows
-    attached = {a["unit"] for i in context["instructions"] for a in i.get("units", [])}
+    attached = {
+        a["unit"] for i in context.decisions.instructions for a in i.get("units", [])
+    }
     for row in rows:
         assert by_id[row["unit"]]["class"] in NEUTRAL_CLASSES
         assert row["witnesses"] == [] and row["unit"] not in attached
@@ -365,7 +367,7 @@ def test_a_neutral_unit_with_no_reports_is_neutral(
 
 
 def test_a_neutral_class_unit_a_witness_reports_is_not_neutral(
-    context: Context, by_id: Mapping[str, Unit], unit_rows: list[Disposition]
+    context: Reconciliation, by_id: Mapping[str, Unit], unit_rows: list[Disposition]
 ) -> None:
     for row in unit_rows:
         if by_id[row["unit"]]["class"] in NEUTRAL_CLASSES and row["witnesses"]:
@@ -377,16 +379,16 @@ def test_a_neutral_class_unit_a_witness_reports_is_not_neutral(
     assert (row["disposition"], row["action"]) == ("silent", "nochange")
 
 
-def test_a_conflict_executes_nothing(context: Context) -> None:
-    for row in context["dispositions"]:
+def test_a_conflict_executes_nothing(context: Reconciliation) -> None:
+    for row in context.verified.dispositions:
         if row["disposition"] == "conflict":
             assert row["action"] == "nochange"
             assert {"ev:witnesses-disagree", "op:nochange"} <= set(row["tags"])
             assert row["flags"]
 
 
-def test_a_silent_unit_keeps_the_kjv(context: Context) -> None:
-    for row in context["dispositions"]:
+def test_a_silent_unit_keeps_the_kjv(context: Reconciliation) -> None:
+    for row in context.verified.dispositions:
         if row["disposition"] == "silent":
             assert row["action"] == "nochange"
             assert {"op:nochange", "from:kjv-retained"} <= set(row["tags"])
@@ -395,8 +397,8 @@ def test_a_silent_unit_keeps_the_kjv(context: Context) -> None:
 # Tags and scores
 
 
-def test_every_tag_is_a_tag(context: Context) -> None:
-    for row in context["dispositions"]:
+def test_every_tag_is_a_tag(context: Reconciliation) -> None:
+    for row in context.verified.dispositions:
         for t in row["tags"]:
             Tag(t)
         assert row["tags"] == sorted(row["tags"])
@@ -414,18 +416,18 @@ def test_computed_tags_never_appear_in_the_readings(
 
 
 def test_witnessed_and_override_rows_carry_from_and_gram_tags(
-    context: Context,
+    context: Reconciliation,
 ) -> None:
-    for row in context["dispositions"]:
+    for row in context.verified.dispositions:
         if row["disposition"] in {"witnessed", "override"}:
             groups = {Tag(t).group for t in row["tags"]}
             assert {"from", "gram"} <= groups, (row["unit"], row["tags"])
 
 
 def test_a_single_witness_and_a_corroborated_edit_exclude_each_other(
-    context: Context,
+    context: Reconciliation,
 ) -> None:
-    for row in context["dispositions"]:
+    for row in context.verified.dispositions:
         if row["disposition"] == "witnessed" and row["action"] != "nochange":
             both = {"ev:single-witness", "ev:corroborated"} & set(row["tags"])
             assert len(both) == 1, row["unit"]
@@ -459,12 +461,12 @@ def test_a_revision_worded_differently_does_not_corroborate(
     assert "ev:revision-agrees" in row["tags"]
 
 
-def test_only_agreeing_revisions_receive_corroboration(context: Context) -> None:
+def test_only_agreeing_revisions_receive_corroboration(context: Reconciliation) -> None:
     by_unit: defaultdict[str, list[RevisionRow]] = defaultdict(list)
-    for report in context["revision_rows"]:
+    for report in context.revisions.rows:
         for attached in report.get("units", []):
             by_unit[attached["unit"]].append(report)
-    for row in context["dispositions"]:
+    for row in context.verified.dispositions:
         if row["disposition"] != "witnessed" or row["action"] == "nochange":
             continue
         actual = set(row["corroborated_by"]) & {RV, BOYD_ASV}
@@ -475,15 +477,25 @@ def test_only_agreeing_revisions_receive_corroboration(context: Context) -> None
         assert ("ev:revision-agrees" in row["tags"]) == bool(expected), row["unit"]
 
 
-def test_revisions_and_alarms_change_no_decision_or_book(context: Context) -> None:
+def test_revisions_and_alarms_change_no_decision_or_book(
+    context: Reconciliation,
+) -> None:
     """Without revision rows and alarms only evidence fields differ, and the
     prepared books and invariants are the same. Revision evidence keeps a
     nochange reading from being marked redundant, which decides whether the
-    build stops on it, not the text."""
-    full: Context = {**context}
-    stages.stage_decide(full)
-    bare: Context = {**context, "revision_rows": [], "alarms": {}}
-    stages.stage_decide(bare)
+    decide stage stops the build on it, not the text; so the bare decisions
+    are made beneath the stage."""
+    full = decided(context)
+    bare = decide.decide(
+        context.greek.units,
+        context.decisions.instructions,
+        context.apparatuses.reports,
+        (),
+        context.decisions.overrides,
+        {},
+        context.english.kjv,
+        supplied=context.english.supplied,
+    )
     evidence_fields = {
         "tags",
         "flags",
@@ -491,21 +503,23 @@ def test_revisions_and_alarms_change_no_decision_or_book(context: Context) -> No
         "alarm_phrases",
         "redundant",
     }
-    for present, absent in zip(full["dispositions"], bare["dispositions"], strict=True):
+    for present, absent in zip(full, bare, strict=True):
         assert {k: v for k, v in present.items() if k not in evidence_fields} == {
             k: v for k, v in absent.items() if k not in evidence_fields
         }, present["unit"]
-    stages.stage_edit(bare)
-    stages.stage_verify(bare)
-    assert bare["prepared"] == context["prepared"]
-    assert bare["invariants"] == context["invariants"]
+    edited = stages.stage_edit(context.greek, context.english, context.decisions, bare)
+    verified = stages.stage_verify(
+        context.greek, context.english, context.decisions, edited
+    )
+    assert edited.prepared == context.edited.prepared
+    assert verified.invariants == context.verified.invariants
 
 
 # Selection
 
 
 def test_a_lower_precedence_edit_does_not_block_a_pierpont_selection(
-    context: Context,
+    context: Reconciliation,
     instructions: Mapping[tuple[str, int | str], Instruction],
     kjv_text: Mapping[str, str],
 ) -> None:
@@ -537,7 +551,7 @@ def test_a_lower_precedence_edit_does_not_block_a_pierpont_selection(
     }
     grouped = constructions([higher, lower], kjv_text)
     rows = decide.decide(
-        [u for u in context["units"] if u["id"] == uid],
+        [u for u in context.greek.units if u["id"] == uid],
         grouped,
         [],
         [],
@@ -552,9 +566,9 @@ def test_a_lower_precedence_edit_does_not_block_a_pierpont_selection(
 
 
 def test_the_deciding_source_is_the_highest_present(
-    context: Context, instructions: Mapping[tuple[str, int | str], Instruction]
+    context: Reconciliation, instructions: Mapping[tuple[str, int | str], Instruction]
 ) -> None:
-    for row in context["dispositions"]:
+    for row in context.verified.dispositions:
         if row["disposition"] != "witnessed":
             continue
         source, entry = row["basis"].split(":")
@@ -566,14 +580,14 @@ def test_the_deciding_source_is_the_highest_present(
                 i["source"] == PIERPONT
                 and i["compatibility"] == "compatible"
                 and any(a["unit"] == row["unit"] for a in i["units"])
-                for i in context["instructions"]
+                for i in context.decisions.instructions
             )
 
 
 def test_a_covered_unit_names_an_executing_owner(
-    context: Context, dispositions: Mapping[str, Disposition]
+    context: Reconciliation, dispositions: Mapping[str, Disposition]
 ) -> None:
-    for row in context["dispositions"]:
+    for row in context.verified.dispositions:
         if row["action"] == "covered":
             owner = dispositions[row["covered_by"]]
             assert owner["action"] == "edit"
@@ -634,10 +648,10 @@ def test_a_unit_with_shared_and_private_edits_executes_its_private_edit() -> Non
 
 
 def test_every_unit_has_one_disposition_and_action(
-    context: Context, unit_rows: list[Disposition]
+    context: Reconciliation, unit_rows: list[Disposition]
 ) -> None:
     rows = unit_rows
-    assert len(rows) == len(context["units"])
+    assert len(rows) == len(context.greek.units)
     assert {r["disposition"] for r in rows} <= DISPOSITIONS
     tagged = Counter(t for r in rows for t in r["tags"])
     assert tagged["op:move-verse"] == 5 and tagged["op:omit-verse"] == 4
@@ -739,10 +753,12 @@ def test_an_override_mending_only_italics_or_a_capital_is_not_redundant() -> Non
 
 
 @pytest.mark.parametrize("ref", ["MAT 9:5", "MRK 2:9"])
-def test_romanizing_retained_thy_is_not_redundant(context: Context, ref: str) -> None:
+def test_romanizing_retained_thy_is_not_redundant(
+    context: Reconciliation, ref: str
+) -> None:
     """The source italic Thy now renders sou; omitting thee alone keeps italics."""
-    text = context["kjv"][ref]
-    supplied = context["supplied"]
+    text = context.english.kjv[ref]
+    supplied = context.english.supplied
     assert any(value == "Thy" for _, _, value in supplied[ref])
     omission = bound({"kind": "delete", "old": "thee", "new": ""}, ref, text)
     instruction: Instruction = {"edits": [omission]}
@@ -761,7 +777,7 @@ def test_romanizing_retained_thy_is_not_redundant(context: Context, ref: str) ->
             {"ref": ref, "start": thy, "end": thy + 3, "new": "[Thy]"},
         ]
     }
-    kjv = context["kjv"]
+    kjv = context.english.kjv
     assert not decide.same_effect(roman, instruction, kjv, supplied)
     assert decide.same_effect(italic, instruction, kjv, supplied)
     assert decide.same_effect({"bound": [omission_bound]}, instruction, kjv, supplied)
@@ -877,8 +893,10 @@ def test_compiled_capitalization_keeps_exact_redundancy_and_styles_separate() ->
         assert not decide.same_effect(changed, instruction, {ref: text})
 
 
-def test_case_overrides_execute_as_witnessed_instructions(context: Context) -> None:
-    rows = {r["unit"]: r for r in context["dispositions"]}
+def test_case_overrides_execute_as_witnessed_instructions(
+    context: Reconciliation,
+) -> None:
+    rows = {r["unit"]: r for r in context.verified.dispositions}
     for ref in ("MAT 26:35#2", "MRK 12:20#1", "REV 9:11#1", "REV 22:17#3"):
         assert rows[ref]["disposition"] == "witnessed"
     assert any("ev:instruction-refused" in r["tags"] for r in rows.values())

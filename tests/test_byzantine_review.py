@@ -8,9 +8,11 @@ import re
 import unicodedata
 from collections import Counter
 from collections.abc import Mapping
+from dataclasses import replace
 from typing import cast
 
 import pytest
+from conftest import amended
 
 import bible.annotate
 import bible.pipeline
@@ -26,8 +28,8 @@ from bible.byzantine.presentation import (
     greek_display,
     passage_spans,
 )
-from bible.byzantine.rows import InstructionEdit, RevisionRow, Unit
-from bible.byzantine.stages import Context
+from bible.byzantine.rows import Disposition, InstructionEdit, RevisionRow, Unit
+from bible.byzantine.stages import Reconciliation
 from bible.usj import Document, Node
 
 HEADING = re.compile(
@@ -36,12 +38,12 @@ HEADING = re.compile(
 
 
 @pytest.fixture(scope="module")
-def packets(byzantine: Context) -> dict[str, str]:
+def packets(byzantine: Reconciliation) -> dict[str, str]:
     return review.packets(byzantine)
 
 
 @pytest.fixture(scope="module")
-def index(byzantine: Context) -> review.Index:
+def index(byzantine: Reconciliation) -> review.Index:
     return review.build_index(byzantine)
 
 
@@ -56,8 +58,8 @@ def section_of(packets: Mapping[str, str], uid: str) -> str:
     return "\n".join(lines[start:end])
 
 
-def unit_of(byzantine: Context, uid: str) -> Unit:
-    return next(u for u in byzantine["units"] if u["id"] == uid)
+def unit_of(byzantine: Reconciliation, uid: str) -> Unit:
+    return next(u for u in byzantine.greek.units if u["id"] == uid)
 
 
 def test_the_books_are_the_only_packet_files(packets: dict[str, str]) -> None:
@@ -73,7 +75,7 @@ def test_each_packet_says_what_it_is(packets: dict[str, str]) -> None:
 
 
 def test_every_non_neutral_unit_has_exactly_one_section(
-    byzantine: Context, packets: dict[str, str]
+    byzantine: Reconciliation, packets: dict[str, str]
 ) -> None:
     headings = []
     for book in BOOKS:
@@ -88,7 +90,7 @@ def test_every_non_neutral_unit_has_exactly_one_section(
                 headings.append(m["unit"])
     expected = [
         r["unit"]
-        for r in byzantine["dispositions"]
+        for r in byzantine.verified.dispositions
         if r["disposition"] not in {"neutral", "shared"}
     ]
     assert sorted(headings) == sorted(expected)
@@ -116,10 +118,12 @@ def test_neutral_table_shows_score_and_evidence(packets: dict[str, str]) -> None
 
 
 def test_neutral_units_are_tabled_not_sectioned(
-    byzantine: Context, packets: dict[str, str]
+    byzantine: Reconciliation, packets: dict[str, str]
 ) -> None:
     neutral = [
-        r["unit"] for r in byzantine["dispositions"] if r["disposition"] == "neutral"
+        r["unit"]
+        for r in byzantine.verified.dispositions
+        if r["disposition"] == "neutral"
     ]
     assert neutral
     text = "\n".join(packets.values())
@@ -144,9 +148,9 @@ def test_a_shared_greek_verse_names_the_section_that_shows_it(
 
 
 def test_sections_show_the_disposition_and_tags(
-    byzantine: Context, packets: dict[str, str]
+    byzantine: Reconciliation, packets: dict[str, str]
 ) -> None:
-    rows = {r["unit"]: r for r in byzantine["dispositions"]}
+    rows = {r["unit"]: r for r in byzantine.verified.dispositions}
     for uid in ("MAT 3:8#1", "MAT 23:13#move", "ACT 9:6#1"):
         section = section_of(packets, uid)
         assert (
@@ -175,13 +179,13 @@ def test_esc_neutralizes_pipes_and_newlines() -> None:
     ],
 )
 def test_full_greek_preserves_pinned_verses_except_display_normalization(
-    byzantine: Context, ref: str, target: str
+    byzantine: Reconciliation, ref: str, target: str
 ) -> None:
     assert_greek_preserved(byzantine, ref, target)
 
 
 def assert_greek_preserved(
-    byzantine: Context,
+    byzantine: Reconciliation,
     ref: str,
     target: str,
     prepared: appendix.PreparedGreek | None = None,
@@ -202,7 +206,7 @@ def assert_greek_preserved(
 
 
 def test_greek_comparison_marks_difference_and_keeps_context(
-    byzantine: Context, packets: dict[str, str]
+    byzantine: Reconciliation, packets: dict[str, str]
 ) -> None:
     lines = review.greek_verses(byzantine, "MAT 3:8", appendix.prepare_greek(byzantine))
     assert "[-καρποὺς ἀξίους][+καρπὸν ἄξιον]" in lines[0]
@@ -254,7 +258,7 @@ def test_phrase_replacements_are_not_arbitrary_word_pairs() -> None:
 
 
 def test_james_keeps_contextual_diff_and_compact_witnesses(
-    byzantine: Context, packets: dict[str, str], index: review.Index
+    byzantine: Reconciliation, packets: dict[str, str], index: review.Index
 ) -> None:
     text = packets["JAS.md"]
     assert "[-have seen][+see ye]" in text
@@ -277,18 +281,18 @@ def test_james_keeps_contextual_diff_and_compact_witnesses(
     assert not any("| Before" in line for line in witnesses)
 
 
-def test_real_verse_diffs_preserve_both_texts(byzantine: Context) -> None:
-    pairs = {(u["ref"], u["target_ref"]) for u in byzantine["units"]}
+def test_real_verse_diffs_preserve_both_texts(byzantine: Reconciliation) -> None:
+    pairs = {(u["ref"], u["target_ref"]) for u in byzantine.greek.units}
     inputs = [
         (
-            " ".join(byzantine["tr"].get(ref, [])),
-            " ".join(byzantine["rp"].get(target, [])),
+            " ".join(byzantine.greek.tr.get(ref, [])),
+            " ".join(byzantine.greek.rp.get(target, [])),
         )
         for ref, target in pairs
     ]
-    for book, doc in byzantine["prepared"].items():
+    for book, doc in byzantine.edited.prepared.items():
         inputs.extend(
-            (byzantine["kjv"].get(f"{book} {address}", ""), verse.text)
+            (byzantine.english.kjv.get(f"{book} {address}", ""), verse.text)
             for address, verse in scripture.verses(doc).items()
         )
     for before, after in inputs:
@@ -297,13 +301,13 @@ def test_real_verse_diffs_preserve_both_texts(byzantine: Context) -> None:
         assert "".join(text for kind, text in spans if kind != "delete") == after
 
 
-def test_greek_diff_marks_accents(byzantine: Context) -> None:
+def test_greek_diff_marks_accents(byzantine: Reconciliation) -> None:
     lines = review.greek_verses(byzantine, "PHP 3:5", appendix.prepare_greek(byzantine))
     assert "[-περιτομὴ][+περιτομῇ]" in lines[0]
 
 
 def test_no_table_row_is_broken_by_its_content(
-    byzantine: Context, packets: dict[str, str]
+    byzantine: Reconciliation, packets: dict[str, str]
 ) -> None:
     for name, text in {**packets, "summary": review.summary(byzantine)}.items():
         for line in text.splitlines():
@@ -313,7 +317,7 @@ def test_no_table_row_is_broken_by_its_content(
 
 
 def test_greek_context_uses_ledger_and_is_shown_once(
-    byzantine: Context, packets: dict[str, str]
+    byzantine: Reconciliation, packets: dict[str, str]
 ) -> None:
     lines = review.greek_verses(
         byzantine, "PHM 1:17", appendix.prepare_greek(byzantine)
@@ -381,7 +385,7 @@ def test_boyd_passage_markup_is_compared_as_plain_wording() -> None:
 
 
 def test_james_witness_excerpts_use_each_sources_own_context(
-    byzantine: Context, index: review.Index
+    byzantine: Reconciliation, index: review.Index
 ) -> None:
     lines = review.witness_lines(unit_of(byzantine, "JAS 4:15#1"), byzantine, index)
     tcent = next(line for line in lines if line.startswith("- TCENT 290"))
@@ -396,7 +400,7 @@ def test_james_witness_excerpts_use_each_sources_own_context(
 
 
 def test_instruction_witness_lines_show_the_proposal_in_kjv_context(
-    byzantine: Context, index: review.Index
+    byzantine: Reconciliation, index: review.Index
 ) -> None:
     lines = review.witness_lines(unit_of(byzantine, "JAS 2:18#1"), byzantine, index)
     pierpont = next(line for line in lines if line.startswith("- Pierpont 565:"))
@@ -405,10 +409,10 @@ def test_instruction_witness_lines_show_the_proposal_in_kjv_context(
 
 
 def test_unit_greek_context_uses_corresponding_passage(
-    byzantine: Context,
+    byzantine: Reconciliation,
 ) -> None:
     prepared = appendix.prepare_greek(byzantine)
-    verses = verses_of(byzantine["prepared"])
+    verses = verses_of(byzantine.edited.prepared)
     unit = unit_of(byzantine, "JAS 2:11#1")
     passages = review.unit_passages(unit, byzantine, prepared, verses)
     excerpt = review.unit_greek_excerpt(unit, byzantine, passages)
@@ -435,10 +439,10 @@ def test_unit_greek_context_uses_corresponding_passage(
 
 
 def test_every_greek_diff_preserves_pinned_verses_except_display_normalization(
-    byzantine: Context,
+    byzantine: Reconciliation,
 ) -> None:
     prepared = appendix.prepare_greek(byzantine)
-    for ref, target in {(u["ref"], u["target_ref"]) for u in byzantine["units"]}:
+    for ref, target in {(u["ref"], u["target_ref"]) for u in byzantine.greek.units}:
         assert_greek_preserved(byzantine, ref, target, prepared)
 
 
@@ -474,7 +478,7 @@ def test_short_form_unit_english_keeps_its_kjv_context(
 
 
 def test_boyd_witness_compares_to_its_asv_base(
-    byzantine: Context, index: review.Index
+    byzantine: Reconciliation, index: review.Index
 ) -> None:
     unit = unit_of(byzantine, "JAS 2:11#1")
     lines = review.witness_lines(unit, byzantine, index)
@@ -483,15 +487,15 @@ def test_boyd_witness_compares_to_its_asv_base(
     assert "KJV contrast at unit:" in line
     expected = review.diff_markup(
         diff_spans(
-            scripture.plain(byzantine["texts"]["asv"][unit["ref"]]),
-            scripture.plain(byzantine["texts"][BOYD_ASV][unit["ref"]]),
+            scripture.plain(byzantine.english.texts["asv"][unit["ref"]]),
+            scripture.plain(byzantine.english.texts[BOYD_ASV][unit["ref"]]),
         )
     )
     assert expected in line
 
 
 def test_patriarchal_agreement_is_relative_to_rp2026(
-    byzantine: Context, index: review.Index
+    byzantine: Reconciliation, index: review.Index
 ) -> None:
     assert (
         review.patriarchal_status(unit_of(byzantine, "JAS 2:11#1"), index)
@@ -503,7 +507,7 @@ def test_patriarchal_agreement_is_relative_to_rp2026(
     )
     unknown = next(
         u
-        for u in byzantine["units"]
+        for u in byzantine.greek.units
         if not u.get("patriarchal")
         and not any(a["inventory"] == "tcgnt" for a in u["inventories"])
     )
@@ -535,14 +539,14 @@ def test_patriarchal_other_reading_is_not_mistaken_for_rp_agreement(
 
 
 def test_revision_quotations_label_eligibility_and_attachment(
-    byzantine: Context, index: review.Index
+    byzantine: Reconciliation, index: review.Index
 ) -> None:
-    for unit in byzantine["units"]:
+    for unit in byzantine.greek.units:
         if index["rows"][unit["id"]]["disposition"] == "neutral":
             continue
         lines = review.witness_lines(unit, byzantine, index)
         for name in REVISIONS:
-            if not byzantine["texts"][name].get(unit["ref"]):
+            if not byzantine.english.texts[name].get(unit["ref"]):
                 continue
             line = next(
                 line for line in lines if line.startswith(f"- {review.NAMES[name]} (")
@@ -550,7 +554,7 @@ def test_revision_quotations_label_eligibility_and_attachment(
             rows = [
                 r for r in index["revisions_at"][unit["id"]] if r["witness"] == name
             ]
-            if unit["id"] not in byzantine["revision_admitted"][name]:
+            if unit["id"] not in byzantine.revisions.admitted[name]:
                 assert "not admitted at this unit:" in line
                 assert not rows
                 assert "KJV contrast" not in line
@@ -567,7 +571,7 @@ def test_revision_quotations_label_eligibility_and_attachment(
 
 
 def test_boyd_quote_keeps_patched_verse_explicitly_excluded(
-    byzantine: Context, index: review.Index
+    byzantine: Reconciliation, index: review.Index
 ) -> None:
     lines = review.witness_lines(unit_of(byzantine, "PHM 1:1#1"), byzantine, index)
     line = next(line for line in lines if line.startswith("- Boyd ASV 2021 ("))
@@ -576,11 +580,11 @@ def test_boyd_quote_keeps_patched_verse_explicitly_excluded(
 
 
 def test_report_attachment_scope_is_visible(
-    byzantine: Context, index: review.Index
+    byzantine: Reconciliation, index: review.Index
 ) -> None:
     report = next(
         r
-        for r in byzantine["reports"]
+        for r in byzantine.apparatuses.reports
         if r["witness"] == "faa"
         and any(a["scope"] == "constituent" for a in r["units"])
     )
@@ -594,9 +598,9 @@ def test_report_attachment_scope_is_visible(
 
 
 def test_silence_explanation_does_not_deny_attached_revision_evidence(
-    byzantine: Context, index: review.Index
+    byzantine: Reconciliation, index: review.Index
 ) -> None:
-    for unit in byzantine["units"]:
+    for unit in byzantine.greek.units:
         row = index["rows"][unit["id"]]
         if row["disposition"] == "silent" and index["revisions_at"][unit["id"]]:
             text = review.calculus(row, unit, index)
@@ -634,13 +638,13 @@ def test_a_correction_of_shared_greek_has_its_section_in_its_book(
     assert "### LUK 23:41\n" not in packet
 
 
-def test_the_summary_counts_the_dispositions(byzantine: Context) -> None:
+def test_the_summary_counts_the_dispositions(byzantine: Reconciliation) -> None:
     text = review.summary(byzantine)
     assert text.startswith("# The Byzantine New Testament\n")
-    counts = Counter(r["disposition"] for r in byzantine["dispositions"])
+    counts = Counter(r["disposition"] for r in byzantine.verified.dispositions)
     for disposition, number in counts.items():
         assert f"| {disposition} | {number} |" in text
-    for name, result in byzantine["invariants"].items():
+    for name, result in byzantine.verified.invariants.items():
         assert f"- {name}: {result}" in text
 
 
@@ -656,30 +660,36 @@ def greek_label(row: appendix.Row) -> str:
 
 
 @pytest.fixture(scope="module")
-def printed(byzantine: Context, policy: bible.policy.Policy) -> dict[str, Document]:
+def printed(
+    byzantine: Reconciliation, policy: bible.policy.Policy
+) -> dict[str, Document]:
     """The New Testament's books after the readings, with the edition's
     systematic spelling and punctuation but before its verse-specific
     revisions, as the appendix quotes them."""
     return {
         code: revision.regularized(revision.named(code, doc, policy, set()), policy)
-        for code, doc in byzantine["prepared"].items()
+        for code, doc in byzantine.edited.prepared.items()
         if code in BOOKS
     }
 
 
 @pytest.fixture(scope="module")
-def regularized(byzantine: Context, policy: bible.policy.Policy) -> dict[str, Document]:
+def regularized(
+    byzantine: Reconciliation, policy: bible.policy.Policy
+) -> dict[str, Document]:
     """The King James books before the readings, with the edition's
     systematic spelling and punctuation, as the appendix compares them."""
     return {
         code: revision.regularized(doc, policy)
-        for code, doc in byzantine["documents"].items()
+        for code, doc in byzantine.english.documents.items()
     }
 
 
 @pytest.fixture(scope="module")
 def rows(
-    byzantine: Context, regularized: dict[str, Document], printed: dict[str, Document]
+    byzantine: Reconciliation,
+    regularized: dict[str, Document],
+    printed: dict[str, Document],
 ) -> list[appendix.Row]:
     return appendix.rows(byzantine, regularized, printed)
 
@@ -734,12 +744,12 @@ def test_johannine_omission_is_one_reading(
 
 
 def test_every_verse_with_a_greek_difference_is_listed_once(
-    byzantine: Context, rows: list[appendix.Row]
+    byzantine: Reconciliation, rows: list[appendix.Row]
 ) -> None:
     references = [row.reference for row in rows]
     assert len(references) == len(set(references))
     listed = set(references)
-    for unit in byzantine["units"]:
+    for unit in byzantine.greek.units:
         if unit["class"] != "structural":
             assert unit["target_ref"] in listed, unit["id"]
     keys = [ref_key(r) for r in references]
@@ -883,14 +893,16 @@ def test_grouped_comparisons_keep_multiple_changes_and_outer_omissions(
 
 
 def test_the_four_omitted_verses_are_listed(
-    byzantine: Context,
+    byzantine: Reconciliation,
     regularized: dict[str, Document],
     rows: list[appendix.Row],
     entries: dict[str, list[Node]],
 ) -> None:
     omitted = [row for row in rows if row.kind == "omitted"]
     assert (
-        {row.reference for row in omitted} == OMITTED == byzantine["structure"].omitted
+        {row.reference for row in omitted}
+        == OMITTED
+        == byzantine.greek.structure.omitted
     )
     for row in omitted:
         assert row.greek_tr and not row.greek_rp and row.oleb is None
@@ -905,42 +917,42 @@ def test_the_four_omitted_verses_are_listed(
 
 
 def test_a_moved_verse_is_labelled_with_the_king_james_number(
-    byzantine: Context,
+    byzantine: Reconciliation,
     rows: list[appendix.Row],
     entries: dict[str, list[Node]],
     printed: dict[str, Document],
 ) -> None:
     moved = {row.reference: row for row in rows if row.source != row.reference}
     expected = {
-        target: origin for origin, target in byzantine["structure"].moved.items()
+        target: origin for origin, target in byzantine.greek.structure.moved.items()
     }
     assert {ref: row.source for ref, row in moved.items()} == expected
     english = verses_of(printed)
     for ref, row in moved.items():
         assert row.kind == "changed"
-        before = scripture.plain(byzantine["kjv"][row.source])
+        before = scripture.plain(byzantine.english.kjv[row.source])
         after = scripture.plain(english[ref].text)
         if before == after:
             assert row.kjv is None and row.oleb is None
             assert not any(text_of(line).startswith("KJV →") for line in entries[ref])
         assert " ".join(
             ascii_greek("".join(accent_letters(w))) for w in row.greek_tr.split()
-        ) == " ".join(byzantine["tr"][row.source])
+        ) == " ".join(byzantine.greek.tr[row.source])
         heading = text_of(entries[ref][0])
         assert heading == (f"{ref.split()[1]} (KJV {row.source.split()[1]})"), heading
 
 
 def test_all_appendix_passages_keep_source_words(
-    byzantine: Context, rows: list[appendix.Row]
+    byzantine: Reconciliation, rows: list[appendix.Row]
 ) -> None:
     for row in rows:
-        assert row.greek_tr == " ".join(byzantine["tr_alignment"].text[row.source])
+        assert row.greek_tr == " ".join(byzantine.greek.tr_alignment.text[row.source])
         assert row.greek_rp == " ".join(
-            byzantine["rp_alignment"].text.get(row.reference, [])
+            byzantine.greek.rp_alignment.text.get(row.reference, [])
         )
         units = [
             u
-            for u in byzantine["units"]
+            for u in byzantine.greek.units
             if u["target_ref"] == row.reference and u["class"] != "structural"
         ]
         units.sort(key=lambda u: u["class"] == "accent")
@@ -950,9 +962,9 @@ def test_all_appendix_passages_keep_source_words(
                 ("rp", unit["target_ref"], printed.rp),
             ):
                 alignment = (
-                    byzantine["tr_alignment"]
+                    byzantine.greek.tr_alignment
                     if side == "tr"
-                    else byzantine["rp_alignment"]
+                    else byzantine.greek.rp_alignment
                 )
                 span = unit["tr_range"] if side == "tr" else unit["rp_range"]
                 assert value == " ".join(
@@ -977,7 +989,7 @@ def test_heli_transcription_and_apparatus_stay_distinct(
 
 
 def test_appendix_passages_and_comparisons_keep_source_case_and_punctuation(
-    byzantine: Context, rows: list[appendix.Row]
+    byzantine: Reconciliation, rows: list[appendix.Row]
 ) -> None:
     def source_features(text: str) -> tuple[list[bool], str]:
         return (
@@ -991,22 +1003,22 @@ def test_appendix_passages_and_comparisons_keep_source_case_and_punctuation(
 
     for row in rows:
         assert source_features(row.greek_tr) == source_features(
-            " ".join(byzantine["tr_accented"][row.source])
+            " ".join(byzantine.greek.tr_alignment.text[row.source])
         ), row.source
-        rp = byzantine["printed"][row.reference]["accented"]
+        rp = byzantine.greek.printed[row.reference]["accented"]
         assert source_features(row.greek_rp) == source_features(
             " ".join(rp)
         ), row.reference
         units = [
             u
-            for u in byzantine["units"]
+            for u in byzantine.greek.units
             if u["target_ref"] == row.reference and u["class"] != "structural"
         ]
         units.sort(key=lambda u: u["class"] == "accent")
         for printed, unit in zip(row.units, units, strict=True):
             assert source_features(printed.tr) == source_features(
                 " ".join(
-                    byzantine["tr_accented"][unit["ref"]][
+                    byzantine.greek.tr_alignment.text[unit["ref"]][
                         slice(
                             *appendix.projected(
                                 byzantine, "tr", unit["ref"], unit["tr_range"]
@@ -1063,27 +1075,35 @@ def test_unchanged_english_and_accent_only_entries_use_normal_comparisons(
 
 
 def test_ellipsis_comparisons_keep_case_at_each_occurrence(
-    byzantine: Context, printed: dict[str, Document]
+    byzantine: Reconciliation, printed: dict[str, Document]
 ) -> None:
     ref = "MRK 4:8"
-    unit = next(u for u in byzantine["units"] if u["id"] == ref + "#accent")
-    context = byzantine.copy()
-    tr = list(byzantine["tr_accented"][ref])
-    rp = list(byzantine["printed"][ref]["accented"])
+    unit = next(u for u in byzantine.greek.units if u["id"] == ref + "#accent")
+    tr = list(byzantine.greek.tr_alignment.text[ref])
+    rp = list(byzantine.greek.printed[ref]["accented"])
     for words, plain, span in (
-        (tr, byzantine["tr"][ref], unit["tr_range"]),
-        (rp, byzantine["rp"][ref], unit["rp_range"]),
+        (tr, byzantine.greek.tr[ref], unit["tr_range"]),
+        (rp, byzantine.greek.rp[ref], unit["rp_range"]),
     ):
         first = next(at for at in range(*span) if plain[at] == "en")
         words[first] = words[first].upper() + ";"
-    context["tr_accented"] = {**byzantine["tr_accented"], ref: tr}
-    context["printed"] = {
-        **byzantine["printed"],
-        ref: {**byzantine["printed"][ref], "accented": rp},
-    }
+    context = replace(
+        byzantine,
+        greek=replace(
+            byzantine.greek,
+            tr_alignment=replace(
+                byzantine.greek.tr_alignment,
+                text={**byzantine.greek.tr_alignment.text, ref: tr},
+            ),
+            printed={
+                **byzantine.greek.printed,
+                ref: {**byzantine.greek.printed[ref], "accented": rp},
+            },
+        ),
+    )
     row = next(
         r
-        for r in appendix.rows(context, byzantine["documents"], printed)
+        for r in appendix.rows(context, byzantine.english.documents, printed)
         if r.reference == ref
     )
     contrast = next(u for u in row.units if u.accented)
@@ -1091,14 +1111,14 @@ def test_ellipsis_comparisons_keep_case_at_each_occurrence(
     assert "ἛΝ" in row.greek_tr and "ἘΝ" in row.greek_rp
 
 
-def test_preparing_greek_does_not_change_inputs(byzantine: Context) -> None:
+def test_preparing_greek_does_not_change_inputs(byzantine: Reconciliation) -> None:
     def inputs() -> tuple[object, ...]:
         return (
-            byzantine["tr"],
-            byzantine["rp"],
-            byzantine["tr_accented"],
-            byzantine["printed"],
-            byzantine["units"],
+            dict(byzantine.greek.tr),
+            dict(byzantine.greek.rp),
+            dict(byzantine.greek.tr_alignment.text),
+            dict(byzantine.greek.printed),
+            byzantine.greek.units,
         )
 
     before = copy.deepcopy(inputs())
@@ -1212,7 +1232,7 @@ def test_rp_dot_is_normalized_inside_the_greek_font() -> None:
 
 
 def test_acts_13_41_keeps_the_word_change_without_dot_changes(
-    byzantine: Context, entries: dict[str, list[Node]]
+    byzantine: Reconciliation, entries: dict[str, list[Node]]
 ) -> None:
     markdown = review.greek_verses(
         byzantine, "ACT 13:41", appendix.prepare_greek(byzantine)
@@ -1233,20 +1253,20 @@ def test_acts_13_41_keeps_the_word_change_without_dot_changes(
 
 @pytest.mark.parametrize("ref", ["REV 22:7", "REV 22:8"])
 def test_revelation_corresponding_passages_keep_sentence_changes(
-    byzantine: Context,
+    byzantine: Reconciliation,
     ref: str,
 ) -> None:
     from bible.byzantine.presentation import passage_spans
 
     tr, rp, _ = appendix.prepare_greek(byzantine)
-    verse = verses_of(byzantine["prepared"])[ref]
+    verse = verses_of(byzantine.edited.prepared)[ref]
     texts, selected, english = appendix.selections(
         byzantine,
         ref,
         ref,
         " ".join(tr[ref]),
         " ".join(rp[ref]),
-        scripture.plain(byzantine["kjv"][ref]),
+        scripture.plain(byzantine.english.kjv[ref]),
         scripture.plain(verse.text),
     )
     greek = appendix.passage_ranges(byzantine, ref, ref, texts[0], texts[1])
@@ -1287,12 +1307,14 @@ def marked_comparison(spans: list[tuple[str, str]]) -> str:
 
 
 def test_uncertain_revision_boundaries_quote_complete_verse(
-    byzantine: Context,
+    byzantine: Reconciliation,
 ) -> None:
     ref = "REV 22:7"
     tr, rp, _ = appendix.prepare_greek(byzantine)
-    verse = verses_of(byzantine["prepared"])[ref]
-    before, after = scripture.plain(byzantine["kjv"][ref]), scripture.plain(verse.text)
+    verse = verses_of(byzantine.edited.prepared)[ref]
+    before, after = scripture.plain(byzantine.english.kjv[ref]), scripture.plain(
+        verse.text
+    )
     texts, selected, _ = appendix.selections(
         byzantine,
         ref,
@@ -1304,7 +1326,7 @@ def test_uncertain_revision_boundaries_quote_complete_verse(
     )
     assert selected == (tuple((0, len(t)) for t in texts),)
     # Missing evidence is an error, not an uncertain correspondence.
-    missing: Context = {**byzantine, "aligned": {}, "crosswire": {}}
+    missing = amended(byzantine, "english", aligned={}, crosswire={})
     with pytest.raises(KeyError):
         appendix.selections(
             missing, ref, ref, " ".join(tr[ref]), " ".join(rp[ref]), before, after
@@ -1350,7 +1372,7 @@ def test_appendix_separates_readings_after_inserted_punctuation(
 
 
 def test_unchanged_english_clips_greek_without_a_bridge(
-    byzantine: Context,
+    byzantine: Reconciliation,
     regularized: dict[str, Document],
     rows: list[appendix.Row],
     entries: dict[str, list[Node]],
@@ -1361,7 +1383,7 @@ def test_unchanged_english_clips_greek_without_a_bridge(
     tr, rp, _ = appendix.prepare_greek(byzantine)
     before = scripture.plain(scripture.verses(regularized["ACT"])["13:22"].text)
     texts, selected, english = appendix.selections(
-        {**byzantine, "aligned": {}},
+        amended(byzantine, "english", aligned={}),
         ref,
         ref,
         " ".join(tr[ref]),
@@ -1417,15 +1439,16 @@ def test_luke_deletion_has_corresponding_clause_excerpts(
 
 @pytest.mark.parametrize("ref", ["LUK 17:4", "REV 22:7", "REV 22:8"])
 def test_missing_execution_evidence_keeps_complete_comparisons(
-    byzantine: Context, ref: str
+    byzantine: Reconciliation, ref: str
 ) -> None:
-    context: Context = {
-        **byzantine,
-        "dispositions": copy.deepcopy(byzantine["dispositions"]),
-    }
+    context = amended(
+        byzantine,
+        "verified",
+        dispositions=copy.deepcopy(byzantine.verified.dispositions),
+    )
     edits = [
         e
-        for row in context["dispositions"]
+        for row in context.verified.dispositions
         for e in row.get("edits", [])
         if e["ref"] == ref
     ]
@@ -1434,13 +1457,13 @@ def test_missing_execution_evidence_keeps_complete_comparisons(
         edit["note_scope"].pop("source_range", None)
         edit.pop("applied_range", None)
     tr, rp, _ = appendix.prepare_greek(context)
-    verse = verses_of(context["prepared"])[ref]
+    verse = verses_of(context.edited.prepared)[ref]
     args = (
         ref,
         ref,
         " ".join(tr[ref]),
         " ".join(rp[ref]),
-        scripture.plain(context["kjv"][ref]),
+        scripture.plain(context.english.kjv[ref]),
         scripture.plain(verse.text),
     )
     if ref == "LUK 17:4":
@@ -1454,25 +1477,25 @@ def test_missing_execution_evidence_keeps_complete_comparisons(
 
 @pytest.mark.parametrize("kind", ["insert", "delete"])
 def test_english_construction_ranges_are_derived_locally(
-    byzantine: Context, kind: str
+    byzantine: Reconciliation, kind: str
 ) -> None:
     tr, rp, _ = appendix.prepare_greek(byzantine)
-    verses = verses_of(byzantine["prepared"])
+    verses = verses_of(byzantine.edited.prepared)
     edit = next(
         e
-        for row in byzantine["dispositions"]
+        for row in byzantine.verified.dispositions
         for e in row.get("edits", [])
         if e["kind"] == kind
         and e.get("note_scope", {}).get("range")
-        and e["ref"] in byzantine["aligned"]
+        and e["ref"] in byzantine.english.aligned
     )
     ref = edit["ref"]
-    dispositions = copy.deepcopy(byzantine["dispositions"])
+    dispositions = copy.deepcopy(list(byzantine.verified.dispositions))
     for row in dispositions:
         for e in row.get("edits", []):
             if e["ref"] == ref and e["kind"] == kind:
                 e["note_scope"].pop("source_range", None)
-    context: Context = {**byzantine, "dispositions": dispositions}
+    context = amended(byzantine, "verified", dispositions=tuple(dispositions))
     snapshot = copy.deepcopy(dispositions)
     texts, selected, english = appendix.selections(
         context,
@@ -1480,11 +1503,11 @@ def test_english_construction_ranges_are_derived_locally(
         ref,
         " ".join(tr[ref]),
         " ".join(rp[ref]),
-        scripture.plain(byzantine["kjv"][ref]),
+        scripture.plain(byzantine.english.kjv[ref]),
         scripture.plain(verses[ref].text),
     )
     assert english
-    assert context["dispositions"] == snapshot
+    assert list(context.verified.dispositions) == snapshot
     spans = anchored(texts[2], texts[3], english)
     excerpts = [span for p in selected for span in passage_spans(texts, p, 2, english)]
     for change in ("delete", "insert"):
@@ -1504,7 +1527,7 @@ def test_english_construction_ranges_are_derived_locally(
     ],
 )
 def test_verified_moves_use_source_and_destination(
-    byzantine: Context,
+    byzantine: Reconciliation,
     ref: str,
     target: str,
 ) -> None:
@@ -1515,8 +1538,8 @@ def test_verified_moves_use_source_and_destination(
         target,
         " ".join(tr[ref]),
         " ".join(rp[target]),
-        scripture.plain(byzantine["kjv"][ref]),
-        scripture.plain(verses_of(byzantine["prepared"])[target].text),
+        scripture.plain(byzantine.english.kjv[ref]),
+        scripture.plain(verses_of(byzantine.edited.prepared)[target].text),
     )
     if ref.startswith("MAT"):
         assert len(selected) == 1
@@ -1537,14 +1560,15 @@ def test_verified_moves_use_source_and_destination(
     else:
         assert texts[2] == texts[3]
         assert not english
-    context: Context = {
-        **byzantine,
-        "dispositions": [
+    context = amended(
+        byzantine,
+        "verified",
+        dispositions=tuple(
             row
-            for row in byzantine["dispositions"]
+            for row in byzantine.verified.dispositions
             if not (row["ref"] == ref and row["disposition"] == "structural")
-        ],
-    }
+        ),
+    )
     _, fallback, _ = appendix.selections(
         context, ref, target, texts[0], texts[1], texts[2], texts[3]
     )
@@ -1553,13 +1577,13 @@ def test_verified_moves_use_source_and_destination(
 
 @pytest.mark.parametrize("inside", [False, True])
 def test_partial_tags_require_only_selected_coverage(
-    byzantine: Context, inside: bool
+    byzantine: Reconciliation, inside: bool
 ) -> None:
     ref, target = "MAT 23:14", "MAT 23:13"
-    tags = copy.deepcopy(byzantine["crosswire"])
+    tags = copy.deepcopy(dict(byzantine.english.crosswire))
     link = tags[ref]["links"][0 if inside else -1]
     link["forms"] = ["wrong"] * len(link["forms"])
-    context: Context = {**byzantine, "aligned": {}, "crosswire": tags}
+    context = amended(byzantine, "english", aligned={}, crosswire=tags)
     tr, rp, _ = appendix.prepare_greek(context)
     texts, selected, _ = appendix.selections(
         context,
@@ -1567,18 +1591,18 @@ def test_partial_tags_require_only_selected_coverage(
         target,
         " ".join(tr[ref]),
         " ".join(rp[target]),
-        scripture.plain(context["kjv"][ref]),
-        scripture.plain(verses_of(context["prepared"])[target].text),
+        scripture.plain(context.english.kjv[ref]),
+        scripture.plain(verses_of(context.edited.prepared)[target].text),
     )
     whole = (tuple((0, len(t)) for t in texts),)
     assert (selected == whole) == inside
 
 
-def test_crossing_bridge_cannot_clip_a_moved_passage(byzantine: Context) -> None:
+def test_crossing_bridge_cannot_clip_a_moved_passage(byzantine: Reconciliation) -> None:
     ref, target = "MAT 23:13", "MAT 23:14"
-    aligned = copy.deepcopy(byzantine["aligned"])
-    aligned[ref]["positions"][0].append(len(byzantine["tr"][ref]) - 1)
-    context: Context = {**byzantine, "aligned": aligned}
+    aligned = copy.deepcopy(dict(byzantine.english.aligned))
+    aligned[ref]["positions"][0].append(len(byzantine.greek.tr[ref]) - 1)
+    context = amended(byzantine, "english", aligned=aligned)
     tr, rp, _ = appendix.prepare_greek(context)
     texts, selected, _ = appendix.selections(
         context,
@@ -1586,8 +1610,8 @@ def test_crossing_bridge_cannot_clip_a_moved_passage(byzantine: Context) -> None
         target,
         " ".join(tr[ref]),
         " ".join(rp[target]),
-        scripture.plain(context["kjv"][ref]),
-        scripture.plain(verses_of(context["prepared"])[target].text),
+        scripture.plain(context.english.kjv[ref]),
+        scripture.plain(verses_of(context.edited.prepared)[target].text),
     )
     assert selected == (tuple((0, len(t)) for t in texts),)
 
@@ -1608,21 +1632,23 @@ def test_matthew_moved_comparison_prints_matching_ellipses(
 @pytest.mark.parametrize("side", ["greek", "english"])
 @pytest.mark.parametrize("boundary", [False, True])
 def test_appendix_missing_correspondence_must_be_bounded_in_both_languages(
-    byzantine: Context, side: str, boundary: bool
+    byzantine: Reconciliation, side: str, boundary: bool
 ) -> None:
     from bible.byzantine.crosswire import presentation_bridge
 
     ref = "ACT 13:41"
     tr, rp, _ = appendix.prepare_greek(byzantine)
-    before = scripture.plain(byzantine["kjv"][ref])
-    after = scripture.plain(verses_of(byzantine["prepared"])[ref].text)
-    aligned = copy.deepcopy(byzantine["aligned"])
+    before = scripture.plain(byzantine.english.kjv[ref])
+    after = scripture.plain(verses_of(byzantine.edited.prepared)[ref].text)
+    aligned = copy.deepcopy(dict(byzantine.english.aligned))
     aligned[ref] = presentation_bridge(
-        byzantine["crosswire"][ref], byzantine["tr"][ref], byzantine["kjv"][ref]
+        byzantine.english.crosswire[ref],
+        byzantine.greek.tr[ref],
+        byzantine.english.kjv[ref],
     )
     bridge = aligned[ref]
     if side == "greek":
-        position = byzantine["tr"][ref].index("pisteushte" if boundary else "ou")
+        position = byzantine.greek.tr[ref].index("pisteushte" if boundary else "ou")
         assert any(position in ps for ps in bridge["positions"])
         bridge["positions"] = [
             [p for p in ps if p != position] for ps in bridge["positions"]
@@ -1635,7 +1661,7 @@ def test_appendix_missing_correspondence_must_be_bounded_in_both_languages(
         )
         assert bridge["positions"][word]
         bridge["positions"][word] = []
-    context: Context = {**byzantine, "aligned": aligned}
+    context = amended(byzantine, "english", aligned=aligned)
     texts, selected, _ = appendix.selections(
         context, ref, ref, " ".join(tr[ref]), " ".join(rp[ref]), before, after
     )
@@ -1647,10 +1673,10 @@ def test_appendix_missing_correspondence_must_be_bounded_in_both_languages(
 
 @pytest.mark.parametrize("bad", ["form", "position", "length", "conflict"])
 def test_appendix_invalid_interior_tags_keep_complete_verse(
-    byzantine: Context, bad: str
+    byzantine: Reconciliation, bad: str
 ) -> None:
     ref = "ACT 13:41"
-    tags = copy.deepcopy(byzantine["crosswire"])
+    tags = copy.deepcopy(dict(byzantine.english.crosswire))
     row = tags[ref]
     link = next(
         link for link in row["links"] if "no wise" in row["text"][slice(*link["range"])]
@@ -1664,7 +1690,7 @@ def test_appendix_invalid_interior_tags_keep_complete_verse(
         link["forms"] = []
     else:
         row["links"].append({**link, "forms": ["wrong"] * len(link["forms"])})
-    context: Context = {**byzantine, "aligned": {}, "crosswire": tags}
+    context = amended(byzantine, "english", aligned={}, crosswire=tags)
     tr, rp, _ = appendix.prepare_greek(context)
     texts, selected, _ = appendix.selections(
         context,
@@ -1672,8 +1698,8 @@ def test_appendix_invalid_interior_tags_keep_complete_verse(
         ref,
         " ".join(tr[ref]),
         " ".join(rp[ref]),
-        scripture.plain(byzantine["kjv"][ref]),
-        scripture.plain(verses_of(byzantine["prepared"])[ref].text),
+        scripture.plain(byzantine.english.kjv[ref]),
+        scripture.plain(verses_of(byzantine.edited.prepared)[ref].text),
     )
     assert selected == (tuple((0, len(t)) for t in texts),)
 
@@ -1687,11 +1713,17 @@ def test_corrections_of_shared_greek_have_english_comparisons(
 
 
 def test_a_real_correction_beside_a_variant_keeps_english(
-    byzantine: Context,
+    byzantine: Reconciliation,
 ) -> None:
-    inputs = (byzantine["documents"], byzantine["prepared"], byzantine["dispositions"])
+    inputs = (
+        dict(byzantine.english.documents),
+        dict(byzantine.edited.prepared),
+        byzantine.verified.dispositions,
+    )
     original = copy.deepcopy(inputs)
-    found = appendix.rows(byzantine, byzantine["documents"], byzantine["prepared"])
+    found = appendix.rows(
+        byzantine, byzantine.english.documents, byzantine.edited.prepared
+    )
     row = next(r for r in found if r.source == "2JN 1:3")
     assert row.units and row.kjv and row.oleb
     assert "Grace be with you" in row.kjv
@@ -1701,26 +1733,26 @@ def test_a_real_correction_beside_a_variant_keeps_english(
 
 
 @pytest.fixture(scope="module")
-def unpunctuated_rows(byzantine: Context) -> dict[str, appendix.Row]:
+def unpunctuated_rows(byzantine: Reconciliation) -> dict[str, appendix.Row]:
     """The appendix's rows from the books before the punctuation pass, by
     source verse."""
     return {
         row.source: row
         for row in appendix.rows(
-            byzantine, byzantine["documents"], byzantine["prepared"]
+            byzantine, byzantine.english.documents, byzantine.edited.prepared
         )
     }
 
 
 def test_john_first_cast_retains_the_king_james_wording(
-    byzantine: Context,
+    byzantine: Reconciliation,
     index: review.Index,
     unpunctuated_rows: dict[str, appendix.Row],
 ) -> None:
     ref = "JHN 8:7"
     verse = index["prepared"][ref]
     assert "let him first cast a stone at her" in verse.text
-    assert scripture.plain(verse.text) == byzantine["kjv"][ref]
+    assert scripture.plain(verse.text) == byzantine.english.kjv[ref]
     row = index["rows"][f"{ref}#1"]
     assert row["disposition"] == "override"
     assert row["kind"] == row["action"] == "nochange"
@@ -1731,10 +1763,10 @@ def test_john_first_cast_retains_the_king_james_wording(
 
 
 def test_every_shared_greek_correction_is_kept_whole_in_the_appendix(
-    byzantine: Context, unpunctuated_rows: dict[str, appendix.Row]
+    byzantine: Reconciliation, unpunctuated_rows: dict[str, appendix.Row]
 ) -> None:
     found = unpunctuated_rows
-    for disposition in byzantine["dispositions"]:
+    for disposition in byzantine.verified.dispositions:
         if disposition["disposition"] != "shared":
             continue
         for edit in disposition["edits"]:
@@ -1755,14 +1787,14 @@ def test_punctuation_revisions_preserve_wording_comparisons(
 
 @pytest.mark.parametrize("ref", ["2JN 1:3", "EPH 4:32"])
 def test_review_separates_corrections_from_variants(
-    byzantine: Context, packets: dict[str, str], index: review.Index, ref: str
+    byzantine: Reconciliation, packets: dict[str, str], index: review.Index, ref: str
 ) -> None:
-    assert index["corrected"][ref].text != byzantine["kjv"][ref]
+    assert index["corrected"][ref].text != byzantine.english.kjv[ref]
     packet = packets[f"{ref.split()[0]}.md"]
     correction = packet[packet.index(f"### {ref}\n") :].split("\n### ", 1)[0]
     assert f"KJV {ref} → Corrected KJV {ref}" in correction
     assert f"KJV {ref} → OLEB {ref} (all changes)" in correction
-    for unit in byzantine["units"]:
+    for unit in byzantine.greek.units:
         if unit["ref"] != ref:
             continue
         row = index["rows"][unit["id"]]
@@ -1782,9 +1814,13 @@ def test_review_separates_corrections_from_variants(
 
 
 def test_review_baseline_preserves_source_documents_and_decisions(
-    byzantine: Context,
+    byzantine: Reconciliation,
 ) -> None:
-    inputs = (byzantine["documents"], byzantine["dispositions"], byzantine["overrides"])
+    inputs = (
+        dict(byzantine.english.documents),
+        byzantine.verified.dispositions,
+        byzantine.decisions.overrides,
+    )
     original = copy.deepcopy(inputs)
     review.build_index(byzantine)
     assert inputs == original
@@ -1804,9 +1840,9 @@ def test_review_baseline_preserves_source_documents_and_decisions(
     ],
 )
 def test_eight_shared_greek_corrections(
-    byzantine: Context, index: review.Index, ref: str, old: str, new: str
+    byzantine: Reconciliation, index: review.Index, ref: str, old: str, new: str
 ) -> None:
-    before = byzantine["kjv"][ref]
+    before = byzantine.english.kjv[ref]
     after = index["corrected"][ref]
     assert scripture.plain(after.text) == before.replace(old, new)
     correction = index["rows"][ref]
@@ -1818,11 +1854,11 @@ def test_eight_shared_greek_corrections(
 
 
 def test_excluded_recommendations_are_visible(
-    byzantine: Context, packets: dict[str, str], index: review.Index
+    byzantine: Reconciliation, packets: dict[str, str], index: review.Index
 ) -> None:
     excluded = [
         i
-        for i in byzantine["instructions"]
+        for i in byzantine.decisions.instructions
         if i["scope"] == "out-of-scope" and i["role"] != "agrees"
     ]
     assert excluded
@@ -1850,12 +1886,12 @@ def test_excluded_recommendations_are_visible(
         assert review.addressed(recommendation, byzantine)
 
 
-def test_summary_lists_unaddressed_exclusions(byzantine: Context) -> None:
+def test_summary_lists_unaddressed_exclusions(byzantine: Reconciliation) -> None:
     text = review.summary(byzantine).split("## Unaddressed recommendations", 1)[1]
     text = text.split("## Invariants", 1)[0]
     excluded = [
         i
-        for i in byzantine["instructions"]
+        for i in byzantine.decisions.instructions
         if i["scope"] == "out-of-scope"
         and i["role"] != "agrees"
         and i["compatibility"] != "agrees"

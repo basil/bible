@@ -18,7 +18,9 @@ from bible.byzantine.rows import (
     InstructionEdit,
     Report,
     Unit,
+    Verdict,
 )
+from bible.byzantine.stages import Reconciliation
 from bible.checks import CheckFailed
 
 Instructions = dict[tuple[str, int | str], Instruction]
@@ -106,9 +108,13 @@ def additional_instruction(
 
 
 def row(instructions: Instructions, source: str, entry: int) -> Instruction:
-    """A copy of a built row: `compatibility` records its verdict on the row,
-    which must not reach the session's shared build."""
+    """A copy of a built row, for the tests that change one."""
     return copy.deepcopy(instructions[(source, entry)])
+
+
+def judged(verdict: Verdict) -> tuple[str, str | None]:
+    """A verdict's status and reason."""
+    return verdict["compatibility"], verdict["compatibility_reason"]
 
 
 # --- attach -------------------------------------------------------------------------
@@ -224,13 +230,15 @@ def test_compatibility_statuses_on_real_rows(
     instructions: Instructions,
     by_id: dict[str, Unit],
     kjv_text: Mapping[str, str],
-    byzantine: Mapping[str, Any],
+    byzantine: Reconciliation,
 ) -> None:
-    supplied = byzantine["supplied"]
+    supplied = byzantine.english.supplied
 
     def check(source: str, entry: int) -> tuple[str, str | None]:
-        return inst.compatibility(
-            row(instructions, source, entry), by_id, kjv_text, supplied
+        return judged(
+            inst.compatibility(
+                row(instructions, source, entry), by_id, kjv_text, supplied
+            )
         )
 
     assert check(PIERPONT, 5) == ("compatible", None)
@@ -243,7 +251,7 @@ def test_compatibility_statuses_on_real_rows(
     attached["scope"] = "greek"
     for edit in attached["edits"]:
         edit["units"] = ["LUK 13:34#1"]
-    assert inst.compatibility(attached, by_id, kjv_text, supplied) == (
+    assert judged(inst.compatibility(attached, by_id, kjv_text, supplied)) == (
         "incompatible",
         "LUK 13:34#1 is spelling only",
     )
@@ -260,35 +268,37 @@ def test_compatibility_shape_checks_on_a_synthetic_unit(
     instructions: Instructions,
     by_id: dict[str, Unit],
     kjv_text: Mapping[str, str],
-    byzantine: Mapping[str, Any],
+    byzantine: Reconciliation,
 ) -> None:
-    supplied = byzantine["supplied"]
+    supplied = byzantine.english.supplied
     fruit = row(instructions, PIERPONT, 5)
     spelling: Unit = {**by_id["MAT 3:8#1"], "class": "spelling"}
-    assert inst.compatibility(
-        fruit, {**by_id, "MAT 3:8#1": spelling}, kjv_text, supplied
+    assert judged(
+        inst.compatibility(fruit, {**by_id, "MAT 3:8#1": spelling}, kjv_text, supplied)
     ) == ("incompatible", "MAT 3:8#1 is spelling only")
     fire = row(instructions, PIERPONT, 6)  # MAT 3:11 omit "and with fire"
     fire["edits"][0]["method"] = "sole"
     longer: Unit = {**by_id["MAT 3:11#1"], "rp_range": [29, 31]}
-    assert inst.compatibility(
-        fire, {**by_id, "MAT 3:11#1": longer}, kjv_text, supplied
+    assert judged(
+        inst.compatibility(fire, {**by_id, "MAT 3:11#1": longer}, kjv_text, supplied)
     ) == ("incompatible", "omission at MAT 3:11#1, where RP is not shorter")
-    assert inst.compatibility(fire, by_id, kjv_text, supplied) == (
+    assert judged(inst.compatibility(fire, by_id, kjv_text, supplied)) == (
         "compatible",
         None,
     )
     hell = row(instructions, PIERPONT, 629)  # REV 1:18 transposition
     hell["edits"][0]["method"] = "sole"
     substitution: Unit = {**by_id["REV 1:18#1"], "class": "substitution"}
-    assert inst.compatibility(
-        hell, {**by_id, "REV 1:18#1": substitution}, kjv_text, supplied
+    assert judged(
+        inst.compatibility(
+            hell, {**by_id, "REV 1:18#1": substitution}, kjv_text, supplied
+        )
     ) == ("incompatible", "transposition at REV 1:18#1, which is not a reordering")
     ambiguous: Instruction = {
         **fruit,
         "edits": [{**fruit["edits"][0], "bind": "ambiguous"}],
     }
-    assert inst.compatibility(ambiguous, by_id, kjv_text, supplied) == (
+    assert judged(inst.compatibility(ambiguous, by_id, kjv_text, supplied)) == (
         "unbound",
         "an occurrence does not bind uniquely",
     )
@@ -296,18 +306,20 @@ def test_compatibility_shape_checks_on_a_synthetic_unit(
         **fruit,
         "edits": [{**fruit["edits"][0], "no_effect": True}],
     }
-    assert inst.compatibility(no_effect, by_id, kjv_text, supplied)[0] == "agrees"
+    assert (
+        judged(inst.compatibility(no_effect, by_id, kjv_text, supplied))[0] == "agrees"
+    )
     # An insertion whose words the KJV already has agrees; beside a real
     # change it does not bind, and the row blocks its group.
     already: InstructionEdit = {**fruit["edits"][0], "bind": "already"}
     alone: Instruction = {**fruit, "bind": "already", "edits": [already]}
-    assert inst.compatibility(alone, by_id, kjv_text, supplied)[0] == "agrees"
+    assert judged(inst.compatibility(alone, by_id, kjv_text, supplied))[0] == "agrees"
     beside: Instruction = {
         **fruit,
         "bind": "already",
         "edits": [already, fruit["edits"][0]],
     }
-    assert inst.compatibility(beside, by_id, kjv_text, supplied) == (
+    assert judged(inst.compatibility(beside, by_id, kjv_text, supplied)) == (
         "unbound",
         "an insertion the KJV already has stands with a change",
     )
@@ -317,17 +329,17 @@ def test_compatibility_shape_checks_on_a_synthetic_unit(
 
 
 def test_pierpont_is_selected_and_remaining_witnesses_corroborate(
-    byzantine: Mapping[str, Any],
+    byzantine: Reconciliation,
     kjv_text: Mapping[str, str],
     dispositions: dict[str, Disposition],
 ) -> None:
-    rows = byzantine["instructions"]
+    rows = byzantine.decisions.instructions
     selected, disagreeing, conflict = inst.select(rows, "MAT 3:8#1", kjv_text)
     assert selected is not None
     assert (selected["source"], selected["entry"]) == (PIERPONT, 5)
     assert (disagreeing, conflict) == ([], None)
     assert inst.corroborating(
-        selected, "MAT 3:8#1", rows, byzantine["reports"], kjv_text
+        selected, "MAT 3:8#1", rows, byzantine.apparatuses.reports, kjv_text
     ) == ["faa", "msb", "tcent"]
     assert dispositions["MAT 9:5#1"]["disposition"] == "override"
     assert inst.select(rows, "MAT 9:5#1", kjv_text)[0] is None
@@ -359,11 +371,11 @@ def test_disagreeing_additional_wording(
 
 
 def test_joint_instructions_conflicts_and_agreement_only(
-    byzantine: Mapping[str, Any],
+    byzantine: Reconciliation,
     kjv_text: Mapping[str, str],
     instructions: Instructions,
 ) -> None:
-    rows = byzantine["instructions"]
+    rows = byzantine.decisions.instructions
     selected, disagreeing, conflict = inst.select(rows, "REV 16:7#1", kjv_text)
     assert selected is not None
     assert selected["joint"] == [
@@ -504,7 +516,7 @@ def test_insertion_cannot_silently_treat_an_unknown_side_as_before() -> None:
 def test_additional_rows_attach_and_rank_after_pierpont(
     kjv_text: Mapping[str, str],
     units: list[Unit],
-    byzantine: Mapping[str, Any],
+    byzantine: Reconciliation,
     by_id: dict[str, Unit],
     instructions: Instructions,
 ) -> None:
@@ -522,12 +534,15 @@ def test_additional_rows_attach_and_rank_after_pierpont(
     additional = inst.attach(
         [proposal],
         [u for u in units if u["ref"] == "MAT 3:8"],
-        byzantine["aligned"],
-        byzantine["reports"],
+        byzantine.english.aligned,
+        byzantine.apparatuses.reports,
     )
-    additional[0]["compatibility"], _ = inst.compatibility(
-        additional[0], by_id, kjv_text, byzantine["supplied"]
-    )
+    additional[0] = {
+        **additional[0],
+        **inst.compatibility(
+            additional[0], by_id, kjv_text, byzantine.english.supplied
+        ),
+    }
     assert additional[0]["units"] == [
         {"unit": "MAT 3:8#1", "scope": "constituent", "method": "aligned"}
     ]

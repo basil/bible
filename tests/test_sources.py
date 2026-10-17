@@ -15,6 +15,7 @@ import pytest
 from bible import paths, sources
 from bible.byzantine import greek
 from bible.byzantine.inventories import boyd
+from bible.byzantine.stages import Reconciliation
 from bible.checks import CheckFailed
 from bible.sources import Content
 
@@ -180,12 +181,12 @@ def test_shared_rp_archive_views(byzantine_inputs: Mapping[str, Content]) -> Non
 
 
 def test_real_pdf_inputs_are_named_and_complete(
-    byzantine_inputs: Mapping[str, Content], byzantine: Mapping[str, Any]
+    byzantine_inputs: Mapping[str, Content], byzantine: Reconciliation
 ) -> None:
     assert byzantine_inputs["rp2026"].name == "TGNTByzText_081526_0727PM.xml"
     assert byzantine_inputs["collation"].name == "collation-scrivener-rp-2018.txt"
-    assert len(byzantine["printed"]) == 7957
-    assert len(byzantine["collation"]) == 1885
+    assert len(byzantine.greek.printed) == 7957
+    assert len(byzantine.greek.collation) == 1885
 
 
 @pytest.mark.parametrize("failure", ["missing", "conversion"])

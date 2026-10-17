@@ -31,7 +31,7 @@ from bible.byzantine.presentation import (
     greek_display,
     passage_spans,
 )
-from bible.byzantine.stages import Context
+from bible.byzantine.stages import Reconciliation
 from bible.checks import require
 from bible.references import parse_verse
 from bible.scripture import Verse
@@ -90,13 +90,13 @@ PreparedGreek = tuple[
 ]
 
 
-def prepare_greek(found: Context) -> PreparedGreek:
+def prepare_greek(found: Reconciliation) -> PreparedGreek:
     """Prepare both texts and accent-only contrasts for display, without
     changing the sources or their token boundaries."""
-    tr = {ref: list(words) for ref, words in found["tr_accented"].items()}
-    rp = {ref: list(verse["accented"]) for ref, verse in found["printed"].items()}
+    tr = {ref: list(words) for ref, words in found.greek.tr_alignment.text.items()}
+    rp = {ref: list(verse["accented"]) for ref, verse in found.greek.printed.items()}
     contrasts: dict[str, tuple[str, str]] = {}
-    for unit in found["units"]:
+    for unit in found.greek.units:
         if unit["class"] != "accent":
             continue
         pair = []
@@ -108,7 +108,7 @@ def prepare_greek(found: Context) -> PreparedGreek:
             quoted = unit["tr_accented"] if side == "tr" else unit["rp_accented"]
             if " … " in quoted:
                 forms = {ascii_greek(part) for part in quoted.split(" … ")}
-                plain = found["tr"] if side == "tr" else found["rp"]
+                plain = found.greek.tr if side == "tr" else found.greek.rp
                 positions = [at for at in range(*span) if plain[ref][at] in forms]
                 require(
                     len(forms) == 1 and len(positions) == len(quoted.split(" … ")),
@@ -131,14 +131,15 @@ def prepare_greek(found: Context) -> PreparedGreek:
 
 
 def projected(
-    found: Context, side: str, ref: str, span: Sequence[int]
+    found: Reconciliation, side: str, ref: str, span: Sequence[int]
 ) -> tuple[int, int]:
     """Source word offsets, including a whole joined word at either edge."""
-    return found["tr_alignment" if side == "tr" else "rp_alignment"].project(ref, span)
+    alignment = found.greek.tr_alignment if side == "tr" else found.greek.rp_alignment
+    return alignment.project(ref, span)
 
 
 def passage_ranges(
-    found: Context, ref: str, target: str, left: str, right: str
+    found: Reconciliation, ref: str, target: str, left: str, right: str
 ) -> tuple[tuple[int, int, int, int], ...]:
     """Project ledger units into faithful passages for both consumers."""
     lo = [m.start() for m in re.finditer(r"\S+", left)] + [len(left)]
@@ -146,7 +147,7 @@ def passage_ranges(
     ranges = []
     verse_units = (
         u
-        for u in found["units"]
+        for u in found.greek.units
         if u["ref"] == ref and u["target_ref"] == target and u["class"] != "structural"
     )
     for u in sorted(verse_units, key=lambda u: (u["tr_range"][0], u["rp_range"][0])):
@@ -157,7 +158,7 @@ def passage_ranges(
 
 
 def selections(
-    found: Context,
+    found: Reconciliation,
     ref: str,
     target: str,
     left: str,
@@ -187,7 +188,7 @@ def selections(
     if not greek_only and any(
         row["disposition"] == "shared"
         and any(edit["ref"] == ref for edit in row.get("edits", []))
-        for row in found["dispositions"]
+        for row in found.verified.dispositions
     ):
         return texts, whole, ()
     links: list[tuple[int, int, int, int, int, int]] = []
@@ -225,12 +226,12 @@ def selections(
     try:
         structural = [
             row
-            for row in found["dispositions"]
+            for row in found.verified.dispositions
             if row["ref"] == ref and row["disposition"] == "structural"
         ]
         if ref != target or structural:
             if not (
-                found["structure"].moved.get(ref) == target
+                found.greek.structure.moved.get(ref) == target
                 and len(structural) == 1
                 and structural[0].get("action") == "move"
                 and structural[0].get("target_ref") == target
@@ -239,18 +240,18 @@ def selections(
             ):
                 return texts, whole, ()
         if not greek_only:
-            original = found["kjv"][ref]
-            bridge = found.get("aligned", {}).get(ref)
+            original = found.english.kjv[ref]
+            bridge = found.english.aligned.get(ref)
             if bridge is None:
-                tagged = found["crosswire"][ref]
-                bridge = presentation_bridge(tagged, found["tr"][ref], original)
+                tagged = found.english.crosswire[ref]
+                bridge = presentation_bridge(tagged, found.greek.tr[ref], original)
                 # Absent tags can leave bounded gaps; contradictory evidence
                 # must not become an apparently harmless gap in the bridge.
                 for link in tagged["links"]:
                     if len(link["src"]) != len(link["forms"]) or any(
                         not p.isdigit()
-                        or not 0 < int(p) <= len(found["tr"][ref])
-                        or ascii_greek(form) != found["tr"][ref][int(p) - 1]
+                        or not 0 < int(p) <= len(found.greek.tr[ref])
+                        or ascii_greek(form) != found.greek.tr[ref][int(p) - 1]
                         for p, form in zip(link["src"], link["forms"])
                     ):
                         invalid.append(project(tagged["text"], before, link["range"]))
@@ -258,14 +259,14 @@ def selections(
                 prepared_verses
                 if prepared_verses is not None
                 else verses_of(
-                    {target.split()[0]: found["prepared"][target.split()[0]]}
+                    {target.split()[0]: found.edited.prepared[target.split()[0]]}
                 )
             )[target].text
             # A verse with a correction of shared Greek was quoted whole above,
             # so every edit here is a reading's, with its TR note or none.
             edits = [
                 edit
-                for row in found["dispositions"]
+                for row in found.verified.dispositions
                 for edit in row.get("edits", [])
                 if edit["ref"] == ref
             ]
@@ -374,7 +375,7 @@ def selections(
         selected = tuple(corresponding(texts, links, seeds))
         greek_words = [
             (offsets[x], offsets[y])
-            for position in range(len(found["tr"][ref]))
+            for position in range(len(found.greek.tr[ref]))
             for x, y in [projected(found, "tr", ref, (position, position + 1))]
         ]
         greek_targets: list[list[int]] = [[] for _ in greek_words]
@@ -429,7 +430,7 @@ def _bounded_correspondence(
 
 
 def rows(
-    found: Context,
+    found: Reconciliation,
     kjv_documents: Mapping[str, Document],
     documents: Mapping[str, Document],
 ) -> list[Row]:
@@ -440,24 +441,24 @@ def rows(
     spells them: the original King James books and the books before
     verse-specific punctuation, including corrections of the English where the Greek texts agree.
     """
-    structure = found["structure"]
+    structure = found.greek.structure
     tr, rp, contrasts = prepare_greek(found)
     kjv = {ref: verse.text for ref, verse in verses_of(kjv_documents).items()}
     units_at: dict[str, list[Unit]] = {}
     accents: dict[str, list[Unit]] = {}
-    evidence = received.rows(found["tcgnt"], found["apparatus"])
+    evidence = received.rows(found.greek.tcgnt, found.greek.apparatus)
     # A unit of a kind the apparatuses do not record (inventory_absence),
     # and on which they say nothing, says nothing either way. The verses are
     # the edition's, where the units are listed (target_ref); an omitted
     # verse keeps its own number there.
-    statuses = {u["id"]: received.status(u, evidence) for u in found["units"]}
+    statuses = {u["id"]: received.status(u, evidence) for u in found.greek.units}
     unreceived = {
         unit["target_ref"]
-        for unit in found["units"]
+        for unit in found.greek.units
         if statuses[unit["id"]] != "TR"
         and not (statuses[unit["id"]] is None and unit.get("inventory_absence"))
     }
-    for unit in found["units"]:
+    for unit in found.greek.units:
         if unit["class"] == "structural":
             continue
         listed = accents if unit["class"] == "accent" else units_at
@@ -492,7 +493,7 @@ def rows(
             {code: without_subscriptions(doc) for code, doc in documents.items()}
         ).items()
     }
-    prepared_verses = verses_of(found["prepared"])
+    prepared_verses = verses_of(found.edited.prepared)
     result = []
     for ref in sorted(printed, key=ref_key):
         source = structure.kjv_ref(ref)

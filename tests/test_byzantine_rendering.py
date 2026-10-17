@@ -7,7 +7,6 @@ neighbours, which still execute.
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import Any
 
 import pytest
 from test_byzantine_instructions import additional_instruction
@@ -16,14 +15,9 @@ from bible.byzantine import PIERPONT
 from bible.byzantine.instructions import compatibility, same_content
 from bible.byzantine.rendering import Checker, content, stems
 from bible.byzantine.rows import Disposition, Instruction, InstructionEdit, Unit
+from bible.byzantine.stages import Reconciliation
 
 Instructions = dict[tuple[str, int | str], Instruction]
-
-
-@pytest.fixture(scope="module")
-def checker(byzantine: Mapping[str, Any]) -> Checker:
-    found: Checker = byzantine["checker"]
-    return found
 
 
 def test_rev_4_8_six_more_holy_render_nothing_rp_adds(
@@ -173,13 +167,13 @@ def test_a_margin_spanning_the_difference_is_not_refused(
 
 
 def test_order_units_admit_only_reorderings(
-    byzantine: Mapping[str, Any],
+    byzantine: Reconciliation,
     by_id: dict[str, Unit],
     kjv_text: Mapping[str, str],
     instructions: Instructions,
     dispositions: dict[str, Disposition],
 ) -> None:
-    supplied = byzantine["supplied"]
+    supplied = byzantine.english.supplied
     # A pure Greek reordering preserves the KJV's "thunderings"; an explicit
     # additional transposition is compatible after Pierpont's rerendering
     # fails.
@@ -195,7 +189,9 @@ def test_order_units_admit_only_reorderings(
         ["REV 4:5#1"],
         kind="transpose",
     )
-    assert compatibility(row, by_id, kjv_text, supplied)[0] == "compatible"
+    assert (
+        compatibility(row, by_id, kjv_text, supplied)["compatibility"] == "compatible"
+    )
     assert dispositions["REV 4:5#1"]["disposition"] == "override"
     # Rev 22:8 only reorders content words, adjusting grammar around them.
     assert instructions[(PIERPONT, 949)]["compatibility"] == "compatible"
@@ -210,13 +206,14 @@ def test_order_units_admit_only_reorderings(
         "instruction",
         "unique",
     )
-    status, reason = compatibility(row, by_id, kjv_text, supplied)
-    assert status == "incompatible" and "reorders" in (reason or "")
+    verdict = compatibility(row, by_id, kjv_text, supplied)
+    assert verdict["compatibility"] == "incompatible"
+    assert "reorders" in (verdict["compatibility_reason"] or "")
 
 
 @pytest.mark.parametrize("kind", ["replace", "transpose"])
 def test_reordering_cannot_rerender_content_even_as_a_transposition(
-    byzantine: Mapping[str, Any],
+    byzantine: Reconciliation,
     by_id: dict[str, Unit],
     kjv_text: Mapping[str, str],
     kind: str,
@@ -230,8 +227,9 @@ def test_reordering_cannot_rerender_content_even_as_a_transposition(
         kind="transpose",
     )
     row["edits"] = [{**row["edits"][0], "kind": kind, "new": "voices and thunders"}]
-    status, reason = compatibility(row, by_id, kjv_text, byzantine["supplied"])
-    assert status == "incompatible" and "content words" in (reason or "")
+    verdict = compatibility(row, by_id, kjv_text, byzantine.english.supplied)
+    assert verdict["compatibility"] == "incompatible"
+    assert "content words" in (verdict["compatibility_reason"] or "")
 
 
 def test_reordering_preserves_content_forms_and_multiplicity() -> None:
@@ -247,15 +245,19 @@ def test_reordering_preserves_content_forms_and_multiplicity() -> None:
 
 @pytest.mark.parametrize("entry", [593, 864])
 def test_transpositions_across_substitution_units_preserve_content(
-    byzantine: Mapping[str, Any],
+    byzantine: Reconciliation,
     by_id: dict[str, Unit],
     kjv_text: Mapping[str, str],
     instructions: Instructions,
     entry: int,
 ) -> None:
-    supplied = byzantine["supplied"]
+    supplied = byzantine.english.supplied
     row = instructions[(PIERPONT, entry)].copy()
     assert len(row["edits"][0]["units"]) == 2
-    assert compatibility(row, by_id, kjv_text, supplied)[0] == "compatible"
+    assert (
+        compatibility(row, by_id, kjv_text, supplied)["compatibility"] == "compatible"
+    )
     row["edits"] = [{**row["edits"][0], "new": row["edits"][0]["new"] + " words"}]
-    assert compatibility(row, by_id, kjv_text, supplied)[0] == "incompatible"
+    assert (
+        compatibility(row, by_id, kjv_text, supplied)["compatibility"] == "incompatible"
+    )

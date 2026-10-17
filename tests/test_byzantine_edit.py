@@ -13,7 +13,7 @@ import bible.pipeline
 from bible import scripture, usj
 from bible.byzantine import edit
 from bible.byzantine.rows import Disposition, Edit, InstructionEdit
-from bible.byzantine.stages import Context
+from bible.byzantine.stages import Reconciliation
 from bible.checks import CheckFailed
 from bible.scripture import Verse
 from bible.usj import Document, Node
@@ -22,14 +22,14 @@ type EditsAt = dict[str, list[tuple[Disposition, Edit]]]
 
 
 @pytest.fixture(scope="module")
-def context(edition: bible.pipeline.Edition) -> Context:
+def context(edition: bible.pipeline.Edition) -> Reconciliation:
     return edition.byzantine
 
 
 @pytest.fixture(scope="module")
-def edits_at(context: Context) -> EditsAt:
+def edits_at(context: Reconciliation) -> EditsAt:
     found: EditsAt = {}
-    for row in context["dispositions"]:
+    for row in context.verified.dispositions:
         if row.get("execution") == "applied":
             for e in row.get("edits", []):
                 found.setdefault(e["ref"], []).append((row, e))
@@ -188,13 +188,13 @@ def test_no_edit_leaves_a_doubled_space_and_every_old_is_the_source(
 
 
 def test_no_edit_leaves_two_stops_together(
-    context: Context,
+    context: Reconciliation,
     kjv_text: Mapping[str, str],
     prepared_verses: Mapping[str, Verse],
 ) -> None:
     # MAT 27:41 once read "and Pharisees., said" from Pierpont's cell period.
     doubled = re.compile(r"[.,;:!]\s?[.,;:]")
-    structure = context["structure"]
+    structure = context.greek.structure
     for ref, verse in prepared_verses.items():
         source = kjv_text.get(ref) or kjv_text.get(structure.kjv_ref(ref), "")
         assert set(doubled.findall(verse.text)) <= set(doubled.findall(source)), (
@@ -216,7 +216,7 @@ def test_supplied_content_turns_brackets_into_add_characters() -> None:
 
 
 def test_an_inserted_bracketed_word_is_supplied_in_the_edition(
-    context: Context, prepared_verses: Mapping[str, Verse], edits_at: EditsAt
+    context: Reconciliation, prepared_verses: Mapping[str, Verse], edits_at: EditsAt
 ) -> None:
     inserted = [
         (row, e)
@@ -227,7 +227,7 @@ def test_an_inserted_bracketed_word_is_supplied_in_the_edition(
     assert inserted
     for row, e in inserted:
         book, address = e["ref"].split()
-        assert "\\add " in usj.serialize(context["prepared"][book])
+        assert "\\add " in usj.serialize(context.edited.prepared[book])
         assert "[" not in prepared_verses[e["ref"]].text
 
 
@@ -235,12 +235,12 @@ def test_an_inserted_bracketed_word_is_supplied_in_the_edition(
 
 
 def test_the_four_omitted_verses_are_absent_and_noted_on_the_verse_before(
-    context: Context,
+    context: Reconciliation,
     kjv_text: Mapping[str, str],
     prepared_verses: Mapping[str, Verse],
     dispositions: Mapping[str, Disposition],
 ) -> None:
-    omitted = context["structure"].omitted
+    omitted = context.greek.structure.omitted
     assert omitted == {"LUK 17:36", "ACT 8:37", "ACT 15:34", "ACT 24:7"}
     for ref in omitted:
         assert ref not in prepared_verses
@@ -277,9 +277,9 @@ def test_omitted_verses_are_quoted_whole_with_their_supplied_style(
 
 
 def test_romans_doxology_stands_at_14_24_to_26_with_a_note_at_each_end(
-    context: Context, kjv_text: Mapping[str, str]
+    context: Reconciliation, kjv_text: Mapping[str, str]
 ) -> None:
-    document = context["prepared"]["ROM"]
+    document = context.edited.prepared["ROM"]
     verses = scripture.verses(document)
     for source, target in [("16:25", "14:24"), ("16:26", "14:25"), ("16:27", "14:26")]:
         assert source not in verses
@@ -321,11 +321,11 @@ def test_romans_doxology_stands_at_14_24_to_26_with_a_note_at_each_end(
 
 
 def test_matthew_23_13_and_14_exchange_places_with_a_note_at_each(
-    context: Context,
+    context: Reconciliation,
     kjv_text: Mapping[str, str],
     prepared_verses: Mapping[str, Verse],
 ) -> None:
-    moved = context["structure"].moved
+    moved = context.greek.structure.moved
     assert moved["MAT 23:13"] == "MAT 23:14" and moved["MAT 23:14"] == "MAT 23:13"
     assert (
         "devour widows" in kjv_text["MAT 23:14"]
@@ -344,7 +344,7 @@ def test_matthew_23_13_and_14_exchange_places_with_a_note_at_each(
 
 
 def test_structural_alone_on_the_pinned_kjv(
-    context: Context, kjv_text: Mapping[str, str]
+    context: Reconciliation, kjv_text: Mapping[str, str]
 ) -> None:
     """The structural stage by itself: the inventory and the quoted verses."""
     rows: list[Disposition] = [
@@ -357,12 +357,14 @@ def test_structural_alone_on_the_pinned_kjv(
             "flags": r["flags"],
             "tags": r["tags"],
         }
-        for r in context["dispositions"]
+        for r in context.verified.dispositions
         if r["disposition"] == "structural"
     ]
-    before = copy.deepcopy(context["documents"])
-    prepared, result = edit.structural(context["documents"], rows, context["structure"])
-    assert context["documents"] == before
+    before = copy.deepcopy(dict(context.english.documents))
+    prepared, result = edit.structural(
+        context.english.documents, rows, context.greek.structure
+    )
+    assert context.english.documents == before
     assert all(r["execution"] == "applied" for r in result)
     verses = {
         f"{b} {a}": v
@@ -370,7 +372,7 @@ def test_structural_alone_on_the_pinned_kjv(
         for a, v in scripture.verses(d).items()
     }
     assert len(verses) == 7953
-    assert not context["structure"].omitted & set(verses)
+    assert not context.greek.structure.omitted & set(verses)
     for row in result:
         if row["action"] == "omit":
             note = row["note"]
@@ -382,10 +384,10 @@ def test_structural_alone_on_the_pinned_kjv(
 
 
 def test_the_edition_has_the_full_verse_inventory(
-    context: Context, prepared_verses: Mapping[str, Verse]
+    context: Reconciliation, prepared_verses: Mapping[str, Verse]
 ) -> None:
     assert len(prepared_verses) == 7953
-    assert len(context["prepared"]) == 27
+    assert len(context.edited.prepared) == 27
 
 
 # Refusals
@@ -412,28 +414,28 @@ def mat_3_8_row(at: int, old: str, new: str) -> Disposition:
     }
 
 
-def test_an_edit_that_changes_nothing_is_refused(context: Context) -> None:
-    verse = scripture.verses(context["documents"]["MAT"])["3:8"]
+def test_an_edit_that_changes_nothing_is_refused(context: Reconciliation) -> None:
+    verse = scripture.verses(context.english.documents["MAT"])["3:8"]
     at = verse.text.index("fruits")
     row = mat_3_8_row(at, "fruits", "fruits")
-    prepared, rows = edit.execute(context["documents"], [row], ["MAT"])
+    prepared, rows = edit.execute(context.english.documents, [row], ["MAT"])
     assert rows[0]["execution"] == "refused" and rows[0]["reasons"] == [
         "edit changes nothing"
     ]
     assert rows[0]["action"] == "refused"
-    assert prepared["MAT"] == context["documents"]["MAT"]
+    assert prepared["MAT"] == context.english.documents["MAT"]
 
 
-def test_a_stale_edit_is_refused_by_name(context: Context) -> None:
-    verse = scripture.verses(context["documents"]["MAT"])["3:8"]
+def test_a_stale_edit_is_refused_by_name(context: Reconciliation) -> None:
+    verse = scripture.verses(context.english.documents["MAT"])["3:8"]
     at = verse.text.index("fruits")
     row = mat_3_8_row(at, "fruit", "apples")
-    _, rows = edit.execute(context["documents"], [row], ["MAT"])
+    _, rows = edit.execute(context.english.documents, [row], ["MAT"])
     assert rows[0]["execution"] == "refused" and "stale edit" in rows[0]["reasons"][0]
 
 
-def test_an_edit_on_an_existing_source_note_is_refused(context: Context) -> None:
-    documents = copy.deepcopy(context["documents"])
+def test_an_edit_on_an_existing_source_note_is_refused(context: Reconciliation) -> None:
+    documents = copy.deepcopy(dict(context.english.documents))
     verse = scripture.verses(documents["MAT"])["3:8"]
     at = verse.text.index("fruits")
     documents["MAT"] = scripture.edited(
@@ -445,8 +447,8 @@ def test_an_edit_on_an_existing_source_note_is_refused(context: Context) -> None
     assert rows[0]["reasons"] == ["existing source note on the edited words"]
 
 
-def test_refused_rows_in_the_build_are_named(context: Context) -> None:
-    for row in context["dispositions"]:
+def test_refused_rows_in_the_build_are_named(context: Reconciliation) -> None:
+    for row in context.verified.dispositions:
         if row.get("execution") == "refused":
             assert row["action"] == "refused" and row["reasons"] and "edits" not in row
             assert any(f.startswith("executor refused: ") for f in row["flags"])
@@ -493,15 +495,15 @@ def execution_row(
 
 
 def test_a_correction_of_shared_greek_keeps_the_former_words_in_a_note(
-    context: Context,
+    context: Reconciliation,
 ) -> None:
     # The note is about the words that change, not the whole replacement.
     for address, old, new, former in (
         ("23:42", "into thy kingdom", "in thy kingdom", "into thy kingdom"),
         ("23:15", "done unto him", "done by him", "unto him"),
     ):
-        before = scripture.verses(context["documents"]["LUK"])[address]
-        after = scripture.verses(context["prepared"]["LUK"])[address]
+        before = scripture.verses(context.english.documents["LUK"])[address]
+        after = scripture.verses(context.edited.prepared["LUK"])[address]
         assert after.text == before.text.replace(old, new)
         added = [n for _, n in after.notes if n not in [m for _, m in before.notes]]
         assert len(added) == 1 and added[0]["x-key"] == f"LUK {address} rendering#1"
@@ -565,8 +567,8 @@ def test_a_correction_overlapping_a_reading_is_refused() -> None:
     assert rows[1]["reasons"] == ["overlapping edits"]
 
 
-def test_a_correction_moves_with_its_verse(context: Context) -> None:
-    text = scripture.verses(context["documents"]["ROM"])["16:25"].text
+def test_a_correction_moves_with_its_verse(context: Reconciliation) -> None:
+    text = scripture.verses(context.english.documents["ROM"])["16:25"].text
     at = text.index("to stablish you")
     correction = execution_row(
         "ROM 16:25",
@@ -579,13 +581,13 @@ def test_a_correction_moves_with_its_verse(context: Context) -> None:
     )
     move = [
         r
-        for r in context["dispositions"]
+        for r in context.verified.dispositions
         if r.get("action") == "move" and r["ref"] == "ROM 16:25"
     ]
     documents, rows = edit.execute(
-        context["documents"], [*move, correction], list(context["documents"])
+        context.english.documents, [*move, correction], list(context.english.documents)
     )
-    documents, _ = edit.structural(documents, rows[:1], context["structure"])
+    documents, _ = edit.structural(documents, rows[:1], context.greek.structure)
     assert "to establish you" in scripture.verses(documents["ROM"])["14:24"].text
 
 

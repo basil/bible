@@ -205,6 +205,18 @@ def shared_greek(
     )
 
 
+def witness_rows(
+    reports: Iterable[Report], instructions: Iterable[Instruction]
+) -> dict[str, dict[int | str, Report | Instruction]]:
+    """Every witness's rows by its entry, for the evidence a reading names."""
+    found: dict[str, dict[int | str, Report | Instruction]] = {}
+    for r in reports:
+        found.setdefault(r["witness"], {})[r["entry"]] = r
+    for i in instructions:
+        found.setdefault(i["source"], {})[i["entry"]] = i
+    return found
+
+
 def validate_overrides(
     entries: Iterable[Mapping[str, Any]],
     units: Sequence[Unit],

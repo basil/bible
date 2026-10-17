@@ -7,7 +7,6 @@ from __future__ import annotations
 import copy
 from collections import defaultdict
 from collections.abc import Mapping
-from typing import Any
 
 import pytest
 
@@ -23,12 +22,12 @@ from bible.byzantine.crosswire import (
     words,
 )
 from bible.byzantine.rows import Report, Unit
+from bible.byzantine.stages import Reconciliation
 
 
 @pytest.fixture(scope="module")
-def cw(byzantine: Mapping[str, Any]) -> dict[str, Tagged]:
-    found: dict[str, Tagged] = byzantine["crosswire"]
-    return found
+def cw(byzantine: Reconciliation) -> dict[str, Tagged]:
+    return dict(byzantine.english.crosswire)
 
 
 @pytest.fixture(scope="module")
@@ -103,9 +102,9 @@ def test_crosswire_reader_keeps_every_verse_with_its_links(
 
 
 def test_bridge_covers_the_canon_but_for_ten_conflicting_verses(
-    byzantine: Mapping[str, Any], kjv_text: Mapping[str, str]
+    byzantine: Reconciliation, kjv_text: Mapping[str, str]
 ) -> None:
-    aligned, failures = byzantine["aligned"], byzantine["bridge_failures"]
+    aligned, failures = byzantine.english.aligned, byzantine.english.bridge_failures
     assert len(aligned) + len(failures) == 7957
     assert sorted(failures) == [
         "1PE 1:1",
@@ -136,7 +135,7 @@ def test_bridge_covers_the_canon_but_for_ten_conflicting_verses(
         assert aligned[ref]["word_ranges"] == [
             [s, e] for _, s, e in spans(kjv_text[ref])
         ]
-        assert aligned[ref]["greek_length"] == len(byzantine["tr"][ref])
+        assert aligned[ref]["greek_length"] == len(byzantine.greek.tr[ref])
     # English spelling differences retain links to the same Greek tokens.
     assert aligned["MAT 22:7"]["positions"][20] == [18]
     assert aligned["MAT 22:7"]["direct"][20] == [18]
@@ -150,8 +149,8 @@ def test_bridge_covers_the_canon_but_for_ten_conflicting_verses(
     assert aligned["MAT 2:11"]["direct"][saw] == []
 
 
-def test_bridge_maps_the_kjv_words_of_a_real_unit(byzantine: Mapping[str, Any]) -> None:
-    row = byzantine["aligned"]["MAT 3:8"]
+def test_bridge_maps_the_kjv_words_of_a_real_unit(byzantine: Reconciliation) -> None:
+    row = byzantine.english.aligned["MAT 3:8"]
     assert row["positions"] == [[0], [0], [1], [2], [3], [4, 5], [4, 5]]
     assert bridged_words(row, 2, 4) == [3, 4]
     assert bridged_words(row, 1, 2) == [2]
@@ -159,10 +158,10 @@ def test_bridge_maps_the_kjv_words_of_a_real_unit(byzantine: Mapping[str, Any]) 
 
 
 def test_bridge_keeps_agreeing_words_across_greek_and_english_changes(
-    byzantine: Mapping[str, Any], cw: dict[str, Tagged], kjv_text: Mapping[str, str]
+    byzantine: Reconciliation, cw: dict[str, Tagged], kjv_text: Mapping[str, str]
 ) -> None:
     ref = "MAT 3:8"
-    tr, aligned = byzantine["tr"], byzantine["aligned"]
+    tr, aligned = byzantine.greek.tr, byzantine.english.aligned
     wrong = {ref: ["other"] + tr[ref][1:]}
     partial = bridge({ref: cw[ref]}, wrong, kjv_text)[0][ref]
     assert not any(0 in ps for ps in partial["positions"])
@@ -212,9 +211,9 @@ def test_spelling_variants_bridge_crosswire_to_the_cambridge_text() -> None:
 
 
 def test_fitting_unit_takes_the_unit_whose_greek_the_words_render(
-    byzantine: Mapping[str, Any], by_ref: dict[str, list[Unit]]
+    byzantine: Reconciliation, by_ref: dict[str, list[Unit]]
 ) -> None:
-    aligned = byzantine["aligned"]
+    aligned = byzantine.english.aligned
     found = fitting_unit(by_ref["MAT 3:8"], aligned["MAT 3:8"], 3, 4, "replace")
     assert found is not None
     chosen, scope, ps = found
@@ -233,7 +232,7 @@ def test_fitting_unit_takes_the_unit_whose_greek_the_words_render(
 
 
 def test_english_addition_can_align_to_an_inflected_greek_word(
-    byzantine: Mapping[str, Any],
+    byzantine: Reconciliation,
     by_ref: dict[str, list[Unit]],
     kjv_text: Mapping[str, str],
 ) -> None:
@@ -241,7 +240,7 @@ def test_english_addition_can_align_to_an_inflected_greek_word(
     assert words(kjv_text["HEB 8:5"])[29:31] == ["thou", "make"]
     assert [u["class"] for u in by_ref["HEB 8:5"]] == ["spelling", "inflection"]
     found = fitting_unit(
-        by_ref["HEB 8:5"], byzantine["aligned"]["HEB 8:5"], 30, 30, "insert"
+        by_ref["HEB 8:5"], byzantine.english.aligned["HEB 8:5"], 30, 30, "insert"
     )
     assert found is not None
     chosen, scope, _ = found
@@ -249,7 +248,7 @@ def test_english_addition_can_align_to_an_inflected_greek_word(
 
 
 def test_several_fitting_units_narrow_to_the_one_whose_greek_does_what_the_english_does(
-    byzantine: Mapping[str, Any],
+    byzantine: Reconciliation,
     by_ref: dict[str, list[Unit]],
     kjv_text: Mapping[str, str],
 ) -> None:
@@ -263,7 +262,7 @@ def test_several_fitting_units_narrow_to_the_one_whose_greek_does_what_the_engli
         [8, 9],
         [8, 8],
     )
-    aligned = byzantine["aligned"]["PHP 2:21"]
+    aligned = byzantine.english.aligned["PHP 2:21"]
     found = fitting_unit([article], aligned, 10, 12, "replace", transpose=True)
     assert found is not None
     chosen, scope, ps = found
@@ -294,9 +293,9 @@ def test_several_fitting_units_narrow_to_the_one_whose_greek_does_what_the_engli
 
 
 def test_fitting_unit_skips_relocations_and_accents(
-    byzantine: Mapping[str, Any], by_ref: dict[str, list[Unit]]
+    byzantine: Reconciliation, by_ref: dict[str, list[Unit]]
 ) -> None:
-    aligned = byzantine["aligned"]
+    aligned = byzantine.english.aligned
     assert [u["kind"] for u in by_ref["1CO 5:13"] if u.get("kind")] == ["accent"]
     accent_only = [u for u in by_ref["1CO 5:13"] if u.get("kind") == "accent"]
     assert fitting_unit(accent_only, aligned["1CO 5:13"], 0, 1, "replace") is None

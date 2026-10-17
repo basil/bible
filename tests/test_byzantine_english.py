@@ -7,13 +7,13 @@ from __future__ import annotations
 import copy
 from collections.abc import Mapping
 from dataclasses import replace
-from typing import Any
 
 import pytest
 from lxml import html
 
 from bible import scripture, usj
 from bible.byzantine import BOOKS, BOYD_ASV, english
+from bible.byzantine.stages import Reconciliation
 from bible.checks import CheckFailed
 from bible.sources import Content
 from bible.usj import Document
@@ -26,9 +26,9 @@ type KjvReading = tuple[
 
 @pytest.fixture(scope="module")
 def kjv_reading(
-    byzantine: Mapping[str, Any],
+    byzantine: Reconciliation,
 ) -> KjvReading:
-    return english.kjv(byzantine["kjv_documents"])
+    return english.kjv(byzantine.inputs.kjv)
 
 
 @pytest.fixture(scope="module")
@@ -69,16 +69,16 @@ def test_pinned_kjv_inventory_and_real_verses(
 
 
 def test_kjv_reader_is_pure(
-    byzantine: Mapping[str, Any],
+    byzantine: Reconciliation,
     kjv_reading: KjvReading,
 ) -> None:
-    before = copy.deepcopy(byzantine["kjv_documents"])
-    assert english.kjv(byzantine["kjv_documents"]) == kjv_reading
-    assert byzantine["kjv_documents"] == before
+    before = copy.deepcopy(dict(byzantine.inputs.kjv))
+    assert english.kjv(byzantine.inputs.kjv) == kjv_reading
+    assert byzantine.inputs.kjv == before
 
 
-def test_kjv_reader_checks_its_inventory(byzantine: Mapping[str, Any]) -> None:
-    documents = byzantine["kjv_documents"]
+def test_kjv_reader_checks_its_inventory(byzantine: Reconciliation) -> None:
+    documents = byzantine.inputs.kjv
     empty = usj.document([{"type": "book", "marker": "id", "code": "JUD"}])
     with pytest.raises(CheckFailed, match="KJV inventory"):
         english.kjv({**documents, "JUD": empty})
@@ -145,17 +145,17 @@ def test_supplied_spans_keep_punctuation_paragraph_offsets_and_ignore_notes() ->
 
 def test_pinned_supplied_words_are_available_for_english_review(
     kjv_reading: KjvReading,
-    byzantine: Mapping[str, Any],
+    byzantine: Reconciliation,
     kjv_text: Mapping[str, str],
 ) -> None:
     documents, verses, _ = kjv_reading
     spans = english.supplied_spans(documents["LUK"], verses["LUK 6:9"])
     assert spans == [(46, 52, "thing;"), (141, 144, "it?")]
-    assert byzantine["supplied"]["LUK 6:9"] == spans
-    assert len(byzantine["supplied"]) == 3872
-    assert byzantine["supplied"]["MAT 3:11"] == [(180, 184, "with")]
+    assert byzantine.english.supplied["LUK 6:9"] == spans
+    assert len(byzantine.english.supplied) == 3872
+    assert byzantine.english.supplied["MAT 3:11"] == [(180, 184, "with")]
     assert kjv_text["MAT 3:11"][180:184] == "with"
-    assert "MAT 3:8" not in byzantine["supplied"]
+    assert "MAT 3:8" not in byzantine.english.supplied
 
 
 def test_verse_markup_shows_italics_without_usfm(
@@ -214,12 +214,12 @@ def test_revisions_round_trip_source_words(readings: dict[str, Reading]) -> None
 
 
 def test_asv_reads_its_poetry_and_indented_paragraphs(
-    readings: dict[str, Reading], byzantine: Mapping[str, Any]
+    readings: dict[str, Reading], byzantine: Reconciliation
 ) -> None:
     _, asv = readings["asv"]
     assert asv["1TI 3:16"].text.endswith("Received up in glory.")
     assert asv["REV 4:11"].text.startswith("Worthy art thou, our Lord and our God")
-    texts = byzantine["texts"]
+    texts = byzantine.english.texts
     assert {ref: v.text for ref, v in asv.items()} == texts["asv"]
     # Boyd's ASV is re-addressed to the KJV's verses for comparison.
     assert len(texts[BOYD_ASV]) == 7957
@@ -308,20 +308,22 @@ def test_citation_metadata_normalizes_words_and_supplied_offsets_together() -> N
     }
 
 
-def test_revision_supplied_spans_are_whole_words(byzantine: Mapping[str, Any]) -> None:
-    for witness, rows in byzantine["revision_citations"].items():
+def test_revision_supplied_spans_are_whole_words(byzantine: Reconciliation) -> None:
+    for witness, rows in byzantine.english.revision_citations.items():
         for ref, row in rows.items():
-            for lo, hi in (row or {}).get("supplied", []):
+            if row is None:
+                continue
+            for lo, hi in row["supplied"]:
                 assert row["text"][lo:hi] == row["text"][lo:hi].strip(), (witness, ref)
 
 
 def test_boyd_citation_metadata_uses_kjv_addresses(
-    byzantine: Mapping[str, Any], readings: dict[str, Reading]
+    byzantine: Reconciliation, readings: dict[str, Reading]
 ) -> None:
     docs, verses = readings[BOYD_ASV]
-    moved = byzantine["structure"].moved
+    moved = byzantine.greek.structure.moved
     assert moved
     for kjv_ref, source_ref in moved.items():
-        assert byzantine["revision_citations"][BOYD_ASV][
+        assert byzantine.english.revision_citations[BOYD_ASV][
             kjv_ref
         ] == english.citation_metadata(docs[source_ref.split()[0]], verses[source_ref])

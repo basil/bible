@@ -35,6 +35,7 @@ from bible.byzantine.rows import (
     Override,
     Report,
     Unit,
+    Verdict,
 )
 from bible.checks import require
 
@@ -283,30 +284,42 @@ def compatibility(
     kjv: Mapping[str, str],
     supplied: Mapping[str, Sequence[tuple[int, int, str]]],
     checker: Checker | None = None,
-) -> tuple[str, str | None]:
+) -> Verdict:
     """Whether the instruction may execute as the unit's RP2026 reading.
 
-    Returns (status, reason). `compatible` needs every edit bound uniquely,
-    attached, and of a shape the unit's Greek allows: an omission where RP
-    has fewer words (or, when the words were aligned, any change of wording),
-    an addition where RP has more, a transposition at a reordering, a
-    replacement at any unit but pure orthography.
-    `agrees` means the KJV already reads so; nothing executes. With a
-    `checker` (rendering.Checker), an edit whose words render Greek RP2026
-    keeps, or add a rendering of Greek both texts share, is incompatible, and
-    the instruction records whether its rendering is verified or unverified.
+    `compatible` needs every edit bound uniquely, attached, and of a shape the
+    unit's Greek allows: an omission where RP has fewer words (or, when the
+    words were aligned, any change of wording), an addition where RP has
+    more, a transposition at a reordering, a replacement at any unit but pure
+    orthography. `agrees` means the KJV already reads so; nothing executes.
+    With a `checker` (rendering.Checker), an edit whose words render Greek
+    RP2026 keeps, or add a rendering of Greek both texts share, is
+    incompatible, refused by the rendering, and the verdict says whether a
+    compatible instruction's rendering is verified or unverified.
     """
-    instruction.pop("refused_by", None)
-    instruction.pop("rendering", None)
+
+    def verdict(
+        status: str,
+        reason: str | None,
+        refused_by: str | None = None,
+        rendering: str | None = None,
+    ) -> Verdict:
+        return {
+            "compatibility": status,
+            "compatibility_reason": reason,
+            "refused_by": refused_by,
+            "rendering": rendering,
+        }
+
     if instruction.get("scope") == "out-of-scope":
-        return "out-of-scope", instruction.get("reason")
+        return verdict("out-of-scope", instruction.get("reason"))
     if instruction.get("role") == "agrees":
-        return "agrees", "the KJV already reads with the Majority here"
+        return verdict("agrees", "the KJV already reads with the Majority here")
     edits = instruction.get("edits", [])
     if not edits or instruction.get("bind") not in {"unique", "already"}:
-        return "unbound", f"binding {instruction.get('bind')}"
+        return verdict("unbound", f"binding {instruction.get('bind')}")
     if any(e.get("bind") not in {"unique", "already"} for e in edits):
-        return "unbound", "an occurrence does not bind uniquely"
+        return verdict("unbound", "an occurrence does not bind uniquely")
     # An insertion whose words the KJV has there already changes nothing.
     if all(
         e.get("bind") == "already"
@@ -314,11 +327,15 @@ def compatibility(
         or (not e["old"] and not e["new"])
         for e in edits
     ):
-        return "agrees", "the instruction changes nothing in the pinned KJV"
+        return verdict("agrees", "the instruction changes nothing in the pinned KJV")
     if any(e.get("bind") != "unique" for e in edits):
-        return "unbound", "an insertion the KJV already has stands with a change"
+        return verdict(
+            "unbound", "an insertion the KJV already has stands with a change"
+        )
     if any(not e.get("units") for e in edits):
-        return "unattached", instruction.get("reason") or "an edit attaches to no unit"
+        return verdict(
+            "unattached", instruction.get("reason") or "an edit attaches to no unit"
+        )
 
     # Italic words supplied by the translators render no Greek, so an
     # instruction that only touches them is not about the text. An omission
@@ -334,7 +351,7 @@ def compatibility(
         and not textual_omission(e)
         for e in edits
     ):
-        return (
+        return verdict(
             "incompatible",
             "changes only supplied (italic) words, which render no Greek",
         )
@@ -343,25 +360,29 @@ def compatibility(
         for uid in e["units"]:
             u = units_by_id[uid]
             if u["class"] in ORTHOGRAPHIC:
-                return "incompatible", f"{uid} is {u['class']} only"
+                return verdict("incompatible", f"{uid} is {u['class']} only")
             a, b = u["tr_range"]
             c, d = u["rp_range"]
             tr_count, rp_count = b - a, d - c
             kind, method = e["kind"], e.get("method")
             if kind == "delete" and rp_count >= tr_count and method != "aligned":
-                return "incompatible", f"omission at {uid}, where RP is not shorter"
+                return verdict(
+                    "incompatible", f"omission at {uid}, where RP is not shorter"
+                )
             if kind == "delete" and rp_count >= tr_count and u["class"] in {"addition"}:
-                return "incompatible", f"omission at {uid}, which RP adds to"
+                return verdict("incompatible", f"omission at {uid}, which RP adds to")
             if kind == "insert" and tr_count >= rp_count and method != "aligned":
-                return "incompatible", f"addition at {uid}, where RP is not longer"
+                return verdict(
+                    "incompatible", f"addition at {uid}, where RP is not longer"
+                )
             if kind == "insert" and tr_count >= rp_count and u["class"] in {"omission"}:
-                return "incompatible", f"addition at {uid}, which RP omits"
+                return verdict("incompatible", f"addition at {uid}, which RP omits")
             if (
                 kind == "transpose"
                 and u["class"] != "order"
                 and method != "construction"
             ):
-                return (
+                return verdict(
                     "incompatible",
                     f"transposition at {uid}, which is not a reordering",
                 )
@@ -369,7 +390,7 @@ def compatibility(
                 kind == "transpose"
                 or all(units_by_id[x]["class"] == "order" for x in e["units"])
             ) and not same_content(e["old"], e["new"]):
-                return (
+                return verdict(
                     "incompatible",
                     f"{uid} only reorders the same words; a {kind} that changes the content words cannot render it",
                 )
@@ -377,20 +398,23 @@ def compatibility(
     # they render what RP2026 changed?
     for e in edits:
         if checker is not None:
-            verdict, reason = checker.check(e, e["units"])
-            if verdict == "contradicted":
+            rendered, reason = checker.check(e, e["units"])
+            if rendered == "contradicted":
                 # Provisional: `constructions` checks the whole group again,
                 # where a word another edit restores is a move.
-                instruction["refused_by"] = "rendering"
-                return "incompatible", reason
-            verdicts.append(verdict)
-    if checker is not None:
-        instruction["rendering"] = (
+                return verdict("incompatible", reason, refused_by="rendering")
+            verdicts.append(rendered)
+    if checker is None:
+        return verdict("compatible", None)
+    return verdict(
+        "compatible",
+        None,
+        rendering=(
             "unverified"
             if "unverified" in verdicts
             else "verified" if verdicts else None
-        )
-    return "compatible", None
+        ),
+    )
 
 
 def edit_key(e: InstructionEdit) -> EditKey:
@@ -638,7 +662,7 @@ def components[T](
 
 
 def constructions(
-    instructions: list[Instruction],
+    instructions: Iterable[Instruction],
     kjv: Mapping[str, str],
     checker: Checker | None = None,
     overrides: Iterable[Override] = (),
@@ -665,8 +689,10 @@ def constructions(
        it, which should be one) and the status they had (`displaced`), and
        the members that would have executed are marked `displaced_choice`, so
        the override can be compared with them.
-    Mutates and returns the instruction rows; adds `group` and `construction`.
+    Returns copies of the instruction rows, with `group` and `construction`
+    added; the rows given are not changed.
     """
+    instructions = [row.copy() for row in instructions]
 
     def bound(row: Instruction) -> list[InstructionEdit]:
         return [

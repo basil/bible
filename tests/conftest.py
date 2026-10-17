@@ -4,10 +4,12 @@ edition prepared from them once."""
 from __future__ import annotations
 
 import copy
+import dataclasses
 from collections.abc import Callable, Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
-from typing import Any, cast
+from types import MappingProxyType
+from typing import Any
 
 import pytest
 
@@ -19,8 +21,9 @@ from bible import export, pipeline
 from bible import policy as decisions
 from bible import scripture
 from bible import sources as source_files
+from bible.byzantine import rendering, stages
 from bible.byzantine.rows import Disposition, Instruction, Report, Unit
-from bible.byzantine.stages import Context
+from bible.byzantine.stages import Reconciliation
 from bible.sources import Content
 from bible.usj import Document
 
@@ -57,6 +60,25 @@ def exported(edition: bible.pipeline.Edition) -> dict[str, str]:
     return dict(export.export(edition, "pdf"))
 
 
+def plain(value: object) -> object:
+    """A copy of a value as plain objects, lists and sets, a dataclass as its
+    name and fields, to compare with the value later: copy.deepcopy cannot
+    copy a mappingproxy. Any other object is kept as it is, compared by
+    what it compares by."""
+    if isinstance(value, (MappingProxyType, dict)):
+        return {k: plain(v) for k, v in value.items()}
+    if isinstance(value, (tuple, list)):
+        return [plain(v) for v in value]
+    if isinstance(value, (set, frozenset)):
+        return set(value)
+    if dataclasses.is_dataclass(value) and not isinstance(value, type):
+        return (
+            type(value).__name__,
+            {f.name: plain(getattr(value, f.name)) for f in dataclasses.fields(value)},
+        )
+    return value
+
+
 @dataclass(frozen=True)
 class Staged:
     """Stages retained from edition preparation, with snapshots taken before
@@ -73,6 +95,9 @@ class Staged:
     promoted_before: tuple[dict[str, Document], ...]
     assembled: dict[str, Document]
     line_documents: dict[str, Document]
+    # What each stage of the reconciliation (bible.byzantine.stages) made,
+    # by its name, with a plain copy taken as it finished.
+    byzantine: dict[str, tuple[object, object]]
 
 
 @pytest.fixture(scope="session")
@@ -80,20 +105,28 @@ def prepared_edition(
     sources: bible.sources.Sources,
     declared: bible.policy.Policy,
 ) -> tuple[bible.pipeline.Edition, Staged]:
-    """Prepare once, keeping what four stages made, each with a copy taken
-    as it finished, before the next stage ran."""
+    """Prepare once, keeping what four stages and the reconciliation's
+    stages made, each with a copy taken as it finished, before the next
+    stage ran."""
     made: dict[str, tuple[Any, Any]] = {}
 
-    def kept(name: str, copied: Callable[[Any], object]) -> Callable[..., object]:
-        stage = getattr(pipeline, name)
+    def kept(
+        name: str, copied: Callable[[Any], object], module: object = pipeline
+    ) -> Callable[..., object]:
+        stage = getattr(module, name)
 
         def run(*args: object) -> object:
-            assert name not in made, f"pipeline.{name} ran twice"
+            assert name not in made, f"{name} ran twice"
             result = stage(*args)
-            made[name] = (result, copy.deepcopy(copied(result)))
+            made[name] = (result, copied(result))
             return result
 
         return run
+
+    def deep(copied: Callable[[Any], object]) -> Callable[[Any], object]:
+        return lambda result: copy.deepcopy(copied(result))
+
+    reconciling = ["inputs", *(n for n in vars(stages) if n.startswith("stage_"))]
 
     def unreadable(*args: object, **kwargs: object) -> None:
         raise AssertionError("Preparation must not read files")
@@ -105,16 +138,18 @@ def prepared_edition(
             "read",
             kept(
                 "read",
-                lambda r: (dict(r.brenton), dict(r.kjv), dict(r.updated_brenton)),
+                deep(lambda r: (dict(r.brenton), dict(r.kjv), dict(r.updated_brenton))),
             ),
         )
         patch.setattr(
             pipeline,
             "promote",
-            kept("promote", lambda p: (dict(p.brenton), dict(p.kjv))),
+            kept("promote", deep(lambda p: (dict(p.brenton), dict(p.kjv)))),
         )
-        patch.setattr(pipeline, "assemble", kept("assemble", dict))
-        patch.setattr(pipeline, "lined", kept("lined", dict))
+        patch.setattr(pipeline, "assemble", kept("assemble", deep(dict)))
+        patch.setattr(pipeline, "lined", kept("lined", deep(dict)))
+        for name in reconciling:
+            patch.setattr(stages, name, kept(name, plain, stages))
         edition = pipeline.prepare(sources, declared)
     read_sources, read_before = made["read"]
     promoted, promoted_before = made["promote"]
@@ -129,6 +164,7 @@ def prepared_edition(
         promoted_before,
         assembled,
         line_documents,
+        {name: made[name] for name in reconciling},
     )
 
 
@@ -186,15 +222,22 @@ def verse_lines(doc: Document) -> dict[str, str]:
 
 
 @pytest.fixture(scope="session")
-def byzantine(edition: bible.pipeline.Edition) -> Context:
+def byzantine(edition: bible.pipeline.Edition) -> Reconciliation:
     """What the reconciliation of the New Testament with the Byzantine text
-    worked out, by the names its stages gave it: the read inputs
-    (source_inputs), the Greek texts (tr, rp), the unit ledger (units), the
-    witnesses (instructions, reports, revision_rows), the readings
-    (overrides), every unit's disposition (dispositions), the King James
-    books before (documents) and after (prepared) the edits, the verses'
-    texts (kjv), and the checks (invariants, finished)."""
+    worked out, by the stage that made it (stages.Reconciliation)."""
     return edition.byzantine
+
+
+def amended(found: Reconciliation, stage: str, **fields: Any) -> Reconciliation:
+    """The reconciliation with some of one stage's results replaced."""
+    return replace(found, **{stage: replace(getattr(found, stage), **fields)})
+
+
+@pytest.fixture(scope="session")
+def checker(byzantine: Reconciliation) -> rendering.Checker:
+    """A rendering check made as the one the instructions and decisions
+    stages were given, from the same records."""
+    return stages.checker(byzantine.greek, byzantine.english)
 
 
 @pytest.fixture(scope="session")
@@ -205,15 +248,15 @@ def byzantine_inputs(sources: bible.sources.Sources) -> Mapping[str, Content]:
 
 
 @pytest.fixture(scope="session")
-def kjv_text(byzantine: Mapping[str, Any]) -> Mapping[str, str]:
+def kjv_text(byzantine: Reconciliation) -> Mapping[str, str]:
     """The pinned King James New Testament's verse texts, by "BOOK c:v",
     before the Byzantine readings."""
-    return cast(Mapping[str, str], byzantine["kjv"])
+    return byzantine.english.kjv
 
 
 @pytest.fixture(scope="session")
-def units(byzantine: Mapping[str, Any]) -> list[Unit]:
-    return cast(list[Unit], byzantine["units"])
+def units(byzantine: Reconciliation) -> list[Unit]:
+    return list(byzantine.greek.units)
 
 
 @pytest.fixture(scope="session")
@@ -222,34 +265,29 @@ def by_id(units: list[Unit]) -> dict[str, Unit]:
 
 
 @pytest.fixture(scope="session")
-def dispositions(byzantine: Mapping[str, Any]) -> dict[str, Disposition]:
-    return {r["unit"]: r for r in cast(list[Disposition], byzantine["dispositions"])}
+def dispositions(byzantine: Reconciliation) -> dict[str, Disposition]:
+    return {r["unit"]: r for r in byzantine.verified.dispositions}
 
 
 @pytest.fixture(scope="session")
 def instructions(
-    byzantine: Mapping[str, Any],
+    byzantine: Reconciliation,
 ) -> dict[tuple[str, int | str], Instruction]:
-    return {
-        (i["source"], i["entry"]): i
-        for i in cast(list[Instruction], byzantine["instructions"])
-    }
+    return {(i["source"], i["entry"]): i for i in byzantine.decisions.instructions}
 
 
 @pytest.fixture(scope="session")
-def reports(byzantine: Mapping[str, Any]) -> dict[tuple[str, int | str], Report]:
-    return {
-        (r["witness"], r["entry"]): r for r in cast(list[Report], byzantine["reports"])
-    }
+def reports(byzantine: Reconciliation) -> dict[tuple[str, int | str], Report]:
+    return {(r["witness"], r["entry"]): r for r in byzantine.apparatuses.reports}
 
 
 @pytest.fixture(scope="session")
-def prepared_verses(byzantine: Mapping[str, Any]) -> dict[str, scripture.Verse]:
+def prepared_verses(byzantine: Reconciliation) -> dict[str, scripture.Verse]:
     """Every verse of the conformed New Testament, by "BOOK c:v", before
     the annotate stage sets its notes in the edition's form."""
     return {
         f"{code} {address}": verse
-        for code, doc in byzantine["prepared"].items()
+        for code, doc in byzantine.edited.prepared.items()
         for address, verse in scripture.verses(doc).items()
     }
 

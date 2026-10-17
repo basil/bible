@@ -30,13 +30,14 @@ from bible.byzantine.rows import (
     SelectedListRow,
     Unit,
 )
+from bible.byzantine.stages import Reconciliation
 from bible.checks import CheckFailed
 from bible.sources import Content
 
 
 @pytest.fixture(scope="module")
-def structure(byzantine: Mapping[str, Any]) -> Structure:
-    found = byzantine["structure"]
+def structure(byzantine: Reconciliation) -> Structure:
+    found = byzantine.greek.structure
     assert isinstance(found, Structure)
     return found
 
@@ -47,23 +48,23 @@ def tcent(byzantine_inputs: Mapping[str, Content]) -> list[BoydNote]:
 
 
 @pytest.fixture(scope="module")
-def tcgnt(byzantine: Mapping[str, Any]) -> list[BoydNote]:
-    return list(byzantine["tcgnt"])
+def tcgnt(byzantine: Reconciliation) -> list[BoydNote]:
+    return list(byzantine.greek.tcgnt)
 
 
 @pytest.fixture(scope="module")
-def faa(byzantine: Mapping[str, Any]) -> dict[str, FaaRow]:
-    return dict(byzantine["faa_rows"])
+def faa(byzantine: Reconciliation) -> dict[str, FaaRow]:
+    return dict(byzantine.apparatuses.faa_rows)
 
 
 @pytest.fixture(scope="module")
-def tr(byzantine: Mapping[str, Any]) -> dict[str, list[str]]:
-    return dict(byzantine["tr"])
+def tr(byzantine: Reconciliation) -> dict[str, list[str]]:
+    return dict(byzantine.greek.tr)
 
 
 @pytest.fixture(scope="module")
-def rp(byzantine: Mapping[str, Any]) -> dict[str, list[str]]:
-    return dict(byzantine["rp"])
+def rp(byzantine: Reconciliation) -> dict[str, list[str]]:
+    return dict(byzantine.greek.rp)
 
 
 @pytest.fixture(scope="module")
@@ -110,13 +111,13 @@ def synthetic_units(
 
 
 def test_report_counts_by_witness(
-    byzantine: Mapping[str, Any],
+    byzantine: Reconciliation,
     tcent: list[BoydNote],
     faa: dict[str, FaaRow],
     msb: list[SelectedListRow],
     web: list[SelectedListRow],
 ) -> None:
-    reports: list[Report] = byzantine["reports"]
+    reports = byzantine.apparatuses.reports
     assert Counter(r["witness"] for r in reports) == {
         FAA: 862,
         TCENT: 552,
@@ -590,13 +591,13 @@ def test_faa_explicit_empty_side_still_locates_repeated_omissions(
 
 
 def test_pierpont_colon_does_not_inherit_a_punctuation_report_or_amen(
-    byzantine: Mapping[str, Any],
+    byzantine: Reconciliation,
     units: list[Unit],
     reports: dict[tuple[str, int | str], Report],
 ) -> None:
     source: Instruction = next(
         r
-        for r in byzantine["instructions"]
+        for r in byzantine.decisions.instructions
         if r["source"] == PIERPONT and r["entry"] == 694
     )
     row = copy.deepcopy(source)
@@ -611,7 +612,7 @@ def test_pierpont_colon_does_not_inherit_a_punctuation_report_or_amen(
     assert (quote["old"], quote["new"]) == ("ages.”", "ages.")
     assert quote["units"][0]["unit"] == "REV 5:13#5"
     verse = [u for u in units if u["ref"] == "REV 5:13"]
-    attached = instructions.attach([row], verse, byzantine["aligned"], [quote])[0]
+    attached = instructions.attach([row], verse, byzantine.english.aligned, [quote])[0]
     assert [a["unit"] for a in attached["units"]] == ["REV 5:13#4"]
     colon = attached["edits"][1]
     assert colon["new"] == ":" and colon["method"] is None

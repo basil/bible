@@ -7,19 +7,20 @@ import copy
 import json
 from collections import Counter
 from collections.abc import Mapping
-from typing import Any, cast
+from typing import Any
 
 import pytest
 
 from bible.byzantine import BOOKS, PIERPONT, pierpont
 from bible.byzantine.pierpont import Inventory
 from bible.byzantine.rows import Instruction, PierpontRow
+from bible.byzantine.stages import Reconciliation
 from bible.sources import Content
 
 
 @pytest.fixture(scope="module")
-def inventory(byzantine: Mapping[str, Any]) -> Inventory:
-    return cast(Inventory, byzantine["pierpont_inventory"])
+def inventory(byzantine: Reconciliation) -> Inventory:
+    return byzantine.instructions.inventory
 
 
 @pytest.fixture(scope="module")

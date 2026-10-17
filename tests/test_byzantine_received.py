@@ -10,6 +10,7 @@ import copy
 import re
 from collections import Counter
 from collections.abc import Iterable, Mapping
+from dataclasses import replace
 from typing import cast
 
 import pytest
@@ -18,17 +19,17 @@ import bible.pipeline
 from bible.byzantine import decisions, greek, received, stages
 from bible.byzantine.inventories import reading_words
 from bible.byzantine.rows import BoydNote, Disposition, Placement, Unit, Unmatched
-from bible.byzantine.stages import Context
+from bible.byzantine.stages import Reconciliation
 from bible.byzantine.units import PRINTED_APPARATUS
 from bible.checks import CheckFailed
 from bible.sources import Content
 from bible.usj import Node
 
 
-def rows_of(byzantine: Context) -> list[tuple[str, BoydNote]]:
+def rows_of(byzantine: Reconciliation) -> list[tuple[str, BoydNote]]:
     return [
-        *(("tcgnt", n) for n in byzantine["tcgnt"]),
-        *((PRINTED_APPARATUS, n) for n in byzantine["apparatus"]),
+        *(("tcgnt", n) for n in byzantine.greek.tcgnt),
+        *((PRINTED_APPARATUS, n) for n in byzantine.greek.apparatus),
     ]
 
 
@@ -36,9 +37,9 @@ def rows_of(byzantine: Context) -> list[tuple[str, BoydNote]]:
 
 
 def test_the_printed_apparatus_gives_the_received_text_its_readings(
-    byzantine: Context,
+    byzantine: Reconciliation,
 ) -> None:
-    rows = byzantine["apparatus"]
+    rows = byzantine.greek.apparatus
     assert Counter("SCR" if "SCR" in r["tr"][0]["sigla"] else "TR" for r in rows) == {
         "TR": 1735,
         "SCR": 150,
@@ -62,7 +63,9 @@ def test_the_printed_apparatus_gives_the_received_text_its_readings(
     for row in rows:
         position = row["position"]
         if position is not None:
-            assert position["words"] == byzantine["printed"][position["ref"]]["Greek"]
+            assert (
+                position["words"] == byzantine.greek.printed[position["ref"]]["Greek"]
+            )
             assert 0 <= position["offset"] <= len(position["words"])
 
 
@@ -141,11 +144,11 @@ def test_an_entry_opens_with_its_letter_and_reference_and_reads_to_the_next() ->
 
 
 def test_every_row_giving_the_received_text_a_reading_stands_at_a_unit(
-    byzantine: Context, declared: bible.policy.Policy
+    byzantine: Reconciliation, declared: bible.policy.Policy
 ) -> None:
     attached = {
         (a["inventory"], a["entry"])
-        for u in byzantine["units"]
+        for u in byzantine.greek.units
         for a in u["inventories"]
     }
     placed_nowhere = {
@@ -157,31 +160,25 @@ def test_every_row_giving_the_received_text_a_reading_stands_at_a_unit(
     for inventory, row in rows_of(byzantine):
         key = (inventory, row["entry"])
         assert key in attached or key in placed_nowhere, key
-    assert {r["inventory"] for r in byzantine["unmatched"]} == {"collation"}
+    assert {r["inventory"] for r in byzantine.greek.unmatched} == {"collation"}
 
 
-def test_a_row_nothing_places_stays_unmatched(byzantine: Context) -> None:
-    row = byzantine["tcgnt"][0]
+def test_a_row_nothing_places_stays_unmatched(byzantine: Reconciliation) -> None:
+    row = byzantine.greek.tcgnt[0]
     units, remaining, errors = decisions.place_inventories(
-        byzantine["units"], [{"inventory": "tcgnt", **row, "reason": "test"}], []
+        byzantine.greek.units, [{"inventory": "tcgnt", **row, "reason": "test"}], []
     )
     assert errors == [] and len(remaining) == 1
-    assert units == byzantine["units"]
+    assert units == list(byzantine.greek.units)
 
 
 def test_the_greek_stage_stops_on_a_row_at_no_unit_or_a_stale_placement(
-    byzantine: Context,
+    byzantine: Reconciliation,
 ) -> None:
     def staged(placements: list[Placement]) -> None:
-        stages.stage_greek(
-            {
-                "source_inputs": byzantine["source_inputs"],
-                "decisions": byzantine["decisions"],
-                "placements": placements,
-            }
-        )
+        stages.stage_greek(replace(byzantine.inputs, placements=tuple(placements)))
 
-    declared = byzantine["placements"]
+    declared = byzantine.inputs.placements
     held = [p for p in declared if (p["witness"], p["entry"]) != ("tcgnt", 1627)]
     with pytest.raises(CheckFailed, match=r"at no unit: \['tcgnt 1627 at REV 12:8'\]"):
         staged(held)
@@ -189,7 +186,7 @@ def test_the_greek_stage_stops_on_a_row_at_no_unit_or_a_stale_placement(
     stale: Placement = {
         "witness": "tcgnt",
         "entry": next(
-            n["entry"] for n in byzantine["tcgnt"] if n["target_ref"] == "MAT 3:8"
+            n["entry"] for n in byzantine.greek.tcgnt if n["target_ref"] == "MAT 3:8"
         ),
         "ref": "MAT 3:8",
         "unit": {"tr": "karpous acious", "rp": "karpon acion"},
@@ -337,12 +334,12 @@ UNSEEN = {
 
 
 def test_every_reading_the_apparatuses_give_the_received_text_is_scriveners(
-    byzantine: Context,
+    byzantine: Reconciliation,
 ) -> None:
     """The Greek each row of Boyd's apparatus and the printed RP2026's gives
     Scrivener stands in Scrivener's text at its verses, and an omission has
     the main words fewer times there than RP2026."""
-    tr, rp = byzantine["tr"], byzantine["rp"]
+    tr, rp = byzantine.greek.tr, byzantine.greek.rp
     missing = set()
     for inventory, row in rows_of(byzantine):
         book = row["target_ref"].split()[0]
@@ -370,22 +367,22 @@ def test_every_reading_the_apparatuses_give_the_received_text_is_scriveners(
     assert missing == UNSEEN
 
 
-def test_ephesians_1_7_is_scriveners_neuter_article(byzantine: Context) -> None:
-    assert byzantine["tr"]["EPH 1:7"][-5:-3] == ["to", "plouton"]
-    (unit,) = [u for u in byzantine["units"] if u["ref"] == "EPH 1:7"]
+def test_ephesians_1_7_is_scriveners_neuter_article(byzantine: Reconciliation) -> None:
+    assert byzantine.greek.tr["EPH 1:7"][-5:-3] == ["to", "plouton"]
+    (unit,) = [u for u in byzantine.greek.units if u["ref"] == "EPH 1:7"]
     assert (unit["tr"], unit["rp"]) == (["to"], ["ton"])
     assert {a["inventory"] for a in unit["inventories"]} == {"tcgnt", PRINTED_APPARATUS}
     assert received.status(unit, rows(byzantine)) == "SCR"
-    accented = byzantine["tr_accented"]["EPH 1:7"]
+    accented = byzantine.greek.tr_alignment.text["EPH 1:7"]
     assert "τὸ" in accented and "τὸν" not in accented
 
 
-def rows(byzantine: Context) -> received.Rows:
-    return received.rows(byzantine["tcgnt"], byzantine["apparatus"])
+def rows(byzantine: Reconciliation) -> received.Rows:
+    return received.rows(byzantine.greek.tcgnt, byzantine.greek.apparatus)
 
 
 def test_a_scrivener_correction_must_fit_its_verse_and_be_evidenced(
-    byzantine: Context,
+    byzantine: Reconciliation,
 ) -> None:
     text = {"EPH 1:7": ["kata", "ton", "plouton"]}
     fix = {"EPH 1:7": {"from": "τὸν πλοῦτον", "to": "τὸ πλοῦτον", "why": "test"}}
@@ -397,7 +394,7 @@ def test_a_scrivener_correction_must_fit_its_verse_and_be_evidenced(
     )
     assert accented == {"EPH 1:7": ["κατὰ", "τὸ", "πλοῦτον"]}
     stages.evidenced(
-        fix, byzantine["units"], byzantine["tcgnt"], byzantine["apparatus"]
+        fix, byzantine.greek.units, byzantine.greek.tcgnt, byzantine.greek.apparatus
     )
     # Without the printed RP2026's evidence, the correction stops the build.
     without: list[Unit] = [
@@ -407,10 +404,10 @@ def test_a_scrivener_correction_must_fit_its_verse_and_be_evidenced(
                 a for a in u["inventories"] if a["inventory"] != PRINTED_APPARATUS
             ],
         }
-        for u in byzantine["units"]
+        for u in byzantine.greek.units
     ]
     with pytest.raises(CheckFailed, match="apparatuses do not give: EPH 1:7"):
-        stages.evidenced(fix, without, byzantine["tcgnt"], byzantine["apparatus"])
+        stages.evidenced(fix, without, byzantine.greek.tcgnt, byzantine.greek.apparatus)
 
 
 # The witness a note names.
@@ -475,9 +472,9 @@ def test_a_note_names_the_received_text_only_where_every_unit_it_is_about_is_est
 
 
 def test_rows_that_disagree_do_not_establish_the_received_text(
-    byzantine: Context,
+    byzantine: Reconciliation,
 ) -> None:
-    (unit,) = [u for u in byzantine["units"] if u["id"] == "LUK 17:36#1"]
+    (unit,) = [u for u in byzantine.greek.units if u["id"] == "LUK 17:36#1"]
     found = rows(byzantine)
     assert received.status(unit, found) == "SCR"
     # Were Boyd to give the verse to TR, the printed RP2026 would still give
@@ -503,12 +500,12 @@ def printed(edition: bible.pipeline.Edition) -> dict[str, str]:
 
 
 def test_the_notes_name_the_witness_the_apparatuses_establish(
-    byzantine: Context, edition: bible.pipeline.Edition
+    byzantine: Reconciliation, edition: bible.pipeline.Edition
 ) -> None:
     notes = printed(edition)
     witnesses = {
         key.removesuffix("#1"): term
-        for key, term in byzantine["note_witnesses"].items()
+        for key, term in byzantine.edited.note_witnesses.items()
         if " TR" in key
     }
     labels: Counter[str] = Counter()

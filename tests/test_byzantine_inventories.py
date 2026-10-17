@@ -7,7 +7,6 @@ import re
 import xml.etree.ElementTree as ET
 from collections import Counter
 from collections.abc import Mapping
-from typing import Any
 
 import pytest
 
@@ -20,6 +19,7 @@ from bible.byzantine.inventories import (
     word_breaks,
 )
 from bible.byzantine.rows import BoydNote, CollationRow, Unit
+from bible.byzantine.stages import Reconciliation
 from bible.checks import CheckFailed
 from bible.sources import Content
 
@@ -30,15 +30,13 @@ def tcgnt(byzantine_inputs: Mapping[str, Content]) -> Content:
 
 
 @pytest.fixture(scope="module")
-def coll(byzantine: Mapping[str, Any]) -> list[CollationRow]:
-    found: list[CollationRow] = byzantine["collation"]
-    return found
+def coll(byzantine: Reconciliation) -> list[CollationRow]:
+    return list(byzantine.greek.collation)
 
 
 @pytest.fixture(scope="module")
-def notes(byzantine: Mapping[str, Any]) -> list[BoydNote]:
-    found: list[BoydNote] = byzantine["tcgnt"]
-    return found
+def notes(byzantine: Reconciliation) -> list[BoydNote]:
+    return list(byzantine.greek.tcgnt)
 
 
 @pytest.fixture(scope="module")
@@ -86,9 +84,9 @@ def test_collation_counts_and_wrapped_omission(coll: list[CollationRow]) -> None
 
 
 def test_collation_entries_are_readings_of_the_two_texts(
-    byzantine: Mapping[str, Any], coll: list[CollationRow]
+    byzantine: Reconciliation, coll: list[CollationRow]
 ) -> None:
-    tr, rp = byzantine["tr"], byzantine["rp"]
+    tr, rp = byzantine.greek.tr, byzantine.greek.rp
     first = coll[0]
     assert first["target_ref"] == "MAT 1:1"
     assert (first["tr"], first["rp"]) == (["dabid"], ["dauid"])

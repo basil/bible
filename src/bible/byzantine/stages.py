@@ -1,11 +1,20 @@
-"""The stages of the reconciliation, each adding to a context what it worked
-out from the stages before it, in the order of the modules' dependencies."""
+"""The stages of the reconciliation, in the order of the modules' dependencies.
+
+Each stage is a function of the read inputs and the records of the stages
+before it, and returns a frozen record of what it worked out (the decide
+stage, a tuple of its dispositions); it stops on its own decisions that do
+not fit their sources and changes nothing it was given.
+`bible.byzantine.reconciled` runs them and gathers the records as the
+Reconciliation.
+"""
 
 from __future__ import annotations
 
 import collections
-from collections.abc import Callable, Mapping, Sequence
-from typing import Any, TypedDict
+from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
+from types import MappingProxyType
+from typing import Any
 
 from bible.byzantine import (
     BOOKS,
@@ -27,9 +36,10 @@ from bible.byzantine import (
     pierpont,
     received,
     rendering,
+    revisers,
+    units,
+    verify,
 )
-from bible.byzantine import revisers as revisions
-from bible.byzantine import units, verify
 from bible.byzantine.crosswire import Aligned, Tagged
 from bible.byzantine.english import Citation
 from bible.byzantine.rows import (
@@ -43,82 +53,171 @@ from bible.byzantine.rows import (
     Placement,
     Report,
     RevisionRow,
+    Token,
     Unit,
     Unmatched,
 )
-from bible.byzantine.tags import Tag, retag
+from bible.byzantine.tags import Tag, tagged
 from bible.checks import require
 from bible.references import parse_passage
-from bible.scripture import Verse
 from bible.sources import Content
 from bible.usj import Document, Node
 
 
-class Context(TypedDict, total=False):
-    """What the reconciliation has worked out, by name: its inputs, then
-    what each stage adds."""
+@dataclass(frozen=True)
+class Inputs:
+    """What the reconciliation is given: the read sources by the registry's
+    names, the King James books, and the editor's decisions
+    (edition/byzantine.json) and placements (edition/byzantine-placements.json),
+    thawed."""
 
-    # The inputs: the read sources, the King James books, and the editor's
-    # decisions (edition/byzantine.json) and placements
-    # (edition/byzantine-placements.json), thawed.
-    source_inputs: Mapping[str, Content]
-    kjv_documents: Mapping[str, Document]
+    sources: Mapping[str, Content]
+    kjv: Mapping[str, Document]
     decisions: Mapping[str, Any]
-    placements: list[Placement]
-    # stage_greek: the Greek texts and the unit ledger.
+    placements: tuple[Placement, ...]
+
+
+@dataclass(frozen=True)
+class Greek:
+    """The Greek texts and the unit ledger."""
+
     structure: greek.Structure
-    tr: greek.Text
-    tr_accented: greek.Text
+    # Scrivener's text, corrected, and its accented form aligned to it.
+    tr: Mapping[str, list[str]]
     tr_alignment: greek.Alignment
+    # RP2018's text as the printed RP2026 prints it, and the printed text
+    # aligned to it.
+    rp: Mapping[str, list[str]]
     rp_alignment: greek.Alignment
-    rp: greek.Text
-    rp_tags: greek.Tags
-    tr_tags: greek.Tags
-    printed: dict[str, greek.PrintedVerse]
-    printed_xml: Content
-    collation: list[CollationRow]
-    tcgnt: list[BoydNote]
-    apparatus: list[BoydNote]
-    units: list[Unit]
-    unmatched: list[Unmatched]
-    annotation_mismatches: list[str]
-    # stage_english: the King James books and verses, the revisions' texts,
-    # and the CrossWire bridge.
-    documents: dict[str, Document]
-    subscriptions: dict[str, list[Node]]
-    verses: dict[str, Verse]
-    kjv: dict[str, str]
-    supplied: dict[str, list[tuple[int, int, str]]]
-    revision_citations: dict[str, dict[str, Citation | None]]
-    texts: dict[str, dict[str, str]]
-    aligned: dict[str, Aligned]
-    bridge_failures: dict[str, str]
-    crosswire: dict[str, Tagged]
-    # stage_reports: the apparatuses.
-    faa_rows: dict[str, FaaRow]
-    reports: list[Report]
-    placement_errors: list[str]
-    stale_placements: list[Placement]
-    # stage_instructions: Pierpont's booklet and its instructions.
-    checker: rendering.Checker
-    pierpont_inventory: pierpont.Inventory
-    instructions: list[Instruction]
-    # stage_revisions: the revisions as witnesses.
-    revision_rows: list[RevisionRow]
-    revision_admitted: dict[str, set[str]]
-    alarms: dict[str, Alarm]
-    # stage_decisions: the editor's decisions, validated and applied.
-    overrides: list[Override]
-    note_lemmas: list[dict[str, Any]]
-    decision_errors: list[str]
-    witness_rows: dict[str, dict[int | str, Report | Instruction]]
-    # stage_decide, stage_edit and stage_verify: the dispositions, the books with the
-    # dispositions carried out, and the checks.
-    dispositions: list[Disposition]
-    prepared: dict[str, Document]
-    note_witnesses: dict[str, str]
-    invariants: dict[str, str]
-    finished: dict[str, list[str]]
+    printed: Mapping[str, greek.PrintedVerse]
+    # The parsed texts' tags, the Received Text's only where its transcription
+    # agrees with Scrivener's.
+    tr_tags: Mapping[str, list[Token]]
+    rp_tags: Mapping[str, list[Token]]
+    # RP's marginal readings, where the Byzantine manuscripts are divided.
+    alternates: Mapping[str, list[greek.MarginalAlternate]]
+    collation: tuple[CollationRow, ...]
+    tcgnt: tuple[BoydNote, ...]
+    # The printed RP2026's apparatus.
+    apparatus: tuple[BoydNote, ...]
+    units: tuple[Unit, ...]
+    unmatched: tuple[Unmatched, ...]
+    # The verses at which the parsed Received Text differs from Scrivener's.
+    annotation_mismatches: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class English:
+    """The King James books and verses, the revisions' texts, and the
+    CrossWire bridge."""
+
+    documents: Mapping[str, Document]
+    subscriptions: Mapping[str, list[Node]]
+    kjv: Mapping[str, str]
+    supplied: Mapping[str, list[tuple[int, int, str]]]
+    revision_citations: Mapping[str, Mapping[str, Citation | None]]
+    texts: Mapping[str, Mapping[str, str]]
+    aligned: Mapping[str, Aligned]
+    bridge_failures: Mapping[str, str]
+    crosswire: Mapping[str, Tagged]
+
+
+@dataclass(frozen=True)
+class Apparatuses:
+    """The modern-English apparatuses attached to units."""
+
+    faa_rows: Mapping[str, FaaRow]
+    reports: tuple[Report, ...]
+
+
+@dataclass(frozen=True)
+class Instructions:
+    """Pierpont's booklet and its instructions, bound, attached and checked
+    for compatibility with the units' Greek."""
+
+    inventory: pierpont.Inventory
+    rows: tuple[Instruction, ...]
+
+
+@dataclass(frozen=True)
+class Revisions:
+    """The RV and Boyd's ASV as witnesses, and the revision alarm."""
+
+    rows: tuple[RevisionRow, ...]
+    admitted: Mapping[str, frozenset[str]]
+    alarms: Mapping[str, Alarm]
+
+
+@dataclass(frozen=True)
+class Decisions:
+    """The editor's readings and lemmas, validated against the placed rows,
+    and the instructions judged and chosen by construction."""
+
+    instructions: tuple[Instruction, ...]
+    overrides: tuple[Override, ...]
+    lemmas: tuple[dict[str, Any], ...]
+
+
+@dataclass(frozen=True)
+class Edited:
+    """The King James books with the dispositions carried out and their notes
+    finished, and the dispositions with their edits, or why each was refused,
+    before the verify stage flags them."""
+
+    prepared: Mapping[str, Document]
+    # The term each note names, by its key (received.labels).
+    note_witnesses: Mapping[str, str]
+    dispositions: tuple[Disposition, ...]
+
+
+@dataclass(frozen=True)
+class Verified:
+    """The invariants checked on what was prepared, every edited verse's
+    problems, and the dispositions flagged with them: the finished set."""
+
+    invariants: Mapping[str, str]
+    finished: Mapping[str, list[str]]
+    dispositions: tuple[Disposition, ...]
+
+
+@dataclass(frozen=True)
+class Reconciliation:
+    """Everything the reconciliation worked out, by the stage that made it,
+    for the promotion, the review and the appendix of readings."""
+
+    inputs: Inputs
+    greek: Greek
+    english: English
+    apparatuses: Apparatuses
+    instructions: Instructions
+    revisions: Revisions
+    decisions: Decisions
+    edited: Edited
+    verified: Verified
+
+
+def inputs(
+    sources: Mapping[str, Content],
+    kjv: Mapping[str, Document],
+    decided: Mapping[str, Any],
+    placements: Mapping[str, Any],
+) -> Inputs:
+    """The reconciliation's inputs, the placements keyed by witness and entry."""
+    placed: list[Placement] = []
+    for key, entry in placements["placements"].items():
+        witness, _, number = key.partition(" ")
+        placement: Placement = {
+            "witness": witness,
+            "entry": int(number) if number.isdigit() else number,
+        }
+        placement.update(entry)
+        placed.append(placement)
+    return Inputs(
+        MappingProxyType(sources),
+        MappingProxyType(kjv),
+        MappingProxyType(decided),
+        tuple(placed),
+    )
 
 
 def structure_of(
@@ -156,6 +255,16 @@ def structure_of(
     return greek.Structure(moved, omitted)
 
 
+def fitting(errors: Sequence[str], stale: Sequence[Placement] = ()) -> None:
+    """The editor's decisions of a stage all fit their sources, and each of
+    its placements places a row the code does not place on its own."""
+    require(
+        not errors, f"Byzantine decisions that do not fit their sources: {errors[:5]}"
+    )
+    keys = [f"{p['witness']} {p['entry']}" for p in stale]
+    require(not keys, f"Byzantine placements the code now makes: {keys}")
+
+
 def evidenced(
     corrections: Mapping[str, Mapping[str, str]],
     ledger: Sequence[Unit],
@@ -184,25 +293,22 @@ def evidenced(
         )
 
 
-def stage_greek(context: Context) -> None:
+def stage_greek(given: Inputs) -> Greek:
     """The Greek texts and the unit ledger."""
-    corrections = context["decisions"].get("scrivener", {})
-    tr = greek.corrected(
-        greek.scrivener(context["source_inputs"]["scrivener"]), corrections
-    )
-    parsed, tr_tags = greek.parsed_scrivener(context["source_inputs"]["parsed_tr"])
+    corrections = given.decisions.get("scrivener", {})
+    tr = greek.corrected(greek.scrivener(given.sources["scrivener"]), corrections)
+    parsed, tr_tags = greek.parsed_scrivener(given.sources["parsed_tr"])
     mismatches = [ref for ref in tr if parsed[ref] != tr[ref]]
     checked = {f"TR {ref}": t for ref, t in tr_tags.items() if ref not in mismatches}
-    rp, tags = greek.rp2018(context["source_inputs"]["rp2018"])
-    structure = structure_of(context["decisions"]["structure"], tr, rp)
-    xml = context["source_inputs"]["rp2026"]
-    root = greek.tree(xml)
+    rp, tags = greek.rp2018(given.sources["rp2018"])
+    structure = structure_of(given.decisions["structure"], tr, rp)
+    root = greek.tree(given.sources["rp2026"])
     printed, diacritics = greek.printed(root, structure.omitted, list(rp)[-1])
     rp = greek.rp2026(rp, printed)
-    collation = inventories.collation(context["source_inputs"]["collation"])
-    notes_ = inventories.boyd(context["source_inputs"]["tcgnt"])
-    require(len(notes_) == 1948, f"TCGNT inventory: {len(notes_)}, expected 1948")
-    splits = inventories.word_breaks(context["source_inputs"]["tcgnt"] / "095XXC.usx")
+    collation = inventories.collation(given.sources["collation"])
+    tcgnt = inventories.boyd(given.sources["tcgnt"])
+    require(len(tcgnt) == 1948, f"TCGNT inventory: {len(tcgnt)}, expected 1948")
+    splits = inventories.word_breaks(given.sources["tcgnt"] / "095XXC.usx")
     rp_alignment = greek.align(
         {ref: verse["accented"] for ref, verse in printed.items()}, rp
     )
@@ -218,7 +324,7 @@ def stage_greek(context: Context) -> None:
         tr,
         rp,
         collation,
-        notes_,
+        tcgnt,
         {**checked, **tags},
         splits,
         structure,
@@ -228,11 +334,11 @@ def stage_greek(context: Context) -> None:
         tr,
         rp,
         collation,
-        notes_,
+        tcgnt,
         printed,
         diacritics,
         structure,
-        context["decisions"]["accents"],
+        given.decisions["accents"],
         rp_alignment,
         printed_apparatus,
     )
@@ -241,7 +347,7 @@ def stage_greek(context: Context) -> None:
     ledger, unmatched, errors = decisions.place_inventories(
         [*ledger, *extra],
         unmatched,
-        [p for p in context["placements"] if p["witness"] in units.QUOTED],
+        [p for p in given.placements if p["witness"] in units.QUOTED],
     )
     require(not errors, f"Byzantine placements of Greek apparatus rows: {errors}")
     unplaced = [
@@ -253,43 +359,40 @@ def stage_greek(context: Context) -> None:
         not unplaced,
         f"Rows of the Greek apparatuses that give the Received Text a reading at no unit: {unplaced}",
     )
-    evidenced(corrections, ledger, notes_, printed_apparatus)
-    ledger = decisions.with_hodges_farstad(
-        ledger, context["decisions"]["hodges-farstad"]
-    )
+    evidenced(corrections, ledger, tcgnt, printed_apparatus)
+    ledger = decisions.with_hodges_farstad(ledger, given.decisions["hodges-farstad"])
     tr_alignment = greek.accented_scrivener(
-        context["source_inputs"]["accented_tr"], tr, corrections
+        given.sources["accented_tr"], tr, corrections
     )
-    context.update(
-        {
-            "structure": structure,
-            "tr": tr,
-            "tr_accented": tr_alignment.text,
-            "tr_alignment": tr_alignment,
-            "rp_alignment": rp_alignment,
-            "rp": rp,
-            "rp_tags": tags,
-            "tr_tags": checked,
-            "printed": printed,
-            "printed_xml": xml,
-            "collation": collation,
-            "tcgnt": notes_,
-            "apparatus": printed_apparatus,
-            "units": ledger,
-            "unmatched": unmatched,
-            "annotation_mismatches": mismatches,
-        }
+    return Greek(
+        structure=structure,
+        tr=MappingProxyType(tr),
+        tr_alignment=tr_alignment,
+        rp=MappingProxyType(rp),
+        rp_alignment=rp_alignment,
+        printed=MappingProxyType(printed),
+        tr_tags=MappingProxyType(checked),
+        rp_tags=MappingProxyType(tags),
+        alternates=MappingProxyType(
+            greek.marginal_alternates(given.sources["rp_margin"])
+        ),
+        collation=tuple(collation),
+        tcgnt=tuple(tcgnt),
+        apparatus=tuple(printed_apparatus),
+        units=tuple(ledger),
+        unmatched=tuple(unmatched),
+        annotation_mismatches=tuple(mismatches),
     )
 
 
-def stage_english(context: Context) -> None:
+def stage_english(given: Inputs, greek_: Greek) -> English:
     """The KJV and the three English witnesses, and the CrossWire bridge."""
-    documents, verses, subscriptions = english.kjv(context["kjv_documents"])
+    documents, verses, subscriptions = english.kjv(given.kjv)
     kjv = {ref: v.text for ref, v in verses.items()}
-    rv_documents, rv = english.rv(context["source_inputs"]["rv"])
-    asv_documents, asv = english.asv(context["source_inputs"]["asv"])
-    boyd_documents, boyd = english.boyd_asv(context["source_inputs"]["boyd_asv"])
-    revision_citations: dict[str, dict[str, Citation | None]] = {
+    rv_documents, rv = english.rv(given.sources["rv"])
+    asv_documents, asv = english.asv(given.sources["asv"])
+    boyd_documents, boyd = english.boyd_asv(given.sources["boyd_asv"])
+    revision_citations: dict[str, Mapping[str, Citation | None]] = {
         name: {
             ref: english.citation_metadata(docs[ref.split()[0]], verse)
             for ref, verse in rows.items()
@@ -300,148 +403,151 @@ def stage_english(context: Context) -> None:
             (BOYD_ASV, boyd_documents, boyd),
         )
     }
-    revision_citations[BOYD_ASV] = revisions.at_kjv_addresses(
-        revision_citations[BOYD_ASV], kjv, context["structure"], missing=None
+    revision_citations[BOYD_ASV] = revisers.at_kjv_addresses(
+        revision_citations[BOYD_ASV], kjv, greek_.structure, missing=None
     )
-    aligned_source = crosswire.crosswire(context["source_inputs"]["crosswire"])
-    aligned, bridge_failures = crosswire.bridge(aligned_source, context["tr"], kjv)
+    aligned_source = crosswire.crosswire(given.sources["crosswire"])
+    aligned, bridge_failures = crosswire.bridge(aligned_source, greek_.tr, kjv)
     supplied: dict[str, list[tuple[int, int, str]]] = {}
     for ref, verse in verses.items():
         found = english.supplied_spans(documents[ref.split()[0]], verse)
         if found:
             supplied[ref] = found
-    context.update(
-        {
-            "documents": documents,
-            "subscriptions": subscriptions,
-            "verses": verses,
-            "kjv": kjv,
-            "supplied": supplied,
-            "revision_citations": revision_citations,
-            "texts": {
+    return English(
+        documents=MappingProxyType(documents),
+        subscriptions=MappingProxyType(subscriptions),
+        kjv=MappingProxyType(kjv),
+        supplied=MappingProxyType(supplied),
+        revision_citations=MappingProxyType(revision_citations),
+        texts=MappingProxyType(
+            {
                 RV: {r: v.text for r, v in rv.items()},
                 "asv": {r: v.text for r, v in asv.items()},
-                BOYD_ASV: revisions.at_kjv_addresses(
-                    {r: v.text for r, v in boyd.items()}, kjv, context["structure"]
+                BOYD_ASV: revisers.at_kjv_addresses(
+                    {r: v.text for r, v in boyd.items()}, kjv, greek_.structure
                 ),
-            },
-            "aligned": aligned,
-            "bridge_failures": bridge_failures,
-            "crosswire": aligned_source,
-        }
+            }
+        ),
+        aligned=MappingProxyType(aligned),
+        bridge_failures=MappingProxyType(bridge_failures),
+        crosswire=MappingProxyType(aligned_source),
     )
 
 
-def stage_reports(context: Context) -> None:
+def stage_reports(given: Inputs, greek_: Greek) -> Apparatuses:
     """The modern-English apparatuses attached to units."""
-    tcent = inventories.tcent(context["source_inputs"]["tcent"])
-    faa_rows = apparatus.faa(context["source_inputs"]["faa"])
-    structure = context["structure"]
-    boyd_reports = apparatus.tcent_reports(
-        tcent, context["tcgnt"], context["units"], structure
-    )
+    tcent = inventories.tcent(given.sources["tcent"])
+    faa_rows = apparatus.faa(given.sources["faa"])
+    structure = greek_.structure
+    boyd_reports = apparatus.tcent_reports(tcent, greek_.tcgnt, greek_.units, structure)
     faa_reports = apparatus.faa_reports(
-        faa_rows, context["tr"], context["rp"], context["units"], structure
+        faa_rows, greek_.tr, greek_.rp, greek_.units, structure
     )
     # The editor's placements of the Greek-bound apparatuses come first: the
     # selected lists inherit their locations from them.
     anchors, errors_a, stale_a = decisions.place(
         [*boyd_reports, *faa_reports],
-        context["units"],
-        [p for p in context["placements"] if p["witness"] in {TCENT, FAA}],
+        greek_.units,
+        [p for p in given.placements if p["witness"] in {TCENT, FAA}],
     )
     selected, errors_s, stale_s = decisions.place(
         apparatus.attach_contrasts(
             [
                 *apparatus.msb(
-                    context["source_inputs"]["msb"],
-                    context["source_inputs"]["msb_tables"],
-                    structure,
+                    given.sources["msb"], given.sources["msb_tables"], structure
                 ),
-                *apparatus.web(context["source_inputs"]["web"], structure),
+                *apparatus.web(given.sources["web"], structure),
             ],
             [r for r in anchors if r["witness"] == FAA],
             [r for r in anchors if r["witness"] == TCENT],
         ),
-        context["units"],
+        greek_.units,
         [
             p
-            for p in context["placements"]
+            for p in given.placements
             if p["witness"] not in {TCENT, FAA, *INSTRUCTION_SOURCES, *units.QUOTED}
         ],
     )
-    context.update(
-        {
-            "faa_rows": faa_rows,
-            "reports": [*anchors, *selected],
-            "placement_errors": [*errors_a, *errors_s],
-            "stale_placements": [*stale_a, *stale_s],
-        }
+    fitting([*errors_a, *errors_s], [*stale_a, *stale_s])
+    return Apparatuses(
+        faa_rows=MappingProxyType(faa_rows), reports=(*anchors, *selected)
     )
 
 
-def stage_instructions(context: Context) -> None:
+def checker(greek_: Greek, english_: English) -> rendering.Checker:
+    """The check that an instruction's English renders RP2026's Greek, from
+    the pinned texts and their tags, for the instructions and decisions
+    stages."""
+    return rendering.Checker(
+        english_.crosswire,
+        english_.aligned,
+        greek_.tr,
+        greek_.rp,
+        greek_.tr_tags,
+        greek_.rp_tags,
+        greek_.units,
+        english_.kjv,
+        greek_.structure,
+        greek_.alternates,
+    )
+
+
+def stage_instructions(
+    given: Inputs,
+    greek_: Greek,
+    english_: English,
+    apparatuses: Apparatuses,
+    check: rendering.Checker,
+) -> Instructions:
     """The KJV-worded instruction source, bound, attached and checked."""
-    kjv = context["kjv"]
-    inventory = pierpont.read(context["source_inputs"]["pierpont"].read_text(), kjv)
+    kjv = english_.kjv
+    inventory = pierpont.read(given.sources["pierpont"].read_text(), kjv)
     rows = pierpont.instructions(inventory, kjv)
     # An objective apparatus placement also corrects the evidence used by an
     # instruction's contrast fallback.
     rows = instructions.attach(
         rows,
-        context["units"],
-        context["aligned"],
-        [r for r in context["reports"] if r["witness"] in {TCENT, FAA}],
+        greek_.units,
+        english_.aligned,
+        [r for r in apparatuses.reports if r["witness"] in {TCENT, FAA}],
     )
     rows, errors, stale = decisions.place(
         rows,
-        context["units"],
-        [p for p in context["placements"] if p["witness"] in INSTRUCTION_SOURCES],
+        greek_.units,
+        [p for p in given.placements if p["witness"] in INSTRUCTION_SOURCES],
     )
-    by_id = {u["id"]: u for u in context["units"]}
-    context["checker"] = rendering.Checker(
-        context["crosswire"],
-        context["aligned"],
-        context["tr"],
-        context["rp"],
-        context["tr_tags"],
-        context["rp_tags"],
-        context["units"],
-        kjv,
-        context["structure"],
-        greek.marginal_alternates(context["source_inputs"]["rp_margin"]),
-    )
-    for row in rows:
-        row["compatibility"], row["compatibility_reason"] = instructions.compatibility(
-            row, by_id, kjv, context["supplied"], context["checker"]
-        )
-    context.update(
-        {
-            "pierpont_inventory": inventory,
-            "instructions": rows,
-            "placement_errors": [*context["placement_errors"], *errors],
-            "stale_placements": [*context["stale_placements"], *stale],
-        }
+    fitting(errors, stale)
+    by_id = {u["id"]: u for u in greek_.units}
+    return Instructions(
+        inventory=inventory,
+        rows=tuple(
+            {
+                **row,
+                **instructions.compatibility(row, by_id, kjv, english_.supplied, check),
+            }
+            for row in rows
+        ),
     )
 
 
-def stage_revisions(context: Context) -> None:
+def stage_revisions(
+    greek_: Greek, english_: English, instructions_: Instructions
+) -> Revisions:
     """The RV and Boyd's ASV as witnesses, and the revision alarm."""
-    kjv, aligned, ledger = context["kjv"], context["aligned"], context["units"]
-    admitted = revisions.readable(ledger, context["tcgnt"])
-    texts = context["texts"]
-    placed = context["instructions"]
+    kjv, aligned, ledger = english_.kjv, english_.aligned, greek_.units
+    admitted = revisers.readable(ledger, greek_.tcgnt)
+    texts = english_.texts
     rows = [
-        *revisions.revision_reports(
+        *revisers.revision_reports(
             RV,
             kjv,
             texts[RV],
             aligned,
             ledger,
             admitted[RV],
-            instructions=placed,
+            instructions=instructions_.rows,
         ),
-        *revisions.revision_reports(
+        *revisers.revision_reports(
             BOYD_ASV,
             kjv,
             texts[BOYD_ASV],
@@ -449,47 +555,48 @@ def stage_revisions(context: Context) -> None:
             ledger,
             admitted[BOYD_ASV],
             base=texts["asv"],
-            instructions=placed,
+            instructions=instructions_.rows,
         ),
     ]
-    context.update(
-        {
-            "revision_rows": rows,
-            "revision_admitted": admitted,
-            "alarms": revisions.alarms(
+    return Revisions(
+        rows=tuple(rows),
+        admitted=MappingProxyType({k: frozenset(v) for k, v in admitted.items()}),
+        alarms=MappingProxyType(
+            revisers.alarms(
                 ledger, aligned, kjv, {RV: texts[RV], BOYD_ASV: texts[BOYD_ASV]}
-            ),
-        }
+            )
+        ),
     )
 
 
-def stage_decisions(context: Context) -> None:
+def stage_decisions(
+    given: Inputs,
+    greek_: Greek,
+    english_: English,
+    apparatuses: Apparatuses,
+    instructions_: Instructions,
+    check: rendering.Checker,
+) -> Decisions:
     """The editor's readings and lemmas, validated against the placed rows."""
-    ledger, kjv = context["units"], context["kjv"]
-    reports, rows = context["reports"], context["instructions"]
-    witness_rows: dict[str, dict[int | str, Report | Instruction]] = {}
-    for r in reports:
-        witness_rows.setdefault(r["witness"], {})[r["entry"]] = r
-    for row in rows:
-        witness_rows.setdefault(row["source"], {})[row["entry"]] = row
+    ledger, kjv = greek_.units, english_.kjv
     readings = [
-        {"id": key, **entry} for key, entry in context["decisions"]["readings"].items()
+        {"id": key, **entry} for key, entry in given.decisions["readings"].items()
     ]
     overrides, errors_o = decisions.validate_overrides(
         readings,
         ledger,
         kjv,
-        witness_rows,
-        context["texts"],
-        context["supplied"],
-        revision_citations=context["revision_citations"],
-        faa_rows=context["faa_rows"],
-        printed=context["printed"],
-        alignment=context["rp_alignment"],
-        structure=context["structure"],
+        decisions.witness_rows(apparatuses.reports, instructions_.rows),
+        english_.texts,
+        english_.supplied,
+        revision_citations=english_.revision_citations,
+        faa_rows=apparatuses.faa_rows,
+        printed=greek_.printed,
+        alignment=greek_.rp_alignment,
+        structure=greek_.structure,
     )
     # Judge and choose instructions by construction, never in parts.
-    rows = instructions.constructions(rows, kjv, context["checker"], overrides)
+    rows = instructions.constructions(instructions_.rows, kjv, check, overrides)
     # One override owns a construction: two that take one must be merged.
     errors_c = sorted(
         {
@@ -498,113 +605,98 @@ def stage_decisions(context: Context) -> None:
             if len(r.get("displaced_by") or []) > 1
         }
     )
-    lemmas = decisions.lemma_entries(context["decisions"]["lemmas"])
+    lemmas = decisions.lemma_entries(given.decisions["lemmas"])
     errors_l = decisions.validate_lemmas(lemmas, ledger)
-    context.update(
-        {
-            "instructions": rows,
-            "overrides": overrides,
-            "note_lemmas": lemmas,
-            "decision_errors": [
-                *context["placement_errors"],
-                *errors_o,
-                *errors_c,
-                *errors_l,
-            ],
-            "witness_rows": witness_rows,
-        }
+    fitting([*errors_o, *errors_c, *errors_l])
+    return Decisions(
+        instructions=tuple(rows), overrides=tuple(overrides), lemmas=tuple(lemmas)
     )
 
 
-def stage_decide(context: Context) -> None:
-    """One disposition per unit."""
+def stage_decide(
+    greek_: Greek,
+    english_: English,
+    apparatuses: Apparatuses,
+    revisions: Revisions,
+    decisions_: Decisions,
+) -> tuple[Disposition, ...]:
+    """One disposition per unit. A reading the build would carry out alike
+    without it stops the build."""
     rows = decide.decide(
-        context["units"],
-        context["instructions"],
-        context["reports"],
-        context["revision_rows"],
-        context["overrides"],
-        context["alarms"],
-        context["kjv"],
-        supplied=context["supplied"],
+        greek_.units,
+        decisions_.instructions,
+        apparatuses.reports,
+        revisions.rows,
+        decisions_.overrides,
+        revisions.alarms,
+        english_.kjv,
+        supplied=english_.supplied,
     )
-    context["dispositions"] = rows
+    redundant = sorted(
+        row["override"] for row in rows if row.get("redundant") and row.get("override")
+    )
+    require(not redundant, f"Byzantine readings that change nothing: {redundant}")
+    return tuple(rows)
 
 
-def stage_edit(context: Context) -> None:
+def stage_edit(
+    greek_: Greek,
+    english_: English,
+    decisions_: Decisions,
+    dispositions: Sequence[Disposition],
+) -> Edited:
     """Apply the dispositions to the KJV, then the structural changes, then
-    finish the notes."""
-    documents, rows = context["documents"], context["dispositions"]
-    by_entry = {(i["source"], i["entry"]): i for i in context["instructions"]}
-    for row in rows:
-        selected = row.get("selected")
-        if selected:
-            i = by_entry[(selected["source"], selected["entry"])]
-            row["readings"] = [i.get("quotation") or ""]
-    prepared, rows = edit.execute(documents, rows, BOOKS)
-    prepared, rows = edit.structural(prepared, rows, context["structure"])
-    prepared, rows = notes.apply(documents, prepared, rows, context["note_lemmas"])
+    finish the notes. A reading the build could not carry out stops it."""
+    documents = english_.documents
+    prepared, rows = edit.execute(documents, dispositions, BOOKS)
+    prepared, rows = edit.structural(prepared, rows, greek_.structure)
+    prepared, rows = notes.apply(documents, prepared, rows, decisions_.lemmas)
+    refused = sorted(row["unit"] for row in rows if row.get("execution") == "refused")
+    require(not refused, f"Byzantine readings the build could not carry out: {refused}")
     # Say where the executor mended punctuation beside the edited words;
     # capitals it changes there are not tagged.
-    for row in rows:
-        seams = [
-            seam
-            for e in row.get("edits", [])
-            for seam in e.get("seams", [])
-            if seam["rule"] == 2 and seam.get("from", "").strip(" ")
-        ]
-        if seams:
-            retag(row, Tag.EV_SEAM_ADJUSTED)
+    rows = [
+        (
+            tagged(row, Tag.EV_SEAM_ADJUSTED)
+            if any(
+                seam["rule"] == 2 and seam.get("from", "").strip(" ")
+                for e in row.get("edits", [])
+                for seam in e.get("seams", [])
+            )
+            else row
+        )
+        for row in rows
+    ]
     witnesses = received.labels(
-        rows, context["units"], received.rows(context["tcgnt"], context["apparatus"])
+        rows, greek_.units, received.rows(greek_.tcgnt, greek_.apparatus)
     )
-    context.update(
-        {"prepared": prepared, "dispositions": rows, "note_witnesses": witnesses}
+    return Edited(
+        prepared=MappingProxyType(prepared),
+        note_witnesses=MappingProxyType(witnesses),
+        dispositions=tuple(rows),
     )
 
 
-def stage_verify(context: Context) -> None:
-    """Check the invariants on what was prepared."""
+def stage_verify(
+    greek_: Greek, english_: English, decisions_: Decisions, edited: Edited
+) -> Verified:
+    """Check the invariants on what was prepared, and flag each disposition
+    with the problems of the verses it edited. A broken invariant, or a note
+    that does not give back the King James words, stops the build."""
     results = verify.checks(
-        context["documents"],
-        context["prepared"],
-        context["units"],
-        context["dispositions"],
-        context["structure"],
-        context["note_lemmas"],
+        english_.documents,
+        edited.prepared,
+        greek_.units,
+        edited.dispositions,
+        greek_.structure,
+        decisions_.lemmas,
     )
     problems = verify.finished_verses(
-        context["documents"],
-        context["prepared"],
-        context["dispositions"],
-        context["structure"],
+        english_.documents, edited.prepared, edited.dispositions, greek_.structure
     )
-    for row in context["dispositions"]:
-        refs = {e["ref"] for e in row.get("edits", [])}
-        cause = "correction:" if row["disposition"] == "shared" else "variant:"
-        found = [
-            p
-            for ref in sorted(refs)
-            for p in problems.get(ref, [])
-            if p.startswith(cause)
-        ]
-        if found:
-            row["flags"] = [
-                *row.get("flags", []),
-                *(f"finished verse: {p}" for p in found),
-            ]
-            retag(row, Tag.EV_FINISHED_VERSE)
-    context.update({"invariants": results, "finished": problems})
-
-
-STAGES: tuple[Callable[[Context], None], ...] = (
-    stage_greek,
-    stage_english,
-    stage_reports,
-    stage_instructions,
-    stage_revisions,
-    stage_decisions,
-    stage_decide,
-    stage_edit,
-    stage_verify,
-)
+    verify.held(results, problems)
+    return Verified(
+        invariants=MappingProxyType(results),
+        finished=MappingProxyType(problems),
+        dispositions=verify.flagged(edited.dispositions, problems),
+    )

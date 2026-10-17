@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import copy
 from collections.abc import Callable, Iterable, Mapping
-from typing import Any
 
 import pytest
 from test_byzantine_instructions import additional_instruction
@@ -16,6 +15,7 @@ from bible.byzantine.edit import NOTE_LABELS, NoteKind
 from bible.byzantine.instructions import constructions, select
 from bible.byzantine.rendering import Checker
 from bible.byzantine.rows import Disposition, Instruction, InstructionEdit
+from bible.byzantine.stages import Reconciliation
 from bible.byzantine.verify import lint, restores
 from bible.scripture import Verse
 
@@ -34,7 +34,7 @@ def test_conflicting_words_at_different_units_take_the_group_whole(
         kjv_text, "REV 13:16", "to receive", "that they should give", ["REV 13:16#1"]
     )
     verb.update({"source": PIERPONT, "entry": 10830, "compatibility": "compatible"})
-    original = constructions([copy.deepcopy(marks), copy.deepcopy(verb)], kjv_text)
+    original = constructions([marks, verb], kjv_text)
     for uid in ("REV 13:16#1", "REV 13:16#2"):
         assert select(original, uid, kjv_text)[0] is not None
 
@@ -46,7 +46,7 @@ def test_conflicting_words_at_different_units_take_the_group_whole(
         }
     )
     mutated = constructions([marks, verb], kjv_text)
-    assert marks["group"] == verb["group"]
+    assert mutated[0]["group"] == mutated[1]["group"]
     for uid in ("REV 13:16#1", "REV 13:16#2"):
         assert select(mutated, uid, kjv_text) == (
             None,
@@ -97,24 +97,24 @@ def test_a_lower_source_in_the_same_construction_is_superseded(
 
 
 def test_an_override_takes_its_construction_whole(
-    byzantine: Mapping[str, Any],
+    byzantine: Reconciliation,
 ) -> None:
-    rows: list[Instruction] = byzantine["instructions"]
+    rows = byzantine.decisions.instructions
     taken = [
         i
         for i in rows
         if "takes this construction" in (i.get("compatibility_reason") or "")
     ]
     assert taken
-    overridden = {u for o in byzantine["overrides"] for u in o["unit_ids"]}
+    overridden = {u for o in byzantine.decisions.overrides for u in o["unit_ids"]}
     for i in taken:
         units = {a["unit"] for a in i.get("units", [])}
         assert i["compatibility"] == "blocked"
         assert units & overridden or i["construction"]
 
 
-def executed(byzantine: Mapping[str, Any]) -> list[Disposition]:
-    dispositions: list[Disposition] = byzantine["dispositions"]
+def executed(byzantine: Reconciliation) -> list[Disposition]:
+    dispositions = byzantine.verified.dispositions
     return [
         d
         for d in dispositions
@@ -123,7 +123,7 @@ def executed(byzantine: Mapping[str, Any]) -> list[Disposition]:
 
 
 def test_every_executed_construction_has_one_source(
-    byzantine: Mapping[str, Any], instructions: Instructions
+    byzantine: Reconciliation, instructions: Instructions
 ) -> None:
     # Each executed edit comes from a compatible row whose edits all bind
     # uniquely to units, and no construction mixes two sources' rows.
@@ -142,11 +142,10 @@ def test_every_executed_construction_has_one_source(
 
 
 def test_no_executed_construction_contradicts_the_main_text(
-    byzantine: Mapping[str, Any], instructions: Instructions
+    byzantine: Reconciliation, instructions: Instructions, checker: Checker
 ) -> None:
     # The executed edits of each construction, read together, are checked
     # against the pinned Greek rather than trusted from the disposition labels.
-    checker: Checker = byzantine["checker"]
     groups: dict[str | None, list[InstructionEdit]] = {}
     for d in executed(byzantine):
         witness = instructions[d["selected"]["source"], d["selected"]["entry"]]
@@ -263,9 +262,9 @@ def test_lint_reports_only_what_an_edit_introduced() -> None:
 
 
 def test_every_finished_verse_problem_is_flagged_for_review(
-    byzantine: Mapping[str, Any], dispositions: dict[str, Disposition]
+    byzantine: Reconciliation, dispositions: dict[str, Disposition]
 ) -> None:
-    for ref in byzantine["finished"]:
+    for ref in byzantine.verified.finished:
         rows = [
             r
             for r in dispositions.values()
@@ -315,7 +314,7 @@ def test_a_unit_the_higher_source_leaves_alone_is_its_decision(
     ]
     for row in rows:
         row["compatibility"], row["compatibility_reason"] = "compatible", None
-    constructions(rows, kjv_text)
+    rows = constructions(rows, kjv_text)
     assert rows[0]["compatibility"] == "compatible"
     assert rows[1]["compatibility"] == "superseded"
     selected = select(rows, "REV 13:16#2", kjv_text)[0]
@@ -341,9 +340,9 @@ def test_an_instruction_across_verses_remains_one_construction(
 
 
 def test_an_override_may_set_supplied_words_in_roman(
-    byzantine: Mapping[str, Any], prepared_verses: dict[str, Verse]
+    byzantine: Reconciliation, prepared_verses: dict[str, Verse]
 ) -> None:
-    document: usj.Document = byzantine["prepared"]["JHN"]
+    document: usj.Document = byzantine.edited.prepared["JHN"]
     verse = prepared_verses["JHN 19:17"]
     content = [
         item
@@ -373,9 +372,9 @@ def test_edits_print_the_curly_apostrophe(
 
 
 def test_every_note_in_the_edition_restores_the_kjv(
-    byzantine: Mapping[str, Any],
+    byzantine: Reconciliation,
 ) -> None:
-    finished: dict[str, list[str]] = byzantine["finished"]
+    finished = byzantine.verified.finished
     assert not [ps for ps in finished.values() if any("restore" in p for p in ps)]
 
 
@@ -415,7 +414,7 @@ def test_failed_higher_source_requires_complete_lower_source_coverage() -> None:
     failed = witness(PIERPONT, 1, ref, [first, second], status="unbound")
     replacement = witness(ADDITIONAL, 2, ref, [first], [delete_sealed(ref, first)])
     kjv = {ref: "sealed twelve thousand sealed"}
-    partial = constructions([copy.deepcopy(failed), copy.deepcopy(replacement)], kjv)
+    partial = constructions([failed, replacement], kjv)
     assert select(partial, first, kjv)[0] is None
     assert partial[1]["compatibility"] == "blocked"
 
@@ -423,7 +422,7 @@ def test_failed_higher_source_requires_complete_lower_source_coverage() -> None:
     complete = copy.deepcopy(replacement)
     complete["units"].append({"unit": second})
     complete["edits"].append(delete_sealed(ref, second, 3))
-    whole = constructions([copy.deepcopy(failed), complete], kjv)
+    whole = constructions([failed, complete], kjv)
     assert all(select(whole, uid, kjv)[0] is not None for uid in (first, second))
 
 
@@ -445,14 +444,14 @@ def test_a_failure_across_verses_requires_lower_source_coverage_of_both(
     )
     lower = witness(ADDITIONAL, 2, second, [b], [delete_sealed(second, b)])
     kjv = {first: "sealed twelve thousand", second: "sealed twelve thousand"}
-    partial = constructions([copy.deepcopy(failed), copy.deepcopy(lower)], kjv)
+    partial = constructions([failed, lower], kjv)
     assert select(partial, b, kjv)[0] is None
     assert partial[0]["construction"] == partial[1]["construction"]
 
     # One lower row covering both verses executes.
     lower["units"].append({"unit": a})
     lower["edits"].append(delete_sealed(first, a))
-    complete = constructions([copy.deepcopy(failed), lower], kjv)
+    complete = constructions([failed, lower], kjv)
     assert all(select(complete, uid, kjv)[0] is not None for uid in (a, b))
 
 
@@ -466,9 +465,7 @@ def test_a_lower_sources_failure_does_not_block_the_higher_source() -> None:
     )
     lower = witness(ADDITIONAL, 4, ref, [b, c], status="unbound")
     kjv = {ref: "sealed twelve thousand sealed twelve thousand"}
-    rows = constructions(
-        [copy.deepcopy(r) for r in (partial, failed, complete, lower)], kjv
-    )
+    rows = constructions([partial, failed, complete, lower], kjv)
     assert len({r["construction"] for r in rows}) == 1
     # Neither source covers everything it owes. No source above Pierpont
     # failed, so Pierpont executes at a as it would without the additional
@@ -495,12 +492,12 @@ def test_unbound_cross_verse_row_blocks_members_in_its_secondary_verse() -> None
     kjv = {"ACT 9:5": "Lord", "ACT 9:6": "trembling"}
     unlisted = copy.deepcopy(failed)
     unlisted.pop("refs")
-    rows = constructions([copy.deepcopy(failed), copy.deepcopy(bound)], kjv)
+    rows = constructions([failed, bound], kjv)
     assert rows[0]["group"] == rows[1]["group"]
     assert rows[1]["compatibility"] == "blocked"
 
     # Units in two verses group the row even without its own list of refs.
-    rows = constructions([unlisted, copy.deepcopy(bound)], kjv)
+    rows = constructions([unlisted, bound], kjv)
     assert rows[1]["compatibility"] == "blocked"
     assert select(rows, second)[0] is None
 

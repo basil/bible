@@ -6,8 +6,9 @@ from __future__ import annotations
 
 import copy
 import re
-from collections.abc import Callable, Mapping
-from typing import Any, cast
+from collections.abc import Callable, Mapping, Sequence
+from dataclasses import replace
+from typing import Any
 
 import pytest
 
@@ -18,9 +19,9 @@ from bible.byzantine import (
     FAA,
     PIERPONT,
     RV,
-    checked,
     decide,
     decisions,
+    stages,
     verify,
 )
 from bible.byzantine.rows import (
@@ -31,7 +32,7 @@ from bible.byzantine.rows import (
     Report,
     Unit,
 )
-from bible.byzantine.stages import Context
+from bible.byzantine.stages import Reconciliation
 from bible.byzantine.units import QUOTED
 from bible.checks import CheckFailed
 
@@ -40,61 +41,59 @@ type Validate = Callable[[list[Entry]], tuple[list[Override], list[str]]]
 
 
 @pytest.fixture(scope="module")
-def readings(byzantine: Mapping[str, Any]) -> list[Entry]:
+def readings(byzantine: Reconciliation) -> list[Entry]:
     """The readings of edition/byzantine.json, each with its key as its id."""
     return [
         {"id": key, **entry}
-        for key, entry in byzantine["decisions"]["readings"].items()
+        for key, entry in byzantine.inputs.decisions["readings"].items()
     ]
 
 
 @pytest.fixture(scope="module")
-def placements(byzantine: Mapping[str, Any]) -> list[Placement]:
+def placements(byzantine: Reconciliation) -> list[Placement]:
     """The placements of edition/byzantine-placements.json, as rows."""
-    found: list[Placement] = byzantine["placements"]
-    return found
+    return list(byzantine.inputs.placements)
 
 
 @pytest.fixture(scope="module")
-def reports(byzantine: Mapping[str, Any]) -> list[Report]:
-    found: list[Report] = byzantine["reports"]
-    return found
+def reports(byzantine: Reconciliation) -> list[Report]:
+    return list(byzantine.apparatuses.reports)
 
 
 @pytest.fixture(scope="module")
-def ledger(byzantine: Mapping[str, Any]) -> list[Unit]:
-    found: list[Unit] = byzantine["units"]
-    return found
+def ledger(byzantine: Reconciliation) -> list[Unit]:
+    return list(byzantine.greek.units)
 
 
 @pytest.fixture(scope="module")
-def lemmas(byzantine: Mapping[str, Any]) -> list[dict[str, Any]]:
-    found: list[dict[str, Any]] = byzantine["note_lemmas"]
-    return found
+def lemmas(byzantine: Reconciliation) -> list[dict[str, Any]]:
+    return list(byzantine.decisions.lemmas)
 
 
-def arguments(byzantine: Mapping[str, Any]) -> tuple[Any, ...]:
+def arguments(byzantine: Reconciliation) -> tuple[Any, ...]:
     """What validate_overrides reads besides the entries, in order."""
     return (
-        byzantine["units"],
-        byzantine["kjv"],
-        byzantine["witness_rows"],
-        byzantine["texts"],
-        byzantine["supplied"],
+        byzantine.greek.units,
+        byzantine.english.kjv,
+        decisions.witness_rows(
+            byzantine.apparatuses.reports, byzantine.instructions.rows
+        ),
+        byzantine.english.texts,
+        byzantine.english.supplied,
     )
 
 
 @pytest.fixture(scope="module")
-def validate(byzantine: Mapping[str, Any]) -> Validate:
+def validate(byzantine: Reconciliation) -> Validate:
     def run(entries: list[Entry]) -> tuple[list[Override], list[str]]:
         return decisions.validate_overrides(
             entries,
             *arguments(byzantine),
-            revision_citations=byzantine["revision_citations"],
-            faa_rows=byzantine["faa_rows"],
-            printed=byzantine["printed"],
-            alignment=byzantine["rp_alignment"],
-            structure=byzantine["structure"],
+            revision_citations=byzantine.english.revision_citations,
+            faa_rows=byzantine.apparatuses.faa_rows,
+            printed=byzantine.greek.printed,
+            alignment=byzantine.greek.rp_alignment,
+            structure=byzantine.greek.structure,
         )
 
     return run
@@ -117,18 +116,11 @@ def sample(readings: list[Entry]) -> Callable[[], Entry]:
 # The real decisions
 
 
-def test_the_real_decisions_validate_without_error(
-    byzantine: Mapping[str, Any],
-) -> None:
-    assert byzantine["decision_errors"] == []
-    assert byzantine["stale_placements"] == []
-
-
 def test_the_real_readings_compile_one_entry_each(
-    byzantine: Mapping[str, Any], readings: list[Entry]
+    byzantine: Reconciliation, readings: list[Entry]
 ) -> None:
-    assert len(byzantine["overrides"]) == len(readings)
-    for compiled, written in zip(byzantine["overrides"], readings):
+    assert len(byzantine.decisions.overrides) == len(readings)
+    for compiled, written in zip(byzantine.decisions.overrides, readings):
         assert compiled["id"] == written["id"]
         assert compiled["id"] == (
             decisions.override_id(compiled["unit_ids"])
@@ -139,9 +131,9 @@ def test_the_real_readings_compile_one_entry_each(
 
 
 def test_every_reading_edit_binds_to_the_pinned_kjv(
-    byzantine: Mapping[str, Any], kjv_text: Mapping[str, str]
+    byzantine: Reconciliation, kjv_text: Mapping[str, str]
 ) -> None:
-    for o in byzantine["overrides"]:
+    for o in byzantine.decisions.overrides:
         for e in o["bound"]:
             assert kjv_text[e["ref"]][e["start"] : e["end"]] == e["old"]
 
@@ -205,11 +197,11 @@ def test_from_must_occur_exactly_once(
 
 
 def test_from_equal_to_to_is_rejected(
-    validate: Validate, readings: list[Entry], byzantine: Mapping[str, Any]
+    validate: Validate, readings: list[Entry], byzantine: Reconciliation
 ) -> None:
     # Supplied words admit an equal-word edit that sets them in roman, so the
     # sample is a reading whose first edit touches none.
-    overrides: list[Override] = byzantine["overrides"]
+    overrides = byzantine.decisions.overrides
     entry = next(
         o
         for o in overrides
@@ -217,7 +209,7 @@ def test_from_equal_to_to_is_rejected(
         and o["bound"][0]["old"]
         and not any(
             a < o["bound"][0]["end"] and o["bound"][0]["start"] < b
-            for a, b, _ in byzantine["supplied"].get(o["bound"][0]["ref"], [])
+            for a, b, _ in byzantine.english.supplied.get(o["bound"][0]["ref"], [])
         )
     )
     bad = copy.deepcopy(next(o for o in readings if o["id"] == entry["id"]))
@@ -436,14 +428,16 @@ def test_unloaded_additional_evidence_is_rejected(
 
 
 def test_loaded_additional_evidence_is_checked(
-    byzantine: Mapping[str, Any], sample: Callable[[], Entry]
+    byzantine: Reconciliation, sample: Callable[[], Entry]
 ) -> None:
     entry = sample()
     entry["evidence"] = {
         ADDITIONAL: {"entry": 1, "quote": "Explicit additional fixture"}
     }
-    witness_rows = {
-        **byzantine["witness_rows"],
+    witness_rows: dict[str, Mapping[int | str, Mapping[str, Any]]] = {
+        **decisions.witness_rows(
+            byzantine.apparatuses.reports, byzantine.instructions.rows
+        ),
         ADDITIONAL: {
             1: {"ref": entry["units"][0]["ref"], "raw": "Explicit additional fixture"}
         },
@@ -557,13 +551,13 @@ def nochange(unit: Unit, witness: str, quote: str) -> Entry:
 
 @pytest.mark.parametrize("witness", [RV, "asv", BOYD_ASV])
 def test_real_revision_supplied_citations(
-    validate: Validate, byzantine: Mapping[str, Any], witness: str
+    validate: Validate, byzantine: Reconciliation, witness: str
 ) -> None:
     # Each reader's real spans are tested against a permitted Greek unit.
-    by_ref = {u["ref"]: u for u in byzantine["units"]}
+    by_ref = {u["ref"]: u for u in byzantine.greek.units}
     ref, metadata = next(
         (ref, row)
-        for ref, row in byzantine["revision_citations"][witness].items()
+        for ref, row in byzantine.english.revision_citations[witness].items()
         if row and row["supplied"] and ref in by_ref
     )
     lo, hi = metadata["supplied"][0]
@@ -691,13 +685,15 @@ def test_faa_note_requires_reference_and_field(
 
 
 def test_bracketed_citation_requires_metadata_and_a_unique_occurrence(
-    byzantine: Mapping[str, Any], readings: list[Entry], validate: Validate
+    byzantine: Reconciliation, readings: list[Entry], validate: Validate
 ) -> None:
     entry = citation_entry(readings, "MRK 10:40#1", BOYD_ASV, "on [my] left hand")
     args = arguments(byzantine)
     assert "metadata missing" in decisions.validate_overrides([entry], *args)[1][0]
-    metadata = copy.deepcopy(byzantine["revision_citations"])
-    metadata[BOYD_ASV]["MRK 10:40"]["text"] += " changed"
+    metadata = copy.deepcopy(dict(byzantine.english.revision_citations))
+    changed = metadata[BOYD_ASV]["MRK 10:40"]
+    assert changed is not None
+    changed["text"] += " changed"
     assert (
         "metadata missing or stale"
         in decisions.validate_overrides([entry], *args, revision_citations=metadata)[1][
@@ -712,10 +708,10 @@ def test_bracketed_citation_requires_metadata_and_a_unique_occurrence(
 
 
 def test_faa_note_quote_is_verbatim_after_source_whitespace_normalization(
-    byzantine: Mapping[str, Any], readings: list[Entry]
+    byzantine: Reconciliation, readings: list[Entry]
 ) -> None:
     entry = faa_entry(readings)
-    rows: dict[str, FaaRow] = copy.deepcopy(dict(byzantine["faa_rows"]))
+    rows: dict[str, FaaRow] = copy.deepcopy(dict(byzantine.apparatuses.faa_rows))
     rows["ACT 28:11"]["source_notes"] = rows["ACT 28:11"]["source_notes"].replace(
         "we were", "we\n  were"
     )
@@ -738,11 +734,11 @@ def placed_row(rows: list[Report], row: Report) -> Report:
 
 
 def test_the_real_placements_apply_to_the_reports_and_instructions(
-    byzantine: Mapping[str, Any], placements: list[Placement]
+    byzantine: Reconciliation, placements: list[Placement]
 ) -> None:
     hand = [
         r
-        for r in [*byzantine["reports"], *byzantine["instructions"]]
+        for r in [*byzantine.apparatuses.reports, *byzantine.decisions.instructions]
         if r.get("method") == "hand"
     ]
     # The Greek apparatuses' rows are placed on the units themselves, or
@@ -777,7 +773,7 @@ def test_place_rejects_a_wrong_verse(
     assert len(errors) == 1 and "the row is at" in errors[0]
 
 
-def stale_placement(reports: list[Report], by_id: Mapping[str, Unit]) -> Placement:
+def stale_placement(reports: Sequence[Report], by_id: Mapping[str, Unit]) -> Placement:
     """A placement of a report where the code already places it."""
     row = next(
         r
@@ -837,9 +833,9 @@ def test_place_with_a_null_unit_takes_the_row_out_of_scope(
 
 
 def test_place_leaves_the_input_instruction_edits_unchanged(
-    byzantine: Mapping[str, Any], ledger: list[Unit]
+    byzantine: Reconciliation, ledger: list[Unit]
 ) -> None:
-    rows: list[Instruction] = byzantine["instructions"]
+    rows = byzantine.decisions.instructions
     row = copy.deepcopy(
         next(
             r
@@ -956,16 +952,21 @@ def test_the_build_stops_on_a_stale_placement_a_redundant_reading_or_a_broken_in
     edition: bible.pipeline.Edition, by_id: Mapping[str, Unit]
 ) -> None:
     context = edition.byzantine
-    reports, ledger = context["reports"], context["units"]
-    checked(context)
-    # A placement the code now makes on its own.
-    _, _, stale = decisions.place(reports, ledger, [stale_placement(reports, by_id)])
-    with pytest.raises(CheckFailed, match="placements the code now makes"):
-        checked(altered(context, stale_placements=stale))
+    reports, ledger = context.apparatuses.reports, context.greek.units
+    # A placement the code now makes on its own stops the stage that reads it.
+    placement = stale_placement(reports, by_id)
+    with pytest.raises(
+        CheckFailed,
+        match=f"placements the code now makes.*{placement['witness']} {placement['entry']}",
+    ):
+        stages.stage_reports(
+            replace(context.inputs, placements=(*context.inputs.placements, placement)),
+            context.greek,
+        )
     # A reading that keeps the KJV where nothing would change it anyway.
     witnessed = {
         a["unit"]
-        for rows in (reports, context["revision_rows"], context["instructions"])
+        for rows in (reports, context.revisions.rows, context.decisions.instructions)
         for row in rows
         for a in row.get("units", [])
     }
@@ -973,7 +974,7 @@ def test_the_build_stops_on_a_stale_placement_a_redundant_reading_or_a_broken_in
         u
         for u in ledger
         if u["id"] not in witnessed
-        and not context["alarms"].get(u["id"], {}).get("alarm")
+        and not context.revisions.alarms.get(u["id"], {}).get("alarm")
         and u["class"] != "structural"
     )
     reading: Override = {
@@ -987,36 +988,44 @@ def test_the_build_stops_on_a_stale_placement_a_redundant_reading_or_a_broken_in
     }
     rows = decide.decide(
         [quiet],
-        context["instructions"],
+        context.decisions.instructions,
         reports,
-        context["revision_rows"],
+        context.revisions.rows,
         [reading],
-        context["alarms"],
-        context["kjv"],
+        context.revisions.alarms,
+        context.english.kjv,
     )
     assert rows[0].get("redundant")
     with pytest.raises(
         CheckFailed, match=f"readings that change nothing.*{quiet['id']}"
     ):
-        checked(altered(context, dispositions=[*context["dispositions"], *rows]))
+        stages.stage_decide(
+            context.greek,
+            context.english,
+            context.apparatuses,
+            context.revisions,
+            replace(
+                context.decisions, overrides=(*context.decisions.overrides, reading)
+            ),
+        )
     # A unit the dispositions lose.
     invariants = verify.checks(
-        context["documents"],
-        context["prepared"],
+        context.english.documents,
+        context.edited.prepared,
         ledger,
-        context["dispositions"][1:],
-        context["structure"],
+        context.verified.dispositions[1:],
+        context.greek.structure,
     )
     assert invariants["I1"] == "unit coverage differs"
     with pytest.raises(CheckFailed, match="invariants broken.*I1"):
-        checked(altered(context, invariants=invariants))
+        verify.held(invariants, {})
 
 
 @pytest.mark.parametrize("mismatch", ["words", "address"])
 def test_shared_greek_refuses_mismatched_alignment(
-    byzantine: Mapping[str, Any], mismatch: str
+    byzantine: Reconciliation, mismatch: str
 ) -> None:
-    alignment = copy.deepcopy(byzantine["rp_alignment"])
+    alignment = copy.deepcopy(byzantine.greek.rp_alignment)
     ref = "LUK 23:42"
     if mismatch == "words":
         alignment.text[ref] = ["wrong", *alignment.text[ref]]
@@ -1028,10 +1037,10 @@ def test_shared_greek_refuses_mismatched_alignment(
         decisions.shared_greek(
             "ἐν τῇ βασιλείᾳ σου",
             ref,
-            byzantine["units"],
-            byzantine["printed"],
+            byzantine.greek.units,
+            byzantine.greek.printed,
             alignment,
-            byzantine["structure"],
+            byzantine.greek.structure,
         )
 
 
@@ -1040,18 +1049,11 @@ def test_the_build_stops_on_ordinary_tr_restoration_failures(
 ) -> None:
     context = edition.byzantine
     with pytest.raises(CheckFailed, match="Notes that do not restore.*LUK 2:21"):
-        checked(
-            altered(
-                context,
-                finished={
-                    "LUK 2:21": [
-                        "variant: note does not restore the corrected KJV (damaged coupled alternative)"
-                    ]
-                },
-            )
+        verify.held(
+            context.verified.invariants,
+            {
+                "LUK 2:21": [
+                    "variant: note does not restore the corrected KJV (damaged coupled alternative)"
+                ]
+            },
         )
-
-
-def altered(context: Context, **changes: Any) -> Context:
-    """The reconciliation's context with some of what it worked out replaced."""
-    return cast(Context, {**context, **changes})

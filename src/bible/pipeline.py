@@ -300,7 +300,7 @@ class Promoted:
     brenton: MappingProxyType[str, Document]
     kjv: MappingProxyType[str, Document]
     alexandrine: tuple[int, int]
-    byzantine: stages.Context
+    byzantine: stages.Reconciliation
     # What came of CCEL's notes, with those set in the verses the promotion
     # supplied.
     ccel: ccel.Report
@@ -702,7 +702,7 @@ def authored(
     ctx: annotate.Context,
     read_sources: Read,
     revised: Revised,
-    found: stages.Context,
+    found: stages.Reconciliation,
 ) -> tuple[dict[str, Document], tuple[tuple[str, int, int, int], ...]]:
     """The edition's own pages, with the passages and tables they ask for,
     among them the appendix of readings; and each reading's run of that
@@ -718,7 +718,7 @@ def authored(
         found,
         {
             code: revision.regularized(doc, policy)
-            for code, doc in found["documents"].items()
+            for code, doc in found.english.documents.items()
         },
         {
             code: revision.regularized(doc, policy)
@@ -788,7 +788,7 @@ class Edition:
     met: Met
     # What the reconciliation of the New Testament with the Byzantine text
     # worked out, for the review and the appendix of readings.
-    byzantine: stages.Context
+    byzantine: stages.Reconciliation
     # The appendix's entries, by book and chapter, with the blocks of its
     # page that each is: the sample prints those of its chapters.
     appendix: tuple[tuple[str, int, int, int], ...]
@@ -897,13 +897,13 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
     units_of = Counter(u["source"] for u in policy.scripture)
     applied = [
         row
-        for row in promoted.byzantine["dispositions"]
+        for row in promoted.byzantine.verified.dispositions
         if row.get("execution") == "applied"
     ]
     summary = dict(
         alexandrine_notes=promoted.alexandrine[0],
         alexandrine_appendix_paragraphs=promoted.alexandrine[1],
-        byzantine_units=len(promoted.byzantine["units"]),
+        byzantine_units=len(promoted.byzantine.greek.units),
         byzantine_edits=sum(1 for row in applied if row["disposition"] != "shared"),
         kjv_corrections=sum(1 for row in applied if row["disposition"] == "shared"),
         byzantine_notes=sum(

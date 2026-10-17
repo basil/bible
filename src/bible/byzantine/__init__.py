@@ -11,8 +11,10 @@ carry the edits and the structural changes out on the King James books
 (edit), set the Textus Receptus footnotes (notes), check the result (verify),
 and write the review (review) and the appendix of readings (appendix).
 
-`reconciled` runs them in the order of their dependencies on the sources the
-read stage parsed; `promoted` gives one book as the promote stage prints it.
+`reconciled` runs the stages (stages) in the order of their dependencies on
+the sources the read stage parsed, each a function of the results before it
+and stopping the build on what does not hold, and gathers their results as
+the Reconciliation; `promoted` gives one book as the promote stage prints it.
 """
 
 from __future__ import annotations
@@ -21,13 +23,11 @@ from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any
 
 from bible import usj
-from bible.byzantine.rows import Placement
-from bible.checks import require
 from bible.sources import NEW_TESTAMENT, Content
 from bible.usj import Document
 
 if TYPE_CHECKING:
-    from bible.byzantine.stages import Context
+    from bible.byzantine.stages import Reconciliation
     from bible.terminology import Registry
 
 # USFM book codes in canonical order.
@@ -67,86 +67,54 @@ def reconciled(
     kjv: Mapping[str, Document],
     decisions: Mapping[str, Any],
     placements: Mapping[str, Any],
-) -> Context:
+) -> Reconciliation:
     """Every stage of the reconciliation, in order, from the read sources and
     the editor's decisions (edition/byzantine.json, thawed) and placements
     (edition/byzantine-placements.json, thawed): everything it worked out,
-    for the promotion, the review and the appendix, by the names the stages
-    give it (stages.Context)."""
+    for the promotion, the review and the appendix, by the stage that made
+    it (stages.Reconciliation). Each stage stops the build on a decision
+    that does not fit its source or changes nothing, a placement the code
+    now makes on its own, a reading it could not carry out, a broken
+    invariant, or a note that does not give back the King James words."""
     from bible.byzantine import stages
 
-    placed: list[Placement] = []
-    for key, entry in placements["placements"].items():
-        witness, _, number = key.partition(" ")
-        placement: Placement = {
-            "witness": witness,
-            "entry": int(number) if number.isdigit() else number,
-        }
-        placement.update(entry)
-        placed.append(placement)
-    context: Context = {
-        "source_inputs": inputs,
-        "kjv_documents": kjv,
-        "decisions": decisions,
-        "placements": placed,
-    }
-    for stage in stages.STAGES:
-        stage(context)
-    checked(context)
-    return context
-
-
-def checked(context: Context) -> None:
-    """The reconciliation holds to its decisions and its invariants: a
-    decision that does not fit its source, a placement the code now makes
-    on its own, a reading the build would carry out alike without it, an
-    instruction it could not carry out, a broken invariant, or a TR or "Or,"
-    note that does not give back the King James words stops the build and
-    names itself."""
-    from bible.byzantine.verify import UNRESTORED_RENDERING, UNRESTORED_VARIANT
-
-    require(
-        not context["decision_errors"],
-        f"Byzantine decisions that do not fit their sources: {context['decision_errors'][:5]}",
+    given = stages.inputs(inputs, kjv, decisions, placements)
+    greek = stages.stage_greek(given)
+    english = stages.stage_english(given, greek)
+    apparatuses = stages.stage_reports(given, greek)
+    check = stages.checker(greek, english)
+    instructions = stages.stage_instructions(given, greek, english, apparatuses, check)
+    revisions = stages.stage_revisions(greek, english, instructions)
+    decided = stages.stage_decisions(
+        given, greek, english, apparatuses, instructions, check
     )
-    stale = [f"{p['witness']} {p['entry']}" for p in context["stale_placements"]]
-    require(not stale, f"Byzantine placements the code now makes: {stale}")
-    redundant = sorted(
-        row["override"]
-        for row in context["dispositions"]
-        if row.get("redundant") and row.get("override")
-    )
-    require(not redundant, f"Byzantine readings that change nothing: {redundant}")
-    refused = sorted(
-        row["unit"]
-        for row in context["dispositions"]
-        if row.get("execution") == "refused"
-    )
-    require(not refused, f"Byzantine readings the build could not carry out: {refused}")
-    failed = {k: v for k, v in context["invariants"].items() if v != "pass"}
-    require(not failed, f"Byzantine invariants broken: {failed}")
-    unrestored = sorted(
-        ref
-        for ref, problems in context["finished"].items()
-        if any(
-            p.startswith((UNRESTORED_RENDERING, UNRESTORED_VARIANT)) for p in problems
-        )
-    )
-    require(
-        not unrestored,
-        f"Notes that do not restore the King James wording: {unrestored}",
+    dispositions = stages.stage_decide(greek, english, apparatuses, revisions, decided)
+    edited = stages.stage_edit(greek, english, decided, dispositions)
+    verified = stages.stage_verify(greek, english, decided, edited)
+    return stages.Reconciliation(
+        inputs=given,
+        greek=greek,
+        english=english,
+        apparatuses=apparatuses,
+        instructions=instructions,
+        revisions=revisions,
+        decisions=decided,
+        edited=edited,
+        verified=verified,
     )
 
 
-def promoted(code: str, found: Context, terms: Registry) -> Document:
+def promoted(code: str, found: Reconciliation, terms: Registry) -> Document:
     """A King James book with the Byzantine readings in it and the notes on
     them in the edition's form, labelled with the abbreviation of the witness
     they name (received.labels), and its subscription put back after its
     verses."""
     from bible.byzantine import notes
 
-    doc = notes.for_edition(found["prepared"][code], terms, found["note_witnesses"])
-    tail = found["subscriptions"].get(code, ())
+    doc = notes.for_edition(
+        found.edited.prepared[code], terms, found.edited.note_witnesses
+    )
+    tail = found.english.subscriptions.get(code, ())
     if not tail:
         return doc
     return usj.with_blocks(doc, [*doc["content"], *tail])

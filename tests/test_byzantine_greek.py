@@ -10,7 +10,6 @@ import re
 import unicodedata
 import xml.etree.ElementTree as ET
 from collections.abc import Iterable, Mapping
-from typing import Any
 
 import pytest
 
@@ -37,6 +36,7 @@ from bible.byzantine.greek import (
     rp2026,
     tree,
 )
+from bible.byzantine.stages import Reconciliation
 from bible.checks import CheckFailed
 from bible.sources import Content
 
@@ -48,16 +48,15 @@ def nfc(words: Iterable[str]) -> list[str]:
 
 
 @pytest.fixture(scope="module")
-def structure(byzantine: Mapping[str, Any]) -> Structure:
-    result = byzantine["structure"]
+def structure(byzantine: Reconciliation) -> Structure:
+    result = byzantine.greek.structure
     assert isinstance(result, Structure)
     return result
 
 
 @pytest.fixture(scope="module")
-def tr(byzantine: Mapping[str, Any]) -> Text:
-    found: Text = byzantine["tr"]
-    return found
+def tr(byzantine: Reconciliation) -> Text:
+    return dict(byzantine.greek.tr)
 
 
 @pytest.fixture(scope="module")
@@ -129,14 +128,14 @@ def test_parsed_scrivener_selects_second_reading_and_shared_tags(
 
 
 def test_annotation_mismatches_are_excluded_from_the_checked_tags(
-    byzantine: Mapping[str, Any],
+    byzantine: Reconciliation,
 ) -> None:
-    assert len(byzantine["annotation_mismatches"]) == 37
-    assert "EPH 1:7" in byzantine["annotation_mismatches"]
-    assert "MAT 15:5" in byzantine["annotation_mismatches"]
-    assert "TR MAT 15:5" not in byzantine["tr_tags"]
-    assert "TR MAT 1:1" in byzantine["tr_tags"]
-    assert all(key.startswith("TR ") for key in byzantine["tr_tags"])
+    assert len(byzantine.greek.annotation_mismatches) == 37
+    assert "EPH 1:7" in byzantine.greek.annotation_mismatches
+    assert "MAT 15:5" in byzantine.greek.annotation_mismatches
+    assert "TR MAT 15:5" not in byzantine.greek.tr_tags
+    assert "TR MAT 1:1" in byzantine.greek.tr_tags
+    assert all(key.startswith("TR ") for key in byzantine.greek.tr_tags)
 
 
 # RP2018 from the BP5 files.
@@ -211,17 +210,17 @@ def test_rp2026_refuses_stale_patches_and_a_changed_printed_text(
 
 
 def test_printed_main_text_equals_rp2026_verse_for_verse(
-    byzantine: Mapping[str, Any], guardian: Printed, structure: Structure
+    byzantine: Reconciliation, guardian: Printed, structure: Structure
 ) -> None:
     snapshot, _ = guardian
     assert len(snapshot) == 7957
-    assert all(snapshot[ref]["Greek"] == byzantine["rp"][ref] for ref in snapshot)
+    assert all(snapshot[ref]["Greek"] == byzantine.greek.rp[ref] for ref in snapshot)
     assert snapshot["PHM 1:1"]["Greek"][2:4] == ["ihsou", "xristou"]
     assert nfc(snapshot["MAT 1:1"]["accented"][:3]) == ["Βίβλος", "γενέσεως", "Ἰησοῦ"]
     assert snapshot["MAT 1:1"]["page"] == 29
     assert snapshot["PHM 1:1"]["page"] == 611
     for ref, row in snapshot.items():
-        assert len(byzantine["rp_alignment"].spans[ref]) == len(row["Greek"]), ref
+        assert len(byzantine.greek.rp_alignment.spans[ref]) == len(row["Greek"]), ref
         assert "".join(
             ascii_greek("".join(accent_letters(w))) for w in row["accented"]
         ) == "".join(row["Greek"]), ref
@@ -248,9 +247,9 @@ def test_printed_apparatus_contrasts_are_accent_only(guardian: Printed) -> None:
 
 
 def test_printed_pages_carry_main_text_and_apparatus_separately(
-    byzantine: Mapping[str, Any],
+    byzantine: Reconciliation,
 ) -> None:
-    xml = byzantine["printed_xml"]
+    xml = byzantine.inputs.sources["rp2026"]
     page = pages(xml)[29]
     main = greek_words(page_text([page], True))
     apparatus = greek_words(page_text([page], False))
@@ -315,10 +314,10 @@ def accented_input(verses: Mapping[str, list[str]]) -> Content:
 
 
 def test_accented_tr_preserves_source_words(
-    byzantine: Mapping[str, Any], tr: Text
+    byzantine: Reconciliation, tr: Text
 ) -> None:
-    alignment = byzantine["tr_alignment"]
-    original = json.loads(byzantine["source_inputs"]["accented_tr"].read_text())
+    alignment = byzantine.greek.tr_alignment
+    original = json.loads(byzantine.inputs.sources["accented_tr"].read_text())
     source = {
         f"{r['book_name_short']} {r['chapter']}:{r['verse']}": [
             unicodedata.normalize("NFC", w["greek"]) for w in r["words"]
@@ -427,7 +426,7 @@ def test_complete_joined_word_projects_across_verse_boundaries() -> None:
 
 
 def test_display_punctuation_matches_pinned_sources(
-    byzantine: Mapping[str, Any],
+    byzantine: Reconciliation,
 ) -> None:
     def punctuation(text: str) -> str:
         return "".join(
@@ -436,7 +435,7 @@ def test_display_punctuation_matches_pinned_sources(
             if not c.isalpha() and not c.isspace() and not unicodedata.combining(c)
         )
 
-    original = json.loads(byzantine["source_inputs"]["accented_tr"].read_text())
+    original = json.loads(byzantine.inputs.sources["accented_tr"].read_text())
     for book in BOOKS:
         source = " ".join(
             w["greek"]
@@ -446,7 +445,7 @@ def test_display_punctuation_matches_pinned_sources(
         )
         aligned = " ".join(
             w
-            for ref, words in byzantine["tr_accented"].items()
+            for ref, words in byzantine.greek.tr_alignment.text.items()
             if ref.split()[0] == book
             for w in words
         )
@@ -462,7 +461,7 @@ def test_display_punctuation_matches_pinned_sources(
             ]
 
         assert case_without_finals(aligned) == case_without_finals(source), book
-    root = ET.fromstring(byzantine["printed_xml"].read_bytes())
+    root = ET.fromstring(byzantine.inputs.sources["rp2026"].read_bytes())
     source = " ".join(
         "".join(n.itertext()).strip()
         for n in root.findall("page/text")
@@ -470,7 +469,7 @@ def test_display_punctuation_matches_pinned_sources(
     )
     source = re.sub(r"-\s+(?=\w)", "", source)
     aligned = " ".join(
-        w for verse in byzantine["printed"].values() for w in verse["accented"]
+        w for verse in byzantine.greek.printed.values() for w in verse["accented"]
     )
     assert punctuation(aligned) == punctuation(source)
     assert [c[0].isupper() for c in accent_letters(aligned)] == [

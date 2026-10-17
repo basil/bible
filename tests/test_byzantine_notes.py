@@ -17,7 +17,7 @@ from bible.byzantine import edit, notes, verify
 from bible.byzantine.edit import NOTE_KINDS, NOTE_LABELS
 from bible.byzantine.greek import Structure
 from bible.byzantine.rows import Disposition, NoteScope
-from bible.byzantine.stages import Context
+from bible.byzantine.stages import Reconciliation
 from bible.checks import CheckFailed
 from bible.scripture import Verse
 from bible.usj import Content, Document, Node
@@ -43,11 +43,11 @@ def fields(note: Node) -> dict[str, str]:
 
 
 @pytest.fixture(scope="module")
-def edition_notes(byzantine: Context) -> list[Found]:
+def edition_notes(byzantine: Reconciliation) -> list[Found]:
     """(ref, verse, offset, note) for every note the Orthodox Liturgical
     English Bible (OLEB) added."""
     found = []
-    for book, doc in byzantine["prepared"].items():
+    for book, doc in byzantine.edited.prepared.items():
         for address, verse in scripture.verses(doc).items():
             for offset, note in verse.notes:
                 if note.get("category") == "edition" or note.get("x-key"):
@@ -374,13 +374,13 @@ def test_every_note_has_the_agreed_shape(edition_notes: list[Found]) -> None:
             assert f["fqa"].strip(), ref
 
 
-def noted(byzantine: Context) -> list[Disposition]:
+def noted(byzantine: Reconciliation) -> list[Disposition]:
     """The rows whose edits carry TR notes: all but the corrections of
     shared Greek."""
-    return [r for r in byzantine["dispositions"] if r["disposition"] != "shared"]
+    return [r for r in byzantine.verified.dispositions if r["disposition"] != "shared"]
 
 
-def test_kinds_follow_the_edits(byzantine: Context) -> None:
+def test_kinds_follow_the_edits(byzantine: Reconciliation) -> None:
     def kind(note: Node) -> str:
         found = note["x-scope"]["kind"]
         where = note["x-scope"].get("where")
@@ -406,7 +406,7 @@ def test_kinds_follow_the_edits(byzantine: Context) -> None:
             assert kind(row["source_note"]) == "moved-out"
 
 
-def test_the_lemma_contains_the_changed_words(byzantine: Context) -> None:
+def test_the_lemma_contains_the_changed_words(byzantine: Reconciliation) -> None:
     for row in noted(byzantine):
         for e in row.get("edits", []):
             if "note" not in e:
@@ -421,12 +421,12 @@ def test_the_lemma_contains_the_changed_words(byzantine: Context) -> None:
 
 
 def test_the_alternative_restores_the_source_words(
-    byzantine: Context,
+    byzantine: Reconciliation,
     kjv_text: Mapping[str, str],
     prepared_verses: dict[str, Verse],
 ) -> None:
     """Substituting fqa for the lemma gives the KJV words at a replacement."""
-    rows = byzantine["dispositions"]
+    rows = byzantine.verified.dispositions
     shared = {row["ref"] for row in rows if row["disposition"] == "shared"}
     checked = 0
     for row in rows:
@@ -468,9 +468,9 @@ def test_the_alternative_restores_the_source_words(
 
 
 def test_the_lemma_decisions_apply(
-    byzantine: Context, dispositions: dict[str, Disposition]
+    byzantine: Reconciliation, dispositions: dict[str, Disposition]
 ) -> None:
-    entries = byzantine["note_lemmas"]
+    entries = byzantine.decisions.lemmas
     assert entries
     for d in entries:
         edits = [e for e in dispositions[d["id"]]["edits"] if "note" in e]
@@ -481,16 +481,18 @@ def test_the_lemma_decisions_apply(
         ), (d["id"], lemma)
 
 
-def test_a_stale_lemma_decision_is_refused(byzantine: Context) -> None:
-    row = next(r for r in byzantine["dispositions"] if r.get("edits"))
+def test_a_stale_lemma_decision_is_refused(byzantine: Reconciliation) -> None:
+    row = next(r for r in byzantine.verified.dispositions if r.get("edits"))
     rows: list[Disposition] = [{**row, "edits": [e.copy() for e in row["edits"]]}]
     stale = {"id": "MAT 0:0#1", "edit": 1, "lemma": "nothing", "why": "Test."}
     with pytest.raises(CheckFailed, match="Stale TR note lemma decisions"):
-        notes.apply(byzantine["documents"], byzantine["prepared"], rows, [stale])
+        notes.apply(
+            byzantine.english.documents, byzantine.edited.prepared, rows, [stale]
+        )
 
 
-def test_readable_span_widens_to_a_unique_phrase(byzantine: Context) -> None:
-    verse = scripture.verses(byzantine["documents"]["JHN"])["1:1"]
+def test_readable_span_widens_to_a_unique_phrase(byzantine: Reconciliation) -> None:
+    verse = scripture.verses(byzantine.english.documents["JHN"])["1:1"]
     words = scripture.word_spans(verse.text)
     assert [w for w, *_ in words].count("word") == 3
     at = [i for i, (w, *_) in enumerate(words) if w == "word"][1]
@@ -550,22 +552,30 @@ def normalized_note_restoration(text: str) -> str:
     return re.sub(r"\s+([,;:.!?])", r"\1", text)
 
 
-def test_notes_restore_every_ordinary_edited_verse(byzantine: Context) -> None:
+def test_notes_restore_every_ordinary_edited_verse(byzantine: Reconciliation) -> None:
     edited = (
-        {e["ref"] for row in byzantine["dispositions"] for e in row.get("edits", [])}
-        - set(byzantine["structure"].moved)
-        - {r["ref"] for r in byzantine["dispositions"] if r["disposition"] == "shared"}
+        {
+            e["ref"]
+            for row in byzantine.verified.dispositions
+            for e in row.get("edits", [])
+        }
+        - set(byzantine.greek.structure.moved)
+        - {
+            r["ref"]
+            for r in byzantine.verified.dispositions
+            if r["disposition"] == "shared"
+        }
     )
     checked = set()
-    for book, document in byzantine["prepared"].items():
+    for book, document in byzantine.edited.prepared.items():
         for address, verse in scripture.verses(document).items():
             ref = f"{book} {address}"
             if ref not in edited:
                 continue
             restored = restored_verse(verse)
             assert normalized_note_restoration(restored) == normalized_note_restoration(
-                byzantine["kjv"][ref]
-            ), (ref, restored, byzantine["kjv"][ref])
+                byzantine.english.kjv[ref]
+            ), (ref, restored, byzantine.english.kjv[ref])
             checked.add(ref)
     assert checked == edited
     assert len(checked) > 700
@@ -574,9 +584,11 @@ def test_notes_restore_every_ordinary_edited_verse(byzantine: Context) -> None:
 @pytest.mark.parametrize(
     "mutation", ["lemma", "alternative", "position", "terminal_stop"]
 )
-def test_restoration_detects_mutations(byzantine: Context, mutation: str) -> None:
-    verse = scripture.verses(byzantine["prepared"]["MAT"])["3:8"]
-    original = normalized_note_restoration(byzantine["kjv"]["MAT 3:8"])
+def test_restoration_detects_mutations(
+    byzantine: Reconciliation, mutation: str
+) -> None:
+    verse = scripture.verses(byzantine.edited.prepared["MAT"])["3:8"]
+    original = normalized_note_restoration(byzantine.english.kjv["MAT 3:8"])
     assert normalized_note_restoration(restored_verse(verse)) == original
     edited_notes = list(copy.deepcopy(verse.notes))
     offset, note = next(
@@ -616,10 +628,10 @@ def test_restoration_detects_mutations(byzantine: Context, mutation: str) -> Non
     ],
 )
 def test_changed_terminal_stop_belongs_to_lemma(
-    byzantine: Context, ref: str, finished_stop: str, original_stop: str
+    byzantine: Reconciliation, ref: str, finished_stop: str, original_stop: str
 ) -> None:
     book, address = ref.split()
-    verse = scripture.verses(byzantine["prepared"][book])[address]
+    verse = scripture.verses(byzantine.edited.prepared[book])[address]
     note = next(
         note
         for _, note in reversed(verse.notes)
@@ -629,18 +641,18 @@ def test_changed_terminal_stop_belongs_to_lemma(
     assert f["fq"].removesuffix(": ").endswith(finished_stop)
     assert f["fqa"].endswith(original_stop)
     assert normalized_note_restoration(restored_verse(verse)) == (
-        normalized_note_restoration(byzantine["kjv"][ref])
+        normalized_note_restoration(byzantine.english.kjv[ref])
     )
 
 
-def omitted_quotation(byzantine: Context, ref: str) -> str:
+def omitted_quotation(byzantine: Reconciliation, ref: str) -> str:
     row = next(
         r
-        for r in byzantine["dispositions"]
+        for r in byzantine.verified.dispositions
         if r.get("action") == "omit" and r["ref"] == ref
     )
     book, address = row["note_scope"]["ref"].split()
-    verse = scripture.verses(byzantine["prepared"][book])[address]
+    verse = scripture.verses(byzantine.edited.prepared[book])[address]
     label = f"Textus Receptus adds verse {ref.split(':')[1]}: "
     return next(
         fields(n)["fqa"] for _, n in verse.notes if fields(n).get("ft") == label
@@ -648,18 +660,18 @@ def omitted_quotation(byzantine: Context, ref: str) -> str:
 
 
 @pytest.mark.parametrize("ref", ["LUK 17:36", "ACT 8:37", "ACT 15:34", "ACT 24:7"])
-def test_omitted_verse_quotes_complete_kjv(byzantine: Context, ref: str) -> None:
+def test_omitted_verse_quotes_complete_kjv(byzantine: Reconciliation, ref: str) -> None:
     assert normalized_note_restoration(omitted_quotation(byzantine, ref)) == (
-        normalized_note_restoration(byzantine["kjv"][ref])
+        normalized_note_restoration(byzantine.english.kjv[ref])
     )
 
 
 def test_omitted_verse_quotation_check_detects_changed_final_stop(
-    byzantine: Context,
+    byzantine: Reconciliation,
 ) -> None:
     ref = "ACT 8:37"
     quote = omitted_quotation(byzantine, ref)
-    original = normalized_note_restoration(byzantine["kjv"][ref])
+    original = normalized_note_restoration(byzantine.english.kjv[ref])
     assert normalized_note_restoration(quote) == original
     assert normalized_note_restoration(quote.rstrip()[:-1] + ";") != original
 
@@ -725,10 +737,12 @@ def assert_lemma_ends_at_note(
     )
 
 
-def test_lemmas_end_at_the_note_with_the_verse_italics(byzantine: Context) -> None:
+def test_lemmas_end_at_the_note_with_the_verse_italics(
+    byzantine: Reconciliation,
+) -> None:
     checked = 0
     supplied = 0
-    for document in byzantine["prepared"].values():
+    for document in byzantine.edited.prepared.values():
         for verse in scripture.verses(document).values():
             for offset, note in verse.notes:
                 if "Textus Receptus" not in usj.text_of(note["content"]):
@@ -754,7 +768,7 @@ class Owned(NamedTuple):
     range: list[int] | None
 
 
-def test_alternatives_preserve_the_pinned_kjv_styles(byzantine: Context) -> None:
+def test_alternatives_preserve_the_pinned_kjv_styles(byzantine: Reconciliation) -> None:
     """Each alternative has the styles of its source range, short and
     structural notes included."""
     owners: dict[str, Owned] = {}
@@ -778,10 +792,10 @@ def test_alternatives_preserve_the_pinned_kjv_styles(byzantine: Context) -> None
     for item in owners.values():
         by_ref.setdefault(item.scope["ref"], []).append(item)
     originals = {
-        book: scripture.verses(doc) for book, doc in byzantine["documents"].items()
+        book: scripture.verses(doc) for book, doc in byzantine.english.documents.items()
     }
     checked = supplied = 0
-    for book, document in byzantine["prepared"].items():
+    for book, document in byzantine.edited.prepared.items():
         # Match each note by its recorded verse and offset, then compare
         # against the pinned source.
         for address, verse in scripture.verses(document).items():
@@ -819,7 +833,9 @@ def test_alternatives_preserve_the_pinned_kjv_styles(byzantine: Context) -> None
                     span = scope.get("source_range", item.range)
                     assert span is not None
                     a, b = span
-                expected = verse_style(byzantine["documents"][source_book], source)[a:b]
+                expected = verse_style(
+                    byzantine.english.documents[source_book], source
+                )[a:b]
                 if scope.get("terminal_stop"):
                     assert expected[-1][0] == scope["terminal_stop"]
                     expected = expected[:-1]
@@ -832,9 +848,9 @@ def test_alternatives_preserve_the_pinned_kjv_styles(byzantine: Context) -> None
 
 
 def test_lemma_style_check_detects_plain_text_preserving_italic_corruption(
-    byzantine: Context,
+    byzantine: Reconciliation,
 ) -> None:
-    for document in byzantine["prepared"].values():
+    for document in byzantine.edited.prepared.values():
         for verse in scripture.verses(document).values():
             for offset, original in verse.notes:
                 if "Textus Receptus" not in usj.text_of(original["content"]):
@@ -857,9 +873,9 @@ def test_lemma_style_check_detects_plain_text_preserving_italic_corruption(
 
 
 def test_lemma_position_check_detects_a_note_moved_before_its_lemma(
-    byzantine: Context,
+    byzantine: Reconciliation,
 ) -> None:
-    for document in byzantine["prepared"].values():
+    for document in byzantine.edited.prepared.values():
         for verse in scripture.verses(document).values():
             for offset, note in verse.notes:
                 if "Textus Receptus" not in usj.text_of(
@@ -873,9 +889,9 @@ def test_lemma_position_check_detects_a_note_moved_before_its_lemma(
 
 
 def test_alternative_style_comparison_detects_plain_text_preserving_corruption(
-    byzantine: Context,
+    byzantine: Reconciliation,
 ) -> None:
-    for document in byzantine["prepared"].values():
+    for document in byzantine.edited.prepared.values():
         for verse in scripture.verses(document).values():
             for _, note in verse.notes:
                 if "Textus Receptus" not in usj.text_of(note["content"]):
