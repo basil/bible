@@ -3790,6 +3790,26 @@
     }
   },
   "words": {
+    "quœ addita sunt": {
+      "to": "quæ addita sunt",
+      "why": "Editorial spelling correction of œ to æ in the King James preface."
+    },
+    "suoe linguoe hominibus": {
+      "to": "suæ linguæ hominibus",
+      "why": "Editorial spelling correction of oe to æ in the King James preface."
+    },
+    "Lucifugoe Scripturarum": {
+      "to": "Lucifugæ Scripturarum",
+      "why": "Editorial spelling correction of oe to æ in the King James preface."
+    },
+    "Et Hebroeum sermonem": {
+      "to": "Et Hebræum sermonem",
+      "why": "Editorial spelling correction of oe to æ in the King James preface."
+    },
+    "Proepuce": {
+      "to": "Præpuce",
+      "why": "Editorial spelling correction of oe to æ in the King James preface."
+    },
     "whose soever": {
       "to": "whosesoever",
       "why": "Write the compound whosesoever as one word throughout the edition."
