@@ -84,15 +84,15 @@
     "source_forms": ["Vat.", "Vatican Text", "Vaticanus"]
   },
   "aldine": {
-    "display": "Aldine Text",
-    "meaning": "Aldine Text",
+    "display": "Aldine text",
+    "meaning": "Aldine text",
     "period_forms": ["Ald"],
     "note_forms": [],
     "source_forms": ["Aldine Text"]
   },
   "complutensian": {
-    "display": "Complutensian Text",
-    "meaning": "Complutensian Text",
+    "display": "Complutensian text",
+    "meaning": "Complutensian text",
     "period_forms": ["Complut"],
     "note_forms": [],
     "source_forms": ["Complutensian Text", "Complutensian"]
@@ -107,6 +107,7 @@
   "authorized-version": {
     "display": "Authorized Version",
     "meaning": "Authorized Version",
+    "note_term": "king-james-version",
     "period_forms": ["A. V"],
     "note_forms": [],
     "source_forms": [

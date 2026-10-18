@@ -186,7 +186,12 @@ def printed(
         # Abbreviations print in the edition's forms.
         (
             r"\v 8 the captain of the \f + \fr 99:8 \fqa A. V. \ft guard, i. e. the Sept. reading.\f*cooks stood there.",
-            r"the captain of the \f - \fr 99:8 \fq cooks: \ft Authorized Version \fqa guard\ft , i.e., the LXX reading\f*cooks stood there.",
+            r"the captain of the \f - \fr 99:8 \fq cooks: \ft KJV \fqa guard\ft , i.e., the LXX reading\f*cooks stood there.",
+        ),
+        # A version's name keeps its capital where the note runs on from its lemma.
+        (
+            r"\v 8 the captain of the \f + \fr 99:8 \ft Eng. Ver. guard.\f*cooks stood there.",
+            r"the captain of the \f - \fr 99:8 \fq cooks stood there: \ft KJV guard\f*cooks stood there.",
         ),
         # A caller just inside supplied words stands before them.
         (
@@ -657,7 +662,16 @@ def test_the_notes_the_edition_writes_say_what_each_part_is() -> None:
 @pytest.mark.parametrize(
     "words, expected",
     [
-        ("so in the Sept. and A. V. also", "so in the LXX and Authorized Version also"),
+        ("so in the Sept. and A. V. also", "so in the LXX and KJV also"),
+        ("AV margin", "KJV margin"),
+        ("Eng. Ver. margin", "KJV margin"),
+        ("Authorized Version margin", "KJV margin"),
+        ("English Version margin", "KJV margin"),
+        ("English Bible margin", "KJV margin"),
+        # The period of a form the label replaces still ends its sentence.
+        ("so the Eng. Ver. The Heb. reads", "so the KJV. The Heb. reads"),
+        ("Ald. reads", "Aldine text reads"),
+        ("Complut. reads", "Complutensian text reads"),
         ("see the MS. Then the Vulg. reads", "see the MS. Then the Vulgate reads"),
         ("in the year a.d. 126, or b.c. 217", "in the year AD 126, or 217 BC"),
         ("scil. the people, &c.", "sc. the people, etc."),
@@ -681,7 +695,7 @@ def test_the_notes_the_edition_writes_say_what_each_part_is() -> None:
         # capital the source gives "lit.", and takes no stop of its own.
         ("Sept. Lit. them.", "LXX lit. them."),
         ("Vulg. lit. them.", "Vulgate lit. them."),
-        ("A. V. Lit. them.", "Authorized Version lit. them."),
+        ("A. V. Lit. them.", "KJV lit. them."),
         ("(Heb.) lit. them.", "(Heb.) lit. them."),
         ("Gr. finishing — cutting.", "Gr. finishing — cutting."),
         ("Note. - This rendering.", "Note. - This rendering."),

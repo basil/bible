@@ -308,6 +308,7 @@ class Terminology(TypedDict, total=False):
     display: ReadOnly[str]
     meaning: ReadOnly[str]
     note_forms: ReadOnly[tuple[str, ...]]
+    note_term: ReadOnly[str]
     period_forms: ReadOnly[tuple[str, ...]]
     plural: ReadOnly[str]
     source_forms: ReadOnly[tuple[str, ...]]

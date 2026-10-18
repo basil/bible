@@ -121,6 +121,7 @@ TRIM = " \n.,;:?!+'‘’“”\"`"
 # languages, texts, versions and people, and the pronoun "I".
 NAMES = re.compile(
     r"(?:Gr|Heb|Hebrew|Hebraism|Syr|Sept|Alex|Vat|Complut|Ald|Vulg|A\. V|App|Appendix"
+    r"|AV|Eng\. Ver|English Bible|English [Vv]ersion|Authorized Version"
     r"|Lambert Bos|Patrick Junius|Tertullian|Professor Samuel Lee|Brenton|Swete|Vatican"
     r"|Sinaiticus|Cotton Genesis|Bodleian Genesis|Ambrosian Pentateuch|I)(?!\w)"
 )

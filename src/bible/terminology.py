@@ -1,9 +1,10 @@
 """The edition's terms and abbreviations (edition/terminology.json).
 
 A term has one identity, one printed form and one meaning; the sources write
-it many ways. "A. V.", "Eng. Ver." and "AV" are the Authorized Version, and
-print so; "Sept." is "LXX"; "i. e." closes up, and takes a comma. A term is
-recognized in a source's words and printed in the edition's form, in the form
+it many ways. "A. V.", "Eng. Ver." and "AV" name the Authorized Version,
+which a note calls by its note term, KJV; "Sept." is "LXX"; "i. e." closes up,
+and takes a comma.
+A term is recognized in a source's words and printed in the edition's form, in the form
 The Chicago Manual of Style gives it. The same registry writes the rows that
 complete Brenton's list of abbreviations (edition/abbreviations.json), so
 that the list and the notes cannot disagree.
@@ -49,6 +50,7 @@ LABELS = (
     "septuagint",
     "vulgate",
     "authorized-version",
+    "king-james-version",
     "complutensian",
     "aldine",
     "scilicet",
@@ -105,7 +107,14 @@ def registry(policy: bible.policy.Policy) -> Registry:
     used: dict[str, set[str]] = {field: set() for field in ALIASES}
     for identity, entry in data.items():
         require_fields(
-            entry, {"display", "meaning", *ALIASES}, {"plural"}, f"Term {identity}"
+            entry,
+            {"display", "meaning", *ALIASES},
+            {"plural", "note_term"},
+            f"Term {identity}",
+        )
+        require(
+            entry.get("note_term", identity) in data,
+            f"Unknown note term: {identity}",
         )
         require(
             entry["display"] and entry["meaning"] and entry.get("plural", "plural"),
@@ -182,6 +191,25 @@ def recognize(text: str, terms: Registry, *, note: bool = True) -> tuple[Term, .
     for term in candidates:
         if not any(term.start < t.end and t.start < term.end for t in result):
             result.append(term)
+    if note:
+        # A term with a note term is called by it in a note, however the
+        # source writes it; the period of its form still ends a sentence
+        # ("Eng. Ver. The"), as an abbreviation's does.
+        result = [
+            (
+                replace(
+                    t,
+                    identity=other,
+                    form="display",
+                    closure=bool(
+                        t.lexeme.endswith(".") and SENTENCE_END.match(text, t.end)
+                    ),
+                )
+                if (other := terms.terms[t.identity].get("note_term"))
+                else t
+            )
+            for t in result
+        ]
     result = list(literally_decided(text, result))
     # A sign following a witness label, spaced on both sides as Brenton sets
     # it, introduces its added or omitted words, and agrees with the labels

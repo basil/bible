@@ -1277,6 +1277,17 @@
       "why": "Brenton prints both Greek forms with capital kappa (1879 and 1900 p. 890); restore the printed capitals.",
       "uncategorized": true
     },
+    "INT the question arises When were": {
+      "from": "the question arises, When, were",
+      "to": "the question arises, When were",
+      "why": "Brenton 1879 Introduction p. ii (PDF page 12) prints When were without a comma after When; eBible adds one."
+    },
+    "INT mere fragments was edited by Montfaucon": {
+      "from": "(mere fragments) was edited by Montfaucon",
+      "to": "(mere fragments) were edited by Montfaucon",
+      "why": "Brenton 1879 Introduction p. vi (PDF page 16) prints were edited by Montfaucon; eBible substitutes was. Restore the printed wording, including its agreement after what remains.",
+      "uncategorized": true
+    },
     "INT μεταξθῇ": {
       "from": "μεταξθῇ",
       "to": "μεταχθῇ",
