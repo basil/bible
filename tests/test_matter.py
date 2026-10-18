@@ -217,7 +217,8 @@ def test_the_appendix_notes_are_footnotes_at_their_verses(
     # The verses it supplies carry their numbers in the note.
     exodus = next(line for line in lines(edition, "EXO") if "Complutensian" in line)
     assert exodus.startswith(
-        "\\v 23 \\ef + \\ft The following verses are found neither in the Vatican"
+        "\\v 23 \\ef + \\ft The following verses are found neither in Codex Vaticanus"
+        " nor Codex Alexandrinus, but appear thus in the Complutensian text:"
     )
     assert "\\+fv 23\\+fv*And thou shalt make upon the oracle" in exodus
     # A note that only sent the reader to the Appendix gives way to it.

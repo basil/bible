@@ -519,13 +519,13 @@
       }
     ]
   },
-  "appendix-hebrew-verse-numbers": {
-    "why": "Brenton's Appendix note on Exodus 28 quotes the Complutensian verses under the Hebrew's numbers, 23–28, but the edition numbers Exodus 28 as the Greek does, so its own 28:23–28 are other verses, and the note itself stands at 28:23. The note says whose numbers it prints, so that a reader does not take them for the edition's.",
+  "appendix-codex-names": {
+    "why": "Name the two manuscripts explicitly in Brenton's Appendix note on Exodus 28, using Codex Vaticanus and Codex Alexandrinus in place of Vatican and Alexandrine copies.",
     "changes": [
       {
         "unit": "BAK",
-        "from": "appear thus in the Complutensian text:",
-        "to": "appear thus in the Complutensian text, here numbered as in the Hebrew:"
+        "from": "The following verses are found neither in the Vatican nor Alexandrine copies",
+        "to": "The following verses are found neither in Codex Vaticanus nor Codex Alexandrinus"
       }
     ]
   },
