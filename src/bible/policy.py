@@ -61,8 +61,9 @@ EDITOR = cast(Entry, freeze({"id": "CNC", "file": "content/introduction.sfm"}))
 NUMBERING = cast(Entry, freeze({"id": "XXA", "file": "content/numbering.sfm"}))
 OLD_TESTAMENT = cast(Entry, freeze({"id": "XXF", "file": "content/old-testament.sfm"}))
 NEW_TESTAMENT = cast(Entry, freeze({"id": "XXG", "file": "content/new-testament.sfm"}))
-APPENDICES = cast(Entry, freeze({"id": "GLO", "file": "content/appendices.sfm"}))
-READINGS = cast(Entry, freeze({"id": "XXC", "file": "content/byzantine.sfm"}))
+# The textual variants, which the website publishes and the book does not
+# print.
+VARIANTS = cast(Entry, freeze({"id": "XXC", "file": "content/byzantine.sfm"}))
 
 
 # Compared and hashed by identity, so that what is worked out from a policy
@@ -101,28 +102,40 @@ class Policy:
         return self.manifest["scripture"]
 
     @property
-    def entries(self) -> tuple[Entry, ...]:
-        """Every unit the edition prints, in its order."""
+    def front_matter(self) -> tuple[tuple[str, Entry], ...]:
+        """Every unit of front matter the edition prints, in its order, with
+        the section it stands in: the project's own pages before the
+        testaments, then each testament's before its books."""
         manifest = self.manifest
-        scripture = manifest["scripture"]
         return (
             # Project units follow the contents page and are listed in it.
-            *manifest["front_matter"],
+            *(("front", unit) for unit in manifest["front_matter"]),
             # The editor's introduction follows the list of abbreviations,
             # and the table of chapters and verses, which it refers to.
-            EDITOR,
-            NUMBERING,
+            ("front", EDITOR),
+            ("front", NUMBERING),
+            *(("old_testament", unit) for unit in manifest["old_testament_front"]),
+            *(("new_testament", unit) for unit in manifest["new_testament_front"]),
+        )
+
+    @property
+    def entries(self) -> tuple[Entry, ...]:
+        """Every unit the edition prints, in its order."""
+        front = self.front_matter
+        scripture = self.manifest["scripture"]
+
+        def of(section: str) -> tuple[Entry, ...]:
+            return tuple(unit for where, unit in front if where == section)
+
+        return (
+            *of("front"),
             # Each testament opens with its divider and its translation's front matter.
             OLD_TESTAMENT,
-            *manifest["old_testament_front"],
+            *of("old_testament"),
             *(u for u in scripture if u["section"] == "old_testament"),
             NEW_TESTAMENT,
-            *manifest["new_testament_front"],
+            *of("new_testament"),
             *(u for u in scripture if u["section"] == "new_testament"),
-            APPENDICES,
-            *manifest["appendices"],
-            # The readings of the Byzantine text close the book.
-            READINGS,
         )
 
     @property
@@ -229,7 +242,6 @@ def check(policy: Policy) -> None:
         "front_matter",
         "old_testament_front",
         "new_testament_front",
-        "appendices",
         "excluded",
     }
     require_fields(policy.manifest, manifest_fields, (), "Manifest")
@@ -240,7 +252,6 @@ def check(policy: Policy) -> None:
         "front_matter",
         "old_testament_front",
         "new_testament_front",
-        "appendices",
     ):
         units = policy.manifest[manifest_group]
         for unit_entry in units:

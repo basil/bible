@@ -359,11 +359,6 @@ def test_the_list_of_abbreviations_is_completed_from_the_registry(
         ("St.", "for saint"),
         ("Vat.", "for Codex Vaticanus"),
         ("KJV", "for King James Version"),
-        ("OLEB", "for Orthodox Liturgical English Bible, this edition"),
-        (
-            "RP26",
-            "for Robinson and Pierpont, The Greek New Testament According to the Byzantine Text (2026)",
-        ),
         ("TR", "for Textus Receptus, the Received Text"),
     } <= set(rows)
     # ...and all are in alphabetical order, by their letters alone. Turpie's
@@ -377,10 +372,6 @@ def test_the_list_of_abbreviations_is_completed_from_the_registry(
     assert "\\tc2 for \\it quasi dicat\\it*, as if to say\n" in latin
     # A title in a meaning is italic as the Latin is.
     assert "\\tc2 for \\it Textus Receptus\\it*, the Received Text\n" in latin
-    assert (
-        "\\tc2 for Robinson and Pierpont, \\it The Greek New Testament According"
-        " to the Byzantine Text\\it* (2026)\n"
-    ) in latin
 
 
 def test_front_and_back_matter_heading_capitalization(
@@ -406,13 +397,17 @@ def test_front_and_back_matter_heading_capitalization(
             "\\mt2 King James Version",
             "\\mt2 Conformed to the Byzantine Text",
         ],
-        "GLO": ["\\mt1 Appendix", "\\mt2 The Readings of the Byzantine Text"],
-        "XXC": ["\\mt1 Readings of the Byzantine Text"],
     }
     for code, headings in expected.items():
         assert [
             line for line in lines(edition, code) if line.startswith("\\mt")
         ] == headings
+    # The textual variants, prepared for the website alone.
+    assert [
+        line
+        for line in usj.serialize(edition.variants_page).splitlines()
+        if line.startswith("\\mt")
+    ] == ["\\mt1 Textual Variants"]
 
 
 @pytest.mark.parametrize("unit", ["XXD", "TDX"])

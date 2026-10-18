@@ -1,6 +1,16 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { renderChapter, escape, chapterPath, type Document } from "./usj.ts";
+import {
+  renderChapter,
+  renderMatter,
+  renderProse,
+  renderVariants,
+  heading,
+  chapterPath,
+  type Document,
+  type Node,
+  type Variant,
+} from "./usj.ts";
 export type Chapter = {
   number: string;
   label: string;
@@ -12,42 +22,98 @@ export type Book = {
   section: string;
   title: string;
   short: string;
+  // The name one of its chapters is cited by.
+  cited: string;
   chapters: Chapter[];
 };
 export const directory = fileURLToPath(
   new URL("../../../build/web/", import.meta.url),
 );
-type Manifest = { books: Book[] };
-export const SECTIONS: Record<string, string> = {
+// A unit of the front matter the book prints, under the section it opens.
+export type Matter = {
+  id: string;
+  section: string;
+  title: string;
+  short: string;
+};
+type Manifest = { books: Book[]; matter: Matter[] };
+// The reader's sections in the book's order: the edition's own pages,
+// untitled, before the testaments, then each testament's front matter
+// and books.
+const SECTIONS: Record<string, string> = {
+  front: "",
   old_testament: "Old Testament",
   new_testament: "New Testament",
 };
+// A file make web writes, explaining how to prepare it where it is missing
+// or malformed.
+function readPrepared<T>(name: string, what: string): T {
+  try {
+    return JSON.parse(readFileSync(`${directory}/${name}`, "utf8")) as T;
+  } catch (error) {
+    throw new Error(
+      `Cannot read the prepared ${what}; run make web before building or serving the site.`,
+      { cause: error },
+    );
+  }
+}
 // Read once: every chapter page and the navigation ask for it.
 let prepared: Manifest | undefined;
 export function manifest(): Manifest {
-  if (!prepared) {
-    try {
-      prepared = JSON.parse(
-        readFileSync(`${directory}/manifest.json`, "utf8"),
-      ) as Manifest;
-    } catch (error) {
-      throw new Error(
-        "Cannot read the prepared Bible; run make web before building or serving the site.",
-        { cause: error },
-      );
-    }
-  }
+  prepared ??= readPrepared<Manifest>("manifest.json", "Bible");
   return prepared;
 }
+// The variants: the page's title and opening prose,
+// and its entries by book, whose names the manifest carries.
+type VariantsBook = { id: string; entries: Variant[] };
+type Terms = { kjv: string; apparatus: string };
+type Variants = {
+  title: string;
+  intro: Node[];
+  terms: Terms;
+  books: VariantsBook[];
+};
+let listed: Variants | undefined;
+export function variants(): Variants {
+  listed ??= readPrepared<Variants>("variants.json", "variants");
+  return listed;
+}
+// Each book's variants, with the book as the manifest has it.
+export const variantsBooks = () =>
+  variants().books.map(({ id, entries }) => {
+    const book = manifest().books.find((b) => b.id === id);
+    if (!book) {
+      throw new Error(`Variants of a book the edition lacks: ${id}`);
+    }
+    return { book, entries };
+  });
+export const variantsURL = (book: { id: string }) =>
+  `/variants/${book.id.toLowerCase()}`;
+export const variantsLink = (book: Book): Link => ({
+  text: book.short,
+  link: variantsURL(book),
+});
 export const document = (book: Book, chapter: Chapter) =>
-  JSON.parse(
-    readFileSync(
-      `${directory}/books/${book.id}/${chapter.number}.json`,
-      "utf8",
-    ),
-  ) as Document;
+  readPrepared<Document>(
+    `books/${book.id}/${chapter.number}.json`,
+    `chapter ${book.id} ${chapter.number}`,
+  );
 export const chapterURL = (book: Book, chapter: Chapter) =>
   chapterPath(book.id, chapter.number);
+export const matterURL = (unit: Matter) => `/read/${unit.id.toLowerCase()}`;
+export const matterLink = (unit: Matter) => ({
+  text: unit.short,
+  link: matterURL(unit),
+});
+// The reader's sections in the book's order, each with its front matter
+// before its books.
+export const sections = () =>
+  Object.entries(SECTIONS).map(([section, title]) => ({
+    section,
+    title,
+    matter: manifest().matter.filter((unit) => unit.section === section),
+    books: manifest().books.filter((b) => b.section === section),
+  }));
 // Every chapter of the edition, in order.
 export const chapters = () =>
   manifest().books.flatMap((book) =>
@@ -68,7 +134,7 @@ function page(book: Book, chapter: Chapter) {
     );
   }
   return {
-    title: chapter.titled ? chapter.label : `${book.short} ${chapter.label}`,
+    title: chapter.titled ? chapter.label : chapterLink(book, chapter).text,
     html,
   };
 }
@@ -85,26 +151,143 @@ export function pages(): Page[] {
   return rendered;
 }
 export const chapterLink = (book: Book, chapter: Chapter) => ({
-  text: `${book.short} ${chapter.label}`,
+  text: `${book.cited} ${chapter.label}`,
   link: chapterURL(book, chapter),
 });
-export function chapterSearchContent(relativePath: string): string | undefined {
-  const url = `/${relativePath.replace(/\.md$/, "")}`;
-  const found = pages().find((p) => chapterURL(p.book, p.chapter) === url);
-  return found && `# ${found.title} {#chapter}\n\n${found.html}`;
+// Every unit of front matter, rendered once under its printed title, and
+// without it for the search index.
+type MatterPage = { unit: Matter; html: string; body: string };
+let renderedMatter: MatterPage[] | undefined;
+export function matterPages(): MatterPage[] {
+  renderedMatter ??= manifest().matter.map((unit) => ({
+    unit,
+    ...renderMatter(
+      readPrepared<Document>(
+        `matter/${unit.id}.json`,
+        `front matter ${unit.id}`,
+      ),
+    ),
+  }));
+  return renderedMatter;
 }
-// The pager runs through the whole Bible, while the sidebar opens one book.
+type Link = { text: string; link: string };
+// The previous and next of a run of pages, by each page's link.
+function pager(links: Link[]) {
+  const positions = new Map(links.map((p, i) => [p.link, i]));
+  return (link: string) => {
+    const at = positions.get(link);
+    if (at === undefined) {
+      throw new Error(`Page in no section of the contents: ${link}`);
+    }
+    return { prev: links[at - 1] ?? false, next: links[at + 1] ?? false };
+  };
+}
+// Every page of the reader in the book's order: each section's front
+// matter, then its chapters. The pager runs through them, while the
+// sidebar opens one book. Read from the manifest alone, so that no page
+// is rendered to place another.
+let readerPager: ReturnType<typeof pager> | undefined;
+const neighbours = (link: string) =>
+  (readerPager ??= pager(
+    sections().flatMap(({ matter, books }) => [
+      ...matter.map(matterLink),
+      ...books.flatMap((b) => b.chapters.map((c) => chapterLink(b, c))),
+    ]),
+  ))(link);
+// The variants introduction and books, rendered once, each by its link.
+// Each entry is anchored by its verse and linked to it where the edition
+// has it.
+type VariantsPage = { link: string; title: string; html: string };
+let renderedVariants: VariantsPage[] | undefined;
+const INTRODUCTION: Link = {
+  text: "Introduction",
+  link: "/variants/introduction",
+};
+// The sidebar and pager share the introduction followed by the books, read
+// from the manifest alone, so that no page is rendered to place another.
+export const variantsLinks = (): Link[] => [
+  INTRODUCTION,
+  ...variantsBooks().map(({ book }) => variantsLink(book)),
+];
+export function variantsPages(): VariantsPage[] {
+  renderedVariants ??= [
+    {
+      link: INTRODUCTION.link,
+      title: INTRODUCTION.text,
+      html: variantsIntro(),
+    },
+    ...variantsBooks().map(({ book, entries }) => {
+      const verses = new Map(
+        book.chapters.map((c) => [c.number, new Set(c.verses)]),
+      );
+      return {
+        link: variantsURL(book),
+        title: `${book.short}: ${variants().title}`,
+        html: renderVariants(
+          book.id,
+          entries,
+          (chapter, verse) => verses.get(chapter)?.has(verse) ?? false,
+          variants().terms,
+        ),
+      };
+    }),
+  ];
+  return renderedVariants;
+}
+// The prose that opens the variants, under the page's title.
+export const variantsIntro = () => renderProse(variants().intro, "variants");
+// Each generated page's content for the local search index, which reads
+// files and so finds nothing of its own for a chapter, a unit of front
+// matter or a book's variants; by the page's URL.
+let searchable: Map<string, string> | undefined;
+const searched = (
+  link: string,
+  title: string,
+  id: string,
+  html: string,
+): [string, string] => [link, `# ${title} {#${id}}\n\n${html}`];
+export function searchContent(relativePath: string): string | undefined {
+  searchable ??= new Map([
+    ...pages().map((p) =>
+      searched(chapterURL(p.book, p.chapter), p.title, "chapter", p.html),
+    ),
+    ...matterPages().map((p) =>
+      searched(matterURL(p.unit), p.unit.title, "matter", p.body),
+    ),
+    ...variantsPages().map((p) =>
+      searched(p.link, p.title, "variants", p.html),
+    ),
+  ]);
+  return searchable.get(`/${relativePath.replace(/\.md$/, "")}`);
+}
+// The pager runs from the introduction through the books' variants; the
+// index is a page of its own, which it does not reach.
+export function variantsRoutes() {
+  const around = pager(variantsLinks());
+  return variantsPages().map(({ link, title, html }) => ({
+    params: { book: link.split("/").at(-1)!, title, ...around(link) },
+    content: `${heading("variants", title)}\n\n${html}`,
+  }));
+}
+// A unit of front matter's page: its printed title is its heading.
+export function matterRoutes() {
+  return matterPages().map(({ unit, html }) => ({
+    params: {
+      unit: unit.id.toLowerCase(),
+      title: unit.title,
+      ...neighbours(matterURL(unit)),
+    },
+    content: html,
+  }));
+}
 export function readerPages() {
-  const all = pages();
-  const neighbour = (p?: Page) => (p ? chapterLink(p.book, p.chapter) : false);
-  return all.map(({ book, chapter, title, html }, i) => ({
+  return pages().map(({ book, chapter, title, html }) => ({
     params: {
       book: book.id.toLowerCase(),
       chapter: chapter.number,
       title,
-      prev: neighbour(all[i - 1]),
-      next: neighbour(all[i + 1]),
+      ...neighbours(chapterURL(book, chapter)),
     },
-    content: `<h1 id="chapter">${escape(title)}</h1>\n\n${html}`,
+    content: `${heading("chapter", title)}\n\n${html}`,
   }));
 }

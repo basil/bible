@@ -38,7 +38,8 @@ from fontTools.pens.transformPen import TransformPen
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.tables.otBase import OTTableWriter
 
-from bible import paths, usj
+from bible import paths
+from bible.byzantine import variants
 from bible.pipeline import Edition
 
 FONTS = paths.FONTS / "olebfont"
@@ -704,17 +705,25 @@ def test_printed_comparison_symbols_are_covered(style: str) -> None:
 
 
 @pytest.mark.parametrize("face", ["GFSDidot.otf", "GFSDidotBold.otf"])
-def test_appendix_greek_font_covers_its_source_characters(
+def test_variants_greek_font_covers_its_source_characters(
     edition: Edition, face: str
 ) -> None:
-    content = edition.documents["XXC"]["content"]
+    """The website sets the Greek lanes in GFS Didot, and the words a
+    correction of the English is about in its bold."""
+    segments = [
+        segment
+        for _, lanes in edition.variants
+        for lane in lanes
+        if lane["language"] == "grc"
+        for segment in lane["segments"]
+    ]
     if face == "GFSDidotBold.otf":
-        content = [node for node in usj.walk(content) if node.get("marker") == "bd"]
+        segments = [s for s in segments if not isinstance(s, str) and "about" in s]
     greek_chars = {
         ord(c)
-        for node in usj.walk(content)
-        if node.get("marker") == "wg"
-        for c in usj.text_of(node.get("content", []))
+        for segment in segments
+        for side in ("from", "to")
+        for c in variants.witness([segment], side)
         if not c.isspace()
     }
     assert greek_chars

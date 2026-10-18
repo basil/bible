@@ -1,5 +1,5 @@
 """The review of the reconciliation, one file for each book with every
-non-neutral unit once, markdown safe; and the appendix of readings."""
+non-neutral unit once, markdown safe; and the textual variants."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ import unicodedata
 from collections import Counter
 from collections.abc import Mapping
 from dataclasses import replace
-from typing import cast
+from typing import Literal, cast
 
 import pytest
 from conftest import amended
@@ -17,7 +17,7 @@ from conftest import amended
 import bible.annotate
 import bible.pipeline
 from bible import revision, scripture, usj
-from bible.byzantine import BOOKS, BOYD_ASV, REVISIONS, appendix, review
+from bible.byzantine import BOOKS, BOYD_ASV, REVISIONS, review, variants
 from bible.byzantine.decisions import ref_key
 from bible.byzantine.english import verses_of
 from bible.byzantine.greek import accent_letters, ascii_greek, greek_words
@@ -30,7 +30,8 @@ from bible.byzantine.presentation import (
 )
 from bible.byzantine.rows import Disposition, InstructionEdit, RevisionRow, Unit
 from bible.byzantine.stages import Reconciliation
-from bible.usj import Document, Node
+from bible.checks import CheckFailed
+from bible.usj import Document
 
 HEADING = re.compile(
     r"^## (?P<unit>[1-3A-Z]{3} \d+:\d+#\S+) · (?P<disposition>\w+)(?: · (?P<action>\w+))? · score (?P<score>\d+)$"
@@ -194,9 +195,9 @@ def assert_greek_preserved(
     byzantine: Reconciliation,
     ref: str,
     target: str,
-    prepared: appendix.PreparedGreek | None = None,
+    prepared: variants.PreparedGreek | None = None,
 ) -> None:
-    prepared = prepared if prepared is not None else appendix.prepare_greek(byzantine)
+    prepared = prepared if prepared is not None else variants.prepare_greek(byzantine)
     lines = review.greek_verses(byzantine, ref, prepared, target)
     diff = lines[0].split(": ", 1)[1].rstrip()
     before = re.sub(r"\[\+[^\]]*\]", "", diff)
@@ -214,7 +215,7 @@ def assert_greek_preserved(
 def test_greek_comparison_marks_difference_and_keeps_context(
     byzantine: Reconciliation, packets: dict[str, str]
 ) -> None:
-    lines = review.greek_verses(byzantine, "MAT 3:8", appendix.prepare_greek(byzantine))
+    lines = review.greek_verses(byzantine, "MAT 3:8", variants.prepare_greek(byzantine))
     assert "[-καρποὺς ἀξίους][+καρπὸν ἄξιον]" in lines[0]
     section = section_of(packets, "MAT 3:8#1")
     for line in lines:
@@ -337,7 +338,7 @@ def test_real_verse_diffs_preserve_both_texts(byzantine: Reconciliation) -> None
 
 
 def test_greek_diff_marks_accents(byzantine: Reconciliation) -> None:
-    lines = review.greek_verses(byzantine, "PHP 3:5", appendix.prepare_greek(byzantine))
+    lines = review.greek_verses(byzantine, "PHP 3:5", variants.prepare_greek(byzantine))
     assert "[-περιτομὴ][+περιτομῇ]" in lines[0]
 
 
@@ -355,7 +356,7 @@ def test_greek_context_uses_ledger_and_is_shown_once(
     byzantine: Reconciliation, packets: dict[str, str]
 ) -> None:
     lines = review.greek_verses(
-        byzantine, "PHM 1:17", appendix.prepare_greek(byzantine)
+        byzantine, "PHM 1:17", variants.prepare_greek(byzantine)
     )
     assert "` Εἰ οὖν [-ἐμὲ][+με] ἔχεις κοινωνόν, προσλαβοῦ αὐτὸν ὡς ἐμέ. `" in lines[0]
     text = packets["JAS.md"]
@@ -446,7 +447,7 @@ def test_instruction_witness_lines_show_the_proposal_in_kjv_context(
 def test_unit_greek_context_uses_corresponding_passage(
     byzantine: Reconciliation,
 ) -> None:
-    prepared = appendix.prepare_greek(byzantine)
+    prepared = variants.prepare_greek(byzantine)
     verses = verses_of(byzantine.edited.prepared)
     unit = unit_of(byzantine, "JAS 2:11#1")
     passages = review.unit_passages(unit, byzantine, prepared, verses)
@@ -459,7 +460,7 @@ def test_unit_greek_context_uses_corresponding_passage(
                 texts,
                 p,
                 0,
-                appendix.passage_ranges(
+                variants.passage_ranges(
                     byzantine, "JAS 2:11", "JAS 2:11", texts[0], texts[1]
                 ),
                 greek=True,
@@ -476,7 +477,7 @@ def test_unit_greek_context_uses_corresponding_passage(
 def test_every_greek_diff_preserves_pinned_verses_except_display_normalization(
     byzantine: Reconciliation,
 ) -> None:
-    prepared = appendix.prepare_greek(byzantine)
+    prepared = variants.prepare_greek(byzantine)
     for ref, target in {(u["ref"], u["target_ref"]) for u in byzantine.greek.units}:
         assert_greek_preserved(byzantine, ref, target, prepared)
 
@@ -683,15 +684,44 @@ def test_the_summary_counts_the_dispositions(byzantine: Reconciliation) -> None:
         assert f"- {name}: {result}" in text
 
 
-# The appendix of readings.
+# The textual variants.
 
 OMITTED = {"LUK 17:36", "ACT 8:37", "ACT 15:34", "ACT 24:7"}
 
 
-def greek_label(row: appendix.Row) -> str:
+def greek_label(row: variants.Row) -> str:
     """The Received Text's, or Scrivener's where the apparatuses do not
     establish its readings as the Received Text's (received.py)."""
     return "TR" if row.received else "Scrivener"
+
+
+GAP: variants.Gap = {"gap": True}
+
+
+def readings(lane: variants.Lane) -> list[tuple[str | None, str | None]]:
+    """A lane's readings in order, each witness's words without the spaces
+    about them, or None where it has nothing."""
+    return [
+        (
+            cast(variants.Reading, s).get("from", "").strip() or None,
+            cast(variants.Reading, s).get("to", "").strip() or None,
+        )
+        for s in lane["segments"]
+        if not isinstance(s, str) and ("from" in s or "to" in s)
+    ]
+
+
+def shown(lane: variants.Lane) -> str:
+    """A lane's words in one line: the words the witnesses share, both
+    readings where they differ, and an ellipsis for each gap."""
+    return "".join(
+        (
+            variants.witness([s], "from")
+            if isinstance(s, str) or "gap" in s or "about" in s
+            else " ".join(s[k] for k in ("from", "to") if k in s)
+        )
+        for s in lane["segments"]
+    )
 
 
 @pytest.fixture(scope="module")
@@ -700,7 +730,7 @@ def printed(
 ) -> dict[str, Document]:
     """The New Testament's books after the readings, with the edition's
     systematic spelling and punctuation but before its verse-specific
-    revisions, as the appendix quotes them."""
+    revisions, as the variants quote them."""
     return {
         code: revision.regularized(revision.named(code, doc, policy, set()), policy)
         for code, doc in byzantine.edited.prepared.items()
@@ -713,7 +743,7 @@ def regularized(
     byzantine: Reconciliation, policy: bible.policy.Policy
 ) -> dict[str, Document]:
     """The King James books before the readings, with the edition's
-    systematic spelling and punctuation, as the appendix compares them."""
+    systematic spelling and punctuation, as the variants compare them."""
     return {
         code: revision.regularized(doc, policy)
         for code, doc in byzantine.english.documents.items()
@@ -725,61 +755,61 @@ def rows(
     byzantine: Reconciliation,
     regularized: dict[str, Document],
     printed: dict[str, Document],
-) -> list[appendix.Row]:
-    return appendix.rows(byzantine, regularized, printed)
+) -> list[variants.Row]:
+    return variants.rows(byzantine, regularized, printed)
 
 
 @pytest.fixture(scope="module")
 def entries(
-    rows: list[appendix.Row], ctx: bible.annotate.Context
-) -> dict[str, list[Node]]:
-    """Each row's run of the appendix's blocks, by the verse it is about."""
-    blocks, spans = appendix.blocks(rows, ctx.books, ctx.terms)
-    return {row.reference: blocks[start:end] for row, start, end in spans}
-
-
-def text_of(block: Node) -> str:
-    return usj.text_of(block["content"])
+    rows: list[variants.Row], ctx: bible.annotate.Context
+) -> dict[str, list[variants.Lane]]:
+    """Each row's lanes, by the verse it is about."""
+    return {row.reference: variants.lanes(row, ctx.terms) for row in rows}
 
 
 def test_romans_amen_keeps_shared_sentence_punctuation(
-    entries: dict[str, list[Node]], packets: dict[str, str]
+    entries: dict[str, list[variants.Lane]], packets: dict[str, str]
 ) -> None:
-    entry = entries["ROM 16:20"]
-    assert "ὑμῶν. [ἀμήν.]" in text_of(entry[1])
-    assert "you. [Amen.]" in text_of(entry[2])
+    greek, english = entries["ROM 16:20"]
+    for lane, shared, dropped in (
+        (greek, "ὑμῶν.", "ἀμήν."),
+        (english, "you.", "Amen."),
+    ):
+        *_, before, last = lane["segments"]
+        assert isinstance(before, str) and before.endswith(shared)
+        assert last == {"from": f" {dropped}"}
     lines = packets["ROM.md"].splitlines()
-    greek = next(
+    greek_line = next(
         line for line in lines if line.startswith("Greek whole verse · TR ROM 16:20 ")
     )
-    english = next(
+    english_line = next(
         line
         for line in lines
         if line.startswith("English whole verse · KJV ROM 16:20 ")
     )
-    assert "ὑμῶν.[- ][-ἀμήν.]" in greek
-    assert "you.[- Amen.]" in english
+    assert "ὑμῶν.[- ][-ἀμήν.]" in greek_line
+    assert "you.[- Amen.]" in english_line
 
 
 def test_johannine_omission_is_one_reading(
-    entries: dict[str, list[Node]], packets: dict[str, str]
+    entries: dict[str, list[variants.Lane]], packets: dict[str, str]
 ) -> None:
     omitted = (
         "in heaven, the Father, the Word, and the Holy {}: and these three are one."
     )
-    english = entries["1JN 5:7"][2]["content"]
-    # The appendix quotes the King James text as the edition spells it; the
+    english = entries["1JN 5:7"][1]
+    # The variants quote the King James text as the edition spells it; the
     # review quotes it as the source does.
-    assert usj.text_of(english) == (
-        f"KJV → OLEB For there are three that bear record, [{omitted.format('Spirit')}]"
-    )
-    assert usj.char("it", ",") in english
+    assert english["segments"] == [
+        "For there are three that bear record",
+        {"from": f" {omitted.format('Spirit')}", "to": ","},
+    ]
     section = section_of(packets, "1JN 5:7#1")
     assert f"bear record[+,][- {omitted.format('Ghost')}]" in section
 
 
 def test_every_verse_with_a_greek_difference_is_listed_once(
-    byzantine: Reconciliation, rows: list[appendix.Row]
+    byzantine: Reconciliation, rows: list[variants.Row]
 ) -> None:
     references = [row.reference for row in rows]
     assert len(references) == len(set(references))
@@ -792,29 +822,26 @@ def test_every_verse_with_a_greek_difference_is_listed_once(
 
 
 def test_a_changed_verse_has_one_aligned_comparison_per_language(
-    rows: list[appendix.Row], entries: dict[str, list[Node]]
+    rows: list[variants.Row], entries: dict[str, list[variants.Lane]]
 ) -> None:
     changed = [row for row in rows if row.kjv != row.oleb and row.kind != "omitted"]
     assert len(changed) > 700
     for row in changed:
-        heading, *lines = entries[row.reference]
-        lines = [line for line in lines if not text_of(line).startswith("apparatus:")]
-        assert heading["marker"] == "im"
-        assert all(line["marker"] == "ili1" for line in lines)
-        labels = [text_of(line).split(" ", 1)[0] for line in lines]
-        assert labels == [greek_label(row), "KJV"], row.reference
-        greek, english = (text_of(line) for line in lines)
-        assert greek.count("…") == english.count("…"), row.reference
-        for text in (greek, english):
+        lanes = [lane for lane in entries[row.reference] if "apparatus" not in lane]
+        assert [(lane["from"], lane["to"]) for lane in lanes] == [
+            (greek_label(row), "RP26"),
+            ("KJV", "OLEB"),
+        ], row.reference
+        greek, english = (lane["segments"] for lane in lanes)
+        assert greek.count(GAP) == english.count(GAP), row.reference
+        for lane in lanes:
+            text = shown(lane)
             assert not re.search(r"…\s*…", text), row.reference
-            body = text.split(" ", 3)[3]
-            assert len([part for part in body.split("…") if part.strip()]) == len(
+            assert len([part for part in text.split("…") if part.strip()]) == len(
                 row.passages
             ), row.reference
-        assert greek.startswith(f"{greek_label(row)} → RP26 …") == english.startswith(
-            "KJV → OLEB …"
-        )
-        assert greek.endswith("…") == english.endswith("…")
+        assert (greek[0] == GAP) == (english[0] == GAP), row.reference
+        assert (greek[-1] == GAP) == (english[-1] == GAP), row.reference
     fruit = next(row for row in rows if row.reference == "MAT 3:8")
     assert "καρποὺς ἀξίους" in fruit.greek_tr
     assert "καρπὸν ἄξιον" in fruit.greek_rp
@@ -827,113 +854,61 @@ def test_a_changed_verse_has_one_aligned_comparison_per_language(
     king = next(row for row in rows if row.reference == "MAT 22:7")
     assert king.kjv and king.kjv.startswith("But when the king heard thereof")
     assert king.oleb and king.oleb.startswith("And when that king heard thereof")
-    # The English comparison has no notes or note lemmas.
-    assert "**" not in "".join(text_of(b) for b in entries["MAT 22:7"])
-    assert not usj.notes_of(entries["MAT 22:7"])
+    # The English comparison has no note lemmas.
+    assert "**" not in "".join(map(shown, entries["MAT 22:7"]))
 
 
 @pytest.mark.parametrize("ref", ["REV 13:6", "REV 13:7"])
 def test_revelation_grouped_comparisons_include_unchanged_english_context(
-    ref: str, rows: list[appendix.Row], entries: dict[str, list[Node]]
+    ref: str, rows: list[variants.Row], entries: dict[str, list[variants.Lane]]
 ) -> None:
     row = next(row for row in rows if row.reference == ref)
-    heading, greek, english = entries[ref]
-    assert text_of(heading) == ref.split()[1]
+    greek, english = entries[ref]
     assert len(row.passages) == 2
-    greek_text, english_text = text_of(greek), text_of(english)
-    assert greek_text.count("TR → RP26") == english_text.count("KJV → OLEB") == 1
-    assert greek_text.count("…") == english_text.count("…") == 1
-    assert " … " in greek_text and " … " in english_text
+    for lane in (greek, english):
+        assert lane["segments"].count(GAP) == 1
+        assert " … " in shown(lane)
+    adopted = variants.witness(english["segments"], "to")
     if ref == "REV 13:6":
-        assert "[ἤνοιξε] ἤνοιξεν" in greek_text
-        assert "[καὶ] τοὺς" in greek_text
-        assert "And he opened his mouth in blasphemy against God," in english_text
-        assert "[and] even them that dwell in heaven." in english_text
+        assert ("ἤνοιξε", "ἤνοιξεν") in readings(greek)
+        assert ("καὶ", None) in readings(greek)
+        assert "And he opened his mouth in blasphemy against God," in adopted
+        assert ("and", "even") in readings(english)
+        assert "even them that dwell in heaven." in adopted
     else:
-        assert "ποιῆσαι πόλεμον [ποιῆσαι]" in greek_text
-        assert "φυλὴν καὶ λαὸν καὶ γλῶσσαν" in greek_text
-        assert "And it was given unto him to make war with the saints," in english_text
-        assert "all kindreds, and people, and tongues, and nations." in english_text
-    first_english = english_text.split(" … ")[0]
-    assert "[" not in first_english
-    for node in usj.walk(english["content"]):
-        if node.get("marker") == "it":
-            reading = usj.text_of(node["content"])
-            if any(char.isalnum() for char in reading):
-                assert reading not in first_english
-    assert any(node.get("marker") == "bd" for node in usj.walk(greek["content"]))
-    assert any(node.get("marker") == "it" for node in usj.walk(english["content"]))
+        assert (None, "ποιῆσαι") in readings(greek)
+        assert ("ποιῆσαι", None) in readings(greek)
+        assert "φυλὴν καὶ λαὸν καὶ γλῶσσαν" in variants.witness(greek["segments"], "to")
+        assert "And it was given unto him to make war with the saints," in adopted
+        assert "all kindreds, and people, and tongues, and nations." in adopted
+    # The first passage of the English stands unchanged, for context.
+    first = english["segments"][: english["segments"].index(GAP)]
+    assert first and all(isinstance(s, str) for s in first)
+    assert readings(greek) and readings(english)
 
 
 def test_a_verse_whose_english_stands_has_a_greek_comparison(
-    rows: list[appendix.Row], entries: dict[str, list[Node]]
+    rows: list[variants.Row], entries: dict[str, list[variants.Lane]]
 ) -> None:
     same = [row for row in rows if row.kind == "same"]
     assert same
     for row in same:
         assert row.units and row.kjv is None and row.oleb is None, row.reference
-        heading, greek, *evidence = entries[row.reference]
-        assert heading["marker"] == "im"
-        assert text_of(heading) == row.reference.split()[1]
-        assert greek["marker"] == "ili1"
-        assert text_of(greek).startswith(f"{greek_label(row)} → RP26 ")
-        assert all(
-            text_of(line).startswith("apparatus: TR → RP26 ") for line in evidence
-        )
+        greek, *evidence = entries[row.reference]
+        assert "apparatus" not in greek
+        assert (greek["from"], greek["to"]) == (greek_label(row), "RP26")
+        for lane in evidence:
+            assert lane.get("apparatus")
+            assert (lane["from"], lane["to"], lane["language"]) == ("TR", "RP26", "grc")
     accents = [unit for row in same for unit in row.units if unit.accented]
     assert accents
-
-
-def test_grouped_comparisons_keep_multiple_changes_and_outer_omissions(
-    ctx: bible.annotate.Context,
-) -> None:
-    texts = (
-        "ἀρχή; παλαιόν ἕν; κενόν; παλαιόν δύο; τέλος.",
-        "ἀρχή; νέον ἕν; κενόν; νέον δύο; τέλος.",
-        "start; old … one; gap; old two; end.",
-        "start; new … one; gap; new two; end.",
-    )
-    selected = tuple(
-        tuple(
-            (text.index(first), text.index(last) + len(last))
-            for text, first, last in zip(texts, starts, ends, strict=True)
-        )
-        for starts, ends in (
-            (("παλαιόν", "νέον", "old", "new"), ("ἕν;", "ἕν;", "one;", "one;")),
-            (
-                ("παλαιόν δύο", "νέον δύο", "old two", "new two"),
-                ("δύο;", "δύο;", "two;", "two;"),
-            ),
-        )
-    )
-    row = appendix.Row(
-        "MAT 1:1",
-        "MAT 1:1",
-        "changed",
-        texts[0],
-        texts[1],
-        (),
-        texts[2],
-        texts[3],
-        passages=selected,
-    )
-    blocks, spans = appendix.blocks([row], ctx.books, ctx.terms)
-    heading, greek, english = blocks[spans[0][1] : spans[0][2]]
-    assert text_of(heading) == "1:1"
-    assert text_of(greek) == "TR → RP26 … [παλαιόν] νέον ἕν; … [παλαιόν] νέον δύο; …"
-    assert text_of(english) == "KJV → OLEB … [old] new … one; … [old] new two; …"
-    assert [
-        usj.text_of(node["content"])
-        for node in usj.walk(english["content"])
-        if node.get("marker") == "it"
-    ] == ["new", "new"]
 
 
 def test_the_four_omitted_verses_are_listed(
     byzantine: Reconciliation,
     regularized: dict[str, Document],
-    rows: list[appendix.Row],
-    entries: dict[str, list[Node]],
+    rows: list[variants.Row],
+    entries: dict[str, list[variants.Lane]],
 ) -> None:
     omitted = [row for row in rows if row.kind == "omitted"]
     assert (
@@ -946,17 +921,17 @@ def test_the_four_omitted_verses_are_listed(
         book, verse = row.reference.split()
         kjv = scripture.verses(regularized[book])[verse].text
         assert row.kjv == scripture.plain(kjv)
-        lines = [text_of(b) for b in entries[row.reference][1:]]
-        assert lines == [
-            f"{greek_label(row)} → RP26 [{row.greek_tr}]",
-            f"KJV → OLEB [{row.kjv}]",
-        ]
+        greek, english = entries[row.reference]
+        assert (greek["from"], greek["to"]) == (greek_label(row), "RP26")
+        assert greek["segments"] == [{"from": row.greek_tr}]
+        assert (english["from"], english["to"]) == ("KJV", "OLEB")
+        assert english["segments"] == [{"from": row.kjv}]
 
 
 def test_a_moved_verse_is_labelled_with_the_king_james_number(
     byzantine: Reconciliation,
-    rows: list[appendix.Row],
-    entries: dict[str, list[Node]],
+    rows: list[variants.Row],
+    entries: dict[str, list[variants.Lane]],
     printed: dict[str, Document],
 ) -> None:
     moved = {row.reference: row for row in rows if row.source != row.reference}
@@ -971,16 +946,14 @@ def test_a_moved_verse_is_labelled_with_the_king_james_number(
         after = scripture.plain(english[ref].text)
         if before == after:
             assert row.kjv is None and row.oleb is None
-            assert not any(text_of(line).startswith("KJV →") for line in entries[ref])
+            assert not any(lane["language"] == "en" for lane in entries[ref])
         assert " ".join(
             ascii_greek("".join(accent_letters(w))) for w in row.greek_tr.split()
         ) == " ".join(byzantine.greek.tr[row.source])
-        heading = text_of(entries[ref][0])
-        assert heading == (f"{ref.split()[1]} (KJV {row.source.split()[1]})"), heading
 
 
-def test_all_appendix_passages_keep_source_words(
-    byzantine: Reconciliation, rows: list[appendix.Row]
+def test_all_variants_passages_keep_source_words(
+    byzantine: Reconciliation, rows: list[variants.Row]
 ) -> None:
     for row in rows:
         assert row.greek_tr == " ".join(byzantine.greek.tr_alignment.text[row.source])
@@ -1014,19 +987,25 @@ def test_all_appendix_passages_keep_source_words(
 
 
 def test_heli_transcription_and_apparatus_stay_distinct(
-    rows: list[appendix.Row], entries: dict[str, list[Node]]
+    rows: list[variants.Row], entries: dict[str, list[variants.Lane]]
 ) -> None:
     row = next(r for r in rows if r.reference == "LUK 3:23")
     assert "Ἡλί" in row.greek_tr
     contrast = next(u for u in row.units if u.accented)
     assert contrast.accented is not None and contrast.accented[0] == "Ἡλί,"
     assert contrast.apparatus == ("ἠλι", "ἡλι")
-    assert text_of(entries["LUK 3:23"][1]).startswith("TR → RP26 ")
-    assert text_of(entries["LUK 3:23"][-1]) == "apparatus: TR → RP26 [ἠλι] ἡλι"
+    assert entries["LUK 3:23"][0]["from"] == "TR"
+    assert entries["LUK 3:23"][-1] == {
+        "from": "TR",
+        "to": "RP26",
+        "language": "grc",
+        "segments": [{"from": "ἠλι", "to": "ἡλι"}],
+        "apparatus": True,
+    }
 
 
-def test_appendix_passages_and_comparisons_keep_source_case_and_punctuation(
-    byzantine: Reconciliation, rows: list[appendix.Row]
+def test_variants_passages_and_comparisons_keep_source_case_and_punctuation(
+    byzantine: Reconciliation, rows: list[variants.Row]
 ) -> None:
     def source_features(text: str) -> tuple[list[bool], str]:
         return (
@@ -1057,7 +1036,7 @@ def test_appendix_passages_and_comparisons_keep_source_case_and_punctuation(
                 " ".join(
                     byzantine.greek.tr_alignment.text[unit["ref"]][
                         slice(
-                            *appendix.projected(
+                            *variants.projected(
                                 byzantine, "tr", unit["ref"], unit["tr_range"]
                             )
                         )
@@ -1068,7 +1047,7 @@ def test_appendix_passages_and_comparisons_keep_source_case_and_punctuation(
                 " ".join(
                     rp[
                         slice(
-                            *appendix.projected(
+                            *variants.projected(
                                 byzantine, "rp", unit["target_ref"], unit["rp_range"]
                             )
                         )
@@ -1093,22 +1072,299 @@ def test_appendix_passages_and_comparisons_keep_source_case_and_punctuation(
                         ), unit["id"]
 
 
-def test_unchanged_english_and_accent_only_entries_use_normal_comparisons(
+def test_unchanged_english_and_accent_only_entries_have_one_lane(
     ctx: bible.annotate.Context,
 ) -> None:
-    row = appendix.Row(
+    row = variants.Row(
         "MAT 1:1",
         "MAT 1:1",
         "same",
         "πρῶτον; τὸ τέλος.",
         "πρῶτον; τό τέλος.",
-        (appendix.Unit("τὸ", "τό", ("τὸ", "τό")),),
+        (variants.Unit("τὸ", "τό", ("τὸ", "τό")),),
     )
-    blocks, spans = appendix.blocks([row], ctx.books, ctx.terms)
-    heading, greek = blocks[spans[0][1] : spans[0][2]]
-    assert text_of(heading) == "1:1"
-    assert text_of(greek) == "TR → RP26 πρῶτον; [τὸ] τό τέλος."
-    assert any(node.get("marker") == "bd" for node in usj.walk(greek["content"]))
+    (greek,) = variants.lanes(row, ctx.terms)
+    assert (greek["from"], greek["to"]) == ("TR", "RP26")
+    assert greek["segments"] == ["πρῶτον; ", {"from": "τὸ", "to": "τό"}, " τέλος."]
+
+
+def test_lanes_pair_each_difference_and_keep_both_witnesses_words(
+    ctx: bible.annotate.Context,
+) -> None:
+    row = variants.Row(
+        "MAT 19:19",
+        "MAT 19:19",
+        "changed",
+        "τίμα τὸν πατέρα σου καὶ τὴν μητέρα.",
+        "τίμα τὸν πατέρα καὶ τὴν μητέρα.",
+        (),
+        "honour thy father and the mother.",
+        "honour thy father and thy mother.",
+    )
+    greek, english = variants.lanes(row, ctx.terms)
+    assert (greek["from"], greek["to"], greek["language"]) == ("TR", "RP26", "grc")
+    assert (english["from"], english["to"], english["language"]) == (
+        "KJV",
+        "OLEB",
+        "en",
+    )
+    # An omission is a reading with the source's side alone; a substitution
+    # pairs both sides. Each witness's words are read whole from its side.
+    assert greek["segments"] == [
+        "τίμα τὸν πατέρα ",
+        {"from": "σου "},
+        "καὶ τὴν μητέρα.",
+    ]
+    assert english["segments"] == [
+        "honour thy father and ",
+        {"from": "the", "to": "thy"},
+        " mother.",
+    ]
+    for lane, before, after in (
+        (greek, row.greek_tr, row.greek_rp),
+        (english, row.kjv, row.oleb),
+    ):
+        assert variants.witness(lane["segments"], "from") == before
+        assert variants.witness(lane["segments"], "to") == after
+    # A run of differences is one reading: here the Byzantine text drops a
+    # word with the space before it, and keeps the sentence's full stop.
+    dropped = variants.Row(
+        "MAT 19:26",
+        "MAT 19:26",
+        "same",
+        "τοῦτο ἀδύνατόν ἐστι, παρὰ δὲ Θεῷ πάντα δυνατά ἐστι.",
+        "τοῦτο ἀδύνατόν ἐστιν, παρὰ δὲ Θεῷ πάντα δυνατά.",
+        (),
+    )
+    (greek,) = variants.lanes(dropped, ctx.terms)
+    assert greek["segments"] == [
+        "τοῦτο ἀδύνατόν ",
+        {"from": "ἐστι", "to": "ἐστιν"},
+        ", παρὰ δὲ Θεῷ πάντα δυνατά",
+        {"from": " ἐστι"},
+        ".",
+    ]
+    # The spaces both sides open or close with are words they share, so a
+    # word dropped between two is a reading of the word and one space.
+    even = variants.Row(
+        "MAT 12:8",
+        "MAT 12:8",
+        "changed",
+        "ἐστι.",
+        "ἐστι.",
+        (),
+        "For the Son of man is Lord even of the sabbath day.",
+        "For the Son of man is Lord of the sabbath day.",
+    )
+    assert variants.lanes(even, ctx.terms)[1]["segments"] == [
+        "For the Son of man is Lord ",
+        {"from": "even "},
+        "of the sabbath day.",
+    ]
+    # An addition is a reading with the adopted text's side alone, keeping
+    # the space that joins it to the word before.
+    added = variants.Row(
+        "MAT 20:21",
+        "MAT 20:21",
+        "same",
+        "καὶ εἷς ἐξ εὐωνύμων, ἐν τῇ βασιλείᾳ σου.",
+        "καὶ εἷς ἐξ εὐωνύμων σου, ἐν τῇ βασιλείᾳ σου.",
+        (),
+    )
+    (greek,) = variants.lanes(added, ctx.terms)
+    assert greek["segments"] == [
+        "καὶ εἷς ἐξ εὐωνύμων",
+        {"to": " σου"},
+        ", ἐν τῇ βασιλείᾳ σου.",
+    ]
+
+
+def test_lanes_mark_the_greek_a_correction_of_the_english_is_about(
+    ctx: bible.annotate.Context,
+) -> None:
+    row = variants.Row(
+        "ACT 1:13",
+        "ACT 1:13",
+        "changed",
+        "Ἰάκωβος Ἀλφαίου καὶ Ἰούδας Ἰακώβου.",
+        "Ἰάκωβος Ἀλφαίου καὶ Ἰούδας Ἰακώβου.",
+        (),
+        "James the son of Alpheus, and Judas the brother of James.",
+        "James the son of Alpheus, and Judas the son of James.",
+        about=("ἰούδας ἰακώβου",),
+    )
+    greek, english = variants.lanes(row, ctx.terms)
+    # Found without case, and without the full stop after it.
+    assert greek["segments"] == [
+        "Ἰάκωβος Ἀλφαίου καὶ ",
+        {"about": "Ἰούδας Ἰακώβου"},
+        ".",
+    ]
+    assert variants.witness(english["segments"], "to") == row.oleb
+    # Greek the lane does not hold once stops the build.
+    stray = replace(row, about=("Ἰακώβου Ἀλφαίου",))
+    with pytest.raises(CheckFailed, match="not once in its lane"):
+        variants.lanes(stray, ctx.terms)
+    # The Greek is RP2026's, found in the adopted text: a movable ν or a
+    # mark the texts print otherwise within it stays a reading, and the
+    # words they share about it are set apart.
+    nu = variants.Row(
+        "MRK 11:17",
+        "MRK 11:17",
+        "changed",
+        "κληθήσεται πᾶσι τοῖς ἔθνεσιν; ὑμεῖς δὲ",
+        "κληθήσεται πᾶσιν τοῖς ἔθνεσιν; ὑμεῖς δὲ",
+        (),
+        "shall be called of all nations; but ye",
+        "shall be called for all nations; but ye",
+        about=("κληθήσεται πᾶσιν τοῖς ἔθνεσιν",),
+    )
+    assert variants.lanes(nu, ctx.terms)[0]["segments"] == [
+        {"about": "κληθήσεται"},
+        " ",
+        {"from": "πᾶσι", "to": "πᾶσιν"},
+        " ",
+        {"about": "τοῖς ἔθνεσιν"},
+        "; ὑμεῖς δὲ",
+    ]
+    # A grave accent is not the acute it stands for, as the decision's Greek
+    # was checked; and words two corrections cite are set apart once.
+    accents = replace(
+        row,
+        greek_tr="εἶδεν αὐτὸν καὶ ἐκάλεσεν αὐτόν.",
+        greek_rp="εἶδεν αὐτὸν καὶ ἐκάλεσεν αὐτόν.",
+        about=("αὐτὸν καὶ", "αὐτὸν"),
+    )
+    assert variants.lanes(accents, ctx.terms)[0]["segments"] == [
+        "εἶδεν ",
+        {"about": "αὐτὸν καὶ"},
+        " ἐκάλεσεν αὐτόν.",
+    ]
+
+
+def test_lanes_mark_the_words_left_out_between_passages_as_gaps(
+    ctx: bible.annotate.Context,
+) -> None:
+    texts = (
+        "ἀρχή; παλαιόν ἕν; κενόν; παλαιόν δύο; τέλος.",
+        "ἀρχή; νέον ἕν; κενόν; νέον δύο; τέλος.",
+        "start; old … one; gap; old two; end.",
+        "start; new … one; gap; new two; end.",
+    )
+    selected = tuple(
+        tuple(
+            (text.index(first), text.index(last) + len(last))
+            for text, first, last in zip(texts, starts, ends, strict=True)
+        )
+        for starts, ends in (
+            (("παλαιόν", "νέον", "old", "new"), ("ἕν;", "ἕν;", "one;", "one;")),
+            (
+                ("παλαιόν δύο", "νέον δύο", "old two", "new two"),
+                ("δύο;", "δύο;", "two;", "two;"),
+            ),
+        )
+    )
+    row = variants.Row(
+        "MAT 1:1", "MAT 1:1", "changed", *texts[:2], (), *texts[2:], passages=selected
+    )
+    greek, english = variants.lanes(row, ctx.terms)
+    assert greek["segments"] == [
+        GAP,
+        " ",
+        {"from": "παλαιόν", "to": "νέον"},
+        " ἕν; ",
+        GAP,
+        " ",
+        {"from": "παλαιόν", "to": "νέον"},
+        " δύο; ",
+        GAP,
+    ]
+    # An ellipsis in the source wording is not a gap.
+    assert variants.witness(english["segments"], "from") == "… old … one; … old two; …"
+    assert variants.witness(english["segments"], "to") == "… new … one; … new two; …"
+
+
+def test_lanes_add_the_apparatus_where_its_accents_differ(
+    ctx: bible.annotate.Context,
+) -> None:
+    def lanes_for(unit: variants.Unit) -> list[variants.Lane]:
+        row = variants.Row(
+            "MAT 1:1",
+            "MAT 1:1",
+            "same",
+            "πρῶτον; τὸ τέλος.",
+            "πρῶτον; τό τέλος.",
+            (unit,),
+        )
+        return variants.lanes(row, ctx.terms)
+
+    # Grave for acute is the same accent.
+    assert len(lanes_for(variants.Unit("τὸ", "τό", ("τὸ", "τό"), ("τό", "τὸ")))) == 1
+    printed, apparatus = lanes_for(
+        variants.Unit("τὸ", "τό", ("τὸ", "τό"), ("τό", "τῷ"))
+    )
+    assert "apparatus" not in printed
+    assert apparatus["apparatus"] is True
+    assert (apparatus["from"], apparatus["to"]) == ("TR", "RP26")
+    assert apparatus["segments"] == [{"from": "τό", "to": "τῷ"}]
+    # The ellipsis an apparatus quotes words apart with is a gap.
+    _, apart = lanes_for(
+        variants.Unit(
+            "τὸ … τὸ", "τό … τό", ("τὸ … τὸ", "τό … τό"), ("τό … τό", "τῷ … τῷ")
+        )
+    )
+    assert apart["segments"] == [
+        {"from": "τό", "to": "τῷ"},
+        " ",
+        {"gap": True},
+        " ",
+        {"from": "τό", "to": "τῷ"},
+    ]
+
+
+@pytest.mark.parametrize("authored", [False, True])
+def test_every_lane_reads_its_witnesses_words_in_order(
+    rows: list[variants.Row],
+    entries: dict[str, list[variants.Lane]],
+    edition: bible.pipeline.Edition,
+    authored: bool,
+) -> None:
+    """Each side of a lane, between its gaps, is its witness's own words in
+    order: the English exactly, the Greek but for the case the shared words
+    take and the dots and elision marks it displays alike; in the lanes of
+    the rows here and in the edition's."""
+    listed = (
+        list(edition.variants)
+        if authored
+        else [(row, entries[row.reference]) for row in rows]
+    )
+    assert listed
+    for row, lanes in listed:
+        assert lanes[0]["language"] == "grc"
+        assert lanes[0]["from"] == ("TR" if row.received else "Scrivener")
+        compared = [lane["language"] for lane in lanes if "apparatus" not in lane]
+        assert compared == (["grc", "en"] if row.kjv is not None else ["grc"])
+        for lane, before, after in (
+            (lanes[0], row.greek_tr, row.greek_rp),
+            *(((lanes[1], row.kjv, row.oleb),) if row.kjv is not None else ()),
+        ):
+            # An omitted verse has nothing on the adopted side.
+            witnesses: tuple[tuple[Literal["from", "to"], str], ...] = (
+                ("from", before or ""),
+                ("to", after or ""),
+            )
+            for key, text in witnesses:
+                read = variants.witness(lane["segments"], key)
+                if lane["language"] == "grc":
+                    read, text = read.lower(), greek_display(text).lower()
+                if not row.passages:
+                    assert read == text, row.reference
+                    continue
+                at = 0
+                for passage in read.split("…"):
+                    found = text.find(passage.strip(), at)
+                    assert found >= 0, (row.reference, key, passage)
+                    at = found + len(passage.strip())
 
 
 def test_ellipsis_comparisons_keep_case_at_each_occurrence(
@@ -1140,7 +1396,7 @@ def test_ellipsis_comparisons_keep_case_at_each_occurrence(
     )
     row = next(
         r
-        for r in appendix.rows(context, byzantine.english.documents, printed)
+        for r in variants.rows(context, byzantine.english.documents, printed)
         if r.reference == ref
     )
     contrast = next(u for u in row.units if u.accented)
@@ -1159,133 +1415,38 @@ def test_preparing_greek_does_not_change_inputs(byzantine: Reconciliation) -> No
         )
 
     before = copy.deepcopy(inputs())
-    appendix.prepare_greek(byzantine)
+    variants.prepare_greek(byzantine)
     assert inputs() == before
 
 
-@pytest.mark.parametrize("authored", [False, True])
-def test_appendix_comparisons_preserve_changes_and_retained_source_passages(
-    rows: list[appendix.Row],
-    entries: dict[str, list[Node]],
-    edition: bible.pipeline.Edition,
-    authored: bool,
-) -> None:
-    if authored:
-        entries = {
-            f"{book} {usj.text_of(blocks[0]['content'][:1])}": blocks
-            for book, _, start, end in edition.appendix
-            for blocks in [edition.documents["XXC"]["content"][start:end]]
-        }
-    for row in rows:
-        lines = [
-            line
-            for line in entries[row.reference][1:]
-            if not text_of(line).startswith("apparatus:")
-        ]
-        for line in lines:
-            is_greek = text_of(line).startswith(greek_label(row) + " ")
-            before, after = (
-                (row.greek_tr, row.greek_rp)
-                if is_greek
-                else (row.kjv or "", row.oleb or "")
-            )
-            content = line["content"][1:]  # Leave the paragraph's label out.
-            insertion_style = "bd" if is_greek else "it"
-            old: list[str] = []
-            new: list[str] = []
-            deleted = False
-            for i, item in enumerate(content):
-                if item == "[":
-                    deleted = True
-                elif item == "]":
-                    deleted = False
-                elif (
-                    item == " "
-                    and i > 0
-                    and content[i - 1] == "]"
-                    and usj.is_type(content[i + 1], "char", insertion_style)
-                ):
-                    continue  # The separator between a replaced pair.
-                elif deleted:
-                    old.append(usj.text_of([item]))
-                elif usj.is_type(item, "char", insertion_style):
-                    new.append(usj.text_of([item]))
-                else:
-                    old.append(usj.text_of([item]))
-                    new.append(usj.text_of([item]))
-            # Printed separators need not belong to either source reading.
-            for source, reconstructed in (
-                (before, "".join(old)),
-                (after, "".join(new)),
-            ):
-                at = 0
-                source_chars = "".join(source.split())
-                if is_greek:
-                    source_chars = greek_display(source_chars).lower()
-                for passage in reconstructed.split("…"):
-                    chars = "".join(passage.split())
-                    if is_greek:
-                        chars = chars.lower()
-                    if chars:
-                        assert chars in source_chars[at:], (
-                            row.reference,
-                            source,
-                            reconstructed,
-                        )
-                        at = source_chars.index(chars, at) + len(chars)
-
-            # Source spans still reconstruct both originals exactly; clipping
-            # retains exact passages, including their internal whitespace.
-            spans = (
-                anchored(before, after, row.greek_ranges)
-                if is_greek
-                else diff_spans(before, after)
-            )
-            for source, absent in ((before, "insert"), (after, "delete")):
-                assert "".join(v for k, v in spans if k != absent) == source
-                retained = "".join(v for k, v in clipped(spans) if k != absent)
-                at = 0
-                for passage in retained.split("…"):
-                    if passage.strip():
-                        at = source.index(passage.strip(), at) + len(passage.strip())
-            if before == after:
-                assert not any(
-                    n.get("marker") in {"bd", "it"} for n in usj.walk(content)
-                )
-                assert "[" not in usj.text_of(content)
-
-
-def test_appendix_blocks_leave_rows_unchanged(
-    rows: list[appendix.Row], ctx: bible.annotate.Context
+def test_variants_lanes_leave_rows_unchanged(
+    rows: list[variants.Row], ctx: bible.annotate.Context
 ) -> None:
     original = copy.deepcopy(rows)
-    appendix.blocks(rows, ctx.books, ctx.terms)
+    for row in rows:
+        variants.lanes(row, ctx.terms)
     assert rows == original
 
 
-def test_rp_dot_is_normalized_inside_the_greek_font() -> None:
-    content = appendix.greek("καί∙ καί")
-    assert content == [usj.char("wg", "καί· καί")]
-
-
 def test_acts_13_41_keeps_the_word_change_without_dot_changes(
-    byzantine: Reconciliation, entries: dict[str, list[Node]]
+    byzantine: Reconciliation, entries: dict[str, list[variants.Lane]]
 ) -> None:
     markdown = review.greek_verses(
-        byzantine, "ACT 13:41", appendix.prepare_greek(byzantine)
+        byzantine, "ACT 13:41", variants.prepare_greek(byzantine)
     )[0]
     assert "[-ἔργον ᾧ][+ὃ]" in markdown
     assert "[-·]" not in markdown and "[+∙]" not in markdown
-    content = entries["ACT 13:41"][1]["content"]
-    assert "[ἔργον ᾧ] ὃ οὐ μὴ πιστεύσητε," in usj.text_of(content)
-    assert "ἐν ταῖς ἡμέραις ὑμῶν," not in usj.text_of(content)
-    assert usj.char("bd", usj.char("wg", "ὃ")) in content
-    assert usj.text_of(content).startswith("TR → RP26 … [ἔργον ᾧ]")
-    english = entries["ACT 13:41"][2]["content"]
-    assert usj.text_of(english).startswith("KJV → OLEB … [a work]")
-    assert "for I work" not in usj.text_of(entries["ACT 13:41"])
-    assert "[a work] which you shall in no wise believe," in usj.text_of(english)
-    assert not any(n.get("marker") in {"it", "bd"} for n in usj.walk(english))
+    greek, english = entries["ACT 13:41"]
+    assert readings(greek) == [("ἔργον ᾧ", "ὃ")]
+    assert greek["segments"][:2] == [GAP, " "]
+    assert "ὃ οὐ μὴ πιστεύσητε," in variants.witness(greek["segments"], "to")
+    assert "ἐν ταῖς ἡμέραις ὑμῶν," not in shown(greek)
+    assert readings(english) == [("a work", None)]
+    assert english["segments"][:2] == [GAP, " "]
+    assert "which you shall in no wise believe," in variants.witness(
+        english["segments"], "to"
+    )
+    assert "for I work" not in shown(english)
 
 
 @pytest.mark.parametrize("ref", ["REV 22:7", "REV 22:8"])
@@ -1295,9 +1456,9 @@ def test_revelation_corresponding_passages_keep_sentence_changes(
 ) -> None:
     from bible.byzantine.presentation import passage_spans
 
-    tr, rp, _ = appendix.prepare_greek(byzantine)
+    tr, rp, _ = variants.prepare_greek(byzantine)
     verse = verses_of(byzantine.edited.prepared)[ref]
-    texts, selected, english = appendix.selections(
+    texts, selected, english = variants.selections(
         byzantine,
         ref,
         ref,
@@ -1306,7 +1467,7 @@ def test_revelation_corresponding_passages_keep_sentence_changes(
         scripture.plain(byzantine.english.kjv[ref]),
         scripture.plain(verse.text),
     )
-    greek = appendix.passage_ranges(byzantine, ref, ref, texts[0], texts[1])
+    greek = variants.passage_ranges(byzantine, ref, ref, texts[0], texts[1])
     for passage in selected:
         comparisons = [
             passage_spans(texts, passage, 0, greek, greek=True),
@@ -1347,12 +1508,12 @@ def test_uncertain_revision_boundaries_quote_complete_verse(
     byzantine: Reconciliation,
 ) -> None:
     ref = "REV 22:7"
-    tr, rp, _ = appendix.prepare_greek(byzantine)
+    tr, rp, _ = variants.prepare_greek(byzantine)
     verse = verses_of(byzantine.edited.prepared)[ref]
     before, after = scripture.plain(byzantine.english.kjv[ref]), scripture.plain(
         verse.text
     )
-    texts, selected, _ = appendix.selections(
+    texts, selected, _ = variants.selections(
         byzantine,
         ref,
         ref,
@@ -1365,13 +1526,13 @@ def test_uncertain_revision_boundaries_quote_complete_verse(
     # Missing evidence is an error, not an uncertain correspondence.
     missing = amended(byzantine, "english", aligned={}, crosswire={})
     with pytest.raises(KeyError):
-        appendix.selections(
+        variants.selections(
             missing, ref, ref, " ".join(tr[ref]), " ".join(rp[ref]), before, after
         )
 
 
 def test_shared_selections_retain_every_change_and_corresponding_omission(
-    rows: list[appendix.Row],
+    rows: list[variants.Row],
 ) -> None:
     for row in rows:
         texts = (row.greek_tr, row.greek_rp, row.kjv or "", row.oleb or "")
@@ -1395,31 +1556,31 @@ def test_shared_selections_retain_every_change_and_corresponding_omission(
                 assert len({b == len(t) for (_, b), t in zip(passage, texts)}) == 1
 
 
-@pytest.mark.parametrize(
-    ("ref", "expected"),
-    [
-        ("1JN 5:7", "μαρτυροῦντες, [ἐν τῷ οὐρανῷ"),
-        ("ACT 13:42", "ῥήματα. [ταῦτα.]"),
-    ],
-)
-def test_appendix_separates_readings_after_inserted_punctuation(
-    entries: dict[str, list[Node]], ref: str, expected: str
+def test_a_reading_keeps_the_marks_the_texts_share_outside_it(
+    entries: dict[str, list[variants.Lane]],
 ) -> None:
-    assert expected in usj.text_of(entries[ref][1]["content"])
+    # A comma takes the place of the clause the Byzantine text lacks.
+    greek = entries["1JN 5:7"][0]
+    clause = next(r for r in readings(greek) if r[1] == ",")
+    assert clause[0] is not None and clause[0].startswith("ἐν τῷ οὐρανῷ")
+    # The stop that closes both texts' sentence is theirs, not the reading's.
+    greek = entries["ACT 13:42"][0]
+    assert readings(greek) == [("ταῦτα", None)]
+    assert greek["segments"][-2:] == [{"from": " ταῦτα"}, "."]
 
 
 def test_unchanged_english_clips_greek_without_a_bridge(
     byzantine: Reconciliation,
     regularized: dict[str, Document],
-    rows: list[appendix.Row],
-    entries: dict[str, list[Node]],
+    rows: list[variants.Row],
+    entries: dict[str, list[variants.Lane]],
 ) -> None:
     ref = "ACT 13:22"
     row = next(row for row in rows if row.reference == ref)
     assert row.kjv is None and row.oleb is None
-    tr, rp, _ = appendix.prepare_greek(byzantine)
+    tr, rp, _ = variants.prepare_greek(byzantine)
     before = scripture.plain(scripture.verses(regularized["ACT"])["13:22"].text)
-    texts, selected, english = appendix.selections(
+    texts, selected, english = variants.selections(
         amended(byzantine, "english", aligned={}),
         ref,
         ref,
@@ -1449,11 +1610,11 @@ def test_unchanged_english_clips_greek_without_a_bridge(
         assert "".join(v for k, v in excerpts if k == kind) == "".join(
             v for k, v in whole if k == kind
         )
-    assert "KJV → OLEB" not in usj.text_of(entries[ref])
+    assert not any(lane["language"] == "en" for lane in entries[ref])
 
 
 def test_luke_deletion_has_corresponding_clause_excerpts(
-    rows: list[appendix.Row], packets: dict[str, str]
+    rows: list[variants.Row], packets: dict[str, str]
 ) -> None:
     row = next(row for row in rows if row.reference == "LUK 17:4")
     assert row.kjv is not None and row.oleb is not None
@@ -1493,7 +1654,7 @@ def test_missing_execution_evidence_keeps_complete_comparisons(
     for edit in edits:
         edit["note_scope"].pop("source_range", None)
         edit.pop("applied_range", None)
-    tr, rp, _ = appendix.prepare_greek(context)
+    tr, rp, _ = variants.prepare_greek(context)
     verse = verses_of(context.edited.prepared)[ref]
     args = (
         ref,
@@ -1506,9 +1667,9 @@ def test_missing_execution_evidence_keeps_complete_comparisons(
     if ref == "LUK 17:4":
         # An insertion or omission without the executor's range is an error.
         with pytest.raises(KeyError, match="applied_range"):
-            appendix.selections(context, *args)
+            variants.selections(context, *args)
         return
-    texts, selected, _ = appendix.selections(context, *args)
+    texts, selected, _ = variants.selections(context, *args)
     assert selected == (tuple((0, len(t)) for t in texts),)
 
 
@@ -1516,7 +1677,7 @@ def test_missing_execution_evidence_keeps_complete_comparisons(
 def test_english_construction_ranges_are_derived_locally(
     byzantine: Reconciliation, kind: str
 ) -> None:
-    tr, rp, _ = appendix.prepare_greek(byzantine)
+    tr, rp, _ = variants.prepare_greek(byzantine)
     verses = verses_of(byzantine.edited.prepared)
     edit = next(
         e
@@ -1534,7 +1695,7 @@ def test_english_construction_ranges_are_derived_locally(
                 e["note_scope"].pop("source_range", None)
     context = amended(byzantine, "verified", dispositions=tuple(dispositions))
     snapshot = copy.deepcopy(dispositions)
-    texts, selected, english = appendix.selections(
+    texts, selected, english = variants.selections(
         context,
         ref,
         ref,
@@ -1568,8 +1729,8 @@ def test_verified_moves_use_source_and_destination(
     ref: str,
     target: str,
 ) -> None:
-    tr, rp, _ = appendix.prepare_greek(byzantine)
-    texts, selected, english = appendix.selections(
+    tr, rp, _ = variants.prepare_greek(byzantine)
+    texts, selected, english = variants.selections(
         byzantine,
         ref,
         target,
@@ -1606,7 +1767,7 @@ def test_verified_moves_use_source_and_destination(
             if not (row["ref"] == ref and row["disposition"] == "structural")
         ),
     )
-    _, fallback, _ = appendix.selections(
+    _, fallback, _ = variants.selections(
         context, ref, target, texts[0], texts[1], texts[2], texts[3]
     )
     assert fallback == (tuple((0, len(t)) for t in texts),)
@@ -1621,8 +1782,8 @@ def test_partial_tags_require_only_selected_coverage(
     link = tags[ref]["links"][0 if inside else -1]
     link["forms"] = ["wrong"] * len(link["forms"])
     context = amended(byzantine, "english", aligned={}, crosswire=tags)
-    tr, rp, _ = appendix.prepare_greek(context)
-    texts, selected, _ = appendix.selections(
+    tr, rp, _ = variants.prepare_greek(context)
+    texts, selected, _ = variants.selections(
         context,
         ref,
         target,
@@ -1640,8 +1801,8 @@ def test_crossing_bridge_cannot_clip_a_moved_passage(byzantine: Reconciliation) 
     aligned = copy.deepcopy(dict(byzantine.english.aligned))
     aligned[ref]["positions"][0].append(len(byzantine.greek.tr[ref]) - 1)
     context = amended(byzantine, "english", aligned=aligned)
-    tr, rp, _ = appendix.prepare_greek(context)
-    texts, selected, _ = appendix.selections(
+    tr, rp, _ = variants.prepare_greek(context)
+    texts, selected, _ = variants.selections(
         context,
         ref,
         target,
@@ -1654,13 +1815,12 @@ def test_crossing_bridge_cannot_clip_a_moved_passage(byzantine: Reconciliation) 
 
 
 def test_matthew_moved_comparison_prints_matching_ellipses(
-    entries: dict[str, list[Node]], packets: dict[str, str]
+    entries: dict[str, list[variants.Lane]], packets: dict[str, str]
 ) -> None:
-    content = entries["MAT 23:13"]
-    printed = usj.text_of(content)
-    assert "Οὐαὶ δὲ ὑμῖν, …" in printed
-    assert "[Woe] But woe unto you, …" in printed
-    assert usj.char("it", "But woe") in content[2]["content"]
+    greek, english = entries["MAT 23:13"]
+    assert variants.witness(greek["segments"], "to").startswith("Οὐαὶ δὲ ὑμῖν, …")
+    assert readings(english)[0] == ("Woe", "But woe")
+    assert variants.witness(english["segments"], "to").startswith("But woe unto you, …")
     section = section_of(packets, "MAT 23:14#1")
     assert "` Οὐαὶ [+δὲ ]ὑμῖν, … `" in section
     assert "` [-Woe][+But woe] unto you, … `" in section
@@ -1668,13 +1828,13 @@ def test_matthew_moved_comparison_prints_matching_ellipses(
 
 @pytest.mark.parametrize("side", ["greek", "english"])
 @pytest.mark.parametrize("boundary", [False, True])
-def test_appendix_missing_correspondence_must_be_bounded_in_both_languages(
+def test_variants_missing_correspondence_must_be_bounded_in_both_languages(
     byzantine: Reconciliation, side: str, boundary: bool
 ) -> None:
     from bible.byzantine.crosswire import presentation_bridge
 
     ref = "ACT 13:41"
-    tr, rp, _ = appendix.prepare_greek(byzantine)
+    tr, rp, _ = variants.prepare_greek(byzantine)
     before = scripture.plain(byzantine.english.kjv[ref])
     after = scripture.plain(verses_of(byzantine.edited.prepared)[ref].text)
     aligned = copy.deepcopy(dict(byzantine.english.aligned))
@@ -1699,7 +1859,7 @@ def test_appendix_missing_correspondence_must_be_bounded_in_both_languages(
         assert bridge["positions"][word]
         bridge["positions"][word] = []
     context = amended(byzantine, "english", aligned=aligned)
-    texts, selected, _ = appendix.selections(
+    texts, selected, _ = variants.selections(
         context, ref, ref, " ".join(tr[ref]), " ".join(rp[ref]), before, after
     )
     assert (selected == (tuple((0, len(t)) for t in texts),)) == boundary
@@ -1709,7 +1869,7 @@ def test_appendix_missing_correspondence_must_be_bounded_in_both_languages(
 
 
 @pytest.mark.parametrize("bad", ["form", "position", "length", "conflict"])
-def test_appendix_invalid_interior_tags_keep_complete_verse(
+def test_variants_invalid_interior_tags_keep_complete_verse(
     byzantine: Reconciliation, bad: str
 ) -> None:
     ref = "ACT 13:41"
@@ -1728,8 +1888,8 @@ def test_appendix_invalid_interior_tags_keep_complete_verse(
     else:
         row["links"].append({**link, "forms": ["wrong"] * len(link["forms"])})
     context = amended(byzantine, "english", aligned={}, crosswire=tags)
-    tr, rp, _ = appendix.prepare_greek(context)
-    texts, selected, _ = appendix.selections(
+    tr, rp, _ = variants.prepare_greek(context)
+    texts, selected, _ = variants.selections(
         context,
         ref,
         ref,
@@ -1742,7 +1902,7 @@ def test_appendix_invalid_interior_tags_keep_complete_verse(
 
 
 def test_corrections_of_shared_greek_have_english_comparisons(
-    rows: list[appendix.Row],
+    rows: list[variants.Row],
 ) -> None:
     for ref in ("LUK 23:42", "LUK 23:15", "3JN 1:2"):
         row = next(r for r in rows if r.source == ref)
@@ -1758,7 +1918,7 @@ def test_a_real_correction_beside_a_variant_keeps_english(
         byzantine.verified.dispositions,
     )
     original = copy.deepcopy(inputs)
-    found = appendix.rows(
+    found = variants.rows(
         byzantine, byzantine.english.documents, byzantine.edited.prepared
     )
     row = next(r for r in found if r.source == "2JN 1:3")
@@ -1770,12 +1930,12 @@ def test_a_real_correction_beside_a_variant_keeps_english(
 
 
 @pytest.fixture(scope="module")
-def unpunctuated_rows(byzantine: Reconciliation) -> dict[str, appendix.Row]:
-    """The appendix's rows from the books before the punctuation pass, by
+def unpunctuated_rows(byzantine: Reconciliation) -> dict[str, variants.Row]:
+    """The variants' rows from the books before the punctuation pass, by
     source verse."""
     return {
         row.source: row
-        for row in appendix.rows(
+        for row in variants.rows(
             byzantine, byzantine.english.documents, byzantine.edited.prepared
         )
     }
@@ -1784,7 +1944,7 @@ def unpunctuated_rows(byzantine: Reconciliation) -> dict[str, appendix.Row]:
 def test_john_first_cast_retains_the_king_james_wording(
     byzantine: Reconciliation,
     index: review.Index,
-    unpunctuated_rows: dict[str, appendix.Row],
+    unpunctuated_rows: dict[str, variants.Row],
 ) -> None:
     ref = "JHN 8:7"
     verse = index["prepared"][ref]
@@ -1794,13 +1954,13 @@ def test_john_first_cast_retains_the_king_james_wording(
     assert row["disposition"] == "override"
     assert row["kind"] == row["action"] == "nochange"
     assert not any(n.get("x-key", "").endswith(" TR") for _, n in verse.notes)
-    appendix_row = unpunctuated_rows[ref]
-    assert appendix_row.kind == "same"
-    assert appendix_row.kjv is None and appendix_row.oleb is None
+    listed = unpunctuated_rows[ref]
+    assert listed.kind == "same"
+    assert listed.kjv is None and listed.oleb is None
 
 
-def test_every_shared_greek_correction_is_kept_whole_in_the_appendix(
-    byzantine: Reconciliation, unpunctuated_rows: dict[str, appendix.Row]
+def test_every_shared_greek_correction_is_kept_whole_in_the_variants(
+    byzantine: Reconciliation, unpunctuated_rows: dict[str, variants.Row]
 ) -> None:
     found = unpunctuated_rows
     for disposition in byzantine.verified.dispositions:
@@ -1815,9 +1975,9 @@ def test_every_shared_greek_correction_is_kept_whole_in_the_appendix(
 
 @pytest.mark.parametrize("ref", ["LUK 17:18", "2CO 12:2", "JAS 4:5", "JHN 20:29"])
 def test_punctuation_revisions_preserve_wording_comparisons(
-    unpunctuated_rows: dict[str, appendix.Row], ref: str
+    unpunctuated_rows: dict[str, variants.Row], ref: str
 ) -> None:
-    # The authored appendix consumes wording before the separate punctuation pass.
+    # The variants consume wording before the separate punctuation pass.
     row = unpunctuated_rows[ref]
     assert row.kjv and row.oleb and row.kjv != row.oleb
 
@@ -1843,7 +2003,7 @@ def test_review_separates_corrections_from_variants(
         passages = review.unit_passages(
             unit,
             byzantine,
-            appendix.prepare_greek(byzantine),
+            variants.prepare_greek(byzantine),
             index["prepared"],
             index["corrected"],
         )

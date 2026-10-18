@@ -18,8 +18,8 @@ def read_json(path: Path) -> Any:
         raise CheckFailed(f"{path}: {error}") from None
 
 
-def write_json(path: Path, data: object) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
+def json_text(data: object) -> str:
+    """The data as the build writes JSON."""
 
     def plain(value: object) -> object:
         # The policy's frozen objects and lists.
@@ -29,9 +29,12 @@ def write_json(path: Path, data: object) -> None:
             return list(value)
         raise TypeError(f"Unsupported JSON value: {type(value).__name__}")
 
-    with path.open("w", encoding="utf-8") as stream:
-        json.dump(data, stream, indent=2, ensure_ascii=False, default=plain)
-        stream.write("\n")
+    return json.dumps(data, indent=2, ensure_ascii=False, default=plain) + "\n"
+
+
+def write_json(path: Path, data: object) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json_text(data), encoding="utf-8")
 
 
 def sha256(data: bytes) -> str:

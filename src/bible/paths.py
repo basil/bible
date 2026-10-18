@@ -21,3 +21,5 @@ FONT_ARCHIVES = OPT / "sources"
 FONT_SCRIPTS = OPT / "scripts"
 UTOPIA = OPT / "utopia"
 FONTS = Path("/usr/local/share/fonts")
+# The Hebrew font, Ezra SIL, which the image installs from Ubuntu.
+EZRA = Path("/usr/share/fonts/truetype/ezra/SILEOT.ttf")

@@ -1,11 +1,8 @@
 """Phrase selection retains source text and all lossless differences."""
 
-from pathlib import Path
-
 import pytest
 
-from bible import usj
-from bible.byzantine import appendix
+from bible.byzantine import variants
 from bible.byzantine.presentation import (
     anchored,
     clipped,
@@ -137,9 +134,6 @@ def test_closing_mark_cannot_split_an_omitted_passage(greek: bool) -> None:
     ]
     assert "".join(v for k, v in spans if k != "insert") == left
     assert "".join(v for k, v in spans if k != "delete") == right
-    assert usj.text_of(appendix.comparison(spans, is_greek=greek)) == (
-        "bear record, [in heaven, the Father.]"
-    )
 
 
 @pytest.mark.parametrize("quote", ['"', "'", "”", "’", "»", ")", "]", "}"])
@@ -155,205 +149,6 @@ def test_overlapping_source_projections_merge_losslessly() -> None:
     assert "".join(v for k, v in spans if k != "insert") == left
     assert "".join(v for k, v in spans if k != "delete") == right
     assert spans == anchored(left, right, [(0, 7, 0, 8)])
-
-
-@pytest.mark.parametrize(
-    ("before", "after", "expected"),
-    [
-        (
-            "She bought a red car.",
-            "She bought a blue car.",
-            [
-                "She bought a ",
-                "[",
-                "red",
-                "]",
-                " ",
-                usj.char("it", "blue"),
-                " car.",
-            ],
-        ),
-        ("word", "new word", [usj.char("it", "new"), " word"]),
-        ("old words.", "", ["[", "old words.", "]"]),
-        (
-            "word,",
-            "word:",
-            ["word", "[", ",", "]", usj.char("it", ":")],
-        ),
-        ("Same words.", "Same words.", ["Same words."]),
-    ],
-)
-def test_pdf_english_comparison_styles(
-    before: str, after: str, expected: list[usj.Node | str]
-) -> None:
-    assert appendix.comparison(diff_spans(before, after)) == expected
-
-
-def test_pdf_unchanged_greek_stays_upright() -> None:
-    assert appendix.comparison(diff_spans("καί∙", "καί∙"), is_greek=True) == [
-        usj.char("wg", "καί·"),
-    ]
-
-
-def test_greek_bold_export_keeps_punctuation_in_the_greek_font(tmp_path: Path) -> None:
-    import usfmtc
-    from ptxprint.usxutils import PTXEmitter
-
-    content = appendix.comparison(
-        [("delete", "καί,"), ("insert", "καί∙")], is_greek=True
-    )
-    assert content == [
-        "[",
-        usj.char("wg", "καί,"),
-        "]",
-        " ",
-        usj.char("bd", usj.char("wg", "καί·")),
-    ]
-    written = usj.serialize(content)
-    assert written == "[\\wg καί,\\wg*] \\bd \\+wg καί·\\+wg*\\bd*"
-    document = f"\\id XXC\n\\usfm {usj.VERSION}\n\\ip " + written + "\n"
-    parsed = usj.parse(document)
-    assert parsed["content"][1]["content"] == [
-        "[",
-        usj.char("wg", "καί,"),
-        "] ",
-        usj.char("bd", usj.char("wg", "καί·")),
-    ]
-    path = tmp_path / "XXC.usfm"
-    path.write_text(document)
-    upstream = usfmtc.readFile(str(path))
-    theirs = upstream.outUsj(None)
-    bold = next(
-        node for node in usj.walk(theirs["content"]) if node.get("marker") == "bd"
-    )
-    assert bold["content"] == [usj.char("wg", "καί·")]
-    # PTXprint reads and writes peripheral books before TeX sees them, in
-    # USFM 3.1, which nests a style without its +.
-    for emitter in (None, PTXEmitter):
-        options = {"emitter": emitter} if emitter else {}
-        processed = upstream.outUsfm(None, **options)
-        assert "\n\\usfm 3.1\n" in processed
-        assert "\\bd \\wg καί·\\wg*\\bd*" in processed
-        assert usj.parse(processed) == parsed
-
-
-@pytest.mark.parametrize(
-    ("before", "after", "printed"),
-    [
-        ("… raise the dead, …", "… …", "… [raise the dead,] …"),
-        ("Lord even of", "Lord of", "Lord [even] of"),
-        ("said by them of old time,", "said,", "said [by them of old time],"),
-        (
-            "therefore fruits meet",
-            "therefore fruit meet",
-            "therefore [fruits] fruit meet",
-        ),
-        ("word", "new word", "new word"),
-        ("word", "word new", "word new"),
-        ("old word", "word", "[old] word"),
-        ("word old", "word", "word [old]"),
-        ("word,", "word:", "word[,]:"),
-        ("said old”", "said”", "said [old]”"),
-        ("one two", "three four", "[one two] three four"),
-        ("  same  words \n", "  same  words \n", "  same  words \n"),
-        ("one  two old", "one  two new", "one  two [old] new"),
-        ("κύριος καὶ θεός", "κύριος θεός", "κύριος [καὶ] θεός"),
-        ("καλός λόγος", "νέος λόγος", "[καλός] νέος λόγος"),
-    ],
-)
-@pytest.mark.parametrize("is_greek", [False, True])
-def test_printed_spacing_preserves_spans_and_markdown(
-    before: str, after: str, printed: str, is_greek: bool
-) -> None:
-    spans = diff_spans(before, after)
-    original = list(spans)
-    markdown = marked(spans)
-    result = appendix.comparison(spans, is_greek=is_greek)
-    assert usj.text_of(result) == printed
-    assert spans == original
-    assert marked(spans) == markdown
-    assert "".join(v for k, v in spans if k != "insert") == before
-    assert "".join(v for k, v in spans if k != "delete") == after
-    for node in usj.walk(result):
-        if node.get("marker") in {"it", "bd"}:
-            assert node["marker"] == ("bd" if is_greek else "it")
-            text = usj.text_of(node["content"])
-            assert text == text.strip()
-
-
-def test_adjacent_changes_collapse_boundary_spaces_only() -> None:
-    spans = [
-        ("equal", "Lord  "),
-        ("delete", " even "),
-        ("delete", " of  old "),
-        ("insert", " new  words "),
-        ("equal", " ,"),
-    ]
-    assert (
-        usj.text_of(appendix.comparison(spans)) == "Lord [even] [of  old] new  words,"
-    )
-    assert marked(spans) == "Lord  [- even ][- of  old ][+ new  words ] ,"
-
-
-@pytest.mark.parametrize(
-    "punctuation", [",", ".", ":", ";", "!", "?", "'", '"', "”", "’", ")"]
-)
-def test_closing_punctuation_follows_the_bracket_without_a_space(
-    punctuation: str,
-) -> None:
-    spans = [("equal", "said "), ("delete", " old "), ("equal", " " + punctuation)]
-    assert usj.text_of(appendix.comparison(spans)) == "said [old]" + punctuation
-
-
-@pytest.mark.parametrize("is_greek", [False, True])
-def test_punctuation_insertion_stays_beside_its_word(is_greek: bool) -> None:
-    word = "λόγος" if is_greek else "word"
-    assert appendix.comparison(diff_spans(word, word + "."), is_greek=is_greek) == [
-        usj.char("wg", word) if is_greek else word,
-        usj.char("bd", usj.char("wg", ".")) if is_greek else usj.char("it", "."),
-    ]
-
-
-def test_adjacent_word_readings_are_separated_after_punctuation() -> None:
-    spans = [("insert", "new."), ("delete", "old words.")]
-    assert usj.text_of(appendix.comparison(spans)) == "new. [old words.]"
-
-
-@pytest.mark.parametrize("words", ["θεὸς τοῦ", "Λυθείσης δὲ"])
-@pytest.mark.parametrize("bold", [False, True])
-@pytest.mark.parametrize("leading", [False, True])
-def test_greek_font_boundary_spaces_survive_ptxprint(
-    words: str, bold: bool, leading: bool, tmp_path: Path
-) -> None:
-    import usfmtc
-    from ptxprint.usxutils import PTXEmitter
-
-    first, second = words.split()
-    content = [
-        *appendix.greek(first + ("" if leading else " ")),
-        *appendix.greek((" " if leading else "") + second),
-    ]
-    assert content == [usj.char("wg", first), " ", usj.char("wg", second)]
-    if bold:
-        content = [usj.char("bd", *content)]
-    assert usj.text_of(content) == words
-    for node in usj.walk(content):
-        if node.get("marker") == "wg":
-            assert usj.text_of(node["content"]) == usj.text_of(node["content"]).strip()
-    written = usj.serialize(content)
-    marker = "+wg" if bold else "wg"
-    assert f"\\{marker} {first}\\{marker}* \\{marker} {second}\\{marker}*" in written
-    document = f"\\id XXC\n\\usfm {usj.VERSION}\n\\ip " + written + "\n"
-    parsed = usj.parse(document)
-    assert usj.text_of(parsed["content"][1]["content"]) == words
-    path = tmp_path / "XXC.usfm"
-    path.write_text(document)
-    upstream = usfmtc.readFile(str(path))
-    for emitter in (None, PTXEmitter):
-        options = {"emitter": emitter} if emitter else {}
-        processed = upstream.outUsfm(None, **options)
-        assert f"\\wg {first}\\wg* \\wg {second}\\wg*" in processed
-        assert usj.parse(processed) == parsed
 
 
 @pytest.mark.parametrize(
@@ -394,7 +189,7 @@ def test_greek_display_all_name_inflections(stem: str, ending: str) -> None:
     assert diff_spans(word, word.upper(), greek=True) == [("equal", word)]
 
 
-def test_case_suppression_precedes_clipping_and_pdf_styling() -> None:
+def test_case_suppression_precedes_clipping() -> None:
     spans = anchored(
         "Καὶ Θεὸς; λόγος καλός.",
         "καὶ θεὸς; λόγος νέος.",
@@ -403,10 +198,6 @@ def test_case_suppression_precedes_clipping_and_pdf_styling() -> None:
     )
     retained = clipped(spans)
     assert marked(retained) == "… λόγος [-καλός][+νέος]."
-    assert (
-        usj.text_of(appendix.comparison(retained, is_greek=True))
-        == "… λόγος [καλός] νέος."
-    )
 
 
 def test_greek_display_keeps_anchored_relocation() -> None:
@@ -423,7 +214,6 @@ def test_equivalent_greek_display_are_displayed_alike(before: str, after: str) -
     for source, absent in ((left, "insert"), (right, "delete")):
         assert "".join(v for k, v in spans if k != absent) == greek_display(source)
     assert marked(spans) == "καί· λόγος"
-    assert appendix.comparison(spans, is_greek=True) == [usj.char("wg", "καί· λόγος")]
     # Raw comparisons reconstruct the pinned characters exactly.
     raw = diff_spans(left, right)
     assert "".join(v for k, v in raw if k != "insert") == left
@@ -434,20 +224,12 @@ def test_equivalent_greek_display_are_displayed_alike(before: str, after: str) -
 def test_genuine_greek_punctuation_change_stays_visible(dot: str) -> None:
     spans = diff_spans("καί,", f"καί{dot}", greek=True)
     assert marked(spans) == "καί[-,][+·]"
-    assert appendix.comparison(spans, is_greek=True) == [
-        usj.char("wg", "καί"),
-        "[",
-        usj.char("wg", ","),
-        "]",
-        usj.char("bd", usj.char("wg", "·")),
-    ]
 
 
 @pytest.mark.parametrize("dot", ["·", "·", "∙"])
 def test_dot_normalization_precedes_anchored_clipping(dot: str) -> None:
     spans = anchored(f"καί{dot} ἔργον ᾧ.", "καί· ὃ.", [(5, 12, 5, 6)], greek=True)
     assert marked(clipped(spans)) == "… [-ἔργον ᾧ][+ὃ]."
-    assert appendix.greek(f" καί{dot} ") == [" ", usj.char("wg", "καί·"), " "]
 
 
 def test_corresponding_distant_passages_share_omissions() -> None:
@@ -506,35 +288,6 @@ def test_corresponding_crossed_order_keeps_one_passage() -> None:
     assert corresponding(texts, [], seeds) == [tuple((0, len(t)) for t in texts)]
 
 
-@pytest.mark.parametrize(
-    ("word", "punctuation", "reading", "is_greek"),
-    [
-        ("μαρτυροῦντες", ",", "ἐν τῷ οὐρανῷ…", True),
-        ("ῥήματα", ".", "ταῦτα.", True),
-        ("witnesses", ",", "in heaven…", False),
-        ("words", ".", "these.", False),
-    ],
-)
-def test_pending_space_survives_inserted_closing_punctuation(
-    word: str, punctuation: str, reading: str, is_greek: bool
-) -> None:
-    spans = [("equal", word + " "), ("insert", punctuation), ("delete", reading)]
-    result = appendix.comparison(spans, is_greek=is_greek)
-    assert usj.text_of(result) == f"{word}{punctuation} [{reading}]"
-    assert result == [
-        usj.char("wg", word) if is_greek else word,
-        (
-            usj.char("bd", usj.char("wg", punctuation))
-            if is_greek
-            else usj.char("it", punctuation)
-        ),
-        " ",
-        "[",
-        usj.char("wg", reading) if is_greek else reading,
-        "]",
-    ]
-
-
 @pytest.mark.parametrize("before", ["᾽", "’"])
 @pytest.mark.parametrize("after", ["᾽", "’"])
 def test_equivalent_greek_elision_marks_are_displayed_alike(
@@ -544,8 +297,6 @@ def test_equivalent_greek_elision_marks_are_displayed_alike(
     spans = diff_spans(left, right, greek=True)
     assert marked(spans) == "κατ’ αὐτόν"
     assert all(kind == "equal" for kind, _ in spans)
-    assert appendix.comparison(spans, is_greek=True) == [usj.char("wg", "κατ’ αὐτόν")]
-    assert appendix.greek(left) == [usj.char("wg", "κατ’ αὐτόν")]
     for source, absent in ((left, "insert"), (right, "delete")):
         assert "".join(v for k, v in spans if k != absent) == greek_display(source)
         assert "".join(v for k, v in diff_spans(left, right) if k != absent) == source
@@ -554,15 +305,6 @@ def test_equivalent_greek_elision_marks_are_displayed_alike(
 def test_elision_equivalence_keeps_genuine_word_and_punctuation_changes() -> None:
     spans = diff_spans("κατ᾽ ἐμέ,", "κατ’ αὐτόν;", greek=True)
     assert marked(spans) == "κατ’ [-ἐμέ,][+αὐτόν;]"
-    assert appendix.comparison(spans, is_greek=True) == [
-        usj.char("wg", "κατ’"),
-        " ",
-        "[",
-        usj.char("wg", "ἐμέ,"),
-        "]",
-        " ",
-        usj.char("bd", usj.char("wg", "αὐτόν;")),
-    ]
     assert marked(diff_spans("κατ᾽", "κατά", greek=True)) == "[-κατ’][+κατά]"
     assert marked(diff_spans("κατ᾽", "κατ", greek=True)) == "κατ[-’]"
 
@@ -576,20 +318,20 @@ def test_bounded_correspondence_requires_mapped_passage_boundaries(
     targets[gap] = []
     # Either language may lack an interior tag. The omitted first phrase
     # cannot supply the preceding mapped word for a retained boundary gap.
-    assert appendix._bounded_correspondence(
+    assert variants._bounded_correspondence(
         words, targets, words, (3, 11), (3, 11)
     ) == (gap in {0, 2})
 
 
 def test_bounded_correspondence_checks_all_neighbour_targets() -> None:
     words = [(0, 2), (3, 5), (6, 8), (9, 11)]
-    assert not appendix._bounded_correspondence(
+    assert not variants._bounded_correspondence(
         words, [[0], [1, 0], [], [3]], words, (3, 11), (3, 11)
     )
-    assert not appendix._bounded_correspondence(
+    assert not variants._bounded_correspondence(
         words, [[], [], [], []], words, (3, 11), (3, 11)
     )
     # Crossed links are safe when both ends remain in the paired passage.
-    assert appendix._bounded_correspondence(
+    assert variants._bounded_correspondence(
         words, [[0], [3], [], [1]], words, (3, 11), (3, 11)
     )

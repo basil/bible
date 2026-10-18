@@ -3,6 +3,9 @@ import { JSDOM } from "jsdom";
 import {
   escape,
   renderChapter,
+  renderMatter,
+  renderProse,
+  renderVariants,
   type Document,
   type Node,
 } from "../../.vitepress/lib/usj.ts";
@@ -60,6 +63,7 @@ describe("chapter renderer", () => {
       "im",
       "imi",
       "iex",
+      "ili1",
     ].map((marker) => [marker, "P"]),
     ["s1", "H2"],
     ["s2", "H3"],
@@ -82,12 +86,31 @@ describe("chapter renderer", () => {
     ["bd", "B"],
     ["fv", "SPAN"],
     ["vp", "SPAN"],
+    ["wg", "SPAN"],
+    ["wh", "SPAN"],
   ])("renders character marker %s as %s", (marker, tag) => {
     const element = dom(
       chapter(para("p", char(marker, "words"))),
     ).querySelector(`.${marker}`)!;
     expect(element.tagName).toBe(tag);
     expect(element.textContent).toBe("words");
+  });
+
+  test.each([
+    ["wg", "grc"],
+    ["wh", "he"],
+  ])("marks the language of a %s run", (marker, lang) => {
+    const element = dom(
+      chapter(para("p", "Gr. ", char(marker, "λόγος"), ",")),
+    ).querySelector(`.${marker}`)!;
+    expect(element.getAttribute("lang")).toBe(lang);
+    expect(element.parentElement!.textContent).toBe("Gr. λόγος,");
+  });
+
+  test("gives no other character style a language", () => {
+    expect(
+      dom(chapter(para("p", char("it", "words")))).querySelector("[lang]"),
+    ).toBeNull();
   });
 
   test("preserves nested character styles", () => {
@@ -216,6 +239,23 @@ describe("chapter renderer", () => {
       [
         [para("unknown"), "Unknown paragraph marker unknown"],
         [{ type: "unknown" }, "Unknown block unknown"],
+        [{ type: "table", content: ["row"] }, "Unexpected table content"],
+        [
+          { type: "table", content: [{ type: "table:row", content: ["x"] }] },
+          "Unexpected row content",
+        ],
+        [
+          {
+            type: "table",
+            content: [
+              {
+                type: "table:row",
+                content: [{ type: "table:cell", marker: "tc9" }],
+              },
+            ],
+          },
+          "Unknown cell marker tc9",
+        ],
         [para("p", char("unknown")), "Unknown character marker unknown"],
         [para("p", { type: "unknown" }), "Unknown inline node unknown/"],
         [para("p", char("ft", "words")), "Note field outside note: ft"],
@@ -244,5 +284,316 @@ describe("chapter renderer", () => {
     ).map(([node, message]) => ({ node, message })),
   )("rejects $message (case $#)", ({ node, message }) => {
     expect(() => renderChapter(chapter(node))).toThrow(message);
+  });
+});
+
+describe("variants renderer", () => {
+  type Variant = Parameters<typeof renderVariants>[1][number];
+  type Lane = Variant["lanes"][number];
+  const greek = (...segments: Lane["segments"]): Lane => ({
+    from: "TR",
+    to: "RP26",
+    language: "grc",
+    segments,
+  });
+  const english = (...segments: Lane["segments"]): Lane => ({
+    from: "KJV",
+    to: "OLEB",
+    language: "en",
+    segments,
+  });
+  const entry = (
+    chapter: string,
+    verse: string,
+    ...lanes: Lane[]
+  ): Variant => ({
+    chapter,
+    verse,
+    lanes: lanes.length ? lanes : [greek({ from: "ἀλλά", to: "δέ" })],
+  });
+  const hasVerse = (chapter: string, verse: string) =>
+    chapter === "5" && verse === "39";
+  const terms = { kjv: "KJV", apparatus: "apparatus" };
+  const render = (...entries: Variant[]) =>
+    JSDOM.fragment(renderVariants("MAT", entries, hasVerse, terms));
+  const texts = (root: ParentNode, selector: string) =>
+    [...root.querySelectorAll(selector)].map((e) => e.textContent);
+
+  test("anchors each entry by its verse and links its reference to the verse", () => {
+    const fragment = render(entry("5", "39"), entry("17", "36"));
+    const sections = fragment.querySelectorAll("tbody.variant");
+    expect([...sections].map((s) => s.id)).toEqual(["c5v39", "c17v36"]);
+    const links = [...fragment.querySelectorAll(".ref .variant-link")];
+    expect(links.map((a) => a.getAttribute("href"))).toEqual([
+      "/read/mat/5#v39",
+      "/read/mat/17",
+    ]);
+    expect(links.map((a) => a.textContent)).toEqual(["5:39", "17:36"]);
+    expect(
+      fragment.querySelector(".scripture")!.classList.contains("variants"),
+    ).toBe(true);
+    expect(texts(fragment, "thead th")).toEqual(["Verse", "Source", "Adopted"]);
+  });
+
+  test("sets each witness's own words in its column, the readings marked", () => {
+    const fragment = render(
+      entry(
+        "19",
+        "26",
+        greek(
+          { gap: true },
+          " Παρὰ ἀνθρώποις τοῦτο ἀδύνατόν ",
+          { from: "ἐστι", to: "ἐστιν" },
+          ", παρὰ δὲ Θεῷ πάντα δυνατά ",
+          { from: "ἐστι" },
+          ".",
+        ),
+      ),
+    );
+    const [source, adopted] = fragment.querySelectorAll(".pair.grc .cell");
+    expect(texts(fragment, ".pair .cell")).toHaveLength(2);
+    expect(source!.querySelector(".tag")!.textContent).toBe("TR");
+    expect(adopted!.querySelector(".tag")!.textContent).toBe("RP26");
+    expect(source!.querySelector("[lang]")!.textContent).toBe(
+      "… Παρὰ ἀνθρώποις τοῦτο ἀδύνατόν ἐστι, παρὰ δὲ Θεῷ πάντα δυνατά ἐστι.",
+    );
+    expect(adopted!.querySelector("[lang]")!.textContent).toBe(
+      "… Παρὰ ἀνθρώποις τοῦτο ἀδύνατόν ἐστιν, παρὰ δὲ Θεῷ πάντα δυνατά ⌀.",
+    );
+    expect(texts(source!, ".del")).toEqual(["ἐστι", "ἐστι"]);
+    expect(texts(adopted!, ".ins")).toEqual(["ἐστιν"]);
+    for (const p of fragment.querySelectorAll(".pair.grc [lang]")) {
+      expect(p.getAttribute("lang")).toBe("grc");
+    }
+    expect(fragment.querySelector(".pair.en")).toBeNull();
+  });
+
+  test("keeps a reading's space where the adopted text adds to a word", () => {
+    const fragment = render(
+      entry(
+        "20",
+        "21",
+        greek("εὐωνύμων", { from: ",", to: " σου," }, " ἐν"),
+        english("on ", { from: "the", to: "thy" }, " left"),
+      ),
+    );
+    expect(texts(fragment, ".pair.grc [lang]")).toEqual([
+      "εὐωνύμων, ἐν",
+      "εὐωνύμων σου, ἐν",
+    ]);
+    const under = fragment.querySelector(".pair.en")!;
+    expect(texts(under, ".tag")).toEqual(["KJV", "OLEB"]);
+    expect(texts(under, "[lang]")).toEqual(["on the left", "on thy left"]);
+    expect(under.querySelector("[lang]")!.getAttribute("lang")).toBe("en");
+    expect(under.querySelector('[lang="grc"]')).toBeNull();
+    expect(fragment.querySelector(".slot")).toBeNull();
+  });
+
+  test("labels a verse whose number the King James Bible gives otherwise, and each lane by its witness", () => {
+    const fragment = render(
+      {
+        chapter: "14",
+        verse: "24",
+        kjv: "16:25",
+        lanes: [
+          { ...greek({ from: "ὁ", to: "ὅ" }), from: "Scrivener" },
+          { ...greek({ from: "τὸ", to: "τῷ" }), apparatus: true },
+        ],
+      },
+      entry("5", "39"),
+    );
+    const [labelled, plain] = fragment.querySelectorAll(".variant");
+    expect(texts(labelled!, ".ref small")).toEqual(["KJV 16:25"]);
+    expect(texts(plain!, ".ref small")).toEqual([]);
+    expect(texts(labelled!, ".tag")).toEqual([
+      "Scrivener",
+      "RP26",
+      "TR (apparatus)",
+      "RP26 (apparatus)",
+    ]);
+  });
+
+  test("prints a lane the witnesses agree in once, across both columns", () => {
+    const fragment = render(
+      entry(
+        "23",
+        "42",
+        greek("ἐν τῇ βασιλείᾳ σου"),
+        english("come ", { from: "into", to: "in" }, " thy kingdom"),
+      ),
+    );
+    const same = fragment.querySelector(".pair.grc")!;
+    expect(same.querySelector(".cell")!.getAttribute("colspan")).toBe("2");
+    expect(texts(same, ".cell")).toHaveLength(1);
+    expect(same.querySelector(".tag")!.textContent).toBe("TR and RP26");
+    expect(same.querySelector("[lang]")!.textContent).toBe(
+      "ἐν τῇ βασιλείᾳ σου",
+    );
+    expect(texts(fragment, ".pair.en .cell")).toHaveLength(2);
+  });
+
+  test("sets in bold the shared Greek a correction of the English is about", () => {
+    const fragment = render(
+      entry(
+        "1",
+        "13",
+        greek("καὶ ", { about: "Ἰούδας Ἰακώβου" }, "."),
+        english("Judas the ", { from: "brother", to: "son" }, " of James."),
+      ),
+    );
+    const same = fragment.querySelector(".pair.grc")!;
+    expect(same.querySelector(".cell")!.getAttribute("colspan")).toBe("2");
+    expect(texts(same, "strong")).toEqual(["Ἰούδας Ἰακώβου"]);
+    expect(same.querySelector("[lang]")!.textContent).toBe(
+      "καὶ Ἰούδας Ἰακώβου.",
+    );
+  });
+
+  test("shows an omitted verse as the source's words against nothing", () => {
+    const fragment = render(
+      entry(
+        "17",
+        "36",
+        greek({ from: "δύο ἔσονται ἐν τῷ ἀγρῷ." }),
+        english({ from: "Two men shall be in the field." }),
+      ),
+    );
+    expect(texts(fragment, ".pair.grc [lang]")).toEqual([
+      "δύο ἔσονται ἐν τῷ ἀγρῷ.",
+      "⌀",
+    ]);
+    expect(texts(fragment, ".pair.en .slot")).toEqual(["⌀"]);
+  });
+
+  test("spaces an empty slot as the other witness's words are", () => {
+    const fragment = render(
+      entry(
+        "3",
+        "11",
+        greek("ἐν πνεύματι ἁγίῳ", { from: " καὶ πυρί" }, "."),
+        english("honour thy father ", { from: "and " }, "mother"),
+      ),
+    );
+    expect(texts(fragment, ".pair [lang]")).toEqual([
+      "ἐν πνεύματι ἁγίῳ καὶ πυρί.",
+      "ἐν πνεύματι ἁγίῳ ⌀.",
+      "honour thy father and mother",
+      "honour thy father ⌀ mother",
+    ]);
+  });
+
+  test("escapes the words", () => {
+    const fragment = render(
+      entry("1", "1", english("<b>", { from: "&", to: "{{ x }}" })),
+    );
+    expect(fragment.querySelector("b")).toBeNull();
+    expect(texts(fragment, ".pair.en [lang]")).toEqual(["<b>&", "<b>{{ x }}"]);
+  });
+});
+
+describe("front matter renderer", () => {
+  const table: Node = {
+    type: "table",
+    content: [
+      {
+        type: "table:row",
+        marker: "tr",
+        content: [
+          { type: "table:cell", marker: "th1", content: ["KJV"] },
+          { type: "table:cell", marker: "th2", content: ["OLEB"] },
+        ],
+      },
+      {
+        type: "table:row",
+        marker: "tr",
+        content: [
+          { type: "table:cell", marker: "tc1", content: ["1:1"] },
+          {
+            type: "table:cell",
+            marker: "tc2",
+            content: [char("it", "missing")],
+          },
+        ],
+      },
+    ],
+  };
+  const unit = (...blocks: Node[]): Document => ({
+    content: [{ type: "book", marker: "id", content: ["XXA"] }, ...blocks],
+  });
+  test("sets the printed title as the heading, with the lines about it", () => {
+    const fragment = JSDOM.fragment(
+      renderMatter(
+        unit(
+          para("mt2", "To the Prince"),
+          para("mt1", "James,"),
+          para("ip", "Great"),
+        ),
+      ).html,
+    );
+    expect(fragment.querySelector(".scripture.matter")).not.toBeNull();
+    expect(fragment.querySelector("h1.mt1")!.id).toBe("matter");
+    expect(
+      [...fragment.querySelectorAll(".matter > *")].map(
+        (e) => `${e.tagName.toLowerCase()}.${e.className}`,
+      ),
+    ).toEqual(["p.mt2", "h1.mt1", "p.ip"]);
+    expect(fragment.textContent).toBe("To the Prince\nJames,\nGreat");
+  });
+  test("joins the lines that continue an opening title into its heading", () => {
+    const fragment = JSDOM.fragment(
+      renderMatter(
+        unit(
+          para("mt1", "Books, Chapters, and Verses"),
+          para("mt2", "in the King James Bible"),
+          para("ip", "Table"),
+        ),
+      ).html,
+    );
+    expect(
+      [...fragment.querySelectorAll(".matter > *")].map(
+        (e) => `${e.tagName.toLowerCase()}.${e.className}`,
+      ),
+    ).toEqual(["h1.mt1", "p.ip"]);
+    expect(fragment.querySelector("h1#matter")!.textContent).toBe(
+      "Books, Chapters, and Verses in the King James Bible",
+    );
+  });
+  test("renders a table with its header and body cells", () => {
+    const fragment = JSDOM.fragment(renderMatter(unit(table)).html);
+    expect(
+      [...fragment.querySelectorAll("table > tbody > tr > *")].map(
+        (e) => `${e.tagName.toLowerCase()}.${e.className}`,
+      ),
+    ).toEqual(["th.th1", "th.th2", "td.tc1", "td.tc2"]);
+    expect(fragment.querySelector("td.tc2 i.it")!.textContent).toBe("missing");
+  });
+  test("refuses a verse milestone in front matter", () => {
+    expect(() =>
+      renderMatter(unit(para("ip", { type: "verse", number: "1" }))),
+    ).toThrow("Verse milestone in prose");
+  });
+});
+
+describe("prose renderer", () => {
+  test("renders paragraphs with their notes below", () => {
+    const fragment = JSDOM.fragment(
+      renderProse([
+        para("ip", "Words", {
+          type: "note",
+          marker: "f",
+          content: [char("ft", "A note")],
+        }),
+      ]),
+    );
+    expect(fragment.querySelector(".ip")!.textContent).toBe("Words[1]");
+    expect(fragment.querySelector(".notes li")!.textContent).toContain(
+      "A note",
+    );
+  });
+
+  test("refuses a verse milestone in prose", () => {
+    expect(() =>
+      renderProse([para("p", { type: "verse", number: "1" })]),
+    ).toThrow("Verse milestone in prose");
   });
 });

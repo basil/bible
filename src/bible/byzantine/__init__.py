@@ -9,7 +9,7 @@ pierpont, instructions, revisers, rendering), validate the editor's decisions
 against them (decisions), give every difference one disposition (decide),
 carry the edits and the structural changes out on the King James books
 (edit), set the Textus Receptus footnotes (notes), check the result (verify),
-and write the review (review) and the appendix of readings (appendix).
+and write the review (review) and the textual variants (variants).
 
 `reconciled` runs the stages (stages) in the order of their dependencies on
 the sources the read stage parsed, each a function of the results before it
@@ -71,7 +71,7 @@ def reconciled(
     """Every stage of the reconciliation, in order, from the read sources and
     the editor's decisions (edition/byzantine.json, thawed) and placements
     (edition/byzantine-placements.json, thawed): everything it worked out,
-    for the promotion, the review and the appendix, by the stage that made
+    for the promotion, the review and the variants, by the stage that made
     it (stages.Reconciliation). Each stage stops the build on a decision
     that does not fit its source or changes nothing, a placement the code
     now makes on its own, a reading it could not carry out, a broken

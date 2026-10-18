@@ -1,21 +1,25 @@
-import { defineConfig } from "vitepress";
+import { defineConfig, type DefaultTheme } from "vitepress";
 import { resolve } from "node:path";
 import {
   manifest,
   chapterURL,
-  chapterSearchContent,
+  matterLink,
+  searchContent,
   directory,
-  SECTIONS,
+  variants,
+  variantsLinks,
+  sections,
   type Book,
 } from "./lib/library.ts";
 const books = manifest().books;
-function contents(current?: Book) {
-  return Object.entries(SECTIONS).map(([section, text]) => ({
-    text,
-    collapsed: current !== undefined && current.section !== section,
-    items: books
-      .filter((b) => b.section === section)
-      .map((b) =>
+const listed = variants();
+// The edition's own pages stand at the top, under no heading.
+function contents(current?: Book): DefaultTheme.SidebarItem[] {
+  return sections().flatMap((s) => {
+    const items: DefaultTheme.SidebarItem[] = [
+      // A section's front matter precedes its books, as in the book.
+      ...s.matter.map(matterLink),
+      ...s.books.map((b) =>
         b === current
           ? {
               text: b.short,
@@ -26,7 +30,17 @@ function contents(current?: Book) {
             }
           : { text: b.short, link: chapterURL(b, b.chapters[0]) },
       ),
-  }));
+    ];
+    return s.title
+      ? [
+          {
+            text: s.title,
+            collapsed: current !== undefined && current.section !== s.section,
+            items,
+          },
+        ]
+      : items;
+  });
 }
 const about = [
   ["Overview", "/about/"],
@@ -77,11 +91,12 @@ export default defineConfig({
     typographer: true,
   },
   themeConfig: {
-    siteTitle: "Orthodox Liturgical English Bible",
+    siteTitle: "OLEB",
     sidebarMenuLabel: "Contents",
     nav: [
       { text: "Home", link: "/" },
       { text: "Read", link: "/read/", activeMatch: "^/read/" },
+      { text: "Variants", link: "/variants/", activeMatch: "^/variants/" },
       { text: "Download", link: "/bible.pdf" },
       { text: "About", items: about },
       { text: "Resources", items: resources },
@@ -92,6 +107,7 @@ export default defineConfig({
           text: "OLEB",
           items: [
             { text: "Read Online", link: "/read/" },
+            { text: listed.title, link: "/variants/" },
             { text: "Download PDF", link: "/bible.pdf" },
           ],
         },
@@ -103,6 +119,7 @@ export default defineConfig({
       ...Object.fromEntries(
         books.map((b) => [`/read/${b.id.toLowerCase()}/`, contents(b)]),
       ),
+      "/variants/": [{ text: listed.title, items: variantsLinks() }],
     },
     socialLinks: [{ icon: "github", link: "https://github.com/basil/bible" }],
     search: {
@@ -111,7 +128,7 @@ export default defineConfig({
         async _render(src, env, md) {
           // Local search reads files directly; generated pages have no file.
           const html = await md.renderAsync(
-            chapterSearchContent(env.relativePath) ?? src,
+            searchContent(env.relativePath) ?? src,
             env,
           );
           return env.frontmatter?.search === false ? "" : html;

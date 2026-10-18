@@ -215,6 +215,13 @@ def accent_letters(text: str) -> list[str]:
     return result
 
 
+def letter_key(text: str) -> str:
+    """The letters with their diacritics, for comparing Greek without case
+    or punctuation: a grave accent is not the acute it stands for."""
+    # lower(), not casefold(): casefold erases iota subscripts.
+    return unicodedata.normalize("NFC", "".join(accent_letters(text))).lower()
+
+
 @dataclasses.dataclass(frozen=True)
 class Alignment:
     """Checked projection of comparison tokens onto complete source words."""

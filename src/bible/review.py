@@ -43,10 +43,12 @@ from bible import (
     references,
     scripture,
     versification,
+    web,
 )
 from bible.alexandrinus import APPENDIX
 from bible.byzantine import review as byzantine_review
 from bible.checks import require
+from bible.files import json_text
 from bible.policy import thaw
 from bible.usfm import plain_text
 from bible.usj import Document
@@ -302,6 +304,8 @@ def review(edition: pipeline.Edition) -> None:
             ).items()
         },
         **{f"text/{code}.usfm": text for code, text in export.export(edition, "pdf")},
+        # The textual variants, as the website publishes them.
+        f"text/{bible.policy.VARIANTS['id']}.json": json_text(web.variants(edition)),
     }
     base = paths.BUILD_DIR / "review"
     changes: list[str] = []

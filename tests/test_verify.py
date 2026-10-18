@@ -87,7 +87,8 @@ def test_printed_origins_lose_their_chapter(declared: bible.policy.Policy) -> No
         summary=none,
         met=none,
         byzantine=cast(Any, None),
-        appendix=(),
+        variants_page=cast(Any, None),
+        variants=(),
         ccel=cast(Any, None),
     )
     assert export.exported("GEN", doc, unit).split("\\v 12 ")[1] == (

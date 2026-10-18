@@ -161,10 +161,6 @@ def shared_greek(
     require(ref not in structure.omitted, "the verse is omitted by RP2026")
     target = structure.rp_ref(ref)
 
-    def key(word: str) -> str:
-        # lower(), not casefold(): casefold erases iota subscripts.
-        return unicodedata.normalize("NFC", "".join(greek.accent_letters(word))).lower()
-
     require(
         alignment.text.get(target) == printed[target]["accented"],
         f"{ref}: printed words disagree with Greek alignment offsets",
@@ -174,8 +170,10 @@ def shared_greek(
         f"{ref}: unsupported cross-verse joined-word alignment",
     )
 
-    wanted = [key(w) for w in cited.split()]
-    hits = greek.occurrences([key(w) for w in printed[target]["accented"]], wanted)
+    wanted = [greek.letter_key(w) for w in cited.split()]
+    hits = greek.occurrences(
+        [greek.letter_key(w) for w in printed[target]["accented"]], wanted
+    )
     require(
         len(hits) == 1, f"greek must occur once at RP2026 {target} ({len(hits)} found)"
     )

@@ -39,7 +39,7 @@ AFTER = "after"
 # to print before it, "{kjv bare PSA 33:13-17}".
 NAMED = re.compile(r"\{((?:[a-z]+ )*)([1-4]?[A-Z]{2,3} [^{}]+)\}")
 # The tables the editor's pages ask for, each on a line of its own.
-TABLES = re.compile(r"^\{(names|psalms|books|readings|glosses)\}$", re.M)
+TABLES = re.compile(r"^\{(names|psalms|books|glosses)\}$", re.M)
 # How a passage that the pages name may print.
 WAYS = {"kjv", "bare"}
 
@@ -509,22 +509,15 @@ def page(
     theirs: bible.references.Books,
     *,
     policy: bible.policy.Policy,
-    readings: Sequence[Node] | None = None,
 ) -> Document:
     """One of the editor's pages as it prints: the passages it names between
     braces as the edition cites them, or as the King James Bible numbers
     them, and the tables it asks for, each on a line of its own: the three
-    of chapters and verses together, the glosses of the quotation links, or
-    the readings of the Byzantine text, whose blocks the caller gives."""
+    of chapters and verses together, or the glosses of the quotation links."""
     requested = TABLES.findall(text)
     require(
-        sorted(requested)
-        in ([], ["books", "names", "psalms"], ["readings"], ["glosses"]),
+        sorted(requested) in ([], ["books", "names", "psalms"], ["glosses"]),
         f"Tables asked for, not once each, or not as one set: {requested}",
-    )
-    require(
-        (readings is not None) == (requested == ["readings"]),
-        "Readings given to a page that asks for none, or asked for and not given",
     )
 
     def named(match: re.Match[str]) -> str:
@@ -564,10 +557,7 @@ def page(
                 "Words for the Psalms missing, or not alone, "
                 "between {books} and {psalms}",
             )
-            if asked[1] == "readings":
-                assert readings is not None
-                blocks.extend(readings)
-            elif asked[1] == "glosses":
+            if asked[1] == "glosses":
                 blocks.append(crossrefs.gloss_table(policy))
             elif asked[1] == "names":
                 blocks.append(

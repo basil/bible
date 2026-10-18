@@ -7,6 +7,14 @@
   --vp-c-brand-soft: rgba(164, 119, 76, 0.12);
   --vp-home-hero-name-color: #76512f;
 
+  /* The two Bibles compared: the former reading and the one adopted. */
+  --reading-old: #9a3838;
+  --reading-old-soft: #f4dbd6;
+  --reading-old-background: #fcf5f4;
+  --reading-new: #17675d;
+  --reading-new-soft: #cde9df;
+  --reading-new-background: #f1f8f5;
+
   font-size: 112.5%;
   font-kerning: normal;
   font-variant-numeric: oldstyle-nums;
@@ -17,6 +25,12 @@
   --vp-c-brand-2: #cfa06b;
   --vp-c-brand-3: #a4774c;
   --vp-home-hero-name-color: #deb98b;
+  --reading-old: #f0b0a7;
+  --reading-old-soft: #583438;
+  --reading-old-background: #302326;
+  --reading-new: #92d9c3;
+  --reading-new-soft: #284d43;
+  --reading-new-background: #1c2c29;
 }
 
 /* Tighten VitePress's relaxed line heights. */
@@ -30,17 +44,6 @@
 .VPFooter .copyright,
 .VPSidebarItem .text {
   line-height: 1.59;
-}
-
-.scripture {
-  max-width: 65ch;
-  font-size: 1.15rem;
-  line-height: 1.8;
-}
-
-.scripture p {
-  margin: 0.65em 0;
-  line-height: inherit;
 }
 
 /* Both poetry levels wrap beyond the start of a q2 line, as in print. */
@@ -64,10 +67,6 @@
   margin: 0.8em 0 0.15em;
 }
 
-.scripture .qc {
-  text-align: center;
-}
-
 .scripture .d {
   font-style: italic;
 }
@@ -80,6 +79,15 @@
 
 .scripture .sc {
   font-variant: small-caps;
+}
+
+/* Greek and Hebrew in the fonts the printed edition sets them in. */
+[lang="grc"] {
+  font-family: "GFS Didot", serif;
+}
+
+[lang="he"] {
+  font-family: "Ezra SIL", serif;
 }
 
 .scripture .verse,
@@ -120,6 +128,54 @@
   height: 0.8em;
 }
 
+/* The variants: a table striped by verse rather than by row, since each
+   verse's rows (its Greek and, where the English changes, its English)
+   belong together; the readings tinted where the witnesses differ. */
+.vp-doc .variants tr {
+  background-color: var(--vp-c-bg);
+}
+
+.vp-doc .variants .variant:nth-of-type(2n) tr {
+  background-color: var(--vp-c-bg-soft);
+}
+
+.vp-doc .variants .variant:target tr {
+  background-color: var(--vp-c-brand-soft);
+}
+
+.variants .ref small,
+.variants .tag,
+.variants .gap,
+.variants .slot {
+  color: var(--vp-c-text-2);
+}
+
+.variants .ref small {
+  display: block;
+}
+
+.variants .del,
+.variants .ins {
+  border-radius: 0.15rem;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.variants .del {
+  color: var(--reading-old);
+  background: var(--reading-old-soft);
+}
+
+.variants .ins {
+  color: var(--reading-new);
+  background: var(--reading-new-soft);
+}
+
+/* The lines about a unit of front matter's title stand close to it. */
+.matter .mt2 {
+  margin: 0;
+}
+
 .chapters {
   display: flex;
   flex-wrap: wrap;
@@ -144,7 +200,7 @@
 
 .book-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
   gap: 1rem;
 }
 
@@ -244,31 +300,19 @@
 }
 
 .comparison-old {
-  --comparison-color: #9a3838;
-  --comparison-background: #fcf5f4;
-  --comparison-highlight: #f4dbd6;
+  --comparison-color: var(--reading-old);
+  --comparison-background: var(--reading-old-background);
+  --comparison-highlight: var(--reading-old-soft);
 }
 
 .comparison-new {
-  --comparison-color: #17675d;
-  --comparison-background: #f1f8f5;
-  --comparison-highlight: #cde9df;
+  --comparison-color: var(--reading-new);
+  --comparison-background: var(--reading-new-background);
+  --comparison-highlight: var(--reading-new-soft);
 }
 
 .comparison-reading + .comparison-reading {
   margin-top: 0.6rem;
-}
-
-.dark .comparison-old {
-  --comparison-color: #f0b0a7;
-  --comparison-background: #302326;
-  --comparison-highlight: #583438;
-}
-
-.dark .comparison-new {
-  --comparison-color: #92d9c3;
-  --comparison-background: #1c2c29;
-  --comparison-highlight: #284d43;
 }
 
 .comparison dt {

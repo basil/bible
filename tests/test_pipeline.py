@@ -38,7 +38,10 @@ def test_the_edition_prints_every_unit_once_in_the_manifests_order(
     assert list(edition.documents) == order
     assert list(exported) == order
     assert edition.scripture == {unit["id"] for unit in policy.scripture}
-    assert edition.authored == {"CNC", "XXA", "XXF", "XXG", "GLO", "XXC"}
+    assert edition.authored == {"CNC", "XXA", "XXF", "XXG"}
+    # The textual variants are prepared for the website, and printed nowhere.
+    assert bible.policy.VARIANTS["id"] not in edition.documents
+    assert order[-1] == "REV"
     # Each is written under its own id, whatever file it was printed from.
     assert all(text.startswith(f"\\id {code}") for code, text in exported.items())
     assert dict(edition.summary) == {
@@ -80,7 +83,7 @@ def test_no_reconciliation_stage_changes_what_an_earlier_stage_made(
 ) -> None:
     """The reconciliation's records are frozen only at the top, and share
     their rows with the stages after them, so none may be changed in place:
-    not by a later stage, nor by the promotion or the appendix, which the
+    not by a later stage, nor by the promotion or the variants, which the
     preparation runs. The review is not run by it, and is caught here only
     when its tests ran earlier in the session."""
     for name, (made, before) in staged.byzantine.items():
@@ -386,12 +389,7 @@ def test_the_editions_spelling_is_revised_wherever_a_word_is_printed(
             reverse=True,
         )
     )
-    comparisons = {
-        id(block)
-        for _, _, start, end in edition.appendix
-        for block in edition.documents["XXC"]["content"][start:end]
-        if block.get("marker") == "ili1"
-    }
+    variants = bible.policy.VARIANTS["id"]
 
     def marks(content: usj.Content) -> tuple[set[int], list[tuple[int, usj.Node]]]:
         """Where a character style opens or closes in the words, and each
@@ -416,18 +414,12 @@ def test_the_editions_spelling_is_revised_wherever_a_word_is_printed(
         visit(content)
         return bounds, notes
 
-    for code, doc in edition.documents.items():
+    for code, doc in {**edition.documents, variants: edition.variants_page}.items():
         found: list[str] = []
         for paragraph in usj.walk(doc["content"]):
             if paragraph["type"] not in {"para", "table:cell"}:
                 continue
             content = paragraph["content"]
-            # Appendix comparisons reconstruct their particular source
-            # readings in test_appendix_comparisons_preserve_changes_and_retained_source_passages.
-            # Check their actual authored blocks against those entries there,
-            # rather than exempt a phrase everywhere it happens to occur.
-            if code == "XXC" and id(paragraph) in comparisons:
-                continue
             words_of = usj.text_of(content)
             bounds, notes = marks(content)
 

@@ -1,5 +1,5 @@
 {
-  "why": "Brenton's list names only some of the abbreviations that the printed notes use: his own notes, the footnotes to his preface, the margin of 1611, the quotation links, and the appendix of readings. These rows supplement it, each abbreviation in the form The Chicago Manual of Style gives it (AD, BC, etc., i.e., MS, St.). A meaning is capitalized only where it is a proper noun. The meanings are table labels rather than sentences, so they are printed without a final full stop.",
+  "why": "Brenton's list names only some of the abbreviations that the printed notes use: his own notes, the footnotes to his preface, the margin of 1611, and the quotation links. These rows supplement it, each abbreviation in the form The Chicago Manual of Style gives it (AD, BC, etc., i.e., MS, St.). A meaning is capitalized only where it is a proper noun. The meanings are table labels rather than sentences, so they are printed without a final full stop.",
   "added": [
     ["anno-domini"],
     ["before-christ"],
@@ -11,9 +11,7 @@
     ["saint"],
     ["vatican"],
     ["king-james-version"],
-    ["robinson-pierpont"],
-    ["textus-receptus"],
-    ["orthodox-liturgical-english-bible"]
+    ["textus-receptus"]
   ],
   "meanings": {
     "why": "Chicago capitalizes a meaning only where it is a proper noun, as \"Hebrew\" and \"Septuagint\" are, so Brenton's other meanings are lowercased to match the added rows.",

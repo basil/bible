@@ -5,13 +5,22 @@ import { pathToFileURL } from "node:url";
 import { expect, test } from "vitest";
 import { JSDOM } from "jsdom";
 import MiniSearch from "minisearch";
-import { chapters, directory, manifest } from "../../.vitepress/lib/library.ts";
+import {
+  chapters,
+  directory,
+  manifest,
+  matterURL,
+  variants,
+  variantsURL,
+} from "../../.vitepress/lib/library.ts";
 import comparisons from "../../about/compare.data.ts";
 
 const dist = new URL("../../.vitepress/dist/", import.meta.url);
 const assets = new URL("assets/", dist);
 const fonts = pathToFileURL(`${directory}/fonts/`);
 const books = manifest().books;
+// The Old Testament's last book, after which the New Testament's front matter stands.
+const lastOld = books.filter((b) => b.section === "old_testament").at(-1)!;
 test("citation links retain spacing before their witness labels", () => {
   const page = JSDOM.fragment(builtFile("read/jhn/2.html"));
   const note = [...page.querySelectorAll(".notes li")].find((li) =>
@@ -32,9 +41,39 @@ function builtFile(path: string): string {
 }
 
 test.each([
-  ["read/index", ["Old Testament", "New Testament"]],
-  ["read/gen/1", ["Old Testament", "New Testament"]],
-  ["read/mat/1", ["Old Testament", "New Testament"]],
+  "read/index",
+  "variants/index",
+  "variants/introduction",
+  "variants/mat",
+  "read/gen/1",
+  "read/ndx",
+])("headings on %s have accessible permalinks", (path) => {
+  const page = JSDOM.fragment(builtFile(`${path}.html`));
+  const headings = [
+    ...page.querySelectorAll(".vp-doc h1, .vp-doc h2, .vp-doc h3, .vp-doc h4"),
+  ];
+  expect(headings.length).toBeGreaterThan(0);
+  expect(new Set(headings.map((h) => h.id)).size).toBe(headings.length);
+  for (const h of headings) {
+    expect(h.id).not.toBe("");
+    expect(h.getAttribute("tabindex")).toBe("-1");
+    const link = h.querySelector(".header-anchor")!;
+    expect(link).not.toBeNull();
+    expect(link.getAttribute("href")).toBe(`#${h.id}`);
+    expect(link.getAttribute("aria-label")).toMatch(/^Permalink to “.+”$/);
+  }
+});
+
+// The reader's sidebar: the book's sections.
+const reader = ["Old Testament", "New Testament"];
+test.each([
+  ["read/index", reader],
+  ["read/gen/1", reader],
+  ["read/mat/1", reader],
+  ["read/tdx", reader],
+  ["variants/index", ["Textual Variants"]],
+  ["variants/introduction", ["Textual Variants"]],
+  ["variants/rev", ["Textual Variants"]],
   ["about/index", ["OLEB", "About", "Resources"]],
   ["resources/liturgical-english", ["OLEB", "About", "Resources"]],
 ])("sidebar groups for %s", (path, headings) => {
@@ -50,6 +89,111 @@ test("reader sidebar lists chapters of the current book", () => {
   expect(sidebar.querySelector('a[href="/read/gen/2"]')).not.toBeNull();
   expect(sidebar.querySelector('a[href="/read/exo/1"]')).not.toBeNull();
   expect(sidebar.querySelector('a[href="/read/exo/2"]')).toBeNull();
+});
+
+test("every unit of front matter reaches the static output under its title", () => {
+  const units = manifest().matter;
+  expect(units.map((u) => u.id)).toEqual([
+    "XXD",
+    "CNC",
+    "XXA",
+    "XXB",
+    "XXE",
+    "TDX",
+    "NDX",
+  ]);
+  for (const unit of units) {
+    const page = JSDOM.fragment(builtFile(`${matterURL(unit).slice(1)}.html`));
+    expect(
+      page.querySelectorAll(".scripture.matter h1.mt1#matter"),
+      unit.id,
+    ).toHaveLength(1);
+  }
+  // The dedication's address stands around its title, as printed.
+  const dedication = JSDOM.fragment(builtFile("read/tdx.html"));
+  expect(dedication.querySelector(".matter h1.mt1")!.textContent).toBe(
+    "James,",
+  );
+  expect(dedication.querySelectorAll(".matter p.mt2")).toHaveLength(5);
+  // The abbreviations and the numbering are tables; the Preface quotes Hebrew.
+  expect(
+    JSDOM.fragment(builtFile("read/xxd.html")).querySelector(
+      ".matter table td.tc1",
+    ),
+  ).not.toBeNull();
+  expect(
+    JSDOM.fragment(builtFile("read/xxa.html")).querySelector(
+      ".matter table th.th1",
+    ),
+  ).not.toBeNull();
+  expect(
+    JSDOM.fragment(builtFile("read/xxb.html")).querySelector(".matter .wh"),
+  ).not.toBeNull();
+});
+
+test("the reader's index links each section's front matter before its books", () => {
+  const page = JSDOM.fragment(builtFile("read/index.html"));
+  expect(
+    [...page.querySelectorAll(".matter-card h3 a:not(.header-anchor)")].map(
+      (a) => a.getAttribute("href"),
+    ),
+  ).toEqual(manifest().matter.map(matterURL));
+});
+
+test("every book's variants reach the static output with their anchors", () => {
+  for (const book of variants().books) {
+    const page = JSDOM.fragment(
+      builtFile(`${variantsURL(book).slice(1)}.html`),
+    );
+    expect(
+      [...page.querySelectorAll("tbody.variant")].map((s) => s.id),
+      book.id,
+    ).toEqual(book.entries.map((e) => `c${e.chapter}v${e.verse}`));
+    expect(page.querySelector('.variants [lang="grc"]')).not.toBeNull();
+    // Every lane compares two columns, but for one the witnesses agree in,
+    // which spans both.
+    for (const pair of page.querySelectorAll(".variants .pair")) {
+      const cells = pair.querySelectorAll(".cell");
+      expect(cells).toHaveLength(cells[0]!.hasAttribute("colspan") ? 1 : 2);
+    }
+  }
+});
+
+test("the variants link the verses the edition has, and omitted verses' chapters", () => {
+  const page = JSDOM.fragment(builtFile("variants/luk.html"));
+  expect(
+    page.querySelector("#c17v35 .variant-link")!.getAttribute("href"),
+  ).toBe("/read/luk/17#v35");
+  expect(
+    page.querySelector("#c17v36 .variant-link")!.getAttribute("href"),
+  ).toBe("/read/luk/17");
+  // The omitted verse has the source's words against nothing, in both lanes.
+  expect(
+    [...page.querySelectorAll("#c17v36 .pair")].map(
+      (pair) => pair.querySelectorAll(".slot").length,
+    ),
+  ).toEqual([1, 1]);
+  expect(builtFile("read/luk/17.html")).toContain('id="v35"');
+});
+
+test("the variants' introduction has its own page, with sources in its prose", () => {
+  const intro = JSDOM.fragment(builtFile("variants/introduction.html"));
+  expect(intro.querySelector(".scripture .ip")!.textContent).toContain(
+    "conformed to the Byzantine text",
+  );
+  expect(
+    [...intro.querySelectorAll(".scripture .ip")].some((p) =>
+      p.textContent.startsWith("The changes start from William G. Pierpont"),
+    ),
+  ).toBe(true);
+  expect(intro.querySelector(".scripture .notes")).toBeNull();
+  const page = JSDOM.fragment(builtFile("variants/index.html"));
+  expect(page.querySelector(".scripture")).toBeNull();
+  expect(
+    [...page.querySelectorAll(".book-card h3 a:not(.header-anchor)")].map((a) =>
+      a.getAttribute("href"),
+    ),
+  ).toEqual(variants().books.map(variantsURL));
 });
 
 test("comparison keeps the full OSB quotations between KJV and OLEB", () => {
@@ -143,6 +287,17 @@ test("every chapter reaches the static output with its verse anchors", () => {
 
 test.each([
   ["gen/50", "next", "Exodus 1", "/read/exo/1"],
+  ["xxd", "next", "Editor’s Introduction", "/read/cnc"],
+  ["xxe", "next", "Genesis 1", "/read/gen/1"],
+  ["gen/1", "prev", "Introduction", "/read/xxe"],
+  [
+    `${lastOld.id.toLowerCase()}/${lastOld.chapters.at(-1)!.number}`,
+    "next",
+    "The Epistle Dedicatory",
+    "/read/tdx",
+  ],
+  ["ndx", "next", "Matthew 1", "/read/mat/1"],
+  ["mat/1", "prev", "The Translators to the Reader", "/read/ndx"],
   [
     "neh/1",
     "prev",
@@ -156,17 +311,38 @@ test.each([
   expect(link.querySelector(".title")!.textContent).toBe(text);
 });
 
-test("chapter pager stops at the first and last chapters", () => {
-  const sequence = chapters();
-  for (const [entry, direction] of [
-    [sequence[0], "prev"],
-    [sequence.at(-1)!, "next"],
+test("variants navigation runs from the introduction through every book", () => {
+  const links = [
+    { text: "Introduction", link: "/variants/introduction" },
+    ...variants().books.map((b) => ({
+      text: books.find((book) => book.id === b.id)!.short,
+      link: variantsURL(b),
+    })),
+  ];
+  for (const [i, current] of links.entries()) {
+    const page = JSDOM.fragment(builtFile(`${current.link.slice(1)}.html`));
+    for (const [direction, target] of [
+      ["prev", links[i - 1]],
+      ["next", links[i + 1]],
+    ] as const) {
+      const link = page.querySelector(`.VPDocFooter a.${direction}`);
+      if (target) {
+        expect(link?.getAttribute("href")).toBe(target.link);
+        expect(link?.querySelector(".title")!.textContent).toBe(target.text);
+      } else {
+        expect(link).toBeNull();
+      }
+    }
+  }
+});
+
+test("the pager stops at the first page of the front matter and the last chapter", () => {
+  const last = chapters().at(-1)!;
+  for (const [path, direction] of [
+    [matterURL(manifest().matter[0]).slice(1), "prev"],
+    [`read/${last.book.id.toLowerCase()}/${last.chapter.number}`, "next"],
   ] as const) {
-    const fragment = JSDOM.fragment(
-      builtFile(
-        `read/${entry.book.id.toLowerCase()}/${entry.chapter.number}.html`,
-      ),
-    );
+    const fragment = JSDOM.fragment(builtFile(`${path}.html`));
     expect(fragment.querySelector(`.VPDocFooter a.${direction}`)).toBeNull();
   }
 });
@@ -196,6 +372,9 @@ test.each(books)("search finds $short with an existing anchor", (book) => {
 test.each([
   ["Ezekiel", "/read/ezk/"],
   ["firmament", "/read/gen/"],
+  ["Scrivener", "/variants/introduction#variants"],
+  ["thankless", "/read/xxb#"],
+  ["Occidental", "/read/tdx#"],
   ["Pierpont", "/resources/improvements-kjv#"],
   ["unencumbered", "/resources/improvements-kjv#"],
 ])("search query %s points to an existing anchor", (query, prefix) => {

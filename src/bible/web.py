@@ -1,5 +1,9 @@
-"""Prepared scripture as USJ for the website, without PTXprint's font runs."""
+"""Prepared scripture as USJ for the website, with the Greek and Hebrew
+tagged for their fonts as the typesetter has them, the front matter the
+book prints, and the textual variants, which the website publishes and
+the book does not print."""
 
+import itertools
 import shutil
 import unicodedata
 from collections.abc import Mapping, Sequence
@@ -8,6 +12,7 @@ from typing import NotRequired, TypedDict
 
 from fontTools.ttLib import TTFont
 
+import bible.policy
 from bible import (
     assembly,
     export,
@@ -16,28 +21,44 @@ from bible import (
     pipeline,
     references,
     scripture,
+    terminology,
     usj,
     versification,
 )
+from bible.byzantine.variants import Lane
 from bible.checks import present, require
 
 FONT_STYLES = ("Regular", "Italic", "Bold", "BoldItalic")
+# Every face the website sets, by the file it is wrapped from: the edition's
+# own, and the Greek and Hebrew fonts the typesetter sets quotations in.
+FONTS = {
+    **{
+        f"OLEBFont-{style}.woff": paths.FONTS / "olebfont" / f"OLEBFont-{style}.otf"
+        for style in FONT_STYLES
+    },
+    **{
+        f"GFSDidot-{style}.woff": paths.FONTS
+        / "gfs_didot"
+        / f"GFSDidot{style.removeprefix('Regular')}.otf"
+        for style in FONT_STYLES
+    },
+    "EzraSIL-Regular.woff": paths.EZRA,
+}
 
 
 def write_fonts(directory: Path) -> None:
-    """Wrap the complete installed faces in WOFF.
+    """Wrap the complete installed faces in WOFF, once every one is found.
     The command checks the image before it prepares the edition."""
-    installed = paths.FONTS / "olebfont"
-    for style in FONT_STYLES:
-        source = installed / f"OLEBFont-{style}.otf"
+    for source in FONTS.values():
         require(
             source.is_file(),
             f"Missing installed font input {source.name}; run make bootstrap",
         )
-        directory.mkdir(parents=True, exist_ok=True)
+    directory.mkdir(parents=True, exist_ok=True)
+    for name, source in FONTS.items():
         with TTFont(source, recalcTimestamp=False, recalcBBoxes=False) as font:
             font.flavor = "woff"
-            font.save(directory / f"OLEBFont-{style}.woff")
+            font.save(directory / name)
 
 
 # The headings that stand for an unnumbered chapter's number: a section's,
@@ -154,19 +175,131 @@ def comparisons(
     return result
 
 
+class Variant(TypedDict):
+    chapter: str
+    verse: str
+    # The King James Bible's number, where it differs.
+    kjv: NotRequired[str]
+    lanes: list[Lane]
+
+
+class VariantsBook(TypedDict):
+    id: str
+    entries: list[Variant]
+
+
+class Terms(TypedDict):
+    # The King James Bible, whose number an entry carries where it differs.
+    kjv: str
+    # The apparatus, whose accents a lane gives where they differ.
+    apparatus: str
+
+
+class Variants(TypedDict):
+    title: str
+    intro: list[usj.Node]
+    terms: Terms
+    books: list[VariantsBook]
+
+
+def variants(edition: pipeline.Edition) -> Variants:
+    """The textual variants for the website: the title and the prose of the
+    page that opens them, then their entries by book, each the verse it is
+    about, for the site to anchor and link, with the King James number where
+    it differs and its lanes; and the terms the site labels them with, from
+    the registry. The page's own names and each book's heading and names are
+    left to the site, which prints them from the manifest."""
+    terms = terminology.registry(edition.policy)
+    page = edition.variants_page
+    intro = [
+        block
+        for block in page["content"]
+        if block["type"] != "book" and block.get("marker") not in usj.BOOK_PARAGRAPHS
+    ]
+    books: list[VariantsBook] = []
+    for row, lanes in edition.variants:
+        verse = references.parse_verse(row.reference)
+        if not books or books[-1]["id"] != verse.book:
+            books.append({"id": verse.book, "entries": []})
+        entry: Variant = {
+            "chapter": str(verse.chapter),
+            "verse": f"{verse.number}{verse.letter}",
+            "lanes": lanes,
+        }
+        if row.source != row.reference:
+            entry["kjv"] = references.parse_verse(row.source).label
+        books[-1]["entries"].append(entry)
+    return {
+        "title": assembly.header(page, "mt1"),
+        "intro": intro,
+        "terms": {
+            "kjv": terms.display("king-james-version"),
+            "apparatus": terms.display("apparatus"),
+        },
+        "books": books,
+    }
+
+
+# The names the manifest carries; a unit's title lines (mt1, mt2) print.
+NAMES = frozenset({"h", *assembly.NAME_MARKERS.values()})
+
+
+class Unit(TypedDict):
+    id: str
+    section: str
+    title: str
+    short: str
+
+
+def matter(
+    edition: pipeline.Edition, documents: Mapping[str, usj.Document]
+) -> list[tuple[Unit, usj.Document]]:
+    """The front matter the website publishes, in print order: the project's
+    own pages, then each testament's before its books, without the dividers,
+    which print a title alone; each the whole unit but for the names the
+    manifest carries, opening with its book and its printed title, with its
+    Greek and Hebrew tagged for their fonts as the typesetter has them, and
+    the editor's pages as the editor wrote them."""
+    result: list[tuple[Unit, usj.Document]] = []
+    for section, entry in edition.policy.front_matter:
+        code = entry["id"]
+        doc = export.fonted(edition, code, documents[code])
+        book, *blocks = doc["content"]
+        rest = list(itertools.dropwhile(lambda b: b.get("marker") in NAMES, blocks))
+        # The site anchors a unit at its one printed title.
+        require(
+            book["type"] == "book"
+            and all(b.get("marker") not in NAMES for b in rest)
+            and sum(b.get("marker") == "mt1" for b in rest) == 1,
+            f"Front matter does not open with its book, its names and one title: {code}",
+        )
+        unit: Unit = {
+            "id": code,
+            "section": section,
+            "title": edition.names[code]["title"],
+            "short": edition.names[code]["short_title"],
+        }
+        result.append((unit, usj.with_blocks(doc, [book, *rest])))
+    return result
+
+
 def write(edition: pipeline.Edition, directory: Path) -> None:
     """Write one document per chapter, each opening with its book, their
     ordered chapter inventory, with the book's names and whether a heading
-    stands for a chapter's number, and the comparison page's passages."""
+    stands for a chapter's number, one document per unit of front matter,
+    listed in the inventory with its section and names, the comparison
+    page's passages, and the textual variants."""
     if directory.exists():
         shutil.rmtree(directory)
     write_fonts(directory / "fonts")
     documents = dict(pipeline.view(edition, "pdf"))
     files.write_json(directory / "comparisons.json", comparisons(edition, documents))
+    files.write_json(directory / "variants.json", variants(edition))
     books = []
     for unit in edition.policy.scripture:
         code = unit["id"]
-        doc = export.with_printed_origins(documents[code])
+        # The Greek elision mark is set as its font has it.
+        doc = export.fonted(edition, code, export.with_printed_origins(documents[code]))
         (book, *header), parts = pipeline.headed_chapters(doc)
         # Before the first chapter stand only the book's names, which the
         # manifest carries.
@@ -200,7 +333,13 @@ def write(edition: pipeline.Edition, directory: Path) -> None:
                 "section": unit["section"],
                 "title": names[assembly.NAME_MARKERS["title"]],
                 "short": names[assembly.NAME_MARKERS["short_title"]],
+                # The name one of its chapters is cited by.
+                "cited": edition.books.name(code, chapters=(1,)),
                 "chapters": chapters,
             }
         )
-    files.write_json(directory / "manifest.json", {"books": books})
+    units = []
+    for listed, doc in matter(edition, documents):
+        files.write_json(directory / "matter" / f"{listed['id']}.json", doc)
+        units.append(listed)
+    files.write_json(directory / "manifest.json", {"books": books, "matter": units})

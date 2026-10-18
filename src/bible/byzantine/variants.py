@@ -1,41 +1,37 @@
-"""The appendix of readings: every verse of the New Testament where the
+"""The textual variants: every verse of the New Testament where the
 Byzantine text differs from the Received Text, with the Greek of both and,
 where the English changes, the King James Bible's words and the edition's.
 
 The rows are read from what the reconciliation worked out and from the
-books as the edition prints them; the blocks are USJ for the editor's page
-that asks for them (content/byzantine.sfm), each verse's entry a run of
-blocks, so that the sample can print the entries of its chapters alone.
+books as the edition prints them. The website publishes each verse's lanes:
+the Greek of both texts and, where the English changes, the words of both
+Bibles, each lane the words the two witnesses share and, where they differ,
+both readings. The book prints none of it.
 """
 
 from __future__ import annotations
 
+import itertools
 import re
 import unicodedata
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from difflib import SequenceMatcher
+from typing import Literal, NotRequired, TypedDict, cast
 
-import bible.references
 import bible.terminology
-from bible import scripture, usj
+from bible import scripture
 from bible.byzantine import received
 from bible.byzantine.crosswire import presentation_bridge
 from bible.byzantine.decisions import ref_key
 from bible.byzantine.english import verses_of, without_subscriptions
-from bible.byzantine.greek import accent_letters, ascii_greek
+from bible.byzantine.greek import ascii_greek, letter_key, occurrences
 from bible.byzantine.notes import source_range
-from bible.byzantine.presentation import (
-    corresponding,
-    diff_spans,
-    greek_display,
-    passage_spans,
-)
+from bible.byzantine.presentation import corresponding, diff_spans, passage_spans
 from bible.byzantine.stages import Reconciliation
 from bible.checks import require
-from bible.references import parse_verse
 from bible.scripture import Verse
-from bible.usj import Document, Node
+from bible.usj import Document
 
 
 class Uncertain(Exception):
@@ -56,7 +52,7 @@ class Unit:
 
 @dataclass(frozen=True)
 class Row:
-    """One verse of the appendix: where the edition prints it, where the
+    """One verse of the variants: where the edition prints it, where the
     King James Bible has it, the Greek of both texts, the English before
     and after where it changes, and how the verse stands: changed, the
     same in English, or omitted."""
@@ -75,15 +71,33 @@ class Row:
     # Whether the apparatuses establish the Received Text's reading at every
     # difference of the verse (received.status), or only Scrivener's.
     received: bool = True
+    # The Greek both texts share that a correction of the English is about,
+    # as the correction cites it.
+    about: tuple[str, ...] = ()
 
-    @property
-    def book(self) -> str:
-        return self.reference.split()[0]
 
-    @property
-    def chapter(self) -> int:
-        return parse_verse(self.reference).chapter
-
+# A lane of a verse's entry, as the website publishes it: the source witness
+# and the adopted one, the language of their words, and their segments: a
+# string of words both have, a gap where words in agreement are left out,
+# a reading, the source's words (from) and the adopted text's (to), one of
+# them missing where that witness has nothing there, or words both have that
+# a correction of the English is about.
+Gap = TypedDict("Gap", {"gap": Literal[True]})
+Reading = TypedDict("Reading", {"from": str, "to": str}, total=False)
+About = TypedDict("About", {"about": str})
+Segment = str | Gap | Reading | About
+Lane = TypedDict(
+    "Lane",
+    {
+        "from": str,
+        "to": str,
+        "language": Literal["grc", "en"],
+        "segments": list[Segment],
+        # The accented forms as the apparatus quotes them, where they differ
+        # from the printed texts'.
+        "apparatus": NotRequired[Literal[True]],
+    },
+)
 
 PreparedGreek = tuple[
     dict[str, list[str]], dict[str, list[str]], dict[str, tuple[str, str]]
@@ -112,7 +126,7 @@ def prepare_greek(found: Reconciliation) -> PreparedGreek:
                 positions = [at for at in range(*span) if plain[ref][at] in forms]
                 require(
                     len(forms) == 1 and len(positions) == len(quoted.split(" … ")),
-                    f"Ambiguous appendix accent scope: {ref}",
+                    f"Ambiguous accent scope in the variants: {ref}",
                 )
                 pair.append(
                     " … ".join(
@@ -494,6 +508,15 @@ def rows(
         ).items()
     }
     prepared_verses = verses_of(found.edited.prepared)
+    # The Greek each correction of the English where the texts agree cites,
+    # by the King James verse it corrects.
+    about: dict[str, tuple[str, ...]] = {}
+    for override in found.decisions.overrides:
+        if not override["unit_ids"]:
+            for edit in override["edits"]:
+                cited = about.get(edit["ref"], ())
+                if edit["greek"] not in cited:
+                    about[edit["ref"]] = (*cited, edit["greek"])
     result = []
     for ref in sorted(printed, key=ref_key):
         source = structure.kjv_ref(ref)
@@ -534,6 +557,7 @@ def rows(
                 selected,
                 english_ranges,
                 ref not in unreceived,
+                about.get(source, ()),
             )
         )
     for ref in sorted(structure.omitted, key=ref_key):
@@ -555,7 +579,7 @@ def rows(
 
 def accent_key(text: str) -> str:
     """Compare diacritics without case, punctuation or grave/acute variation."""
-    return acute("".join(accent_letters(text.replace("…", "")))).lower()
+    return acute(letter_key(text.replace("…", "")))
 
 
 def acute(text: str) -> str:
@@ -565,175 +589,234 @@ def acute(text: str) -> str:
     )
 
 
-def greek(text: str) -> list[Node | str]:
-    """Set Greek and its normalized punctuation in GFS Didot."""
-    text = greek_display(text)
-    if not text.strip():
-        return [text] if text else []
-    leading = text[: len(text) - len(text.lstrip())]
-    trailing = text[len(text.rstrip()) :]
-    result: list[Node | str] = []
-    if leading:
-        result.append(leading)
-    result.append(usj.char("wg", text.strip()))
-    if trailing:
-        result.append(trailing)
-    return result
-
-
-def comparison(
-    spans: Sequence[tuple[str, str]], *, is_greek: bool = False
-) -> list[Node | str]:
-    """Bracket former readings upright; italicize new English, embolden Greek.
-
-    Greek stays upright in its own font, including normalized punctuation.
-    Brackets are outside all character styles. Boundary spaces belong to
-    the printed prose, not to either reading; the source spans stay lossless.
-    """
-    if all(kind == "equal" for kind, _ in spans):
-        return [
-            part
-            for _, value in spans
-            for part in (greek(value) if is_greek else [value])
-        ]
-
-    # Arrange the prose before making character styles. Keep internal spacing
-    # and every non-whitespace character, including punctuation-only changes.
-    printed: list[tuple[str, str]] = []
-    previous = "equal"
-    previous_value = ""
-    space = False
-    for kind, raw in spans:
-        value = raw.strip()
-        space |= bool(raw[:1].isspace())
-        if value:
-            word = kind != "equal" and any(c.isalnum() for c in value)
-            previous_word = previous != "equal" and any(
-                c.isalnum() for c in previous_value
-            )
-            separate = (
-                (word and previous_value[-1:].isalnum())
-                or (previous_word and value[:1].isalnum())
-                or (previous_word and word)
-            )
-            if value[0] not in ",;:.?!··∙)]}”’»\"'":
-                if printed and (space or separate):
-                    printed.append(("equal", " "))
-                space = False
-            # Closing punctuation keeps the pending boundary space for the
-            # next reading, while staying beside the preceding words.
-            printed.append((kind, value))
-            previous, previous_value = kind, value
-        space |= bool(raw[-1:].isspace())
-
-    result: list[Node | str] = []
-    joined: list[tuple[str, str]] = []
-    for kind, value in printed:
-        if kind == "equal" and joined and joined[-1][0] == "equal":
-            joined[-1] = (kind, joined[-1][1] + value)
-        else:
-            joined.append((kind, value))
-    for kind, value in joined:
-        content = greek(value) if is_greek and value.strip() else [value]
-        if kind == "delete":
-            result.append("[")
-            result.extend(content)
-            result.append("]")
-        elif kind == "insert":
-            result.append(usj.char("bd" if is_greek else "it", *content))
-        else:
-            result.extend(content)
-    return result
-
-
-def joined_comparison(
+def joined_spans(
     texts: Sequence[str],
     selected: Sequence[Sequence[tuple[int, int]]],
     side: int,
     anchors: Sequence[tuple[int, int, int, int]],
-) -> list[Node | str]:
-    """Join selected passages, retaining only the outer omission markers."""
+) -> list[tuple[str, str]]:
+    """The selected passages' lossless spans joined, with the words left out
+    around and between them marked as gaps: the markers passage_spans sets,
+    never ellipses in the source wording, one separator between passages."""
     spans: list[tuple[str, str]] = []
     for index, passage in enumerate(selected):
         parts = passage_spans(texts, passage, side, anchors, greek=side == 0)
         a, b = passage[side]
-        # These are the separate markers generated by passage_spans, never
-        # ellipses in the source wording. One separator replaces both.
+        if a:
+            parts[0] = ("gap", parts[0][1])
+        if b < len(texts[side]):
+            parts[-1] = ("gap", parts[-1][1])
         if index and a:
             parts.pop(0)
         if index < len(selected) - 1 and b < len(texts[side]):
             parts.pop()
         if index:
-            spans.append(("equal", " … "))
+            spans.append(("gap", " … "))
         spans.extend(parts)
-    return comparison(spans, is_greek=side == 0)
+    return spans
 
 
-def blocks(
-    listed: Sequence[Row],
-    books: bible.references.Books,
-    terms: bible.terminology.Registry,
-) -> tuple[list[Node], list[tuple[Row, int, int]]]:
-    """The appendix's blocks: a heading for each book, and under it one
-    entry per verse, with a Greek comparison and, where its complete wording
-    changes, an English comparison. Returns the blocks and each entry's run
-    of them, for the sample to choose by chapter."""
-    result: list[Node] = []
-    spans: list[tuple[Row, int, int]] = []
-    current = None
-    tr, rp, kjv, oleb, apparatus, scrivener = (
+def segments(spans: Sequence[tuple[str, str]]) -> list[Segment]:
+    """The spans as the website publishes them: words the witnesses share
+    joined, a gap for each omission marker with its spaces kept as words,
+    and a reading for each run of differences, the source's words on one
+    side and the adopted text's on the other. Spaces and marks both sides
+    of a reading open or close with are words they share."""
+    result: list[Segment] = []
+
+    def shared(text: str) -> None:
+        if text and result and isinstance(result[-1], str):
+            result[-1] += text
+        elif text:
+            result.append(text)
+
+    def reading(before: str, after: str) -> None:
+        while before and after and before[0] == after[0] and not before[0].isalnum():
+            shared(before[0])
+            before, after = before[1:], after[1:]
+        end = 0
+        while (
+            end < min(len(before), len(after))
+            and before[-end - 1] == after[-end - 1]
+            and not before[-end - 1].isalnum()
+        ):
+            end += 1
+        before, after, trailing = (
+            before[: len(before) - end],
+            after[: len(after) - end],
+            before[len(before) - end :],
+        )
+        words: Reading = {}
+        if before:
+            words["from"] = before
+        if after:
+            words["to"] = after
+        if words:
+            result.append(words)
+        shared(trailing)
+
+    before = after = ""
+    for kind, text in (*spans, ("equal", "")):
+        if kind in {"delete", "insert"}:
+            if kind == "delete":
+                before += text
+            else:
+                after += text
+            continue
+        if before or after:
+            reading(before, after)
+            before = after = ""
+        if kind == "equal":
+            shared(text)
+        else:
+            require(kind == "gap", f"Unknown span kind: {kind}")
+            lead, _, trail = text.partition("…")
+            shared(lead)
+            result.append({"gap": True})
+            shared(trail)
+    return result
+
+
+def witness(segments: Sequence[Segment], side: Literal["from", "to"]) -> str:
+    """One witness's words of a lane, with an ellipsis for each gap."""
+
+    def words(segment: Segment) -> str:
+        if isinstance(segment, str):
+            return segment
+        if "gap" in segment:
+            return "…"
+        if "about" in segment:
+            return cast(About, segment)["about"]
+        return segment.get(side, "")
+
+    return "".join(map(words, segments))
+
+
+def marked(result: list[Segment], cited: Sequence[str]) -> list[Segment]:
+    """The segments with the words both witnesses share of each cited phrase
+    set apart. A phrase is RP2026's, so it is found once in the adopted
+    text, read without case or punctuation, as its decision was checked; a
+    reading within it, of a movable ν, a breathing or the punctuation, stays
+    a reading, and a gap breaks it. Words an earlier phrase set apart are
+    this one's too."""
+    result = list(result)
+    for phrase in cited:
+        # The adopted text's words, with where each segment starts in them.
+        text = witness(result, "to")
+        lengths = [len(witness([segment], "to")) for segment in result]
+        starts = list(itertools.accumulate(lengths, initial=0))[:-1]
+        words = list(re.finditer(r"\S+", text))
+        hits = occurrences(
+            [letter_key(word.group().replace("…", "")) for word in words],
+            [letter_key(word) for word in phrase.split()],
+        )
+        require(len(hits) == 1, f"Greek of a correction not once in its lane: {phrase}")
+        a, b = words[hits[0]].start(), words[hits[0] + len(phrase.split()) - 1].end()
+        marks: list[Segment] = []
+        shared = False
+        for start, segment in zip(starts, result, strict=True):
+            if not isinstance(segment, str):
+                if "about" in segment:
+                    end = start + len(cast(About, segment)["about"])
+                    shared |= start < b and a < end
+                marks.append(segment)
+                continue
+            lo, hi = max(a - start, 0), min(b - start, len(segment))
+            # The spaces and punctuation around the words are not theirs.
+            while lo < hi and not lettered(segment[lo]):
+                lo += 1
+            while lo < hi and not lettered(segment[hi - 1]):
+                hi -= 1
+            if lo >= hi:
+                marks.append(segment)
+                continue
+            shared = True
+            marks += [segment[:lo]] if lo else []
+            marks.append({"about": segment[lo:hi]})
+            marks += [segment[hi:]] if hi < len(segment) else []
+        require(shared, f"Greek of a correction shares no words in its lane: {phrase}")
+        result = marks
+    return result
+
+
+def lettered(character: str) -> bool:
+    """A letter, or a mark that belongs to the letter before it."""
+    return unicodedata.category(character)[0] in "LM"
+
+
+def apparatus_differs(unit: Unit) -> bool:
+    """Whether the apparatus accents a unit otherwise than the printed texts."""
+    if unit.apparatus is None or unit.accented is None:
+        return False
+    return tuple(map(accent_key, unit.apparatus)) != tuple(
+        map(accent_key, unit.accented)
+    )
+
+
+def lane(
+    source: str,
+    target: str,
+    language: Literal["grc", "en"],
+    spans: Sequence[tuple[str, str]],
+    *,
+    apparatus: bool = False,
+    about: Sequence[str] = (),
+) -> Lane:
+    """One lane: the witnesses' spans as segments, with the words of the
+    phrases a correction of the English is about set apart."""
+    result: Lane = {
+        "from": source,
+        "to": target,
+        "language": language,
+        "segments": marked(segments(spans), about),
+    }
+    if apparatus:
+        result["apparatus"] = True
+    return result
+
+
+def lanes(row: Row, terms: bible.terminology.Registry) -> list[Lane]:
+    """A verse's lanes: the Greek of the Received Text, or Scrivener's where
+    the apparatuses do not establish it, against the Byzantine text; the
+    King James words against the edition's where they change; and the
+    apparatus's accents where they differ from the printed texts'. The Greek
+    and the English compare the selected passages, the words left out around
+    and between them marked as gaps."""
+    tr, rp, kjv, oleb, scrivener = (
         terms.display(k)
         for k in (
             "textus-receptus",
             "robinson-pierpont",
             "king-james-version",
             "orthodox-liturgical-english-bible",
-            "apparatus",
             "scrivener",
         )
     )
-    for row in listed:
-        if row.book != current:
-            current = row.book
-            result.append(usj.para("is1", books.names[current]))
-        start = len(result)
-        # Under its book's heading, a verse is its chapter and number alone.
-        heading: list[Node | str] = [usj.char("bd", parse_verse(row.reference).label)]
-        if row.source != row.reference:
-            heading.append(f" ({kjv} {parse_verse(row.source).label})")
-        result.append(usj.para("im", *heading))
-        texts = (row.greek_tr, row.greek_rp, row.kjv or "", row.oleb or "")
-        selected = row.passages or (tuple((0, len(t)) for t in texts),)
-        result.append(
-            usj.para(
-                "ili1",
-                f"{tr if row.received else scrivener} → {rp} ",
-                *joined_comparison(texts, selected, 0, row.greek_ranges),
-            )
+    texts = (row.greek_tr, row.greek_rp, row.kjv or "", row.oleb or "")
+    selected = row.passages or (tuple((0, len(t)) for t in texts),)
+    result = [
+        lane(
+            tr if row.received else scrivener,
+            rp,
+            "grc",
+            joined_spans(texts, selected, 0, row.greek_ranges),
+            about=row.about,
         )
-        if row.kjv is not None:
-            result.append(
-                usj.para(
-                    "ili1",
-                    f"{kjv} → {oleb} ",
-                    *joined_comparison(texts, selected, 2, row.english_ranges),
-                )
-            )
-        for unit in row.units:
-            if (
-                unit.apparatus
-                and unit.accented
-                and tuple(map(accent_key, unit.apparatus))
-                != tuple(map(accent_key, unit.accented))
-            ):
-                result.append(
-                    usj.para(
-                        "ili1",
-                        f"{apparatus}: {tr} → {rp} ",
-                        *comparison(
-                            diff_spans(*unit.apparatus, greek=True), is_greek=True
-                        ),
-                    )
-                )
-        spans.append((row, start, len(result)))
-    return result, spans
+    ]
+    if row.kjv is not None:
+        result.append(
+            lane(kjv, oleb, "en", joined_spans(texts, selected, 2, row.english_ranges))
+        )
+    for unit in row.units:
+        if apparatus_differs(unit):
+            assert unit.apparatus is not None
+            # The apparatus quotes words apart with an ellipsis between them,
+            # which marks words left out, as a gap between passages does.
+            spans = [
+                ("gap" if kind == "equal" and part == "…" else kind, part)
+                for kind, text in diff_spans(*unit.apparatus, greek=True)
+                for part in (re.split("(…)", text) if kind == "equal" else [text])
+                if part
+            ]
+            result.append(lane(tr, rp, "grc", spans, apparatus=True))
+    return result

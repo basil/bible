@@ -126,7 +126,7 @@ def write_project(
     # project already contains the edition's inputs and must stand on its own.
     cfg.remove_section("import")
     # Replace BSB's selected book with the edition's manifest order, including
-    # its front pages, dividers, and appendices as distinct printable units.
+    # its front pages and dividers as distinct printable units.
     cfg["project"]["booklist"] = " ".join(ids)
     cfg["project"]["book"] = ids[0]
     if mode == "sample":

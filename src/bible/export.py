@@ -222,8 +222,7 @@ def exported(code: str, doc: Document, edition: Edition) -> str:
     def content(items: Content) -> Content:
         # A note's children are mapped before it, so a bottom note's origin,
         # which does not print, goes before any origin is set as it prints.
-        items = usj.mapped(usj.mapped(items, bottom), origin)
-        return items if code in edition.authored else font_runs(items)
+        return usj.mapped(usj.mapped(items, bottom), origin)
 
     labels = printed_labels(doc) if code in edition.scripture else {}
     full = named_in_full(doc) if code in edition.scripture else set()
@@ -233,7 +232,14 @@ def exported(code: str, doc: Document, edition: Edition) -> str:
         doc = labelled(doc, edition.policy.unit(code))
     # A unit printed from a file that holds another, or under an id that
     # PTXprint would take for its own front matter, is a unit of its own.
-    return usj.serialize(usj.with_code(usj.with_content(doc, content), code))
+    doc = fonted(edition, code, usj.with_content(doc, content))
+    return usj.serialize(usj.with_code(doc, code))
+
+
+def fonted(edition: Edition, code: str, doc: Document) -> Document:
+    """The document with its Greek and Hebrew tagged for their fonts as the
+    typesetter has them; the editor's pages stay as the editor wrote them."""
+    return doc if code in edition.authored else usj.with_content(doc, font_runs)
 
 
 def notes_below(edition: Edition) -> dict[str, frozenset[str]]:

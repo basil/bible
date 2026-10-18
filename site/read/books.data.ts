@@ -1,20 +1,22 @@
-import { manifest, chapterURL, SECTIONS } from "../.vitepress/lib/library.ts";
+import { chapterURL, matterLink, sections } from "../.vitepress/lib/library.ts";
+// Each section with its front matter and its books, as the book has them.
 const loader = {
-  load() {
-    const books = manifest().books;
-    return Object.entries(SECTIONS).map(([section, title]) => ({
+  load: () =>
+    sections().map(({ section, title, matter, books }) => ({
+      section,
       title,
-      books: books
-        .filter((book) => book.section === section)
-        .map((book) => ({
-          ...book,
-          chapters: book.chapters.map((c) => ({
-            label: c.label,
-            url: chapterURL(book, c),
-          })),
+      matter: matter.map((unit) => ({
+        ...matterLink(unit),
+        title: unit.title,
+      })),
+      books: books.map((book) => ({
+        ...book,
+        chapters: book.chapters.map((c) => ({
+          label: c.label,
+          url: chapterURL(book, c),
         })),
-    }));
-  },
+      })),
+    })),
 };
 declare const data: ReturnType<typeof loader.load>;
 export { data };

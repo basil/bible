@@ -4,6 +4,7 @@ import {
   chapters,
   chapterURL,
   manifest,
+  matterRoutes,
   readerPages,
 } from "../../.vitepress/lib/library.ts";
 
@@ -16,30 +17,50 @@ const targets = new Set(
     return [url, ...chapter.verses.map((verse) => `${url}#v${verse}`)];
   }),
 );
+function expectLinksResolved(content: string) {
+  const fragment = JSDOM.fragment(content);
+  for (const link of fragment.querySelectorAll('a[href^="#"]')) {
+    const target = link.getAttribute("href")!.slice(1);
+    expect(
+      fragment.getElementById(target),
+      `Unresolved link #${target}`,
+    ).not.toBeNull();
+  }
+  // A citation the build cannot read prints without a link.
+  for (const field of fragment.querySelectorAll(".xt")) {
+    expect(
+      field.querySelector("a"),
+      `Unlinked citation ${field.textContent}`,
+    ).not.toBeNull();
+  }
+  for (const link of fragment.querySelectorAll(".xt a")) {
+    const href = link.getAttribute("href")!;
+    expect(targets.has(href), `Unresolved citation ${href}`).toBe(true);
+  }
+}
 test.each(pages)(
   "exported note links: $params.book $params.chapter",
-  ({ content }) => {
-    const fragment = JSDOM.fragment(content);
-    for (const link of fragment.querySelectorAll('a[href^="#"]')) {
-      const target = link.getAttribute("href")!.slice(1);
-      expect(
-        fragment.getElementById(target),
-        `Unresolved link #${target}`,
-      ).not.toBeNull();
-    }
-    // A citation the build cannot read prints without a link.
-    for (const field of fragment.querySelectorAll(".xt")) {
-      expect(
-        field.querySelector("a"),
-        `Unlinked citation ${field.textContent}`,
-      ).not.toBeNull();
-    }
-    for (const link of fragment.querySelectorAll(".xt a")) {
-      const href = link.getAttribute("href")!;
-      expect(targets.has(href), `Unresolved citation ${href}`).toBe(true);
-    }
-  },
+  ({ content }) => expectLinksResolved(content),
 );
+test.each(matterRoutes())(
+  "front matter note links: $params.unit",
+  ({ content }) => expectLinksResolved(content),
+);
+
+test("Greek and Hebrew are set in the styles of their fonts", () => {
+  const genesis = pages.find(
+    (p) => p.params.book === "gen" && p.params.chapter === "1",
+  )!;
+  const greek = JSDOM.fragment(genesis.content).querySelector(".wg")!;
+  expect(greek.getAttribute("lang")).toBe("grc");
+  expect(greek.textContent).toMatch(/^εἰς/);
+  const kingdoms = pages.find(
+    (p) => p.params.book === "2sa" && p.params.chapter === "5",
+  )!;
+  const hebrew = JSDOM.fragment(kingdoms.content).querySelector(".wh")!;
+  expect(hebrew.getAttribute("lang")).toBe("he");
+  expect(hebrew.textContent).toBe("רפאים");
+});
 
 test("Exodus 4 links its note's citation to 1 Corinthians 2:16", () => {
   const page = pages.find(

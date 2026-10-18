@@ -8,7 +8,8 @@
     matter      the translations' front and back matter
     annotate    notes, quotation links and the notes of Brenton's Appendix
     revise      the translations' spelling and punctuation
-    authored    the edition's own pages, quoting the revised translations
+    authored    the edition's own pages, quoting the revised translations,
+                and the textual variants for the website
     view        the full edition, or the sample's chapters, with typography
     export      USFM for PTXprint
 
@@ -53,7 +54,7 @@ from bible import (
     usj,
     versification,
 )
-from bible.byzantine import appendix, stages
+from bible.byzantine import stages, variants
 from bible.checks import present, require, require_used
 from bible.policy import source_id
 from bible.usj import Content, Document, Node
@@ -613,7 +614,7 @@ def annotated(
 class Revised:
     """The translations revised: every unit of front matter and every book
     as it prints; the books as their names alone were respelt, which the
-    kept-name check and the appendix of readings read; and the revisions
+    kept-name check and the textual variants read; and the revisions
     met, which the authored pages' own finishing pass adds to."""
 
     finished: MappingProxyType[str, Document]
@@ -666,23 +667,29 @@ def revise(
     return Revised(MappingProxyType(finished), MappingProxyType(named), met)
 
 
+# An entry of the textual variants: its verse's row and its lanes, as the
+# website publishes them.
+Entry = tuple[variants.Row, list[variants.Lane]]
+
+
 def authored(
     ctx: annotate.Context,
     read_sources: Read,
     revised: Revised,
     found: stages.Reconciliation,
-) -> tuple[dict[str, Document], tuple[tuple[str, int, int, int], ...]]:
-    """The edition's own pages, with the passages and tables they ask for,
-    among them the appendix of readings; and each reading's run of that
-    page's blocks, by book and chapter, for the sample to choose by."""
+) -> tuple[dict[str, Document], Document, tuple[Entry, ...]]:
+    """The edition's own pages, with the passages and tables they ask for:
+    the pages the book prints, by id; the page that opens the textual
+    variants, which the website publishes; and the variants' entries, each
+    its row and its lanes, for the website to publish by its verse."""
     policy = ctx.policy
-    # The appendix quotes the King James books before the readings and the
+    # The variants quote the King James books before the readings and the
     # New Testament after them with the same systematic spelling and
     # punctuation, before the verse-specific revisions, so that it shows the
     # readings' differences alone. The names are the edition's verses' and
     # are not applied to the King James books, so a respelt name shows in
-    # the appendix beside the reading it stands near.
-    rows = appendix.rows(
+    # the variants beside the reading it stands near.
+    rows = variants.rows(
         found,
         {
             code: revision.regularized(doc, policy)
@@ -694,16 +701,15 @@ def authored(
             if code in policy.kjv_units
         },
     )
-    readings, spans = appendix.blocks(rows, ctx.books, ctx.terms)
+    entries = tuple((row, variants.lanes(row, ctx.terms)) for row in rows)
     pages = {}
-    for entry in policy.entries:
+    for entry in (*policy.entries, bible.policy.VARIANTS):
         if "file" not in entry:
             continue
         text = read_sources.authored[entry["file"]]
         require(
             text.startswith(f"\\id {entry['id']}\n"), f"Wrong id in {entry['file']}"
         )
-        listing = entry["id"] == bible.policy.READINGS["id"]
         pages[entry["id"]] = numbering.page(
             text,
             ctx.inventory,
@@ -711,23 +717,15 @@ def authored(
             ctx.books,
             read_sources.kjv_books,
             policy=policy,
-            readings=readings if listing else None,
         )
-    page = pages[bible.policy.READINGS["id"]]
-    offset = next(
-        (index for index, block in enumerate(page["content"]) if block is readings[0]),
-        len(page["content"]),
-    )
     # These pages discuss source names, so retain their spelling. Finish
     # punctuation after their passages and tables have been filled in.
     docs = {
         code: revision.punctuated(doc, policy, revised.met)
         for code, doc in pages.items()
     }
-    return docs, tuple(
-        (row.book, row.chapter, offset + start, offset + end)
-        for row, start, end in spans
-    )
+    variants_page = docs.pop(bible.policy.VARIANTS["id"])
+    return docs, variants_page, entries
 
 
 @dataclass(frozen=True)
@@ -755,11 +753,12 @@ class Edition:
     # names for books, and the revisions of spelling and punctuation.
     met: Met
     # What the reconciliation of the New Testament with the Byzantine text
-    # worked out, for the review and the appendix of readings.
+    # worked out, for the review and the textual variants.
     byzantine: stages.Reconciliation
-    # The appendix's entries, by book and chapter, with the blocks of its
-    # page that each is: the sample prints those of its chapters.
-    appendix: tuple[tuple[str, int, int, int], ...]
+    # The page that opens the textual variants, which the website publishes
+    # and the book does not print, and their entries.
+    variants_page: Document
+    variants: tuple[Entry, ...]
     # What came of CCEL's notes, with those set in the verses promotion
     # supplied.
     ccel: ccel.Report
@@ -830,7 +829,9 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
     front, appendix_notes, front_report = front_and_back(read_sources, ctx)
     books, reports = annotated(units, read_sources, appendix_notes, ctx)
     revised = revise(front, books, policy)
-    pages, spans = authored(ctx, read_sources, revised, promoted.byzantine)
+    pages, variants_page, entries = authored(
+        ctx, read_sources, revised, promoted.byzantine
+    )
     prepared = {**pages, **revised.finished}
     documents: dict[str, Document] = {}
     for entry in policy.entries:
@@ -902,7 +903,8 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
         summary=MappingProxyType(summary),
         met=met,
         byzantine=promoted.byzantine,
-        appendix=spans,
+        variants_page=variants_page,
+        variants=entries,
         ccel=promoted.ccel,
     )
 
@@ -943,38 +945,6 @@ def sample_chapters(code: str, doc: Document, wanted: Sequence[int]) -> Document
     return usj.with_blocks(doc, kept)
 
 
-def sample_readings(
-    doc: Document,
-    spans: Sequence[tuple[str, int, int, int]],
-    sample: Mapping[str, Sequence[int]],
-) -> Document:
-    """The appendix of readings with the entries of the sample's chapters
-    alone, under their books' headings, and all of its other blocks."""
-    listed: set[int] = set()
-    kept: set[int] = set()
-    first: dict[str, int] = {}
-    for book, chapter, start, end in spans:
-        listed.update(range(start, end))
-        first[book] = min(first.get(book, start), start)
-        if chapter in sample.get(book, ()):
-            kept.update(range(start, end))
-    # Each book's heading is the block before its first entry.
-    headings = {start - 1: book for book, start in first.items()}
-    books = {book for book, chapter, _, _ in spans if chapter in sample.get(book, ())}
-    return usj.with_blocks(
-        doc,
-        [
-            block
-            for index, block in enumerate(doc["content"])
-            if (
-                headings[index] in books
-                if index in headings
-                else index in kept or index not in listed
-            )
-        ],
-    )
-
-
 def view(edition: Edition, mode: str) -> list[tuple[str, Document]]:
     """The documents a build prints, as (id, document), in order: the whole
     edition, or the sample's chapters; with their typography and their lines
@@ -987,8 +957,6 @@ def view(edition: Edition, mode: str) -> list[tuple[str, Document]]:
             if code not in sample:
                 continue
             doc = sample_chapters(code, doc, sample[code])
-        if code == bible.policy.READINGS["id"] and mode == "sample":
-            doc = sample_readings(doc, edition.appendix, sample)
         if code not in edition.authored:
             doc = typography.typographic(doc)
         result.append((code, indented(doc)))

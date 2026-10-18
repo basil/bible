@@ -973,7 +973,7 @@ RULES: dict[str, re.Pattern[str]] = {
 VERSE_END = re.compile(r"[,;:]+(?=\s*$)")
 # The rule that drops Brenton's square brackets from a book's text. Not a
 # pattern over a unit's English like RULES: a note's brackets, and the
-# appendix of readings' around a former reading, are not scripture text and
+# textual variants' around a former reading, are not scripture text and
 # stay, so the rule reads a book's paragraphs alone (unbracketed).
 BRACKETS = "brackets"
 # A bracket between two letters, which dropping it would join.
@@ -1246,8 +1246,8 @@ def _check_lemmas(before: Document, after: Document) -> None:
 
 def regularized(doc: Document, policy: bible.policy.Policy) -> Document:
     """A document with the systematic spelling and punctuation alone,
-    recording nothing: the appendix of readings quotes both Bibles so, to
-    show the readings' differences and not the edition's finishing."""
+    recording nothing: the textual variants quote both Bibles so, to show
+    the readings' differences and not the edition's finishing."""
     return punctuated(respelt(doc, policy, set()), policy, set())
 
 

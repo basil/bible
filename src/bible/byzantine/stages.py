@@ -183,7 +183,7 @@ class Verified:
 @dataclass(frozen=True)
 class Reconciliation:
     """Everything the reconciliation worked out, by the stage that made it,
-    for the promotion, the review and the appendix of readings."""
+    for the promotion, the review and the textual variants."""
 
     inputs: Inputs
     greek: Greek

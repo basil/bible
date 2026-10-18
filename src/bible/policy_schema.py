@@ -238,7 +238,6 @@ class ManifestExcluded(TypedDict, total=False):
 
 
 class Manifest(TypedDict, total=False):
-    appendices: ReadOnly[tuple[Entry, ...]]
     excluded: ReadOnly[ManifestExcluded]
     front_matter: ReadOnly[tuple[Entry, ...]]
     new_testament_front: ReadOnly[tuple[Entry, ...]]

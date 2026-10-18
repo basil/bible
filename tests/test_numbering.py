@@ -26,7 +26,7 @@ from bible import (
 )
 from bible.checks import CheckFailed
 from bible.numbering import MISSING, Table, within
-from bible.policy import EDITOR, NUMBERING, READINGS
+from bible.policy import EDITOR, NUMBERING
 from bible.references import Verse, parse_verse
 from bible.scripture import Inventory
 
@@ -383,9 +383,7 @@ def test_the_page_asks_for_each_table_once(printed: Printed, more: str) -> None:
         printed(f"\\ip x\n{{names}}\n{{books}}\n{{books}}\n{more}")
 
 
-@pytest.mark.parametrize(
-    "written", ["{glosses}\n{glosses}\n", "{glosses}\n{readings}\n"]
-)
+@pytest.mark.parametrize("written", ["{glosses}\n{glosses}\n", "{glosses}\n{names}\n"])
 def test_the_page_asks_for_the_glosses_alone_and_once(
     printed: Printed, written: str
 ) -> None:
@@ -507,16 +505,16 @@ def test_the_editors_pages_write_the_registrys_terms(
     policy: bible.policy.Policy, edition: bible.pipeline.Edition
 ) -> None:
     # The editor's pages write their abbreviations by hand, so they are held
-    # to the registry: the labels of the appendix of readings.
+    # to the registry: the labels of the textual variants.
     terms = terminology.registry(policy)
-    readings = usj.serialize(edition.documents[READINGS["id"]])
+    variants = usj.serialize(edition.variants_page)
     for identity in (
         "textus-receptus",
         "robinson-pierpont",
         "king-james-version",
         "orthodox-liturgical-english-bible",
     ):
-        assert f"({terms.display(identity)})" in readings
+        assert f"({terms.display(identity)})" in variants
 
 
 def test_every_exception_is_in_the_table(

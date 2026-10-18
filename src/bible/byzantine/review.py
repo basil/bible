@@ -33,13 +33,6 @@ from bible.byzantine import (
     received,
 )
 from bible.byzantine import revisers as revisions
-from bible.byzantine.appendix import (
-    PreparedGreek,
-    passage_ranges,
-    prepare_greek,
-    projected,
-    selections,
-)
 from bible.byzantine.crosswire import edit_offsets, reports_by_unit
 from bible.byzantine.crosswire import spans as word_spans
 from bible.byzantine.crosswire import words
@@ -64,6 +57,13 @@ from bible.byzantine.rows import (
 )
 from bible.byzantine.stages import Reconciliation
 from bible.byzantine.tags import Tag, score
+from bible.byzantine.variants import (
+    PreparedGreek,
+    passage_ranges,
+    prepare_greek,
+    projected,
+    selections,
+)
 from bible.checks import present, require
 from bible.scripture import Verse
 from bible.usj import Document, Node
@@ -111,12 +111,12 @@ DIFF_LEGEND = (
     "English diffs compare the King James words with the edition's before their spelling and punctuation are revised. Contextual diffs use [-removed] "
     "and [+added] inside code spans. Unit comparisons use corresponding Greek and English passages, keeping shared constructions intact. "
     "Greek-only excerpts retain complete phrases without English alignment. Paired Greek and English ellipses mark corresponding omitted intervals; verified moved passages may be excerpted; uncertain correspondence quotes complete verses. "
-    "Greek diffs mark wording, punctuation and accents as prepared for the appendix, suppressing case-only differences. Shared words use RP capitalization except every inflection of θεός, κύριος and χριστός (including human uses), which keeps TR capitalization even at verse openings; whole-verse Greek diffs appear once per verse. "
+    "Greek diffs mark wording, punctuation and accents as prepared for the variants, suppressing case-only differences. Shared words use RP capitalization except every inflection of θεός, κύριος and χριστός (including human uses), which keeps TR capitalization even at verse openings; whole-verse Greek diffs appear once per verse. "
     "Witness diffs show complete touched phrases where their "
     "wording can be located uniquely; … marks clipped context. KJV context shows "
     "an instruction’s proposal; source context shows the reported alternative "
     "in the witness’s own verse wording. Otherwise only the quoted contrast appears. "
-    "Unit comparisons start from the corrections-only KJV baseline where needed; correction sections compare original KJV with that baseline. Explicit whole-verse comparisons show all changes and remain complete. The printed appendix gives every entry a TR → RP comparison and adds KJV → OLEB only where the complete English wording changes, including shared-Greek corrections and moved verses, before verse-specific punctuation revisions and with systematic spelling and punctuation applied to both sides, with shared wording once, former readings in upright square brackets, new Greek readings in bold and new English readings in italics. Deleted English and Greek stay upright. Separately labelled apparatus evidence uses the same Greek comparison format. Printed boundary spaces follow ordinary prose spacing outside brackets and bold type in both languages; Markdown marks retain the exact source spaces. "
+    "Unit comparisons start from the corrections-only KJV baseline where needed; correction sections compare original KJV with that baseline. Explicit whole-verse comparisons show all changes and remain complete. The textual variants on the website give every entry a TR → RP lane and add KJV → OLEB only where the complete English wording changes, including shared-Greek corrections and moved verses, before verse-specific punctuation revisions and with systematic spelling and punctuation applied to both sides, shared words once and each side's own words where they differ. Separately labelled apparatus evidence uses the same Greek comparison format. Printed boundary spaces follow ordinary prose spacing outside brackets and bold type in both languages; Markdown marks retain the exact source spaces. "
     "Verse context includes every unit. Witness quotations include excluded "
     "readings; eligibility and attachment labels state their evidential scope."
     " Greek change describes what differs, not whether English must change. "
