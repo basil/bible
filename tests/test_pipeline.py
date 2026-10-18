@@ -994,7 +994,7 @@ def test_the_sample_prints_selected_chapters_as_the_full_edition_has_them(
     assert daniel.count("\\s1 Susanna\n\\c 0\n\\cp ​\n") == 1
     # A chapter's own closing paragraph stays with it: Psalm 71 ends in a \d
     # that holds its last verse.
-    close = "\\d\n\\v 20 The hymns of David the son of Jesse are ended.\n"
+    close = "\\d\n\\v 20 The hymns of David the son of Jesse are ended\n"
     psalms = edition.documents["PSA"]
     assert usj.serialize(pipeline.sample_chapters("PSA", psalms, [71])).endswith(close)
     assert close not in usj.serialize(pipeline.sample_chapters("PSA", psalms, [72]))
@@ -1152,9 +1152,7 @@ def test_a_title_keeps_the_marking_of_its_supplied_words(
     # Psalm 4's title supplies "the", and Sirach's prologue heading most of
     # its words; the stylesheet sets them in the title's italic.
     psalms = exported["PSA"]
-    assert (
-        "\\v 1 For the end, a Song of David among \\add the \\add*Psalms.\n" in psalms
-    )
+    assert "\\v 1 For the end, a Song of David among \\add the \\add*Psalms\n" in psalms
     assert (
         "\\d \\add The Prologue to the Wisdom of\\add* Jesus \\add the son of\\add* Sirach\n"
         in exported["SIR"]
@@ -1296,6 +1294,33 @@ def test_brackets_go_from_the_text_but_not_from_a_note(
     assert revision.unbracketed(unchanged, policy, set()) is unchanged
     # The rule applies by decision.
     assert revision.unbracketed(doc, revisions(policy, punctuation={}), met) is doc
+
+
+def test_a_title_ends_without_a_period(policy: bible.policy.Policy) -> None:
+    policy = revisions(policy, punctuation={revision.TITLE: {"why": "x"}})
+    doc = usj.parse(
+        "\\id PSA\n\\c 3\n\\d\n\\v 1 A Psalm of \\sc David.\\sc*\\f + \\fr 3:1 "
+        "\\fq David: \\ft A note.\\f*\n\\q1\n\\v 2 O Lord.\n\\c 4\n\\d\n"
+        "\\v 1 and he said:\n\\q1\n\\v 2 Hear me.\n\\c 5\n\\d\n\\v 1 Is not David hid?"
+    )
+    met: revision.MetRevisions = set()
+    result = revision.untitled(doc, policy, met)
+    assert met == {revision.TITLE}
+    text = usj.serialize(result)
+    # The period goes from the title's style; the note and the verse keep theirs.
+    assert (
+        "\\v 1 A Psalm of \\sc David\\sc*\\f + \\fr 3:1 \\fq David: \\ft A note.\\f*"
+        in text
+    )
+    assert "\\v 2 O Lord." in text
+    # Another mark that ends a title stays.
+    assert "\\v 1 and he said:" in text
+    assert "\\v 1 Is not David hid?" in text
+    # A book without them is shared, and the rule is not met by it.
+    unchanged = usj.parse("\\id GEN\n\\c 1\n\\p\n\\v 1 In the beginning.")
+    assert revision.untitled(unchanged, policy, set()) is unchanged
+    # The rule applies by decision.
+    assert revision.untitled(doc, revisions(policy, punctuation={}), met) is doc
 
 
 def test_brackets_in_a_book_the_hebrew_lacks_are_supplied_words(
@@ -1510,7 +1535,10 @@ def test_closing_parenthesis_outside_supplied_words(
 
 
 def test_every_punctuation_rule_is_accepted(policy: bible.policy.Policy) -> None:
-    rules = {name: {"why": "x"} for name in (*revision.RULES, revision.BRACKETS)}
+    rules = {
+        name: {"why": "x"}
+        for name in (*revision.RULES, revision.BRACKETS, revision.TITLE)
+    }
     revision.check(revisions(policy, punctuation=rules))
 
 

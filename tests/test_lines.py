@@ -395,9 +395,7 @@ def test_the_psalter_is_set_in_the_updates_lines(
         "how long wilt thou turn away thy face from me?"
     )
     # A title is not a line, and a psalm's first line follows it.
-    assert psalms["109:1"].text.startswith(
-        "A Psalm of David.\nThe Lord said to my Lord"
-    )
+    assert psalms["109:1"].text.startswith("A Psalm of David\nThe Lord said to my Lord")
 
 
 def test_the_hebrew_letters_of_lamentations_head_their_lines(

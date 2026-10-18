@@ -10958,6 +10958,9 @@
     "before-parenthesis": {
       "why": "A parenthesis marks its own boundary. Remove the adjacent run of commas, colons and semicolons before an opening parenthesis, within a verse and at the end of a verse whose next verse opens one; a period, question mark or exclamation mark before it ends a sentence and stays."
     },
+    "end-of-title": {
+      "why": "A title (the psalms' titles and the close of Psalm 71, Habakkuk 3:1, the titles of Hezekias's prayer and of the oracles of Esaias and Jeremias, the close of Acts) is a heading, not a sentence, and ends without a period. Another mark that ends one stays: the colon that introduces Psalm 17, the semicolon of Jeremias 29:1, the question a title quotes. A note after the period keeps its place, and its own period."
+    },
     "inside-parenthesis": {
       "why": "A comma, colon or semicolon inside a closing parenthesis belongs to the containing sentence: move it after the parenthesis, or remove it where an em dash follows and supplies the break. A period, question mark or exclamation mark inside stays as the end of the parenthesis's own sentence. Where the containing sentence needs a different mark after the aside, or none, that is a decision."
     }

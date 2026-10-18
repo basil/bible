@@ -121,6 +121,14 @@
 \Marker cat:glosses|tc3
 \SpaceBefore 6
 
+% The introduction's list of translations is a definition list: each term
+% an ili1 list entry, whose first line stands at a paragraph's indent, and
+% its definition below it in one block, a paragraph's indent further in;
+% usfm_sb.sty hangs ili2 like a list entry instead.
+\Marker ili2
+\LeftMargin .25
+\FirstLineIndent 0
+
 % A kathisma heading stands above the psalms it holds, so it is set larger
 % than their chapter labels. The stasis rule's spacing in ptxprint-mods.tex
 % is measured against the label's size.

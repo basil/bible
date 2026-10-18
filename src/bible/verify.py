@@ -33,7 +33,8 @@ POINTS_PER_MM = 72 / 25.4
 TEX_POINTS = 72.27 / 72
 XHTML = "{http://www.w3.org/1999/xhtml}"
 # Notes, character styles, table cells, the Psalter's chapter label and
-# headings, and the Pause lines and acrostic headings, which PTXprint must keep.
+# headings, the Pause lines and acrostic headings, and the terms and
+# definitions of Brenton's list of translations, which PTXprint must keep.
 KEPT_MARKERS = {
     *(
         "f",
@@ -56,6 +57,8 @@ KEPT_MARKERS = {
         "sd2",
         "qr",
         "qa",
+        "ili1",
+        "ili2",
     )
 }
 # PTXprint's record of where the final run set a margin note: its reference,

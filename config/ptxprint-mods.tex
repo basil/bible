@@ -224,3 +224,23 @@
     \baselineskip=\p@ram\fi
   \trace{j}{set baselineskip=\the\baselineskip (\s@urce)}}
 \endgroup
+
+% A paragraph after a blank line opens flush left, as one after a heading
+% does (layout.ini's firstparaindent): the space already marks the break.
+% PTXprint drops the first-line indent of the paragraph that follows a
+% heading by the flag it sets as the heading's box closes. A blank line is
+% no paragraph style but a macro of PTXprint's, which runs no style hooks
+% and is defined only when the first book starts, after this file; extend it
+% then, so that the flag lasts until the next paragraph starts and clears it.
+\begingroup
+\catcode`\@=11
+\addtoinithooks{%
+  \let\BibleBlankLine\ib
+  \def\ib{\BibleBlankLine\global\first@fterheadingtrue}%
+}
+\endgroup
+
+% A term of the introduction's list of translations stands on the page with
+% its definition. PTXprint has no keep-with-next property; its after hook
+% runs once the term's paragraph has closed, and the term has no space after.
+\sethook{after}{ili1}{\nobreak}

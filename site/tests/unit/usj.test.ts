@@ -63,7 +63,6 @@ describe("chapter renderer", () => {
       "im",
       "imi",
       "iex",
-      "ili1",
     ].map((marker) => [marker, "P"]),
     ["s1", "H2"],
     ["s2", "H3"],
@@ -119,6 +118,24 @@ describe("chapter renderer", () => {
     );
     expect(fragment.querySelector("i > b")!.textContent).toBe("last");
     expect(fragment.querySelector("i")!.textContent).toBe("First last");
+  });
+  test("renders a run of terms and definitions as one definition list", () => {
+    const fragment = dom(
+      chapter(
+        para("ip", "Before"),
+        para("ili1", "Term"),
+        para("ili2", "Definition"),
+        para("ili1", "Other"),
+        para("ili2", "Its definition"),
+        para("ip", "After"),
+      ),
+    );
+    expect(fragment.querySelectorAll("dl")).toHaveLength(1);
+    expect(
+      [...fragment.querySelectorAll("dl > *")].map(
+        (e) => `${e.tagName.toLowerCase()}.${e.className}`,
+      ),
+    ).toEqual(["dt.ili1", "dd.ili2", "dt.ili1", "dd.ili2"]);
   });
   test.each(["b", "ib"])("renders %s as a stanza break", (marker) => {
     expect(
@@ -566,6 +583,24 @@ describe("front matter renderer", () => {
       ),
     ).toEqual(["th.th1", "th.th2", "td.tc1", "td.tc2"]);
     expect(fragment.querySelector("td.tc2 i.it")!.textContent).toBe("missing");
+  });
+  test("sets a run of terms and definitions as one definition list", () => {
+    const { html, body } = renderMatter(
+      unit(
+        para("mt1", "Introduction"),
+        para("ili1", "Term"),
+        para("ili2", "Definition"),
+        para("ili1", "Other"),
+        para("ili2", "Its definition"),
+        para("ip", "After"),
+      ),
+    );
+    const tags = (shown: string) =>
+      [...JSDOM.fragment(shown).querySelectorAll(".matter > *")].map((e) =>
+        e.tagName.toLowerCase(),
+      );
+    expect(tags(html)).toEqual(["h1", "dl", "p"]);
+    expect(tags(body)).toEqual(["dl", "p"]);
   });
   test("refuses a verse milestone in front matter", () => {
     expect(() =>

@@ -102,10 +102,31 @@ const PARAGRAPH_TAGS: Record<string, string> = {
   im: "p",
   imi: "p",
   iex: "p",
-  ili1: "p",
+  // A definition list's terms and definitions, in the list its run makes.
+  ili1: "dt",
+  ili2: "dd",
   is1: "h2",
   is2: "h3",
 };
+const DEFINITIONS = new Set(["ili1", "ili2"]);
+// The blocks in the runs they render in: a definition list's terms and
+// definitions together, and every other block alone.
+function runs(nodes: Node[]) {
+  const result: Node[][] = [];
+  for (const n of nodes) {
+    const last = result.at(-1);
+    if (
+      last &&
+      DEFINITIONS.has(n.marker!) &&
+      DEFINITIONS.has(last[0]!.marker!)
+    ) {
+      last.push(n);
+    } else {
+      result.push([n]);
+    }
+  }
+  return result;
+}
 // A zero-width space stands for a number that a chapter or verse doesn't print.
 const HIDDEN = "\u200b";
 // The words of a run of blocks as HTML, with the notes among them numbered
@@ -241,7 +262,12 @@ function renderer(titleAnchor = "") {
       ? headed(tag, id, html, title, marker)
       : `<${tag} class="${marker}">${html}</${tag}>`;
   }
-  const blocks = (nodes: Node[]) => nodes.map(block).join("\n");
+  // One of the runs: a definition list, or a block alone.
+  const run = (nodes: Node[]) =>
+    DEFINITIONS.has(nodes[0]!.marker!)
+      ? `<dl>${nodes.map(block).join("\n")}</dl>`
+      : block(nodes[0]!);
+  const blocks = (nodes: Node[]) => runs(nodes).map(run).join("\n");
   // The notes list, once every block that calls one has been rendered: one
   // list, under one anchor, however often the page asks for it.
   let noteHTML: string | undefined;
@@ -259,7 +285,7 @@ function renderer(titleAnchor = "") {
     }
     return scripture(html + noteList(), ...classes);
   }
-  return { blocks, noteList, prose, verses };
+  return { blocks, run, noteList, prose, verses };
 }
 // A page's Markdown is compiled as a Vue template: v-pre keeps the words,
 // which escape leaves free to hold "{{", from being read as expressions.
@@ -326,11 +352,12 @@ export function renderMatter(doc: Document) {
     blocks = [title, ...rest.slice(lines.length)];
   }
   const render = renderer("matter");
-  const html = blocks.map((n) => render.blocks([n]));
+  const grouped = runs(blocks);
+  const html = grouped.map((nodes) => render.run(nodes));
   const prose = (shown: string[]) => render.prose(shown.join("\n"), "matter");
   return {
     html: prose(html),
-    body: prose(html.filter((_, i) => blocks[i].marker !== "mt1")),
+    body: prose(html.filter((_, i) => grouped[i]![0]!.marker !== "mt1")),
   };
 }
 // The terms the entries are labelled with, as the edition abbreviates them.

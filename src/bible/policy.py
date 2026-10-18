@@ -493,7 +493,8 @@ def check(policy: Policy) -> None:
             for paragraph in addition["paragraphs"]:
                 require_fields(paragraph, {"type", "marker", "content"}, (), label)
                 require(
-                    paragraph["type"] == "para" and paragraph["marker"] in {"ip", "ib"},
+                    paragraph["type"] == "para"
+                    and paragraph["marker"] in {"ip", "ili1", "ili2", "ib"},
                     f"{label}: expected an introductory paragraph",
                 )
                 if paragraph["marker"] == "ib":

@@ -530,7 +530,7 @@
     ]
   },
   "brenton-1851-introduction": {
-    "why": "Complete eBible’s introduction, which ends where the 1870 printing breaks it off (p. vi in the 1879 reprint of its plates), from Brenton’s 1851 printing, pp. viii–xiii, whose words agree with eBible’s closing paragraphs where the scanned pages overlap them, after the paragraph on translations from the Septuagint and before the separate Apocrypha heading. Transcribed from https://ccat.sas.upenn.edu/ioscs/brenton/brenton1851.pdf (PDF pages 1–6), consulted 2026-10-17; retain its wording, including its dates and the printed “Petri and Pauli” in the Latin decree. Preserve the blank-line separations between the translation entries and before the groups beginning “The principal translations”, “In later periods”, “The first printed edition” and “In the latter part”.",
+    "why": "Complete eBible’s introduction, which ends where the 1870 printing breaks it off (p. vi in the 1879 reprint of its plates), from Brenton’s 1851 printing, pp. viii–xiii, whose words agree with eBible’s closing paragraphs where the scanned pages overlap them, after the paragraph on translations from the Septuagint and before the separate Apocrypha heading. Transcribed from https://ccat.sas.upenn.edu/ioscs/brenton/brenton1851.pdf (PDF pages 1–6), consulted 2026-10-17; retain its wording, including its dates and the printed “Petri and Pauli” in the Latin decree. Set the translation entries as a definition list, each term above its definition, without the 1851 printing’s run-in period and dash; preserve the blank-line separations around the list and before the groups beginning “The principal translations”, “In later periods”, “The first printed edition” and “In the latter part”.",
     "changes": [],
     "additions": [
       {
@@ -556,16 +556,22 @@
           },
           {
             "type": "para",
-            "marker": "ip",
+            "marker": "ili1",
             "content": [
               {
                 "type": "char",
                 "marker": "it",
                 "content": [
-                  "The Old Latin."
+                  "The Old Latin"
                 ]
-              },
-              "—This version was executed in very early times, probably in the north of Africa. At the end of the fourth century Jerome made his translation direct from the Hebrew—a work of which many expressed alarm, as though it were a dangerous innovation: however, by degrees the version of Jerome obtained such a footing in the Latin Church that (except in the book of Psalms) it displaced its predecessor. The ",
+              }
+            ]
+          },
+          {
+            "type": "para",
+            "marker": "ili2",
+            "content": [
+              "This version was executed in very early times, probably in the north of Africa. At the end of the fourth century Jerome made his translation direct from the Hebrew—a work of which many expressed alarm, as though it were a dangerous innovation: however, by degrees the version of Jerome obtained such a footing in the Latin Church that (except in the book of Psalms) it displaced its predecessor. The ",
               {
                 "type": "char",
                 "marker": "it",
@@ -578,97 +584,102 @@
           },
           {
             "type": "para",
-            "marker": "ib",
-            "content": []
-          },
-          {
-            "type": "para",
-            "marker": "ip",
+            "marker": "ili1",
             "content": [
               {
                 "type": "char",
                 "marker": "it",
                 "content": [
-                  "The Memphitic (or Coptic) version."
+                  "The Memphitic (or Coptic) version"
                 ]
-              },
-              "—This was probably executed at an early period. Many books of the Old Testament in this translation have been printed."
+              }
             ]
           },
           {
             "type": "para",
-            "marker": "ib",
-            "content": []
-          },
-          {
-            "type": "para",
-            "marker": "ip",
+            "marker": "ili2",
             "content": [
-              {
-                "type": "char",
-                "marker": "it",
-                "content": [
-                  "The Thebaic (or Sahidic)."
-                ]
-              },
-              "—The version into the language of Upper Egypt exists only in fragments."
+              "This was probably executed at an early period. Many books of the Old Testament in this translation have been printed."
             ]
           },
           {
             "type": "para",
-            "marker": "ib",
-            "content": []
-          },
-          {
-            "type": "para",
-            "marker": "ip",
+            "marker": "ili1",
             "content": [
               {
                 "type": "char",
                 "marker": "it",
                 "content": [
-                  "The Æthiopic."
+                  "The Thebaic (or Sahidic)"
                 ]
-              },
-              "—This was probably made in the fourth century: it has not been all printed."
+              }
             ]
           },
           {
             "type": "para",
-            "marker": "ib",
-            "content": []
-          },
-          {
-            "type": "para",
-            "marker": "ip",
+            "marker": "ili2",
             "content": [
-              {
-                "type": "char",
-                "marker": "it",
-                "content": [
-                  "The Gothic."
-                ]
-              },
-              "—This translation was executed by Ulphilas in the fourth century. But few fragments of the Old Testament have been discovered, and a portion of Nehemiah is all that has been printed."
+              "The version into the language of Upper Egypt exists only in fragments."
             ]
           },
           {
             "type": "para",
-            "marker": "ib",
-            "content": []
-          },
-          {
-            "type": "para",
-            "marker": "ip",
+            "marker": "ili1",
             "content": [
               {
                 "type": "char",
                 "marker": "it",
                 "content": [
-                  "The Armenian."
+                  "The Æthiopic"
                 ]
-              },
-              "—In the early part of the fifth century Miesrob, the inventor of the Armenian alphabet, undertook the translation of the Scriptures into that tongue. The version has always been in use in the Armenian Church; and as that nation are so scattered through the East, the translation has become known in many countries in which they have settled. The best edition of this version is that of Zohrab (Venice, 1805), formed wholly on the authority of MSS."
+              }
+            ]
+          },
+          {
+            "type": "para",
+            "marker": "ili2",
+            "content": [
+              "This was probably made in the fourth century: it has not been all printed."
+            ]
+          },
+          {
+            "type": "para",
+            "marker": "ili1",
+            "content": [
+              {
+                "type": "char",
+                "marker": "it",
+                "content": [
+                  "The Gothic"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "para",
+            "marker": "ili2",
+            "content": [
+              "This translation was executed by Ulphilas in the fourth century. But few fragments of the Old Testament have been discovered, and a portion of Nehemiah is all that has been printed."
+            ]
+          },
+          {
+            "type": "para",
+            "marker": "ili1",
+            "content": [
+              {
+                "type": "char",
+                "marker": "it",
+                "content": [
+                  "The Armenian"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "para",
+            "marker": "ili2",
+            "content": [
+              "In the early part of the fifth century Miesrob, the inventor of the Armenian alphabet, undertook the translation of the Scriptures into that tongue. The version has always been in use in the Armenian Church; and as that nation are so scattered through the East, the translation has become known in many countries in which they have settled. The best edition of this version is that of Zohrab (Venice, 1805), formed wholly on the authority of MSS."
             ]
           },
           {

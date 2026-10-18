@@ -100,7 +100,10 @@ def check(policy: bible.policy.Policy) -> None:
         "Revisions file",
     )
     for name, rule in data["punctuation"].items():
-        require(name in RULES or name == BRACKETS, f"Unknown punctuation rule: {name}")
+        require(
+            name in RULES or name in (BRACKETS, TITLE),
+            f"Unknown punctuation rule: {name}",
+        )
         require_fields(rule, {"why"}, (), f"Punctuation rule {name}")
         require(bool(rule["why"]), f"Punctuation rule without a why: {name}")
     words = data["words"]
@@ -976,6 +979,10 @@ VERSE_END = re.compile(r"[,;:]+(?=\s*$)")
 # textual variants' around a former reading, are not scripture text and
 # stay, so the rule reads a book's paragraphs alone (unbracketed).
 BRACKETS = "brackets"
+# The rule that ends a title (\d) without a period, and the period: a
+# title is a heading, not a sentence. Another mark that ends one stays.
+TITLE = "end-of-title"
+STOP = re.compile(r"\.(?=\s*$)")
 # A bracket between two letters, which dropping it would join.
 INSIDE_WORD = re.compile(r"\w[\[\]]+\w")
 # What the rules do not understand, and refuse: a mark already standing where
@@ -1206,6 +1213,38 @@ def unbracketed(
     return result
 
 
+def untitled(doc: Document, policy: bible.policy.Policy, met: MetRevisions) -> Document:
+    """A book whose titles end without a period. Their notes keep their own,
+    a period after untagged Greek or Hebrew is left, and one after a tagged
+    foreign word is refused, as it may be the foreign text's own."""
+    if TITLE not in policy.revisions["punctuation"]:
+        return doc
+    changed = False
+
+    def block(node: Node) -> Node:
+        nonlocal changed
+        if node.get("marker") != "d":
+            return node
+        text = _english(node["content"])
+        match = STOP.search(text)
+        if match is None or not _revisable(text, match, doc):
+            return node
+        changed = True
+        return {
+            **node,
+            "content": usj.substituted(
+                node["content"], [(match.start(), match.end(), "")]
+            ),
+        }
+
+    result = usj.with_blocks(doc, [block(node) for node in doc["content"]])
+    if not changed:
+        return doc
+    met.add(TITLE)
+    _check_lemmas(doc, result)
+    return result
+
+
 def _check_lemmas(before: Document, after: Document) -> None:
     """Refuse a lost lemma, preserving its whole-word edges when it had them."""
 
@@ -1248,7 +1287,8 @@ def regularized(doc: Document, policy: bible.policy.Policy) -> Document:
     """A document with the systematic spelling and punctuation alone,
     recording nothing: the textual variants quote both Bibles so, to show
     the readings' differences and not the edition's finishing."""
-    return punctuated(respelt(doc, policy, set()), policy, set())
+    doc = punctuated(respelt(doc, policy, set()), policy, set())
+    return untitled(doc, policy, set())
 
 
 def revised(

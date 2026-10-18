@@ -71,7 +71,7 @@ VERSION = "3.1"
 MARKER = re.compile(r"\\(?P<plus>\+?)(?P<name>[a-z][a-z0-9-]*)(?P<close>\*?)")
 BOOK_PARAGRAPHS = frozenset("h toc1 toc2 toc3 mt1 mt2 mt3".split())
 PARAGRAPHS = BOOK_PARAGRAPHS | frozenset(
-    "p m mi nb q1 qr qa qc b ip im imi ib iex s1 s2 s3 ms1 sd2 is1 is2 d cl".split()
+    "p m mi nb q1 qr qa qc b ip im imi ib ili1 ili2 iex s1 s2 s3 ms1 sd2 is1 is2 d cl".split()
 )
 # Headings and divisions: no part of the verses or the introduction they stand among.
 HEADINGS = frozenset("s1 s2 s3 ms1 sd2".split())

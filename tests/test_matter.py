@@ -39,6 +39,8 @@ def test_prose_additions_preserve_order_styles_and_inputs(
                             usj.para(
                                 "ip", "An ", usj.char("it", "important"), " reading."
                             ),
+                            usj.para("ili1", "A term"),
+                            usj.para("ili2", "Its definition."),
                         ],
                     }
                 ],
@@ -53,6 +55,8 @@ def test_prose_additions_preserve_order_styles_and_inputs(
         "\\ip Before.",
         "\\ib",
         "\\ip An \\it important\\it* reading.",
+        "\\ili1 A term",
+        "\\ili2 Its definition.",
         "\\ip After.",
     ]
     # The inserted objects are independent of the frozen decision, too.
@@ -166,8 +170,12 @@ def test_brentons_introduction_includes_the_1851_continuation(
     assert "as much among Protestants as among those" in introduction
     assert "Petri and Pauli" in introduction
     assert "\\it intentionally\\it*" in introduction
-    assert introduction.index("The Old Latin.") < introduction.index("The Gothic.")
-    assert introduction.index("The Gothic.") < introduction.index("Cardinal Caraffa")
+    assert introduction.index("\\ili1 \\it The Old Latin\\it*\n") < introduction.index(
+        "\\ili1 \\it The Gothic\\it*\n"
+    )
+    assert introduction.index("\\ili1 \\it The Gothic\\it*\n") < introduction.index(
+        "Cardinal Caraffa"
+    )
     assert introduction.index("Cardinal Caraffa") < introduction.index("Tischendorf")
     assert introduction.rstrip().endswith("have been subjoined to the Roman text.")
     assert "Apocryphal books" not in introduction

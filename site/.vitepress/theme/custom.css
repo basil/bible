@@ -35,6 +35,7 @@
 
 /* Tighten VitePress's relaxed line heights. */
 .vp-doc p,
+.scripture dl,
 .vp-doc .custom-block p,
 .custom-block,
 .VPNavMenuLink.VPNavScreenMenuLink,
@@ -126,6 +127,12 @@
 
 .scripture .stanza {
   height: 0.8em;
+}
+
+/* A definition list, as of the translations in Brenton's introduction: each
+   term above its definition, which is indented as in print. */
+.scripture .ili2 {
+  margin: 0 0 0.4em 1.2em;
 }
 
 /* The variants: a table striped by verse rather than by row, since each
