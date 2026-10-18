@@ -22,7 +22,7 @@ from collections.abc import Iterable, Mapping, Sequence
 
 import bible.policy
 import bible.references
-from bible import scripture, terminology, usj, versification
+from bible import crossrefs, scripture, terminology, usj, versification
 from bible.checks import require
 from bible.policy_schema import Run, VersificationApocrypha
 from bible.references import EDITION, Verse, parse_passage
@@ -38,8 +38,8 @@ AFTER = "after"
 # A passage that the editor's pages name: "{PSA 33:13-17}", or with how it is
 # to print before it, "{kjv bare PSA 33:13-17}".
 NAMED = re.compile(r"\{((?:[a-z]+ )*)([1-4]?[A-Z]{2,3} [^{}]+)\}")
-# What the table's page asks for, each on a line of its own.
-TABLES = re.compile(r"^\{(names|psalms|books|readings)\}$", re.M)
+# The tables the editor's pages ask for, each on a line of its own.
+TABLES = re.compile(r"^\{(names|psalms|books|readings|glosses)\}$", re.M)
 # How a passage that the pages name may print.
 WAYS = {"kjv", "bare"}
 
@@ -514,12 +514,13 @@ def page(
     """One of the editor's pages as it prints: the passages it names between
     braces as the edition cites them, or as the King James Bible numbers
     them, and the tables it asks for, each on a line of its own: the three
-    of chapters and verses together, or the readings of the Byzantine text,
-    whose blocks the caller gives."""
+    of chapters and verses together, the glosses of the quotation links, or
+    the readings of the Byzantine text, whose blocks the caller gives."""
     requested = TABLES.findall(text)
     require(
-        sorted(requested) in ([], ["books", "names", "psalms"], ["readings"]),
-        f"Tables asked for, not once each: {requested}",
+        sorted(requested)
+        in ([], ["books", "names", "psalms"], ["readings"], ["glosses"]),
+        f"Tables asked for, not once each, or not as one set: {requested}",
     )
     require(
         (readings is not None) == (requested == ["readings"]),
@@ -566,6 +567,8 @@ def page(
             if asked[1] == "readings":
                 assert readings is not None
                 blocks.extend(readings)
+            elif asked[1] == "glosses":
+                blocks.append(crossrefs.gloss_table(policy))
             elif asked[1] == "names":
                 blocks.append(
                     names_table(tuple(inventory), facing, ours, theirs, policy=policy)

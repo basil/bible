@@ -384,6 +384,16 @@ def test_the_page_asks_for_each_table_once(printed: Printed, more: str) -> None:
 
 
 @pytest.mark.parametrize(
+    "written", ["{glosses}\n{glosses}\n", "{glosses}\n{readings}\n"]
+)
+def test_the_page_asks_for_the_glosses_alone_and_once(
+    printed: Printed, written: str
+) -> None:
+    with pytest.raises(CheckFailed, match="not as one set"):
+        printed(f"\\ip x\n{written}")
+
+
+@pytest.mark.parametrize(
     "written",
     [
         # Before the books, with no words, and with another table among them.
@@ -468,18 +478,37 @@ def test_the_introduction_names_its_passages(
     assert "of 2 Corinthians 9:7 is found at Proverbs 22:8a." in page
 
 
+def test_the_introduction_tables_the_glosses_by_turpies_classes(
+    edition: bible.pipeline.Edition,
+) -> None:
+    # Each gloss the links print, beside the classes of Turpie's it is
+    # printed for and what it means: C is divided, as crossrefs.agreement
+    # divides it.
+    [table] = [
+        b for b in edition.documents[EDITOR["id"]]["content"] if b["type"] == "table"
+    ]
+    heads, *rows = [
+        tuple(usj.text_of(cell["content"]) for cell in usj.objects(row["content"]))
+        for row in usj.objects(table["content"])
+    ]
+    assert heads == ("Gloss", "Turpie’s classes", "Meaning")
+    assert [(gloss, classes) for gloss, classes, _ in rows] == [
+        ("Heb.\u00a0+ LXX", "A, C\u00a0I"),
+        ("Heb.\u00a0≠ LXX", "B"),
+        ("LXX\u00a0≠ Heb.", "D"),
+        ("reference alone", "C\u00a0II, C\u00a0III, E"),
+    ]
+    assert [meaning for *_, meaning in rows] == [
+        crossrefs.GLOSS_MEANINGS[a] for a in ("A", "B", "D", None)
+    ]
+
+
 def test_the_editors_pages_write_the_registrys_terms(
     policy: bible.policy.Policy, edition: bible.pipeline.Edition
 ) -> None:
     # The editor's pages write their abbreviations by hand, so they are held
-    # to the registry: the glosses of the quotation links as the links print
-    # them, and the labels of the appendix of readings.
+    # to the registry: the labels of the appendix of readings.
     terms = terminology.registry(policy)
-    introduction = usj.serialize(edition.documents[EDITOR["id"]])
-    for agreement in ("A", "B", "D"):
-        gloss = crossrefs.gloss(agreement, terms)
-        assert gloss is not None
-        assert gloss.replace("\u00a0", " ") in introduction
     readings = usj.serialize(edition.documents[READINGS["id"]])
     for identity in (
         "textus-receptus",

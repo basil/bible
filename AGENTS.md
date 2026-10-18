@@ -112,7 +112,7 @@ A correction to a slip in transcription must match the source text exactly once,
 | Page layout, styles and TeX | `config/` |
 | The website | `site/` |
 
-A page in `content/` names a passage between braces, by its code, and the build prints it; `numbering.sfm` also says where its tables go, which the build writes.
+A page in `content/` names a passage between braces, by its code, and the build prints it. A page also says, on a line of its own, where a table the build writes goes: `numbering.sfm` the tables of chapters and verses, `introduction.sfm` the glosses of the quotation links, and `byzantine.sfm` the readings.
 
 ### Where things are
 

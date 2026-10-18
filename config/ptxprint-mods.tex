@@ -154,20 +154,23 @@
 }
 \endgroup
 
-% Give the numbering page's tables their fixed column widths; other tables,
-% such as the abbreviations, keep PTXprint's own. Select the category at
-% table entry, before PTXprint opens the table's group and reads
-% the category. Row hooks run too late; transition hooks depend on the
-% preceding paragraph marker. PTXprint clears the category after each table.
-\newif\ifBibleReferenceTables
-\setbookhook{start}{XXA}{\BibleReferenceTablestrue}
-\setbookhook{end}{XXA}{\BibleReferenceTablesfalse}
+% Give the numbering page's tables, and the introduction's table of glosses,
+% their fixed column widths; other tables, such as the abbreviations, keep
+% PTXprint's own. Select the category at table entry, before PTXprint opens
+% the table's group and reads the category. Row hooks run too late;
+% transition hooks depend on the preceding paragraph marker. PTXprint clears
+% the category after each table.
+\let\BibleTableCategory\empty
+\setbookhook{start}{XXA}{\def\BibleTableCategory{reference}}
+\setbookhook{end}{XXA}{\let\BibleTableCategory\empty}
+\setbookhook{start}{CNC}{\def\BibleTableCategory{glosses}}
+\setbookhook{end}{CNC}{\let\BibleTableCategory\empty}
 \begingroup
 \catcode`\@=11
 \global\let\BibleStartTable\startt@ble
 \gdef\startt@ble{%
-  \ifBibleReferenceTables
-    \ifdoingt@ble\else\def\tablecategory{reference}\fi
+  \ifx\BibleTableCategory\empty\else
+    \ifdoingt@ble\else\let\tablecategory\BibleTableCategory\fi
   \fi
   \BibleStartTable
 }

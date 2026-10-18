@@ -20,6 +20,21 @@ from bible.references import Passage, Verse
 from bible.usj import Node
 from bible.versification import mapped_passages
 
+# The table of the links' glosses: its headings, what a link without a
+# gloss prints, and what each gloss means, by the agreement it prints (None
+# for the reference alone).
+GLOSS_HEADS = ("Gloss", "Turpie’s classes", "Meaning")
+UNGLOSSED = "reference alone"
+GLOSS_MEANINGS: dict[str | None, str] = {
+    "A": "follows the Hebrew and the Septuagint where they agree, allowing"
+    " differences in wording",
+    "B": "follows the Hebrew where it differs from the Septuagint",
+    "D": "follows the Septuagint where it differs from the Hebrew",
+    None: "departs from the Hebrew and the Septuagint by whole clauses where"
+    " they agree, as when a verse is abridged or two passages are joined, or"
+    " follows neither where they differ",
+}
+
 
 def gloss(agreement: str | None, terms: bible.terminology.Registry) -> str | None:
     """The printed gloss of a link's agreement, by Turpie's class. C.I, which
@@ -35,6 +50,57 @@ def gloss(agreement: str | None, terms: bible.terminology.Registry) -> str | Non
         "B": f"{hebrew}\u00a0{differs} {septuagint}",
         "D": f"{septuagint}\u00a0{differs} {hebrew}",
     }.get(agreement or "")
+
+
+def gloss_table(policy: bible.policy.Policy) -> Node:
+    """The glosses of the quotation links, each beside Turpie's classes that
+    it is printed for and what it means: a class whose divisions are glossed
+    alike is named alone, and otherwise each division is named, as C\u00a0I.
+    The glosses come first, in the order of their classes, and the reference
+    alone last."""
+    terms = bible.terminology.registry(policy)
+    divisions: dict[str, dict[str | None, str | None]] = collections.defaultdict(dict)
+    # The rows the links are made from, so that a class no link prints is
+    # not listed.
+    for row in quotations.reviewed_rows(policy=policy):
+        cls, code = row["class"], row["table_code"]
+        divisions[cls][quotations.scope(code)] = agreement(cls, code)
+    classes: dict[str | None, list[str]] = collections.defaultdict(list)
+    for cls, glossed in sorted(divisions.items()):
+        if len(set(glossed.values())) == 1:
+            classes[next(iter(glossed.values()))].append(cls)
+        else:
+            for division, agreed in sorted(glossed.items(), key=lambda d: d[0] or ""):
+                classes[agreed].append(f"{cls}\u00a0{division}")
+    require(
+        all(gloss(a, terms) for a in classes if a is not None),
+        "A class of Turpie's glossed as the links print no gloss",
+    )
+    require(
+        set(classes) == set(GLOSS_MEANINGS),
+        f"The glosses' meanings are for {sorted(map(str, GLOSS_MEANINGS))},"
+        f" and the links print {sorted(map(str, classes))}",
+    )
+
+    def printed(agreed: str | None) -> str | Node:
+        return gloss(agreed, terms) or usj.char("it", UNGLOSSED)
+
+    return {
+        "type": "table",
+        "content": [
+            usj.row(*(usj.cell(f"th{n}", c) for n, c in enumerate(GLOSS_HEADS, 1))),
+            *(
+                usj.row(
+                    usj.cell("tc1", printed(a)),
+                    usj.cell("tc2", ", ".join(c)),
+                    usj.cell("tc3", GLOSS_MEANINGS[a]),
+                )
+                for a, c in sorted(
+                    classes.items(), key=lambda g: (g[0] is None, g[0] or "")
+                )
+            ),
+        ],
+    }
 
 
 @dataclass(frozen=True)

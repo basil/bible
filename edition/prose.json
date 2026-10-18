@@ -286,7 +286,8 @@
       {
         "unit": "XXD",
         "from": "ABBREVIATIONS AND SIGNS USED IN THE NOTES",
-        "to": "Abbreviations and Signs Used in the Notes"
+        "to": "Abbreviations Used in the Notes",
+        "why": "the list holds no signs: Brenton's are written adds and omits, and Turpie's are explained in the editor's introduction"
       },
       {
         "unit": "TDX",

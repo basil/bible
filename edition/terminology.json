@@ -191,7 +191,7 @@
   },
   "textus-receptus": {
     "display": "TR",
-    "meaning": "Textus Receptus, the Received Text of the Greek New Testament, which the King James translators followed, where Scrivener's reconstruction of it and Stephanus's edition agree",
+    "meaning": "_Textus Receptus_, the Received Text",
     "period_forms": ["TR"],
     "note_forms": [],
     "source_forms": ["TR", "Textus Receptus"]
@@ -205,7 +205,7 @@
   },
   "robinson-pierpont": {
     "display": "RP26",
-    "meaning": "the Byzantine text of the Greek New Testament edited by Robinson and Pierpont, 2026",
+    "meaning": "Robinson and Pierpont, _The Greek New Testament According to the Byzantine Text_ (2026)",
     "period_forms": ["RP26"],
     "note_forms": [],
     "source_forms": ["RP26"]
@@ -219,7 +219,7 @@
   },
   "king-james-version": {
     "display": "KJV",
-    "meaning": "King James Version, in the text of the Cambridge Paragraph Bible",
+    "meaning": "King James Version",
     "period_forms": ["KJV"],
     "note_forms": [],
     "source_forms": ["KJV"]

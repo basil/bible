@@ -338,57 +338,55 @@ def test_brenton_introduction_preserves_emphasis_and_nested_quotation(
 def test_the_list_of_abbreviations_is_completed_from_the_registry(
     edition: bible.pipeline.Edition, policy: bible.policy.Policy
 ) -> None:
-    table = next(b for b in edition.documents["XXD"]["content"] if b["type"] == "table")
+    [table] = [b for b in edition.documents["XXD"]["content"] if b["type"] == "table"]
     rows = [
         tuple(
             usj.text_of(cell["content"]).strip() for cell in usj.objects(row["content"])
         )
         for row in usj.objects(table["content"])
     ]
+    latin = usj.serialize(edition.documents["XXD"])
     labels = [label for label, _ in rows]
-    # Brenton's rows for what the edition prints in full are dropped (the +
-    # listed is Turpie's, below)...
-    assert not (set(policy.abbreviations["expanded"]["removed"]) - {"+"}) & set(labels)
+    # Brenton's rows for what the edition prints in full are dropped...
+    assert not set(policy.abbreviations["expanded"]["removed"]) & set(labels)
     # ...his meanings are lowercased where they aren't proper nouns...
     assert ("lit.", "for literally") in rows
     assert not {"—", "adds", "omits"} & set(labels)
-    # Brenton's sign of addition is gone; the + listed is Turpie's.
-    assert [meaning for label, meaning in rows if label == "+"] == [
-        "for Turpie's sign that a quotation follows both texts named"
-    ]
     # ...the edition's rows join his, in the registry's forms...
     assert {
         ("p., pp.", "for page, pages"),
         ("St.", "for saint"),
         ("Vat.", "for Codex Vaticanus"),
-        ("KJV", "for King James Version, in the text of the Cambridge Paragraph Bible"),
+        ("KJV", "for King James Version"),
         ("OLEB", "for Orthodox Liturgical English Bible, this edition"),
         (
             "RP26",
-            "for the Byzantine text of the Greek New Testament edited by Robinson and Pierpont, 2026",
+            "for Robinson and Pierpont, The Greek New Testament According to the Byzantine Text (2026)",
         ),
-        (
-            "TR",
-            "for Textus Receptus, the Received Text of the Greek New Testament, which the King James translators followed, where Scrivener's reconstruction of it and Stephanus's edition agree",
-        ),
+        ("TR", "for Textus Receptus, the Received Text"),
     } <= set(rows)
-    # ...and all are in alphabetical order, by their letters alone, with
-    # Turpie's signs after them.
+    # ...and all are in alphabetical order, by their letters alone. Turpie's
+    # signs aren't abbreviations: the editor's introduction explains them.
     assert labels == sorted(labels, key=terminology.alphabetical)
     assert labels[:3] == ["AD", "Alex.", "BC"]
-    assert labels[-2:] == ["+", "≠"]
+    assert not {"+", "≠"} & set(labels)
     assert ("AD", "for anno Domini, in the year of our Lord") in rows
     assert all(not meaning.endswith(".") for _, meaning in rows)
-    latin = usj.serialize(edition.documents["XXD"])
     assert "\\tc2 for \\it anno Domini\\it*, in the year of our Lord\n" in latin
     assert "\\tc2 for \\it quasi dicat\\it*, as if to say\n" in latin
+    # A title in a meaning is italic as the Latin is.
+    assert "\\tc2 for \\it Textus Receptus\\it*, the Received Text\n" in latin
+    assert (
+        "\\tc2 for Robinson and Pierpont, \\it The Greek New Testament According"
+        " to the Byzantine Text\\it* (2026)\n"
+    ) in latin
 
 
 def test_front_and_back_matter_heading_capitalization(
     edition: bible.pipeline.Edition,
 ) -> None:
     expected = {
-        "XXD": ["\\mt1 Abbreviations and Signs Used in the Notes"],
+        "XXD": ["\\mt1 Abbreviations Used in the Notes"],
         "XXB": ["\\mt1 Preface"],
         "XXE": ["\\mt1 Introduction"],
         "TDX": [

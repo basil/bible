@@ -36,7 +36,7 @@ ALIASES: tuple[Literal["period_forms", "note_forms", "source_forms"], ...] = (
 WITNESS_JOIN = re.compile(r",?\s+and\s+")
 SENTENCE_END = re.compile(r"['’”)]*(?:\s+[A-Z]|[ \t]*(?:\n|$))")
 ERA = re.compile(r"\b(?P<era>a\.d|b\.c)\.(?: (?P<year>\d+(?:[–-]\d+)?)\b)?")
-# Latin in a meaning, italic as Brenton's "quasi dicat" is.
+# Latin or a title in a meaning, italic as Brenton's "quasi dicat" is.
 LATIN = re.compile(r"_([^_]+)_")
 GLOSSARY = "FRT"
 # The witnesses whose additions and omissions the sources mark with a sign.
@@ -531,11 +531,11 @@ def glossary_terms(doc: Document, policy: bible.policy.Policy) -> list[str | Non
     ]
 
 
-def alphabetical(abbreviation: str) -> tuple[bool, str]:
-    """The order of the list of abbreviations: by their letters alone, and
-    the signs, which have none, after them, in the order of their characters."""
+def alphabetical(abbreviation: str) -> str:
+    """The order of the list of abbreviations: by their letters alone."""
     letters = "".join(c for c in abbreviation.casefold() if c.isalpha())
-    return not letters, letters or abbreviation
+    require(bool(letters), f"A sign in the list of abbreviations: {abbreviation}")
+    return letters
 
 
 def completed_glossary(
@@ -543,14 +543,10 @@ def completed_glossary(
 ) -> Document:
     """Brenton's list of abbreviations without the rows dropped, each of his
     labelled as the registry prints it, and with the edition's rows set as
-    his are: the abbreviation in italic, a sign in roman, and "for" its
-    meaning, without a final full stop. The rows are in alphabetical order."""
+    his are: the abbreviation in italic and "for" its meaning, without a
+    final full stop. The rows are in alphabetical order."""
     terms = registry(policy)
     table = glossary_table(doc)
-
-    def label(abbreviation: str) -> str | Node:
-        sign, _ = alphabetical(abbreviation)
-        return abbreviation if sign else usj.char("it", abbreviation)
 
     rows: list[tuple[str, Node]] = []
     for identity, row in zip(identities, usj.objects(table["content"]), strict=True):
@@ -558,7 +554,7 @@ def completed_glossary(
             continue
         label_cell, meaning_cell = list(usj.objects(row["content"]))
         abbreviation = terms.display(identity)
-        label_cell = {**label_cell, "content": [label(abbreviation)]}
+        label_cell = {**label_cell, "content": [usj.char("it", abbreviation)]}
         meaning_text = usj.text_of(meaning_cell["content"]).rstrip()
         require(meaning_text.endswith("."), "Source glossary meaning has no full stop")
         content = usj.substituted(
@@ -581,7 +577,7 @@ def completed_glossary(
             (
                 abbreviation,
                 usj.row(
-                    usj.cell("tc1", label(abbreviation)),
+                    usj.cell("tc1", usj.char("it", abbreviation)),
                     usj.cell("tc2", *usj.joined(cells)),
                 ),
             )
