@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
+import copy
+
 import pytest
 
 import bible.pipeline
-from bible import typography, usj
+from bible import scripture, typography, usj
 from bible.checks import CheckFailed
 
 
@@ -57,3 +59,59 @@ def test_the_edition_is_sent_without_a_straight_quote(
         == len(typography.PLAIN.findall(usj.serialize(kingdoms)))
         > 0
     )
+
+
+def test_small_caps_distinguish_opening_god_from_divine_name_emphasis() -> None:
+    source = usj.parse(
+        "\\id HEB\n\\c 1\n\\p \\v 1 \\add \\+sc God\\+sc*\\add* spoke.\n"
+        "\\p \\v 2 The \\sc Lord\\sc* \\f - \\ft A note.\\f*spoke."
+    )
+    before = copy.deepcopy(source)
+    result = typography.small_caps(source)
+    assert "\\add \\+sc God\\+sc*\\add*" in usj.serialize(result)
+    assert "\\sc Lord" not in usj.serialize(result)
+    assert [v.text for v in scripture.verses(result).values()] == [
+        v.text for v in scripture.verses(source).values()
+    ]
+    assert source == before and typography.small_caps(result) == result
+    # Unwrapped words run on as the parser would leave them.
+    assert result == usj.parse(usj.serialize(result))
+
+
+def test_a_declared_opening_keeps_its_small_capitals_or_is_refused() -> None:
+    text = "\\id REV\n\\c 1\n\\p \\v 1 \\sc The\\sc* Revelation.\n\\p \\v 4 \\sc John\\sc*."
+    assert "\\sc John\\sc*" in usj.serialize(typography.small_caps(usj.parse(text)))
+    with pytest.raises(CheckFailed, match="REV 1:4"):
+        typography.small_caps(usj.parse(text.replace("\\sc John\\sc*", "John")))
+
+
+def test_selective_emphasis_is_unwrapped_without_new_speech_punctuation() -> None:
+    source = usj.parse(
+        "\\id MAT\n\\c 1\n\\p \\v 1 \\sc The\\sc* beginning.\n"
+        "\\d \\v 2 \\sc A descriptive title.\\sc*\n"
+        "\\p \\v 3 He said, \\sc Eli, Eli, \\add lama\\add* sabachthani\\sc*.\n"
+        "\\p \\v 4 About \\sc Aquila\\sc* and \\sc Septuagint\\sc*."
+    )
+    result = usj.serialize(typography.small_caps(source))
+    assert result.count("\\sc ") == 1
+    assert "He said, Eli, Eli, \\add lama\\add* sabachthani." in result
+    assert "About Aquila and Septuagint." in result
+
+
+def test_only_the_audited_decorative_small_caps_remain(
+    edition: bible.pipeline.Edition,
+) -> None:
+    spans: list[str] = []
+
+    def collect(node: usj.Node) -> usj.Node:
+        if usj.is_type(node, "char", "sc"):
+            spans.append(usj.text_of(node["content"]))
+        return node
+
+    for doc in edition.documents.values():
+        usj.with_content(doc, lambda content: usj.mapped(content, collect))
+    assert len(spans) == 84
+    assert spans.count("God") == 1  # Hebrews opens with this word.
+    assert "Lord" not in spans
+    for word in ("Some", "Great", "Zeal", "O Lord", "A copy"):
+        assert word in spans

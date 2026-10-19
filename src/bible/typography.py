@@ -1,5 +1,6 @@
-"""Typographic quotation marks, ellipses and dashes, in place of the sources'
-straight quotes, triple periods and double hyphens.
+"""Decorative opening small capitals, and typographic quotation marks,
+ellipses and dashes in place of straight quotes, triple periods and double
+hyphens.
 
 SmartyPants curls each quote from the characters about it, so it is given a
 document's words as a reader meets them: paragraph after paragraph, each verse
@@ -15,9 +16,78 @@ from collections.abc import Callable
 
 from bible import usj
 from bible.checks import require
-from bible.usj import Content, Document
+from bible.usj import Content, Document, Node
 
 PLAIN = re.compile(r"['\"`]|\.\.\.|--")
+
+# The paragraphs small_caps passes over: titles and headings, whose small
+# capitals are their style's, the acrostic names, an introduction's titles,
+# and an epistle's salutation (po), which precedes its decorative opening.
+PASSED = usj.BOOK_PARAGRAPHS | usj.HEADINGS | frozenset("qa imt1 is1 is2 po".split())
+# The openings after a book's own that keep their small capitals, by book,
+# chapter and verse: the sources joined into Daniel after Susanna, and
+# Revelation's epistolary opening.
+OPENINGS = frozenset({("DAG", "1", "1"), ("DAG", "13", "1"), ("REV", "1", "4")})
+
+
+def small_caps(doc: Document) -> Document:
+    """Retain small capitals at a unit's opening, not as selective emphasis.
+
+    Daniel's joined source books and Revelation's epistolary opening keep
+    their own opening ornaments (OPENINGS); one that no longer opens its
+    paragraph in small capitals is refused. Descriptive and acrostic titles
+    take their style from their paragraph markers, not an inline sc span,
+    unless one opens its book. The source brackets have already gone.
+    """
+    book = usj.book_code(doc)
+    chapter, verse = "", ""
+    opening = True
+    met: set[tuple[str, str, str]] = set()
+    blocks: list[Node] = []
+    for block in doc["content"]:
+        if block["type"] == "chapter":
+            chapter, verse = block["number"], ""
+        if block["type"] != "para" or block.get("marker") in PASSED:
+            blocks.append(block)
+            continue
+        at = 0
+
+        def inline(content: Content, *, note: bool = False) -> Content:
+            nonlocal at, verse, opening
+            result: Content = []
+            for item in content:
+                if isinstance(item, str):
+                    if not note:
+                        at += len(item.strip()) if at == 0 else len(item)
+                        opening = opening and not item.strip()
+                    usj.extended(result, [item])
+                elif item["type"] == "verse":
+                    verse = item["number"]
+                    result.append(item)
+                elif usj.is_label(item):
+                    result.append(item)
+                elif "content" in item:
+                    place = (book, chapter, verse)
+                    keep = not note and at == 0 and (opening or place in OPENINGS)
+                    inner = inline(item["content"], note=note or usj.is_note(item))
+                    if usj.is_type(item, "char", "sc") and not keep:
+                        usj.extended(result, inner)
+                        continue
+                    if usj.is_type(item, "char", "sc") and place in OPENINGS:
+                        met.add(place)
+                    result.append({**item, "content": inner})
+                else:
+                    result.append(item)
+            return result
+
+        blocks.append({**block, "content": inline(block["content"])})
+    declared = {place for place in OPENINGS if place[0] == book}
+    require(
+        met == declared,
+        "Decorative openings without their small capitals: "
+        + ", ".join(f"{b} {c}:{v}" for b, c, v in sorted(declared - met)),
+    )
+    return usj.with_blocks(doc, blocks)
 
 
 def _walk(

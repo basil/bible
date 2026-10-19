@@ -86,7 +86,7 @@ Facts about the Received Text that affect the reading of any list: in 152 units 
 
 **Order.** Carry changed coordination, attachment and emphasis where English syntax allows. Move existing phrases rather than rewrite them; do not copy Greek order into unnatural English.
 
-**Capitals and supplied words.** The King James capitals stay unless a changed expression or sentence boundary needs another; no new reverential capitals. A King James supplied word for which RP2026 now has Greek is no longer marked supplied; necessary supplied English is marked, judged by the Greek construction and King James usage; supplied words that served only an omitted construction go with it. (The edition prints supplied words in ordinary type, so the marking shows only in the sources sent to be typeset.)
+**Capitals and supplied words.** The King James capitals stay unless a changed expression or sentence boundary needs another; no new reverential capitals. (The revise stage then sets emphatic capitals, such as JESUS and the inscriptions, in ordinary case, as [the edition](edition.md) describes.) A King James supplied word for which RP2026 now has Greek is no longer marked supplied; necessary supplied English is marked, judged by the Greek construction and King James usage; supplied words that served only an omitted construction go with it. (The edition prints supplied words in ordinary type, so the marking shows only in the sources sent to be typeset.)
 
 ## Lines of verse
 

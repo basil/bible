@@ -10,8 +10,10 @@ edition/lines.json or stops the build; a decision there may also set a line
 where the words would place it otherwise.
 
 After alignment, terminal “Pause.” instructions stand in right-aligned
-lines, and Brenton’s existing small-cap Lamentations acrostic names in
-headings. Both preserve the source wording, styles, notes and verse nodes.
+lines, Brenton’s existing small-cap Lamentations acrostic names in
+headings, and a prose paragraph's opening small-cap title that ends in a
+period in a descriptive title (d). All preserve the source wording, notes and verse nodes; qa
+supplies the acrostic names' style in place of inline small capitals.
 
 The New Testament keeps Scrivener's paragraphs and poetry unchanged.
 """
@@ -847,7 +849,7 @@ def acrostics(doc: Document) -> Document:
     """Give the existing small-cap names of Lamentations 1–4 qa headings.
 
     Split at word offsets, keeping each verse node before the words it
-    governed. Headings add no stanza breaks and preserve the sc spans.
+    governed. Headings add no stanza breaks; qa supplies their style.
     Refuse a changed inventory, an unexpected placement in its verse, or a
     declared placement that is no longer met.
     """
@@ -858,6 +860,16 @@ def acrostics(doc: Document) -> Document:
     within: set[tuple[str, str, str]] = set()
     # Whether the verse's words have begun before the place reached.
     begun = False
+
+    def label(text: str) -> None:
+        address = f"LAM {chapter}:{verse}"
+        require(
+            (verse, text) in expected,
+            f"Unexpected acrostic label: {address}: {text!r}",
+        )
+        seen.append((verse, text))
+        if begun:
+            within.add((chapter, verse, text))
 
     def check_chapter() -> None:
         require(
@@ -877,6 +889,14 @@ def acrostics(doc: Document) -> Document:
             chapter, verse = block["number"], ""
             expected = acrostic_inventory(chapter)
             seen, within, begun = [], set(), False
+        if block.get("marker") == "qa":
+            for item in block["content"]:
+                if usj.is_type(item, "verse"):
+                    verse, begun = item["number"], False
+            label(usj.text_of(block["content"]))
+            begun = True
+            blocks.append(block)
+            continue
         cuts: list[tuple[int, str, bool]] = []
         offset = 0
         for item in block.get("content", []):
@@ -888,29 +908,63 @@ def acrostics(doc: Document) -> Document:
             elif "content" in item and not usj.is_note(item):
                 text = usj.text_of(item["content"])
                 if item.get("marker") == "sc" and verse:
-                    address = f"LAM {chapter}:{verse}"
+                    label(text)
                     require(
-                        (verse, text) in expected,
-                        f"Unexpected acrostic label: {address}: {text!r}",
+                        block.get("marker") in {"q1", "q2"},
+                        f"Acrostic outside poetry: LAM {chapter}:{verse}",
                     )
-                    seen.append((verse, text))
-                    if begun:
-                        within.add((chapter, verse, text))
-                    if block.get("marker") != "qa":
-                        require(
-                            block.get("marker") in {"q1", "q2"},
-                            f"Acrostic outside poetry: {address}",
-                        )
-                        cuts.extend(
-                            [
-                                (offset, "qa", False),
-                                (offset + len(text), block["marker"], False),
-                            ]
-                        )
+                    cuts.extend(
+                        [
+                            (offset, "qa", False),
+                            (offset + len(text), block["marker"], False),
+                        ]
+                    )
                 offset += len(text)
                 begun = begun or bool(text.strip())
         blocks += _divided(block, cuts) if cuts else [block]
     check_chapter()
+    return usj.with_blocks(
+        doc,
+        (
+            (
+                {
+                    **block,
+                    "content": usj.mapped(
+                        block["content"],
+                        lambda node: (
+                            node["content"] if usj.is_type(node, "char", "sc") else node
+                        ),
+                    ),
+                }
+                if block.get("marker") == "qa"
+                else block
+            )
+            for block in blocks
+        ),
+    )
+
+
+def descriptive_titles(doc: Document) -> Document:
+    """Give a complete source title d, leaving highlighted prose fragments
+    in their sentences. A title ends with a period, whether it fills its
+    prose paragraph or the prose resumes after it, as Concerning Damascus
+    does; one that runs on into what it introduces, as with saying, stays
+    prose. Existing descriptive titles retain their structure and verse
+    nodes.
+    """
+    blocks: list[Node] = []
+    for block in doc["content"]:
+        cuts: list[tuple[int, str, bool]] = []
+        if block.get("marker") == "p":
+            for item in block["content"]:
+                if usj.is_type(item, "verse") or usj.is_type(item, "note"):
+                    continue
+                if usj.is_type(item, "char", "sc"):
+                    title = usj.text_of(item["content"])
+                    if title.endswith("."):
+                        cuts = [(0, "d", False), (len(title), "p", False)]
+                break
+        blocks += _divided(block, cuts) if cuts else [block]
     return usj.with_blocks(doc, blocks)
 
 

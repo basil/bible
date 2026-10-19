@@ -10099,9 +10099,168 @@
     "fellowworkers": {
       "to": "fellow workers",
       "why": "Write fellow as a separate word before the role or relation it modifies throughout the translation, notes, and source matter."
+    },
+    "JESUS CHRIST": {
+      "to": "Jesus Christ",
+      "why": "Use ordinary contextual capitalization for emphatic names and inscriptions, including the notes that quote them; uppercase abbreviations and identifiers retain their spelling."
+    },
+    "JESUS": {
+      "to": "Jesus",
+      "why": "Use ordinary contextual capitalization for emphatic names and inscriptions, including the notes that quote them; uppercase abbreviations and identifiers retain their spelling."
+    },
+    "GOD": {
+      "to": "God",
+      "why": "Use ordinary contextual capitalization for emphatic names and inscriptions, including the notes that quote them; uppercase abbreviations and identifiers retain their spelling."
+    },
+    "THE BEING": {
+      "to": "the Being",
+      "why": "Use ordinary contextual capitalization for emphatic names and inscriptions, including the notes that quote them; uppercase abbreviations and identifiers retain their spelling."
+    },
+    "THE NAME": {
+      "to": "the Name",
+      "why": "Use ordinary contextual capitalization for emphatic names and inscriptions, including the notes that quote them; uppercase abbreviations and identifiers retain their spelling."
+    },
+    "I AM": {
+      "to": "I am",
+      "why": "Use ordinary contextual capitalization for emphatic names and inscriptions, including the notes that quote them; uppercase abbreviations and identifiers retain their spelling."
+    },
+    "THIS IS JESUS THE KING OF THE JEWS": {
+      "to": "This is Jesus the King of the Jews",
+      "why": "Use ordinary contextual capitalization for emphatic names and inscriptions, including the notes that quote them; uppercase abbreviations and identifiers retain their spelling."
+    },
+    "THE KING OF THE JEWS": {
+      "to": "The King of the Jews",
+      "why": "Use ordinary contextual capitalization for emphatic names and inscriptions, including the notes that quote them; uppercase abbreviations and identifiers retain their spelling."
+    },
+    "THIS IS THE KING OF THE JEWS": {
+      "to": "This is the King of the Jews",
+      "why": "Use ordinary contextual capitalization for emphatic names and inscriptions, including the notes that quote them; uppercase abbreviations and identifiers retain their spelling."
+    },
+    "JESUS OF NAZARETH THE KING OF THE JEWS": {
+      "to": "Jesus of Nazareth the King of the Jews",
+      "why": "Use ordinary contextual capitalization for emphatic names and inscriptions, including the notes that quote them; uppercase abbreviations and identifiers retain their spelling."
+    },
+    "TO THE UNKNOWN GOD": {
+      "to": "To the unknown God",
+      "why": "Use ordinary contextual capitalization for emphatic names and inscriptions, including the notes that quote them; uppercase abbreviations and identifiers retain their spelling."
+    },
+    "MYSTERY, BABYLON THE GREAT, THE MOTHER OF HARLOTS AND ABOMINATIONS OF THE EARTH": {
+      "to": "Mystery, Babylon the great, the mother of harlots and abominations of the earth",
+      "why": "Use ordinary contextual capitalization for emphatic names and inscriptions, including the notes that quote them; uppercase abbreviations and identifiers retain their spelling."
+    },
+    "KING OF KINGS, AND LORD OF LORDS": {
+      "to": "King of kings, and Lord of lords",
+      "why": "Use ordinary contextual capitalization for emphatic names and inscriptions, including the notes that quote them; uppercase abbreviations and identifiers retain their spelling."
+    },
+    "HARLOTS": {
+      "to": "harlots",
+      "why": "The lemma of the marginal note at Revelation 17:5 keeps the ordinary case of the inscription it quotes."
+    },
+    "apostolick": {
+      "to": "apostolic",
+      "why": "Use the modern spelling throughout scripture, notes, and front and back matter, as requested by the editor."
+    },
+    "authentick": {
+      "to": "authentic",
+      "why": "Use the modern spelling throughout scripture, notes, and front and back matter, as requested by the editor."
+    },
+    "domestick": {
+      "to": "domestic",
+      "why": "Use the modern spelling throughout scripture, notes, and front and back matter, as requested by the editor."
+    },
+    "bishoprick": {
+      "to": "bishopric",
+      "why": "Use the modern spelling throughout scripture, notes, and front and back matter, as requested by the editor."
+    },
+    "Catholicks": {
+      "to": "Catholics",
+      "why": "Use the modern spelling throughout scripture, notes, and front and back matter, as requested by the editor."
+    },
+    "Ethnicks": {
+      "to": "Ethnics",
+      "why": "Use the modern spelling throughout scripture, notes, and front and back matter, as requested by the editor."
+    },
+    "Gothick": {
+      "to": "Gothic",
+      "why": "Use the modern spelling throughout scripture, notes, and front and back matter, as requested by the editor."
+    },
+    "Arabick": {
+      "to": "Arabic",
+      "why": "Use the modern spelling throughout scripture, notes, and front and back matter, as requested by the editor."
+    },
+    "rhythme": {
+      "to": "rhyme",
+      "why": "Use the modern spelling throughout scripture, notes, and front and back matter, as requested by the editor."
+    },
+    "hinderance": {
+      "to": "hindrance",
+      "why": "Use the modern spelling throughout scripture, notes, and front and back matter, as requested by the editor."
+    },
+    "Friers": {
+      "to": "Friars",
+      "why": "Use the modern spelling throughout scripture, notes, and front and back matter, as requested by the editor."
+    },
+    "Africk": {
+      "to": "Africa",
+      "why": "Use the modern spelling throughout scripture, notes, and front and back matter, as requested by the editor."
+    },
+    "illmeaning": {
+      "to": "ill-meaning",
+      "why": "Use this compound spelling consistently throughout scripture, notes, and front and back matter, as requested by the editor."
+    },
+    "printinghouse": {
+      "to": "printing-house",
+      "why": "Use this compound spelling consistently throughout scripture, notes, and front and back matter, as requested by the editor."
+    },
+    "seventy two": {
+      "to": "seventy-two",
+      "why": "Use this compound spelling consistently throughout scripture, notes, and front and back matter, as requested by the editor."
+    },
+    "under foot": {
+      "to": "underfoot",
+      "why": "Use this compound spelling consistently throughout scripture, notes, and front and back matter, as requested by the editor."
+    },
+    "an uniform": {
+      "to": "a uniform",
+      "why": "Use a before the consonantal opening sound of uniform and uniformity throughout the edition."
+    },
+    "an uniformity": {
+      "to": "a uniformity",
+      "why": "Use a before the consonantal opening sound of uniform and uniformity throughout the edition."
+    },
+    "innocency": {
+      "to": "innocence",
+      "why": "Use innocence consistently throughout scripture, notes, and front and back matter, as requested by the editor."
+    },
+    "Hierome": {
+      "to": "Jerome",
+      "why": "Use Jerome consistently throughout the edition; Brenton's introduction already uses this spelling for the same Father."
+    },
+    "Hierusalem": {
+      "to": "Jerusalem",
+      "why": "Use Jerusalem consistently throughout the edition, including the source prose that otherwise retains its names."
+    },
+    "Nazianzene": {
+      "to": "Nazianzen",
+      "why": "Use Nazianzen consistently throughout the edition; the King James preface already uses this spelling for the same Father."
+    },
+    "surnamed The wise": {
+      "to": "surnamed the Wise",
+      "why": "The article in the epithet of Charles V is lowercase and Wise is capitalized."
     }
   },
   "verses": {
+    "emphatic designations": {
+      "why": "A designation printed in capitals takes the case of its place in the sentence.",
+      "changes": [
+        {
+          "verse": "EXO 3:14",
+          "from": "THE BEING has",
+          "to": "The Being has",
+          "why": "The second designation opens the words Moses is to say, so its article begins with a capital; the first follows “I am”, and the word revision gives it a lowercase article."
+        }
+      ]
+    },
     "luke-belief-clause": {
       "why": "A comma rather than a colon before the reason, as George’s 1611 margin quotes the verse, so that the note’s lemma does not print two colons.",
       "changes": [
@@ -11345,6 +11504,28 @@
           "note": "ESG 6:13 CCEL",
           "from": "Mardochæus. etc.",
           "to": "Mardochæus, etc."
+        }
+      ]
+    },
+    "kjv-preface-parenthesis-periods": {
+      "why": "These parentheses are attached to their containing sentences, whose closing periods stand after the parentheses.",
+      "changes": [
+        {
+          "unit": "NDX",
+          "from": "saith St. Augustine.",
+          "to": "saith St. Augustine",
+          "why": "Remove the containing sentence’s period before the roman closing parenthesis; the adjacent decision restores it after that parenthesis without changing its style."
+        },
+        {
+          "unit": "NDX",
+          "from": ") Again, they were not out of the Hebrew fountain",
+          "to": "). Again, they were not out of the Hebrew fountain",
+          "why": "Restore the containing sentence’s period after its existing roman closing parenthesis, keeping Augustine alone in italics."
+        },
+        {
+          "unit": "NDX",
+          "from": "whose tongue is strange unto him.) Yet",
+          "to": "whose tongue is strange unto him). Yet"
         }
       ]
     }

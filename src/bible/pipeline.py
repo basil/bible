@@ -372,8 +372,9 @@ def lined(
     policy: bible.policy.Policy,
 ) -> MappingProxyType[str, Document]:
     """Brenton's poems set in the update's lines where Scrivener sets the
-    verse as verse too or has no say; New Testament documents unchanged.
-    After the verses are placed, through which the witnesses are read."""
+    verse as verse too or has no say, with their pauses, descriptive titles
+    and acrostic headings; New Testament documents unchanged. After the
+    verses are placed, through which the witnesses are read."""
     lines.check(policy)
     old_testament = {
         code: doc for code, doc in units.items() if code not in policy.kjv_units
@@ -398,7 +399,10 @@ def lined(
     )
     require("PSA" in brenton, "Psalter decisions without the Psalms")
     require("LAM" in brenton, "Acrostic names without Lamentations")
-    brenton = {code: lines.pauses(doc) for code, doc in brenton.items()}
+    brenton = {
+        code: lines.descriptive_titles(lines.pauses(doc))
+        for code, doc in brenton.items()
+    }
     brenton["LAM"] = lines.acrostics(brenton["LAM"])
     brenton["PSA"] = psalter.divided(brenton["PSA"], policy.psalter)
     return MappingProxyType({**units, **brenton})
@@ -635,12 +639,12 @@ def finished_book(
 ) -> tuple[Document, Document]:
     """A book as revised, and as its names alone were respelt: the names
     come first, then the declared changes to its verses and notes, then the
-    source's brackets go, then the systematic spelling and punctuation; a
-    kept name must survive them."""
+    source's brackets and the small capitals of selective emphasis go, then
+    the systematic spelling and punctuation; a kept name must survive them."""
     named = revision.named(code, doc, policy, met)
     doc = revision.revised(code, named, policy, met)
     doc = revision.passages(code, doc, policy, met)
-    doc = revision.unbracketed(doc, policy, met)
+    doc = typography.small_caps(revision.unbracketed(doc, policy, met))
     doc = revision.punctuated(revision.respelt(doc, policy, met), policy, met)
     revision.check_kept(code, named, doc, policy)
     return doc, named
@@ -649,9 +653,10 @@ def finished_book(
 def finished_matter(
     code: str, doc: Document, policy: bible.policy.Policy, met: revision.MetRevisions
 ) -> Document:
-    """A unit of front or back matter as revised: its declared passages,
-    then the systematic spelling and punctuation."""
-    doc = revision.passages(code, doc, policy, met)
+    """A unit of front or back matter as revised: without the small capitals
+    of selective emphasis, its declared passages, then the systematic
+    spelling and punctuation."""
+    doc = revision.passages(code, typography.small_caps(doc), policy, met)
     return revision.punctuated(
         revision.respelt(doc, policy, met, book=False), policy, met
     )
@@ -662,9 +667,10 @@ def revise(
     books: Mapping[str, Document],
     policy: bible.policy.Policy,
 ) -> Revised:
-    """The translations' spelling and punctuation revised, after the
-    source-dependent decisions and before the edition's own pages, which
-    quote the books as they print."""
+    """The translations' spelling and punctuation revised, and the small
+    capitals of selective emphasis gone, after the source-dependent
+    decisions and before the edition's own pages, which quote the books as
+    they print."""
     met: revision.MetRevisions = set()
     finished = {
         code: finished_matter(code, doc, policy, met) for code, doc in front.items()

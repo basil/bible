@@ -684,6 +684,38 @@ def acrostic_source(chapter: str) -> Document:
     return usj.parse(f"\\id LAM\n\\c {chapter}\n" + content)
 
 
+def test_descriptive_titles_keep_fragments_and_verse_continuations() -> None:
+    source = usj.parse(
+        "\\id JER\n\\c 30\n"
+        "\\p \\v 1 \\sc Concerning Idumea,\\sc* thus saith the Lord.\n"
+        "\\p \\v 29 \\sc Concerning Damascus.\\sc* "
+        "\\f - \\ft A note.\\f*Emath is brought to shame.\n"
+        "\\p \\v 30 More words.\n"
+        "\\p \\v 31 \\sc A complete title.\\sc*\n"
+        "\\p \\v 32 \\sc The Word that came, saying,\\sc*\n"
+        "\\p \\v 33 Thus saith the Lord."
+    )
+    before = copy.deepcopy(source)
+    result = lines.descriptive_titles(source)
+    assert [b["marker"] for b in result["content"] if b["type"] == "para"] == [
+        "p",
+        "d",
+        "p",
+        "p",
+        "d",
+        "p",
+        "p",
+    ]
+    assert {
+        k: (scripture.plain(v.text), v.notes)
+        for k, v in scripture.verses(result).items()
+    } == {
+        k: (scripture.plain(v.text), v.notes)
+        for k, v in scripture.verses(source).items()
+    }
+    assert source == before and lines.descriptive_titles(result) == result
+
+
 @pytest.mark.parametrize("chapter,count", [("1", 22), ("2", 22), ("3", 23), ("4", 22)])
 def test_acrostic_headings_preserve_content(chapter: str, count: int) -> None:
     source = acrostic_source(chapter)
@@ -692,8 +724,7 @@ def test_acrostic_headings_preserve_content(chapter: str, count: int) -> None:
     headings = [b for b in result["content"] if b.get("marker") == "qa"]
     assert len(headings) == count
     assert all(
-        len([i for i in b["content"] if usj.is_type(i, "char", "sc")]) == 1
-        for b in headings
+        not any(usj.is_type(i, "char", "sc") for i in b["content"]) for b in headings
     )
     assert source == before and lines.acrostics(result) == result
     assert {
@@ -765,18 +796,27 @@ def test_source_instructions_across_the_corpus(
             assert [note for _, note in verse.notes] == [
                 note for _, note in original.notes
             ]
+        names = {*lines.ACROSTIC_NAMES, "Rechs."}
 
         def without_selah(content: usj.Content) -> usj.Content:
             return usj.mapped(
                 content,
                 lambda node: (
-                    node["content"] if usj.is_type(node, "char", "qs") else node
+                    node["content"]
+                    if usj.is_type(node, "char", "qs")
+                    or (
+                        code == "LAM"
+                        and usj.is_type(node, "char", "sc")
+                        and usj.text_of(node["content"]) in names
+                    )
+                    else node
                 ),
             )
 
-        # Selah supplies semantic markup; all pre-existing verse/style nodes
-        # survive intact beneath it.
+        # Selah supplies semantic markup and qa replaces inline small caps;
+        # all other verse/style nodes survive intact.
         unwrapped = usj.with_content(source, without_selah)
+        before = usj.with_content(before, without_selah)
         assert [
             item
             for block in unwrapped["content"]

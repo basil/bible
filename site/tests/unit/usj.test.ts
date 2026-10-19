@@ -675,9 +675,9 @@ describe("prose renderer", () => {
 
 test("acrostic headings stand alone with their verse number on the next line", () => {
   const doc = chapter(
-    para("qa", { type: "verse", number: "5" }, char("sc", "Beth")),
+    para("qa", { type: "verse", number: "5" }, "Beth"),
     para("q1", "The words of the poem."),
-    para("qa", char("sc", "Gimel")),
+    para("qa", "Gimel"),
     para("q1", "Continuing the same verse."),
   );
   const before = JSON.stringify(doc);

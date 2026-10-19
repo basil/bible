@@ -409,7 +409,7 @@ def test_choenix_spacing_and_italics_survive_preparation_and_export(
 
 
 @pytest.mark.parametrize("book,reference", [("MAT", "27:46"), ("MRK", "15:34")])
-def test_transliteration_keeps_its_span_and_spacing(
+def test_transliteration_is_roman_and_keeps_its_spacing(
     book: str, reference: str, edition: bible.pipeline.Edition, exported: dict[str, str]
 ) -> None:
     for doc in [edition.documents[book], usj.parse(exported[book])]:
@@ -420,8 +420,8 @@ def test_transliteration_keeps_its_span_and_spacing(
             for n in usj.walk(doc["content"][block]["content"][lo:hi])
             if usj.is_type(n, "char", "sc")
         ]
-        assert any(usj.text_of(n["content"]) == "lima sabachthani" for n in spans)
-        assert all(not usj.text_of(n["content"]).startswith(" ") for n in spans)
+        assert not spans
+        assert "lima sabachthani" in verse.text
         note = next(n for _, n in verse.notes if "TR" in usj.text_of(n["content"]))
         assert (
             usj.text_of(

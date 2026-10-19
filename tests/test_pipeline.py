@@ -502,6 +502,45 @@ def revisions(
     return changed(policy, "revisions", change)
 
 
+def test_inscription_case_crosses_styles_and_notes_without_changing_them(
+    declared: bible.policy.Policy,
+) -> None:
+    source = usj.parse(
+        "\\id REV\n\\c 17\n\\p \\v 5 "
+        "MYSTERY, BABYLON THE GREAT, THE MOTHER OF "
+        "\\f - \\fq HARLOTS: \\ft or, \\fqa fornications\\f*"
+        "\\add HARLOTS\\add* AND ABOMINATIONS OF THE EARTH."
+    )
+    before = copy.deepcopy(source)
+    result = revision.respelt(source, declared, set())
+    assert usj.text_of(result["content"][-1]["content"]) == (
+        "Mystery, Babylon the great, the mother of harlots and abominations of the earth."
+    )
+    rendered = usj.serialize(result)
+    assert "\\add harlots\\add*" in rendered
+    assert "\\fq harlots: " in rendered
+    assert "\\fqa fornications" in rendered
+    assert source == before
+
+
+@pytest.mark.parametrize(
+    "code,reference,expected",
+    [
+        ("EXO", "3:14", "I am the Being"),
+        ("EXO", "3:14", "The Being hath sent me to you"),
+        ("LEV", "24:11", "named the Name"),
+        ("ISA", "41:4", "I am"),
+        ("MAT", "1:21", "call his name Jesus"),
+        ("ACT", "17:23", "To the unknown God"),
+        ("REV", "19:16", "King of kings, and Lord of lords"),
+    ],
+)
+def test_emphatic_case_is_normalized(
+    edition: bible.pipeline.Edition, code: str, reference: str, expected: str
+) -> None:
+    assert expected in scripture.verses(edition.documents[code])[reference].text
+
+
 def test_a_word_is_respelt_whole_in_the_text_and_its_notes(
     policy: bible.policy.Policy,
 ) -> None:
@@ -1554,16 +1593,16 @@ def test_acrostic_heading_periods_go_without_changing_other_punctuation(
 ) -> None:
     policy = revisions(policy, punctuation={revision.ACROSTICS: {"why": "x"}})
     doc = usj.parse(
-        "\\id LAM\n\\c 1\n\\qa \\v 1 \\sc Aleph.\\sc*\n"
+        "\\id LAM\n\\c 1\n\\qa \\v 1 Aleph.\n"
         "\\q1 Words.\\f + \\ft Aleph. is a name.\\f*\n"
-        "\\qa \\v 2 \\sc Beth.\\sc*\n\\q1 More words."
+        "\\qa \\v 2 Beth.\n\\q1 More words."
     )
     before = copy.deepcopy(doc)
     met: revision.MetRevisions = set()
     result = revision.punctuated(doc, policy, met)
     assert usj.serialize(result) == usj.serialize(doc).replace(
-        "\\sc Aleph.", "\\sc Aleph"
-    ).replace("\\sc Beth.", "\\sc Beth")
+        "\\v 1 Aleph.", "\\v 1 Aleph"
+    ).replace("\\v 2 Beth.", "\\v 2 Beth")
     assert met == {revision.ACROSTICS}
     assert doc == before
     assert revision.punctuated(result, policy, set()) == result
@@ -1574,7 +1613,7 @@ def test_an_acrostic_period_a_lemma_quotes_is_refused(
 ) -> None:
     policy = revisions(policy, punctuation={revision.ACROSTICS: {"why": "x"}})
     doc = usj.parse(
-        "\\id LAM\n\\c 1\n\\qa \\v 1 \\sc Aleph.\\sc*\n"
+        "\\id LAM\n\\c 1\n\\qa \\v 1 Aleph.\n"
         "\\q1 Words.\\f + \\fq Aleph. \\ft A letter.\\f*\n"
     )
     with pytest.raises(CheckFailed, match="lemma its verse no longer has: LAM 1:1"):
@@ -1585,7 +1624,7 @@ def test_an_acrostic_heading_that_is_no_name_is_refused(
     policy: bible.policy.Policy,
 ) -> None:
     policy = revisions(policy, punctuation={revision.ACROSTICS: {"why": "x"}})
-    doc = usj.parse("\\id PSA\n\\c 1\n\\qa \\v 1 \\sc Aleph.\\sc*\n\\q1 Words.")
+    doc = usj.parse("\\id PSA\n\\c 1\n\\qa \\v 1 Aleph.\n\\q1 Words.")
     with pytest.raises(CheckFailed, match="Unexpected acrostic heading: PSA"):
         revision.punctuated(doc, policy, set())
 
@@ -2623,8 +2662,8 @@ def test_the_word_pattern_finds_the_longest_word_at_a_place() -> None:
 def test_source_instructions_keep_their_export_markers_and_spacing() -> None:
     doc = usj.parse(
         "\\id LAM\n\\c 1\n\\q1 \\v 1 Words.\n\\qr Pause.\n"
-        "\\qa \\v 2 \\sc Beth.\\sc*\n\\q1 Words.\n\\q1 More.\n"
-        "\\b\n\\qa \\sc Gimel.\\sc*\n\\q1 Words.\n\\p Prose."
+        "\\qa \\v 2 Beth.\n\\q1 Words.\n\\q1 More.\n"
+        "\\b\n\\qa Gimel.\n\\q1 Words.\n\\p Prose."
     )
     result = export.spaced(pipeline.indented(doc))
     assert [b.get("marker") for b in result["content"]] == [
@@ -2649,8 +2688,8 @@ def test_an_acrostic_heading_supplies_its_own_space() -> None:
     # chapters 2 to 4 with their first names, as chapter 5 opens with a line.
     # Neither a chapter nor an acrostic label needs a blank paragraph.
     assert spaced_markers(
-        "\\id LAM\n\\c 1\n\\p Prose.\n\\qa \\v 1 \\sc Aleph.\\sc*\n\\q1 Line.\n"
-        "\\c 2\n\\qa \\v 1 \\sc Aleph.\\sc*\n\\q1 Line.\n\\c 5\n\\q1 \\v 1 Line.\n"
+        "\\id LAM\n\\c 1\n\\p Prose.\n\\qa \\v 1 Aleph.\n\\q1 Line.\n"
+        "\\c 2\n\\qa \\v 1 Aleph.\n\\q1 Line.\n\\c 5\n\\q1 \\v 1 Line.\n"
     ) == ["id", "c", "p", "qa", "q1", "c", "qa", "q1", "c", "q1"]
 
 
