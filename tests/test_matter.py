@@ -101,6 +101,57 @@ def test_marker_decisions_give_front_matter_its_roles(
     assert result["content"][4] == usj.para("sd1")
 
 
+def test_a_heading_replaces_a_division_without_changing_its_paragraph(
+    declared: bible.policy.Policy,
+) -> None:
+    doc = usj.parse(STRUCTURED)
+    before = copy.deepcopy(doc)
+    policy = with_markers(
+        declared,
+        {
+            "unit": "XXB",
+            "from": "ib",
+            "to": "s1",
+            "before": "A topic",
+            "heading": "A New Section",
+            "why": "Name the topic instead of leaving a division.",
+        },
+    )
+    decisions = bible.policy.thaw(policy.prose)
+    result = matter.structured("XXB", doc, policy)
+    assert result["content"][4] == usj.para("s1", "A New Section")
+    assert result["content"][5] == {**doc["content"][5], "marker": "p"}
+    assert not any(usj.paragraph(b) in {"ib", "sd1"} for b in result["content"])
+    assert "\\s1 A New Section\n\\p A topic." in usj.serialize(result)
+    assert doc == before
+    assert bible.policy.thaw(policy.prose) == decisions
+
+
+@pytest.mark.parametrize(
+    "overrides, refusal",
+    [
+        ({}, "heading text is required"),
+        ({"heading": ""}, "empty heading"),
+        ({"heading": " Heading"}, "heading with surrounding space"),
+        ({"heading": "Heading", "to": "sd1"}, "heading text is required only"),
+        ({"heading": "Heading", "before": "Absent"}, "not met once"),
+    ],
+)
+def test_invalid_heading_decisions_are_refused(
+    declared: bible.policy.Policy, overrides: dict[str, str], refusal: str
+) -> None:
+    marker = {
+        "unit": "XXB",
+        "from": "ib",
+        "to": "s1",
+        "before": "A topic",
+        "why": ".",
+        **overrides,
+    }
+    with pytest.raises(CheckFailed, match=refusal):
+        matter.structured("XXB", usj.parse(STRUCTURED), with_markers(declared, marker))
+
+
 @pytest.mark.parametrize(
     "marker, refusal",
     [

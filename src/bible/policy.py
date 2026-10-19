@@ -531,7 +531,10 @@ def check(policy: Policy) -> None:
         for marker in prose_group.get("markers", ()):
             label = f"Marker decision in {name}"
             require_fields(
-                marker, {"unit", "from", "to", "why"}, {"opening", "before"}, label
+                marker,
+                {"unit", "from", "to", "why"},
+                {"opening", "before", "heading"},
+                label,
             )
             # A unit taken apart, as the Appendix is, is never structured.
             require(
@@ -555,6 +558,21 @@ def check(policy: Policy) -> None:
                 f"{label}: a paragraph is known by its opening words, a blank line by the words after it",
             )
             require(words == words.strip(), f"{label}: words with surrounding space")
+            heading = marker.get("heading")
+            # A blank line becomes a division as it is, a heading with words.
+            needs_heading = marker["from"] == "ib" and marker["to"] in (
+                usj.HEADINGS - {"sd1", "sd2"}
+            )
+            require(
+                (heading is not None) == needs_heading,
+                f"{label}: heading text is required only for a blank line becoming a section heading",
+            )
+            if heading is not None:
+                require(bool(heading.strip()), f"{label}: empty heading")
+                require(
+                    heading == heading.strip(),
+                    f"{label}: heading with surrounding space",
+                )
         for change in prose_group["changes"]:
             require_fields(
                 change,

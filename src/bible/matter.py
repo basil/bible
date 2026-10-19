@@ -533,7 +533,8 @@ def structured(
     (edition/prose.json, markers), by its unit, marker and opening words,
     takes the marker the decision gives; a blank line a decision describes,
     by the words of the paragraph after it, becomes the division it gives,
-    and every other goes, the typesetter spacing headings and lists itself;
+    or the heading with the words it gives, and every other goes, the
+    typesetter spacing headings and lists itself;
     and the sources' introduction markers become the ordinary ones. A
     decision that describes no paragraph, or two, stops the build."""
     decisions = [
@@ -577,8 +578,13 @@ def structured(
         )
         if found:
             met[found[0]] += 1
-            to = decisions[found[0]][1]["to"]
-            block = usj.para(to) if marker == "ib" else {**block, "marker": to}
+            decision = decisions[found[0]][1]
+            if marker != "ib":
+                block = {**block, "marker": decision["to"]}
+            elif "heading" in decision:
+                block = usj.para(decision["to"], decision["heading"])
+            else:
+                block = usj.para(decision["to"])
         elif marker == "ib" and standalone:
             continue
         elif marker in STANDALONE and standalone:

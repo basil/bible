@@ -180,6 +180,7 @@ MarkerChange = TypedDict(
         "to": ReadOnly[str],
         "opening": ReadOnly[str],
         "before": ReadOnly[str],
+        "heading": ReadOnly[str],
         "why": ReadOnly[str],
     },
     total=False,

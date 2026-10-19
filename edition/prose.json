@@ -974,7 +974,7 @@
     ]
   },
   "structure": {
-    "why": "Front matter prints as units of their own, in ordinary paragraphs, headings and lists, not under the markers of a scripture book's introduction. Where the sources' markers do not say what a paragraph is, these decisions do: a blank line at a change of topic is a division, a lesser one within a greater; a line of a title that is the text's opening sentence is its opening paragraph; readings quoted for comparison stand as a block; the one section heading of a unit that is wholly that section is a line of its title, which the manifest sets; and paragraphs that each set one item of a series with its name run in are the entries of a list. A blank line no decision describes goes: the typesetter spaces headings and lists itself.",
+    "why": "Front matter prints as units of their own, in ordinary paragraphs, headings and lists, not under the markers of a scripture book's introduction. Where the sources' markers do not say what a paragraph is, these decisions do: a blank line at a change of topic becomes a section heading, in words its decision supplies; a line of a title that is the text's opening sentence is its opening paragraph; readings quoted for comparison stand as a block; the one section heading of a unit that is wholly that section is a line of its title, which the manifest sets; and paragraphs that each set one item of a series with its name run in are the entries of a list. A blank line no decision describes goes: the typesetter spaces headings and lists itself.",
     "changes": [],
     "markers": [
       {
@@ -1008,30 +1008,34 @@
       {
         "unit": "XXE",
         "from": "ib",
-        "to": "sd1",
+        "to": "s1",
         "before": "The earliest writer",
-        "why": "a change of topic within the account, which runs on under one heading: a division"
+        "heading": "Origins, Character, and Authority",
+        "why": "a change of topic within the account, which it leaves unnamed: a section heading"
       },
       {
         "unit": "XXE",
         "from": "ib",
-        "to": "sd1",
+        "to": "s1",
         "before": "In the course",
-        "why": "a change of topic within the account, which runs on under one heading: a division"
+        "heading": "Other Greek Versions",
+        "why": "a change of topic within the account, which it leaves unnamed: a section heading"
       },
       {
         "unit": "XXE",
         "from": "ib",
-        "to": "sd1",
+        "to": "s1",
         "before": "We have now",
-        "why": "a change of topic within the account, which runs on under one heading: a division"
+        "heading": "Origen and the Early Recensions",
+        "why": "a change of topic within the account, which it leaves unnamed: a section heading"
       },
       {
         "unit": "XXE",
         "from": "ib",
-        "to": "sd1",
+        "to": "s1",
         "before": "From the fourth",
-        "why": "a change of topic within the account, which runs on under one heading: a division"
+        "heading": "Transmission and Influence",
+        "why": "a change of topic within the account, which it leaves unnamed: a section heading"
       },
       {
         "unit": "XXE",
@@ -1078,16 +1082,18 @@
       {
         "unit": "XXE",
         "from": "ib",
-        "to": "sd1",
+        "to": "s1",
         "before": "The first printed edition",
-        "why": "a change of topic within the account, which runs on under one heading: a division"
+        "heading": "The Principal Printed Editions",
+        "why": "a change of topic within the account, which it leaves unnamed: a section heading"
       },
       {
         "unit": "XXE",
         "from": "ib",
-        "to": "sd1",
+        "to": "s1",
         "before": "In the latter part",
-        "why": "a change of topic within the account, which runs on under one heading: a division"
+        "heading": "Collations and Textual Criticism",
+        "why": "a change of topic within the account, which it leaves unnamed: a section heading"
       },
       {
         "unit": "LJE",
