@@ -1,0 +1,25 @@
+OLEBFont: Valkyrie OT with superior letters and a superior colon added for the Orthodox Liturgical English Bible.
+
+Valkyrie OT by Matthew Butterick (MB Type) is proprietary, licensed software:
+http://mbtype.com/license. These faces are a licensee's modification of it,
+made under that licence (which permits licensed users to modify the fonts and
+convert their format, keeping its copyright and trademark notices intact) for
+the licensee's own edition. They may not be redistributed, committed to a
+source repository or otherwise made available to anyone who is not a licensed
+user of Valkyrie. Read-only copies embedded in the edition's PDF, and the
+webfonts served on the licensee's own website, are the uses the licence allows.
+Valkyrie's outlines, hinting, spacing, kerning, features and metrics are
+unchanged; its notices remain embedded in each face.
+
+The superior lowercase letters a-z and the superior colon, which Valkyrie's
+sups feature lacks, come from npxsups, the superiors font of Michael Sharpe's
+newpx package (CTAN), scaled and raised to Valkyrie's own superior figures and
+added as the glyphs sups selects for those characters, unhinted. npxsups is
+Copyright 2006, 2009 for TeX Gyre extensions by B. Jackowski and J.M. Nowacki
+(on behalf of TeX users groups), released under the GUST Font License
+(http://tug.org/fonts/licenses/GUST-FONT-LICENSE.txt), and Copyright
+2015-2019 Michael Sharpe, under equivalent LPPL; see MANIFEST-newpx.txt.
+
+The four faces are assembled by scripts/build_olebfont.py from the faces
+make bootstrap finds on the host and the inputs pinned in Dockerfile. This
+font notice does not govern the Bible text.

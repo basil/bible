@@ -2,8 +2,13 @@
 !Dockerfile
 !requirements.txt
 !sources/GFS_Didot.zip
+!sources/GFS_Heraklit.zip
 !sources/OTF-source-code-pro-2.042R-u_1.062R-i.zip
 !sources/erewhon.zip
 !sources/erewhon-math.zip
+!sources/newpx.zip
 !scripts/*.py
 !scripts/*.txt
+# The host's Valkyrie OT faces, collected by make bootstrap, or none.
+!build/valkyrie/
+!build/valkyrie/*.otf

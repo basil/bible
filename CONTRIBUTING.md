@@ -62,14 +62,14 @@ PTXprint's configuration is in `config/`, on top of its layout for the Berean St
 - `layout.ini` overrides the layout settings. The title page is printed from the title and subtitle given here.
 - `ptxprint-mods.sty` overrides paragraph and character styles.
 - `ptxprint-mods.tex` holds the TeX changes: hyphenation, note placement and folios.
-- `protrusion.tex` lets punctuation hang slightly into the margin, and `word-spacing.tex` widens the word space. Both affect line breaking, so changing them can change pagination.
+- `protrusion.tex` lets punctuation hang slightly into the margin. It affects line breaking, so changing it can change pagination. (The word space is the font's own: the Utopia-based OLEBFont's is widened by a fifth when it is assembled.)
 - `changes.txt` holds PTXprint's text substitutions.
 
 The tests require every setting in `layout.ini` and `ptxprint-mods.sty` to change the value it overrides, so a setting that repeats the default must be removed.
 
 Run `make test-tex` after changing the TeX files. If a difference was intended, save the new expected output of the protrusion test with `make test-tex-save` and review the diff.
 
-The Latin typeface is OLEBFont, which is Utopia with the characters it lacks added from Erewhon. [Font normalization](docs/font-normalization.md) explains how it is assembled and tested. `make font-specimen` renders a specimen to `dist/olebfont-specimen.pdf`.
+The Latin typeface is OLEBFont, assembled when the image is built. Where the host has Valkyrie OT, it is Valkyrie with the superior letters and colon its `sups` feature lacks added from newpx's npxsups, and GFS Heraklit is installed for Greek; otherwise it is Utopia with the characters it lacks added from Erewhon, and GFS Didot is installed. Valkyrie is proprietary, so it is never committed: `make bootstrap` finds its faces on the host through fontconfig (`fc-list`) and copies them into `build/valkyrie/` for the image build, which assembles OLEBFont from them. Run `make bootstrap` again after installing or removing Valkyrie; an incomplete installation stops it, and `make bootstrap WITHOUT_VALKYRIE=1` builds the Utopia image a pull request gets on a host that has Valkyrie. [Font normalization](docs/font-normalization.md) explains how both recipes are assembled and tested. `make font-specimen` renders a specimen to `dist/olebfont-specimen.pdf`.
 
 ## Code style
 
@@ -107,4 +107,4 @@ Replace a source archive only on purpose. Download the new one somewhere else fi
 2. Explain every intended difference there, in the commit message or pull request. Commit configuration, dependency and source changes together.
 3. Open a pull request. CI must pass before merging.
 
-CI runs the lint, the tests and the full build on pull requests and on pushes to `master`, builds the VitePress site on pull requests too, and publishes the site and PDF from `master`. It also lints the Markdown, which no Make target does.
+CI runs the lint, the tests and the full build on pull requests and on pushes to `master`, builds the VitePress site on pull requests too, and publishes the site and PDF from `master`. It also lints the Markdown, which no Make target does. Only the `master` build installs Valkyrie OT, from the `FONT_URL` and `FONT_TOKEN` repository secrets, before anything else runs; a pull request, which cannot reach the secrets, is set in Utopia.

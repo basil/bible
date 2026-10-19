@@ -5,7 +5,9 @@
 \input{regression-test}
 \usepackage{fontspec}
 \setmainfont{OLEBFont}
-\newfontfamily\didot{GFS Didot}
+% The Greek face the image installed beside OLEBFont: GFS Heraklit with
+% Valkyrie, GFS Didot with Utopia.
+\IfFontExistsTF{GFS Heraklit}{\newfontfamily\greek{GFS Heraklit}}{\newfontfamily\greek{GFS Didot}}
 \newfontfamily\ezra{Ezra SIL}
 \usepackage{microtype}
 \makeatletter
@@ -134,7 +136,7 @@
 \setbox0=\hbox{%
   {\normalfont}{\itshape}{\bfseries}{\bfseries\itshape}%
   {\fontsize{9.5}{12}\selectfont}{\fontsize{48}{50}\selectfont}%
-  {\didot}{\ezra}}
+  {\greek}{\ezra}}
 \START
 \CheckFont{OLEBFont regular}{\normalfont}
 \CheckFont{OLEBFont italic}{\itshape}
@@ -142,7 +144,7 @@
 \CheckFont{OLEBFont bold italic}{\bfseries\itshape}
 \CheckFont{OLEBFont 9.5pt}{\fontsize{9.5}{12}\selectfont}
 \CheckFont{OLEBFont 48pt}{\fontsize{48}{50}\selectfont}
-\CheckFont{GFS Didot}{\didot}
+\CheckFont{Greek}{\greek}
 \CheckFont{Ezra SIL}{\ezra}
 \CheckFigure{Lining}{\PlainFont}{1}
 \CheckFigure{Oldstyle}{\OldstyleFont}{1}
@@ -153,10 +155,18 @@
 \CheckHang{Oldstyle}{\OldstyleFont}{1}
 \CheckHang{Oldstyle}{\OldstyleFont}{4}
 \CheckHang{Oldstyle}{\OldstyleFont}{7}
-% The three oldstyle figures and their new Math copies share measurements;
-% the adapter codes all six in addition to the character map's glyphs.
+% With oldstyle figures selected, the adapter codes the figures the font sets
+% in place of the character map's, beyond the character map's glyphs. From
+% Utopia, the three recentred oldstyle figures and their Math copies share
+% measurements, so six glyphs are coded beyond the map's 74; from Valkyrie,
+% whose Greek is Heraklit, four. Either way the lining count is 74.
+\IfFontExistsTF{GFS Heraklit}{\def\ExpectedOldstyle{78}}{\def\ExpectedOldstyle{80}}
 \CountCoded{\PlainFont}
 \TYPE{OLEBFont lining: \the\coded\space glyphs coded}
 \CountCoded{\OldstyleFont}
-\TYPE{OLEBFont oldstyle: \the\coded\space glyphs coded}
+\ifnum\coded=\ExpectedOldstyle\relax
+  \TYPE{OLEBFont oldstyle: every expected glyph coded}
+\else
+  \TYPE{OLEBFont oldstyle: \the\coded\space glyphs coded, expected \ExpectedOldstyle}
+\fi
 \END

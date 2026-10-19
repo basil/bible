@@ -19,8 +19,8 @@ from bible.usj import Content, Document, Node
 ORIGIN = re.compile(r"^\d+:")
 
 
-# GFS Didot does not encode U+02BC, the Greek elision mark; it does encode the
-# typographic apostrophe.
+# Neither Greek face (GFS Didot, GFS Heraklit) encodes U+02BC, the Greek
+# elision mark; both encode the typographic apostrophe.
 ELISION = re.compile(f"(?<=[{usfm.GREEK}])\u02bc")
 # A run of Greek or of Hebrew words, by the character style that sets its
 # font. The Greek apostrophe stays in the Greek font.

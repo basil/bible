@@ -12,7 +12,7 @@ from collections.abc import Sequence
 from pathlib import Path
 
 import bible.pipeline
-from bible import assembly, paths
+from bible import assembly, paths, typeface
 from bible.checks import require
 from bible.files import write_json
 
@@ -54,6 +54,14 @@ def project_settings(project: Path) -> configparser.ConfigParser:
 def text_font(cfg: configparser.ConfigParser) -> str:
     """The family of the body face, from PTXprint's "family|style|..." value."""
     return cfg["document"]["fontregular"].split("|")[0]
+
+
+def style_mods() -> str:
+    """The style overrides, with Greek quotations set in the Greek face the
+    image installed beside OLEBFont; ptx2pdf's Galatia SIL is not installed."""
+    return (paths.CONFIG_DIR / "ptxprint-mods.sty").read_text(
+        encoding="utf-8"
+    ) + f"\n\\Marker wg\n\\FontName {typeface.greek_family()}\n"
 
 
 def book_names(edition: bible.pipeline.Edition, ids: Sequence[str]) -> ET.Element:
@@ -135,15 +143,10 @@ def write_project(
         cfg["vars"]["subtitle"] += " — TYPESETTING SAMPLE: selected chapters"
     with (conf / "ptxprint.cfg").open("w", encoding="utf-8") as f:
         cfg.write(f)
+    (conf / "ptxprint-mods.sty").write_text(style_mods(), encoding="utf-8")
     # Copy the shared protrusion adapter alongside its production loader;
     # the font regression test loads this same adapter independently.
-    for name in (
-        "ptxprint-mods.sty",
-        "ptxprint-mods.tex",
-        "protrusion.tex",
-        "word-spacing.tex",
-        "changes.txt",
-    ):
+    for name in ("ptxprint-mods.tex", "protrusion.tex", "changes.txt"):
         shutil.copyfile(paths.CONFIG_DIR / name, conf / name)
     # Replace BSB's front matter with PTXprint's basic template so the title,
     # publication data, and contents come from this edition's settings.

@@ -43,15 +43,16 @@ set -eu
 # --strict: a malformed line would otherwise be skipped with only a warning.
 sha256sum --strict -c <<SUMS
 866855b0296579451c233fc78bec82918996a8df7341ee2f1c09d7bc94440680  GFS_Didot.zip
+9d02c294c33aad58de44c408d20f5a7b06aefad411bce9f2e096a4040900f702  GFS_Heraklit.zip
 754a2e3ebb945ae905d720ac5896b3b34acc9546dd6551ef9536869788629dae  OTF-source-code-pro-2.042R-u_1.062R-i.zip
 865ed6e5b4aeda1b5a350a2dc5d4b239f515059812366acc6dcd04c80fd9d942  erewhon.zip
 afd722e515f0c94e08902c8960f8799736657d98348cb00068d827e71bbbb706  erewhon-math.zip
+a5705119752a634a4db511a198fb1de4b876da1b07a7f49e0e3443939750fb55  newpx.zip
 SUMS
+# The Greek faces are installed with OLEBFont below, by the base it was built from.
 fonts=/usr/local/share/fonts
-unzip -qj GFS_Didot.zip 'GFSDidot*.otf' -d $fonts/gfs_didot
 unzip -qj OTF-source-code-pro-2.042R-u_1.062R-i.zip 'OTF/*.otf' -d $fonts/source_code_pro
-# unzip keeps each archive's permissions, ignoring the umask: GFS Didot's
-# are owner-only.
+# unzip keeps each archive's permissions, ignoring the umask.
 chmod 644 $fonts/*/*.otf
 EOF
 
@@ -98,18 +99,27 @@ cd /opt/utopia
     /opt/usfmtc /opt/ptxprint
 EOF
 
+# The host's Valkyrie OT faces, which make bootstrap collects into build/valkyrie
+# (an empty directory where the host has none). Valkyrie is proprietary and
+# never committed; the edition is then set in Utopia.
+COPY build/valkyrie/ /opt/valkyrie/
 # Font assembly changes should not refetch upstream projects or Python wheels.
 COPY scripts/ /opt/scripts/
 RUN /opt/venv/bin/python /opt/scripts/patch_margin_convergence.py \
     && /opt/venv/bin/python /opt/scripts/patch_emitter_prefix.py
 RUN <<EOF
 set -eu
-# Assemble the normalized text family with separate source hint dictionaries.
+# Assemble OLEBFont from Valkyrie OT where the host provided it, else from
+# Utopia, and install the Greek face paired with it (fonts/olebfont, fonts/greek).
 /opt/venv/bin/python /opt/scripts/build_olebfont.py \
-    --utopia /opt/utopia --erewhon /opt/sources/erewhon.zip \
+    --utopia /opt/utopia --valkyrie /opt/valkyrie \
+    --erewhon /opt/sources/erewhon.zip \
     --erewhon-math /opt/sources/erewhon-math.zip \
-    --output /usr/local/share/fonts/olebfont
-chmod 644 /usr/local/share/fonts/olebfont/*
+    --newpx /opt/sources/newpx.zip \
+    --gfs-didot /opt/sources/GFS_Didot.zip \
+    --gfs-heraklit /opt/sources/GFS_Heraklit.zip \
+    --output /usr/local/share/fonts
+chmod 644 /usr/local/share/fonts/olebfont/* /usr/local/share/fonts/greek/*
 fc-cache -f
 fc-list
 EOF

@@ -1,7 +1,7 @@
 """Prepared scripture as USJ for the website, with the Greek and Hebrew
 tagged for their fonts as the typesetter has them, the front matter the
-book prints, and the textual variants, which the website publishes and
-the book does not print."""
+book prints, the textual variants, which the website publishes and the
+book does not print, and the fonts the edition is set in."""
 
 import itertools
 import shutil
@@ -17,48 +17,68 @@ from bible import (
     assembly,
     export,
     files,
-    paths,
     pipeline,
     references,
     scripture,
     terminology,
+    typeface,
     usj,
     versification,
 )
 from bible.byzantine.variants import Lane
 from bible.checks import present, require
 
-FONT_STYLES = ("Regular", "Italic", "Bold", "BoldItalic")
-# Every face the website sets, by the file it is wrapped from: the edition's
-# own, and the Greek and Hebrew fonts the typesetter sets quotations in.
-FONTS = {
-    **{
-        f"OLEBFont-{style}.woff": paths.FONTS / "olebfont" / f"OLEBFont-{style}.otf"
-        for style in FONT_STYLES
-    },
-    **{
-        f"GFSDidot-{style}.woff": paths.FONTS
-        / "gfs_didot"
-        / f"GFSDidot{style.removeprefix('Regular')}.otf"
-        for style in FONT_STYLES
-    },
-    "EzraSIL-Regular.woff": paths.EZRA,
-}
+
+def font_file(face: Path) -> str:
+    """The WOFF the website serves a face from, named as the face is."""
+    return face.with_suffix(".woff").name
+
+
+def font_face(face: Path) -> str:
+    """The @font-face rule that declares a face under its family's name."""
+    weight, slant = typeface.style(face)
+    return (
+        "@font-face {\n"
+        f'  font-family: "{typeface.family(face)}";\n'
+        f'  src: url("./{font_file(face)}") format("woff");\n'
+        f"  font-weight: {weight};\n"
+        f"  font-style: {slant};\n"
+        "  font-display: swap;\n"
+        "}\n"
+    )
+
+
+def font_stylesheet(faces: Sequence[Path]) -> str:
+    """The stylesheet the website imports: every face installed for the
+    edition, and the families to set the Latin, Greek and Hebrew in."""
+    families = {
+        "latin": typeface.family(typeface.faces(typeface.LATIN)[0]),
+        "greek": typeface.greek_family(),
+        "hebrew": typeface.family(typeface.HEBREW),
+    }
+    return (
+        "/* The fonts the edition is set in, in print and here: written by the\n"
+        "   build (bible.web) from the faces the image installed, never by hand. */\n"
+        + "".join(font_face(face) for face in faces)
+        + ":root {\n"
+        + "".join(
+            f'  --edition-font-{script}: "{family}";\n'
+            for script, family in families.items()
+        )
+        + "}\n"
+    )
 
 
 def write_fonts(directory: Path) -> None:
-    """Wrap the complete installed faces in WOFF, once every one is found.
-    The command checks the image before it prepares the edition."""
-    for source in FONTS.values():
-        require(
-            source.is_file(),
-            f"Missing installed font input {source.name}; run make bootstrap",
-        )
+    """Wrap every installed face in WOFF, with the stylesheet that declares
+    them. The command checks the image before it prepares the edition."""
+    faces = typeface.installed()
     directory.mkdir(parents=True, exist_ok=True)
-    for name, source in FONTS.items():
-        with TTFont(source, recalcTimestamp=False, recalcBBoxes=False) as font:
+    for face in faces:
+        with TTFont(face, recalcTimestamp=False, recalcBBoxes=False) as font:
             font.flavor = "woff"
-            font.save(directory / name)
+            font.save(directory / font_file(face))
+    (directory / "fonts.css").write_text(font_stylesheet(faces), encoding="utf-8")
 
 
 # The headings that stand for an unnumbered chapter's number: a section's,

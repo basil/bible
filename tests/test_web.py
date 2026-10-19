@@ -5,30 +5,44 @@ from pathlib import Path
 import pytest
 from fontTools.ttLib import TTFont
 
-from bible import export, files, paths, pipeline, scripture, usj, web
+from bible import export, files, pipeline, scripture, typeface, usj, web
 from bible.checks import CheckFailed
 from bible.sources import Sources
 
 
 def test_web_fonts(tmp_path: Path) -> None:
-    """WOFF changes the wrapper, preserving every font table: of the
-    edition's own faces, and of the Greek and Hebrew fonts the typesetter
-    sets quotations in."""
+    """WOFF changes the wrapper, preserving every font table: of OLEBFont's
+    faces, and of the Greek and Hebrew fonts the typesetter sets quotations
+    in. The stylesheet declares every face written, under the families the
+    site sets each script in."""
     first, second = tmp_path / "first", tmp_path / "second"
     web.write_fonts(first)
     web.write_fonts(second)
-    assert {p.name for p in first.iterdir()} == set(web.FONTS)
-    assert {name.split("-")[0] for name in web.FONTS} == {
-        "OLEBFont",
-        "GFSDidot",
-        "EzraSIL",
+    faces = typeface.installed()
+    assert {p.name for p in first.iterdir()} == {
+        *(web.font_file(face) for face in faces),
+        "fonts.css",
     }
+    assert [web.font_file(face) for face in faces][:4] == [
+        f"OLEBFont-{style}.woff"
+        for style in ("Bold", "BoldItalic", "Italic", "Regular")
+    ]
+    assert web.font_file(typeface.HEBREW) == "SILEOT.woff"
+    css = (first / "fonts.css").read_text(encoding="utf-8")
+    assert css.count("@font-face") == len(faces)
+    for face in faces:
+        assert f'url("./{web.font_file(face)}")' in css
+        assert f'font-family: "{typeface.family(face)}";' in css
+    assert '--edition-font-latin: "OLEBFont";' in css
+    assert f'--edition-font-greek: "{typeface.greek_family()}";' in css
+    assert '--edition-font-hebrew: "Ezra SIL";' in css
+    assert "font-weight: 700;\n  font-style: italic;" in css.split("@font-face")[2]
     for output in first.iterdir():
         assert output.read_bytes() == (second / output.name).read_bytes()
-    for name, source in web.FONTS.items():
+    for face in faces:
         with (
-            TTFont(source) as original,
-            TTFont(first / name) as exported,
+            TTFont(face) as original,
+            TTFont(first / web.font_file(face)) as exported,
         ):
             assert exported.flavor == "woff"
             assert set(original.keys()) == set(exported.keys())
@@ -42,18 +56,18 @@ def test_web_fonts(tmp_path: Path) -> None:
                     # The checksum adjustment belongs to the file wrapper.
                     before = before[:8] + before[12:]
                     after = after[:8] + after[12:]
-                assert before == after, (name, tag)
+                assert before == after, (face.name, tag)
             assert original.getGlyphOrder() == exported.getGlyphOrder()
             assert original.getBestCmap() == exported.getBestCmap()
 
 
-@pytest.mark.parametrize("name", ["OLEBFont-Regular.woff", "EzraSIL-Regular.woff"])
+@pytest.mark.parametrize("script", ["LATIN", "GREEK"])
 def test_missing_web_fonts(
-    name: str, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    script: str, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    monkeypatch.setitem(web.FONTS, name, tmp_path / "missing.ttf")
+    monkeypatch.setattr(typeface, script, tmp_path / "none")
     with pytest.raises(
-        CheckFailed, match="Missing installed font input missing.ttf.*make bootstrap"
+        CheckFailed, match="No fonts installed in .*none; run make bootstrap"
     ):
         web.write_fonts(tmp_path / "output")
     assert not (tmp_path / "output").exists()

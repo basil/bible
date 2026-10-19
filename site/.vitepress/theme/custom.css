@@ -1,5 +1,6 @@
 :root {
-  --vp-font-family-base: "OLEBible", Georgia, "Times New Roman", serif;
+  --vp-font-family-base:
+    var(--edition-font-latin), Georgia, "Times New Roman", serif;
 
   --vp-c-brand-1: #76512f;
   --vp-c-brand-2: #8b6039;
@@ -84,11 +85,11 @@
 
 /* Greek and Hebrew in the fonts the printed edition sets them in. */
 [lang="grc"] {
-  font-family: "GFS Didot", serif;
+  font-family: var(--edition-font-greek), serif;
 }
 
 [lang="he"] {
-  font-family: "Ezra SIL", serif;
+  font-family: var(--edition-font-hebrew), serif;
 }
 
 .scripture .verse,

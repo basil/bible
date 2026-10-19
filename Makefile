@@ -11,6 +11,7 @@ HADOLINT := $(COMPOSE) run --rm -T --interactive=true hadolint
 PIPELINE := $(TOOLCHAIN) python3 -m bible
 .PHONY: bootstrap validate review review-diff test test-python test-fonts test-tex test-tex-save font-specimen sample pdf web site site-dev clean lint lint-fix
 bootstrap:
+	sh scripts/collect_valkyrie.sh
 	$(COMPOSE) pull dockerfmt hadolint
 	$(COMPOSE) build --pull
 validate:

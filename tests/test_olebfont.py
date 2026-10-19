@@ -1,9 +1,14 @@
-"""Inspect serialized production fonts and shape them through HarfBuzz."""
+"""Inspect the installed OLEBFont faces and shape them through HarfBuzz.
+
+The image assembled them from Valkyrie OT or from Utopia; the tests that
+belong to one recipe are skipped under the other, and the rest hold for both.
+"""
 
 from __future__ import annotations
 
 import csv
 import json
+import re
 import subprocess
 import unicodedata
 import zipfile
@@ -12,21 +17,30 @@ from copy import deepcopy
 from functools import cache
 from io import BytesIO
 from pathlib import Path
-from typing import Any, TypedDict, cast
+from typing import IO, Any, TypedDict, cast
 
 import pytest
 from build_olebfont import (
     DIGITS,
     EREWHON_MEMBER,
     FAMILY,
+    NEWPX_MEMBER,
     STYLES,
+    SUFFIX,
     SUPERIOR_CODES,
+    SUPERIOR_LETTERS,
+    VALKYRIE_FACE,
+    WORD_SPACE,
     append_layout,
-    assemble,
+    assemble_utopia,
+    assemble_valkyrie,
     donor_names,
     figure_kerns,
     font_file,
+    ink,
     rename,
+    style_name,
+    superior_placements,
 )
 from font_sources import MATH_MEMBERS, OLDSTYLE_SHIFTS, archive_font, normalized_donor
 from fontTools.cffLib.specializer import programToCommands
@@ -34,21 +48,44 @@ from fontTools.feaLib.builder import addOpenTypeFeaturesFromString
 from fontTools.misc.fixedTools import otRound
 from fontTools.pens.boundsPen import BoundsPen
 from fontTools.pens.recordingPen import RecordingPen
+from fontTools.pens.t2CharStringPen import T2CharStringPen
 from fontTools.pens.transformPen import TransformPen
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.tables.otBase import OTTableWriter
 
-from bible import paths
+from bible import export, paths, typeface
 from bible.byzantine import variants
 from bible.pipeline import Edition
 
 FONTS = paths.FONTS / "olebfont"
 EREWHON = paths.FONT_ARCHIVES / "erewhon.zip"
 MATH = paths.FONT_ARCHIVES / "erewhon-math.zip"
+NEWPX = paths.FONT_ARCHIVES / "newpx.zip"
 
 
 def utopia(style: str) -> Path:
     return paths.UTOPIA / f"dist/Utopia-{style}.otf"
+
+
+def valkyrie(style: str) -> Path:
+    return paths.VALKYRIE / VALKYRIE_FACE.format(style)
+
+
+def recipe() -> str:
+    """Which base the installed OLEBFont was assembled from, as its
+    description says."""
+    with TTFont(FONTS / font_file("Regular"), lazy=True) as font:
+        description = font["name"].getDebugName(10)
+    return "valkyrie" if description.startswith("Valkyrie") else "utopia"
+
+
+RECIPE = recipe()
+utopia_only = pytest.mark.skipif(
+    RECIPE != "utopia", reason="OLEBFont was assembled from Valkyrie OT"
+)
+valkyrie_only = pytest.mark.skipif(
+    RECIPE != "valkyrie", reason="OLEBFont was assembled from Utopia"
+)
 
 
 class GlyphPosition(TypedDict):
@@ -167,6 +204,7 @@ def glyph_ids(base: TTFont, donor: TTFont) -> dict[str, int]:
     return ids
 
 
+@utopia_only
 @pytest.mark.parametrize("style", STYLES)
 def test_original_typography_and_hint_dependencies(
     style: str, donor_path: Path
@@ -191,6 +229,7 @@ def test_original_typography_and_hint_dependencies(
     )
     glyphs = {id(f): f.getGlyphSet() for f in (base, donor, result)}
     replacements = {base_cmap[c]: donor_cmap[c] for c in SUPERIOR_CODES}
+    space = base_cmap[0x20]
     for g in old_order:
         replaced = g in replacements
         source, source_g = (donor, replacements[g]) if replaced else (base, g)
@@ -198,6 +237,18 @@ def test_original_typography_and_hint_dependencies(
         assert_outlines(
             outline(glyphs[id(source)], source_g), outline(glyphs[id(result)], target_g)
         )
+        if g == space:
+            # The word space is widened by a fifth, in the advance and in the
+            # charstring's operand alike; Utopia's 225 and 210 become 270 and 252.
+            width, bearing = base["hmtx"][g]
+            widened = width * WORD_SPACE[0] // WORD_SPACE[1]
+            assert (width, widened) in ((225, 270), (210, 252))
+            assert result["hmtx"][target_g] == (widened, bearing)
+            assert program(rt.CharStrings[target_g]) == [
+                widened - rt.FDArray[0].Private.nominalWidthX,
+                "endchar",
+            ]
+            continue
         assert source["hmtx"][source_g] == result["hmtx"][target_g], g
         assert_programs(
             program(source["CFF "].cff[0].CharStrings[source_g]),
@@ -271,6 +322,7 @@ def test_original_typography_and_hint_dependencies(
     assert "Reserved Font Names" in result["name"].getDebugName(13)
 
 
+@utopia_only
 @pytest.mark.parametrize("style", STYLES)
 def test_numerals_smallcaps_and_shaping(style: str, scaled_donor: Path) -> None:
     path = FONTS / font_file(style)
@@ -324,6 +376,7 @@ def test_numerals_smallcaps_and_shaping(style: str, scaled_donor: Path) -> None:
         assert shape(utopia(style), text, "") == shape(path, text, "")
 
 
+@utopia_only
 @pytest.mark.parametrize("style", STYLES)
 def test_oldstyle_figure_kerning(style: str) -> None:
     path = FONTS / font_file(style)
@@ -345,6 +398,7 @@ def test_oldstyle_figure_kerning(style: str) -> None:
             assert sum(item["ax"] for item in items) - separate == expected, pair
 
 
+@utopia_only
 def test_regular_oldstyle_figures_are_centred() -> None:
     path = FONTS / font_file("Regular")
     with path.with_suffix(".glyphs.csv").open() as stream:
@@ -366,6 +420,7 @@ def test_regular_oldstyle_figures_are_centred() -> None:
             assert abs(width - x1 - x0) <= 1, name
 
 
+@utopia_only
 @pytest.mark.parametrize("style", STYLES)
 def test_added_glyphs_are_positioned_as_the_donor_positions_them(
     style: str, scaled_donor: Path
@@ -459,16 +514,29 @@ def test_an_imported_language_keeps_only_the_original_default_features() -> None
 
 
 def test_deterministic_build(tmp_path: Path) -> None:
-    with zipfile.ZipFile(EREWHON) as z:
+    """Assembling the installed recipe again from its sources gives the
+    installed bytes, sidecar included."""
+
+    def assemble(f: IO[bytes], path: Path, style: str) -> None:
+        if RECIPE == "valkyrie":
+            assemble_valkyrie(valkyrie(style), f, path, style)
+        else:
+            assemble_utopia(utopia(style), f, path, style, MATH)
+
+    archive, member = (
+        (NEWPX, NEWPX_MEMBER) if RECIPE == "valkyrie" else (EREWHON, EREWHON_MEMBER)
+    )
+    with zipfile.ZipFile(archive) as z:
         for style in STYLES:
             path = tmp_path / font_file(style)
-            with z.open(EREWHON_MEMBER.format(style)) as f:
-                assemble(utopia(style), f, path, style, MATH)
+            with z.open(member.format(style)) as f:
+                assemble(f, path, style)
             assert path.read_bytes() == (FONTS / path.name).read_bytes()
             report = path.with_suffix(".glyphs.csv")
             assert report.read_bytes() == (FONTS / report.name).read_bytes()
 
 
+@utopia_only
 @pytest.mark.parametrize("style", STYLES)
 def test_every_selected_glyph_has_correct_source_and_scale(style: str) -> None:
     result_path = FONTS / font_file(style)
@@ -496,7 +564,11 @@ def test_every_selected_glyph_has_correct_source_and_scale(style: str) -> None:
             assert result_cmap[int(code[2:], 16)] == row["Glyph"]
         source = sources[row["SourceFont"]]
         g, target = row["SourceGlyph"], row["Glyph"]
-        factor = 1 if row["SizeType"] == "Utopia" else 100 / 94
+        assert row["Raise"] == "0"
+        factor = 1 if row["Scale"] == "1" else 100 / 94
+        assert row["Scale"] in ("1", "100/94")
+        if target == result_cmap[0x20]:
+            continue  # the widened word space, checked with the originals
         pen = RecordingPen()
         dx = OLDSTYLE_SHIFTS.get(g, 0) if row["SourceFont"] == "Erewhon-Regular" else 0
         glyph_sets[row["SourceFont"]][g].draw(
@@ -641,6 +713,7 @@ def test_every_selected_glyph_has_correct_source_and_scale(style: str) -> None:
     assert all(g["g"] != 0 for g in shaped)
 
 
+@utopia_only
 def test_inverse_scale_restores_legacy_reference_geometry() -> None:
     # Compare actual curve bounds: contour starting points differ between
     # Utopia and Erewhon, even when they describe the same geometry.
@@ -698,18 +771,129 @@ def test_ghost_hint_markers_and_edges_survive_scaling() -> None:
     assert scaled_stems([100, -20, 40, 10], 2) == [200, -20, 60, 20]
 
 
+def sidecar(style: str) -> list[dict[str, str]]:
+    with (FONTS / font_file(style)).with_suffix(".glyphs.csv").open() as stream:
+        return list(csv.DictReader(stream))
+
+
 @pytest.mark.parametrize("style", STYLES)
-def test_printed_comparison_symbols_are_covered(style: str) -> None:
+def test_faces_are_named_and_featured_alike(style: str) -> None:
+    """Whatever the base, the family is OLEBFont in every name, and the
+    features the stylesheet and layout select are there."""
     with TTFont(FONTS / font_file(style)) as font:
-        assert set(map(ord, "[]…→∙")) <= font.getBestCmap().keys()
+        names = font["name"]
+        assert names.getDebugName(1) == names.getDebugName(16) == FAMILY
+        assert names.getDebugName(2) == names.getDebugName(17) == style_name(style)
+        assert names.getDebugName(4) == f"{FAMILY} {style_name(style)}"
+        assert names.getDebugName(6) == f"{FAMILY}-{style}"
+        assert font["CFF "].cff.fontNames == [f"{FAMILY}-{style}"]
+        features = {r.FeatureTag for r in font["GSUB"].table.FeatureList.FeatureRecord}
+        assert {"onum", "lnum", "pnum", "tnum", "sups"} <= features
+        # The running heads and the acrostic headings, which alone take
+        # small caps, are set upright; Valkyrie's italics have none.
+        if RECIPE == "utopia" or "Italic" not in style:
+            assert {"smcp", "c2sc"} <= features
+        assert "kern" in {
+            r.FeatureTag for r in font["GPOS"].table.FeatureList.FeatureRecord
+        }
 
 
-@pytest.mark.parametrize("face", ["GFSDidot.otf", "GFSDidotBold.otf"])
-def test_variants_greek_font_covers_its_source_characters(
-    edition: Edition, face: str
+@pytest.mark.parametrize("style", STYLES)
+def test_sups_sets_every_label_the_edition_prints(style: str) -> None:
+    """Verse numbers, note origins and callers are set with sups over
+    oldstyle proportional figures: every digit in every form, the letter of
+    a suffixed label, the colon of a chapter-and-verse label, in both
+    recipes' designed superiors, never a shrunken or raised full-size glyph."""
+    path = FONTS / font_file(style)
+    rows = sidecar(style)
+    # Erewhon's superiors, Valkyrie's figures and npxsups' letters, as the
+    # sidecar names each glyph's source.
+    superior = {".superior", SUFFIX, ".sup"}
+
+    def source_glyphs(shaped: Sequence[GlyphPosition]) -> list[str]:
+        return [rows[item["g"]]["SourceGlyph"] for item in shaped]
+
+    for features in (
+        "sups=1",
+        "onum=1,pnum=1,sups=1",
+        "onum=1,tnum=1,sups=1",
+        "lnum=1,pnum=1,sups=1",
+        "lnum=1,tnum=1,sups=1",
+    ):
+        # The ligatures a font forms (fi, fl) must come apart into superiors.
+        for text in (
+            "0123456789",
+            "35a",
+            "30:1",
+            "23b",
+            SUPERIOR_LETTERS,
+            ":",
+            "fi",
+            "fl",
+        ):
+            shaped = shape(path, text, features)
+            assert len(shaped) == len(text), (text, features)
+            for char, g in zip(text, source_glyphs(shaped)):
+                stem, dot, suffix = g.partition(".")
+                assert dot + suffix in superior, (text, features, g)
+                expected = {":": "colon"}.get(char, char)
+                if char.isdigit():
+                    expected = DIGITS[int(char)]
+                assert stem == expected, (text, features, g)
+            assert all(item["dy"] == 0 for item in shaped), (text, features)
+    # The encoded superior figures are the glyphs sups selects.
+    assert source_glyphs(shape(path, "¹²³", "")) == source_glyphs(
+        shape(path, "123", "onum=1,pnum=1,sups=1")
+    )
+    # A superior letter is smaller than the letter it stands for.
+    plain = {item["cl"]: item["ax"] for item in shape(path, SUPERIOR_LETTERS, "")}
+    for item in shape(path, SUPERIOR_LETTERS, "sups=1"):
+        assert item["ax"] < plain[item["cl"]]
+
+
+RUNS = re.compile(r"\\\+?w[gh] .*?\\\+?w[gh]\*", re.S)
+
+
+@pytest.fixture(scope="module")
+def latin_characters(edition: Edition) -> set[str]:
+    """Every character the exported edition prints outside the Greek and
+    Hebrew runs, which their own fonts set: exported once for every face."""
+    text = "".join(
+        RUNS.sub("", document) for _, document in export.export(edition, "pdf")
+    )
+    return {c for c in text if not c.isspace()}
+
+
+@pytest.mark.parametrize("style", STYLES)
+def test_every_latin_character_of_the_edition_is_encoded(
+    latin_characters: set[str], style: str
 ) -> None:
-    """The website sets the Greek lanes in GFS Didot, and the words a
-    correction of the English is about in its bold."""
+    """Outside the Greek and Hebrew runs, which their own fonts set, every
+    character the exported edition prints has a glyph in every face."""
+    characters = latin_characters
+    assert len(characters) > 90
+    with TTFont(FONTS / font_file(style)) as font:
+        missing = characters - set(map(chr, font.getBestCmap()))
+    assert missing == set()
+
+
+# What each Greek face lacks of the variants' characters: GFS Heraklit has no
+# stigma, the numeral of the Received Text's number of the beast at Revelation
+# 13:18, which the browser sets from another font.
+GREEK_GAPS = {"GFS Didot": set(), "GFS Heraklit": {"ϛ"}}
+
+
+@pytest.mark.parametrize("bold", [False, True], ids=["regular", "bold"])
+def test_installed_greek_covers_the_variants(edition: Edition, bold: bool) -> None:
+    """The website sets the Greek lanes in the installed Greek face, and the
+    words a correction of the English is about in its bold; where the family
+    has no bold (Heraklit), the browser emboldens its one face."""
+    faces = typeface.faces(typeface.GREEK)
+    face = next((f for f in faces if typeface.style(f) == (700, "normal")), None)
+    if bold and face is None:
+        pytest.skip(f"{typeface.greek_family()} has no bold face")
+    face = face if bold else faces[0]
+    assert face is not None
     segments = [
         segment
         for _, lanes in edition.variants
@@ -717,7 +901,7 @@ def test_variants_greek_font_covers_its_source_characters(
         if lane["language"] == "grc"
         for segment in lane["segments"]
     ]
-    if face == "GFSDidotBold.otf":
+    if bold:
         segments = [s for s in segments if not isinstance(s, str) and "about" in s]
     greek_chars = {
         ord(c)
@@ -727,5 +911,143 @@ def test_variants_greek_font_covers_its_source_characters(
         if not c.isspace()
     }
     assert greek_chars
-    with TTFont(paths.FONTS / "gfs_didot" / face) as font:
-        assert greek_chars <= font.getBestCmap().keys()
+    with TTFont(face) as font:
+        cmap = font.getBestCmap()
+    assert {chr(c) for c in greek_chars - cmap.keys()} == GREEK_GAPS[
+        typeface.greek_family()
+    ]
+    # The premise of export.ELISION: no Greek face encodes the elision mark,
+    # and every one encodes the apostrophe set in its place.
+    assert 0x2BC not in cmap and 0x2019 in cmap
+
+
+def test_greek_is_paired_with_the_base() -> None:
+    """GFS Heraklit goes with Valkyrie, GFS Didot with Utopia."""
+    assert (
+        typeface.greek_family()
+        == {
+            "valkyrie": "GFS Heraklit",
+            "utopia": "GFS Didot",
+        }[RECIPE]
+    )
+
+
+@valkyrie_only
+@pytest.mark.parametrize("style", STYLES)
+def test_valkyrie_is_untouched_but_for_its_names(style: str) -> None:
+    """Every glyph, metric, feature and kerning pair of the base survives as
+    it was, with the base's notices; only the family's names change and
+    the superiors are added after the base's glyphs."""
+    base = TTFont(valkyrie(style))
+    result = TTFont(FONTS / font_file(style))
+    order = base.getGlyphOrder()
+    assert result.getGlyphOrder()[: len(order)] == order
+    assert result.getBestCmap() == base.getBestCmap()
+    base_glyphs, result_glyphs = base.getGlyphSet(), result.getGlyphSet()
+    base_cff, result_cff = base["CFF "].cff[0], result["CFF "].cff[0]
+    for g in order:
+        assert base["hmtx"][g] == result["hmtx"][g], g
+        assert_outlines(outline(base_glyphs, g), outline(result_glyphs, g))
+        assert_programs(
+            program(base_cff.CharStrings[g]), program(result_cff.CharStrings[g])
+        )
+    assert base["hmtx"]["space"] == result["hmtx"]["space"]
+    for key in ("ascent", "descent", "lineGap"):
+        assert getattr(result["hhea"], key) == getattr(base["hhea"], key)
+    for key in (
+        "fsType",
+        "fsSelection",
+        "sTypoAscender",
+        "sTypoDescender",
+        "sTypoLineGap",
+        "usWinAscent",
+        "usWinDescent",
+        "sCapHeight",
+        "sxHeight",
+    ):
+        assert getattr(result["OS/2"], key) == getattr(base["OS/2"], key)
+    # The original lookups, compiled with the combined glyph ids, match.
+    for tag in ("GSUB", "GPOS"):
+        original = base[tag].table.LookupList.Lookup
+        kept = result[tag].table.LookupList.Lookup[: len(original)]
+        for old, new in zip(original, kept, strict=True):
+            a, b = OTTableWriter(), OTTableWriter()
+            old.compile(a, result)
+            new.compile(b, result)
+            assert a.getAllData() == b.getAllData()
+    for text in ("AV", "To", "Wa", "ffi", "Office", "1234"):
+        assert shape(valkyrie(style), text, "") == shape(
+            FONTS / font_file(style), text, ""
+        )
+        assert shape(valkyrie(style), text, "onum=1,pnum=1") == shape(
+            FONTS / font_file(style), text, "onum=1,pnum=1"
+        )
+    for name_id in (0, 7, 14):
+        assert result["name"].getDebugName(name_id) == base["name"].getDebugName(
+            name_id
+        )
+    licence = result["name"].getDebugName(13)
+    assert licence.startswith(base["name"].getDebugName(13))
+    assert "TeX Gyre" in licence and "Michael Sharpe" in licence
+    assert "Valkyrie" not in (
+        result["name"].getDebugName(1),
+        result["name"].getDebugName(4),
+    )
+
+
+@valkyrie_only
+@pytest.mark.parametrize("style", STYLES)
+def test_superiors_are_the_donors_scaled_to_the_figures(style: str) -> None:
+    """Each added superior is npxsups' letter or colon under the one
+    transform superior_placements gives, which lays the donor's superior
+    figures on the base's; and the sidecar records the placement."""
+    base = TTFont(valkyrie(style))
+    donor = archive_font(NEWPX, NEWPX_MEMBER.format(style))
+    result = TTFont(FONTS / font_file(style))
+    placements = superior_placements(base, donor)
+    assert set(placements) == {c + SUFFIX for c in SUPERIOR_LETTERS} | {"colon.sups"}
+    added = result.getGlyphOrder()[len(base.getGlyphOrder()) :]
+    assert added == list(placements)
+    donor_glyphs, result_glyphs = donor.getGlyphSet(), result.getGlyphSet()
+    private = result["CFF "].cff[0].Private
+    rows = {row["Glyph"]: row for row in sidecar(style)}
+    _, bottom, _, top = ink(result_glyphs, "one" + SUFFIX)
+    for g, (source_g, scale, dy) in placements.items():
+        width = otRound(donor["hmtx"][source_g][0] * scale)
+        # The charstring is the donor's outline transformed and written by
+        # the same pen, which rounds to units and specializes the operators.
+        pen = T2CharStringPen(width - private.nominalWidthX, None)
+        donor_glyphs[source_g].draw(TransformPen(pen, (scale, 0, 0, scale, 0, dy)))
+        expected = pen.getCharString(private, result["CFF "].cff.GlobalSubrs)
+        assert program(result["CFF "].cff[0].CharStrings[g]) == program(expected)
+        bounds = BoundsPen(None)
+        expected.draw(bounds)
+        assert result["hmtx"][g] == (width, otRound(bounds.bounds[0]))
+        assert rows[g]["SourceFont"] == f"npxsups-{style}"
+        assert rows[g]["SourceGlyph"] == source_g
+        assert float(rows[g]["Scale"]) == pytest.approx(scale)
+        assert float(rows[g]["Raise"]) == pytest.approx(dy)
+    # One transform: the donor's superior one spans the base's superior one,
+    # so every donated glyph keeps its proportion to the figures.
+    _, donor_bottom, _, donor_top = ink(donor_glyphs, "one.sup")
+    scales = {scale for _, scale, _ in placements.values()}
+    raises = {dy for _, _, dy in placements.values()}
+    assert len(scales) == len(raises) == 1
+    (scale,), (dy,) = scales, raises
+    assert (donor_top - donor_bottom) * scale == pytest.approx(top - bottom)
+    assert donor_bottom * scale + dy == pytest.approx(bottom)
+    for name in ("x", "colon"):
+        _, g_bottom, _, g_top = ink(result_glyphs, name + SUFFIX)
+        _, d_bottom, _, d_top = ink(donor_glyphs, name + ".sup")
+        # Within the unit the pen rounds to.
+        assert g_bottom == pytest.approx(d_bottom * scale + dy, abs=1)
+        assert g_top == pytest.approx(d_top * scale + dy, abs=1)
+    _, x_bottom, _, x_top = ink(result_glyphs, "x" + SUFFIX)
+    assert bottom - 10 <= x_bottom and x_top < top
+    for row in rows.values():
+        if row["Glyph"] not in placements:
+            assert (row["SourceFont"], row["Scale"], row["Raise"]) == (
+                f"ValkyrieOTA{style}",
+                "1",
+                "0",
+            )

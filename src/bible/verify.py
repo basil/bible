@@ -13,6 +13,7 @@ import xml.etree.ElementTree as ET
 from collections.abc import Mapping, Sequence
 from pathlib import Path
 
+from bible import typeface
 from bible.checks import CheckFailed, present, require
 from bible.files import sha256, write_json
 from bible.policy_schema import Witnesses
@@ -485,7 +486,7 @@ def inspect_pdf(
     )
     settings = project_settings(project)
     family = text_font(settings)
-    text_fonts = (family, "GFSDidot", "Ezra")
+    text_fonts = (family, typeface.postscript_family(typeface.greek_face()), "Ezra")
     require(
         all(f in fonts for f in text_fonts),
         "Expected text/quotation fonts missing",

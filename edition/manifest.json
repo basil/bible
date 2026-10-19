@@ -1349,7 +1349,8 @@
       "source": "kjv",
       "id": "NDX",
       "source_id": "INT",
-      "title": "The Translators to the Reader"
+      "title": "The Translators to the Reader",
+      "abbreviation": "Transl. to the Reader"
     }
   ],
   "excluded": {

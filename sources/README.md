@@ -134,16 +134,18 @@ The historical published note wording is in the public domain under U.S. copyrig
 
 ## Fonts
 
-The fonts below are under the SIL Open Font License. Source Code Pro and Erewhon were retrieved on 2026-09-25.
+The fonts below are under the SIL Open Font License, except newpx, whose superiors font extends the TeX Gyre Pagella fonts under the GUST Font License, with Michael Sharpe's additions under the LPPL; only its `npxsups` faces are read. Source Code Pro and Erewhon were retrieved on 2026-09-25, GFS Heraklit and newpx on 2026-10-18.
 
 | File                                        | Downloaded from                                                                                                                                 | Version                     | Used for                                                |
 | ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- | ------------------------------------------------------- |
-| `GFS_Didot.zip`                             | [Greek Font Society](https://greekfontsociety-gfs.gr/_assets/fonts/GFS_Didot.zip)                                                               |                             | Greek                                                   |
+| `GFS_Didot.zip`                             | [Greek Font Society](https://greekfontsociety-gfs.gr/_assets/fonts/GFS_Didot.zip)                                                               |                             | Greek, with Utopia                                      |
+| `GFS_Heraklit.zip`                          | [Greek Font Society](https://greekfontsociety-gfs.gr/_assets/fonts/GFS_Heraklit.zip)                                                            |                             | Greek, with Valkyrie OT                                 |
 | `erewhon.zip`                               | [CTAN](https://mirrors.ctan.org/fonts/erewhon.zip)                                                                                              | 1.123 (2025-06-08)          | OLEBFont text additions                                 |
 | `erewhon-math.zip`                          | [CTAN](https://mirrors.ctan.org/fonts/erewhon-math.zip)                                                                                         | 0.75 (2026-08-27)           | OLEBFont additional symbols and mathematical alphabets  |
+| `newpx.zip`                                 | [CTAN](https://mirrors.ctan.org/fonts/newpx.zip)                                                                                                | 1.551 (2025-10-31)          | OLEBFont superior letters and colon, with Valkyrie OT   |
 | `OTF-source-code-pro-2.042R-u_1.062R-i.zip` | [Adobe](https://github.com/adobe-fonts/source-code-pro/releases/download/2.042R-u/1.062R-i/1.026R-vf/OTF-source-code-pro-2.042R-u_1.062R-i.zip) | 2.042 upright, 1.062 italic | Nothing printed; PTXprint loads it for crop-mark labels |
 
-The main text family, OLEBFont, is assembled by `scripts/build_olebfont.py` from Utopia (the repository pinned in `Dockerfile`), the matching four Erewhon text faces, and Erewhon Math. See [font normalization](../docs/font-normalization.md) for donor selection and scaling.
+The main text family, OLEBFont, is assembled by `scripts/build_olebfont.py` from Valkyrie OT, which is proprietary and never committed, with the superior letters and colon of newpx's `npxsups`, where `make bootstrap` finds Valkyrie's four faces on the host; and otherwise from Utopia (the repository pinned in `Dockerfile`), the matching four Erewhon text faces, and Erewhon Math. See [font normalization](../docs/font-normalization.md) for both recipes.
 
 Utopia supplies overlapping glyphs, spacing, ligatures, kerning and hinting, except that superscript 1, 2 and 3 use Erewhon’s designs for a consistent figure set. Erewhon supplies missing glyphs and alternate forms, followed by Erewhon Math. Both donors are enlarged by 100/94 to restore Utopia size, including their spacing, positioning and hints.
 

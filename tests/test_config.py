@@ -10,10 +10,9 @@ from ptxprint.modelmap import ModelMap
 from ptxprint.usxutils import merge_sty, simple_parse
 
 from bible import paths
-from bible.project import FRONT_TEMPLATE, bsb_baseline
+from bible.project import FRONT_TEMPLATE, bsb_baseline, style_mods
 
 LAYOUT = paths.CONFIG_DIR / "layout.ini"
-STYLE_MODS = paths.CONFIG_DIR / "ptxprint-mods.sty"
 
 
 def read_cfg(text: str) -> configparser.ConfigParser:
@@ -113,8 +112,7 @@ def test_style_mods_override_only_non_default_fields() -> None:
     with (src / "ptx2pdf.sty").open(encoding="utf-8") as f:
         merge_sty(base, simple_parse(f))
     merge_sty(base, simple_parse(io.StringIO(bsb_baseline()[1])))
-    with STYLE_MODS.open(encoding="utf-8") as f:
-        mods = simple_parse(f)
+    mods = simple_parse(io.StringIO(style_mods()))
     repeated = [
         f"{marker} {field} {value}"
         for marker, fields in mods.items()

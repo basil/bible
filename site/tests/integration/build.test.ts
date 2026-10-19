@@ -235,7 +235,10 @@ const assetNames = entries(
   assets,
   "run npm --prefix site run build after make web",
 );
-const fontNames = entries(fonts, "run make web");
+// The faces beside their stylesheet, which the theme imports.
+const fontNames = entries(fonts, "run make web").filter((name) =>
+  name.endsWith(".woff"),
+);
 const css = assetNames
   .filter((name) => name.endsWith(".css"))
   .map((name) => builtFile(`assets/${name}`))
