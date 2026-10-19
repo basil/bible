@@ -55,36 +55,51 @@ def font_runs(content: Content) -> Content:
     return [item for item in result if item != ""]
 
 
+# What supplies its own space in PTXprint, so that no blank line stands
+# before it: a heading, a title and an acrostic name; a chapter does too
+# where the book labels its chapters.
+SELF_SPACED = usj.HEADINGS | {"d", "qa"}
+
+
 def spaced(doc: Document) -> Document:
     """Blank lines for PTXprint: a poem gets one where it begins after prose
-    and where prose resumes after it, and a title where it follows the body
-    and before its own words, so that it stands as far from them as from
-    those before it. A chapter that opens with a poem or a title gets one
-    before it, and so does a chapter where prose resumes after a poem. A
-    heading supplies its own space, so a blank line directly before one goes.
-    An acrostic heading opens its poem as a line would, and adds no space
-    within the poem; existing blanks remain. Only the form of what prints
-    changes, never the words."""
+    and where prose resumes after it. A chapter that opens with a poem or a
+    title gets one before it, and so does a chapter where prose resumes
+    after a poem, unless the book labels its chapters: the label supplies
+    its own space. A heading, a title and an acrostic name supply their own,
+    so no blank line stands before one, nor after a title. An instruction
+    on its own right-aligned line supplies the stanza break, so a blank
+    between it and the next line goes. Other blanks remain. Only the form
+    of what prints changes, never the words."""
     blocks = doc["content"]
+    label = any(usj.paragraph(block) == "cl" for block in blocks)
     result: list[Node] = []
     for at, block in enumerate(blocks):
         marker = usj.paragraph(block)
         before = usj.paragraph(result[-1]) if result else None
-        after = usj.paragraph(blocks[at + 1]) if at + 1 < len(blocks) else None
+        following = blocks[at + 1] if at + 1 < len(blocks) else None
+        after = usj.paragraph(following)
         if marker == "b":
-            blank = after not in usj.HEADINGS and after != "d"
-        elif usj.is_type(block, "chapter"):
-            blank = before in usj.BODY and (
-                after in usj.OPENING
-                or after == "d"
-                or (before in usj.POEM and after in usj.PROSE)
+            blank = (
+                after not in SELF_SPACED
+                and before != "d"
+                and not (label and usj.is_type(following, "chapter"))
+                and not (before == "qr" and after in usj.POEM)
             )
-        elif marker == "d":
-            blank = before in usj.BODY
-        elif marker in usj.OPENING:
-            blank = before in usj.PROSE or before == "d"
+        elif usj.is_type(block, "chapter"):
+            blank = (
+                not label
+                and before in usj.BODY
+                and (
+                    after in usj.OPENING
+                    or after == "d"
+                    or (before in usj.POEM and after in usj.PROSE)
+                )
+            )
+        elif marker in usj.POEM:
+            blank = before in usj.PROSE
         elif marker in usj.PROSE:
-            blank = before in usj.POEM or before == "d"
+            blank = before in usj.POEM
         else:
             blank = False
         if blank and before != "b":
@@ -193,10 +208,10 @@ def exported(code: str, doc: Document, edition: Edition) -> str:
     """A document as PTXprint takes it: under its project id; its notes'
     margin origins without their chapter, which the chapter figure and running
     head supply, unless the verse's printed label names one, and bottom notes
-    under their callers alone; its chapters opened in paragraphs of their own
-    and its blank lines set; its chapter label, where the manifest asks for
-    one, set once before its first chapter as PTXprint takes it; and its
-    Greek and Hebrew tagged for their fonts.
+    under their callers alone; its chapter label, where the manifest asks for
+    one, set once before its first chapter as PTXprint takes it; its chapters
+    opened in paragraphs of their own and its blank lines set, which read the
+    label; and its Greek and Hebrew tagged for their fonts.
     The edition's own pages are sent as the editor wrote them. A note at a
     verse that prints another label than its own is set under that label."""
 
@@ -226,10 +241,10 @@ def exported(code: str, doc: Document, edition: Edition) -> str:
 
     labels = printed_labels(doc) if code in edition.scripture else {}
     full = named_in_full(doc) if code in edition.scripture else set()
-    if code not in edition.authored:
-        doc = spaced(opened(doc))
     if code in edition.scripture:
         doc = labelled(doc, edition.policy.unit(code))
+    if code not in edition.authored:
+        doc = spaced(opened(doc))
     # A unit printed from a file that holds another, or under an id that
     # PTXprint would take for its own front matter, is a unit of its own.
     doc = fonted(edition, code, usj.with_content(doc, content))

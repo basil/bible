@@ -319,8 +319,8 @@ def test_the_page_prints_its_tables(edition: bible.pipeline.Edition) -> None:
     assert "\\tr\n\\tc1 23:7–8\n\\tc2 23:7–8 (after 40)\n" in page
     assert "\\tr\n\\tc1 31:25\n\\tc2 31:25 (after 26)\n" in page
     # A book's table is headed by both Bibles' names for the book.
-    assert "\\tr\n\\th1 \\bd Jeremiah\\bd*\n\\th2 \\bd Jeremias\\bd*\n" in page
-    assert "\\tr\n\\th1 \\bd Genesis\\bd*\n\\th2 \\bd Genesis\\bd*\n" in page
+    assert "\\tr\n\\th1 \\sc Jeremiah\\sc*\n\\th2 \\sc Jeremias\\sc*\n" in page
+    assert "\\tr\n\\th1 \\sc Genesis\\sc*\n\\th2 \\sc Genesis\\sc*\n" in page
     assert "\\is2" not in page
     tables = [
         node
@@ -576,5 +576,5 @@ def test_generated_names_share_the_body_heading_registry(
     written = sources.authored[NUMBERING["file"]] + "\\ip {JER 38:31}\n"
     page = printed(written, ours=ours)
     assert "\\tr\n\\tc1 Jeremiah\n\\tc2 Renamed Jeremias\n" in page
-    assert "\\th1 \\bd Jeremiah\\bd*\n\\th2 \\bd Renamed Jeremias\\bd*\n" in page
+    assert "\\th1 \\sc Jeremiah\\sc*\n\\th2 \\sc Renamed Jeremias\\sc*\n" in page
     assert page.endswith("\\ip Renamed Jeremias 38:31\n")

@@ -4,7 +4,11 @@ from __future__ import annotations
 
 import configparser
 import io
+import os
+import re
+import subprocess
 from collections import defaultdict
+from pathlib import Path
 
 from ptxprint.modelmap import ModelMap
 from ptxprint.usxutils import merge_sty, simple_parse
@@ -125,3 +129,57 @@ def test_style_mods_override_only_non_default_fields() -> None:
         and style_value(value) == style_value(base[marker][field])
     ]
     assert repeated == [], "ptxprint-mods.sty repeats the styles beneath it"
+
+
+def test_chapter_figures_are_lining_despite_the_base_oldstyle_font(
+    tmp_path: Path,
+) -> None:
+    # Exercise PTXprint's real font selection: removing onum from the style
+    # feature list cannot disable +onum=1 embedded in the base font name, so
+    # the chapter styles name the family directly. Oldstyle 3, 4 and 5
+    # descend well below the baseline; lining figures do not.
+    probe = tmp_path / "chapter-figures.tex"
+    probe.write_text(
+        r"""\input paratext2.tex
+\def\regular{"OLEBFont:+onum=1:+pnum=1"}
+\def\bold{"OLEBFont/B:+onum=1:+pnum=1"}
+\def\italic{"OLEBFont/I:+onum=1:+pnum=1"}
+\def\bolditalic{"OLEBFont/B/I:+onum=1:+pnum=1"}
+\stylesheet{usfm_sb.sty}
+\stylesheet{ptx2pdf.sty}
+"""
+        + rf"\stylesheet{{{paths.CONFIG_DIR / 'ptxprint-mods.sty'}}}"
+        + r"""
+\catcode`\@=11
+\XeTeXuseglyphmetrics=3
+\def\measure#1{%
+  \s@tfont{#1}{#1}%
+  \setbox0=\hbox{345}%
+  \immediate\write16{DIGITS #1 \the\ht0\space\the\dp0}%
+}
+\measure{p}
+\measure{c}
+\measure{cl}
+\s@ve@nd
+""",
+        encoding="utf-8",
+    )
+    result = subprocess.run(
+        ["xetex", "-interaction=nonstopmode", "-halt-on-error", probe.name],
+        cwd=tmp_path,
+        env={**os.environ, "TEXINPUTS": f"{paths.UPSTREAM / 'src'}//:"},
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode == 0, result.stdout
+    depths = {
+        marker: float(depth) / float(height)
+        for marker, height, depth in re.findall(
+            r"DIGITS (p|c|cl) ([\d.]+)pt\s*([\d.]+)pt", result.stdout
+        )
+    }
+    assert set(depths) == {"p", "c", "cl"}, result.stdout
+    assert depths["p"] > 0.1
+    assert depths["c"] < depths["p"] / 2
+    assert depths["cl"] < depths["p"] / 2

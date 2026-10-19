@@ -405,12 +405,12 @@ def test_the_hebrew_letters_of_lamentations_head_their_lines(
 ) -> None:
     doc = unit(edition, "LAM")
     verses = scripture.verses(doc)
-    assert verses["1:2"].text.startswith("Beth.\nShe weepeth sore in the night,\n")
-    assert verses["3:22"].text.startswith("Heth.\nIt is the mercies of the Lord,\n")
+    assert verses["1:2"].text.startswith("Beth\nShe weepeth sore in the night,\n")
+    assert verses["3:22"].text.startswith("Heth\nIt is the mercies of the Lord,\n")
     assert verses["4:17"].text == (
-        "Phe.\nWhile we yet lived our eyes failed,\n"
+        "Phe\nWhile we yet lived our eyes failed,\n"
         "while we looked in vain for our help.\n"
-        "Tsade.\nWe looked to a nation that could not save."
+        "Tsade\nWe looked to a nation that could not save."
     )
 
 

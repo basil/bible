@@ -1088,20 +1088,42 @@ def test_a_blank_line_the_source_sets_before_a_poem_is_not_doubled() -> None:
     ) == ["id", "c", "p", "b", "q1"]
 
 
-def test_a_title_is_set_a_line_from_its_poem_and_from_the_chapter_before() -> None:
+def test_a_pause_supplies_the_break_before_the_next_poetic_line() -> None:
+    assert spaced_markers(
+        "\\id PSA\n\\c 33\n\\q1 \\v 11 The rich have become poor and hungry:\n"
+        "\\q1 but they that seek the Lord diligently shall not want any good thing.\n"
+        "\\qr Pause.\n\\b\n\\q1 \\v 12 Come, ye children, hear me:\n"
+        "\\q1 I will teach you the fear of the Lord.\n"
+        "\\b\n\\q1 \\v 13 What man is there that desireth life,\n"
+        "\\qr Pause.\n\\b\n\\p \\v 14 Prose.\n"
+    ) == ["id", "c", "q1", "q1", "qr", "q1", "q1", "b", "q1", "qr", "b", "p"]
+
+
+def test_a_title_leads_directly_into_its_poem() -> None:
+    # A chapter that opens with a title gets a blank line before it where
+    # its chapters are not labelled; the title supplies its own space after,
+    # so a blank line the source sets after it goes too.
     assert spaced_markers(
         "\\id PSA\n\\c 3\n\\q1 \\v 1 Line.\n\\c 4\n\\d \\v 1 A Psalm.\n"
-        "\\q1 \\v 2 Line.\n\\c 5\n\\d \\v 1 A Psalm.\n\\p \\v 2 Prose.\n"
-    ) == ["id", "c", "q1", "b", "c", "d", "b", "q1", "b", "c", "d", "b", "p"]
+        "\\b\n\\q1 \\v 2 Line.\n\\c 5\n\\d \\v 1 A Psalm.\n\\p \\v 2 Prose.\n"
+    ) == ["id", "c", "q1", "b", "c", "d", "q1", "b", "c", "d", "p"]
 
 
-def test_a_title_within_a_chapter_is_set_a_line_from_the_words_before_it() -> None:
+def test_labelled_chapters_supply_their_own_space() -> None:
+    assert spaced_markers(
+        "\\id PSA\n\\cl Psalm\n\\c 1\n\\q1 \\v 1 Line.\n"
+        "\\c 2\n\\d \\v 1 A Psalm.\n\\q1 \\v 2 Line.\n"
+        "\\b\n\\c 3\n\\d \\v 1 A Psalm.\n\\q1 \\v 2 Line.\n\\p \\v 3 Prose.\n\\c 4\n\\q1 \\v 1 Line.\n"
+    ) == ["id", "cl", "c", "q1", "c", "d", "q1", "c", "d", "q1", "b", "p", "c", "q1"]
+
+
+def test_a_title_within_a_chapter_supplies_its_own_space() -> None:
     # Esaias 21:11 opens a passage with a title within its chapter, and
     # Psalm 71 closes with one.
     assert spaced_markers(
         "\\id ISA\n\\c 21\n\\p \\v 10 Prose.\n\\d \\v 11 A Vision.\n\\p Prose.\n"
-        "\\c 22\n\\q1 \\v 1 Line.\n\\d \\v 2 The hymns are ended.\n"
-    ) == ["id", "c", "p", "b", "d", "b", "p", "b", "c", "q1", "b", "d"]
+        "\\c 22\n\\q1 \\v 1 Line.\n\\b\n\\d \\v 2 The hymns are ended.\n"
+    ) == ["id", "c", "p", "d", "p", "b", "c", "q1", "d"]
 
 
 def test_a_chapter_between_a_poem_and_prose_gets_a_blank_line_before_it() -> None:
@@ -1127,14 +1149,12 @@ def test_headings_and_rules_supply_their_own_space() -> None:
         "sd2",
         "c",
         "d",
-        "b",
         "q1",
         "s2",
         "q1",
         "ms1",
         "c",
         "d",
-        "b",
         "q1",
     ]
 
@@ -1509,8 +1529,52 @@ def test_closing_parenthesis_outside_supplied_words(
     assert revision.punctuated(result, policy, set()) == result
 
 
+def test_acrostic_heading_periods_go_without_changing_other_punctuation(
+    policy: bible.policy.Policy,
+) -> None:
+    policy = revisions(policy, punctuation={revision.ACROSTICS: {"why": "x"}})
+    doc = usj.parse(
+        "\\id LAM\n\\c 1\n\\qa \\v 1 \\sc Aleph.\\sc*\n"
+        "\\q1 Words.\\f + \\ft Aleph. is a name.\\f*\n"
+        "\\qa \\v 2 \\sc Beth.\\sc*\n\\q1 More words."
+    )
+    before = copy.deepcopy(doc)
+    met: revision.MetRevisions = set()
+    result = revision.punctuated(doc, policy, met)
+    assert usj.serialize(result) == usj.serialize(doc).replace(
+        "\\sc Aleph.", "\\sc Aleph"
+    ).replace("\\sc Beth.", "\\sc Beth")
+    assert met == {revision.ACROSTICS}
+    assert doc == before
+    assert revision.punctuated(result, policy, set()) == result
+
+
+def test_an_acrostic_period_a_lemma_quotes_is_refused(
+    policy: bible.policy.Policy,
+) -> None:
+    policy = revisions(policy, punctuation={revision.ACROSTICS: {"why": "x"}})
+    doc = usj.parse(
+        "\\id LAM\n\\c 1\n\\qa \\v 1 \\sc Aleph.\\sc*\n"
+        "\\q1 Words.\\f + \\fq Aleph. \\ft A letter.\\f*\n"
+    )
+    with pytest.raises(CheckFailed, match="lemma its verse no longer has: LAM 1:1"):
+        revision.punctuated(doc, policy, set())
+
+
+def test_an_acrostic_heading_that_is_no_name_is_refused(
+    policy: bible.policy.Policy,
+) -> None:
+    policy = revisions(policy, punctuation={revision.ACROSTICS: {"why": "x"}})
+    doc = usj.parse("\\id PSA\n\\c 1\n\\qa \\v 1 \\sc Aleph.\\sc*\n\\q1 Words.")
+    with pytest.raises(CheckFailed, match="Unexpected acrostic heading: PSA"):
+        revision.punctuated(doc, policy, set())
+
+
 def test_every_punctuation_rule_is_accepted(policy: bible.policy.Policy) -> None:
-    rules = {name: {"why": "x"} for name in (*revision.RULES, revision.BRACKETS)}
+    rules = {
+        name: {"why": "x"}
+        for name in (*revision.RULES, revision.BRACKETS, revision.ACROSTICS)
+    }
     revision.check(revisions(policy, punctuation=rules))
 
 
@@ -2551,7 +2615,6 @@ def test_source_instructions_keep_their_export_markers_and_spacing() -> None:
         "qa",
         "q1",
         "q2",
-        "b",
         "qa",
         "q1",
         "b",
@@ -2561,13 +2624,14 @@ def test_source_instructions_keep_their_export_markers_and_spacing() -> None:
     assert "\\qa" in usj.serialize(result)
 
 
-def test_a_poem_that_opens_with_an_acrostic_heading_is_spaced_as_any_poem() -> None:
+def test_an_acrostic_heading_supplies_its_own_space() -> None:
     # Lamentations 1 opens its poem after a paragraph of prose, and its
-    # chapters 2 to 4 with their first names, as chapter 5 opens with a line.
+    # chapters 2 to 4 with their first names, as chapter 5 opens with a line:
+    # the chapter, which has no label, still gets its blank line.
     assert spaced_markers(
         "\\id LAM\n\\c 1\n\\p Prose.\n\\qa \\v 1 \\sc Aleph.\\sc*\n\\q1 Line.\n"
         "\\c 2\n\\qa \\v 1 \\sc Aleph.\\sc*\n\\q1 Line.\n\\c 5\n\\q1 \\v 1 Line.\n"
-    ) == ["id", "c", "p", "b", "qa", "q1", "b", "c", "qa", "q1", "b", "c", "q1"]
+    ) == ["id", "c", "p", "qa", "q1", "b", "c", "qa", "q1", "b", "c", "q1"]
 
 
 def test_a_note_is_set_under_the_label_its_verse_prints() -> None:

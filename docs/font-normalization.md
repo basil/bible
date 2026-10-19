@@ -96,9 +96,12 @@ It does not import a MATH table or replace an extensible equation font.
 
 ## Numerals, superiors and word spacing
 
-PTXprint's font settings enable `onum` and `pnum` on all four faces, so chapter
-figures, headings, notes, front matter and contents use proportional oldstyle
-numbers. The stylesheet selects `sups` for verse numbers, note origins,
+PTXprint's font settings enable `onum` and `pnum` on all four faces, so the
+text, headings, notes, front matter and contents use proportional oldstyle
+numbers. Chapter figures and labels name OLEBFont directly in the stylesheet,
+with `lnum` and `pnum`, since the base font name's embedded `onum` setting
+cannot be turned off by a feature-list subtraction; they are set in lining
+figures. The stylesheet selects `sups` for verse numbers, note origins,
 embedded verse numbers and callers, and `smcp`/`c2sc` for the running heads
 (the footer's folio turns them off again, since Valkyrie's `c2sc` would set it
 in small-cap lining figures). A mixed label, `35a` or `30:1`, is set whole in

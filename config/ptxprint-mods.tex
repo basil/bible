@@ -25,6 +25,54 @@
 }
 \endgroup
 
+% An acrostic name of Lamentations opens its verse, so the verse milestone
+% stands in the name's heading, where the source puts it; print the number
+% beside the first line of the poem instead, as a hanging verse number is
+% set. The ordinary rendering is kept, with its font and spacing: a milestone
+% met in a qa paragraph is boxed, and the next q1 line sets the box: the
+% line stage cuts a name from the opening of its q1 line, and the view
+% indents only a line that follows a line of poetry, so a q1 line always
+% follows. A name before the box is set, or the end of the book, is an
+% error. A name that opens a chapter leaves the chapter number to drop into
+% that q1 line, since a heading takes none, and its verse milestone came
+% before the number, where PTXprint cannot omit or unhang verse one: do so
+% here, as it does after a dropped number, rather than hang the number
+% against the chapter figure.
+\newbox\BibleAcrosticVerse
+\begingroup
+\catcode`\@=11
+\gdef\BibleAcrosticMarker{qa}
+\global\let\BiblePrintVerse\defaultprintverse
+\gdef\defaultprintverse{%
+  \ifx\m@rker\BibleAcrosticMarker
+    \ifvoid\BibleAcrosticVerse\else
+      \errmessage{Unplaced acrostic verse number}%
+    \fi
+    \global\setbox\BibleAcrosticVerse=\hbox{\BiblePrintVerse}%
+  \else
+    \BiblePrintVerse
+  \fi
+}
+\addtohook{start}{q1}{%
+  \ifvoid\BibleAcrosticVerse\else
+    \ifdr@ppednumber
+      \ifOmitVerseNumberOne
+        \global\setbox\BibleAcrosticVerse=\box\voidb@x
+      \else
+        \box\BibleAcrosticVerse
+      \fi
+    \else
+      \llap{\box\BibleAcrosticVerse}%
+    \fi
+  \fi
+}
+\endgroup
+\setbookhook{end}{LAM}{%
+  \ifvoid\BibleAcrosticVerse\else
+    \errmessage{Unplaced acrostic verse number at end of Lamentations}%
+  \fi
+}
+
 % Give note origin numbers a compact fixed 1 pt separation in the margin.
 % Remove the source's trailing space/NBSP inside the origin style, then add
 % the kern after the style closes. Keeping both hooks avoids an extra word
@@ -172,22 +220,6 @@
     \ifdoingt@ble\else\let\tablecategory\BibleTableCategory\fi
   \fi
   \BibleStartTable
-}
-\endgroup
-
-% Empty paragraphs do not enter the start hook. Put the rule in the
-% heading box through the before hook. PTXprint sets that box, with the
-% chapter label and the title that follow every rule, on the line grid, and
-% the label's own space before and its line come after the hook. Half a
-% line in all, split .43 above the rule and .07 below it, sets the rule as
-% far below the poem's last baseline as above the label's capitals.
-\begingroup
-\catcode`\@=11
-\sethook{before}{sd2}{%
-  \vskip.43\onel@neunit
-  \hbox to \hsize{\hfil\vrule width .25\hsize height .5pt depth 0pt\hfil}%
-  \nobreak
-  \vskip.07\onel@neunit
 }
 \endgroup
 

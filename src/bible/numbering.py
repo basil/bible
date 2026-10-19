@@ -358,7 +358,7 @@ def table_rows(
     return {
         "type": "table",
         "content": [
-            *([row("th", names, "bd")] if names else []),
+            *([row("th", names, "sc")] if names else []),
             row("th", heads),
             *(row("tc", r) for r in rows),
         ],

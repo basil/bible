@@ -100,7 +100,10 @@ def check(policy: bible.policy.Policy) -> None:
         "Revisions file",
     )
     for name, rule in data["punctuation"].items():
-        require(name in RULES or name == BRACKETS, f"Unknown punctuation rule: {name}")
+        require(
+            name in RULES or name in {BRACKETS, ACROSTICS},
+            f"Unknown punctuation rule: {name}",
+        )
         require_fields(rule, {"why"}, (), f"Punctuation rule {name}")
         require(bool(rule["why"]), f"Punctuation rule without a why: {name}")
     words = data["words"]
@@ -976,6 +979,11 @@ VERSE_END = re.compile(r"[,;:]+(?=\s*$)")
 # textual variants' around a former reading, are not scripture text and
 # stay, so the rule reads a book's paragraphs alone (unbracketed).
 BRACKETS = "brackets"
+# The rule that drops the periods of Lamentations' acrostic names, which
+# stand as headings, not sentences; it too reads a book's paragraphs alone.
+ACROSTICS = "acrostic-headings"
+# An acrostic name as Brenton prints it, with or without its period.
+ACROSTIC = re.compile(r"[A-Za-z]+\.?")
 # A bracket between two letters, which dropping it would join.
 INSIDE_WORD = re.compile(r"\w[\[\]]+\w")
 # What the rules do not understand, and refuse: a mark already standing where
@@ -1084,6 +1092,30 @@ def _joined(doc: Document, met: MetRevisions) -> Document:
     return scripture.rewritten(doc, edits)
 
 
+def unpointed_acrostics(doc: Document, met: MetRevisions) -> Document:
+    """The document with the period of each acrostic heading removed, in
+    the style it stands in; a heading that is not a name of Lamentations
+    is refused. A document with no period to remove is returned as given."""
+    blocks: list[Node] = []
+    changed = False
+    for block in doc["content"]:
+        if usj.paragraph(block) == "qa":
+            text = usj.text_of(block["content"])
+            require(
+                usj.book_code(doc) == "LAM" and ACROSTIC.fullmatch(text) is not None,
+                f"Unexpected acrostic heading: {usj.book_code(doc)}: {text!r}",
+            )
+            if text.endswith("."):
+                content = usj.substituted(
+                    block["content"], [(len(text) - 1, len(text), "")]
+                )
+                block = {**block, "content": content}
+                changed = True
+                met.add(ACROSTICS)
+        blocks.append(block)
+    return usj.with_blocks(doc, blocks) if changed else doc
+
+
 def punctuated(
     doc: Document, policy: bible.policy.Policy, met: MetRevisions
 ) -> Document:
@@ -1093,12 +1125,18 @@ def punctuated(
     a unit. The dash and the parenthesis keep their style because only the
     punctuation beside them changes. Punctuation after a tagged foreign word
     is refused, as it may be the foreign text's own, and so is a change that
-    leaves a lemma its verse no longer has.
+    leaves a lemma its verse no longer has. The acrostic headings lose
+    their periods first, under the same lemma check.
     """
+    original = doc
+    if ACROSTICS in policy.revisions["punctuation"]:
+        doc = unpointed_acrostics(doc, met)
+    changed = doc is not original
     rules = [name for name in RULES if name in policy.revisions["punctuation"]]
     if not rules:
+        if changed:
+            _check_lemmas(original, doc)
         return doc
-    changed = False
 
     def rewrite(content: Content, after: str = "") -> Content:
         nonlocal changed
@@ -1157,7 +1195,7 @@ def punctuated(
         changed = changed or joined is not result
         result = joined
     if changed:
-        _check_lemmas(doc, result)
+        _check_lemmas(original, result)
     return result
 
 

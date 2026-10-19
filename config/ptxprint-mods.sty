@@ -7,6 +7,26 @@
 \Marker h
 \ztexFontFeatures +[smcp] +[c2sc]
 
+% Book titles and section headings are set in the regular face's
+% designed small capitals, their initials included, as the running heads are.
+\Marker mt1
+\Bold -
+\ztexFontFeatures +[smcp] +[c2sc]
+
+% PTXprint's front-matter template uses mt3 for the publication title
+% and the Contents heading.
+\Marker mt3
+\Bold -
+\ztexFontFeatures +[smcp] +[c2sc]
+
+\Marker is1
+\Bold -
+\ztexFontFeatures +[smcp] +[c2sc]
+
+\Marker s1
+\Bold -
+\ztexFontFeatures +[smcp] +[c2sc]
+
 % The footer, which PTXprint's zfooter+h style stack makes inherit the head's
 % features, holds the page number alone: set it in the ordinary oldstyle
 % figures, not the small-cap lining figures that Valkyrie's c2sc selects.
@@ -49,16 +69,16 @@
 \Marker add+d
 \Italic
 
-% A title (a Psalm's superscription) is followed by a blank line in the
-% generated USFM, which sets it one line from its poem, as a stanza break
-% does; usfm_sb.sty's space after it would add to that.
-\Marker d
-\SpaceAfter 0
-
-% Set the acrostic headings of Lamentations upright: they are small caps,
-% which Valkyrie's italics lack, and usfm_sb.sty sets qa italic.
+% The acrostic names of Lamentations are subordinate headings, centred in
+% regular small caps: upright, since Valkyrie's italics have no small caps
+% and usfm_sb.sty sets qa italic. As a section heading, PTXprint's heading
+% box keeps a name with its line and on the line grid, and ptxprint-mods.tex
+% sets its verse number beside that line.
 \Marker qa
+\TextType Section
 \Italic -
+\ztexFontFeatures +[smcp] +[c2sc]
+\Justification Center
 
 % Set a note's lemma, the words it glosses, in roman type followed by a colon;
 % only another rendering of them (fqa) is italic. usfm_sb.sty sets fq italic.
@@ -120,6 +140,16 @@
 \Marker cat:reference|tc2
 \SpaceBefore 6
 
+% Book names in table headings use upright small caps; other headings
+% retain PTXprint's italic.
+\Marker sc+th1
+\Italic -
+\ztexFontFeatures +[smcp] +[c2sc]
+
+\Marker sc+th2
+\Italic -
+\ztexFontFeatures +[smcp] +[c2sc]
+
 % The introduction's table of glosses gives the gloss and Turpie's classes a
 % quarter of the width each, and what the gloss means the half that is left.
 \Marker cat:glosses|tc1
@@ -140,24 +170,26 @@
 \FirstLineIndent 0
 
 % A kathisma heading stands above the psalms it holds, so it is set larger
-% than their chapter labels. The stasis rule's spacing in ptxprint-mods.tex
-% is measured against the label's size.
+% than their chapter labels.
 \Marker ms1
+\Bold -
+\ztexFontFeatures +[smcp] +[c2sc]
 \FontSize 18
 
+% The chapter label and the chapter number take proportional lining figures,
+% in roman, not the bold of usfm_sb.sty. The font name layout.ini gives
+% embeds +onum=1, which a feature-list subtraction cannot undo, so the two
+% styles name the family directly and select their own figures.
 \Marker cl
+\FontName OLEBFont
+\Bold -
+\ztexFontFeatures +[smcp] +[c2sc] +[lnum] +[pnum]
 \FontSize 14
 
-% Set chapter numbers in roman, not the bold of usfm_sb.sty.
 \Marker c
+\FontName OLEBFont
 \Bold -
-
-% Ordinary stasis divisions use the standard semantic division paragraph.
-\Marker sd2
-\Justification Center
-% The before hook supplies fixed TeX-point spacing around the rule.
-\SpaceBefore 0
-\SpaceAfter 0
+\ztexFontFeatures +[lnum] +[pnum]
 
 % The Seventeenth Kathisma names its stases within Psalm 118.
 % Section paragraphs stay with the following verse in PTXprint.
