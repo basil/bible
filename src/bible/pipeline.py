@@ -634,7 +634,6 @@ def finished_book(
     doc = revision.passages(code, doc, policy, met)
     doc = revision.unbracketed(doc, policy, met)
     doc = revision.punctuated(revision.respelt(doc, policy, met), policy, met)
-    doc = revision.untitled(doc, policy, met)
     revision.check_kept(code, named, doc, policy)
     return doc, named
 
