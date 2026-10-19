@@ -1335,8 +1335,18 @@
       "source": "brenton",
       "id": "XXE",
       "source_id": "INT",
-      "title": "Introduction",
-      "short_title": "Introduction"
+      "title": "Introduction An Historical Account of the Septuagint Version",
+      "short_title": "Introduction",
+      "heading": [
+        [
+          "mt1",
+          "Introduction"
+        ],
+        [
+          "mt2",
+          "An Historical Account of the Septuagint Version"
+        ]
+      ]
     }
   ],
   "new_testament_front": [

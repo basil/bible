@@ -43,7 +43,7 @@ LINE, STANZA, RESUMED = "q1", "b", "p"
 FLUSH = "m"
 # A block whose marker these are keeps it whatever the update has: a psalm's
 # title, a heading.
-FIXED = frozenset({"d", "s1", "ms1"})
+FIXED = frozenset({"d", "cl", "s1", "ms1"})
 # What opens a line with its first word: a quotation mark or a bracket.
 OPENING = "“‘\"'(["
 
@@ -601,6 +601,8 @@ def relined(
                 first = chapter.first_words.get(block)
                 if first is None:
                     position = _position(chapter, block)
+                    if doc["content"][block].get("marker") in usj.HEADINGS:
+                        continue
                     if span.start < position <= end:
                         require(
                             doc["content"][block]["marker"] == STANZA,
@@ -740,6 +742,8 @@ def pauses(doc: Document) -> Document:
     chapter, verse = "", ""
     kept: set[str] = set()
     chapters: set[str] = set()
+    # The blocks, by their place in the result, that keep a declared Pause.
+    inline: set[int] = set()
     for block in doc["content"]:
         if usj.is_type(block, "chapter"):
             chapter, verse = block["number"], ""
@@ -747,7 +751,7 @@ def pauses(doc: Document) -> Document:
         content = block.get("content", [])
         text = usj.text_of(content)
         starts = _verses_at(content)
-        cut = None
+        cut, declared_here = None, False
         for match in re.finditer(r"\bPause\b", text):
             number = next(
                 (v for at, v in reversed(starts) if at <= match.start()), verse
@@ -767,17 +771,41 @@ def pauses(doc: Document) -> Document:
                 cut = match.start()
             elif here in INLINE_PAUSES:
                 kept.add(here)
+                declared_here = True
             else:
                 require(False, f"Unexpected Pause instruction: {here}")
         if starts:
             verse = starts[-1][1]
+        start = len(blocks)
         blocks += _divided(block, [(cut, "qr", False)]) if cut is not None else [block]
+        if declared_here:
+            inline.update(range(start, len(blocks)))
     declared = {key for key in INLINE_PAUSES if key.split(":")[0] in chapters}
     require(
         kept == declared,
         f"Inline Pause declarations no Pause meets: {sorted(declared - kept)}",
     )
-    return usj.with_blocks(doc, blocks)
+    marked: list[Node] = []
+    for index, block in enumerate(blocks):
+        if usj.paragraph(block) == "qr" or index in inline:
+            text = usj.text_of(block["content"])
+            for match in reversed(list(re.finditer(r"\bPause[.:]", text))):
+                content = block["content"]
+                head, rest = usj.split(content, match.start(), notes_left=False)
+                words, tail = usj.split(rest, match.end() - match.start())
+                # A verse consisting entirely of the instruction still has
+                # its milestone in the paragraph, outside its character style.
+                while words and usj.is_type(words[0], "verse"):
+                    head = usj.joined(head, words[:1])
+                    words = words[1:]
+                if len(words) == 1 and usj.is_type(words[0], "char", "qs"):
+                    continue
+                block = {
+                    **block,
+                    "content": usj.joined(head, [usj.char("qs", *words)], tail),
+                }
+        marked.append(block)
+    return usj.with_blocks(doc, marked)
 
 
 # These are Brenton's spellings and placements, including the repeated Teth

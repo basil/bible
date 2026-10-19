@@ -30,8 +30,18 @@ const books: Book[] = [
 // The front matter: the edition's own before the testaments, and each
 // testament's before its books.
 const matter: Matter[] = [
-  { id: "XXD", section: "front", title: "Abbreviations", short: "Abbr." },
-  { id: "XXB", section: "old_testament", title: "Preface", short: "Preface" },
+  {
+    id: "abbreviations",
+    section: "front",
+    title: "Abbreviations",
+    short: "Abbr.",
+  },
+  {
+    id: "brenton-preface",
+    section: "old_testament",
+    title: "Preface",
+    short: "Preface",
+  },
 ];
 const inventory = { books, matter };
 const variants = {
@@ -92,23 +102,38 @@ const files = () =>
     ["manifest.json", inventory],
     ["variants.json", variants],
     [
-      "matter/XXD.json",
+      "matter/abbreviations.json",
       {
         content: [
-          { type: "book", marker: "id", code: "XXD" },
-          { type: "para", marker: "mt1", content: ["Abbreviations and Signs"] },
+          { type: "book", marker: "id", code: "XXA" },
           {
-            type: "table",
+            type: "periph",
+            id: "abbreviations",
+            alt: "Abbreviations",
             content: [
               {
-                type: "table:row",
-                marker: "tr",
+                type: "para",
+                marker: "mt1",
+                content: ["Abbreviations and Signs"],
+              },
+              {
+                type: "table",
                 content: [
-                  { type: "table:cell", marker: "tc1", content: ["Alex."] },
                   {
-                    type: "table:cell",
-                    marker: "tc2",
-                    content: ["for Codex Alexandrinus"],
+                    type: "table:row",
+                    marker: "tr",
+                    content: [
+                      {
+                        type: "table:cell",
+                        marker: "tc1",
+                        content: ["Alex."],
+                      },
+                      {
+                        type: "table:cell",
+                        marker: "tc2",
+                        content: ["for Codex Alexandrinus"],
+                      },
+                    ],
                   },
                 ],
               },
@@ -118,22 +143,29 @@ const files = () =>
       },
     ],
     [
-      "matter/XXB.json",
+      "matter/brenton-preface.json",
       {
         content: [
           { type: "book", marker: "id", code: "XXB" },
-          { type: "para", marker: "mt2", content: ["To the Reader"] },
-          { type: "para", marker: "mt1", content: ["Preface"] },
           {
-            type: "para",
-            marker: "ip",
+            type: "periph",
+            id: "preface",
+            alt: "Preface",
             content: [
-              "Some introduction",
+              { type: "para", marker: "mt2", content: ["To the Reader"] },
+              { type: "para", marker: "mt1", content: ["Preface"] },
               {
-                type: "note",
-                marker: "f",
+                type: "para",
+                marker: "p",
                 content: [
-                  { type: "char", marker: "ft", content: ["See Bos."] },
+                  "Some introduction",
+                  {
+                    type: "note",
+                    marker: "f",
+                    content: [
+                      { type: "char", marker: "ft", content: ["See Bos."] },
+                    ],
+                  },
                 ],
               },
             ],
@@ -150,7 +182,7 @@ const files = () =>
               content: [
                 { type: "chapter", number: chapter.number },
                 ...(book.id === "DAG"
-                  ? [{ type: "para", marker: "s1", content: ["Susanna"] }]
+                  ? [{ type: "para", marker: "cl", content: ["Susanna"] }]
                   : []),
                 {
                   type: "para",
@@ -165,7 +197,7 @@ const files = () =>
           ] as const,
       ),
     ),
-  ]);
+  ] as [string, unknown][]);
 
 let library: typeof import("../../.vitepress/lib/library.ts");
 let fixture: ReturnType<typeof files>;
@@ -184,6 +216,53 @@ beforeEach(async () => {
 });
 
 describe("prepared Bible library", () => {
+  test("book introductions have named routes, search text and reading-order neighbours", () => {
+    const modified = structuredClone(inventory);
+    modified.books[1]!.introduction = {
+      title: "Translator’s Prologue",
+      slug: "prologue",
+    };
+    fixture.set("manifest.json", modified);
+    fixture.set("books/DAG/prologue.json", {
+      content: [
+        { type: "book", marker: "id", code: "DAG" },
+        { type: "para", marker: "imt1", content: ["Translator’s Prologue"] },
+        {
+          type: "para",
+          marker: "ip",
+          content: ["Unnumbered introductory words."],
+        },
+      ],
+    });
+    const routes = library.readerPages();
+    const prologue = routes.find((r) => r.params.chapter === "prologue")!;
+    expect(prologue.params.book).toBe("dag");
+    expect(prologue.params.prev).toEqual({
+      text: "Genesis & beginnings 2",
+      link: "/read/gen/2",
+    });
+    expect(prologue.params.next).toEqual({
+      text: "Daniel Susanna",
+      link: "/read/dag/1",
+    });
+    expect(JSDOM.fragment(prologue.content).querySelector(".verse")).toBeNull();
+    expect(
+      JSDOM.fragment(prologue.content).querySelectorAll("h1"),
+    ).toHaveLength(1);
+    expect(library.searchContent("read/dag/prologue.md")).toContain(
+      "Unnumbered introductory words.",
+    );
+    expect(library.bookLinks(library.manifest().books[1]!)[0]!.link).toBe(
+      "/read/dag/prologue",
+    );
+    const firstChapter = routes.find(
+      (r) => r.params.book === "dag" && r.params.chapter === "1",
+    )!;
+    expect(firstChapter.params.prev).toEqual({
+      text: "Translator’s Prologue",
+      link: "/read/dag/prologue",
+    });
+  });
   test("reads and caches the manifest once", () => {
     const first = library.manifest();
     expect(first).toEqual(inventory);
@@ -223,7 +302,10 @@ describe("prepared Bible library", () => {
   });
   test("renders each unit of front matter under its printed title", () => {
     const routes = library.matterRoutes();
-    expect(routes.map((r) => r.params.unit)).toEqual(["xxd", "xxb"]);
+    expect(routes.map((r) => r.params.unit)).toEqual([
+      "abbreviations",
+      "brenton-preface",
+    ]);
     expect(routes[0].params.title).toBe("Abbreviations");
     const abbreviations = JSDOM.fragment(routes[0].content);
     expect(abbreviations.querySelector("h1.mt1#matter")!.textContent).toBe(
@@ -237,7 +319,7 @@ describe("prepared Bible library", () => {
       "See Bos.",
     );
     expect(readFileSync).toHaveBeenCalledWith(
-      `${library.directory}/matter/XXB.json`,
+      `${library.directory}/matter/brenton-preface.json`,
       "utf8",
     );
   });
@@ -246,15 +328,21 @@ describe("prepared Bible library", () => {
     expect(abbreviations.params.prev).toBe(false);
     expect(abbreviations.params.next).toEqual({
       text: "Preface",
-      link: "/read/xxb",
+      link: "/read/brenton-preface",
     });
-    expect(preface.params.prev).toEqual({ text: "Abbr.", link: "/read/xxd" });
+    expect(preface.params.prev).toEqual({
+      text: "Abbr.",
+      link: "/read/abbreviations",
+    });
     expect(preface.params.next).toEqual({
       text: "Genesis & beginnings 1",
       link: "/read/gen/1",
     });
     const [genesis] = library.readerPages();
-    expect(genesis.params.prev).toEqual({ text: "Preface", link: "/read/xxb" });
+    expect(genesis.params.prev).toEqual({
+      text: "Preface",
+      link: "/read/brenton-preface",
+    });
     expect(library.readerPages().at(-1)!.params.next).toBe(false);
   });
   test("refuses a page of a section the contents lack", () => {
@@ -262,13 +350,13 @@ describe("prepared Bible library", () => {
     altered.matter[0].section = "back";
     fixture.set("manifest.json", altered);
     expect(() => library.matterRoutes()).toThrow(
-      "Page in no section of the contents: /read/xxd",
+      "Page in no section of the contents: /read/abbreviations",
     );
   });
   test("explains how to prepare a missing unit of front matter", () => {
-    fixture.delete("matter/XXB.json");
+    fixture.delete("matter/brenton-preface.json");
     expect(() => library.matterRoutes()).toThrow(
-      "Cannot read the prepared front matter XXB; run make web",
+      "Cannot read the prepared front matter brenton-preface; run make web",
     );
   });
   test("explains how to prepare missing variants", () => {
@@ -281,7 +369,7 @@ describe("prepared Bible library", () => {
     expect(library.variants()).toEqual(variants);
   });
   test("provides front matter search content with its title", () => {
-    const content = library.searchContent("read/xxb.md")!;
+    const content = library.searchContent("read/brenton-preface.md")!;
     expect(content).toMatch(/^# Preface \{#matter\}/);
     // The heading the index gives the page is its title's only one.
     expect(JSDOM.fragment(content).querySelector("#matter")).toBeNull();
@@ -303,7 +391,7 @@ describe("prepared Bible library", () => {
     expect(page.params.title).toBe("Susanna");
     const fragment = JSDOM.fragment(page.content);
     expect(fragment.querySelector("h1")!.textContent).toBe("Susanna");
-    expect(fragment.querySelector(".s1")).toBeNull();
+    expect(fragment.querySelector(".cl")).toBeNull();
   });
   test("provides chapter search content with its title and scripture anchors", () => {
     const content = library.searchContent("read/gen/1.md")!;

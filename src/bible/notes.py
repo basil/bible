@@ -154,7 +154,7 @@ AUTHORED = {
 }
 
 # How a part of a printed note is marked.
-PRINTED = {"commentary": "ft", "reading": "fqa", "quotation": "fqa", "citation": "xt"}
+PRINTED = {"commentary": "ft", "reading": "fqa", "quotation": "ft", "citation": "xt"}
 
 
 @dataclass(frozen=True)
@@ -1102,40 +1102,48 @@ def footnote(
 ) -> Node:
     """A printed note: its verse, the words it is about, and its text. A
     marker takes the space after it, so a run's leading space is written at
-    the end of the run before."""
-    parts: list[list[str]] = []
+    the end of the run before, and runs of one role are one part. A
+    quotation's italic ends with its words, the space after it roman."""
+    merged: list[list[str]] = []
     for role, value in runs:
-        marker = PRINTED[role]
         spaces = len(value) - len(value.lstrip())
-        if parts and spaces:
-            parts[-1][1] += value[:spaces]
+        if merged and spaces:
+            merged[-1][1] += value[:spaces]
             value = value[spaces:]
         if value:
-            if parts and parts[-1][0] == marker:
-                parts[-1][1] += value
+            if merged and merged[-1][0] == role:
+                merged[-1][1] += value
             else:
-                parts.append([marker, value])
+                merged.append([role, value])
+    parts: list[Node] = []
+    for role, value in merged:
+        inner: Content = [value]
+        words = value.rstrip()
+        if role == "quotation" and words:
+            inner = usj.joined([usj.char("it", words)], [value[len(words) :]])
+        parts.append(usj.char(PRINTED[role], *inner))
     content = [usj.char("fr", f"{reference} ")]
     if lemma is not None:
         content.append(usj.char("fq", f"{lemma}: "))
-    content += [usj.char(marker, value) for marker, value in parts]
+    content += parts
     return usj.note("f", *content, **extra)
 
 
 def linked(note: Node, body: Body, books: bible.references.Books) -> Node:
-    """Carry resolved citations into the finished note's citation fields.
+    """Carry resolved citations into the finished note's citation fields,
+    then set the citations as commentary, in one field with the commentary
+    around them.
 
     Finishing changes commentary and its punctuation, leaving the citation's
     words intact but for the capital of a sentence that opens with one.
-    Match those words in order within the semantic fields.
+    Match those words in order within the citation fields, which footnote
+    marks apart for this alone.
     """
     pending = [
         citations.linked(citation, books)
         for _, _, citation in body.citations
         if citation.items
     ]
-    if not pending:
-        return note
     content: Content = []
     for field in note["content"]:
         if not pending or not usj.is_type(field, "char", "xt"):
@@ -1162,7 +1170,23 @@ def linked(note: Node, body: Body, books: bible.references.Books) -> Node:
         not pending,
         f"Citation wording changed while finishing a note: {note.get('x-key')}",
     )
-    return {**note, "content": content}
+    fields: Content = []
+    for item in content:
+        if usj.is_type(item, "char", "xt"):
+            item = {**item, "marker": "ft"}
+        if (
+            fields
+            and usj.is_type(item, "char", "ft")
+            and usj.is_type(fields[-1], "char", "ft")
+        ):
+            previous = fields[-1]
+            fields[-1] = {
+                **previous,
+                "content": usj.joined(previous["content"], item["content"]),
+            }
+        else:
+            fields.append(item)
+    return {**note, "content": fields}
 
 
 def set_below(doc: Document, placed: Collection[str]) -> Document:
@@ -1183,9 +1207,12 @@ def set_below(doc: Document, placed: Collection[str]) -> Document:
         if key in wanted:
             assert key is not None
             require(key not in found, f"Duplicate note placement: {key}")
-            require(node["marker"] == "f", f"Note placement changes nothing: {key}")
+            require(
+                node["marker"] == "f" and node.get("caller") == "-",
+                f"Note placement changes nothing: {key}",
+            )
             found.add(key)
-            return {**node, "marker": "ef", "caller": "+"}
+            return {**node, "caller": "+"}
         return node
 
     result = scripture.map_notes(doc, place)

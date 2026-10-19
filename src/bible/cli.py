@@ -36,7 +36,7 @@ def validate() -> None:
 def render(mode: str) -> None:
     """Typeset one edition in build/<mode>, check it, and publish it to dist/."""
     edition = prepared()
-    documents = export.export(edition, mode)
+    documents = export.grouped(edition, export.prepared(edition, mode))
     check_image()
     base = paths.BUILD_DIR / mode
     if base.exists():

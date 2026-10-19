@@ -375,7 +375,9 @@ def test_every_line_of_the_update_is_a_line_of_the_edition(
         for entry in entries
         if entry["line"] is None
     )
-    assert wanted == 16781 and printed == wanted - prose - unlined
+    # Psalm 71:20 is also a poetic line: the source marked the collection's
+    # closing verse as a descriptive title, which assembly corrects.
+    assert wanted == 16781 and printed == wanted - prose - unlined + 1
     assert 13000 < printed < 16000
 
 
@@ -635,7 +637,16 @@ def test_an_unexpected_pause_is_refused(body: str) -> None:
 
 def test_an_inline_pause_is_declared_and_met() -> None:
     kept = usj.parse("\\id PSA\n\\c 67\n\\q1 \\v 7 Sing.\n\\q1 \\v 8 Go; Pause: on.")
-    assert lines.pauses(kept) == kept
+    before = copy.deepcopy(kept)
+    result = lines.pauses(kept)
+    assert kept == before
+    assert scripture.verses(result)["67:8"].text == "Go; Pause: on."
+    assert [
+        usj.text_of(node["content"])
+        for node in usj.walk(result["content"])
+        if usj.is_type(node, "char", "qs")
+    ] == ["Pause:"]
+    assert lines.pauses(result) == result
     moved = usj.parse("\\id PSA\n\\c 67\n\\q1 \\v 8 Go. Pause.")
     with pytest.raises(CheckFailed, match="no Pause meets: \\['PSA 67:8'\\]"):
         lines.pauses(moved)
@@ -650,7 +661,9 @@ def test_pause_keeps_its_explanation_and_styles() -> None:
     result = lines.pauses(source)
     assert markers(result) == ["q1", "qr", "q1"]
     instruction = next(b for b in result["content"] if b.get("marker") == "qr")
-    assert instruction["content"] == source["content"][2]["content"][2:]
+    assert instruction["content"] == [
+        usj.char("qs", *source["content"][2]["content"][2:])
+    ]
     assert (
         scripture.verses(result)["3:3"].notes[0][1]
         == scripture.verses(source)["3:3"].notes[0][1]
@@ -752,9 +765,21 @@ def test_source_instructions_across_the_corpus(
             assert [note for _, note in verse.notes] == [
                 note for _, note in original.notes
             ]
+
+        def without_selah(content: usj.Content) -> usj.Content:
+            return usj.mapped(
+                content,
+                lambda node: (
+                    node["content"] if usj.is_type(node, "char", "qs") else node
+                ),
+            )
+
+        # Selah supplies semantic markup; all pre-existing verse/style nodes
+        # survive intact beneath it.
+        unwrapped = usj.with_content(source, without_selah)
         assert [
             item
-            for block in source["content"]
+            for block in unwrapped["content"]
             for item in block.get("content", [])
             if usj.is_type(item, "char") or usj.is_type(item, "verse")
         ] == [

@@ -25,6 +25,7 @@ export type Book = {
   // The name one of its chapters is cited by.
   cited: string;
   chapters: Chapter[];
+  introduction?: { title: string; slug: string };
 };
 export const directory = fileURLToPath(
   new URL("../../../build/web/", import.meta.url),
@@ -100,6 +101,23 @@ export const document = (book: Book, chapter: Chapter) =>
   );
 export const chapterURL = (book: Book, chapter: Chapter) =>
   chapterPath(book.id, chapter.number);
+export const introductionLink = (book: Book) =>
+  book.introduction
+    ? {
+        text: book.introduction.title,
+        link: chapterPath(book.id, book.introduction.slug),
+      }
+    : undefined;
+export const bookLinks = (book: Book) => {
+  const introduction = introductionLink(book);
+  return [
+    ...(introduction ? [introduction] : []),
+    ...book.chapters.map((chapter) => ({
+      text: chapter.label,
+      link: chapterURL(book, chapter),
+    })),
+  ];
+};
 export const matterURL = (unit: Matter) => `/read/${unit.id.toLowerCase()}`;
 export const matterLink = (unit: Matter) => ({
   text: unit.short,
@@ -154,6 +172,40 @@ export const chapterLink = (book: Book, chapter: Chapter) => ({
   text: `${book.cited} ${chapter.label}`,
   link: chapterURL(book, chapter),
 });
+
+// Book introductions have no chapter or verse identity. Rendered once: the
+// paths loader and the search index both read them.
+type IntroductionPage = {
+  book: Book;
+  title: string;
+  link: string;
+  html: string;
+};
+let renderedIntroductions: IntroductionPage[] | undefined;
+export function introductionPages(): IntroductionPage[] {
+  renderedIntroductions ??= manifest().books.flatMap((book) => {
+    if (!book.introduction) {
+      return [];
+    }
+    const doc = readPrepared<Document>(
+      `books/${book.id}/${book.introduction.slug}.json`,
+      `introduction to ${book.id}`,
+    );
+    const blocks = doc.content.filter(
+      (node) => node.type !== "book" && node.marker !== "imt1",
+    );
+    const html = renderProse(blocks, "introduction");
+    return [
+      {
+        book,
+        title: book.introduction.title,
+        link: introductionLink(book)!.link,
+        html,
+      },
+    ];
+  });
+  return renderedIntroductions;
+}
 // Every unit of front matter, rendered once under its printed title, and
 // without it for the search index.
 type MatterPage = { unit: Matter; html: string; body: string };
@@ -191,7 +243,10 @@ const neighbours = (link: string) =>
   (readerPager ??= pager(
     sections().flatMap(({ matter, books }) => [
       ...matter.map(matterLink),
-      ...books.flatMap((b) => b.chapters.map((c) => chapterLink(b, c))),
+      ...books.flatMap((b) => [
+        ...(introductionLink(b) ? [introductionLink(b)!] : []),
+        ...b.chapters.map((c) => chapterLink(b, c)),
+      ]),
     ]),
   ))(link);
 // The variants introduction and books, rendered once, each by its link.
@@ -251,6 +306,9 @@ export function searchContent(relativePath: string): string | undefined {
     ...pages().map((p) =>
       searched(chapterURL(p.book, p.chapter), p.title, "chapter", p.html),
     ),
+    ...introductionPages().map((p) =>
+      searched(p.link, p.title, "introduction", p.html),
+    ),
     ...matterPages().map((p) =>
       searched(matterURL(p.unit), p.unit.title, "matter", p.body),
     ),
@@ -281,13 +339,29 @@ export function matterRoutes() {
   }));
 }
 export function readerPages() {
-  return pages().map(({ book, chapter, title, html }) => ({
-    params: {
-      book: book.id.toLowerCase(),
-      chapter: chapter.number,
-      title,
-      ...neighbours(chapterURL(book, chapter)),
-    },
-    content: `${heading("chapter", title)}\n\n${html}`,
-  }));
+  const introductions = introductionPages();
+  return manifest().books.flatMap((book) => [
+    ...introductions
+      .filter((p) => p.book === book)
+      .map((p) => ({
+        params: {
+          book: book.id.toLowerCase(),
+          chapter: book.introduction!.slug,
+          title: p.title,
+          ...neighbours(p.link),
+        },
+        content: `${heading("introduction", p.title)}\n\n${p.html}`,
+      })),
+    ...pages()
+      .filter((p) => p.book === book)
+      .map(({ chapter, title, html }) => ({
+        params: {
+          book: book.id.toLowerCase(),
+          chapter: chapter.number,
+          title,
+          ...neighbours(chapterURL(book, chapter)),
+        },
+        content: `${heading("chapter", title)}\n\n${html}`,
+      })),
+  ]);
 }

@@ -13,16 +13,6 @@
 \Bold -
 \ztexFontFeatures +[smcp] +[c2sc]
 
-% PTXprint's front-matter template uses mt3 for the publication title
-% and the Contents heading.
-\Marker mt3
-\Bold -
-\ztexFontFeatures +[smcp] +[c2sc]
-
-\Marker is1
-\Bold -
-\ztexFontFeatures +[smcp] +[c2sc]
-
 \Marker s1
 \Bold -
 \ztexFontFeatures +[smcp] +[c2sc]
@@ -69,13 +59,9 @@
 \Marker add+d
 \Italic
 
-% The acrostic names of Lamentations are subordinate headings, centred in
-% regular small caps: upright, since Valkyrie's italics have no small caps
-% and usfm_sb.sty sets qa italic. As a section heading, PTXprint's heading
-% box keeps a name with its line and on the line grid, and ptxprint-mods.tex
-% sets its verse number beside that line.
+% Keep native acrostic headings, centred in upright small caps. Their verse
+% numbers print on the following poetic line through ptxprint-mods.tex.
 \Marker qa
-\TextType Section
 \Italic -
 \ztexFontFeatures +[smcp] +[c2sc]
 \Justification Center
@@ -116,14 +102,6 @@
 \Justification Left
 \SpaceBeside 0
 
-% The notes set below the text and the Appendix notes use the native
-% extended-footnote class, which stays below the text, justified like it.
-% Keep the ordinary footnote size and leading of ptx2pdf.sty; ef otherwise
-% inherits the larger USFM default size.
-\Marker ef
-\FontSize 10
-\LineSpacing 0.833
-
 % The verses a note of Brenton's Appendix supplies carry their numbers as the
 % text carries a supplied passage's.
 \Marker fv
@@ -133,41 +111,13 @@
 
 % The numbering tables have fixed columns, so that every book's table lines
 % up the same. PTXprint uses tc's SpaceBefore as a fixed column width in
-% twelfths of the text width. The two Bibles' sides are equal.
-\Marker cat:reference|tc1
+% twelfths of the text width, and looks styles up under their peripheral
+% division too. The two Bibles' sides are equal.
+\Marker periph:x-numbering|tc1
 \SpaceBefore 6
 
-\Marker cat:reference|tc2
+\Marker periph:x-numbering|tc2
 \SpaceBefore 6
-
-% Book names in table headings use upright small caps; other headings
-% retain PTXprint's italic.
-\Marker sc+th1
-\Italic -
-\ztexFontFeatures +[smcp] +[c2sc]
-
-\Marker sc+th2
-\Italic -
-\ztexFontFeatures +[smcp] +[c2sc]
-
-% The introduction's table of glosses gives the gloss and Turpie's classes a
-% quarter of the width each, and what the gloss means the half that is left.
-\Marker cat:glosses|tc1
-\SpaceBefore 3
-
-\Marker cat:glosses|tc2
-\SpaceBefore 3
-
-\Marker cat:glosses|tc3
-\SpaceBefore 6
-
-% The introduction's list of translations is a definition list: each term
-% an ili1 list entry, whose first line stands at a paragraph's indent, and
-% its definition below it in one block, a paragraph's indent further in;
-% usfm_sb.sty hangs ili2 like a list entry instead.
-\Marker ili2
-\LeftMargin .25
-\FirstLineIndent 0
 
 % A kathisma heading stands above the psalms it holds, so it is set larger
 % than their chapter labels.
@@ -191,11 +141,21 @@
 \Bold -
 \ztexFontFeatures +[lnum] +[pnum]
 
-% The Seventeenth Kathisma names its stases within Psalm 118.
-% Section paragraphs stay with the following verse in PTXprint.
-\Marker s2
+% The Seventeenth Kathisma names its stases within Psalm 118, as major
+% section headings under its kathisma heading.
+\Marker ms2
 \Bold -
 
-\Marker s3
+% Its Middle is a liturgical note, centred like the stasis headings.
+\Marker lit
 \Bold -
 \Justification Center
+
+% A retained source colophon is separate paratext, printed where it occurs.
+\Marker cat:colophon|esb
+\Position h
+\Border None
+\BoxPadding 0
+
+\Marker periph:pubdata|pc
+\SpaceBefore 12

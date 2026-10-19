@@ -1,7 +1,7 @@
 """The Psalter's kathismata and stases, added after its poetry is aligned."""
 
 from bible import scripture, usj
-from bible.checks import require
+from bible.checks import require, require_used
 from bible.policy_schema import Psalter
 from bible.usj import Document, Node
 
@@ -73,7 +73,7 @@ def divided(doc: Document, policy: Psalter) -> Document:
                 )
                 major[int(chapter)] = f"The {ORDINALS[number - 1]} Kathisma"
             elif number == 17:
-                minor[opening] = usj.para("s2", f"{ORDINALS[stasis - 1]} Stasis")
+                minor[opening] = usj.para("ms2", f"{ORDINALS[stasis - 1]} Stasis")
                 if stasis == 2:
                     second = (previous + 1, at)
             else:
@@ -88,6 +88,8 @@ def divided(doc: Document, policy: Psalter) -> Document:
             )
             previous = at
     require(labels[previous] == chapters[150][-1], "Kathismata must cover Psalms 1–150")
+    # The psalm after the kathismata stands outside their divisions.
+    outside = int(labels[previous].split(":")[0]) + 1
     require(
         groups[16][-1] == chapters[118][-1],
         "Seventeenth Kathisma must end with Psalm 118",
@@ -99,19 +101,37 @@ def divided(doc: Document, policy: Psalter) -> Document:
         and second[0] <= positions[middle] <= second[1],
         f"Psalter Middle must fall within the Second Stasis: {middle}",
     )
-    minor[middle] = usj.para("s3", "Middle")
+    minor[middle] = usj.para("lit", "Middle")
+    # A collection's closing notice is a verse, not a descriptive title or
+    # a musical performance instruction (edition/psalter.json, notes).
+    notes = policy["notes"]
     blocks: list[Node] = []
     chapter = ""
     met: set[str] = set()
+    met_notes: set[str] = set()
     for block in doc["content"]:
         if block["type"] == "chapter":
             chapter = block["number"]
+            if int(chapter) == outside:
+                blocks.append(usj.para("sd1"))
             if int(chapter) in rules:
                 blocks.append(usj.para("sd2"))
             if int(chapter) in major:
                 blocks.append(usj.para("ms1", major[int(chapter)]))
             blocks.append(block)
         elif block["type"] == "para":
+            held = [
+                f"{chapter}:{n['number']}"
+                for n in block["content"]
+                if usj.is_type(n, "verse")
+            ]
+            if any(label in notes for label in held):
+                require(
+                    block.get("marker") == "d",
+                    f"Psalter note is not set as a title: {held}",
+                )
+                met_notes.update(label for label in held if label in notes)
+                block = {**block, "marker": "q1"}
             start = 0
             for at, item in enumerate(block["content"]):
                 if not usj.is_type(item, "verse"):
@@ -129,4 +149,5 @@ def divided(doc: Document, policy: Psalter) -> Document:
         else:
             blocks.append(block)
     require(met == set(minor), f"Unplaced Psalter headings: {set(minor) - met}")
+    require_used(notes, met_notes, "Psalter notes")
     return usj.with_blocks(doc, blocks)

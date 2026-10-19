@@ -435,11 +435,18 @@ def test_a_citation_of_the_wrong_verse_prints_the_verse_meant(
 ) -> None:
     # The margin of 1611 has "Rom. 1.19" for 15.19, and George after it.
     colossians = usj.serialize(edition.documents["COL"])
-    assert "fully to preach the word of God\\ft , \\xt Rom. 15:19\\f*" in colossians
+    assert (
+        "fully to preach the word of God\\ft , \\ref Rom. 15:19|ROM 15:19\\ref*\\f*"
+        in colossians
+    )
+    assert "\\xt Rom. 15:19" not in colossians
     # Brenton's "Rom. 10. 9" is 10. 19, which the link at the verse names, so
     # the note is merged into it as any note is that the link repeats.
     deuteronomy = usj.serialize(edition.documents["DEU"])
-    assert "\\xo 32:21 \\xt Rom. 10:19 \\xta (Heb.\u00a0+ LXX)\\x*" in deuteronomy
+    assert (
+        "\\xo 32:21 \\xt \\ref Rom. 10:19|ROM 10:19\\ref* \\xta (Heb.\u00a0+ LXX)\\x*"
+        in deuteronomy
+    )
     assert "\\fr 32:21" not in deuteronomy and "Rom. 10:9" not in deuteronomy
 
 
@@ -450,8 +457,8 @@ def test_a_book_cited_alone_keeps_its_abbreviations_period(
     # eBible's "See 1 Pet." named the book alone; Brenton prints 1 Pet. 4. 18,
     # which a correction restores. After a number, the period closed the note,
     # and goes as any does.
-    assert "\\fr 11:31 \\ft See \\xt 1 Pet. 4:18\\f*" in proverbs
-    assert "\\fr 3:34 \\ft See \\xt 1 Pet. 5:5\\f*" in proverbs
+    assert "\\fr 11:31 \\ft See \\ref 1 Pet. 4:18|1PE 4:18\\ref*\\f*" in proverbs
+    assert "\\fr 3:34 \\ft See \\ref 1 Pet. 5:5|1PE 5:5\\ref*\\f*" in proverbs
 
 
 # In the front and back matter
@@ -469,7 +476,7 @@ def test_a_book_cited_alone_keeps_its_abbreviations_period(
         ("NDX", "studied them. Acts 17:11 and 8:28, 29. They"),
         ("NDX", "See Judg. 8:2. \\it Joash\\it* the king"),
         # The Appendix's cross-reference, moved into the note on its verse.
-        ("PRO", "See note on \\xt 2 Kgdms. 5:18\\f*giants."),
+        ("PRO", "See note on \\ref 2 Kgdms. 5:18|2SA 5:18\\ref*\\f*giants."),
         # The Appendix's notes, at their verses, cite as the edition does.
         ("EZK", "Mark 4:30; in Heb. 9:9 and 11:19 it is"),
         # A citation that names no book is of the book the note stands in.
@@ -662,10 +669,11 @@ def test_linked_citations(
     assert usj.text_of(linked) == text == citations.printed(citation, books)
     assert [node["loc"] for node in linked if isinstance(node, dict)] == targets
     assert repr(citation) == before
-    # References inside a citation field add no printed USFM.
-    assert usj.serialize([usj.char("xt", *linked)]) == usj.serialize(
-        [usj.char("xt", text)]
-    )
+    # USFM retains both the displayed words and the resolved reference targets.
+    encoded = usj.serialize([usj.char("xt", *linked)])
+    restored = usj.parse(encoded, fragment=True)
+    assert usj.text_of(restored) == text
+    assert [n["loc"] for n in usj.walk(restored) if n["type"] == "ref"] == targets
 
 
 def test_custom_print_links_each_book_it_names() -> None:
@@ -748,7 +756,9 @@ def test_finished_note_retains_link_targets_and_input(
     saved = deepcopy(original)
     linked = notes.linked(original, body, ctx.books)
     assert original == saved
-    assert usj.serialize([linked]) == usj.serialize([original])
+    restored = usj.parse(usj.serialize([linked]), fragment=True)
+    assert restored == [linked]
+    assert all(n.get("marker") != "xt" for n in usj.walk(restored))
     assert usj.text_of(linked["content"]) == usj.text_of(original["content"])
     assert [n["loc"] for n in usj.walk(linked["content"]) if "loc" in n] == [
         "JDG 13:8",

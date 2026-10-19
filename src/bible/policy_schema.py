@@ -58,10 +58,15 @@ class Versification(TypedDict, total=False):
     why: ReadOnly[str]
 
 
+class PsalterNote(TypedDict):
+    why: ReadOnly[str]
+
+
 class Psalter(TypedDict):
     why: ReadOnly[str]
     kathismata: ReadOnly[tuple[tuple[int | str, ...], ...]]
     middle: ReadOnly[str]
+    notes: ReadOnly[Mapping[str, PsalterNote]]
 
 
 class ComparisonQuote(TypedDict):
@@ -165,9 +170,26 @@ class ProseAddition(TypedDict):
     paragraphs: ReadOnly[tuple[Mapping[str, object], ...]]
 
 
+# The marker a paragraph of front matter takes, by the words it opens with,
+# or that a blank line takes, by the words of the paragraph after it.
+MarkerChange = TypedDict(
+    "MarkerChange",
+    {
+        "unit": ReadOnly[str],
+        "from": ReadOnly[str],
+        "to": ReadOnly[str],
+        "opening": ReadOnly[str],
+        "before": ReadOnly[str],
+        "why": ReadOnly[str],
+    },
+    total=False,
+)
+
+
 class Prose(TypedDict, total=False):
     changes: ReadOnly[tuple[WordingChange, ...]]
     additions: ReadOnly[tuple[ProseAddition, ...]]
+    markers: ReadOnly[tuple[MarkerChange, ...]]
     why: ReadOnly[str]
 
 

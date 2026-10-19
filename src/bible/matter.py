@@ -35,8 +35,11 @@ type Unit = list[tuple[Node, dict[Address, Reading]]]
 
 
 # The titles and headings that drop a closing full stop. Not mt2: the Epistle
-# Dedicatory's are its address ("ETC.") and salutation.
-PERIOD_FREE = ("h", "toc1", "mt1", "is1", "is2")
+# Dedicatory's are its address ("ETC.").
+PERIOD_FREE = ("h", "toc1", "mt1", "s1", "s2")
+# How standalone prose prints: the sources' introduction markers as the
+# ordinary paragraphs and headings of a unit of its own.
+STANDALONE = {"ip": "p", "im": "m", "imi": "mi", "is1": "s1", "is2": "s2"}
 # The origin eBible gives a note of its front matter, which has no verses:
 # it names nothing.
 EMPTY_ORIGIN = re.compile(r"\d+:0 ")
@@ -523,6 +526,69 @@ def supplemented(code: str, doc: Document, policy: bible.policy.Policy) -> Docum
     return usj.with_blocks(doc, blocks)
 
 
+def structured(
+    code: str, doc: Document, policy: bible.policy.Policy, *, standalone: bool = True
+) -> Document:
+    """A unit's blocks as standalone prose. A paragraph a decision describes
+    (edition/prose.json, markers), by its unit, marker and opening words,
+    takes the marker the decision gives; a blank line a decision describes,
+    by the words of the paragraph after it, becomes the division it gives,
+    and every other goes, the typesetter spacing headings and lists itself;
+    and the sources' introduction markers become the ordinary ones. A
+    decision that describes no paragraph, or two, stops the build."""
+    decisions = [
+        (f"{name}: {marker.get('opening', marker.get('before'))}", marker)
+        for name, group in policy.prose.items()
+        for marker in group.get("markers", ())
+        if marker["unit"] == code
+    ]
+    if not decisions and not standalone:
+        return doc
+    # Counted by decision, since two may share their words.
+    met = [0] * len(decisions)
+    source = doc["content"]
+    blocks: list[Node] = []
+    for at, block in enumerate(source):
+        marker = usj.paragraph(block)
+        if marker is None:
+            blocks.append(block)
+            continue
+        candidates = [n for n, (_, d) in enumerate(decisions) if d["from"] == marker]
+        # A blank line is known by the words after it, a paragraph by its own.
+        known: Node | None = block
+        if marker == "ib":
+            known = source[at + 1] if at + 1 < len(source) else None
+        words = (
+            usj.unlabelled(known["content"]).strip()
+            if candidates and usj.is_type(known, "para")
+            else ""
+        )
+        found = [
+            n
+            for n in candidates
+            if words.startswith(
+                decisions[n][1]["before" if marker == "ib" else "opening"]
+            )
+        ]
+        require(
+            len(found) <= 1,
+            "Paragraph that two marker decisions describe: "
+            f"{[decisions[n][0] for n in found]}",
+        )
+        if found:
+            met[found[0]] += 1
+            to = decisions[found[0]][1]["to"]
+            block = usj.para(to) if marker == "ib" else {**block, "marker": to}
+        elif marker == "ib" and standalone:
+            continue
+        elif marker in STANDALONE and standalone:
+            block = {**block, "marker": STANDALONE[marker]}
+        blocks.append(block)
+    unmet = sorted(label for (label, _), count in zip(decisions, met) if count != 1)
+    require(not unmet, f"Marker decisions not met once: {unmet}")
+    return usj.with_blocks(doc, blocks)
+
+
 def unit(
     entry: Entry,
     doc: Document,
@@ -537,6 +603,8 @@ def unit(
     taken_apart = placements(entry, policy)
     if taken_apart:
         doc = unlabelled(doc, taken_apart)
+    else:
+        doc = structured(code, doc, policy)
     destinations = taken_apart.destinations if taken_apart else {}
     read_unit, tongue = read(code, doc, destinations, ctx)
     if taken_apart:
@@ -610,6 +678,15 @@ def unit(
     return result, sent
 
 
+# What the key of a note of Brenton's Appendix ends with: `2SA 5:18 Appendix`.
+APPENDIX = " Appendix"
+
+
+def is_appendix(note: Node) -> bool:
+    """Whether a note is one of Brenton's Appendix, set below the text."""
+    return note.get("x-key", "").endswith(APPENDIX)
+
+
 def appendix_note(paragraphs: Sequence[Content], key: str) -> Node:
     """A note of Brenton's appendix as a footnote with a numbered caller, set
     below the text among the extended notes while the ordinary notes keep the
@@ -626,4 +703,4 @@ def appendix_note(paragraphs: Sequence[Content], key: str) -> Node:
         joined = usj.joined(joined, [" "] if joined else [], paragraph)
     content = usj.mapped(joined, own_numbers)
     extra: usj.Extra = {"x-key": key}
-    return usj.note("ef", usj.char("ft", *content), caller="+", **extra)
+    return usj.note("f", usj.char("ft", *content), caller="+", **extra)

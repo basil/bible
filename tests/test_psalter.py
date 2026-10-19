@@ -89,6 +89,8 @@ def source() -> Document:
                 f"\\v {verse} Word \\add added\\add* \\f + \\ft Note.\\f*end.\n"
                 for verse in range(1, (176 if chapter == 118 else 2) + 1)
             )
+            # The notice that closes the collection, set as a title.
+            + ("\\d\n\\v 20 The hymns are ended.\n" if chapter == 71 else "")
             for chapter in range(1, 152)
         )
     )
@@ -123,7 +125,10 @@ def test_divisions_and_scripture_are_preserved(declared: policy.Policy) -> None:
             rules.append(int(blocks[at + 1]["number"]))
             assert blocks[at + 1]["type"] == "chapter"
             assert block["content"] == []
-        if block.get("marker") in {"s2", "s3"}:
+        if block.get("marker") == "sd1":
+            assert blocks[at + 1]["type"] == "chapter"
+            assert blocks[at + 1]["number"] == "151"
+        if block.get("marker") in {"ms2", "lit"}:
             following = blocks[at + 1]
             assert following["marker"] == "q1"
             verse = following["content"][0]
@@ -154,14 +159,14 @@ def test_sample_divisions_follow_their_opening_chapters(
         ([4], ["sd2"]),
         ([8], []),
         ([9], ["ms1"]),
-        ([118], ["ms1", "s2", "s3", "s2"]),
-        ([151], []),
+        ([118], ["ms1", "ms2", "lit", "ms2"]),
+        ([151], ["sd1"]),
     ]:
         sample = pipeline.sample_chapters("PSA", doc, selected)
         assert [
             b["marker"]
             for b in sample["content"]
-            if b.get("marker") in {"ms1", "sd2", "s2", "s3"}
+            if b.get("marker") in {"ms1", "ms2", "sd1", "sd2", "lit"}
         ] == expected
 
 
@@ -175,6 +180,8 @@ def test_sample_divisions_follow_their_opening_chapters(
         (lambda p: p.__setitem__("middle", "118:71"), "within the Second"),
         (lambda p: p.__setitem__("middle", "118:73"), "within the Second"),
         (lambda p: p["kathismata"][16].__setitem__(0, "118:999"), "Missing Psalter"),
+        (lambda p: p["notes"].__setitem__("1:1", {"why": "."}), "not set as a title"),
+        (lambda p: p["notes"].__setitem__("1:99", {"why": "."}), "Psalter notes"),
     ],
 )
 def test_invalid_decisions_stop_the_build(
@@ -226,3 +233,12 @@ def test_pinned_psalms_keep_every_word_and_note(
     }
     assert usj.notes_of(doc["content"]) == usj.notes_of(result["content"])
     assert scripture.heads(doc) == scripture.heads(result)
+    # A closing collection notice is a Hebrew note, not the next psalm's
+    # descriptive title.
+    ending = scripture.verses(result)["71:20"]
+    assert ending.text == "The hymns of David the son of Jessæ are ended."
+    assert [result["content"][part[0]]["marker"] for part in ending.parts] == ["q1"]
+    # Supernumerary Psalm 151 lies outside all twenty kathismata.
+    blocks = result["content"]
+    at = next(i for i, b in enumerate(blocks) if b.get("number") == "151")
+    assert blocks[at - 1] == usj.para("sd1")

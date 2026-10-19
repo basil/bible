@@ -1,0 +1,19 @@
+\id FRT
+\periph Title Page|id="title"
+\nopagenums
+\mt1 \zvar|maintitle\*
+\mt2 \zvar|subtitle\*
+\periph Publication Data|id="pubdata"
+\mt1 \zvar|maintitle\*
+\mt2 \zvar|subtitle\*
+\pc \zvar|languagename\*
+\pc \zcopyright
+\pc \zlicense
+\pc \zimagecopyrights
+\periph Table of Contents|id="contents"
+\mt1 \zvar|toctitle\*
+\p
+\ztoc|main\*
+\resetpagenums -1
+\dopagenums
+\p

@@ -37,7 +37,7 @@ from bible.byzantine.crosswire import edit_offsets, reports_by_unit
 from bible.byzantine.crosswire import spans as word_spans
 from bible.byzantine.crosswire import words
 from bible.byzantine.decisions import ref_key
-from bible.byzantine.english import verses_of, without_subscriptions
+from bible.byzantine.english import verses_of
 from bible.byzantine.presentation import (
     anchored,
     clipped,
@@ -1009,8 +1009,6 @@ def build_index(context: Reconciliation, finished: Mapping[str, Document]) -> In
         all(r.get("execution") == "applied" for r in rows),
         "Review corrections-only baseline could not be executed",
     )
-    # An epistle's subscription is matter, not its last verse.
-    finished = {code: without_subscriptions(doc) for code, doc in finished.items()}
     index: Index = {
         "instructions_at": reports_by_unit(context.decisions.instructions),
         "reports_at": reports_by_unit(context.apparatuses.reports),

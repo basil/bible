@@ -267,7 +267,9 @@ def read(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Read:
         }
         | set(versification.kjv_books(policy=policy))
     )
-    kjv = {code: usj.parse(sources.kjv[code]) for code in sorted(wanted)}
+    kjv = {
+        code: assembly.colophon(usj.parse(sources.kjv[code])) for code in sorted(wanted)
+    }
     for unit in policy.scripture:
         if unit["source"] == "kjv":
             require(
@@ -410,8 +412,14 @@ def assemble(
         policy, {"brenton": read_sources.brenton, "kjv": read_sources.kjv}
     )
     units = {
-        unit["id"]: assembly.named(
-            unit, assembly.scripture_unit(unit, promoted.brenton, promoted.kjv, policy)
+        unit["id"]: matter.structured(
+            unit["id"],
+            assembly.named(
+                unit,
+                assembly.scripture_unit(unit, promoted.brenton, promoted.kjv, policy),
+            ),
+            policy,
+            standalone=False,
         )
         for unit in policy.scripture
     }
@@ -561,7 +569,7 @@ def linked(
     for key, paragraphs in sent.items():
         reference = key.removeprefix(f"{code} ")
         require(reference in verses, f"Appendix note verse missing: {key}")
-        note = matter.appendix_note(paragraphs, f"{key} Appendix")
+        note = matter.appendix_note(paragraphs, key + matter.APPENDIX)
         decision, verse = policy.appendix["notes"][key], verses[reference]
         if "before" in decision:
             at = alexandrinus.anchor(verse, decision["before"], key)
@@ -789,7 +797,7 @@ def check_document(
         # caller, and only that.
         require(
             all(
-                note["caller"] == ("+" if note["marker"] == "ef" else "-")
+                note["caller"] == ("+" if matter.is_appendix(note) else "-")
                 for note in usj.notes_of(doc["content"])
             ),
             f"Note with a caller left in the text, or a footnote without one: {code}",
@@ -801,7 +809,7 @@ def check_document(
                 named = bool(note["content"]) and usj.is_origin(note["content"][0])
                 origin = note_origin(note)
                 require(
-                    (note["marker"] == "ef" and not named) or origin == reference,
+                    (matter.is_appendix(note) and not named) or origin == reference,
                     f"Note reference disagrees with its verse: {code} {origin}",
                 )
     if authored_page:
@@ -918,8 +926,7 @@ def headed_chapters(doc: Document) -> tuple[list[Node], list[list[Node]]]:
     for index in range(len(parts) - 1):
         blocks = parts[index]
         at = len(blocks)
-        # Not a \d paragraph, which is its own chapter's and may hold verses,
-        # as the close of Psalm 71 does.
+        # Not a \d paragraph, which is its own chapter's and may hold verses.
         while at > 0 and blocks[at - 1].get("marker") in usj.HEADINGS:
             at -= 1
         parts[index + 1] = blocks[at:] + parts[index + 1]
@@ -930,17 +937,28 @@ def headed_chapters(doc: Document) -> tuple[list[Node], list[list[Node]]]:
 def sample_chapters(code: str, doc: Document, wanted: Sequence[int]) -> Document:
     """The header and the wanted chapters of a book, for the typesetting sample.
 
-    A heading that opens a chapter is kept or dropped with it. Export opens
-    every chapter in a paragraph of its own, so none continues an omitted one's.
+    A heading that opens a chapter is kept or dropped with it. A continuation
+    after an omitted chapter begins a new paragraph in the excerpt alone.
     """
     header, chapters = headed_chapters(doc)
     kept, seen = [*header], set()
+    previous: int | None = None
     for blocks in chapters:
         at = next(i for i, block in enumerate(blocks) if block["type"] == "chapter")
         number = int(blocks[at]["number"])
         if number in wanted:
+            if previous is None or number != previous + 1:
+                blocks = [
+                    (
+                        {**b, "marker": "p"}
+                        if i == at + 1 and usj.is_type(b, "para", "nb")
+                        else b
+                    )
+                    for i, b in enumerate(blocks)
+                ]
             seen.add(number)
             kept += blocks
+            previous = number
     require(seen == set(wanted), f"Sample chapters missing from {code}: {list(wanted)}")
     return usj.with_blocks(doc, kept)
 

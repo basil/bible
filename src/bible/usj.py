@@ -45,6 +45,8 @@ Node = TypedDict(
         "align": str,
         "category": str,
         "loc": str,
+        "id": str,
+        "alt": str,
         "x-key": str,
         "x-scope": Scope,
     },
@@ -71,24 +73,27 @@ VERSION = "3.1"
 MARKER = re.compile(r"\\(?P<plus>\+?)(?P<name>[a-z][a-z0-9-]*)(?P<close>\*?)")
 BOOK_PARAGRAPHS = frozenset("h toc1 toc2 toc3 mt1 mt2 mt3".split())
 PARAGRAPHS = BOOK_PARAGRAPHS | frozenset(
-    "p m mi nb q1 qr qa qc b ip im imi ib ili1 ili2 iex s1 s2 s3 ms1 sd2 is1 is2 d cl".split()
+    "p m mi nb po pm q1 q2 qr qa qc qd lit b li1 imt1 ip im imi ib ili1 ili2 iex s1 s2 s3 ms1 ms2 sd1 sd2 is1 is2 d cl".split()
 )
 # Headings and divisions: no part of the verses or the introduction they stand among.
-HEADINGS = frozenset("s1 s2 s3 ms1 sd2".split())
-CELLS = frozenset("tc1 tc2 th1 th2".split())
-CHARS = frozenset("add bd fv it sc vp wg wh".split())
-NOTES = frozenset("f ef x".split())
+HEADINGS = frozenset("s1 s2 s3 ms1 ms2 sd1 sd2 cl lit".split())
+CELLS = frozenset("tc1 tc2 tc3 th1 th2 th3".split())
+CHARS = frozenset("add bd fv it sc vp wg wh qs".split())
+NOTES = frozenset("f x".split())
 # The paragraphs of the body: prose, and the lines of a poem.
 PROSE = frozenset("p m mi nb".split())
 POEM = frozenset("q1 q2 qr".split())
 BODY = PROSE | POEM
-# What a poem opens with: a line, or an acrostic heading.
-OPENING = POEM | {"qa"}
 # The parts of a note, each of which runs to the next or to the note's end.
 FIELDS = frozenset("fr ft fq fqa fl xo xt xta".split())
 LABEL = re.compile(r"\d+[a-z]?(?:-\d+[a-z]?)?")
 # A verse's printed number, right after the verse's own.
 PRINTED = re.compile(r"\\vp ([^\\]*)\\vp\* ?")
+# A category, a peripheral division's title and identifier, and the rest of
+# a published chapter number's line.
+CATEGORY = re.compile(r"([^\\]+)\\cat\*")
+PERIPHERAL = re.compile(r'([^\n\\|]+)\|id="([^"\n]+)"')
+LINE = re.compile(r"[^\n\\]*")
 # What follows a marker that takes one: a note's caller, a book's code, a
 # document's USFM version.
 TOKEN = re.compile(r"(\S+) ?")
@@ -167,6 +172,10 @@ def parse(text: str, *, fragment: bool = False) -> Document | Content:
     block: Node | None = None
     inline: list[tuple[str, Node]] = []
     table: Node | None = None
+    containers: list[Node] = []
+
+    def blocks() -> Content:
+        return containers[-1]["content"] if containers else root
 
     def fail(message: str, at: int) -> NoReturn:
         """Refuse the text, showing where."""
@@ -213,7 +222,7 @@ def parse(text: str, *, fragment: bool = False) -> Document | Content:
                 while inline and inline[-1][0] != "note":
                     kind, node = inline.pop()
                     if kind != "field":
-                        fail(f"Unclosed \\{node['marker']}", at)
+                        fail(f"Unclosed \\{_marker(node)}", at)
                 if not (inline and inline[-1][1]["marker"] == name):
                     fail("Unmatched note end", at)
                 inline.pop()
@@ -227,6 +236,32 @@ def parse(text: str, *, fragment: bool = False) -> Document | Content:
             node = note(name, caller=caller[1])
             content().append(node)
             inline.append(("note", node))
+        elif name == "cat":
+            category = CATEGORY.match(text, end)
+            if closing or category is None:
+                fail("Invalid category", at)
+            owner = next((n for kind, n in reversed(inline) if kind == "note"), None)
+            if owner is None:
+                owner = containers[-1] if containers else None
+            if owner is None or owner["type"] not in {"note", "sidebar"}:
+                fail("Category outside a note or sidebar", at)
+            owner["category"] = category[1].strip()
+            cursor = category.end()
+        elif name == "ref":
+            if closing:
+                if not inline or inline[-1][0] != "ref":
+                    fail("Unmatched reference end", at)
+                _, node = inline.pop()
+                # The location is an attribute of the reference, not its words.
+                last = node["content"][-1] if node["content"] else ""
+                if isinstance(last, str) and "|" in last:
+                    words, loc = last.rsplit("|", 1)
+                    node["content"][-1] = words
+                    node["loc"] = loc.removeprefix("loc=").strip('" ')
+                continue
+            node = {"type": "ref", "content": []}
+            content().append(node)
+            inline.append(("ref", node))
         elif name in FIELDS:
             if closing or plus:
                 fail("Invalid note field", at)
@@ -235,7 +270,7 @@ def parse(text: str, *, fragment: bool = False) -> Document | Content:
             while inline and inline[-1][0] != "note":
                 kind, node = inline.pop()
                 if kind != "field":
-                    fail(f"Unclosed \\{node['marker']}", at)
+                    fail(f"Unclosed \\{_marker(node)}", at)
             node = char(name)
             content().append(node)
             inline.append(("field", node))
@@ -290,11 +325,40 @@ def parse(text: str, *, fragment: bool = False) -> Document | Content:
             if name == "tr":
                 if table is None:
                     table = {"type": "table", "content": []}
-                    root.append(table)
+                    blocks().append(table)
                 table["content"].append(row())
                 continue
             table = None
-            if name == "id":
+            if name == "esb":
+                if containers and containers[-1]["type"] == "sidebar":
+                    fail("Nested sidebar", at)
+                node = {"type": "sidebar", "marker": "esb", "content": []}
+                blocks().append(node)
+                containers.append(node)
+            elif name == "esbe":
+                if not containers or containers[-1]["type"] != "sidebar":
+                    fail("Sidebar end without its beginning", at)
+                containers.pop()
+            elif name == "periph":
+                if containers and containers[-1]["type"] == "sidebar":
+                    fail("Peripheral division inside sidebar", at)
+                containers.clear()
+                line = PERIPHERAL.match(text, end)
+                if line is None:
+                    fail("Peripheral division without an identifier", at)
+                node = {
+                    "type": "periph",
+                    "alt": line[1].strip(),
+                    "id": line[2],
+                    "content": [],
+                }
+                root.append(node)
+                containers.append(node)
+                cursor = line.end()
+            elif name == "id":
+                if any(n["type"] == "sidebar" for n in containers):
+                    fail("Unclosed sidebar before a new book", at)
+                containers.clear()
                 code = TOKEN.match(text, end)
                 if code is None:
                     fail("Missing book code", at)
@@ -319,35 +383,41 @@ def parse(text: str, *, fragment: bool = False) -> Document | Content:
                 if label is None:
                     fail("Missing chapter number", at)
                 cursor = label.end()
-                root.append({"type": "chapter", "marker": "c", "number": label[0]})
+                blocks().append({"type": "chapter", "marker": "c", "number": label[0]})
             elif name == "cp":
                 # The number a chapter prints, in place of its own. One set
                 # further into its chapter would be moved to its head.
                 if not (
-                    bool(root)
-                    and is_type(root[-1], "chapter")
-                    and "pubnumber" not in root[-1]
+                    bool(blocks())
+                    and is_type(blocks()[-1], "chapter")
+                    and "pubnumber" not in blocks()[-1]
                 ):
                     fail("Published chapter number not at the head of a chapter", at)
-                line = re.match(r"[^\n\\]*", text[end:])
-                chapter_node = root[-1]
+                line = LINE.match(text, end)
+                chapter_node = blocks()[-1]
                 assert isinstance(chapter_node, dict) and line is not None
-                root[-1] = {**chapter_node, "pubnumber": line[0].strip(" ")}
-                cursor = end + line.end()
+                blocks()[-1] = {**chapter_node, "pubnumber": line[0].strip(" ")}
+                cursor = line.end()
             else:
                 if name not in PARAGRAPHS:
                     fail(f"Unsupported marker \\{name}", at)
                 block = para(name)
-                root.append(block)
+                blocks().append(block)
     add_text(text[cursor:], cursor)
+    require(not any(n["type"] == "sidebar" for n in containers), "Unclosed sidebar")
     for kind, node in inline:
         require(
             kind == "field" and fragment,
-            f"Unclosed \\{node['marker']} at the end of the text",
+            f"Unclosed \\{_marker(node)} at the end of the text",
         )
     if fragment:
         return _tidy(root, edges=False)
     return document([_tidy_block(node) for node in objects(root)])
+
+
+def _marker(node: Node) -> str:
+    """An open span's marker: a reference has none but its type."""
+    return node.get("marker", node["type"])
 
 
 def _spaces(value: str) -> str:
@@ -421,6 +491,8 @@ def _without_trailing_space(item: str | Node) -> Node:
 
 
 def _tidy_block(node: Node) -> Node:
+    if node["type"] in {"sidebar", "periph"}:
+        return {**node, "content": [_tidy_block(n) for n in objects(node["content"])]}
     if node["type"] == "table":
         return {
             **node,
@@ -443,8 +515,12 @@ def serialize(node: Document | Content) -> str:
         return _inline(node, nested=False)
     # The writer nests and closes styles as this version does.
     require(node["version"] == VERSION, f"Unsupported USJ version: {node['version']}")
-    lines = []
-    for block in node["content"]:
+    return "\n".join(_block_lines(node["content"])) + "\n"
+
+
+def _block_lines(blocks: Iterable[str | Node]) -> list[str]:
+    lines: list[str] = []
+    for block in objects(blocks):
         kind = block["type"]
         if kind == "book":
             lines.append(_line(f"\\id {block['code']}", block["content"]))
@@ -460,13 +536,23 @@ def serialize(node: Document | Content) -> str:
                 lines.append("\\tr")
                 for cell in objects(row["content"]):
                     lines.append(_line(f"\\{cell['marker']}", cell["content"]))
+        elif kind == "sidebar":
+            category = (
+                f" \\cat {block['category']}\\cat*" if block.get("category") else ""
+            )
+            lines.append(f"\\esb{category}")
+            lines.extend(_block_lines(block["content"]))
+            lines.append("\\esbe")
+        elif kind == "periph":
+            lines.append(f'\\periph {block["alt"]}|id="{block["id"]}"')
+            lines.extend(_block_lines(block["content"]))
         else:
             require(kind == "para", f"Unsupported block: {kind}")
             # Each verse opens a line of its own.
             head, verses = _split_verses(block["content"])
             lines.append(_line(f"\\{block['marker']}", head))
             lines.extend(_line(_verse_marker(verse), rest) for verse, rest in verses)
-    return "\n".join(lines) + "\n"
+    return lines
 
 
 def _verse_marker(verse: Node) -> str:
@@ -512,7 +598,8 @@ def _inline(content: Iterable[str | Node], *, nested: bool) -> str:
             )
             body = _inline(item["content"], nested=False)
             marker = item["marker"]
-            parts.append(f"\\{marker} {item['caller']} {body}\\{marker}*")
+            category = f"\\cat {item['category']}\\cat*" if item.get("category") else ""
+            parts.append(f"\\{marker} {item['caller']} {category}{body}\\{marker}*")
         elif item["type"] == "char":
             body = _inline(item["content"], nested=True)
             if item["marker"] in FIELDS:
@@ -521,7 +608,9 @@ def _inline(content: Iterable[str | Node], *, nested: bool) -> str:
                 marker = ("+" if nested else "") + item["marker"]
                 parts.append(f"\\{marker} {body}\\{marker}*")
         elif item["type"] == "ref":
-            parts.append(_inline(item["content"], nested=nested))
+            body = _inline(item["content"], nested=nested)
+            target = f"|{item['loc']}" if item.get("loc") else ""
+            parts.append(f"\\ref {body}{target}\\ref*")
         else:
             require(False, f"Unsupported inline content: {item['type']}")
     return "".join(parts)
@@ -617,6 +706,8 @@ def with_content(doc: Document, change: Callable[[Content], Content]) -> Documen
     change. Its \\id line is the source's own, and stays."""
 
     def block(node: Node) -> Node:
+        if node["type"] in {"sidebar", "periph"}:
+            return {**node, "content": [block(n) for n in objects(node["content"])]}
         if node["type"] == "table":
             return {
                 **node,

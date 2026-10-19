@@ -130,6 +130,9 @@ def verses(doc: usj.Document) -> dict[str, Verse]:
         if block["type"] == "chapter":
             close()
             chapter, reference, parts = block["number"], None, []
+        elif block["type"] == "sidebar":
+            close()
+            reference, parts = None, []
         elif block["type"] == "para" and block["marker"] not in usj.HEADINGS:
             start = 0
             for at, item in enumerate(block["content"]):

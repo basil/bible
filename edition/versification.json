@@ -915,7 +915,7 @@
       "edition": {
         "SIR 0:1": "Whereas many"
       },
-      "why": "eBible divides the translator's Prologue into verses 1:1 and 1:1a-1g, so that the book's first verse is 1:1h. The Church of Greece's text prints the Prologue as one unnumbered block before chapter 1, and Swete (vol. 2, p. 644) prints it as one paragraph, numbering only its lines in the margin, as Rahlfs does; neither divides it into verses. It stands as one verse of a chapter 0 that prints no number, as Susanna does in Daniel, and is unnumbered."
+      "why": "eBible divides the translator's Prologue into verses 1:1 and 1:1a-1g, so that the book's first verse is 1:1h. The Church of Greece's text prints the Prologue as one unnumbered block before chapter 1, and Swete (vol. 2, p. 644) prints it as one paragraph, numbering only its lines in the margin, as Rahlfs does; neither divides it into verses. The assembly verifies and joins this source span, then places its title and paragraphs before chapter 1 as the book’s introduction, without chapter or verse markers."
     },
     "SIR 13:13": {
       "edition": {
@@ -1232,9 +1232,6 @@
   },
   "unnumbered": {
     "why": "A verse the Greek editions print without a number: it prints none, and a chapter all of whose verses print none prints no number either, as Susanna's and Bel's do. Its own label stays, for the notes and links that name it.",
-    "SIR 0:1": {
-      "why": "Sirach's Prologue, the translator's preface, which the Church of Greece's text and Swete print unnumbered before chapter 1."
-    },
     "LJE 1:0": {
       "why": "The Epistle's title, which the Church of Greece's text and Swete print unnumbered, and Rahlfs numbers 0."
     }

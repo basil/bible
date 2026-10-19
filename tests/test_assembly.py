@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from copy import deepcopy
 from typing import Any
 
 import pytest
@@ -14,6 +15,35 @@ from bible import assembly, scripture, usj, versification
 from bible.checks import CheckFailed
 from bible.policy_schema import Entry
 from bible.references import Verse
+
+
+@pytest.mark.parametrize(
+    "book, closing",
+    [
+        ("ROM", "\\mi ¶ Written from Rome."),
+        ("ACT", "\\d The end of the Acts of the Apostles."),
+    ],
+)
+def test_terminal_colophons_are_separate_from_scripture(
+    book: str, closing: str
+) -> None:
+    doc = usj.parse(f"\\id {book}\n\\c 1\n\\p\n\\v 1 Scripture.\n\\b\n{closing}")
+    before = deepcopy(doc)
+    result = assembly.colophon(doc)
+    assert doc == before
+    assert scripture.verses(result)["1:1"].text == "Scripture."
+    sidebar = result["content"][-1]
+    assert sidebar["type"] == "sidebar" and sidebar["category"] == "colophon"
+    assert usj.is_type(sidebar["content"][0], "para", "p")
+    assert usj.text_of(sidebar["content"]) == closing.split(" ", 1)[1]
+    assert result["content"][-2]["marker"] == "p"
+    assert usj.parse(usj.serialize(result)) == result
+
+
+def test_an_ordinary_terminal_paragraph_is_not_a_colophon() -> None:
+    doc = usj.parse("\\id ROM\n\\c 1\n\\p\n\\v 1 Scripture.\n\\mi Further scripture.")
+    assert assembly.colophon(doc) is doc
+    assert scripture.verses(doc)["1:1"].text == "Scripture.\nFurther scripture."
 
 
 def test_every_book_prints_under_the_editions_name_and_heading(
@@ -84,11 +114,16 @@ def test_daniel_stands_between_susanna_and_bel_and_the_dragon(
     assert list(edition.inventory["DAG"]) == [str(c) for c in range(14)]
     # Each addition is a chapter that prints no number, under its heading.
     hidden = [
-        (usj.text_of(blocks[n - 1]["content"]), block["number"])
+        (usj.text_of(blocks[n + 1]["content"]), block["number"])
         for n, block in enumerate(blocks)
         if block.get("pubnumber") == scripture.HIDDEN
     ]
     assert hidden == [("Susanna", "0"), ("Bel and the Dragon", "13")]
+    assert all(
+        blocks[n + 1]["marker"] == "cl"
+        for n, block in enumerate(blocks)
+        if block.get("pubnumber") == scripture.HIDDEN
+    )
     lines = usj.serialize(edition.documents["DAG"]).splitlines()
     song = lines.index("\\s1 The Song of the Three Children")
     assert lines[song + 1 : song + 3] == ["\\p", lines[song + 2]]
@@ -134,16 +169,15 @@ def test_a_relocated_passage_prints_the_hebrews_labels(
 def test_a_preface_and_a_title_print_no_number(
     edition: bible.pipeline.Edition,
 ) -> None:
-    # Sirach's Prologue is one unnumbered verse of a chapter that prints no
-    # number under its title, and the book's first verse is 1:1.
-    assert list(edition.inventory["SIR"])[:2] == ["0", "1"]
-    assert edition.inventory["SIR"]["0"] == ["1"]
+    # The translator's Prologue is a true introduction, outside scripture
+    # numbering; the book's first verse is 1:1.
+    assert list(edition.inventory["SIR"])[0] == "1"
+    assert "0" not in edition.inventory["SIR"]
     lines = usj.serialize(edition.documents["SIR"]).splitlines()
-    at = lines.index("\\c 0")
-    assert lines[at + 1] == f"\\cp {scripture.HIDDEN}"
-    assert lines[at + 2].startswith("\\d ")
-    assert f"\\v 1 \\vp {scripture.HIDDEN}\\vp* " in "\n".join(lines[at:])
     first = lines.index("\\c 1")
+    assert any(line.startswith("\\imt1 ") for line in lines[:first])
+    assert sum(line.startswith("\\ip ") for line in lines[:first]) == 2
+    assert not any(line.startswith(("\\c ", "\\v ", "\\cp ")) for line in lines[:first])
     assert next(line for line in lines[first:] if line.startswith("\\v ")).startswith(
         "\\v 1 All wisdom"
     )
@@ -151,6 +185,10 @@ def test_a_preface_and_a_title_print_no_number(
     # the Greek editions begin inside Brenton's clause.
     assert edition.inventory["LJE"]["1"] == [str(v) for v in range(73) if v != 16]
     assert scripture.printed(edition.documents["LJE"]) == {"1:0": ""}
+    title = scripture.verses(edition.documents["LJE"])["1:0"]
+    assert all(
+        edition.documents["LJE"]["content"][p[0]]["marker"] == "d" for p in title.parts
+    )
 
 
 def test_a_printed_label_must_fit_its_verses(

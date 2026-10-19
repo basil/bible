@@ -7,6 +7,10 @@
 % This also sets the standard minimum fragments: 2 letters left, 3 right.
 \uselanguage{USenglish}
 
+% These introductions are already placed in the edition's reading order.
+\NoStorePeriph{intbible}
+\NoStorePeriph{intot}
+
 % Omit the label of a chapter's first verse when it is exactly 1, even in
 % Psalm titles, where PTXprint's chapter-drop-cap check does not apply.
 % PTXprint empties \oldv@rse only for a chapter's first verse, so a verse 1
@@ -16,6 +20,14 @@
 % with.
 \begingroup
 \catcode`\@=11
+% Every sidebar in this edition is terminal source paratext. Close the
+% scripture paragraph before PTXprint captures its box, so a pending final
+% line cannot print after the colophon.
+\global\let\BibleStartSidebar\@sb
+\gdef\@sb{%
+  \endlastp@rstyle{esb}%
+  \BibleStartSidebar
+}
 \gdef\BibleVerseOne{1}
 \addtopreversehooks{%
   \ifOmitVerseNumberOne\ifx\oldv@rse\empty
@@ -104,6 +116,8 @@
 \gdef\MarginNoteSide{inner}
 \gdef\BibleStartNote#1{%
   \BibleMarginNotetrue
+  % A note with a caller is set below the text, not in the margin.
+  \ifx\them@rk\empty\else\BibleMarginNotefalse\fi
   \ifx\ch@pter\empty\BibleMarginNotefalse\fi
   \ifx\ch@pter\z@ro\BibleMarginNotefalse\fi
   \ifBibleMarginNote
@@ -154,15 +168,22 @@
 \expandafter\gdef\csname endnote-no-insert-x\endcsname{\BibleEndNote{x}}
 \endgroup
 
-% The notes edition/margin.json sets below the text and the Appendix notes
-% use the native ef class in the generated USFM. Leaving
-% that class out of marginaln@te keeps them below without a placement lookup.
-% Including ef enables study-note formatting in the template; use its native
-% switch to retain ordinary full-width bottom notes.
-% NotStudyNotes assigns locally, so call it outside the temporary group above.
-\NotStudyNotes{ef}
-% Restart their callers on each page, as the f notes' do.
-\PageResetCallers{ef}
+% Caller-bearing footnotes use the ordinary bottom insertion; callerless
+% scripture notes use the margin. Both remain standard f notes.
+\PageResetCallers{f}
+
+% The contents identify each logical peripheral division, not the file that
+% packages several of them. Keep PTXprint's native pagination and convergence.
+\begingroup
+\catcode`\@=11
+\global\let\BibleContentsLine\maket@cline
+\gdef\maket@cline{%
+  \begingroup
+  \ifinperiph\ifx\periph@@@\empty\else\let\id@@@\periph@@@\fi\fi
+  \BibleContentsLine
+  \endgroup
+}
+\endgroup
 
 % BSB numbers ordinary/no-verse pages in the center header and opening
 % pages in the center footer. Put every visible folio at the outer bottom
@@ -181,47 +202,6 @@
 
 % Load the shared optical-margin adapter used by the font regression test.
 \input ../../../shared/ptxprint/Bible/protrusion.tex
-
-% Susanna and Bel and the Dragon have a zero-width-space \cp in place
-% of a chapter
-% number. Remove its drop-cap cutout so the opening text does not indent
-% around a chapter figure that readers cannot see.
-\begingroup
-\catcode`\@=11
-\xdef\BibleHiddenChapterText{\Uchar"200B}
-\ifx\BibleMakeChapterBox\undefined\global\let\BibleMakeChapterBox\m@kechapterbox\fi
-\gdef\m@kechapterbox{%
-  \BibleMakeChapterBox
-  \edef\BibleChapterText{\detokenize\expandafter{\ch@ptert@xt}}%
-  \ifx\BibleChapterText\BibleHiddenChapterText
-    \setbox\ch@pterbox=\hbox{}%
-    \ch@pterwd=0pt
-    \ch@pterdp=0pt
-  \fi
-}
-\endgroup
-
-% Give the numbering page's tables, and the introduction's table of glosses,
-% their fixed column widths; other tables, such as the abbreviations, keep
-% PTXprint's own. Select the category at table entry, before PTXprint opens
-% the table's group and reads the category. Row hooks run too late;
-% transition hooks depend on the preceding paragraph marker. PTXprint clears
-% the category after each table.
-\let\BibleTableCategory\empty
-\setbookhook{start}{XXA}{\def\BibleTableCategory{reference}}
-\setbookhook{end}{XXA}{\let\BibleTableCategory\empty}
-\setbookhook{start}{CNC}{\def\BibleTableCategory{glosses}}
-\setbookhook{end}{CNC}{\let\BibleTableCategory\empty}
-\begingroup
-\catcode`\@=11
-\global\let\BibleStartTable\startt@ble
-\gdef\startt@ble{%
-  \ifx\BibleTableCategory\empty\else
-    \ifdoingt@ble\else\let\tablecategory\BibleTableCategory\fi
-  \fi
-  \BibleStartTable
-}
-\endgroup
 
 % A heading set in its own size keeps its own leading. PTXprint (3.1.3,
 % paratext2.tex, \@s@tbaseline) computes a paragraph's baseline from the
@@ -270,8 +250,3 @@
   \def\ib{\BibleBlankLine\global\first@fterheadingtrue}%
 }
 \endgroup
-
-% A term of the introduction's list of translations stands on the page with
-% its definition. PTXprint has no keep-with-next property; its after hook
-% runs once the term's paragraph has closed, and the term has no space after.
-\sethook{after}{ili1}{\nobreak}

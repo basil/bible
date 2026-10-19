@@ -24,7 +24,7 @@ from bible import scripture
 from bible.byzantine import received
 from bible.byzantine.crosswire import presentation_bridge
 from bible.byzantine.decisions import ref_key
-from bible.byzantine.english import verses_of, without_subscriptions
+from bible.byzantine.english import verses_of
 from bible.byzantine.greek import ascii_greek, letter_key, occurrences
 from bible.byzantine.notes import source_range
 from bible.byzantine.presentation import corresponding, diff_spans, passage_spans
@@ -500,12 +500,9 @@ def rows(
                 ),
             )
         )
-    # Both without the epistles' subscriptions, which no verse holds.
+    # A subscription is a sidebar, which no verse holds.
     printed = {
-        ref: scripture.plain(verse.text)
-        for ref, verse in verses_of(
-            {code: without_subscriptions(doc) for code, doc in documents.items()}
-        ).items()
+        ref: scripture.plain(verse.text) for ref, verse in verses_of(documents).items()
     }
     prepared_verses = verses_of(found.edited.prepared)
     # The Greek each correction of the English where the texts agree cites,

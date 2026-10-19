@@ -1,5 +1,5 @@
 """USFM for PTXprint, written once from a view of the edition, with the few
-things only the typesetter needs: its blank lines and chapter openings, the
+things only the typesetter needs: its blank lines, the
 label it prints before a chapter's number, the margin origins of the notes
 without their chapter, the notes edition/margin.json sets below the text,
 and the Greek and Hebrew tagged for their fonts. Only the form of what
@@ -7,10 +7,11 @@ prints changes here, never its substance."""
 
 from __future__ import annotations
 
+import itertools
 import re
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 
-from bible import notes, pipeline, scripture, usfm, usj
+from bible import notes, peripherals, pipeline, scripture, usfm, usj
 from bible.checks import require, require_used
 from bible.pipeline import Edition
 from bible.policy_schema import Entry
@@ -55,24 +56,9 @@ def font_runs(content: Content) -> Content:
     return [item for item in result if item != ""]
 
 
-# What supplies its own space in PTXprint, so that no blank line stands
-# before it: a heading, a title and an acrostic name; a chapter does too
-# where the book labels its chapters.
-SELF_SPACED = usj.HEADINGS | {"d", "qa"}
-
-
 def spaced(doc: Document) -> Document:
-    """Blank lines for PTXprint: a poem gets one where it begins after prose
-    and where prose resumes after it. A chapter that opens with a poem or a
-    title gets one before it, and so does a chapter where prose resumes
-    after a poem, unless the book labels its chapters: the label supplies
-    its own space. A heading, a title and an acrostic name supply their own,
-    so no blank line stands before one, nor after a title. An instruction
-    on its own right-aligned line supplies the stanza break, so a blank
-    between it and the next line goes. Other blanks remain. Only the form
-    of what prints changes, never the words."""
+    """Keep stanza breaks and prose/poetry transitions, never heading padding."""
     blocks = doc["content"]
-    label = any(usj.paragraph(block) == "cl" for block in blocks)
     result: list[Node] = []
     for at, block in enumerate(blocks):
         marker = usj.paragraph(block)
@@ -80,54 +66,20 @@ def spaced(doc: Document) -> Document:
         following = blocks[at + 1] if at + 1 < len(blocks) else None
         after = usj.paragraph(following)
         if marker == "b":
-            blank = (
-                after not in SELF_SPACED
-                and before != "d"
-                and not (label and usj.is_type(following, "chapter"))
-                and not (before == "qr" and after in usj.POEM)
-            )
-        elif usj.is_type(block, "chapter"):
-            blank = (
-                not label
-                and before in usj.BODY
-                and (
-                    after in usj.OPENING
-                    or after == "d"
-                    or (before in usj.POEM and after in usj.PROSE)
-                )
-            )
-        elif marker in usj.POEM:
-            blank = before in usj.PROSE
-        elif marker in usj.PROSE:
-            blank = before in usj.POEM
-        else:
-            blank = False
-        if blank and before != "b":
+            if (
+                before in usj.BODY
+                and after in usj.BODY
+                and before != "qr"
+                and (before in usj.POEM or after in usj.POEM)
+            ):
+                result.append(block)
+            continue
+        if (marker in usj.POEM and before in usj.PROSE) or (
+            marker in usj.PROSE and before in usj.POEM and before != "qr"
+        ):
             result.append(usj.para("b"))
-        if marker != "b":
-            result.append(block)
+        result.append(block)
     return usj.with_blocks(doc, result)
-
-
-def opened(doc: Document) -> Document:
-    """Each chapter opening in a paragraph of its own, as the Berean Standard
-    Bible sets it: a chapter that goes on with its source's paragraph, or
-    opens one flush left, opens it as any other. The chapter figure sets its
-    first line alike either way."""
-    blocks = doc["content"]
-    return usj.with_blocks(
-        doc,
-        [
-            (
-                {**block, "marker": "p"}
-                if at
-                and usj.is_type(blocks[at - 1], "chapter")
-                and usj.paragraph(block) in ("m", "nb")
-                else block
-            )
-            for at, block in enumerate(blocks)
-        ],
-    )
 
 
 def labelled(doc: Document, entry: Entry) -> Document:
@@ -204,19 +156,18 @@ def with_printed_origins(doc: Document) -> Document:
     return usj.with_content(doc, lambda items: usj.mapped(items, origin))
 
 
-def exported(code: str, doc: Document, edition: Edition) -> str:
+def document(code: str, doc: Document, edition: Edition) -> Document:
     """A document as PTXprint takes it: under its project id; its notes'
     margin origins without their chapter, which the chapter figure and running
     head supply, unless the verse's printed label names one, and bottom notes
     under their callers alone; its chapter label, where the manifest asks for
-    one, set once before its first chapter as PTXprint takes it; its chapters
-    opened in paragraphs of their own and its blank lines set, which read the
-    label; and its Greek and Hebrew tagged for their fonts.
+    one, set once before its first chapter as PTXprint takes it; its blank lines set; and its Greek
+    and Hebrew tagged for their fonts.
     The edition's own pages are sent as the editor wrote them. A note at a
     verse that prints another label than its own is set under that label."""
 
     def bottom(item: Node) -> Node:
-        if usj.is_type(item, "note", "ef"):
+        if usj.is_type(item, "note", "f") and item.get("caller") == "+":
             return {
                 **item,
                 "content": [p for p in item["content"] if not usj.is_origin(p)],
@@ -244,11 +195,11 @@ def exported(code: str, doc: Document, edition: Edition) -> str:
     if code in edition.scripture:
         doc = labelled(doc, edition.policy.unit(code))
     if code not in edition.authored:
-        doc = spaced(opened(doc))
+        doc = spaced(doc)
     # A unit printed from a file that holds another, or under an id that
     # PTXprint would take for its own front matter, is a unit of its own.
     doc = fonted(edition, code, usj.with_content(doc, content))
-    return usj.serialize(usj.with_code(doc, code))
+    return usj.with_code(doc, code)
 
 
 def fonted(edition: Edition, code: str, doc: Document) -> Document:
@@ -275,11 +226,11 @@ def notes_below(edition: Edition) -> dict[str, frozenset[str]]:
     return found
 
 
-def export(edition: Edition, mode: str) -> list[tuple[str, str]]:
-    """Every document of a view as USFM, by its project id, in order, with
-    the notes edition/margin.json sets below the text so set: the page whose
-    margin a note relieves is PTXprint's, so the placement is made for it
-    alone, and the sample prints the notes of its chapters."""
+def prepared(edition: Edition, mode: str) -> list[tuple[str, Document]]:
+    """Every document of a view as PTXprint takes it, by its project id, in
+    order, with the notes edition/margin.json sets below the text so set:
+    the page whose margin a note relieves is PTXprint's, so the placement is
+    made for it alone, and the sample prints the notes of its chapters."""
     below = notes_below(edition)
     result = []
     for code, doc in pipeline.view(edition, mode):
@@ -288,5 +239,40 @@ def export(edition: Edition, mode: str) -> list[tuple[str, str]]:
                 note.get("x-key") for note in usj.notes_of(doc["content"])
             }
             doc = notes.set_below(doc, here)
-        result.append((code, exported(code, doc, edition)))
+        result.append((code, document(code, doc, edition)))
     return result
+
+
+def grouped(
+    edition: Edition, documents: Sequence[tuple[str, Document]]
+) -> list[tuple[str, Document]]:
+    """The prepared documents as PTXprint's files: each scripture book its
+    own, and each run of front matter packaged as the divisions of its
+    section's document."""
+
+    def container(code: str) -> tuple[str, str]:
+        return (
+            (code, code)
+            if code in edition.scripture
+            else (edition.policy.sections[code], peripherals.book(code))
+        )
+
+    result: list[tuple[str, Document]] = []
+    for (_, code), run in itertools.groupby(documents, key=lambda cd: container(cd[0])):
+        units = list(run)
+        if code in edition.scripture:
+            result.extend(units)
+        else:
+            book: Node = {"type": "book", "marker": "id", "code": code, "content": []}
+            divisions = [
+                peripherals.division(unit, doc, edition.names[unit]["title"])
+                for unit, doc in units
+            ]
+            result.append((units[0][0], usj.document([book, *divisions])))
+    return result
+
+
+def export(edition: Edition, mode: str) -> list[tuple[str, str]]:
+    """Every file of a view as USFM, by its project id, in order."""
+    documents = grouped(edition, prepared(edition, mode))
+    return [(code, usj.serialize(doc)) for code, doc in documents]

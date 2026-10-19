@@ -13,7 +13,7 @@ import xml.etree.ElementTree as ET
 from collections.abc import Mapping, Sequence
 from pathlib import Path
 
-from bible import typeface
+from bible import peripherals, scripture, typeface, usj
 from bible.checks import CheckFailed, present, require
 from bible.files import sha256, write_json
 from bible.policy_schema import Witnesses
@@ -39,7 +39,6 @@ XHTML = "{http://www.w3.org/1999/xhtml}"
 KEPT_MARKERS = {
     *(
         "f",
-        "ef",
         "x",
         "xta",
         "add",
@@ -49,12 +48,29 @@ KEPT_MARKERS = {
         "th2",
         "tc1",
         "tc2",
+        "tc3",
+        "th3",
+        "po",
+        "pm",
+        "li1",
+        "s1",
+        "s2",
+        "mt1",
+        "mt2",
+        "d",
         "vp",
         "fv",
         "ms1",
         "cl",
-        "s2",
-        "s3",
+        "ms2",
+        "lit",
+        "sd1",
+        "qs",
+        "qd",
+        "ref",
+        "esb",
+        "esbe",
+        "periph",
         "sd2",
         "qr",
         "qa",
@@ -88,12 +104,6 @@ def check_processed(project: Path, base: Path, ids: list[str]) -> None:
     tex = texfiles[0].read_text(encoding="utf-8")
     require("%\\OmitCallerInNote{f}" in tex, "Footnote callers unexpectedly suppressed")
     require("\\AutoCallers{f}{1,2," in tex, "Footnote callers not numbered")
-    # The notes set below the text and the Appendix notes are ef footnotes,
-    # whose callers stand in the text.
-    require(
-        "%\\OmitCallerInNote{ef}" in tex,
-        "Extended note callers unexpectedly suppressed",
-    )
     for code in ids:
         source = project_usfm(project, code).read_text(encoding="utf-8")
         processed = processed_usfm(project, code)
@@ -172,6 +182,30 @@ def check_contents(
     )
 
 
+def printed_key(text: str) -> str:
+    return "".join(
+        c for c in unicodedata.normalize("NFKC", text).casefold() if c.isalnum()
+    )
+
+
+def check_colophon_order(source: str, printed: str) -> None:
+    """A terminal sidebar must follow the completed final scripture verse."""
+    if "\\cat colophon\\cat*" not in source:
+        return
+    doc = usj.parse(source)
+    colophons = [b for b in doc["content"] if b.get("category") == "colophon"]
+    last = next(reversed(scripture.verses(doc).values()))
+    tail = printed_key(" ".join(last.text.split()[-12:]))
+    words = printed_key(printed)
+    for colophon in colophons:
+        notice = printed_key(usj.text_of(colophon["content"]))
+        at = words.find(notice)
+        require(
+            at >= 0 and words.rfind(tail, 0, at) >= 0,
+            "Colophon missing or printed before scripture ends",
+        )
+
+
 def check_boundaries(
     base: Path,
     project: Path,
@@ -194,9 +228,21 @@ def check_boundaries(
             r"\\doTOCline\{([^}]+)\}\{([^}]+)\}\{[^}]*\}\{([^}]*)\}\{(\d+)\}", main
         )
 
+    # The units the contents list: each scripture book, and each division of
+    # a front matter file.
+    usfm: dict[str, str] = {}
+    for code in ids:
+        text = project_usfm(project, code).read_text(encoding="utf-8")
+        if "\\periph " not in text:
+            usfm[code] = text
+            continue
+        for division in usj.objects(usj.parse(text)["content"]):
+            if division["type"] == "periph":
+                blocks = usj.objects(division["content"])
+                usfm[division["id"]] = usj.serialize(usj.document(blocks))
     toc = readtoc(tocfiles[0])
     require(
-        [r[0] for r in toc] == ids,
+        [r[0] for r in toc] == list(usfm),
         "PDF contents omitted, duplicated or reordered units",
     )
     # Both files come from the final TeX run: PTXprint copies the raw TOC to _org.toc and
@@ -208,23 +254,16 @@ def check_boundaries(
     )
     page_text = reading_text.split("\f")
 
-    def key(s: str) -> str:
-        return "".join(
-            c for c in unicodedata.normalize("NFKC", s).casefold() if c.isalnum()
-        )
-
-    usfm = {
-        code: project_usfm(project, code).read_text(encoding="utf-8") for code in ids
-    }
     # The basic front matter template restarts printed numbering at the
     # contents. Its TOC numbers therefore differ from physical PDF pages.
-    first_heading = heading(usfm[ids[0]])
+    first_heading = heading(next(iter(usfm.values())))
     first_physical = present(
         next(
             (
                 i + 1
                 for i in range(3, pages)
-                if key(canonical_text(first_heading)) in key(page_text[i])
+                if printed_key(canonical_text(first_heading))
+                in printed_key(page_text[i])
             ),
             None,
         ),
@@ -236,15 +275,29 @@ def check_boundaries(
         "document", "usetoc3", fallback=False
     )
     check_contents(
-        [key(page) for page in page_text[2 : first_physical - 1]],
+        [printed_key(page) for page in page_text[2 : first_physical - 1]],
         [
-            (code, key(title), key(abbreviation) if abbreviations else "", number)
+            (
+                code,
+                printed_key(title),
+                printed_key(abbreviation) if abbreviations else "",
+                number,
+            )
             for code, title, abbreviation, number in toc
         ],
     )
+    # The physical pages each unit spans, from its heading's to the one
+    # before the next unit's.
+    spans = {
+        code: (
+            int(printed_page) + page_offset,
+            int(toc[index + 1][3]) + page_offset - 1 if index + 1 < len(toc) else pages,
+        )
+        for index, (code, _, _, printed_page) in enumerate(toc)
+    }
     previous = 0
     for code, title, abbreviation, printed_page in toc:
-        page = int(printed_page) + page_offset
+        page, end = spans[code]
         require(previous < page <= pages, f"Invalid boundary page: {code} {page}")
         previous = page
         # PTXprint writes an empty cell for a unit without \toc3; TeX in the
@@ -256,9 +309,10 @@ def check_boundaries(
         words = heading(usfm[code])
         require(words, f"Missing heading: {code}")
         require(
-            key(canonical_text(words)) in key(page_text[page - 1]),
+            printed_key(canonical_text(words)) in printed_key(page_text[page - 1]),
             f"Book heading not on advertised PDF page: {code} {page}",
         )
+        check_colophon_order(usfm[code], " ".join(page_text[page - 1 : end]))
     write_json(
         base / "book-boundaries.json",
         [
@@ -266,23 +320,22 @@ def check_boundaries(
             for b, t, _, p in toc
         ],
     )
-    by_code = {b: (i, int(p) + page_offset) for i, (b, t, _, p) in enumerate(toc)}
 
     for witness in witnesses:
         code = witness["id"]
-        if code not in by_code or (
+        if code in peripherals.UNITS:
+            code = peripherals.UNITS[code].periph
+        if code not in spans or (
             "chapter" in witness
             and witness["chapter"] not in inventory(usfm[code])["chapters"]
         ):
             # The sample deliberately selects only representative units and chapters.
             require(sample, f"Special-content witness not checked: {witness}")
             continue
-        index, start = by_code[code]
-        end = (
-            int(toc[index + 1][3]) + page_offset - 1 if index + 1 < len(toc) else pages
-        )
+        start, end = spans[code]
         require(
-            key(witness["phrase"]) in key("".join(page_text[start - 1 : end])),
+            printed_key(witness["phrase"])
+            in printed_key("".join(page_text[start - 1 : end])),
             f"Special-content witness absent from rendered {code}: {witness['phrase']}",
         )
 

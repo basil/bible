@@ -106,7 +106,8 @@ COPY build/valkyrie/ /opt/valkyrie/
 # Font assembly changes should not refetch upstream projects or Python wheels.
 COPY scripts/ /opt/scripts/
 RUN /opt/venv/bin/python /opt/scripts/patch_margin_convergence.py \
-    && /opt/venv/bin/python /opt/scripts/patch_emitter_prefix.py
+    && /opt/venv/bin/python /opt/scripts/patch_emitter_prefix.py \
+    && /opt/venv/bin/python /opt/scripts/patch_periph.py
 RUN <<EOF
 set -eu
 # Assemble OLEBFont from Valkyrie OT where the host provided it, else from

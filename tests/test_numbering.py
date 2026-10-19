@@ -318,9 +318,9 @@ def test_the_page_prints_its_tables(edition: bible.pipeline.Edition) -> None:
     # A run that keeps its numbers but stands out of their order says where.
     assert "\\tr\n\\tc1 23:7–8\n\\tc2 23:7–8 (after 40)\n" in page
     assert "\\tr\n\\tc1 31:25\n\\tc2 31:25 (after 26)\n" in page
-    # A book's table is headed by both Bibles' names for the book.
-    assert "\\tr\n\\th1 \\sc Jeremiah\\sc*\n\\th2 \\sc Jeremias\\sc*\n" in page
-    assert "\\tr\n\\th1 \\sc Genesis\\sc*\n\\th2 \\sc Genesis\\sc*\n" in page
+    assert "\\s2 Jeremias\n" in page
+    assert "\\s2 Genesis\n" in page
+    assert "\\th1 \\sc " not in page
     assert "\\is2" not in page
     tables = [
         node
@@ -330,11 +330,8 @@ def test_the_page_prints_its_tables(edition: bible.pipeline.Edition) -> None:
     # The Old Testament's, and four of the New Testament's.
     assert len(tables) == 35
     for table in tables:
-        *named, heading = list(usj.objects(table["content"]))[
-            : 1 if table is tables[0] else 2
-        ]
-        # Only the table of the books' names has no book over it.
-        assert len(named) == (table is not tables[0])
+        heading = next(usj.objects(table["content"]))
+        assert sum(n.get("marker") == "th1" for n in usj.walk(table["content"])) == 1
         assert heading["marker"] == "tr"
         cells = list(usj.objects(heading["content"]))
         assert [cell["marker"] for cell in cells] == ["th1", "th2"]
@@ -351,7 +348,7 @@ def test_the_page_prints_its_tables(edition: bible.pipeline.Edition) -> None:
     ):
         assert f"\\tr\n\\tc1 {theirs}\n\\tc2 {ours}\n" in page
     assert "as Proverbs 22:8a, is usually an addition" in page
-    assert "the Song of the Three Children runs from Daniel 3:24 to 3:90." in page
+    assert "the Song of the Three Children is headed from Daniel 3:25 to 3:90." in page
     assert "as 2:28–32 beside 3:1–5, they answer" in page
     # Esther's verses that are the King James Bible's Rest of Esther.
     assert "\\tc1 The Rest of Esther (Apocrypha)\n\\tc2 Esther, the additions\n" in page
@@ -359,17 +356,14 @@ def test_the_page_prints_its_tables(edition: bible.pipeline.Edition) -> None:
     assert "\\tr\n\\tc1 (\\it missing\\it*)\n\\tc2 151\n" in page
     blocks = list(usj.objects(edition.documents[NUMBERING["id"]]["content"]))
     headings = [
-        usj.text_of(next(usj.objects(table["content"]))["content"][1:2])
-        for table in tables[1:]
+        usj.text_of(block["content"]) for block in blocks if block.get("marker") == "s2"
     ]
-    # The Psalms' table stands at their place, under the editor's words, and
-    # a blank line sets every table off from the one before it.
+    # The Psalms' table stands at their place, directly after the editor's
+    # explanation; neighboring tables need no blank paragraphs as padding.
     psalms = blocks.index(tables[1:][headings.index("Psalms")])
-    assert [block.get("marker") for block in blocks[psalms - 2 : psalms]] == [
-        "ib",
-        "ip",
-    ]
-    assert blocks[psalms + 1]["marker"] == "ib"
+    assert blocks[psalms - 2] == usj.para("s2", "Psalms")
+    assert blocks[psalms - 1]["marker"] == "p"
+    assert blocks[psalms + 1] == usj.para("s2", "Job")
     assert headings.index("Nehemias") < headings.index("Psalms")
     assert headings.index("Psalms") < headings.index("Job")
     # Books that are numbered alike have no table.
@@ -576,5 +570,5 @@ def test_generated_names_share_the_body_heading_registry(
     written = sources.authored[NUMBERING["file"]] + "\\ip {JER 38:31}\n"
     page = printed(written, ours=ours)
     assert "\\tr\n\\tc1 Jeremiah\n\\tc2 Renamed Jeremias\n" in page
-    assert "\\th1 \\sc Jeremiah\\sc*\n\\th2 \\sc Renamed Jeremias\\sc*\n" in page
+    assert "\\s2 Renamed Jeremias\n" in page
     assert page.endswith("\\ip Renamed Jeremias 38:31\n")

@@ -17,6 +17,7 @@ from bible import (
     assembly,
     export,
     files,
+    peripherals,
     pipeline,
     references,
     scripture,
@@ -81,18 +82,13 @@ def write_fonts(directory: Path) -> None:
     (directory / "fonts.css").write_text(font_stylesheet(faces), encoding="utf-8")
 
 
-# The headings that stand for an unnumbered chapter's number: a section's,
-# as Susanna's, or a title's, as Sirach's Prologue's.
-TITLES = ("s1", "d")
-
-
 def label(chapter: usj.Node, blocks: list[usj.Node]) -> str:
     """The number a chapter prints, or the heading that stands for it."""
     shown = chapter.get("pubnumber", chapter["number"])
     if shown != scripture.HIDDEN:
         return shown
     heading = present(
-        next((block for block in blocks if block.get("marker") in TITLES), None),
+        next((b for b in blocks if usj.is_type(b, "para", "cl")), None),
         f"Unnumbered chapter has no heading: {chapter}",
     )
     return scripture.plain(usj.text_of(heading.get("content", [])))
@@ -294,12 +290,14 @@ def matter(
             f"Front matter does not open with its book, its names and one title: {code}",
         )
         unit: Unit = {
-            "id": code,
+            "id": peripherals.UNITS[code].slug,
             "section": section,
             "title": edition.names[code]["title"],
             "short": edition.names[code]["short_title"],
         }
-        result.append((unit, usj.with_blocks(doc, [book, *rest])))
+        division = peripherals.division(code, usj.with_blocks(doc, rest), unit["title"])
+        group = peripherals.book(code)
+        result.append((unit, usj.document([{**book, "code": group}, division])))
     return result
 
 
@@ -321,6 +319,8 @@ def write(edition: pipeline.Edition, directory: Path) -> None:
         # The Greek elision mark is set as its font has it.
         doc = export.fonted(edition, code, export.with_printed_origins(documents[code]))
         (book, *header), parts = pipeline.headed_chapters(doc)
+        introduction = [n for n in header if n.get("marker") not in usj.BOOK_PARAGRAPHS]
+        header = [n for n in header if n.get("marker") in usj.BOOK_PARAGRAPHS]
         # Before the first chapter stand only the book's names, which the
         # manifest carries.
         require(
@@ -347,17 +347,33 @@ def write(edition: pipeline.Edition, directory: Path) -> None:
                 directory / "books" / code / f"{number}.json",
                 usj.with_blocks(doc, [book, *blocks]),
             )
-        books.append(
-            {
-                "id": code,
-                "section": unit["section"],
-                "title": names[assembly.NAME_MARKERS["title"]],
-                "short": names[assembly.NAME_MARKERS["short_title"]],
-                # The name one of its chapters is cited by.
-                "cited": edition.books.name(code, chapters=(1,)),
-                "chapters": chapters,
+        listed_book: dict[str, object] = {
+            "id": code,
+            "section": unit["section"],
+            "title": names[assembly.NAME_MARKERS["title"]],
+            "short": names[assembly.NAME_MARKERS["short_title"]],
+            # The name one of its chapters is cited by.
+            "cited": edition.books.name(code, chapters=(1,)),
+            "chapters": chapters,
+        }
+        if introduction:
+            title = present(
+                next((n for n in introduction if n.get("marker") == "imt1"), None),
+                f"Book introduction without its title: {code}",
+            )
+            require(
+                all(n.get("marker") in {"imt1", "ip"} for n in introduction),
+                f"Unexpected book introduction: {code}",
+            )
+            listed_book["introduction"] = {
+                "title": usj.text_of(title["content"]),
+                "slug": "prologue",
             }
-        )
+            files.write_json(
+                directory / "books" / code / "prologue.json",
+                usj.with_blocks(doc, [book, *introduction]),
+            )
+        books.append(listed_book)
     units = []
     for listed, doc in matter(edition, documents):
         files.write_json(directory / "matter" / f"{listed['id']}.json", doc)

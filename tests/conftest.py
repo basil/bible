@@ -55,9 +55,15 @@ def policy(edition: bible.pipeline.Edition) -> bible.policy.Policy:
 
 
 @pytest.fixture(scope="session")
-def exported(edition: bible.pipeline.Edition) -> dict[str, str]:
+def prepared(edition: bible.pipeline.Edition) -> list[tuple[str, bible.usj.Document]]:
+    """The full edition as PTXprint takes it, by unit, in order."""
+    return export.prepared(edition, "pdf")
+
+
+@pytest.fixture(scope="session")
+def exported(prepared: list[tuple[str, bible.usj.Document]]) -> dict[str, str]:
     """The full edition as it is sent to be typeset, by unit."""
-    return dict(export.export(edition, "pdf"))
+    return {code: bible.usj.serialize(doc) for code, doc in prepared}
 
 
 def plain(value: object) -> object:

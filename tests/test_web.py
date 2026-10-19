@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 from fontTools.ttLib import TTFont
 
-from bible import export, files, pipeline, scripture, typeface, usj, web
+from bible import export, files, peripherals, pipeline, scripture, typeface, usj, web
 from bible.checks import CheckFailed
 from bible.sources import Sources
 
@@ -115,6 +115,9 @@ def test_web(edition: pipeline.Edition, tmp_path: Path) -> None:
             ],
         )
         blocks = [doc["content"][0]]
+        if "introduction" in book:
+            introduction = files.read_json(tmp_path / "books" / code / "prologue.json")
+            blocks += introduction["content"][1:]
         for chapter in book["chapters"]:
             part = files.read_json(
                 tmp_path / "books" / code / f"{chapter['number']}.json"
@@ -133,14 +136,34 @@ def test_web(edition: pipeline.Edition, tmp_path: Path) -> None:
         node.get("marker") == "wh" and usj.text_of(node["content"]) == "רפאים"
         for node in usj.walk(kingdoms["content"])
     )
+    # A source subscription remains available as paratext, outside verse words.
+    romans = files.read_json(tmp_path / "books" / "ROM" / "16.json")
+    sidebar = romans["content"][-1]
+    assert (sidebar["type"], sidebar["category"]) == ("sidebar", "colophon")
+    assert "Written to the Romans" in usj.text_of(sidebar["content"])
+    assert "Written to the Romans" not in scripture.verses(romans)["16:24"].text
+    # Ordinary footnotes carry reference nodes without cross-reference fields.
+    assert any(n["type"] == "ref" for n in usj.walk(genesis["content"]))
+    assert all(
+        n.get("marker") != "xt"
+        for note in usj.notes_of(genesis["content"])
+        if note["marker"] == "f"
+        for n in usj.walk(note["content"])
+    )
     daniel = next(b for b in manifest["books"] if b["id"] == "DAG")
     labels = [c["label"] for c in daniel["chapters"] if c["titled"]]
     assert labels == ["Susanna", "Bel and the Dragon"]
-    # Sirach's Prologue is a chapter its title stands for.
+    # Sirach's Prologue is a book introduction, not a chapter.
     sirach = next(b for b in manifest["books"] if b["id"] == "SIR")
-    prologue = sirach["chapters"][0]
-    assert (prologue["number"], prologue["titled"]) == ("0", True)
-    assert prologue["label"].startswith("The Prologue to the Wisdom of Jesus")
+    assert sirach["chapters"][0]["number"] == "1"
+    assert sirach["introduction"]["slug"] == "prologue"
+    assert sirach["introduction"]["title"].startswith(
+        "The Prologue to the Wisdom of Jesus"
+    )
+    prologue = files.read_json(tmp_path / "books" / "SIR" / "prologue.json")
+    assert not any(
+        n["type"] in {"chapter", "verse"} for n in usj.walk(prologue["content"])
+    )
     # The stasis rule set before Psalm 4 opens it, not the close of Psalm 3.
     psalms = tmp_path / "books" / "PSA"
     rule, chapter = files.read_json(psalms / "4.json")["content"][1:3]
@@ -210,51 +233,61 @@ def test_matter(edition: pipeline.Edition) -> None:
     documents = dict(pipeline.view(edition, "pdf"))
     listed = web.matter(edition, documents)
     assert [(unit["id"], unit["section"]) for unit, _ in listed] == [
-        ("XXD", "front"),
-        ("CNC", "front"),
-        ("XXA", "front"),
-        ("XXB", "old_testament"),
-        ("XXE", "old_testament"),
-        ("TDX", "new_testament"),
-        ("NDX", "new_testament"),
+        ("abbreviations", "front"),
+        ("editor-introduction", "front"),
+        ("numbering", "front"),
+        ("brenton-preface", "old_testament"),
+        ("brenton-introduction", "old_testament"),
+        ("dedication", "new_testament"),
+        ("translators-to-reader", "new_testament"),
     ]
     units = {unit["id"]: unit for unit, _ in listed}
-    assert units["XXD"]["short"] == "Abbreviations"
-    assert units["TDX"]["title"] == "The Epistle Dedicatory"
-    assert units["CNC"]["title"] == "Editor’s Introduction"
+    assert units["abbreviations"]["short"] == "Abbreviations"
+    assert units["dedication"]["title"] == "The Epistle Dedicatory"
+    assert units["editor-introduction"]["title"] == "Editor’s Introduction"
+    source_codes = {unit.slug: code for code, unit in peripherals.UNITS.items()}
+    blocks = {}
     for unit, doc in listed:
-        code = unit["id"]
+        code = source_codes[unit["id"]]
         whole = documents[code]
         if code not in edition.authored:
             whole = usj.with_content(whole, export.font_runs)
-        assert doc["content"][0]["type"] == "book"
-        assert doc["content"][0] == whole["content"][0]
-        assert doc == usj.with_blocks(
-            whole,
-            [b for b in whole["content"] if b.get("marker") not in web.NAMES],
+        book, division = doc["content"]
+        assert book == {
+            **whole["content"][0],
+            "code": peripherals.book(code),
+        }
+        assert division["type"] == "periph"
+        assert division["id"] == peripherals.UNITS[code].periph
+        assert division["alt"] == unit["title"]
+        blocks[unit["id"]] = division["content"]
+        assert division["content"] == [
+            b for b in whole["content"][1:] if b.get("marker") not in web.NAMES
+        ]
+        assert (
+            sum(b.get("marker") == "mt1" for b in usj.objects(division["content"])) == 1
         )
-        assert [b.get("marker") for b in doc["content"][1:]].count("mt1") == 1
     markers = {
-        unit["id"]: [b.get("marker") for b in doc["content"][1:]]
-        for unit, doc in listed
+        slug: [b.get("marker") for b in usj.objects(body)]
+        for slug, body in blocks.items()
     }
-    # The dedication's address stands around its title, as printed.
-    assert markers["TDX"][:6] == ["mt2", "mt1", "mt2", "mt2", "mt2", "mt2"]
-    assert markers["XXD"][0] == "mt1"
-    blocks = {unit["id"]: doc["content"] for unit, doc in listed}
-    assert any(b["type"] == "table" for b in blocks["XXD"])
-    assert any(node.get("marker") == "th1" for node in usj.walk(blocks["XXA"]))
+    assert markers["dedication"][:6] == ["mt2", "mt1", "mt2", "mt2", "mt2", "po"]
+    assert markers["abbreviations"][0] == "mt1"
+    assert any(b["type"] == "table" for b in usj.objects(blocks["abbreviations"]))
+    assert any(node.get("marker") == "th1" for node in usj.walk(blocks["numbering"]))
+    assert "li1" in markers["brenton-introduction"]
+    assert "ili2" not in markers["brenton-introduction"]
     tagged = {
-        code: {
+        slug: {
             node["marker"]
-            for node in usj.walk(content)
+            for node in usj.walk(body)
             if node.get("marker") in ("wg", "wh")
         }
-        for code, content in blocks.items()
+        for slug, body in blocks.items()
     }
-    assert tagged["XXB"] == {"wg", "wh"}
-    assert "wg" in tagged["NDX"]
-    assert tagged["CNC"] == set()
+    assert tagged["brenton-preface"] == {"wg", "wh"}
+    assert "wg" in tagged["translators-to-reader"]
+    assert tagged["editor-introduction"] == set()
 
 
 def test_variants(edition: pipeline.Edition) -> None:
@@ -265,7 +298,7 @@ def test_variants(edition: pipeline.Edition) -> None:
     listed = web.variants(edition)
     assert listed["title"] == "Textual Variants"
     assert listed["terms"] == {"kjv": "KJV", "apparatus": "apparatus"}
-    assert {block["marker"] for block in listed["intro"]} == {"ip"}
+    assert {block["marker"] for block in listed["intro"]} == {"p"}
     assert usj.text_of(listed["intro"][-1]["content"]).startswith(
         "The Greek is Scrivener’s"
     )

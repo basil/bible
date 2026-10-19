@@ -41,12 +41,18 @@ def test_a_link_prints_the_other_passage_and_turpies_judgment(
 ) -> None:
     matthew = usj.serialize(edition.documents["MAT"])
     # The reference alone, where Turpie's class prints no gloss.
-    assert "\\v 23 \\x - \\xo 1:23 \\xt Esai. 7:14\\x*Behold, a virgin" in matthew
-    assert "\\x - \\xo 2:15 \\xt Hos. 11:1 \\xta (Heb.\u00a0≠ LXX)\\x*" in matthew
+    assert (
+        "\\v 23 \\x - \\xo 1:23 \\xt \\ref Esai. 7:14|ISA 7:14\\ref*\\x*Behold, a virgin"
+        in matthew
+    )
+    assert (
+        "\\x - \\xo 2:15 \\xt \\ref Hos. 11:1|HOS 11:1\\ref* \\xta (Heb.\u00a0≠ LXX)\\x*"
+        in matthew
+    )
     # Quotations sharing a printed agreement are one note, before its footnotes.
     psalms = usj.serialize(edition.documents["PSA"])
     assert (
-        "\\v 7 \\x - \\xo 2:7 \\xt Acts 13:33; Heb. 1:5; 5:5 "
+        "\\v 7 \\x - \\xo 2:7 \\xt \\ref Acts 13:33|ACT 13:33\\ref*; \\ref Heb. 1:5|HEB 1:5\\ref*; \\ref 5:5|HEB 5:5\\ref* "
         "\\xta (Heb.\u00a0+ LXX)\\x*declaring the ordinance"
     ) in psalms
 
@@ -220,7 +226,9 @@ def test_a_see_note_that_names_more_than_its_link_needs_a_decision(
             }
         ),
     )
-    assert line.startswith("\\f - \\fr 99:3 \\ft See \\xt Matt. 3:3; John 1:23\\f*")
+    assert line.startswith(
+        "\\f - \\fr 99:3 \\ft See \\ref Matt. 3:3|MAT 3:3\\ref*; \\ref John 1:23|JHN 1:23\\ref*\\f*"
+    )
     # A merge must say which verse it drops.
     merged: dict[str, QuotationsNoteMerges] = {
         "ISA 99:3": {"action": "merge", "why": "reviewed"}

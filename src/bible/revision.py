@@ -900,7 +900,9 @@ def respelt(
         output: Content = []
         for item in content:
             if isinstance(item, dict) and "content" in item:
-                if item.get("marker") in {"fq", "fqa"}:
+                if item.get("marker") in {"fq", "fqa"} or (
+                    key is not None and item.get("marker") == "it"
+                ):
                     inner = _rewritten(
                         item["content"],
                         confined.get(key, general) if key is not None else general,

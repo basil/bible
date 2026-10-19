@@ -39,8 +39,6 @@ def test_prose_additions_preserve_order_styles_and_inputs(
                             usj.para(
                                 "ip", "An ", usj.char("it", "important"), " reading."
                             ),
-                            usj.para("ili1", "A term"),
-                            usj.para("ili2", "Its definition."),
                         ],
                     }
                 ],
@@ -55,14 +53,110 @@ def test_prose_additions_preserve_order_styles_and_inputs(
         "\\ip Before.",
         "\\ib",
         "\\ip An \\it important\\it* reading.",
-        "\\ili1 A term",
-        "\\ili2 Its definition.",
         "\\ip After.",
     ]
     # The inserted objects are independent of the frozen decision, too.
     result["content"][3]["content"].append(" Changed.")
     assert doc == before
     assert bible.policy.thaw(policy.prose) == decisions
+
+
+STRUCTURED = (
+    "\\id XXB\n\\mt1 Title\n\\is1 Heading\n\\ip Opening words.\n\\ib\n"
+    "\\ip A topic.\n\\ib\n\\im Gr. quoted.\n\\ip Plain.\n"
+)
+
+
+def with_markers(
+    declared: bible.policy.Policy, *markers: dict[str, str]
+) -> bible.policy.Policy:
+    return declared.replace(
+        prose={"structure": {"why": "Roles.", "changes": [], "markers": list(markers)}}
+    )
+
+
+def test_marker_decisions_give_front_matter_its_roles(
+    declared: bible.policy.Policy,
+) -> None:
+    doc = usj.parse(STRUCTURED)
+    before = copy.deepcopy(doc)
+    policy = with_markers(
+        declared,
+        {"unit": "XXB", "from": "ib", "to": "sd1", "before": "A topic", "why": "."},
+        {"unit": "XXB", "from": "im", "to": "pm", "opening": "Gr.", "why": "."},
+        {"unit": "XXB", "from": "ip", "to": "li1", "opening": "Plain", "why": "."},
+    )
+    result = matter.structured("XXB", doc, policy)
+    assert doc == before
+    assert [usj.paragraph(b) for b in result["content"][1:]] == [
+        "mt1",
+        "s1",
+        "p",
+        "sd1",
+        "p",
+        "pm",
+        "li1",
+    ]
+    assert usj.text_of(result["content"][-1]["content"]) == "Plain."
+    assert result["content"][4] == usj.para("sd1")
+
+
+@pytest.mark.parametrize(
+    "marker, refusal",
+    [
+        (
+            {"unit": "XXB", "from": "ip", "to": "li1", "opening": "Absent", "why": "."},
+            "not met once",
+        ),
+        (
+            {"unit": "XXB", "from": "ip", "to": "li1", "opening": "", "why": "."},
+            "known by its opening words",
+        ),
+        (
+            {"unit": "XXB", "from": "ib", "to": "sd1", "before": "Nothing", "why": "."},
+            "not met once",
+        ),
+        (
+            {
+                "unit": "XXB",
+                "from": "ib",
+                "to": "sd1",
+                "opening": "A topic",
+                "why": ".",
+            },
+            "known by its opening words",
+        ),
+        (
+            {"unit": "XXB", "from": "ip", "to": "ip", "opening": "Plain", "why": "."},
+            "changes nothing",
+        ),
+        (
+            {"unit": "GEN", "from": "ip", "to": "li1", "opening": "Plain", "why": "."},
+            "not front or back matter",
+        ),
+        (
+            {"unit": "XXB", "from": "ip", "to": "li1", "opening": "Plain ", "why": "."},
+            "surrounding space",
+        ),
+    ],
+)
+def test_marker_decisions_that_describe_nothing_are_refused(
+    declared: bible.policy.Policy, marker: dict[str, str], refusal: str
+) -> None:
+    with pytest.raises(CheckFailed, match=refusal):
+        matter.structured("XXB", usj.parse(STRUCTURED), with_markers(declared, marker))
+
+
+def test_a_paragraph_two_marker_decisions_describe_is_refused(
+    declared: bible.policy.Policy,
+) -> None:
+    policy = with_markers(
+        declared,
+        {"unit": "XXB", "from": "ip", "to": "li1", "opening": "Plain", "why": "."},
+        {"unit": "XXB", "from": "ip", "to": "m", "opening": "Plain.", "why": "."},
+    )
+    with pytest.raises(CheckFailed, match="two marker decisions"):
+        matter.structured("XXB", usj.parse(STRUCTURED), policy)
 
 
 def test_prose_additions_after_one_paragraph_keep_their_order(
@@ -170,10 +264,12 @@ def test_brentons_introduction_includes_the_1851_continuation(
     assert "as much among Protestants as among those" in introduction
     assert "Petri and Pauli" in introduction
     assert "\\it intentionally\\it*" in introduction
-    assert introduction.index("\\ili1 \\it The Old Latin\\it*\n") < introduction.index(
-        "\\ili1 \\it The Gothic\\it*\n"
+    # The early translations are the entries of a list, each with the
+    # source's run-in name.
+    assert introduction.index("\\li1 \\it The Old Latin.\\it*—") < introduction.index(
+        "\\li1 \\it The Gothic.\\it*—"
     )
-    assert introduction.index("\\ili1 \\it The Gothic\\it*\n") < introduction.index(
+    assert introduction.index("\\li1 \\it The Gothic.\\it*—") < introduction.index(
         "Cardinal Caraffa"
     )
     assert introduction.index("Cardinal Caraffa") < introduction.index("Tischendorf")
@@ -218,14 +314,12 @@ def test_the_appendix_notes_are_footnotes_at_their_verses(
         if line.startswith("\\v 18 And the Philistines came")
     )
     # After the margin note on the word, which keeps its other words.
-    assert (
-        "\\fqa Rephaim\\f*\\ef + \\ft Giants. \\+it Heb.\\+it* רפאים. For" in kingdoms
-    )
-    assert kingdoms.endswith("Isaiah.\\ef*giants.")
+    assert "\\fqa Rephaim\\f*\\f + \\ft Giants. \\+it Heb.\\+it* רפאים. For" in kingdoms
+    assert kingdoms.endswith("Isaiah.\\f*giants.")
     # The verses it supplies carry their numbers in the note.
     exodus = next(line for line in lines(edition, "EXO") if "Complutensian" in line)
     assert exodus.startswith(
-        "\\v 23 \\ef + \\ft The following verses are found neither in Codex Vaticanus"
+        "\\v 23 \\f + \\ft The following verses are found neither in Codex Vaticanus"
         " nor Codex Alexandrinus, but appear thus in the Complutensian text:"
     )
     assert "\\+fv 23\\+fv*And thou shalt make upon the oracle" in exodus
@@ -388,14 +482,16 @@ def test_front_and_back_matter_heading_capitalization(
     expected = {
         "XXD": ["\\mt1 Abbreviations Used in the Notes"],
         "XXB": ["\\mt1 Preface"],
-        "XXE": ["\\mt1 Introduction"],
+        "XXE": [
+            "\\mt1 Introduction",
+            "\\mt2 A Historical Account of the Septuagint Version",
+        ],
         "TDX": [
             "\\mt2 To the Most High and Mighty Prince",
             "\\mt1 James,",
             "\\mt2 by the Grace of God",
             "\\mt2 King of Great Britain, France, and Ireland,",
             "\\mt2 Defender of the Faith, etc.",
-            "\\mt2 The Translators of the Bible wish Grace, Mercy, and Peace, through Jesus Christ our Lord.",
         ],
         "NDX": ["\\mt1 The Translators to the Reader"],
         "CNC": ["\\mt1 Editor’s Introduction"],
@@ -410,6 +506,10 @@ def test_front_and_back_matter_heading_capitalization(
         assert [
             line for line in lines(edition, code) if line.startswith("\\mt")
         ] == headings
+    assert (
+        "\\po The Translators of the Bible wish Grace, Mercy, and Peace, through Jesus Christ our Lord."
+        in lines(edition, "TDX")
+    )
     # The textual variants, prepared for the website alone.
     assert [
         line
@@ -450,15 +550,15 @@ def test_matter_cites_and_names_as_the_edition_does(
     # Brenton's "Gen. xlvii. 31, compared with Hebrews xi. 21".
     assert "afforded by Gen. 47:31, compared with Heb. 11:21" in preface
     # A declared change keeps the style of the words it replaces.
-    assert "\\im \\it Authorized Version\\it* bowed himself" in preface
+    assert "\\pm \\it Authorized Version\\it* bowed himself" in preface
     # Titles and headings drop their closing full stops.
     assert not [
         line
         for line in lines(edition, "XXE")
-        if line.startswith(("\\is1", "\\is2")) and line.endswith(".")
+        if line.startswith(("\\s1", "\\s2", "\\mt")) and line.endswith(".")
     ]
     # Only the stop that closes a heading, not one before a style within it.
-    heading = usj.parse("\\id XXB\n\\is1 St. \\it John\\it* I.\n")["content"][1]
+    heading = usj.parse("\\id XXB\n\\s1 St. \\it John\\it* I.\n")["content"][1]
     ((printed, _),) = matter.unpunctuated([(heading, {})])
     assert usj.serialize(printed["content"]) == "St. \\it John\\it* I"
 

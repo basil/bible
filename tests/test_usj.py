@@ -10,7 +10,7 @@ import pytest
 import bible.export
 import bible.pipeline
 import bible.sources
-from bible import scripture, usj
+from bible import assembly, scripture, usj
 from bible.checks import CheckFailed
 from bible.usj import Node
 
@@ -88,7 +88,8 @@ def test_every_source_book_survives_reading_and_writing(
     # The corrections to Brenton's transcription are made before it is read.
     for code, doc in read.kjv.items():
         written = usj.serialize(doc)
-        assert unspaced(written) == unspaced(versioned(sources.kjv[code])), code
+        source = assembly.colophon(usj.parse(sources.kjv[code]))
+        assert unspaced(written) == unspaced(usj.serialize(source)), code
         assert usj.parse(written) == doc, code
     for code in ("RUT", "PSA", "SIR", "XXA"):
         doc = usj.parse(sources.brenton[code])
@@ -381,15 +382,15 @@ def test_choenix_spacing_and_italics_survive_preparation_and_export(
     )
     assert "choenix signifieth" in usj.text_of(note["content"])
     assert any(
-        usj.is_type(n, "char", "fqa") and usj.text_of(n["content"]).endswith("choenix ")
+        usj.is_type(n, "char", "it") and usj.text_of(n["content"]) == "choenix"
         for n in usj.walk(note["content"])
     )
     text = exported["REV"]
-    assert "choenix \\ft signifieth" in text
+    assert "choenix\\+it* signifieth" in text
     passage = usj.parse("\\id REV\n\\c 6\n\\p\n\\v 6 A measure of wheat.\n")
     block = passage["content"][-1]
     block["content"].append(note)
-    text = bible.export.exported("REV", passage, edition)
+    text = usj.serialize(bible.export.document("REV", passage, edition))
     doc = usj.parse(text)
     path = tmp_path / "REV.usfm"
     path.write_text(text, encoding="utf-8")

@@ -62,7 +62,8 @@ def test_the_edition_prints_every_unit_once_in_the_manifests_order(
         # Alexandrinus lacks, and divided as the edition's numbering divides
         # them; and the King James New Testament less the four verses the
         # Byzantine text lacks.
-        "verses": 36604,
+        # Sirach's translator's Prologue is an introduction, not a verse.
+        "verses": 36603,
     }
 
 
@@ -371,7 +372,7 @@ def test_the_editions_spelling_is_revised_wherever_a_word_is_printed(
     # stand on their own account.
     source_names = {
         "CNC": ["Nehemiah"],
-        "XXA": ["Nehemiah", "Nehemiah"],
+        "XXA": ["Nehemiah"],
     }
     assert re.search(
         r"\bOsee and Naum\b", usj.text_of(edition.documents["CNC"]["content"])
@@ -977,7 +978,8 @@ def test_the_sample_prints_selected_chapters_as_the_full_edition_has_them(
     # test_psalter.
     def without_divisions(doc: Document) -> Document:
         return usj.with_blocks(
-            doc, [b for b in doc["content"] if b.get("marker") not in {"sd2", "ms1"}]
+            doc,
+            [b for b in doc["content"] if b.get("marker") not in {"sd1", "sd2", "ms1"}],
         )
 
     for code, chapters in policy.sample.items():
@@ -988,13 +990,17 @@ def test_the_sample_prints_selected_chapters_as_the_full_edition_has_them(
             for blocks in assembly.chapters_of(without_divisions(full[code]))[1]
         }
         for blocks in wanted:
-            assert blocks == whole[blocks[0]["number"]], code
+            number = int(blocks[0]["number"])
+            expected = whole[str(number)]
+            if number - 1 not in chapters and usj.is_type(expected[1], "para", "nb"):
+                expected = [expected[0], {**expected[1], "marker": "p"}, *expected[2:]]
+            assert blocks == expected, code
     # A heading set before a chapter is kept with it.
     daniel = usj.serialize(sample["DAG"])
-    assert daniel.count("\\s1 Susanna\n\\c 0\n\\cp ​\n") == 1
-    # A chapter's own closing paragraph stays with it: Psalm 71 ends in a \d
-    # that holds its last verse.
-    close = "\\d\n\\v 20 The hymns of David the son of Jesse are ended.\n"
+    assert daniel.count("\\c 0\n\\cp ​\n\\cl Susanna\n") == 1
+    # A chapter's own closing note stays with it: Psalm 71 ends in the
+    # Hebrew note that holds its last verse.
+    close = "\\q1\n\\v 20 The hymns of David the son of Jesse are ended.\n"
     psalms = edition.documents["PSA"]
     assert usj.serialize(pipeline.sample_chapters("PSA", psalms, [71])).endswith(close)
     assert close not in usj.serialize(pipeline.sample_chapters("PSA", psalms, [72]))
@@ -1007,14 +1013,15 @@ def test_what_is_typeset_prints_margin_origins_and_bottom_callers(
         text = exported[code]
         # A note in the margin has no caller: any, "*" as well as "+", would
         # stand in the text. A note at the foot of the page has its number.
-        assert not re.search(r"\\[fx] (?!- )", text), code
-        assert not re.search(r"\\ef (?!\+ )", text), code
+        assert not re.search(r"\\x (?!- )", text), code
+        assert not re.search(r"\\f (?![-+] )", text), code
+        assert "\\ef " not in text, code
         # The chapter is the page's to supply: an origin is its verse alone.
         assert not re.search(r"\\(?:fr|xo) \d+:", text), code
-        for note in re.findall(r"\\ef \+ (.*?)\\ef\*", text, re.DOTALL):
+        for note in re.findall(r"\\f \+ (.*?)\\f\*", text, re.DOTALL):
             assert not re.search(r"\\(?:fr|xo) ", note), (code, note)
     assert (
-        r"\ef + \fq even fire, that it should come down from heaven upon the earth: "
+        r"\f + \cat edition\cat*\fq even fire, that it should come down from heaven upon the earth: "
     ) in exported["REV"]
     # Supplied verses within the Complutensian note keep their own labels.
     passage = next(
@@ -1060,15 +1067,26 @@ def test_lines_that_go_on_with_a_verse_are_indented() -> None:
     assert markers == ["id", "c", "p", "q1", "q2", "q1", "q2", "b", "q1"]
 
 
-def test_a_chapter_opens_in_a_paragraph_of_its_own() -> None:
+def test_export_preserves_chapter_continuations() -> None:
     # Matthew 5 goes on with the paragraph before it, and Scrivener opens
     # each epistle flush left; a paragraph within a chapter keeps its marker.
     doc = usj.parse(
         "\\id MAT\n\\c 4\n\\p \\v 1 Prose.\n\\m and on.\n"
         "\\c 5\n\\nb \\v 1 Prose.\n\\c 6\n\\m \\v 1 Prose.\n"
     )
-    markers = [b.get("marker") for b in export.opened(doc)["content"]]
-    assert markers == ["id", "c", "p", "m", "c", "p", "c", "p"]
+    markers = [b.get("marker") for b in export.spaced(doc)["content"]]
+    assert markers == ["id", "c", "p", "m", "c", "nb", "c", "m"]
+
+
+def test_sample_continuations_only_break_after_omitted_chapters() -> None:
+    doc = usj.parse(
+        "\\id ACT\n\\c 7\n\\p\\v 1 One.\n\\c 8\n\\nb\\v 1 Two.\n\\c 9\n\\nb\\v 1 Three."
+    )
+    consecutive = pipeline.sample_chapters("ACT", doc, [7, 8, 9])
+    assert usj.serialize(consecutive).count("\\nb") == 2
+    excerpt = pipeline.sample_chapters("ACT", doc, [8, 9])
+    assert usj.serialize(excerpt).count("\\nb") == 1
+    assert "\\c 8\n\\p\n" in usj.serialize(excerpt)
 
 
 def spaced_markers(usfm: str) -> list[str | None]:
@@ -1096,17 +1114,16 @@ def test_a_pause_supplies_the_break_before_the_next_poetic_line() -> None:
         "\\q1 I will teach you the fear of the Lord.\n"
         "\\b\n\\q1 \\v 13 What man is there that desireth life,\n"
         "\\qr Pause.\n\\b\n\\p \\v 14 Prose.\n"
-    ) == ["id", "c", "q1", "q1", "qr", "q1", "q1", "b", "q1", "qr", "b", "p"]
+    ) == ["id", "c", "q1", "q1", "qr", "q1", "q1", "b", "q1", "qr", "p"]
 
 
 def test_a_title_leads_directly_into_its_poem() -> None:
-    # A chapter that opens with a title gets a blank line before it where
-    # its chapters are not labelled; the title supplies its own space after,
-    # so a blank line the source sets after it goes too.
+    # Chapters and titles already mark boundaries; no blank paragraph pads
+    # them or separates a title from its poem.
     assert spaced_markers(
         "\\id PSA\n\\c 3\n\\q1 \\v 1 Line.\n\\c 4\n\\d \\v 1 A Psalm.\n"
         "\\b\n\\q1 \\v 2 Line.\n\\c 5\n\\d \\v 1 A Psalm.\n\\p \\v 2 Prose.\n"
-    ) == ["id", "c", "q1", "b", "c", "d", "q1", "b", "c", "d", "p"]
+    ) == ["id", "c", "q1", "c", "d", "q1", "c", "d", "p"]
 
 
 def test_labelled_chapters_supply_their_own_space() -> None:
@@ -1123,16 +1140,15 @@ def test_a_title_within_a_chapter_supplies_its_own_space() -> None:
     assert spaced_markers(
         "\\id ISA\n\\c 21\n\\p \\v 10 Prose.\n\\d \\v 11 A Vision.\n\\p Prose.\n"
         "\\c 22\n\\q1 \\v 1 Line.\n\\b\n\\d \\v 2 The hymns are ended.\n"
-    ) == ["id", "c", "p", "d", "p", "b", "c", "q1", "d"]
+    ) == ["id", "c", "p", "d", "p", "c", "q1", "d"]
 
 
-def test_a_chapter_between_a_poem_and_prose_gets_a_blank_line_before_it() -> None:
-    # Before a chapter that opens with a poem, and before one where prose
-    # resumes after a poem; not between two chapters of prose.
+def test_chapter_boundaries_do_not_get_blank_paragraphs() -> None:
+    # A chapter is a boundary in either poetry or prose.
     assert spaced_markers(
         "\\id PRO\n\\c 8\n\\q1 \\v 1 Line.\n\\c 9\n\\q1 \\v 1 Line.\n"
         "\\c 10\n\\p \\v 1 Prose.\n\\c 11\n\\p \\v 1 Prose.\n"
-    ) == ["id", "c", "q1", "b", "c", "q1", "b", "c", "p", "c", "p"]
+    ) == ["id", "c", "q1", "c", "q1", "c", "p", "c", "p"]
 
 
 def test_headings_and_rules_supply_their_own_space() -> None:
@@ -1163,7 +1179,11 @@ def test_the_psalter_alone_carries_one_chapter_label(exported: dict[str, str]) -
     psalms = exported["PSA"]
     assert psalms.count("\\cl ") == 1
     assert "\\cl Psalm\n\\c 1\n" in psalms
-    assert all("\\cl " not in text for code, text in exported.items() if code != "PSA")
+    assert all(
+        "\\cl " not in text
+        for code, text in exported.items()
+        if code not in {"PSA", "DAG", "SIR"}
+    )
 
 
 def test_a_title_keeps_the_marking_of_its_supplied_words(
@@ -1176,7 +1196,7 @@ def test_a_title_keeps_the_marking_of_its_supplied_words(
         "\\v 1 For the end, a Song of David among \\add the \\add*Psalms.\n" in psalms
     )
     assert (
-        "\\d \\add The Prologue to the Wisdom of\\add* Jesus \\add the son of\\add* Sirach\n"
+        "\\imt1 \\add The Prologue to the Wisdom of\\add* Jesus \\add the son of\\add* Sirach\n"
         in exported["SIR"]
     )
     assert "\\v 3 \\add saying\\add*, Let us break through their bonds," in psalms
@@ -2626,12 +2646,12 @@ def test_source_instructions_keep_their_export_markers_and_spacing() -> None:
 
 def test_an_acrostic_heading_supplies_its_own_space() -> None:
     # Lamentations 1 opens its poem after a paragraph of prose, and its
-    # chapters 2 to 4 with their first names, as chapter 5 opens with a line:
-    # the chapter, which has no label, still gets its blank line.
+    # chapters 2 to 4 with their first names, as chapter 5 opens with a line.
+    # Neither a chapter nor an acrostic label needs a blank paragraph.
     assert spaced_markers(
         "\\id LAM\n\\c 1\n\\p Prose.\n\\qa \\v 1 \\sc Aleph.\\sc*\n\\q1 Line.\n"
         "\\c 2\n\\qa \\v 1 \\sc Aleph.\\sc*\n\\q1 Line.\n\\c 5\n\\q1 \\v 1 Line.\n"
-    ) == ["id", "c", "p", "qa", "q1", "b", "c", "qa", "q1", "b", "c", "q1"]
+    ) == ["id", "c", "p", "qa", "q1", "c", "qa", "q1", "c", "q1"]
 
 
 def test_a_note_is_set_under_the_label_its_verse_prints() -> None:
@@ -2647,7 +2667,9 @@ def test_a_note_is_set_under_the_label_its_verse_prints() -> None:
 def test_exported_proverbs_sets_the_hebrews_labels(
     edition: bible.pipeline.Edition,
 ) -> None:
-    text = bible.export.exported("PRO", edition.documents["PRO"], edition)
+    text = usj.serialize(
+        bible.export.document("PRO", edition.documents["PRO"], edition)
+    )
     assert "\\v 22f \\vp 30:1\\vp* " in text
     assert "\\v 23 \\vp 24:23\\vp* " in text
 
@@ -2659,11 +2681,11 @@ def test_a_margin_note_names_another_chapters_label_in_full(
     # verse as it prints: with its chapter where its label names one.
     doc = usj.parse(
         "\\id PRO\n\\c 24\n\\p\n"
-        "\\v 22f \\vp 30:1\\vp* Agur\\f + \\fr 24:22f \\ft A\\f*\n"
-        "\\v 22g \\vp 2\\vp* said\\f + \\fr 24:22g \\ft B\\f*\n"
-        "\\v 23 back\\f + \\fr 24:23 \\ft C\\f*\n"
+        "\\v 22f \\vp 30:1\\vp* Agur\\f - \\fr 24:22f \\ft A\\f*\n"
+        "\\v 22g \\vp 2\\vp* said\\f - \\fr 24:22g \\ft B\\f*\n"
+        "\\v 23 back\\f - \\fr 24:23 \\ft C\\f*\n"
     )
-    text = bible.export.exported("PRO", doc, edition)
+    text = usj.serialize(bible.export.document("PRO", doc, edition))
     assert [
         line.split("\\fr ")[1].split(" \\ft")[0]
         for line in text.split("\n")

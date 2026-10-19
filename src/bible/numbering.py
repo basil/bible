@@ -327,30 +327,28 @@ class Table:
 
 def table_rows(
     rows: Sequence[tuple[str, str]],
-    names: tuple[str, str] | None = None,
     *,
     policy: bible.policy.Policy,
 ) -> Node:
     """A table: its headings, and a row for each pair of cells, given as
     (edition, King James) and printed with the King James Bible on the left.
-    A book's table is headed by both Bibles' names for the book, over the
-    headings."""
+    The two column headings identify the Bibles."""
 
     heads = (
         policy.title.rsplit(": ", 1)[-1],
         terminology.registry(policy).display("king-james-bible"),
     )
 
-    def content(cell: str, style: str | None) -> list[str | Node]:
+    def content(cell: str) -> list[str | Node]:
         if cell == MISSING:
             # Not a name or a number: set apart from them.
             return ["(", usj.char("it", cell), ")"]
-        return [usj.char(style, cell) if style else cell]
+        return [cell]
 
-    def row(kind: str, cells: tuple[str, ...], style: str | None = None) -> Node:
+    def row(kind: str, cells: tuple[str, ...]) -> Node:
         return usj.row(
             *(
-                usj.cell(f"{kind}{n}", *content(cell, style))
+                usj.cell(f"{kind}{n}", *content(cell))
                 for n, cell in enumerate(reversed(cells), 1)
             )
         )
@@ -358,7 +356,6 @@ def table_rows(
     return {
         "type": "table",
         "content": [
-            *([row("th", names, "sc")] if names else []),
             row("th", heads),
             *(row("tc", r) for r in rows),
         ],
@@ -369,14 +366,13 @@ def books_tables(
     inventory: scripture.Inventory,
     facing: scripture.Inventory,
     ours: bible.references.Books,
-    theirs: bible.references.Books,
     psalms: Sequence[Node],
     *,
     policy: bible.policy.Policy,
 ) -> list[Node]:
-    """The books' tables in the manifest's book order, each headed by both
-    Bibles' names for the book and set off by a blank line; the Psalms' table
-    under the editor's words for it."""
+    """The books' tables in the manifest's book order, within their own
+    named subsections; the Psalms' table
+    follows the editor's words within that subsection."""
     sections: list[Node] = []
     for entry in policy.scripture:
         code = entry["id"]
@@ -388,14 +384,10 @@ def books_tables(
             values = Table(code, inventory, facing, policy=policy).rows()
         if not values:
             continue
-        names = (
-            ours.names[code],
-            theirs.names[versification.kjv_book(code, policy=policy)],
-        )
         sections += [
-            usj.para("ib"),
+            usj.para("s2", ours.names[code]),
             *(psalms if code == "PSA" else ()),
-            table_rows(values, names, policy=policy),
+            table_rows(values, policy=policy),
         ]
     return sections
 
@@ -566,9 +558,7 @@ def page(
             elif asked[1] == "books":
                 here = psalms
             else:
-                blocks += books_tables(
-                    inventory, facing, ours, theirs, psalms, policy=policy
-                )
+                blocks += books_tables(inventory, facing, ours, psalms, policy=policy)
                 here = blocks
         elif line.strip():
             line = NAMED.sub(named, line)

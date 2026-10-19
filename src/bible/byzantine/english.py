@@ -146,11 +146,7 @@ def without_subscriptions(document: usj.Document) -> usj.Document:
         [
             n
             for n in document["content"]
-            if not (
-                n.get("type") == "para"
-                and n.get("marker") == "mi"
-                and usj.text_of(n.get("content", [])).lstrip().startswith("¶")
-            )
+            if not (n.get("type") == "sidebar" and n.get("category") == "colophon")
         ],
     )
 
@@ -170,18 +166,16 @@ def kjv(
         kept = without_subscriptions(document)
         removed = len(document["content"]) - len(kept["content"])
         if removed:
-            # The subscription closes the book: a blank line and its paragraph.
-            tail = document["content"][-removed - 1 :]
+            tail = document["content"][-removed:]
             require(
-                tail[0].get("marker") == "b" and len(tail) == removed + 1,
+                all(n.get("type") == "sidebar" for n in tail),
                 f"{book}: subscription is not the book's close",
             )
-            kept = usj.with_blocks(document, document["content"][: -removed - 1])
             taken[book] = tail
         clean[book] = kept
     verses = verses_of(clean)
     require(
-        len(verses) == 7957 and len(taken) == 14,
+        len(verses) == 7957 and len(taken) == 15,
         f"KJV inventory: {len(verses)} verses, {len(taken)} subscriptions",
     )
     return clean, verses, taken

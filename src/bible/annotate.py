@@ -889,7 +889,11 @@ def finished_rows(
                     continue
                 value = usj.text_of(n["content"])
                 if n.get("marker") != "fqa":
-                    runs.append(("commentary", value))
+                    for part in n["content"]:
+                        if usj.is_type(part, "char", "it"):
+                            runs.append(("quotation", usj.text_of(part["content"])))
+                        else:
+                            runs.append(("commentary", usj.text_of([part])))
                     continue
                 kept = value.rstrip()
                 runs.append(("reading", kept))

@@ -102,5 +102,10 @@
       150
     ]
   ],
-  "middle": "118:94"
+  "middle": "118:94",
+  "notes": {
+    "71:20": {
+      "why": "Brenton sets the collection’s closing notice, “The hymns of David the son of Jessæ are ended”, as a descriptive title (\\d). It remains verse 20 of Psalm 71, in an ordinary poetic paragraph (\\q1): it is neither an opening superscription nor a musical performance instruction (\\qd)."
+    }
+  }
 }

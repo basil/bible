@@ -1,0 +1,122 @@
+"""The edition's structural roles, checked across its exported corpus."""
+
+from pathlib import Path
+
+import pytest
+
+from bible import export, peripherals, pipeline, usj
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        '\\id XXA\n\\periph Preface|id="preface"\n\\p A preface.\n'
+        "\\esb \\cat colophon\\cat*\n\\p A closing notice.\n\\esbe\n",
+        "\\id GEN\n\\c 1\n\\p\\v 1 Words."
+        "\\f + \\cat edition\\cat*\\ft See "
+        "\\ref Genesis 1:2|GEN 1:2\\ref*.\\f*\n",
+    ],
+)
+def test_standard_containers_and_references_agree_with_usfmtc(
+    text: str, tmp_path: Path
+) -> None:
+    import usfmtc
+
+    path = tmp_path / "unit.usfm"
+    path.write_text(text, encoding="utf-8")
+    ours = usj.parse(text)
+    assert usj.parse(usj.serialize(ours)) == ours
+    assert usj.parse(usj.serialize(usfmtc.readFile(str(path)).outUsj(None))) == ours
+
+
+def test_peripheral_chapters_and_sidebar_boundaries() -> None:
+    text = '\\id XXA\n\\periph Index|id="x-index"\n\\c 1\n\\cp A\n\\p Words.\n'
+    doc = usj.parse(text)
+    assert usj.parse(usj.serialize(doc)) == doc
+    with pytest.raises(RuntimeError, match="Unclosed sidebar"):
+        usj.parse("\\id GEN\n\\esb\n\\p Open.\n\\id EXO\n")
+
+
+def test_exported_roles_are_consistent_across_the_edition(
+    edition: pipeline.Edition, prepared: list[tuple[str, usj.Document]]
+) -> None:
+    physical = export.grouped(edition, prepared)
+    assert len({code for code, _ in physical}) == len(physical)
+    divisions = []
+    colophons = []
+    for code, grouped in physical:
+        doc = usj.parse(usj.serialize(grouped))
+        # In particular, independent adjacent tables must not merge.
+        assert sum(n["type"] == "table" for n in usj.walk(grouped["content"])) == sum(
+            n["type"] == "table" for n in usj.walk(doc["content"])
+        )
+        assert usj.parse(usj.serialize(doc)) == doc, code
+        for block in usj.walk(doc["content"]):
+            if block["type"] == "periph":
+                assert doc["content"][0]["code"] in {"FRT", "INT"}
+                divisions.append(block["id"])
+            if block["type"] == "sidebar":
+                colophons.append((code, block.get("category")))
+            if usj.is_note(block):
+                assert block["marker"] != "ef", code
+                if block["marker"] == "f":
+                    assert all(
+                        n.get("marker") != "xt" for n in usj.walk(block["content"])
+                    ), code
+        block_groups: list[list[usj.Node]] = [doc["content"]]
+        block_groups.extend(
+            [
+                list(usj.objects(n["content"]))
+                for n in usj.objects(doc["content"])
+                if n["type"] == "periph"
+            ],
+        )
+        for blocks in block_groups:
+            for at, block in enumerate(blocks):
+                if usj.is_type(block, "para", "b"):
+                    assert 0 < at < len(blocks) - 1, code
+                    assert usj.paragraph(blocks[at - 1]) in usj.BODY, code
+                    assert usj.paragraph(blocks[at + 1]) in usj.BODY, code
+    assert divisions == [
+        peripherals.UNITS[code].periph
+        for code, _ in pipeline.view(edition, "pdf")
+        if code not in edition.scripture
+    ]
+    assert len(colophons) == 15
+    assert {category for _, category in colophons} == {"colophon"}
+
+
+def test_quotation_roles_preserve_the_edition_grammar(
+    edition: pipeline.Edition,
+) -> None:
+    for code, phrase in [
+        ("ISA", "he that sendeth"),
+        ("JER", "he hath passed the appointed time"),
+    ]:
+        quotes = [
+            usj.text_of(n["content"])
+            for n in usj.walk(edition.documents[code]["content"])
+            if usj.is_type(n, "char", "it")
+        ]
+        assert any(phrase in value for value in quotes), code
+
+
+def test_unnumbered_chapters_have_native_chapter_headings(
+    edition: pipeline.Edition,
+) -> None:
+    from bible import scripture
+
+    found = []
+    for code in edition.scripture:
+        blocks = edition.documents[code]["content"]
+        for at, block in enumerate(blocks):
+            if (
+                block["type"] == "chapter"
+                and block.get("pubnumber") == scripture.HIDDEN
+            ):
+                assert usj.is_type(blocks[at + 1], "para", "cl"), (
+                    code,
+                    block["number"],
+                )
+                found.append((code, block["number"]))
+    assert sorted(found) == [("DAG", "0"), ("DAG", "13")]

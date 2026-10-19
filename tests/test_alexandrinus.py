@@ -71,7 +71,7 @@ def test_a_reading_replaces_the_vatican_words_and_notes_them(
 ) -> None:
     doc = promoted(decided(policy, {"GEN 99:22": READING}))
     assert verse_lines(doc)["22"] == (
-        r"And \f + \fr 99:22 \fl Vat. \ft omits “the Lord”.\f*the Lord God said, Behold, "
+        r"And \f + \cat edition\cat*\fr 99:22 \fl Vat. \ft omits “the Lord”.\f*the Lord God said, Behold, "
         r"\f + \fr 99:22 \fqa Gr. \ft look.\f*Adam is become as one of us."
     )
     note = scripture.verses(doc)["99:22"].notes[0][1]
@@ -83,7 +83,7 @@ def test_a_reading_replaces_the_vatican_words_and_notes_them(
     # The edition's note names the words that were printed in the Vatican's place.
     printed, _ = annotate.brenton("GEN", doc, (), frozenset(), ctx)
     assert verse_lines(printed)["22"].startswith(
-        r"And \f - \fr 99:22 \fq the Lord God said: \ft Vat. omits \fqa the Lord\f*the Lord God said,"
+        r"And \f - \cat edition\cat*\fr 99:22 \fq the Lord God said: \ft Vat. omits \+it the Lord\+it*\f*the Lord God said,"
     )
 
 
@@ -322,7 +322,7 @@ def test_a_verse_omitted_whole_leaves_its_note_on_the_verse_before(
     assert list(lines) == ["16", "18"]
     assert (
         lines["16"]
-        == r"And Elisama, and Eliphalath.\f + \fr 99:16 \fl Vat. \ft adds \fq Samae, Nathan\ft .\f*"
+        == r"And Elisama, and Eliphalath.\f + \cat edition\cat*\fr 99:16 \fl Vat. \ft adds \fq Samae, Nathan\ft .\f*"
     )
 
 
@@ -350,7 +350,7 @@ def test_a_passage_supplies_verses_from_the_appendix_or_the_king_james_bible(
     lines = verse_lines(promoted(decided(policy, passages={"GEN 99:22a": passage})))
     assert list(lines) == ["21", "22a", "22", "23"]
     assert lines["22a"] == (
-        r"\f + \fr 99:22a \fl Vat. \ft omits this verse.\f*And the Philistine \add drew\add* nigh."
+        r"\f + \cat edition\cat*\fr 99:22a \fl Vat. \ft omits this verse.\f*And the Philistine \add drew\add* nigh."
     )
     borrowed = {
         "kjv": True,
@@ -392,13 +392,13 @@ def test_the_edition_prints_its_readings_and_supplied_passages(
     edition: bible.pipeline.Edition,
 ) -> None:
     assert (
-        r"\v 22 And \f - \fr 3:22 \fq the Lord God said: \ft Brenton omits"
+        r"\v 22 And \f - \cat edition\cat*\fr 3:22 \fq the Lord God said: \ft Brenton omits"
         in usj.serialize(edition.documents["GEN"])
     )
     kingdoms = usj.serialize(edition.documents["1SA"])
     # Supplied from the Authorized Version, with Brenton's form of the name.
     assert (
-        r"\v 12 \f - \fr 23:12 \ft Alex. has the verse. Vat. omits; the English is supplied "
+        r"\v 12 \f - \cat edition\cat*\fr 23:12 \ft Alex. has the verse. Vat. omits; the English is supplied "
         r"from the KJV.\f*Then said David, Will the men of Keila deliver me"
     ) in kingdoms
     # The names the Alexandrine text omits are noted on the verse before.
@@ -408,14 +408,24 @@ def test_the_edition_prints_its_readings_and_supplied_passages(
     # Its words stand in the note on the verse, in the edition's own style.
     kingdoms = usj.serialize(edition.documents["1KI"])
     assert (
-        r"\v 35a \f - \fr 2:35a \ft Alex. Considerable variation here rather than omission\f*and"
+        r"\v 35a \f - \cat edition\cat*\fr 2:35a \ft Alex. Considerable variation here rather than omission\f*and"
         in kingdoms
     )
-    proverbs = usj.serialize(edition.documents["PRO"])
-    assert (
-        r"\fq giants: \ft Heb. \fqa Rephaim\ft . See note on \xt 2 Kgdms. 5:18\f*giants"
-        in proverbs
+    gloss = next(
+        note
+        for _, note in scripture.verses(edition.documents["PRO"])["21:16"].notes
+        if "Rephaim" in usj.text_of(note["content"])
     )
+    assert gloss["category"] == "edition"
+    assert any(
+        node.get("marker") == "fqa" and usj.text_of(node["content"]) == "Rephaim"
+        for node in usj.walk(gloss["content"])
+    )
+    assert [
+        (node["loc"], usj.text_of(node["content"]))
+        for node in usj.walk(gloss["content"])
+        if node["type"] == "ref"
+    ] == [("2SA 5:18", "2 Kgdms. 5:18")]
 
 
 def test_a_passage_may_omit_a_verse_and_note_it_on_the_verse_before(
@@ -456,8 +466,8 @@ def test_a_passage_may_omit_a_verse_and_note_it_on_the_verse_before(
     )
     assert list(lines) == ["21", "21a"]
     assert lines["21a"] == (
-        r"\f + \fr 99:21a \fl Vat. \ft omits this verse.\f*And the Lord spoke."
-        r"\f + \fr 99:21a \fl Vat. \ft adds \fq So he sent him forth\ft .\f*"
+        r"\f + \cat edition\cat*\fr 99:21a \fl Vat. \ft omits this verse.\f*And the Lord spoke."
+        r"\f + \cat edition\cat*\fr 99:21a \fl Vat. \ft adds \fq So he sent him forth\ft .\f*"
     )
 
 
@@ -541,7 +551,7 @@ def test_a_king_james_passage_may_span_verses_and_be_conformed(
     assert list(lines) == ["21", "22", "23", "24", "25"]
     assert lines["24"] == "Then said David, Will they?"
     assert lines["25"] == (
-        r"And the Lord said, Go to \f + \fr 99:25 \fl Heb. \fq Tirzah\ft .\f*Sarira."
+        r"And the Lord said, Go to \f + \cat edition\cat*\fr 99:25 \fl Heb. \fq Tirzah\ft .\f*Sarira."
     )
     # The verses borrowed are those the decision is keyed by, and only they
     # may be conformed.
@@ -612,10 +622,10 @@ def test_a_passage_moves_whole_paragraphs_before_a_verse_and_notes_both_places(
     assert list(lines) == ["21", "23", "22"]
     assert (
         lines["23"]
-        == rf"\f + \fr 99:23 \fl {witness} \ft has this verse after verse 22.\f*C."
+        == rf"\f + \cat edition\cat*\fr 99:23 \fl {witness} \ft has this verse after verse 22.\f*C."
     )
     assert lines["22"] == (
-        rf"B.\f + \fr 99:22 \fl {witness} \ft has here the verse printed at 99:23.\f*"
+        rf"B.\f + \cat edition\cat*\fr 99:22 \fl {witness} \ft has here the verse printed at 99:23.\f*"
     )
     # A run that does not fill its paragraphs, or that would move later, is refused.
     joined = r"\v 21 A. \v 22 B." "\n" r"\p" "\n" r"\v 23 C."

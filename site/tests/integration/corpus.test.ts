@@ -33,7 +33,7 @@ function expectLinksResolved(content: string) {
       `Unlinked citation ${field.textContent}`,
     ).not.toBeNull();
   }
-  for (const link of fragment.querySelectorAll(".xt a")) {
+  for (const link of fragment.querySelectorAll('a[href^="/read/"]')) {
     const href = link.getAttribute("href")!;
     expect(targets.has(href), `Unresolved citation ${href}`).toBe(true);
   }
@@ -68,7 +68,7 @@ test("Exodus 4 links its note's citation to 1 Corinthians 2:16", () => {
   )!;
   const fragment = JSDOM.fragment(page.content);
   expect(
-    fragment.querySelector('.xt a[href="/read/1co/2#v16"]')!.textContent,
+    fragment.querySelector('.ft a[href="/read/1co/2#v16"]')!.textContent,
   ).toBe("1 Cor. 2:16");
 });
 
@@ -82,7 +82,26 @@ test("Susanna uses its source heading once", () => {
   expect(page.params.title).toBe("Susanna");
   const fragment = JSDOM.fragment(page.content);
   expect(fragment.querySelector("h1")!.textContent).toBe("Susanna");
-  expect(fragment.querySelector(".s1")).toBeNull();
+  expect(fragment.querySelector(".cl")).toBeNull();
+});
+
+test("Sirach's Prologue is an introduction before chapter 1", () => {
+  const sirach = manifest().books.find((book) => book.id === "SIR")!;
+  expect(sirach.chapters[0]!.number).toBe("1");
+  expect(sirach.chapters.some((chapter) => chapter.number === "0")).toBe(false);
+  const prologue = pages.find(
+    (page) => page.params.book === "sir" && page.params.chapter === "prologue",
+  )!;
+  expect(JSDOM.fragment(prologue.content).querySelector(".verse")).toBeNull();
+  expect(prologue.params.next).toEqual({
+    text: "Sirach 1",
+    link: "/read/sir/1",
+  });
+  expect(
+    pages.some(
+      (page) => page.params.book === "sir" && page.params.chapter === "0",
+    ),
+  ).toBe(false);
 });
 
 test("generated quotation lists link each passage independently", () => {
@@ -103,4 +122,18 @@ test("generated quotation lists link each passage independently", () => {
     ["Deut. 5:16", "/read/deu/5#v16"],
     ["17–21", "/read/deu/5#v17"],
   ]);
+});
+
+test("Lamentations keeps acrostic headings separate from verse numbers", () => {
+  const lamentations = pages.filter((p) => p.params.book === "lam");
+  let labels = 0;
+  for (const page of lamentations) {
+    const rendered = JSDOM.fragment(page.content);
+    for (const heading of rendered.querySelectorAll(".qa")) {
+      expect(heading.querySelector(".verse")).toBeNull();
+      expect(heading.nextElementSibling!.classList.contains("q1")).toBe(true);
+      labels++;
+    }
+  }
+  expect(labels).toBe(89);
 });

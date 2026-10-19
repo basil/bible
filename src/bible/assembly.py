@@ -32,11 +32,79 @@ NAME_MARKERS = {"title": "toc1", "short_title": "toc2", "abbreviation": "toc3"}
 NAME_ATTRIBUTES = {"abbreviation": "abbr", "short_title": "short", "title": "long"}
 # Daniel's parts that the Greek sets about it, each under a heading.
 DANIEL = (("SUS", "0", "Susanna"), ("BEL", "13", "Bel and the Dragon"))
+# The Song of the Three Children: the verse and words it is headed before,
+# and the verse and words at which the narrative resumes after it.
 SONG = (
-    "3:25",
-    "Then Azarias stood up, and prayed on this manner",
-    "The Song of the Three Children",
+    ("25", "Then Azarias stood up, and prayed on this manner"),
+    ("91", "And Nabuchodonosor"),
 )
+SONG_TITLE = "The Song of the Three Children"
+
+
+def colophon(doc: Document) -> Document:
+    """Keep a source's terminal subscription outside its scripture verses."""
+    blocks = doc["content"]
+    last = blocks[-1]
+    text = usj.text_of(last["content"])
+    if usj.book_code(doc) == "ACT" and usj.paragraph(last) == "d":
+        require(text == "The end of the Acts of the Apostles.", "Acts colophon changed")
+    elif not (usj.paragraph(last) == "mi" and text.startswith("¶")):
+        return doc
+    at = len(blocks) - 1
+    if at and usj.paragraph(blocks[at - 1]) == "b":
+        at -= 1
+    return usj.with_blocks(
+        doc,
+        [
+            *blocks[:at],
+            {
+                "type": "sidebar",
+                "marker": "esb",
+                "category": "colophon",
+                "content": [{**last, "marker": "p"}],
+            },
+        ],
+    )
+
+
+def divided_before(
+    blocks: list[Node],
+    boundary: tuple[str, str],
+    inserted: list[Node],
+    *,
+    resumed: str | None = None,
+) -> list[Node]:
+    """A chapter's blocks with the inserted blocks set before a verse, whose
+    words the boundary gives, the paragraph it stood in closing before them
+    and resuming after, under its own marker or the one given."""
+    number, opens = boundary
+    found = [
+        (index, n)
+        for index, block in enumerate(blocks)
+        if block["type"] == "para"
+        for n, item in enumerate(block["content"])
+        if usj.is_type(item, "verse") and item["number"] == number
+    ]
+    require(len(found) == 1, f"Daniel 3 boundary changed: verse {number}")
+    index, n = found[0]
+    block = blocks[index]
+    require(
+        usj.text_of(block["content"][n + 1 :]).startswith(opens),
+        f"Daniel 3 boundary changed: verse {number}",
+    )
+    before: Node = {**block, "content": block["content"][:n]}
+    after: Node = {
+        **block,
+        "marker": resumed or block["marker"],
+        "content": block["content"][n:],
+    }
+    return [
+        *blocks[:index],
+        *([before] if n else []),
+        *inserted,
+        after,
+        *blocks[index + 1 :],
+    ]
 
 
 def header(doc: Document, marker: str) -> str:
@@ -209,38 +277,14 @@ def daniel(doc: Document, brenton: Mapping[str, Document]) -> Document:
     for code, number, title in DANIEL:
         _, found = chapters_of(brenton[code])
         require(len(found) == 1, "Daniel source boundaries changed")
-        parts[code] = [
-            usj.para("s1", title),
-            *relabelled(found[0], number, pubnumber=HIDDEN),
-        ]
-    reference, opens, title = SONG
-    third = chapters[2]
-    at = next(
-        (
-            (index, n)
-            for index, block in enumerate(third)
-            if block["type"] == "para"
-            for n, item in enumerate(block["content"])
-            if usj.is_type(item, "verse") and item["number"] == reference.split(":")[1]
-        ),
-        None,
-    )
-    require(
-        at is not None
-        and usj.text_of(third[at[0]]["content"][at[1] + 1 :]).startswith(opens),
-        "Daniel 3 Song of the Three Children boundary changed",
-    )
-    assert at is not None
-    index, n = at
-    block = third[index]
-    chapters[2] = [
-        *third[:index],
-        # The paragraph the verse stood in closes before the heading.
-        {**block, "content": block["content"][:n]},
-        usj.para("s1", title),
-        usj.para("p", *block["content"][n:]),
-        *third[index + 1 :],
-    ]
+        chapter, *body = relabelled(found[0], number, pubnumber=HIDDEN)
+        parts[code] = [chapter, usj.para("cl", title), *body]
+    (opening, ending), third = SONG, chapters[2]
+    # The paragraph the Song's first verse stood in closes before its heading,
+    # and the unheaded return to Daniel's narrative closes the addition, at
+    # the same level as that heading.
+    third = divided_before(third, opening, [usj.para("s1", SONG_TITLE)], resumed="p")
+    chapters[2] = divided_before(third, ending, [usj.para("sd1")])
     blocks = [*header, *parts["SUS"], *(b for c in chapters for b in c), *parts["BEL"]]
     return usj.with_blocks(doc, blocks)
 
@@ -618,6 +662,36 @@ def scripture_unit(
         )
     # A book printed from a file that holds another is a unit of its own.
     doc = renumbered(code, usj.with_code(doc, code), policy)
+    if code == "SIR":
+        header, chapters = chapters_of(doc)
+        chapter, title, *paragraphs = chapters[0]
+        if paragraphs and usj.is_type(paragraphs[-1], "para", "b"):
+            require(
+                not paragraphs[-1]["content"], "Text in Sirach's closing blank line"
+            )
+            paragraphs = paragraphs[:-1]
+        require(
+            chapter["number"] == "0"
+            and usj.paragraph(title) == "d"
+            and all(usj.is_type(p, "para", "p") for p in paragraphs)
+            and list(usj.inventory(usj.document(chapters[0])).items())
+            == [("0", ["1"])],
+            "Sirach Prologue title changed",
+        )
+        introduction: list[Node] = [{**title, "marker": "imt1"}]
+        for paragraph in paragraphs:
+            introduction.append(
+                {
+                    **paragraph,
+                    "marker": "ip",
+                    "content": [
+                        n for n in paragraph["content"] if not usj.is_type(n, "verse")
+                    ],
+                }
+            )
+        doc = usj.with_blocks(
+            doc, [*header, *introduction, *(b for c in chapters[1:] for b in c)]
+        )
     return printed(code, without_stubs(code, doc, policy), policy)
 
 

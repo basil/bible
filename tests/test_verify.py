@@ -29,7 +29,7 @@ def processed(tmp_path: Path) -> Callable[[str], None]:
     local.mkdir(parents=True)
     project.project_usfm(root, "GEN").write_text(SOURCE_USFM, encoding="utf-8")
     (local / "Bible_ptxp.tex").write_text(
-        "%\\OmitCallerInNote{f}\n\\AutoCallers{f}{1,2,3}\n%\\OmitCallerInNote{ef}\n",
+        "%\\OmitCallerInNote{f}\n\\AutoCallers{f}{1,2,3}\n",
         encoding="utf-8",
     )
 
@@ -91,9 +91,9 @@ def test_printed_origins_lose_their_chapter(declared: bible.policy.Policy) -> No
         variants=(),
         ccel=cast(Any, None),
     )
-    assert export.exported("GEN", doc, unit).split("\\v 12 ")[1] == (
+    assert usj.serialize(export.document("GEN", doc, unit)).split("\\v 12 ")[1] == (
         "And God\\f - \\fr 12 \\ft See \\xt Hebrews 12:29\\f* said"
-        "\\x - \\xo 12a \\xt Psalm 1:2\\x* to Noe.\\f + \\fr 0 \\ft A title\\f*\n"
+        "\\x - \\xo 12a \\xt Psalm 1:2\\x* to Noe.\\f + \\ft A title\\f*\n"
     )
 
 
@@ -355,3 +355,17 @@ def test_a_margin_note_record_in_another_form_is_refused(tmp_path: Path) -> None
     )
     with pytest.raises(CheckFailed, match="Could not read every margin note"):
         verify.margin_overflow(tmp_path, 561, 51)
+
+
+def test_a_colophon_follows_the_complete_final_verse() -> None:
+    source = (
+        "\\id ACT\n\\c 28\n\\p\\v 31 Preaching the kingdom, no man forbidding him.\n"
+        "\\esb \\cat colophon\\cat*\n\\p The end of the Acts.\n\\esbe\n"
+    )
+    verify.check_colophon_order(
+        source, "Preaching the kingdom, no man forbidding him. The end of the Acts."
+    )
+    with pytest.raises(CheckFailed, match="before scripture ends"):
+        verify.check_colophon_order(
+            source, "Preaching the kingdom, The end of the Acts. no man forbidding him."
+        )

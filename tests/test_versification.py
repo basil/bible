@@ -159,7 +159,9 @@ def test_a_lettered_verse_never_joins_a_range(
     note = crossrefs.link_note(
         link.origin, link.targets, link.agreement, ctx.books, ctx.terms
     )
-    assert usj.serialize([note]) == r"\x - \xo 22:8a \xt 2 Cor. 9:7\x*"
+    assert (
+        usj.serialize([note]) == r"\x - \xo 22:8a \xt \ref 2 Cor. 9:7|2CO 9:7\ref*\x*"
+    )
 
 
 def unplaced(
@@ -469,6 +471,12 @@ def test_every_relabelled_verse_is_printed_under_its_new_label(
         for verse, _ in division.printed
     }
     for source, printed_as in relabelled.items():
+        if str(printed_as) == "SIR 0:1":
+            assert not printed(printed_as, edition)
+            assert any(
+                n.get("marker") == "imt1" for n in edition.documents["SIR"]["content"]
+            )
+            continue
         assert printed(printed_as, edition)
         assert source in taken or not printed(source, edition)
 
@@ -476,11 +484,11 @@ def test_every_relabelled_verse_is_printed_under_its_new_label(
 def test_a_reference_to_a_verse_printed_under_another_label_is_refused(
     policy: bible.policy.Policy,
 ) -> None:
-    # Proverbs 24:35 prints as 30:15, and Sirach's Prologue prints no number.
+    # Proverbs 24:35 prints as 30:15, and the Epistle’s superscription prints no number.
     versification.require_own_labels(
         [parse_verse("PRO 24:34")], "Citation", policy=policy
     )
-    for verse in ("PRO 24:35", "SIR 0:1"):
+    for verse in ("PRO 24:35", "LJE 1:0"):
         with pytest.raises(CheckFailed, match=f"Citation of verses printed .*{verse}"):
             versification.require_own_labels(
                 [parse_verse(verse)], "Citation", policy=policy

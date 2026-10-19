@@ -85,7 +85,7 @@ def test_kjv_reader_checks_its_inventory(byzantine: Reconciliation) -> None:
     # A subscription that is not the close of its book is refused.
     unclosed = usj.with_blocks(
         documents["ROM"],
-        [*documents["ROM"]["content"][:-2], documents["ROM"]["content"][-1]],
+        [*documents["ROM"]["content"], usj.para("p", "Other matter.")],
     )
     with pytest.raises(CheckFailed, match="subscription is not the book's close"):
         english.kjv({**documents, "ROM": unclosed})
@@ -93,7 +93,9 @@ def test_kjv_reader_checks_its_inventory(byzantine: Reconciliation) -> None:
 
 def test_subscriptions_removed_immutably_and_other_matter_kept() -> None:
     doc = usj.parse(
-        "\\id ROM\n\\c 1\n\\p\n\\v 1 Scripture.\n\\mi ¶ Subscription.\n\\mi Other matter."
+        "\\id ROM\n\\c 1\n\\p\n\\v 1 Scripture.\n"
+        "\\esb \\cat colophon\\cat*\n\\p ¶ Subscription.\n\\esbe\n"
+        "\\esb \\cat annotation\\cat*\n\\p Other matter.\n\\esbe"
     )
     before = copy.deepcopy(doc)
     clean = english.without_subscriptions(doc)
@@ -117,10 +119,17 @@ def test_pinned_subscriptions_are_not_verses(
         kjv_text["PHM 1:25"]
         == "The grace of our Lord Jesus Christ be with your spirit. Amen."
     )
-    # It is taken off with the blank line before it, to be put back.
-    assert len(taken) == 14 and all(len(blocks) == 2 for blocks in taken.values())
-    assert [b.get("marker") for b in taken["ROM"]] == ["b", "mi"]
+    # The fourteen letter subscriptions and Acts' closing notice are retained
+    # as separate paratext, to be put back after the verses are edited.
+    assert len(taken) == 15 and all(len(blocks) == 1 for blocks in taken.values())
+    assert all(
+        blocks[0]["type"] == "sidebar" and blocks[0]["category"] == "colophon"
+        for blocks in taken.values()
+    )
+    assert [b.get("marker") for b in taken["ROM"]] == ["esb"]
     assert "Corinthus" in usj.text_of(taken["ROM"])
+    assert "The end of the Acts of the Apostles." in usj.text_of(taken["ACT"])
+    assert kjv_text["ACT 28:31"].endswith("no man forbidding him.")
 
 
 # Supplied words and markup.

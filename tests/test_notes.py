@@ -85,21 +85,24 @@ def test_editorial_note_styles_and_punctuation(
     edition: bible.pipeline.Edition,
 ) -> None:
     rows = {r["key"]: r for notes in edition.notes.values() for r in notes}
-    assert "_from any cause_" in rows["GEN 30:41"]["note"]
-    assert "_then_" in rows["GEN 30:41"]["note"]
-    assert rows["1SA 14:29"]["note"].startswith("_E medio sustulit_.")
+
+    # Adjacent italic spans have the same meaning whether the review joins them.
+    def reviewed(key: str) -> str:
+        return rows[key]["note"].replace("_ _", " ")
+
+    assert "_from any cause_" in reviewed("GEN 30:41")
+    assert "_then_" in reviewed("GEN 30:41")
+    assert reviewed("1SA 14:29").startswith("_E medio sustulit_.")
     assert rows["1SA 14:29"]["lemma"] == "destroyed the land"
-    assert rows["PSA 113:24"]["note"] == "Gr. singular"
-    assert "_suburbs_ above" in rows["JOS 21:13"]["note"]
-    assert rows["JOS 20:7#2"]["note"] == "or, _of Nephthali_"
-    assert rows["1SA 30:26"]["note"] == "Heb. agrees. Vat. _behold some_"
+    assert reviewed("PSA 113:24") == "Gr. singular"
+    assert "_suburbs_ above" in reviewed("JOS 21:13")
+    assert reviewed("JOS 20:7#2") == "or, _of Nephthali_"
+    assert reviewed("1SA 30:26") == "Heb. agrees. Vat. _behold some_"
     assert rows["JHN 18:13 year"]["lemma"] is None
-    assert rows["JHN 18:13 year"]["note"] == (
+    assert reviewed("JHN 18:13 year") == (
         "_And Annas sent Christ bound unto Caiaphas the high priest_, verse 24"
     )
-    assert rows["2CO 4:8 in despair"]["note"] == (
-        "or, _altogether without help, or means_"
-    )
+    assert reviewed("2CO 4:8 in despair") == ("or, _altogether without help, or means_")
 
 
 @pytest.mark.parametrize(
@@ -176,7 +179,7 @@ def printed(
         # A cross-reference is "See" and what it cites, as the edition cites.
         (
             r"\v 5 \x + \xo 99:5 \xt Rom. 4. 7,8.\x* Blessed are they whose sins are forgiven.",
-            r"\f - \fr 99:5 \ft See \xt Rom. 4:7, 8\f*Blessed are they whose sins are forgiven.",
+            r"\f - \fr 99:5 \ft See \ref Rom. 4:7|ROM 4:7\ref*, \ref 8|ROM 4:8\ref*\f*Blessed are they whose sins are forgiven.",
         ),
         # A caller at the end of a verse glosses the words before it.
         (
@@ -1657,7 +1660,7 @@ def test_notes_stay_in_the_margin_whatever_their_length_or_form(
         n["x-key"].endswith(" Appendix")
         for code in edition.scripture
         for n in usj.notes_of(edition.documents[code]["content"])
-        if n["marker"] == "ef" and "x-key" in n
+        if n["caller"] == "+" and "x-key" in n
     )
     placed = bible.export.notes_below(edition)
     assert set[str]().union(*placed.values()) == set(edition.policy.margin["below"])
@@ -1719,7 +1722,7 @@ def test_a_note_set_below_keeps_its_words_and_stale_placements_stop_the_build() 
     before = deepcopy(doc)
     placed = notes.set_below(doc, [key])
     assert doc == before
-    assert usj.notes_of(placed["content"]) == [{**note, "marker": "ef", "caller": "+"}]
+    assert usj.notes_of(placed["content"]) == [{**note, "caller": "+"}]
     assert usj.text_of(placed["content"]) == usj.text_of(doc["content"])
     assert notes.set_below(doc, []) == doc
     with pytest.raises(CheckFailed, match="changes nothing.*REV 13:1#1 TR"):

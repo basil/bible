@@ -27,7 +27,7 @@ import { data as sections } from "./books.data.ts";
       <article v-for="book in section.books" :key="book.id" class="book-card">
         <CardHeading :id="book.id.toLowerCase()" :text="book.short" />
         <p>{{ book.title }}</p>
-        <nav class="chapters" :aria-label="'Chapters of ' + book.short">
+        <nav class="chapters" :aria-label="'Contents of ' + book.short">
           <a
             v-for="chapter in book.chapters"
             :key="chapter.url"

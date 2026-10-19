@@ -8,16 +8,16 @@ import configparser
 import shutil
 import xml.etree.ElementTree as ET
 import zipfile
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from pathlib import Path
 
 import bible.pipeline
-from bible import assembly, paths, typeface
+from bible import assembly, paths, typeface, usj
 from bible.checks import require
 from bible.files import write_json
 
 BSB_DEFAULT = "shared/ptxprint/Default"
-FRONT_TEMPLATE = paths.UPSTREAM / "python/lib/ptxprint/FRTtemplateBasic.txt"
+FRONT_TEMPLATE = paths.ROOT / "config/front.sfm"
 # The generated PTXprint project, and where PTXprint writes its processed copies.
 PROJECT_DIR = "projects/BIBLE"
 SETTINGS_DIR = "shared/ptxprint/Bible"
@@ -64,8 +64,13 @@ def style_mods() -> str:
     ) + f"\n\\Marker wg\n\\FontName {typeface.greek_family()}\n"
 
 
-def book_names(edition: bible.pipeline.Edition, ids: Sequence[str]) -> ET.Element:
-    """PTXprint's BookNames.xml for the units a project prints."""
+def book_names(
+    edition: bible.pipeline.Edition,
+    ids: Sequence[str],
+    aliases: Mapping[str, str],
+) -> ET.Element:
+    """PTXprint's BookNames.xml for the units a project prints, each under
+    its physical id."""
     root = ET.Element("BookNames")
     for code in ids:
         names = edition.names[code]
@@ -73,7 +78,7 @@ def book_names(edition: bible.pipeline.Edition, ids: Sequence[str]) -> ET.Elemen
             root,
             "book",
             {
-                "code": code,
+                "code": aliases.get(code, code),
                 **{
                     attr: names[field]
                     for field, attr in assembly.NAME_ATTRIBUTES.items()
@@ -86,18 +91,28 @@ def book_names(edition: bible.pipeline.Edition, ids: Sequence[str]) -> ET.Elemen
 def write_project(
     mode: str,
     base: Path,
-    documents: Sequence[tuple[str, str]],
+    documents: Sequence[tuple[str, usj.Document]],
     edition: bible.pipeline.Edition,
 ) -> tuple[Path, list[str]]:
-    """Write the exported documents, as (id, USFM), and PTXprint's
+    """Write the prepared USJ documents and PTXprint's
     configuration; the project's directory, and the ids it prints."""
     project = base / PROJECT_DIR
     conf = project / SETTINGS_DIR
     conf.mkdir(parents=True)
-    ids = [code for code, _ in documents]
+    peripheral_ids = [code for code, _ in documents if code not in edition.scripture]
+    require(
+        len(peripheral_ids) <= 7, "Too many peripheral runs for PTXprint's extra books"
+    )
+    aliases = {code: f"XX{chr(ord('A') + n)}" for n, code in enumerate(peripheral_ids)}
+    ids = [aliases.get(code, code) for code, _ in documents]
     require(ids and len(ids) == len(set(ids)), "Empty or duplicate project id")
-    for code, text in documents:
-        project_usfm(project, code).write_text(text, encoding="utf-8")
+    for code, document in documents:
+        # PTXprint needs unique physical books in reading order. Standard
+        # FRT/INT identities remain in the review and web exports. PTXprint
+        # reserves FRT, INT and some source keys for its own special handling.
+        physical = aliases.get(code, code)
+        doc = usj.with_code(document, physical)
+        project_usfm(project, physical).write_text(usj.serialize(doc), encoding="utf-8")
     write_json(base / "order.json", ids)
     baseline, styles = bsb_baseline()
     (conf / "ptxprint.sty").write_text(styles, encoding="utf-8")
@@ -127,7 +142,7 @@ def write_project(
     ET.ElementTree(root).write(
         project / "Settings.xml", encoding="utf-8", xml_declaration=True
     )
-    ET.ElementTree(book_names(edition, ids)).write(
+    ET.ElementTree(book_names(edition, [code for code, _ in documents], aliases)).write(
         project / "BookNames.xml", encoding="utf-8", xml_declaration=True
     )
     # BSB's import selections describe copying from its project; our generated
@@ -148,7 +163,7 @@ def write_project(
     # the font regression test loads this same adapter independently.
     for name in ("ptxprint-mods.tex", "protrusion.tex", "changes.txt"):
         shutil.copyfile(paths.CONFIG_DIR / name, conf / name)
-    # Replace BSB's front matter with PTXprint's basic template so the title,
+    # Replace BSB's front matter with the edition's semantic template so the title,
     # publication data, and contents come from this edition's settings.
     shutil.copyfile(FRONT_TEMPLATE, conf / "FRTlocal.sfm")
     return project, ids

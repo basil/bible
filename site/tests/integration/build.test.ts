@@ -1,6 +1,6 @@
 // VitePress can report a failed paths loader without failing its build.
 // Require every exported chapter to have reached the static output.
-import { readFileSync, readdirSync } from "node:fs";
+import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 import { expect, test } from "vitest";
 import { JSDOM } from "jsdom";
@@ -46,7 +46,7 @@ test.each([
   "variants/introduction",
   "variants/mat",
   "read/gen/1",
-  "read/ndx",
+  "read/translators-to-reader",
 ])("headings on %s have accessible permalinks", (path) => {
   const page = JSDOM.fragment(builtFile(`${path}.html`));
   const headings = [
@@ -70,7 +70,7 @@ test.each([
   ["read/index", reader],
   ["read/gen/1", reader],
   ["read/mat/1", reader],
-  ["read/tdx", reader],
+  ["read/dedication", reader],
   ["variants/index", ["Textual Variants"]],
   ["variants/introduction", ["Textual Variants"]],
   ["variants/rev", ["Textual Variants"]],
@@ -94,13 +94,13 @@ test("reader sidebar lists chapters of the current book", () => {
 test("every unit of front matter reaches the static output under its title", () => {
   const units = manifest().matter;
   expect(units.map((u) => u.id)).toEqual([
-    "XXD",
-    "CNC",
-    "XXA",
-    "XXB",
-    "XXE",
-    "TDX",
-    "NDX",
+    "abbreviations",
+    "editor-introduction",
+    "numbering",
+    "brenton-preface",
+    "brenton-introduction",
+    "dedication",
+    "translators-to-reader",
   ]);
   for (const unit of units) {
     const page = JSDOM.fragment(builtFile(`${matterURL(unit).slice(1)}.html`));
@@ -110,24 +110,26 @@ test("every unit of front matter reaches the static output under its title", () 
     ).toHaveLength(1);
   }
   // The dedication's address stands around its title, as printed.
-  const dedication = JSDOM.fragment(builtFile("read/tdx.html"));
+  const dedication = JSDOM.fragment(builtFile("read/dedication.html"));
   expect(dedication.querySelector(".matter h1.mt1")!.textContent).toBe(
     "James,",
   );
-  expect(dedication.querySelectorAll(".matter p.mt2")).toHaveLength(5);
+  expect(dedication.querySelectorAll(".matter p.mt2")).toHaveLength(4);
   // The abbreviations and the numbering are tables; the Preface quotes Hebrew.
   expect(
-    JSDOM.fragment(builtFile("read/xxd.html")).querySelector(
+    JSDOM.fragment(builtFile("read/abbreviations.html")).querySelector(
       ".matter table td.tc1",
     ),
   ).not.toBeNull();
   expect(
-    JSDOM.fragment(builtFile("read/xxa.html")).querySelector(
+    JSDOM.fragment(builtFile("read/numbering.html")).querySelector(
       ".matter table th.th1",
     ),
   ).not.toBeNull();
   expect(
-    JSDOM.fragment(builtFile("read/xxb.html")).querySelector(".matter .wh"),
+    JSDOM.fragment(builtFile("read/brenton-preface.html")).querySelector(
+      ".matter .wh",
+    ),
   ).not.toBeNull();
 });
 
@@ -178,11 +180,11 @@ test("the variants link the verses the edition has, and omitted verses' chapters
 
 test("the variants' introduction has its own page, with sources in its prose", () => {
   const intro = JSDOM.fragment(builtFile("variants/introduction.html"));
-  expect(intro.querySelector(".scripture .ip")!.textContent).toContain(
+  expect(intro.querySelector(".scripture .p")!.textContent).toContain(
     "conformed to the Byzantine text",
   );
   expect(
-    [...intro.querySelectorAll(".scripture .ip")].some((p) =>
+    [...intro.querySelectorAll(".scripture .p")].some((p) =>
       p.textContent.startsWith("The changes start from William G. Pierpont"),
     ),
   ).toBe(true);
@@ -288,19 +290,65 @@ test("every chapter reaches the static output with its verse anchors", () => {
   }
 });
 
+test("Sirach's introduction has a named static page and search entry", () => {
+  const page = JSDOM.fragment(builtFile("read/sir/prologue.html"));
+  expect(page.querySelector("#introduction")!.textContent).toContain(
+    "The Prologue",
+  );
+  expect(page.querySelector(".scripture .verse")).toBeNull();
+  expect(page.querySelector(".VPDocFooter a.next")!.getAttribute("href")).toBe(
+    "/read/sir/1",
+  );
+  expect(existsSync(new URL("read/sir/0.html", dist))).toBe(false);
+  const results = search.search("Whereas many and great things", {
+    prefix: true,
+  });
+  expect(
+    results.some((result) =>
+      String(result.id).startsWith("/read/sir/prologue#"),
+    ),
+  ).toBe(true);
+});
+
+test("numbering tables name each book once above their Bible column headings", () => {
+  const page = JSDOM.fragment(builtFile("read/numbering.html"));
+  const tables = [...page.querySelectorAll(".matter table")];
+  expect(tables).toHaveLength(35);
+  for (const table of tables) {
+    expect(
+      [...table.querySelectorAll("th")].map((cell) => cell.textContent),
+    ).toEqual(["King James Bible", "Orthodox Liturgical English Bible"]);
+  }
+  expect(
+    [...page.querySelectorAll("h3.s2")].filter(
+      (heading) => heading.textContent === "Amos",
+    ),
+  ).toHaveLength(1);
+});
+
 test.each([
   ["gen/50", "next", "Exodus 1", "/read/exo/1"],
-  ["xxd", "next", "Editor’s Introduction", "/read/cnc"],
-  ["xxe", "next", "Genesis 1", "/read/gen/1"],
-  ["gen/1", "prev", "Introduction", "/read/xxe"],
+  [
+    "abbreviations",
+    "next",
+    "Editor’s Introduction",
+    "/read/editor-introduction",
+  ],
+  ["brenton-introduction", "next", "Genesis 1", "/read/gen/1"],
+  ["gen/1", "prev", "Introduction", "/read/brenton-introduction"],
   [
     `${lastOld.id.toLowerCase()}/${lastOld.chapters.at(-1)!.number}`,
     "next",
     "The Epistle Dedicatory",
-    "/read/tdx",
+    "/read/dedication",
   ],
-  ["ndx", "next", "Matthew 1", "/read/mat/1"],
-  ["mat/1", "prev", "The Translators to the Reader", "/read/ndx"],
+  ["translators-to-reader", "next", "Matthew 1", "/read/mat/1"],
+  [
+    "mat/1",
+    "prev",
+    "The Translators to the Reader",
+    "/read/translators-to-reader",
+  ],
   [
     "neh/1",
     "prev",
@@ -376,8 +424,8 @@ test.each([
   ["Ezekiel", "/read/ezk/"],
   ["firmament", "/read/gen/"],
   ["Scrivener", "/variants/introduction#variants"],
-  ["thankless", "/read/xxb#"],
-  ["Occidental", "/read/tdx#"],
+  ["thankless", "/read/brenton-preface#"],
+  ["Occidental", "/read/dedication#"],
   ["Pierpont", "/resources/improvements-kjv#"],
   ["unencumbered", "/resources/improvements-kjv#"],
 ])("search query %s points to an existing anchor", (query, prefix) => {

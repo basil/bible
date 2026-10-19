@@ -1,4 +1,4 @@
-import { chapterURL, matterLink, sections } from "../.vitepress/lib/library.ts";
+import { bookLinks, matterLink, sections } from "../.vitepress/lib/library.ts";
 // Each section with its front matter and its books, as the book has them.
 const loader = {
   load: () =>
@@ -11,9 +11,9 @@ const loader = {
       })),
       books: books.map((book) => ({
         ...book,
-        chapters: book.chapters.map((c) => ({
-          label: c.label,
-          url: chapterURL(book, c),
+        chapters: bookLinks(book).map((link) => ({
+          label: link.text,
+          url: link.link,
         })),
       })),
     })),

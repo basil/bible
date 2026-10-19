@@ -2,7 +2,7 @@ import { defineConfig, type DefaultTheme } from "vitepress";
 import { resolve } from "node:path";
 import {
   manifest,
-  chapterURL,
+  bookLinks,
   matterLink,
   searchContent,
   directory,
@@ -23,12 +23,9 @@ function contents(current?: Book): DefaultTheme.SidebarItem[] {
         b === current
           ? {
               text: b.short,
-              items: b.chapters.map((c) => ({
-                text: c.label,
-                link: chapterURL(b, c),
-              })),
+              items: bookLinks(b),
             }
-          : { text: b.short, link: chapterURL(b, b.chapters[0]) },
+          : { text: b.short, link: bookLinks(b)[0]!.link },
       ),
     ];
     return s.title

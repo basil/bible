@@ -59,6 +59,10 @@ describe("chapter renderer", () => {
       "qa",
       "qc",
       "d",
+      "cl",
+      "qd",
+      "lit",
+      "po",
       "ip",
       "im",
       "imi",
@@ -68,6 +72,8 @@ describe("chapter renderer", () => {
     ["s2", "H3"],
     ["s3", "H4"],
     ["ms1", "H2"],
+    ["ms2", "H3"],
+    ["pm", "BLOCKQUOTE"],
     ["is1", "H2"],
     ["is2", "H3"],
   ])("renders paragraph %s as %s", (marker, tag) => {
@@ -87,6 +93,7 @@ describe("chapter renderer", () => {
     ["vp", "SPAN"],
     ["wg", "SPAN"],
     ["wh", "SPAN"],
+    ["qs", "SPAN"],
   ])("renders character marker %s as %s", (marker, tag) => {
     const element = dom(
       chapter(para("p", char(marker, "words"))),
@@ -112,6 +119,26 @@ describe("chapter renderer", () => {
     ).toBeNull();
   });
 
+  test("links a semantic reference inside ordinary footnote text", () => {
+    const fragment = dom(
+      chapter(
+        para("p", "Words", {
+          type: "note",
+          marker: "f",
+          content: [
+            char("ft", "See ", {
+              type: "ref",
+              loc: "GEN 1:2",
+              content: ["Gen. 1:2"],
+            }),
+          ],
+        }),
+      ),
+    );
+    const link = fragment.querySelector('.ft a[href="/read/gen/1#v2"]')!;
+    expect(link.textContent).toBe("Gen. 1:2");
+    expect(fragment.querySelector(".xt")).toBeNull();
+  });
   test("preserves nested character styles", () => {
     const fragment = dom(
       chapter(para("p", char("it", "First ", char("bd", "last")))),
@@ -119,33 +146,48 @@ describe("chapter renderer", () => {
     expect(fragment.querySelector("i > b")!.textContent).toBe("last");
     expect(fragment.querySelector("i")!.textContent).toBe("First last");
   });
-  test("renders a run of terms and definitions as one definition list", () => {
+  test("renders sibling list entries as one list", () => {
     const fragment = dom(
       chapter(
         para("ip", "Before"),
-        para("ili1", "Term"),
-        para("ili2", "Definition"),
-        para("ili1", "Other"),
-        para("ili2", "Its definition"),
+        para("li1", "Term and its description"),
+        para("li1", "Other and its description"),
         para("ip", "After"),
       ),
     );
-    expect(fragment.querySelectorAll("dl")).toHaveLength(1);
+    expect(fragment.querySelectorAll("ul")).toHaveLength(1);
     expect(
-      [...fragment.querySelectorAll("dl > *")].map(
+      [...fragment.querySelectorAll("ul > *")].map(
         (e) => `${e.tagName.toLowerCase()}.${e.className}`,
       ),
-    ).toEqual(["dt.ili1", "dd.ili2", "dt.ili1", "dd.ili2"]);
+    ).toEqual(["li.li1", "li.li1"]);
   });
-  test.each(["b", "ib"])("renders %s as a stanza break", (marker) => {
+  test("renders a blank paragraph as a stanza break", () => {
     expect(
-      dom(chapter(para(marker)))
+      dom(chapter(para("b")))
         .querySelector(".stanza")!
         .getAttribute("aria-hidden"),
     ).toBe("true");
   });
   test("renders a division as a horizontal rule", () => {
     expect(dom(chapter(para("sd2"))).querySelector("hr")).not.toBeNull();
+  });
+  test("keeps a source colophon separate from scripture", () => {
+    const fragment = dom(
+      chapter(para("p", { type: "verse", number: "1" }, "Amen."), {
+        type: "sidebar",
+        marker: "esb",
+        category: "colophon",
+        content: [para("p", "Written from Rome.")],
+      }),
+    );
+    expect(
+      fragment.querySelector("aside.colophon")!.getAttribute("aria-label"),
+    ).toBe("Source colophon");
+    expect(fragment.querySelector("aside")!.textContent).toBe(
+      "Written from Rome.",
+    );
+    expect(fragment.querySelectorAll(".verse")).toHaveLength(1);
   });
   test("omits the book", () => {
     const doc = chapter(para("p", "scripture"));
@@ -181,46 +223,43 @@ describe("chapter renderer", () => {
     expect(page.querySelectorAll(".verse a")).toHaveLength(0);
   });
   test("takes a title as a titled chapter's heading", () => {
-    const doc = chapter(para("d", "The Prologue"), para("p", "words"));
+    const doc = chapter(para("cl", "The Prologue"), para("p", "words"));
     expect(renderChapter(doc, true).html).not.toContain("The Prologue");
   });
-  test.each(["f", "ef", "x"])(
-    "links %s note callers and backlinks",
-    (marker) => {
-      const note: Node = {
-        type: "note",
-        marker,
-        content: [char("ft", "first")],
-      };
-      const fragment = dom(
-        chapter(
-          para("p", "words", note, {
-            ...note,
-            content: [char("ft", "second")],
-          }),
-        ),
-      );
-      expect(
-        Array.from(fragment.querySelectorAll(".note a"), (link) => [
-          link.getAttribute("href"),
-          link.getAttribute("aria-label"),
-        ]),
-      ).toEqual([
-        ["#n1", "Note 1"],
-        ["#n2", "Note 2"],
-      ]);
-      expect(
-        Array.from(fragment.querySelectorAll(".notes li"), (li) => li.id),
-      ).toEqual(["n1", "n2"]);
-      expect(
-        Array.from(fragment.querySelectorAll(".notes a"), (link) =>
-          link.getAttribute("href"),
-        ),
-      ).toEqual(["#caller1", "#caller2"]);
-      expect(fragment.querySelector("#n1")!.textContent).toContain("first");
-      expect(fragment.querySelector("#n2")!.textContent).toContain("second");
-    },
-  );
+  test.each(["f", "x"])("links %s note callers and backlinks", (marker) => {
+    const note: Node = {
+      type: "note",
+      marker,
+      content: [char("ft", "first")],
+    };
+    const fragment = dom(
+      chapter(
+        para("p", "words", note, {
+          ...note,
+          content: [char("ft", "second")],
+        }),
+      ),
+    );
+    expect(
+      Array.from(fragment.querySelectorAll(".note a"), (link) => [
+        link.getAttribute("href"),
+        link.getAttribute("aria-label"),
+      ]),
+    ).toEqual([
+      ["#n1", "Note 1"],
+      ["#n2", "Note 2"],
+    ]);
+    expect(
+      Array.from(fragment.querySelectorAll(".notes li"), (li) => li.id),
+    ).toEqual(["n1", "n2"]);
+    expect(
+      Array.from(fragment.querySelectorAll(".notes a"), (link) =>
+        link.getAttribute("href"),
+      ),
+    ).toEqual(["#caller1", "#caller2"]);
+    expect(fragment.querySelector("#n1")!.textContent).toContain("first");
+    expect(fragment.querySelector("#n2")!.textContent).toContain("second");
+  });
   test.each([
     ["fr", "B"],
     ["fq", "SPAN"],
@@ -243,8 +282,8 @@ describe("chapter renderer", () => {
     expect(fragment.querySelector(`.${marker}`)!.tagName).toBe(tag);
   });
   test("uses an unnumbered chapter heading only as its title", () => {
-    const doc = chapter(para("s1", "Susanna"), para("p", "words"));
-    expect(dom(doc, true).querySelector(".s1")).toBeNull();
+    const doc = chapter(para("cl", "Susanna"), para("p", "words"));
+    expect(dom(doc, true).querySelector(".cl")).toBeNull();
     expect(dom(doc, true).textContent!.trim()).toBe("words");
   });
   test("retains numbered chapter headings", () => {
@@ -535,7 +574,10 @@ describe("front matter renderer", () => {
     ],
   };
   const unit = (...blocks: Node[]): Document => ({
-    content: [{ type: "book", marker: "id", content: ["XXA"] }, ...blocks],
+    content: [
+      { type: "book", marker: "id", content: ["XXA"] },
+      { type: "periph", id: "preface", alt: "Preface", content: blocks },
+    ],
   });
   test("sets the printed title as the heading, with the lines about it", () => {
     const fragment = JSDOM.fragment(
@@ -584,14 +626,12 @@ describe("front matter renderer", () => {
     ).toEqual(["th.th1", "th.th2", "td.tc1", "td.tc2"]);
     expect(fragment.querySelector("td.tc2 i.it")!.textContent).toBe("missing");
   });
-  test("sets a run of terms and definitions as one definition list", () => {
+  test("sets sibling list entries as one list", () => {
     const { html, body } = renderMatter(
       unit(
         para("mt1", "Introduction"),
-        para("ili1", "Term"),
-        para("ili2", "Definition"),
-        para("ili1", "Other"),
-        para("ili2", "Its definition"),
+        para("li1", "Term and its description"),
+        para("li1", "Other and its description"),
         para("ip", "After"),
       ),
     );
@@ -599,8 +639,8 @@ describe("front matter renderer", () => {
       [...JSDOM.fragment(shown).querySelectorAll(".matter > *")].map((e) =>
         e.tagName.toLowerCase(),
       );
-    expect(tags(html)).toEqual(["h1", "dl", "p"]);
-    expect(tags(body)).toEqual(["dl", "p"]);
+    expect(tags(html)).toEqual(["h1", "ul", "p"]);
+    expect(tags(body)).toEqual(["ul", "p"]);
   });
   test("refuses a verse milestone in front matter", () => {
     expect(() =>
@@ -631,4 +671,21 @@ describe("prose renderer", () => {
       renderProse([para("p", { type: "verse", number: "1" })]),
     ).toThrow("Verse milestone in prose");
   });
+});
+
+test("acrostic headings stand alone with their verse number on the next line", () => {
+  const doc = chapter(
+    para("qa", { type: "verse", number: "5" }, char("sc", "Beth")),
+    para("q1", "The words of the poem."),
+    para("qa", char("sc", "Gimel")),
+    para("q1", "Continuing the same verse."),
+  );
+  const before = JSON.stringify(doc);
+  const rendered = renderChapter(doc);
+  const page = JSDOM.fragment(rendered.html);
+  expect(page.querySelector(".qa")!.textContent).toBe("Beth");
+  expect(page.querySelectorAll(".qa .verse")).toHaveLength(0);
+  expect(page.querySelector(".qa + .q1 > .verse")!.id).toBe("v5");
+  expect(rendered.verses).toEqual(["5"]);
+  expect(JSON.stringify(doc)).toBe(before);
 });

@@ -119,6 +119,15 @@ class Policy:
         )
 
     @property
+    def sections(self) -> dict[str, str]:
+        """The section each unit of front matter and each divider stands in."""
+        return {
+            **{entry["id"]: section for section, entry in self.front_matter},
+            OLD_TESTAMENT["id"]: "old_testament",
+            NEW_TESTAMENT["id"]: "new_testament",
+        }
+
+    @property
     def entries(self) -> tuple[Entry, ...]:
         """Every unit the edition prints, in its order."""
         front = self.front_matter
@@ -211,8 +220,15 @@ def check_prose_content(content: object, label: str) -> None:
 
 
 def check(policy: Policy) -> None:
-    require_fields(policy.psalter, {"why", "kathismata", "middle"}, (), "Psalter")
+    require_fields(
+        policy.psalter, {"why", "kathismata", "middle", "notes"}, (), "Psalter"
+    )
     require(bool(policy.psalter["why"].strip()), "Psalter without a why")
+    for reference, closing in policy.psalter["notes"].items():
+        require_fields(closing, {"why"}, (), f"Psalter note {reference}")
+        require(
+            bool(closing["why"].strip()), f"Psalter note without a why: {reference}"
+        )
     require_fields(policy.margin, {"why", "below"}, (), "Margin")
     require(
         isinstance(policy.margin["why"], str)
@@ -456,6 +472,8 @@ def check(policy: Policy) -> None:
             f"Invalid Appendix note: {key}",
         )
     matter = policy.matter
+    unprinted = {entry["id"] for entry in policy.unprinted}
+    scriptures = {entry["id"] for entry in policy.scripture}
     require_fields(
         policy.citations,
         {"units", "dialects", "decisions", "names"},
@@ -479,7 +497,10 @@ def check(policy: Policy) -> None:
             )
     for name, prose_group in policy.prose.items():
         require_fields(
-            prose_group, {"why", "changes"}, {"additions"}, f"Prose changes {name}"
+            prose_group,
+            {"why", "changes"},
+            {"additions", "markers"},
+            f"Prose changes {name}",
         )
         require(prose_group["why"], f"Prose changes without a why: {name}")
         for addition in prose_group.get("additions", ()):
@@ -493,8 +514,7 @@ def check(policy: Policy) -> None:
             for paragraph in addition["paragraphs"]:
                 require_fields(paragraph, {"type", "marker", "content"}, (), label)
                 require(
-                    paragraph["type"] == "para"
-                    and paragraph["marker"] in {"ip", "ili1", "ili2", "ib"},
+                    paragraph["type"] == "para" and paragraph["marker"] in {"ip", "ib"},
                     f"{label}: expected an introductory paragraph",
                 )
                 if paragraph["marker"] == "ib":
@@ -508,6 +528,33 @@ def check(policy: Policy) -> None:
                     bool(usj.unlabelled(thaw(paragraph["content"])).strip()),
                     f"{label}: blank paragraph",
                 )
+        for marker in prose_group.get("markers", ()):
+            label = f"Marker decision in {name}"
+            require_fields(
+                marker, {"unit", "from", "to", "why"}, {"opening", "before"}, label
+            )
+            # A unit taken apart, as the Appendix is, is never structured.
+            require(
+                (marker["unit"] in matter and marker["unit"] not in unprinted)
+                or (marker["unit"] in scriptures and marker["to"] == "d"),
+                f"{label}: not front or back matter or a scripture superscription",
+            )
+            require(
+                {marker["from"], marker["to"]} <= usj.PARAGRAPHS,
+                f"{label}: not a paragraph marker",
+            )
+            require(marker["from"] != marker["to"], f"{label}: changes nothing")
+            require(bool(marker["why"].strip()), f"{label}: without a why")
+            words = (
+                marker.get("before")
+                if marker["from"] == "ib"
+                else marker.get("opening")
+            ) or ""
+            require(
+                ("opening" in marker) != ("before" in marker) and bool(words),
+                f"{label}: a paragraph is known by its opening words, a blank line by the words after it",
+            )
+            require(words == words.strip(), f"{label}: words with surrounding space")
         for change in prose_group["changes"]:
             require_fields(
                 change,

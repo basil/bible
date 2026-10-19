@@ -5,6 +5,9 @@ export type Node = {
   number?: string;
   pubnumber?: string;
   loc?: string;
+  id?: string;
+  alt?: string;
+  category?: string;
   content?: (string | Node)[];
 };
 export type Document = { content: Node[] };
@@ -44,8 +47,14 @@ function refURL(loc: string) {
   return chapterPath(book!, chapter!) + (verse ? `#v${verse}` : "");
 }
 // A chapter's document opens with its book.
-const blocksOf = (doc: Document) =>
-  doc.content.filter((n) => n.type !== "book" && n.type !== "chapter");
+const blocksOf = (doc: Document): Node[] =>
+  doc.content.flatMap((n) =>
+    n.type === "periph"
+      ? blocksOf({ content: n.content as Node[] })
+      : n.type !== "book" && n.type !== "chapter"
+        ? [n]
+        : [],
+  );
 const CHAR_TAGS: Record<string, string> = {
   add: "span",
   sc: "span",
@@ -56,6 +65,7 @@ const CHAR_TAGS: Record<string, string> = {
   // Greek and Hebrew, tagged for their fonts as the typesetter has them.
   wg: "span",
   wh: "span",
+  qs: "span",
 };
 const CHAR_ATTRIBUTES: Record<string, string> = {
   wg: ' lang="grc"',
@@ -87,39 +97,39 @@ const PARAGRAPH_TAGS: Record<string, string> = {
   m: "p",
   mi: "p",
   nb: "p",
+  po: "p",
+  pm: "blockquote",
   q1: "p",
   q2: "p",
-  // A standalone Pause, and an acrostic name with the verse it opens.
+  // A standalone Pause and an acrostic heading.
   qr: "p",
   qa: "p",
   qc: "p",
   d: "p",
+  qd: "p",
+  cl: "p",
+  lit: "p",
   s1: "h2",
   s2: "h3",
   s3: "h4",
   ms1: "h2",
+  ms2: "h3",
   ip: "p",
   im: "p",
   imi: "p",
   iex: "p",
-  // A definition list's terms and definitions, in the list its run makes.
-  ili1: "dt",
-  ili2: "dd",
+  li1: "li",
   is1: "h2",
   is2: "h3",
 };
-const DEFINITIONS = new Set(["ili1", "ili2"]);
-// The blocks in the runs they render in: a definition list's terms and
-// definitions together, and every other block alone.
+const LIST_ITEMS = new Set(["li1"]);
+// The blocks in the runs they render in: list entries together, and every
+// other block alone.
 function runs(nodes: Node[]) {
   const result: Node[][] = [];
   for (const n of nodes) {
     const last = result.at(-1);
-    if (
-      last &&
-      DEFINITIONS.has(n.marker!) &&
-      DEFINITIONS.has(last[0]!.marker!)
-    ) {
+    if (last && LIST_ITEMS.has(n.marker!) && LIST_ITEMS.has(last[0]!.marker!)) {
       last.push(n);
     } else {
       result.push([n]);
@@ -169,7 +179,7 @@ function renderer(titleAnchor = "") {
       return ` <sup class="verse" id="v${escape(item.number)}"><a href="#v${escape(item.number)}">${escape(item.pubnumber || item.number)}</a></sup> `;
     }
     if (item.type === "note") {
-      if (inNote || !["f", "ef", "x"].includes(marker)) {
+      if (inNote || !["f", "x"].includes(marker)) {
         throw new Error(`Unexpected note ${marker}`);
       }
       // A note holds no note, so its number is fixed before its content.
@@ -222,6 +232,9 @@ function renderer(titleAnchor = "") {
     return `<tr>${(r.content || []).map(cell).join("")}</tr>`;
   }
   function block(n: Node): string {
+    if (n.type === "sidebar") {
+      return `<aside class="${escape(n.category || "")}" aria-label="${n.category === "colophon" ? "Source colophon" : "Annotation"}">${blocks(n.content as Node[])}</aside>`;
+    }
     if (n.type === "table") {
       // Vue's parser inserts no tbody; the browser's does, and they must agree.
       return `<table><tbody>\n${(n.content || []).map(row).join("\n")}\n</tbody></table>`;
@@ -230,11 +243,11 @@ function renderer(titleAnchor = "") {
       throw new Error(`Unknown block ${n.type}`);
     }
     const marker = n.marker!;
-    if (marker === "b" || marker === "ib") {
+    if (marker === "b") {
       return '<div class="stanza" aria-hidden="true"></div>';
     }
-    if (marker === "sd2") {
-      return "<hr>";
+    if (marker === "sd1" || marker === "sd2") {
+      return `<hr class="${marker}">`;
     }
     const tag = PARAGRAPH_TAGS[marker];
     if (!tag) {
@@ -262,10 +275,10 @@ function renderer(titleAnchor = "") {
       ? headed(tag, id, html, title, marker)
       : `<${tag} class="${marker}">${html}</${tag}>`;
   }
-  // One of the runs: a definition list, or a block alone.
+  // One of the runs: a list, or a block alone.
   const run = (nodes: Node[]) =>
-    DEFINITIONS.has(nodes[0]!.marker!)
-      ? `<dl>${nodes.map(block).join("\n")}</dl>`
+    LIST_ITEMS.has(nodes[0]!.marker!)
+      ? `<ul>${nodes.map(block).join("\n")}</ul>`
       : block(nodes[0]!);
   const blocks = (nodes: Node[]) => runs(nodes).map(run).join("\n");
   // The notes list, once every block that calls one has been rendered: one
@@ -291,13 +304,41 @@ function renderer(titleAnchor = "") {
 // which escape leaves free to hold "{{", from being read as expressions.
 const scripture = (html: string, ...classes: string[]) =>
   `<div class="${["scripture", ...classes].join(" ")}" v-pre>${html}</div>`;
-// A titled chapter's heading, a section's or a title's, stands for its number,
-// and so is the page title.
+// An acrostic name stands alone; the number of the verse it opens is set
+// beside the poetic line that follows it, as in print.
+function numberedAfterAcrostics(blocks: Node[]): Node[] {
+  const result = [...blocks];
+  for (const [at, heading] of blocks.entries()) {
+    if (heading.marker !== "qa") {
+      continue;
+    }
+    const milestones = (heading.content || []).filter(
+      (n): n is Node => typeof n !== "string" && n.type === "verse",
+    );
+    if (!milestones.length) {
+      continue;
+    }
+    const line = blocks[at + 1];
+    if (milestones.length !== 1 || line?.marker !== "q1") {
+      throw new Error("Acrostic verse without its following poetic line");
+    }
+    result[at] = {
+      ...heading,
+      content: (heading.content || []).filter(
+        (n) => typeof n === "string" || n.type !== "verse",
+      ),
+    };
+    result[at + 1] = {
+      ...line,
+      content: [...milestones, ...(line.content || [])],
+    };
+  }
+  return result;
+}
+// A titled chapter's heading stands for its number, and so is the page title.
 export function renderChapter(doc: Document, titled = false) {
-  const blocks = blocksOf(doc);
-  const title = titled
-    ? blocks.find((n) => n.marker === "s1" || n.marker === "d")
-    : undefined;
+  const blocks = numberedAfterAcrostics(blocksOf(doc));
+  const title = titled ? blocks.find((n) => n.marker === "cl") : undefined;
   const render = renderer("chapter");
   const html = render.blocks(blocks.filter((n) => n !== title));
   return { html: scripture(html + render.noteList()), verses: render.verses };

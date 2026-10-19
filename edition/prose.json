@@ -530,7 +530,7 @@
     ]
   },
   "brenton-1851-introduction": {
-    "why": "Complete eBible’s introduction, which ends where the 1870 printing breaks it off (p. vi in the 1879 reprint of its plates), from Brenton’s 1851 printing, pp. viii–xiii, whose words agree with eBible’s closing paragraphs where the scanned pages overlap them, after the paragraph on translations from the Septuagint and before the separate Apocrypha heading. Transcribed from https://ccat.sas.upenn.edu/ioscs/brenton/brenton1851.pdf (PDF pages 1–6), consulted 2026-10-17; retain its wording, including its dates and the printed “Petri and Pauli” in the Latin decree. Set the translation entries as a definition list, each term above its definition, without the 1851 printing’s run-in period and dash; preserve the blank-line separations around the list and before the groups beginning “The principal translations”, “In later periods”, “The first printed edition” and “In the latter part”.",
+    "why": "Complete eBible’s introduction, which ends where the 1870 printing breaks it off (p. vi in the 1879 reprint of its plates), from Brenton’s 1851 printing, pp. viii–xiii, whose words agree with eBible’s closing paragraphs where the scanned pages overlap them, after the paragraph on translations from the Septuagint and before the separate Apocrypha heading. Transcribed from https://ccat.sas.upenn.edu/ioscs/brenton/brenton1851.pdf (PDF pages 1–6), consulted 2026-10-17; retain its wording, including its dates and the printed “Petri and Pauli” in the Latin decree. Transcribe its blank lines as printed, between the translation entries and before the groups beginning “The principal translations”, “In later periods”, “The first printed edition” and “In the latter part”; what each paragraph and blank line is to the edition, the markers decisions say.",
     "changes": [],
     "additions": [
       {
@@ -556,22 +556,16 @@
           },
           {
             "type": "para",
-            "marker": "ili1",
+            "marker": "ip",
             "content": [
               {
                 "type": "char",
                 "marker": "it",
                 "content": [
-                  "The Old Latin"
+                  "The Old Latin."
                 ]
-              }
-            ]
-          },
-          {
-            "type": "para",
-            "marker": "ili2",
-            "content": [
-              "This version was executed in very early times, probably in the north of Africa. At the end of the fourth century Jerome made his translation direct from the Hebrew—a work of which many expressed alarm, as though it were a dangerous innovation: however, by degrees the version of Jerome obtained such a footing in the Latin Church that (except in the book of Psalms) it displaced its predecessor. The ",
+              },
+              "—This version was executed in very early times, probably in the north of Africa. At the end of the fourth century Jerome made his translation direct from the Hebrew—a work of which many expressed alarm, as though it were a dangerous innovation: however, by degrees the version of Jerome obtained such a footing in the Latin Church that (except in the book of Psalms) it displaced its predecessor. The ",
               {
                 "type": "char",
                 "marker": "it",
@@ -584,102 +578,97 @@
           },
           {
             "type": "para",
-            "marker": "ili1",
+            "marker": "ib",
+            "content": []
+          },
+          {
+            "type": "para",
+            "marker": "ip",
             "content": [
               {
                 "type": "char",
                 "marker": "it",
                 "content": [
-                  "The Memphitic (or Coptic) version"
+                  "The Memphitic (or Coptic) version."
                 ]
-              }
+              },
+              "—This was probably executed at an early period. Many books of the Old Testament in this translation have been printed."
             ]
           },
           {
             "type": "para",
-            "marker": "ili2",
-            "content": [
-              "This was probably executed at an early period. Many books of the Old Testament in this translation have been printed."
-            ]
+            "marker": "ib",
+            "content": []
           },
           {
             "type": "para",
-            "marker": "ili1",
+            "marker": "ip",
             "content": [
               {
                 "type": "char",
                 "marker": "it",
                 "content": [
-                  "The Thebaic (or Sahidic)"
+                  "The Thebaic (or Sahidic)."
                 ]
-              }
+              },
+              "—The version into the language of Upper Egypt exists only in fragments."
             ]
           },
           {
             "type": "para",
-            "marker": "ili2",
-            "content": [
-              "The version into the language of Upper Egypt exists only in fragments."
-            ]
+            "marker": "ib",
+            "content": []
           },
           {
             "type": "para",
-            "marker": "ili1",
+            "marker": "ip",
             "content": [
               {
                 "type": "char",
                 "marker": "it",
                 "content": [
-                  "The Æthiopic"
+                  "The Æthiopic."
                 ]
-              }
+              },
+              "—This was probably made in the fourth century: it has not been all printed."
             ]
           },
           {
             "type": "para",
-            "marker": "ili2",
-            "content": [
-              "This was probably made in the fourth century: it has not been all printed."
-            ]
+            "marker": "ib",
+            "content": []
           },
           {
             "type": "para",
-            "marker": "ili1",
+            "marker": "ip",
             "content": [
               {
                 "type": "char",
                 "marker": "it",
                 "content": [
-                  "The Gothic"
+                  "The Gothic."
                 ]
-              }
+              },
+              "—This translation was executed by Ulphilas in the fourth century. But few fragments of the Old Testament have been discovered, and a portion of Nehemiah is all that has been printed."
             ]
           },
           {
             "type": "para",
-            "marker": "ili2",
-            "content": [
-              "This translation was executed by Ulphilas in the fourth century. But few fragments of the Old Testament have been discovered, and a portion of Nehemiah is all that has been printed."
-            ]
+            "marker": "ib",
+            "content": []
           },
           {
             "type": "para",
-            "marker": "ili1",
+            "marker": "ip",
             "content": [
               {
                 "type": "char",
                 "marker": "it",
                 "content": [
-                  "The Armenian"
+                  "The Armenian."
                 ]
-              }
-            ]
-          },
-          {
-            "type": "para",
-            "marker": "ili2",
-            "content": [
-              "In the early part of the fifth century Miesrob, the inventor of the Armenian alphabet, undertook the translation of the Scriptures into that tongue. The version has always been in use in the Armenian Church; and as that nation are so scattered through the East, the translation has become known in many countries in which they have settled. The best edition of this version is that of Zohrab (Venice, 1805), formed wholly on the authority of MSS."
+              },
+              "—In the early part of the fifth century Miesrob, the inventor of the Armenian alphabet, undertook the translation of the Scriptures into that tongue. The version has always been in use in the Armenian Church; and as that nation are so scattered through the East, the translation has become known in many countries in which they have settled. The best edition of this version is that of Zohrab (Venice, 1805), formed wholly on the authority of MSS."
             ]
           },
           {
@@ -981,6 +970,131 @@
             ]
           }
         ]
+      }
+    ]
+  },
+  "structure": {
+    "why": "Front matter prints as units of their own, in ordinary paragraphs, headings and lists, not under the markers of a scripture book's introduction. Where the sources' markers do not say what a paragraph is, these decisions do: a blank line at a change of topic is a division, a lesser one within a greater; a line of a title that is the text's opening sentence is its opening paragraph; readings quoted for comparison stand as a block; the one section heading of a unit that is wholly that section is a line of its title, which the manifest sets; and paragraphs that each set one item of a series with its name run in are the entries of a list. A blank line no decision describes goes: the typesetter spaces headings and lists itself.",
+    "changes": [],
+    "markers": [
+      {
+        "unit": "TDX",
+        "from": "mt2",
+        "to": "po",
+        "opening": "The Translators of the Bible wish",
+        "why": "the salutation that closes the dedication's address is its opening sentence, not a line of its title"
+      },
+      {
+        "unit": "XXB",
+        "from": "im",
+        "to": "pm",
+        "opening": "Gr.",
+        "why": "the Greek quoted for comparison with the English stands as a block"
+      },
+      {
+        "unit": "XXB",
+        "from": "im",
+        "to": "pm",
+        "opening": "Eng. Ver.",
+        "why": "the English quoted for comparison with the Greek stands as a block"
+      },
+      {
+        "unit": "XXE",
+        "from": "is1",
+        "to": "mt2",
+        "opening": "An Historical Account of the Septuagint Version",
+        "why": "the introduction's one section heading names the whole of it: a line of its title, which edition/manifest.json sets, as every unit's"
+      },
+      {
+        "unit": "XXE",
+        "from": "ib",
+        "to": "sd1",
+        "before": "The earliest writer",
+        "why": "a change of topic within the account, which runs on under one heading: a division"
+      },
+      {
+        "unit": "XXE",
+        "from": "ib",
+        "to": "sd1",
+        "before": "In the course",
+        "why": "a change of topic within the account, which runs on under one heading: a division"
+      },
+      {
+        "unit": "XXE",
+        "from": "ib",
+        "to": "sd1",
+        "before": "We have now",
+        "why": "a change of topic within the account, which runs on under one heading: a division"
+      },
+      {
+        "unit": "XXE",
+        "from": "ib",
+        "to": "sd1",
+        "before": "From the fourth",
+        "why": "a change of topic within the account, which runs on under one heading: a division"
+      },
+      {
+        "unit": "XXE",
+        "from": "ip",
+        "to": "li1",
+        "opening": "The Old Latin.",
+        "why": "one of the early translations from the Septuagint, each set in a paragraph of its own with its name run in: an entry of the list of them"
+      },
+      {
+        "unit": "XXE",
+        "from": "ip",
+        "to": "li1",
+        "opening": "The Memphitic (or Coptic) version.",
+        "why": "one of the early translations from the Septuagint, each set in a paragraph of its own with its name run in: an entry of the list of them"
+      },
+      {
+        "unit": "XXE",
+        "from": "ip",
+        "to": "li1",
+        "opening": "The Thebaic (or Sahidic).",
+        "why": "one of the early translations from the Septuagint, each set in a paragraph of its own with its name run in: an entry of the list of them"
+      },
+      {
+        "unit": "XXE",
+        "from": "ip",
+        "to": "li1",
+        "opening": "The Æthiopic.",
+        "why": "one of the early translations from the Septuagint, each set in a paragraph of its own with its name run in: an entry of the list of them"
+      },
+      {
+        "unit": "XXE",
+        "from": "ip",
+        "to": "li1",
+        "opening": "The Gothic.",
+        "why": "one of the early translations from the Septuagint, each set in a paragraph of its own with its name run in: an entry of the list of them"
+      },
+      {
+        "unit": "XXE",
+        "from": "ip",
+        "to": "li1",
+        "opening": "The Armenian.",
+        "why": "one of the early translations from the Septuagint, each set in a paragraph of its own with its name run in: an entry of the list of them"
+      },
+      {
+        "unit": "XXE",
+        "from": "ib",
+        "to": "sd1",
+        "before": "The first printed edition",
+        "why": "a change of topic within the account, which runs on under one heading: a division"
+      },
+      {
+        "unit": "XXE",
+        "from": "ib",
+        "to": "sd1",
+        "before": "In the latter part",
+        "why": "a change of topic within the account, which runs on under one heading: a division"
+      },
+      {
+        "unit": "LJE",
+        "from": "p",
+        "to": "d",
+        "opening": "A copy of an epistle,",
+        "why": "the opening words identify the epistle and its circumstances: an integral superscription, retaining its unnumbered verse identity, rather than an ordinary paragraph"
       }
     ]
   }
