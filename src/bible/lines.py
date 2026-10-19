@@ -7,7 +7,8 @@ with the source's, and a line of the update begins a line of the edition
 where its first word is matched, or after the matched last word of the line
 before. A break the words do not place, or place two ways, is given in
 edition/lines.json or stops the build; a decision there may also set a line
-where the words would place it otherwise.
+where the words would place it otherwise, keep a verse in prose, or change
+or join a prose paragraph at an existing boundary.
 
 After alignment, terminal “Pause.” instructions stand in right-aligned
 lines, Brenton’s existing small-cap Lamentations acrostic names in
@@ -29,6 +30,7 @@ import bible.policy
 from bible import scripture, usj, versification
 from bible.alignment import Alignment
 from bible.checks import CheckFailed, require, require_fields
+from bible.policy_schema import Paragraph
 from bible.references import Verse, book_of, verse_at
 from bible.usj import Content, Document, Node
 
@@ -37,12 +39,12 @@ from bible.usj import Content, Document, Node
 type Witness = Callable[[str, str], bool | None]
 
 # The paragraph markers of a line and of a stanza break, and of the prose
-# that resumes after a poem without a paragraph of its own: a new paragraph,
-# within a verse too, as the Berean Standard Bible sets it.
+# that resumes where a second witness or a decision sets the update's lines
+# as prose, without a paragraph of its own: a new paragraph, within a verse
+# too. At the end of the update's poem, prose resumes under its marker.
 LINE, STANZA, RESUMED = "q1", "b", "p"
-# The update's marker for prose that goes on flush left, which resumes as
-# RESUMED does.
-FLUSH = "m"
+# A decision's verse key.
+VERSE_KEY = re.compile(r"[1-4A-Z]{3} \d+:\d+[a-z]?")
 # A block whose marker these are keeps it whatever the update has: a psalm's
 # title, a heading.
 FIXED = frozenset({"d", "cl", "s1", "ms1"})
@@ -394,9 +396,7 @@ def update_spans(chapter: Chapter, doc: Document) -> list[Span]:
                 f"Unsupported line marker \\{marker}: chapter {chapter.number}",
             )
             if start is not None:
-                resume = (
-                    None if marker in FIXED else RESUMED if marker == FLUSH else marker
-                )
+                resume = None if marker in FIXED else marker
                 spans.append(Span(start, tuple(lines), first, resume, start_stanza))
                 start, lines = None, []
         stanza = False
@@ -533,8 +533,11 @@ def old_testament(
     witness: Witness = lambda code, label: None,
 ) -> dict[str, Document]:
     """Brenton's books with the update's poems set in lines, where a second
-    witness sets the verse as verse too or has no say."""
+    witness sets the verse as verse too or has no say, except for declared
+    prose verses. Each exception must suppress otherwise retained poetry."""
     decisions = Decisions.of(policy, documents)
+    prose = {key for key in policy.lines.get("prose", {}) if book_of(key) in documents}
+    taken: set[str] = set()
     result = dict(documents)
     for code, doc in documents.items():
         if code not in update:
@@ -556,7 +559,13 @@ def old_testament(
 
             def keep(position: int, _target: Chapter = target[number]) -> bool:
                 label = f"{_target.number}:{_target.verse_of(position)}"
-                return witness(code, label) is not False
+                if witness(code, label) is False:
+                    return False
+                key = f"{code} {label}"
+                if key in prose:
+                    taken.add(key)
+                    return False
+                return True
 
             spans[number] = witnessed(placed_spans, target[number], keep)
         spans = {number: found for number, found in spans.items() if found}
@@ -564,6 +573,82 @@ def old_testament(
             continue
         result[code] = relined(doc, target, spans)
     decisions.check_all_taken()
+    require(
+        prose == taken,
+        f"Prose decisions suppress no poetry: {', '.join(sorted(prose - taken))}",
+    )
+    return result
+
+
+def paragraphs(
+    documents: Mapping[str, Document], policy: bible.policy.Policy
+) -> dict[str, Document]:
+    """Apply declared marker changes and joins to existing prose blocks.
+
+    Anchors are exact, apart from whitespace, in an assembled verse's words
+    before revision. All targets are checked against the unchanged document;
+    verse markers, notes and styles remain in their original content order.
+    """
+    grouped: dict[str, list[tuple[str, Paragraph]]] = {}
+    for key, entries in policy.lines.get("paragraphs", {}).items():
+        code, reference = key.split()
+        require(
+            code in documents, f"Paragraph decision in no Old Testament book: {key}"
+        )
+        grouped.setdefault(code, []).extend((reference, entry) for entry in entries)
+    result = dict(documents)
+    for code, book_entries in grouped.items():
+        doc = documents[code]
+        verses = scripture.verses(doc)
+        edits: dict[int, str] = {}
+        for reference, entry in book_entries:
+            label = f"Paragraph decision {code} {reference}: {entry['at']!r}"
+            require(reference in verses, f"{label}: missing verse")
+            pattern = re.compile(r"(?<!\w)" + re.escape(entry["at"]) + r"(?!\w)")
+            found = [
+                (block, lo, match.start())
+                for block, lo, hi, _ in verses[reference].parts
+                for match in pattern.finditer(
+                    scripture.plain(
+                        usj.text_of(doc["content"][block]["content"][lo:hi])
+                    )
+                )
+            ]
+            require(len(found) == 1, f"{label}: anchor not met once")
+            block, lo, offset = found[0]
+            node = doc["content"][block]
+            require(
+                offset == 0 and not usj.text_of(node["content"][:lo]).strip(),
+                f"{label}: anchor does not open a paragraph",
+            )
+            require(
+                node["marker"] == entry["from"], f"{label}: expected {entry['from']}"
+            )
+            require(entry["to"] != entry["from"], f"{label}: changes nothing")
+            require(block not in edits, f"{label}: conflicting paragraph decisions")
+            if entry["to"] == "join":
+                require(
+                    block > 0
+                    and usj.paragraph(doc["content"][block - 1]) in {"p", "m"},
+                    f"{label}: join must follow ordinary prose in the same chapter",
+                )
+            edits[block] = entry["to"]
+        blocks: list[Node] = []
+        for index, node in enumerate(doc["content"]):
+            marker = edits.get(index)
+            if marker == "join":
+                # Joined as the parser would have read them: one space
+                # between, and none before a verse number.
+                previous = blocks[-1]
+                blocks[-1] = {
+                    **previous,
+                    "content": usj.trimmed(
+                        usj.joined(previous["content"], [" "], node["content"])
+                    ),
+                }
+            else:
+                blocks.append({**node, "marker": marker} if marker else node)
+        result[code] = usj.with_blocks(doc, blocks)
     return result
 
 
@@ -970,10 +1055,19 @@ def descriptive_titles(doc: Document) -> Document:
 
 def check(policy: bible.policy.Policy) -> None:
     data = policy.lines
-    require_fields(data, {"why", "breaks"}, (), "Lines file")
+    require_fields(data, {"why", "breaks"}, {"paragraphs", "prose"}, "Lines file")
+    for key, why in data.get("prose", {}).items():
+        require(
+            VERSE_KEY.fullmatch(key) is not None,
+            f"Prose decision at what is not a verse: {key}",
+        )
+        require(
+            isinstance(why, str) and bool(why.strip()),
+            f"Prose decision without a why: {key}",
+        )
     for key, entries in data["breaks"].items():
         require(
-            re.fullmatch(r"[1-4A-Z]{3} \d+:\d+[a-z]?", key) is not None,
+            VERSE_KEY.fullmatch(key) is not None,
             f"Line decision at what is not a verse: {key}",
         )
         require(bool(entries), f"Line decision without a line: {key}")
@@ -986,4 +1080,27 @@ def check(policy: bible.policy.Policy) -> None:
                 and (entry["line"] is None or bool(scripture.words_of(entry["line"])))
                 and bool(entry["why"]),
                 f"Line decision without words or a why: {key}",
+            )
+    for key, paragraph_entries in data.get("paragraphs", {}).items():
+        require(
+            VERSE_KEY.fullmatch(key) is not None,
+            f"Paragraph decision at what is not a verse: {key}",
+        )
+        require(bool(paragraph_entries), f"Paragraph decision without an entry: {key}")
+        for paragraph_entry in paragraph_entries:
+            label = f"Paragraph decision {key}"
+            require_fields(paragraph_entry, {"at", "from", "to", "why"}, (), label)
+            at, why = paragraph_entry["at"], paragraph_entry["why"]
+            require(
+                isinstance(at, str)
+                and bool(at)
+                and at == scripture.plain(at)
+                and isinstance(why, str)
+                and bool(why.strip()),
+                f"{label}: needs an anchor with normal spaces and a why",
+            )
+            require(
+                paragraph_entry["from"] in ("p", "m")
+                and paragraph_entry["to"] in ("p", "m", "join"),
+                f"{label}: unsupported paragraph marker",
             )

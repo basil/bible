@@ -380,7 +380,9 @@ def lined(
         code: doc for code, doc in units.items() if code not in policy.kjv_units
     }
     unknown = sorted(
-        key for key in policy.lines["breaks"] if key[:3] not in old_testament
+        key
+        for key in set(policy.lines["breaks"]) | set(policy.lines.get("prose", {}))
+        if key[:3] not in old_testament
     )
     require(
         not unknown,
@@ -397,6 +399,7 @@ def lined(
         policy,
         lines.scrivener(read_sources.kjv, policy),
     )
+    brenton = lines.paragraphs(brenton, policy)
     require("PSA" in brenton, "Psalter decisions without the Psalms")
     require("LAM" in brenton, "Acrostic names without Lamentations")
     brenton = {

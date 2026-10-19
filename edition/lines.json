@@ -1,5 +1,8 @@
 {
-  "why": "The Old Testament poetry is set in lines where the Updated Brenton sets it in lines and Scrivener's King James Bible sets the verse as verse too or has no say, divided as the update divides it, by aligning its words with Brenton's. A line the words do not place, or place two ways, or would place wrongly, is given here: the source's verse it opens, the words the update's line begins with, so the build knows which line is meant, and the words the source's line begins with, met once in that verse, or null where the source has no words for the line.",
+  "why": "The Old Testament poetry follows the Updated Brenton where Scrivener also sets the verse as poetry or has no say. Prose records verse-level exceptions following Scrivener. Its line boundaries are aligned to Brenton; breaks records the lines the words cannot place or would place wrongly. Boyd’s prose marker is retained at a poem’s end. Paragraphs records departures at existing prose boundaries: a continuation or repeated label is flush left, while a distinct narrative unit or independent speech turn keeps its paragraph. Each anchor is checked in the assembled, unrevised verse; joining changes paragraph structure alone.",
+  "prose": {
+    "SIR 50:27": "The author's colophon is prose in Scrivener's Cambridge Paragraph Bible; follow him here rather than Boyd's poetry."
+  },
   "breaks": {
     "JOB 2:11": [
       {
@@ -100,6 +103,168 @@
         "follows": "Our time has drawn nigh",
         "line": "Koph. Our time has drawn nigh",
         "why": "Brenton prints the Hebrew letter inside the verse, where the update's numbering begins a new verse, so both words beside the break are matched but the letter stands between them. The letter heads the line it names, as it heads the verses of chapters 1, 2 and 4."
+      }
+    ]
+  },
+  "paragraphs": {
+    "GEN 25:24": [
+      {
+        "at": "And the days were fulfilled",
+        "from": "m",
+        "to": "p",
+        "why": "The oracle ends and the narrative advances to the birth and upbringing of the twins; Scrivener begins a paragraph here."
+      }
+    ],
+    "EXO 15:22": [
+      {
+        "at": "So Moses brought up the children of Israel",
+        "from": "m",
+        "to": "p",
+        "why": "Departure from the Red Sea begins the wilderness journey as a new narrative unit; Scrivener begins a paragraph here."
+      }
+    ],
+    "NUM 21:16": [
+      {
+        "at": "And thence they came to the well;",
+        "from": "p",
+        "to": "m",
+        "why": "The itinerary resumes after the quotation about Arnon and continues into the introduction of the well song; Scrivener resumes flush left."
+      }
+    ],
+    "NUM 21:31": [
+      {
+        "at": "And Israel dwelt in all the cities of the Amorites.",
+        "from": "p",
+        "to": "m",
+        "why": "The conquest narrative resumes after the historical quotation about Hesebon; Scrivener resumes flush left."
+      }
+    ],
+    "NUM 23:11": [
+      {
+        "at": "And Balac said to Balaam,",
+        "from": "p",
+        "to": "m",
+        "why": "Balac’s response continues the encounter after the oracle, as Scrivener sets it; the existing new paragraph at verse 14 still marks the change of location."
+      }
+    ],
+    "NUM 23:25": [
+      {
+        "at": "And Balac said to Balaam,",
+        "from": "p",
+        "to": "m",
+        "why": "The response and ensuing preparations continue the encounter around its oracle; Scrivener resumes flush left."
+      }
+    ],
+    "NUM 24:10": [
+      {
+        "at": "And Balac was angry with Balaam,",
+        "from": "p",
+        "to": "m",
+        "why": "Balac’s immediate reaction continues the encounter after the oracle; Scrivener resumes flush left."
+      }
+    ],
+    "NUM 24:15": [
+      {
+        "at": "And he took up his parable and said,",
+        "from": "p",
+        "to": "join",
+        "why": "The introduction completes Balaam’s preceding announcement and leads into his oracle; Scrivener leaves it within the preceding prose paragraph."
+      }
+    ],
+    "DEU 33:7": [
+      {
+        "at": "And this is the blessing of Juda;",
+        "from": "p",
+        "to": "m",
+        "why": "The tribal introductions are parallel prose labels within the blessing sequence. Set each flush left, including Juda, which Scrivener sets in poetry; the chapter’s substantive introduction remains a paragraph."
+      }
+    ],
+    "DEU 33:8": [
+      {
+        "at": "And to Levi he said,",
+        "from": "p",
+        "to": "m",
+        "why": "The tribal introductions are parallel prose labels within the blessing sequence. Set each flush left, including Juda, which Scrivener sets in poetry; the chapter’s substantive introduction remains a paragraph."
+      }
+    ],
+    "DEU 33:12": [
+      {
+        "at": "And to Benjamin he said,",
+        "from": "p",
+        "to": "m",
+        "why": "The tribal introductions are parallel prose labels within the blessing sequence. Set each flush left, including Juda, which Scrivener sets in poetry; the chapter’s substantive introduction remains a paragraph."
+      }
+    ],
+    "DEU 33:13": [
+      {
+        "at": "And to Joseph he said,",
+        "from": "p",
+        "to": "m",
+        "why": "The tribal introductions are parallel prose labels within the blessing sequence. Set each flush left, including Juda, which Scrivener sets in poetry; the chapter’s substantive introduction remains a paragraph."
+      }
+    ],
+    "DEU 33:18": [
+      {
+        "at": "And to Zabulon he said,",
+        "from": "p",
+        "to": "m",
+        "why": "The tribal introductions are parallel prose labels within the blessing sequence. Set each flush left, including Juda, which Scrivener sets in poetry; the chapter’s substantive introduction remains a paragraph."
+      }
+    ],
+    "DEU 33:20": [
+      {
+        "at": "And to Gad he said,",
+        "from": "p",
+        "to": "m",
+        "why": "The tribal introductions are parallel prose labels within the blessing sequence. Set each flush left, including Juda, which Scrivener sets in poetry; the chapter’s substantive introduction remains a paragraph."
+      }
+    ],
+    "DEU 33:22": [
+      {
+        "at": "And to Dan he said,",
+        "from": "p",
+        "to": "m",
+        "why": "The tribal introductions are parallel prose labels within the blessing sequence. Set each flush left, including Juda, which Scrivener sets in poetry; the chapter’s substantive introduction remains a paragraph."
+      }
+    ],
+    "DEU 33:23": [
+      {
+        "at": "And to Nephthali he said,",
+        "from": "p",
+        "to": "m",
+        "why": "The tribal introductions are parallel prose labels within the blessing sequence. Set each flush left, including Juda, which Scrivener sets in poetry; the chapter’s substantive introduction remains a paragraph."
+      }
+    ],
+    "DEU 33:24": [
+      {
+        "at": "And to Aser he said,",
+        "from": "p",
+        "to": "m",
+        "why": "The tribal introductions are parallel prose labels within the blessing sequence. Set each flush left, including Juda, which Scrivener sets in poetry; the chapter’s substantive introduction remains a paragraph."
+      }
+    ],
+    "JDG 5:31": [
+      {
+        "at": "And the land had rest forty years.",
+        "from": "p",
+        "to": "m",
+        "why": "This closing narrative sentence completes the song’s episode; Scrivener resumes flush left."
+      }
+    ],
+    "1SA 2:10": [
+      {
+        "at": "And she left him there before the Lord,",
+        "from": "p",
+        "to": "m",
+        "why": "Anna’s departure and Samuel’s service continue the scene after her song; Scrivener resumes flush left at his corresponding verse 11."
+      }
+    ],
+    "1CH 16:36": [
+      {
+        "at": "And all the people shall say, Amen.",
+        "from": "p",
+        "to": "m",
+        "why": "The people’s response directly answers the hymn, as Scrivener sets it; the existing paragraphs at verses 37 and 43 retain the arrangements and departure as distinct units."
       }
     ]
   }

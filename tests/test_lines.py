@@ -63,15 +63,15 @@ def test_a_source_paragraph_is_divided_as_the_update_divides_it(
     declared: bible.policy.Policy,
 ) -> None:
     doc = lined(SOURCE, UPDATE, declared)
-    assert markers(doc) == ["p", "q1", "q1", "b", "q1", "q1", "p", "p"]
+    assert markers(doc) == ["p", "q1", "q1", "b", "q1", "q1", "m", "p"]
     verses = scripture.verses(doc)
     # The words that introduce the poem end their paragraph of prose; a
     # break after a respelt word (to-day) is placed by the line's first word.
     assert verses["1:1"].text == (
         "And he said,\nHear my voice, ye wives of Lamech;\nto-day I have slain a man."
     )
-    # Prose resumes in a paragraph of its own, as the Berean Standard Bible
-    # sets it, and the next verse keeps the source's own paragraph.
+    # Prose resumes flush left as the update sets it; the next verse keeps
+    # the source's own paragraph.
     assert (
         verses["1:2"].text
         == "Cursed be Canaan,\na slave shall he be:\nand he went away."
@@ -96,7 +96,61 @@ def test_a_poem_after_a_dropped_line_opens_without_its_stanza_break(
         declared,
         lambda code, label: label != "1:1",
     )["TST"]
-    assert markers(doc) == ["p", "q1", "q1", "p", "p"]
+    assert markers(doc) == ["p", "q1", "q1", "m", "p"]
+
+
+def test_a_prose_exception_preserves_words_notes_and_inputs(
+    declared: bible.policy.Policy,
+) -> None:
+    decided = changed(
+        declared, "lines", lambda data: data.update(prose={"TST 1:2": "Prose."})
+    )
+    lines.check(decided)
+    source, update = usj.parse(SOURCE), usj.parse(UPDATE)
+    before = copy.deepcopy((source, update))
+    result = lines.old_testament({"TST": source}, {"TST": update}, decided)["TST"]
+    assert (source, update) == before
+    assert parts(result, "1:2") == ["p"]
+    assert parts(result, "1:1") == ["p", "q1", "q1"]
+    for label, verse in scripture.verses(result).items():
+        original = scripture.verses(source)[label]
+        assert scripture.plain(verse.text) == scripture.plain(original.text)
+        assert [note for _, note in verse.notes] == [note for _, note in original.notes]
+
+
+@pytest.mark.parametrize("label", ["1:3", "1:4"])
+def test_a_prose_exception_must_suppress_poetry(
+    declared: bible.policy.Policy, label: str
+) -> None:
+    decided = changed(
+        declared, "lines", lambda data: data.update(prose={f"TST {label}": "Prose."})
+    )
+    with pytest.raises(CheckFailed, match=f"suppress no poetry: TST {label}"):
+        lined(SOURCE, UPDATE, decided)
+
+
+def test_a_prose_exception_redundant_with_the_witness_is_refused(
+    declared: bible.policy.Policy,
+) -> None:
+    decided = changed(
+        declared, "lines", lambda data: data.update(prose={"TST 1:2": "Prose."})
+    )
+    with pytest.raises(CheckFailed, match="suppress no poetry: TST 1:2"):
+        lines.old_testament(
+            {"TST": usj.parse(SOURCE)},
+            {"TST": usj.parse(UPDATE)},
+            decided,
+            lambda code, label: False,
+        )
+
+
+@pytest.mark.parametrize("entries", [{"TST 1": "Prose."}, {"TST 1:2": " "}])
+def test_prose_exception_shape_is_checked(
+    declared: bible.policy.Policy, entries: dict[str, str]
+) -> None:
+    decided = changed(declared, "lines", lambda data: data.update(prose=entries))
+    with pytest.raises(CheckFailed, match="Prose decision"):
+        lines.check(decided)
 
 
 def test_a_note_at_a_break_stays_with_the_word_it_is_set_against(
@@ -351,9 +405,9 @@ def test_every_line_of_the_update_is_a_line_of_the_edition(
         for block in unit(edition, code)["content"]
         if block.get("marker") == "q1"
     )
-    # Less the lines of the verses Scrivener sets as prose, and the one line
-    # the edition's text lacks by a reading from Codex Alexandrinus, which
-    # the decisions give as no line.
+    # Less the lines of the verses Scrivener or a decision sets as prose,
+    # and the one line the edition lacks by a reading from Codex Alexandrinus,
+    # which the decisions give as no line.
     witness = lines.scrivener(read.kjv, edition.policy)
     prose = 0
     for code, doc in read.updated_brenton.items():
@@ -361,7 +415,10 @@ def test_every_line_of_the_update_is_a_line_of_the_edition(
             continue
         blocks: set[int] = set()
         for label, verse in scripture.verses(doc).items():
-            if witness(code, label) is False:
+            key = f"{code} {label}"
+            if witness(code, label) is False or key in edition.policy.lines.get(
+                "prose", {}
+            ):
                 blocks |= {
                     block
                     for block, _, _, _ in verse.parts
@@ -416,17 +473,17 @@ def test_the_hebrew_letters_of_lamentations_head_their_lines(
     )
 
 
-def test_prose_resumes_in_a_paragraph_of_its_own(
+def test_prose_resumes_under_its_declared_marker(
     edition: bible.pipeline.Edition,
 ) -> None:
-    # Prose resumes in a paragraph of its own, within a verse too.
+    # Prose resumes flush left where Boyd does, within a verse too.
     judges = unit(edition, "JDG")
     verse = scripture.verses(judges)["14:18"]
     assert [judges["content"][block]["marker"] for block, *_ in verse.parts] == [
         "p",
         "q1",
         "q1",
-        "p",
+        "m",
         "q1",
         "q1",
     ]
@@ -435,7 +492,7 @@ def test_prose_resumes_in_a_paragraph_of_its_own(
     assert [
         unit(edition, "EXO")["content"][block]["marker"]
         for block, *_ in exodus["15:19"].parts
-    ] == ["p"]
+    ] == ["m"]
 
 
 def test_chapters_the_source_continued_open_with_their_lines(
@@ -484,6 +541,11 @@ def test_scrivener_says_which_verses_are_verse(
     # does not map to his, follow the update.
     assert parts(unit(edition, "WIS"), "7:7") == ["q1", "q1"]
     assert parts(unit(edition, "SIR"), "2:1") == ["q1", "q1"]
+    # The author's colophon is an explicit exception following Scrivener.
+    sirach = unit(edition, "SIR")
+    assert parts(sirach, "50:27") == ["p"]
+    assert parts(sirach, "50:26") == ["q1", "q1", "q1"]
+    assert parts(sirach, "50:28") == ["q1", "q1"]
     # His own lines in the prophets do not come in.
     assert all(block.get("marker") != "q1" for block in unit(edition, "ISA")["content"])
 
@@ -573,15 +635,23 @@ def test_the_lines_file_is_checked(declared: bible.policy.Policy) -> None:
         lines.check(changed(declared, "lines", wordless))
 
 
+@pytest.mark.parametrize("kind", ["breaks", "prose"])
 def test_new_testament_line_decisions_are_refused(
     read: bible.pipeline.Read,
     declared: bible.policy.Policy,
+    kind: str,
 ) -> None:
     decided = changed(
         declared,
         "lines",
-        lambda data: data["breaks"].update(
-            {"MAT 4:6": [{"follows": "x", "line": "y", "why": "."}]}
+        lambda data: data[kind].update(
+            {
+                "MAT 4:6": (
+                    [{"follows": "x", "line": "y", "why": "."}]
+                    if kind == "breaks"
+                    else "."
+                )
+            }
         ),
     )
     with pytest.raises(CheckFailed, match="no Old Testament book.*MAT 4:6"):

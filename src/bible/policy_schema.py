@@ -92,8 +92,21 @@ class LineBreak(TypedDict, total=False):
     why: ReadOnly[str]
 
 
+Paragraph = TypedDict(
+    "Paragraph",
+    {
+        "at": ReadOnly[str],
+        "from": ReadOnly[Literal["p", "m"]],
+        "to": ReadOnly[Literal["p", "m", "join"]],
+        "why": ReadOnly[str],
+    },
+)
+
+
 class Lines(TypedDict, total=False):
     breaks: ReadOnly[Mapping[str, tuple[LineBreak, ...]]]
+    prose: ReadOnly[Mapping[str, str]]
+    paragraphs: ReadOnly[Mapping[str, tuple[Paragraph, ...]]]
     why: ReadOnly[str]
 
 
