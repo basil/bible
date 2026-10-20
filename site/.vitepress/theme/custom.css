@@ -410,6 +410,71 @@
   font-size: 1rem;
 }
 
+/*
+ * The quote stands in the hero's image slot on wide screens, and after the
+ * features on narrow ones (HomeLayout.vue).
+ */
+.VPHomeHero .image {
+  display: none;
+}
+
+.features-quote {
+  margin-top: 2rem;
+  padding: 0 1.5rem;
+}
+
+@media (min-width: 40rem) {
+  .features-quote {
+    padding: 0 3rem;
+  }
+}
+
+/* The image's backdrop would lie over the quote and catch the pointer. */
+.VPHomeHero .image-bg {
+  display: none;
+}
+
+/* Keep the hero's text flush left, as it is without an image. */
+.VPHomeHero.VPHero.has-image .container .main {
+  text-align: left;
+}
+
+.VPHomeHero.VPHero.has-image .main .name,
+.VPHomeHero.VPHero.has-image .main .text,
+.VPHomeHero.VPHero.has-image .main .tagline {
+  margin: 0;
+}
+
+.VPHomeHero.VPHero.has-image .main .actions {
+  justify-content: flex-start;
+}
+
+@media (min-width: 60rem) {
+  .VPHomeHero .container {
+    gap: 2rem;
+    align-items: center;
+  }
+
+  .VPHomeHero.has-image .main {
+    flex: 1;
+  }
+
+  .VPHomeHero .image {
+    display: block;
+    flex: 1;
+    margin: 0;
+    min-width: 0;
+  }
+
+  .VPHomeHero .image-container {
+    transform: none;
+  }
+
+  .features-quote {
+    display: none;
+  }
+}
+
 .VPNavBarTitle .title {
   font-size: 1.125rem;
   line-height: 1.3333333;
