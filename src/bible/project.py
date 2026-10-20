@@ -22,6 +22,8 @@ FRONT_TEMPLATE = paths.ROOT / "config/front.sfm"
 PROJECT_DIR = "projects/BIBLE"
 SETTINGS_DIR = "shared/ptxprint/Bible"
 PROCESSED_DIR = "local/ptxprint/Bible"
+# The paragraph adjustments the page filler writes, which the typesetter reads.
+ADJUSTMENTS_DIR = f"{SETTINGS_DIR}/AdjLists"
 
 
 def bsb_baseline() -> tuple[str, ...]:

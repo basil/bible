@@ -61,7 +61,7 @@ def patch(root: Path) -> None:
 """,
         """                    if self.maxRuns == 1:
                         self.maxRuns = 2
-                    if numruns >= self.maxRuns:
+                    if self.maxRuns > 0 and numruns >= self.maxRuns:
                         logger.error(f"Margin notes did not converge after {numruns} passes")
                         self.res = 1
                         break
@@ -70,7 +70,7 @@ def patch(root: Path) -> None:
     replace_once(
         root / "runjob.py",
         "        if not self.res and not self.nopdf:\n",
-        """        if not self.res and numruns >= self.maxRuns and (rererun or self.rerunReasons):
+        """        if self.maxRuns > 0 and not self.res and numruns >= self.maxRuns and (rererun or self.rerunReasons):
             logger.error(f"Typesetting did not converge after {numruns} passes: {self.rerunReasons}")
             self.res = 1
         if not self.res and not self.nopdf:

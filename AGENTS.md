@@ -8,7 +8,7 @@ You need Docker with the Compose plugin, Make, and about 5 GB of disk space. Eve
 
 ```sh
 make bootstrap  # build the container image (needs the network)
-make pdf        # build dist/bible.pdf
+make pdf        # fill pages, check and build dist/bible.pdf
 ```
 
 Run `make bootstrap` first, and again when the build says the image is stale. The build and test targets run with networking turned off and read the texts from the archives committed in `sources/`.
@@ -17,6 +17,7 @@ The edition's text family is OLEBFont, which the image build assembles once (`sc
 
 ```sh
 make sample    # a short PDF of selected chapters, for checking layout quickly
+make pdf-unfilled # a full unfilled proof at dist/bible-unfilled.pdf
 make validate  # prepare the whole edition, checking every source and decision, without typesetting it
 make web       # write prepared scripture as USJ JSON in build/web/
 make site      # export scripture and build the VitePress website (Node >= 22)
@@ -24,9 +25,45 @@ make site-dev  # serve the site locally after make web and npm --prefix site ci
 make clean     # delete build/ and dist/
 ```
 
+`make pdf` runs PTXprint's page filler with four workers before typesetting
+the complete book. A cold run can take an hour or more; a matching cache
+avoids repeating the searches, but final typesetting and checks still run.
+`FILL_ARGS="--jobs 2"` changes concurrency.
+
+Adjustments and saved probes live in `build/page-fill-cache/`, keyed by each
+book's generated USFM, shared layout, fonts and pinned tools. Matching books
+are reused automatically; interrupted books resume from their last saved
+adjustments. A change confined to Revelation refills Revelation, while a
+margin or font change refills every book. Corrupt entries are recomputed.
+`make pdf FILL_ARGS=--fresh` discards the cache, and `make clean` removes it.
+
+The runner refuses concurrent filled builds, checkpoints every minute and
+after each book, and reports completed, reused and pending books. Its rough
+remaining-time estimate starts once enough books have finished; it covers
+filling alone, not final typesetting. Logs and the machine-readable report
+are in `build/page-fill/`; complete typesetting and verification output is
+in `build/pdf/`. A failed or interrupted build preserves valid checkpoints
+and the last checked `dist/bible.pdf`. Any unresolved filler pages, failed
+convergence or failed publication checks stop publication.
+
+The filler checks its final page measurements rather than retaining every
+page it failed on earlier in its search. A short page before a major
+kathisma heading is permitted only when the measured heading, psalm title
+and first scripture line cannot fit in the remaining space. These protected
+breaks are recorded by book in the cache and report; ordinary unresolved
+gaps still fail. Partial checkpoints receive a fresh diagnostic pass before
+they can be accepted as complete.
+
+The baseline grid keeps lines registered front and back on thin paper; it
+does not require every row to contain text. Paragraph protection can leave
+a row empty. Filling changes paragraph wrapping to improve page breaks
+while retaining the baseline spacing. Samples and `make pdf-unfilled` skip
+filling. CI fills master builds and caches their checkpoints; pull requests
+build unfilled proofs in Utopia rather than the published Valkyrie face.
+
 The sample prints the chapters listed in `edition/sample.json`, which were picked to cover the awkward cases: Psalm 151, the additions to Esther and Daniel, the join between 2 Esdras and Nehemias, the end of Malachias, the verses of 3 Kingdoms 5–7 and 14 supplied or reordered after Codex Alexandrinus, the displaced passages of Proverbs 24 under the Hebrew's numbers, Sirach's Prologue and the Epistle of Jeremias's unnumbered title, quoted Greek and Hebrew, the verses the Byzantine text lacks or moves (Luke 17, Acts 24, Romans 14, Matthew 23, 1 John 5), Revelation 13 with its many readings, and pages crowded with notes.
 
-Logs and intermediate files go to `build/`, which is regenerated on every run.
+Logs and intermediate files go to `build/`, which is regenerated on every run except for the page filler's cache.
 
 The `web` command writes the prepared scripture as USJ JSON, one file per chapter, each with its book, a separate file for Sirach’s Prologue as a book introduction, and an ordered chapter manifest with each book's names and each chapter's label, marking the chapters whose heading stands for their number; the front matter the book prints, one file per unit in `build/web/matter/`, each with its book and its printed title, without the names the manifest lists it under, in its order, with the section it opens (the edition's own pages, then each testament's before its books; the divider pages are left out); the passages of the comparison page, quoted from the edition and from the King James verses the place stage pairs with them, with their highlights, the textual variants, with their opening prose and their entries by book, each the verse it is about, with the King James Bible's number where it differs, and its lanes: the Greek of both texts and, where the English changes, the words of both Bibles, each lane the words the two witnesses share and, where they differ, both readings, and the fonts as complete WOFF files in `build/web/fonts/`, with the stylesheet that declares them: the four OLEBFont faces, the Greek face installed beside them and Ezra SIL, in which the Greek and Hebrew are set as in print, tagged in the exported chapters as the typesetter has them. The website in `site/` is its only consumer; it renders one static page per chapter, the Prologue at `/read/sir/prologue`, one per unit of front matter and one per book's variants. Run `make web` before developing or building the site directly with npm; `make site` does this automatically. Node runs on the host, while preparing the scripture and fonts still runs in the container. If the image is stale or its fonts are missing, run `make bootstrap` again.
 

@@ -33,8 +33,11 @@ def json_text(data: object) -> str:
 
 
 def write_json(path: Path, data: object) -> None:
+    """Write the file whole: a reader sees the old file or the new, never part."""
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json_text(data), encoding="utf-8")
+    temporary = path.with_name(path.name + ".tmp")
+    temporary.write_text(json_text(data), encoding="utf-8")
+    temporary.replace(path)
 
 
 def sha256(data: bytes) -> str:

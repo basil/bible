@@ -11,7 +11,11 @@ BUILD_DIR = ROOT / "build"
 DIST_DIR = ROOT / "dist"
 WEB_DIR = BUILD_DIR / "web"
 # The PDF each command publishes under dist/; it builds in build/<command>.
-OUTPUTS = {"sample": "sample.pdf", "pdf": "bible.pdf"}
+OUTPUTS = {
+    "sample": "sample.pdf",
+    "pdf": "bible.pdf",
+    "pdf-unfilled": "bible-unfilled.pdf",
+}
 
 # The container image's pinned tools, and the PTXprint checkout among them.
 OPT = Path("/opt")

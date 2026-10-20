@@ -218,6 +218,7 @@ def test_patch_refuses_changed_upstream(tmp_path: Path) -> None:
         (5, False, 5, False),
         (1, False, 2, False),
         (5, True, 5, True),
+        (0, False, 1, True),
     ],
 )
 def test_note_reruns_and_cap(
@@ -243,7 +244,7 @@ def test_note_reruns_and_cap(
     job.silent = True
     job.env = None
     job.res = 0
-    job.nopdf = False
+    job.nopdf = max_runs == 0
     passes = []
     converted = []
     job.xdvtopdf = lambda *args: converted.append(args)
@@ -270,8 +271,12 @@ def test_note_reruns_and_cap(
     )
     job.run_xetex("Bible.tex", "Bible.pdf")
     assert len(passes) == expected_runs
-    success = settles and not layout_changes
-    assert bool(converted) == success
+    success = max_runs == 0 or (settles and not layout_changes)
+    assert bool(converted) == (success and max_runs > 0)
     assert job.res == (0 if success else 1)
-    assert ("Margin notes did not converge after" in caplog.text) == (not settles)
-    assert ("Typesetting did not converge after" in caplog.text) == layout_changes
+    assert ("Margin notes did not converge after" in caplog.text) == (
+        not settles and max_runs > 0
+    )
+    assert ("Typesetting did not converge after" in caplog.text) == (
+        layout_changes and max_runs > 0
+    )

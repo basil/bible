@@ -43,7 +43,26 @@ jobs:
       - uses: DavidAnson/markdownlint-cli2-action@v24.2.0
       - run: make validate
       - run: make test
-      - run: make pdf
+      - name: Restore page-filler checkpoints (master only)
+        if: github.ref == 'refs/heads/master'
+        uses: actions/cache/restore@v6.1.0
+        with:
+          path: build/page-fill-cache/
+          key: ${{ runner.os }}-page-fill-v1-valkyrie-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: ${{ runner.os }}-page-fill-v1-valkyrie-
+      - name: Build filled release PDF
+        if: github.ref == 'refs/heads/master'
+        run: make pdf
+      - name: Build unfilled proof PDF
+        if: github.ref != 'refs/heads/master'
+        run: make pdf-unfilled
+      # Keyed by content, so a run that changes no checkpoint saves no copy.
+      - name: Save page-filler checkpoints
+        if: always() && github.ref == 'refs/heads/master' && hashFiles('build/page-fill-cache/**/*.json') != ''
+        uses: actions/cache/save@v6.1.0
+        with:
+          path: build/page-fill-cache/
+          key: ${{ runner.os }}-page-fill-v1-valkyrie-${{ hashFiles('build/page-fill-cache/**/*.json') }}
       - run: make web
       - uses: actions/setup-node@v7.1.0
         with:
@@ -55,7 +74,12 @@ jobs:
       - run: npm --prefix site run build
       - run: npm --prefix site run test:integration
       - name: Include PDF downloads
-        run: cp dist/bible.pdf site/.vitepress/dist/
+        run: |
+          if [ "$GITHUB_REF" = refs/heads/master ]; then
+            cp dist/bible.pdf site/.vitepress/dist/
+          else
+            cp dist/bible-unfilled.pdf site/.vitepress/dist/bible.pdf
+          fi
       - name: Upload Pages artifact
         if: github.ref == 'refs/heads/master'
         uses: actions/upload-pages-artifact@v5.0.0

@@ -9,7 +9,7 @@ TOOLCHAIN := $(COMPOSE) run --rm -T --interactive=false --user $(UIDGID) toolcha
 DOCKERFMT := $(COMPOSE) run --rm -T --interactive=false --user $(UIDGID) dockerfmt
 HADOLINT := $(COMPOSE) run --rm -T --interactive=true hadolint
 PIPELINE := $(TOOLCHAIN) python3 -m bible
-.PHONY: bootstrap validate review review-diff test test-python test-fonts test-tex test-tex-save font-specimen sample pdf web site site-dev clean lint lint-fix
+.PHONY: bootstrap validate review review-diff test test-python test-fonts test-tex test-tex-save font-specimen sample pdf pdf-unfilled web site site-dev clean lint lint-fix
 bootstrap:
 	sh scripts/collect_valkyrie.sh
 	$(COMPOSE) pull dockerfmt hadolint
@@ -48,7 +48,9 @@ font-specimen:
 sample:
 	$(PIPELINE) sample
 pdf:
-	$(PIPELINE) pdf
+	$(PIPELINE) pdf $(FILL_ARGS)
+pdf-unfilled:
+	$(PIPELINE) pdf-unfilled
 web:
 	$(PIPELINE) web
 site: web

@@ -506,7 +506,8 @@ def inspect_pdf(
     ids: Sequence[str],
     sample: bool,
     witnesses: Sequence[Witnesses],
-) -> None:
+) -> int:
+    """Check the typeset PDF against the project; returns its page count."""
     with (base / "qpdf.log").open("w", encoding="utf-8") as log:
         run("qpdf", "--check", pdf, stdout=log, stderr=subprocess.STDOUT)
     # Every page's boxes, not just the first MediaBox: a last page past the
@@ -589,3 +590,4 @@ def inspect_pdf(
         "Missing glyph or TeX error; inspect logs",
     )
     check_boundaries(base, project, ids, pages, reading_text, sample, witnesses)
+    return pages
