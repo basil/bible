@@ -8,6 +8,7 @@ import os
 import re
 import shutil
 import subprocess
+import xml.etree.ElementTree as ET
 from collections import defaultdict
 from pathlib import Path
 
@@ -18,6 +19,34 @@ from bible import paths
 from bible.project import FRONT_TEMPLATE, bsb_baseline, style_mods
 
 LAYOUT = paths.CONFIG_DIR / "layout.ini"
+
+
+def xetex(cwd: Path, name: str) -> subprocess.CompletedProcess[str]:
+    """Typeset a job with PTXprint's macros, which must succeed."""
+    result = subprocess.run(
+        ["xetex", "-interaction=nonstopmode", "-halt-on-error", name],
+        cwd=cwd,
+        env={**os.environ, "TEXINPUTS": f"{paths.UPSTREAM / 'src'}//:"},
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode == 0, result.stdout
+    return result
+
+
+def ptxprint_project(tmp_path: Path) -> Path:
+    """A small PTXprint project loading the production customizations,
+    including their relative inputs; the directory its jobs run in."""
+    conf = tmp_path / "shared/ptxprint/Bible"
+    conf.mkdir(parents=True)
+    work = tmp_path / "local/ptxprint/Bible"
+    work.mkdir(parents=True)
+    for name in ("protrusion.tex", "running-heads.tex"):
+        shutil.copy(paths.CONFIG_DIR / name, conf)
+    (conf / "baseline.sty").write_text(bsb_baseline()[1], encoding="utf-8")
+    (conf / "mods.sty").write_text(style_mods(), encoding="utf-8")
+    return work
 
 
 def read_cfg(text: str) -> configparser.ConfigParser:
@@ -165,15 +194,7 @@ def test_chapter_figures_are_lining_despite_the_base_oldstyle_font(
 """,
         encoding="utf-8",
     )
-    result = subprocess.run(
-        ["xetex", "-interaction=nonstopmode", "-halt-on-error", probe.name],
-        cwd=tmp_path,
-        env={**os.environ, "TEXINPUTS": f"{paths.UPSTREAM / 'src'}//:"},
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    assert result.returncode == 0, result.stdout
+    result = xetex(tmp_path, probe.name)
     depths = {
         marker: float(depth) / float(height)
         for marker, height, depth in re.findall(
@@ -189,16 +210,7 @@ def test_chapter_figures_are_lining_despite_the_base_oldstyle_font(
 def test_note_callers_follow_context_and_restart_without_margin_notes(
     tmp_path: Path,
 ) -> None:
-    # Load the production customizations, including their relative protrusion
-    # input, in a small PTXprint project independent of generated scripture.
-    conf = tmp_path / "shared/ptxprint/Bible"
-    conf.mkdir(parents=True)
-    work = tmp_path / "local/ptxprint/Bible"
-    work.mkdir(parents=True)
-    shutil.copy(paths.CONFIG_DIR / "protrusion.tex", conf)
-    shutil.copy(paths.CONFIG_DIR / "running-heads.tex", conf)
-    (conf / "baseline.sty").write_text(bsb_baseline()[1], encoding="utf-8")
-    (conf / "mods.sty").write_text(style_mods(), encoding="utf-8")
+    work = ptxprint_project(tmp_path)
     (work / "front.usfm").write_text(
         r"""\id FRT
 \periph Preface|id="preface"
@@ -273,15 +285,7 @@ def test_note_callers_follow_context_and_restart_without_margin_notes(
     )
     records = []
     for _ in range(3):
-        result = subprocess.run(
-            ["xetex", "-interaction=nonstopmode", "-halt-on-error", probe.name],
-            cwd=work,
-            env={**os.environ, "TEXINPUTS": f"{paths.UPSTREAM / 'src'}//:"},
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        assert result.returncode == 0, result.stdout
+        result = xetex(work, probe.name)
         records.append((work / "callers.notepages").read_text(encoding="utf-8"))
 
     notes = re.findall(
@@ -313,3 +317,147 @@ def test_note_callers_follow_context_and_restart_without_margin_notes(
     # not overwrite its predecessor's page. This also checks the image patch.
     assert [int(number) for number, _ in page_records] == list(range(1, 9))
     assert int(page_records[4][1]) > int(page_records[3][1]) + 1
+
+
+def test_poetry_indents_and_line_opening_verse_numbers(tmp_path: Path) -> None:
+    """Check rendered geometry, including wraps, inline milestones and acrostics."""
+    work = ptxprint_project(tmp_path)
+    (work / "poetry.usfm").write_text(
+        r"""\id LAM
+\c 1
+\p \v 1 Preliminary prose clears the chapter cutout before the poem begins.
+\p Further prose clears the chapter cutout completely.
+\b
+\q1 \v 14 Levelone """
+        + "echo " * 40
+        + r"""Tailone.
+\q2 \v 9 Leveltwo """
+        + "echo " * 40
+        + r"""Tailtwo.
+\q1 \v 118 Threefigures stand at the same margin.
+\q1 \v 35a Lettered labels retain their native appearance.
+\q1 \v 23 \vp 24:23\vp* Published labels fit the level-one inset.
+\q1 \v 30 \vp 30:15\vp* Anotherpublished label fits too.
+\q1 \v 36-37 Bridged labels keep their native formatting.
+\q1 Beforeone \v 38 Afterone remains inline.
+\q2 Beforetwo \v 39 Aftertwo remains inline.
+\q1 \v 41 Opening \v 42 Secondinline remains in this line.
+\qa \v 40 AIN
+\q1 Acrostic starts beneath its heading.
+\qa \v 44 PE
+\q1 \v 45 Fortyfive follows the acrostic number inline.
+\b
+\p Afterpoetry resumes the ordinary prose paragraph indent.
+\p Prosebefore \v 43 Proseafter keeps an inline number outside poetry.
+\c 3
+\qa \v 1 ALEPH
+\q1 Chapteracrostic suppresses verse one beside the chapter figure.
+""",
+        encoding="utf-8",
+    )
+    (work / "poetry.tex").write_text(
+        r"""\input paratext2.tex
+\input ptx-ptxprint.tex
+\def\regular{"OLEBFont:+onum=1:+pnum=1"}
+\def\bold{"OLEBFont/B:+onum=1:+pnum=1"}
+\def\italic{"OLEBFont/I:+onum=1:+pnum=1"}
+\def\bolditalic{"OLEBFont/B/I:+onum=1:+pnum=1"}
+\FontSizeUnit=.75pt
+\def\LineSpaceBase{12}
+\def\LineSpacingFactor{1.222222}
+\IndentUnit=.8in
+\stylesheet{usfm_sb.sty}
+\stylesheet{ptx2pdf.sty}
+\stylesheet{../../../shared/ptxprint/Bible/baseline.sty}
+\stylesheet{../../../shared/ptxprint/Bible/mods.sty}
+\BodyColumns=1\IntroColumns=1\TitleColumns=1
+\JustifyParstrue\IndentAfterHeadingfalse
+\OmitVerseNumberOnetrue
+\def\AfterVerseSpaceFactor{1.8}
+\hangpoetry
+"""
+        + rf"\input {paths.CONFIG_DIR / 'ptxprint-mods.tex'}"
+        + r"""
+\nolotwritetrue
+\scripturebooktrue
+\lastptxfiletrue
+\ptxfile{poetry.usfm}
+\end
+""",
+        encoding="utf-8",
+    )
+    result = xetex(work, "poetry.tex")
+    assert "Overfull" not in result.stdout
+    pdf = subprocess.check_output(
+        ["pdftotext", "-bbox-layout", str(work / "poetry.pdf"), "-"], text=True
+    )
+    root = ET.fromstring(pdf)
+    ns = {"x": "http://www.w3.org/1999/xhtml"}
+    lines = [list(line) for line in root.findall(".//x:line", ns)]
+    words = [word for line in lines for word in line]
+
+    def word(text: str) -> ET.Element:
+        found = [w for w in words if w.text == text]
+        assert len(found) == 1, (text, [w.text for w in words])
+        return found[0]
+
+    def edge(element: ET.Element, side: str = "xMin") -> float:
+        # Poppler uses PDF points (72/in), while the settings use TeX points.
+        return float(element.attrib[side]) * 72.27 / 72
+
+    def left(text: str) -> float:
+        return edge(word(text))
+
+    def right(text: str) -> float:
+        return edge(word(text), "xMax")
+
+    margin = left("14")
+    x = 0.125 * 0.8 * 72.27
+    for text, factor in (
+        ("Levelone", 2),
+        ("Leveltwo", 3),
+        ("Threefigures", 2),
+        ("Lettered", 2),
+        ("Published", 2),
+        ("Anotherpublished", 2),
+        ("Acrostic", 2),
+        ("Afterpoetry", 1),
+    ):
+        assert abs(left(text) - margin - factor * x) < 0.15, text
+    for label in ("9", "118", "35a", "40", "41", "44"):
+        assert abs(left(label) - margin) < 0.15, label
+    for label, opening in (("24:23", "Published"), ("30:15", "Anotherpublished")):
+        assert left(label) <= margin + 0.15
+        gap = left(opening) - right(label)
+        assert gap >= 1.3
+        # In the fallback font these labels may exceed 2X; only then may
+        # they extend outward, with the gap reduced to its native minimum.
+        if left(label) < margin - 0.15:
+            assert gap < 1.4
+    for start in ("Levelone", "Leveltwo"):
+        index = next(i for i, line in enumerate(lines) if word(start) in line)
+        continuation = lines[index + 1][0]
+        assert continuation.text == "echo"
+        assert abs(edge(continuation) - margin - 6 * x) < 0.15
+    for before, label, after in (
+        ("Beforeone", "38", "Afterone"),
+        ("Beforetwo", "39", "Aftertwo"),
+        ("Opening", "42", "Secondinline"),
+        # A verse that opens an acrostic's line follows the acrostic's number.
+        ("44", "45", "Fortyfive"),
+        ("Prosebefore", "43", "Proseafter"),
+    ):
+        assert left(before) < left(label) < left(after)
+        assert any(
+            all(word(t) in line for t in (before, label, after)) for line in lines
+        )
+    # A bridge can exceed 2X even in Valkyrie: keep the native minimum
+    # gap, allowing the number to extend outward rather than widening poetry.
+    assert left("36–") <= margin
+    assert left("Bridged") - right("37") >= 1.3
+    # The only 1 above the last scripture line is the first chapter figure;
+    # both opening verse ones are suppressed (the folio is farther down).
+    last_line = float(word("Chapteracrostic").attrib["yMax"])
+    assert (
+        sum(w.text == "1" and float(w.attrib["yMin"]) < last_line for w in words) == 1
+    )
