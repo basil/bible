@@ -1005,6 +1005,18 @@ def build_valkyrie(args: Namespace, fonts: Path) -> None:
     )
 
 
+def install_chapter(archive: Path, output: Path) -> None:
+    """Install newpx's original upright text face and its licensing notices."""
+    output.mkdir(parents=True, exist_ok=True)
+    with zipfile.ZipFile(archive) as z:
+        for member in (
+            "newpx/opentype/TeXGyrePagellaX-Regular.otf",
+            "newpx/doc/MANIFEST-newpx.txt",
+            "newpx/README",
+        ):
+            (output / Path(member).name).write_bytes(z.read(member))
+
+
 def main() -> None:
     parser = ArgumentParser(description=__doc__)
     parser.add_argument("--utopia", type=Path, required=True)
@@ -1023,6 +1035,7 @@ def main() -> None:
     expected = sorted(VALKYRIE_FACE.format(style) for style in STYLES)
     if provided == expected:
         build_valkyrie(args, fonts)
+        install_chapter(args.newpx, args.output / "chapter")
         install_greek(args.gfs_heraklit, HERAKLIT_FACES, greek)
         print(f"{FAMILY} assembled from Valkyrie OT, with GFS Heraklit for Greek")
     elif not provided:

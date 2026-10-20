@@ -16,7 +16,7 @@ import pytest
 from ptxprint.modelmap import ModelMap
 from ptxprint.usxutils import merge_sty, simple_parse
 
-from bible import paths
+from bible import paths, typeface
 from bible.project import FRONT_TEMPLATE, bsb_baseline, style_mods
 
 LAYOUT = paths.CONFIG_DIR / "layout.ini"
@@ -167,8 +167,9 @@ def test_chapter_figures_are_lining_despite_the_base_oldstyle_font(
 ) -> None:
     # Exercise PTXprint's real font selection: removing onum from the style
     # feature list cannot disable +onum=1 embedded in the base font name, so
-    # the chapter styles name the family directly. Oldstyle 3, 4 and 5
+    # the chapter styles select their fonts directly. Oldstyle 3, 4 and 5
     # descend well below the baseline; lining figures do not.
+    (tmp_path / "mods.sty").write_text(style_mods(), encoding="utf-8")
     probe = tmp_path / "chapter-figures.tex"
     probe.write_text(
         r"""\input paratext2.tex
@@ -179,18 +180,26 @@ def test_chapter_figures_are_lining_despite_the_base_oldstyle_font(
 \stylesheet{usfm_sb.sty}
 \stylesheet{ptx2pdf.sty}
 """
-        + rf"\stylesheet{{{paths.CONFIG_DIR / 'ptxprint-mods.sty'}}}"
+        + rf"\stylesheet{{{tmp_path / 'mods.sty'}}}"
         + r"""
 \catcode`\@=11
 \XeTeXuseglyphmetrics=3
 \def\measure#1{%
   \s@tfont{#1}{#1}%
+  \immediate\write16{SELECTED #1 \fontname\font}%
   \setbox0=\hbox{345}%
   \immediate\write16{DIGITS #1 \the\ht0\space\the\dp0}%
 }
 \measure{p}
 \measure{c}
 \measure{cl}
+\s@tfont{c}{c}
+\setbox0=\hbox{1}\setbox1=\hbox{12}\setbox2=\hbox{123}
+\ifdim\wd1>\wd0\else\errmessage{Two digit width}\fi
+\ifdim\wd2>\wd1\else\errmessage{Three digit width}\fi
+\setbox1=\hbox{0}
+\ifdim\wd1=\wd0\errmessage{Tabular figures}\fi
+\shipout\hbox{1 12 123}
 \s@ve@nd
 """,
         encoding="utf-8",
@@ -202,6 +211,14 @@ def test_chapter_figures_are_lining_despite_the_base_oldstyle_font(
             r"DIGITS (p|c|cl) ([\d.]+)pt\s*([\d.]+)pt", result.stdout
         )
     }
+    selected = dict(re.findall(r"SELECTED (p|c|cl) (.*)", result.stdout))
+    assert str(typeface.chapter_face()) in selected["c"]
+    assert "OLEBFont" in selected["p"] and "onum=1" in selected["p"]
+    assert "OLEBFont" in selected["cl"] and "onum=1" not in selected["cl"]
+    fonts = subprocess.check_output(
+        ["pdffonts", str(tmp_path / "chapter-figures.pdf")], text=True
+    )
+    assert typeface.postscript_name(typeface.chapter_face()) in fonts
     assert set(depths) == {"p", "c", "cl"}, result.stdout
     assert depths["p"] > 0.1
     assert depths["c"] < depths["p"] / 2

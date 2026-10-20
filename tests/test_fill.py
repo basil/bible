@@ -15,7 +15,7 @@ import pytest
 from ptxprint import page_filler
 from ptxprint.adjlist import AdjList
 
-from bible import cli, fill, fill_cache, fill_layout, paths
+from bible import cli, fill, fill_cache, fill_layout, paths, typeface
 from bible.checks import CheckFailed
 from bible.project import SETTINGS_DIR
 
@@ -30,6 +30,9 @@ def project(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     monkeypatch.setattr(paths, "UPSTREAM", tmp_path / "ptxprint")
     (paths.UPSTREAM / ".git").mkdir(parents=True)
     (paths.UPSTREAM / ".git/HEAD").write_text("pinned commit")
+    monkeypatch.setattr(typeface, "CHAPTER", tmp_path / "chapter.otf")
+    monkeypatch.setattr(typeface, "greek_family", lambda: "GFS Heraklit")
+    typeface.CHAPTER.write_bytes(b"chapter")
     paths.EZRA.write_bytes(b"hebrew")
     for directory in ("olebfont", "greek"):
         target = paths.FONTS / directory
@@ -59,6 +62,7 @@ def test_cache_invalidates_only_rendering_inputs(project: Path) -> None:
     for target in (
         project / SETTINGS_DIR / "ptxprint.cfg",
         paths.EZRA,
+        typeface.CHAPTER,
         paths.ROOT / "Dockerfile",
     ):
         before = fill_cache.keys(project, ["GEN", "REV"])

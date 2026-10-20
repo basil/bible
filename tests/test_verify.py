@@ -11,7 +11,7 @@ from typing import Any, cast
 import pytest
 
 import bible.policy
-from bible import export, pipeline, project, usj, verify
+from bible import export, pipeline, project, typeface, usj, verify
 from bible.checks import CheckFailed
 from bible.files import read_json
 
@@ -372,3 +372,43 @@ def test_a_colophon_follows_the_complete_final_verse() -> None:
             source,
             "Grace be with you all. Written to the Hebrews from Italy by Timothy. Amen.",
         )
+
+
+@pytest.mark.parametrize(
+    "fault",
+    ["", "missing", "wrong_chapter", "substitute", "unembedded", "unselected_newpx"],
+)
+def test_pdf_fonts_require_embedded_chapter_face(fault: str) -> None:
+    names = [
+        "OLEBFont-Italic",
+        typeface.postscript_family(typeface.greek_face()),
+        "EzraSIL",
+        typeface.postscript_name(typeface.chapter_face()),
+    ]
+    if fault == "unselected_newpx":
+        if names[-1] != "OLEBFont-Regular":
+            pytest.skip("newpx is selected with Valkyrie")
+        names.append("TeXGyrePagellaX-Regular")
+    elif fault == "missing":
+        names.pop()
+    elif fault == "wrong_chapter":
+        names[-1] = "TeXGyrePagellaX-Bold"
+    elif fault == "substitute":
+        names.append("UnwantedFont-Regular")
+    fonts = "name type encoding emb sub uni object ID\n---\n" + "\n".join(
+        f"ABCDEF+{name} CID Type 0C Identity-H "
+        f"{'no' if fault == 'unembedded' and name == names[-1] else 'yes'} yes yes 1 0"
+        for name in names
+    )
+    if fault:
+        refusal = {
+            "missing": "Expected text/quotation fonts missing",
+            "wrong_chapter": "Expected text/quotation fonts missing",
+            "substitute": "Unexpected font family",
+            "unselected_newpx": "Unexpected font family",
+            "unembedded": "Unembedded PDF font",
+        }[fault]
+        with pytest.raises(CheckFailed, match=refusal):
+            verify.check_fonts(fonts, "OLEBFont")
+    else:
+        verify.check_fonts(fonts, "OLEBFont")

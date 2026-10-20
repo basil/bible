@@ -38,6 +38,7 @@ from build_olebfont import (
     figure_kerns,
     font_file,
     ink,
+    install_chapter,
     rename,
     style_name,
     superior_placements,
@@ -1051,3 +1052,36 @@ def test_superiors_are_the_donors_scaled_to_the_figures(style: str) -> None:
                 "1",
                 "0",
             )
+
+
+def test_chapter_installation_preserves_archive_bytes(tmp_path: Path) -> None:
+    install_chapter(NEWPX, tmp_path)
+    with zipfile.ZipFile(NEWPX) as z:
+        if RECIPE == "valkyrie":
+            assert typeface.chapter_face().read_bytes() == z.read(
+                "newpx/opentype/TeXGyrePagellaX-Regular.otf"
+            )
+        else:
+            assert not (paths.FONTS / "chapter").exists()
+            assert (
+                typeface.chapter_face().read_bytes()
+                == (FONTS / font_file("Regular")).read_bytes()
+            )
+        for member in (
+            "newpx/opentype/TeXGyrePagellaX-Regular.otf",
+            "newpx/doc/MANIFEST-newpx.txt",
+            "newpx/README",
+        ):
+            assert (tmp_path / Path(member).name).read_bytes() == z.read(member)
+
+
+def test_chapter_lining_proportional_figures() -> None:
+    face = typeface.chapter_face()
+    digits = "0123456789"
+    lining = shape(face, digits, "lnum=1,pnum=1")
+    oldstyle = shape(face, digits, "onum=1,pnum=1")
+    tabular = shape(face, digits, "lnum=1,tnum=1")
+    assert all(g["g"] for g in lining)
+    assert [g["g"] for g in lining] != [g["g"] for g in oldstyle]
+    assert len({g["ax"] for g in lining}) > 1
+    assert len({g["ax"] for g in tabular}) == 1

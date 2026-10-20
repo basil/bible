@@ -499,6 +499,34 @@ def check_publication(text: str, settings: configparser.ConfigParser) -> None:
     )
 
 
+def check_fonts(fonts: str, family: str) -> None:
+    """Require the edition's embedded faces and refuse substitutes."""
+    rows = fonts.splitlines()[2:]
+    require(
+        rows
+        and all(
+            re.search(r"\s+yes\s+(?:yes|no)\s+(?:yes|no)\s+\d+\s+\d+\s*$", r)
+            for r in rows
+        ),
+        "Unembedded PDF font",
+    )
+    text_fonts = (
+        family,
+        typeface.postscript_family(typeface.greek_face()),
+        "Ezra",
+        typeface.postscript_name(typeface.chapter_face()),
+    )
+    missing = [f for f in text_fonts if f not in fonts]
+    require(not missing, f"Expected text/quotation fonts missing: {missing}")
+    # Every embedded face must belong to an edition font; merely finding
+    # the text family in verse labels would not catch substitution in the body text.
+    allowed_fonts = (*text_fonts, "SourceCodePro")
+    require(
+        all(any(f in row.split()[0] for f in allowed_fonts) for row in rows),
+        "Unexpected font family in PDF; inspect font selections",
+    )
+
+
 def inspect_pdf(
     pdf: Path,
     base: Path,
@@ -529,29 +557,8 @@ def inspect_pdf(
     )
     fonts = capture("pdffonts", pdf)
     (base / "fonts.txt").write_text(fonts, encoding="utf-8")
-    rows = fonts.splitlines()[2:]
-    require(
-        rows
-        and all(
-            re.search(r"\s+yes\s+(?:yes|no)\s+(?:yes|no)\s+\d+\s+\d+\s*$", r)
-            for r in rows
-        ),
-        "Unembedded PDF font",
-    )
     settings = project_settings(project)
-    family = text_font(settings)
-    text_fonts = (family, typeface.postscript_family(typeface.greek_face()), "Ezra")
-    require(
-        all(f in fonts for f in text_fonts),
-        "Expected text/quotation fonts missing",
-    )
-    # Every embedded face must belong to an edition font; merely finding
-    # the text family in verse labels would not catch substitution in the body text.
-    allowed_fonts = (*text_fonts, "SourceCodePro")
-    require(
-        all(any(f in row.split()[0] for f in allowed_fonts) for row in rows),
-        "Unexpected font family in PDF; inspect font selections",
-    )
+    check_fonts(fonts, text_font(settings))
     text = capture("pdftotext", "-layout", pdf, "-")
     (base / "text.txt").write_text(text, encoding="utf-8")
     require(not re.search(r"['\"`]", text), "Straight quote in the rendered PDF text")

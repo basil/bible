@@ -129,7 +129,9 @@
 % The chapter label and the chapter number take proportional lining figures,
 % in roman, not the bold of usfm_sb.sty. The font name layout.ini gives
 % embeds +onum=1, which a feature-list subtraction cannot undo, so the two
-% styles name the family directly and select their own figures.
+% styles select their own figures. project.py names the image's chapter
+% face for c (newpx with Valkyrie, OLEBFont with Utopia); cl keeps the body
+% family.
 \Marker cl
 \FontName OLEBFont
 \Bold -
@@ -137,7 +139,6 @@
 \FontSize 14
 
 \Marker c
-\FontName OLEBFont
 \Bold -
 \ztexFontFeatures +[lnum] +[pnum]
 

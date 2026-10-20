@@ -113,7 +113,7 @@ RUN /opt/venv/bin/python /opt/scripts/patch_margin_convergence.py \
 RUN <<EOF
 set -eu
 # Assemble OLEBFont from Valkyrie OT where the host provided it, else from
-# Utopia, and install the Greek face paired with it (fonts/olebfont, fonts/greek).
+# Utopia, its paired Greek face, and newpx chapter numerals with Valkyrie only.
 /opt/venv/bin/python /opt/scripts/build_olebfont.py \
     --utopia /opt/utopia --valkyrie /opt/valkyrie \
     --erewhon /opt/sources/erewhon.zip \
@@ -122,7 +122,7 @@ set -eu
     --gfs-didot /opt/sources/GFS_Didot.zip \
     --gfs-heraklit /opt/sources/GFS_Heraklit.zip \
     --output /usr/local/share/fonts
-chmod 644 /usr/local/share/fonts/olebfont/* /usr/local/share/fonts/greek/*
+find /usr/local/share/fonts -type f -exec chmod 644 {} +
 fc-cache -f
 fc-list
 EOF

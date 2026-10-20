@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from bible import paths
+from bible import paths, typeface
 from bible.files import json_text, sha256, write_json
 from bible.project import ADJUSTMENTS_DIR, SETTINGS_DIR, project_usfm
 from bible.toolchain import capture, image_inputs
@@ -34,6 +34,8 @@ def keys(project: Path, books: list[str]) -> dict[str, str]:
         for p in sorted((paths.FONTS / directory).iterdir()):
             if p.is_file():
                 shared[str(p)] = sha256(p.read_bytes())
+    chapter = typeface.chapter_face()
+    shared[str(chapter)] = sha256(chapter.read_bytes())
     shared[str(paths.EZRA)] = sha256(paths.EZRA.read_bytes())
     digest = sha256(json_text(shared).encode())
     return {

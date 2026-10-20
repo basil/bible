@@ -59,11 +59,11 @@ def text_font(cfg: configparser.ConfigParser) -> str:
 
 
 def style_mods() -> str:
-    """The style overrides, with Greek quotations set in the Greek face the
-    image installed beside OLEBFont; ptx2pdf's Galatia SIL is not installed."""
-    return (paths.CONFIG_DIR / "ptxprint-mods.sty").read_text(
-        encoding="utf-8"
-    ) + f"\n\\Marker wg\n\\FontName {typeface.greek_family()}\n"
+    """The style overrides, naming the installed Greek and chapter faces."""
+    return (paths.CONFIG_DIR / "ptxprint-mods.sty").read_text(encoding="utf-8") + (
+        f"\n\\Marker c\n\\FontName [{typeface.chapter_face()}]\n"
+        f"\n\\Marker wg\n\\FontName {typeface.greek_family()}\n"
+    )
 
 
 def book_names(

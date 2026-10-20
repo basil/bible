@@ -5,9 +5,28 @@ built, by `scripts/build_olebfont.py` from whichever base the image has: from
 Valkyrie OT where `make bootstrap` found its four faces on the host, and from
 Utopia otherwise. Both recipes give a family named OLEBFont with the features
 the layout and stylesheet select (`onum`, `pnum`, `sups`, `smcp`, `c2sc`), so
-nothing downstream knows which base it came from; the Greek face paired with
+the body styles work with either base; the Greek face paired with
 the base is installed beside it (GFS Heraklit with Valkyrie, GFS Didot with
 Utopia), and the build reads both from the image.
+
+## Printed chapter numerals
+
+The Valkyrie recipe installs `newpx/opentype/TeXGyrePagellaX-Regular.otf` unchanged
+from the pinned archive in `fonts/chapter/`, with its README and extension
+manifest. Its embedded copyright notice names the GUST Font License; the
+package README also identifies LPPL material. These are not OFL fonts.
+The regular text face is distinct from `npxsups`, the superior donor below.
+
+Python selects the installed newpx face when the paired Greek family is GFS
+Heraklit (Valkyrie), and OLEBFont Regular with GFS Didot (Utopia), preserving
+Utopia’s chapter numerals without installing the newpx chapter face. Only
+PTXprint’s `c` style uses this bracketed installed file path, with `lnum` and `pnum`. This
+bypasses the body selection's embedded `onum` while preserving the existing
+size, drop and placement. Chapter labels (`cl`) keep OLEBFont. Preparation
+refuses a missing chapter face and never substitutes another. Its bytes enter
+every book's page-fill cache key, and PDF checks require a face embedded under
+its PostScript name and reject unexpected substitutes. The shared webfont list
+excludes this print-only face.
 
 ## From Valkyrie OT
 
