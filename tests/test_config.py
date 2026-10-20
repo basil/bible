@@ -6,6 +6,7 @@ import configparser
 import io
 import os
 import re
+import shutil
 import subprocess
 from collections import defaultdict
 from pathlib import Path
@@ -183,3 +184,131 @@ def test_chapter_figures_are_lining_despite_the_base_oldstyle_font(
     assert depths["p"] > 0.1
     assert depths["c"] < depths["p"] / 2
     assert depths["cl"] < depths["p"] / 2
+
+
+def test_note_callers_follow_context_and_restart_without_margin_notes(
+    tmp_path: Path,
+) -> None:
+    # Load the production customizations, including their relative protrusion
+    # input, in a small PTXprint project independent of generated scripture.
+    conf = tmp_path / "shared/ptxprint/Bible"
+    conf.mkdir(parents=True)
+    work = tmp_path / "local/ptxprint/Bible"
+    work.mkdir(parents=True)
+    shutil.copy(paths.CONFIG_DIR / "protrusion.tex", conf)
+    (conf / "baseline.sty").write_text(bsb_baseline()[1], encoding="utf-8")
+    (conf / "mods.sty").write_text(style_mods(), encoding="utf-8")
+    (work / "front.usfm").write_text(
+        r"""\id FRT
+\periph Preface|id="preface"
+\p Alpha\f + \ft First front note.\f* and beta\f + \ft Second front note.\f*.
+\p Quotation\x + \xt Gen. 1:1\x*.
+""",
+        encoding="utf-8",
+    )
+    (work / "scripture.usfm").write_text(
+        r"""\id PRO
+\c 8
+\p
+\v 5 Alpha\f + \ft First scripture note.\f* and beta\f + \ft Second scripture note.\f*.
+\p\pagebreak
+\v 6 Gamma\f - \fr 6 \ft Callerless margin note.\f*.
+\p\pagebreak
+\v 7 Delta\f + \ft Restarted scripture note.\f*.
+""",
+        encoding="utf-8",
+    )
+    (work / "last.usfm").write_text(
+        r"""\id MAT
+\c 1
+\p
+\v 1 Epsilon\f + \ft New Testament note.\f*.
+""",
+        encoding="utf-8",
+    )
+    probe = work / "callers.tex"
+    probe.write_text(
+        r"""\input paratext2.tex
+\input ptx-ptxprint.tex
+\def\regular{"OLEBFont"}
+\def\bold{"OLEBFont/B"}
+\def\italic{"OLEBFont/I"}
+\def\bolditalic{"OLEBFont/B/I"}
+\FontSizeUnit=.75pt
+\stylesheet{usfm_sb.sty}
+\stylesheet{ptx2pdf.sty}
+\stylesheet{../../../shared/ptxprint/Bible/baseline.sty}
+\stylesheet{../../../shared/ptxprint/Bible/mods.sty}
+\BodyColumns=1
+\IntroColumns=1
+\TitleColumns=1
+\AutoCallers{f}{1,2,3,4,5,6,7,8,9}
+\AutoCallers{x}{1,2,3,4,5,6,7,8,9}
+\PageResetCallers{x}
+"""
+        + rf"\input {paths.CONFIG_DIR / 'ptxprint-mods.tex'}"
+        + r"""
+\NoStorePeriph{preface}
+\nolotwritetrue
+\catcode`\@=11
+\def\ReportNote#1{%
+  \immediate\write16{NOTE #1 [\them@rk] WIDTH \the\NoteCallerWidth\space GAP \the\NoteCallerSpace}%
+}
+\sethook{start}{f}{\ReportNote{f}}
+\sethook{start}{x}{\ReportNote{x}}
+\catcode`\@=12
+\scripturebookfalse
+\ptxfile{front.usfm}
+\scripturebooktrue
+\ptxfile{scripture.usfm}
+\scripturebookfalse
+\ptxfile{front.usfm}
+\scripturebooktrue
+\lastptxfiletrue
+\ptxfile{last.usfm}
+\end
+""",
+        encoding="utf-8",
+    )
+    records = []
+    for _ in range(3):
+        result = subprocess.run(
+            ["xetex", "-interaction=nonstopmode", "-halt-on-error", probe.name],
+            cwd=work,
+            env={**os.environ, "TEXINPUTS": f"{paths.UPSTREAM / 'src'}//:"},
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        assert result.returncode == 0, result.stdout
+        records.append((work / "callers.notepages").read_text(encoding="utf-8"))
+
+    notes = re.findall(
+        r"NOTE ([fx]) \[([^]]*)\] WIDTH ([\d.]+)pt GAP ([\d.]+)pt", result.stdout
+    )
+    assert [(kind, caller) for kind, caller, _, _ in notes] == [
+        ("f", "1"),
+        ("f", "2"),
+        ("x", "1"),
+        ("f", "a"),
+        ("f", "b"),
+        ("f", ""),
+        ("f", "a"),
+        ("f", "1"),
+        ("f", "2"),
+        ("x", "1"),
+        ("f", "a"),
+    ], result.stdout
+    for _, caller, width, gap in notes:
+        if caller:
+            assert (float(width), float(gap)) == (0, 1)
+        else:
+            # Bottom-note spacing is local; margin notes keep their defaults.
+            assert float(width) > 0
+            assert float(gap) > 1
+    assert records[1] == records[2]
+    page_records = re.findall(r"\\noteonpage\{f\}\{(\d+)\}\{(-?\d+)\}", records[2])
+    # Each automatic caller has exactly one record; the callerless note must
+    # not overwrite its predecessor's page. This also checks the image patch.
+    assert [int(number) for number, _ in page_records] == list(range(1, 9))
+    assert int(page_records[4][1]) > int(page_records[3][1]) + 1

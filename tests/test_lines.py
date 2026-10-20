@@ -517,7 +517,7 @@ def test_chapters_the_source_continued_open_with_their_lines(
         for i, block in enumerate(genesis["content"])
         if block["type"] == "chapter" and block["number"] == "2"
     )
-    assert genesis["content"][at + 1]["marker"] == "nb"
+    assert genesis["content"][at + 1]["marker"] == "p"
 
 
 def test_scrivener_says_which_verses_are_verse(
@@ -550,6 +550,36 @@ def test_scrivener_says_which_verses_are_verse(
     assert all(block.get("marker") != "q1" for block in unit(edition, "ISA")["content"])
 
 
+def test_ecclesiastes_times_poem_ends_before_verse_nine(
+    edition: bible.pipeline.Edition, prepared: list[tuple[str, Document]]
+) -> None:
+    doc = unit(edition, "ECC")
+    assert parts(doc, "3:8") == ["q1", "q1"]
+    assert parts(doc, "3:9") == ["p"]
+    assert parts(doc, "3:10") == ["p"]
+    printed = dict(prepared)["ECC"]
+    verses = scripture.verses(printed)
+    blocks = printed["content"]
+    for label, previous in (("3:9", "q2"), ("3:10", "p")):
+        at, start, _, _ = verses[label].parts[0]
+        assert start == 1
+        assert blocks[at]["marker"] == "p"
+        assert blocks[at - 1]["marker"] == previous
+
+
+@pytest.mark.parametrize("label", ["1:1", "1:2", "1:3", "1:4"])
+def test_unspaced_decisions_must_name_a_prose_paragraph_after_poetry(
+    label: str,
+) -> None:
+    with pytest.raises(CheckFailed, match="Unspaced decision"):
+        lines.unspaced(usj.parse(SOURCE), {f"TST {label}": "No extra blank."})
+
+
+def test_an_excerpt_passes_over_the_unspaced_verses_it_leaves_out() -> None:
+    decisions = {"TST 1:4": "No extra blank."}
+    assert lines.unspaced(usj.parse(SOURCE), decisions, excerpt=True) == set()
+
+
 def test_the_song_of_the_three_children_stays_in_lines(
     edition: bible.pipeline.Edition,
 ) -> None:
@@ -566,7 +596,7 @@ def parts(doc: Document, label: str) -> list[str]:
     return [doc["content"][block]["marker"] for block, *_ in verse.parts]
 
 
-def test_the_line_stage_preserves_verses_notes_and_new_testament_documents(
+def test_the_line_stage_preserves_verses_notes_and_new_testament_paragraphs_within_chapters(
     staged: Staged,
 ) -> None:
     units, after = staged.units, staged.lined
@@ -597,8 +627,7 @@ def test_the_line_stage_preserves_verses_notes_and_new_testament_documents(
         ), code
     assert len(before) == 27
     for code, doc in before.items():
-        assert after[code] is units[code]
-        assert after[code] == doc
+        assert after[code] == lines.opened(doc)
 
 
 def test_the_decisions_are_the_few_the_words_do_not_place(
@@ -635,7 +664,7 @@ def test_the_lines_file_is_checked(declared: bible.policy.Policy) -> None:
         lines.check(changed(declared, "lines", wordless))
 
 
-@pytest.mark.parametrize("kind", ["breaks", "prose"])
+@pytest.mark.parametrize("kind", ["breaks", "prose", "unspaced"])
 def test_new_testament_line_decisions_are_refused(
     read: bible.pipeline.Read,
     declared: bible.policy.Policy,

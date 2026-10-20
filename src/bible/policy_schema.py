@@ -106,6 +106,7 @@ Paragraph = TypedDict(
 class Lines(TypedDict, total=False):
     breaks: ReadOnly[Mapping[str, tuple[LineBreak, ...]]]
     prose: ReadOnly[Mapping[str, str]]
+    unspaced: ReadOnly[Mapping[str, str]]
     paragraphs: ReadOnly[Mapping[str, tuple[Paragraph, ...]]]
     why: ReadOnly[str]
 

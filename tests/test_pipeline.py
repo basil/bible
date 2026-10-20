@@ -19,6 +19,7 @@ from bible import (
     annotate,
     assembly,
     export,
+    lines,
     pipeline,
     places,
     revision,
@@ -1031,8 +1032,6 @@ def test_the_sample_prints_selected_chapters_as_the_full_edition_has_them(
         for blocks in wanted:
             number = int(blocks[0]["number"])
             expected = whole[str(number)]
-            if number - 1 not in chapters and usj.is_type(expected[1], "para", "nb"):
-                expected = [expected[0], {**expected[1], "marker": "p"}, *expected[2:]]
             assert blocks == expected, code
     # A heading set before a chapter is kept with it.
     daniel = usj.serialize(sample["DAG"])
@@ -1106,25 +1105,38 @@ def test_lines_that_go_on_with_a_verse_are_indented() -> None:
     assert markers == ["id", "c", "p", "q1", "q2", "q1", "q2", "b", "q1"]
 
 
-def test_export_preserves_chapter_continuations() -> None:
+def test_chapters_open_new_paragraphs_without_changing_internal_continuations() -> None:
     # Matthew 5 goes on with the paragraph before it, and Scrivener opens
     # each epistle flush left; a paragraph within a chapter keeps its marker.
     doc = usj.parse(
         "\\id MAT\n\\c 4\n\\p \\v 1 Prose.\n\\m and on.\n"
         "\\c 5\n\\nb \\v 1 Prose.\n\\c 6\n\\m \\v 1 Prose.\n"
     )
-    markers = [b.get("marker") for b in export.spaced(doc)["content"]]
-    assert markers == ["id", "c", "p", "m", "c", "nb", "c", "m"]
+    before = copy.deepcopy(doc)
+    opened = lines.opened(doc)
+    assert doc == before
+    assert [b.get("marker") for b in opened["content"]] == [
+        "id",
+        "c",
+        "p",
+        "m",
+        "c",
+        "p",
+        "c",
+        "p",
+    ]
+    assert scripture.verses(opened) == scripture.verses(doc)
 
 
-def test_sample_continuations_only_break_after_omitted_chapters() -> None:
+def test_sample_keeps_the_full_editions_chapter_paragraphs() -> None:
     doc = usj.parse(
         "\\id ACT\n\\c 7\n\\p\\v 1 One.\n\\c 8\n\\nb\\v 1 Two.\n\\c 9\n\\nb\\v 1 Three."
     )
+    doc = lines.opened(doc)
     consecutive = pipeline.sample_chapters("ACT", doc, [7, 8, 9])
-    assert usj.serialize(consecutive).count("\\nb") == 2
+    assert usj.serialize(consecutive).count("\\p") == 3
     excerpt = pipeline.sample_chapters("ACT", doc, [8, 9])
-    assert usj.serialize(excerpt).count("\\nb") == 1
+    assert usj.serialize(excerpt).count("\\p") == 2
     assert "\\c 8\n\\p\n" in usj.serialize(excerpt)
 
 
@@ -1170,7 +1182,23 @@ def test_labelled_chapters_supply_their_own_space() -> None:
         "\\id PSA\n\\cl Psalm\n\\c 1\n\\q1 \\v 1 Line.\n"
         "\\c 2\n\\d \\v 1 A Psalm.\n\\q1 \\v 2 Line.\n"
         "\\b\n\\c 3\n\\d \\v 1 A Psalm.\n\\q1 \\v 2 Line.\n\\p \\v 3 Prose.\n\\c 4\n\\q1 \\v 1 Line.\n"
-    ) == ["id", "cl", "c", "q1", "c", "d", "q1", "c", "d", "q1", "b", "p", "c", "q1"]
+    ) == [
+        "id",
+        "cl",
+        "c",
+        "q1",
+        "c",
+        "d",
+        "q1",
+        "c",
+        "d",
+        "q1",
+        "b",
+        "p",
+        "b",
+        "c",
+        "q1",
+    ]
 
 
 def test_a_title_within_a_chapter_supplies_its_own_space() -> None:
@@ -1179,15 +1207,42 @@ def test_a_title_within_a_chapter_supplies_its_own_space() -> None:
     assert spaced_markers(
         "\\id ISA\n\\c 21\n\\p \\v 10 Prose.\n\\d \\v 11 A Vision.\n\\p Prose.\n"
         "\\c 22\n\\q1 \\v 1 Line.\n\\b\n\\d \\v 2 The hymns are ended.\n"
-    ) == ["id", "c", "p", "d", "p", "c", "q1", "d"]
+    ) == ["id", "c", "p", "d", "p", "b", "c", "q1", "d"]
 
 
-def test_chapter_boundaries_do_not_get_blank_paragraphs() -> None:
-    # A chapter is a boundary in either poetry or prose.
+def test_chapter_boundaries_get_blanks_only_at_prose_poetry_transitions() -> None:
     assert spaced_markers(
         "\\id PRO\n\\c 8\n\\q1 \\v 1 Line.\n\\c 9\n\\q1 \\v 1 Line.\n"
         "\\c 10\n\\p \\v 1 Prose.\n\\c 11\n\\p \\v 1 Prose.\n"
-    ) == ["id", "c", "q1", "c", "q1", "c", "p", "c", "p"]
+    ) == ["id", "c", "q1", "c", "q1", "b", "c", "p", "c", "p"]
+
+
+@pytest.mark.parametrize("before,after", [("p", "q1"), ("q1", "p")])
+@pytest.mark.parametrize(
+    "left,right", [("", ""), ("\\b\n", ""), ("", "\\b\n"), ("\\b\n", "\\b\n")]
+)
+def test_chapter_transition_has_one_blank_before_the_chapter(
+    before: str, after: str, left: str, right: str
+) -> None:
+    assert spaced_markers(
+        f"\\id TST\n\\c 1\n\\{before} \\v 1 Before.\n{left}"
+        f"\\c 2\n{right}\\{after} \\v 1 After.\n"
+    ) == ["id", "c", before, "b", "c", after]
+
+
+@pytest.mark.parametrize("code,chapter", [("DEU", "32"), ("2SA", "2")])
+def test_poetry_transitions_across_real_chapters(
+    prepared: list[tuple[str, Document]], code: str, chapter: str
+) -> None:
+    blocks = dict(prepared)[code]["content"]
+    at = next(
+        i
+        for i, block in enumerate(blocks)
+        if usj.is_type(block, "chapter") and block["number"] == chapter
+    )
+    assert usj.paragraph(blocks[at - 1]) == "b"
+    assert usj.paragraph(blocks[at - 2]) in (usj.PROSE if code == "DEU" else usj.POEM)
+    assert usj.paragraph(blocks[at + 1]) == ("q1" if code == "DEU" else "p")
 
 
 def test_headings_and_rules_supply_their_own_space() -> None:

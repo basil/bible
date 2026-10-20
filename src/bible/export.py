@@ -9,9 +9,9 @@ from __future__ import annotations
 
 import itertools
 import re
-from collections.abc import Mapping, Sequence
+from collections.abc import Mapping, Sequence, Set
 
-from bible import notes, peripherals, pipeline, scripture, usfm, usj
+from bible import lines, notes, peripherals, pipeline, scripture, usfm, usj
 from bible.checks import require, require_used
 from bible.pipeline import Edition
 from bible.policy_schema import Entry
@@ -56,8 +56,20 @@ def font_runs(content: Content) -> Content:
     return [item for item in result if item != ""]
 
 
-def spaced(doc: Document) -> Document:
-    """Keep stanza breaks and prose/poetry transitions, never heading padding."""
+def turns(before: str | None, after: str | None) -> bool:
+    """Whether the text turns between prose and poetry, which a blank marks,
+    but for a line that follows a Pause."""
+    return (before in usj.PROSE and after in usj.POEM) or (
+        before in usj.POEM and before != "qr" and after in usj.PROSE
+    )
+
+
+def spaced(doc: Document, unspaced: Set[int] = frozenset()) -> Document:
+    """Keep stanza breaks and prose/poetry transitions, across chapters too.
+
+    A transition across a chapter gets its blank before the chapter figure.
+    Headings and titles supply their own space.
+    """
     blocks = doc["content"]
     result: list[Node] = []
     for at, block in enumerate(blocks):
@@ -65,6 +77,19 @@ def spaced(doc: Document) -> Document:
         before = usj.paragraph(result[-1]) if result else None
         following = blocks[at + 1] if at + 1 < len(blocks) else None
         after = usj.paragraph(following)
+        if usj.is_type(block, "chapter"):
+            # Source blanks beside the chapter are discarded below; read
+            # through them to find the kind of paragraph the chapter opens.
+            after = next(
+                (
+                    usj.paragraph(item)
+                    for item in itertools.islice(blocks, at + 1, None)
+                    if usj.paragraph(item) != "b"
+                ),
+                None,
+            )
+            if turns(before, after):
+                result.append(usj.para("b"))
         if marker == "b":
             if (
                 before in usj.BODY
@@ -74,9 +99,7 @@ def spaced(doc: Document) -> Document:
             ):
                 result.append(block)
             continue
-        if (marker in usj.POEM and before in usj.PROSE) or (
-            marker in usj.PROSE and before in usj.POEM and before != "qr"
-        ):
+        if turns(before, marker) and at not in unspaced:
             result.append(usj.para("b"))
         result.append(block)
     return usj.with_blocks(doc, result)
@@ -202,7 +225,9 @@ def document(code: str, doc: Document, edition: Edition) -> Document:
     if code in edition.scripture:
         doc = labelled(doc, edition.policy.unit(code))
     if code not in edition.authored:
-        doc = spaced(doc)
+        # The line stage checked each decision against its whole book.
+        decisions = edition.policy.lines.get("unspaced", {})
+        doc = spaced(doc, lines.unspaced(doc, decisions, excerpt=True))
     # A unit printed from a file that holds another, or under an id that
     # PTXprint would take for its own front matter, is a unit of its own.
     doc = fonted(edition, code, usj.with_content(doc, content))

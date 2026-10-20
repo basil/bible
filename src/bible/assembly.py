@@ -32,12 +32,8 @@ NAME_MARKERS = {"title": "toc1", "short_title": "toc2", "abbreviation": "toc3"}
 NAME_ATTRIBUTES = {"abbreviation": "abbr", "short_title": "short", "title": "long"}
 # Daniel's parts that the Greek sets about it, each under a heading.
 DANIEL = (("SUS", "0", "Susanna"), ("BEL", "13", "Bel and the Dragon"))
-# The Song of the Three Children: the verse and words it is headed before,
-# and the verse and words at which the narrative resumes after it.
-SONG = (
-    ("25", "Then Azarias stood up, and prayed on this manner"),
-    ("91", "And Nabuchodonosor"),
-)
+# The Song of the Three Children: the verse and words it is headed before.
+SONG = ("25", "Then Azarias stood up, and prayed on this manner")
 SONG_TITLE = "The Song of the Three Children"
 
 
@@ -281,12 +277,10 @@ def daniel(doc: Document, brenton: Mapping[str, Document]) -> Document:
         require(len(found) == 1, "Daniel source boundaries changed")
         chapter, *body = relabelled(found[0], number, pubnumber=HIDDEN)
         parts[code] = [chapter, usj.para("cl", title), *body]
-    (opening, ending), third = SONG, chapters[2]
-    # The paragraph the Song's first verse stood in closes before its heading,
-    # and the unheaded return to Daniel's narrative closes the addition, at
-    # the same level as that heading.
-    third = divided_before(third, opening, [usj.para("s1", SONG_TITLE)], resumed="p")
-    chapters[2] = divided_before(third, ending, [usj.para("sd1")])
+    # The paragraph the Song's first verse stood in closes before its heading.
+    chapters[2] = divided_before(
+        chapters[2], SONG, [usj.para("s1", SONG_TITLE)], resumed="p"
+    )
     blocks = [*header, *parts["SUS"], *(b for c in chapters for b in c), *parts["BEL"]]
     return usj.with_blocks(doc, blocks)
 

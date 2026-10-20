@@ -125,9 +125,6 @@ def test_divisions_and_scripture_are_preserved(declared: policy.Policy) -> None:
             rules.append(int(blocks[at + 1]["number"]))
             assert blocks[at + 1]["type"] == "chapter"
             assert block["content"] == []
-        if block.get("marker") == "sd1":
-            assert blocks[at + 1]["type"] == "chapter"
-            assert blocks[at + 1]["number"] == "151"
         if block.get("marker") in {"ms2", "lit"}:
             following = blocks[at + 1]
             assert following["marker"] == "q1"
@@ -160,7 +157,7 @@ def test_sample_divisions_follow_their_opening_chapters(
         ([8], []),
         ([9], ["ms1"]),
         ([118], ["ms1", "ms2", "lit", "ms2"]),
-        ([151], ["sd1"]),
+        ([151], []),
     ]:
         sample = pipeline.sample_chapters("PSA", doc, selected)
         assert [
@@ -238,7 +235,4 @@ def test_pinned_psalms_keep_every_word_and_note(
     ending = scripture.verses(result)["71:20"]
     assert ending.text == "The hymns of David the son of Jessæ are ended."
     assert [result["content"][part[0]]["marker"] for part in ending.parts] == ["q1"]
-    # Supernumerary Psalm 151 lies outside all twenty kathismata.
-    blocks = result["content"]
-    at = next(i for i, b in enumerate(blocks) if b.get("number") == "151")
-    assert blocks[at - 1] == usj.para("sd1")
+    assert not any(b.get("marker") == "sd1" for b in result["content"])

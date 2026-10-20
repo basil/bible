@@ -91,6 +91,7 @@ When upgrading PTXprint, check the places that depend on its internals:
 
 - `config/protrusion.tex` and `config/ptxprint-mods.tex` wrap PTXprint's private macros for fonts, tables and margin notes. The TeX tests run outside PTXprint, so only the build exercises them.
 - `scripts/patch_margin_convergence.py`, run when the image is built, patches PTXprint's placement of margin notes and its checks for another pass.
+- `scripts/patch_note_callers.py`, run when the image is built, keeps PTXprint's callerless notes from writing caller-page records, on which `config/ptxprint-mods.tex` relies to restart each page's lettered callers.
 - `scripts/patch_emitter_prefix.py`, run when the image is built, lets PTXprint's USFM emitter take the marker prefix that usfmtc passes it (the `+` of a nested style in USFM 3.0), without which PTXprint cannot write the copy it typesets. Revisit it when upgrading usfmtc too.
 
 The image build fails if the patched lines have changed upstream. Drop each patch once PTXprint has the fix.

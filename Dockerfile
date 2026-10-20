@@ -108,6 +108,7 @@ COPY scripts/ /opt/scripts/
 RUN /opt/venv/bin/python /opt/scripts/patch_margin_convergence.py \
     && /opt/venv/bin/python /opt/scripts/patch_page_filler.py \
     && /opt/venv/bin/python /opt/scripts/patch_emitter_prefix.py \
+    && /opt/venv/bin/python /opt/scripts/patch_note_callers.py \
     && /opt/venv/bin/python /opt/scripts/patch_periph.py
 RUN <<EOF
 set -eu

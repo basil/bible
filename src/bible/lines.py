@@ -16,7 +16,8 @@ headings, and a prose paragraph's opening small-cap title that ends in a
 period in a descriptive title (d). All preserve the source wording, notes and verse nodes; qa
 supplies the acrostic names' style in place of inline small capitals.
 
-The New Testament keeps Scrivener's paragraphs and poetry unchanged.
+The New Testament keeps Scrivener's paragraphs and poetry within chapters.
+In both testaments, chapter-opening prose starts an ordinary paragraph.
 """
 
 from __future__ import annotations
@@ -580,6 +581,37 @@ def old_testament(
     return result
 
 
+def unspaced(
+    doc: Document, decisions: Mapping[str, str], *, excerpt: bool = False
+) -> set[int]:
+    """Prose paragraphs that follow poetry without an extra blank in print.
+    An excerpt, as the sample prints, passes over the verses it leaves out."""
+    code = usj.book_code(doc)
+    wanted = {key for key in decisions if book_of(key) == code}
+    if not wanted:
+        return set()
+    verses = scripture.verses(doc)
+    blocks = doc["content"]
+    result = set()
+    for key in sorted(wanted):
+        label = key.split()[1]
+        if excerpt and label not in verses:
+            continue
+        require(label in verses, f"Unspaced decision at a missing verse: {key}")
+        at, start, _, _ = verses[label].parts[0]
+        # The verse's number opens its paragraph.
+        require(
+            start == 1
+            and usj.paragraph(blocks[at]) == "p"
+            and at > 0
+            and usj.paragraph(blocks[at - 1]) in usj.POEM
+            and usj.paragraph(blocks[at - 1]) != "qr",
+            f"Unspaced decision does not follow poetry with a prose paragraph: {key}",
+        )
+        result.add(at)
+    return result
+
+
 def paragraphs(
     documents: Mapping[str, Document], policy: bible.policy.Policy
 ) -> dict[str, Document]:
@@ -1053,18 +1085,45 @@ def descriptive_titles(doc: Document) -> Document:
     return usj.with_blocks(doc, blocks)
 
 
+def opened(doc: Document) -> Document:
+    """Start each chapter's prose in an ordinary paragraph, in both outputs.
+
+    Poetry keeps its lines; continuations within a chapter keep their marker.
+    """
+    blocks = doc["content"]
+    return usj.with_blocks(
+        doc,
+        [
+            (
+                {**block, "marker": "p"}
+                if at
+                and usj.is_type(blocks[at - 1], "chapter")
+                and usj.paragraph(block) in {"m", "nb"}
+                else block
+            )
+            for at, block in enumerate(blocks)
+        ],
+    )
+
+
 def check(policy: bible.policy.Policy) -> None:
     data = policy.lines
-    require_fields(data, {"why", "breaks"}, {"paragraphs", "prose"}, "Lines file")
-    for key, why in data.get("prose", {}).items():
-        require(
-            VERSE_KEY.fullmatch(key) is not None,
-            f"Prose decision at what is not a verse: {key}",
-        )
-        require(
-            isinstance(why, str) and bool(why.strip()),
-            f"Prose decision without a why: {key}",
-        )
+    require_fields(
+        data, {"why", "breaks"}, {"paragraphs", "prose", "unspaced"}, "Lines file"
+    )
+    for kind, reasons in (
+        ("prose", data.get("prose", {})),
+        ("unspaced", data.get("unspaced", {})),
+    ):
+        for key, why in reasons.items():
+            require(
+                VERSE_KEY.fullmatch(key) is not None,
+                f"{kind.capitalize()} decision at what is not a verse: {key}",
+            )
+            require(
+                isinstance(why, str) and bool(why.strip()),
+                f"{kind.capitalize()} decision without a why: {key}",
+            )
     for key, entries in data["breaks"].items():
         require(
             VERSE_KEY.fullmatch(key) is not None,

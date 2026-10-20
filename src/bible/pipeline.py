@@ -373,15 +373,20 @@ def lined(
 ) -> MappingProxyType[str, Document]:
     """Brenton's poems set in the update's lines where Scrivener sets the
     verse as verse too or has no say, with their pauses, descriptive titles
-    and acrostic headings; New Testament documents unchanged. After the
-    verses are placed, through which the witnesses are read."""
+    and acrostic headings. Each chapter's prose opens a new paragraph in
+    both testaments. After the verses are placed, through which the witnesses
+    are read."""
     lines.check(policy)
     old_testament = {
         code: doc for code, doc in units.items() if code not in policy.kjv_units
     }
     unknown = sorted(
         key
-        for key in set(policy.lines["breaks"]) | set(policy.lines.get("prose", {}))
+        for key in (
+            set(policy.lines["breaks"])
+            | set(policy.lines.get("prose", {}))
+            | set(policy.lines.get("unspaced", {}))
+        )
         if key[:3] not in old_testament
     )
     require(
@@ -399,7 +404,13 @@ def lined(
         policy,
         lines.scrivener(read_sources.kjv, policy),
     )
-    brenton = lines.paragraphs(brenton, policy)
+    # Chapters open their paragraphs first, so that a paragraph decision at a
+    # chapter's opening is checked against, and departs from, that rule.
+    brenton = lines.paragraphs(
+        {code: lines.opened(doc) for code, doc in brenton.items()}, policy
+    )
+    for doc in brenton.values():
+        lines.unspaced(doc, policy.lines.get("unspaced", {}))
     require("PSA" in brenton, "Psalter decisions without the Psalms")
     require("LAM" in brenton, "Acrostic names without Lamentations")
     brenton = {
@@ -408,7 +419,12 @@ def lined(
     }
     brenton["LAM"] = lines.acrostics(brenton["LAM"])
     brenton["PSA"] = psalter.divided(brenton["PSA"], policy.psalter)
-    return MappingProxyType({**units, **brenton})
+    return MappingProxyType(
+        {
+            code: brenton[code] if code in brenton else lines.opened(doc)
+            for code, doc in units.items()
+        }
+    )
 
 
 def assemble(
@@ -946,28 +962,17 @@ def headed_chapters(doc: Document) -> tuple[list[Node], list[list[Node]]]:
 def sample_chapters(code: str, doc: Document, wanted: Sequence[int]) -> Document:
     """The header and the wanted chapters of a book, for the typesetting sample.
 
-    A heading that opens a chapter is kept or dropped with it. A continuation
-    after an omitted chapter begins a new paragraph in the excerpt alone.
+    A heading that opens a chapter is kept or dropped with it. Chapter
+    openings already begin their own paragraphs in the full edition.
     """
     header, chapters = headed_chapters(doc)
     kept, seen = [*header], set()
-    previous: int | None = None
     for blocks in chapters:
         at = next(i for i, block in enumerate(blocks) if block["type"] == "chapter")
         number = int(blocks[at]["number"])
         if number in wanted:
-            if previous is None or number != previous + 1:
-                blocks = [
-                    (
-                        {**b, "marker": "p"}
-                        if i == at + 1 and usj.is_type(b, "para", "nb")
-                        else b
-                    )
-                    for i, b in enumerate(blocks)
-                ]
             seen.add(number)
             kept += blocks
-            previous = number
     require(seen == set(wanted), f"Sample chapters missing from {code}: {list(wanted)}")
     return usj.with_blocks(doc, kept)
 

@@ -117,8 +117,14 @@
 \gdef\BibleCrossReference{x}
 \gdef\BibleStartNote#1{%
   \BibleMarginNotetrue
-  % A note with a caller is set below the text, not in the margin.
-  \ifx\them@rk\empty\else\BibleMarginNotefalse\fi
+  % A note with a caller is set below the text, not in the margin. Its
+  % caller takes its actual width, followed by a small gap. Set this here:
+  % PTXprint's size setup resets the minimum caller width.
+  \ifx\them@rk\empty\else
+    \BibleMarginNotefalse
+    \NoteCallerWidth=0pt
+    \NoteCallerSpace=1pt
+  \fi
   \ifx\ch@pter\empty\BibleMarginNotefalse\fi
   \ifx\ch@pter\z@ro\BibleMarginNotefalse\fi
   % Peripheral scripture references keep their callers to identify the
@@ -127,9 +133,6 @@
     \def\BibleNoteKind{#1}%
     \ifx\BibleNoteKind\BibleCrossReference
       \BibleMarginNotetrue
-      % Use the caller's actual width and a small gap before its reference.
-      \NoteCallerWidth=0pt
-      \NoteCallerSpace=1pt
     \fi
   \fi
   \ifBibleMarginNote
@@ -181,14 +184,20 @@
 \endgroup
 
 % Caller-bearing footnotes use the ordinary bottom insertion; callerless
-% scripture notes use the margin. Both remain standard f notes.
+% scripture notes use the margin. Both remain standard f notes. Callers
+% restart on each page; callerless notes leave the counters alone, and the
+% image patch keeps them from overwriting the callers' page records.
 \PageResetCallers{f}
-% Scripture cross references have no callers. Their page records must use
-% an idle counter, rather than overwrite the last preface caller's page.
-% This assumes The Translators to the Reader is the only front matter with
-% margin references, and that Matthew follows it; if another unit gains
-% them, reset the counter at the book that follows that unit too.
-\setbookhook{start}{MAT}{\resetautonum{x}}
+% Scripture already has verse figures, so its bottom notes use letters.
+% Front matter uses numbers. The before hook runs before PTXprint generates
+% the caller; the insertion hook above is too late to select its sequence.
+\sethook{before}{f}{%
+  \ifinperiph
+    \AutoCallers{f}{1,2,3,4,5,6,7,8,9}%
+  \else
+    \AutoCallers{f}{a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}%
+  \fi
+}
 
 % The contents identify each logical peripheral division, not the file that
 % packages several of them. Keep PTXprint's native pagination and convergence.

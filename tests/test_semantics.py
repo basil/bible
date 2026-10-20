@@ -76,7 +76,15 @@ def test_exported_roles_are_consistent_across_the_edition(
                 if usj.is_type(block, "para", "b"):
                     assert 0 < at < len(blocks) - 1, code
                     assert usj.paragraph(blocks[at - 1]) in usj.BODY, code
-                    assert usj.paragraph(blocks[at + 1]) in usj.BODY, code
+                    if usj.is_type(blocks[at + 1], "chapter"):
+                        assert at + 2 < len(blocks), code
+                        before = usj.paragraph(blocks[at - 1])
+                        after = usj.paragraph(blocks[at + 2])
+                        assert (before in usj.PROSE and after in usj.POEM) or (
+                            before in usj.POEM and after in usj.PROSE
+                        ), code
+                    else:
+                        assert usj.paragraph(blocks[at + 1]) in usj.BODY, code
     assert divisions == [
         peripherals.UNITS[code].periph
         for code, _ in pipeline.view(edition, "pdf")

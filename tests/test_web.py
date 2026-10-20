@@ -125,6 +125,12 @@ def test_web(edition: pipeline.Edition, tmp_path: Path) -> None:
             assert part["content"][0] == doc["content"][0]
             blocks += part["content"][1:]
         assert usj.with_blocks(doc, blocks) == doc
+    # Chapter openings start ordinary paragraphs in the shared text, even
+    # where Brenton or Scrivener continues the preceding chapter's paragraph.
+    for code, chapter in (("GEN", "2"), ("MAT", "5"), ("ROM", "1")):
+        part = files.read_json(tmp_path / "books" / code / f"{chapter}.json")
+        at = next(i for i, n in enumerate(part["content"]) if n["type"] == "chapter")
+        assert usj.paragraph(part["content"][at + 1]) == "p"
     # Greek and Hebrew are tagged for their fonts, as the typesetter has them.
     genesis = files.read_json(tmp_path / "books" / "GEN" / "1.json")
     assert any(

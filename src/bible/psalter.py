@@ -88,8 +88,6 @@ def divided(doc: Document, policy: Psalter) -> Document:
             )
             previous = at
     require(labels[previous] == chapters[150][-1], "Kathismata must cover Psalms 1–150")
-    # The psalm after the kathismata stands outside their divisions.
-    outside = int(labels[previous].split(":")[0]) + 1
     require(
         groups[16][-1] == chapters[118][-1],
         "Seventeenth Kathisma must end with Psalm 118",
@@ -112,8 +110,6 @@ def divided(doc: Document, policy: Psalter) -> Document:
     for block in doc["content"]:
         if block["type"] == "chapter":
             chapter = block["number"]
-            if int(chapter) == outside:
-                blocks.append(usj.para("sd1"))
             if int(chapter) in rules:
                 blocks.append(usj.para("sd2"))
             if int(chapter) in major:
