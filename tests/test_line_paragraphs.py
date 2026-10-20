@@ -106,10 +106,15 @@ def test_declared_prose_labels_and_join_reach_the_edition(
 
     for verse in ("7", "8", "12", "13", "18", "20", "22", "23", "24"):
         assert first_block("DEU", f"33:{verse}")["marker"] == "m"
+    # Boyd's flush-left continuations that no decision changes, Scrivener's
+    # paragraphing at Exodus 15:19 and 2 Kingdoms 3:35 notwithstanding.
+    for code, verse in (("NUM", "24:25"), ("EXO", "15:19"), ("2SA", "3:35")):
+        assert first_block(code, verse)["marker"] == "m"
     assert first_block("NUM", "24:14") is first_block("NUM", "24:15")
     for code, verse in (
         ("NUM", "23:14"),
         ("GEN", "25:24"),
+        ("GEN", "49:28"),
         ("EXO", "15:22"),
         ("JOB", "4:1"),
         ("JOB", "42:7"),

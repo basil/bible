@@ -218,10 +218,12 @@ def heading_lines(entry: Entry, found: Mapping[str, str]) -> list[tuple[str, str
 
 
 def named(entry: Entry, doc: Document) -> Document:
-    """A document with the edition's names and heading in place of the source's."""
+    """A document with the edition's names and heading in place of the source's.
+    A running head names one chapter, so it takes the name by which a
+    chapter is cited singly where the book has one."""
     found = names(entry, doc)
     replacements = {
-        "h": found["short_title"],
+        "h": entry.get("cited_singly") or found["short_title"],
         **{marker: found[field] for field, marker in NAME_MARKERS.items()},
     }
     blocks, seen = [], set()

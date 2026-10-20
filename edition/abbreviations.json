@@ -1,5 +1,5 @@
 {
-  "why": "Brenton's list names only some of the abbreviations that the printed notes use: his own notes, the footnotes to his preface, the margin of 1611, and the quotation links. These rows supplement it, each abbreviation in the form The Chicago Manual of Style gives it (AD, BC, etc., i.e., MS, St.). A meaning is capitalized only where it is a proper noun. The meanings are table labels rather than sentences, so they are printed without a final full stop.",
+  "why": "Brenton's list names only some of the abbreviations that the printed notes use: his own notes, the footnotes to his preface, the margin of 1611, and the quotation links. These rows supplement it, each abbreviation in the form The Chicago Manual of Style gives it (AD, BC, etc., i.e., MS). The familiar St. remains in the text without a row in the list. A meaning is capitalized only where it is a proper noun. The meanings are table labels rather than sentences, so they are printed without a final full stop.",
   "added": [
     ["anno-domini"],
     ["before-christ"],
@@ -7,8 +7,6 @@
     ["id-est"],
     ["septuagint"],
     ["manuscript", "manuscripts"],
-    ["page", "pages"],
-    ["saint"],
     ["vatican"],
     ["king-james-version"],
     ["textus-receptus"]
@@ -33,7 +31,7 @@
     ]
   },
   "expanded": {
-    "why": "Text names are printed in full in the notes, apart from the Alexandrine and Vatican Texts, which stay Alex. and Vat., and the King James Version, labelled KJV, and their other rows are removed from his list, as is his row for Comp. as Compare, which is printed in full. LXX remains in the text, and is listed by a row added. In notes the Authorized Version is labelled KJV, whether Brenton writes it A. V., Eng. Ver., the English Version or English Bible; front-matter prose keeps the full name, and his row for A. V. is removed. Other abbreviations used only once or twice are also printed in full where they stand and not listed, but for those that Chicago prints (AD, MS, MSS, p., pp.), which are listed. The addition and omission signs after witness labels are printed as adds and omits, and their rows are removed. Punctuation dashes stay as written. Where one ends a note, its period goes, as a note ends with no full stop, unless the note is a sentence of its own, which keeps it.",
+    "why": "Text names are printed in full in the notes, apart from the Alexandrine and Vatican Texts, which stay Alex. and Vat., and the King James Version, labelled KJV, and their other rows are removed from his list, as is his row for Comp. as Compare, which is printed in full. LXX remains in the text, and is listed by a row added. In notes the Authorized Version is labelled KJV, whether Brenton writes it A. V., Eng. Ver., the English Version or English Bible; front-matter prose keeps the full name, and his row for A. V. is removed. Other abbreviations used only once or twice are also printed in full where they stand and not listed, but for those that Chicago prints (AD, MS, MSS), which are listed. The addition and omission signs after witness labels are printed as adds and omits, and their rows are removed. Punctuation dashes stay as written. Where one ends a note, its period goes, as a note ends with no full stop, unless the note is a sentence of its own, which keeps it.",
     "removed": ["Ald.", "App.", "Comp.", "A. V.", "+", "—"]
   },
   "source_rows": {

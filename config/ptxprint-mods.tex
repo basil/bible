@@ -236,13 +236,14 @@
   \trace{j}{set baselineskip=\the\baselineskip (\s@urce)}}
 \endgroup
 
-% A paragraph after a blank line opens flush left, as one after a heading
-% does (layout.ini's firstparaindent): the space already marks the break.
-% PTXprint drops the first-line indent of the paragraph that follows a
-% heading by the flag it sets as the heading's box closes. A blank line is
-% no paragraph style but a macro of PTXprint's, which runs no style hooks
-% and is defined only when the first book starts, after this file; extend it
-% then, so that the flag lasts until the next paragraph starts and clears it.
+% An introductory paragraph after \ib opens flush left, as one after a
+% heading does (layout.ini's firstparaindent): the space marks the break.
+% This hook extends only \ib, not scripture's \b: an ordinary \p after
+% poetry can still indent, including a numbered paragraph such as GEN 49:28.
+% PTXprint suppresses the introductory indent with its first-after-heading
+% flag. Its \ib macro runs no style hooks and is defined only when the
+% first book starts, after this file; extend it then, so that the flag lasts
+% until the next paragraph starts and clears it.
 \begingroup
 \catcode`\@=11
 \addtoinithooks{%

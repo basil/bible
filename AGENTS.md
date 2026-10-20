@@ -121,7 +121,7 @@ A page in `content/` names a passage between braces, by its code, and the build 
 
 The rest of the repository:
 
-- `sources/`: the Bible texts, the Updated Brenton (read for its lines of verse alone), CCEL's Brenton (read for its notes alone), the 1611 marginal notes, the Greek New Testament in both its texts with its collations and apparatus, the English witnesses to its differences, and the fonts, committed as downloaded. [sources/README.md](sources/README.md) says where each came from.
+- `sources/`: the Bible texts, the Updated Brenton (read for its lines of verse and the prose markers at their end), CCEL's Brenton (read for its notes alone), the 1611 marginal notes, the Greek New Testament in both its texts with its collations and apparatus, the English witnesses to its differences, and the fonts, committed as downloaded. [sources/README.md](sources/README.md) says where each came from.
 - `src/bible/`: the Python package that prepares the edition; `src/bible/byzantine/` is the reconciliation of the New Testament with the Byzantine text, run by the promote stage.
 - `tests/`: the tests.
 - `scripts/`: the font assembly and the PTXprint patches, run when the image is built.

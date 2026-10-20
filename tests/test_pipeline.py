@@ -1216,6 +1216,8 @@ def test_headings_and_rules_supply_their_own_space() -> None:
 
 def test_the_psalter_alone_carries_one_chapter_label(exported: dict[str, str]) -> None:
     psalms = exported["PSA"]
+    assert "\\h Psalm\n" in psalms
+    assert "\\toc2 Psalms\n" in psalms
     assert psalms.count("\\cl ") == 1
     assert "\\cl Psalm\n\\c 1\n" in psalms
     assert all(

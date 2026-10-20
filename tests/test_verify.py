@@ -177,7 +177,7 @@ def test_missing_edition_license_on_the_publication_page_is_refused() -> None:
         "Ps. 117:22–23 (LXX ≠ Heb.)",
         "Heb. 5:6; 7:17, 21 (Heb. + LXX)",
         "Heb. 300. Alex. 500",
-        "Alex. 187 years. Heb. Grammar, p. 92",
+        "Alex. 187 years. Heb. Grammar, page 92",
         # The numbers that the appendix supplies a passage under.
         "17. 12And David son of an Ephrathite",
         "the days of Saul. 13And the three elder sons",

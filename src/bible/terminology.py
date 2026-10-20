@@ -173,7 +173,7 @@ def recognize(text: str, terms: Registry, *, note: bool = True) -> tuple[Term, .
             )
         )
     # A form already the edition's is still the term. The longest spelling
-    # wins: "p." cannot take the end of "pp.".
+    # wins: "Complutensian" cannot take the start of "Complutensian Text".
     forms = [
         (alias, identity, n)
         for identity, term in terms.terms.items()
@@ -650,7 +650,7 @@ def check_glossary(doc: Document, policy: bible.policy.Policy) -> None:
 UNPRINTED = re.compile(
     r"\bi\. e\.|\bq\. d\.|\b[Ss]cil\.|\bSept\b|\b[Cc]omp\.|\d AD\b|&c\b|\b[ab]\.[dc]\."
     r"|(?<![\w.])(?:[ON]\. ?T|A\. V|Ald|Complut|Vulg)(?!\w)|\bAV\b"
-    r"|\b(?:App|Chrysost|Gram|Qu|om|nom|voc|absol|infin|imper|pl|qy|viz|niph"
+    r"|\b(?:App|Chrysost|Gram|Qu|om|nom|voc|absol|infin|imper|pl|pp?|qy|viz|niph"
     r"|fem|ob|sing|fut|Conf)\.|\bRom\.(?! \d)|\bCateches\b|\bult\b|\b4to\b|\bEng\. Ver\b|\d\.(?:li|[sd])\b"
 )
 # A number with a period within a note's sentence, which edition/prose.json

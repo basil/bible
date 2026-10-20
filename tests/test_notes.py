@@ -484,7 +484,9 @@ def test_a_change_of_words_decides_where_lit_stands_again(
     assert expected in printed
 
 
-@pytest.mark.parametrize("words", ["Gr. sing.", "Gr. fut.", "Conf. Luke 15:20"])
+@pytest.mark.parametrize(
+    "words", ["Gr. sing.", "Gr. fut.", "Conf. Luke 15:20", "Heb. Grammar, p. 92"]
+)
 def test_an_abbreviation_written_out_by_a_decision_is_refused_where_it_stays(
     words: str,
 ) -> None:

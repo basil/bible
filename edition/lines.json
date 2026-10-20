@@ -1,5 +1,5 @@
 {
-  "why": "The Old Testament poetry follows the Updated Brenton where Scrivener also sets the verse as poetry or has no say. Prose records verse-level exceptions following Scrivener. Its line boundaries are aligned to Brenton; breaks records the lines the words cannot place or would place wrongly. Boyd’s prose marker is retained at a poem’s end. Paragraphs records departures at existing prose boundaries: a continuation or repeated label is flush left, while a distinct narrative unit or independent speech turn keeps its paragraph. Each anchor is checked in the assembled, unrevised verse; joining changes paragraph structure alone.",
+  "why": "The Old Testament poetry follows the Updated Brenton where Scrivener also sets the verse as poetry or has no say. Prose records verse-level exceptions following Scrivener. Its line boundaries are aligned to Brenton; breaks records the lines the words cannot place or would place wrongly. Boyd’s prose marker is retained at a poem’s end. Paragraphs records departures at existing prose boundaries: a continuation, repeated label, immediate response or closing action may remain flush left, while a new narrative or discourse unit keeps its paragraph. A change of speaker alone does not open a new unit. Each anchor is checked in the assembled, unrevised verse; joining changes paragraph structure alone.",
   "prose": {
     "SIR 50:27": "The author's colophon is prose in Scrivener's Cambridge Paragraph Bible; follow him here rather than Boyd's poetry."
   },
@@ -113,6 +113,14 @@
         "from": "m",
         "to": "p",
         "why": "The oracle ends and the narrative advances to the birth and upbringing of the twins; Scrivener begins a paragraph here."
+      }
+    ],
+    "GEN 49:28": [
+      {
+        "at": "All these are the twelve sons of Jacob",
+        "from": "m",
+        "to": "p",
+        "why": "The summary closes the tribal blessings and opens the narrative of Jacob’s final burial instructions and death; Scrivener begins a paragraph here."
       }
     ],
     "EXO 15:22": [

@@ -505,11 +505,9 @@ def test_the_list_of_abbreviations_is_completed_from_the_registry(
     assert not set(policy.abbreviations["expanded"]["removed"]) & set(labels)
     # ...his meanings are lowercased where they aren't proper nouns...
     assert ("lit.", "for literally") in rows
-    assert not {"—", "adds", "omits"} & set(labels)
+    assert not {"—", "adds", "omits", "St.", "p., pp."} & set(labels)
     # ...the edition's rows join his, in the registry's forms...
     assert {
-        ("p., pp.", "for page, pages"),
-        ("St.", "for saint"),
         ("Vat.", "for Codex Vaticanus"),
         ("KJV", "for King James Version"),
         ("TR", "for Textus Receptus, the Received Text"),

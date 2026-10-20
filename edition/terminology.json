@@ -55,20 +55,6 @@
     "note_forms": [],
     "source_forms": ["MSS"]
   },
-  "page": {
-    "display": "p.",
-    "meaning": "page",
-    "period_forms": [],
-    "note_forms": [],
-    "source_forms": ["p."]
-  },
-  "pages": {
-    "display": "pp.",
-    "meaning": "pages",
-    "period_forms": [],
-    "note_forms": [],
-    "source_forms": ["pp."]
-  },
   "saint": {
     "display": "St.",
     "meaning": "saint",
