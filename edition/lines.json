@@ -4,9 +4,6 @@
     "ECC 3:9": "The poem of appointed times ends at verse 8; verse 9 returns to prose with the question about labour. Brenton’s 1879 printing, printed page 821 (PDF page 837), begins a new paragraph here.",
     "SIR 50:27": "The author's colophon is prose in Scrivener's Cambridge Paragraph Bible; follow him here rather than Boyd's poetry."
   },
-  "unspaced": {
-    "ECC 3:9": "Brenton’s 1879 printing, printed page 821 (PDF page 837), begins an indented paragraph at verse 9 without a blank line. Retain that paragraph break alone after the poem of verses 1–8."
-  },
   "breaks": {
     "JOB 2:11": [
       {

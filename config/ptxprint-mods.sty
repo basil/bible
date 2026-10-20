@@ -161,11 +161,21 @@
 \Bold -
 \Justification Center
 
+% Every sidebar is a colophon, which spans the text's full width. PTXprint
+% sizes a sidebar at \esb, with its default 1 pt padding at either side,
+% before \cat names the category, and measures it again from that narrower
+% width, so the padding is cleared here, not under the category.
+\Marker esb
+\BoxPadding 0
+
 % A retained source colophon is separate paratext, printed where it occurs.
 \Marker cat:colophon|esb
 \Position h
 \Border None
-\BoxPadding 0
+
+% Its notice is set flush left, without a paragraph's first-line indent.
+\Marker cat:colophon|p
+\FirstLineIndent 0
 
 \Marker periph:pubdata|pc
 \SpaceBefore 12

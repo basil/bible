@@ -12,7 +12,7 @@ from conftest import Staged, changed
 
 import bible.pipeline
 import bible.policy
-from bible import alignment, byzantine, lines, scripture, usj
+from bible import alignment, byzantine, export, lines, scripture, usj
 from bible.checks import CheckFailed
 from bible.usj import Document
 
@@ -560,11 +560,11 @@ def test_ecclesiastes_times_poem_ends_before_verse_nine(
     printed = dict(prepared)["ECC"]
     verses = scripture.verses(printed)
     blocks = printed["content"]
-    for label, previous in (("3:9", "q2"), ("3:10", "p")):
+    for label, previous in (("3:9", ["q2", "b"]), ("3:10", ["p"])):
         at, start, _, _ = verses[label].parts[0]
         assert start == 1
         assert blocks[at]["marker"] == "p"
-        assert blocks[at - 1]["marker"] == previous
+        assert [b["marker"] for b in blocks[at - len(previous) : at]] == previous
 
 
 @pytest.mark.parametrize("label", ["1:1", "1:2", "1:3", "1:4"])
@@ -573,6 +573,15 @@ def test_unspaced_decisions_must_name_a_prose_paragraph_after_poetry(
 ) -> None:
     with pytest.raises(CheckFailed, match="Unspaced decision"):
         lines.unspaced(usj.parse(SOURCE), {f"TST {label}": "No extra blank."})
+
+
+def test_an_unspaced_decision_drops_the_blank_before_its_paragraph() -> None:
+    doc = usj.parse(
+        "\\id TST\n\\c 1\n\\q1\n\\v 1 Sing.\n\\q2 Again.\n\\p\n\\v 2 Prose.\n"
+    )
+    unspaced = lines.unspaced(doc, {"TST 1:2": "No extra blank."})
+    assert markers(export.spaced(doc)) == ["q1", "q2", "b", "p"]
+    assert markers(export.spaced(doc, unspaced)) == ["q1", "q2", "p"]
 
 
 def test_an_excerpt_passes_over_the_unspaced_verses_it_leaves_out() -> None:
@@ -673,7 +682,7 @@ def test_new_testament_line_decisions_are_refused(
     decided = changed(
         declared,
         "lines",
-        lambda data: data[kind].update(
+        lambda data: data.setdefault(kind, {}).update(
             {
                 "MAT 4:6": (
                     [{"follows": "x", "line": "y", "why": "."}]

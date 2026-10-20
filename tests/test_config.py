@@ -319,6 +319,52 @@ def test_note_callers_follow_context_and_restart_without_margin_notes(
     assert int(page_records[4][1]) > int(page_records[3][1]) + 1
 
 
+def typeset_lines(work: Path, name: str) -> list[list[ET.Element]]:
+    """Typeset <name>.usfm in one column with the production customizations,
+    and return the words of each line as Poppler finds them."""
+    (work / f"{name}.tex").write_text(
+        r"""\input paratext2.tex
+\input ptx-ptxprint.tex
+\def\regular{"OLEBFont:+onum=1:+pnum=1"}
+\def\bold{"OLEBFont/B:+onum=1:+pnum=1"}
+\def\italic{"OLEBFont/I:+onum=1:+pnum=1"}
+\def\bolditalic{"OLEBFont/B/I:+onum=1:+pnum=1"}
+\FontSizeUnit=.75pt
+\def\LineSpaceBase{12}
+\def\LineSpacingFactor{1.222222}
+\IndentUnit=.8in
+\stylesheet{usfm_sb.sty}
+\stylesheet{ptx2pdf.sty}
+\stylesheet{../../../shared/ptxprint/Bible/baseline.sty}
+\stylesheet{../../../shared/ptxprint/Bible/mods.sty}
+\BodyColumns=1\IntroColumns=1\TitleColumns=1
+\JustifyParstrue\IndentAfterHeadingfalse
+\OmitVerseNumberOnetrue
+\def\AfterVerseSpaceFactor{1.8}
+\hangpoetry
+"""
+        + rf"\input {paths.CONFIG_DIR / 'ptxprint-mods.tex'}"
+        + r"""
+\nolotwritetrue
+\scripturebooktrue
+\lastptxfiletrue
+"""
+        + rf"\ptxfile{{{name}.usfm}}"
+        + r"""
+\end
+""",
+        encoding="utf-8",
+    )
+    result = xetex(work, f"{name}.tex")
+    assert "Overfull" not in result.stdout
+    pdf = subprocess.check_output(
+        ["pdftotext", "-bbox-layout", str(work / f"{name}.pdf"), "-"], text=True
+    )
+    root = ET.fromstring(pdf)
+    ns = {"x": "http://www.w3.org/1999/xhtml"}
+    return [list(line) for line in root.findall(".//x:line", ns)]
+
+
 def test_poetry_indents_and_line_opening_verse_numbers(tmp_path: Path) -> None:
     """Check rendered geometry, including wraps, inline milestones and acrostics."""
     work = ptxprint_project(tmp_path)
@@ -355,45 +401,7 @@ def test_poetry_indents_and_line_opening_verse_numbers(tmp_path: Path) -> None:
 """,
         encoding="utf-8",
     )
-    (work / "poetry.tex").write_text(
-        r"""\input paratext2.tex
-\input ptx-ptxprint.tex
-\def\regular{"OLEBFont:+onum=1:+pnum=1"}
-\def\bold{"OLEBFont/B:+onum=1:+pnum=1"}
-\def\italic{"OLEBFont/I:+onum=1:+pnum=1"}
-\def\bolditalic{"OLEBFont/B/I:+onum=1:+pnum=1"}
-\FontSizeUnit=.75pt
-\def\LineSpaceBase{12}
-\def\LineSpacingFactor{1.222222}
-\IndentUnit=.8in
-\stylesheet{usfm_sb.sty}
-\stylesheet{ptx2pdf.sty}
-\stylesheet{../../../shared/ptxprint/Bible/baseline.sty}
-\stylesheet{../../../shared/ptxprint/Bible/mods.sty}
-\BodyColumns=1\IntroColumns=1\TitleColumns=1
-\JustifyParstrue\IndentAfterHeadingfalse
-\OmitVerseNumberOnetrue
-\def\AfterVerseSpaceFactor{1.8}
-\hangpoetry
-"""
-        + rf"\input {paths.CONFIG_DIR / 'ptxprint-mods.tex'}"
-        + r"""
-\nolotwritetrue
-\scripturebooktrue
-\lastptxfiletrue
-\ptxfile{poetry.usfm}
-\end
-""",
-        encoding="utf-8",
-    )
-    result = xetex(work, "poetry.tex")
-    assert "Overfull" not in result.stdout
-    pdf = subprocess.check_output(
-        ["pdftotext", "-bbox-layout", str(work / "poetry.pdf"), "-"], text=True
-    )
-    root = ET.fromstring(pdf)
-    ns = {"x": "http://www.w3.org/1999/xhtml"}
-    lines = [list(line) for line in root.findall(".//x:line", ns)]
+    lines = typeset_lines(work, "poetry")
     words = [word for line in lines for word in line]
 
     def word(text: str) -> ET.Element:
@@ -461,3 +469,36 @@ def test_poetry_indents_and_line_opening_verse_numbers(tmp_path: Path) -> None:
     assert (
         sum(w.text == "1" and float(w.attrib["yMin"]) < last_line for w in words) == 1
     )
+
+
+def test_a_colophon_spans_the_text_width_flush_left(tmp_path: Path) -> None:
+    """PTXprint measures a sidebar before its category is named, so padding
+    on the category alone would still narrow it; nor does its paragraph
+    take the first-line indent."""
+    work = ptxprint_project(tmp_path)
+    (work / "colophon.usfm").write_text(
+        r"""\id ROM
+\c 16
+\p \v 27 Prose """
+        + "echo " * 60
+        + r"""Amen.
+\b
+\esb \cat colophon\cat*
+\p Colophon """
+        + "echo " * 60
+        + r"""Notice.
+\esbe
+""",
+        encoding="utf-8",
+    )
+    lines = typeset_lines(work, "colophon")
+    start = next(i for i, line in enumerate(lines) if line[0].text == "Colophon")
+    end = next(i for i, line in enumerate(lines) if line[-1].text == "Notice.")
+    prose, colophon = lines[:start], lines[start : end + 1]
+    margin = min(float(line[0].attrib["xMin"]) for line in prose)
+    measure = max(float(line[-1].attrib["xMax"]) for line in prose)
+    assert len(colophon) > 2
+    for line in colophon:
+        assert abs(float(line[0].attrib["xMin"]) - margin) < 0.15, line[0].text
+    for line in colophon[:-1]:
+        assert abs(float(line[-1].attrib["xMax"]) - measure) < 0.15
