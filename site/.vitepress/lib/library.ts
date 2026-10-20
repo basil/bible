@@ -30,7 +30,7 @@ export type Book = {
 export const directory = fileURLToPath(
   new URL("../../../build/web/", import.meta.url),
 );
-// A unit of the front matter the book prints, under the section it opens.
+// A unit of reader front matter, under the section it opens.
 export type Matter = {
   id: string;
   section: string;

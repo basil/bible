@@ -311,24 +311,24 @@ def test_psalms_use_whole_psalms_and_verse_ranges(
 
 
 def test_the_page_prints_its_tables(edition: bible.pipeline.Edition) -> None:
-    page = usj.serialize(edition.documents[NUMBERING["id"]])
+    page = usj.serialize(edition.numbering_page)
     assert "{" not in page and "}" not in page
-    # Supplying Ezekiel 1:14 removes its former missing-verse row.
-    assert page.count("\\tr\n\\tc1 ") == 475
+    # Only the book-name table moved; all chapter-and-verse rows remain.
+    assert page.count("\\tr\n\\tc1 ") == 439
     # A run that keeps its numbers but stands out of their order says where.
     assert "\\tr\n\\tc1 23:7–8\n\\tc2 23:7–8 (after 40)\n" in page
     assert "\\tr\n\\tc1 31:25\n\\tc2 31:25 (after 26)\n" in page
-    assert "\\s2 Jeremias\n" in page
-    assert "\\s2 Genesis\n" in page
+    assert "\\s1 Jeremias\n" in page
+    assert "\\s1 Genesis\n" in page
     assert "\\th1 \\sc " not in page
     assert "\\is2" not in page
     tables = [
         node
-        for node in usj.walk(edition.documents[NUMBERING["id"]]["content"])
+        for node in usj.walk(edition.numbering_page["content"])
         if usj.is_type(node, "table")
     ]
     # The Old Testament's, and four of the New Testament's.
-    assert len(tables) == 35
+    assert len(tables) == 34
     for table in tables:
         heading = next(usj.objects(table["content"]))
         assert sum(n.get("marker") == "th1" for n in usj.walk(table["content"])) == 1
@@ -339,46 +339,50 @@ def test_the_page_prints_its_tables(edition: bible.pipeline.Edition) -> None:
             ["King James Bible"],
             ["Orthodox Liturgical English Bible"],
         ]
-    assert "the word \\it missing\\it* stands on its side." in page
+    intro = usj.serialize(edition.documents[EDITOR["id"]])
+    assert "the word \\it missing\\it* stands on its side." in intro
     for ours, theirs in (
         ("3 Kingdoms", "1 Kings"),
         ("Epistle of Jeremias", "Baruch 6 (Apocrypha)"),
-        ("Tobit", "Tobit (Apocrypha)"),
         ("3 Maccabees", "(\\it missing\\it*)"),
     ):
-        assert f"\\tr\n\\tc1 {theirs}\n\\tc2 {ours}\n" in page
+        assert f"\\tr\n\\tc1 {theirs}\n\\tc2 {ours}\n" in intro
     assert "as Proverbs 22:8a, is usually an addition" in page
-    assert "the Song of the Three Children is headed from Daniel 3:25 to 3:90." in page
+    assert "the Song of the Three Children is headed from Daniel 3:25 to 3:90." in intro
     assert "as 2:28–32 beside 3:1–5, they answer" in page
     # Esther's verses that are the King James Bible's Rest of Esther.
-    assert "\\tc1 The Rest of Esther (Apocrypha)\n\\tc2 Esther, the additions\n" in page
+    assert (
+        "\\tc1 The Rest of Esther (Apocrypha)\n\\tc2 Esther, the additions\n" in intro
+    )
     assert "\\tc1 one lower" not in page and "\\tc1 two lower" not in page
     assert "\\tr\n\\tc1 (\\it missing\\it*)\n\\tc2 151\n" in page
-    blocks = list(usj.objects(edition.documents[NUMBERING["id"]]["content"]))
+    blocks = list(usj.objects(edition.numbering_page["content"]))
     headings = [
-        usj.text_of(block["content"]) for block in blocks if block.get("marker") == "s2"
+        usj.text_of(block["content"]) for block in blocks if block.get("marker") == "s1"
     ]
     # The Psalms' table stands at their place, directly after the editor's
     # explanation; neighboring tables need no blank paragraphs as padding.
-    psalms = blocks.index(tables[1:][headings.index("Psalms")])
-    assert blocks[psalms - 2] == usj.para("s2", "Psalms")
+    psalms = blocks.index(tables[headings.index("Psalms")])
+    assert blocks[psalms - 2] == usj.para("s1", "Psalms")
     assert blocks[psalms - 1]["marker"] == "p"
-    assert blocks[psalms + 1] == usj.para("s2", "Job")
+    assert blocks[psalms + 1] == usj.para("s1", "Job")
     assert headings.index("Nehemias") < headings.index("Psalms")
     assert headings.index("Psalms") < headings.index("Job")
     # Books that are numbered alike have no table.
     assert "Judges" not in headings and "Ruth" not in headings
 
 
-@pytest.mark.parametrize("more", ["", "{names}\n{psalms}\n"])
+@pytest.mark.parametrize("more", ["", "\\ip Psalms\n{psalms}\n"])
 def test_the_page_asks_for_each_table_once(printed: Printed, more: str) -> None:
     # A complete set of tables, with none repeated.
     with pytest.raises(CheckFailed, match="not once each"):
-        printed(f"\\ip x\n{{names}}\n{{books}}\n{{books}}\n{more}")
+        printed(f"\\ip x\n{{books}}\n{{books}}\n{more}")
 
 
-@pytest.mark.parametrize("written", ["{glosses}\n{glosses}\n", "{glosses}\n{names}\n"])
-def test_the_page_asks_for_the_glosses_alone_and_once(
+@pytest.mark.parametrize(
+    "written", ["{glosses}\n{glosses}\n", "{glosses}\n{books}\n{psalms}\n"]
+)
+def test_the_page_refuses_repeated_glosses_or_glosses_with_numbering(
     printed: Printed, written: str
 ) -> None:
     with pytest.raises(CheckFailed, match="not as one set"):
@@ -388,10 +392,9 @@ def test_the_page_asks_for_the_glosses_alone_and_once(
 @pytest.mark.parametrize(
     "written",
     [
-        # Before the books, with no words, and with another table among them.
-        "{psalms}\n{names}\n{books}\n",
-        "{names}\n{books}\n{psalms}\n",
-        "{books}\n\\ip Psalms\n{names}\n{psalms}\n",
+        # Before the books, or with no words between the tables.
+        "{psalms}\n{books}\n",
+        "{books}\n{psalms}\n",
     ],
 )
 def test_the_psalms_have_their_words_between_the_books_and_their_table(
@@ -476,7 +479,7 @@ def test_the_introduction_tables_the_glosses_by_turpies_classes(
     # Each gloss the links print, beside the classes of Turpie's it is
     # printed for and what it means: C is divided, as crossrefs.agreement
     # divides it.
-    [table] = [
+    _, table = [
         b for b in edition.documents[EDITOR["id"]]["content"] if b["type"] == "table"
     ]
     heads, *rows = [
@@ -543,7 +546,19 @@ def test_a_page_is_written_of_the_books_and_verses_it_is_given(
 
     full = named(edition.inventory)
     tobit = ("Tobit (Apocrypha)", "Tobit")
-    assert tobit in full
+    assert tobit not in full
+    assert all(theirs != f"{ours} (Apocrypha)" for theirs, ours in full[1:])
+    for name in (
+        "Prayer of Manasses",
+        "1 Esdras",
+        "Tobit",
+        "Judith",
+        "1 Maccabees",
+        "2 Maccabees",
+        "Wisdom of Solomon",
+        "Bel and the Dragon",
+    ):
+        assert (f"{name} (Apocrypha)", name) not in full
     # A book that the edition lacks is missing on its side.
     assert full[-1] == ("2 Esdras (Apocrypha)", "(missing)")
     assert named(c for c in edition.inventory if c != "TOB") == [
@@ -569,6 +584,15 @@ def test_generated_names_share_the_body_heading_registry(
     ours = assembly.books(changed(policy, "manifest", rename), edition.documents)
     written = sources.authored[NUMBERING["file"]] + "\\ip {JER 38:31}\n"
     page = printed(written, ours=ours)
-    assert "\\tr\n\\tc1 Jeremiah\n\\tc2 Renamed Jeremias\n" in page
-    assert "\\s2 Renamed Jeremias\n" in page
+    names_page = printed("{names}\n", ours=ours)
+    assert "\\tr\n\\tc1 Jeremiah\n\\tc2 Renamed Jeremias\n" in names_page
+    assert "\\s1 Renamed Jeremias\n" in page
     assert page.endswith("\\ip Renamed Jeremias 38:31\n")
+
+
+@pytest.mark.parametrize("written", ["{names}\n{names}\n", "{books}\n", "{psalms}\n"])
+def test_a_page_refuses_duplicate_or_incomplete_table_groups(
+    printed: Printed, written: str
+) -> None:
+    with pytest.raises(CheckFailed, match="not once each, or not as one set"):
+        printed(written)

@@ -710,11 +710,11 @@ def authored(
     read_sources: Read,
     revised: Revised,
     found: stages.Reconciliation,
-) -> tuple[dict[str, Document], Document, tuple[Entry, ...]]:
+) -> tuple[dict[str, Document], Document, Document, tuple[Entry, ...]]:
     """The edition's own pages, with the passages and tables they ask for:
-    the pages the book prints, by id; the page that opens the textual
-    variants, which the website publishes; and the variants' entries, each
-    its row and its lanes, for the website to publish by its verse."""
+    the pages the book prints, by id; the numbering and textual
+    variants pages, which the website publishes; and the variants’ entries,
+    each its row and its lanes, for the website to publish by its verse."""
     policy = ctx.policy
     # The variants quote the King James books before the readings and the
     # New Testament after them with the same systematic spelling and
@@ -736,7 +736,7 @@ def authored(
     )
     entries = tuple((row, variants.lanes(row, ctx.terms)) for row in rows)
     pages = {}
-    for entry in (*policy.entries, bible.policy.VARIANTS):
+    for entry in (*policy.entries, bible.policy.NUMBERING, bible.policy.VARIANTS):
         if "file" not in entry:
             continue
         text = read_sources.authored[entry["file"]]
@@ -758,7 +758,8 @@ def authored(
         for code, doc in pages.items()
     }
     variants_page = docs.pop(bible.policy.VARIANTS["id"])
-    return docs, variants_page, entries
+    numbering_page = docs.pop(bible.policy.NUMBERING["id"])
+    return docs, numbering_page, variants_page, entries
 
 
 @dataclass(frozen=True)
@@ -788,8 +789,9 @@ class Edition:
     # What the reconciliation of the New Testament with the Byzantine text
     # worked out, for the review and the textual variants.
     byzantine: stages.Reconciliation
-    # The page that opens the textual variants, which the website publishes
-    # and the book does not print, and their entries.
+    # The website-only numbering and textual variants pages, and the
+    # variants entries.
+    numbering_page: Document
     variants_page: Document
     variants: tuple[Entry, ...]
     # What came of CCEL's notes, with those set in the verses promotion
@@ -863,7 +865,7 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
     front, appendix_notes, front_report = front_and_back(read_sources, ctx)
     books, reports = annotated(units, read_sources, appendix_notes, ctx)
     revised = revise(front, books, policy)
-    pages, variants_page, entries = authored(
+    pages, numbering_page, variants_page, entries = authored(
         ctx, read_sources, revised, promoted.byzantine
     )
     prepared = {**pages, **revised.finished}
@@ -937,6 +939,7 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
         summary=MappingProxyType(summary),
         met=met,
         byzantine=promoted.byzantine,
+        numbering_page=numbering_page,
         variants_page=variants_page,
         variants=entries,
         ccel=promoted.ccel,

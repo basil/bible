@@ -10,7 +10,7 @@ This volume brings together two English translations that have long been read ap
 
 The volume is arranged as follows:
 
-1. The title page, the table of contents, a list of abbreviations, the editor's introduction, and a table of chapters and verses whose numbers differ from the King James Bible’s
+1. The title page, the table of contents, a list of abbreviations, the editor's introduction, including a table of books whose names differ from the King James Bible’s
 2. The Old Testament, opening with Brenton's preface and introduction
 3. The New Testament, opening with the King James translators' dedication to the king and their preface, "The Translators to the Reader"
 
@@ -22,7 +22,7 @@ The translations are preserved with a few exceptions. Brenton translated Valpy's
 
 The page size is ISO B5 (176 × 250 mm). Scripture is set in one column in [Valkyrie](https://mbtype.com/fonts/valkyrie/) at 9 pt, with the notes in the inside margin beside their verses, and at the foot of the page those that would crowd it. Greek is set in GFS Heraklit and Hebrew in Ezra SIL, in print and online. Valkyrie is a proprietary typeface, so a build made without it, such as one checking a pull request, is set instead in [Utopia](<https://en.wikipedia.org/wiki/Utopia_(typeface)>), with Greek in GFS Didot. The design is based on the Berean Standard Bible layout that comes with [PTXprint](https://software.sil.org/ptxprint/), a free program for typesetting Bibles.
 
-The website presents the same prepared scripture, with notes below each chapter, the front matter of the book, each translation's before its testament, and [the textual variants](https://oleb.bible/variants/): every New Testament verse in which the Greek texts differ, with the Greek of both and, where the English changes, the words of both Bibles.
+The website presents the same prepared scripture, with notes below each chapter, the front matter of the book, each translation's before its testament, and the website-only [tables of chapters and verses](https://oleb.bible/read/numbering) and [textual variants](https://oleb.bible/variants/). The variants list every New Testament verse in which the Greek texts differ, with the Greek of both and, where the English changes, the words of both Bibles.
 
 ## Building it yourself
 

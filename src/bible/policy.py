@@ -58,11 +58,10 @@ def freeze(value: object) -> object:
 
 # The edition's own pages, among the units the manifest lists.
 EDITOR = cast(Entry, freeze({"id": "CNC", "file": "content/introduction.sfm"}))
-NUMBERING = cast(Entry, freeze({"id": "XXA", "file": "content/numbering.sfm"}))
 OLD_TESTAMENT = cast(Entry, freeze({"id": "XXF", "file": "content/old-testament.sfm"}))
 NEW_TESTAMENT = cast(Entry, freeze({"id": "XXG", "file": "content/new-testament.sfm"}))
-# The textual variants, which the website publishes and the book does not
-# print.
+# The numbering tables and textual variants are website-only.
+NUMBERING = cast(Entry, freeze({"id": "XXA", "file": "content/numbering.sfm"}))
 VARIANTS = cast(Entry, freeze({"id": "XXC", "file": "content/byzantine.sfm"}))
 
 
@@ -110,10 +109,8 @@ class Policy:
         return (
             # Project units follow the contents page and are listed in it.
             *(("front", unit) for unit in manifest["front_matter"]),
-            # The editor's introduction follows the list of abbreviations,
-            # and the table of chapters and verses, which it refers to.
+            # The editor's introduction follows the list of abbreviations.
             ("front", EDITOR),
-            ("front", NUMBERING),
             *(("old_testament", unit) for unit in manifest["old_testament_front"]),
             *(("new_testament", unit) for unit in manifest["new_testament_front"]),
         )
@@ -307,7 +304,9 @@ def check(policy: Policy) -> None:
     ]
     require(not unplaced, f"Scripture units outside both testaments: {unplaced}")
     ids = [entry["id"] for entry in policy.entries]
-    require(len(ids) == len(set(ids)), "Duplicate project id")
+    # The website-only pages' ids are taken too.
+    taken = [*ids, NUMBERING["id"], VARIANTS["id"]]
+    require(len(taken) == len(set(taken)), "Duplicate project id")
     # The rendered PDF is searched by the contents' units.
     unread = sorted({witness["id"] for witness in policy.witnesses} - set(ids))
     require(not unread, f"Witnesses of units without a contents entry: {unread}")

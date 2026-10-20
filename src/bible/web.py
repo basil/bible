@@ -1,7 +1,8 @@
 """Prepared scripture as USJ for the website, with the Greek and Hebrew
 tagged for their fonts as the typesetter has them, the front matter the
-book prints, the textual variants, which the website publishes and the
-book does not print, and the fonts the edition is set in."""
+book prints, the website-only numbering tables and textual variants, and
+the fonts the edition is set in.
+"""
 
 import itertools
 import shutil
@@ -258,16 +259,31 @@ class Unit(TypedDict):
 def matter(
     edition: pipeline.Edition, documents: Mapping[str, usj.Document]
 ) -> list[tuple[Unit, usj.Document]]:
-    """The front matter the website publishes, in print order: the project's
-    own pages, then each testament's before its books, without the dividers,
-    which print a title alone; each the whole unit but for the names the
+    """The front matter the book prints, with the website-only numbering
+    page after the editor's introduction, in reading order: the project's
+    own pages, then each testament's before its books, without the
+    dividers, which print a title alone; each the whole unit but for the names the
     manifest carries, opening with its book and its printed title, with its
     Greek and Hebrew tagged for their fonts as the typesetter has them, and
     the editor's pages as the editor wrote them."""
     result: list[tuple[Unit, usj.Document]] = []
-    for section, entry in edition.policy.front_matter:
+    front = edition.policy.front_matter
+    # Keep the website-only numbering page beside the introduction.
+    at = (
+        next(i for i, (_, entry) in enumerate(front) if entry == bible.policy.EDITOR)
+        + 1
+    )
+    units = (*front[:at], ("front", bible.policy.NUMBERING), *front[at:])
+    for section, entry in units:
         code = entry["id"]
-        doc = export.fonted(edition, code, documents[code])
+        names: Mapping[str, str]
+        if entry == bible.policy.NUMBERING:
+            doc = edition.numbering_page
+            names = assembly.names(entry, doc)
+        else:
+            # Under the names the book prints it under.
+            doc = export.fonted(edition, code, documents[code])
+            names = edition.names[code]
         book, *blocks = doc["content"]
         rest = list(itertools.dropwhile(lambda b: b.get("marker") in NAMES, blocks))
         # The site anchors a unit at its one printed title.
@@ -280,8 +296,8 @@ def matter(
         unit: Unit = {
             "id": peripherals.UNITS[code].slug,
             "section": section,
-            "title": edition.names[code]["title"],
-            "short": edition.names[code]["short_title"],
+            "title": names["title"],
+            "short": names["short_title"],
         }
         division = peripherals.division(code, usj.with_blocks(doc, rest), unit["title"])
         group = peripherals.book(code)

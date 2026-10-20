@@ -39,7 +39,9 @@ def test_the_edition_prints_every_unit_once_in_the_manifests_order(
     assert list(edition.documents) == order
     assert list(exported) == order
     assert edition.scripture == {unit["id"] for unit in policy.scripture}
-    assert edition.authored == {"CNC", "XXA", "XXF", "XXG"}
+    assert edition.authored == {"CNC", "XXF", "XXG"}
+    for mode in ("pdf", "sample"):
+        assert "XXA" not in dict(pipeline.view(edition, mode))
     # The textual variants are prepared for the website, and printed nowhere.
     assert bible.policy.VARIANTS["id"] not in edition.documents
     assert order[-1] == "REV"
@@ -372,8 +374,7 @@ def test_the_editions_spelling_is_revised_wherever_a_word_is_printed(
     # respelt wherever they are printed, so the introduction's Osee and Naum
     # stand on their own account.
     source_names = {
-        "CNC": ["Nehemiah"],
-        "XXA": ["Nehemiah"],
+        "CNC": ["Nehemiah", "Nehemiah"],
     }
     assert re.search(
         r"\bOsee and Naum\b", usj.text_of(edition.documents["CNC"]["content"])
@@ -416,7 +417,11 @@ def test_the_editions_spelling_is_revised_wherever_a_word_is_printed(
         visit(content)
         return bounds, notes
 
-    for code, doc in {**edition.documents, variants: edition.variants_page}.items():
+    for code, doc in {
+        **edition.documents,
+        "XXA": edition.numbering_page,
+        variants: edition.variants_page,
+    }.items():
         found: list[str] = []
         for paragraph in usj.walk(doc["content"]):
             if paragraph["type"] not in {"para", "table:cell"}:

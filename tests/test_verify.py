@@ -87,6 +87,7 @@ def test_printed_origins_lose_their_chapter(declared: bible.policy.Policy) -> No
         summary=none,
         met=none,
         byzantine=cast(Any, None),
+        numbering_page=cast(Any, None),
         variants_page=cast(Any, None),
         variants=(),
         ccel=cast(Any, None),

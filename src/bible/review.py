@@ -304,7 +304,8 @@ def review(edition: pipeline.Edition) -> None:
             ).items()
         },
         **{f"text/{code}.usfm": text for code, text in export.export(edition, "pdf")},
-        # The textual variants, as the website publishes them.
+        # The numbering page and textual variants, as the website publishes them.
+        f"text/{bible.policy.NUMBERING['id']}.json": json_text(edition.numbering_page),
         f"text/{bible.policy.VARIANTS['id']}.json": json_text(web.variants(edition)),
     }
     base = paths.BUILD_DIR / "review"

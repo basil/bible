@@ -602,7 +602,7 @@ describe("front matter renderer", () => {
     const fragment = JSDOM.fragment(
       renderMatter(
         unit(
-          para("mt1", "Books, Chapters, and Verses"),
+          para("mt1", "Chapters and Verses"),
           para("mt2", "in the King James Bible"),
           para("ip", "Table"),
         ),
@@ -614,7 +614,7 @@ describe("front matter renderer", () => {
       ),
     ).toEqual(["h1.mt1", "p.ip"]);
     expect(fragment.querySelector("h1#matter")!.textContent).toBe(
-      "Books, Chapters, and Verses in the King James Bible",
+      "Chapters and Verses in the King James Bible",
     );
   });
   test("renders a table with its header and body cells", () => {

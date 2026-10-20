@@ -482,12 +482,12 @@
     ]
   },
   "jeremiah-numbering-table-pointer": {
-    "why": "The edition relocates the table of chapter and verse numbers after its introduction; the source pointer to the end of Jeremiah no longer leads to a table.",
+    "why": "The edition’s numbering tables are published on its website; the source pointer to the end of Jeremiah no longer leads to a table.",
     "changes": [
       {
         "note": "JER 25:13 CCEL",
         "from": "see the end of Jeremiah",
-        "to": "see the table of chapters and verses after the introduction"
+        "to": "see the tables of chapters and verses at oleb.bible"
       }
     ]
   },

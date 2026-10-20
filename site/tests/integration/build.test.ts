@@ -313,14 +313,33 @@ test("Sirach's introduction has a named static page and search entry", () => {
 test("numbering tables name each book once above their Bible column headings", () => {
   const page = JSDOM.fragment(builtFile("read/numbering.html"));
   const tables = [...page.querySelectorAll(".matter table")];
-  expect(tables).toHaveLength(35);
+  expect(tables).toHaveLength(34);
+  expect(page.querySelector("h1")!.textContent).toBe(
+    "Chapters and Verses in the King James Bible",
+  );
+  const introduction = JSDOM.fragment(
+    builtFile("read/editor-introduction.html"),
+  );
+  const names = [...introduction.querySelectorAll(".matter table")].find(
+    (table) => table.textContent?.includes("King James Bible"),
+  )!;
+  expect(names).toBeDefined();
+  expect(names.textContent).toContain("1 Kings");
+  for (const row of names.querySelectorAll("tr")) {
+    const cells = [...row.querySelectorAll("td")].map(
+      (cell) => cell.textContent,
+    );
+    if (cells.length === 2) {
+      expect(cells[0]).not.toBe(`${cells[1]} (Apocrypha)`);
+    }
+  }
   for (const table of tables) {
     expect(
       [...table.querySelectorAll("th")].map((cell) => cell.textContent),
     ).toEqual(["King James Bible", "Orthodox Liturgical English Bible"]);
   }
   expect(
-    [...page.querySelectorAll("h3.s2")].filter(
+    [...page.querySelectorAll("h2.s1")].filter(
       (heading) => heading.textContent === "Amos",
     ),
   ).toHaveLength(1);

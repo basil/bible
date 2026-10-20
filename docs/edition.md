@@ -63,8 +63,8 @@ Each translation's front matter stands before its own testament, so that the int
 
 - **Old Testament:** Brenton's preface and his introduction.
 - **New Testament:** the translators' dedication to King James and their preface, "The Translators to the Reader".
-- **On the website too:** these, with Brenton's list of abbreviations, the editor's introduction and the table of chapters and verses, each a page under Read where the book has it; the divider pages of the testaments are not pages, the reader's sections standing for them.
-- **On the website, and not in the book:** the textual variants: every New Testament verse in which the two Greek texts differ, with the Greek of both and, where the English changes, the words of both Bibles. The English changes are based on Pierpont's instructions. Where an instruction cannot be applied or its wording does not fit, a fitting KJV parallel is preferred, then Pierpont, the Revised Version of 1881, and Boyd's Byzantine ASV of 2021; Boyd's Text-Critical English New Testament and Thomason's Far Above All are occasionally consulted, in that order.
+- **On the website too:** these, with Brenton's list of abbreviations and the editor's introduction, each a page under Read where the book has it; the divider pages of the testaments are not pages, the reader's sections standing for them.
+- **On the website, and not in the book:** the tables of chapters and verses, a page under Read after the editor's introduction, and the textual variants: every New Testament verse in which the two Greek texts differ, with the Greek of both and, where the English changes, the words of both Bibles. The English changes are based on Pierpont's instructions. Where an instruction cannot be applied or its wording does not fit, a fitting KJV parallel is preferred, then Pierpont, the Revised Version of 1881, and Boyd's Byzantine ASV of 2021; Boyd's Text-Critical English New Testament and Thomason's Far Above All are occasionally consulted, in that order.
 
 Brenton's introduction in eBible ends after the paragraph on early translations from the Septuagint, where the 1870 printing ends it (p. vi in the 1879 reprint of its plates). The 1851 printing goes on; the rest is restored from its [pp. viii–xiii](https://ccat.sas.upenn.edu/ioscs/brenton/brenton1851.pdf), stopping before the separate “Apocrypha” heading. Where those pages overlap eBible's closing paragraphs, their words agree. The existing opening is retained. The restoration in `edition/prose.json` gives the exact preceding paragraph and the added paragraphs as USJ, with the source's emphasis and blank lines; marker decisions set the early translations as a list and the blank lines before its groups as divisions. The matter stage inserts them before reading citations and terminology, and the usual spelling and punctuation revisions follow. The build refuses a missing or ambiguous anchor. The unchanged scan is pinned as `sources/brenton1851.pdf`: the read stage verifies its checksum, but does not OCR it. Building remains offline.
 
@@ -74,7 +74,7 @@ Four things are left out:
 
 - eBible's list of corrections.
 - The introduction to the books of the Apocrypha in eBible's transcription.
-- Brenton's table of the chapters of Jeremias, which does not match eBible's text. The table of chapters and verses replaces it.
+- Brenton's table of the chapters of Jeremias, which does not match eBible's text. The website's tables of chapters and verses replace it.
 - The Cambridge Paragraph Bible's 1873 title page, which advertises an introduction and appendices by Scrivener that are not in the online text.
 
 The traditional notes at the ends of the epistles, such as "Written to the Romans from Corinthus", are kept.

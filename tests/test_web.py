@@ -235,7 +235,7 @@ def test_spans_take_closing_punctuation() -> None:
 
 
 def test_matter(edition: pipeline.Edition) -> None:
-    """The front matter the book prints, in its order and under its section,
+    """The front matter and website-only numbering page, in reading order,
     each unit the whole document but for the names the manifest carries,
     with its printed title and its Greek and Hebrew tagged for their fonts;
     the editor's pages as the editor wrote them."""
@@ -258,8 +258,8 @@ def test_matter(edition: pipeline.Edition) -> None:
     blocks = {}
     for unit, doc in listed:
         code = source_codes[unit["id"]]
-        whole = documents[code]
-        if code not in edition.authored:
+        whole = edition.numbering_page if code == "XXA" else documents[code]
+        if code not in edition.authored and code != "XXA":
             whole = usj.with_content(whole, export.font_runs)
         book, division = doc["content"]
         assert book == {

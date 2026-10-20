@@ -385,7 +385,7 @@ def books_tables(
         if not values:
             continue
         sections += [
-            usj.para("s2", ours.names[code]),
+            usj.para("s1", ours.names[code]),
             *(psalms if code == "PSA" else ()),
             table_rows(values, policy=policy),
         ]
@@ -437,9 +437,10 @@ def names_table(
     *,
     policy: bible.policy.Policy,
 ) -> Node:
-    """The books that the King James Bible names otherwise, or sets apart in
-    its Apocrypha, or lacks, and the parts of books that it sets apart; then
-    the books of its Apocrypha that the edition lacks."""
+    """The books that the King James Bible names otherwise or lacks, and the
+    books and parts of books of its Apocrypha that it names otherwise, sets
+    in another book, or lacks; then the books of its Apocrypha that the
+    edition lacks."""
     parts = policy.versification["apocrypha"]
     rows = []
     # The books of the King James Bible's Apocrypha that the edition's books
@@ -449,6 +450,15 @@ def names_table(
         set(printed) <= set(ours.names),
         "Assembled books missing from the book-name registry",
     )
+
+    def differs(name: str, part: VersificationApocrypha) -> bool:
+        # A book of its Apocrypha under the same name needs no row.
+        return (
+            part["kjv"] is None
+            or "chapter" in part
+            or theirs.names[part["kjv"]] != name
+        )
+
     for code in printed:
         name = ours.names[code]
         here = [
@@ -465,11 +475,13 @@ def names_table(
         else:
             if whole is None:
                 held.add(code)
-            rows.append((name, _apocryphal(whole or {"kjv": code}, theirs)))
+            book: VersificationApocrypha = whole or {"kjv": code}
+            if differs(name, book):
+                rows.append((name, _apocryphal(book, theirs)))
         rows += [
             (part["title"], _apocryphal(part, theirs))
             for part in here
-            if "title" in part
+            if "title" in part and differs(part["title"], part)
         ]
     canonical = set(versification.kjv_books(policy=policy)) | {
         unit["id"] for unit in policy.scripture if unit["source"] == "kjv"
@@ -504,11 +516,12 @@ def page(
 ) -> Document:
     """One of the editor's pages as it prints: the passages it names between
     braces as the edition cites them, or as the King James Bible numbers
-    them, and the tables it asks for, each on a line of its own: the three
-    of chapters and verses together, or the glosses of the quotation links."""
+    them, and the tables it asks for, each on a line of its own: the chapters
+    and verses together, or the book names and the quotation glosses."""
     requested = TABLES.findall(text)
     require(
-        sorted(requested) in ([], ["books", "names", "psalms"], ["glosses"]),
+        sorted(requested)
+        in ([], ["books", "psalms"], ["names"], ["glosses"], ["glosses", "names"]),
         f"Tables asked for, not once each, or not as one set: {requested}",
     )
 
