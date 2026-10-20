@@ -52,27 +52,6 @@
 }
 \endgroup
 
-% Align the left edge of a line-opening poetry number with the prose
-% margin, using the active style's first-line inset. The native printer
-% retains its font, published label and gap. A label wider than the inset,
-% as a bridge, extends outward instead of colliding with the text.
-% PTXprint hangs a number only where a poetic line opens with it; a
-% milestone after words keeps the native inline printer.
-\begingroup
-\catcode`\@=11
-\gdef\BiblePlacePoetryVerse#1{%
-  \begingroup
-  \setbox0=\hbox{#1}%
-  \getp@ram{leftmargin}{\styst@kfirst}{\styst@k}%
-  \dimen0=\ifx\p@ram\relax 0\else\p@ram\fi\IndentUnit
-  \getp@ram{firstindent}{\styst@kfirst}{\styst@k}%
-  \ifx\p@ram\relax\else\advance\dimen0 by \p@ram\IndentUnit\fi
-  \llap{\hbox to \dimen0{\hskip0pt minus1fil\box0\hfil}}%
-  \endgroup
-}
-\gdef\hangprintverse{\BiblePlacePoetryVerse{\defaultprintverse}}
-\endgroup
-
 % An acrostic name of Lamentations opens its verse, so the verse milestone
 % stands in the name's heading, where the source puts it; print the number
 % beside the first line of the poem instead, as a hanging verse number is
@@ -110,7 +89,9 @@
         \box\BibleAcrosticVerse
       \fi
     \else
-      \BiblePlacePoetryVerse{\box\BibleAcrosticVerse}%
+      % Match PTXprint's native hanging printer: right-align the captured
+      % label and its prose spacing before the text without moving the text.
+      \llap{\box\BibleAcrosticVerse}%
     \fi
     % The line no longer opens at its hanging position: set a verse that
     % opens it inline.

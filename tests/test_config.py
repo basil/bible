@@ -12,6 +12,7 @@ import xml.etree.ElementTree as ET
 from collections import defaultdict
 from pathlib import Path
 
+import pytest
 from ptxprint.modelmap import ModelMap
 from ptxprint.usxutils import merge_sty, simple_parse
 
@@ -331,7 +332,9 @@ def layout(work: Path, name: str) -> ET.Element:
     return ET.fromstring(pdf)
 
 
-def typeset_lines(work: Path, name: str) -> list[list[ET.Element]]:
+def typeset_lines(
+    work: Path, name: str, *, after_verse_space_factor: float = 1.8
+) -> list[list[ET.Element]]:
     """Typeset <name>.usfm in one column with the production customizations,
     and return the words of each line as Poppler finds them."""
     (work / f"{name}.tex").write_text(
@@ -352,10 +355,10 @@ def typeset_lines(work: Path, name: str) -> list[list[ET.Element]]:
 \BodyColumns=1\IntroColumns=1\TitleColumns=1
 \JustifyParstrue\IndentAfterHeadingfalse
 \OmitVerseNumberOnetrue
-\def\AfterVerseSpaceFactor{1.8}
-\hangpoetry
 """
-        + rf"\input {paths.CONFIG_DIR / 'ptxprint-mods.tex'}"
+        + rf"""\def\AfterVerseSpaceFactor{{{after_verse_space_factor}}}
+\hangpoetry
+\input {paths.CONFIG_DIR / 'ptxprint-mods.tex'}"""
         + r"""
 \nolotwritetrue
 \scripturebooktrue
@@ -453,7 +456,10 @@ def test_peripheral_running_heads_follow_pages(tmp_path: Path) -> None:
     assert "Reader" not in last
 
 
-def test_poetry_indents_and_line_opening_verse_numbers(tmp_path: Path) -> None:
+@pytest.mark.parametrize("after_verse_space_factor", [1.8, 3.0])
+def test_poetry_indents_and_line_opening_verse_numbers(
+    tmp_path: Path, after_verse_space_factor: float
+) -> None:
     """Check rendered geometry, including wraps, inline milestones and acrostics."""
     work = ptxprint_project(tmp_path)
     (work / "poetry.usfm").write_text(
@@ -462,16 +468,18 @@ def test_poetry_indents_and_line_opening_verse_numbers(tmp_path: Path) -> None:
 \p \v 1 Preliminary prose clears the chapter cutout before the poem begins.
 \p Further prose clears the chapter cutout completely.
 \b
+\q1 \v 8 Singlefigure aligns beside the level-one text.
 \q1 \v 14 Levelone """
         + "echo " * 40
         + r"""Tailone.
 \q2 \v 9 Leveltwo """
         + "echo " * 40
         + r"""Tailtwo.
-\q1 \v 118 Threefigures stand at the same margin.
+\q2 \v 119 Leveltwothree aligns beside the level-two text.
+\q1 \v 118 Threefigures align beside the level-one text.
 \q1 \v 35a Lettered labels retain their native appearance.
-\q1 \v 23 \vp 24:23\vp* Published labels fit the level-one inset.
-\q1 \v 30 \vp 30:15\vp* Anotherpublished label fits too.
+\q1 \v 23 \vp 24:23\vp* Published labels hang before the text.
+\q1 \v 30 \vp 30:15\vp* Anotherpublished label hangs too.
 \q1 \v 36-37 Bridged labels keep their native formatting.
 \q1 Beforeone \v 38 Afterone remains inline.
 \q2 Beforetwo \v 39 Aftertwo remains inline.
@@ -489,7 +497,9 @@ def test_poetry_indents_and_line_opening_verse_numbers(tmp_path: Path) -> None:
 """,
         encoding="utf-8",
     )
-    lines = typeset_lines(work, "poetry")
+    lines = typeset_lines(
+        work, "poetry", after_verse_space_factor=after_verse_space_factor
+    )
     words = [word for line in lines for word in line]
 
     def word(text: str) -> ET.Element:
@@ -507,29 +517,27 @@ def test_poetry_indents_and_line_opening_verse_numbers(tmp_path: Path) -> None:
     def right(text: str) -> float:
         return edge(word(text), "xMax")
 
-    margin = left("14")
     x = 0.125 * 0.8 * 72.27
-    for text, factor in (
-        ("Levelone", 2),
-        ("Leveltwo", 3),
-        ("Threefigures", 2),
-        ("Lettered", 2),
-        ("Published", 2),
-        ("Anotherpublished", 2),
-        ("Acrostic", 2),
-        ("Afterpoetry", 1),
+    margin = left("Afterpoetry") - x
+    prose_gap = left("Proseafter") - right("43")
+    assert abs(prose_gap - after_verse_space_factor * 0.75) < 0.02
+    # Each level keeps its text position; variable-width labels share a
+    # right edge at that level, with exactly the native prose gap after them.
+    for label, opening, factor in (
+        ("8", "Singlefigure", 2),
+        ("14", "Levelone", 2),
+        ("9", "Leveltwo", 3),
+        ("119", "Leveltwothree", 3),
+        ("118", "Threefigures", 2),
+        ("35a", "Lettered", 2),
+        ("24:23", "Published", 2),
+        ("30:15", "Anotherpublished", 2),
+        ("40", "Acrostic", 2),
+        ("41", "Opening", 2),
+        ("44", "45", 2),
     ):
-        assert abs(left(text) - margin - factor * x) < 0.15, text
-    for label in ("9", "118", "35a", "40", "41", "44"):
-        assert abs(left(label) - margin) < 0.15, label
-    for label, opening in (("24:23", "Published"), ("30:15", "Anotherpublished")):
-        assert left(label) <= margin + 0.15
-        gap = left(opening) - right(label)
-        assert gap >= 1.3
-        # In the fallback font these labels may exceed 2X; only then may
-        # they extend outward, with the gap reduced to its native minimum.
-        if left(label) < margin - 0.15:
-            assert gap < 1.4
+        assert abs(left(opening) - margin - factor * x) < 0.15, opening
+        assert abs(left(opening) - right(label) - prose_gap) < 0.02, label
     for start in ("Levelone", "Leveltwo"):
         index = next(i for i, line in enumerate(lines) if word(start) in line)
         continuation = lines[index + 1][0]
@@ -547,10 +555,13 @@ def test_poetry_indents_and_line_opening_verse_numbers(tmp_path: Path) -> None:
         assert any(
             all(word(t) in line for t in (before, label, after)) for line in lines
         )
-    # A bridge can exceed 2X even in Valkyrie: keep the native minimum
-    # gap, allowing the number to extend outward rather than widening poetry.
-    assert left("36–") <= margin
-    assert left("Bridged") - right("37") >= 1.3
+    # Poppler may split a bridge differently with another font or gap.
+    # Measure its trailing edge without depending on those word boundaries.
+    bridge_line = next(line for line in lines if word("Bridged") in line)
+    bridge = bridge_line[: bridge_line.index(word("Bridged"))]
+    assert "".join(w.text or "" for w in bridge) == "36–37"
+    assert abs(left("Bridged") - margin - 2 * x) < 0.15
+    assert abs(left("Bridged") - edge(bridge[-1], "xMax") - prose_gap) < 0.02
     # The only 1 above the last scripture line is the first chapter figure;
     # both opening verse ones are suppressed (the folio is farther down).
     last_line = float(word("Chapteracrostic").attrib["yMax"])
