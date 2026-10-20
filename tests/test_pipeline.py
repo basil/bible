@@ -2293,15 +2293,55 @@ def test_passage_note_keys_must_select_once(policy: bible.policy.Policy) -> None
         ),
         (
             "mine honour; thine heir; mine hour; Mine eyes; Thine hand",
-            "my honour; thy heir; my hour; My eyes; Thy hand",
+            "mine honour; thine heir; mine hour; Mine eyes; Thy hand",
         ),
         (
             "mine own hand; thine own soul; mine own; thine own; mine are thine; thine is the kingdom",
-            "my own hand; thy own soul; mine own; thine own; mine are thine; thine is the kingdom",
+            "mine own hand; thine own soul; mine own; thine own; mine are thine; thine is the kingdom",
+        ),
+        (
+            "mine heart; thine house; thine holy soul",
+            "my heart; thy house; thy holy soul",
+        ),
+        (
+            "my eyes; my ears; my enemies; my honour; thine arm; thy inheritance",
+            "mine eyes; mine ears; mine enemies; mine honour; thine arm; thine inheritance",
+        ),
+        (
+            "my old age; my own house; thy own soul",
+            "mine old age; mine own house; thine own soul",
+        ),
+        (
+            "mine old age; Thine ancient mercies; mine every sin; mine own country; "
+            "thine own soul; mine own failings; thine honourable virginity; mine hour of need",
+            "mine old age; Thine ancient mercies; mine every sin; mine own country; "
+            "thine own soul; mine own failings; thine honourable virginity; mine hour of need",
+        ),
+        (
+            "thy union; thy universal memorial; thy useless servant; thy ewe lamb; "
+            "thine unworthy servant; thy one side; thy Urim",
+            "thy union; thy universal memorial; thy useless servant; thy ewe lamb; "
+            "thine unworthy servant; thy one side; thy Urim",
+        ),
+        (
+            "an herb; an humble person; an uniform; an uniformity; an eunuch; such an one",
+            "a herb; a humble person; a uniform; a uniformity; a eunuch; such a one",
+        ),
+        (
+            "a horse; a house; a holy man; a hundred; a historical account; "
+            "a union; a useful thing; a ewe-lamb; a once-barren root; Such a one; "
+            "an uncle; an unknown thing; an unholy man; a whole hour; an hour",
+            "a horse; a house; a holy man; a hundred; a historical account; "
+            "a union; a useful thing; a ewe-lamb; a once-barren root; Such a one; "
+            "an uncle; an unknown thing; an unholy man; a whole hour; an hour",
         ),
         (
             "no honour; none holy as the Lord; none hath; none of them",
             "no honour; none holy as the Lord; none hath; none of them",
+        ),
+        (
+            "The silver is mine; All that I have is thine; Thine is the kingdom",
+            "The silver is mine; All that I have is thine; Thine is the kingdom",
         ),
     ],
 )
@@ -2319,17 +2359,17 @@ def test_contextual_phrases_in_styles_notes_and_paragraphs(
     policy: bible.policy.Policy,
 ) -> None:
     doc = usj.parse(
-        "\\id GEN\n\\c 1\n\\p\n\\v 1 mine \\add honour\\add*"
-        "\\f - \\fq mine \\+it honour\\+it*: \\ft an \\+it hundred\\+it*-fold; thine heir.\\f*."
-        "\n\\ip mine hour; an holy place."
+        "\\id GEN\n\\c 1\n\\p\n\\v 1 my \\add honour\\add*"
+        "\\f - \\fq my \\+it honour\\+it*: \\ft an \\+it hundred\\+it*-fold; thine heir; thine heart.\\f*."
+        "\n\\ip mine hour; my eyes; an holy place."
     )
     original = copy.deepcopy(doc)
     result = revision.respelt(doc, policy, set())
     printed = usj.serialize(result)
-    assert "my \\add honour\\add*" in printed
-    assert "my \\+it honour\\+it*:" in printed
-    assert "a \\+it hundred\\+it*-fold; thy heir." in printed
-    assert "my hour; a holy place." in printed
+    assert "mine \\add honour\\add*" in printed
+    assert "mine \\+it honour\\+it*:" in printed
+    assert "a \\+it hundred\\+it*-fold; thine heir; thy heart." in printed
+    assert "mine hour; mine eyes; a holy place." in printed
     assert doc == original
 
 
@@ -2366,10 +2406,11 @@ def test_attributive_none_changes_only_in_a_declared_phrase(
 @pytest.mark.parametrize(
     ("code", "reference", "phrase"),
     [
-        ("GEN", "15:2", "my heir"),
-        ("GEN", "15:4", "thy heir"),
-        ("MAL", "1:6", "my honour"),
-        ("JHN", "2:4", "my hour"),
+        ("GEN", "15:2", "mine heir"),
+        ("GEN", "15:4", "thine heir"),
+        ("MAL", "1:6", "mine honour"),
+        ("JHN", "2:4", "mine hour"),
+        ("LUK", "2:30", "For mine eyes have seen thy salvation"),
         ("JOB", "34:19", "an honourable"),
         ("ISA", "56:5", "an honourable"),
         ("MRK", "15:43", "an honourable"),

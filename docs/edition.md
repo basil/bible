@@ -179,12 +179,16 @@ Every abbreviation the edition prints is in the list of abbreviations, but the f
 
 The edition regularizes spelling and punctuation and records explicit editorial vocabulary changes in `edition/revisions.json`. Throughout the printed edition, including notes and front and back matter, whole-word "ghost" becomes "spirit" and "Ghost" becomes "Spirit": "Holy Ghost" becomes "Holy Spirit", and "yielded up the ghost" becomes "yielded up the spirit". Capitalization and surrounding wording are preserved. Generated quotations and the textual variants use the revised wording.
 
+Possessives follow the immediately following sound: "my heart", "thy house" and "thy holy soul", but "mine eyes", "mine ears", "mine enemies", "thine arm" and "thine inheritance". Silent h takes "mine" or "thine": "mine honour", "thine honourable virginity", "mine hour of need". An intervening adjective governs the form: "mine old age", "Thine ancient mercies", "mine every sin", "mine own country", "thine own soul", "mine own failings". A vowel letter can begin with a consonant sound: "thy union", "thy universal memorial", "thy useless servant", "thy ewe lamb"; contrast "thine unworthy servant". Independent possessives remain: "The silver is mine", "All that I have is thine", "Thine is the kingdom". Capitalization is a separate decision. Luke 2:30 retains "For mine eyes have seen thy salvation".
+
+Articles likewise follow the immediately following sound: "a horse", "a house", "a holy man", "a hundred", "a humble person", but "an hour", "an honour", "an heir". Thus "a union", "a useful thing", "a ewe-lamb", "a eunuch", "a once-barren root" and "Such a one", but "an uncle", "an unknown thing" and "an unholy man"; "a whole hour", but "an hour". The edition prints "a herb", "a historical account", "a uniform" and "a uniformity" by the same principle.
+
 The systematic respellings regularize names. Brenton writes the prophet's name "Jezekiel" at Ezekiel 1:3 and 24:24, transliterating the Greek Ἰεζεκιήλ; the edition prints "Ezekiel". His Osee, Michæas, Obdias, Naum and Ambacum are printed as the edition's titles spell them: Hosea, Michaias, Abdias, Nahum and Abbacum.
 
 Throughout the edition, "amongst" is printed "among". In scripture, where the sources mix the words of a pair, the sense decides:
 
 - "besides" for "in addition" or "other than" ("other gods besides me"), "beside" for "by the side of" and in idioms ("beside himself");
-- "born" of birth, "borne" for bearing ("I have borne a child in my old age");
+- "born" of birth, "borne" for bearing ("I have borne a child in mine old age");
 - "farther" for distance, "further" for continuation or addition;
 - "sometime" for formerly, "sometimes" for occasionally, "some time" for a span of time;
 - "diverse" for different in kind or quality ("diverse seed", "diverse weights"), "divers" for various or several;

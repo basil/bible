@@ -1484,9 +1484,9 @@ def test_finished_readings_preserve_boundary_punctuation(
         ("ZEC 3:4", "long", "full length", "with a full length robe"),
         (
             "JHN 17:11#2 TR",
-            "them through thy own name which",
-            "through thy own name those whom",
-            "keep through thy own name those whom thou hast given me",
+            "them through thine own name which",
+            "through thine own name those whom",
+            "keep through thine own name those whom thou hast given me",
         ),
         (
             "REV 4:4#1 TR",

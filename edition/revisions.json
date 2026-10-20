@@ -1,5 +1,5 @@
 {
-  "why": "The spelling, vocabulary and punctuation of the translation, revised by explicit editorial decisions. A word is respelt or modernized wherever the translation, its notes, and its front and back matter print it as a whole word; a word with a scope of scripture is revised only in numbered scripture and marked note lemmas (fq) and readings (fqa), wherever they stand. Book titles and metadata, headings, introduction paragraphs and explanatory commentary retain source grammar. Numbered scripture in d paragraphs, including Psalm superscriptions, remains in scope. Plain quotation marks do not establish scope. Names are respelt first. Global spelling, vocabulary and participle decisions affect source prose and run next, followed by a separate single sweep of scoped grammar decisions. A verse's change is made to the words of that verse alone, which must have them once, as the names leave them, and to the notes that quote them. Verses' changes stand in groups, each group under the reason its changes share. Each gives its reason. An isolated alternative whose word is also a plural noun may name its stable source note as its exact context. Passage changes name a stable note key or a front/back-matter unit and the plain words met once there; only punctuation, associated spacing and sentence-initial capitalization may change, with lowercase word initials also allowed in keyed notes. A phrase is revised as a word is; an stays before a silent h, and mine and thine where they stand alone. A word may except the phrases it must not change, which the edition must print. Words that a character style divides keep their division, and so does the lemma that quotes them at its note.",
+  "why": "The spelling, vocabulary and punctuation of the translation, revised by explicit editorial decisions. A word is respelt or modernized wherever the translation, its notes, and its front and back matter print it as a whole word; a word with a scope of scripture is revised only in numbered scripture and marked note lemmas (fq) and readings (fqa), wherever they stand. Book titles and metadata, headings, introduction paragraphs and explanatory commentary are outside that scripture scope. Numbered scripture in d paragraphs, including Psalm superscriptions, remains in scope. Plain quotation marks do not establish scope. Names are respelt first. Global spelling, vocabulary, article, possessive and participle decisions affect source prose and run next, followed by a separate single sweep of scoped grammar decisions. A verse's change is made to the words of that verse alone, which must have them once, as the names leave them, and to the notes that quote them. Verses' changes stand in groups, each group under the reason its changes share. Each gives its reason. An isolated alternative whose word is also a plural noun may name its stable source note as its exact context. Passage changes name a stable note key or a front/back-matter unit and the plain words met once there; only punctuation, associated spacing and sentence-initial capitalization may change, with lowercase word initials also allowed in keyed notes. A phrase is revised as a word is; possessives and articles follow the immediately following sound, including an intervening adjective: my and thy before consonant sounds, mine and thine before vowel sounds and silent h; a before consonant sounds, an before vowel sounds and silent h. Independent mine and thine stay. Capitalization is decided separately. A word may except the phrases it must not change, which the edition must print. Words that a character style divides keep their division, and so does the lemma that quotes them at its note.",
   "names": {
     "why": "Proper names of persons and places, respelt where their bearer is identified. A decision respells every whole-word occurrence of its forms in the verses it lists, as the edition numbers them, and in the lemmas that quote them, and nowhere else. Every other verse of the printed books that has a decided form is listed under keep, with who keeps it. The build refuses an occurrence listed neither way, a listed verse without its form, and a kept verse that another revision respells. A note's commentary and the front and back matter keep the source's names. The king of Judah retains both source names: Azarias for Greek Ἀζαρίας in 4 Kgdms and 1 Chr 3:12, and Ozias for Greek Ὀζίας, including 2 Chr. These names are not harmonized; other bearers and the related forms Azaria, Azariu, Ozia and Ozi retain their source forms.",
     "decisions": {
@@ -3922,65 +3922,17 @@
       "to": "A hundred",
       "why": "Use a before a sounded h."
     },
-    "Mine anger": {
-      "to": "My anger",
-      "why": "Use my and thy before a noun."
-    },
-    "Mine answer": {
-      "to": "My answer",
-      "why": "Use my and thy before a noun."
-    },
-    "Mine enemies": {
-      "to": "My enemies",
-      "why": "Use my and thy before a noun."
-    },
-    "Mine eye": {
-      "to": "My eye",
-      "why": "Use my and thy before a noun."
-    },
-    "Mine eyes": {
-      "to": "My eyes",
-      "why": "Use my and thy before a noun."
-    },
     "Mine head": {
       "to": "My head",
-      "why": "Use my and thy before a noun."
-    },
-    "Thine apostasy": {
-      "to": "Thy apostasy",
-      "why": "Use my and thy before a noun."
-    },
-    "Thine eye": {
-      "to": "Thy eye",
-      "why": "Use my and thy before a noun."
-    },
-    "Thine eyes": {
-      "to": "Thy eyes",
-      "why": "Use my and thy before a noun."
+      "why": "Use my and thy before an immediately following consonant sound, including sounded h."
     },
     "Thine hand": {
       "to": "Thy hand",
-      "why": "Use my and thy before a noun."
+      "why": "Use my and thy before an immediately following consonant sound, including sounded h."
     },
     "Thine handmaid": {
       "to": "Thy handmaid",
-      "why": "Use my and thy before a noun."
-    },
-    "Thine insolence": {
-      "to": "Thy insolence",
-      "why": "Use my and thy before a noun."
-    },
-    "Thine ordinances": {
-      "to": "Thy ordinances",
-      "why": "Use my and thy before a noun."
-    },
-    "Thine own friend": {
-      "to": "Thy own friend",
-      "why": "Use my and thy before a noun."
-    },
-    "Thine own nation": {
-      "to": "Thy own nation",
-      "why": "Use my and thy before a noun."
+      "why": "Use my and thy before an immediately following consonant sound, including sounded h."
     },
     "an habit": {
       "to": "a habit",
@@ -4138,893 +4090,145 @@
       "to": "a hypocrite",
       "why": "Use a before a sounded h."
     },
-    "mine account": {
-      "to": "my account",
-      "why": "Use my and thy before a noun."
-    },
-    "mine acquaintance": {
-      "to": "my acquaintance",
-      "why": "Use my and thy before a noun."
-    },
-    "mine acquaintances": {
-      "to": "my acquaintances",
-      "why": "Use my and thy before a noun."
-    },
-    "mine act": {
-      "to": "my act",
-      "why": "Use my and thy before a noun."
-    },
-    "mine adversaries": {
-      "to": "my adversaries",
-      "why": "Use my and thy before a noun."
-    },
-    "mine adversary": {
-      "to": "my adversary",
-      "why": "Use my and thy before a noun."
-    },
-    "mine affliction": {
-      "to": "my affliction",
-      "why": "Use my and thy before a noun."
-    },
-    "mine afflictions": {
-      "to": "my afflictions",
-      "why": "Use my and thy before a noun."
-    },
-    "mine age": {
-      "to": "my age",
-      "why": "Use my and thy before a noun."
-    },
-    "mine aid": {
-      "to": "my aid",
-      "why": "Use my and thy before a noun."
-    },
-    "mine altar": {
-      "to": "my altar",
-      "why": "Use my and thy before a noun."
-    },
-    "mine amazement": {
-      "to": "my amazement",
-      "why": "Use my and thy before a noun."
-    },
-    "mine ancestors": {
-      "to": "my ancestors",
-      "why": "Use my and thy before a noun."
-    },
-    "mine angel": {
-      "to": "my angel",
-      "why": "Use my and thy before a noun."
-    },
-    "mine anger": {
-      "to": "my anger",
-      "why": "Use my and thy before a noun."
-    },
-    "mine anointed": {
-      "to": "my anointed",
-      "why": "Use my and thy before a noun."
-    },
-    "mine apostleship": {
-      "to": "my apostleship",
-      "why": "Use my and thy before a noun."
-    },
-    "mine arm": {
-      "to": "my arm",
-      "why": "Use my and thy before a noun."
-    },
-    "mine army": {
-      "to": "my army",
-      "why": "Use my and thy before a noun."
-    },
-    "mine ear": {
-      "to": "my ear",
-      "why": "Use my and thy before a noun."
-    },
-    "mine ears": {
-      "to": "my ears",
-      "why": "Use my and thy before a noun."
-    },
-    "mine elect": {
-      "to": "my elect",
-      "why": "Use my and thy before a noun."
-    },
-    "mine end": {
-      "to": "my end",
-      "why": "Use my and thy before a noun."
-    },
-    "mine enemies": {
-      "to": "my enemies",
-      "why": "Use my and thy before a noun."
-    },
-    "mine enemy": {
-      "to": "my enemy",
-      "why": "Use my and thy before a noun."
-    },
-    "mine eye": {
-      "to": "my eye",
-      "why": "Use my and thy before a noun."
-    },
-    "mine eyelids": {
-      "to": "my eyelids",
-      "why": "Use my and thy before a noun."
-    },
-    "mine eyes": {
-      "to": "my eyes",
-      "why": "Use my and thy before a noun."
-    },
     "mine hand": {
       "to": "my hand",
-      "why": "Use my and thy before a noun."
+      "why": "Use my and thy before an immediately following consonant sound, including sounded h."
     },
     "mine hands": {
       "to": "my hands",
-      "why": "Use my and thy before a noun."
+      "why": "Use my and thy before an immediately following consonant sound, including sounded h."
     },
     "mine head": {
       "to": "my head",
-      "why": "Use my and thy before a noun."
+      "why": "Use my and thy before an immediately following consonant sound, including sounded h."
     },
     "mine health": {
       "to": "my health",
-      "why": "Use my and thy before a noun."
+      "why": "Use my and thy before an immediately following consonant sound, including sounded h."
     },
     "mine heart": {
       "to": "my heart",
-      "why": "Use my and thy before a noun."
-    },
-    "mine heir": {
-      "to": "my heir",
-      "why": "Use my and thy before a noun."
+      "why": "Use my and thy before an immediately following consonant sound, including sounded h."
     },
     "mine help": {
       "to": "my help",
-      "why": "Use my and thy before a noun."
+      "why": "Use my and thy before an immediately following consonant sound, including sounded h."
     },
     "mine helper": {
       "to": "my helper",
-      "why": "Use my and thy before a noun."
+      "why": "Use my and thy before an immediately following consonant sound, including sounded h."
     },
     "mine heritage": {
       "to": "my heritage",
-      "why": "Use my and thy before a noun."
-    },
-    "mine honour": {
-      "to": "my honour",
-      "why": "Use my and thy before a noun."
+      "why": "Use my and thy before an immediately following consonant sound, including sounded h."
     },
     "mine host": {
       "to": "my host",
-      "why": "Use my and thy before a noun."
-    },
-    "mine hour": {
-      "to": "my hour",
-      "why": "Use my and thy before a noun."
+      "why": "Use my and thy before an immediately following consonant sound, including sounded h."
     },
     "mine house": {
       "to": "my house",
-      "why": "Use my and thy before a noun."
+      "why": "Use my and thy before an immediately following consonant sound, including sounded h."
     },
     "mine hypocrisy": {
       "to": "my hypocrisy",
-      "why": "Use my and thy before a noun."
-    },
-    "mine ignorances": {
-      "to": "my ignorances",
-      "why": "Use my and thy before a noun."
-    },
-    "mine incense": {
-      "to": "my incense",
-      "why": "Use my and thy before a noun."
-    },
-    "mine infants": {
-      "to": "my infants",
-      "why": "Use my and thy before a noun."
-    },
-    "mine infirmities": {
-      "to": "my infirmities",
-      "why": "Use my and thy before a noun."
-    },
-    "mine inheritance": {
-      "to": "my inheritance",
-      "why": "Use my and thy before a noun."
-    },
-    "mine iniquities": {
-      "to": "my iniquities",
-      "why": "Use my and thy before a noun."
-    },
-    "mine iniquity": {
-      "to": "my iniquity",
-      "why": "Use my and thy before a noun."
-    },
-    "mine innocence": {
-      "to": "my innocence",
-      "why": "Use my and thy before a noun."
-    },
-    "mine inward": {
-      "to": "my inward",
-      "why": "Use my and thy before a noun."
-    },
-    "mine oath": {
-      "to": "my oath",
-      "why": "Use my and thy before a noun."
-    },
-    "mine office": {
-      "to": "my office",
-      "why": "Use my and thy before a noun."
-    },
-    "mine oil": {
-      "to": "my oil",
-      "why": "Use my and thy before a noun."
-    },
-    "mine old": {
-      "to": "my old",
-      "why": "Use my and thy before a noun."
-    },
-    "mine only": {
-      "to": "my only",
-      "why": "Use my and thy before a noun."
-    },
-    "mine ordinances": {
-      "to": "my ordinances",
-      "why": "Use my and thy before a noun."
-    },
-    "mine own bowels": {
-      "to": "my own bowels",
-      "why": "Use my and thy before a noun."
-    },
-    "mine own citizens": {
-      "to": "my own citizens",
-      "why": "Use my and thy before a noun."
-    },
-    "mine own country": {
-      "to": "my own country",
-      "why": "Use my and thy before a noun."
-    },
-    "mine own glory": {
-      "to": "my own glory",
-      "why": "Use my and thy before a noun."
-    },
-    "mine own hand": {
-      "to": "my own hand",
-      "why": "Use my and thy before a noun."
-    },
-    "mine own heart": {
-      "to": "my own heart",
-      "why": "Use my and thy before a noun."
-    },
-    "mine own kindred": {
-      "to": "my own kindred",
-      "why": "Use my and thy before a noun."
-    },
-    "mine own life": {
-      "to": "my own life",
-      "why": "Use my and thy before a noun."
-    },
-    "mine own name": {
-      "to": "my own name",
-      "why": "Use my and thy before a noun."
-    },
-    "mine own nation": {
-      "to": "my own nation",
-      "why": "Use my and thy before a noun."
-    },
-    "mine own profit": {
-      "to": "my own profit",
-      "why": "Use my and thy before a noun."
-    },
-    "mine own righteousness": {
-      "to": "my own righteousness",
-      "why": "Use my and thy before a noun."
-    },
-    "mine own sake": {
-      "to": "my own sake",
-      "why": "Use my and thy before a noun."
-    },
-    "mine own self": {
-      "to": "my own self",
-      "why": "Use my and thy before a noun."
-    },
-    "mine own son": {
-      "to": "my own son",
-      "why": "Use my and thy before a noun."
-    },
-    "mine own will": {
-      "to": "my own will",
-      "why": "Use my and thy before a noun."
-    },
-    "mine unbelief": {
-      "to": "my unbelief",
-      "why": "Use my and thy before a noun."
-    },
-    "mine up-rising": {
-      "to": "my up-rising",
-      "why": "Use my and thy before a noun."
-    },
-    "thine Almighty": {
-      "to": "thy Almighty",
-      "why": "Use my and thy before a noun."
+      "why": "Use my and thy before an immediately following consonant sound, including sounded h."
     },
     "thine Holy": {
       "to": "thy Holy",
-      "why": "Use my and thy before a noun."
-    },
-    "thine abominations": {
-      "to": "thy abominations",
-      "why": "Use my and thy before a noun."
-    },
-    "thine abundance": {
-      "to": "thy abundance",
-      "why": "Use my and thy before a noun."
-    },
-    "thine accuser": {
-      "to": "thy accuser",
-      "why": "Use my and thy before a noun."
-    },
-    "thine accusers": {
-      "to": "thy accusers",
-      "why": "Use my and thy before a noun."
-    },
-    "thine adultery": {
-      "to": "thy adultery",
-      "why": "Use my and thy before a noun."
-    },
-    "thine adversaries": {
-      "to": "thy adversaries",
-      "why": "Use my and thy before a noun."
-    },
-    "thine adversary": {
-      "to": "thy adversary",
-      "why": "Use my and thy before a noun."
-    },
-    "thine afflicted": {
-      "to": "thy afflicted",
-      "why": "Use my and thy before a noun."
-    },
-    "thine affliction": {
-      "to": "thy affliction",
-      "why": "Use my and thy before a noun."
-    },
-    "thine age": {
-      "to": "thy age",
-      "why": "Use my and thy before a noun."
-    },
-    "thine alliance": {
-      "to": "thy alliance",
-      "why": "Use my and thy before a noun."
-    },
-    "thine allies": {
-      "to": "thy allies",
-      "why": "Use my and thy before a noun."
-    },
-    "thine alms": {
-      "to": "thy alms",
-      "why": "Use my and thy before a noun."
-    },
-    "thine altar": {
-      "to": "thy altar",
-      "why": "Use my and thy before a noun."
-    },
-    "thine altars": {
-      "to": "thy altars",
-      "why": "Use my and thy before a noun."
-    },
-    "thine ancient": {
-      "to": "thy ancient",
-      "why": "Use my and thy before a noun."
-    },
-    "thine angel": {
-      "to": "thy angel",
-      "why": "Use my and thy before a noun."
-    },
-    "thine angels": {
-      "to": "thy angels",
-      "why": "Use my and thy before a noun."
-    },
-    "thine anger": {
-      "to": "thy anger",
-      "why": "Use my and thy before a noun."
-    },
-    "thine anointed": {
-      "to": "thy anointed",
-      "why": "Use my and thy before a noun."
-    },
-    "thine appetites": {
-      "to": "thy appetites",
-      "why": "Use my and thy before a noun."
-    },
-    "thine arm": {
-      "to": "thy arm",
-      "why": "Use my and thy before a noun."
-    },
-    "thine arms": {
-      "to": "thy arms",
-      "why": "Use my and thy before a noun."
-    },
-    "thine army": {
-      "to": "thy army",
-      "why": "Use my and thy before a noun."
-    },
-    "thine array": {
-      "to": "thy array",
-      "why": "Use my and thy before a noun."
-    },
-    "thine arrows": {
-      "to": "thy arrows",
-      "why": "Use my and thy before a noun."
-    },
-    "thine ass": {
-      "to": "thy ass",
-      "why": "Use my and thy before a noun."
-    },
-    "thine asses": {
-      "to": "thy asses",
-      "why": "Use my and thy before a noun."
-    },
-    "thine ear": {
-      "to": "thy ear",
-      "why": "Use my and thy before a noun."
-    },
-    "thine ears": {
-      "to": "thy ears",
-      "why": "Use my and thy before a noun."
-    },
-    "thine ease": {
-      "to": "thy ease",
-      "why": "Use my and thy before a noun."
-    },
-    "thine elbow": {
-      "to": "thy elbow",
-      "why": "Use my and thy before a noun."
-    },
-    "thine elder": {
-      "to": "thy elder",
-      "why": "Use my and thy before a noun."
-    },
-    "thine elders": {
-      "to": "thy elders",
-      "why": "Use my and thy before a noun."
-    },
-    "thine elect": {
-      "to": "thy elect",
-      "why": "Use my and thy before a noun."
-    },
-    "thine enchantments": {
-      "to": "thy enchantments",
-      "why": "Use my and thy before a noun."
-    },
-    "thine end": {
-      "to": "thy end",
-      "why": "Use my and thy before a noun."
-    },
-    "thine enemies": {
-      "to": "thy enemies",
-      "why": "Use my and thy before a noun."
-    },
-    "thine enemy": {
-      "to": "thy enemy",
-      "why": "Use my and thy before a noun."
-    },
-    "thine enmity": {
-      "to": "thy enmity",
-      "why": "Use my and thy before a noun."
-    },
-    "thine enterprizes": {
-      "to": "thy enterprizes",
-      "why": "Use my and thy before a noun."
-    },
-    "thine entrance": {
-      "to": "thy entrance",
-      "why": "Use my and thy before a noun."
-    },
-    "thine espousals": {
-      "to": "thy espousals",
-      "why": "Use my and thy before a noun."
-    },
-    "thine established": {
-      "to": "thy established",
-      "why": "Use my and thy before a noun."
-    },
-    "thine everlasting": {
-      "to": "thy everlasting",
-      "why": "Use my and thy before a noun."
-    },
-    "thine evil": {
-      "to": "thy evil",
-      "why": "Use my and thy before a noun."
-    },
-    "thine eye": {
-      "to": "thy eye",
-      "why": "Use my and thy before a noun."
-    },
-    "thine eyelids": {
-      "to": "thy eyelids",
-      "why": "Use my and thy before a noun."
-    },
-    "thine eyes": {
-      "to": "thy eyes",
-      "why": "Use my and thy before a noun."
+      "why": "Use my and thy before an immediately following consonant sound, including sounded h."
     },
     "thine habitation": {
       "to": "thy habitation",
-      "why": "Use my and thy before a noun."
+      "why": "Use my and thy before an immediately following consonant sound, including sounded h."
     },
     "thine hair": {
       "to": "thy hair",
-      "why": "Use my and thy before a noun."
+      "why": "Use my and thy before an immediately following consonant sound, including sounded h."
     },
     "thine hand": {
       "to": "thy hand",
-      "why": "Use my and thy before a noun."
+      "why": "Use my and thy before an immediately following consonant sound, including sounded h."
     },
     "thine handmaid": {
       "to": "thy handmaid",
-      "why": "Use my and thy before a noun."
+      "why": "Use my and thy before an immediately following consonant sound, including sounded h."
     },
     "thine hands": {
       "to": "thy hands",
-      "why": "Use my and thy before a noun."
+      "why": "Use my and thy before an immediately following consonant sound, including sounded h."
     },
     "thine harvest": {
       "to": "thy harvest",
-      "why": "Use my and thy before a noun."
+      "why": "Use my and thy before an immediately following consonant sound, including sounded h."
     },
     "thine head": {
       "to": "thy head",
-      "why": "Use my and thy before a noun."
+      "why": "Use my and thy before an immediately following consonant sound, including sounded h."
     },
     "thine heart": {
       "to": "thy heart",
-      "why": "Use my and thy before a noun."
+      "why": "Use my and thy before an immediately following consonant sound, including sounded h."
     },
     "thine heels": {
       "to": "thy heels",
-      "why": "Use my and thy before a noun."
-    },
-    "thine heir": {
-      "to": "thy heir",
-      "why": "Use my and thy before a noun."
+      "why": "Use my and thy before an immediately following consonant sound, including sounded h."
     },
     "thine herd": {
       "to": "thy herd",
-      "why": "Use my and thy before a noun."
+      "why": "Use my and thy before an immediately following consonant sound, including sounded h."
     },
     "thine herds": {
       "to": "thy herds",
-      "why": "Use my and thy before a noun."
+      "why": "Use my and thy before an immediately following consonant sound, including sounded h."
     },
     "thine heritage": {
       "to": "thy heritage",
-      "why": "Use my and thy before a noun."
+      "why": "Use my and thy before an immediately following consonant sound, including sounded h."
     },
     "thine high": {
       "to": "thy high",
-      "why": "Use my and thy before a noun."
+      "why": "Use my and thy before an immediately following consonant sound, including sounded h."
     },
     "thine holiness": {
       "to": "thy holiness",
-      "why": "Use my and thy before a noun."
+      "why": "Use my and thy before an immediately following consonant sound, including sounded h."
     },
     "thine holy": {
       "to": "thy holy",
-      "why": "Use my and thy before a noun."
-    },
-    "thine honour": {
-      "to": "thy honour",
-      "why": "Use my and thy before a noun."
+      "why": "Use my and thy before an immediately following consonant sound, including sounded h."
     },
     "thine hoofs": {
       "to": "thy hoofs",
-      "why": "Use my and thy before a noun."
+      "why": "Use my and thy before an immediately following consonant sound, including sounded h."
     },
     "thine hope": {
       "to": "thy hope",
-      "why": "Use my and thy before a noun."
+      "why": "Use my and thy before an immediately following consonant sound, including sounded h."
     },
     "thine horns": {
       "to": "thy horns",
-      "why": "Use my and thy before a noun."
+      "why": "Use my and thy before an immediately following consonant sound, including sounded h."
     },
     "thine horses": {
       "to": "thy horses",
-      "why": "Use my and thy before a noun."
+      "why": "Use my and thy before an immediately following consonant sound, including sounded h."
     },
     "thine host": {
       "to": "thy host",
-      "why": "Use my and thy before a noun."
+      "why": "Use my and thy before an immediately following consonant sound, including sounded h."
     },
     "thine house": {
       "to": "thy house",
-      "why": "Use my and thy before a noun."
+      "why": "Use my and thy before an immediately following consonant sound, including sounded h."
     },
     "thine houses": {
       "to": "thy houses",
-      "why": "Use my and thy before a noun."
+      "why": "Use my and thy before an immediately following consonant sound, including sounded h."
     },
     "thine husbands": {
       "to": "thy husbands",
-      "why": "Use my and thy before a noun."
-    },
-    "thine ignorance": {
-      "to": "thy ignorance",
-      "why": "Use my and thy before a noun."
-    },
-    "thine incorruptible": {
-      "to": "thy incorruptible",
-      "why": "Use my and thy before a noun."
-    },
-    "thine infancy": {
-      "to": "thy infancy",
-      "why": "Use my and thy before a noun."
-    },
-    "thine infants": {
-      "to": "thy infants",
-      "why": "Use my and thy before a noun."
-    },
-    "thine inheritance": {
-      "to": "thy inheritance",
-      "why": "Use my and thy before a noun."
-    },
-    "thine iniquities": {
-      "to": "thy iniquities",
-      "why": "Use my and thy before a noun."
-    },
-    "thine iniquity": {
-      "to": "thy iniquity",
-      "why": "Use my and thy before a noun."
-    },
-    "thine instruments": {
-      "to": "thy instruments",
-      "why": "Use my and thy before a noun."
-    },
-    "thine oars": {
-      "to": "thy oars",
-      "why": "Use my and thy before a noun."
-    },
-    "thine oath": {
-      "to": "thy oath",
-      "why": "Use my and thy before a noun."
-    },
-    "thine oaths": {
-      "to": "thy oaths",
-      "why": "Use my and thy before a noun."
-    },
-    "thine occupation": {
-      "to": "thy occupation",
-      "why": "Use my and thy before a noun."
-    },
-    "thine offences": {
-      "to": "thy offences",
-      "why": "Use my and thy before a noun."
-    },
-    "thine offering": {
-      "to": "thy offering",
-      "why": "Use my and thy before a noun."
-    },
-    "thine often": {
-      "to": "thy often",
-      "why": "Use my and thy before a noun."
-    },
-    "thine oil": {
-      "to": "thy oil",
-      "why": "Use my and thy before a noun."
-    },
-    "thine ointments": {
-      "to": "thy ointments",
-      "why": "Use my and thy before a noun."
-    },
-    "thine old": {
-      "to": "thy old",
-      "why": "Use my and thy before a noun."
-    },
-    "thine olive": {
-      "to": "thy olive",
-      "why": "Use my and thy before a noun."
-    },
-    "thine olives": {
-      "to": "thy olives",
-      "why": "Use my and thy before a noun."
-    },
-    "thine oliveyard": {
-      "to": "thy oliveyard",
-      "why": "Use my and thy before a noun."
-    },
-    "thine opponents": {
-      "to": "thy opponents",
-      "why": "Use my and thy before a noun."
-    },
-    "thine oracle": {
-      "to": "thy oracle",
-      "why": "Use my and thy before a noun."
-    },
-    "thine oracles": {
-      "to": "thy oracles",
-      "why": "Use my and thy before a noun."
-    },
-    "thine ordinances": {
-      "to": "thy ordinances",
-      "why": "Use my and thy before a noun."
-    },
-    "thine ornaments": {
-      "to": "thy ornaments",
-      "why": "Use my and thy before a noun."
-    },
-    "thine other": {
-      "to": "thy other",
-      "why": "Use my and thy before a noun."
-    },
-    "thine ovens": {
-      "to": "thy ovens",
-      "why": "Use my and thy before a noun."
-    },
-    "thine overseers": {
-      "to": "thy overseers",
-      "why": "Use my and thy before a noun."
-    },
-    "thine own cause": {
-      "to": "thy own cause",
-      "why": "Use my and thy before a noun."
-    },
-    "thine own children": {
-      "to": "thy own children",
-      "why": "Use my and thy before a noun."
-    },
-    "thine own conceit": {
-      "to": "thy own conceit",
-      "why": "Use my and thy before a noun."
-    },
-    "thine own counsel": {
-      "to": "thy own counsel",
-      "why": "Use my and thy before a noun."
-    },
-    "thine own desire": {
-      "to": "thy own desire",
-      "why": "Use my and thy before a noun."
-    },
-    "thine own eye": {
-      "to": "thy own eye",
-      "why": "Use my and thy before a noun."
-    },
-    "thine own head": {
-      "to": "thy own head",
-      "why": "Use my and thy before a noun."
-    },
-    "thine own heart": {
-      "to": "thy own heart",
-      "why": "Use my and thy before a noun."
-    },
-    "thine own house": {
-      "to": "thy own house",
-      "why": "Use my and thy before a noun."
-    },
-    "thine own issue": {
-      "to": "thy own issue",
-      "why": "Use my and thy before a noun."
-    },
-    "thine own kindred": {
-      "to": "thy own kindred",
-      "why": "Use my and thy before a noun."
-    },
-    "thine own knowledge": {
-      "to": "thy own knowledge",
-      "why": "Use my and thy before a noun."
-    },
-    "thine own land": {
-      "to": "thy own land",
-      "why": "Use my and thy before a noun."
-    },
-    "thine own life": {
-      "to": "thy own life",
-      "why": "Use my and thy before a noun."
-    },
-    "thine own lips": {
-      "to": "thy own lips",
-      "why": "Use my and thy before a noun."
-    },
-    "thine own master": {
-      "to": "thy own master",
-      "why": "Use my and thy before a noun."
-    },
-    "thine own mind": {
-      "to": "thy own mind",
-      "why": "Use my and thy before a noun."
-    },
-    "thine own mouth": {
-      "to": "thy own mouth",
-      "why": "Use my and thy before a noun."
-    },
-    "thine own name": {
-      "to": "thy own name",
-      "why": "Use my and thy before a noun."
-    },
-    "thine own people": {
-      "to": "thy own people",
-      "why": "Use my and thy before a noun."
-    },
-    "thine own portion": {
-      "to": "thy own portion",
-      "why": "Use my and thy before a noun."
-    },
-    "thine own power": {
-      "to": "thy own power",
-      "why": "Use my and thy before a noun."
-    },
-    "thine own prudence": {
-      "to": "thy own prudence",
-      "why": "Use my and thy before a noun."
-    },
-    "thine own sake": {
-      "to": "thy own sake",
-      "why": "Use my and thy before a noun."
-    },
-    "thine own seed": {
-      "to": "thy own seed",
-      "why": "Use my and thy before a noun."
-    },
-    "thine own self": {
-      "to": "thy own self",
-      "why": "Use my and thy before a noun."
-    },
-    "thine own signet": {
-      "to": "thy own signet",
-      "why": "Use my and thy before a noun."
-    },
-    "thine own sons": {
-      "to": "thy own sons",
-      "why": "Use my and thy before a noun."
-    },
-    "thine own soul": {
-      "to": "thy own soul",
-      "why": "Use my and thy before a noun."
-    },
-    "thine own springing": {
-      "to": "thy own springing",
-      "why": "Use my and thy before a noun."
-    },
-    "thine own stamp": {
-      "to": "thy own stamp",
-      "why": "Use my and thy before a noun."
-    },
-    "thine own strength": {
-      "to": "thy own strength",
-      "why": "Use my and thy before a noun."
-    },
-    "thine own vessels": {
-      "to": "thy own vessels",
-      "why": "Use my and thy before a noun."
-    },
-    "thine own wisdom": {
-      "to": "thy own wisdom",
-      "why": "Use my and thy before a noun."
-    },
-    "thine ox": {
-      "to": "thy ox",
-      "why": "Use my and thy before a noun."
-    },
-    "thine oxen": {
-      "to": "thy oxen",
-      "why": "Use my and thy before a noun."
-    },
-    "thine unclean": {
-      "to": "thy unclean",
-      "why": "Use my and thy before a noun."
-    },
-    "thine understanding": {
-      "to": "thy understanding",
-      "why": "Use my and thy before a noun."
-    },
-    "thine unfeigned": {
-      "to": "thy unfeigned",
-      "why": "Use my and thy before a noun."
-    },
-    "thine ungodliness": {
-      "to": "thy ungodliness",
-      "why": "Use my and thy before a noun."
-    },
-    "thine unspeakable": {
-      "to": "thy unspeakable",
-      "why": "Use my and thy before a noun."
-    },
-    "thine utter": {
-      "to": "thy utter",
-      "why": "Use my and thy before a noun."
+      "why": "Use my and thy before an immediately following consonant sound, including sounded h."
     },
     "casts": {
       "to": "casteth",
@@ -10247,6 +9451,446 @@
     "surnamed The wise": {
       "to": "surnamed the Wise",
       "why": "The article in the epithet of Charles V is lowercase and Wise is capitalized."
+    },
+    "My age": {
+      "to": "Mine age",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "My idols": {
+      "to": "Mine idols",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "My inheritance": {
+      "to": "Mine inheritance",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "Thy ungodliness": {
+      "to": "Thine ungodliness",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my absence": {
+      "to": "mine absence",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my account": {
+      "to": "mine account",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my acquaintance": {
+      "to": "mine acquaintance",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my acquaintances": {
+      "to": "mine acquaintances",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my advice": {
+      "to": "mine advice",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my advocate": {
+      "to": "mine advocate",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my affairs": {
+      "to": "mine affairs",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my afflicted": {
+      "to": "mine afflicted",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my affliction": {
+      "to": "mine affliction",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my afflictions": {
+      "to": "mine afflictions",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my altar": {
+      "to": "mine altar",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my angel": {
+      "to": "mine angel",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my angels": {
+      "to": "mine angels",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my anger": {
+      "to": "mine anger",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my anointed": {
+      "to": "mine anointed",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my arm": {
+      "to": "mine arm",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my arms": {
+      "to": "mine arms",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my attendants": {
+      "to": "mine attendants",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my authority": {
+      "to": "mine authority",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my ear": {
+      "to": "mine ear",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my earnest": {
+      "to": "mine earnest",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my ears": {
+      "to": "mine ears",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my elder": {
+      "to": "mine elder",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my elders": {
+      "to": "mine elders",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my enemies": {
+      "to": "mine enemies",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my enemy": {
+      "to": "mine enemy",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my enterprise": {
+      "to": "mine enterprise",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my entrails": {
+      "to": "mine entrails",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my entrances": {
+      "to": "mine entrances",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my equals": {
+      "to": "mine equals",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my errand": {
+      "to": "mine errand",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my eruption": {
+      "to": "mine eruption",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my existence": {
+      "to": "mine existence",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my expectation": {
+      "to": "mine expectation",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my extreme": {
+      "to": "mine extreme",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my eye": {
+      "to": "mine eye",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my eyelids": {
+      "to": "mine eyelids",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my eyes": {
+      "to": "mine eyes",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my honour": {
+      "to": "mine honour",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my ignorances": {
+      "to": "mine ignorances",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my importunity": {
+      "to": "mine importunity",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my incense": {
+      "to": "mine incense",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my infantry": {
+      "to": "mine infantry",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my infirmities": {
+      "to": "mine infirmities",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my inheritance": {
+      "to": "mine inheritance",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my iniquities": {
+      "to": "mine iniquities",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my iniquity": {
+      "to": "mine iniquity",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my injunctions": {
+      "to": "mine injunctions",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my injustice": {
+      "to": "mine injustice",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my innocence": {
+      "to": "mine innocence",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my instruction": {
+      "to": "mine instruction",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my instructor": {
+      "to": "mine instructor",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my inward": {
+      "to": "mine inward",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my oath": {
+      "to": "mine oath",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my oblations": {
+      "to": "mine oblations",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my office": {
+      "to": "mine office",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my officers": {
+      "to": "mine officers",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my oil": {
+      "to": "mine oil",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my old": {
+      "to": "mine old",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my only": {
+      "to": "mine only",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my orders": {
+      "to": "mine orders",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my ordinances": {
+      "to": "mine ordinances",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my outgoings": {
+      "to": "mine outgoings",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my own": {
+      "to": "mine own",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my oxen": {
+      "to": "mine oxen",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my understanding": {
+      "to": "mine understanding",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "my unwrought": {
+      "to": "mine unwrought",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "thy Almighty": {
+      "to": "thine Almighty",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "thy ability": {
+      "to": "thine ability",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "thy abundant": {
+      "to": "thine abundant",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "thy acts": {
+      "to": "thine acts",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "thy affairs": {
+      "to": "thine affairs",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "thy affliction": {
+      "to": "thine affliction",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "thy altar": {
+      "to": "thine altar",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "thy ancestors": {
+      "to": "thine ancestors",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "thy anger": {
+      "to": "thine anger",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "thy appetite": {
+      "to": "thine appetite",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "thy arguments": {
+      "to": "thine arguments",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "thy arrangement": {
+      "to": "thine arrangement",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "thy elect": {
+      "to": "thine elect",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "thy end": {
+      "to": "thine end",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "thy endurance": {
+      "to": "thine endurance",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "thy enemy": {
+      "to": "thine enemy",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "thy enmity": {
+      "to": "thine enmity",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "thy honour": {
+      "to": "thine honour",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "thy illustrious": {
+      "to": "thine illustrious",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "thy impiety": {
+      "to": "thine impiety",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "thy infirmity": {
+      "to": "thine infirmity",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "thy inheritance": {
+      "to": "thine inheritance",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "thy instructions": {
+      "to": "thine instructions",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "thy invincible": {
+      "to": "thine invincible",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "thy oath": {
+      "to": "thine oath",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "thy obedience": {
+      "to": "thine obedience",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "thy office": {
+      "to": "thine office",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "thy old": {
+      "to": "thine old",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "thy oversight": {
+      "to": "thine oversight",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "thy overthrowing": {
+      "to": "thine overthrowing",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "thy overweening": {
+      "to": "thine overweening",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "thy own": {
+      "to": "thine own",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "thy oxen": {
+      "to": "thine oxen",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "thy uncleanness": {
+      "to": "thine uncleanness",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "thy understanding": {
+      "to": "thine understanding",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "thy ungodliness": {
+      "to": "thine ungodliness",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "thy uprightness": {
+      "to": "thine uprightness",
+      "why": "Use mine and thine before an immediately following vowel sound, including silent h; an intervening adjective governs the form."
+    },
+    "an eunuch": {
+      "to": "a eunuch",
+      "why": "Use a before the immediately following consonant sound: eunuch begins with y, and one with w."
+    },
+    "an one": {
+      "to": "a one",
+      "why": "Use a before the immediately following consonant sound: eunuch begins with y, and one with w."
     }
   },
   "verses": {
