@@ -37,7 +37,7 @@ def small_caps(doc: Document) -> Document:
     their own opening ornaments (OPENINGS); one that no longer opens its
     paragraph in small capitals is refused. Descriptive and acrostic titles
     take their style from their paragraph markers, not an inline sc span,
-    unless one opens its book. The source brackets have already gone.
+    even where one opens its book. The source brackets have already gone.
     """
     book = usj.book_code(doc)
     chapter, verse = "", ""
@@ -51,6 +51,7 @@ def small_caps(doc: Document) -> Document:
             blocks.append(block)
             continue
         at = 0
+        title = block.get("marker") == "d"
 
         def inline(content: Content, *, note: bool = False) -> Content:
             nonlocal at, verse, opening
@@ -68,7 +69,11 @@ def small_caps(doc: Document) -> Document:
                     result.append(item)
                 elif "content" in item:
                     place = (book, chapter, verse)
-                    keep = not note and at == 0 and (opening or place in OPENINGS)
+                    keep = (
+                        not (note or title)
+                        and at == 0
+                        and (opening or place in OPENINGS)
+                    )
                     inner = inline(item["content"], note=note or usj.is_note(item))
                     if usj.is_type(item, "char", "sc") and not keep:
                         usj.extended(result, inner)

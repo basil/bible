@@ -98,6 +98,13 @@ def test_selective_emphasis_is_unwrapped_without_new_speech_punctuation() -> Non
     assert "About Aquila and Septuagint." in result
 
 
+def test_a_title_that_opens_its_book_loses_its_small_capitals() -> None:
+    source = usj.parse(
+        "\\id LJE\n\\c 1\n\\d \\sc A copy\\sc* of an epistle.\n\\p \\v 1 For."
+    )
+    assert "\\sc" not in usj.serialize(typography.small_caps(source))
+
+
 def test_only_the_audited_decorative_small_caps_remain(
     edition: bible.pipeline.Edition,
 ) -> None:
@@ -110,8 +117,8 @@ def test_only_the_audited_decorative_small_caps_remain(
 
     for doc in edition.documents.values():
         usj.with_content(doc, lambda content: usj.mapped(content, collect))
-    assert len(spans) == 84
+    assert len(spans) == 83
     assert spans.count("God") == 1  # Hebrews opens with this word.
     assert "Lord" not in spans
-    for word in ("Some", "Great", "Zeal", "O Lord", "A copy"):
+    for word in ("Some", "Great", "Zeal", "O Lord"):
         assert word in spans

@@ -56,25 +56,25 @@
 \Bold -
 \Italic -
 
-% A title is set in italic throughout, its added words too.
+% A descriptive title is set in italic throughout, its added words too.
 \Marker add+d
 \Italic
 
-% Match the introduction title to descriptive titles, keeping its spacing.
+% The Prologue names an introductory unit, in upright small capitals like
+% the other structural headings, keeping its size and spacing.
 \Marker imt1
 \Bold -
-\Italic
+\ztexFontFeatures +[smcp] +[c2sc]
 \FontSize 12
-
-\Marker add+imt1
-\Italic
 
 % Keep native acrostic headings, centred in upright small caps. Their verse
 % numbers print on the following poetic line through ptxprint-mods.tex.
+% Separate each label from the preceding poetry, keeping it with what follows.
 \Marker qa
 \Italic -
 \ztexFontFeatures +[smcp] +[c2sc]
 \Justification Center
+\SpaceBefore 4
 
 % Set a note's lemma, the words it glosses, in roman type followed by a colon;
 % only another rendering of them (fqa) is italic. usfm_sb.sty sets fq italic.
@@ -137,6 +137,8 @@
 \Bold -
 \ztexFontFeatures +[smcp] +[c2sc] +[lnum] +[pnum]
 \FontSize 14
+% A following descriptive title supplies its own upper space.
+\SpaceAfter 0
 
 \Marker c
 \Bold -
@@ -146,11 +148,15 @@
 % section headings under its kathisma heading.
 \Marker ms2
 \Bold -
+\ztexFontFeatures +[smcp] +[c2sc]
 
-% Its Middle is a liturgical note, centred like the stasis headings.
+% Its Middle is an italic liturgical note, separated from the preceding
+% poetry and kept close to the line it introduces.
 \Marker lit
 \Bold -
+\Italic
 \Justification Center
+\SpaceBefore 4
 
 % Every sidebar is a colophon, which spans the text's full width. PTXprint
 % sizes a sidebar at \esb, with its default 1 pt padding at either side,

@@ -790,8 +790,8 @@ def test_faces_are_named_and_featured_alike(style: str) -> None:
         assert font["CFF "].cff.fontNames == [f"{FAMILY}-{style}"]
         features = {r.FeatureTag for r in font["GSUB"].table.FeatureList.FeatureRecord}
         assert {"onum", "lnum", "pnum", "tnum", "sups"} <= features
-        # The running heads and the acrostic headings, which alone take
-        # small caps, are set upright; Valkyrie's italics have none.
+        # The running heads and the headings set in small caps are
+        # upright; Valkyrie's italics have none.
         if RECIPE == "utopia" or "Italic" not in style:
             assert {"smcp", "c2sc"} <= features
         assert "kern" in {

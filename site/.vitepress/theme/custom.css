@@ -69,7 +69,8 @@
   font-variant-caps: all-small-caps;
 }
 
-.scripture .d {
+.scripture .d,
+.scripture .lit {
   font-style: italic;
 }
 
