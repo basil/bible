@@ -5,6 +5,19 @@
 
 \input ../../../shared/ptxprint/Bible/running-heads.tex
 
+% Pages without verses use separate header slots. Freeze a peripheral's
+% existing \h title in a custom page mark, rather than reading \book at
+% shipout, when the parser may already have entered the following unit.
+% Every paragraph marks the unit it opens in, whatever marker a unit begins
+% with; PTXprint propagates custom marks out of its heading and column
+% boxes. Outside a peripheral the mark is empty, so a book's introduction
+% pages keep no head.
+\getcustommarknum{BiblePeripheral}
+\let\BiblePeripheralMark\custommarknum
+\addtoeveryparhooks{\marks\BiblePeripheralMark{\ifinperiph\book\fi}}
+\def\RHnoVoddright{\firstmarks\BiblePeripheralMark}
+\def\RHnoVevenleft{\firstmarks\BiblePeripheralMark}
+
 % PTXprint selects an empty language; use XeTeX's preloaded US English patterns.
 % This also sets the standard minimum fragments: 2 letters left, 3 right.
 \uselanguage{USenglish}

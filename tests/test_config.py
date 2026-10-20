@@ -319,6 +319,18 @@ def test_note_callers_follow_context_and_restart_without_margin_notes(
     assert int(page_records[4][1]) > int(page_records[3][1]) + 1
 
 
+NS = {"x": "http://www.w3.org/1999/xhtml"}
+
+
+def layout(work: Path, name: str) -> ET.Element:
+    """Poppler's layout of <name>.pdf: its pages, lines and words, each word
+    with its position."""
+    pdf = subprocess.check_output(
+        ["pdftotext", "-bbox-layout", str(work / f"{name}.pdf"), "-"], text=True
+    )
+    return ET.fromstring(pdf)
+
+
 def typeset_lines(work: Path, name: str) -> list[list[ET.Element]]:
     """Typeset <name>.usfm in one column with the production customizations,
     and return the words of each line as Poppler finds them."""
@@ -357,12 +369,88 @@ def typeset_lines(work: Path, name: str) -> list[list[ET.Element]]:
     )
     result = xetex(work, f"{name}.tex")
     assert "Overfull" not in result.stdout
-    pdf = subprocess.check_output(
-        ["pdftotext", "-bbox-layout", str(work / f"{name}.pdf"), "-"], text=True
+    return [list(line) for line in layout(work, name).findall(".//x:line", NS)]
+
+
+def test_peripheral_running_heads_follow_pages(tmp_path: Path) -> None:
+    work = ptxprint_project(tmp_path)
+    units = [
+        ("x-dedication", "The Epistle Dedicatory", "\\mt2 To the Most High"),
+        ("x-translators-preface", "The Translators to the Reader", "\\mt1 Preface"),
+    ]
+    # The head is the unit's \h, not the division's longer title.
+    (work / "front.usfm").write_text(
+        "\\id FRT\n"
+        + "".join(
+            f'\\periph {title} in Full|id="{identifier}"\n\\h {title}\n{opening}\n'
+            "\\p Openingbody.\n"
+            "\\p\\pagebreak\n\\p Secondbody.\n"
+            "\\p\\pagebreak\n\\p Thirdbody.\n"
+            for identifier, title, opening in units
+        ),
+        encoding="utf-8",
     )
-    root = ET.fromstring(pdf)
-    ns = {"x": "http://www.w3.org/1999/xhtml"}
-    return [list(line) for line in root.findall(".//x:line", ns)]
+    (work / "scripture.usfm").write_text(
+        "\\id GEN\n\\h Genesis\n\\mt1 Genesis\n\\ip Scriptureintro.\n"
+        "\\p\\pagebreak\n\\ip Continuedintro.\n"
+        "\\p\\pagebreak\n\\c 1\n\\p\\v 1 Scripturebody.\n",
+        encoding="utf-8",
+    )
+    (work / "heads.tex").write_text(
+        r"""\input paratext2.tex
+\input ptx-ptxprint.tex
+\def\regular{"OLEBFont"}
+\def\bold{"OLEBFont/B"}
+\def\italic{"OLEBFont/I"}
+\def\bolditalic{"OLEBFont/B/I"}
+\FontSizeUnit=.75pt
+\stylesheet{usfm_sb.sty}
+\stylesheet{ptx2pdf.sty}
+\stylesheet{../../../shared/ptxprint/Bible/baseline.sty}
+\stylesheet{../../../shared/ptxprint/Bible/mods.sty}
+\BodyColumns=1\IntroColumns=1\TitleColumns=1
+\DoubleSidedtrue
+\def\RHevenleft{\firstref}\def\RHoddright{\lastref}
+"""
+        + rf"\input {paths.CONFIG_DIR / 'ptxprint-mods.tex'}"
+        + r"""
+\nolotwritetrue
+\scripturebookfalse
+\ptxfile{front.usfm}
+\scripturebooktrue
+\lastptxfiletrue
+\ptxfile{scripture.usfm}
+\end
+""",
+        encoding="utf-8",
+    )
+    xetex(work, "heads.tex")
+    pages = layout(work, "heads").findall(".//x:page", NS)
+    # Each unit opens on a page of its own, then fills two more, one of each
+    # side; Genesis adds its title page, a second introduction page and a
+    # chapter page.
+    expected = [
+        (title, opening, offset) for _, title, opening in units for offset in range(3)
+    ]
+    assert len(pages) == len(expected) + 3
+    for number, (page, (title, opening, offset)) in enumerate(zip(pages, expected), 1):
+        first = page.find(".//x:line", NS)
+        assert first is not None
+        text = " ".join(word.text or "" for word in first)
+        if offset == 0:
+            # The displayed title alone; no running head.
+            assert text == opening.split(" ", 1)[1]
+        else:
+            assert text == title
+            # Odd pages put the head at the right, even pages at the left.
+            outer = float(first[0].attrib["xMin"]) > float(page.attrib["width"]) / 2
+            assert outer == (number % 2 == 1)
+        assert page.findall(".//x:word", NS)[-1].text == str(number)
+    intro = " ".join(w.text or "" for w in pages[-2].findall(".//x:word", NS))
+    assert intro == f"Continuedintro. {len(pages) - 1}"
+    last = " ".join(w.text or "" for w in pages[-1].findall(".//x:word", NS))
+    assert "Genesis 1" in last
+    assert "Reader" not in last
 
 
 def test_poetry_indents_and_line_opening_verse_numbers(tmp_path: Path) -> None:

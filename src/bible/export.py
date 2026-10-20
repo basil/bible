@@ -300,6 +300,12 @@ def grouped(
             result.extend(units)
         else:
             book: Node = {"type": "book", "marker": "id", "code": code, "content": []}
+            # A division without its own \h would run the last one's heads.
+            for unit, doc in units:
+                require(
+                    any(usj.is_type(b, "para", "h") for b in doc["content"]),
+                    f"Peripheral {unit} has no h marker for its running heads",
+                )
             divisions = [
                 peripherals.division(unit, doc, edition.names[unit]["title"])
                 for unit, doc in units
