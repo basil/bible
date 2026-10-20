@@ -1110,5 +1110,485 @@
         "why": "the opening words identify the epistle and its circumstances: an integral superscription, retaining its unnumbered verse identity, rather than an ordinary paragraph"
       }
     ]
+  },
+  "translators-presentation": {
+    "why": "Restore the fifteen section headings and explicit scripture references supplied by the editor for The Translators to the Reader, and follow that text’s modern use of italics: quotations, foreign phrases, titles and words discussed, rather than ordinary names. The pinned Cambridge text remains the wording authority. References use King James coordinates, resolved to the edition as its other citations are; existing inline references move to the margin after being read and validated. Each heading, italic span and reference anchor is checked against the source words. Callers follow clause punctuation and closing parentheses, except dashes, following Chicago Manual of Style 13.29; quotation attributions stay before their callers.",
+    "changes": [],
+    "sections": [
+      {
+        "unit": "NDX",
+        "before": "Zeal to promote",
+        "heading": "The Best Things Have Been Calumniated"
+      },
+      {
+        "unit": "NDX",
+        "before": "If we will descend",
+        "heading": "The Highest Personages Have Been Calumniated"
+      },
+      {
+        "unit": "NDX",
+        "before": "This, and more to this purpose",
+        "heading": "His Majesty’s Constancy, Notwithstanding Calumniation, for the Survey of the English Translations"
+      },
+      {
+        "unit": "NDX",
+        "before": "But now what piety",
+        "heading": "The Praise of the Holy Scriptures"
+      },
+      {
+        "unit": "NDX",
+        "before": "But how shall men meditate",
+        "heading": "Translation Necessary"
+      },
+      {
+        "unit": "NDX",
+        "before": "While God would be known",
+        "heading": "The Translation of the Old Testament out of the Hebrew into Greek"
+      },
+      {
+        "unit": "NDX",
+        "before": "There were also within",
+        "heading": "Translation out of Hebrew and Greek into Latin"
+      },
+      {
+        "unit": "NDX",
+        "before": "Now though the Church",
+        "heading": "The Translating of the Scripture into the Vulgar Tongues"
+      },
+      {
+        "unit": "NDX",
+        "before": "Now the Church of Rome",
+        "heading": "The Unwillingness of Our Chief Adversaries, That the Scriptures Should Be Divulged in the Mother Tongue, etc."
+      },
+      {
+        "unit": "NDX",
+        "before": "Many men’s mouths",
+        "heading": "The Speeches and Reasons, Both of Our Brethren and of Our Adversaries, against This Work"
+      },
+      {
+        "unit": "NDX",
+        "before": "And to the same effect",
+        "heading": "A Satisfaction to Our Brethren"
+      },
+      {
+        "unit": "NDX",
+        "before": "Now to the latter we answer",
+        "heading": "An Answer to the Imputations of Our Adversaries"
+      },
+      {
+        "unit": "NDX",
+        "before": "But it is high time",
+        "heading": "The Purpose of the Translators, with Their Number, Furniture, Care, etc."
+      },
+      {
+        "unit": "NDX",
+        "before": "Some peradventure would have",
+        "heading": "Reasons Moving Us to Set Diversity of Senses in the Margin, Where There Is Great Probability for Each"
+      },
+      {
+        "unit": "NDX",
+        "before": "Another thing we think good",
+        "heading": "Reasons Inducing Us Not to Stand Curiously upon an Identity of Phrasing"
+      }
+    ],
+    "italics": [
+      {
+        "unit": "NDX",
+        "opening": "Yet for all that, the learned know that certain",
+        "spans": [
+          "the sword devoureth as well one as another",
+          "to fight neither with small nor great, save only against the king of Israel:",
+          "Make",
+          "the grievous servitude of thy father, and his sore yoke, lighter"
+        ]
+      },
+      {
+        "unit": "NDX",
+        "opening": "If we will descend to later times, we shall find",
+        "spans": [
+          "Pupillus",
+          "cum benè facerent, malè audire",
+          "You are risen up in your fathers’ stead, an increase of sinful men.",
+          "What is that that hath been done? that which shall be done: and there is no new thing under the sun",
+          "As your fathers did, so do ye",
+          "Himself and children and children’s children always",
+          "as a statue immoveable, and an anvil not easy to be beaten into plates",
+          "Them that honour me I will honour"
+        ]
+      },
+      {
+        "unit": "NDX",
+        "opening": "But now what piety without truth? What truth,",
+        "spans": [
+          "Tolle, lege; tolle, lege;",
+          "Whatsoever is in the Scriptures, believe me",
+          "is high and divine; there is verily truth, and a doctrine most fit for the refreshing and renewing of men’s minds, and truly so tempered, that every one may draw from thence that which is sufficient for him, if he come to draw with a devout and pious mind, as true religion requireth.",
+          "Ama Scripturas, et amabit te sapientia, &c.",
+          "Even boys that are bred up in the Scriptures, become most religious, &c.",
+          "I adore the fulness of the Scripture",
+          "I do not admit that which thou bringest in",
+          "of thine own",
+          "de tuo",
+          "We must know by all means",
+          "that it is not lawful",
+          "to learn",
+          "of God or of right piety, save only out of the Prophets, who teach us by divine inspiration.",
+          "It is a manifest falling away from the faith, and a fault of presumption, either to reject any of those things that are written, or to bring in",
+          "any of those things that are not written.",
+          "Cateches.",
+          "Cornu-copia",
+          "Panaces",
+          "Catholicon",
+          "Vulcan’s",
+          "Manna"
+        ]
+      },
+      {
+        "unit": "NDX",
+        "opening": "But how shall men meditate in that which they",
+        "spans": [
+          "Except I know the power of the voice, I shall be to him that speaketh a barbarian, and he that speaketh shall be a barbarian to me",
+          "Lognazim",
+          "Read this, I pray thee",
+          "I cannot, for it is sealed"
+        ]
+      },
+      {
+        "unit": "NDX",
+        "opening": "While God would be known only in Jacob, and have",
+        "spans": [
+          "Hexapla"
+        ]
+      },
+      {
+        "unit": "NDX",
+        "opening": "There were also within a few hundred years after",
+        "spans": [
+          "Latini interpretes nullo modo numerari possunt"
+        ]
+      },
+      {
+        "unit": "NDX",
+        "opening": "Now though the Church were thus furnished with",
+        "spans": [
+          "Multarum gentium linguis Scriptura ante translata docet falsa esse quœ addita sunt, &c.",
+          "The Scripture being translated before in the language of many nations doth shew that those things that were added",
+          "are false",
+          "suoe linguoe hominibus",
+          "The doctrine of S. John",
+          "did not in such sort",
+          "vanish away: but the Syrians, Egyptians, Indians, Persians, Ethiopians, and infinite other nations, being barbarous people, translated it into their (mother) tongue, and have learned to be (true) Philosophers",
+          "Every country that is under the sun is full of these words",
+          "and the Hebrew tongue",
+          "is turned not only into the language of the Grecians, but also of the Romans, and Egyptians, and Persians, and Indians, and Armenians, and Scythians, and Sauromatians, and, briefly, into all the languages that any nation useth.",
+          "As we have heard, so we have seen"
+        ]
+      },
+      {
+        "unit": "NDX",
+        "opening": "Now the Church of Rome would seem at the length",
+        "spans": [
+          "Lucifugoe Scripturarum"
+        ]
+      },
+      {
+        "unit": "NDX",
+        "opening": "Many men’s mouths have been open a good while",
+        "spans": [
+          "lacte gypsum malè miscetur",
+          "lapidosus",
+          "What do these weak Jews, &c.",
+          "will they make the stones whole again out of the heaps of dust which are burnt? Although they build, yet if a fox go up, he shall even break down their stony wall.",
+          "manum de tabulâ",
+          "Damnamus veteres? Minimè, sed post priorum studia in domo Domini quod possumus laboramus.",
+          "Do we condemn the ancient? In no case: but after the endeavours of them that were before us, we take the best pains we can in the house of God."
+        ]
+      },
+      {
+        "unit": "NDX",
+        "opening": "And to the same effect say we, that we are so far",
+        "spans": [
+          "If Timotheus had not been, we had not had much sweet musick: But if Phrynis",
+          "had not been, we had not had Timotheus",
+          "A man had rather be with his dog than with a stranger",
+          "Ethics",
+          "What is the chaff to the wheat? saith the Lord",
+          "Tanti vitreum, quanti verum margaritum"
+        ]
+      },
+      {
+        "unit": "NDX",
+        "opening": "Now to the latter we answer, that we do not deny,",
+        "spans": [
+          "Verum ubi multa nitent in carmine, non ego paucis offendor maculis, &c.",
+          "in many things we offend all"
+        ]
+      },
+      {
+        "unit": "NDX",
+        "opening": "Plutarch writeth, that after that Rome had been",
+        "spans": [
+          "Ex personis probamus fidem, an ex fide personas?",
+          "De Doctrinâ Christianâ"
+        ]
+      },
+      {
+        "unit": "NDX",
+        "opening": "Yet before we end, we must answer a third cavil",
+        "spans": [
+          "Palinodia",
+          "Officium Ambrosianum",
+          "Officium Gregorianum",
+          "Roman",
+          "Micrologus",
+          "O tandem major parcas insane minori"
+        ]
+      },
+      {
+        "unit": "NDX",
+        "opening": "But it is high time to leave them, and to shew in",
+        "spans": [
+          "exercendi causâ",
+          "exercitati",
+          "Et Hebroeum sermonem ex parte didicimus, et in Latino penè ab ipsis incunabulis, &c. detriti sumus; Both we have learned the Hebrew tongue in part, and in the Latin we have been exercised almost from our very cradle.",
+          "O let thy Scriptures be my pure delight; let me not be deceived in them, neither let me deceive by them.",
+          "as the credit of the old books",
+          "is to be tried by the Hebrew volumes; so of the New by the Greek tongue"
+        ]
+      },
+      {
+        "unit": "NDX",
+        "opening": "Some peradventure would have no variety of senses",
+        "spans": [
+          "whatsoever things are necessary are manifest",
+          "in those things that are plainly set down in the Scriptures all such matters are found that concern faith, hope, and charity:",
+          "Melius est dubitare de occultis, quam litigare de incertis: It is better to make doubt of those things which are secret, than to strive about those things that are uncertain."
+        ]
+      },
+      {
+        "unit": "NDX",
+        "opening": "Another thing we think good to admonish thee of,",
+        "spans": [
+          {
+            "text": "purpose",
+            "within": "once by purpose"
+          },
+          "intent",
+          "journeying",
+          "travelling",
+          {
+            "text": "think",
+            "within": "if one where think"
+          },
+          "suppose",
+          "pain",
+          "ache",
+          "joy",
+          "gladness",
+          "cucurbita",
+          "hedera",
+          "To be partial in ourselves, and judges of evil thoughts",
+          "washing",
+          "Baptism",
+          "Congregation",
+          "Church",
+          "Azimes, Tunike, Rational, Holocausts, Proepuce, Pasche"
+        ]
+      },
+      {
+        "unit": "NDX",
+        "opening": "Many other things we might give thee warning of,",
+        "spans": [
+          "It is a grievous thing",
+          "to neglect a great fair, and to seek to make markets afterwards:",
+          "It is altogether impossible, that he that is sober",
+          "should at any time be neglected:",
+          "They that despise God’s will inviting them shall feel God’s will taking vengeance of them."
+        ]
+      }
+    ],
+    "references": [
+      {
+        "unit": "NDX",
+        "after": "as it is in Samuel",
+        "passages": "2SA 11:25"
+      },
+      {
+        "unit": "NDX",
+        "after": "to fight neither with small nor great, save only against the king of Israel",
+        "passages": "1KI 22:31"
+      },
+      {
+        "unit": "NDX",
+        "after": "he was scorned and scoffed at by his own wife",
+        "passages": "2SA 6:16"
+      },
+      {
+        "unit": "NDX",
+        "after": "the grievous servitude of thy father, and his sore yoke, lighter",
+        "passages": "1KI 12:4"
+      },
+      {
+        "unit": "NDX",
+        "after": "You are risen up in your fathers’ stead, an increase of sinful men",
+        "passages": "NUM 32:14"
+      },
+      {
+        "unit": "NDX",
+        "after": "saith the wise man",
+        "passages": "ECC 1:9"
+      },
+      {
+        "unit": "NDX",
+        "after": "As your fathers did, so do ye",
+        "passages": "ACT 7:51"
+      },
+      {
+        "unit": "NDX",
+        "after": "Them that honour me I will honour",
+        "passages": "1SA 2:30"
+      },
+      {
+        "unit": "NDX",
+        "after": "The Scriptures we are commanded to search",
+        "passages": "JHN 5:39; ISA 8:20",
+        "remove": "John 5. 39. Isaiah 8. 20. "
+      },
+      {
+        "unit": "NDX",
+        "after": "They are commended that searched and studied them",
+        "passages": "ACT 17:11; ACT 8:28-29",
+        "remove": "Acts 17. 11 and 8. 28, 29. "
+      },
+      {
+        "unit": "NDX",
+        "after": "They are reproved that were unskilful in them, or slow to believe them",
+        "passages": "MAT 22:29; LUK 24:25",
+        "remove": "Matth. 22. 29. Luke 24. 25. "
+      },
+      {
+        "unit": "NDX",
+        "after": "They can make us wise unto salvation",
+        "passages": "2TI 3:15",
+        "remove": "2 Tim. 3. 15. "
+      },
+      {
+        "unit": "NDX",
+        "after": "and he that speaketh shall be a barbarian to me",
+        "passages": "1CO 14"
+      },
+      {
+        "unit": "NDX",
+        "after": "by which means the flocks of Laban were watered",
+        "passages": "GEN 29:10"
+      },
+      {
+        "unit": "NDX",
+        "after": "which was deep",
+        "passages": "JHN 4:11"
+      },
+      {
+        "unit": "NDX",
+        "after": "I cannot, for it is sealed",
+        "passages": "ISA 29:11"
+      },
+      {
+        "unit": "NDX",
+        "after": "their horses flesh and not spirit",
+        "passages": "ISA 31:3"
+      },
+      {
+        "unit": "NDX",
+        "after": "that they also might provide for themselves",
+        "passages": "2KI 7:9"
+      },
+      {
+        "unit": "NDX",
+        "after": "As we have heard, so we have seen",
+        "passages": "PSA 48:8"
+      },
+      {
+        "unit": "NDX",
+        "after": "lest his deeds should be reproved",
+        "passages": "JHN 3:20"
+      },
+      {
+        "unit": "NDX",
+        "after": "he shall even break down their stony wall",
+        "passages": "NEH 4:3"
+      },
+      {
+        "unit": "NDX",
+        "after": "yet the gleaning of grapes of Ephraim was not to be despised",
+        "passages": "JDG 8:2",
+        "remove": "See Judges viii. verse 2. "
+      },
+      {
+        "unit": "NDX",
+        "after": "and yet he offended the Prophet for giving over then",
+        "passages": "2KI 13:18-19"
+      },
+      {
+        "unit": "NDX",
+        "after": "What is the chaff to the wheat? saith the Lord",
+        "passages": "JER 23:28"
+      },
+      {
+        "unit": "NDX",
+        "after": "in many things we offend all",
+        "passages": "JAS 3:2"
+      },
+      {
+        "unit": "NDX",
+        "after": "wept when they considered the latter",
+        "passages": "EZR 3:12"
+      },
+      {
+        "unit": "NDX",
+        "after": "for telling them the truth",
+        "passages": "GAL 4:16"
+      },
+      {
+        "unit": "NDX",
+        "after": "if the former Law and Testament had been sufficient, there had been no need of the latter",
+        "passages": "HEB 7:11; HEB 8:7"
+      },
+      {
+        "unit": "NDX",
+        "after": "do not cast earth into them, with the Philistines",
+        "passages": "GEN 26:15"
+      },
+      {
+        "unit": "NDX",
+        "after": "neither prefer broken pits before them, with the wicked Jews",
+        "passages": "JER 2:13"
+      },
+      {
+        "unit": "NDX",
+        "after": "Depart out of our coasts",
+        "passages": "MAT 8:34"
+      },
+      {
+        "unit": "NDX",
+        "after": "sell your birthright for a mess of pottage",
+        "passages": "HEB 12:16"
+      },
+      {
+        "unit": "NDX",
+        "after": "It is a fearful thing to fall into the hands of the living God",
+        "passages": "HEB 10:31"
+      }
+    ]
+  },
+  "front-matter-caller-placement": {
+    "why": "Place the note supporting the dating of the Septuagint at the end of that sentence, rather than interrupting its opening There is, following Chicago Manual of Style 13.29. The source words and note are unchanged.",
+    "changes": [],
+    "callers": [
+      {
+        "unit": "XXB",
+        "note": "See Preface to Lambert Bos’s edition of the LXX.",
+        "after": "about the year b.c. 280."
+      }
+    ]
   }
 }

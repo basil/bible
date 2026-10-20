@@ -21,6 +21,377 @@ from bible.policy import source_id
 from bible.usj import Content, Document
 
 
+def presentation_policy(
+    declared: bible.policy.Policy, **decisions: Any
+) -> bible.policy.Policy:
+    return declared.replace(
+        prose={
+            "presentation": {
+                "why": "Editorial presentation.",
+                "changes": [],
+                **decisions,
+            }
+        }
+    )
+
+
+def test_prose_presentation_preserves_words_styles_and_inputs(
+    declared: bible.policy.Policy,
+) -> None:
+    doc = usj.parse(
+        "\\id NDX\n\\im \\sc Opening\\sc* \\it David\\it* said \\it word\\it*. This begins another topic.\n"
+    )
+    policy = presentation_policy(
+        declared,
+        sections=[{"unit": "NDX", "before": "This begins", "heading": "Another Topic"}],
+        italics=[{"unit": "NDX", "opening": "Opening", "spans": ["word"]}],
+    )
+    before, decisions = copy.deepcopy(doc), bible.policy.thaw(policy.prose)
+    result = matter.presented("NDX", doc, policy)
+    assert usj.serialize(result).endswith(
+        "\\im \\sc Opening\\sc* David said \\it word\\it*.\n\\s1 Another Topic\n\\ip This begins another topic.\n"
+    )
+    assert doc == before
+    assert bible.policy.thaw(policy.prose) == decisions
+
+
+@pytest.mark.parametrize(
+    "span", ["Missing", "word", {"text": "word", "within": "Missing word"}]
+)
+def test_prose_italics_refuse_missing_or_ambiguous_words(
+    declared: bible.policy.Policy, span: Any
+) -> None:
+    doc = usj.parse("\\id NDX\n\\ip A word and another word.\n")
+    policy = presentation_policy(
+        declared, italics=[{"unit": "NDX", "opening": "A word", "spans": [span]}]
+    )
+    with pytest.raises(CheckFailed, match="not met once"):
+        matter.presented("NDX", doc, policy)
+
+
+def test_prose_italics_use_context_for_repeated_words(
+    declared: bible.policy.Policy,
+) -> None:
+    doc = usj.parse("\\id NDX\n\\ip A word and another word.\n")
+    policy = presentation_policy(
+        declared,
+        italics=[
+            {
+                "unit": "NDX",
+                "opening": "A word",
+                "spans": [{"text": "word", "within": "another word"}],
+            }
+        ],
+    )
+    assert "A word and another \\it word\\it*." in usj.serialize(
+        matter.presented("NDX", doc, policy)
+    )
+
+
+@pytest.mark.parametrize(
+    ("text", "within"), [("by", "urpose by"), ("purpose", "purpose b")]
+)
+def test_prose_italics_refuse_context_within_a_word(
+    declared: bible.policy.Policy, text: str, within: str
+) -> None:
+    doc = usj.parse("\\id NDX\n\\ip A purpose by which.\n")
+    policy = presentation_policy(
+        declared,
+        italics=[
+            {
+                "unit": "NDX",
+                "opening": "A purpose",
+                "spans": [{"text": text, "within": within}],
+            }
+        ],
+    )
+    with pytest.raises(CheckFailed, match="context within a word"):
+        matter.presented("NDX", doc, policy)
+
+
+def test_prose_italics_keep_notes_and_their_own_italics(
+    declared: bible.policy.Policy,
+) -> None:
+    doc = usj.parse(
+        "\\id XXB\n\\ip A \\f + \\ft \\it Note\\it*.\\f*word and"
+        " more\\f + \\ft Other.\\f* here.\n"
+    )
+    policy = presentation_policy(
+        declared,
+        italics=[{"unit": "XXB", "opening": "A word", "spans": ["word", "and more"]}],
+    )
+    assert usj.serialize(matter.presented("XXB", doc, policy)).endswith(
+        "\\ip A \\f + \\ft \\+it Note\\+it*.\\f*\\it word\\it* \\it and more\\it*"
+        "\\f + \\ft Other.\\f* here.\n"
+    )
+
+
+@pytest.mark.parametrize("before", ["Missing", "word"])
+def test_prose_sections_refuse_missing_or_ambiguous_breaks(
+    declared: bible.policy.Policy, before: str
+) -> None:
+    doc = usj.parse("\\id NDX\n\\ip A word and another word.\n")
+    policy = presentation_policy(
+        declared, sections=[{"unit": "NDX", "before": before, "heading": "Topic"}]
+    )
+    with pytest.raises(CheckFailed, match="section not met once"):
+        matter.presented("NDX", doc, policy)
+
+
+def test_prose_references_move_inline_citations_without_losing_words(
+    ctx: bible.annotate.Context,
+) -> None:
+    doc = usj.parse("\\id NDX\n\\p One. John 5. 39. Two. Luke 24. 25. Three.\n")
+    policy = presentation_policy(
+        ctx.policy,
+        references=[
+            {
+                "unit": "NDX",
+                "after": "Two",
+                "passages": "LUK 24:25",
+                "remove": "Luke 24. 25. ",
+            },
+            {
+                "unit": "NDX",
+                "after": "One",
+                "passages": "JHN 5:39",
+                "remove": "John 5. 39. ",
+            },
+            {"unit": "NDX", "after": "Three", "passages": "1CO 14"},
+        ],
+    )
+    context = bible.annotate.Context(policy, ctx.inventory, ctx.books)
+    unit, _ = matter.read("NDX", doc, {}, context)
+    unit = matter.resolved(unit, "NDX", ctx.inventory, policy)
+    before = copy.deepcopy(unit)
+    decisions = bible.policy.thaw(policy.prose)
+    result = matter.referenced(unit, "NDX", context)
+    block, readings = result[-1]
+    assert usj.text_of(block["content"]) == "One. Two. Three."
+    assert [n["loc"] for n in usj.walk(block["content"]) if n["type"] == "ref"] == [
+        "JHN 5:39",
+        "LUK 24:25",
+        "1CO 14",
+    ]
+    assert not readings[None].citations
+    assert unit == before
+    assert bible.policy.thaw(policy.prose) == decisions
+
+
+@pytest.mark.parametrize(
+    "punctuation", [".", ",", ";", ":", "!", "?", "),", '."', "—", "--"]
+)
+def test_prose_reference_callers_follow_punctuation_except_dashes(
+    ctx: bible.annotate.Context, punctuation: str
+) -> None:
+    doc = usj.parse(f"\\id NDX\n\\p \\it Quotation\\it*{punctuation} Next.\n")
+    policy = presentation_policy(
+        ctx.policy,
+        references=[{"unit": "NDX", "after": "Quotation", "passages": "JHN 5:39"}],
+    )
+    context = bible.annotate.Context(policy, ctx.inventory, ctx.books)
+    unit, _ = matter.read("NDX", doc, {}, context)
+    result = matter.referenced(unit, "NDX", context)
+    content = result[-1][0]["content"]
+    before = []
+    for item in content:
+        if usj.is_type(item, "note"):
+            break
+        before.append(item)
+    assert usj.text_of(before) == "Quotation" + (
+        "" if punctuation in {"—", "--"} else punctuation
+    )
+    assert usj.text_of(content) == f"Quotation{punctuation} Next."
+
+
+def test_prose_caller_moves_unchanged_note_to_declared_sentence_end(
+    declared: bible.policy.Policy,
+) -> None:
+    doc = usj.parse("\\id XXB\n\\p There\\f + \\ft Evidence.\\f* is a claim. Next.\n")
+    policy = presentation_policy(
+        declared,
+        callers=[{"unit": "XXB", "note": "Evidence.", "after": "is a claim."}],
+    )
+    before = copy.deepcopy(doc)
+    result = matter.presented("XXB", doc, policy)
+    assert "There is a claim.\\f + \\ft Evidence.\\f* Next." in usj.serialize(result)
+    assert doc == before
+    with pytest.raises(CheckFailed, match="changes nothing"):
+        matter.presented("XXB", result, policy)
+
+
+@pytest.mark.parametrize(
+    "override, refusal",
+    [
+        ({"after": "Missing"}, "anchor not met once"),
+        ({"after": "One"}, "anchor not met once"),
+        # An anchor ends where a word does.
+        ({"after": "Tw"}, "anchor not met once"),
+        ({"after": "John 5"}, "caller within a citation"),
+        ({"passages": "JHN5:39"}, "invalid chapter"),
+        ({"after": "Two", "remove": "Missing"}, "inline citation not met once"),
+        ({"after": "Two", "remove": "John 5. 39. End."}, "removal changes prose"),
+        (
+            {"after": "Two", "remove": "John 5. 39. ", "passages": "JHN 5:40"},
+            "changes its target",
+        ),
+    ],
+)
+def test_prose_references_reject_stale_or_changed_decisions(
+    ctx: bible.annotate.Context, override: dict[str, str], refusal: str
+) -> None:
+    doc = usj.parse("\\id NDX\n\\p One. One. Two. John 5. 39. End.\n")
+    decision = {"unit": "NDX", "after": "Two", "passages": "JHN 5:39", **override}
+    policy = presentation_policy(ctx.policy, references=[decision])
+    context = bible.annotate.Context(policy, ctx.inventory, ctx.books)
+    unit, _ = matter.read("NDX", doc, {}, context)
+    unit = matter.resolved(unit, "NDX", ctx.inventory, policy)
+    with pytest.raises(CheckFailed, match=refusal):
+        matter.referenced(unit, "NDX", context)
+
+
+def test_prose_references_name_each_book_once_and_keep_every_caller(
+    ctx: bible.annotate.Context,
+) -> None:
+    doc = usj.parse("\\id NDX\n\\p One. John 5. 39. Two.\n")
+    listed = {
+        "unit": "NDX",
+        "after": "Two",
+        "passages": "ACT 17:11; ACT 8:28-29; LUK 24:25",
+    }
+    policy = presentation_policy(ctx.policy, references=[listed])
+    context = bible.annotate.Context(policy, ctx.inventory, ctx.books)
+    unit, _ = matter.read("NDX", doc, {}, context)
+    unit = matter.resolved(unit, "NDX", ctx.inventory, policy)
+    note = usj.notes_of(matter.referenced(unit, "NDX", context)[-1][0]["content"])[0]
+    assert usj.text_of(note["content"]) == "Acts 17:11; 8:28–29; Luke 24:25"
+    # A caller at the very end of another's removal would be removed with it.
+    moved = {
+        "unit": "NDX",
+        "after": "One",
+        "passages": "JHN 5:39",
+        "remove": "John 5. 39.",
+    }
+    after = {"unit": "NDX", "after": "John 5. 39", "passages": "LUK 1:1"}
+    policy = presentation_policy(ctx.policy, references=[moved, after])
+    context = bible.annotate.Context(policy, ctx.inventory, ctx.books)
+    unit, _ = matter.read("NDX", doc, {}, context)
+    unit = matter.resolved(unit, "NDX", ctx.inventory, policy)
+    with pytest.raises(CheckFailed, match="Overlapping prose references"):
+        matter.referenced(unit, "NDX", context)
+
+
+def test_translators_preface_headings_notes_and_modern_italics(
+    edition: bible.pipeline.Edition,
+    exported: dict[str, str],
+) -> None:
+    doc = edition.documents["NDX"]
+    headings = [
+        usj.text_of(b["content"]) for b in doc["content"] if b.get("marker") == "s1"
+    ]
+    assert len(headings) == 15
+    assert [h.split(",")[0] for h in headings] == [
+        "The Best Things Have Been Calumniated",
+        "The Highest Personages Have Been Calumniated",
+        "His Majesty’s Constancy",
+        "The Praise of the Holy Scriptures",
+        "Translation Necessary",
+        "The Translation of the Old Testament out of the Hebrew into Greek",
+        "Translation out of Hebrew and Greek into Latin",
+        "The Translating of the Scripture into the Vulgar Tongues",
+        "The Unwillingness of Our Chief Adversaries",
+        "The Speeches and Reasons",
+        "A Satisfaction to Our Brethren",
+        "An Answer to the Imputations of Our Adversaries",
+        "The Purpose of the Translators",
+        "Reasons Moving Us to Set Diversity of Senses in the Margin",
+        "Reasons Inducing Us Not to Stand Curiously upon an Identity of Phrasing",
+    ]
+    # A heading drops a closing full stop, not an abbreviation's period.
+    assert headings[8].endswith("in the Mother Tongue, etc.")
+    assert headings[12].endswith("Furniture, Care, etc.")
+    majesty = next(
+        i
+        for i, b in enumerate(doc["content"])
+        if b.get("marker") == "s1"
+        and usj.text_of(b["content"]).startswith("His Majesty")
+    )
+    assert usj.text_of(doc["content"][majesty + 1]["content"]).startswith(
+        "This, and more to this purpose"
+    )
+    notes = list(usj.notes_of(doc["content"]))
+    assert len(notes) == 33
+    assert all(n["marker"] == "x" and n["caller"] == "+" for n in notes)
+    refs = [n["loc"] for n in usj.walk(doc["content"]) if n["type"] == "ref"]
+    assert refs == [
+        "2SA 11:25",
+        "1KI 22:31",
+        "2SA 6:16",
+        "1KI 12:4",
+        "NUM 32:14",
+        "ECC 1:9",
+        "ACT 7:51",
+        "1SA 2:30",
+        "JHN 5:39",
+        "ISA 8:20",
+        "ACT 17:11",
+        "ACT 8:28",
+        "MAT 22:29",
+        "LUK 24:25",
+        "2TI 3:15",
+        "1CO 14",
+        "GEN 29:10",
+        "JHN 4:11",
+        "ISA 29:11",
+        "ISA 31:3",
+        "2KI 7:9",
+        "PSA 47:9",
+        "JHN 3:20",
+        "NEH 3:35",
+        "JDG 8:2",
+        "2KI 13:18",
+        "JER 23:28",
+        "JAS 3:2",
+        "EZR 3:12",
+        "GAL 4:16",
+        "HEB 7:11",
+        "HEB 8:7",
+        "GEN 26:15",
+        "JER 2:13",
+        "MAT 8:34",
+        "HEB 12:16",
+        "HEB 10:31",
+    ]
+    assert "\\ref " not in exported["NDX"]
+    assert "\\x + \\xt 2 Kgdms. 11:25\\x*" in exported["NDX"]
+    assert "as it is in Samuel;\\x +" in exported["NDX"]
+    assert "saith the wise man:\\x +" in exported["NDX"]
+    assert "his own wife.\\x + \\xt 2 Kgdms. 6:16\\x* Solomon" in exported["NDX"]
+    assert (
+        "280 BC.\\f + \\ft See Preface to Lambert Bos’s edition of the LXX.\\f*"
+        in exported["XXB"]
+    )
+    italic = [
+        usj.text_of(n["content"])
+        for n in usj.walk(doc["content"])
+        if usj.is_type(n, "char", "it")
+    ]
+    assert "Hexapla" in italic and "Ethics" in italic
+    assert "the sword devoureth as well one as another" in italic
+    assert not {"David", "Solomon", "Moses", "Augustine", "England", "Greek"} & set(
+        italic
+    )
+    prose = " ".join(
+        usj.text_of(b["content"])
+        for b in doc["content"]
+        if b.get("marker") in {"p", "m"}
+    )
+    assert "The Scriptures we are commanded to search. They are commended" in prose
+    assert (
+        "yet the gleaning of grapes of Ephraim was not to be despised. Joash" in prose
+    )
+
+
 def test_prose_additions_preserve_order_styles_and_inputs(
     declared: bible.policy.Policy,
 ) -> None:

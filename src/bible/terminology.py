@@ -372,6 +372,8 @@ def _outline(
                 at += len(item)
             elif usj.is_label(item) or "content" not in item:
                 continue
+            elif item["type"] == "ref":
+                visit(item["content"])
             elif item["type"] == "note":
                 start = at
                 visit(item["content"])
@@ -395,7 +397,7 @@ def found(content: Content, terms: Registry, *, note: bool) -> tuple[Term, ...]:
     footnote within prose are read as a note's."""
     text = usj.unlabelled(content)
     # Each footnote's words are read on their own.
-    styles, _, spans = _outline(content)
+    _, _, spans = _outline(content)
     result = [
         t
         for t in recognize(text, terms, note=note)
@@ -406,19 +408,9 @@ def found(content: Content, terms: Registry, *, note: bool) -> tuple[Term, ...]:
             replace(t, start=t.start + a, end=t.end + a)
             for t in recognize(text[a:b], terms, note=True)
         ]
-    # The Translators to the Reader's saints: "S. \it Augustine\it*", and one
-    # inside an italic quotation: "\it The doctrine of S\it*. John".
-    for position, marker, closing in styles:
-        if marker != "it":
-            continue
-        if not closing:
-            m = re.search(r"\bS\. $", text[:position])
-            if m and re.match("[A-Z]", text[position:]):
-                result.append(Term("saint", m[0], m.start(), m.end(), "space"))
-        else:
-            m = re.search(r"\bS$", text[:position])
-            if m and re.match(r"\. [A-Z]", text[position:]):
-                result.append(Term("saint", m[0], m.start(), m.end(), "stem"))
+    # The Translators to the Reader's saints, in roman or italic type.
+    for match in re.finditer(r"\bS\. (?=[A-Z])", text):
+        result.append(Term("saint", match[0], match.start(), match.end(), "space"))
     # A period that ends a footnote ends its sentence.
     note_ends = {b for _, b in spans}
     return tuple(

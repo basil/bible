@@ -163,7 +163,9 @@ def document(code: str, doc: Document, edition: Edition) -> Document:
     under their callers alone; its chapter label, where the manifest asks for
     one, set once before its first chapter as PTXprint takes it; its blank lines set; and its Greek
     and Hebrew tagged for their fonts.
-    The edition's own pages are sent as the editor wrote them. A note at a
+    The edition's own pages are sent as the editor wrote them, except that
+    a peripheral unit's citations keep their words without their links,
+    which PTXprint would take as scripture to import. A note at a
     verse that prints another label than its own is set under that label."""
 
     def bottom(item: Node) -> Node:
@@ -174,7 +176,12 @@ def document(code: str, doc: Document, edition: Edition) -> Document:
             }
         return item
 
-    def origin(item: Node) -> Node:
+    def origin(item: Node) -> Node | Content:
+        # In peripheral modules PTXprint treats \ref as an instruction to
+        # import scripture, parsing the printed book name instead of loc.
+        # Keep the citation's words; its resolved links belong to the web.
+        if item["type"] == "ref" and code not in edition.scripture:
+            return item["content"]
         if item["type"] == "char" and usj.is_origin(item):
             values = item["content"]
             assert all(isinstance(v, str) for v in values)

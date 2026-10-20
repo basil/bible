@@ -473,8 +473,15 @@ def test_a_book_cited_alone_keeps_its_abbreviations_period(
         ("XXB", "the first Epistle of Peter, 4:18."),
         ("XXB", "one of the acrostic Psalms (144:13), where"),
         ("XXB", "In Acts 17:28, we find"),
-        ("NDX", "studied them. Acts 17:11 and 8:28, 29. They"),
-        ("NDX", "See Judg. 8:2. \\it Joash\\it* the king"),
+        (
+            "NDX",
+            "studied them.\\x + \\xt \\ref Acts 17:11|ACT 17:11\\ref*; "
+            "\\ref 8:28–29|ACT 8:28\\ref*\\x* They",
+        ),
+        (
+            "NDX",
+            "not to be despised.\\x + \\xt \\ref Judg. 8:2|JDG 8:2\\ref*\\x* Joash the king",
+        ),
         # The Appendix's cross-reference, moved into the note on its verse.
         ("PRO", "See note on \\ref 2 Kgdms. 5:18|2SA 5:18\\ref*\\f*giants."),
         # The Appendix's notes, at their verses, cite as the edition does.

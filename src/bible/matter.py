@@ -26,8 +26,8 @@ import bible.references
 from bible import assembly, citations, repairs, scripture, terminology, usj
 from bible.checks import CheckFailed, require
 from bible.policy import source_id
-from bible.policy_schema import Entry, WordingChange
-from bible.references import parse_verse
+from bible.policy_schema import Entry, ProseReference, WordingChange
+from bible.references import Item, parse_passage, parse_verse
 from bible.usj import Content, Document, Node
 
 type Address = tuple[int, int] | None
@@ -467,14 +467,20 @@ def numbered_notes(doc: Document) -> Document:
 
 
 def unpunctuated(unit: Unit) -> Unit:
-    """A unit whose titles and headings drop their closing full stops."""
+    """A unit whose titles and headings drop their closing full stops, but
+    not the period of an abbreviation read there, as "etc."."""
     result: Unit = []
     for block, readings in unit:
         if block.get("marker") in PERIOD_FREE:
             # The stop that closes its words, not one that ends a string
             # before a style or within a note.
-            stop = re.search(r"\.\s*$", usj.text_of(block["content"]))
-            if stop:
+            words = usj.text_of(block["content"])
+            stop = re.search(r"\.\s*$", words)
+            terms = readings[None].terms if None in readings else ()
+            if stop and not any(
+                t.lexeme.endswith(".") and words.rstrip().endswith(t.lexeme)
+                for t in terms
+            ):
                 block = {
                     **block,
                     "content": usj.substituted(
@@ -524,6 +530,294 @@ def supplemented(code: str, doc: Document, policy: bible.policy.Policy) -> Docum
         blocks.append(block)
         blocks.extend(after.get(index, ()))
     return usj.with_blocks(doc, blocks)
+
+
+def roman(content: Content) -> Content:
+    """Content without its italics, except within its notes, which keep
+    their own."""
+    result: Content = []
+    for item in content:
+        if usj.is_type(item, "char", "it"):
+            usj.extended(result, roman(item["content"]))
+        elif isinstance(item, dict) and "content" in item and not usj.is_note(item):
+            result.append({**item, "content": roman(item["content"])})
+        else:
+            usj.extended(result, [item])
+    return result
+
+
+def presented(code: str, doc: Document, policy: bible.policy.Policy) -> Document:
+    """Declared italics and section breaks, matched in the source's words.
+
+    Every group's notes are moved first, then its italics set, then its
+    sections opened, so that each is matched in the source's paragraphs
+    whichever group declares it. A section may begin within a source
+    paragraph. Only that paragraph is split; its words and character styles
+    stay where they were.
+    """
+    blocks = list(doc["content"])
+    groups = policy.prose.values()
+    for caller in [
+        c for g in groups for c in g.get("callers", ()) if c["unit"] == code
+    ]:
+        notes_found = [
+            (i, note)
+            for i, block in enumerate(blocks)
+            for note in usj.notes_of(block.get("content", []))
+            if usj.unlabelled(note["content"]).strip() == caller["note"]
+        ]
+        label = f"Prose caller: {code}: {caller['note']}"
+        require(len(notes_found) == 1, f"{label}: note not met once")
+        i, note = notes_found[0]
+        block = blocks[i]
+        words = usj.text_of(block["content"])
+        require(words.count(caller["after"]) == 1, f"{label}: anchor not met once")
+        at = words.index(caller["after"]) + len(caller["after"])
+        content = usj.mapped(block["content"], lambda n: None if n == note else n)
+        content = usj.inserted(content, at, [note])
+        require(content != block["content"], f"{label}: changes nothing")
+        blocks[i] = {**block, "content": content}
+    for italic in [
+        d for g in groups for d in g.get("italics", ()) if d["unit"] == code
+    ]:
+        found = [
+            i
+            for i, b in enumerate(blocks)
+            if b.get("marker") in {"ip", "im"}
+            and usj.text_of(b["content"]).startswith(italic["opening"])
+        ]
+        label = f"Prose italics: {code}: {italic['opening']}"
+        require(len(found) == 1, f"{label}: paragraph not met once")
+        i = found[0]
+        original = blocks[i]["content"]
+        content = roman(original)
+        words = usj.text_of(content)
+        spans = []
+        for span in italic["spans"]:
+            phrase = span if isinstance(span, str) else span["text"]
+            context = words if isinstance(span, str) else span["within"]
+            offset = 0
+            if not isinstance(span, str):
+                require(
+                    words.count(context) == 1,
+                    f"{label}: context not met once: {context}",
+                )
+                offset = words.index(context)
+                end = offset + len(context)
+                require(
+                    not re.fullmatch(r"\w\w", words[max(offset - 1, 0) : offset + 1])
+                    and not re.fullmatch(r"\w\w", words[end - 1 : end + 1]),
+                    f"{label}: context within a word: {context}",
+                )
+            matches = list(
+                re.finditer(r"(?<!\w)" + re.escape(phrase) + r"(?!\w)", context)
+            )
+            require(len(matches) == 1, f"{label}: span not met once: {phrase}")
+            start = offset + matches[0].start()
+            spans.append((start, start + len(phrase)))
+        spans.sort()
+        require(
+            all(b <= c for (_, b), (c, _) in zip(spans, spans[1:])),
+            f"{label}: overlapping spans",
+        )
+        for start, end in reversed(spans):
+            # A note at either edge of a span stays outside its italics.
+            head, rest = usj.split(content, start)
+            inner, tail = usj.split(rest, end - start, notes_left=False)
+            content = usj.joined(head, [usj.char("it", *inner)], tail)
+        require(content != original, f"{label}: changes nothing")
+        blocks[i] = {**blocks[i], "content": content}
+    for section in [
+        d for g in groups for d in g.get("sections", ()) if d["unit"] == code
+    ]:
+        phrase = section["before"]
+        breaks = [
+            (i, m.start())
+            for i, b in enumerate(blocks)
+            if b.get("marker") in {"ip", "im"}
+            for m in re.finditer(re.escape(phrase), usj.text_of(b["content"]))
+        ]
+        require(len(breaks) == 1, f"Prose section not met once: {code}: {phrase}")
+        i, at = breaks[0]
+        block = blocks[i]
+        head, tail = usj.split(block["content"], at)
+        replacement = [usj.para("s1", section["heading"])]
+        if head:
+            replacement.insert(0, {**block, "content": usj.trimmed(head)})
+        replacement.append(
+            {
+                **block,
+                "marker": "ip" if head else block["marker"],
+                "content": usj.trimmed(tail),
+            }
+        )
+        blocks[i : i + 1] = replacement
+    return usj.with_blocks(doc, blocks)
+
+
+def cited_places(citation: citations.Citation) -> list[object]:
+    """What a citation names, in its order: each verse, and each chapter it
+    names whole, which has no verses to compare."""
+    places: list[object] = []
+    for book, runs in citation.targets:
+        for run in runs:
+            for item in run:
+                passage = item.passage(book)
+                places.extend(passage.verses if passage else [(book, item.chapter)])
+    return places
+
+
+def referenced(unit: Unit, code: str, ctx: bible.annotate.Context) -> Unit:
+    """Explicit references in prose, placed at exact words as margin notes.
+
+    Existing inline citations are read and checked before they are moved.
+    New references name King James coordinates and use the same resolver as
+    the source's citations, including chapter-only references. Callers follow
+    the anchor's punctuation and closing delimiters, except for dashes
+    (Chicago Manual of Style 13.29). An anchor ends where a word does, so
+    that no caller splits one, as before a possessive's "’s"; nor does a
+    caller stand within a citation.
+    """
+    anchored: dict[tuple[int, Address], list[tuple[int, ProseReference]]] = {}
+    for group in ctx.policy.prose.values():
+        for decision in group.get("references", ()):
+            if decision["unit"] != code:
+                continue
+            phrase = decision["after"]
+            pattern = re.escape(phrase) + (
+                r"(?!['’]?\w)" if phrase[-1].isalnum() else ""
+            )
+            found = [
+                (i, address, m.end())
+                for i, (_, readings) in enumerate(unit)
+                for address, reading in readings.items()
+                for m in re.finditer(pattern, reading.text)
+            ]
+            label = f"Prose reference: {code}: {phrase}"
+            require(len(found) == 1, f"{label}: anchor not met once")
+            i, address, at = found[0]
+            reading = unit[i][1][address]
+            text = reading.text
+            while at < len(text) and text[at] in ".,;:!?)]}\"'’”":
+                at += 1
+            require(
+                not any(c.start < at < c.end for c in reading.citations),
+                f"{label}: caller within a citation",
+            )
+            anchored.setdefault((i, address), []).append((at, decision))
+    result = list(unit)
+    for (i, address), decisions in anchored.items():
+        block, readings = result[i]
+        reading = readings[address]
+        content = dict(regions(block))[address]
+        require(
+            not list(usj.notes_of(content)),
+            f"Prose references require unnoted prose: {code}",
+        )
+        edits: list[tuple[int, int, Content]] = []
+        removed_citations = []
+        removed_terms: list[terminology.Term] = []
+        for at, decision in decisions:
+            label = f"Prose reference: {code}: {decision['after']}"
+            # Consecutive passages of one book are one citation, which names
+            # its book once, as the edition's lists of passages do.
+            by_book: list[tuple[str, list[str], list[Item]]] = []
+            for reference in decision["passages"].split("; "):
+                book, _, numbers = reference.partition(" ")
+                if ":" in numbers:
+                    passage = parse_passage(reference)
+                    first, last = passage.first, passage.last
+                    item = Item(first.chapter, first.number, last.number, first.letter)
+                else:
+                    require(
+                        numbers.isdigit() and int(numbers) > 0,
+                        f"{label}: invalid chapter: {reference}",
+                    )
+                    item = Item(int(numbers), None, None)
+                if by_book and by_book[-1][0] == book:
+                    by_book[-1][1].append(reference)
+                    by_book[-1][2].append(item)
+                else:
+                    by_book.append((book, [reference], [item]))
+            linked: Content = []
+            targets: list[object] = []
+            for book, sources, items in by_book:
+                expression = citations.UnresolvedCitation(
+                    0,
+                    0,
+                    "; ".join(sources),
+                    book,
+                    tuple((item,) for item in items),
+                    "kjv",
+                    coordinate_numbering="kjv",
+                )
+                citation = citations.resolve(
+                    expression, ctx.inventory, label, policy=ctx.policy
+                )
+                targets.extend(cited_places(citation))
+                if linked:
+                    linked.append(bible.references.EDITION.passages)
+                linked.extend(citations.linked(citation, ctx.books))
+            remove = decision.get("remove")
+            if remove is not None:
+                require(
+                    reading.text.count(remove) == 1,
+                    f"{label}: inline citation not met once",
+                )
+                start = reading.text.index(remove)
+                end = start + len(remove)
+                require(at <= start, f"{label}: removal precedes anchor")
+                removed = [
+                    c for c in reading.citations if start <= c.start and c.end <= end
+                ]
+                require(bool(removed), f"{label}: removal contains no citation")
+                require(
+                    [p for c in removed for p in cited_places(c)] == targets,
+                    f"{label}: moved citation changes its target",
+                )
+                require(
+                    not any(
+                        c.start < end and start < c.end and c not in removed
+                        for c in reading.citations
+                    ),
+                    f"{label}: removal cuts a citation",
+                )
+                residue = remove
+                for citation in reversed(removed):
+                    residue = (
+                        residue[: citation.start - start]
+                        + residue[citation.end - start :]
+                    )
+                require(
+                    re.fullmatch(r"(?:[\s.;,]|See\b|and\b)*", residue),
+                    f"{label}: removal changes prose outside its citation",
+                )
+                edits.append((start, end, []))
+                removed_citations.extend(removed)
+                removed_terms.extend(t for t in reading.terms if start <= t.start < end)
+            note = usj.note("x", usj.char("xt", *linked), caller="+")
+            edits.append((at, at, [note]))
+        edits.sort(key=lambda edit: (edit[0], edit[1]))
+        # A caller at the very end of a removal would go with the words removed.
+        require(
+            all(
+                b <= c and a != c and (b < c or c < d)
+                for (a, b, _), (c, d, _) in zip(edits, edits[1:])
+            ),
+            f"Overlapping prose references: {code}",
+        )
+        for start, end, replacement in reversed(edits):
+            content = usj.replaced(content, start, end, replacement)
+        reading = replace(
+            reading,
+            citations=tuple(c for c in reading.citations if c not in removed_citations),
+            terms=tuple(t for t in reading.terms if t not in removed_terms),
+        )
+        result[i] = (
+            with_region(block, address, content),
+            {**readings, address: rebased(reading, usj.unlabelled(content))},
+        )
+    return result
 
 
 def structured(
@@ -606,6 +900,7 @@ def unit(
     code, policy = entry["id"], ctx.policy
     source = doc
     doc = supplemented(code, doc, policy)
+    doc = presented(code, doc, policy)
     taken_apart = placements(entry, policy)
     if taken_apart:
         doc = unlabelled(doc, taken_apart)
@@ -643,6 +938,7 @@ def unit(
     ]
     doubled = sorted(d for d in set(used) if used.count(d) > 1)
     require(not doubled, f"Citation decisions met more than once: {doubled}")
+    read_unit = referenced(read_unit, code, ctx)
     shown = []
     for block, readings in read_unit:
         for address, content in regions(block):

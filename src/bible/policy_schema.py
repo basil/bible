@@ -200,10 +200,44 @@ MarkerChange = TypedDict(
 )
 
 
+class ProseSection(TypedDict):
+    unit: ReadOnly[str]
+    before: ReadOnly[str]
+    heading: ReadOnly[str]
+
+
+class ProseItalicSpan(TypedDict):
+    text: ReadOnly[str]
+    within: ReadOnly[str]
+
+
+class ProseItalics(TypedDict):
+    unit: ReadOnly[str]
+    opening: ReadOnly[str]
+    spans: ReadOnly[tuple[str | ProseItalicSpan, ...]]
+
+
+class ProseReference(TypedDict):
+    unit: ReadOnly[str]
+    after: ReadOnly[str]
+    passages: ReadOnly[str]
+    remove: NotRequired[ReadOnly[str]]
+
+
+class ProseCaller(TypedDict):
+    unit: ReadOnly[str]
+    note: ReadOnly[str]
+    after: ReadOnly[str]
+
+
 class Prose(TypedDict, total=False):
     changes: ReadOnly[tuple[WordingChange, ...]]
     additions: ReadOnly[tuple[ProseAddition, ...]]
     markers: ReadOnly[tuple[MarkerChange, ...]]
+    sections: ReadOnly[tuple[ProseSection, ...]]
+    italics: ReadOnly[tuple[ProseItalics, ...]]
+    references: ReadOnly[tuple[ProseReference, ...]]
+    callers: ReadOnly[tuple[ProseCaller, ...]]
     why: ReadOnly[str]
 
 

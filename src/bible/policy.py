@@ -499,10 +499,56 @@ def check(policy: Policy) -> None:
         require_fields(
             prose_group,
             {"why", "changes"},
-            {"additions", "markers"},
+            {"additions", "markers", "sections", "italics", "references", "callers"},
             f"Prose changes {name}",
         )
         require(prose_group["why"], f"Prose changes without a why: {name}")
+        for field, required, optional in (
+            ("sections", {"unit", "before", "heading"}, set()),
+            ("italics", {"unit", "opening", "spans"}, set()),
+            ("references", {"unit", "after", "passages"}, {"remove"}),
+            ("callers", {"unit", "note", "after"}, set()),
+        ):
+            for presentation in cast(
+                tuple[Mapping[str, Any], ...], prose_group.get(field, ())
+            ):
+                label = f"Prose {field} in {name}"
+                require_fields(presentation, required, optional, label)
+                require(
+                    presentation["unit"] in matter
+                    and presentation["unit"] not in unprinted,
+                    f"{label}: not printed front or back matter",
+                )
+                for key, value in presentation.items():
+                    if key == "spans":
+                        require(
+                            isinstance(value, tuple), f"{label}: spans must be a list"
+                        )
+                        for span in value:
+                            if isinstance(span, str):
+                                require(
+                                    bool(span) and span.strip() == span,
+                                    f"{label}: invalid italic span",
+                                )
+                            else:
+                                require_fields(span, {"text", "within"}, (), label)
+                                require(
+                                    all(
+                                        isinstance(v, str) and v.strip() == v and v
+                                        for v in span.values()
+                                    ),
+                                    f"{label}: invalid italic span",
+                                )
+                    else:
+                        require(
+                            isinstance(value, str) and bool(value.strip()),
+                            f"{label}: empty {key}",
+                        )
+                        if key != "remove":
+                            require(
+                                value == value.strip(),
+                                f"{label}: surrounding space in {key}",
+                            )
         for addition in prose_group.get("additions", ()):
             label = f"Prose addition in {name}"
             require_fields(addition, {"unit", "after", "paragraphs"}, (), label)

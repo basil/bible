@@ -114,12 +114,24 @@
 \global\marginnotesgap=6mm
 \global\marginnoteswidth=\dimexpr 24mm+\marginnotesgap\relax
 \gdef\MarginNoteSide{inner}
+\gdef\BibleCrossReference{x}
 \gdef\BibleStartNote#1{%
   \BibleMarginNotetrue
   % A note with a caller is set below the text, not in the margin.
   \ifx\them@rk\empty\else\BibleMarginNotefalse\fi
   \ifx\ch@pter\empty\BibleMarginNotefalse\fi
   \ifx\ch@pter\z@ro\BibleMarginNotefalse\fi
+  % Peripheral scripture references keep their callers to identify the
+  % quoted words, but use the same margin as scripture's references.
+  \ifinperiph
+    \def\BibleNoteKind{#1}%
+    \ifx\BibleNoteKind\BibleCrossReference
+      \BibleMarginNotetrue
+      % Use the caller's actual width and a small gap before its reference.
+      \NoteCallerWidth=0pt
+      \NoteCallerSpace=1pt
+    \fi
+  \fi
   \ifBibleMarginNote
     % A note in a heading (a Psalm's title) is set inside the heading box,
     % which forbids hyphenation and minimizes lines; the narrow column needs
@@ -127,7 +139,7 @@
     \ifhe@dings\hyphenpenalty=50 \exhyphenpenalty=50 \linepenalty=10 \fi
     \n@test@rt{#1}%
   \else
-    % The front matter has no chapters, so its notes go to the foot, in
+    % The front matter's ordinary footnotes go to the foot, in
     % separate paragraphs: PTXprint's separate notes reserve space and
     % can split long notes. The stylesheet's Left justification is for the
     % margin column; at the foot a note is justified like the text. This
@@ -171,6 +183,12 @@
 % Caller-bearing footnotes use the ordinary bottom insertion; callerless
 % scripture notes use the margin. Both remain standard f notes.
 \PageResetCallers{f}
+% Scripture cross references have no callers. Their page records must use
+% an idle counter, rather than overwrite the last preface caller's page.
+% This assumes The Translators to the Reader is the only front matter with
+% margin references, and that Matthew follows it; if another unit gains
+% them, reset the counter at the book that follows that unit too.
+\setbookhook{start}{MAT}{\resetautonum{x}}
 
 % The contents identify each logical peripheral division, not the file that
 % packages several of them. Keep PTXprint's native pagination and convergence.
