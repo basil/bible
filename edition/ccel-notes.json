@@ -566,6 +566,18 @@
       "to": "<p> Probably Moloch. <i id=\"v.7.p0.175\">Heb.</i> מלך.</p>",
       "why": "Brenton 1900 physical p. 165 and 1879 physical p. 169 (both printed p. 153) print β Probably Moloch. Heb. מלך. with the caller before a ruler in Leviticus 18:21. CCEL’s three bytes are not UTF-8; read as Windows-1255 they spell סלך, with samekh for mem. Set Brenton’s letters and the closing stop. This mends CCEL’s note transcription alone.",
       "uncategorized": true
+    },
+    "3.xv#2": {
+      "from": "ἐαυτοῦς",
+      "to": "ἑαυτούς",
+      "why": "Brenton's 1879 physical p. 565 and 1900 physical p. 561 (printed p. 549) print ἐφ᾽ ἑαυτούς, with rough breathing and an acute, not CCEL's smooth breathing and circumflex. Swete II p. 33, checked on the scan, confirms the reflexive letters in επ αυτους] εφ εαυτους A; his apparatus is unaccented. This repairs CCEL's transcription alone, preserving the English and its attribution.",
+      "uncategorized": true
+    },
+    "8.xxiii#3": {
+      "from": "ὀμιχλη",
+      "to": "ὁμίχλη",
+      "why": "Brenton's 1844 vol. 2 physical p. 65 (printed p. 562), 1879 physical p. 699 and 1900 physical p. 695 (printed p. 683) give ὁμίχλη, with rough breathing and acute on iota, in this note. Swete II p. 565, checked on the scan, prints the same noun at Job 24:20; his p. 566 gives μολοχη] χλοη A at 24:24, so it does not establish that Brenton's unspecified mist reading is Alexandrinus. This repairs CCEL's diacritics alone, retaining some read without adding a witness.",
+      "uncategorized": true
     }
   },
   "notes": {

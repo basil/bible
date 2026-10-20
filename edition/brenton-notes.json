@@ -396,19 +396,12 @@
       "why": "the printed Hebrew is בכים",
       "uncategorized": true
     },
-    "JDG 2:18": [
-      {
-        "from": "כהס",
-        "to": "נחם",
-        "why": "the Hebrew for repented, which παρεκλήθη renders, is נחם; eBible has כ for נ, ה for ח and ס for ם",
-        "uncategorized": true
-      },
-      {
-        "from": "\\f + \\fr 2:18 \\fqa Gr. \\ft repented. This word seems generally to stand for נחם.\\f*",
-        "to": "\\f + \\fr 2:18 \\fqa Gr. \\ft repented. This word seems generally to stand for נהם.\\f*",
-        "why": "Brenton’s 1879 physical page 333; 1900 physical page 329. Both 1879 and 1900 print נהם, agreeing with CCEL’s letters. eBible silently gives נחם; whatever Hebrew root was intended, the visible middle character in both impressions is he, with its separate lower left leg. CCEL alone drops the final period. The caller is the same in both printings and both transcriptions. This restores the note’s transcription; the scripture words are unchanged."
-      }
-    ],
+    "JDG 2:18": {
+      "from": "כהס",
+      "to": "נהם",
+      "why": "Brenton’s 1879 physical page 333; 1900 physical page 329. Both 1879 and 1900 print נהם, agreeing with CCEL’s letters; eBible has כ for נ and ס for ם. Whatever Hebrew root was intended, the visible middle character in both impressions is he, with its separate lower left leg. CCEL alone drops the final period. The caller is the same in both printings and both transcriptions. This restores the note’s transcription; the scripture words are unchanged.",
+      "uncategorized": true
+    },
     "JDG 4:7": {
       "from": "אה",
       "to": "את",

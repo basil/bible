@@ -11183,6 +11183,41 @@
           "from": "συνεφρύτη",
           "to": "συνεφρύγη",
           "why": "Brenton prints συνεφρύτη, τ for γ, in every printing (1844 vol. 2 p. 565; 1879 and 1900 p. 687), and CCEL copies it. Swete vol. 2 p. 575 gives καυματος] + συνεφρυγη A, the aorist passive of συμφρύγω; checked on the scan, it establishes the printed letter error without changing the English or the witness."
+        },
+        {
+          "note": "GEN 14:13",
+          "spelling": "hebrew",
+          "from": "עֹבֹר",
+          "to": "עֹבֵר",
+          "why": "Brenton's 1844 vol. 1 physical p. 37 (printed p. 13), checked on the enlarged scan, prints holam above ayin and tsere beneath bet, עֹבֵר, for the passer gloss. The 1879 physical p. 32 and 1900 physical p. 28 (printed p. 16) have two holam points. Restore the earlier printing's pointing as an editorial correction of the later printed form; its transcriptions remain faithful to their source. Swete I p. 22, checked on the scan, confirms τῷ περάτῃ, but supplies no Hebrew pointing."
+        },
+        {
+          "note": "JDG 2:18",
+          "spelling": "hebrew",
+          "from": "נהם",
+          "to": "נחם",
+          "why": "Brenton's 1844 vol. 1 physical p. 284 (printed p. 260), checked on the scan, prints נחם beside παρεκλήθη and repented. The 1879 physical p. 333 and 1900 physical p. 329 (printed p. 317) instead print נהם. Restore the earlier printing's heth as an editorial correction, leaving the exact-source transcription decisions faithful to the later printing. Swete I p. 480, checked on the scan, confirms παρεκλήθη at this verse, but supplies no Hebrew apparatus."
+        },
+        {
+          "note": "2KI 8:28#2",
+          "spelling": "greek",
+          "from": "ἀλλοφύλοι",
+          "to": "ἀλλόφυλοι",
+          "why": "Brenton's 1844 vol. 1 physical p. 434 (printed p. 410), checked on the scan, prints nominative plural ἀλλόφυλοι. The 1879 physical p. 516 and 1900 physical p. 512 (printed p. 500) misaccent it ἀλλοφύλοι. Restore the earlier nominative accent. Swete I p. 760, checked on the scan, prints the legitimately differently accented genitive ἀλλοφύλων in the verse; neither that inflection nor the English or witness is changed."
+        },
+        {
+          "note": "EXO 19:22",
+          "spelling": "greek",
+          "from": "ἀπαλλατέω",
+          "to": "ἀπαλλάττω",
+          "why": "Brenton prints the defective lemma ἀπαλλατέω in 1879 physical p. 111 and 1900 physical p. 107 (printed p. 95); 1844 vol. 1 physical p. 103 (printed p. 79) prints ἀπαλ-λάτεω, hyphenated, with the acute on the second alpha, as ἀπαλλάττω has it, and ε for its second τ. All were checked on the scans. Swete I p. 142, checked on the scan, has ἀπαλλάξῃ at 19:22 without a variant verb. LSJ under ἀπαλλάσσω gives Attic ἀπαλλάττω; use that legitimate present form, closest to Brenton's printed tau stem and to the 1844 accent, as an editorial spelling repair. The aorist alone does not choose between the sigma and tau present forms; retain the English and make no new witness attribution."
+        },
+        {
+          "note": "HOS 7:4 CCEL",
+          "spelling": "greek",
+          "from": "ζυμῆς",
+          "to": "ζύμης",
+          "why": "Brenton's 1844 vol. 2 physical p. 382 (printed p. 879), 1879 physical p. 1091 and 1900 physical p. 1087 (printed p. 1075), all checked on the scans, misaccent the genitive of ζύμη as ζυμῆς. Correct its accent to ζύμης as editorial spelling, not a transcription repair. Swete III p. 7, checked on the scan, prints στέατος and ζυμωθῆναι, with no ζυμης alternative in the apparatus; it does not independently establish Brenton's Complutensian attribution, which remains unchanged."
         }
       ]
     },
