@@ -147,6 +147,9 @@ def test_web(edition: pipeline.Edition, tmp_path: Path) -> None:
     sidebar = romans["content"][-1]
     assert (sidebar["type"], sidebar["category"]) == ("sidebar", "colophon")
     assert "Written to the Romans" in usj.text_of(sidebar["content"])
+    assert "¶" not in usj.text_of(sidebar["content"])
+    acts = files.read_json(tmp_path / "books" / "ACT" / "28.json")
+    assert not any(n.get("category") == "colophon" for n in acts["content"])
     assert "Written to the Romans" not in scripture.verses(romans)["16:24"].text
     # Ordinary footnotes carry reference nodes without cross-reference fields.
     assert any(n["type"] == "ref" for n in usj.walk(genesis["content"]))

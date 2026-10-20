@@ -67,8 +67,9 @@ def turns(before: str | None, after: str | None) -> bool:
 def spaced(doc: Document, unspaced: Set[int] = frozenset()) -> Document:
     """Keep stanza breaks and prose/poetry transitions, across chapters too.
 
-    A transition across a chapter gets its blank before the chapter figure.
-    Headings and titles supply their own space.
+    A transition across a chapter gets its blank before the chapter figure,
+    and a source's colophon one before it. Headings and titles supply their
+    own space.
     """
     blocks = doc["content"]
     result: list[Node] = []
@@ -99,7 +100,10 @@ def spaced(doc: Document, unspaced: Set[int] = frozenset()) -> Document:
             ):
                 result.append(block)
             continue
-        if turns(before, marker) and at not in unspaced:
+        # A blank, unlike space inside the colophon's box, goes at a page top.
+        if block.get("category") == "colophon" or (
+            turns(before, marker) and at not in unspaced
+        ):
             result.append(usj.para("b"))
         result.append(block)
     return usj.with_blocks(doc, result)

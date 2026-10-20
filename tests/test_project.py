@@ -2,9 +2,33 @@
 
 from pathlib import Path
 
-from bible import export, typeface, usj
+import pytest
+
+from bible import export, pipeline, typeface, usj
+from bible.checks import CheckFailed
 from bible.pipeline import Edition
-from bible.project import project_settings, style_mods, write_project
+from bible.project import project_settings, running_heads, style_mods, write_project
+
+
+def test_running_heads_use_the_selected_chapters(edition: Edition) -> None:
+    doc = edition.documents["DAG"]
+    before = usj.serialize(doc)
+    assert running_heads([("DAG", doc)]) == (
+        "\\BibleRunningHead{Daniel}{0}{Susanna}\n"
+        "\\BibleRunningHead{Daniel}{13}{Bel and the Dragon}\n"
+    )
+    assert running_heads([("DAG", pipeline.sample_chapters("DAG", doc, [13]))]) == (
+        "\\BibleRunningHead{Daniel}{13}{Bel and the Dragon}\n"
+    )
+    assert running_heads([("DAG", pipeline.sample_chapters("DAG", doc, [1, 12]))]) == ""
+    assert usj.serialize(doc) == before
+
+
+@pytest.mark.parametrize("heading", ["", "\\cl\n"])
+def test_hidden_chapter_requires_a_heading(heading: str) -> None:
+    doc = usj.parse("\\id DAG\n\\h Daniel\n\\c 0\n\\cp \u200b\n" + heading)
+    with pytest.raises(CheckFailed, match="Unnumbered chapter has no heading: 0"):
+        running_heads([("DAG", doc)])
 
 
 def test_project_sets_greek_in_the_installed_face(
@@ -35,6 +59,9 @@ def test_standard_peripherals_get_unique_ptxprint_transport_aliases(
 ) -> None:
     documents = export.grouped(edition, export.prepared(edition, "sample"))
     project, ids = write_project("sample", tmp_path, documents, edition)
+    config = project / "shared/ptxprint/Bible"
+    assert (config / "ptxprint-mods.tex").read_text().endswith(running_heads(documents))
+    assert (config / "running-heads.tex").is_file()
     assert len(ids) == len(set(ids))
     divisions = []
     for (source, original), physical in zip(documents, ids):

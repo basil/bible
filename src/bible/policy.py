@@ -499,10 +499,32 @@ def check(policy: Policy) -> None:
         require_fields(
             prose_group,
             {"why", "changes"},
-            {"additions", "markers", "sections", "italics", "references", "callers"},
+            {
+                "additions",
+                "markers",
+                "sections",
+                "italics",
+                "references",
+                "callers",
+                "colophons",
+            },
             f"Prose changes {name}",
         )
         require(prose_group["why"], f"Prose changes without a why: {name}")
+        for colophon_change in prose_group.get("colophons", ()):
+            label = f"Colophon change in {name}: {colophon_change.get('book')}"
+            require_fields(colophon_change, {"book", "from", "to"}, (), label)
+            require(
+                colophon_change["book"] in policy.kjv_units,
+                f"{label}: not a printed KJV book",
+            )
+            require(
+                isinstance(colophon_change["from"], str)
+                and bool(colophon_change["from"])
+                and isinstance(colophon_change["to"], str)
+                and colophon_change["from"] != colophon_change["to"],
+                f"{label}: invalid or ineffective wording change",
+            )
         for field, required, optional in (
             ("sections", {"unit", "before", "heading"}, set()),
             ("italics", {"unit", "opening", "spans"}, set()),

@@ -1157,6 +1157,13 @@ def test_a_blank_line_the_source_sets_before_a_poem_is_not_doubled() -> None:
     ) == ["id", "c", "p", "b", "q1"]
 
 
+def test_a_colophon_follows_a_blank_line_the_page_can_discard() -> None:
+    assert spaced_markers(
+        "\\id ROM\n\\c 16\n\\p \\v 27 Amen.\n"
+        "\\esb \\cat colophon\\cat*\n\\p Written to the Romans.\n\\esbe\n"
+    ) == ["id", "c", "p", "b", "esb"]
+
+
 def test_a_pause_supplies_the_break_before_the_next_poetic_line() -> None:
     assert spaced_markers(
         "\\id PSA\n\\c 33\n\\q1 \\v 11 The rich have become poor and hungry:\n"

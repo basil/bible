@@ -858,6 +858,7 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
     units = assemble(promoted, policy, read_sources)
     policy = placed(units, read_sources, policy)
     units = lined(units, read_sources, policy)
+    units = matter.colophons(units, policy)
     ctx = context(units, policy)
     front, appendix_notes, front_report = front_and_back(read_sources, ctx)
     books, reports = annotated(units, read_sources, appendix_notes, ctx)

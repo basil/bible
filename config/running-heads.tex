@@ -1,0 +1,50 @@
+% A hidden-number chapter's heading replaces its book and chapter in the
+% running head. Registrations are generated from USJ in project.py. Use page
+% marks, not the parser's current chapter: it may already be on the next page.
+\begingroup
+\catcode`\@=11
+\gdef\BibleRunningHead#1#2#3{%
+  \expandafter\gdef\csname BibleHead:\detokenize{#1:#2}\endcsname{#3}%
+}
+\gdef\BibleHeadLookup#1:#2:#3\relax{%
+  \ifcsname BibleHead:\detokenize{#1:#2}\endcsname
+    \def\BibleHeadPrint{\csname BibleHead:\detokenize{#1:#2}\endcsname}%
+  \fi
+}
+\gdef\BiblePageHead#1#2{%
+  \begingroup
+  \let\BibleHeadPrint#2%
+  \edef\BibleHeadMark{#1}%
+  \ifx\BibleHeadMark\empty\else
+    \ifx\BibleHeadMark\t@tle\else
+      \ifx\BibleHeadMark\intr@\else
+        \expandafter\BibleHeadLookup\BibleHeadMark\relax
+      \fi
+    \fi
+  \fi
+  \BibleHeadPrint
+  \endgroup
+}
+% Wrap the slots PTXprint's settings fill from layout.ini (the first
+% reference on even pages, the last on odd), so that every other page keeps
+% the configured formatter; reference marks stay intact for other consumers.
+\global\let\BibleEvenLeft\RHevenleft
+\global\let\BibleOddRight\RHoddright
+\gdef\RHevenleft{\BiblePageHead{\p@gefirstmark}\BibleEvenLeft}
+\gdef\RHoddright{\BiblePageHead{\p@gebotmark}\BibleOddRight}
+% Chapter bookmarks use the parser's chapter. Preserve PTXprint's destination,
+% hierarchy, suppression and action settings, substituting only the title.
+\global\let\BibleChapterBookmark\pdfch@pterm@rk
+\gdef\pdfch@pterm@rk{%
+  \begingroup
+  \let\BibleOutline\pdf@utline
+  \def\pdf@utline##1##2##3{%
+    \def\BibleHeadPrint{##2}%
+    \edef\BibleHeadMark{\book:\ch@pter:}%
+    \expandafter\BibleHeadLookup\BibleHeadMark\relax
+    \BibleOutline{##1}{\BibleHeadPrint}{##3}%
+  }%
+  \BibleChapterBookmark
+  \endgroup
+}
+\endgroup

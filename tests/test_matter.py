@@ -1115,3 +1115,69 @@ def test_an_appendix_note_follows_the_notes_at_the_start_of_its_verse(
     ]
     assert [n["caller"] for _, n in notes_at_start] == ["+", "+"]
     assert notes_at_start[-1][1]["x-key"] == "EXO 28:23 Appendix"
+
+
+def test_colophon_decisions_preserve_styles_scripture_and_inputs(
+    declared: bible.policy.Policy,
+) -> None:
+    romans = usj.parse(
+        "\\id ROM\n\\c 16\n\\p\n\\v 24 Amen.\n"
+        "\\esb \\cat colophon\\cat*\n\\p ¶ Written \\add from\\add* Rome.\n\\esbe\n"
+    )
+    acts = usj.parse(
+        "\\id ACT\n\\c 28\n\\p\n\\v 31 No man forbidding him.\n"
+        "\\esb \\cat colophon\\cat*\n\\p The end of the Acts of the Apostles.\n\\esbe\n"
+    )
+    books = {"ROM": romans, "ACT": acts}
+    before = copy.deepcopy(books)
+    policy = presentation_policy(
+        declared,
+        colophons=[
+            {"book": "ROM", "from": "¶ ", "to": ""},
+            # Words rewritten across a style keep it.
+            {"book": "ROM", "from": "from Rome", "to": "from Roma"},
+            {"book": "ACT", "from": "The end of the Acts of the Apostles.", "to": ""},
+        ],
+    )
+    result = matter.colophons(books, policy)
+    assert books == before
+    assert result["ACT"]["content"] == acts["content"][:-1]
+    assert usj.text_of(result["ROM"]["content"][-1]["content"]) == "Written from Roma."
+    assert "\\add from\\add*" in usj.serialize(result["ROM"])
+    for code in books:
+        assert bible.scripture.verses(result[code]) == bible.scripture.verses(
+            books[code]
+        )
+
+
+@pytest.mark.parametrize("closing", [None, "Missing prefix.", "¶ Once ¶ twice."])
+def test_colophon_decisions_refuse_stale_or_ambiguous_matches(
+    declared: bible.policy.Policy,
+    closing: str | None,
+) -> None:
+    doc = usj.parse(
+        "\\id ROM\n\\c 16\n\\p\n\\v 24 Amen.\n"
+        + (f"\\esb \\cat colophon\\cat*\n\\p {closing}\n\\esbe\n" if closing else "")
+    )
+    policy = presentation_policy(
+        declared,
+        colophons=[
+            {"book": "ROM", "from": "¶ ", "to": ""},
+        ],
+    )
+    with pytest.raises(CheckFailed, match="Colophon change.*ROM"):
+        matter.colophons({"ROM": doc}, policy)
+
+
+def test_all_nt_colophons_are_edited(edition: bible.pipeline.Edition) -> None:
+    expected = set("ROM 1CO 2CO GAL EPH PHP COL 1TH 2TH 1TI 2TI TIT PHM HEB".split())
+    found = set()
+    for code, doc in edition.documents.items():
+        for block in doc["content"]:
+            if block.get("category") == "colophon":
+                found.add(code)
+                assert "¶" not in usj.text_of(block["content"])
+    assert found == expected
+    assert "The end of the Acts of the Apostles." not in usj.text_of(
+        edition.documents["ACT"]["content"]
+    )

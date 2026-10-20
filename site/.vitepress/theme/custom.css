@@ -495,3 +495,18 @@
 * {
   letter-spacing: normal !important;
 }
+
+/* One empty line separates a subscription from the final scripture line. */
+.scripture p:has(+ aside.colophon) {
+  margin-bottom: 0;
+}
+
+.scripture aside.colophon {
+  margin: 0;
+  padding-top: 1lh;
+  line-height: 1.59;
+}
+
+.scripture aside.colophon > p {
+  margin: 0;
+}

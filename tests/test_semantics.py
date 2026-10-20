@@ -83,14 +83,17 @@ def test_exported_roles_are_consistent_across_the_edition(
                         assert (before in usj.PROSE and after in usj.POEM) or (
                             before in usj.POEM and after in usj.PROSE
                         ), code
-                    else:
+                    elif blocks[at + 1].get("category") != "colophon":
                         assert usj.paragraph(blocks[at + 1]) in usj.BODY, code
     assert divisions == [
         peripherals.UNITS[code].periph
         for code, _ in pipeline.view(edition, "pdf")
         if code not in edition.scripture
     ]
-    assert len(colophons) == 15
+    assert {code for code, _ in colophons} == set(
+        "ROM 1CO 2CO GAL EPH PHP COL 1TH 2TH 1TI 2TI TIT PHM HEB".split()
+    )
+    assert len(colophons) == 14
     assert {category for _, category in colophons} == {"colophon"}
 
 

@@ -231,7 +231,14 @@ class ProseCaller(TypedDict):
     after: ReadOnly[str]
 
 
+ColophonChange = TypedDict(
+    "ColophonChange",
+    {"book": ReadOnly[str], "from": ReadOnly[str], "to": ReadOnly[str]},
+)
+
+
 class Prose(TypedDict, total=False):
+    colophons: ReadOnly[tuple[ColophonChange, ...]]
     changes: ReadOnly[tuple[WordingChange, ...]]
     additions: ReadOnly[tuple[ProseAddition, ...]]
     markers: ReadOnly[tuple[MarkerChange, ...]]

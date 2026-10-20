@@ -82,18 +82,6 @@ def write_fonts(directory: Path) -> None:
     (directory / "fonts.css").write_text(font_stylesheet(faces), encoding="utf-8")
 
 
-def label(chapter: usj.Node, blocks: list[usj.Node]) -> str:
-    """The number a chapter prints, or the heading that stands for it."""
-    shown = chapter.get("pubnumber", chapter["number"])
-    if shown != scripture.HIDDEN:
-        return shown
-    heading = present(
-        next((b for b in blocks if usj.is_type(b, "para", "cl")), None),
-        f"Unnumbered chapter has no heading: {chapter}",
-    )
-    return scripture.plain(usj.text_of(heading.get("content", [])))
-
-
 class Span(TypedDict):
     text: str
     changed: bool
@@ -338,7 +326,7 @@ def write(edition: pipeline.Edition, directory: Path) -> None:
             chapters.append(
                 {
                     "number": number,
-                    "label": label(chapter, blocks),
+                    "label": scripture.chapter_label(chapter, blocks),
                     "titled": chapter.get("pubnumber") == scripture.HIDDEN,
                     "verses": edition.inventory[code][number],
                 }

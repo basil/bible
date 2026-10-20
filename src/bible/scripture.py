@@ -42,6 +42,18 @@ def plain(text: str) -> str:
     return " ".join(text.split())
 
 
+def chapter_label(chapter: usj.Node, blocks: Iterable[usj.Node]) -> str:
+    """The number a chapter prints, or the heading (\\cl) that stands for it,
+    as the website and the running heads both name it."""
+    shown: str = chapter.get("pubnumber", chapter["number"])
+    if shown != HIDDEN:
+        return shown
+    heading = next((b for b in blocks if usj.is_type(b, "para", "cl")), None)
+    title = plain(usj.text_of(heading.get("content", []))) if heading else ""
+    require(bool(title), f"Unnumbered chapter has no heading: {chapter['number']}")
+    return title
+
+
 def has_verse(inventory: Inventory, verse: Reference) -> bool:
     """Whether what the edition prints has a verse."""
     labels = inventory.get(verse.book, {}).get(str(verse.chapter), ())

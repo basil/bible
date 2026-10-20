@@ -1590,5 +1590,86 @@
         "after": "about the year b.c. 280."
       }
     ]
+  },
+  "nt-colophons": {
+    "why": "Omit the English closing notice of Acts at the editor’s direction. Retain the epistle subscriptions without their printed pilcrow.",
+    "changes": [],
+    "colophons": [
+      {
+        "book": "ACT",
+        "from": "The end of the Acts of the Apostles.",
+        "to": ""
+      },
+      {
+        "book": "ROM",
+        "from": "¶ ",
+        "to": ""
+      },
+      {
+        "book": "1CO",
+        "from": "¶ ",
+        "to": ""
+      },
+      {
+        "book": "2CO",
+        "from": "¶ ",
+        "to": ""
+      },
+      {
+        "book": "GAL",
+        "from": "¶ ",
+        "to": ""
+      },
+      {
+        "book": "EPH",
+        "from": "¶ ",
+        "to": ""
+      },
+      {
+        "book": "PHP",
+        "from": "¶ ",
+        "to": ""
+      },
+      {
+        "book": "COL",
+        "from": "¶ ",
+        "to": ""
+      },
+      {
+        "book": "1TH",
+        "from": "¶ ",
+        "to": ""
+      },
+      {
+        "book": "2TH",
+        "from": "¶ ",
+        "to": ""
+      },
+      {
+        "book": "1TI",
+        "from": "¶ ",
+        "to": ""
+      },
+      {
+        "book": "2TI",
+        "from": "¶ ",
+        "to": ""
+      },
+      {
+        "book": "TIT",
+        "from": "¶ ",
+        "to": ""
+      },
+      {
+        "book": "PHM",
+        "from": "¶ ",
+        "to": ""
+      },
+      {
+        "book": "HEB",
+        "from": "¶ ",
+        "to": ""
+      }
+    ]
   }
 }

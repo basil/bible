@@ -12,7 +12,7 @@ from collections.abc import Mapping, Sequence
 from pathlib import Path
 
 import bible.pipeline
-from bible import assembly, paths, typeface, usj
+from bible import assembly, paths, scripture, typeface, usj
 from bible.checks import require
 from bible.files import write_json
 
@@ -90,6 +90,30 @@ def book_names(
     return root
 
 
+def running_heads(documents: Sequence[tuple[str, usj.Document]]) -> str:
+    """Hidden chapters' titles for PTXprint's running heads and bookmarks."""
+    result = []
+    for code, doc in documents:
+        chapters = [n for n in doc["content"] if n["type"] == "chapter"]
+        if not any(n.get("pubnumber") == scripture.HIDDEN for n in chapters):
+            continue
+        book = assembly.header(doc, "h")
+        require(book, f"Missing running-head book name: {code}")
+        for chapter, *body in assembly.chapters_of(doc)[1]:
+            if chapter.get("pubnumber") != scripture.HIDDEN:
+                continue
+            # The heading the website labels the chapter by.
+            title = scripture.chapter_label(chapter, body)
+            number = chapter["number"]
+            # These are plain words passed to TeX, never executable markup.
+            require(
+                not any(c in book + number + title for c in "\\{}%#$&^_~"),
+                f"Unsupported TeX character in running head: {code} {number}",
+            )
+            result.append(f"\\BibleRunningHead{{{book}}}{{{number}}}{{{title}}}\n")
+    return "".join(result)
+
+
 def write_project(
     mode: str,
     base: Path,
@@ -161,10 +185,20 @@ def write_project(
     with (conf / "ptxprint.cfg").open("w", encoding="utf-8") as f:
         cfg.write(f)
     (conf / "ptxprint-mods.sty").write_text(style_mods(), encoding="utf-8")
-    # Copy the shared protrusion adapter alongside its production loader;
-    # the font regression test loads this same adapter independently.
-    for name in ("ptxprint-mods.tex", "protrusion.tex", "changes.txt"):
+    # Copy the TeX helpers alongside their production loader. Regression
+    # tests also load these helpers independently.
+    for name in (
+        "ptxprint-mods.tex",
+        "protrusion.tex",
+        "running-heads.tex",
+        "changes.txt",
+    ):
         shutil.copyfile(paths.CONFIG_DIR / name, conf / name)
+    with (conf / "ptxprint-mods.tex").open("a", encoding="utf-8") as f:
+        f.write(
+            "\n"
+            + running_heads([(c, d) for c, d in documents if c in edition.scripture])
+        )
     # Replace BSB's front matter with the edition's semantic template so the title,
     # publication data, and contents come from this edition's settings.
     shutil.copyfile(FRONT_TEMPLATE, conf / "FRTlocal.sfm")

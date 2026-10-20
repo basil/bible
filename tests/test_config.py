@@ -196,6 +196,7 @@ def test_note_callers_follow_context_and_restart_without_margin_notes(
     work = tmp_path / "local/ptxprint/Bible"
     work.mkdir(parents=True)
     shutil.copy(paths.CONFIG_DIR / "protrusion.tex", conf)
+    shutil.copy(paths.CONFIG_DIR / "running-heads.tex", conf)
     (conf / "baseline.sty").write_text(bsb_baseline()[1], encoding="utf-8")
     (conf / "mods.sty").write_text(style_mods(), encoding="utf-8")
     (work / "front.usfm").write_text(

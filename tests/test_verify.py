@@ -359,13 +359,15 @@ def test_a_margin_note_record_in_another_form_is_refused(tmp_path: Path) -> None
 
 def test_a_colophon_follows_the_complete_final_verse() -> None:
     source = (
-        "\\id ACT\n\\c 28\n\\p\\v 31 Preaching the kingdom, no man forbidding him.\n"
-        "\\esb \\cat colophon\\cat*\n\\p The end of the Acts.\n\\esbe\n"
+        "\\id HEB\n\\c 13\n\\p\\v 25 Grace be with you all. Amen.\n"
+        "\\esb \\cat colophon\\cat*\n\\p Written to the Hebrews from Italy by Timothy.\n\\esbe\n"
     )
     verify.check_colophon_order(
-        source, "Preaching the kingdom, no man forbidding him. The end of the Acts."
+        source,
+        "Grace be with you all. Amen. Written to the Hebrews from Italy by Timothy.",
     )
     with pytest.raises(CheckFailed, match="before scripture ends"):
         verify.check_colophon_order(
-            source, "Preaching the kingdom, The end of the Acts. no man forbidding him."
+            source,
+            "Grace be with you all. Written to the Hebrews from Italy by Timothy. Amen.",
         )

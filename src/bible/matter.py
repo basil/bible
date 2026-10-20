@@ -45,6 +45,55 @@ STANDALONE = {"ip": "p", "im": "m", "imi": "mi", "is1": "s1", "is2": "s2"}
 EMPTY_ORIGIN = re.compile(r"\d+:0 ")
 
 
+def colophons(
+    books: Mapping[str, Document], policy: bible.policy.Policy
+) -> MappingProxyType[str, Document]:
+    """Apply declared edits to terminal source subscriptions, outside scripture."""
+    result = dict(books)
+    for name, group in policy.prose.items():
+        for change in group.get("colophons", ()):
+            code = change["book"]
+            label = f"Colophon change in {name}: {code}"
+            require(code in result, f"{label}: missing book")
+            doc = result[code]
+            blocks = doc["content"]
+            found = [i for i, b in enumerate(blocks) if b.get("category") == "colophon"]
+            require(
+                found == [len(blocks) - 1], f"{label}: expected one terminal colophon"
+            )
+            sidebar = blocks[-1]
+            content = sidebar["content"]
+            require(
+                len(content) == 1 and usj.is_type(content[0], "para", "p"),
+                f"{label}: expected one colophon paragraph",
+            )
+            paragraph = content[0]
+            assert not isinstance(paragraph, str)
+            text = usj.text_of(paragraph["content"])
+            before, after = change["from"], change["to"]
+            require(
+                text.count(before) == 1, f"{label}: words do not match exactly once"
+            )
+            if text == before and not after:
+                result[code] = usj.with_blocks(doc, blocks[:-1])
+            else:
+                # One stretch gives way, so that what replaces it stays in the
+                # style of the words it replaces, as a prose change does.
+                prefix, removed, added = repairs.change(before, after)
+                start = text.index(before) + prefix
+                edited = usj.substituted(
+                    paragraph["content"], [(start, start + len(removed), added)]
+                )
+                result[code] = usj.with_blocks(
+                    doc,
+                    [
+                        *blocks[:-1],
+                        {**sidebar, "content": [{**paragraph, "content": edited}]},
+                    ],
+                )
+    return MappingProxyType(result)
+
+
 @dataclass(frozen=True)
 class Reading:
     """What was read in a paragraph: the words as they then stood, and the
