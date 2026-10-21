@@ -47,12 +47,13 @@ and the last checked `dist/bible.pdf`. Any unresolved filler pages, failed
 convergence or failed publication checks stop publication.
 
 The filler checks its final page measurements rather than retaining every
-page it failed on earlier in its search. A short page before a major
-kathisma heading is permitted only when the measured heading, psalm title
-and first scripture line cannot fit in the remaining space. These protected
-breaks are recorded by book in the cache and report; ordinary unresolved
-gaps still fail. Partial checkpoints receive a fresh diagnostic pass before
-they can be accepted as complete.
+page it failed on earlier in its search. A short page is permitted when the
+next page opens with a heading: TeX breaks before a heading only when it and
+the lines it keeps cannot follow the page's last line, and the filler cannot
+reflow a heading. These protected breaks are recorded by book in the cache
+and report; a gap before a verse paragraph, or inside one, still fails.
+Partial checkpoints receive a fresh diagnostic pass before they can be
+accepted as complete.
 
 The baseline grid keeps lines registered front and back on thin paper; it
 does not require every row to contain text. Paragraph protection can leave

@@ -1,4 +1,4 @@
-"""Check actual filler output, including space protected for a major heading."""
+"""Check the filler's actual output: a short page before a heading is forced."""
 
 from __future__ import annotations
 
@@ -13,30 +13,32 @@ from ptxprint.texlog import readUnderfills
 
 from bible.checks import require
 
-# These paragraphs form the heading group of a kathisma and its first psalm.
-HEADINGS = {"ms1", "ms2", "cl", "d"}
+
+def heading(paragraph: Any) -> bool:
+    """Does TeX keep this paragraph with the one after it?
+
+    PTXprint sets a title, a section heading or any other non-verse paragraph
+    outside an introduction (an introduction marker begins with i, as its TeX
+    tests) in a heading box, and forbids a page break after the box
+    (ptx-para-style.tex). The type it typeset each paragraph as is recorded in
+    the paragraph locations.
+    """
+    kind = paragraph.partype
+    return kind in {"title", "section"} or (
+        kind == "other" and not paragraph.mrk.startswith("i")
+    )
 
 
-def protected_heading(
-    paragraphs: Any, page: int, available: float, leading: float
-) -> bool:
-    """Does the next page's major heading need more space than was left?"""
-    following = list(paragraphs.getParas(page + 1))
-    if not following or following[0][0].mrk != "ms1":
-        return False
-    top = following[0][1].ystart
-    for paragraph, rect in following:
-        if paragraph.mrk in HEADINGS:
-            continue
-        if paragraph.mrk not in {"p", "q1", "q2", "q3", "q4"}:
-            return False
-        if rect.lines < 1:
-            return False
-        # Use only the first scripture line. Requiring an entire verse or
-        # paragraph would incorrectly excuse a gap in which its start fits.
-        bottom = rect.yend + (rect.lines - 1) * leading
-        return bool(top - bottom > available + 1 / 65536)
-    return False
+def forced(paragraphs: Any, page: int) -> bool:
+    """Is the break at the end of a page forced by a heading opening the next?
+
+    TeX breaks a page at the last place it may, so a page ends before a heading
+    only when the heading, with the lines it keeps, cannot follow the page's
+    last line; the filler cannot reflow a heading. A page that ends inside a
+    paragraph, or before a verse paragraph, could have been filled.
+    """
+    following = next(iter(paragraphs.getParas(page + 1)), None)
+    return following is not None and heading(following[0])
 
 
 def remaining(
@@ -51,14 +53,9 @@ def remaining(
         page = paragraphs.pnums.get(printed, printed)
         if page >= paragraphs.numPages():  # The last page may be short.
             continue
-        gap = available - used
-        if int(gap / leading + 0.4) <= 0:
+        if int((available - used) / leading + 0.4) <= 0:
             continue
-        target = (
-            protected
-            if column == "A" and protected_heading(paragraphs, page, gap, leading)
-            else unresolved
-        )
+        target = protected if column == "A" and forced(paragraphs, page) else unresolved
         target.append(page)
     return sorted(set(unresolved)), sorted(set(protected))
 

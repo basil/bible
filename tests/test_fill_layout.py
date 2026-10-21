@@ -1,4 +1,4 @@
-"""Protected major headings are distinguished from ordinary unresolved gaps."""
+"""A short page before a heading is forced; any other gap is unresolved."""
 
 from types import SimpleNamespace
 
@@ -7,53 +7,49 @@ import pytest
 from bible.fill_layout import remaining
 
 
+def pages(*following: tuple[str, str]) -> SimpleNamespace:
+    """Three pages, of which the second opens with the given paragraphs."""
+    paragraphs = [
+        (SimpleNamespace(partype=kind, mrk=marker), SimpleNamespace(lines=1))
+        for kind, marker in following
+    ]
+    return SimpleNamespace(
+        pnums={}, numPages=lambda: 3, getParas=lambda page: iter(paragraphs)
+    )
+
+
 @pytest.mark.parametrize(
-    "marker,gap,body,expected",
+    "following,expected",
     [
-        ("ms1", 66, True, ([], [1])),
-        ("ms1", 100, True, ([1], [])),  # The group would fit: a genuine gap.
-        ("q1", 66, True, ([1], [])),
-        ("ms1", 66, False, ([1], [])),  # Unknown heading block: refuse to guess.
+        ([("section", "ms1"), ("other", "cl"), ("section", "d")], ([], [1])),
+        ([("other", "cl"), ("section", "d"), ("versetext", "q1")], ([], [1])),
+        ([("other", "lit"), ("versetext", "q1")], ([], [1])),
+        ([("title", "imt1"), ("other", "ip")], ([], [1])),
+        ([("versetext", "q1"), ("versetext", "q2")], ([1], [])),
+        ([("versetext", "p")], ([1], [])),  # A paragraph continued, or not.
+        ([("other", "ip")], ([1], [])),  # An introduction paragraph: no box.
+        ([], ([1], [])),
     ],
 )
-def test_protected_heading_requires_measured_space(
-    marker: str, gap: float, body: bool, expected: tuple[list[int], list[int]]
+def test_only_a_heading_forces_the_break_before_it(
+    following: list[tuple[str, str]], expected: tuple[list[int], list[int]]
 ) -> None:
-    def item(
-        mark: str, ref: str, top: float, bottom: float
-    ) -> tuple[SimpleNamespace, SimpleNamespace]:
-        return SimpleNamespace(mrk=mark, pid=lambda: ref), SimpleNamespace(
-            ystart=top, yend=bottom, lines=1
-        )
-
-    following = [
-        item(marker, "PSA104.45[]", 670, 651),
-        item("cl", "PSA105.0[1]", 642, 627),
-        item("d", "PSA105.1[1]", 622, 609),
-    ]
-    if body:
-        following += [
-            item("q1", "PSA105.1[2]", 605, 592),
-            item("q2", "PSA105.1[3]", 592, 581),
-            item("q1", "PSA105.2[1]", 581, 570),
-        ]
-    pages = SimpleNamespace(
-        pnums={}, numPages=lambda: 3, getParas=lambda page: following
-    )
-    assert remaining(pages, [(1, "A", 594, 594 - gap, 11)]) == expected
-    # Last pages are permitted to be short, independently of headings.
-    assert remaining(pages, [(3, "A", 594, 100, 11)]) == ([], [])
+    assert remaining(pages(*following), [(1, "A", 594, 560, 11)]) == expected
     # Never apply the single-column exemption to a second column.
-    assert remaining(pages, [(1, "B", 594, 594 - gap, 11)]) == ([1], [])
+    assert remaining(pages(*following), [(1, "B", 594, 560, 11)]) == ([1], [])
 
 
-def test_long_opening_paragraph_does_not_excuse_a_gap() -> None:
-    following = [
-        (SimpleNamespace(mrk="ms1"), SimpleNamespace(ystart=670, yend=650, lines=1)),
-        (SimpleNamespace(mrk="p"), SimpleNamespace(ystart=640, yend=529, lines=10)),
-    ]
-    pages = SimpleNamespace(
-        pnums={}, numPages=lambda: 3, getParas=lambda page: following
+def test_short_last_pages_and_full_pages_are_not_gaps() -> None:
+    layout = pages(("versetext", "q1"))
+    assert remaining(layout, [(3, "A", 594, 100, 11)]) == ([], [])
+    assert remaining(layout, [(1, "A", 594, 588, 11)]) == ([], [])
+    assert remaining(layout, [(-1, "A", 594, 100, 11)]) == ([], [])
+
+
+def test_printed_pages_map_to_physical_pages() -> None:
+    layout = pages(("versetext", "q1"))
+    layout.pnums = {5: 1}
+    assert remaining(layout, [(5, "A", 594, 560, 11), (5, "A", 594, 500, 11)]) == (
+        [1],
+        [],
     )
-    # The full paragraph cannot fit in 66pt, but its first line can.
-    assert remaining(pages, [(1, "A", 594, 528, 11)]) == ([1], [])
