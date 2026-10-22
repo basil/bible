@@ -344,9 +344,12 @@ def check_boundaries(
 # a chapter in Arabic or Roman, and a stop before the verse, as "Rom. 4. 7",
 # "Mat. 18.28", "Gen. xlvii. 31", "2Ki. 19. 18". A number that a supplied
 # passage is printed under has no name before it. A line may break at any of
-# its spaces.
+# its spaces. Chapters have at most three digits and verses start at one:
+# a date with a note caller ("February 2021.4") or a version ("Attribution
+# 4.0") is not a citation.
 FOREIGN_CITATION = re.compile(
-    r"(?<![\w.])(?:[1-4]\.?\s?)?[A-Z][a-z]+\.?\s(?:\d+|[ivxlc]+)\.\s?\d+"
+    r"(?<![\w.])(?:[1-4]\.?\s?)?[A-Z][a-z]+\.?\s"
+    r"(?:[1-9]\d{0,2}|[ivxlc]+)\.\s?[1-9]\d*"
 )
 
 

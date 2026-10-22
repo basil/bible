@@ -264,8 +264,7 @@ def matter(
     own pages, then each testament's before its books, without the
     dividers, which print a title alone; each the whole unit but for the names the
     manifest carries, opening with its book and its printed title, with its
-    Greek and Hebrew tagged for their fonts as the typesetter has them, and
-    the editor's pages as the editor wrote them."""
+    Greek and Hebrew tagged for their fonts as the typesetter has them."""
     result: list[tuple[Unit, usj.Document]] = []
     front = edition.policy.front_matter
     # Keep the website-only numbering page beside the introduction.
@@ -282,8 +281,9 @@ def matter(
             names = assembly.names(entry, doc)
         else:
             # Under the names the book prints it under.
-            doc = export.fonted(edition, code, documents[code])
+            doc = documents[code]
             names = edition.names[code]
+        doc = usj.with_content(doc, export.font_runs)
         book, *blocks = doc["content"]
         rest = list(itertools.dropwhile(lambda b: b.get("marker") in NAMES, blocks))
         # The site anchors a unit at its one printed title.
@@ -321,7 +321,9 @@ def write(edition: pipeline.Edition, directory: Path) -> None:
     for unit in edition.policy.scripture:
         code = unit["id"]
         # The Greek elision mark is set as its font has it.
-        doc = export.fonted(edition, code, export.with_printed_origins(documents[code]))
+        doc = usj.with_content(
+            export.with_printed_origins(documents[code]), export.font_runs
+        )
         (book, *header), parts = pipeline.headed_chapters(doc)
         introduction = [n for n in header if n.get("marker") not in usj.BOOK_PARAGRAPHS]
         header = [n for n in header if n.get("marker") in usj.BOOK_PARAGRAPHS]

@@ -25,6 +25,7 @@ from bible import (
     revision,
     scripture,
     usj,
+    web,
 )
 from bible.checks import CheckFailed
 from bible.usj import Document
@@ -1087,8 +1088,6 @@ def test_what_is_typeset_prints_margin_origins_and_bottom_callers(
     # a note's words, and among a paragraph's.
     assert "\\+wg εἰς ὁμοιότητα\\+wg*" in exported["GEN"]
     assert "\\+wh רפאים\\+wh*" in exported["2SA"]
-    # The edition's own pages are sent as the editor wrote them.
-    assert not re.search(r"\\\+?w[gh] ", exported["CNC"])
 
 
 def test_greek_and_hebrew_are_set_in_the_styles_of_their_fonts() -> None:
@@ -1099,6 +1098,36 @@ def test_greek_and_hebrew_are_set_in_the_styles_of_their_fonts() -> None:
     )
     # Only the form of what prints changes.
     assert usj.text_of(export.font_runs(content)) == "Gr. ἀλλ’ ἐγώ, Heb. א, or β"
+
+
+def test_authored_pages_select_fonts_in_body_notes_and_bibliography(
+    edition: bible.pipeline.Edition,
+) -> None:
+    doc = usj.parse(
+        "\\id CNC\n\\mt1 Introduction\n"
+        "\\p Greek ἐνέστηκεν and Hebrew א."
+        "\\f + \\ft See Παλαιά Διαθήκη.\\f*\n"
+        "\\li1 Παλαιά Διαθήκη.\n"
+    )
+    before = copy.deepcopy(doc)
+    printed = export.document("CNC", doc, edition)
+    text = usj.serialize(printed)
+    assert "\\wg ἐνέστηκεν\\wg*" in text
+    assert "\\wh א\\wh*" in text
+    assert "\\+wg Παλαιά Διαθήκη\\+wg*" in text
+    assert "\\wg Παλαιά Διαθήκη\\wg*" in text
+    assert usj.text_of(printed["content"]) == usj.text_of(doc["content"])
+    assert doc == before
+    documents = {**edition.documents, "CNC": doc}
+    [(_, online)] = [
+        (unit, page)
+        for unit, page in web.matter(edition, documents)
+        if unit["id"] == "editor-introduction"
+    ]
+    online_text = usj.serialize(online)
+    assert "\\wg ἐνέστηκεν\\wg*" in online_text
+    assert "\\wh א\\wh*" in online_text
+    assert "\\+wg Παλαιά Διαθήκη\\+wg*" in online_text
 
 
 def test_lines_that_go_on_with_a_verse_are_indented() -> None:

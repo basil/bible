@@ -185,6 +185,9 @@ def test_missing_edition_license_on_the_publication_page_is_refused() -> None:
         "1870. it | 1844. It",
         # A verse's number, after the sentence before it.
         "and the evening star. 32 Or wilt thou",
+        # License versions and dates followed by a printed note caller.
+        "Creative Commons Attribution 4.0 International",
+        "dated February 2021.4 The TCENT version",
     ],
 )
 def test_the_editions_citations_pass(words: str) -> None:
@@ -201,6 +204,8 @@ def test_the_editions_citations_pass(words: str) -> None:
         "2Ki. 19. 18",
         "1. Cor. 8.11",
         "See 1 Cor 2. 16. Gr.",
+        "Exodus 28. 5",
+        "Ps. 150. 6",
     ],
 )
 def test_a_citation_as_a_source_writes_it_is_refused(words: str) -> None:

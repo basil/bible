@@ -233,6 +233,7 @@ def test_note_callers_follow_context_and_restart_without_margin_notes(
         r"""\id FRT
 \periph Preface|id="preface"
 \p Alpha\f + \ft First front note.\f* and beta\f + \ft Second front note.\f*.
+\p More word\f + \ft Front note 3.\f* word\f + \ft Front note 4.\f* word\f + \ft Front note 5.\f* word\f + \ft Front note 6.\f* word\f + \ft Front note 7.\f* word\f + \ft Front note 8.\f* word\f + \ft Front note 9.\f* word\f + \ft Front note 10.\f*.
 \p Quotation\x + \xt Gen. 1:1\x*.
 """,
         encoding="utf-8",
@@ -312,6 +313,7 @@ def test_note_callers_follow_context_and_restart_without_margin_notes(
     assert [(kind, caller) for kind, caller, _, _ in notes] == [
         ("f", "1"),
         ("f", "2"),
+        *(("f", str(n)) for n in range(3, 11)),
         ("x", "1"),
         ("f", "a"),
         ("f", "b"),
@@ -319,6 +321,7 @@ def test_note_callers_follow_context_and_restart_without_margin_notes(
         ("f", "a"),
         ("f", "1"),
         ("f", "2"),
+        *(("f", str(n)) for n in range(3, 11)),
         ("x", "1"),
         ("f", "a"),
     ], result.stdout
@@ -333,8 +336,8 @@ def test_note_callers_follow_context_and_restart_without_margin_notes(
     page_records = re.findall(r"\\noteonpage\{f\}\{(\d+)\}\{(-?\d+)\}", records[2])
     # Each automatic caller has exactly one record; the callerless note must
     # not overwrite its predecessor's page. This also checks the image patch.
-    assert [int(number) for number, _ in page_records] == list(range(1, 9))
-    assert int(page_records[4][1]) > int(page_records[3][1]) + 1
+    assert [int(number) for number, _ in page_records] == list(range(1, 25))
+    assert int(page_records[12][1]) > int(page_records[11][1]) + 1
 
 
 NS = {"x": "http://www.w3.org/1999/xhtml"}
@@ -390,6 +393,18 @@ def typeset_lines(
     result = xetex(work, f"{name}.tex")
     assert "Overfull" not in result.stdout
     return [list(line) for line in layout(work, name).findall(".//x:line", NS)]
+
+
+def test_urls_keep_both_slashes_in_print(tmp_path: Path) -> None:
+    work = ptxprint_project(tmp_path)
+    (work / "urls.usfm").write_text(
+        '\\id FRT\n\\periph Introduction|id="intbible"\n'
+        "\\p See https://example.org/license/.\n",
+        encoding="utf-8",
+    )
+    lines = typeset_lines(work, "urls")
+    words = [word.text for line in lines for word in line]
+    assert "https://example.org/license/." in words
 
 
 def test_peripheral_running_heads_follow_pages(tmp_path: Path) -> None:

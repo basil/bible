@@ -190,8 +190,9 @@ def document(code: str, doc: Document, edition: Edition) -> Document:
     under their callers alone; its chapter label, where the manifest asks for
     one, set once before its first chapter as PTXprint takes it; its blank lines set; and its Greek
     and Hebrew tagged for their fonts.
-    The edition's own pages are sent as the editor wrote them, except that
-    a peripheral unit's citations keep their words without their links,
+    The edition's own pages are sent as the editor wrote them, with their
+    Greek and Hebrew tagged for their fonts, except that a peripheral
+    unit's citations keep their words without their links,
     which PTXprint would take as scripture to import. A note at a
     verse that prints another label than its own is set under that label."""
 
@@ -222,7 +223,7 @@ def document(code: str, doc: Document, edition: Edition) -> Document:
     def content(items: Content) -> Content:
         # A note's children are mapped before it, so a bottom note's origin,
         # which does not print, goes before any origin is set as it prints.
-        return usj.mapped(usj.mapped(items, bottom), origin)
+        return font_runs(usj.mapped(usj.mapped(items, bottom), origin))
 
     labels = printed_labels(doc) if code in edition.scripture else {}
     full = named_in_full(doc) if code in edition.scripture else set()
@@ -234,14 +235,7 @@ def document(code: str, doc: Document, edition: Edition) -> Document:
         doc = spaced(doc, lines.unspaced(doc, decisions, excerpt=True))
     # A unit printed from a file that holds another, or under an id that
     # PTXprint would take for its own front matter, is a unit of its own.
-    doc = fonted(edition, code, usj.with_content(doc, content))
-    return usj.with_code(doc, code)
-
-
-def fonted(edition: Edition, code: str, doc: Document) -> Document:
-    """The document with its Greek and Hebrew tagged for their fonts as the
-    typesetter has them; the editor's pages stay as the editor wrote them."""
-    return doc if code in edition.authored else usj.with_content(doc, font_runs)
+    return usj.with_code(usj.with_content(doc, content), code)
 
 
 def notes_below(edition: Edition) -> dict[str, frozenset[str]]:

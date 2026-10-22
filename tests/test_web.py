@@ -237,8 +237,7 @@ def test_spans_take_closing_punctuation() -> None:
 def test_matter(edition: pipeline.Edition) -> None:
     """The front matter and website-only numbering page, in reading order,
     each unit the whole document but for the names the manifest carries,
-    with its printed title and its Greek and Hebrew tagged for their fonts;
-    the editor's pages as the editor wrote them."""
+    with its printed title and its Greek and Hebrew tagged for their fonts."""
     documents = dict(pipeline.view(edition, "pdf"))
     listed = web.matter(edition, documents)
     assert [(unit["id"], unit["section"]) for unit, _ in listed] == [
@@ -258,9 +257,10 @@ def test_matter(edition: pipeline.Edition) -> None:
     blocks = {}
     for unit, doc in listed:
         code = source_codes[unit["id"]]
-        whole = edition.numbering_page if code == "XXA" else documents[code]
-        if code not in edition.authored and code != "XXA":
-            whole = usj.with_content(whole, export.font_runs)
+        whole = usj.with_content(
+            edition.numbering_page if code == "XXA" else documents[code],
+            export.font_runs,
+        )
         book, division = doc["content"]
         assert book == {
             **whole["content"][0],
@@ -296,7 +296,6 @@ def test_matter(edition: pipeline.Edition) -> None:
     }
     assert tagged["brenton-preface"] == {"wg", "wh"}
     assert "wg" in tagged["translators-to-reader"]
-    assert tagged["editor-introduction"] == set()
 
 
 def test_variants(edition: pipeline.Edition) -> None:
