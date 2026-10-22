@@ -1362,7 +1362,6 @@
             "2SA 20:1",
             "2SA 23:1",
             "1KI 12:16",
-            "1KI 12:24t",
             "1CH 2:12",
             "1CH 2:13",
             "1CH 29:26",
@@ -1802,9 +1801,6 @@
             "1KI 12:20",
             "1KI 12:21",
             "1KI 12:23",
-            "1KI 12:24u",
-            "1KI 12:24x",
-            "1KI 12:24y",
             "1KI 12:27",
             "1KI 12:32",
             "1KI 13:1",
@@ -3595,9 +3591,6 @@
           ],
           "Sikima": [
             "1KI 12:1",
-            "1KI 12:24n",
-            "1KI 12:24u",
-            "1KI 12:24x",
             "1KI 12:25"
           ]
         }
@@ -5008,11 +5001,6 @@
     },
     "asks": {
       "to": "asketh",
-      "why": "Use the archaic third-person singular in scripture and quoted readings. Every occurrence of this whole word in those regions is a present-tense verb; explanatory prose retains its source grammar.",
-      "scope": "scripture"
-    },
-    "assembles": {
-      "to": "assembleth",
       "why": "Use the archaic third-person singular in scripture and quoted readings. Every occurrence of this whole word in those regions is a present-tense verb; explanatory prose retains its source grammar.",
       "scope": "scripture"
     },
@@ -10747,6 +10735,17 @@
           "verse": "PRO 28:8",
           "from": "pities the poor",
           "to": "pitieth the poor"
+        }
+      ]
+    },
+    "alexandrine narration": {
+      "why": "In the supplied Alexandrine account the Lord’s speech ends before the narrative resumes; punctuation follows that division, not the King James prediction.",
+      "changes": [
+        {
+          "verse": "1KI 14:5",
+          "from": "her: And it came to pass",
+          "to": "her. And it came to pass",
+          "why": "Swete I p. 714 closes the instruction προς αυτην and resumes with και εγενετο, reporting her entrance as past."
         }
       ]
     }

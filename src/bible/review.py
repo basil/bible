@@ -50,6 +50,7 @@ from bible.byzantine import review as byzantine_review
 from bible.checks import require
 from bible.files import json_text
 from bible.policy import thaw
+from bible.policy_schema import Swete
 from bible.usfm import plain_text
 from bible.usj import Document
 
@@ -140,6 +141,13 @@ def placed(
     return ebible.book, moved.label
 
 
+def swete_record(swete: Swete) -> str:
+    return (
+        f"Swete {swete['volume']} p. {swete['page']} ({swete['evidence']}; "
+        f"agrees={swete['agrees']}): {swete['reading']}"
+    )
+
+
 def context(verses: Mapping[str, scripture.Verse], wanted: set[str]) -> str:
     """The wanted verses with the one before and the one after."""
     labels = list(verses)
@@ -157,6 +165,7 @@ def alexandrinus_report(read: pipeline.Read, edition: pipeline.Edition) -> str:
     data = policy.alexandrinus
     sources: dict[str, dict[str, scripture.Verse]] = {}
     printed: dict[str, dict[str, scripture.Verse]] = {}
+    borrowed_from: dict[str, dict[str, scripture.Verse]] = {}
 
     def verses(
         cache: dict[str, dict[str, scripture.Verse]],
@@ -204,16 +213,33 @@ def alexandrinus_report(read: pipeline.Read, edition: pipeline.Edition) -> str:
                     {behind, moved.first.label, moved.last.label, move["before"]}
                 )
             wanted = {w for w in wanted if ":" in w and "-" not in w}
+            # An omitted run is shown with its neighbours apart from the rest,
+            # so that the chapters between them are not printed as well.
+            groups = [wanted] + [
+                {*omission["verses"], omission["note_target"]}
+                for omission in decision.get("omissions", ())
+            ]
             source = decision.get("appendix", decision.get("source_note", ""))
             if "kjv" in decision:
                 source = f"Authorized Version, {key}" + (
                     f"; {source}" if source else ""
                 )
-            targets: dict[str, set[str]] = {}
-            for reference in wanted:
-                where = placed(policy, code, reference)
-                if where:
-                    targets.setdefault(where[0], set()).add(where[1])
+            before = "\n\n".join(
+                context(verses(sources, read.brenton, code), group) for group in groups
+            )
+            if "kjv" in decision:
+                borrowed = {v.label for v in references.parse_passage(key).verses}
+                before += "\n\nKing James source:\n\n" + context(
+                    verses(borrowed_from, read.kjv, code), borrowed
+                )
+            placements: list[dict[str, set[str]]] = []
+            for group in groups:
+                targets: dict[str, set[str]] = {}
+                for reference in group:
+                    where = placed(policy, code, reference)
+                    if where:
+                        targets.setdefault(where[0], set()).add(where[1])
+                placements.append(targets)
             keys = {
                 key,
                 *decision.get("note_edits", ()),
@@ -224,6 +250,7 @@ def alexandrinus_report(read: pipeline.Read, edition: pipeline.Edition) -> str:
                 *by_stem.get(key, ()),
                 *(
                     index
+                    for targets in placements
                     for unit, references_ in targets.items()
                     for reference in references_
                     for index in by_verse.get((unit, reference), ())
@@ -245,11 +272,12 @@ def alexandrinus_report(read: pipeline.Read, edition: pipeline.Edition) -> str:
             lines.append(
                 f"## {key} — {section}\n\n"
                 f"Source: {plain_text(source)}\n\n"
-                f"Before:\n\n{context(verses(sources, read.brenton, code), wanted)}\n\n"
+                f"Before:\n\n{before}\n\n"
                 "After:\n\n"
                 + (
                     "\n".join(
                         context(verses(printed, edition.documents, unit), references)
+                        for targets in placements
                         for unit, references in targets.items()
                     )
                     or "(Not printed in a book.)"
@@ -271,14 +299,31 @@ def alexandrinus_report(read: pipeline.Read, edition: pipeline.Edition) -> str:
                     for proof in derivations
                 )
                 + f"\nSupplied: {', '.join(decision.get('supplied', ())) or 'none'}\n\n"
-                f"Decision: {decision['why']}\n\n"
-                f"Swete {swete['volume']} p. {swete['page']} ({swete['evidence']}; "
-                f"agrees={swete['agrees']}): {swete['reading']}\n\n"
+                + "".join(
+                    f"Omission: {', '.join(omission['verses'])}\n\n"
+                    f"Reason: {omission['why']}\n\n"
+                    f"{swete_record(omission['swete'])}\n\n"
+                    + "".join(
+                        f"Omitted source note {identity}: {plain_text(body)}\n\n"
+                        for identity, body in omission["source_notes"].items()
+                    )
+                    for omission in decision.get("omissions", ())
+                )
+                + f"Decision: {decision['why']}\n\n"
+                f"{swete_record(swete)}\n\n"
             )
-            reading = swete["reading"].replace("|", "&#124;")
-            audit.append(
-                f"| {key} | {swete['volume']} | {swete['page']} | {reading} | {swete['agrees']} |\n"
-            )
+            # Every Swete record the decision rests on, its omissions' too.
+            for name, record in [
+                (key, swete),
+                *(
+                    (f"{key}@omission{index}", omission["swete"])
+                    for index, omission in enumerate(decision.get("omissions", ()), 1)
+                ),
+            ]:
+                reading = record["reading"].replace("|", "&#124;")
+                audit.append(
+                    f"| {name} | {record['volume']} | {record['page']} | {reading} | {record['agrees']} |\n"
+                )
     lines.append(
         "# Swete audit\n\n| Decision | Volume | Page | Reading | Agrees |\n|---|---|---|---|---|\n"
     )

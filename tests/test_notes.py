@@ -39,6 +39,8 @@ from bible.usj import Document, Node
         "1SA 15:11",
         "2KI 12:14",
         "1KI 10:22a",
+        "1KI 14:1-20@6",
+        "1KI 14:1-20@12",
         "MAT 17:27 a piece of money",
         "ACT 17:19 Areopagus",
     ],
@@ -743,7 +745,7 @@ def test_a_sign_after_no_witness_is_refused(
 def test_every_note_is_printed_replaced_by_a_link_or_explicitly_omitted(
     edition: bible.pipeline.Edition,
 ) -> None:
-    assert edition.summary["printed_notes"] == 6194
+    assert edition.summary["printed_notes"] == 6204
     rows = [row for listed in edition.notes.values() for row in listed]
     assert len({row["key"] for row in rows}) == len(rows)
     # The 1611 margin is printed on the New Testament alone, and whole but
@@ -1733,3 +1735,51 @@ def test_a_note_set_below_keeps_its_words_and_stale_placements_stop_the_build() 
         notes.set_below(doc, ["REV 13:1#2 TR"])
     with pytest.raises(CheckFailed, match="Duplicate note placement.*REV 13:1#1 TR"):
         notes.set_below(usj.document([usj.para("p", note, note)]), [key])
+
+
+@pytest.mark.parametrize(
+    "reference, index, restored",
+    [
+        (
+            "14:4",
+            3,
+            "But Ahijah could not see; for his eyes were set by reason of his age",
+        ),
+        (
+            "14:5",
+            4,
+            "thus and thus shalt thou say unto her: for it shall be, when she cometh in, that she shall feign herself to be another woman",
+        ),
+        (
+            "14:10",
+            12,
+            "and will take away the remnant of the house of Jeroboam, as a man taketh away dung, till it be all gone",
+        ),
+        ("14:11", 13, "Him that dieth of Jeroboam in the city shall the dogs eat"),
+        ("14:12", 15, "when thy feet enter into the city, the child shall die"),
+        ("14:15", 19, "as a reed is shaken in the water"),
+        ("14:15", 20, "and he shall root up Israel"),
+        ("14:15", 21, "out of this good land, which he gave to their fathers"),
+        ("14:16", 22, "And he shall give Israel up because of the sins of Jeroboam"),
+        ("14:17", 23, "And Jeroboam’s wife arose, and departed, and came to Tirzah"),
+        ("14:17", 24, "and when she came to the threshold of the door, the child died"),
+    ],
+)
+def test_supplied_kingdoms_notes_restore_their_quoted_constructions(
+    edition: bible.pipeline.Edition, reference: str, index: int, restored: str
+) -> None:
+    verse = scripture.verses(edition.documents["1KI"])[reference]
+    key = f"1KI 14:1-20@{index}"
+    note = next(note for _, note in verse.notes if note.get("x-key") == key)
+    lemma = next(
+        usj.text_of(node["content"]).removesuffix(": ")
+        for node in usj.walk(note["content"])
+        if node.get("marker") == "fq"
+    )
+    alternate = next(
+        usj.text_of(node["content"])
+        for node in usj.walk(note["content"])
+        if node.get("marker") in {"fqa", "it"}
+    ).strip()
+    assert verse.text.count(lemma) == 1
+    assert restored in verse.text.replace(lemma, alternate)

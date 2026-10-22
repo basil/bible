@@ -66,7 +66,7 @@ FIELDS = {
     | REPLACEMENT
     | {"edits", "note_edits", "source_note", "omit_verse", "note_target"},
     "passages": COMMON
-    | {"appendix", "kjv", "edits", "insertions", "moves", "source_notes"},
+    | {"appendix", "kjv", "edits", "insertions", "moves", "omissions", "source_notes"},
     "kept": COMMON | {"appendix", "todo", "source_note", "note", "lemma", "moved_to"},
 }
 
@@ -368,6 +368,7 @@ def check(
                         entry.get("edits")
                         or entry.get("insertions")
                         or entry.get("moves")
+                        or entry.get("omissions")
                     ),
                     f"Alexandrine passage needs an English source and an operation: {key}",
                 )
@@ -383,6 +384,26 @@ def check(
                             f"Alexandrine label changes nothing: {key}",
                         )
                         terminology.registry(policy).display(move["label"])
+                for omission in entry.get("omissions", ()):
+                    require_fields(
+                        omission,
+                        {
+                            "verses",
+                            "note_target",
+                            "note",
+                            "source_notes",
+                            "swete",
+                            "why",
+                        },
+                        (),
+                        f"Omission of {key}",
+                    )
+                    check_swete(key, cast(Decision, omission), policy)
+                    require(
+                        isinstance(omission["note"], str)
+                        and bool(omission["note"].strip()),
+                        f"Omission without its note: {key}",
+                    )
             allowed = REPLACEMENT | COMMON
             if section == "passages":
                 allowed |= OMISSION
@@ -714,8 +735,18 @@ def promoted(
                 key, entry, source, verses[reference], note_key, verses, consumed, terms
             )
         )
+    # A verse omitted whole cannot also be edited: the edit would print nothing.
+    dropped = {
+        label
+        for key, entry in policy.alexandrinus["passages"].items()
+        if references.book_of(key) == code
+        for omission in entry.get("omissions", ())
+        for label in omission["verses"]
+    }
+    edited = sorted(r.decision for r in replacements if r.verse in dropped)
+    require(not edited, f"Alexandrine omission drops an edited verse: {edited}")
     if not replacements and not rewritten:
-        return with_moves(code, doc, policy, terms)
+        return with_moves(code, with_omissions(code, doc, policy), policy, terms)
     omitted = {r.verse for r in replacements if r.omits_verse}
     # Every note of a verse the decisions touch is taken up, and set again
     # where it belongs once the words have changed.
@@ -800,7 +831,99 @@ def promoted(
             set_again.append((position, rank, note))
         for position, _, note in sorted(set_again, key=lambda e: e[:2]):
             note_changes.append((verse, position, position, [note]))
-    return with_moves(code, scripture.edited(doc, note_changes), policy, terms)
+    doc = with_omissions(code, scripture.edited(doc, note_changes), policy)
+    return with_moves(code, doc, policy, terms)
+
+
+def with_omissions(code: str, doc: Document, policy: bible.policy.Policy) -> Document:
+    """Omit declared consecutive verses, including their pinned source notes.
+
+    References are listed explicitly: lettered additions have no inferred
+    alphabetic range. The preceding surviving verse receives the account of
+    the omission; no wording or note is silently left behind.
+    """
+    for key, entry in policy.alexandrinus["passages"].items():
+        if references.book_of(key) != code:
+            continue
+        for index, omission in enumerate(entry.get("omissions", ()), 1):
+            verses = scripture.verses(doc)
+            order = list(verses)
+            labels = omission["verses"]
+            home = omission["note_target"]
+            require(
+                bool(labels)
+                and len(labels) == len(set(labels))
+                and all(label in verses for label in (*labels, home)),
+                f"Missing or repeated Alexandrine omission verse: {key}",
+            )
+            first = order.index(labels[0])
+            require(
+                first > 0
+                and order[first - 1] == home
+                and order[first : first + len(labels)] == list(labels)
+                and all(label.split(":")[0] == home.split(":")[0] for label in labels),
+                f"Alexandrine omission must follow its note as one run: {key}",
+            )
+            placed = {
+                note["x-key"]: (verses[label], offset, note)
+                for label in labels
+                for offset, note in verses[label].notes
+            }
+            require(
+                set(placed) == set(omission["source_notes"]),
+                f"Alexandrine omission leaves an unaccounted source note: {key}",
+            )
+            for identity, body in omission["source_notes"].items():
+                pinned(identity, body, placed)
+            blocks = list(doc["content"])
+            cuts: dict[int, list[tuple[int, int]]] = {}
+            for label in labels:
+                for part, (block, lo, hi, _) in enumerate(verses[label].parts):
+                    if part == 0:
+                        require(
+                            lo > 0
+                            and usj.is_type(blocks[block]["content"][lo - 1], "verse"),
+                            f"Alexandrine omission lacks its verse marker: {key}",
+                        )
+                        lo -= 1
+                    cuts.setdefault(block, []).append((lo, hi))
+            start, end = min(cuts), max(cuts)
+            # A heading among the run's paragraphs, or before a run that
+            # opens its paragraph, would be left standing over the next verse.
+            first_block = start - 1 if verses[labels[0]].parts[0][1] == 1 else start
+            require(
+                all(
+                    blocks[b]["type"] == "para"
+                    and blocks[b]["marker"] not in usj.HEADINGS
+                    for b in range(max(first_block, 0), end + 1)
+                ),
+                f"Alexandrine omission crosses a heading: {key}",
+            )
+            for block, spans in cuts.items():
+                content = list(blocks[block]["content"])
+                for lo, hi in sorted(spans, reverse=True):
+                    del content[lo:hi]
+                blocks[block] = {**blocks[block], "content": usj.joined(content)}
+            # Paragraphs the run empties go, and so does a blank line among them.
+            doc = usj.with_blocks(
+                doc,
+                (
+                    block
+                    for b, block in enumerate(blocks)
+                    if not start <= b <= end or block.get("content")
+                ),
+            )
+            verse = scripture.verses(doc)[home]
+            note = edition_note(
+                f"{key}@omission{index}",
+                home,
+                usj.parse(omission["note"], fragment=True),
+                {"declared": None},
+            )
+            doc = scripture.edited(
+                doc, [(verse, len(verse.text), len(verse.text), [note])]
+            )
+    return doc
 
 
 def pinned(

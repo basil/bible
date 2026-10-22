@@ -362,6 +362,15 @@ class AlexandrinusPassagesMoves(TypedDict, total=False):
     verses: ReadOnly[str]
 
 
+class AlexandrinusPassagesOmissions(TypedDict):
+    verses: ReadOnly[tuple[str, ...]]
+    note_target: ReadOnly[str]
+    note: ReadOnly[str]
+    source_notes: ReadOnly[Mapping[str, str]]
+    swete: ReadOnly[Swete]
+    why: ReadOnly[str]
+
+
 AlexandrinusReadingsNoteEdits = TypedDict(
     "AlexandrinusReadingsNoteEdits",
     {
@@ -575,6 +584,7 @@ Decision = TypedDict(
         "lemma": ReadOnly[str | None],
         "moved_to": ReadOnly[str],
         "moves": ReadOnly[tuple[AlexandrinusPassagesMoves, ...]],
+        "omissions": ReadOnly[tuple[AlexandrinusPassagesOmissions, ...]],
         "note": ReadOnly[str | None],
         "note_at": ReadOnly[int],
         "note_edits": ReadOnly[Mapping[str, AlexandrinusReadingsNoteEdits]],

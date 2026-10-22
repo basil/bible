@@ -7845,7 +7845,7 @@
     "1KI 14:1-20": {
       "appendix": "\\ip 14. \\it Verses\\it* 1 to 20. The substance of these verses is found in the Vatican copy after \\it v\\it*. 24, \\it chap\\it*. 12.  \n",
       "kjv": true,
-      "why": "Supply the twenty verses from the King James Version, as 1 Kingdoms 23:12 is supplied: Brenton gives no English, saying only that the Alexandrine text has them (his 14:21 note: 1879 physical page 486 and 1900 physical page 482, printed page 470) and, in his Appendix, that the Vatican text has their substance after 12:24, and Swete prints A’s Greek entire (vol. I, pp. 714–715), which broadly corresponds to the Hebrew but has the departures recorded below. Where A departs from the Hebrew the King James words are conformed to it, the displaced words noted as the Hebrew’s: at 14:2 A lacks the Hebrew’s I pray thee (ἀνάστηθι καὶ ἀλλοιωθήσῃ), at 14:8 its only (ποιῆσαι ἕκαστος τὸ εὐθές), and at 14:10 its behold (διὰ τοῦτο ἐγὼ ἄγω); at 14:3 A reads τῷ ἀνθρώπῳ τοῦ θεοῦ ἄρτους καὶ κολλυρίδα τοῖς τέκνοις αὐτοῦ καὶ σταφίδας καὶ στάμνον μέλιτος, rendered with Brenton’s words for the Vatican’s form of the verse at 12:24h (loaves for the man of God, and cakes for his children, and grapes, and a pot of honey), but a cake for A’s singular κολλυρίδα, and raisins, Brenton’s word for σταφίς at 2 Kingdoms 16:1, for grapes; at 14:10 A adds πρὸς σέ, rendered upon thee; at 14:17 A reads εἰς γῆν Σαριρά, Brenton’s the land of Sarira (11:43), for the Hebrew’s Tirzah. The King James words are also kept at 14:9, where A has θεοὺς ἑτέρους χωνευτά, other molten gods; at 14:15, where A has ὁ ἄνεμος, the wind, for the reed, and ἐκτελεῖ, make an end of, for root up; and at 14:16, where A names the Lord as the one who gives Israel up. The names are respelled by their bearers to Brenton’s forms in this book: Abia, Achia, Selom, and Nabat for Nadab, as Brenton names him at 15:25 and 15:31 and A at 14:20 (Swete p. 715), though A writes Ναδαβ at 15:25 and 15:31 (pp. 717–718). A’s ἐπιλέξω οἴκου Ἰεροβοάμ at 14:10, for the Hebrew’s taking away of the remnant, and its πλήξει at 14:14, shall smite, for the Hebrew’s cut off, are left as the King James has them, as are 14:4, where A has ὁ ἄνθρωπος πρεσβύτερος τοῦ ἰδεῖν, the man was too old to see, and 14:5, where A tells her coming in as past (καὶ ἐγένετο ἐν τῷ εἰσέρχεσθαι αὐτὴν καὶ αὐτὴ ἀπεξενοῦτο) where the King James has the Lord’s it shall be; A’s ἕκαστος at 14:8 (ποιῆσαι ἕκαστος τὸ εὐθές), a nominative that does not construe with the sentence, is likewise left unrendered; at 14:10 the King James him that pisseth against the wall, which A and the Hebrew both have, is Brenton’s every male, as he renders it in the Vatican’s telling at 12:24m. The Vatican’s 12:24a–z stay as Brenton has them: he reports only that Alexandrinus supplies these verses. Both Bagster printings give the remark (1879 physical page 1150; 1900 physical page 1146, printed page 1134): “14. Verses 1 to 20. The substance of these verses is found in the Vatican copy after v. 24, chap. 12.” Swete (vol. I, pp. 714–715) prints the entire addition in his apparatus under A, ending A (om B); B’s main text proceeds from 13:34 to 14:21. Other King James departures from A are kept without new translations; the note says conformed where noted, not that this is a complete translation of A.",
+      "why": "Supply 14:1–20 from the King James Version and adapt it to the Alexandrinus text printed by Swete I pp. 714–715 (A, om B). Brenton reports the addition at 14:21 and in his Appendix, but gives no English. Retain matching KJV clauses; adapt Brenton’s English from the Vatican parallel at 12:24g–n and his usage elsewhere where A differs. Each change below records its Greek, English derivation, and displaced KJV or Hebrew reading. Irregular constructions are explained explicitly; unresolved each and with at 14:8 remain in the note rather than receiving a conjectural translation. At 14:15 retain the KJV beyond the river for απο περαν του ποταμου: the scattering is beyond the river, and Brenton likewise renders απο του περαν του Ιορδανου locatively as on the other side of Jordan at Joshua 14:2, rather than requiring English from. The separate omission follows Swete p. 708: A lacks all of 12:24a–z, so both accounts must not stand in the main text. Brenton’s source notes and Appendix notice remain exactly pinned. Names are revised by their bearers at the revise stage. The Hebrew of 14:14–17 is checked against the Masoretic text (https://mechon-mamre.org/p/pt/pt09a14.htm): that day, beyond the river, and threshold of the door are identified as KJV renderings, not falsely attributed as different Hebrew words.",
       "swete": {
         "volume": 1,
         "page": 714,
@@ -7853,14 +7853,14 @@
         "reading": "XIV 1–20 εν τω καιρω εκεινω ηρρωστη|στησεν Αβια υιος Ιεροβοαμ· … και εβασιλευσεν Ναβατ· υιος|αυτου αντ αυτου| A (om B)",
         "agrees": true
       },
-      "supplied": ["for", "the", "man", "of", "God", "cake", "his", "children", "raisins", "pot", "thee", "land", "Sarira", "every", "male"],
+      "supplied": ["for", "the", "man", "of", "God", "cake", "his", "children", "raisins", "pot", "thee", "land", "Sarira", "every", "male", "and", "dim", "old", "to", "too", "was", "came", "pass", "body", "gather", "gathered", "is", "out", "them", "dead", "smite", "moved", "wind", "an", "end", "make", "from", "lord", "went", "as", "entered", "house", "into", "it", "porch", "that", "enters", "foot", "this", "off", "feigned"],
       "insertions": [
         {
           "before": "14:21",
           "verses": [
             {
               "reference": "14:1",
-              "note": "\\fl Alex. \\ft has verses 1–20. \\fl Vat. \\ft omits them, and has their substance at 12:24g–n; the English is supplied from the KJV, conformed to \\fl Alex. \\ft where noted."
+              "note": "\\fl Alex. \\ft has verses 1–20; \\fl Vat. \\ft omits. English supplied from the KJV, adapted to \\fl Alex. \\ft in Brenton’s idiom. The Vatican parallel after 12:24 is omitted with \\fl Alex."
             },
             {
               "reference": "14:2"
@@ -7954,17 +7954,94 @@
           }
         },
         {
-          "target": "1KI 14:8",
-          "from": "\\add that\\add* only which",
-          "lemma": "that",
-          "note": "\\fl Heb. \\ft adds \\fq only\\ft .",
-          "why": "A reads ποιῆσαι ἕκαστος τὸ εὐθές, without the Hebrew’s only.",
+          "target": "1KI 14:4",
+          "from": "But Ahijah could not see; for his eyes were set by reason of his age.",
+          "note": "\\fl Heb. \\fq But Ahijah could not see; for his eyes were set by reason of his age\\ft .",
+          "why": "A: και ο ανθρωπος πρεσβυτερος του ιδειν· και ημβλυωπουν οι οφθαλμοι αυτου απο γηρους αυτου. Adapt Brenton’s man was old and eyes were dim at 12:24i; his too old to construction is at Ruth 1:12. A expressly makes age the impediment to sight. The Hebrew differs (ואחיהו לא יכל לראות כי קמו עיניו), so the displaced wording is labelled Heb.",
           "english": {
             "source": "from",
             "edits": [
               {
-                "span": [14, 19],
-                "to": ""
+                "span": [0, 69],
+                "to": "And the man was too old to see; and his eyes were dim by reason of his age."
+              }
+            ]
+          },
+          "lemma": "And the man was too old to see; and his eyes were dim by reason of his age"
+        },
+        {
+          "target": "1KI 14:5",
+          "from": "thus and thus shalt thou say unto her: for it shall be, when she cometh in, that she shall feign herself to be another \\add woman\\add*.",
+          "note": "\\fl Heb. \\fq thus and thus shalt thou say unto her: for it shall be, when she cometh in, that she shall feign herself to be another woman\\ft .",
+          "why": "A closes the Lord’s speech after προς αυτην and resumes narration: και εγενετο εν τω εισερχεσθαι αυτην και αυτη απεξενουτο. Retain the KJV feign herself to be another woman construction, changing the prediction to past narration and its opening to And it came to pass. Woman remains supplied as in the KJV. The lemma and displaced reading include the preceding speech-ending clause so substitution restores its colon as well as its words. The Hebrew consonants (ויהי כבאה) agree with A, but the Masoretic pointing וִיהִי makes them future, which the KJV renders, so the displaced wording is labelled Heb.",
+          "english": {
+            "source": "from",
+            "edits": [
+              {
+                "span": [0, 135],
+                "to": "thus and thus shalt thou say unto her: And it came to pass, when she came in, that she feigned herself to be another \\add woman\\add*."
+              }
+            ]
+          },
+          "lemma": "thus and thus shalt thou say unto her: And it came to pass, when she came in, that she feigned herself to be another woman"
+        },
+        {
+          "target": "1KI 14:6",
+          "from": "for I \\add am\\add* sent to thee \\add with\\add* heavy \\add tidings\\add*.",
+          "note": null,
+          "why": "A: και εγω ειμι αποστολος προς σε σκληρος. Keep the KJV sent construction and heavy tidings, changing for to and for και. A explicitly has ειμι, so am is no longer marked supplied; with and tidings remain supplied to express the messenger’s relation to his message.",
+          "english": {
+            "source": "from",
+            "edits": [
+              {
+                "span": [0, 71],
+                "to": "and I am sent to thee \\add with\\add* heavy \\add tidings\\add*."
+              }
+            ]
+          }
+        },
+        {
+          "target": "1KI 14:8",
+          "from": "\\add that\\add* only which \\add was\\add* right",
+          "note": "\\fl Heb. \\ft adds \\fq only\\ft . The Greek has \\fq each \\ft in the nominative without a clear referent; the King James construction is retained, with this irregular word recorded here rather than rendered as \\fq everything\\ft . The Greek also inserts \\fq with \\ft before \\fq the kingdom\\ft , without a construction.",
+          "why": "A: ποιησαι εκαστος το ευθες. Remove the Hebrew only, retaining the KJV to do that which was right. The nominative εκαστος, each, has no clear referent after the singular David; turning it into everything would require a conjectural accusative εκαστον. Keep this unresolved word in the note under the rule that doubtful readings stay as the source has them. A also inserts συν before το βασιλειον without a construction; record it in the same note rather than silently repair it.",
+          "english": {
+            "source": "from",
+            "edits": [
+              {
+                "span": [0, 45],
+                "to": "\\add that\\add* which \\add was\\add* right"
+              }
+            ]
+          },
+          "lemma": "that"
+        },
+        {
+          "target": "1KI 14:9",
+          "from": "other gods, and molten images",
+          "note": "\\fl Heb. \\fq other gods, and molten images\\ft .",
+          "why": "A: θεους ετερους χωνευτα. Retain the KJV nouns and order, omitting and: neuter χωνευτα is a substantive in apposition to masculine θεους ετερους, not an agreeing adjective. The apposition keeps the irregular construction without silently changing χωνευτα to χωνευτους.",
+          "english": {
+            "source": "from",
+            "edits": [
+              {
+                "span": [0, 29],
+                "to": "other gods, molten images"
+              }
+            ]
+          }
+        },
+        {
+          "target": "1KI 14:9",
+          "from": "behind thy back",
+          "note": "\\fl Heb. \\fq behind thy back\\ft .",
+          "why": "A: οπισω σωματος σου, body, rather than the Hebrew back. Brenton renders σωμα by body, for example at 1 Kingdoms 31:10; inflect the possessive as in the KJV.",
+          "english": {
+            "source": "from",
+            "edits": [
+              {
+                "span": [0, 15],
+                "to": "behind thy body"
               }
             ]
           }
@@ -8016,24 +8093,259 @@
           }
         },
         {
-          "target": "1KI 14:17",
-          "from": "Tirzah",
-          "note": "\\fl Heb. \\fq Tirzah\\ft .",
-          "why": "A reads εἰς γῆν Σαριρά, the name Brenton’s text has for Jeroboam’s city.",
+          "target": "1KI 14:10",
+          "from": "will take away the remnant of the house of Jeroboam, as \\add a man\\add* taketh away dung, till it be all gone",
+          "note": "\\fl Heb. \\fq will take away the remnant of the house of Jeroboam, as a man taketh away dung\\ft . The Greek spells the passive \\fq is gathered \\ft with a final epsilon in place of alpha-iota; the comparison is with dung gathered away.",
+          "why": "A: επιλεξω οικου Ιεροβοαμ· καθως επιλεγετε η κοπρος ως τελιωθηναι αυτον. Render the gathering/removal comparison in context, using Brenton’s gather them out of at Ezekiel 11:17 and dung at 4 Kingdoms 9:37. The partitive genitive οικου is expressed by out of the house, with them supplied from the preceding people; επιλεγετε is read as passive επιλεγεται with the phonetic epsilon/alpha-iota spelling interchange. No remnant occurs in A; retain till it be all gone without specifying the referent of αυτον. The Hebrew differs (ובערתי אחרי, sweep away after, the KJV remnant), so the displaced wording is labelled Heb.",
           "english": {
             "source": "from",
             "edits": [
               {
-                "span": [0, 6],
-                "to": "the land of Sarira"
+                "span": [0, 109],
+                "to": "will gather \\add them\\add* out of the house of Jeroboam, as dung is gathered, till it be all gone"
+              }
+            ]
+          },
+          "lemma": "will gather them out of the house of Jeroboam, as dung is gathered"
+        },
+        {
+          "target": "1KI 14:11",
+          "from": "Him that dieth of Jeroboam in the city shall the dogs eat",
+          "note": "\\fl Heb. \\fq Him that dieth of Jeroboam\\ft .",
+          "why": "A begins οι τεθνηκοτες του Ιεροβοαμ, plural, before the singular τον τεθνηκοτα εν τω αγρω. Use Brenton’s the dead of Jeroboam from the Vatican parallel at 12:24m.",
+          "english": {
+            "source": "from",
+            "edits": [
+              {
+                "span": [0, 57],
+                "to": "The dead of Jeroboam in the city shall the dogs eat"
+              }
+            ]
+          },
+          "lemma": "The dead of Jeroboam"
+        },
+        {
+          "target": "1KI 14:12",
+          "from": "Arise thou therefore, get thee to thine own house",
+          "note": null,
+          "why": "A: και συ· αναστασα πορευθητι εις τον οικον σου. Keep the KJV arise thou and get thee to thine own house, supplying no new auxiliary. A has no causal therefore; and renders και.",
+          "english": {
+            "source": "from",
+            "edits": [
+              {
+                "span": [0, 49],
+                "to": "And arise thou, get thee to thine own house"
               }
             ]
           }
+        },
+        {
+          "target": "1KI 14:12",
+          "from": "when thy feet enter into the city",
+          "note": "\\fl Heb. \\fq thy feet enter\\ft .",
+          "why": "A: εν τω εισερχεσθαι ποδα σου την πολιν, singular foot, rather than the Hebrew’s feet. Use Brenton’s thy foot (Ecclesiastes 4:17) and inflect KJV enter for the singular subject; the revise stage supplies the regular archaic inflection.",
+          "english": {
+            "source": "from",
+            "edits": [
+              {
+                "span": [0, 33],
+                "to": "when thy foot enters into the city"
+              }
+            ]
+          },
+          "lemma": "thy foot enters"
+        },
+        {
+          "target": "1KI 14:14",
+          "from": "shall cut off the house of Jeroboam",
+          "note": "\\fl Heb. \\fq shall cut off the house of Jeroboam\\ft .",
+          "why": "A: πληξει τον οικον Ιεροβοαμ. Brenton uses smite at Deuteronomy 28:22; inflect it for A’s future πληξει; this is a different verb from the Hebrew cutting off.",
+          "english": {
+            "source": "from",
+            "edits": [
+              {
+                "span": [0, 35],
+                "to": "shall smite the house of Jeroboam"
+              }
+            ]
+          }
+        },
+        {
+          "target": "1KI 14:14",
+          "from": "that day",
+          "note": "\\fl KJV \\fq that day\\ft .",
+          "why": "A: ταυτη τη ημερα. Brenton’s this day is used throughout his translation, for example Deuteronomy 4:26. The Hebrew also has זה היום, this day: that day is the KJV’s rendering, not a distinct Hebrew reading.",
+          "english": {
+            "source": "from",
+            "edits": [
+              {
+                "span": [0, 8],
+                "to": "this day"
+              }
+            ]
+          }
+        },
+        {
+          "target": "1KI 14:15",
+          "from": "For the",
+          "note": null,
+          "why": "A begins κυριος πληξει, without a causal conjunction. Remove KJV For, retaining the following Lord and verb.",
+          "english": {
+            "source": "from",
+            "edits": [
+              {
+                "span": [0, 7],
+                "to": "The"
+              }
+            ]
+          }
+        },
+        {
+          "target": "1KI 14:15",
+          "from": "as a reed is shaken in the water",
+          "note": "\\fl Heb. \\fq a reed is shaken\\ft .",
+          "why": "A: καθα κινιται ο ανεμος εν τω υδατι. Keep the manuscript’s wind and in the water, without silently changing either to the Hebrew reed or to over the water. Adapt Brenton’s moved (Psalm 95:10) to κινιται, and his wind for ανεμος at Ecclesiastes 1:6; combine these in the existing KJV construction.",
+          "english": {
+            "source": "from",
+            "edits": [
+              {
+                "span": [0, 32],
+                "to": "as the wind is moved in the water"
+              }
+            ]
+          },
+          "lemma": "the wind is moved"
+        },
+        {
+          "target": "1KI 14:15",
+          "from": "he shall root up Israel",
+          "note": "\\fl Heb. \\fq root up Israel\\ft .",
+          "why": "A: εκτελει τον Ισραηλ. Brenton renders the same verb by make an end of at Ezekiel 20:17; retain the existing KJV subject and future.",
+          "english": {
+            "source": "from",
+            "edits": [
+              {
+                "span": [0, 23],
+                "to": "he shall make an end of Israel"
+              }
+            ]
+          },
+          "lemma": "make an end of Israel"
+        },
+        {
+          "target": "1KI 14:15",
+          "from": "out of this good land",
+          "note": "\\fl KJV \\fq out of\\ft .",
+          "why": "A: απο ανω της χθονος της αγαθης ταυτης. Use Brenton’s from off the good land (Deuteronomy 11:17), expressing the Greek removal from its surface after make an end of; out of is the KJV’s phrasing.",
+          "english": {
+            "source": "from",
+            "edits": [
+              {
+                "span": [0, 21],
+                "to": "from off this good land"
+              }
+            ]
+          },
+          "lemma": "from off"
+        },
+        {
+          "target": "1KI 14:16",
+          "from": "And he shall give Israel up",
+          "note": "\\fl Heb. \\fq he\\ft .",
+          "why": "A: και παραδωσει κυριος τον Ισραηλ. Name the explicit subject; Brenton’s give up vocabulary is at Ezekiel 32:15, adapted here to A’s παραδωσει.",
+          "english": {
+            "source": "from",
+            "edits": [
+              {
+                "span": [0, 27],
+                "to": "And the Lord shall give Israel up"
+              }
+            ]
+          },
+          "lemma": "the Lord"
+        },
+        {
+          "target": "1KI 14:17",
+          "from": "and departed, and came to Tirzah",
+          "note": "\\fl Heb. \\fq and departed, and came to Tirzah\\ft .",
+          "why": "A: και επορευθη εις γην Σαριρα. One verb of travel, not the KJV’s two; Brenton’s went and land of Sarira are at 12:24g and 11:43.",
+          "english": {
+            "source": "from",
+            "edits": [
+              {
+                "span": [0, 32],
+                "to": "and went to the land of Sarira"
+              }
+            ]
+          },
+          "lemma": "and went to the land of Sarira"
+        },
+        {
+          "target": "1KI 14:17",
+          "from": "\\add and\\add* when she came to the threshold of the door, the child died",
+          "note": "\\fl KJV \\fq and when she came to the threshold of the door, the child died\\ft .",
+          "why": "A: και εγενετο ως εισηλθεν εν τω προθυρω του οικου και το παιδαριον απεθανεν. Adapt Brenton’s and it came to pass as she entered ... that the child died at 12:24n; porch of the house is his rendering of προθυρον του οικου at Genesis 43:19. This is the house, not an English substitution of the city mentioned in the Vatican parallel. The Hebrew also names the house (בסף הבית); door belongs to the KJV’s English, so the displaced wording is labelled KJV.",
+          "english": {
+            "source": "from",
+            "edits": [
+              {
+                "span": [0, 72],
+                "to": "and it came to pass, as she entered into the porch of the house, that the child died"
+              }
+            ]
+          },
+          "lemma": "and it came to pass, as she entered into the porch of the house, that the child died"
         }
       ],
       "source_notes": {
         "1KI 14:21": "\\ft The first 20 verses of this chapter are supplied by the \\fqa Alex. \\ft See \\fqa App."
-      }
+      },
+      "omissions": [
+        {
+          "verses": [
+            "12:24a",
+            "12:24b",
+            "12:24c",
+            "12:24d",
+            "12:24e",
+            "12:24f",
+            "12:24g",
+            "12:24h",
+            "12:24i",
+            "12:24k",
+            "12:24l",
+            "12:24m",
+            "12:24n",
+            "12:24o",
+            "12:24p",
+            "12:24q",
+            "12:24r",
+            "12:24s",
+            "12:24t",
+            "12:24u",
+            "12:24x",
+            "12:24y",
+            "12:24z"
+          ],
+          "note_target": "12:24",
+          "note": "\\fl Vat. \\ft adds the passage numbered 24a–z, which \\fl Alex. \\ft omits; its account of Abia’s sickness is another form of 14:1–20.",
+          "source_notes": {
+            "1KI 12:24a": "\\fqa Gr. \\ft in his reigning.",
+            "1KI 12:24g": "\\fqa Gr. \\ft live.",
+            "1KI 12:24i": "\\fqa Gr. \\ft were blunted from seeing.",
+            "1KI 12:24r": "\\fqa Gr. \\ft dispersed.",
+            "1KI 12:24r#2": "\\fqa Gr. \\ft littleness."
+          },
+          "swete": {
+            "volume": 1,
+            "page": 708,
+            "evidence": "apparatus",
+            "reading": "24a–z om και ο βασιλευς...κατα το ρημα Κυριου A",
+            "agrees": true
+          },
+          "why": "Swete I p. 708 explicitly records that A omits the entire Vatican addition after 12:24, from και ο βασιλευς to κατα το ρημα Κυριου, not just the child’s sickness. Remove Brenton’s lettered verses as one run, with their source glosses pinned here; the full wording and glosses remain in the source and review. A instead contains 14:1–20 (pp. 714–715), supplied by this decision."
+        }
+      ]
     },
     "EZK 1:14": {
       "kjv": true,

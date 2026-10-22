@@ -223,9 +223,9 @@
       "why": "Where this edition prints the verse Alexandrinus has, named as a number rather than cited, as the note at Romans 16:24 names the doxology's."
     },
     "1KI 14:1": {
-      "source": "12:24g–n",
+      "source": "12:24",
       "not_a_citation": true,
-      "why": "Where the Vatican text has their substance, named as a number rather than cited, as the note at Romans 16:24 names where the doxology stands: the note is about the two texts' telling of the story, not a reference to be followed."
+      "why": "The omitted Vatican addition after 12:24 is named as a source location, not linked as scripture printed here."
     },
     "1KI 16:28d": {
       "source": "1 Kings 22. 46-50",
@@ -511,6 +511,11 @@
       "passages": "EXO 22:29",
       "print": "{EXO} 22:29",
       "why": "Brenton cites Exodus by his printed numbers, which here are the King James Bible's and this edition's. His 22:29 gives the first-born to the Lord; eBible's transcription numbers that verse 22:28, as Rahlfs does."
+    },
+    "1KI 14:1-20@omission1": {
+      "source": "14:1–20",
+      "not_a_citation": true,
+      "why": "The note compares the Vatican addition with the Alexandrine account by its verse numbers, rather than making a source-form Brenton citation."
     }
   },
   "names": {}

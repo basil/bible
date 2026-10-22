@@ -3425,10 +3425,6 @@
       "lemma": "made haste",
       "why": "prevented renders made haste"
     },
-    "1KI 12:24i": {
-      "lemma": "were dim",
-      "why": "were blunted from seeing renders were dim; eyes remains"
-    },
     "1KI 12:28": {
       "lemma": "to have gone",
       "why": "Gr. to go renders to have gone"
@@ -5298,6 +5294,18 @@
     "LEV 16:32": {
       "lemma": "whomsoever they shall consecrate",
       "why": "Whosesoever hands they shall accomplish renders whomsoever they shall consecrate; to exercise the priestly office is the Greek’s next word (ἱερατεύειν)."
+    },
+    "1KI 14:1-20@6": {
+      "sentence": true,
+      "why": "The note ends with a complete explanatory sentence after its opening reading, so its final full stop stays."
+    },
+    "1KI 14:1-20@12": {
+      "sentence": true,
+      "why": "The note ends with a complete explanatory sentence after its opening reading, so its final full stop stays."
+    },
+    "1KI 14:1-20@omission1": {
+      "sentence": true,
+      "why": "The note explains the omitted passage in a complete sentence, so its final full stop stays."
     }
   },
   "shapes": {

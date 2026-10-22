@@ -3,6 +3,7 @@ carried out on his books before anything else reads them."""
 
 from __future__ import annotations
 
+import copy
 from collections.abc import Mapping
 from typing import Any
 
@@ -661,3 +662,126 @@ def test_a_passage_moves_whole_paragraphs_before_a_verse_and_notes_both_places(
     both = {"GEN 99:23": passage, "GEN 99:20": beside}
     with pytest.raises(CheckFailed, match="beside an inserted verse"):
         promoted(decided(policy, passages=both), body, kjv=kjv)
+
+
+def test_a_passage_omission_removes_all_its_paragraphs_and_pins_its_notes(
+    declared: bible.policy.Policy,
+) -> None:
+    original = book(
+        "GEN",
+        r"\v 21 Before."
+        "\n\\p\n"
+        r"\v 21a First \f + \fr 99:21a \ft A source gloss.\f*addition."
+        "\n\\p\nIts continuation.\n"
+        r"\v 21b Second addition."
+        "\n\\p\n"
+        r"\v 22 After.",
+    )
+    snapshot = copy.deepcopy(original)
+    omission = {
+        "verses": ["99:21a", "99:21b"],
+        "note_target": "99:21",
+        "note": r"\fl Vat. \ft adds verses 21a–b; \fl Alex. \ft omits them.",
+        "source_notes": {"GEN 99:21a": r"\ft A source gloss."},
+        "why": "Alexandrinus omits the complete addition.",
+        "swete": SWETE,
+    }
+    policy = decided(declared, passages={"GEN 99:22": {"omissions": [omission]}})
+    result = alexandrinus.with_omissions("GEN", original, policy)
+    verses = scripture.verses(result)
+    assert list(verses) == ["99:21", "99:22"]
+    assert verses["99:21"].text == "Before."
+    assert verses["99:22"].text == "After."
+    assert "adds verses 21a–b" in usj.text_of(verses["99:21"].notes[0][1]["content"])
+    assert "addition" not in usj.text_of(result["content"])
+    assert original == snapshot
+    for changed_omission, message in (
+        ({**omission, "verses": []}, "Missing or repeated"),
+        ({**omission, "verses": ["99:21a", "99:21a"]}, "Missing or repeated"),
+        ({**omission, "verses": ["99:21a", "99:25"]}, "Missing or repeated"),
+        ({**omission, "verses": ["99:21b", "99:21a"]}, "one run"),
+        ({**omission, "verses": ["99:21b"]}, "one run"),
+        ({**omission, "source_notes": {}}, "unaccounted source note"),
+        (
+            {**omission, "source_notes": {"GEN 99:21a": r"\ft Changed."}},
+            "source note changed",
+        ),
+    ):
+        policy = decided(
+            declared, passages={"GEN 99:22": {"omissions": [changed_omission]}}
+        )
+        with pytest.raises(CheckFailed, match=message):
+            alexandrinus.with_omissions("GEN", original, policy)
+    # Reapplying a completed omission is stale, rather than silently accepted.
+    with pytest.raises(CheckFailed, match="Missing or repeated"):
+        alexandrinus.with_omissions(
+            "GEN",
+            result,
+            decided(declared, passages={"GEN 99:22": {"omissions": [omission]}}),
+        )
+
+
+def test_kingdoms_has_only_the_alexandrine_account(
+    edition: bible.pipeline.Edition,
+) -> None:
+    verses = scripture.verses(edition.documents["1KI"])
+    assert not any(label.startswith("12:24") and label != "12:24" for label in verses)
+    labels = list(verses)
+    assert labels[labels.index("12:24") + 1] == "12:25"
+    assert all(f"14:{n}" in verses for n in range(1, 21))
+    for reference, phrase in (
+        ("14:4", "too old to see"),
+        ("14:5", "she feigned herself to be another woman"),
+        ("14:8", "to do that which was right"),
+        ("14:9", "other gods, molten images"),
+        ("14:5", "say to her. And it came to pass"),
+        ("14:12", "thy foot entereth"),
+        ("14:14", "this day"),
+        ("14:15", "from off this good land"),
+        ("14:10", "as dung is gathered"),
+        ("14:14", "shall smite the house"),
+        ("14:15", "the wind is moved in the water"),
+        ("14:15", "make an end of Israel"),
+        ("14:16", "the Lord shall give Israel up"),
+    ):
+        assert phrase in verses[reference].text
+
+
+def test_a_passage_omission_takes_its_blank_lines_and_refuses_a_heading_before_it(
+    declared: bible.policy.Policy,
+) -> None:
+    omission = {
+        "verses": ["99:21a", "99:21b"],
+        "note_target": "99:21",
+        "note": r"\fl Vat. \ft adds verses 21a–b; \fl Alex. \ft omits them.",
+        "source_notes": {},
+        "why": "Alexandrinus omits the complete addition.",
+        "swete": SWETE,
+    }
+    policy = decided(declared, passages={"GEN 99:22": {"omissions": [omission]}})
+    poem = book(
+        "GEN",
+        r"\v 21 Before."
+        "\n\\q1\n"
+        r"\v 21a First addition."
+        "\n\\b\n\\q1\n"
+        r"\v 21b Second addition."
+        "\n\\p\n"
+        r"\v 22 After.",
+    )
+    result = alexandrinus.with_omissions("GEN", poem, policy)
+    paragraphs = [block for block in result["content"] if block["type"] == "para"]
+    assert [block["marker"] for block in paragraphs] == ["p", "p"]
+    assert list(scripture.verses(result)) == ["99:21", "99:22"]
+    headed = book(
+        "GEN",
+        r"\v 21 Before."
+        "\n\\s1 The addition\n\\p\n"
+        r"\v 21a First addition."
+        "\n\\p\n"
+        r"\v 21b Second addition."
+        "\n\\p\n"
+        r"\v 22 After.",
+    )
+    with pytest.raises(CheckFailed, match="crosses a heading"):
+        alexandrinus.with_omissions("GEN", headed, policy)
