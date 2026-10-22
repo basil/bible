@@ -1210,11 +1210,59 @@ def addressed(i: Instruction, context: Reconciliation) -> bool:
     return bool(edits) and all(covered(e) for e in edits)
 
 
+def sources_of_wording(rows: Sequence[Disposition]) -> list[str]:
+    """The rows carried out, by where their wording comes from (their
+    `from:` tags: a row that draws on more than one source counts under
+    each, and one with no wording of its own, a verse moved or omitted or a
+    correction of shared Greek, under none) and by their disposition, each
+    with its share of the rows, and how many rows draw on two sources or
+    more, so that the source table's total reconciles with the rows."""
+    executed = [r for r in rows if r.get("execution") == "applied"]
+    sources: Counter[str] = Counter()
+    several: Counter[int] = Counter()
+    for r in executed:
+        tags = [t.removeprefix("from:") for t in r["tags"] if t.startswith("from:")]
+        sources.update(tags or ["(none)"])
+        if len(tags) > 1:
+            several[len(tags)] += 1
+    dispositions = Counter(r["disposition"] for r in executed)
+
+    def table(head: str, counts: Counter[str]) -> list[str]:
+        ordered = sorted(
+            counts.items(), key=lambda kv: (kv[0] == "(none)", -kv[1], kv[0])
+        )
+        return [
+            f"| {head} | Rows | Share |",
+            "| --- | --- | --- |",
+            *(f"| {k} | {n} | {100 * n / len(executed):.1f}% |" for k, n in ordered),
+            "",
+        ]
+
+    return [
+        "## Sources of wording",
+        "",
+        "Of the rows executed, a row whose wording draws on more than one "
+        "source counts under each; a verse moved or omitted, or a correction "
+        "of shared Greek, has no source of wording.",
+        "",
+        "Rows drawing on more than one source: "
+        + (
+            ", ".join(f"{n} on {k} sources" for k, n in sorted(several.items())) + "."
+            if several
+            else "none."
+        ),
+        "",
+        *table("Source", sources),
+        *table("Disposition", dispositions),
+    ]
+
+
 def summary(context: Reconciliation) -> str:
     """The reconciliation in figures, for the review: how many units (and
-    corrections of shared Greek) of each disposition, how each witness's rows
-    were read, the inventory rows that match no unit, and the verses the
-    CrossWire bridge could not align."""
+    corrections of shared Greek) of each disposition, where the wording of
+    the rows executed comes from, how each witness's rows were read, the
+    inventory rows that match no unit, and the verses the CrossWire bridge
+    could not align."""
     c = Counter
     lines = ["# The Byzantine New Testament", ""]
     rows = context.verified.dispositions
@@ -1229,6 +1277,7 @@ def summary(context: Reconciliation) -> str:
         f"Rows executed: {sum(1 for r in rows if r.get('execution') == 'applied')}; refused: {sum(1 for r in rows if r.get('execution') == 'refused')}.",
         "",
     ]
+    lines += sources_of_wording(rows)
     lines += ["## Witnesses", "", "| Witness | Rows | Scope |", "| --- | --- | --- |"]
     witnesses: defaultdict[str, list[str | None]] = defaultdict(list)
     for r in context.apparatuses.reports:

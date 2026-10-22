@@ -678,10 +678,60 @@ def test_the_summary_counts_the_dispositions(byzantine: Reconciliation) -> None:
     text = review.summary(byzantine)
     assert text.startswith("# The Byzantine New Testament\n")
     counts = Counter(r["disposition"] for r in byzantine.verified.dispositions)
+    # Only the dispositions table: the sources of wording tabulate the rows
+    # executed by disposition too.
+    table = text.split("## Dispositions\n")[1].split("\n## ")[0]
     for disposition, number in counts.items():
-        assert f"| {disposition} | {number} |" in text
+        assert f"| {disposition} | {number} |\n" in table
     for name, result in byzantine.verified.invariants.items():
         assert f"- {name}: {result}" in text
+
+
+def test_the_summary_tallies_the_sources_of_wording(
+    byzantine: Reconciliation,
+) -> None:
+    text = review.summary(byzantine)
+    executed = [
+        r for r in byzantine.verified.dispositions if r.get("execution") == "applied"
+    ]
+    assert executed
+    froms = [
+        [t.removeprefix("from:") for t in r["tags"] if t.startswith("from:")]
+        for r in executed
+    ]
+    # Every row carried out says where its wording comes from, one source or
+    # more, but a verse moved or omitted and a correction of shared Greek,
+    # which have no wording of their own.
+    assert all(
+        bool(tags) == (r["disposition"] not in {"structural", "shared"})
+        for r, tags in zip(executed, froms, strict=True)
+    )
+    sources = Counter(t for tags in froms for t in tags or ["(none)"])
+    dispositions = Counter(r["disposition"] for r in executed)
+    section = text.split("## Sources of wording\n")[1].split("\n## ")[0]
+    several = Counter(len(tags) for tags in froms if len(tags) > 1)
+    assert several[2]
+    assert (
+        "Rows drawing on more than one source: "
+        + ", ".join(f"{n} on {k} sources" for k, n in sorted(several.items()))
+        + "."
+    ) in section
+    printed: dict[str, list[str]] = {}
+    for head, counts in (("Source", sources), ("Disposition", dispositions)):
+        rows = (
+            section.split(f"| {head} | Rows | Share |\n| --- | --- | --- |\n")[1]
+            .split("\n\n")[0]
+            .splitlines()
+        )
+        assert len(rows) == len(counts)
+        for name, number in counts.items():
+            share = f"{100 * number / len(executed):.1f}%"
+            assert f"| {name} | {number} | {share} |" in rows
+        printed[head] = rows
+    # The source table's total reconciles with the rows executed.
+    assert sum(int(row.split(" | ")[1]) for row in printed["Source"]) == len(
+        executed
+    ) + sum(n * (k - 1) for k, n in several.items())
 
 
 # The textual variants.
