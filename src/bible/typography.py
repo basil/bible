@@ -1,5 +1,5 @@
 """Decorative opening small capitals, and typographic quotation marks,
-ellipses and dashes in place of straight quotes, triple periods and double
+ellipses, and dashes in place of straight quotes, triple periods, and double
 hyphens.
 
 SmartyPants curls each quote from the characters about it, so it is given a
@@ -161,7 +161,7 @@ def curled(text: str) -> str:
 
 
 def typographic(doc: Document) -> Document:
-    """A document with typographic quotes, ellipses and dashes."""
+    """A document with typographic quotes, ellipses, and dashes."""
     parts: list[str] = []
     leaves: list[tuple[int, str]] = []
     length = 0
@@ -200,7 +200,7 @@ def typographic(doc: Document) -> Document:
         )
         require(
             plain[i : i + n] in ("'", '"', "...", "--"),
-            "Typography changed more than quotes, ellipses and dashes",
+            "Typography changed more than quotes, ellipses, and dashes",
         )
         for step in range(n):
             leaf = bisect_right(starts, i + step) - 1
@@ -227,7 +227,7 @@ def typographic(doc: Document) -> Document:
 
 
 def count(doc: Document) -> int:
-    """How many straight quotes, triple periods and double hyphens a document has."""
+    """How many straight quotes, triple periods, and double hyphens a document has."""
     found = 0
 
     def text(value: str) -> str:

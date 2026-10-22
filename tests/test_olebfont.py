@@ -261,7 +261,7 @@ def test_original_typography_and_hint_dependencies(
         assert result_cmap[code] == mapping[g]
     for tag in ("GSUB", "GPOS"):
         # Compile the preserved lookups with the combined glyph IDs;
-        # every original ligature, value record and kerning pair must match.
+        # every original ligature, value record, and kerning pair must match.
         table = rename(deepcopy(base[tag].table), mapping)
         if tag == "GSUB":
             indices = sorted(
@@ -304,7 +304,7 @@ def test_original_typography_and_hint_dependencies(
                 else a == b
             )
         assert len(getattr(private, "Subrs", [])) == len(getattr(target, "Subrs", []))
-    # Added glyphs retain donor outlines, programs and spacing too.
+    # Added glyphs retain donor outlines, programs, and spacing too.
     _, added = donor_names(base, donor)
     for source_g, target_g in zip(added, order[len(old_order) :]):
         assert_outlines(
@@ -807,7 +807,7 @@ def test_sups_sets_every_label_the_edition_prints(style: str) -> None:
     recipes' designed superiors, never a shrunken or raised full-size glyph."""
     path = FONTS / font_file(style)
     rows = sidecar(style)
-    # Erewhon's superiors, Valkyrie's figures and npxsups' letters, as the
+    # Erewhon's superiors, Valkyrie's figures, and npxsups' letters, as the
     # sidecar names each glyph's source.
     superior = {".superior", SUFFIX, ".sup"}
 
@@ -936,7 +936,7 @@ def test_greek_is_paired_with_the_base() -> None:
 @valkyrie_only
 @pytest.mark.parametrize("style", STYLES)
 def test_valkyrie_is_untouched_but_for_its_names(style: str) -> None:
-    """Every glyph, metric, feature and kerning pair of the base survives as
+    """Every glyph, metric, feature, and kerning pair of the base survives as
     it was, with the base's notices; only the family's names change and
     the superiors are added after the base's glyphs."""
     base = TTFont(valkyrie(style))

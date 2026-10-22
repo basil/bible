@@ -167,7 +167,7 @@ def test_chapter_figures_are_lining_despite_the_base_oldstyle_font(
 ) -> None:
     # Exercise PTXprint's real font selection: removing onum from the style
     # feature list cannot disable +onum=1 embedded in the base font name, so
-    # the chapter styles select their fonts directly. Oldstyle 3, 4 and 5
+    # the chapter styles select their fonts directly. Oldstyle 3, 4, and 5
     # descend well below the baseline; lining figures do not.
     (tmp_path / "mods.sty").write_text(style_mods(), encoding="utf-8")
     probe = tmp_path / "chapter-figures.tex"
@@ -344,7 +344,7 @@ NS = {"x": "http://www.w3.org/1999/xhtml"}
 
 
 def layout(work: Path, name: str) -> ET.Element:
-    """Poppler's layout of <name>.pdf: its pages, lines and words, each word
+    """Poppler's layout of <name>.pdf: its pages, lines, and words, each word
     with its position."""
     pdf = subprocess.check_output(
         ["pdftotext", "-bbox-layout", str(work / f"{name}.pdf"), "-"], text=True
@@ -492,7 +492,7 @@ def test_peripheral_running_heads_follow_pages(tmp_path: Path) -> None:
 def test_poetry_indents_and_line_opening_verse_numbers(
     tmp_path: Path, after_verse_space_factor: float
 ) -> None:
-    """Check rendered geometry, including wraps, inline milestones and acrostics."""
+    """Check rendered geometry, including wraps, inline milestones, and acrostics."""
     work = ptxprint_project(tmp_path)
     (work / "poetry.usfm").write_text(
         r"""\id LAM

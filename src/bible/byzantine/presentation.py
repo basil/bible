@@ -24,7 +24,7 @@ def greek_display(text: str) -> str:
 
 
 def shared_greek(old: str, new: str) -> str:
-    """RP case by default; TR case for θεός, κύριος and χριστός."""
+    """RP case by default; TR case for θεός, κύριος, and χριστός."""
     letters = "".join(
         c
         for c in unicodedata.normalize("NFD", old.lower())

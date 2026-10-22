@@ -135,7 +135,7 @@ def write_project(
     for code, document in documents:
         # PTXprint needs unique physical books in reading order. Standard
         # FRT/INT identities remain in the review and web exports. PTXprint
-        # reserves FRT, INT and some source keys for its own special handling.
+        # reserves FRT, INT, and some source keys for its own special handling.
         physical = aliases.get(code, code)
         doc = usj.with_code(document, physical)
         project_usfm(project, physical).write_text(usj.serialize(doc), encoding="utf-8")

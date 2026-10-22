@@ -873,7 +873,7 @@ def structured(
     code: str, doc: Document, policy: bible.policy.Policy, *, standalone: bool = True
 ) -> Document:
     """A unit's blocks as standalone prose. A paragraph a decision describes
-    (edition/prose.json, markers), by its unit, marker and opening words,
+    (edition/prose.json, markers), by its unit, marker, and opening words,
     takes the marker the decision gives; a blank line a decision describes,
     by the words of the paragraph after it, becomes the division it gives,
     or the heading with the words it gives, and every other goes, the

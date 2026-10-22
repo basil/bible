@@ -94,7 +94,7 @@
         "note": "JOB 21:23 CCEL",
         "from": ". in Heb.",
         "to": ", in Heb.",
-        "why": "The qualification in Hebrew, Greek and the Authorized Version continues the same cross-reference sentence; separate it with a comma rather than leaving a period after the cited verse number."
+        "why": "The qualification in Hebrew, Greek, and the Authorized Version continues the same cross-reference sentence; separate it with a comma rather than leaving a period after the cited verse number."
       }
     ]
   },
@@ -349,7 +349,7 @@
     ]
   },
   "mark-fist-margin": {
-    "why": "The text adopts with the fist, so remove that repeated rendering and its in the Original introduction from the turned margin, retaining the former oft, diligently and Theophylact’s up to the elbow.",
+    "why": "The text adopts with the fist, so remove that repeated rendering and its in the Original introduction from the turned margin, retaining the former oft, diligently, and Theophylact’s up to the elbow.",
     "changes": [
       {
         "note": "MRK 7:3 oft",
@@ -365,19 +365,19 @@
         "note": "DEU 9:22",
         "from": "Taberah, Massah, and Kibroth Hattaavah",
         "to": "Taberah",
-        "why": "Brenton prints one note, Heb. Taberah, Massah, and Kibroth Hattaavah., keyed at the three callers burning, temptation and graves of lust (1844 p. 225; 1879 p. 260; 1900 p. 256), and eBible copies it at each; the edition gives each caller its own place name instead."
+        "why": "Brenton prints one note, Heb. Taberah, Massah, and Kibroth Hattaavah., keyed at the three callers burning, temptation, and graves of lust (1844 p. 225; 1879 p. 260; 1900 p. 256), and eBible copies it at each; the edition gives each caller its own place name instead."
       },
       {
         "note": "DEU 9:22#2",
         "from": "Taberah, Massah, and Kibroth Hattaavah",
         "to": "Massah",
-        "why": "Brenton prints one note, Heb. Taberah, Massah, and Kibroth Hattaavah., keyed at the three callers burning, temptation and graves of lust (1844 p. 225; 1879 p. 260; 1900 p. 256), and eBible copies it at each; the edition gives each caller its own place name instead."
+        "why": "Brenton prints one note, Heb. Taberah, Massah, and Kibroth Hattaavah., keyed at the three callers burning, temptation, and graves of lust (1844 p. 225; 1879 p. 260; 1900 p. 256), and eBible copies it at each; the edition gives each caller its own place name instead."
       },
       {
         "note": "DEU 9:22#3",
         "from": "Taberah, Massah, and Kibroth Hattaavah",
         "to": "Kibroth Hattaavah",
-        "why": "Brenton prints one note, Heb. Taberah, Massah, and Kibroth Hattaavah., keyed at the three callers burning, temptation and graves of lust (1844 p. 225; 1879 p. 260; 1900 p. 256), and eBible copies it at each; the edition gives each caller its own place name instead. Hattavah is eBible’s slip for the printed Hattaavah."
+        "why": "Brenton prints one note, Heb. Taberah, Massah, and Kibroth Hattaavah., keyed at the three callers burning, temptation, and graves of lust (1844 p. 225; 1879 p. 260; 1900 p. 256), and eBible copies it at each; the edition gives each caller its own place name instead. Hattavah is eBible’s slip for the printed Hattaavah."
       },
       {
         "note": "GEN 3:15#2",
@@ -537,7 +537,7 @@
     ]
   },
   "brenton-1851-introduction": {
-    "why": "Complete eBible’s introduction, which ends where the 1870 printing breaks it off (p. vi in the 1879 reprint of its plates), from Brenton’s 1851 printing, pp. viii–xiii, whose words agree with eBible’s closing paragraphs where the scanned pages overlap them, after the paragraph on translations from the Septuagint and before the separate Apocrypha heading. Transcribed from https://ccat.sas.upenn.edu/ioscs/brenton/brenton1851.pdf (PDF pages 1–6), consulted 2026-10-17; retain its wording, including its dates and the printed “Petri and Pauli” in the Latin decree. Transcribe its blank lines as printed, between the translation entries and before the groups beginning “The principal translations”, “In later periods”, “The first printed edition” and “In the latter part”; what each paragraph and blank line is to the edition, the markers decisions say.",
+    "why": "Complete eBible’s introduction, which ends where the 1870 printing breaks it off (p. vi in the 1879 reprint of its plates), from Brenton’s 1851 printing, pp. viii–xiii, whose words agree with eBible’s closing paragraphs where the scanned pages overlap them, after the paragraph on translations from the Septuagint and before the separate Apocrypha heading. Transcribed from https://ccat.sas.upenn.edu/ioscs/brenton/brenton1851.pdf (PDF pages 1–6), consulted 2026-10-17; retain its wording, including its dates and the printed “Petri and Pauli” in the Latin decree. Transcribe its blank lines as printed, between the translation entries and before the groups beginning “The principal translations”, “In later periods”, “The first printed edition”, and “In the latter part”; what each paragraph and blank line is to the edition, the markers decisions say.",
     "changes": [],
     "additions": [
       {
@@ -981,7 +981,7 @@
     ]
   },
   "structure": {
-    "why": "Front matter prints as units of their own, in ordinary paragraphs, headings and lists, not under the markers of a scripture book's introduction. Where the sources' markers do not say what a paragraph is, these decisions do: a blank line at a change of topic becomes a section heading, in words its decision supplies; a line of a title that is the text's opening sentence is its opening paragraph; readings quoted for comparison stand as a block; the one section heading of a unit that is wholly that section is a line of its title, which the manifest sets; and paragraphs that each set one item of a series with its name run in are the entries of a list. A blank line no decision describes goes: the typesetter spaces headings and lists itself.",
+    "why": "Front matter prints as units of their own, in ordinary paragraphs, headings, and lists, not under the markers of a scripture book's introduction. Where the sources' markers do not say what a paragraph is, these decisions do: a blank line at a change of topic becomes a section heading, in words its decision supplies; a line of a title that is the text's opening sentence is its opening paragraph; readings quoted for comparison stand as a block; the one section heading of a unit that is wholly that section is a line of its title, which the manifest sets; and paragraphs that each set one item of a series with its name run in are the entries of a list. A blank line no decision describes goes: the typesetter spaces headings and lists itself.",
     "changes": [],
     "markers": [
       {
@@ -1112,7 +1112,7 @@
     ]
   },
   "translators-presentation": {
-    "why": "Restore the fifteen section headings and explicit scripture references supplied by the editor for The Translators to the Reader, and follow that text’s modern use of italics: quotations, foreign phrases, titles and words discussed, rather than ordinary names. The pinned Cambridge text remains the wording authority. References use King James coordinates, resolved to the edition as its other citations are; existing inline references move to the margin after being read and validated. Each heading, italic span and reference anchor is checked against the source words. Callers follow clause punctuation and closing parentheses, except dashes, following Chicago Manual of Style 13.29; quotation attributions stay before their callers.",
+    "why": "Restore the fifteen section headings and explicit scripture references supplied by the editor for The Translators to the Reader, and follow that text’s modern use of italics: quotations, foreign phrases, titles, and words discussed, rather than ordinary names. The pinned Cambridge text remains the wording authority. References use King James coordinates, resolved to the edition as its other citations are; existing inline references move to the margin after being read and validated. Each heading, italic span, and reference anchor is checked against the source words. Callers follow clause punctuation and closing parentheses, except dashes, following Chicago Manual of Style 13.29; quotation attributions stay before their callers.",
     "changes": [],
     "sections": [
       {

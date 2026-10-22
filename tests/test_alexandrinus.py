@@ -163,7 +163,7 @@ def test_english_is_derived_exactly_and_only_from_brentons_words() -> None:
         alexandrinus.derived("key", supplied, NOTE, ["Almighty"])
         == r"\add Almighty\add* God said"
     )
-    # Brenton's numbers may be spelt out, whichever way he wrote them.
+    # Brenton's numbers may be spelled out, whichever way he wrote them.
     aged: Decision = {
         "from": "an hundred and sixty and seven years",
         "english": {

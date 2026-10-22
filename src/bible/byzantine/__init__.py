@@ -47,7 +47,7 @@ BOOKS_BY_NAME = dict(
 )
 
 # Witness identifiers, used everywhere a source is named: ledger rows, the
-# evidence of a reading, tags and the review.
+# evidence of a reading, tags, and the review.
 PIERPONT = "pierpont"  # Pierpont, Some Improvements to the KJV (1990)
 ADDITIONAL = "additional"  # a second KJV-worded instruction source; none is read
 TCENT = "tcent"  # Boyd, Text-Critical English New Testament apparatus
@@ -71,7 +71,7 @@ def reconciled(
     """Every stage of the reconciliation, in order, from the read sources and
     the editor's decisions (edition/byzantine.json, thawed) and placements
     (edition/byzantine-placements.json, thawed): everything it worked out,
-    for the promotion, the review and the variants, by the stage that made
+    for the promotion, the review, and the variants, by the stage that made
     it (stages.Reconciliation). Each stage stops the build on a decision
     that does not fit its source or changes nothing, a placement the code
     now makes on its own, a reading it could not carry out, a broken

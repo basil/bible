@@ -32,7 +32,7 @@ def require_fields(
     optional: Collection[str],
     what: str,
 ) -> None:
-    """A declaration must have its fields and no others: a misspelt one would
+    """A declaration must have its fields and no others: a misspelled one would
     otherwise be read as absent."""
     require(
         isinstance(entry, Mapping)

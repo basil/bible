@@ -48,7 +48,7 @@ class NoteDerivation(TypedDict):
 
 
 class NoteRow(NoteDerivation):
-    """A note's row of the review, with the verse, the lemma and the note as
+    """A note's row of the review, with the verse, the lemma, and the note as
     the finished book prints them."""
 
     verse: str
@@ -701,9 +701,9 @@ def with_relocation_notes(
             chapters_held.add(ends[following.last][0].chapter)
             end = following.last
         listed = (
-            printed[0]
-            if len(printed) == 1
-            else ", ".join(printed[:-1]) + " and " + printed[-1]
+            " and ".join(printed)
+            if len(printed) <= 2
+            else ", ".join(printed[:-1]) + ", and " + printed[-1]
         )
         anchor = versification.from_kjv(before, policy=policy)
         require(bool(anchor), f"Relocated passage follows no verse here: {theirs}")
@@ -859,7 +859,7 @@ def finished_rows(
     rows: Sequence[NoteDerivation],
     exceptions: Mapping[str, NoteOverride] | None = None,
 ) -> list[NoteRow]:
-    """The rows of the review, each note's verse, lemma and text read from
+    """The rows of the review, each note's verse, lemma, and text read from
     the finished book, with how annotation read it. A finished lemma must
     still identify one passage, with any boundary stop it declares."""
     by_key = {row["key"]: row for row in rows}

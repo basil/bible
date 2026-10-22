@@ -52,7 +52,7 @@ def font_face(face: Path) -> str:
 
 def font_stylesheet(faces: Sequence[Path]) -> str:
     """The stylesheet the website imports: every face installed for the
-    edition, and the families to set the Latin, Greek and Hebrew in."""
+    edition, and the families to set the Latin, Greek, and Hebrew in."""
     families = {
         "latin": typeface.family(typeface.faces(typeface.LATIN)[0]),
         "greek": typeface.greek_family(),

@@ -67,7 +67,7 @@ def exported(prepared: list[tuple[str, bible.usj.Document]]) -> dict[str, str]:
 
 
 def plain(value: object) -> object:
-    """A copy of a value as plain objects, lists and sets, a dataclass as its
+    """A copy of a value as plain objects, lists, and sets, a dataclass as its
     name and fields, to compare with the value later: copy.deepcopy cannot
     copy a mappingproxy. Any other object is kept as it is, compared by
     what it compares by."""

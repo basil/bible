@@ -47,7 +47,7 @@ REFERENCE = re.compile(r"(?:(\d+):)?(\d+)([ab]?)(?:[-–](?:(\d+):)?(\d+)([ab]?)
 
 
 class Inventory(TypedDict):
-    """The booklet as read: its lines, its tables and every row of them."""
+    """The booklet as read: its lines, its tables, and every row of them."""
 
     source_lines: list[str]
     tables: list[PierpontTable]
@@ -612,9 +612,9 @@ def bind(row: PierpontRow, kjv: Mapping[str, str]) -> dict[str, Any]:
 
 
 def strength(w: Mapping[str, Any] | None, informational: bool) -> str | None:
-    """Pierpont's weight as evidence strength: mandatory, strong, weak or None.
+    """Pierpont's weight as evidence strength: mandatory, strong, weak, or None.
 
-    Matthew to Jude: 5, 4 and the letters b, c, d (which he calls mandatory)
+    Matthew to Jude: 5, 4, and the letters b, c, d (which he calls mandatory)
     are mandatory; 3 is strong; 2 and 1 are minority readings. Revelation uses
     the percentage of manuscripts: 70 and above he says "should certainly be
     made"; below 60 is a minority. A leading ( marks a merely informational row.

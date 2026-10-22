@@ -644,7 +644,7 @@ def annotated(
 @dataclass(frozen=True)
 class Revised:
     """The translations revised: every unit of front matter and every book
-    as it prints; the books as their names alone were respelt, which the
+    as it prints; the books as their names alone were respelled, which the
     kept-name check and the textual variants read; and the revisions
     met, which the authored pages' own finishing pass adds to."""
 
@@ -656,7 +656,7 @@ class Revised:
 def finished_book(
     code: str, doc: Document, policy: bible.policy.Policy, met: revision.MetRevisions
 ) -> tuple[Document, Document]:
-    """A book as revised, and as its names alone were respelt: the names
+    """A book as revised, and as its names alone were respelled: the names
     come first, then the declared changes to its verses and notes, then the
     source's brackets and the small capitals of selective emphasis go, then
     the systematic spelling and punctuation; a kept name must survive them."""
@@ -664,7 +664,7 @@ def finished_book(
     doc = revision.revised(code, named, policy, met)
     doc = revision.passages(code, doc, policy, met)
     doc = typography.small_caps(revision.unbracketed(doc, policy, met))
-    doc = revision.punctuated(revision.respelt(doc, policy, met), policy, met)
+    doc = revision.punctuated(revision.respelled(doc, policy, met), policy, met)
     revision.check_kept(code, named, doc, policy)
     return doc, named
 
@@ -677,7 +677,7 @@ def finished_matter(
     spelling and punctuation."""
     doc = revision.passages(code, typography.small_caps(doc), policy, met)
     return revision.punctuated(
-        revision.respelt(doc, policy, met, book=False), policy, met
+        revision.respelled(doc, policy, met, book=False), policy, met
     )
 
 
@@ -720,7 +720,7 @@ def authored(
     # New Testament after them with the same systematic spelling and
     # punctuation, before the verse-specific revisions, so that it shows the
     # readings' differences alone. The names are the edition's verses' and
-    # are not applied to the King James books, so a respelt name shows in
+    # are not applied to the King James books, so a respelled name shows in
     # the variants beside the reading it stands near.
     rows = variants.rows(
         found,

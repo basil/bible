@@ -4,7 +4,7 @@ The [editorial notes](edition.md) describe the edition as a whole. This page giv
 
 ## Why this is a reconciliation problem
 
-The King James translators followed the Received Text, the Greek of the printed editions of Erasmus, Stephanus and Beza, as F. H. A. Scrivener reconstructed it from their choices in 1894. The Orthodox Church reads the Byzantine text, which the great majority of the Greek manuscripts carry, and which Maurice A. Robinson and William G. Pierpont edited in 2005, 2018 and 2026. Scrivener's text and RP2026 differ in 1,939 places. Most cannot be seen in English. Which ones can, and what the King James words should be instead, has already been decided in print, several times over, by people working independently:
+The King James translators followed the Received Text, the Greek of the printed editions of Erasmus, Stephanus, and Beza, as F. H. A. Scrivener reconstructed it from their choices in 1894. The Orthodox Church reads the Byzantine text, which the great majority of the Greek manuscripts carry, and which Maurice A. Robinson and William G. Pierpont edited in 2005, 2018, and 2026. Scrivener's text and RP2026 differ in 1,939 places. Most cannot be seen in English. Which ones can, and what the King James words should be instead, has already been decided in print, several times over, by people working independently:
 
 | Question | Who has answered it | Form |
 | --- | --- | --- |
@@ -17,7 +17,7 @@ So the build does not translate. It reads these sources mechanically, lines them
 
 ## The trust model
 
-The units are the places where the two Greek texts differ, as the token comparison, the collation and Boyd's apparatus find them. Two decisions in `edition/byzantine.json` add to what they find, each checked against the sources: a difference of accent or breathing alone, which the unaccented texts cannot show, is made a unit where it changes the sense (1 Corinthians 5:13, Mark 4:8 and 20); and Hodges–Farstad's side is given where no apparatus the build reads gives it (Philemon 1:1).
+The units are the places where the two Greek texts differ, as the token comparison, the collation, and Boyd's apparatus find them. Two decisions in `edition/byzantine.json` add to what they find, each checked against the sources: a difference of accent or breathing alone, which the unaccented texts cannot show, is made a unit where it changes the sense (1 Corinthians 5:13, Mark 4:8 and 20); and Hodges–Farstad's side is given where no apparatus the build reads gives it (Philemon 1:1).
 
 Every Greek unit gets exactly one **disposition**, decided in this order:
 
@@ -55,7 +55,7 @@ Where a correction of the English adopts a 1611 marginal alternative, nine notes
 
 ## What counts as a translatable difference
 
-Several scholars have decided which Greek differences can be seen in English, each by a stated standard. The edition keeps the King James Version's literalness: a difference is translatable when ordinary King James English shows it, in meaning, reference, number, tense, mood, voice, emphasis or grammatical relation, even if the sense of the passage is unchanged. An article, particle, inflection or word order does not by itself need its own English; a revised passage is no more literal than its neighbours.
+Several scholars have decided which Greek differences can be seen in English, each by a stated standard. The edition keeps the King James Version's literalness: a difference is translatable when ordinary King James English shows it, in meaning, reference, number, tense, mood, voice, emphasis, or grammatical relation, even if the sense of the passage is unchanged. An article, particle, inflection, or word order does not by itself need its own English; a revised passage is no more literal than its neighbours.
 
 **Pierpont** notes "only those places where the change is translatable, or potentially translatable", in the King James words, and excludes words the translators supplied with no basis in any text, places where the King James Version already agrees with the Majority against the Received Text (he lists thirty), and mere improvements of rendering. He gives each change a weight by manuscript support; the weight is a tag, not a standard of translatability. **Boyd**'s TCENT notes only what shows in an "optimal equivalence" translation and ignores "minor differences involving word order, phrasing, conjunctions, articles, prepositions, and the like", so his list is a lower bound: a difference he notes shows in English, though the King James wording may already carry it. **Thomason**'s _Far Above All_ is hyper-literal and marks a contrast wherever his English can carry one, so his list is close to an upper bound. The **MSB** and **WEB** footnotes are selections: a note is evidence, silence is not. From the loosest to the strictest about what must be reported: Boyd, then the WEB and MSB, then Pierpont, then Thomason.
 
@@ -63,10 +63,10 @@ Several scholars have decided which Greek differences can be seen in English, ea
 | --- | --- | --- |
 | Pierpont, bound and compatible | Proposed King James wording, subject to the house style | witnessed |
 | Boyd’s TCENT, and no King James-worded instruction | Shows in English; the King James wording may already carry it | silent, `ev:tcent-reports`: a priority for review, normally a reading |
-| Only Thomason, the MSB or the WEB | Possibly below the King James Version's resolution | silent, `ev:hyper-literal-only` |
+| Only Thomason, the MSB, or the WEB | Possibly below the King James Version's resolution | silent, `ev:hyper-literal-only` |
 | Nobody | No witness reports an English contrast | silent or neutral |
 
-What nobody counts as translatable, when the witnesses are also silent: movable ν and ς; word division and crasis; accents, breathings and punctuation except where they change the word (Philippians 3:5, 1 Corinthians 5:13, Luke 3:23); spellings of common names (Δαυίδ/Δαβίδ, Μωσῆς/Μωϋσῆς); variant forms of one inflection (εἶπον/εἶπαν). Two that look like spelling and are not: a changed verbal prefix (Acts 3:24), and a transliterated word inside a quotation (Matthew 27:46 λαμά/λιμά).
+What nobody counts as translatable, when the witnesses are also silent: movable ν and ς; word division and crasis; accents, breathings, and punctuation except where they change the word (Philippians 3:5, 1 Corinthians 5:13, Luke 3:23); spellings of common names (Δαυίδ/Δαβίδ, Μωσῆς/Μωϋσῆς); variant forms of one inflection (εἶπον/εἶπαν). Two that look like spelling and are not: a changed verbal prefix (Acts 3:24), and a transliterated word inside a quotation (Matthew 27:46 λαμά/λιμά).
 
 The Revised Version of 1881 and Boyd's ASV of 2021 are full revisions, never compared with the King James Version to find readings: of some 6,400 verses with no Greek difference, only about 720 are word-identical between the King James Version and Boyd's ASV. A revision's change is read only where the CrossWire bridge places it on the words of one unit, or where it makes the same contrast as a placed instruction; it corroborates an edit, raises the alarm when both revisions lack the King James words of an unreported unit, and supplies wording in King James diction when a reading needs it. Boyd's method for his revision is the model: "every effort has been made to stay within the style and vocabulary of the ASV. When available, alternate renderings in the ASV footnotes were used. Otherwise, modifications to the text were most often derived from the King James Version itself."
 
@@ -74,23 +74,23 @@ Facts about the Received Text that affect the reading of any list: in 152 units 
 
 ## The English house style
 
-**Least disturbance, not fewest words.** A changed case, referent or clause relation may take its whole phrase with it; dependent words, agreement and punctuation move only where the change breaks them. A hard reading stays hard, and an ambiguous one ambiguous: do not explain it away, harmonize it with a parallel or mend it, but put its construction in grammatical King James English.
+**Least disturbance, not fewest words.** A changed case, referent, or clause relation may take its whole phrase with it; dependent words, agreement, and punctuation move only where the change breaks them. A hard reading stays hard, and an ambiguous one ambiguous: do not explain it away, harmonize it with a parallel, or mend it, but put its construction in grammatical King James English.
 
-**Wording.** Start from the selected instruction, where one exists. If none executes or its wording fails the house style, decide with, in order, a King James parallel that fits the sense and grammar here, the words of Pierpont, the Revised Version or Boyd's ASV in King James diction, and only then the editor's own; the reading's `from:` tag says which.
+**Wording.** Start from the selected instruction, where one exists. If none executes or its wording fails the house style, decide with, in order, a King James parallel that fits the sense and grammar here, the words of Pierpont, the Revised Version, or Boyd's ASV in King James diction, and only then the editor's own; the reading's `from:` tag says which.
 
-**Diction.** The King James vocabulary, spelling, pronouns and inflections: _thou_, _thee_, _thy_, _thine_, nominative _ye_, _-eth_ and _-est_. Choose a word for its meaning, not its age; it need not occur elsewhere in the King James Version. Do not modernize, and do not force one English word on a Greek lemma.
+**Diction.** The King James vocabulary, spelling, pronouns, and inflections: _thou_, _thee_, _thy_, _thine_, nominative _ye_, _-eth_, and _-est_. Choose a word for its meaning, not its age; it need not occur elsewhere in the King James Version. Do not modernize, and do not force one English word on a Greek lemma.
 
-**Verbs.** A changed tense, mood or voice is rendered as the King James Version renders it in context, not by formula. Judge like constructions together: conditionals, negation, dependent clauses.
+**Verbs.** A changed tense, mood, or voice is rendered as the King James Version renders it in context, not by formula. Judge like constructions together: conditionals, negation, dependent clauses.
 
-**Reference.** A changed name, pronoun or possessive is rendered where it shows at the King James Version's level. Do not put a name for a pronoun to clarify it, or explain in a parenthesis.
+**Reference.** A changed name, pronoun, or possessive is rendered where it shows at the King James Version's level. Do not put a name for a pronoun to clarify it, or explain in a parenthesis.
 
-**Order.** Carry changed coordination, attachment and emphasis where English syntax allows. Move existing phrases rather than rewrite them; do not copy Greek order into unnatural English.
+**Order.** Carry changed coordination, attachment, and emphasis where English syntax allows. Move existing phrases rather than rewrite them; do not copy Greek order into unnatural English.
 
 **Capitals and supplied words.** The King James capitals stay unless a changed expression or sentence boundary needs another; no new reverential capitals. (The revise stage then sets emphatic capitals, such as JESUS and the inscriptions, in ordinary case, as [the edition](edition.md) describes.) A King James supplied word for which RP2026 now has Greek is no longer marked supplied; necessary supplied English is marked, judged by the Greek construction and King James usage; supplied words that served only an omitted construction go with it. (The edition prints supplied words in ordinary type, so the marking shows only in the sources sent to be typeset.)
 
 ## Lines of verse
 
-The text keeps Scrivener's paragraphs, and the lines he gave the Beatitudes, the canticles of Luke 1–2, the tribes sealed in Revelation 7 and the fall of Babylon in Revelation 18.
+The text keeps Scrivener's paragraphs, and the lines he gave the Beatitudes, the canticles of Luke 1–2, the tribes sealed in Revelation 7, and the fall of Babylon in Revelation 18.
 
 ## The cases
 
@@ -100,11 +100,11 @@ The verses that test the executor's seam rules and the trust model, with what th
 
 **Omissions.** Matthew 3:11 "and _with_ fire" goes with its supplied word; 5:27 "by them of old time"; 10:8 "raise the dead," with its comma; 27:35, where the colon before the omitted fulfilment quotation becomes a full stop; Luke 3:19 "his brother Philip's wife" becomes "his brother's wife"; 9:1 "his twelve disciples" becomes "the twelve"; John 18:11 "thy sword" becomes "the sword"; Acts 9:5–6, one construction across two verses; 12:23 "God the glory" becomes "glory to God" after the article goes; 20:21 "Christ" goes with no space before the stop; 2 Corinthians 11:31 "of our Lord" becomes "of the Lord"; 1 John 5:7–8, where two verses become one sentence and the punctuation is part of the decision; Revelation 1:8, two units, a clause removed and "God" added; 6:3 "and see", here only.
 
-**Additions and substitutions.** Matthew 4:10 "Get thee hence, Satan" becomes "Get thee behind me, Satan", as the King James Version renders the same Greek at Luke 4:8; 18:19 "Again, verily I say"; 26:26 "blessed _it_" becomes "gave thanks"; 27:41 "and Pharisees"; Luke 6:9 "to destroy _it_" becomes "to kill"; 8:31 "they besought" becomes "he besought"; Acts 3:24 "foretold of" becomes "announced"; Acts 8:16 and 2 Timothy 2:19, where the article changes with the title; 1 Peter 3:1 "may … be won" becomes "shall … be won"; Ephesians 4:6, 1 Thessalonians 4:8 and 2 Corinthians 1:11, where first and second person plural swap; Revelation 20:2, a relative clause that closes before the main clause resumes; 22:21 "our Lord" becomes "the Lord" and "you all" becomes "all the saints".
+**Additions and substitutions.** Matthew 4:10 "Get thee hence, Satan" becomes "Get thee behind me, Satan", as the King James Version renders the same Greek at Luke 4:8; 18:19 "Again, verily I say"; 26:26 "blessed _it_" becomes "gave thanks"; 27:41 "and Pharisees"; Luke 6:9 "to destroy _it_" becomes "to kill"; 8:31 "they besought" becomes "he besought"; Acts 3:24 "foretold of" becomes "announced"; Acts 8:16 and 2 Timothy 2:19, where the article changes with the title; 1 Peter 3:1 "may … be won" becomes "shall … be won"; Ephesians 4:6, 1 Thessalonians 4:8, and 2 Corinthians 1:11, where first and second person plural swap; Revelation 20:2, a relative clause that closes before the main clause resumes; 22:21 "our Lord" becomes "the Lord" and "you all" becomes "all the saints".
 
 **Several units in one verse.** 1 Peter 5:10 "us" becomes "you" and three of four verbs change from optative to future; Revelation 13:5 "blasphemies" becomes "blasphemy" and "war" is added; Luke 22:30 omits "in my kingdom" and makes "sit" future; Revelation 9:10, one recast predicate covering several units; 11:10 "shall rejoice" becomes "rejoice", "make merry" gains its own "shall", "send" becomes "give"; 5:14 omits "four and twenty" and "him that liveth for ever and ever".
 
-**Reorderings, transliterations, quotations.** Luke 8:51, Matthew 21:14 and Revelation 1:18, one reordered phrase each, applied as one transposition; Revelation 22:8, a phrase replacement that carries the reordering and removes the supplied object; Philippians 2:21, a unit (an article) at which the names stand in the same order in both texts, so a directive must attach to its own unit; Matthew 27:46 λαμά/λιμά and Mark 15:34, a spelling difference inside a transliterated quotation that does change the English; Matthew 21:1 and Mark 11:1 "Bethphage" becomes "Bethsphage"; John 1:28 "Bethabara" becomes "Bethany"; Romans 16:3 "Priscilla" becomes "Prisca".
+**Reorderings, transliterations, quotations.** Luke 8:51, Matthew 21:14, and Revelation 1:18, one reordered phrase each, applied as one transposition; Revelation 22:8, a phrase replacement that carries the reordering and removes the supplied object; Philippians 2:21, a unit (an article) at which the names stand in the same order in both texts, so a directive must attach to its own unit; Matthew 27:46 λαμά/λιμά and Mark 15:34, a spelling difference inside a transliterated quotation that does change the English; Matthew 21:1 and Mark 11:1 "Bethphage" becomes "Bethsphage"; John 1:28 "Bethabara" becomes "Bethany"; Romans 16:3 "Priscilla" becomes "Prisca".
 
 **Construction judgments.** Acts 18:17 keeps "cared" by a `nochange` ruling; Matthew 12:6 keeps "one greater" for the neuter comparative; Revelation 21:16's added second "twelve" takes supplied "each" and "thousand furlongs" to carry the elliptical measurement, and its note restores the King James comparison whole.
 

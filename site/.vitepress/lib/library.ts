@@ -156,7 +156,7 @@ function page(book: Book, chapter: Chapter) {
     html,
   };
 }
-// Every chapter page, rendered once: the paths loader, the pager and the
+// Every chapter page, rendered once: the paths loader, the pager, and the
 // search index all read it.
 type Page = { book: Book; chapter: Chapter; title: string; html: string };
 let rendered: Page[] | undefined;

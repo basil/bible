@@ -1,7 +1,7 @@
 {
-  "why": "The spelling, vocabulary and punctuation of the translation, revised by explicit editorial decisions. A word is respelt or modernized wherever the translation, its notes, and its front and back matter print it as a whole word; a word with a scope of scripture is revised only in numbered scripture and marked note lemmas (fq) and readings (fqa), wherever they stand. Book titles and metadata, headings, introduction paragraphs and explanatory commentary are outside that scripture scope. Numbered scripture in d paragraphs, including Psalm superscriptions, remains in scope. Plain quotation marks do not establish scope. Names are respelt first. Global spelling, vocabulary, article, possessive and participle decisions affect source prose and run next, followed by a separate single sweep of scoped grammar decisions. A verse's change is made to the words of that verse alone, which must have them once, as the names leave them, and to the notes that quote them. Verses' changes stand in groups, each group under the reason its changes share. Each gives its reason. An isolated alternative whose word is also a plural noun may name its stable source note as its exact context. Passage changes name a stable note key or a front/back-matter unit and the plain words met once there; only punctuation, associated spacing and sentence-initial capitalization may change, with lowercase word initials also allowed in keyed notes. A phrase is revised as a word is; possessives and articles follow the immediately following sound, including an intervening adjective: my and thy before consonant sounds, mine and thine before vowel sounds and silent h; a before consonant sounds, an before vowel sounds and silent h. Independent mine and thine stay. Capitalization is decided separately. A word may except the phrases it must not change, which the edition must print. Words that a character style divides keep their division, and so does the lemma that quotes them at its note.",
+  "why": "The spelling, vocabulary, and punctuation of the translation, revised by explicit editorial decisions. A word is respelled or modernized wherever the translation, its notes, and its front and back matter print it as a whole word; a word with a scope of scripture is revised only in numbered scripture and marked note lemmas (fq) and readings (fqa), wherever they stand. Book titles and metadata, headings, introduction paragraphs, and explanatory commentary are outside that scripture scope. Numbered scripture in d paragraphs, including Psalm superscriptions, remains in scope. Plain quotation marks do not establish scope. Names are respelled first. Global spelling, vocabulary, article, possessive, and participle decisions affect source prose and run next, followed by a separate single sweep of scoped grammar decisions. A verse's change is made to the words of that verse alone, which must have them once, as the names leave them, and to the notes that quote them. Verses' changes stand in groups, each group under the reason its changes share. Each gives its reason. An isolated alternative whose word is also a plural noun may name its stable source note as its exact context. Passage changes name a stable note key or a front/back-matter unit and the plain words met once there; only punctuation, associated spacing, and sentence-initial capitalization may change, with lowercase word initials also allowed in keyed notes. A phrase is revised as a word is; possessives and articles follow the immediately following sound, including an intervening adjective: my and thy before consonant sounds, mine and thine before vowel sounds and silent h; a before consonant sounds, an before vowel sounds and silent h. Independent mine and thine stay. Capitalization is decided separately. A word may except the phrases it must not change, which the edition must print. Words that a character style divides keep their division, and so does the lemma that quotes them at its note.",
   "names": {
-    "why": "Proper names of persons and places, respelt where their bearer is identified. A decision respells every whole-word occurrence of its forms in the verses it lists, as the edition numbers them, and in the lemmas that quote them, and nowhere else. Every other verse of the printed books that has a decided form is listed under keep, with who keeps it. The build refuses an occurrence listed neither way, a listed verse without its form, and a kept verse that another revision respells. A note's commentary and the front and back matter keep the source's names. The king of Judah retains both source names: Azarias for Greek Ἀζαρίας in 4 Kgdms and 1 Chr 3:12, and Ozias for Greek Ὀζίας, including 2 Chr. These names are not harmonized; other bearers and the related forms Azaria, Azariu, Ozia and Ozi retain their source forms.",
+    "why": "Proper names of persons and places, respelled where their bearer is identified. A decision respells every whole-word occurrence of its forms in the verses it lists, as the edition numbers them, and in the lemmas that quote them, and nowhere else. Every other verse of the printed books that has a decided form is listed under keep, with who keeps it. The build refuses an occurrence listed neither way, a listed verse without its form, and a kept verse that another revision respells. A note's commentary and the front and back matter keep the source's names. The king of Judah retains both source names: Azarias for Greek Ἀζαρίας in 4 Kgdms and 1 Chr 3:12, and Ozias for Greek Ὀζίας, including 2 Chr. These names are not harmonized; other bearers and the related forms Azaria, Azariu, Ozia, and Ozi retain their source forms.",
     "decisions": {
       "Abijah, son of Jeroboam": {
         "to": "Abia",
@@ -1696,7 +1696,7 @@
       },
       "Judah, son of Jacob, tribe, territory and other bearers": {
         "to": "Judah",
-        "why": "The spelling of the King James Apocrypha (Sirach 49:4), for the patriarch, his tribe, territory and kingdom, the Levite (Ezra 3:9), the official (Neh 11:9), the men of the dedication (Neh 12:34, 36), the Lord's brother and the other ancestors named Juda. 3 Kgdms 16:8 and 16:10 are words the Alexandrine readings supply.",
+        "why": "The spelling of the King James Apocrypha (Sirach 49:4), for the patriarch; his tribe, territory, and kingdom; the Levite (Ezra 3:9); the official (Neh 11:9); the men of the dedication (Neh 12:34, 36); the Lord's brother; and the other ancestors named Juda. 3 Kgdms 16:8 and 16:10 are words the Alexandrine readings supply.",
         "forms": {
           "Juda": [
             "GEN 29:35",
@@ -2550,7 +2550,7 @@
       },
       "Midian, patriarch, people and their territory": {
         "to": "Madian",
-        "why": "The spelling of the King James New Testament (Acts 7:29), for the patriarch, his people and their territory.",
+        "why": "The spelling of the King James New Testament (Acts 7:29), for the patriarch, his people, and their territory.",
         "forms": {
           "Madiam": [
             "GEN 25:2",
@@ -2851,7 +2851,7 @@
       },
       "Nun, father of Joshua": {
         "to": "Navi",
-        "why": "The Orthodox spelling used in the edition's title Jesus, the Son of Navi, for Greek Ναυη (Ναυῆ, Ναυή or Ναυὴ) at these places in Apostoliki Diakonia's text (https://apostoliki-diakonia.gr/holybible/). Numbers 13:8 and 13:16 correspond to its 13:9 and 13:17. Nun in 1 Chr 7:27 is retained: that text has the distinct form Νοὺμ.",
+        "why": "The Orthodox spelling used in the edition's title Jesus, the Son of Navi, for Greek Ναυη (Ναυῆ, Ναυή, or Ναυὴ) at these places in Apostoliki Diakonia's text (https://apostoliki-diakonia.gr/holybible/). Numbers 13:8 and 13:16 correspond to its 13:9 and 13:17. Nun in 1 Chr 7:27 is retained: that text has the distinct form Νοὺμ.",
         "forms": {
           "Naue": [
             "EXO 33:11",
@@ -3884,11 +3884,11 @@
     },
     "Chananitish": {
       "to": "Canaanite",
-      "why": "Use Canaanite consistently throughout the printed edition, as requested by the user, replacing the older adjective in descriptions of a man, woman or king."
+      "why": "Use Canaanite consistently throughout the printed edition, as requested by the user, replacing the older adjective in descriptions of a man, woman, or king."
     },
     "Timotheus": {
       "to": "Timothy",
-      "why": "Use one consistent spelling throughout scripture, notes and front and back matter, including quotations and references to people other than Paul's companion."
+      "why": "Use one consistent spelling throughout scripture, notes, and front and back matter, including quotations and references to people other than Paul's companion."
     },
     "ghost": {
       "to": "spirit",
@@ -4232,72 +4232,72 @@
     },
     "casts": {
       "to": "casteth",
-      "why": "Print the King James Bible's archaic third person consistently in scripture, note lemmas, quotations and alternative readings, as requested by the user; explanatory commentary, introductions and prefaces keep their source grammar.",
+      "why": "Print the King James Bible's archaic third person consistently in scripture, note lemmas, quotations, and alternative readings, as requested by the user; explanatory commentary, introductions, and prefaces keep their source grammar.",
       "scope": "scripture"
     },
     "drives": {
       "to": "driveth",
-      "why": "Print the King James Bible's archaic third person consistently in scripture, note lemmas, quotations and alternative readings, as requested by the user; explanatory commentary, introductions and prefaces keep their source grammar.",
+      "why": "Print the King James Bible's archaic third person consistently in scripture, note lemmas, quotations, and alternative readings, as requested by the user; explanatory commentary, introductions, and prefaces keep their source grammar.",
       "scope": "scripture"
     },
     "dwells": {
       "to": "dwelleth",
-      "why": "Print the King James Bible's archaic third person consistently in scripture, note lemmas, quotations and alternative readings, as requested by the user; explanatory commentary, introductions and prefaces keep their source grammar.",
+      "why": "Print the King James Bible's archaic third person consistently in scripture, note lemmas, quotations, and alternative readings, as requested by the user; explanatory commentary, introductions, and prefaces keep their source grammar.",
       "scope": "scripture"
     },
     "gives": {
       "to": "giveth",
-      "why": "Print the King James Bible's archaic third person consistently in scripture, note lemmas, quotations and alternative readings, as requested by the user; explanatory commentary, introductions and prefaces keep their source grammar.",
+      "why": "Print the King James Bible's archaic third person consistently in scripture, note lemmas, quotations, and alternative readings, as requested by the user; explanatory commentary, introductions, and prefaces keep their source grammar.",
       "scope": "scripture"
     },
     "has": {
       "to": "hath",
-      "why": "Print the King James Bible's archaic third person consistently in scripture, note lemmas, quotations and alternative readings, as requested by the user; explanatory commentary, introductions and prefaces keep their source grammar.",
+      "why": "Print the King James Bible's archaic third person consistently in scripture, note lemmas, quotations, and alternative readings, as requested by the user; explanatory commentary, introductions, and prefaces keep their source grammar.",
       "scope": "scripture"
     },
     "Has": {
       "to": "Hath",
-      "why": "Print the King James Bible's archaic third person consistently in scripture, note lemmas, quotations and alternative readings, as requested by the user; explanatory commentary, introductions and prefaces keep their source grammar.",
+      "why": "Print the King James Bible's archaic third person consistently in scripture, note lemmas, quotations, and alternative readings, as requested by the user; explanatory commentary, introductions, and prefaces keep their source grammar.",
       "scope": "scripture"
     },
     "prays": {
       "to": "prayeth",
-      "why": "Print the King James Bible's archaic third person consistently in scripture, note lemmas, quotations and alternative readings, as requested by the user; explanatory commentary, introductions and prefaces keep their source grammar.",
+      "why": "Print the King James Bible's archaic third person consistently in scripture, note lemmas, quotations, and alternative readings, as requested by the user; explanatory commentary, introductions, and prefaces keep their source grammar.",
       "scope": "scripture"
     },
     "reckons": {
       "to": "reckoneth",
-      "why": "Print the King James Bible's archaic third person consistently in scripture, note lemmas, quotations and alternative readings, as requested by the user; explanatory commentary, introductions and prefaces keep their source grammar.",
+      "why": "Print the King James Bible's archaic third person consistently in scripture, note lemmas, quotations, and alternative readings, as requested by the user; explanatory commentary, introductions, and prefaces keep their source grammar.",
       "scope": "scripture"
     },
     "says": {
       "to": "saith",
-      "why": "Print the King James Bible's archaic third person consistently in scripture, note lemmas, quotations and alternative readings, as requested by the user; explanatory commentary, introductions and prefaces keep their source grammar.",
+      "why": "Print the King James Bible's archaic third person consistently in scripture, note lemmas, quotations, and alternative readings, as requested by the user; explanatory commentary, introductions, and prefaces keep their source grammar.",
       "scope": "scripture"
     },
     "searches": {
       "to": "searcheth",
-      "why": "Print the King James Bible's archaic third person consistently in scripture, note lemmas, quotations and alternative readings, as requested by the user; explanatory commentary, introductions and prefaces keep their source grammar.",
+      "why": "Print the King James Bible's archaic third person consistently in scripture, note lemmas, quotations, and alternative readings, as requested by the user; explanatory commentary, introductions, and prefaces keep their source grammar.",
       "scope": "scripture"
     },
     "sees": {
       "to": "seeth",
-      "why": "Print the King James Bible's archaic third person consistently in scripture, note lemmas, quotations and alternative readings, as requested by the user; explanatory commentary, introductions and prefaces keep their source grammar.",
+      "why": "Print the King James Bible's archaic third person consistently in scripture, note lemmas, quotations, and alternative readings, as requested by the user; explanatory commentary, introductions, and prefaces keep their source grammar.",
       "scope": "scripture"
     },
     "speaks": {
       "to": "speaketh",
-      "why": "Print the King James Bible's archaic third person consistently in scripture, note lemmas, quotations and alternative readings, as requested by the user; explanatory commentary, introductions and prefaces keep their source grammar.",
+      "why": "Print the King James Bible's archaic third person consistently in scripture, note lemmas, quotations, and alternative readings, as requested by the user; explanatory commentary, introductions, and prefaces keep their source grammar.",
       "scope": "scripture"
     },
     "takes": {
       "to": "taketh",
-      "why": "Print the King James Bible's archaic third person consistently in scripture, note lemmas, quotations and alternative readings, as requested by the user; explanatory commentary, introductions and prefaces keep their source grammar.",
+      "why": "Print the King James Bible's archaic third person consistently in scripture, note lemmas, quotations, and alternative readings, as requested by the user; explanatory commentary, introductions, and prefaces keep their source grammar.",
       "scope": "scripture"
     },
     "he blows": {
       "to": "he bloweth",
-      "why": "Print the King James Bible's archaic third person consistently in scripture, note lemmas, quotations and alternative readings, as requested by the user; explanatory commentary, introductions and prefaces keep their source grammar.",
+      "why": "Print the King James Bible's archaic third person consistently in scripture, note lemmas, quotations, and alternative readings, as requested by the user; explanatory commentary, introductions, and prefaces keep their source grammar.",
       "scope": "scripture"
     },
     "abridgement": {
@@ -8857,11 +8857,11 @@
     },
     "amongst": {
       "to": "among",
-      "why": "Use the approved among spelling throughout translations, notes and front and back matter."
+      "why": "Use the approved among spelling throughout translations, notes, and front and back matter."
     },
     "Amongst": {
       "to": "Among",
-      "why": "Use the approved Among spelling throughout translations, notes and front and back matter."
+      "why": "Use the approved Among spelling throughout translations, notes, and front and back matter."
     },
     "beside women and children": {
       "to": "besides women and children",
@@ -10374,7 +10374,7 @@
       ]
     },
     "parenthesis marks dropped": {
-      "why": "A comma, colon or semicolon inside a closing parenthesis moves after it by rule. Here it goes instead: the parenthesis interrupts a subject and its verb, a verb and its complement, or a phrase and the words it governs, and a mark after it would divide them.",
+      "why": "A comma, colon, or semicolon inside a closing parenthesis moves after it by rule. Here it goes instead: the parenthesis interrupts a subject and its verb, a verb and its complement, or a phrase and the words it governs, and a mark after it would divide them.",
       "changes": [
         {
           "verse": "EXO 9:19",
@@ -10756,16 +10756,16 @@
       "why": "Lamentations’ acrostic names stand as headings, not as sentences or abbreviations, so their terminal periods go; their letters and the verses they open stay."
     },
     "brackets": {
-      "why": "Brenton's square brackets are not printed. In a book the Hebrew has, they mark the words of the Greek that the Hebrew or Codex Alexandrinus lacks (the additions to Esther, the prologue of Lamentations, Genesis 35:16, Proverbs 24:22a–f), passages that may run on over verses and chapters, with notes among them. This edition presents the Greek as its Old Testament, so it does not mark them: the brackets go from the scripture text, and the notes that explain what the Hebrew lacks stay, on those words or verses. Twice in those books they mark something else, and go all the same: at Exodus 5:14 English supplied from the Hebrew, italic within the brackets in every printing (1844 physical p. 86, 1900 physical p. 87), which eBible tags as supplied words and which print in ordinary type like the translators' others, with the note that says where they come from; at Judges 1:10 a parenthesis the Bagster printings added (1900 physical p. 327) and the 1844 printing (physical p. 282) does without. In a book the Hebrew lacks, they mark English words with no Greek behind them, which the Authorized Version prints in italics in the books it has, and the read stage takes those for supplied words. His printings of 1844, 1879 and 1900 all set both kinds (1900 physical pp. 59, 662, 984, 1126, 1220, 1228). A note's own brackets are not scripture text and stay."
+      "why": "Brenton's square brackets are not printed. In a book the Hebrew has, they mark the words of the Greek that the Hebrew or Codex Alexandrinus lacks (the additions to Esther, the prologue of Lamentations, Genesis 35:16, Proverbs 24:22a–f), passages that may run on over verses and chapters, with notes among them. This edition presents the Greek as its Old Testament, so it does not mark them: the brackets go from the scripture text, and the notes that explain what the Hebrew lacks stay, on those words or verses. Twice in those books they mark something else, and go all the same: at Exodus 5:14 English supplied from the Hebrew, italic within the brackets in every printing (1844 physical p. 86, 1900 physical p. 87), which eBible tags as supplied words and which print in ordinary type like the translators' others, with the note that says where they come from; at Judges 1:10 a parenthesis the Bagster printings added (1900 physical p. 327) and the 1844 printing (physical p. 282) does without. In a book the Hebrew lacks, they mark English words with no Greek behind them, which the Authorized Version prints in italics in the books it has, and the read stage takes those for supplied words. His printings of 1844, 1879, and 1900 all set both kinds (1900 physical pp. 59, 662, 984, 1126, 1220, 1228). A note's own brackets are not scripture text and stay."
     },
     "before-em-dash": {
-      "why": "An em dash supplies the break marked by an adjacent comma, colon or semicolon. Remove only adjacent runs of these three marks before it in English; preserve periods (including abbreviation periods), question marks and exclamation marks. Sentence endings and contextual dash changes require explicit decisions."
+      "why": "An em dash supplies the break marked by an adjacent comma, colon, or semicolon. Remove only adjacent runs of these three marks before it in English; preserve periods (including abbreviation periods), question marks, and exclamation marks. Sentence endings and contextual dash changes require explicit decisions."
     },
     "before-parenthesis": {
-      "why": "A parenthesis marks its own boundary. Remove the adjacent run of commas, colons and semicolons before an opening parenthesis, within a verse and at the end of a verse whose next verse opens one; a period, question mark or exclamation mark before it ends a sentence and stays."
+      "why": "A parenthesis marks its own boundary. Remove the adjacent run of commas, colons, and semicolons before an opening parenthesis, within a verse and at the end of a verse whose next verse opens one; a period, question mark, or exclamation mark before it ends a sentence and stays."
     },
     "inside-parenthesis": {
-      "why": "A comma, colon or semicolon inside a closing parenthesis belongs to the containing sentence: move it after the parenthesis, or remove it where an em dash follows and supplies the break. A period, question mark or exclamation mark inside stays as the end of the parenthesis's own sentence. Where the containing sentence needs a different mark after the aside, or none, that is a decision."
+      "why": "A comma, colon, or semicolon inside a closing parenthesis belongs to the containing sentence: move it after the parenthesis, or remove it where an em dash follows and supplies the break. A period, question mark, or exclamation mark inside stays as the end of the parenthesis's own sentence. Where the containing sentence needs a different mark after the aside, or none, that is a decision."
     }
   },
   "passages": {
@@ -10931,7 +10931,7 @@
       ]
     },
     "note-fragment-capitals": {
-      "why": "Common words in marginal glosses continue the lemma in lowercase; proper names, titles, the pronoun I and complete quotations retain their capitals. Each change names its source note and leaves the wording and italics intact.",
+      "why": "Common words in marginal glosses continue the lemma in lowercase; proper names, titles, the pronoun I, and complete quotations retain their capitals. Each change names its source note and leaves the wording and italics intact.",
       "changes": [
         {
           "note": "GEN 6:13",

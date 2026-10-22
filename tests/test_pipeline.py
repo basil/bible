@@ -352,7 +352,7 @@ def test_the_editions_spelling_is_revised_wherever_a_word_is_printed(
 
     def printed(phrase: str) -> str:
         doc = usj.parse("\\id GEN\n\\c 1\n\\p\n\\v 1 " + phrase)
-        return scripture.verses(revision.respelt(doc, policy, set()))["1:1"].text
+        return scripture.verses(revision.respelled(doc, policy, set()))["1:1"].text
 
     # Scoped grammar can remain in explanatory prose and ambiguous nouns, and
     # a word that excepts phrases survives in them alone, as the source has
@@ -372,7 +372,7 @@ def test_the_editions_spelling_is_revised_wherever_a_word_is_printed(
     # The editor's own pages name the sources' books, rather than respelling
     # the translations: the introduction explains Brenton's names, and the
     # table names the KJV's. The names decided by their bearers are not words
-    # respelt wherever they are printed, so the introduction's Osee and Naum
+    # respelled wherever they are printed, so the introduction's Osee and Naum
     # stand on their own account.
     source_names = {
         "CNC": ["Nehemiah", "Nehemiah"],
@@ -519,7 +519,7 @@ def test_inscription_case_crosses_styles_and_notes_without_changing_them(
         "\\add HARLOTS\\add* AND ABOMINATIONS OF THE EARTH."
     )
     before = copy.deepcopy(source)
-    result = revision.respelt(source, declared, set())
+    result = revision.respelled(source, declared, set())
     assert usj.text_of(result["content"][-1]["content"]) == (
         "Mystery, Babylon the great, the mother of harlots and abominations of the earth."
     )
@@ -548,12 +548,12 @@ def test_emphatic_case_is_normalized(
     assert expected in scripture.verses(edition.documents[code])[reference].text
 
 
-def test_a_word_is_respelt_whole_in_the_text_and_its_notes(
+def test_a_word_is_respelled_whole_in_the_text_and_its_notes(
     policy: bible.policy.Policy,
 ) -> None:
     words = revisions(policy, words={"Noe": {"to": "Noah", "why": "the English name"}})
     met: revision.MetRevisions = set()
-    text = usj.serialize(revision.respelt(usj.parse(NOE), words, met))
+    text = usj.serialize(revision.respelled(usj.parse(NOE), words, met))
     assert (
         "\\v 1 Noah’s sons and Noeman \\f - \\fr 1:1 \\fq went with Noah: \\ft or, "
         "\\fqa Noah\\f*went \\add with\\add* Noah.\n\\v 2 And Noah went.\n"
@@ -571,9 +571,9 @@ def test_a_word_excepts_the_phrases_it_stands_in(
         },
     )
     met: revision.MetRevisions = set()
-    text = usj.serialize(revision.respelt(usj.parse(NOE), words, met))
+    text = usj.serialize(revision.respelled(usj.parse(NOE), words, met))
     # The excepted phrase stands as it is, whatever styles divide it, and
-    # the word is respelt everywhere else.
+    # the word is respelled everywhere else.
     assert (
         "\\v 1 Noah’s sons and Noeman \\f - \\fr 1:1 \\fq went with Noe: \\ft or, "
         "\\fqa Noah\\f*went \\add with\\add* Noe.\n\\v 2 And Noah went.\n"
@@ -592,12 +592,12 @@ def test_a_word_scoped_to_scripture_spares_front_and_back_matter(
         },
     )
     met: revision.MetRevisions = set()
-    book = usj.serialize(revision.respelt(usj.parse(NOE), words, met))
+    book = usj.serialize(revision.respelled(usj.parse(NOE), words, met))
     assert "goeth with Noah: \\ft or, \\fqa Noah\\f*goeth" in book
     assert "\\v 2 And Noah goeth.\n" in book and met == {"Noe", "went"}
     met = set()
     matter = usj.serialize(
-        revision.respelt(
+        revision.respelled(
             usj.parse(
                 "\\id XXB\n\\ip Noe went.\\f + \\ft Noe went; \\fqa Noe went\\f*"
             ),
@@ -611,7 +611,7 @@ def test_a_word_scoped_to_scripture_spares_front_and_back_matter(
     assert met == {"Noe"}
 
 
-def test_a_word_is_respelt_whatever_styles_divide_it(
+def test_a_word_is_respelled_whatever_styles_divide_it(
     policy: bible.policy.Policy,
 ) -> None:
     words = revisions(
@@ -629,7 +629,7 @@ def test_a_word_is_respelt_whatever_styles_divide_it(
         "\\v 2 begat Sem.\n"
     )
     met: revision.MetRevisions = set()
-    text = usj.serialize(revision.respelt(doc, words, met))
+    text = usj.serialize(revision.respelled(doc, words, met))
     # Each letter keeps the style it stood in, and what is added takes the
     # style of the word it joins.
     assert "\\v 1 N\\add oah\\add* and \\add She\\add*m " in text
@@ -847,7 +847,7 @@ NOAH = {
 }
 
 
-def test_a_name_is_respelt_in_its_listed_verses_and_their_lemmas(
+def test_a_name_is_respelled_in_its_listed_verses_and_their_lemmas(
     policy: bible.policy.Policy,
 ) -> None:
     decided = revisions(policy, names=names(NOAH))
@@ -890,7 +890,7 @@ def test_a_name_prints_only_where_a_decision_says(
     absent = {"to": "Lamek", "why": "x", "forms": {"Lamech": ["GEN 1:1"]}}
     with pytest.raises(CheckFailed, match="Name not met: GEN 1:1: Lamech"):
         revision.named("GEN", doc, revisions(policy, names=names(NOAH, absent)), set())
-    # A form within a longer one is the longer one's, and is not respelt there.
+    # A form within a longer one is the longer one's, and is not respelled there.
     peor = usj.parse("\\id GEN\n\\c 1\n\\p\n\\v 1 Baal Peor and Baal.\n")
     within = names(
         {"to": "Bael", "why": "x", "forms": {"Baal": ["GEN 1:1"]}},
@@ -898,7 +898,7 @@ def test_a_name_prints_only_where_a_decision_says(
     )
     with pytest.raises(CheckFailed, match="Name within another name: GEN 1:1: Baal"):
         revision.named("GEN", peor, revisions(policy, names=within), set())
-    # One decision owns a form. A word respelt wherever it is printed would
+    # One decision owns a form. A word respelled wherever it is printed would
     # respell a name behind the decision's back, or print one where no
     # decision says: as the word, in a phrase, or in what it respells, all of
     # which the check refuses. A verse's own change to a kept name is refused
@@ -910,7 +910,7 @@ def test_a_name_prints_only_where_a_decision_says(
             policy, names=names(NOAH), words={word: {"to": to, "why": "x"}}
         )
         with pytest.raises(
-            CheckFailed, match=f"Name also respelt as a word: {word}: Noe"
+            CheckFailed, match=f"Name also respelled as a word: {word}: Noe"
         ):
             revision.check(shared)
     own = revisions(
@@ -919,7 +919,7 @@ def test_a_name_prints_only_where_a_decision_says(
         verses=group({"verse": "GEN 1:2", "from": "Noe went", "to": "Noah went"}),
     )
     named = revision.named("GEN", doc, own, set())
-    with pytest.raises(CheckFailed, match="Kept name respelt: GEN 1:2: Noe"):
+    with pytest.raises(CheckFailed, match="Kept name respelled: GEN 1:2: Noe"):
         revision.check_kept(
             "GEN", named, revision.revised("GEN", named, own, set()), own
         )
@@ -2249,11 +2249,11 @@ def test_prepared_contextual_dashes_and_derived_quotations(
         code, reference = change["verse"].split()
         words = scripture.verses(edition.documents[code])[reference].text
         # Respelling follows the verse decisions, so a decision's words may
-        # be respelt (4MA 12:7 "says"); its space may stand at a line break.
-        respelt = revision.respelt(
+        # be respelled (4MA 12:7 "says"); its space may stand at a line break.
+        respelled = revision.respelled(
             usj.parse(f"\\id {code}\n\\c 1\n\\p\n\\v 1 {change['to']}"), policy, set()
         )
-        expected = scripture.plain(scripture_text(respelt))
+        expected = scripture.plain(scripture_text(respelled))
         assert expected in scripture.plain(words), (change, words)
         # A respelling can retain its source as a substring (beside → besides),
         # so its words are matched whole.
@@ -2379,7 +2379,7 @@ def test_contextual_articles_and_possessives(
 ) -> None:
     doc = usj.parse("\\id GEN\n\\c 1\n\\p\n\\v 1 " + before)
     original = copy.deepcopy(doc)
-    result = revision.respelt(doc, policy, set())
+    result = revision.respelled(doc, policy, set())
     assert scripture.verses(result)["1:1"].text == after
     assert doc == original
 
@@ -2393,7 +2393,7 @@ def test_contextual_phrases_in_styles_notes_and_paragraphs(
         "\n\\ip mine hour; my eyes; an holy place."
     )
     original = copy.deepcopy(doc)
-    result = revision.respelt(doc, policy, set())
+    result = revision.respelled(doc, policy, set())
     printed = usj.serialize(result)
     assert "mine \\add honour\\add*" in printed
     assert "mine \\+it honour\\+it*:" in printed
@@ -2409,7 +2409,7 @@ def test_phrase_revision_refuses_a_partial_inconsistent_lemma(
         "\\id GEN\n\\c 1\n\\p\n\\v 1 mine heart\\f - \\fq mine: \\ft or, my.\\f*."
     )
     with pytest.raises(CheckFailed, match="lemma .* GEN 1:1: mine"):
-        revision.respelt(doc, policy, set())
+        revision.respelled(doc, policy, set())
 
 
 def test_attributive_none_changes_only_in_a_declared_phrase(
@@ -2427,7 +2427,7 @@ def test_attributive_none_changes_only_in_a_declared_phrase(
     doc = usj.parse(
         "\\id GEN\n\\c 1\n\\p\n\\v 1 none habitation; none holy; none hath; no honour."
     )
-    assert scripture.verses(revision.respelt(doc, rules, set()))["1:1"].text == (
+    assert scripture.verses(revision.respelled(doc, rules, set()))["1:1"].text == (
         "no habitation; none holy; none hath; no honour."
     )
 
@@ -2489,7 +2489,7 @@ def test_reviewed_grammar_and_exceptions(
 ) -> None:
     doc = usj.parse("\\id GEN\n\\c 1\n\\p\n\\v 1 " + before)
     original = copy.deepcopy(doc)
-    result = revision.respelt(doc, declared, set())
+    result = revision.respelled(doc, declared, set())
     assert scripture.verses(result)["1:1"].text == after
     assert doc == original
 
@@ -2503,7 +2503,7 @@ def test_a_compound_divided_by_a_style_stays_divided(
         "\\f - \\fr 1 \\fq any thing: \\ft Gr. \\fqa any thing\\f*any thing"
     )
     original = copy.deepcopy(doc)
-    result = revision.respelt(doc, declared, set())
+    result = revision.respelled(doc, declared, set())
     verse = scripture.verses(result)["1:1"]
     assert verse.text == "any thing and anything"
     assert usj.serialize(result).count("\\add thing\\add*") == 1
@@ -2528,7 +2528,7 @@ def test_words_a_style_divides_are_not_redivided_or_met(
     # Moving burnt between the words would move it out of the style.
     text = "\\v 1 the whole \\add burnt-offering\\add* and any \\add thing\\add*"
     doc = usj.parse("\\id GEN\n\\c 1\n\\p\n" + text)
-    assert usj.serialize(revision.respelt(doc, words, met)).endswith(text + "\n")
+    assert usj.serialize(revision.respelled(doc, words, met)).endswith(text + "\n")
     # A word that only a style keeps changes nothing, so is not met.
     assert met == set()
 
@@ -2542,7 +2542,7 @@ def test_string_seams_and_notes_do_not_prevent_compound_spelling(
     for content in seams:
         doc = usj.parse("\\id GEN\n\\c 1\n\\p\n\\v 1 x")
         doc["content"][-1]["content"][1:] = content
-        result = revision.respelt(doc, declared, set())
+        result = revision.respelled(doc, declared, set())
         assert scripture.verses(result)["1:1"].text == "anything"
         if annotation in content:
             assert usj.notes_of(result["content"]) == [annotation]
@@ -2556,7 +2556,7 @@ def test_a_note_inside_a_compound_requires_a_whole_word_lemma(
         "\\ft A comment.\\f*thing and a thing"
     )
     with pytest.raises(CheckFailed, match="lemma its verse no longer has"):
-        revision.respelt(doc, declared, set())
+        revision.respelled(doc, declared, set())
 
 
 @pytest.mark.parametrize(
@@ -2589,7 +2589,7 @@ def test_reviewed_verb_phrases_preserve_nouns_and_commentary(
     commentary = "Aaron lights; silversmith works; what matters it; Whoso rewards"
     doc = usj.parse("\\id GEN\n\\ip " + commentary + "\n\\c 1\n\\p\n\\v 1 " + words)
     original = copy.deepcopy(doc)
-    result = revision.respelt(doc, declared, set())
+    result = revision.respelled(doc, declared, set())
     assert scripture.verses(result)["1:1"].text == words
     assert usj.text_of(result["content"]) == usj.text_of(doc["content"])
     assert doc == original
@@ -2612,7 +2612,7 @@ def test_grammar_pass_spares_commentary_and_keeps_note_metadata(
         }
     )
     original = copy.deepcopy(doc)
-    result = revision.respelt(doc, declared, set())
+    result = revision.respelled(doc, declared, set())
     text = usj.serialize(result)
     assert "\\ip He has shown it." in text
     assert "He hath \\add shown\\add* it." in text
@@ -2674,7 +2674,7 @@ def test_scoped_grammar_spares_excluded_paragraphs_wherever_they_stand(
         }
     )
     original = copy.deepcopy(doc)
-    result = revision.respelt(doc, declared, set())
+    result = revision.respelled(doc, declared, set())
     block = next(b for b in result["content"] if b.get("marker") == marker)
     assert usj.text_of(block["content"]) == 'He has shown it; says "has shown".'
     printed = usj.serialize(result)
@@ -2699,7 +2699,7 @@ def test_scoped_grammar_in_numbered_psalm_superscriptions(
         "\\d \\v 1 He has shewed it.\n\\q1 \\v 2 He has shewed it."
     )
     original = copy.deepcopy(doc)
-    result = revision.respelt(doc, declared, set())
+    result = revision.respelled(doc, declared, set())
     printed = usj.serialize(result)
     assert "\\d He has shown it." in printed
     assert scripture.verses(result)["1:1"].text == "He hath shown it."
@@ -2722,7 +2722,7 @@ def test_scoped_pass_is_one_sweep_and_quotations_share_it(
         "\\id GEN\n\\c 1\n\\p\n\\v 1 has shewed; "
         "\\f + \\ft commentary; \\fqa has \\+it shewed\\+it*\\f*"
     )
-    result = revision.respelt(doc, rules, set())
+    result = revision.respelled(doc, rules, set())
     assert scripture.verses(result)["1:1"].text == "hath shown; "
     assert "\\fqa hath \\+it shown\\+it*" in usj.serialize(result)
 
@@ -2739,7 +2739,7 @@ def test_isolated_alternative_uses_its_source_note_context(
     notes[0]["x-key"] = "1SA 22:9"
     notes[1]["x-key"] = "1SA 22:9#2"
     before = copy.deepcopy(doc)
-    result = revision.respelt(doc, declared, set())
+    result = revision.respelled(doc, declared, set())
     assert scripture.verses(result)["22:9"].text == "He answered with answers."
     printed = usj.serialize(result)
     assert "\\fqa answereth" in printed
@@ -2764,7 +2764,7 @@ def test_note_contexts_must_each_be_met(declared: bible.policy.Policy) -> None:
     )
     usj.notes_of(doc["content"])[0]["x-key"] = "GEN 1:1"
     met: revision.MetRevisions = set()
-    result = revision.respelt(doc, rules, met)
+    result = revision.respelled(doc, rules, met)
     assert scripture.verses(result)["1:1"].text == "answers"
     assert "\\fqa answereth" in usj.serialize(result)
     with pytest.raises(CheckFailed, match="GEN 1:2"):

@@ -714,7 +714,7 @@ def contextual_case(
 
 def surface(text: str) -> str:
     """A verse's text for comparison: spacing normalized, everything else
-    kept, supplied-word brackets, capitals and stops included."""
+    kept, supplied-word brackets, capitals, and stops included."""
     text = curly_apostrophes(text)
     return re.sub(r"\s+([,;:.!?])", r"\1", plain(text))
 
@@ -727,7 +727,7 @@ def same_effect(
     *,
     common: frozenset[str] | None = None,
 ) -> bool:
-    """Compare words, capitals, stops and supplied-word formatting.
+    """Compare words, capitals, stops, and supplied-word formatting.
 
     Untouched text keeps its source formatting. Instructions retain supplied
     words they carry over; raw override replacements declare italics explicitly

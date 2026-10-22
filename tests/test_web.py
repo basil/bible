@@ -47,7 +47,7 @@ def test_web_fonts(tmp_path: Path) -> None:
             assert exported.flavor == "woff"
             assert set(original.keys()) == set(exported.keys())
             # Compare serialized tables before decompilation: this includes
-            # outlines, hints, metrics, coverage, features, names and copyright.
+            # outlines, hints, metrics, coverage, features, names, and copyright.
             for tag in original.keys():
                 if tag == "GlyphOrder":
                     continue

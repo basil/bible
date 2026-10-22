@@ -76,7 +76,7 @@ HERAKLIT_FACES = ("GFSHeraklit.otf",)
 # half of it and the shrink a third. Utopia's word space is widened by this
 # much, keeping those proportions; Valkyrie's is left as designed.
 WORD_SPACE = (6, 5)
-# The sidecar beside each face: every slot, its source and how it was placed.
+# The sidecar beside each face: every slot, its source, and how it was placed.
 COLUMNS = (
     "GID",
     "Glyph",
@@ -164,7 +164,7 @@ FIGURE_KERNS = {
 
 
 def figure_kerns(style: str) -> dict[tuple[str, str], int]:
-    # Refuse a misspelt face or figure, and an allowance of nothing.
+    # Refuse a misspelled face or figure, and an allowance of nothing.
     assert set(FIGURE_SPACING) <= set(STYLES)
     assert all(
         set(allowances) <= {d + ".oldstyle" for d in DIGITS}
@@ -203,7 +203,7 @@ def rename(value: Any, names: Mapping[str, str]) -> Any:
         return {names.get(k, k): rename(v, names) for k, v in value.items()}
     if hasattr(value, "__dict__"):
         for k, v in vars(value).copy().items():
-            # A feature, script or language tag may spell a glyph's name
+            # A feature, script, or language tag may spell a glyph's name
             # ("zero" is both the digit and the slashed-zero feature).
             if not k.endswith("Tag"):
                 setattr(value, k, rename(v, names))
@@ -522,7 +522,7 @@ def unicode_columns(cmap: Mapping[int, str]) -> dict[str, str]:
 
 def write_face(base: TTFont, output: Path, rows: Sequence[Sequence[Any]]) -> None:
     """Save a face with its sidecar, and read it back whole to catch a
-    dangling glyph, hint or layout reference now."""
+    dangling glyph, hint, or layout reference now."""
     base["head"].created = base["head"].modified = EPOCH
     if "FFTM" in base:
         del base["FFTM"]

@@ -1,5 +1,5 @@
 {
-  "why": "The Old Testament poetry follows the Updated Brenton where Scrivener also sets the verse as poetry or has no say. Prose records verse-level exceptions to this agreement. Its line boundaries are aligned to Brenton; breaks records the lines the words cannot place or would place wrongly. Boyd’s prose marker is retained at a poem’s end. Unspaced records prose paragraphs that follow poetry without the blank line normally added for print. Paragraphs records departures at existing prose boundaries: a continuation, repeated label, immediate response or closing action may remain flush left, while a new narrative or discourse unit keeps its paragraph. A change of speaker alone does not open a new unit. Each anchor is checked in the assembled, unrevised verse; joining changes paragraph structure alone.",
+  "why": "The Old Testament poetry follows the Updated Brenton where Scrivener also sets the verse as poetry or has no say. Prose records verse-level exceptions to this agreement. Its line boundaries are aligned to Brenton; breaks records the lines the words cannot place or would place wrongly. Boyd’s prose marker is retained at a poem’s end. Unspaced records prose paragraphs that follow poetry without the blank line normally added for print. Paragraphs records departures at existing prose boundaries: a continuation, repeated label, immediate response, or closing action may remain flush left, while a new narrative or discourse unit keeps its paragraph. A change of speaker alone does not open a new unit. Each anchor is checked in the assembled, unrevised verse; joining changes paragraph structure alone.",
   "prose": {
     "ECC 3:9": "The poem of appointed times ends at verse 8; verse 9 returns to prose with the question about labour. Brenton’s 1879 printing, printed page 821 (PDF page 837), begins a new paragraph here.",
     "SIR 50:27": "The author's colophon is prose in Scrivener's Cambridge Paragraph Bible; follow him here rather than Boyd's poetry."
@@ -89,21 +89,21 @@
       {
         "follows": "Thou hast set us alone",
         "line": "Ain. Thou hast set us alone",
-        "why": "Brenton prints the Hebrew letter inside the verse, where the update's numbering begins a new verse, so both words beside the break are matched but the letter stands between them. The letter heads the line it names, as it heads the verses of chapters 1, 2 and 4."
+        "why": "Brenton prints the Hebrew letter inside the verse, where the update's numbering begins a new verse, so both words beside the break are matched but the letter stands between them. The letter heads the line it names, as it heads the verses of chapters 1, 2, and 4."
       }
     ],
     "LAM 4:17": [
       {
         "follows": "We looked to a nation",
         "line": "Tsade. We looked to a nation",
-        "why": "Brenton prints the Hebrew letter inside the verse, where the update's numbering begins a new verse, so both words beside the break are matched but the letter stands between them. The letter heads the line it names, as it heads the verses of chapters 1, 2 and 4."
+        "why": "Brenton prints the Hebrew letter inside the verse, where the update's numbering begins a new verse, so both words beside the break are matched but the letter stands between them. The letter heads the line it names, as it heads the verses of chapters 1, 2, and 4."
       }
     ],
     "LAM 4:18": [
       {
         "follows": "Our time has drawn nigh",
         "line": "Koph. Our time has drawn nigh",
-        "why": "Brenton prints the Hebrew letter inside the verse, where the update's numbering begins a new verse, so both words beside the break are matched but the letter stands between them. The letter heads the line it names, as it heads the verses of chapters 1, 2 and 4."
+        "why": "Brenton prints the Hebrew letter inside the verse, where the update's numbering begins a new verse, so both words beside the break are matched but the letter stands between them. The letter heads the line it names, as it heads the verses of chapters 1, 2, and 4."
       }
     ]
   },

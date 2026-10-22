@@ -337,7 +337,7 @@ def check(policy: Policy) -> None:
             ),
             f"Empty Brenton rendering: {key}",
         )
-    # A misspelt field would be read as no override, and the entry as used.
+    # A misspelled field would be read as no override, and the entry as used.
     # The 1611 notes also say where George's lemma is found in the verse; a
     # note of either source may say which verse it belongs to.
     note_fields = {"lemma", "note", "sentence", "occurrence", "quotation"}

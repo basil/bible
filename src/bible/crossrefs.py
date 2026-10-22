@@ -357,7 +357,7 @@ def link_notes(
     """One note per origin and printed agreement, with targets in edition order.
 
     Keep the relations separate upstream, where their classes and row ids
-    govern reciprocal links, conflicts and source-note merges.
+    govern reciprocal links, conflicts, and source-note merges.
     """
     groups: dict[tuple[Verse, str | None], list[Passage]] = {}
     for link in links:

@@ -44,11 +44,11 @@
   \next
 }
 % A font's features can set another glyph than the one its character map
-% names: production's oldstyle figures, superscripts and small capitals. The
+% names: production's oldstyle figures, superscripts, and small capitals. The
 % codes belong to the glyph on the page, and XeTeX cannot be asked which one
 % shaping chose, so find it by its measurements: set the character as text,
 % and when that differs from the mapped glyph, give every glyph of the same
-% width, height and depth the codes reckoned from the width as set.
+% width, height, and depth the codes reckoned from the width as set.
 \gdef\BibleProtrusionSubstitute#1{%
   \XeTeXuseglyphmetrics=1
   \setbox0=\hbox{\char#1}%

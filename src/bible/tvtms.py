@@ -54,7 +54,7 @@ class Row:
 def _verses(
     text: str, book: str | None = None
 ) -> list[tuple[str, str, int, str]] | None:
-    """The verses a reference, range or list names, as (book, chapter, verse,
+    """The verses a reference, range, or list names, as (book, chapter, verse,
     part), or None if it can't be read."""
     verses = []
     for item in re.split(r"\s*;\s*", text.strip()):

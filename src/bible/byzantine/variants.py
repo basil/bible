@@ -575,7 +575,7 @@ def rows(
 
 
 def accent_key(text: str) -> str:
-    """Compare diacritics without case, punctuation or grave/acute variation."""
+    """Compare diacritics without case, punctuation, or grave/acute variation."""
     return acute(letter_key(text.replace("…", "")))
 
 
@@ -693,7 +693,7 @@ def marked(result: list[Segment], cited: Sequence[str]) -> list[Segment]:
     """The segments with the words both witnesses share of each cited phrase
     set apart. A phrase is RP2026's, so it is found once in the adopted
     text, read without case or punctuation, as its decision was checked; a
-    reading within it, of a movable ν, a breathing or the punctuation, stays
+    reading within it, of a movable ν, a breathing, or the punctuation, stays
     a reading, and a gap breaks it. Words an earlier phrase set apart are
     this one's too."""
     result = list(result)

@@ -35,7 +35,7 @@ def installed() -> list[Path]:
 
 
 def family(face: Path) -> str:
-    """A face's family, as fontconfig, PTXprint and CSS name it."""
+    """A face's family, as fontconfig, PTXprint, and CSS name it."""
     with TTFont(face, lazy=True) as font:
         return str(font["name"].getDebugName(16) or font["name"].getDebugName(1))
 

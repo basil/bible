@@ -50,7 +50,7 @@ def with_field(note: Node, marker: str, content: Content) -> Node:
 
 
 def readable_span(text: str, words: Words, first: int, last: int) -> Span:
-    # Articles, possessives and other determiners need the words they govern.
+    # Articles, possessives, and other determiners need the words they govern.
     open_words = (
         lemmas.LINKING_WORDS
         | lemmas.POSSESSIVES

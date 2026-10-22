@@ -5,7 +5,7 @@ the text worse than eBible's archive and the notes far more fully. The build
 reads it for the notes alone, and never for a word of the text: each page's
 words are read with the note callers among them and parted into the runs of
 one chapter each; a run's chapter is found among eBible's by the words, since
-the archive's page names, contents and chapter markup mislead: of the chapters
+the archive's page names, contents, and chapter markup mislead: of the chapters
 that share the run's rarer words, the one whose words the run's align with
 best, and the build stops where two align alike and would set the notes
 differently; and each note is set in eBible's verse before the word its
@@ -877,7 +877,7 @@ def note_words(note: Node) -> str:
 
 
 def canonical_note(text: str) -> str:
-    """Only encoding, spacing and typographic quote differences are immaterial."""
+    """Only encoding, spacing, and typographic quote differences are immaterial."""
     return scripture.plain(
         unicodedata.normalize("NFC", text).translate(str.maketrans("‘’“”", "''\"\""))
     )

@@ -19,7 +19,7 @@ from bible.usj import Document
 # A chapter of prose as a source prints it, and the same words as the update
 # sets them: a poem that opens mid-verse, a stanza break, prose resuming in
 # the same paragraph and in a new one, and a line whose first word is
-# respelt.
+# respelled.
 SOURCE = (
     "\\id TST\n\\c 1\n\\p\n"
     "\\v 1 And he said, Hear my voice, ye wives of Lamech; "
@@ -66,7 +66,7 @@ def test_a_source_paragraph_is_divided_as_the_update_divides_it(
     assert markers(doc) == ["p", "q1", "q1", "b", "q1", "q1", "m", "p"]
     verses = scripture.verses(doc)
     # The words that introduce the poem end their paragraph of prose; a
-    # break after a respelt word (to-day) is placed by the line's first word.
+    # break after a respelled word (to-day) is placed by the line's first word.
     assert verses["1:1"].text == (
         "And he said,\nHear my voice, ye wives of Lamech;\nto-day I have slain a man."
     )
@@ -627,7 +627,7 @@ def test_the_line_stage_preserves_verses_notes_and_new_testament_paragraphs_with
                 re.escape(scripture.plain(part)) for part in text.splitlines()
             )
             assert re.fullmatch(pattern, scripture.plain(verse.text)), (code, label)
-            # Compare whole notes, including their ordered content, x-key and x-scope.
+            # Compare whole notes, including their ordered content, x-key, and x-scope.
             assert [note for _, note in after_verses[label].notes] == [
                 note for _, note in verse.notes
             ], (code, label)

@@ -319,7 +319,7 @@ def place_break(
     # A line that opens a verse opens the verse of that number, where its
     # first words are matched there, or a word or two of the source's stand
     # before them: Brenton's Hebrew letters in Lamentations head their verses
-    # whatever the update left out, and a respelt name opens its verse. Never
+    # whatever the update left out, and a respelled name opens its verse. Never
     # at or before the line already begun.
     label = source.verse_of(index)
     if (

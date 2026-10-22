@@ -133,7 +133,7 @@ def attach(
                 continue
             i, j = edit["word_range"]
             kind = edit["kind"]
-            # The units, the scope, the aligned TR positions and the method.
+            # The units, the scope, the aligned TR positions, and the method.
             fit: tuple[list[Unit], str, set[int], str] | None = None
             if ref in aligned:
                 found = fitting_unit(
@@ -667,7 +667,7 @@ def constructions(
     checker: Checker | None = None,
     overrides: Iterable[Override] = (),
 ) -> list[Instruction]:
-    """Group, check and choose instructions by construction, book by book.
+    """Group, check, and choose instructions by construction, book by book.
 
     1. A source's instructions whose edits share a unit, or whose words overlap
        or touch in a verse, form one group (an instruction spanning verses is

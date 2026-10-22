@@ -610,7 +610,7 @@ def test_notes_restore_the_kjv_as_corrected_where_the_greek_is_shared() -> None:
     verse = scripture.verses(prepared["MAT"])["1:1"]
     assert verse.text == "And they came within the kingdom."
     assert "\\add came\\add*" in usj.serialize(prepared["MAT"])
-    # The source note, the TR note and the "Or," note of the correction.
+    # The source note, the TR note, and the "Or," note of the correction.
     assert len(verse.notes) == 3
     assert verify.finished_verses(documents, prepared, rows, NO_STRUCTURE) == {}
     assert documents == original

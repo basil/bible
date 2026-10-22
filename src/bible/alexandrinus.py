@@ -152,7 +152,7 @@ def derived(
     key: str, operation: Decision, source: str, supplied: Sequence[str] = ()
 ) -> str:
     """The English a decision prints, derived exactly from a source phrase by
-    its declared edits: order, punctuation, spelling and supplied-word markup
+    its declared edits: order, punctuation, spelling, and supplied-word markup
     cannot change without one. Its vocabulary must be Brenton's besides."""
     proof = operation.get("english")
     require(
@@ -254,8 +254,8 @@ def operations(
 
 
 def further(entry: Decision, item: Decision) -> Decision:
-    """A decision's further replacement: its own words, derivation and note
-    position, and the decision's reason, note and lemma unless it has its
+    """A decision's further replacement: its own words, derivation, and note
+    position, and the decision's reason, note, and lemma unless it has its
     own. A verse is omitted by the decision itself, or by a passage's
     further replacement, each naming the verse its note stands on."""
     inherited = cast(

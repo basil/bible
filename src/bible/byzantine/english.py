@@ -1,7 +1,7 @@
 """The English texts, read through the USJ document model.
 
 The pinned KJV (Cambridge Paragraph Bible, eBible) is the text being edited;
-the Revised Version of 1881, the ASV of 1901 and Boyd's ASV conformed to
+the Revised Version of 1881, the ASV of 1901, and Boyd's ASV conformed to
 RP2018 are witnesses. Every reader checks its verse inventory.
 """
 

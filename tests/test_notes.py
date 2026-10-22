@@ -1063,7 +1063,7 @@ def test_passages_set_in_another_order_are_noted_alike_in_both_testaments(
     assert "PRO 24:22f Heb." not in rows
     assert rows["PRO 29:27 Heb."] == (
         "29:27",
-        "Heb. has here 30:1–14, 30:15–33 and 31:1–9, printed in chapter 24",
+        "Heb. has here 30:1–14, 30:15–33, and 31:1–9, printed in chapter 24",
     )
     assert rows["ROM 14:24 TR"] == ("14:24", "TR has this passage at 16:25–27")
     assert rows["ROM 16:24 TR"] == (

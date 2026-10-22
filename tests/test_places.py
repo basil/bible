@@ -71,7 +71,7 @@ def test_the_words_move_a_verse_and_its_place_keeps_one() -> None:
         ("GEN 1:2", "GEN 1:3", "words"),
         ("GEN 1:3", "GEN 1:2", "words"),
         ("GEN 1:4", "GEN 1:4", "words"),
-        # Names spelt otherwise share no words.
+        # Names spelled otherwise share no words.
         ("GEN 1:5", "GEN 1:5", "place"),
         ("GEN 1:6", "GEN 1:6", "words"),
         ("GEN 1:6a", "", "words"),

@@ -6,7 +6,7 @@ preface "Gen. xlvii. 31", and each names the books its own way: Brenton's
 "1 Kings" is the First Book of Kingdoms, and the King James Bible's the
 Third. A dialect is a source's way of writing: its names for the books, its
 numerals and stops, and the numbering it cites by. A citation is read once,
-where its source is read, into the books, chapters and verses of this
+where its source is read, into the books, chapters, and verses of this
 edition; what prints is written from those.
 
 The grammar reads what is regular. What isn't is decided in the file, each

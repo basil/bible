@@ -1,7 +1,7 @@
 """Apply the dispositions to the KJV: edits at fixed offsets in the USJ, each
 with its Textus Receptus footnote, and the structural moves and omissions.
 
-Only mechanical spacing, deletion punctuation and supplied-word styles
+Only mechanical spacing, deletion punctuation, and supplied-word styles
 touch anything beside the exact replacement wording. An operation the rules cannot
 carry out is refused by name, never guessed at.
 """

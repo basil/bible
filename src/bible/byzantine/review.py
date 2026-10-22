@@ -111,7 +111,7 @@ DIFF_LEGEND = (
     "English diffs compare the King James words with the edition's before their spelling and punctuation are revised. Contextual diffs use [-removed] "
     "and [+added] inside code spans. Unit comparisons use corresponding Greek and English passages, keeping shared constructions intact. "
     "Greek-only excerpts retain complete phrases without English alignment. Paired Greek and English ellipses mark corresponding omitted intervals; verified moved passages may be excerpted; uncertain correspondence quotes complete verses. "
-    "Greek diffs mark wording, punctuation and accents as prepared for the variants, suppressing case-only differences. Shared words use RP capitalization except every inflection of θεός, κύριος and χριστός (including human uses), which keeps TR capitalization even at verse openings; whole-verse Greek diffs appear once per verse. "
+    "Greek diffs mark wording, punctuation, and accents as prepared for the variants, suppressing case-only differences. Shared words use RP capitalization except every inflection of θεός, κύριος, and χριστός (including human uses), which keeps TR capitalization even at verse openings; whole-verse Greek diffs appear once per verse. "
     "Witness diffs show complete touched phrases where their "
     "wording can be located uniquely; … marks clipped context. KJV context shows "
     "an instruction’s proposal; source context shows the reported alternative "
@@ -436,7 +436,7 @@ def revision_status(
     index: Index,
     rows: Sequence[RevisionRow],
 ) -> str:
-    """Keep eligibility, an attached contrast and corroboration distinct."""
+    """Keep eligibility, an attached contrast, and corroboration distinct."""
     if unit["id"] in context.revisions.admitted[name]:
         return "eligible reading; " + (
             "English contrast attached" if rows else "no English contrast attached"
@@ -506,7 +506,7 @@ def source_plain(markup: str | None) -> str | None:
 def instruction_line(
     i: Instruction, context: Reconciliation, uid: str | None = None
 ) -> str:
-    """A recommendation with its proposal, binding and exclusion reason."""
+    """A recommendation with its proposal, binding, and exclusion reason."""
     name = NAMES.get(i["source"], i["source"])
     bits = [f"{name} {i['entry']}"]
     if i.get("strength") and i["source"] != PIERPONT:
@@ -664,7 +664,7 @@ def calculus(row: Disposition, unit: Unit, index: Index) -> str:
             base += f", departing from {name} {s.get('entry')}"
         if row.get("redundant"):
             base += (
-                "; no apparatus report, instruction, revision row or revision alarm attaches to its units, so without it they stay unchanged and it could be removed"
+                "; no apparatus report, instruction, revision row, or revision alarm attaches to its units, so without it they stay unchanged and it could be removed"
                 if row["kind"] == "nochange"
                 else "; it has the same effect as the selected instruction and could be removed"
             )
@@ -1076,7 +1076,7 @@ def packets(
         lines = [
             f"# {book}",
             "",
-            "Every Scrivener-RP2026 unit in the book. Neutral units are tabled first; other units keep the Greek, verse comparisons, witnesses and disposition together. The corrections of shared Greek follow them. The tag legend is in src/bible/byzantine/tags.py.",
+            "Every Scrivener-RP2026 unit in the book. Neutral units are tabled first; other units keep the Greek, verse comparisons, witnesses, and disposition together. The corrections of shared Greek follow them. The tag legend is in src/bible/byzantine/tags.py.",
             "",
         ]
         lines += [

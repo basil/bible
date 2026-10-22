@@ -1,4 +1,4 @@
-"""Edits on real verses: seams, supplied words, structural moves and omissions."""
+"""Edits on real verses: seams, supplied words, structural moves, and omissions."""
 
 from __future__ import annotations
 

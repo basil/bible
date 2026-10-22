@@ -8,7 +8,7 @@ the licensee's own edition. They may not be redistributed, committed to a
 source repository or otherwise made available to anyone who is not a licensed
 user of Valkyrie. Read-only copies embedded in the edition's PDF, and the
 webfonts served on the licensee's own website, are the uses the licence allows.
-Valkyrie's outlines, hinting, spacing, kerning, features and metrics are
+Valkyrie's outlines, hinting, spacing, kerning, features, and metrics are
 unchanged; its notices remain embedded in each face.
 
 The superior lowercase letters a-z and the superior colon, which Valkyrie's

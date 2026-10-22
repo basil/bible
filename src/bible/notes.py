@@ -118,7 +118,7 @@ COMMENTARY = re.compile(
 # Punctuation and quotation marks stay roman at either end of an italic run.
 TRIM = " \n.,;:?!+'‘’“”\"`"
 # Names, which keep their capital where a note runs on from its lemma: of
-# languages, texts, versions and people, and the pronoun "I".
+# languages, texts, versions, and people, and the pronoun "I".
 NAMES = re.compile(
     r"(?:Gr|Heb|Hebrew|Hebraism|Syr|Sept|Alex|Vat|Complut|Ald|Vulg|A\. V|App|Appendix"
     r"|AV|Eng\. Ver|English Bible|English [Vv]ersion|Authorized Version"
@@ -941,7 +941,7 @@ def finished(
     """The note as it prints: its terms in the edition's forms; a sentence
     with its capital and a closing full stop; any other note without one, and
     after a lemma, running on from the colon ("elder: or, greater") unless it
-    opens with a name, a reference, capitals or a quotation mark."""
+    opens with a name, a reference, capitals, or a quotation mark."""
     found = is_sentence(runs)
     require(
         sentence is None or sentence != found,
@@ -1077,7 +1077,7 @@ def boundary_stop(scope: usj.Scope | None) -> str:
     by the one stop its replacement takes in, where the words it stands for
     end on a stop the lemma leaves out; the printed lemma never carries a
     stop, since the colon that ends its field is the note's. Annotation and
-    verse revision write it, and annotation, the review and its checks read
+    verse revision write it, and annotation, the review, and its checks read
     it here."""
     declared = (scope or {}).get("declared") or ""
     return declared[-1] if declared and declared[-1] in BOUNDARY_STOPS else ""

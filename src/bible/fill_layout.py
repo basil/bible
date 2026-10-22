@@ -17,7 +17,7 @@ from bible.checks import require
 def heading(paragraph: Any) -> bool:
     """Does TeX keep this paragraph with the one after it?
 
-    PTXprint sets a title, a section heading or any other non-verse paragraph
+    PTXprint sets a title, a section heading, or any other non-verse paragraph
     outside an introduction (an introduction marker begins with i, as its TeX
     tests) in a heading box, and forbids a page break after the box
     (ptx-para-style.tex). The type it typeset each paragraph as is recorded in

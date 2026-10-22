@@ -132,7 +132,7 @@ class Apparatuses:
 
 @dataclass(frozen=True)
 class Instructions:
-    """Pierpont's booklet and its instructions, bound, attached and checked
+    """Pierpont's booklet and its instructions, bound, attached, and checked
     for compatibility with the units' Greek."""
 
     inventory: pierpont.Inventory
@@ -183,7 +183,7 @@ class Verified:
 @dataclass(frozen=True)
 class Reconciliation:
     """Everything the reconciliation worked out, by the stage that made it,
-    for the promotion, the review and the textual variants."""
+    for the promotion, the review, and the textual variants."""
 
     inputs: Inputs
     greek: Greek
@@ -499,7 +499,7 @@ def stage_instructions(
     apparatuses: Apparatuses,
     check: rendering.Checker,
 ) -> Instructions:
-    """The KJV-worded instruction source, bound, attached and checked."""
+    """The KJV-worded instruction source, bound, attached, and checked."""
     kjv = english_.kjv
     inventory = pierpont.read(given.sources["pierpont"].read_text(), kjv)
     rows = pierpont.instructions(inventory, kjv)

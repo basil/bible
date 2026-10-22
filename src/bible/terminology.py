@@ -1,7 +1,7 @@
 """The edition's terms and abbreviations (edition/terminology.json).
 
-A term has one identity, one printed form and one meaning; the sources write
-it many ways. "A. V.", "Eng. Ver." and "AV" name the Authorized Version,
+A term has one identity, one printed form, and one meaning; the sources write
+it many ways. "A. V.", "Eng. Ver.", and "AV" name the Authorized Version,
 which a note calls by its note term, KJV; "Sept." is "LXX"; "i. e." closes up,
 and takes a comma.
 A term is recognized in a source's words and printed in the edition's form, in the form

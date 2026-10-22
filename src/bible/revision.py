@@ -1,22 +1,22 @@
-"""The edition's revision of the translation's spelling, vocabulary and
+"""The edition's revision of the translation's spelling, vocabulary, and
 punctuation (edition/revisions.json), by explicit editorial decisions.
 
 Five kinds of change are declared, each with its reason:
 
-    names    a proper name respelt where its bearer is decided: every
+    names    a proper name respelled where its bearer is decided: every
              whole-word occurrence of a form in the verses its decision
              lists, and in the lemmas of their notes. Every other verse of
              the printed books that has the form is listed as keeping it,
              with who keeps it, so that each form prints only where a
              decision says
-    words    a word respelt or modernized wherever it is printed as a whole
+    words    a word respelled or modernized wherever it is printed as a whole
              word: in the translation, its notes, and front and back matter,
              or, with a scope of "scripture", in a book's verses and the
              lemmas and readings of their notes alone, preserving source
              prose's grammar. A word may except phrases it stands in, which
              spelling leaves as they are, though the grammar of scripture
              still revises their other words. Words that a character style
-             divides are not joined, divided or re-divided, and nor are
+             divides are not joined, divided, or re-divided, and nor are
              they in the lemma that quotes them
     passages punctuation in a keyed note or front/back-matter paragraph,
              and lowercase word initials in a keyed note's fragments,
@@ -49,10 +49,10 @@ from bible.policy_schema import RevisionChange, WordingChange
 from bible.references import book_of
 from bible.usj import Content, Document, Node, Predicate
 
-# What revision has met: a word, verse or punctuation rule by its key, a
+# What revision has met: a word, verse, or punctuation rule by its key, a
 # passage change by its selector and words, a word confined to notes by the
 # note's key and the word, a phrase a word excepts by the word and the
-# phrase, and a name respelt or kept by its verse and form.
+# phrase, and a name respelled or kept by its verse and form.
 type MetRevisions = set[str | tuple[str, ...]]
 # The words to revise, letter by letter; an empty key ends a word.
 type Trie = dict[str, "Trie"]
@@ -117,7 +117,7 @@ def check(policy: bible.policy.Policy) -> None:
             f"Respelling with a scope that is not scripture: {word}",
         )
         # Spelling alone excepts. An excepted phrase holds its word whole and
-        # no other word respelt wherever it is printed, which it would leave
+        # no other word respelled wherever it is printed, which it would leave
         # unrevised, so no other word excepts it.
         require(
             "except" not in entry
@@ -194,7 +194,7 @@ def check(policy: bible.policy.Policy) -> None:
     for word, entry in words.items():
         spanned = sorted((_spans(word) | _spans(entry["to"])) & owners.keys())
         require(
-            not spanned, f"Name also respelt as a word: {word}: {', '.join(spanned)}"
+            not spanned, f"Name also respelled as a word: {word}: {', '.join(spanned)}"
         )
     for name, group in data["verses"].items():
         require_fields(group, {"why", "changes"}, (), f"Revisions {name}")
@@ -214,7 +214,7 @@ def check(policy: bible.policy.Policy) -> None:
             )
             # NT wording belongs to checked Greek-reading or rendering
             # decisions. Verse revisions may change its punctuation only;
-            # keep words, numbers and internal apostrophes/hyphens intact.
+            # keep words, numbers, and internal apostrophes/hyphens intact.
             require(
                 key[:3] not in policy.kjv_units
                 or punctuation_only(change["from"], change["to"]),
@@ -696,7 +696,7 @@ def _pattern(words: tuple[str, ...]) -> re.Pattern[str]:
     """The words set out as a trie, so that the text is scanned once however
     many there are: a plain alternation of a thousand words tries each of them
     at every letter, ten times slower on the whole edition. Each document is
-    respelt with the same few sets of words, so each trie is built once."""
+    respelled with the same few sets of words, so each trie is built once."""
     trie: Trie = {}
     for word in words:
         node = trie
@@ -752,7 +752,7 @@ def exceptions(policy: bible.policy.Policy) -> dict[str, str]:
     }
 
 
-def respelt(
+def respelled(
     doc: Document,
     policy: bible.policy.Policy,
     met: MetRevisions,
@@ -762,12 +762,12 @@ def respelt(
     """Spell first, then revise grammar in scripture; the names come before
     both (named).
 
-    Each pass is one longest-match sweep. Spelling, vocabulary and participle
+    Each pass is one longest-match sweep. Spelling, vocabulary, and participle
     changes apply wherever a word is printed, source prose included. Grammar,
     the words scoped to scripture, applies to a book's verses alone: their
     words, and the lemmas (fq) and readings (fqa) of the notes set in them. A
     verse runs to the next verse number, or to the end of its book. The titles,
-    headings and introductions it spans keep their grammar, and so do the
+    headings, and introductions it spans keep their grammar, and so do the
     notes set in them, whose lemmas quote them. Plain quotation marks do not
     establish scope.
     """
@@ -786,7 +786,7 @@ def respelt(
         if key is not None and "notes" in words[match[0]]:
             met.add((key, match[0]))
 
-    def spelt(match: re.Match[str]) -> str:
+    def spelled(match: re.Match[str]) -> str:
         # A phrase a word excepts stands as it is, and is met for the word.
         if match[0] in excepted:
             met.add((excepted[match[0]], match[0]))
@@ -797,10 +797,10 @@ def respelt(
         [word for word, entry in words.items() if "scope" not in entry] + list(excepted)
     )
 
-    def spelt_note(
+    def spelled_note(
         items: Content, text: str, at: int, divided: list[tuple[int, int]]
     ) -> Content:
-        """A note's words respelt. Its readings and commentary stand alone;
+        """A note's words respelled. Its readings and commentary stand alone;
         its lemma, where it quotes the words at the note's place, keeps the
         compounds a style keeps divided there."""
 
@@ -823,7 +823,7 @@ def respelt(
                             item["content"],
                             spelling,
                             lambda match: (
-                                match[0] if match.span() in kept else spelt(match)
+                                match[0] if match.span() in kept else spelled(match)
                             ),
                             done=done,
                         )
@@ -836,13 +836,13 @@ def respelt(
         return _rewritten(
             lemmas(items),
             spelling,
-            spelt,
+            spelled,
             skip=lambda item: usj.is_note(item) or item.get("marker") == "fq",
             done=done,
         )
 
-    def spelt_notes(segment: Content) -> Content:
-        """A verse with its notes respelt, each read at its place."""
+    def spelled_notes(segment: Content) -> Content:
+        """A verse with its notes respelled, each read at its place."""
         text = usj.text_of(segment)
         runs = functools.cache(lambda: _style_runs(segment))
         divided = [
@@ -862,7 +862,7 @@ def respelt(
                 elif usj.is_note(item):
                     item = {
                         **item,
-                        "content": spelt_note(item["content"], text, at, divided),
+                        "content": spelled_note(item["content"], text, at, divided),
                     }
                 elif "content" in item:
                     item = {**item, "content": visit(item["content"])}
@@ -880,8 +880,8 @@ def respelt(
         for start, end in zip(starts, ends):
             segment = content[start:end]
             if usj.notes_of(segment):
-                segment = spelt_notes(segment)
-            part = _rewritten(segment, spelling, spelt, done=done)
+                segment = spelled_notes(segment)
+            part = _rewritten(segment, spelling, spelled, done=done)
             output += part + content[end : end + 1]
         return output
 
@@ -962,12 +962,12 @@ def prose(marker: str) -> bool:
 # is not revised as English.
 FOREIGN_END = re.compile(f"[{usfm.GREEK}{usfm.HEBREW}][{usfm.COMBINING}]*[.?!]*$")
 # The systematic rules, each a pattern over a unit's English, in the order
-# they apply: a run of commas, colons and semicolons duplicates the break an
+# they apply: a run of commas, colons, and semicolons duplicates the break an
 # em dash or a parenthesis marks. Inside closing parentheses the run moves
 # after the last, or goes when a dash follows; before a dash or an opening
 # parenthesis it goes. The move comes first, so that a run it sets before a
 # dash or a parenthesis goes too, and a second pass changes nothing. A
-# period, question mark or exclamation mark inside a parenthesis ends the
+# period, question mark, or exclamation mark inside a parenthesis ends the
 # parenthesis's own sentence, and stays.
 RULES: dict[str, re.Pattern[str]] = {
     "inside-parenthesis": re.compile(r"([,;:]+)\)+(—?)"),
@@ -1123,7 +1123,7 @@ def punctuated(
 ) -> Document:
     """Regularize English punctuation across styles, within each text unit.
 
-    Notes have their own words; verses, labels and foreign styles interrupt
+    Notes have their own words; verses, labels, and foreign styles interrupt
     a unit. The dash and the parenthesis keep their style because only the
     punctuation beside them changes. Punctuation after a tagged foreign word
     is refused, as it may be the foreign text's own, and so is a change that
@@ -1288,7 +1288,7 @@ def regularized(doc: Document, policy: bible.policy.Policy) -> Document:
     """A document with the systematic spelling and punctuation alone,
     recording nothing: the textual variants quote both Bibles so, to show
     the readings' differences and not the edition's finishing."""
-    return punctuated(respelt(doc, policy, set()), policy, set())
+    return punctuated(respelled(doc, policy, set()), policy, set())
 
 
 def revised(
@@ -1337,7 +1337,7 @@ def named(
     policy: bible.policy.Policy,
     met: MetRevisions,
 ) -> Document:
-    """A book with its names respelt where their bearers are decided
+    """A book with its names respelled where their bearers are decided
     (revisions.json, names): every whole-word occurrence of a form in the
     verses its decision lists, in the styles it stands in, and in the lemmas
     of the notes that quote it. Every other verse that prints the form must
@@ -1376,7 +1376,7 @@ def named(
                 (reference, form) in found, f"Name not met: {code} {reference}: {form}"
             )
             met.add((kind, f"{code} {reference}", form))
-    # A form respelt within a longer one would splice the two decisions.
+    # A form respelled within a longer one would splice the two decisions.
     for reference, form in changes:
         require(
             [m.start() for m in _phrase(form).finditer(verses[reference].text)]
@@ -1397,7 +1397,7 @@ def named(
 def check_kept(
     code: str, before: Document, after: Document, policy: bible.policy.Policy
 ) -> None:
-    """Refuse a kept name that another revision respelt: each kept verse of a
+    """Refuse a kept name that another revision respelled: each kept verse of a
     book as finished prints its form as often as the names left it."""
     kept = [
         (reference, keeping["form"])
@@ -1418,7 +1418,7 @@ def check_kept(
             for verses in (was, now)
         ]
         require(
-            counts[0] == counts[1], f"Kept name respelt: {code} {reference}: {form}"
+            counts[0] == counts[1], f"Kept name respelled: {code} {reference}: {form}"
         )
 
 

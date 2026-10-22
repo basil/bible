@@ -384,7 +384,7 @@ def _in_place(
     ours: list[Verse], theirs: list[Verse], pairs: Mapping[Verse, Verse]
 ) -> dict[Verse, Verse]:
     """Verses left over that face as many left over, between two pairs that
-    stand in the same order: names spelt otherwise share no words.
+    stand in the same order: names spelled otherwise share no words.
 
     A lettered verse is an addition, and faces nothing. Nor does a title face
     a verse.

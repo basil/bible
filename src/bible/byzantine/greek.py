@@ -591,7 +591,7 @@ def joined(tokens: list[tuple[bool, str]]) -> list[tuple[bool, str]]:
 
 def reading(part: list[tuple[bool, str]]) -> str:
     """A reading of the printed apparatus as Boyd writes his: its words without
-    the editors' sigla, brackets or remarks, an omission as ---, and the
+    the editors' sigla, brackets, or remarks, an omission as ---, and the
     numeral sign as Boyd's."""
     words = " ".join(t for s, t in part if not s)
     # Square brackets mark an edition that brackets the words; a remark in
@@ -627,7 +627,7 @@ def page_text(pages: Iterable[ET.Element], main: bool = True) -> str:
 def printed(
     root: ET.Element, omitted: frozenset[str], last: str
 ) -> tuple[dict[str, PrintedVerse], list[Diacritic]]:
-    """The printed RP2026: per verse, ascii forms, accented words and page; and
+    """The printed RP2026: per verse, ascii forms, accented words, and page; and
     the same-letter accent contrasts its apparatus prints against the TR. The
     text ends with its last verse, which RP2018 also ends with."""
     spec = root.find(".//fontspec[@id='25']")

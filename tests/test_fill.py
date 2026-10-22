@@ -1,4 +1,4 @@
-"""Cache isolation, strict solver acceptance and preserving checked downloads."""
+"""Cache isolation, strict solver acceptance, and preserving checked downloads."""
 
 from __future__ import annotations
 

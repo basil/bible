@@ -1,5 +1,5 @@
 """The English texts of the reconciliation: the King James books the read
-stage parsed, and the RV, ASV and Boyd's ASV witnesses, read through the
+stage parsed, and the RV, ASV, and Boyd's ASV witnesses, read through the
 document model."""
 
 from __future__ import annotations

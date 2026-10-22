@@ -1,8 +1,8 @@
 """USJ, the JSON form of USFM, as the model of every document the build handles.
 
 A document is plain data: {"type": "USJ", "version": ..., "content": [...]}, whose
-content holds book, chapter, para and table objects; a para's content holds
-strings, verse milestones, char objects and notes. Nothing here is the build's
+content holds book, chapter, para, and table objects; a para's content holds
+strings, verse milestones, char objects, and notes. Nothing here is the build's
 own invention but two things: a note may carry "x-key", the address of the
 source note it was made from, and "x-scope", the words a manuscript decision
 says it is about.

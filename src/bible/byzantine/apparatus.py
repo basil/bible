@@ -609,7 +609,7 @@ def msb_contrast(source: str, english: str) -> tuple[str | None, str | None]:
     """Read one closed contrast with a generic or Scrivener TR label.
 
     Joint edition labels say the same thing as a lone TR label. MT-shared
-    mentions, Stephanus-only readings, alternatives and explanations abstain.
+    mentions, Stephanus-only readings, alternatives, and explanations abstain.
     Separate fully labelled edition readings may include a third reading;
     each edition must occur only once, and exactly one clause must name TR.
     A parsed pair still needs both sides to match Greek-bound FAA evidence.
@@ -866,7 +866,7 @@ def attach_contrasts(
 ) -> list[Report]:
     """Require both complete English readings and a unique Greek-bound match.
 
-    No phrase containment, synonyms, word-count similarity or verse-only
+    No phrase containment, synonyms, word-count similarity, or verse-only
     co-occurrence. An empty reading is explicit; an unavailable one is None.
     Optional/supplied notation is retained and prevents an attachment.
     Rows are the readers' own; an attached row is refused, since attaching

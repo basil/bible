@@ -766,7 +766,7 @@ def test_lemmas_end_at_the_note_with_the_verse_italics(
 
 class Owned(NamedTuple):
     """A note's owner: the King James verse it quotes, the kind of its edit,
-    whether it is an omitted verse's, and its scope, note and source range."""
+    whether it is an omitted verse's, and its scope, note, and source range."""
 
     ref: str
     kind: str | None

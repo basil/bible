@@ -1,4 +1,4 @@
-"""Typography: quotes, ellipses and dashes curled from the words about them."""
+"""Typography: quotes, ellipses, and dashes curled from the words about them."""
 
 from __future__ import annotations
 

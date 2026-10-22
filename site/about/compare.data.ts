@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { directory } from "../.vitepress/lib/library.ts";
-// The passages, their quotations and highlights, as the build compares them.
+// The passages, with their quotations and highlights, as the build compares them.
 const loader = {
   load: () =>
     JSON.parse(readFileSync(`${directory}/comparisons.json`, "utf8")) as {

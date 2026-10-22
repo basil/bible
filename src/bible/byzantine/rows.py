@@ -299,7 +299,7 @@ class NoteScope(TypedDict, total=False):
 
 
 class Override(TypedDict, total=False):
-    """A reading of the editor's, compiled: its units, its edits bound to the verse, its tags and its evidence."""
+    """A reading of the editor's, compiled: its units, its edits bound to the verse, its tags, and its evidence."""
 
     bound: list[BoundEdit]
     edits: list[dict[str, Any]]

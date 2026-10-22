@@ -182,7 +182,7 @@ def test_usj_agrees_with_the_reference_parser(
     theirs = usfmtc.readFile(str(path)).outUsj(None)
 
     def shape(content: Iterable[str | Node]) -> list[Shape]:
-        """Types, markers and words, without the spacing each reader keeps."""
+        """Types, markers, and words, without the spacing each reader keeps."""
         found: list[Shape] = []
         for item in content:
             if isinstance(item, str):

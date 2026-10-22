@@ -123,7 +123,7 @@ LEGEND: dict[Tag, str] = {
     Tag.EV_HF_DIFFERS: "Hodges-Farstad does not read with RP here",
     Tag.EV_RP_ALTERNATE: "The TR reading is RP's own marginal alternate",
     Tag.EV_PATRIARCHAL_TR: "The Patriarchal text of 1904 reads with the TR",
-    Tag.EV_PIERPONT_MANDATORY: "Pierpont weight 5, 4, b, c or d; or 70 percent and above in Revelation",
+    Tag.EV_PIERPONT_MANDATORY: "Pierpont weight 5, 4, b, c, or d; or 70 percent and above in Revelation",
     Tag.EV_PIERPONT_WEAK: "Pierpont weight 1 or 2, or below 60 percent in Revelation",
     Tag.EV_KJV_ALREADY: "The KJV already reads the Majority wording",
     Tag.EV_RENDERING_VERIFIED: "The KJV's own usage ties the changed words to Greek RP2026 changes (evidence, not proof of a correct rendering)",
