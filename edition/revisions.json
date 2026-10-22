@@ -334,20 +334,10 @@
           ]
         }
       },
-      "Ammon, king of Judah and father of Josiah": {
-        "to": "Ammon",
-        "why": "Spell the king of Judah and father of Josiah Ammon throughout, retaining Amos for the prophet and the other bearers listed under keep.",
+      "Amon, king of Judah and father of Josias": {
+        "to": "Amon",
+        "why": "The king of Judah, son of Manasses and father of Josias: Amon, the spelling of the King James New Testament (Matt 1:10), rendering the Greek Ἀμών. Brenton has Amon in Chronicles and Sophonias but Amos in 4 Kingdoms and Jeremias, where the Greek assimilates his name to the prophet’s; one Hebrew name underlies both, unlike Ἀζαρίας and Ὀζίας.",
         "forms": {
-          "Amon": [
-            "1CH 3:14",
-            "2CH 33:20",
-            "2CH 33:21",
-            "2CH 33:22",
-            "2CH 33:23",
-            "2CH 33:25",
-            "ZEP 1:1",
-            "MAT 1:10"
-          ],
           "Amos": [
             "2KI 21:18",
             "2KI 21:19",
@@ -720,7 +710,7 @@
       },
       "Elisha, prophet": {
         "to": "Elisseus",
-        "why": "The prophet.",
+        "why": "The prophet. Elisseus stands nearer the Greek Ἐλισσαῖος of the New Testament and Alexandrinus, keeping its double consonant, than the King James Eliseus (Luke 4:27).",
         "forms": {
           "Elisaie": [
             "1KI 19:16",
@@ -1017,7 +1007,7 @@
       },
       "Hezekiah and other bearers of Ezekias": {
         "to": "Hezekias",
-        "why": "The king of Judah, including the superscription of his prayer (Esaias 38:9) and Jeremias 33:18-19 and 2 Macc 15:22, which name him; and the other men named Ezekias: the ancestor of Ater's house, the ancestor of Sophonias, and the Ephraimite chief, son of Sellem.",
+        "why": "The king of Judah, including the superscription of his prayer (Esaias 38:9) and Jeremias 33:18-19 and 2 Macc 15:22, which name him; and the other men named Ezekias: the ancestor of Ater's house, the ancestor of Sophonias, and the Ephraimite chief, son of Sellem. Hezekias stands nearer the Greek Ἑζεκίας, rendering its rough breathing, than the King James Ezekias (Matt 1:9).",
         "forms": {
           "Ezekias": [
             "2KI 16:20",
