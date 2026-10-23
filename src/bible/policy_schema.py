@@ -585,6 +585,8 @@ Decision = TypedDict(
         "insertions": ReadOnly[tuple[AlexandrinusPassagesInsertions, ...]],
         "kjv": ReadOnly[bool],
         "label": ReadOnly[str],
+        "omits": ReadOnly[bool],
+        "hebrew_agrees": ReadOnly[bool],
         "lemma": ReadOnly[str | None],
         "moved_to": ReadOnly[str],
         "moves": ReadOnly[tuple[AlexandrinusPassagesMoves, ...]],

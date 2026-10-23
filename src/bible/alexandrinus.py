@@ -61,7 +61,8 @@ ORDINAL = dict(
 SCALE = {"hundred": 100, "thousand": 1000, "million": 1000000}
 SWETE = {"volume", "page", "evidence", "reading", "agrees"}
 COMMON = {"why", "swete", "supplied"}
-REPLACEMENT = {"from", "note", "label", "lemma", "target", "english", "note_at"}
+NOTE = {"note", "label", "omits", "hebrew_agrees"}
+REPLACEMENT = {"from", "lemma", "target", "english", "note_at"} | NOTE
 # A verse omitted whole, noted on the verse before it.
 OMISSION = {"omit_verse", "note_target"}
 MOVE = {"verses", "before"}
@@ -213,21 +214,56 @@ def note_content(
     entry: Decision, key: str, terms: terminology.Registry
 ) -> Content | None:
     """The note a decision leaves on the words it displaces: the one it
-    declares, or the displaced words quoted under the witness its label
-    names, Brenton unless a manuscript is shown to read them; None if it
-    declares none."""
+    declares, None if it declares none, or one composed from its label and
+    flags. A whole-lemma alternative is fqa, so annotation widens it with its
+    lemma. Quotations within explicit commentary remain fq. A label names
+    Brenton unless the decision already establishes a manuscript's reading;
+    composing a label supplies no manuscript evidence. A verse omitted whole
+    is quoted or described by an explicit note, never composed."""
     if "note" in entry:
-        require("label" not in entry, f"Alexandrine label beside a note: {key}")
+        require(
+            not (NOTE - {"note"}) & entry.keys(),
+            f"Alexandrine label or note fields beside a note: {key}",
+        )
         if entry["note"] is None:
             return None
         return usj.parse(entry["note"], fragment=True)
     require(
         entry.get("label") != "brenton", f"Alexandrine label changes nothing: {key}"
     )
+    for flag in ("omits", "hebrew_agrees"):
+        require(
+            flag not in entry or entry[flag] is True,
+            f"Invalid Alexandrine {flag}: {key}",
+        )
+    label = entry.get("label", "brenton")
+    require(
+        isinstance(label, str) and label in terms.terms,
+        f"Unknown Alexandrine label: {key}: {label}",
+    )
+    require(
+        not (entry.get("hebrew_agrees") and label == "hebrew"),
+        f"Contradictory Alexandrine Hebrew agreement: {key}",
+    )
+    require(
+        not entry.get("omit_verse")
+        and not (entry.get("omits") and entry.get("lemma", "") is None),
+        f"Unsupported Alexandrine omission note: {key}",
+    )
+    content: Content = []
+    if entry.get("hebrew_agrees"):
+        content += [
+            usj.char("fl", f"{terms.display('hebrew')} "),
+            usj.char("ft", "agrees. "),
+        ]
+    content.append(usj.char("fl", f"{terms.display(label)} "))
+    if entry.get("omits"):
+        return [*content, usj.char("ft", f"{terms.display('omission')}.")]
     words = plain(usj.text_of(usj.parse(entry["from"], fragment=True)))
+    require(bool(words.strip().rstrip(".")), f"Empty Alexandrine alternative: {key}")
     return [
-        usj.char("fl", f"{terms.display(entry.get('label', 'brenton'))} "),
-        usj.char("fq", words.strip().rstrip(".")),
+        *content,
+        usj.char("fqa", words.strip().rstrip(".")),
         usj.char("ft", "."),
     ]
 
@@ -269,16 +305,17 @@ def operations(
 
 def further(entry: Decision, item: Decision) -> Decision:
     """A decision's further replacement: its own words, derivation, and note
-    position, and the decision's reason, note, and lemma unless it has its
-    own. A verse is omitted by the decision itself, or by a passage's
-    further replacement, each naming the verse its note stands on."""
+    position, and the decision's reason, lemma, and note unless it has its
+    own: a note, or any field that composes one, replaces the decision's
+    note and all those fields. A verse is omitted by the decision itself, or
+    by a passage's further replacement, each naming the verse its note
+    stands on."""
+    replaced = {"english", "note_at", "omit_verse", "note_target"}
+    if NOTE & item.keys():
+        replaced |= NOTE
     inherited = cast(
         Decision,
-        {
-            key: value
-            for key, value in entry.items()
-            if key not in {"english", "note_at", "omit_verse", "note_target"}
-        },
+        {key: value for key, value in entry.items() if key not in replaced},
     )
     return {**inherited, **item}
 
@@ -472,7 +509,10 @@ def check(
                     f"KJV passage edits a verse it does not supply: {key}",
                 )
                 require(
-                    all("note" in item for item in entry.get("edits", ())),
+                    all(
+                        "note" in item or "label" in item
+                        for item in entry.get("edits", ())
+                    ),
                     f"KJV passage edit without its own note: {key}",
                 )
                 # The passage's words are vocabulary, not a phrase to derive
@@ -689,6 +729,15 @@ def replacement(
         body is not None or entry.get("why"),
         f"Dropped Vatican text without a why: {key}",
     )
+    lemma = entry["lemma"] if "lemma" in entry else derived_lemma(english, at)
+    if "note" not in entry:
+        # A composed note is about words the reading prints: an omission
+        # names some of them, and an alternative stands for all of them.
+        require(
+            lemma is not None
+            and (entry.get("omits") or lemma == derived_lemma(english, 0)),
+            f"Composed Alexandrine note does not fit its lemma: {key}",
+        )
     home, note_at = reference, (start, before)
     omits = entry.get("omit_verse", False)
     if omits:
@@ -714,7 +763,6 @@ def replacement(
         note_at = (len(verses[home].text), 0)
     note = None
     if body is not None:
-        lemma = entry["lemma"] if "lemma" in entry else derived_lemma(english, at)
         note = edition_note(note_key, home, body, {"declared": lemma})
     return Replacement(
         key, reference, start, start + len(old), tuple(new), note, home, note_at, omits

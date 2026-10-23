@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import copy
 from collections.abc import Mapping
-from typing import Any
+from typing import Any, cast
 
 import pytest
 from conftest import book, changed, verse_lines
@@ -13,7 +13,7 @@ from conftest import book, changed, verse_lines
 import bible.annotate
 import bible.pipeline
 import bible.policy
-from bible import alexandrinus, annotate, scripture, usj
+from bible import alexandrinus, annotate, notes, scripture, terminology, usj
 from bible.checks import CheckFailed
 from bible.policy_schema import Decision, Swete
 from bible.usj import Document
@@ -89,12 +89,12 @@ def test_a_reading_replaces_the_vatican_words_and_notes_them(
     )
 
 
-def test_a_reading_without_a_note_of_its_own_quotes_brentons_words(
+def test_a_reading_without_a_note_of_its_own_gives_brentons_alternative(
     policy: bible.policy.Policy,
 ) -> None:
     reading = {k: v for k, v in READING.items() if k != "note"}
     doc = promoted(decided(policy, {"GEN 99:22": reading}))
-    assert r"\fl Brenton \fq God said\ft ." in verse_lines(doc)["22"]
+    assert r"\fl Brenton \fqa God said\ft ." in verse_lines(doc)["22"]
 
 
 def test_a_reading_without_a_note_names_the_witness_its_label_declares(
@@ -102,12 +102,12 @@ def test_a_reading_without_a_note_names_the_witness_its_label_declares(
 ) -> None:
     reading = {k: v for k, v in READING.items() if k != "note"} | {"label": "vatican"}
     doc = promoted(decided(policy, {"GEN 99:22": reading}))
-    assert r"\fl Vat. \fq God said\ft ." in verse_lines(doc)["22"]
+    assert r"\fl Vat. \fqa God said\ft ." in verse_lines(doc)["22"]
 
 
 @pytest.mark.parametrize(
     "label,message",
-    [("brenton", "label changes nothing"), ("vatican", "label beside a note")],
+    [("brenton", "label changes nothing"), ("vatican", "fields beside a note")],
 )
 def test_a_reading_label_must_change_something_and_stand_alone(
     policy: bible.policy.Policy, label: str, message: str
@@ -117,6 +117,174 @@ def test_a_reading_label_must_change_something_and_stand_alone(
         del reading["note"]
     with pytest.raises(CheckFailed, match=message):
         promoted(decided(policy, {"GEN 99:22": reading}))
+
+
+@pytest.mark.parametrize("omits", [False, True])
+@pytest.mark.parametrize("hebrew", [False, True])
+@pytest.mark.parametrize("label", [None, "vatican"])
+def test_structured_witness_notes_match_explicit_notes_through_annotation(
+    policy: bible.policy.Policy,
+    ctx: bible.annotate.Context,
+    omits: bool,
+    hebrew: bool,
+    label: str | None,
+) -> None:
+    reading = {k: v for k, v in READING.items() if k != "note"}
+    if label:
+        reading["label"] = label
+    witness = "Vat." if label else "Brenton"
+    explicit = (
+        rf"\fl {witness} \ft omits." if omits else rf"\fl {witness} \fqa God said\ft ."
+    )
+    if omits:
+        reading["omits"] = True
+    if hebrew:
+        reading["hebrew_agrees"] = True
+        explicit = r"\fl Heb. \ft agrees. " + explicit
+    generated = promoted(decided(policy, {"GEN 99:22": reading}))
+    handwritten = promoted(
+        decided(policy, {"GEN 99:22": {**READING, "note": explicit}})
+    )
+    assert generated == handwritten
+    printed, report = annotate.brenton("GEN", generated, (), frozenset(), ctx)
+    expected, _ = annotate.brenton("GEN", handwritten, (), frozenset(), ctx)
+    assert printed == expected
+    row = next(row for row in report.rows if row["key"] == "GEN 99:22")
+    assert row["reading"] == (None if omits else "God said")
+
+
+@pytest.mark.parametrize("label", [None, "vatican"])
+def test_generated_alternative_widens_with_its_lemma(
+    policy: bible.policy.Policy, ctx: bible.annotate.Context, label: str | None
+) -> None:
+    reading = {k: v for k, v in READING.items() if k != "note"}
+    reading["english"] = {"source": "brenton", "span": (17, 25)}
+    if label:
+        reading["label"] = label
+    body = VERSES.replace("God said, Behold,", "God said to the Lord, Behold,")
+    generated = promoted(decided(policy, {"GEN 99:22": reading}), body)
+    printed, report = annotate.brenton("GEN", generated, (), frozenset(), ctx)
+    note = scripture.verses(printed)["99:22"].notes[0][1]
+    fields = {
+        n["marker"]: usj.text_of(n["content"])
+        for n in note["content"]
+        if isinstance(n, dict)
+    }
+    assert fields["fq"] != "the Lord: "  # The repeated lemma had to widen.
+    assert "God said" in fields["fqa"]
+    assert fields["fqa"] != "God said"  # Its alternative widened with it.
+    assert (
+        next(row for row in report.rows if row["key"] == "GEN 99:22")["reading"]
+        == "God said"
+    )
+    # Commentary quotations keep their exact words even when the lemma widens.
+    explicit = {**reading, "note": r"\fl Vat. \fq God said\ft ."}
+    explicit.pop("label", None)
+    quoted = promoted(decided(policy, {"GEN 99:22": explicit}), body)
+    printed, _ = annotate.brenton("GEN", quoted, (), frozenset(), ctx)
+    assert r"\+it God said\+it*" in verse_lines(printed)["22"]
+
+
+@pytest.mark.parametrize(
+    "change, message",
+    [
+        ({"omits": False}, "Invalid Alexandrine omits"),
+        ({"hebrew_agrees": False}, "Invalid Alexandrine hebrew_agrees"),
+        ({"omits": "yes"}, "Invalid Alexandrine omits"),
+        ({"label": "unknown"}, "Unknown Alexandrine label"),
+        ({"label": []}, "Unknown Alexandrine label"),
+        (
+            {"label": "hebrew", "hebrew_agrees": True},
+            "Contradictory Alexandrine Hebrew agreement",
+        ),
+        (
+            {"label": "vatican", "omits": True, "omit_verse": True},
+            "Unsupported Alexandrine omission",
+        ),
+        ({"omits": True, "lemma": None}, "Unsupported Alexandrine omission"),
+        ({"omit_verse": True}, "Unsupported Alexandrine omission"),
+        (
+            {"label": "vatican", "hebrew_agrees": True, "omit_verse": True},
+            "Unsupported Alexandrine omission",
+        ),
+        ({"note": None, "hebrew_agrees": True}, "fields beside a note"),
+        ({"note": r"\ft Commentary.", "omits": True}, "fields beside a note"),
+        ({"from": " . "}, "Empty Alexandrine alternative"),
+    ],
+)
+def test_invalid_structured_notes_name_the_decision(
+    declared: bible.policy.Policy, change: dict[str, Any], message: str
+) -> None:
+    with pytest.raises(CheckFailed, match=message + ".*GEN 99:22"):
+        alexandrinus.note_content(
+            cast(Decision, {"from": "God said", **change}),
+            "GEN 99:22",
+            terminology.registry(declared),
+        )
+
+
+@pytest.mark.parametrize(
+    "change",
+    [
+        {"lemma": "the Lord God"},
+        {"note_at": 8},
+        {"omits": True, "note_at": 17},
+    ],
+)
+def test_a_composed_note_must_fit_its_lemma(
+    policy: bible.policy.Policy, change: dict[str, Any]
+) -> None:
+    """An alternative stands for every word printed in its place, and an
+    omission names some of them; anything else needs an explicit note."""
+    reading = {k: v for k, v in READING.items() if k != "note"} | change
+    with pytest.raises(CheckFailed, match="does not fit its lemma.*GEN 99:22"):
+        promoted(decided(policy, {"GEN 99:22": reading}))
+
+
+def test_further_replacements_inherit_or_replace_the_whole_note_description() -> None:
+    parent: Decision = {
+        "from": "old",
+        "label": "vatican",
+        "omits": True,
+        "hebrew_agrees": True,
+    }
+    assert dict(alexandrinus.further(parent, {"from": "other"})) == {
+        **parent,
+        "from": "other",
+    }
+    assert dict(alexandrinus.further(parent, {"from": "other", "note": None})) == {
+        "from": "other",
+        "note": None,
+    }
+    assert dict(alexandrinus.further(parent, {"label": "hebrew"})) == {
+        "from": "old",
+        "label": "hebrew",
+    }
+    assert dict(
+        alexandrinus.further({"note": r"\ft Commentary."}, {"label": "vatican"})
+    ) == {"label": "vatican"}
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        r"\fl Heb. \ft nearly agrees. \fl Vat. first hand \fq quoted words\ft .",
+        r"\fl Vat. (correcting hands ab) \fqa other words\ft .",
+        r"\fl Vat. \ft adds \fq a clause\ft . \fl Heb. \ft omits it.",
+    ],
+)
+def test_exceptional_notes_keep_their_explicit_roles(
+    declared: bible.policy.Policy, text: str
+) -> None:
+    body = alexandrinus.note_content(
+        {"note": text}, "GEN 99:22", terminology.registry(declared)
+    )
+    assert body == usj.parse(text, fragment=True)
+    assert body is not None
+    interpreted = notes.authored_body(
+        alexandrinus.edition_note("GEN 99:22", "99:22", body), None, "GEN 99:22"
+    )
+    assert interpreted.alternative == ("other words" if "fqa" in text else None)
 
 
 @pytest.mark.parametrize("override", [False, True])
@@ -577,6 +745,26 @@ def test_a_king_james_passage_may_span_verses_and_be_conformed(
         alexandrinus.check(
             decided(policy, passages={"GEN 99:24-25": unnoted}), read.brenton
         )
+    # A flag without a label would still name Brenton.
+    agreeing = {**unnoted, "edits": [{**unnoted["edits"][0], "hebrew_agrees": True}]}
+    with pytest.raises(CheckFailed, match="KJV passage edit without its own note"):
+        alexandrinus.check(
+            decided(policy, passages={"GEN 99:24-25": agreeing}), read.brenton
+        )
+    # A structured label is also an explicit attribution; it cannot silently
+    # inherit the default Brenton label for words borrowed from the KJV.
+    labelled = {**unnoted, "edits": [{**unnoted["edits"][0], "label": "hebrew"}]}
+    alexandrinus.check(
+        decided(policy, passages={"GEN 99:24-25": labelled}),
+        {
+            "GEN": book("GEN", r"\v 21 A."),
+            "BAK": usj.parse(r"\id BAK" + "\n" + r"\is1 " + alexandrinus.SUPPLIED),
+        },
+    )
+    lines = verse_lines(
+        promoted(decided(policy, passages={"GEN 99:24-25": labelled}), kjv=kjv)
+    )
+    assert r"\fl Heb. \fqa Tirzah\ft ." in lines["25"]
 
 
 def test_verses_inserted_before_a_paragraph_are_a_paragraph_of_their_own(
