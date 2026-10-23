@@ -569,6 +569,12 @@ class RevisionGroup(TypedDict, total=False):
     wording: ReadOnly[Literal["spelling", "misprint"]]
 
 
+class AlexandrinusSuppliedSource(TypedDict):
+    source: ReadOnly[Literal["brenton"]]
+    reference: ReadOnly[str]
+    why: ReadOnly[str]
+
+
 Decision = TypedDict(
     "Decision",
     {
@@ -592,6 +598,7 @@ Decision = TypedDict(
         "source_note": ReadOnly[str],
         "source_notes": ReadOnly[Mapping[str, str]],
         "supplied": ReadOnly[tuple[str, ...]],
+        "supplied_sources": ReadOnly[tuple[AlexandrinusSuppliedSource, ...]],
         "swete": ReadOnly[Swete],
         "target": ReadOnly[str],
         "todo": ReadOnly[bool],

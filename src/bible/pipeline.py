@@ -340,7 +340,7 @@ def promote(sources: Read, policy: bible.policy.Policy) -> Promoted:
     brenton = {
         code: renderings.brenton(
             code,
-            alexandrinus.promoted(code, doc, policy, sources.kjv),
+            alexandrinus.promoted(code, doc, policy, sources.kjv, sources.brenton),
             policy.brenton_notes.get("renderings", {}),
         )
         for code, doc in sources.brenton.items()

@@ -64,7 +64,8 @@ def promoted(
     body: str = VERSES,
     kjv: Mapping[str, Document] | None = None,
 ) -> Document:
-    return alexandrinus.promoted("GEN", book("GEN", body), policy, kjv or {})
+    doc = book("GEN", body)
+    return alexandrinus.promoted("GEN", doc, policy, kjv or {}, {"GEN": doc})
 
 
 def test_a_reading_replaces_the_vatican_words_and_notes_them(
@@ -158,7 +159,7 @@ def test_english_is_derived_exactly_and_only_from_brentons_words() -> None:
             "edits": ({"span": (0, 0), "to": r"\add Almighty\add* "},),
         },
     }
-    with pytest.raises(CheckFailed, match="English not supplied by Brenton"):
+    with pytest.raises(CheckFailed, match="English not supplied by its sources"):
         alexandrinus.derived("key", supplied, NOTE)
     assert (
         alexandrinus.derived("key", supplied, NOTE, ["Almighty"])
@@ -517,7 +518,7 @@ def test_a_king_james_passage_may_span_verses_and_be_conformed(
     kjv = {
         "GEN": book(
             "GEN",
-            r"\v 24 Then said \sc David\sc*, Will they?"
+            r"\v 24 Then said \sc David\sc* in Sarira, Will they?"
             "\n"
             r"\v 25 And the \sc Lord\sc* said, Go to Tirzah.",
         )
@@ -526,7 +527,6 @@ def test_a_king_james_passage_may_span_verses_and_be_conformed(
         "kjv": True,
         "why": "The verses are missing; Alexandrinus reads Sarira at 25.",
         "swete": SWETE,
-        "supplied": ["Sarira"],
         "insertions": [
             {
                 "after": "99:23",
@@ -550,7 +550,7 @@ def test_a_king_james_passage_may_span_verses_and_be_conformed(
         promoted(decided(policy, passages={"GEN 99:24-25": borrowed}), kjv=kjv)
     )
     assert list(lines) == ["21", "22", "23", "24", "25"]
-    assert lines["24"] == "Then said David, Will they?"
+    assert lines["24"] == "Then said David in Sarira, Will they?"
     assert lines["25"] == (
         r"And the Lord said, Go to \f + \cat edition\cat*\fr 99:25 \fl Heb. \fq Tirzah\ft .\f*Sarira."
     )
@@ -785,3 +785,172 @@ def test_a_passage_omission_takes_its_blank_lines_and_refuses_a_heading_before_i
     )
     with pytest.raises(CheckFailed, match="crosses a heading"):
         alexandrinus.with_omissions("GEN", headed, policy)
+
+
+def test_kjv_passage_supplied_vocabulary_uses_original_sources(
+    declared: bible.policy.Policy,
+) -> None:
+    kjv = {"GEN": book("GEN", r"\v 24 Then said David, Go to Tirzah.")}
+    original = book("GEN", VERSES + r"\v 24 Sarira.")
+    before = copy.deepcopy((original, kjv))
+    passage: dict[str, Any] = {
+        "kjv": True,
+        "why": "Borrow the verse and adapt its place name.",
+        "swete": SWETE,
+        "supplied": ["Sarira"],
+        "supplied_sources": [
+            {
+                "source": "brenton",
+                "reference": "GEN 99:24",
+                "why": "The parallel's name.",
+            }
+        ],
+        "insertions": [{"after": "99:23", "verses": [{"reference": "99:24"}]}],
+        "edits": [
+            {
+                "target": "GEN 99:24",
+                "from": "Tirzah",
+                "note": None,
+                "english": {
+                    "source": "from",
+                    "edits": [{"span": [0, 6], "to": "Sarira"}],
+                },
+            }
+        ],
+    }
+    # The Brenton evidence can be a verse the passage later omits or replaces;
+    # it must be resolved from the original document, before insertion.
+    body = book("GEN", VERSES)
+    policy = decided(declared, passages={"GEN 99:24": passage})
+    result = alexandrinus.promoted("GEN", body, policy, kjv, {"GEN": original})
+    assert "Go to Sarira." in verse_lines(result)["24"]
+    assert (original, kjv) == before
+
+    # KJV words outside the displaced phrase are evidence too.
+    valid = copy.deepcopy(passage)
+    valid.pop("supplied_sources")
+    valid.pop("supplied")
+    valid["edits"][0]["english"]["edits"][0]["to"] = "David"
+    assert (
+        "Go to David."
+        in verse_lines(
+            promoted(decided(declared, passages={"GEN 99:24": valid}), kjv=kjv)
+        )["24"]
+    )
+
+    # They need no declaring, by the passage or by an edit.
+    for owner in (valid, valid["edits"][0]):
+        bad = copy.deepcopy(valid)
+        (bad if owner is valid else bad["edits"][0])["supplied"] = ["david"]
+        with pytest.raises(
+            CheckFailed, match=r"in the KJV passage: GEN 99:24: \['david'\]"
+        ):
+            promoted(decided(declared, passages={"GEN 99:24": bad}), kjv=kjv)
+
+    # An allowance the edits inherit is checked.
+    bad = copy.deepcopy(valid)
+    bad["supplied"] = ["fabricatedword"]
+    with pytest.raises(CheckFailed, match="provenance: GEN 99:24.*fabricatedword"):
+        promoted(decided(declared, passages={"GEN 99:24": bad}), kjv=kjv)
+
+    # A passage's allowance that every edit overrides, or that has no edit
+    # to inherit it, licenses nothing.
+    overridden = copy.deepcopy(passage)
+    overridden["edits"][0]["supplied"] = ["Sarira"]
+    unedited = {k: v for k, v in passage.items() if k != "edits"}
+    for bad in (overridden, unedited):
+        with pytest.raises(CheckFailed, match="no edit uses: GEN 99:24"):
+            alexandrinus.promoted(
+                "GEN",
+                body,
+                decided(declared, passages={"GEN 99:24": bad}),
+                kjv,
+                {"GEN": original},
+            )
+
+    # An edit's own declaration is checked, rather than just the parent's.
+    bad = copy.deepcopy(valid)
+    bad["edits"][0]["supplied"] = ["fabricatedword"]
+    with pytest.raises(CheckFailed, match="provenance: GEN 99:24.*fabricatedword"):
+        promoted(decided(declared, passages={"GEN 99:24": bad}), kjv=kjv)
+
+    # A future promoted reading cannot bootstrap its own vocabulary evidence.
+    bad = copy.deepcopy(passage)
+    bad["supplied_sources"][0]["reference"] = "GEN 99:22"
+    reading: dict[str, Any] = copy.deepcopy(dict(READING))
+    reading["supplied"] = ["Sarira"]
+    reading["english"]["edits"][0]["to"] = " Sarira"
+    with pytest.raises(CheckFailed, match="provenance: GEN 99:24.*sarira"):
+        promoted(decided(declared, {"GEN 99:22": reading}, {"GEN 99:24": bad}), kjv=kjv)
+
+    # Notes do not supply scripture vocabulary.
+    noted = book(
+        "GEN", VERSES.replace("clothed.", r"clothed.\f + \fr 99:21 \ft Sarira.\f*")
+    )
+    bad["supplied_sources"][0]["reference"] = "GEN 99:21"
+    with pytest.raises(CheckFailed, match="provenance: GEN 99:24.*sarira"):
+        alexandrinus.promoted(
+            "GEN",
+            noted,
+            decided(declared, passages={"GEN 99:24": bad}),
+            kjv,
+            {"GEN": noted},
+        )
+
+    for evidence, message in (
+        (
+            {"source": "kjv", "reference": "GEN 99:21", "why": "Wrong source."},
+            "Malformed",
+        ),
+        (
+            {"source": "brenton", "reference": "GEN 99:21-23", "why": "A range."},
+            "Malformed",
+        ),
+        ({"source": "brenton", "reference": "GEN 99:21", "why": ""}, "Malformed"),
+        ({"source": "brenton", "reference": "GEN 99:30", "why": "Missing."}, "missing"),
+        (
+            {"source": "brenton", "reference": "EXO 99:21", "why": "Missing book."},
+            "missing",
+        ),
+    ):
+        bad = {**passage, "supplied_sources": [evidence]}
+        with pytest.raises(CheckFailed, match=f"{message}.*GEN 99:24"):
+            promoted(decided(declared, passages={"GEN 99:24": bad}), kjv=kjv)
+    bad = {**passage, "supplied_sources": []}
+    with pytest.raises(CheckFailed, match="Malformed supplied sources: GEN 99:24"):
+        promoted(decided(declared, passages={"GEN 99:24": bad}), kjv=kjv)
+    # Each source must license a word supplied, or it would go stale unnoticed.
+    for extra, message in (
+        (passage["supplied_sources"][0], "Duplicate.*GEN 99:24"),
+        (
+            {"source": "brenton", "reference": "GEN 99:21", "why": "Idle."},
+            r"license nothing: GEN 99:24: \['GEN 99:21'\]",
+        ),
+    ):
+        bad = {**passage, "supplied_sources": [*passage["supplied_sources"], extra]}
+        with pytest.raises(CheckFailed, match=message):
+            alexandrinus.promoted(
+                "GEN",
+                body,
+                decided(declared, passages={"GEN 99:24": bad}),
+                kjv,
+                {"GEN": original},
+            )
+
+    appendix = {k: v for k, v in passage.items() if k != "kjv"}
+    appendix["appendix"] = "An Appendix passage."
+    with pytest.raises(
+        CheckFailed, match="Supplied sources outside a KJV passage: GEN 99:24"
+    ):
+        alexandrinus.check(
+            decided(declared, passages={"GEN 99:24": appendix}), {"GEN": body}
+        )
+    # The King James words are vocabulary, never a phrase to derive from.
+    spliced = copy.deepcopy(passage)
+    spliced["edits"][0]["english"] = {"source": "brenton", "span": [0, 10]}
+    with pytest.raises(
+        CheckFailed, match="not derived from the words it displaces: GEN 99:24"
+    ):
+        alexandrinus.check(
+            decided(declared, passages={"GEN 99:24": spliced}), {"GEN": body}
+        )

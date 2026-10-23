@@ -11,6 +11,10 @@ This stage reads Brenton's books as their source numbers them, before any
 chapter is selected or relabelled and before any note is set as a footnote.
 The notes it writes say which words they are about; a note of Brenton's whose
 words a reading changes keeps the words it was about.
+
+KJV-backed passages verify every supplied token against the original KJV
+passage or explicitly referenced Brenton verses. Other decisions still
+permit declared editorial vocabulary without a machine-checked source.
 """
 
 from __future__ import annotations
@@ -31,7 +35,7 @@ from bible import (
     usfm,
     usj,
 )
-from bible.checks import present, require, require_fields
+from bible.checks import CheckFailed, present, require, require_fields
 from bible.policy_schema import AlexandrinusReadingsNoteEdits, Decision
 from bible.scripture import plain, word_spans, words_of
 from bible.usj import Content, Document, Node
@@ -66,7 +70,16 @@ FIELDS = {
     | REPLACEMENT
     | {"edits", "note_edits", "source_note", "omit_verse", "note_target"},
     "passages": COMMON
-    | {"appendix", "kjv", "edits", "insertions", "moves", "omissions", "source_notes"},
+    | {
+        "appendix",
+        "kjv",
+        "edits",
+        "insertions",
+        "moves",
+        "omissions",
+        "source_notes",
+        "supplied_sources",
+    },
     "kept": COMMON | {"appendix", "todo", "source_note", "note", "lemma", "moved_to"},
 }
 
@@ -153,7 +166,9 @@ def derived(
 ) -> str:
     """The English a decision prints, derived exactly from a source phrase by
     its declared edits: order, punctuation, spelling, and supplied-word markup
-    cannot change without one. Its vocabulary must be Brenton's besides."""
+    cannot change without one. Vocabulary comes from the displaced words,
+    source, or declared editorial allowances; KJV passages validate those
+    allowances against original sources before reaching this function."""
     proof = operation.get("english")
     require(
         proof is not None
@@ -186,7 +201,7 @@ def derived(
     before = operation.get("from", "")
     allowed = set(tokens(before) + tokens(source) + tokens(" ".join(supplied)))
     added = set(tokens(english)) - allowed
-    require(not added, f"English not supplied by Brenton: {key}: {sorted(added)}")
+    require(not added, f"English not supplied by its sources: {key}: {sorted(added)}")
     require(
         set(usfm.inventory(before + english)["markers"]) <= {"add", "add*"},
         f"Unsupported USFM marker in Alexandrine replacement: {key}",
@@ -227,7 +242,7 @@ def edition_note(
 
 
 def operations(
-    policy: bible.policy.Policy, code: str
+    policy: bible.policy.Policy, code: str, kjv_sources: Mapping[str, str]
 ) -> Iterator[tuple[str, Decision, str, str, str]]:
     """Each replacement a book's decisions declare, as (decision, operation,
     source words, verse, the key of its note)."""
@@ -245,9 +260,8 @@ def operations(
     for key, entry in data["passages"].items():
         if references.book_of(key) != code:
             continue
-        # A King James passage's Appendix paragraph only points to it: the
-        # words its edits print are the King James words and those supplied.
-        source = "" if "kjv" in entry else entry["appendix"]
+        # The Appendix only points to a KJV passage; use its original words.
+        source = kjv_sources[key] if "kjv" in entry else entry["appendix"]
         for index, item in enumerate(entry.get("edits", ()), 1):
             verse = item["target"].split()[-1]
             yield key, further(entry, item), source, verse, f"{key}@{index}"
@@ -363,6 +377,10 @@ def check(
                 )
             elif section == "passages":
                 require(
+                    "supplied_sources" not in entry or "kjv" in entry,
+                    f"Supplied sources outside a KJV passage: {key}",
+                )
+                require(
                     ("appendix" in entry or "kjv" in entry)
                     and bool(
                         entry.get("edits")
@@ -456,6 +474,16 @@ def check(
                 require(
                     all("note" in item for item in entry.get("edits", ())),
                     f"KJV passage edit without its own note: {key}",
+                )
+                # The passage's words are vocabulary, not a phrase to derive
+                # from: a span of them could splice another verse's words.
+                require(
+                    all(
+                        isinstance(proof := item.get("english"), Mapping)
+                        and proof.get("source") == "from"
+                        for item in entry.get("edits", ())
+                    ),
+                    f"KJV passage edit not derived from the words it displaces: {key}",
                 )
     consumed = [
         k for entry in data["passages"].values() for k in entry.get("source_notes", ())
@@ -707,14 +735,112 @@ def shifted(position: int, changes: list[Replacement], strict: bool = False) -> 
     return position + delta
 
 
+def kjv_source(
+    key: str,
+    entry: Decision,
+    kjv: Mapping[str, Document],
+    brenton: Mapping[str, Document],
+) -> str:
+    """Original KJV passage words, with every supplied allowance evidenced.
+
+    Supplemental Brenton references license vocabulary only, not the exact
+    English derivation. Neither source includes notes or promoted readings.
+    """
+    passage = references.parse_passage(key)
+    code = passage.first.book
+    require(code in kjv, f"KJV source book missing: {key}")
+    verses = scripture.verses(kjv[code])
+    require(
+        all(v.label in verses for v in passage.verses),
+        f"KJV source verse missing: {key}",
+    )
+    source = " ".join(verses[v.label].text for v in passage.verses)
+    edits = entry.get("edits", ())
+    declared = (entry, *edits)
+    for operation in declared:
+        supplied = operation.get("supplied", ())
+        require(
+            isinstance(supplied, (list, tuple))
+            and all(isinstance(word, str) and tokens(word) for word in supplied),
+            f"Malformed supplied vocabulary: {key}",
+        )
+    # The passage's own list is inherited by the edits that declare none;
+    # with no such edit it would license nothing.
+    require(
+        "supplied" not in entry or any("supplied" not in item for item in edits),
+        f"Supplied vocabulary no edit uses: {key}",
+    )
+    needed = {
+        word for op in declared for word in tokens(" ".join(op.get("supplied", ())))
+    }
+    # The King James passage's own words need no declaring.
+    redundant = sorted(needed & set(tokens(source)))
+    require(
+        not redundant, f"Supplied vocabulary in the KJV passage: {key}: {redundant}"
+    )
+    licensed: dict[str, set[str]] = {}
+    evidence_sources = entry.get("supplied_sources", ())
+    require(
+        isinstance(evidence_sources, (list, tuple))
+        and (bool(evidence_sources) or "supplied_sources" not in entry),
+        f"Malformed supplied sources: {key}",
+    )
+    for evidence in evidence_sources:
+        require_fields(
+            evidence, {"source", "reference", "why"}, (), f"Supplied source of {key}"
+        )
+        require(
+            evidence["source"] == "brenton"
+            and isinstance(evidence["reference"], str)
+            and isinstance(evidence["why"], str)
+            and evidence["why"].strip(),
+            f"Malformed supplied source: {key}",
+        )
+        reference = evidence["reference"]
+        require(
+            reference not in licensed, f"Duplicate supplied source: {key}: {reference}"
+        )
+        try:
+            verse = references.parse_verse(reference)
+        except CheckFailed as error:
+            raise CheckFailed(f"Malformed supplied source: {key}: {error}") from error
+        require(
+            verse.book in brenton, f"Supplied source book missing: {key}: {reference}"
+        )
+        original = scripture.verses(brenton[verse.book])
+        require(
+            verse.label in original,
+            f"Supplied source verse missing: {key}: {reference}",
+        )
+        licensed[reference] = set(tokens(original[verse.label].text)) & needed
+    unsupported = needed - {word for words in licensed.values() for word in words}
+    require(
+        not unsupported,
+        f"Supplied vocabulary without provenance: {key}: {sorted(unsupported)}",
+    )
+    # A source that licenses nothing supplied would go stale unnoticed.
+    idle = sorted(reference for reference, words in licensed.items() if not words)
+    require(not idle, f"Supplied sources license nothing: {key}: {idle}")
+    return source
+
+
 def promoted(
-    code: str, doc: Document, policy: bible.policy.Policy, kjv: Mapping[str, Document]
+    code: str,
+    doc: Document,
+    policy: bible.policy.Policy,
+    kjv: Mapping[str, Document],
+    brenton: Mapping[str, Document],
 ) -> Document:
     """A book of Brenton's with its Alexandrine decisions carried out: the
     verses its passages supply are set first, so that a King James verse may
     be conformed to Alexandrinus; then the words of verses are replaced and
     verses omitted; and the verses Alexandrinus orders otherwise are moved
     last, by whole paragraphs."""
+    kjv_sources = {
+        key: kjv_source(key, entry, kjv, brenton)
+        for key, entry in policy.alexandrinus["passages"].items()
+        if "kjv" in entry and references.book_of(key) == code
+    }
     doc = with_insertions(code, doc, policy, kjv)
     verses = scripture.verses(doc)
     placed = {
@@ -728,7 +854,9 @@ def promoted(
     check_pins(code, policy, placed, consumed, rewritten)
     terms = terminology.registry(policy)
     replacements = []
-    for key, entry, source, reference, note_key in operations(policy, code):
+    for key, entry, source, reference, note_key in operations(
+        policy, code, kjv_sources
+    ):
         require(reference in verses, f"Alexandrine target verse missing: {key}")
         replacements.append(
             replacement(

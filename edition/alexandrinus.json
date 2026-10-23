@@ -7853,7 +7853,99 @@
         "reading": "XIV 1–20 εν τω καιρω εκεινω ηρρωστη|στησεν Αβια υιος Ιεροβοαμ· … και εβασιλευσεν Ναβατ· υιος|αυτου αντ αυτου| A (om B)",
         "agrees": true
       },
-      "supplied": ["for", "the", "man", "of", "God", "cake", "his", "children", "raisins", "pot", "thee", "land", "Sarira", "every", "male", "and", "dim", "old", "to", "too", "was", "came", "pass", "body", "gather", "gathered", "is", "out", "them", "dead", "smite", "moved", "wind", "an", "end", "make", "from", "lord", "went", "as", "entered", "house", "into", "it", "porch", "that", "enters", "foot", "this", "off", "feigned", "birds"],
+      "supplied": ["cake", "children", "raisins", "pot", "Sarira", "every", "male", "dim", "old", "too", "pass", "body", "gather", "gathered", "dead", "moved", "wind", "an", "end", "make", "entered", "porch", "enters", "foot", "feigned", "birds"],
+      "supplied_sources": [
+        {
+          "source": "brenton",
+          "reference": "1KI 12:24h",
+          "why": "The Vatican parallel supplies children, old, and pot in its account of the gifts and the prophet."
+        },
+        {
+          "source": "brenton",
+          "reference": "1KI 12:24i",
+          "why": "The parallel describes the prophet’s eyes as dim."
+        },
+        {
+          "source": "brenton",
+          "reference": "1KI 12:24k",
+          "why": "The parallel supplies came to pass and the place name Sarira."
+        },
+        {
+          "source": "brenton",
+          "reference": "1KI 12:24m",
+          "why": "The parallel supplies every male, the dead, and birds in the same prophecy."
+        },
+        {
+          "source": "brenton",
+          "reference": "1KI 12:24n",
+          "why": "The parallel supplies entered in the account of the child’s death."
+        },
+        {
+          "source": "brenton",
+          "reference": "RUT 1:12",
+          "why": "Brenton’s too old to construction supplies too."
+        },
+        {
+          "source": "brenton",
+          "reference": "1SA 31:10",
+          "why": "Brenton’s body supplies the English noun for the declared replacement of back."
+        },
+        {
+          "source": "brenton",
+          "reference": "EZK 11:17",
+          "why": "Brenton’s gather them out of supplies gather for the declared gathering comparison."
+        },
+        {
+          "source": "brenton",
+          "reference": "ECC 4:17",
+          "why": "Brenton’s thy foot supplies the singular noun."
+        },
+        {
+          "source": "brenton",
+          "reference": "PSA 95:10",
+          "why": "Brenton’s moved supplies the verb form retained in the declared wind comparison."
+        },
+        {
+          "source": "brenton",
+          "reference": "ECC 1:6",
+          "why": "Brenton’s wind supplies the noun in that comparison."
+        },
+        {
+          "source": "brenton",
+          "reference": "EZK 20:17",
+          "why": "Brenton’s make an end of supplies the declared verb phrase."
+        },
+        {
+          "source": "brenton",
+          "reference": "GEN 43:19",
+          "why": "Brenton’s porch of the house supplies porch."
+        },
+        {
+          "source": "brenton",
+          "reference": "1KI 17:13",
+          "why": "Brenton uses the singular cake with children here; this verifies the singular vocabulary adapted from cakes in the parallel."
+        },
+        {
+          "source": "brenton",
+          "reference": "NUM 6:3",
+          "why": "Brenton distinguishes fresh grapes and raisins here; this verifies raisins in the declared adaptation of the parallel’s gifts."
+        },
+        {
+          "source": "brenton",
+          "reference": "1SA 21:14",
+          "why": "Brenton’s feigned verifies the past-tense form adapted from KJV feign."
+        },
+        {
+          "source": "brenton",
+          "reference": "1SA 5:5",
+          "why": "Brenton’s enters into verifies the singular form adapted from KJV enter."
+        },
+        {
+          "source": "brenton",
+          "reference": "1KI 12:24x",
+          "why": "Brenton’s gathered verifies the passive participle in the declared gathering comparison."
+        }
+      ],
       "insertions": [
         {
           "before": "14:21",
@@ -8380,7 +8472,7 @@
     },
     "EZK 1:14": {
       "kjv": true,
-      "why": "Supply Ezekiel 1:14 before 1:15 from the Authorized Version, which renders the Hebrew verse Brenton reports; A’s βεζεκ transliterates the Hebrew word that the Authorized Version renders a flash of lightning. Brenton 1879 physical p. 996 and 1900 physical p. 992 (printed p. 980) place θ after lightning. at the end of 1:13, immediately before 1:15, and print “Alex. and Heb. supply ver. 14. ‘And the living creatures ran and returned at the appearance of Bezec.’” CCEL 15#6 misreads the final c as e; the build sets its closing caller at the end of 1:13, as printed, under the key EZK 1:13 CCEL#2. Swete III p. 386 B main passes directly from 1:13 to 1:15; explicit apparatus adds και τα ζωα ετρεχον και ανεκαμπτον ως ειδος του βεζεκ A et (sub θʹ ✣) Q. A is unqualified, without correcting hand, lacuna, or uncertainty; Q has a Theodotion source marker, not an A hand. Brenton’s Bezec transliterates βεζεκ, the Hebrew lightning word; his at does not express the Greek comparison ως. Pinned KJV Ezekiel 1:14 supplies the complete matching sentence “And the living creatures ran and returned as the appearance of a flash of lightning.” RV1885 has the identical sentence and is unnecessary. Copy the entire licensed KJV construction, declaring the newly supplied as, a, flash, lightning, instead of splicing syntax or inventing a translation. B positively omits the verse independently of Brenton’s facing Greek, which also omits it.",
+      "why": "Supply Ezekiel 1:14 before 1:15 from the Authorized Version, which renders the Hebrew verse Brenton reports; A’s βεζεκ transliterates the Hebrew word that the Authorized Version renders a flash of lightning. Brenton 1879 physical p. 996 and 1900 physical p. 992 (printed p. 980) place θ after lightning. at the end of 1:13, immediately before 1:15, and print “Alex. and Heb. supply ver. 14. ‘And the living creatures ran and returned at the appearance of Bezec.’” CCEL 15#6 misreads the final c as e; the build sets its closing caller at the end of 1:13, as printed, under the key EZK 1:13 CCEL#2. Swete III p. 386 B main passes directly from 1:13 to 1:15; explicit apparatus adds και τα ζωα ετρεχον και ανεκαμπτον ως ειδος του βεζεκ A et (sub θʹ ✣) Q. A is unqualified, without correcting hand, lacuna, or uncertainty; Q has a Theodotion source marker, not an A hand. Brenton’s Bezec transliterates βεζεκ, the Hebrew lightning word; his at does not express the Greek comparison ως. Pinned KJV Ezekiel 1:14 supplies the complete matching sentence “And the living creatures ran and returned as the appearance of a flash of lightning.” RV1885 has the identical sentence and is unnecessary. Copy the entire KJV verse instead of splicing syntax or inventing a translation. B positively omits the verse independently of Brenton’s facing Greek, which also omits it.",
       "swete": {
         "volume": 3,
         "page": 386,
@@ -8388,7 +8480,6 @@
         "reading": "αστραπη] pr ως AQ + και τα ζωα ετρεχον και ανεκαμπτον ως ειδος του βεζεκ A et (sub θʹ ✣) Q (pro βεζεκ leg αʹ απορροιας η αστραπης σʹ ακτινος αστραπης Q^mg)",
         "agrees": true
       },
-      "supplied": ["as", "a", "flash", "lightning"],
       "insertions": [
         {
           "before": "1:15",
