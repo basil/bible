@@ -284,6 +284,131 @@ def test_a_witness_quote_not_in_the_entry_is_rejected(
     assert len(errors) == 1 and "does not contain the quote" in errors[0]
 
 
+def kjv_parallel(readings: list[Entry]) -> Entry:
+    """A real reading that borrows the KJV's own rendering from elsewhere."""
+    return copy.deepcopy(next(o for o in readings if "kjv" in o.get("evidence", {})))
+
+
+def test_a_kjv_parallel_is_quoted_from_the_pinned_text(
+    validate: Validate, readings: list[Entry]
+) -> None:
+    entry = kjv_parallel(readings)
+    assert "from:kjv-parallel" in entry["tags"]
+    compiled, errors = validate([entry])
+    assert len(compiled) == 1 and not errors
+
+
+def test_a_kjv_parallel_quote_not_in_the_verse_is_rejected(
+    validate: Validate, readings: list[Entry]
+) -> None:
+    bad = kjv_parallel(readings)
+    bad["evidence"]["kjv"]["quote"] = "words the King James verse does not have"
+    _, errors = validate([bad])
+    assert len(errors) == 1 and "kjv quote is not in the verse once" in errors[0]
+    bad = kjv_parallel(readings)
+    bad["evidence"]["kjv"]["ref"] = "MAT 99:99"
+    _, errors = validate([bad])
+    assert len(errors) == 1 and "is not a verse" in errors[0]
+
+
+def test_a_kjv_parallel_marks_the_supplied_words(
+    validate: Validate, readings: list[Entry]
+) -> None:
+    bad = next(
+        copy.deepcopy(o)
+        for o in readings
+        if "[" in o.get("evidence", {}).get("kjv", {}).get("quote", "")
+    )
+    bad["evidence"]["kjv"]["quote"] = (
+        bad["evidence"]["kjv"]["quote"].replace("[", "").replace("]", "")
+    )
+    _, errors = validate([bad])
+    assert len(errors) == 1 and "brackets differ from the supplied words" in errors[0]
+
+
+def test_a_kjv_parallel_is_not_the_edited_words(
+    validate: Validate,
+    readings: list[Entry],
+    byzantine: Reconciliation,
+    kjv_text: Mapping[str, str],
+) -> None:
+    # Words a reading replaces, printed once and in roman, so that only
+    # their being the edit itself can refuse them as its parallel.
+    compiled = {o["id"]: o for o in byzantine.decisions.overrides}
+    supplied = byzantine.english.supplied
+    bad, edit = next(
+        (copy.deepcopy(o), e)
+        for o in readings
+        if "kjv" in o["evidence"]
+        for e in compiled[o["id"]]["bound"]
+        if e["old"]
+        and kjv_text[e["ref"]].count(e["old"]) == 1
+        and not any(
+            a < e["end"] and e["start"] < b for a, b, _ in supplied.get(e["ref"], [])
+        )
+    )
+    bad["evidence"]["kjv"] = {"ref": edit["ref"], "quote": edit["old"]}
+    _, errors = validate([bad])
+    assert len(errors) == 1 and "is words an override edits" in errors[0]
+
+
+def test_a_kjv_parallel_is_not_words_another_reading_edits(
+    validate: Validate,
+    readings: list[Entry],
+    byzantine: Reconciliation,
+    kjv_text: Mapping[str, str],
+) -> None:
+    # Revelation 4:4's "elders sitting", once REV 14:14#1's parallel, stands
+    # in words REV 4:4#1+REV 4:4#2 replaces, without the "I saw" it needs.
+    compiled = {o["id"]: o for o in byzantine.decisions.overrides}
+    supplied = byzantine.english.supplied
+    bad = kjv_parallel(readings)
+    other, edit = next(
+        (o, e)
+        for o in readings
+        if o["id"] != bad["id"]
+        for e in compiled[o["id"]]["bound"]
+        if e["old"]
+        and kjv_text[e["ref"]].count(e["old"]) == 1
+        and not any(
+            a < e["end"] and e["start"] < b for a, b, _ in supplied.get(e["ref"], [])
+        )
+    )
+    bad["evidence"]["kjv"] = {"ref": edit["ref"], "quote": edit["old"]}
+    compiled_alone, errors = validate([bad])
+    assert len(compiled_alone) == 1 and not errors
+    _, errors = validate([bad, other])
+    assert len(errors) == 1 and "is words an override edits" in errors[0]
+    assert errors[0].startswith(f"override {bad['id']}")
+
+
+def test_a_kjv_parallel_is_whole_words(
+    validate: Validate, readings: list[Entry]
+) -> None:
+    bad = next(
+        copy.deepcopy(o)
+        for o in readings
+        if o["evidence"].get("kjv", {}).get("quote") == "in a word"
+    )
+    bad["evidence"]["kjv"]["quote"] = "n a word"
+    _, errors = validate([bad])
+    assert len(errors) == 1 and "kjv quote cuts through a word" in errors[0]
+
+
+def test_the_tag_and_the_evidence_go_together(
+    validate: Validate, readings: list[Entry], sample: Callable[[], Entry]
+) -> None:
+    bad = kjv_parallel(readings)
+    del bad["evidence"]["kjv"]
+    _, errors = validate([bad])
+    assert len(errors) == 1 and "go together" in errors[0]
+    bad = sample()
+    assert "from:kjv-parallel" not in bad["tags"]
+    bad["evidence"]["kjv"] = {"ref": "MAT 1:1", "quote": "The book of the generation"}
+    _, errors = validate([bad])
+    assert len(errors) == 1 and "go together" in errors[0]
+
+
 def test_an_unknown_witness_is_rejected(
     validate: Validate, sample: Callable[[], Entry]
 ) -> None:

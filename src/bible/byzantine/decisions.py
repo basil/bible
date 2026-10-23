@@ -20,7 +20,7 @@ from collections.abc import Iterable, Mapping, Sequence
 from copy import deepcopy
 from typing import Any, TypeIs, TypeVar, cast
 
-from bible.byzantine import BOOKS, FAA, WITNESSES, greek
+from bible.byzantine import BOOKS, FAA, KJV, WITNESSES, greek
 from bible.byzantine.crosswire import curly_apostrophes
 from bible.byzantine.rows import (
     BoundEdit,
@@ -35,7 +35,7 @@ from bible.byzantine.rows import (
     UnitInventory,
     Unmatched,
 )
-from bible.byzantine.tags import asserted
+from bible.byzantine.tags import Tag, asserted
 from bible.byzantine.units import keyed_units, record_side
 from bible.checks import CheckFailed, present, require
 from bible.scripture import plain
@@ -148,6 +148,17 @@ def bracketed_quote(quote: str) -> tuple[str, list[tuple[int, int]]]:
     return text, ranges
 
 
+def spans_within(
+    spans: Iterable[tuple[int, int]], start: int, end: int
+) -> list[tuple[int, int]]:
+    """The parts of spans that fall in text[start:end], from its start."""
+    return [
+        (max(a, start) - start, min(b, end) - start)
+        for a, b in spans
+        if a < end and start < b
+    ]
+
+
 def shared_greek(
     cited: str,
     ref: str,
@@ -247,6 +258,7 @@ def validate_overrides(
     errors: list[str] = []
     claimed: set[str] = set()
     occupied: defaultdict[str, list[tuple[int, int]]] = defaultdict(list)
+    parallels: list[tuple[str, str, int, int]] = []
     for number, entry in enumerate(entries, 1):
         label = f"override {entry.get('id') or number}"
         try:
@@ -418,6 +430,7 @@ def validate_overrides(
                 isinstance(evidence, dict) and evidence, f"{label}: evidence required"
             )
             permitted = refs | {e["ref"] for e in bound}
+            parallel: tuple[str, int, int] | None = None
             for witness, item in evidence.items():
                 quote = item.get("quote") if isinstance(item, dict) else None
                 if not isinstance(quote, str) or not quote.strip():
@@ -462,15 +475,38 @@ def validate_overrides(
                             )
                         start = verse.index(wording)
                         end = start + len(wording)
-                        expected = [
-                            (max(a, start) - start, min(b, end) - start)
-                            for a, b in metadata["supplied"]
-                            if a < end and start < b
-                        ]
                         require(
-                            marked == expected,
+                            marked == spans_within(metadata["supplied"], start, end),
                             f"{label}: {witness} brackets differ from source supplied words",
                         )
+                elif witness == KJV:
+                    require(
+                        set(item) == {"ref", "quote"},
+                        f"{label}: kjv parallel needs ref and quote only",
+                    )
+                    ref = item["ref"]
+                    verse = present(
+                        kjv.get(ref), f"{label}: kjv parallel {ref} is not a verse"
+                    )
+                    wording, marked = bracketed_quote(plain(quote))
+                    require(
+                        verse.count(wording) == 1,
+                        f"{label}: kjv quote is not in the verse once",
+                    )
+                    start = verse.index(wording)
+                    end = start + len(wording)
+                    require(
+                        not cuts_word(verse, start, end),
+                        f"{label}: kjv quote cuts through a word",
+                    )
+                    # The KJV's supplied words are bracketed, as the
+                    # revisions' are, so that the parallel shows its italics.
+                    spans = ((a, b) for a, b, _ in supplied.get(ref, []))
+                    require(
+                        marked == spans_within(spans, start, end),
+                        f"{label}: kjv brackets differ from the supplied words",
+                    )
+                    parallel = ref, start, end
                 elif witness in witness_rows:
                     require(
                         witness != FAA or set(item) == {"entry", "quote"},
@@ -506,6 +542,10 @@ def validate_overrides(
                     )
                 else:
                     raise CheckFailed(f"{label}: unknown witness {witness}")
+            require(
+                (Tag.FROM_KJV_PARALLEL in tags) == (KJV in evidence),
+                f"{label}: from:kjv-parallel and kjv evidence go together",
+            )
             override: Override = {
                 "id": entry["id"],
                 "units": entry.get("units", []),
@@ -523,12 +563,19 @@ def validate_overrides(
             claimed.update(ids)
             for e in bound:
                 occupied[e["ref"]].append((e["start"], e["end"]))
+            if parallel:
+                parallels.append((label, *parallel))
         except (CheckFailed, ValueError, KeyError, TypeError, AttributeError) as error:
             errors.append(
                 str(error)
                 if str(error).startswith(label)
                 else f"{label}: malformed ({error})"
             )
+    # A parallel is the KJV's wording as the edition prints it, so no
+    # override, its own or another's, may change the words it quotes.
+    for label, ref, start, end in parallels:
+        if any(start < b and a < end for a, b in occupied[ref]):
+            errors.append(f"{label}: kjv parallel is words an override edits")
     return compiled, errors
 
 

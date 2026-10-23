@@ -691,24 +691,51 @@ def test_the_summary_tallies_the_sources_of_wording(
     byzantine: Reconciliation,
 ) -> None:
     text = review.summary(byzantine)
-    executed = [
+    all_executed = [
         r for r in byzantine.verified.dispositions if r.get("execution") == "applied"
     ]
+    # A row that only marks or unmarks supplied words prints the same words
+    # and writes no note: it is counted apart from the changes of wording.
+    marking = [r for r in all_executed if review.marking_only(r)]
+    assert marking and all(
+        e["old"] == e["new"] and "note" not in e for r in marking for e in r["edits"]
+    )
+    executed = [r for r in all_executed if not review.marking_only(r)]
     assert executed
     froms = [
         [t.removeprefix("from:") for t in r["tags"] if t.startswith("from:")]
         for r in executed
     ]
-    # Every row carried out says where its wording comes from, one source or
-    # more, but a verse moved or omitted and a correction of shared Greek,
-    # which have no wording of their own.
+    # Every row carried out, a change of marking alone included, says where
+    # its wording comes from, one source or more, but a verse moved or
+    # omitted and a correction of shared Greek, which have no wording of
+    # their own.
     assert all(
-        bool(tags) == (r["disposition"] not in {"structural", "shared"})
-        for r, tags in zip(executed, froms, strict=True)
+        any(t.startswith("from:") for t in r["tags"])
+        == (r["disposition"] not in {"structural", "shared"})
+        for r in all_executed
     )
     sources = Counter(t for tags in froms for t in tags or ["(none)"])
     dispositions = Counter(r["disposition"] for r in executed)
     section = text.split("## Sources of wording\n")[1].split("\n## ")[0]
+    assert (
+        f"Of the rows executed, {len(marking)} only mark or unmark a supplied "
+        f"word, printing the same words with no note; the tables count the "
+        f"{len(executed)} that change the words."
+    ) in section
+    assert len(marking) + len(executed) == len(all_executed)
+    marking_froms = Counter(
+        t.removeprefix("from:")
+        for r in marking
+        for t in [t for t in r["tags"] if t.startswith("from:")] or ["(none)"]
+    )
+    line = section.split("Changes of marking alone, by source: ")[1].split("\n")[0]
+    listed = [item.rsplit(" ", 1) for item in line.removesuffix(".").split(", ")]
+    # Ranked as the tables are: most rows first, then by name, and rows with
+    # no source last.
+    assert [(k, int(n)) for k, n in listed] == sorted(
+        marking_froms.items(), key=lambda kv: (kv[0] == "(none)", -kv[1], kv[0])
+    )
     several = Counter(len(tags) for tags in froms if len(tags) > 1)
     assert several[2]
     assert (

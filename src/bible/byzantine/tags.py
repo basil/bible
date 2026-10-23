@@ -90,7 +90,7 @@ LEGEND: dict[Tag, str] = {
     Tag.OP_NOCHANGE: "The Greek differs; the English stands",
     Tag.FROM_PIERPONT: "Wording from Pierpont's Some Improvements",
     Tag.FROM_ADDITIONAL: "Wording from an additional instruction file",
-    Tag.FROM_KJV_PARALLEL: "The KJV's own rendering of the same Greek elsewhere",
+    Tag.FROM_KJV_PARALLEL: "The KJV's own rendering of the same or a like construction",
     Tag.FROM_RV: "Wording from the Revised Version of 1881",
     Tag.FROM_BOYD_ASV: "Wording from Boyd's ASV conformed to RP2018",
     Tag.FROM_TCENT: "Wording from Boyd's TCENT apparatus",

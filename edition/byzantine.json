@@ -54,6 +54,10 @@
         "pierpont": {
           "entry": 16,
           "quote": "speak _the_ word only, and my servant shall"
+        },
+        "kjv": {
+          "ref": "LUK 7:7",
+          "quote": "in a word"
         }
       }
     },
@@ -304,6 +308,10 @@
         "boyd-asv": {
           "ref": "MAT 15:4",
           "quote": "Honor thy father and thy mother"
+        },
+        "kjv": {
+          "ref": "MAT 19:19",
+          "quote": "and [thy] mother"
         }
       }
     },
@@ -405,7 +413,7 @@
         "gram:pronoun",
         "gram:supplied-word"
       ],
-      "why": "RP omits sou after father but retains the articles, so thy remains necessary English as both revisions show. It now stands supplied, matching the KJV’s italic thy before mother at Matthew 19:19 where the same bare-article construction has no sou (steps 3 and 5).",
+      "why": "RP omits sou after father but retains the article, so thy remains necessary English as both revisions show. It now stands supplied, as the KJV’s own italic thy before mother does in this verse, where the article stands without sou (steps 3 and 5).",
       "evidence": {
         "rv": {
           "ref": "MAT 19:19",
@@ -414,6 +422,10 @@
         "boyd-asv": {
           "ref": "MAT 19:19",
           "quote": "Honor thy father and thy mother"
+        },
+        "kjv": {
+          "ref": "MAT 19:19",
+          "quote": "and [thy] mother"
         }
       }
     },
@@ -1208,6 +1220,10 @@
         "boyd-asv": {
           "ref": "MRK 8:35",
           "quote": "whosoever shall lose his own life"
+        },
+        "kjv": {
+          "ref": "LUK 14:26",
+          "quote": "his own life"
         }
       }
     },
@@ -1540,6 +1556,10 @@
         "boyd-asv": {
           "ref": "MRK 16:1",
           "quote": "Mary the mother of James"
+        },
+        "kjv": {
+          "ref": "LUK 24:10",
+          "quote": "Mary [the mother] of James"
         }
       }
     },
@@ -1828,6 +1848,10 @@
         "faa": {
           "entry": "LUK 7:11#1",
           "quote": "the next day"
+        },
+        "kjv": {
+          "ref": "LUK 8:1",
+          "quote": "And it came to pass afterward"
         }
       }
     },
@@ -2051,6 +2075,10 @@
         "pierpont": {
           "entry": 158,
           "quote": "And he turned to his disciples and said,"
+        },
+        "kjv": {
+          "ref": "LUK 10:23",
+          "quote": "And he turned him unto [his] disciples, and said"
         }
       }
     },
@@ -2079,6 +2107,10 @@
         "boyd-asv": {
           "ref": "LUK 11:11",
           "quote": "or a fish, and he for a fish give him a serpent?"
+        },
+        "kjv": {
+          "ref": "LUK 11:11",
+          "quote": "[If] a son shall ask bread"
         }
       }
     },
@@ -2143,6 +2175,10 @@
         "faa": {
           "entry": "LUK 13:29#1",
           "quote": "from"
+        },
+        "kjv": {
+          "ref": "LUK 13:29",
+          "quote": "and [from] the west"
         }
       }
     },
@@ -2200,6 +2236,10 @@
         "tcent": {
           "entry": 93,
           "quote": "at the feast ¦ bread CT TR"
+        },
+        "kjv": {
+          "ref": "LUK 14:12",
+          "quote": "makest a dinner"
         }
       }
     },
@@ -2233,6 +2273,10 @@
         "boyd-asv": {
           "ref": "LUK 14:24",
           "quote": "For many are called, but few chosen."
+        },
+        "kjv": {
+          "ref": "MAT 22:14",
+          "quote": "For many are called, but few [are] chosen."
         }
       }
     },
@@ -2740,6 +2784,10 @@
         "boyd-asv": {
           "ref": "JHN 6:39",
           "quote": "at the last day"
+        },
+        "kjv": {
+          "ref": "JHN 6:40",
+          "quote": "[at] the last day"
         }
       }
     },
@@ -2763,11 +2811,15 @@
         "from:kjv-parallel",
         "gram:supplied-word"
       ],
-      "why": "RP adds en before the last day, so at now renders an explicit Greek preposition and is roman; the KJV uses roman at the last day for en in John 6:39.",
+      "why": "RP adds en before the last day, so at now renders an explicit Greek preposition and is roman; the KJV uses roman at the last day for en in John 11:24.",
       "evidence": {
         "boyd-asv": {
           "ref": "JHN 6:44",
           "quote": "raise him up in the last day"
+        },
+        "kjv": {
+          "ref": "JHN 11:24",
+          "quote": "at the last day"
         }
       }
     },
@@ -2841,6 +2893,10 @@
         "boyd-asv": {
           "ref": "JHN 8:4",
           "quote": "they say unto him, trying him,"
+        },
+        "kjv": {
+          "ref": "JHN 8:6",
+          "quote": "tempting him"
         }
       }
     },
@@ -3360,6 +3416,10 @@
         "boyd-asv": {
           "ref": "JHN 19:17",
           "quote": "called The place of a skull"
+        },
+        "kjv": {
+          "ref": "MRK 15:22",
+          "quote": "The place of a skull"
         }
       }
     },
@@ -3526,6 +3586,10 @@
         "rv": {
           "ref": "ACT 4:21",
           "quote": "finding nothing how they might punish them"
+        },
+        "kjv": {
+          "ref": "MRK 11:18",
+          "quote": "sought how they might destroy him"
         }
       }
     },
@@ -3720,6 +3784,10 @@
         "boyd-asv": {
           "ref": "ACT 7:14",
           "quote": "and all his kindred"
+        },
+        "kjv": {
+          "ref": "LUK 2:44",
+          "quote": "among [their] kinsfolk"
         }
       }
     },
@@ -3749,6 +3817,10 @@
         "boyd-asv": {
           "ref": "ACT 7:20",
           "quote": "in his father’s house"
+        },
+        "kjv": {
+          "ref": "1CO 5:1",
+          "quote": "[his] father’s wife"
         }
       }
     },
@@ -3807,6 +3879,10 @@
         "boyd-asv": {
           "ref": "ACT 7:58",
           "quote": "the witnesses laid down their garments"
+        },
+        "kjv": {
+          "ref": "ACT 22:23",
+          "quote": "cast [off their] clothes"
         }
       }
     },
@@ -3917,6 +3993,10 @@
         "boyd-asv": {
           "ref": "ACT 11:26",
           "quote": "when he had found him"
+        },
+        "kjv": {
+          "ref": "LUK 15:5",
+          "quote": "found [it]"
         }
       }
     },
@@ -4214,6 +4294,10 @@
         "boyd-asv": {
           "ref": "ACT 17:25",
           "quote": "giveth to all life and breath in all things"
+        },
+        "kjv": {
+          "ref": "HEB 2:17",
+          "quote": "in all [things]"
         }
       }
     },
@@ -4487,6 +4571,10 @@
         "rv": {
           "ref": "ACT 21:15",
           "quote": "we took up our baggage"
+        },
+        "kjv": {
+          "ref": "ACT 10:10",
+          "quote": "made ready"
         }
       }
     },
@@ -5109,6 +5197,10 @@
         "boyd-asv": {
           "ref": "ACT 27:39",
           "quote": "if possible"
+        },
+        "kjv": {
+          "ref": "MAT 24:24",
+          "quote": "if [it were] possible"
         }
       }
     },
@@ -5337,6 +5429,10 @@
         "tcent": {
           "entry": 205,
           "quote": "law, having died to that by which we were held ¦ law since that by which we were held has died SCR"
+        },
+        "kjv": {
+          "ref": "1PE 2:24",
+          "quote": "being dead to"
         }
       }
     },
@@ -5462,6 +5558,10 @@
         "boyd-asv": {
           "ref": "ROM 12:2",
           "quote": "and not to be fashioned according to this world, but to be transformed"
+        },
+        "kjv": {
+          "ref": "ROM 12:1",
+          "quote": "that [ye] present"
         }
       }
     },
@@ -5561,6 +5661,10 @@
         "rv": {
           "ref": "ROM 16:27",
           "quote": "through Jesus Christ, to whom be the glory"
+        },
+        "kjv": {
+          "ref": "GAL 1:5",
+          "quote": "to whom [be] glory"
         }
       }
     },
@@ -5685,6 +5789,10 @@
         "pierpont": {
           "entry": 450,
           "quote": "indeed"
+        },
+        "kjv": {
+          "ref": "ROM 7:2",
+          "quote": "to [her] husband"
         }
       }
     },
@@ -6695,6 +6803,10 @@
         "tcent": {
           "entry": 246,
           "quote": "Yes, ¦ --- TR"
+        },
+        "kjv": {
+          "ref": "MAT 11:9",
+          "quote": "yea, I say unto you"
         }
       }
     },
@@ -7598,6 +7710,10 @@
         "boyd-asv": {
           "ref": "JAS 2:11",
           "quote": "Thou shalt not commit adultery, said also, Thou shalt not kill."
+        },
+        "kjv": {
+          "ref": "ROM 13:9",
+          "quote": "Thou shalt not commit adultery, Thou shalt not kill"
         }
       }
     },
@@ -7626,6 +7742,10 @@
         "tcent": {
           "entry": 285,
           "quote": "by 87.7% ¦ apart from CT SCR 11.1%"
+        },
+        "kjv": {
+          "ref": "JAS 2:18",
+          "quote": "by my works"
         }
       }
     },
@@ -7916,6 +8036,10 @@
         "faa": {
           "entry": "1PE 1:8#1",
           "quote": "do not know"
+        },
+        "kjv": {
+          "ref": "ACT 5:7",
+          "quote": "not knowing"
         }
       }
     },
@@ -8156,6 +8280,10 @@
         "boyd-asv": {
           "ref": "1PE 5:10",
           "quote": "himself perfect you; he shall establish"
+        },
+        "kjv": {
+          "ref": "2TH 3:3",
+          "quote": "who shall stablish you"
         }
       }
     },
@@ -9805,6 +9933,10 @@
         "tcent": {
           "entry": 386,
           "quote": "something like ¦ --- CT TR"
+        },
+        "kjv": {
+          "ref": "REV 19:6",
+          "quote": "I heard as [it were] the voice"
         }
       }
     },
@@ -9877,6 +10009,10 @@
         "faa": {
           "entry": "REV 5:13#4",
           "quote": "the creatures in them, all saying,"
+        },
+        "kjv": {
+          "ref": "1CO 14:16",
+          "quote": "say Amen"
         }
       }
     },
@@ -10223,6 +10359,10 @@
         "boyd-asv": {
           "ref": "REV 7:9",
           "quote": "standing before the throne and before the Lamb, arrayed in white robes, and palms in their hands"
+        },
+        "kjv": {
+          "ref": "REV 19:17",
+          "quote": "an angel standing"
         }
       }
     },
@@ -10467,6 +10607,10 @@
         "boyd-asv": {
           "ref": "REV 8:11",
           "quote": "and many of the men died of the waters, because they were made bitter."
+        },
+        "kjv": {
+          "ref": "JHN 12:11",
+          "quote": "many of the Jews"
         }
       }
     },
@@ -11232,6 +11376,10 @@
         "boyd-asv": {
           "ref": "REV 12:14",
           "quote": "that she might be nourished there"
+        },
+        "kjv": {
+          "ref": "REV 12:14",
+          "quote": "that she might fly"
         }
       }
     },
@@ -11299,6 +11447,10 @@
         "boyd-asv": {
           "ref": "REV 13:4",
           "quote": "and who is able to war with him?"
+        },
+        "kjv": {
+          "ref": "REV 13:4",
+          "quote": "Who [is] like unto the beast"
         }
       }
     },
@@ -11711,7 +11863,7 @@
         "from:kjv-parallel",
         "gram:lexical"
       ],
-      "why": "RP’s accusative καθημενον ομοιον makes the seated figure an object of I looked, so the independent one sat fails §5’s clause-relation rule. Sitting follows the KJV’s object-and-participle construction in Revelation 4:4 and leaves the coordinated objects under behold grammatical without supplying a repeated verb; no instruction executes here.",
+      "why": "RP’s accusative καθημενον ομοιον makes the seated figure an object of I looked, so the independent one sat fails §5’s clause-relation rule. Sitting follows the KJV’s object-and-participle construction in Mark 16:5 and leaves the coordinated objects under behold grammatical without supplying a repeated verb; no instruction executes here.",
       "evidence": {
         "rv": {
           "ref": "REV 14:14",
@@ -11720,6 +11872,10 @@
         "boyd-asv": {
           "ref": "REV 14:14",
           "quote": "on the cloud I saw one sitting like unto a son of man"
+        },
+        "kjv": {
+          "ref": "MRK 16:5",
+          "quote": "they saw a young man sitting"
         }
       }
     },
@@ -11991,6 +12147,10 @@
         "faa": {
           "entry": "REV 17:8#5",
           "quote": "will be present"
+        },
+        "kjv": {
+          "ref": "LUK 13:1",
+          "quote": "were present"
         }
       }
     },
@@ -12143,6 +12303,10 @@
         "faa": {
           "entry": "REV 18:3#1",
           "quote": "fallen because of"
+        },
+        "kjv": {
+          "ref": "REV 16:11",
+          "quote": "because of their pains"
         }
       }
     },
@@ -12566,6 +12730,10 @@
         "tcent": {
           "entry": 521,
           "quote": "the deceiver of the whole world, ¦ the deceiver of the world, ANT ¦ --- Αν CT TR"
+        },
+        "kjv": {
+          "ref": "REV 12:9",
+          "quote": "which deceiveth the whole world"
         }
       }
     },

@@ -56,6 +56,10 @@ MSB = "msb"  # Majority Standard Bible footnotes
 WEB = "web"  # World English Bible footnotes
 RV = "rv"  # Revised Version of 1881
 BOYD_ASV = "boyd-asv"  # Boyd's ASV conformed to RP2018 (2021)
+# The evidence of a King James parallel: the pinned KJV's own rendering of
+# the same or a like construction, at another verse or in the unit's verse
+# outside the edit.
+KJV = "kjv"
 INSTRUCTION_SOURCES = (PIERPONT, ADDITIONAL)  # in order of precedence
 APPARATUS = (TCENT, FAA, MSB, WEB)
 REVISIONS = (RV, BOYD_ASV)

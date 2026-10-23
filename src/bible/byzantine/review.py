@@ -22,6 +22,7 @@ from bible.byzantine import (
     BOOKS,
     BOYD_ASV,
     FAA,
+    KJV,
     MSB,
     PIERPONT,
     REVISIONS,
@@ -78,6 +79,7 @@ NAMES = {
     RV: "RV 1881",
     "asv": "ASV 1901",
     BOYD_ASV: "Boyd ASV 2021",
+    KJV: "KJV parallel",
 }
 LOOSE_HEADING = "## Attached to no unit"
 GREEK_CHANGES = {
@@ -1210,40 +1212,75 @@ def addressed(i: Instruction, context: Reconciliation) -> bool:
     return bool(edits) and all(covered(e) for e in edits)
 
 
+def marking_only(row: Disposition) -> bool:
+    """Whether a row carried out changes only the marking of supplied words:
+    every edit prints the words it replaces, writes no note, and changes no
+    character outside them (a stop or a capital, edit.py's external seams)."""
+    edits = row.get("edits", [])
+    return bool(edits) and all(
+        e["old"] == e["new"]
+        and "note" not in e
+        and not any(s.get("external") for s in e.get("seams", []))
+        for e in edits
+    )
+
+
 def sources_of_wording(rows: Sequence[Disposition]) -> list[str]:
     """The rows carried out, by where their wording comes from (their
     `from:` tags: a row that draws on more than one source counts under
     each, and one with no wording of its own, a verse moved or omitted or a
     correction of shared Greek, under none) and by their disposition, each
     with its share of the rows, and how many rows draw on two sources or
-    more, so that the source table's total reconciles with the rows."""
+    more, so that the source table's total reconciles with the rows. A row
+    whose every edit only marks or unmarks a supplied word, so that the
+    words print the same and no note is written, changes the marking alone
+    and is counted apart from the changes of wording."""
     executed = [r for r in rows if r.get("execution") == "applied"]
+    marking = [r for r in executed if marking_only(r)]
+    changes = [r for r in executed if not marking_only(r)]
+
+    def froms(r: Disposition) -> list[str]:
+        return [t.removeprefix("from:") for t in r["tags"] if t.startswith("from:")]
+
     sources: Counter[str] = Counter()
     several: Counter[int] = Counter()
-    for r in executed:
-        tags = [t.removeprefix("from:") for t in r["tags"] if t.startswith("from:")]
+    for r in changes:
+        tags = froms(r)
         sources.update(tags or ["(none)"])
         if len(tags) > 1:
             several[len(tags)] += 1
-    dispositions = Counter(r["disposition"] for r in executed)
+    dispositions = Counter(r["disposition"] for r in changes)
+    marking_sources = Counter(t for r in marking for t in froms(r) or ["(none)"])
+
+    def ranked(counts: Counter[str]) -> list[tuple[str, int]]:
+        return sorted(counts.items(), key=lambda kv: (kv[0] == "(none)", -kv[1], kv[0]))
 
     def table(head: str, counts: Counter[str]) -> list[str]:
-        ordered = sorted(
-            counts.items(), key=lambda kv: (kv[0] == "(none)", -kv[1], kv[0])
-        )
         return [
             f"| {head} | Rows | Share |",
             "| --- | --- | --- |",
-            *(f"| {k} | {n} | {100 * n / len(executed):.1f}% |" for k, n in ordered),
+            *(
+                f"| {k} | {n} | {100 * n / len(changes):.1f}% |"
+                for k, n in ranked(counts)
+            ),
             "",
         ]
 
     return [
         "## Sources of wording",
         "",
-        "Of the rows executed, a row whose wording draws on more than one "
-        "source counts under each; a verse moved or omitted, or a correction "
-        "of shared Greek, has no source of wording.",
+        f"Of the rows executed, {len(marking)} only mark or unmark a supplied "
+        "word, printing the same words with no note; the tables count the "
+        f"{len(changes)} that change the words. A row whose wording draws on "
+        "more than one source counts under each; a verse moved or omitted, or "
+        "a correction of shared Greek, has no source of wording.",
+        "",
+        "Changes of marking alone, by source: "
+        + (
+            ", ".join(f"{k} {n}" for k, n in ranked(marking_sources)) + "."
+            if marking_sources
+            else "none."
+        ),
         "",
         "Rows drawing on more than one source: "
         + (
