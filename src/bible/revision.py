@@ -1,7 +1,7 @@
 """The edition's revision of the translation's spelling, vocabulary, and
 punctuation (edition/revisions.json), by explicit editorial decisions.
 
-Five kinds of change are declared, each with its reason:
+Six kinds of change are declared, each with its reason:
 
     names    a proper name respelled where its bearer is decided: every
              whole-word occurrence of a form in the verses its decision
@@ -26,6 +26,9 @@ Five kinds of change are declared, each with its reason:
              as "EZK 1:3", which must have the words once: its punctuation,
              or a spelling particular to it. They stand in groups, by the
              reason they share
+    ligatures each ligature written out as its letters wherever it is
+             printed, last of all, so that every other decision is written
+             and met in the sources' letters
 
 Revision finishes the translations after source-dependent decisions, so
 that the sources are read and those decisions are met in the sources' own
@@ -39,7 +42,7 @@ from __future__ import annotations
 import functools
 import re
 import unicodedata
-from collections.abc import Callable, Container, Iterable
+from collections.abc import Callable, Container, Iterable, Mapping
 from difflib import SequenceMatcher
 
 import bible.policy
@@ -69,11 +72,15 @@ def _unrevised(item: Node) -> bool:
     return usj.is_note(item) or usj.is_label(item) or item.get("marker") in UNREVISED
 
 
+# A word, with the apostrophes and hyphens within it, and a plural's
+# possessive one.
+LEXEME = re.compile(r"\w+(?:['’\-]\w+)*['’]?")
+
+
 def punctuation_only(old: str, new: str) -> bool:
     """Keep lexical tokens, allowing initial case at a changed sentence end.
     A word keeps its apostrophes and hyphens, a plural's possessive one too."""
-    pattern = r"\w+(?:['’\-]\w+)*['’]?"
-    before, after = list(re.finditer(pattern, old)), list(re.finditer(pattern, new))
+    before, after = list(LEXEME.finditer(old)), list(LEXEME.finditer(new))
     if len(before) != len(after):
         return False
     for a, b in zip(before, after):
@@ -91,13 +98,56 @@ def punctuation_only(old: str, new: str) -> bool:
     return True
 
 
+def _lexemes(text: str) -> list[str]:
+    """The words, apostrophes and hyphens within them and a plural's
+    possessive one kept, with their case and the shape of their apostrophes
+    put aside."""
+    return [w.casefold().replace("’", "'") for w in LEXEME.findall(text)]
+
+
+def words_kept(old: str, new: str) -> bool:
+    """The words stand, in the same order: punctuation and capitals alone
+    change, the most a verse revision may do without declaring its kind."""
+    return _lexemes(old) == _lexemes(new)
+
+
+def one_word_differs(old: str, new: str) -> bool:
+    """One word changes, and nothing else among the words: the kind of
+    change a verse revision may declare, a spelling or inflection chosen
+    by sense, or a misprint corrected."""
+    before, after = _lexemes(old), _lexemes(new)
+    return len(before) == len(after) and sum(a != b for a, b in zip(before, after)) == 1
+
+
+# What a verse revision may change among the words, declared by its group:
+# the spelling or inflection of a word, chosen by sense verse by verse, or a
+# word the source's printing got wrong, which another printing shows.
+WORDING = frozenset({"spelling", "misprint"})
+
+
 def check(policy: bible.policy.Policy) -> None:
     data = policy.revisions
     require_fields(
         data,
-        {"why", "words", "verses", "passages", "punctuation", "names"},
+        {"why", "words", "verses", "passages", "punctuation", "names", "ligatures"},
         (),
         "Revisions file",
+    )
+    ligatures = data["ligatures"]
+    require_fields(ligatures, {"why", "letters"}, (), "Ligatures")
+    letters = ligatures["letters"]
+    require(
+        bool(ligatures["why"])
+        and isinstance(letters, Mapping)
+        and all(
+            isinstance(ligature, str)
+            and isinstance(written, str)
+            and len(ligature) == 1
+            and len(written) > 1
+            for ligature, written in letters.items()
+        )
+        and not _ligature(letters, "".join(letters.values())),
+        "Ligatures without a why, or not each one letter written as its letters",
     )
     for name, rule in data["punctuation"].items():
         require(
@@ -196,11 +246,32 @@ def check(policy: bible.policy.Policy) -> None:
         require(
             not spanned, f"Name also respelled as a word: {word}: {', '.join(spanned)}"
         )
+    # A word written anew is written with the letters, not a ligature that
+    # the edition would then write out; and a respelling is more than the
+    # ligature written out, which the edition does without it.
+    table = str.maketrans(dict(letters))
+    respellings = [
+        *((word, entry["to"]) for word, entry in words.items()),
+        *(
+            (form, decision["to"])
+            for decision in names["decisions"].values()
+            for form in decision["forms"]
+        ),
+    ]
+    written = sorted({to for _, to in respellings if _ligature(letters, to)})
+    require(not written, f"Respellings that write a ligature: {written}")
+    unneeded = sorted(old for old, to in respellings if old.translate(table) == to)
+    require(not unneeded, f"Respellings that only write out a ligature: {unneeded}")
     for name, group in data["verses"].items():
-        require_fields(group, {"why", "changes"}, (), f"Revisions {name}")
+        require_fields(group, {"why", "changes"}, {"wording"}, f"Revisions {name}")
         require(
             group["why"] and group["changes"],
             f"Revisions without a why, or without a change: {name}",
+        )
+        wording = group.get("wording")
+        require(
+            wording is None or (isinstance(wording, str) and wording in WORDING),
+            f"Revisions with an unknown kind of wording: {name}: {wording}",
         )
         for change in group["changes"]:
             # A change may add its own reason to its group's.
@@ -212,19 +283,45 @@ def check(policy: bible.policy.Policy) -> None:
                 re.fullmatch(r"\w{3} \S+:\S+", key) is not None,
                 f"Revision of what is not a verse: {name}: {key}",
             )
-            # NT wording belongs to checked Greek-reading or rendering
-            # decisions. Verse revisions may change its punctuation only;
-            # keep words, numbers, and internal apostrophes/hyphens intact.
-            require(
-                key[:3] not in policy.kjv_units
-                or punctuation_only(change["from"], change["to"]),
-                f"Revision changes New Testament words: {name}: {key}",
-            )
             require(
                 change["from"]
                 and change["from"] != change["to"]
                 and change.get("why", True),
                 f"Revision that changes nothing, or with an empty why: {name}: {key}",
+            )
+            # A verse revision changes punctuation and capitals only,
+            # keeping words, numbers, and internal apostrophes and hyphens
+            # intact, unless its group declares the kind of wording it
+            # changes, and then one word. NT wording belongs to checked
+            # Greek-reading or rendering decisions: no kind reaches it, and
+            # its capitals change only at a changed sentence end.
+            require(
+                key[:3] not in policy.kjv_units
+                or punctuation_only(change["from"], change["to"]),
+                f"Revision changes New Testament words: {name}: {key}",
+            )
+            # Nor does it only write out a ligature, as a respelling may not:
+            # the edition does that without it.
+            require(
+                words_kept(change["from"], change["to"])
+                or not words_kept(change["from"].translate(table), change["to"]),
+                f"Revision that only writes out a ligature: {name}: {key}",
+            )
+            require(
+                (
+                    words_kept(change["from"], change["to"])
+                    if wording is None
+                    else one_word_differs(change["from"], change["to"])
+                ),
+                f"Revision changes words without their kind, or other than one: {name}: {key}",
+            )
+            # A word it writes anew is written with the letters.
+            require(
+                all(
+                    change["to"].count(ligature) <= change["from"].count(ligature)
+                    for ligature in letters
+                ),
+                f"Revision that writes a ligature: {name}: {key}",
             )
 
     # The front and back matter that prints: a unit read only for what it
@@ -1284,11 +1381,48 @@ def _check_lemmas(before: Document, after: Document) -> None:
                     )
 
 
+def _ligature(letters: Mapping[str, str], text: str) -> bool:
+    return any(ligature in text for ligature in letters)
+
+
+def unligatured(
+    doc: Document, policy: bible.policy.Policy, met: MetRevisions
+) -> Document:
+    """A document with its ligatures written out as their letters, wherever
+    they stand: in its words, its notes, and the lemmas that quote them
+    alike, so that a lemma still quotes its verse. Each ligature written
+    out is met."""
+    letters = policy.revisions["ligatures"]["letters"]
+    table = str.maketrans(dict(letters))
+
+    def written(content: Content) -> Content:
+        output: Content = []
+        for item in content:
+            if isinstance(item, str):
+                plain = item.translate(table)
+                if plain != item:
+                    met.update(
+                        ("ligature", ligature)
+                        for ligature in letters
+                        if ligature in item
+                    )
+                item = plain
+            elif "content" in item:
+                item = {**item, "content": written(item["content"])}
+            output.append(item)
+        return output
+
+    return usj.with_content(doc, written)
+
+
 def regularized(doc: Document, policy: bible.policy.Policy) -> Document:
-    """A document with the systematic spelling and punctuation alone,
-    recording nothing: the textual variants quote both Bibles so, to show
-    the readings' differences and not the edition's finishing."""
-    return punctuated(respelled(doc, policy, set()), policy, set())
+    """A document with the systematic spelling and punctuation alone, and
+    its ligatures written out, recording nothing: the textual variants quote
+    both Bibles so, to show the readings' differences and not the edition's
+    finishing."""
+    return unligatured(
+        punctuated(respelled(doc, policy, set()), policy, set()), policy, set()
+    )
 
 
 def revised(
@@ -1586,6 +1720,7 @@ def check_met(policy: bible.policy.Policy, met: Container[object]) -> None:
         )
     expected = (
         set(data["words"])
+        | {("ligature", ligature) for ligature in data["ligatures"]["letters"]}
         | verses
         | set(data["punctuation"])
         | passages

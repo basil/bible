@@ -326,6 +326,10 @@ def test_the_editions_spelling_is_revised_wherever_a_word_is_printed(
             for phrase in entry.get("except", ())
         }
         | set(policy.revisions["punctuation"])
+        | {
+            ("ligature", ligature)
+            for ligature in policy.revisions["ligatures"]["letters"]
+        }
         | {c["verse"] for c in revision.verse_changes(policy)}
         | {
             (c.get("note", c.get("unit")), c["from"])
@@ -489,6 +493,7 @@ def revisions(
             passages={},
             punctuation={},
             names={"why": "names", "decisions": {}},
+            ligatures={"why": "ligatures", "letters": {}},
         )
         data.update(sections)
 
@@ -628,8 +633,13 @@ def test_a_word_is_respelled_whatever_styles_divide_it(
     assert met == {"Noe", "Sem", "ham"}
 
 
-def group(*changes: object, why: str = "the sentence runs on") -> dict[str, Any]:
-    return {"pointing": {"why": why, "changes": list(changes)}}
+def group(
+    *changes: object, why: str = "the sentence runs on", wording: str | None = None
+) -> dict[str, Any]:
+    entry: dict[str, Any] = {"why": why, "changes": list(changes)}
+    if wording is not None:
+        entry["wording"] = wording
+    return {"pointing": entry}
 
 
 def test_a_verse_is_revised_in_its_own_words_and_the_notes_that_quote_them(
@@ -650,7 +660,11 @@ def test_a_verse_is_revised_in_its_own_words_and_the_notes_that_quote_them(
         "why": "a note quotes these words",
     }
     both = revisions(
-        policy, verses={**group(change), "wording": {"why": "x", "changes": [quoted]}}
+        policy,
+        verses={
+            **group(change),
+            "wording": {"why": "x", "wording": "spelling", "changes": [quoted]},
+        },
     )
     revision.check(both)
     text = usj.serialize(revision.revised("GEN", usj.parse(NOE), both, set()))
@@ -783,6 +797,83 @@ def test_a_revision_changes_a_lemma_whole_or_is_refused(
             {"verses": group({"verse": "MAT 1:1", "from": "Noe", "to": "Noah"})},
             "Revision changes New Testament words",
         ),
+        (
+            {"verses": group({"verse": "GEN 1:1", "from": "beside", "to": "besides"})},
+            "Revision changes words without their kind",
+        ),
+        (
+            {
+                "verses": group(
+                    {"verse": "GEN 1:1", "from": "the fowls", "to": "all birds"},
+                    wording="spelling",
+                )
+            },
+            "or other than one",
+        ),
+        (
+            {
+                "verses": group(
+                    {"verse": "MAT 1:1", "from": "beside", "to": "besides"},
+                    wording="spelling",
+                )
+            },
+            "Revision changes New Testament words",
+        ),
+        (
+            {
+                "verses": group(
+                    {"verse": "GEN 1:1", "from": "beside", "to": "besides"},
+                    wording="wording",
+                )
+            },
+            "unknown kind of wording",
+        ),
+        (
+            {
+                "words": {"emerods": {"to": "hæmorrhoids", "why": "x"}},
+                "ligatures": {"why": "x", "letters": {"æ": "ae"}},
+            },
+            r"Respellings that write a ligature: \['hæmorrhoids'\]",
+        ),
+        (
+            {"ligatures": {"why": "x", "letters": {"ae": "æ"}}},
+            "not each one letter written as its letters",
+        ),
+        (
+            {"ligatures": {"why": "x", "letters": ["æ", "ae"]}},
+            "not each one letter written as its letters",
+        ),
+        (
+            {
+                "words": {"Phœnicia": {"to": "Phoenicia", "why": "x"}},
+                "ligatures": {"why": "x", "letters": {"œ": "oe"}},
+            },
+            r"Respellings that only write out a ligature: \['Phœnicia'\]",
+        ),
+        (
+            {
+                "verses": group(
+                    {"verse": "GEN 1:1", "from": "Judea", "to": "Judæa"},
+                    wording="misprint",
+                ),
+                "ligatures": {"why": "x", "letters": {"æ": "ae"}},
+            },
+            "Revision that writes a ligature: pointing: GEN 1:1",
+        ),
+        (
+            {
+                "verses": group(
+                    {"verse": "GEN 1:1", "from": "Phœnicia.", "to": "Phoenicia,"},
+                    wording="spelling",
+                ),
+                "ligatures": {"why": "x", "letters": {"œ": "oe"}},
+            },
+            "Revision that only writes out a ligature: pointing: GEN 1:1",
+        ),
+        (
+            {"words": {"emerods": {"why": "x"}}},
+            "Respelling of emerods has missing or unknown fields",
+        ),
     ],
 )
 def test_a_malformed_revision_is_refused(
@@ -790,6 +881,49 @@ def test_a_malformed_revision_is_refused(
 ) -> None:
     with pytest.raises(CheckFailed, match=refusal):
         revision.check(revisions(policy, **sections))
+
+
+def test_ligatures_are_written_out_in_words_notes_and_lemmas(
+    policy: bible.policy.Policy,
+) -> None:
+    source = usj.parse(
+        "\\id JOB\n\\c 4\n\\p \\v 1 Then Eliphaz the "
+        "\\f - \\fq Thæmanite: \\ft Gr. \\fqa Æthiopic chœnix\\f*"
+        "\\add Thæmanite\\add* answered."
+    )
+    before = copy.deepcopy(source)
+    met: revision.MetRevisions = set()
+    result = revision.unligatured(source, policy, met)
+    assert source == before
+    assert usj.serialize(result) == usj.serialize(
+        usj.parse(
+            "\\id JOB\n\\c 4\n\\p \\v 1 Then Eliphaz the "
+            "\\f - \\fq Thaemanite: \\ft Gr. \\fqa Aethiopic choenix\\f*"
+            "\\add Thaemanite\\add* answered."
+        )
+    )
+    assert met == {("ligature", "æ"), ("ligature", "Æ"), ("ligature", "œ")}
+
+
+def test_the_edition_prints_no_ligature(
+    edition: bible.pipeline.Edition, policy: bible.policy.Policy
+) -> None:
+    letters = policy.revisions["ligatures"]["letters"]
+    # The website's own pages print too, the textual variants among them.
+    documents = {
+        **edition.documents,
+        bible.policy.NUMBERING["id"]: edition.numbering_page,
+        bible.policy.VARIANTS["id"]: edition.variants_page,
+    }
+    printed = sorted(
+        code
+        for code, doc in documents.items()
+        if any(
+            ligature in usj.text_of(doc["content"], skip=lambda _: False)
+            for ligature in letters
+        )
+    )
+    assert not printed
 
 
 def test_a_revision_must_be_met(policy: bible.policy.Policy) -> None:
@@ -2231,6 +2365,9 @@ def test_prepared_contextual_dashes_and_derived_quotations(
     policy: bible.policy.Policy,
     read: bible.pipeline.Read,
 ) -> None:
+    # A verse's or a passage's change is made in the source's letters, and
+    # printed with its ligatures written out.
+    letters = str.maketrans(dict(policy.revisions["ligatures"]["letters"]))
     for change in revision.verse_changes(policy):
         code, reference = change["verse"].split()
         words = scripture.verses(edition.documents[code])[reference].text
@@ -2239,13 +2376,14 @@ def test_prepared_contextual_dashes_and_derived_quotations(
         respelled = revision.respelled(
             usj.parse(f"\\id {code}\n\\c 1\n\\p\n\\v 1 {change['to']}"), policy, set()
         )
-        expected = scripture.plain(scripture_text(respelled))
+        expected = scripture.plain(scripture_text(respelled)).translate(letters)
         assert expected in scripture.plain(words), (change, words)
         # A respelling can retain its source as a substring (beside → besides),
         # so its words are matched whole.
         # An added stop can retain the entire former phrase (God?) → God?);).
-        if revision._phrase(change["from"]).search(expected) is None:
-            assert revision._phrase(change["from"]).search(words) is None
+        gone = revision._phrase(change["from"].translate(letters))
+        if gone.search(expected) is None:
+            assert gone.search(words) is None
     for passage_change in revision.passage_changes(policy):
         if "note" in passage_change:
             code = passage_change["note"].split()[0]
@@ -2257,8 +2395,8 @@ def test_prepared_contextual_dashes_and_derived_quotations(
             words = usj.text_of(note["content"])
         else:
             words = usj.text_of(edition.documents[passage_change["unit"]]["content"])
-        assert passage_change["to"] in words
-        assert passage_change["from"] not in words
+        assert passage_change["to"].translate(letters) in words
+        assert passage_change["from"].translate(letters) not in words
     assert (
         "expressly were appointed"
         in scripture.verses(edition.documents["2CH"])["31:19"].text

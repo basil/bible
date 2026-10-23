@@ -910,8 +910,9 @@ def _divided(block: Node, cuts: Sequence[tuple[int, str, bool]]) -> list[Node]:
 # Source instructions and acrostic names, after the lines have been placed.
 
 
-# The instructions Brenton leaves within their verses, which stay inline.
-INLINE_PAUSES = frozenset({"PSA 67:8"})
+# A terminal instruction of Brenton's, with the song it belongs to
+# (Psalm 9:17), and its own punctuation (Psalm 67:8 closes with a colon).
+INSTRUCTION = re.compile(r"\b(?:A song of )?Pause[.:]")
 
 
 def _verses_at(content: Content) -> list[tuple[int, str]]:
@@ -926,65 +927,47 @@ def _verses_at(content: Content) -> list[tuple[int, str]]:
 def pauses(doc: Document) -> Document:
     """Set a terminal Pause instruction on its own right-aligned line.
 
-    Only a standalone sentence in poetry qualifies; a song's attribution,
-    prose and notes keep their form. The existing caller stays with Pause.
-    Refuse any other Pause in the words unless its verse is declared to keep
-    it inline, and a declaration in the document's chapters that no Pause
-    meets.
+    Only an instruction ending a poetic line qualifies, after a punctuated
+    clause or alone, with the song it belongs to and its own punctuation;
+    notes keep their form. The existing caller stays with Pause. Refuse any
+    other Pause in the words, prose included.
     """
     book = usj.book_code(doc)
     blocks: list[Node] = []
     chapter, verse = "", ""
-    kept: set[str] = set()
-    chapters: set[str] = set()
-    # The blocks, by their place in the result, that keep a declared Pause.
-    inline: set[int] = set()
     for block in doc["content"]:
         if usj.is_type(block, "chapter"):
             chapter, verse = block["number"], ""
-            chapters.add(f"{book} {chapter}")
         content = block.get("content", [])
         text = usj.text_of(content)
         starts = _verses_at(content)
-        cut, declared_here = None, False
-        for match in re.finditer(r"\bPause\b", text):
-            number = next(
-                (v for at, v in reversed(starts) if at <= match.start()), verse
-            )
+        cut = None
+        # Every Pause, with the song it belongs to where it has one.
+        for match in re.finditer(r"\b(?:A song of )?Pause\b", text):
+            start = match.start()
+            number = next((v for at, v in reversed(starts) if at <= start), verse)
             here = f"{book} {chapter}:{number}"
-            before = text[: match.start()].rstrip()
-            terminal = re.fullmatch(r"Pause\.\s*", text[match.start() :])
-            if before.endswith("A song of") or (
-                block.get("marker") == "qr" and terminal and not before
-            ):
+            before = text[:start].rstrip()
+            instruction = INSTRUCTION.match(text, start)
+            terminal = instruction is not None and not text[instruction.end() :].strip()
+            if block.get("marker") == "qr" and terminal and not before:
                 continue
             if (
                 block.get("marker") in {"q1", "q2"}
                 and terminal
-                and (not before or before[-1] in ".!?")
+                and (not before or before[-1] in ".!?;:,")
             ):
-                cut = match.start()
-            elif here in INLINE_PAUSES:
-                kept.add(here)
-                declared_here = True
+                cut = start
             else:
                 require(False, f"Unexpected Pause instruction: {here}")
         if starts:
             verse = starts[-1][1]
-        start = len(blocks)
         blocks += _divided(block, [(cut, "qr", False)]) if cut is not None else [block]
-        if declared_here:
-            inline.update(range(start, len(blocks)))
-    declared = {key for key in INLINE_PAUSES if key.split(":")[0] in chapters}
-    require(
-        kept == declared,
-        f"Inline Pause declarations no Pause meets: {sorted(declared - kept)}",
-    )
     marked: list[Node] = []
-    for index, block in enumerate(blocks):
-        if usj.paragraph(block) == "qr" or index in inline:
+    for block in blocks:
+        if usj.paragraph(block) == "qr":
             text = usj.text_of(block["content"])
-            for match in reversed(list(re.finditer(r"\bPause[.:]", text))):
+            for match in reversed(list(INSTRUCTION.finditer(text))):
                 content = block["content"]
                 head, rest = usj.split(content, match.start(), notes_left=False)
                 words, tail = usj.split(rest, match.end() - match.start())

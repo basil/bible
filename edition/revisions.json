@@ -1,5 +1,13 @@
 {
-  "why": "The spelling, vocabulary, and punctuation of the translation, revised by explicit editorial decisions. A word is respelled or modernized wherever the translation, its notes, and its front and back matter print it as a whole word; a word with a scope of scripture is revised only in numbered scripture and marked note lemmas (fq) and readings (fqa), wherever they stand. Book titles and metadata, headings, introduction paragraphs, and explanatory commentary are outside that scripture scope. Numbered scripture in d paragraphs, including Psalm superscriptions, remains in scope. Plain quotation marks do not establish scope. Names are respelled first. Global spelling, vocabulary, article, possessive, and participle decisions affect source prose and run next, followed by a separate single sweep of scoped grammar decisions. A verse's change is made to the words of that verse alone, which must have them once, as the names leave them, and to the notes that quote them. Verses' changes stand in groups, each group under the reason its changes share. Each gives its reason. An isolated alternative whose word is also a plural noun may name its stable source note as its exact context. Passage changes name a stable note key or a front/back-matter unit and the plain words met once there; only punctuation, associated spacing, and sentence-initial capitalization may change, with lowercase word initials also allowed in keyed notes. A phrase is revised as a word is; possessives and articles follow the immediately following sound, including an intervening adjective: my and thy before consonant sounds, mine and thine before vowel sounds and silent h; a before consonant sounds, an before vowel sounds and silent h. Independent mine and thine stay. Capitalization is decided separately. A word may except the phrases it must not change, which the edition must print. Words that a character style divides keep their division, and so does the lemma that quotes them at its note.",
+  "why": "The spelling, vocabulary, and punctuation of the translation, revised by explicit editorial decisions. A word is respelled or modernized wherever the translation, its notes, and its front and back matter print it as a whole word; a word with a scope of scripture is revised only in numbered scripture and marked note lemmas (fq) and readings (fqa), wherever they stand. Book titles and metadata, headings, introduction paragraphs, and explanatory commentary are outside that scripture scope. Numbered scripture in d paragraphs, including Psalm superscriptions, remains in scope. Plain quotation marks do not establish scope. Names are respelled first. Global spelling, vocabulary, article, possessive, and participle decisions affect source prose and run next, followed by a separate single sweep of scoped grammar decisions. The ligatures are written out last of all. A verse's change is made to the words of that verse alone, which must have them once, as the names leave them, and to the notes that quote them. Verses' changes stand in groups, each group under the reason its changes share. Each gives its reason. An isolated alternative whose word is also a plural noun may name its stable source note as its exact context. Passage changes name a stable note key or a front/back-matter unit and the plain words met once there; only punctuation, associated spacing, and sentence-initial capitalization may change, with lowercase word initials also allowed in keyed notes. A phrase is revised as a word is; possessives and articles follow the immediately following sound, including an intervening adjective: my and thy before consonant sounds, mine and thine before vowel sounds and silent h; a before consonant sounds, an before vowel sounds and silent h. Independent mine and thine stay. Capitalization is decided separately. A word may except the phrases it must not change, which the edition must print. Words that a character style divides keep their division, and so does the lemma that quotes them at its note.",
+  "ligatures": {
+    "why": "The edition writes the ligatures out as their letters: æ as ae and œ as oe, in every word of the translations, their notes, and their front and back matter, names and Latin alike, so that no verse prints both spellings. It is done last, after every decision has been carried out and checked in the sources’ own letters, so the decisions name the forms the sources print; a decision that writes a word anew writes it with the letters.",
+    "letters": {
+      "æ": "ae",
+      "Æ": "Ae",
+      "œ": "oe"
+    }
+  },
   "names": {
     "why": "Proper names of persons and places, respelled where their bearer is identified. A decision respells every whole-word occurrence of its forms in the verses it lists, as the edition numbers them, and in the lemmas that quote them, and nowhere else. Every other verse of the printed books that has a decided form is listed under keep, with who keeps it. The build refuses an occurrence listed neither way, a listed verse without its form, and a kept verse that another revision respells. A note's commentary and the front and back matter keep the source's names. The king of Judah retains both source names: Azarias for Greek Ἀζαρίας in 4 Kgdms and 1 Chr 3:12, and Ozias for Greek Ὀζίας, including 2 Chr. These names are not harmonized; other bearers and the related forms Azaria, Azariu, Ozia, and Ozi retain their source forms.",
     "decisions": {
@@ -276,7 +284,7 @@
       },
       "Ahaz, king of Judah and other bearers": {
         "to": "Ahaz",
-        "why": "The king of Judah, the Benjamite of Jonathan's line, and the father named at Jeremias 22:15.",
+        "why": "The king of Judah, the Benjamite of Jonathan’s line, and the father named at Jeremias 22:15. The King James Old Testament’s Ahaz, by which English readers know the king, in place of the Greek books’ Achaz (Matt 1:9), for recognizability, as Hosea; the other bearers take the same form, since the Greek name is one.",
         "forms": {
           "Achaz": [
             "2KI 15:38",
@@ -336,7 +344,7 @@
       },
       "Amon, king of Judah and father of Josias": {
         "to": "Amon",
-        "why": "The king of Judah, son of Manasses and father of Josias: Amon, the spelling of the King James New Testament (Matt 1:10), rendering the Greek Ἀμών. Brenton has Amon in Chronicles and Sophonias but Amos in 4 Kingdoms and Jeremias, where the Greek assimilates his name to the prophet’s; one Hebrew name underlies both, unlike Ἀζαρίας and Ὀζίας.",
+        "why": "The king of Judah, son of Manasses and father of Josias: Amon, the spelling of the King James New Testament (Matt 1:10), rendering the Greek Ἀμών. Brenton has Amon in Chronicles and Sophonias but Amos in 4 Kingdoms and Jeremias, where the Greek assimilates his name to the prophet’s; one Hebrew name underlies both, unlike Ἀζαρίας and Ὀζίας. The prophet Amos, the father of Esaias, and the ancestor of Christ keep Amos, as listed under keep.",
         "forms": {
           "Amos": [
             "2KI 21:18",
@@ -552,7 +560,7 @@
       },
       "Boaz, husband of Ruth": {
         "to": "Boaz",
-        "why": "Ruth's husband.",
+        "why": "Ruth’s husband. The King James Old Testament’s Boaz, by which English readers know him, in place of the Greek books’ Booz (Matt 1:5, Luke 3:32), for recognizability, as Hosea.",
         "forms": {
           "Booz": [
             "RUT 2:1",
@@ -836,7 +844,7 @@
       },
       "Gideon, judge": {
         "to": "Gideon",
-        "why": "The judge.",
+        "why": "The judge. The King James Old Testament’s Gideon, by which English readers know him, in place of the Greek books’ Gedeon (Heb 11:32), for recognizability, as Hosea.",
         "forms": {
           "Gedeon": [
             "JDG 6:11",
@@ -1259,7 +1267,7 @@
       },
       "Issachar, son of Jacob and his tribe": {
         "to": "Issachar",
-        "why": "The tribe (Rev 7:7).",
+        "why": "The tribe (Rev 7:7). The King James Old Testament’s and Brenton’s Issachar, which the King James text prints Isachar at Rev 7:7 alone; one form for the one name.",
         "forms": {
           "Isachar": [
             "REV 7:7"
@@ -2489,7 +2497,7 @@
       },
       "Melchizedek, king of Salem and priest": {
         "to": "Melchisedek",
-        "why": "The king of Salem and priest.",
+        "why": "The king of Salem and priest. Melchisedek stands nearer the Greek Μελχισεδέκ, rendering its final kappa, than the King James Melchisedec (Heb 5:6), which keeps the Latin c, as Hezekias and Elisseus stand nearer their Greek.",
         "forms": {
           "Melchisedec": [
             "GEN 14:18",
@@ -2508,7 +2516,7 @@
       },
       "Methuselah, son of Enoch and man of Cain's line": {
         "to": "Mathusalah",
-        "why": "Enoch's son, and the man of Cain's line (Gen 4:18).",
+        "why": "Enoch’s son, and the man of Cain’s line (Gen 4:18). The Greek Μαθουσάλα in the King James New Testament’s letters (Luke 3:37, Mathusala), with the final h that the King James Old Testament gives the Hebrew name (Methuselah), so that it reads in English as a man’s name and not a Greek feminine in -a; nearer the Greek than Methuselah, and nearer English use than Mathusala.",
         "forms": {
           "Mathusala": [
             "GEN 5:21",
@@ -3162,7 +3170,7 @@
       },
       "Phinehas, son of Eleazar and other bearers": {
         "to": "Phineas",
-        "why": "Eleazar's son, including the zeal recalled at 1 Macc 2:26, 54; Heli's son; and the priestly ancestors and houses.",
+        "why": "Eleazar’s son, including the zeal recalled at 1 Macc 2:26, 54; Heli’s son; and the priestly ancestors and houses. Phineas, the English form of the Greek Φινεές in use since the Vulgate’s Phinees was anglicized, keeps the Greek vowels and reads as a name, in place of the King James Old Testament’s Phinehas, which renders the Hebrew, and the Greek books’ Phinees (1 Macc 2:26), which English does not use; the temple servants’ house at 1 Esd 5:31 keeps Phinees, as listed under keep.",
         "forms": {
           "Phinees": [
             "EXO 6:25",
@@ -3210,7 +3218,7 @@
       },
       "Phoenicia, coastal region": {
         "to": "Phoenicia",
-        "why": "The region.",
+        "why": "The region. The English form of the Greek Φοινίκη, Brenton’s Phœnicia, in place of the King James Phenice and Phenicia (Acts 11:19, 15:3, 21:2), which English no longer uses for the region; Phenice the haven of Crete keeps its form, as listed under keep.",
         "forms": {
           "Phenice": [
             "1ES 2:16",
@@ -3240,12 +3248,6 @@
           ],
           "Phœnice": [
             "ISA 23:2"
-          ],
-          "Phœnicia": [
-            "EXO 16:35",
-            "JOS 5:1",
-            "3MA 3:15",
-            "4MA 4:2"
           ]
         },
         "keep": [
@@ -3451,7 +3453,7 @@
       },
       "Sarah, wife of Abraham after the renaming": {
         "to": "Sarah",
-        "why": "Abraham's wife after her renaming at Gen 17:15.",
+        "why": "Abraham’s wife after her renaming at Gen 17:15. The King James Old Testament’s Sarah, by which English readers know her, in place of the Greek books’ Sara (Rom 4:19, Heb 11:11, 1 Pet 3:6), for recognizability, as Hosea; before the renaming she is Sara, as the Greek Σάρα distinguishes her from Σάρρα.",
         "forms": {
           "Sara": [
             "ROM 4:19",
@@ -3606,7 +3608,7 @@
       },
       "Simeon, son of Jacob and tribe": {
         "to": "Symeon",
-        "why": "The patriarch and his tribe alone.",
+        "why": "The patriarch and his tribe alone. Symeon stands nearer the Greek Συμεών, rendering its upsilon, than the King James Simeon of both Testaments, as Hezekias stands nearer its Greek; the other bearers keep Simeon, by which English readers know them, as listed under keep.",
         "forms": {
           "Simeon": [
             "GEN 29:33",
@@ -3696,7 +3698,7 @@
       },
       "Teman, Edomite region": {
         "to": "Thaeman",
-        "why": "The region of Edom.",
+        "why": "The Greek Θαιμάν, which Brenton writes Thæman, the region of Edom: his Thaman (Amos 1:12) and Theman (Baruch 3:22–23) take the one spelling. The King James Teman renders the Hebrew.",
         "forms": {
           "Thaman": [
             "AMO 1:12"
@@ -3774,24 +3776,24 @@
   },
   "words": {
     "quœ addita sunt": {
-      "to": "quæ addita sunt",
-      "why": "Editorial spelling correction of œ to æ in the King James preface."
+      "to": "quae addita sunt",
+      "why": "The transcription’s œ for the preface’s æ, the Latin diphthong, written ae as the edition writes it."
     },
     "suoe linguoe hominibus": {
-      "to": "suæ linguæ hominibus",
-      "why": "Editorial spelling correction of oe to æ in the King James preface."
+      "to": "suae linguae hominibus",
+      "why": "The transcription’s oe for the preface’s æ, the Latin diphthong, written ae as the edition writes it."
     },
     "Lucifugoe Scripturarum": {
-      "to": "Lucifugæ Scripturarum",
-      "why": "Editorial spelling correction of oe to æ in the King James preface."
+      "to": "Lucifugae Scripturarum",
+      "why": "The transcription’s oe for the preface’s æ, the Latin diphthong, written ae as the edition writes it."
     },
     "Et Hebroeum sermonem": {
-      "to": "Et Hebræum sermonem",
-      "why": "Editorial spelling correction of oe to æ in the King James preface."
+      "to": "Et Hebraeum sermonem",
+      "why": "The transcription’s oe for the preface’s æ, the Latin diphthong, written ae as the edition writes it."
     },
     "Proepuce": {
-      "to": "Præpuce",
-      "why": "Editorial spelling correction of oe to æ in the King James preface."
+      "to": "Praepuce",
+      "why": "The transcription’s oe for the preface’s æ, the Latin diphthong, written ae as the edition writes it."
     },
     "whose soever": {
       "to": "whosesoever",
@@ -4320,8 +4322,8 @@
       "why": "Use the British and modern spelling consistently throughout the printed edition, as requested by the user."
     },
     "emerods": {
-      "to": "hæmorrhoids",
-      "why": "Use the approved medical term hæmorrhoids in place of emerods, retaining the æ ligature as the edition’s vocabulary choice."
+      "to": "haemorrhoids",
+      "why": "Use the approved medical term haemorrhoids in place of emerods, with its ligature written out as the edition writes it."
     },
     "engulphed": {
       "to": "engulfed",
@@ -9894,13 +9896,14 @@
       ]
     },
     "approved wording correction": {
-      "why": "Apply the approved correction to the English through an explicit verse revision, preserving the pinned source transcription.",
+      "why": "A word Brenton’s Bagster printing got wrong, corrected from his earlier printing. The pinned transcription stays as it is; the verse revision records the correction.",
+      "wording": "misprint",
       "changes": [
         {
           "verse": "NUM 21:5",
           "from": "ought of Egypt",
           "to": "out of Egypt",
-          "why": "The people ask why Moses brought them out of Egypt; ought is erroneous in this phrase. Apply the approved wording correction only to this verse."
+          "why": "The people ask why Moses brought them out of Egypt (Greek ἐξ Αἰγύπτου). Brenton’s 1844 edition (vol. 1, physical p. 192) prints out; the Bagster printings of 1879 (physical p. 220) and 1900 (physical p. 216) print ought, which eBible transcribes faithfully."
         }
       ]
     },
@@ -9993,6 +9996,7 @@
     },
     "addition and exclusion": {
       "why": "Use besides for addition or exclusion; retain beside for spatial and idiomatic uses.",
+      "wording": "spelling",
       "changes": [
         {
           "verse": "EXO 20:3",
@@ -10258,6 +10262,7 @@
     },
     "garments": {
       "why": "The purple garments are clothes worn by the kings, rather than pieces of cloth.",
+      "wording": "spelling",
       "changes": [
         {
           "verse": "JDG 8:26",
@@ -10268,6 +10273,7 @@
     },
     "differing measures": {
       "why": "Use diverse for weights or measures differing in size; retain divers for various or several things.",
+      "wording": "spelling",
       "changes": [
         {
           "verse": "DEU 25:13",
@@ -10288,6 +10294,7 @@
     },
     "continuation and addition": {
       "why": "Use further for continuation or addition rather than physical distance.",
+      "wording": "spelling",
       "changes": [
         {
           "verse": "GEN 2:19",
@@ -10328,6 +10335,7 @@
     },
     "physical distance": {
       "why": "Use farther for physical distance from the city.",
+      "wording": "spelling",
       "changes": [
         {
           "verse": "2MA 10:27",
@@ -10338,6 +10346,7 @@
     },
     "occasional action": {
       "why": "Use sometimes for occasional action rather than a former period.",
+      "wording": "spelling",
       "changes": [
         {
           "verse": "WIS 16:18",
@@ -10645,40 +10654,13 @@
     },
     "spoke for spake": {
       "why": "Brenton writes spoke throughout the books of Kingdoms; a verse the edition borrows from the King James Version takes his form.",
+      "wording": "spelling",
       "changes": [
         {
           "verse": "1KI 14:18",
           "from": "which he spake by",
           "to": "which he spoke by",
           "why": "The only spake in the four books of Kingdoms, in words supplied from the King James Version (1KI 14:1-20); Brenton’s parallel at 15:29 has which he spoke by his servant Achia."
-        }
-      ]
-    },
-    "to for unto": {
-      "why": "Brenton writes to after said and say, almost never unto; a verse the edition borrows from the King James Version takes his form.",
-      "changes": [
-        {
-          "verse": "1KI 14:5",
-          "from": "said unto",
-          "to": "said to",
-          "why": "Words supplied from the King James Version (1KI 14:1-20); Brenton’s telling of the story has said to his servant (12:24k)."
-        },
-        {
-          "verse": "1KI 14:5",
-          "from": "say unto her",
-          "to": "say to her",
-          "why": "Words supplied from the King James Version (1KI 14:1-20); Brenton’s telling of the story has thou shalt say to her (12:24k)."
-        }
-      ]
-    },
-    "birds of the air": {
-      "why": "Brenton’s words for the birds that eat the dead in the prophecies against the kings’ houses.",
-      "changes": [
-        {
-          "verse": "1KI 14:11",
-          "from": "fowls of the air",
-          "to": "birds of the air",
-          "why": "Words supplied from the King James Version (1KI 14:1-20); Brenton’s telling of the same prophecy has the birds of the air (12:24m)."
         }
       ]
     },
@@ -10705,6 +10687,7 @@
     },
     "pities-verb-contexts": {
       "why": "Revise pities only where it is the present-tense verb. EZR11:11 CCEL gives the plural noun pities in give him to pities and must retain it.",
+      "wording": "spelling",
       "changes": [
         {
           "verse": "PSA 102:13",

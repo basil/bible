@@ -1174,7 +1174,7 @@
       "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft 'Bethel.'"
     },
     "2SA 5:16a": {
-      "why": "Brenton 1879 physical p. 423 and 1900 physical p. 419 (printed p. 407) place “Heb. and Alex. omit the remaining names in this verse.” after Eliphalath and before Samae. Swete I p. 621 explicitly records om Σαμαε... Ελειφααθ (2°) A, establishing omission of the entire thirteen-name continuation without a hand or uncertainty qualification. Delete the complete pinned 5:16a continuation and its verse marker, end 5:16 with a period, and quote the displaced list there while retaining Brenton’s Hebrew report. B supports the extent of this continuation but not every exact name: Brenton’s Janathan differs from B’s Ἰαναθά. Attribute the full quoted list to Brenton rather than equating all its spellings with B.",
+      "why": "Brenton 1879 physical p. 423 and 1900 physical p. 419 (printed p. 407) place “Heb. and Alex. omit the remaining names in this verse.” after Eliphalath and before Samae. Swete I p. 621 explicitly records om Σαμαε... Ελειφααθ (2°) A, establishing omission of the entire thirteen-name continuation without a hand or uncertainty qualification. Delete the complete pinned 5:16a continuation and its verse marker, end 5:16 with a period, and quote the displaced list there while retaining Brenton’s Hebrew report. The list is labelled Vat.: Swete I p. 621 records the omission of A against his Vaticanus text, so B has the thirteen names, though not every spelling: Brenton’s Janathan differs from B’s Ἰαναθά.",
       "swete": {
         "volume": 1,
         "page": 621,
@@ -1183,7 +1183,7 @@
         "agrees": true
       },
       "from": "Samae, Jessibath, Nathan, Galamaan, Jebaar, Theësus, Eliphalat, Naged, Naphec, Janathan, Leasamys, Baalimath, Eliphaath.",
-      "note": "\\fl Heb. \\ft also omits these names. \\fl Brenton \\ft adds \\fq Samae, Jessibath, Nathan, Galamaan, Jebaar, Theësus, Eliphalat, Naged, Naphec, Janathan, Leasamys, Baalimath, Eliphaath\\ft .",
+      "note": "\\fl Heb. \\ft also omits these names. \\fl Vat. \\ft adds \\fq Samae, Jessibath, Nathan, Galamaan, Jebaar, Theësus, Eliphalat, Naged, Naphec, Janathan, Leasamys, Baalimath, Eliphaath\\ft .",
       "lemma": null,
       "edits": [
         {
@@ -7853,7 +7853,7 @@
         "reading": "XIV 1–20 εν τω καιρω εκεινω ηρρωστη|στησεν Αβια υιος Ιεροβοαμ· … και εβασιλευσεν Ναβατ· υιος|αυτου αντ αυτου| A (om B)",
         "agrees": true
       },
-      "supplied": ["for", "the", "man", "of", "God", "cake", "his", "children", "raisins", "pot", "thee", "land", "Sarira", "every", "male", "and", "dim", "old", "to", "too", "was", "came", "pass", "body", "gather", "gathered", "is", "out", "them", "dead", "smite", "moved", "wind", "an", "end", "make", "from", "lord", "went", "as", "entered", "house", "into", "it", "porch", "that", "enters", "foot", "this", "off", "feigned"],
+      "supplied": ["for", "the", "man", "of", "God", "cake", "his", "children", "raisins", "pot", "thee", "land", "Sarira", "every", "male", "and", "dim", "old", "to", "too", "was", "came", "pass", "body", "gather", "gathered", "is", "out", "them", "dead", "smite", "moved", "wind", "an", "end", "make", "from", "lord", "went", "as", "entered", "house", "into", "it", "porch", "that", "enters", "foot", "this", "off", "feigned", "birds"],
       "insertions": [
         {
           "before": "14:21",
@@ -7972,18 +7972,19 @@
         {
           "target": "1KI 14:5",
           "from": "thus and thus shalt thou say unto her: for it shall be, when she cometh in, that she shall feign herself to be another \\add woman\\add*.",
-          "note": "\\fl Heb. \\fq thus and thus shalt thou say unto her: for it shall be, when she cometh in, that she shall feign herself to be another woman\\ft .",
-          "why": "A closes the Lord’s speech after προς αυτην and resumes narration: και εγενετο εν τω εισερχεσθαι αυτην και αυτη απεξενουτο. Retain the KJV feign herself to be another woman construction, changing the prediction to past narration and its opening to And it came to pass. Woman remains supplied as in the KJV. The lemma and displaced reading include the preceding speech-ending clause so substitution restores its colon as well as its words. The Hebrew consonants (ויהי כבאה) agree with A, but the Masoretic pointing וִיהִי makes them future, which the KJV renders, so the displaced wording is labelled Heb.",
+          "note": "\\fl Heb. \\fq her: for it shall be, when she cometh in, that she shall feign herself to be another woman\\ft .",
+          "why": "A closes the Lord’s speech after προς αυτην and resumes narration: και εγενετο εν τω εισερχεσθαι αυτην και αυτη απεξενουτο. Retain the KJV feign herself to be another woman construction, changing the prediction to past narration and its opening to And it came to pass. Woman remains supplied as in the KJV. Unto becomes to, Brenton’s thou shalt say to her at 12:24k, his usage after say throughout Kingdoms; it displaces no reading, so the lemma and the Hebrew’s wording begin at her, the last word both keep, and substitution restores the colon that the Hebrew’s continuing speech takes before for. The Hebrew consonants (ויהי כבאה) agree with A, but the Masoretic pointing וִיהִי makes them future, which the KJV renders, so the displaced wording is labelled Heb.",
           "english": {
             "source": "from",
             "edits": [
               {
                 "span": [0, 135],
-                "to": "thus and thus shalt thou say unto her: And it came to pass, when she came in, that she feigned herself to be another \\add woman\\add*."
+                "to": "thus and thus shalt thou say to her: And it came to pass, when she came in, that she feigned herself to be another \\add woman\\add*."
               }
             ]
           },
-          "lemma": "thus and thus shalt thou say unto her: And it came to pass, when she came in, that she feigned herself to be another woman"
+          "lemma": "her: And it came to pass, when she came in, that she feigned herself to be another woman",
+          "note_at": 32
         },
         {
           "target": "1KI 14:6",
@@ -8295,6 +8296,36 @@
             ]
           },
           "lemma": "and it came to pass, as she entered into the porch of the house, that the child died"
+        },
+        {
+          "target": "1KI 14:5",
+          "from": "said unto",
+          "note": null,
+          "why": "Brenton writes to after said throughout Kingdoms, said to his servant in the Vatican’s telling of this account (12:24k); the King James unto takes his form. The Greek is the same, so nothing is displaced.",
+          "english": {
+            "source": "from",
+            "edits": [
+              {
+                "span": [5, 9],
+                "to": "to"
+              }
+            ]
+          }
+        },
+        {
+          "target": "1KI 14:11",
+          "from": "fowls of the air",
+          "note": null,
+          "why": "Brenton’s birds of the air in the Vatican’s telling of the same prophecy (12:24m), for the King James fowls. The Greek is the same, so nothing is displaced.",
+          "english": {
+            "source": "from",
+            "edits": [
+              {
+                "span": [0, 5],
+                "to": "birds"
+              }
+            ]
+          }
         }
       ],
       "source_notes": {

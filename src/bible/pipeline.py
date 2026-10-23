@@ -659,14 +659,16 @@ def finished_book(
     """A book as revised, and as its names alone were respelled: the names
     come first, then the declared changes to its verses and notes, then the
     source's brackets and the small capitals of selective emphasis go, then
-    the systematic spelling and punctuation; a kept name must survive them."""
+    the systematic spelling and punctuation; a kept name must survive them.
+    The ligatures are written out last, once every decision written in the
+    source's letters has been carried out and checked."""
     named = revision.named(code, doc, policy, met)
     doc = revision.revised(code, named, policy, met)
     doc = revision.passages(code, doc, policy, met)
     doc = typography.small_caps(revision.unbracketed(doc, policy, met))
     doc = revision.punctuated(revision.respelled(doc, policy, met), policy, met)
     revision.check_kept(code, named, doc, policy)
-    return doc, named
+    return revision.unligatured(doc, policy, met), named
 
 
 def finished_matter(
@@ -674,11 +676,12 @@ def finished_matter(
 ) -> Document:
     """A unit of front or back matter as revised: without the small capitals
     of selective emphasis, its declared passages, then the systematic
-    spelling and punctuation."""
+    spelling and punctuation, and its ligatures written out."""
     doc = revision.passages(code, typography.small_caps(doc), policy, met)
-    return revision.punctuated(
+    doc = revision.punctuated(
         revision.respelled(doc, policy, met, book=False), policy, met
     )
+    return revision.unligatured(doc, policy, met)
 
 
 def revise(
@@ -752,9 +755,12 @@ def authored(
             policy=policy,
         )
     # These pages discuss source names, so retain their spelling. Finish
-    # punctuation after their passages and tables have been filled in.
+    # punctuation after their passages and tables have been filled in, and
+    # write out the ligatures, as everywhere the edition prints.
     docs = {
-        code: revision.punctuated(doc, policy, revised.met)
+        code: revision.unligatured(
+            revision.punctuated(doc, policy, revised.met), policy, revised.met
+        )
         for code, doc in pages.items()
     }
     variants_page = docs.pop(bible.policy.VARIANTS["id"])

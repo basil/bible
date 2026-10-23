@@ -504,7 +504,13 @@ class Names(TypedDict, total=False):
     why: ReadOnly[str]
 
 
+class Ligatures(TypedDict, total=False):
+    letters: ReadOnly[Mapping[str, str]]
+    why: ReadOnly[str]
+
+
 class Revisions(TypedDict, total=False):
+    ligatures: ReadOnly[Ligatures]
     names: ReadOnly[Names]
     passages: ReadOnly[Mapping[str, Prose]]
     punctuation: ReadOnly[Mapping[str, PunctuationRule]]
@@ -560,6 +566,7 @@ RevisionChange = TypedDict(
 class RevisionGroup(TypedDict, total=False):
     changes: ReadOnly[tuple[RevisionChange, ...]]
     why: ReadOnly[str]
+    wording: ReadOnly[Literal["spelling", "misprint"]]
 
 
 Decision = TypedDict(

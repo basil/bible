@@ -884,8 +884,10 @@ def test_quotation_extent_decisions_are_refused(
     [
         ("\\q1 \\v 1 Sing. Pause.", ["q1", "qr"]),
         ("\\q1 \\v 1 Pause.", ["qr"]),
-        ("\\q1 \\v 1 Sing. A song of Pause.", ["q1"]),
-        ("\\q1 \\v 1 A song of Pause.", ["q1"]),
+        ("\\q1 \\v 1 Sing. A song of Pause.", ["q1", "qr"]),
+        ("\\q1 \\v 1 A song of Pause.", ["qr"]),
+        ("\\q1 \\v 1 Go; Pause:", ["q1", "qr"]),
+        ("\\q1 \\v 1 Go, Pause.", ["q1", "qr"]),
     ],
 )
 def test_pause_instructions(body: str, expected: list[str]) -> None:
@@ -910,6 +912,11 @@ def test_pause_instructions(body: str, expected: list[str]) -> None:
         "\\q1 \\v 1 Sing Pause.",
         "\\q1 \\v 1 Pause. Sing.",
         "\\q1 \\v 1 Sing; Pause: words.",
+        "\\p \\v 1 Sing. A song of Pause.",
+        "\\q1 \\v 1 Sing A song of Pause.",
+        "\\q1 \\v 1 A song of Pause. Sing.",
+        "\\q1 \\v 1 Sing’ Pause.",
+        "\\q1 \\v 1 (Sing) Pause.",
     ],
 )
 def test_an_unexpected_pause_is_refused(body: str) -> None:
@@ -918,21 +925,22 @@ def test_an_unexpected_pause_is_refused(body: str) -> None:
         lines.pauses(source)
 
 
-def test_an_inline_pause_is_declared_and_met() -> None:
-    kept = usj.parse("\\id PSA\n\\c 67\n\\q1 \\v 7 Sing.\n\\q1 \\v 8 Go; Pause: on.")
-    before = copy.deepcopy(kept)
-    result = lines.pauses(kept)
-    assert kept == before
-    assert scripture.verses(result)["67:8"].text == "Go; Pause: on."
+def test_an_instruction_keeps_its_song_and_its_punctuation() -> None:
+    source = usj.parse(
+        "\\id PSA\n\\c 9\n\\q1 \\v 17 Taken. A song of Pause.\n"
+        "\\c 67\n\\q1 \\v 8 Go; Pause:\n\\q1 \\v 9 on."
+    )
+    before = copy.deepcopy(source)
+    result = lines.pauses(source)
+    assert source == before
+    assert markers(result) == ["q1", "qr", "q1", "qr", "q1"]
+    assert scripture.verses(result)["67:8"].text == "Go;\nPause:"
     assert [
         usj.text_of(node["content"])
         for node in usj.walk(result["content"])
         if usj.is_type(node, "char", "qs")
-    ] == ["Pause:"]
+    ] == ["A song of Pause.", "Pause:"]
     assert lines.pauses(result) == result
-    moved = usj.parse("\\id PSA\n\\c 67\n\\q1 \\v 8 Go. Pause.")
-    with pytest.raises(CheckFailed, match="no Pause meets: \\['PSA 67:8'\\]"):
-        lines.pauses(moved)
 
 
 def test_pause_keeps_its_explanation_and_styles() -> None:
@@ -1076,7 +1084,7 @@ def test_source_instructions_across_the_corpus(
         lines.scrivener(read.kjv, edition.policy),
     )
     for code, transform, marker, count in (
-        ("PSA", lines.pauses, "qr", 70),
+        ("PSA", lines.pauses, "qr", 72),
         ("HAB", lines.pauses, "qr", 3),
         (
             "LAM",

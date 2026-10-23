@@ -1748,7 +1748,7 @@ def test_a_note_set_below_keeps_its_words_and_stale_placements_stop_the_build() 
         (
             "14:5",
             4,
-            "thus and thus shalt thou say unto her: for it shall be, when she cometh in, that she shall feign herself to be another woman",
+            "thus and thus shalt thou say to her: for it shall be, when she cometh in, that she shall feign herself to be another woman",
         ),
         (
             "14:10",
