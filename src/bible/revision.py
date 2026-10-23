@@ -8,16 +8,20 @@ Six kinds of change are declared, each with its reason:
              lists, and in the lemmas of their notes. Every other verse of
              the printed books that has the form is listed as keeping it,
              with who keeps it, so that each form prints only where a
-             decision says
+             decision says; where a verse names two bearers alike, each
+             lists its occurrence by number (LUK 6:16#1); a decision may
+             also name the books whose terminal subscriptions respell it
     words    a word respelled or modernized wherever it is printed as a whole
              word: in the translation, its notes, and front and back matter,
              or, with a scope of "scripture", in a book's verses and the
              lemmas and readings of their notes alone, preserving source
              prose's grammar. A word may except phrases it stands in, which
-             spelling leaves as they are, though the grammar of scripture
-             still revises their other words. Words that a character style
-             divides are not joined, divided, or re-divided, and nor are
-             they in the lemma that quotes them
+             its pass leaves as they are, though the grammar of scripture
+             still revises the other words of a phrase spelling excepts.
+             Words that a character style divides are not joined, divided,
+             or re-divided, and nor are they in the lemma that quotes them,
+             except that hyphens may replace spaces between unchanged words
+             without moving their styles
     passages punctuation in a keyed note or front/back-matter paragraph,
              and lowercase word initials in a keyed note's fragments,
              or Greek/Hebrew spelling in Old Testament notes and matter
@@ -46,16 +50,17 @@ from collections.abc import Callable, Container, Iterable, Mapping
 from difflib import SequenceMatcher
 
 import bible.policy
-from bible import assembly, notes, repairs, scripture, usfm, usj
+from bible import assembly, matter, notes, repairs, scripture, usfm, usj
 from bible.checks import CheckFailed, require, require_fields
-from bible.policy_schema import RevisionChange, WordingChange
+from bible.policy_schema import NameDecision, RevisionChange, WordingChange
 from bible.references import book_of
 from bible.usj import Content, Document, Node, Predicate
 
 # What revision has met: a word, verse, or punctuation rule by its key, a
 # passage change by its selector and words, a word confined to notes by the
 # note's key and the word, a phrase a word excepts by the word and the
-# phrase, and a name respelled or kept by its verse and form.
+# phrase, a name respelled or kept by its verse and form, and a name
+# respelled in a subscription by its book and form.
 type MetRevisions = set[str | tuple[str, ...]]
 # The words to revise, letter by letter; an empty key ends a word.
 type Trie = dict[str, "Trie"]
@@ -166,19 +171,23 @@ def check(policy: bible.policy.Policy) -> None:
             entry.get("scope", "scripture") == "scripture",
             f"Respelling with a scope that is not scripture: {word}",
         )
-        # Spelling alone excepts. An excepted phrase holds its word whole and
-        # no other word respelled wherever it is printed, which it would leave
-        # unrevised, so no other word excepts it.
+        # An excepted phrase holds its word whole and no other word of its
+        # pass, which it would leave unrevised, so no other word excepts it;
+        # a scoped word's phrase holds no spelling either, which would be
+        # revised before the phrase is met. A word confined to notes does
+        # not except.
         require(
             "except" not in entry
             or (
-                "scope" not in entry
+                "notes" not in entry
                 and bool(entry["except"])
                 and len(set(entry["except"])) == len(entry["except"])
                 and all(
                     phrase not in words
                     and WORD.fullmatch(phrase) is not None
-                    and _spans(phrase) & everywhere == {word}
+                    and _spans(phrase)
+                    & (words.keys() if "scope" in entry else everywhere)
+                    == {word}
                     for phrase in entry["except"]
                 )
             ),
@@ -208,41 +217,72 @@ def check(policy: bible.policy.Policy) -> None:
     names = data["names"]
     require_fields(names, {"why", "decisions"}, (), "Names")
     require(bool(names["why"]), "Names without a why")
-    owners: dict[str, str] = {}
+    # The verses listed for each form, respelled or kept, across every
+    # decision: two bearers may share a form, each in its own verses.
+    listed: dict[str, set[str]] = {}
+    colophons_listed: dict[str, set[str]] = {}
     for bearer, decision in names["decisions"].items():
         require_fields(
-            decision, {"to", "why", "forms"}, {"keep"}, f"Name decision {bearer}"
+            decision,
+            {"to", "why", "forms"},
+            {"keep", "colophons"},
+            f"Name decision {bearer}",
         )
         require(
-            bool(decision["to"]) and bool(decision["why"]) and bool(decision["forms"]),
+            bool(decision["to"])
+            and bool(decision["why"])
+            and bool(decision["forms"] or decision.get("colophons")),
             f"Name decision without a target, a why or a form: {bearer}",
         )
-        listed: dict[str, set[str]] = {}
-        for form, keys in decision["forms"].items():
+        for form in _decided_forms(decision):
             require(
                 WORD.fullmatch(form) is not None and form != decision["to"],
                 f"Name decision of what is not a word, or that changes nothing: {form}",
             )
-            # One decision owns a form.
-            require(form not in owners, f"Name decided for two bearers: {form}")
-            owners[form] = bearer
+        for form, keys in decision["forms"].items():
             _check_name_verses(
                 keys, listed.setdefault(form, set()), f"{bearer}: {form}"
             )
+        for form, books in decision.get("colophons", {}).items():
+            require(bool(books), f"Name decision without a colophon: {bearer}: {form}")
+            require(
+                len(set(books)) == len(books),
+                f"Colophon listed twice for a name: {bearer}: {form}",
+            )
+            for book in books:
+                require(
+                    book in policy.kjv_units,
+                    f"Name decision for what is not a King James book: {bearer}: {book}",
+                )
+                require(
+                    book not in colophons_listed.setdefault(form, set()),
+                    f"Colophon name decided twice: {bearer}: {form}: {book}",
+                )
+                colophons_listed[form].add(book)
         for kept in decision.get("keep", ()):
             require_fields(kept, {"form", "who", "verses"}, (), f"Kept name {bearer}")
             require(
-                kept["form"] in decision["forms"] and bool(kept["who"]),
+                kept["form"] in _decided_forms(decision) and bool(kept["who"]),
                 f"Kept name without its decision, or without who keeps it: {bearer}",
             )
             _check_name_verses(
-                kept["verses"], listed[kept["form"]], f"{bearer}: {kept['form']}"
+                kept["verses"],
+                listed.setdefault(kept["form"], set()),
+                f"{bearer}: {kept['form']}",
             )
     # No word respells a name behind its decision's back, or prints one where
     # no decision says, alone or in a phrase: a word applies wherever it is
-    # printed.
+    # printed. A form decided for a subscription alone is a name too.
+    decided = listed.keys() | colophons_listed.keys()
     for word, entry in words.items():
-        spanned = sorted((_spans(word) | _spans(entry["to"])) & owners.keys())
+        spanned = sorted((_spans(word) | _spans(entry["to"])) & decided)
+        if word.casefold() == entry["to"].casefold():
+            # A title may change case beside a name without respelling it.
+            spanned = [
+                name
+                for name in spanned
+                if _phrase(name).findall(word) != _phrase(name).findall(entry["to"])
+            ]
         require(
             not spanned, f"Name also respelled as a word: {word}: {', '.join(spanned)}"
         )
@@ -255,10 +295,20 @@ def check(policy: bible.policy.Policy) -> None:
         *(
             (form, decision["to"])
             for decision in names["decisions"].values()
-            for form in decision["forms"]
+            for form in _decided_forms(decision)
         ),
     ]
-    written = sorted({to for _, to in respellings if _ligature(letters, to)})
+    written = sorted(
+        {
+            to
+            for old, to in respellings
+            if _ligature(letters, to)
+            and not (
+                old.casefold() == to.casefold()
+                and [c for c in old if c in letters] == [c for c in to if c in letters]
+            )
+        }
+    )
     require(not written, f"Respellings that write a ligature: {written}")
     unneeded = sorted(old for old, to in respellings if old.translate(table) == to)
     require(not unneeded, f"Respellings that only write out a ligature: {unneeded}")
@@ -327,7 +377,9 @@ def check(policy: bible.policy.Policy) -> None:
     # The front and back matter that prints: a unit read only for what it
     # sends to the books, as Brenton's Appendix, is never revised as a unit,
     # and its notes are revised at their verses, by their keys.
-    matter = {e["id"] for e in policy.entries if "file" not in e and "section" not in e}
+    matter_units = {
+        e["id"] for e in policy.entries if "file" not in e and "section" not in e
+    }
     # Brenton's units, and the files their notes are keyed by: Daniel's
     # include those of Susanna and Bel.
     brenton = [e for e in policy.entries if e.get("source") == "brenton"]
@@ -355,7 +407,7 @@ def check(policy: bible.policy.Policy) -> None:
             selector = _selector(passage_change)
             require(bool(selector), f"Empty passage selector: {name}")
             require(
-                "unit" not in passage_change or passage_change["unit"] in matter,
+                "unit" not in passage_change or passage_change["unit"] in matter_units,
                 f"Passage revision unit is not front or back matter: {selector}",
             )
             require(
@@ -425,6 +477,12 @@ def check(policy: bible.policy.Policy) -> None:
             )
 
 
+def _decided_forms(decision: NameDecision) -> list[str]:
+    """The forms a name decision respells, in its verses or its
+    subscriptions, each once and in the order the file gives them."""
+    return list(dict.fromkeys([*decision["forms"], *decision.get("colophons", {})]))
+
+
 def _check_name_verses(keys: Iterable[str], seen: set[str], label: str) -> None:
     """Verses a name decision lists: each once, for its form, across the
     verses that respell it and the verses that keep it."""
@@ -432,10 +490,18 @@ def _check_name_verses(keys: Iterable[str], seen: set[str], label: str) -> None:
     require(bool(keys), f"Name decision without a verse: {label}")
     for key in keys:
         require(
-            re.fullmatch(r"\w{3} \S+:\S+", key) is not None,
+            re.fullmatch(r"\w{3} [^\s#]+:[^\s#]+(?:#[1-9]\d*)?", key) is not None,
             f"Name decision for what is not a verse: {label}: {key}",
         )
-        require(key not in seen, f"Verse listed twice for a name: {label}: {key}")
+        # A verse is listed whole, or by the occurrences of the form in it,
+        # not both.
+        verse = _occurrence(key)[0]
+        require(
+            key not in seen
+            and verse not in seen
+            and (key != verse or not any(o.startswith(verse + "#") for o in seen)),
+            f"Verse listed twice for a name: {label}: {key}",
+        )
         seen.add(key)
 
 
@@ -731,18 +797,26 @@ def _separators(words: str) -> list[str]:
     return re.findall(r"[\s\-]+", words)
 
 
+def _hyphenated(words: str, replacement: str) -> bool:
+    """Whether a replacement is the words with hyphens for the spaces
+    between them."""
+    return re.sub(r"\s+", "-", words) == replacement
+
+
 def _keeps_styles(
     match: re.Match[str],
     replacement: str,
     runs: Callable[[], list[tuple[int, int]]],
 ) -> bool:
     """Whether a replacement keeps the character styles of the words it
-    replaces: it respells each word in place, or the words stand in one
-    style. Joining, dividing or re-dividing words that a style divides would
-    erase the distinction, so such words are left as they are. Notes and
+    replaces: it respells each word in place, hyphenates between unchanged
+    words, or the words stand in one style. Other joining, dividing or
+    re-dividing across styles would erase their distinction. Notes and
     adjacent strings alone do not divide them."""
-    return _separators(match[0]) == _separators(replacement) or any(
-        a <= match.start() and match.end() <= b for a, b in runs()
+    return (
+        _separators(match[0]) == _separators(replacement)
+        or _hyphenated(match[0], replacement)
+        or any(a <= match.start() and match.end() <= b for a, b in runs())
     )
 
 
@@ -765,7 +839,14 @@ def _rewritten(
         replacement = new(match)
         if replacement == match[0] or not _keeps_styles(match, replacement, runs):
             continue
-        if _separators(match[0]) == _separators(replacement):
+        if _hyphenated(match[0], replacement):
+            # Keep the words in their original styles, replacing only the
+            # separators (for example corner + supplied stone).
+            edits.extend(
+                (match.start() + gap.start(), match.start() + gap.end(), "-")
+                for gap in re.finditer(r"\s+", match[0])
+            )
+        elif _separators(match[0]) == _separators(replacement):
             # Contextual decisions can change several words. Keep each word
             # in its own inline style rather than moving the whole phrase
             # into one.
@@ -873,6 +954,10 @@ def respelled(
     changed = False
 
     def to(match: re.Match[str]) -> str:
+        # A phrase a word excepts stands as it is, and is met for the word.
+        if match[0] in excepted:
+            met.add((excepted[match[0]], match[0]))
+            return match[0]
         return words[match[0]]["to"]
 
     def done(match: re.Match[str], key: str | None = None) -> None:
@@ -883,15 +968,17 @@ def respelled(
         if key is not None and "notes" in words[match[0]]:
             met.add((key, match[0]))
 
-    def spelled(match: re.Match[str]) -> str:
-        # A phrase a word excepts stands as it is, and is met for the word.
-        if match[0] in excepted:
-            met.add((excepted[match[0]], match[0]))
-            return match[0]
-        return to(match)
+    def excepting(scoped: bool) -> list[str]:
+        """The phrases the words of a pass except, revised in that pass."""
+        return [
+            phrase
+            for phrase, word in excepted.items()
+            if ("scope" in words[word]) == scoped
+        ]
 
     spelling = _words(
-        [word for word, entry in words.items() if "scope" not in entry] + list(excepted)
+        [word for word, entry in words.items() if "scope" not in entry]
+        + excepting(scoped=False)
     )
 
     def spelled_note(
@@ -920,7 +1007,7 @@ def respelled(
                             item["content"],
                             spelling,
                             lambda match: (
-                                match[0] if match.span() in kept else spelled(match)
+                                match[0] if match.span() in kept else to(match)
                             ),
                             done=done,
                         )
@@ -933,7 +1020,7 @@ def respelled(
         return _rewritten(
             lemmas(items),
             spelling,
-            spelled,
+            to,
             skip=lambda item: usj.is_note(item) or item.get("marker") == "fq",
             done=done,
         )
@@ -978,16 +1065,25 @@ def respelled(
             segment = content[start:end]
             if usj.notes_of(segment):
                 segment = spelled_notes(segment)
-            part = _rewritten(segment, spelling, spelled, done=done)
+            part = _rewritten(segment, spelling, to, done=done)
             output += part + content[end : end + 1]
         return output
 
     grammar = {word: entry for word, entry in words.items() if "scope" in entry}
-    general = _words(word for word, entry in grammar.items() if "notes" not in entry)
-    # A word confined to some notes is revised in their lemmas and readings.
+    general = _words(
+        [word for word, entry in grammar.items() if "notes" not in entry]
+        + excepting(scoped=True)
+    )
+    # A word confined to some notes is revised in their lemmas and readings,
+    # which keep the phrases the scoped words except as the verse does.
     confined = {
         key: _words(
-            word for word, entry in grammar.items() if key in entry.get("notes", (key,))
+            [
+                word
+                for word, entry in grammar.items()
+                if key in entry.get("notes", (key,))
+            ]
+            + excepting(scoped=True)
         )
         for entry in grammar.values()
         for key in entry.get("notes", ())
@@ -1477,20 +1573,27 @@ def named(
     of the notes that quote it. Every other verse that prints the form must
     be listed as keeping it, so that each form prints only where a decision
     says: an occurrence listed neither way is refused, and so is a listed
-    verse without its form."""
+    verse without its form. Where a verse names two bearers alike, each
+    lists its occurrence by number, as LUK 6:16#1; a verse that names the
+    form once is listed whole, and a lemma quoting a numbered form, which
+    does not say which occurrence it quotes, is refused. A subscription's
+    names are named_colophon's."""
     decisions = policy.revisions["names"]["decisions"]
-    forms = frozenset(form for d in decisions.values() for form in d["forms"])
+    # A form decided for a subscription alone is still decided: a verse
+    # that prints it must be listed too.
+    forms = frozenset(form for d in decisions.values() for form in _decided_forms(d))
     if not forms:
         return doc
-    changes: dict[tuple[str, str], str] = {}
-    kept: set[tuple[str, str]] = set()
+    # Each listing: the verse, the occurrence it names or None for all, the
+    # form, and what it gives way to, or None where it is kept.
+    listings: dict[tuple[str, int | None, str], str | None] = {}
     for decision in decisions.values():
         for form, keys in decision["forms"].items():
-            for reference in _in_book(keys, code):
-                changes[reference, form] = decision["to"]
+            for key in _in_book(keys, code):
+                listings[_occurrence(key) + (form,)] = decision["to"]
         for keeping in decision.get("keep", ()):
-            for reference in _in_book(keeping["verses"], code):
-                kept.add((reference, keeping["form"]))
+            for key in _in_book(keeping["verses"], code):
+                listings[_occurrence(key) + (keeping["form"],)] = None
     verses = scripture.verses(doc)
     pattern = _names(forms)
     # Where each form stands, by verse: a form within a longer one is the
@@ -1499,19 +1602,25 @@ def named(
     for reference, verse in verses.items():
         for match in pattern.finditer(verse.text):
             form = re.sub(r"\s+", " ", match[0])
+            places = found.setdefault((reference, form), [])
+            places.append(match.start())
             require(
-                (reference, form) in changes or (reference, form) in kept,
+                (reference, None, form) in listings
+                or (reference, len(places), form) in listings,
                 f"Name without a decision: {code} {reference}: {form}",
             )
-            found.setdefault((reference, form), []).append(match.start())
-    for kind, listed in (("name", changes.keys()), ("kept", kept)):
-        for reference, form in listed:
-            require(
-                (reference, form) in found, f"Name not met: {code} {reference}: {form}"
-            )
-            met.add((kind, f"{code} {reference}", form))
+    for (reference, occurrence, form), to in listings.items():
+        count = len(found.get((reference, form), ()))
+        require(count >= (occurrence or 1), f"Name not met: {code} {reference}: {form}")
+        require(
+            occurrence is None or count > 1,
+            f"Name numbered in a verse that has it once: {code} {reference}: {form}",
+        )
+        key = reference if occurrence is None else f"{reference}#{occurrence}"
+        met.add(("name" if to else "kept", f"{code} {key}", form))
+    changes = {k: to for k, to in listings.items() if to}
     # A form respelled within a longer one would splice the two decisions.
-    for reference, form in changes:
+    for reference, _, form in changes:
         require(
             [m.start() for m in _phrase(form).finditer(verses[reference].text)]
             == found[reference, form],
@@ -1519,25 +1628,85 @@ def named(
         )
     if not changes:
         return doc
+    occurrences: dict[tuple[str, str, str], set[int]] = {}
+    for (reference, occurrence, form), to in changes.items():
+        if occurrence is not None:
+            occurrences.setdefault((reference, form, to), set()).add(occurrence)
+    # The lemmas change with every occurrence of the words they quote, and
+    # cannot tell a respelled occurrence from a kept one.
+    for reference, form, _ in occurrences:
+        require(
+            not any(
+                _phrase(form).search(usj.text_of(item["content"]))
+                for _, note in verses[reference].notes
+                for item in usj.walk(note["content"])
+                if usj.is_type(item, "char", "fq")
+            ),
+            f"Lemma quoting a numbered name: {code} {reference}: {form}",
+        )
     return _reworded(
         code,
         doc,
-        [(reference, form, to) for (reference, form), to in changes.items()],
+        sorted({(reference, form, to) for (reference, _, form), to in changes.items()}),
         every=True,
         verses=verses,
+        occurrences=occurrences,
     )
+
+
+def _occurrence(key: str) -> tuple[str, int | None]:
+    """A verse key as its reference and the occurrence it names, if any."""
+    reference, _, occurrence = key.partition("#")
+    return reference, int(occurrence) if occurrence else None
+
+
+def named_colophon(
+    code: str, doc: Document, policy: bible.policy.Policy, met: MetRevisions
+) -> Document:
+    """Respell only the names explicitly assigned to this subscription."""
+    changes = {
+        form: decision["to"]
+        for decision in policy.revisions["names"]["decisions"].values()
+        for form, books in decision.get("colophons", {}).items()
+        if code in books
+    }
+    if not changes:
+        return doc
+    paragraph = matter.colophon_paragraph(doc, f"Name decision for {code}")
+    text = usj.text_of(paragraph["content"])
+    # A form within a longer one is the longer one's, as in a verse, so that
+    # no two edits overlap.
+    found: dict[str, list[re.Match[str]]] = {}
+    for match in _names(frozenset(changes)).finditer(text):
+        found.setdefault(re.sub(r"\s+", " ", match[0]), []).append(match)
+    edits = []
+    for form, to in changes.items():
+        matches = found.get(form, [])
+        require(len(matches) == 1, f"Colophon name not met once: {code}: {form}")
+        match = matches[0]
+        start, end, new = _edit(match.start(), match[0], to)
+        require(
+            not new
+            or sum(a < end and start < b for a, b in usj.leaves(paragraph["content"]))
+            <= 1,
+            f"Colophon name across a style or note: {code}: {form}",
+        )
+        edits.append((start, end, new))
+        met.add(("colophon name", code, form))
+    return matter.with_colophon(doc, usj.substituted(paragraph["content"], edits))
 
 
 def check_kept(
     code: str, before: Document, after: Document, policy: bible.policy.Policy
 ) -> None:
     """Refuse a kept name that another revision respelled: each kept verse of a
-    book as finished prints its form as often as the names left it."""
+    book as finished prints its form as often as the names left it, whether
+    it keeps the verse whole or an occurrence of it."""
     kept = [
-        (reference, keeping["form"])
+        (_occurrence(key)[0], keeping["form"])
         for decision in policy.revisions["names"]["decisions"].values()
         for keeping in decision.get("keep", ())
-        for reference in _in_book(keeping["verses"], code)
+        for key in _in_book(keeping["verses"], code)
     ]
     if not kept:
         return
@@ -1563,13 +1732,15 @@ def _reworded(
     *,
     every: bool,
     verses: dict[str, scripture.Verse] | None = None,
+    occurrences: Mapping[tuple[str, str, str], Container[int]] | None = None,
 ) -> Document:
     """A book with words of its verses giving way to others: in each verse
-    named, the words once, or every whole-word occurrence of them. They give
-    way where they stand, in the styles they stand in, and the lemma of a
-    note of the verse that quotes them changes with them. A lemma that quotes
-    them in part would be left as the verse no longer reads, so it is
-    refused. The verses are the document's, if already read."""
+    named, the words once, or every whole-word occurrence of them, or the
+    occurrences numbered for the change. They give way where they stand, in
+    the styles they stand in, and the lemma of a note of the verse that
+    quotes them changes with them. A lemma that quotes them in part would be
+    left as the verse no longer reads, so it is refused. The verses are the
+    document's, if already read."""
     if verses is None:
         verses = scripture.verses(doc)
     edits = []
@@ -1579,6 +1750,9 @@ def _reworded(
         require(reference in verses, f"Revision of a verse the edition lacks: {key}")
         verse = verses[reference]
         found = list(_phrase(old).finditer(verse.text))
+        if occurrences and (reference, old, to) in occurrences:
+            numbered = occurrences[reference, old, to]
+            found = [m for n, m in enumerate(found, 1) if n in numbered]
         require(
             bool(found) if every else len(found) == 1,
             f"Revision not met{'' if every else ' once'} in its verse: {key}: {old}",
@@ -1708,6 +1882,11 @@ def check_met(policy: bible.policy.Policy, met: Container[object]) -> None:
     excepted = {(word, phrase) for phrase, word in exceptions(policy).items()}
     names: set[str | tuple[str, ...]] = set()
     for decision in data["names"]["decisions"].values():
+        names.update(
+            ("colophon name", code, form)
+            for form, books in decision.get("colophons", {}).items()
+            for code in books
+        )
         names.update(
             ("name", key, form)
             for form, keys in decision["forms"].items()

@@ -311,6 +311,12 @@ def test_the_editions_spelling_is_revised_wherever_a_word_is_printed(
             for key in kept["verses"]
         }
         | {
+            ("colophon name", code, form)
+            for decision in decisions.values()
+            for form, books in decision.get("colophons", {}).items()
+            for code in books
+        }
+        | {
             (key, word)
             for word, entry in words.items()
             for key in entry.get("notes", ())
@@ -340,13 +346,13 @@ def test_the_editions_spelling_is_revised_wherever_a_word_is_printed(
         return scripture.verses(revision.respelled(doc, policy, set()))["1:1"].text
 
     # Scoped grammar can remain in explanatory prose and ambiguous nouns, and
-    # a word that excepts phrases survives in them alone, as the source has
-    # them or as the grammar of scripture revises their other words, or where
-    # a style divides it.
+    # a spelling that excepts phrases survives in them alone, as the source
+    # has them or as the grammar of scripture revises their other words, or
+    # where a style divides it.
     excepting = {
         pattern([word]): pattern([*entry["except"], *map(printed, entry["except"])])
         for word, entry in words.items()
-        if "except" in entry
+        if "except" in entry and "scope" not in entry
     }
     unscoped = pattern(
         word
@@ -361,10 +367,10 @@ def test_the_editions_spelling_is_revised_wherever_a_word_is_printed(
     source_forms = {
         "introduction": [
             "publickly",
-            "Nehemiah",
             "Ghost",
             "ghost",
             "Hallelujah",
+            "strake sail",
             "an hundred",
             "Shew",
             "shewed",
@@ -377,12 +383,20 @@ def test_the_editions_spelling_is_revised_wherever_a_word_is_printed(
             "apostolick",
             "musick",
             "emerods",
+            "enquire",
+            "grey",
+            "waggon",
+            "amongst",
+            "connexion",
+            "shew",
+            "expence",
+            "scrole",
+            "dulness",
             "shamefacedness",
-            "To-day",
-            "any thing",
+            "sweetsmelling",
             "fellowservant",
-            "threshingfloor",
-            "firstfruits",
+            "stiffnecked",
+            "longsuffering",
             "JESUS",
             "KING OF KINGS, AND LORD OF LORDS",
             "THE BEING",
@@ -401,7 +415,10 @@ def test_the_editions_spelling_is_revised_wherever_a_word_is_printed(
         sorted(
             [word for word, entry in words.items() if "scope" not in entry]
             + [
-                phrase for entry in words.values() for phrase in entry.get("except", ())
+                phrase
+                for entry in words.values()
+                if "scope" not in entry
+                for phrase in entry.get("except", ())
             ],
             key=len,
             reverse=True,
@@ -481,11 +498,18 @@ def test_the_editions_spelling_is_revised_wherever_a_word_is_printed(
                     assert not word.search(phrases.sub("", text)), (code, word.pattern)
         assert found == source_forms.get(code, []), (code, found)
     # A scoped word that stands alone is a verb wherever it is printed, so
-    # none is left in the verses of the books, outside their headings.
+    # none is left in the verses of the books, outside their headings and
+    # the phrases it excepts.
     alone = pattern(
         word
         for word, entry in words.items()
         if "scope" in entry and "notes" not in entry and " " not in word
+    )
+    scoped_phrases = pattern(
+        phrase
+        for word, entry in words.items()
+        if "scope" in entry
+        for phrase in entry.get("except", ())
     )
     for code in edition.scripture:
         blocks = edition.documents[code]["content"]
@@ -493,7 +517,10 @@ def test_the_editions_spelling_is_revised_wherever_a_word_is_printed(
             for block, lo, hi, _ in verse.parts:
                 if not revision.prose(blocks[block]["marker"]):
                     text = usj.text_of(blocks[block]["content"][lo:hi])
-                    assert not alone.findall(text), (code, reference)
+                    assert not alone.findall(scoped_phrases.sub("", text)), (
+                        code,
+                        reference,
+                    )
     assert "has been" in usj.serialize(edition.documents["XXB"])
     ezekiel = usj.serialize(edition.documents["EZK"])
     assert "the word of the Lord came to Ezekiel the priest" in ezekiel
@@ -594,6 +621,70 @@ def test_a_word_excepts_the_phrases_it_stands_in(
         "\\fqa Noah\\f*went \\add with\\add* Noe.\n\\v 2 And Noah went.\n"
     ) in text
     assert met == {"Noe", ("Noe", "with Noe")}
+
+
+def test_a_scoped_word_excepts_the_phrases_it_stands_in(
+    policy: bible.policy.Policy,
+) -> None:
+    words = revisions(
+        policy,
+        words={
+            "bore": {
+                "to": "bare",
+                "why": "the King James past tense",
+                "scope": "scripture",
+                "except": ["bore his ear"],
+            }
+        },
+    )
+    met: revision.MetRevisions = set()
+    source = usj.parse(
+        "\\id GEN\n\\ip She bore a son.\n\\c 1\n\\p \\v 1 She "
+        "\\f - \\fq bore: \\ft Gr. \\fqa bore\\f*bore a son, and he shall bore his ear."
+    )
+    result = revision.respelled(source, words, met)
+    verse = scripture.verses(result)["1:1"]
+    # The excepted phrase stands in scripture, the word gives way elsewhere
+    # in it and in the readings its notes quote, and prose keeps its own.
+    assert verse.text == "She bare a son, and he shall bore his ear."
+    assert usj.text_of(verse.notes[0][1]["content"]) == "bare: Gr. bare"
+    assert "\\ip She bore a son." in usj.serialize(result)
+    assert met == {"bore", ("bore", "bore his ear")}
+
+
+def test_a_scoped_word_excepts_its_phrases_in_a_confined_note_too(
+    policy: bible.policy.Policy,
+) -> None:
+    words = revisions(
+        policy,
+        words={
+            "bore": {
+                "to": "bare",
+                "why": "x",
+                "scope": "scripture",
+                "except": ["bore his ear"],
+            },
+            "does": {
+                "to": "doth",
+                "why": "x",
+                "scope": "scripture",
+                "notes": ["GEN 1:1#1"],
+            },
+        },
+    )
+    revision.check(words)
+    doc = usj.parse(
+        "\\id GEN\n\\c 1\n\\p \\v 1 He "
+        "\\f - \\fq bore his ear: \\ft Gr. \\fqa does\\f*bore his ear."
+    )
+    usj.notes_of(doc["content"])[0]["x-key"] = "GEN 1:1#1"
+    met: revision.MetRevisions = set()
+    verse = scripture.verses(revision.respelled(doc, words, met))["1:1"]
+    # The lemma of a note a word is confined to quotes the excepted phrase
+    # as the verse keeps it, while the reading takes the confined word.
+    assert verse.text == "He bore his ear."
+    assert usj.text_of(verse.notes[0][1]["content"]) == "bore his ear: Gr. doth"
+    assert met == {"does", ("GEN 1:1#1", "does"), ("bore", "bore his ear")}
 
 
 def test_a_word_scoped_to_scripture_spares_front_and_back_matter(
@@ -798,7 +889,22 @@ def test_a_revision_changes_a_lemma_whole_or_is_refused(
                         "why": "x",
                         "scope": "scripture",
                         "except": ["went with"],
-                    }
+                    },
+                    "with": {"to": "wyth", "why": "x"},
+                }
+            },
+            "Invalid exception",
+        ),
+        (
+            {
+                "words": {
+                    "went": {
+                        "to": "goeth",
+                        "why": "x",
+                        "scope": "scripture",
+                        "except": ["went with"],
+                    },
+                    "with": {"to": "wyth", "why": "x", "scope": "scripture"},
                 }
             },
             "Invalid exception",
@@ -991,6 +1097,81 @@ NOAH = {
 }
 
 
+def test_a_verse_naming_two_bearers_alike_lists_each_occurrence(
+    policy: bible.policy.Policy,
+) -> None:
+    doc = usj.parse(
+        "\\id GEN\n\\c 1\n\\p\n\\v 1 Noe and \\add Noe\\add* went.\n\\v 2 Noe.\n"
+    )
+    numbered = names(
+        {"to": "Noah", "why": "x", "forms": {"Noe": ["GEN 1:1#1"]}},
+        {
+            "to": "Noël",
+            "why": "x",
+            "forms": {"Noe": ["GEN 1:2"]},
+            "keep": [{"form": "Noe", "who": "another", "verses": ["GEN 1:1#2"]}],
+        },
+    )
+    met: revision.MetRevisions = set()
+    result = revision.named("GEN", doc, revisions(policy, names=numbered), met)
+    verses = scripture.verses(result)
+    assert verses["1:1"].text == "Noah and Noe went." and verses["1:2"].text == "Noël."
+    assert met == {
+        ("name", "GEN 1:1#1", "Noe"),
+        ("kept", "GEN 1:1#2", "Noe"),
+        ("name", "GEN 1:2", "Noe"),
+    }
+    # A kept occurrence must survive the later revisions, as a kept verse
+    # must.
+    respelling = revisions(
+        policy,
+        names=numbered,
+        verses=group({"verse": "GEN 1:1", "from": "and Noe", "to": "and Noah"}),
+    )
+    with pytest.raises(CheckFailed, match="Kept name respelled: GEN 1:1: Noe"):
+        revision.check_kept(
+            "GEN",
+            result,
+            revision.revised("GEN", result, respelling, set()),
+            respelling,
+        )
+    # An occurrence the verse lacks, or one listed beside the whole verse,
+    # is refused.
+    with pytest.raises(CheckFailed, match="Name not met: GEN 1:1: Noe"):
+        absent = names(
+            {
+                "to": "Noah",
+                "why": "x",
+                "forms": {"Noe": ["GEN 1:1#1", "GEN 1:1#3", "GEN 1:2"]},
+                "keep": [{"form": "Noe", "who": "another", "verses": ["GEN 1:1#2"]}],
+            }
+        )
+        revision.named("GEN", doc, revisions(policy, names=absent), set())
+    with pytest.raises(CheckFailed, match="Verse listed twice for a name"):
+        both = names(
+            {"to": "Noah", "why": "x", "forms": {"Noe": ["GEN 1:1#1"]}},
+            {"to": "Noël", "why": "x", "forms": {"Noe": ["GEN 1:1"]}},
+        )
+        revision.check(revisions(policy, names=both))
+    # A verse that names the form once is listed whole.
+    with pytest.raises(CheckFailed, match="Name numbered in a verse that has it once"):
+        once = names(
+            {"to": "Noah", "why": "x", "forms": {"Noe": ["GEN 1:1", "GEN 1:2#1"]}}
+        )
+        revision.named("GEN", doc, revisions(policy, names=once), set())
+    # A lemma cannot say which occurrence it quotes, whether the respelled
+    # one or the kept one, so it is refused rather than respelled with both.
+    for lemma in ["Noe", "Noe went"]:
+        quoted = usj.parse(
+            "\\id GEN\n\\c 1\n\\p\n\\v 1 Noe and Noe "
+            f"\\f - \\fq {lemma}: \\ft the other\\f*went.\n\\v 2 Noe.\n"
+        )
+        with pytest.raises(
+            CheckFailed, match="Lemma quoting a numbered name: GEN 1:1: Noe"
+        ):
+            revision.named("GEN", quoted, revisions(policy, names=numbered), set())
+
+
 def test_a_name_is_respelled_in_its_listed_verses_and_their_lemmas(
     policy: bible.policy.Policy,
 ) -> None:
@@ -1024,6 +1205,108 @@ def test_a_name_is_respelled_in_its_listed_verses_and_their_lemmas(
         )
 
 
+def test_a_subscription_name_is_scoped_and_must_be_met(
+    declared: bible.policy.Policy,
+) -> None:
+    decision = {
+        "to": "Luke",
+        "why": "Paul's companion",
+        "forms": {"Lucas": ["2CO 1:1"]},
+        "colophons": {"Lucas": ["2CO"]},
+    }
+    own = revisions(declared, names=names(decision))
+    revision.check(own)
+    source = usj.parse(
+        "\\id 2CO\n\\c 1\n\\p \\v 1 Lucas "
+        "\\f - \\fq Lucas: \\ft Lucas says \\fqa Lucas\\f*went.\n"
+        "\\esb \\cat colophon\\cat*\n"
+        "\\p Written by \\add Lucas\\add*.\n\\esbe\n"
+    )
+    before = copy.deepcopy(source)
+    met: revision.MetRevisions = set()
+    result = revision.named(
+        "2CO", revision.named_colophon("2CO", source, own, met), own, met
+    )
+    assert source == before
+    assert usj.serialize(result) == usj.serialize(
+        usj.parse(
+            "\\id 2CO\n\\c 1\n\\p \\v 1 Luke "
+            "\\f - \\fq Luke: \\ft Lucas says \\fqa Lucas\\f*went.\n"
+            "\\esb \\cat colophon\\cat*\n"
+            "\\p Written by \\add Luke\\add*.\n\\esbe\n"
+        )
+    )
+    revision.check_met(own, met)
+    with pytest.raises(CheckFailed, match="Revisions that nothing prints"):
+        revision.check_met(own, {("name", "2CO 1:1", "Lucas")})
+    only_colophon = revisions(declared, names=names({**decision, "forms": {}}))
+    revision.check(only_colophon)
+    # A form decided for a subscription alone is still a name no word respells.
+    with pytest.raises(
+        CheckFailed, match="Name also respelled as a word: Lucas: Lucas"
+    ):
+        revision.check(
+            revisions(
+                declared,
+                names=names({**decision, "forms": {}}),
+                words={"Lucas": {"to": "Luke", "why": "x"}},
+            )
+        )
+    # Another book's subscription keeps the source's name.
+    other = usj.parse(
+        "\\id ROM\n\\c 1\n\\p \\v 1 Paul.\n"
+        "\\esb \\cat colophon\\cat*\n\\p Written by Lucas.\n\\esbe\n"
+    )
+    assert revision.named_colophon("ROM", other, only_colophon, set()) is other
+    # A form decided for a subscription alone is still decided in the verses.
+    with pytest.raises(CheckFailed, match="Name without a decision: 2CO 1:1: Lucas"):
+        revision.named("2CO", source, only_colophon, set())
+    for text in ["Written by Lucasians.", "Written by Lucas and Lucas."]:
+        stale = usj.parse(
+            "\\id 2CO\n\\esb \\cat colophon\\cat*\n\\p " + text + "\n\\esbe\n"
+        )
+        with pytest.raises(CheckFailed, match="Colophon name not met once"):
+            revision.named_colophon("2CO", stale, only_colophon, set())
+    # A form within a longer one is the longer one's, so no two edits overlap.
+    nested = revisions(
+        declared,
+        names=names(
+            {**decision, "forms": {}},
+            {
+                "to": "Titus and Luke",
+                "why": "x",
+                "forms": {},
+                "colophons": {"Titus and Lucas": ["2CO"]},
+            },
+        ),
+    )
+    revision.check(nested)
+    pair = usj.parse(
+        "\\id 2CO\n\\esb \\cat colophon\\cat*\n\\p By Titus and Lucas.\n\\esbe\n"
+    )
+    with pytest.raises(CheckFailed, match="Colophon name not met once: 2CO: Lucas"):
+        revision.named_colophon("2CO", pair, nested, set())
+    with pytest.raises(CheckFailed, match="expected one terminal colophon"):
+        revision.named_colophon("2CO", usj.parse(NOE), only_colophon, set())
+
+
+@pytest.mark.parametrize(
+    "colophons,message",
+    [
+        ({"Lucas": []}, "without a colophon"),
+        ({"Lucas": ["2CO", "2CO"]}, "Colophon listed twice"),
+        ({"Lucas": ["XYZ"]}, "not a King James book"),
+        ({"Luke": ["2CO"]}, "changes nothing: Luke"),
+    ],
+)
+def test_malformed_subscription_name_decisions_are_refused(
+    declared: bible.policy.Policy, colophons: dict[str, list[str]], message: str
+) -> None:
+    decision = {"to": "Luke", "why": "x", "forms": {}, "colophons": colophons}
+    with pytest.raises(CheckFailed, match=message):
+        revision.check(revisions(declared, names=names(decision)))
+
+
 def test_a_name_prints_only_where_a_decision_says(
     policy: bible.policy.Policy,
 ) -> None:
@@ -1042,12 +1325,13 @@ def test_a_name_prints_only_where_a_decision_says(
     )
     with pytest.raises(CheckFailed, match="Name within another name: GEN 1:1: Baal"):
         revision.named("GEN", peor, revisions(policy, names=within), set())
-    # One decision owns a form. A word respelled wherever it is printed would
-    # respell a name behind the decision's back, or print one where no
-    # decision says: as the word, in a phrase, or in what it respells, all of
-    # which the check refuses. A verse's own change to a kept name is refused
-    # by the kept verse after the fact.
-    with pytest.raises(CheckFailed, match="decided for two bearers: Noe"):
+    # Two bearers may share a form, but a verse is listed for it once. A word
+    # respelled wherever it is printed would respell a name behind the
+    # decision's back, or print one where no decision says: as the word, in a
+    # phrase, or in what it respells, all of which the check refuses. A
+    # verse's own change to a kept name is refused by the kept verse after
+    # the fact.
+    with pytest.raises(CheckFailed, match="Verse listed twice for a name"):
         revision.check(revisions(policy, names=names(NOAH, {**NOAH, "keep": []})))
     for word, to in [("Noe", "Noah"), ("Noe went", "Noah went"), ("Noë", "Noe")]:
         shared = revisions(
@@ -1942,7 +2226,7 @@ def test_the_edition_prints_no_brackets_of_brentons(
         for _, note in verse.notes
     )
     assert (
-        "against him; and the name of Chebron before was Cariatharbocsepher: and they"
+        "against him; and the name of Hebron before was Cariatharbocsepher: and they"
         in scripture.verses(edition.documents["JDG"])["1:10"].text
     )
     # A note's own bracket, Brenton quoting the Authorized Version, stays.
@@ -2667,6 +2951,74 @@ def test_a_compound_divided_by_a_style_stays_divided(
     assert doc == original
 
 
+def test_house_style_distinguishes_titles_names_and_common_words(
+    declared: bible.policy.Policy,
+) -> None:
+    source = usj.parse(
+        "\\id GEN\n\\c 1\n\\p \\v 1 king David and king Solomon; the king; "
+        "David the king; king of Israel. mount Sinai; mount of Olives; "
+        "the mount of God; mount my mule. sabbath-day; sabbaths of years; "
+        "a scripture; the scriptures. enquiring; enquiry; grey-haired. "
+        "firstborn; corner stone; stumblingblock; fulness. "
+        "sin-offering; whole-burnt offering; meat offering; freewill-offering. "
+        "He begot a son, and she bore a son; he shall bore his ear, and broke it."
+    )
+    before = copy.deepcopy(source)
+    result = revision.respelled(source, declared, set())
+    assert scripture.verses(result)["1:1"].text == (
+        "King David and King Solomon; the king; David the king; king of Israel. "
+        "Mount Sinai; Mount of Olives; the mount of God; mount my mule. "
+        "Sabbath day; Sabbaths of years; a Scripture; the Scriptures. "
+        "inquiring; inquiry; gray-haired. first-born; corner-stone; "
+        "stumbling-block; fulness. sin offering; whole-burnt offering; "
+        "meat offering; free-will offering. He begat a son, and she bare a son; "
+        "he shall bore his ear, and brake it."
+    )
+    assert source == before
+
+
+def test_spake_revises_scripture_and_readings_but_preserves_commentary(
+    declared: bible.policy.Policy,
+) -> None:
+    source = usj.parse(
+        "\\id GEN\n\\ip He spoke and had spoken.\n\\c 1\n\\p \\v 1 He "
+        "\\f - \\fq spoke: \\ft He spoke; or, \\fqa spoke\\f*spoke and had spoken."
+    )
+    before = copy.deepcopy(source)
+    result = revision.respelled(source, declared, set())
+    verse = scripture.verses(result)["1:1"]
+    assert verse.text == "He spake and had spoken."
+    assert usj.text_of(verse.notes[0][1]["content"]) == ("spake: He spoke; or, spake")
+    assert "\\ip He spoke and had spoken." in usj.serialize(result)
+    assert source == before
+
+
+def test_title_case_can_surround_unchanged_names_and_ligatures(
+    declared: bible.policy.Policy,
+) -> None:
+    rules = revisions(
+        declared,
+        names=names(NOAH),
+        words={
+            "king Noe": {"to": "King Noe", "why": "Capitalize the title only."},
+            "mount Gæbal": {"to": "Mount Gæbal", "why": "Capitalize the title only."},
+        },
+        ligatures={
+            "why": "Write out the source ligature last.",
+            "letters": {"æ": "ae"},
+        },
+    )
+    revision.check(rules)
+    for target in ["King Noah", "King noe"]:
+        wrong = revisions(
+            rules,
+            names=names(NOAH),
+            words={"king Noe": {"to": target, "why": "x"}},
+        )
+        with pytest.raises(CheckFailed, match="Name also respelled as a word"):
+            revision.check(wrong)
+
+
 def test_words_a_style_divides_are_not_redivided_or_met(
     policy: bible.policy.Policy,
 ) -> None:
@@ -2684,6 +3036,24 @@ def test_words_a_style_divides_are_not_redivided_or_met(
     assert usj.serialize(revision.respelled(doc, words, met)).endswith(text + "\n")
     # A word that only a style keeps changes nothing, so is not met.
     assert met == set()
+
+
+def test_hyphenating_unchanged_words_preserves_their_styles_and_lemma(
+    declared: bible.policy.Policy,
+) -> None:
+    doc = usj.parse(
+        "\\id EPH\n\\c 2\n\\p\\v 20 "
+        "\\f - \\fq corner stone: \\ft A comment.\\f*corner \\add stone\\add*; "
+        "mother \\add in\\add* law."
+    )
+    original = copy.deepcopy(doc)
+    result = revision.respelled(doc, declared, set())
+    verse = scripture.verses(result)["2:20"]
+    assert verse.text == "corner-stone; mother-in-law."
+    assert usj.text_of(verse.notes[0][1]["content"]) == "corner-stone: A comment."
+    assert "\\add stone\\add*" in usj.serialize(result)
+    assert "\\add in\\add*" in usj.serialize(result)
+    assert doc == original
 
 
 def test_string_seams_and_notes_do_not_prevent_compound_spelling(
@@ -2927,6 +3297,9 @@ def test_note_contexts_must_each_be_met(declared: bible.policy.Policy) -> None:
 def test_corpus_grammar_exceptions_and_quoted_readings(
     edition: bible.pipeline.Edition,
 ) -> None:
+    for code, label in [("JDG", "19:4"), ("JDG", "19:7"), ("NAM", "2:9")]:
+        text = scripture.verses(edition.documents[code])[label].text
+        assert "stayed" in text and "staid" not in text
     assert (
         "strake of the gall" in scripture.verses(edition.documents["TOB"])["11:11"].text
     )

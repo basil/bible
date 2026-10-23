@@ -1367,7 +1367,7 @@ def test_unrelated_and_stale_source_notes_are_omitted(
 @pytest.mark.parametrize(
     "key,lemma,expected",
     [
-        ("JOS 21:13", "Chebron, and the suburbs", "q.d. _glebe_."),
+        ("JOS 21:13", "Hebron, and the suburbs", "q.d. _glebe_."),
         ("ISA 14:2#2", "they shall be multiplied", "i.e., _the Gentiles_"),
         (
             "1KI 11:33#2",

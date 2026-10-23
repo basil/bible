@@ -60,6 +60,22 @@ def with_colophon(doc: Document, content: Content) -> Document:
     )
 
 
+def colophon_paragraph(doc: Document, label: str) -> Node:
+    """The one paragraph of a book's terminal subscription, refused unless
+    the subscription closes the book and holds that paragraph alone."""
+    blocks = doc["content"]
+    found = [i for i, b in enumerate(blocks) if b.get("category") == "colophon"]
+    require(found == [len(blocks) - 1], f"{label}: expected one terminal colophon")
+    content = blocks[-1]["content"]
+    require(
+        len(content) == 1 and usj.is_type(content[0], "para", "p"),
+        f"{label}: expected one colophon paragraph",
+    )
+    paragraph = content[0]
+    assert not isinstance(paragraph, str)
+    return paragraph
+
+
 def unpilcrowed(doc: Document) -> Document:
     """A book whose terminal subscription opens without the pilcrow the
     source's epistles open theirs with."""
@@ -87,25 +103,14 @@ def colophons(
             label = f"Colophon change in {name}: {code}"
             require(code in result, f"{label}: missing book")
             doc = result[code]
-            blocks = doc["content"]
-            found = [i for i, b in enumerate(blocks) if b.get("category") == "colophon"]
-            require(
-                found == [len(blocks) - 1], f"{label}: expected one terminal colophon"
-            )
-            content = blocks[-1]["content"]
-            require(
-                len(content) == 1 and usj.is_type(content[0], "para", "p"),
-                f"{label}: expected one colophon paragraph",
-            )
-            paragraph = content[0]
-            assert not isinstance(paragraph, str)
+            paragraph = colophon_paragraph(doc, label)
             text = usj.text_of(paragraph["content"])
             before, after = change["from"], change["to"]
             require(
                 text.count(before) == 1, f"{label}: words do not match exactly once"
             )
             if text == before and not after:
-                result[code] = usj.with_blocks(doc, blocks[:-1])
+                result[code] = usj.with_blocks(doc, doc["content"][:-1])
             else:
                 # One stretch gives way, so that what replaces it stays in the
                 # style of the words it replaces, as a prose change does.

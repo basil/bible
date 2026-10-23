@@ -493,6 +493,7 @@ class NameKept(TypedDict, total=False):
 
 class NameDecision(TypedDict, total=False):
     forms: ReadOnly[Mapping[str, tuple[str, ...]]]
+    colophons: ReadOnly[Mapping[str, tuple[str, ...]]]
     keep: ReadOnly[tuple[NameKept, ...]]
     to: ReadOnly[str]
     why: ReadOnly[str]

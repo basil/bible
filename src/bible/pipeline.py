@@ -664,7 +664,9 @@ def finished_book(
     the systematic spelling and punctuation; a kept name must survive them.
     The ligatures are written out last, once every decision written in the
     source's letters has been carried out and checked."""
-    named = revision.named(code, doc, policy, met)
+    named = revision.named(
+        code, revision.named_colophon(code, doc, policy, met), policy, met
+    )
     doc = revision.revised(code, named, policy, met)
     doc = revision.passages(code, doc, policy, met)
     doc = typography.small_caps(revision.unbracketed(doc, policy, met))
