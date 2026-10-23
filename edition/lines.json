@@ -5,37 +5,6 @@
     "SIR 50:27": "The author's colophon is prose in Scrivener's Cambridge Paragraph Bible; follow him here rather than Boyd's poetry."
   },
   "breaks": {
-    "JOB 2:11": [
-      {
-        "follows": "Bildad sovereign of the Shuhites",
-        "line": "Baldad sovereign of the Saucheans",
-        "why": "The update respells the names of Job's friends and their peoples, so the words place neither line of the list; the line begins at the name, as the update's does."
-      },
-      {
-        "follows": "Zophar king of the Minaeans",
-        "line": "Sophar king of the Minæans",
-        "why": "The update respells the names of Job's friends and their peoples, so the words place neither line of the list; the line begins at the name, as the update's does."
-      }
-    ],
-    "JOB 42:16": [
-      {
-        "follows": "And Job saw his sons",
-        "line": "and Job saw his sons",
-        "why": "The Alexandrinus reading changes the preceding age from two hundred and forty to two hundred and forty-eight, so word alignment no longer places the next Updated Brenton line. Keep its third line at the unchanged and Job saw his sons, preserving the source’s division."
-      }
-    ],
-    "JOB 42:17e": [
-      {
-        "follows": "Bildad sovereign of the Shuhites",
-        "line": "Baldad sovereign of the Sauchæans",
-        "why": "The update respells the names of Job's friends and their peoples, so the words place neither line of the list; the line begins at the name, as the update's does."
-      },
-      {
-        "follows": "Zophar king of the Naamathites",
-        "line": "Sophar king of the Minæans",
-        "why": "The update respells the names of Job's friends and their peoples, so the words place neither line of the list; the line begins at the name, as the update's does."
-      }
-    ],
     "PSA 41:9": [
       {
         "follows": "With me is prayer to the God of my life",

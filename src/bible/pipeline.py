@@ -417,7 +417,7 @@ def lined(
         code: lines.descriptive_titles(lines.pauses(doc))
         for code, doc in brenton.items()
     }
-    brenton["LAM"] = lines.acrostics(brenton["LAM"])
+    brenton["LAM"] = lines.acrostics(brenton["LAM"], lines.within_verse(policy))
     brenton["PSA"] = psalter.divided(brenton["PSA"], policy.psalter)
     return MappingProxyType(
         {

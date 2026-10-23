@@ -45,11 +45,42 @@ STANDALONE = {"ip": "p", "im": "m", "imi": "mi", "is1": "s1", "is2": "s2"}
 EMPTY_ORIGIN = re.compile(r"\d+:0 ")
 
 
+def with_colophon(doc: Document, content: Content) -> Document:
+    """A book whose terminal subscription's first paragraph has the content
+    given."""
+    blocks = doc["content"]
+    paragraph, *rest = blocks[-1]["content"]
+    assert not isinstance(paragraph, str)
+    return usj.with_blocks(
+        doc,
+        [
+            *blocks[:-1],
+            {**blocks[-1], "content": [{**paragraph, "content": content}, *rest]},
+        ],
+    )
+
+
+def unpilcrowed(doc: Document) -> Document:
+    """A book whose terminal subscription opens without the pilcrow the
+    source's epistles open theirs with."""
+    blocks = doc["content"]
+    if not blocks or blocks[-1].get("category") != "colophon":
+        return doc
+    paragraph = blocks[-1]["content"][0]
+    assert not isinstance(paragraph, str)
+    text = usj.text_of(paragraph["content"])
+    if not text.startswith("¶"):
+        return doc
+    pilcrow = len(text) - len(text[1:].lstrip())
+    return with_colophon(doc, usj.substituted(paragraph["content"], [(0, pilcrow, "")]))
+
+
 def colophons(
     books: Mapping[str, Document], policy: bible.policy.Policy
 ) -> MappingProxyType[str, Document]:
-    """Apply declared edits to terminal source subscriptions, outside scripture."""
-    result = dict(books)
+    """Terminal source subscriptions, outside scripture, without their
+    pilcrow and with their declared edits."""
+    result = {code: unpilcrowed(doc) for code, doc in books.items()}
     for name, group in policy.prose.items():
         for change in group.get("colophons", ()):
             code = change["book"]
@@ -61,8 +92,7 @@ def colophons(
             require(
                 found == [len(blocks) - 1], f"{label}: expected one terminal colophon"
             )
-            sidebar = blocks[-1]
-            content = sidebar["content"]
+            content = blocks[-1]["content"]
             require(
                 len(content) == 1 and usj.is_type(content[0], "para", "p"),
                 f"{label}: expected one colophon paragraph",
@@ -84,13 +114,7 @@ def colophons(
                 edited = usj.substituted(
                     paragraph["content"], [(start, start + len(removed), added)]
                 )
-                result[code] = usj.with_blocks(
-                    doc,
-                    [
-                        *blocks[:-1],
-                        {**sidebar, "content": [{**paragraph, "content": edited}]},
-                    ],
-                )
+                result[code] = with_colophon(doc, edited)
     return MappingProxyType(result)
 
 
@@ -453,50 +477,6 @@ def cited(
                 f"Citation across markup: {code} ({text[start:end]})",
             )
     return usj.substituted(content, edits, skip=usj.is_label, unwrap=unwrap)
-
-
-def renamed(
-    unit: Unit, code: str, books: bible.references.Books, policy: bible.policy.Policy
-) -> Unit:
-    """A unit with the names that are changed where a book is named but not
-    cited (edition/citations.json), each met once."""
-    for declaration in policy.citations["names"].get(code, ()):
-        before = usj.text_of(usj.parse(declaration.get("from", ""), fragment=True))
-        require(
-            before and declaration.get("to") is not None and declaration.get("why"),
-            f"Change of name without its words or reason: {code} ({before})",
-        )
-        pattern = re.compile(
-            (r"(?<!\w)" if before[0].isalnum() else "")
-            + re.escape(before)
-            + (r"(?!\w)" if before[-1].isalnum() else "")
-        )
-        found = [
-            (index, address, match)
-            for index, (block, _) in enumerate(unit)
-            for address, content in regions(block)
-            for match in pattern.finditer(usj.unlabelled(content))
-        ]
-        require(len(found) == 1, f"Change of name not met once: {code} ({before})")
-        index, address, match = found[0]
-        block, readings = unit[index]
-        content = dict(regions(block))[address]
-        after = citations.named(declaration["to"], books.names)
-        require(before != after, f"Change of name changes nothing: {code} ({before})")
-        edits = [
-            (match.start() + a, match.start() + b, after[c:d])
-            for kind, a, b, c, d in SequenceMatcher(
-                None, before, after, autojunk=False
-            ).get_opcodes()
-            if kind != "equal"
-        ]
-        # The name's own styling gives way to what the edition's name has.
-        content = usj.substituted(
-            content, edits, skip=usj.is_label, right=True, unwrap=[match.span()]
-        )
-        unit = list(unit)
-        unit[index] = (with_region(block, address, content), readings)
-    return unit
 
 
 def numbered_notes(doc: Document) -> Document:
@@ -1018,7 +998,6 @@ def unit(
         by_id = {id(block): readings for block, readings in shown}
         shown = [(block, by_id.get(id(block), {})) for block in named["content"]]
     shown = unpunctuated(shown)
-    shown = renamed(shown, code, ctx.books, policy)
     shown = with_terms(shown, ctx.terms)
     result = numbered_notes(usj.with_blocks(doc, [block for block, _ in shown]))
     if is_glossary(entry):

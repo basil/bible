@@ -197,6 +197,158 @@ def test_a_break_the_words_do_not_place_stops_the_build_naming_the_line(
     assert scripture.verses(lined(SOURCE, update, decided))["1:1"].lines == (13, 48)
 
 
+def test_a_line_in_a_prose_verse_needs_no_placing_and_takes_no_decision(
+    declared: bible.policy.Policy,
+) -> None:
+    # The witness drops the first verse's lines wherever they stand, so the
+    # words need not place them, and a decision there would change nothing.
+    update = UPDATE.replace("he said,\n\\q1 Hear my voice,", "he spake,\n\\q1 Hearken,")
+    doc = lines.old_testament(
+        {"TST": usj.parse(SOURCE)},
+        {"TST": usj.parse(update)},
+        declared,
+        lambda code, label: label != "1:1",
+    )["TST"]
+    assert markers(doc) == ["p", "q1", "q1", "m", "p"]
+    decided = changed(
+        declared,
+        "lines",
+        lambda data: data["breaks"].update(
+            {
+                "TST 1:1": [
+                    {
+                        "follows": "Hearken, ye wives",
+                        "line": "Hear my voice",
+                        "why": ".",
+                    }
+                ]
+            }
+        ),
+    )
+    with pytest.raises(CheckFailed, match="decision in a verse set as prose: TST 1:1"):
+        lines.old_testament(
+            {"TST": usj.parse(SOURCE)},
+            {"TST": usj.parse(update)},
+            decided,
+            lambda code, label: label != "1:1",
+        )
+
+
+def test_a_line_the_update_numbers_otherwise_goes_by_the_source_verse(
+    declared: bible.policy.Policy,
+) -> None:
+    # The update begins verse 2, which the witness sets as prose, a line
+    # before the source does: the line stands in the source's verse 1, so it
+    # is not dropped with verse 2, and a decision may set it there.
+    update = UPDATE.replace(
+        "Hear my voice, ye wives of Lamech;\n\\q1 Today I have slain a man.",
+        "Hear my voice, ye women of Lamek;\n\\q1 \\v 2 This day I slew one.",
+    ).replace("\\q1\n\\v 2 Cursed", "\\q1 Cursed")
+    with pytest.raises(CheckFailed, match="Line the words do not place"):
+        lines.old_testament(
+            {"TST": usj.parse(SOURCE)},
+            {"TST": usj.parse(update)},
+            declared,
+            lambda code, label: label != "1:2",
+        )
+    decided = changed(
+        declared,
+        "lines",
+        lambda data: data["breaks"].update(
+            {
+                "TST 1:1": [
+                    {
+                        "follows": "This day I slew one",
+                        "line": "to-day I have slain a man",
+                        "why": ".",
+                    }
+                ]
+            }
+        ),
+    )
+    doc = lines.old_testament(
+        {"TST": usj.parse(SOURCE)},
+        {"TST": usj.parse(update)},
+        decided,
+        lambda code, label: label != "1:2",
+    )["TST"]
+    assert scripture.verses(doc)["1:1"].text == (
+        "And he said,\nHear my voice, ye wives of Lamech;\nto-day I have slain a man."
+    )
+    # A line in a verse the source lacks is not dropped into the line before.
+    lacking = UPDATE.replace("\\m and he went away.", "\\q1 \\v 4 Then departed he.")
+    with pytest.raises(CheckFailed, match="Line the words do not place"):
+        lines.old_testament(
+            {"TST": usj.parse(SOURCE)},
+            {"TST": usj.parse(lacking.replace("he be:", "he become."))},
+            declared,
+            lambda code, label: label != "1:4",
+        )
+
+
+def test_a_line_is_not_dropped_after_where_it_can_begin(
+    declared: bible.policy.Policy,
+) -> None:
+    # The update begins verse 3 inside the source's verse 2, both set as
+    # prose: at the source's verse 3, the line would leave the whole of
+    # verse 2 in the last line of verse 1's poem.
+    update = (
+        "\\id TST\n\\c 1\n\\p\n"
+        "\\v 1 And he said,\n"
+        "\\q1 Hear my voice, ye wives of Lamech;\n"
+        "\\q1 Today I have slain a man. \\v 2 Cursed be Kenaan,\n"
+        "\\q1 \\v 3 Bondman becomes he: and he went away.\n"
+        "\\p So they parted.\n"
+    )
+    with pytest.raises(CheckFailed, match="Line the words do not place"):
+        lines.old_testament(
+            {"TST": usj.parse(SOURCE)},
+            {"TST": usj.parse(update)},
+            declared,
+            lambda code, label: label == "1:1",
+        )
+
+
+def test_a_decision_may_set_a_line_in_a_prose_verse_the_words_leave_open(
+    declared: bible.policy.Policy,
+) -> None:
+    # The words leave the line anywhere from the end of verse 1, which the
+    # witness sets as verse, to verse 2, which it sets as prose: it is not
+    # dropped unplaced, and a decision there changes something.
+    update = UPDATE.replace("slain a man.", "slain a lad.").replace(
+        "Cursed be Canaan,", "Damned is Kenaan,"
+    )
+
+    def set_in_lines(policy: bible.policy.Policy) -> Document:
+        return lines.old_testament(
+            {"TST": usj.parse(SOURCE)},
+            {"TST": usj.parse(update)},
+            policy,
+            lambda code, label: label != "1:2",
+        )["TST"]
+
+    with pytest.raises(CheckFailed, match="Line the words do not place"):
+        set_in_lines(declared)
+    decided = changed(
+        declared,
+        "lines",
+        lambda data: data["breaks"].update(
+            {
+                "TST 1:2": [
+                    {"follows": "Damned is Kenaan", "line": "Cursed be", "why": "."}
+                ]
+            }
+        ),
+    )
+    verses = scripture.verses(set_in_lines(decided))
+    assert verses["1:1"].text == (
+        "And he said,\nHear my voice, ye wives of Lamech;\nto-day I have slain a man."
+    )
+    assert (
+        verses["1:2"].text == "Cursed be Canaan, a slave shall he be: and he went away."
+    )
+
+
 def test_a_decision_the_words_place_alike_or_that_no_line_takes_is_refused(
     declared: bible.policy.Policy,
 ) -> None:
@@ -349,6 +501,32 @@ def test_a_break_cannot_go_back_to_an_already_begun_line(previous: int) -> None:
     )
     with pytest.raises(lines.Disordered):
         lines.placed(2, aligned, previous)
+
+
+def test_a_line_in_a_prose_verse_may_stand_out_of_order() -> None:
+    # The words place the line at or before the line already begun: in a
+    # verse set as prose it goes with that line, if it lies in the verse.
+    doc = usj.parse("\\id TST\n\\c 1\n\\p\n\\v 1 one two three four\n\\v 2 five six\n")
+    chapter = lines.chapters(doc)["1"]
+    aligned = alignment.Alignment.of(chapter.texts, chapter.texts)
+
+    def place(previous: int, prose: bool) -> int | None:
+        return lines.place_break(
+            2,
+            chapter,
+            chapter,
+            aligned,
+            previous,
+            "TST",
+            lines.Decisions([]),
+            lambda label: prose,
+        )
+
+    assert place(3, prose=True) == 3
+    with pytest.raises(lines.Disordered):
+        place(3, prose=False)
+    with pytest.raises(lines.Disordered):
+        place(4, prose=True)
 
 
 def test_new_line_words_cannot_stand_before_the_break() -> None:
@@ -643,9 +821,6 @@ def test_the_decisions_are_the_few_the_words_do_not_place(
     policy: bible.policy.Policy,
 ) -> None:
     assert list(policy.lines["breaks"]) == [
-        "JOB 2:11",
-        "JOB 42:16",
-        "JOB 42:17e",
         "PSA 41:9",
         "PSA 87:19",
         "PSA 91:10",
@@ -778,6 +953,18 @@ def test_pause_keeps_its_explanation_and_styles() -> None:
     )
 
 
+# The names Brenton sets inside their verses, as the line decisions give them.
+WITHIN_VERSE = frozenset(
+    {("3", "45", "Ain."), ("4", "17", "Tsade."), ("4", "18", "Koph.")}
+)
+
+
+def test_the_names_within_their_verses_come_from_the_line_decisions(
+    declared: bible.policy.Policy,
+) -> None:
+    assert lines.within_verse(declared) == WITHIN_VERSE
+
+
 def acrostic_source(chapter: str) -> Document:
     """All source labels, with opening and mid-verse placements exercised."""
     content = ""
@@ -828,13 +1015,13 @@ def test_descriptive_titles_keep_fragments_and_verse_continuations() -> None:
 def test_acrostic_headings_preserve_content(chapter: str, count: int) -> None:
     source = acrostic_source(chapter)
     before = copy.deepcopy(source)
-    result = lines.acrostics(source)
+    result = lines.acrostics(source, WITHIN_VERSE)
     headings = [b for b in result["content"] if b.get("marker") == "qa"]
     assert len(headings) == count
     assert all(
         not any(usj.is_type(i, "char", "sc") for i in b["content"]) for b in headings
     )
-    assert source == before and lines.acrostics(result) == result
+    assert source == before and lines.acrostics(result, WITHIN_VERSE) == result
     assert {
         key: scripture.plain(verse.text)
         for key, verse in scripture.verses(result).items()
@@ -867,7 +1054,7 @@ def test_acrostic_headings_preserve_content(chapter: str, count: int) -> None:
 def test_changed_acrostic_source_is_refused(old: str, new: str, match: str) -> None:
     source = usj.parse(usj.serialize(acrostic_source("1")).replace(old, new, 1))
     with pytest.raises(CheckFailed, match=match):
-        lines.acrostics(source)
+        lines.acrostics(source, WITHIN_VERSE)
 
 
 def test_a_name_declared_within_its_verse_that_opens_it_is_refused() -> None:
@@ -876,7 +1063,7 @@ def test_a_name_declared_within_its_verse_that_opens_it_is_refused() -> None:
     assert "Before. \\sc Ain." in text
     source = usj.parse(text.replace("Before. \\sc Ain.", "\\sc Ain.", 1))
     with pytest.raises(CheckFailed, match="placement: LAM 3:45"):
-        lines.acrostics(source)
+        lines.acrostics(source, WITHIN_VERSE)
 
 
 def test_source_instructions_across_the_corpus(
@@ -891,7 +1078,12 @@ def test_source_instructions_across_the_corpus(
     for code, transform, marker, count in (
         ("PSA", lines.pauses, "qr", 70),
         ("HAB", lines.pauses, "qr", 3),
-        ("LAM", lines.acrostics, "qa", 89),
+        (
+            "LAM",
+            lambda doc: lines.acrostics(doc, lines.within_verse(edition.policy)),
+            "qa",
+            89,
+        ),
     ):
         before = aligned[code]
         # Isolate the two rules from alignment, which may split styled spans.

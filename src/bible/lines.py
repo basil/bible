@@ -6,9 +6,10 @@ words never reach the edition: each of its chapters is aligned word by word
 with the source's, and a line of the update begins a line of the edition
 where its first word is matched, or after the matched last word of the line
 before. A break the words do not place, or place two ways, is given in
-edition/lines.json or stops the build; a decision there may also set a line
-where the words would place it otherwise, keep a verse in prose, or change
-or join a prose paragraph at an existing boundary.
+edition/lines.json or stops the build, except where its own verse and every
+verse it can stand in are set as prose, and the line is dropped; a decision
+may also set a line where the words would place it otherwise, keep a verse
+in prose, or change or join a prose paragraph at an existing boundary.
 
 After alignment, terminal “Pause.” instructions stand in right-aligned
 lines, Brenton’s existing small-cap Lamentations acrostic names in
@@ -23,7 +24,7 @@ In both testaments, chapter-opening prose starts an ordinary paragraph.
 from __future__ import annotations
 
 import re
-from collections.abc import Callable, Iterable, Mapping, Sequence
+from collections.abc import Callable, Collection, Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
 from functools import cached_property
 
@@ -295,6 +296,40 @@ class Decisions:
         require(not left, f"Line decisions no line takes: {left}")
 
 
+def prose_reach(
+    index: int,
+    source: Chapter,
+    target: Chapter,
+    alignment: Alignment,
+    previous: int | None,
+    disordered: bool,
+    prose: Callable[[str], bool],
+) -> int | None:
+    """The furthest word of the source at which an update line the words
+    do not place in order can begin, where every verse it can begin in is
+    set as prose; None where one is not. It can begin from after the words
+    placed before it and the line already begun to the next word placed,
+    or, where the words place it at or before that line, from there to it."""
+    if disordered:
+        assert previous is not None
+        lo, hi = placed(index, alignment, None), previous
+    else:
+        before = (alignment.anchored(i) for i in range(index - 1, -1, -1))
+        after = (alignment.anchored(i) for i in range(index, len(source.words)))
+        lo = 1 + max(
+            next((p for p in before if p is not None), -1),
+            -1 if previous is None else previous,
+        )
+        hi = next((p for p in after if p is not None), len(target.words) - 1)
+        lo, hi = min(lo, hi), max(lo, hi)
+    verses = {target.verse_of(lo)} | {
+        verse for verse, start in target.verse_starts.items() if lo < start <= hi
+    }
+    if all(verse in target.verse_starts and prose(verse) for verse in verses):
+        return hi
+    return None
+
+
 def place_break(
     index: int,
     source: Chapter,
@@ -303,11 +338,21 @@ def place_break(
     previous: int | None,
     code: str,
     decisions: Decisions,
+    prose: Callable[[str], bool],
 ) -> int | None:
     """Where an update line beginning at a word begins in the source, or
-    None where a decision says the source has no such line."""
+    None where a decision says the source has no such line. A line the
+    words do not place, or place at or before the line already begun, is
+    dropped where its verse and every verse of the source it can begin in
+    are set as prose by the witness or a decision: it stands at its verse's
+    opening, where it can begin there or before, or with the line already
+    begun where that lies in the verse. Never after where it can begin: the
+    line before would run on over its words. A decision that sets a line in
+    a verse set as prose, where the line would stand in one without it,
+    changes nothing, and is refused."""
     line = source.texts[index : index + 12]
     decision = decisions.find(code, target, source.texts, index)
+    label = source.verse_of(index)
     position: int | None = None
     disordered = False
     try:
@@ -321,7 +366,6 @@ def place_break(
     # before them: Brenton's Hebrew letters in Lamentations head their verses
     # whatever the update left out, and a respelled name opens its verse. Never
     # at or before the line already begun.
-    label = source.verse_of(index)
     if (
         not disordered
         and source.verse_starts.get(label) == index
@@ -339,7 +383,28 @@ def place_break(
             position = start
         elif position is not None and start < position <= start + 2:
             position = start
+    dropped: int | None = None
+    reach = (
+        prose_reach(index, source, target, alignment, previous, disordered, prose)
+        if position is None and label in target.verse_starts and prose(label)
+        else None
+    )
+    if reach is not None:
+        opening = target.verse_starts[label]
+        if (previous is None or opening > previous) and opening <= reach:
+            dropped = opening
+        elif previous is not None and target.verse_of(previous) == label:
+            dropped = previous
     if decision is not None:
+        placed_in = "" if position is None else target.verse_of(position)
+        require(
+            not prose(decision.verse.split(":")[1])
+            or (
+                dropped is None
+                and not (placed_in in target.verse_starts and prose(placed_in))
+            ),
+            f"Line decision in a verse set as prose: {decision.verse}",
+        )
         decided = decisions.take(decision, target)
         require(
             decided is None or decided != position,
@@ -350,6 +415,8 @@ def place_break(
             f"Line decision at or before the line already begun: {decision.verse}",
         )
         return decided
+    if dropped is not None:
+        return dropped
     if disordered:
         raise Disordered()
     at = target.verse_of(previous) if previous is not None else source.verse_of(index)
@@ -412,6 +479,7 @@ def place_spans(
     target: Chapter,
     code: str,
     decisions: Decisions,
+    prose: Callable[[str], bool],
 ) -> list[Span]:
     """The update's poems in the source's words."""
     alignment = Alignment.of(source.texts, target.texts)
@@ -422,7 +490,7 @@ def place_spans(
         nonlocal previous
         try:
             found = place_break(
-                index, source, target, alignment, previous, code, decisions
+                index, source, target, alignment, previous, code, decisions, prose
             )
         except Disordered:
             raise CheckFailed(
@@ -556,7 +624,15 @@ def old_testament(
             require(
                 number in target, f"Update chapter the source lacks: {code} {number}"
             )
-            placed_spans = place_spans(found, chapter, target[number], code, decisions)
+
+            def declared(label: str, _number: str = number) -> bool:
+                """Whether the witness or a decision sets a verse as prose."""
+                key = f"{code} {_number}:{label}"
+                return witness(code, f"{_number}:{label}") is False or key in prose
+
+            placed_spans = place_spans(
+                found, chapter, target[number], code, decisions, declared
+            )
 
             def keep(position: int, _target: Chapter = target[number]) -> bool:
                 label = f"{_target.number}:{_target.verse_of(position)}"
@@ -956,19 +1032,29 @@ def acrostic_inventory(chapter: str) -> list[tuple[str, str]]:
     return list(zip(labels, names, strict=True))
 
 
-# The names Brenton sets inside their verses rather than at their openings.
-WITHIN_VERSE = frozenset(
-    {("3", "45", "Ain."), ("4", "17", "Tsade."), ("4", "18", "Koph.")}
-)
+def within_verse(policy: bible.policy.Policy) -> frozenset[tuple[str, str, str]]:
+    """The names Brenton sets inside their verses rather than at their
+    openings: those of the chapter's acrostic inventory that a line decision
+    of Lamentations heads a line with (chapter, verse, name)."""
+    found = set()
+    for key, entries in policy.lines["breaks"].items():
+        if book_of(key) != "LAM":
+            continue
+        chapter, verse = key.split(" ")[1].split(":")
+        for entry in entries:
+            name = (entry["line"] or "").split(" ")[0]
+            if (verse, name) in acrostic_inventory(chapter):
+                found.add((chapter, verse, name))
+    return frozenset(found)
 
 
-def acrostics(doc: Document) -> Document:
+def acrostics(doc: Document, inside: Collection[tuple[str, str, str]]) -> Document:
     """Give the existing small-cap names of Lamentations 1–4 qa headings.
 
     Split at word offsets, keeping each verse node before the words it
     governed. Headings add no stanza breaks; qa supplies their style.
     Refuse a changed inventory, an unexpected placement in its verse, or a
-    declared placement that is no longer met.
+    placement within its verse that is no longer met.
     """
     blocks: list[Node] = []
     chapter, verse = "", ""
@@ -993,7 +1079,7 @@ def acrostics(doc: Document) -> Document:
             seen == expected,
             f"Unexpected acrostic inventory: LAM {chapter}:{verse}: {seen!r}",
         )
-        declared = {name for name in WITHIN_VERSE if name[0] == chapter}
+        declared = {name for name in inside if name[0] == chapter}
         require(
             within == declared,
             "Unexpected acrostic placement: "

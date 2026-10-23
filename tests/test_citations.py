@@ -562,31 +562,6 @@ def test_markup_within_a_citation_goes_with_it(
         cited(r"\it See John\it* 5. 39.")
 
 
-def test_a_name_is_changed_once_and_whole(
-    policy: bible.policy.Policy, ctx: bible.annotate.Context
-) -> None:
-    doc = usj.parse("\\id BAK\n\\is2 CHRONICLES I\n\\is2 CHRONICLES II\n")
-    unit: matter.Unit = [(block, {}) for block in doc["content"]]
-
-    def renamed(*names: object) -> str:
-        declared = changed(
-            policy, "citations", lambda data: data["names"].update(BAK=list(names))
-        )
-        found = matter.renamed(unit, "BAK", ctx.books, declared)
-        return usj.serialize(usj.with_blocks(doc, [block for block, _ in found]))
-
-    assert renamed(
-        {"from": "CHRONICLES I", "to": "{1CH:upper}", "why": "x"},
-        {"from": "CHRONICLES II", "to": "{2CH:upper}", "why": "x"},
-    ) == ("\\id BAK\n\\usfm 3.1\n\\is2 1 CHRONICLES\n\\is2 2 CHRONICLES\n")
-    with pytest.raises(CheckFailed, match="Change of name not met once: BAK"):
-        renamed({"from": "CHRONICLES", "to": "x", "why": "x"})
-    with pytest.raises(
-        CheckFailed, match="Citation name change BAK has missing or unknown fields"
-    ):
-        renamed({"from": "CHRONICLES I", "to": "x"})
-
-
 def test_several_decisions_on_one_note_form_a_list(
     policy: bible.policy.Policy, ctx: bible.annotate.Context
 ) -> None:

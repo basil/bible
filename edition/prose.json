@@ -1592,82 +1592,12 @@
     ]
   },
   "nt-colophons": {
-    "why": "Omit the English closing notice of Acts at the editor’s direction. Retain the epistle subscriptions without their printed pilcrow.",
+    "why": "Omit the closing notice of Acts, ‘The end of the Acts of the Apostles’: a typographical element of the 1611 typesetting, not part of the text. The epistles’ subscriptions are kept as colophons; the build drops the pilcrow they open with.",
     "changes": [],
     "colophons": [
       {
         "book": "ACT",
         "from": "The end of the Acts of the Apostles.",
-        "to": ""
-      },
-      {
-        "book": "ROM",
-        "from": "¶ ",
-        "to": ""
-      },
-      {
-        "book": "1CO",
-        "from": "¶ ",
-        "to": ""
-      },
-      {
-        "book": "2CO",
-        "from": "¶ ",
-        "to": ""
-      },
-      {
-        "book": "GAL",
-        "from": "¶ ",
-        "to": ""
-      },
-      {
-        "book": "EPH",
-        "from": "¶ ",
-        "to": ""
-      },
-      {
-        "book": "PHP",
-        "from": "¶ ",
-        "to": ""
-      },
-      {
-        "book": "COL",
-        "from": "¶ ",
-        "to": ""
-      },
-      {
-        "book": "1TH",
-        "from": "¶ ",
-        "to": ""
-      },
-      {
-        "book": "2TH",
-        "from": "¶ ",
-        "to": ""
-      },
-      {
-        "book": "1TI",
-        "from": "¶ ",
-        "to": ""
-      },
-      {
-        "book": "2TI",
-        "from": "¶ ",
-        "to": ""
-      },
-      {
-        "book": "TIT",
-        "from": "¶ ",
-        "to": ""
-      },
-      {
-        "book": "PHM",
-        "from": "¶ ",
-        "to": ""
-      },
-      {
-        "book": "HEB",
-        "from": "¶ ",
         "to": ""
       }
     ]

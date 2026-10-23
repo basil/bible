@@ -748,9 +748,8 @@ def source_pieces(
 
 
 class Names(string.Formatter):
-    """What a decision or a change of name prints, with the edition's names
-    for the books it names by their codes: "{ISA} 2:6", or in capitals,
-    "{ISA:upper} 2:6"."""
+    """What a decision prints, with the edition's names for the books it
+    names by their codes: "{ISA} 2:6", or in capitals, "{ISA:upper} 2:6"."""
 
     def format_field(self, value: object, spec: str) -> str:
         assert isinstance(value, str)

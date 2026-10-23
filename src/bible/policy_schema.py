@@ -144,13 +144,6 @@ class Appendix(TypedDict, total=False):
     why: ReadOnly[str]
 
 
-class QuotationsAlignment(TypedDict, total=False):
-    outscored: ReadOnly[Mapping[str, str]]
-    passages: ReadOnly[Mapping[str, str]]
-    range_ends: ReadOnly[Mapping[str, str]]
-    unscored: ReadOnly[Mapping[str, str]]
-
-
 class QuotationsLxxToEdition(TypedDict, total=False):
     numbering: ReadOnly[str]
     target: ReadOnly[str]
@@ -169,7 +162,6 @@ class QuotationsNoteMerges(TypedDict, total=False):
 
 
 class Quotations(TypedDict, total=False):
-    alignment: ReadOnly[QuotationsAlignment]
     class_conflicts: ReadOnly[tuple[ClassConflict, ...]]
     excluded: ReadOnly[Mapping[str, str]]
     lxx_to_edition: ReadOnly[Mapping[str, QuotationsLxxToEdition]]
@@ -473,7 +465,6 @@ class Citations(TypedDict, total=False):
         Mapping[str, CitationsDecisions | tuple[CitationsDecisions, ...]]
     ]
     dialects: ReadOnly[Mapping[str, CitationsDialects]]
-    names: ReadOnly[Mapping[str, tuple[WordingChange, ...]]]
     units: ReadOnly[Mapping[str, str | None]]
 
 

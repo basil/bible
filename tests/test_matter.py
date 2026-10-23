@@ -1042,28 +1042,6 @@ def test_what_was_read_is_carried_through_a_change_of_words() -> None:
     assert moved.text[moved.terms[0].start : moved.terms[0].end] == "Sept."
 
 
-def test_a_name_change_that_prints_the_same_words_is_refused(
-    policy: bible.policy.Policy,
-    ctx: bible.annotate.Context,
-) -> None:
-    before = ctx.books.names["GEN"]
-    other = changed(
-        policy,
-        "citations",
-        lambda d: d["names"].update(
-            XXB=[
-                {
-                    "from": before,
-                    "to": "{GEN}",
-                    "why": "x",
-                }
-            ]
-        ),
-    )
-    with pytest.raises(CheckFailed, match="Change of name changes nothing: XXB"):
-        matter.renamed([(usj.para("ip", before), {})], "XXB", ctx.books, other)
-
-
 def test_a_prose_edit_that_changes_nothing_is_refused() -> None:
     doc = usj.parse("\\id XXB\n\\ip Some introduction.\n")
     unit: matter.Unit = [
@@ -1133,16 +1111,18 @@ def test_colophon_decisions_preserve_styles_scripture_and_inputs(
     policy = presentation_policy(
         declared,
         colophons=[
-            {"book": "ROM", "from": "¶ ", "to": ""},
-            # Words rewritten across a style keep it.
+            # The pilcrow goes without a decision. Words rewritten across a
+            # style keep it, and a second change to the same colophon applies
+            # to the words the first left.
             {"book": "ROM", "from": "from Rome", "to": "from Roma"},
+            {"book": "ROM", "from": "Written", "to": "Sent"},
             {"book": "ACT", "from": "The end of the Acts of the Apostles.", "to": ""},
         ],
     )
     result = matter.colophons(books, policy)
     assert books == before
     assert result["ACT"]["content"] == acts["content"][:-1]
-    assert usj.text_of(result["ROM"]["content"][-1]["content"]) == "Written from Roma."
+    assert usj.text_of(result["ROM"]["content"][-1]["content"]) == "Sent from Roma."
     assert "\\add from\\add*" in usj.serialize(result["ROM"])
     for code in books:
         assert bible.scripture.verses(result[code]) == bible.scripture.verses(
@@ -1150,7 +1130,7 @@ def test_colophon_decisions_preserve_styles_scripture_and_inputs(
         )
 
 
-@pytest.mark.parametrize("closing", [None, "Missing prefix.", "¶ Once ¶ twice."])
+@pytest.mark.parametrize("closing", [None, "Missing words.", "Once from, twice from."])
 def test_colophon_decisions_refuse_stale_or_ambiguous_matches(
     declared: bible.policy.Policy,
     closing: str | None,
@@ -1162,14 +1142,16 @@ def test_colophon_decisions_refuse_stale_or_ambiguous_matches(
     policy = presentation_policy(
         declared,
         colophons=[
-            {"book": "ROM", "from": "¶ ", "to": ""},
+            {"book": "ROM", "from": "from", "to": "at"},
         ],
     )
     with pytest.raises(CheckFailed, match="Colophon change.*ROM"):
         matter.colophons({"ROM": doc}, policy)
 
 
-def test_all_nt_colophons_are_edited(edition: bible.pipeline.Edition) -> None:
+def test_all_nt_colophons_stand_without_their_pilcrow(
+    edition: bible.pipeline.Edition,
+) -> None:
     expected = set("ROM 1CO 2CO GAL EPH PHP COL 1TH 2TH 1TI 2TI TIT PHM HEB".split())
     found = set()
     for code, doc in edition.documents.items():

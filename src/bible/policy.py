@@ -18,7 +18,7 @@ from typing import Any, cast
 from bible import paths
 from bible import policy_schema as schema
 from bible import usj
-from bible.checks import require, require_fields, require_used
+from bible.checks import require, require_fields
 from bible.files import read_json
 from bible.policy_schema import Entry
 
@@ -475,25 +475,10 @@ def check(policy: Policy) -> None:
     scriptures = {entry["id"] for entry in policy.scripture}
     require_fields(
         policy.citations,
-        {"units", "dialects", "decisions", "names"},
+        {"units", "dialects", "decisions"},
         (),
         "Citations file",
     )
-    require_used(policy.citations["names"], matter, "citation name changes")
-    for code, changes in policy.citations["names"].items():
-        require(changes, f"Empty citation name changes: {code}")
-        for change in changes:
-            require_fields(
-                change, {"from", "to", "why"}, (), f"Citation name change {code}"
-            )
-            require(
-                change["from"] and change["why"],
-                f"Citation name change without words or reason: {code}",
-            )
-            require(
-                change["from"] != change["to"],
-                f"Citation name change that changes nothing: {code}",
-            )
     for name, prose_group in policy.prose.items():
         require_fields(
             prose_group,

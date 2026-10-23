@@ -176,20 +176,6 @@ def test_the_policy_is_read_once_and_cannot_be_changed(
             "Labelled chapters not true or without a singular name: GEN",
         ),
         (
-            "citations",
-            lambda d: d["names"].update(
-                XYZ=[{"from": "Never present", "to": "{GEN}", "why": "x"}]
-            ),
-            "Unused citation name changes.*XYZ",
-        ),
-        (
-            "citations",
-            lambda d: d["names"].update(
-                BAK=[{"from": "x", "to": "{GEN}", "why": "x", "whyy": "x"}]
-            ),
-            "Citation name change BAK has missing or unknown fields",
-        ),
-        (
             "prose",
             lambda d: d.update(
                 probe={
