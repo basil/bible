@@ -39,15 +39,23 @@ def test_prose_presentation_preserves_words_styles_and_inputs(
     declared: bible.policy.Policy,
 ) -> None:
     doc = usj.parse(
-        "\\id NDX\n\\im \\sc Opening\\sc* \\it David\\it* said \\it word\\it*. This begins another topic.\n"
+        "\\id INT\n\\im \\sc Opening\\sc* \\it David\\it* said \\it word\\it*. This begins another topic.\n"
     )
     policy = presentation_policy(
         declared,
-        sections=[{"unit": "NDX", "before": "This begins", "heading": "Another Topic"}],
-        italics=[{"unit": "NDX", "opening": "Opening", "spans": ["word"]}],
+        sections=[
+            {
+                "unit": "translators-preface",
+                "before": "This begins",
+                "heading": "Another Topic",
+            }
+        ],
+        italics=[
+            {"unit": "translators-preface", "opening": "Opening", "spans": ["word"]}
+        ],
     )
     before, decisions = copy.deepcopy(doc), bible.policy.thaw(policy.prose)
-    result = matter.presented("NDX", doc, policy)
+    result = matter.presented("translators-preface", doc, policy)
     assert usj.serialize(result).endswith(
         "\\im \\sc Opening\\sc* David said \\it word\\it*.\n\\s1 Another Topic\n\\ip This begins another topic.\n"
     )
@@ -61,30 +69,31 @@ def test_prose_presentation_preserves_words_styles_and_inputs(
 def test_prose_italics_refuse_missing_or_ambiguous_words(
     declared: bible.policy.Policy, span: Any
 ) -> None:
-    doc = usj.parse("\\id NDX\n\\ip A word and another word.\n")
+    doc = usj.parse("\\id INT\n\\ip A word and another word.\n")
     policy = presentation_policy(
-        declared, italics=[{"unit": "NDX", "opening": "A word", "spans": [span]}]
+        declared,
+        italics=[{"unit": "translators-preface", "opening": "A word", "spans": [span]}],
     )
     with pytest.raises(CheckFailed, match="not met once"):
-        matter.presented("NDX", doc, policy)
+        matter.presented("translators-preface", doc, policy)
 
 
 def test_prose_italics_use_context_for_repeated_words(
     declared: bible.policy.Policy,
 ) -> None:
-    doc = usj.parse("\\id NDX\n\\ip A word and another word.\n")
+    doc = usj.parse("\\id INT\n\\ip A word and another word.\n")
     policy = presentation_policy(
         declared,
         italics=[
             {
-                "unit": "NDX",
+                "unit": "translators-preface",
                 "opening": "A word",
                 "spans": [{"text": "word", "within": "another word"}],
             }
         ],
     )
     assert "A word and another \\it word\\it*." in usj.serialize(
-        matter.presented("NDX", doc, policy)
+        matter.presented("translators-preface", doc, policy)
     )
 
 
@@ -94,19 +103,19 @@ def test_prose_italics_use_context_for_repeated_words(
 def test_prose_italics_refuse_context_within_a_word(
     declared: bible.policy.Policy, text: str, within: str
 ) -> None:
-    doc = usj.parse("\\id NDX\n\\ip A purpose by which.\n")
+    doc = usj.parse("\\id INT\n\\ip A purpose by which.\n")
     policy = presentation_policy(
         declared,
         italics=[
             {
-                "unit": "NDX",
+                "unit": "translators-preface",
                 "opening": "A purpose",
                 "spans": [{"text": text, "within": within}],
             }
         ],
     )
     with pytest.raises(CheckFailed, match="context within a word"):
-        matter.presented("NDX", doc, policy)
+        matter.presented("translators-preface", doc, policy)
 
 
 def test_prose_italics_keep_notes_and_their_own_italics(
@@ -130,42 +139,45 @@ def test_prose_italics_keep_notes_and_their_own_italics(
 def test_prose_sections_refuse_missing_or_ambiguous_breaks(
     declared: bible.policy.Policy, before: str
 ) -> None:
-    doc = usj.parse("\\id NDX\n\\ip A word and another word.\n")
+    doc = usj.parse("\\id INT\n\\ip A word and another word.\n")
     policy = presentation_policy(
-        declared, sections=[{"unit": "NDX", "before": before, "heading": "Topic"}]
+        declared,
+        sections=[
+            {"unit": "translators-preface", "before": before, "heading": "Topic"}
+        ],
     )
     with pytest.raises(CheckFailed, match="section not met once"):
-        matter.presented("NDX", doc, policy)
+        matter.presented("translators-preface", doc, policy)
 
 
 def test_prose_references_move_inline_citations_without_losing_words(
     ctx: bible.annotate.Context,
 ) -> None:
-    doc = usj.parse("\\id NDX\n\\p One. John 5. 39. Two. Luke 24. 25. Three.\n")
+    doc = usj.parse("\\id INT\n\\p One. John 5. 39. Two. Luke 24. 25. Three.\n")
     policy = presentation_policy(
         ctx.policy,
         references=[
             {
-                "unit": "NDX",
+                "unit": "translators-preface",
                 "after": "Two",
                 "passages": "LUK 24:25",
                 "remove": "Luke 24. 25. ",
             },
             {
-                "unit": "NDX",
+                "unit": "translators-preface",
                 "after": "One",
                 "passages": "JHN 5:39",
                 "remove": "John 5. 39. ",
             },
-            {"unit": "NDX", "after": "Three", "passages": "1CO 14"},
+            {"unit": "translators-preface", "after": "Three", "passages": "1CO 14"},
         ],
     )
     context = bible.annotate.Context(policy, ctx.inventory, ctx.books)
-    unit, _ = matter.read("NDX", doc, {}, context)
-    unit = matter.resolved(unit, "NDX", ctx.inventory, policy)
+    unit, _ = matter.read("translators-preface", doc, {}, context)
+    unit = matter.resolved(unit, "translators-preface", ctx.inventory, policy)
     before = copy.deepcopy(unit)
     decisions = bible.policy.thaw(policy.prose)
-    result = matter.referenced(unit, "NDX", context)
+    result = matter.referenced(unit, "translators-preface", context)
     block, readings = result[-1]
     assert usj.text_of(block["content"]) == "One. Two. Three."
     assert [n["loc"] for n in usj.walk(block["content"]) if n["type"] == "ref"] == [
@@ -184,14 +196,20 @@ def test_prose_references_move_inline_citations_without_losing_words(
 def test_prose_reference_callers_follow_punctuation_except_dashes(
     ctx: bible.annotate.Context, punctuation: str
 ) -> None:
-    doc = usj.parse(f"\\id NDX\n\\p \\it Quotation\\it*{punctuation} Next.\n")
+    doc = usj.parse(f"\\id INT\n\\p \\it Quotation\\it*{punctuation} Next.\n")
     policy = presentation_policy(
         ctx.policy,
-        references=[{"unit": "NDX", "after": "Quotation", "passages": "JHN 5:39"}],
+        references=[
+            {
+                "unit": "translators-preface",
+                "after": "Quotation",
+                "passages": "JHN 5:39",
+            }
+        ],
     )
     context = bible.annotate.Context(policy, ctx.inventory, ctx.books)
-    unit, _ = matter.read("NDX", doc, {}, context)
-    result = matter.referenced(unit, "NDX", context)
+    unit, _ = matter.read("translators-preface", doc, {}, context)
+    result = matter.referenced(unit, "translators-preface", context)
     content = result[-1][0]["content"]
     before = []
     for item in content:
@@ -240,52 +258,63 @@ def test_prose_caller_moves_unchanged_note_to_declared_sentence_end(
 def test_prose_references_reject_stale_or_changed_decisions(
     ctx: bible.annotate.Context, override: dict[str, str], refusal: str
 ) -> None:
-    doc = usj.parse("\\id NDX\n\\p One. One. Two. John 5. 39. End.\n")
-    decision = {"unit": "NDX", "after": "Two", "passages": "JHN 5:39", **override}
+    doc = usj.parse("\\id INT\n\\p One. One. Two. John 5. 39. End.\n")
+    decision = {
+        "unit": "translators-preface",
+        "after": "Two",
+        "passages": "JHN 5:39",
+        **override,
+    }
     policy = presentation_policy(ctx.policy, references=[decision])
     context = bible.annotate.Context(policy, ctx.inventory, ctx.books)
-    unit, _ = matter.read("NDX", doc, {}, context)
-    unit = matter.resolved(unit, "NDX", ctx.inventory, policy)
+    unit, _ = matter.read("translators-preface", doc, {}, context)
+    unit = matter.resolved(unit, "translators-preface", ctx.inventory, policy)
     with pytest.raises(CheckFailed, match=refusal):
-        matter.referenced(unit, "NDX", context)
+        matter.referenced(unit, "translators-preface", context)
 
 
 def test_prose_references_name_each_book_once_and_keep_every_caller(
     ctx: bible.annotate.Context,
 ) -> None:
-    doc = usj.parse("\\id NDX\n\\p One. John 5. 39. Two.\n")
+    doc = usj.parse("\\id INT\n\\p One. John 5. 39. Two.\n")
     listed = {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "after": "Two",
         "passages": "ACT 17:11; ACT 8:28-29; LUK 24:25",
     }
     policy = presentation_policy(ctx.policy, references=[listed])
     context = bible.annotate.Context(policy, ctx.inventory, ctx.books)
-    unit, _ = matter.read("NDX", doc, {}, context)
-    unit = matter.resolved(unit, "NDX", ctx.inventory, policy)
-    note = usj.notes_of(matter.referenced(unit, "NDX", context)[-1][0]["content"])[0]
+    unit, _ = matter.read("translators-preface", doc, {}, context)
+    unit = matter.resolved(unit, "translators-preface", ctx.inventory, policy)
+    note = usj.notes_of(
+        matter.referenced(unit, "translators-preface", context)[-1][0]["content"]
+    )[0]
     assert usj.text_of(note["content"]) == "Acts 17:11; 8:28–29; Luke 24:25"
     # A caller at the very end of another's removal would be removed with it.
     moved = {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "after": "One",
         "passages": "JHN 5:39",
         "remove": "John 5. 39.",
     }
-    after = {"unit": "NDX", "after": "John 5. 39", "passages": "LUK 1:1"}
+    after = {
+        "unit": "translators-preface",
+        "after": "John 5. 39",
+        "passages": "LUK 1:1",
+    }
     policy = presentation_policy(ctx.policy, references=[moved, after])
     context = bible.annotate.Context(policy, ctx.inventory, ctx.books)
-    unit, _ = matter.read("NDX", doc, {}, context)
-    unit = matter.resolved(unit, "NDX", ctx.inventory, policy)
+    unit, _ = matter.read("translators-preface", doc, {}, context)
+    unit = matter.resolved(unit, "translators-preface", ctx.inventory, policy)
     with pytest.raises(CheckFailed, match="Overlapping prose references"):
-        matter.referenced(unit, "NDX", context)
+        matter.referenced(unit, "translators-preface", context)
 
 
 def test_translators_preface_headings_notes_and_modern_italics(
     edition: bible.pipeline.Edition,
     exported: dict[str, str],
 ) -> None:
-    doc = edition.documents["NDX"]
+    doc = edition.documents["translators-preface"]
     headings = [
         usj.text_of(b["content"]) for b in doc["content"] if b.get("marker") == "s1"
     ]
@@ -362,11 +391,14 @@ def test_translators_preface_headings_notes_and_modern_italics(
         "HEB 12:16",
         "HEB 10:31",
     ]
-    assert "\\ref " not in exported["NDX"]
-    assert "\\x + \\xt 2 Kgdms. 11:25\\x*" in exported["NDX"]
-    assert "as it is in Samuel;\\x +" in exported["NDX"]
-    assert "saith the wise man:\\x +" in exported["NDX"]
-    assert "his own wife.\\x + \\xt 2 Kgdms. 6:16\\x* Solomon" in exported["NDX"]
+    assert "\\ref " not in exported["translators-preface"]
+    assert "\\x + \\xt 2 Kgdms. 11:25\\x*" in exported["translators-preface"]
+    assert "as it is in Samuel;\\x +" in exported["translators-preface"]
+    assert "saith the wise man:\\x +" in exported["translators-preface"]
+    assert (
+        "his own wife.\\x + \\xt 2 Kgdms. 6:16\\x* Solomon"
+        in exported["translators-preface"]
+    )
     assert (
         "280 BC.\\f + \\ft See Preface to Lambert Bos’s edition of the LXX.\\f*"
         in exported["XXB"]
@@ -716,7 +748,7 @@ def prepared(
     ctx: bible.annotate.Context,
 ) -> tuple[Document, dict[str, list[Content]]]:
     """One unit prepared again under a changed policy."""
-    entry = next(e for e in policy.entries if e["id"] == code)
+    entry = next(e for e in (*policy.entries, *policy.unprinted) if e["id"] == code)
     family = read.brenton if entry["source"] == "brenton" else read.kjv
     doc = family[source_id(entry)]
     changed_ctx = annotate.Context(policy, ctx.inventory, ctx.books)
@@ -863,14 +895,29 @@ def test_brenton_introduction_preserves_emphasis_and_nested_quotation(
 def test_the_list_of_abbreviations_is_completed_from_the_registry(
     edition: bible.pipeline.Edition, policy: bible.policy.Policy
 ) -> None:
-    [table] = [b for b in edition.documents["XXD"]["content"] if b["type"] == "table"]
+    # The list is finished as the front matter is, and the editor's
+    # introduction tables it where {abbreviations} asks for it.
+    [table] = [
+        block
+        for block in edition.documents["introduction"]["content"]
+        if block["type"] == "table"
+        and any(
+            tuple(
+                usj.text_of(cell["content"]).strip()
+                for cell in usj.objects(row["content"])
+            )
+            == ("KJV", "for King James Version")
+            for row in usj.objects(block["content"])
+        )
+    ]
+    assert table == edition.glossary
     rows = [
         tuple(
             usj.text_of(cell["content"]).strip() for cell in usj.objects(row["content"])
         )
         for row in usj.objects(table["content"])
     ]
-    latin = usj.serialize(edition.documents["XXD"])
+    latin = usj.serialize(usj.document([table]))
     labels = [label for label, _ in rows]
     # Brenton's rows for what the edition prints in full are dropped...
     assert not set(policy.abbreviations["expanded"]["removed"]) & set(labels)
@@ -884,7 +931,7 @@ def test_the_list_of_abbreviations_is_completed_from_the_registry(
         ("TR", "for Textus Receptus, the Received Text"),
     } <= set(rows)
     # ...and all are in alphabetical order, by their letters alone. Turpie's
-    # signs aren't abbreviations: the editor's introduction explains them.
+    # signs aren't abbreviations: the introduction explains them.
     assert labels == sorted(labels, key=terminology.alphabetical)
     assert labels[:3] == ["AD", "Alex.", "BC"]
     assert not {"+", "≠"} & set(labels)
@@ -900,21 +947,20 @@ def test_front_and_back_matter_heading_capitalization(
     edition: bible.pipeline.Edition,
 ) -> None:
     expected = {
-        "XXD": ["\\mt1 Abbreviations Used in the Notes"],
         "XXB": ["\\mt1 Preface"],
         "XXE": [
             "\\mt1 Introduction",
             "\\mt2 A Historical Account of the Septuagint Version",
         ],
-        "TDX": [
+        "dedication": [
             "\\mt2 To the Most High and Mighty Prince",
             "\\mt1 James,",
             "\\mt2 by the Grace of God",
             "\\mt2 King of Great Britain, France, and Ireland,",
             "\\mt2 Defender of the Faith, etc.",
         ],
-        "NDX": ["\\mt1 The Translators to the Reader"],
-        "CNC": ["\\mt1 Editor’s Introduction"],
+        "translators-preface": ["\\mt1 The Translators to the Reader"],
+        "introduction": ["\\mt1 Introduction"],
         "XXF": ["\\mt1 The Old Testament", "\\mt2 Brenton’s Septuagint"],
         "XXG": [
             "\\mt1 The New Testament",
@@ -928,7 +974,7 @@ def test_front_and_back_matter_heading_capitalization(
         ] == headings
     assert (
         "\\po The Translators of the Bible wish Grace, Mercy, and Peace, through Jesus Christ our Lord."
-        in lines(edition, "TDX")
+        in lines(edition, "dedication")
     )
     # The textual variants, prepared for the website alone.
     assert [
@@ -938,7 +984,7 @@ def test_front_and_back_matter_heading_capitalization(
     ] == ["\\mt1 Textual Variants"]
 
 
-@pytest.mark.parametrize("unit", ["XXD", "TDX"])
+@pytest.mark.parametrize("unit", ["dedication"])
 @pytest.mark.parametrize("source", ["missing heading", "changed capitalization"])
 def test_heading_decisions_reject_changed_or_missing_source(
     unit: str,

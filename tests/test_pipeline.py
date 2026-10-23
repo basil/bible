@@ -40,7 +40,7 @@ def test_the_edition_prints_every_unit_once_in_the_manifests_order(
     assert list(edition.documents) == order
     assert list(exported) == order
     assert edition.scripture == {unit["id"] for unit in policy.scripture}
-    assert edition.authored == {"CNC", "XXF", "XXG"}
+    assert edition.authored == {"introduction", "XXF", "XXG"}
     for mode in ("pdf", "sample"):
         assert "XXA" not in dict(pipeline.view(edition, mode))
     # The textual variants are prepared for the website, and printed nowhere.
@@ -157,11 +157,6 @@ def test_the_policy_is_read_once_and_cannot_be_changed(
             "manifest",
             lambda d: d["scripture"][0].update(short_titel="Genesis"),
             "Manifest scripture.*GEN.*missing or unknown fields",
-        ),
-        (
-            "manifest",
-            lambda d: d["front_matter"][0].update(short_titel="Front matter"),
-            "Manifest front_matter.*missing or unknown fields",
         ),
         (
             "manifest",
@@ -359,18 +354,47 @@ def test_the_editions_spelling_is_revised_wherever_a_word_is_printed(
         if "scope" not in entry and "except" not in entry
     )
     assert any("scope" in entry for entry in words.values())
-    # The editor's own pages name the sources' books, rather than respelling
-    # the translations: the introduction explains Brenton's names, and the
-    # table names the KJV's. The names decided by their bearers are not words
-    # respelled wherever they are printed, so the introduction's Osee and Naum
-    # stand on their own account.
-    source_names = {
-        "CNC": ["Nehemiah", "Nehemiah"],
+    # Authored prose preserves the source forms it discusses: the words
+    # quoted from the sources and the explicit before-and-after examples.
+    # Enumerate every occurrence, so this does not permit unrevised words
+    # elsewhere in the introduction or in the translated books.
+    source_forms = {
+        "introduction": [
+            "publickly",
+            "Nehemiah",
+            "Ghost",
+            "ghost",
+            "Hallelujah",
+            "an hundred",
+            "Shew",
+            "shewed",
+            "alway",
+            "amongst",
+            "throughly",
+            "subtil",
+            "brasen",
+            "spue",
+            "apostolick",
+            "musick",
+            "emerods",
+            "shamefacedness",
+            "To-day",
+            "any thing",
+            "fellowservant",
+            "threshingfloor",
+            "firstfruits",
+            "JESUS",
+            "KING OF KINGS, AND LORD OF LORDS",
+            "THE BEING",
+            "I AM",
+        ],
     }
-    assert re.search(
-        r"\bOsee and Naum\b", usj.text_of(edition.documents["CNC"]["content"])
+    # Names decided by their bearers also survive when the introduction
+    # discusses the source form, rather than referring to the bearer.
+    assert "he writes Abraam, Noe, Juda" in usj.text_of(
+        edition.documents["introduction"]["content"]
     )
-    assert {"Osee", "Naum"} <= {
+    assert {"Abraam", "Amos"} <= {
         form for decision in decisions.values() for form in decision["forms"]
     }
     spelling = pattern(
@@ -455,7 +479,7 @@ def test_the_editions_spelling_is_revised_wherever_a_word_is_printed(
                 found.extend(unscoped.findall(text))
                 for word, phrases in excepting.items():
                     assert not word.search(phrases.sub("", text)), (code, word.pattern)
-        assert found == source_names.get(code, []), code
+        assert found == source_forms.get(code, []), (code, found)
     # A scoped word that stands alone is a verb wherever it is printed, so
     # none is left in the verses of the books, outside their headings.
     alone = pattern(
@@ -1224,13 +1248,13 @@ def test_authored_pages_select_fonts_in_body_notes_and_bibliography(
     edition: bible.pipeline.Edition,
 ) -> None:
     doc = usj.parse(
-        "\\id CNC\n\\mt1 Introduction\n"
+        "\\id INT\n\\mt1 Introduction\n"
         "\\p Greek ἐνέστηκεν and Hebrew א."
         "\\f + \\ft See Παλαιά Διαθήκη.\\f*\n"
         "\\li1 Παλαιά Διαθήκη.\n"
     )
     before = copy.deepcopy(doc)
-    printed = export.document("CNC", doc, edition)
+    printed = export.document("introduction", doc, edition)
     text = usj.serialize(printed)
     assert "\\wg ἐνέστηκεν\\wg*" in text
     assert "\\wh א\\wh*" in text
@@ -1238,11 +1262,11 @@ def test_authored_pages_select_fonts_in_body_notes_and_bibliography(
     assert "\\wg Παλαιά Διαθήκη\\wg*" in text
     assert usj.text_of(printed["content"]) == usj.text_of(doc["content"])
     assert doc == before
-    documents = {**edition.documents, "CNC": doc}
+    documents = {**edition.documents, "introduction": doc}
     [(_, online)] = [
         (unit, page)
         for unit, page in web.matter(edition, documents)
-        if unit["id"] == "editor-introduction"
+        if unit["id"] == "introduction"
     ]
     online_text = usj.serialize(online)
     assert "\\wg ἐνέστηκεν\\wg*" in online_text
@@ -2178,7 +2202,12 @@ def test_foreign_spelling_reaches_the_parts_of_daniel(
             "not Old Testament",
         ),
         (
-            {"unit": "NDX", "spelling": "greek", "from": "λέγει", "to": "λέγε"},
+            {
+                "unit": "translators-preface",
+                "spelling": "greek",
+                "from": "λέγει",
+                "to": "λέγε",
+            },
             "not Old Testament",
         ),
         (

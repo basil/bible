@@ -260,7 +260,7 @@ def matter(
     edition: pipeline.Edition, documents: Mapping[str, usj.Document]
 ) -> list[tuple[Unit, usj.Document]]:
     """The front matter the book prints, with the website-only numbering
-    page after the editor's introduction, in reading order: the project's
+    page after the introduction, in reading order: the project's
     own pages, then each testament's before its books, without the
     dividers, which print a title alone; each the whole unit but for the names the
     manifest carries, opening with its book and its printed title, with its

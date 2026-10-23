@@ -12,18 +12,17 @@ class Identity(NamedTuple):
     slug: str
 
 
-# Source decision keys stay in their source namespace. Publications use
-# peripheral identifiers, and the website uses these descriptive slugs.
+# Logical units have descriptive names or existing source keys. Publications
+# use peripheral identifiers, and the website uses these descriptive slugs.
 UNITS = {
-    "XXD": Identity("abbreviations", "abbreviations"),
-    "CNC": Identity("intbible", "editor-introduction"),
+    "introduction": Identity("intbible", "introduction"),
     "XXA": Identity("x-numbering", "numbering"),
     "XXF": Identity("x-old-testament", "old-testament"),
     "XXB": Identity("preface", "brenton-preface"),
     "XXE": Identity("intot", "brenton-introduction"),
     "XXG": Identity("x-new-testament", "new-testament"),
-    "TDX": Identity("x-dedication", "dedication"),
-    "NDX": Identity("x-translators-preface", "translators-to-reader"),
+    "dedication": Identity("x-dedication", "dedication"),
+    "translators-preface": Identity("x-translators-preface", "translators-to-reader"),
 }
 
 

@@ -1,83 +1,56 @@
-# OLEBFont assembly
+# Font assembly and selection
 
-OLEBFont is the edition's text family, assembled once, when the image is
-built, by `scripts/build_olebfont.py` from whichever base the image has: from
-Valkyrie OT where `make bootstrap` found its four faces on the host, and from
-Utopia otherwise. Both recipes give a family named OLEBFont with the features
-the layout and stylesheet select (`onum`, `pnum`, `sups`, `smcp`, `c2sc`), so
-the body styles work with either base; the Greek face paired with
-the base is installed beside it (GFS Heraklit with Valkyrie, GFS Didot with
-Utopia), and the build reads both from the image.
+[scripts/build_olebfont.py](../scripts/build_olebfont.py) builds the four
+OLEBFont faces during `make bootstrap`. Preparation reads the installed fonts
+through [typeface.py](../src/bible/typeface.py). The reader-facing account of
+the typography belongs in [the introduction](../content/introduction.sfm);
+source notices are listed in [sources/README.md](../sources/README.md).
 
-## Printed chapter numerals
+| Base supplied to the image | Greek family | Printed chapter numeral |
+| --- | --- | --- |
+| All four Valkyrie OT A faces | GFS Heraklit | TeX Gyre PagellaX Regular from newpx |
+| No Valkyrie faces | GFS Didot | OLEBFont Regular |
 
-The Valkyrie recipe installs `newpx/opentype/TeXGyrePagellaX-Regular.otf` unchanged
-from the pinned archive in `fonts/chapter/`, with its README and extension
-manifest. Its embedded copyright notice names the GUST Font License; the
-package README also identifies LPPL material. These are not OFL fonts.
-The regular text face is distinct from `npxsups`, the superior donor below.
+[collect_valkyrie.sh](../scripts/collect_valkyrie.sh) finds the host's faces
+through fontconfig and copies them to `build/valkyrie/` by PostScript name.
+Conflicting copies fail collection; a partial set fails font assembly.
+`make bootstrap WITHOUT_VALKYRIE=1` explicitly selects the Utopia build.
+Valkyrie files are proprietary and must not be committed. Rebuild the image
+after changing a recipe or the available base fonts.
 
-Python selects the installed newpx face when the paired Greek family is GFS
-Heraklit (Valkyrie), and OLEBFont Regular with GFS Didot (Utopia), preserving
-Utopia’s chapter numerals without installing the newpx chapter face. Only
-PTXprint’s `c` style uses this bracketed installed file path, with `lnum` and `pnum`. This
-bypasses the body selection's embedded `onum` while preserving the existing
-size, drop, and placement. Chapter labels (`cl`) keep OLEBFont. Preparation
-refuses a missing chapter face and never substitutes another. Its bytes enter
-every book's page-fill cache key, and PDF checks require a face embedded under
-its PostScript name and reject unexpected substitutes. The shared webfont list
-excludes this print-only face.
+## Valkyrie recipe
 
-## From Valkyrie OT
+The original glyph programs, metrics, spacing, and layout lookups are retained.
+The family is renamed OLEBFont, with its original notices retained and donor
+notices added. Name ID 10 identifies the recipe for the regression tests.
 
-Valkyrie is proprietary and never committed. `scripts/collect_valkyrie.sh`
-copies the faces fontconfig finds on the host into `build/valkyrie/`, by their
-PostScript names, and the Dockerfile copies that directory, empty or full, into
-the image; one to three faces stop the image build.
+The matching `npxsups` face supplies 26 superior lowercase letters and a
+superior colon. One scale and vertical translation per face fits the donor's
+superior one to Valkyrie's superior one; that same transform places every
+donated glyph. The added outlines are unhinted. No donor character mappings
+or kerning are imported.
 
-The faces stay as designed: outlines, hints, metrics, kerning, and features
-are untouched, the word space included, and Valkyrie's copyright, trademark
-and licence notices remain embedded, as its licence requires of a licensee's
-modified copy. What Valkyrie lacks for the edition is the superior lowercase
-and the superior colon: its `sups` feature covers figures only, and the
-edition sets `35a` and `30:1` labels and alphabetic note callers with `sups`.
-These twenty-seven glyphs come from `npxsups`, the superiors font of Michael
-Sharpe's newpx package (`sources/newpx.zip`), in the matching face. One
-transform places them all, measured from the fonts rather than fixed: the
-donor's superior one is laid on Valkyrie's superior one (both flat-topped,
-without overshoot), which gives a uniform scale, about 0.85 in Regular, and a
-raise that sets the donor's superior baseline on Valkyrie's. Every donated
-letter, and the colon, then stands to Valkyrie's figures exactly as it stands
-to npxsups' own: the same x-height, capital height, descent, and baseline in
-proportion, and the same weight relative to the figures (the donor's stems
-come to about 60 units beside Valkyrie's 71; uniform scaling cannot change
-weight apart from size). Nothing is stretched or placed by hand.
-The glyphs are written unhinted,
-in Valkyrie's own hint dictionary, as `a.sups` to `z.sups` and `colon.sups`,
-and `sups` is extended to select them, and to select the superior figures from
-every form of a figure (`onum`, `tnum`, `tallfig`, small-cap), so that the
-layout's `onum` and `pnum` cannot keep a verse number from its superior.
-Nothing else of the donor is imported: no capitals, punctuation, code points
-or kerning. The family's names change to OLEBFont; its description (name ID
-10) says what it was assembled from, which the tests read to know the recipe.
+The superior one is used because both designs are flat-topped, without overshoot. One uniform transform retains the donor letters' proportions and their baseline relationship to its figures; it does not independently match stem weight. In Regular the measured scale is about 0.85, and the donor stems remain lighter than Valkyrie's figures. Nothing is stretched or individually placed.
 
-## From Utopia
+The appended `sups` lookup also covers the existing numeral variants, so
+`onum` or `tnum` cannot prevent superior verse figures. It decomposes letter
+ligatures such as `fi` into their superior letters. These details matter for
+alphabetic note callers and mixed labels such as `35a` and `30:1`.
 
-OLEBFont combines the pinned Utopia, Erewhon, and Erewhon Math sources:
+## Utopia recipe
 
-- Utopia supplies overlapping glyphs and character mappings, except superscript
-  1, 2, and 3, which use Erewhon to match its superior figure set.
-- The matching Erewhon text face supplies missing characters and alternates.
-- Erewhon Math supplies the remaining glyphs. Regular and Italic prefer Regular
-  Math; Bold and BoldItalic prefer Bold Math. Each falls back to the other Math
-  face for missing glyphs, without synthesizing weight or slant.
+Utopia supplies overlapping glyphs and mappings, except encoded superscript
+1, 2, and 3, which are replaced by the matching Erewhon superiors. The matching
+Erewhon text face supplies missing glyphs, then Erewhon Math supplies the
+remainder. Regular and Italic prefer Regular Math; Bold and BoldItalic prefer
+Bold Math, falling back to the other Math face for missing glyphs.
 
-### Scale
-
-Utopia uses the original Utopia size convention. Erewhon and Erewhon Math use
-UtopiaStd size, so their outlines, spacing, positioning, and hints are enlarged
-by **100/94**. This classification applies to every glyph in the source face,
-including small capitals, superior figures, large delimiters, and empty glyphs.
+[font_sources.py](../scripts/font_sources.py) enlarges Erewhon donors by
+`100/94` at unchanged 1000 units per em. This is a source-size normalization
+applied to the whole donor, including superiors and delimiters, rather than
+a fit calculated separately for each glyph. Utopia does not take this path.
+The pinned donors and the outline/metric tests are the basis for retaining
+this factor when updating sources; a replacement font requires rechecking it.
 
 The [Erewhon documentation](https://mirrors.mit.edu/CTAN/fonts/erewhon/doc/erewhon-doc.pdf)
 documents a 6% reduction from Heuristica, which matched old Utopia, to commercial
@@ -88,47 +61,26 @@ All sources use 1000 units/em. Utopia's `H` height is 692 units; Erewhon's is 65
 which becomes 691.49 after normalization. The inverse restores the size
 convention while retaining donor rounding, design changes, and spacing choices.
 
-`scripts/font_sources.py` expands donor CFF subroutines before scaling Type 2
-operands and private hint dictionaries. Ghost-hint markers `-20` and `-21`
-remain literal sentinels while their edge positions scale. BlueScale is divided
-by the factor to retain its pixel-size threshold. Integer OpenType metrics and
-positioning use OpenType rounding; explicit CFF widths match the rounded hmtx
-advances. Erewhon Italic's tabular oldstyle zero advance is repaired from 498
-to 500 before scaling. Utopia programs, subroutines, hints, original lookups and
-line metrics remain intact; glyph bounding boxes grow to fit the additions.
+Donor CFF subroutines are expanded before transformation. Coordinates and hint
+edges scale, ghost-hint sentinels remain literal, and BlueScale is divided by
+the factor. Integer OpenType metrics are rounded; explicit CFF widths are
+made consistent with the resulting advances. Separate CFF font dictionaries
+preserve the donors' hint environments. The Italic tabular oldstyle zero's
+known 498-unit advance is corrected to 500 before scaling.
 
-### Coverage and provenance
+The recipe widens Utopia's word space by one fifth: 225 to 270 units in
+Regular and Italic, 210 to 252 in Bold and BoldItalic. Regular oldstyle figure
+shifts live in `OLDSTYLE_SHIFTS`; proportional-figure positioning allowances
+and pair exceptions live in `FIGURE_SPACING` and `FIGURE_KERNS`. The latter
+change positioning, not advances, and leave tabular figures unkerned.
 
-Private-use collisions retain the higher-priority character mapping. Math
-glyphs with conflicting identities receive separate internal names so their
-alternate lookups remain valid. Supplementary mathematical alphabets use
-format-12 Unicode cmaps.
+Character-map collisions keep the higher-priority source; conflicting Math
+glyph identities receive separate names. Supplementary characters receive
+format-12 Unicode mappings. Math substitutions and relevant pair positioning
+are imported, but no MATH table is added: this is a text family, not an
+extensible equation font.
 
-Each generated font, in either recipe, has a `.glyphs.csv` sidecar recording
-every output slot, its source face and glyph, the scale and raise it was
-placed with, its Unicode mappings, and its metrics. These reports are generated alongside the fonts rather
-than committed. Original copyright and license notices are embedded and
-included with the generated family.
-
-OLEBFont imports Math substitutions and pair positioning for added glyphs.
-It does not import a MATH table or replace an extensible equation font.
-
-## Numerals, superiors, and word spacing
-
-PTXprint's font settings enable `onum` and `pnum` on all four faces, so the
-text, headings, notes, front matter, and contents use proportional oldstyle
-numbers. Chapter figures and labels name OLEBFont directly in the stylesheet,
-with `lnum` and `pnum`, since the base font name's embedded `onum` setting
-cannot be turned off by a feature-list subtraction; they are set in lining
-figures. The stylesheet selects `sups` for verse numbers, note origins,
-embedded verse numbers and callers, and `smcp`/`c2sc` for the running heads
-(the footer's folio turns them off again, since Valkyrie's `c2sc` would set it
-in small-cap lining figures). A mixed label, `35a` or `30:1`, is set whole in
-`sups`: the figures, the letter, and the colon are all designed superiors,
-Erewhon's in the Utopia recipe and Valkyrie's figures with npxsups' letters
-in the Valkyrie one, so no TeX shrinks or raises anything. No digits in the
-content are rewritten. `\XeTeXgenerateactualtext=1` records the input Unicode
-in the PDF, so that these alternate glyphs can still be copied and searched.
+### Spacing rationale
 
 XeTeX takes a font's interword glue from its space glyph: the stretch is half
 the advance and the shrink a third. The Utopia recipe widens the space advance
@@ -149,31 +101,54 @@ changes to glyph metrics; tabular figures remain unkerned. The shifts are in
 `font_sources.py`, and the allowances and exceptions are in `FIGURE_SPACING`
 and `FIGURE_KERNS` in `build_olebfont.py`.
 
-## Validation and inspection
+## Print and web consumers
 
-`tests/test_olebfont.py` reads which recipe the installed faces came from and
-checks what holds for both: the names and features, that `sups` sets every
-figure form, every lowercase letter, and the colon in designed superiors, that
-every Latin character the exported edition prints is encoded, that the
-installed Greek covers the variants, and that assembling the recipe again from
-its sources gives the installed bytes. For the Utopia recipe it then checks all
-four serialized faces against independently transformed source outlines and
-metrics, verifies donor preference and Unicode coverage, and checks hint edges,
-numeral features, small capitals, kerning, ligatures, and the widened space.
-Normalized Erewhon basic Latin bounds agree with Utopia within 1.1 units in
-Regular, Italic, and BoldItalic; advances agree within one unit. Bold retains
-Erewhon's deliberate widening. For the Valkyrie recipe it checks that every
-glyph, metric, lookup, and notice of the base survives unchanged and that each
-added superior is the donor's glyph under the measured placement.
+The image installs OLEBFont and its paired Greek fonts under
+`/usr/local/share/fonts`; Ezra SIL supplies Hebrew. Each OLEBFont face has a
+generated `.glyphs.csv` sidecar recording source glyphs, mappings, scale,
+vertical translation and metrics. Preserve embedded notices and the notice
+files copied by the assembler when changing the recipe.
 
-For a complete inventory of all 12 source faces, including unencoded glyphs:
+[config/layout.ini](../config/layout.ini) selects proportional oldstyle
+figures with `onum` and `pnum` on all four body faces.
+[ptxprint-mods.sty](../config/ptxprint-mods.sty) selects `sups` for verse
+figures, note origins, and callers, and `smcp`/`c2sc` for running heads.
+The footer disables those small-cap features for its folio. Chapter labels
+select OLEBFont directly with lining figures. The large chapter numeral uses
+the installed face selected by `typeface.chapter_face`, again with `lnum`
+and `pnum`, through the generated `c` style in
+[project.py](../src/bible/project.py). Its selection uses the installed Greek
+family's pairing and fails if the selected file is absent.
+
+For Valkyrie, the chapter face is copied unchanged from
+`newpx/opentype/TeXGyrePagellaX-Regular.otf`, alongside the package's README
+and manifest. It is distinct from the `npxsups` superior donor. Its embedded notice names the GUST Font License; the package README also identifies LPPL material. These are not OFL fonts. Its bytes enter
+every book's page-fill cache key. PDF verification checks for its PostScript
+name along with the expected text and quotation families.
+
+The TeX configuration enables `\XeTeXgenerateactualtext=1` so alternate
+glyphs retain their input Unicode for copying and searching.
+[web.py](../src/bible/web.py) exports complete WOFF files and CSS declarations
+from the shared installed faces. The separate chapter numeral face is
+print-only and excluded from that list.
+
+## Checking a change
+
+`make test-fonts` runs [tests/test_olebfont.py](../tests/test_olebfont.py):
+recipe-specific outline, metric, hint, and lookup checks; shared shaping and
+character-coverage checks; and byte-for-byte reconstruction of the installed
+fonts and sidecars. `make font-specimen` produces
+`dist/olebfont-specimen.pdf`. The full `make test` also runs the TeX regressions.
+Run these after `make bootstrap` has rebuilt the changed image. The Utopia regressions compare serialized outlines and metrics with independently transformed donors. Normalized Erewhon basic Latin bounds agree with Utopia within 1.1 units in Regular, Italic, and BoldItalic, and advances within one unit; Bold retains Erewhon's deliberate widening. Valkyrie checks require original glyphs, metrics, lookups, and notices to survive unchanged and added superiors to match their measured donor transform.
+
+For source-glyph inspection, run this inside the toolchain container:
 
 ```sh
 python /work/scripts/inventory_fonts.py --utopia /opt/utopia \
   --archives /opt/sources --output /work/build/font-inventory
 ```
 
-Run this inside the toolchain container. `make bootstrap` rebuilds the fonts,
-`make test` runs regressions, and `make font-specimen` renders the assembled
-family. A change to either recipe can change advances and so line breaks;
-review sample pages before publication.
+Font metrics and feature changes can alter wrapping throughout the book.
+Follow the sample and full-PDF inspection procedure in
+[AGENTS.md](../AGENTS.md); text equality alone cannot verify the resulting
+pages. Generated fonts, reports, and build output remain disposable.

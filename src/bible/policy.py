@@ -57,7 +57,19 @@ def freeze(value: object) -> object:
 
 
 # The edition's own pages, among the units the manifest lists.
-EDITOR = cast(Entry, freeze({"id": "CNC", "file": "content/introduction.sfm"}))
+EDITOR = cast(
+    Entry,
+    freeze(
+        {
+            "id": "introduction",
+            "source_id": "INT",
+            "file": "content/introduction.sfm",
+        }
+    ),
+)
+# Brenton's list of abbreviations, completed from the registry and printed
+# as a table of the introduction, where {abbreviations} asks for it.
+GLOSSARY = cast(Entry, freeze({"id": "XXD", "source": "brenton", "source_id": "FRT"}))
 OLD_TESTAMENT = cast(Entry, freeze({"id": "XXF", "file": "content/old-testament.sfm"}))
 NEW_TESTAMENT = cast(Entry, freeze({"id": "XXG", "file": "content/new-testament.sfm"}))
 # The numbering tables and textual variants are website-only.
@@ -107,9 +119,8 @@ class Policy:
         testaments, then each testament's before its books."""
         manifest = self.manifest
         return (
-            # Project units follow the contents page and are listed in it.
-            *(("front", unit) for unit in manifest["front_matter"]),
-            # The editor's introduction follows the list of abbreviations.
+            # The introduction follows the contents page and is
+            # listed in it.
             ("front", EDITOR),
             *(("old_testament", unit) for unit in manifest["old_testament_front"]),
             *(("new_testament", unit) for unit in manifest["new_testament_front"]),
@@ -146,10 +157,13 @@ class Policy:
 
     @property
     def unprinted(self) -> tuple[Entry, ...]:
-        """The source units read for what they send to the books, and
-        printed nowhere: Brenton's Appendix."""
+        """The source units read for what they send elsewhere, and printed
+        nowhere as units: Brenton's Appendix, whose notes go to the books,
+        and his list of abbreviations, whose table goes to the editor's
+        introduction."""
         return (
             cast(Entry, freeze({"id": self.appendix["source"], "source": "brenton"})),
+            GLOSSARY,
         )
 
     @property
@@ -252,7 +266,6 @@ def check(policy: Policy) -> None:
     manifest_fields = {
         "title",
         "scripture",
-        "front_matter",
         "old_testament_front",
         "new_testament_front",
         "excluded",
@@ -262,7 +275,6 @@ def check(policy: Policy) -> None:
     names = {"source_id", "title", "short_title", "abbreviation", "heading"}
     for manifest_group in (
         "scripture",
-        "front_matter",
         "old_testament_front",
         "new_testament_front",
     ):
@@ -304,8 +316,9 @@ def check(policy: Policy) -> None:
     ]
     require(not unplaced, f"Scripture units outside both testaments: {unplaced}")
     ids = [entry["id"] for entry in policy.entries]
-    # The website-only pages' ids are taken too.
-    taken = [*ids, NUMBERING["id"], VARIANTS["id"]]
+    # The website-only pages' ids are taken too, and the list of
+    # abbreviations', which is finished beside the printed units.
+    taken = [*ids, NUMBERING["id"], VARIANTS["id"], GLOSSARY["id"]]
     require(len(taken) == len(set(taken)), "Duplicate project id")
     # The rendered PDF is searched by the contents' units.
     unread = sorted({witness["id"] for witness in policy.witnesses} - set(ids))

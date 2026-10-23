@@ -39,7 +39,7 @@ AFTER = "after"
 # to print before it, "{kjv bare PSA 33:13-17}".
 NAMED = re.compile(r"\{((?:[a-z]+ )*)([1-4]?[A-Z]{2,3} [^{}]+)\}")
 # The tables the editor's pages ask for, each on a line of its own.
-TABLES = re.compile(r"^\{(names|psalms|books|glosses)\}$", re.M)
+TABLES = re.compile(r"^\{(names|psalms|books|glosses|abbreviations)\}$", re.M)
 # How a passage that the pages name may print.
 WAYS = {"kjv", "bare"}
 
@@ -512,17 +512,21 @@ def page(
     ours: bible.references.Books,
     theirs: bible.references.Books,
     *,
+    glossary: Node,
     policy: bible.policy.Policy,
 ) -> Document:
     """One of the editor's pages as it prints: the passages it names between
     braces as the edition cites them, or as the King James Bible numbers
-    them, and the tables it asks for, each on a line of its own: the chapters
-    and verses together, or the book names and the quotation glosses."""
+    them, and the tables it asks for, each at most once, on a line of its
+    own: the book names, the quotation glosses, the list of abbreviations,
+    and the chapters and verses, whose tables of the books and of the
+    Psalms are asked for together."""
     requested = TABLES.findall(text)
+    repeated = sorted({t for t in requested if requested.count(t) > 1})
+    require(not repeated, f"Tables asked for more than once: {repeated}")
     require(
-        sorted(requested)
-        in ([], ["books", "psalms"], ["names"], ["glosses"], ["glosses", "names"]),
-        f"Tables asked for, not once each, or not as one set: {requested}",
+        ("books" in requested) == ("psalms" in requested),
+        "The tables of the books and of the Psalms not asked for as a pair",
     )
 
     def named(match: re.Match[str]) -> str:
@@ -564,6 +568,8 @@ def page(
             )
             if asked[1] == "glosses":
                 blocks.append(crossrefs.gloss_table(policy))
+            elif asked[1] == "abbreviations":
+                blocks.append(glossary)
             elif asked[1] == "names":
                 blocks.append(
                     names_table(tuple(inventory), facing, ours, theirs, policy=policy)

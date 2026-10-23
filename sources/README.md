@@ -4,7 +4,7 @@ Everything the build reads is committed here with its downloaded contents unchan
 
 ## New Testament quotations of the Old Testament
 
-[`edition/turpie.json`](../edition/turpie.json) cites the Internet Archive's [scan](https://archive.org/download/oldtestamentinne00turp/oldtestamentinne00turp.pdf) of David McCalman Turpie's *The Old Testament in the New* (1868), retrieved on 2026-09-27, by page for every quotation. The build doesn't read the scan, so at 23 MB it isn't committed. [The editorial notes](../docs/edition.md#quotations) explain how the quotations are chosen and linked. To check a citation, download it and compare its hash:
+[`edition/turpie.json`](../edition/turpie.json) cites the Internet Archive's [scan](https://archive.org/download/oldtestamentinne00turp/oldtestamentinne00turp.pdf) of David McCalman Turpie's *The Old Testament in the New* (1868), retrieved on 2026-09-27, by page for every quotation. The build doesn't read the scan, so at 23 MB it isn't committed. The introduction (`content/introduction.sfm`) explains how the quotations are chosen and linked. To check a citation, download it and compare its hash:
 
 ```sh
 curl -LO https://archive.org/download/oldtestamentinne00turp/oldtestamentinne00turp.pdf
@@ -21,7 +21,7 @@ The archives below were retrieved from eBible.org on the dates shown.
 | `engkjvcpb_usfm.zip` | [eBible](https://ebible.org/Scriptures/engkjvcpb_usfm.zip) | 2026-09-23 | `copr.htm` in the archive; `kjv-notice.html` |
 | `englxxup_usfm.zip` | [eBible](https://ebible.org/Scriptures/englxxup_usfm.zip) | 2026-10-09 | `copr.htm` in the archive; `englxxup-notice.html` |
 
-`englxxup_usfm.zip` is Adam Boyd's Updated Brenton, the same translation with its spelling and formatting updated (CC0 for his changes, 2020). It supplies the boundaries of poetry and the prose markers at its end, as [the editorial notes](../docs/edition.md#lines-of-verse) explain. None of its words is printed. `englxxup-notice.html` is an unaltered copy of its [copyright page](https://ebible.org/englxxup/copyright.htm).
+`englxxup_usfm.zip` is Adam Boyd's Updated Brenton, the same translation with its spelling and formatting updated (CC0 for his changes, 2020). It supplies the boundaries of poetry and the prose markers at its end, as the introduction (`content/introduction.sfm`) explains. None of its words is printed. `englxxup-notice.html` is an unaltered copy of its [copyright page](https://ebible.org/englxxup/copyright.htm).
 
 The Brenton and King James texts in `eng-Brenton_usfm.zip` and `engkjvcpb_usfm.zip` are in the public domain outside the United Kingdom. Brenton's is also in the public domain in the UK, where the right to print and publish the King James Version belongs to the Crown and is licensed only to certain publishers under letters patent. See the [UK Intellectual Property Office's guidance](https://www.gov.uk/government/publications/copyright-notice-duration-of-copyright-term/copyright-notice-duration-of-copyright-term). `brenton-notice.html` and `kjv-notice.html` are unaltered copies of eBible's [Brenton](https://ebible.org/eng-Brenton/copyright.htm) and [KJV](https://ebible.org/engkjvcpb/copyright.htm) copyright pages, saved the same day.
 
@@ -71,11 +71,11 @@ included.
 
 `edition/alexandrinus.json` cites Henry Barclay Swete, *The Old Testament in Greek according to the Septuagint*, third edition: volume I (1901), volume II (1907), and volume III (1905). The decisions cite printed page numbers. Swete’s apparatus checks Brenton’s reports of Codex Alexandrinus and settles the placement of supplied English passages; it is not an additional English translation printed in the edition.
 
-The scans are consulted editorial evidence. The build reads the recorded decisions and citations in `edition/alexandrinus.json` and does not require the images or network access. See [Readings from Codex Alexandrinus](../docs/edition.md#readings-from-codex-alexandrinus) for the limits of this use, and [CONTRIBUTING.md](../CONTRIBUTING.md#reviewing-the-readings-from-codex-alexandrinus) for the review of each decision.
+The scans are consulted editorial evidence. The build reads the recorded decisions and citations in `edition/alexandrinus.json` and does not require the images or network access. See the introduction (`content/introduction.sfm`) for the limits of this use, and [CONTRIBUTING.md](../CONTRIBUTING.md#reviewing-the-readings-from-codex-alexandrinus) for the review of each decision.
 
 ## English for the readings from Codex Alexandrinus
 
-Where Brenton gives a reading of Codex Alexandrinus with no English of his own, or with English that is wrong or incomplete, a decision in `edition/alexandrinus.json` supplies the words from one of the following public-domain translations, in King James English, and names the source in its reason; [the editorial notes](../docs/edition.md#readings-from-codex-alexandrinus) say when.
+Where Brenton gives a reading of Codex Alexandrinus with no English of his own, or with English that is wrong or incomplete, a decision in `edition/alexandrinus.json` supplies the words from one of the following public-domain translations, in King James English, and names the source in its reason; the introduction (`content/introduction.sfm`) says when.
 
 | Work | Where | Consulted |
 | --- | --- | --- |
@@ -86,7 +86,7 @@ Where Brenton gives a reading of Codex Alexandrinus with no English of his own, 
 
 [`TVTMS - Translators Versification Traditions with Methodology for Standardisation for Eng+Heb+Lat+Grk+Others - STEPBible.org CC BY.txt`](<TVTMS - Translators Versification Traditions with Methodology for Standardisation for Eng+Heb+Lat+Grk+Others - STEPBible.org CC BY.txt>) is [STEP Bible](https://www.STEPBible.org)'s table of the ways Bibles number their chapters and verses, retrieved on 2026-09-28 from [STEPBible-Data](https://github.com/STEPBible/STEPBible-Data/tree/1f342173b881ba5d1a5a4cae6e7c6c3fcc7cac51/Versification) at commit `1f34217`. Data created by <www.STEPBible.org> based on work at Tyndale House Cambridge (CC BY 4.0). The file is unaltered. Its header asks users to refer others to [github.com/STEPBible](https://github.com/STEPBible) rather than redistribute it; it is committed here, as its licence allows, so that the checks that read it never need the network. Look there for the current version.
 
-The table is one of two witnesses to where each verse of this Old Testament stands in the King James Bible; the other is the words of the two translations. The build hears both, and the editor's readings in [`edition/versification.json`](../edition/versification.json) stand over both. Where the numbering departs from the table, the run says what it rests on instead, as the licence asks of changes; `make review` lists every run in `build/review/numbering.md`. [The editorial notes](../docs/edition.md#numbering) explain.
+The table is one of two witnesses to where each verse of this Old Testament stands in the King James Bible; the other is the words of the two translations. The build hears both, and the editor's readings in [`edition/versification.json`](../edition/versification.json) stand over both. Where the numbering departs from the table, the run says what it rests on instead, as the licence asks of changes; `make review` lists every run in `build/review/numbering.md`. [docs/numbering.md](../docs/numbering.md) explains.
 
 ## The New Testament Greek and its witnesses
 
@@ -126,9 +126,9 @@ The Boyd scrape is a local package, not a publisher download: its members are th
 
 ## 1611 marginal notes
 
-[`exhaustive-listing-marginal-notes-1611-edition-king-james-bible.md`](exhaustive-listing-marginal-notes-1611-edition-king-james-bible.md) is a Markdown copy of Calvin George's ["An exhaustive listing of the marginal notes of the 1611 edition of the King James Bible"](https://en.literaturabautista.com/exhaustive-listing-marginal-notes-1611-edition-king-james-bible), from Literatura Bautista. It covers the translators' notes on both testaments: alternative translations, literal meanings, and variant readings. It leaves out the Apocrypha, the chapter summaries, and the cross-references. George counts 6,566 notes in the Old Testament and 775 in the New; Scrivener counted 6,637 and 767.
+[`exhaustive-listing-marginal-notes-1611-edition-king-james-bible.md`](exhaustive-listing-marginal-notes-1611-edition-king-james-bible.md) is a Markdown copy of Calvin George's ["An exhaustive listing of the marginal notes of the 1611 edition of the King James Bible"](https://en.literaturabautista.com/exhaustive-listing-marginal-notes-1611-edition-king-james-bible), from Literatura Bautista. It covers the translators' notes on both testaments: alternative translations, literal meanings, and variant readings. It leaves out the Apocrypha, the chapter summaries, and the cross-references. George counts 6,566 notes in the Old Testament and 775 in the New; Scrivener counted 6,637 and 765.
 
-George modernized much of the spelling and sometimes had to judge which words a note refers to, so this is an edited transcription, not a facsimile. The build uses only the New Testament notes. The [editorial notes](../docs/edition.md#the-1611-marginal-notes) explain how they're placed and corrected.
+George modernized much of the spelling and sometimes had to judge which words a note refers to, so this is an edited transcription, not a facsimile. The build uses only the New Testament notes. The introduction (`content/introduction.sfm`) explains how they're placed and corrected.
 
 The historical published note wording is in the public domain under U.S. copyright law. Calvin George and Literatura Bautista are credited as the transcription source. This statement does not cover modern editorial additions or website assets.
 
@@ -145,7 +145,7 @@ The fonts below are under the SIL Open Font License, except newpx, whose fonts e
 | `newpx.zip`                                 | [CTAN](https://mirrors.ctan.org/fonts/newpx.zip)                                                                                                | 1.551 (2025-10-31)          | OLEBFont superiors, chapter numerals, with Valkyrie OT  |
 | `OTF-source-code-pro-2.042R-u_1.062R-i.zip` | [Adobe](https://github.com/adobe-fonts/source-code-pro/releases/download/2.042R-u/1.062R-i/1.026R-vf/OTF-source-code-pro-2.042R-u_1.062R-i.zip) | 2.042 upright, 1.062 italic | Nothing printed; PTXprint loads it for crop-mark labels |
 
-The main text family, OLEBFont, is assembled by `scripts/build_olebfont.py` from Valkyrie OT, which is proprietary and never committed, with the superior letters and colon of newpx's `npxsups`, where `make bootstrap` finds Valkyrie's four faces on the host; and otherwise from Utopia (the repository pinned in `Dockerfile`), the matching four Erewhon text faces, and Erewhon Math. See [font normalization](../docs/font-normalization.md) for both recipes.
+The main text family, OLEBFont, is assembled by `scripts/build_olebfont.py` from Valkyrie OT, which is proprietary and never committed, with the superior letters and colon of newpx's `npxsups`, where `make bootstrap` finds Valkyrie's four faces on the host; and otherwise from Utopia (the repository pinned in `Dockerfile`), the matching four Erewhon text faces, and Erewhon Math. See [the fonts](../docs/font-normalization.md) for both recipes.
 
 Utopia supplies overlapping glyphs, spacing, ligatures, kerning and hinting, except that superscript 1, 2 and 3 use Erewhon’s designs for a consistent figure set. Erewhon supplies missing glyphs and alternate forms, followed by Erewhon Math. Both donors are enlarged by 100/94 to restore Utopia size, including their spacing, positioning and hints.
 

@@ -309,7 +309,6 @@ class ManifestExcluded(TypedDict, total=False):
 
 class Manifest(TypedDict, total=False):
     excluded: ReadOnly[ManifestExcluded]
-    front_matter: ReadOnly[tuple[Entry, ...]]
     new_testament_front: ReadOnly[tuple[Entry, ...]]
     old_testament_front: ReadOnly[tuple[Entry, ...]]
     scripture: ReadOnly[tuple[Entry, ...]]

@@ -43,13 +43,13 @@
         "why": "in words, as the rest of the sum is, and six pence as the note on Matthew 17:27 writes it"
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "from": "his 4. Cateches.",
         "to": "his 4th Cateches.",
         "why": "an ordinal: Cyril's fourth catechetical lecture"
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "from": "17. 11. and",
         "to": "17. 11 and"
       },
@@ -249,7 +249,7 @@
         "to": "(query"
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "from": "Cateches.",
         "to": "Catechesis.",
         "why": "Cyril of Jerusalem's fourth catechetical lecture"
@@ -296,33 +296,27 @@
     "why": "Print page and section headings in mixed case, retaining their hierarchy, punctuation, and line arrangements; keep the dedication's by and etc. lowercase.",
     "changes": [
       {
-        "unit": "XXD",
-        "from": "ABBREVIATIONS AND SIGNS USED IN THE NOTES",
-        "to": "Abbreviations Used in the Notes",
-        "why": "the list holds no signs: Brenton's are written adds and omits, and Turpie's are explained in the editor's introduction"
-      },
-      {
-        "unit": "TDX",
+        "unit": "dedication",
         "from": "TO THE MOST HIGH AND MIGHTY PRINCE",
         "to": "To the Most High and Mighty Prince"
       },
       {
-        "unit": "TDX",
+        "unit": "dedication",
         "from": "JAMES,",
         "to": "James,"
       },
       {
-        "unit": "TDX",
+        "unit": "dedication",
         "from": "BY THE GRACE OF GOD",
         "to": "by the Grace of God"
       },
       {
-        "unit": "TDX",
+        "unit": "dedication",
         "from": "KING OF GREAT BRITAIN, FRANCE, AND IRELAND,",
         "to": "King of Great Britain, France, and Ireland,"
       },
       {
-        "unit": "TDX",
+        "unit": "dedication",
         "from": "DEFENDER OF THE FAITH, &c.",
         "to": "Defender of the Faith, &c."
       }
@@ -985,7 +979,7 @@
     "changes": [],
     "markers": [
       {
-        "unit": "TDX",
+        "unit": "dedication",
         "from": "mt2",
         "to": "po",
         "opening": "The Translators of the Bible wish",
@@ -1116,84 +1110,84 @@
     "changes": [],
     "sections": [
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "before": "Zeal to promote",
         "heading": "The Best Things Have Been Calumniated"
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "before": "If we will descend",
         "heading": "The Highest Personages Have Been Calumniated"
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "before": "This, and more to this purpose",
         "heading": "His Majesty’s Constancy, Notwithstanding Calumniation, for the Survey of the English Translations"
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "before": "But now what piety",
         "heading": "The Praise of the Holy Scriptures"
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "before": "But how shall men meditate",
         "heading": "Translation Necessary"
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "before": "While God would be known",
         "heading": "The Translation of the Old Testament out of the Hebrew into Greek"
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "before": "There were also within",
         "heading": "Translation out of Hebrew and Greek into Latin"
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "before": "Now though the Church",
         "heading": "The Translating of the Scripture into the Vulgar Tongues"
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "before": "Now the Church of Rome",
         "heading": "The Unwillingness of Our Chief Adversaries, That the Scriptures Should Be Divulged in the Mother Tongue, etc."
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "before": "Many men’s mouths",
         "heading": "The Speeches and Reasons, Both of Our Brethren and of Our Adversaries, against This Work"
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "before": "And to the same effect",
         "heading": "A Satisfaction to Our Brethren"
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "before": "Now to the latter we answer",
         "heading": "An Answer to the Imputations of Our Adversaries"
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "before": "But it is high time",
         "heading": "The Purpose of the Translators, with Their Number, Furniture, Care, etc."
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "before": "Some peradventure would have",
         "heading": "Reasons Moving Us to Set Diversity of Senses in the Margin, Where There Is Great Probability for Each"
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "before": "Another thing we think good",
         "heading": "Reasons Inducing Us Not to Stand Curiously upon an Identity of Phrasing"
       }
     ],
     "italics": [
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "opening": "Yet for all that, the learned know that certain",
         "spans": [
           "the sword devoureth as well one as another",
@@ -1203,7 +1197,7 @@
         ]
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "opening": "If we will descend to later times, we shall find",
         "spans": [
           "Pupillus",
@@ -1217,7 +1211,7 @@
         ]
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "opening": "But now what piety without truth? What truth,",
         "spans": [
           "Tolle, lege; tolle, lege;",
@@ -1244,7 +1238,7 @@
         ]
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "opening": "But how shall men meditate in that which they",
         "spans": [
           "Except I know the power of the voice, I shall be to him that speaketh a barbarian, and he that speaketh shall be a barbarian to me",
@@ -1254,21 +1248,21 @@
         ]
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "opening": "While God would be known only in Jacob, and have",
         "spans": [
           "Hexapla"
         ]
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "opening": "There were also within a few hundred years after",
         "spans": [
           "Latini interpretes nullo modo numerari possunt"
         ]
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "opening": "Now though the Church were thus furnished with",
         "spans": [
           "Multarum gentium linguis Scriptura ante translata docet falsa esse quœ addita sunt, &c.",
@@ -1285,14 +1279,14 @@
         ]
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "opening": "Now the Church of Rome would seem at the length",
         "spans": [
           "Lucifugoe Scripturarum"
         ]
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "opening": "Many men’s mouths have been open a good while",
         "spans": [
           "lacte gypsum malè miscetur",
@@ -1305,7 +1299,7 @@
         ]
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "opening": "And to the same effect say we, that we are so far",
         "spans": [
           "If Timotheus had not been, we had not had much sweet musick: But if Phrynis",
@@ -1317,7 +1311,7 @@
         ]
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "opening": "Now to the latter we answer, that we do not deny,",
         "spans": [
           "Verum ubi multa nitent in carmine, non ego paucis offendor maculis, &c.",
@@ -1325,7 +1319,7 @@
         ]
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "opening": "Plutarch writeth, that after that Rome had been",
         "spans": [
           "Ex personis probamus fidem, an ex fide personas?",
@@ -1333,7 +1327,7 @@
         ]
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "opening": "Yet before we end, we must answer a third cavil",
         "spans": [
           "Palinodia",
@@ -1345,7 +1339,7 @@
         ]
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "opening": "But it is high time to leave them, and to shew in",
         "spans": [
           "exercendi causâ",
@@ -1357,7 +1351,7 @@
         ]
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "opening": "Some peradventure would have no variety of senses",
         "spans": [
           "whatsoever things are necessary are manifest",
@@ -1366,7 +1360,7 @@
         ]
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "opening": "Another thing we think good to admonish thee of,",
         "spans": [
           {
@@ -1396,7 +1390,7 @@
         ]
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "opening": "Many other things we might give thee warning of,",
         "spans": [
           "It is a grievous thing",
@@ -1409,172 +1403,172 @@
     ],
     "references": [
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "after": "as it is in Samuel",
         "passages": "2SA 11:25"
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "after": "to fight neither with small nor great, save only against the king of Israel",
         "passages": "1KI 22:31"
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "after": "he was scorned and scoffed at by his own wife",
         "passages": "2SA 6:16"
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "after": "the grievous servitude of thy father, and his sore yoke, lighter",
         "passages": "1KI 12:4"
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "after": "You are risen up in your fathers’ stead, an increase of sinful men",
         "passages": "NUM 32:14"
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "after": "saith the wise man",
         "passages": "ECC 1:9"
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "after": "As your fathers did, so do ye",
         "passages": "ACT 7:51"
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "after": "Them that honour me I will honour",
         "passages": "1SA 2:30"
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "after": "The Scriptures we are commanded to search",
         "passages": "JHN 5:39; ISA 8:20",
         "remove": "John 5. 39. Isaiah 8. 20. "
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "after": "They are commended that searched and studied them",
         "passages": "ACT 17:11; ACT 8:28-29",
         "remove": "Acts 17. 11 and 8. 28, 29. "
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "after": "They are reproved that were unskilful in them, or slow to believe them",
         "passages": "MAT 22:29; LUK 24:25",
         "remove": "Matth. 22. 29. Luke 24. 25. "
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "after": "They can make us wise unto salvation",
         "passages": "2TI 3:15",
         "remove": "2 Tim. 3. 15. "
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "after": "and he that speaketh shall be a barbarian to me",
         "passages": "1CO 14"
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "after": "by which means the flocks of Laban were watered",
         "passages": "GEN 29:10"
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "after": "which was deep",
         "passages": "JHN 4:11"
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "after": "I cannot, for it is sealed",
         "passages": "ISA 29:11"
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "after": "their horses flesh and not spirit",
         "passages": "ISA 31:3"
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "after": "that they also might provide for themselves",
         "passages": "2KI 7:9"
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "after": "As we have heard, so we have seen",
         "passages": "PSA 48:8"
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "after": "lest his deeds should be reproved",
         "passages": "JHN 3:20"
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "after": "he shall even break down their stony wall",
         "passages": "NEH 4:3"
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "after": "yet the gleaning of grapes of Ephraim was not to be despised",
         "passages": "JDG 8:2",
         "remove": "See Judges viii. verse 2. "
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "after": "and yet he offended the Prophet for giving over then",
         "passages": "2KI 13:18-19"
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "after": "What is the chaff to the wheat? saith the Lord",
         "passages": "JER 23:28"
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "after": "in many things we offend all",
         "passages": "JAS 3:2"
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "after": "wept when they considered the latter",
         "passages": "EZR 3:12"
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "after": "for telling them the truth",
         "passages": "GAL 4:16"
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "after": "if the former Law and Testament had been sufficient, there had been no need of the latter",
         "passages": "HEB 7:11; HEB 8:7"
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "after": "do not cast earth into them, with the Philistines",
         "passages": "GEN 26:15"
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "after": "neither prefer broken pits before them, with the wicked Jews",
         "passages": "JER 2:13"
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "after": "Depart out of our coasts",
         "passages": "MAT 8:34"
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "after": "sell your birthright for a mess of pottage",
         "passages": "HEB 12:16"
       },
       {
-        "unit": "NDX",
+        "unit": "translators-preface",
         "after": "It is a fearful thing to fall into the hands of the living God",
         "passages": "HEB 10:31"
       }

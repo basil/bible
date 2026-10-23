@@ -160,7 +160,11 @@ def placements(entry: Entry, policy: bible.policy.Policy) -> Placements | None:
 
 
 def is_glossary(entry: Entry) -> bool:
-    return (entry["source"], source_id(entry)) == ("brenton", terminology.GLOSSARY)
+    glossary = bible.policy.GLOSSARY
+    return (entry["source"], source_id(entry)) == (
+        glossary["source"],
+        source_id(glossary),
+    )
 
 
 def rebased(reading: Reading, text: str) -> Reading:

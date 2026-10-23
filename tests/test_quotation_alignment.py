@@ -315,8 +315,8 @@ def test_a_range_run_a_verse_too_far_is_caught(
 
 # Turpie's rows at the verses the Byzantine text changes, Matthew 27:35's
 # excluded. Each was read against the words that remain, which still quote
-# the passage while the TR note gives the words lost (docs/edition.md,
-# Quotations). A row new here is one to read the same way.
+# the passage while the TR note gives the words lost (content/introduction.sfm,
+# Notes and Quotations). A row new here is one to read the same way.
 AT_CHANGED_VERSES = {
     "Q026", "Q027", "Q058", "Q061", "Q062", "Q066", "Q070", "Q085", "Q132",
     "Q165", "Q176", "Q199", "Q207", "Q208", "Q233", "Q245", "Q253", "Q255",

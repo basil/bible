@@ -39,7 +39,6 @@ SENTENCE_END = re.compile(r"['’”)]*(?:\s+[A-Z]|[ \t]*(?:\n|$))")
 ERA = re.compile(r"\b(?P<era>a\.d|b\.c)\.(?: (?P<year>\d+(?:[–-]\d+)?)\b)?")
 # Latin or a title in a meaning, italic as Brenton's "quasi dicat" is.
 LATIN = re.compile(r"_([^_]+)_")
-GLOSSARY = "FRT"
 # The witnesses whose additions and omissions the sources mark with a sign.
 WITNESSES = ("hebrew", "alexandrine", "vatican")
 # The labels that introduce what follows them, so that their stop never ends

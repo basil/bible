@@ -255,8 +255,8 @@
 % font size it finds through the style stack and caches the result under
 % \f@ntstyle, the style it was asked about. A table row (ptx-tables.tex,
 % \t@blerow) asks about the previous paragraph's marker through the row's
-% stack, so a table that follows a title, as on the Abbreviations page,
-% caches the body's leading as the title's, and every mt1 after it is set
+% stack, so a table that follows a title caches the body's leading as the
+% title's, and every mt1 after it is set
 % on body leading: its wrapped lines touch, and a large line after a small
 % one has no room. Cache a baseline only when it was looked up without a
 % stack: PTXprint passes the same style twice for that. Every paragraph

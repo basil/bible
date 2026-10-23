@@ -19,6 +19,7 @@ from bible import (
     crossrefs,
     numbering,
     quotations,
+    scripture,
     terminology,
     usfm,
     usj,
@@ -77,6 +78,7 @@ def printed(
                 facing,
                 ours,
                 names[1],
+                glossary=edition.glossary,
                 policy=policy,
             )
         )
@@ -340,7 +342,7 @@ def test_the_page_prints_its_tables(edition: bible.pipeline.Edition) -> None:
             ["Orthodox Liturgical English Bible"],
         ]
     intro = usj.serialize(edition.documents[EDITOR["id"]])
-    assert "the word \\it missing\\it* stands on its side." in intro
+    assert "\\s1 The Books, Their Order, and Their Names\n" in intro
     for ours, theirs in (
         ("3 Kingdoms", "1 Kings"),
         ("Epistle of Jeremias", "Baruch 6 (Apocrypha)"),
@@ -348,7 +350,7 @@ def test_the_page_prints_its_tables(edition: bible.pipeline.Edition) -> None:
     ):
         assert f"\\tr\n\\tc1 {theirs}\n\\tc2 {ours}\n" in intro
     assert "as Proverbs 22:8a, is usually an addition" in page
-    assert "the Song of the Three Children is headed from Daniel 3:25 to 3:90." in intro
+    assert "the Prayer of Azarias and the Song stand within chapter 3" in intro
     assert "as 2:28–32 beside 3:1–5, they answer" in page
     # Esther's verses that are the King James Bible's Rest of Esther.
     assert (
@@ -372,21 +374,31 @@ def test_the_page_prints_its_tables(edition: bible.pipeline.Edition) -> None:
     assert "Judges" not in headings and "Ruth" not in headings
 
 
-@pytest.mark.parametrize("more", ["", "\\ip Psalms\n{psalms}\n"])
-def test_the_page_asks_for_each_table_once(printed: Printed, more: str) -> None:
-    # A complete set of tables, with none repeated.
-    with pytest.raises(CheckFailed, match="not once each"):
-        printed(f"\\ip x\n{{books}}\n{{books}}\n{more}")
-
-
 @pytest.mark.parametrize(
-    "written", ["{glosses}\n{glosses}\n", "{glosses}\n{books}\n{psalms}\n"]
+    "written",
+    [
+        "{books}\n{books}\n",
+        "{books}\n{books}\n\\ip Psalms\n{psalms}\n",
+        "{glosses}\n{glosses}\n",
+        "{names}\n{names}\n",
+        "{abbreviations}\n{abbreviations}\n",
+    ],
 )
-def test_the_page_refuses_repeated_glosses_or_glosses_with_numbering(
+def test_the_page_asks_for_each_table_at_most_once(
     printed: Printed, written: str
 ) -> None:
-    with pytest.raises(CheckFailed, match="not as one set"):
+    with pytest.raises(CheckFailed, match="more than once"):
         printed(f"\\ip x\n{written}")
+
+
+def test_the_page_tables_the_abbreviations_where_it_asks(
+    printed: Printed, edition: bible.pipeline.Edition
+) -> None:
+    # Brenton's list, completed from the registry, as the pipeline finished it.
+    page = printed("\\ip Before.\n{abbreviations}\n\\ip After.\n")
+    table = usj.serialize(usj.document([edition.glossary]))
+    assert page == "\\ip Before.\n" + table + "\\ip After.\n"
+    assert "\\tr\n\\tc1 \\it KJV\\it*\n\\tc2 for King James Version\n" in page
 
 
 @pytest.mark.parametrize(
@@ -448,29 +460,75 @@ def test_a_passage_misnamed_is_refused(
 
 
 def test_the_introduction_names_its_passages(
-    policy: bible.policy.Policy,
     edition: bible.pipeline.Edition,
     sources: bible.sources.Sources,
 ) -> None:
     written = sources.authored[EDITOR["file"]]
     page = usj.serialize(edition.documents[EDITOR["id"]])
-    # No chapter and verse is typed: each is a passage named, which the files
-    # are held to.
-    assert not re.search(r"\d+:\d+", re.sub(r"\{[^{}]*\}", "", written))
+    # Passage references are generated: a chapter and verse typed in the
+    # introduction's own words names a passage in braces, so that it is
+    # checked and printed under the edition's names, except for the
+    # passages the edition does not print, the King James Bible's and the
+    # Hebrew's labels of Proverbs' displaced passages, which the page
+    # discusses. Footnotes cite the sources by their own numbering, and the
+    # works cited give a recording's length.
+    typed = re.sub(r"\\f \+.*?\\f\*", "", written, flags=re.S)
+    typed = re.sub(r"^\\li1 .*$", "", typed, flags=re.M)
+    typed = re.sub(r"\{[^{}]*\}", "", typed)
+    allowed = (
+        "Luke 17:36",
+        "Acts 8:37",
+        "Acts 15:34",
+        "Acts 24:7",
+        "John 7:53–8:11",
+        "Daniel 3:24–90",
+        "2 Esdras 1:39–40",
+        "30:15–33",
+        "30:1–14",
+        "31:1–9",
+        "30:15",
+        "31:10",
+        "31:1",
+        "30:1",
+        "24:23",
+    )
+    for reference in allowed:
+        # Whole references alone: 30:1 excuses neither 130:1 nor 30:10.
+        exact = re.compile(rf"(?<![\d:–]){re.escape(reference)}(?![\d–])")
+        assert exact.search(typed), reference
+        typed = exact.sub("", typed)
+    assert not re.search(r"\d+:\d+", typed)
     assert "\\tr " not in written
-    assert "so that Psalm 33:13–17 is the King James Bible’s 34:12–16." in page
-    assert "so that Jeremias 38:31–34 is the King James Bible’s 31:31–34." in page
-    assert "and the chapters and verses are numbered as in the Greek." in page
-    # A Septuagint addition that Brenton letters has no King James number,
-    # so the introduction names the one that a link stands at.
-    linked = {
-        str(verse)
-        for row in quotations.reviewed_rows(policy=policy)
-        for verse in quotations.brenton_verses(row["ot"], policy=policy)
-        if verse.letter
-    }
-    assert linked == {"PRO 22:8a"}
-    assert "of 2 Corinthians 9:7 is found at Proverbs 22:8a." in page
+    assert "{" not in page and "}" not in page
+    # Concrete examples include a renamed book and both Testaments.
+    for named, printed in (
+        ("1KI 14:3", "3 Kingdoms 14:3"),
+        ("EZK 1:14", "Ezekiel 1:14"),
+        ("JHN 3:7", "John 3:7"),
+        ("REV 22:19", "Revelation 22:19"),
+    ):
+        assert "{" + named + "}" in written
+        assert "(" + printed + ")" in page
+
+
+def test_the_introductions_scripture_quotes_match_the_prepared_edition(
+    edition: bible.pipeline.Edition,
+) -> None:
+    introduction = usj.text_of(edition.documents[EDITOR["id"]]["content"])
+    for code, reference in (
+        ("JHN", "3:7"),
+        ("REV", "22:19"),
+        ("EZK", "1:14"),
+        ("1KI", "14:3"),
+        ("MAT", "21:16"),
+        ("GEN", "3:22"),
+    ):
+        text = scripture.verses(edition.documents[code])[reference].text
+        if code == "MAT":
+            text = text[text.index("Yea;") :]
+        elif code == "GEN":
+            text = text[: text.index(", Behold,")]
+        assert text.rstrip(".") in introduction, (code, reference)
 
 
 def test_the_introduction_tables_the_glosses_by_turpies_classes(
@@ -479,14 +537,22 @@ def test_the_introduction_tables_the_glosses_by_turpies_classes(
     # Each gloss the links print, beside the classes of Turpie's it is
     # printed for and what it means: C is divided, as crossrefs.agreement
     # divides it.
-    _, table = [
-        b for b in edition.documents[EDITOR["id"]]["content"] if b["type"] == "table"
+    # The introduction's tables are known by their heads: the glosses'
+    # among the names' and, when it asks for it, the abbreviations'.
+    [(heads, *rows)] = [
+        rows
+        for b in edition.documents[EDITOR["id"]]["content"]
+        if b["type"] == "table"
+        for rows in [
+            [
+                tuple(
+                    usj.text_of(cell["content"]) for cell in usj.objects(row["content"])
+                )
+                for row in usj.objects(b["content"])
+            ]
+        ]
+        if rows[0] == ("Gloss", "Turpie’s classes", "Meaning")
     ]
-    heads, *rows = [
-        tuple(usj.text_of(cell["content"]) for cell in usj.objects(row["content"]))
-        for row in usj.objects(table["content"])
-    ]
-    assert heads == ("Gloss", "Turpie’s classes", "Meaning")
     assert [(gloss, classes) for gloss, classes, _ in rows] == [
         ("Heb.\u00a0+ LXX", "A, C\u00a0I"),
         ("Heb.\u00a0≠ LXX", "B"),
@@ -590,9 +656,11 @@ def test_generated_names_share_the_body_heading_registry(
     assert page.endswith("\\ip Renamed Jeremias 38:31\n")
 
 
-@pytest.mark.parametrize("written", ["{names}\n{names}\n", "{books}\n", "{psalms}\n"])
-def test_a_page_refuses_duplicate_or_incomplete_table_groups(
+@pytest.mark.parametrize(
+    "written", ["{books}\n", "{psalms}\n", "{glosses}\n{psalms}\n"]
+)
+def test_a_page_asks_for_the_books_and_the_psalms_as_a_pair(
     printed: Printed, written: str
 ) -> None:
-    with pytest.raises(CheckFailed, match="not once each, or not as one set"):
+    with pytest.raises(CheckFailed, match="not asked for as a pair"):
         printed(written)

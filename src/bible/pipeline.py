@@ -520,12 +520,12 @@ def front_and_back(read_sources: Read, ctx: annotate.Context) -> tuple[
     dict[str, list[Content]],
     annotate.Report,
 ]:
-    """The translations' front and back matter, and the notes of Brenton's
-    Appendix, which is read for them and printed nowhere, by the verse each
-    goes to."""
+    """The translations' front and back matter, with Brenton's list of
+    abbreviations, which the introduction tables, and the notes of
+    Brenton's Appendix, which is read for them and printed nowhere, by the
+    verse each goes to."""
     policy, report = ctx.policy, annotate.Report()
     docs, appendix_notes = {}, {}
-    unprinted = {e["id"] for e in policy.unprinted}
     for entry in (*policy.entries, *policy.unprinted):
         if "file" in entry or "section" in entry:
             continue
@@ -536,7 +536,7 @@ def front_and_back(read_sources: Read, ctx: annotate.Context) -> tuple[
             else read_sources.kjv[code]
         )
         # Of the Appendix, the notes alone: the books print its passages.
-        appendix = entry["id"] in unprinted
+        appendix = entry["id"] == policy.appendix["source"]
         doc = alexandrinus.appendix_notes(source) if appendix else source
         doc, moved = matter.unit(entry, doc, ctx, report)
         if appendix:
@@ -548,9 +548,11 @@ def front_and_back(read_sources: Read, ctx: annotate.Context) -> tuple[
         for e in policy.entries
         if "section" not in e and e.get("source") == "brenton"
     }
-    # The Appendix's notes print at their verses, so printed as well they
+    # The Appendix's notes print at their verses, and the list of
+    # abbreviations in the introduction, so printed as well either
     # would print twice.
-    require(not unprinted & front, "Brenton's Appendix is printed as well as sent")
+    twice = sorted(front & {source_id(e) for e in policy.unprinted})
+    require(not twice, f"Brenton sources printed as well as sent: {twice}")
     return docs, appendix_notes, report
 
 
@@ -713,11 +715,13 @@ def authored(
     read_sources: Read,
     revised: Revised,
     found: stages.Reconciliation,
+    glossary: Node,
 ) -> tuple[dict[str, Document], Document, Document, tuple[Entry, ...]]:
-    """The edition's own pages, with the passages and tables they ask for:
-    the pages the book prints, by id; the numbering and textual
-    variants pages, which the website publishes; and the variants’ entries,
-    each its row and its lanes, for the website to publish by its verse."""
+    """The edition's own pages, with the passages and tables they ask for,
+    among them the list of abbreviations, Brenton's as revised: the pages
+    the book prints, by id; the numbering and textual variants pages, which
+    the website publishes; and the variants’ entries, each its row and its
+    lanes, for the website to publish by its verse."""
     policy = ctx.policy
     # The variants quote the King James books before the readings and the
     # New Testament after them with the same systematic spelling and
@@ -744,7 +748,8 @@ def authored(
             continue
         text = read_sources.authored[entry["file"]]
         require(
-            text.startswith(f"\\id {entry['id']}\n"), f"Wrong id in {entry['file']}"
+            text.startswith(f"\\id {source_id(entry)}\n"),
+            f"Wrong id in {entry['file']}",
         )
         pages[entry["id"]] = numbering.page(
             text,
@@ -752,6 +757,7 @@ def authored(
             read_sources.kjv_chapters,
             ctx.books,
             read_sources.kjv_books,
+            glossary=glossary,
             policy=policy,
         )
     # These pages discuss source names, so retain their spelling. Finish
@@ -795,11 +801,13 @@ class Edition:
     # What the reconciliation of the New Testament with the Byzantine text
     # worked out, for the review and the textual variants.
     byzantine: stages.Reconciliation
-    # The website-only numbering and textual variants pages, and the
-    # variants entries.
+    # The website-only numbering and textual variants pages, the variants
+    # entries, and Brenton's list of abbreviations completed from the
+    # registry, which the introduction tables.
     numbering_page: Document
     variants_page: Document
     variants: tuple[Entry, ...]
+    glossary: Node
     # What came of CCEL's notes, with those set in the verses promotion
     # supplied.
     ccel: ccel.Report
@@ -871,8 +879,15 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
     front, appendix_notes, front_report = front_and_back(read_sources, ctx)
     books, reports = annotated(units, read_sources, appendix_notes, ctx)
     revised = revise(front, books, policy)
+    # Brenton's list of abbreviations is finished and checked as the front
+    # matter is, and the introduction tables it.
+    unit = bible.policy.GLOSSARY["id"]
+    check_document(
+        unit, revised.finished[unit], scripture_unit=False, authored_page=False
+    )
+    glossary = terminology.glossary_table(revised.finished[unit])
     pages, numbering_page, variants_page, entries = authored(
-        ctx, read_sources, revised, promoted.byzantine
+        ctx, read_sources, revised, promoted.byzantine, glossary
     )
     prepared = {**pages, **revised.finished}
     documents: dict[str, Document] = {}
@@ -948,6 +963,7 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
         numbering_page=numbering_page,
         variants_page=variants_page,
         variants=entries,
+        glossary=glossary,
         ccel=promoted.ccel,
     )
 

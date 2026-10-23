@@ -1317,13 +1317,6 @@
       ]
     }
   ],
-  "front_matter": [
-    {
-      "source": "brenton",
-      "id": "XXD",
-      "source_id": "FRT"
-    }
-  ],
   "old_testament_front": [
     {
       "source": "brenton",
@@ -1352,12 +1345,12 @@
   "new_testament_front": [
     {
       "source": "kjv",
-      "id": "TDX",
+      "id": "dedication",
       "source_id": "OTH"
     },
     {
       "source": "kjv",
-      "id": "NDX",
+      "id": "translators-preface",
       "source_id": "INT",
       "title": "The Translators to the Reader",
       "abbreviation": "Transl. to the Reader"

@@ -241,8 +241,7 @@ def test_matter(edition: pipeline.Edition) -> None:
     documents = dict(pipeline.view(edition, "pdf"))
     listed = web.matter(edition, documents)
     assert [(unit["id"], unit["section"]) for unit, _ in listed] == [
-        ("abbreviations", "front"),
-        ("editor-introduction", "front"),
+        ("introduction", "front"),
         ("numbering", "front"),
         ("brenton-preface", "old_testament"),
         ("brenton-introduction", "old_testament"),
@@ -250,9 +249,8 @@ def test_matter(edition: pipeline.Edition) -> None:
         ("translators-to-reader", "new_testament"),
     ]
     units = {unit["id"]: unit for unit, _ in listed}
-    assert units["abbreviations"]["short"] == "Abbreviations"
     assert units["dedication"]["title"] == "The Epistle Dedicatory"
-    assert units["editor-introduction"]["title"] == "Editor’s Introduction"
+    assert units["introduction"]["title"] == "Introduction"
     source_codes = {unit.slug: code for code, unit in peripherals.UNITS.items()}
     blocks = {}
     for unit, doc in listed:
@@ -281,8 +279,6 @@ def test_matter(edition: pipeline.Edition) -> None:
         for slug, body in blocks.items()
     }
     assert markers["dedication"][:6] == ["mt2", "mt1", "mt2", "mt2", "mt2", "po"]
-    assert markers["abbreviations"][0] == "mt1"
-    assert any(b["type"] == "table" for b in usj.objects(blocks["abbreviations"]))
     assert any(node.get("marker") == "th1" for node in usj.walk(blocks["numbering"]))
     assert "li1" in markers["brenton-introduction"]
     assert "ili2" not in markers["brenton-introduction"]
@@ -308,7 +304,7 @@ def test_variants(edition: pipeline.Edition) -> None:
     assert listed["terms"] == {"kjv": "KJV", "apparatus": "apparatus"}
     assert {block["marker"] for block in listed["intro"]} == {"p"}
     assert usj.text_of(listed["intro"][-1]["content"]).startswith(
-        "The Greek is Scrivener’s"
+        "The Greek retains its accents and punctuation"
     )
     books = listed["books"]
     assert [book["id"] for book in books] == [

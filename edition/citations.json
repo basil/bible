@@ -3,8 +3,8 @@
     "XXB": "brenton-preface",
     "XXE": null,
     "XXD": null,
-    "TDX": null,
-    "NDX": "kjv-preface",
+    "dedication": null,
+    "translators-preface": "kjv-preface",
     "BAK": "brenton-appendix"
   },
   "dialects": {
@@ -315,12 +315,12 @@
       "print": "{ZEC} 3:8; {ISA} 11:1; {MAL} 4:2; {NUM} 24:17",
       "why": "The margin of 1611 runs the four together, with one stop between them; they are set apart as citations are."
     },
-    "NDX Judges viii. verse 2": {
+    "translators-preface Judges viii. verse 2": {
       "passages": "JDG 8:2",
       "print": "{JDG} 8:2",
       "why": "The translators write the verse out in words."
     },
-    "NDX and 8. 28, 29": {
+    "translators-preface and 8. 28, 29": {
       "source": "8. 28, 29",
       "passages": "ACT 8:28; ACT 8:29",
       "print": "8:28, 29",

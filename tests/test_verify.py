@@ -90,6 +90,7 @@ def test_printed_origins_lose_their_chapter(declared: bible.policy.Policy) -> No
         numbering_page=cast(Any, None),
         variants_page=cast(Any, None),
         variants=(),
+        glossary=cast(Any, None),
         ccel=cast(Any, None),
     )
     assert usj.serialize(export.document("GEN", doc, unit)).split("\\v 12 ")[1] == (
@@ -116,19 +117,21 @@ def test_contents_page_numbers_with_abbreviations(page: str, accepted: bool) -> 
 
 
 # Two contents pages, as pdftotext reads them, ending and beginning with
-# "Introduction", which "Editor's Introduction" contains.
+# "Introduction", which "Historical Introduction" contains.
 CONTENTS = [
-    ("CNC", "editorsintroduction", "", "1"),
+    ("introduction", "historicalintroduction", "", "1"),
     ("XXB", "preface", "", "5"),
     ("XXE", "introduction", "", "9"),
 ]
 
 
 def test_a_title_within_another_on_the_page_before_is_not_taken_for_it() -> None:
-    verify.check_contents(["editorsintroductionpreface15", "introduction9"], CONTENTS)
-    verify.check_contents(["editorsintroductionprefaceintroduction159"], CONTENTS)
+    verify.check_contents(
+        ["historicalintroductionpreface15", "introduction9"], CONTENTS
+    )
+    verify.check_contents(["historicalintroductionprefaceintroduction159"], CONTENTS)
     with pytest.raises(CheckFailed, match="missing in PDF: XXE"):
-        verify.check_contents(["editorsintroductionpreface15", "9"], CONTENTS)
+        verify.check_contents(["historicalintroductionpreface15", "9"], CONTENTS)
 
 
 # The publication page as the layout's settings give it, and as pdftotext

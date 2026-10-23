@@ -94,8 +94,7 @@ test("reader sidebar lists chapters of the current book", () => {
 test("every unit of front matter reaches the static output under its title", () => {
   const units = manifest().matter;
   expect(units.map((u) => u.id)).toEqual([
-    "abbreviations",
-    "editor-introduction",
+    "introduction",
     "numbering",
     "brenton-preface",
     "brenton-introduction",
@@ -115,12 +114,35 @@ test("every unit of front matter reaches the static output under its title", () 
     "James,",
   );
   expect(dedication.querySelectorAll(".matter p.mt2")).toHaveLength(4);
-  // The abbreviations and the numbering are tables; the Preface quotes Hebrew.
+  // All three generated tables reach the introduction, including the
+  // completed glossary that used to have its own page.
+  const introduction = JSDOM.fragment(builtFile("read/introduction.html"));
+  const tables = [...introduction.querySelectorAll(".matter table")].map(
+    (table) =>
+      [...table.querySelectorAll("tr")].map((row) =>
+        [...row.querySelectorAll("th, td")].map((cell) => cell.textContent),
+      ),
+  );
+  expect(tables).toHaveLength(3);
+  expect(tables[0]).toContainEqual(["Jeremiah", "Jeremias"]);
+  expect(tables[1][0]).toEqual(["Gloss", "Turpie’s classes", "Meaning"]);
+  expect(tables[2]).toContainEqual(["KJV", "for King James Version"]);
   expect(
-    JSDOM.fragment(builtFile("read/abbreviations.html")).querySelector(
-      ".matter table td.tc1",
+    [...introduction.querySelectorAll(".matter p .wg")].some(
+      (node) => node.textContent === "ἐνέστηκεν",
     ),
-  ).not.toBeNull();
+  ).toBe(true);
+  expect(
+    [...introduction.querySelectorAll(".matter .notes .wg")].some(
+      (node) => node.textContent === "Παλαιά Διαθήκη",
+    ),
+  ).toBe(true);
+  expect(
+    [...introduction.querySelectorAll(".matter .li1 .wg")].some(
+      (node) => node.textContent === "Παλαιά Διαθήκη",
+    ),
+  ).toBe(true);
+  // The numbering has column headings; the Preface quotes Hebrew.
   expect(
     JSDOM.fragment(builtFile("read/numbering.html")).querySelector(
       ".matter table th.th1",
@@ -178,14 +200,16 @@ test("the variants link the verses the edition has, and omitted verses' chapters
   expect(builtFile("read/luk/17.html")).toContain('id="v35"');
 });
 
-test("the variants' introduction has its own page, with sources in its prose", () => {
+test("the variants' introduction explains its sources and labels", () => {
   const intro = JSDOM.fragment(builtFile("variants/introduction.html"));
   expect(intro.querySelector(".scripture .p")!.textContent).toContain(
-    "conformed to the Byzantine text",
+    "every New Testament verse in which the compared Greek texts differ",
   );
   expect(
     [...intro.querySelectorAll(".scripture .p")].some((p) =>
-      p.textContent.startsWith("The changes start from William G. Pierpont"),
+      p.textContent.includes(
+        "Scrivener’s reconstruction of the Greek underlying the King James Version",
+      ),
     ),
   ).toBe(true);
   expect(intro.querySelector(".scripture .notes")).toBeNull();
@@ -317,9 +341,7 @@ test("numbering tables name each book once above their Bible column headings", (
   expect(page.querySelector("h1")!.textContent).toBe(
     "Chapters and Verses in the King James Bible",
   );
-  const introduction = JSDOM.fragment(
-    builtFile("read/editor-introduction.html"),
-  );
+  const introduction = JSDOM.fragment(builtFile("read/introduction.html"));
   const names = [...introduction.querySelectorAll(".matter table")].find(
     (table) => table.textContent?.includes("King James Bible"),
   )!;
@@ -347,12 +369,6 @@ test("numbering tables name each book once above their Bible column headings", (
 
 test.each([
   ["gen/50", "next", "Exodus 1", "/read/exo/1"],
-  [
-    "abbreviations",
-    "next",
-    "Editor’s Introduction",
-    "/read/editor-introduction",
-  ],
   ["brenton-introduction", "next", "Genesis 1", "/read/gen/1"],
   ["gen/1", "prev", "Introduction", "/read/brenton-introduction"],
   [

@@ -1,12 +1,119 @@
-# The Old Testament's numbering
+# Numbering in the build
 
-This page says how the Old Testament's chapters and verses are numbered, and why. [Editorial notes](edition.md#numbering) say what the numbers are for: every reference in the edition uses them. Places where a witness numbers otherwise but the rule keeps the edition's numbers, and that need a word of explanation, are listed under [Places the rule leaves as they are](#places-the-rule-leaves-as-they-are).
+This page describes the addresses and transformations the build works with, followed by recovered editorial criteria and examples for reviewing its decisions.
+The reader-facing account of the edition's numbering is in
+[the introduction](../content/introduction.sfm). The evidence for each change
+belongs in [edition/versification.json](../edition/versification.json), under
+its `why`; the build executes those decisions rather than collating Greek
+editions or choosing a numbering by itself.
 
-## The goal
+## Three kinds of address
 
-The edition is an Orthodox Septuagint, so it uses the Septuagint's numbering. A reader should find a verse under the number a Greek Orthodox Bible or a Septuagint edition gives it, and never under the Masoretic Hebrew's number unless the Septuagint's editions use it too. The Apocrypha are printed among the other books, as the Greek sets them, and are numbered by the same rule, not by the King James Apocrypha's division.
+Before Assemble, source corrections, Alexandrine decisions, and source-note
+keys use eBible's addresses. Assemble groups the books, changes their verse
+divisions and numbers, and sets their printed labels. Later stages use the
+assembled edition's addresses. A source note's `x-key` remains its source
+address even when the verse containing it has moved.
 
-The numbers must also fit the edition's text, which is Brenton's English with some readings from Codex Alexandrinus. A number belongs to words, and dividing a verse again moves Brenton's notes, the quotation links, and the lines of verse with it. So a verse is divided again only on strong evidence.
+A verse's USJ `number` is its internal address. Its optional `pubnumber` is
+the label readers see; USFM exports that verse label as `\vp`. Do not infer
+an internal address from the visible label. Proverbs' displaced passages
+remain internally in chapter 24 while displaying Hebrew chapter and verse
+labels. The Epistle of Jeremias's title remains `LJE 1:0` but prints no label.
+
+King James correspondence is a separate relation, computed after Assemble.
+An unchanged correspondence number does not determine the number this
+edition prints.
+
+## Recording a change
+
+Use the existing entries and [the schema](../src/bible/policy_schema.py) for
+the exact data shape.
+
+| Field | What it changes | Required checks |
+| --- | --- | --- |
+| `relabel` | Maps source verses to edition verses, in order | Equal run lengths, one book, a reason, and an actual change. `opens` gives the opening words when the mapping begins a chapter inside a source chapter. |
+| `breaks` | Divides a source run at named opening words | Source verses must occur together; every opening must match once, in order; the first must begin the run. The decision gives each resulting edition address. |
+| `stubs` | Removes an empty transcription placeholder | The named verse must have no words and be its chapter's only verse. |
+| `unnumbered` | Hides a verse's printed label | The verse must exist and the decision must give a reason. |
+| `relocations` | Gives a passage Hebrew labels where the Greek places it | Keyed by the Hebrew passage, with `to` naming its first internal edition verse. The passage must fit within that edition chapter. |
+| `readings` | Overrides inferred King James correspondence | Gives edition and King James passages with the reason for the correspondence. It does not renumber the text. |
+
+Write opening words as they stand at Assemble, before the spelling and
+punctuation revisions. A numbering decision moves boundaries and labels,
+not English wording. Its reason should distinguish evidence for a label
+from evidence for a division, identify the witnesses consulted, and locate
+printed evidence by printing and page. Existing decisions weigh the Church
+of Greece, Swete, Brenton's printed divisions, and Rahlfs; they do not establish
+unconditional conformity to any one of them.
+
+[assembly.py](../src/bible/assembly.py) performs the changes on USJ words and
+markers. A new verse boundary cannot be inserted inside a character style.
+Notes at a new opening travel with that opening; a note closing an existing
+verse stays before its replacement boundary. Paragraphs are split where a
+new chapter begins. The checks reject overlapping decisions, unused anchors,
+unchanged divisions, duplicate resulting verses, and an unexpected resulting
+chapter or verse inventory. Do not repair these failures in exported USFM.
+
+## Grouping and displayed labels
+
+The manifest selects and renumbers chapter ranges when one source file holds
+two books. Daniel adds Susanna as internal chapter 0 and Bel as chapter 13.
+Their chapter numerals are hidden; their verses remain numbered. The Song's
+heading is inserted before Daniel 3:25. Sirach's Prologue is converted from
+its source chapter into introduction paragraphs, removing chapter and verse
+markers altogether.
+
+Proverbs' relocations set the first label of each passage to `30:1`, `30:15`
+or `31:1`, then continue with verse figures. The return to chapter 24 prints
+`24:23`. The empty source chapter 30 is removed, so the text passes from
+29:27 to 31:10. The relocation note is added later by
+[annotate.py](../src/bible/annotate.py). Internal addresses remain the ones
+declared in the decisions.
+
+`versification.require_own_labels` rejects citations, quotation links,
+comparisons and authored-page passages that would refer readers to an
+internal label the page does not display. Brenton citations touching
+renumbered or redivided source verses need their intended reference resolved
+by [edition/citations.json](../edition/citations.json); see
+[citations.py](../src/bible/citations.py).
+
+## Correspondence and lines
+
+[places.py](../src/bible/places.py) derives Old Testament correspondence from
+the pinned STEP table, word alignment, and explicit `readings`. New Testament
+runs come from omitted and moved verses in the Byzantine structural decisions.
+[versification.py](../src/bible/versification.py) checks the runs and supplies
+both directions of lookup. Equal-length runs pair verse by verse;
+unequal-length runs face one another whole unless explicit `pairs` describe
+partial overlaps. Lettered additions have no inferred King James counterpart
+unless a run supplies one.
+
+[numbering.py](../src/bible/numbering.py) builds the chapter-and-verse tables
+from those runs and the actual inventories. It groups whole chapters, shows
+missing passages and suppresses rows whose numbers agree. Keep derived runs
+and table rows out of the decision files.
+
+Before [lines.py](../src/bible/lines.py) aligns the Updated Brenton's poetry,
+its labels receive the same mapping, without redividing its words. A division
+crossing a chapter boundary in its poetry is therefore refused. Scrivener's
+King James counterpart supplies a positive or negative poetry judgment;
+a mapped counterpart set as prose supplies a negative judgment even in a
+wholly prose book. The Apocrypha and
+verses without counterparts have no such judgment, with a base-verse fallback
+for lettered additions. Numbering changes can consequently affect poetry
+placement as well as citations and notes.
+
+After a numbering change, run the repository's validation and tests, read
+`make review-diff BASE=HEAD`, and inspect the affected entries in
+`build/review/numbering.md`. Follow the sample and full-PDF inspection procedure
+in [AGENTS.md](../AGENTS.md) for changes that move text between pages.
+
+## The numbering rule: a checklist for reviewing decisions
+
+The reasons for the numbering are given to the reader in [the introduction](../content/introduction.sfm). The rule below is what a decision in `edition/versification.json` is checked against; it is not an algorithm the build runs, and each decision's `why` records its own evidence. Resolve any discrepancy against the witnesses and the actual decision.
+
+Rahlfs here is the 1935 edition, not Rahlfs–Hanhart 2006. In the Epistle of Jeremias 10–16, Swete's boundaries differ from Apostoliki Diakonia's: do not infer identical divisions from a general reference to “the Greek editions.” Compare Swete III, pp. 379–380, and the individual decision.
 
 ## Where the numbers come from
 
@@ -24,7 +131,7 @@ The text, and so its numbers, comes from eBible's transcription of Brenton. eBib
 - **The Church of Greece's text**, as published online by Apostoliki Diakonia of the Church of Greece (apostoliki-diakonia.gr). This identifies the consulted online text, without identifying it with a particular printed edition. Its numbering often follows Rahlfs, and it departs from Rahlfs mostly toward the traditional breaks Brenton and Swete share. Its website has many slips, such as "9" for 19, dropped numerals, and a chapter's first verse printed as the last of the chapter before. So a reading only it has is not trusted.
 - **Rahlfs's *Septuaginta*** (1935, not the Rahlfs–Hanhart revision of 2006), the modern standard edition.
 
-Every place where the edition differed from Swete was read on Brenton's pages. The Church of Greece's whole Old Testament was compared with the edition chapter by chapter, and every chapter that differed was aligned with Brenton's English verse by verse. The lengths of every verse were also compared with the Church of Greece's verse of the same number, which finds chapters whose numbers match but whose verses begin at other words. A second review read every decision again on all four witnesses, and searched every chapter for divisions the rule calls for, by those lengths and by locating each of Rahlfs's verses in Brenton's English.
+Compare relevant printed pages and online passages verse by verse, including the opening words. Matching labels alone do not establish matching boundaries. Check adjacent verses and chapter openings as well as the changed verse.
 
 ## The rule
 
@@ -53,16 +160,6 @@ These follow from the rules:
 
 Each change is a decision in `edition/versification.json`. Its reason names its witnesses, with printing and page. Brenton's pages are cited by the physical page of the PDF scan, with the printed page beside it. The 1900 printing's Apocrypha has its own page numbers.
 
-## Alternatives rejected
-
-- **Brenton's printed numbers throughout.** His pages borrow the King James and Hebrew numbers in the Apocrypha, 3 Kingdoms 4–11, Jeremias, the Psalms, and Proverbs. In places they print no number (Jesus the Son of Navi 12:16–22) or the same number twice (13:8). Those cannot be printed as the Septuagint's. The transcriptions are no substitute, since neither keeps his numbers.
-- **Swete throughout.** Swete numbers Codex B, so wherever B's text differs from Brenton's, his numbers would divide words Brenton's English lacks or join verses it keeps apart. Modern readers, concordances, and the Greek Orthodox Bible also do not number by him.
-- **Rahlfs alone.** It is the modern standard and the smallest change. But at the traditional chapter breaks it follows the Hebrew against Brenton, Swete, and the Church of Greece, and the edition should not be Masoretic.
-- **The Church of Greece alone.** It is the Orthodox text, but too many of its website's lone readings are slips. A misprint is very unlikely to agree with Brenton or Swete by chance, so any second witness is enough to confirm a number. Requiring one particular witness would only throw out places that are confirmed.
-- **A veto for Brenton's division.** Requiring his page to agree before a verse is divided again would keep his division even where a whole verse of the Greek stands under another number, and would give a vote to divisions that are the King James Bible's or the Hebrew's. The numbering is the Septuagint's, not the translator's. Where his division is his own, a re-division still needs three witnesses, though a relabelling needs two, because a re-division moves notes, links, and lines.
-- **The Greek editions at every verse's edge.** Following the three Greek editions wherever they place a verse's edge part of a verse away from Brenton's own would re-cut his sentences in a great many places, and move his notes, the quotation links, and the lines of verse with them, while every verse would still be found under its number. So his own division yields only where a verse would otherwise stand under another number.
-- **The Song of the Three Children numbered on its own, 1–67**, as the Church of Greece and Brenton number it. Rahlfs and Swete number it within the chapter, every Septuagint edition cites it so, and separate numbers would need printed labels that differ from the ones the edition uses inside.
-
 ## Special places
 
 - **Daniel 3–4** follow Swete. The Song of the Three Children runs on as 3:24–90, in Swete's order, which like Codex B's is out of sequence in three places. Then come 3:91–100 and 4:1–34. Chapter 4 begins where the Church of Greece, Brenton, and Swete all begin it. The Song, Susanna, and Bel are Apocrypha, so rule 1 applies to their divisions.
@@ -72,7 +169,7 @@ Each change is a decision in `edition/versification.json`. Its reason names its 
 - **Proverbs 24–31.** The passages the Greek sets in chapter 24 print the Hebrew's numbers, as Rahlfs numbers them, Swete marks them in his margin, the Church of Greece's text marks each passage's first verse in parentheses and numbers the rest by the Hebrew, and Brenton's printing numbers them, though his chapter 30 begins one sentence later, at "These things says the man". The first verse of each passage prints its chapter, as 30:1, 30:15, and 31:1, and the first verse back in chapter 24 prints 24:23. A chapter cannot be numbered twice in the edition, so these verses keep eBible's labels, 24:22f–t, 24:35–53, and 24:54–62, and their notes, links, and decisions use those labels. 24:22a–e keep Rahlfs's letters. In chapter 31, the Greek editions divide Brenton's 24 at "she opens her mouth heedfully". The Church of Greece's text numbers that verse 26 and the next, "She puts on strength", 25, the Hebrew's numbers, which Swete gives in his margin; only Rahlfs numbers them 25 and 26 in Brenton's order. They print 26 before 25, as Brenton's page there prints 27 before 26. A note at 29:27 says that the Hebrew has the three passages there, and that they are printed in chapter 24.
 - **Sirach's Prologue** is the book's introduction, with no chapter or verse number. The Church of Greece prints the Prologue unnumbered, and Swete and Rahlfs number only its lines. The book's first verse, "All wisdom", is 1:1.
 - **The Epistle of Jeremias's title** is verse 1:0, as Rahlfs numbers it, and prints no number, as in the Church of Greece's text and Swete. The Epistle's verses are 1–72, but for 16: the Church of Greece's text and Rahlfs begin it at "their eyes be full of dust", inside Brenton's clause, so 15 runs on to the end of his sentence and 16 is unused. In verses 10–16 Swete divides otherwise than they do (vol. 3, pp. 379–380), so the three Greek editions do not agree there; the decision on these verses in `edition/versification.json` gives each one's division.
-- **Malachias 4** is printed as the Church of Greece and Swete print it ([Editorial notes](edition.md#divisions-of-the-text)).
+- **Malachias 4** is printed as the Church of Greece and Swete print it, chapter 4 verses 1–6, with Elias before the law of Moses.
 
 ## Places the rule leaves as they are
 
@@ -88,13 +185,3 @@ A witness numbers these places otherwise, but the rule keeps the edition's numbe
 - **Sirach 30–36.** The Church of Greece and Rahlfs number these chapters by the Latin order of the exchanged blocks. Swete prints the blocks in that order too, but keeps the manuscripts' chapter and verse numbers, which Brenton and the edition follow; numbering by the Latin order would print chapters 30, 33, and 36 twice. Inside these chapters the verses are numbered and divided by rule 1, like the rest of Sirach, wherever the witnesses' numbers can stand in the edition's chapter; a number of the other arrangement cannot (33:11–12).
 - **Jeremias 29–30.** The Church of Greece sets Edom in chapter 29 and numbers Ammon, Kedar, and Damascus 30:1–16, as Swete does. Its Edom numbers rest only on Brenton's Hebrew numbers, which print 29:7 twice, and it runs Edom's first verse into its own 29:7, so the edition keeps its numbers.
 - **Jeremias 10:9a.** The Church of Greece, Brenton's page, and Rahlfs number this verse 5 a second time, and Swete letters it 5b. A chapter never prints a label twice, so it keeps eBible's letter.
-
-## How the build carries it out
-
-- **The Assemble stage applies the numbering**, after the readings from Codex Alexandrinus and the CCEL notes have been placed by eBible's numbering. So a note's `x-key`, the decisions about Codex Alexandrinus, and the corrections and notes of Brenton's sources name eBible's verse. Every decision read after Assemble names the edition's verse.
-- **`relabel`** maps a run of eBible's labels onto the edition's. Where a relabelled verse begins a chapter, and did not begin one before, the decision gives the words the chapter opens with.
-- **`breaks`** divides a run of verses again where the decision's words begin, each part labelled with its printed verse. The words must occur once in the run, and are spelled as in eBible, since revision comes later. The first part begins where the run does.
-- **`unnumbered`** names a verse that prints no number; a chapter none of whose verses is numbered prints no number either. A relocated passage (`relocations`) prints the Hebrew's labels. Both set the label the verse prints (USFM `\vp`), which only PTXprint, the margin notes, and the website read. Everything else names the verse by its own label.
-- **The Updated Brenton** is numbered as eBible is, and its labels are mapped the same way before its lines are placed. Its words are not divided again, so a division that sets words in another chapter is refused in its poems.
-- **Brenton's citations** in his notes are read by eBible's numbering where the edition keeps it. A citation of a verse that the edition relabels or divides again could mean his printed number or eBible's, so a decision in `edition/citations.json` names the verse meant.
-- **The build refuses** a decision whose verses or words it cannot find, or that changes nothing; a verse relabelled twice, or relabelled and divided; a chapter whose opening words don't match; a citation by Brenton's numbers of a verse the edition relabels or divides again, which no decision names; and a citation, quotation link, comparison, or passage on the edition's own pages of a verse that prints another label than its own.

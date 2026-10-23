@@ -161,7 +161,7 @@ def check_contents(
     units their page numbers. A contents page reads by its columns: the
     titles with the abbreviations, then the page numbers. A title is sought
     after the one before it on its page, since one title may be part of
-    another's ("Introduction" of "Editor's Introduction")."""
+    another's ("Introduction" of "Historical Introduction")."""
     listed = at = 0
     entries: list[tuple[str, str, str]] = []
     for code, title, abbreviation, number in toc:

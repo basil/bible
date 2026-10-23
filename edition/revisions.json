@@ -11162,19 +11162,19 @@
       "why": "These parentheses are attached to their containing sentences, whose closing periods stand after the parentheses.",
       "changes": [
         {
-          "unit": "NDX",
+          "unit": "translators-preface",
           "from": "saith St. Augustine.",
           "to": "saith St. Augustine",
           "why": "Remove the containing sentence’s period before the roman closing parenthesis; the adjacent decision restores it after that parenthesis without changing its style."
         },
         {
-          "unit": "NDX",
+          "unit": "translators-preface",
           "from": ") Again, they were not out of the Hebrew fountain",
           "to": "). Again, they were not out of the Hebrew fountain",
           "why": "Restore the containing sentence’s period after its existing roman closing parenthesis."
         },
         {
-          "unit": "NDX",
+          "unit": "translators-preface",
           "from": "whose tongue is strange unto him.) Yet",
           "to": "whose tongue is strange unto him). Yet"
         }

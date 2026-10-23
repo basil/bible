@@ -474,12 +474,12 @@ def test_a_book_cited_alone_keeps_its_abbreviations_period(
         ("XXB", "one of the acrostic Psalms (144:13), where"),
         ("XXB", "In Acts 17:28, we find"),
         (
-            "NDX",
+            "translators-preface",
             "studied them.\\x + \\xt \\ref Acts 17:11|ACT 17:11\\ref*; "
             "\\ref 8:28–29|ACT 8:28\\ref*\\x* They",
         ),
         (
-            "NDX",
+            "translators-preface",
             "not to be despised.\\x + \\xt \\ref Judg. 8:2|JDG 8:2\\ref*\\x* Joash the king",
         ),
         # The Appendix's cross-reference, moved into the note on its verse.
