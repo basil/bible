@@ -496,6 +496,175 @@ def test_a_verse_omitted_whole_leaves_its_note_on_the_verse_before(
     )
 
 
+def test_a_reading_omits_consecutive_verses_as_one_run(
+    policy: bible.policy.Policy, read: bible.pipeline.Read
+) -> None:
+    before = scripture.verses(read.brenton["1KI"])
+    doc = alexandrinus.promoted(
+        "1KI", read.brenton["1KI"], policy, read.kjv, read.brenton
+    )
+    verses = scripture.verses(doc)
+    assert "5:14a" not in verses and "5:14b" not in verses
+    assert verses["5:14"].text == before["5:14"].text
+    assert verses["5:15"].text == before["5:15"].text
+    # The paragraph they filled goes with them.
+    assert verses["5:15"].parts[0][0] == verses["5:14"].parts[-1][0] + 1
+    ((offset, note),) = verses["5:14"].notes
+    assert offset == len(verses["5:14"].text)
+    assert note["x-scope"] == {"declared": None}
+    assert usj.text_of(note["content"]) == (
+        "5:14 Heb. also omits these verses. Vat. adds "
+        + before["5:14a"].text.strip()
+        + " "
+        + before["5:14b"].text.strip().rstrip(".")
+        + "."
+    )
+
+
+RUN = (
+    r"\v 16 Before."
+    "\n\\p\n"
+    r"\v 16a \f + \fr 99:16a \fqa Alex. \ft omits these.\f*First addition."
+    "\n"
+    r"\v 16b Second addition."
+    "\n\\p\n"
+    r"\v 17 After."
+)
+
+
+def run_reading(**omission: Any) -> dict[str, Any]:
+    return {
+        "why": "Alexandrinus lacks both verses.",
+        "swete": SWETE,
+        "source_note": r"\fqa Alex. \ft omits these.",
+        "omissions": [
+            {
+                "verses": ["99:16a", "99:16b"],
+                "note_target": "99:16",
+                "note": r"\fl Vat. \ft adds \fq First addition. Second addition\ft .",
+                "source_notes": {},
+                **omission,
+            }
+        ],
+    }
+
+
+def test_a_reading_run_takes_its_paragraph_and_its_note_quotes_it_whole(
+    policy: bible.policy.Policy, read: bible.pipeline.Read
+) -> None:
+    doc = promoted(decided(policy, {"GEN 99:16a": run_reading()}), RUN)
+    assert list(verse_lines(doc)) == ["16", "17"]
+    verses = scripture.verses(doc)
+    assert verses["99:17"].parts[0][0] == verses["99:16"].parts[-1][0] + 1
+    assert verse_lines(doc)["16"] == (
+        r"Before.\f + \cat edition\cat*\fr 99:16 \fl Vat. \ft adds \fq First addition. Second addition\ft .\f*"
+    )
+    # A quotation of part of the run would drift from it unseen.
+    misquoting = run_reading(note=r"\fl Vat. \ft adds \fq First addition\ft .")
+    with pytest.raises(CheckFailed, match="misquotes its verses: GEN 99:16a"):
+        promoted(decided(policy, {"GEN 99:16a": misquoting}), RUN)
+    with pytest.raises(CheckFailed, match="one run: GEN 99:16a"):
+        promoted(decided(policy, {"GEN 99:16a": run_reading(verses=["99:16b"])}), RUN)
+    # The note it takes up goes, wherever it stands, though nothing else
+    # in the book is decided.
+    before = {
+        **run_reading(),
+        "source_note": r"\fqa Alex. \ft omits the next verses.",
+    }
+    noted = RUN.replace(r"\f + \fr 99:16a \fqa Alex. \ft omits these.\f*", "").replace(
+        r"\v 16 Before.",
+        r"\v 16 Before.\f + \fr 99:16 \fqa Alex. \ft omits the next verses.\f*",
+    )
+    assert (
+        verse_lines(promoted(decided(policy, {"GEN 99:16": before}), noted))["16"]
+        == verse_lines(doc)["16"]
+    )
+    # A verse omitted on its own is not noted on a verse the run omits,
+    # where the run would take its note.
+    lone = {
+        **run_reading(),
+        "from": "After.",
+        "omit_verse": True,
+        "note_target": "GEN 99:16b",
+        "lemma": None,
+        "note": r"\fl Vat. \ft adds \fq After\ft .",
+        "english": {"source": "from", "edits": [{"span": [0, 6], "to": ""}]},
+        "source_note": r"\fqa Alex. \ft omits.",
+    }
+    tail = RUN.replace(r"\f + \fr 99:16a \fqa Alex. \ft omits these.\f*", "").replace(
+        r"\v 17 After.",
+        r"\v 17 After.\f + \fr 99:17 \fqa Alex. \ft omits.\f*" "\n" r"\v 18 Last.",
+    )
+    with pytest.raises(CheckFailed, match="omit them as a run"):
+        promoted(decided(policy, {"GEN 99:17": lone}), tail)
+    # The run rests on the reading's evidence and reason, and a reading
+    # replaces words or omits verses, and pins its note.
+    for reading, message in (
+        (run_reading(swete=SWETE), "Omission of GEN 99:16a"),
+        (
+            {key: value for key, value in run_reading().items() if key != "omissions"},
+            "needs words or verses to omit: GEN 99:16a",
+        ),
+        ({**run_reading(), "omissions": []}, "needs words or verses to omit"),
+        ({**run_reading(), "lemma": None}, "needs words or verses to omit"),
+        (
+            {k: v for k, v in run_reading().items() if k != "source_note"},
+            "without its source note: GEN 99:16a",
+        ),
+    ):
+        with pytest.raises(CheckFailed, match=message):
+            alexandrinus.check(decided(policy, {"GEN 99:16a": reading}), read.brenton)
+
+
+def test_single_verse_omissions_are_quoted_and_leave_their_paragraph(
+    policy: bible.policy.Policy, read: bible.pipeline.Read
+) -> None:
+    def omission(target: str, home: str, words: str) -> dict[str, Any]:
+        return {
+            "target": f"GEN 99:{target}",
+            "omit_verse": True,
+            "note_target": f"GEN 99:{home}",
+            "lemma": None,
+            "from": words,
+            "note": rf"\fl Vat. \ft adds \fq {words.rstrip('.')}\ft .",
+            "why": "Alexandrinus lacks the verse.",
+            "english": {
+                "source": "from",
+                "edits": [{"span": [0, len(words)], "to": ""}],
+            },
+        }
+
+    def passage(*edits: dict[str, Any]) -> dict[str, Any]:
+        return {
+            "appendix": r"\ip \it Verse\it* 16a. Omitted.",
+            "why": "Alexandrinus lacks the verses.",
+            "swete": SWETE,
+            "edits": list(edits),
+        }
+
+    # A verse's own note that does not quote it.
+    unquoted = {
+        **omission("16b", "16a", "Second addition."),
+        "note": r"\fl Vat. \ft adds \fq Second\ft .",
+    }
+    with pytest.raises(CheckFailed, match="Omission without its note: GEN 99:16b"):
+        alexandrinus.check(
+            decided(policy, passages={"GEN 99:16b": passage(unquoted)}), read.brenton
+        )
+    body = RUN.replace(r"\f + \fr 99:16a \fqa Alex. \ft omits these.\f*", "")
+    # Consecutive verses, each noted on the one before.
+    chain = passage(
+        omission("16a", "16", "First addition."),
+        omission("16b", "16a", "Second addition."),
+    )
+    with pytest.raises(CheckFailed, match="omit them as a run"):
+        promoted(decided(policy, passages={"GEN 99:16b": chain}), body)
+    # A verse that is its paragraph.
+    alone = passage(omission("17", "16b", "After."))
+    with pytest.raises(CheckFailed, match="empties its paragraph"):
+        promoted(decided(policy, passages={"GEN 99:17": alone}), body)
+
+
 def test_a_passage_supplies_verses_from_the_appendix_or_the_king_james_bible(
     policy: bible.policy.Policy,
 ) -> None:

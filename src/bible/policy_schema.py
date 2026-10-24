@@ -358,8 +358,9 @@ class AlexandrinusPassagesOmissions(TypedDict):
     note_target: ReadOnly[str]
     note: ReadOnly[str]
     source_notes: ReadOnly[Mapping[str, str]]
-    swete: ReadOnly[Swete]
-    why: ReadOnly[str]
+    # A reading's run rests on the reading's own.
+    swete: NotRequired[ReadOnly[Swete]]
+    why: NotRequired[ReadOnly[str]]
 
 
 AlexandrinusReadingsNoteEdits = TypedDict(

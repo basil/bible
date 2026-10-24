@@ -214,11 +214,14 @@ def alexandrinus_report(read: pipeline.Read, edition: pipeline.Edition) -> str:
                 )
             wanted = {w for w in wanted if ":" in w and "-" not in w}
             # An omitted run is shown with its neighbours apart from the rest,
-            # so that the chapters between them are not printed as well.
-            groups = [wanted] + [
+            # so that the chapters between them are not printed as well; a
+            # decision that only omits verses is shown by its runs alone.
+            runs = [
                 {*omission["verses"], omission["note_target"]}
                 for omission in decision.get("omissions", ())
             ]
+            wanted -= {v for run in runs for v in run}
+            groups = ([wanted] if wanted or not runs else []) + runs
             source = decision.get("appendix", decision.get("source_note", ""))
             if "kjv" in decision:
                 source = f"Authorized Version, {key}" + (
@@ -301,8 +304,13 @@ def alexandrinus_report(read: pipeline.Read, edition: pipeline.Edition) -> str:
                 + f"\nSupplied: {', '.join(decision.get('supplied', ())) or 'none'}\n\n"
                 + "".join(
                     f"Omission: {', '.join(omission['verses'])}\n\n"
-                    f"Reason: {omission['why']}\n\n"
-                    f"{swete_record(omission['swete'])}\n\n"
+                    # A reading's run rests on the reading's reason and record.
+                    + (
+                        f"Reason: {omission['why']}\n\n"
+                        f"{swete_record(omission['swete'])}\n\n"
+                        if "why" in omission
+                        else ""
+                    )
                     + "".join(
                         f"Omitted source note {identity}: {plain_text(body)}\n\n"
                         for identity, body in omission["source_notes"].items()
@@ -318,6 +326,7 @@ def alexandrinus_report(read: pipeline.Read, edition: pipeline.Edition) -> str:
                 *(
                     (f"{key}@omission{index}", omission["swete"])
                     for index, omission in enumerate(decision.get("omissions", ()), 1)
+                    if "swete" in omission
                 ),
             ]:
                 reading = record["reading"].replace("|", "&#124;")

@@ -164,8 +164,14 @@ def test_a_verse_may_stand_beside_two(
     # lettered verses that a reading pairs each stand beside their own part.
     assert ("38:11", "37:4, 15") in rows("EXO")
     kingdoms = rows("1KI")
+    assert ("2:35c", "3:1") in kingdoms
     at = kingdoms.index(("10:22a", "9:15, 17–19"))
-    assert kingdoms[at + 1 : at + 3] == [("10:22b", "9:20–21"), ("10:22c", "9:22")]
+    # The Pharaoh passage omitted at 5:14b no longer supplies the capture of Gazer.
+    assert kingdoms[at + 1 : at + 4] == [
+        (MISSING, "9:16"),
+        ("10:22b", "9:20–21"),
+        ("10:22c", "9:22"),
+    ]
     # Malachias ends in another order.
     assert rows("MAL") == [("4:4–5", "4:5–6"), ("4:6", "4:4")]
 

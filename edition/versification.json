@@ -1385,6 +1385,11 @@
     ],
     "1KI": [
       {
+        "edition": "1KI 2:35c",
+        "kjv": "1KI 3:1",
+        "why": "After Alexandrinus's omission of 5:14a, the account of Solomon taking Pharaoh's daughter and bringing her into the city of David remains at 2:35c. It is the counterpart of the King James Bible's 3:1; 2:46l says only that Solomon reigned over Israel and Judah, and must not acquire that correspondence from their shared names."
+      },
+      {
         "edition": "1KI 2:35g",
         "kjv": "1KI 9:25",
         "why": "The Greek tells this of Solomon in a lettered verse, and lacks it where the Hebrew has it."
@@ -1423,16 +1428,6 @@
         "edition": "1KI 5:1",
         "kjv": "1KI 4:27-28",
         "why": "The officers' provision for Solomon, and the barley and straw, which the Greek sets before his daily supplies."
-      },
-      {
-        "edition": "1KI 5:14a",
-        "kjv": "1KI 3:1",
-        "why": "The Greek tells this of Solomon in a lettered verse, and lacks it where the Hebrew has it."
-      },
-      {
-        "edition": "1KI 5:14b",
-        "kjv": "1KI 9:16",
-        "why": "The Greek tells this of Solomon in a lettered verse, and lacks it where the Hebrew has it."
       },
       {
         "edition": "1KI 7:38; 1KI 7:50",

@@ -52,13 +52,6 @@ Splices, compositions, and the editor's own words.
 - `1KI 5:31`: The completion of 6:1, “that he began to build the house to the Lord”, is the King James “that he began to build the house of the LORD” with “to” for “of”, rendering A's τω κ̅ω̅ (Brenton's own phrase at 6:2), and the decision names no source for it. Decide whether to take the King James words exactly or declare the composition.
 - `JOB 39:22 CCEL`: The verse prints “as he meeteth it”; “it” is declared supplied but comes from no named translation. Decide whether to narrow the `from` to “a king” and keep Brenton's “as he meets him”.
 
-### 2.2 Passages and verse structure
-
-Supplied passages, omitted verses, and words moved across verses.
-
-- `EZK 33:25`: A has the divine-speech formula twice (Swete III p. 457): ουτως ειπεν αδωναι κ̅ς̅ opening its prefixed 25, and ταδε λεγει kept before ζω εγω at 27. The passage edit replaces eBible’s “Therefore say to them, Thus saith the Lord God,” with the Appendix’s 33:25, so the edition prints the formula once and 33:27 opens “As I live”. Narrowing the edit’s `from` does not help: the remaining formula would stand at the end of 25, before the inserted 26. A working alternative is a passage edit on 33:27 that sets Brenton’s “Thus saith the Lord God” (Appendix span [41, 65]) before “As I live”, with a note that Brenton has it at 33:25. Decide whether to move Brenton’s words across his verse boundary so.
-- `1KI 5:14a`: Brenton's “Here the chapter ends, according to Heb. and Alex.” agrees with Swete I p. 683, “om και ελαβεν…Γαζερ 2° A”: A lacks 5:14a–b here. The entry is kept with `agrees` null as a remark on chapter division. Decide whether to omit 5:14a–b with their words in a note on 5:14, as at 2SA 5:16a.
-
 ## 3. Future work
 
 ### Website tables of mechanical changes

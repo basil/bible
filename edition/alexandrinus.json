@@ -1581,6 +1581,28 @@
       "note_at": 14,
       "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft insert 'priest.'"
     },
+    "1KI 5:14a": {
+      "why": "Brenton 1844 vol. I physical p. 392, printed p. 368, and the 1879, 1884, and 1900 printings at physical pp. 465, 434, and 461, printed p. 449, place the chapter-ending report immediately before the two Pharaoh paragraphs, after the last numbered verse of his chapter 4 and before Chiram opens chapter 5. Swete I p. 683 explicitly records om και ελαβεν…Γαζερ 2° A, omitting the whole block here without a hand or uncertainty qualification. Treat Brenton's report as identifying this trailing block and omit 5:14a–b as one run, as at 12:24a–z, quoting their complete displaced words in one Vat. note on 5:14. The note keeps Brenton's report on the Hebrew as Heb. also omits these verses, as at 2SA 5:16a: the Hebrew has this matter at 3:1 and 9:16, not here. His chapter ending is not repeated, since the edition numbers these chapters otherwise. This is a local omission, not a reconstruction of Alexandrinus's chapter divisions or a claim that it lacks the events everywhere: Swete I pp. 678 and 698 gives different A forms at the Hebrew's 3:1 and 9:16–17. Leave those passages untouched. The surviving verse labels remain the edition's: the Church of Greece prints these paragraphs as 5:14α–β, and Brenton's borrowed King James numbering here establishes no new boundary.",
+      "swete": {
+        "volume": 1,
+        "page": 683,
+        "evidence": "apparatus",
+        "reading": "om και ελαβεν…Γαζερ 2° A",
+        "agrees": true
+      },
+      "source_note": "\\ft Here the chapter ends, according to \\fqa Heb. \\ft and \\fqa Alex.",
+      "omissions": [
+        {
+          "verses": [
+            "5:14a",
+            "5:14b"
+          ],
+          "note_target": "5:14",
+          "note": "\\fl Heb. \\ft also omits these verses. \\fl Vat. \\ft adds \\fq And Solomon took to himself the daughter of Pharao to wife, and brought her into the city of David until he had finished the house of the Lord, and his own house, and the wall of Jerusalem. Then went up Pharao the king of Egypt, and took Gazer, and burnt it and the Chananite dwelling in Mergab; and Pharao gave them as a dowry to his daughter the wife of Solomon: and Solomon rebuilt Gazer\\ft .",
+          "source_notes": {}
+        }
+      ]
+    },
     "1KI 5:18": {
       "why": "Print Codex Alexandrinus’s ἀπάντημα for ἁμάρτημα: Swete I p. 683, at his 5:4 (Brenton’s 5:18), explicitly records αμαρτημα] απαντημα A; B’s main text has ἁμάρτημα πονηρόν. Brenton’s 1879 and 1900 printings (printed p. 450; physical pp. 466 and 462) put caller δ before evil and print Alex. ἀπάντημα. See συναντήματα, Ex. 9. 14. They offer Greek alone. The pinned Cambridge Paragraph Bible’s 1 Kings 5:4 reads neither adversary nor evil occurrent, providing the permitted King James word for the corresponding Hebrew פֶּגַע רָע rendered by A. Declare occurrent as supplied and remove Brenton’s supplied against me with the trespass rendering. B supports the displaced Greek trespass, but against me is Brenton’s English supplement, not words present in B’s Greek; the note names Vat. for the displaced trespass.",
       "swete": {
@@ -7500,7 +7522,7 @@
     },
     "EZK 33:25": {
       "appendix": "\\ip 33. \\vp 25\\vp*Therefore say to them, Thus saith the Lord God: Ye will eat with the blood, and ye will lift up your eyes to your idols, and ye shed blood, and shall ye inherit the land? \\vp 26\\vp*Ye stand upon your sword, ye have wrought abomination, and have defiled every one his neighbour, and shall ye inherit the land?  ",
-      "why": "Retain Brenton’s own Appendix rendering of Ezekiel 33:25–26. Brenton 1879 physical p. 1150 and 1900 physical p. 1146, in the Appendix paragraph headed JEZEKIEL, print the complete two sentences under chapter 33 and superscript 25/26, including both final question marks. This paragraph has verse labels rather than a caller. Swete III p. 457 explicitly prepends the complete A passage before ταδε λεγει at 33:27, with no A hand, lacuna, or uncertainty qualification. Quote its exact diplomatic apparatus, distinguishing the separately printed Q addition sub θʹ ※, whose 26 specifies the neighbour’s wife whereas A and Brenton have the neighbour. B positively lacks 25’s supplied remainder and all 26; B’s 25 is διὰ τοῦτο εἰπὸν αὐτοῖς and its next verse is 27. The source English already carries the divine-speech introduction in 25, so retain the existing complete replacement and insertion boundaries, punctuation restoration, and Vat. omission labels for the supplied remainder and verse 26. No new English is supplied and no other manuscript variant is translated. The distinct scripture pointer is printed See Appendix. with γ before Therefore at printed verse 27 in Brenton 1879 physical p. 1040 and 1900 physical p. 1036 (printed p. 1024). CCEL 15.xxxiii#6 places it at eBible 33:25, whose introductory words are split from printed verse 27. Its note is consumed through source_notes with this supplied passage; no duplicate eBible pointer exists and no further English is supplied. B positively transitions from v25 διὰ τοῦτο εἰπὸν αὐτοῖς to v27 Τάδε λέγει κύριος Κύριος, with no intervening supplied remainder or v26. Explicit A adds both; Q has a distinct form including neighbour’s wife. Both omission notes may name Vat. for the supplied scope, while retaining the eBible/printed numbering distinction. This is positive omission evidence, not apparatus silence.",
+      "why": "Retain Brenton’s own Appendix rendering of Ezekiel 33:25–26. Brenton 1879 physical p. 1150 and 1900 physical p. 1146, in the Appendix paragraph headed JEZEKIEL, print the complete two sentences under chapter 33 and superscript 25/26, including both final question marks. This paragraph has verse labels rather than a caller. Swete III p. 457 explicitly prepends the complete A passage before ταδε λεγει at 33:27, with no A hand, lacuna, or uncertainty qualification. Quote its exact diplomatic apparatus, distinguishing the separately printed Q addition sub θʹ ※, whose 26 specifies the neighbour’s wife whereas A and Brenton have the neighbour. B positively lacks 25’s supplied remainder and all 26; B’s 25 is διὰ τοῦτο εἰπὸν αὐτοῖς and its next verse is 27. The source English already carries the divine-speech introduction in 25, so retain the existing complete replacement and insertion boundaries, punctuation restoration, and Vat. omission labels for the supplied remainder and verse 26. No new English is supplied and no other manuscript variant is translated. The distinct scripture pointer is printed See Appendix. with γ before Therefore at printed verse 27 in Brenton 1879 physical p. 1040 and 1900 physical p. 1036 (printed p. 1024). CCEL 15.xxxiii#6 places it at eBible 33:25, whose introductory words are split from printed verse 27. Its note is consumed through source_notes with this supplied passage; no duplicate eBible pointer exists and no further English is supplied. B positively transitions from v25 διὰ τοῦτο εἰπὸν αὐτοῖς to v27 Τάδε λέγει κύριος Κύριος, with no intervening supplied remainder or v26. Explicit A adds both; Q has a distinct form including neighbour’s wife. Both omission notes may name Vat. for the supplied scope, while retaining the eBible/printed numbering distinction. This is positive omission evidence, not apparatus silence. Restore Brenton’s main-text introduction at 33:27 after supplying Appendix 33:25–26. Swete III p. 457 prefixes ουτως ειπεν αδωναι κ̅ς̅ … ουτως A before the retained ταδε λεγει, so Alexandrinus has the divine-speech formula at both places. Brenton 1844 II physical p. 340 (printed p. 837), 1879 physical p. 1040, 1884 physical p. 987, and 1900 physical p. 1036 (the latter three printed p. 1024) all keep the main-text introduction before As I live; their separate Appendix passages are 1844 physical p. 433 (printed p. 930), 1879 p. 1150, 1884 p. 1088 (right edge cropped), and 1900 p. 1146. Derive Thus saith the Lord God from the Appendix’s exact span [41,65), replacing its colon with the existing comma and retained As I live, including As’s supplied-word marking. The new note identifies Brenton’s original position by the words Therefore say to them, avoiding confusion between eBible’s verse 25 and printed Brenton’s verse 27. This is restoration of the main-text formula after the supplied passage, not a new translation of another A variant; retain the two existing Vat. omission notes. The 1844 main text uses says and its Appendix said; the pinned Bagster wording is saith at both places.",
       "swete": {
         "volume": 3,
         "page": 457,
@@ -7546,6 +7568,22 @@
             ]
           },
           "note_at": 48
+        },
+        {
+          "target": "EZK 33:27",
+          "from": "\\add As\\add* I live",
+          "lemma": "Thus saith the Lord God",
+          "note": "\\fl Brenton \\ft has these words only after \\fq Therefore say to them\\ft .",
+          "english": {
+            "source": "brenton",
+            "span": [41, 65],
+            "edits": [
+              {
+                "span": [23, 24],
+                "to": ", \\add As\\add* I live"
+              }
+            ]
+          }
         }
       ],
       "source_notes": {
@@ -8884,17 +8922,6 @@
         "agrees": true
       },
       "source_note": "\\ft So the \\fqa Alex. \\ft The \\fqa Vat. \\ft renders אבן as if it were אחי \\fqa or \\ft אחה."
-    },
-    "1KI 5:14a": {
-      "why": "Brenton 1879 physical 465 and 1900 physical 461 (printed 449) print “Here the chapter ends, according to Heb. and Alex.” before the Pharao passage. Swete I p. 683 explicitly reports A’s omission of IV 31–33, but its V 1 heading belongs to the printed layout. Swete I p. xiv says that the Sixtine chapter divisions are retained, with bracketed Hebrew numeration. Neither the heading nor the omission unit establishes A’s manuscript chapter division. Retain Brenton’s historical report and the edition’s numbering, with agreement null. There is no displaced witness note to relabel.",
-      "swete": {
-        "volume": 1,
-        "page": 683,
-        "evidence": "apparatus",
-        "reading": "om και ελαβεν…Γαζερ 2° A",
-        "agrees": null
-      },
-      "source_note": "\\ft Here the chapter ends, according to \\fqa Heb. \\ft and \\fqa Alex."
     },
     "1KI 15:2": {
       "why": "Keep three years in the text and Brenton’s Alex. 16 years in the note under the evident-slip rule, as at NUM 28:24. Brenton 1879 physical p. 486 and 1900 physical p. 482 (printed p. 470) print “Alex. 16 years.” with φ before “three”. Swete I p. 716 records εξ] pr δεκα A, but in A Abiu begins in Jeroboam’s eighteenth year (15:1), Asa succeeds in his twentieth (15:9, και εν ετει εικοστου A), and Jeroboam reigns twenty-two years (A’s 14:20, Swete I p. 715): sixteen years contradicts the manuscript’s own chronology.",
