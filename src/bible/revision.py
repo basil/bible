@@ -1215,20 +1215,27 @@ def prose(marker: str) -> bool:
 # their letters too, and the stops that close them, so that their punctuation
 # is not revised as English.
 FOREIGN_END = re.compile(f"[{usfm.GREEK}{usfm.HEBREW}][{usfm.COMBINING}]*[.?!]*$")
+# The opening parenthesis of an aside. A reference or list marker, as (39)
+# or (a), supplies no sentence break, so the punctuation before it stays,
+# across lines and verses too.
+ASIDE = r"\((?!(?:\d+|[a-z])\))"
 # The systematic rules, each a pattern over a unit's English, in the order
 # they apply: a run of commas, colons, and semicolons duplicates the break an
-# em dash or a parenthesis marks. Inside closing parentheses the run moves
-# after the last, or goes when a dash follows; before a dash or an opening
-# parenthesis it goes. The move comes first, so that a run it sets before a
-# dash or a parenthesis goes too, and a second pass changes nothing. A
-# period, question mark, or exclamation mark inside a parenthesis ends the
-# parenthesis's own sentence, and stays.
+# em dash or an aside's parenthesis marks. Inside closing parentheses the run
+# moves after the last, or goes when a dash follows; before a dash or an
+# aside it goes. The move comes first, so that a run it sets before a dash or
+# an aside goes too, and a second pass changes nothing. A period, question
+# mark, or exclamation mark inside a parenthesis ends the parenthesis's own
+# sentence, and stays.
 RULES: dict[str, re.Pattern[str]] = {
     "inside-parenthesis": re.compile(r"([,;:]+)\)+(—?)"),
     "before-em-dash": re.compile(r"[,;:]+(?=—)"),
-    "before-parenthesis": re.compile(r"[,;:]+(?=\s?\()"),
+    "before-parenthesis": re.compile(rf"[,;:]+(?=\s?{ASIDE})"),
 }
-# A run that ends a verse, before a verse that opens a parenthesis.
+# A run that ends a line, before a line of the same verse that opens an aside.
+LINE_END = re.compile(rf"[,;:]+(?=\n\s*{ASIDE})")
+# A verse that opens an aside, and a run that ends the verse before it.
+OPENS_ASIDE = re.compile(rf"\s*{ASIDE}")
 VERSE_END = re.compile(r"[,;:]+(?=\s*$)")
 # The rule that drops Brenton's square brackets from a book's text. Not a
 # pattern over a unit's English like RULES: a note's brackets, and the
@@ -1244,11 +1251,9 @@ ACROSTIC = re.compile(r"[A-Za-z]+\.?")
 INSIDE_WORD = re.compile(r"\w[\[\]]+\w")
 # What the rules do not understand, and refuse: a mark already standing where
 # a run would move, unless a dash follows to clear it; the comma of the "Or,"
-# that opens a note's alternative; and the separator before an item's label,
-# as "(1)" or "(a)".
+# that opens a note's alternative.
 FOLLOWING = re.compile(r"(?![,;:]*—)[,;:.?!]")
 ALTERNATIVE = re.compile(r"(?<!\w)Or$")
-ITEM = re.compile(r"\s?\((?:\d+|[a-z])\)")
 # What a tagged foreign word or a label stands as in the English it interrupts.
 FOREIGN, LABEL = "\1", "\0"
 
@@ -1286,7 +1291,7 @@ def _understood(name: str, text: str, match: re.Match[str], doc: Document) -> No
         refused = not match[2] and bool(FOLLOWING.match(text, match.end()))
     else:
         refused = name == "before-parenthesis" and bool(
-            ALTERNATIVE.search(text, 0, match.start()) or ITEM.match(text, match.end())
+            ALTERNATIVE.search(text, 0, match.start())
         )
     if refused:
         raise CheckFailed(
@@ -1309,9 +1314,9 @@ def _between(doc: Document, start: int, end: int, verse: str) -> None:
 
 def _joined(doc: Document, met: MetRevisions) -> Document:
     """The document with the run of marks that ends a verse removed where the
-    next verse opens a parenthesis, or the parenthesis opens the next line
-    of the same verse. Read protected words at verse offsets, and delete only
-    the marks, preserving the lines and their notes."""
+    next verse opens an aside, or the aside opens the next line of the same
+    verse. Read protected words at verse offsets, and delete only the marks,
+    preserving the lines and their notes."""
     verses = list(scripture.verses(doc).values())
     edits = []
     texts = [
@@ -1323,13 +1328,13 @@ def _joined(doc: Document, met: MetRevisions) -> Document:
     ]
     for index, (verse, text) in enumerate(zip(verses, texts)):
         matches = []
-        for match in re.finditer(r"[,;:]+(?=\n\s*\()", text):
+        for match in LINE_END.finditer(text):
             line = text.count("\n", 0, match.end())
             _between(
                 doc, verse.parts[line][0], verse.parts[line + 1][0], verse.reference
             )
             matches.append(match)
-        if index + 1 < len(verses) and texts[index + 1].lstrip().startswith("("):
+        if index + 1 < len(verses) and OPENS_ASIDE.match(texts[index + 1]):
             end = VERSE_END.search(text)
             if end is not None:
                 # A chapter may stand between, as a sentence runs across it.

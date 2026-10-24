@@ -12540,13 +12540,13 @@
       ]
     },
     "alexandrinus-city-name-quotation": {
-      "why": "The quoted phrase is the city’s name, so its opening and closing marks are a typographic quotation pair, not possessive apostrophes.",
+      "why": "Retain quotation marks around this promoted clause-shaped name because it is the subject of shall be; the marks distinguish the name’s own verb from the sentence’s verb. This is a grammatical exception to setting scripture’s names without quotation marks. The change sets the promoted note’s straight marks as that typographic quotation pair, not as possessive apostrophes.",
       "changes": [
         {
           "verse": "EZK 48:35",
           "from": "'the Lord is there'",
           "to": "‘the Lord is there’",
-          "why": "Brenton1879physical1064/1900 physical p. 1060 printed p. 1048 quotes the complete city-name rendering. Preserve every word and mark the name as a quoted phrase."
+          "why": "Brenton 1844 vol. 2 physical p. 360 (printed p. 857), 1879 physical p. 1064 and 1900 physical p. 1060 (printed p. 1048) quote the English city name in their explanatory notes. Retain the quotation pair so that the Lord is there is read as the name used as the subject of shall be, rather than as an assertion followed by a second finite verb. The bare names at Genesis 22:14 and Esaias 8:3 follow naming expressions and do not have this construction. Preserve every word, lowercase the, and the existing unquoted note lemma, Hebrew gloss, omission label and caller."
         }
       ]
     },
@@ -12620,7 +12620,7 @@
       "why": "An em dash supplies the break marked by an adjacent comma, colon, or semicolon. Remove only adjacent runs of these three marks before it in English; preserve periods (including abbreviation periods), question marks, and exclamation marks. Sentence endings and contextual dash changes require explicit decisions."
     },
     "before-parenthesis": {
-      "why": "A parenthesis marks its own boundary. Remove the adjacent run of commas, colons, and semicolons before an opening parenthesis, within a verse and at the end of a verse whose next verse opens one; a period, question mark, or exclamation mark before it ends a sentence and stays."
+      "why": "A parenthetical aside marks its own boundary. Remove the adjacent run of commas, colons, and semicolons before its opening parenthesis, within a verse and at the end of a verse whose next verse opens one; a period, question mark, or exclamation mark before it ends a sentence and stays. Parentheses containing only a number or a single lowercase letter mark a reference or list item, not an aside: preserve the punctuation before them, including across lines and verses. Ezekiel 40:38 CCEL illustrates the distinction: (39) marks the next clause’s verse, without replacing the comma between the independent washing and porch clauses. Brenton 1879 physical p. 1051, 1884 physical p. 998 and 1900 physical p. 1047 (printed p. 1035) have that comma; 1844 vol. 2 physical p. 349 (printed p. 846) does not. Retain the later printings’ comma, the complete report and its two semantic italic runs."
     },
     "inside-parenthesis": {
       "why": "A comma, colon, or semicolon inside a closing parenthesis belongs to the containing sentence: move it after the parenthesis, or remove it where an em dash follows and supplies the break. A period, question mark, or exclamation mark inside stays as the end of the parenthesis's own sentence. Where the containing sentence needs a different mark after the aside, or none, that is a decision."
@@ -13015,17 +13015,6 @@
           "note": "ZEC 10:3#2",
           "from": "oversee. or,",
           "to": "oversee, or,"
-        }
-      ]
-    },
-    "alexandrinus-note-verse-parenthesis": {
-      "why": "A parenthesized inline verse number marks the following clause of a retained Alexandrinus report; it is not an item-list aside requiring the preceding comma.",
-      "changes": [
-        {
-          "note": "EZK 40:38 CCEL",
-          "from": "offering, (39)",
-          "to": "offering (39)",
-          "why": "Brenton1879physical1051/1900 physical p. 1047 printed p. 1035 reports a continuous washing-and-tables clause with inline (39). Remove only the comma before that verse marker, preserving the number and every English word; the general before-parenthesis rule deliberately refuses numbered items."
         }
       ]
     },

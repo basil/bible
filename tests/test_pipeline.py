@@ -2049,6 +2049,7 @@ BEFORE, INSIDE = "before-parenthesis", "inside-parenthesis"
         ("Word, (λόγος,) more.", "Word (λόγος,) more.", {BEFORE}),
         # A moved mark is read by the rules after the move.
         ("Word (a,) (bee) more.", "Word (a) (bee) more.", {BEFORE, INSIDE}),
+        ("Word (bee,) (39) more.", "Word (bee), (39) more.", {INSIDE}),
         ("Word (a,);—more.", "Word (a)—more.", {"before-em-dash", INSIDE}),
         ("Word (a (b,)) more.", "Word (a (b)), more.", {INSIDE}),
     ],
@@ -2072,9 +2073,8 @@ def test_punctuation_beside_parentheses(
         # A mark already stands where the run would move.
         "\\c 1\n\\p\n\\v 1 Word (aside,); more.",
         "\\c 1\n\\p\n\\v 1 Word (aside,). More.",
-        # The "Or," of an alternative, and the separator before an item.
+        # The "Or," of an alternative.
         "\\c 1\n\\p\n\\v 1 Word.\\f + \\fr 1:1 \\ft Or, (as some read) smoke.\\f*",
-        "\\ip These: (1) one, (2) two.",
         # A join across a heading, a chapter's heading, or onto an introduction.
         "\\c 1\n\\p\n\\v 1 He said:\n\\s1 Head\n\\p\n\\v 2 (Aside.)",
         "\\c 1\n\\p\n\\v 1 He said:\n\\c 2\n\\s1 Head\n\\p\n\\v 1 (Aside.)",
@@ -2087,6 +2087,55 @@ def test_punctuation_not_understood_is_refused(
     doc = usj.parse(f"\\id GEN\n{usfm}")
     with pytest.raises(CheckFailed, match="to be decided"):
         revision.punctuated(doc, policy, set())
+
+
+@pytest.mark.parametrize("marker", ["39", "1", "a"])
+@pytest.mark.parametrize("marks", [",", ";", ":"])
+def test_punctuation_before_reference_and_list_markers_stays(
+    policy: bible.policy.Policy, marker: str, marks: str
+) -> None:
+    doc = usj.parse(
+        f"\\id GEN\n\\ip These{marks} ({marker}) one, (2) two."
+        f"\n\\c 1\n\\p\n\\v 1 Word{marks}\\it ({marker})\\it* more."
+        f" \\wg λόγος\\wg*{marks} ({marker}) more."
+        "\\f - \\fr 1:1 \\fq Word: \\ft Alex. adds "
+        f"\\fqa words{marks} \\ft \\+it ({marker}) and more\\+it*\\f*"
+    )
+    usj.notes_of(doc["content"])[0]["x-key"] = "GEN 1:1"
+    before = copy.deepcopy(doc)
+    met: revision.MetRevisions = set()
+    result = revision.punctuated(doc, policy, met)
+    assert result == before
+    assert doc == before
+    assert met == set()
+    assert revision.punctuated(result, policy, set()) == result
+
+
+@pytest.mark.parametrize("marker", ["39", "a"])
+@pytest.mark.parametrize(
+    "boundary",
+    [
+        "\n\\q1\n",
+        "\n\\q1\n\\v 2 ",
+        "\n\\c 2\n\\p\n\\v 1 ",
+        "\n\\s1 Heading\n\\p\n\\v 2 ",
+    ],
+)
+def test_reference_and_list_markers_do_not_join_lines_or_verses(
+    policy: bible.policy.Policy, marker: str, boundary: str
+) -> None:
+    doc = usj.parse(
+        "\\id JOB\n\\c 1\n\\q1\n\\v 1 Words;"
+        "\\f + \\fr 1:1 \\ft A note.\\f*"
+        f"{boundary}\\it ({marker})\\it* more."
+    )
+    before = copy.deepcopy(doc)
+    met: revision.MetRevisions = set()
+    result = revision.punctuated(doc, policy, met)
+    assert result == before
+    assert doc == before
+    assert met == set()
+    assert revision.punctuated(result, policy, set()) == result
 
 
 def test_mark_ending_a_chapter_before_a_parenthesis(
