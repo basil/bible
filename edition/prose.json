@@ -444,6 +444,12 @@
     "why": "Complete the source alternatives with the words and grammatical dependencies their full lemmas take in, as required by the marginal notes’ substitution rule. Each from is checked against its source note; the supplied object and clause context come from the verse named by the key, and the plural verb agrees with Brenton’s Abodes. Scripture wording and witness attribution are retained.",
     "changes": [
       {
+        "note": "ISA 19:2",
+        "from": "district",
+        "to": "district against district",
+        "why": "Brenton 1844 vol. 2 physical p. 201 (printed p. 698), 1879 physical p. 869, 1884 physical p. 836 and 1900 physical p. 865 (printed p. 853 in the Bagster printings) apply their one district note at both law words. Repeat his rendering at both positions, retaining against from the verse, so that it substitutes for the complete lemma law against law. Swete III p. 133 prints νομὸς ἐπὶ νομὸν; its silence about A does not establish a promoted reading."
+      },
+      {
         "note": "GEN 4:26",
         "from": "trusted",
         "to": "trusted to call",

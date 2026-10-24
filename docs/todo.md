@@ -110,11 +110,6 @@ Callers and lemmas.
 - `JER 50:10 CCEL` (`13.l#3`): “Or, such as are, and so on.” is confirmed as printed (1879 physical 983 / 1900 physical 979, printed 967; 1844 vol. 2 physical 293, printed 790), with caller δ (1844 †) before “lift up weapons against them” in all three. The gloss renders verse 11: “such as are” is the KJV's wording at the parallel Jer. 43:11 for οὓς εἰς θάνατον, which Brenton renders “delivering some for death to death” with “delivering” supplied in italics; nothing in verse 10 (Swete III p. 342) fits it. Decide whether to keep Brenton's caller or to move the note before “delivering some” in 50:11 with a placement in `ccel-notes.json`, as at EZK 17:20.
 - CCEL notes the words do not place: of the ten listed in the review as left out, eight are already in eBible at their verses. Two are not: `iv.39#1` (“Setting forth of it.”, EXO 40, at “shalt set forth that which is to be set forth”) and `14#1` (“Words bracketed not in Heb.”, on the prologue before Lamentations 1:1, whose brackets the edition does not print). Decide whether to bring the first in with a placement in `ccel-notes.json`; the second stays out.
 
-#### How much a lemma covers
-
-- `GEN 21:22`: Brenton's “Not in the Heb. friend of bridegroom, or attendant at marriage.” stands on “friend” (λ before “friend”, 1879 and 1900 p. 24), but “Not in the Heb.” is true of “and Ochozath his friend”, which the Hebrew lacks. Decide whether the lemma stays “friend” or widens to “Ochozath his friend”.
-- `ISA 19:2`: Brenton's one β note stands at both “law”s, but the edition prints it on the first alone, so “district” replaces one of them. Decide whether the lemma should be “law against law” with “district against district”.
-
 ### 2.5 What a note or verse prints
 
 Wording and punctuation.

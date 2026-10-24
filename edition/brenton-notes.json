@@ -1872,9 +1872,9 @@
       "why": "Gr. living renders springing alone"
     },
     "GEN 21:22": {
-      "lemma": "friend",
+      "lemma": "Ochozath his friend",
       "note": "Not in the Heb. _friend of bridegroom_, or _attendant at marriage_.",
-      "why": "friend of bridegroom and attendant at marriage render friend; Brenton 1879 physical p. 40 and 1900 physical p. 36 (printed p. 24) set λ before friend, after his."
+      "why": "Brenton 1844 vol. 1 physical p. 44 (printed p. 20) sets † before friend and prints friend or bridegroom; 1879 physical p. 40, 1884 physical p. 37 and 1900 physical p. 36 (printed p. 24) set λ before friend and print friend of bridegroom, or attendant at marriage. Swete I p. 34 (checked, scan confirmed), whose text is A, prints καὶ Ὀχοζὰθ ὁ νυμφαγωγὸς αὐτοῦ; the KJV and RV omit this companion altogether. The lemma names the whole companion phrase absent from the Hebrew rather than friend alone. Keep the source note and its lexical glosses unchanged: they explain friend within that phrase; the conjunction remains implicit in the omission report."
     },
     "GEN 22:4": {
       "lemma": "lifted up",
@@ -5232,10 +5232,8 @@
       "why": "eBible sets the caller before the second followed (followed Thamni), but Brenton's μ stands before the first, followed Ambri, and the verse has no other caller (1879 physical p. 489, 1900 physical p. 485, printed p. 473); Gr. was after renders ὁ ὢν ὀπίσω Ἀμβρί, while the people that followed Thamni is τὸν ὀπίσω Θαμνί, without ὢν"
     },
     "ISA 19:2": {
-      "lemma": "law",
-      "occurrence": 1,
-      "widen": false,
-      "why": "Alex. ‘district,’ the accent being different glosses the first law alone (νόμος read as νομός); widening it to the unique law against echoed against into the reading."
+      "lemma": "law against law",
+      "why": "Brenton 1844 vol. 2 physical p. 201 (printed p. 698), 1879 physical p. 869, 1884 physical p. 836 and 1900 physical p. 865 (printed p. 853 in the Bagster printings) set the same caller before both law words and print one Alex. ‘district,’ the accent being different note. Scope that single report to law against law, keeping his verse unchanged and completing both applications as district against district. Swete III p. 133 reads πόλις ἐπὶ πόλιν καὶ νομὸς ἐπὶ νομὸν and reports no A noun variant; retain the kept report and agrees:null rather than promote an unattested A accent reading."
     },
     "EZK 8:10 CCEL": {
       "lemma": "them",
