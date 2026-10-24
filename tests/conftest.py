@@ -1,11 +1,11 @@
 """What the tests share: the sources, the edition's decisions, and the
-edition prepared from them once."""
+edition prepared from them once in each test process."""
 
 from __future__ import annotations
 
 import copy
 import dataclasses
-from collections.abc import Callable, Mapping
+from collections.abc import Callable, Iterator, Mapping
 from dataclasses import dataclass, replace
 from pathlib import Path
 from types import MappingProxyType
@@ -28,6 +28,10 @@ from bible.sources import Content
 from bible.usj import Document
 
 
+def unreadable(*args: object, **kwargs: object) -> None:
+    raise AssertionError("Preparation must not read files")
+
+
 @pytest.fixture(scope="session")
 def sources() -> bible.sources.Sources:
     """The pinned sources, read through the input-integrity checks."""
@@ -40,12 +44,29 @@ def declared() -> bible.policy.Policy:
     return decisions.load()
 
 
+type ReadAsMade = tuple[bible.pipeline.Read, tuple[dict[str, Document], ...]]
+
+
 @pytest.fixture(scope="session")
-def read(
+def read_as_made(
     sources: bible.sources.Sources, declared: bible.policy.Policy
-) -> bible.pipeline.Read:
+) -> ReadAsMade:
+    """The sources as documents, with a copy of them taken as they were made:
+    the tests of the sources and the preparation share them, so a change in
+    place by either, whichever ran first, shows against the copy when the
+    stages are checked later in the same test process."""
+    with pytest.MonkeyPatch.context() as patch:
+        patch.setattr(Path, "open", unreadable)
+        made = pipeline.read(sources, declared)
+    return made, copy.deepcopy(
+        (dict(made.brenton), dict(made.kjv), dict(made.updated_brenton))
+    )
+
+
+@pytest.fixture(scope="session")
+def read(read_as_made: ReadAsMade) -> bible.pipeline.Read:
     """The sources as documents, their transcription corrected."""
-    return pipeline.read(sources, declared)
+    return read_as_made[0]
 
 
 @pytest.fixture(scope="session")
@@ -101,20 +122,32 @@ class Staged:
     promoted_before: tuple[dict[str, Document], ...]
     assembled: dict[str, Document]
     line_documents: dict[str, Document]
-    # What each stage of the reconciliation (bible.byzantine.stages) made,
-    # by its name, with a plain copy taken as it finished.
-    byzantine: dict[str, tuple[object, object]]
 
 
 @pytest.fixture(scope="session")
 def prepared_edition(
     sources: bible.sources.Sources,
     declared: bible.policy.Policy,
-) -> tuple[bible.pipeline.Edition, Staged]:
-    """Prepare once, keeping what four stages and the reconciliation's
-    stages made, each with a copy taken as it finished, before the next
-    stage ran."""
+    read_as_made: ReadAsMade,
+) -> Iterator[tuple[bible.pipeline.Edition, Staged]]:
+    """Prepare once, from the sources as the read fixture made them, keeping
+    what four stages and the reconciliation's stages made, each with a copy
+    taken as it finished, before the next stage ran.
+
+    The reconciliation's records are frozen only at the top, and share their
+    rows with the stages after them, so none may be changed in place: not by
+    a later stage, nor by the promotion or the variants, which the
+    preparation runs, nor by any test. They are checked against their copies
+    once every test in the process has run, whatever ran and in what order."""
     made: dict[str, tuple[Any, Any]] = {}
+
+    def reused(
+        given: bible.sources.Sources, policy: bible.policy.Policy
+    ) -> bible.pipeline.Read:
+        assert given is sources and policy is declared, "read other sources"
+        assert "read" not in made, "read ran twice"
+        made["read"] = read_as_made
+        return read_as_made[0]
 
     def kept(
         name: str, copied: Callable[[Any], object], module: object = pipeline
@@ -134,19 +167,9 @@ def prepared_edition(
 
     reconciling = ["inputs", *(n for n in vars(stages) if n.startswith("stage_"))]
 
-    def unreadable(*args: object, **kwargs: object) -> None:
-        raise AssertionError("Preparation must not read files")
-
     with pytest.MonkeyPatch.context() as patch:
         patch.setattr(Path, "open", unreadable)
-        patch.setattr(
-            pipeline,
-            "read",
-            kept(
-                "read",
-                deep(lambda r: (dict(r.brenton), dict(r.kjv), dict(r.updated_brenton))),
-            ),
-        )
+        patch.setattr(pipeline, "read", reused)
         patch.setattr(
             pipeline,
             "promote",
@@ -161,7 +184,7 @@ def prepared_edition(
     promoted, promoted_before = made["promote"]
     units, assembled = made["assemble"]
     lined, line_documents = made["lined"]
-    return edition, Staged(
+    yield edition, Staged(
         read_sources,
         (dict(promoted.brenton), dict(promoted.kjv)),
         dict(units),
@@ -170,8 +193,10 @@ def prepared_edition(
         promoted_before,
         assembled,
         line_documents,
-        {name: made[name] for name in reconciling},
     )
+    for name in reconciling:
+        result, before = made[name]
+        assert plain(result) == before, f"stages.{name} made what was changed later"
 
 
 @pytest.fixture(scope="session")

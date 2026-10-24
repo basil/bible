@@ -9,7 +9,7 @@ TOOLCHAIN := $(COMPOSE) run --rm -T --interactive=false --user $(UIDGID) toolcha
 DOCKERFMT := $(COMPOSE) run --rm -T --interactive=false --user $(UIDGID) dockerfmt
 HADOLINT := $(COMPOSE) run --rm -T --interactive=true hadolint
 PIPELINE := $(TOOLCHAIN) python3 -m bible
-.PHONY: bootstrap validate review review-diff test test-python test-fonts test-tex test-tex-save font-specimen sample pdf pdf-unfilled web site site-dev clean lint lint-fix
+.PHONY: bootstrap validate review review-diff test test-python test-tex test-tex-save font-specimen sample pdf pdf-unfilled web site site-dev clean lint lint-fix
 bootstrap:
 	sh scripts/collect_valkyrie.sh
 	$(COMPOSE) pull dockerfmt hadolint
@@ -31,13 +31,11 @@ review-diff:
 	diff -ru -x changes.diff build/review-base/build/review build/review > build/review.diff; test $$? -le 1
 	git worktree remove --force build/review-base
 	@echo "$$(grep -c '^diff \|^Only in ' build/review.diff) files differ from $(BASE): build/review.diff"
-# The three suites are independent, and run side by side.
+# The two suites are independent, and run side by side.
 test:
-	$(MAKE) --no-print-directory -j3 --output-sync=target test-python test-fonts test-tex
+	$(MAKE) --no-print-directory -j2 --output-sync=target test-python test-tex
 test-python:
-	$(TOOLCHAIN) python3 -m pytest --ignore=tests/test_olebfont.py $(PYTEST_ARGS)
-test-fonts:
-	$(TOOLCHAIN) python3 -m pytest tests/test_olebfont.py -o cache_dir=build/pytest-cache-fonts
+	$(TOOLCHAIN) python3 -m pytest -p xdist.plugin -n 2 --dist=loadscope $(PYTEST_ARGS)
 test-tex:
 	$(TOOLCHAIN) l3build check
 test-tex-save:

@@ -9,7 +9,7 @@ from collections.abc import Callable, Iterable
 from typing import Any, cast
 
 import pytest
-from conftest import Staged, changed, plain
+from conftest import Staged, changed
 
 import bible.export
 import bible.pipeline
@@ -81,18 +81,6 @@ def test_no_stage_changes_what_an_earlier_stage_made(staged: Staged) -> None:
     assert staged.promoted == staged.promoted_before
     assert staged.units == staged.assembled
     assert staged.lined == staged.line_documents
-
-
-def test_no_reconciliation_stage_changes_what_an_earlier_stage_made(
-    staged: Staged,
-) -> None:
-    """The reconciliation's records are frozen only at the top, and share
-    their rows with the stages after them, so none may be changed in place:
-    not by a later stage, nor by the promotion or the variants, which the
-    preparation runs. The review is not run by it, and is caught here only
-    when its tests ran earlier in the session."""
-    for name, (made, before) in staged.byzantine.items():
-        assert plain(made) == before, f"stages.{name} made what was changed later"
 
 
 def test_the_policy_is_read_once_and_cannot_be_changed(

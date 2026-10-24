@@ -1,11 +1,16 @@
 """The fonts the image installed, as the build reads them."""
 
+import re
 from pathlib import Path
 
 import pytest
+from build_olebfont import STYLES, font_file
+from fontTools.ttLib import TTFont
 
 from bible import paths, typeface
+from bible.byzantine import variants
 from bible.checks import CheckFailed
+from bible.pipeline import Edition
 
 
 def test_installed_faces() -> None:
@@ -89,3 +94,71 @@ def test_missing_chapter_stops_project_preparation(
         CheckFailed, match="Missing chapter font .*; run make bootstrap"
     ):
         style_mods()
+
+
+RUNS = re.compile(r"\\\+?w[gh] .*?\\\+?w[gh]\*", re.S)
+
+
+@pytest.fixture(scope="module")
+def latin_characters(exported: dict[str, str]) -> set[str]:
+    """Every character the exported edition prints outside the Greek and
+    Hebrew runs, which their own fonts set: shared with the other export checks."""
+    text = "".join(RUNS.sub("", document) for document in exported.values())
+    return {c for c in text if not c.isspace()}
+
+
+@pytest.mark.parametrize("style", STYLES)
+def test_every_latin_character_of_the_edition_is_encoded(
+    latin_characters: set[str], style: str
+) -> None:
+    """Outside the Greek and Hebrew runs, which their own fonts set, every
+    character the exported edition prints has a glyph in every face."""
+    characters = latin_characters
+    assert len(characters) > 90
+    with TTFont(typeface.LATIN / font_file(style)) as font:
+        missing = characters - set(map(chr, font.getBestCmap()))
+    assert missing == set()
+
+
+# What each Greek face lacks of the variants' characters: GFS Heraklit has no
+# stigma, the numeral of the Received Text's number of the beast at Revelation
+# 13:18, which the browser sets from another font.
+GREEK_GAPS = {"GFS Didot": set(), "GFS Heraklit": {"ϛ"}}
+
+
+@pytest.mark.parametrize("bold", [False, True], ids=["regular", "bold"])
+def test_installed_greek_covers_the_variants(edition: Edition, bold: bool) -> None:
+    """The website sets the Greek lanes in the installed Greek face, and the
+    words a correction of the English is about in its bold; where the family
+    has no bold (Heraklit), the browser emboldens its one face."""
+    faces = typeface.faces(typeface.GREEK)
+    face = next((f for f in faces if typeface.style(f) == (700, "normal")), None)
+    if bold and face is None:
+        pytest.skip(f"{typeface.greek_family()} has no bold face")
+    face = face if bold else faces[0]
+    assert face is not None
+    segments = [
+        segment
+        for _, lanes in edition.variants
+        for lane in lanes
+        if lane["language"] == "grc"
+        for segment in lane["segments"]
+    ]
+    if bold:
+        segments = [s for s in segments if not isinstance(s, str) and "about" in s]
+    greek_chars = {
+        ord(c)
+        for segment in segments
+        for side in ("from", "to")
+        for c in variants.witness([segment], side)
+        if not c.isspace()
+    }
+    assert greek_chars
+    with TTFont(face) as font:
+        cmap = font.getBestCmap()
+    assert {chr(c) for c in greek_chars - cmap.keys()} == GREEK_GAPS[
+        typeface.greek_family()
+    ]
+    # The premise of export.ELISION: no Greek face encodes the elision mark,
+    # and every one encodes the apostrophe set in its place.
+    assert 0x2BC not in cmap and 0x2019 in cmap

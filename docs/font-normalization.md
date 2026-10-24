@@ -134,11 +134,16 @@ print-only and excluded from that list.
 
 ## Checking a change
 
-`make test-fonts` runs [tests/test_olebfont.py](../tests/test_olebfont.py):
-recipe-specific outline, metric, hint, and lookup checks; shared shaping and
-character-coverage checks; and byte-for-byte reconstruction of the installed
-fonts and sidecars. `make font-specimen` produces
-`dist/olebfont-specimen.pdf`. The full `make test` also runs the TeX regressions.
+[tests/test_olebfont.py](../tests/test_olebfont.py) holds
+recipe-specific outline, metric, hint, and lookup checks; shared naming
+and shaping checks; and byte-for-byte reconstruction of the installed
+fonts and sidecars. The checks that every character the edition prints,
+and every Greek character of the textual variants, has a glyph in the
+installed faces need the prepared edition, and are in
+[tests/test_typeface.py](../tests/test_typeface.py). `make test-python` runs
+both with the rest of the Python suite, and the full `make test` runs it
+beside the TeX regressions. `make font-specimen` produces
+`dist/olebfont-specimen.pdf`.
 Run these after `make bootstrap` has rebuilt the changed image. The Utopia regressions compare serialized outlines and metrics with independently transformed donors. Normalized Erewhon basic Latin bounds agree with Utopia within 1.1 units in Regular, Italic, and BoldItalic, and advances within one unit; Bold retains Erewhon's deliberate widening. Valkyrie checks require original glyphs, metrics, lookups, and notices to survive unchanged and added superiors to match their measured donor transform.
 
 For source-glyph inspection, run this inside the toolchain container:
