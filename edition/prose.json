@@ -526,6 +526,16 @@
       }
     ]
   },
+  "unitalicized-note": {
+    "why": "Brenton 1844 vol. 2 physical p. 339 (printed p. 836), 1879 physical p. 1039, 1884 physical p. 986 and 1900 physical p. 1035 (printed p. 1023 in the Bagster printings) put a caller before the complete italic phrase Thou shalt live; and and print “The words in italics are found in Alex.” Swete III p. 456 (checked and scan-confirmed) explicitly records δικαιω] + ζωη ζησει και A, supporting all the words the existing lemma names. The edition retains these supplied words as add markup but prints them in ordinary type; describe their presence in Alexandrinus by the lemma rather than by italics the reader cannot see, as unbracketed-notes already does for absent brackets. Keep the scripture, caller, complete lemma, source-note pin and kept Alexandrinus disposition.",
+    "changes": [
+      {
+        "note": "EZK 33:13 CCEL",
+        "from": "The words in italics",
+        "to": "These words"
+      }
+    ]
+  },
   "appendix-codex-names": {
     "why": "Name the two manuscripts explicitly in Brenton's Appendix note on Exodus 28, using Codex Vaticanus and Codex Alexandrinus in place of Vatican and Alexandrine copies.",
     "changes": [
