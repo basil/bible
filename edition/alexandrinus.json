@@ -5230,7 +5230,7 @@
       "source_note": "\\fqa Alex. \\ft + 'it shall be for derision, \\fqa or, \\ft scorn.'"
     },
     "EZK 23:42 CCEL": {
-      "why": "Promote Brenton’s complete English Alexandrinus addition at the place Swete explicitly gives it. Brenton 1879 physical p. 1026 and 1900 physical p. 1022 (printed p. 1010 in both) place ζ after men and before and they put at Ezekiel 23:42 and print “Alex. + 'inflamed with wine.' See A. V. margin.” CCEL 15.xxiii#10 preserves the report accurately; baseline eBible lacks this note. Swete III p. 434 explicitly records ηκοντας] + οινωμενους A et (sub θʹ ✣) Q: unqualified A adds the participle after coming and before from the wilderness; the θʹ ✣ marking belongs to Q alone. No A hand, lacuna, or uncertainty is stated at this unit. Brenton reordered the base phrase in English and placed his terminal caller after men; insert the exact complete gloss immediately after coming, where A’s participle stands, without altering that base English order. Select serialized source_note [18,36), excluding Alex., +, quotation punctuation and the A. V. margin pointer, and prefix unchanged scripture coming plus one space. The result is coming inflamed with wine from the wilderness out of a multitude of men, with the verse’s punctuation retained. Every new English word is Brenton’s; no additional translation is supplied. Pinned KJV Ezekiel 23:42 has Sabeans and pinned RV Ezekiel 23:42 has drunkards, confirming the alternative Hebrew interpretation behind the pointer but providing no borrowed wording. Brenton’s facing Greek and Swete B main positively have ηκοντας εκ της ερημου without οινωμενους. Swete’s B main text thus positively supports the displaced omission; the new note names Vat. The unrelated αυτων και] σου συ δε A unit is outside this note’s report and authorizes no English edit.",
+      "why": "Promote Brenton’s complete English Alexandrinus addition at the place Swete explicitly gives it. Brenton 1879 physical p. 1026 and 1900 physical p. 1022 (printed p. 1010 in both) place ζ after men and before and they put at Ezekiel 23:42 and print “Alex. + 'inflamed with wine.' See A. V. margin.” CCEL 15.xxiii#10 preserves the report accurately; baseline eBible lacks this note. Swete III p. 434 explicitly records ηκοντας] + οινωμενους A et (sub θʹ ✣) Q: unqualified A adds the participle after coming and before from the wilderness; the θʹ ✣ marking belongs to Q alone. No A hand, lacuna, or uncertainty is stated at this unit. Brenton reordered the base phrase in English and placed his terminal caller after men; insert the exact complete gloss immediately after coming, where A’s participle stands, without altering that base English order. Select serialized source_note [18,36), excluding Alex., +, quotation punctuation and the A. V. margin pointer, and prefix unchanged scripture coming plus one space. The result is coming inflamed with wine from the wilderness out of a multitude of men, with the verse’s punctuation retained. Every new English word is Brenton’s; no additional translation is supplied. Pinned KJV Ezekiel 23:42 has Sabeans and pinned RV Ezekiel 23:42 has drunkards, confirming the alternative Hebrew interpretation behind the pointer but providing no borrowed wording. Brenton’s facing Greek and Swete B main positively have ηκοντας εκ της ερημου without οινωμενους. Swete’s B main text thus positively supports the displaced omission; the new note names Vat. The unrelated αυτων και] σου συ δε A unit is outside this note’s report and authorizes no English edit. Retain the accompanying pointer in the displaced note. Brenton 1844 vol. 2 physical p. 329, printed p. 826, has “See E. V. margin.”; 1884 physical p. 973, printed p. 1010, agrees with the other Bagster printings’ “See A. V. margin.” The 1611 KJV margin gives “Or, drunkards” for Sabeans, and the RV prints drunkards. The pointer therefore remains relevant to the adopted words and prints as See KJV margin under the edition’s terminology; it adds no new gloss or borrowed scripture wording.",
       "swete": {
         "volume": 3,
         "page": 434,
@@ -5252,8 +5252,7 @@
       },
       "note_at": 7,
       "lemma": "inflamed with wine",
-      "label": "vatican",
-      "omits": true,
+      "note": "\\fl Vat. \\ft omits. See \\fl A. V. \\ft margin.",
       "source_note": "\\fqa Alex. \\ft + 'inflamed with wine.' See \\fqa A. V. \\ft margin."
     },
     "EZK 25:10 CCEL": {
@@ -8692,7 +8691,7 @@
       "why": "Keep seven days in the text and two days in the footnote. Brenton 1879 (physical page 232, printed page 216) and 1900 (physical page 228, printed page 216) both put the caller before seven days and print “Alex. two days.” Swete I, p. 319 confirms δυο sup ras A^a, the corrector’s two over an erasure. Treat it as a scribal slip within the feast sequence: the base text specifies seven days of unleavened bread at 28:17 and a holy convocation on the seventh day at 28:25. A omits the seven-day clause at 28:17, so that clause is not evidence of A contradicting itself; the seventh-day close at 28:25 still frames this daily feast offering. The erasure alone is not grounds for rejection, since corrected readings are printed elsewhere (PSA 91:10)."
     },
     "NUM 4:48": {
-      "why": "Brenton 1844 (physical p. 171, printed p. 147), 1879 (physical p. 194, printed p. 178) and 1900 (physical p. 190, printed p. 178) print “Alex. 450.” at Numbers 4:48, with the caller before five hundred and eighty. Swete I p. 264 prints B ὀκτακισχίλιοι πεντακόσιοι ὀγδοήκοντα (8,580) and records ογδοηκοντα] και πεντηκοντα A, so A reads 8,550, not the 8,450 Brenton’s figure implies. His report is kept as a note, with A’s figure stated beside it; it cannot be promoted, because Swete’s A does not have the number he reports.",
+      "why": "Keep Brenton’s printed report without editorial commentary or promotion. Brenton 1844 vol. 1 physical p. 171 (printed p. 147), 1879 physical p. 194, 1884 physical p. 163, and 1900 physical p. 190 (printed p. 178 in all three Bagster printings) print “Alex. 450.” with the caller immediately before five hundred and eighty. Swete I p. 264 prints B ὀκτακισχίλιοι πεντακόσιοι ὀγδοήκοντα and explicitly records ογδοηκοντα] και πεντηκοντα A, confirmed on the scan: A therefore reads 8,550, not the 8,450 Brenton’s report implies. The discrepancy prevents promotion and is recorded here; it does not authorize correcting his historical report or adding commentary to its printed note. Retain the source note and the verse’s 8,580 unchanged.",
       "swete": {
         "volume": 1,
         "page": 264,
@@ -8700,8 +8699,7 @@
         "reading": "ὀγδοήκοντα] καὶ πεντήκοντα A",
         "agrees": false
       },
-      "source_note": "\\fqa Alex. \\ft 450.",
-      "note": "\\fl Alex. \\ft 450 (Brenton’s report; Swete’s Alexandrinus reads 550)."
+      "source_note": "\\fqa Alex. \\ft 450."
     },
     "GEN 1:11#2": {
       "why": "Keep this Greek-only addition as a note: Brenton 1844 (vol. 1 physical p. 25), 1879 (physical p. 17), and 1900 (physical p. 13) print Alex. + εἰς ὁμοιότητα, with the caller before on the earth in the fruit-tree clause, and supply no English for it. Swete vol. 1 p. 1 prints κατὰ γένος εἰς ὁμοιότητα ἐπὶ τῆς γῆς in its Alexandrinus main text. KJV and RV Genesis 1:11 lack the likeness addition, so neither supplies English rendering this variant; Ottley translates Isaiah alone. The edition's permitted English sources therefore provide no rendering to promote.",
@@ -8903,7 +8901,7 @@
       "source_note": "\\fqa Alex. \\ft θελητὴν."
     },
     "1KI 2:35a": {
-      "why": "Keep Brenton’s general report as a note, not as an instruction to reconstruct A’s passage. The printed pointer at “sea-shore” is “See Appendix.” (1879 printed p. 445, physical p. 461; 1900 printed p. 445, physical p. 457; 1844 vol. 1 printed p. 364, physical p. 388). Brenton’s Appendix says “Considerable variation here rather than omission”, without supplying an English rendering. Swete I pp. 676–678 explicitly reports A’s variations within 35a–o, its omission of 46a–l, and its addition before 3:2 corresponding to the Hebrew’s 2:46b–3:1. These are distinct textual changes; the general English remark authorizes none of them as a replacement passage. Move that remark into the existing note at 2:35a. The repeated pointer before “And the wisdom” at 2:35b refers to the same Appendix remark; after the remark is moved out of the Appendix, do not restore a second dangling pointer or duplicate the remark.",
+      "why": "Keep Brenton’s general report and its locator as a note, not as an instruction to reconstruct A’s passage. Brenton 1844 vol. 1 physical p. 388, printed p. 364, explicitly begins chapter 3 at And the wisdom, the edition’s 2:35b; the preceding unit, 2:35a, ends his chapter 2. The Appendix’s “2 ult. 3. verse 1” therefore names this edition’s 2:35a–b. Brenton 1879 physical p. 461, 1884 physical p. 430, and 1900 physical p. 457 (printed p. 445 in each) place the repeated See Appendix pointers after sea-shore and before And the wisdom. Transfer the complete remark into the existing note at 2:35a, retaining its locator in the edition’s numbers through the citation decision. Swete I p. 676 records 35a τω Σαλ. φρονησιν A and further variants in 35c–d; his separate omission of 46a–l and addition before 3:2 on p. 678 do not establish that Brenton’s locator names that later seam. The general remark supplies no replacement English. Keep the current note position and lack of lemma, and do not restore the duplicate Appendix pointer at 2:35b.",
       "swete": {
         "volume": 1,
         "page": 676,
@@ -8912,12 +8910,12 @@
         "agrees": true
       },
       "source_note": "\\ft See \\fqa Appendix.",
-      "note": "\\fl Alex. \\ft Considerable variation here rather than omission.",
+      "note": "\\fl Alex. \\ft 2 ult. 3. verse 1. Considerable variation here rather than omission.",
       "lemma": null
     },
     "BAK 1KI 2:35a": {
       "appendix": "\\ip 2 \\it ult\\it*. 3. \\it verse\\it* 1. Considerable variation here rather than omission.  \n",
-      "why": "A remark, not a supplied passage: the Appendix in both Bagster printings (1879 physical page 1149; 1900 physical page 1145, printed page 1133) reads “2 ult. 3. verse 1. Considerable variation here rather than omission.” It supplies no alternative English. Keep its transfer into the existing note at 2:35a. Swete I p. 678 explicitly reports A’s omission of B’s 2:46a–l and A’s different opening before 3:2, without a correcting hand or uncertainty. These confirm substantial variation at the chapter seam but do not authorize translating an unreported variant; the emptied Appendix list remains removed.",
+      "why": "A remark, not a supplied passage: Brenton 1844 vol. 2 physical p. 432, printed p. 929; 1879 physical p. 1149; 1884 physical p. 1087; and 1900 physical p. 1145 (the Bagster Appendix leaf corresponding to p. 1133) print “2 ult. 3. verse 1. Considerable variation here rather than omission.” The italic ult. and verse belong to its locator. His chapter 3 begins at the edition’s 2:35b (1844 vol. 1 physical p. 388, printed p. 364), so retain the locator as verses 35a–35b in the note at 2:35a, through the citation decision. Swete I p. 678 explicitly records 46 a–l om και ην ο βασιλευς…εν Ιερουσαλημ A and III 2 θυμιωντες] pr της δε βασιλειας εδρασθεισης|εν χειρι Σαλωμων επιγαμια|εποιησατο Σαλωμων προς Φαραω βασιλεα Αιγυπτου· και ελα|βεν την θυγατερα Φαραω· και|εισηγαγεν αυτην εις την πολιν Δ̅α̅δ̅· εως ου συνετελεσεν|οικοδομων τον οικον εαυτου|και τον οικον κ̅υ̅· και το τειχος|Ι̅η̅μ̅λ̅ (sic)· κυκλω· πλην ο λαος ησαν A, confirmed on the scan. Those variations concern Swete’s different chapter seam; they do not redefine Brenton’s printed locator or authorize translating an unreported variant. Preserve the transfer and the removal of the emptied Appendix list.",
       "moved_to": "1KI 2:35a",
       "swete": {
         "volume": 1,

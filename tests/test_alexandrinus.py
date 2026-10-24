@@ -578,7 +578,7 @@ def test_the_edition_prints_its_readings_and_supplied_passages(
     # Its words stand in the note on the verse, in the edition's own style.
     kingdoms = usj.serialize(edition.documents["1KI"])
     assert (
-        r"\v 35a \f - \cat edition\cat*\fr 2:35a \ft Alex. Considerable variation here rather than omission\f*and"
+        r"\v 35a \f - \cat edition\cat*\fr 2:35a \ft Alex. \ref verses 35a–35b|1KI 2:35a\ref*. Considerable variation here rather than omission\f*and"
         in kingdoms
     )
     gloss = next(

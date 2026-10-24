@@ -88,12 +88,6 @@ Callers and lemmas.
 
 Wording and punctuation.
 
-#### Words left out of a note or added to it
-
-- `BAK 1KI 2:35a`: The printed note leaves out Brenton's locator (“2 ult. 3. verse 1”), so its “here” reads as 2:35a, where Swete I p. 678 reports only small A variants; the variation he means is at 2:46a–l and 3:1–2. Decide whether the note keeps his locator.
-- `EZK 23:42 CCEL`: Brenton's pointer “See A. V. margin.” goes with the promoted source note and prints nowhere. Decide whether the displaced note keeps it.
-- `NUM 4:48`: The kept note adds the editor's parenthesis “(Brenton’s report; Swete’s Alexandrinus reads 550)”, which no other kept report has. Decide whether it prints Brenton's “Alex. 450.” alone.
-
 #### Punctuation
 
 - `EZK 40:38 CCEL`: The printed note splits Brenton's quotation into two italic runs and drops his comma before “(39)”. Decide whether to keep the comma.

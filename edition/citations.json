@@ -516,6 +516,13 @@
       "source": "14:1–20",
       "not_a_citation": true,
       "why": "The note compares the Vatican addition with the Alexandrine account by its verse numbers, rather than making a source-form Brenton citation."
+    },
+    "1KI 2:35a": {
+      "source": "2 ult. 3. verse 1",
+      "passages": "1KI 2:35a; 1KI 2:35b",
+      "print": "verses 35a–35b",
+      "relative": "verse",
+      "why": "Brenton’s Appendix prints “2 ult. 3. verse 1” (1844 vol. 2 physical p. 432, printed p. 929; 1879 physical p. 1149 and 1900 physical p. 1145, Appendix leaf corresponding to p. 1133; also 1884 physical p. 1087). His chapter 3 begins And the wisdom, explicitly numbered 3:1 in 1844 vol. 1 physical p. 388, printed p. 364, so the locator names the edition’s 2:35a and 2:35b. Express the reference in the edition’s numbers, without relocating the note to Swete’s different chapter seam."
     }
   }
 }
