@@ -3955,8 +3955,7 @@
     },
     "PSA 9:22": {
       "lemma": null,
-      "why": "the note is on the numbering of the psalm that begins here. The note includes a complete explanatory sentence after its opening label or gloss, which keeps its final full stop.",
-      "sentence": true
+      "why": "The note is on the numbering of the psalm that begins here."
     },
     "PSA 9:27": {
       "verse": "9:28",
@@ -4825,10 +4824,6 @@
       "why": "The note includes a complete explanatory sentence after its opening label or gloss, which keeps its final full stop."
     },
     "1KI 14:1": {
-      "sentence": true,
-      "why": "The note includes a complete explanatory sentence after its opening label or gloss, which keeps its final full stop."
-    },
-    "PSA 2:12": {
       "sentence": true,
       "why": "The note includes a complete explanatory sentence after its opening label or gloss, which keeps its final full stop."
     },

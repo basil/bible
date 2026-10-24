@@ -481,6 +481,35 @@
       }
     ]
   },
+  "direct-note-introductions": {
+    "why": "Begin these explanations directly, omitting the introductory word Note and its following punctuation. This is an editorial shortening of the notes, not a correction of Brenton's wording; retain each explanation, its caller and its scope.",
+    "changes": [
+      {
+        "note": "PSA 2:12",
+        "from": "Note. - This rendering",
+        "to": "This rendering",
+        "why": "Brenton 1879 physical p. 715, 1884 physical p. 682 and 1900 physical p. 711 (printed p. 699), checked on the scans, print Note.—This rendering or a similar one the Jews maintain. The 1844 volume II physical p. 79 (printed p. 576) has Note. this rendering, without a dash. Omit the introductory label and begin This rendering, preserving the explanation and the caller before Accept correction."
+      },
+      {
+        "note": "PSA 9:22",
+        "from": "Note.—Here begins",
+        "to": "Here begins",
+        "why": "Brenton 1844 volume II physical p. 82 (printed p. 579), 1879 physical p. 719, 1884 physical p. 686 and 1900 physical p. 715 (printed p. 703), checked on the scans, print Note.—Here begins a change of numbers. Omit the introductory label and begin Here begins, keeping this verse-level explanation before the opening of the psalm."
+      },
+      {
+        "note": "EZR 17:73 CCEL#2",
+        "from": "Note.—In",
+        "to": "In",
+        "why": "Brenton 1879 physical p. 657, 1884 physical p. 624 and 1900 physical p. 653 (printed p. 641), checked on the scans, print Note.—In chap. vii. there are frequent slight variations in Alex., with the caller after their cities. The 1844 volume II physical p. 29 (printed p. 526) instead has Note.—In this chapter there are frequent but not important variations in Alex. Omit the introductory label from the Bagster wording the edition reads, retaining that wording and the note's position at the end of Nehemias 7:73."
+      },
+      {
+        "note": "JER 25:13 CCEL",
+        "from": "Note.—For a list",
+        "to": "For a list",
+        "why": "Brenton 1844 volume II physical p. 266 (printed p. 763), 1879 physical p. 949, 1884 physical p. 915 and 1900 physical p. 945 (printed p. 933), checked on the scans, print Note.—For a list of the transpositions of verses and chapters in the LXX., see the end of Jeremiah. Omit the introductory label while retaining the caller after book and the edition's separately declared pointer to its website's tables."
+      }
+    ]
+  },
   "jeremiah-numbering-table-pointer": {
     "why": "The edition’s numbering tables are published on its website; the source pointer to the end of Jeremiah no longer leads to a table.",
     "changes": [

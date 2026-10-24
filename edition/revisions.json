@@ -12734,17 +12734,12 @@
       ]
     },
     "note-introduction-dashes": {
-      "why": "The dash introduces the explanation in these notes without ending a sentence; remove the ordinary period while retaining abbreviation periods.",
+      "why": "The dash introduces the explanation in the Joshua note without ending a sentence; remove the ordinary period while retaining the abbreviation periods in q.d.",
       "changes": [
         {
           "note": "JOS 21:13",
           "from": "above.—q.d.",
           "to": "above—q.d."
-        },
-        {
-          "note": "PSA 9:22",
-          "from": "Note.—Here begins",
-          "to": "Note—Here begins"
         }
       ]
     },
