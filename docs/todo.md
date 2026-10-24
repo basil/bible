@@ -43,14 +43,6 @@ Found while checking notes against the 1844, 1879, and 1900 printings and agains
 
 How the verse reads once a report of Codex Alexandrinus is carried out.
 
-#### How far a reading reaches
-
-The verse changes more, or less, than Brenton's report covers.
-
-- `EZK 1:26 CCEL`: Besides Brenton’s reported “when they stood their wings were let down”, the verse prints “; and above the firmament that was over their head”, the King James clause of 1:26 with “heads” changed to “head” and its italic “was” made roman, for the rest of A’s addition (Swete III p. 387); “above the firmament that was over their head” is also Brenton’s own wording for the same Greek at 1:25, so only “and” needs the King James. Decide whether to print Brenton’s reported clause alone.
-- `ISA 40:4`: Brenton’s note (“Luke 3. 5, with which Alex. agrees”) covers a clause where Swete III p. 173 records two A differences, om παντα A and πεδια] οδους λιας A. The decision carries out only the second, so the verse prints “and all the crooked ways shall become straight, and the rough places smooth ways”, B’s πάντα beside A’s ὁδοὺς λείας. Decide whether “all” goes too, with the displaced note naming Vat. for it.
-- `HOS 13:3 CCEL`: The decision drops the article of “as a smoke”, outside the words Brenton's caller marks. Decide whether to keep “a”.
-
 #### English from no single source
 
 Splices, compositions, and the editor's own words.

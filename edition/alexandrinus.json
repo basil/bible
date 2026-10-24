@@ -2748,21 +2748,26 @@
       "source_note": "\\fqa Gr. \\ft for days in time. \\fqa Alex. \\ft seasons."
     },
     "ISA 40:4": {
-      "why": "Retain the promotion of smooth ways. Brenton 1879 physical p. 890 and 1900 physical p. 886 (printed p. 874 in both) place γ before and all the crooked ways and print “Luke 3. 5, with which Alex. agrees.” without See. Facing Valpy/base Greek ends καὶ ἡ τραχεῖα εἰς πεδία and English the rough places plains. Swete III p. 173 has B main πεδία and explicitly records πεδια (-αν ℵ*)] οδους λιας ℵ^{c.a, c.b} A (ο. λειας) Q*: unqualified A reads οδους λειας, alongside Sinaiticus correcting hands c.a/c.b and Q first hand, without an A hand, lacuna, or uncertainty qualification. Ottley 1909 vol. I printed p. 219 renders Isaiah 40:4 “and the rough land smooth ways”; the pinned KJV Luke 3:5 has “the rough ways shall be made smooth”, while pinned KJV/RV Isaiah 40:4 have rough places plain. Swete’s B main text positively supports the displaced plains; the note names Vat.",
+      "why": "Carry out both differences covered by Brenton’s report that Alexandrinus agrees with Luke 3:5. Brenton 1844 vol. 2 physical p. 218 (printed p. 715), 1879 physical p. 890, 1884 physical p. 857, and 1900 physical p. 886 (printed p. 874 in the three Bagster printings) place the caller before and all the crooked ways and print Luke 3. 5, with which Alex. agrees. Ways and places are supplied italics. Swete III p. 173, checked and scan-confirmed, records om παντα A sub ⸓ Q and πεδια (-αν ℵ*)] οδους λιας ℵ^{c.a, c.b} A (ο. λειας) Q*: unqualified A omits all and reads smooth ways. KJV Luke 3:5, the parallel Brenton names, likewise has the crooked without all. Retain the previously declared smooth ways from Ottley’s Isaiah 40:4 (vol. 1, p. 219) and the King James parallel; remove only all from Brenton’s other words. Preserve both supplied-word markers. Swete’s B main text positively has both παντα and πεδια, so one Vat. alternative quotes the complete displaced construction under the complete printed construction.",
       "swete": {
         "volume": 3,
         "page": 173,
         "evidence": "apparatus",
-        "reading": "πεδια (-αν ℵ*)] οδους λιας ℵ^{c.a, c.b} A (ο. λειας) Q*",
+        "reading": "om παντα A sub ⸓ Q | πεδια (-αν ℵ*)] οδους λιας ℵ^{c.a, c.b} A (ο. λειας) Q*",
         "agrees": true
       },
-      "from": "plains",
+      "from": "all the crooked \\add ways\\add* shall become straight, and the rough \\add places\\add* plains",
       "supplied": ["smooth", "ways"],
       "english": {
         "source": "from",
         "edits": [
           {
-            "span": [0, 6],
+            "span": [0, 4],
+            "to": "",
+            "why": "Remove all for A’s omission of παντα within the clause Brenton reports as agreeing with Luke."
+          },
+          {
+            "span": [85, 91],
             "to": "smooth ways",
             "why": "Ottley’s and Luke 3:5’s English for ὁδοὺς λείας."
           }
@@ -4215,12 +4220,12 @@
       "omits": true
     },
     "JER 31:34 CCEL": {
-      "why": "Promote Brenton’s reported name and complete the Alexandrine unit from the licensed King James rendering of the same text. Brenton 1879 physical p. 960 and 1900 physical p. 956 (printed p. 944 in both) print “Alex. Eleale.” with δ immediately before Ætam at Jeremias 31:34; CCEL 13.xxxi#4’s Elcale is corrected separately. Swete III p. 296 records the single unit Αιταμ] Εγαβ ℵ Ελεαλη| και εως Ιασσα A Ελ. και εως Ιασσα| εως Αιταθ Q: unqualified A replaces ἕως Αἰτὰμ with ἕως Ἐλεαλὴ καὶ ἕως Ἰασσά, with no corrector, lacuna, or uncertainty. Brenton’s English for the unit he reports is incomplete, and no witness reads Eleale alone, so the words his note lacks are supplied: the Hebrew reads with A, and the pinned KJV Jeremiah 48:34 has “even unto Elealeh, and even unto Jahaz”, from which “, and even unto” is taken; Jassa is Brenton’s own form of Ἰασσά (Isaiah 15:4, Numbers 21:23, Deuteronomy 2:32), as EZK 1:26 CCEL completes a partly reported A unit from the KJV and 2SA 6:3 takes a name in Brenton’s form. Swete’s B main ἀπὸ κραυγῆς Ἑσεβὼν ἕως Αἰτὰμ and Brenton’s facing Greek ἕως Αἰτὰμ positively support the displaced Ætam, so it keeps the Vat. label.",
+      "why": "Retain the complete Alexandrine replacement at the unit Brenton reports under the name Eleale. Brenton 1844 vol. 2 physical p. 275 (printed p. 772), 1879 physical p. 960, 1884 physical p. 925, and 1900 physical p. 956 (printed p. 944 in the three Bagster printings) all put the caller immediately before Ætam and print Alex. Eleale. CCEL 13.xxxi#4’s Elcale is corrected separately. Swete III p. 296, verified and scan-confirmed, records Αιταμ] Εγαβ ℵ Ελεαλη|και εως Ιασσα A Ελ. και εως Ιασσα|εως Αιταθ Q: unqualified A replaces Αιταμ with Ελεαλη και εως Ιασσα, without an uncertain hand or erasure. Although Brenton reports only the first name, the editorial ruling is to render the complete replacement through the added destination. Pinned KJV Jeremiah 48:34 supplies And even unto Jahaz; adapt its capitalization and use Brenton’s Jassa, attested at Isaiah 15:4, Numbers 21:23, and Deuteronomy 2:32. Declare and, even, unto, and Jassa as supplied vocabulary. This is an explicit completion from KJV wording with Brenton’s name form, not a claim that Brenton printed the complete alternative or that his name substitution is grammatically incomplete. Swete’s B main text positively supports the displaced Ætam, so the note retains Vat. The full lemma Eleale, and even unto Jassa can be replaced by the displaced name without breaking the surrounding sentence.",
       "swete": {
         "volume": 3,
         "page": 296,
         "evidence": "apparatus",
-        "reading": "Αιταμ] Ελεαλη και εως Ιασσα A",
+        "reading": "Αιταμ] Εγαβ ℵ Ελεαλη|και εως Ιασσα A Ελ. και εως Ιασσα|εως Αιταθ Q",
         "agrees": true
       },
       "from": "Ætam",
@@ -4687,7 +4692,7 @@
       "source_note": "\\fqa Alex. \\ft + 'as the sound of the Mighty One, when they went there was the sound of speech as the sound of an army,' nearly according to the \\fqa Heb."
     },
     "EZK 1:26 CCEL": {
-      "why": "Promote Brenton’s addition and complete its English from the licensed King James rendering of the same Alexandrine construction. Brenton 1879 physical p. 996 and 1900 physical p. 992 (printed p. 980 in both) print “Alex. + ‘when they stood their wings were let down.’” with τ after head, and before there was at Ezekiel 1:26. CCEL 15#13 preserves this report exactly. Swete III p. 387 explicitly records αυτων] + εν τω εσταναι αυτα ανιεντο (-οντο Q) αι πτερυγες αυτων και υπερανω του στερεωματος του υπερ κεφαλης αυτων A et (sup θʹ ✣) Q: unqualified A adds both the reported wing clause and the repeated above-the-firmament clause; Q has a different ending on the verb and marks the addition θʹ ✣. No A hand, lacuna, or uncertainty qualifies this unit. The addition follows αυτων in Swete verse 25, which is the closing head in Brenton 1:26. Brenton’s printed English report is incomplete: inserting its wing clause alone leaves the sapphire/throne clause without A’s restored prepositional frame. The pinned King James Ezekiel 1:26 supplies And above the firmament that was over their heads; the Hebrew here reads with A. Supply every word of and above the firmament that was over their head from this KJV clause, adapting heads to Brenton’s existing head because Greek κεφαλης is singular in both the unchanged and repeated clauses. Pinned RV 1:25–26 confirms the same construction, with no different idiom required. Select when they stood their wings were let down exactly from serialized source_note [18,59), prepend retained head, and append a semicolon and the licensed KJV clause with a final comma. Preserve all following scripture words and punctuation. This yields the complete A construction rather than joining its wings clause directly to the throne clause. The source-facing Greek and Swete B both lack the entire addition. Swete’s B main text positively supports the displaced omission of the complete inserted text; the note names Vat.",
+      "why": "Retain the complete Alexandrine addition, completing Brenton’s abbreviated report rather than limiting the verse to its reported wing clause. Brenton 1844 vol. 2 physical p. 305 (printed p. 802), 1879 physical p. 996 and 1900 physical p. 992 (printed p. 980 in both) place the caller after head, before italic there was, and print Alex. + ‘when they stood their wings were let down.’ The surviving 1884 physical p. 955 is cropped before this verse and its note. CCEL 15#13 preserves the report. Swete III p. 387, checked and scan-confirmed, records αυτων] + εν τω εσταναι αυτα ανιεντο (-οντο Q) αι πτερυγες αυτων και υπερανω του στερεωματος του υπερ κεφαλης αυτων A et (sup θʹ ✣) Q: unqualified A adds both the wing clause and the repeated firmament clause, without an uncertain hand or lacuna. The addition follows αυτων in Swete verse 25, the closing head in Brenton 1:26. The editorial ruling is to render this entire addition despite the abbreviated report. Brenton already has above the firmament that was over their head across 1:25–26; pinned KJV Ezekiel 1:26 supplies And above the firmament that was over their heads, with was supplied, and the Hebrew reads with A. Retain the declared KJV completion, adapting plural heads to singular head for Greek κεφαλης and setting was in roman as part of the declared rendering of A’s repeated prepositional frame. RV confirms the same construction. Preserve the semicolon and all following scripture words, including supplied there was and and. The complete addition and its full omission lemma remain unchanged. Swete’s B main text positively lacks the complete addition, supporting Vat. omits.",
       "swete": {
         "volume": 3,
         "page": 387,
@@ -6172,7 +6177,7 @@
       "label": "vatican"
     },
     "HOS 13:3 CCEL": {
-      "why": "Promote Brenton’s complete English Alexandrinus alternative smoke out of the chimney. Brenton 1879 physical p. 1095 and 1900 physical p. 1091, printed p. 1079 in both, print “Alex. smoke out of the chimney.” with δ immediately before vapour in Hosea 13:3. CCEL 17.xii#3 faithfully preserves this unique note, absent from eBible. Swete III p. 13 explicitly records απο δακρυων] εκ καπνοδοχης AQ* (απο δ. Q^mg): unqualified A and Q first hand support out of the chimney, while Q’s marginal reading supports from tears. There is no A hand or uncertainty qualification and no lacuna at the unit. Brenton’s gloss renders the entire ἀτμὶς ἐκ καπνοδοχης construction; replace a vapour from tears with his whole smoke out of the chimney, dropping the indefinite article together with the displaced count-noun phrase so that the complete sentence reads as smoke out of the chimney. Every new English word comes from the printed note; no translation is supplied. Brenton’s facing base Greek ἀτμὶς ἀπὸ δακρύων and Swete B main independently support the displaced a vapour from tears, so Swete’s B main text positively supports the displaced phrase at this unit and the note names Vat.",
+      "why": "Print Brenton’s Alexandrine alternative smoke out of the chimney, retaining his preceding article. Brenton 1844 vol. 2 physical p. 385 (printed p. 882), 1879 physical p. 1095, 1884 physical p. 1037, and 1900 physical p. 1091 (printed p. 1079 in the three Bagster printings) all print a vapour from tears, with the caller immediately before vapour, after a, and the note Alex. smoke out of the chimney. No supplied-word italics or brackets qualify the verse or alternative. CCEL 17.xii#3 preserves the note, absent from eBible. Swete III p. 13, checked and scan-confirmed, records απο δακρυων] εκ καπνοδοχης AQ* (απο δ. Q^mg): unqualified A supports out of the chimney, while B’s main text supports the displaced vapour from tears. Replace only vapour from tears with Brenton’s complete alternative, leaving a before the caller. A smoke is established biblical English, also found in Brenton at 2 Kingdoms 22:9 and Psalm 17:9, so no grammatical adjustment requires deleting the article. The verse reads as a smoke out of the chimney; the note remains on smoke out of the chimney and names Vat. for the displaced vapour from tears. No English is supplied or translated.",
       "swete": {
         "volume": 3,
         "page": 13,
@@ -6180,7 +6185,7 @@
         "reading": "απο δακρυων] εκ καπνοδοχης AQ* (απο δ. Q^mg)",
         "agrees": true
       },
-      "from": "a vapour from tears",
+      "from": "vapour from tears",
       "english": {
         "source": "brenton",
         "span": [15, 39]
