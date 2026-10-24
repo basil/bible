@@ -3054,7 +3054,7 @@
       "source_note": "\\fqa Or, \\ft a perpetual covenant. \\fqa Heb. \\ft and \\fqa Alex. \\ft omit."
     },
     "2KI 3:21#2": {
-      "why": "Print the supported Alexandrine idiom. Brenton 1879 physical 507 and 1900 physical 503 (printed 491) put ζ before “and they said, Ho!” and print “Alex. καὶ ἐπάνα, ‘and above.’”; preserve his printed spelling in the exact source pin. Swete I p. 746 explicitly reports ειπον ω] επανω A without hand or uncertainty qualification. The preceding “even all that were girt with a girdle” supplies the lower class from which the range extends upward, as the pinned King James and Revised Versions at 2 Kings 3:21 both express it: “all that were able to put on armour, and upward”. Their English resolves the threshold without adding an age or rank absent from the source. Derive “and” from Brenton’s quoted English and use the pinned KJV’s “upward” for his “above”; retain the surrounding Brenton clause and add the comma needed before “and stood”. Do not apply the separately reported A ανεβησαν for “cried out”, which Brenton does not report. Swete B positively supports the displaced καὶ εἶπον Ὤ; the note names Vat.",
+      "why": "Print Brenton’s own English for the supported Alexandrine reading. Brenton 1844 vol. I physical p. 426 (printed p. 402) puts a dagger before “and they said, Ho!” and explains “Alex. reads καὶ ἐπάνα, ‘and above,’ which corresponds more nearly with the Hebrew.” The 1879 physical p. 507, 1884 physical p. 474, and 1900 physical p. 503 printings (printed p. 491 in all three) put ζ at the same place and shorten the note to “Alex. καὶ ἐπάνα, ‘and above.’” Swete I p. 746 reports ειπον ω] επανω A, without a correcting hand or uncertainty, confirmed on the scan. The preceding “all that were girt with a girdle” supplies the lower limit of “and above”; Brenton’s English is complete and needs no borrowed synonym. The pinned KJV and RV render this range “and upward”, but do not supply a meaning absent from Brenton’s wording. Select his exact “and above” and retain the comma before “and stood”. Preserve the source note’s printed Greek spelling. Do not apply the separately reported ανεβοησαν] ανεβησαν A, which Brenton does not report. Swete’s B main text positively supports the displaced καὶ εἶπον Ὤ, so the explicit note retains Vat.",
       "swete": {
         "volume": 1,
         "page": 746,
@@ -3064,17 +3064,11 @@
       },
       "from": "and they said, Ho!",
       "note": "\\fl Vat. \\fq and they said, Ho\\ft .",
-      "lemma": "and upward",
-      "supplied": ["upward"],
+      "lemma": "and above",
       "english": {
         "source": "brenton",
         "span": [27, 36],
         "edits": [
-          {
-            "span": [4, 9],
-            "to": "upward",
-            "why": "The pinned KJV and RV at 2 Kings 3:21 both render the same lower-bound idiom with upward; the preceding girded class supplies the threshold."
-          },
           {
             "span": [9, 9],
             "to": ",",
@@ -7763,7 +7757,7 @@
     },
     "2CH 27:8": {
       "appendix": "\\ip 27. \\vp 8\\vp*And he reigned twenty-five years, and sixteen years he reigned in Jerusalem.  \n",
-      "why": "Print Codex Alexandrinus’s verse 8 after verse 7. Brenton’s Appendix, 1879 physical p. 1150 and 1900 physical p. 1146 (the same final supplied-passages page), prints under Chronicles II, “27. 8 And he reigned twenty-five years, and sixteen years he reigned in Jerusalem.” Both printings give the same words without an ordinary note caller in this paragraph. Swete, vol. II, p. 105 positively adds verse 8 after Ισραηλ in verse 7 with the explicit siglum A: καὶ εἴκοσι καὶ πέντε ἐτῶν ἦν βασιλεύσας· καὶ ἓξ καὶ δέκα ἔτη ἐβασίλευσεν ἐν Ἰερουσαλήμ. No correcting hand is specified for the addition. B’s main text passes directly from verse 7 to verse 9, confirming the omission. Brenton’s Appendix makes both numbers years reigned, where A gives his age at accession and then his reign, as verse 1 does; the English is corrected to A with the words of the King James Version (2 Chronicles 27:8 “He was five and twenty years old when he began to reign, and reigned sixteen years in Jerusalem”), which renders the Hebrew verse A supplies, and which are Brenton’s own words at 27:1. ἦν is in the Greek, so “was” is not bracketed.",
+      "why": "Print Codex Alexandrinus’s verse 8 after verse 7. Brenton’s Appendix, 1844 vol. II physical p. 433 (printed p. 930), 1879 physical p. 1150, 1884 physical p. 1088, and 1900 physical p. 1146 (the latter three Appendix pages unnumbered), prints under Chronicles II, “27. 8 And he reigned twenty-five years, and sixteen years he reigned in Jerusalem.” These printings give the same words without supplied-word italics, brackets, or a note caller within the supplied verse. Swete II p. 105 records after verse 7: Ισραηλ] + (8) και εικοσι και πεντε ετων·| ην βασιλευσας· και εξ και δεκα·| ετη εβασιλευσεν εν Ι̅λ̅η̅μ̅| A. The checked transcription is confirmed on the scan; no correcting hand or uncertainty qualifies the addition. B passes directly from verse 7 to verse 9, so the note names Vat. for its omission. Correct Brenton’s first clause, which makes twenty-five years a reign rather than his age at accession, using the wording of the King James Version at 2 Chronicles 27:8 and Brenton’s own words at 27:1. Retain his second clause, “and sixteen years he reigned in Jerusalem”: it already renders A’s Greek and needs neither borrowed wording nor a change of order. ἦν is in the Greek, so “was” is not bracketed.",
       "swete": {
         "volume": 2,
         "page": 105,
@@ -7787,11 +7781,6 @@
                     "span": [7, 32],
                     "to": "was twenty-five years old when he began to reign",
                     "why": "A gives the age at accession."
-                  },
-                  {
-                    "span": [38, 62],
-                    "to": "he reigned sixteen years",
-                    "why": "Brenton’s words in the order of verse 1."
                   }
                 ]
               }
@@ -8593,7 +8582,7 @@
     },
     "EZK 1:14": {
       "kjv": true,
-      "why": "Supply Ezekiel 1:14 before 1:15 from the Authorized Version, which renders the Hebrew verse Brenton reports; A’s βεζεκ transliterates the Hebrew word that the Authorized Version renders a flash of lightning. Brenton 1879 physical p. 996 and 1900 physical p. 992 (printed p. 980) place θ after lightning. at the end of 1:13, immediately before 1:15, and print “Alex. and Heb. supply ver. 14. ‘And the living creatures ran and returned at the appearance of Bezec.’” CCEL 15#6 misreads the final c as e; the build sets its closing caller at the end of 1:13, as printed, under the key EZK 1:13 CCEL#2. Swete III p. 386 B main passes directly from 1:13 to 1:15; explicit apparatus adds και τα ζωα ετρεχον και ανεκαμπτον ως ειδος του βεζεκ A et (sub θʹ ✣) Q. A is unqualified, without correcting hand, lacuna, or uncertainty; Q has a Theodotion source marker, not an A hand. Brenton’s Bezec transliterates βεζεκ, the Hebrew lightning word; his at does not express the Greek comparison ως. Pinned KJV Ezekiel 1:14 supplies the complete matching sentence “And the living creatures ran and returned as the appearance of a flash of lightning.” RV1885 has the identical sentence and is unnecessary. Copy the entire KJV verse instead of splicing syntax or inventing a translation. B positively omits the verse independently of Brenton’s facing Greek, which also omits it.",
+      "why": "Supply Ezekiel 1:14 before 1:15 from the Authorized Version, which renders the Hebrew verse Brenton reports; A’s βεζεκ transliterates the Hebrew word that the Authorized Version renders a flash of lightning. Brenton 1879 physical p. 996 and 1900 physical p. 992 (printed p. 980) place θ after lightning. at the end of 1:13, immediately before 1:15, and print “Alex. and Heb. supply ver. 14. ‘And the living creatures ran and returned at the appearance of Bezec.’” Brenton 1844 vol. II physical p. 304 (printed p. 801) gives the same sentence in a marginal note called by a dagger after “lightning.” The 1884 physical p. 955 preserves the body and its θ caller, but its footnote band is cropped away and cannot independently confirm the note. CCEL 15#6 misreads the final c as e; the build sets its closing caller at the end of 1:13, as printed, under the key EZK 1:13 CCEL#2. In Swete III p. 386, checked against the scan, B’s main text passes directly from 1:13 to 1:15; explicit apparatus adds και τα ζωα ετρεχον και ανεκαμπτον ως ειδος του βεζεκ A et (sub θʹ ✣) Q. A is unqualified, without correcting hand, lacuna, or uncertainty; Q has a Theodotion source marker, not an A hand. Brenton’s Bezec transliterates βεζεκ, the Hebrew lightning word; his at does not express the Greek comparison ως. Pinned KJV Ezekiel 1:14 supplies the complete matching sentence “And the living creatures ran and returned as the appearance of a flash of lightning.” The pinned RV1885 has the identical sentence. Retain the complete KJV sentence under the house-style provision for passages whose English Brenton left incomplete; the introduction explains this case. Copy the entire KJV verse instead of splicing syntax or inventing a translation. B positively omits the verse independently of Brenton’s facing Greek, which also omits it.",
       "swete": {
         "volume": 3,
         "page": 386,

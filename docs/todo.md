@@ -68,14 +68,6 @@ A's differences that the verse translates, or that leave it inconsistent, though
 - `1SA 17:1`: The verse prints “in Aphesdommin”; “in” is supplied from the King James “in Ephes-dammim” for A's εν (Swete I p. 578), which Brenton's note (“Alex. Aphesdommin.”) does not report. Decide whether to keep it, or print “Azeca Aphesdommin” as his English has it, since variants Brenton does not report are not translated.
 - `1KI 15:9`: The edition prints 15:8 “in the twenty-fourth year of Jeroboam” (A omits the date, Swete I p. 716, but Brenton has no note there) beside 15:9 “In the twentieth year of Jeroboam”. Decide whether this needs an editorial note.
 
-#### Brenton's English or the King James
-
-Where the verse prints the King James, or reorders Brenton, though his own words would serve.
-
-- `2KI 3:21#2`: The verse prints the King James and Revised Version's “and upward” for Brenton's own “and above” (“Alex. καὶ ἐπάνω, ‘and above.’”). The rule supplies words only where his English is wrong or incomplete. Decide whether to print “and above”.
-- `2CH 27:8`: The passage reorders Brenton's “and sixteen years he reigned in Jerusalem”, which already renders A's και εξ και δεκα ετη εβασιλευσεν. Decide whether to keep his order.
-- `EZK 1:14`: The passage prints the King James verse, “And the living creatures ran and returned as the appearance of a flash of lightning”, with a note that its English is supplied from the Authorized Version. Brenton gives English for A's verse (1879 physical p. 996, 1900 physical p. 992): “And the living creatures ran and returned at the appearance of Bezec”, transliterating A's βεζεκ (Swete III p. 386, where Q's margin glosses it as lightning). The edition takes the King James only where Brenton's English is wanting. Decide whether the verse prints Brenton's English, with “Bezec”, or keeps the King James words because “Bezec” gives no sense.
-
 ### 2.2 Passages and verse structure
 
 Supplied passages, omitted verses, and words moved across verses.
