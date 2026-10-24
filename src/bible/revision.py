@@ -1618,13 +1618,13 @@ def _in_book(keys: Iterable[str], code: str) -> list[str]:
 
 @functools.cache
 def _names(forms: frozenset[str]) -> re.Pattern[str]:
-    """The forms given, each as a phrase, the longest at a place first."""
-    return re.compile(
-        "|".join(
-            _phrase(form).pattern
-            for form in sorted(forms, key=lambda form: (-len(form), form))
-        )
-    )
+    """The forms given, each as a phrase, the longest at a place first.
+
+    Name forms begin and end with a word character (checked by WORD).
+    Share their boundaries and prefixes as spelling does, rather than
+    trying every name at every character of every verse.
+    """
+    return re.compile(_words(sorted(forms)).pattern.replace(r"\ ", "[ \n]"))
 
 
 def named(

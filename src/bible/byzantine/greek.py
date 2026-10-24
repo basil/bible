@@ -197,9 +197,11 @@ def corrected(
 SIGMAS = str.maketrans("ϲϛϹϚ", "σςΣΣ")
 
 
-def accent_letters(text: str) -> list[str]:
+@functools.cache
+def accent_letters(text: str) -> tuple[str, ...]:
     """Cased letters with their combining marks, without punctuation.
-    Lunate sigma and the numeral stigma use the pinned text's sigma form."""
+    Lunate sigma and the numeral stigma use the pinned text's sigma form.
+    Repeated source words share an immutable, checked result."""
     result: list[str] = []
     for letter in unicodedata.normalize("NFD", text):
         if unicodedata.combining(letter):
@@ -212,7 +214,7 @@ def accent_letters(text: str) -> list[str]:
             raise CheckFailed(f"Unknown Greek character: {text}")
     if any(ord(c[0].lower()) not in LATIN for c in result):
         raise CheckFailed(f"Unknown Greek letters: {text}")
-    return result
+    return tuple(result)
 
 
 def letter_key(text: str) -> str:

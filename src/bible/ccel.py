@@ -663,8 +663,9 @@ class Finder:
         total = sum(self.weight[w] for w in words)
         shared: dict[int, float] = {}
         for word in words:
+            weight = self.weight[word]
             for i in self.index.get(word, ()):
-                shared[i] = shared.get(i, 0) + self.weight[word]
+                shared[i] = shared.get(i, 0) + weight
         if not total:
             return []
         # Ranked by share, not by the weight shared: a word every bag has

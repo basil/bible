@@ -1410,6 +1410,24 @@ def test_malformed_front_matter_name_decisions_are_refused(
         revision.check(revisions(declared, names=names(decision)))
 
 
+@pytest.mark.parametrize("separator", [" ", "\n"])
+def test_name_phrases_keep_word_boundaries_and_prefer_the_longest(
+    separator: str,
+) -> None:
+    pattern = revision._names(frozenset({"Noe", "Noel", "Noe son", "Noe son of"}))
+    text = (
+        f"Noe{separator}son of Noah; Noe{separator}son; "
+        f"Noe{separator}son ofa; Noel; Noe; Noes; xNoe."
+    )
+    assert [m[0] for m in pattern.finditer(text)] == [
+        f"Noe{separator}son of",
+        f"Noe{separator}son",
+        f"Noe{separator}son",
+        "Noel",
+        "Noe",
+    ]
+
+
 def test_a_name_prints_only_where_a_decision_says(
     policy: bible.policy.Policy,
 ) -> None:
