@@ -243,7 +243,7 @@
     "2SA 21:11": {
       "from": "omits the words in italics.",
       "to": "omits the words in brackets.",
-      "why": "Brenton 1900 physical p. 446 (printed p. 434) prints “Heb. omits the words in brackets.”, with the caller β before “[and they were faint”; the transcription substitutes italics for brackets, as it does at 2SA 17:8.",
+      "why": "Brenton 1844 vol. I physical p. 379 (printed p. 355), 1879 physical p. 450, 1884 physical p. 419 and 1900 physical p. 446 (printed p. 434 in the Bagster printings) print “Heb. omits the words in brackets.” The caller is † in 1844 and β in the Bagster printings, inside the opening bracket immediately before and. The transcription substitutes italics for brackets, as it does at 2SA 17:8.",
       "uncategorized": true
     },
     "2SA 24:20": {
@@ -1031,6 +1031,12 @@
       "from": "posession",
       "to": "possession",
       "why": "Brenton’s printings read possession (1879 p. 140; 1900 p. 136)."
+    },
+    "EXO 40:4": {
+      "from": "\\fqa Lit. \\ft setting forth of it.",
+      "to": "\\ft Setting forth of it.",
+      "why": "Brenton 1844 vol. I physical p. 126 (printed p. 102), 1879 physical p. 140, 1884 physical p. 109 and 1900 physical p. 136 (printed p. 124 in the Bagster printings) print the unlabelled note “Setting forth of it.” at Exodus 40:4, with the caller before that which is to be set forth. CCEL preserves this wording; eBible adds Lit. Remove the added label and restore the printed initial capital, leaving the scripture and caller unchanged.",
+      "uncategorized": true
     },
     "JOS 10:34": {
       "from": "vigourously",

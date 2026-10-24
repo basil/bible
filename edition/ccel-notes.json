@@ -1259,6 +1259,11 @@
       "anchor": "the candlestick",
       "why": "Pinned CCEL iv.36#8 is before candlestick in its chapter 37:17, which corresponds by exact English to eBible Exodus 38:17. eBible already has Gr. it at the candlestick; moving it to the verified caller allows automatic duplicate detection."
     },
+    "iv.39#1": {
+      "verse": "EXO 40:4",
+      "anchor": "that which is to be set forth",
+      "why": "Pinned CCEL iv.39 joins Exodus 40:1–15 to 38:19–27, so alignment cannot place its first caller. Brenton 1844 vol. I physical p. 126 (printed p. 102), 1879 physical p. 140, 1884 physical p. 109 and 1900 physical p. 136 (printed p. 124 in the Bagster printings) place this caller immediately before that which is to be set forth in Exodus 40:4 and print “Setting forth of it.” Set it at that verified caller; the corrected existing eBible note accounts for it automatically."
+    },
     "iii.25#2": {
       "duplicate": "GEN 25:23",
       "why": "Brenton 1879 physical p. 47 and 1900 physical p. 43 (printed p. 31) print one gamma caller before elder and the complete gloss with Romans 9:12. eBible preserves the same printed note as GEN 25:23; CCEL misreads 12 as l2. Retain the existing complete gloss and its quotation-preservation decision, rather than import a duplicate."
