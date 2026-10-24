@@ -1209,6 +1209,11 @@
       "omitted": true,
       "why": "Account for CCEL 9.clxii#4 (PRO 11:11 CCEL) as the redundant boundary-assigned copy of the existing eBible PRO 11:10 Appendix pointer, already consumed by the PRO 11:10-11 passage decision. Brenton 1879 physical p. 814 and 1900 physical p. 810 (printed p. 798 in both) print “See Appendix.” with β immediately after prospers: ending 11:10 and before but by the mouths introducing 11:11. CCEL assigns its offset-zero caller to 11:11, whereas eBible keeps the same printed pointer at the end of 11:10. Its exact serialized CCEL body is \\ft See \\fqa Appendix. Omit this copy rather than import or consume a second source note for the one printed caller. Swete II p. 437 explicitly records πολις] + και επ απωλεια ασεβων αγαλλιαμα (11) εν ευλογιαις δικαιων υψωθησεται πολις B^{b mg sup} + και εν απωλια (-λεια A) ασ. αγαλλ. (11) εν ευλογια (-γεια A) ευθιων (-θειων A) υψ. πολις ℵ^c.a A, establishing A’s addition without a hand or uncertainty qualifier. B main positively lacks both clauses; B correcting hand b adds them in the margin, with δικαιων instead of A’s ευθειων in the second clause. No lacuna is marked. The pointer itself reports no Greek or English alternative and names no manuscript; omitting this copy changes neither the PRO 11:10-11 passage, its English derivation nor its Vat. first hand labels."
     },
+    "13.l#3": {
+      "verse": "JER 50:11",
+      "anchor": "delivering some",
+      "why": "Brenton 1844 vol. II physical p. 293 (printed p. 790), 1879 physical p. 983, 1884 physical p. 946 and 1900 physical p. 979 (printed p. 967 in the Bagster printings) place the caller before lift up weapons against them in Jeremiah 50:10 and print Or, such as are, and so on. The gloss belongs to delivering some in 50:11: Swete III p. 342 prints οὓς εἰς θάνατον εἰς θάνατον there, followed by the parallel captivity and sword clauses, whereas 50:10 has καὶ ἀρεῖ τὰ ὅπλα ἐπ᾽ αὐτούς. The pinned King James Jeremiah 43:11 likewise has such as are for death to death. Move the caller to the words Brenton's alternative explains, preserving his scripture and the note's wording."
+    },
     "15.xvii#9": {
       "verse": "EZK 17:20",
       "anchor": "snare",

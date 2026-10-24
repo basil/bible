@@ -67,15 +67,6 @@ Whether Swete settles a report well enough to print it, or it stays a note.
 - `EZK 43:7 CCEL#2`: The kept entry rests on Swete's silence at XLIII 7 (III p. 481); Swete's Appendix (III p. 881) is still rough and has not been read there. Decide whether to have it read for an orthographic entry of A.
 - `1CH 1:11-23`: The passage prints 1:12, which Swete writes as wholly over an erasure, perhaps by A^a (“sup ras A^a?”), without a note; the doubtful-reading rule keeps such a reading as a note. Decide whether 1:12 prints with a note saying so, is omitted, or is recorded as an exception.
 
-### 2.4 Where a note stands
-
-Callers and lemmas.
-
-#### Notes the words do not place
-
-- `JER 50:10 CCEL` (`13.l#3`): “Or, such as are, and so on.” is confirmed as printed (1879 physical 983 / 1900 physical 979, printed 967; 1844 vol. 2 physical 293, printed 790), with caller δ (1844 †) before “lift up weapons against them” in all three. The gloss renders verse 11: “such as are” is the KJV's wording at the parallel Jer. 43:11 for οὓς εἰς θάνατον, which Brenton renders “delivering some for death to death” with “delivering” supplied in italics; nothing in verse 10 (Swete III p. 342) fits it. Decide whether to keep Brenton's caller or to move the note before “delivering some” in 50:11 with a placement in `ccel-notes.json`, as at EZK 17:20.
-- CCEL notes the words do not place: of the ten listed in the review as left out, eight are already in eBible at their verses. Two are not: `iv.39#1` (“Setting forth of it.”, EXO 40, at “shalt set forth that which is to be set forth”) and `14#1` (“Words bracketed not in Heb.”, on the prologue before Lamentations 1:1, whose brackets the edition does not print). Decide whether to bring the first in with a placement in `ccel-notes.json`; the second stays out.
-
 ## 3. Future work
 
 ### Website tables of mechanical changes
