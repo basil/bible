@@ -53,14 +53,6 @@ The verse changes more, or less, than Brenton's report covers.
 - `ISA 40:4`: Brenton’s note (“Luke 3. 5, with which Alex. agrees”) covers a clause where Swete III p. 173 records two A differences, om παντα A and πεδια] οδους λιας A. The decision carries out only the second, so the verse prints “and all the crooked ways shall become straight, and the rough places smooth ways”, B’s πάντα beside A’s ὁδοὺς λείας. Decide whether “all” goes too, with the displaced note naming Vat. for it.
 - `HOS 13:3 CCEL`: The decision drops the article of “as a smoke”, outside the words Brenton's caller marks. Decide whether to keep “a”.
 
-#### Words stranded by a reading
-
-Brenton's supplied or italic words that fitted his text and stay beside A's.
-
-- `1SA 25:24`: Brenton's italic “even”, which joined his “bowing to the ground even to his feet”, stays after A's “And she fell”. Decide whether to drop it by a declared edit.
-- `JER 23:32 CCEL`: With “not” gone, Brenton's supplied italic “truly” makes the verse read “have told them truly”, which neither A nor the Hebrew says (KJV, RV “and do tell them”). Decide whether to drop “truly” with “not”.
-- `JOB 20:15 CCEL`: The verse prints “a messenger _of_ death” with “of” still italic, though it now renders A's θανάτου. Decide whether to widen the reading to “of wrath” so that “of death” prints in roman.
-
 #### English from no single source
 
 Splices, compositions, and the editor's own words.

@@ -910,7 +910,7 @@
       "source_note": "\\fqa Alex. \\ft and \\fqa Heb. \\ft + 'and they girded on every man his sword, and David also girded on his sword.'"
     },
     "1SA 25:24": {
-      "why": "Brenton 1879 physical p. 407 and 1900 physical p. 403 (printed p. 391) both give “Heb. and Alex. + ‘and she fell.’” with caller θ before “even to his feet” at 25:24. Swete I p. 598 prefixes και επεσεν before επι τους ποδας in A, with no correcting hand or uncertainty. Print Brenton’s English addition, capitalizing it as a new sentence, and end 25:23 with a full stop. B’s main text positively supports the displaced omission.",
+      "why": "Brenton 1844 vol. I physical p. 345 (printed p. 321), 1879 physical p. 407, 1884 physical p. 376, and 1900 physical p. 403 (the latter three printed p. 391) all print the supplied italic even at the start of 25:24, connecting “bowing to the ground” in 25:23 with “to his feet”. The 1844 margin reports Hebrew and Alex. + “and she fell.”; the Bagster footnote reports Heb. and Alex. + “and she fell.” with theta immediately before even. Swete I p. 598, checked and scan-confirmed, records επι τους ποδας] pr και επεσεν A, without a correcting hand or uncertainty. Print Brenton’s reported and she fell, capitalized as a new sentence, and drop his supplied even because it connected the former continuous construction and is no longer needed after the independent Alexandrine verb. Retain to his feet in Brenton’s own words and the existing full stop at the end of 25:23; borrow no King James wording. B’s main text positively lacks the added verb, so retain the note Heb. agrees. Vat. omits on And she fell.",
       "swete": {
         "volume": 1,
         "page": 598,
@@ -950,7 +950,8 @@
           },
           {
             "span": [8, 8],
-            "to": " \\add even\\add* to his feet"
+            "to": " to his feet",
+            "why": "Retain Brenton’s to his feet; omit his supplied even, whose connection to the preceding clause is superseded by the reported Alexandrine verb."
           }
         ]
       },
@@ -3518,7 +3519,7 @@
       "source_note": "\\ft Alex. ψηλαφήσουσιν, 'feel after.'"
     },
     "JOB 20:15 CCEL": {
-      "why": "Promote death for wrath from Brenton’s printed note. Brenton 1879 physical p. 696 and 1900 physical p. 692 (printed p. 680) establish δ before wrath and “Alex. death.” Swete II p. 556 explicitly records αγγελος] + θανατου A. The entire resulting messenger of death is supported; preserve the surrounding sentence. Attribute the displaced wrath to Brenton, because both his facing Greek and B have bare ἄγγελος without a wrath qualifier. B’s bare messenger cannot establish a manuscript reading wrath. No A correcting hand, local lacuna or uncertainty attaches to the addition. Preserve the exact source_note and existing English derivation.",
+      "why": "Brenton 1844 vol. 2 physical p. 62 (printed p. 559), 1879 physical p. 696 and 1900 physical p. 692 (printed p. 680) all print the supplied italic phrase of wrath, with the caller before wrath and the note Alex. death. The surviving 1884 physical p. 663 fragment has the same verse and caller, but its footnote band is missing. Swete II p. 556, checked against the scan, records αγγελος] + θανατου A, with no correcting hand or uncertainty. Promote Brenton’s death and include its governing of in the replacement: of death renders A’s genitive θανατου, so neither word remains supplied. Derive death from Brenton’s note and retain the verse’s own of in roman; this changes no English words beyond the already promoted wrath/death reading. The whole displaced phrase of wrath is Brenton’s supplied English, whereas B has bare αγγελος and no wrath qualifier, so the composed note names Brenton and compares of death with of wrath. Preserve every other word, the source-note pin and all unrelated variants.",
       "swete": {
         "volume": 2,
         "page": 556,
@@ -3526,10 +3527,17 @@
         "reading": "αγγελος] + θανατου A",
         "agrees": true
       },
-      "from": "wrath",
+      "from": "\\add of wrath\\add*",
       "english": {
         "source": "brenton",
-        "span": [15, 20]
+        "span": [15, 20],
+        "edits": [
+          {
+            "span": [0, 0],
+            "to": "of ",
+            "why": "The retained preposition of renders the genitive θανατου; include it in the roman replacement instead of leaving it marked as an English supplement."
+          }
+        ]
       },
       "source_note": "\\fqa Alex. \\ft death."
     },
@@ -4066,7 +4074,7 @@
       "lemma": "the hands of evil-doers"
     },
     "JER 23:32 CCEL": {
-      "why": "Promote the omission Brenton explicitly reports for Alexandrinus. Brenton 1879 physical p. 948 and 1900 physical p. 944 (printed p. 932 in both) place β immediately before not in Jeremiah 23:32 and print “Heb. and Alex. omit the negative.” eBible lacks the note; CCEL transcribes it at the same caller. Swete III p. 274 explicitly records om ου ℵAQ, with no A correcting hand, lacuna, or uncertainty qualification. The B main text positively has καὶ οὐ διηγοῦντο αὐτά, as does Brenton’s facing Greek, independently supporting the displaced negative. Delete only not and its following space from have not told them truly; leave Brenton’s supplementary italic truly and the full surrounding sentence intact. This omission is Brenton’s own English instruction, not a new translation; pinned KJV and RV Jeremiah 23:32 both independently have and do tell them, supporting the printed Hebrew agreement. Preserve that agreement; since Swete’s B main text positively supports the displaced negative, the note names Vat. No additional variants of the verse are licensed by this note.",
+      "why": "Brenton 1844 vol. 2 physical p. 265 (printed p. 762), 1879 physical p. 948 and 1900 physical p. 944 (both printed p. 932) print have not told them with truly supplied in italics and place the caller immediately before not; the note reads Heb. & Alex. omit the negative in 1844 and Heb. and Alex. omit the negative in the Bagster printings. The relevant 1884 scan is cropped and does not preserve this verse or its note. Swete III p. 274, checked and confirmed on the scan, records om ου ℵAQ; B has καὶ οὐ διηγοῦντο αὐτά and A has the affirmative clause without ου, with no qualifying hand or uncertainty. Remove not as Brenton reports and, by explicit editorial judgment, remove his supplied truly, which made sense beside the negative but wrongly asserts the truth of the false dreams in the affirmative. Retain Brenton’s remaining have told them, without composing or borrowing new English; pinned KJV and RV Jeremiah 23:32 both have and do tell them. Preserve Heb. agrees and the note that Vat. adds not, whose manuscript attribution concerns the Greek negative alone, not Brenton’s English supplement. No other variant of the verse is applied.",
       "swete": {
         "volume": 3,
         "page": 274,
@@ -4081,7 +4089,12 @@
           {
             "span": [5, 9],
             "to": "",
-            "why": "Remove exactly the negative identified by Brenton, including its following separator space."
+            "why": "Remove the negative and its following space, as Brenton reports for Alexandrinus."
+          },
+          {
+            "span": [18, 34],
+            "to": "",
+            "why": "Remove the preceding space and Brenton’s supplied italic truly: the positive assertion of truth is not in A and belongs only to his negative rendering."
           }
         ]
       },
