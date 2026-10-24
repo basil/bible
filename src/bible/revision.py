@@ -10,7 +10,10 @@ Six kinds of change are declared, each with its reason:
              with who keeps it, so that each form prints only where a
              decision says; where a verse names two bearers alike, each
              lists its occurrence by number (LUK 6:16#1); a decision may
-             also name the books whose terminal subscriptions respell it
+             also name the books whose terminal subscriptions respell it,
+             and the units of front and back matter that respell it in
+             every paragraph and footnote, where a decided form may print
+             only where a decision says
     words    a word respelled or modernized wherever it is printed as a whole
              word: in the translation, its notes, and front and back matter,
              or, with a scope of "scripture", in a book's verses and the
@@ -21,7 +24,9 @@ Six kinds of change are declared, each with its reason:
              Words that a character style divides are not joined, divided,
              or re-divided, and nor are they in the lemma that quotes them,
              except that hyphens may replace spaces between unchanged words
-             without moving their styles
+             without moving their styles; the supplied words' style, which
+             the reader does not see among roman words, divides nothing
+             there
     passages punctuation in a keyed note or front/back-matter paragraph,
              and lowercase word initials in a keyed note's fragments,
              or Greek/Hebrew spelling in Old Testament notes and matter
@@ -46,6 +51,7 @@ from __future__ import annotations
 import functools
 import re
 import unicodedata
+from collections import Counter
 from collections.abc import Callable, Container, Iterable, Mapping
 from difflib import SequenceMatcher
 
@@ -60,7 +66,8 @@ from bible.usj import Content, Document, Node, Predicate
 # passage change by its selector and words, a word confined to notes by the
 # note's key and the word, a phrase a word excepts by the word and the
 # phrase, a name respelled or kept by its verse and form, and a name
-# respelled in a subscription by its book and form.
+# respelled in a subscription or a unit of matter by its book or unit and
+# form.
 type MetRevisions = set[str | tuple[str, ...]]
 # The words to revise, letter by letter; an empty key ends a word.
 type Trie = dict[str, "Trie"]
@@ -71,6 +78,14 @@ UNREVISED = frozenset("xt fl fq fqa wg wh".split())
 
 # A word or phrase revised, or excepted: whole words, and what joins them.
 WORD = re.compile(r"\w(?:[\w’', -]*\w)?")
+
+# The character style that does not divide words where the words around it
+# are roman: the translators' supplied words are printed in roman and shown
+# plain on the website, so joining or dividing words across the style erases
+# nothing the reader sees in a verse, a note's own text, or its lemma. Within
+# another style, such as an italic rendering (fqa), it divides them.
+INVISIBLE = frozenset({"add"})
+ROMAN = frozenset({"ft", "fq"})
 
 
 def _unrevised(item: Node) -> bool:
@@ -214,24 +229,37 @@ def check(policy: bible.policy.Policy) -> None:
             entry["to"] and entry["to"] != word and entry["why"],
             f"Respelling that changes nothing, or without a why: {word}",
         )
+    # The front and back matter that prints: a unit read only for what it
+    # sends to the books, as Brenton's Appendix, is never revised as a unit,
+    # and its notes are revised at their verses, by their keys.
+    matter_units = {
+        e["id"] for e in policy.entries if "file" not in e and "section" not in e
+    }
+    # Brenton's list of abbreviations is respelled as a unit too, for the
+    # table the introduction makes of it, so a name decision may list it.
+    named_units = policy.matter - {policy.appendix["source"]}
     names = data["names"]
     require_fields(names, {"why", "decisions"}, (), "Names")
     require(bool(names["why"]), "Names without a why")
     # The verses listed for each form, respelled or kept, across every
-    # decision: two bearers may share a form, each in its own verses.
+    # decision: two bearers may share a form, each in its own verses. A
+    # subscription or a unit of matter is listed for a form once.
     listed: dict[str, set[str]] = {}
     colophons_listed: dict[str, set[str]] = {}
+    matter_listed: dict[str, set[str]] = {}
     for bearer, decision in names["decisions"].items():
         require_fields(
             decision,
             {"to", "why", "forms"},
-            {"keep", "colophons"},
+            {"keep", "colophons", "matter"},
             f"Name decision {bearer}",
         )
         require(
             bool(decision["to"])
             and bool(decision["why"])
-            and bool(decision["forms"] or decision.get("colophons")),
+            and bool(
+                decision["forms"] or decision.get("colophons") or decision.get("matter")
+            ),
             f"Name decision without a target, a why or a form: {bearer}",
         )
         for form in _decided_forms(decision):
@@ -259,6 +287,22 @@ def check(policy: bible.policy.Policy) -> None:
                     f"Colophon name decided twice: {bearer}: {form}: {book}",
                 )
                 colophons_listed[form].add(book)
+        for form, units in decision.get("matter", {}).items():
+            require(bool(units), f"Name decision without a unit: {bearer}: {form}")
+            require(
+                len(set(units)) == len(units),
+                f"Unit listed twice for a name: {bearer}: {form}",
+            )
+            for unit in units:
+                require(
+                    unit in named_units,
+                    f"Name decision for what is not front or back matter: {bearer}: {unit}",
+                )
+                require(
+                    unit not in matter_listed.setdefault(form, set()),
+                    f"Matter name decided twice: {bearer}: {form}: {unit}",
+                )
+                matter_listed[form].add(unit)
         for kept in decision.get("keep", ()):
             require_fields(kept, {"form", "who", "verses"}, (), f"Kept name {bearer}")
             require(
@@ -273,7 +317,7 @@ def check(policy: bible.policy.Policy) -> None:
     # No word respells a name behind its decision's back, or prints one where
     # no decision says, alone or in a phrase: a word applies wherever it is
     # printed. A form decided for a subscription alone is a name too.
-    decided = listed.keys() | colophons_listed.keys()
+    decided = listed.keys() | colophons_listed.keys() | matter_listed.keys()
     for word, entry in words.items():
         spanned = sorted((_spans(word) | _spans(entry["to"])) & decided)
         if word.casefold() == entry["to"].casefold():
@@ -374,12 +418,6 @@ def check(policy: bible.policy.Policy) -> None:
                 f"Revision that writes a ligature: {name}: {key}",
             )
 
-    # The front and back matter that prints: a unit read only for what it
-    # sends to the books, as Brenton's Appendix, is never revised as a unit,
-    # and its notes are revised at their verses, by their keys.
-    matter_units = {
-        e["id"] for e in policy.entries if "file" not in e and "section" not in e
-    }
     # Brenton's units, and the files their notes are keyed by: Daniel's
     # include those of Susanna and Bel.
     brenton = [e for e in policy.entries if e.get("source") == "brenton"]
@@ -478,9 +516,17 @@ def check(policy: bible.policy.Policy) -> None:
 
 
 def _decided_forms(decision: NameDecision) -> list[str]:
-    """The forms a name decision respells, in its verses or its
-    subscriptions, each once and in the order the file gives them."""
-    return list(dict.fromkeys([*decision["forms"], *decision.get("colophons", {})]))
+    """The forms a name decision respells, in its verses, its subscriptions,
+    or the matter, each once and in the order the file gives them."""
+    return list(
+        dict.fromkeys(
+            [
+                *decision["forms"],
+                *decision.get("colophons", {}),
+                *decision.get("matter", {}),
+            ]
+        )
+    )
 
 
 def _check_name_verses(keys: Iterable[str], seen: set[str], label: str) -> None:
@@ -765,14 +811,19 @@ def _edit(at: int, old: str, new: str) -> tuple[int, int, str]:
 
 
 def _style_runs(
-    content: Content, *, skip: Predicate = usj.is_note
+    content: Content,
+    *,
+    skip: Predicate = usj.is_note,
+    styles: tuple[str, ...] = (),
 ) -> list[tuple[int, int]]:
-    """Runs with the same character styles, ignoring notes and string seams."""
+    """Runs with the same character styles, ignoring notes, string seams,
+    and the invisible style of supplied words among roman ones. The content
+    stands in the styles given: a note's field, read alone, in its own."""
     runs: list[tuple[int, int]] = []
     previous: tuple[str, ...] | None = None
     at = 0
 
-    def visit(items: Content, styles: tuple[str, ...] = ()) -> None:
+    def visit(items: Content, styles: tuple[str, ...]) -> None:
         nonlocal at, previous
         for item in items:
             if isinstance(item, str):
@@ -785,10 +836,17 @@ def _style_runs(
                     previous = styles
                 at = end
             elif "content" in item and not skip(item):
-                inner = (*styles, item["marker"]) if item["type"] == "char" else styles
+                inner = (
+                    (*styles, item["marker"])
+                    if item["type"] == "char"
+                    and (
+                        item["marker"] not in INVISIBLE or not ROMAN.issuperset(styles)
+                    )
+                    else styles
+                )
                 visit(item["content"], inner)
 
-    visit(content)
+    visit(content, styles)
     return runs
 
 
@@ -827,14 +885,15 @@ def _rewritten(
     *,
     skip: Predicate = usj.is_note,
     done: Callable[[re.Match[str]], object] | None = None,
+    styles: tuple[str, ...] = (),
 ) -> Content:
     """Content with every match of a pattern in its words giving way to what
     new makes of it, and done told of each match that gives way. The words
     are read as one, whatever styles divide them, unless the replacement
     would not keep the styles; a note's words are its own, not those of the
-    content it stands in."""
+    content it stands in. The content stands in the styles given."""
     edits: list[tuple[int, int, str]] = []
-    runs = functools.cache(lambda: _style_runs(content, skip=skip))
+    runs = functools.cache(lambda: _style_runs(content, skip=skip, styles=styles))
     for match in pattern.finditer(usj.text_of(content, skip=skip)):
         replacement = new(match)
         if replacement == match[0] or not _keeps_styles(match, replacement, runs):
@@ -1010,6 +1069,7 @@ def respelled(
                                 match[0] if match.span() in kept else to(match)
                             ),
                             done=done,
+                            styles=("fq",),
                         )
                     else:
                         inner = lemmas(item["content"])
@@ -1102,6 +1162,7 @@ def respelled(
                         to,
                         skip=_unrevised,
                         done=lambda match: done(match, key),
+                        styles=(item["marker"],),
                     )
                 else:
                     inner = quoted(item["content"], item.get("x-key", key))
@@ -1696,6 +1757,62 @@ def named_colophon(
     return matter.with_colophon(doc, usj.substituted(paragraph["content"], edits))
 
 
+def named_matter(
+    code: str, doc: Document, policy: bible.policy.Policy, met: MetRevisions
+) -> Document:
+    """A unit of front or back matter with its names respelled where a
+    decision lists the unit (revisions.json, names, matter): every
+    whole-word occurrence of the form in its paragraphs, table cells, and
+    footnotes, in the styles it stands in. A form decided anywhere prints in
+    the matter only where a decision says: an occurrence the unit is not
+    listed for is refused, and so is a listing the unit does not meet."""
+    decisions = policy.revisions["names"]["decisions"]
+    forms = frozenset(form for d in decisions.values() for form in _decided_forms(d))
+    if not forms:
+        return doc
+    changes = {
+        form: decision["to"]
+        for decision in decisions.values()
+        for form, units in decision.get("matter", {}).items()
+        if code in units
+    }
+    pattern = _names(forms)
+    # Each occurrence found, and each respelled: a respelling that would
+    # join or divide words across styles is not made, and is refused.
+    found: Counter[str] = Counter()
+    made: Counter[str] = Counter()
+
+    def form_of(match: re.Match[str]) -> str:
+        return re.sub(r"\s+", " ", match[0])
+
+    def to(match: re.Match[str]) -> str:
+        form = form_of(match)
+        require(form in changes, f"Name without a decision: {code}: {form}")
+        found[form] += 1
+        return changes[form]
+
+    def done(match: re.Match[str]) -> None:
+        made[form_of(match)] += 1
+
+    def footnote(item: Node) -> Node:
+        # A footnote's words are its author's too, and are respelled with
+        # the paragraph's.
+        if not usj.is_note(item):
+            return item
+        return {**item, "content": _rewritten(item["content"], pattern, to, done=done)}
+
+    def respelled(content: Content) -> Content:
+        return usj.mapped(_rewritten(content, pattern, to, done=done), footnote)
+
+    result = usj.with_content(doc, respelled)
+    across = sorted(found - made)
+    require(not across, f"Matter name across a style: {code}: {', '.join(across)}")
+    for form in changes:
+        require(form in found, f"Matter name not met: {code}: {form}")
+        met.add(("matter name", code, form))
+    return result if changes else doc
+
+
 def check_kept(
     code: str, before: Document, after: Document, policy: bible.policy.Policy
 ) -> None:
@@ -1811,7 +1928,7 @@ def _reworded(
                 return item
             content = item["content"]
             for pattern, to in phrases:
-                content = _rewritten(content, pattern, lambda match: to)
+                content = _rewritten(content, pattern, lambda match: to, styles=("fq",))
             quoted = scripture.plain(usj.text_of(content)).removesuffix(":")
             require(
                 quoted in words,
@@ -1886,6 +2003,11 @@ def check_met(policy: bible.policy.Policy, met: Container[object]) -> None:
             ("colophon name", code, form)
             for form, books in decision.get("colophons", {}).items()
             for code in books
+        )
+        names.update(
+            ("matter name", code, form)
+            for form, units in decision.get("matter", {}).items()
+            for code in units
         )
         names.update(
             ("name", key, form)

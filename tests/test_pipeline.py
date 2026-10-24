@@ -317,6 +317,12 @@ def test_the_editions_spelling_is_revised_wherever_a_word_is_printed(
             for code in books
         }
         | {
+            ("matter name", code, form)
+            for decision in decisions.values()
+            for form, units in decision.get("matter", {}).items()
+            for code in units
+        }
+        | {
             (key, word)
             for word, entry in words.items()
             for key in entry.get("notes", ())
@@ -370,7 +376,14 @@ def test_the_editions_spelling_is_revised_wherever_a_word_is_printed(
             "Ghost",
             "ghost",
             "Hallelujah",
+            "tare",
+            "forgat",
+            "trode",
+            "tare",
+            "trode",
+            "forgat",
             "strake sail",
+            "forgat",
             "an hundred",
             "Shew",
             "shewed",
@@ -428,12 +441,13 @@ def test_the_editions_spelling_is_revised_wherever_a_word_is_printed(
 
     def marks(content: usj.Content) -> tuple[set[int], list[tuple[int, usj.Node]]]:
         """Where a character style opens or closes in the words, and each
-        note with its place in them."""
+        note with its place in them. The supplied words' style among roman
+        words divides nothing, so it marks no bound."""
         bounds: set[int] = set()
         notes: list[tuple[int, usj.Node]] = []
         at = 0
 
-        def visit(items: usj.Content) -> None:
+        def visit(items: usj.Content, styles: tuple[str, ...] = ()) -> None:
             nonlocal at
             for item in items:
                 if isinstance(item, str):
@@ -441,9 +455,15 @@ def test_the_editions_spelling_is_revised_wherever_a_word_is_printed(
                 elif usj.is_note(item):
                     notes.append((at, item))
                 elif "content" in item:
-                    styled = item["type"] == "char"
+                    styled = item["type"] == "char" and (
+                        item["marker"] not in revision.INVISIBLE
+                        or not revision.ROMAN.issuperset(styles)
+                    )
                     bounds.update([at] if styled else [])
-                    visit(item["content"])
+                    visit(
+                        item["content"],
+                        (*styles, item["marker"]) if styled else styles,
+                    )
                     bounds.update([at] if styled else [])
 
         visit(content)
@@ -1303,6 +1323,101 @@ def test_malformed_subscription_name_decisions_are_refused(
     declared: bible.policy.Policy, colophons: dict[str, list[str]], message: str
 ) -> None:
     decision = {"to": "Luke", "why": "x", "forms": {}, "colophons": colophons}
+    with pytest.raises(CheckFailed, match=message):
+        revision.check(revisions(declared, names=names(decision)))
+
+
+def test_a_front_matter_name_is_scoped_and_must_be_met(
+    declared: bible.policy.Policy,
+) -> None:
+    decision = {
+        "to": "Luke",
+        "why": "Paul's companion",
+        "forms": {"Lucas": ["2CO 1:1"]},
+        "matter": {"Lucas": ["XXB"]},
+    }
+    own = revisions(declared, names=names(decision))
+    revision.check(own)
+    source = usj.parse(
+        "\\id XXB\n\\ip Lucas went\\f + \\ft with \\it Lucas\\it*.\\f*, "
+        "Lucasians say.\n\\tr \\tc1 Lucas \\tc2 by Lucas\n"
+    )
+    before = copy.deepcopy(source)
+    met: revision.MetRevisions = set()
+    result = revision.named_matter("XXB", source, own, met)
+    assert source == before
+    assert usj.serialize(result) == usj.serialize(
+        usj.parse(
+            "\\id XXB\n\\ip Luke went\\f + \\ft with \\it Luke\\it*.\\f*, "
+            "Lucasians say.\n\\tr \\tc1 Luke \\tc2 by Luke\n"
+        )
+    )
+    assert met == {("matter name", "XXB", "Lucas")}
+    revision.check_met(own, met | {("name", "2CO 1:1", "Lucas")})
+    with pytest.raises(CheckFailed, match="Revisions that nothing prints"):
+        revision.check_met(own, {("name", "2CO 1:1", "Lucas")})
+    # A unit that names nobody decided is shared, not copied.
+    plain = usj.parse("\\id XXE\n\\ip Paul went.\n")
+    assert revision.named_matter("XXE", plain, own, set()) is plain
+    # A decided form prints in the matter only where a decision says.
+    other = usj.parse("\\id XXE\n\\ip Lucas went.\n")
+    with pytest.raises(CheckFailed, match="Name without a decision: XXE: Lucas"):
+        revision.named_matter("XXE", other, own, set())
+    stale = usj.parse("\\id XXB\n\\ip Lucasians went.\n")
+    with pytest.raises(CheckFailed, match="Matter name not met: XXB: Lucas"):
+        revision.named_matter("XXB", stale, own, set())
+    # A form decided for the matter alone is still a name no word respells,
+    # and still decided in the verses.
+    only_matter = revisions(declared, names=names({**decision, "forms": {}}))
+    revision.check(only_matter)
+    with pytest.raises(CheckFailed, match="Name also respelled as a word: Lucas"):
+        revision.check(
+            revisions(
+                declared,
+                names=names({**decision, "forms": {}}),
+                words={"Lucas": {"to": "Luke", "why": "x"}},
+            )
+        )
+    verses = usj.parse("\\id 2CO\n\\c 1\n\\p \\v 1 Lucas went.\n")
+    with pytest.raises(CheckFailed, match="Name without a decision: 2CO 1:1: Lucas"):
+        revision.named("2CO", verses, only_matter, set())
+    # Two decisions may not respell one form in one unit.
+    twice = revisions(declared, names=names(decision, {**decision, "forms": {}}))
+    with pytest.raises(CheckFailed, match="Matter name decided twice: .*: Lucas: XXB"):
+        revision.check(twice)
+    # Brenton's list of abbreviations is respelled as a unit, so it may be
+    # listed.
+    revision.check(
+        revisions(
+            declared, names=names({**decision, "matter": {"Lucas": ["XXB", "XXD"]}})
+        )
+    )
+    # A respelling that would join words across styles is refused, not
+    # skipped.
+    joined = revisions(
+        declared,
+        names=names(
+            {"to": "Luke", "why": "x", "forms": {}, "matter": {"Lucas Paulus": ["XXB"]}}
+        ),
+    )
+    styled = usj.parse("\\id XXB\n\\ip \\it Lucas\\it* Paulus went.\n")
+    with pytest.raises(CheckFailed, match="Matter name across a style: XXB"):
+        revision.named_matter("XXB", styled, joined, set())
+
+
+@pytest.mark.parametrize(
+    "matter,message",
+    [
+        ({"Lucas": []}, "without a unit"),
+        ({"Lucas": ["XXB", "XXB"]}, "Unit listed twice"),
+        ({"Lucas": ["GEN"]}, "not front or back matter"),
+        ({"Luke": ["XXB"]}, "changes nothing: Luke"),
+    ],
+)
+def test_malformed_front_matter_name_decisions_are_refused(
+    declared: bible.policy.Policy, matter: dict[str, list[str]], message: str
+) -> None:
+    decision = {"to": "Luke", "why": "x", "forms": {}, "matter": matter}
     with pytest.raises(CheckFailed, match=message):
         revision.check(revisions(declared, names=names(decision)))
 
@@ -2751,7 +2866,7 @@ def test_passage_note_keys_must_select_once(policy: bible.policy.Policy) -> None
         ),
         (
             "an hundred-fold harvest; an hundredfold harvest",
-            "a hundred-fold harvest; a hundredfold harvest",
+            "a hundredfold harvest; a hundredfold harvest",
         ),
         (
             "an heir; an honest man; an honestly-made answer; an honourable man; an hour",
@@ -2786,7 +2901,7 @@ def test_passage_note_keys_must_select_once(policy: bible.policy.Policy) -> None
         (
             "thy union; thy universal memorial; thy useless servant; thy ewe lamb; "
             "thine unworthy servant; thy one side; thy Urim",
-            "thy union; thy universal memorial; thy useless servant; thy ewe lamb; "
+            "thy union; thy universal memorial; thy useless servant; thy ewe-lamb; "
             "thine unworthy servant; thy one side; thy Urim",
         ),
         (
@@ -2795,7 +2910,7 @@ def test_passage_note_keys_must_select_once(policy: bible.policy.Policy) -> None
         ),
         (
             "a horse; a house; a holy man; a hundred; a historical account; "
-            "a union; a useful thing; a ewe-lamb; a once-barren root; Such a one; "
+            "a union; a useful thing; a ewe lamb; a once-barren root; Such a one; "
             "an uncle; an unknown thing; an unholy man; a whole hour; an hour",
             "a horse; a house; a holy man; a hundred; a historical account; "
             "a union; a useful thing; a ewe-lamb; a once-barren root; Such a one; "
@@ -2826,7 +2941,7 @@ def test_contextual_phrases_in_styles_notes_and_paragraphs(
 ) -> None:
     doc = usj.parse(
         "\\id GEN\n\\c 1\n\\p\n\\v 1 my \\add honour\\add*"
-        "\\f - \\fq my \\+it honour\\+it*: \\ft an \\+it hundred\\+it*-fold; thine heir; thine heart.\\f*."
+        "\\f - \\fq my \\+it honour\\+it*: \\ft an \\+it hundred\\+it* and one; thine heir; thine heart.\\f*."
         "\n\\ip mine hour; my eyes; an holy place."
     )
     original = copy.deepcopy(doc)
@@ -2834,7 +2949,7 @@ def test_contextual_phrases_in_styles_notes_and_paragraphs(
     printed = usj.serialize(result)
     assert "mine \\add honour\\add*" in printed
     assert "mine \\+it honour\\+it*:" in printed
-    assert "a \\+it hundred\\+it*-fold; thine heir; thy heart." in printed
+    assert "a \\+it hundred\\+it* and one; thine heir; thy heart." in printed
     assert "mine hour; mine eyes; a holy place." in printed
     assert doc == original
 
@@ -2936,18 +3051,41 @@ def test_a_compound_divided_by_a_style_stays_divided(
 ) -> None:
     doc = usj.parse(
         "\\id GEN\n\\c 1\n\\p\n\\v 1 \\f - \\fr 1 \\fq any thing: \\ft "
-        "any thing; Gr. \\fqa any thing\\f*any \\add thing\\add* and "
+        "any thing; Gr. \\fqa any thing\\f*any \\it thing\\it* and "
         "\\f - \\fr 1 \\fq any thing: \\ft Gr. \\fqa any thing\\f*any thing"
     )
     original = copy.deepcopy(doc)
     result = revision.respelled(doc, declared, set())
     verse = scripture.verses(result)["1:1"]
     assert verse.text == "any thing and anything"
-    assert usj.serialize(result).count("\\add thing\\add*") == 1
+    assert usj.serialize(result).count("\\it thing\\it*") == 1
     assert [usj.text_of(note["content"]) for _, note in verse.notes] == [
         "1 any thing: anything; Gr. anything",
         "1 anything: Gr. anything",
     ]
+    assert doc == original
+
+
+def test_the_supplied_word_style_divides_no_compound(
+    declared: bible.policy.Policy,
+) -> None:
+    # The style is printed roman and shown plain, so the reader sees the words
+    # alone, and they are joined as they are anywhere else, lemma included;
+    # within an italic rendering it prints otherwise, and divides them.
+    doc = usj.parse(
+        "\\id 1KI\n\\c 1\n\\p\n\\v 1 \\f - \\fr 1 \\fq any thing: \\ft Gr. "
+        "\\fqa any one; \\ft or, \\fqa any \\+add thing\\+add*\\f*"
+        "any \\add thing\\add* and every \\add thing\\add*."
+    )
+    original = copy.deepcopy(doc)
+    result = revision.respelled(doc, declared, set())
+    verse = scripture.verses(result)["1:1"]
+    assert verse.text == "anything and everything."
+    assert "any\\add thing\\add* and every\\add thing\\add*." in usj.serialize(result)
+    assert (
+        usj.text_of(verse.notes[0][1]["content"])
+        == "1 anything: Gr. anyone; or, any thing"
+    )
     assert doc == original
 
 
@@ -3031,11 +3169,32 @@ def test_words_a_style_divides_are_not_redivided_or_met(
     )
     met: revision.MetRevisions = set()
     # Moving burnt between the words would move it out of the style.
-    text = "\\v 1 the whole \\add burnt-offering\\add* and any \\add thing\\add*"
+    text = "\\v 1 the whole \\it burnt-offering\\it* and any \\it thing\\it*"
     doc = usj.parse("\\id GEN\n\\c 1\n\\p\n" + text)
     assert usj.serialize(revision.respelled(doc, words, met)).endswith(text + "\n")
     # A word that only a style keeps changes nothing, so is not met.
     assert met == set()
+    # The supplied-word style divides nothing, since it is printed plain.
+    supplied = "\\v 1 the whole \\add burnt-offering\\add* and any \\add thing\\add*"
+    doc = usj.parse("\\id GEN\n\\c 1\n\\p\n" + supplied)
+    result = revision.respelled(doc, words, met)
+    assert (
+        scripture.verses(result)["1:1"].text == "the whole-burnt offering and anything"
+    )
+    assert met == {"whole burnt-offering", "any thing"}
+    # Within a reading's italic it prints roman, and divides the words for
+    # the grammar of scripture too, which reads each quoted field alone.
+    scoped = revisions(
+        policy,
+        words={"any thing": {"to": "anything", "scope": "scripture", "why": "x"}},
+    )
+    doc = usj.parse(
+        "\\id GEN\n\\c 1\n\\p\n\\v 1 \\f - \\fr 1 \\fq any thing: \\ft or, "
+        "\\fqa any \\+add thing\\+add*\\f*any \\add thing\\add*."
+    )
+    verse = scripture.verses(revision.respelled(doc, scoped, set()))["1:1"]
+    assert verse.text == "anything."
+    assert usj.text_of(verse.notes[0][1]["content"]) == "1 anything: or, any thing"
 
 
 def test_hyphenating_unchanged_words_preserves_their_styles_and_lemma(

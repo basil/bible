@@ -678,9 +678,11 @@ def finished_book(
 def finished_matter(
     code: str, doc: Document, policy: bible.policy.Policy, met: revision.MetRevisions
 ) -> Document:
-    """A unit of front or back matter as revised: without the small capitals
-    of selective emphasis, its declared passages, then the systematic
-    spelling and punctuation, and its ligatures written out."""
+    """A unit of front or back matter as revised: its names respelled where
+    their decisions list the unit, then without the small capitals of
+    selective emphasis, its declared passages, then the systematic spelling
+    and punctuation, and its ligatures written out."""
+    doc = revision.named_matter(code, doc, policy, met)
     doc = revision.passages(code, typography.small_caps(doc), policy, met)
     doc = revision.punctuated(
         revision.respelled(doc, policy, met, book=False), policy, met

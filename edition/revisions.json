@@ -1,5 +1,5 @@
 {
-  "why": "The spelling, vocabulary, and punctuation of the translation, revised by explicit editorial decisions. A word is respelled or modernized wherever the translation, its notes, and its front and back matter print it as a whole word; a word with a scope of scripture is revised only in numbered scripture and marked note lemmas (fq) and readings (fqa), wherever they stand. Book titles and metadata, headings, introduction paragraphs, and explanatory commentary are outside that scripture scope. Numbered scripture in d paragraphs, including Psalm superscriptions, remains in scope. Plain quotation marks do not establish scope. Names are respelled first. Global spelling, vocabulary, article, possessive, and participle decisions affect source prose and run next, followed by a separate single sweep of scoped grammar decisions. The ligatures are written out last of all. A verse's change is made to the words of that verse alone, which must have them once, as the names leave them, and to the notes that quote them. Verses' changes stand in groups, each group under the reason its changes share. Each gives its reason. An isolated alternative whose word is also a plural noun may name its stable source note as its exact context. Passage changes name a stable note key or a front/back-matter unit and the plain words met once there; only punctuation, associated spacing, and sentence-initial capitalization may change, with lowercase word initials also allowed in keyed notes. A phrase is revised as a word is; possessives and articles follow the immediately following sound, including an intervening adjective: my and thy before consonant sounds, mine and thine before vowel sounds and silent h; a before consonant sounds, an before vowel sounds and silent h. Independent mine and thine stay. Capitalization is decided separately. A word may except the phrases it must not change, which the edition must print. Words that a character style divides keep their division, and so does the lemma that quotes them at its note. Hyphens may replace spaces between unchanged words, preserving each word’s styles and the matching note lemma. Five past tenses the King James Bible holds to, spake, begat, bare, brake, and sware, are carried through scripture as the inflections are. A compound takes the form current English gives it, closed, hyphenated as a modifier before its noun or wherever English keeps the hyphen, and otherwise open; eight terms of Scripture keep Brenton’s hyphen by decision.",
+  "why": "The spelling, vocabulary, and punctuation of the translation, revised by explicit editorial decisions. A word is respelled or modernized wherever the translation, its notes, and its front and back matter print it as a whole word; a word with a scope of scripture is revised only in numbered scripture and marked note lemmas (fq) and readings (fqa), wherever they stand. Book titles and metadata, headings, introduction paragraphs, and explanatory commentary are outside that scripture scope. The scope marks the archaisms, the King James inflections and past tenses carried into Brenton’s Scripture, which the notes’ commentary and the prefaces do not take; a modernization has no scope, and reaches them as it reaches the text. Numbered scripture in d paragraphs, including Psalm superscriptions, remains in scope. Plain quotation marks do not establish scope. Names are respelled first. Global spelling, vocabulary, article, possessive, and participle decisions affect source prose and run next, followed by a separate single sweep of scoped grammar decisions. The ligatures are written out last of all. A verse's change is made to the words of that verse alone, which must have them once, as the names leave them, and to the notes that quote them. Verses' changes stand in groups, each group under the reason its changes share. Each gives its reason. An isolated alternative whose word is also a plural noun may name its stable source note as its exact context. Passage changes name a stable note key or a front/back-matter unit and the plain words met once there; only punctuation, associated spacing, and sentence-initial capitalization may change, with lowercase word initials also allowed in keyed notes. A phrase is revised as a word is; possessives and articles follow the immediately following sound, including an intervening adjective: my and thy before consonant sounds, mine and thine before vowel sounds and silent h; a before consonant sounds, an before vowel sounds and silent h. Independent mine and thine stay. Capitalization is decided separately. A word may except the phrases it must not change, which the edition must print. Words that a character style divides keep their division, and so does the lemma that quotes them at its note; the style of the translators’ supplied words (add), which is printed in roman and shown plain on the website, divides nothing among roman words, so that a compound it splits there is joined as any other. Hyphens may replace spaces between unchanged words, preserving each word’s styles and the matching note lemma. Five past tenses the King James Bible holds to, spake, begat, bare, brake, and sware, are carried through scripture as the inflections are. A compound takes the form current English gives it, closed, hyphenated as a modifier before its noun or wherever English keeps the hyphen, and otherwise open; the edition retains first-born, first-fruits, corner-stone, mercy-seat, stumbling-block, stumbling-stone, threshing-floor, dwelling-place, ewe-lamb, turtle-dove, pre-eminence, battle-array, and well-pleased, with their plurals, by explicit editorial preference.",
   "ligatures": {
     "why": "The edition writes the ligatures out as their letters: æ as ae and œ as oe, in every word of the translations, their notes, and their front and back matter, names and Latin alike, so that no verse prints both spellings. It is done last, after every decision has been carried out and checked in the sources’ own letters, so the decisions name the forms the sources print; a decision that writes a word anew writes it with the letters.",
     "letters": {
@@ -9,7 +9,7 @@
     }
   },
   "names": {
-    "why": "Proper names of persons and places, respelled where their bearer is identified. A decision respells every whole-word occurrence of its forms in the verses it lists, as the edition numbers them, and in the lemmas that quote them, and nowhere else. Every other verse of the printed books that has a decided form is listed under keep, with who keeps it. The build refuses an occurrence listed neither way, a listed verse without its form, and a kept verse that another revision respells. Two bearers may share a source form, each listing its own verses, and where one verse names two bearers alike, each lists its occurrence by number, as LUK 6:16#1 and LUK 6:16#2. A note's commentary and the front and back matter keep the source's names. The king of Judah retains both source names: Azarias for Greek Ἀζαρίας in 4 Kgdms and 1 Chr 3:12, and Ozias for Greek Ὀζίας, including 2 Chr. These names are not harmonized; other bearers and the related forms Azaria, Azariu, Ozia, and Ozi retain their source forms. A decision may also name the books whose terminal subscriptions respell a form under colophons; their wording otherwise remains the source’s. Subscription names must be met once in their named colophon.",
+    "why": "Proper names of persons and places, respelled where their bearer is identified. A decision respells every whole-word occurrence of its forms in the verses it lists, as the edition numbers them, and in the lemmas that quote them, and nowhere else. Every other verse of the printed books that has a decided form is listed under keep, with who keeps it. The build refuses an occurrence listed neither way, a listed verse without its form, and a kept verse that another revision respells. Two bearers may share a source form, each listing its own verses, and where one verse names two bearers alike, each lists its occurrence by number, as LUK 6:16#1 and LUK 6:16#2. A note's commentary keeps the source's names, since the name there is often the note's subject. The front and back matter take the edition's names: a decision lists under matter the units that respell a form in every paragraph and footnote, and a decided form prints in the matter only where a decision lists it, so that the prefaces and Brenton's Introduction name the prophets and books as the edition does; the translators' and Brenton's other names, and their 1611 spellings of the Fathers, stand as they wrote them. The king of Judah retains both source names: Azarias for Greek Ἀζαρίας in 4 Kgdms and 1 Chr 3:12, and Ozias for Greek Ὀζίας, including 2 Chr. These names are not harmonized; other bearers and the related forms Azaria, Azariu, Ozia, and Ozi retain their source forms. A decision may also name the books whose terminal subscriptions respell a form under colophons; their wording otherwise remains the source’s. Subscription names must be met once in their named colophon.",
     "decisions": {
       "Abijah, son of Jeroboam": {
         "to": "Abia",
@@ -395,6 +395,16 @@
             "1MA 6:63",
             "2MA 4:33",
             "2MA 5:21"
+          ]
+        }
+      },
+      "Aristeas, the narrator of the Septuagint's origin": {
+        "to": "Aristeas",
+        "why": "Brenton’s Introduction writes Aristeas three times and his Preface Aristæas once; the Introduction’s form, which is also the usual English one, serves both. Not the ligature written out, which would give Aristaeas.",
+        "forms": {},
+        "matter": {
+          "Aristæas": [
+            "XXB"
           ]
         }
       },
@@ -1051,7 +1061,7 @@
       },
       "Haggai, prophet": {
         "to": "Aggeus",
-        "why": "The spelling of the King James Apocrypha (1 Esd 6:1), including the Psalm superscriptions that name the prophet.",
+        "why": "The spelling of the King James Apocrypha (1 Esd 6:1), including the Psalm superscriptions that name the prophet. The translators’ preface names the prophet Haggai once, and takes the edition’s name.",
         "forms": {
           "Aggæus": [
             "EZR 5:1",
@@ -1070,6 +1080,11 @@
             "HAG 2:13",
             "HAG 2:14",
             "HAG 2:20"
+          ]
+        },
+        "matter": {
+          "Haggai": [
+            "translators-preface"
           ]
         }
       },
@@ -1440,7 +1455,7 @@
       },
       "Isaiah, prophet": {
         "to": "Esaias",
-        "why": "The spelling of the King James New Testament (Matt 3:3).",
+        "why": "The spelling of the King James New Testament (Matt 3:3). Brenton’s Introduction names the book Isaiah once, and the translators’ preface the prophet Esay once; both take the edition’s name.",
         "forms": {
           "Esay": [
             "SIR 48:20",
@@ -1448,6 +1463,14 @@
           ],
           "Jessias": [
             "2CH 26:22"
+          ]
+        },
+        "matter": {
+          "Esay": [
+            "translators-preface"
+          ],
+          "Isaiah": [
+            "XXE"
           ]
         }
       },
@@ -4780,6 +4803,26 @@
             "PSA 79:3"
           ]
         }
+      },
+      "Zerubbabel, governor of the return": {
+        "to": "Zorobabel",
+        "why": "The spelling of the King James New Testament (Matt 1:12) and Apocrypha (1 Esd 4:13), and Brenton’s throughout. The translators’ preface names him Zerubbabel once, and takes the edition’s name.",
+        "forms": {},
+        "matter": {
+          "Zerubbabel": [
+            "translators-preface"
+          ]
+        }
+      },
+      "Ezra, the scribe and the book": {
+        "to": "Esdras",
+        "why": "The spelling of the King James Apocrypha and of Brenton for the scribe, and of this edition’s title for the book, 2 Esdras. The translators’ preface names the story of Ezra once, and takes the edition’s name.",
+        "forms": {},
+        "matter": {
+          "Ezra": [
+            "translators-preface"
+          ]
+        }
       }
     }
   },
@@ -4827,8 +4870,7 @@
     },
     "have born": {
       "to": "have borne",
-      "scope": "scripture",
-      "why": "Use borne for active bearing after have in scripture and marked note lemmas and readings; preserve passive birth constructions such as have been born."
+      "why": "Use borne for active bearing after have wherever it is printed, a modernization that reaches the notes’ commentary and the prefaces as the inflections do not; preserve passive birth constructions such as have been born."
     },
     "hast born": {
       "to": "hast borne",
@@ -4837,18 +4879,15 @@
     },
     "had born": {
       "to": "had borne",
-      "scope": "scripture",
-      "why": "Use borne for active bearing after had in scripture and marked note lemmas and readings; preserve passive birth constructions such as had been born."
+      "why": "Use borne for active bearing after had wherever it is printed, a modernization that reaches the notes’ commentary and the prefaces as the inflections do not; preserve passive birth constructions such as had been born."
     },
     "having born": {
       "to": "having borne",
-      "scope": "scripture",
-      "why": "Use borne for active bearing after having in scripture and marked note lemmas and readings; preserve having been born."
+      "why": "Use borne for active bearing after having wherever it is printed, a modernization that reaches the notes’ commentary and the prefaces as the inflections do not; preserve having been born."
     },
     "have I born": {
       "to": "have I borne",
-      "scope": "scripture",
-      "why": "Use borne in the inverted active-bearing question have I born in scripture and marked note lemmas and readings."
+      "why": "Use borne in the inverted active-bearing question have I born wherever it is printed, a modernization that reaches the notes’ commentary and the prefaces as the inflections do not."
     },
     "hast not born": {
       "to": "hast not borne",
@@ -4857,8 +4896,7 @@
     },
     "conceived and born": {
       "to": "conceived and borne",
-      "scope": "scripture",
-      "why": "Use borne for active bearing coordinated with conceived under the auxiliary have in scripture and marked note lemmas and readings."
+      "why": "Use borne for active bearing coordinated with conceived under the auxiliary have wherever it is printed, a modernization that reaches the notes’ commentary and the prefaces as the inflections do not."
     },
     "Chanaan": {
       "to": "Canaan",
@@ -5881,28 +5919,23 @@
     },
     "trode": {
       "to": "trod",
-      "why": "Four rare past tenses are modernized wherever either Bible has them in the text of Scripture, trode to trod, tare to tore, forgat to forgot, and ware (the past of wear) to wore, as the King James strake sail is struck sail. The King James Bible holds to each without exception in the books of its canon, as it does to the five forms carried into Brenton, but has them in a handful of verses, trode 8 times, forgat 9, tare 4, and ware once as a past tense, against brake 77 and spake 631; they stand at Mark 9:20, Luke 8:27, 9:42, and 12:1, and in Brenton’s Apocrypha, reprinted from the King James, at Wisdom 19:20 and Judith 8:5, while Brenton’s Old Testament writes trod, tore, forgot, and wore throughout. The choice is of which forms to carry, drawn where the counts leave a gap. The adjective ware, meaning aware (Matthew 24:50, Luke 12:46, Acts 14:6, 2 Timothy 4:15), is another word and stands, so the verb is revised by its phrases.",
-      "scope": "scripture"
+      "why": "Four rare past tenses are modernized wherever either Bible has them, in the text of Scripture, the notes, and the prefaces alike, trode to trod, tare to tore, forgat to forgot, and ware (the past of wear) to wore, as the King James strake sail is struck sail. The King James Bible holds to each without exception in the books of its canon, as it does to the five forms carried into Brenton, but has them in a handful of verses, trode 8 times, forgat 9, tare 4, and ware once as a past tense, against brake 77 and spake 631; they stand at Mark 9:20, Luke 8:27, 9:42, and 12:1, and in Brenton’s Apocrypha, reprinted from the King James, at Wisdom 19:20 and Judith 8:5, while Brenton’s Old Testament writes trod, tore, forgot, and wore throughout. The choice is of which forms to carry, drawn where the counts leave a gap. The adjective ware, meaning aware (Matthew 24:50, Luke 12:46, Acts 14:6, 2 Timothy 4:15), is another word and stands, so the verb is revised by its phrases."
     },
     "tare": {
       "to": "tore",
-      "why": "Four rare past tenses are modernized wherever either Bible has them in the text of Scripture, trode to trod, tare to tore, forgat to forgot, and ware (the past of wear) to wore, as the King James strake sail is struck sail. The King James Bible holds to each without exception in the books of its canon, as it does to the five forms carried into Brenton, but has them in a handful of verses, trode 8 times, forgat 9, tare 4, and ware once as a past tense, against brake 77 and spake 631; they stand at Mark 9:20, Luke 8:27, 9:42, and 12:1, and in Brenton’s Apocrypha, reprinted from the King James, at Wisdom 19:20 and Judith 8:5, while Brenton’s Old Testament writes trod, tore, forgot, and wore throughout. The choice is of which forms to carry, drawn where the counts leave a gap. The adjective ware, meaning aware (Matthew 24:50, Luke 12:46, Acts 14:6, 2 Timothy 4:15), is another word and stands, so the verb is revised by its phrases.",
-      "scope": "scripture"
+      "why": "Four rare past tenses are modernized wherever either Bible has them, in the text of Scripture, the notes, and the prefaces alike, trode to trod, tare to tore, forgat to forgot, and ware (the past of wear) to wore, as the King James strake sail is struck sail. The King James Bible holds to each without exception in the books of its canon, as it does to the five forms carried into Brenton, but has them in a handful of verses, trode 8 times, forgat 9, tare 4, and ware once as a past tense, against brake 77 and spake 631; they stand at Mark 9:20, Luke 8:27, 9:42, and 12:1, and in Brenton’s Apocrypha, reprinted from the King James, at Wisdom 19:20 and Judith 8:5, while Brenton’s Old Testament writes trod, tore, forgot, and wore throughout. The choice is of which forms to carry, drawn where the counts leave a gap. The adjective ware, meaning aware (Matthew 24:50, Luke 12:46, Acts 14:6, 2 Timothy 4:15), is another word and stands, so the verb is revised by its phrases."
     },
     "forgat": {
       "to": "forgot",
-      "why": "Four rare past tenses are modernized wherever either Bible has them in the text of Scripture, trode to trod, tare to tore, forgat to forgot, and ware (the past of wear) to wore, as the King James strake sail is struck sail. The King James Bible holds to each without exception in the books of its canon, as it does to the five forms carried into Brenton, but has them in a handful of verses, trode 8 times, forgat 9, tare 4, and ware once as a past tense, against brake 77 and spake 631; they stand at Mark 9:20, Luke 8:27, 9:42, and 12:1, and in Brenton’s Apocrypha, reprinted from the King James, at Wisdom 19:20 and Judith 8:5, while Brenton’s Old Testament writes trod, tore, forgot, and wore throughout. The choice is of which forms to carry, drawn where the counts leave a gap. The adjective ware, meaning aware (Matthew 24:50, Luke 12:46, Acts 14:6, 2 Timothy 4:15), is another word and stands, so the verb is revised by its phrases.",
-      "scope": "scripture"
+      "why": "Four rare past tenses are modernized wherever either Bible has them, in the text of Scripture, the notes, and the prefaces alike, trode to trod, tare to tore, forgat to forgot, and ware (the past of wear) to wore, as the King James strake sail is struck sail. The King James Bible holds to each without exception in the books of its canon, as it does to the five forms carried into Brenton, but has them in a handful of verses, trode 8 times, forgat 9, tare 4, and ware once as a past tense, against brake 77 and spake 631; they stand at Mark 9:20, Luke 8:27, 9:42, and 12:1, and in Brenton’s Apocrypha, reprinted from the King James, at Wisdom 19:20 and Judith 8:5, while Brenton’s Old Testament writes trod, tore, forgot, and wore throughout. The choice is of which forms to carry, drawn where the counts leave a gap. The adjective ware, meaning aware (Matthew 24:50, Luke 12:46, Acts 14:6, 2 Timothy 4:15), is another word and stands, so the verb is revised by its phrases."
     },
     "ware no clothes": {
       "to": "wore no clothes",
-      "why": "Four rare past tenses are modernized wherever either Bible has them in the text of Scripture, trode to trod, tare to tore, forgat to forgot, and ware (the past of wear) to wore, as the King James strake sail is struck sail. The King James Bible holds to each without exception in the books of its canon, as it does to the five forms carried into Brenton, but has them in a handful of verses, trode 8 times, forgat 9, tare 4, and ware once as a past tense, against brake 77 and spake 631; they stand at Mark 9:20, Luke 8:27, 9:42, and 12:1, and in Brenton’s Apocrypha, reprinted from the King James, at Wisdom 19:20 and Judith 8:5, while Brenton’s Old Testament writes trod, tore, forgot, and wore throughout. The choice is of which forms to carry, drawn where the counts leave a gap. The adjective ware, meaning aware (Matthew 24:50, Luke 12:46, Acts 14:6, 2 Timothy 4:15), is another word and stands, so the verb is revised by its phrases.",
-      "scope": "scripture"
+      "why": "Four rare past tenses are modernized wherever either Bible has them, in the text of Scripture, the notes, and the prefaces alike, trode to trod, tare to tore, forgat to forgot, and ware (the past of wear) to wore, as the King James strake sail is struck sail. The King James Bible holds to each without exception in the books of its canon, as it does to the five forms carried into Brenton, but has them in a handful of verses, trode 8 times, forgat 9, tare 4, and ware once as a past tense, against brake 77 and spake 631; they stand at Mark 9:20, Luke 8:27, 9:42, and 12:1, and in Brenton’s Apocrypha, reprinted from the King James, at Wisdom 19:20 and Judith 8:5, while Brenton’s Old Testament writes trod, tore, forgot, and wore throughout. The choice is of which forms to carry, drawn where the counts leave a gap. The adjective ware, meaning aware (Matthew 24:50, Luke 12:46, Acts 14:6, 2 Timothy 4:15), is another word and stands, so the verb is revised by its phrases."
     },
     "ware her widow": {
       "to": "wore her widow",
-      "why": "Four rare past tenses are modernized wherever either Bible has them in the text of Scripture, trode to trod, tare to tore, forgat to forgot, and ware (the past of wear) to wore, as the King James strake sail is struck sail. The King James Bible holds to each without exception in the books of its canon, as it does to the five forms carried into Brenton, but has them in a handful of verses, trode 8 times, forgat 9, tare 4, and ware once as a past tense, against brake 77 and spake 631; they stand at Mark 9:20, Luke 8:27, 9:42, and 12:1, and in Brenton’s Apocrypha, reprinted from the King James, at Wisdom 19:20 and Judith 8:5, while Brenton’s Old Testament writes trod, tore, forgot, and wore throughout. The choice is of which forms to carry, drawn where the counts leave a gap. The adjective ware, meaning aware (Matthew 24:50, Luke 12:46, Acts 14:6, 2 Timothy 4:15), is another word and stands, so the verb is revised by its phrases.",
-      "scope": "scripture"
+      "why": "Four rare past tenses are modernized wherever either Bible has them, in the text of Scripture, the notes, and the prefaces alike, trode to trod, tare to tore, forgat to forgot, and ware (the past of wear) to wore, as the King James strake sail is struck sail. The King James Bible holds to each without exception in the books of its canon, as it does to the five forms carried into Brenton, but has them in a handful of verses, trode 8 times, forgat 9, tare 4, and ware once as a past tense, against brake 77 and spake 631; they stand at Mark 9:20, Luke 8:27, 9:42, and 12:1, and in Brenton’s Apocrypha, reprinted from the King James, at Wisdom 19:20 and Judith 8:5, while Brenton’s Old Testament writes trod, tore, forgot, and wore throughout. The choice is of which forms to carry, drawn where the counts leave a gap. The adjective ware, meaning aware (Matthew 24:50, Luke 12:46, Acts 14:6, 2 Timothy 4:15), is another word and stands, so the verb is revised by its phrases."
     },
     "Oh let": {
       "to": "O let",
@@ -9868,53 +9901,43 @@
     },
     "beside women and children": {
       "to": "besides women and children",
-      "scope": "scripture",
-      "why": "Use besides for addition in scripture and marked note quotations; retain spatial and idiomatic beside."
+      "why": "Use besides for addition wherever it is printed, a modernization that reaches the notes’ commentary and the prefaces as the inflections do not; retain spatial and idiomatic beside."
     },
     "beside all this": {
       "to": "besides all this",
-      "scope": "scripture",
-      "why": "Use besides for addition in scripture and marked note quotations; retain spatial and idiomatic beside."
+      "why": "Use besides for addition wherever it is printed, a modernization that reaches the notes’ commentary and the prefaces as the inflections do not; retain spatial and idiomatic beside."
     },
     "beside this": {
       "to": "besides this",
-      "scope": "scripture",
-      "why": "Use besides for addition in scripture and marked note quotations; retain spatial and idiomatic beside."
+      "why": "Use besides for addition wherever it is printed, a modernization that reaches the notes’ commentary and the prefaces as the inflections do not; retain spatial and idiomatic beside."
     },
     "gone a little further": {
       "to": "gone a little farther",
-      "scope": "scripture",
-      "why": "Use farther for physical distance in scripture and marked note quotations."
+      "why": "Use farther for physical distance wherever it is printed, a modernization that reaches the notes’ commentary and the prefaces as the inflections do not."
     },
     "gone further": {
       "to": "gone farther",
-      "scope": "scripture",
-      "why": "Use farther for physical distance in scripture and marked note quotations."
+      "why": "Use farther for physical distance wherever it is printed, a modernization that reaches the notes’ commentary and the prefaces as the inflections do not."
     },
     "went a little further": {
       "to": "went a little farther",
-      "scope": "scripture",
-      "why": "Use farther for physical distance in scripture and marked note quotations, including the MAT 26:39 TR reading."
+      "why": "Use farther for physical distance wherever it is printed, a modernization that reaches the notes’ commentary and the prefaces as the inflections do not, including the MAT 26:39 TR reading."
     },
     "who sometimes were": {
       "to": "who sometime were",
-      "scope": "scripture",
-      "why": "Use sometime for formerly in scripture and marked note quotations; sometimes means occasionally, and some time expresses duration."
+      "why": "Use sometime for formerly wherever it is printed, a sorting by sense that reaches the notes’ commentary and the prefaces as the inflections do not; sometimes means occasionally, and some time expresses duration."
     },
     "were sometimes darkness": {
       "to": "were sometime darkness",
-      "scope": "scripture",
-      "why": "Use sometime for formerly in scripture and marked note quotations; sometimes means occasionally, and some time expresses duration."
+      "why": "Use sometime for formerly wherever it is printed, a sorting by sense that reaches the notes’ commentary and the prefaces as the inflections do not; sometimes means occasionally, and some time expresses duration."
     },
     "were sometimes alienated": {
       "to": "were sometime alienated",
-      "scope": "scripture",
-      "why": "Use sometime for formerly in scripture and marked note quotations; sometimes means occasionally, and some time expresses duration."
+      "why": "Use sometime for formerly wherever it is printed, a sorting by sense that reaches the notes’ commentary and the prefaces as the inflections do not; sometimes means occasionally, and some time expresses duration."
     },
     "were sometimes foolish": {
       "to": "were sometime foolish",
-      "scope": "scripture",
-      "why": "Use sometime for formerly in scripture and marked note quotations; sometimes means occasionally, and some time expresses duration."
+      "why": "Use sometime for formerly wherever it is printed, a sorting by sense that reaches the notes’ commentary and the prefaces as the inflections do not; sometimes means occasionally, and some time expresses duration."
     },
     "any thing": {
       "to": "anything",
@@ -10020,11 +10043,11 @@
     },
     "first fruits": {
       "to": "first-fruits",
-      "why": "Eight terms of Scripture keep the hyphen Brenton gave them, against the solid and the open forms of 1611 and of today alike: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), and dwelling-place (21 beside 1 open; 31 open). They are the forms in which Brenton’s Septuagint, which has most of their occurrences, prints these terms; the choice is for these eight terms and is no rule, and every other compound takes its current English form."
+      "why": "The edition retains these hyphenated forms by explicit editorial preference: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), dwelling-place (21 beside 1 open; 31 open), ewe-lamb, turtle-dove, pre-eminence, battle-array, and well-pleased, with their plurals. These spellings are editorial choices, not a general rule. Other compound changes are declared individually; forms outside those decisions stand as the sources print them."
     },
     "firstfruits": {
       "to": "first-fruits",
-      "why": "Eight terms of Scripture keep the hyphen Brenton gave them, against the solid and the open forms of 1611 and of today alike: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), and dwelling-place (21 beside 1 open; 31 open). They are the forms in which Brenton’s Septuagint, which has most of their occurrences, prints these terms; the choice is for these eight terms and is no rule, and every other compound takes its current English form."
+      "why": "The edition retains these hyphenated forms by explicit editorial preference: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), dwelling-place (21 beside 1 open; 31 open), ewe-lamb, turtle-dove, pre-eminence, battle-array, and well-pleased, with their plurals. These spellings are editorial choices, not a general rule. Other compound changes are declared individually; forms outside those decisions stand as the sources print them."
     },
     "evildoers": {
       "to": "evil-doers",
@@ -10056,11 +10079,11 @@
     },
     "mercy seat": {
       "to": "mercy-seat",
-      "why": "Eight terms of Scripture keep the hyphen Brenton gave them, against the solid and the open forms of 1611 and of today alike: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), and dwelling-place (21 beside 1 open; 31 open). They are the forms in which Brenton’s Septuagint, which has most of their occurrences, prints these terms; the choice is for these eight terms and is no rule, and every other compound takes its current English form."
+      "why": "The edition retains these hyphenated forms by explicit editorial preference: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), dwelling-place (21 beside 1 open; 31 open), ewe-lamb, turtle-dove, pre-eminence, battle-array, and well-pleased, with their plurals. These spellings are editorial choices, not a general rule. Other compound changes are declared individually; forms outside those decisions stand as the sources print them."
     },
     "corner stone": {
       "to": "corner-stone",
-      "why": "Eight terms of Scripture keep the hyphen Brenton gave them, against the solid and the open forms of 1611 and of today alike: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), and dwelling-place (21 beside 1 open; 31 open). They are the forms in which Brenton’s Septuagint, which has most of their occurrences, prints these terms; the choice is for these eight terms and is no rule, and every other compound takes its current English form."
+      "why": "The edition retains these hyphenated forms by explicit editorial preference: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), dwelling-place (21 beside 1 open; 31 open), ewe-lamb, turtle-dove, pre-eminence, battle-array, and well-pleased, with their plurals. These spellings are editorial choices, not a general rule. Other compound changes are declared individually; forms outside those decisions stand as the sources print them."
     },
     "stone bow": {
       "to": "stone-bow",
@@ -10132,11 +10155,11 @@
     },
     "threshingfloor": {
       "to": "threshing-floor",
-      "why": "Eight terms of Scripture keep the hyphen Brenton gave them, against the solid and the open forms of 1611 and of today alike: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), and dwelling-place (21 beside 1 open; 31 open). They are the forms in which Brenton’s Septuagint, which has most of their occurrences, prints these terms; the choice is for these eight terms and is no rule, and every other compound takes its current English form."
+      "why": "The edition retains these hyphenated forms by explicit editorial preference: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), dwelling-place (21 beside 1 open; 31 open), ewe-lamb, turtle-dove, pre-eminence, battle-array, and well-pleased, with their plurals. These spellings are editorial choices, not a general rule. Other compound changes are declared individually; forms outside those decisions stand as the sources print them."
     },
     "threshing floor": {
       "to": "threshing-floor",
-      "why": "Eight terms of Scripture keep the hyphen Brenton gave them, against the solid and the open forms of 1611 and of today alike: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), and dwelling-place (21 beside 1 open; 31 open). They are the forms in which Brenton’s Septuagint, which has most of their occurrences, prints these terms; the choice is for these eight terms and is no rule, and every other compound takes its current English form."
+      "why": "The edition retains these hyphenated forms by explicit editorial preference: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), dwelling-place (21 beside 1 open; 31 open), ewe-lamb, turtle-dove, pre-eminence, battle-array, and well-pleased, with their plurals. These spellings are editorial choices, not a general rule. Other compound changes are declared individually; forms outside those decisions stand as the sources print them."
     },
     "resting place": {
       "to": "resting-place",
@@ -10144,7 +10167,7 @@
     },
     "dwelling place": {
       "to": "dwelling-place",
-      "why": "Eight terms of Scripture keep the hyphen Brenton gave them, against the solid and the open forms of 1611 and of today alike: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), and dwelling-place (21 beside 1 open; 31 open). They are the forms in which Brenton’s Septuagint, which has most of their occurrences, prints these terms; the choice is for these eight terms and is no rule, and every other compound takes its current English form."
+      "why": "The edition retains these hyphenated forms by explicit editorial preference: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), dwelling-place (21 beside 1 open; 31 open), ewe-lamb, turtle-dove, pre-eminence, battle-array, and well-pleased, with their plurals. These spellings are editorial choices, not a general rule. Other compound changes are declared individually; forms outside those decisions stand as the sources print them."
     },
     "broken hearted": {
       "to": "broken-hearted",
@@ -10253,7 +10276,7 @@
     },
     "fellow-feeling": {
       "to": "fellow feeling",
-      "why": "Write fellow as a separate word before the noun it modifies, as in the other fellow compounds, throughout the translation, notes, and source matter."
+      "why": "Write the noun fellow feeling, meaning mutual sympathy, open in its occurrence at 4 Maccabees 13:25."
     },
     "fellowheirs": {
       "to": "fellow heirs",
@@ -10949,15 +10972,15 @@
     },
     "firstborn": {
       "to": "first-born",
-      "why": "Eight terms of Scripture keep the hyphen Brenton gave them, against the solid and the open forms of 1611 and of today alike: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), and dwelling-place (21 beside 1 open; 31 open). They are the forms in which Brenton’s Septuagint, which has most of their occurrences, prints these terms; the choice is for these eight terms and is no rule, and every other compound takes its current English form."
+      "why": "The edition retains these hyphenated forms by explicit editorial preference: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), dwelling-place (21 beside 1 open; 31 open), ewe-lamb, turtle-dove, pre-eminence, battle-array, and well-pleased, with their plurals. These spellings are editorial choices, not a general rule. Other compound changes are declared individually; forms outside those decisions stand as the sources print them."
     },
     "stumblingblock": {
       "to": "stumbling-block",
-      "why": "Eight terms of Scripture keep the hyphen Brenton gave them, against the solid and the open forms of 1611 and of today alike: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), and dwelling-place (21 beside 1 open; 31 open). They are the forms in which Brenton’s Septuagint, which has most of their occurrences, prints these terms; the choice is for these eight terms and is no rule, and every other compound takes its current English form."
+      "why": "The edition retains these hyphenated forms by explicit editorial preference: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), dwelling-place (21 beside 1 open; 31 open), ewe-lamb, turtle-dove, pre-eminence, battle-array, and well-pleased, with their plurals. These spellings are editorial choices, not a general rule. Other compound changes are declared individually; forms outside those decisions stand as the sources print them."
     },
     "stumblingblocks": {
       "to": "stumbling-blocks",
-      "why": "Eight terms of Scripture keep the hyphen Brenton gave them, against the solid and the open forms of 1611 and of today alike: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), and dwelling-place (21 beside 1 open; 31 open). They are the forms in which Brenton’s Septuagint, which has most of their occurrences, prints these terms; the choice is for these eight terms and is no rule, and every other compound takes its current English form."
+      "why": "The edition retains these hyphenated forms by explicit editorial preference: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), dwelling-place (21 beside 1 open; 31 open), ewe-lamb, turtle-dove, pre-eminence, battle-array, and well-pleased, with their plurals. These spellings are editorial choices, not a general rule. Other compound changes are declared individually; forms outside those decisions stand as the sources print them."
     },
     "Enquire": {
       "to": "Inquire",
@@ -11397,10 +11420,6 @@
       "to": "Mount Horeb",
       "why": "Mount is capitalized where it begins a mountain’s name. After an article, a demonstrative, or an adjective, mount is a common noun standing before the name, as in the river Jordan, and stays lowercase; so do the verb, unnamed mountains, and descriptive phrases such as the mount of God or the mount of Esau."
     },
-    "mount Nephthali": {
-      "to": "Mount Nephthali",
-      "why": "Mount is capitalized where it begins a mountain’s name. After an article, a demonstrative, or an adjective, mount is a common noun standing before the name, as in the river Jordan, and stays lowercase; so do the verb, unnamed mountains, and descriptive phrases such as the mount of God or the mount of Esau."
-    },
     "mount Or": {
       "to": "Mount Or",
       "except": [
@@ -11472,7 +11491,7 @@
     },
     "firstfruit": {
       "to": "first-fruit",
-      "why": "Eight terms of Scripture keep the hyphen Brenton gave them, against the solid and the open forms of 1611 and of today alike: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), and dwelling-place (21 beside 1 open; 31 open). They are the forms in which Brenton’s Septuagint, which has most of their occurrences, prints these terms; the choice is for these eight terms and is no rule, and every other compound takes its current English form."
+      "why": "The edition retains these hyphenated forms by explicit editorial preference: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), dwelling-place (21 beside 1 open; 31 open), ewe-lamb, turtle-dove, pre-eminence, battle-array, and well-pleased, with their plurals. These spellings are editorial choices, not a general rule. Other compound changes are declared individually; forms outside those decisions stand as the sources print them."
     },
     "birth-day": {
       "to": "birthday",
@@ -11636,7 +11655,7 @@
     },
     "stumblingstone": {
       "to": "stumbling-stone",
-      "why": "Eight terms of Scripture keep the hyphen Brenton gave them, against the solid and the open forms of 1611 and of today alike: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), and dwelling-place (21 beside 1 open; 31 open). They are the forms in which Brenton’s Septuagint, which has most of their occurrences, prints these terms; the choice is for these eight terms and is no rule, and every other compound takes its current English form."
+      "why": "The edition retains these hyphenated forms by explicit editorial preference: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), dwelling-place (21 beside 1 open; 31 open), ewe-lamb, turtle-dove, pre-eminence, battle-array, and well-pleased, with their plurals. These spellings are editorial choices, not a general rule. Other compound changes are declared individually; forms outside those decisions stand as the sources print them."
     },
     "feebleminded": {
       "to": "feeble-minded",
@@ -11645,6 +11664,90 @@
     "highminded": {
       "to": "high-minded",
       "why": "A compound takes the form current English gives it. A compound modifier is hyphenated before its noun, as sweet-smelling, two-edged, well-pleasing before a noun, and whole-burnt offering already stand, and is open after its noun; a compound that English hyphenates wherever it stands keeps its hyphen in every position, stiff-necked, like-minded, high-minded, double-tongued, and the noun long-suffering. The solid form is 1611’s."
+    },
+    "maid-servant": {
+      "to": "maidservant",
+      "why": "A compound takes the form current English gives it, and where the two translations write it differently the King James Bible’s form serves both where it keeps to one: it writes maidservant 17 times and never otherwise, while Brenton writes maid-servant 14 times, maidservant once."
+    },
+    "maid-servants": {
+      "to": "maidservants",
+      "why": "A compound takes the form current English gives it, and where the two translations write it differently the King James Bible’s form serves both where it keeps to one: it writes maidservants 12 times and never otherwise, while Brenton writes maid-servants 15 times, maidservants 3 times."
+    },
+    "law-giver": {
+      "to": "lawgiver",
+      "why": "A compound takes the form current English gives it, and where the two translations write it differently the King James Bible’s form serves both where it keeps to one: it writes lawgiver 7 times and never otherwise, while Brenton writes law-giver twice, lawgiver 3 times."
+    },
+    "seven-fold": {
+      "to": "sevenfold",
+      "why": "A compound takes the form current English gives it, and where the two translations write it differently the King James Bible’s form serves both where it keeps to one: it writes sevenfold 9 times and never otherwise, while Brenton writes seven-fold twice, sevenfold 7 times."
+    },
+    "hundred-fold": {
+      "to": "hundredfold",
+      "why": "A compound takes the form current English gives it, and where the two translations write it differently the King James Bible’s form serves both where it keeps to one: it writes hundredfold 7 times and never otherwise, while Brenton writes hundred-fold 3 times."
+    },
+    "four-fold": {
+      "to": "fourfold",
+      "why": "A compound takes the form current English gives it, and where the two translations write it differently the King James Bible’s form serves both where it keeps to one: it writes fourfold twice and never otherwise, while Brenton writes four-fold once."
+    },
+    "two-fold": {
+      "to": "twofold",
+      "why": "A compound takes the form current English gives it, and where the two translations write it differently the King James Bible’s form serves both where it keeps to one: it writes twofold once and never otherwise, while Brenton writes two-fold once."
+    },
+    "thousand-fold": {
+      "to": "thousandfold",
+      "why": "A compound takes the form current English gives it. The King James Bible has not the word; Brenton writes thousand-fold once, thousand fold once, so the current form, thousandfold, serves."
+    },
+    "thousand fold": {
+      "to": "thousandfold",
+      "why": "A compound takes the form current English gives it. The King James Bible has not the word; Brenton writes thousand-fold once, thousand fold once, so the current form, thousandfold, serves."
+    },
+    "half-tribe": {
+      "to": "half tribe",
+      "except": ["half-tribe sons"],
+      "why": "A compound takes the form current English gives it, and where the two translations write it differently the King James Bible’s form serves both where it keeps to one: it writes half tribe 32 times and never otherwise, while Brenton writes half-tribe 16 times, half tribe 23 times. At Joshua 13:31 the half-tribe sons of Machir modifies the noun after it, and keeps its hyphen."
+    },
+    "ewe lamb": {
+      "to": "ewe-lamb",
+      "why": "Retain ewe-lamb by explicit editorial preference, with the plural ewe-lambs, as an exception to the current-English compound rule. The King James Bible writes ewe lamb 3 times, and Brenton ewe-lamb once and ewe lamb 3 times."
+    },
+    "an hundred-fold": {
+      "to": "a hundredfold",
+      "why": "The article and the compound at once, at Genesis 26:12: the sweep takes the longest rule at each place, and an hundred alone would take the article’s words and leave -fold behind. The King James Bible writes hundredfold 7 times and never otherwise, Brenton hundred-fold 3 times."
+    },
+    "all wise": {
+      "to": "all-wise",
+      "why": "A compound modifier is hyphenated before its noun, as all-powerful is, and this one stands before its noun in both its places: Brenton writes all-wise Providence at 4 Maccabees 13:19 and all wise God at 1:12. The King James Bible has not the word."
+    },
+    "round-about": {
+      "to": "round about",
+      "why": "A hyphen joins a compound modifier before its noun, not a noun to its adjective or a phrase to its preposition: Brenton writes round about 361 times and round-about once, at Exodus 30:3, and the King James Bible round about 346 times and never round-about."
+    },
+    "a whoring": {
+      "to": "a-whoring",
+      "why": "Hyphenate the archaic adverbial a- (at), so that it is not read as the article, as a-coming and a-fishing are: Brenton writes a-whoring 30 times and a whoring 16, and the King James Bible a whoring 20 times."
+    },
+    "only begotten": {
+      "to": "only-begotten",
+      "except": [
+        "only begotten of the Father"
+      ],
+      "why": "Hyphenate only-begotten before a following noun or one. By editorial preference, retain the open form in John 1:14, the only begotten of the Father; its substantival use does not require the open spelling. The King James Bible writes only begotten 7 times and only-begotten once, at Tobit 8:17, Brenton only-begotten twice and only begotten once."
+    },
+    "man-servant": {
+      "to": "manservant",
+      "why": "Write the noun manservant in its current English form throughout the edition, including notes, consistently with the compound rule. Brenton writes man-servant 12 times; the King James Bible writes manservant 13 times."
+    },
+    "men-servants": {
+      "to": "menservants",
+      "why": "Write the plural menservants consistently with manservant throughout the edition, including notes. Brenton writes men-servants 9 times and menservants 5 times; the King James Bible writes menservants 14 times and never otherwise."
+    },
+    "women-servants": {
+      "to": "womenservants",
+      "why": "Write the plural womenservants consistently with menservants, its partner, throughout the edition, including notes. Brenton writes women-servants twice and womenservants once; the King James Bible writes womenservants 4 times and never otherwise."
+    },
+    "well pleased": {
+      "to": "well-pleased",
+      "why": "Write well-pleased with a hyphen in every position, including after a verb, by editorial preference. Brenton and the King James Bible both write well pleased; Brenton’s existing well-pleased stands too."
     }
   },
   "verses": {
