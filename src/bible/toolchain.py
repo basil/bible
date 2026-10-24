@@ -34,7 +34,7 @@ def font_archives() -> tuple[str, ...]:
 
 
 def font_build_inputs() -> tuple[str, ...]:
-    """Assembly and notices are image inputs, checked alongside font pins."""
+    """Assembly, notices and patches are image inputs, checked alongside font pins."""
     return tuple(
         str(p.relative_to(paths.OPT))
         for p in sorted(paths.FONT_SCRIPTS.glob("*"))

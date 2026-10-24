@@ -3,7 +3,13 @@
 from pathlib import Path
 
 import ptxprint
-from patch_margin_convergence import replace_once
+
+
+def replace_once(path: Path, old: str, new: str) -> None:
+    text = path.read_text(encoding="utf-8")
+    if text.count(old) != 1:
+        raise RuntimeError(f"PTXprint changed in {path}; review the page-filler patch")
+    path.write_text(text.replace(old, new), encoding="utf-8")
 
 
 def patch(root: Path) -> None:

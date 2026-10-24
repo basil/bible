@@ -250,39 +250,6 @@
 % Load the shared optical-margin adapter used by the font regression test.
 \input ../../../shared/ptxprint/Bible/protrusion.tex
 
-% A heading set in its own size keeps its own leading. PTXprint (3.1.3,
-% paratext2.tex, \@s@tbaseline) computes a paragraph's baseline from the
-% font size it finds through the style stack and caches the result under
-% \f@ntstyle, the style it was asked about. A table row (ptx-tables.tex,
-% \t@blerow) asks about the previous paragraph's marker through the row's
-% stack, so a table that follows a title caches the body's leading as the
-% title's, and every mt1 after it is set
-% on body leading: its wrapped lines touch, and a large line after a small
-% one has no room. Cache a baseline only when it was looked up without a
-% stack: PTXprint passes the same style twice for that. Every paragraph
-% passes \m@rker and \styst@k, so a paragraph's baseline is worked out
-% each time from its font size.
-\begingroup
-\catcode`\@=11
-\gdef\@s@tbaseline#1#2{%
-  \getp@ram{baseline}{#1}{#2}\ifx\p@ram\relax
-    \getp@ram{fontsize}{#1}{#2}\ifx\p@ram\relax\else
-      \def\s@urce{calcn:\f@ntstyle}%
-      \dimen0=\p@ram\le@dingunit
-      \multiply\dimen0 by \LineSpaceBase \divide\dimen0 by 12
-      \def\BibleBaselineStyle{#1}\def\BibleBaselineStack{#2}%
-      \ifx\BibleBaselineStyle\BibleBaselineStack
-        \setp@ram{baseline}{\f@ntstyle}{\the\dimen0}%
-        \should@xist{}{\f@ntstyle}%
-      \fi
-      \baselineskip=\dimen0\advance \baselineskip by \ColAdjskip
-    \fi
-  \else
-    \def\s@urce{store:#1,#2}%
-    \baselineskip=\p@ram\fi
-  \trace{j}{set baselineskip=\the\baselineskip (\s@urce)}}
-\endgroup
-
 % An introductory paragraph after \ib opens flush left, as one after a
 % heading does (layout.ini's firstparaindent): the space marks the break.
 % This hook extends only \ib, not scripture's \b: an ordinary \p after

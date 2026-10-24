@@ -63,14 +63,17 @@ def typeset(base: Path, project: Path) -> Path:
         )
     if result.returncode:
         print((base / "console.log").read_text(encoding="utf-8")[-6000:])
+        # The rerun-limit patch logs why a layout did not settle in -R passes.
         raise RuntimeError(
-            f"PTXprint failed ({result.returncode}); see {base}/console.log"
+            f"PTXprint failed ({result.returncode}); "
+            f"see {base}/console.log and {base}/ptxprint.log"
         )
-    # PTXprint's headless CLI can return success even when RunJob failed.
+    # The rerun-limit patch exempts a single-pass run, of which PTXprint
+    # keeps the unsettled PDF and only says so on its console.
     require(
-        "did not converge after"
-        not in (base / "ptxprint.log").read_text(encoding="utf-8"),
-        f"Typesetting did not converge; see {base}/ptxprint.log",
+        "Maximum runs exceeded"
+        not in (base / "console.log").read_text(encoding="utf-8"),
+        f"Typesetting did not converge; see {base}/console.log",
     )
     pdfs = sorted(project.rglob("*.pdf"), key=lambda pdf: len(pdf.name))
     # A colour conversion leaves XeTeX's PDF beside the finished one, which

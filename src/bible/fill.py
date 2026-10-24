@@ -157,8 +157,9 @@ def run(project: Path, books: list[str], jobs: int, fresh: bool) -> Report:
     started = time.monotonic()
     progress: dict[str, dict[str, Any]] = {}
     try:
-        # The pinned CLI's fill command refers to removed scheduler methods.
-        # Its ViewModel plus MultiPrint API provide the supported primitives.
+        # The pinned CLI's fill command waits for every book, without
+        # checkpoints or progress. Its ViewModel plus MultiPrint API provide
+        # the supported primitives.
         sys.argv = typeset.command(
             work, base / "filler.log", "fill", "-b", " ".join(pending)
         )

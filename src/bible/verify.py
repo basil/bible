@@ -79,12 +79,16 @@ KEPT_MARKERS = {
     )
 }
 # PTXprint's record of where the final run set a margin note: its reference,
-# height, depth, page, and top (in scaled points from the foot of the page,
-# negative for a note an overfull margin pushes off the page).
+# marker, height, depth, page, and top (in scaled points from the foot of the
+# page).
 MARGIN_NOTE = re.compile(
-    r"\\@marginnote\{([^}]*)\}(?:\{[^}]*\}){5}\{([\d.]+)pt\}\{([\d.]+)pt\}"
-    r"(?:\{[^}]*\}){2}\{(\d+)\}\{\d+\}\{(-?\d+)\}"
+    r"\\@marginnote\{([^}]*)\}\{([^}]*)\}(?:\{[^}]*\}){4}\{([\d.]+)pt\}"
+    r"\{([\d.]+)pt\}(?:\{[^}]*\}){2}\{(\d+)\}\{\d+\}\{(-?\d+)\}"
 )
+# PTXprint's record of a note an overfull margin has no room for, which it
+# sets at the head of a later page instead: its reference and marker, and
+# where it is set. The note's own record keeps its verse's page.
+MARGIN_PUSH = re.compile(r"\\@marginnotepush\{([^}]*)\}\{([^}]*)\}(?:\{[^}]*\}){3}")
 
 
 def processed_markers(markers: Mapping[str, int]) -> dict[str, int]:
@@ -412,26 +416,32 @@ def stream_text(
 
 def margin_overflow(base: Path, top: float, bottom: float) -> list[str]:
     """The margin notes that are not in the text block, below the note placed
-    above it: PTXprint has nowhere else to put the notes of an overfull
-    margin, and lets them overlap at its foot. The notes are taken in the
-    order they stand on the page, since PTXprint may set a note of a
-    chapter's opening paragraph above an earlier verse's. top and bottom are
-    the block's edges, in TeX points from the foot of the page."""
+    above it, and those an overfull margin has moved to a later page, away
+    from their verse. The notes are taken in the order they stand on the
+    page, since PTXprint may set a note of a chapter's opening paragraph
+    above an earlier verse's. top and bottom are the block's edges, in TeX
+    points from the foot of the page."""
     files = list(base.rglob("*_ptxp.marginnotes"))
     require(len(files) == 1, "Missing/ambiguous margin note positions")
     records = files[0].read_text(encoding="utf-8")
     notes = MARGIN_NOTE.findall(records)
+    pushes = MARGIN_PUSH.findall(records)
     # A record in a form this can't read would otherwise go unchecked.
     require(
-        len(notes) == records.count("\\@marginnote"),
+        len(notes) == records.count("\\@marginnote{")
+        and len(pushes) == records.count("\\@marginnotepush{"),
         "Could not read every margin note position",
     )
+    pushed = set(pushes)
     pages: dict[str, list[tuple[float, float, str]]] = {}
-    for ref, height, depth, page, y in notes:
+    overflow = []
+    for ref, marker, height, depth, page, y in notes:
+        if (ref, marker) in pushed:
+            overflow.append(f"page {page} {ref}")
+            continue
         note_top = int(y) / 65536
         note_bottom = note_top - float(height) - float(depth)
         pages.setdefault(page, []).append((note_top, note_bottom, ref))
-    overflow = []
     for page, placed in pages.items():
         ceiling = top
         for note_top, note_bottom, ref in sorted(placed, reverse=True):

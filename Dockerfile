@@ -72,8 +72,8 @@ ARG USFMTC_BRANCH=main
 ARG USFMTC_COMMIT=ae84fb160efffcf5aeabaae62326743cf6f218d7
 # renovate: datasource=git-tags depName=ptxprint
 ARG PTXPRINT_URL=https://github.com/sillsdev/ptx2pdf.git
-ARG PTXPRINT_TAG=3.1.3
-ARG PTXPRINT_COMMIT=756cdc265ba5aca816bcca87168399fbebb4c20a
+ARG PTXPRINT_TAG=3.1.4
+ARG PTXPRINT_COMMIT=a85f2d70a7d67ed2fd5cae5867ac5c8adedf02a5
 # Fetching and building several projects in one layer requires their directories.
 # hadolint ignore=DL3003
 RUN <<EOF
@@ -105,9 +105,10 @@ EOF
 COPY build/valkyrie/ /opt/valkyrie/
 # Font assembly changes should not refetch upstream projects or Python wheels.
 COPY scripts/ /opt/scripts/
-RUN /opt/venv/bin/python /opt/scripts/patch_margin_convergence.py \
+# Fail typesetting when layout still needs another pass at the rerun limit
+# (sillsdev/ptx2pdf#1262).
+RUN /opt/venv/bin/python /opt/scripts/patch_rerun_limit.py \
     && /opt/venv/bin/python /opt/scripts/patch_page_filler.py \
-    && /opt/venv/bin/python /opt/scripts/patch_emitter_prefix.py \
     && /opt/venv/bin/python /opt/scripts/patch_note_callers.py \
     && /opt/venv/bin/python /opt/scripts/patch_periph.py
 RUN <<EOF

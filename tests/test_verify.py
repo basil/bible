@@ -352,16 +352,39 @@ def test_a_margin_note_that_does_not_fit_is_found(
     assert check_notes(tmp_path, *notes) == [f"page 46 {found}"]
 
 
+def test_a_margin_note_moved_to_a_later_page_is_found(tmp_path: Path) -> None:
+    """PTXprint sets a note an overfull margin has no room for at the head of
+    a later page, and records the move; the note's own record keeps its
+    verse's page and place."""
+    check_notes(tmp_path, ("GEN2.19", 46, 561, 20), ("GEN2.20", 46, 541, 10))
+    records = tmp_path / "Bible_ptxp.marginnotes"
+    records.write_text(
+        records.read_text(encoding="utf-8")
+        + "\\@marginnotepush{GEN2.20}{f}{47}{0}{right}\n"
+        # A move of another kind of note at the verse is not this note's.
+        + "\\@marginnotepush{GEN2.19}{x}{47}{0}{right}\n",
+        encoding="utf-8",
+    )
+    assert verify.margin_overflow(tmp_path, 561, 51) == ["page 46 GEN2.20"]
+
+
 def test_a_later_note_placed_above_an_earlier_one_fits(tmp_path: Path) -> None:
     """PTXprint may set a note of a chapter's opening paragraph above an
     earlier verse's; the notes are checked in the order they stand."""
     assert not check_notes(tmp_path, ("GEN2.19", 46, 541, 20), ("GEN2.20", 46, 561, 20))
 
 
-def test_a_margin_note_record_in_another_form_is_refused(tmp_path: Path) -> None:
-    (tmp_path / "Bible_ptxp.marginnotes").write_text(
-        "\\@marginnote{GEN2.19}{f}{inner}{46}{-36765696}\n", encoding="utf-8"
-    )
+@pytest.mark.parametrize(
+    "record",
+    [
+        "\\@marginnote{GEN2.19}{f}{inner}{46}{-36765696}\n",
+        "\\@marginnotepush{GEN2.19}{f}{47}\n",
+    ],
+)
+def test_a_margin_note_record_in_another_form_is_refused(
+    tmp_path: Path, record: str
+) -> None:
+    (tmp_path / "Bible_ptxp.marginnotes").write_text(record, encoding="utf-8")
     with pytest.raises(CheckFailed, match="Could not read every margin note"):
         verify.margin_overflow(tmp_path, 561, 51)
 

@@ -163,18 +163,12 @@ def test_upstream_exposes_unresolved_pages(
         )
         return layout
 
-    monkeypatch.setattr(
-        page_filler, "Hooks", lambda *args: SimpleNamespace(run_layout=run_layout)
-    )
-    monkeypatch.setattr(
-        page_filler,
-        "TypesetterSolver",
-        lambda *args, **kwargs: SimpleNamespace(
-            solve=lambda *args, **kwargs: solved,
-            itercount=1,
-            shape_cache={},
-            failed_pages=failures,
-        ),
+    filler.hooks_class = lambda *args: SimpleNamespace(run_layout=run_layout)
+    filler.solver_class = lambda *args, **kwargs: SimpleNamespace(
+        solve=lambda *args, **kwargs: solved,
+        itercount=1,
+        shape_cache={},
+        failed_pages=failures,
     )
     monkeypatch.setattr(page_filler, "unlockme", lambda: None)
     result = filler.solve("REV")
