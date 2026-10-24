@@ -4522,6 +4522,30 @@
       "omits": true,
       "hebrew_agrees": true
     },
+    "JER 51:28 CCEL": {
+      "why": "Promote Brenton’s reported descending verb as the complete coordinated construction supported by Alexandrinus. Brenton 1844 vol. II physical p. 295 (printed p. 792), 1879 physical p. 985, 1884 physical p. 948, and 1900 physical p. 981 (printed p. 969 in the Bagster printings) all give Alex. ‘who go down to.’ with the caller immediately before who have continued in. Swete III p. 345, checked and confirmed on the scan, records οι κατασταντες] οι παροικουντες ℵQ και οι καταβαινοντες A. The conjunction belongs to this reported substitution unit, rather than a separate variant elsewhere. Complete Brenton’s English by replacing its relative who with and they that: and renders A’s και, and they that makes οι καταβαινοντες a coordinated nominal group beside the remnant of Judah. Supply these three words from the pinned Revised Version’s opening of Jeremiah 44:28, And they that escape the sword, a parallel grammatical construction; Brenton’s own opening of this verse uses the identical frame. Record an explicit local exception to the requirement that supplied words come from a translation of the same Greek: this RV opening supplies the coordinated grammatical frame, not a translation of Alexandrinus’s και οι καταβαινοντες at the affected clause. Permit this completion here because Swete explicitly attests the conjunction and participle, Brenton supplies go down to, and the borrowed frame expresses their coordination without changing the surrounding words. Brenton Psalm 106:23 and KJV Psalm 107:23 also give They that go down to for οι καταβαινοντες εις, confirming this established diction for the descending participle. Retain Brenton’s go down to and all surrounding words; this is the declared grammatical completion of his incomplete report, not a claim that the completed sentence occurs verbatim in one English source. Do not apply the separate Αιγυπτου or παροικησαι variants on Swete III p. 346. B main positively has οι κατασταντες εν γη Αιγυπτω across pp. 345–346, supporting Vat. for the displaced who have continued in.",
+      "swete": {
+        "volume": 3,
+        "page": 345,
+        "evidence": "apparatus",
+        "reading": "οι κατασταντες] οι παροικουντες ℵQ και οι καταβαινοντες A",
+        "agrees": true
+      },
+      "source_note": "\\fqa Alex. \\ft 'who go down to.'",
+      "from": "who have continued in",
+      "label": "vatican",
+      "supplied": ["and", "they", "that"],
+      "english": {
+        "source": "brenton",
+        "span": [16, 30],
+        "edits": [
+          {
+            "span": [0, 3],
+            "to": "and they that"
+          }
+        ]
+      }
+    },
     "JER 52:25 CCEL": {
       "why": "Promote Brenton’s own English addition he took out of the city. Brenton 1879 physical p. 986 and 1900 physical p. 982 (printed p. 970 in both) print ζ Heb. and Alex. + ‘he took out of the city.’ with ζ before of war in Jeremiah 52:25; their facing Greek starts Καὶ εὐνοῦχον ἕνα without the supplied verb phrase. CCEL 13.lii#7 preserves the exact report, though its aligned offset 24 stands before over rather than the printed of war. Swete III p. 349 explicitly records και 1°] + εκ της πολεως ελαβεν AQ, establishing unqualified A and Q addition after the opening conjunction, with no A correcting hand, lacuna, or uncertainty at this unit. B main καὶ εὐνοῦχον ἕνα positively omits the phrase, independently supporting the displaced omission. Select he took out of the city at exact serialized source_note offsets 36:59, excluding all note markers, labels, plus sign, quote marks, and final period; retain the opening conjunction and one eunuch explicitly, so the complete sentence begins and he took out of the city one eunuch, who was over the men of war. Preserve Brenton’s Hebrew agreement report in the note. Swete’s B main text positively supports the displaced omission; the note names Vat., and no existing displaced label changes.",
       "swete": {
@@ -7144,7 +7168,7 @@
     },
     "1CH 1:11-23": {
       "appendix": "\\ip 1. \\vp 11\\vp*And Mesraim was father of the Lodiim, and the Anamiim, and the Labin, and the Nephthalim, \\vp 12\\vp*and the Patrosoniim, and the Chasloniim, whence went forth Philistiim, and the Chaphoriim. \\vp 13\\vp*And Chanaan was father of Sidon, his first-born, and the Chettite, and the Jebusite, \\vp 14\\vp*and the Amorrhæan, and the Gergesite, \\vp 15\\vp*and the Evite, and the Arucæan, and the Asennæan, \\vp 16\\vp*and the Aradian, and the Samaræan, and the Amathite, \\vp 17\\vp*and Arphaxad, and Lud and Aram. And the sons of Aram: Os and Ul, and Gather, and Mosoch. \\vp 18\\vp*And Arphaxad begot Cainan, and Cainan begot Sala, and Sala begot Eber. \\vp 19\\vp*And to Eber were born two sons, the name of the one Phalec, for in his days the earth was divided, and the name of his brother was Jectan. \\vp 20\\vp*And Jectan begot Elmodad and Saleph and Aramoth, \\vp 21\\vp*and Keduran, and Æxe, and Declam, \\vp 22\\vp*and Gemian, and Abimeel, and Saban, \\vp 23\\vp*and Uphir, and Evi, and Oram; all these were the sons of Jectan.  \n",
-      "why": "Print Brenton’s Appendix paragraph headed Chronicles I, chapter 1, in the 1879 printing (physical 1150) and 1900 printing (physical 1146). Swete II p. 1 explicitly supplies 11–16 and 17–23 from A against B’s omission; the clause from “and Arphaxad” in 1:17 continues the existing verse after Assur. Its A text for the whole of 1:12 is written over an erasure, perhaps by A^a; do not suppress that qualification. Brenton puts the Jebusite in verse 13 where Swete numbers it 14, and renders Ul in 1:17 where Swete prints Ουδ A, the form his text gives the same son of Aram at Genesis 10:23: the pinned Appendix translation and its verse division are kept. The inserted verses and the continuation of 1:17 retain the Appendix’s words, with the declared terminal stops and existing introductory words.",
+      "why": "Print Brenton’s Appendix paragraph headed Chronicles I, chapter 1, in the 1844 printing (vol. II physical p. 433, Appendix printed p. 4), 1879 printing (physical p. 1150), 1884 printing (physical p. 1088), and 1900 printing (physical p. 1146). Swete II p. 1 explicitly supplies 11–16 and 17–23 from A against B’s omission; the clause from “and Arphaxad” in 1:17 continues the existing verse after Assur. Retain verse 12 as an explicit local exception to the doubtful-reading criterion: all four Brenton Appendices print its complete English without qualification, and the surviving Alexandrinus words are attested. Swete II p. 1 records (και τους Πατροσωνιειμ… Χαφοριειμ sup ras A^a?), confirmed on the scan: the whole verse stands over an erasure, perhaps by correcting hand a. The hand is uncertain, not the surviving wording; retaining Brenton’s complete verse preserves the attested words, while omitting it would remove the verse entirely from readers’ view. This exception does not claim a secure first-hand reading or suppress Swete’s qualification, and adds no printed commentary. Brenton puts the Jebusite in verse 13 where Swete numbers it 14, and renders Ul in 1:17 where Swete prints Ουδ A, the form his text gives the same son of Aram at Genesis 10:23: the pinned Appendix translation and its verse division are kept. The inserted verses and the continuation of 1:17 retain the Appendix’s words, with the declared terminal stops and existing introductory words.",
       "swete": {
         "volume": 2,
         "page": 1,
@@ -9653,17 +9677,6 @@
       },
       "source_note": "\\fqa Gr. \\ft rested upon, but \\fqa Alex. \\ft reads ἀπὸ, 'from.'"
     },
-    "JER 51:28 CCEL": {
-      "why": "Brenton 1879 physical p. 985 and 1900 physical p. 981, printed p. 969; source note and caller confirmed in both printings. Swete III p. 345, main-text witness B. No English is displaced. Extant B main across Swete III pp. 345–346 positively has οι κατασταντες εν γη Αιγυπτω. Unqualified A explicitly has και οι καταβαινοντες, while ℵQ have οι παροικουντες. Brenton’s who go down to reports the descending verb but omits the complete coordinated construction; retain agrees:true and the source note without a partial promotion or invented English.",
-      "swete": {
-        "volume": 3,
-        "page": 345,
-        "evidence": "apparatus",
-        "reading": "οι κατασταντες] οι παροικουντες ℵQ και οι καταβαινοντες A",
-        "agrees": true
-      },
-      "source_note": "\\fqa Alex. \\ft 'who go down to.'"
-    },
     "JER 51:30 CCEL": {
       "why": "Brenton 1879 physical p. 985 and 1900 physical p. 981, printed p. 969; both print the note with its caller. Swete III p. 346, main-text witness B. No English is displaced. B has the plural ζητούντων; Brenton’s facing Greek has the singular ζητοῦντος, which his English one that seeks renders. The explicit singular belongs to Q first hand, corrected to plural by Q^a. Neither this apparatus nor Swete’s Appendix III p. 875 establishes A at the participle, so the report stays a note and the singular is not labelled Vaticanus.",
       "swete": {
@@ -9907,12 +9920,12 @@
       "source_note": "\\ft Alex. ἐξυλωμένα."
     },
     "EZK 43:7 CCEL#2": {
-      "why": "Brenton 1879 physical p. 1055 (printed p. 1039), caller γ immediately before shall dwell, after my name in Ezekiel 43:7, prints Alex. κατασκηνώσει.; Brenton 1900 physical p. 1051 (printed p. 1039), caller γ immediately before shall dwell, after my name in Ezekiel 43:7, prints Alex. κατασκηνώσει. Swete III p. 481 has the reading recorded with this decision. No English is displaced. Extant B positively has future κατασκηνώσει, matching the tense of Brenton’s English shall dwell but differing from his facing Valpy subjunctive κατασκηνώσῃ. The verse apparatus contains no explicit A verb unit; Keep agrees:null: silence establishes no A agreement. Preserve the Greek-only source report and existing English; no invented lexical translation or displaced witness label is needed.",
+      "why": "Brenton 1844 vol. II physical p. 352 (printed p. 349), 1879 physical p. 1055, 1884 physical p. 1002, and 1900 physical p. 1051 (printed p. 1039 in the Bagster printings) print Alex. κατασκηνώσει., with the caller immediately before shall dwell. Swete III p. 481 prints κατασκηνώσει in B’s main text, matching Brenton’s English shall dwell but differing from his facing Greek κατασκηνώσῃ; its verse apparatus gives no explicit A reading at the verb. Swete’s orthographic Appendix, III p. 881, records XLIII 7 ειπε B^b | εμμεσω A (bis): item 9, also without a verb entry; both pages are checked and their relevant text has been confirmed on the scans. Keep agrees:null: neither apparatus silence nor the Appendix’s silence establishes A agreement. Preserve Brenton’s Greek-only report and unchanged English, with no displaced reading or witness label.",
       "swete": {
         "volume": 3,
         "page": 481,
         "evidence": "silence",
-        "reading": "κατασκηνώσει (B text); no explicit A verb evidence in XLIII 7 apparatus",
+        "reading": "κατασκηνώσει (B text); no explicit A verb evidence in XLIII 7 apparatus; Appendix III p. 881: 7 ειπε B^b | εμμεσω A (bis): item 9",
         "agrees": null
       },
       "source_note": "\\fqa Alex. \\ft κατασκηνώσει."

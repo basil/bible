@@ -59,14 +59,6 @@ Supplied passages, omitted verses, and words moved across verses.
 - `EZK 33:25`: A has the divine-speech formula twice (Swete III p. 457): ουτως ειπεν αδωναι κ̅ς̅ opening its prefixed 25, and ταδε λεγει kept before ζω εγω at 27. The passage edit replaces eBible’s “Therefore say to them, Thus saith the Lord God,” with the Appendix’s 33:25, so the edition prints the formula once and 33:27 opens “As I live”. Narrowing the edit’s `from` does not help: the remaining formula would stand at the end of 25, before the inserted 26. A working alternative is a passage edit on 33:27 that sets Brenton’s “Thus saith the Lord God” (Appendix span [41, 65]) before “As I live”, with a note that Brenton has it at 33:25. Decide whether to move Brenton’s words across his verse boundary so.
 - `1KI 5:14a`: Brenton's “Here the chapter ends, according to Heb. and Alex.” agrees with Swete I p. 683, “om και ελαβεν…Γαζερ 2° A”: A lacks 5:14a–b here. The entry is kept with `agrees` null as a remark on chapter division. Decide whether to omit 5:14a–b with their words in a note on 5:14, as at 2SA 5:16a.
 
-### 2.3 Promote or keep: the evidence
-
-Whether Swete settles a report well enough to print it, or it stays a note.
-
-- `JER 51:28 CCEL`: Brenton's “Alex. ‘who go down to’” is kept; promoting it would leave A's unreported και untranslated. Decide whether to promote it.
-- `EZK 43:7 CCEL#2`: The kept entry rests on Swete's silence at XLIII 7 (III p. 481); Swete's Appendix (III p. 881) is still rough and has not been read there. Decide whether to have it read for an orthographic entry of A.
-- `1CH 1:11-23`: The passage prints 1:12, which Swete writes as wholly over an erasure, perhaps by A^a (“sup ras A^a?”), without a note; the doubtful-reading rule keeps such a reading as a note. Decide whether 1:12 prints with a note saying so, is omitted, or is recorded as an exception.
-
 ## 3. Future work
 
 ### Website tables of mechanical changes
