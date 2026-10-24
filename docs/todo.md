@@ -61,13 +61,6 @@ Splices, compositions, and the editor's own words.
 - `1KI 5:31`: The completion of 6:1, “that he began to build the house to the Lord”, is the King James “that he began to build the house of the LORD” with “to” for “of”, rendering A's τω κ̅ω̅ (Brenton's own phrase at 6:2), and the decision names no source for it. Decide whether to take the King James words exactly or declare the composition.
 - `JOB 39:22 CCEL`: The verse prints “as he meeteth it”; “it” is declared supplied but comes from no named translation. Decide whether to narrow the `from` to “a king” and keep Brenton's “as he meets him”.
 
-#### Variants Brenton does not report
-
-A's differences that the verse translates, or that leave it inconsistent, though Brenton is silent.
-
-- `1SA 17:1`: The verse prints “in Aphesdommin”; “in” is supplied from the King James “in Ephes-dammim” for A's εν (Swete I p. 578), which Brenton's note (“Alex. Aphesdommin.”) does not report. Decide whether to keep it, or print “Azeca Aphesdommin” as his English has it, since variants Brenton does not report are not translated.
-- `1KI 15:9`: The edition prints 15:8 “in the twenty-fourth year of Jeroboam” (A omits the date, Swete I p. 716, but Brenton has no note there) beside 15:9 “In the twentieth year of Jeroboam”. Decide whether this needs an editorial note.
-
 ### 2.2 Passages and verse structure
 
 Supplied passages, omitted verses, and words moved across verses.

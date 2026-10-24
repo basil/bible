@@ -1790,21 +1790,39 @@
       "source_note": "\\ft Words in brackets not in \\fqa Heb. \\ft or \\fqa Alex."
     },
     "1KI 15:9": {
-      "why": "Print Brenton’s “In the twentieth year”, reported as Heb. and Alex. in the β note before “In” at 1KI 15:9 (1879 physical 487; 1900 physical 483; printed p. 471 in both). Swete I p. 716 explicitly reports A και εν ετει εικοστου (sic) against B ἐν τῷ ἐνιαυτῷ τῷ τετάρτῳ καὶ εἰκοστῷ. The grammatical sic qualifies the ordinal’s case, not the numeral twenty. Brenton’s English span [33, 54] in the exact source note gives the complete replacement. B positively supports the displaced twenty-fourth year; the note prints Heb. agrees and names Vat.",
+      "why": "Print Brenton’s reported twentieth-year reading together with Alexandrinus’s omission of the conflicting date in the preceding verse. Brenton 1844 vol. I physical p. 409 (printed p. 385), 1879 physical p. 487, 1884 physical p. 456, and 1900 physical p. 483 (printed p. 471 in the Bagster printings) give “Heb. and Alex. In the twentieth year.” at 15:9, while retaining the twenty-fourth-year date without a report at 15:8. Swete I p. 716, checked and confirmed on the scan, records at 8 “om εν τω εικ. και τετ. ετει του Ιερ. A” and at 9 “εν τω ενιαυτω τω τετ. και εικοστω] και εν ετει εικοστου (sic) A”. Apply both related date readings so that promoting the second does not introduce a conflicting chronology. Retain Brenton’s other verse-8 words, including the burial clause; the separate omission Swete reports there is outside this date decision. Vaticanus positively contains both displaced dates, which the existing note records.",
       "swete": {
         "volume": 1,
         "page": 716,
         "evidence": "apparatus",
-        "reading": "ἐν τῷ ἐνιαυτῷ τῷ τετ. καὶ εἰκοστῷ] καὶ ἐν ἔτει εἰκοστοῦ (sic) A",
+        "reading": "εν τω ενιαυτω τω τετ. και εικοστω] και εν ετει εικοστου (sic) A",
         "agrees": true
       },
       "from": "In the four and twentieth year",
-      "label": "vatican",
-      "hebrew_agrees": true,
+      "note": "\\fl Heb. \\ft agrees. \\fl Vat. \\fqa In the four and twentieth year\\ft . In verse 8 \\fl Vat. \\ft adds \\fq in the twenty-fourth year of Jeroboam\\ft .",
       "english": {
         "source": "brenton",
         "span": [33, 54]
       },
+      "edits": [
+        {
+          "target": "1KI 15:8",
+          "why": "Remove only the conflicting date: Swete I p. 716 records “om εν τω εικ. και τετ. ετει του Ιερ. A”. Retain the preceding fathers and its following semicolon; quote the removed date in the decision’s existing verse-9 note.",
+          "swete": {
+            "volume": 1,
+            "page": 716,
+            "evidence": "apparatus",
+            "reading": "om εν τω εικ. και τετ. ετει του Ιερ. A",
+            "agrees": true
+          },
+          "from": "fathers in the twenty-fourth year of Jeroboam",
+          "english": {
+            "source": "from",
+            "span": [0, 7]
+          },
+          "note": null
+        }
+      ],
       "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft In the twentieth year."
     },
     "1KI 16:8": {
