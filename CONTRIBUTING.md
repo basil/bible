@@ -26,6 +26,8 @@ A reading the build would decide the same way without it is redundant, and a pla
 
 The build works out by rule which words each note is about and which of its words are italic. Where a rule goes wrong, a decision under `notes` in `edition/brenton-notes.json` or `edition/kjv-notes.json` gives the note's `lemma`, the words it is about, or its `note`, the note's own words with its italics between underscores. In such a decision, `quotation: true` identifies the italic spans as quotations rather than alternative renderings: they keep their opening capital and do not widen with the lemma.
 
+A note that mixes a rendering with quoted commentary may also give `quotations`, mapping a unique source phrase to the words quoted within it (for example, `"signify punishment": "punishment"`). Each phrase and its quoted words must occur once, and the words must be unquoted commentary. This leaves the note’s alternative rendering and its scope intact.
+
 The tests flag a note whose lemma is much longer than its rendering. Read a flagged note. If the rule is wrong, give the note a `lemma`. If it is right, list the note under `shapes` in `edition/brenton-notes.json`.
 
 ### Reviewing the citations

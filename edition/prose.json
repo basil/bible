@@ -295,6 +295,24 @@
         "unit": "XXB",
         "from": "the English version Cain",
         "to": "the Authorized Version Cain"
+      },
+      {
+        "note": "LEV 6:14 CCEL#2",
+        "from": "pl.",
+        "to": "plural.",
+        "why": "Brenton 1879 physical page 148 (printed page 132), at printed Leviticus 6:21 (source 6:14), prints “Gr. rolled. pl.” before in rolls. Expand the grammatical abbreviation as elsewhere."
+      },
+      {
+        "note": "JER 11:15 CCEL",
+        "from": "pl.",
+        "to": "plural.",
+        "why": "Brenton 1879 physical page 933 (printed page 917) prints “Gr. holy flesh, pl.” before holy offerings at Jeremias 11:15. Expand the grammatical abbreviation as elsewhere."
+      },
+      {
+        "note": "JER 22:23 CCEL",
+        "from": "Fem. gen.",
+        "to": "Feminine gender",
+        "why": "Brenton 1879 physical page 946 (printed page 930) prints “Fem. gen.” after O, before thou at Jeremias 22:23. The feminine participles describe the addressee; gen. means gender."
       }
     ]
   },

@@ -148,6 +148,55 @@ def test_a_quotation_decision_must_declare_quoted_words() -> None:
         )
 
 
+def test_commentary_quotations_preserve_the_separate_alternative() -> None:
+    text = (
+        "lit. torment, Βάσανος in Old Testament seems to signify punishment, "
+        "as κόλασις in New Testament does torment."
+    )
+    body = notes.source_body(notes.labelled_pieces(text), [], None, "key", text)
+    quoted = notes.with_quotations(
+        body, {"signify punishment": "punishment", "does torment": "torment"}, "key"
+    )
+    assert body.alternative == quoted.alternative == "torment"
+    assert quoted.plain == body.plain
+    runs, _, _ = notes.displayed(quoted, "before ", " after")
+    assert ("reading", "before torment after") in runs
+    assert [(role, value) for role, value in runs if role == "quotation"] == [
+        ("quotation", "punishment"),
+        ("quotation", "torment"),
+    ]
+
+
+@pytest.mark.parametrize(
+    "context, words",
+    [
+        ("absent context", "context"),
+        ("signify punishment", "punish"),
+        ("torment", "torment"),
+        ("lit. torment", "torment"),
+        # The rules already quote words in quotation marks.
+        ("'pain'", "pain"),
+    ],
+)
+def test_commentary_quotations_reject_stale_ambiguous_or_rendered_words(
+    context: str, words: str
+) -> None:
+    text = (
+        "lit. torment, Βάσανος seems to signify punishment, as "
+        "κόλασις does torment, 'pain'."
+    )
+    body = notes.source_body(notes.labelled_pieces(text), [], None, "key", text)
+    with pytest.raises(CheckFailed, match="Note quotation"):
+        notes.with_quotations(body, {context: words}, "key")
+
+
+def test_commentary_quotations_count_overlapping_contexts() -> None:
+    text = "it reads one, then two, then one, then two, then one."
+    body = notes.source_body(notes.labelled_pieces(text), [], None, "key", text)
+    with pytest.raises(CheckFailed, match="context not met once"):
+        notes.with_quotations(body, {"one, then two, then one": "two"}, "key")
+
+
 def printed(
     body: str,
     ctx: bible.annotate.Context,
@@ -1039,7 +1088,7 @@ def test_a_sign_after_no_witness_is_refused(
 def test_every_note_is_printed_replaced_by_a_link_or_explicitly_omitted(
     edition: bible.pipeline.Edition,
 ) -> None:
-    assert edition.summary["printed_notes"] == 6194
+    assert edition.summary["printed_notes"] == 6204
     rows = [row for listed in edition.notes.values() for row in listed]
     assert len({row["key"] for row in rows}) == len(rows)
     # The 1611 margin is printed on the New Testament alone, and whole but

@@ -33,6 +33,7 @@
         "1 Pe": "1PE",
         "2 Pet": "2PE",
         "1 John": "1JN",
+        "1 Jno": "1JN",
         "Jude": "JUD",
         "Rev": "REV",
         "Gen": "GEN",
@@ -52,6 +53,7 @@
         "Hos": "HOS",
         "Joel": "JOL",
         "Am": "AMO",
+        "Amos": "AMO",
         "Jon": "JON",
         "Mic": "MIC",
         "Hab": "HAB",
@@ -507,6 +509,24 @@
       "print": "verses 35a–35b",
       "relative": "verse",
       "why": "Brenton’s Appendix prints “2 ult. 3. verse 1” (1844 vol. 2 physical p. 432, printed p. 929; 1879 physical p. 1149 and 1900 physical p. 1145, Appendix leaf corresponding to p. 1133; also 1884 physical p. 1087). His chapter 3 begins And the wisdom, explicitly numbered 3:1 in 1844 vol. 1 physical p. 388, printed p. 364, so the locator names the edition’s 2:35a and 2:35b. Express the reference in the edition’s numbers, without relocating the note to Swete’s different chapter seam."
+    },
+    "JER 8:2 CCEL": {
+      "source": "2 Kings (2 Sam.) 17. 19",
+      "passages": "2SA 17:19",
+      "print": "{2SA} 17:19",
+      "why": "Brenton 1879 physical page 929 and 1900 physical page 925 (printed page 913) print “2 Kings (2 Sam.) 17. 19” in the note before spread at Jeremias 8:2. Both names designate 2 Kingdoms 17:19, where the same verb describes spreading ground corn."
+    },
+    "JER 27:9 CCEL": {
+      "source": "2 Kings (2 Sam.) 1. 22",
+      "passages": "2SA 1:22",
+      "print": "{2SA} 1:22",
+      "why": "Brenton 1879 physical page 952 (printed page 936) prints “See 2 Kings (2 Sam.) 1. 22.” before empty at Jeremias 27:9. Both book names designate 2 Kingdoms 1:22, where the bow returned not empty."
+    },
+    "DAG 8:8 CCEL": {
+      "source": "2 Ki. (2 Sam.) 2. 23",
+      "passages": "2SA 2:23",
+      "print": "{2SA} 2:23",
+      "why": "Brenton 1879 physical page 1078 and 1900 physical page 1074 (printed page 1062) print “2 Ki. (2 Sam.) 2. 23” in the note before in its place at Daniel 8:8. Both names designate 2 Kingdoms 2:23."
     }
   }
 }

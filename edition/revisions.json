@@ -13063,6 +13063,29 @@
           "to": "whose tongue is strange unto him). Yet"
         }
       ]
+    },
+    "recovered-note-punctuation": {
+      "why": "Finish the punctuation of recovered Brenton notes: join grammatical commentary to its gloss, separate a complete explanation from a rendering, and use the citation-list separator between books.",
+      "changes": [
+        {
+          "note": "LEV 6:14 CCEL#2",
+          "from": "rolled. plural",
+          "to": "rolled, plural",
+          "why": "Plural is grammatical commentary on rolled, not another sentence."
+        },
+        {
+          "note": "MIC 7:18 CCEL",
+          "from": "Prov. 29:14. Amos 1:11",
+          "to": "Prov. 29:14; Amos 1:11",
+          "why": "These are two books within the same cross-reference list."
+        },
+        {
+          "note": "EZK 3:20 CCEL",
+          "from": "torment, Βάσανος",
+          "to": "torment. Βάσανος",
+          "why": "The Greek comparison begins a complete explanatory sentence after the initial literal rendering."
+        }
+      ]
     }
   }
 }

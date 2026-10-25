@@ -641,6 +641,49 @@ def quoted(body: Body) -> Body:
     return replace(body, roles=tuple(meaning.intervals))
 
 
+def whole_words_at(phrase: str, text: str) -> list[int]:
+    """Where a phrase stands in a text as words of its own, counting each
+    occurrence, those that overlap among them: "one, then one" stands twice
+    in "one, then one, then one"."""
+    return [
+        match.start()
+        for match in re.finditer(rf"(?<!\w)(?={re.escape(phrase)}(?!\w))", text)
+    ]
+
+
+def with_quotations(body: Body, quotations: Mapping[str, str], key: str) -> Body:
+    """Quote words within unique source phrases, retaining the note's rendering."""
+    if not quotations:
+        return body
+    roles = Roles(body.plain, body.roles)
+    # The rules quote the words a note sets in quotation marks when it is
+    # displayed, so a decision to quote them would change nothing.
+    ruled = (body if body.rule == "override" else quoted(body)).roles
+    for context, words in quotations.items():
+        contexts = whole_words_at(context, body.plain)
+        require(
+            len(contexts) == 1,
+            f"Note quotation context not met once in the note: {key}: {context!r}",
+        )
+        within = whole_words_at(words, context)
+        require(
+            len(within) == 1,
+            f"Note quotation not met once in its context: {key}: {words!r}",
+        )
+        start = contexts[0] + within[0]
+        end = start + len(words)
+        require(
+            all(
+                role == "text"
+                for first, last, role in (*roles.intervals, *ruled)
+                if first < end and start < last
+            ),
+            f"Note quotation is not unquoted commentary: {key}: {words!r}",
+        )
+        roles.mark(start, end, "quotation")
+    return replace(body, roles=tuple(roles.intervals))
+
+
 def source_body(
     pieces: Sequence[tuple[str, str]],
     found: Sequence[Citation],

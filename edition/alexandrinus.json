@@ -6781,7 +6781,7 @@
     },
     "1SA 17:41": {
       "appendix": "\\ip \\it Verse\\it* 41. And the Philistine advanced and drew nigh to David, and a man bearing his shield \\add went\\add* before him, and the Philistine looked on.  \n",
-      "why": "Print Brenton’s Appendix verse 41 between 17:40 and 17:42. The 1879 printing (physical page 396, printed page 380) and the 1900 printing (physical page 392, printed page 380) both set the γ “See App.” caller after “the Philistine” at the end of verse 40. Their Appendix pages (1879 physical 1149; 1900 physical 1145) give exactly “And the Philistine advanced and drew nigh to David, and a man bearing his shield went before him, and the Philistine looked on”, with “went” italic. Swete 1 p. 580 explicitly prints this whole verse as A’s addition, including the final looking clause, and records B’s omission without a correcting hand or uncertainty. Consume the source pointer, preserve Brenton’s supplied-word italics, and mark Vaticanus’s omission on the inserted verse.",
+      "why": "Print Brenton’s Appendix verse 41 between 17:40 and 17:42. The 1879 printing (physical page 396, printed page 380) and the 1900 printing (physical page 392, printed page 380) both set the γ “See Appendix.” caller after “the Philistine” at the end of verse 40. Their Appendix pages (1879 physical 1149; 1900 physical 1145) give exactly “And the Philistine advanced and drew nigh to David, and a man bearing his shield went before him, and the Philistine looked on”, with “went” italic. Swete 1 p. 580 explicitly prints this whole verse as A’s addition, including the final looking clause, and records B’s omission without a correcting hand or uncertainty. Consume the source pointer, preserve Brenton’s supplied-word italics, and mark Vaticanus’s omission on the inserted verse.",
       "swete": {
         "volume": 1,
         "page": 580,
@@ -6811,7 +6811,7 @@
         }
       ],
       "source_notes": {
-        "1SA 17:40": "\\ft See \\fqa App."
+        "1SA 17:40": "\\ft See \\fqa Appendix."
       }
     },
     "1SA 17:50": {
@@ -6846,7 +6846,7 @@
         }
       ],
       "source_notes": {
-        "1SA 17:49": "\\ft See \\fqa App."
+        "1SA 17:49": "\\ft See \\fqa Appendix."
       }
     },
     "1SA 18:30": {

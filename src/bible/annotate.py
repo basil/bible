@@ -238,6 +238,7 @@ def brenton(
                     source,
                     quotation=exception.get("quotation", False),
                 )
+            body = notes.with_quotations(body, exception.get("quotations", {}), key)
             report.read(tongue, key, cited, policy)
             found.append(
                 notes.Read(
@@ -501,6 +502,7 @@ def george(
             text,
             quotation=override.get("quotation", False),
         )
+        body = notes.with_quotations(body, override.get("quotations", {}), key)
         if former is not None:
             body = replace(body, rule="editorial reversal")
         read = notes.Read(

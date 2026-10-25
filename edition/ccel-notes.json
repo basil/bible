@@ -578,6 +578,12 @@
       "to": "ὁμίχλη",
       "why": "Brenton's 1844 vol. 2 physical p. 65 (printed p. 562), 1879 physical p. 699 and 1900 physical p. 695 (printed p. 683) give ὁμίχλη, with rough breathing and acute on iota, in this note. Swete II p. 565, checked on the scan, prints the same noun at Job 24:20; his p. 566 gives μολοχη] χλοη A at 24:24, so it does not establish that Brenton's unspecified mist reading is Alexandrinus. This repairs CCEL's diacritics alone, retaining some read without adding a witness.",
       "uncategorized": true
+    },
+    "1.xxii#6": {
+      "from": "<p> <sup>�</sup></p>",
+      "to": "<p> <i>Gr.</i> every man.</p>",
+      "why": "Brenton 1879 physical page 447 and 1900 physical page 443 (printed page 431) repeat the ζ caller before all the men of Juda at printed II Kings 19:42 (source 2SA 19:43), referring to “Gr. every man.” CCEL leaves a corrupt letter as its body. The preceding caller before all the men of Israel belongs to another verse; eBible preserves that note but lacks this one. Restore this note’s transcription without changing the verse.",
+      "uncategorized": true
     }
   },
   "notes": {
@@ -1189,21 +1195,13 @@
       "omitted": true,
       "why": "Brenton’s 1879 physical page 17 and 1900 physical page 13. Both print the caller before “on the earth” in Genesis 1:11, with “Alex. + εἰς ὁμοιότητα.”; neither prints this caller in 1:12. CCEL puts caller iii#6 in 1:12 and corrupts ὁμοιότητα as ὁμοιότητο. The printed note is already accounted for by GEN 1:11#2 and its Alexandrinus decision. Omit this misattached copy so it cannot print a second note or imply an addition in 1:12. Swete volume 1 page 1, checked text based on A, prints εἰς ὁμοιότητα in 1:11 and not 1:12."
     },
-    "1.xvii#8": {
-      "omitted": true,
-      "why": "Brenton 1879 physical p. 396 and 1900 physical p. 392 (printed p. 380) both set the γ “See Appendix.” caller after “the Philistine” at the end of 17:40. CCEL preserves this pointer but alignment attaches its terminal caller to the opening of 17:42. The existing Alexandrinus passage decision for 1SA 17:41 already consumes the expanded eBible 1SA 17:40 source note and supplies the Appendix verse with its Vatican omission note. Omit this second transcription of the same printed pointer; it is not the distinct 17:42 “with beauty of eyes” gloss and adds no further reading or note."
-    },
-    "1.xvii#12": {
-      "omitted": true,
-      "why": "Brenton 1879 physical p. 396 and 1900 physical p. 392 (printed p. 380) set the σ “See App.” caller after “ground” at the end of 17:49. CCEL expands the pointer to “See Appendix.” and alignment attaches its terminal caller to the opening of 17:51. The existing Alexandrinus passage decision for 1SA 17:50 already consumes the expanded eBible 1SA 17:49 source note and supplies the Appendix verse with its Vatican omission note, supported by Swete I p. 581, A (om B). Omit this second transcription of the same printed pointer; it gives no separate reading of 17:51."
-    },
     "1.xvii#18": {
       "omitted": true,
-      "why": "CCEL’s caller for See App. follows the end of 17:54 in 1.xvii.htm and aligns to the opening of 18:6 only because the intervening verses are absent from that transcription. Brenton 1879 physical p. 396 and 1900 physical p. 392 (printed p. 380) put the σ caller before armour in 17:54 and print See App. The existing 1SA 17:55-58 Appendix decision supplies the passage and consumes eBible’s expanded 1SA 17:54 source note. Omit this redundant misattached pointer rather than print an Appendix reference at 18:6."
+      "why": "Brenton 1879 physical page 396 and 1900 physical page 392 (printed page 380) set caller σ after tent. at the end of 17:54 and print “See App.” CCEL reproduces that terminal pointer, which the words place at 17:54. The existing 1SA 17:55-58 Appendix decision supplies its passage after 17:54 and consumes eBible’s explanatory expansion under source note 1SA 17:54. Omit this second transcription of the same printed pointer rather than retain an Appendix reference to a passage now supplied in the text."
     },
     "1.vii#4": {
       "omitted": true,
-      "why": "Brenton 1879 physical p. 426 and 1900 physical p. 422 (printed p. 410) both place caller δ after “for ever.” at the end of 2 Kingdoms 7:26, before verse 27, and print “Heb. and Alex. add, 'and let the house of thy servant David be established before thee.'” CCEL 1.vii#4 drops “David” and aligns this boundary caller with 7:27. The complete note already survives as eBible 2SA 7:26 and is consumed by its existing Alexandrinus reading. Swete I p. 626 explicitly records the house-of-David clause as an A addition after εως αιωνος at 7:26; B lacks it. Omit this misplaced, truncated copy rather than print a second reading at 7:27."
+      "why": "Brenton 1879 physical p. 426 and 1900 physical p. 422 (printed p. 410) both place caller δ after “for ever.” at the end of 2 Kingdoms 7:26, before verse 27, and print “Heb. and Alex. add, 'and let the house of thy servant David be established before thee.'” CCEL 1.vii#4 drops “David”; its boundary caller is placed at 7:26. The complete note already survives as eBible 2SA 7:26 and is consumed by its existing Alexandrinus reading. Swete I p. 626 explicitly records the house-of-David clause as an A addition after εως αιωνος at 7:26; B lacks it. Omit this truncated copy rather than print a second note on the same reading."
     },
     "9.clxii#4": {
       "omitted": true,
@@ -1449,6 +1447,10 @@
       "verse": "EXO 25:40",
       "anchor": "according to the pattern",
       "why": "Pinned CCEL iv.26#1 is before according to the pattern shewed thee in the mount at Exodus 25:40, not 29:41. eBible already preserves the identical Hebrews 8:5 reference at 25:40; only source citation spacing differs."
+    },
+    "4.xxvii#1": {
+      "omitted": true,
+      "why": "Brenton 1879 physical page 616 (printed page 600) prints Joathan, 26. 21. before Joatham at 2 Chronicles 27:1. The Jotham, king of Judah name decision normalizes Joathan to Joatham at 26:21, so the spelling distinction this note points to is absent from the edition. Omit the now-inapplicable reference rather than imply that the cited verse still reads Joathan."
     },
     "27.ix#4": {
       "duplicate": "ZEC 9:9",

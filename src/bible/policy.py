@@ -353,7 +353,7 @@ def check(policy: Policy) -> None:
     # A misspelled field would be read as no override, and the entry as used.
     # The 1611 notes also say where George's lemma is found in the verse; a
     # note of either source may say which verse it belongs to.
-    note_fields = {"lemma", "note", "sentence", "occurrence", "quotation"}
+    note_fields = {"lemma", "note", "sentence", "occurrence", "quotation", "quotations"}
     for name, notes, fields in (
         ("Brenton", policy.brenton_notes, note_fields | {"verse", "widen", "omitted"}),
         (
@@ -381,6 +381,20 @@ def check(policy: Policy) -> None:
                 require(
                     override["quotation"] is True and bool(override.get("note")),
                     f"Quotation exception needs declared italic words: {key}",
+                )
+            if "quotations" in override:
+                note_quotations = override["quotations"]
+                require(
+                    isinstance(note_quotations, Mapping)
+                    and bool(note_quotations)
+                    and all(
+                        isinstance(value, str)
+                        and bool(value.strip())
+                        and value == value.strip()
+                        for pair in note_quotations.items()
+                        for value in pair
+                    ),
+                    f"Invalid note quotations: {key}",
                 )
             if "widen" in override:
                 require(

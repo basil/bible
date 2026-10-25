@@ -263,6 +263,7 @@ class NoteOverride(TypedDict, total=False):
     widen: ReadOnly[bool]
     sentence: ReadOnly[bool]
     quotation: ReadOnly[bool]
+    quotations: ReadOnly[Mapping[str, str]]
     uncategorized: ReadOnly[bool]
     verse: ReadOnly[str]
     why: ReadOnly[str]

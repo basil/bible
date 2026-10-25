@@ -962,17 +962,37 @@ def finished_note(
     """The note as eBible's transcription would set it: a cross-reference
     where it is nothing but "See" and what it cites, as eBible sets
     Brenton's references; otherwise a footnote. None, with the reason, where
-    it cites a passage in a form the edition cannot read, or abbreviates in
-    a form the edition does not print and no term renders: such a note is
-    left out, for a correction to bring in, rather than stopping the build
-    as a note of eBible's would. What a citation names is resolved when the
-    notes are set, as for any note, where a citation decision answers for it,
-    and a prose decision on the note's words answers for its abbreviations
-    the same way: the forms printed are checked once the notes are finished.
+    it cites a passage in a form the edition cannot read, or abbreviates
+    outside its citations in a form the edition does not print and no term
+    renders: such a note is left out, for a correction to bring in, rather
+    than stopping the build as a note of eBible's would. What a citation
+    names is resolved when the notes are set, as for any note, where a
+    citation decision answers for it, and a prose decision on the note's
+    words answers for its abbreviations the same way: the forms printed are
+    checked once the notes are finished.
     """
     text = notes.text_of(notes.source_pieces(usj.note("f", *body.content)))
-    rest = text
-    for term in sorted(terminology.recognize(text, terms), key=lambda t: -t.start):
+    found: list[citations.UnresolvedCitation] | None
+    try:
+        found = citations.parse(
+            text,
+            citations.dialect("brenton", policy=policy),
+            references.verse_at(code, reference),
+            key,
+            None,
+            policy=policy,
+        )
+    except CheckFailed:
+        found = None
+    # The note's words outside its citations, each citation blanked: an
+    # abbreviation within a citation, read by rule or by a decision, is
+    # accounted for there, as the ult. of Ps. 2. ult.; prose outside it is not.
+    outside = text
+    for citation in found or ():
+        width = citation.end - citation.start
+        outside = outside[: citation.start] + " " * width + outside[citation.end :]
+    rest = outside
+    for term in sorted(terminology.recognize(rest, terms), key=lambda t: -t.start):
         rest = rest[: term.start] + rest[term.end :]
     # The finished note lowers its first letter where it runs on after its
     # lemma, so an abbreviation that opens the note counts as well.
@@ -985,25 +1005,13 @@ def finished_note(
     footnote = usj.note(
         "f", usj.char("fr", f"{reference} "), *body.content, caller="+", **extra
     )
-    try:
-        found = citations.parse(
-            text,
-            citations.dialect("brenton", policy=policy),
-            references.verse_at(code, reference),
-            key,
-            None,
-            policy=policy,
-        )
-    except CheckFailed:
+    if found is None:
         # A decision on the note's citations answers for them, and is
         # carried out, or refused, when the notes are set.
         if citations.decisions(key, policy=policy):
             return footnote, ""
         return None, "citation the edition cannot read"
-    rest = text
-    for citation in reversed(found):
-        rest = rest[: citation.start] + rest[citation.end :]
-    if found and SEE.fullmatch(rest):
+    if found and SEE.fullmatch(outside):
         cited = re.sub(r"^\s*[Ss]ee\s+", "", text)
         return (
             usj.note(

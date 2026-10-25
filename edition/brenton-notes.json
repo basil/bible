@@ -1551,14 +1551,14 @@
     },
     "1SA 17:40": {
       "from": "\\f + \\fr 17:40 \\ft Verse 41 is not in the Vatican codex. \\fqa Alex. \\ft has the following.\\f*",
-      "to": "\\f + \\fr 17:40 \\ft See \\fqa App.\\f*",
-      "why": "Brenton 1879 physical p. 396 and 1900 physical p. 392 print only See App. at this caller. Replace eBible’s unprinted explanatory paraphrase with the printed pointer; the Alexandrinus passage already records and carries out the supplied verse.",
+      "to": "\\f + \\fr 17:40 \\ft See \\fqa Appendix.\\f*",
+      "why": "Brenton 1879 physical page 396 and 1900 physical page 392 (printed page 380) print γ “See Appendix.” at the end of 17:40. Restore that printed pointer in place of eBible’s explanatory paraphrase; the existing Alexandrinus passage decision consumes it and supplies the Appendix verse.",
       "uncategorized": true
     },
     "1SA 17:49": {
       "from": "\\f + \\fr 17:49 \\ft Verse 50 is not in the Vatican codex. \\fqa Alex. \\ft has the following.\\f*",
-      "to": "\\f + \\fr 17:49 \\ft See \\fqa App.\\f*",
-      "why": "Brenton 1879 physical p. 396 and 1900 physical p. 392 print only See App. at this caller. Replace eBible’s unprinted explanatory paraphrase with the printed pointer; the Alexandrinus passage already records and carries out the supplied verse.",
+      "to": "\\f + \\fr 17:49 \\ft See \\fqa Appendix.\\f*",
+      "why": "Brenton 1879 physical page 396 and 1900 physical page 392 (printed page 380) print γ “See Appendix.” at the end of 17:49. Restore that printed pointer in place of eBible’s explanatory paraphrase; the existing Alexandrinus passage decision consumes it and supplies the Appendix verse.",
       "uncategorized": true
     },
     "1SA 18:16": {
@@ -5280,6 +5280,25 @@
     "1KI 14:1-20@12": {
       "sentence": true,
       "why": "The note ends with a complete explanatory sentence after its opening reading, so its final full stop stays."
+    },
+    "JER 11:15 CCEL": {
+      "note": "Gr. _holy flesh_, pl.",
+      "why": "Brenton 1879 physical page 933 (printed page 917) prints “Gr. holy flesh, pl.” before holy offerings. Only holy flesh is the alternative rendering; pl. is grammatical commentary and must not make the lemma take in the following verb take."
+    },
+    "JER 8:2 CCEL": {
+      "lemma": "spread",
+      "note": "Lit. _cool_ or _refresh_. See 2 Kings (2 Sam.) 17. 19.",
+      "quotation": true,
+      "sentence": true,
+      "why": "Brenton’s cool and refresh are lexical senses, not continuous alternatives for spread in spread them out to the sun. Quote those glosses without widening them into renderings; the following See sentence keeps its final stop."
+    },
+    "EZK 3:20 CCEL": {
+      "quotations": {
+        "signify punishment": "punishment",
+        "does torment": "torment"
+      },
+      "sentence": true,
+      "why": "Brenton 1879 physical p. 998 and 1900 physical p. 994 both place the delta caller before punishment and print: ‘lit. torment, Βάσανος in Old Testament seems to signify punishment, as κόλασις in New Testament does torment, 1 Jno. 4. 18.’ Keep torment as the literal alternative for punishment, while the English senses in the ensuing Greek comparison are quoted glosses within commentary. That comparison is a complete sentence and retains its final stop."
     },
     "EXO 6:2": {
       "verse": "6:3",

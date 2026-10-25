@@ -316,6 +316,38 @@ def test_a_prose_decision_answers_for_an_abbreviation_the_edition_writes_out(
     assert not report.left_out
 
 
+@pytest.mark.parametrize("prose", ["", "<i>Gr.</i> test, pl. "])
+def test_a_decided_citation_accounts_only_for_its_own_abbreviations(
+    page_policy: bible.policy.Policy, prose: str
+) -> None:
+    def decided(data: dict[str, Any]) -> None:
+        data["decisions"]["GEN 99:1 CCEL"] = {
+            "source": "Ps. 2. ult.",
+            "passages": "PSA 2:12",
+            "print": "{PSA} 2:12",
+            "why": "The last verse of Psalm 2 is verse 12.",
+        }
+
+    docs, report = supplemented(
+        changed(page_policy, "citations", decided),
+        {"GEN": genesis()},
+        test=page(
+            VERSE_1.replace("world", caller(1) + "world"),
+            footnote(1, prose + "See <scripref>Ps. 2. ult.</scripref>"),
+        ),
+    )
+    if prose:
+        assert report.inserted == 0
+        assert [item.reason for item in report.left_out] == [
+            "abbreviation in a form the edition does not print"
+        ]
+    else:
+        assert report.inserted == 1 and report.left_out == ()
+        verse = scripture.verses(docs["GEN"])["99:1"]
+        assert verse.notes[0][0] == verse.text.index("world")
+        assert verse.notes[0][1]["marker"] == "x"
+
+
 def test_a_body_whose_caller_is_in_skipped_markup_is_left_out_and_listed(
     page_policy: bible.policy.Policy,
 ) -> None:
@@ -762,10 +794,15 @@ def test_the_real_pages_supply_the_notes_ebible_lacks(
     )
     report = read.ccel
     assert (report.pages, report.bodies) == (708, 4116)
-    assert report.inserted == 1823
-    assert report.duplicates == 2206
+    assert report.inserted == 1832
+    assert report.duplicates == 2209
     assert len(report.held) == 0
-    assert len(report.left_out) == 81
+    assert len(report.left_out) == 69
+    assert {
+        item.key: item.retained
+        for item in report.matched
+        if item.key in {"1.xvii#8", "1.xvii#12"}
+    } == {"1.xvii#8": "1SA 17:40", "1.xvii#12": "1SA 17:49"}
     # A note that a decision sets in another verse is the same note there.
     assert [
         (item.place, item.retained) for item in report.matched if item.key == "2.xi#5"
@@ -779,7 +816,6 @@ def test_the_real_pages_supply_the_notes_ebible_lacks(
         "abbreviation in a form the edition does not print",
         "caller the words do not place",
         "caller without a body",
-        "citation the edition cannot read",
         "empty",
         "omitted by decision",
         "undecodable characters",
@@ -838,6 +874,76 @@ def test_the_review_counts_the_notes_set_after_promotion(
     text = review.ccel_report(report)
     assert f"Notes set in Brenton's verses: {report.inserted}, 8 of them" in text
     assert all(f"`{key}` as `{printed}`" in text for key, printed in report.supplied)
+
+
+@pytest.mark.parametrize(
+    "key, reference, lemma, note",
+    [
+        ("2SA 19:43 CCEL", "19:42", "all the men", "Gr. _every man_"),
+        ("LEV 6:14 CCEL#2", "6:14", "in rolls", "Gr. _rolled_, plural"),
+        (
+            "JER 11:15 CCEL",
+            "11:15",
+            "holy offerings",
+            "Gr. _holy flesh_, plural",
+        ),
+        (
+            "JER 8:2 CCEL",
+            "8:2",
+            "spread",
+            "lit. _cool_ or _refresh_. See 2 Kgdms. 17:19.",
+        ),
+        (
+            "MIC 7:18 CCEL",
+            "7:18",
+            "for a testimony",
+            "vide supra, Prov. 29:14; Amos 1:11",
+        ),
+        (
+            "EZK 3:20 CCEL",
+            "3:20",
+            "punishment",
+            "lit. _torment_. Βάσανος in Old Testament seems to signify _punishment_, "
+            "as κόλασις in New Testament does _torment_, 1 John 4:18.",
+        ),
+        ("ZEP 3:7 CCEL", "3:7", "receive instruction", "see Ps. 2:12"),
+    ],
+)
+def test_recovered_notes_keep_their_callers_renderings_and_commentary(
+    edition: bible.pipeline.Edition,
+    key: str,
+    reference: str,
+    lemma: str,
+    note: str,
+) -> None:
+    rows = [
+        row for group in edition.notes.values() for row in group if row["key"] == key
+    ]
+    assert len(rows) == 1
+    row = rows[0]
+    assert (row["reference"], row["lemma"], row["note"]) == (reference, lemma, note)
+
+
+def test_a_spelling_note_made_inapplicable_by_normalization_is_omitted(
+    edition: bible.pipeline.Edition,
+) -> None:
+    assert any(
+        item.key == "4.xxvii#1" and item.reason == "omitted by decision"
+        for item in edition.ccel.left_out
+    )
+    assert not any(row["key"] == "2CH 27:1 CCEL" for row in edition.notes["2CH"])
+    assert "Joatham" in scripture.verses(edition.documents["2CH"])["26:21"].text
+
+
+def test_recovered_lexical_quotations_are_not_whole_lemma_alternatives(
+    edition: bible.pipeline.Edition,
+) -> None:
+    verses = scripture.verses(edition.documents["JER"])
+    note = next(
+        note for _, note in verses["8:2"].notes if note.get("x-key") == "JER 8:2 CCEL"
+    )
+    assert not any(usj.is_type(node, "char", "fqa") for node in note["content"])
+    assert "cool" in usj.serialize(note["content"])
 
 
 @pytest.mark.parametrize(
