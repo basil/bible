@@ -353,7 +353,7 @@ def check_boundaries(
 # 4.0") is not a citation.
 FOREIGN_CITATION = re.compile(
     r"(?<![\w.])(?:[1-4]\.?\s?)?[A-Z][a-z]+\.?\s"
-    r"(?:[1-9]\d{0,2}|[ivxlc]+)\.\s?[1-9]\d*"
+    r"(?:[1-9]\d{0,2}|[ivxlc]+)\.\s?[1-9]\d*(?!\d|(?:st|nd|rd|th)\b)"
 )
 
 

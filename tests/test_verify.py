@@ -191,6 +191,7 @@ def test_missing_edition_license_on_the_publication_page_is_refused() -> None:
         # License versions and dates followed by a printed note caller.
         "Creative Commons Attribution 4.0 International",
         "dated February 2021.4 The TCENT version",
+        "The Greek New Testament According to Family 35. 3rd ed.",
     ],
 )
 def test_the_editions_citations_pass(words: str) -> None:
