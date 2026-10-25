@@ -974,6 +974,11 @@ def mapped(content: Iterable[str | Node], change: Change) -> Content:
     return result
 
 
+def without_notes(content: Iterable[str | Node]) -> Content:
+    """The content without its notes, wherever they stand."""
+    return mapped(content, lambda node: None if is_note(node) else node)
+
+
 def replaced_by_identity(doc: Document, replacements: Mapping[int, Node]) -> Document:
     """The document with the objects in replacements, by their identity,
     replaced in place: mapped rebuilds every object, so an object found in

@@ -513,11 +513,66 @@ def test_a_reading_omits_consecutive_verses_as_one_run(
     assert offset == len(verses["5:14"].text)
     assert note["x-scope"] == {"declared": None}
     assert usj.text_of(note["content"]) == (
-        "5:14 Heb. also omits these verses. Vat. adds "
+        "5:14 Heb. also omits the following verses, which Vat. adds: 14a"
         + before["5:14a"].text.strip()
-        + " "
-        + before["5:14b"].text.strip().rstrip(".")
-        + "."
+        + " 14b"
+        + before["5:14b"].text.strip()
+    )
+    omission = policy.alexandrinus["passages"]["1KI 14:1-20"]["omissions"][0]
+    ((_, long_note),) = verses["12:24"].notes
+    assert usj.text_of(long_note["content"]).endswith(
+        " 24z" + before["12:24z"].text.strip()
+    )
+    assert long_note["x-key"] in policy.margin["below"]
+    assert all(label not in verses for label in omission["verses"])
+
+
+@pytest.mark.parametrize(
+    "code, reference, key, former, account",
+    [
+        (
+            "1SA",
+            "25:24",
+            "1SA 25:24",
+            "even",
+            "Heb. agrees. Vat. omits. Brenton supplies even.",
+        ),
+        (
+            "1KI",
+            "16:8",
+            "1KI 16:8",
+            "And Ela",
+            "Heb. agrees. Vat. And Ela.",
+        ),
+        (
+            "JER",
+            "23:32",
+            "JER 23:32 CCEL",
+            "have not told them truly",
+            "Heb. agrees. Brenton have not told them truly. Vat. adds the negative.",
+        ),
+    ],
+)
+def test_notes_preserve_displaced_conjunctions_and_english_supplements(
+    policy: bible.policy.Policy,
+    read: bible.pipeline.Read,
+    code: str,
+    reference: str,
+    key: str,
+    former: str,
+    account: str,
+) -> None:
+    doc = alexandrinus.promoted(
+        code, read.brenton[code], policy, read.kjv, read.brenton
+    )
+    verse = scripture.verses(doc)[reference]
+    note = next(note for _, note in verse.notes if note["x-key"] == key)
+    assert usj.text_of(note["content"]) == f"{reference} {account}"
+    assert any(
+        isinstance(item, dict)
+        and item.get("marker") in {"fq", "fqa"}
+        and usj.text_of(item["content"]) == former
+        for item in note["content"]
     )
 
 
@@ -541,7 +596,7 @@ def run_reading(**omission: Any) -> dict[str, Any]:
             {
                 "verses": ["99:16a", "99:16b"],
                 "note_target": "99:16",
-                "note": r"\fl Vat. \ft adds \fq First addition. Second addition\ft .",
+                "note": r"\fl Vat. \ft adds:",
                 "source_notes": {},
                 **omission,
             }
@@ -549,7 +604,7 @@ def run_reading(**omission: Any) -> dict[str, Any]:
     }
 
 
-def test_a_reading_run_takes_its_paragraph_and_its_note_quotes_it_whole(
+def test_a_reading_run_takes_its_paragraph_and_its_note_gives_it_whole(
     policy: bible.policy.Policy, read: bible.pipeline.Read
 ) -> None:
     doc = promoted(decided(policy, {"GEN 99:16a": run_reading()}), RUN)
@@ -557,11 +612,12 @@ def test_a_reading_run_takes_its_paragraph_and_its_note_quotes_it_whole(
     verses = scripture.verses(doc)
     assert verses["99:17"].parts[0][0] == verses["99:16"].parts[-1][0] + 1
     assert verse_lines(doc)["16"] == (
-        r"Before.\f + \cat edition\cat*\fr 99:16 \fl Vat. \ft adds \fq First addition. Second addition\ft .\f*"
+        r"Before.\f + \cat edition\cat*\fr 99:16 \fl Vat. \ft adds: \+fv 16a\+fv*First"
+        r" addition. \+fv 16b\+fv*Second addition.\f*"
     )
-    # A quotation of part of the run would drift from it unseen.
-    misquoting = run_reading(note=r"\fl Vat. \ft adds \fq First addition\ft .")
-    with pytest.raises(CheckFailed, match="misquotes its verses: GEN 99:16a"):
+    # The build gives the run; a note's own quotation of it would drift unseen.
+    misquoting = run_reading(note=r"\fl Vat. \ft adds \fq First addition\ft :")
+    with pytest.raises(CheckFailed, match="introduce its verses: GEN 99:16a"):
         promoted(decided(policy, {"GEN 99:16a": misquoting}), RUN)
     with pytest.raises(CheckFailed, match="one run: GEN 99:16a"):
         promoted(decided(policy, {"GEN 99:16a": run_reading(verses=["99:16b"])}), RUN)
@@ -1038,7 +1094,7 @@ def test_a_passage_omission_removes_all_its_paragraphs_and_pins_its_notes(
     omission = {
         "verses": ["99:21a", "99:21b"],
         "note_target": "99:21",
-        "note": r"\fl Vat. \ft adds verses 21a–b; \fl Alex. \ft omits them.",
+        "note": r"\fl Vat. \ft adds:",
         "source_notes": {"GEN 99:21a": r"\ft A source gloss."},
         "why": "Alexandrinus omits the complete addition.",
         "swete": SWETE,
@@ -1049,10 +1105,28 @@ def test_a_passage_omission_removes_all_its_paragraphs_and_pins_its_notes(
     assert list(verses) == ["99:21", "99:22"]
     assert verses["99:21"].text == "Before."
     assert verses["99:22"].text == "After."
-    assert "adds verses 21a–b" in usj.text_of(verses["99:21"].notes[0][1]["content"])
-    assert "addition" not in usj.text_of(result["content"])
+    # The run follows its introduction, verse by verse, without its notes.
+    assert usj.serialize(verses["99:21"].notes[0][1]["content"]) == (
+        r"\fr 99:21 \fl Vat. \ft adds: \+fv 21a\+fv*First addition. Its"
+        r" continuation. \+fv 21b\+fv*Second addition."
+    )
     assert original == snapshot
     for changed_omission, message in (
+        (
+            {
+                **omission,
+                "note": r"\fl Vat. \ft adds \fq First addition\ft :",
+            },
+            "must introduce its verses",
+        ),
+        (
+            {**omission, "note": r"\fl Vat. \ft adds verses 21a–b."},
+            "must introduce its verses",
+        ),
+        (
+            {**omission, "note": r"\fl Vat. \ft adds after \+fv 21\+fv* these:"},
+            "must introduce its verses",
+        ),
         ({**omission, "verses": []}, "Missing or repeated"),
         ({**omission, "verses": ["99:21a", "99:21a"]}, "Missing or repeated"),
         ({**omission, "verses": ["99:21a", "99:25"]}, "Missing or repeated"),
@@ -1110,7 +1184,7 @@ def test_a_passage_omission_takes_its_blank_lines_and_refuses_a_heading_before_i
     omission = {
         "verses": ["99:21a", "99:21b"],
         "note_target": "99:21",
-        "note": r"\fl Vat. \ft adds verses 21a–b; \fl Alex. \ft omits them.",
+        "note": r"\fl Vat. \ft adds:",
         "source_notes": {},
         "why": "Alexandrinus omits the complete addition.",
         "swete": SWETE,

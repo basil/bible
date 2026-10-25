@@ -1105,6 +1105,39 @@ NOAH = {
 }
 
 
+def test_the_verses_a_note_gives_in_full_are_named_as_verses_are(
+    policy: bible.policy.Policy,
+) -> None:
+    doc = usj.parse(
+        "\\id GEN\n\\c 1\n\\p\n\\v 1 Noe went.\\f + \\cat edition\\cat*\\fr 1:1 "
+        "\\ft Vat. adds: \\fv 1a\\fv* Noe came.\\f*\n"
+    )
+    decided = names({**NOAH, "forms": {"Noe": ["GEN 1:1", "GEN 1:1a"]}, "keep": []})
+    met: revision.MetRevisions = set()
+    result = revision.named("GEN", doc, revisions(policy, names=decided), met)
+    ((_, note),) = scripture.verses(result)["1:1"].notes
+    assert usj.text_of(note["content"]).endswith("adds: 1a Noah came.")
+    assert ("name", "GEN 1:1a", "Noe") in met
+    with pytest.raises(CheckFailed, match="Name without a decision: GEN 1:1a: Noe"):
+        revision.named("GEN", doc, revisions(policy, names=names(NOAH)), set())
+    # A name it keeps must survive the later revisions, as a verse's must.
+    keeping = {"form": "Noe", "who": "another Noe", "verses": ["GEN 1:1a"]}
+    kept = revisions(policy, names=names({**NOAH, "keep": [keeping]}))
+    respelled = usj.parse(usj.serialize(doc).replace("Noe came", "Noah came"))
+    with pytest.raises(CheckFailed, match="Kept name respelled: GEN 1:1a: Noe"):
+        revision.check_kept("GEN", doc, respelled, kept)
+    # Its number is no part of its first word.
+    shown = revisions(policy, words={"Shew": {"to": "Show", "why": "spelling"}})
+    shewn = usj.parse(
+        "\\id GEN\n\\c 1\n\\p\n\\v 1 Went.\\f + \\cat edition\\cat*\\fr 1:1 "
+        "\\ft Vat. adds: \\fv 1a\\fv*Shew came.\\f*\n"
+    )
+    ((_, note),) = scripture.verses(revision.respelled(shewn, shown, set()))[
+        "1:1"
+    ].notes
+    assert usj.text_of(note["content"]).endswith("adds: 1aShow came.")
+
+
 def test_a_verse_naming_two_bearers_alike_lists_each_occurrence(
     policy: bible.policy.Policy,
 ) -> None:

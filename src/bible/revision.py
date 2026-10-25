@@ -5,7 +5,8 @@ Six kinds of change are declared, each with its reason:
 
     names    a proper name respelled where its bearer is decided: every
              whole-word occurrence of a form in the verses its decision
-             lists, and in the lemmas of their notes. Every other verse of
+             lists, those an edition note gives in full among them, and in
+             the lemmas of their notes. Every other verse of
              the printed books that has the form is listed as keeping it,
              with who keeps it, so that each form prints only where a
              decision says; where a verse names two bearers alike, each
@@ -49,6 +50,7 @@ change that nothing meets is refused.
 from __future__ import annotations
 
 import functools
+import itertools
 import re
 import unicodedata
 from collections import Counter
@@ -1002,8 +1004,9 @@ def respelled(
     Each pass is one longest-match sweep. Spelling, vocabulary, and participle
     changes apply wherever a word is printed, source prose included. Grammar,
     the words scoped to scripture, applies to a book's verses alone: their
-    words, and the lemmas (fq) and readings (fqa) of the notes set in them. A
-    verse runs to the next verse number, or to the end of its book. The titles,
+    words, the lemmas (fq) and readings (fqa) of the notes set in them, and
+    the verses their edition notes give in full (notes.passage). A verse runs
+    to the next verse number, or to the end of its book. The titles,
     headings, and introductions it spans keep their grammar, and so do the
     notes set in them, whose lemmas quote them. Plain quotation marks do not
     establish scope.
@@ -1077,11 +1080,15 @@ def respelled(
                 output.append(item)
             return output
 
+        # A label is no word: a verse number a note gives would otherwise run
+        # on into its verse's first word ("24aSo").
         return _rewritten(
             lemmas(items),
             spelling,
             to,
-            skip=lambda item: usj.is_note(item) or item.get("marker") == "fq",
+            skip=lambda item: (
+                usj.is_note(item) or usj.is_label(item) or item.get("marker") == "fq"
+            ),
             done=done,
         )
 
@@ -1166,9 +1173,19 @@ def respelled(
                     )
                 else:
                     inner = quoted(item["content"], item.get("x-key", key))
+                    if usj.is_note(item) and item.get("category") == "edition":
+                        inner = given(inner)
                 item = {**item, "content": inner}
             output.append(item)
         return output
+
+    def given(content: Content) -> Content:
+        # The verses an edition note gives in full (notes.passage) are
+        # scripture, each a verse of its own.
+        return notes.with_passage(
+            content,
+            lambda _, words: _rewritten(words, general, to, skip=_unrevised, done=done),
+        )
 
     def scoped(doc: Document) -> list[Node]:
         # Exclude the prose of titles and introductions, wherever they stand,
@@ -1642,8 +1659,9 @@ def named(
     verse without its form. Where a verse names two bearers alike, each
     lists its occurrence by number, as LUK 6:16#1; a verse that names the
     form once is listed whole, and a lemma quoting a numbered form, which
-    does not say which occurrence it quotes, is refused. A subscription's
-    names are named_colophon's."""
+    does not say which occurrence it quotes, is refused. The verses an
+    edition note gives in full are listed and respelled as verses are. A
+    subscription's names are named_colophon's."""
     decisions = policy.revisions["names"]["decisions"]
     # A form decided for a subscription alone is still decided: a verse
     # that prints it must be listed too.
@@ -1661,12 +1679,16 @@ def named(
             for key in _in_book(keeping["verses"], code):
                 listings[_occurrence(key) + (keeping["form"],)] = None
     verses = scripture.verses(doc)
+    # The verses an edition note gives in full (notes.passage) are named as
+    # the verses are, under their own numbers.
+    given = _given(code, verses)
+    texts = _texts(verses, given)
     pattern = _names(forms)
     # Where each form stands, by verse: a form within a longer one is the
     # longer one's.
     found: dict[tuple[str, str], list[int]] = {}
-    for reference, verse in verses.items():
-        for match in pattern.finditer(verse.text):
+    for reference, text in texts.items():
+        for match in pattern.finditer(text):
             form = re.sub(r"\s+", " ", match[0])
             places = found.setdefault((reference, form), [])
             places.append(match.start())
@@ -1688,7 +1710,7 @@ def named(
     # A form respelled within a longer one would splice the two decisions.
     for reference, _, form in changes:
         require(
-            [m.start() for m in _phrase(form).finditer(verses[reference].text)]
+            [m.start() for m in _phrase(form).finditer(texts[reference])]
             == found[reference, form],
             f"Name within another name: {code} {reference}: {form}",
         )
@@ -1702,7 +1724,8 @@ def named(
     # cannot tell a respelled occurrence from a kept one.
     for reference, form, _ in occurrences:
         require(
-            not any(
+            reference not in verses
+            or not any(
                 _phrase(form).search(usj.text_of(item["content"]))
                 for _, note in verses[reference].notes
                 for item in usj.walk(note["content"])
@@ -1710,14 +1733,98 @@ def named(
             ),
             f"Lemma quoting a numbered name: {code} {reference}: {form}",
         )
-    return _reworded(
+    respellings = sorted(
+        {(reference, form, to) for (reference, _, form), to in changes.items()}
+    )
+    doc = _reworded(
         code,
         doc,
-        sorted({(reference, form, to) for (reference, _, form), to in changes.items()}),
+        [change for change in respellings if change[0] in verses],
         every=True,
         verses=verses,
         occurrences=occurrences,
     )
+    in_notes = [change for change in respellings if change[0] in given]
+    return _named_passages(code, doc, in_notes, occurrences) if in_notes else doc
+
+
+def _given(code: str, verses: Mapping[str, scripture.Verse]) -> dict[str, Content]:
+    """The verses a book's edition notes give in full (notes.passage), each
+    under its chapter and the number it prints. A verse given twice, or
+    given and printed too, would be read for the other."""
+    given: dict[str, Content] = {}
+    for reference, verse in verses.items():
+        chapter = reference.split(":")[0]
+        for _, note in verse.notes:
+            if note.get("category") != "edition":
+                continue
+            for label, words in notes.passage_verses(note["content"]):
+                key = f"{chapter}:{label}"
+                require(
+                    key not in verses and key not in given,
+                    f"Verse given in a note and printed again: {code} {key}",
+                )
+                given[key] = words
+    return given
+
+
+def _texts(
+    verses: Mapping[str, scripture.Verse], given: Mapping[str, Content]
+) -> dict[str, str]:
+    """The words of a book's verses, and of those its edition notes give."""
+    texts = {reference: verse.text for reference, verse in verses.items()}
+    return texts | {reference: usj.text_of(words) for reference, words in given.items()}
+
+
+def _named_passages(
+    code: str,
+    doc: Document,
+    changes: list[tuple[str, str, str]],
+    occurrences: Mapping[tuple[str, str, str], Container[int]],
+) -> Document:
+    """A book with the names respelled in the verses its edition notes give
+    in full, each verse known by its chapter and the number it prints. As in
+    a verse (_reworded), a name set across a style or note is refused."""
+
+    def renamed(words: Content, change: tuple[str, str, str]) -> Content:
+        reference, old, new = change
+        numbered = occurrences.get(change)
+        count = itertools.count(1)
+        asked: list[int] = []
+        done: list[re.Match[str]] = []
+
+        def respelling(match: re.Match[str]) -> str:
+            number = next(count)
+            if numbered is not None and number not in numbered:
+                return match[0]
+            asked.append(number)
+            return new
+
+        words = _rewritten(words, _phrase(old), respelling, done=done.append)
+        require(
+            len(done) == len(asked),
+            f"Revision across a style or note: {code} {reference}: {old}",
+        )
+        return words
+
+    def named_verse(chapter: str, label: str, words: Content) -> Content:
+        for change in changes:
+            if change[0] == f"{chapter}:{label}":
+                words = renamed(words, change)
+        return words
+
+    replacements: dict[int, Node] = {}
+    for reference, verse in scripture.verses(doc).items():
+        chapter = reference.split(":")[0]
+        for _, note in verse.notes:
+            if note.get("category") != "edition":
+                continue
+            content = notes.with_passage(
+                note["content"], functools.partial(named_verse, chapter)
+            )
+            if content is not note["content"]:
+                replacements[id(note)] = {**note, "content": content}
+    return usj.replaced_by_identity(doc, replacements)
 
 
 def _occurrence(key: str) -> tuple[str, int | None]:
@@ -1832,15 +1939,15 @@ def check_kept(
     ]
     if not kept:
         return
-    was, now = scripture.verses(before), scripture.verses(after)
+    # The verses an edition note gives in full keep their names as verses do.
+    was, now = (
+        _texts(verses, _given(code, verses))
+        for verses in (scripture.verses(before), scripture.verses(after))
+    )
     for reference, form in kept:
         counts = [
-            (
-                len(_phrase(form).findall(verses[reference].text))
-                if reference in verses
-                else 0
-            )
-            for verses in (was, now)
+            len(_phrase(form).findall(texts[reference])) if reference in texts else 0
+            for texts in (was, now)
         ]
         require(
             counts[0] == counts[1], f"Kept name respelled: {code} {reference}: {form}"

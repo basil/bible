@@ -154,9 +154,24 @@ def printed(
     if boundary:
         assert lemma is not None
         extra["x-scope"] = {"declared": lemma + boundary}
-    return notes.linked(
+    note = notes.linked(
         notes.footnote(read.reference, lemma, runs, **extra), body, ctx.books
     )
+    if read.passage is None:
+        return note
+    # The verses an edition note gives follow the colon that ends its words,
+    # in their field; finishing must leave it there (a sentence's full stop
+    # would follow it).
+    *fields, last = note["content"]
+    require(
+        usj.is_type(last, "char", "ft")
+        and usj.text_of(last["content"]).rstrip().endswith(":"),
+        f"Note giving verses does not end its words with a colon: {key}",
+    )
+    assert usj.is_type(last, "char", "ft")
+    joined = usj.joined(last["content"], [" "], read.passage["content"])
+    given: Node = {**last, "content": joined}
+    return {**note, "content": [*fields, given]}
 
 
 def brenton(
@@ -195,7 +210,9 @@ def brenton(
                 )
                 verse = verses[reference]
             home = verse_at(code, reference)
+            given: Node | None = None
             if note.get("category") == "edition":
+                note, given = notes.passage(note)
                 body = notes.authored_body(
                     note, override, key, quotation=exception.get("quotation", False)
                 )
@@ -236,6 +253,7 @@ def brenton(
                     text,
                     note.get("x-scope"),
                     note.get("category"),
+                    given,
                 )
             )
     merged = crossrefs.merged_notes(code, found, links, policy=policy)
@@ -745,6 +763,11 @@ def with_edition_notes(
             if note.get("category") != "edition":
                 continue
             key = note["x-key"]
+            # Only Brenton's notes give verses in full (annotate.brenton).
+            require(
+                not any(n.get("marker") == "fv" for n in usj.walk(note["content"])),
+                f"King James edition note giving verses: {key}",
+            )
             body = notes.authored_body(note, None, key)
             cited = citations.scan(
                 body.plain,

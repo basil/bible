@@ -23,7 +23,7 @@ from __future__ import annotations
 
 import functools
 import re
-from collections.abc import Collection, Iterable, Mapping, Sequence
+from collections.abc import Callable, Collection, Iterable, Mapping, Sequence
 from dataclasses import dataclass, replace
 from difflib import SequenceMatcher
 from typing import Unpack
@@ -693,6 +693,67 @@ def bound(body: Body, found: Sequence[Citation], key: str, leading: int = 0) -> 
     return replace(body, citations=tuple(spans))
 
 
+def passage_start(content: Content) -> int | None:
+    """Where the verses an edition note gives in full begin: at the first of
+    their numbers in the note's last field, its roman words (ft), if any."""
+    last = content[-1] if content else None
+    if not usj.is_type(last, "char", "ft"):
+        return None
+    numbers = (
+        i for i, item in enumerate(last["content"]) if usj.is_type(item, "char", "fv")
+    )
+    return next(numbers, None)
+
+
+def passage_verses(content: Content) -> list[tuple[str, Content]]:
+    """The verses an edition note gives in full, each by the number it
+    prints, with its words."""
+    at = passage_start(content)
+    if at is None:
+        return []
+    last = content[-1]
+    assert isinstance(last, dict)
+    given: list[tuple[str, Content]] = []
+    for item in last["content"][at:]:
+        if usj.is_type(item, "char", "fv"):
+            given.append((usj.text_of(item["content"]), []))
+        else:
+            given[-1][1].append(item)
+    return given
+
+
+def with_passage(
+    content: Content, change: Callable[[str, Content], Content]
+) -> Content:
+    """An edition note's content with the words of each verse it gives in
+    full changed, one verse at a time, by the number it prints."""
+    at = passage_start(content)
+    if at is None:
+        return content
+    *fields, last = content
+    assert isinstance(last, dict)
+    words: Content = list(last["content"][:at])
+    for label, given in passage_verses(content):
+        words = usj.joined(words, [usj.char("fv", label)], change(label, given))
+    return [*fields, {**last, "content": words}]
+
+
+def passage(note: Node) -> tuple[Node, Node | None]:
+    """An edition note without the verses it gives in full at its end, and
+    the field of those verses, from the first of their numbers: printed as
+    they stand, untouched by the reading and finishing of the note's words."""
+    at = passage_start(note["content"])
+    if at is None:
+        return note, None
+    *rest, last = note["content"]
+    assert isinstance(last, dict)
+    content = last["content"]
+    head: Node = {**last, "content": usj.trimmed(content[:at])}
+    given: Node = {**last, "content": content[at:]}
+    fields = [*rest, head] if head["content"] else rest
+    return {**note, "content": fields}, given
+
+
 def authored_body(
     note: Node, override: str | None, key: str, *, quotation: bool = False
 ) -> Body:
@@ -1238,6 +1299,9 @@ class Read:
     scope: usj.Scope | None = None
     # The edition's own notes carry their category to the typesetter.
     category: str | None = None
+    # The field of the verses an edition note gives in full after its words
+    # (passage).
+    passage: Node | None = None
 
 
 def spanned(verses: Sequence[bible.references.Verse]) -> str:

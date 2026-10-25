@@ -5286,10 +5286,6 @@
     "1KI 14:1-20@12": {
       "sentence": true,
       "why": "The note ends with a complete explanatory sentence after its opening reading, so its final full stop stays."
-    },
-    "1KI 14:1-20@omission1": {
-      "sentence": true,
-      "why": "The note explains the omitted passage in a complete sentence, so its final full stop stays."
     }
   },
   "shapes": {

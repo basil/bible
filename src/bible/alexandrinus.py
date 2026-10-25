@@ -224,7 +224,8 @@ def note_content(
     lemma. Quotations within explicit commentary remain fq. A label names
     Brenton unless the decision already establishes a manuscript's reading;
     composing a label supplies no manuscript evidence. A verse omitted whole
-    is quoted or described by an explicit note, never composed."""
+    is quoted by an explicit note, never composed; a run of them is given in
+    full after the note that introduces it (with_omissions)."""
     if "note" in entry:
         require(
             not (NOTE - {"note"}) & entry.keys(),
@@ -1112,17 +1113,28 @@ def with_omissions(code: str, doc: Document, policy: bible.policy.Policy) -> Doc
         )
         for identity, body in omission["source_notes"].items():
             pinned(identity, body, placed)
-        # A note that quotes the run quotes all its words, so that it cannot
-        # drift from them; one that describes the run quotes nothing.
-        words = plain(" ".join(verses[label].text.strip() for label in labels))
+        # The note introduces the run, and the run follows it in full, each
+        # verse under its number, from the source, so it cannot drift. A
+        # number of its own would be read as the run's first (notes.passage).
+        introduction = usj.parse(omission["note"], fragment=True)
+        last = introduction[-1] if introduction else None
         require(
-            all(
-                quotation == words.strip().rstrip(".")
-                for quotation in quotations(omission["note"])
-            ),
-            f"Alexandrine omission misquotes its verses: {key}",
+            not any(
+                n.get("marker") in {"fq", "fqa", "fv"} for n in usj.walk(introduction)
+            )
+            and usj.is_type(last, "char", "ft")
+            and usj.text_of(last["content"]).rstrip().endswith(":"),
+            f"Alexandrine omission note must introduce its verses: {key}",
         )
+        assert usj.is_type(last, "char", "ft")
         blocks = list(doc["content"])
+        run: list[str | Node] = []
+        for label in labels:
+            run += [" ", usj.char("fv", label.split(":")[1])]
+            for part, (block, lo, hi, _) in enumerate(verses[label].parts):
+                words = usj.without_notes(blocks[block]["content"][lo:hi])
+                run += [" "] * bool(part) + words
+        given = usj.char("ft", *usj.trimmed(usj.joined(last["content"], run)))
         cuts: dict[int, list[tuple[int, int]]] = {}
         for label in labels:
             for part, (block, lo, hi, _) in enumerate(verses[label].parts):
@@ -1163,7 +1175,7 @@ def with_omissions(code: str, doc: Document, policy: bible.policy.Policy) -> Doc
         note = edition_note(
             f"{key}@omission{index}",
             home,
-            usj.parse(omission["note"], fragment=True),
+            [*introduction[:-1], given],
             {"declared": None},
         )
         doc = scripture.edited(doc, [(verse, len(verse.text), len(verse.text), [note])])

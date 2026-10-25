@@ -176,10 +176,6 @@ def relemma(note: Node, text: str, a: int, b: int) -> Node:
     return with_lemma(note, scripture.plain(text[a:b]))
 
 
-def without_notes(content: Content) -> Content:
-    return usj.mapped(content, lambda n: None if n["type"] == "note" else n)
-
-
 def adjacent_lemma(text: str, words: Words, offset: int) -> Span:
     """The lemma for words the Textus Receptus adds at `offset`: the words
     just before the gap, grown leftwards until they are unique in the verse;
@@ -523,7 +519,9 @@ def apply(
             # the space an insertion's seam maps into the range is nobody's
             # words.
             a, b = unspaced(source.text, a, b)
-            quote = without_notes(source_content(original[source_book], source, a, b))
+            quote = usj.without_notes(
+                source_content(original[source_book], source, a, b)
+            )
             finished = with_field(finished, "fqa", quote)
             scope["source_range"] = [a, b]
         changed[note["x-key"]] = finished
@@ -605,7 +603,7 @@ def apply(
             source = source_verses[source_book][source_ref]
             lo, hi = unspaced(source.text, lo, hi)
             quote = source_content(original[source_book], source, lo, hi)
-            quote = without_notes(quote)
+            quote = usj.without_notes(quote)
             primary = min(group, key=lambda e: e[1]["note_scope"]["offset"])[1]
             key, offset = primary["note"]["x-key"], primary["note_scope"]["offset"]
             phrase = scripture.plain(verse.text[a:b])
@@ -764,7 +762,7 @@ def placed(
         for owned, scope in items:
             ref = scope["ref"].split()[1]
             a, b = lemma_range(scope)
-            lemma = without_notes(source_content(prepared[book], verses[ref], a, b))
+            lemma = usj.without_notes(source_content(prepared[book], verses[ref], a, b))
             note = with_field(owned, "fq", usj.joined(lemma, [": "]))
             # A note omitting its whole lemma with the stop that ends it
             # stands after that stop, which goes with the words.
