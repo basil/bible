@@ -4,11 +4,6 @@ Open questions and source discrepancies from the footnote reviews. Every reading
 
 ## How to read this list
 
-The sections:
-
-- [Rules to decide](#1-rules-to-decide): one decision settles many notes.
-- [Questions from the source review](#2-questions-from-the-source-review): Brenton's reports of Codex Alexandrinus that the evidence does not settle, printed oddities, witness labels, and lemmas left for a decision.
-
 **Keys.** Brenton's notes are named by their keys, the `x-key` the build gives each source note ([AGENTS.md](../AGENTS.md#the-document-model)), which a decision in `edition/` is filed under:
 
 - Books are USFM codes: `1SA`–`2KI` are 1–4 Kingdoms, `PRO` Proverbs, `JOL` Joel, and `BAK` Brenton's Appendix, whose entries in `alexandrinus.json` are named by the verse they concern, as `BAK 1KI 2:35a`, and whose notes `appendix.json` names by the verse they stand at.
@@ -35,21 +30,7 @@ Each of these is a question about a rule. One decision settles every note it cov
 - **Revised Version and Boyd's ASV borrowed by hand where the automatic witness is not admitted.** The automatic rule takes the RV only where Westcott–Hort agrees with the Byzantine reading; seven readings borrow it by hand at units the review marks not admitted (REV 2:3#1+#2, REV 7:4#1+#2, REV 13:8#1, MRK 1:16#1, MRK 6:9#1), and two borrow Boyd's ASV at REV 13:14#3+#4, where Appendix A changes the verse. Admission is a heuristic for the automatic witness, and hand borrowing is allowed where the RV's words render the Byzantine Greek; decide whether the review should list these, or the build check that the quoted wording renders RP's Greek rather than Westcott–Hort's.
 - **Reports Swete supports that stay notes.** The promotion rule prints a kept report whose `agrees` is true and whose note gives Brenton's English, unless the reading is doubtful or a slip. Three stay notes on other grounds: EZK 16:21 CCEL (“Alex. omits ‘them’”; Swete III p. 412 αυτα αυτοις] εν αυτοις A, confirmed on the scan, so A also adds the unreported ἐν), 2CH 15:11 CCEL (“seven rams”; Swete II p. 85 επτακοσιους] επτα·|κριους A, whose point after επτα separates seven from rams; `agrees` is still false), and EZK 44:14 CCEL (“and they shall appoint”; A's και ταξουσιν αυτου looks like a slip for κατάξουσιν αὐτούς). Decide whether each is promoted, kept as a slip, or kept under a further exception the rule should name.
 
-## 2. Questions from the source review
-
-Found while checking notes against the 1844, 1879, and 1900 printings and against Swete. Each note stays as it is now, with its evidence in the decision's `why` where it has one; none changes without the decision named.
-
-### 2.1 Promoted readings: what the verse prints
-
-How the verse reads once a report of Codex Alexandrinus is carried out.
-
-#### English from no single source
-
-Splices, compositions, and the editor's own words.
-
-- `1KI 5:31`: The completion of 6:1, “that he began to build the house to the Lord”, is the King James “that he began to build the house of the LORD” with “to” for “of”, rendering A's τω κ̅ω̅ (Brenton's own phrase at 6:2), and the decision names no source for it. Decide whether to take the King James words exactly or declare the composition.
-
-## 3. Future work
+## 2. Future work
 
 ### Website tables of mechanical changes
 

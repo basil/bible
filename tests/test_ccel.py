@@ -763,7 +763,7 @@ def test_the_real_pages_supply_the_notes_ebible_lacks(
     report = read.ccel
     assert (report.pages, report.bodies) == (708, 4116)
     assert report.inserted == 1823
-    assert report.duplicates == 2205
+    assert report.duplicates == 2206
     assert len(report.held) == 0
     assert len(report.left_out) == 81
     # A note that a decision sets in another verse is the same note there.
@@ -785,7 +785,7 @@ def test_the_real_pages_supply_the_notes_ebible_lacks(
         "undecodable characters",
     ]
     # The Appendix's notes on supplied verses wait for promotion to supply them.
-    assert len(report.deferred) == 9
+    assert len(report.deferred) == 8
     assert report.bodies == (
         report.inserted
         + report.duplicates
@@ -823,11 +823,11 @@ def test_the_review_counts_the_notes_set_after_promotion(
     # and the review reports the edition's count, not Read's.
     report = edition.ccel
     assert report.deferred == ()
-    assert len(report.supplied) == len(read.ccel.deferred) == 9
+    assert len(report.supplied) == len(read.ccel.deferred) == 8
     assert {key for key, _ in report.supplied} == {
         body.key for body in read.ccel.deferred
     }
-    assert report.inserted == read.ccel.inserted + 9
+    assert report.inserted == read.ccel.inserted + 8
     printed = {
         note["x-key"]
         for rows in edition.documents.values()
@@ -836,7 +836,7 @@ def test_the_review_counts_the_notes_set_after_promotion(
     }
     assert all(key in printed for _, key in report.supplied)
     text = review.ccel_report(report)
-    assert f"Notes set in Brenton's verses: {report.inserted}, 9 of them" in text
+    assert f"Notes set in Brenton's verses: {report.inserted}, 8 of them" in text
     assert all(f"`{key}` as `{printed}`" in text for key, printed in report.supplied)
 
 

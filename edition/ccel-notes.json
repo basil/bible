@@ -1321,10 +1321,10 @@
       "why": "Brenton’s Appendix, 1879 physical p. 1149 and 1900 physical p. 1145 (printed p. 1133), prints θ Gr. their sufficient expedition. with θ immediately before “the sufficiency of their expedition” in Appendix verse 30, supplied as 1 Samuel 18:30 (appendix-18-30-theta.json). eBible’s Appendix lacks this ordinary gloss; it is separate from the whole-verse omission note."
     },
     "29#14": {
-      "verse": "1KI 5:31",
-      "anchor": "brought",
-      "supplied": true,
-      "why": "Brenton’s Appendix, 1879 physical p. 1149 and 1900 physical p. 1145 (printed p. 1133), prints λ Gr. bring. with λ immediately before “brought” in Appendix 3 Kingdoms 5:17, which the edition supplies as 1 Kings 5:31 (appendix-0112-lambda.json). eBible’s Appendix lacks this ordinary gloss; it is independent of the displaced-reading note."
+      "verse": "1KI 5:30",
+      "anchor": "in the works",
+      "duplicate": "1KI 5:30#3",
+      "why": "Brenton’s Appendix, 1879 physical p. 1149 and 1900 physical p. 1145 (printed p. 1133), prints λ Gr. bring. before brought in the stone command. The retained Alexandrine note 1KI 5:30#3 gives both that Appendix sentence and this gloss; account for the gloss by that note rather than set a separate note on a verse no longer promoted. CCEL’s Appendix run has no matching chapter in the source books. Name the retained note’s verse and caller phrase so the review records where the gloss is accounted for, instead of listing it as unplaced."
     },
     "29#15": {
       "verse": "1CH 1:11",
@@ -1384,7 +1384,7 @@
       "verse": "1KI 5:30",
       "anchor": "in the works",
       "duplicate": "1KI 5:30#3",
-      "why": "Brenton 1879 physical p. 466 and 1900 physical p. 462 (printed p. 450) both print ρ “See Appendix.” with ρ after “masters who wrought in the works.” at the end of III Kings 5:16, before verse 18; 1844 vol. 1 p. 368 has the same pointer in the margin. eBible numbers the verse 1KI 5:30, where the brenton-notes correction restores the same pointer at the verse’s end as 1KI 5:30#3, which the 1KI 5:31 Appendix decision in alexandrinus.json consumes. CCEL’s caller also closes the verse, but its malformed chapter heading leaves the note in no chapter, and an anchor cannot stand after the last word, so the identical texts are not matched by caller. Account for it by that existing note rather than adding a second pointer."
+      "why": "Brenton 1879 physical p. 466 and 1900 physical p. 462 (printed p. 450) both print ρ “See Appendix.” with ρ after “masters who wrought in the works.” at the end of III Kings 5:16, before verse 18; 1844 vol. 1 p. 368 has the same pointer in the margin. eBible numbers the verse 1KI 5:30, where the brenton-notes correction restores the same pointer at the verse’s end as 1KI 5:30#3, whose retained-note decision in alexandrinus.json gives it the Appendix reading instead of promoting that reading. CCEL’s caller also closes the verse, but its malformed chapter heading leaves the note in no chapter, and an anchor cannot stand after the last word, so the identical texts are not matched by caller. Account for it by that existing note rather than adding a second pointer."
     },
     "17.iii#8": {
       "omitted": true,

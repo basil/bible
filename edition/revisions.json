@@ -12516,17 +12516,6 @@
         }
       ]
     },
-    "command and its execution": {
-      "why": "A comma between the command and what was done at it, as everywhere else Brenton writes commanded, and they.",
-      "changes": [
-        {
-          "verse": "1KI 5:31",
-          "from": "commanded and they",
-          "to": "commanded, and they",
-          "why": "The verse is Brenton’s Appendix English for Alexandrinus, printed in the text; his other seven such clauses have the comma."
-        }
-      ]
-    },
     "isaiah-40-14-alexandrinus-question": {
       "why": "End the promoted Isaiah 40:14 question with the question mark that Brenton prints in his Alexandrinus note, rather than inheriting the base verse’s terminal semicolon. Brenton 1879 physical p. 890 and 1900 physical p. 886 (printed p. 874), θ after understanding;, both print the complete added question ending again?; Swete III p. 174 explicitly supports its full clause in unqualified A. No English word or witness label changes.",
       "changes": [

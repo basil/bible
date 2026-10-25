@@ -59,7 +59,7 @@ def test_the_edition_prints_every_unit_once_in_the_manifests_order(
         "brenton_units": 51,
         "kjv_units": 27,
         "kjv_marginal_notes": 775,
-        "printed_notes": 6205,
+        "printed_notes": 6203,
         # Every verse of the assembled books: Brenton's, with the passages
         # supplied from Codex Alexandrinus and the King James Bible's
         # 1 Kingdoms 23:12 and 3 Kingdoms 14:1-20, less the verses

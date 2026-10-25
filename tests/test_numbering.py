@@ -322,7 +322,7 @@ def test_the_page_prints_its_tables(edition: bible.pipeline.Edition) -> None:
     page = usj.serialize(edition.numbering_page)
     assert "{" not in page and "}" not in page
     # Only the book-name table moved; all chapter-and-verse rows remain.
-    assert page.count("\\tr\n\\tc1 ") == 439
+    assert page.count("\\tr\n\\tc1 ") == 441
     # A run that keeps its numbers but stands out of their order says where.
     assert "\\tr\n\\tc1 23:7–8\n\\tc2 23:7–8 (after 40)\n" in page
     assert "\\tr\n\\tc1 31:25\n\\tc2 31:25 (after 26)\n" in page

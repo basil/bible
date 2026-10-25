@@ -7946,72 +7946,6 @@
         "2CH 27:7 CCEL": "\\ft See \\fqa Appendix."
       }
     },
-    "1KI 5:31": {
-      "appendix": "\\ip 5. \\vp 17\\vp*And the king commanded and they brought great stones, precious stones for the foundation of the house, and unhewn stones.  \n",
-      "why": "Print Brenton’s Appendix paragraph for 5:17, “And the king commanded and they brought great stones, precious stones for the foundation of the house, and unhewn stones.” (1879 physical p. 1149; 1900 physical p. 1145, printed p. 1133), as 5:31, in place of his See Appendix pointer at the end of 5:30. Swete I p. 684 records the paragraph in A before his V 17 (Brenton’s 5:32), “17 και ητοιμασαν] pr και ενετειλατο ο βασιλευς και αιρουσιν λιθους μεγαλους λιθους τιμιους εις τον θεμελιον του οικου· και λιθους απελεκητους …”, and “VI 2–5 om A”. Brenton’s 6:1a, Swete’s VI 2, is therefore omitted and quoted in the note on 6:1. B’s main text there, καὶ αἴρουσιν λίθους μεγάλους τιμίους … καὶ λίθους ἀπελεκήτους, lacks the king’s command, which B^ab supplies (ινα in the margin, ω superscribed), and reads unhewn where Brenton says hewn. The displaced words are therefore labelled Brenton, and the notice at 5:31 says only that Brenton has the verse elsewhere. Brenton’s 6:1b–d stay, though Swete’s “VI 2–5 om A” covers them: Brenton reports no reading there, and A has their matter elsewhere, that of 6:1b within the same addition before V 17 and that of 6:1c–d after κεδρου at VI 34 (p. 687).",
-      "swete": {
-        "volume": 1,
-        "page": 684,
-        "evidence": "apparatus",
-        "reading": "17 και ητοιμασαν] pr και ενετειλατο ο βασιλευς και αιρουσιν λιθους μεγαλους λιθους τιμιους εις τον θεμελιον του οικου· και λιθους απελεκητους και επελεκησαν οι υιοι Σαλωμων· και οι υιοι Χειραμ· και οι Βιβλιοι· A | VI 2–5 om A",
-        "agrees": true
-      },
-      "supplied": ["that", "he", "began", "build", "to", "Lord"],
-      "insertions": [
-        {
-          "after": "5:30",
-          "verses": [
-            {
-              "reference": "5:31",
-              "note": "\\fl Brenton \\ft omits this verse, and has another form of it at 6:1.",
-              "english": {
-                "source": "brenton",
-                "span": [17, 138]
-              }
-            }
-          ]
-        }
-      ],
-      "edits": [
-        {
-          "target": "1KI 6:1",
-          "from": "over Israel,",
-          "note": "\\fl Brenton \\fq that the king commanded that they should take great and costly stones for the foundation of the house, and hewn stones\\ft , its form of 5:31.",
-          "why": "Swete I p. 684 explicitly records Ισραηλ 2°] + και ωκοδομει τον οικον τω κω A. Complete the verse where Brenton’s 6:1a form is omitted; retain the existing derivation from Brenton’s licensed house-building words. The displaced command/hewn-stones form is quoted as Brenton’s, since B main has unhewn stones and the command belongs to B correcting hands ab.",
-          "english": {
-            "source": "from",
-            "edits": [
-              {
-                "span": [12, 12],
-                "to": " that he began to build the house to the Lord."
-              }
-            ]
-          },
-          "note_at": 13
-        },
-        {
-          "target": "1KI 6:1a",
-          "omit_verse": true,
-          "note_target": "1KI 6:1",
-          "lemma": null,
-          "from": "that the king commanded that they should take great \\add and\\add* costly stones for the foundation of the house, and hewn stones.",
-          "note": null,
-          "why": "Swete, vol. I, p. 684: VI 2–5 om A; its verse 2 is Brenton’s 1a, Brenton’s base form of the verse printed at 5:31, which the note on 6:1 quotes.",
-          "english": {
-            "source": "from",
-            "edits": [
-              {
-                "span": [0, 129],
-                "to": ""
-              }
-            ]
-          }
-        }
-      ],
-      "source_notes": {
-        "1KI 5:30#3": "\\ft See \\fqa Appendix."
-      }
-    },
     "1KI 6:11-22": {
       "appendix": "\\ip 6. \\vp 11\\vp*And the word of the Lord came to Solomon, saying, \\vp 12\\vp*As \\add for\\add* this house which thou art building, if thou wilt walk in my ordinances and execute my judgments, and keep all my commandments to walk in them, I will establish my word with thee which I spoke to David thy father. \\vp 13\\vp*And I will dwell in the midst of the children of Israel, and will not forsake my people Israel. \\vp 14\\vp*So Solomon built the house, and finished it. \\vp 22\\vp*And all inside the oracle he overlaid with gold.  \n",
       "why": "Print Brenton’s Appendix passage, printed in 1879 physical p. 1149 and 1900 physical p. 1145 (printed p. 1133). Both give verses 11–14 followed by the addition to verse 22; both italicize the complete “As for” at the beginning of verse 12. Restore supplied-word markup on As by a declared derivation edit, leaving the English words unchanged. Swete I pp. 685–686 explicitly assigns both additions to A. The first follows κεδρίνοις in Swete 15 (10), Brenton 6:10, so insert verses 11–14 before 6:15. The opening λογος κ̅υ̅ προς Σαλω is over an erasure by A^1; no uncertainty is attached to the passage’s A attribution. The second follows οἴκου in Swete 21 (22), Brenton 6:22, so append it after the existing sentence and set the omission note on the added words. B positively lacks both additions at these locations; the brief house-building clauses elsewhere in B do not supply the complete added block. Preserve the existing ordinary source gloss at 6:22 and its caller; no source-note deletion or move is authorized by this passage decision.",
@@ -10092,6 +10026,31 @@
         "agrees": true
       },
       "source_note": "\\fqa Alex. \\ft ἐπιθυμίαν."
+    },
+    "1KI 5:30#3": {
+      "why": "Retain Brenton’s construction narrative and give his Appendix stone command in the note on 5:30. Brenton’s Appendix 5:17 (1879 physical p. 1149; 1900 physical p. 1145, printed p. 1133) supplies the command. Swete I p. 684 confirms its place before preparation, but Brenton’s dated sentence at 6:1 continues into the other form of the command at 6:1a: “And it came to pass … over Israel, that the king commanded …”. Removing 6:1a leaves that sentence unfinished. Alexandrinus completes the date with και ωκοδομει τον οικο̅ τω κ̅ω̅, a house-building clause Brenton did not report. Supplying it would apply an unreported reading even if its English were borrowed from another translation. Keeping both commands would repeat the same event in different forms, while substituting the Appendix words at 6:1a would put them where Alexandrinus does not have them. Keep 6:1–1d unchanged and retain the Appendix sentence as another form of the command, with its Gr. bring gloss (CCEL 29#14). This is a limit of editorial scope, not doubtful evidence: agrees remains true. Swete also relocates the hewers and dates and changes the chapter’s ending, but differences elsewhere do not by themselves prevent a complete local promotion; the unfinished dated sentence is the dependency that prevents this one.",
+      "swete": {
+        "volume": 1,
+        "page": 684,
+        "evidence": "apparatus",
+        "reading": "17 και ητοιμασαν] pr και ενετειλατο ο βασιλευς και αιρουσιν λιθους μεγαλους λιθους τιμιους εις τον θεμελιον του οικου· και λιθους απελεκητους και επελεκησαν οι υιοι Σαλωμων· και οι υιοι Χειραμ· και οι Βιβλιοι· A | VI 1 Ισραηλ 2°] + και ωκοδομει τον οικο̅|τω κ̅ω̅ A | VI 2–5 om A",
+        "agrees": true
+      },
+      "source_note": "\\ft See \\fqa Appendix.",
+      "note": "\\fl Alex. \\ft has here another form of the stone command at the opening of the next chapter: \\fq And the king commanded and they brought great stones, precious stones for the foundation of the house, and unhewn stones.\\ft  \\fl Gr. \\fq bring\\ft .",
+      "lemma": null
+    },
+    "BAK 1KI 5:31": {
+      "appendix": "\\ip 5. \\vp 17\\vp*And the king commanded and they brought great stones, precious stones for the foundation of the house, and unhewn stones.  \n",
+      "why": "Give the Appendix stone command in the retained note 1KI 5:30#3, with its Gr. bring gloss from CCEL 29#14. That decision explains why moving the command into the text would require completing Brenton’s dated sentence with an Alexandrine reading he did not report. Swete I p. 687 records the related placement of the construction dates after cedar, the Bul reading and seven-year clause, and the omission of the curtain passage. Brenton reports none of these changes here; retain his construction summary and chapter ending. These differences do not require demoting the independent Appendix additions at 6:11–14 and 6:22 or the complete palace passage moved at 7:38–50. The supported stone command remains available in its note; the Appendix itself is not printed.",
+      "moved_to": "1KI 5:30#3",
+      "swete": {
+        "volume": 1,
+        "page": 687,
+        "evidence": "apparatus",
+        "reading": "κεδρου] + εν τω ετει τω τεταρτω·| εθεμελιωσεν τον οικον κ̅υ̅| εν μηνι Ζειου· και τω δευτε|ρω μηνι εν ενδεκατω ενιαυ|τω εν μηνι Βουλ· ουτος ο μην| ογδοος συνετελεσθη ο οικος| εις παντα λογον αυτου και εις| πασαν διαταξιν αυτου και ωκο|δομησεν αυτον εν επτα ετεσι̅| A | om κυκλοθεν…ναου A",
+        "agrees": true
+      }
     }
   }
 }
