@@ -47,10 +47,7 @@ How the verse reads once a report of Codex Alexandrinus is carried out.
 
 Splices, compositions, and the editor's own words.
 
-- `EZK 11:6 CCEL`: The verse prints “the ways thereof”: Brenton’s “ways” in the King James frame “the streets thereof”, for A’s αυτης (Swete III p. 402). No source has these words together. Decide whether to keep the splice, or keep Brenton’s “your ways” and report A in a kept note.
-- `EZK 23:32 CCEL`: The verse prints “it shall be for derision and scorn”, where Brenton’s note has “derision, or, scorn”; the “and” is the editor’s, for A’s εις γελωτα και εις μυκτηρισμον (Swete III p. 433), and the displaced note quotes that form. The verse also drops the “and” before “full” for Swete’s om και 2° AQ, which Brenton does not report. Decide whether Brenton’s “or” offers two renderings of one word or names two, and print accordingly.
 - `1KI 5:31`: The completion of 6:1, “that he began to build the house to the Lord”, is the King James “that he began to build the house of the LORD” with “to” for “of”, rendering A's τω κ̅ω̅ (Brenton's own phrase at 6:2), and the decision names no source for it. Decide whether to take the King James words exactly or declare the composition.
-- `JOB 39:22 CCEL`: The verse prints “as he meeteth it”; “it” is declared supplied but comes from no named translation. Decide whether to narrow the `from` to “a king” and keep Brenton's “as he meets him”.
 
 ## 3. Future work
 
