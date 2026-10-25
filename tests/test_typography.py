@@ -85,6 +85,30 @@ def test_a_declared_opening_keeps_its_small_capitals_or_is_refused() -> None:
         typography.small_caps(usj.parse(text.replace("\\sc John\\sc*", "John")))
 
 
+def test_an_opening_divided_by_a_note_keeps_both_halves() -> None:
+    doc = usj.parse(
+        "\\id GEN\n\\c 1\n\\p \\v 1 \\sc In the beginning\\sc* God made, "
+        "and \\sc emphasis\\sc*."
+    )
+    verse = scripture.verses(doc)["1:1"]
+    note = usj.note("f", "a note")
+    divided = scripture.edited(
+        doc,
+        [(verse, verse.text.index("beg"), verse.text.index("beg"), [note])],
+        split_styles=True,
+    )
+    result = usj.serialize(typography.small_caps(divided))
+    assert "\\sc In the \\sc*\\f - a note\\f*\\sc beginning\\sc* God" in result
+    assert "and emphasis." in result
+    # Small capitals beside an opening, with no note dividing them, are emphasis.
+    adjacent = usj.parse(
+        "\\id GEN\n\\c 1\n\\p \\v 1 \\sc In the\\sc* \\sc beginning\\sc*."
+    )
+    assert "\\sc In the\\sc* beginning." in usj.serialize(
+        typography.small_caps(adjacent)
+    )
+
+
 def test_selective_emphasis_is_unwrapped_without_new_speech_punctuation() -> None:
     source = usj.parse(
         "\\id MAT\n\\c 1\n\\p \\v 1 \\sc The\\sc* beginning.\n"

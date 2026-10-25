@@ -1811,7 +1811,7 @@
     },
     "GEN 2:23#3": {
       "lemma": "her husband",
-      "why": "Brenton 1879 physical p. 19 and 1900 physical p. 15 (printed p. 3) set τ before her in “taken out of her husband”."
+      "why": "Brenton 1844 vol. 1 physical p. 27 (printed p. 3) sets its dagger before her husband; 1879 physical p. 19, 1884 physical p. 18 and 1900 physical p. 15 (printed p. 3) set τ before her. Their note explains the Hebrew names Issha and Ish. Swete I p. 4 prints ὅτι ἐκ τοῦ ἀνδρὸς αὐτῆς ἐλήμφθη αὕτη. Keep the lemma her husband and every word of the verse and note. An explicit Brenton lemma override also places the note before its declared words, before any contextual widening, rather than retaining eBible's caller before of; this rule applies to all such overrides. Null lemmas and automatically inferred scopes retain their positions."
     },
     "GEN 2:24": {
       "lemma": "cleave",
@@ -1940,8 +1940,9 @@
       "why": "hearken to and obey me are two renderings"
     },
     "GEN 30:36": {
-      "lemma": "them and Jacob",
-      "why": "and between renders the and of between them and Jacob"
+      "lemma": "and",
+      "occurrence": 2,
+      "why": "And between renders the second and, between them and Jacob. Any context needed to identify this conjunction belongs in both the printed lemma and its alternative, not in the caller's scope."
     },
     "GEN 33:1": {
       "lemma": "lifted up",
@@ -2053,7 +2054,8 @@
     "EXO 12:3": {
       "lemma": "each man a lamb",
       "note": "πρόβατον, _sheep_ generally but ver. 5 seems to show that the word _lamb_ is admissible in this passage.",
-      "why": "the note is on the word lamb; according to the houses is not part of it; sheep renders πρόβατον, generally is comment"
+      "why": "the note is on the word lamb; according to the houses is not part of it; sheep renders πρόβατον, generally is comment",
+      "quotation": true
     },
     "EXO 12:16": {
       "lemma": "a holy convocation",
@@ -3987,8 +3989,9 @@
       "why": "out of the way of renders above alone"
     },
     "PSA 19:8": {
-      "lemma": "we will glory",
-      "why": "be magnified renders glory"
+      "lemma": "glory",
+      "occurrence": 2,
+      "why": "Be magnified renders the second glory alone. The subject we and modal will remain in the sentence and must be echoed if needed to distinguish the printed lemma."
     },
     "PSA 21:22": {
       "lemma": "lowliness",
@@ -4497,8 +4500,9 @@
       "why": "the phrase ends at inhabited"
     },
     "ISA 6:13": {
-      "lemma": "there shall be",
-      "why": "Gr. is renders shall be"
+      "lemma": "shall be",
+      "occurrence": 1,
+      "why": "Gr. is renders the first shall be. There remains the subject of the existential construction and must not disappear when the alternative replaces the lemma."
     },
     "ISA 7:18": {
       "note": "Or, _which part of the enemy_, etc. _shall rule over the river of Egypt_; but according to Alex. the reading in the text is the right one.",
@@ -4557,7 +4561,7 @@
     },
     "ISA 19:3": {
       "lemma": "them that have in them a divining spirit",
-      "why": "the ventriloquists (ἐγγαστριμύθους) renders them that have in them a divining spirit, as in 8. 19; them that speak out of the earth is τοὺς ἐκ τῆς γῆς φωνοῦντας"
+      "why": "Brenton 1844 vol. 2 physical p. 201 (printed p. 698), 1879 physical p. 869, 1884 physical p. 836 and 1900 physical p. 865 (printed p. 853 in the Bagster printings) put the caller before them that have in them a divining spirit: a dagger in 1844 and γ in the Bagster printings. Their note reads Gr. the ventriloquists. Swete III p. 133 prints τοὺς ἐκ τῆς γῆς φωνοῦντας καὶ τοὺς ἐγγαστριμύθους: the ventriloquists renders the latter phrase, not them that speak out of the earth. Keep the complete lemma and note wording; the lemma override also places the note before its declared words, where Brenton and CCEL put it."
     },
     "ISA 19:9": {
       "lemma": "make",
@@ -4746,8 +4750,11 @@
       "why": "The source Or, full length renders long alone; retain robe as the noun after either adjective."
     },
     "JOS 21:13": {
-      "lemma": "Chebron, and the suburbs",
-      "why": "glebe, after q. d., renders suburbs alone"
+      "lemma": "suburbs",
+      "occurrence": 1,
+      "note": "The Greek word is different from that translated _‘suburbs.’_ above.—q. d. _glebe_.",
+      "quotation": true,
+      "why": "The note discusses the Greek word for the first suburbs; Hebron is only context distinguishing that occurrence. Suburbs and glebe are lexical quotations within the explanation, not whole-lemma alternatives, and retain their words when the printed lemma widens."
     },
     "1KI 11:33#2": {
       "lemma": "the abomination of the children of Ammon",
@@ -4763,7 +4770,7 @@
     },
     "DEU 21:5": {
       "lemma": "in his name",
-      "why": "Brenton’s caller stands before in (1844 p. 237; 1879 p. 275; 1900 p. 271), where eBible’s stands before bless; his name renders in his name"
+      "why": "Brenton 1844 vol. 1 physical p. 237 (printed p. 213), 1879 physical p. 275, 1884 physical p. 244 and 1900 physical p. 271 (printed p. 259 in the Bagster printings) put the caller before in in bless in his name: a dagger in 1844 and δ in the Bagster printings. The note reads Or, his name. Hebraism. Swete I p. 385 prints καὶ εὐλογεῖν ἐπὶ τῷ ὀνόματι αὐτοῦ, without a variant on that phrase. His name renders in his name. Keep the complete lemma and source wording; the lemma override also places the note before these words rather than before bless, where eBible places it."
     },
     "EXO 21:17": {
       "lemma": "let him certainly die",
@@ -4838,8 +4845,10 @@
       "why": "He that sends quotes the literal Greek construction, not continuous replacement English for He sends: substituting it would remove the clause’s main predicate. Mark it as a grammatical explanation, retaining Brenton’s words and the exact phrase they explain."
     },
     "MIC 7:4 CCEL": {
-      "lemma": "who acts by a rigid rule",
-      "why": "The lemma takes in the whole phrase that the revision of who acts respells, so that it changes with the verse; the words the caller stands before alone would be left as the verse no longer reads."
+      "lemma": "acts by a rigid rule",
+      "note": "Gr. _goes upon_, etc.",
+      "quotation": true,
+      "why": "The abbreviated Greek gloss explains acts by a rigid rule, retaining the relative pronoun who. Its etc. leaves the remainder unstated, so quote the source gloss as commentary rather than present it as a complete alternative. A note-specific revision keeps acts in the lemma in agreement with the verse."
     },
     "JER 21:9 CCEL": {
       "lemma": "advance to",
@@ -4849,10 +4858,6 @@
       "lemma": "bought",
       "why": "κτηθήσονται, the substituted Alex. reading, is rendered bought"
     },
-    "JER 45:2 CCEL": {
-      "lemma": "that remains",
-      "why": "The lemma takes in the whole phrase that the revision of that remains respells, so that it changes with the verse; the words the caller stands before alone would be left as the verse no longer reads."
-    },
     "EZK 5:9 CCEL": {
       "lemma": "for all thine abominations",
       "why": "The note gives the literal Greek preposition, and the lemma takes in the whole phrase it governs; the words the caller stands before alone would end on the possessive thine."
@@ -4860,14 +4865,6 @@
     "JOB 19:23 CCEL": {
       "lemma": "oh that",
       "why": "The lemma takes in the whole phrase that the revision of oh that respells, so that it changes with the verse; the word the caller stands before alone would be left as the verse no longer reads."
-    },
-    "EZK 17:15 CCEL": {
-      "lemma": "that acts as an adversary",
-      "why": "The lemma takes in the whole phrase that the revision of that acts respells, so that it changes with the verse; the words the caller stands before alone would be left as the verse no longer reads."
-    },
-    "JOB 11:12 CCEL": {
-      "lemma": "man vainly buoys",
-      "why": "The lemma takes in the whole phrase that the revision of man vainly buoys respells, so that it changes with the verse; the word the caller stands before alone would be left as the verse no longer reads."
     },
     "OBA 1:19 CCEL#2": {
       "lemma": "in the plain",

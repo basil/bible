@@ -830,11 +830,17 @@ def replaced(content: Content, start: int, end: int, new: Content) -> Content:
 
 
 def inserted(
-    content: Content, offset: int, items: Content, *, after_notes: bool = True
+    content: Content,
+    offset: int,
+    items: Content,
+    *,
+    after_notes: bool = True,
+    split_styles: bool = False,
 ) -> Content:
     """The content with items set at an offset in its words, after the notes
-    already there or before them, and never inside a character style."""
-    head, tail = split(content, offset, notes_left=after_notes, whole=True)
+    already there or before them. A destination inside a character style is
+    refused unless split_styles divides it, keeping the items outside it."""
+    head, tail = split(content, offset, notes_left=after_notes, whole=not split_styles)
     return joined(head, items, tail)
 
 

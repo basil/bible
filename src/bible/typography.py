@@ -69,10 +69,10 @@ def small_caps(doc: Document) -> Document:
                     result.append(item)
                 elif "content" in item:
                     place = (book, chapter, verse)
-                    keep = (
-                        not (note or title)
-                        and at == 0
-                        and (opening or place in OPENINGS)
+                    keep = not (note or title) and (
+                        (at == 0 and (opening or place in OPENINGS))
+                        # An opening a note divides keeps both its halves.
+                        or _continues_opening(result)
                     )
                     inner = inline(item["content"], note=note or usj.is_note(item))
                     if usj.is_type(item, "char", "sc") and not keep:
@@ -93,6 +93,21 @@ def small_caps(doc: Document) -> Document:
         + ", ".join(f"{b} {c}:{v}" for b, c, v in sorted(declared - met)),
     )
     return usj.with_blocks(doc, blocks)
+
+
+def _continues_opening(result: Content) -> bool:
+    """Whether the content so far ends with small capitals kept as an
+    opening and a note that divides them, with only spaces besides."""
+    divided = False
+    for item in reversed(result):
+        if isinstance(item, str):
+            if item.strip():
+                return False
+        elif usj.is_note(item):
+            divided = True
+        else:
+            return divided and usj.is_type(item, "char", "sc")
+    return False
 
 
 def _walk(

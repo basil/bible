@@ -267,8 +267,9 @@ def brenton(
             continue
         key, verse, words = read.key, read.verse, read.words
         exception = exceptions.get(key, {})
-        if "verse" in exception or exception.get("widen") is False:
-            # A moved or deliberately narrow note stands at its named words.
+        # A moved or deliberately narrow note stands at its named words.
+        relocated = "verse" in exception or exception.get("widen") is False
+        if relocated:
             require(
                 read.scope is None,
                 f"Alexandrine lemma also has a Brenton exception: {key}",
@@ -288,14 +289,7 @@ def brenton(
                 key,
                 exception.get("occurrence"),
             )
-            assert glossed is not None
-            at = words[glossed[0]][1]
-            read = replace(read, offset=at)
-            note = printed(read, span, glossed, rule, exception, ctx, report)
-            replacements[key] = None
-            moved.append((read.reference, at, note))
-            continue
-        if read.scope is None:
+        elif read.scope is None:
             span, glossed, rule = lemmas.inferred(
                 read.kind,
                 verse.text,
@@ -318,7 +312,19 @@ def brenton(
             span, glossed, rule = lemmas.preserved(
                 words, read.scope["lemma"], read.scope["glossed"], key
             )
-        replacements[key] = printed(read, span, glossed, rule, exception, ctx, report)
+        note = printed(read, span, glossed, rule, exception, ctx, report)
+        # Declared words also determine placement, before any context added
+        # to make the printed lemma unique. Inferred and null lemmas keep
+        # their caller.
+        if isinstance(exception.get("lemma"), str) and glossed is not None:
+            at = words[glossed[0]][1]
+            if relocated or at != read.offset:
+                replacements[key] = None
+                moved.append((read.reference, at, note))
+                continue
+        # A moved note left here would stand in the verse it was moved from.
+        assert not relocated, key
+        replacements[key] = note
 
     def change(item: Node) -> Node | Content | None:
         if item["type"] == "note":
@@ -334,7 +340,9 @@ def brenton(
     if moved:
         verses = scripture.verses(doc)
         doc = scripture.edited(
-            doc, [(verses[reference], at, at, [note]) for reference, at, note in moved]
+            doc,
+            [(verses[reference], at, at, [note]) for reference, at, note in moved],
+            split_styles=True,
         )
     return doc, report
 

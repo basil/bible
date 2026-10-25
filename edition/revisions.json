@@ -9869,6 +9869,31 @@
       "scope": "scripture",
       "why": "In JOB 11:12 man is the singular subject of buoys himself up; use the archaic third-person verb."
     },
+    "buoys": {
+      "to": "buoyeth",
+      "scope": "scripture",
+      "notes": [
+        "JOB 11:12 CCEL"
+      ],
+      "why": "Keep the narrow lemma buoys in agreement with the scripture-only revision of man vainly buoys, without including its subject and adverb in the note's scope."
+    },
+    "remains": {
+      "to": "remaineth",
+      "scope": "scripture",
+      "notes": [
+        "JER 45:2 CCEL"
+      ],
+      "why": "Keep this note's narrow lemma in agreement with the contextual revision of that remains, without including the relative pronoun in its scope."
+    },
+    "acts": {
+      "to": "acteth",
+      "scope": "scripture",
+      "notes": [
+        "MIC 7:4 CCEL",
+        "EZK 17:15 CCEL"
+      ],
+      "why": "Revise the present-tense verb in these notes' narrow lemmas and alternatives as in the contextual scripture rules who acts and that acts; preserve the noun elsewhere and the grammar of commentary."
+    },
     "what matters it": {
       "to": "what mattereth it",
       "scope": "scripture",

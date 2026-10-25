@@ -293,6 +293,245 @@ def test_a_repeated_verb_can_keep_its_gloss_clear_of_its_object(
     )
 
 
+def test_a_declared_lemma_moves_its_caller_before_widening(
+    ctx: bible.annotate.Context,
+) -> None:
+    source = book(
+        "GEN",
+        r"\v 9 He was very advanced in years; thou art advanced in "
+        r"\f + \fr 99:9 \fqa Gr. \ft days.\f*years.",
+    )
+    before = deepcopy(source)
+    policy = changed(
+        ctx.policy,
+        "brenton_notes",
+        lambda data: data["notes"].update(
+            {
+                "GEN 99:9": {
+                    "lemma": "years",
+                    "occurrence": 1,
+                    "why": "The note belongs to the first years.",
+                }
+            }
+        ),
+    )
+    doc, _ = annotate.brenton(
+        "GEN", source, (), frozenset(), replace(ctx, policy=policy)
+    )
+    verse = scripture.verses(doc)["99:9"]
+    [(offset, note)] = verse.notes
+    assert offset == verse.text.index("years")
+    assert notes.lemma_of(note) == "very advanced in years"
+    assert source == before
+    assert verse.text == scripture.verses(source)["99:9"].text
+
+
+@pytest.mark.parametrize("override", [{}, {"lemma": None}])
+def test_inferred_and_null_lemmas_keep_their_callers(
+    ctx: bible.annotate.Context, override: dict[str, Any]
+) -> None:
+    source = book(
+        "GEN", r"\v 9 There was light.\f + \fr 99:9 \fqa Gr. \ft brightness.\f*"
+    )
+    policy = changed(
+        ctx.policy,
+        "brenton_notes",
+        lambda data: data["notes"].update(
+            {"GEN 99:9": {**override, "why": "Keep the source position."}}
+        ),
+    )
+    doc, _ = annotate.brenton(
+        "GEN", source, (), frozenset(), replace(ctx, policy=policy)
+    )
+    verse = scripture.verses(doc)["99:9"]
+    [(offset, _)] = verse.notes
+    assert offset == len(verse.text)
+
+
+def placed(
+    edition: bible.pipeline.Edition, key: str
+) -> tuple[scripture.Verse, int, Node]:
+    """A printed note by its key, with its verse and its place in it."""
+    code = key.split()[0]
+    row = next(row for row in edition.notes[code] if row["key"] == key)
+    verse = scripture.verses(edition.documents[code])[row["reference"]]
+    [(offset, note)] = [(at, n) for at, n in verse.notes if n.get("x-key") == key]
+    return verse, offset, note
+
+
+@pytest.mark.parametrize(
+    "key, words",
+    [
+        ("GEN 2:23#3", "her husband"),
+        ("DEU 21:5", "in his name"),
+        ("ISA 19:3", "them that have in them a divining spirit"),
+        ("JOS 13:1", "years"),
+        ("JER 30:23 CCEL", "the Queen of the Palace"),
+        ("PSA 93:1", "God of vengeance"),
+        ("PRO 24:31", "weeds"),
+        ("ISA 61:3", "the garment of glory"),
+        ("ISA 61:3#2", "oil"),
+    ],
+)
+def test_brentons_caller_follows_its_declared_words(
+    edition: bible.pipeline.Edition, key: str, words: str
+) -> None:
+    verse, offset, _ = placed(edition, key)
+    assert offset == verse.text.index(words)
+    if key.startswith("ISA 61:3"):
+        assert [n["x-key"] for _, n in verse.notes] == ["ISA 61:3#2", "ISA 61:3"]
+
+
+@pytest.mark.parametrize(
+    "key, words, occurrence",
+    [
+        ("GEN 30:36", "and", 2),
+        ("EXO 12:3", "each man a lamb", 1),
+        ("DEU 4:9", "keep thy heart", 1),
+        ("JOS 21:13", "suburbs", 1),
+        ("1KI 21:39", "thy life", 1),
+        ("2KI 8:28#2", "king of the Syrians", 1),
+        ("2KI 17:14", "their neck", 1),
+        ("PSA 19:8", "glory", 2),
+        ("JOB 11:12 CCEL", "buoyeth", 1),
+        ("MIC 7:4 CCEL", "acteth by a rigid rule", 1),
+        ("OBA 1:19 CCEL#2", "in the plain", 1),
+        ("ISA 6:13", "shall be", 1),
+        ("JER 45:2 CCEL", "remaineth", 1),
+        ("EZK 17:15 CCEL", "acteth as an adversary", 1),
+    ],
+)
+def test_context_does_not_move_a_callers_scope(
+    edition: bible.pipeline.Edition, key: str, words: str, occurrence: int
+) -> None:
+    verse, offset, note = placed(edition, key)
+    matches = list(re.finditer(r"\b" + re.escape(words) + r"\b", verse.text, re.I))
+    assert offset == matches[occurrence - 1].start()
+    # The printed lemma may add context, but must still identify one passage.
+    lemma = notes.lemma_of(note)
+    assert lemma is not None
+    assert verse.text.count(lemma) == 1
+
+
+@pytest.mark.parametrize(
+    "key, lemma",
+    [
+        ("OBA 1:19 CCEL#2", "in the plain"),
+        ("EXO 12:3", "each man a lamb"),
+        ("2KI 8:28#2", "king of the Syrians"),
+    ],
+)
+def test_commentary_lemmas_have_no_whole_lemma_alternatives(
+    edition: bible.pipeline.Edition, key: str, lemma: str
+) -> None:
+    _, _, note = placed(edition, key)
+    assert notes.lemma_of(note) == lemma
+    assert not any(n.get("marker") == "fqa" for n in usj.walk(note["content"]))
+
+
+@pytest.mark.parametrize(
+    "key, quoted",
+    [
+        ("EXO 12:3", ["sheep", "lamb"]),
+        ("JOS 21:13", ["suburbs", "glebe"]),
+        ("MIC 7:4 CCEL", ["goeth upon"]),
+    ],
+)
+def test_lexical_commentary_does_not_echo_a_widened_lemma(
+    edition: bible.pipeline.Edition, key: str, quoted: list[str]
+) -> None:
+    _, _, note = placed(edition, key)
+    assert not any(n.get("marker") == "fqa" for n in usj.walk(note["content"]))
+    assert [
+        usj.text_of(n["content"])
+        for n in usj.walk(note["content"])
+        if usj.is_type(n, "char", "it")
+    ] == quoted
+
+
+@pytest.mark.parametrize(
+    "key, replacements",
+    [
+        ("GEN 30:36", ["between them and between Jacob"]),
+        ("PSA 19:8", ["we will be magnified in the name"]),
+        ("JOB 11:12 CCEL", ["man vainly floats himself", "man vainly swims himself"]),
+        ("ISA 6:13", ["there is a tenth"]),
+        ("JER 45:2 CCEL", ["He that dwelleth in this city"]),
+        ("EZK 17:15 CCEL", ["he that acteth perversely be preserved"]),
+    ],
+)
+def test_alternatives_preserve_their_sentences_subjects_and_context(
+    edition: bible.pipeline.Edition, key: str, replacements: list[str]
+) -> None:
+    verse, _, note = placed(edition, key)
+    lemma = notes.lemma_of(note)
+    assert lemma is not None
+    alternatives = [
+        usj.text_of(n["content"]).strip()
+        for n in usj.walk(note["content"])
+        if n.get("marker") == "fqa"
+    ]
+    assert len(alternatives) == len(replacements)
+    for alternative, expected in zip(alternatives, replacements):
+        assert expected in verse.text.replace(lemma, alternative, 1)
+
+
+@pytest.mark.parametrize(
+    "key, context, lemma, revised, alternative, revised_alternative",
+    [
+        ("JOB 11:12 CCEL", "man vainly buoys", "buoys", "buoyeth", "floats", "floats"),
+        (
+            "JER 45:2 CCEL",
+            "that remains",
+            "remains",
+            "remaineth",
+            "dwelleth",
+            "dwelleth",
+        ),
+        (
+            "EZK 17:15 CCEL",
+            "that acts as an adversary",
+            "acts as an adversary",
+            "acteth as an adversary",
+            "acts perversely",
+            "acteth perversely",
+        ),
+    ],
+)
+def test_narrow_lemmas_follow_grammar_without_revising_nouns_or_commentary(
+    declared: bible.policy.Policy,
+    key: str,
+    context: str,
+    lemma: str,
+    revised: str,
+    alternative: str,
+    revised_alternative: str,
+) -> None:
+    source = book(
+        "GEN",
+        f"\\v 9 {context}; buoys; remains; acts."
+        f"\\f - \\fr 99:9 \\fq {lemma}: \\ft or, \\fqa {alternative}"
+        r"\ft ; man vainly buoys; that remains; that acts.\f*",
+    )
+    [note] = usj.notes_of(source["content"])
+    note["x-key"] = key
+    before = deepcopy(source)
+    doc = revision.respelled(source, declared, set())
+    verse = scripture.verses(doc)["99:9"]
+    assert verse.text == context.replace(lemma, revised) + "; buoys; remains; acts."
+    [(_, note)] = verse.notes
+    assert notes.lemma_of(note) == revised
+    assert [
+        usj.text_of(n["content"])
+        for n in usj.walk(note["content"])
+        if n.get("marker") == "fqa"
+    ] == [revised_alternative]
+    assert usj.text_of(note["content"]).endswith(
+        "; man vainly buoys; that remains; that acts."
+    )
+    assert source == before
+
+
 def test_a_note_in_the_wrong_verse_is_set_on_its_words_in_the_right_one(
     ctx: bible.annotate.Context, policy: bible.policy.Policy
 ) -> None:
@@ -1381,7 +1620,6 @@ def test_unrelated_and_stale_source_notes_are_omitted(
         ("1SA 23:11", "shut up", "i.e., _besieged_"),
         ("JOS 21:4", "out of the tribe of Judah", "Gr. _from_"),
         ("1SA 26:24#2", "be precious", "Gr. _magnified_"),
-        ("ISA 6:13", "there shall be", "Gr. _is_"),
     ],
 )
 def test_identifying_lemmas_do_not_add_words_to_explanations(

@@ -255,6 +255,28 @@ def test_an_insertion_stands_before_a_style_and_among_notes_in_order() -> None:
         usj.inserted(CONTENT, 14, [note])
 
 
+def test_a_note_can_split_nested_styles_without_changing_their_words() -> None:
+    doc = usj.parse(
+        "\\id GEN\n\\c 1\n\\p\n" r"\v 1 \sc before \+it these words\+it*\sc*"
+    )
+    before = usj.serialize(doc)
+    note = usj.note("f", usj.char("ft", "a note"))
+    verse = scripture.verses(doc)["1:1"]
+    offset = verse.text.index("words")
+    with pytest.raises(CheckFailed, match="inside a .sc span"):
+        scripture.edited(doc, [(verse, offset, offset, [note])])
+    changed = scripture.edited(
+        doc, [(verse, offset, offset, [note])], split_styles=True
+    )
+    assert usj.serialize(changed).splitlines()[-1] == (
+        r"\v 1 \sc before \+it these \+it*\sc*\f - \ft a note\f*"
+        r"\sc \+it words\+it*\sc*"
+    )
+    assert scripture.verses(changed)["1:1"].notes == ((offset, note),)
+    assert scripture.verses(changed)["1:1"].text == verse.text
+    assert usj.serialize(doc) == before
+
+
 def test_rewriting_words_in_place_keeps_their_styles() -> None:
     assert (
         usj.serialize(usj.substituted(CONTENT, [(4, 16, "narrow"), (25, 29, "begins")]))

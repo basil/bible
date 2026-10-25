@@ -186,14 +186,18 @@ def heads(doc: usj.Document) -> dict[str, list[usj.Node]]:
 
 
 def edited(
-    doc: usj.Document, changes: Iterable[tuple[Verse, int, int, usj.Content]]
+    doc: usj.Document,
+    changes: Iterable[tuple[Verse, int, int, usj.Content]],
+    *,
+    split_styles: bool = False,
 ) -> usj.Document:
     """The document with changes made to its verses' words.
 
     A change is (verse, start, end, content): the words from start to end, by
     their offsets in the verse, give way to the content. A change of no words
     is an insertion, and stands after the notes already at its place; those
-    at one place stand in the order given.
+    at one place stand in the order given. With split_styles, an insertion
+    may divide a character style, retaining its styling on both sides.
     """
     by_part: dict[tuple[int, int, int], list[tuple[int, int, int, usj.Content]]] = {}
     for order, (verse, start, end, content) in enumerate(changes):
@@ -218,7 +222,7 @@ def edited(
                 f"Overlapping changes in {usj.book_code(doc)}",
             )
             if start == end:
-                items = usj.inserted(items, start, new)
+                items = usj.inserted(items, start, new, split_styles=split_styles)
             else:
                 items = usj.replaced(items, start, end, new)
                 floor = start
