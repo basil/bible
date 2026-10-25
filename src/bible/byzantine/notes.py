@@ -892,7 +892,7 @@ def for_edition(
             else:
                 hits = lemmas.occurrences(words, scripture.words_of(lemma))
                 require(len(hits) == 1, f"TR note lemma is not unique: {key}")
-                at = words[hits[0]][1]
+                at = lemmas.opening(verse.text, words[hits[0]][1])
             extra: usj.Extra = {
                 "x-key": key,
                 "x-scope": {"declared": lemma},

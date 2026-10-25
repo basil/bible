@@ -328,14 +328,19 @@ def brenton(
             )
         else:
             span, glossed, rule = lemmas.preserved(
-                words, read.scope["lemma"], read.scope["glossed"], key
+                verse.text,
+                words,
+                read.offset,
+                read.scope["lemma"],
+                read.scope["glossed"],
+                key,
             )
         note = printed(read, span, glossed, rule, exception, ctx, report)
         # Declared words also determine placement, before any context added
         # to make the printed lemma unique. Inferred and null lemmas keep
         # their caller.
         if isinstance(exception.get("lemma"), str) and glossed is not None:
-            at = words[glossed[0]][1]
+            at = lemmas.opening(verse.text, words[glossed[0]][1])
             if relocated or at != read.offset:
                 replacements[key] = None
                 moved.append((read.reference, at, note))
@@ -504,7 +509,7 @@ def george(
             reference,
             verse,
             words,
-            words[first][1],
+            lemmas.opening(verse.text, words[first][1]),
             body,
             tuple(cited),
             note["note"],

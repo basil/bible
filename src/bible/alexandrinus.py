@@ -665,19 +665,27 @@ def surviving_scope(
     )
 
 
-def anchor(verse: scripture.Verse, phrase: str | None, key: str) -> int:
+def anchor(
+    verse: scripture.Verse,
+    phrase: str,
+    key: str,
+    near: tuple[int, int] | None = None,
+) -> int:
     """Where a phrase stands in a verse: the start of its one occurrence, as
-    whole words, whatever the markup; a note on the whole verse stands at its
-    start. An absent or repeated phrase needs a decision, never a guess."""
-    if phrase is None:
-        return 0
+    whole words, whatever the markup, or of the one that meets the words a
+    reading printed. An absent or repeated phrase needs a decision, never a
+    guess."""
     words = word_spans(verse.text)
-    hits = lemmas.occurrences(words, words_of(phrase))
-    require(
-        words_of(phrase) and len(hits) == 1,
-        f"Note lemma not anchored once: {key} ({len(hits)})",
-    )
-    return words[hits[0]][1]
+    tokens = words_of(phrase)
+    hits = lemmas.occurrences(words, tokens) if tokens else []
+    if len(hits) > 1 and near is not None:
+        hits = [
+            hit
+            for hit in hits
+            if words[hit][1] <= near[1] and near[0] <= words[hit + len(tokens) - 1][2]
+        ]
+    require(len(hits) == 1, f"Note lemma not anchored once: {key} ({len(hits)})")
+    return lemmas.opening(verse.text, words[hits[0]][1])
 
 
 def check_pins(
@@ -713,7 +721,8 @@ def check_pins(
 @dataclass(frozen=True)
 class Replacement:
     """The words of a verse that a decision replaces, what it prints in their
-    place, and the note it leaves: in which verse, and where in its words."""
+    place, and the note it leaves: in which verse, and where in its words,
+    or None where it stands before its declared lemma."""
 
     decision: str
     verse: str
@@ -722,8 +731,14 @@ class Replacement:
     content: tuple[str | Node, ...]
     note: Node | None
     note_verse: str
-    note_at: tuple[int, int]
+    note_at: tuple[int, int] | None
     omits_verse: bool
+
+
+# A note set again in a verse a reading changes: its position, its rank
+# among the verse's notes, the note, the words it is about, and the words a
+# reading printed, which pick its lemma's occurrence where that repeats.
+Pending = tuple[int, int, Node, usj.Scope | None, tuple[int, int] | None]
 
 
 def replacement(
@@ -746,6 +761,12 @@ def replacement(
     require(len(found) == 1, f"Alexandrine from not found once outside notes: {key}")
     start, old = found[0].start(), found[0][0]
     english = derived(key, entry, source, entry.get("supplied", ()))
+    declared = isinstance(entry.get("lemma"), str)
+    # A declared lemma places the note itself, before its first word.
+    require(
+        not (declared and "note_at" in entry),
+        f"Note position given by its lemma; remove note_at: {key}",
+    )
     at = entry.get("note_at", 0)
     require(
         type(at) is int and 0 <= at <= len(english), f"Invalid note position: {key}"
@@ -768,7 +789,8 @@ def replacement(
             and (entry.get("omits") or lemma == derived_lemma(english, 0)),
             f"Composed Alexandrine note does not fit its lemma: {key}",
         )
-    home, note_at = reference, (start, before)
+    home = reference
+    note_at = None if declared else (start, before)
     omits = entry.get("omit_verse", False)
     if omits:
         require(
@@ -972,7 +994,7 @@ def promoted(
         | {r.note_verse for r in replacements if r.note}
         | {placed[key][0].reference for key in rewritten}
     ) - omitted
-    again: dict[str, list[tuple[int, int, Node, usj.Scope | None]]] = {}
+    again: dict[str, list[Pending]] = {}
     for reference in touched:
         verse = verses[reference]
         changes = sorted(
@@ -983,7 +1005,7 @@ def promoted(
                 previous.end <= current.start,
                 f"Overlapping Alexandrine replacements: {previous.decision}, {current.decision}",
             )
-        kept: list[tuple[int, int, Node, usj.Scope | None]] = []
+        kept: list[Pending] = []
         for offset, note in verse.notes:
             key = note["x-key"]
             if key in consumed:
@@ -1000,25 +1022,36 @@ def promoted(
                 )
                 lemma, glossed = surviving_scope(note, verse, offset, policy)
                 scope = {"lemma": lemma, "glossed": glossed}
+            # A note about no words keeps its place, which words a reading
+            # replaces around it no longer have.
+            require(
+                scope is None
+                or not any(r.start < offset < r.end for r in changes)
+                or scope.get("declared", scope.get("lemma")) is not None,
+                f"Note about no words within replaced words: {key}",
+            )
             if companion is not None:
                 note = edition_note(
                     key, reference, usj.parse(companion["to"], fragment=True), scope
                 )
             elif scope is not None:
                 note = {**note, "x-scope": scope}
-            kept.append((shifted(offset, changes), order[key], note, scope))
+            kept.append((shifted(offset, changes), order[key], note, scope, None))
         # A reading's note takes the place, among the verse's notes, of the
-        # note it replaces; any other new note follows them.
-        fresh: list[tuple[int, int, Node, usj.Scope | None]] = [
-            (
-                shifted(r.note_at[0], changes, strict=True) + r.note_at[1],
-                order.get(r.note["x-key"], len(order)),
-                r.note,
-                None,
-            )
-            for r in replacements
-            if r.note and r.note_verse == reference
-        ]
+        # note it replaces; any other new note follows them. One with a
+        # declared lemma stands before it, wherever the verse now has it.
+        fresh: list[Pending] = []
+        for r in replacements:
+            if not (r.note and r.note_verse == reference):
+                continue
+            rank = order.get(r.note["x-key"], len(order))
+            if r.note_at is None:
+                start = shifted(r.start, changes, strict=True)
+                printed = (start, start + len(usj.text_of(r.content)))
+                fresh.append((start, rank, r.note, r.note["x-scope"], printed))
+            else:
+                position = shifted(r.note_at[0], changes, strict=True)
+                fresh.append((position + r.note_at[1], rank, r.note, None, None))
         again[reference] = kept + fresh
     removed = consumed | {
         note["x-key"] for reference in touched for _, note in verses[reference].notes
@@ -1048,15 +1081,27 @@ def promoted(
     for reference, listed in again.items():
         verse = verses[reference]
         set_again = []
-        for position, rank, note, scope in listed:
+        for position, rank, note, scope, near in listed:
             if scope is not None:
-                # At the words it is about, as the verse now has them. The
-                # narrower gloss must survive as well, for the lemma to keep
-                # its relation to it.
-                phrase = scope["declared"] if "declared" in scope else scope["lemma"]
-                position = anchor(verse, phrase, note["x-key"])
-                if "glossed" in scope:
-                    anchor(verse, scope["glossed"], note["x-key"])
+                # Before the words it glosses, as the verse now has them: a
+                # preserved note's narrower gloss, within a lemma that must
+                # survive as well, for it to keep its relation to them. A note
+                # about no words keeps its place.
+                key = note["x-key"]
+                if "declared" in scope:
+                    if scope["declared"] is not None:
+                        position = anchor(verse, scope["declared"], key, near)
+                else:
+                    words = word_spans(verse.text)
+                    about = (
+                        None
+                        if scope["lemma"] is None
+                        else lemmas.phrase_span(words, scope["lemma"], key)
+                    )
+                    if scope["glossed"] is not None:
+                        about = lemmas.within(words, about, scope["glossed"], key)
+                    if about is not None:
+                        position = lemmas.opening(verse.text, words[about[0]][1])
             set_again.append((position, rank, note))
         for position, _, note in sorted(set_again, key=lambda e: e[:2]):
             note_changes.append((verse, position, position, [note]))

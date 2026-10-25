@@ -845,17 +845,12 @@ def place_run(
     return result
 
 
-# Punctuation that opens the word it precedes, which a caller stands before.
-OPENING = "‘“'\"([«"
-
-
 def outside_styles(doc: Document, verse: scripture.Verse, offset: int) -> int:
     """The offset, or the start of the character style it falls inside, or
     of the punctuation that opens the word there: a caller stands before a
     supplied word, never among the words of its style, as eBible sets
     Brenton's, and before a quotation mark rather than after it."""
-    while offset > 0 and verse.text[offset - 1] in OPENING:
-        offset -= 1
+    offset = lemmas.opening(verse.text, offset)
     at = 0
     for block, lo, hi, _ in verse.parts:
         for item in doc["content"][block]["content"][lo:hi]:

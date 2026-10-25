@@ -26,6 +26,7 @@ from bible import (
     usj,
 )
 from bible.checks import CheckFailed
+from bible.policy_schema import NoteOverride
 from bible.usj import Document, Node
 
 
@@ -346,6 +347,62 @@ def test_inferred_and_null_lemmas_keep_their_callers(
     verse = scripture.verses(doc)["99:9"]
     [(offset, _)] = verse.notes
     assert offset == len(verse.text)
+
+
+def test_a_declared_lemma_needs_its_caller_before_its_first_word() -> None:
+    verse = "He said, ‘Behold the man’, and the man said nothing."
+    words = scripture.word_spans(verse)
+    # Before the first word, past an opening quotation mark.
+    span, glossed, _ = lemmas.declared(
+        verse, words, verse.index("‘"), "Behold the man", "key"
+    )
+    assert span == glossed == (2, 4)
+    # A repeated phrase is anchored by the word after the caller, and widened.
+    span, glossed, _ = lemmas.declared(
+        verse, words, verse.index("the man said"), "the man", "key"
+    )
+    assert (glossed, span) == ((6, 7), (6, 8))
+    # Not after the word before, parted by its space or its comma.
+    elsewhere = (verse.index(" ‘"), verse.index(", ‘"))
+    for offset in (0, verse.index("the man’"), len(verse), *elsewhere):
+        with pytest.raises(CheckFailed, match="does not stand before its lemma: key"):
+            lemmas.declared(verse, words, offset, "Behold the man", "key")
+    with pytest.raises(CheckFailed, match="not anchored once: key"):
+        lemmas.declared(verse, words, 0, "the man", "key")
+
+
+def test_a_preserved_scope_needs_its_caller_before_its_glossed_words() -> None:
+    verse = "Behold Adam the man as Adam was."
+    words = scripture.word_spans(verse)
+    at = verse.index("Adam")
+    span, glossed, rule = lemmas.preserved(
+        verse, words, at, "Behold Adam", "Adam", "key"
+    )
+    assert (span, glossed, rule) == ((0, 1), (1, 1), "preserved passage note")
+    assert lemmas.preserved(verse, words, 0, "Behold Adam", None, "key")[0] == (0, 1)
+    assert lemmas.preserved(verse, words, len(verse), None, None, "key") == (
+        None,
+        None,
+        "preserved passage note",
+    )
+    for offset in (0, at - 1, len(verse)):
+        with pytest.raises(CheckFailed, match="does not stand before its lemma: key"):
+            lemmas.preserved(verse, words, offset, "Behold Adam", "Adam", "key")
+
+
+def test_a_1611_lemma_override_places_the_note_before_its_words() -> None:
+    verse = "For verily he took not on him the nature of angels."
+    words = scripture.word_spans(verse)
+    override: NoteOverride = {"lemma": "he took not on him", "why": "The clause."}
+    span, glossed, rule, first = lemmas.anchored(
+        verse, words, ["took"], None, override, "key"
+    )
+    assert (span, glossed, rule) == ((2, 6), (2, 6), "override")
+    assert first == 2
+    # A null lemma, for a note on the whole verse, stays at the anchor.
+    whole: NoteOverride = {"lemma": None, "why": "Whole."}
+    *_, first = lemmas.anchored(verse, words, ["took"], None, whole, "key")
+    assert first == 3
 
 
 def placed(

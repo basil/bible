@@ -11,6 +11,16 @@ edition/kjv-notes.json say what to print where they go wrong.
 A verse is read as scripture.Verse gives it: its words without its notes,
 each paragraph or line parted from the next by a newline. Words are named by
 their index in the verse, and a span by its first and last word.
+
+A note stands before the first word it glosses, whatever context its printed
+lemma adds around those words. A lemma inferred from the caller keeps the
+caller's place, even where it takes in words before it (an addition, a
+rendering that opens with the word before); a lemma declared independently
+of it (an override of Brenton's or the 1611 margin's, a reading's lemma, a
+preserved scope, a Received Text note) places its note: an override moves
+the note here, the others are set there before they reach annotation, and
+`before`, the word a caller stands before, holds them to it. A note about
+no words keeps its place.
 """
 
 from __future__ import annotations
@@ -61,6 +71,27 @@ RELATIVE_LEMMA_WORDS = 8
 DEFAULT_LEMMA_WORDS = 4
 # Punctuation that ends the words a note can gloss.
 CLAUSE_END = re.compile(r"[,;:.?!()—]")
+
+
+# Punctuation that opens the word it precedes, which a caller stands before.
+OPENING_MARKS = "‘“'\"([«"
+OPENING = re.compile(f"[{re.escape(OPENING_MARKS)}]*")
+
+
+def opening(verse: str, start: int) -> int:
+    """Where a caller before the word at start stands: before any quotation
+    mark or bracket that opens it."""
+    return len(verse[:start].rstrip(OPENING_MARKS))
+
+
+def before(verse: str, words: Words, offset: int) -> int | None:
+    """The word a caller stands before: the first at or after it, past any
+    opening punctuation, or None where a space or another mark parts them,
+    for a caller there follows the word before, or at the end of the words."""
+    first = next((i for i, (_, start, _) in enumerate(words) if start >= offset), None)
+    if first is None or not OPENING.fullmatch(verse[offset : words[first][1]]):
+        return None
+    return first
 
 
 def occurrences(words: Words, phrase: list[str]) -> list[int]:
@@ -276,9 +307,9 @@ def inferred_lemma(
     """
     after = [i for i, (_, start, _) in enumerate(words) if start >= offset]
     if addition:
-        before = [i for i, (_, _, end) in enumerate(words) if end <= offset]
-        if before:
-            clause = clause_before(verse, words, before[-1])
+        preceding = [i for i, (_, _, end) in enumerate(words) if end <= offset]
+        if preceding:
+            clause = clause_before(verse, words, preceding[-1])
             if len(clause) > 9:
                 clause = clause[-DEFAULT_LEMMA_WORDS:]
             span = whole_compounds(verse, words, clause[0], clause[-1])
@@ -290,10 +321,10 @@ def inferred_lemma(
     if kind == "x" and after and after[0] <= 3:
         return None, None, "xref-verse"
     if not after or ends_line(verse, offset):
-        before = [i for i, (_, _, end) in enumerate(words) if end <= offset]
-        if not other or kind == "x" or not before:
+        preceding = [i for i, (_, _, end) in enumerate(words) if end <= offset]
+        if not other or kind == "x" or not preceding:
             return None, None, "verse-level"
-        clause = clause_before(verse, words, before[-1])
+        clause = clause_before(verse, words, preceding[-1])
         size, rule = measured(words, clause, other, backward=True)
         span = clause[-min(size, len(clause))], clause[-1]
         return unique_span(verse, words, *span), span, rule + " before"
@@ -427,25 +458,51 @@ def declared(
         return None, None, "edition reading"
     hits = occurrences(words, words_of(phrase))
     occurrence = None
+    at = before(verse, words, offset)
     if len(hits) > 1:
-        anchored = [i for i, hit in enumerate(hits, 1) if words[hit][1] == offset]
+        anchored = [i for i, hit in enumerate(hits, 1) if hit == at]
         require(len(anchored) == 1, f"Alexandrine lemma not anchored once: {key}")
         occurrence = anchored[0]
     glossed = phrase_span(words, phrase, key, occurrence)
+    require(glossed[0] == at, f"Edition note does not stand before its lemma: {key}")
     span = unique_span(verse, words, *glossed) if len(hits) > 1 else glossed
     return span, glossed, "edition reading"
 
 
+def within(words: Words, span: Span | None, glossed: str, key: str) -> Span:
+    """The words a note glosses, found once inside its lemma, or once in the
+    verse when it has none: a lemma is widened because they repeat."""
+    tokens = words_of(glossed)
+    start, end = span if span is not None else (0, len(words) - 1)
+    hits = [
+        i for i in occurrences(words, tokens) if start <= i <= end - len(tokens) + 1
+    ]
+    require(
+        tokens and len(hits) == 1,
+        f"Glossed words not found once in their lemma: {key} ({len(hits)})",
+    )
+    return hits[0], hits[0] + len(tokens) - 1
+
+
 def preserved(
-    words: Words, lemma: str | None, glossed: str | None, key: str
+    verse: str,
+    words: Words,
+    offset: int,
+    lemma: str | None,
+    glossed: str | None,
+    key: str,
 ) -> tuple[Span | None, Span | None, str]:
     """The lemma and gloss a note had before a manuscript reading changed the
-    words around it, found again in the verse as it now stands."""
-    return (
-        phrase_span(words, lemma, key) if lemma is not None else None,
-        phrase_span(words, glossed, key) if glossed is not None else None,
-        "preserved passage note",
+    words around it, found again in the verse as it now stands, with the
+    note before the words it glosses."""
+    span = phrase_span(words, lemma, key) if lemma is not None else None
+    narrow = within(words, span, glossed, key) if glossed is not None else None
+    words_about = narrow or span
+    require(
+        words_about is None or words_about[0] == before(verse, words, offset),
+        f"Preserved note does not stand before its lemma: {key}",
     )
+    return span, narrow, "preserved passage note"
 
 
 def anchored(
@@ -478,11 +535,11 @@ def anchored(
     span, glossed, rule = overridden_lemma(
         verse, words, exception, span, glossed, rule, key
     )
-    # A lemma clear of George's anchor says where the note belongs, so the
-    # footnote follows it. A null lemma, for a note on the whole verse, leaves
-    # the note at the anchor.
-    if span and (span[1] < first or first + len(anchor) - 1 < span[0]):
-        first = span[0]
+    # Declared words also say where the note stands: before them, as every
+    # declared lemma does. A null lemma, for a note on the whole verse,
+    # leaves the note at the anchor.
+    if isinstance(exception.get("lemma"), str) and glossed is not None:
+        first = glossed[0]
     return span, glossed, rule, first
 
 

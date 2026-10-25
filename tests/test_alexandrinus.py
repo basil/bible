@@ -400,6 +400,44 @@ def test_a_kept_note_declared_without_its_words_is_refused(
         alexandrinus.companions(decided(policy, kept=kept), "GEN")
 
 
+def test_a_kept_note_about_no_words_keeps_its_place(
+    policy: bible.policy.Policy,
+) -> None:
+    kept = {
+        "GEN 99:22#2": {
+            "why": "Keep it.",
+            "swete": SWETE,
+            "source_note": r"\fqa Gr. \ft look.",
+            "note": r"\fl Alex. \ft See the Appendix.",
+            "lemma": None,
+        }
+    }
+    doc = promoted(decided(policy, {"GEN 99:22": READING}, kept=kept))
+    assert verse_lines(doc)["22"].endswith(
+        r"Behold, \f + \cat edition\cat*\fr 99:22 \fl Alex. \ft See the Appendix.\f*Adam is become as one of us."
+    )
+
+
+def test_a_note_about_no_words_within_replaced_words_is_refused(
+    policy: bible.policy.Policy,
+) -> None:
+    reading = {
+        **READING,
+        "from": "Behold, Adam is",
+        "english": {"source": "from", "edits": [{"span": [0, 8], "to": ""}]},
+        "lemma": None,
+    }
+
+    def whole(data: dict[str, Any]) -> None:
+        data["notes"]["GEN 99:22#2"] = {"lemma": None, "why": "The verse."}
+
+    # Its place lay among the words the reading replaces.
+    with pytest.raises(CheckFailed, match="within replaced words: GEN 99:22#2"):
+        promoted(
+            changed(decided(policy, {"GEN 99:22": reading}), "brenton_notes", whole)
+        )
+
+
 def test_the_appendix_is_read_for_its_notes_alone(policy: bible.policy.Policy) -> None:
     doc = usj.parse(
         "\\id BAK\n\\ip Job 25. 2.—A note.\n\\is1 ———————\n"
@@ -456,6 +494,79 @@ def test_a_note_within_replaced_words_keeps_the_words_it_was_about(
     # Its caller stands at those words again, in the verse as it now reads.
     assert verse_lines(doc)["22"].endswith(
         r"the Lord God said, Behold, \f + \fr 99:22 \fqa Gr. \ft look.\f*Adam is become as one of us."
+    )
+
+
+def test_a_kept_note_is_set_before_the_words_it_glosses_not_its_wider_lemma(
+    policy: bible.policy.Policy, ctx: bible.annotate.Context
+) -> None:
+    body = (
+        r"\v 22 And \f + \fr 99:22 \fqa Alex. \ft + the Lord.\f*God said, Behold "
+        r"\f + \fr 99:22 \fqa Gr. \ft look.\f*Adam the man as Adam was."
+    )
+    reading = {
+        **READING,
+        "from": "God said, Behold Adam",
+        "english": {
+            "source": "from",
+            "edits": [{"span": [0, 3], "to": "the Lord God"}],
+        },
+    }
+    doc = promoted(decided(policy, {"GEN 99:22": reading}), body)
+    kept = scripture.verses(doc)["99:22"].notes[1][1]
+    # Its lemma takes in a word before the one it glosses, to occur once.
+    assert kept["x-scope"] == {"lemma": "Behold Adam", "glossed": "Adam"}
+    assert verse_lines(doc)["22"].endswith(
+        r"the Lord God said, Behold \f + \fr 99:22 \fqa Gr. \ft look.\f*Adam the man as Adam was."
+    )
+    printed, _ = annotate.brenton("GEN", doc, (), frozenset(), ctx)
+    assert (
+        r"Behold \f - \fr 99:22 \fq Behold Adam: \ft Gr. \fqa Behold look\f*Adam"
+        in (verse_lines(printed)["22"])
+    )
+
+
+def test_a_readings_note_stands_before_its_declared_lemma(
+    policy: bible.policy.Policy, ctx: bible.annotate.Context
+) -> None:
+    reading = {**READING, "lemma": "God said"}
+    printed, _ = annotate.brenton(
+        "GEN", promoted(decided(policy, {"GEN 99:22": reading})), (), frozenset(), ctx
+    )
+    assert verse_lines(printed)["22"].startswith(
+        r"And the Lord \f - \cat edition\cat*\fr 99:22 \fq God said: \ft Vat. omits \+it the Lord\+it*\f*God said,"
+    )
+    # Even where the lemma lies outside the words the reading prints.
+    reading = {**READING, "lemma": "And"}
+    printed, _ = annotate.brenton(
+        "GEN", promoted(decided(policy, {"GEN 99:22": reading})), (), frozenset(), ctx
+    )
+    assert verse_lines(printed)["22"].startswith(r"\f - \cat edition")
+    with pytest.raises(CheckFailed, match="remove note_at: GEN 99:22"):
+        promoted(decided(policy, {"GEN 99:22": {**reading, "note_at": 0}}))
+
+
+def test_a_repeated_declared_lemma_is_the_one_the_reading_prints(
+    policy: bible.policy.Policy, ctx: bible.annotate.Context
+) -> None:
+    body = (
+        r"\v 22 And \f + \fr 99:22 \fqa Alex. \ft + the Lord.\f*God said, Behold "
+        r"Adam the man as Adam was."
+    )
+    reading = {
+        **READING,
+        "from": "as Adam was",
+        "english": {"source": "from", "edits": [{"span": [7, 11], "to": ""}]},
+        "note": r"\fl Vat. \ft adds \fq was\ft .",
+        "lemma": "Adam",
+    }
+    doc = promoted(decided(policy, {"GEN 99:22": reading}), body)
+    assert verse_lines(doc)["22"].endswith(
+        r"Behold Adam the man as \f + \cat edition\cat*\fr 99:22 \fl Vat. \ft adds \fq was\ft .\f*Adam."
+    )
+    printed, _ = annotate.brenton("GEN", doc, (), frozenset(), ctx)
+    assert r"as \f - \cat edition\cat*\fr 99:22 \fq as Adam: " in (
+        verse_lines(printed)["22"]
     )
 
 
@@ -803,7 +914,7 @@ def test_the_edition_prints_its_readings_and_supplied_passages(
     # Its words stand in the note on the verse, in the edition's own style.
     kingdoms = usj.serialize(edition.documents["1KI"])
     assert (
-        r"\v 35a \f - \cat edition\cat*\fr 2:35a \ft Alex. \ref verses 35a–35b|1KI 2:35a\ref*. Considerable variation here rather than omission\f*and"
+        r"sea-shore.\f - \cat edition\cat*\fr 2:35a \ft Alex. \ref verses 35a–35b|1KI 2:35a\ref*. Considerable variation here rather than omission\f*"
         in kingdoms
     )
     gloss = next(

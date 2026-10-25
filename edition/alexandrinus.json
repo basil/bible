@@ -141,7 +141,7 @@
       "source_note": "\\fqa Alex. \\ft 79 years."
     },
     "GEN 11:25": {
-      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Brenton 1879 physical p. 29 and 1900 physical p. 25 (both printed p. 13) put caller ζ before an hundred and twenty-five years and print Alex. 129 years. Expand that printed numeral in Brenton’s age wording; the unique changed numeral alone gives the paired twenty-nine / twenty-five reading, with the common age wording outside the note. Codex Vaticanus is lacking before Genesis 46:28; Swete vol. 1 p. 18 uses A as its main text and reads ἔτη ἑκατὸν εἴκοσι ἐννέα, with no uncertainty or correcting hand marked for this age. A and E read 129; no witness Swete reports reads Brenton’s 125.",
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Brenton 1879 physical p. 29 and 1900 physical p. 25 (both printed p. 13) put caller ζ before an hundred and twenty-five years and print Alex. 129 years. Expand that printed numeral in Brenton’s age wording; the unique changed numeral alone gives the paired twenty-nine / twenty-five reading, with the common age wording outside the note, and the caller stands before it, where Brenton’s stood before the whole age. Codex Vaticanus is lacking before Genesis 46:28; Swete vol. 1 p. 18 uses A as its main text and reads ἔτη ἑκατὸν εἴκοσι ἐννέα, with no uncertainty or correcting hand marked for this age. A and E read 129; no witness Swete reports reads Brenton’s 125.",
       "swete": {
         "volume": 1,
         "page": 18,
@@ -672,11 +672,10 @@
           }
         ]
       },
-      "note_at": 21,
       "source_note": "\\fqa Alex. \\ft + \\ft 'whom ye asked for,' nearer the \\fqa Heb."
     },
     "1SA 15:12": {
-      "why": "Print Brenton’s Alexandrine “Samuel”: the 1879 physical p. 392 and 1900 physical p. 388 (both printed p. 376) attach caller ξ before “Saul” in “it was told Saul” and print “Heb. and Alex. Samuel.” Swete vol. 1 p. 575, Vatican main text, explicitly records Σαουλ] Σαμουηλ A, with no correcting hand or uncertainty. Retain the source’s surrounding words “it was told”; the note records Hebrew agreement and the displaced Vatican name.",
+      "why": "Print Brenton’s Alexandrine “Samuel”: the 1879 physical p. 392 and 1900 physical p. 388 (both printed p. 376) attach caller ξ before “Saul” in “it was told Saul” and print “Heb. and Alex. Samuel.” Swete vol. 1 p. 575, Vatican main text, explicitly records Σαουλ] Σαμουηλ A, with no correcting hand or uncertainty. Retain the source’s surrounding words “it was told”; the note records Hebrew agreement and the displaced Vatican name. Declare the changed name alone, with the caller before it; annotation adds “told” to both lemma and alternative because “Samuel” repeats in the verse.",
       "swete": {
         "volume": 1,
         "page": 575,
@@ -685,8 +684,8 @@
         "agrees": true
       },
       "from": "it was told Saul",
-      "note": "\\fl Heb. \\ft agrees. \\fl Vat. \\fqa told Saul\\ft .",
-      "lemma": "told Samuel",
+      "note": "\\fl Heb. \\ft agrees. \\fl Vat. \\fqa Saul\\ft .",
+      "lemma": "Samuel",
       "english": {
         "source": "brenton",
         "span": [33, 39],
@@ -697,7 +696,6 @@
           }
         ]
       },
-      "note_at": 12,
       "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft Samuel."
     },
     "1SA 15:12#2": {
@@ -726,7 +724,6 @@
           }
         ]
       },
-      "note_at": 8,
       "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft Saul."
     },
     "1SA 17:1": {
@@ -797,7 +794,6 @@
           }
         ]
       },
-      "note_at": 16,
       "source_note": "\\fqa Alex. \\ft Gai."
     },
     "1SA 21:10": {
@@ -906,7 +902,6 @@
           }
         ]
       },
-      "note_at": 11,
       "source_note": "\\fqa Alex. \\ft and \\fqa Heb. \\ft + 'and they girded on every man his sword, and David also girded on his sword.'"
     },
     "1SA 25:24": {
@@ -1007,7 +1002,6 @@
           }
         ]
       },
-      "note_at": 12,
       "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft insert 'that Nabal was dead.'"
     },
     "1SA 25:44": {
@@ -1255,7 +1249,6 @@
           }
         ]
       },
-      "note_at": 8,
       "source_note": "\\fqa Alex. \\ft more according to the \\fqa Heb. \\ft inserts 'and brought it out of the house of Abinadab in the hill.'"
     },
     "2SA 6:7": {
@@ -1342,7 +1335,7 @@
       "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft omit the name."
     },
     "2SA 11:18": {
-      "why": "Brenton 1879 physical p. 430 and 1900 physical p. 426 (printed p. 414) both print “Alex. and Heb. make the verse end here.” with caller δ after “war,” and before “so as to tell them to the king.” Swete I p. 631 uses B main text and explicitly records om λαλησαι προς τον βασ. A. Delete only the concluding clause, retaining the period through the English derivation; keep the Hebrew agreement report and displaced clause in the note. B positively prints the displaced λαλῆσαι πρὸς τὸν βασιλέα, so its witness attribution is supported at this unit.",
+      "why": "Brenton 1879 physical p. 430 and 1900 physical p. 426 (printed p. 414) both print “Alex. and Heb. make the verse end here.” with caller δ after “war,” and before “so as to tell them to the king.” Swete I p. 631 uses B main text and explicitly records om λαλησαι προς τον βασ. A. Delete only the concluding clause, retaining the period through the English derivation; keep the Hebrew agreement report and displaced clause in the note, on the words the verse now ends with, before which the caller stands, where Brenton’s followed them. B positively prints the displaced λαλῆσαι πρὸς τὸν βασιλέα, so its witness attribution is supported at this unit.",
       "swete": {
         "volume": 1,
         "page": 631,
@@ -1435,7 +1428,7 @@
       "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft insert 'and he called the pillar after his own name.'"
     },
     "2SA 22:39": {
-      "why": "Brenton 1879 physical p. 452 and 1900 physical p. 448 (printed p. 436) both print “Alex. and Heb. consume.”, with ζ before “I will crush” in 22:39. Swete I p. 662 explicitly reports “και θλασω] pr και τελεσω αυτους A” without a correcting-hand or uncertainty qualification. A prefixes the consume clause and retains the crush clause; therefore print “And I will consume them, and I will crush them”, preserving both actions. The source report supplies consume and the base verse supplies the surrounding English. B positively lacks the consume clause, supporting the displaced omission at this unit.",
+      "why": "Brenton 1879 physical p. 452 and 1900 physical p. 448 (printed p. 436) both print “Alex. and Heb. consume.”, with ζ before “I will crush” in 22:39. Swete I p. 662 explicitly reports “και θλασω] pr και τελεσω αυτους A” without a correcting-hand or uncertainty qualification. A prefixes the consume clause and retains the crush clause; therefore print “And I will consume them, and I will crush them”, preserving both actions. The source report supplies consume and the base verse supplies the surrounding English; the caller stands before the clause A prefixes, where Brenton’s stood before “I will crush”. B positively lacks the consume clause, supporting the displaced omission at this unit.",
       "swete": {
         "volume": 1,
         "page": 662,
@@ -1462,7 +1455,6 @@
           }
         ]
       },
-      "note_at": 11,
       "source_note": "\\fqa Alex. \\ft and \\fqa Heb. \\ft consume."
     },
     "2SA 24:17": {
@@ -1515,7 +1507,6 @@
           }
         ]
       },
-      "note_at": 5,
       "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft the fountain of Rogel."
     },
     "1KI 3:20": {
@@ -1576,7 +1567,6 @@
           }
         ]
       },
-      "note_at": 14,
       "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft insert 'priest.'"
     },
     "1KI 5:14a": {
@@ -1759,7 +1749,6 @@
           }
         ]
       },
-      "note_at": 22,
       "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft with (or against) the walls of the house round about."
     },
     "1KI 8:59#3": {
@@ -1912,7 +1901,7 @@
       "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft insert 'in the 27th year of Asa king of Juda.'"
     },
     "2KI 5:21": {
-      "why": "Print Brenton’s Alexandrine addition, explicitly confirmed by Swete I p. 752: A adds καὶ εἶπεν εἰρήνη after meeting Naiman, with no correcting-hand or uncertainty qualification at this unit. Brenton 1879 physical p. 511 and 1900 physical p. 507 (printed p. 495) put the β caller after “to meet him.” and before verse 22, and print “Alex. + ‘Is all well?’”. Derive the question from that exact source-note span; supply “and said” from καὶ εἶπεν. Swete B positively lacks the addition and matches Brenton’s facing base Greek at this unit. The note names Vat. for the displaced omission.",
+      "why": "Print Brenton’s Alexandrine addition, explicitly confirmed by Swete I p. 752: A adds καὶ εἶπεν εἰρήνη after meeting Naiman, with no correcting-hand or uncertainty qualification at this unit. Brenton 1879 physical p. 511 and 1900 physical p. 507 (printed p. 495) put the β caller after “to meet him.” and before verse 22, and print “Alex. + ‘Is all well?’”. Derive the question from that exact source-note span; supply “and said” from καὶ εἶπεν. Swete B positively lacks the addition and matches Brenton’s facing base Greek at this unit. The note names Vat. for the displaced omission, and stands before the supplied “and said”, the first words it is about, where Brenton’s caller followed “to meet him.”",
       "swete": {
         "volume": 1,
         "page": 752,
@@ -1939,7 +1928,6 @@
           }
         ]
       },
-      "note_at": 23,
       "source_note": "\\fqa Alex. \\ft + \\ft 'Is all well?'."
     },
     "PSA 16:14": {
@@ -2205,7 +2193,7 @@
       "source_note": "\\fqa Alex. \\ft + yea, prosper thou the work of our hands."
     },
     "PSA 91:10": {
-      "why": "Print Brenton’s complete repeated address before the original clause. Brenton 1879 physical p. 770 and 1900 physical p. 766 (printed p. 754 in both) print “Alex. + For behold thine enemies, O Lord, as in Heb.” with ζ immediately before For at printed Psalm 91:9 (source/Swete 91:10). Swete II p. 338 explicitly records οτι ιδου] pr οτι ιδου οι εχθροι σου κ̅ε̅ ℵA^{a (mg)} RT: Alexandrinus corrector a supplies the addition in the margin; it is not assigned to A first hand and has no uncertainty qualifier at this unit. B main positively prints ὅτι ἰδοὺ οἱ ἐχθροί σου ἀπολοῦνται without the repeated address, independently supporting the displaced omission; Brenton’s facing Greek also lacks it. The existing serialized-note span [21,49) selects exactly behold thine enemies, O Lord; its two explicit seams retain For and the complete original clause, yielding For, behold thine enemies, O Lord, for, behold, thine enemies shall perish; and all the workers of iniquity shall be scattered.",
+      "why": "Print Brenton’s complete repeated address before the original clause. Brenton 1879 physical p. 770 and 1900 physical p. 766 (printed p. 754 in both) print “Alex. + For behold thine enemies, O Lord, as in Heb.” with ζ immediately before For at printed Psalm 91:9 (source/Swete 91:10). Swete II p. 338 explicitly records οτι ιδου] pr οτι ιδου οι εχθροι σου κ̅ε̅ ℵA^{a (mg)} RT: Alexandrinus corrector a supplies the addition in the margin; it is not assigned to A first hand and has no uncertainty qualifier at this unit. B main positively prints ὅτι ἰδοὺ οἱ ἐχθροί σου ἀπολοῦνται without the repeated address, independently supporting the displaced omission; Brenton’s facing Greek also lacks it. The existing serialized-note span [21,49) selects exactly behold thine enemies, O Lord; its two explicit seams retain For and the complete original clause, yielding For, behold thine enemies, O Lord, for, behold, thine enemies shall perish; and all the workers of iniquity shall be scattered. The caller stands before the supplied address, as Brenton’s ζ did.",
       "swete": {
         "volume": 2,
         "page": 338,
@@ -2232,7 +2220,6 @@
           }
         ]
       },
-      "note_at": 35,
       "source_note": "\\fqa Alex. \\ft + for behold thine enemies, O Lord, as in \\fqa Heb."
     },
     "PSA 91:11": {
@@ -2556,7 +2543,6 @@
           }
         ]
       },
-      "note_at": 12,
       "source_note": "\\fqa Alex. \\ft + 'that ye may live.'"
     },
     "ISA 8:1": {
@@ -2709,7 +2695,6 @@
           }
         ]
       },
-      "note_at": 21,
       "source_note": "\\fqa Alex. \\ft + 'and thou shalt say in that day'."
     },
     "ISA 24:23": {
@@ -2946,7 +2931,6 @@
           }
         ]
       },
-      "note_at": 8,
       "source_note": "\\fqa Alex. \\ft + 'for whose cause this evil is upon us'."
     },
     "ZEC 4:10": {
@@ -3147,11 +3131,10 @@
         ]
       },
       "source_note": "\\fqa Alex. \\ft Chiram my son \\fqa or \\ft servant.",
-      "note_at": 5,
       "lemma": "Chiram my servant"
     },
     "2CH 3:4 CCEL": {
-      "why": "Print Brenton’s Alexandrinus height reading. Brenton 1879 physical p. 586 and 1900 physical p. 582 (both printed p. 570) print “Alex. 20 cubits.” with caller γ before “a hundred and twenty cubits” in 2 Chronicles 3:4. The source note is absent from eBible and uniquely supplied by CCEL 4.iii#1. Swete II p. 64 explicitly records και υψος πηχεων εικοσι| και κατ|ε sup ras et in mgg A^a (om και υψος πηχεων A*^vid): twenty belongs to the correcting hand A^a, written over an erasure and in the margins, and A’s first hand apparently lacked the height clause. The corrector’s hand is not in doubt, so the corrected reading is printed; as for the edition’s other corrected readings (PSA 92:3, EZK 1:27), the note names only the displaced witness. Spell out Brenton’s printed numeral in his surrounding verse wording. B’s main text positively has ἑκατὸν εἴκοσι, supporting the displaced 120. The unique height lemma distinguishes this number from the earlier breadth measurement of twenty cubits.",
+      "why": "Print Brenton’s Alexandrinus height reading. Brenton 1879 physical p. 586 and 1900 physical p. 582 (both printed p. 570) print “Alex. 20 cubits.” with caller γ before “a hundred and twenty cubits” in 2 Chronicles 3:4. The source note is absent from eBible and uniquely supplied by CCEL 4.iii#1. Swete II p. 64 explicitly records και υψος πηχεων εικοσι| και κατ|ε sup ras et in mgg A^a (om και υψος πηχεων A*^vid): twenty belongs to the correcting hand A^a, written over an erasure and in the margins, and A’s first hand apparently lacked the height clause. The corrector’s hand is not in doubt, so the corrected reading is printed; as for the edition’s other corrected readings (PSA 92:3, EZK 1:27), the note names only the displaced witness. Spell out Brenton’s printed numeral in his surrounding verse wording. B’s main text positively has ἑκατὸν εἴκοσι, supporting the displaced 120. The lemma is the changed measure; it repeats in the verse (the breadth is twenty cubits too), so annotation widens the printed lemma from the caller’s occurrence.",
       "swete": {
         "volume": 2,
         "page": 64,
@@ -3171,7 +3154,7 @@
           }
         ]
       },
-      "lemma": "height twenty cubits",
+      "lemma": "twenty cubits",
       "note": "\\fl Vat. \\fq a hundred and twenty cubits\\ft .",
       "source_note": "\\fqa Alex. \\ft 20 cubits."
     },
@@ -3397,7 +3380,6 @@
       },
       "label": "vatican",
       "omits": true,
-      "note_at": 0,
       "lemma": "Who is the man such as I that will flee",
       "source_note": "\\fqa Alex. \\ft + Who is the man such as I \\fqa that \\ft will flee."
     },
@@ -3862,7 +3844,7 @@
       "label": "vatican"
     },
     "ECC 10:10 CCEL": {
-      "why": "Promote Brenton’s complete English clause. Brenton 1879 physical p. 844 and 1900 physical p. 840 (printed p. 828 in both) print β after the concluding man in Ecclesiastes 10:10 and the note “Alex. for τῷ ἀνδρὶ οὐ reads τοῦ ἀνδρείου. Wisdom is the advantage of an energetic man.” Facing Valpy/base Greek has καὶ περισσεία τῷ ἀνδρὶ οὐ σοφία. Swete II p. 501 records τω ανδρι ου (τω ανδρὶ οὐ B^b)] του ανδριου ℵAC at verse 10, with unqualified A, no lacuna or uncertainty. The A spelling ανδριου is the itacistic form of Brenton’s ανδρειου; preserve the diplomatic citation. B main positively has τῷ ἀνδρὶ οὐ, and Swete prints B^b’s accents as ἀνδρὶ with grave and οὐ with smooth breathing alone, the same as Swete’s main text and not οὗ: the correcting hand divides the words as the negative clause, so the whole displaced reading is B’s in both hands and is labelled Vat. Select the entire supplied English clause from the serialized note, lower its opening capital and retain the shared conjunction and from the replaced scripture clause; preserve the final period and the complete surrounding sentence.",
+      "why": "Promote Brenton’s complete English clause. Brenton 1879 physical p. 844 and 1900 physical p. 840 (printed p. 828 in both) print β after the concluding man in Ecclesiastes 10:10 and the note “Alex. for τῷ ἀνδρὶ οὐ reads τοῦ ἀνδρείου. Wisdom is the advantage of an energetic man.” Facing Valpy/base Greek has καὶ περισσεία τῷ ἀνδρὶ οὐ σοφία. Swete II p. 501 records τω ανδρι ου (τω ανδρὶ οὐ B^b)] του ανδριου ℵAC at verse 10, with unqualified A, no lacuna or uncertainty. The A spelling ανδριου is the itacistic form of Brenton’s ανδρειου; preserve the diplomatic citation. B main positively has τῷ ἀνδρὶ οὐ, and Swete prints B^b’s accents as ἀνδρὶ with grave and οὐ with smooth breathing alone, the same as Swete’s main text and not οὗ: the correcting hand divides the words as the negative clause, so the whole displaced reading is B’s in both hands and is labelled Vat. Select the entire supplied English clause from the serialized note, lower its opening capital and retain the shared conjunction and from the replaced scripture clause; preserve the final period and the complete surrounding sentence. The caller stands after the shared “and”, before the words the note is about, where Brenton’s followed the clause.",
       "swete": {
         "volume": 2,
         "page": 501,
@@ -3906,7 +3888,6 @@
           }
         ]
       },
-      "note_at": 5,
       "lemma": "yield obedience",
       "source_note": "\\ft Heb. doubly translated. \\fqa Alex.\\ft —'humbly.'",
       "note": "\\ft Heb. doubly translated. \\fl Vat. \\ft adds \\fq humbly\\ft ."
@@ -4405,7 +4386,6 @@
           }
         ]
       },
-      "note_at": 9,
       "lemma": "and Gamarias",
       "source_note": "\\fqa Alex. \\ft + and Gamarias.",
       "label": "vatican",
@@ -4534,7 +4514,6 @@
         ]
       },
       "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft + 'to other gods.'",
-      "note_at": 8,
       "lemma": "to other gods",
       "label": "vatican",
       "omits": true,
@@ -4591,7 +4570,6 @@
         ]
       },
       "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft + 'he took out of the city.'",
-      "note_at": 4,
       "lemma": "he took out of the city",
       "label": "vatican",
       "omits": true,
@@ -4701,7 +4679,6 @@
           }
         ]
       },
-      "note_at": 4,
       "lemma": "there",
       "label": "vatican",
       "omits": true,
@@ -4760,7 +4737,6 @@
         ]
       },
       "supplied": ["and", "above", "the", "firmament", "that", "was", "over", "their", "head"],
-      "note_at": 6,
       "lemma": "when they stood their wings were let down; and above the firmament that was over their head",
       "label": "vatican",
       "omits": true,
@@ -4792,7 +4768,6 @@
           }
         ]
       },
-      "note_at": 7,
       "lemma": "as the appearance of fire within it round about",
       "label": "vatican",
       "omits": true,
@@ -4825,7 +4800,6 @@
           }
         ]
       },
-      "note_at": 0,
       "lemma": "For they are impudent children and stiff-hearted, I do send thee to them",
       "label": "vatican",
       "omits": true,
@@ -4895,7 +4869,6 @@
         ]
       },
       "note": "\\fq reaching one to the other\\ft : Or, \\fq clapping or making a noise\\ft . \\fl Vat. \\ft omits \\fq joined\\ft .",
-      "note_at": 0,
       "lemma": "reaching one to the other; two wings to each, joined, covering their bodies",
       "source_note": "\\ft Or, clapping or making a noise. \\fqa Alex. \\ft + συνεζευγμέναι, joined with."
     },
@@ -5113,7 +5086,6 @@
           }
         ]
       },
-      "note_at": 0,
       "lemma": "Therefore",
       "label": "vatican",
       "omits": true,
@@ -5272,7 +5244,6 @@
         ]
       },
       "note": "\\fl Vat. \\ft omits \\fq it shall be for derision and scorn\\ft , and has \\fq and full\\ft .",
-      "note_at": 0,
       "lemma": "large (it shall be for derision and scorn), full",
       "source_note": "\\fqa Alex. \\ft + 'it shall be for derision, \\fqa or, \\ft scorn.'"
     },
@@ -5297,7 +5268,6 @@
           }
         ]
       },
-      "note_at": 7,
       "lemma": "inflamed with wine",
       "note": "\\fl Vat. \\ft omits. See \\fl A. V. \\ft margin.",
       "source_note": "\\fqa Alex. \\ft + 'inflamed with wine.' See \\fqa A. V. \\ft margin."
@@ -5486,7 +5456,6 @@
           }
         ]
       },
-      "note_at": 0,
       "lemma": "and they shall take her multitude",
       "source_note": "\\fqa Alex. \\ft + 'and they shall take her multitude.'",
       "label": "vatican",
@@ -5556,7 +5525,6 @@
           }
         ]
       },
-      "note_at": 6,
       "label": "vatican",
       "omits": true,
       "source_note": "\\fqa Alex. \\ft + 'and I will put fear in the land of Egypt.'",
@@ -5630,7 +5598,6 @@
           }
         ]
       },
-      "note_at": 11,
       "lemma": "hear the word of the Lord",
       "source_note": "\\fqa Alex. \\ft + 'Hear the word of the Lord.'",
       "label": "vatican",
@@ -5688,7 +5655,6 @@
       },
       "label": "vatican",
       "omits": true,
-      "note_at": 8,
       "lemma": "and according to thy jealousy which thou hast vented in thy hatred against them",
       "source_note": "\\fqa Alex. \\ft + 'and according to thy jealousy which thou hast vented in thy hatred against them.'"
     },
@@ -7748,8 +7714,7 @@
                 "to": ".  Blessed"
               }
             ]
-          },
-          "note_at": 9
+          }
         }
       ],
       "source_notes": {
@@ -8268,8 +8233,7 @@
               }
             ]
           },
-          "lemma": "her: And it came to pass, when she came in, that she feigned herself to be another woman",
-          "note_at": 32
+          "lemma": "her: And it came to pass, when she came in, that she feigned herself to be another woman"
         },
         {
           "target": "1KI 14:6",

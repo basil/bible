@@ -29,7 +29,7 @@ from dataclasses import dataclass, field
 from functools import cached_property
 
 import bible.policy
-from bible import scripture, usj, versification
+from bible import lemmas, scripture, usj, versification
 from bible.alignment import Alignment
 from bible.checks import CheckFailed, require, require_fields
 from bible.policy_schema import Paragraph
@@ -50,8 +50,6 @@ VERSE_KEY = re.compile(r"[1-4A-Z]{3} \d+:\d+[a-z]?")
 # A block whose marker these are keeps it whatever the update has: a psalm's
 # title, a heading.
 FIXED = frozenset({"d", "cl", "s1", "ms1"})
-# What opens a line with its first word: a quotation mark or a bracket.
-OPENING = "“‘\"'(["
 
 
 @dataclass(frozen=True)
@@ -854,7 +852,7 @@ def _pieces(
     at = 0
     previous: tuple[str | None, bool] = (None, False)
     for offset, marker, stanza in cuts:
-        while offset > at and text[offset - 1] in OPENING:
+        while offset > at and text[offset - 1] in lemmas.OPENING_MARKS:
             offset -= 1
         require(offset >= at, "Cuts out of order")
         left, rest = usj.split(rest, offset - at, notes_left=False)
