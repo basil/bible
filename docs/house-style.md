@@ -60,6 +60,7 @@ Check, in both testaments:
 
 - Alternative renderings, cited words, and glosses are italic, without quotation marks; labels, references, and comments are roman.
 - A note runs on from its colon in lowercase, except for names and the opening capital of a quotation. A complete sentence is capitalized and punctuated as one; a fragment has no final full stop.
+- The lemma retains the verse’s internal punctuation, including a colon before the colon that introduces the note (Luke 4:41, Revelation 14:13, Haggai 2:14). A separate verse-specific revision may change both verse and lemma, as the retained comma decision does at Luke 1:45; two colons alone do not require such a revision.
 - The lemma quotes enough of the verse to be unambiguous; if that takes more words, the rendering takes the same words ("of your Father: or, *with your Father*", Matthew 6:1).
 - Liskov substitution principle: an alternative rendering must be able to replace the words it is about in the verse without breaking the grammar of the surrounding sentence.
 - Brenton's source sets labels and cited words alike in italic; the edition tells them apart. Scholars' names are written out. In scripture itself a correction may mend only word spacing or restore a whole note Brenton printed that the transcription lacks.

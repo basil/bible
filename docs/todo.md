@@ -12,7 +12,7 @@ Open questions and source discrepancies from the footnote reviews. Every reading
 
 A 1611 marginal note is named by its verse and `(1611)`, as `1CO 14:27 (1611)`; its key in `edition/kjv-notes.json` adds the words George prints it under, as `1CO 14:27 two...`.
 
-**Cross-references.** A note with more than one problem is listed under each, and each listing names the others in brackets, as [also **Two colons**].
+**Cross-references.** A note with more than one problem is listed under each, and each listing names the others in brackets.
 
 **Sources.** eBible is the transcription of Brenton that the build reads, and George is Calvin George's transcription of the 1611 notes ([sources/README.md](../sources/README.md)). Swete is the Greek edition whose apparatus checks Brenton's reports of Codex Alexandrinus. In its sigla, A is Codex Alexandrinus, A* its first hand and A¹ and Aᵃ correcting hands, "vid" marks an uncertain reading, and Q and Γ are other manuscripts. A displaced reading is labelled `Vat.` only where Swete's B main text positively supports it, with the hand where a corrector of B changes the unit; otherwise it is labelled `Brenton`, whose English renders Valpy's printed Greek (the introduction, `content/introduction.sfm`).
 
@@ -22,7 +22,6 @@ A 1611 marginal note is named by its verse and `(1611)`, as `1CO 14:27 (1611)`; 
 
 Each of these is a question about a rule. One decision settles every note it covers.
 
-- **Two colons.** A lemma that keeps the verse’s own colon prints two: "to speak: for they knew that he was Christ: or, …" (LUK 4:41 (1611)) and "from henceforth: Yea, saith the Spirit: or, …" (REV 14:13 (1611)), and "because of their early burdens: they shall be pained because of their toils; and ye have hated him that reproved in the gates: not in Hebrew" (HAG 2:14), whose lemma takes in the whole passage the Hebrew lacks. Decide whether these lemmas should keep their internal colon.
 - **Footnote callers that Brenton sets elsewhere.** A lemma override puts a note on the words Brenton's caller marks, but a footnote's printed caller stays where eBible has it: GEN 2:23#3 (before “of”, where the 1879 and 1900 printings set τ before “her”), DEU 21:5 (before “bless”; Brenton's before “in”), and ISA 19:3 (seven words before its lemma, where CCEL has it before the lemma). Decide whether a footnote's caller should follow its lemma.
 - **A corrector's reading printed without its hand.** 2CH 3:4 CCEL (A^a over an erasure and in the margins, A* apparently lacking the clause), PSA 92:3, and EZK 1:27 print readings Swete gives to a corrector of A, and their notes name only the displaced witness, while a corrector of B is named (“Vat. first hand”). Decide whether these notes should say that the printed reading is a corrector's.
 - **“Vat.” for a free rendering of B's Greek.** 2CH 34:8 CCEL labels Brenton's free “after having cleansed” Vat., PSA 16:14 labels his “uncleanness” (for B's ὑείων) Brenton, and 2CH 28:12 CCEL labels his “Udias” Vat. though B reads Οὐδειά. Decide whether displaced English that renders B's Greek freely, or spells a name otherwise, takes “Vat.” or “Brenton”.
