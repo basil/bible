@@ -455,20 +455,41 @@ def test_a_note_names_the_received_text_only_where_every_unit_it_is_about_is_est
         {"unit": "A", "edits": [{"note": note("A TR#1")}]},
         # B's row is carried out by A's.
         {"unit": "B", "covered_by": "A"},
-        {"unit": "C", "edits": [{"note": note("C TR#1")}], "note": note("C TR")},
+        # A note on an omitted or moved verse is keyed by its verse.
+        {"unit": "C", "edits": [{"note": note("C TR#1")}], "note": note("C 1:1 TR")},
         # A note combined from two rows names the witness of both.
         {"unit": "A", "edits": [{"note": note("AC TR#1")}]},
         {"unit": "C", "edits": [{"note": note("AC TR#1")}]},
         # A correction of shared Greek is keyed by its verse.
         {"unit": "MAT 1:1", "edits": [{"note": note("MAT 1:1 rendering#1")}]},
     ]
-    assert received.labels(rows, units, found) == {
+    assert received.labels(rows, units, found, {}) == {
         "A TR#1": received.RECEIVED,
         "C TR#1": received.KING_JAMES,
-        "C TR": received.KING_JAMES,
+        "C 1:1 TR": received.KING_JAMES,
         "AC TR#1": received.KING_JAMES,
         "MAT 1:1 rendering#1": received.KING_JAMES,
     }
+    # An edition decision names the printed edition the King James Version
+    # followed where the apparatuses establish no Received Text.
+    beza = {"label": "beza", "why": "Beza has it."}
+    # It names every note about the same units, and one decision says so.
+    for key in ("C TR", "C 1:1 TR"):
+        named = received.labels(rows, units, found, {key: beza})
+        assert named["C TR#1"] == named["C 1:1 TR"] == "beza"
+        assert named["AC TR#1"] == received.KING_JAMES
+    with pytest.raises(CheckFailed, match="about the same units"):
+        received.labels(rows, units, found, {"C TR": beza, "C 1:1 TR": beza})
+    assert received.labels(rows, units, found, {"AC TR": beza})["AC TR#1"] == "beza"
+    for stale in ("A TR", "D TR", "MAT 1:1 rendering"):
+        with pytest.raises(CheckFailed, match="name no one note or change nothing"):
+            received.labels(rows, units, found, {stale: beza})
+    # A key that two notes share names neither.
+    twice: list[Disposition] = [*rows, {"unit": "C", "note": note("C TR")}]
+    with pytest.raises(CheckFailed, match="name no one note"):
+        received.labels(twice, units, found, {"C TR": beza})
+    with pytest.raises(CheckFailed, match="name no printed edition"):
+        received.labels(rows, units, found, {"C TR": {**beza, "label": "vatican"}})
 
 
 def test_rows_that_disagree_do_not_establish_the_received_text(
@@ -499,6 +520,18 @@ def printed(edition: bible.pipeline.Edition) -> dict[str, str]:
     }
 
 
+# The first word of each witness's label.
+EDITIONS = {
+    received.RECEIVED: "TR",
+    received.KING_JAMES: "KJV",
+    "beza": "Beza",
+    "erasmus": "Erasmus",
+    "stephanus-1549": "Stephanus",
+    "complutensian": "Complutensian",
+    "aldine": "Aldine",
+}
+
+
 def test_the_notes_name_the_witness_the_apparatuses_establish(
     byzantine: Reconciliation, edition: bible.pipeline.Edition
 ) -> None:
@@ -511,12 +544,19 @@ def test_the_notes_name_the_witness_the_apparatuses_establish(
     labels: Counter[str] = Counter()
     for key, text in notes.items():
         label = text.split(" ", 1)[0]
-        assert (
-            label
-            == {received.RECEIVED: "TR", received.KING_JAMES: "KJV"}[witnesses[key]]
-        ), key
+        assert label == EDITIONS[witnesses[key]], key
         labels[label] += 1
-    assert labels == {"TR": 756, "KJV": 95}
+    # Where the apparatuses establish no Received Text, a note names the
+    # printed edition the translators followed, and KJV where none is shown.
+    assert labels == {
+        "TR": 756,
+        "Beza": 65,
+        "Erasmus": 15,
+        "Stephanus": 1,
+        "Complutensian": 12,
+        "Aldine": 1,
+        "KJV": 1,
+    }
 
 
 @pytest.mark.parametrize(
@@ -525,13 +565,33 @@ def test_the_notes_name_the_witness_the_apparatuses_establish(
         ("MAT 3:8#1 TR", "TR _fruits_"),
         ("ACT 8:36 TR", "TR adds verse 37"),
         ("ROM 14:24 TR", "TR has this passage at 16:25–27"),
-        ("LUK 1:35#1 TR", "KJV adds _of thee_"),
-        ("MRK 5:38#1 TR", "KJV _and them_"),
-        ("MAT 23:13 TR", "KJV has this passage at 23:14"),
-        ("LUK 17:35 TR", "KJV adds verse 36"),
+        ("LUK 1:35#1 TR", "Beza adds _of thee_"),
+        ("MRK 5:38#1 TR", "Erasmus _and them_"),
+        ("MAT 23:13 TR", "Beza has this passage at 23:14"),
+        ("LUK 17:35 TR", "Beza adds verse 36"),
+        ("LUK 8:31#1 TR", "Erasmus _they besought_"),
+        ("JAS 4:15#1 TR", "Stephanus 1549 _we shall live_"),
+        ("REV 9:19#1 TR", "KJV _their power_"),
     ],
 )
 def test_a_note_names_its_witness(
     edition: bible.pipeline.Edition, key: str, note: str
 ) -> None:
     assert printed(edition)[key].startswith(note)
+
+
+def test_an_edition_decision_quotes_scriveners_text_only_as_it_reads() -> None:
+    scrivener = {"ROM 16:27": ["μόνῳ", "σοφῷ", "Θεῷ,", "διὰ", "Ἰησοῦ"]}
+
+    def decided(**words: str) -> dict[str, dict[str, str]]:
+        return {"ROM 16:27#1 TR": {"label": "beza", **words, "why": "Because."}}
+
+    # Case, punctuation, and a grave for an acute do not count.
+    assert not received.misquoted(decided(reads="Σοφῷ θεῷ", lacks="ᾧ"), scrivener)
+    assert not received.misquoted(decided(lacks="σοφῷ διὰ"), scrivener)
+    assert received.misquoted(decided(reads="σοφῷ διὰ"), scrivener)
+    assert received.misquoted(decided(lacks="Θεῷ"), scrivener)
+    assert received.misquoted(decided(reads="σοφ"), scrivener)
+    # Words that are not there are never read.
+    assert received.misquoted(decided(reads=""), scrivener)
+    assert received.misquoted(decided(reads="Θεῷ"), {})

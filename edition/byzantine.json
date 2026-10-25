@@ -7917,25 +7917,20 @@
         }
       }
     },
-    "JAS 4:15#1+JAS 4:15#2": {
+    "JAS 4:15#1": {
       "units": [
         {
           "ref": "JAS 4:15",
           "tr": "zhsomen",
           "rp": "zhswmen"
-        },
-        {
-          "ref": "JAS 4:15",
-          "tr": "poihsomen",
-          "rp": "poihswmen"
         }
       ],
       "kind": "edit",
       "edits": [
         {
           "ref": "JAS 4:15",
-          "from": "we shall live, and do",
-          "to": "let us live, and do"
+          "from": "we shall live",
+          "to": "let us live"
         }
       ],
       "tags": [
@@ -7943,7 +7938,7 @@
         "from:tcent",
         "gram:mood"
       ],
-      "why": "RP's subjunctives zhswmen and poihswmen are hortatory, let us in TCENT and FAA; Boyd's both renders the first kai, which both texts share (step 3).",
+      "why": "RP's zhswmen is hortatory, let us live in TCENT and FAA. The let us also governs the following do (JAS 4:15#2), so only we shall live changes.",
       "evidence": {
         "faa": {
           "entry": "JAS 4:15#1",
@@ -7953,6 +7948,24 @@
           "entry": 290,
           "quote": "let us ¦ we will ANT CT SCR"
         },
+        "boyd-asv": {
+          "ref": "JAS 4:15",
+          "quote": "let us both live, and do"
+        }
+      }
+    },
+    "JAS 4:15#2": {
+      "units": [
+        {
+          "ref": "JAS 4:15",
+          "tr": "poihsomen",
+          "rp": "poihswmen"
+        }
+      ],
+      "kind": "nochange",
+      "tags": ["from:kjv-retained", "gram:mood"],
+      "why": "The preceding let us, supplied by the decision on JAS 4:15#1, governs both coordinated hortatory subjunctives. The King James do already expresses the second verb under that auxiliary, so it stays without an edit or a separate note.",
+      "evidence": {
         "boyd-asv": {
           "ref": "JAS 4:15",
           "quote": "let us both live, and do"
@@ -13582,6 +13595,10 @@
     }
   },
   "lemmas": {
+    "JAS 4:15#1 TR": {
+      "lemma": "let us live",
+      "why": "Include the verb governed by let us so the note identifies the complete predicate and restores we shall live."
+    },
     "2TI 2:19#1 TR": {
       "lemma": "the name of the Lord",
       "why": "The complete noun phrase uniquely identifies the changed referent without taking depart from the next predicate into the lemma, and restores the name of Christ exactly."
@@ -13700,6 +13717,415 @@
       "from": "τὸν πλοῦτον",
       "to": "τὸ πλοῦτον",
       "why": "The printed RP2026 (p. 551) and Boyd's apparatus both give Scrivener τὸ πλοῦτον, against the τὸν πλοῦτον of Stephanus and RP2026; Robinson's electronic text, the accented transcription that follows it and his 2018 collation have τὸν. The English is unaffected."
+    }
+  },
+  "editions": {
+    "1JN 1:4#1 TR": {
+      "label": "beza",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § II (p. cii, PDF p. 108) lists this place among those where the Authorized Version agrees with Beza (1589) against Stephanus (1550): “i. 4. χαρὰ ὑμῶν after Erasm. is rendered in all English versions except Tyndale 1534, but ἡμῶν in Compl., Steph., Vulg.” Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, pp. 655–656, PDF pp. 671–672) does not list the place, so his text follows Beza 1598 there. Scrivener’s Greek text (1894), p. 587 (PDF p. 603), has this reading."
+    },
+    "1JN 2:23#1 TR": {
+      "label": "beza",
+      "reads": "ὁ ὁμολογῶν τὸν υἱὸν καὶ τὸν πατέρα ἔχει",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § II (p. cii, PDF p. 108) lists this place among those where the Authorized Version agrees with Beza (1589) against Stephanus (1550): “ii. 23. ὁ ὁμολογῶν τὸν υἱὸν καὶ τὸν πατέρα ἔχει is the well-known clause inserted in italics in our own and the Bishops’ versions, to indicate thereby a doubtful reading (Introduction, p. xxxv.). Though not in Compl., Erasm., Steph., or even in Beza 1565, Tyndale, Coverdale, Geneva 1557, it was brought in within brackets and italicised in the Great Bible, doubtless from the Vulgate, and rightly forms a part of the text in Beza’s last three editions.” Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 655, PDF p. 671) gives it as “ii. 23 ὁ ὁμολογῶν τὸν υἱὸν καὶ τὸν πατέρα ἔχει] om. Compl. Er. Ald. St. Bez. 1. 2. Tynd. (A.V. mutato typi charactere). Habent Col. Bez. 4. 5. Vulg.”, so Beza 1598 has it. Scrivener’s Greek text (1894), p. 589 (PDF p. 605), has this reading."
+    },
+    "1JN 3:16#1 TR": {
+      "label": "beza",
+      "reads": "τὴν ἀγάπην τοῦ Θεοῦ",
+      "why": "Scrivener’s Greek text (1894), p. 591 (PDF p. 607), reads the words given, and his appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, pp. 655–656, PDF pp. 671–672) lists no departure at this place, so the reading is Beza 1598’s."
+    },
+    "1PE 1:8#1 TR": {
+      "label": "beza",
+      "reads": "ἰδόντες",
+      "why": "Scrivener’s Greek text (1894), p. 573 (PDF p. 589), reads the words given, and his appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 655, PDF p. 671) lists no departure at this place, so the reading is Beza 1598’s."
+    },
+    "1PE 3:21#1 TR": {
+      "label": "beza",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § II (p. cii, PDF p. 108) lists this place among those where the Authorized Version agrees with Beza (1589) against Stephanus (1550): “iii. 21 init. ᾧ Compl., Ald., Geneva 1557, Bishops’: but ὃ Erasm., Steph., Vulg., Tyndale, Coverdale, Great Bible.” Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 655, PDF p. 671) does not list the place, so his text follows Beza 1598 there. Scrivener’s Greek text (1894), p. 578 (PDF p. 594), has this reading."
+    },
+    "1TI 1:2#1 TR": {
+      "label": "erasmus",
+      "reads": "Ἰησοῦ Χριστοῦ",
+      "why": "Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 654, PDF p. 670): “i. 2 Ἰησοῦ Χριστοῦ] Er. Ald. Tynd. Χριστοῦ Ἰησοῦ Compl. Col. St. Bez.” The first Greek edition named is Erasmus’. Scrivener’s Greek text (1894), p. 520 (PDF p. 536), has this reading."
+    },
+    "1TI 1:4#1 TR": {
+      "label": "beza",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § II (p. cii, PDF p. 108) lists this place among those where the Authorized Version agrees with Beza (1589) against Stephanus (1550): “i. 4. οἰκοδομίαν Erasm., Ald., Vulg., all English?, but οἰκονομίαν Compl., Steph.” Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 654, PDF p. 670) does not list the place, so his text follows Beza 1598 there. Scrivener’s Greek text (1894), p. 520 (PDF p. 536), has this reading."
+    },
+    "2CO 13:4#1 TR": {
+      "label": "beza",
+      "reads": "καὶ γὰρ καὶ ἡμεῖς",
+      "why": "Scrivener’s Greek text (1894), p. 470 (PDF p. 486), reads the words given, and his appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 653, PDF p. 669) lists no departure at this place, so the reading is Beza 1598’s."
+    },
+    "2CO 3:1#1 TR": {
+      "label": "beza",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § II (p. ci, PDF p. 107) lists this place among those where the Authorized Version agrees with Beza (1589) against Stephanus (1550): “iii. 1. ἢ μὴ χρῄζομεν Vulg., Coverdale, Bishops’, for εἰ μὴ χρ. of Compl., Erasm., Steph.” Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 653, PDF p. 669) does not list the place, so his text follows Beza 1598 there. Scrivener’s Greek text (1894), p. 454 (PDF p. 470), has this reading."
+    },
+    "2CO 6:15#1 TR": {
+      "label": "beza",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § II (p. ci, PDF p. 107) lists this place among those where the Authorized Version agrees with Beza (1589) against Stephanus (1550): “vi. 15. Βελίαλ Compl., Erasm. (Lat.), Vulg., all English: Βελίαρ Erasm. (Greek), Steph.” Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 653, PDF p. 669) does not list the place, so his text follows Beza 1598 there. Scrivener’s Greek text (1894), p. 459 (PDF p. 475), has this reading."
+    },
+    "2CO 7:12#1 TR": {
+      "label": "beza",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § II (p. ci, PDF p. 107) lists this place among those where the Authorized Version agrees with Beza (1589) against Stephanus (1550): “vii. 12. τὴν σπουδὴν ἡμῶν τὴν ὑπὲρ ὑμῶν Compl., Vulg., Tyndale, Geneva 1557: but τὴν σπουδὴν ὑμῶν τὴν ὑπὲρ ἡμῶν Erasm., Steph., Coverdale, Great Bible, Bishops’.” Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 653, PDF p. 669) does not list the place, so his text follows Beza 1598 there. Scrivener’s Greek text (1894), p. 461 (PDF p. 477), has this reading."
+    },
+    "2CO 7:16#1 TR": {
+      "label": "beza",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § II (p. ci, PDF p. 107) lists this place among those where the Authorized Version agrees with Beza (1589) against Stephanus (1550): “ver. 16. χαίρω οὖν Geneva 1557: οὖν is omitted by Compl., Erasm., Ald., Steph., Tyndale, Coverdale, Great Bible, Bishops’.” Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 653, PDF p. 669) does not list the place, so his text follows Beza 1598 there. Scrivener’s Greek text (1894), p. 461 (PDF p. 477), has this reading."
+    },
+    "2JN 1:3#1 TR": {
+      "label": "beza",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § II (p. cii, PDF p. 108) lists this place among those where the Authorized Version agrees with Beza (1589) against Stephanus (1550): “3. ὑμῶν Compl., all English except the Great Bible: ἡμῶν Erasm., Steph., Vulg. (manuscripts, not Clementine edition).” Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, pp. 655–656, PDF pp. 671–672) does not list the place, so his text follows Beza 1598 there. Scrivener’s Greek text (1894), p. 596 (PDF p. 612), has this reading."
+    },
+    "2PE 1:1#1 TR": {
+      "label": "complutensian",
+      "reads": "Σίμων",
+      "why": "Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 655, PDF p. 671): “i. 1 Σίμων] Compl. Vulg. Συμεὼν Er. (Σύμων Ald. Col.) St. Bez.” Scrivener’s Greek text (1894), p. 581 (PDF p. 597), has this reading."
+    },
+    "2PE 1:1#2 TR": {
+      "label": "beza",
+      "reads": "σωτῆρος ἡμῶν",
+      "why": "Scrivener’s Greek text (1894), p. 581 (PDF p. 597), reads the words given, and his appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 655, PDF p. 671) lists at 2 Peter 1:1 only Σίμων, so the rest of the verse is Beza 1598’s."
+    },
+    "2PE 2:9#1 TR": {
+      "label": "complutensian",
+      "reads": "πειρασμῶν",
+      "why": "Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 655, PDF p. 671): “ii. 9 πειρασμῶν] Compl. πειρασμοῦ ceteri omnes.” Scrivener’s Greek text (1894), p. 584 (PDF p. 600), has this reading."
+    },
+    "2PE 3:7#1 TR": {
+      "label": "beza",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § II (p. cii, PDF p. 108) lists this place among those where the Authorized Version agrees with Beza (1589) against Stephanus (1550): “iii. 7. τῷ αὐτῷ λόγῳ Vulg., Tyndale, Geneva 1557, but τῷ αὐτοῦ (αὐτοῦ only, Erasm.) λόγῳ Compl., Erasm., Steph., Coverdale, Great Bible, Bishops’.” Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 655, PDF p. 671) does not list the place, so his text follows Beza 1598 there. Scrivener’s Greek text (1894), p. 585 (PDF p. 601), has this reading."
+    },
+    "3JN 1:7#1 TR": {
+      "label": "beza",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § II (p. cii, PDF p. 108) lists this place among those where the Authorized Version agrees with Beza (1589) against Stephanus (1550): “7. αὐτοῦ after ὀνόματος of Compl., Vulg. (Clementine), English versions, is omitted in Erasm., Steph., Vulg. manuscripts.” Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, pp. 655–656, PDF pp. 671–672) does not list the place, so his text follows Beza 1598 there. Scrivener’s Greek text (1894), p. 597 (PDF p. 613), has this reading."
+    },
+    "ACT 17:25#1 TR": {
+      "label": "beza",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § II (p. ci, PDF p. 107) lists this place among those where the Authorized Version agrees with Beza (1589) against Stephanus (1550): “xvii. 25. καὶ τὰ πάντα Vulg. So Geneva only of preceding English versions.” Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 652, PDF p. 668) does not list the place, so his text follows Beza 1598 there. Scrivener’s Greek text (1894), p. 353 (PDF p. 369), has this reading."
+    },
+    "ACT 19:33#1 TR": {
+      "label": "beza",
+      "reads": "προβαλλόντων",
+      "why": "Scrivener’s Greek text (1894), p. 359 (PDF p. 375), reads the words given, and his appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 652, PDF p. 668) lists no departure at this place, so the reading is Beza 1598’s."
+    },
+    "ACT 21:8#1 TR": {
+      "label": "complutensian",
+      "reads": "ἤλθομεν",
+      "why": "Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 652, PDF p. 668): “xxi. 8 ἤλθομεν] Compl. Vulg. Bez. (Lat.). ἦλθον Er. Ald. Col. St. Bez. (Gr.).” Scrivener’s Greek text (1894), p. 364 (PDF p. 380), has this reading."
+    },
+    "ACT 22:25#1 TR": {
+      "label": "beza",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § II (p. ci, PDF p. 107) lists this place among those where the Authorized Version agrees with Beza (1589) against Stephanus (1550): “xxii. 25. προέτειναν Compl., Beza 1589 (not 1565), Vulg., the other English; against Eras., Stephens, Coverdale προέτεινεν.” Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 652, PDF p. 668) does not list the place, so his text follows Beza 1598 there. Scrivener’s Greek text (1894), p. 369 (PDF p. 385), has this reading."
+    },
+    "ACT 24:13#1 TR": {
+      "label": "beza",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § II (p. ci, PDF p. 107) lists this place among those where the Authorized Version agrees with Beza (1589) against Stephanus (1550): “xxiv. 13. παραστῆσαι (Erasm., Steph. add με) Compl.” Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 652, PDF p. 668) does not list the place, so his text follows Beza 1598 there. Scrivener’s Greek text (1894), p. 374 (PDF p. 390), has this reading."
+    },
+    "ACT 24:19#1 TR": {
+      "label": "beza",
+      "reads": "ἔδει",
+      "why": "Scrivener’s Greek text (1894), p. 375 (PDF p. 391), reads the word given, and his appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 652, PDF p. 668) lists no departure at this place, so the reading is Beza 1598’s."
+    },
+    "ACT 25:5#1 TR": {
+      "label": "beza",
+      "reads": "εἴ τι ἐστὶν ἄτοπον",
+      "why": "Scrivener’s Greek text (1894), p. 376 (PDF p. 392), reads the words given, and his appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 652, PDF p. 668) lists no departure at this place, so the reading is Beza 1598’s."
+    },
+    "ACT 26:18#1 TR": {
+      "label": "beza",
+      "reads": "καὶ ἐπιστρέψαι",
+      "why": "Scrivener’s Greek text (1894), p. 380 (PDF p. 396), reads the words given, and his appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 652, PDF p. 668) lists no departure at this place, so the reading is Beza 1598’s."
+    },
+    "ACT 26:20#1 TR": {
+      "label": "complutensian",
+      "reads": "ἀπήγγελλον",
+      "why": "Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 652, PDF p. 668): “xxvi. 20 ἀπήγγελλον] Compl. Vulg. ἀπήγγελον Col. ἀπαγγέλλων Er. Ald. St. Bez.” Scrivener’s Greek text (1894), p. 380 (PDF p. 396), has this reading."
+    },
+    "ACT 26:3#1 TR": {
+      "label": "beza",
+      "reads": "εἰδώς",
+      "why": "Scrivener’s Greek text (1894), p. 378 (PDF p. 394), reads the words given, and his appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 652, PDF p. 668) lists no departure at this place, so the reading is Beza 1598’s."
+    },
+    "ACT 8:28#1 TR": {
+      "label": "complutensian",
+      "reads": "ἀνεγίνωσκε",
+      "why": "Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 652, PDF p. 668): “viii. 28 ἀνεγίνωσκε] Compl. St. 1. 2. καὶ ἀνεγίνωσκε St. 3. 4. Bez. ceteri omnes.” The first Greek edition named is the Complutensian. Scrivener’s Greek text (1894), p. 323 (PDF p. 339), has this reading."
+    },
+    "ACT 9:35#1 TR": {
+      "label": "beza",
+      "reads": "Σάρωνα",
+      "why": "Scrivener’s Greek text (1894), p. 327 (PDF p. 343), reads the words given, and his appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 652, PDF p. 668) lists no departure at this place, so the reading is Beza 1598’s."
+    },
+    "COL 1:24#1 TR": {
+      "label": "beza",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § II (p. cii, PDF p. 108) lists this place among those where the Authorized Version agrees with Beza (1589) against Stephanus (1550): “ver. 24. ὃς is set before νῦν χαίρω in Beza’s last three editions, Vulg., and our Authorized Version only among the English.” Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 654, PDF p. 670) does not list the place, so his text follows Beza 1598 there. Scrivener’s Greek text (1894), p. 503 (PDF p. 519), has this reading."
+    },
+    "COL 2:13#1 TR": {
+      "label": "beza",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § II (p. cii, PDF p. 108) lists this place among those where the Authorized Version agrees with Beza (1589) against Stephanus (1550): “ii. 13. ὑμῖν Vulg., Geneva 1557 (Bishops’): but ἡμῖν Compl., Erasm., Steph., other English versions.” Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 654, PDF p. 670) does not list the place, so his text follows Beza 1598 there. Scrivener’s Greek text (1894), p. 504 (PDF p. 520), has this reading."
+    },
+    "COL 2:13#2 TR": {
+      "label": "beza",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § II (p. cii, PDF p. 108) lists this place among those where the Authorized Version agrees with Beza (1589) against Stephanus (1550): “ii. 13. ὑμῖν Vulg., Geneva 1557 (Bishops’): but ἡμῖν Compl., Erasm., Steph., other English versions.” Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 654, PDF p. 670) does not list the place, so his text follows Beza 1598 there. Scrivener’s Greek text (1894), p. 504 (PDF p. 520), has this reading."
+    },
+    "HEB 11:4#1 TR": {
+      "label": "erasmus",
+      "reads": "λαλεῖ",
+      "why": "Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 655, PDF p. 671): “xi. 4 λαλεῖ] Er. Ald. Vulg. Bez. Lat. (loquitur). λαλεῖται Compl. Col. St. Bez. (Gr.) (A.V. marg.).” The first Greek edition named is Erasmus’. Scrivener’s introduction to the Cambridge Paragraph Bible (p. xxxi, PDF p. 37) likewise gives “λαλεῖ text, with Erasm. Aldus, Vulg.” against “λαλεῖται margin, Compl. Stephens, Beza”. Scrivener’s Greek text (1894), p. 557 (PDF p. 573), has this reading."
+    },
+    "HEB 12:24#1 TR": {
+      "label": "erasmus",
+      "reads": "τὸ Ἄβελ",
+      "why": "Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 655, PDF p. 671): “xii. 24 τὸ Ἄβελ] Er. Ald. Col. Tynd. (A.V. 1611). τὸν Ἄβελ Compl. St. Bez. Vulg. (?)” The first Greek edition named is Erasmus’. Scrivener, Cambridge Paragraph Bible (1873), Appendix E § I (p. c, PDF p. 106) agrees (“τὸ Ἄβελ Erasm., Ald.”). The note’s other unit, κρείττονα, is the Received Text’s, which Erasmus shares. Scrivener’s Greek text (1894), p. 561 (PDF p. 577), has this reading."
+    },
+    "JAS 2:18#1 TR": {
+      "label": "beza",
+      "reads": "χωρὶς τῶν ἔργων σου",
+      "why": "Scrivener’s Greek text (1894), p. 567 (PDF p. 583), reads the words given, and his appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 655, PDF p. 671) lists no departure at this place, so the reading is Beza 1598’s."
+    },
+    "JAS 4:13#1 TR": {
+      "label": "beza",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § II (p. cii, PDF p. 108) lists this place among those where the Authorized Version agrees with Beza (1589) against Stephanus (1550): “iv. 13, 15. The four verbs in ver. 13 and ποιήσομεν ver. 15 are futures in Vulg., Geneva 1557 (the Authorized stands alone in reading with Stephens 1549 ζήσομεν ver. 15), but they are aorists subjunctive in Compl., Erasm., Tyndale, Coverdale, Great Bible, Bishops’.” Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 655, PDF p. 671) does not list the place, so his text follows Beza 1598 there. Scrivener’s Greek text (1894), p. 570 (PDF p. 586), has this reading."
+    },
+    "JAS 4:15#1 TR": {
+      "label": "stephanus-1549",
+      "reads": "ζήσομεν",
+      "why": "Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 655, PDF p. 671) gives the future to St. 2, which its list of editions (p. 648, PDF p. 664) identifies as Stephanus’s second edition (1549), against the subjunctive of the Complutensian, Erasmus, the Aldine, Colinaeus, Stephanus’s other editions, and Beza. Scrivener’s Greek text (1894), p. 570 (PDF p. 586), has this reading."
+    },
+    "JAS 5:12#1 TR": {
+      "label": "beza",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § II (p. cii, PDF p. 108) lists this place among those where the Authorized Version agrees with Beza (1589) against Stephanus (1550): “v. 12. εἰς ὑπόκρισιν of Compl., Erasm., Steph., Tyndale, Coverdale, Great Bible, was corrected into εἰς κρίσιν by Geneva 1557, Bishops’ (“sub judicio” Vulg.).” Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 655, PDF p. 671) does not list the place, so his text follows Beza 1598 there. Scrivener’s Greek text (1894), p. 571 (PDF p. 587), has this reading."
+    },
+    "JHN 13:31#1 TR": {
+      "label": "beza",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § II (p. ci, PDF p. 107) lists this place among those where the Authorized Version agrees with Beza (1589) against Stephanus (1550): “xiii. 30, 31. ἦν δὲ νύξ· ὅτε οὖν (ἦν δὲ νὺξ ὅτε Compl., Steph.) Erasm., Ald., Vulg., Engl.” Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 651, PDF p. 667) does not list the place, so his text follows Beza 1598 there. Scrivener’s Greek text (1894), p. 278 (PDF p. 294), has this reading."
+    },
+    "JHN 16:33#1 TR": {
+      "label": "beza",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § II (p. ci, PDF p. 107) lists this place among those where the Authorized Version agrees with Beza (1589) against Stephanus (1550): “xvi. 33. ἕξετε, for which there is very little authority, is a false correction by Beza of a typographical error of Stephens 1550. Even Tyndale (not Coverdale), the Great Bible and Geneva 1557 have the future, after Vulg.” Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 651, PDF p. 667) does not list the place, so his text follows Beza 1598 there. Scrivener’s Greek text (1894), p. 285 (PDF p. 301), has this reading."
+    },
+    "JHN 18:15#1 TR": {
+      "label": "erasmus",
+      "reads": "ἄλλος",
+      "why": "Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 651, PDF p. 667): “xviii. 15 ἄλλος] Er. Ald. Col. Bez. 1. Tynd. ὁ ἄλλος Compl. St. Bez. 2. 3. 4. 5.” The first Greek edition named is Erasmus’. Scrivener’s Greek text (1894), p. 288 (PDF p. 304), has this reading."
+    },
+    "JHN 18:24#1 TR": {
+      "label": "beza",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § II (p. ci, PDF p. 107) lists this place among those where the Authorized Version agrees with Beza (1589) against Stephanus (1550): “xviii. 24. οὖν added after ἀπέστειλεν, so Geneva 1557, Bishops’ Bible: “And Annas” Tyndale, Coverdale, Great Bible, after Vulg.” Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 651, PDF p. 667) does not list the place, so his text follows Beza 1598 there. Scrivener’s Greek text (1894), p. 289 (PDF p. 305), has this reading."
+    },
+    "JHN 19:31#1 TR": {
+      "label": "erasmus",
+      "reads": "ἐπεὶ παρασκευὴ ἦν",
+      "why": "Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 651, PDF p. 667): “xix. 31 ἐπεὶ παρασκευὴ ἦν (post Ἰουδαῖοι)] Er. Ald. Col. Bez. 1. Vulg. Tynd.: (post σαββάτῳ) Compl. St. Bez. 2. 3. 4. 5.” The first Greek edition named is Erasmus’. Scrivener’s Greek text (1894), p. 293 (PDF p. 309), has this reading."
+    },
+    "JHN 4:37#1 TR": {
+      "label": "beza",
+      "reads": "ὁ λόγος ἐστὶν ἀληθινός",
+      "why": "Scrivener’s Greek text (1894), p. 242 (PDF p. 258), reads the words given, without the article before the adjective, and his appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, pp. 650–651, PDF pp. 666–667) lists no departure at this place, so the reading is Beza 1598’s."
+    },
+    "JHN 8:42#1 TR": {
+      "label": "erasmus",
+      "reads": "εἶπεν",
+      "why": "Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 651, PDF p. 667): “viii. 42 εἶπεν] Er. Ald. Col. St. 1. 2. Plant. Tynd. εἶπεν οὖν Compl. St. 3. 4. Bez. Vulg.” The first Greek edition named is Erasmus’. Scrivener’s Greek text (1894), p. 260 (PDF p. 276), has this reading."
+    },
+    "JUD 1:19#1 TR": {
+      "label": "beza",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § II (p. cii, PDF p. 108) lists this place among those where the Authorized Version agrees with Beza (1589) against Stephanus (1550): “19. ἑαυτοὺς is added after ἀποδιορίζοντες in Vulg., Beza, and our own Version against Compl., Erasm., and the other English (“makers of sects”).” Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, pp. 655–656, PDF pp. 671–672) does not list the place, so his text follows Beza 1598 there. Scrivener’s Greek text (1894), p. 600 (PDF p. 616), has this reading."
+    },
+    "JUD 1:24#1 TR": {
+      "label": "beza",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § II (p. cii, PDF p. 108) lists this place among those where the Authorized Version agrees with Beza (1589) against Stephanus (1550): “ver. 24. ὑμᾶς Vulg., English versions, but αὐτοὺς Compl., Erasm., Steph.” Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, pp. 655–656, PDF pp. 671–672) does not list the place, so his text follows Beza 1598 there. Scrivener’s Greek text (1894), p. 601 (PDF p. 617), has this reading."
+    },
+    "LUK 8:31#1 TR": {
+      "label": "erasmus",
+      "reads": "παρεκάλουν",
+      "why": "Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 650, PDF p. 666) gives the plural to ceteri omnes, all the editions collated except Stephanus 1551 and Beza, which have the singular, so Erasmus, the first of them, has the displaced they besought. Scrivener’s Greek text (1894), p. 170 (PDF p. 186), has this reading."
+    },
+    "LUK 10:22#1 TR": {
+      "label": "beza",
+      "reads": "Πάντα παρεδόθη μοι",
+      "lacks": "καὶ στραφεὶς πρὸς τοὺς μαθητὰς εἶπε",
+      "why": "Scrivener’s Greek text (1894), p. 180 (PDF p. 196), reads the words given and lacks those given before them, and his appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 650, PDF p. 666) lists no departure at this place, so the reading is Beza 1598’s."
+    },
+    "LUK 10:6#2 TR": {
+      "label": "beza",
+      "reads": "ὁ υἱὸς εἰρήνης",
+      "why": "Scrivener’s Greek text (1894), p. 179 (PDF p. 195), reads the words given, and his appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 650, PDF p. 666) lists no departure at this place, so the reading is Beza 1598’s."
+    },
+    "LUK 12:56#1 TR": {
+      "label": "complutensian",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § I (p. c, PDF p. 106): “xii. 56. τοῦ οὐρανοῦ καὶ τῆς γῆς Compl., Vulg. (Clementine) …”, against Stephanus 1550 and Beza 1589 jointly. Scrivener’s Greek text (1894), p. 191 (PDF p. 207), has this reading."
+    },
+    "LUK 17:35 TR": {
+      "label": "beza",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § II (p. ci, PDF p. 107) lists this place among those where the Authorized Version agrees with Beza (1589) against Stephanus (1550): “ver. 36. This verse, extant in Compl., the Great Bible (within brackets and in another type), and the Bishops’, is omitted by Erasm., Vulg., and the other English versions.” Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 650, PDF p. 666) does not list the place, so his text follows Beza 1598 there. Scrivener’s Greek text (1894), p. 205 (PDF p. 221), has this reading."
+    },
+    "LUK 17:35#1 TR": {
+      "label": "erasmus",
+      "reads": "ἡ μία",
+      "why": "Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 650, PDF p. 666): “xvii. 35 ἡ μία] Er. Ald. Col. Tynd. μία Compl. St. Bez.” The first Greek edition named is Erasmus’. Scrivener’s Greek text (1894), p. 205 (PDF p. 221), has this reading."
+    },
+    "LUK 1:35#1 TR": {
+      "label": "beza",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § II (p. ci, PDF p. 107) lists this place among those where the Authorized Version agrees with Beza (1589) against Stephanus (1550): “i. 35. ἐκ σοῦ added after γεννώμενον Compl., Erasm. (1516 only), Ald., Vulg. (editions), with Coverdale “(of the),” Geneva 1557.” Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 650, PDF p. 666) does not list the place, so his text follows Beza 1598 there. Scrivener’s Greek text (1894), p. 142 (PDF p. 158), has this reading."
+    },
+    "LUK 20:31#2 TR": {
+      "label": "erasmus",
+      "reads": "καὶ οὐ κατέλιπον",
+      "why": "Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 650, PDF p. 666): “xx. 31 καὶ οὐ κατέλιπον] Er. Ald. Col. Vulg. Tynd. om. καὶ Compl. St. Bez.” The first Greek edition named is Erasmus’. Scrivener, Cambridge Paragraph Bible (1873), Appendix E § I (p. c, PDF p. 106) likewise: “καὶ is inserted before οὐ κατέλιπον Erasm. and all English.” Scrivener’s Greek text (1894), p. 214 (PDF p. 230), has this reading."
+    },
+    "LUK 20:32#1 TR": {
+      "label": "erasmus",
+      "reads": "ὕστερον",
+      "why": "Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 650, PDF p. 666): “xx. 32 ὕστερον] Er. Ald. Col. Vulg. Tynd. ὕστερον δὲ Compl. St. Bez.” The first Greek edition named is Erasmus’. Scrivener’s Greek text (1894), p. 214 (PDF p. 230), has this reading."
+    },
+    "LUK 22:42#1 TR": {
+      "label": "aldine",
+      "reads": "παρένεγκε",
+      "why": "Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 650, PDF p. 666): “xxii. 42 παρένεγκε] Ald. Vulg. Tynd. παρενεγκεῖν ceteri omnes.” The first Greek edition named is Aldus’. Scrivener’s Greek text (1894), p. 221 (PDF p. 237), has this reading."
+    },
+    "LUK 22:45#1 TR": {
+      "label": "erasmus",
+      "reads": "μαθητὰς αὐτοῦ",
+      "why": "Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 650, PDF p. 666): “xxii. 45 μαθητὰς αὐτοῦ] Er. Ald. Col. Vulg. om. αὐτοῦ Compl. St. Bez.” The first Greek edition named is Erasmus’. Scrivener’s Greek text (1894), p. 221 (PDF p. 237), has this reading."
+    },
+    "LUK 2:22#1 TR": {
+      "label": "beza",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § II (p. ci, PDF p. 107) lists this place among those where the Authorized Version agrees with Beza (1589) against Stephanus (1550): “ii. 22. αὐτῆς (for αὐτῶν) Compl.” Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 650, PDF p. 666) does not list the place, so his text follows Beza 1598 there. Scrivener’s Greek text (1894), p. 147 (PDF p. 163), has this reading."
+    },
+    "LUK 3:31#1 TR": {
+      "label": "erasmus",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § I (p. c, PDF p. 106): “iii. 31. Μενάμ, Erasm., Ald., Tyndale …”, a place where the Authorized Version differs from Stephanus 1550 and Beza 1589 jointly. The first Greek edition named is Erasmus’. Scrivener’s Greek text (1894), p. 151 (PDF p. 167), has this reading."
+    },
+    "LUK 6:37#1 TR": {
+      "label": "erasmus",
+      "reads": "μὴ",
+      "why": "Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 650, PDF p. 666): “vi. 37 μὴ] Er. Ald. Col. Vulg. Tynd. καὶ μὴ Compl. St. Bez.” The first Greek edition named is Erasmus’. Scrivener’s Greek text (1894), p. 162 (PDF p. 178), has this reading."
+    },
+    "MAT 10:25#1 TR": {
+      "label": "complutensian",
+      "reads": "Βεελζεβοὺβ",
+      "why": "Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 649, PDF p. 665): “x. 25 Βεελζεβοὺβ] Compl. hic tantum, Vulg. passim, Tynd. Βεελζεβοὺλ Plant. Bez. ceteri omnes.” Scrivener’s Greek text (1894), p. 25 (PDF p. 41), has this reading."
+    },
+    "MAT 13:24#1 TR": {
+      "label": "complutensian",
+      "reads": "σπείραντι",
+      "why": "Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 649, PDF p. 665): “xiii. 24 σπείραντι] Compl. Col. Vulg. σπείροντι Bez. ceteri omnes.” The first Greek edition named is the Complutensian. Scrivener’s Greek text (1894), p. 34 (PDF p. 50), has this reading."
+    },
+    "MAT 21:7#1 TR": {
+      "label": "beza",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § II (p. ci, PDF p. 107) lists this place among those where the Authorized Version agrees with Beza (1589) against Stephanus (1550): “xxi. 7. ἐπεκάθισαν.” Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 649, PDF p. 665) does not list the place, so his text follows Beza 1598 there. Scrivener’s Greek text (1894), p. 56 (PDF p. 72), has this reading."
+    },
+    "MAT 23:13 TR": {
+      "label": "beza",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § II (p. ci, PDF p. 107) lists this place among those where the Authorized Version agrees with Beza (1589) against Stephanus (1550): “xxiii. 13, 14 (transposed by Compl., Stephens).” Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 649, PDF p. 665) does not list the place, so his text follows Beza 1598 there. Scrivener’s Greek text (1894), p. 63 (PDF p. 79), has this reading."
+    },
+    "MAT 23:13#1 TR": {
+      "label": "beza",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § II (p. ci, PDF p. 107) lists this place among those where the Authorized Version agrees with Beza (1589) against Stephanus (1550): “xxiii. 13, 14 (transposed by Compl., Stephens).” Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 649, PDF p. 665) does not list the place, so his text follows Beza 1598 there. Scrivener’s Greek text (1894), p. 63 (PDF p. 79), has this reading."
+    },
+    "MAT 23:14 TR": {
+      "label": "beza",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § II (p. ci, PDF p. 107) lists this place among those where the Authorized Version agrees with Beza (1589) against Stephanus (1550): “xxiii. 13, 14 (transposed by Compl., Stephens).” Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 649, PDF p. 665) does not list the place, so his text follows Beza 1598 there. Scrivener’s Greek text (1894), p. 63 (PDF p. 79), has this reading."
+    },
+    "MAT 23:14#1 TR": {
+      "label": "beza",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § II (p. ci, PDF p. 107) lists this place among those where the Authorized Version agrees with Beza (1589) against Stephanus (1550): “xxiii. 13, 14 (transposed by Compl., Stephens).” Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 649, PDF p. 665) does not list the place, so his text follows Beza 1598 there. Scrivener’s Greek text (1894), p. 63 (PDF p. 79), has this reading."
+    },
+    "MRK 10:25#1 TR": {
+      "label": "beza",
+      "reads": "διελθεῖν",
+      "why": "Scrivener’s Greek text (1894), p. 117 (PDF p. 133), reads the words given, and his appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 649, PDF p. 665) lists no departure at this place, so the reading is Beza 1598’s."
+    },
+    "MRK 12:20#1 TR": {
+      "label": "beza",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § II (p. ci, PDF p. 107) lists this place among those where the Authorized Version agrees with Beza (1589) against Stephanus (1550): “xii. 20. οὖν added after ἦσαν; so Coverdale, Geneva 1557.” Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 649, PDF p. 665) does not list the place, so his text follows Beza 1598 there. Scrivener’s Greek text (1894), p. 124 (PDF p. 140), has this reading."
+    },
+    "MRK 13:9#1 TR": {
+      "label": "erasmus",
+      "reads": "ἀχθήσεσθε",
+      "why": "Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 649, PDF p. 665): “xiii. 9 ἀχθήσεσθε] Er. (ducemini) Ald. Col. Tynd. σταθήσεσθε Bez. ceteri omnes.” The first Greek edition named is Erasmus’. Scrivener’s Greek text (1894), p. 127 (PDF p. 143), has this reading."
+    },
+    "MRK 15:3#1 TR": {
+      "label": "complutensian",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § I (p. c, PDF p. 106), lists this addition among the places where the Authorized Version differs from Stephanus 1550 and Beza 1589 jointly: “add to the end αὐτὸς δὲ οὐδὲν ἀπεκρίνατο Compl., Stephens 1546, 1549, Bishops’.” The first Greek edition named is the Complutensian. Scrivener’s Greek text (1894), p. 135 (PDF p. 151), has this reading."
+    },
+    "MRK 5:38#1 TR": {
+      "label": "erasmus",
+      "reads": "καὶ κλαίοντας",
+      "why": "Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 649, PDF p. 665): “v. 38 καὶ κλαίοντας] Er. Ald. Col. Vulg. om. καὶ Bez. ceteri omnes.” The first Greek edition named is Erasmus’. Scrivener, Cambridge Paragraph Bible (1873), Appendix E § I (p. c, PDF p. 106) likewise: “v. 38. καὶ κλαίοντας Erasm., Ald., Vulg.” Scrivener’s Greek text (1894), p. 99 (PDF p. 115), has this reading."
+    },
+    "MRK 6:9#1 TR": {
+      "label": "beza",
+      "reads": "ἐνδύσασθαι",
+      "why": "Scrivener’s Greek text (1894), p. 100 (PDF p. 116), reads the words given, and his appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 649, PDF p. 665) lists no departure at this place, so the reading is Beza 1598’s."
+    },
+    "MRK 8:14#1 TR": {
+      "label": "beza",
+      "reads": "ἐπελάθοντο οἱ μαθηταὶ",
+      "why": "Scrivener’s Greek text (1894), p. 108 (PDF p. 124), reads the words given, and his appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 649, PDF p. 665) lists no departure at this place, so the reading is Beza 1598’s."
+    },
+    "MRK 8:24#1 TR": {
+      "label": "beza",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § II (p. ci, PDF p. 107) lists this place among those where the Authorized Version agrees with Beza (1589) against Stephanus (1550): “viii. 24. ὅτι and ὁρῶ omitted, Compl. against Erasm., and the other English versions.” Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 649, PDF p. 665) does not list the place, so his text follows Beza 1598 there. Scrivener’s Greek text (1894), p. 109 (PDF p. 125), has this reading."
+    },
+    "MRK 9:40#1 TR": {
+      "label": "beza",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § II (p. ci, PDF p. 107) lists this place among those where the Authorized Version agrees with Beza (1589) against Stephanus (1550): “ix. 40. ἡμῶν [ὑμῶν Compl., Steph., Vulg.] twice, Erasm., Ald., all English except Tyndale.” Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 649, PDF p. 665) does not list the place, so his text follows Beza 1598 there. Scrivener’s Greek text (1894), p. 114 (PDF p. 130), has this reading."
+    },
+    "MRK 9:42#2 TR": {
+      "label": "complutensian",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § I (p. c, PDF p. 106): “ix. 42. τῶν μικρῶν τούτων Compl., Vulg.”, against Stephanus 1550 and Beza 1589 jointly. Scrivener’s Greek text (1894), p. 114 (PDF p. 130), has this reading."
+    },
+    "PHM 1:7#1 TR": {
+      "label": "complutensian",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § I (p. c, PDF p. 106): “Philem. 7. χαρὰν Compl., Vulg., all English: χάριν Erasm., Stephens, Beza.” Scrivener’s Greek text (1894), p. 539 (PDF p. 555), has this reading."
+    },
+    "REV 11:1#1 TR": {
+      "label": "beza",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § II (p. ciii, PDF p. 109) lists this place among those where the Authorized Version agrees with Beza (1589) against Stephanus (1550): “xi. 1. καὶ ὁ ἄγγελος εἱστήκει before λέγων is omitted by Erasm., Steph., Vulg., Tyndale, Coverdale, Great Bible: the words are found, less correctly, in Compl., Geneva 1557, Bishops’.” Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 656, PDF p. 672) does not list the place, so his text follows Beza 1598 there. Scrivener’s Greek text (1894), p. 620 (PDF p. 636), has this reading."
+    },
+    "REV 11:14#1 TR": {
+      "label": "beza",
+      "reads": "καὶ ἰδού",
+      "why": "Scrivener’s Greek text (1894), p. 622 (PDF p. 638), reads the words given, and his appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 656, PDF p. 672) lists no departure at this place, so the reading is Beza 1598’s."
+    },
+    "REV 16:5#2 TR": {
+      "label": "beza",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § II (p. ciii, PDF p. 109) lists this place among those where the Authorized Version agrees with Beza (1589) against Stephanus (1550): “xvi. 5. ἐσόμενος (for ὅσιος), a bold variation of Beza’s last three editions, is adopted in our version and the Elzevir text of 1633.” Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 657, PDF p. 673) does not list the place, so his text follows Beza 1598 there. Scrivener’s Greek text (1894), p. 631 (PDF p. 647), has this reading."
+    },
+    "REV 20:4#3 TR": {
+      "label": "complutensian",
+      "reads": "χίλια",
+      "why": "Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 657, PDF p. 673): “xx. 4 χίλια] Compl. Er. Ald. Col. St. 1. 2. τὰ χίλια St. 3. 4. Bez.” The first Greek edition named is the Complutensian. Scrivener’s Greek text (1894), p. 640 (PDF p. 656), has this reading."
+    },
+    "REV 4:3#3 TR": {
+      "label": "beza",
+      "reads": "ὁμοία",
+      "why": "Scrivener’s Greek text (1894), p. 609 (PDF p. 625), reads the words given, and his appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 656, PDF p. 672) lists no departure at this place, so the reading is Beza 1598’s."
+    },
+    "REV 9:11#1 TR": {
+      "label": "beza",
+      "reads": "καὶ ἔχουσιν",
+      "why": "Scrivener’s Greek text (1894), p. 618 (PDF p. 634), and Beza 1598 both read the words given, which the note gives back as “And they had”; Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 656, PDF p. 672) records only their elision: “ix. 11 ἐπ’ αὐτῶν] Compl. Er. Ald. Col. Bez. 1. ἐφ’ αὐτῶν St. Plant. Bez. 2. 3. 4. 5.”, which the English cannot show, and for which the apparatuses give the reading as Scrivener’s alone."
+    },
+    "ROM 16:20#1 TR": {
+      "label": "beza",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § II (p. ci, PDF p. 107) lists this place among those where the Authorized Version agrees with Beza (1589) against Stephanus (1550): “xvi. 20. Ἀμὴν only in Bishops’: omitted in other English, after Compl., Erasm., Steph., Vulg.” Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, pp. 652–653, PDF pp. 668–669) does not list the place, so his text follows Beza 1598 there. Scrivener’s Greek text (1894), p. 419 (PDF p. 435), has this reading."
+    },
+    "ROM 16:27#1 TR": {
+      "label": "beza",
+      "lacks": "ᾧ",
+      "why": "Scrivener’s Greek text (1894), p. 419 (PDF p. 435), lacks the word given, and his appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, pp. 652–653, PDF pp. 668–669) lists no departure at this place, so the reading is Beza 1598’s."
+    },
+    "ROM 7:6#1 TR": {
+      "label": "beza",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § II (p. ci, PDF p. 107) lists this place among those where the Authorized Version agrees with Beza (1589) against Stephanus (1550): “vii. 6. ἀποθανόντος, on no known authority.” Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, pp. 652–653, PDF pp. 668–669) does not list the place, so his text follows Beza 1598 there. Scrivener’s Greek text (1894), p. 400 (PDF p. 416), has this reading."
+    },
+    "ROM 8:11#1 TR": {
+      "label": "beza",
+      "why": "Scrivener, Cambridge Paragraph Bible (1873), Appendix E § II (p. ci, PDF p. 107) lists this place among those where the Authorized Version agrees with Beza (1589) against Stephanus (1550): “viii. 11. διὰ τοῦ ἐνοικοῦντος αὐτοῦ πνεύματος Compl.: but διὰ τὸ ἐνοικοῦν αὐτοῦ πνεῦμα Eras., Ald., Steph., Vulg., all English.” Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, pp. 652–653, PDF pp. 668–669) does not list the place, so his text follows Beza 1598 there. Scrivener’s Greek text (1894), p. 402 (PDF p. 418), has this reading."
     }
   }
 }

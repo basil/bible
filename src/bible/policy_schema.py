@@ -683,6 +683,13 @@ ByzantineCorrection = TypedDict(
 )
 
 
+class ByzantineEdition(TypedDict, total=False):
+    label: ReadOnly[str]
+    reads: ReadOnly[str]
+    lacks: ReadOnly[str]
+    why: ReadOnly[str]
+
+
 class ByzantineSide(TypedDict, total=False):
     unit: ReadOnly[ByzantineUnit]
     side: ReadOnly[str]
@@ -699,6 +706,7 @@ Byzantine = TypedDict(
         "hodges-farstad": ReadOnly[Mapping[str, ByzantineSide]],
         "lemmas": ReadOnly[Mapping[str, ByzantineLemma]],
         "scrivener": ReadOnly[Mapping[str, ByzantineCorrection]],
+        "editions": ReadOnly[Mapping[str, ByzantineEdition]],
     },
     total=False,
 )

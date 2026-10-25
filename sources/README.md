@@ -73,6 +73,10 @@ included.
 
 The scans are consulted editorial evidence. The build reads the recorded decisions and citations in `edition/alexandrinus.json` and does not require the images or network access. See the introduction (`content/introduction.sfm`) for the limits of this use, and [CONTRIBUTING.md](../CONTRIBUTING.md#reviewing-the-readings-from-codex-alexandrinus) for the review of each decision.
 
+## Valpy’s Greek edition
+
+`edition/alexandrinus.json` also cites Valpy’s printed Greek Septuagint, the edition Brenton translated, where it names `Valpy` as the witness of a displaced reading or confirms that Vaticanus has the Greek Brenton rendered. The decisions cite it as “Valpy p. 9 (PDF p. 21)”: the printed page, then the 1-based page of the PDF of the Library of Congress copy, catalogued as of 1819, at the Internet Archive ([hepalaiadiatheke00holm](https://archive.org/details/hepalaiadiatheke00holm)). Like Swete’s, the scan is consulted evidence and the build does not read it.
+
 ## English for the readings from Codex Alexandrinus
 
 Where Brenton gives a reading of Codex Alexandrinus with no English of his own, or with English that is wrong or incomplete, a decision in `edition/alexandrinus.json` supplies the words from one of the following public-domain translations, in King James English, and names the source in its reason; the introduction (`content/introduction.sfm`) says when.

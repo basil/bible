@@ -731,13 +731,11 @@ def test_a_change_that_rewrites_a_term_drops_it(
         notes.source_body(notes.labelled_pieces(source), [], None, "key", source),
         ctx.terms,
     )
-    edited = notes.edited(
-        body, "Heb. and Vat.", "Heb. and Brenton’s facing Greek", "key"
-    )
+    edited = notes.edited(body, "Heb. and Vat.", "Heb. and Valpy", "key")
     assert [edited.plain[t.start : t.end] for t in edited.terms] == ["Alex.", "Heb."]
     runs, terms, _ = notes.displayed(edited)
     printed = notes.text_of(notes.finished(runs, terms, None, None, ctx.terms, "key"))
-    assert "Brenton’s facing Greek" in printed and "Vat." not in printed
+    assert "Valpy" in printed and "Vat." not in printed
 
 
 @pytest.mark.parametrize(
@@ -1041,7 +1039,7 @@ def test_a_sign_after_no_witness_is_refused(
 def test_every_note_is_printed_replaced_by_a_link_or_explicitly_omitted(
     edition: bible.pipeline.Edition,
 ) -> None:
-    assert edition.summary["printed_notes"] == 6203
+    assert edition.summary["printed_notes"] == 6201
     rows = [row for listed in edition.notes.values() for row in listed]
     assert len({row["key"] for row in rows}) == len(rows)
     # The 1611 margin is printed on the New Testament alone, and whole but
@@ -1368,8 +1366,9 @@ def test_passages_set_in_another_order_are_noted_alike_in_both_testaments(
         "16:24",
         "TR has here the verses printed at 14:24–26",
     )
-    # Scrivener alone has the two woes in this order (received.py).
-    assert rows["MAT 23:13 TR"] == ("23:13", "KJV has this passage at 23:14")
+    # Scrivener alone has the two woes in this order, as Beza does
+    # (received.py).
+    assert rows["MAT 23:13 TR"] == ("23:13", "Beza has this passage at 23:14")
 
 
 def test_an_omission_quotes_only_the_part_of_its_lemma_that_is_omitted(
@@ -1383,8 +1382,8 @@ def test_an_omission_quotes_only_the_part_of_its_lemma_that_is_omitted(
         for code in ("GEN", "MAT", "JAS")
         for row in edition.notes[code]
     }
-    assert rows["GEN 8:7#2"] == ("to see if the water had ceased", "Brenton omits")
-    assert rows["GEN 3:22"] == ("the Lord God said", "Brenton omits _the Lord_")
+    assert rows["GEN 8:7#2"] == ("to see if the water had ceased", "Valpy omits")
+    assert rows["GEN 3:22"] == ("the Lord God said", "Valpy omits _the Lord_")
     assert rows["MAT 18:19#1 TR"] == ("verily", "TR omits")
     assert rows["JAS 4:12#1 TR"] == ("but who", "TR omits _but_")
     for code in edition.scripture:
@@ -1591,11 +1590,11 @@ def test_mark_fist_correction_preserves_the_marginal_note(
             "according to the Heb. _a wonderful work_. Alex. reads τῷ θαυμαστὰ ποιοῦντι κυρίῳ.",
         ),
         ("GEN 1:11#2", "Alex. adds εἰς ὁμοιότητα"),
-        ("GEN 8:7#2", "Brenton omits"),
-        ("GEN 6:7", "Brenton _I am grieved_. Gr. _I have thought_ or _reasoned_"),
+        ("GEN 8:7#2", "Valpy omits"),
+        ("GEN 6:7", "Valpy _I am grieved_. Gr. _I have thought_ or _reasoned_"),
         (
             "LUK 17:35 TR",
-            "KJV adds verse 36 _Two men shall be in the field; the one shall be taken, and the other left._",
+            "Beza adds verse 36 _Two men shall be in the field; the one shall be taken, and the other left._",
         ),
         (
             "JOB 25:2",
@@ -2054,7 +2053,6 @@ def test_a_note_set_below_keeps_its_words_and_stale_placements_stop_the_build() 
         ("14:12", 15, "when thy feet enter into the city, the child shall die"),
         ("14:15", 19, "as a reed is shaken in the water"),
         ("14:15", 20, "and he shall root up Israel"),
-        ("14:15", 21, "out of this good land, which he gave to their fathers"),
         ("14:16", 22, "And he shall give Israel up because of the sins of Jeroboam"),
         ("14:17", 23, "And Jeroboam’s wife arose, and departed, and came to Tirzah"),
         ("14:17", 24, "and when she came to the threshold of the door, the child died"),

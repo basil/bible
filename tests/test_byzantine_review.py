@@ -291,10 +291,10 @@ def test_james_keeps_contextual_diff_and_compact_witnesses(
 def test_a_note_names_the_witness_the_edition_prints(
     packets: dict[str, str], index: review.Index
 ) -> None:
-    # Scrivener alone has "joy", so the note names the King James Version.
+    # Scrivener alone has "joy", after the Complutensian, which the note names.
     section = section_of(packets, "PHM 1:7#1")
     assert "Received Text: Scrivener alone (SCR)" in section
-    assert "thankfulness: KJV joy" in section
+    assert "thankfulness: Complutensian text joy" in section
     # Every note the packets show is one the edition prints, an omitted
     # verse's included.
     printed = sorted(

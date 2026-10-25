@@ -474,15 +474,15 @@
       "numbering": "kjv-verses",
       "why": "CCEL 24.iii#1 cites Psalm 3:2 using English verse numbers. The edition counts the Psalm title, so this is PSA3:3, whose note explicitly explains Pause."
     },
-    "1KI 7:37 Brenton": {
+    "1KI 7:37 Vat.": {
       "source": "7:38–50",
       "not_a_citation": true,
-      "why": "Where this edition prints the passage Brenton’s source text has here, named as a number rather than cited, as the note at Romans 16:24 names the doxology's."
+      "why": "Where this edition prints the passage the Vatican text has here, named as a number rather than cited, as the note at Romans 16:24 names the doxology's."
     },
-    "1KI 7:38 Brenton": {
+    "1KI 7:38 Vat.": {
       "source": "verse 37",
       "not_a_citation": true,
-      "why": "The verse after which Brenton’s source text has this passage, named as a number rather than cited, as the notes on the Hebrew's and the Received Text's order name theirs."
+      "why": "The verse after which the Vatican text has this passage, named as a number rather than cited, as the notes on the Hebrew's and the Received Text's order name theirs."
     },
     "LEV 24:20 CCEL": {
       "source": "Matt. 5. 21",

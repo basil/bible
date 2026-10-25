@@ -224,6 +224,18 @@ def letter_key(text: str) -> str:
     return unicodedata.normalize("NFC", "".join(accent_letters(text))).lower()
 
 
+def accent_key(text: str) -> str:
+    """Compare diacritics without case, punctuation, or grave/acute variation."""
+    return acute(letter_key(text.replace("…", "")))
+
+
+def acute(text: str) -> str:
+    """The words with a grave accent read as the acute it stands for."""
+    return unicodedata.normalize(
+        "NFC", unicodedata.normalize("NFD", text).replace("\u0300", "\u0301")
+    )
+
+
 @dataclasses.dataclass(frozen=True)
 class Alignment:
     """Checked projection of comparison tokens onto complete source words."""

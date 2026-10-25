@@ -25,7 +25,7 @@ from bible.byzantine import received
 from bible.byzantine.crosswire import presentation_bridge
 from bible.byzantine.decisions import ref_key
 from bible.byzantine.english import verses_of
-from bible.byzantine.greek import ascii_greek, letter_key, occurrences
+from bible.byzantine.greek import accent_key, ascii_greek, letter_key, occurrences
 from bible.byzantine.notes import source_range
 from bible.byzantine.presentation import corresponding, diff_spans, passage_spans
 from bible.byzantine.stages import Reconciliation
@@ -572,18 +572,6 @@ def rows(
             )
         )
     return sorted(result, key=lambda row: ref_key(row.reference))
-
-
-def accent_key(text: str) -> str:
-    """Compare diacritics without case, punctuation, or grave/acute variation."""
-    return acute(letter_key(text.replace("…", "")))
-
-
-def acute(text: str) -> str:
-    """The words with a grave accent read as the acute it stands for."""
-    return unicodedata.normalize(
-        "NFC", unicodedata.normalize("NFD", text).replace("\u0300", "\u0301")
-    )
 
 
 def joined_spans(

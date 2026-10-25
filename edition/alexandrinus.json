@@ -6,7 +6,7 @@
   },
   "readings": {
     "GEN 3:22": {
-      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Codex Vaticanus is lacking before Genesis 46:28. Brenton 1879 p. 4 (physical 20) and 1900 p. 4 (physical 16) both print “Alex. + the Lord.” at caller ξ in “And God said” (their English verse 23, Greek and source verse 22); Swete 1 p. 5 prints “Καὶ εἶπεν Κύριος ὁ θεὸς” in its A text, and no manuscript Swete reports omits the Lord.",
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Codex Vaticanus is lacking before Genesis 46:28. Brenton 1879 p. 4 (physical 20) and 1900 p. 4 (physical 16) both print “Alex. + the Lord.” at caller ξ in “And God said” (their English verse 23, Greek and source verse 22); Swete 1 p. 5 prints “Καὶ εἶπεν Κύριος ὁ θεὸς” in its A text, and no manuscript Swete reports omits the Lord. Valpy p. 3 (PDF p. 15) prints Καὶ εἶπεν ὁ Θεός, without Κύριος, so the displaced omission is Valpy’s.",
       "swete": {
         "volume": 1,
         "page": 5,
@@ -15,7 +15,7 @@
         "agrees": true
       },
       "from": "God said",
-      "note": "\\fl Brenton \\ft omits \\fq the Lord\\ft .",
+      "note": "\\fl Valpy \\ft omits \\fq the Lord\\ft .",
       "english": {
         "source": "brenton",
         "span": [17, 25],
@@ -29,7 +29,7 @@
       "source_note": "\\fqa Alex. \\ft + the Lord."
     },
     "GEN 6:7": {
-      "why": "Print Brenton’s Alexandrine reading. Brenton 1879 p. 7 (physical 23) and 1900 p. 7 (physical 19) both print “Gr. I have thought or reasoned. Alex. ἐθυμώθην. I became angry.” at caller θ before “grieved” (their English verse 8, source verse 7). Swete 1 p. 9 prints “ὅτι ἐθυμώθην ὅτι ἐποίησα αὐτούς” in its A text, without a correcting-hand qualification. Codex Vaticanus is lacking before Genesis 46:28, and no witness Swete reports has the displaced reading, so the displaced “I am grieved” is attributed to Brenton. Brenton’s Gr. gloss belongs to his displaced words and stays with them.",
+      "why": "Print Brenton’s Alexandrine reading. Brenton 1844 volume I physical p. 30 (printed p. 6), 1879 physical p. 23 and 1900 physical p. 19 (printed p. 7 in both Bagster printings) give “Gr. I have thought or reasoned. Alex. ἐθυμώθην. I became angry.” with the caller immediately before grieved in I am grieved; the required printed p. 7 is absent from the cropped 1884 scan. Swete I p. 9 prints “ὅτι ἐθυμώθην ὅτι ἐποίησα αὐτούς” in its A main text, without a correcting-hand qualification. Codex Vaticanus is lacking before Genesis 46:28. Valpy p. 5 (PDF p. 17) prints “ὅτι ἐνεθυμήθην, ὅτι ἐποίησα αὐτούς”, which Brenton renders freely I am grieved and literally I have thought or reasoned, so the displaced reading is Valpy’s. Brenton’s Gr. gloss belongs to his displaced words and stays with them.",
       "swete": {
         "volume": 1,
         "page": 9,
@@ -38,7 +38,7 @@
         "agrees": true
       },
       "from": "I am grieved",
-      "note": "\\fl Brenton \\fqa I am grieved\\ft . \\fl Gr. \\fqa I have thought \\ft or \\fqa reasoned\\ft .",
+      "note": "\\fl Valpy \\fqa I am grieved\\ft . \\fl Gr. \\fqa I have thought \\ft or \\fqa reasoned\\ft .",
       "english": {
         "source": "brenton",
         "span": [66, 80]
@@ -46,7 +46,7 @@
       "source_note": "\\fqa Gr. \\ft I have thought or reasoned. \\fqa Alex. \\ft ἐθυμώθην. I became angry."
     },
     "GEN 8:7#2": {
-      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Codex Vaticanus is lacking before Genesis 46:28; Brenton 1879 p. 9 (physical 25) and 1900 p. 9 (physical 21) both print “Alex. + to see if the water had ceased.” at caller γ after “raven”; Swete 1 p. 12 prints “τοῦ ἰδεῖν εἰ κεκόπακεν τὸ ὕδωρ” in its A text at that place. A and D’s later hand D^a have the clause; E omits only του. No witness Swete reports omits the whole clause.",
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Brenton 1844 volume 1 physical p. 32 (printed p. 8) puts a dagger before and following a raven; and gives the marginal Alex. to see if the water had ceased. Brenton 1879 physical p. 25, 1884 physical p. 22 and 1900 physical p. 21 (printed p. 9 in all three Bagster printings) print “Alex. + to see if the water had ceased.” at caller γ after a raven; and before and. Swete I p. 12 prints τοῦ ἰδεῖν εἰ κεκόπακεν τὸ ὕδωρ in its A main text and records του ιδειν ει _D_^a om του E | υδωρ 1°] ωρ rescr _D_^a | εως ου _D_. A and D’s later hand have the clause; E omits only του. Codex Vaticanus is lacking before Genesis 46:28. Valpy p. 6 (PDF p. 18) reads Καὶ ἀπέστειλε τὸν κόρακα· καὶ ἐξελθὼν, without the clause, so the displaced omission is Valpy’s.",
       "swete": {
         "volume": 1,
         "page": 12,
@@ -55,6 +55,7 @@
         "agrees": true
       },
       "from": "a raven;",
+      "label": "valpy",
       "omits": true,
       "english": {
         "source": "brenton",
@@ -74,7 +75,7 @@
       "source_note": "\\fqa Alex. \\ft + to see if the water had ceased."
     },
     "GEN 11:13": {
-      "why": "Print Brenton’s Alexandrine 430 years as “four hundred and thirty years”: Brenton 1879 p. 13 (physical 29) and 1900 p. 13 (physical 25) both print “Alex. 430 years.” at caller β before Arphaxad’s “four hundred years”. Swete 1 p. 17, whose text here is A, prints “ἔτη τετρακόσια τριάκοντα” in Genesis 11:13, with no correction or uncertainty attached to this number; its apparatus gives τριακοσια for D and E. Codex Vaticanus is lacunose here. The English derivation spells out the printed numeral without altering its value. Neither A’s 430 nor the τριακοσια of D and E establishes Brenton’s 400.",
+      "why": "Print Brenton’s Alexandrine 430 years as “four hundred and thirty years”: Brenton 1844 volume I physical pp. 34–35 (printed pp. 10–11), 1879 physical p. 29, 1884 physical p. 26, and 1900 physical p. 25 (printed p. 13 in the Bagster printings) all give “Alex. 430 years.” with the caller immediately before Arphaxad’s “four hundred years”. Swete I p. 17, whose text here is A, prints ἔτη τετρακόσια τριάκοντα without a correcting-hand or uncertainty qualification at this number; its apparatus records τετρακοσια] τριακοσια _D_ E. Codex Vaticanus is lacunose here. Valpy p. 9 (PDF p. 21) prints ἔτη τετρακόσια, as does Brenton’s facing Greek, so the displaced four hundred years is Valpy’s. The derivation spells out Brenton’s printed numeral without altering its value.",
       "swete": {
         "volume": 1,
         "page": 17,
@@ -83,6 +84,7 @@
         "agrees": true
       },
       "from": "four hundred years",
+      "label": "valpy",
       "english": {
         "source": "brenton",
         "span": [15, 24],
@@ -119,7 +121,7 @@
       "label": "bodleian-genesis"
     },
     "GEN 11:24": {
-      "why": "Print Brenton’s Alexandrine 79 years as “seventy-nine years”: Brenton 1879 p. 13 (physical 29) and 1900 p. 13 (physical 25) both print “Alex. 79 years.” at caller δ before Nachor’s “a hundred and seventy-nine years”. Swete 1 p. 18, whose main text here is A, prints “ἔτη ἑβδομήκοντα ἐννέα” in Genesis 11:24, with no correction or uncertainty attached to this number; its apparatus gives the same 79 in a different word order for E. Codex Vaticanus is lacunose here. The English derivation spells out the printed numeral without altering its value. A and E establish 79, not Brenton 179.",
+      "why": "Print Brenton’s Alexandrine 79 years as “seventy-nine years”: Brenton 1844 volume I physical p. 35 (printed p. 11), 1879 physical p. 29, 1884 physical p. 26 and 1900 physical p. 25 (printed p. 13 in the Bagster printings) give “Alex. 79 years.” with the caller immediately before Nachor’s “a hundred and seventy-nine years”. Swete I p. 18, whose main text here is A, prints “ἔτη ἑβδομήκοντα ἐννέα” in Genesis 11:24, without a correcting-hand or uncertainty qualification; its apparatus records “εννεα και εβδ. ετη E”, the same 79 in a different word order. Codex Vaticanus is lacunose here. Valpy p. 9 (PDF p. 21) prints ἔτη ἑκατὸν ἑβδομηκονταεννέα, so the displaced 179 is Valpy’s. The English derivation spells out the reported 79 without altering its value.",
       "swete": {
         "volume": 1,
         "page": 18,
@@ -128,6 +130,7 @@
         "agrees": true
       },
       "from": "a hundred and seventy-nine years",
+      "label": "valpy",
       "english": {
         "source": "brenton",
         "span": [15, 23],
@@ -141,7 +144,7 @@
       "source_note": "\\fqa Alex. \\ft 79 years."
     },
     "GEN 11:25": {
-      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Brenton 1879 physical p. 29 and 1900 physical p. 25 (both printed p. 13) put caller ζ before an hundred and twenty-five years and print Alex. 129 years. Expand that printed numeral in Brenton’s age wording; the unique changed numeral alone gives the paired twenty-nine / twenty-five reading, with the common age wording outside the note, and the caller stands before it, where Brenton’s stood before the whole age. Codex Vaticanus is lacking before Genesis 46:28; Swete vol. 1 p. 18 uses A as its main text and reads ἔτη ἑκατὸν εἴκοσι ἐννέα, with no uncertainty or correcting hand marked for this age. A and E read 129; no witness Swete reports reads Brenton’s 125.",
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. Brenton 1844 volume I physical p. 35 (printed p. 11) puts a dagger before a hundred and twenty-five years and prints Alex. 129 years; 1879 physical p. 29, 1884 physical p. 26, and 1900 physical p. 25 (printed p. 13 in the Bagster printings) put caller ζ before an hundred and twenty-five years and print Alex. 129 years. Expand that printed numeral in Brenton’s age wording; the unique changed numeral alone gives the paired twenty-nine / twenty-five reading, with the common age wording outside the note, and the caller stands before it, where Brenton’s stood before the whole age. Codex Vaticanus is lacking before Genesis 46:28; Swete I p. 18 uses A as its main text and reads ἔτη ἑκατὸν εἴκοσι ἐννέα, with no uncertainty or correcting hand marked for this age; its diplomatic apparatus gives εννεα και εικοσι και εκ. ετη E. A and E read 129; no witness Swete reports reads 125. Valpy p. 9 (PDF p. 21) prints ἔτη ἑκατὸν εἴκοσιπέντε, as Brenton’s facing Greek does, so the displaced twenty-five is Valpy’s.",
       "swete": {
         "volume": 1,
         "page": 18,
@@ -162,7 +165,7 @@
       },
       "source_note": "\\fqa Alex. \\ft 129 years.",
       "lemma": "twenty-nine",
-      "note": "\\fl Brenton \\fqa twenty-five\\ft ."
+      "note": "\\fl Valpy \\fqa twenty-five\\ft ."
     },
     "GEN 12:5": {
       "why": "Brenton 1879 physical p. 30 and 1900 physical p. 26 (both printed p. 14) print “Alex. + and came into the land of Chanaan. So the Heb.” Swete I p. 19: A explicitly prints καὶ ἦλθον εἰς γῆν Χανάαν; E explicitly omits that complete clause. Cotton Genesis retains it with singular ηλθεν. B is lacunose. The omission note can identify Bodleian Genesis (Swete E).",
@@ -195,7 +198,7 @@
       "source_note": "\\fqa Alex. \\ft + and came into the land of Chanaan. So the \\fqa Heb."
     },
     "GEN 12:20": {
-      "why": "Brenton source note \\fqa Alex. \\ft + and Lot with him. is supported by the printings: 1879 physical p. 30 (printed p. 14); 1900 physical p. 26 (printed p. 14). Swete I p. 20: A explicitly prints καὶ Λὼτ μετ᾽ αὐτοῦ. No apparatus unit positively identifies a manuscript omitting it, and B is lacunose. Identify the displaced omission as Brenton’s.",
+      "why": "Brenton 1844 volume I physical p. 36 (printed p. 12), 1879 physical p. 30, 1884 physical p. 27 and 1900 physical p. 26 (printed p. 14 in the three Bagster printings) all end Genesis 12:20 at “and all that he had.”, with the caller after the period and the note “Alex. + and Lot with him.” Swete I p. 20, whose main text here is A, explicitly ends the verse καὶ πάντα ὅσα ἦν αὐτῷ, καὶ Λὼτ μετ᾽ αὐτοῦ, without a correcting-hand or uncertainty qualification at the addition; no apparatus unit positively identifies a manuscript omitting it, and B is lacunose. Valpy p. 10 (PDF p. 22) ends the verse καὶ πάντα ὅσα ἦν αὐτῷ. and begins chapter 13 without the Lot clause, so the displaced omission is Valpy’s.",
       "swete": {
         "volume": 1,
         "page": 20,
@@ -204,6 +207,7 @@
         "agrees": true
       },
       "from": "and all that he had.",
+      "label": "valpy",
       "omits": true,
       "english": {
         "source": "brenton",
@@ -246,7 +250,7 @@
       "source_note": "\\fqa Alex. \\ft where he made or pitched his tent."
     },
     "GEN 13:5": {
-      "why": "Brenton source note \\fqa Alex. \\ft cattle. is supported by the printings: 1879 physical p. 30 (printed p. 14); 1900 physical p. 26 (printed p. 14). Swete I p. 20: A has κτήνη. E adds και σκηναι after κτηνη, thus cattle and tents; it does not replace cattle with tents as Brenton’s English does. B is lacunose. The substitution note must identify Brenton rather than claim E has his configuration.",
+      "why": "Brenton 1844 volume I physical p. 36 (printed p. 12), 1879 physical p. 30, 1884 physical p. 27, and 1900 physical p. 26 (printed p. 14 in the Bagster printings) print tents, with the caller immediately before it and the note “Alex. cattle.” Swete I p. 20, whose main text here is A, prints κτήνη, with diplomatic apparatus κτηνη] + και σκηναι E: E adds tents after cattle rather than replacing cattle with tents. B is lacunose before Genesis 46:28. Valpy p. 10 (PDF p. 22) prints καὶ βόες, καὶ σκηναί, tents without cattle, as Brenton’s facing Greek does, so the displaced tents is Valpy’s.",
       "swete": {
         "volume": 1,
         "page": 20,
@@ -255,6 +259,7 @@
         "agrees": true
       },
       "from": "tents",
+      "label": "valpy",
       "english": {
         "source": "brenton",
         "span": [15, 21]
@@ -286,7 +291,7 @@
       "source_note": "\\fqa Alex. \\ft Hivite."
     },
     "GEN 34:2": {
-      "why": "Brenton source note \\fqa Alex. \\ft the Chorrhæan. is supported by the printings: 1879 physical p. 61 (printed p. 45); 1900 physical p. 57 (printed p. 45). Swete I p. 64: A explicitly prints ὁ Χορραῖος. The only apparatus unit for 34:2 concerns ειδεν, and establishes no manuscript reading Evite. B is lacunose. Attribute the displaced Evite to Brenton.",
+      "why": "Brenton source note \\fqa Alex. \\ft the Chorrhæan. is supported by the printings: 1879 physical p. 61 (printed p. 45); 1900 physical p. 57 (printed p. 45); 1844 vol. 1 physical p. 61 margin. Swete I p. 64: A explicitly prints ὁ Χορραῖος; the only apparatus unit for 34:2 concerns ειδεν. B is lacunose. Valpy p. 31 (PDF p. 43) prints Συχὲμ ὁ υἱὸς Ἐμμὼρ ὁ Εὐαῖος, ὁ ἄρχων τῆς γῆς, as does Brenton’s facing Greek; the displaced Evite renders its Εὐαῖος, so the note names Valpy.",
       "swete": {
         "volume": 1,
         "page": 64,
@@ -295,6 +300,7 @@
         "agrees": true
       },
       "from": "Evite",
+      "label": "valpy",
       "english": {
         "source": "brenton",
         "span": [19, 28]
@@ -442,7 +448,7 @@
       "source_note": "\\fqa Alex. \\ft 350."
     },
     "NUM 26:31": {
-      "why": "Both Brenton printings give “Alex. 600.” with the caller before four hundred (1879 physical 228; 1900 physical 224, printed 212). Their facing Greek τετρακόσιοι and English four hundred agree with each other. Swete I p. 314 prints B χʹ and explicitly records χʹ] εξακοσιοι AF: all represent six hundred. Retain the supported promotion of six hundred, leaving forty-three thousand untouched. Attribute displaced four hundred to Brenton; neither B nor the apparatus witnesses support that number.",
+      "why": "Both Brenton printings give “Alex. 600.” with the caller before four hundred (1879 physical 228; 1900 physical 224, printed 212). Their facing Greek τετρακόσιοι and English four hundred agree with each other. Swete I p. 314 prints B χʹ and explicitly records χʹ] εξακοσιοι AF: all represent six hundred. Retain the supported promotion of six hundred, leaving forty-three thousand untouched. Valpy p. 145 (PDF p. 157) reads “τρεῖς καὶ τεσσαράκοντα χιλιάδες καὶ τετρακόσιοι”, the reading Brenton translated, while B reads χʹ; attribute the displaced four hundred to Valpy, since B differs and no witness Swete reports supports it.",
       "swete": {
         "volume": 1,
         "page": 314,
@@ -451,6 +457,7 @@
         "agrees": true
       },
       "from": "four hundred",
+      "label": "valpy",
       "english": {
         "source": "brenton",
         "span": [15, 18],
@@ -489,7 +496,7 @@
       "label": "vatican"
     },
     "NUM 26:47": {
-      "why": "Both Brenton printings give “Alex. 600.” with the caller before four hundred (1879 physical 229; 1900 physical 225, printed 213). Brenton’s facing Greek τετρακόσιοι also represents four hundred. Swete I p. 315 prints B χʹ and explicitly records χʹ] εξακοσιοι AF, all representing six hundred. Retain the supported promotion of six hundred, leaving sixty-four thousand untouched. Attribute displaced four hundred to Brenton; no witness Swete reports supports it.",
+      "why": "Both Brenton printings give “Alex. 600.” with the caller before four hundred (1879 physical 229; 1900 physical 225, printed 213). Brenton’s facing Greek τετρακόσιοι also represents four hundred. Swete I p. 315 prints B χʹ and explicitly records χʹ] εξακοσιοι AF, all representing six hundred. Retain the supported promotion of six hundred, leaving sixty-four thousand untouched. Valpy p. 145 (PDF p. 157) prints “τέσσαρες καὶ ἑξήκοντα χιλιάδες καὶ τετρακόσιοι”, the Greek Brenton’s four hundred translates, while Vaticanus substantively differs (χʹ); attribute displaced four hundred to Valpy. No witness Swete reports supports it.",
       "swete": {
         "volume": 1,
         "page": 315,
@@ -498,6 +505,7 @@
         "agrees": true
       },
       "from": "four hundred",
+      "label": "valpy",
       "english": {
         "source": "brenton",
         "span": [15, 18],
@@ -535,7 +543,7 @@
       "source_note": "\\fqa Alex. \\ft ἐθνῶν, Gentiles."
     },
     "JOS 17:10": {
-      "why": "Print Brenton’s Alexandrine Aser for Aseb. Both Bagster printings (1879 physical p. 318 and 1900 physical p. 314, printed p. 302 in both) put caller β immediately before Aseb in Joshua 17:10 and print “Alex. Aser.” Swete 1 p. 456 explicitly records Ιασήβ] Ασηρ A against its Vatican text Ἰασὴβ; the reading has no correcting-hand or uncertainty qualification. The note’s Aser supplies the complete English replacement. The displaced Aseb is marked Brenton, not Vat.: Bagster’s Greek column on the same page prints ἐπὶ Ἀσὴβ, which Aseb renders, whereas B’s Ἰασὴβ would give Iaseb.",
+      "why": "Print Brenton’s Alexandrine Aser for Aseb. Both Bagster printings (1879 physical p. 318 and 1900 physical p. 314, printed p. 302 in both) put caller β immediately before Aseb in Joshua 17:10 and print “Alex. Aser.” Swete 1 p. 456 explicitly records Ιασήβ] Ασηρ A against its Vatican text Ἰασὴβ; the reading has no correcting-hand or uncertainty qualification. The note’s Aser supplies the complete English replacement. The displaced Aseb is labelled Valpy, not Vat.: Valpy p. 205 (PDF p. 217) and Bagster’s facing Greek both print ἐπὶ Ἀσήβ, which Aseb renders, whereas B’s Ἰασήβ (Swete I p. 456) would give Iaseb.",
       "swete": {
         "volume": 1,
         "page": 456,
@@ -544,6 +552,7 @@
         "agrees": true
       },
       "from": "Aseb",
+      "label": "valpy",
       "english": {
         "source": "brenton",
         "span": [15, 19]
@@ -551,7 +560,7 @@
       "source_note": "\\fqa Alex. \\ft Aser."
     },
     "JDG 9:37#2": {
-      "why": "Print Brenton’s Alexandrine “the way of the oak of the seers” for “the way of Helon Maonenim”. Both Bagster printings (1879 physical p. 346 and 1900 physical p. 342, printed p. 330 in both) place caller θ before “the way” in Judges 9:37 and print “Alex. translates the words ‘the way of the oak of the seers.’” Swete 1 p. 503 explicitly records δια οδου Ηλωνμαωνεμειν] απο οδου δρυος αποβλεποντων A against its Vatican text; this unit has no correcting-hand or uncertainty qualification. Brenton supplies the complete replacement noun phrase; A’s απο for δια is not in his note and is not translated. The displaced words are labelled Brenton, since B’s single word Ἠλωνμαωνεμείν does not give his Helon Maonenim.",
+      "why": "Print Brenton’s Alexandrine “the way of the oak of the seers” for “the way of Helon Maonenim”. Both Bagster printings (1879 physical p. 346 and 1900 physical p. 342, printed p. 330 in both) place caller θ before “the way” in Judges 9:37 and print “Alex. translates the words ‘the way of the oak of the seers.’” Swete 1 p. 503 explicitly records δια οδου Ηλωνμαωνεμειν] απο οδου δρυος αποβλεποντων A against its Vatican text; this unit has no correcting-hand or uncertainty qualification. Brenton supplies the complete replacement noun phrase; A’s απο for δια is not in his note and is not translated. The displaced words are labelled Valpy, not Vat.: Valpy p. 223 (PDF p. 235) and Bagster’s facing Greek both print δι’ ὁδοῦ Ἠλὼν Μαωνενίμ, which Helon Maonenim transliterates, whereas B’s single word Ἠλωνμαωνεμείν (Swete 1 p. 503) would give Elonmaonemein.",
       "swete": {
         "volume": 1,
         "page": 503,
@@ -560,6 +569,7 @@
         "agrees": true
       },
       "from": "the way of Helon Maonenim",
+      "label": "valpy",
       "english": {
         "source": "brenton",
         "span": [42, 73]
@@ -584,7 +594,7 @@
       "source_note": "\\fqa Heb. \\ft שבלת, “Shibboleth,” ear of corn. If translated at all, the English may as well be put as the Greek. \\fqa Alex. \\ft σύνθημα, \\fqa q. d. \\ft watchword."
     },
     "JDG 16:4": {
-      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. The 1879 printing (physical page 355, printed page 339) and the 1900 printing (physical page 351, printed page 339) both place the δ caller before Alsorech in Judges 16:4 and print “Alex. the brook of Sorech.”; the facing Greek reads ἐν Ἀλσωρήχ. Swete I p. 519 records εν Αλσωρηχ] η sup ras B^? επι του χειμαρρου Σωρηχ A: the A phrase is unqualified. Brenton’s caller marks the name alone, so his English replaces Alsorech and keeps “in”, as the King James Version’s “in the valley of Sorek” has it; A’s ἐπί for ἐν is a variant he does not report, and is not translated. The displaced name keeps the default Brenton label: Swete’s B main text reads Ἁλσωρήχ, but its η stands over an erasure by a hand Swete leaves uncertain, so neither plain Vat. nor Vat. first hand can be claimed for the spelling Alsorech, while Brenton’s facing Greek and English attest it.",
+      "why": "Print Brenton’s Alexandrine reading, confirmed by Swete. The 1879 printing (physical page 355, printed page 339) and the 1900 printing (physical page 351, printed page 339) both place the δ caller before Alsorech in Judges 16:4 and print “Alex. the brook of Sorech.”; the facing Greek reads ἐν Ἀλσωρήχ. Swete I p. 519 records εν Αλσωρηχ] η sup ras B^? επι του χειμαρρου Σωρηχ A: the A phrase is unqualified. Brenton’s caller marks the name alone, so his English replaces Alsorech and keeps “in”, as the King James Version’s “in the valley of Sorek” has it; A’s ἐπί for ἐν is a variant he does not report, and is not translated. Swete’s B main text reads Ἁλσωρήχ, its η over an erasure by a hand Swete leaves uncertain; the erasure touches one letter of the name, not the reading, and Valpy p. 229 (PDF p. 241) prints ἐν Ἀλσωρήχ, so the note names Vat. for the displaced Alsorech.",
       "swete": {
         "volume": 1,
         "page": 519,
@@ -593,6 +603,7 @@
         "agrees": true
       },
       "from": "Alsorech",
+      "label": "vatican",
       "english": {
         "source": "brenton",
         "span": [15, 34]
@@ -727,7 +738,7 @@
       "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft Saul."
     },
     "1SA 17:1": {
-      "why": "Print Brenton’s Alexandrine place-name and supply “in” for Swete’s ἐν. The 1879 printing (physical page 395, printed page 379) and the 1900 printing (physical page 391, printed page 379) both place the β caller immediately before “Ephermen” at 1 Kingdoms 17:1 and print “Alex. Aphesdommin.”; the Greek column of both prints Ἐφερμέν, which “Ephermen” renders letter for letter, so the name is neither Brenton’s nor eBible’s slip. Swete 1 p. 578, with Vaticanus as main text, records Εφερμεμ] εν Αφεσδομμειν A, with no correcting hand or uncertainty in this unit. Retain Brenton’s “Aphesdommin”, and supply “in” for A’s preceding ἐν from the King James Version’s “in Ephes-dammim”, where the Hebrew reads with A; it renders a word of A, so it is printed in roman. The displaced “Ephermen” is labelled Brenton, not Vat.: it renders his printed Ἐφερμέν, while B reads Ἐφερμέμ, a different Greek form, so B does not support the displaced word as printed.",
+      "why": "Print Brenton’s Alexandrine place-name and supply “in” for Swete’s ἐν. The 1879 printing (physical page 395, printed page 379) and the 1900 printing (physical page 391, printed page 379) both place the β caller immediately before “Ephermen” at 1 Kingdoms 17:1 and print “Alex. Aphesdommin.”; the Greek column of both prints Ἐφερμέν, which “Ephermen” renders letter for letter, so the name is neither Brenton’s nor eBible’s slip. Swete 1 p. 578, with Vaticanus as main text, records Εφερμεμ] εν Αφεσδομμειν A, with no correcting hand or uncertainty in this unit. Retain Brenton’s “Aphesdommin”, and supply “in” for A’s preceding ἐν from the King James Version’s “in Ephes-dammim”, where the Hebrew reads with A; it renders a word of A, so it is printed in roman. The displaced “Ephermen” is labelled Valpy, not Vat. or Brenton: Valpy p. 255 (PDF p. 267) prints ἀναμέσον Ἀζηκὰ Ἐφερμέν, as does Bagster’s facing Greek, and “Ephermen” renders it letter for letter, whereas B’s Ἐφερμέμ (Swete 1 p. 578) would give Ephermem.",
       "swete": {
         "volume": 1,
         "page": 578,
@@ -736,6 +747,7 @@
         "agrees": true
       },
       "from": "Ephermen",
+      "label": "valpy",
       "supplied": ["in"],
       "english": {
         "source": "brenton",
@@ -859,7 +871,7 @@
       "source_note": "\\fqa Heb. \\ft Ramah. \\fqa Alex. \\ft Rama."
     },
     "1SA 25:1#3": {
-      "why": "Brenton 1879 physical p. 406 and 1900 physical p. 402 (printed p. 390) both give “Alex. Paran.” with caller λ before “Maon” in 25:1, and his Greek prints Μαών. Swete I p. 596, B main text Μαάν, records Μααν] Φαραν A. Print Brenton’s “Paran”. The displaced Maon stays Brenton’s: B has the same place spelled Μαάν, which does not give Brenton’s English form, so it is not Vat. support.",
+      "why": "Brenton 1879 physical p. 406 and 1900 physical p. 402 (printed p. 390) both give “Alex. Paran.” with caller λ before “Maon” in 25:1, and his Greek prints Μαών. Swete I p. 596, B main text Μαάν, records Μααν] Φαραν A. Print Brenton’s “Paran”. The displaced Maon is labelled Valpy, not Vat.: Valpy p. 263 (PDF p. 275) prints εἰς τὴν ἔρημον Μαών, which Maon renders, whereas B’s Μαάν (Swete I p. 596) would give Maan.",
       "swete": {
         "volume": 1,
         "page": 596,
@@ -868,6 +880,7 @@
         "agrees": true
       },
       "from": "Maon",
+      "label": "valpy",
       "english": {
         "source": "brenton",
         "span": [15, 20]
@@ -905,7 +918,7 @@
       "source_note": "\\fqa Alex. \\ft and \\fqa Heb. \\ft + 'and they girded on every man his sword, and David also girded on his sword.'"
     },
     "1SA 25:24": {
-      "why": "Brenton 1844 vol. I physical p. 345 (printed p. 321), 1879 physical p. 407, 1884 physical p. 376, and 1900 physical p. 403 (the latter three printed p. 391) all print the supplied italic even at the start of 25:24, connecting “bowing to the ground” in 25:23 with “to his feet”. The 1844 margin reports Hebrew and Alex. + “and she fell.”; the Bagster footnote reports Heb. and Alex. + “and she fell.” with theta immediately before even. Swete I p. 598, checked and scan-confirmed, records επι τους ποδας] pr και επεσεν A, without a correcting hand or uncertainty. Print Brenton’s reported and she fell, capitalized as a new sentence, and drop his supplied even because it connected the former continuous construction and is no longer needed after the independent Alexandrine verb. Retain to his feet in Brenton’s own words and the existing full stop at the end of 25:23; borrow no King James wording. B’s main text positively lacks the added verb, so retain the note Heb. agrees. Vat. omits on And she fell, and report that Brenton supplies even before to his feet. Quote even within commentary, not as an alternative to And she fell: it continued the preceding construction and cannot replace the lemma after the retained full stop. It is his English supplement, not a word attributed to Vaticanus.",
+      "why": "Brenton 1844 vol. I physical p. 345 (printed p. 321), 1879 physical p. 407, 1884 physical p. 376, and 1900 physical p. 403 (the latter three printed p. 391) all print the supplied italic even at the start of 25:24, connecting “bowing to the ground” in 25:23 with “to his feet”. The 1844 margin reports Hebrew and Alex. + “and she fell.”; the Bagster footnote reports Heb. and Alex. + “and she fell.” with theta immediately before even. Swete I p. 598, checked and scan-confirmed, records επι τους ποδας] pr και επεσεν A, without a correcting hand or uncertainty. Print Brenton’s reported and she fell, capitalized as a new sentence, and drop his supplied even because it connected the former continuous construction and is no longer needed after the independent Alexandrine verb. Retain to his feet in Brenton’s own words and add a full stop at the end of 25:23; borrow no King James wording. B’s main text positively lacks the added verb and continues ἐπὶ τοὺς πόδας from the obeisance, which Brenton’s italic even renders freely, so the note on And she fell gives Heb. agrees and even under Vat., as at Jeremias 23:10.",
       "swete": {
         "volume": 1,
         "page": 598,
@@ -948,7 +961,7 @@
         ]
       },
       "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft + \\ft and she fell.",
-      "note": "\\fl Heb. \\ft agrees. \\fl Vat. \\ft omits. \\fl Brenton \\ft supplies \\fq even\\ft ."
+      "note": "\\fl Heb. \\ft agrees. \\fl Vat. \\fqa even\\ft ."
     },
     "1SA 25:25": {
       "why": "Brenton 1879 physical p. 407 and 1900 physical p. 403 (printed p. 391) both print “Heb. and Alex. + ‘even Nabal.’” with caller λ before “for according” at 25:25. Swete I p. 598 explicitly adds επι Ναβαλ after τουτον in A, with no correcting hand or uncertainty at this unit. Print Brenton’s complete English addition there; B’s main text positively supports the displaced omission.",
@@ -1358,7 +1371,7 @@
       "source_note": "\\fqa Alex. \\ft and \\fqa Heb. \\ft make the verse end here."
     },
     "2SA 12:30": {
-      "why": "Brenton 1879 physical 432 and 1900 physical 428 (printed 416) give “Alex. rightly omits Molchom. ‘Their king’ in Heb.” with the caller immediately before Molchom. Swete I p. 635 explicitly reports om Μελχολ A without a hand or uncertainty mark. Retain removal of Molchom and the printed Hebrew agreement report. B’s corresponding name is Μελχὸλ, whereas Brenton’s facing Greek is Μολχὸμ and English is Molchom. Name presence alone does not establish the exact displaced clause in B; attribute that clause to Brenton.",
+      "why": "Brenton 1879 physical 432 and 1900 physical 428 (printed 416) give “Alex. rightly omits Molchom. ‘Their king’ in Heb.” with the caller immediately before Molchom. Swete I p. 635 explicitly reports om Μελχολ A without a hand or uncertainty mark. Retain removal of Molchom and the printed Hebrew agreement report. B’s corresponding name is Μελχὸλ, whereas Brenton’s facing Greek is Μολχὸμ and English is Molchom. The displaced clause is labelled Valpy, not Vat.: Valpy p. 281 (PDF p. 293) prints τὸν στέφανον Μολχὸμ τοῦ βασιλέως αὐτῶν, which “Molchom” renders, whereas B’s Μελχὸλ (Swete I p. 635) is the name Brenton elsewhere writes Melchol.",
       "swete": {
         "volume": 1,
         "page": 635,
@@ -1367,6 +1380,7 @@
         "agrees": true
       },
       "from": "the crown of Molchom their king",
+      "label": "valpy",
       "hebrew_agrees": true,
       "english": {
         "source": "from",
@@ -1458,7 +1472,7 @@
       "source_note": "\\fqa Alex. \\ft and \\fqa Heb. \\ft consume."
     },
     "2SA 24:17": {
-      "why": "Brenton 1879 physical p. 455 and 1900 physical p. 451 (printed p. 439) both print “Alex. adds, ‘and I the shepherd have done wickedly.’”, with θ after “wrong,” and before “but” in 24:17. Swete I p. 667 explicitly adds “και εγω ο ποιμην εκακοποιησα A” after ηδικησα, without an A correcting hand or uncertainty mark. Retain Brenton’s exact English addition at that position and its existing comma seam. B main text omits the addition, supporting the displaced omission; the separate marginal B^{ab mg} replacement “ημαρτηκα κ εγω ειμι ο ποιμην” is not A’s full clause, so the displaced note names B’s first hand.",
+      "why": "Brenton 1879 physical p. 455 and 1900 physical p. 451 (printed p. 439) both print “Alex. adds, ‘and I the shepherd have done wickedly.’”, with θ after “wrong,” and before “but” in 24:17. Swete I p. 667 explicitly adds “και εγω ο ποιμην εκακοποιησα A” after ηδικησα, without an A correcting hand or uncertainty mark. Retain Brenton’s exact English addition at that position and its existing comma seam. B main text omits the addition, supporting the displaced omission; the separate marginal B^{ab mg} replacement “ημαρτηκα κ εγω ειμι ο ποιμην” is not A’s full clause, so the displaced note names B’s first hand. The printed note names the manuscript alone; the hand and correction details remain here as evidence.",
       "swete": {
         "volume": 1,
         "page": 667,
@@ -1467,7 +1481,7 @@
         "agrees": true
       },
       "from": "I that have done wrong,",
-      "note": "\\fl Vat. first hand \\ft omits.",
+      "note": "\\fl Vat. \\ft omits.",
       "english": {
         "source": "brenton",
         "span": [22, 59],
@@ -1665,7 +1679,7 @@
       "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft overseers of the people."
     },
     "1KI 6:2#2": {
-      "why": "Brenton 1879 physical p. 467 and 1900 physical p. 463 (printed p. 451) print “Heb. and Alex. 60 cubits.” with γ before forty. Swete I p. 684 explicitly records εξηκοντα πηχων A at 6:6 (Brenton 6:2), supporting sixty cubits; the Hebrew agreement is Brenton’s own report. B main supports forty but omits the length-unit expression; B^{ab mg} adds πηχεις. Attribute the whole displaced forty-cubits wording to Brenton and the subsidiary literal gloss to the Greek facing his English.",
+      "why": "Brenton 1879 physical p. 467 and 1900 physical p. 463 (printed p. 451) print “Heb. and Alex. 60 cubits.” with γ before forty. Swete I p. 684 explicitly records εξηκοντα πηχων A at 6:6 (Brenton 6:2), supporting sixty cubits; the Hebrew agreement is Brenton’s own report. B main supports forty but omits the length-unit expression; B^{ab mg} adds πηχεις. Label the displaced forty cubits Vat.: B main and Valpy p. 303 (PDF p. 315), τεσσαράκοντα ἐν πήχει μῆκος αὐτοῦ, agree on forty against A’s sixty, and the cubits are the measure of the verse’s other dimensions (εἴκοσι ἐν πήχει), so B’s lack of the unit phrase is no different reading of the length. The subsidiary literal gloss is attributed to the Greek facing his English.",
       "swete": {
         "volume": 1,
         "page": 684,
@@ -1674,13 +1688,14 @@
         "agrees": true
       },
       "from": "forty cubits",
+      "label": "vatican",
       "hebrew_agrees": true,
       "note_edits": {
         "1KI 6:2": {
           "from": "\\fqa Gr. \\ft its length forty in cubit, etc.",
-          "to": "\\ft Brenton's Greek, literally, \\fq its length forty in cubit\\ft , etc.",
+          "to": "\\ft Valpy's Greek, literally, \\fq its length forty in cubit\\ft , etc.",
           "lemma": "was sixty cubits in length",
-          "why": "Brenton 1879 physical p. 467 and 1900 physical p. 463 (printed p. 451) print “Gr. its length forty in cubit, etc.”, with β before “was”. This gloss renders the Greek facing Brenton’s English, τεσσαράκοντα ἐν πήχει μῆκος αὐτοῦ, rather than an established Vaticanus expression. Swete I p. 684, B main at 6:6 (Brenton 6:2), has τεσσεράκοντα μῆκος αὐτοῦ; B^b changes spelling and B^{ab mg} adds πηχεις, not ἐν πήχει. Label the gloss as Brenton's Greek, on the clause whose number changes."
+          "why": "Brenton 1879 physical p. 467 and 1900 physical p. 463 (printed p. 451) print “Gr. its length forty in cubit, etc.”, with β before “was”. This gloss renders the Greek facing Brenton’s English, τεσσαράκοντα ἐν πήχει μῆκος αὐτοῦ, which Valpy p. 303 (PDF p. 315) prints, rather than an established Vaticanus expression. Swete I p. 684, B main at 6:6 (Brenton 6:2), has τεσσεράκοντα μῆκος αὐτοῦ; B^b changes spelling and B^{ab mg} adds πηχεις, not ἐν πήχει. Label the gloss as Valpy's Greek, on the clause whose number changes."
         }
       },
       "english": {
@@ -1776,7 +1791,7 @@
       "source_note": "\\fqa Gr. \\ft a thing \\fqa or \\ft word of a day in a day of a year. But \\fqa Alex. \\ft reads ἡμέρᾳ αὐτοῦ, which agrees with the \\fqa Heb."
     },
     "1KI 14:26#2": {
-      "why": "Print the explicitly collated Alexandrine manufacture clause, retaining Brenton’s English outside the bracketed removal. Brenton 1844 vol. 1 physical p. 409 and 1879 physical p. 486 / 1900 physical p. 482 (printed p. 470) print “Words in brackets not in Heb. or Alex.” and bracket only “and carried them away into Egypt.” Swete I p. 715 explicitly records οσα εποιησεν Σαλωμων A, while B main ends at golden shields. The complete displaced manufacture-and-removal quotation is supported only by B^{a?b? mg inf}; retain both uncertain hand designations and the lower-margin location in its Vat. label. No claim is made that B first hand has either addition or that A has the removal clause.",
+      "why": "Print the explicitly collated Alexandrine manufacture clause, retaining Brenton’s English outside the bracketed removal. Brenton 1844 vol. 1 physical p. 409 and 1879 physical p. 486 / 1900 physical p. 482 (printed p. 470) print “Words in brackets not in Heb. or Alex.” and bracket only “and carried them away into Egypt.” Swete I p. 715 explicitly records οσα εποιησεν Σαλωμων A, while B main ends at golden shields. The complete displaced manufacture-and-removal quotation is supported only by B^{a?b? mg inf}; retain both uncertain hand designations and the lower-margin location in its Vat. label. No claim is made that B first hand has either addition or that A has the removal clause. The printed note names the manuscript alone; the hand and correction details remain here as evidence.",
       "swete": {
         "volume": 1,
         "page": 715,
@@ -1785,7 +1800,7 @@
         "agrees": true
       },
       "from": "the golden shields which Solomon had made, [and carried them away into Egypt.]",
-      "note": "\\fl Heb. \\ft agrees. \\fl Vat. (correcting hands a?b?, lower margin) \\fq the golden shields which Solomon had made, and carried them away into Egypt\\ft .",
+      "note": "\\fl Heb. \\ft agrees. \\fl Vat. \\fq the golden shields which Solomon had made, and carried them away into Egypt\\ft .",
       "english": {
         "source": "from",
         "span": [0, 41],
@@ -1931,7 +1946,7 @@
       "source_note": "\\fqa Alex. \\ft + \\ft 'Is all well?'."
     },
     "PSA 16:14": {
-      "why": "Promote Brenton’s printed children, as 1879 physical p. 722 and 1900 physical p. 718 print it, printed p. 706, with γ before uncleanness. Swete II p. 228 explicitly assigns υιων to unqualified A and R vid; vid qualifies R only. B main positively reads ὑείων, swine/pork, matching the facing Greek. Brenton’s displaced uncleanness is an interpretive English rendering rather than that lexical noun, so identify the exact English as Brenton. Preserve the existing English derivation and complete sentence.",
+      "why": "Promote Brenton’s printed children, as 1879 physical p. 722 and 1900 physical p. 718 print it, printed p. 706, with γ before uncleanness. Swete II p. 228 explicitly assigns υιων to unqualified A and R vid; vid qualifies R only. B main positively reads ὑείων, swine/pork, matching the facing Greek, and Swete’s apparatus gives υειων to B and ℵ with no correcting hand or uncertainty. Valpy p. 473 (PDF p. 485) reads ἐχορτάσθησαν ὑείων, agreeing with B. Brenton’s displaced uncleanness renders that ὑείων freely, so label it Vat. Preserve the existing English derivation and complete sentence.",
       "swete": {
         "volume": 2,
         "page": 228,
@@ -1940,6 +1955,7 @@
         "agrees": true
       },
       "from": "uncleanness",
+      "label": "vatican",
       "english": {
         "source": "brenton",
         "span": [15, 23]
@@ -1947,7 +1963,7 @@
       "source_note": "\\fqa Alex. \\ft children."
     },
     "PSA 38:6": {
-      "why": "Print Brenton’s own Alexandrinus English a span long at the caller before old. Brenton 1879 physical p. 737 and 1900 physical p. 733 (printed p. 721 in both) print β Alex. a span long with β immediately before old in Psalm 38:6; the facing Greek reads παλαιὰς and the English my days old. Swete II p. 263 explicitly records παλαιας B*ℵ*R] παλαιστας B^ab ℵ^c.a παλεστας AT: unqualified A gives the measure reading without lacuna or uncertainty, alongside T; B’s correctors a and b and Sinaiticus c.a give the same measure with different spelling, while B first hand positively supports displaced old. Select a span long at serialized source-note offsets 15–26 and retain my days from the scripture, leaving the complete sentence and its punctuation intact. Label the displaced reading Vat. first hand, distinguishing B’s first hand from its later correction.",
+      "why": "Print Brenton’s own Alexandrinus English a span long at the caller before old. Brenton 1879 physical p. 737 and 1900 physical p. 733 (printed p. 721 in both) print β Alex. a span long with β immediately before old in Psalm 38:6; the facing Greek reads παλαιὰς and the English my days old. Swete II p. 263 explicitly records παλαιας B*ℵ*R] παλαιστας B^ab ℵ^c.a παλεστας AT: unqualified A gives the measure reading without lacuna or uncertainty, alongside T; B’s correctors a and b and Sinaiticus c.a give the same measure with different spelling, while B first hand positively supports displaced old. Select a span long at serialized source-note offsets 15–26 and retain my days from the scripture, leaving the complete sentence and its punctuation intact. Label the displaced reading Vat. first hand, distinguishing B’s first hand from its later correction. The printed note names the manuscript alone; the hand and correction details remain here as evidence.",
       "swete": {
         "volume": 2,
         "page": 263,
@@ -1967,7 +1983,7 @@
         ]
       },
       "source_note": "\\fqa Alex. \\ft a span long.",
-      "note": "\\fl Vat. first hand \\fq my days old\\ft ."
+      "note": "\\fl Vat. \\fq my days old\\ft ."
     },
     "PSA 41:9": {
       "why": "Retain the existing promotion of Brenton’s English Alexandrinus alternative. Brenton 1879 physical p. 739 and 1900 physical p. 735 (printed p. 723 in both) print “Heb. and Alex. his song shall be, etc.” with β immediately before manifest at Psalm 41:9. Swete II p. 267 explicitly records δηλωσει] ωδη αυτω ℵ^c.a ω. αυτου A and om παρ εμοι ℵ* (hab ℵ^c.a sed ipse rursus del vid) c praec coniung A. Thus unqualified A supplies his song and joins with me to the preceding clause; Sinaiticus correcting-hand and apparent re-deletion qualifications belong to Sinaiticus alone. No A lacuna or uncertainty is indicated at these units. B main positively prints καὶ νυκτὸς δηλώσει· παρ᾽ ἐμοὶ προσευχὴ τῷ θεῷ τῆς ζωῆς μου, matching Brenton’s facing base Greek and supporting the displaced construction, whose it and is are italic English supplements. Select his song shall be at serialized source-note offsets 33–50, retain by night and with me: prayer from the surrounding scripture, and mark the supplied copula shall be with add markers. Pinned King James Psalm 42:8 explicitly has And in the night his song shall be with me, with shall be marked as supplied; pinned RV gives the same song clause. Keep the complete sentence and existing displaced Vat. label.",
@@ -2004,7 +2020,7 @@
       "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft his song shall be, etc."
     },
     "PSA 44:14": {
-      "why": "Promote Brenton’s printed within and retain its Hebrew-agreement report. Brenton 1879 physical p. 741 and 1900 physical p. 737 (printed p. 725) print Alex. ἔσωθεν, within, so Heb. with β before of Esebon. Swete II p. 271 B main positively reads Ἑσεβών; explicit εσωθεν B^ab ℵ^c.a ART assigns within to Vaticanus correcting hands ab and unqualified A. The displaced place-name English is supported by the uncorrected B reading, so label it Vat. first hand, distinguishing it from B corrections. Preserve the exact derivation and surrounding sentence; no qualification attaches to A at this unit.",
+      "why": "Promote Brenton’s printed within and retain its Hebrew-agreement report. Brenton 1879 physical p. 741 and 1900 physical p. 737 (printed p. 725) print Alex. ἔσωθεν, within, so Heb. with β before of Esebon. Swete II p. 271 B main positively reads Ἑσεβών; explicit εσωθεν B^ab ℵ^c.a ART assigns within to Vaticanus correcting hands ab and unqualified A. The displaced place-name English is supported by the uncorrected B reading, so label it Vat. first hand, distinguishing it from B corrections. Preserve the exact derivation and surrounding sentence; no qualification attaches to A at this unit. The printed note names the manuscript alone; the hand and correction details remain here as evidence.",
       "swete": {
         "volume": 2,
         "page": 271,
@@ -2013,7 +2029,7 @@
         "agrees": true
       },
       "from": "of Esebon",
-      "note": "\\fl Heb. \\ft agrees. \\fl Vat. first hand \\fqa of Esebon\\ft .",
+      "note": "\\fl Heb. \\ft agrees. \\fl Vat. \\fqa of Esebon\\ft .",
       "english": {
         "source": "brenton",
         "span": [23, 29]
@@ -2021,7 +2037,7 @@
       "source_note": "\\fqa Alex. \\ft ἔσωθεν, within, so \\fqa Heb."
     },
     "PSA 45:6": {
-      "why": "Retain the existing promotion of Brenton’s own English toward the morning. Brenton 1879 physical p. 741 and 1900 physical p. 737 (printed p. 725 in both) place δ immediately before with in God shall help her with his countenance and print “Alex. and Heb. before, or, toward the morning.” Swete II p. 272 explicitly records τω προσωπω] το (τω ℵ^c.a) προς πρωι πρωι B^b ℵ^c.a AT πρωι πρωι R^a. The unqualified A reading positively supports Brenton’s temporal alternative, with no A hand, lacuna, or uncertainty qualification at this unit; B^b and Sinaiticus c.a also support it, while the parenthesized τω belongs to Sinaiticus c.a. B main τῷ προσώπῳ and Brenton’s facing Greek τῷ προσώπῳ positively support the displaced countenance wording. Preserve the exact verified serialized source note, English span 54–72, and existing note, with its Vat. first hand label.",
+      "why": "Retain the existing promotion of Brenton’s own English toward the morning. Brenton 1879 physical p. 741 and 1900 physical p. 737 (printed p. 725 in both) place δ immediately before with in God shall help her with his countenance and print “Alex. and Heb. before, or, toward the morning.” Swete II p. 272 explicitly records τω προσωπω] το (τω ℵ^c.a) προς πρωι πρωι B^b ℵ^c.a AT πρωι πρωι R^a. The unqualified A reading positively supports Brenton’s temporal alternative, with no A hand, lacuna, or uncertainty qualification at this unit; B^b and Sinaiticus c.a also support it, while the parenthesized τω belongs to Sinaiticus c.a. B main τῷ προσώπῳ and Brenton’s facing Greek τῷ προσώπῳ positively support the displaced countenance wording. Preserve the exact verified serialized source note, English span 54–72, and existing note, with its Vat. first hand label. The printed note names the manuscript alone; the hand and correction details remain here as evidence.",
       "swete": {
         "volume": 2,
         "page": 272,
@@ -2030,7 +2046,7 @@
         "agrees": true
       },
       "from": "with his countenance",
-      "note": "\\fl Heb. \\fqa before\\ft , \\fl or, \\fqa toward the morning\\ft . \\fl Vat. first hand \\fqa with his countenance\\ft .",
+      "note": "\\fl Heb. \\fqa before\\ft , \\fl or, \\fqa toward the morning\\ft . \\fl Vat. \\fqa with his countenance\\ft .",
       "english": {
         "source": "brenton",
         "span": [54, 72]
@@ -2130,7 +2146,7 @@
       "label": "vatican"
     },
     "PSA 88:21#2": {
-      "why": "Retain the promotion of Brenton’s own Alexandrinus alternative oil. Brenton 1879 physical p. 768 and 1900 physical p. 764 (printed p. 752 in both) put δ immediately before mercy and print “Heb. and Alex. oil, see Ps. 91. (92) 10.” Both preserve the parenthesized Hebrew psalm number and the period after 91, which the transcription correction restores in the source note. Swete II p. 332 explicitly records ελεει] ελεω B^a (? R) ελαιω B^b ℵA (? R) T. Unqualified A positively supports oil; the question marks qualify R, not A, and B^b is a correcting hand sharing oil. B main ἐν ἐλέει ἁγίῳ positively supports the displaced mercy at this word, as does Brenton’s facing base Greek ἐν ἐλέει ἁγίῳ. Derive oil from serialized source_note [33,36), preserving the complete surrounding English sentence, Hebrew agreement and printed comparison reference. This decision concerns the mercy/oil unit alone: the separately recorded A addition μου after αγιω is already represented by my in Brenton’s English and is not a new edit. Swete’s B main text positively supports the displaced mercy, while the correcting hand B^b changes the word to oil; the note names Vat. first hand.",
+      "why": "Retain the promotion of Brenton’s own Alexandrinus alternative oil. Brenton 1879 physical p. 768 and 1900 physical p. 764 (printed p. 752 in both) put δ immediately before mercy and print “Heb. and Alex. oil, see Ps. 91. (92) 10.” Both preserve the parenthesized Hebrew psalm number and the period after 91, which the transcription correction restores in the source note. Swete II p. 332 explicitly records ελεει] ελεω B^a (? R) ελαιω B^b ℵA (? R) T. Unqualified A positively supports oil; the question marks qualify R, not A, and B^b is a correcting hand sharing oil. B main ἐν ἐλέει ἁγίῳ positively supports the displaced mercy at this word, as does Brenton’s facing base Greek ἐν ἐλέει ἁγίῳ. Derive oil from serialized source_note [33,36), preserving the complete surrounding English sentence, Hebrew agreement and printed comparison reference. This decision concerns the mercy/oil unit alone: the separately recorded A addition μου after αγιω is already represented by my in Brenton’s English and is not a new edit. Swete’s B main text positively supports the displaced mercy, while the correcting hand B^b changes the word to oil; the note names Vat. first hand. The printed note names the manuscript alone; the hand and correction details remain here as evidence.",
       "swete": {
         "volume": 2,
         "page": 332,
@@ -2139,7 +2155,7 @@
         "agrees": true
       },
       "from": "mercy",
-      "note": "\\fl Heb. \\ft agrees. See \\xt Ps. 91. 10. \\fl Vat. first hand \\fqa mercy\\ft .",
+      "note": "\\fl Heb. \\ft agrees. See \\xt Ps. 91. 10. \\fl Vat. \\fqa mercy\\ft .",
       "english": {
         "source": "brenton",
         "span": [33, 36]
@@ -2223,7 +2239,7 @@
       "source_note": "\\fqa Alex. \\ft + for behold thine enemies, O Lord, as in \\fqa Heb."
     },
     "PSA 91:11": {
-      "why": "Promote Brenton’s printed oil and retain its Psalm cross-reference. Brenton 1879 physical p. 770 and 1900 physical p. 766 (printed p. 754 in both) put θ before mercy at printed Psalm 91:10 (source and Swete 91:11). Swete II p. 338 explicitly gives ελεω to B first hand and ελαιω to B correcting hands ab, Sinaiticus, unqualified A, and T; R is uncertain on both sides. The corrected B main prints ἐλαίῳ. Brenton’s facing ἐλέῳ and displaced mercy are positively supported by B first hand, so label the note Vat. first hand. R uncertainty does not qualify B or A; nearby A erasures concern separate units.",
+      "why": "Promote Brenton’s printed oil and retain its Psalm cross-reference. Brenton 1879 physical p. 770 and 1900 physical p. 766 (printed p. 754 in both) put θ before mercy at printed Psalm 91:10 (source and Swete 91:11). Swete II p. 338 explicitly gives ελεω to B first hand and ελαιω to B correcting hands ab, Sinaiticus, unqualified A, and T; R is uncertain on both sides. The corrected B main prints ἐλαίῳ. Brenton’s facing ἐλέῳ and displaced mercy are positively supported by B first hand, so label the note Vat. first hand. R uncertainty does not qualify B or A; nearby A erasures concern separate units. The printed note names the manuscript alone; the hand and correction details remain here as evidence.",
       "swete": {
         "volume": 2,
         "page": 338,
@@ -2232,7 +2248,7 @@
         "agrees": true
       },
       "from": "mercy",
-      "note": "\\fl Vat. first hand \\fqa mercy\\ft . See \\xt Ps. 88. 20.",
+      "note": "\\fl Vat. \\fqa mercy\\ft . See \\xt Ps. 88. 20.",
       "english": {
         "source": "brenton",
         "span": [15, 18]
@@ -2287,7 +2303,7 @@
       "source_note": "\\fqa Alex. \\ft + the floods will lift up their waves. See \\fqa Heb."
     },
     "PSA 93:19": {
-      "why": "Promote Brenton’s printed have gladdened, retaining the literal have loved gloss. Brenton 1879 physical p. 771 and 1900 physical p. 767 (printed p. 755) place μ between have and soothed and print Lit. have loved. Alex. ἠύφραναν, have gladdened. Swete II p. 340 positively gives ἠγάπησαν in B main, with gladdened supported by Vaticanus correcting hand b, Sinaiticus c.a and unqualified A; only R is uncertain. Brenton’s have soothed interprets loved rather than reproducing a distinct lexical manuscript reading, so label the displaced English Brenton while retaining its literal gloss.",
+      "why": "Promote Brenton’s printed have gladdened, retaining the literal have loved gloss. Brenton 1879 physical p. 771 and 1900 physical p. 767 (printed p. 755) place μ between have and soothed and print Lit. have loved. Alex. ἠύφραναν, have gladdened. Swete II p. 340 positively gives ἠγάπησαν in B main, with gladdened supported by Vaticanus correcting hand b, Sinaiticus c.a and unqualified A; only R is uncertain. Brenton’s have soothed freely renders ἠγάπησαν, which B’s first hand and Valpy p. 506 (PDF p. 518) both read, as his own Lit. have loved acknowledges; B’s corrector b gives Alexandrinus’s verb, so label the displaced English Vat. first hand while retaining its literal gloss. The printed note names the manuscript alone; the hand and correction details remain here as evidence.",
       "swete": {
         "volume": 2,
         "page": 340,
@@ -2296,7 +2312,7 @@
         "agrees": true
       },
       "from": "have soothed",
-      "note": "\\fl Brenton \\fqa have soothed\\ft ; literally, \\fq have loved\\ft .",
+      "note": "\\fl Vat. \\fqa have soothed\\ft ; literally, \\fq have loved\\ft .",
       "english": {
         "source": "brenton",
         "span": [54, 68]
@@ -2355,7 +2371,7 @@
       "source_note": "\\fqa Alex. \\ft + before the Lord, for he comes."
     },
     "PSA 118:109": {
-      "why": "Print Brenton’s my from “Heb. and Alex. my.” (1879 physical p. 789; 1900 physical p. 785; printed p. 773), with γ before thine. Swete II p. 383 explicitly reads χερσι] -σιν σου ℵ^c.a RT χερσιν μου A: unqualified A supports my, whereas Sinaiticus correcting hand c.a supports the displaced possessive thine; R and T also support it. Attribute only that possessive, not the whole clause, to Sinaiticus correcting hand c.a. Swete’s Sinaiticus main has no possessive, and B is lacunose at Psalms 105:27–137:6. The printings establish the facing Greek χερσί σου. Source-note offsets 33:35 select my and produce a grammatical complete sentence.",
+      "why": "Print Brenton’s my from “Heb. and Alex. my.” (1879 physical p. 789; 1900 physical p. 785; printed p. 773), with γ before thine. Swete II p. 383 explicitly reads χερσι] -σιν σου ℵ^c.a RT χερσιν μου A: unqualified A supports my, whereas Sinaiticus correcting hand c.a supports the displaced possessive thine; R and T also support it. Attribute only that possessive, not the whole clause, to Sinaiticus correcting hand c.a. Swete’s Sinaiticus main has no possessive, and B is lacunose at Psalms 105:27–137:6. The printings establish the facing Greek χερσί σου. Source-note offsets 33:35 select my and produce a grammatical complete sentence. The printed note names the manuscript alone; the hand and correction details remain here as evidence.",
       "swete": {
         "volume": 2,
         "page": 383,
@@ -2364,7 +2380,7 @@
         "agrees": true
       },
       "from": "thine",
-      "note": "\\fl Heb. \\ft agrees. \\fl Sinaiticus correcting hand c.a \\fq thine hands\\ft .",
+      "note": "\\fl Heb. \\ft agrees. \\fl Sinaiticus \\fq thine hands\\ft .",
       "english": {
         "source": "brenton",
         "span": [33, 35]
@@ -2670,7 +2686,7 @@
       "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft ‘of thee’."
     },
     "ISA 14:4": {
-      "why": "Promote Brenton’s complete English addition and attribute the full displaced omission to Brenton. Brenton 1879 physical p. 865 and 1900 physical p. 861 (printed p. 849) establish θ after Babylon and the note “Alex. + and thou shalt say in that day”; both the English base and facing Greek omit the complete clause. Swete III p. 125 B main has καὶ ἐρεῖς, and explicit ερεις] + εν τη ημερα εκεινη (εκιν. ℵ) ℵAQΓ supports unqualified A’s addition of in that day; the spelling parenthesis belongs to Sinaiticus. B omits only the temporal phrase, so calling the full displaced omission Vaticanus would be false. The English from the source note retains the complete clause and closing punctuation.",
+      "why": "Promote Brenton’s complete English addition and attribute the full displaced omission to Valpy. Brenton 1879 physical p. 865 and 1900 physical p. 861 (printed p. 849) establish θ after Babylon and the note “Alex. + and thou shalt say in that day”; both the English base and facing Greek omit the complete clause. Swete III p. 125 B main has καὶ ἐρεῖς, and explicit ερεις] + εν τη ημερα εκεινη (εκιν. ℵ) ℵAQΓ supports unqualified A’s addition of in that day; the spelling parenthesis belongs to Sinaiticus. B omits only the temporal phrase, so calling the full displaced omission Vaticanus would be false. The English from the source note retains the complete clause and closing punctuation. Valpy p. 568 (PDF p. 580) prints βασιλέα Βαβυλώνος, Πῶς ἀναπέπαυται without καὶ ἐρεῖς, the whole clause Brenton omits, so the displaced omission is Valpy’s.",
       "swete": {
         "volume": 3,
         "page": 125,
@@ -2679,7 +2695,7 @@
         "agrees": true
       },
       "from": "the king of Babylon,",
-      "note": "\\fl Brenton \\ft omits this clause.",
+      "note": "\\fl Valpy \\ft omits this clause.",
       "lemma": "and thou shalt say in that day",
       "english": {
         "source": "brenton",
@@ -2698,7 +2714,7 @@
       "source_note": "\\fqa Alex. \\ft + 'and thou shalt say in that day'."
     },
     "ISA 24:23": {
-      "why": "Print Brenton’s noted in at both prepositions, retaining the Hebrew agreement report, and attribute the complete displaced English to Brenton. Brenton 1879 physical p. 874 and 1900 physical p. 870 (printed p. 858) locate β before from out of Sion and establish “Heb. and Alex. in”. Swete III p. 143 explicitly records εκ] εν ℵAQ and εις] εν ℵAQ εκ Γ (sic), with unqualified A at both units. B main reads ἐκ Σειὼν καὶ εἰς Ἰερουσαλήμ: it supports the first out of but not the second. Brenton’s facing Greek likewise prints ἐκ Σιών καὶ εἰς Ἱερουσαλήμ, so his second out of is a printed English/Greek discrepancy, not an eBible transcription slip; the displaced note quotes it unchanged. Γ’s second εκ, marked sic, supports that preposition alone. Preserve the English derivation and attribute the whole displaced phrase to its directly attested English source.",
+      "why": "Print Brenton’s noted in at both prepositions, retaining the Hebrew agreement report. Brenton 1879 physical p. 874 and 1900 physical p. 870 (printed p. 858) locate β before from out of Sion and establish “Heb. and Alex. in”. Swete III p. 143 explicitly records εκ] εν ℵAQ and εις] εν ℵAQ εκ Γ (sic), with unqualified A at both units. B main reads ἐκ Σειὼν καὶ εἰς Ἰερουσαλήμ: it supports the first out of but not the second. Brenton’s facing Greek prints ἐκ Σιὼν, καὶ ἐξ Ἱερουσαλὴμ, and Valpy p. 574 (PDF p. 586) likewise reads ἐκ Σιών, καὶ ἐξ Ἱερουσαλήμ, the Greek that Brenton’s from out of Sion, and out of Jerusalem translates; since Codex Vaticanus reads εἰς at the second preposition, attribute the displaced English to Valpy rather than to Vat. or to Brenton.",
       "swete": {
         "volume": 3,
         "page": 143,
@@ -2707,6 +2723,7 @@
         "agrees": true
       },
       "from": "from out of Sion, and out of Jerusalem",
+      "label": "valpy",
       "hebrew_agrees": true,
       "english": {
         "source": "from",
@@ -3104,7 +3121,7 @@
       "source_note": "\\fqa Alex. \\ft καὶ ἐπάνα, 'and above.'"
     },
     "2CH 2:12 CCEL": {
-      "why": "Promote Brenton’s licensed “Chiram my servant” alternative, preserving “son” in an Or note and retaining “man” with a comma before the apposition. Brenton 1879 physical p. 586 and 1900 physical p. 582 (printed p. 570) print “Alex. Chiram my son or servant.” with β before “who belonged to Chiram my father” (printed 2:13, source 2:12). Swete II p. 63 reports 11–14 retractavit A^b and πατερα μου] παιδα μου B^{ab mg} A^b (A*?), positively supporting the retraced A reading while leaving the original hand uncertain. B main supports τὸν Χειρὰμ τὸν πατέρα μου and the father component; it does not separately establish Brenton’s italic supplied words “who belonged”. Attribute the whole displaced English quotation to Brenton.",
+      "why": "Promote Brenton’s licensed “Chiram my servant” alternative, preserving “son” in an Or note and retaining “man” with a comma before the apposition. Brenton 1879 physical p. 586 and 1900 physical p. 582 (printed p. 570) print “Alex. Chiram my son or servant.” with β before “who belonged to Chiram my father” (printed 2:13, source 2:12). Swete II p. 63 reports 11–14 retractavit A^b and πατερα μου] παιδα μου B^{ab mg} A^b (A*?), positively supporting the retraced A reading while leaving the original hand uncertain. The displaced English renders, freely, the Greek of B’s first hand and of Valpy alike: Swete’s B text reads ἄνδρα σοφὸν καὶ εἰδότα σύνεσιν τὸν Χειρὰμ τὸν πατέρα μου (vol. II p. 63), and Valpy ἄνδρα σοφὸν καὶ εἰδότα σύνεσιν Χιρὰμ τὸν πατέρα μου (p. 383, PDF p. 395); Brenton’s supplied who belonged interprets that Greek rather than reporting another reading. B’s correctors give A’s παιδα μου in the margin, so the displaced reading is labelled Vat. first hand, as at Psalm 38:6. The printed note names the manuscript alone; the hand and correction details remain here as evidence.",
       "swete": {
         "volume": 2,
         "page": 63,
@@ -3113,7 +3130,7 @@
         "agrees": true
       },
       "from": "man who belonged to Chiram my father",
-      "note": "\\fl Or, \\fq son\\ft . \\fl Brenton \\fqa who belonged to Chiram my father\\ft .",
+      "note": "\\fl Or, \\fq son\\ft . \\fl Vat. \\fqa who belonged to Chiram my father\\ft .",
       "english": {
         "source": "brenton",
         "span": [15, 48],
@@ -3200,7 +3217,7 @@
       "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft + with the sword."
     },
     "2CH 28:1 CCEL": {
-      "why": "Print the positively supported age twenty, using Brenton’s printed “Alex. 20 years.” note and its verified numeral expansion. Brenton 1879 physical p. 617 and 1900 physical p. 613 (printed p. 601) put β before “five and twenty years”; the facing Greek has εἴκοσι καὶ πέντε. Swete II p. 106 prints B main Εἴκοσι ἐτῶν and explicitly records εικοσι] pr υιος A, establishing the A numeral twenty. Neither supports the displaced twenty-five. Attribute “five and twenty years” to Brenton, whose English follows Valpy’s printed edition; no witness Swete reports establishes that base numeral.",
+      "why": "Print the positively supported age twenty, using Brenton’s printed “Alex. 20 years.” note and its verified numeral expansion. Brenton 1879 physical p. 617 and 1900 physical p. 613 (printed p. 601) put β before “five and twenty years”; the facing Greek has εἴκοσι καὶ πέντε. Swete II p. 106 prints B main Εἴκοσι ἐτῶν and explicitly records εικοσι] pr υιος A, establishing the A numeral twenty. Neither supports the displaced twenty-five. Valpy p. 404 (PDF p. 416) reads Υἱὸς εἴκοσι καὶ πέντε ἐτῶν ἦν Ἄχαζ, the Greek that Brenton’s “five and twenty years” translates; Codex Vaticanus reads twenty, so attribute the displaced age to Valpy rather than to Vat. or to Brenton.",
       "swete": {
         "volume": 2,
         "page": 106,
@@ -3209,6 +3226,7 @@
         "agrees": true
       },
       "from": "five and twenty years",
+      "label": "valpy",
       "english": {
         "source": "brenton",
         "span": [15, 23],
@@ -3242,7 +3260,7 @@
       "lemma": "Azarias"
     },
     "2CH 28:18 CCEL": {
-      "why": "Promote the omission explicitly reported by Brenton and supported by A. Brenton 1879 physical p. 618 and 1900 physical p. 614 (printed p. 602) establish the γ caller and “Alex. omits the words between brackets.” Swete II p. 107 explicitly attributes the added clause to B and records om A. Remove exactly the bracketed clause and following separator, joining the existing and to Ælon. Attribute the complete displaced English to Brenton: its ending they gave corresponds to his facing ἔδωκαν, whereas the B apparatus has singular εδωκεν. Positive B support for the clause’s presence does not establish all the quoted wording. No correcting-hand or uncertainty qualifier is attached to the relevant B addition or A omission.",
+      "why": "Promote the omission explicitly reported by Brenton and supported by A. Brenton 1879 physical p. 618 and 1900 physical p. 614 (printed p. 602) establish the γ caller and “Alex. omits the words between brackets.” Swete II p. 107 explicitly attributes the added clause to B and records om A. Remove exactly the bracketed clause and following separator, joining the existing and to Ælon. Attribute the complete displaced English to Valpy: Valpy p. 404 (PDF p. 416) reads καὶ ἔλαβον τὴν Βαιθσαμὺς, καὶ τὰ ἐν οἴκῳ Κυρίου, καὶ τὰ ἐν οἴκῳ τοῦ βασιλέως καὶ τῶν ἀρχόντων, καὶ ἔδωκαν τῷ βασιλεῖ τὴν Αἰλὼν, the Greek Brenton faces and renders word for word, plural they gave included, whereas the B apparatus has singular εδωκεν and lacks τα before the first εν, so B substantively differs. No correcting-hand or uncertainty qualifier is attached to the relevant B addition or A omission.",
       "swete": {
         "volume": 2,
         "page": 107,
@@ -3262,7 +3280,7 @@
         ]
       },
       "source_note": "\\fqa Alex. \\ft omits the words between brackets.",
-      "note": "\\fl Brenton \\ft adds before Ælon, \\fq the things in the house of the Lord, and the things in the house of the king, and of the princes: and they gave to the king\\ft .",
+      "note": "\\fl Valpy \\ft adds before Ælon, \\fq the things in the house of the Lord, and the things in the house of the king, and of the princes: and they gave to the king\\ft .",
       "lemma": "Bæthsamys"
     },
     "2CH 29:17 CCEL": {
@@ -3536,7 +3554,7 @@
       "source_note": "\\ft Alex. ψηλαφήσουσιν, 'feel after.'"
     },
     "JOB 20:15 CCEL": {
-      "why": "Brenton 1844 vol. 2 physical p. 62 (printed p. 559), 1879 physical p. 696 and 1900 physical p. 692 (printed p. 680) all print the supplied italic phrase of wrath, with the caller before wrath and the note Alex. death. The surviving 1884 physical p. 663 fragment has the same verse and caller, but its footnote band is missing. Swete II p. 556, checked against the scan, records αγγελος] + θανατου A, with no correcting hand or uncertainty. Promote Brenton’s death and include its governing of in the replacement: of death renders A’s genitive θανατου, so neither word remains supplied. Derive death from Brenton’s note and retain the verse’s own of in roman; this changes no English words beyond the already promoted wrath/death reading. The whole displaced phrase of wrath is Brenton’s supplied English, whereas B has bare αγγελος and no wrath qualifier, so the composed note names Brenton and compares of death with of wrath. Preserve every other word, the source-note pin and all unrelated variants.",
+      "why": "Brenton 1844 vol. 2 physical p. 62 (printed p. 559), 1879 physical p. 696 and 1900 physical p. 692 (printed p. 680) all print the supplied italic phrase of wrath, with the caller before wrath and the note Alex. death. The surviving 1884 physical p. 663 fragment has the same verse and caller, but its footnote band is missing. Swete II p. 556, checked against the scan, records αγγελος] + θανατου A, with no correcting hand or uncertainty. Promote Brenton’s death and include its governing of in the replacement: of death renders A’s genitive θανατου, so neither word remains supplied. Derive death from Brenton’s note and retain the verse’s own of in roman; this changes no English words beyond the already promoted wrath/death reading. The whole displaced phrase of wrath is Brenton’s supplied English, whereas B has bare αγγελος and no wrath qualifier, and Valpy p. 456 (PDF p. 468) likewise reads bare ἐξελκύσει αὐτὸν ἄγγελος, so the composed note names Brenton and compares of death with of wrath. Preserve every other word, the source-note pin and all unrelated variants.",
       "swete": {
         "volume": 2,
         "page": 556,
@@ -3610,7 +3628,7 @@
       "source_note": "\\fqa Alex. \\ft ῥήματα, 'speeches.'"
     },
     "JOB 27:23 CCEL": {
-      "why": "Promote the complete printed clause he shall clap his hands at him, capitalizing its opening and preserving the continuing comma and second clause. Brenton 1879 physical p. 701 and 1900 physical p. 697 (printed p. 685) establish β before He and the complete note. Swete II p. 569 explicitly assigns αυτον to A and αυτου to AC, supporting him and his hands without an A hand qualifier. The revocation attached to Sinaiticus correcting hand c.a must not be transferred to A. Attribute the complete displaced He shall cause men to clap their hands against them to Brenton. Although his facing Greek equals B main κροτήσει ἐπ᾽ αὐτοῦ χεῖρας αὐτῶν, its singular object does not establish the quoted plural them, and the English adds a causative construction. Preserve exact source_note and derivation.",
+      "why": "Promote the complete printed clause he shall clap his hands at him, capitalizing its opening and preserving the continuing comma and second clause. Brenton 1879 physical p. 701 and 1900 physical p. 697 (printed p. 685 in both) establish β before He and the complete note. Swete II p. 569 explicitly assigns αυτον to A and αυτου to AC, supporting him and his hands without an A hand qualifier. The revocation attached to Sinaiticus correcting hand c.a must not be transferred to A. Valpy p. 459 (PDF p. 471) prints Κροτήσει ἐπ᾽ αὐτοὺς χεῖρας αὐτῶν, as Brenton’s facing Greek in both Bagster printings does, against B’s main ἐπ᾽ αὐτοῦ in Swete; Brenton’s He shall cause men to clap their hands against them renders that plural object, with men and the causative his own free rendering. Attribute the displaced English to Valpy. Preserve exact source_note and derivation.",
       "swete": {
         "volume": 2,
         "page": 569,
@@ -3619,6 +3637,7 @@
         "agrees": true
       },
       "from": "He shall cause men to clap their hands against them",
+      "label": "valpy",
       "english": {
         "source": "brenton",
         "span": [16, 46],
@@ -3694,7 +3713,7 @@
       "source_note": "\\fqa Alex. \\ft whenever they act."
     },
     "JOB 36:30 CCEL": {
-      "why": "Promote only Brenton’s printed bow over it, as 1879 physical p. 708 and 1900 physical p. 704 print it, printed p. 692. Swete II p. 589 explicitly supports A’s feminine pronoun and bow without qualification. B main and Brenton’s facing Greek instead have masculine αὐτὸν and ἡ ᾠδή, song. The displaced English bow against him combines a B-supported pronoun with Brenton’s different interpretation of the noun; label the complete displaced English Brenton. Preserve Sinaiticus c.a marginal τόξον and c.c vid qualifications as distinct from unqualified A. Retain the existing possessive his and the explanatory source note without inserting sc. tabernacle into scripture.",
+      "why": "Promote only Brenton’s printed bow over it, as 1879 physical p. 708 and 1900 physical p. 704 print it, printed p. 692. Swete II p. 589 explicitly supports A’s feminine pronoun and bow without qualification. B main has masculine αὐτὸν and ἡ ᾠδή, song. Valpy p. 464 (PDF p. 476) and Brenton’s facing Greek instead read ἐπ᾽ αὐτὸν ἠδώ, the form ℵ’s c.a corrector glosses τοξον in the margin. The displaced English bow against him renders Valpy’s ἠδώ, which B does not have; label it Valpy. Preserve Sinaiticus c.a marginal τόξον and c.c vid qualifications as distinct from unqualified A. Retain the existing possessive his and the explanatory source note without inserting sc. tabernacle into scripture.",
       "swete": {
         "volume": 2,
         "page": 589,
@@ -3703,6 +3722,7 @@
         "agrees": true
       },
       "from": "bow against him",
+      "label": "valpy",
       "english": {
         "source": "brenton",
         "span": [30, 41]
@@ -3893,7 +3913,7 @@
       "note": "\\ft Heb. doubly translated. \\fl Vat. \\ft adds \\fq humbly\\ft ."
     },
     "JER 2:9 CCEL": {
-      "why": "Promote Brenton’s own English addition saith the Lord at Jeremiah 2:9. Brenton 1879 physical p. 919 and 1900 physical p. 915 (printed p. 903 in both) print “Heb. and Alex. + 'saith the Lord.'” with δ after you, in the first clause. Swete III p. 225 explicitly records υμας] + λεγει κ̅ς̅ B^ab ℵ^c.a AQ; the printed B superscript is ab, and κς bears a nomen-sacrum overbar. A is unqualified, without lacuna or uncertainty here. Add only Brenton’s printed saith the Lord after with you, keeping the complete sentence and Brenton’s report of Hebrew agreement, with the omission noted for Vat.’s first hand. B main positively omits the clause, whereas B correcting hands ab and Sinaiticus c.a explicitly add it alongside A and Q; this hand distinction must be retained. Serialized source-note offsets 36:50 select exactly saith the Lord, excluding the printed quotation and terminal stop; retain with you and supply the surrounding comma seam from the verse.",
+      "why": "Promote Brenton’s own English addition saith the Lord at Jeremiah 2:9. Brenton 1879 physical p. 919 and 1900 physical p. 915 (printed p. 903 in both) print “Heb. and Alex. + 'saith the Lord.'” with δ after you, in the first clause. Swete III p. 225 explicitly records υμας] + λεγει κ̅ς̅ B^ab ℵ^c.a AQ; the printed B superscript is ab, and κς bears a nomen-sacrum overbar. A is unqualified, without lacuna or uncertainty here. Add only Brenton’s printed saith the Lord after with you, keeping the complete sentence and Brenton’s report of Hebrew agreement, with the omission noted for Vat.’s first hand. B main positively omits the clause, whereas B correcting hands ab and Sinaiticus c.a explicitly add it alongside A and Q; this hand distinction must be retained. Serialized source-note offsets 36:50 select exactly saith the Lord, excluding the printed quotation and terminal stop; retain with you and supply the surrounding comma seam from the verse. The printed note names the manuscript alone; the hand and correction details remain here as evidence.",
       "swete": {
         "volume": 3,
         "page": 225,
@@ -3919,7 +3939,7 @@
         ]
       },
       "note_at": 10,
-      "note": "\\fl Heb. \\ft agrees. \\fl Vat. first hand \\ft omits.",
+      "note": "\\fl Heb. \\ft agrees. \\fl Vat. \\ft omits.",
       "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft + 'saith the Lord.'"
     },
     "JER 6:22 CCEL": {
@@ -3995,7 +4015,7 @@
       "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft + 'nor did I speak \\fqa it.\\ft '"
     },
     "JER 19:14 CCEL": {
-      "why": "Promote Brenton’s complete phrase the fall of the place of Tapheth, and attribute the displaced English the place of the Fall to Brenton. Brenton 1879 physical p. 943 and 1900 physical p. 939 (printed p. 927) put β before the italic supplied the place, with this note, which eBible lacks. Swete III p. 265 B main positively reads ἀπὸ τῆς διαπτώσεως; explicit διαπτωσεως] + του τοπου Ταφεθ A supports the A expansion without a hand or uncertainty qualifier. The following adnot Ταφεθ ερμηνευεται διαπτωσις Q^mg belongs to Q’s marginal explanation, not an A corrector. B supports Fall and the absence of the A expansion, but does not literally attest the supplied English place words, so the full displaced English is identified as Brenton. Preserve the Hebrew from Tophet report and the source-note derivation of the complete phrase.",
+      "why": "Promote Brenton’s complete phrase the fall of the place of Tapheth, and attribute the displaced English the place of the Fall to Vat. Brenton 1879 physical p. 943 and 1900 physical p. 939 (printed p. 927) put β before the italic supplied the place, with this note, which eBible lacks. Swete III p. 265 B main positively reads ἀπὸ τῆς διαπτώσεως; explicit διαπτωσεως] + του τοπου Ταφεθ A supports the A expansion without a hand or uncertainty qualifier. The following adnot Ταφεθ ερμηνευεται διαπτωσις Q^mg belongs to Q’s marginal explanation, not an A corrector. Valpy p. 618 (PDF p. 630) also reads ἀπὸ τῆς διαπτώσεως without the A expansion; B and Valpy agree, and Brenton’s displaced the place of the Fall, with the place supplied in italic, freely renders their διαπτώσεως, so it is labelled Vat. Preserve the Hebrew from Tophet report and the source-note derivation of the complete phrase.",
       "swete": {
         "volume": 3,
         "page": 265,
@@ -4009,7 +4029,7 @@
         "span": [43, 75]
       },
       "source_note": "\\fqa Heb. \\ft from Tophet. \\fqa Alex. \\ft 'the fall of the place of Tapheth.'",
-      "note": "\\fl Heb. \\ft from Tophet. \\fl Brenton \\fqa the place of the Fall\\ft ."
+      "note": "\\fl Heb. \\ft from Tophet. \\fl Vat. \\fqa the place of the Fall\\ft ."
     },
     "JER 23:1 CCEL#2": {
       "why": "Promote Brenton’s printed Alexandrinus alternative my at Jeremiah 23:1. Brenton 1879 physical p. 946 and 1900 physical p. 942 (printed p. 930 in both) put ξ immediately before their in the sheep of their pasture and print “Heb. and Alex. ‘my.’”. Swete III p. 271 explicitly records αυτων] μου AQ, establishing unqualified A’s possessive my with Q; no correcting hand, lacuna, or uncertainty qualifies A at this unit. Only their is replaced. Brenton’s facing Greek τῆς νομῆς αὐτῶν and Swete B main τῆς νομῆς αὐτῶν positively support the displaced possessive their. Preserve Hebrew agreement; since Swete’s B main text positively supports the displaced their, the new displaced note names Vat.",
@@ -4055,7 +4075,7 @@
       "hebrew_agrees": true
     },
     "JER 23:10 CCEL#2": {
-      "why": "Brenton 1879 physical p. 947 and 1900 physical p. 943, printed p. 931; source note and caller confirmed in both printings. Swete III p. 272, main-text witness B. Promote the explicitly supported A negation ουχ before ουτως, using Brenton’s not so. Label the displaced so also Brenton: B positively supports affirmative ουτως, but also is an italic English supply whose exact wording is Brenton’s interpretation. The adjoining course/δρομος is supported by ℵAQ against B δρυμος and lies outside this displaced quotation. Preserve the Hebrew agreement report.",
+      "why": "Brenton 1879 physical p. 947 and 1900 physical p. 943, printed p. 931; source note and caller confirmed in both printings. Swete III p. 272, main-text witness B. Promote the explicitly supported A negation ουχ before ουτως, using Brenton’s not so. Label the displaced so also Vat.: B’s main text καὶ ἡ ἰσχὺς αὐτῶν οὕτως, without ουχ, is matched by Valpy p. 621 (PDF p. 633), and Brenton’s italic also only renders that ουτως freely. The adjoining course/δρομος is supported by ℵAQ against B δρυμος and lies outside this displaced quotation. Preserve the Hebrew agreement report.",
       "swete": {
         "volume": 3,
         "page": 272,
@@ -4064,6 +4084,7 @@
         "agrees": true
       },
       "from": "so \\add also\\add*",
+      "label": "vatican",
       "english": {
         "source": "brenton",
         "span": [33, 39]
@@ -4090,7 +4111,7 @@
       "lemma": "the hands of evil-doers"
     },
     "JER 23:32 CCEL": {
-      "why": "Brenton 1844 vol. 2 physical p. 265 (printed p. 762), 1879 physical p. 948 and 1900 physical p. 944 (both printed p. 932) print have not told them with truly supplied in italics and place the caller immediately before not; the note reads Heb. & Alex. omit the negative in 1844 and Heb. and Alex. omit the negative in the Bagster printings. The relevant 1884 scan is cropped and does not preserve this verse or its note. Swete III p. 274, checked and confirmed on the scan, records om ου ℵAQ; B has καὶ οὐ διηγοῦντο αὐτά and A has the affirmative clause without ου, with no qualifying hand or uncertainty. Remove not as Brenton reports and, by explicit editorial judgment, remove his supplied truly, which made sense beside the negative but wrongly asserts the truth of the false dreams in the affirmative. Retain Brenton’s remaining have told them, without composing or borrowing new English; pinned KJV and RV Jeremiah 23:32 both have and do tell them. Preserve Heb. agrees and quote the whole former have not told them truly under Brenton’s name. State separately that Vaticanus adds the negative: truly is Brenton’s English supplement and must be preserved without being attributed to the manuscript. No other variant of the verse is applied.",
+      "why": "Brenton 1844 vol. 2 physical p. 265 (printed p. 762), 1879 physical p. 948 and 1900 physical p. 944 (both printed p. 932) print have not told them with truly supplied in italics and place the caller immediately before not; the note reads Heb. & Alex. omit the negative in 1844 and Heb. and Alex. omit the negative in the Bagster printings. The relevant 1884 scan is cropped and does not preserve this verse or its note. Swete III p. 274, checked and confirmed on the scan, records om ου ℵAQ; B has καὶ οὐ διηγοῦντο αὐτά and A has the affirmative clause without ου, with no qualifying hand or uncertainty. Remove not as Brenton reports and, by explicit editorial judgment, remove his supplied truly, which made sense beside the negative but wrongly asserts the truth of the false dreams in the affirmative. Retain Brenton’s remaining have told them, without composing or borrowing new English; pinned KJV and RV Jeremiah 23:32 both have and do tell them. Preserve Heb. agrees and quote the whole former have not told them truly under Vat.: B’s main text, given above, has the negative, and Brenton’s italic truly only renders its clause freely, as his also does at 23:10. No other variant of the verse is applied.",
       "swete": {
         "volume": 3,
         "page": 274,
@@ -4115,7 +4136,7 @@
         ]
       },
       "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft omit the negative.",
-      "note": "\\fl Heb. \\ft agrees. \\fl Brenton \\fqa have not told them truly\\ft . \\fl Vat. \\ft adds the negative.",
+      "note": "\\fl Heb. \\ft agrees. \\fl Vat. \\fqa have not told them truly\\ft .",
       "note_at": 0
     },
     "JER 27:20 CCEL": {
@@ -4907,7 +4928,7 @@
       "label": "vatican"
     },
     "EZK 11:6 CCEL": {
-      "why": "Brenton 1844 vol. II physical p. 312 (printed p. 809), 1879 physical p. 1006 and 1900 physical p. 1002 (printed p. 990 in both) print your ways and the same Gr. their, but Alex. αὐτῆς, sc. the city, αὐτῶν perhaps for ὑμῶν αὐτῶν note, with the caller immediately before your. The 1884 physical p. 962 fragment loses this verse and its footnote. Swete III p. 402 (checked, apparatus confirmed on scan) reads αυτων] αυτης AQ, with A unqualified: the city is the singular possessor, whereas B has the third-person plural αυτων. Retain the ways thereof as a declared editorial composition, keeping Brenton’s adequate ways and adapting its possessive with the KJV/RV frame the streets thereof. No named translation prints the complete phrase the ways thereof. This faithfully renders A; reverting to your ways would discard its established possessive. Keep the displaced your ways labelled Brenton because his second-person possessive is not B’s third-person plural. Preserve the grammatical explanation, source-note pin, and caller before the whole replacement phrase.",
+      "why": "Brenton 1844 vol. II physical p. 312 (printed p. 809), 1879 physical p. 1006 and 1900 physical p. 1002 (printed p. 990 in both) print your ways and the same Gr. their, but Alex. αὐτῆς, sc. the city, αὐτῶν perhaps for ὑμῶν αὐτῶν note, with the caller immediately before your. The 1884 physical p. 962 fragment loses this verse and its footnote. Swete III p. 402 (checked, apparatus confirmed on scan) reads αυτων] αυτης AQ, with A unqualified: the city is the singular possessor, whereas B has the third-person plural αυτων. Retain the ways thereof as a declared editorial composition, keeping Brenton’s adequate ways and adapting its possessive with the KJV/RV frame the streets thereof. No named translation prints the complete phrase the ways thereof. This faithfully renders A; reverting to your ways would discard its established possessive. Label the displaced your ways Vat.: Swete’s B and Valpy p. 659 (PDF p. 671) both read τὰς ὁδοὺς αὐτῶν, and Brenton’s own note explains his second-person your as a free rendering of that αὐτῶν (perhaps for ὑμῶν αὐτῶν), not as another reading. Preserve the grammatical explanation, source-note pin, and caller before the whole replacement phrase.",
       "swete": {
         "volume": 3,
         "page": 402,
@@ -4934,7 +4955,7 @@
       },
       "supplied": ["the", "thereof"],
       "source_note": "\\fqa Gr. \\ft their, but \\fqa Alex. \\ft αὐτῆς, \\fqa sc. \\ft the city, αὐτῶν perhaps for ὑμῶν αὐτῶν.",
-      "note": "\\fl Brenton \\fqa your ways\\ft . \\fl Gr. \\fqa their\\ft , αὐτῶν perhaps for ὑμῶν αὐτῶν."
+      "note": "\\fl Vat. \\fqa your ways\\ft . \\fl Gr. \\fqa their\\ft , αὐτῶν perhaps for ὑμῶν αὐτῶν."
     },
     "EZK 13:2 CCEL": {
       "why": "Print Brenton’s complete Alexandrinus addition at its explicit place after Israel. Brenton 1879 physical p. 1008 and 1900 physical p. 1004 (printed p. 992) both print γ Alex. + ‘that prophesy, and thou shalt say to the prophets that prophesy out of their own heart.’; γ follows Israel, before the existing and thou shalt prophesy at Ezekiel 13:2. CCEL 15.xiii#1 preserves these words; baseline eBible has no note here. Swete III p. 405 B main text lacks the addition and explicit apparatus after Ισραηλ supplies τους προφητευοντας και ερεις τοις προφηταις (-τες A* improb ε A^?) τοις προφητευουσιν απο καρδιας αυτων A et (sub αʹθʹ ※) Q. The addition is positively attributed to A and Q; Q has critical signs α'θ' and ✣. A first hand spells the prophets noun with -τες; the epsilon is disapproved by an uncertain A hand, with no uncertainty about the presence or wording of the full addition and no lacuna here. This inflectional spelling does not change Brenton’s to the prophets rendering under τοις. Use exactly the source-note English, excluding quotation marks and its terminal period; prepend existing Israel from the replaced text and preserve the following comma and all the existing words. The complete A construction retains καὶ προφητεύσεις καὶ ἐρεῖς πρὸς αὐτούς after the addition, so the repeated commands remain rather than being silently harmonized with the Hebrew. No new English words are supplied. Brenton’s facing Greek and Swete’s B text both lack this addition, positively supporting the Vat. omission note independently of that label.",
@@ -5019,7 +5040,7 @@
       "label": "vatican"
     },
     "EZK 17:16 CCEL": {
-      "why": "Print Brenton’s Alexandrine relative. Brenton 1879 physical p. 1015 and 1900 physical p. 1011 (printed p. 999) print “Alex. ἐν ᾧ ὁ βασιλεὺς, in which the king is.” Swete III p. 417 records τοπω] τω τοπω ω A τω τοπω Q: unqualified A has the relative ᾧ, which Brenton renders in which. B has ἐν τόπῳ ὁ βασιλεὺς without a relative, so Brenton’s where is his own English, and the displaced word is labelled Brenton. A’s τῷ before τόπῳ is not in his note and is not translated.",
+      "why": "Print Brenton’s Alexandrine relative. Brenton 1879 physical p. 1015 and 1900 physical p. 1011 (printed p. 999) print “Alex. ἐν ᾧ ὁ βασιλεὺς, in which the king is.” Swete III p. 417 records τοπω] τω τοπω ω A τω τοπω Q: unqualified A has the relative ᾧ, which Brenton renders in which. B, in Swete III p. 417 without correcting-hand qualification, and Valpy p. 665 (PDF p. 677) both read ἐν τόπῳ ὁ βασιλεὺς without a relative; Brenton’s where renders that construction freely, so the displaced word is labelled Vat. A’s τῷ before τόπῳ is not in his note and is not translated.",
       "swete": {
         "volume": 3,
         "page": 417,
@@ -5028,6 +5049,7 @@
         "agrees": true
       },
       "from": "where",
+      "label": "vatican",
       "english": {
         "source": "brenton",
         "span": [27, 35]
@@ -5604,7 +5626,7 @@
       "omits": true
     },
     "EZK 34:12 CCEL": {
-      "why": "Promote Brenton’s own English gather at Ezekiel 34:12. Brenton 1879 physical p. 1041 and 1900 physical p. 1037 (printed p. 1025 in both) put γ immediately before bring in will bring them back and print “Lit. drive them away. Alex. gather.”; CCEL 15.xxxiv#2 preserves the note exactly and eBible has none. Swete III p. 459 (B main text) explicitly records απελασω] συναξω A: A is unqualified, with no correcting hand, lacuna, or uncertainty at this unit. Replace only bring them back with gather them, selecting gather from the serialized source note and retaining the object them explicitly; the surrounding complete sentence and punctuation remain Brenton’s. Preserve Brenton’s literal gloss within the displaced note because it explains his base verb, and identify the quoted contextual English as Brenton rather than as a literal manuscript rendering. B positively prints απελάσω αὐτά, the same Greek as Brenton’s facing Greek; Brenton’s English bring them back is a contextual rendering, while his note states the literal drive them away. This evidence supports the Greek attribution independently of the label, without claiming that B literally says bring them back.",
+      "why": "Promote Brenton’s own English gather at Ezekiel 34:12. Brenton 1879 physical p. 1041 and 1900 physical p. 1037 (printed p. 1025 in both) put γ immediately before bring in will bring them back and print “Lit. drive them away. Alex. gather.”; CCEL 15.xxxiv#2 preserves the note exactly and eBible has none. Swete III p. 459 (B main text) explicitly records απελασω] συναξω A: A is unqualified, with no correcting hand, lacuna, or uncertainty at this unit. Replace only bring them back with gather them, selecting gather from the serialized source note and retaining the object them explicitly; the surrounding complete sentence and punctuation remain Brenton’s. Preserve Brenton’s literal gloss within the displaced note because it explains his base verb. B prints ἀπελάσω αὐτὰ (Swete III p. 459), as do Brenton’s facing Greek and Valpy p. 682 (PDF p. 694). Brenton’s bring them back renders that Greek freely, and his note gives the literal drive them away, so the note names Vat.",
       "swete": {
         "volume": 3,
         "page": 459,
@@ -5625,7 +5647,7 @@
         ]
       },
       "source_note": "\\fqa Lit. \\ft drive them away. \\fqa Alex. \\ft gather.",
-      "note": "\\fl Brenton \\fqa bring them back\\ft ; literally, \\fqa drive them away\\ft ."
+      "note": "\\fl Vat. \\fqa bring them back\\ft ; literally, \\fqa drive them away\\ft ."
     },
     "EZK 35:11 CCEL": {
       "why": "Promote Brenton’s complete Alexandrinus addition at Ezekiel 35:11. Brenton 1879 physical p. 1042 and 1900 physical p. 1038 (printed p. 1026 in both) print “Alex. + ‘and according to thy jealousy which thou hast vented in thy hatred against them.’” with γ between enmity, and and I will be made known. CCEL 15.xxxv#2 supplies this unique missing note, correctly after enmity. Swete III p. 461 explicitly records σου] + και κατα τον ζηλον σου ον εποιησας εκ του μεμισηκειν σε εν αυτοις A et (sub θʹ ✣) Q. A is unqualified, with no correcting hand, lacuna, or uncertainty; the Theodotion/asterisk qualification belongs to Q alone. Brenton’s complete English renders the addition’s jealousy and hatred construction. Select only its words from the serialized note, excluding labels, plus, quotes, and concluding period; retain enmity and its comma before the addition and add a comma before the unchanged continuation and I. No translation is newly supplied and no unreported A reading is applied. Brenton’s facing Greek κατὰ τὴν ἔχθραν σου, καὶ γνωσθήσομαί σοι and Swete B main independently lack the addition, positively supporting the Vat. omits. note locally.",
@@ -5735,7 +5757,7 @@
       "note": "\\fl Vat. \\fqa Rhos prince of Mesoch and Thobel\\ft ; or, chief prince."
     },
     "EZK 38:13 CCEL": {
-      "why": "Promote Brenton’s own English “of Chalcedon”, retaining the unchanged noun merchants before its genitive. Brenton 1879 physical p. 1047 and 1900 physical p. 1043 (printed p. 1031 in both) place γ immediately before Carthaginian and print “Heb. merchants of Tarshish; Alex. of Chalcedon.” CCEL 15.xxxviii#4 faithfully preserves this unique note; eBible has no equivalent note. Swete III p. 468 explicitly records Καρχηδονιοι (Κ̅ sup ras B^ab)] Χαλκηδονος A, establishing the unqualified A genitive, without A correcting hand, lacuna, or uncertainty. Replace the whole English noun phrase Carthaginian merchants with merchants of Chalcedon, rather than putting the genitive before merchants. The unchanged English bare plural remains idiomatic; the adjacent A article unit and the separately reported A villages reading authorize no further change under this note. Preserve the Hebrew report as a separate report of merchants of Tarshish, since Hebrew does not agree with Chalcedon. Brenton’s facing Greek Καρχηδόνιοι and Swete B main Καρχηδόνιοι positively support the displaced adjective; Swete qualifies the B initial K as over an erasure by correcting hands ab. The new note uses the Vat. label with that independent B evidence, without asserting unqualified first-hand B.",
+      "why": "Promote Brenton’s own English “of Chalcedon”, retaining the unchanged noun merchants before its genitive. Brenton 1879 physical p. 1047 and 1900 physical p. 1043 (printed p. 1031 in both) place γ immediately before Carthaginian and print “Heb. merchants of Tarshish; Alex. of Chalcedon.” CCEL 15.xxxviii#4 faithfully preserves this unique note; eBible has no equivalent note. Swete III p. 468 explicitly records Καρχηδονιοι (Κ̅ sup ras B^ab)] Χαλκηδονος A, establishing the unqualified A genitive, without A correcting hand, lacuna, or uncertainty. Replace the whole English noun phrase Carthaginian merchants with merchants of Chalcedon, rather than putting the genitive before merchants. The unchanged English bare plural remains idiomatic; the adjacent A article unit and the separately reported A villages reading authorize no further change under this note. Preserve the Hebrew report as a separate report of merchants of Tarshish, since Hebrew does not agree with Chalcedon. Brenton’s facing Greek Καρχηδόνιοι and Swete B main Καρχηδόνιοι positively support the displaced adjective; Swete qualifies the B initial K as over an erasure by correcting hands ab. The new note uses the Vat. label with that independent B evidence, without asserting unqualified first-hand B. The printed note names the manuscript alone; the hand and correction details remain here as evidence.",
       "swete": {
         "volume": 3,
         "page": 468,
@@ -5756,10 +5778,10 @@
         ]
       },
       "source_note": "\\fqa Heb. \\ft merchants of Tarshish; \\fqa Alex. \\ft of Chalcedon.",
-      "note": "\\fl Heb. \\fqa merchants of Tarshish\\ft ; \\fl Vat. (correcting hands ab) \\fqa Carthaginian merchants\\ft ."
+      "note": "\\fl Heb. \\fqa merchants of Tarshish\\ft ; \\fl Vat. \\fqa Carthaginian merchants\\ft ."
     },
     "EZK 39:11 CCEL#3": {
-      "why": "Brenton 1879 physical p. 1048 (printed p. 1032), caller δ immediately before final burial-place in called the burial-place of Gog., prints Alex. the valley, the burial-place, etc.; Brenton 1900 physical p. 1044 (printed p. 1032), caller δ immediately before final burial-place in called the burial-place of Gog., prints Alex. the valley, the burial-place, etc. Swete III p. 470 has the reading recorded with this decision. Attribute the complete displaced English then be called the burial-place to Brenton. B positively reads the capitalized naming-form Τὸ τέ, τὸ πολυάνδριον τοῦ Γώγ, which does not establish the temporal meaning of Brenton’s then. Unqualified A explicitly substitutes το γαι; Q has το γε. Promote Brenton’s own complete valley naming gloss, retain be called and of Gog from the source sentence, and remove then; no invented English is supplied. Swete 39:12 corresponds to Brenton’s closing 39:11 clause.",
+      "why": "Brenton 1879 physical p. 1048 (printed p. 1032), caller δ immediately before final burial-place in called the burial-place of Gog., prints Alex. the valley, the burial-place, etc.; Brenton 1900 physical p. 1044 (printed p. 1032), caller δ immediately before final burial-place in called the burial-place of Gog., prints Alex. the valley, the burial-place, etc. Swete III p. 470 has the reading recorded with this decision. Label the complete displaced English then be called the burial-place Valpy. Valpy p. 687 (PDF p. 699), like Brenton’s facing Greek on the same Bagster pages, reads καὶ κληθήσεται τότε Τὸ πολυάνδριον τοῦ Γώγ, and Brenton’s then renders its τότε. Swete’s B has the same letters but divides and accents them as the naming-form Τὸ τέ, τὸ πολυάνδριον τοῦ Γώγ, the transliteration A gives as το γαι and Q as το γε; that is a different reading, not then, so the displaced English is Valpy’s and not B’s. Unqualified A explicitly substitutes το γαι; Q has το γε. Promote Brenton’s own complete valley naming gloss, retain be called and of Gog from the source sentence, and remove then; no invented English is supplied. Swete 39:12 corresponds to Brenton’s closing 39:11 clause.",
       "swete": {
         "volume": 3,
         "page": 470,
@@ -5768,6 +5790,7 @@
         "agrees": true
       },
       "from": "then be called the burial-place",
+      "label": "valpy",
       "english": {
         "source": "brenton",
         "span": [15, 43],
@@ -5826,7 +5849,7 @@
       "hebrew_agrees": true
     },
     "EZK 43:11 CCEL": {
-      "why": "Brenton 1879 physical p. 1055 (printed p. 1039), caller ζ immediately before entrances in Ezekiel 43:11, prints Alex. its goings out and its comings in.; Brenton 1900 physical p. 1051 (printed p. 1039), caller ζ immediately before entrances in Ezekiel 43:11, prints Alex. its goings out and its comings in. Swete III p. 482 has the reading recorded with this decision. Attribute the exact displaced its entrances to Brenton. B and the facing Greek positively read exits alone, καὶ τὰς ἐξόδους αὐτοῦ, so B does not support the direction of this English. Explicit unqualified A adds entrances after exits. The parenthetical supplement annotation belongs to Q, not A. Promote Brenton’s complete English exits-and-entrances report, without promoting the separate preparation addition. Retain the exact source pin and complete phrase.",
+      "why": "Brenton 1879 physical p. 1055 (printed p. 1039), caller ζ immediately before entrances in Ezekiel 43:11, prints Alex. its goings out and its comings in.; Brenton 1900 physical p. 1051 (printed p. 1039), caller ζ immediately before entrances in Ezekiel 43:11, prints Alex. its goings out and its comings in. Swete III p. 482 has the reading recorded with this decision. Label the exact displaced its entrances Vat.: B and Valpy p. 691 (PDF p. 703) both read the single noun καὶ τὰς ἐξόδους αὐτοῦ, without A’s second, and Brenton’s entrances is his free rendering of that noun, the openings of the house, not another reading. Explicit unqualified A adds entrances after exits. The parenthetical supplement annotation belongs to Q, not A. Promote Brenton’s complete English exits-and-entrances report, without promoting the separate preparation addition. Retain the exact source pin and complete phrase.",
       "swete": {
         "volume": 3,
         "page": 482,
@@ -5835,6 +5858,7 @@
         "agrees": true
       },
       "from": "its entrances",
+      "label": "vatican",
       "english": {
         "source": "brenton",
         "span": [15, 48]
@@ -6111,7 +6135,7 @@
       "lemma": "in breadth"
     },
     "EZK 48:28 CCEL": {
-      "why": "Promote Brenton’s reported omission of from the eastern. Brenton 1879 physical p. 1064 and 1900 physical p. 1060 (printed p. 1048 in both) place θ immediately before from the eastern in Ezekiel 48:28 and print “Alex. — ‘from the eastern.’”, the sign of omission spaced as Brenton sets it (his punctuation dash is closed up, as in “Heb.—מ” at Deuteronomy 17:20); CCEL 15.xlviii#12 closes it up. His facing Greek reads καὶ ἀπὸ τῶν ὁρίων τῶν Γὰδ, ἀπὸ τῶν πρὸς ἀνατολὰς, ἕως τῶν πρὸς λίβα. Swete III p. 496, checked on the scan, prints B as καὶ ἀπὸ τῶν ὁρίων τῶν Γὰδ ἕως τῶν πρὸς λίβα, without the phrase verses 23–27 all have, and cites A unqualified at both words beside the gap, των Γαδ] om των AQ and εως των] και εως A, with no addition: A is extant here and lacks the phrase, as Brenton reports. Γ begins later, at ἀπὸ Θαιμὰν, and no witness Swete reports has the phrase, so the displaced words are attributed to Brenton, not Vat. Remove only the comma and from the eastern, leaving from the borders of Gad to the south-western parts. A’s και before εως is not reported by Brenton and supplies no English.",
+      "why": "Promote Brenton’s reported omission of from the eastern. Brenton 1879 physical p. 1064 and 1900 physical p. 1060 (printed p. 1048 in both) place θ immediately before from the eastern in Ezekiel 48:28 and print “Alex. — ‘from the eastern.’”, the sign of omission spaced as Brenton sets it (his punctuation dash is closed up, as in “Heb.—מ” at Deuteronomy 17:20); CCEL 15.xlviii#12 closes it up. His facing Greek reads καὶ ἀπὸ τῶν ὁρίων τῶν Γὰδ, ἀπὸ τῶν πρὸς ἀνατολὰς, ἕως τῶν πρὸς λίβα. Swete III p. 496, checked on the scan, prints B as καὶ ἀπὸ τῶν ὁρίων τῶν Γὰδ ἕως τῶν πρὸς λίβα, without the phrase verses 23–27 all have, and cites A unqualified at both words beside the gap, των Γαδ] om των AQ and εως των] και εως A, with no addition: A is extant here and lacks the phrase, as Brenton reports. Γ begins later, at ἀπὸ Θαιμὰν, and no witness Swete reports has the phrase. Valpy p. 697 (PDF p. 709) reads καὶ ἀπὸ τῶν ὁρίων τῶν Γὰδ, ἀπὸ τῶν πρὸς ἀνατολὰς, ἕως τῶν πρὸς λίβα, as Brenton’s facing Greek does, so the displaced words are attributed to Valpy, not Brenton or Vat. Remove only the comma and from the eastern, leaving from the borders of Gad to the south-western parts. A’s και before εως is not reported by Brenton and supplies no English.",
       "swete": {
         "volume": 3,
         "page": 496,
@@ -6135,7 +6159,7 @@
       },
       "note_at": 4,
       "source_note": "\\fqa Alex.\\ft —'from the eastern.'",
-      "note": "\\fl Brenton \\ft adds \\fq from the eastern\\ft ."
+      "note": "\\fl Valpy \\ft adds \\fq from the eastern\\ft ."
     },
     "EZK 48:35 CCEL#2": {
       "why": "Promote Brenton’s own English city-name rendering, retaining both renderings as Alexandrinus does. Brenton 1879 physical p. 1064 and 1900 physical p. 1060 (printed p. 1048 in both) place ξ immediately before shall in Ezekiel 48:35 and print “Heb. Jehovah Shammah, ‘the Lord is there.’ Alex. gives both renderings.” CCEL 15.xlviii#15 preserves this unique missing note with its correct caller. Checked diplomatic Swete III p. 497 explicitly records εσται] pr κ̅ς̅ εκει AQ; the A and Q witnesses are unqualified, with no hand, lacuna, or uncertainty at this unit. Its B main reads ἔσται τὸ ὄνομα αὐτῆς and positively lacks the city-name phrase, as does Brenton’s facing Greek. Select the quoted English exactly from serialized source-note offsets 31–51, remove its internal terminal period when putting the quotation into the sentence, and append the unchanged closing shall be the name thereof. The complete result retains Alexandrinus’s name phrase followed by shall be the name thereof; no translation word is newly supplied. Retain Brenton’s informative Hebrew transliteration in the displaced omission note, with the required Vat. label, independently supported here by B. The metalinguistic Alex. gives both renderings report is consumed by the promotion, which now prints both. Scope the omission note to the added quoted name alone, excluding the retained closing clause.",
@@ -6349,7 +6373,7 @@
       }
     },
     "EZK 36:32 CCEL": {
-      "why": "Promote Brenton’s own English Alexandrinus alternative be it known to you at Ezekiel 36:32. Brenton 1879 physical p. 1044 and 1900 physical p. 1040 (printed p. 1028 in both) put δ immediately before the italic supplied as in “saith the Lord God, as it is known to you:” and print “Alex. be it known to you.”; the facing Greek reads γνωστόν ἐστιν ὑμῖν. Swete III p. 464 has B main text γνωστόν ἐστιν ὑμῖν and explicitly records εστιν] εσται AQ, unqualified A with Q, without correcting hand, lacuna, or uncertainty at this unit. A’s future γνωστὸν ἔσται ὑμῖν follows the Hebrew imperfect, which the pinned King James Version and Revised Version both render “be it known unto you”; Brenton’s “be it known to you” is his jussive rendering of that same future, so his note supplies the English and none is invented. Select be it known to you exactly at serialized source-note offsets 15–33, excluding the label and stop, and replace the whole clause as it is known to you, keeping the verse’s colon and the rest of the sentence. B main positively supports ἐστιν, but the displaced as is Brenton’s italic supply, an interpretive connective that the Greek does not have, so the displaced note names Brenton, as at Jeremiah 23:10. The separate A readings ὁ θεός for the second Κύριος and the added λέγει κύριος after Ἰσραήλ are not reported by this note and change nothing here.",
+      "why": "Promote Brenton’s own English Alexandrinus alternative be it known to you at Ezekiel 36:32. Brenton 1879 physical p. 1044 and 1900 physical p. 1040 (printed p. 1028 in both) put δ immediately before the italic supplied as in “saith the Lord God, as it is known to you:” and print “Alex. be it known to you.”; the facing Greek reads γνωστόν ἐστιν ὑμῖν. Swete III p. 464 has B main text γνωστόν ἐστιν ὑμῖν and explicitly records εστιν] εσται AQ, unqualified A with Q, without correcting hand, lacuna, or uncertainty at this unit. A’s future γνωστὸν ἔσται ὑμῖν follows the Hebrew imperfect, which the pinned King James Version and Revised Version both render “be it known unto you”; Brenton’s “be it known to you” is his jussive rendering of that same future, so his note supplies the English and none is invented. Select be it known to you exactly at serialized source-note offsets 15–33, excluding the label and stop, and replace the whole clause as it is known to you, keeping the verse’s colon and the rest of the sentence. Label the displaced as it is known to you Vat.: B’s main text γνωστόν ἐστιν ὑμῖν is matched by Valpy p. 684 (PDF p. 696), which reads Κύριος, γνωστόν ἐστιν ὑμῖν, and Brenton’s italic as only renders that present ἐστιν freely as a connective, not another reading, as at Jeremiah 23:10. The separate A readings ὁ θεός for the second Κύριος and the added λέγει κύριος after Ἰσραήλ are not reported by this note and change nothing here.",
       "swete": {
         "volume": 3,
         "page": 464,
@@ -6358,6 +6382,7 @@
         "agrees": true
       },
       "from": "\\add as\\add* it is known to you",
+      "label": "vatican",
       "english": {
         "source": "brenton",
         "span": [15, 33]
@@ -6389,7 +6414,7 @@
       "label": "vatican"
     },
     "1CH 21:20 CCEL": {
-      "why": "Promote the complete hiding construction with high confidence, using the pinned King James Version’s matching clause. Brenton 1844 vol. I physical p. 481, printed p. 457, places a dagger before and he hid and includes the Greek transliteration in his Hebrew gloss; 1879 physical p. 572, 1884 physical p. 539, and 1900 physical p. 568, printed p. 556 in Bagster, put λ before and he hid and print Heb. מתחבאים hiding themselves. Alex. κρυβόμενοι. No supplied-word italics or brackets occur. Swete II p. 45, checked and scan-confirmed, records τεσσαρες υιοι A | μεθαχαβειν] κρυβομενοι A, without hand or uncertainty qualifications. A’s nominative sons and plural hiding participle make the sons the hiding subject, unlike Brenton’s he hid himself and his four sons with him. The pinned KJV 1 Chronicles 21:20 supplies the complete clause his four sons with him hid themselves, rendering the same local Hebrew construction; the RV confirms the subject relation. Replace only that complete hiding clause, retaining the preceding and, king, and all surrounding words. Its semantic scope follows the plural hiding construction and its necessary subject agreement, not vocabulary acquisition. Preserve Brenton’s Hebrew gloss in the explicit displaced note. Label the displaced English Brenton: B’s accusative sons and transliterated Hebrew do not establish Brenton’s singular English construction. No supplied words or new commentary are introduced.",
+      "why": "Promote the complete hiding construction with high confidence, using the pinned King James Version’s matching clause. Brenton 1844 vol. I physical p. 481, printed p. 457, places a dagger before and he hid and includes the Greek transliteration in his Hebrew gloss; 1879 physical p. 572, 1884 physical p. 539, and 1900 physical p. 568, printed p. 556 in Bagster, put λ before and he hid and print Heb. מתחבאים hiding themselves. Alex. κρυβόμενοι. No supplied-word italics or brackets occur. Swete II p. 45, checked and scan-confirmed, records τεσσαρες υιοι A | μεθαχαβειν] κρυβομενοι A, without hand or uncertainty qualifications. A’s nominative sons and plural hiding participle make the sons the hiding subject, unlike Brenton’s he hid himself and his four sons with him. The pinned KJV 1 Chronicles 21:20 supplies the complete clause his four sons with him hid themselves, rendering the same local Hebrew construction; the RV confirms the subject relation. Replace only that complete hiding clause, retaining the preceding and, king, and all surrounding words. Its semantic scope follows the plural hiding construction and its necessary subject agreement, not vocabulary acquisition. Preserve Brenton’s Hebrew gloss in the explicit displaced note. Label the displaced English Vat.: Swete II p. 45 prints B’s καὶ εἶδεν τὸν βασιλέα καὶ τέσσαρας υἱοὺς αὐτοῦ μετ᾽ αὐτοῦ μεθαχαβείν, and Valpy p. 374 (PDF p. 386) prints the same reading, καὶ τέσσαρας υἱοὺς αὐτοῦ μετ᾽ αὐτοῦ μεθ᾽ ἀχαβίν; Brenton’s he hid himself and his four sons with him renders that shared Greek freely, giving the transliteration its Hebrew sense and keeping the accusative sons as the object. No supplied words or new commentary are introduced.",
       "swete": {
         "volume": 2,
         "page": 45,
@@ -6409,10 +6434,10 @@
           }
         ]
       },
-      "note": "\\fl Brenton \\fqa he hid himself and his four sons with him\\ft . \\fl Heb. \\ft מתחבאים \\fq hiding themselves\\ft ."
+      "note": "\\fl Vat. \\fqa he hid himself and his four sons with him\\ft . \\fl Heb. \\ft מתחבאים \\fq hiding themselves\\ft ."
     },
     "JOB 36:29 CCEL": {
-      "why": "Promote Alexandrinus’s singular with high confidence by grammatical adaptation of Brenton’s displaced noun. Brenton 1844 vol. II physical p. 73, printed p. 570, has a dagger before outspreadings and Alex. συνῇ ἐπέκτασιν.; 1879 physical p. 708, 1884 physical p. 675, and 1900 physical p. 704, printed p. 692 in Bagster, put σ before outspreadings and give Alex. ἐπέκτασιν. Only or is supplied; no brackets occur. Swete II p. 589, checked and scan-confirmed, records απεκτασεις (-σις Bℵ*)] επεκτασιν ℵ^c.a (mox revoc απ.) A. A’s accusative singular is unqualified; the subsequent reversion belongs to the Sinaiticus corrector. Inflect outspreadings as outspreading, retaining its lexical meaning, grammatical role, following of the clouds, and supplied or. The declared singular token satisfies the build’s whole-word vocabulary check; the grammatical relationship to Brenton’s noun independently justifies the edit. The pinned KJV and RV both have plural spreadings and supply no words. This decision carries out the Bagster noun report, not A’s separate preceding verb variant. Label the displaced plural Brenton: his facing ἐπεκτάσεις differs from Swete’s main απεκτασεις and its -σις Bℵ* qualification, so his exact plural must not be attributed to Vaticanus.",
+      "why": "Promote Alexandrinus’s singular with high confidence by grammatical adaptation of Brenton’s displaced noun. Brenton 1844 vol. II physical p. 73, printed p. 570, has a dagger before outspreadings and Alex. συνῇ ἐπέκτασιν.; 1879 physical p. 708, 1884 physical p. 675, and 1900 physical p. 704, printed p. 692 in Bagster, put σ before outspreadings and give Alex. ἐπέκτασιν. Only or is supplied; no brackets occur. Swete II p. 589, checked and scan-confirmed, records απεκτασεις (-σις Bℵ*)] επεκτασιν ℵ^c.a (mox revoc απ.) A. A’s accusative singular is unqualified; the subsequent reversion belongs to the Sinaiticus corrector. Inflect outspreadings as outspreading, retaining its lexical meaning, grammatical role, following of the clouds, and supplied or. The declared singular token satisfies the build’s whole-word vocabulary check; the grammatical relationship to Brenton’s noun independently justifies the edit. The pinned KJV and RV both have plural spreadings and supply no words. This decision carries out the Bagster noun report, not A’s separate preceding verb variant. Label the displaced plural Vat.: B (Swete’s main ἀπεκτάσεις, written -σις by B and ℵ first hand) and Valpy p. 464 (PDF p. 476), which reads Καὶ ἐὰν συνῇ ἀπέκτασις νεφέλης, have the same noun in the same letters, and Brenton’s outspreadings renders it, its plural agreeing with Swete’s reading of B’s spelling; the prefix of Bagster’s later facing ἐπεκτάσεις makes no difference to the English.",
       "swete": {
         "volume": 2,
         "page": 589,
@@ -6422,6 +6447,7 @@
       },
       "source_note": "\\fqa Alex. \\ft ἐπέκτασιν.",
       "from": "outspreadings",
+      "label": "vatican",
       "english": {
         "source": "from",
         "edits": [
@@ -7554,7 +7580,7 @@
     },
     "EZK 33:25": {
       "appendix": "\\ip 33. \\vp 25\\vp*Therefore say to them, Thus saith the Lord God: Ye will eat with the blood, and ye will lift up your eyes to your idols, and ye shed blood, and shall ye inherit the land? \\vp 26\\vp*Ye stand upon your sword, ye have wrought abomination, and have defiled every one his neighbour, and shall ye inherit the land?  ",
-      "why": "Retain Brenton’s own Appendix rendering of Ezekiel 33:25–26. Brenton 1879 physical p. 1150 and 1900 physical p. 1146, in the Appendix paragraph headed JEZEKIEL, print the complete two sentences under chapter 33 and superscript 25/26, including both final question marks. This paragraph has verse labels rather than a caller. Swete III p. 457 explicitly prepends the complete A passage before ταδε λεγει at 33:27, with no A hand, lacuna, or uncertainty qualification. Quote its exact diplomatic apparatus, distinguishing the separately printed Q addition sub θʹ ※, whose 26 specifies the neighbour’s wife whereas A and Brenton have the neighbour. B positively lacks 25’s supplied remainder and all 26; B’s 25 is διὰ τοῦτο εἰπὸν αὐτοῖς and its next verse is 27. The source English already carries the divine-speech introduction in 25, so retain the existing complete replacement and insertion boundaries, punctuation restoration, and Vat. omission labels for the supplied remainder and verse 26. No new English is supplied and no other manuscript variant is translated. The distinct scripture pointer is printed See Appendix. with γ before Therefore at printed verse 27 in Brenton 1879 physical p. 1040 and 1900 physical p. 1036 (printed p. 1024). CCEL 15.xxxiii#6 places it at eBible 33:25, whose introductory words are split from printed verse 27. Its note is consumed through source_notes with this supplied passage; no duplicate eBible pointer exists and no further English is supplied. B positively transitions from v25 διὰ τοῦτο εἰπὸν αὐτοῖς to v27 Τάδε λέγει κύριος Κύριος, with no intervening supplied remainder or v26. Explicit A adds both; Q has a distinct form including neighbour’s wife. Both omission notes may name Vat. for the supplied scope, while retaining the eBible/printed numbering distinction. This is positive omission evidence, not apparatus silence. Restore Brenton’s main-text introduction at 33:27 after supplying Appendix 33:25–26. Swete III p. 457 prefixes ουτως ειπεν αδωναι κ̅ς̅ … ουτως A before the retained ταδε λεγει, so Alexandrinus has the divine-speech formula at both places. Brenton 1844 II physical p. 340 (printed p. 837), 1879 physical p. 1040, 1884 physical p. 987, and 1900 physical p. 1036 (the latter three printed p. 1024) all keep the main-text introduction before As I live; their separate Appendix passages are 1844 physical p. 433 (printed p. 930), 1879 p. 1150, 1884 p. 1088 (right edge cropped), and 1900 p. 1146. Derive Thus saith the Lord God from the Appendix’s exact span [41,65), replacing its colon with the existing comma and retained As I live, including As’s supplied-word marking. The new note identifies Brenton’s original position by the words Therefore say to them, avoiding confusion between eBible’s verse 25 and printed Brenton’s verse 27. This is restoration of the main-text formula after the supplied passage, not a new translation of another A variant; retain the two existing Vat. omission notes. The 1844 main text uses says and its Appendix said; the pinned Bagster wording is saith at both places.",
+      "why": "Retain Brenton’s own Appendix rendering of Ezekiel 33:25–26. Brenton 1879 physical p. 1150 and 1900 physical p. 1146, in the Appendix paragraph headed JEZEKIEL, print the complete two sentences under chapter 33 and superscript 25/26, including both final question marks. This paragraph has verse labels rather than a caller. Swete III p. 457 explicitly prepends the complete A passage before ταδε λεγει at 33:27, with no A hand, lacuna, or uncertainty qualification. Quote its exact diplomatic apparatus, distinguishing the separately printed Q addition sub θʹ ※, whose 26 specifies the neighbour’s wife whereas A and Brenton have the neighbour. B positively lacks 25’s supplied remainder and all 26; B’s 25 is διὰ τοῦτο εἰπὸν αὐτοῖς and its next verse is 27. The source English already carries the divine-speech introduction in 25, so retain the existing complete replacement and insertion boundaries, punctuation restoration, and Vat. omission labels for the supplied remainder and verse 26. No new English is supplied and no other manuscript variant is translated. The distinct scripture pointer is printed See Appendix. with γ before Therefore at printed verse 27 in Brenton 1879 physical p. 1040 and 1900 physical p. 1036 (printed p. 1024). CCEL 15.xxxiii#6 places it at eBible 33:25, whose introductory words are split from printed verse 27. Its note is consumed through source_notes with this supplied passage; no duplicate eBible pointer exists and no further English is supplied. B positively transitions from v25 διὰ τοῦτο εἰπὸν αὐτοῖς to v27 Τάδε λέγει κύριος Κύριος, with no intervening supplied remainder or v26. Explicit A adds both; Q has a distinct form including neighbour’s wife. Both omission notes may name Vat. for the supplied scope, while retaining the eBible/printed numbering distinction. This is positive omission evidence, not apparatus silence. Restore Brenton’s main-text introduction at 33:27 after supplying Appendix 33:25–26. Swete III p. 457 prefixes ουτως ειπεν αδωναι κ̅ς̅ … ουτως A before the retained ταδε λεγει, so Alexandrinus has the divine-speech formula at both places. Brenton 1844 II physical p. 340 (printed p. 837), 1879 physical p. 1040, 1884 physical p. 987, and 1900 physical p. 1036 (the latter three printed p. 1024) all keep the main-text introduction before As I live; their separate Appendix passages are 1844 physical p. 433 (printed p. 930), 1879 p. 1150, 1884 p. 1088 (right edge cropped), and 1900 p. 1146. Derive Thus saith the Lord God from the Appendix’s exact span [41,65), replacing its colon with the existing comma and retained As I live, including As’s supplied-word marking. The new note identifies the Vatican text’s single position for the formula by the words Therefore say to them, avoiding confusion between eBible’s verse 25 and printed Brenton’s verse 27. This is restoration of the main-text formula after the supplied passage, not a new translation of another A variant; retain the two existing Vat. omission notes. The 1844 main text uses says and its Appendix said; the pinned Bagster wording is saith at both places. The note names Vat., not Brenton: the arrangement it reports is a textual reading. Swete III p. 457 prints B’s 25 as διὰ τοῦτο εἰπὸν αὐτοῖς followed directly by 27 Τάδε λέγει κύριος Κύριος Ζῶ ἐγώ, and Valpy p. 681 (PDF p. 693) prints as one verse 27 Διατοῦτο εἰπὸν αὐτοῖς, Τάδε λέγει Κύριος Κύριος, Ζῶ ἐγώ; Brenton’s Therefore say to them, Thus saith the Lord God, As I live renders that Greek, so B and Valpy agree and the formula follows Therefore say to them alone in both.",
       "swete": {
         "volume": 3,
         "page": 457,
@@ -7605,7 +7631,7 @@
           "target": "EZK 33:27",
           "from": "\\add As\\add* I live",
           "lemma": "Thus saith the Lord God",
-          "note": "\\fl Brenton \\ft has these words only after \\fq Therefore say to them\\ft .",
+          "note": "\\fl Vat. \\ft has these words only after \\fq Therefore say to them\\ft .",
           "english": {
             "source": "brenton",
             "span": [41, 65],
@@ -7761,7 +7787,7 @@
     },
     "PRO 11:10-11": {
       "appendix": "\\ip \\it Part of verses\\it* 10, 11.—but at the destruction of the wicked there is exultation. \\vp 11\\vp*At the blessing of the upright a city shall be exalted.  \n",
-      "why": "Retain Brenton’s complete Appendix clauses at Proverbs 11:10–11 (1879 physical p. 1150; 1900 physical p. 1146, final Appendix leaf), using the existing verified serialized spans [35,91) and [103,157). The pointer is β See Appendix. after prospers: at 11:10 (1879 physical p. 814; 1900 physical p. 810; printed p. 798). Swete II p. 437 B main positively lacks both clauses; its apparatus explicitly adds them in unqualified A alongside Sinaiticus correcting hand c.a. A has απωλεια, ευλογεια and ευθειων, matching the supplied English. B correcting hand b supplies both in the upper margin, with εν ευλογιαις δικαιων rather than A’s εν ευλογεια ευθειων. Identify the displaced omissions as Vaticanus first hand, distinguishing them from its correcting hand’s supplement. Preserve the complete clauses and existing seams; no English wording change is needed.",
+      "why": "Retain Brenton’s complete Appendix clauses at Proverbs 11:10–11 (1879 physical p. 1150; 1900 physical p. 1146, final Appendix leaf), using the existing verified serialized spans [35,91) and [103,157). The pointer is β See Appendix. after prospers: at 11:10 (1879 physical p. 814; 1900 physical p. 810; printed p. 798). Swete II p. 437 B main positively lacks both clauses; its apparatus explicitly adds them in unqualified A alongside Sinaiticus correcting hand c.a. A has απωλεια, ευλογεια and ευθειων, matching the supplied English. B correcting hand b supplies both in the upper margin, with εν ευλογιαις δικαιων rather than A’s εν ευλογεια ευθειων. Identify the displaced omissions as Vaticanus first hand, distinguishing them from its correcting hand’s supplement. Preserve the complete clauses and existing seams; no English wording change is needed. The printed note names the manuscript alone; the hand and correction details remain here as evidence.",
       "swete": {
         "volume": 2,
         "page": 437,
@@ -7773,7 +7799,7 @@
         {
           "target": "PRO 11:10",
           "from": "prospers:",
-          "note": "\\fl Vat. first hand \\ft omits.",
+          "note": "\\fl Vat. \\ft omits.",
           "english": {
             "source": "brenton",
             "span": [35, 91],
@@ -7793,7 +7819,7 @@
         {
           "target": "PRO 11:11",
           "from": "but by",
-          "note": "\\fl Vat. first hand \\ft omits.",
+          "note": "\\fl Vat. \\ft omits.",
           "lemma": "At the blessing of the upright a city shall be exalted",
           "english": {
             "source": "brenton",
@@ -7982,7 +8008,7 @@
     },
     "1KI 7:38-50": {
       "appendix": "\\ip 7. \\it Verse\\it* 1, etc. See the first 12 verses of this chapter placed at the end of it in the Vatican copy.  \n",
-      "why": "Print the chapter in the order of Alexandrinus, confirmed by Swete (vol. I, p. 687: VII 38–50 anteponit A): Solomon’s house, Brenton’s 7:38–50, before the works of Chiram, as the Hebrew orders them. Brenton’s printings number the chapter by the King James numbers, so his Appendix calls them the first 12 verses; eBible’s numbers are Swete’s, and the verses keep them. A also words both ends otherwise, as the Hebrew does: at 38 it adds that he finished all his house (p. 690: ετη] αιτεσιν· και συνετελεσεν ολον τον οικον αυτου· A), and at 50 it has instead the court of the porch, which it leaves out at 6:36–36a (p. 687: om κυκλοθεν...ναου A; p. 691: 50 συνετελεσεν… αυτου] οικοδομησε αυλην οικου κ̅υ̅ την εσωτατην των αιλαμ του οικου του κατα προσωπον του ναου· A); Brenton reports neither, so the verses keep his words. Brenton printed only See Appendix at 7:1 (1879 p. 468; 1844 vol. 1 p. 394), restored by a correction and taken up here; the edition’s notes stand at each place, as the New Testament’s moved verses are noted. The Appendix paragraph is identical in 1879 printed p. 1133 (physical 1149) and 1900 printed p. 1133 (physical 1145): “7. Verse 1, etc. See the first 12 verses of this chapter placed at the end of it in the Vatican copy.” These are Brenton’s Hebrew-numbered verses, represented by eBible’s 7:38–50, including its separate closing clause at 50; the move changes order, not the wording or source numbering.",
+      "why": "Print the chapter in the order of Alexandrinus, confirmed by Swete (vol. I, p. 687: VII 38–50 anteponit A): Solomon’s house, Brenton’s 7:38–50, before the works of Chiram, as the Hebrew orders them. Brenton’s printings number the chapter by the King James numbers, so his Appendix calls them the first 12 verses; eBible’s numbers are Swete’s, and the verses keep them. A also words both ends otherwise, as the Hebrew does: at 38 it adds that he finished all his house (p. 690: ετη] αιτεσιν· και συνετελεσεν ολον τον οικον αυτου· A), and at 50 it has instead the court of the porch, which it leaves out at 6:36–36a (p. 687: om κυκλοθεν...ναου A; p. 691: 50 συνετελεσεν… αυτου] οικοδομησε αυλην οικου κ̅υ̅ την εσωτατην των αιλαμ του οικου του κατα προσωπον του ναου· A); Brenton reports neither, so the verses keep his words. Brenton printed only See Appendix at 7:1 (1879 p. 468; 1844 vol. 1 p. 394), restored by a correction and taken up here; the edition’s notes stand at each place, as the New Testament’s moved verses are noted. The Appendix paragraph is identical in 1879 printed p. 1133 (physical 1149) and 1900 printed p. 1133 (physical 1145): “7. Verse 1, etc. See the first 12 verses of this chapter placed at the end of it in the Vatican copy.” These are Brenton’s Hebrew-numbered verses, represented by eBible’s 7:38–50, including its separate closing clause at 50; the move changes order, not the wording or source numbering. The notes at 7:37 and 7:38 name the Vatican text’s order, which Brenton translated: Swete (vol. I, pp. 690–691) has B’s 37 (51) followed by 38 (1) Καὶ τὸν οἶκον ἑαυτῷ ᾠκοδόμησεν Σαλωμὼν τρισκαίδεκα ἔτη through 50 καὶ συνετέλεσεν Σαλωμὼν ὅλον τὸν οἶκον αὐτοῦ before VIII 1, and Valpy pp. 305–306 (PDF pp. 317–318) has the same order, 51 and then 1–12 before chapter VIII; Brenton follows it (1844 vol. 1 printed p. 371; 1879 and 1900 printed p. 454), and his Appendix calls it the Vatican copy’s.",
       "swete": {
         "volume": 1,
         "page": 687,
@@ -7993,6 +8019,7 @@
       "moves": [
         {
           "verses": "7:38-50",
+          "label": "vatican",
           "before": "7:1"
         }
       ],
@@ -8424,8 +8451,8 @@
         {
           "target": "1KI 14:14",
           "from": "that day",
-          "label": "king-james-version",
-          "why": "A: ταυτη τη ημερα. Brenton’s this day is used throughout his translation, for example Deuteronomy 4:26. The Hebrew also has זה היום, this day: that day is the KJV’s rendering, not a distinct Hebrew reading.",
+          "note": null,
+          "why": "A: ταυτη τη ημερα. Brenton’s this day is used throughout his translation, for example Deuteronomy 4:26. The Hebrew also has זה היום, this day: that day is the KJV’s rendering, not a distinct Hebrew reading. Omit the note on this minor difference of rendering.",
           "english": {
             "source": "from",
             "edits": [
@@ -8486,8 +8513,8 @@
         {
           "target": "1KI 14:15",
           "from": "out of this good land",
-          "note": "\\fl KJV \\fq out of\\ft .",
-          "why": "A: απο ανω της χθονος της αγαθης ταυτης. Use Brenton’s from off the good land (Deuteronomy 11:17), expressing the Greek removal from its surface after make an end of; out of is the KJV’s phrasing.",
+          "note": null,
+          "why": "A: απο ανω της χθονος της αγαθης ταυτης. Use Brenton’s from off the good land (Deuteronomy 11:17), expressing the Greek removal from its surface after make an end of; out of is the KJV’s phrasing. Omit the note on this minor difference of rendering.",
           "english": {
             "source": "from",
             "edits": [
@@ -8496,8 +8523,7 @@
                 "to": "from off this good land"
               }
             ]
-          },
-          "lemma": "from off"
+          }
         },
         {
           "target": "1KI 14:16",
@@ -9103,7 +9129,7 @@
       "source_note": "\\fqa Alex. \\ft reads καταστολὴν as one word."
     },
     "ISA 66:5": {
-      "why": "Keep Brenton’s source report and the English our brethren, but clarify the printed your attribution editorially. Brenton 1879 physical p. 916 and 1900 physical p. 912 (printed p. 900) put γ before our, confirm “Alex. ἡμῶν, but Heb. and Vat. your”, and establish facing ἀδελφοὶ ὑμῶν. Swete III p. 220 B main positively reads ἀδελφοὶ ἡμῶν: B agrees with our, not the source report’s your. Explicit υμας] ημας ℵAQ concerns the later accusative object of hate, not this genitive possessive; the Appendix p. 862 supplies no A possessive evidence. The note replaces the false printed identification of your as Vaticanus with Brenton’s facing Greek through a scoped prose decision. No English scripture change or displaced note is needed.",
+      "why": "Keep Brenton’s source report and the English our brethren, but clarify the printed your attribution editorially. Brenton 1879 physical p. 916 and 1900 physical p. 912 (printed p. 900) put γ before our, confirm “Alex. ἡμῶν, but Heb. and Vat. your”, and establish facing ἀδελφοὶ ὑμῶν. Swete III p. 220 B main positively reads ἀδελφοὶ ἡμῶν: B agrees with our, not the source report’s your. Explicit υμας] ημας ℵAQ concerns the later accusative object of hate, not this genitive possessive; the Appendix p. 862 supplies no A possessive evidence. Valpy p. 601 (PDF p. 613) prints ἀδελφοὶ ὑμῶν, as Brenton’s facing Greek does, so a scoped prose decision names Valpy where the note names Vaticanus. No English scripture change or displaced note is needed.",
       "swete": {
         "volume": 3,
         "page": 220,

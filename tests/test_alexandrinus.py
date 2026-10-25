@@ -268,8 +268,8 @@ def test_further_replacements_inherit_or_replace_the_whole_note_description() ->
 @pytest.mark.parametrize(
     "text",
     [
-        r"\fl Heb. \ft nearly agrees. \fl Vat. first hand \fq quoted words\ft .",
-        r"\fl Vat. (correcting hands ab) \fqa other words\ft .",
+        r"\fl Heb. \ft nearly agrees. \fl Vat. \fq quoted words\ft .",
+        r"\fl Sinaiticus \fqa other words\ft .",
         r"\fl Vat. \ft adds \fq a clause\ft . \fl Heb. \ft omits it.",
     ],
 )
@@ -646,7 +646,7 @@ def test_a_reading_omits_consecutive_verses_as_one_run(
             "25:24",
             "1SA 25:24",
             "even",
-            "Heb. agrees. Vat. omits. Brenton supplies even.",
+            "Heb. agrees. Vat. even.",
         ),
         (
             "1KI",
@@ -660,7 +660,7 @@ def test_a_reading_omits_consecutive_verses_as_one_run(
             "23:32",
             "JER 23:32 CCEL",
             "have not told them truly",
-            "Heb. agrees. Brenton have not told them truly. Vat. adds the negative.",
+            "Heb. agrees. Vat. have not told them truly.",
         ),
     ],
 )
@@ -898,7 +898,7 @@ def test_the_edition_prints_its_readings_and_supplied_passages(
     edition: bible.pipeline.Edition,
 ) -> None:
     assert (
-        r"\v 22 And \f - \cat edition\cat*\fr 3:22 \fq the Lord God said: \ft Brenton omits"
+        r"\v 22 And \f - \cat edition\cat*\fr 3:22 \fq the Lord God said: \ft Valpy omits"
         in usj.serialize(edition.documents["GEN"])
     )
     kingdoms = usj.serialize(edition.documents["1SA"])

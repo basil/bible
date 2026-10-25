@@ -46,9 +46,6 @@ RENDERING_LABELS = {
     *("Lit.", "lit.", "more lit.", "i. e.", "viz.", "sc.", "scil.", "Scil."),
     *("q. d.", "Gr. q. d.", "adj. q. d."),
     *("Alex.", "Vat.", "Vat.,", "Vat. i.e.", "Complut.", "Ald.", "Vulg."),
-    # The edition's labels for the Received Text and for the King James words
-    # the apparatuses do not establish as its, on the New Testament's readings.
-    *("TR", "KJV"),
     *("A. V.", "Margin,"),
     *("Some read,", "Some read", "some read,", "some read", "Some copies read,"),
     *("Many Greek copies have,", "Many ancient copies add these words,"),
@@ -122,7 +119,7 @@ TRIM = " \n.,;:?!+'‘’“”\"`"
 NAMES = re.compile(
     r"(?:Gr|Heb|Hebrew|Hebraism|Syr|Sept|Alex|Vat|Complut|Ald|Vulg|A\. V|App|Appendix"
     r"|AV|Eng\. Ver|English Bible|English [Vv]ersion|Authorized Version"
-    r"|Lambert Bos|Patrick Junius|Tertullian|Professor Samuel Lee|Brenton|Swete|Vatican"
+    r"|Lambert Bos|Patrick Junius|Tertullian|Professor Samuel Lee|Brenton|Valpy|Swete|Vatican"
     r"|Sinaiticus|Cotton Genesis|Bodleian Genesis|Ambrosian Pentateuch|I)(?!\w)"
 )
 # Abbreviations, whose full stop stays at the end of a note ("so the Heb.").
@@ -965,15 +962,28 @@ def displayed(
     return runs, terms, original
 
 
-def is_sentence(runs: Sequence[tuple[str, str]]) -> bool:
+def witnessed(text: str, registry: terminology.Registry) -> bool:
+    """Whether the note opens with a witness that a New Testament note names
+    (terminology.NEW_TESTAMENT), which is a label and a name."""
+    return any(
+        text.startswith(registry.display(identity) + " ")
+        for identity in terminology.NEW_TESTAMENT
+    )
+
+
+def is_sentence(
+    runs: Sequence[tuple[str, str]], registry: terminology.Registry
+) -> bool:
     """Whether the note is a sentence of its own: it opens with neither a label,
     a rendering nor a reference, and has a finite verb outside its renderings."""
     roman = "".join(
         value if role == "commentary" else " " * len(value) for role, value in runs
     )
+    text = text_of(runs)
     return (
         runs[0][0] == "commentary"
-        and not LABEL_START.match(text_of(runs))
+        and not LABEL_START.match(text)
+        and not witnessed(text, registry)
         and FINITE_VERB.search(roman) is not None
     )
 
@@ -1003,13 +1013,14 @@ def finished(
     with its capital and a closing full stop; any other note without one, and
     after a lemma, running on from the colon ("elder: or, greater") unless it
     opens with a name, a reference, capitals, or a quotation mark."""
-    found = is_sentence(runs)
+    found = is_sentence(runs, registry)
     require(
         sentence is None or sentence != found,
         f"Note sentence override changes nothing: {key}",
     )
     complete = found if sentence is None else sentence
     text = text_of(runs)
+    named = witnessed(text, registry)
     # The closing full stop, before any closing quotation mark, unless it is
     # the last of an ellipsis; it stays if it ends an abbreviation ("so the Heb.").
     stop = re.search(r"(?<!\.)\.(?=['’”\"]?$)", text)
@@ -1022,7 +1033,7 @@ def finished(
             lexical = lexical or role in {"reading", "quotation"}
         offset += len(value)
     initial = None
-    continuation = not complete or LABEL_START.match(text) is not None
+    continuation = not complete or LABEL_START.match(text) is not None or named
     if not continuation and re.match("[a-z]", text):
         initial = str.upper
     elif (
@@ -1030,6 +1041,7 @@ def finished(
         and lemma is not None
         and runs[0][0] not in {"citation", "quotation"}
         and not NAMES.match(text)
+        and not named
         and re.match(r"[A-Z](?![A-Z])", text)
     ):
         initial = str.lower
@@ -1318,8 +1330,8 @@ def spanned(verses: Sequence[bible.references.Verse]) -> str:
 def relocation_note(code: str, address: str, label: str, sentence: str) -> Node:
     """A note the edition sets at a verse to say where a passage stands in
     another order: labelled with the text whose order it is, as the notes
-    on the New Testament's moved verses are labelled TR or KJV, and saying
-    what that text has there."""
+    on the New Testament's moved verses are labelled with their witness,
+    and saying what that text has there."""
     extra: usj.Extra = {
         "x-key": f"{code} {address} {label}",
         "category": "edition",

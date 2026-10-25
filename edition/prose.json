@@ -527,12 +527,12 @@
     ]
   },
   "isaiah-66-5-base-attribution": {
-    "why": "Brenton’s printed Vat. your report refers to his facing Valpy Greek ἀδελφοὶ ὑμῶν; Swete III p. 220 B positively reads ἀδελφοὶ ἡμῶν. Clarify the source of your rather than falsely ascribing it to Codex Vaticanus. Preserve the source_note pin and the historical Alexandrinus report without using a later accusative variant as possessive evidence.",
+    "why": "Brenton’s printed Vat. your report refers to his facing Greek ἀδελφοὶ ὑμῶν, which Valpy p. 601 (PDF p. 613) prints; Swete III p. 220 B positively reads ἀδελφοὶ ἡμῶν. Name Valpy as the source of your rather than falsely ascribing it to Codex Vaticanus. Preserve the source_note pin and the historical Alexandrinus report without using a later accusative variant as possessive evidence.",
     "changes": [
       {
         "note": "ISA 66:5",
         "from": "but Heb. and Vat.",
-        "to": "but Heb. and Brenton’s facing Greek"
+        "to": "but Heb. and Valpy"
       }
     ]
   },

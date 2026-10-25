@@ -222,10 +222,11 @@ def note_content(
     declares, None if it declares none, or one composed from its label and
     flags. A whole-lemma alternative is fqa, so annotation widens it with its
     lemma. Quotations within explicit commentary remain fq. A label names
-    Brenton unless the decision already establishes a manuscript's reading;
-    composing a label supplies no manuscript evidence. A verse omitted whole
-    is quoted by an explicit note, never composed; a run of them is given in
-    full after the note that introduces it (with_omissions)."""
+    Brenton unless the decision already establishes the reading in a
+    manuscript or in Valpy's printed Greek; composing a label supplies no
+    evidence. A verse omitted whole is quoted by an explicit note, never
+    composed; a run of them is given in full after the note that introduces
+    it (with_omissions)."""
     if "note" in entry:
         require(
             not (NOTE - {"note"}) & entry.keys(),

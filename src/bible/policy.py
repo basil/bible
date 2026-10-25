@@ -661,7 +661,7 @@ def check(policy: Policy) -> None:
     require_fields(
         policy.byzantine,
         {"why", "readings", "structure", "accents", "hodges-farstad", "lemmas"},
-        {"scrivener"},
+        {"scrivener", "editions"},
         "Byzantine decisions",
     )
     require_fields(
@@ -690,6 +690,16 @@ def check(policy: Policy) -> None:
         require_fields(correction, {"from", "to", "why"}, (), what)
         require(bool(correction["why"].strip()), f"{what} without a why")
         require(correction["from"] != correction["to"], f"{what} changes nothing")
+    for key, named in policy.byzantine.get("editions", {}).items():
+        what = f"Byzantine edition {key}"
+        require_fields(named, {"label", "why"}, {"reads", "lacks"}, what)
+        require(isinstance(named["label"], str), f"{what} names no one label")
+        require(bool(named["why"].strip()), f"{what} without a why")
+        quoted = [named[field] for field in ("reads", "lacks") if field in named]
+        require(
+            all(isinstance(words, str) and words.strip() for words in quoted),
+            f"{what} quotes no words",
+        )
     for key, lemma in policy.byzantine["lemmas"].items():
         require_fields(lemma, {"lemma", "why"}, (), f"Byzantine note lemma {key}")
     require_fields(

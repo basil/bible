@@ -156,6 +156,9 @@ class Decisions:
     instructions: tuple[Instruction, ...]
     overrides: tuple[Override, ...]
     lemmas: tuple[dict[str, Any], ...]
+    # The printed edition a note names where the apparatuses establish no
+    # Received Text, by the note's key (edition/byzantine.json editions).
+    editions: Mapping[str, Mapping[str, str]]
 
 
 @dataclass(frozen=True)
@@ -607,9 +610,14 @@ def stage_decisions(
     )
     lemmas = decisions.lemma_entries(given.decisions["lemmas"])
     errors_l = decisions.validate_lemmas(lemmas, ledger)
-    fitting([*errors_o, *errors_c, *errors_l])
+    editions = given.decisions.get("editions", {})
+    errors_q = received.misquoted(editions, greek_.tr_alignment.text)
+    fitting([*errors_o, *errors_c, *errors_l, *errors_q])
     return Decisions(
-        instructions=tuple(rows), overrides=tuple(overrides), lemmas=tuple(lemmas)
+        instructions=tuple(rows),
+        overrides=tuple(overrides),
+        lemmas=tuple(lemmas),
+        editions=MappingProxyType(editions),
     )
 
 
@@ -668,7 +676,10 @@ def stage_edit(
         for row in rows
     ]
     witnesses = received.labels(
-        rows, greek_.units, received.rows(greek_.tcgnt, greek_.apparatus)
+        rows,
+        greek_.units,
+        received.rows(greek_.tcgnt, greek_.apparatus),
+        decisions_.editions,
     )
     return Edited(
         prepared=MappingProxyType(prepared),

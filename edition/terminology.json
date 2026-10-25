@@ -190,6 +190,27 @@
     "note_forms": [],
     "source_forms": []
   },
+  "beza": {
+    "display": "Beza",
+    "meaning": "Beza's Greek New Testament (1589, 1598), which the King James translators chiefly followed",
+    "period_forms": [],
+    "note_forms": [],
+    "source_forms": []
+  },
+  "erasmus": {
+    "display": "Erasmus",
+    "meaning": "Erasmus's Greek New Testament (1516–1535)",
+    "period_forms": [],
+    "note_forms": [],
+    "source_forms": []
+  },
+  "stephanus-1549": {
+    "display": "Stephanus 1549",
+    "meaning": "Stephanus's second edition of the Greek New Testament (1549)",
+    "period_forms": [],
+    "note_forms": [],
+    "source_forms": []
+  },
   "robinson-pierpont": {
     "display": "RP26",
     "meaning": "Robinson and Pierpont, _The Greek New Testament According to the Byzantine Text_ (2026)",
@@ -224,6 +245,13 @@
     "period_forms": [],
     "note_forms": [],
     "source_forms": ["Brenton"]
+  },
+  "valpy": {
+    "display": "Valpy",
+    "meaning": "Valpy’s printed Greek edition of the Septuagint, which Brenton translated",
+    "period_forms": [],
+    "note_forms": [],
+    "source_forms": []
   },
   "cotton-genesis": {
     "display": "Cotton Genesis",
