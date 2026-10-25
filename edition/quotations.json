@@ -84,27 +84,27 @@
     },
     "GEN 2:24": {
       "action": "preserve",
-      "why": "The note glosses ‘be cemented’ before it cites Matthew 19:5, and merging would lose Brenton’s rendering; the reference repeats one of the links."
+      "why": "The note glosses ‘be cemented’ before it cites Matthew 19:5, and merging would lose Brenton’s rendering; the reference repeats one of the links. The prose decision removes the duplicated citation while retaining the rest of the note."
     },
     "GEN 25:23": {
       "action": "preserve",
-      "why": "The note glosses ‘the greater shall serve the less’ before it cites Romans 9:12, and merging would lose Brenton’s rendering; the reference repeats the link."
+      "why": "The note glosses ‘the greater shall serve the less’ before it cites Romans 9:12, and merging would lose Brenton’s rendering; the reference repeats the link. The prose decision removes the duplicated citation while retaining the rest of the note."
     },
     "PSA 2:9": {
       "action": "preserve",
-      "why": "The note glosses ‘tend them as a shepherd’ before it cites Revelation 2:27, and merging would lose Brenton’s rendering; the reference repeats the link."
+      "why": "The note glosses ‘tend them as a shepherd’ before it cites Revelation 2:27, and merging would lose Brenton’s rendering; the reference repeats the link. The prose decision removes the duplicated citation while retaining the rest of the note."
     },
     "PRO 22:8a": {
       "action": "preserve",
-      "why": "After citing 2 Corinthians 9:7 the note sends the reader to the Hebrew, which lacks this Septuagint addition; merging would lose that pointer."
+      "why": "After citing 2 Corinthians 9:7 the note sends the reader to the Hebrew, which lacks this Septuagint addition; merging would lose that pointer. The prose decision removes the duplicated citation while retaining the rest of the note."
     },
     "ISA 52:7": {
       "action": "preserve",
-      "why": "Beside Romans 10:15 the note gives another reading, a literal rendering, and a reference to Joel 2:2, none of which a link carries."
+      "why": "Beside Romans 10:15 the note gives another reading, a literal rendering, and a reference to Joel 2:2, none of which a link carries. The prose decision removes the duplicated citation while retaining the rest of the note."
     },
     "ISA 53:5#2": {
       "action": "preserve",
-      "why": "The note glosses ‘bruise’ before it cites 1 Peter 2:24 (Brenton’s printed reference, which eBible had as 2. 22), and merging would lose Brenton’s rendering; the reference repeats the link."
+      "why": "The note glosses ‘bruise’ before it cites 1 Peter 2:24 (Brenton’s printed reference, which eBible had as 2. 22), and merging would lose Brenton’s rendering; the reference repeats the link. The prose decision removes the duplicated citation while retaining the rest of the note."
     },
     "HAB 2:3 CCEL": {
       "action": "preserve",
@@ -114,9 +114,13 @@
       "action": "preserve",
       "why": "CCEL's transcription has Brenton's reference to Hebrews 8:8 and 8:13: the verse that opens the quotation of this passage, and the verse that draws its lesson from the new covenant. The link here names the quotation, 8:8–12, and not 8:13, so the reference stands beside it."
     },
-    "ZEC 9:9": {
+    "ISA 6:10": {
+      "action": "merge",
+      "why": "The links for Isaiah 6:9–10 at 6:9 name Matthew 13:14–15 and Mark 4:12, covering both references of Brenton’s note at 6:10 without losing a verse."
+    },
+    "HAB 2:4 CCEL": {
       "action": "preserve",
-      "why": "The restored note, confirmed in Brenton’s 1879 and 1900 printings, cites Matthew 21:5 and John 12:15 together. Preserve the complete printed reference beside the edition’s quotation links, rather than losing its second citation."
+      "why": "The link for Habakkuk 2:3–4 names Hebrews 10:37–38, but this note also renders he should as any man. Retain the rendering rather than merging the whole note into the passage’s link. The prose decision removes the duplicated citation while retaining the rest of the note."
     }
   },
   "lxx_to_edition": {

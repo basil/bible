@@ -445,12 +445,6 @@
       "print": "{JER} 28:32",
       "why": "The restored printed note gives both Greek and Hebrew chapter numbers; these name the same passage. Print the edition’s chapter and verse numbering. The Brenton scan evidence is recorded in the source-note correction."
     },
-    "ZEC 9:9": {
-      "source": "Jno. 12. 15",
-      "passages": "JHN 12:15",
-      "print": "{JHN} 12:15",
-      "why": "Brenton’s 1879 and 1900 note cites both Matthew 21:5 and John 12:15; eBible dropped the second citation. Jno. is John, printed under the edition’s abbreviation."
-    },
     "DEU 32:21": {
       "source": "Rom. 10. 9",
       "passages": "ROM 10:19",
@@ -494,7 +488,7 @@
       "source": "Jno. 21",
       "passages": "JHN 21:1-25",
       "print": "{JHN} 21",
-      "why": "Brenton’s Appendix note (1879 p. 1149, 1900 p. 1145, printed p. 1133; 1844 vol. 2 p. 929 “See John 21.”) cites John 21 as a whole chapter, with no verse. Jno. is John, as at ZEC 9:9. The range is the whole chapter, as at EZR 17:73 CCEL#2, and prints as the chapter alone."
+      "why": "Brenton’s Appendix note (1879 p. 1149, 1900 p. 1145, printed p. 1133; 1844 vol. 2 p. 929 “See John 21.”) cites John 21 as a whole chapter, with no verse. Jno. is John. The range is the whole chapter, as at EZR 17:73 CCEL#2, and prints as the chapter alone."
     },
     "JER 28:27 CCEL": {
       "source": "Exodus 22. 29",

@@ -283,35 +283,33 @@ def merged_notes(
     *,
     policy: bible.policy.Policy,
 ) -> frozenset[str]:
-    """The keys of Brenton's See notes that the links at their verses replace.
+    """The keys of Brenton's See notes that their passages' links replace.
 
     Read from brenton_notes, before restyling, so a merged note is never
     restyled and needs no exception. A note of one citation, of a verse, range
-    or list, all of whose verses a link at its verse names, is merged. A note of
-    several references, or one naming a verse no link there names, needs a
-    reviewed decision: to preserve it, or to merge it naming what it drops.
+    or list, all of whose verses its passages' links name, is merged. A note of
+    several references, or one naming a verse none of those links names, needs
+    a reviewed decision: to preserve it, or to merge it naming what it drops.
     """
     # Only a Septuagint verse links to the New Testament, so only a Brenton book
     # has notes to merge.
-    nt_rows: collections.defaultdict[str, collections.defaultdict[Verse, set[str]]] = (
-        collections.defaultdict(lambda: collections.defaultdict(set))
-    )
+    nt_verses: collections.defaultdict[str, set[Verse]] = collections.defaultdict(set)
     for link in links:
-        for passage in link.targets:
-            for verse in passage.verses:
-                nt_rows[link.origin.label][verse].update(link.row_ids)
-    if not nt_rows:
+        targets = bible.references.verses_of(link.targets)
+        for verse in link.passage.verses:
+            nt_verses[verse.label].update(targets)
+    if not nt_verses:
         return frozenset()
     decisions = policy.quotations["note_merges"]
     used_decisions = set()
     merges = []
     for note in found:
-        if not (linked := nt_rows.get(note.reference)):
+        if not (linked := nt_verses.get(note.reference)):
             continue
         # A note that cites a linked verse among other words, or cites what
         # names no verse, needs a decision too, lest it print beside its link.
         named = cited_verses(note)
-        if named is not None and not set(named) & set(linked):
+        if named is not None and not set(named) & linked:
             continue
         dropped = [str(verse) for verse in named or () if verse not in linked]
         if decision := decisions.get(note.key):
@@ -340,7 +338,7 @@ def merged_notes(
             action = "merge"
         if action == "merge":
             merges.append(note.key)
-    linked_verses = {f"{code} {reference}" for reference in nt_rows}
+    linked_verses = {f"{code} {reference}" for reference in nt_verses}
     require(
         {k for k in decisions if quotations.note_verse(k) in linked_verses}
         <= used_decisions,

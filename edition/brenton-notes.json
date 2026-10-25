@@ -1393,12 +1393,6 @@
       "why": "Brenton’s 1879 physical page 1112; 1900 physical page 1108. Both printings carry the same γ caller immediately before Lord God and the same footnote “Or, sovereign Lord.” CCEL matches the printed note; eBible substitutes Gr. for Or. This is the same note, not an additional note. This restores the note’s transcription; the scripture words are unchanged.",
       "uncategorized": true
     },
-    "ZEC 9:9": {
-      "from": "\\x + \\xo 9:9 \\xt Mat. 21. 5.\\x*",
-      "to": "\\x + \\xo 9:9 \\xt Mat. 21. 5. Jno. 12. 15.\\x*",
-      "why": "Brenton’s 1879 physical page 1137; 1900 physical page 1133. Both printings give Matthew 21:5 and John 12:15 together in one note. Both place the theta caller immediately before “behold” in Zechariah 9:9; the separate lambda caller before “a Saviour” belongs to “Gr. saving.” CCEL preserves the full citation note; eBible omits its John citation. This is additional content in the same existing note, not a distinct note or a difference between printings. This restores the note’s transcription; the scripture words are unchanged.",
-      "uncategorized": true
-    },
     "ZEC 11:14": {
       "from": "\\f + \\fr 11:14 \\ft Compare \\fqa Heb. \\fqa Alex. \\ft διαθήκην \\ft covenant.\\f*",
       "to": "\\f + \\fr 11:14 \\ft Compare \\fqa Heb. \\fqa Alex. \\ft διαθήκην, \\ft covenant.\\f*",
@@ -4337,7 +4331,7 @@
     },
     "PRO 22:8a": {
       "lemma": null,
-      "why": "2 Cor. 9. 7 quotes the verse from its start"
+      "why": "the note compares the whole verse, a Septuagint addition, with the Hebrew; the 2 Cor. 9. 7 it also cited, which quotes the verse from its start, is left to the verse's link"
     },
     "PRO 22:28": {
       "lemma": "old",
@@ -5286,6 +5280,11 @@
     "1KI 14:1-20@12": {
       "sentence": true,
       "why": "The note ends with a complete explanatory sentence after its opening reading, so its final full stop stays."
+    },
+    "EXO 6:2": {
+      "verse": "6:3",
+      "lemma": "Lord",
+      "why": "Brenton 1879 physical p. 92 and 1900 physical p. 88 place the single beta caller for Or, The Lord before Lord in Exodus 6:3, not 6:2, where the Lord is already printed; the note supplies the article to my name Lord."
     }
   },
   "shapes": {

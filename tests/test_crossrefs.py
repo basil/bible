@@ -196,6 +196,71 @@ def test_a_see_note_moved_onto_its_link_is_replaced_by_it(
         moved()
 
 
+def test_links_cover_notes_throughout_their_passages(
+    ctx: bible.annotate.Context,
+) -> None:
+    passage = parse_passage("ISA 99:2-3")
+    link = crossrefs.Link(
+        passage.first, passage, (parse_passage("MAT 3:3"),), ("Q999",), "A"
+    )
+
+    def annotated(note: str) -> str:
+        doc, _ = annotate.brenton(
+            "ISA",
+            book("ISA", "\\v 2 Before.\n\\v 3 " + note + "The voice."),
+            [link],
+            frozenset(),
+            ctx,
+        )
+        return verse_lines(doc)["3"]
+
+    assert annotated(r"\x + \xo 99:3 \xt Mat. 3. 3.\x*") == "The voice."
+    with pytest.raises(CheckFailed, match="needs a merge decision: ISA 99:3"):
+        annotated(r"\x + \xo 99:3 \xt Mat. 3. 3; John 1. 23.\x*")
+    with pytest.raises(CheckFailed, match="needs a merge decision: ISA 99:3"):
+        annotated(r"\f + \fr 99:3 \ft Compare \xt Mat. 3. 3.\ft Also the Hebrew.\f*")
+    # A note past the passage's last verse is not its link's to replace.
+    doc, _ = annotate.brenton(
+        "ISA",
+        book(
+            "ISA",
+            "\\v 2 Before.\n\\v 3 The voice.\n"
+            "\\v 4 \\x + \\xo 99:4 \\xt Mat. 3. 3.\\x*After.",
+        ),
+        [link],
+        frozenset(),
+        ctx,
+    )
+    assert "MAT 3:3" in verse_lines(doc)["4"]
+
+
+def test_a_later_notes_references_can_be_covered_by_several_links(
+    ctx: bible.annotate.Context,
+) -> None:
+    passage = parse_passage("ISA 99:2-3")
+    links = [
+        crossrefs.Link(passage.first, passage, (parse_passage(target),), (row,), "A")
+        for target, row in (("MAT 3:3", "Q998"), ("JHN 1:23", "Q999"))
+    ]
+    decided = ctx.policy.replace(
+        quotations={
+            **ctx.policy.quotations,
+            "note_merges": {"ISA 99:3": {"action": "merge", "why": "both links"}},
+        }
+    )
+    doc, _ = annotate.brenton(
+        "ISA",
+        book(
+            "ISA",
+            r"\v 2 Before.\v 3 \x + \xo 99:3 \xt Mat. 3. 3; John 1. 23.\x*The voice.",
+        ),
+        links,
+        frozenset(),
+        annotate.Context(decided, ctx.inventory, ctx.books),
+    )
+    assert verse_lines(doc)["3"] == "The voice."
+
+
 def test_a_see_note_that_names_more_than_its_link_needs_a_decision(
     ctx: bible.annotate.Context, policy: bible.policy.Policy
 ) -> None:
@@ -254,3 +319,36 @@ def test_the_merged_notes_of_the_edition_are_not_printed(
     printed = {row["key"] for rows in edition.notes.values() for row in rows}
     for key, decision in policy.quotations["note_merges"].items():
         assert (key in printed) == (decision["action"] == "preserve"), key
+
+
+def test_redundant_notes_are_removed_and_commentary_is_kept(
+    edition: bible.pipeline.Edition,
+) -> None:
+    rows = {row["key"]: row for rows in edition.notes.values() for row in rows}
+    assert not rows.keys() & {
+        "EXO 6:3 CCEL",
+        "EXO 20:14",
+        "LEV 26:12 CCEL",
+        "DEU 18:19",
+        "PSA 90:12",
+        "ISA 6:10",
+        "ZEC 9:9",
+    }
+    # CCEL's copies are accounted for by the notes they repeat, not lost.
+    duplicates = {(d.place, d.retained) for d in edition.ccel.matched}
+    assert {("EXO 6:3 CCEL", "EXO 6:2"), ("ZEC 9:9 CCEL", "ZEC 9:9")} <= duplicates
+    assert rows["EXO 6:2"]["note"] == "or, _the Lord_"
+    assert rows["EXO 6:2"]["reference"].endswith("6:3")
+    assert rows["EXO 32:17"]["lemma"] == "Jesus"
+    assert rows["EXO 32:17"]["note"] == "or, _Joshua_"
+    assert rows["GEN 2:24"]["note"] == "Gr. _be cemented_"
+    assert rows["GEN 25:23"]["note"] == "Gr. _the greater shall serve the less_"
+    assert rows["PSA 2:9"]["note"] == "Gr. _tend them as a shepherd_"
+    assert rows["HAB 2:4 CCEL"]["note"] == "or, _any man_"
+    assert rows["PRO 22:8a"]["note"] == "Compare Heb."
+    assert rows["ISA 53:5#2"]["note"] == "Gr. _bruise_"
+    isaiah = rows["ISA 52:7"]["note"]
+    assert isaiah.startswith("Another reading is _How beautiful are the feet_")
+    assert "Lit." in isaiah and "Joel 2:2" in isaiah and "Rom." not in isaiah
+    assert "10:37–39" in rows["HAB 2:3 CCEL"]["note"]
+    assert "8:8, 13" in rows["JER 38:31 CCEL"]["note"]

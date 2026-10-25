@@ -1646,5 +1646,60 @@
         "to": ""
       }
     ]
+  },
+  "joshua-name-gloss": {
+    "why": "Brenton 1879 physical p. 130 and 1900 physical p. 126 print Gr. Jesus on Joshua at Exodus 32:17. The edition prints Jesus for the son of Nun under its name decision. Reverse the gloss to give the source’s familiar English name as the alternative, Jesus: or, Joshua, as the notes in Aggeus already do, rather than repeat the printed name or omit the gloss.",
+    "changes": [
+      {
+        "note": "EXO 32:17",
+        "from": "Gr.",
+        "to": "Or,"
+      },
+      {
+        "note": "EXO 32:17",
+        "from": "Jesus",
+        "to": "Joshua"
+      }
+    ]
+  },
+  "references-covered-by-quotation-links": {
+    "why": "The quotation links already name these New Testament passages. Remove their repeated citations from Brenton’s notes while retaining the renderings, the comparison with the Hebrew, and the separate Joel reference. The from words are checked against each prepared source note before its citations are printed.",
+    "changes": [
+      {
+        "note": "GEN 2:24",
+        "from": ". Mat. 19. 5.",
+        "to": "."
+      },
+      {
+        "note": "GEN 25:23",
+        "from": ". Rom. 9. 12.",
+        "to": "."
+      },
+      {
+        "note": "PSA 2:9",
+        "from": ". Rev. 2. 27.",
+        "to": "."
+      },
+      {
+        "note": "PRO 22:8a",
+        "from": "See 2 Cor. 9. 7. ",
+        "to": ""
+      },
+      {
+        "note": "ISA 52:7",
+        "from": "Rom. 10. 15. ",
+        "to": ""
+      },
+      {
+        "note": "ISA 53:5#2",
+        "from": ". 1 Pet. 2. 24.",
+        "to": "."
+      },
+      {
+        "note": "HAB 2:4 CCEL",
+        "from": ". See Heb. 10. 38.",
+        "to": "."
+      }
+    ]
   }
 }

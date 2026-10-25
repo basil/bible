@@ -93,7 +93,7 @@ Check, in both testaments:
 - Both ends are linked at the first verse of each passage, with a gloss by Turpie's class: A and C in words only, "Heb. + LXX"; B, "Heb. ≠ LXX"; D, "LXX ≠ Heb."; C in whole clauses and E, the reference alone. The gloss means the same at both ends.
 - Turpie's Greek text is Tischendorf's seventh edition; where the Byzantine text shortens a quotation (Romans 13:9, Hebrews 2:7, 12:20, Acts 7:37) the link stands. Ten of his 282 entries are left out: five for which he names no settled Old Testament passage (1 Timothy 5:18 among them), three he himself says are not quotations, one he repeats, and Matthew 27:35, whose quotation the Byzantine text lacks.
 - The classes judge Turpie's underlying texts, not the edition's revised English or every promoted reading. An agreement gloss does not promise identical English. Class C in words only joins A; whole-clause departures and joined passages receive the reference alone, without a claim of agreement.
-- Brenton's "See" cross-reference is dropped where a link names the same verses and usually kept where it says more; his note at Psalm 21:19 is kept.
+- Brenton's "See" cross-reference is dropped where the link of a passage that takes in its verse names the same verses, and usually kept where it names more; a note that says more than its reference keeps the rest of its words without it. His note at Psalm 21:19 is kept.
 
 ## Citations and abbreviations
 

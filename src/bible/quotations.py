@@ -178,13 +178,13 @@ def reviewed_rows(*, policy: bible.policy.Policy) -> list[ReviewedRow]:
         rows.append(row)
     unused = unused_exceptions(linked_passages, policy=policy)
     require(not unused, f"Verse mapping exceptions no quotation uses: {unused}")
-    # A merge decision is used where a link lands on its note's verse, the first
-    # of a printed passage, so one anywhere else would go unused unnoticed.
+    # A merge decision must stand within a passage whose link can replace it.
     linked = {
-        str(printed.first)
+        str(verse)
         for row in rows
         for passage in row["ot"]
         for printed in mapped_passages(passage, policy=policy)
+        for verse in printed.verses
     }
     for key, decision in policy.quotations["note_merges"].items():
         require(

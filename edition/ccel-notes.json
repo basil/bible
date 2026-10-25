@@ -1449,6 +1449,10 @@
       "verse": "EXO 25:40",
       "anchor": "according to the pattern",
       "why": "Pinned CCEL iv.26#1 is before according to the pattern shewed thee in the mount at Exodus 25:40, not 29:41. eBible already preserves the identical Hebrews 8:5 reference at 25:40; only source citation spacing differs."
+    },
+    "27.ix#4": {
+      "duplicate": "ZEC 9:9",
+      "why": "Brenton 1879 physical p. 1137 and 1900 physical p. 1133 print a single theta note before behold, citing Matthew 21:5 and John 12:15. eBible’s note at that caller omits John; CCEL preserves the full note. Account for the same physical note by ZEC 9:9 rather than inserting a second one. The quotation links name both Matthew 21:5 and John 12:14–15 and replace this reference note, so neither reference is lost."
     }
   }
 }
