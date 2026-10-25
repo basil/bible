@@ -348,7 +348,8 @@ def test_the_page_prints_its_tables(edition: bible.pipeline.Edition) -> None:
             ["Orthodox Liturgical English Bible"],
         ]
     intro = usj.serialize(edition.documents[EDITOR["id"]])
-    assert "\\s1 The Books, Their Order, and Their Names\n" in intro
+    assert "\\s1 The Books and Their Order\n" in intro
+    assert "\\s1 Names\n" in intro
     for ours, theirs in (
         ("3 Kingdoms", "1 Kings"),
         ("Epistle of Jeremias", "Baruch 6 (Apocrypha)"),
