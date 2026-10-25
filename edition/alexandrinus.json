@@ -6401,6 +6401,76 @@
         "span": [15, 33]
       },
       "source_note": "\\fqa Alex. \\ft be it known to you."
+    },
+    "2KI 19:30#2": {
+      "why": "Promote Alexandrinus’s neuter collective with high confidence using Brenton’s own explanation. Brenton 1844 vol. I physical p. 450, printed p. 426, puts a dagger before him that has escaped and prints Alex. τὸ διασεσ. οἴκον., followed by That (neut.) which has, &c. Brenton 1879 physical p. 535, 1884 physical p. 502, and 1900 physical p. 531, printed p. 519 in Bagster, retain σ before him and the Greek report but omit the English explanation. Only shall strike is supplied; no brackets occur. Swete I p. 788, checked and scan-confirmed, records τον διασεσ.] το διασεσ. A | om και 2° A. A’s unqualified neuter supports the escaped collective that which has escaped. Replace only him that with that which, retaining has escaped and the surrounding construction; systematic revision prints hath. Declare which for the vocabulary check because the pinned later note lacks the inspected 1844 English; the printing, not that check, supplies its authority. The pinned KJV and RV give the remnant that is escaped but supply no borrowed words. Preserve the first Gr. add note, supplied shall strike, and the later remnant. Do not implement the separate unreported omission of και. B positively has τὸν διασεσωσμένον οἴκου, supporting Vat. for the displaced masculine phrase. The recovered English is realized in scripture; repeating its explanatory fragment in the displaced note would be redundant.",
+      "swete": {
+        "volume": 1,
+        "page": 788,
+        "evidence": "apparatus",
+        "reading": "τον διασεσ.] το διασεσ. A",
+        "agrees": true
+      },
+      "source_note": "\\fqa Alex. \\ft τὸ διασεσ. οἴκον.",
+      "from": "him that has escaped",
+      "english": {
+        "source": "from",
+        "edits": [
+          {
+            "span": [0, 8],
+            "to": "that which",
+            "why": "Use Brenton’s 1844 That (neut.) which has explanation, retaining has escaped."
+          }
+        ]
+      },
+      "supplied": ["which"],
+      "label": "vatican"
+    },
+    "1CH 21:20 CCEL": {
+      "why": "Promote the complete hiding construction with high confidence, using the pinned King James Version’s matching clause. Brenton 1844 vol. I physical p. 481, printed p. 457, places a dagger before and he hid and includes the Greek transliteration in his Hebrew gloss; 1879 physical p. 572, 1884 physical p. 539, and 1900 physical p. 568, printed p. 556 in Bagster, put λ before and he hid and print Heb. מתחבאים hiding themselves. Alex. κρυβόμενοι. No supplied-word italics or brackets occur. Swete II p. 45, checked and scan-confirmed, records τεσσαρες υιοι A | μεθαχαβειν] κρυβομενοι A, without hand or uncertainty qualifications. A’s nominative sons and plural hiding participle make the sons the hiding subject, unlike Brenton’s he hid himself and his four sons with him. The pinned KJV 1 Chronicles 21:20 supplies the complete clause his four sons with him hid themselves, rendering the same local Hebrew construction; the RV confirms the subject relation. Replace only that complete hiding clause, retaining the preceding and, king, and all surrounding words. Its semantic scope follows the plural hiding construction and its necessary subject agreement, not vocabulary acquisition. Preserve Brenton’s Hebrew gloss in the explicit displaced note. Label the displaced English Brenton: B’s accusative sons and transliterated Hebrew do not establish Brenton’s singular English construction. No supplied words or new commentary are introduced.",
+      "swete": {
+        "volume": 2,
+        "page": 45,
+        "evidence": "apparatus",
+        "reading": "τεσσαρες υιοι A | μεθαχαβειν] κρυβομενοι A",
+        "agrees": true
+      },
+      "source_note": "\\fqa Heb. \\ft מתחבאים 'hiding themselves.' \\fqa Alex. \\ft κρυβόμενοι.",
+      "from": "he hid himself and his four sons with him",
+      "english": {
+        "source": "from",
+        "edits": [
+          {
+            "span": [0, 41],
+            "to": "his four sons with him hid themselves",
+            "why": "Use the complete pinned KJV 1 Chronicles 21:20 clause for A’s plural hiding construction and its nominative sons."
+          }
+        ]
+      },
+      "note": "\\fl Brenton \\fqa he hid himself and his four sons with him\\ft . \\fl Heb. \\ft מתחבאים \\fq hiding themselves\\ft ."
+    },
+    "JOB 36:29 CCEL": {
+      "why": "Promote Alexandrinus’s singular with high confidence by grammatical adaptation of Brenton’s displaced noun. Brenton 1844 vol. II physical p. 73, printed p. 570, has a dagger before outspreadings and Alex. συνῇ ἐπέκτασιν.; 1879 physical p. 708, 1884 physical p. 675, and 1900 physical p. 704, printed p. 692 in Bagster, put σ before outspreadings and give Alex. ἐπέκτασιν. Only or is supplied; no brackets occur. Swete II p. 589, checked and scan-confirmed, records απεκτασεις (-σις Bℵ*)] επεκτασιν ℵ^c.a (mox revoc απ.) A. A’s accusative singular is unqualified; the subsequent reversion belongs to the Sinaiticus corrector. Inflect outspreadings as outspreading, retaining its lexical meaning, grammatical role, following of the clouds, and supplied or. The declared singular token satisfies the build’s whole-word vocabulary check; the grammatical relationship to Brenton’s noun independently justifies the edit. The pinned KJV and RV both have plural spreadings and supply no words. This decision carries out the Bagster noun report, not A’s separate preceding verb variant. Label the displaced plural Brenton: his facing ἐπεκτάσεις differs from Swete’s main απεκτασεις and its -σις Bℵ* qualification, so his exact plural must not be attributed to Vaticanus.",
+      "swete": {
+        "volume": 2,
+        "page": 589,
+        "evidence": "apparatus",
+        "reading": "απεκτασεις (-σις Bℵ*)] επεκτασιν ℵ^c.a (mox revoc απ.) A",
+        "agrees": true
+      },
+      "source_note": "\\fqa Alex. \\ft ἐπέκτασιν.",
+      "from": "outspreadings",
+      "english": {
+        "source": "from",
+        "edits": [
+          {
+            "span": [12, 13],
+            "to": "",
+            "why": "Inflect Brenton’s existing noun as A’s singular, preserving its lexical meaning and grammatical role."
+          }
+        ]
+      },
+      "supplied": ["outspreading"]
     }
   },
   "passages": {
@@ -9238,28 +9308,6 @@
       },
       "source_note": "\\fqa Alex. \\ft omits the negative, but still differs from the Hebrew."
     },
-    "2KI 19:30#2": {
-      "why": "Keep Brenton’s Greek-only Alexandrinus report. The 1879 physical p. 535 and 1900 physical p. 531 print “Alex. τὸ διασεσ. οἴκον.”, with σ before “him that has escaped”; neither supplies English for the variant. Swete vol. 1 p. 788 explicitly records τον διασεσ.] το διασεσ. A, with B main τὸν διασεσωσμένον οἴκου. The neuter article is supported for A without correcting-hand uncertainty; the printed accusative οἴκον is corrected to the shared genitive οἴκου by a revision. Preserve the source’s English and this Greek-only report rather than devise an English substitution for an isolated grammatical variant. CCEL 2.xix#18 is the same printed note and caller, accounted for by the repaired eBible note.",
-      "swete": {
-        "volume": 1,
-        "page": 788,
-        "evidence": "apparatus",
-        "reading": "τον διασεσ.] το διασεσ. A",
-        "agrees": true
-      },
-      "source_note": "\\fqa Alex. \\ft τὸ διασεσ. οἴκον."
-    },
-    "1CH 21:20 CCEL": {
-      "why": "Keep Brenton’s Hebrew gloss and Greek-only Alexandrinus report: 1879 physical p. 572 and 1900 physical p. 568 (printed p. 556) print “Heb. מתחבאים ‘hiding themselves.’ Alex. κρυβόμενοι.” with λ before “he hid himself” in 1 Chronicles 21:20. Neither transcription supplies this note elsewhere; CCEL 3.xx#14 preserves the single printed note at its proper caller. Swete vol. 2 p. 45 explicitly records μεθαχαβειν] κρυβομενοι A, without hand or uncertainty qualifications, against B’s transliterated Hebrew μεθαχαβείν. Brenton’s English already expresses hiding, and the English words in this note gloss the Hebrew rather than offer a separate Alexandrinus rendering. Preserve the English and retain the supported Greek report rather than invent an English grammatical substitution.",
-      "swete": {
-        "volume": 2,
-        "page": 45,
-        "evidence": "apparatus",
-        "reading": "μεθαχαβειν] κρυβομενοι A",
-        "agrees": true
-      },
-      "source_note": "\\fqa Heb. \\ft מתחבאים 'hiding themselves.' \\fqa Alex. \\ft κρυβόμενοι."
-    },
     "1CH 27:1 CCEL": {
       "why": "Keep this unique Greek-only Alexandrinus note. Brenton 1879 physical p. 579 and 1900 physical p. 575 (printed p. 563 in both) print “Alex. πάντα.” with caller γ before “ordinance” in 1 Chronicles 27:1, aligned with the second πᾶν λόγον in the facing Greek. No eBible note occupies this verse. Swete II p. 54 explicitly records παν λογον (2°)] εις παντα λογον Α; A therefore supports the reported πάντα, with no hand or uncertainty qualification. Brenton gives no other English, and his existing “for every ordinance” already expresses the sense of that A construction. The King James Version and Revised Version both have “in any matter of the courses”, recasting the broader clause rather than supplying a distinct English rendering of this Greek inflection. Retain the printed Greek report without rewriting the verse or inventing an English distinction; this is not an additional English Alexandrine reading.",
       "swete": {
@@ -9448,17 +9496,6 @@
         "agrees": false
       },
       "source_note": "\\fqa Alex. \\ft + 'What shall I say? what shall I do, having sinned?'"
-    },
-    "JOB 36:29 CCEL": {
-      "why": "Keep Brenton’s Greek-only report without inventing singular English. Brenton 1879 physical p. 708 and 1900 physical p. 704 (printed p. 692) establish σ before outspreadings and “Alex. ἐπέκτασιν.” Swete II p. 589 records απεκτασεις (-σις Bℵ*)] επεκτασιν ℵ^c.a (mox revoc απ.) A. A supports the singular επεκτασιν without qualification; the later reversion to απ. belongs to ℵ^c.a. Preserve the Sinaiticus corrector and B -σις qualifications exactly. Brenton’s facing plural ἐπεκτάσεις differs from both B main απεκτάσεις and the apparatus B -σις qualification; do not assign that exact Valpy form to B. Preserve the complete source report, existing English and agrees true for its explicit A reading. No licensed singular English alternative or displaced note is generated.",
-      "swete": {
-        "volume": 2,
-        "page": 589,
-        "evidence": "apparatus",
-        "reading": "απεκτασεις (-σις Bℵ*)] επεκτασιν ℵ^c.a (mox revoc απ.) A",
-        "agrees": true
-      },
-      "source_note": "\\fqa Alex. \\ft ἐπέκτασιν."
     },
     "JOB 37:11 CCEL": {
       "why": "Keep Brenton’s Greek-only Alexandrinus report without changing the scripture. Brenton 1879 physical p. 709 and 1900 physical p. 705 (printed p. 693 in both) put γ immediately before obscures at Job 37:11 and print “Alex. καταπλήσσει.” CCEL 8.xxxvii#2 preserves the unique note; eBible has no matching note. Swete II p. 590 explicitly records καταπλησσει ℵ^{c.a}A, establishing the A reading without an A hand or uncertainty qualification; the correcting hand belongs only to Sinaiticus. Brenton supplies no English for this verb, and no licensed English rendering of A is established, so preserve his English obscures and the Greek report. Brenton’s facing Greek καταπλάσσει and Swete’s B main καταπλάσσει positively agree at the reported unit. The separate A διασκορπισει form does not license an additional English edit. This kept decision generates no displaced note.",

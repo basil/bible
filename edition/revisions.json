@@ -12657,13 +12657,6 @@
           "why": "Brenton's 1844 vol. 1 p. 292 prints σκληρᾷ in this same comparison; the 1879 and 1900 notes omit its circumflex (p. 356). Restore the accent while preserving the comparison and its English."
         },
         {
-          "note": "2KI 19:30#2",
-          "spelling": "greek",
-          "from": "οἴκον",
-          "to": "οἴκου",
-          "why": "Brenton prints accusative οἴκον (1879 and 1900 p. 519; 1844 vol. 1 p. 426). Swete vol. 1 p. 788 gives genitive οἴκου; within this phrase its apparatus changes only the article and participle in A. Both were checked on the scan, establishing the printed case error without changing the English."
-        },
-        {
           "unit": "XXE",
           "spelling": "greek",
           "from": "βιβλὶων",

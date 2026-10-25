@@ -698,7 +698,7 @@
     "2KI 19:30#2": {
       "from": "\\fqa Gr. \\ft τὸ διασες. οἴκον.",
       "to": "\\fqa Alex. \\ft τὸ διασεσ. οἴκον.",
-      "why": "Brenton 1879 physical p. 535 and 1900 physical p. 531 (printed p. 519) print “Alex. τὸ διασεσ. οἴκον.”, with σ before “him that has escaped” in verse 30. CCEL preserves the Alexandrinus label; eBible substitutes Gr. and final sigma in the abbreviation. Restore the printed label and medial sigma; retain the printed οἴκον here because its case correction belongs to revisions.json.",
+      "why": "Brenton 1879 physical p. 535 and 1900 physical p. 531 (printed p. 519) print “Alex. τὸ διασεσ. οἴκον.”, with σ before “him that has escaped” in verse 30. CCEL preserves the Alexandrinus label; eBible substitutes Gr. and final sigma in the abbreviation. Restore the printed label and medial sigma; retain οἴκον, which 1844 vol. 1 p. 426 prints too.",
       "uncategorized": true
     },
     "DEU 24:13": {
@@ -3823,10 +3823,6 @@
       "lemma": "by him that stands upon it",
       "why": "before it stands up renders by him that stands upon it"
     },
-    "2KI 19:30#2": {
-      "lemma": "him that has escaped of the house",
-      "why": "the Greek cited is the escaped of the house"
-    },
     "2KI 20:1": {
       "lemma": "shalt die",
       "why": "diest renders shalt die"
@@ -4895,10 +4891,6 @@
       "lemma": "groves",
       "why": "Swete I p. 791 sets A θελητην against ελλην, rendered groves, not γνώστας rendered wizards; Brenton 1879/1900 place the λ caller before wizards, so supply the semantic lemma rather than perpetuate the misleading caller."
     },
-    "1CH 21:20 CCEL": {
-      "lemma": "he hid himself and his four sons with him",
-      "why": "Brenton’s λ caller stands immediately before he hid himself; the Hebrew gloss and Greek plural participle concern the hiding clause and its sons, not the preceding sight of the king. Use the full unique clause while preserving all note words."
-    },
     "1CH 27:1 CCEL": {
       "lemma": "every ordinance",
       "why": "Brenton 1879 physical p. 579 and 1900 physical p. 575, printed p. 563, both place γ before ordinance in for every ordinance; this is the second πᾶν λόγον in the facing Greek. Alex. πάντα concerns πᾶν, rendered every, so the lemma is every ordinance, not the earlier every affair."
@@ -5251,10 +5243,6 @@
     "JOB 19:7 CCEL": {
       "lemma": "laugh",
       "why": "Alex. λαλῶ (I speak) stands against γελῶ, which laugh renders; the report concerns that verb alone, not at reproach."
-    },
-    "JOB 36:29 CCEL": {
-      "lemma": "outspreadings",
-      "why": "Alex. ἐπέκτασιν is the noun outspreadings renders; of the clouds is not part of the reading."
     },
     "JOB 42:8 CCEL": {
       "lemma": "burnt offering",
