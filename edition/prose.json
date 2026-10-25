@@ -1665,6 +1665,32 @@
       }
     ]
   },
+  "gospel-colophons": {
+    "why": "Supply the four traditional Gospel publication colophons from Boyd’s Text-Critical English New Testament, whose Greek wording is also printed in his Text-Critical Greek New Testament. Print only the colophon, after the final verse and apart from Scripture, in the same form as the retained KJV epistle subscriptions. These are scribal traditions, not claims of scriptural authority.",
+    "changes": [],
+    "sourced_colophons": [
+      {
+        "book": "MAT",
+        "source": "tcent",
+        "verse": "28:20"
+      },
+      {
+        "book": "MRK",
+        "source": "tcent",
+        "verse": "16:20"
+      },
+      {
+        "book": "LUK",
+        "source": "tcent",
+        "verse": "24:53"
+      },
+      {
+        "book": "JHN",
+        "source": "tcent",
+        "verse": "21:25"
+      }
+    ]
+  },
   "joshua-name-gloss": {
     "why": "Brenton 1879 physical p. 130 and 1900 physical p. 126 print Gr. Jesus on Joshua at Exodus 32:17. The edition prints Jesus for the son of Nun under its name decision. Reverse the gloss to give the source’s familiar English name as the alternative, Jesus: or, Joshua, as the notes in Aggeus already do, rather than repeat the printed name or omit the gloss.",
     "changes": [

@@ -5,7 +5,9 @@ dedication and preface, and Brenton's appendix.
 Each prints under the edition's names, citing as the edition cites, with its
 abbreviations in the edition's forms. Brenton's appendix is taken apart
 (edition/appendix.json): each of its notes is a footnote at the verse it
-discusses, and nothing of it prints after Revelation.
+discusses, and nothing of it prints after Revelation. The books' terminal
+subscriptions are matter too: the King James epistles' own, and the Gospels'
+read from Boyd's notes.
 
 A paragraph is read once, as its source writes it: what it cites, and the
 terms it uses. What is read is carried through each declared change of its
@@ -15,6 +17,7 @@ words, so that nothing is read again from words the edition has rewritten.
 from __future__ import annotations
 
 import re
+import xml.etree.ElementTree as ET
 from collections.abc import Iterable, Iterator, Mapping, Sequence
 from dataclasses import dataclass, replace
 from difflib import SequenceMatcher
@@ -24,10 +27,11 @@ import bible.annotate
 import bible.policy
 import bible.references
 from bible import assembly, citations, repairs, scripture, terminology, usj
-from bible.checks import CheckFailed, require
+from bible.checks import CheckFailed, present, require
 from bible.policy import source_id
 from bible.policy_schema import Entry, ProseReference, WordingChange
 from bible.references import Item, parse_passage, parse_verse
+from bible.sources import Content as SourceContent
 from bible.usj import Content, Document, Node
 
 type Address = tuple[int, int] | None
@@ -91,12 +95,82 @@ def unpilcrowed(doc: Document) -> Document:
     return with_colophon(doc, usj.substituted(paragraph["content"], [(0, pilcrow, "")]))
 
 
+def read_colophons(
+    sources: Mapping[str, SourceContent], policy: bible.policy.Policy
+) -> MappingProxyType[str, Node]:
+    """Boyd's selected English colophons, read once from their USX notes."""
+    result: dict[str, Node] = {}
+    introduction = (
+        "The following scribal note is included in the colophons of many "
+        "Greek manuscripts: "
+    )
+    for group in policy.prose.values():
+        for selection in group.get("sourced_colophons", ()):
+            code, verse = selection["book"], selection["verse"]
+            label = f"Sourced colophon: {code} {verse}"
+            files = sources[selection["source"]].glob(f"*{code}.usx")
+            require(len(files) == 1, f"{label}: expected one source book")
+            try:
+                root = ET.fromstring(files[0].read_bytes())
+            except ET.ParseError as error:
+                raise CheckFailed(f"{label}: {files[0]}: {error}") from error
+            book = present(root.find("book"), f"{label}: missing book marker")
+            require(book.get("code") == code, f"{label}: wrong book")
+            notes = [
+                note
+                for note in root.iter("note")
+                if (origin := note.find("char[@style='fr']")) is not None
+                and (origin.text or "").strip() == verse
+                and introduction in "".join(note.itertext())
+            ]
+            require(len(notes) == 1, f"{label}: expected one colophon note")
+            note = notes[0]
+            words = note.findall("char[@style='it']")
+            require(len(words) == 1, f"{label}: expected one italic colophon")
+            text = "".join(words[0].itertext()) + "."
+            require(
+                "".join(note.itertext()).strip() == verse + " " + introduction + text,
+                f"{label}: unrecognized colophon wording",
+            )
+            result[code] = {
+                "type": "sidebar",
+                "marker": "esb",
+                "category": "colophon",
+                "content": [usj.para("p", text)],
+            }
+    return MappingProxyType(result)
+
+
 def colophons(
-    books: Mapping[str, Document], policy: bible.policy.Policy
+    books: Mapping[str, Document],
+    policy: bible.policy.Policy,
+    supplied: Mapping[str, Node] = MappingProxyType({}),
 ) -> MappingProxyType[str, Document]:
-    """Terminal source subscriptions, outside scripture, without their
-    pilcrow and with their declared edits."""
+    """Terminal subscriptions outside scripture: the sources' own without
+    their pilcrow, and the supplied ones after the final verse they name,
+    each with its declared edits."""
     result = {code: unpilcrowed(doc) for code, doc in books.items()}
+    selections = {
+        s["book"]: s
+        for g in policy.prose.values()
+        for s in g.get("sourced_colophons", ())
+    }
+    require(
+        set(supplied) == set(selections), "Sourced colophons do not match decisions"
+    )
+    for code, colophon in supplied.items():
+        require(code in result, f"Sourced colophon: missing book {code}")
+        doc = result[code]
+        require(
+            not any(b.get("category") == "colophon" for b in doc["content"]),
+            f"Sourced colophon: {code} already has a colophon",
+        )
+        final = next(reversed(scripture.verses(doc)))
+        require(
+            selections[code]["verse"] == final,
+            f"Sourced colophon: {code} does not name the final verse",
+        )
+        result[code] = usj.with_blocks(doc, [*doc["content"], colophon])
     for name, group in policy.prose.items():
         for change in group.get("colophons", ()):
             code = change["book"]

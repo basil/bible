@@ -229,8 +229,15 @@ ColophonChange = TypedDict(
 )
 
 
+class SourcedColophon(TypedDict):
+    book: ReadOnly[str]
+    source: ReadOnly[Literal["tcent"]]
+    verse: ReadOnly[str]
+
+
 class Prose(TypedDict, total=False):
     colophons: ReadOnly[tuple[ColophonChange, ...]]
+    sourced_colophons: ReadOnly[tuple[SourcedColophon, ...]]
     changes: ReadOnly[tuple[WordingChange, ...]]
     additions: ReadOnly[tuple[ProseAddition, ...]]
     markers: ReadOnly[tuple[MarkerChange, ...]]

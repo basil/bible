@@ -91,9 +91,9 @@ def test_exported_roles_are_consistent_across_the_edition(
         if code not in edition.scripture
     ]
     assert {code for code, _ in colophons} == set(
-        "ROM 1CO 2CO GAL EPH PHP COL 1TH 2TH 1TI 2TI TIT PHM HEB".split()
+        "MAT MRK LUK JHN ROM 1CO 2CO GAL EPH PHP COL 1TH 2TH 1TI 2TI TIT PHM HEB".split()
     )
-    assert len(colophons) == 14
+    assert len(colophons) == 18
     assert {category for _, category in colophons} == {"colophon"}
 
 

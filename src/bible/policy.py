@@ -506,6 +506,7 @@ def check(policy: Policy) -> None:
         (),
         "Citations file",
     )
+    sourced_colophons: set[str] = set()
     for name, prose_group in policy.prose.items():
         require_fields(
             prose_group,
@@ -518,10 +519,24 @@ def check(policy: Policy) -> None:
                 "references",
                 "callers",
                 "colophons",
+                "sourced_colophons",
             },
             f"Prose changes {name}",
         )
         require(prose_group["why"], f"Prose changes without a why: {name}")
+        for selection in prose_group.get("sourced_colophons", ()):
+            code = selection.get("book")
+            label = f"Sourced colophon in {name}: {code}"
+            require_fields(selection, {"book", "source", "verse"}, (), label)
+            require(code in policy.kjv_units, f"{label}: not a printed KJV book")
+            require(selection["source"] == "tcent", f"{label}: unsupported source")
+            require(
+                isinstance(selection["verse"], str)
+                and re.fullmatch(r"[1-9]\d*:[1-9]\d*", selection["verse"]),
+                f"{label}: invalid source verse",
+            )
+            require(code not in sourced_colophons, f"{label}: duplicate book")
+            sourced_colophons.add(selection["book"])
         for colophon_change in prose_group.get("colophons", ()):
             label = f"Colophon change in {name}: {colophon_change.get('book')}"
             require_fields(colophon_change, {"book", "from", "to"}, (), label)

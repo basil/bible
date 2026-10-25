@@ -77,6 +77,7 @@ def test_no_stage_changes_what_an_earlier_stage_made(staged: Staged) -> None:
         dict(staged.read.brenton),
         dict(staged.read.kjv),
         dict(staged.read.updated_brenton),
+        dict(staged.read.colophons),
     ) == staged.read_before
     assert staged.promoted == staged.promoted_before
     assert staged.units == staged.assembled

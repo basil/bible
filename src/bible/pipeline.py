@@ -92,6 +92,8 @@ class Read:
     authored: MappingProxyType[str, str]
     # The New Testament's Greek texts and witnesses, for the reconciliation.
     byzantine: MappingProxyType[str, bible.sources.Content]
+    # Boyd's Gospel colophons, by book, which the matter stage appends.
+    colophons: MappingProxyType[str, Node]
 
 
 # Words Brenton brackets within a run of text.
@@ -299,6 +301,7 @@ def read(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Read:
         kjv_chapters=MappingProxyType(facing),
         authored=sources.authored,
         byzantine=sources.byzantine,
+        colophons=matter.read_colophons(sources.byzantine, policy),
     )
 
 
@@ -878,7 +881,7 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
     units = assemble(promoted, policy, read_sources)
     policy = placed(units, read_sources, policy)
     units = lined(units, read_sources, policy)
-    units = matter.colophons(units, policy)
+    units = matter.colophons(units, policy, read_sources.colophons)
     ctx = context(units, policy)
     front, appendix_notes, front_report = front_and_back(read_sources, ctx)
     books, reports = annotated(units, read_sources, appendix_notes, ctx)

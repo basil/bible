@@ -1198,7 +1198,9 @@ def test_colophon_decisions_refuse_stale_or_ambiguous_matches(
 def test_all_nt_colophons_stand_without_their_pilcrow(
     edition: bible.pipeline.Edition,
 ) -> None:
-    expected = set("ROM 1CO 2CO GAL EPH PHP COL 1TH 2TH 1TI 2TI TIT PHM HEB".split())
+    expected = set(
+        "MAT MRK LUK JHN ROM 1CO 2CO GAL EPH PHP COL 1TH 2TH 1TI 2TI TIT PHM HEB".split()
+    )
     found = set()
     for code, doc in edition.documents.items():
         for block in doc["content"]:
@@ -1209,3 +1211,76 @@ def test_all_nt_colophons_stand_without_their_pilcrow(
     assert "The end of the Acts of the Apostles." not in usj.text_of(
         edition.documents["ACT"]["content"]
     )
+
+
+def test_gospel_colophons_are_sourced_and_appended_without_changing_verses(
+    read: bible.pipeline.Read, declared: bible.policy.Policy
+) -> None:
+    expected = {"MAT": "eight", "MRK": "ten", "LUK": "fifteen", "JHN": "thirty-two"}
+    # Include Acts, whose closing notice the declared policy removes.
+    books = {code: read.kjv[code] for code in [*expected, "ACT"]}
+    before = copy.deepcopy(books)
+    supplied_before = copy.deepcopy(dict(read.colophons))
+    result = matter.colophons(books, declared, read.colophons)
+    assert books == before
+    assert dict(read.colophons) == supplied_before
+    assert set(read.colophons) == set(expected)
+    for code, years in expected.items():
+        assert usj.text_of(result[code]["content"][-1]["content"]) == (
+            f"Published {years} years after the ascension of Christ."
+        )
+        assert bible.scripture.verses(result[code]) == bible.scripture.verses(
+            books[code]
+        )
+    with pytest.raises(CheckFailed, match="already has a colophon"):
+        matter.colophons(result, declared, read.colophons)
+    with pytest.raises(CheckFailed, match="do not match decisions"):
+        matter.colophons(books, declared)
+
+
+@pytest.mark.parametrize(
+    "failure", ["missing", "duplicate", "verse", "wording", "italic", "book", "xml"]
+)
+def test_sourced_colophons_refuse_changed_notes(
+    declared: bible.policy.Policy, failure: str
+) -> None:
+    policy = presentation_policy(
+        declared,
+        sourced_colophons=[{"book": "MAT", "source": "tcent", "verse": "28:20"}],
+    )
+    note = (
+        '<note style="f"><char style="fr">28:20 </char>'
+        '<char style="ft">The following scribal note is included in the colophons '
+        'of many Greek manuscripts: </char><char style="it">Published eight years '
+        "after the ascension of Christ</char>.</note>"
+    )
+    if failure == "missing":
+        note = ""
+    elif failure == "duplicate":
+        note *= 2
+    elif failure == "verse":
+        note = note.replace("28:20", "28:19")
+    elif failure == "wording":
+        note = note.replace("</note>", " Unexpected prose.</note>")
+    elif failure == "italic":
+        note = note.replace('<char style="it">', "").replace("</char>.", ".")
+    book = "MRK" if failure == "book" else "MAT"
+    closing = "" if failure == "xml" else "</usx>"
+    source = bible.sources.Content(
+        {"040MAT.usx": (f'<usx><book code="{book}"/>' + note + closing).encode()}
+    )
+    with pytest.raises(CheckFailed, match="Sourced colophon: MAT 28:20"):
+        matter.read_colophons({"tcent": source}, policy)
+
+
+def test_sourced_colophon_must_name_the_final_verse(
+    read: bible.pipeline.Read, declared: bible.policy.Policy
+) -> None:
+    policy = presentation_policy(
+        declared,
+        sourced_colophons=[{"book": "MAT", "source": "tcent", "verse": "28:19"}],
+    )
+    with pytest.raises(CheckFailed, match="does not name the final verse"):
+        matter.colophons(
+            {"MAT": read.kjv["MAT"]}, policy, {"MAT": read.colophons["MAT"]}
+        )

@@ -44,7 +44,7 @@ def declared() -> bible.policy.Policy:
     return decisions.load()
 
 
-type ReadAsMade = tuple[bible.pipeline.Read, tuple[dict[str, Document], ...]]
+type ReadAsMade = tuple[bible.pipeline.Read, tuple[Mapping[str, object], ...]]
 
 
 @pytest.fixture(scope="session")
@@ -59,7 +59,12 @@ def read_as_made(
         patch.setattr(Path, "open", unreadable)
         made = pipeline.read(sources, declared)
     return made, copy.deepcopy(
-        (dict(made.brenton), dict(made.kjv), dict(made.updated_brenton))
+        (
+            dict(made.brenton),
+            dict(made.kjv),
+            dict(made.updated_brenton),
+            dict(made.colophons),
+        )
     )
 
 
@@ -118,7 +123,7 @@ class Staged:
     lined: dict[str, Document]
     # The copies: the sources before promotion, the promoted books before
     # assembly, the assembled books before lining, the lined before annotation.
-    read_before: tuple[dict[str, Document], ...]
+    read_before: tuple[Mapping[str, object], ...]
     promoted_before: tuple[dict[str, Document], ...]
     assembled: dict[str, Document]
     line_documents: dict[str, Document]
