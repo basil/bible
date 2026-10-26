@@ -722,8 +722,10 @@ def printed(code: str, doc: Document, policy: bible.policy.Policy) -> Document:
     relocations = versification.relocations(code, policy=policy)
     unnumbered = {
         reference: entry
-        for reference, entry in policy.versification.get("unnumbered", {}).items()
-        if not isinstance(entry, str) and bible.references.book_of(reference) == code
+        for reference, entry in policy.versification.get("unnumbered", {})
+        .get("decisions", {})
+        .items()
+        if bible.references.book_of(reference) == code
     }
     if not relocations and not unnumbered:
         return doc
@@ -787,8 +789,10 @@ def without_stubs(code: str, doc: Document, policy: bible.policy.Policy) -> Docu
     where the edition's versification says the source has none (as eBible's
     empty Proverbs 30): the chapter and its one empty verse go, with any
     remark of the transcriber's in it. A stub that has words is refused."""
-    for reference, entry in policy.versification.get("stubs", {}).items():
-        if isinstance(entry, str) or bible.references.book_of(reference) != code:
+    for reference, entry in (
+        policy.versification.get("stubs", {}).get("decisions", {}).items()
+    ):
+        if bible.references.book_of(reference) != code:
             continue
         require(bool(entry.get("why")), f"Stub without its reason: {reference}")
         address = reference.split()[1]

@@ -35,7 +35,7 @@ from bible.byzantine.rows import (
     UnitInventory,
     Unmatched,
 )
-from bible.byzantine.tags import Tag, asserted
+from bible.byzantine.tags import Grammar, Wording
 from bible.byzantine.units import keyed_units, record_side
 from bible.checks import CheckFailed, present, require
 from bible.scripture import plain
@@ -246,7 +246,7 @@ def validate_overrides(
 
     Returns (compiled, errors). A compiled override has everything as
     written, and its units' ids (`unit_ids`), its edits at character offsets
-    (`bound`) and its tags (`tag_set`).
+    (`bound`), its wording sources, and its grammatical kinds.
     witness_rows: {witness: {entry: row}} for the instruction sources and the
     apparatus; texts: {witness: verses} for the revisions. Optional
     revision_citations carries normalized text and USJ supplied spans;
@@ -285,18 +285,28 @@ def validate_overrides(
             why = entry.get("why")
             if not isinstance(why, str) or not why.strip():
                 raise CheckFailed(f"{label}: why required")
-            tags = asserted(entry.get("tags", []))
+            require(
+                all(
+                    isinstance(entry.get(field, []), (list, tuple))
+                    for field in ("wording", "grammar")
+                ),
+                f"{label}: wording and grammar must be lists",
+            )
+            wording = [Wording(w) for w in entry.get("wording", [])]
+            grammar = [Grammar(g) for g in entry.get("grammar", [])]
+            require(
+                len(wording) == len(set(wording)) and len(grammar) == len(set(grammar)),
+                f"{label}: duplicate wording or grammar",
+            )
             require(
                 not ids or len(re.findall(r"[.!?](?:\s|$)", why.strip())) <= 2,
                 f"{label}: why is at most two sentences",
             )
             require(
-                not ids
-                or (
-                    any(t.group == "from" for t in tags)
-                    and any(t.group == "gram" for t in tags)
-                ),
-                f"{label}: one from: and one gram: tag required",
+                bool(wording) == bool(ids)
+                and bool(grammar) == bool(ids)
+                and (bool(ids) or not {"wording", "grammar"} & set(entry)),
+                f"{label}: wording and grammar go with units",
             )
             refs = {g["ref"] for g in entry["units"]} if ids else {entry["id"]}
             books = {r.split()[0] for r in refs}
@@ -460,11 +470,11 @@ def validate_overrides(
                     bracketed = (
                         "[" in normalized or "]" in normalized
                     ) and normalized not in verse
-                    wording, marked = (
+                    quoted, marked = (
                         bracketed_quote(normalized) if bracketed else (normalized, [])
                     )
                     require(
-                        ref in permitted and verse.count(wording) == 1,
+                        ref in permitted and verse.count(quoted) == 1,
                         f"{label}: {witness} quote is not in the verse once",
                     )
                     if bracketed:
@@ -473,8 +483,8 @@ def validate_overrides(
                             raise CheckFailed(
                                 f"{label}: {witness} supplied-word metadata missing or stale"
                             )
-                        start = verse.index(wording)
-                        end = start + len(wording)
+                        start = verse.index(quoted)
+                        end = start + len(quoted)
                         require(
                             marked == spans_within(metadata["supplied"], start, end),
                             f"{label}: {witness} brackets differ from source supplied words",
@@ -488,13 +498,13 @@ def validate_overrides(
                     verse = present(
                         kjv.get(ref), f"{label}: kjv parallel {ref} is not a verse"
                     )
-                    wording, marked = bracketed_quote(plain(quote))
+                    quoted, marked = bracketed_quote(plain(quote))
                     require(
-                        verse.count(wording) == 1,
+                        verse.count(quoted) == 1,
                         f"{label}: kjv quote is not in the verse once",
                     )
-                    start = verse.index(wording)
-                    end = start + len(wording)
+                    start = verse.index(quoted)
+                    end = start + len(quoted)
                     require(
                         not cuts_word(verse, start, end),
                         f"{label}: kjv quote cuts through a word",
@@ -543,19 +553,19 @@ def validate_overrides(
                 else:
                     raise CheckFailed(f"{label}: unknown witness {witness}")
             require(
-                (Tag.FROM_KJV_PARALLEL in tags) == (KJV in evidence),
-                f"{label}: from:kjv-parallel and kjv evidence go together",
+                (Wording.KJV_PARALLEL in wording) == (KJV in evidence),
+                f"{label}: kjv-parallel wording and kjv evidence go together",
             )
             override: Override = {
                 "id": entry["id"],
                 "units": entry.get("units", []),
                 "kind": kind,
-                "tags": entry.get("tags", []),
+                "wording": wording,
+                "grammar": grammar,
                 "why": why,
                 "evidence": evidence,
                 "unit_ids": ids,
                 "bound": bound,
-                "tag_set": tags,
             }
             if "edits" in entry:
                 override["edits"] = edits

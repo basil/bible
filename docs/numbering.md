@@ -28,7 +28,8 @@ edition prints.
 ## Recording a change
 
 Use the existing entries and [the schema](../src/bible/policy_schema.py) for
-the exact data shape.
+the exact data shape. The `stubs`, `unnumbered`, and `relocations` groups each
+have a `why` explaining the group and a `decisions` object keyed by address.
 
 | Field | What it changes | Required checks |
 | --- | --- | --- |

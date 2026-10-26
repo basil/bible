@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING, Any, TypedDict
 from bible.usj import Node
 
 if TYPE_CHECKING:
-    from bible.byzantine.tags import Tag
+    from bible.byzantine.tags import Grammar, Wording
 
 
 class GreekKey(TypedDict, total=False):
@@ -242,6 +242,8 @@ Disposition = TypedDict(
         "source_note": "Node",
         "source_note_ref": "str",
         "tags": "list[str]",
+        "wording": "list[str]",
+        "grammar": "list[str]",
         "target_ref": "str",
         "tcent_reports": "bool",
         "unit": "str",
@@ -299,15 +301,15 @@ class NoteScope(TypedDict, total=False):
 
 
 class Override(TypedDict, total=False):
-    """A reading of the editor's, compiled: its units, its edits bound to the verse, its tags, and its evidence."""
+    """A reading of the editor's, compiled: its units, its edits bound to the verse, its wording, grammar, and evidence."""
 
     bound: list[BoundEdit]
     edits: list[dict[str, Any]]
     evidence: dict[str, dict[str, Any]]
     id: str
     kind: str
-    tag_set: list[Tag]
-    tags: list[str]
+    wording: list[Wording]
+    grammar: list[Grammar]
     unit_ids: list[str]
     units: list[GreekKey]
     why: str

@@ -483,8 +483,10 @@ def relocations(
     prints them."""
     return {
         reference: entry
-        for reference, entry in policy.versification.get("relocations", {}).items()
-        if not isinstance(entry, str) and parse_verse(entry["to"]).book == code
+        for reference, entry in policy.versification.get("relocations", {})
+        .get("decisions", {})
+        .items()
+        if parse_verse(entry["to"]).book == code
     }
 
 
@@ -494,8 +496,9 @@ def printed_as(*, policy: bible.policy.Policy) -> dict[Verse, Verse]:
     assembly.printed): the Hebrew's, which is the King James Bible's."""
     return {
         v: verse
-        for reference, entry in policy.versification.get("relocations", {}).items()
-        if not isinstance(entry, str)
+        for reference, entry in policy.versification.get("relocations", {})
+        .get("decisions", {})
+        .items()
         for verse in parse_passage(reference).verses
         for v in from_kjv(verse, policy=policy)
     }
@@ -509,8 +512,9 @@ def printed_otherwise(*, policy: bible.policy.Policy) -> frozenset[Verse]:
     show, so none may be cited."""
     return frozenset(printed_as(policy=policy)) | {
         parse_verse(reference)
-        for reference, entry in policy.versification.get("unnumbered", {}).items()
-        if not isinstance(entry, str)
+        for reference, entry in policy.versification.get("unnumbered", {})
+        .get("decisions", {})
+        .items()
     }
 
 

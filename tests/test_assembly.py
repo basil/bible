@@ -210,7 +210,7 @@ def test_a_printed_label_must_fit_its_verses(
         return changed(
             policy,
             "versification",
-            lambda data: data["relocations"]["PRO 30:1-14"].update(to=to),
+            lambda data: data["relocations"]["decisions"]["PRO 30:1-14"].update(to=to),
         )
 
     with pytest.raises(CheckFailed, match="runs past its chapter"):
@@ -220,14 +220,16 @@ def test_a_printed_label_must_fit_its_verses(
     twice = changed(
         policy,
         "versification",
-        lambda data: data["unnumbered"].update({"PRO 24:22f": {"why": "."}}),
+        lambda data: data["unnumbered"]["decisions"].update(
+            {"PRO 24:22f": {"why": "."}}
+        ),
     )
     with pytest.raises(CheckFailed, match="printed under two labels"):
         assembly.printed("PRO", plain, twice)
     unexplained = changed(
         policy,
         "versification",
-        lambda data: data["unnumbered"].update({"PRO 24:1": {}}),
+        lambda data: data["unnumbered"]["decisions"].update({"PRO 24:1": {}}),
     )
     with pytest.raises(CheckFailed, match="without its reason"):
         assembly.printed("PRO", plain, unexplained)
@@ -480,7 +482,7 @@ def test_a_relocation_is_carried_out_in_the_book_that_prints_it(
     decided = changed(
         policy,
         "versification",
-        lambda data: data["relocations"].update(
+        lambda data: data["relocations"]["decisions"].update(
             {"DAN 4:1-2": {"to": "DAG 3:24", "why": "."}}
         ),
     )

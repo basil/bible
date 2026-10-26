@@ -225,7 +225,7 @@ def in_translation(text: str, snippet: str) -> bool:
 
 
 def brenton(
-    code: str, text: str, corrections: Mapping[str, Correction | tuple[Correction, ...]]
+    code: str, text: str, corrections: Mapping[str, tuple[Correction, ...]]
 ) -> tuple[str, frozenset[str]]:
     """A Brenton source file with its corrections, and the keys of the notes
     they mend, without the file's code.
@@ -247,7 +247,7 @@ def brenton(
         if book_of(key) != code:
             continue
         place = key.partition(" ")[2]
-        for correction in group if isinstance(group, tuple) else (group,):
+        for correction in group:
             source = correction["from"]
             restored = category(source, correction["to"]) == "missing note"
             if VERSE_KEY.fullmatch(place):

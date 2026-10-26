@@ -344,7 +344,7 @@ def _by_chapter(moved: Iterable[Item]) -> list[tuple[Item, ...]]:
 def decisions(key: str, *, policy: bible.policy.Policy) -> list[CitationsDecisions]:
     """The decisions on a note's citations, in the file's order."""
     found = policy.citations["decisions"].get(key, ())
-    return list(found) if isinstance(found, tuple) else [found]
+    return list(found)
 
 
 def unit_decisions(
@@ -356,10 +356,11 @@ def unit_decisions(
     Psalm iv. 4", which must be the unit's once.
     """
     found: dict[str, CitationsDecisions] = {}
-    for key, decision in policy.citations["decisions"].items():
+    for key, group in policy.citations["decisions"].items():
         code, _, words = key.partition(" ")
         if code == unit and not re.fullmatch(rf"\d+:{VERSE_LABEL}.*", words):
-            assert not isinstance(decision, tuple)
+            require(len(group) == 1, f"Unit citation needs one decision: {key}")
+            decision = group[0]
             source = decision.get("source", words)
             if _places(source, plain):
                 found[key] = {**decision, "source": source}

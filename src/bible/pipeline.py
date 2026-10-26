@@ -455,13 +455,15 @@ def assemble(
         *versification.renumberings(policy=policy),
         *(
             bible.references.book_of(reference)
-            for reference in policy.versification.get("unnumbered", {})
-            if reference != "why"
+            for reference in policy.versification.get("unnumbered", {}).get(
+                "decisions", {}
+            )
         ),
         *(
             bible.references.parse_verse(entry["to"]).book
-            for entry in policy.versification.get("relocations", {}).values()
-            if not isinstance(entry, str)
+            for entry in policy.versification.get("relocations", {})
+            .get("decisions", {})
+            .values()
         ),
     }
     unknown = sorted(numbered - set(units))

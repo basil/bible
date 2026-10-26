@@ -21,7 +21,6 @@ from bible.byzantine import (
     decide,
     rendering,
     stages,
-    tags,
 )
 from bible.byzantine.instructions import bind_plain, compatibility, constructions
 from bible.byzantine.rows import (
@@ -36,7 +35,7 @@ from bible.byzantine.rows import (
     Unit,
 )
 from bible.byzantine.stages import Reconciliation
-from bible.byzantine.tags import Tag
+from bible.byzantine.tags import Grammar, Tag, Wording
 from bible.byzantine.units import NEUTRAL_CLASSES
 from bible.checks import CheckFailed
 
@@ -110,7 +109,8 @@ def keep_kjv(uid: str = FIRST) -> Override:
         "kind": "nochange",
         "why": "Keep the KJV.",
         "evidence": {},
-        "tag_set": [Tag.FROM_KJV_RETAINED, Tag.GRAM_LEXICAL],
+        "wording": [Wording.KJV_RETAINED],
+        "grammar": [Grammar.LEXICAL],
         "bound": [],
     }
 
@@ -162,6 +162,8 @@ def test_decide_is_a_function_of_its_inputs(context: Reconciliation) -> None:
     assert len(again) == len(now)
     for row in again:
         # Execution adds the seam and finished-verse tags afterwards.
+        assert row["wording"] == now[row["unit"]]["wording"]
+        assert row["grammar"] == now[row["unit"]]["grammar"]
         assert (row["disposition"], row["tags"]) == (
             now[row["unit"]]["disposition"],
             [
@@ -255,7 +257,8 @@ def test_two_readings_must_merge_even_when_every_instruction_is_refused(
             "kind": "nochange",
             "edits": [],
             "why": "Test a split construction.",
-            "tags": ["from:editor", "gram:lexical"],
+            "wording": ["editor"],
+            "grammar": ["lexical"],
             "evidence": {
                 PIERPONT: {
                     "entry": 332,
@@ -342,7 +345,8 @@ def test_matthew_3_8_is_witnessed_from_pierpont_with_remaining_corroboration(
     assert row["disposition"] == "witnessed" and row["action"] == "edit"
     assert row["basis"].startswith("pierpont:")
     assert TCENT in row["corroborated_by"]
-    assert {"from:pierpont", "ev:corroborated", "op:replace"} <= set(row["tags"])
+    assert "pierpont" in row["wording"]
+    assert {"ev:corroborated", "op:replace"} <= set(row["tags"])
     assert "ev:single-witness" not in row["tags"]
     assert row["execution"] == "applied"
     assert [(e["old"], e["new"]) for e in row["edits"]] == [("fruits", "fruit")]
@@ -391,7 +395,8 @@ def test_a_silent_unit_keeps_the_kjv(context: Reconciliation) -> None:
     for row in context.verified.dispositions:
         if row["disposition"] == "silent":
             assert row["action"] == "nochange"
-            assert {"op:nochange", "from:kjv-retained"} <= set(row["tags"])
+            assert "op:nochange" in row["tags"]
+            assert "kjv-retained" in row["wording"]
 
 
 def test_rev_21_2_relocated_saw_needs_no_further_english_change(
@@ -402,7 +407,7 @@ def test_rev_21_2_relocated_saw_needs_no_further_english_change(
     assert not row.get("redundant")
     assert set(row["witnesses"]) == {"tcent", "faa", "msb"}
     assert row["tcent_reports"]
-    assert "gram:order" in row["tags"]
+    assert "order" in row["grammar"]
     assert "ev:tcent-reports" not in row["tags"]
     chapter = exported["REV"].split("\\c 21\n")[1].split("\\c 22\n")[0]
     verse = next(line for line in chapter.splitlines() if line.startswith("\\v 2 "))
@@ -422,18 +427,15 @@ def test_every_tag_is_a_tag(context: Reconciliation) -> None:
     for row in context.verified.dispositions:
         for t in row["tags"]:
             Tag(t)
-        assert row["tags"] == sorted(row["tags"])
+        for w in row["wording"]:
+            Wording(w)
+        for g in row["grammar"]:
+            Grammar(g)
+        for field in ("tags", "wording", "grammar"):
+            assert row[field] == sorted(set(row[field]))
         # The op: tags of a shared construction sit on the unit that executes it.
         if row["action"] != "covered":
             assert any(t.startswith("op:") for t in row["tags"]), row["unit"]
-
-
-def test_computed_tags_never_appear_in_the_readings(
-    readings: list[dict[str, Any]],
-) -> None:
-    for o in readings:
-        for t in o["tags"]:
-            assert Tag(t).group in tags.ASSERTED_GROUPS, (o["id"], t)
 
 
 def test_witnessed_and_override_rows_carry_from_and_gram_tags(
@@ -441,8 +443,7 @@ def test_witnessed_and_override_rows_carry_from_and_gram_tags(
 ) -> None:
     for row in context.verified.dispositions:
         if row["disposition"] in {"witnessed", "override"}:
-            groups = {Tag(t).group for t in row["tags"]}
-            assert {"from", "gram"} <= groups, (row["unit"], row["tags"])
+            assert row["wording"] and row["grammar"], row["unit"]
 
 
 def test_a_single_witness_and_a_corroborated_edit_exclude_each_other(
@@ -519,6 +520,8 @@ def test_revisions_and_alarms_change_no_decision_or_book(
     )
     evidence_fields = {
         "tags",
+        "wording",
+        "grammar",
         "flags",
         "corroborated_by",
         "alarm_phrases",
@@ -688,7 +691,8 @@ def nochange_override(units: Sequence[Unit]) -> Override:
         "kind": "nochange",
         "why": "The reported difference leaves the KJV unchanged.",
         "evidence": {},
-        "tag_set": [Tag.FROM_KJV_RETAINED, Tag.GRAM_LEXICAL],
+        "wording": [Wording.KJV_RETAINED],
+        "grammar": [Grammar.LEXICAL],
         "bound": [],
     }
 

@@ -169,7 +169,10 @@ def test_sections_show_the_disposition_and_tags(
         assert (
             f"Disposition {rows[uid]['disposition']} · {rows[uid]['action']}" in section
         )
-        assert "Tags " + " ".join(f"`{t}`" for t in rows[uid]["tags"]) in section
+        assert (
+            "Tags " + " ".join(f"`{t}`" for t in review.printed_tags(rows[uid]))
+            in section
+        )
         assert "Calculus " in section
 
 
@@ -690,7 +693,7 @@ def test_manual_borrowing_follows_the_source_tag_not_the_quotations(
 
     # A corroborating quotation is not a borrowing; a source tag is one,
     # quoted or not.
-    corroborating = changed({"tags": ["from:editor", "gram:lexical"]})
+    corroborating = changed({"wording": ["editor"], "grammar": ["lexical"]})
     assert (uid, RV) not in review.manual_borrowings(corroborating)
     unquoted = changed({"evidence": {}})
     assert (uid, RV) in review.manual_borrowings(unquoted)
@@ -796,17 +799,13 @@ def test_the_summary_tallies_the_sources_of_wording(
     )
     executed = [r for r in all_executed if not review.marking_only(r)]
     assert executed
-    froms = [
-        [t.removeprefix("from:") for t in r["tags"] if t.startswith("from:")]
-        for r in executed
-    ]
+    froms = [r["wording"] for r in executed]
     # Every row carried out, a change of marking alone included, says where
     # its wording comes from, one source or more, but a verse moved or
     # omitted and a correction of shared Greek, which have no wording of
     # their own.
     assert all(
-        any(t.startswith("from:") for t in r["tags"])
-        == (r["disposition"] not in {"structural", "shared"})
+        bool(r["wording"]) == (r["disposition"] not in {"structural", "shared"})
         for r in all_executed
     )
     sources = Counter(t for tags in froms for t in tags or ["(none)"])
@@ -818,11 +817,7 @@ def test_the_summary_tallies_the_sources_of_wording(
         f"{len(executed)} that change the words."
     ) in section
     assert len(marking) + len(executed) == len(all_executed)
-    marking_froms = Counter(
-        t.removeprefix("from:")
-        for r in marking
-        for t in [t for t in r["tags"] if t.startswith("from:")] or ["(none)"]
-    )
+    marking_froms = Counter(t for r in marking for t in r["wording"] or ["(none)"])
     line = section.split("Changes of marking alone, by source: ")[1].split("\n")[0]
     listed = [item.rsplit(" ", 1) for item in line.removesuffix(".").split(", ")]
     # Ranked as the tables are: most rows first, then by name, and rows with

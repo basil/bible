@@ -44,6 +44,16 @@ class VersificationRelocation(TypedDict, total=False):
     why: ReadOnly[str]
 
 
+class VersificationStubGroup(TypedDict):
+    why: ReadOnly[str]
+    decisions: ReadOnly[Mapping[str, VersificationStub]]
+
+
+class VersificationRelocationGroup(TypedDict):
+    why: ReadOnly[str]
+    decisions: ReadOnly[Mapping[str, VersificationRelocation]]
+
+
 class Versification(TypedDict, total=False):
     apocrypha: ReadOnly[tuple[VersificationApocrypha, ...]]
     books: ReadOnly[Mapping[str, str]]
@@ -52,9 +62,9 @@ class Versification(TypedDict, total=False):
     old_testament: ReadOnly[tuple[str, ...]]
     readings: ReadOnly[Mapping[str, tuple[Run, ...]]]
     relabel: ReadOnly[Mapping[str, VersificationRelabel]]
-    relocations: ReadOnly[Mapping[str, VersificationRelocation | str]]
-    stubs: ReadOnly[Mapping[str, VersificationStub | str]]
-    unnumbered: ReadOnly[Mapping[str, VersificationStub | str]]
+    relocations: ReadOnly[VersificationRelocationGroup]
+    stubs: ReadOnly[VersificationStubGroup]
+    unnumbered: ReadOnly[VersificationStubGroup]
     why: ReadOnly[str]
 
 
@@ -287,7 +297,7 @@ Rendering = TypedDict(
 
 
 class BrentonNotes(TypedDict, total=False):
-    corrections: ReadOnly[Mapping[str, tuple[Correction, ...] | Correction]]
+    corrections: ReadOnly[Mapping[str, tuple[Correction, ...]]]
     notes: ReadOnly[Mapping[str, NoteOverride]]
     renderings: ReadOnly[Mapping[str, Rendering]]
     shapes: ReadOnly[Mapping[str, str]]
@@ -467,9 +477,7 @@ class CitationsDialects(TypedDict, total=False):
 
 
 class Citations(TypedDict, total=False):
-    decisions: ReadOnly[
-        Mapping[str, CitationsDecisions | tuple[CitationsDecisions, ...]]
-    ]
+    decisions: ReadOnly[Mapping[str, tuple[CitationsDecisions, ...]]]
     dialects: ReadOnly[Mapping[str, CitationsDialects]]
     units: ReadOnly[Mapping[str, str | None]]
 
@@ -651,7 +659,8 @@ class ByzantineReading(TypedDict, total=False):
     units: ReadOnly[tuple[ByzantineUnit, ...]]
     kind: ReadOnly[str]
     edits: ReadOnly[tuple[ByzantineEdit, ...]]
-    tags: ReadOnly[tuple[str, ...]]
+    wording: ReadOnly[tuple[str, ...]]
+    grammar: ReadOnly[tuple[str, ...]]
     why: ReadOnly[str]
     evidence: ReadOnly[Mapping[str, ByzantineEvidence]]
 

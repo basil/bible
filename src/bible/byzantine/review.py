@@ -154,6 +154,19 @@ class Index(TypedDict):
     received: received.Rows
 
 
+def printed_tags(row: Disposition | Override) -> list[str]:
+    """The review's prefixed labels for computed tags, wording, and grammar."""
+    computed = row.get("tags", [])
+    assert isinstance(computed, list)
+    return sorted(
+        [
+            *computed,
+            *(f"from:{w}" for w in row["wording"]),
+            *(f"gram:{g}" for g in row["grammar"]),
+        ]
+    )
+
+
 def esc(text: object) -> str:
     """Markdown-safe inline text: pipes and leading # neutralized, newlines joined."""
     return " ".join(str(text).replace("|", "\\|").split())
@@ -463,7 +476,7 @@ def revision_exclusion(name: str, unit: Unit, tcgnt: Mapping[int, BoydNote]) -> 
 
 def manual_borrowings(context: Reconciliation) -> dict[tuple[str, str], list[Unit]]:
     """Executed decisions' wording sources outside automatic admission, by
-    their `from:` tags, grouped by decision and source, including their
+    their wording sources, grouped by decision and source, including their
     covered units, in the order of the units."""
     rows = [
         r for r in context.verified.dispositions if r.get("disposition") == "override"
@@ -478,7 +491,7 @@ def manual_borrowings(context: Reconciliation) -> dict[tuple[str, str], list[Uni
             continue
         for name in REVISIONS:
             if (
-                f"from:{name}" in overrides[oid]["tags"]
+                name in overrides[oid]["wording"]
                 and row["unit"] not in context.revisions.admitted[name]
             ):
                 result.setdefault((oid, name), []).append(units[row["unit"]])
@@ -944,7 +957,7 @@ def section(
         f"Disposition {row['disposition']} · {row['action']}"
         + (f" · basis {basis}" if basis else "")
     )
-    lines.append("Tags " + " ".join(f"`{t}`" for t in row["tags"]))
+    lines.append("Tags " + " ".join(f"`{t}`" for t in printed_tags(row)))
     lines.append("Calculus " + esc(calculus(row, unit, index)))
     for flag in row.get("flags", []):
         lines.append(f"Flag {esc(flag)}")
@@ -982,10 +995,11 @@ def section(
 
 def override_lines(o: Override, ref: str) -> list[str]:
     """An override as the editor wrote it, its evidence ticked as checked."""
+    labels = printed_tags(o)
     lines = [
         " · ".join(
             [f"Override {o['id']}", o["kind"]]
-            + [" ".join(f"`{t}`" for t in o["tags"])] * bool(o["tags"])
+            + [" ".join(f"`{t}`" for t in labels)] * bool(labels)
         )
     ]
     for e in o.get("edits", []):
@@ -1268,7 +1282,7 @@ def marking_only(row: Disposition) -> bool:
 
 def sources_of_wording(rows: Sequence[Disposition]) -> list[str]:
     """The rows carried out, by where their wording comes from (their
-    `from:` tags: a row that draws on more than one source counts under
+    wording sources: a row that draws on more than one source counts under
     each, and one with no wording of its own, a verse moved or omitted or a
     correction of shared Greek, under none) and by their disposition, each
     with its share of the rows, and how many rows draw on two sources or
@@ -1279,19 +1293,14 @@ def sources_of_wording(rows: Sequence[Disposition]) -> list[str]:
     executed = [r for r in rows if r.get("execution") == "applied"]
     marking = [r for r in executed if marking_only(r)]
     changes = [r for r in executed if not marking_only(r)]
-
-    def froms(r: Disposition) -> list[str]:
-        return [t.removeprefix("from:") for t in r["tags"] if t.startswith("from:")]
-
     sources: Counter[str] = Counter()
     several: Counter[int] = Counter()
     for r in changes:
-        tags = froms(r)
-        sources.update(tags or ["(none)"])
-        if len(tags) > 1:
-            several[len(tags)] += 1
+        sources.update(r["wording"] or ["(none)"])
+        if len(r["wording"]) > 1:
+            several[len(r["wording"])] += 1
     dispositions = Counter(r["disposition"] for r in changes)
-    marking_sources = Counter(t for r in marking for t in froms(r) or ["(none)"])
+    marking_sources = Counter(t for r in marking for t in r["wording"] or ["(none)"])
 
     def ranked(counts: Counter[str]) -> list[tuple[str, int]]:
         return sorted(counts.items(), key=lambda kv: (kv[0] == "(none)", -kv[1], kv[0]))

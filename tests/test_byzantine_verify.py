@@ -156,6 +156,8 @@ def test_every_unit_has_one_complete_declaration(byzantine: Reconciliation) -> N
     assert _i1(byzantine, byzantine.verified.dispositions) == "pass"
     for row in rows:
         assert row["tags"] and all(tag in tags.Tag for tag in row["tags"])
+        assert all(w in tags.Wording for w in row["wording"])
+        assert all(g in tags.Grammar for g in row["grammar"])
         if row["disposition"] == "override":
             assert row["override"] and row["why"] and row["evidence"]
         elif row["disposition"] == "witnessed":
@@ -664,6 +666,8 @@ def test_finished_verse_flags_follow_the_cause(cause: str) -> None:
     prepared, rows = notes.apply(documents, prepared, rows)
     for row in rows:
         row["tags"] = []
+        row["wording"] = []
+        row["grammar"] = []
     flagged = verify.flagged(
         rows, verify.finished_verses(documents, prepared, rows, NO_STRUCTURE)
     )

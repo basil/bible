@@ -138,13 +138,13 @@ def test_every_reading_edit_binds_to_the_pinned_kjv(
             assert kjv_text[e["ref"]][e["start"] : e["end"]] == e["old"]
 
 
-def test_every_reading_tag_is_asserted_not_computed(readings: list[Entry]) -> None:
-    for o in readings:
-        if "units" not in o:
-            continue  # a correction of shared Greek has no difference to tag
-        groups = {t.split(":")[0] for t in o["tags"]}
-        assert groups <= {"from", "gram"}, o["id"]
-        assert "from" in groups and "gram" in groups, o["id"]
+def test_readings_declare_wording_and_grammar_only_for_units(
+    readings: list[Entry],
+) -> None:
+    for reading in readings:
+        assert "tags" not in reading
+        assert bool(reading.get("wording")) == bool(reading.get("units"))
+        assert bool(reading.get("grammar")) == bool(reading.get("units"))
 
 
 def test_every_reading_why_is_at_most_two_sentences(readings: list[Entry]) -> None:
@@ -168,16 +168,16 @@ def test_a_computed_tag_is_rejected(
     validate: Validate, sample: Callable[[], Entry]
 ) -> None:
     bad = sample()
-    bad["tags"].append("op:omit")
+    bad["wording"].append("op:omit")
     _, errors = validate([bad])
-    assert len(errors) == 1 and "computed by the build" in errors[0]
+    assert len(errors) == 1 and "malformed" in errors[0]
 
 
 def test_an_unknown_tag_is_rejected(
     validate: Validate, sample: Callable[[], Entry]
 ) -> None:
     bad = sample()
-    bad["tags"].append("from:nowhere")
+    bad["grammar"].append("nowhere")
     _, errors = validate([bad])
     assert len(errors) == 1 and "malformed" in errors[0]
 
@@ -293,7 +293,7 @@ def test_a_kjv_parallel_is_quoted_from_the_pinned_text(
     validate: Validate, readings: list[Entry]
 ) -> None:
     entry = kjv_parallel(readings)
-    assert "from:kjv-parallel" in entry["tags"]
+    assert "kjv-parallel" in entry["wording"]
     compiled, errors = validate([entry])
     assert len(compiled) == 1 and not errors
 
@@ -403,7 +403,7 @@ def test_the_tag_and_the_evidence_go_together(
     _, errors = validate([bad])
     assert len(errors) == 1 and "go together" in errors[0]
     bad = sample()
-    assert "from:kjv-parallel" not in bad["tags"]
+    assert "kjv-parallel" not in bad["wording"]
     bad["evidence"]["kjv"] = {"ref": "MAT 1:1", "quote": "The book of the generation"}
     _, errors = validate([bad])
     assert len(errors) == 1 and "go together" in errors[0]
@@ -611,6 +611,14 @@ def test_a_correction_of_shared_greek_validates_without_units_or_tags(
     assert errors == [] and compiled[0]["unit_ids"] == []
 
 
+@pytest.mark.parametrize("field", ["wording", "grammar"])
+def test_a_correction_of_shared_greek_has_no_wording_or_grammar(
+    validate: Validate, field: str
+) -> None:
+    _, errors = validate([{**correction(), field: []}])
+    assert len(errors) == 1 and "wording and grammar go with units" in errors[0]
+
+
 @pytest.mark.parametrize(
     "field,value,message",
     [
@@ -668,7 +676,8 @@ def nochange(unit: Unit, witness: str, quote: str) -> Entry:
         "id": unit["id"],
         "units": [{"ref": ref, "tr": " ".join(unit["tr"]), "rp": " ".join(unit["rp"])}],
         "kind": "nochange",
-        "tags": ["from:kjv-retained", "gram:supplied-word"],
+        "wording": ["kjv-retained"],
+        "grammar": ["supplied-word"],
         "why": "Citation fixture.",
         "evidence": {witness: {"ref": ref, "quote": quote}},
     }
@@ -1108,7 +1117,8 @@ def test_the_build_stops_on_a_stale_placement_a_redundant_reading_or_a_broken_in
         "kind": "nochange",
         "why": "Keep the KJV.",
         "evidence": {},
-        "tag_set": [],
+        "wording": [],
+        "grammar": [],
         "bound": [],
     }
     rows = decide.decide(
@@ -1182,3 +1192,23 @@ def test_the_build_stops_on_ordinary_tr_restoration_failures(
                 ]
             },
         )
+
+
+@pytest.mark.parametrize("field", ["wording", "grammar"])
+def test_reading_claims_are_unique(
+    validate: Validate, sample: Callable[[], Entry], field: str
+) -> None:
+    bad = sample()
+    bad[field].append(bad[field][0])
+    _, errors = validate([bad])
+    assert len(errors) == 1 and "duplicate wording or grammar" in errors[0]
+
+
+@pytest.mark.parametrize("field", ["wording", "grammar"])
+def test_reading_units_need_both_kinds_of_claim(
+    validate: Validate, sample: Callable[[], Entry], field: str
+) -> None:
+    bad = sample()
+    bad[field] = []
+    _, errors = validate([bad])
+    assert len(errors) == 1 and "wording and grammar go with units" in errors[0]

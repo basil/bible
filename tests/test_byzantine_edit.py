@@ -367,6 +367,8 @@ def test_structural_alone_on_the_pinned_kjv(
             "target_ref": r["target_ref"],
             "flags": r["flags"],
             "tags": r["tags"],
+            "wording": r["wording"],
+            "grammar": r["grammar"],
         }
         for r in context.verified.dispositions
         if r["disposition"] == "structural"

@@ -189,7 +189,9 @@ class Policy:
         """A policy with some of its files replaced: as a test declares them,
         or with what the build works out from the sources."""
         values = {name: getattr(self, name) for name in self.__dataclass_fields__}
-        values.update({name: freeze(value) for name, value in files.items()})
+        values.update(
+            {name: freeze(normalized(name, value)) for name, value in files.items()}
+        )
         policy = Policy(**values)
         check(policy)
         return policy
@@ -207,6 +209,20 @@ def thaw(value: object) -> Any:
     if isinstance(value, (tuple, list)):
         return [thaw(v) for v in value]
     return value
+
+
+def normalized(name: str, data: Any) -> Any:
+    """Give repeated decisions one shape at the policy boundary."""
+    field = {"brenton_notes": "corrections", "citations": "decisions"}.get(name)
+    if field is None or field not in data:
+        return data
+    return {
+        **data,
+        field: {
+            key: (value,) if isinstance(value, Mapping) else value
+            for key, value in data[field].items()
+        },
+    }
 
 
 def check_prose_content(content: object, label: str) -> None:
@@ -252,6 +268,27 @@ def check(policy: Policy) -> None:
             isinstance(why, str) and bool(why.strip()),
             f"Note placement without a why: {key}",
         )
+    # A decision's reason is required where it is carried out; a relocation
+    # names the verse it prints at.
+    decided: dict[str, frozenset[str]] = {
+        "stubs": frozenset(),
+        "unnumbered": frozenset(),
+        "relocations": frozenset({"to"}),
+    }
+    for name, group in policy.versification.items():
+        if name in decided:
+            require_fields(group, {"why", "decisions"}, (), f"Versification {name}")
+            assert isinstance(group, Mapping)
+            require(
+                isinstance(group["why"], str)
+                and bool(group["why"].strip())
+                and isinstance(group["decisions"], Mapping),
+                f"Versification {name} without its reason or its decisions",
+            )
+            for reference, entry in group["decisions"].items():
+                require_fields(
+                    entry, decided[name], {"why"}, f"Versification {name} {reference}"
+                )
     require_fields(policy.comparisons, {"why", "passages"}, (), "Comparisons")
     for comparison in policy.comparisons["passages"]:
         require_fields(comparison, {"passage", "kjv", "oleb"}, {"osb"}, "Comparison")
@@ -350,6 +387,16 @@ def check(policy: Policy) -> None:
             ),
             f"Empty Brenton rendering: {key}",
         )
+
+    def check_correction(entry: schema.Correction, source: str, key: str) -> None:
+        require_fields(
+            entry,
+            {"from", "to", "why"},
+            {"uncategorized"},
+            f"{source} correction {key}",
+        )
+        require(entry["why"], f"{source} correction without a why: {key}")
+
     # A misspelled field would be read as no override, and the entry as used.
     # The 1611 notes also say where George's lemma is found in the verse; a
     # note of either source may say which verse it belongs to.
@@ -384,15 +431,12 @@ def check(policy: Policy) -> None:
                     and "occurrence" in override,
                     f"Unwidened note exception needs a repeated lemma: {key}",
                 )
-        for key, group in notes["corrections"].items():
-            for entry in group if isinstance(group, tuple) else (group,):
-                require_fields(
-                    entry,
-                    {"from", "to", "why"},
-                    {"uncategorized"},
-                    f"{name} correction {key}",
-                )
-                require(entry["why"], f"{name} correction without a why: {key}")
+    for key, group in policy.brenton_notes["corrections"].items():
+        require(bool(group), f"Brenton correction group with no corrections: {key}")
+        for entry in group:
+            check_correction(entry, "Brenton", key)
+    for key, entry in policy.kjv_notes["corrections"].items():
+        check_correction(entry, "1611", key)
     # A CCEL decision names its existing duplicate, leaves it out, or places
     # it before its anchor words; its corrections are as the other sources' are.
     require_fields(policy.ccel_notes, {"notes", "corrections"}, (), "CCEL note file")
@@ -428,10 +472,7 @@ def check(policy: Policy) -> None:
             f"CCEL note decision neither omits, duplicates nor places its note: {key}",
         )
     for key, entry in policy.ccel_notes["corrections"].items():
-        require_fields(
-            entry, {"from", "to", "why"}, {"uncategorized"}, f"CCEL correction {key}"
-        )
-        require(entry["why"], f"CCEL correction without a why: {key}")
+        check_correction(entry, "CCEL", key)
     # A Brenton exception's occurrence says which of a repeated lemma is meant.
     pointless = sorted(
         k
@@ -684,7 +725,7 @@ def check(policy: Policy) -> None:
         require_fields(
             reading,
             {"kind", "why", "evidence"},
-            {"units", "tags", "edits"},
+            {"units", "wording", "grammar", "edits"},
             f"Byzantine reading {key}",
         )
     for key, accent in policy.byzantine["accents"].items():
@@ -727,7 +768,13 @@ def load() -> Policy:
     policy = Policy(
         **{
             name.replace("-", "_"): cast(
-                Any, freeze(read_json(paths.EDITION_DIR / f"{name}.json"))
+                Any,
+                freeze(
+                    normalized(
+                        name.replace("-", "_"),
+                        read_json(paths.EDITION_DIR / f"{name}.json"),
+                    )
+                ),
             )
             for name in FILES
         }

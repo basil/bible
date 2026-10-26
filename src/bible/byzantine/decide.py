@@ -40,24 +40,24 @@ from bible.byzantine.rows import (
     RevisionRow,
     Unit,
 )
-from bible.byzantine.tags import Tag
+from bible.byzantine.tags import Grammar, Tag, Wording
 from bible.byzantine.units import NEUTRAL_CLASSES
 from bible.checks import require
 from bible.scripture import plain
 
 HYPER_LITERAL = set(APPARATUS) - {TCENT}
 GRAM_BY_CLASS = {
-    "article": Tag.GRAM_ARTICLE,
-    "particle": Tag.GRAM_PARTICLE,
-    "pronoun": Tag.GRAM_PRONOUN,
-    "order": Tag.GRAM_ORDER,
-    "name-spelling": Tag.GRAM_NAME,
-    "inflection": Tag.GRAM_INFLECTION,
-    "accent": Tag.GRAM_PUNCTUATION,
-    "substitution": Tag.GRAM_LEXICAL,
-    "omission": Tag.GRAM_LEXICAL,
-    "addition": Tag.GRAM_LEXICAL,
-    "prefix": Tag.GRAM_LEXICAL,
+    "article": Grammar.ARTICLE,
+    "particle": Grammar.PARTICLE,
+    "pronoun": Grammar.PRONOUN,
+    "order": Grammar.ORDER,
+    "name-spelling": Grammar.NAME,
+    "inflection": Grammar.INFLECTION,
+    "accent": Grammar.PUNCTUATION,
+    "substitution": Grammar.LEXICAL,
+    "omission": Grammar.LEXICAL,
+    "addition": Grammar.LEXICAL,
+    "prefix": Grammar.LEXICAL,
 }
 OP_BY_KIND = {
     "replace": Tag.OP_REPLACE,
@@ -69,8 +69,8 @@ OP_BY_KIND = {
 type Contrast = tuple[tuple[str, ...], tuple[str, ...]]
 
 FROM_BY_SOURCE = {
-    PIERPONT: Tag.FROM_PIERPONT,
-    ADDITIONAL: Tag.FROM_ADDITIONAL,
+    PIERPONT: Wording.PIERPONT,
+    ADDITIONAL: Wording.ADDITIONAL,
 }
 
 
@@ -321,6 +321,8 @@ def decide(
     for unit in units:
         uid = unit["id"]
         tags = unit_tags(unit)
+        wording: set[Wording] = set()
+        grammar: set[Grammar] = set()
         flags: list[str] = []
         row: Disposition = {
             "unit": uid,
@@ -354,7 +356,8 @@ def decide(
                     "evidence": o["evidence"],
                 }
             )
-            tags.update(o["tag_set"])
+            wording.update(o["wording"])
+            grammar.update(o["grammar"])
             if o["kind"] == "nochange":
                 row["action"] = "nochange"
                 tags.add(Tag.OP_NOCHANGE)
@@ -427,7 +430,7 @@ def decide(
                 if unit.get("kind") == "relocation"
                 else Tag.OP_OMIT_VERSE
             )
-            tags.add(Tag.GRAM_LEXICAL)
+            grammar.add(Grammar.LEXICAL)
         elif conflict:
             row.update(
                 {"disposition": "conflict", "action": "nochange", "reason": conflict}
@@ -442,8 +445,9 @@ def decide(
                     "basis": f"{selected['source']}:{selected['entry']}",
                 }
             )
-            tags.update({Tag.OP_NOCHANGE, Tag.EV_KJV_ALREADY, Tag.FROM_KJV_RETAINED})
-            tags.add(GRAM_BY_CLASS.get(unit["class"], Tag.GRAM_LEXICAL))
+            tags.update({Tag.OP_NOCHANGE, Tag.EV_KJV_ALREADY})
+            wording.add(Wording.KJV_RETAINED)
+            grammar.add(GRAM_BY_CLASS.get(unit["class"], Grammar.LEXICAL))
         elif selected:
             edits = row["selected_edits"]
             shared = sorted(
@@ -467,7 +471,7 @@ def decide(
                 row["action"] = "edit"
                 row["ops"] = operations(owned_edits, kjv, common)
             tags.update(OP_BY_KIND[e["kind"]] for e in edits)
-            tags.add(FROM_BY_SOURCE[selected["source"]])
+            wording.add(FROM_BY_SOURCE[selected["source"]])
             rendering = selected.get("rendering")
             if rendering:
                 tags.add(
@@ -475,7 +479,7 @@ def decide(
                     if rendering == "verified"
                     else Tag.EV_RENDERING_UNVERIFIED
                 )
-            tags.add(GRAM_BY_CLASS.get(unit["class"], Tag.GRAM_LEXICAL))
+            grammar.add(GRAM_BY_CLASS.get(unit["class"], Grammar.LEXICAL))
             support = corroborating(
                 selected, uid, by_unit_instructions[uid], by_unit_reports[uid], kjv
             )
@@ -513,7 +517,8 @@ def decide(
             tags.add(Tag.OP_NOCHANGE)
         else:
             row.update({"disposition": "silent", "action": "nochange"})
-            tags.update({Tag.OP_NOCHANGE, Tag.FROM_KJV_RETAINED})
+            tags.add(Tag.OP_NOCHANGE)
+            wording.add(Wording.KJV_RETAINED)
             witnesses = set(row["witnesses"])
             if TCENT in witnesses:
                 tags.add(Tag.EV_TCENT_REPORTS)
@@ -522,7 +527,7 @@ def decide(
             if any(r.get("reviser") == "revised" for r in by_unit_revisions[uid]):
                 flags.append("Boyd changed the ASV here")
             if unit.get("kind") == "accent":
-                tags.add(Tag.GRAM_PUNCTUATION)
+                grammar.add(Grammar.PUNCTUATION)
             unattached = [
                 i
                 for i in instructions
@@ -542,6 +547,8 @@ def decide(
             tags.add(Tag.EV_REVISION_ALARM)
             row["alarm_phrases"] = alarm["missing"]
         row["tags"] = sorted(t.value for t in tags)
+        row["wording"] = sorted(w.value for w in wording)
+        row["grammar"] = sorted(g.value for g in grammar)
         row["flags"] = flags
         result.append(row)
     # An override without units corrects English where the Greek is shared:
@@ -559,10 +566,9 @@ def decide(
                     "ops": ops,
                     "why": o["why"],
                     "evidence": o["evidence"],
-                    "tags": sorted(
-                        {OP_BY_KIND[op["kind"]].value for op in ops}
-                        | {t.value for t in o["tag_set"]}
-                    ),
+                    "tags": sorted({OP_BY_KIND[op["kind"]].value for op in ops}),
+                    "wording": [],
+                    "grammar": [],
                     "flags": [],
                 }
             )
