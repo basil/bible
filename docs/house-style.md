@@ -48,8 +48,6 @@ Ordinary witness notes are composed from the decision: `label` names a terminolo
 
 Displaced words that substitute for the whole lemma use `fqa`, an alternative rendering; when annotation widens a repeated lemma, it widens the alternative with the same surrounding words. A quotation within commentary uses `fq` and keeps its own words. Explicit notes remain where composition would lose information: partial alternatives (such as 1 Kingdoms 15:12), source brackets or different punctuation (2 Kingdoms 17:8 and 4 Kingdoms 3:21), qualified hands, near agreement, multiple witnesses or renderings, Greek or Hebrew glosses, citations, and compound remarks. Notes identifying an inserted verse or a range, quoting an omitted verse, or describing a relocation remain explicit or use their existing structural composers; these are commentary about a passage rather than whole-lemma alternatives.
 
-Open questions about particular readings are in [todo.md](todo.md).
-
 ## Notes
 
 Every note stands in the inside margin beside its verse, without a caller, beginning with the verse's number and the words it is about, followed by a colon. Notes too tall for a page's margin are moved below the text by `edition/margin.json`, keyed by the note, with lettered callers restarting on each page; Brenton's Appendix notes and the prefaces' notes are footnotes (lowercase letters in scripture, numbers in front matter).

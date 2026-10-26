@@ -53,10 +53,6 @@ A word is respelled or modernized by an explicit editorial vocabulary decision w
 
 As the principles say, the revision is made last, so a lemma or a `from` names "Jezekiel" if the source does, and "Thæman", whose ligature is written out after every other decision. A respelling writes its word with the letters, and does more than write out a ligature.
 
-### Outstanding editorial work
-
-The open questions are listed in [the open notes](docs/todo.md), among them Brenton's reports of Codex Alexandrinus that the evidence does not settle.
-
 ## Changing the layout
 
 PTXprint's configuration is in `config/`, on top of its layout for the Berean Standard Bible (BSB):
