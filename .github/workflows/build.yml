@@ -40,7 +40,7 @@ jobs:
           fc-list ':family=Valkyrie OT A' family style
       - run: make bootstrap
       - run: make lint
-      - uses: DavidAnson/markdownlint-cli2-action@v24.2.0
+      - uses: DavidAnson/markdownlint-cli2-action@v25.0.0
       - run: make validate
       - run: make test
       - name: Restore page-filler checkpoints (master only)
