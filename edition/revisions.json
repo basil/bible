@@ -3951,7 +3951,7 @@
       },
       "Phoenicia, coastal region": {
         "to": "Phoenicia",
-        "why": "The region. The English form of the Greek Φοινίκη, Brenton’s Phœnicia, in place of the King James Phenice and Phenicia (Acts 11:19, 15:3, 21:2), which English no longer uses for the region; Phenice the haven of Crete keeps its form, as listed under keep.",
+        "why": "The region. The English name of the Greek Φοινίκη, in place of the King James Phenice and Phenicia (Acts 11:19, 15:3, 21:2), which English no longer uses for it, and of Brenton’s Phenice and Phœnice beside his Phœnicia. The haven of Crete at Acts 27:12, Φοῖνιξ, is Phoenix by its own decision.",
         "forms": {
           "Phenice": [
             "1ES 2:16",
@@ -3982,16 +3982,16 @@
           "Phœnice": [
             "ISA 23:2"
           ]
-        },
-        "keep": [
-          {
-            "form": "Phenice",
-            "who": "Phenice the haven of Crete (Acts 27:12).",
-            "verses": [
-              "ACT 27:12"
-            ]
-          }
-        ]
+        }
+      },
+      "Phoenix, Cretan haven": {
+        "to": "Phoenix",
+        "why": "The haven of Crete at Acts 27:12. Phoenix is the English form of its Greek name Φοῖνιξ, in place of the King James Phenice, a form the King James Bible also gives the region Φοινίκη, which has its own decision.",
+        "forms": {
+          "Phenice": [
+            "ACT 27:12"
+          ]
+        }
       },
       "Rahab, harlot of Jericho": {
         "to": "Rahab",
