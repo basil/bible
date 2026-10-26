@@ -9117,6 +9117,17 @@
       },
       "source_note": "\\fqa Alex. \\ft Κύριος for Κύριε adopted here. Compare \\xt Mat. 16. 22, \\ft with this passage."
     },
+    "ISA 54:17#2": {
+      "why": "Keep: Brenton’s English every voice that shall rise up already renders the relative clause that A’s added ἣ makes, so there is no alternative English to promote. Brenton’s 1844 printing, vol. 2 physical p. 232 (printed p. 729), prints Alex. + ἣ. with its dagger before that shall rise; the Bagster printings drop it (1879 physical p. 906; 1900 physical p. 902; printed p. 890), whose facing Greek, like B, reads πᾶσα φωνὴ ἀναστήσεται, and neither eBible nor CCEL transcribes it. Swete III p. 202 records φωνη] + η ℵ^c AQ: unqualified A adds the relative before ἀναστήσεται, without a correcting hand, lacuna, or uncertainty qualification. The note is restored by the Brenton correction at ISA 54:17.",
+      "swete": {
+        "volume": 3,
+        "page": 202,
+        "evidence": "apparatus",
+        "reading": "φωνη] + η ℵ^c AQ",
+        "agrees": true
+      },
+      "source_note": "\\fqa Alex. \\ft + ἣ."
+    },
     "ISA 61:3": {
       "why": "Keep Brenton’s word-division report and unchanged garment of glory. Brenton 1879 physical p. 912 and 1900 physical p. 908 (printed p. 896) print θ before the garment and facing κατὰ στολὴν δόξης, beside “Alex. reads καταστολὴν as one word.” Swete III p. 212 B main positively reads καταστολὴν δόξης, but supplies no A word-division unit; the Appendix p. 861 likewise records no A unit there. The base word division cannot be attributed to B, and the complete English already renders garment.",
       "swete": {

@@ -2,7 +2,8 @@
 
 eBible's text of Brenton and Calvin George's transcription of the 1611 margin
 have slips: a missing word space, a doubled label, a transcriber's remark, a
-dropped note.
+dropped note. A note of Brenton's 1844 printing that the later Bagster
+printings, and so eBible, dropped or shortened is restored the same way.
 edition/brenton-notes.json and edition/kjv-notes.json mend them, each with its
 reason. A correction is made to the source's own text, where it must be found
 once, and must fit one of the kinds of slip below unless it is marked
@@ -59,6 +60,26 @@ def letter_slip(old: str, new: str) -> str | None:
     return None
 
 
+def inserted_note(before: str, at: int, new: str) -> bool:
+    """Whether new, inserted in before at an offset, is one whole note.
+
+    change() takes the insertion as late as it can, so a note set before a
+    marker or another note shares the start of what follows it: its backslash,
+    or its own opening. The insertion may stand as far back as new ends with
+    what stands before it; each such place is tried.
+    """
+    shift = 0
+    while True:
+        moved = before[at - shift : at] + new[: len(new) - shift]
+        # One note and nothing else: a lazy fullmatch would take two notes
+        # with words between them for one.
+        if (note := NOTE.match(moved)) and note.end() == len(moved):
+            return True
+        shift += 1
+        if shift > min(at, len(new)) or before[at - shift] != new[-shift]:
+            return False
+
+
 def category(before: str, after: str) -> str | None:
     """The kind of slip a correction mends, or None if it is none of them."""
     at, old, new = change(before, after)
@@ -83,9 +104,7 @@ def category(before: str, after: str) -> str | None:
             return "remark"
         if EMPTY_NOTE.fullmatch(old):
             return "empty note"
-    # One note and nothing else: a lazy fullmatch would take two notes with
-    # words between them for one.
-    if not old and (note := NOTE.match(new)) and note.end() == len(new):
+    if not old and inserted_note(before, at, new):
         return "missing note"
     if old == "[Greek characters]" and re.fullmatch(rf"[{GREEK}\s,.;]+", new):
         return "omitted Greek"
@@ -217,10 +236,11 @@ def brenton(
     within that note alone, where its words must be found once, and may not
     reach beyond it. Outside notes a correction may only mend word spaces in
     translation or restore a whole note Brenton printed that the transcription
-    lacks, so the translation stays eBible's. In a file without verses, the key
-    names the words the note stands among, or outside the notes, the words it
-    mends, which are found once in the file; a preface, an introduction, or
-    the appendix's notes and labels may have their words mended.
+    lacks, his 1844 printing's among them, so the translation stays eBible's.
+    In a file without verses, the key names the words the note stands among,
+    or outside the notes, the words it mends, which are found once in the
+    file; a preface, an introduction, or the appendix's notes and labels may
+    have their words mended.
     """
     mended = set()
     for key, group in corrections.items():

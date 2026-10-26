@@ -118,14 +118,14 @@ Each decision gives its reason, usually as `why`. The shape of each file is decl
 
 A decision about a note is keyed by the note's `x-key`. A decision about front or back matter is keyed by its unit and the words it concerns, as `XXB There is`. A decision about a Greek difference of the New Testament is keyed by its unit: the verse and the Received Text's and Byzantine text's words there, as `MAT 5:39#1`; a placement by the witness and its row, as `faa 1PE 5:10#2`.
 
-A correction to a slip in transcription must match the source text exactly once, and in the scripture itself it may mend only word spacing or restore a whole note Brenton printed that the transcription lacks, so that the wording stays eBible's. It must also fit one of the kinds of slip that `src/bible/repairs.py` defines (a missing word space, a stray letter, a bracketed remark, a dropped note, and so on), or be marked `"uncategorized": true`, so that no correction can rewrite the translation unnoticed.
+A correction to a slip in transcription must match the source text exactly once, and in the scripture itself it may mend only word spacing or restore a whole note Brenton printed that the transcription lacks, so that the wording stays eBible's. It must also fit one of the kinds of slip that `src/bible/repairs.py` defines (a missing word space, a stray letter, a bracketed remark, a dropped note, and so on), or be marked `"uncategorized": true`, so that no correction can rewrite the translation unnoticed. A note a correction restores may be one of the 1844 printing that the later Bagster printings, and so eBible, dropped, and a correction within a note may recover information they shortened, retaining genuine corrections in later printings. Its `why` names the printing and page that has the information and the pages of the later printings that lack it, and explains any disagreement checked against the printed sources and Swete's images.
 
 ### Where a change goes
 
 | To change | Edit |
 | --- | --- |
 | Which books are printed, their order, names, and headings, and whether their chapters are labelled | `edition/manifest.json` |
-| A slip in a source's transcription | `corrections` in `edition/brenton-notes.json` or `edition/kjv-notes.json` |
+| A slip in a source's transcription, or a note of Brenton's 1844 printing that the later printings dropped or shortened | `corrections` in `edition/brenton-notes.json` or `edition/kjv-notes.json` |
 | The words a note is about, its italics, or whether it is a sentence | `notes` in the same files |
 | A reading from Codex Alexandrinus, a supplied passage, a verse omitted or moved after it, a kept note, or an Appendix entry moved into the note on its verse | `edition/alexandrinus.json` |
 | A Byzantine reading the build does not decide, a ruling that a difference is not applied, a verse omitted or moved, a difference of accent alone, Hodges–Farstad's side where no apparatus gives it, or the lemma of a TR note | `edition/byzantine.json` |

@@ -1,5 +1,264 @@
 {
   "corrections": {
+    "LEV 23:36": {
+      "from": "it is a time of release",
+      "to": "it is \\f + \\fr 23:36 \\fqa q. d. \\ft holiday, when public business being restrained עצר servants, &c. have leave to go out ἐξόδιον.\\f*a time of release",
+      "why": "Brenton’s 1844 printing, vol. 1 physical p. 157 (printed p. 133), prints the note q. d. holiday, when public business being restrained עצר servants, &c. have leave to go out ἐξόδιον. with its dagger before a time of release in Leviticus 23:36; ἐξόδιον is the verse’s own Greek word. The later Bagster setting omits it (1879 physical p. 177; 1900 physical p. 173), and neither eBible nor CCEL transcribes it. Restore the earlier substantive explanation without changing the scripture words."
+    },
+    "NUM 35:3": {
+      "from": "\\fqa Gr. \\ft special offerings of land, \\fqa q. d. \\ft glebe lands. This latter sense is probably the right one here.",
+      "to": "\\fqa Gr. \\ft ἀφορισματα special offerings of land, \\fqa q. d. \\ft glebe lands. This latter sense is probably the right one here if we would judge from the frequent use of the word in LXX. rather than from its original meaning.",
+      "why": "Brenton’s 1844 printing, vol. 1 physical p. 210 (printed p. 186), gives the Greek word ἀφορισματα after Gr. and continues the note after right one here with if we would judge from the frequent use of the word in LXX. rather than from its original meaning. The later Bagster setting drops both at the same caller (1879 physical p. 242; 1900 physical p. 238), the form eBible and CCEL vi.35#3 transcribe. Restore the complete earlier note within the existing caller, with the word its ending speaks of.",
+      "uncategorized": true
+    },
+    "DEU 32:8": {
+      "from": "the number of the angels of God",
+      "to": "the number of \\f + \\fr 32:8 \\ft This variation may be accounted for if we suppose the three intermediate letters of בני [ישר]אל to be left out by LXX. But possibly the Jews, not the LXX., corrupted the passage. The Greek is more intelligible. Comp. \\xt Dan. 10. 13, 20, 21. Heb. 2. 5.\\f*the angels of God",
+      "why": "Brenton’s 1844 printing, vol. 1 physical p. 250 (printed p. 226), prints this discussion of בני [ישר]אל, bracketing the three letters whose loss leaves בני אל, with its dagger before the angels of God in Deuteronomy 32:8. The later Bagster setting omits it (1879 physical p. 292; 1900 physical p. 288), and neither eBible nor CCEL transcribes it. Restore the earlier textual explanation and its cross-references without changing the scripture words."
+    },
+    "JDG 16:5": {
+      "from": "\\f + \\fr 16:5 \\fqa Gr. \\ft a man.\\f*",
+      "to": "\\f + \\fr 16:5 \\fqa Gr. \\ft a man. Query. Is not the English ‘each’ derived from the Hebrew איש, eesh, a man?\\f*",
+      "why": "Brenton’s 1844 printing, vol. 1 physical p. 302 (printed p. 278), continues the gloss Gr. a man. with Query. Is not the English ‘each’ derived from the Hebrew איש, eesh, a man? at the same dagger before each in Judges 16:5. The later Bagster setting retains only the opening gloss (1879 physical p. 355; 1900 physical p. 351), which eBible transcribes; CCEL has no fuller copy. Restore the complete earlier note rather than setting a duplicate.",
+      "uncategorized": true
+    },
+    "JDG 16:7": {
+      "from": "have not been spoiled,",
+      "to": "have not been \\f + \\fr 16:7 \\fqa Gr. \\ft διεφθαρμέναις. \\fqa Heb. \\ft חרבו dried or ruined.\\f*spoiled,",
+      "why": "Brenton’s 1844 printing, vol. 1 physical p. 302 (printed p. 278), prints Gr. διεφθαρμέναις. Heb. חרבו dried or ruined. as one marginal note, with its only dagger before spoiled in Judges 16:7; its second half runs on beside 16:8 without a dagger, and διεφθαρμέναις is 16:7’s Greek where 16:8 has διεφθαρμένας. The Hebrew is printed pointed, חֹרָבוּ. The later Bagster setting omits the note (1879 physical p. 355; 1900 physical p. 351), and neither eBible nor CCEL transcribes it. Restore the complete earlier note at its caller without changing the scripture words."
+    },
+    "RUT 4:4": {
+      "from": "and he said, I am \\add here\\add*, I will redeem it.",
+      "to": "and he said, \\f + \\fr 4:4 \\ft ἐγώ εἰμι, this phrase seems at one time to signify ‘I am here,’ at another to represent only ἐγώ with emphasis, at another to imply Divinity, as when used by our Lord. According to Bos in the preface to his edition the 2d. use of ἐγώ ειμι where ειμι is redundant is peculiar to Judges, Ruth, and Kings.\\f*I am \\add here\\add*, I will redeem it.",
+      "why": "Brenton’s 1844 printing, vol. 1 physical p. 314 (printed p. 290), prints this grammatical note with its dagger before I myself will redeem it in Ruth 4:4, its rendering of ἐγώ εἰμι, which the later Bagster setting and eBible render I am here, I will redeem it; the note stands before those words. The later Bagster setting omits the note (1879 physical p. 369; 1900 physical p. 365), and neither eBible nor CCEL transcribes it; CCEL’s note on inform is a different caller and gloss. Restore the earlier note without changing the scripture words."
+    },
+    "1SA 21:3#2": {
+      "from": "\\f + \\fr 21:3 \\fqa Phellani maemoni, \\ft a corruption of פלכי אלמבי.\\f*",
+      "to": "\\f + \\fr 21:3 \\fqa Phellani maemoni, \\ft a corruption of the latter part of אל־מקום פלני אלמני ‘ad certum quendam locum.’\\f*",
+      "why": "Brenton’s 1844 printing, vol. 1 physical p. 340 (printed p. 316), gives the complete note Phellani maemoni, a corruption of the latter part of אל־מקום פלני אלמני ‘ad certum quendam locum.’ The later Bagster setting shortens it to a corruption of פלני אלמני (1879 physical p. 401; 1900 physical p. 397), which eBible transcribes with כ and ב for נ, and CCEL 1.xxi#2 correctly. Restore the complete 1844 note at eBible’s caller: 1844 sets its dagger before maemoni, the Bagster printings theirs before Phellani.",
+      "uncategorized": true
+    },
+    "1KI 7:44": [
+      {
+        "from": "the Porch of seats",
+        "to": "the \\f + \\fr 7:44 \\ft Answering to the English phrase, ‘King’s Bench.’\\f*Porch of seats",
+        "why": "Brenton’s 1844 printing, vol. 1 physical p. 396 (printed p. 372), prints Answering to the English phrase, ‘King’s Bench.’ with its dagger before Porch of seats in 3 Kingdoms 7:7, which eBible sets at 7:44. The later Bagster setting omits it (1879 physical p. 470; 1900 physical p. 466), and neither eBible nor CCEL transcribes it. Restore the earlier explanation without changing the scripture words."
+      },
+      {
+        "from": "he would judge",
+        "to": "he \\f + \\fr 7:44 \\fqa Gr. \\ft will.\\f*would judge",
+        "why": "Brenton’s 1844 printing, vol. 1 physical p. 396 (printed p. 372), prints Gr. will. with its dagger before would judge in 3 Kingdoms 7:7, eBible’s 7:44. The 1879 and 1900 printings (physical pp. 470 and 466) set one χ before both would judge and would dwell with the single note Gr. will., which eBible transcribes at would dwell in 7:45 alone. Restore the note at its first caller."
+      }
+    ],
+    "2KI 12:6": [
+      {
+        "from": "the proceeds of\\add* his sale",
+        "to": "the proceeds of\\add* \\f + \\fr 12:6 \\ft Confusion between מַכָּרוֹ ‘his friend,’ from נכר and מַכְרוֹ ‘his purchase.’\\f*his sale",
+        "why": "Brenton’s 1844 printing, vol. 1 physical p. 439 (printed p. 415), prints Confusion between מַכָּרוֹ ‘his friend,’ from נכר and מַכְרוֹ ‘his purchase.’ with its dagger before his sale in 4 Kingdoms 12:5, which eBible numbers 12:6; the two words differ only in their points, which are kept. The later Bagster setting omits it (1879 physical p. 522; 1900 physical p. 518), and neither eBible nor CCEL transcribes it."
+      },
+      {
+        "from": "repair the breaches",
+        "to": "repair the \\f + \\fr 12:6 \\fqa Gr. sing. \\ft βεδὲκ. Hebrew word.\\f*breaches",
+        "why": "Brenton’s 1844 printing, vol. 1 physical p. 439 (printed p. 415), prints Gr. sing. βεδὲκ. Hebrew word. with its dagger before breaches in 4 Kingdoms 12:5, eBible’s 12:6; the dagger before breaches in the next verse has no note of its own. The later Bagster setting omits it (1879 physical p. 522; 1900 physical p. 518), and neither eBible nor CCEL transcribes it."
+      }
+    ],
+    "2CH 31:5": {
+      "from": "Israel brought abundantly",
+      "to": "Israel \\f + \\fr 31:5 \\ft Note.—The active use of neuter verbs, as πλεονάζω, βασιλεύω, ἐξανατέλλω, &c. is frequent in LXX. See preface to Bos’s edition.\\f*brought abundantly",
+      "why": "Brenton’s 1844 printing, vol. 1 physical p. 521 (printed p. 497), prints this note with its dagger before brought abundantly in 2 Chronicles 31:5, the active use of πλεονάζω it describes; the crowded margin sets it a few lines higher, beside 31:4. The later Bagster setting omits it (1879 physical p. 622; 1900 physical p. 618), and neither eBible nor CCEL transcribes it."
+    },
+    "EZR 2:62": [
+      {
+        "from": "genealogy \\add as",
+        "to": "genealogy \\f + \\fr 2:62 \\fqa Gr. \\ft οἱ μεθωεσίμ, evident corruption of \\fqa Hebrew.\\f*\\add as",
+        "why": "Brenton’s 1844 printing, vol. 2 physical p. 12 (printed p. 509), prints Gr. οἱ μεθωεσίμ, evident corruption of Hebrew. with its first dagger before as though they had been reckoned in Ezra 2:62; the Greek column of the Bagster printing has οἱ μεθωεσὶμ. The later Bagster setting omits the note (1879 physical p. 636; 1900 physical p. 632), and neither eBible nor CCEL transcribes it. Restore this separate note at its caller."
+      },
+      {
+        "from": "they were removed, \\add as polluted",
+        "to": "they were \\f + \\fr 2:62 \\ft The rendering of גאל by ἀγχιστεύω has frequently caused much confusion in the LXX. version.\\f*removed, \\add as polluted",
+        "why": "Brenton’s 1844 printing, vol. 2 physical p. 12 (printed p. 509), prints this explanation with a second dagger before removed, as polluted in Ezra 2:62. The later Bagster setting omits it (1879 physical p. 636; 1900 physical p. 632), and neither eBible nor CCEL transcribes it. It is a distinct caller and note from the preceding comment on οἱ μεθωεσίμ."
+      }
+    ],
+    "EZR 2:69": {
+      "from": "\\v 69 According",
+      "to": "\\v 69 \\f + \\fr 2:69 \\ft μναὶ nom. case ungrammatical.\\f*According",
+      "why": "Brenton’s 1844 printing, vol. 2 physical p. 12 (printed p. 509), prints μναὶ nom. case ungrammatical. with its dagger before According to their power in Ezra 2:69, on the Greek’s χρυσίον καθαρὸν μναὶ. The later Bagster setting omits it (1879 physical p. 636; 1900 physical p. 632), and neither eBible nor CCEL transcribes it. Restore the grammatical note at its caller."
+    },
+    "EZR 3:2": {
+      "from": "stood up Jesus",
+      "to": "stood up \\f + \\fr 3:2 \\ft Called Joshua elsewhere, in Hagg. & Zech.\\f*Jesus",
+      "why": "Brenton’s 1844 printing, vol. 2 physical p. 12 (printed p. 509), prints Called Joshua elsewhere, in Hagg. & Zech. with its dagger before Jesus in Ezra 3:2. The later Bagster setting omits it (1879 physical p. 636; 1900 physical p. 632), and neither eBible nor CCEL transcribes it. Restore the earlier naming note at its caller."
+    },
+    "EZR 4:23": {
+      "from": "Then the tribute-gatherer of king",
+      "to": "Then the \\f + \\fr 4:23 \\fqa Or, \\ft courier.\\f*tribute-gatherer of king",
+      "why": "Brenton’s 1844 printing, vol. 2 physical p. 14 (printed p. 511), prints Or, courier. in the margin with a dagger before tribute-gatherer in Ezra 4:23, the Greek’s φορολόγος. The 1879 and 1900 printings (physical pp. 638 and 634) have neither the caller nor the note, and neither eBible nor CCEL transcribes it. Restore the 1844 alternative at its printed caller without changing the scripture words."
+    },
+    "EZR 5:1": {
+      "from": "Israel, \\add even\\add* to them.",
+      "to": "Israel, \\f + \\fr 5:1 \\fqa Or, \\ft for, \\fqa or, \\ft concerning them.\\f*\\add even\\add* to them.",
+      "why": "Brenton’s 1844 printing, vol. 2 physical p. 14 (printed p. 511), prints Or, for, or, concerning them. in the margin with its dagger before even to them at the end of Ezra 5:1. The 1879 and 1900 printings (physical pp. 638 and 634) keep only Or, concerning them., with the caller after even, as CCEL 5.v#1 transcribes it; eBible has no note. Restore the complete 1844 note at its caller, accounting separately for the shorter duplicate."
+    },
+    "EZR 4:18": {
+      "from": "\\v 18 The tribute-gatherer whom",
+      "to": "\\v 18 \\f + \\fr 4:18 \\fqa Or, \\ft tribute-bearer \\fqa or \\ft collector.\\f*The tribute-gatherer whom",
+      "why": "Brenton’s 1844 printing, vol. 2 physical p. 14 (printed p. 511), prints Or, tribute-bearer or collector. in the margin with a dagger before The tribute-gatherer at the opening of Ezra 4:18. The 1879 and 1900 printings (physical pp. 638 and 634) have neither the caller nor the note, and neither eBible nor CCEL transcribes it. Restore the complete 1844 note at its printed caller without changing the scripture words."
+    },
+    "EZR 20:14": {
+      "from": "Odum, the sons of Banuæ.",
+      "to": "Odum, \\f + \\fr 20:14 \\ft Probably a mistranslation, see \\fqa Heb.\\f*the sons of Banuæ.",
+      "why": "Brenton’s 1844 printing, vol. 2 physical p. 32 (printed p. 529), prints Probably a mistranslation, see Heb. with its dagger before the sons of Banuæ in Nehemias 10:13. Pinned eBible keeps Nehemias in its Esdras file and numbers this verse EZR 20:14; the assemble stage makes it NEH 10:13. The Bagster printings keep the caller but shorten the note to See Heb. (1879 physical p. 661; 1900 physical p. 657), as CCEL 6.x#2 transcribes it; eBible has no note. Restore the complete 1844 note, accounting separately for the shorter duplicate."
+    },
+    "ESG 1:20": {
+      "from": "made, be widely proclaimed",
+      "to": "made, \\f + \\fr 1:20 \\ft The punctuation probably wrong.\\f*be widely proclaimed",
+      "why": "Brenton’s 1844 printing, vol. 2 physical p. 38 (printed p. 535), prints The punctuation probably wrong. with its dagger before be widely proclaimed in Esther 1:20. The 1900 printing, physical p. 664 (printed p. 652), has neither caller nor note, and neither eBible nor CCEL transcribes it. Restore the earlier comment at its printed caller."
+    },
+    "ESG 9:16": {
+      "from": "and helped one another",
+      "to": "and \\f + \\fr 9:16 \\fqa Gr. \\fqa lit. \\ft themselves, i. e. the mutual act of the parts is the reciprocal or reflective act of the whole. See \\xt Eph. 5. 19; Col. 3. 16.\\f*helped one another",
+      "why": "Brenton’s 1844 printing, vol. 2 physical p. 47 (printed p. 544), prints this grammatical explanation with its dagger before helped one another in Esther 9:16. The 1900 printing, physical p. 675 (printed p. 663), has neither caller nor note, and neither eBible nor CCEL transcribes it. Restore the complete earlier note and its cross-references at the printed caller."
+    },
+    "JOB 17:5": [
+      {
+        "from": "promise mischief",
+        "to": "promise \\f + \\fr 17:5 \\ft κακίας mischiefs, \\fqa i. e. \\ft the opportunity of doing mischief. This passage may be accounted for by the ambiguity of רעים ‘friends, \\fqa or, \\ft evils’ and חלק ‘flattery, \\fqa or, \\ft division.’\\f*mischief",
+        "why": "Brenton’s 1844 printing, vol. 2 physical p. 60 (printed p. 557), prints this explanation with its dagger before mischief in Job 17:5. The later Bagster setting omits it (1879 physical p. 694; 1900 physical p. 690), and neither eBible nor CCEL transcribes it. Restore the earlier lexical note at its caller."
+      },
+      {
+        "from": "to \\add his\\add* companions",
+        "to": "to \\f + \\fr 17:5 \\ft τῃ μερίδι \\fqa q. d. \\ft party.\\f*\\add his\\add* companions",
+        "why": "Brenton’s 1844 printing, vol. 2 physical p. 60 (printed p. 557), prints τῃ μερίδι q. d. party. with a second dagger before his companions in Job 17:5. The later Bagster setting omits it (1879 physical p. 694; 1900 physical p. 690), and neither eBible nor CCEL transcribes it. Restore this separate note at its caller."
+      }
+    ],
+    "PSA 32:7": {
+      "from": "as \\add in\\add* a bottle",
+      "to": "as \\add in\\add* a \\f + \\fr 32:7 \\ft Confusion between נד ‘heap’ and נאד ‘bottle.’\\f*bottle",
+      "why": "Brenton’s 1844 printing, vol. 2 physical p. 92 (printed p. 589), prints Confusion between נד ‘heap’ and נאד ‘bottle.’ with its dagger before bottle in Psalm 32:7. The later Bagster setting omits it (1879 physical p. 732; 1900 physical p. 728), and neither eBible nor CCEL transcribes it. Restore the earlier Hebrew explanation at its caller."
+    },
+    "PSA 47:10": {
+      "from": "thy people",
+      "to": "thy \\f + \\fr 47:10 \\ft λαοῦ probably written for ναοῦ, temple.\\f*people",
+      "why": "Brenton’s 1844 printing, vol. 2 physical p. 100 (printed p. 597), prints λαοῦ probably written for ναοῦ, temple. with its dagger before people in printed Psalm 47:9, which eBible numbers 47:10. The later Bagster setting omits it (1879 physical p. 742; 1900 physical p. 738), and neither eBible nor CCEL transcribes it. Restore the earlier conjecture at its caller."
+    },
+    "PSA 77:13": {
+      "from": "\\add in\\add* a bottle",
+      "to": "\\add in\\add* \\f + \\fr 77:13 \\ft נד ‘heap,’ and נאד ‘skin bottle,’ are easily confounded.\\f*a bottle",
+      "why": "Brenton’s 1844 printing, vol. 2 physical p. 115 (printed p. 612), prints נד ‘heap,’ and נאד ‘skin bottle,’ are easily confounded. with its dagger before a bottle in Psalm 77:13. The later Bagster setting omits it (1879 physical p. 760; 1900 physical p. 756), and neither eBible nor CCEL transcribes it. Restore the earlier Hebrew explanation at its caller."
+    },
+    "PRO 17:6a": [
+      {
+        "from": "\\v 6a The",
+        "to": "\\v 6a \\f + \\fr 17:6a \\ft Note.—What follows seems quite an interpolation.\\f*The",
+        "why": "Brenton’s 1844 printing, vol. 2 physical p. 162 (printed p. 659), sets the uncalled marginal Note.—What follows seems quite an interpolation. immediately before The faithful has the whole world full of wealth, which it runs on within Proverbs 17:6 and eBible numbers 17:6a. The later Bagster setting omits it (1879 physical p. 820; 1900 physical p. 816), and neither eBible nor CCEL transcribes it. Restore the note at the passage it introduces without inventing a caller."
+      },
+      {
+        "from": "a farthing",
+        "to": "a \\f + \\fr 17:6a \\fqa Gr. \\ft obolus.\\f*farthing",
+        "why": "Brenton’s 1844 printing, vol. 2 physical p. 162 (printed p. 659), prints Gr. obolus. with its dagger before farthing in the sentence eBible numbers Proverbs 17:6a. The later Bagster setting omits it (1879 physical p. 820; 1900 physical p. 816), and neither eBible nor CCEL transcribes it. Restore the earlier note at its caller."
+      }
+    ],
+    "PRO 27:9": {
+      "from": "the soul is broken",
+      "to": "the soul is \\f + \\fr 27:9 \\ft Confusion between עצב and עצה\\f*broken",
+      "why": "Brenton’s 1844 printing, vol. 2 physical p. 171 (printed p. 668), prints Confusion between עצב and עצה with its dagger before broken in Proverbs 27:9: the Greek’s broken by calamities reads עצב, pain, where the Hebrew has מעצת, counsel. The later Bagster setting omits the note (1879 physical p. 831; 1900 physical p. 827), and neither eBible nor CCEL transcribes it. Restore the earlier explanation at its caller."
+    },
+    "ECC 8:6": {
+      "from": "is great to him.",
+      "to": "is \\f + \\fr 8:6 \\ft Seeming confusion between דעה and רעת\\f*great to him.",
+      "why": "Brenton’s 1844 printing, vol. 2 physical p. 179 (printed p. 676), prints Seeming confusion between דעה and רעת with its dagger before great to him in Ecclesiastes 8:6: the Greek’s knowledge reads דעה where the Hebrew has רעת, evil. The later Bagster setting has no caller or note in this verse (1879 physical p. 841; 1900 physical p. 837); its Comp. Heb. with Gr. on that page belongs to great depth in 7:24 (printed 7:25). Neither eBible nor CCEL transcribes it. Restore the earlier explanation at its caller."
+    },
+    "ISA 16:4": {
+      "from": "pursuer: for thine alliance",
+      "to": "pursuer: \\f + \\fr 16:4 \\ft Common punctuation perhaps wrong.\\f*for thine alliance",
+      "why": "Brenton’s 1844 printing, vol. 2 physical p. 200 (printed p. 697), prints Common punctuation perhaps wrong. with its dagger before for thine alliance has been taken away in Isaiah 16:4. The later Bagster setting omits it (1879 physical p. 867; 1900 physical p. 863), and neither eBible nor CCEL transcribes it. Restore the earlier punctuation notice at its caller."
+    },
+    "ISA 54:17": [
+      {
+        "from": "vanquish them all; and thine adversaries",
+        "to": "vanquish them all; \\f + \\fr 54:17 \\ft Observe ἔνοχοι and εἰς κρίσιν seem a double translation of למשפט\\f*and thine adversaries",
+        "why": "Brenton’s 1844 printing, vol. 2 physical p. 232 (printed p. 729), prints this note at the boundary before and thine adversaries shall be condemned thereby in Isaiah 54:17, on the Hebrew’s למשפט. It is separate from the existing Gr. instrument. note earlier in the verse. The later Bagster setting omits it (1879 physical p. 906; 1900 physical p. 902), and neither eBible nor CCEL transcribes it. Restore the earlier Hebrew and Greek explanation without duplicating the first note."
+      },
+      {
+        "from": "every voice that shall rise",
+        "to": "every voice \\f + \\fr 54:17 \\fqa Alex. \\ft + ἣ.\\f*that shall rise",
+        "why": "Brenton’s 1844 printing, vol. 2 physical p. 232 (printed p. 729), prints Alex. + ἣ. with its dagger before that shall rise in Isaiah 54:17; the accent on the eta is not legible in the scan, and the relative pronoun takes the grave Brenton gives added words. The later Bagster setting omits it (1879 physical p. 906; 1900 physical p. 902), and neither eBible nor CCEL transcribes it. Restore the note, which edition/alexandrinus.json keeps."
+      }
+    ],
+    "JER 30:5": {
+      "from": "left to live, but I shall live",
+      "to": "left to live, but \\f + \\fr 30:5 \\ft Possibly, ‘I shall cause them to live.’ The transitive use of neuter verbs common in LXX.\\f*I shall live",
+      "why": "Brenton’s 1844 printing, vol. 2 physical p. 273 (printed p. 770), prints this alternative and grammatical explanation with its dagger before I shall live in the passage it numbers Jeremias 29:11 (Hebrew 49:11); pinned eBible numbers it JER 30:5. The later Bagster setting omits it (1879 physical p. 957; 1900 physical p. 953), and neither eBible nor CCEL transcribes it. Restore the earlier note at its caller."
+    },
+    "JER 36:26": [
+      {
+        "from": "to be ruler in the house",
+        "to": "to be \\f + \\fr 36:26 \\ft The word constantly used in Luke for master.\\f*ruler in the house",
+        "why": "Brenton’s 1844 printing, vol. 2 physical p. 279 (printed p. 776), prints The word constantly used in Luke for master. with its dagger before ruler in Jeremias 36:26 (Hebrew 29:26), where the Greek has ἐπιστάτην. The later Bagster setting omits it (1879 physical p. 965; 1900 physical p. 961), and neither eBible nor CCEL transcribes it. Restore the earlier lexical note at its caller."
+      },
+      {
+        "from": "over every prophet",
+        "to": "over \\f + \\fr 36:26 \\fqa More lit. \\ft every man prophesying.\\f*every prophet",
+        "why": "Brenton’s 1844 printing, vol. 2 physical p. 279 (printed p. 776), prints More lit. every man prophesying. with a second dagger before every prophet in Jeremias 36:26. The later Bagster setting omits it (1879 physical p. 965; 1900 physical p. 961), and neither eBible nor CCEL transcribes it. Restore Brenton’s literal alternative without adopting it into the translation."
+      }
+    ],
+    "EZK 16:8": [
+      {
+        "from": "a time of resting",
+        "to": "a time of \\f + \\fr 16:8 \\fqa Gr. \\ft resting ones. \\fqa q. d. \\ft divertentium, et sic melius, δι’ εὐφημισμόν. Illud verò monendum, vocem καταλυόντων, quæ Hebræo דדים respondet, ad παρθενίην ζωνὴν potius spectare.\\f*resting",
+        "why": "Brenton’s 1844 printing, vol. 2 physical p. 317 (printed p. 814), prints this Greek, Latin, and Hebrew explanation with its dagger before resting in Ezekiel 16:8. The later Bagster setting omits it (1879 physical p. 1011; 1900 physical p. 1007), and neither eBible nor CCEL transcribes it. Restore the complete earlier note at its caller."
+      },
+      {
+        "from": "spread my wings",
+        "to": "spread my \\f + \\fr 16:8 \\fqa i. e. \\ft skirt.\\f*wings",
+        "why": "Brenton’s 1844 printing, vol. 2 physical p. 317 (printed p. 814), prints i. e. skirt. with the verse’s second dagger, before wings in Ezekiel 16:8. The later Bagster setting omits it (1879 physical p. 1011; 1900 physical p. 1007), and neither eBible nor CCEL transcribes it. Restore the earlier gloss at its caller."
+      }
+    ],
+    "EZK 34:26": {
+      "from": "give you the rain, the rain of blessing",
+      "to": "give you \\f + \\fr 34:26 \\fqa q. d. \\ft the right sort of rain. Compare τὸν ἄρτον, \\xt John 6. 32.\\f*the rain, the rain of blessing",
+      "why": "Brenton’s 1844 printing, vol. 2 physical p. 341 (printed p. 838), prints q. d. the right sort of rain. Compare τὸν ἄρτον, John 6. 32. with its dagger before the rain in Ezekiel 34:26. The later Bagster setting omits it (1879 physical p. 1042; 1900 physical p. 1038), and neither eBible nor CCEL transcribes it. Restore the earlier explanatory comparison at its caller."
+    },
+    "EZK 34:27": {
+      "from": "dwell in the confidence of peace",
+      "to": "dwell \\f + \\fr 34:27 \\fqa Or, \\fqa lit. \\ft in hope of peace.\\f*in the confidence of peace",
+      "why": "Brenton’s 1844 printing, vol. 2 physical p. 341 (printed p. 838), prints Or, lit. in hope of peace. with its dagger before in the confidence of peace in Ezekiel 34:27, rendering the Greek’s ἐν ἐλπίδι εἰρήνης. The later Bagster setting omits it (1879 physical p. 1042; 1900 physical p. 1038), and neither eBible nor CCEL transcribes it. Restore the earlier literal alternative at its caller."
+    },
+    "EZR 3:12": {
+      "from": "former house on its foundation,",
+      "to": "former house \\f + \\fr 3:12 \\ft These words probably belong, at least in the original, to the latter clause.\\f*on its foundation,",
+      "why": "Brenton’s 1844 printing, vol. 2 physical p. 13 (printed p. 510), prints These words probably belong, at least in the original, to the latter clause. with its dagger before on its foundation in Ezra 3:12. eBible has no note; the 1900 printing, physical p. 633 (printed p. 621), and CCEL 5.iii#2 preserve only These words probably belong to the latter clause. Restore the complete 1844 explanation, including its qualification, and account separately for the shortened duplicate. Scripture words are unchanged."
+    },
+    "EZR 6:11": {
+      "from": "his house shall be confiscated.",
+      "to": "his house \\f + \\fr 6:11 \\fqa Gr. \\ft shall be done according to me. Strange variation in Greek from Chaldee.\\f*shall be confiscated.",
+      "why": "Brenton’s 1844 printing, vol. 2 physical p. 15 (printed p. 512), prints Gr. shall be done according to me. Strange variation in Greek from Chaldee. with a dagger before shall be confiscated in Ezra 6:11. The 1900 printing, physical p. 636 (printed p. 624), retains only the opening gloss, as CCEL 5.vi#3 does; eBible has no note. Restore the complete 1844 note and account separately for the shorter duplicate, without changing the scripture words."
+    },
+    "EZR 4:10": {
+      "from": "Somoron, and the rest \\add of them\\add* beyond the river.",
+      "to": "Somoron, and \\f + \\fr 4:10 \\fqa Or, \\ft the rest, \\fqa who now are.\\f*the rest \\add of them\\add* beyond the river.",
+      "why": "Brenton’s 1844 printing, vol. 2 physical p. 13 (printed p. 510), prints Or, the rest, who now are. in the margin with a dagger before the rest of them at the end of Ezra 4:10. The 1879 and 1900 printings (physical pp. 638 and 634) have no caller or corresponding note; neither eBible nor CCEL transcribes it. Restore the complete 1844 note at its caller without changing the scripture words."
+    },
+    "EZR 6:8": {
+      "from": "by me, if haply ye may do somewhat",
+      "to": "by me, \\f + \\fr 6:8 \\fqa more lit. \\ft lest ye should do anything.\\f*if haply ye may do somewhat",
+      "why": "Brenton’s 1844 printing, vol. 2 physical p. 15 (printed p. 512), prints more lit. lest ye should do anything. in the margin, with a dagger immediately before if haply in Ezra 6:8. The 1900 printing, physical p. 636 (printed p. 624), has neither the caller nor this note; neither eBible nor CCEL transcribes it. Restore Brenton’s literal alternative without adopting it into the translation or changing the scripture words."
+    },
+    "EZR 4:11": {
+      "from": "the purport of the letter,",
+      "to": "the \\f + \\fr 4:11 \\fqa Or, \\ft construction, \\fqa or, \\ft framing.\\f*purport of the letter,",
+      "why": "Brenton’s 1844 printing, vol. 2 physical p. 13 (printed p. 510), prints the marginal note Or, construction, or, framing. with a dagger immediately before purport in Ezra 4:11. The 1879 and 1900 printings (physical pp. 638 and 634) have neither this caller nor this note. Neither eBible nor CCEL transcribes it. Restore the complete 1844 note at its printed caller without changing the scripture words."
+    },
+    "EZR 6:14": {
+      "from": "Darius, and Arthasastha,",
+      "to": "Darius, and \\f + \\fr 6:14 \\ft It would seem a sort of accommodation was attempted here between the name of Tirshatha and Artaxerxes.\\f*Arthasastha,",
+      "why": "Brenton’s 1844 printing, vol. 2 physical p. 16 (printed p. 513), prints the marginal note It would seem a sort of accommodation was attempted here between the name of Tirshatha and Artaxerxes. with a dagger immediately before Arthasastha in Ezra 6:14. The 1900 printing, physical p. 636 (printed p. 624), has neither this caller nor this note. Neither eBible nor CCEL transcribes it. Restore the complete 1844 note; the scripture words are unchanged."
+    },
+    "LEV 7:34": {
+      "from": "wave-breast and shoulder of separation",
+      "to": "wave-breast and \\f + \\fr 7:34 \\fqa Or, \\ft heave shoulder. The word ἀφαίρεμα seems to denote, 1. a thing separated; 2. a choice piece offered; 3. any offering.\\f*shoulder of separation",
+      "why": "Brenton’s 1879 Greek–English printing, physical p. 150 (printed p. 134), prints δ before shoulder of separation in Leviticus 7:34 (printed 7:24): Or, heave shoulder. The word ἀφαίρεμα seems to denote, 1. a thing separated; 2. a choice piece offered; 3. any offering. The 1900 printing, physical p. 146, has the same worn setting; 1844 vol. 1 physical p. 135 (printed p. 111) has the same note at the same caller, with periods between the senses. eBible omits the whole note; CCEL v.7#3 preserves only Or, heave shoulder. Restore the complete printed note at its caller, accounting separately for CCEL’s shortened duplicate. Scripture words are unchanged."
+    },
     "NUM 1:1": {
       "from": "And the Lord spoke to Moses in the wilderness of Sina, in the tabernacle of witness,",
       "to": "\\sc And\\sc* the Lord spoke to Moses in the wilderness of Sina, in the tabernacle of witness,",
@@ -1130,17 +1389,19 @@
       "to": "מצפה",
       "why": "Brenton prints מצפה (1879 and 1900 p. 332); the transcription mistakes tsadi for ayin."
     },
-    "1SA 21:3": {
-      "from": "מקוצ",
-      "to": "מקום",
-      "why": "Brenton’s printings read מקום with a final mem (1844 p. 340; 1879 p. 401; 1900 p. 397)."
-    },
-    "1SA 21:3#2": {
-      "from": "פלכי אלמבי",
-      "to": "פלני אלמני",
-      "why": "Brenton’s printings read פלני אלמני (1844 p. 340; 1879 p. 401; 1900 p. 397); eBible has כ and ב for נ.",
-      "uncategorized": true
-    },
+    "1SA 21:3": [
+      {
+        "from": "מקוצ",
+        "to": "מקום",
+        "why": "Brenton’s printings read מקום with a final mem (1844 p. 340; 1879 p. 401; 1900 p. 397)."
+      },
+      {
+        "from": "double translation, מקום suggesting probably both the idea of place and faithfulness.",
+        "to": "double translation of ambiguous words, מקום suggesting probably both the idea of place and faithfulness, and thus both are inserted. For Palmoni see \\xt Ruth 4. 1.",
+        "why": "Brenton’s 1844 printing, vol. 1 physical p. 340 (printed p. 316), gives the complete note This is another instance of double translation of ambiguous words, מקום suggesting probably both the idea of place and faithfulness, and thus both are inserted. For Palmoni see Ruth 4. 1. The later Bagster setting shortens it at the same caller (1879 physical p. 401; 1900 physical p. 397), the form eBible and CCEL 1.xxi#1 transcribe. Restore the complete earlier note within the existing caller.",
+        "uncategorized": true
+      }
+    ],
     "2SA 5:23": {
       "from": "בכאיס",
       "to": "בכאים",
@@ -1787,6 +2048,148 @@
     }
   },
   "notes": {
+    "ISA 54:17#2": {
+      "lemma": "that",
+      "occurrence": 1,
+      "widen": false,
+      "why": "Alexandrinus adds the relative ἣ, which that renders in every voice that shall rise up; the 1844 dagger stands before it."
+    },
+    "EZR 5:1": {
+      "lemma": "to them",
+      "note": "Or, _for_, or, _concerning them_.",
+      "quotation": true,
+      "why": "Brenton’s for and concerning them render ἐπ’ αὐτούς, the Greek of to them, where even is supplied, the first by ellipsis of them, so that for alone cannot stand in place of the phrase; both are quoted senses."
+    },
+    "ISA 54:17#3": {
+      "lemma": "adversaries",
+      "why": "The 1844 note is on ἔνοχοι, which adversaries renders, and its double with εἰς κρίσιν; shall be condemned thereby is outside it."
+    },
+    "PSA 77:13": {
+      "lemma": "bottle",
+      "why": "The 1844 note compares the Hebrew nouns; the article is outside it, as at Psalm 32:7."
+    },
+    "ECC 8:6": {
+      "lemma": "knowledge",
+      "why": "The 1844 note compares דעה, which the Greek’s γνῶσις, knowledge, reads, with the Hebrew’s רעת; it explains knowledge, though its dagger stands before great."
+    },
+    "EZR 3:2": {
+      "note": "Called _Joshua_ elsewhere, in Hagg. & Zech.",
+      "why": "Joshua is the alternative name for Jesus, as in the notes of Aggeus; the son of Josedec is outside the note."
+    },
+    "LEV 23:36": {
+      "note": "q. d. _holiday_, when public business being restrained עצר servants, &c. have leave to go out ἐξόδιον.",
+      "quotation": true,
+      "why": "Holiday, after q. d., glosses ἐξόδιον, the Greek of a time of release, within an explanation that runs on to ἐξόδιον; as a quotation it leaves the lemma at the whole phrase rather than measuring it by the one word."
+    },
+    "ISA 16:4": {
+      "lemma": "for thine alliance has been taken away",
+      "why": "The 1844 note questions the punctuation before this clause; the clause runs to taken away."
+    },
+    "2KI 12:6#2": {
+      "lemma": "breaches",
+      "note": "Gr. sing. βεδὲκ. Hebrew word.",
+      "why": "βεδὲκ is the Greek’s transliteration, and Hebrew word says what it is: a comment, not a rendering of breaches."
+    },
+    "EZR 4:18": {
+      "lemma": "tribute-gatherer",
+      "why": "The 1844 alternatives tribute-bearer or collector replace tribute-gatherer; the article stays in the sentence."
+    },
+    "ESG 9:16": {
+      "lemma": "one another",
+      "why": "Gr. lit. themselves renders one another; helped stays in the sentence."
+    },
+    "PRO 17:6a#2": {
+      "note": "Gr. _obolus_.",
+      "quotation": true,
+      "why": "Gr. obolus names the coin the Greek has; it is a lexical quotation, not a rendering to put in place of farthing after a."
+    },
+    "EZR 2:69": {
+      "lemma": "pieces",
+      "why": "The 1844 note is on μναὶ, the Greek of pieces, whose nominative case it calls ungrammatical; the dagger stands at the verse’s opening."
+    },
+    "JDG 16:5": {
+      "lemma": "each",
+      "note": "Gr. _a man_. Query. Is not the English ‘each’ derived from the Hebrew איש, eesh, a man?",
+      "quotation": true,
+      "quotations": {
+        "each": "each",
+        "eesh": "eesh",
+        "eesh, a man": "a man"
+      },
+      "why": "The cited English word and the transliteration and glosses of the Hebrew are italic; the query stays roman. A man gives the lexical sense within Brenton’s etymological explanation, rather than a whole-lemma alternative that would leave we will give thee a man eleven hundred pieces of silver."
+    },
+    "JOB 17:5": {
+      "note": "κακίας _mischiefs_, i. e. _the opportunity of doing mischief_. This passage may be accounted for by the ambiguity of רעים ‘friends, or, evils’ and חלק ‘flattery, or, division.’",
+      "quotations": {
+        "friends": "friends",
+        "evils": "evils",
+        "flattery": "flattery",
+        "division": "division"
+      },
+      "why": "The rendering of κακίας and the glosses of the Hebrew are italic; the explanation stays roman."
+    },
+    "JOB 17:5#2": {
+      "note": "τῃ μερίδι q. d. _party_.",
+      "quotation": true,
+      "why": "Party glosses τῇ μερίδι, the Greek of his companions; it is a lexical quotation, not a rendering to put in place of his companions."
+    },
+    "PSA 47:10": {
+      "note": "λαοῦ probably written for ναοῦ, _temple_.",
+      "why": "The gloss of ναοῦ is italic; the conjecture stays roman."
+    },
+    "JER 36:26": {
+      "lemma": "ruler",
+      "note": "The word constantly used in Luke for _master_.",
+      "quotation": true,
+      "why": "The gloss is italic; the comment stays roman."
+    },
+    "EZK 16:8": {
+      "note": "Gr. _resting ones_. q. d. divertentium, et sic melius, δι’ εὐφημισμόν. Illud verò monendum, vocem καταλυόντων, quæ Hebræo דדים respondet, ad παρθενίην ζωνὴν potius spectare.",
+      "quotations": {
+        "divertentium": "divertentium"
+      },
+      "sentence": true,
+      "why": "Only the rendering and the Latin gloss divertentium are italic; et sic melius and the closing Latin sentence are commentary, and that sentence keeps its period."
+    },
+    "2CH 31:5": {
+      "lemma": "brought abundantly",
+      "why": "The restored 1844 note is on the active use of πλεονάζω, which brought abundantly renders; the first-fruits are outside it."
+    },
+    "PRO 17:6a": {
+      "lemma": null,
+      "why": "The restored 1844 note stands uncalled beside the passage it calls an interpolation, not on any of its words."
+    },
+    "EZK 34:26": {
+      "lemma": "the rain",
+      "occurrence": 1,
+      "widen": false,
+      "why": "The restored 1844 note q. d. the right sort of rain glosses the first the rain; you is outside it, and stays out of the gloss."
+    },
+    "EZR 4:10": {
+      "lemma": "the rest of them",
+      "why": "The 1844 marginal alternative the rest, who now are replaces the rest of them; beyond the river remains in the sentence and is outside the gloss. The printed dagger stands before the at this clause."
+    },
+    "EZR 6:8": {
+      "lemma": "if haply ye may do somewhat",
+      "why": "Brenton’s 1844 literal alternative lest ye should do anything replaces the entire clause if haply ye may do somewhat; anything corresponds to somewhat. The printed dagger stands before if, and in concert with the elders is outside the gloss."
+    },
+    "LEV 7:34": {
+      "lemma": "shoulder of separation",
+      "quotations": {
+        "a thing separated": "a thing separated",
+        "a choice piece offered": "a choice piece offered",
+        "any offering": "any offering"
+      },
+      "sentence": true,
+      "why": "The restored note continues after its gloss with a complete explanation and numbered senses of ἀφαίρεμα; retain the sentence’s final period."
+    },
+    "LEV 19:28 CCEL": {
+      "note": "Gr. _soul_. Heb. נפש. q. d. that animal frame which once breathed.",
+      "quotations": {
+        "q. d. that animal frame which once breathed": "that animal frame which once breathed"
+      },
+      "why": "Soul is the alternative for body. The Hebrew word and the explanation of its meaning are commentary, not another replacement for the widened lemma dead body; do not prefix dead to the explanatory phrase. That animal frame which once breathed glosses נפש and is quoted; the note ends in that fragment, without a full stop."
+    },
     "GEN 1:9#2": {
       "lemma": "its places",
       "why": "eBible's caller follows the words the note glosses"
@@ -3046,8 +3449,11 @@
     },
     "1SA 21:3": {
       "lemma": "The faithfulness of God",
-      "note": "This is another instance of double translation, מקום suggesting probably both the idea of _place_ and _faithfulness_.",
-      "why": "The cited words and lexical glosses are italic; the surrounding explanation stays roman; retain the existing scope of the note"
+      "note": "This is another instance of double translation of ambiguous words, מקום suggesting probably both the idea of _place_ and _faithfulness_, and thus both are inserted. For Palmoni see Ruth 4. 1.",
+      "quotations": {
+        "For Palmoni": "Palmoni"
+      },
+      "why": "The cited words and lexical glosses are italic; the surrounding explanation stays roman; retain the existing scope of the note. Palmoni, for which the complete 1844 note refers to Ruth 4:1, is a quoted word"
     },
     "1SA 21:8": {
       "lemma": "detained",

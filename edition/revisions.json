@@ -12652,6 +12652,41 @@
       "why": "Correct printed Greek and Hebrew spelling errors in the Old Testament notes and matter, preserving their English and their witnesses.",
       "changes": [
         {
+          "note": "JOB 17:5#2",
+          "spelling": "greek",
+          "from": "τῃ μερίδι",
+          "to": "τῇ μερίδι",
+          "why": "Brenton's 1844 vol. 2 p. 60 prints the article τῃ without its circumflex; the dative is τῇ, as his Greek column prints it (1879 physical p. 694; 1900 physical p. 690)."
+        },
+        {
+          "note": "EZR 2:69",
+          "spelling": "greek",
+          "from": "μναὶ",
+          "to": "μναῖ",
+          "why": "Brenton's 1844 vol. 2 p. 12 prints μναὶ with a grave, as does his Greek column (1879 physical p. 636; 1900 physical p. 632); the nominative plural of the contracted μνᾶ is μναῖ, which Swete vol. 2 p. 165 prints."
+        },
+        {
+          "note": "NUM 35:3",
+          "spelling": "greek",
+          "from": "ἀφορισματα",
+          "to": "ἀφορίσματα",
+          "why": "Brenton's 1844 vol. 1 p. 210 prints ἀφορισματα without its accent; the Greek column of the Bagster printing (1879 physical p. 242) has ἀφορίσματα."
+        },
+        {
+          "note": "RUT 4:4",
+          "spelling": "greek",
+          "from": "ἐγώ ειμι where ειμι",
+          "to": "ἐγώ εἰμι where εἰμι",
+          "why": "Brenton's 1844 vol. 1 p. 314 prints the second and third ειμι of this note without breathing or accent, against its own first ἐγώ εἰμι."
+        },
+        {
+          "note": "EZK 16:8",
+          "spelling": "greek",
+          "from": "ζωνὴν",
+          "to": "ζώνην",
+          "why": "Brenton's 1844 vol. 2 p. 317 prints ζω-νὴν across a line, a misprint for Homer's παρθενίην ζώνην (Od. 11.245)."
+        },
+        {
           "note": "NUM 1:18",
           "spelling": "greek",
           "from": "ἐπαξοοῦν",
@@ -13067,6 +13102,36 @@
     "recovered-note-punctuation": {
       "why": "Finish the punctuation of recovered Brenton notes: join grammatical commentary to its gloss, separate a complete explanation from a rendering, and use the citation-list separator between books.",
       "changes": [
+        {
+          "note": "LEV 23:36",
+          "from": "עצר servants",
+          "to": "עצר, servants",
+          "why": "Close the absolute clause public business being restrained עצר before its main clause, servants, etc. have leave to go out."
+        },
+        {
+          "note": "2KI 12:6",
+          "from": "נכר and",
+          "to": "נכר, and",
+          "why": "Close the derivation from נכר before the second word compared."
+        },
+        {
+          "note": "RUT 4:4",
+          "from": "his edition the",
+          "to": "his edition, the",
+          "why": "Set off the introductory According to Lambert Bos in the preface to his edition from its clause."
+        },
+        {
+          "note": "LEV 7:34",
+          "from": "denote, (1)",
+          "to": "denote (1)",
+          "why": "The three numbered senses are the object of seems to denote; no comma separates a verb from its object."
+        },
+        {
+          "note": "DEU 32:8",
+          "from": "21. Heb.",
+          "to": "21; Heb.",
+          "why": "Daniel and Hebrews are two books within the same cross-reference list."
+        },
         {
           "note": "LEV 6:14 CCEL#2",
           "from": "rolled. plural",

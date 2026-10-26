@@ -49,7 +49,7 @@ def test_the_edition_prints_every_unit_once_in_the_manifests_order(
     # Each is written under its own id, whatever file it was printed from.
     assert all(text.startswith(f"\\id {code}") for code, text in exported.items())
     assert dict(edition.summary) == {
-        "alexandrine_notes": 415,
+        "alexandrine_notes": 416,
         "alexandrine_appendix_paragraphs": 26,
         "byzantine_units": 1940,
         "byzantine_edits": 858,
@@ -59,7 +59,7 @@ def test_the_edition_prints_every_unit_once_in_the_manifests_order(
         "brenton_units": 51,
         "kjv_units": 27,
         "kjv_marginal_notes": 775,
-        "printed_notes": 6204,
+        "printed_notes": 6244,
         # Every verse of the assembled books: Brenton's, with the passages
         # supplied from Codex Alexandrinus and the King James Bible's
         # 1 Kingdoms 23:12 and 3 Kingdoms 14:1-20, less the verses
@@ -1678,6 +1678,17 @@ def test_greek_and_hebrew_are_set_in_the_styles_of_their_fonts() -> None:
     )
     # Only the form of what prints changes.
     assert usj.text_of(export.font_runs(content)) == "Gr. ἀλλ’ ἐγώ, Heb. א, or β"
+    # Brackets between Hebrew words keep one right-to-left run; those around
+    # it stay with the English.
+    bracketed = usj.parse("of בני [ישר]אל, [אל]", fragment=True)
+    assert usj.serialize(export.font_runs(bracketed)) == (
+        "of \\wh בני [ישר]אל\\wh*, [\\wh אל\\wh*]"
+    )
+    # A pair split by the run's edge would print one bracket reversed, even
+    # where the run holds as many of each as two pairs give it.
+    for split in ("[אל] בני", "[אל] [בני]"):
+        with pytest.raises(CheckFailed, match="bracket pair"):
+            export.font_runs(usj.parse(split, fragment=True))
 
 
 def test_authored_pages_select_fonts_in_body_notes_and_bibliography(

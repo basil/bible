@@ -101,12 +101,48 @@
         "from": ". in Heb.",
         "to": ", in Heb.",
         "why": "The qualification in Hebrew, Greek, and the Authorized Version continues the same cross-reference sentence; separate it with a comma rather than leaving a period after the cited verse number."
+      },
+      {
+        "note": "LEV 7:34",
+        "from": "1.",
+        "to": "(1)",
+        "why": "Parenthesize the numbered sense of ἀφαίρεμα rather than leaving a period within the note’s sentence."
+      },
+      {
+        "note": "LEV 7:34",
+        "from": "2.",
+        "to": "(2)",
+        "why": "Parenthesize the numbered sense of ἀφαίρεμα rather than leaving a period within the note’s sentence."
+      },
+      {
+        "note": "LEV 7:34",
+        "from": "3.",
+        "to": "(3)",
+        "why": "Parenthesize the numbered sense of ἀφαίρεμα rather than leaving a period within the note’s sentence."
       }
     ]
   },
   "expanded": {
     "why": "Text names are printed in full in the notes, apart from the Alexandrine and Vatican Texts, which stay Alex. and Vat., and the King James Version, labelled KJV, and their other rows are removed from his list, as is his row for Comp. as Compare, which is printed in full. LXX remains in the text, and is listed by a row added. In notes the Authorized Version is labelled KJV, whether Brenton writes it A. V., Eng. Ver., the English Version or English Bible; front-matter prose keeps the full name, and his row for A. V. is removed. Other abbreviations used only once or twice are also printed in full where they stand and not listed, but for those that Chicago prints (AD, MS, MSS), which are listed. Where one ends a note, its period goes, as a note ends with no full stop, unless the note is a sentence of its own, which keeps it.",
     "changes": [
+      {
+        "note": "RUT 4:4",
+        "from": "and Kings.",
+        "to": "and Kingdoms.",
+        "why": "Brenton’s Kings are the four books of Kingdoms, as the edition names them."
+      },
+      {
+        "note": "RUT 4:4",
+        "from": "2d.",
+        "to": "second",
+        "why": "Spell out Brenton’s ordinal in the recovered 1844 note."
+      },
+      {
+        "note": "EZR 2:69",
+        "from": "nom.",
+        "to": "nominative",
+        "why": "Expand Brenton’s grammatical abbreviation in the recovered 1844 note."
+      },
       {
         "note": "1KI 20:10",
         "from": "Gram.",
@@ -141,6 +177,11 @@
       },
       {
         "note": "2KI 4:39",
+        "from": "sing.",
+        "to": "singular"
+      },
+      {
+        "note": "2KI 12:6#2",
         "from": "sing.",
         "to": "singular"
       },
@@ -439,6 +480,18 @@
         "why": "Brenton prints P. Junius (1879 p. 60; 1900 p. 56): Patrick Young, who wrote his name Patricius Junius and edited the readings of Codex Alexandrinus that Brenton cites"
       },
       {
+        "note": "RUT 4:4",
+        "from": "Bos",
+        "to": "Lambert Bos",
+        "why": "Brenton prints Bos (1844 vol. 1 p. 314)"
+      },
+      {
+        "note": "2CH 31:5",
+        "from": "Bos’s",
+        "to": "Lambert Bos’s",
+        "why": "Brenton prints Bos’s (1844 vol. 1 p. 521)"
+      },
+      {
         "note": "NUM 1:18",
         "from": "L. Bos.",
         "to": "Lambert Bos.",
@@ -531,6 +584,18 @@
         "from": "Note.—For a list",
         "to": "For a list",
         "why": "Brenton 1844 volume II physical p. 266 (printed p. 763), 1879 physical p. 949, 1884 physical p. 915 and 1900 physical p. 945 (printed p. 933), checked on the scans, print Note.—For a list of the transpositions of verses and chapters in the LXX., see the end of Jeremiah. Omit the introductory label while retaining the caller after book and the edition's separately declared pointer to its website's tables."
+      },
+      {
+        "note": "2CH 31:5",
+        "from": "Note.—The active use",
+        "to": "The active use",
+        "why": "Brenton’s 1844 printing, vol. 1 physical p. 521 (printed p. 497), prints Note.—The active use of neuter verbs. Omit the introductory label and begin The active use, keeping the note at brought abundantly."
+      },
+      {
+        "note": "PRO 17:6a",
+        "from": "Note.—What follows",
+        "to": "What follows",
+        "why": "Brenton’s 1844 printing, vol. 2 physical p. 162 (printed p. 659), prints Note.—What follows seems quite an interpolation. Omit the introductory label and begin What follows, keeping the note before the passage it introduces."
       }
     ]
   },
@@ -1692,8 +1757,18 @@
     ]
   },
   "joshua-name-gloss": {
-    "why": "Brenton 1879 physical p. 130 and 1900 physical p. 126 print Gr. Jesus on Joshua at Exodus 32:17. The edition prints Jesus for the son of Nun under its name decision. Reverse the gloss to give the source’s familiar English name as the alternative, Jesus: or, Joshua, as the notes in Aggeus already do, rather than repeat the printed name or omit the gloss.",
+    "why": "Brenton 1879 physical p. 130 and 1900 physical p. 126 print Gr. Jesus on Joshua at Exodus 32:17. The edition prints Jesus for the son of Nun under its name decision. Reverse the gloss to give the source’s familiar English name as the alternative, Jesus: or, Joshua, as the notes in Aggeus already do, rather than repeat the printed name or omit the gloss. Brenton’s 1844 note at Ezra 3:2, Called Joshua elsewhere, in Hagg. & Zech., names the high priest. His 1844 Aggeus 1:1 and 1:12 (vol. 2 physical p. 415, printed p. 912) already prints Jesus with Or, Joshua notes, while Zacharias 3 (physical p. 418, printed p. 915) prints Jesus without that gloss. Give the Ezra note the same Or, Joshua form as 1844 Aggeus, retaining the alternative name without a cross-reference that suggests the running text elsewhere calls him Joshua. This does not extend the son of Navi’s name revision to another bearer.",
     "changes": [
+      {
+        "note": "EZR 3:2",
+        "from": "Called",
+        "to": "Or,"
+      },
+      {
+        "note": "EZR 3:2",
+        "from": " elsewhere, in Hagg. & Zech.",
+        "to": "."
+      },
       {
         "note": "EXO 32:17",
         "from": "Gr.",

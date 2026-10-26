@@ -43,7 +43,17 @@ from bible.usj import Content, Document, Node
 RENDERING_LABELS = {
     *("Or,", "or,", "or", "Or simply,", "Possibly,", "Perhaps"),
     *("Gr.", "Gr. sing.", "Heb.", "Hebrew"),
-    *("Lit.", "lit.", "more lit.", "i. e.", "viz.", "sc.", "scil.", "Scil."),
+    *(
+        "Lit.",
+        "lit.",
+        "More lit.",
+        "more lit.",
+        "i. e.",
+        "viz.",
+        "sc.",
+        "scil.",
+        "Scil.",
+    ),
     *("q. d.", "Gr. q. d.", "adj. q. d."),
     *("Alex.", "Vat.", "Vat.,", "Vat. i.e.", "Complut.", "Ald.", "Vulg."),
     *("A. V.", "Margin,"),

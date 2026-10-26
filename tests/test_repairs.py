@@ -32,6 +32,18 @@ BOOK = (
         ("note [sic] here", "note here", "remark"),
         ("\\f + \\fr 6:1 \\f*", "", "empty note"),
         ("I lay", "I \\f + \\fr 3:21 \\ft Gr. commit to.\\f*lay", "missing note"),
+        # A note before a marker shares its backslash, not its first letter,
+        # and one before another note shares that note's opening.
+        (
+            "I \\add lay",
+            "I \\f + \\fr 3:21 \\ft Gr. commit to.\\f*\\add lay",
+            "missing note",
+        ),
+        (
+            "I \\f + \\fr 3:21 \\ft to.\\f*lay",
+            "I \\f + \\fr 3:21 \\ft Gr.\\f*\\f + \\fr 3:21 \\ft to.\\f*lay",
+            "missing note",
+        ),
         # Two notes with words between them are not one missing note.
         (
             "I lay",
@@ -167,5 +179,5 @@ def test_the_editions_corrections_all_apply(
     """Each is made once, to a file the edition prints or reads; reading refused
     otherwise."""
     corrections = policy.brenton_notes["corrections"]
-    assert len(corrections) == 298
+    assert len(corrections) == 337
     assert read.mended["1KI"] and "21:11" in read.mended["GEN"]

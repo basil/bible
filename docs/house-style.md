@@ -84,6 +84,7 @@ Check, in both testaments:
 ### Brenton's notes and Appendix
 
 - Brenton's notes come from eBible, supplemented from CCEL ([sources/README.md](../sources/README.md#ccel-brenton-html-edition)); the CCEL review lists placements, duplicates, and omissions.
+- A note of the 1844 printing that the later Bagster printings dropped is restored at its 1844 caller, and information they shortened is recovered from its 1844 wording, retaining genuine corrections in later printings. Check disagreements against the printed sources, including Swete's images where the Greek is at issue. The correction in `edition/brenton-notes.json` cites the pages of each printing and explains the choice; the scripture keeps eBible's words.
 - The Appendix is not printed as a unit: its passages stand in their books; its eight notes (2 Kingdoms 5:18, Job 25:2 and 39:13, Psalm 41:5, Proverbs 8:5, Esaias 2:6, Ezekiel 16:44, Exodus 28) are footnotes at their verses with a lettered caller before the word discussed or at the start of the verse; margin notes that only sent the reader to the Appendix are left out, and the pointer is dropped from those that say more; the two 1844 margin notes the Bagster printings dropped (Job 25:2, Ezekiel 16:44) are restored, as is the note at Job 39:13 that every printing has and eBible lacks.
 
 ## Quotation links

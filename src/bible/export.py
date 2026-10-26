@@ -24,16 +24,19 @@ ORIGIN = re.compile(r"^\d+:")
 # elision mark; both encode the typographic apostrophe.
 ELISION = re.compile(f"(?<=[{usfm.GREEK}])\u02bc")
 # A run of Greek or of Hebrew words, by the character style that sets its
-# font. The Greek apostrophe stays in the Greek font.
+# font. The Greek apostrophe stays in the Greek font. Brackets between Hebrew
+# words stay in their run, which is set right to left as one: בני [ישר]אל.
 FONT_RUNS = re.compile(
     "|".join(
-        f"(?P<{marker}>{word}(?: +{word})*)"
-        for marker, word in (
-            ("wh", f"[{usfm.HEBREW}][{usfm.COMBINING}{usfm.HEBREW}]*"),
-            ("wg", f"[{usfm.GREEK}][{usfm.COMBINING}\u2019{usfm.GREEK}]*"),
+        f"(?P<{marker}>{word}(?:{between}{word})*)"
+        for marker, word, between in (
+            ("wh", f"[{usfm.HEBREW}][{usfm.COMBINING}{usfm.HEBREW}]*", r"[ \[\]]+"),
+            ("wg", f"[{usfm.GREEK}][{usfm.COMBINING}\u2019{usfm.GREEK}]*", " +"),
         )
     )
 )
+# A bracket opened and closed within a run; once these go, none may remain.
+BRACKET_PAIR = re.compile(r"\[[^\[\]]*\]")
 
 
 def font_runs(content: Content) -> Content:
@@ -46,6 +49,10 @@ def font_runs(content: Content) -> Content:
             item, at = ELISION.sub("\u2019", item), 0
             for run in FONT_RUNS.finditer(item):
                 assert run.lastgroup is not None
+                require(
+                    not set("[]") & set(BRACKET_PAIR.sub("", run[0])),
+                    f"A bracket pair across the edge of a Hebrew run: {run[0]}",
+                )
                 result += [item[at : run.start()], usj.char(run.lastgroup, run[0])]
                 at = run.end()
             result.append(item[at:])

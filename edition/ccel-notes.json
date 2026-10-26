@@ -1,5 +1,11 @@
 {
   "corrections": {
+    "v.7#39": {
+      "from": "<p> Gr. soul.</p>",
+      "to": "<p> Gr. soul. <i>Heb.</i> נפש. <i>q. d.</i> that animal frame which once breathed.</p>",
+      "why": "Brenton’s 1900 Greek–English printing, physical p. 167, confirmed in 1879 physical p. 171 (both printed p. 155), prints δ Gr. soul. Heb. נפש. q. d. that animal frame which once breathed. with the caller after the supplied dead and before body in Leviticus 19:28; the 1844 margin, vol. 1 physical p. 152 (printed p. 128), has the same note with pointed Hebrew. CCEL v.7#39 drops everything after soul.; eBible has no note. Restore the missing Hebrew and explanation without changing the caller or the scripture words.",
+      "uncategorized": true
+    },
     "1#6": {
       "from": "<p> The LXX. take <font face=\"SIL Ezra\" size=\"2\" id=\"1.i.p0.20_1\">ych</font> as from <font face=\"SIL Ezra\" size=\"2\" id=\"1.i.p0.21_1\">bcg</font>, the <i id=\"1.i.p0.22_1\">A.V.</i> from <font face=\"SIL Ezra\" size=\"2\" id=\"1.i.p0.23_1\">ybc</font>. </p>",
       "to": "<p> The LXX. take <font face=\"SIL Ezra\" size=\"2\" id=\"1.i.p0.20_1\">ybch</font> as from <font face=\"SIL Ezra\" size=\"2\" id=\"1.i.p0.21_1\">bcn</font>, the <i id=\"1.i.p0.22_1\">A.V.</i> from <font face=\"SIL Ezra\" size=\"2\" id=\"1.i.p0.23_1\">ybc</font>. </p>",
@@ -587,6 +593,42 @@
     }
   },
   "notes": {
+    "5.v#1": {
+      "duplicate": "EZR 5:1",
+      "why": "The 1844 margin, vol. 2 physical p. 14 (printed p. 511), prints the complete note restored at EZR 5:1, with its dagger before even. CCEL’s Or, concerning them., with its caller after even, is the Bagster form of the same note (1879 physical p. 638; 1900 physical p. 634), without 1844’s first alternative for; it is not a separate note."
+    },
+    "1.xxi#1": {
+      "duplicate": "1SA 21:3",
+      "why": "The 1844 printing, vol. 1 physical p. 340 (printed p. 316), prints the complete note restored at 1SA 21:3. CCEL’s note ending the idea of place and faithfulness. is the Bagster form of the same note at The faithfulness of God; it is not a separate note."
+    },
+    "vi.35#3": {
+      "duplicate": "NUM 35:3",
+      "why": "The 1844 printing, vol. 1 physical p. 210 (printed p. 186), prints the complete note restored at NUM 35:3. CCEL’s note ending This latter sense is probably the right one here. is the Bagster form of the same note at enclosures; it is not a separate note."
+    },
+    "vii.xli#2": {
+      "duplicate": "JDG 16:5",
+      "why": "The 1844 printing, vol. 1 physical p. 302 (printed p. 278), prints the complete note restored at JDG 16:5. CCEL’s Gr. a man. is the Bagster form of the same note at each, without 1844’s query; it is not a separate note."
+    },
+    "1.xxi#2": {
+      "duplicate": "1SA 21:3#2",
+      "why": "The 1844 printing, vol. 1 physical p. 340 (printed p. 316), prints the complete note restored at 1SA 21:3#2. CCEL’s a corruption of פלני אלמני is the Bagster form of the same note at Phellani maemoni; it is not a separate note."
+    },
+    "6.x#2": {
+      "duplicate": "EZR 20:14",
+      "why": "The 1844 printing, vol. 2 physical p. 32 (printed p. 529), prints the complete note restored at EZR 20:14. CCEL’s See Heb. is the Bagster form of the same note at the sons of Banuæ, without 1844’s Probably a mistranslation; it is not a separate note."
+    },
+    "5.iii#2": {
+      "duplicate": "EZR 3:12",
+      "why": "The 1844 margin, vol. 2 physical p. 13 (printed p. 510), prints the complete note restored at EZR 3:12. CCEL’s These words probably belong to the latter clause. is the same note at on its foundation, without 1844’s qualification at least in the original; it is not a separate note."
+    },
+    "5.vi#3": {
+      "duplicate": "EZR 6:11",
+      "why": "The 1844 margin, vol. 2 physical p. 15 (printed p. 512), prints the complete note restored at EZR 6:11. CCEL retains its gloss shall be done according to me but lacks the ensuing comment Strange variation in Greek from Chaldee. It is the same note at shall be confiscated, not a separate note."
+    },
+    "v.7#3": {
+      "duplicate": "LEV 7:34",
+      "why": "Brenton 1879 physical p. 150 (printed p. 134), with 1900 physical p. 146 and 1844 vol. 1 physical p. 135, prints one note before shoulder of separation in Leviticus 7:34 (printed 7:24). CCEL keeps its opening Or, heave shoulder. but drops the explanation and all three senses of ἀφαίρεμα. The complete note is restored by the Brenton correction; this partial transcription is the same note at the same caller."
+    },
     "vi.37.ix#4": {
       "omitted": true,
       "why": "eBible has Brenton's note on the three names at Deuteronomy 9:22 as one note thrice, which the note decisions give each name's words; CCEL's note on this name alone is the same note, too unlike the combined one for the build to pass over."
