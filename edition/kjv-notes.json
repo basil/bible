@@ -117,7 +117,7 @@
     "MRK 7:3 oft": {
       "anchor": "with the fist",
       "former": "oft",
-      "note": "Or, _oft_; or, _diligently_, in the Original, _with the fist_, Theophylact, _up to the elbow_",
+      "note": "Or, {oft}; or, {diligently}, in the Original, {with the fist}, Theophylact, {up to the elbow}",
       "why": "The text adopts the margin’s with the fist; turn the note round to quote the former King James oft first, ahead of its own renderings diligently and up to the elbow, whose authorities it names."
     },
     "MRK 7:4 pots": {
@@ -136,7 +136,7 @@
       "uncategorized": true
     },
     "MRK 11:22 Have faith in God": {
-      "note": "Or, _have the faith of God_",
+      "note": "Or, {have the faith of God}",
       "why": "have the faith of God is the rendering"
     },
     "LUK 1:17 to": {
@@ -169,15 +169,15 @@
     },
     "LUK 15:8 pieces of silver": {
       "note": "Drachma here translated _a piece of silver_, is the eighth part of an ounce, which cometh to seven pence halfpenny, and is equal to the Roman penny, Mat. 18.28",
-      "why": "The cited words and lexical glosses are italic; the surrounding explanation stays roman"
+      "why": "A piece of silver is the singular term quoted in the definition of drachma; it cannot replace pieces of silver after ten. Keep the definition’s words and lexical italics without echoing the lemma into the quotation."
     },
     "LUK 16:7 measures": {
       "note": "the word here interpreted _a measure_, in the original containeth about fourteen bushels and a pottle",
-      "why": "The cited words and lexical glosses are italic; the surrounding explanation stays roman"
+      "why": "A measure is the singular term quoted in the definition; it cannot replace measures after A hundred. Keep the definition’s words and lexical italics without echoing the lemma into the quotation."
     },
     "LUK 19:13 pounds": {
       "note": "Mina here translated _a pound_, is twelve ounces and an half, which according to five shillings the ounce, is 3. pounds two shillings sixpence",
-      "why": "The cited words and lexical glosses are italic; the surrounding explanation stays roman"
+      "why": "A pound is the singular term quoted in the definition of mina; it cannot replace pounds after ten. Keep the definition’s words and lexical italics without echoing the lemma into the quotation."
     },
     "JHN 5:13 a multitude being in that": {
       "lemma": "a multitude being",
@@ -201,7 +201,6 @@
     },
     "JHN 18:13 year": {
       "note": "_And Annas sent Christ bound unto Caiaphas the high priest_, ver. 24",
-      "quotation": true,
       "why": "The note quotes verse 24 on the order of events and renders nothing here, so it has no lemma. The quotation keeps its capital and is italic, the reference roman.",
       "lemma": null
     },
@@ -224,11 +223,11 @@
     },
     "ACT 13:18 suffered": {
       "note": "Gr. ἐτροποφόρησεν, perhaps for ἐτροφοφόρησεν, _as a nurse beareth or feedeth her child_, Deut. 1.31. 2. Macc 7.27. according to the Sept. and so Chrysost.",
-      "why": "The cited words and lexical glosses are italic; the surrounding explanation stays roman"
+      "why": "As a nurse beareth or feedeth her child explains the cited Greek verb; it cannot replace suffered in suffered he their manners. Keep the paraphrase as an italic quotation, retaining the Greek, references, and authorities without inventing continuous replacement English."
     },
     "ACT 13:34 mercies": {
-      "note": "Gr. τὰ ὅσια, _holy_ or _just things_, which word the Sept. both in the place of Esai 55.3. and in many others, use for that which is in the Hebrew, _Mercies_",
-      "why": "holy or just things renders the Greek, and Mercies the Hebrew"
+      "note": "Gr. τὰ ὅσια, {holy or just things}, which word the Sept. both in the place of Esai 55.3. and in many others, use for that which is in the Hebrew, _Mercies_",
+      "why": "Holy and just share things: the complete phrase holy or just things is one replacement for mercies. Mercies later quotes the Hebrew term within the explanation, not another Greek alternative. Scrivener’s 1873 Cambridge Paragraph Bible, NT printed p. 121 (PDF physical p. 1305), prints both the shared-noun phrase and the explanatory Hebrew sense; retain the source words, with only the replacement phrase echoing a widened lemma."
     },
     "ACT 13:36 own generation by the will of God": {
       "lemma": "after he had served his own generation by the will of God",
@@ -244,7 +243,7 @@
     },
     "ACT 25:6 more then ten days": {
       "anchor": "more than ten days",
-      "note": "Or, as some copies read, _no more than eight or ten days_",
+      "note": "Or, as some copies read, {no more than eight or ten days}",
       "why": "as some copies read introduces the rendering, and eight or ten is one reading"
     },
     "ROM 1:31 without natural": {
@@ -301,7 +300,7 @@
       "why": "the words are in 10:4, the spiritual Rock that followed them"
     },
     "1CO 11:10 power": {
-      "note": "That is, _a covering_, in sign that she is under the power of her husband",
+      "note": "That is, {a covering}, in sign that she is under the power of her husband",
       "why": "a covering is the rendering; the rest explains it"
     },
     "1CO 11:20 not to eat": {
@@ -331,7 +330,7 @@
     "1CO 14:27 two...": {
       "lemma": "by two, or at the most by three, and that by course",
       "why": "George’s two... marks a span; ‘by two or three sentences separately’ renders the whole of it, so it is italic.",
-      "note": "_by two or three sentences separately_"
+      "note": "{by two or three sentences separately}"
     },
     "1CO 15:2 what I preached": {
       "lemma": "what",
@@ -477,7 +476,7 @@
       "why": "for the suffering of death (Or, by the suffering)"
     },
     "HEB 2:16 took not on him the nature of Angels, but he took on him the seed of Abraham": {
-      "note": "Gr. _he taketh not hold of Angels, but of the seed of Abraham he taketh hold_",
+      "note": "Gr. {he taketh not hold of Angels, but of the seed of Abraham he taketh hold}",
       "why": "The rendering begins he taketh, so its lemma includes the preceding he as well as the two clauses. Replacing it then restores one subject, rather than For verily he he taketh; the rendering runs to the end of the note.",
       "lemma": "he took not on him the nature of Angels, but he took on him the seed of Abraham"
     },
@@ -559,8 +558,8 @@
       "why": "the second, ye know that every one (Or, know ye)"
     },
     "2JN 1:8 wrought": {
-      "note": "Or, _gained_. Some copies read, _which ye have gained, but that ye receive_, etc.",
-      "why": "the second reading runs to etc."
+      "note": "Or, {gained}. Some copies read, _which ye have gained, but that ye receive_, etc.",
+      "why": "Gained replaces wrought alone. Which ye have gained, but that ye receive quotes a longer construction with different subjects; it cannot replace wrought within which we have wrought. Keep that clause italic as a quotation, without echoing the narrow lemma’s context into it."
     },
     "REV 4:8 rest not": {
       "lemma": "they rest not",
@@ -699,11 +698,10 @@
     },
     "REV 6:6 A measure": {
       "note": "The word _choenix_, signifieth a measure containing one wine quart, and the twelfth part of a quart",
-      "quotation": true,
       "why": "The note explains the Greek word choenix, which is italic as a quotation. It is a sentence and keeps its capital and stop; revisions.json removes the comma before signifieth."
     },
     "2CO 4:8 in despair": {
-      "note": "Or, _altogether without help or means_",
+      "note": "Or, {altogether without help or means}",
       "why": "‘Without’ governs both ‘help’ and ‘means’, so ‘altogether without help or means’ is one rendering of ‘in despair’, after the verse’s ‘not’, and one italic run. revisions.json adds its comma."
     },
     "PHP 1:13 palace": {

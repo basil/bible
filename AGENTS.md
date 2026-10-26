@@ -126,7 +126,7 @@ A correction to a slip in transcription must match the source text exactly once,
 | --- | --- |
 | Which books are printed, their order, names, and headings, and whether their chapters are labelled | `edition/manifest.json` |
 | A slip in a source's transcription, or a note of Brenton's 1844 printing that the later printings dropped or shortened | `corrections` in `edition/brenton-notes.json` or `edition/kjv-notes.json` |
-| The words a note is about, its italics, or whether it is a sentence | `notes` in the same files |
+| The words a note is about, its quotations and alternative renderings, or whether it is a sentence | `notes` in the same files |
 | A reading from Codex Alexandrinus, a supplied passage, a verse omitted or moved after it, a kept note, or an Appendix entry moved into the note on its verse | `edition/alexandrinus.json` |
 | A Byzantine reading the build does not decide, a ruling that a difference is not applied, a verse omitted or moved, a difference of accent alone, Hodges–Farstad's side where no apparatus gives it, or the lemma of a TR note | `edition/byzantine.json` |
 | A correction of the King James English where TR and RP2026 share the Greek | `readings` in `edition/byzantine.json`, keyed by the verse |

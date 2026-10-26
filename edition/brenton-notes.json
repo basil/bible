@@ -432,9 +432,9 @@
       "why": "appears is misspelled"
     },
     "JOS 6:8": {
-      "from": "היובלים \\fqa A. V. \\ft ‘ram's horns.’",
-      "to": "היובלים. \\fqa A. V. \\ft ‘rams' horns.’",
-      "why": "Brenton 1879 physical p. 302 and 1900 physical p. 298 (printed p. 286) print β “Heb. שופרות היובלים. A. V. ‘rams' horns.’ Only in this place.”, with a full stop after the Hebrew and the apostrophe after the s.",
+      "from": "\\f + \\fr 6:8 \\fqa Heb. \\ft שופרות היובלים \\fqa A. V. \\ft ‘ram's horns.’ Only in this place.\\f*",
+      "to": "\\f + \\fr 6:8 \\ft Gr. σάλπιγγας ἱεράς. Heb. שופרות היובלים. See Parkhurst on יובל. A. V. ‘rams' horns.’ Only in this place.\\f*",
+      "why": "Brenton’s 1844 printing, vol. 1 physical p. 259 (printed p. 235), gives the Greek σάλπιγγας ἱεράς and See Parkhurst on יובל before its English Version gloss. The later Bagster setting (1879 physical p. 302; 1900 physical p. 298, printed p. 286) omits both pieces of information. Restore them while retaining its corrected plural possessive rams' horns and punctuation, which eBible mistranscribes. Swete I p. 429 prints σάλπιγγας ἱεράς in Joshua 6:8; the Greek is cited, not a new English reading.",
       "uncategorized": true
     },
     "JOS 19:51": {
@@ -455,9 +455,9 @@
       "uncategorized": true
     },
     "JDG 5:14": {
-      "from": "\\fqa Gr. \\ft Rather,",
-      "to": "\\ft Rather,",
-      "why": "Brenton 1879 physical p. 337 and 1900 physical p. 333 (printed p. 321) print θ “Rather, draw or handle the scribe's pen, etc.” with no label; eBible adds Gr.",
+      "from": "\\f + \\fr 5:14 \\fqa Gr. \\ft Rather, draw or handle the scribe's pen, etc.\\f*",
+      "to": "\\f + \\fr 5:14 \\ft Rather, draw or handle the scribe's pen, etc. omitting ἐν as a Hebraism.\\f*",
+      "why": "Brenton’s 1844 printing, vol. 1 physical p. 288 (printed p. 264), continues after the rendering with omitting ἐν as a Hebraism. The later Bagster setting (1879 physical p. 337; 1900 physical p. 333, printed p. 321) omits that explanation; neither prints eBible’s added Gr. Restore the missing observation and remove the spurious label in one correction. Swete I p. 487 prints ἐλκύοντες ἐν ῥάβδῳ ὁδηγήσεως γραμματέως, confirming the preposition Brenton discusses.",
       "uncategorized": true
     },
     "JDG 9:33#2": {
@@ -544,11 +544,19 @@
       "why": "Brenton 1879 physical p. 734 and 1900 physical p. 730 (printed p. 718) print “q. d. with regard to the discovering, etc.”; eBible drops etc.",
       "uncategorized": true
     },
-    "PSA 50:21": {
-      "from": "wave-offfering",
-      "to": "wave-offering",
-      "why": "offering is misspelled"
-    },
+    "PSA 50:21": [
+      {
+        "from": "wave-offfering",
+        "to": "wave-offering",
+        "why": "offering is misspelled"
+      },
+      {
+        "from": "\\f + \\fr 50:21 \\ft Properly, a heave or wave-offering.\\f*",
+        "to": "\\f + \\fr 50:21 \\ft ἀναφορά, Properly, a heave or wave-offering. Heb. עֹלָה.\\f*",
+        "why": "Brenton’s 1844 printing, vol. 2 physical p. 102 (printed p. 599), names ἀναφορά and the Hebrew עֹלָה in its note perhaps a heave or wave-offering. The later Bagster setting (1879 physical p. 744; 1900 physical p. 740, printed p. 728) omits both cited words and reads Properly, a heave or wave-offering. Restore the Greek and Hebrew identifications while retaining the later assessment Properly. Swete II p. 279 prints ἀναφορὰν καὶ ὁλοκαυτώματα; this is source commentary, not an added manuscript reading.",
+        "uncategorized": true
+      }
+    ],
     "PSA 89:9": {
       "from": "\\ft mediated.",
       "to": "\\ft meditated.",
@@ -808,11 +816,19 @@
       "why": "the printed Hebrew is הכמרים",
       "uncategorized": true
     },
-    "1SA 19:13#2": {
-      "from": "כבר liver",
-      "to": "כבד liver",
-      "why": "the printed Hebrew is כבד, liver"
-    },
+    "1SA 19:13#2": [
+      {
+        "from": "כבר liver",
+        "to": "כבד liver",
+        "why": "the printed Hebrew is כבד, liver"
+      },
+      {
+        "from": "\\f + \\fr 19:13 \\ft כבד liver, has evidently been read here for כביר a quilt, or perhaps a pillow.\\f*",
+        "to": "\\f + \\fr 19:13 \\ft כבד liver, has evidently been read here by mistake for כביר a quilt, or something of the kind, perhaps a pillow.\\f*",
+        "why": "Brenton’s 1844 printing, vol. 1 physical p. 337 (printed p. 313), includes by mistake and the qualification or something of the kind, perhaps a pillow. The later Bagster setting (1879 physical p. 398; 1900 physical p. 394, printed p. 382) drops those qualifications, reading or perhaps a pillow. Restore the earlier information. Swete I p. 585 confirms the Greek ἧπαρ τῶν αἰγῶν; this comparison explains the possible Hebrew source, not a new Greek variant.",
+        "uncategorized": true
+      }
+    ],
     "1SA 19:9#2": {
       "from": "ישך",
       "to": "ישן",
@@ -872,6 +888,12 @@
         "to": "κυρίῳ",
         "why": "Brenton prints κυρίῳ: 1844 vol. 1 p. 276 clearly; 1900 p. 336 shows the acute on damaged type, 1879 p. 336 has worn it away. No printing has the transcription's circumflex on omega. Swete vol. 1 p. 513 confirms the dative.",
         "uncategorized": true
+      },
+      {
+        "from": "\\f + \\fr 13:19 \\ft According to the \\fqa Heb. \\ft a wonderful work. \\fqa Alex. \\ft reads τῷ θαυμαστὰ ποιοῦντι κυρίῳ.\\f*",
+        "to": "\\f + \\fr 13:19 \\ft According to the Heb. a wonderful work. The LXX. seem to have confounded פלא with פלח or פלה and thus rendered it διεχώρισε ποιῆσαι, but Alex. reads τῷ θαυμαστὰ ποιοῦντι κυρίῳ.\\f*",
+        "why": "Brenton’s 1844 printing, vol. 1 physical p. 300 (printed p. 276), explains the confusion of פלא with פלח or פלה and quotes διεχώρισε ποιῆσαι before reporting Alexandrinus. The later Bagster setting (1879 physical p. 352; 1900 physical p. 348, printed p. 336) omits that explanation and Greek quotation. Restore them. Swete I p. 513 confirms the main clause and the Alexandrine dative construction; the existing decision to keep the report as a note remains unchanged.",
+        "uncategorized": true
       }
     ],
     "JDG 14:6": {
@@ -904,11 +926,19 @@
       "why": "the printed Greek reads ἀπάντημα",
       "uncategorized": true
     },
-    "1KI 18:21": {
-      "from": "γόνν",
-      "to": "γόνυ",
-      "why": "the printed Greek reads γόνυ"
-    },
+    "1KI 18:21": [
+      {
+        "from": "γόνν",
+        "to": "γόνυ",
+        "why": "the printed Greek reads γόνυ"
+      },
+      {
+        "from": "\\f + \\fr 18:21 \\fqa Gr. \\ft the hams, from γόνυ, the knee.\\f*",
+        "to": "\\f + \\fr 18:21 \\ft Gr. ἰγνύη, the hams, from γόνυ, the knee.\\f*",
+        "why": "Brenton’s 1844 printing, vol. 1 physical p. 414 (printed p. 390), explicitly cites ἰγνύη, explaining knee, or rather back part of the knee. The later Bagster setting (1879 physical p. 492; 1900 physical p. 488, printed p. 476) omits that noun and refines the explanation to the hams, from γόνυ, the knee. Restore the cited noun while retaining the later anatomical rendering and root explanation. Swete I p. 725 prints ἐπ᾽ ἀμφοτέραις ταῖς ἰγνύαις; the dictionary form identifies the same noun, without changing the Greek witness or the English verse.",
+        "uncategorized": true
+      }
+    ],
     "PSA 93:19": {
       "from": "ἠὺφπαναν",
       "to": "ἠύφραναν",
@@ -1402,11 +1432,19 @@
         "uncategorized": true
       }
     ],
-    "2SA 5:23": {
-      "from": "בכאיס",
-      "to": "בכאים",
-      "why": "Brenton’s printings read בכאים with a final mem (1844 p. 358; 1879 p. 423; 1900 p. 419)."
-    },
+    "2SA 5:23": [
+      {
+        "from": "בכאיס",
+        "to": "בכאים",
+        "why": "Brenton’s printings read בכאים with a final mem (1844 p. 358; 1879 p. 423; 1900 p. 419)."
+      },
+      {
+        "from": "\\f + \\fr 5:23 \\fqa Heb. \\ft בכאים \\fqa lit. \\ft mulberries.\\f*",
+        "to": "\\f + \\fr 5:23 \\ft Gr. κλαυθμῶνος. Heb. בכאים lit. mulberries, mistaken for בֹּכִים.\\f*",
+        "why": "Brenton’s 1844 printing, vol. 1 physical p. 358 (printed p. 334), gives Gr. κλαυθμῶνος before the Hebrew and continues after mulberries with mistaken for בֹּכִים. The later Bagster setting (1879 physical p. 423; 1900 physical p. 419, printed p. 407) omits the Greek and the mistaken-form explanation. Restore both. Swete I p. 622 prints τοῦ κλαυθμῶνος at 2 Kingdoms 5:23–24. The last Hebrew word ends the 1844 margin without a stop; the restored note retains the later setting’s sentence punctuation.",
+        "uncategorized": true
+      }
+    ],
     "JDG 21:4": {
       "from": "See chap \\xt 20. 26.",
       "to": "See chap. \\xt 20. 26.",
@@ -1776,9 +1814,9 @@
       "uncategorized": true
     },
     "JOS 24:26": {
-      "from": "\\fqa Gr. \\ft Properly",
-      "to": "\\ft Properly",
-      "why": "Brenton 1879 physical p. 329 and 1900 physical p. 325 (printed p. 313) print δ “Properly a pine or turpentine tree. So chap. 17. 9.” with no label; eBible adds Gr.",
+      "from": "\\f + \\fr 24:26 \\fqa Gr. \\ft Properly a pine or turpentine tree. So chap. \\xt 17. 9.\\f*",
+      "to": "\\f + \\fr 24:26 \\ft Gr. τέρμινθον, properly a pine or turpentine tree, here frequently answering to the Hebrew for an oak. So chap. \\xt 17. 9.\\f*",
+      "why": "Brenton’s 1844 printing, vol. 1 physical p. 281 (printed p. 257), gives Gr. τέρμινθον and explains here frequently answering to the Hebrew for an oak. The later Bagster setting (1879 physical p. 329; 1900 physical p. 325, printed p. 313) omits the Greek and that explanation, leaving Properly a pine or turpentine tree. So chap. 17. 9. Restore the fuller note; the Gr. label eBible retains belongs with the recovered Greek. The printed τέρμινθον is restored diplomatically; a separate Greek-spelling revision corrects it from Swete I p. 473, τερέμινθον.",
       "uncategorized": true
     },
     "JDG 9:23#2": {
@@ -2045,6 +2083,108 @@
       "from": "priest shall pour the blood",
       "to": "priest \\f + \\fr 17:6 \\fqa Gr. \\ft pours.\\f*shall pour the blood",
       "why": "Brenton 1900 physical p. 164 and 1879 physical p. 168 (both printed p. 152) print β Gr. pours. with the caller before shall pour in Leviticus 17:6. eBible lacks the note, and CCEL sets the words of 13:3 to 17:6 in its note v.7#30 and loses the notes between; its caller #30 stands before shall pour too."
+    },
+    "PSA 3:3": {
+      "from": "\\f + \\fr 3:3 \\ft The word Διάψαλμα (Selah) has been rendered Pause, as most intelligible to the English reader.\\f*",
+      "to": "\\f + \\fr 3:3 \\ft The word Διάψαλμα (Selah) has been rendered Pause, as most intelligible to the English reader. What kind of pause was intended by the LXX. cannot perhaps be determined.\\f*",
+      "why": "Brenton’s 1844 printing, vol. 2 physical p. 79 (printed p. 576), continues the note after English reader with What kind of pause was intended by the LXX. cannot perhaps be determined. The later Bagster setting (1879 physical p. 715; 1900 physical p. 711, both printed p. 699) omits that sentence, which eBible and CCEL likewise lack. Restore the older information while retaining the later wording of the first sentence. Swete II p. 214 prints διάψαλμα at the end of Psalm 3:3; this is Brenton’s explanation of his translation, not a manuscript reading.",
+      "uncategorized": true
+    },
+    "JOS 14:8": {
+      "from": "\\f + \\fr 14:8 \\fqa Or, \\ft according to the \\fqa Heb. \\ft idiom, ‘fully followed.’\\f*",
+      "to": "\\f + \\fr 14:8 \\ft Or, according to the Heb. idiom with instances of which LXX. abounds, repeatedly, i. e. fully followed the Lord my God.\\f*",
+      "why": "Brenton’s 1844 printing, vol. 1 physical p. 269 (printed p. 245), gives the full explanation Or, according to the Heb. idiom with instances of which LXX. abounds, repeatedly, i.e. fully followed the Lord my God. The later Bagster setting (1879 physical p. 314; 1900 physical p. 310, printed p. 298) shortens this to Or, according to the Heb. idiom, fully followed. Restore the omitted explanation and the full rendering; Swete I pp. 449–450 prints προσέθην ἐπακολουθῆσαι Κυρίῳ τῷ Θεῷ μου. The whole rendering replaces the whole verbal phrase, including the Lord my God.",
+      "uncategorized": true
+    },
+    "JOS 21:13": {
+      "from": "\\f + \\fr 21:13 \\ft The Greek word is different from that translated ‘suburbs.’ above.—\\fqa q. d. \\ft glebe.\\f*",
+      "to": "\\f + \\fr 21:13 \\ft The Greek word τὰ ἀφωρισμένα is different from that translated ‘suburbs.’ above.—q. d. Anglicè glebe.\\f*",
+      "why": "Brenton’s 1844 printing, vol. 1 physical p. 276 (printed p. 252), names τὰ ἀφωρισμένα and gives q.d. Anglicè glebe. The later Bagster setting (1879 physical p. 323; 1900 physical p. 319, printed p. 307) drops the Greek and Anglicè. Restore those identifications within the later explanatory sentence. Swete I p. 463 prints τὰ ἀφωρισμένα at Joshua 21:13, distinct from τὰ περισπόρια at 21:11. Keep the source’s gloss, without replacing the English translation.",
+      "uncategorized": true
+    },
+    "DEU 21:4": {
+      "from": "\\f + \\fr 21:4 \\fqa Gr. \\ft cut the sinews. \\fqa i. e. \\ft of the neck.\\f*",
+      "to": "\\f + \\fr 21:4 \\fqa Gr. \\ft cut the sinews. \\fqa i. e. \\ft of the neck. Iliad. x. 456.\\f*",
+      "why": "Brenton’s 1844 printing, vol. 1 physical p. 237 (printed p. 213), gives the full note Gr. Cut the sinews, sc. of the neck. Iliad. x. 456. The later Bagster setting (1879 physical p. 275; 1900 physical p. 271, printed p. 259) keeps the anatomical gloss with i.e. but drops the Homer citation. Restore that citation, retaining the later clarification. Swete I p. 385 prints νευροκοπήσουσιν τὴν δάμαλιν; the gloss explains this verb, without changing the English translation.",
+      "uncategorized": true
+    },
+    "1KI 7:33": {
+      "from": "\\f + \\fr 7:33 \\ft thick \\fqa part of the land.\\f*",
+      "to": "\\f + \\fr 7:33 \\ft Gr. thick part of the land.\\f*",
+      "why": "Brenton’s 1844 printing, vol. 1 physical p. 395 (printed p. 371), and the later Bagster setting (1879 physical p. 470; 1900 physical p. 466, printed p. 454) all print Gr. thick part of the land. eBible drops Gr. and splits the rendering’s markup after thick. Restore the label and the complete printed gloss; Swete I p. 690 has ἐν τῷ πάχει τῆς γῆς.",
+      "uncategorized": true
+    },
+    "1KI 10:21": {
+      "from": "\\f + \\fr 10:21 \\fqa Lit. \\ft 'shut up with gold,' a frequent phrase in \\fqa Heb. \\ft and \\fqa Gr. \\ft for 'pure gold.' See chap. \\xt 6. 20.\\f*",
+      "to": "\\f + \\fr 10:21 \\ft Gr. or gilt with gold, lit. ‘shut up with gold,’ but ‘shut up gold’ seems frequently used both in Heb. and Gr. for ‘pure gold.’ See chap. \\xt 6. 20.\\f*",
+      "why": "Brenton’s 1844 printing, vol. 1 physical p. 401 (printed p. 377), gives the gilding sense and distinguishes shut up with gold from the idiom shut up gold. The later Bagster setting (1879 physical p. 476; 1900 physical p. 472, printed p. 460) shortens this to Lit. shut up with gold, a frequent phrase in Heb. and Gr. for pure gold. Restore the earlier information and its qualification seems; no demonstrated correction warrants omitting either distinction. Swete I p. 701 prints χρυσίῳ συνκεκλεισμένα. Retain Brenton’s discussion without changing the translation.",
+      "uncategorized": true
+    },
+    "1KI 10:22a": {
+      "from": "\\f + \\fr 10:22a \\ft This word more commonly means 'spoil' in the O.T.\\f*",
+      "to": "\\f + \\fr 10:22a \\ft This word more commonly means ‘spoil’ in the O.T. which is evidently not the meaning here.\\f*",
+      "why": "Brenton’s 1844 printing, vol. 1 physical p. 401 (printed p. 377), continues after O.T. with which is evidently not the meaning here. The later Bagster setting (1879 physical p. 477; 1900 physical p. 473, printed p. 461) omits that rejection of the dictionary sense. Restore it: the note quotes spoil precisely to distinguish it from the sense of provision here. Swete I p. 701 prints τῆς προνομῆς; the note does not propose a different Greek reading.",
+      "uncategorized": true
+    },
+    "2KI 8:1": {
+      "from": "\\f + \\fr 8:1 \\ft The \\fqa Gr. \\ft signifies, to rekindle a fire.\\f*",
+      "to": "\\f + \\fr 8:1 \\ft Gr. ζωπυρέω properly to rekindle a fire.\\f*",
+      "why": "Brenton’s 1844 printing, vol. 1 physical p. 432 (printed p. 408), prints Gr. ζωπυρέω properly to rekindle a fire. The later Bagster setting (1879 physical p. 514; 1900 physical p. 510, printed p. 498) omits the explicit dictionary lemma, paraphrasing The Gr. signifies, to rekindle a fire. Restore the Greek and its qualification properly. Swete I p. 757 prints the inflected verb ἐζωπύρησεν. The infinitive gloss remains commentary, not continuous replacement English.",
+      "uncategorized": true
+    },
+    "2KI 8:15": {
+      "from": "\\f + \\fr 8:15 \\ft The \\fqa Gr. \\ft is from the \\fqa Heb. \\ft rug \\fqa or \\ft quilt, etc.\\f*",
+      "to": "\\f + \\fr 8:15 \\ft Gr. μαχβὰρ, is from the Heb. rug or quilt, etc.\\f*",
+      "why": "Brenton’s 1844 printing, vol. 1 physical p. 433 (printed p. 409), cites μαχβὰρ before from the Heb. rug or quilt, &c. The later Bagster note (1879 physical p. 515; 1900 physical p. 511, printed p. 499) omits the cited word, reading The Gr. is from the Heb. rug or quilt, etc.; its Greek column still prints τὸ μαχβὰρ. Restore the omitted citation, retaining the later is and etc. Swete I p. 759 instead prints τὸν χαββά, with a different Alexandrine form in the apparatus; this does not authorize replacing Brenton’s cited Greek with Swete’s main text.",
+      "uncategorized": true
+    },
+    "PSA 54:20": {
+      "from": "\\f + \\fr 54:20 \\fqa Or, \\ft they have nothing to give in exchange, \\fqa q. d. \\ft to redeem their souls. Compare \\xt Ps. 48. 7,8; Mark 8. 37.\\f*",
+      "to": "\\f + \\fr 54:20 \\ft Or, they have nothing to give in exchange, q. d. to redeem their souls in the day of vengeance. Compare \\xt Ps. 48. 7,8; Matt. 16. 26; Mark 8. 37.\\f*",
+      "why": "Brenton’s 1844 printing, vol. 2 physical p. 103 (printed p. 600), includes in the day of vengeance after to redeem their souls and cites Matthew 16:26 between Psalm 48:7–8 and Mark 8:37. The later Bagster setting (1879 physical p. 746; 1900 physical p. 742, printed p. 730) omits that explanation’s final phrase and the Matthew reference. Restore both, without extending the alternative rendering beyond they have nothing to give in exchange. Swete II p. 283 prints οὐ γάρ ἐστιν αὐτοῖς ἀντάλλαγμα.",
+      "uncategorized": true
+    },
+    "JDG 14:10": {
+      "from": "\\f + \\fr 14:10 \\fqa i. e. \\ft in the original sense of the word, \\fqa a drinking party.\\f*",
+      "to": "\\f + \\fr 14:10 \\ft i. e. in the original sense of the word, a drinking party, πότον.\\f*",
+      "why": "Brenton’s 1844 printing, vol. 1 physical p. 300 (printed p. 276), identifies πότον after a drinking party. The later Bagster setting (1879 physical p. 353; 1900 physical p. 349, printed p. 337) omits the cited Greek noun. Restore it as commentary; Swete I p. 515 prints πότον in Judges 14:10. The English rendering replaces the complete a banquet, including its article.",
+      "uncategorized": true
+    },
+    "JDG 18:25": {
+      "from": "\\f + \\fr 18:25 \\fqa Lit. \\ft add. \\fqa q. d. \\ft to the deeds already done.\\f*",
+      "to": "\\f + \\fr 18:25 \\ft Lit. add. q. d. to the deeds already done. It seems here the LXX. have confounded אָסַפְתָּה with יָסַפְתָּה.\\f*",
+      "why": "Brenton’s 1844 printing, vol. 1 physical p. 305 (printed p. 281), explains that the LXX. seem to have confounded אָסַפְתָּה with יָסַפְתָּה. The later Bagster setting (1879 physical p. 359; 1900 physical p. 355, printed p. 343) replaces that observation with q.d. to the deeds already done. Restore the older Hebrew comparison alongside the later explanation, retaining their source words. Swete I p. 526 prints προσθήσουσιν, which Brenton glosses add; neither observation changes the English translation.",
+      "uncategorized": true
+    },
+    "JDG 20:26": {
+      "from": "\\f + \\fr 20:26 \\fqa Or, \\ft unblemished, according to the \\fqa Heb. \\ft peace offering.\\f*",
+      "to": "\\f + \\fr 20:26 \\ft Or, unblemished, according to the Heb. peace offering, the variation may be accounted for by the different renderings of שְׁלָמִים.\\f*",
+      "why": "Brenton’s 1844 printing, vol. 1 physical p. 308 (printed p. 284), continues the note with the variation may be accounted for by the different renderings of שְׁלָמִים. The later Bagster setting (1879 physical p. 363; 1900 physical p. 359, printed p. 347) omits that explanation. Restore it, retaining the later open peace offering. Swete I p. 533 prints τελείας and records Alexandrinus’s σωτηρίου, supporting the distinction of senses; the note adds no new manuscript claim.",
+      "uncategorized": true
+    },
+    "JDG 20:39": {
+      "from": "\\f + \\fr 20:39 \\fqa Or, \\ft slain ones, \\fqa i. e. \\ft to smite and cause to fall.\\f*",
+      "to": "\\f + \\fr 20:39 \\ft Or, slain ones, i. e. to smite and slay and cause to fall. Gr. τραυματίας, generally slain ones.\\f*",
+      "why": "Brenton’s 1844 printing, vol. 1 physical p. 309 (printed p. 285), includes and slay in the explanation and continues Gr. τραυματίας, generally slain ones. The later Bagster setting (1879 physical p. 363; 1900 physical p. 359, printed p. 347) drops both. Restore the omitted words and lexical explanation; Swete I p. 534 prints τραυματίας. The first slain ones renders wounded ones, while the repeated phrase cites the noun’s general sense.",
+      "uncategorized": true
+    },
+    "JDG 21:12": {
+      "from": "\\f + \\fr 21:12 \\fqa Gr. \\ft from, out of.\\f*",
+      "to": "\\f + \\fr 21:12 \\ft Gr. from, or of, or out of.\\f*",
+      "why": "Brenton’s 1844 printing, vol. 1 physical p. 310 (printed p. 286), gives three senses, from, or of, or out of. The later Bagster setting (1879 physical p. 365; 1900 physical p. 361, printed p. 349) drops of and its connectors, retaining from, out of. Restore the omitted partitive alternative; Swete I p. 536 prints ἀπὸ οἰκούντων. Each preposition can replace among before the inhabitants, without changing the verse’s wording.",
+      "uncategorized": true
+    },
+    "1SA 15:17": {
+      "from": "\\f + \\fr 15:17 \\fqa Gr. \\ft staff of a tribe. A double rendering of שבט \\fqa i. e. \\ft both staff and tribe.\\f*",
+      "to": "\\f + \\fr 15:17 \\ft Gr. staff of a tribe. Here, as is frequently the case in the LXX. a double rendering has been given to שבט i. e. both staff and tribe.\\f*",
+      "why": "Brenton’s 1844 printing, vol. 1 physical p. 333 (printed p. 309), includes Here, as is frequently the case in the LXX. a double rendering has been given to שבט. The later Bagster setting (1879 physical p. 392; 1900 physical p. 388, printed p. 376) reduces that observation to A double rendering of שבט. Restore the older explanation of frequency while preserving the source glosses. Swete I p. 575 prints ἡγούμενος σκήπτρου φυλῆς; these are lexical explanations, not independent replacements for the English clause.",
+      "uncategorized": true
+    },
+    "1SA 25:2": {
+      "from": "\\f + \\fr 25:2 \\fqa Lit. \\ft 3,000 flocks; as we say in English, 3,000 troops, meaning men formed into troops.\\f*",
+      "to": "\\f + \\fr 25:2 \\ft Lit. 3,000 flocks, but the expression is probably elliptical, as we say in English, 3,000 troops, meaning men formed into troops.\\f*",
+      "why": "Brenton’s 1844 printing, vol. 1 physical p. 344 (printed p. 320), explains but the expression is probably elliptical before the English troops analogy. The later Bagster setting (1879 physical p. 406; 1900 physical p. 402, printed p. 390) omits that qualification. Restore it while retaining the later wording of the concluding explanation and the source transcription’s thousands separators. Swete I p. 596 has τρισχίλια, confirming the number; the note discusses the expression, not another reading.",
+      "uncategorized": true
     }
   },
   "notes": {
@@ -2057,7 +2197,6 @@
     "EZR 5:1": {
       "lemma": "to them",
       "note": "Or, _for_, or, _concerning them_.",
-      "quotation": true,
       "why": "Brenton’s for and concerning them render ἐπ’ αὐτούς, the Greek of to them, where even is supplied, the first by ellipsis of them, so that for alone cannot stand in place of the phrase; both are quoted senses."
     },
     "ISA 54:17#3": {
@@ -2073,12 +2212,11 @@
       "why": "The 1844 note compares דעה, which the Greek’s γνῶσις, knowledge, reads, with the Hebrew’s רעת; it explains knowledge, though its dagger stands before great."
     },
     "EZR 3:2": {
-      "note": "Called _Joshua_ elsewhere, in Hagg. & Zech.",
+      "note": "Called {Joshua} elsewhere, in Hagg. & Zech.",
       "why": "Joshua is the alternative name for Jesus, as in the notes of Aggeus; the son of Josedec is outside the note."
     },
     "LEV 23:36": {
       "note": "q. d. _holiday_, when public business being restrained עצר servants, &c. have leave to go out ἐξόδιον.",
-      "quotation": true,
       "why": "Holiday, after q. d., glosses ἐξόδιον, the Greek of a time of release, within an explanation that runs on to ἐξόδιον; as a quotation it leaves the lemma at the whole phrase rather than measuring it by the one word."
     },
     "ISA 16:4": {
@@ -2100,7 +2238,6 @@
     },
     "PRO 17:6a#2": {
       "note": "Gr. _obolus_.",
-      "quotation": true,
       "why": "Gr. obolus names the coin the Greek has; it is a lexical quotation, not a rendering to put in place of farthing after a."
     },
     "EZR 2:69": {
@@ -2109,45 +2246,28 @@
     },
     "JDG 16:5": {
       "lemma": "each",
-      "note": "Gr. _a man_. Query. Is not the English ‘each’ derived from the Hebrew איש, eesh, a man?",
-      "quotation": true,
-      "quotations": {
-        "each": "each",
-        "eesh": "eesh",
-        "eesh, a man": "a man"
-      },
+      "note": "Gr. _a man_. Query. Is not the English ‘_each_’ derived from the Hebrew איש, _eesh_, _a man_?",
       "why": "The cited English word and the transliteration and glosses of the Hebrew are italic; the query stays roman. A man gives the lexical sense within Brenton’s etymological explanation, rather than a whole-lemma alternative that would leave we will give thee a man eleven hundred pieces of silver."
     },
     "JOB 17:5": {
-      "note": "κακίας _mischiefs_, i. e. _the opportunity of doing mischief_. This passage may be accounted for by the ambiguity of רעים ‘friends, or, evils’ and חלק ‘flattery, or, division.’",
-      "quotations": {
-        "friends": "friends",
-        "evils": "evils",
-        "flattery": "flattery",
-        "division": "division"
-      },
+      "note": "κακίας {mischiefs}, i. e. {the opportunity of doing mischief}. This passage may be accounted for by the ambiguity of רעים ‘_friends_, or, _evils_’ and חלק ‘_flattery_, or, _division_.’",
       "why": "The rendering of κακίας and the glosses of the Hebrew are italic; the explanation stays roman."
     },
     "JOB 17:5#2": {
       "note": "τῃ μερίδι q. d. _party_.",
-      "quotation": true,
       "why": "Party glosses τῇ μερίδι, the Greek of his companions; it is a lexical quotation, not a rendering to put in place of his companions."
     },
     "PSA 47:10": {
-      "note": "λαοῦ probably written for ναοῦ, _temple_.",
+      "note": "λαοῦ probably written for ναοῦ, {temple}.",
       "why": "The gloss of ναοῦ is italic; the conjecture stays roman."
     },
     "JER 36:26": {
       "lemma": "ruler",
       "note": "The word constantly used in Luke for _master_.",
-      "quotation": true,
       "why": "The gloss is italic; the comment stays roman."
     },
     "EZK 16:8": {
-      "note": "Gr. _resting ones_. q. d. divertentium, et sic melius, δι’ εὐφημισμόν. Illud verò monendum, vocem καταλυόντων, quæ Hebræo דדים respondet, ad παρθενίην ζωνὴν potius spectare.",
-      "quotations": {
-        "divertentium": "divertentium"
-      },
+      "note": "Gr. {resting ones}. q. d. _divertentium_, et sic melius, δι’ εὐφημισμόν. Illud verò monendum, vocem καταλυόντων, quæ Hebræo דדים respondet, ad παρθενίην ζωνὴν potius spectare.",
       "sentence": true,
       "why": "Only the rendering and the Latin gloss divertentium are italic; et sic melius and the closing Latin sentence are commentary, and that sentence keeps its period."
     },
@@ -2174,20 +2294,13 @@
       "why": "Brenton’s 1844 literal alternative lest ye should do anything replaces the entire clause if haply ye may do somewhat; anything corresponds to somewhat. The printed dagger stands before if, and in concert with the elders is outside the gloss."
     },
     "LEV 7:34": {
+      "note": "Or, {heave shoulder}. The word ἀφαίρεμα seems to denote, 1. _a thing separated_; 2. _a choice piece offered_; 3. _any offering_.",
       "lemma": "shoulder of separation",
-      "quotations": {
-        "a thing separated": "a thing separated",
-        "a choice piece offered": "a choice piece offered",
-        "any offering": "any offering"
-      },
       "sentence": true,
       "why": "The restored note continues after its gloss with a complete explanation and numbered senses of ἀφαίρεμα; retain the sentence’s final period."
     },
     "LEV 19:28 CCEL": {
-      "note": "Gr. _soul_. Heb. נפש. q. d. that animal frame which once breathed.",
-      "quotations": {
-        "q. d. that animal frame which once breathed": "that animal frame which once breathed"
-      },
+      "note": "Gr. {soul}. Heb. נפש. q. d. _that animal frame which once breathed_.",
       "why": "Soul is the alternative for body. The Hebrew word and the explanation of its meaning are commentary, not another replacement for the widened lemma dead body; do not prefix dead to the explanatory phrase. That animal frame which once breathed glosses נפש and is quoted; the note ends in that fragment, without a full stop."
     },
     "GEN 1:9#2": {
@@ -2277,7 +2390,7 @@
     "GEN 21:22": {
       "lemma": "Ochozath his friend",
       "note": "Not in the Heb. _friend of bridegroom_, or _attendant at marriage_.",
-      "why": "Brenton 1844 vol. 1 physical p. 44 (printed p. 20) sets † before friend and prints friend or bridegroom; 1879 physical p. 40, 1884 physical p. 37 and 1900 physical p. 36 (printed p. 24) set λ before friend and print friend of bridegroom, or attendant at marriage. Swete I p. 34 (checked, scan confirmed), whose text is A, prints καὶ Ὀχοζὰθ ὁ νυμφαγωγὸς αὐτοῦ; the KJV and RV omit this companion altogether. The lemma names the whole companion phrase absent from the Hebrew rather than friend alone. Keep the source note and its lexical glosses unchanged: they explain friend within that phrase; the conjunction remains implicit in the omission report."
+      "why": "Brenton 1844 vol. 1 physical p. 44 (printed p. 20) sets † before friend and prints friend or bridegroom; 1879 physical p. 40, 1884 physical p. 37 and 1900 physical p. 36 (printed p. 24) set λ before friend and print friend of bridegroom, or attendant at marriage. Swete I p. 34 (checked, scan confirmed), whose text is A, prints καὶ Ὀχοζὰθ ὁ νυμφαγωγὸς αὐτοῦ; the KJV and RV omit this companion altogether. The lemma names the whole companion phrase absent from the Hebrew rather than friend alone. Keep the source note and its lexical glosses unchanged: they explain friend within that phrase; the conjunction remains implicit in the omission report. The two senses explain friend, not the entire companion phrase, and remain quotations rather than whole-lemma replacements."
     },
     "GEN 22:4": {
       "lemma": "lifted up",
@@ -2289,7 +2402,7 @@
     },
     "GEN 22:20": {
       "note": "_Men_, understood.",
-      "why": "The cited words and lexical glosses are italic; the surrounding explanation stays roman"
+      "why": "Men names the understood subject of saying; it does not replace saying in the reporting clause. Keep the supplied subject as an italic quotation, with its opening capital."
     },
     "GEN 24:5": {
       "lemma": "if haply",
@@ -2313,7 +2426,7 @@
     },
     "GEN 27:38": {
       "note": "Heb. — _Isaac being troubled_.",
-      "why": "Isaac being troubled quotes the words omitted by the Hebrew, so the quotation is italic and the omission sign stays roman"
+      "why": "Isaac being troubled quotes the words omitted by the Hebrew; it is the object of the omission report, not alternative wording. Keep the quotation italic and the omission sign roman."
     },
     "GEN 28:13": {
       "lemma": "stood",
@@ -2324,17 +2437,16 @@
       "why": "Lit. put under renders laid"
     },
     "GEN 30:27": {
-      "lemma": "I would augur well",
       "note": "_Stay thou_, perhaps understood. Heb. _I have argued that_, etc.",
-      "why": "The cited words and lexical glosses are italic; the surrounding explanation stays roman; retain the existing scope of the note"
+      "why": "Stay thou supplies the apodosis suggested for the conditional, while I have argued that, etc. abbreviates a different Hebrew construction. Neither is continuous replacement English for I would augur well; quote both without completing the source or echoing the lemma into them."
     },
     "GEN 30:30": {
-      "note": "So A. V. but Gr. and Heb. literally, _at my foot_.",
+      "note": "So A. V. but Gr. and Heb. literally, {at my foot}.",
       "why": "at my foot is the literal rendering"
     },
     "GEN 30:33": {
-      "note": "_Hearken to_ or _obey me_.",
-      "why": "hearken to and obey me are two renderings"
+      "note": "_Hearken to_ or {obey me}.",
+      "why": "Obey me can replace answer for me. Hearken to is an abbreviated lexical gloss that lacks its object in this construction; retain it as an italic quotation rather than a whole-lemma alternative."
     },
     "GEN 30:36": {
       "lemma": "and",
@@ -2346,21 +2458,21 @@
       "why": "looked up with renders lifted up; his eyes stays"
     },
     "GEN 34:3": {
-      "note": "Lit. _spoke according to the heart of the damsel—to her_. A literal version of the Hebrew.",
+      "note": "Lit. {spoke according to the heart of the damsel—to her}. A literal version of the Hebrew.",
       "why": "the rendering runs past the dash to to her"
     },
     "GEN 37:2": {
       "note": "Or, according to some copies, _they brought an evil report of Joseph_, etc.",
-      "lemma": "Joseph brought",
-      "why": "according to some copies introduces the reading, which runs on past Joseph brought"
+      "lemma": "Joseph brought to Israel their father their evil reproach",
+      "why": "According to some copies introduces an abbreviated different construction of the whole report. They brought an evil report of Joseph cannot replace Joseph brought while retaining the original object their evil reproach. Quote the source wording without completing its etc. or treating it as a whole-clause replacement."
     },
     "GEN 38:16": {
       "lemma": "went out of his way to her",
       "why": "turned his way to her renders went out of his way to her"
     },
     "GEN 39:1": {
-      "note": "Gr. _chief cook_. The same Hebrew word טבח signifies _a cook_, who was also a butcher; and _a guardsman_, who was also an executioner.",
-      "why": "The cited words and lexical glosses are italic; the surrounding explanation stays roman. The complete explanation retains its final full stop.",
+      "note": "Gr. {chief cook}. The same Hebrew word טבח signifies _a cook_, who was also a butcher; and _a guardsman_, who was also an executioner.",
+      "why": "Chief cook replaces captain of the guard after the verse’s the. A cook and a guardsman explain the Hebrew word within the following commentary; they cannot replace that phrase after the retained article. Keep these glosses italic as quotations and retain the complete explanation’s final full stop.",
       "sentence": true
     },
     "GEN 39:11": {
@@ -2449,10 +2561,11 @@
       "why": "be left of renders leave alone"
     },
     "EXO 12:3": {
-      "lemma": "each man a lamb",
+      "lemma": "lamb",
       "note": "πρόβατον, _sheep_ generally but ver. 5 seems to show that the word _lamb_ is admissible in this passage.",
-      "why": "the note is on the word lamb; according to the houses is not part of it; sheep renders πρόβατον, generally is comment",
-      "quotation": true
+      "why": "Brenton’s 1844 printing, vol. 1 physical p. 93 (printed p. 69), places the dagger immediately before the first lamb, as the later note at 1879 physical p. 100 discusses the same word. The note is on that word alone, and its caller tells it from the second lamb; widened, the lemma would end on according. Sheep glosses πρόβατον, and lamb is the English word cited within the explanation, rather than whole-lemma replacement wording.",
+      "occurrence": 1,
+      "widen": false
     },
     "EXO 12:16": {
       "lemma": "a holy convocation",
@@ -2460,8 +2573,7 @@
     },
     "EXO 12:42": {
       "lemma": "so that he should bring them out",
-      "note": "ὥστε seems to be given for ל, instead of ‘_when he brought_,’ etc.",
-      "why": "ὥστε is so that; when he brought is the rendering it replaces"
+      "why": "ὥστε is so that, and the note is on its whole clause. When he brought, etc., which the rules quote, abbreviates the Hebrew construction; it cannot replace so that he should bring them out while retaining of the land of Egypt."
     },
     "EXO 13:12": {
       "lemma": "set apart",
@@ -2472,7 +2584,7 @@
       "why": "the rendering is having looked up with their eyes"
     },
     "EXO 14:15": {
-      "note": "Gr. _harness or yoke the horses again_.",
+      "note": "Gr. {harness or yoke the horses again}.",
       "why": "Brenton 1844 vol. I physical p. 97 (printed p. 73), 1879 physical p. 104 and 1900 physical p. 100 (both printed p. 88) read “Gr. harness or yoke the horses again”, with the caller before proceed. Swete I p. 132 reads “καὶ ἀναζευξάτωσαν·”. Harness and yoke share the object the horses and the adverb again: the whole phrase is one rendering of proceed, so its internal or is italic with it."
     },
     "EXO 16:16": {
@@ -2504,7 +2616,7 @@
       "why": "saw the voice renders perceived the thundering"
     },
     "EXO 21:28": {
-      "note": "Or, _he or she die_.",
+      "note": "Or, {he or she die}.",
       "why": "he or she die is one rendering of they die"
     },
     "EXO 22:7": {
@@ -2544,7 +2656,7 @@
       "why": "little shields renders circlets alone"
     },
     "EXO 28:30": {
-      "note": "i. e. in Heb. _Urim and Thummim_; lit. _lights and perfections_.",
+      "note": "i. e. in Heb. {Urim and Thummim}; lit. {lights and perfections}.",
       "why": "Urim and Thummim renders Manifestation and the Truth as one name, like lights and perfections"
     },
     "EXO 29:9": {
@@ -2583,18 +2695,18 @@
       "lemma": "make",
       "why": "Work is shared by in and at: keep work in or at as one italic rendering of make, so neither preposition becomes an independent alternative without its verb. The complete explanatory sentence keeps its final full stop.",
       "sentence": true,
-      "note": "Or, _work in or at_. One reading is ποιήσουσι."
+      "note": "Or, {work in or at}. One reading is ποιήσουσι."
     },
     "EXO 32:6": {
       "lemma": "he offered",
       "why": "Set upon the altar renders offered, but the verse has offered twice. Keep he offered as the unique lemma and include the same subject in its alternative, leaving whole-burnt offerings outside the substitution."
     },
     "EXO 32:20": {
-      "note": "Gr. _sowed it under the water_, but another reading is ἐπὶ.",
+      "note": "Gr. {sowed it under the water}, but another reading is ἐπὶ.",
       "why": "but another reading is comments on the Greek; Brenton's italic here is not a rendering"
     },
     "EXO 32:23": {
-      "note": "_Done to him_.",
+      "note": "{Done to him}.",
       "why": "Done to him renders become of him"
     },
     "EXO 34:25#2": {
@@ -2636,11 +2748,11 @@
     "NUM 1:18": {
       "lemma": "registered them",
       "note": "ἄξονες dicebantur olim tabulæ publicæ; atque inde ἐπαξοοῦν, quod videtur esse, _in tabulas referre_. L. Bos.",
-      "why": "L. Bos names the source of the note; in tabulas referre renders registered them, not after"
+      "why": "L. Bos names the source of the note. In tabulas referre is a Latin infinitive explaining the Greek for registered them, not continuous English that can replace the finite verb and its object; retain it as an italic quotation."
     },
     "NUM 1:52": {
-      "note": "Or, _headship_, i. e. _according to the situation of his captain or prince_.",
-      "why": "captain or prince is one phrase, not two renderings"
+      "note": "Or, {headship}, i. e. _according to the situation of his captain or prince_.",
+      "why": "Headship replaces company. According to the situation of his captain or prince explains that sense; substituting it after the verse’s according to his would duplicate the construction. Keep the explanation italic as a quotation."
     },
     "NUM 2:18": {
       "lemma": "westward",
@@ -2648,7 +2760,7 @@
     },
     "NUM 3:3": {
       "note": "Gr. _accomplished their hands to minister_: according to the Hebrew idiom, _filled their hands_.",
-      "why": "filled their hands is the whole Hebrew rendering"
+      "why": "Accomplished their hands to minister and filled their hands explain the Greek and Hebrew idioms, but neither replaces consecrated to the priesthood after priests whom they. Retain both literal glosses as quotations without rewriting their relative construction."
     },
     "NUM 4:25": {
       "lemma": "they",
@@ -2684,7 +2796,7 @@
     },
     "NUM 10:21": {
       "lemma": "the others",
-      "note": "i. e. _the Gershonites and the Merarites_. A. V. margin.",
+      "note": "i. e. {the Gershonites and the Merarites}. A. V. margin.",
       "why": "the note explains the others; margin is a comment"
     },
     "NUM 11:23": {
@@ -2795,7 +2907,7 @@
       "why": "Gr. to dwell renders to have dwelt"
     },
     "DEU 1:15": {
-      "note": "Perhaps, _recorders_: more lit. _instructers in reading and writing_.",
+      "note": "Perhaps, {recorders}: more lit. {instructers in reading and writing}.",
       "why": "recorders is a rendering; the note is on officers"
     },
     "DEU 1:16": {
@@ -2811,8 +2923,9 @@
       "why": "The rendering is of the whole clause through enough; retain this mount in the alternative too, so its infinitive compass keeps the object that the lemma takes in."
     },
     "DEU 3:11": {
-      "note": "Or, _acropolis, citadel_: or _extremity_ of the land of the Ammonites.",
-      "why": "extremity is a second rendering of chief city"
+      "lemma": "chief city",
+      "note": "Or, {acropolis}, {citadel}: or {extremity} of the land of the Ammonites.",
+      "why": "Acropolis and citadel are separate synonymous renderings, as 1844 physical p. 216 (printed p. 192) makes explicit with or; the later setting at 1879 physical p. 249 (printed p. 233) separates them by a comma. Each, and extremity, can replace chief city. Keep the later source words, with the comma roman and each alternative italic."
     },
     "DEU 3:27": {
       "lemma": "quarried rock",
@@ -2878,8 +2991,8 @@
     },
     "DEU 21:4": {
       "lemma": "slay",
-      "note": "Gr. _cut the sinews_. i. e. of the neck.",
-      "why": "Gr. cut the sinews renders slay alone; of the neck adds to it rather than renders"
+      "note": "Gr. _cut the sinews_. i. e. of the neck. Iliad. x. 456.",
+      "why": "Cut the sinews is a literal gloss of slay, with of the neck supplied in commentary; replacing slay would leave cut the sinews the heifer. Keep the source’s explanation as a quotation rather than inventing continuous replacement English."
     },
     "DEU 21:15": {
       "lemma": "the other",
@@ -2894,7 +3007,7 @@
       "why": "Gr. this man renders he who does so"
     },
     "DEU 28:10": {
-      "note": "Or, _see that the name_, etc.",
+      "note": "Or, {see that the name}, etc.",
       "lemma": "see thee, that the name",
       "why": "see that the name is the rendering, of see thee, that the name"
     },
@@ -2940,7 +3053,7 @@
     },
     "JOS 3:9": {
       "note": "Gr. _bring hither_. sc. yourselves.",
-      "why": "yourselves supplies the object rather than renders"
+      "why": "Bring hither explains the transitive Greek construction; its object yourselves is supplied separately by sc. It cannot replace Come hither as continuous English without that object, so retain the literal gloss as a quotation."
     },
     "JOS 3:15": {
       "lemma": "all its banks",
@@ -2951,8 +3064,8 @@
       "why": "as on the days renders about the time"
     },
     "JOS 4:3": {
-      "note": "Gr. _ready_. Heb. הכין. A. V. _firm_, applied to the feet of the priests.",
-      "why": "only firm is the A. V. rendering"
+      "note": "Gr. {ready}. Heb. הכין. A. V. _firm_, applied to the feet of the priests.",
+      "why": "Ready replaces fit. Firm is the Authorized Version’s word applied to the priests’ feet, as the commentary expressly says; keep that cited word italic without treating it as another reading of the stones."
     },
     "JOS 4:4": {
       "lemma": "of distinction",
@@ -2979,7 +3092,7 @@
       "why": "let all the people, etc. renders all the people shall shout"
     },
     "JOS 6:8": {
-      "note": "Heb. שופרות היובלים. A. V. ‘_rams' horns_.’ Only in this place.",
+      "note": "Gr. σάλπιγγας ἱεράς. Heb. שופרות היובלים. See Parkhurst on יובל. A. V. ‘{rams' horns}.’ Only in this place.",
       "why": "rams' horns is the A. V. rendering, of sacred trumpets"
     },
     "JOS 8:21": {
@@ -2987,7 +3100,7 @@
       "why": "Gr. took renders had taken"
     },
     "JOS 9:5": {
-      "note": "Gr. _eaten_, sc. of worms or maggots.",
+      "note": "Gr. {eaten}, sc. of worms or maggots.",
       "why": "of worms or maggots adds to eaten rather than renders"
     },
     "JOS 10:4": {
@@ -3003,13 +3116,12 @@
       "why": "fasten upon or seize renders attack; the rear remains"
     },
     "JOS 11:21": {
-      "lemma": "race of Israel",
       "note": "Heb. הר ישראל probably הר for דור _a mountain_, not _a generation_.",
-      "why": "The cited words and lexical glosses are italic; the surrounding explanation stays roman; retain the existing scope of the note"
+      "why": "A mountain and a generation gloss the cited Hebrew words in the conjecture; neither replaces race of Israel after from all the. Keep the lexical glosses italic and the surrounding explanation roman."
     },
     "JOS 12:2": {
-      "note": "another reading is ἐπὶ τοῦ χείλους, _on the slope_ or, _edge_.",
-      "why": "the English after the Greek renders on the side; of the valley remains"
+      "note": "another reading is ἐπὶ τοῦ χείλους, {on the slope} or, _edge_.",
+      "why": "On the slope replaces on the side, retaining of the valley. Edge is the second noun in the source’s elliptical phrase, not a complete replacement including its preposition and article; keep it as a quoted gloss."
     },
     "JOS 13:1": {
       "lemma": "years",
@@ -3021,8 +3133,8 @@
       "why": "uninhabited country renders wilderness"
     },
     "JOS 14:8": {
-      "note": "Or, according to the Heb. idiom, ‘_fully followed_.’",
-      "why": "fully followed is the rendering; according to the Heb. idiom introduces it"
+      "note": "Or, according to the Heb. idiom with instances of which LXX. abounds, repeatedly, i. e. {fully followed the Lord my God}.",
+      "why": "The full 1844 rendering fully followed the Lord my God replaces applied myself to follow the Lord my God. Include the complete verbal phrase so its final words are not duplicated; the preceding observation about Hebrew idiom is commentary."
     },
     "JOS 14:15": {
       "lemma": "metropolis",
@@ -3041,7 +3153,7 @@
       "why": "Kirjath-sepher is the city of Letters"
     },
     "JOS 15:18": {
-      "note": "_What hast thou to say_? or _of what hast thou need_?",
+      "note": "{What hast thou to say}? or {of what hast thou need}?",
       "why": "both are renderings"
     },
     "JOS 18:5": {
@@ -3108,7 +3220,7 @@
     },
     "JOS 24:26": {
       "lemma": "the oak",
-      "note": "Properly _a pine or turpentine tree_. So chap. 17. 9.",
+      "note": "Gr. τέρμινθον, properly {a pine or turpentine tree}, here frequently answering to the Hebrew for an oak. So chap. 17. 9.",
       "why": "Brenton’s a governs pine and turpentine tree together. Keep the shared-article phrase as one italic rendering and include the verse’s the in the lemma, so either tree-name replaces the whole noun phrase without a doubled or missing article; Properly remains commentary."
     },
     "JDG 1:27": {
@@ -3147,7 +3259,7 @@
       "why": "noisy ones renders disturbers"
     },
     "JDG 5:14": {
-      "note": "Rather, _draw or handle the scribe's pen_, etc.",
+      "note": "Rather, {draw or handle the scribe's pen}, etc. omitting ἐν as a Hebraism.",
       "why": "Rather is Brenton’s comment. Draw and handle share the scribe’s pen as their object: keep the whole phrase in one italic run, so draw cannot stand alone as a replacement for draw with the scribe’s pen."
     },
     "JDG 5:26": {
@@ -3171,7 +3283,7 @@
       "why": "the phrase ends at Ephraim"
     },
     "JDG 8:6": {
-      "note": "Gr. _is the hand_.",
+      "note": "Gr. {is the hand}.",
       "why": "is the hand renders are the hands"
     },
     "JDG 8:21": {
@@ -3224,17 +3336,17 @@
       "why": "the note is on the Greek word for Nazarite"
     },
     "JDG 13:19": {
-      "note": "According to the Heb. _a wonderful work_. Alex. reads τῷ θαυμαστὰ ποιοῦντι κυρίῳ.",
+      "note": "According to the Heb. {a wonderful work}. The LXX. seem to have confounded פלא with פלח or פלה and thus rendered it διεχώρισε ποιῆσαι, but Alex. reads τῷ θαυμαστὰ ποιοῦντι κυρίῳ.",
       "why": "a wonderful work is the Hebrew's rendering. Alex. reads introduces a complete sentence about the witness, so its final full stop stays; the opening Hebrew gloss remains a lowercase fragment."
     },
     "JDG 14:1": {
       "note": "Observe, ἀλλόφυλοι here and elsewhere is rendered _Philistines_.",
-      "why": "Philistines is the English word Brenton cites"
+      "why": "Philistines is the English word cited from this passage and other uses of ἀλλόφυλοι. Keep that word italic as a quotation within the explanatory sentence, rather than a proposed replacement."
     },
     "JDG 14:10": {
-      "lemma": "banquet",
-      "note": "i. e. in the original sense of the word, _a drinking party_.",
-      "why": "the note is on banquet; in the original sense of the word is comment"
+      "lemma": "a banquet",
+      "note": "i. e. in the original sense of the word, {a drinking party}, πότον.",
+      "why": "A drinking party renders a banquet in the original sense of the word. Include the verse’s article in the scope so substitution does not produce a a drinking party; the introductory explanation stays roman."
     },
     "JDG 14:13": {
       "lemma": "changes of apparel",
@@ -3258,24 +3370,26 @@
     },
     "JDG 18:25": {
       "lemma": "take away",
-      "note": "Lit. _add_. q. d. to the deeds already done.",
-      "why": "add renders take away; to the deeds already done explains rather than renders"
+      "note": "Lit. {add}. q. d. to the deeds already done. It seems here the LXX. have confounded אָסַפְתָּה with יָסַפְתָּה.",
+      "sentence": true,
+      "why": "Add renders take away; to the deeds already done explains rather than renders. The restored final sentence about the Hebrew confusion retains its closing stop."
     },
     "JDG 19:3#2": {
       "lemma": "he had his young man",
       "why": "his young man was renders he had his young man"
     },
     "JDG 20:26": {
-      "note": "Or, _unblemished_, according to the Heb. _peace offering_.",
-      "why": "unblemished and peace offering are the renderings"
+      "note": "Or, {unblemished}, according to the Heb. _peace offering_, the variation may be accounted for by the different renderings of שְׁלָמִים.",
+      "sentence": true,
+      "why": "Unblemished replaces perfect before sacrifices. Peace offering names the Hebrew kind of offering, not another adjective to replace perfect; retain it as a lexical quotation within the commentary. The restored finite explanation retains its closing stop."
     },
     "JDG 20:37": {
       "lemma": "moved on",
       "why": "extended themselves renders moved on; toward Gabaa stays"
     },
     "JDG 20:39": {
-      "note": "Or, _slain ones_, i. e. to smite and cause to fall.",
-      "why": "to smite and cause to fall explains smite down, rather than renders wounded ones"
+      "note": "Or, {slain ones}, i. e. to smite and slay and cause to fall. Gr. τραυματίας, generally _slain ones_.",
+      "why": "The first slain ones replaces wounded ones. To smite and slay and cause to fall explains the verb, and the last slain ones quotes the general sense of τραυματίας; neither is another whole-lemma alternative. Claim only the first matching italic run as the replacement."
     },
     "JDG 20:45": {
       "lemma": "picked off",
@@ -3284,10 +3398,6 @@
     "JDG 21:6": {
       "lemma": "relented",
       "why": "comforted themselves renders relented"
-    },
-    "JDG 21:12": {
-      "note": "Gr. _from_, _out of_.",
-      "why": "from and out of are two renderings of among"
     },
     "JDG 21:15": {
       "lemma": "relented",
@@ -3362,17 +3472,18 @@
       "why": "set up a hand renders raised up help; for himself is kept"
     },
     "1SA 15:17": {
-      "note": "Gr. _staff of a tribe_. A double rendering of שבט i. e. both _staff_ and _tribe_.",
-      "why": "The cited words and lexical glosses are italic; the surrounding explanation stays roman"
+      "note": "Gr. _staff of a tribe_. Here, as is frequently the case in the LXX. a double rendering has been given to שבט i. e. both _staff_ and _tribe_.",
+      "sentence": true,
+      "why": "Staff of a tribe and the separate senses staff and tribe explain Brenton’s double rendering of שבט. None is continuous replacement English for one of the tribes after a leader of; retain the explanation and all three lexical quotations. The restored explanatory sentence retains its closing stop.",
+      "lemma": "one of the tribes"
     },
     "1SA 15:32": {
       "lemma": "Is death thus bitter",
       "why": "the rendering stands for the whole question"
     },
     "1SA 16:4": {
-      "lemma": "Dost thou come peaceably",
       "note": "Gr. _is_ '_thy coming in peace_.'",
-      "why": "the whole question is the rendering, of Dost thou come peaceably"
+      "why": "Is and thy coming in peace are separate pieces of one literal question; neither independently replaces Dost thou come peaceably. Keep both pieces as italic quotations without joining or completing the source’s wording."
     },
     "1SA 16:7#2": {
       "lemma": "sees not",
@@ -3419,12 +3530,12 @@
       "why": "his wife sent to David renders David's wife told him"
     },
     "1SA 19:13#2": {
-      "lemma": "liver of a goat",
-      "note": "כבד _liver_, has evidently been read here for כביר _a quilt_, or perhaps _a pillow_.",
-      "why": "The cited words and lexical glosses are italic; the surrounding explanation stays roman; retain the existing scope of the note"
+      "lemma": "the liver of a goat",
+      "note": "כבד _liver_, has evidently been read here by mistake for כביר {a quilt}, or something of the kind, perhaps {a pillow}.",
+      "why": "Liver quotes the Hebrew sense in the explanation of a misreading. The proposed a quilt and a pillow can each replace the liver of a goat; include the verse’s article so substitution does not produce the a quilt or the a pillow. Keep the source’s qualification or something of the kind as commentary."
     },
     "1SA 20:6": {
-      "note": "Or, _notice me as present or absent_.",
+      "note": "Or, {notice me as present or absent}.",
       "why": "notice me as present or absent is one rendering, not two"
     },
     "1SA 20:6#2": {
@@ -3437,10 +3548,10 @@
     },
     "1SA 20:19#2": {
       "note": "A corruption of the Heb. _ezel_.",
-      "why": "The cited words and lexical glosses are italic; the surrounding explanation stays roman"
+      "why": "Ezel quotes the Hebrew form in a comment about the name’s corruption, rather than offering a translated replacement. Keep the cited form italic and its explanation roman."
     },
     "1SA 20:30": {
-      "note": "Lit. _deserting_ in a military sense.",
+      "note": "Lit. {deserting} in a military sense.",
       "why": "Lit. deserting renders traitorous; in a military sense is comment"
     },
     "1SA 20:31": {
@@ -3448,12 +3559,8 @@
       "why": "all the days that renders so long as"
     },
     "1SA 21:3": {
-      "lemma": "The faithfulness of God",
-      "note": "This is another instance of double translation of ambiguous words, מקום suggesting probably both the idea of _place_ and _faithfulness_, and thus both are inserted. For Palmoni see Ruth 4. 1.",
-      "quotations": {
-        "For Palmoni": "Palmoni"
-      },
-      "why": "The cited words and lexical glosses are italic; the surrounding explanation stays roman; retain the existing scope of the note. Palmoni, for which the complete 1844 note refers to Ruth 4:1, is a quoted word"
+      "note": "This is another instance of double translation of ambiguous words, מקום suggesting probably both the idea of _place_ and _faithfulness_, and thus both are inserted. For _Palmoni_ see Ruth 4. 1.",
+      "why": "Place and faithfulness name the two senses in the explanation of a double translation, not replacements for The faithfulness of God. Palmoni is likewise a quoted name in the reference to Ruth 4:1. Keep all three italic, without echoing the lemma into the explanation."
     },
     "1SA 21:8": {
       "lemma": "detained",
@@ -3490,8 +3597,9 @@
       "why": "the eBible text swaps this note and the one before: assemble and bewail renders assembled, and bewailed him"
     },
     "1SA 25:2": {
-      "note": "Lit. _3,000 flocks_; as we say in English, _3,000 troops_, meaning men formed into troops.",
-      "why": "3,000 flocks is the literal rendering; 3,000 troops is the English phrase Brenton cites"
+      "note": "Lit. {3,000 flocks}, but the expression is probably elliptical, as we say in English, _3,000 troops_, meaning men formed into troops.",
+      "sentence": true,
+      "why": "3,000 flocks is the literal rendering. 3,000 troops is an analogy from English usage that illustrates the collective sense, not another reading of Nabal’s possessions; keep it as a quotation. The restored finite explanation retains its closing stop."
     },
     "1SA 25:5": {
       "lemma": "how he is",
@@ -3538,8 +3646,8 @@
       "why": "Gr. told renders gave orders"
     },
     "2SA 1:18#2": {
-      "note": "Gr. _straight_, or _right_, sometimes _upright_, as of a man. Heb. _Jasher_.",
-      "why": "straight, right, and upright are the renderings; the rest is comment"
+      "note": "Gr. _straight_, or _right_, sometimes _upright_, as of a man. Heb. {Jasher}.",
+      "why": "Jasher is the Hebrew book-title alternative to Right. Straight, right, and upright describe the lexical range of the Greek, with upright expressly illustrated as of a man; keep those glosses as quotations rather than alternative titles."
     },
     "2SA 1:19#2": {
       "lemma": "the slain that died",
@@ -3548,7 +3656,7 @@
     "2SA 3:29": {
       "lemma": "Let it fall",
       "note": "Gr. Lit. _them_. (sc. _bloods_) _meet_.",
-      "why": "them meet renders it fall; the italic ran across the parenthesis"
+      "why": "Them and meet are separate pieces of the literal construction, with bloods explaining the pronoun in a parenthesis. None independently replaces Let it fall; quote the grammatical glosses without inventing a continuous rendering or echoing the lemma into them."
     },
     "2SA 5:2": {
       "lemma": "heretofore",
@@ -3560,11 +3668,12 @@
     },
     "2SA 5:20#2": {
       "note": "Thus in English or other languages, _Underskiddaw_, _Unterseen_, etc.",
-      "why": "the comma between the two cited names is not italic"
+      "why": "Underskiddaw and Unterseen are cited place-name analogies illustrating the prefix Over, not alternative names for this place. Keep both names italic, with their comma roman, and set the note on the prefix it explains.",
+      "lemma": "Over"
     },
     "2SA 5:23": {
-      "note": "Heb. בכאים lit. _mulberries_.",
-      "why": "mulberries is the literal rendering of the Hebrew"
+      "note": "Gr. κλαυθμῶνος. Heb. בכאים lit. {mulberries}, mistaken for בֹּכִים.",
+      "why": "Mulberries renders weeping in place of weeping. The cited Greek, the Hebrew forms, and the observation about their confusion are commentary; only mulberries is a whole-lemma alternative."
     },
     "2SA 8:1": {
       "lemma": "tribute",
@@ -3611,7 +3720,7 @@
       "why": "the phrase ends at way"
     },
     "2SA 18:2": {
-      "note": "Gr. _in_, _by_.",
+      "note": "Gr. {in}, {by}.",
       "why": "in and by are two renderings"
     },
     "2SA 18:3": {
@@ -3623,7 +3732,7 @@
       "why": "weigh upon my hands renders receive"
     },
     "2SA 18:18#3": {
-      "note": "Heb. idiom for '_place_.'",
+      "note": "Heb. idiom for '{place}.'",
       "why": "place is the rendering"
     },
     "2SA 19:30": {
@@ -3682,8 +3791,7 @@
     "1KI 1:47": {
       "lemma": "make the name of Solomon better",
       "why": "The Greek gloss describes the discontinuous make ... better construction; print it as an explanation, retaining the name of Solomon between the verbs. Brenton’s printings read do good to, or make good (1844 p. 386; 1884 p. 427).",
-      "note": "Gr. _do good to_, or _make good_.",
-      "quotation": true
+      "note": "Gr. _do good to_, or _make good_."
     },
     "1KI 2:37#2": {
       "lemma": "know assuredly",
@@ -3750,16 +3858,12 @@
       "occurrence": 2,
       "why": "the rendering runs to of the house"
     },
-    "1KI 7:33": {
-      "note": "_thick part of the land_.",
-      "why": "thick part of the land renders clay land"
-    },
     "1KI 7:35#2": {
       "lemma": "snuffers",
       "why": "the rendering stands for snuffers alone; of gold remains"
     },
     "1KI 7:36": {
-      "note": "Or, rather _work about the door_.",
+      "note": "Or, rather {work about the door}.",
       "why": "rather is Brenton's comment"
     },
     "1KI 7:36#2": {
@@ -3776,7 +3880,7 @@
     },
     "1KI 8:7": {
       "note": "pass. part. _spread out with their wings_.",
-      "why": "spread out with their wings is the literal rendering"
+      "why": "The source labels spread out with their wings a passive participle; it explains the Greek construction rather than supplying a finite replacement for spread out their wings. Swete I p. 691 prints διαπεπετασμένα ταῖς πτέρυξιν. Retain the grammatical gloss as a quotation."
     },
     "1KI 8:14": {
       "lemma": "turned",
@@ -3796,7 +3900,7 @@
     },
     "1KI 8:53": {
       "lemma": "O Lord God",
-      "note": "Gr. _Lord, Lord_, i. e. according to the Heb. _Lord Jehovah_.",
+      "note": "Gr. {Lord, Lord}, i. e. according to the Heb. {Lord Jehovah}.",
       "why": "Lord, Lord renders O Lord God; according to the Heb. introduces the rendering"
     },
     "1KI 9:5": {
@@ -3809,17 +3913,12 @@
     },
     "1KI 10:13": {
       "lemma": "by the hand of king Solomon",
-      "note": "_of his royal bounty_, A. V.",
+      "note": "{of his royal bounty}, A. V.",
       "why": "of his royal bounty renders by the hand of king Solomon; of his royal bounty is the A. V. rendering"
     },
     "1KI 10:21": {
-      "note": "Lit. '_shut up with gold_,' a frequent phrase in Heb. and Gr. for '_pure gold_.' See chap. 6. 20.",
-      "why": "shut up with gold is the literal rendering; pure gold is the quoted English idiom, italic as cited words are"
-    },
-    "1KI 10:22a": {
-      "note": "This word more commonly means '_spoil_' in the O.T.",
-      "why": "spoil is another rendering of the word. The complete explanation retains its final full stop.",
-      "sentence": true
+      "note": "Gr. or _gilt with gold_, lit. ‘_shut up with gold_,’ but ‘_shut up gold_’ seems frequently used both in Heb. and Gr. for ‘_pure gold_.’ See chap. 6. 20.",
+      "why": "The note discusses gilding and the literal and idiomatic senses of the Greek expression. None of its glosses replaces pure gold after were of without changing the construction; keep all cited phrases italic as quotations and retain the full explanation."
     },
     "1KI 11:37": {
       "lemma": "as thy soul desires",
@@ -3922,8 +4021,8 @@
       "why": "if thou art renders art thou"
     },
     "1KI 18:21": {
-      "note": "Gr. _the hams_, from γόνυ, _the knee_.",
-      "why": "The cited words and lexical glosses are italic; the surrounding explanation stays roman"
+      "note": "Gr. ἰγνύη, {the hams}, from γόνυ, _the knee_.",
+      "why": "The hams can replace feet in halt on both feet; Swete I p. 725 prints ἐπ᾽ ἀμφοτέραις ταῖς ἰγνύαις. The knee glosses the cited root γόνυ within the etymological explanation, not the plural English feet, and remains an italic quotation."
     },
     "1KI 19:2": {
       "lemma": "do so to me, and more also",
@@ -3934,7 +4033,7 @@
       "why": "Rom. 11. 3 quotes from they have digged down, not from I have been very jealous"
     },
     "1KI 20:8#2": {
-      "note": "Possibly _nobles_ is here meant.",
+      "note": "Possibly {nobles} is here meant.",
       "why": "nobles is the word Brenton offers for freemen"
     },
     "1KI 20:10": {
@@ -4072,13 +4171,13 @@
       "why": "Gr. is renders the second was alone; no man stays"
     },
     "2KI 8:1": {
-      "note": "The Gr. signifies, _to rekindle a fire_.",
-      "why": "to rekindle a fire is the literal rendering"
+      "note": "Gr. ζωπυρέω properly _to rekindle a fire_.",
+      "why": "To rekindle a fire gives the Greek verb’s dictionary sense; it cannot replace restored to life after whose son he had. Retain the infinitive as a quoted lexical explanation without inventing a conjugated English reading."
     },
     "2KI 8:15": {
       "lemma": "thick cloth",
-      "note": "The Gr. is from the Heb. _rug_ or _quilt_, etc.",
-      "why": "The cited words and lexical glosses are italic; the surrounding explanation stays roman; retain the existing scope of the note"
+      "note": "Gr. μαχβὰρ, is from the Heb. {rug} or {quilt}, etc.",
+      "why": "Rug and quilt each replace thick cloth after a; the cited Greek and its derivation stay roman. Retain the existing scope of the note."
     },
     "2KI 8:17": {
       "lemma": "Thirty and two years old was he when he began to reign",
@@ -4087,8 +4186,7 @@
     "2KI 8:26": {
       "lemma": "Twenty and two years old was Ochozias when he began to reign",
       "why": "The source gives a grammatical gloss, rather than a continuous replacement; print its words as an explanation so the subject and retained words remain in the verse.",
-      "note": "Gr. _a son of 22 years in his reigning_.",
-      "quotation": true
+      "note": "Gr. _a son of 22 years in his reigning_."
     },
     "2KI 8:28#2": {
       "lemma": "king of the Syrians",
@@ -4316,8 +4414,7 @@
     "JOB 25:2": {
       "lemma": "beginning",
       "why": "Brenton’s caller stands before beginning, his rendering of προοίμιον (1844 vol. 2 p. 65). Exordium and parable gloss the cited Greek words, not beginning as replacement English; print those lexical quotations in italics and keep the explanation roman.",
-      "note": "Compare chap. 27. 1. προοίμιον, _exordium_, is in Job used in the sense of παροιμία, _parable_.",
-      "quotation": true
+      "note": "Compare chap. 27. 1. προοίμιον, _exordium_, is in Job used in the sense of παροιμία, _parable_."
     },
     "JOB 39:13": {
       "lemma": "The peacock has a beautiful wing",
@@ -4328,7 +4425,7 @@
       "why": "Brenton’s caller stands before And, and A adds after τεσσάρων (Swete III p. 385), the four that ends this clause"
     },
     "EZK 16:44": {
-      "note": "Or, perhaps, _parable_.",
+      "note": "Or, perhaps, {parable}.",
       "why": "The rendering is parable, after the qualifier perhaps, which Brenton sets with Or, (1844 vol. 2 p. 318)"
     },
     "PSA 2:9": {
@@ -4336,8 +4433,8 @@
       "why": "tend them as a shepherd renders rule them"
     },
     "PSA 3:3": {
-      "note": "The word Διάψαλμα (Selah) has been rendered _Pause_, as most intelligible to the English reader.",
-      "why": "Pause is the English word cited from the text"
+      "note": "The word Διάψαλμα (Selah) has been rendered _Pause_, as most intelligible to the English reader. What kind of pause was intended by the LXX. cannot perhaps be determined.",
+      "why": "Pause is the English word cited from the text in an explanation of the translator’s choice. Keep the cited word italic as a quotation, rather than a proposed replacement."
     },
     "PSA 4:9": {
       "lemma": "both",
@@ -4348,7 +4445,7 @@
       "why": "fall from renders fail of"
     },
     "PSA 7:14": {
-      "note": "See Heb. perhaps '_persecuting ones_.'",
+      "note": "See Heb. perhaps '{persecuting ones}.'",
       "why": "persecuting ones is a rendering"
     },
     "PSA 9:22": {
@@ -4403,11 +4500,11 @@
       "why": "sc. as a law-giver qualifies instruct rather than renders it"
     },
     "PSA 24:14": {
-      "note": "Or, '_it_,' sc. what has just been stated.",
+      "note": "Or, '{it},' sc. what has just been stated.",
       "why": "Only it is an alternative rendering of truth; what has just been stated explains its referent and keeps the grammar of commentary."
     },
     "PSA 25:12": {
-      "note": "Gr. _in evenness or uprightness_.",
+      "note": "Gr. {in evenness or uprightness}.",
       "why": "in governs both alternatives"
     },
     "PSA 26:6#2": {
@@ -4439,11 +4536,11 @@
       "why": "Gr. for renders by (τῷ Δαυιδ)"
     },
     "PSA 32:2": {
-      "note": "Rather, '_confess_' or _give thanks to_.'",
+      "note": "Rather, '{confess}' or {give thanks to}.'",
       "why": "confess and give thanks to are both renderings"
     },
     "PSA 32:4": {
-      "note": "Gr. _in or with faithfulness_.",
+      "note": "Gr. {in or with faithfulness}.",
       "why": "faithfulness goes with both in and with"
     },
     "PSA 33:19": {
@@ -4471,7 +4568,7 @@
       "why": "to the age of the age renders for ever and ever"
     },
     "PSA 47:1": {
-      "note": "_A song_.",
+      "note": "{A song}.",
       "why": "A song renders praise"
     },
     "PSA 48:3": {
@@ -4483,7 +4580,7 @@
       "why": "Gr. as far as renders to alone"
     },
     "PSA 50:21": {
-      "note": "Properly, _a heave or wave-offering_.",
+      "note": "ἀναφορά, Properly, {a heave or wave-offering}. Heb. עֹלָה.",
       "why": "a heave or wave-offering renders offering"
     },
     "PSA 54:11": {
@@ -4492,7 +4589,6 @@
     },
     "PSA 54:20": {
       "lemma": "they suffer no reverse",
-      "note": "Or, _they have nothing to give in exchange_, q. d. to redeem their souls. Compare Ps. 48. 7,8; Mark 8. 37.",
       "why": "the rendering does not cover For; to redeem their souls adds to it rather than renders"
     },
     "PSA 54:22": {
@@ -4544,7 +4640,7 @@
       "why": "Gr. justify renders do justice to"
     },
     "PSA 91:8": {
-      "note": "Perhaps, '_come to light_'.",
+      "note": "Perhaps, '{come to light}'.",
       "why": "come to light is a rendering of have watched"
     },
     "PSA 92:4": {
@@ -4605,7 +4701,7 @@
     },
     "PSA 128:3": {
       "sentence": false,
-      "why": "The lexical glosses iniquity and a furrow are italic; read is a participle, so the note stays without sentence styling",
+      "why": "Iniquity and a furrow gloss the two Hebrew forms in the conjecture, not independent replacements for iniquity after their. Keep both lexical quotations italic; read is a participle, so the note remains without sentence styling.",
       "note": "עון _iniquity_, easily read for עונה _a furrow_."
     },
     "PSA 131:18": {
@@ -4617,7 +4713,7 @@
       "why": "empty, empty renders the repeated rase it"
     },
     "PSA 138:3": {
-      "note": "q. d. of rushes, lit. _rush_.",
+      "note": "q. d. of rushes, lit. {rush}.",
       "why": "of rushes adds to bed; rush renders it"
     },
     "PSA 140:3": {
@@ -4646,7 +4742,7 @@
       "why": "Gr. exaltations renders high praises"
     },
     "PSA 149:9": {
-      "note": "Gr. _inscribed_, sc. in the scripture.",
+      "note": "Gr. {inscribed}, sc. in the scripture.",
       "why": "in the scripture adds to inscribed rather than renders"
     },
     "PRO 1:3": {
@@ -4719,7 +4815,8 @@
     },
     "PRO 19:23": {
       "note": "Or, '_but he that is without fear_ (sc. of the Lord) _shall dwell_' etc.",
-      "why": "sc. of the Lord is comment"
+      "why": "But he that is without fear and shall dwell are two pieces of one abbreviated rendering, separated by the commentary sc. of the Lord. Neither independently replaces and he shall lodge without fear; quote both without inventing a joined rendering or echoing the lemma into each piece.",
+      "lemma": "and he shall lodge without fear"
     },
     "PRO 20:27": {
       "lemma": "spirit of man",
@@ -4727,13 +4824,12 @@
     },
     "PRO 21:18": {
       "lemma": "abomination",
-      "note": "Gr. _`off-scouring_;' perhaps _`ransom_,' q. d. that which cleans.",
+      "note": "Gr. {`off-scouring};' perhaps {`ransom},' q. d. that which cleans.",
       "why": "off-scouring renders abomination; ransom is a second rendering"
     },
     "PRO 21:29": {
-      "lemma": "impudently withstands with his face",
       "note": "See Alex. _ungodly_.",
-      "why": "The cited words and lexical glosses are italic; the surrounding explanation stays roman; retain the existing scope of the note"
+      "why": "See Alex. ungodly reports a lexical reading without a complete replacement construction. Ungodly cannot replace impudently withstands with his face without removing the sentence’s predicate; keep the report as an italic quotation, without inventing the words the source does not give."
     },
     "PRO 22:8a": {
       "lemma": null,
@@ -4756,8 +4852,8 @@
       "why": "Gr. grass renders weeds; Brenton's caller follows the words the note glosses"
     },
     "PRO 25:1": {
-      "note": "Possibly _genuine_, q. d. _beyond doubt_.",
-      "why": "genuine and beyond doubt render miscellaneous (Gr. ἀδιάκριτοι)"
+      "note": "Possibly {genuine}, q. d. _beyond doubt_.",
+      "why": "Genuine can replace miscellaneous before instructions. Beyond doubt explains that sense after q. d.; it cannot serve as another adjective in that phrase, so keep it italic as a quotation."
     },
     "PRO 26:10": {
       "lemma": null,
@@ -4785,7 +4881,8 @@
     },
     "JOL 2:3#2": {
       "note": "Lit. _to him_, sc. _the people_.",
-      "why": "Lit. to him renders of them alone, which the inferred lemma now finds; retain none, and italicize the people as the explanation of him."
+      "why": "To him gives the literal dative of the Greek construction, while the people explains the pronoun. Neither is continuous replacement English for of them in there shall none of them escape; quote both grammatical glosses and retain the narrow words they explain.",
+      "lemma": "of them"
     },
     "JOL 2:20": {
       "lemma": "sink",
@@ -4800,8 +4897,8 @@
       "why": "the note is on the word stink (smell, Job 6. 7)"
     },
     "JOL 4:4": {
-      "note": "ἀλλοφύλων, usually _Philistines_.",
-      "why": "The cited words and lexical glosses are italic; the surrounding explanation stays roman"
+      "note": "ἀλλοφύλων, usually {Philistines}.",
+      "why": "Philistines, the usual rendering of ἀλλοφύλων, can replace Gentiles after Galilee of the; the cited Greek and usually stay roman."
     },
     "JOL 4:18": {
       "lemma": "fountains of Juda",
@@ -4848,7 +4945,7 @@
       "why": "proper names describes the Hebrew rather than renders it"
     },
     "ZEC 9:13": {
-      "note": "Or, _it with Ephraim_.",
+      "note": "Or, {it with Ephraim}.",
       "why": "it with Ephraim is the whole alternative rendering; Or stays roman"
     },
     "ZEC 10:2#2": {
@@ -4907,7 +5004,7 @@
     "ISA 7:18": {
       "note": "Or, _which part of the enemy_, etc. _shall rule over the river of Egypt_; but according to Alex. the reading in the text is the right one.",
       "lemma": "which insect shall rule over a part of the river of Egypt",
-      "why": "the rendering is split by etc. and runs to the river of Egypt; the rest is comment"
+      "why": "Which part of the enemy and shall rule over the river of Egypt are complementary pieces of one abbreviated rendering split by etc. Neither independently replaces the full clause; keep both as quotations and retain the source’s comment on Alexandrinus without inventing a joined reading."
     },
     "ISA 8:8": {
       "lemma": "God with us",
@@ -4924,8 +5021,7 @@
     "ISA 10:23": {
       "lemma": "He will finish the work, and cut it short",
       "note": "Gr. _finishing_ — _cutting_.",
-      "why": "The source gives a grammatical gloss, rather than a continuous replacement; print its words as an explanation so the subject and retained words remain in the verse.",
-      "quotation": true
+      "why": "The source gives a grammatical gloss, rather than a continuous replacement; print its words as an explanation so the subject and retained words remain in the verse."
     },
     "ISA 10:25": {
       "lemma": "their council",
@@ -5044,7 +5140,7 @@
       "why": "I am, I am renders I, even I"
     },
     "ISA 46:6": {
-      "note": "Gr. _things made with hands_.",
+      "note": "Gr. {things made with hands}.",
       "why": "things made with hands is the rendering"
     },
     "ISA 47:10": {
@@ -5065,7 +5161,8 @@
     },
     "ISA 52:7": {
       "note": "Rom. 10. 15. Another reading is '_How beautiful are the feet_,' etc. Lit. _Why have the feet been made beautiful_? See also Joel 2. 2.,'_the morning [spread] upon the mountains_.'",
-      "why": "How beautiful are the feet is the other reading; the morning [spread] upon the mountains is quoted from Joel"
+      "why": "The two questions report another reading and a literal construction; neither replaces a season of beauty upon the mountains after the retained as. The morning [spread] upon the mountains is separately quoted from Joel. Keep all three phrases italic as quotations, without completing the source’s abbreviated readings or echoing the lemma into them.",
+      "lemma": "a season of beauty upon the mountains"
     },
     "ISA 52:12": {
       "lemma": "brings up your rear",
@@ -5126,24 +5223,21 @@
     },
     "1SA 14:29": {
       "note": "_E medio sustulit_. עכר probably read as עבר.",
-      "why": "E medio sustulit is the Latin rendering and is italic; the following explanation keeps its sentence punctuation.",
+      "why": "E medio sustulit is the Latin gloss of destroyed the land; it is not English that can replace that phrase after My father hath. Keep it italic as a quotation and retain the following explanation’s sentence punctuation.",
       "sentence": true
     },
     "1KI 22:41": {
       "note": "Gr. _reigned_.",
-      "quotation": true,
       "why": "The source gives a grammatical gloss, rather than a continuous replacement; print its words as an explanation so the subject and retained words remain in the verse."
     },
     "2KI 15:13": {
       "note": "Gr. _reigned_.",
-      "quotation": true,
       "why": "The source gives a grammatical gloss, rather than a continuous replacement; print its words as an explanation so the subject and retained words remain in the verse."
     },
     "JOL 2:3": {
       "note": "Gr. _it_, sc. _the people_.",
       "why": "Gr. it explains the singular Greek behind them; sc. the people names its referent. These grammatical glosses explain the clause, rather than replace the whole clause or echo it into the referent.",
-      "lemma": "Before them is a consuming fire",
-      "quotation": true
+      "lemma": "Before them is a consuming fire"
     },
     "ZEC 3:4": {
       "lemma": "long",
@@ -5152,9 +5246,8 @@
     "JOS 21:13": {
       "lemma": "suburbs",
       "occurrence": 1,
-      "note": "The Greek word is different from that translated _‘suburbs.’_ above.—q. d. _glebe_.",
-      "quotation": true,
-      "why": "The note discusses the Greek word for the first suburbs; Hebron is only context distinguishing that occurrence. Suburbs and glebe are lexical quotations within the explanation, not whole-lemma alternatives, and retain their words when the printed lemma widens."
+      "note": "The Greek word τὰ ἀφωρισμένα is different from that translated _‘suburbs.’_ above.—q. d. Anglicè _glebe_.",
+      "why": "The note discusses τὰ ἀφωρισμένα behind the first suburbs after Chebron; the preceding place-name only distinguishes its occurrence. Suburbs and glebe are lexical quotations within the explanation, not whole-lemma alternatives, and retain their words when the printed lemma widens."
     },
     "1KI 11:33#2": {
       "lemma": "the abomination of the children of Ammon",
@@ -5241,13 +5334,11 @@
     "ISA 18:2": {
       "lemma": "He sends",
       "note": "Gr. _He that sends_.",
-      "quotation": true,
       "why": "He that sends quotes the literal Greek construction, not continuous replacement English for He sends: substituting it would remove the clause’s main predicate. Mark it as a grammatical explanation, retaining Brenton’s words and the exact phrase they explain."
     },
     "MIC 7:4 CCEL": {
       "lemma": "acts by a rigid rule",
       "note": "Gr. _goes upon_, etc.",
-      "quotation": true,
       "why": "The abbreviated Greek gloss explains acts by a rigid rule, retaining the relative pronoun who. Its etc. leaves the remainder unstated, so quote the source gloss as commentary rather than present it as a complete alternative. A note-specific revision keeps acts in the lemma in agreement with the verse."
     },
     "JER 21:9 CCEL": {
@@ -5271,7 +5362,7 @@
       "why": "Brenton repeats the same note caller at south and plain. This second caller glosses the Greek transliteration of the Hebrew for plain, not the following Philistines; both Bagster printings confirm its position. The verse uses plain twice; in the plain uniquely identifies the first occurrence without including the Philistines."
     },
     "EZR 15:13 CCEL": {
-      "note": "q.d. _fruits of labour_.",
+      "note": "q.d. {fruits of labour}.",
       "why": "Set the q.d. label in roman and the gloss of labours in italic, as the edition sets rendering notes; retain all source words."
     },
     "EZR 15:14 CCEL": {
@@ -5281,8 +5372,7 @@
     "LEV 11:6 CCEL": {
       "lemma": "does not chew the cud",
       "why": "Both Bagster printings place the caller before the first does in Leviticus 11:6; the omission report concerns the first not, in chewing the cud, rather than the later not in dividing the hoof. The full predicate uniquely identifies that negative. Italicize the omitted word as a quotation, keeping the witness labels and omission instruction in roman.",
-      "note": "Heb. and Alex. — _not_.",
-      "quotation": true
+      "note": "Heb. and Alex. — _not_."
     },
     "2KI 21:6#2": {
       "lemma": "groves",
@@ -5369,7 +5459,7 @@
     "EZR 2:58 CCEL": {
       "lemma": "Abdeselma",
       "note": "Heb. word, '_servants of Solomon_.'",
-      "why": "CCEL 5#3 reads \"Heb. word, 'servants of Solomon.'\". Set the note on the complete words it explains in this verse, excluding adjacent predicates or counts; retain the source's words without invented lemma echoes. Mark grammatical and name explanations as commentary, and only actual lexical glosses as readings."
+      "why": "CCEL 5#3 reads \"Heb. word, 'servants of Solomon.'\". The phrase explains the Hebrew form of Abdeselma rather than replacing the named ancestor in this genealogy. Set the note on that name, keeping the etymological gloss italic as a quotation and retaining all source words."
     },
     "EZR 8:17 CCEL": {
       "lemma": "with the money of the place",
@@ -5591,7 +5681,7 @@
     "ESG 6:13 CCEL": {
       "lemma": "If Mardochæus be of the race of the Jews, and thou hast begun to be humbled before him",
       "note": "Or, _if it be M_. etc., _before whom_.",
-      "why": "Both Bagster printings (1879 physical page 675, printed 659; 1900 physical page 671, printed 659) print δ before If and read 'Or, if it be M. etc., before whom.', as CCEL 7.vi#4 gives it. Brenton's shorthand renders the whole clause εἰ ἐκ γένους Ἰουδαίων Μαρδοχαῖος, ἤρξαι ταπεινοῦσθαι ἐνώπιον αὐτοῦ as 'if it be Mardochæus before whom thou hast begun to be humbled', so the note covers the clause through before him. Both if it be M. and before whom are words of the rendering and are set in italic, as the edition sets renderings, and etc. stays roman as at GEN 30:27. Source wording is retained."
+      "why": "Both Bagster printings (1879 physical page 675, printed 659; 1900 physical page 671, printed 659) print δ before If and read “Or, if it be M. etc., before whom.”, as CCEL 7.vi#4 gives it. The two italic pieces sketch a different construction of the conditional clause; neither independently replaces it, and etc. leaves words unstated. Keep both as quotations without expanding the source’s shorthand or echoing the whole lemma into either piece."
     },
     "EZK 16:39 CCEL": {
       "lemma": "thy proud ornaments",
@@ -5646,7 +5736,7 @@
       "why": "Alex. κάρπωμα is the noun burnt offering renders; for you is not part of the reading."
     },
     "ECC 6:6 CCEL": {
-      "note": "Alex. begins the verse thus, Καὶ εἰ ἔζησε, _and if he has lived_, etc.",
+      "note": "Alex. begins the verse thus, Καὶ εἰ ἔζησε, {and if he has lived}, etc.",
       "why": "Brenton reports how A opens the verse: begins the verse thus is his commentary, not a rendering, and the rendering is and if he has lived, his English of the Greek he quotes."
     },
     "LEV 13:3": {
@@ -5688,21 +5778,17 @@
       "why": "The note ends with a complete explanatory sentence after its opening reading, so its final full stop stays."
     },
     "JER 11:15 CCEL": {
-      "note": "Gr. _holy flesh_, pl.",
+      "note": "Gr. {holy flesh}, pl.",
       "why": "Brenton 1879 physical page 933 (printed page 917) prints “Gr. holy flesh, pl.” before holy offerings. Only holy flesh is the alternative rendering; pl. is grammatical commentary and must not make the lemma take in the following verb take."
     },
     "JER 8:2 CCEL": {
       "lemma": "spread",
       "note": "Lit. _cool_ or _refresh_. See 2 Kings (2 Sam.) 17. 19.",
-      "quotation": true,
       "sentence": true,
       "why": "Brenton’s cool and refresh are lexical senses, not continuous alternatives for spread in spread them out to the sun. Quote those glosses without widening them into renderings; the following See sentence keeps its final stop."
     },
     "EZK 3:20 CCEL": {
-      "quotations": {
-        "signify punishment": "punishment",
-        "does torment": "torment"
-      },
+      "note": "lit. {torment}, Βάσανος in Old Testament seems to signify _punishment_, as κόλασις in New Testament does _torment_, 1 Jno. 4. 18.",
       "sentence": true,
       "why": "Brenton 1879 physical p. 998 and 1900 physical p. 994 both place the delta caller before punishment and print: ‘lit. torment, Βάσανος in Old Testament seems to signify punishment, as κόλασις in New Testament does torment, 1 Jno. 4. 18.’ Keep torment as the literal alternative for punishment, while the English senses in the ensuing Greek comparison are quoted glosses within commentary. That comparison is a complete sentence and retains its final stop."
     },

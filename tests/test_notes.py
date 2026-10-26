@@ -97,6 +97,10 @@ def test_editorial_note_styles_and_punctuation(
     assert "_then_" in reviewed("GEN 30:41")
     assert reviewed("1SA 14:29").startswith("_E medio sustulit_.")
     assert rows["1SA 14:29"]["lemma"] == "destroyed the land"
+    assert "What kind of pause was intended by the LXX" in reviewed("PSA 3:3")
+    assert "which is evidently not the meaning here" in reviewed("1KI 10:22a")
+    assert "omitting ἐν as a Hebraism" in reviewed("JDG 5:14")
+    assert "Iliad, book 10, line 456" in reviewed("DEU 21:4")
     assert reviewed("PSA 113:24") == "Gr. singular"
     assert "_suburbs_ above" in reviewed("JOS 21:13")
     assert reviewed("JOS 20:7#2") == "or, _of Nephthali_"
@@ -109,22 +113,24 @@ def test_editorial_note_styles_and_punctuation(
 
 
 @pytest.mark.parametrize(
-    "quotation, expected",
-    [(True, "_And Annas sent Christ_"), (False, "_and Annas sent Christ_")],
+    "marker, expected",
+    [
+        ("_", "_And Annas sent Christ_"),
+        ("{", "_and Annas sent Christ_"),
+    ],
 )
 def test_declared_quotations_preserve_capitals_but_alternatives_run_on(
-    policy: bible.policy.Policy, quotation: bool, expected: str
+    policy: bible.policy.Policy, marker: str, expected: str
 ) -> None:
     source = "And Annas sent Christ"
     body = notes.source_body(
         [("text", source)],
         [],
-        "_" + source + "_",
+        marker + source + ("}" if marker == "{" else "_"),
         "key",
         source,
-        quotation=quotation,
     )
-    assert body.alternative == (None if quotation else source)
+    assert body.alternative == (source if marker == "{" else None)
     runs, terms, _ = notes.displayed(body)
     result = notes.finished(
         runs, terms, "year", None, terminology.registry(policy), "key"
@@ -132,20 +138,30 @@ def test_declared_quotations_preserve_capitals_but_alternatives_run_on(
     assert notes.underscored(result) == expected
     echoed = notes.displayed(body, "before ", " after")[0]
     assert notes.text_of(echoed) == (
-        source if quotation else "before " + source + " after"
+        "before " + source + " after" if marker == "{" else source
     )
 
 
-def test_a_quotation_decision_must_declare_quoted_words() -> None:
-    with pytest.raises(CheckFailed, match="declares no quoted words: key"):
-        notes.source_body(
-            [("text", "And Annas sent Christ")],
-            [],
-            "And Annas sent Christ",
-            "key",
-            "And Annas sent Christ",
-            quotation=True,
-        )
+@pytest.mark.parametrize(
+    "override",
+    [
+        "{word",
+        "_word",
+        "word}",
+        "{_word_}",
+        "_{word}_",
+        "{word_",
+        "{}word",
+        "__word",
+        "word{ }word",
+        "{.}word",
+    ],
+)
+def test_malformed_note_markers_are_refused(override: str) -> None:
+    # The words match the note, so only the markers can be refused.
+    source = re.sub("[_{}]", "", override)
+    with pytest.raises(CheckFailed, match="note override: key"):
+        notes.source_body([("text", source)], [], override, "key", source)
 
 
 def test_commentary_quotations_preserve_the_separate_alternative() -> None:
@@ -153,13 +169,21 @@ def test_commentary_quotations_preserve_the_separate_alternative() -> None:
         "lit. torment, Βάσανος in Old Testament seems to signify punishment, "
         "as κόλασις in New Testament does torment."
     )
-    body = notes.source_body(notes.labelled_pieces(text), [], None, "key", text)
-    quoted = notes.with_quotations(
-        body, {"signify punishment": "punishment", "does torment": "torment"}, "key"
+    override = (
+        text.replace("torment", "_torment_")
+        .replace("punishment", "_punishment_")
+        .replace("_torment_", "{torment}", 1)
     )
-    assert body.alternative == quoted.alternative == "torment"
-    assert quoted.plain == body.plain
-    runs, _, _ = notes.displayed(quoted, "before ", " after")
+    body = notes.source_body(
+        notes.labelled_pieces(text),
+        [],
+        override,
+        "key",
+        text,
+    )
+    assert body.alternative == "torment"
+    assert body.reading == (5, 12)
+    runs, _, _ = notes.displayed(body, "before ", " after")
     assert ("reading", "before torment after") in runs
     assert [(role, value) for role, value in runs if role == "quotation"] == [
         ("quotation", "punishment"),
@@ -167,34 +191,67 @@ def test_commentary_quotations_preserve_the_separate_alternative() -> None:
     ]
 
 
-@pytest.mark.parametrize(
-    "context, words",
-    [
-        ("absent context", "context"),
-        ("signify punishment", "punish"),
-        ("torment", "torment"),
-        ("lit. torment", "torment"),
-        # The rules already quote words in quotation marks.
-        ("'pain'", "pain"),
-    ],
-)
-def test_commentary_quotations_reject_stale_ambiguous_or_rendered_words(
-    context: str, words: str
-) -> None:
-    text = (
-        "lit. torment, Βάσανος seems to signify punishment, as "
-        "κόλασις does torment, 'pain'."
+def test_repeated_alternatives_each_echo_the_context() -> None:
+    text = "lit. torment; the other torment."
+    body = notes.source_body(
+        notes.labelled_pieces(text),
+        [],
+        "lit. {torment}; the other {torment}.",
+        "key",
+        text,
     )
-    body = notes.source_body(notes.labelled_pieces(text), [], None, "key", text)
-    with pytest.raises(CheckFailed, match="Note quotation"):
-        notes.with_quotations(body, {context: words}, "key")
+    assert body.alternative == "torment"
+    runs, _, _ = notes.displayed(body, "before ", " after")
+    assert [value for role, value in runs if role == "reading"] == [
+        "before torment after",
+        "before torment after",
+    ]
 
 
-def test_commentary_quotations_count_overlapping_contexts() -> None:
-    text = "it reads one, then two, then one, then two, then one."
-    body = notes.source_body(notes.labelled_pieces(text), [], None, "key", text)
-    with pytest.raises(CheckFailed, match="context not met once"):
-        notes.with_quotations(body, {"one, then two, then one": "two"}, "key")
+def test_the_first_declared_alternative_measures_the_lemma() -> None:
+    text = "first; second; third."
+    body = notes.declared_readings(
+        notes.interpreted([("text", text)], "key"),
+        "_first_; {second}; {third}.",
+        "key",
+    )
+    assert body.alternative == "second"
+
+
+def test_changing_commentary_italics_keeps_the_inferred_scope(
+    policy: bible.policy.Policy,
+) -> None:
+    # The quotation stands before the alternative, so a lemma measured by
+    # the first italic run would change with it.
+    override = policy.brenton_notes["notes"]["GEN 30:33"]["note"]
+    assert override is not None
+    exception: NoteOverride = {"note": override}
+    source = override.translate(str.maketrans("", "", "_{}"))
+    text = "And my righteousness shall answer for me on the morrow."
+    words = scripture.word_spans(text)
+    bodies = [
+        notes.source_body(
+            notes.labelled_pieces(source),
+            [],
+            value,
+            "key",
+            source,
+        )
+        for value in (override, override.replace("_Hearken to_", "Hearken to"))
+    ]
+    assert [body.alternative for body in bodies] == ["obey me", "obey me"]
+    assert bodies[0].reading == bodies[1].reading
+    inferred = [
+        lemmas.inferred(
+            "f", text, words, text.index("answer"), body.alternative, exception, "key"
+        )
+        for body in bodies
+    ]
+    assert inferred[0] == inferred[1]
+    assert (
+        notes.displayed(bodies[0], "before ", " after")[0]
+        != notes.displayed(bodies[1], "before ", " after")[0]
+    )
 
 
 def printed(
@@ -298,7 +355,10 @@ def test_the_exception_files_correct_the_rules(
         {"lemma": "into one place", "why": "the rendering is of the whole phrase"}
     )
     assert r"\fq place: \ft Gr. \fqa meeting \ft together\f*" in with_exception(
-        {"note": "Gr. _meeting_ together.", "why": "together is the editor's"}
+        {
+            "note": "Gr. {meeting} together.",
+            "why": "together is the editor's",
+        }
     )
     assert r"\f - \fr 99:9 \ft Gr. \fqa meeting together\f*" in with_exception(
         {"lemma": None, "why": "the note is on the verse"}
@@ -307,7 +367,12 @@ def test_the_exception_files_correct_the_rules(
     with pytest.raises(CheckFailed, match="Lemma override changes nothing"):
         with_exception({"lemma": "place of rest", "why": "the same"})
     with pytest.raises(CheckFailed, match="Note override changes nothing"):
-        with_exception({"note": "Gr. _meeting together_.", "why": "the same"})
+        with_exception(
+            {
+                "note": "Gr. {meeting together}.",
+                "why": "the same",
+            }
+        )
     with pytest.raises(CheckFailed, match="does not match the note"):
         with_exception({"note": "Gr. _meeting_ apart.", "why": "other words"})
 
@@ -475,6 +540,7 @@ def placed(
         ("JER 30:23 CCEL", "the Queen of the Palace"),
         ("PSA 93:1", "God of vengeance"),
         ("PRO 24:31", "weeds"),
+        ("EXO 12:3", "lamb"),
         ("ISA 61:3", "the garment of glory"),
         ("ISA 61:3#2", "oil"),
     ],
@@ -492,7 +558,6 @@ def test_brentons_caller_follows_its_declared_words(
     "key, words, occurrence",
     [
         ("GEN 30:36", "and", 2),
-        ("EXO 12:3", "each man a lamb", 1),
         ("DEU 4:9", "keep thy heart", 1),
         ("JOS 21:13", "suburbs", 1),
         ("1KI 21:39", "thy life", 1),
@@ -523,7 +588,7 @@ def test_context_does_not_move_a_callers_scope(
     "key, lemma",
     [
         ("OBA 1:19 CCEL#2", "in the plain"),
-        ("EXO 12:3", "each man a lamb"),
+        ("EXO 12:3", "lamb"),
         ("2KI 8:28#2", "king of the Syrians"),
     ],
 )
@@ -538,7 +603,6 @@ def test_commentary_lemmas_have_no_whole_lemma_alternatives(
 @pytest.mark.parametrize(
     "key, quoted",
     [
-        ("EXO 12:3", ["sheep", "lamb"]),
         ("JOS 21:13", ["suburbs", "glebe"]),
         ("MIC 7:4 CCEL", ["goeth upon"]),
     ],
@@ -940,7 +1004,11 @@ def test_an_exception_declares_its_italics_and_must_differ_from_the_rules(
 
     def printed_note(source: str, override: str) -> str:
         body = notes.source_body(
-            notes.labelled_pieces(source), [], override, "key", source
+            notes.labelled_pieces(source),
+            [],
+            override,
+            "key",
+            source,
         )
         runs, terms, _ = notes.displayed(notes.with_terms(body, registry))
         return notes.underscored(
@@ -951,16 +1019,17 @@ def test_an_exception_declares_its_italics_and_must_differ_from_the_rules(
     assert (
         printed_note(
             "Or, 'but he that is without fear (sc. of the Lord) shall dwell' etc.",
-            "Or, '_but he that is without fear_ (sc. of the Lord) _shall dwell_' etc.",
+            "Or, '{but he that is without fear} (sc. of the Lord) {shall dwell}' etc.",
         )
         == "or, _but he that is without fear_ (sc. of the Lord) _shall dwell_ etc."
     )
+    assert printed_note("Or, windows.", "Or, _windows_.") == "or, _windows_"
     # One that only repeats the italics of the rules, quoted words among
     # them, changes nothing.
     with pytest.raises(CheckFailed, match="Note override changes nothing: key"):
         printed_note(
             "Or, windows, see above, there rendered 'flood-gates.'",
-            "Or, _windows_, see above, there rendered '_flood-gates_.'",
+            "Or, {windows}, see above, there rendered '_flood-gates_.'",
         )
 
 
@@ -1524,6 +1593,12 @@ def test_former_readings_restore_the_eight_marginal_notes(
         ("going out", "gone out", {"omitted": True}, "omitted with other exceptions"),
         ("going out going out", "gone out", {"occurrence": 1}, "former conflicts"),
         ("going out", "gone out", {"lemma": "going"}, "former conflicts"),
+        (
+            "going out",
+            "gone out",
+            {"note": "Or, _gone out_."},
+            "former is not an alternative",
+        ),
         # The text prints other words than the margin's alternative.
         (
             "falling out",
@@ -1636,7 +1711,9 @@ def test_mark_fist_correction_preserves_the_marginal_note(
         ("PSA 79:11", "Gr. _cedars of God_, see Gen. 30:8; Jonas 3:3; Acts 7:20"),
         (
             "JDG 13:19",
-            "according to the Heb. _a wonderful work_. Alex. reads τῷ θαυμαστὰ ποιοῦντι κυρίῳ.",
+            "according to the Heb. _a wonderful work_. The LXX seem to have confounded "
+            "פלא with פלח or פלה and thus rendered it διεχώρισε ποιῆσαι, but Alex. reads "
+            "τῷ θαυμαστὰ ποιοῦντι κυρίῳ.",
         ),
         ("GEN 1:11#2", "Alex. adds εἰς ὁμοιότητα"),
         ("GEN 8:7#2", "Valpy omits"),
@@ -1711,7 +1788,7 @@ def test_unrelated_and_stale_source_notes_are_omitted(
 @pytest.mark.parametrize(
     "key,lemma,expected",
     [
-        ("JOS 21:13", "Hebron, and the suburbs", "q.d. _glebe_."),
+        ("JOS 21:13", "Hebron, and the suburbs", "q.d. Anglicè _glebe_."),
         ("ISA 14:2#2", "they shall be multiplied", "i.e., _the Gentiles_"),
         (
             "1KI 11:33#2",
@@ -1744,6 +1821,17 @@ def test_identifying_lemmas_do_not_add_words_to_explanations(
         "1KI 22:41",
         "2KI 15:13",
         "JOL 2:3",
+        "JOL 2:3#2",
+        "GEN 21:22",
+        "GEN 37:2",
+        "NUM 1:18",
+        "1SA 16:4",
+        "1KI 10:22a",
+        "ISA 52:7",
+        "LUK 15:8 pieces of silver",
+        "LUK 16:7 measures",
+        "LUK 19:13 pounds",
+        "ACT 13:18 suffered",
     ],
 )
 def test_historical_glosses_are_explanations(

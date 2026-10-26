@@ -12769,6 +12769,13 @@
           "from": "ζυμῆς",
           "to": "ζύμης",
           "why": "Brenton's 1844 vol. 2 physical p. 382 (printed p. 879), 1879 physical p. 1091 and 1900 physical p. 1087 (printed p. 1075), all checked on the scans, misaccent the genitive of ζύμη as ζυμῆς. Correct its accent to ζύμης as editorial spelling, not a transcription repair. Swete III p. 7, checked on the scan, prints στέατος and ζυμωθῆναι, with no ζυμης alternative in the apparatus; it does not independently establish Brenton's Complutensian attribution, which remains unchanged."
+        },
+        {
+          "note": "JOS 24:26",
+          "spelling": "greek",
+          "from": "τέρμινθον",
+          "to": "τερέμινθον",
+          "why": "Brenton’s 1844 printing, vol. 1 physical p. 281 (printed p. 257), omits epsilon after rho in τέρμινθον. Swete I p. 473 prints τερέμινθον in Joshua 24:26. Correct the recovered note’s Greek spelling while retaining its English and its witness."
         }
       ]
     },
@@ -13149,6 +13156,24 @@
           "from": "torment, Βάσανος",
           "to": "torment. Βάσανος",
           "why": "The Greek comparison begins a complete explanatory sentence after the initial literal rendering."
+        },
+        {
+          "note": "PSA 50:21",
+          "from": "ἀναφορά, Properly",
+          "to": "ἀναφορά, properly",
+          "why": "The later opening Properly follows the recovered Greek noun and its comma within one clause. Lowercase the continuing word without changing the source’s revised assessment or its rendering."
+        },
+        {
+          "note": "1KI 10:22a",
+          "from": "Old Testament which",
+          "to": "Old Testament, which",
+          "why": "The stop of O.T. no longer ends the note: set off the recovered which is evidently not the meaning here from the word it follows."
+        },
+        {
+          "note": "1SA 15:17",
+          "from": "LXX a double",
+          "to": "LXX, a double",
+          "why": "The stop of the 1844 LXX. also closed the aside as is frequently the case in the LXX; close it before the main clause a double rendering has been given."
         }
       ]
     }

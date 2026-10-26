@@ -527,6 +527,11 @@
       "passages": "2SA 2:23",
       "print": "{2SA} 2:23",
       "why": "Brenton 1879 physical page 1078 and 1900 physical page 1074 (printed page 1062) print “2 Ki. (2 Sam.) 2. 23” in the note before in its place at Daniel 8:8. Both names designate 2 Kingdoms 2:23."
+    },
+    "DEU 21:4": {
+      "source": "Iliad. x. 456.",
+      "not_a_citation": true,
+      "why": "Brenton’s restored 1844 note cites Homer’s Iliad, book 10, line 456, not Deuteronomy or another biblical book. The prose decision expands this classical reference; do not interpret its Roman book number and line as a scripture citation."
     }
   }
 }

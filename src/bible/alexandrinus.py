@@ -647,9 +647,7 @@ def surviving_scope(
     words = word_spans(verse.text)
     body = notes.interpreted(notes.source_pieces(note), key)
     if exception.get("note") is not None:
-        body = notes.declared_readings(
-            body, exception["note"], key, quotation=exception.get("quotation", False)
-        )
+        body = notes.declared_readings(body, exception["note"], key)
     span, glossed, _ = lemmas.inferred(
         note["marker"],
         verse.text,

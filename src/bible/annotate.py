@@ -213,9 +213,7 @@ def brenton(
             given: Node | None = None
             if note.get("category") == "edition":
                 note, given = notes.passage(note)
-                body = notes.authored_body(
-                    note, override, key, quotation=exception.get("quotation", False)
-                )
+                body = notes.authored_body(note, override, key)
                 source = text = body.plain
                 cited = citations.scan(
                     text, tongue, home, key, ctx.inventory, policy=policy
@@ -236,9 +234,7 @@ def brenton(
                     override,
                     key,
                     source,
-                    quotation=exception.get("quotation", False),
                 )
-            body = notes.with_quotations(body, exception.get("quotations", {}), key)
             report.read(tongue, key, cited, policy)
             found.append(
                 notes.Read(
@@ -439,7 +435,6 @@ def george(
                 "lemma",
                 "occurrence",
                 "widen",
-                "quotation",
                 "verse",
             }
             require(
@@ -500,10 +495,16 @@ def george(
             override.get("note"),
             key,
             text,
-            quotation=override.get("quotation", False),
         )
-        body = notes.with_quotations(body, override.get("quotations", {}), key)
         if former is not None:
+            require(
+                any(
+                    role == "alternative"
+                    and body.plain[slice(*notes.trimmed(body.plain, a, b))] == former
+                    for a, b, role in body.roles
+                ),
+                f"Marginal note former is not an alternative of its note: {key}",
+            )
             body = replace(body, rule="editorial reversal")
         read = notes.Read(
             key,

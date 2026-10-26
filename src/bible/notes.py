@@ -6,8 +6,10 @@ them. A label such as "Gr." or "Or," is roman, another rendering of the
 glossed words, cited words and lexical glosses are italic, without quotation
 marks, and a citation is a reference of its own. The rules
 here tell them apart; edition/brenton-notes.json and edition/kjv-notes.json
-say what to print where the rules go wrong, and why. The notes that
-edition/alexandrinus.json writes say what each of their parts is themselves.
+say what to print where the rules go wrong, and why. An override marks
+quotations with underscores and replacement wording with braces. The
+notes that edition/alexandrinus.json writes say what each of their parts is
+themselves.
 
 A note prints its verse, the words it is about, and its text, which runs on
 from them unless it is a sentence of its own. The notes stand in the margin
@@ -171,7 +173,9 @@ class Body:
 
     The reading is the rendering that measures how far the glossed words
     reach. A citation is bound to the words that write it, whatever they are.
-    An addition names added words, which never echo a widened lemma.
+    In an override, braces declare alternatives that replace the lemma,
+    while underscores mark quotations. An addition names added words, which
+    never echo a widened lemma.
     """
 
     plain: str
@@ -543,66 +547,47 @@ def interpreted(pieces: Sequence[tuple[str, str]], key: str) -> Body:
     )
 
 
-def declared_readings(
-    body: Body, override: str | None, key: str, *, quotation: bool = False
-) -> Body:
-    """A note with declared italic spans in place of those the rules found.
-    A quotation keeps its wording rather than measuring or echoing a lemma."""
+def declared_readings(body: Body, override: str | None, key: str) -> Body:
+    """Read {alternatives} and _quotations_ without changing the source words."""
     assert override is not None
-    words = override.replace("_", "")
-    require(words == body.plain, f"Note override does not match the note: {key}")
-    require(override.count("_") % 2 == 0, f"Unclosed italic in note override: {key}")
+    require(
+        re.sub("[_{}]", "", override) == body.plain,
+        f"Note override does not match the note: {key}",
+    )
     roles = Roles(body.plain, body.roles)
     for first, last, role in tuple(roles.intervals):
         if role != "citation":
             roles.mark(first, last, "text")
     at, opened = 0, None
-    for part in re.split("(_)", override):
-        if part != "_":
+    reading = None
+    for part in re.split(r"([_{}])", override):
+        if part not in {"_", "{", "}"}:
             at += len(part)
         elif opened is None:
-            opened = at
+            require(part != "}", f"Unexpected closing marker in note override: {key}")
+            opened = (part, at)
         else:
-            for first, last, role in tuple(roles.intervals):
-                if role != "citation" and first < at and opened < last:
-                    roles.mark(
-                        max(first, opened),
-                        min(last, at),
-                        "quotation" if quotation else "alternative",
-                    )
+            marker, start = opened
+            require(
+                part == ("_" if marker == "_" else "}"),
+                f"Nested or mismatched markers in note override: {key}",
+            )
+            first, last = trimmed(body.plain, start, at)
+            require(first < last, f"Empty marked words in note override: {key}")
+            kind = "quotation" if marker == "_" else "alternative"
+            for a, b, role in tuple(roles.intervals):
+                if role != "citation" and a < at and start < b:
+                    roles.mark(max(a, start), min(b, at), kind)
+            if kind == "alternative" and reading is None:
+                reading = (first, last)
             opened = None
-    require(
-        not quotation or any(role == "quotation" for _, _, role in roles.intervals),
-        f"Quotation exception declares no quoted words: {key}",
-    )
-    # The lemma is measured by the first rendering the override declares.
-    reading = None
-    for first, last, role in roles.intervals:
-        if role == "alternative":
-            value = body.plain[first:last]
-            if value.strip(TRIM):
-                reading = (
-                    first + len(value) - len(value.lstrip(TRIM)),
-                    last - len(value) + len(value.rstrip(TRIM)),
-                )
-                break
+    require(opened is None, f"Unclosed marker in note override: {key}")
     return roles.body(reading, "override", addition=body.addition)
 
 
-def visual(body: Body) -> list[tuple[str, str]]:
-    """A body's roles as they print: readings, citations and the rest."""
-    result: list[tuple[str, str]] = []
-    for start, end, role in body.roles:
-        kind = (
-            "reading"
-            if role in {"alternative", "quotation"}
-            else "citation" if role == "citation" else "text"
-        )
-        if result and result[-1][0] == kind:
-            result[-1] = (kind, result[-1][1] + body.plain[start:end])
-        else:
-            result.append((kind, body.plain[start:end]))
-    return result
+def readings(body: Body) -> tuple[tuple[int, int, str], ...]:
+    """The italic intervals and whether they replace or quote words."""
+    return tuple(run for run in body.roles if run[2] in {"alternative", "quotation"})
 
 
 def check_quotes(text: str) -> None:
@@ -651,57 +636,12 @@ def quoted(body: Body) -> Body:
     return replace(body, roles=tuple(meaning.intervals))
 
 
-def whole_words_at(phrase: str, text: str) -> list[int]:
-    """Where a phrase stands in a text as words of its own, counting each
-    occurrence, those that overlap among them: "one, then one" stands twice
-    in "one, then one, then one"."""
-    return [
-        match.start()
-        for match in re.finditer(rf"(?<!\w)(?={re.escape(phrase)}(?!\w))", text)
-    ]
-
-
-def with_quotations(body: Body, quotations: Mapping[str, str], key: str) -> Body:
-    """Quote words within unique source phrases, retaining the note's rendering."""
-    if not quotations:
-        return body
-    roles = Roles(body.plain, body.roles)
-    # The rules quote the words a note sets in quotation marks when it is
-    # displayed, so a decision to quote them would change nothing.
-    ruled = (body if body.rule == "override" else quoted(body)).roles
-    for context, words in quotations.items():
-        contexts = whole_words_at(context, body.plain)
-        require(
-            len(contexts) == 1,
-            f"Note quotation context not met once in the note: {key}: {context!r}",
-        )
-        within = whole_words_at(words, context)
-        require(
-            len(within) == 1,
-            f"Note quotation not met once in its context: {key}: {words!r}",
-        )
-        start = contexts[0] + within[0]
-        end = start + len(words)
-        require(
-            all(
-                role == "text"
-                for first, last, role in (*roles.intervals, *ruled)
-                if first < end and start < last
-            ),
-            f"Note quotation is not unquoted commentary: {key}: {words!r}",
-        )
-        roles.mark(start, end, "quotation")
-    return replace(body, roles=tuple(roles.intervals))
-
-
 def source_body(
     pieces: Sequence[tuple[str, str]],
     found: Sequence[Citation],
     override: str | None,
     key: str,
     source: str,
-    *,
-    quotation: bool = False,
 ) -> Body:
     """A source note's body: its roles read, an exception's renderings in
     place of the rules', and its citations bound to their words."""
@@ -709,15 +649,15 @@ def source_body(
     leading = len(text) - len(text.lstrip())
     body = interpreted(citations.source_pieces(pieces, found), key)
     require(body.plain and body.plain != ".", f"Empty note: {key}")
-    require("_" not in body.plain, f"Underscore in note: {key}")
+    # An override marks its words with these, so the note cannot contain them.
+    require(not set("_{}") & set(body.plain), f"Override marker in note: {key}")
     if override is not None:
-        changed = declared_readings(body, override, key, quotation=quotation)
+        changed = declared_readings(body, override, key)
         # An exception changes the italics the rules would print, quoted
         # words among them, or the rendering that measures the lemma.
         require(
-            visual(changed) != visual(quoted(body))
-            or changed.reading != body.reading
-            or (quotation and changed.roles != body.roles),
+            readings(changed) != readings(quoted(body))
+            or changed.reading != body.reading,
             f"Note override changes nothing: {key}",
         )
         body = changed
@@ -804,9 +744,7 @@ def passage(note: Node) -> tuple[Node, Node | None]:
     return {**note, "content": fields}, given
 
 
-def authored_body(
-    note: Node, override: str | None, key: str, *, quotation: bool = False
-) -> Body:
+def authored_body(note: Node, override: str | None, key: str) -> Body:
     """The body of a note the edition writes, whose markers say what each
     part is: \\fl a label, \\fqa an alternative rendering, \\fq quoted words,
     \\xt a citation, \\ft the rest. A rendering or quotation carries no space
@@ -843,7 +781,7 @@ def authored_body(
         offset += len(value)
     body = roles.body(reading, "rendering" if reading else "roman")
     if override is not None:
-        body = declared_readings(body, override, key, quotation=quotation)
+        body = declared_readings(body, override, key)
     return body
 
 
@@ -1210,7 +1148,8 @@ def boundary_stop(scope: usj.Scope | None) -> str:
 
 
 def underscored(runs: Sequence[tuple[str, str]]) -> str:
-    """The note with its italic between underscores, as the exception files write it."""
+    """The note with its italic between underscores, alternatives and quotations
+    alike: the exception files mark alternatives with braces instead."""
     result, reading = [], False
     for role, value in runs:
         if (role in {"reading", "quotation"}) != reading:

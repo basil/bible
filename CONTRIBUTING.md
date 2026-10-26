@@ -24,9 +24,11 @@ A reading the build would decide the same way without it is redundant, and a pla
 
 ### Reviewing the notes
 
-The build works out by rule which words each note is about and which of its words are italic. Where a rule goes wrong, a decision under `notes` in `edition/brenton-notes.json` or `edition/kjv-notes.json` gives the note's `lemma`, the words it is about, or its `note`, the note's own words with its italics between underscores. In such a decision, `quotation: true` identifies the italic spans as quotations rather than alternative renderings: they keep their opening capital and do not widen with the lemma.
+The build works out by rule which words each note is about and which of its words are italic. Where a rule goes wrong, a decision under `notes` in `edition/brenton-notes.json` or `edition/kjv-notes.json` gives the note's `lemma`, the words it is about, or its `note`, the note's own words with `{alternatives}` and `_quotations_`. Both print in italics. Alternatives replace the lemma; quotations keep their words and opening capital.
 
-A note that mixes a rendering with quoted commentary may also give `quotations`, mapping a unique source phrase to the words quoted within it (for example, `"signify punishment": "punishment"`). Each phrase and its quoted words must occur once, and the words must be unquoted commentary. This leaves the note’s alternative rendering and its scope intact.
+The first alternative in note order measures an inferred lemma, and each alternative echoes the context when the lemma widens. Markers must be paired, nonempty, and unnested. Repeated words are marked where they occur, so each occurrence can have its own role.
+
+Each alternative must replace the whole lemma in its verse without breaking the surrounding grammar. Lexical explanations, analogies, and separate pieces of an abbreviated rendering remain quotations where they cannot make that substitution.
 
 The tests flag a note whose lemma is much longer than its rendering. Read a flagged note. If the rule is wrong, give the note a `lemma`. If it is right, list the note under `shapes` in `edition/brenton-notes.json`.
 

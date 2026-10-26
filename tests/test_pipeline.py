@@ -185,6 +185,18 @@ def test_the_policy_is_read_once_and_cannot_be_changed(
             lambda d: d["numbers"]["changes"].append({"from": "5.", "to": "five"}),
             "neither a note nor a unit",
         ),
+        (
+            "brenton_notes",
+            lambda d: d["notes"].update(probe={"alternatives": ["word"], "why": "x"}),
+            "note exception probe has missing or unknown fields",
+        ),
+        (
+            "kjv_notes",
+            lambda d: d["notes"].update(
+                probe={"note": "_word_", "alternatives": [], "why": "x"}
+            ),
+            "note exception probe has missing or unknown fields",
+        ),
     ],
 )
 def test_a_malformed_decision_is_refused_when_the_policy_is_read(
