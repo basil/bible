@@ -19,9 +19,56 @@ The archives below were retrieved from eBible.org on the dates shown.
 | ---------------------- | ------------------------------------------------------------ | ---------- | ------------------------------------------------ |
 | `eng-Brenton_usfm.zip` | [eBible](https://ebible.org/Scriptures/eng-Brenton_usfm.zip) | 2026-09-23 | `copr.htm` in the archive; `brenton-notice.html` |
 | `engkjvcpb_usfm.zip` | [eBible](https://ebible.org/Scriptures/engkjvcpb_usfm.zip) | 2026-09-23 | `copr.htm` in the archive; `kjv-notice.html` |
-| `englxxup_usfm.zip` | [eBible](https://ebible.org/Scriptures/englxxup_usfm.zip) | 2026-10-09 | `copr.htm` in the archive; `englxxup-notice.html` |
+| `englxxup_usfm.zip` | [eBible](https://ebible.org/Scriptures/englxxup_usfm.zip) | 2026-10-26 | `copr.htm` in the archive; `englxxup-notice.html` |
 
 `englxxup_usfm.zip` is Adam Boyd's Updated Brenton, the same translation with its spelling and formatting updated (CC0 for his changes, 2020). It supplies the boundaries of poetry and the prose markers at its end, as the introduction (`content/introduction.sfm`) explains. None of its words is printed. `englxxup-notice.html` is an unaltered copy of its [copyright page](https://ebible.org/englxxup/copyright.htm).
+
+### Boyd USFM comparison archives
+
+All four current eBible USFM downloads were retrieved unchanged on **2026-10-26**.
+The source revision and package generation dates below come from each archive's
+`copr.htm`, rather than the live website, which can change independently.
+Only Updated Brenton is a build input; the other three archives are retained
+for comparison and are not registered in `src/bible/sources.py`. The build
+continues to read TCGNT and TCENT from the Internet Archive USX archives and
+Boyd's ASV from the February 2021 HTML archive documented below.
+
+| Archive | Source revision | Package generated | SHA-256 |
+| --- | --- | --- | --- |
+| [englxxup_usfm.zip](https://ebible.org/Scriptures/englxxup_usfm.zip) | 2026-02-18 | 2026-10-20 | `2bca3a239561a69ec001c3ca75a3d48dda0c1c715bb5b5dbe6dded117607441e` |
+| [grctcgnt_usfm.zip](https://ebible.org/Scriptures/grctcgnt_usfm.zip) | 2026-10-26 | 2026-10-26 | `37a9870d439868fbdb26ea356500833789c2177ff5824250e338fa76dd3088ae` |
+| [engtcent_usfm.zip](https://ebible.org/Scriptures/engtcent_usfm.zip) | 2026-10-26 | 2026-10-26 | `382fa3b53c38c1fd94af7e8530b97c8100b8b35935168c676df779ade7f10f78` |
+| [engasvbt_usfm.zip](https://ebible.org/Scriptures/engasvbt_usfm.zip) | 2026-10-24 | 2026-10-24 | `cb85ed5119f70ced33d950590220b3dafaf89d4a86304531101aab14025afde1` |
+
+Redistribution notices were checked against the downloaded archives and eBible's
+copyright pages on 2026-10-26. Each unchanged archive retains its `copr.htm`,
+front matter, attribution, and any supplied signature files:
+
+- **Updated Brenton English Septuagint:** Brenton's original is public domain;
+  Adam Boyd dedicated his 2020 language updates under CC0. See the
+  [publisher's notice](https://ebible.org/englxxup/copyright.htm).
+- **Text-Critical Greek New Testament:** Maurice A. Robinson and William G.
+  Pierpont's Byzantine Textform 2018, with Robert Adam Boyd's contribution;
+  the text, preface, and notes are released to the public domain. The retained
+  notice requests the editors' names, title, and disclaimer, including that
+  reuse implies no doctrinal or theological agreement. See the
+  [publisher's notice](https://ebible.org/grctcgnt/copyright.htm).
+- **Text-Critical English New Testament:** copyright © 2022 Robert Adam Boyd,
+  [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). The source is
+  eBible's linked download above; no changes have been made. Its titles
+  *Text-Critical English New Testament* and *Byzantine Text Version* are
+  trademarks and may not name an altered translation or altered footnotes.
+  The notice licenses any included pictures only with the Scriptures and
+  documents they accompany. See the
+  [publisher's notice](https://ebible.org/engtcent/copyright.htm).
+- **American Standard Version Byzantine Text:** the ASV is public domain;
+  Adam Boyd dedicated his changes to the public domain in 2021. See the
+  [publisher's notice](https://ebible.org/engasvbt/copyright.htm).
+
+Compared with the previously pinned Updated Brenton download, every USFM
+member is byte-for-byte identical. Only `copr.htm` and `dejavuserif.css`
+changed, and `signature.txt.asc` was added. Its source revision remains
+2026-02-18, so this refresh changes no scripture or layout instructions.
 
 The Brenton and King James texts in `eng-Brenton_usfm.zip` and `engkjvcpb_usfm.zip` are in the public domain outside the United Kingdom. Brenton's is also in the public domain in the UK, where the right to print and publish the King James Version belongs to the Crown and is licensed only to certain publishers under letters patent. See the [UK Intellectual Property Office's guidance](https://www.gov.uk/government/publications/copyright-notice-duration-of-copyright-term/copyright-notice-duration-of-copyright-term). `brenton-notice.html` and `kjv-notice.html` are unaltered copies of eBible's [Brenton](https://ebible.org/eng-Brenton/copyright.htm) and [KJV](https://ebible.org/engkjvcpb/copyright.htm) copyright pages, saved the same day.
 

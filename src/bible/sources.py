@@ -67,8 +67,8 @@ SOURCES: Mapping[str, Pinned] = {
     "updated_brenton": {
         "archive": "sources/englxxup_usfm.zip",
         "url": "https://ebible.org/Scriptures/englxxup_usfm.zip",
-        "retrieved": "2026-10-09",
-        "sha256": "ff634ca56e906cf726df3006db5088509a35186ed069e282be40cc2fe9e7f564",
+        "retrieved": "2026-10-26",
+        "sha256": "2bca3a239561a69ec001c3ca75a3d48dda0c1c715bb5b5dbe6dded117607441e",
     },
     # CCEL's HTML transcription of Brenton: read for the footnotes eBible's
     # transcription lacks, and for nothing else (bible.ccel).
