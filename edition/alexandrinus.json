@@ -3151,12 +3151,12 @@
       "lemma": "Chiram my servant"
     },
     "2CH 3:4 CCEL": {
-      "why": "Print Brenton’s Alexandrinus height reading. Brenton 1879 physical p. 586 and 1900 physical p. 582 (both printed p. 570) print “Alex. 20 cubits.” with caller γ before “a hundred and twenty cubits” in 2 Chronicles 3:4. The source note is absent from eBible and uniquely supplied by CCEL 4.iii#1. Swete II p. 64 explicitly records και υψος πηχεων εικοσι| και κατ|ε sup ras et in mgg A^a (om και υψος πηχεων A*^vid): twenty belongs to the correcting hand A^a, written over an erasure and in the margins, and A’s first hand apparently lacked the height clause. The corrector’s hand is not in doubt, so the corrected reading is printed; as for the edition’s other corrected readings (PSA 92:3, EZK 1:27), the note names only the displaced witness. Spell out Brenton’s printed numeral in his surrounding verse wording. B’s main text positively has ἑκατὸν εἴκοσι, supporting the displaced 120. The lemma is the changed measure; it repeats in the verse (the breadth is twenty cubits too), so annotation widens the printed lemma from the caller’s occurrence.",
+      "why": "Print Brenton’s Alexandrinus height reading. Brenton 1879 physical p. 586 and 1900 physical p. 582 (both printed p. 570) print “Alex. 20 cubits.” with caller γ before “a hundred and twenty cubits” in 2 Chronicles 3:4. The source note is absent from eBible and uniquely supplied by CCEL 4.iii#1. Swete II p. 64 explicitly records και υψος πηχεων εικοσ|ι και κατ|ε sup ras et in mgg A^a (om και υψος πηχεων A*^vid): twenty belongs to the correcting hand A^a, written over an erasure and in the margins, and A’s first hand apparently lacked the height clause. The corrector’s hand is not in doubt, so the corrected reading is printed; as for the edition’s other corrected readings (PSA 92:3, EZK 1:27), the note names only the displaced witness. Spell out Brenton’s printed numeral in his surrounding verse wording. B’s main text positively has ἑκατὸν εἴκοσι, supporting the displaced 120. The lemma is the changed measure; it repeats in the verse (the breadth is twenty cubits too), so annotation widens the printed lemma from the caller’s occurrence. Compose the displaced measure as a whole-lemma alternative so it echoes height when the lemma widens, restoring Brenton’s complete construction on substitution.",
       "swete": {
         "volume": 2,
         "page": 64,
         "evidence": "apparatus",
-        "reading": "και υψος πηχεων εικοσι| και κατ|ε sup ras et in mgg A^a (om και υψος πηχεων A*^vid)",
+        "reading": "και υψος πηχεων εικοσ|ι και κατ|ε sup ras et in mgg A^a (om και υψος πηχεων A*^vid)",
         "agrees": true
       },
       "from": "a hundred and twenty cubits",
@@ -3172,7 +3172,7 @@
         ]
       },
       "lemma": "twenty cubits",
-      "note": "\\fl Vat. \\fq a hundred and twenty cubits\\ft .",
+      "label": "vatican",
       "source_note": "\\fqa Alex. \\ft 20 cubits."
     },
     "2CH 15:8 CCEL": {
@@ -3327,12 +3327,12 @@
       "lemma": "fifty years"
     },
     "2CH 34:8 CCEL": {
-      "why": "Print the Alexandrinus addition in the complete affected English construction. Brenton 1879 physical p. 627 and 1900 physical p. 623 (printed p. 611) both print “Alex. inserts ὅτε συνετέλεσε ‘when he had finished’.” with the caller before “after having cleansed”. Swete II p. 120 explicitly records του καθαρισαι] pr οτε συνετελεσει A; B positively lacks the added phrase. Derive “when he had finished” exactly from Brenton’s gloss. Retain his cleansing verb for the unchanged καθαρίσαι, inflecting cleansed to cleansing as the complement of finished and removing the displaced after having construction. Declare cleansing as the morphological adaptation of Brenton’s own cleansed, not a separately translated word or a borrowing from another version. This replaces the whole affected construction with grammatical English: when he had finished cleansing the land, and the house. Preserve A’s diplomatic συνετελεσει in the evidence separately from Brenton’s συνετέλεσε. The displaced phrase after having cleansed remains a grammatical substitution in the note; B positively lacks the added phrase, and the note names Vat.",
+      "why": "Print the Alexandrinus addition in the complete affected English construction. Brenton 1879 physical p. 627 and 1900 physical p. 623 (printed p. 611) both print “Alex. inserts ὅτε συνετέλεσε ‘when he had finished’.” with the caller before “after having cleansed”. Swete II p. 120 explicitly records του καθαρισαι] pr οτε συνετελεσε̅| A; B positively lacks the added phrase. Derive “when he had finished” exactly from Brenton’s gloss. Retain his cleansing verb for the unchanged καθαρίσαι, inflecting cleansed to cleansing as the complement of finished and removing the displaced after having construction. Declare cleansing as the morphological adaptation of Brenton’s own cleansed, not a separately translated word or a borrowing from another version. This replaces the whole affected construction with grammatical English: when he had finished cleansing the land, and the house. Preserve Swete’s diplomatic συνετελεσε̅| in the evidence: the overbar represents final nu and the bar marks a manuscript line end; Brenton’s note prints συνετέλεσε. The displaced phrase after having cleansed remains a grammatical substitution in the note; B positively lacks the added phrase, and the note names Vat.",
       "swete": {
         "volume": 2,
         "page": 120,
         "evidence": "apparatus",
-        "reading": "του καθαρισαι] pr οτε συνετελεσει A",
+        "reading": "του καθαρισαι] pr οτε συνετελεσε̅| A",
         "agrees": true
       },
       "from": "after having cleansed",
