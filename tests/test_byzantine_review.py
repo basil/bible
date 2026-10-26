@@ -17,7 +17,7 @@ from conftest import amended
 import bible.annotate
 import bible.pipeline
 from bible import revision, scripture, usj
-from bible.byzantine import BOOKS, BOYD_ASV, REVISIONS, review, variants
+from bible.byzantine import BOOKS, BOYD_ASV, REVISIONS, RV, review, variants
 from bible.byzantine.decisions import ref_key
 from bible.byzantine.english import verses_of
 from bible.byzantine.greek import accent_letters, ascii_greek, greek_words
@@ -28,7 +28,13 @@ from bible.byzantine.presentation import (
     greek_display,
     passage_spans,
 )
-from bible.byzantine.rows import Disposition, InstructionEdit, RevisionRow, Unit
+from bible.byzantine.rows import (
+    Disposition,
+    InstructionEdit,
+    Override,
+    RevisionRow,
+    Unit,
+)
 from bible.byzantine.stages import Reconciliation
 from bible.checks import CheckFailed
 from bible.usj import Document
@@ -613,6 +619,94 @@ def test_boyd_quote_keeps_patched_verse_explicitly_excluded(
     line = next(line for line in lines if line.startswith("- Boyd ASV 2021 ("))
     assert "not admitted at this unit: RP2026 Appendix A" in line
     assert "ASV 1901 → Boyd ASV 2021 (whole verse):" in line
+
+
+def test_manual_borrowings_group_decisions_and_only_excluded_units(
+    byzantine: Reconciliation, packets: dict[str, str]
+) -> None:
+    expected = {
+        ("MRK 1:16#1", RV): ["MRK 1:16#1"],
+        ("MRK 6:9#1", RV): ["MRK 6:9#1"],
+        ("REV 2:3#1+REV 2:3#2", RV): ["REV 2:3#2"],
+        ("REV 7:4#1+REV 7:4#2", RV): ["REV 7:4#1", "REV 7:4#2"],
+        ("REV 13:8#1", RV): ["REV 13:8#1"],
+        ("REV 13:14#3+REV 13:14#4", BOYD_ASV): ["REV 13:14#3", "REV 13:14#4"],
+    }
+    assert {
+        key: [u["id"] for u in units]
+        for key, units in review.manual_borrowings(byzantine).items()
+    } == expected
+    text = (
+        review.summary(byzantine)
+        .split("## Manual borrowing outside automatic admission\n", 1)[1]
+        .split("\n## ", 1)[0]
+    )
+    entries = [line for line in text.splitlines() if line.startswith("| ")][2:]
+    assert len(entries) == len(expected)
+    for (oid, name), units in expected.items():
+        line = next(line for line in entries if line.startswith(f"| {oid} |"))
+        assert f"| {review.NAMES[name]} |" in line
+        for uid in units:
+            assert uid + ": " in line
+            section = section_of(packets, uid)
+            assert f"Borrowed wording by editorial decision {oid};" in section
+            assert "not admitted at this unit:" in section
+        if oid.startswith("REV 2:3"):
+            assert "REV 2:3#1:" not in line
+    assert "Borrowed wording by editorial decision" not in section_of(
+        packets, "REV 2:3#1"
+    )
+    assert "Westcott–Hort reads with TR" in text
+    assert "Westcott–Hort reads with neither TR nor RP" in text
+    assert "RP2026 Appendix A changes this verse" in text
+    assert "quotation’s ✓ checks its source accuracy" in text
+
+
+def test_manual_borrowing_follows_admission_changes(
+    byzantine: Reconciliation, finished: dict[str, Document]
+) -> None:
+    uid = "MRK 1:16#1"
+    admitted = dict(byzantine.revisions.admitted)
+    admitted[RV] = admitted[RV] | {uid}
+    context = amended(byzantine, "revisions", admitted=admitted)
+    assert (uid, RV) not in review.manual_borrowings(context)
+    index = review.build_index(context, finished)
+    lines = review.witness_lines(unit_of(context, uid), context, index)
+    assert any(line.startswith("- RV 1881 (eligible reading;") for line in lines)
+    assert not any("Borrowed wording by editorial decision" in line for line in lines)
+
+
+def test_manual_borrowing_follows_the_source_tag_not_the_quotations(
+    byzantine: Reconciliation,
+) -> None:
+    uid = "MRK 1:16#1"
+
+    def changed(change: Mapping[str, object]) -> Reconciliation:
+        overrides: tuple[Override, ...] = tuple(
+            cast(Override, {**o, **change}) if o["id"] == uid else o
+            for o in byzantine.decisions.overrides
+        )
+        return amended(byzantine, "decisions", overrides=overrides)
+
+    # A corroborating quotation is not a borrowing; a source tag is one,
+    # quoted or not.
+    corroborating = changed({"tags": ["from:editor", "gram:lexical"]})
+    assert (uid, RV) not in review.manual_borrowings(corroborating)
+    unquoted = changed({"evidence": {}})
+    assert (uid, RV) in review.manual_borrowings(unquoted)
+
+
+@pytest.mark.parametrize("execution", ["refused", "none"])
+def test_manual_borrowing_requires_the_shared_decision_to_execute(
+    byzantine: Reconciliation, execution: str
+) -> None:
+    oid = "REV 7:4#1+REV 7:4#2"
+    rows: tuple[Disposition, ...] = tuple(
+        {**r, "execution": execution} if r.get("override") == oid else r
+        for r in byzantine.verified.dispositions
+    )
+    context = amended(byzantine, "verified", dispositions=rows)
+    assert (oid, RV) not in review.manual_borrowings(context)
 
 
 def test_report_attachment_scope_is_visible(

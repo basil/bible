@@ -133,7 +133,8 @@ type Attached = Instruction | Report | RevisionRow
 
 class Index(TypedDict):
     """Lookups the packet renders from: each unit's instructions, reports and
-    revision rows, the rows attached to no unit by verse, the readings by id,
+    revision rows, the decision borrowing each revision where it is not
+    admitted, the rows attached to no unit by verse, the readings by id,
     the prepared verses, the verses and the notes on the readings as the
     edition prints them, the dispositions by unit, Boyd's Greek notes, and
     the rows of both Greek apparatuses that give the Received Text a reading."""
@@ -141,6 +142,7 @@ class Index(TypedDict):
     instructions_at: dict[str, list[Instruction]]
     reports_at: dict[str, list[Report]]
     revisions_at: dict[str, list[RevisionRow]]
+    borrowings_at: dict[str, dict[str, str]]
     loose_in_verse: defaultdict[str, list[str]]
     overrides: dict[str, Override]
     prepared: dict[str, Verse]
@@ -443,15 +445,44 @@ def revision_status(
         return "eligible reading; " + (
             "English contrast attached" if rows else "no English contrast attached"
         )
+    return "not admitted at this unit: " + revision_exclusion(
+        name, unit, index["tcgnt"]
+    )
+
+
+def revision_exclusion(name: str, unit: Unit, tcgnt: Mapping[int, BoydNote]) -> str:
+    """Why a revision is excluded from automatic witnessing at this unit."""
     if name == RV:
-        side = revisions.wh_side(unit, index["tcgnt"])
-        reason = {
+        side = revisions.wh_side(unit, tcgnt)
+        return {
             "TR": "Westcott–Hort reads with TR",
             "other": "Westcott–Hort reads with neither TR nor RP",
         }.get(side or "", "Westcott–Hort agreement with RP is not established")
-    else:
-        reason = "RP2026 Appendix A changes this verse from Boyd’s RP2018 target"
-    return "not admitted at this unit: " + reason
+    return "RP2026 Appendix A changes this verse from Boyd’s RP2018 target"
+
+
+def manual_borrowings(context: Reconciliation) -> dict[tuple[str, str], list[Unit]]:
+    """Executed decisions' wording sources outside automatic admission, by
+    their `from:` tags, grouped by decision and source, including their
+    covered units, in the order of the units."""
+    rows = [
+        r for r in context.verified.dispositions if r.get("disposition") == "override"
+    ]
+    applied = {r["override"] for r in rows if r.get("execution") == "applied"}
+    overrides = {o["id"]: o for o in context.decisions.overrides}
+    units = {u["id"]: u for u in context.greek.units}
+    result: dict[tuple[str, str], list[Unit]] = {}
+    for row in rows:
+        oid = row["override"]
+        if oid not in applied:
+            continue
+        for name in REVISIONS:
+            if (
+                f"from:{name}" in overrides[oid]["tags"]
+                and row["unit"] not in context.revisions.admitted[name]
+            ):
+                result.setdefault((oid, name), []).append(units[row["unit"]])
+    return result
 
 
 def patriarchal_status(unit: Unit, index: Index) -> str:
@@ -639,6 +670,12 @@ def witness_lines(unit: Unit, context: Reconciliation, index: Index) -> list[str
                 + (f" ({origin})" if origin else "")
             )
         details = "; ".join(revised)
+        if oid := index["borrowings_at"].get(uid, {}).get(name):
+            # A hard break, as for the details, so it is not run on.
+            details += ("  \n  " if details else "") + (
+                f"Borrowed wording by editorial decision {esc(oid)}; "
+                "excluded from automatic witnessing at this unit."
+            )
         if name == BOYD_ASV and unit["ref"] in context.english.texts["asv"]:
             base = context.english.texts["asv"][unit["ref"]]
             reading = "ASV 1901 → Boyd ASV 2021 (whole verse): " + diff_markup(
@@ -1015,6 +1052,7 @@ def build_index(context: Reconciliation, finished: Mapping[str, Document]) -> In
         "instructions_at": reports_by_unit(context.decisions.instructions),
         "reports_at": reports_by_unit(context.apparatuses.reports),
         "revisions_at": reports_by_unit(context.revisions.rows),
+        "borrowings_at": {},
         "loose_in_verse": defaultdict(list),
         "overrides": {o["id"]: o for o in context.decisions.overrides},
         "prepared": verses_of(context.edited.prepared),
@@ -1030,6 +1068,9 @@ def build_index(context: Reconciliation, finished: Mapping[str, Document]) -> In
         "tcgnt": {n["entry"]: n for n in context.greek.tcgnt},
         "received": received.rows(context.greek.tcgnt, context.greek.apparatus),
     }
+    for (oid, name), units in manual_borrowings(context).items():
+        for unit in units:
+            index["borrowings_at"].setdefault(unit["id"], {})[name] = oid
     for i in context.decisions.instructions:
         if i.get("scope") == "verse" or (
             i.get("scope") == "out-of-scope" and i.get("role") != "agrees"
@@ -1297,9 +1338,10 @@ def sources_of_wording(rows: Sequence[Disposition]) -> list[str]:
 def summary(context: Reconciliation) -> str:
     """The reconciliation in figures, for the review: how many units (and
     corrections of shared Greek) of each disposition, where the wording of
-    the rows executed comes from, how each witness's rows were read, the
-    inventory rows that match no unit, and the verses the CrossWire bridge
-    could not align."""
+    the rows executed comes from, the executed decisions that borrow a
+    revision's wording where it is not admitted, how each witness's rows
+    were read, the inventory rows that match no unit, and the verses the
+    CrossWire bridge could not align."""
     c = Counter
     lines = ["# The Byzantine New Testament", ""]
     rows = context.verified.dispositions
@@ -1315,6 +1357,31 @@ def summary(context: Reconciliation) -> str:
         "",
     ]
     lines += sources_of_wording(rows)
+    lines += [
+        "## Manual borrowing outside automatic admission",
+        "",
+        "These executed decisions borrow wording from a revision excluded "
+        "from automatic witnessing at the listed units. A source tag identifies "
+        "borrowed wording within the construction, not verbatim adoption of "
+        "every replacement word. A quotation’s ✓ checks its source accuracy; "
+        "the decision’s reason explains why the English renders RP2026. "
+        "Automatic admission is unchanged.",
+        "",
+        "| Decision | Wording source | Excluded units and reasons |",
+        "| --- | --- | --- |",
+    ]
+    tcgnt = {n["entry"]: n for n in context.greek.tcgnt}
+    borrowings = manual_borrowings(context)
+    for (oid, name), units in sorted(
+        borrowings.items(), key=lambda kv: (ref_key(kv[1][0]["ref"]), kv[0])
+    ):
+        excluded = "; ".join(
+            f"{u['id']}: {revision_exclusion(name, u, tcgnt)}" for u in units
+        )
+        lines.append(f"| {esc(oid)} | {NAMES[name]} | {esc(excluded)} |")
+    if not borrowings:
+        lines.append("| none | — | — |")
+    lines.append("")
     lines += ["## Witnesses", "", "| Witness | Rows | Scope |", "| --- | --- | --- |"]
     witnesses: defaultdict[str, list[str | None]] = defaultdict(list)
     for r in context.apparatuses.reports:

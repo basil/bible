@@ -394,6 +394,27 @@ def test_a_silent_unit_keeps_the_kjv(context: Reconciliation) -> None:
             assert {"op:nochange", "from:kjv-retained"} <= set(row["tags"])
 
 
+def test_rev_21_2_relocated_saw_needs_no_further_english_change(
+    context: Reconciliation, exported: Mapping[str, str]
+) -> None:
+    row = next(r for r in context.verified.dispositions if r["unit"] == "REV 21:2#2")
+    assert (row["disposition"], row["action"]) == ("override", "nochange")
+    assert not row.get("redundant")
+    assert set(row["witnesses"]) == {"tcent", "faa", "msb"}
+    assert row["tcent_reports"]
+    assert "gram:order" in row["tags"]
+    assert "ev:tcent-reports" not in row["tags"]
+    chapter = exported["REV"].split("\\c 21\n")[1].split("\\c 22\n")[0]
+    verse = next(line for line in chapter.splitlines() if line.startswith("\\v 2 "))
+    assert verse == (
+        r"\v 2 And \f - \cat edition\cat*\fr 2 \fq I: \ft TR adds \+it John\+it*\f*"
+        "I saw the holy city, new Jerusalem, coming down "
+        r"\f - \cat edition\cat*\fr 2 \fq out of heaven from God: \ft TR "
+        r"\fqa from God out of heaven\f*out of heaven from God, "
+        "prepared as a bride adorned for her husband."
+    )
+
+
 # Tags and scores
 
 

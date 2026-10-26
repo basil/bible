@@ -12870,6 +12870,31 @@
         }
       }
     },
+    "REV 21:2#2": {
+      "units": [
+        {
+          "ref": "REV 21:2",
+          "tr": "",
+          "rp": "eidon"
+        }
+      ],
+      "kind": "nochange",
+      "tags": [
+        "from:kjv-retained",
+        "gram:order"
+      ],
+      "why": "RP relocates εἶδον after καινήν, but ordinary English keeps I saw before its object; TCENT 529’s I versus I, John is already carried out by the omission of John at the preceding unit. FAA likewise prints I saw before the holy city, so the relocated Greek verb calls for no further English change.",
+      "evidence": {
+        "tcent": {
+          "entry": 529,
+          "quote": "I ¦ I, John, TR"
+        },
+        "rv": {
+          "ref": "REV 21:2",
+          "quote": "And I saw the holy city"
+        }
+      }
+    },
     "REV 21:6#1": {
       "units": [
         {

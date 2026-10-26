@@ -1,33 +1,6 @@
-# Notes: open questions
+# Open questions
 
-Open questions and source discrepancies from the footnote reviews. Every reading from Codex Alexandrinus has its decision in `edition/alexandrinus.json`; the questions below need an editor's decision or further evidence, and each names the evidence already gathered.
-
-## How to read this list
-
-**Keys.** Brenton's notes are named by their keys, the `x-key` the build gives each source note ([AGENTS.md](../AGENTS.md#the-document-model)), which a decision in `edition/` is filed under:
-
-- Books are USFM codes: `1SA`–`2KI` are 1–4 Kingdoms, `PRO` Proverbs, `JOL` Joel, and `BAK` Brenton's Appendix, whose entries in `alexandrinus.json` are named by the verse they concern, as `BAK 1KI 2:35a`, and whose notes `appendix.json` names by the verse they stand at.
-- Chapters and verses are eBible's, as its transcription of Brenton numbers them, so the Psalms and Joel are numbered as in the Greek, and some verses are lettered, as `1KI 5:14a`. Where the edition numbers a verse otherwise, by [docs/numbering.md](numbering.md), a key still names it by eBible's number.
-- `#2` is a verse's second note; a key without it is the verse's first or only note.
-
-A 1611 marginal note is named by its verse and `(1611)`, as `1CO 14:27 (1611)`; its key in `edition/kjv-notes.json` adds the words George prints it under, as `1CO 14:27 two...`.
-
-**Cross-references.** A note with more than one problem is listed under each, and each listing names the others in brackets.
-
-**Sources.** eBible is the transcription of Brenton that the build reads, and George is Calvin George's transcription of the 1611 notes ([sources/README.md](../sources/README.md)). Swete is the Greek edition whose apparatus checks Brenton's reports of Codex Alexandrinus. In its sigla, A is Codex Alexandrinus, A* its first hand and A¹ and Aᵃ correcting hands, "vid" marks an uncertain reading, and Q and Γ are other manuscripts. A displaced reading is labelled `Vat.` only where Swete's B main text positively supports it; where B differs or is missing but Valpy's printed Greek, which Brenton translated, has it, `Valpy`; and `Brenton` only for his own English that neither has (the introduction, `content/introduction.sfm`).
-
-**Closing an item.** Record the decision in `edition/` with its reason, as [AGENTS.md](../AGENTS.md#where-a-change-goes) says, and delete the item here in the same commit.
-
-## 1. Rules to decide
-
-Each of these is a question about a rule. One decision settles every note it covers.
-
-- **A silent unit that a report already settles.** `REV 21:2#2` (RP's εἶδον re-placed after καινήν) is flagged as wanting an override because Boyd's apparatus reports a translatable difference there; but that report (TCENT 529, “I, John” for “I”) is the one `REV 21:2#1` already carries out, and the FAA placement spans both units. Decide whether a `nochange` reading on #2, or a placement of TCENT 529 on #1 alone, closes it. The 69 silent units whose only reports come from the hyper-literal lists (FAA, MSB, WEB) need a ruling on whether those lists alone can establish a change.
-- **Revised Version and Boyd's ASV borrowed by hand where the automatic witness is not admitted.** The automatic rule takes the RV only where Westcott–Hort agrees with the Byzantine reading; seven readings borrow it by hand at units the review marks not admitted (REV 2:3#1+#2, REV 7:4#1+#2, REV 13:8#1, MRK 1:16#1, MRK 6:9#1), and two borrow Boyd's ASV at REV 13:14#3+#4, where Appendix A changes the verse. Admission is a heuristic for the automatic witness, and hand borrowing is allowed where the RV's words render the Byzantine Greek; decide whether the review should list these, or the build check that the quoted wording renders RP's Greek rather than Westcott–Hort's.
-
-## 2. Future work
-
-### Website tables of mechanical changes
+## Website tables of mechanical changes
 
 Publish searchable, website-only tables of the edition’s changes in spelling, vocabulary, grammar, punctuation, capitalization, and presentation, after the documentary example of Scrivener’s introduction and appendices to the _Cambridge Paragraph Bible_: his Appendix A catalogues every change of text with the edition that introduced it, his Section V treats orthography, grammar, and capitals, and the end of Section III describes the list of italic changes, with reasons, that he deposited with the Press. These are models for recording exact changes and reasons, not evidence that this edition follows his individual decisions. The printed introduction explains the conventions and gives representative examples; it does not yet promise the full tables, so mention them there once they are published.
 
