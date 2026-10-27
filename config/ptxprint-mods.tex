@@ -3,6 +3,12 @@
 % native XeTeX output switch records ActualText without changing shaped text.
 \XeTeXgenerateactualtext=1
 
+% Count bottom footnotes at 60% of their height when choosing a page break.
+% TeX gives a split note's first part the room left times 1000/this, so
+% PTXprint's 40% overfills the page before 3 Kingdoms 12:24's long note
+% and leaves a gap. Below about 590 the gap remains; 600 sets it without one.
+\def\FootnoteMulS{600}
+
 % Prose indents by .125 IndentUnit. Set that to 3 en (1.5 em) of the
 % 12-unit body, scaling with layout.ini's fontfactor. Poetry and the other
 % stylesheet indents keep their multiples of this shared unit.
