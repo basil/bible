@@ -71,6 +71,43 @@ def turns(before: str | None, after: str | None) -> bool:
     )
 
 
+def set_apart(block: Node) -> bool:
+    """A table, or an entry of a list, which a blank line sets apart from
+    the prose beside it in print, as the website's margins do."""
+    return block["type"] == "table" or usj.paragraph(block) == "li1"
+
+
+def apart(doc: Document) -> Document:
+    """A blank between prose and a table or a list beside it."""
+    result: list[Node] = []
+    for block in doc["content"]:
+        before = result[-1] if result else None
+        if before is not None and (
+            (set_apart(before) and usj.paragraph(block) in usj.PROSE)
+            or (usj.paragraph(before) in usj.PROSE and set_apart(block))
+        ):
+            result.append(usj.para("b"))
+        result.append(block)
+    return usj.with_blocks(doc, result)
+
+
+def keyed(block: Node) -> Node:
+    """A list entry without the word space beside its key, which the gap
+    config/ptxprint-mods.tex sets after every key takes the place of."""
+    content = block.get("content") or []
+    if not (content and usj.is_type(key := content[0], "char", "lik")):
+        return block
+    words, rest = list(key["content"]), content[1:]
+    if words and isinstance(words[-1], str):
+        words[-1] = words[-1].rstrip()
+    if rest and isinstance(rest[0], str):
+        rest = [rest[0].lstrip(), *rest[1:]]
+    return {
+        **block,
+        "content": usj.joined([{**key, "content": usj.joined(words)}], rest),
+    }
+
+
 def spaced(doc: Document, unspaced: Set[int] = frozenset()) -> Document:
     """Keep stanza breaks and prose/poetry transitions, across chapters too.
 
@@ -195,7 +232,8 @@ def document(code: str, doc: Document, edition: Edition) -> Document:
     margin origins without their chapter, which the chapter figure and running
     head supply, unless the verse's printed label names one, and bottom notes
     under their callers alone; its chapter label, where the manifest asks for
-    one, set once before its first chapter as PTXprint takes it; its blank lines set; and its Greek
+    one, set once before its first chapter as PTXprint takes it; its blank lines set; its
+    list keys without the word space the typesetter's gap replaces; and its Greek
     and Hebrew tagged for their fonts.
     The edition's own pages are sent as the editor wrote them, with their
     Greek and Hebrew tagged for their fonts, except that a peripheral
@@ -240,6 +278,7 @@ def document(code: str, doc: Document, edition: Edition) -> Document:
         # The line stage checked each decision against its whole book.
         decisions = edition.policy.lines.get("unspaced", {})
         doc = spaced(doc, lines.unspaced(doc, decisions, excerpt=True))
+    doc = apart(usj.with_blocks(doc, map(keyed, doc["content"])))
     # A unit printed from a file that holds another, or under an id that
     # PTXprint would take for its own front matter, is a unit of its own.
     return usj.with_code(usj.with_content(doc, content), code)

@@ -170,3 +170,10 @@ Check, in both testaments:
 - The website also prints the preliminary chapters under Read; website-only are the tables of chapters and verses and the textual variants.
 - The sources' prefaces and introductions retain their authors' opinions. Scrivener's critical introduction and appendices are not part of the electronic source and are not printed. Testament divider pages are print-only; the website's reader sections stand for them. Each divider is a recto without a folio, backed by a blank page, and its testament's first book opens on the next recto.
 - The introduction's book-name and quotation-gloss tables, and the separate alphabetized List of Abbreviations, are generated from the registries. The website's textual variants give both Greek readings and, where English changes, both English readings. Keep derived quotations, tables, and current reconciliation counts out of hand-maintained decisions; use the generated review to check them.
+
+List entries whose names run in use `\lik` for the key, retaining ordinary
+italics elsewhere. A colon introduces each translation’s description; punctuation changes
+are decisions in `edition/revisions.json`. Print sets half an em between the key and its
+description, in place of the word space, and wraps list entries at the prose indent. The
+export sets lists and tables apart from prose with blank lines in print; the website's own
+margins set them apart there, so the pages do not write those blanks.

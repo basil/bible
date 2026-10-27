@@ -720,10 +720,10 @@ def test_brentons_introduction_includes_the_1851_continuation(
     assert "\\it intentionally\\it*" in introduction
     # The early translations are the entries of a list, each with the
     # source's run-in name.
-    assert introduction.index("\\li1 \\it The Old Latin.\\it*—") < introduction.index(
-        "\\li1 \\it The Gothic.\\it*—"
+    assert introduction.index("\\li1 \\lik The Old Latin: \\lik*") < introduction.index(
+        "\\li1 \\lik The Gothic: \\lik*"
     )
-    assert introduction.index("\\li1 \\it The Gothic.\\it*—") < introduction.index(
+    assert introduction.index("\\li1 \\lik The Gothic: \\lik*") < introduction.index(
         "Cardinal Caraffa"
     )
     assert introduction.index("Cardinal Caraffa") < introduction.index("Tischendorf")
@@ -1029,7 +1029,7 @@ def test_matter_cites_and_names_as_the_edition_does(
     # Brenton's "Gen. xlvii. 31, compared with Hebrews xi. 21".
     assert "afforded by Gen. 47:31, compared with Heb. 11:21" in preface
     # A declared change keeps the style of the words it replaces.
-    assert "\\pm \\it Authorized Version\\it* bowed himself" in preface
+    assert "\\li1 \\lik Authorized Version\\lik* bowed himself" in preface
     # Titles and headings drop their closing full stops.
     assert not [
         line
@@ -1297,3 +1297,14 @@ def test_sourced_colophon_must_name_the_final_verse(
         matter.colophons(
             {"MAT": read.kjv["MAT"]}, policy, {"MAT": read.colophons["MAT"]}
         )
+
+
+def test_front_matter_lists_name_their_keys(edition: bible.pipeline.Edition) -> None:
+    for code, count in (("XXB", 2), ("XXE", 6)):
+        entries = [
+            b for b in edition.documents[code]["content"] if usj.paragraph(b) == "li1"
+        ]
+        assert len(entries) == count
+        for entry in entries:
+            assert usj.is_type(entry["content"][0], "char", "lik")
+            assert usj.unlabelled(entry["content"]).strip()

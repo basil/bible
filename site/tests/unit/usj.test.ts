@@ -689,3 +689,11 @@ test("acrostic headings stand alone with their verse number on the next line", (
   expect(rendered.verses).toEqual(["5"]);
   expect(JSON.stringify(doc)).toBe(before);
 });
+
+test("list keys retain their role and punctuation", () => {
+  const fragment = JSDOM.fragment(
+    renderProse([para("li1", char("lik", "Label:"), " Description.")]),
+  );
+  expect(fragment.querySelector("li > i.lik")?.textContent).toBe("Label:");
+  expect(fragment.querySelector("li")?.textContent).toBe("Label: Description.");
+});

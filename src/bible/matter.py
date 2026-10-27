@@ -987,6 +987,26 @@ def structured(
             decision = decisions[found[0]][1]
             if marker != "ib":
                 block = {**block, "marker": decision["to"]}
+                if decision["to"] == "li1" and usj.is_type(
+                    first := block["content"][0], "char", "it"
+                ):
+                    # These decisions name labelled entries, whose opening
+                    # italic span is the key; other italics keep their role.
+                    opening = decision["opening"]
+                    require(
+                        bool(opening.rstrip("."))
+                        and usj.unlabelled(first["content"]).rstrip(".")
+                        == opening.rstrip("."),
+                        f"List opening does not name its italic key: {code}: {opening}",
+                    )
+                    # The source may put its terminal period just outside
+                    # the italic span. It still belongs to the key, which
+                    # keeps the source's words and any note among them.
+                    key, rest = usj.split(block["content"], len(opening))
+                    block = {
+                        **block,
+                        "content": [usj.char("lik", *roman(key)), *rest],
+                    }
             elif "heading" in decision:
                 block = usj.para(decision["to"], decision["heading"])
             else:

@@ -47,6 +47,7 @@ KEPT_MARKERS = {
         "xta",
         "add",
         "it",
+        "lik",
         "tr",
         "th1",
         "th2",

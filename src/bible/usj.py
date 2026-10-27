@@ -78,7 +78,7 @@ PARAGRAPHS = BOOK_PARAGRAPHS | frozenset(
 # Headings and divisions: no part of the verses or the introduction they stand among.
 HEADINGS = frozenset("s1 s2 s3 ms1 ms2 sd1 sd2 cl lit".split())
 CELLS = frozenset("tc1 tc2 tc3 th1 th2 th3".split())
-CHARS = frozenset("add bd fv it sc vp wg wh qs".split())
+CHARS = frozenset("add bd fv it lik sc vp wg wh qs".split())
 NOTES = frozenset("f x".split())
 # The paragraphs of the body: prose, and the lines of a poem.
 PROSE = frozenset("p m mi nb".split())

@@ -351,3 +351,9 @@
 \catcode`\/=\active
 \gdef\sl@shbreak/{\char`\/\char`\/\penalty\z@{}}
 \endgroup
+
+% A list key has a fixed gap before its description, independent of the
+% punctuation that belongs to its words. The hook runs inside PTXprint's
+% end-marker macro, before the space that follows it, so it cannot ignore
+% that space: the export sends the key without one.
+\sethook{end}{lik}{\hskip .5em}

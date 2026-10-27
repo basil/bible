@@ -1818,6 +1818,28 @@ def test_a_pause_supplies_the_break_before_the_next_poetic_line() -> None:
     ) == ["id", "c", "q1", "q1", "qr", "q1", "q1", "b", "q1", "qr", "p"]
 
 
+def test_a_list_or_table_within_prose_gets_a_blank_line_before_and_after_it() -> None:
+    for usfm, middle in (
+        ("\\li1 One.\n\\li1 Two.\n", ["li1", "li1"]),
+        ("\\tr \\tc1 One\n\\tr \\tc1 Two\n", [None]),
+    ):
+        doc = export.apart(usj.parse(f"\\id XXE\n\\p Before.\n{usfm}\\m After.\n"))
+        assert [b.get("marker") for b in doc["content"]] == [
+            "id",
+            "p",
+            "b",
+            *middle,
+            "b",
+            "m",
+        ]
+
+
+def test_a_list_key_is_sent_without_the_space_its_gap_replaces() -> None:
+    for usfm in ("\\li1 \\lik Key:\\lik* words.", "\\li1 \\lik Key: \\lik*words."):
+        (block,) = usj.parse(f"\\id XXE\n{usfm}\n")["content"][1:]
+        assert export.keyed(block)["content"] == [usj.char("lik", "Key:"), "words."]
+
+
 def test_a_title_leads_directly_into_its_poem() -> None:
     # Chapters and titles already mark boundaries; no blank paragraph pads
     # them or separates a title from its poem.

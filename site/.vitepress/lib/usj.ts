@@ -59,6 +59,7 @@ const CHAR_TAGS: Record<string, string> = {
   add: "span",
   sc: "span",
   it: "i",
+  lik: "i",
   bd: "b",
   fv: "span",
   vp: "span",

@@ -738,3 +738,27 @@ def test_a_colophon_spans_the_text_width_flush_left(tmp_path: Path) -> None:
         assert abs(float(line[0].attrib["xMin"]) - margin) < 0.15, line[0].text
     for line in colophon[:-1]:
         assert abs(float(line[-1].attrib["xMax"]) - measure) < 0.15
+
+
+def test_list_key_gap_and_hanging_indent(tmp_path: Path) -> None:
+    work = ptxprint_project(tmp_path)
+    # As the export sends a key: without the word space the gap replaces.
+    (work / "listkeys.usfm").write_text(
+        "\\id FRT\n\\m Unindented.\n\\p Proseindent.\n\\b\n"
+        "\\li1 \\lik Label:\\lik*Description " + "echo " * 60 + "end.\n",
+        encoding="utf-8",
+    )
+    lines = typeset_lines(work, "listkeys")
+
+    def word(text: str) -> ET.Element:
+        return next(w for line in lines for w in line if w.text == text)
+
+    def left(w: ET.Element) -> float:
+        return float(w.attrib["xMin"])
+
+    assert abs(left(word("Label:")) - left(word("Unindented."))) < 0.15
+    index = next(i for i, line in enumerate(lines) if word("Label:") in line)
+    assert abs(left(lines[index + 1][0]) - left(word("Proseindent."))) < 0.15
+    # Half an em of the 9-point list, unstretched on a justified line.
+    gap = left(word("Description")) - float(word("Label:").attrib["xMax"])
+    assert 4 < gap < 5

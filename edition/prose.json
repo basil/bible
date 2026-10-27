@@ -1109,7 +1109,7 @@
     ]
   },
   "structure": {
-    "why": "Front matter prints as units of their own, in ordinary paragraphs, headings, and lists, not under the markers of a scripture book's introduction. Where the sources' markers do not say what a paragraph is, these decisions do: a blank line at a change of topic becomes a section heading, in words its decision supplies; a line of a title that is the text's opening sentence is its opening paragraph; readings quoted for comparison stand as a block; the one section heading of a unit that is wholly that section is a line of its title, which the manifest sets; and paragraphs that each set one item of a series with its name run in are the entries of a list. A blank line no decision describes goes: the typesetter spaces headings and lists itself.",
+    "why": "Front matter prints as units of their own, in ordinary paragraphs, headings, and lists, not under the markers of a scripture book's introduction. Where the sources' markers do not say what a paragraph is, these decisions do: a blank line at a change of topic becomes a section heading, in words its decision supplies; a line of a title that is the text's opening sentence is its opening paragraph; the one section heading of a unit that is wholly that section is a line of its title, which the manifest sets; and paragraphs that each set one item of a series, or one of the readings compared, with its name run in are the entries of a list. A blank line no decision describes goes: the typesetter spaces headings itself, and the export sets a list apart from the prose around it.",
     "changes": [],
     "markers": [
       {
@@ -1122,16 +1122,16 @@
       {
         "unit": "XXB",
         "from": "im",
-        "to": "pm",
+        "to": "li1",
         "opening": "Gr.",
-        "why": "the Greek quoted for comparison with the English stands as a block"
+        "why": "The Greek and English comparison is a labelled list, each reading after its italic key."
       },
       {
         "unit": "XXB",
         "from": "im",
-        "to": "pm",
+        "to": "li1",
         "opening": "Eng. Ver.",
-        "why": "the English quoted for comparison with the Greek stands as a block"
+        "why": "The Greek and English comparison is a labelled list, each reading after its italic key."
       },
       {
         "unit": "XXE",

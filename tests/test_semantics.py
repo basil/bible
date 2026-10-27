@@ -10,6 +10,7 @@ from bible import export, peripherals, pipeline, usj
 @pytest.mark.parametrize(
     "text",
     [
+        "\\id FRT\n\\li1 \\lik Label:\\lik* Description.\n",
         '\\id XXA\n\\periph Preface|id="preface"\n\\p A preface.\n'
         "\\esb \\cat colophon\\cat*\n\\p A closing notice.\n\\esbe\n",
         "\\id GEN\n\\c 1\n\\p\\v 1 Words."
@@ -75,9 +76,13 @@ def test_exported_roles_are_consistent_across_the_edition(
             for at, block in enumerate(blocks):
                 if usj.is_type(block, "para", "b"):
                     assert 0 < at < len(blocks) - 1, code
+                    # A blank line also sets a table or a list apart from
+                    # the prose.
+                    if export.set_apart(blocks[at - 1]):
+                        assert usj.paragraph(blocks[at + 1]) in usj.PROSE, code
+                        continue
                     assert usj.paragraph(blocks[at - 1]) in usj.BODY, code
-                    # A blank line also sets a table apart from the prose.
-                    if blocks[at + 1]["type"] == "table":
+                    if export.set_apart(blocks[at + 1]):
                         continue
                     if usj.is_type(blocks[at + 1], "chapter"):
                         assert at + 2 < len(blocks), code
@@ -134,3 +139,19 @@ def test_unnumbered_chapters_have_native_chapter_headings(
                 )
                 found.append((code, block["number"]))
     assert sorted(found) == [("DAG", "0"), ("DAG", "13")]
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "\\id FRT\n\\p \\lik Key\\lik* words.\n",
+        "\\id FRT\n\\li1 Words \\lik Key\\lik*.\n",
+        "\\id FRT\n\\li1 \\lik One\\lik* \\lik Two\\lik*.\n",
+        "\\id FRT\n\\li1 \\lik \\lik* words.\n",
+    ],
+)
+def test_list_keys_must_open_their_entries(text: str) -> None:
+    with pytest.raises(RuntimeError, match="List key outside"):
+        pipeline.check_document(
+            "test", usj.parse(text), scripture_unit=False, authored_page=True
+        )

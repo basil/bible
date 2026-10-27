@@ -859,6 +859,20 @@ def check_document(
                     (matter.is_appendix(note) and not named) or origin == reference,
                     f"Note reference disagrees with its verse: {code} {origin}",
                 )
+    for block in doc["content"]:
+        keys = [
+            n
+            for n in usj.walk(block.get("content", []))
+            if usj.is_type(n, "char", "lik")
+        ]
+        if keys:
+            require(
+                usj.paragraph(block) == "li1"
+                and len(keys) == 1
+                and block["content"][0] is keys[0]
+                and bool(usj.unlabelled(keys[0]["content"]).strip()),
+                f"List key outside the opening of its entry: {code}",
+            )
     if authored_page:
         return
     for block in doc["content"]:

@@ -13176,6 +13176,41 @@
           "why": "The stop of the 1844 LXX. also closed the aside as is frequently the case in the LXX; close it before the main clause a double rendering has been given."
         }
       ]
+    },
+    "front-matter-list-labels": {
+      "why": "Translation names introduce their descriptions with a colon rather than a period and dash. The wording remains Brenton’s.",
+      "changes": [
+        {
+          "unit": "XXE",
+          "from": "The Old Latin.—",
+          "to": "The Old Latin: "
+        },
+        {
+          "unit": "XXE",
+          "from": "The Memphitic (or Coptic) version.—",
+          "to": "The Memphitic (or Coptic) version: "
+        },
+        {
+          "unit": "XXE",
+          "from": "The Thebaic (or Sahidic).—",
+          "to": "The Thebaic (or Sahidic): "
+        },
+        {
+          "unit": "XXE",
+          "from": "The Æthiopic.—",
+          "to": "The Æthiopic: "
+        },
+        {
+          "unit": "XXE",
+          "from": "The Gothic.—",
+          "to": "The Gothic: "
+        },
+        {
+          "unit": "XXE",
+          "from": "The Armenian.—",
+          "to": "The Armenian: "
+        }
+      ]
     }
   }
 }
