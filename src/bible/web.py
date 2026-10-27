@@ -29,6 +29,7 @@ from bible import (
 )
 from bible.byzantine.variants import Lane
 from bible.checks import present, require
+from bible.policy_schema import Entry
 
 
 def font_file(face: Path) -> str:
@@ -263,7 +264,6 @@ def matter(
     which print a title alone; each the whole unit but for the names the
     manifest carries, opening with its book and its printed title, with its
     Greek and Hebrew tagged for their fonts as the typesetter has them."""
-    result: list[tuple[Unit, usj.Document]] = []
     front = edition.policy.front_matter
     # Keep the website-only numbering page beside the introduction.
     at = (
@@ -276,8 +276,25 @@ def matter(
         )
         + 1
     )
-    units = (*front[:at], bible.policy.NUMBERING, *front[at:])
-    for entry in units:
+    return units(edition, documents, (*front[:at], bible.policy.NUMBERING, *front[at:]))
+
+
+def back_matter(
+    edition: pipeline.Edition, documents: Mapping[str, usj.Document]
+) -> list[tuple[Unit, usj.Document]]:
+    """The back matter the book prints and the colophon, in reading order,
+    each as a unit of front matter is given."""
+    policy = edition.policy
+    return units(edition, documents, (*policy.back_matter, bible.policy.COLOPHON))
+
+
+def units(
+    edition: pipeline.Edition,
+    documents: Mapping[str, usj.Document],
+    entries: Sequence[Entry],
+) -> list[tuple[Unit, usj.Document]]:
+    result: list[tuple[Unit, usj.Document]] = []
+    for entry in entries:
         code = entry["id"]
         names: Mapping[str, str]
         if entry == bible.policy.NUMBERING:
@@ -290,12 +307,14 @@ def matter(
         doc = usj.with_content(doc, export.font_runs)
         book, *blocks = doc["content"]
         rest = list(itertools.dropwhile(lambda b: b.get("marker") in NAMES, blocks))
-        # The site anchors a unit at its one printed title.
+        # The site anchors a unit at its one printed title, or, for the
+        # colophon, which prints none, at the title the manifest carries.
+        titles = 0 if entry == bible.policy.COLOPHON else 1
         require(
             book["type"] == "book"
             and all(b.get("marker") not in NAMES for b in rest)
-            and sum(b.get("marker") == "mt1" for b in rest) == 1,
-            f"Front matter does not open with its book, its names and one title: {code}",
+            and sum(b.get("marker") == "mt1" for b in rest) == titles,
+            f"Matter does not open with its book, its names and its title: {code}",
         )
         unit: Unit = {
             "id": peripherals.slug(code),
@@ -311,8 +330,8 @@ def matter(
 def write(edition: pipeline.Edition, directory: Path) -> None:
     """Write one document per chapter, each opening with its book, their
     ordered chapter inventory, with the book's names and whether a heading
-    stands for a chapter's number, one document per unit of front matter,
-    listed in the inventory with its names, the comparison
+    stands for a chapter's number, one document per unit of front and back
+    matter, each listed apart in the inventory with its names, the comparison
     page's passages, and the textual variants."""
     if directory.exists():
         shutil.rmtree(directory)
@@ -383,8 +402,14 @@ def write(edition: pipeline.Edition, directory: Path) -> None:
                 usj.with_blocks(doc, [book, *introduction]),
             )
         books.append(listed_book)
-    units = []
-    for listed, doc in matter(edition, documents):
-        files.write_json(directory / "matter" / f"{listed['id']}.json", doc)
-        units.append(listed)
-    files.write_json(directory / "manifest.json", {"books": books, "matter": units})
+    front, back = matter(edition, documents), back_matter(edition, documents)
+    for page, doc in (*front, *back):
+        files.write_json(directory / "matter" / f"{page['id']}.json", doc)
+    files.write_json(
+        directory / "manifest.json",
+        {
+            "books": books,
+            "matter": [page for page, _ in front],
+            "back": [page for page, _ in back],
+        },
+    )

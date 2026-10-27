@@ -18,6 +18,7 @@ from bible.checks import CheckFailed, require
 from bible.files import sha256, write_json
 from bible.policy_schema import Witnesses
 from bible.project import (
+    COLOPHON,
     PARTS,
     PROCESSED_DIR,
     processed_usfm,
@@ -49,12 +50,7 @@ KEPT_MARKERS = {
         "it",
         "lik",
         "tr",
-        "th1",
-        "th2",
-        "tc1",
-        "tc2",
-        "tc3",
-        "th3",
+        *usj.CELLS,
         "po",
         "pm",
         "li1",
@@ -244,6 +240,28 @@ def check_colophon_order(source: str, printed: str) -> None:
         at += len(notice)
 
 
+def closing_page(
+    words: str, layout_pages: Sequence[str], pages: int, after: int
+) -> int:
+    """The physical page of the colophon, whose words alone stand on it: a
+    verso after the back matter's opening pages, without a folio or running
+    head, followed by the two blank pages that close the book."""
+    key = printed_key(words)
+    found = [n for n, page in enumerate(layout_pages, 1) if printed_key(page) == key]
+    require(
+        len(found) == 1,
+        "Colophon not printed on a page of its own without a folio or running head",
+    )
+    page = found[0]
+    require(page > after, "Colophon printed before the back matter")
+    require(page % 2 == 0, "Colophon is not on a verso")
+    require(
+        page + 2 == pages and not any(p.strip() for p in layout_pages[page : page + 2]),
+        "Colophon not followed by the two blank pages that close the book",
+    )
+    return page
+
+
 def check_boundaries(
     base: Path,
     project: Path,
@@ -271,8 +289,11 @@ def check_boundaries(
         ]
 
     # The units the contents list: each scripture book, and each division of
-    # a front matter file.
+    # a front or back matter file but the colophon, whose words are kept to
+    # find its page. The back matter book's other divisions open rectos.
     usfm: dict[str, str] = {}
+    back: list[str] = []
+    colophon = ""
     for code in ids:
         text = project_usfm(project, code).read_text(encoding="utf-8")
         if "\\periph " not in text:
@@ -281,7 +302,15 @@ def check_boundaries(
         for division in usj.objects(usj.parse(text)["content"]):
             if division["type"] == "periph":
                 blocks = usj.objects(division["content"])
-                usfm[division["id"]] = usj.serialize(usj.document(blocks))
+                if division["id"] == COLOPHON:
+                    # Its printed words: not the names the page carries.
+                    colophon = usj.text_of(
+                        b for b in blocks if b.get("marker") not in usj.BOOK_PARAGRAPHS
+                    )
+                else:
+                    usfm[division["id"]] = usj.serialize(usj.document(blocks))
+                    if code == peripherals.BACK:
+                        back.append(division["id"])
     toc = readtoc(tocfiles[0])
     require(
         [r[0] for r in toc] == list(usfm),
@@ -305,6 +334,11 @@ def check_boundaries(
         for index, (code, _, page) in enumerate(toc)
     }
     main_page = spans[PARTS[0]][0]
+    if colophon:
+        last = toc[-1][0]
+        closing = closing_page(colophon, layout_pages, pages, spans[last][0])
+        spans[last] = (spans[last][0], closing - 1)
+        spans[COLOPHON] = (closing, closing)
     # Each testament's divider opens a recto, which prints no folio, and its
     # first book the next one, after a blank verso. Both are read whole, with
     # the margins where a folio or running head would stand, which the
@@ -335,9 +369,16 @@ def check_boundaries(
     for code, (page, end) in spans.items():
         require(previous < page <= pages, f"Invalid boundary page: {code} {page}")
         previous = page
+        if code == COLOPHON:
+            # Checked whole by closing_page: it prints no heading.
+            continue
         require(
             page >= main_page or page % 2 == 1,
             f"Front matter does not open on a recto: {code}",
+        )
+        require(
+            code not in back or page % 2 == 1,
+            f"Back matter does not open on a recto: {code}",
         )
         words = heading(usfm[code])
         require(words, f"Missing heading: {code}")

@@ -881,3 +881,189 @@ def test_list_key_gap_and_hanging_indent(tmp_path: Path) -> None:
     # Half an em of the 9-point list, unstretched on a justified line.
     gap = left(word("Description")) - float(word("Label:").attrib["xMax"])
     assert 4 < gap < 5
+
+
+def test_back_matter_opens_rectos_and_the_colophon_closes_on_a_verso(
+    tmp_path: Path,
+) -> None:
+    work = ptxprint_project(tmp_path)
+
+    def division(identifier: str, title: str, body: str) -> str:
+        return (
+            f'\\periph {title}|id="{identifier}"\n\\h {title}\n'
+            f"\\toc1 {title}\n\\toc2 {title}\n\\toc3 {title}\n{body}"
+        )
+
+    (work / "back.usfm").write_text(
+        FRONT_TEMPLATE.read_text()
+        + division("intbible", "Introduction", "\\mt1 Introduction\n\\p Opening.\n")
+        + division("x-old-testament", "The Old Testament", "\\mt1 The Old Testament\n")
+        + "\\zendperiph\n\\id GEN\n\\mt1 Genesis\n\\c 1\n\\p\\v 1 Scripture.\n\\pb\n"
+        + '\\id XXG\n\\periph The New Testament|id="x-new-testament"\n'
+        "\\mt1 The New Testament\n\\zendperiph\n"
+        "\\id MAT\n\\mt1 Matthew\n\\c 1\n\\p\\v 1 Gospel.\n\\pb\n"
+        "\\id BAK\n" + division("x-odes", "Odes", "\\mt1 Odes\n\\p Odesbody.\n")
+        # The Order runs to a verso, so a blank recto precedes the colophon.
+        + division(
+            "x-psalter",
+            "Psalter",
+            "\\mt1 Psalter\n\\p Psalterbody.\n\\p\\pagebreak\n\\p Psaltersecond.\n",
+        )
+        + division("x-colophon", "Colophon", "\\m Designedline.\n\\b\n\\m Amenline.\n"),
+        encoding="utf-8",
+    )
+    cfg = read_cfg(LAYOUT.read_text(encoding="utf-8"))
+    setup = "\n".join(
+        [
+            *(rf"\defzvar{{{name}}}{{{value}}}" for name, value in cfg["vars"].items()),
+            rf"\def\zcopyright{{{cfg['project']['copyright']}}}",
+            rf"\def\zlicense{{{cfg['project']['license']}}}",
+            rf"\BindingGuttertrue\BindingGutter={cfg['paper']['gutter']}mm",
+            # PTXprint's launcher names the contents file; name it here so
+            # that the rows written can be read.
+            r"\catcode`\@=11 \def\t@cfilename{back.toc}\catcode`\@=12",
+            pagination(({"id": "odes"}, {"id": "psalter"}))
+            + r"\defTOC{main}{\doTOCline{intbible}{Introduction}{}{}{7}"
+            r"\doTOCline{x-old-testament}{The Old Testament}{}{}{9}"
+            r"\doTOCline{GEN}{Genesis}{}{}{11}"
+            r"\doTOCline{x-new-testament}{New Testament}{}{}{13}"
+            r"\doTOCline{MAT}{Matthew}{}{}{15}"
+            r"\doTOCline{x-odes}{Odes}{}{}{17}"
+            r"\doTOCline{x-psalter}{Psalter}{}{}{19}}",
+            "",
+        ]
+    )
+    typeset_lines(work, "back", setup=setup)
+    pages = layout(work, "back").findall(".//x:page", NS)
+    words = [page.findall(".//x:word", NS) for page in pages]
+    texts = [[w.text for w in page] for page in words]
+    # Each page by its first word: a unit's opening page, since its later
+    # pages open with its running head too.
+    numbers: dict[str, int] = {}
+    for n, text in enumerate(texts, 1):
+        if text:
+            numbers.setdefault(text[0] or "", n)
+    assert {"Odes", "Psalter", "Designedline."} <= set(numbers), texts
+    # A unit of back matter opens a recto under a centered folio, as a unit
+    # of front matter does, and its folios go on from the books'.
+    odes, psalter = numbers["Odes"], numbers["Psalter"]
+    assert odes % 2 == 1 and psalter % 2 == 1
+    assert texts[odes - 1] == ["Odes", "Odesbody.", str(odes - 8)]
+    assert texts[psalter - 1] == ["Psalter", "Psalterbody.", str(psalter - 8)]
+    footer, heading = words[odes - 1][2], words[odes - 1][0]
+    assert (
+        abs(
+            float(footer.attrib["xMin"])
+            + float(footer.attrib["xMax"])
+            - float(heading.attrib["xMin"])
+            - float(heading.attrib["xMax"])
+        )
+        < 2
+    )
+    # A later page carries the unit's running head.
+    assert texts[psalter] == ["Psalter", "Psaltersecond.", str(psalter - 7)]
+    # The colophon opens a verso, after a blank recto, bearing its words
+    # alone, a third of the way down the page; two blank pages close the book.
+    colophon = numbers["Designedline."]
+    assert colophon == psalter + 3
+    assert not texts[psalter + 1]
+    assert texts[colophon - 1] == ["Designedline.", "Amenline."]
+    page = pages[colophon - 1]
+    top = float(words[colophon - 1][0].attrib["yMin"])
+    assert 0.25 < top / float(page.attrib["height"]) < 0.4
+    assert len(pages) == colophon + 2
+    assert not texts[colophon] and not texts[colophon + 1]
+    # The contents list the back matter after the books, the first row after
+    # a blank line, and leave the colophon out.
+    contents = {w.text: w for w in words[4]}
+    tops = {
+        text: float(contents[text].attrib["yMin"])
+        for text in ("Matthew", "Odes", "Psalter")
+    }
+    line = tops["Psalter"] - tops["Odes"]
+    assert line > 0
+    assert abs(tops["Odes"] - tops["Matthew"] - 2 * line) < 0.5
+    assert "Colophon" not in contents
+    toc = (work / "back.toc").read_text(encoding="utf-8")
+    assert "{x-odes}" in toc and "{x-psalter}" in toc
+    assert "x-colophon" not in toc and "Colophon" not in toc
+
+
+def test_notes_in_a_peripherals_table_and_heading_go_to_the_foot(
+    tmp_path: Path,
+) -> None:
+    work = ptxprint_project(tmp_path)
+    (work / "tablenotes.usfm").write_text(
+        '\\id FRT\n\\periph Order|id="x-psalter"\n\\h Order\n\\mt1 Order\n'
+        "\\p Introduction.\n"
+        "\\tr \\th1 Day \\th2 Matins \\th3 Vespers\n"
+        "\\tr \\tc1 Sunday \\tc2 II, III\\f + \\ft Cellnote words.\\f* \\tc3\n"
+        "\\tr \\tc1 Monday \\tc2 IV, V \\tc3 VI\n"
+        "\\s1 Holyweek\\f + \\ft Headnote words.\\f*\n"
+        "\\tr \\th1 Day \\th2 Matins \\th3 Vespers\n"
+        "\\tr \\tc1 Saturday \\tc2 XVII \\tc3\n"
+        "\\p Afterwards.\n",
+        encoding="utf-8",
+    )
+    lines = typeset_lines(work, "tablenotes")
+    assert len(layout(work, "tablenotes").findall(".//x:page", NS)) == 1
+    words = {w.text: w for line in lines for w in line}
+    # The callers are numbered in the text, and the notes stand at the foot
+    # of the page, below the prose that follows the tables, each labelled.
+    assert {"III1", "Holyweek2", "Cellnote", "Headnote"} <= set(words), list(words)
+
+    def top(text: str) -> float:
+        return float(words[text].attrib["yMin"])
+
+    assert top("Afterwards.") < top("Cellnote") < top("Headnote")
+    for label, note in (("1.", "Cellnote"), ("2.", "Headnote")):
+        assert abs(top(label) - top(note)) < 0.1
+        assert float(words[label].attrib["xMax"]) < float(words[note].attrib["xMin"])
+
+
+def test_the_psalters_tables_span_the_measure(tmp_path: Path) -> None:
+    work = ptxprint_project(tmp_path)
+    (work / "columns.usfm").write_text(
+        '\\id FRT\n\\periph Order|id="x-psalter"\n\\h Order\n\\mt1 Order\n'
+        "\\p The Psalter is divided into twenty Kathismata. It is read through"
+        " once each week outside Great Lent and twice each week during Great Lent.\n"
+        "\\tr \\th1 Day \\th2 Matins \\th3 Vespers\n"
+        "\\tr \\tc1 Wednesday \\tc2 X, XI \\tc3 XII\n"
+        "\\s1 Lent\n"
+        "\\tr \\th1 Day \\th2 Matins \\th3 First Hour \\th4 Third Hour"
+        " \\th5 Sixth Hour \\th6 Ninth Hour \\th7 Vespers\n"
+        "\\tr \\tc1 Wednesday evening \\tc2 XIII, XIV, XV \\tc3 II \\tc4 III"
+        " \\tc5 IV \\tc6 V \\tc7 XVIII\n",
+        encoding="utf-8",
+    )
+    lines = typeset_lines(work, "columns")
+    # The justified paragraph's first line runs the measure.
+    opening = next(line for line in lines if line[0].text == "The")
+    left = float(opening[0].attrib["xMin"])
+    measure = float(opening[-1].attrib["xMax"]) - left
+
+    def starts(text: str) -> list[float]:
+        return [
+            float(w.attrib["xMin"]) - left
+            for line in lines
+            for w in line
+            if w.text == text
+        ]
+
+    # Every cell of three columns fits a third, and they share the measure.
+    (matins, lenten), (vespers, closing) = starts("Matins"), starts("Vespers")
+    assert abs(matins - measure / 3) < 0.5
+    assert abs(vespers - 2 * measure / 3) < 0.5
+    # A cell wider than a seventh, so the columns take their fixed shares,
+    # in twelfths of the text width, which in print is the measure: the
+    # day's and Matins' wider, and Matins' cell on one line.
+    twelfth = lenten / 2
+    assert abs(starts("First")[0] - 4.5 * twelfth) < 0.5
+    assert abs(closing - 10.5 * twelfth) < 0.5
+    tops = {
+        float(w.attrib["yMin"])
+        for line in lines
+        for w in line
+        if w.text in ("XIII,", "XIV,", "XV")
+    }
+    assert len(tops) == 1

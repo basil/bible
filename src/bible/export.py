@@ -11,6 +11,7 @@ import itertools
 import re
 from collections.abc import Mapping, Sequence, Set
 
+import bible.policy
 from bible import lines, notes, peripherals, pipeline, scripture, usfm, usj
 from bible.checks import require, require_used
 from bible.pipeline import Edition
@@ -72,13 +73,14 @@ def turns(before: str | None, after: str | None) -> bool:
 
 
 def set_apart(block: Node) -> bool:
-    """A table, or an entry of a list, which a blank line sets apart from
-    the prose beside it in print, as the website's margins do."""
-    return block["type"] == "table" or usj.paragraph(block) == "li1"
+    """A table, an entry of a list, or a paragraph of a block quotation,
+    which a blank line sets apart from the prose beside it in print, as the
+    website's margins do."""
+    return block["type"] == "table" or usj.paragraph(block) in {"li1", "pm"}
 
 
 def apart(doc: Document) -> Document:
-    """A blank between prose and a table or a list beside it."""
+    """A blank between prose and a table, a list, or a quotation beside it."""
     result: list[Node] = []
     for block in doc["content"]:
         before = result[-1] if result else None
@@ -323,12 +325,16 @@ def grouped(
 ) -> list[tuple[str, Document]]:
     """The prepared documents as PTXprint's files: each scripture book its
     own, each testament's divider the division of a document of its own, and
-    each run of front matter in one standard peripheral book packaged as the
-    divisions of its document."""
-    front = {entry["id"] for entry in edition.policy.front_matter}
+    each run of front or back matter in one standard peripheral book packaged
+    as the divisions of its document."""
+    policy = edition.policy
+    matter = {
+        entry["id"]
+        for entry in (*policy.front_matter, *policy.back_matter, bible.policy.COLOPHON)
+    }
     result: list[tuple[str, Document]] = []
     for key, run in itertools.groupby(
-        documents, key=lambda cd: peripherals.book(cd[0]) if cd[0] in front else cd[0]
+        documents, key=lambda cd: peripherals.book(cd[0]) if cd[0] in matter else cd[0]
     ):
         units = list(run)
         if key in edition.scripture:

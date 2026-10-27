@@ -81,14 +81,13 @@ const NOTE_TAGS: Record<string, string> = {
   xt: "span",
   xta: "span",
 };
-const CELL_TAGS: Record<string, string> = {
-  th1: "th",
-  th2: "th",
-  th3: "th",
-  tc1: "td",
-  tc2: "td",
-  tc3: "td",
-};
+// The columns the edition's tables run to.
+const CELL_TAGS: Record<string, string> = Object.fromEntries(
+  [1, 2, 3, 4, 5, 6, 7].flatMap((n) => [
+    [`th${n}`, "th"],
+    [`tc${n}`, "td"],
+  ]),
+);
 const SIDEBAR_LABELS: Record<string, string> = {
   colophon: "Source colophon",
   closing: "Closing notice",
@@ -407,29 +406,40 @@ export function renderProse(blocks: Node[], titleAnchor = "") {
   const render = renderer(titleAnchor);
   return render.prose(render.blocks(blocks), "prose");
 }
-// A unit of front matter, under its printed title, and without it, for the
-// search index to set under the title it gives the page.
+// A unit of front or back matter, under its printed title, and without it,
+// for the search index to set under the title it gives the page.
 // On the web a title is one heading: the lines that continue a title opening
 // the unit join it. The dedication's address, around its title, stays apart.
-export function renderMatter(doc: Document) {
+// A unit that prints no title, as the colophon, is headed by the title the
+// manifest carries.
+export function renderMatter(doc: Document, title?: string) {
   let blocks = blocksOf(doc);
+  if (!blocks.some((n) => n.marker === "mt1")) {
+    if (title === undefined) {
+      throw new Error("Matter without a printed title or one to head it by");
+    }
+    blocks = [{ type: "para", marker: "mt1", content: [title] }, ...blocks];
+  }
   const [first, ...rest] = blocks;
   if (first?.marker === "mt1") {
     const end = rest.findIndex((n) => n.marker !== "mt2");
     const lines = end === -1 ? rest : rest.slice(0, end);
-    const title = {
+    const opening = {
       ...first,
       content: [
         ...(first.content || []),
         ...lines.flatMap((n) => [" ", ...(n.content || [])]),
       ],
     };
-    blocks = [title, ...rest.slice(lines.length)];
+    blocks = [opening, ...rest.slice(lines.length)];
   }
   const render = renderer("matter");
   const grouped = runs(blocks);
   const html = grouped.map((nodes) => render.run(nodes));
-  const prose = (shown: string[]) => render.prose(shown.join("\n"), "matter");
+  // The unit's division names it, for the styles of its own.
+  const division = doc.content.find((n) => n.type === "periph")?.id ?? "";
+  const prose = (shown: string[]) =>
+    render.prose(shown.join("\n"), "matter", division);
   return {
     html: prose(html),
     body: prose(html.filter((_, i) => grouped[i]![0]!.marker !== "mt1")),

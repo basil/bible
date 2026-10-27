@@ -631,7 +631,9 @@ describe("front matter renderer", () => {
     );
   });
   test("renders a table with its header and body cells", () => {
-    const fragment = JSDOM.fragment(renderMatter(unit(table)).html);
+    const fragment = JSDOM.fragment(
+      renderMatter(unit(table), "Numbering").html,
+    );
     expect(
       [...fragment.querySelectorAll("table > tbody > tr > *")].map(
         (e) => `${e.tagName.toLowerCase()}.${e.className}`,
@@ -655,9 +657,46 @@ describe("front matter renderer", () => {
     expect(tags(html)).toEqual(["h1", "ul", "p"]);
     expect(tags(body)).toEqual(["ul", "p"]);
   });
+  test("heads a unit that prints no title by the title it is given", () => {
+    const fragment = JSDOM.fragment(
+      renderMatter(
+        unit(para("m", "Set in California."), para("b"), para("m", "Amen.")),
+        "Colophon",
+      ).html,
+    );
+    expect(
+      [...fragment.querySelectorAll(".matter > *")].map(
+        (e) => `${e.tagName.toLowerCase()}.${e.className}`,
+      ),
+    ).toEqual(["h1.mt1", "p.m", "div.stanza", "p.m"]);
+    expect(fragment.querySelector("h1#matter")!.textContent).toBe("Colophon");
+    expect(fragment.querySelector(".scripture.matter.preface")).not.toBeNull();
+    expect(() => renderMatter(unit(para("m", "Set in California.")))).toThrow(
+      "Matter without a printed title or one to head it by",
+    );
+  });
+  test("renders the columns the edition's tables run to", () => {
+    const row = {
+      type: "table:row",
+      marker: "tr",
+      content: [1, 2, 3, 4, 5, 6, 7].map((n) => ({
+        type: "table:cell",
+        marker: `tc${n}`,
+        content: [String(n)],
+      })),
+    };
+    const fragment = JSDOM.fragment(
+      renderMatter(
+        unit(para("mt1", "Order"), { type: "table", content: [row] }),
+      ).html,
+    );
+    expect(
+      [...fragment.querySelectorAll("td")].map((e) => e.className),
+    ).toEqual([1, 2, 3, 4, 5, 6, 7].map((n) => `tc${n}`));
+  });
   test("refuses a verse milestone in front matter", () => {
     expect(() =>
-      renderMatter(unit(para("ip", { type: "verse", number: "1" }))),
+      renderMatter(unit(para("ip", { type: "verse", number: "1" })), "Preface"),
     ).toThrow("Verse milestone in prose");
   });
 });

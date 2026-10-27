@@ -13,7 +13,8 @@ import {
 } from "./lib/library.ts";
 const books = manifest().books;
 const listed = variants();
-// The front matter stands at the top, under no heading, as in the book.
+// The front matter stands at the top and the back matter at the foot, under
+// no heading, as in the book.
 function contents(current?: Book): DefaultTheme.SidebarItem[] {
   return [
     ...manifest().matter.map(matterLink),
@@ -29,6 +30,7 @@ function contents(current?: Book): DefaultTheme.SidebarItem[] {
           : { text: b.short, link: bookLinks(b)[0]!.link },
       ),
     })),
+    ...manifest().back.map(matterLink),
   ];
 }
 const about = [

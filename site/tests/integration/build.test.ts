@@ -91,7 +91,7 @@ test("reader sidebar lists chapters of the current book", () => {
   expect(sidebar.querySelector('a[href="/read/exo/2"]')).toBeNull();
 });
 
-test("every unit of front matter reaches the static output under its title", () => {
+test("every unit of matter reaches the static output under its title", () => {
   const units = manifest().matter;
   expect(units.map((u) => u.id)).toEqual([
     "acknowledgments",
@@ -103,7 +103,12 @@ test("every unit of front matter reaches the static output under its title", () 
     "translators-preface",
     "abbreviations",
   ]);
-  for (const unit of units) {
+  expect(manifest().back.map((u) => u.id)).toEqual([
+    "odes",
+    "psalter",
+    "colophon",
+  ]);
+  for (const unit of [...units, ...manifest().back]) {
     const page = JSDOM.fragment(builtFile(`${matterURL(unit).slice(1)}.html`));
     expect(
       page.querySelectorAll(".scripture.matter h1.mt1#matter"),
@@ -160,13 +165,20 @@ test("every unit of front matter reaches the static output under its title", () 
   ).not.toBeNull();
 });
 
-test("the reader's index links the front matter before the books", () => {
+test("the reader's index links the front matter before the books and the back matter after", () => {
   const page = JSDOM.fragment(builtFile("read/index.html"));
-  expect(
-    [...page.querySelectorAll(".matter-card h3 a:not(.header-anchor)")].map(
+  const links = (selector: string) =>
+    [...page.querySelectorAll(`${selector} h3 a:not(.header-anchor)`)].map(
       (a) => a.getAttribute("href"),
-    ),
-  ).toEqual(manifest().matter.map(matterURL));
+    );
+  expect(links(".matter-card:not(.back-card)")).toEqual(
+    manifest().matter.map(matterURL),
+  );
+  expect(links(".back-card")).toEqual(manifest().back.map(matterURL));
+  const cards = [...page.querySelectorAll(".book-card")];
+  expect(cards.findIndex((c) => c.classList.contains("back-card"))).toBe(
+    cards.length - manifest().back.length,
+  );
 });
 
 test("every book's variants reach the static output with their anchors", () => {
@@ -432,15 +444,22 @@ test("variants navigation runs from the introduction through every book", () => 
   }
 });
 
-test("the pager stops at the first page of the front matter and the last chapter", () => {
-  const last = chapters().at(-1)!;
+test("the pager stops at the first page of the front matter and the colophon", () => {
   for (const [path, direction] of [
     [matterURL(manifest().matter[0]).slice(1), "prev"],
-    [`read/${last.book.id.toLowerCase()}/${last.chapter.number}`, "next"],
+    [matterURL(manifest().back.at(-1)!).slice(1), "next"],
   ] as const) {
     const fragment = JSDOM.fragment(builtFile(`${path}.html`));
     expect(fragment.querySelector(`.VPDocFooter a.${direction}`)).toBeNull();
   }
+  // The last chapter goes on to the back matter.
+  const last = chapters().at(-1)!;
+  const page = JSDOM.fragment(
+    builtFile(`read/${last.book.id.toLowerCase()}/${last.chapter.number}.html`),
+  );
+  expect(page.querySelector(".VPDocFooter a.next")!.getAttribute("href")).toBe(
+    matterURL(manifest().back[0]),
+  );
 });
 
 test.each(fontNames)("bundles font %s unchanged with a root URL", (name) => {

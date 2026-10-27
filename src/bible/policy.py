@@ -60,6 +60,12 @@ def freeze(value: object) -> object:
 GLOSSARY = cast(Entry, freeze({"id": "XXD", "source": "brenton", "source_id": "FRT"}))
 OLD_TESTAMENT = cast(Entry, freeze({"id": "XXF", "file": "content/old-testament.sfm"}))
 NEW_TESTAMENT = cast(Entry, freeze({"id": "XXG", "file": "content/new-testament.sfm"}))
+# The colophon closes the book after the back matter, on a verso, unlisted in
+# the contents, and followed by two blank pages.
+COLOPHON = cast(
+    Entry,
+    freeze({"id": "colophon", "source_id": "BAK", "file": "content/colophon.sfm"}),
+)
 # The numbering tables and textual variants are website-only.
 NUMBERING = cast(Entry, freeze({"id": "XXA", "file": "content/numbering.sfm"}))
 VARIANTS = cast(Entry, freeze({"id": "XXC", "file": "content/byzantine.sfm"}))
@@ -107,6 +113,12 @@ class Policy:
         return self.manifest["front"]
 
     @property
+    def back_matter(self) -> tuple[Entry, ...]:
+        """Every unit of back matter the edition prints, in its order, after
+        Scripture and before the colophon: the edition's own pages."""
+        return self.manifest["back"]
+
+    @property
     def entries(self) -> tuple[Entry, ...]:
         """Every unit the edition prints, in its order."""
         scripture = self.manifest["scripture"]
@@ -116,6 +128,8 @@ class Policy:
             *(u for u in scripture if u["section"] == "old_testament"),
             NEW_TESTAMENT,
             *(u for u in scripture if u["section"] == "new_testament"),
+            *self.back_matter,
+            COLOPHON,
         )
 
     @property
@@ -260,11 +274,11 @@ def check(policy: Policy) -> None:
                 isinstance(osb["text"], str) and bool(osb["text"].strip()),
                 f"Empty OSB quotation: {passage}",
             )
-    manifest_fields = {"title", "scripture", "front", "excluded"}
+    manifest_fields = {"title", "scripture", "front", "back", "excluded"}
     require_fields(policy.manifest, manifest_fields, (), "Manifest")
     require_fields(policy.manifest["excluded"], {"brenton"}, (), "Excluded sources")
     names = {"source_id", "title", "short_title", "abbreviation", "heading"}
-    for manifest_group in ("scripture", "front"):
+    for manifest_group in ("scripture", "front", "back"):
         for unit_entry in policy.manifest[manifest_group]:
             required = {"id", "source"}
             optional = names
@@ -285,10 +299,24 @@ def check(policy: Policy) -> None:
                 optional,
                 f"Manifest {manifest_group} entry {unit_entry.get('id')}",
             )
-            # Front matter prints and publishes as a peripheral division.
+            # Front and back matter print and publish as peripheral divisions.
             require(
-                manifest_group != "front" or unit_entry["id"] in peripherals.UNITS,
-                f"Front matter without a peripheral identifier: {unit_entry['id']}",
+                manifest_group == "scripture" or unit_entry["id"] in peripherals.UNITS,
+                f"Matter without a peripheral identifier: {unit_entry['id']}",
+            )
+            # The back matter, and it alone, is packaged in the back matter
+            # book, as peripherals.BOOKS has it.
+            require(
+                manifest_group == "scripture"
+                or (manifest_group == "back")
+                == (peripherals.book(unit_entry["id"]) == peripherals.BACK),
+                f"Matter packaged apart from its place: {unit_entry['id']}",
+            )
+            # The edition's own pages close the book; a source's unit
+            # would need the matter stage, which runs before scripture.
+            require(
+                manifest_group != "back" or "file" in unit_entry,
+                f"Back matter that is not one of the edition's pages: {unit_entry['id']}",
             )
             # Only true labels anything: false would be a decision that changes nothing.
             if "labelled_chapters" in unit_entry:

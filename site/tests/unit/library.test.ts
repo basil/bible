@@ -40,7 +40,12 @@ const matter: Matter[] = [
     short: "Preface",
   },
 ];
-const inventory = { books, matter };
+// The back matter, after the testaments, ending with the colophon, which
+// prints no title of its own.
+const back: Matter[] = [
+  { id: "colophon", title: "Colophon", short: "Colophon" },
+];
+const inventory = { books, matter, back };
 const variants = {
   title: "Textual Variants",
   intro: [{ type: "para", marker: "ip", content: ["This appendix lists."] }],
@@ -134,6 +139,22 @@ const files = () =>
                   },
                 ],
               },
+            ],
+          },
+        ],
+      },
+    ],
+    [
+      "matter/colophon.json",
+      {
+        content: [
+          { type: "book", marker: "id", code: "BAK" },
+          {
+            type: "periph",
+            id: "x-colophon",
+            alt: "Colophon",
+            content: [
+              { type: "para", marker: "m", content: ["Set in California."] },
             ],
           },
         ],
@@ -297,11 +318,12 @@ describe("prepared Bible library", () => {
       "utf8",
     );
   });
-  test("renders each unit of front matter under its printed title", () => {
+  test("renders each unit of matter under its printed title", () => {
     const routes = library.matterRoutes();
     expect(routes.map((r) => r.params.unit)).toEqual([
       "abbreviations",
       "brenton-preface",
+      "colophon",
     ]);
     expect(routes[0].params.title).toBe("Abbreviations");
     const abbreviations = JSDOM.fragment(routes[0].content);
@@ -318,6 +340,14 @@ describe("prepared Bible library", () => {
     expect(readFileSync).toHaveBeenCalledWith(
       `${library.directory}/matter/brenton-preface.json`,
       "utf8",
+    );
+    // The colophon is headed by the manifest's title, over its lines.
+    const colophon = JSDOM.fragment(routes[2].content);
+    expect(colophon.querySelector("h1.mt1#matter")!.textContent).toBe(
+      "Colophon",
+    );
+    expect(colophon.querySelector(".x-colophon p.m")!.textContent).toBe(
+      "Set in California.",
     );
   });
   test("runs the pager through the front matter and the chapters in order", () => {
@@ -340,7 +370,17 @@ describe("prepared Bible library", () => {
       text: "Preface",
       link: "/read/brenton-preface",
     });
-    expect(library.readerPages().at(-1)!.params.next).toBe(false);
+    // The back matter follows the last chapter and ends the run.
+    expect(library.readerPages().at(-1)!.params.next).toEqual({
+      text: "Colophon",
+      link: "/read/colophon",
+    });
+    const colophon = library.matterRoutes().at(-1)!;
+    expect(colophon.params.prev).toEqual({
+      text: "Daniel Susanna",
+      link: "/read/dag/1",
+    });
+    expect(colophon.params.next).toBe(false);
   });
   test("refuses a page of a section the contents lack", () => {
     const altered = structuredClone(inventory);
@@ -353,7 +393,7 @@ describe("prepared Bible library", () => {
   test("explains how to prepare a missing unit of front matter", () => {
     fixture.delete("matter/brenton-preface.json");
     expect(() => library.matterRoutes()).toThrow(
-      "Cannot read the prepared front matter brenton-preface; run make web",
+      "Cannot read the prepared matter brenton-preface; run make web",
     );
   });
   test("explains how to prepare missing variants", () => {

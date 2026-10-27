@@ -82,8 +82,10 @@ def test_standard_peripherals_get_unique_ptxprint_transport_aliases(
         published = usj.parse((project / f"{physical}.usfm").read_text())
         assert usj.with_code(published, logical["content"][0]["code"]) == logical
         if source not in edition.scripture:
-            assert logical["content"][0]["code"] in {"FRT", "INT"}
-            assert physical.startswith("XX")
+            code = logical["content"][0]["code"]
+            assert code in {"FRT", "INT", "BAK"}
+            # The back matter's run is PTXprint's own back matter book.
+            assert physical == "BAK" if code == "BAK" else physical.startswith("XX")
             divisions += [n["id"] for n in logical["content"] if n["type"] == "periph"]
     assert divisions == [
         n["id"] for _, doc in documents for n in doc["content"] if n["type"] == "periph"

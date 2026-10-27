@@ -30,13 +30,14 @@ export type Book = {
 export const directory = fileURLToPath(
   new URL("../../../build/web/", import.meta.url),
 );
-// A unit of reader front matter, all of which precedes the testaments.
+// A unit of the reader's matter: the front matter precedes the testaments,
+// and the back matter, ending with the colophon, follows them.
 export type Matter = {
   id: string;
   title: string;
   short: string;
 };
-type Manifest = { books: Book[]; matter: Matter[] };
+type Manifest = { books: Book[]; matter: Matter[]; back: Matter[] };
 // The testaments' titles, in the book's order, after the front matter.
 const SECTIONS: Record<string, string> = {
   old_testament: "Old Testament",
@@ -200,18 +201,17 @@ export function introductionPages(): IntroductionPage[] {
   });
   return renderedIntroductions;
 }
-// Every unit of front matter, rendered once under its printed title, and
-// without it for the search index.
+// Every unit of front and back matter, rendered once under its printed
+// title, or the manifest's where it prints none, and without it for the
+// search index.
 type MatterPage = { unit: Matter; html: string; body: string };
 let renderedMatter: MatterPage[] | undefined;
 export function matterPages(): MatterPage[] {
-  renderedMatter ??= manifest().matter.map((unit) => ({
+  renderedMatter ??= [...manifest().matter, ...manifest().back].map((unit) => ({
     unit,
     ...renderMatter(
-      readPrepared<Document>(
-        `matter/${unit.id}.json`,
-        `front matter ${unit.id}`,
-      ),
+      readPrepared<Document>(`matter/${unit.id}.json`, `matter ${unit.id}`),
+      unit.title,
     ),
   }));
   return renderedMatter;
@@ -229,9 +229,9 @@ function pager(links: Link[]) {
   };
 }
 // Every page of the reader in the book's order: the front matter, then
-// each section's chapters. The pager runs through them, while the sidebar
-// opens one book. Read from the manifest alone, so that no page is
-// rendered to place another.
+// each section's chapters, then the back matter. The pager runs through
+// them, while the sidebar opens one book. Read from the manifest alone, so
+// that no page is rendered to place another.
 let readerPager: ReturnType<typeof pager> | undefined;
 const neighbours = (link: string) =>
   (readerPager ??= pager([
@@ -242,6 +242,7 @@ const neighbours = (link: string) =>
         ...b.chapters.map((c) => chapterLink(b, c)),
       ]),
     ),
+    ...manifest().back.map(matterLink),
   ]))(link);
 // The variants introduction and books, rendered once, each by its link.
 // Each entry is anchored by its verse and linked to it where the edition
@@ -321,7 +322,7 @@ export function variantsRoutes() {
     content: `${heading("variants", title)}\n\n${html}`,
   }));
 }
-// A unit of front matter's page: its printed title is its heading.
+// A unit of matter's page: its printed title is its heading.
 export function matterRoutes() {
   return matterPages().map(({ unit, html }) => ({
     params: {

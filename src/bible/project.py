@@ -16,6 +16,7 @@ import bible.policy
 from bible import assembly, paths, peripherals, scripture, typeface, usj
 from bible.checks import require
 from bible.files import write_json
+from bible.policy_schema import Entry
 
 BSB_DEFAULT = "shared/ptxprint/Default"
 FRONT_TEMPLATE = paths.ROOT / "config/front.sfm"
@@ -30,6 +31,8 @@ PARTS = tuple(
     peripherals.UNITS[entry["id"]]
     for entry in (bible.policy.OLD_TESTAMENT, bible.policy.NEW_TESTAMENT)
 )
+# The colophon, by its peripheral id.
+COLOPHON = peripherals.UNITS[bible.policy.COLOPHON["id"]]
 
 
 def bsb_baseline() -> tuple[str, ...]:
@@ -120,10 +123,21 @@ def running_heads(documents: Sequence[tuple[str, usj.Document]]) -> str:
     return "".join(result)
 
 
-def pagination() -> str:
-    """Register the testaments' dividers as the parts of the contents; the
-    first starts the main matter's folios."""
-    return "".join(f"\\BiblePart{{{part}}}\n" for part in PARTS)
+def pagination(back_matter: Sequence[Entry] = ()) -> str:
+    """Register the testaments' dividers as the parts of the contents, the
+    first of which starts the main matter's folios; the units of back matter,
+    which open rectos and are listed after the books; and the colophon, which
+    closes the book on a verso, unlisted."""
+    return "".join(
+        [
+            *(f"\\BiblePart{{{part}}}\n" for part in PARTS),
+            *(
+                f"\\BibleBackMatter{{{peripherals.UNITS[entry['id']]}}}\n"
+                for entry in back_matter
+            ),
+            f"\\BibleColophon{{{COLOPHON}}}\n",
+        ]
+    )
 
 
 def write_project(
@@ -137,11 +151,13 @@ def write_project(
     project = base / PROJECT_DIR
     conf = project / SETTINGS_DIR
     conf.mkdir(parents=True)
+    # PTXprint's extra books, XXA to XXG, carry the front matter's runs and
+    # the dividers; the back matter's run is the standard back matter book.
     peripheral_ids = [code for code, _ in documents if code not in edition.scripture]
-    require(
-        len(peripheral_ids) <= 7, "Too many peripheral runs for PTXprint's extra books"
-    )
-    aliases = {code: f"XX{chr(ord('A') + n)}" for n, code in enumerate(peripheral_ids)}
+    aliased = [c for c in peripheral_ids if peripherals.book(c) != peripherals.BACK]
+    require(len(aliased) <= 7, "Too many peripheral runs for PTXprint's extra books")
+    aliases = {code: f"XX{chr(ord('A') + n)}" for n, code in enumerate(aliased)}
+    aliases.update({c: peripherals.BACK for c in peripheral_ids if c not in aliases})
     ids = [aliases.get(code, code) for code, _ in documents]
     require(ids and len(ids) == len(set(ids)), "Empty or duplicate project id")
     for code, document in documents:
@@ -209,7 +225,7 @@ def write_project(
     with (conf / "ptxprint-mods.tex").open("a", encoding="utf-8") as f:
         f.write(
             "\n"
-            + pagination()
+            + pagination(edition.policy.back_matter)
             + running_heads([(c, d) for c, d in documents if c in edition.scripture])
         )
     # Replace BSB's front matter with the edition's template, so the opening

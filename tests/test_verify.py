@@ -434,6 +434,31 @@ def test_a_colophon_follows_the_complete_final_verse() -> None:
         )
 
 
+# The layout text of a book's last pages, as pdftotext parts them: a form
+# feed ends every page, so the last part is empty.
+COLOPHON = "Glory be to God for all things. Amen. Amen. Amen."
+CLOSING = ["Odes 211", "Psalter 212", "", COLOPHON, "", "", ""]
+
+
+def test_the_colophon_closes_the_book_on_a_verso() -> None:
+    words = "Glory be to God for all things.\nAmen. Amen. Amen."
+    # After a blank recto, or straight after the Order's last verso.
+    assert verify.closing_page(words, CLOSING, 6, 2) == 4
+    straight = ["Odes 211", "Psalter 212", "Psalter 213", *CLOSING[3:]]
+    assert verify.closing_page(words, straight, 6, 2) == 4
+    with pytest.raises(CheckFailed, match="not on a verso"):
+        verify.closing_page(words, ["Odes 211", "Psalter 212", *CLOSING[3:]], 5, 2)
+    with pytest.raises(CheckFailed, match="before the back matter"):
+        verify.closing_page(words, CLOSING, 6, 4)
+    for page in (f"213 {COLOPHON}", f"Colophon {COLOPHON}"):
+        with pytest.raises(CheckFailed, match="without a folio or running head"):
+            verify.closing_page(words, [*CLOSING[:3], page, *CLOSING[4:]], 6, 2)
+    with pytest.raises(CheckFailed, match="two blank pages"):
+        verify.closing_page(words, CLOSING[:5] + [""], 5, 2)
+    with pytest.raises(CheckFailed, match="two blank pages"):
+        verify.closing_page(words, [*CLOSING[:4], "", "Stray", ""], 6, 2)
+
+
 def test_terminal_sidebars_print_in_their_order() -> None:
     source = (
         "\\id REV\n\\c 22\n\\p\\v 21 The grace be with you all. Amen.\n"

@@ -46,12 +46,17 @@ def test_the_edition_prints_every_unit_once_in_the_manifests_order(
         "abbreviations",
         "XXF",
         "XXG",
+        "odes",
+        "psalter",
+        "colophon",
     }
     for mode in ("pdf", "sample"):
         assert "XXA" not in dict(pipeline.view(edition, mode))
     # The textual variants are prepared for the website, and printed nowhere.
     assert bible.policy.VARIANTS["id"] not in edition.documents
-    assert order[-1] == "REV"
+    # The back matter follows the last book, and the colophon closes the book.
+    assert order[order.index("REV") + 1 :] == ["odes", "psalter", "colophon"]
+    assert order[-4] == "REV"
     # Each is written under its own id, whatever file it was printed from.
     assert all(text.startswith(f"\\id {code}") for code, text in exported.items())
     assert dict(edition.summary) == {
@@ -157,6 +162,11 @@ def test_the_policy_is_read_once_and_cannot_be_changed(
             "manifest",
             lambda d: d["scripture"][0].update(labelled_chapters=True),
             "Labelled chapters not true or without a singular name: GEN",
+        ),
+        (
+            "manifest",
+            lambda d: d["front"].append(d["back"].pop()),
+            "Matter packaged apart from its place: psalter",
         ),
         (
             "manifest",

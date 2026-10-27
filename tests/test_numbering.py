@@ -381,6 +381,34 @@ def test_the_page_prints_its_tables(edition: bible.pipeline.Edition) -> None:
     assert "Judges" not in headings and "Ruth" not in headings
 
 
+def test_a_page_keeps_the_rows_it_writes_over_several_lines_as_one_table(
+    printed: Printed,
+) -> None:
+    doc = usj.parse(
+        printed(
+            "\\s1 Order\n"
+            "\\tr \\th1 Day \\th2 Matins \\th3 Vespers\n"
+            "\\tr \\tc1 Sunday \\tc2 II, III\\f + \\ft Not at Vespers.\\f* \\tc3\n"
+            "\\tr \\tc1 Monday \\tc2 IV, V \\tc3 VI\n"
+            "\\p After {GEN 1:1-3}.\n"
+            "\\tr \\tc1 Second \\tc2 Table\n"
+        )
+    )
+    kinds = [(b["type"], b.get("marker")) for b in doc["content"]]
+    assert kinds == [
+        ("para", "s1"),
+        ("table", None),
+        ("para", "p"),
+        ("table", None),
+    ]
+    rows = list(usj.objects(doc["content"][1]["content"]))
+    assert len(rows) == 3
+    sunday = list(usj.objects(rows[1]["content"]))
+    assert [cell["marker"] for cell in sunday] == ["tc1", "tc2", "tc3"]
+    assert len(list(usj.notes_of(sunday[1]["content"]))) == 1
+    assert usj.text_of(doc["content"][2]["content"]) == "After Genesis 1:1–3."
+
+
 @pytest.mark.parametrize(
     "written",
     [
@@ -451,6 +479,7 @@ def test_a_passage_named_prints_as_the_files_have_it(
     [
         ("{PSA 33:13-99}", "doesn't print"),
         ("{MAL 3:19-24}", "doesn't print"),
+        ("{DAG 3:57-88}", "doesn't print"),
         ("{brenton MAL 3:19-24}", "no known way"),
         ("{kjv PRO 22:8a}", "King James Bible lacks"),
         ("{hebrew PSA 33:13}", "no known way"),

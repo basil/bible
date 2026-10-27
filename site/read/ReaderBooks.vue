@@ -35,4 +35,18 @@ import { data } from "./books.data.ts";
       </article>
     </div>
   </section>
+  <div class="book-grid">
+    <article
+      v-for="page in data.back"
+      :key="page.link"
+      class="book-card matter-card back-card"
+    >
+      <CardHeading
+        :id="page.link.split('/').at(-1)!"
+        :text="page.text"
+        :href="page.link"
+      />
+      <p v-if="page.title !== page.text">{{ page.title }}</p>
+    </article>
+  </div>
 </template>

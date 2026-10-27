@@ -90,11 +90,15 @@ def test_web(edition: pipeline.Edition, tmp_path: Path) -> None:
     documents = dict(pipeline.view(edition, "pdf"))
     assert {p.name for p in (tmp_path / "books").iterdir()} == edition.scripture
     assert {p.name for p in (tmp_path / "matter").iterdir()} == {
-        f"{u['id']}.json" for u in manifest["matter"]
+        f"{u['id']}.json" for u in (*manifest["matter"], *manifest["back"])
     }
-    for unit, doc in web.matter(edition, documents):
-        assert unit in manifest["matter"]
-        assert files.read_json(tmp_path / "matter" / f"{unit['id']}.json") == doc
+    for key, listed in (
+        ("matter", web.matter(edition, documents)),
+        ("back", web.back_matter(edition, documents)),
+    ):
+        assert [unit for unit, _ in listed] == manifest[key]
+        for unit, doc in listed:
+            assert files.read_json(tmp_path / "matter" / f"{unit['id']}.json") == doc
     for book in manifest["books"]:
         code = book["id"]
         assert {c["number"]: c["verses"] for c in book["chapters"]} == dict(
@@ -263,12 +267,20 @@ def test_matter(edition: pipeline.Edition) -> None:
         "translators-preface",
         "abbreviations",
     ]
-    units = {unit["id"]: unit for unit, _ in listed}
+    back = web.back_matter(edition, documents)
+    assert [unit["id"] for unit, _ in back] == ["odes", "psalter", "colophon"]
+    units = {unit["id"]: unit for unit, _ in (*listed, *back)}
     assert units["dedication"]["title"] == "The Epistle Dedicatory"
     assert units["introduction"]["title"] == "Introduction"
+    # The colophon prints no title; the site heads it by the manifest's.
+    assert units["colophon"] == {
+        "id": "colophon",
+        "title": "Colophon",
+        "short": "Colophon",
+    }
     source_codes = {peripherals.slug(code): code for code in peripherals.UNITS}
     blocks = {}
-    for unit, doc in listed:
+    for unit, doc in (*listed, *back):
         code = source_codes[unit["id"]]
         whole = usj.with_content(
             edition.numbering_page if code == "XXA" else documents[code],
@@ -286,9 +298,9 @@ def test_matter(edition: pipeline.Edition) -> None:
         assert division["content"] == [
             b for b in whole["content"][1:] if b.get("marker") not in web.NAMES
         ]
-        assert (
-            sum(b.get("marker") == "mt1" for b in usj.objects(division["content"])) == 1
-        )
+        assert sum(
+            b.get("marker") == "mt1" for b in usj.objects(division["content"])
+        ) == (0 if code == "colophon" else 1)
     markers = {
         slug: [b.get("marker") for b in usj.objects(body)]
         for slug, body in blocks.items()

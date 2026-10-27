@@ -175,10 +175,16 @@ Check, in both testaments:
 - The sources' prefaces and introductions retain their authors' opinions. Scrivener's critical introduction and appendices are not part of the electronic source and are not printed. Testament divider pages are print-only; the website's reader sections stand for them. Each divider is a recto without a folio, its translation's title page above the edition's own lines in the regular weight, backed by a blank page, and its testament's first book opens on the next recto.
 - The introduction's book-name and quotation-gloss tables, and the separate alphabetized List of Abbreviations, are generated from the registries. The website's textual variants give both Greek readings and, where English changes, both English readings. Keep derived quotations, tables, and current reconciliation counts out of hand-maintained decisions; use the generated review to check them.
 
+## Back matter
+
+- After Revelation's closing notice come the edition's own pages, from `content/`: the Biblical Odes and the Order of Reading the Psalter, listed under `back` in `edition/manifest.json`, then the colophon. Each unit of back matter is a `\periph` division of the standard back matter book `BAK`; it opens on a recto with a centered arabic folio continuing the books', and later pages carry its `\h` as a running head. The contents list the two after the New Testament's books, in italic like the preliminaries, the first after a blank line; the colophon is not listed.
+- The colophon prints no heading. Its lines are flush-left `\m` paragraphs, as the imprint page's are, the groups parted by `\b`, beginning a third of the way down a verso without a folio or running head, after a blank recto where the Order ends on a verso. Two blank pages follow it and close the book. The website heads it by the title the manifest carries.
+- The Odes are `\li1` entries numbered in their text, each citing its passage in braces so that the build verifies it, except the Hymn of the Three Holy Children, whose Daniel 3:57–88 is written out because it spans the verses 67–68 that the edition's Daniel 3 lacks. The Order's tables are `\tr` rows of up to seven cells; a page writes a table over several lines, and the lines between the tables it asks for are parsed together. Print sets their cells at 11/12 of the body, and every table spans the measure: a table whose cells fit equal columns is set in them (`config/ptxprint-mods.tex`), and a wider one gives each column a fixed share (`config/ptxprint-mods.sty`), so that a day's kathismata stand on one line and the hours' headings wrap. Its notes are footnotes in the cells and heading they are about, numbered at the foot of the page like every front-matter note, each written once: the note on Sunday Matins in Great Lent stands at its first Lenten table. Its prayers are `\pm` paragraphs, set a blank line apart from the prose, with their rubrics italic within their parentheses.
+
 List entries whose names run in use `\lik` for the key, retaining ordinary
 italics elsewhere. Translation labels have no terminal punctuation; punctuation changes
 are decisions in `edition/revisions.json`. Print sets half an em between the key and its
 description, in place of the word space, and wraps list entries at the prose indent; the
 website sets keyed entries as a description list, each key above its description. The
-export sets lists and tables apart from prose with blank lines in print; the website's own
-margins set them apart there, so the pages do not write those blanks.
+export sets lists, tables, and block quotations apart from prose with blank lines in print;
+the website's own margins set them apart there, so the pages do not write those blanks.

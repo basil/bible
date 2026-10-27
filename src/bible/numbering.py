@@ -556,9 +556,19 @@ def page(
     # the books. Any words after them stay at the end.
     psalms: list[Node] = []
     here = blocks
+    # The lines between the tables asked for are parsed together, so that
+    # the rows of a table the page writes over several lines make one table.
+    pending: list[str] = []
+
+    def flush() -> None:
+        if pending:
+            here.extend(usj.parse("\n".join(pending))["content"])
+            pending.clear()
+
     for line in text.split("\n"):
         asked = TABLES.fullmatch(line)
         if asked:
+            flush()
             # Without its words, the Psalms' table would run on from the
             # table before it.
             require(
@@ -585,5 +595,6 @@ def page(
                 "{" not in line and "}" not in line,
                 "Braces left on one of the editor's pages",
             )
-            here.extend(usj.parse(line)["content"])
+            pending.append(line)
+    flush()
     return usj.document(blocks)

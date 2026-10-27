@@ -3,14 +3,15 @@ import {
   manifest,
   matterLink,
   sections,
+  type Matter,
 } from "../.vitepress/lib/library.ts";
-// The front matter, then each section with its books, as the book has them.
+// The front matter, then each section with its books, then the back
+// matter, as the book has them.
+const card = (unit: Matter) => ({ ...matterLink(unit), title: unit.title });
 const loader = {
   load: () => ({
-    matter: manifest().matter.map((unit) => ({
-      ...matterLink(unit),
-      title: unit.title,
-    })),
+    matter: manifest().matter.map(card),
+    back: manifest().back.map(card),
     sections: sections().map(({ section, title, books }) => ({
       section,
       title,

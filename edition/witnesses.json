@@ -205,5 +205,17 @@
     "id": "EXO",
     "chapter": "28",
     "phrase": "appear thus in the Complutensian text"
+  },
+  {
+    "id": "odes",
+    "phrase": "The Biblical Odes were originally chanted in their entirety every day"
+  },
+  {
+    "id": "psalter",
+    "phrase": "The Psalter is divided into twenty Kathismata"
+  },
+  {
+    "id": "colophon",
+    "phrase": "Glory be to God for all things"
   }
 ]

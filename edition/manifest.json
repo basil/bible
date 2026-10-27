@@ -1372,6 +1372,18 @@
       "file": "content/abbreviations.sfm"
     }
   ],
+  "back": [
+    {
+      "id": "odes",
+      "source_id": "BAK",
+      "file": "content/odes.sfm"
+    },
+    {
+      "id": "psalter",
+      "source_id": "BAK",
+      "file": "content/psalter.sfm"
+    }
+  ],
   "excluded": {
     "brenton": [
       "NEH",

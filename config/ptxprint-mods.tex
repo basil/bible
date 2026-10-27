@@ -19,6 +19,38 @@
 % when this is undefined, and its native cell padding still separates them.
 \expandafter\def\csname tc1:fill\endcsname{\hskip0pt}
 
+% A table of the Order of the Psalter whose every cell fits an equal share
+% of the measure gives each column that share, so that it spans the text
+% block: PTXprint would give each column its natural width. A table too
+% wide for equal shares keeps the fixed shares its cell styles give, which
+% fill the measure (ptxprint-mods.sty). The share is the threshold PTXprint
+% divides the measure into before it wraps the columns, and a column's box
+% is as wide as its widest cell.
+\newif\ifBibleEqualColumns
+\begingroup
+\catcode`\@=11
+\expandafter\gdef\csname BibleEqualColumns:x-psalter\endcsname{}
+\global\let\BibleEndTableWrap\endt@blewrap
+\gdef\endt@blewrap{%
+  \BibleEqualColumnsfalse
+  \ifinperiph\ifcsname BibleEqualColumns:\periph@@@\endcsname
+    \BibleEqualColumnstrue
+    \dimen0=\hsize \divide\dimen0 by \maxtablec@l
+    \@col=0
+    \loop\ifnum\@col<\maxtablec@l
+      \advance\@col by 1
+      \ifdim\wd\csname tablecol-\the\@col\endcsname>\dimen0
+        \BibleEqualColumnsfalse
+      \fi
+    \repeat
+  \fi\fi
+  \BibleEndTableWrap}
+\global\let\BibleWrapColumn\wr@pcolumn
+\gdef\wr@pcolumn{%
+  \ifBibleEqualColumns\c@rrentcolwidth=\thr@shold\fi
+  \BibleWrapColumn}
+\endgroup
+
 % Include punctuation and an ordinary word space in the in-note label,
 % without changing the caller printed in the text.
 \sethook{end}{znotelabel}{.\space}
@@ -271,9 +303,15 @@
 % the first part.
 \def\BibleBeginFrontMatter{\global\BibleMainPage=\maxdimen}
 \def\BiblePart#1{\expandafter\gdef\csname BiblePart:#1\endcsname{}}
+% The units of back matter, and the colophon that closes the book after them.
+\def\BibleBackMatter#1{\expandafter\gdef\csname BibleBackMatter:#1\endcsname{}}
+\def\BibleColophon#1{\expandafter\gdef\csname BibleColophon:#1\endcsname{}}
 \newif\ifBibleOpensPart
 \begingroup
 \catcode`\@=11
+% A verso is needed as PTXprint needs a recto: an empty page where the
+% pages shipped so far would put the next one on a recto.
+\gdef\needevenemptyp@ge{\need@evenpage{\emptyoutput}}
 % A book restores the folios its part's divider leaves out, and the part's
 % first book opens a recto after the divider's blank verso, as an opening
 % page. PTXprint already puts the first scripture book on one.
@@ -290,18 +328,37 @@
     \needoddemptyp@ge
     \ifnum\BibleMainPage=\maxdimen \global\BibleMainPage=\pageno\fi
     \nopagenums\global\BibleOpensParttrue
+  \else\ifcsname BibleColophon:\periph@@@\endcsname
+    % The colophon opens a verso, after a blank recto where the back matter
+    % ends on a verso, without a folio or running head. Its lines begin a
+    % third of the way down the page: glue at the head of a page would be
+    % discarded, so the space is a box.
+    \needevenemptyp@ge\global\p@geonetrue\nopagenums
+    \vbox to .3\textheight{}%
+  \else\ifcsname BibleBackMatter:\periph@@@\endcsname
+    % A unit of back matter opens a recto, under a centered folio, as a unit
+    % of front matter does; its folios go on from the books'.
+    \needoddemptyp@ge\global\p@geonetrue\dopagenums
   \else\ifnum\BibleMainPage=\maxdimen
     % A unit of front matter opens a recto, under a centered folio.
     \needoddemptyp@ge\global\p@geonetrue\dopagenums
-  \fi\fi
+  \fi\fi\fi\fi
 }
+% The back matter's book, PTXprint's BAK, closes the book. Its last division,
+% the colophon, has been shipped when the book ends; two blank pages follow.
+\setbookhook{end}{BAK}{\outemptyp@ge{\emptyoutput}\outemptyp@ge{\emptyoutput}}
 % The contents identify each logical peripheral division, not the file that
 % packages several of them. Keep PTXprint's native pagination and convergence.
 \global\let\BibleContentsLine\maket@cline
 \gdef\maket@cline{%
   \begingroup
   \ifinperiph\ifx\periph@@@\empty\else\let\id@@@\periph@@@\fi\fi
-  \BibleContentsLine
+  % The colophon is not listed: its names are dropped as a line's would be.
+  \ifcsname BibleColophon:\id@@@\endcsname
+    \gdef\toc@A{}\gdef\toc@B{}\gdef\toc@C{}%
+  \else
+    \BibleContentsLine
+  \fi
   \endgroup
 }
 \endgroup
@@ -335,8 +392,10 @@
 
 % Keep native titles and references. A part is a heading without a folio:
 % each follows a blank line and stays with its first entry, and the first
-% starts the main matter. Every other row has its folio in the inner margin,
-% and a preliminary's title is italic.
+% starts the main matter. Every other row has its folio in the inner margin;
+% a preliminary's title is italic, and so is a unit of back matter's, the
+% first of them after a blank line.
+\newif\ifBibleBackMatterListed
 \def\doTOCline#1#2#3#4#5{%
   \ifcsname BiblePart:#1\endcsname
     \ifnum\BibleContentsMainPage=\maxdimen
@@ -345,9 +404,14 @@
     \b
     \m\leavevmode\ztocpart #2\ztocpart*\par\nobreak
   \else
+    \ifcsname BibleBackMatter:#1\endcsname
+      \ifBibleBackMatterListed\else\b\global\BibleBackMatterListedtrue\fi
+    \fi
     \m\leavevmode
     \BibleContentsNumber{#1}{\BibleFolio{#5}\BibleContentsMainPage}%
-    \ifnum#5<\BibleContentsMainPage \it #2\it*\else #2\fi\par
+    \ifnum 1=\ifnum#5<\BibleContentsMainPage 1\else
+      \ifcsname BibleBackMatter:#1\endcsname 1\else 0\fi\fi\relax
+      \it #2\it*\else #2\fi\par
   \fi
 }
 

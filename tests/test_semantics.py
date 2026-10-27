@@ -54,7 +54,7 @@ def test_exported_roles_are_consistent_across_the_edition(
         assert usj.parse(usj.serialize(doc)) == doc, code
         for block in usj.walk(doc["content"]):
             if block["type"] == "periph":
-                assert doc["content"][0]["code"] in {"FRT", "INT"}
+                assert doc["content"][0]["code"] in {"FRT", "INT", "BAK"}
                 divisions.append(block["id"])
             if block["type"] == "sidebar":
                 colophons.append((code, block.get("category")))
@@ -94,8 +94,8 @@ def test_exported_roles_are_consistent_across_the_edition(
                             usj.paragraph(following),
                         ) in {("mt1", "mt2"), ("mt2", "mt3")}, code
                         continue
-                    # A blank line also sets a table or a list apart from
-                    # the prose.
+                    # A blank line also sets a table, a list, or a block
+                    # quotation apart from the prose.
                     if export.set_apart(blocks[at - 1]):
                         assert usj.paragraph(blocks[at + 1]) in usj.PROSE, code
                         continue

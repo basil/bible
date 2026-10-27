@@ -211,6 +211,23 @@
   margin: 0;
 }
 
+/* The colophon's lines stand close, as in print, its groups a blank apart. */
+.matter.x-colophon .m {
+  margin: 0;
+}
+
+/* List entries as in print: no bullets, each entry flush left and its
+   turnover lines indented, whether the entry is numbered or not. */
+.scripture ul {
+  padding-left: 0;
+  list-style: none;
+}
+
+.scripture li.li1 {
+  padding-left: 1.5em;
+  text-indent: -1.5em;
+}
+
 .chapters {
   display: flex;
   flex-wrap: wrap;

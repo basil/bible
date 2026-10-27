@@ -42,9 +42,8 @@ test.each(pages)(
   "exported note links: $params.book $params.chapter",
   ({ content }) => expectLinksResolved(content),
 );
-test.each(matterRoutes())(
-  "front matter note links: $params.unit",
-  ({ content }) => expectLinksResolved(content),
+test.each(matterRoutes())("matter note links: $params.unit", ({ content }) =>
+  expectLinksResolved(content),
 );
 
 test("Greek and Hebrew are set in the styles of their fonts", () => {
