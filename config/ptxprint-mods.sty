@@ -68,7 +68,7 @@
 \ztexFontFeatures +[smcp] +[c2sc]
 \FontSize 12
 
-% Keep native acrostic headings, centred in upright small caps. Their verse
+% Keep native acrostic headings, centered in upright small caps. Their verse
 % numbers print on the following poetic line through ptxprint-mods.tex.
 % Separate each label from the preceding poetry, keeping it with what follows.
 \Marker qa
@@ -176,19 +176,47 @@
 \Marker cat:colophon|p
 \FirstLineIndent 0
 
-\Marker periph:pubdata|pc
-\SpaceBefore 12
+% A testament's divider sets its title flush left without space about it,
+% and the lines beneath it flush left: its translation's title page, then
+% the edition's own.
+\Marker periph:x-old-testament|mt1
+\Justification Left
+\SpaceBefore 0
+\SpaceAfter 0
 
-% A testament's divider sets the lines beneath its title flush left: its
-% translation's title page, then the edition's own.
 \Marker periph:x-old-testament|mt2
 \Justification Left
 
 \Marker periph:x-old-testament|mt3
 \Justification Left
 
+\Marker periph:x-new-testament|mt1
+\Justification Left
+\SpaceBefore 0
+\SpaceAfter 0
+
 \Marker periph:x-new-testament|mt2
 \Justification Left
 
 \Marker periph:x-new-testament|mt3
+\Justification Left
+
+% The contents set a testament's row in small capitals.
+\Marker ztocpart
+\StyleType Character
+\ztexFontFeatures +[smcp] +[c2sc]
+
+% The opening pages and the contents set their titles flush left.
+\Marker periph:halftitle|mt1
+\Justification Left
+\FontSize 24
+
+\Marker periph:title|mt1
+\Justification Left
+\FontSize 28
+
+\Marker periph:title|mt2
+\Justification Left
+
+\Marker periph:contents|mt1
 \Justification Left

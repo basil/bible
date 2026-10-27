@@ -219,10 +219,45 @@
   \fi
 }
 
-% The contents identify each logical peripheral division, not the file that
-% packages several of them. Keep PTXprint's native pagination and convergence.
+% Keep the engine's page counter physical and monotonic: native TOC sorting,
+% references and blank-page parity continue to work across the folio restart.
+% A folio is roman before the main matter's first page and counts from it
+% after; the front matter leaves that page unknown until the first part.
+\newcount\BibleMainPage \BibleMainPage=1
+\newcount\BibleContentsMainPage \BibleContentsMainPage=\maxdimen
+\def\BibleFolio#1#2{\ifnum#1<\numexpr#2\relax\romannumeral#1\else
+  \number\numexpr#1-#2+1\relax\fi}
+\def\folio{\BibleFolio\pageno\BibleMainPage}
+% Every division after the opening pages is a unit of front matter until
+% the first part.
+\def\BibleBeginFrontMatter{\global\BibleMainPage=\maxdimen}
+\def\BiblePart#1{\expandafter\gdef\csname BiblePart:#1\endcsname{}}
+\newif\ifBibleOpensPart
 \begingroup
 \catcode`\@=11
+% A book restores the folios its part's divider leaves out, and the part's
+% first book opens a recto after the divider's blank verso, as an opening
+% page. PTXprint already puts the first scripture book on one.
+\setbookhook{start}{all}{\dopagenums
+  \ifBibleOpensPart
+    \needoddemptyp@ge\global\p@geonetrue\global\BibleOpensPartfalse
+  \fi}
+\global\let\BibleStartPeriph\@@@periph
+\gdef\@@@periph#1|#2|#3\E{%
+  \BibleStartPeriph#1|#2|#3\E
+  \ifcsname BiblePart:\periph@@@\endcsname
+    % A part's divider opens a recto without a folio; the first part's
+    % starts the main matter.
+    \needoddemptyp@ge
+    \ifnum\BibleMainPage=\maxdimen \global\BibleMainPage=\pageno\fi
+    \nopagenums\global\BibleOpensParttrue
+  \else\ifnum\BibleMainPage=\maxdimen
+    % A unit of front matter opens a recto, under a centered folio.
+    \needoddemptyp@ge\global\p@geonetrue\dopagenums
+  \fi\fi
+}
+% The contents identify each logical peripheral division, not the file that
+% packages several of them. Keep PTXprint's native pagination and convergence.
 \global\let\BibleContentsLine\maket@cline
 \gdef\maket@cline{%
   \begingroup
@@ -232,20 +267,61 @@
 }
 \endgroup
 
-% BSB numbers ordinary/no-verse pages in the center header and opening
-% pages in the center footer. Put every visible folio at the outer bottom
-% corner for a consistent locator on facing pages, clearing the old slots
-% to avoid duplicates. Keep \pagenumber itself, so \nopagenums and
-% \dopagenums govern
-% suppression. PTXprint continues to choose page types and omit blank pages.
+% The date belongs to the TeX run, rather than a checked-in timestamp.
+\defzvar{compiled}{\ifcase\month\or January\or February\or March\or April%
+  \or May\or June\or July\or August\or September\or October\or November%
+  \or December\fi\space\number\day, \number\year}
+
+% Use native label records to learn the actual page of each contents row,
+% including rows the page builder moves to the next page. Native rerun
+% convergence then keeps their numbers in the inner margin on both sides.
+\begingroup
+\catcode`\@=11
+\gdef\BibleContentsNumber#1#2{%
+  \write\picp@ges{\string\labelonpage{\the\pageno}{BibleTOC:#1}{}}%
+  \begingroup
+  \let\BibleContentsPage\pageno
+  \ifcsname zpage-BibleTOC:#1\endcsname
+    \expandafter\let\expandafter\BibleContentsPage\csname zpage-BibleTOC:#1\endcsname
+  \fi
+  \ifodd\BibleContentsPage
+    \llap{#2\hskip\marginnotesgap}%
+  \else
+    \rlap{\hskip\hsize\hskip\marginnotesgap
+      \hbox to2em{\hss#2}}%
+  \fi
+  \endgroup
+}
+\endgroup
+
+% Keep native titles and references. A part is a heading without a folio:
+% the first follows a blank line and starts the main matter, and each later
+% one opens a page. Every other row has its folio in the inner margin, and a
+% preliminary's title is italic. \endpage, unlike \pb, does not set a blank
+% line first, which would push a full page's break onto a page of its own.
+\def\doTOCline#1#2#3#4#5{%
+  \ifcsname BiblePart:#1\endcsname
+    \ifnum\BibleContentsMainPage=\maxdimen
+      \b\global\BibleContentsMainPage=#5\relax
+    \else\endpage\fi
+    \m\leavevmode\ztocpart #2\ztocpart*%
+  \else
+    \m\leavevmode
+    \BibleContentsNumber{#1}{\BibleFolio{#5}\BibleContentsMainPage}%
+    \ifnum#5<\BibleContentsMainPage \it #2\it*\else #2\fi
+  \fi\par
+}
+
+% Ordinary pages use outer bottom folios; opening pages use the center
+% footer. Keep native suppression and the choice of page types.
 \def\RFoddright{\pagenumber}
 \def\RFevenleft{\pagenumber}
 \def\RFnoVoddright{\pagenumber}
 \def\RFnoVevenleft{\pagenumber}
-\let\RFtitleoddcenter\empty
-\let\RFtitleevencenter\empty
-\def\RFtitleoddright{\pagenumber}
-\def\RFtitleevenleft{\pagenumber}
+% Native center slots follow the text column, under which an opening
+% folio is centered.
+\def\RFtitleoddcenter{\pagenumber}
+\def\RFtitleevencenter{\pagenumber}
 
 % Load the shared optical-margin adapter used by the font regression test.
 \input ../../../shared/ptxprint/Bible/protrusion.tex

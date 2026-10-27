@@ -17,7 +17,7 @@ from ptxprint.modelmap import ModelMap
 from ptxprint.usxutils import merge_sty, simple_parse
 
 from bible import paths, typeface
-from bible.project import FRONT_TEMPLATE, bsb_baseline, style_mods
+from bible.project import FRONT_TEMPLATE, bsb_baseline, pagination, style_mods
 
 LAYOUT = paths.CONFIG_DIR / "layout.ini"
 
@@ -114,21 +114,16 @@ def test_publication_data_uses_project_license_fields() -> None:
     cfg = read_cfg(LAYOUT.read_text(encoding="utf-8"))
     front = FRONT_TEMPLATE.read_text(encoding="utf-8")
     assert cfg["project"]["copyright"] == "Copyright © 2026 Basil Crow"
+    assert cfg["project"]["license"] == "Creative Commons BY-NC-ND 4.0 license"
     assert (
-        "Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International"
-        in cfg["project"]["license"]
-    )
-    assert (
-        "https://creativecommons.org/licenses/by-nc-nd/4.0/"
-        in cfg["project"]["license"]
-    )
-    assert (
-        front.index("\\periph Title Page")
-        < front.index("\\periph Publication Data")
+        front.index("\\periph Half-title")
+        < front.index("\\periph Title Page")
+        < front.index("\\periph Imprint page")
         < front.index("\\periph Table of Contents")
     )
-    assert "\\zcopyright" in front and "\\zlicense" in front
-    assert "\\resetpagenums -1" in front
+    assert all(s in front for s in ("\\zcopyright", "\\zlicense", "\\zvar|compiled\\*"))
+    assert "\\resetpagenums 1" in front
+    assert "\\dopagenums" not in front
     assert cfg["project"]["ifcolophon"] == "False"
 
 
@@ -353,13 +348,15 @@ def layout(work: Path, name: str) -> ET.Element:
 
 
 def typeset_lines(
-    work: Path, name: str, *, after_verse_space_factor: float = 1.8
+    work: Path, name: str, *, after_verse_space_factor: float = 1.8, setup: str = ""
 ) -> list[list[ET.Element]]:
     """Typeset <name>.usfm in one column with the production customizations,
     and return the words of each line as Poppler finds them."""
     (work / f"{name}.tex").write_text(
-        r"""\input paratext2.tex
+        r"""\def\pluginlist{ornaments}
+\input paratext2.tex
 \input ptx-ptxprint.tex
+\stylesheet{standardborders.sty}
 \def\regular{"OLEBFont:+onum=1:+pnum=1"}
 \def\bold{"OLEBFont/B:+onum=1:+pnum=1"}
 \def\italic{"OLEBFont/I:+onum=1:+pnum=1"}
@@ -384,6 +381,7 @@ def typeset_lines(
 \scripturebooktrue
 \lastptxfiletrue
 """
+        + setup
         + rf"\ptxfile{{{name}.usfm}}"
         + r"""
 \end
@@ -393,6 +391,113 @@ def typeset_lines(
     result = xetex(work, f"{name}.tex")
     assert "Overfull" not in result.stdout
     return [list(line) for line in layout(work, name).findall(".//x:line", NS)]
+
+
+def test_opening_pages_and_margin_contents(tmp_path: Path) -> None:
+    work = ptxprint_project(tmp_path)
+    (work / "opening.usfm").write_text(
+        FRONT_TEMPLATE.read_text()
+        + '\\periph Introduction|id="intbible"\n\\mt1 Introduction\n'
+        "\\p Opening.\n\\pb\n\\p Continuation.\n"
+        '\\periph Preface|id="preface"\n\\mt1 Preface\n\\p Prefacewords.\n'
+        '\\periph The Old Testament|id="x-old-testament"\n'
+        "\\mt1 The Old Testament\n\\zendperiph\n"
+        "\\id GEN\n\\mt1 Genesis\n\\c 1\n\\p\\v 1 Scripture.\n"
+        # Each book is its own file, ejecting its last page.
+        "\\pb\n"
+        '\\id XXG\n\\periph The New Testament|id="x-new-testament"\n'
+        "\\mt1 The New Testament\n\\zendperiph\n"
+        "\\id MAT\n\\mt1 Matthew\n\\c 1\n\\p\\v 1 Gospel.\n",
+        encoding="utf-8",
+    )
+    cfg = read_cfg(LAYOUT.read_text(encoding="utf-8"))
+    setup = "\n".join(
+        [
+            *(rf"\defzvar{{{name}}}{{{value}}}" for name, value in cfg["vars"].items()),
+            rf"\def\zcopyright{{{cfg['project']['copyright']}}}",
+            rf"\def\zlicense{{{cfg['project']['license']}}}",
+            r"\notocwritetrue",
+            rf"\BindingGuttertrue\BindingGutter={cfg['paper']['gutter']}mm",
+            pagination() + r"\defTOC{main}{\doTOCline{intbible}{Introduction}{}{}{7}"
+            r"\doTOCline{x-old-testament}{The Old Testament}{}{}{11}"
+            r"\doTOCline{GEN}{Genesis}{}{Gen.}{13}"
+            r"\doTOCline{x-new-testament}{New Testament}{}{}{15}"
+            r"\m\hbox to\hsize{Leftedge\hfil Rightedge}\endgraf"
+            r"\doTOCline{MAT}{Matthew}{}{}{17}"
+            r"\doTOCline{MRK}{Mark}{}{}{18}}",
+            "",
+        ]
+    )
+    typeset_lines(work, "opening", setup=setup)
+    # The first run records each row's page; the second sets each folio's
+    # side from that record, as PTXprint's later runs do.
+    assert "{BibleTOC:MAT}" in (work / "opening.picpages").read_text("utf-8")
+    typeset_lines(work, "opening", setup=setup)
+    pages = layout(work, "opening").findall(".//x:page", NS)
+    assert len(pages) == 17
+    words = [page.findall(".//x:word", NS) for page in pages]
+    texts = [[w.text for w in page] for page in words]
+    by_text = [{w.text: w for w in page} for page in words]
+    assert not any(words[index] for index in (1, 9, 11, 13, 15))
+    assert "Septuagint" not in texts[0]
+    assert "Septuagint" in texts[2]
+    imprint = by_text[3]
+    assert (
+        min(float(w.attrib["yMin"]) for w in words[3])
+        < float(pages[3].attrib["height"]) * 0.2
+    )
+    starts = [
+        float(imprint[text].attrib["xMin"])
+        for text in (
+            "Published",
+            "Concord,",
+            "www.oleb.bible",
+            "Compiled",
+            "Copyright",
+            "under",
+            "[God",
+            "Printed",
+        )
+    ]
+    assert max(starts) - min(starts) < 0.05
+    contents = by_text[4]
+    assert "Gen." not in contents
+    assert "1" not in contents and "5" not in contents
+    gap = float(contents["Introduction"].attrib["xMin"]) - float(
+        contents["vii"].attrib["xMax"]
+    )
+    assert abs(gap - 6 * 72 / 25.4) < 0.05
+    verso = by_text[5]
+    assert texts[5][:2] == ["New", "Testament"]
+    right = float(verso["Rightedge"].attrib["xMax"])
+    for number in ("7", "8"):
+        offset = float(verso[number].attrib["xMax"]) - right
+        assert 6 * 72 / 25.4 < offset < 14 * 72 / 25.4
+    assert (
+        abs(float(verso["7"].attrib["xMax"]) - float(verso["8"].attrib["xMax"])) < 0.05
+    )
+    assert "5" not in verso
+    assert "viii" in texts[7]
+    # An opening folio is centered under the text column, as its title is.
+    for index, number, title in (
+        (6, "vii", "Introduction"),
+        (8, "ix", "Preface"),
+        (12, "3", "Genesis"),
+        (16, "7", "Matthew"),
+    ):
+        footer, heading = by_text[index][number], by_text[index][title]
+        assert (
+            abs(
+                float(footer.attrib["xMin"])
+                + float(footer.attrib["xMax"])
+                - float(heading.attrib["xMin"])
+                - float(heading.attrib["xMax"])
+            )
+            < 2
+        )
+    # Each testament's divider opens a recto without a folio.
+    assert texts[10] == ["The", "Old", "Testament"]
+    assert texts[14] == ["The", "New", "Testament"]
 
 
 def test_urls_keep_both_slashes_in_print(tmp_path: Path) -> None:

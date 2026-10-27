@@ -1,19 +1,38 @@
 \id FRT
-\periph Title Page|id="title"
+\resetpagenums 1
+\periph Half-title|id="halftitle"
 \nopagenums
+\zgap|1in\*
 \mt1 \zvar|maintitle\*
-\mt2 \zvar|subtitle\*
-\periph Publication Data|id="pubdata"
+\periph Title Page|id="title"
+\zNeedOddPage
+\zgap|1in\*
 \mt1 \zvar|maintitle\*
+\zbl|2\*
 \mt2 \zvar|subtitle\*
-\pc \zvar|languagename\*
-\pc \zcopyright
-\pc \zlicense
-\pc \zimagecopyrights
+\zbl|3\*
+\m \it Edited by Basil Crow\it*
+\periph Imprint page|id="pubdata"
+\m Published by Basil Crow
+\m Concord, CA 94519
+\m www.oleb.bible
+\b
+\m Compiled \zvar|compiled\*
+\b
+\m Old Testament first published in Great Britain by
+\m Samuel Bagster and Sons, 15 Paternoster Row, London, 1844
+\b
+\m New Testament first published in Great Britain by
+\m Cambridge Warehouse, 17 Paternoster Row, London, 1873
+\b
+\m \zcopyright,
+\m under a \zlicense
+\b
+\m [God willing, this book will someday be]
+\m Printed in the United States of America
 \periph Table of Contents|id="contents"
 \mt1 \zvar|toctitle\*
 \p
 \ztoc|main\*
-\resetpagenums -1
-\dopagenums
 \p
+\BibleBeginFrontMatter

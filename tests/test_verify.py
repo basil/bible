@@ -100,38 +100,64 @@ def test_printed_origins_lose_their_chapter(declared: bible.policy.Policy) -> No
 
 
 # Rendered PDF
+@pytest.mark.parametrize(
+    "page,main,expected",
+    [
+        (1, 101, "i"),
+        (7, 101, "vii"),
+        (49, 101, "xlix"),
+        (100, 101, "c"),
+        (101, 101, "1"),
+        (103, 101, "3"),
+    ],
+)
+def test_preliminary_and_scripture_folios(page: int, main: int, expected: str) -> None:
+    assert verify.folio(page, main) == expected
 
 
 @pytest.mark.parametrize(
-    "page,accepted",
+    "page,recto,accepted",
     [
-        ("appendixappendix1480readingsreadings1481", True),
-        ("appendixappendixreadingsreadings14801481", True),
-        ("appendixappendix1480readingsreadings1482", False),
-        ("appendixappendixreadingsreadings14801482", False),
+        ("1480appendix1481readings", True, True),
+        ("appendix1480readings1481", False, True),
+        # Numbers in the outer margin.
+        ("1480appendix1481readings", False, False),
+        ("appendix1480readings1481", True, False),
+        ("1480appendix1482readings", True, False),
+        ("appendix1480readings1482", False, False),
+        # A number with another figure beside it.
+        ("11480appendix1481readings", True, False),
+        ("appendix14801readings1481", False, False),
     ],
 )
-def test_contents_page_numbers_with_abbreviations(page: str, accepted: bool) -> None:
-    entries = [("appendix", "appendix", "1480"), ("readings", "readings", "1481")]
-    assert verify.numbered(page, entries) == accepted
+def test_contents_page_numbers_in_the_inner_margin(
+    page: str, recto: bool, accepted: bool
+) -> None:
+    entries = [("appendix", "1480"), ("readings", "1481")]
+    assert verify.numbered(page, entries, recto) == accepted
 
 
-# Two contents pages, as pdftotext reads them, ending and beginning with
-# "Introduction", which "Historical Introduction" contains.
+# Two contents pages, as pdftotext reads them, a recto and its verso, ending
+# and beginning with "Introduction", which "Historical Introduction" contains.
 CONTENTS = [
-    ("introduction", "historicalintroduction", "", "1"),
-    ("XXB", "preface", "", "5"),
-    ("XXE", "introduction", "", "9"),
+    ("introduction", "historicalintroduction", "1"),
+    ("XXB", "preface", "5"),
+    ("XXE", "introduction", "9"),
 ]
 
 
 def test_a_title_within_another_on_the_page_before_is_not_taken_for_it() -> None:
     verify.check_contents(
-        ["historicalintroductionpreface15", "introduction9"], CONTENTS
+        ["1historicalintroduction5preface", "introduction9"], CONTENTS, 5
     )
-    verify.check_contents(["historicalintroductionprefaceintroduction159"], CONTENTS)
+    verify.check_contents(["1historicalintroduction5preface9introduction"], CONTENTS, 5)
     with pytest.raises(CheckFailed, match="missing in PDF: XXE"):
-        verify.check_contents(["historicalintroductionpreface15", "9"], CONTENTS)
+        verify.check_contents(["1historicalintroduction5preface", "9"], CONTENTS, 5)
+    # The verso gives its number in the outer margin.
+    with pytest.raises(CheckFailed, match="last page of the contents"):
+        verify.check_contents(
+            ["1historicalintroduction5preface", "9introduction"], CONTENTS, 5
+        )
 
 
 # The publication page as the layout's settings give it, and as pdftotext
@@ -151,11 +177,13 @@ PUBLICATION = (
     "Creative Commons Attribution 4.0 International (CC BY 4.0).\n"
     "https://creativecommons.org/licenses/by/4.0/"
 )
+# The pages before the imprint: the half-title, its blank verso, and the title.
+OPENING = "Half title\f\fTitle\f"
 
 
 def test_layout_credit_in_the_introduction_passes() -> None:
     verify.check_publication(
-        f"Title\f{PUBLICATION}\f"
+        f"{OPENING}{PUBLICATION}\f"
         "The design is based on the Berean Standard Bible layout.",
         SETTINGS,
     )
@@ -164,13 +192,13 @@ def test_layout_credit_in_the_introduction_passes() -> None:
 def test_inherited_publication_identity_is_refused() -> None:
     with pytest.raises(CheckFailed, match="Inherited BSB publication text remains"):
         verify.check_publication(
-            f"Title\f{PUBLICATION}\nBerean Standard\nBible\fIntroduction", SETTINGS
+            f"{OPENING}{PUBLICATION}\nBerean Standard\nBible\fIntroduction", SETTINGS
         )
 
 
 def test_missing_edition_license_on_the_publication_page_is_refused() -> None:
     with pytest.raises(CheckFailed, match="omitted the edition license notice"):
-        verify.check_publication(f"Title\fPublication\f{PUBLICATION}", SETTINGS)
+        verify.check_publication(f"{OPENING}Publication\f{PUBLICATION}", SETTINGS)
 
 
 @pytest.mark.parametrize(

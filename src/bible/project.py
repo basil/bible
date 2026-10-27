@@ -12,7 +12,8 @@ from collections.abc import Mapping, Sequence
 from pathlib import Path
 
 import bible.pipeline
-from bible import assembly, paths, scripture, typeface, usj
+import bible.policy
+from bible import assembly, paths, peripherals, scripture, typeface, usj
 from bible.checks import require
 from bible.files import write_json
 
@@ -24,6 +25,11 @@ SETTINGS_DIR = "shared/ptxprint/Bible"
 PROCESSED_DIR = "local/ptxprint/Bible"
 # The paragraph adjustments the page filler writes, which the typesetter reads.
 ADJUSTMENTS_DIR = f"{SETTINGS_DIR}/AdjLists"
+# The testaments' dividers, the parts of the contents, by their peripheral ids.
+PARTS = tuple(
+    peripherals.UNITS[entry["id"]]
+    for entry in (bible.policy.OLD_TESTAMENT, bible.policy.NEW_TESTAMENT)
+)
 
 
 def bsb_baseline() -> tuple[str, ...]:
@@ -114,6 +120,12 @@ def running_heads(documents: Sequence[tuple[str, usj.Document]]) -> str:
     return "".join(result)
 
 
+def pagination() -> str:
+    """Register the testaments' dividers as the parts of the contents; the
+    first starts the main matter's folios."""
+    return "".join(f"\\BiblePart{{{part}}}\n" for part in PARTS)
+
+
 def write_project(
     mode: str,
     base: Path,
@@ -181,7 +193,7 @@ def write_project(
     if mode == "sample":
         # Mark the title page so a selection of chapters cannot be mistaken
         # for the complete edition.
-        cfg["vars"]["subtitle"] += " — TYPESETTING SAMPLE: selected chapters"
+        cfg["vars"]["subtitle"] += r"\hfil\break{}TYPESETTING SAMPLE: selected chapters"
     with (conf / "ptxprint.cfg").open("w", encoding="utf-8") as f:
         cfg.write(f)
     (conf / "ptxprint-mods.sty").write_text(style_mods(), encoding="utf-8")
@@ -197,9 +209,10 @@ def write_project(
     with (conf / "ptxprint-mods.tex").open("a", encoding="utf-8") as f:
         f.write(
             "\n"
+            + pagination()
             + running_heads([(c, d) for c, d in documents if c in edition.scripture])
         )
-    # Replace BSB's front matter with the edition's semantic template so the title,
-    # publication data, and contents come from this edition's settings.
+    # Replace BSB's front matter with the edition's template, so the opening
+    # pages and the contents are this edition's own.
     shutil.copyfile(FRONT_TEMPLATE, conf / "FRTlocal.sfm")
     return project, ids

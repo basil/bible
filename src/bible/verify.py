@@ -14,10 +14,11 @@ from collections.abc import Mapping, Sequence
 from pathlib import Path
 
 from bible import peripherals, scripture, typeface, usj
-from bible.checks import CheckFailed, present, require
+from bible.checks import CheckFailed, require
 from bible.files import sha256, write_json
 from bible.policy_schema import Witnesses
 from bible.project import (
+    PARTS,
     PROCESSED_DIR,
     processed_usfm,
     project_settings,
@@ -30,6 +31,9 @@ from bible.toolchain import run
 from bible.usfm import canonical_text, heading, inventory
 
 POINTS_PER_MM = 72 / 25.4
+# The pages config/front.sfm opens with, before the contents: the half-title,
+# its blank verso, the title page, and the imprint on its verso.
+OPENING_PAGES = 4
 # TeX points (72.27 to the inch) in a PDF point.
 TEX_POINTS = 72.27 / 72
 XHTML = "{http://www.w3.org/1999/xhtml}"
@@ -140,48 +144,75 @@ def check_processed(project: Path, base: Path, ids: list[str]) -> None:
     write_json(base / "processed-integrity.json", records)
 
 
-def numbered(page: str, entries: Sequence[tuple[str, str, str]]) -> bool:
-    """Whether a contents page, read as one string of its letters and
-    figures, gives its entries their page numbers: as one block of numbers
-    after the titles, which is how a full page's columns read, or each
-    number after its title and abbreviation, which is how a short page reads."""
-    if page.endswith("".join(number for _, _, number in entries)):
-        return True
+def folio(page: int, main_page: int) -> str:
+    """The printed folio at a physical page, including unprinted ones."""
+    if page >= main_page:
+        return str(page - main_page + 1)
+    result = ""
+    for value, letters in (
+        (1000, "m"),
+        (900, "cm"),
+        (500, "d"),
+        (400, "cd"),
+        (100, "c"),
+        (90, "xc"),
+        (50, "l"),
+        (40, "xl"),
+        (10, "x"),
+        (9, "ix"),
+        (5, "v"),
+        (4, "iv"),
+        (1, "i"),
+    ):
+        count, page = divmod(page, value)
+        result += letters * count
+    return result
+
+
+def numbered(page: str, entries: Sequence[tuple[str, str]], recto: bool) -> bool:
+    """Whether a contents page, read row by row as one string of its letters
+    and figures, gives each entry its page number in the inner margin: before
+    its title on a recto, after it on a verso. No figure adjoins a number, so
+    that 13 is not taken for 3, nor 31 for 3; no title begins or ends with
+    one."""
     at = 0
-    for title, abbreviation, number in entries:
-        found = page.find(title, at)
-        expected = title + abbreviation + number
-        if found < 0 or not page.startswith(expected, found):
+    for title, number in entries:
+        row = re.compile(
+            rf"(?<!\d){re.escape(number + title)}"
+            if recto
+            else rf"{re.escape(title + number)}(?!\d)"
+        ).search(page, at)
+        if row is None:
             return False
-        at = found + len(expected)
+        at = row.end()
     return True
 
 
 def check_contents(
-    contents: Sequence[str], toc: Sequence[tuple[str, str, str, str]]
+    contents: Sequence[str], toc: Sequence[tuple[str, str, str]], first: int
 ) -> None:
     """Refuse contents pages, each read as one string of its letters and
-    figures, unless they list the units in order, each page giving its own
-    units their page numbers. A contents page reads by its columns: the
-    titles with the abbreviations, then the page numbers. A title is sought
-    after the one before it on its page, since one title may be part of
-    another's ("Introduction" of "Historical Introduction")."""
+    figures, the first of them at physical page `first`, unless they list
+    the units in order, each page giving its own units their page numbers. A
+    title is sought after the one before it on its page, since one title may
+    be part of another's ("Introduction" of "Historical Introduction")."""
     listed = at = 0
-    entries: list[tuple[str, str, str]] = []
-    for code, title, abbreviation, number in toc:
+    entries: list[tuple[str, str]] = []
+    for code, title, number in toc:
         found = contents[listed].find(title, at) if listed < len(contents) else -1
         if found < 0 and listed < len(contents):
             require(
-                entries and numbered(contents[listed], entries),
+                entries
+                and numbered(contents[listed], entries, (first + listed) % 2 == 1),
                 f"Contents page numbers wrong in PDF before: {code}",
             )
             listed, entries = listed + 1, []
             found = contents[listed].find(title) if listed < len(contents) else -1
         require(found >= 0, f"Contents entry missing in PDF: {code}")
         at = found + len(title)
-        entries.append((title, abbreviation, number))
+        entries.append((title, number))
     require(
-        numbered(contents[listed], entries),
+        numbered(contents[listed], entries, (first + listed) % 2 == 1),
         "Contents page numbers wrong in PDF on the last page of the contents",
     )
 
@@ -216,21 +247,25 @@ def check_boundaries(
     ids: Sequence[str],
     pages: int,
     reading_text: str,
+    layout_text: str,
     sample: bool,
     witnesses: Sequence[Witnesses],
 ) -> None:
     tocfiles = list(base.rglob("*_ptxp.toc"))
     require(len(tocfiles) == 1, "Missing/ambiguous contents file")
 
-    def readtoc(path: Path) -> list[tuple[str, str, str, str]]:
+    def readtoc(path: Path) -> list[tuple[str, str, int]]:
         main = (
             path.read_text(encoding="utf-8")
             .split("\\defTOC{main}{", 1)[1]
             .split("\n}", 1)[0]
         )
-        return re.findall(
-            r"\\doTOCline\{([^}]+)\}\{([^}]+)\}\{[^}]*\}\{([^}]*)\}\{(\d+)\}", main
-        )
+        return [
+            (code, title, int(page))
+            for code, title, page in re.findall(
+                r"\\doTOCline\{([^}]+)\}\{([^}]+)\}(?:\{[^}]*\}){2}\{(\d+)\}", main
+            )
+        ]
 
     # The units the contents list: each scripture book, and each division of
     # a front matter file.
@@ -257,58 +292,49 @@ def check_boundaries(
         "PTXprint's regenerated contents differ from the final TeX run",
     )
     page_text = reading_text.split("\f")
+    layout_pages = layout_text.split("\f")
 
-    # The basic front matter template restarts printed numbering at the
-    # contents. Its TOC numbers therefore differ from physical PDF pages.
-    first_heading = heading(next(iter(usfm.values())))
-    first_physical = present(
-        next(
-            (
-                i + 1
-                for i in range(3, pages)
-                if printed_key(canonical_text(first_heading))
-                in printed_key(page_text[i])
-            ),
-            None,
-        ),
-        "First unit heading missing from PDF",
-    )
-    page_offset = first_physical - int(toc[0][3])
-    require(page_offset >= 3, "Front matter page offset is invalid")
-    abbreviations = project_settings(project).getboolean(
-        "document", "usetoc3", fallback=False
-    )
-    check_contents(
-        [printed_key(page) for page in page_text[2 : first_physical - 1]],
-        [
-            (
-                code,
-                printed_key(title),
-                printed_key(abbreviation) if abbreviations else "",
-                number,
-            )
-            for code, title, abbreviation, number in toc
-        ],
-    )
-    # The physical pages each unit spans, from its heading's to the one
-    # before the next unit's.
+    # Native contents retain physical pages, even when printed folios restart:
+    # the pages each unit spans, from its heading's to the one before the
+    # next unit's.
     spans = {
-        code: (
-            int(printed_page) + page_offset,
-            int(toc[index + 1][3]) + page_offset - 1 if index + 1 < len(toc) else pages,
-        )
-        for index, (code, _, _, printed_page) in enumerate(toc)
+        code: (page, toc[index + 1][2] - 1 if index + 1 < len(toc) else pages)
+        for index, (code, _, page) in enumerate(toc)
     }
-    previous = 0
-    for code, title, abbreviation, printed_page in toc:
+    main_page = spans[PARTS[0]][0]
+    # Each testament's divider opens a recto, which prints no folio, and its
+    # first book the next one, after a blank verso. Both are read whole, with
+    # the margins where a folio or running head would stand, which the
+    # reading text leaves out.
+    for code in PARTS:
         page, end = spans[code]
+        require(page % 2 == 1, f"Divider is not on a recto: {code}")
+        require(
+            end == page + 1 and not layout_pages[page].strip(),
+            f"Divider is not followed by a blank verso: {code}",
+        )
+        require(
+            not re.search(r"\d", layout_pages[page - 1]),
+            f"Divider page has a folio: {code}",
+        )
+    check_contents(
+        # Contents mix upright folios, italic preliminaries and small-cap
+        # parts. Read their rows spatially: PDF font runs can put otherwise
+        # correct folios out of sequence in the content stream.
+        [printed_key(page) for page in layout_pages[OPENING_PAGES : toc[0][2] - 1]],
+        [
+            (code, printed_key(title), "" if code in PARTS else folio(page, main_page))
+            for code, title, page in toc
+        ],
+        OPENING_PAGES + 1,
+    )
+    previous = 0
+    for code, (page, end) in spans.items():
         require(previous < page <= pages, f"Invalid boundary page: {code} {page}")
         previous = page
-        # PTXprint writes an empty cell for a unit without \toc3; TeX in the
-        # cell would not read as the letters it prints.
         require(
-            not abbreviations or (abbreviation and not abbreviation.startswith("\\")),
-            f"Unit without \\toc3: {code}",
+            page >= main_page or page % 2 == 1,
+            f"Front matter does not open on a recto: {code}",
         )
         words = heading(usfm[code])
         require(words, f"Missing heading: {code}")
@@ -320,8 +346,8 @@ def check_boundaries(
     write_json(
         base / "book-boundaries.json",
         [
-            {"id": b, "title": t, "page": int(p) + page_offset, "printed_page": int(p)}
-            for b, t, _, p in toc
+            {"id": b, "title": t, "page": p, "printed_page": folio(p, main_page)}
+            for b, t, p in toc
         ],
     )
 
@@ -496,15 +522,18 @@ def check_added_words_roman(
 
 
 def check_publication(text: str, settings: configparser.ConfigParser) -> None:
-    """The publication data page carries the edition's copyright and license
+    """The imprint page carries the edition's copyright and license
     as config/layout.ini gives them, and nothing of the layout's own."""
-    publication = plain(text.split("\f")[1])
+    pages = text.split("\f")
+    require(len(pages) >= OPENING_PAGES, "Half-title, title, or imprint page missing")
+    require(not pages[1].strip(), "The half-title verso is not blank")
+    publication = plain(pages[OPENING_PAGES - 1])
     require(
         all(
             plain(settings["project"][key]) in publication
             for key in ("copyright", "license")
         ),
-        "Publication data page omitted the edition license notice",
+        "Imprint page omitted the edition license notice",
     )
     require(
         "Berean Standard Bible" not in publication,
@@ -609,5 +638,5 @@ def inspect_pdf(
         ),
         "Missing glyph or TeX error; inspect logs",
     )
-    check_boundaries(base, project, ids, pages, reading_text, sample, witnesses)
+    check_boundaries(base, project, ids, pages, reading_text, text, sample, witnesses)
     return pages

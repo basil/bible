@@ -54,6 +54,19 @@ def test_project_sets_greek_in_the_installed_face(
     assert typeface.greek_family() in ("GFS Didot", "GFS Heraklit")
 
 
+@pytest.mark.parametrize("mode", ["sample", "pdf"])
+def test_only_the_sample_title_page_is_marked(
+    edition: Edition, tmp_path: Path, mode: str
+) -> None:
+    project, _ = write_project(
+        mode, tmp_path, [("GEN", usj.parse("\\id GEN\n"))], edition
+    )
+    subtitle = project_settings(project)["vars"]["subtitle"]
+    assert subtitle.endswith("TYPESETTING SAMPLE: selected chapters") == (
+        mode == "sample"
+    )
+
+
 def test_standard_peripherals_get_unique_ptxprint_transport_aliases(
     edition: Edition, tmp_path: Path
 ) -> None:
