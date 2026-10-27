@@ -121,6 +121,12 @@ def source_codes(entry: Entry) -> tuple[str, ...]:
     return (code,)
 
 
+def printed_names(doc: Document) -> dict[str, str]:
+    """The contents title, running-head title, and abbreviation a document's
+    header gives."""
+    return {field: header(doc, marker) for field, marker in NAME_MARKERS.items()}
+
+
 def names(entry: Entry, doc: Document) -> dict[str, str]:
     """The contents title, running-head title, and abbreviation of an entry,
     from its header where the manifest gives none.
@@ -129,7 +135,7 @@ def names(entry: Entry, doc: Document) -> dict[str, str]:
     does not rename keeps its source names, as preparation prints them.
     """
     if "title" not in entry and "section" not in entry:
-        return {field: header(doc, marker) for field, marker in NAME_MARKERS.items()}
+        return printed_names(doc)
     require(entry.get("title"), f"Missing title: {entry['id']}")
     return {
         "title": entry["title"],
@@ -184,10 +190,11 @@ def _singly(
 def heading_lines(entry: Entry, found: Mapping[str, str]) -> list[tuple[str, str]]:
     """The mt lines printed over a book, as (marker, text) pairs.
 
-    As in the Cambridge KJV, the heading is the contents title itself. The
-    manifest's optional "heading" says how to break it into lines and which
-    line is the main one; without it the whole title is one mt1 line. The
-    edition sets its titles in two sizes, so a line is mt1 or mt2, never mt3.
+    As in the Cambridge KJV, the heading is the contents title itself, but
+    for the colon a contents title may set after a main line that comes
+    first. The manifest's optional "heading" says how to break it into lines
+    and which line is the main one; without it the whole title is one mt1 line.
+    A unit's title is set in two sizes, so a line is mt1 or mt2, never mt3.
     """
     lines = entry.get("heading", (("mt1", found["title"]),))
     require(
@@ -201,8 +208,13 @@ def heading_lines(entry: Entry, found: Mapping[str, str]) -> list[tuple[str, str
         and sum(marker == "mt1" for marker, _ in lines) == 1,
         f"Invalid heading: {entry['id']}",
     )
+    titles = {" ".join(text for _, text in lines)}
+    if len(lines) > 1 and lines[0][0] == "mt1":
+        # A title and subtitle may be separated by a colon in the contents,
+        # while their displayed heading uses the line break alone.
+        titles.add(lines[0][1] + ": " + " ".join(text for _, text in lines[1:]))
     require(
-        " ".join(text for _, text in lines) == found["title"],
+        found["title"] in titles,
         f"Heading lines do not spell the contents title: {entry['id']}",
     )
     # One line can only be the whole title as mt1, which is the default.

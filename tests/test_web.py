@@ -253,18 +253,20 @@ def test_matter(edition: pipeline.Edition) -> None:
     with its printed title and its Greek and Hebrew tagged for their fonts."""
     documents = dict(pipeline.view(edition, "pdf"))
     listed = web.matter(edition, documents)
-    assert [(unit["id"], unit["section"]) for unit, _ in listed] == [
-        ("introduction", "front"),
-        ("numbering", "front"),
-        ("brenton-preface", "old_testament"),
-        ("brenton-introduction", "old_testament"),
-        ("dedication", "new_testament"),
-        ("translators-to-reader", "new_testament"),
+    assert [unit["id"] for unit, _ in listed] == [
+        "acknowledgments",
+        "introduction",
+        "numbering",
+        "brenton-preface",
+        "brenton-introduction",
+        "dedication",
+        "translators-preface",
+        "abbreviations",
     ]
     units = {unit["id"]: unit for unit, _ in listed}
     assert units["dedication"]["title"] == "The Epistle Dedicatory"
     assert units["introduction"]["title"] == "Introduction"
-    source_codes = {unit.slug: code for code, unit in peripherals.UNITS.items()}
+    source_codes = {peripherals.slug(code): code for code in peripherals.UNITS}
     blocks = {}
     for unit, doc in listed:
         code = source_codes[unit["id"]]
@@ -278,7 +280,7 @@ def test_matter(edition: pipeline.Edition) -> None:
             "code": peripherals.book(code),
         }
         assert division["type"] == "periph"
-        assert division["id"] == peripherals.UNITS[code].periph
+        assert division["id"] == peripherals.UNITS[code]
         assert division["alt"] == unit["title"]
         blocks[unit["id"]] = division["content"]
         assert division["content"] == [
@@ -304,7 +306,7 @@ def test_matter(edition: pipeline.Edition) -> None:
         for slug, body in blocks.items()
     }
     assert tagged["brenton-preface"] == {"wg", "wh"}
-    assert "wg" in tagged["translators-to-reader"]
+    assert "wg" in tagged["translators-preface"]
 
 
 def test_variants(edition: pipeline.Edition) -> None:

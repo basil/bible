@@ -1317,32 +1317,42 @@
       ]
     }
   ],
-  "old_testament_front": [
+  "front": [
+    {
+      "id": "acknowledgments",
+      "source_id": "FRT",
+      "file": "content/acknowledgments.sfm"
+    },
+    {
+      "id": "introduction",
+      "source_id": "INT",
+      "file": "content/introduction.sfm"
+    },
     {
       "source": "brenton",
       "id": "XXB",
-      "title": "Preface",
-      "short_title": "Preface"
+      "title": "Preface to the Old Testament",
+      "short_title": "Preface to the Old Testament",
+      "abbreviation": "OT Pref."
     },
     {
       "source": "brenton",
       "id": "XXE",
       "source_id": "INT",
-      "title": "Introduction An Historical Account of the Septuagint Version",
-      "short_title": "Introduction",
+      "title": "Introduction to the Old Testament: An Historical Account of the Septuagint Version",
+      "short_title": "Introduction to the Old Testament",
+      "abbreviation": "OT Intr.",
       "heading": [
         [
           "mt1",
-          "Introduction"
+          "Introduction to the Old Testament"
         ],
         [
           "mt2",
           "An Historical Account of the Septuagint Version"
         ]
       ]
-    }
-  ],
-  "new_testament_front": [
+    },
     {
       "source": "kjv",
       "id": "dedication",
@@ -1352,8 +1362,14 @@
       "source": "kjv",
       "id": "translators-preface",
       "source_id": "INT",
-      "title": "The Translators to the Reader",
-      "abbreviation": "Transl. to the Reader"
+      "title": "Preface to the New Testament",
+      "short_title": "Preface to the New Testament",
+      "abbreviation": "NT Pref."
+    },
+    {
+      "id": "abbreviations",
+      "source_id": "FRT",
+      "file": "content/abbreviations.sfm"
     }
   ],
   "excluded": {

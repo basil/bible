@@ -30,19 +30,15 @@ export type Book = {
 export const directory = fileURLToPath(
   new URL("../../../build/web/", import.meta.url),
 );
-// A unit of reader front matter, under the section it opens.
+// A unit of reader front matter, all of which precedes the testaments.
 export type Matter = {
   id: string;
-  section: string;
   title: string;
   short: string;
 };
 type Manifest = { books: Book[]; matter: Matter[] };
-// The reader's sections in the book's order: the edition's own pages,
-// untitled, before the testaments, then each testament's front matter
-// and books.
+// The testaments' titles, in the book's order, after the front matter.
 const SECTIONS: Record<string, string> = {
-  front: "",
   old_testament: "Old Testament",
   new_testament: "New Testament",
 };
@@ -123,13 +119,11 @@ export const matterLink = (unit: Matter) => ({
   text: unit.short,
   link: matterURL(unit),
 });
-// The reader's sections in the book's order, each with its front matter
-// before its books.
+// The reader's sections in the book's order, each with its books.
 export const sections = () =>
   Object.entries(SECTIONS).map(([section, title]) => ({
     section,
     title,
-    matter: manifest().matter.filter((unit) => unit.section === section),
     books: manifest().books.filter((b) => b.section === section),
   }));
 // Every chapter of the edition, in order.
@@ -234,21 +228,21 @@ function pager(links: Link[]) {
     return { prev: links[at - 1] ?? false, next: links[at + 1] ?? false };
   };
 }
-// Every page of the reader in the book's order: each section's front
-// matter, then its chapters. The pager runs through them, while the
-// sidebar opens one book. Read from the manifest alone, so that no page
-// is rendered to place another.
+// Every page of the reader in the book's order: the front matter, then
+// each section's chapters. The pager runs through them, while the sidebar
+// opens one book. Read from the manifest alone, so that no page is
+// rendered to place another.
 let readerPager: ReturnType<typeof pager> | undefined;
 const neighbours = (link: string) =>
-  (readerPager ??= pager(
-    sections().flatMap(({ matter, books }) => [
-      ...matter.map(matterLink),
-      ...books.flatMap((b) => [
+  (readerPager ??= pager([
+    ...manifest().matter.map(matterLink),
+    ...sections().flatMap(({ books }) =>
+      books.flatMap((b) => [
         ...(introductionLink(b) ? [introductionLink(b)!] : []),
         ...b.chapters.map((c) => chapterLink(b, c)),
       ]),
-    ]),
-  ))(link);
+    ),
+  ]))(link);
 // The variants introduction and books, rendered once, each by its link.
 // Each entry is anchored by its verse and linked to it where the edition
 // has it.

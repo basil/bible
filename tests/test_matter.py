@@ -895,11 +895,11 @@ def test_brenton_introduction_preserves_emphasis_and_nested_quotation(
 def test_the_list_of_abbreviations_is_completed_from_the_registry(
     edition: bible.pipeline.Edition, policy: bible.policy.Policy
 ) -> None:
-    # The list is finished as the front matter is, and the editor's
-    # introduction tables it where {abbreviations} asks for it.
+    # The list is finished as the front matter is, then placed in its own
+    # preliminary chapter where {abbreviations} asks for it.
     [table] = [
         block
-        for block in edition.documents["introduction"]["content"]
+        for block in edition.documents["abbreviations"]["content"]
         if block["type"] == "table"
         and any(
             tuple(
@@ -947,9 +947,9 @@ def test_front_and_back_matter_heading_capitalization(
     edition: bible.pipeline.Edition,
 ) -> None:
     expected = {
-        "XXB": ["\\mt1 Preface"],
+        "XXB": ["\\mt1 Preface to the Old Testament"],
         "XXE": [
-            "\\mt1 Introduction",
+            "\\mt1 Introduction to the Old Testament",
             "\\mt2 A Historical Account of the Septuagint Version",
         ],
         "dedication": [
@@ -959,13 +959,26 @@ def test_front_and_back_matter_heading_capitalization(
             "\\mt2 King of Great Britain, France, and Ireland,",
             "\\mt2 Defender of the Faith, etc.",
         ],
-        "translators-preface": ["\\mt1 The Translators to the Reader"],
+        "translators-preface": ["\\mt1 Preface to the New Testament"],
+        "acknowledgments": ["\\mt1 Acknowledgments"],
+        "abbreviations": ["\\mt1 List of Abbreviations"],
         "introduction": ["\\mt1 Introduction"],
-        "XXF": ["\\mt1 The Old Testament", "\\mt2 Brenton’s Septuagint"],
+        "XXF": [
+            "\\mt1 The Old Testament",
+            "\\mt2 Translated into English from the Septuagint",
+            "\\mt2 According to the Alexandrine Text",
+            "\\mt2 with the Principal Various Readings of the Vatican Copy",
+            "\\mt2 by Sir Lancelot Charles Lee Brenton",
+            "\\mt3 Edited by Basil Crow",
+        ],
         "XXG": [
             "\\mt1 The New Testament",
-            "\\mt2 King James Version",
-            "\\mt2 Conformed to the Byzantine Text",
+            "\\mt2 Translated out of the Original Tongues",
+            "\\mt2 and with the Former Translations",
+            "\\mt2 Diligently Compared and Revised",
+            "\\mt2 by His Majesty’s Special Commandment",
+            "\\mt3 Conformed to the Byzantine Text",
+            "\\mt3 Edited by Basil Crow",
         ],
     }
     for code, headings in expected.items():

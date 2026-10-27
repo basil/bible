@@ -234,11 +234,10 @@ def check(policy: bible.policy.Policy) -> None:
     # The front and back matter that prints: a unit read only for what it
     # sends to the books, as Brenton's Appendix, is never revised as a unit,
     # and its notes are revised at their verses, by their keys.
-    matter_units = {
-        e["id"] for e in policy.entries if "file" not in e and "section" not in e
-    }
+    matter_units = {e["id"] for e in policy.front_matter if "file" not in e}
     # Brenton's list of abbreviations is respelled as a unit too, for the
-    # table the introduction makes of it, so a name decision may list it.
+    # edition's list of abbreviations, which tables it, so a name decision
+    # may list it.
     named_units = policy.matter - {policy.appendix["source"]}
     names = data["names"]
     require_fields(names, {"why", "decisions"}, (), "Names")

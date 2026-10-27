@@ -328,7 +328,7 @@ def check_boundaries(
     for witness in witnesses:
         code = witness["id"]
         if code in peripherals.UNITS:
-            code = peripherals.UNITS[code].periph
+            code = peripherals.UNITS[code]
         if code not in spans or (
             "chapter" in witness
             and witness["chapter"] not in inventory(usfm[code])["chapters"]

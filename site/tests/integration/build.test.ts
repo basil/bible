@@ -19,7 +19,7 @@ const dist = new URL("../../.vitepress/dist/", import.meta.url);
 const assets = new URL("assets/", dist);
 const fonts = pathToFileURL(`${directory}/fonts/`);
 const books = manifest().books;
-// The Old Testament's last book, after which the New Testament's front matter stands.
+// The Old Testament's last book, which Matthew follows.
 const lastOld = books.filter((b) => b.section === "old_testament").at(-1)!;
 test("citation links retain spacing before their witness labels", () => {
   const page = JSDOM.fragment(builtFile("read/jhn/2.html"));
@@ -46,7 +46,7 @@ test.each([
   "variants/introduction",
   "variants/mat",
   "read/gen/1",
-  "read/translators-to-reader",
+  "read/translators-preface",
 ])("headings on %s have accessible permalinks", (path) => {
   const page = JSDOM.fragment(builtFile(`${path}.html`));
   const headings = [
@@ -94,12 +94,14 @@ test("reader sidebar lists chapters of the current book", () => {
 test("every unit of front matter reaches the static output under its title", () => {
   const units = manifest().matter;
   expect(units.map((u) => u.id)).toEqual([
+    "acknowledgments",
     "introduction",
     "numbering",
     "brenton-preface",
     "brenton-introduction",
     "dedication",
-    "translators-to-reader",
+    "translators-preface",
+    "abbreviations",
   ]);
   for (const unit of units) {
     const page = JSDOM.fragment(builtFile(`${matterURL(unit).slice(1)}.html`));
@@ -114,19 +116,22 @@ test("every unit of front matter reaches the static output under its title", () 
     "James,",
   );
   expect(dedication.querySelectorAll(".matter p.mt2")).toHaveLength(4);
-  // All three generated tables reach the introduction, including the
-  // completed glossary that used to have its own page.
-  const introduction = JSDOM.fragment(builtFile("read/introduction.html"));
-  const tables = [...introduction.querySelectorAll(".matter table")].map(
-    (table) =>
+  // The introduction tables the book names and the glosses; the completed
+  // glossary has its own chapter, the List of Abbreviations.
+  const rows = (page: DocumentFragment) =>
+    [...page.querySelectorAll(".matter table")].map((table) =>
       [...table.querySelectorAll("tr")].map((row) =>
         [...row.querySelectorAll("th, td")].map((cell) => cell.textContent),
       ),
-  );
-  expect(tables).toHaveLength(3);
+    );
+  const introduction = JSDOM.fragment(builtFile("read/introduction.html"));
+  const tables = rows(introduction);
+  expect(tables).toHaveLength(2);
   expect(tables[0]).toContainEqual(["Jeremiah", "Jeremias"]);
   expect(tables[1][0]).toEqual(["Gloss", "Turpie’s classes", "Meaning"]);
-  expect(tables[2]).toContainEqual(["KJV", "for King James Version"]);
+  const glossary = rows(JSDOM.fragment(builtFile("read/abbreviations.html")));
+  expect(glossary).toHaveLength(1);
+  expect(glossary[0]).toContainEqual(["KJV", "for King James Version"]);
   expect(
     [...introduction.querySelectorAll(".matter p .wg")].some(
       (node) => node.textContent === "ἐνέστηκεν",
@@ -155,7 +160,7 @@ test("every unit of front matter reaches the static output under its title", () 
   ).not.toBeNull();
 });
 
-test("the reader's index links each section's front matter before its books", () => {
+test("the reader's index links the front matter before the books", () => {
   const page = JSDOM.fragment(builtFile("read/index.html"));
   expect(
     [...page.querySelectorAll(".matter-card h3 a:not(.header-anchor)")].map(
@@ -369,20 +374,25 @@ test("numbering tables name each book once above their Bible column headings", (
 
 test.each([
   ["gen/50", "next", "Exodus 1", "/read/exo/1"],
-  ["brenton-introduction", "next", "Genesis 1", "/read/gen/1"],
-  ["gen/1", "prev", "Introduction", "/read/brenton-introduction"],
   [
-    `${lastOld.id.toLowerCase()}/${lastOld.chapters.at(-1)!.number}`,
+    "brenton-introduction",
     "next",
     "The Epistle Dedicatory",
     "/read/dedication",
   ],
-  ["translators-to-reader", "next", "Matthew 1", "/read/mat/1"],
+  ["abbreviations", "next", "Genesis 1", "/read/gen/1"],
+  ["gen/1", "prev", "List of Abbreviations", "/read/abbreviations"],
+  [
+    `${lastOld.id.toLowerCase()}/${lastOld.chapters.at(-1)!.number}`,
+    "next",
+    "Matthew 1",
+    "/read/mat/1",
+  ],
   [
     "mat/1",
     "prev",
-    "The Translators to the Reader",
-    "/read/translators-to-reader",
+    `${lastOld.cited} ${lastOld.chapters.at(-1)!.label}`,
+    `/read/${lastOld.id.toLowerCase()}/${lastOld.chapters.at(-1)!.number}`,
   ],
   [
     "neh/1",

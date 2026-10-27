@@ -27,7 +27,7 @@ from bible import (
 )
 from bible.checks import CheckFailed
 from bible.numbering import MISSING, Table, within
-from bible.policy import EDITOR, NUMBERING
+from bible.policy import NUMBERING
 from bible.references import Verse, parse_verse
 from bible.scripture import Inventory
 
@@ -347,7 +347,7 @@ def test_the_page_prints_its_tables(edition: bible.pipeline.Edition) -> None:
             ["King James Bible"],
             ["Orthodox Liturgical English Bible"],
         ]
-    intro = usj.serialize(edition.documents[EDITOR["id"]])
+    intro = usj.serialize(edition.documents["introduction"])
     assert "\\s1 The Books and Their Order\n" in intro
     assert "\\s1 Names\n" in intro
     for ours, theirs in (
@@ -470,8 +470,8 @@ def test_the_introduction_names_its_passages(
     edition: bible.pipeline.Edition,
     sources: bible.sources.Sources,
 ) -> None:
-    written = sources.authored[EDITOR["file"]]
-    page = usj.serialize(edition.documents[EDITOR["id"]])
+    written = sources.authored["content/introduction.sfm"]
+    page = usj.serialize(edition.documents["introduction"])
     # Passage references are generated: a chapter and verse typed in the
     # introduction's own words names a passage in braces, so that it is
     # checked and printed under the edition's names, except for the
@@ -521,7 +521,7 @@ def test_the_introduction_names_its_passages(
 def test_the_introductions_scripture_quotes_match_the_prepared_edition(
     edition: bible.pipeline.Edition,
 ) -> None:
-    introduction = usj.text_of(edition.documents[EDITOR["id"]]["content"])
+    introduction = usj.text_of(edition.documents["introduction"]["content"])
     for code, reference in (
         ("JHN", "3:7"),
         ("REV", "22:19"),
@@ -545,10 +545,10 @@ def test_the_introduction_tables_the_glosses_by_turpies_classes(
     # printed for and what it means: C is divided, as crossrefs.agreement
     # divides it.
     # The introduction's tables are known by their heads: the glosses'
-    # among the names' and, when it asks for it, the abbreviations'.
+    # beside the names'.
     [(heads, *rows)] = [
         rows
-        for b in edition.documents[EDITOR["id"]]["content"]
+        for b in edition.documents["introduction"]["content"]
         if b["type"] == "table"
         for rows in [
             [

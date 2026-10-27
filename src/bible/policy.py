@@ -15,7 +15,7 @@ from dataclasses import dataclass
 from types import MappingProxyType
 from typing import Any, cast
 
-from bible import paths
+from bible import paths, peripherals
 from bible import policy_schema as schema
 from bible import usj
 from bible.checks import require, require_fields
@@ -56,19 +56,7 @@ def freeze(value: object) -> object:
     return value
 
 
-# The edition's own pages, among the units the manifest lists.
-EDITOR = cast(
-    Entry,
-    freeze(
-        {
-            "id": "introduction",
-            "source_id": "INT",
-            "file": "content/introduction.sfm",
-        }
-    ),
-)
-# Brenton's list of abbreviations, completed from the registry and printed
-# as a table of the introduction, where {abbreviations} asks for it.
+# Brenton's list, completed from the registry for the list of abbreviations.
 GLOSSARY = cast(Entry, freeze({"id": "XXD", "source": "brenton", "source_id": "FRT"}))
 OLD_TESTAMENT = cast(Entry, freeze({"id": "XXF", "file": "content/old-testament.sfm"}))
 NEW_TESTAMENT = cast(Entry, freeze({"id": "XXG", "file": "content/new-testament.sfm"}))
@@ -113,45 +101,20 @@ class Policy:
         return self.manifest["scripture"]
 
     @property
-    def front_matter(self) -> tuple[tuple[str, Entry], ...]:
-        """Every unit of front matter the edition prints, in its order, with
-        the section it stands in: the project's own pages before the
-        testaments, then each testament's before its books."""
-        manifest = self.manifest
-        return (
-            # The introduction follows the contents page and is
-            # listed in it.
-            ("front", EDITOR),
-            *(("old_testament", unit) for unit in manifest["old_testament_front"]),
-            *(("new_testament", unit) for unit in manifest["new_testament_front"]),
-        )
-
-    @property
-    def sections(self) -> dict[str, str]:
-        """The section each unit of front matter and each divider stands in."""
-        return {
-            **{entry["id"]: section for section, entry in self.front_matter},
-            OLD_TESTAMENT["id"]: "old_testament",
-            NEW_TESTAMENT["id"]: "new_testament",
-        }
+    def front_matter(self) -> tuple[Entry, ...]:
+        """Every unit of front matter the edition prints, in its order, all
+        before Scripture: the translations' and the edition's own pages."""
+        return self.manifest["front"]
 
     @property
     def entries(self) -> tuple[Entry, ...]:
         """Every unit the edition prints, in its order."""
-        front = self.front_matter
         scripture = self.manifest["scripture"]
-
-        def of(section: str) -> tuple[Entry, ...]:
-            return tuple(unit for where, unit in front if where == section)
-
         return (
-            *of("front"),
-            # Each testament opens with its divider and its translation's front matter.
+            *self.front_matter,
             OLD_TESTAMENT,
-            *of("old_testament"),
             *(u for u in scripture if u["section"] == "old_testament"),
             NEW_TESTAMENT,
-            *of("new_testament"),
             *(u for u in scripture if u["section"] == "new_testament"),
         )
 
@@ -159,8 +122,7 @@ class Policy:
     def unprinted(self) -> tuple[Entry, ...]:
         """The source units read for what they send elsewhere, and printed
         nowhere as units: Brenton's Appendix, whose notes go to the books,
-        and his list of abbreviations, whose table goes to the editor's
-        introduction."""
+        and his list of abbreviations, whose table goes to the edition's."""
         return (
             cast(Entry, freeze({"id": self.appendix["source"], "source": "brenton"})),
             GLOSSARY,
@@ -171,9 +133,7 @@ class Policy:
         """The units of front and back matter a decision may name: the
         translations' own, printed or read for the books."""
         return {
-            e["id"]
-            for e in (*self.entries, *self.unprinted)
-            if "file" not in e and "section" not in e
+            e["id"] for e in (*self.front_matter, *self.unprinted) if "file" not in e
         }
 
     def unit(self, code: str) -> Entry:
@@ -300,23 +260,12 @@ def check(policy: Policy) -> None:
                 isinstance(osb["text"], str) and bool(osb["text"].strip()),
                 f"Empty OSB quotation: {passage}",
             )
-    manifest_fields = {
-        "title",
-        "scripture",
-        "old_testament_front",
-        "new_testament_front",
-        "excluded",
-    }
+    manifest_fields = {"title", "scripture", "front", "excluded"}
     require_fields(policy.manifest, manifest_fields, (), "Manifest")
     require_fields(policy.manifest["excluded"], {"brenton"}, (), "Excluded sources")
     names = {"source_id", "title", "short_title", "abbreviation", "heading"}
-    for manifest_group in (
-        "scripture",
-        "old_testament_front",
-        "new_testament_front",
-    ):
-        units = policy.manifest[manifest_group]
-        for unit_entry in units:
+    for manifest_group in ("scripture", "front"):
+        for unit_entry in policy.manifest[manifest_group]:
             required = {"id", "source"}
             optional = names
             if manifest_group == "scripture":
@@ -327,11 +276,19 @@ def check(policy: Policy) -> None:
                     "abbreviated_singly",
                     "labelled_chapters",
                 }
+            elif "file" in unit_entry:
+                # The edition's own page, which gives its own names.
+                required, optional = {"id", "file"}, {"source_id"}
             require_fields(
                 unit_entry,
                 required,
                 optional,
                 f"Manifest {manifest_group} entry {unit_entry.get('id')}",
+            )
+            # Front matter prints and publishes as a peripheral division.
+            require(
+                manifest_group != "front" or unit_entry["id"] in peripherals.UNITS,
+                f"Front matter without a peripheral identifier: {unit_entry['id']}",
             )
             # Only true labels anything: false would be a decision that changes nothing.
             if "labelled_chapters" in unit_entry:
@@ -342,7 +299,7 @@ def check(policy: Policy) -> None:
                     f"{unit_entry['id']}",
                 )
             require(
-                unit_entry["source"] in {"brenton", "kjv"},
+                "file" in unit_entry or unit_entry["source"] in {"brenton", "kjv"},
                 f"Unknown source: {unit_entry['id']}",
             )
     scripture = policy.scripture

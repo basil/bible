@@ -526,13 +526,13 @@ def front_and_back(read_sources: Read, ctx: annotate.Context) -> tuple[
     annotate.Report,
 ]:
     """The translations' front and back matter, with Brenton's list of
-    abbreviations, which the introduction tables, and the notes of
+    abbreviations, which the edition's list tables, and the notes of
     Brenton's Appendix, which is read for them and printed nowhere, by the
     verse each goes to."""
     policy, report = ctx.policy, annotate.Report()
     docs, appendix_notes = {}, {}
-    for entry in (*policy.entries, *policy.unprinted):
-        if "file" in entry or "section" in entry:
+    for entry in (*policy.front_matter, *policy.unprinted):
+        if "file" in entry:
             continue
         family, code = entry["source"], source_id(entry)
         source = (
@@ -548,13 +548,9 @@ def front_and_back(read_sources: Read, ctx: annotate.Context) -> tuple[
             appendix_notes.update(moved)
         else:
             docs[entry["id"]] = doc
-    front = {
-        source_id(e)
-        for e in policy.entries
-        if "section" not in e and e.get("source") == "brenton"
-    }
+    front = {source_id(e) for e in policy.front_matter if e.get("source") == "brenton"}
     # The Appendix's notes print at their verses, and the list of
-    # abbreviations in the introduction, so printed as well either
+    # abbreviations in its own authored chapter, so printed as well either
     # would print twice.
     twice = sorted(front & {source_id(e) for e in policy.unprinted})
     require(not twice, f"Brenton sources printed as well as sent: {twice}")
@@ -796,8 +792,9 @@ class Edition:
     # Which units are books of scripture, and which are the edition's own pages.
     scripture: frozenset[str]
     authored: frozenset[str]
-    # Every unit's contents title, running-head title and abbreviation, and
-    # the books of scripture under the names citations print.
+    # Every unit's contents title, running-head title and abbreviation as its
+    # finished header gives them, and the books of scripture under the names
+    # citations print.
     names: MappingProxyType[str, Mapping[str, str]]
     books: bible.references.Books
     inventory: MappingProxyType[str, Mapping[str, Sequence[str]]]
@@ -812,7 +809,7 @@ class Edition:
     byzantine: stages.Reconciliation
     # The website-only numbering and textual variants pages, the variants
     # entries, and Brenton's list of abbreviations completed from the
-    # registry, which the introduction tables.
+    # registry for their own preliminary chapter.
     numbering_page: Document
     variants_page: Document
     variants: tuple[Entry, ...]
@@ -889,7 +886,7 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
     books, reports = annotated(units, read_sources, appendix_notes, ctx)
     revised = revise(front, books, policy)
     # Brenton's list of abbreviations is finished and checked as the front
-    # matter is, and the introduction tables it.
+    # matter is, and the edition's list of abbreviations tables it.
     unit = bible.policy.GLOSSARY["id"]
     check_document(
         unit, revised.finished[unit], scripture_unit=False, authored_page=False
@@ -957,11 +954,10 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
         documents=MappingProxyType(documents),
         scripture=frozenset(books),
         authored=frozenset(pages),
+        # As revised, so that the contents, the website, and PTXprint spell
+        # a name as the heading over its unit does.
         names=MappingProxyType(
-            {
-                entry["id"]: assembly.names(entry, documents[entry["id"]])
-                for entry in policy.entries
-            }
+            {code: assembly.printed_names(doc) for code, doc in documents.items()}
         ),
         books=ctx.books,
         inventory=MappingProxyType(ctx.inventory),

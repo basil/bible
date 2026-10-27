@@ -76,6 +76,9 @@ def test_exported_roles_are_consistent_across_the_edition(
                 if usj.is_type(block, "para", "b"):
                     assert 0 < at < len(blocks) - 1, code
                     assert usj.paragraph(blocks[at - 1]) in usj.BODY, code
+                    # A blank line also sets a table apart from the prose.
+                    if blocks[at + 1]["type"] == "table":
+                        continue
                     if usj.is_type(blocks[at + 1], "chapter"):
                         assert at + 2 < len(blocks), code
                         before = usj.paragraph(blocks[at - 1])
@@ -86,7 +89,7 @@ def test_exported_roles_are_consistent_across_the_edition(
                     elif blocks[at + 1].get("category") != "colophon":
                         assert usj.paragraph(blocks[at + 1]) in usj.BODY, code
     assert divisions == [
-        peripherals.UNITS[code].periph
+        peripherals.UNITS[code]
         for code, _ in pipeline.view(edition, "pdf")
         if code not in edition.scripture
     ]

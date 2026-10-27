@@ -251,7 +251,6 @@ NAMES = frozenset({"h", *assembly.NAME_MARKERS.values()})
 
 class Unit(TypedDict):
     id: str
-    section: str
     title: str
     short: str
 
@@ -260,20 +259,25 @@ def matter(
     edition: pipeline.Edition, documents: Mapping[str, usj.Document]
 ) -> list[tuple[Unit, usj.Document]]:
     """The front matter the book prints, with the website-only numbering
-    page after the introduction, in reading order: the project's
-    own pages, then each testament's before its books, without the
-    dividers, which print a title alone; each the whole unit but for the names the
+    page after the introduction, in reading order, without the dividers,
+    which print a title alone; each the whole unit but for the names the
     manifest carries, opening with its book and its printed title, with its
     Greek and Hebrew tagged for their fonts as the typesetter has them."""
     result: list[tuple[Unit, usj.Document]] = []
     front = edition.policy.front_matter
     # Keep the website-only numbering page beside the introduction.
     at = (
-        next(i for i, (_, entry) in enumerate(front) if entry == bible.policy.EDITOR)
+        present(
+            next(
+                (i for i, entry in enumerate(front) if entry["id"] == "introduction"),
+                None,
+            ),
+            "No introduction among the front matter for the numbering page to follow",
+        )
         + 1
     )
-    units = (*front[:at], ("front", bible.policy.NUMBERING), *front[at:])
-    for section, entry in units:
+    units = (*front[:at], bible.policy.NUMBERING, *front[at:])
+    for entry in units:
         code = entry["id"]
         names: Mapping[str, str]
         if entry == bible.policy.NUMBERING:
@@ -294,8 +298,7 @@ def matter(
             f"Front matter does not open with its book, its names and one title: {code}",
         )
         unit: Unit = {
-            "id": peripherals.UNITS[code].slug,
-            "section": section,
+            "id": peripherals.slug(code),
             "title": names["title"],
             "short": names["short_title"],
         }
@@ -309,7 +312,7 @@ def write(edition: pipeline.Edition, directory: Path) -> None:
     """Write one document per chapter, each opening with its book, their
     ordered chapter inventory, with the book's names and whether a heading
     stands for a chapter's number, one document per unit of front matter,
-    listed in the inventory with its section and names, the comparison
+    listed in the inventory with its names, the comparison
     page's passages, and the textual variants."""
     if directory.exists():
         shutil.rmtree(directory)

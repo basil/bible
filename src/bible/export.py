@@ -284,22 +284,19 @@ def grouped(
     edition: Edition, documents: Sequence[tuple[str, Document]]
 ) -> list[tuple[str, Document]]:
     """The prepared documents as PTXprint's files: each scripture book its
-    own, and each run of front matter packaged as the divisions of its
-    section's document."""
-
-    def container(code: str) -> tuple[str, str]:
-        return (
-            (code, code)
-            if code in edition.scripture
-            else (edition.policy.sections[code], peripherals.book(code))
-        )
-
+    own, each testament's divider the division of a document of its own, and
+    each run of front matter in one standard peripheral book packaged as the
+    divisions of its document."""
+    front = {entry["id"] for entry in edition.policy.front_matter}
     result: list[tuple[str, Document]] = []
-    for (_, code), run in itertools.groupby(documents, key=lambda cd: container(cd[0])):
+    for key, run in itertools.groupby(
+        documents, key=lambda cd: peripherals.book(cd[0]) if cd[0] in front else cd[0]
+    ):
         units = list(run)
-        if code in edition.scripture:
+        if key in edition.scripture:
             result.extend(units)
         else:
+            code = peripherals.book(units[0][0])
             book: Node = {"type": "book", "marker": "id", "code": code, "content": []}
             # A division without its own \h would run the last one's heads.
             for unit, doc in units:

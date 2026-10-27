@@ -13,13 +13,14 @@ import {
 } from "./lib/library.ts";
 const books = manifest().books;
 const listed = variants();
-// The edition's own pages stand at the top, under no heading.
+// The front matter stands at the top, under no heading, as in the book.
 function contents(current?: Book): DefaultTheme.SidebarItem[] {
-  return sections().flatMap((s) => {
-    const items: DefaultTheme.SidebarItem[] = [
-      // A section's front matter precedes its books, as in the book.
-      ...s.matter.map(matterLink),
-      ...s.books.map((b) =>
+  return [
+    ...manifest().matter.map(matterLink),
+    ...sections().map((s) => ({
+      text: s.title,
+      collapsed: current !== undefined && current.section !== s.section,
+      items: s.books.map((b) =>
         b === current
           ? {
               text: b.short,
@@ -27,17 +28,8 @@ function contents(current?: Book): DefaultTheme.SidebarItem[] {
             }
           : { text: b.short, link: bookLinks(b)[0]!.link },
       ),
-    ];
-    return s.title
-      ? [
-          {
-            text: s.title,
-            collapsed: current !== undefined && current.section !== s.section,
-            items,
-          },
-        ]
-      : items;
-  });
+    })),
+  ];
 }
 const about = [
   ["Overview", "/about/"],

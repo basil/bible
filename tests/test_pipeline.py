@@ -40,7 +40,13 @@ def test_the_edition_prints_every_unit_once_in_the_manifests_order(
     assert list(edition.documents) == order
     assert list(exported) == order
     assert edition.scripture == {unit["id"] for unit in policy.scripture}
-    assert edition.authored == {"introduction", "XXF", "XXG"}
+    assert edition.authored == {
+        "acknowledgments",
+        "introduction",
+        "abbreviations",
+        "XXF",
+        "XXG",
+    }
     for mode in ("pdf", "sample"):
         assert "XXA" not in dict(pipeline.view(edition, mode))
     # The textual variants are prepared for the website, and printed nowhere.

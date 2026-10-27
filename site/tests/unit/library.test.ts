@@ -27,18 +27,15 @@ const books: Book[] = [
     chapters: [{ number: "1", label: "Susanna", titled: true, verses: ["1"] }],
   },
 ];
-// The front matter: the edition's own before the testaments, and each
-// testament's before its books.
+// The front matter, all before the testaments.
 const matter: Matter[] = [
   {
     id: "abbreviations",
-    section: "front",
     title: "Abbreviations",
     short: "Abbr.",
   },
   {
     id: "brenton-preface",
-    section: "old_testament",
     title: "Preface",
     short: "Preface",
   },
@@ -347,10 +344,10 @@ describe("prepared Bible library", () => {
   });
   test("refuses a page of a section the contents lack", () => {
     const altered = structuredClone(inventory);
-    altered.matter[0].section = "back";
+    altered.books[0].section = "back";
     fixture.set("manifest.json", altered);
-    expect(() => library.matterRoutes()).toThrow(
-      "Page in no section of the contents: /read/abbreviations",
+    expect(() => library.readerPages()).toThrow(
+      "Page in no section of the contents: /read/gen/1",
     );
   });
   test("explains how to prepare a missing unit of front matter", () => {
