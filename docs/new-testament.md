@@ -115,7 +115,7 @@ Scrivener and Stephanus can differ: do not infer a TR attribution from King Jame
 
 ## Lines of verse
 
-The text keeps Scrivener's paragraphs, and the lines he gave the Beatitudes, the canticles of Luke 1–2, the tribes sealed in Revelation 7, and the fall of Babylon in Revelation 18.
+The text keeps Scrivener's paragraphs, the extent of the poetry he set in lines (the Beatitudes, the canticles of Luke 1–2, the tribes sealed in Revelation 7, and the fall of Babylon in Revelation 18), and his stanza breaks. Within that poetry, a verse keeps Scrivener's lines unless a `new_testament` decision in `edition/lines.json` divides them and sets their indentation, after the Berean Standard Bible adapted to the King James wording, as [the house style](house-style.md) describes.
 
 ## The cases
 

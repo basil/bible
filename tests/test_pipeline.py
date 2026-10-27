@@ -1744,8 +1744,15 @@ def test_lines_that_go_on_with_a_verse_are_indented() -> None:
         "\\id PSA\n\\c 1\n\\p \\v 1 He said:\n\\q1 One,\n\\q1 two.\n"
         "\\q1 \\v 2 Three,\n\\q1 four.\n\\b\n\\q1 five.\n"
     )
-    markers = [b.get("marker") for b in pipeline.indented(doc)["content"]]
+    markers = [b.get("marker") for b in lines.indented(doc)["content"]]
     assert markers == ["id", "c", "p", "q1", "q2", "q1", "q2", "b", "q1"]
+    # A note of the verse before, standing ahead of the number, does not make
+    # the line that opens the next verse a continuation.
+    doc = usj.parse(
+        "\\id PSA\n\\c 1\n\\q1 \\v 1 One,\n\\q1 \\f + \\fr 1:1 \\ft N.\\f*\\v 2 Two.\n"
+    )
+    markers = [b.get("marker") for b in lines.indented(doc)["content"]]
+    assert markers == ["id", "c", "q1", "q1"]
 
 
 def test_chapters_open_new_paragraphs_without_changing_internal_continuations() -> None:
@@ -3626,7 +3633,7 @@ def test_source_instructions_keep_their_export_markers_and_spacing() -> None:
         "\\qa \\v 2 Beth.\n\\q1 Words.\n\\q1 More.\n"
         "\\b\n\\qa Gimel.\n\\q1 Words.\n\\p Prose."
     )
-    result = export.spaced(pipeline.indented(doc))
+    result = export.spaced(lines.indented(doc))
     assert [b.get("marker") for b in result["content"]] == [
         "id",
         "c",

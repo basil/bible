@@ -113,11 +113,23 @@ Paragraph = TypedDict(
 )
 
 
+class PoetryLine(TypedDict):
+    at: ReadOnly[str]
+    marker: ReadOnly[Literal["q1", "q2"]]
+    occurrence: NotRequired[ReadOnly[int]]
+
+
+class Poetry(TypedDict):
+    why: ReadOnly[str]
+    lines: ReadOnly[tuple[PoetryLine, ...]]
+
+
 class Lines(TypedDict, total=False):
     breaks: ReadOnly[Mapping[str, tuple[LineBreak, ...]]]
     prose: ReadOnly[Mapping[str, str]]
     unspaced: ReadOnly[Mapping[str, str]]
     paragraphs: ReadOnly[Mapping[str, tuple[Paragraph, ...]]]
+    new_testament: ReadOnly[Mapping[str, Poetry]]
     why: ReadOnly[str]
 
 

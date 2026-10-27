@@ -17,12 +17,16 @@ headings, and a prose paragraph's opening small-cap title that ends in a
 period in a descriptive title (d). All preserve the source wording, notes and verse nodes; qa
 supplies the acrostic names' style in place of inline small capitals.
 
-The New Testament keeps Scrivener's paragraphs and poetry within chapters.
+The Old Testament's lines are then indented by where they stand in their
+verses. The New Testament keeps Scrivener's paragraphs, poetry scope, and
+lines, except where edition/lines.json divides and indents a verse's lines
+after the BSB.
 In both testaments, chapter-opening prose starts an ordinary paragraph.
 """
 
 from __future__ import annotations
 
+import itertools
 import re
 from collections.abc import Callable, Collection, Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
@@ -31,8 +35,8 @@ from functools import cached_property
 import bible.policy
 from bible import lemmas, scripture, usj, versification
 from bible.alignment import Alignment
-from bible.checks import CheckFailed, require, require_fields
-from bible.policy_schema import Paragraph
+from bible.checks import CheckFailed, present, require, require_fields, require_used
+from bible.policy_schema import Paragraph, PoetryLine
 from bible.references import Verse, book_of, verse_at
 from bible.usj import Content, Document, Node
 
@@ -45,6 +49,8 @@ type Witness = Callable[[str, str], bool | None]
 # as prose, without a paragraph of its own: a new paragraph, within a verse
 # too. At the end of the update's poem, prose resumes under its marker.
 LINE, STANZA, RESUMED = "q1", "b", "p"
+# The two levels a line of a poem is set at.
+LEVELS = frozenset({"q1", "q2"})
 # A decision's verse key.
 VERSE_KEY = re.compile(r"[1-4A-Z]{3} \d+:\d+[a-z]?")
 # A block whose marker these are keeps it whatever the update has: a psalm's
@@ -87,6 +93,15 @@ class Chapter:
             (s for s in self.verse_starts.values() if s > start),
             default=len(self.words),
         )
+
+    def met(self, start: int, words: list[str]) -> list[int]:
+        """Where words are met in the verse beginning at a word."""
+        end = self.verse_end(start)
+        return [
+            i
+            for i in range(start, end - len(words) + 1)
+            if self.texts[i : i + len(words)] == words
+        ]
 
     def verse_of(self, index: int) -> str:
         """The label of the verse a word stands in."""
@@ -269,15 +284,8 @@ class Decisions:
         if decision.line is None:
             self.taken.add(decision)
             return None
-        lo = chapter.verse_starts[label]
-        hi = chapter.verse_end(lo)
         wanted = scripture.words_of(decision.line)
-        texts = chapter.texts[lo:hi]
-        found = [
-            lo + i
-            for i in range(len(texts) - len(wanted) + 1)
-            if texts[i : i + len(wanted)] == wanted
-        ]
+        found = chapter.met(chapter.verse_starts[label], wanted)
         require(
             bool(wanted) and len(found) == 1,
             f"Line decision not met once in its verse: {decision.verse}: {decision.line!r}",
@@ -761,6 +769,126 @@ def paragraphs(
 # Setting the lines.
 
 
+def new_testament(
+    units: Mapping[str, Document], policy: bible.policy.Policy
+) -> dict[str, Document]:
+    """Set existing NT poetry in its declared lines.
+
+    Anchors name the promoted, assembled words before revision. A decided
+    verse's lines are those its decision opens; any other verse keeps
+    Scrivener's. A run a decision changes is divided again as a whole, so a
+    line can cross a verse number; every other run, and every book without a
+    decision, is left as it is. Prose and stanza boundaries remain the
+    source's; only its internal line boundaries change.
+    """
+    decisions = policy.lines.get("new_testament", {})
+    decided_books = {book_of(key) for key in decisions}
+    met: set[str] = set()
+    result: dict[str, Document] = {}
+    for code, doc in units.items():
+        if code not in decided_books:
+            result[code] = doc
+            continue
+        # Each block's cuts: an offset in its words, and the level of the
+        # line that begins there.
+        cuts: dict[int, list[tuple[int, str]]] = {}
+        # The blocks whose lines a decision changes: only their runs are set
+        # again, so that every other run keeps Scrivener's blocks as they are.
+        touched: set[int] = set()
+        for number, chapter in chapters(doc).items():
+            # Scrivener's lines, by the word that opens each.
+            starts = {
+                index: doc["content"][block]["marker"]
+                for block, index in chapter.first_words.items()
+                if usj.paragraph(doc["content"][block]) in LEVELS
+            }
+            for verse, start in chapter.verse_starts.items():
+                key = f"{code} {number}:{verse}"
+                if key not in decisions:
+                    continue
+                met.add(key)
+                end = chapter.verse_end(start)
+                kept = {i: m for i, m in starts.items() if start <= i < end}
+                decided = _declared(doc, chapter, start, key, decisions[key]["lines"])
+                require(decided != kept, f"NT poetry decision changes nothing: {key}")
+                for index in kept.keys() - decided.keys():
+                    require(
+                        usj.paragraph(doc["content"][chapter.words[index].block - 1])
+                        in LEVELS,
+                        f"NT poetry decision removes a poem's opening line: {key}",
+                    )
+                touched |= {chapter.words[i].block for i in (*kept, *decided)}
+                starts = {i: m for i, m in starts.items() if i not in kept} | decided
+            for index, level in sorted(starts.items()):
+                block_index, offset = chapter.block_of(index)
+                cuts.setdefault(block_index, []).append((offset, level))
+        blocks: list[Node] = []
+        for poetic, group in itertools.groupby(
+            enumerate(doc["content"]),
+            key=lambda item: usj.paragraph(item[1]) in LEVELS,
+        ):
+            members = list(group)
+            if not poetic or touched.isdisjoint(index for index, _ in members):
+                blocks += (block for _, block in members)
+                continue
+            run: Content = []
+            run_cuts: list[tuple[int, str, bool]] = []
+            for index, block in members:
+                # A space replaces each removed line boundary, including before
+                # a verse milestone. The splitter trims it again at retained cuts.
+                offset = len(usj.text_of(run)) + (1 if run else 0)
+                run_cuts += [
+                    (offset + at, level, False) for at, level in cuts.get(index, [])
+                ]
+                run = usj.joined(run, [" "] if run else [], block["content"])
+            blocks += (
+                usj.para(
+                    present(marker, f"NT poetry run without opening line: {code}"),
+                    *content,
+                )
+                for marker, _, content in _pieces(run, run_cuts)
+                if content
+            )
+        result[code] = usj.with_blocks(doc, blocks)
+    require_used(decisions, met, "NT poetry decisions")
+    return result
+
+
+def _declared(
+    doc: Document,
+    chapter: Chapter,
+    start: int,
+    key: str,
+    entries: Iterable[PoetryLine],
+) -> dict[int, str]:
+    """The lines a decision declares in the verse beginning at a word: the
+    level of each, by the word that opens it."""
+    result: dict[int, str] = {}
+    for entry in entries:
+        found = chapter.met(start, scripture.words_of(entry["at"]))
+        occurrence = entry.get("occurrence")
+        require(
+            (
+                len(found) == 1
+                if occurrence is None
+                else len(found) > 1 and occurrence <= len(found)
+            ),
+            (
+                f"NT poetry anchor not met once: {key}: {entry['at']!r}"
+                if occurrence is None
+                else f"NT poetry occurrence does not fit: {key}: {entry['at']!r}"
+            ),
+        )
+        index = found[(occurrence or 1) - 1]
+        require(index > max(result, default=-1), f"NT poetry lines out of order: {key}")
+        require(
+            usj.paragraph(doc["content"][chapter.words[index].block]) in LEVELS,
+            f"NT poetry anchor in prose: {key}: {entry['at']!r}",
+        )
+        result[index] = entry["marker"]
+    return result
+
+
 def relined(
     doc: Document,
     by_chapter: Mapping[str, Chapter],
@@ -883,11 +1011,16 @@ def _pieces(
             left = [*left, rest[0]]
             rest = rest[1:]
         # A note before the number of the verse the line opens is the verse
-        # before's, and stays on its line (Psalm 9:27).
+        # before's, and stays on its line (Psalm 9:27), where there is one.
         lead = 0
         while lead < len(rest) and usj.is_type(rest[lead], "note"):
             lead += 1
-        if lead and lead < len(rest) and usj.is_type(rest[lead], "verse"):
+        if (
+            lead
+            and lead < len(rest)
+            and usj.is_type(rest[lead], "verse")
+            and usj.text_of(left).strip()
+        ):
             left, rest = [*left, *rest[:lead]], rest[lead:]
         pieces.append((*previous, usj.trimmed(left)))
         previous = (marker, stanza)
@@ -951,7 +1084,7 @@ def pauses(doc: Document) -> Document:
             if block.get("marker") == "qr" and terminal and not before:
                 continue
             if (
-                block.get("marker") in {"q1", "q2"}
+                block.get("marker") in LEVELS
                 and terminal
                 and (not before or before[-1] in ".!?;:,")
             ):
@@ -1094,7 +1227,7 @@ def acrostics(doc: Document, inside: Collection[tuple[str, str, str]]) -> Docume
                 if item.get("marker") == "sc" and verse:
                     label(text)
                     require(
-                        block.get("marker") in {"q1", "q2"},
+                        block.get("marker") in LEVELS,
                         f"Acrostic outside poetry: LAM {chapter}:{verse}",
                     )
                     cuts.extend(
@@ -1173,11 +1306,69 @@ def opened(doc: Document) -> Document:
     )
 
 
+def indented(doc: Document) -> Document:
+    """OT poetry indented: a line that opens a verse, a poem or a stanza at
+    the first level, and a line that goes on with a verse at the second.
+    An acrostic heading starts the following line at the first level. A note
+    before the verse's number does not make its line a continuation."""
+    result: list[Node] = []
+    for block in doc["content"]:
+        first = next(
+            (
+                item
+                for item in block.get("content", [])
+                if not usj.is_type(item, "note")
+            ),
+            None,
+        )
+        if (
+            usj.is_type(block, "para", LINE)
+            and result
+            and usj.paragraph(result[-1]) in usj.POEM
+            and not usj.is_type(first, "verse")
+        ):
+            block = {**block, "marker": "q2"}
+        result.append(block)
+    return usj.with_blocks(doc, result)
+
+
 def check(policy: bible.policy.Policy) -> None:
     data = policy.lines
     require_fields(
-        data, {"why", "breaks"}, {"paragraphs", "prose", "unspaced"}, "Lines file"
+        data,
+        {"why", "breaks"},
+        {"paragraphs", "prose", "unspaced", "new_testament"},
+        "Lines file",
     )
+    for key, poem in data.get("new_testament", {}).items():
+        require(
+            VERSE_KEY.fullmatch(key) is not None, f"NT poetry key is not a verse: {key}"
+        )
+        require_fields(poem, {"why", "lines"}, (), f"NT poetry {key}")
+        require(
+            isinstance(poem["why"], str) and bool(poem["why"].strip()),
+            f"NT poetry without a why: {key}",
+        )
+        for poetry_line in poem["lines"]:
+            require_fields(
+                poetry_line, {"at", "marker"}, {"occurrence"}, f"NT poetry line {key}"
+            )
+            if "occurrence" in poetry_line:
+                require(
+                    type(poetry_line["occurrence"]) is int
+                    and poetry_line["occurrence"] > 0,
+                    f"Invalid NT poetry occurrence: {key}",
+                )
+            require(
+                isinstance(poetry_line["at"], str)
+                and bool(scripture.words_of(poetry_line["at"]))
+                and poetry_line["at"] == scripture.plain(poetry_line["at"]),
+                f"NT poetry line without plain anchor words: {key}",
+            )
+            require(
+                poetry_line["marker"] in LEVELS,
+                f"Unsupported NT poetry marker: {key}: {poetry_line['marker']}",
+            )
     for kind, reasons in (
         ("prose", data.get("prose", {})),
         ("unspaced", data.get("unspaced", {})),

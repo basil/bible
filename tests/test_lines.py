@@ -4,6 +4,7 @@ Testament paragraphs and poetry preserved from Scrivener."""
 from __future__ import annotations
 
 import copy
+import itertools
 import re
 from typing import Any
 
@@ -14,7 +15,8 @@ import bible.pipeline
 import bible.policy
 from bible import alignment, byzantine, export, lines, scripture, usj
 from bible.checks import CheckFailed
-from bible.usj import Document
+from bible.references import book_of
+from bible.usj import Document, Node
 
 # A chapter of prose as a source prints it, and the same words as the update
 # sets them: a poem that opens mid-verse, a stanza break, prose resuming in
@@ -581,7 +583,7 @@ def test_every_line_of_the_update_is_a_line_of_the_edition(
         1
         for code in old_testament
         for block in unit(edition, code)["content"]
-        if block.get("marker") == "q1"
+        if block.get("marker") in lines.LEVELS
     )
     # Less the lines of the verses Scrivener or a decision sets as prose,
     # and the one line the edition lacks by a reading from Codex Alexandrinus,
@@ -625,7 +627,12 @@ def test_the_psalter_is_set_in_the_updates_lines(
         "and hath not stood in the way of sinners,\n"
         "and hath not sat in the seat of evil men."
     )
-    assert markers(unit(edition, "PSA"))[:11] == ["q1"] * 9 + ["b", "q1"]
+    assert markers(unit(edition, "PSA"))[:11] == [
+        *("q1", "q2", "q2"),
+        *("q1", "q2"),
+        *("q1", "q2", "q2", "q2"),
+        *("b", "q1"),
+    ]
     # The update numbers Psalm 12 otherwise; the chapter's words place its lines.
     assert psalms["12:2"].text == (
         "How long, O Lord, wilt thou forget me? for ever?\n"
@@ -660,10 +667,10 @@ def test_prose_resumes_under_its_declared_marker(
     assert [judges["content"][block]["marker"] for block, *_ in verse.parts] == [
         "p",
         "q1",
-        "q1",
+        "q2",
         "m",
         "q1",
-        "q1",
+        "q2",
     ]
     exodus = scripture.verses(unit(edition, "EXO"))
     assert exodus["15:19"].text.startswith("For the horse of Pharaoh")
@@ -703,36 +710,39 @@ def test_scrivener_says_which_verses_are_verse(
 ) -> None:
     job = unit(edition, "JOB")
     assert parts(job, "1:1") == ["p"] and parts(job, "2:13") == ["p"]
-    assert parts(job, "1:21") == ["p", "q1", "q1", "q1", "q1", "q1"]
-    assert parts(job, "3:3") == ["q1", "q1"] and parts(job, "42:6") == ["q1", "q1"]
+    assert parts(job, "1:21") == ["p", "q1", "q2", "q2", "q2", "q2"]
+    assert parts(job, "3:3") == ["q1", "q2"] and parts(job, "42:6") == ["q1", "q2"]
     assert parts(job, "42:7") == ["p"]
     # A Septuagint addition lettered to a verse goes as that verse goes.
     assert parts(job, "42:17b") == ["p"] and parts(job, "2:9a") == ["p"]
-    assert parts(unit(edition, "PRO"), "24:22g") == ["q1", "q1"]
+    assert parts(unit(edition, "PRO"), "24:22g") == ["q1", "q2"]
     # A lettered verse with a counterpart of its own goes as that goes:
     # Proverbs 24:22f is the Hebrew's 30:1, which Scrivener sets as prose.
     assert parts(unit(edition, "PRO"), "24:22f") == ["p", "p"]
     ecclesiastes = unit(edition, "ECC")
     assert parts(ecclesiastes, "1:2") == ["p"] and parts(ecclesiastes, "12:13") == ["p"]
-    assert parts(ecclesiastes, "3:2") == ["q1", "q1"]
+    assert parts(ecclesiastes, "3:2") == ["q1", "q2"]
     # A book Scrivener set wholly as prose, and the Apocrypha, which the table
     # does not map to his, follow the update.
-    assert parts(unit(edition, "WIS"), "7:7") == ["q1", "q1"]
-    assert parts(unit(edition, "SIR"), "2:1") == ["q1", "q1"]
+    assert parts(unit(edition, "WIS"), "7:7") == ["q1", "q2"]
+    assert parts(unit(edition, "SIR"), "2:1") == ["q1", "q2"]
     # The author's colophon is an explicit exception following Scrivener.
     sirach = unit(edition, "SIR")
     assert parts(sirach, "50:27") == ["p"]
-    assert parts(sirach, "50:26") == ["q1", "q1", "q1"]
-    assert parts(sirach, "50:28") == ["q1", "q1"]
+    assert parts(sirach, "50:26") == ["q1", "q2", "q2"]
+    assert parts(sirach, "50:28") == ["q1", "q2"]
     # His own lines in the prophets do not come in.
-    assert all(block.get("marker") != "q1" for block in unit(edition, "ISA")["content"])
+    assert all(
+        block.get("marker") not in lines.LEVELS
+        for block in unit(edition, "ISA")["content"]
+    )
 
 
 def test_ecclesiastes_times_poem_ends_before_verse_nine(
     edition: bible.pipeline.Edition, prepared: list[tuple[str, Document]]
 ) -> None:
     doc = unit(edition, "ECC")
-    assert parts(doc, "3:8") == ["q1", "q1"]
+    assert parts(doc, "3:8") == ["q1", "q2"]
     assert parts(doc, "3:9") == ["p"]
     assert parts(doc, "3:10") == ["p"]
     printed = dict(prepared)["ECC"]
@@ -774,7 +784,7 @@ def test_the_song_of_the_three_children_stays_in_lines(
     verse = scripture.verses(daniel)["3:26"]
     assert [daniel["content"][block]["marker"] for block, *_ in verse.parts] == [
         "q1",
-        "q1",
+        "q2",
     ]
 
 
@@ -785,6 +795,7 @@ def parts(doc: Document, label: str) -> list[str]:
 
 def test_the_line_stage_preserves_verses_notes_and_new_testament_paragraphs_within_chapters(
     staged: Staged,
+    policy: bible.policy.Policy,
 ) -> None:
     units, after = staged.units, staged.lined
     before = {code: staged.assembled[code] for code in byzantine.BOOKS}
@@ -813,8 +824,40 @@ def test_the_line_stage_preserves_verses_notes_and_new_testament_paragraphs_with
             original["content"]
         ), code
     assert len(before) == 27
+    decisions = policy.lines.get("new_testament", {})
+    poetic = {book_of(key) for key in decisions}
+
+    def prose(doc: Document) -> list[Node]:
+        return [b for b in doc["content"] if usj.paragraph(b) not in lines.LEVELS]
+
+    def poems(doc: Document) -> list[list[tuple[int, Node]]]:
+        return [
+            list(run)
+            for poem, run in itertools.groupby(
+                enumerate(doc["content"]),
+                key=lambda item: usj.paragraph(item[1]) in lines.LEVELS,
+            )
+            if poem
+        ]
+
     for code, doc in before.items():
-        assert after[code] == lines.opened(doc)
+        opened = lines.opened(doc)
+        if code not in poetic:
+            assert after[code] == opened, code
+            continue
+        # The poems take their declared lines; every other block stays, and
+        # so does every poem in which no decided verse stands.
+        assert prose(after[code]) == prose(opened), code
+        verses = scripture.verses(opened)
+        decided = {
+            block
+            for key in decisions
+            if book_of(key) == code
+            for block, *_ in verses[key.split()[1]].parts
+        }
+        for run, result in zip(poems(opened), poems(after[code]), strict=True):
+            if decided.isdisjoint(index for index, _ in run):
+                assert [b for _, b in result] == [b for _, b in run], code
 
 
 def test_the_decisions_are_the_few_the_words_do_not_place(

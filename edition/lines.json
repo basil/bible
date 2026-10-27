@@ -1,5 +1,5 @@
 {
-  "why": "The Old Testament poetry follows the Updated Brenton where Scrivener also sets the verse as poetry or has no say. Prose records verse-level exceptions to this agreement. Its line boundaries are aligned to Brenton; breaks records the lines the words cannot place or would place wrongly. Boyd’s prose marker is retained at a poem’s end. Unspaced records prose paragraphs that follow poetry without the blank line normally added for print. Paragraphs records departures at existing prose boundaries: a continuation, repeated label, immediate response, or closing action may remain flush left, while a new narrative or discourse unit keeps its paragraph. A change of speaker alone does not open a new unit. Each anchor is checked in the assembled, unrevised verse; joining changes paragraph structure alone.",
+  "why": "The Old Testament poetry follows the Updated Brenton where Scrivener also sets the verse as poetry or has no say. Prose records verse-level exceptions to this agreement. Its line boundaries are aligned to Brenton; breaks records the lines the words cannot place or would place wrongly. Boyd’s prose marker is retained at a poem’s end. Unspaced records prose paragraphs that follow poetry without the blank line normally added for print. Paragraphs records departures at existing prose boundaries: a continuation, repeated label, immediate response, or closing action may remain flush left, while a new narrative or discourse unit keeps its paragraph. A change of speaker alone does not open a new unit. Each anchor is checked in the assembled, unrevised verse; joining changes paragraph structure alone. New_testament records the verses of Scrivener’s New Testament poetry whose line divisions or indents depart from his, using BSB as a structural model while retaining the edition’s words, poetry scope and stanza boundaries; a verse without a decision keeps his lines; each anchor’s words, not its case or punctuation, are checked in the assembled, unrevised verse where the line stage applies them.",
   "prose": {
     "ECC 3:9": "The poem of appointed times ends at verse 8; verse 9 returns to prose with the question about labour. Brenton’s 1879 printing, printed page 821 (PDF page 837), begins a new paragraph here.",
     "SIR 50:27": "The author's colophon is prose in Scrivener's Cambridge Paragraph Bible; follow him here rather than Boyd's poetry."
@@ -245,5 +245,970 @@
         "why": "The people’s response directly answers the hymn, as Scrivener sets it; the existing paragraphs at verses 37 and 43 retain the arrangements and departure as distinct units."
       }
     ]
+  },
+  "new_testament": {
+    "MAT 5:3": {
+      "why": "BSB pairs each blessing with its promise at the second indent; divide the same clauses without changing the King James words.",
+      "lines": [
+        {
+          "at": "Blessed are the poor in spirit",
+          "marker": "q1"
+        },
+        {
+          "at": "for theirs is the kingdom of heaven",
+          "marker": "q2"
+        }
+      ]
+    },
+    "MAT 5:4": {
+      "why": "BSB pairs each blessing with its promise at the second indent; divide the same clauses without changing the King James words.",
+      "lines": [
+        {
+          "at": "Blessed are they that mourn",
+          "marker": "q1"
+        },
+        {
+          "at": "for they shall be comforted",
+          "marker": "q2"
+        }
+      ]
+    },
+    "MAT 5:5": {
+      "why": "BSB pairs each blessing with its promise at the second indent; divide the same clauses without changing the King James words.",
+      "lines": [
+        {
+          "at": "Blessed are the meek",
+          "marker": "q1"
+        },
+        {
+          "at": "for they shall inherit the earth",
+          "marker": "q2"
+        }
+      ]
+    },
+    "MAT 5:6": {
+      "why": "BSB pairs each blessing with its promise at the second indent; divide the same clauses without changing the King James words.",
+      "lines": [
+        {
+          "at": "Blessed are they which do hunger",
+          "marker": "q1"
+        },
+        {
+          "at": "for they shall be filled",
+          "marker": "q2"
+        }
+      ]
+    },
+    "MAT 5:7": {
+      "why": "BSB pairs each blessing with its promise at the second indent; divide the same clauses without changing the King James words.",
+      "lines": [
+        {
+          "at": "Blessed are the merciful",
+          "marker": "q1"
+        },
+        {
+          "at": "for they shall obtain mercy",
+          "marker": "q2"
+        }
+      ]
+    },
+    "MAT 5:8": {
+      "why": "BSB pairs each blessing with its promise at the second indent; divide the same clauses without changing the King James words.",
+      "lines": [
+        {
+          "at": "Blessed are the pure in heart",
+          "marker": "q1"
+        },
+        {
+          "at": "for they shall see God",
+          "marker": "q2"
+        }
+      ]
+    },
+    "MAT 5:9": {
+      "why": "BSB pairs each blessing with its promise at the second indent; divide the same clauses without changing the King James words.",
+      "lines": [
+        {
+          "at": "Blessed are the peacemakers",
+          "marker": "q1"
+        },
+        {
+          "at": "for they shall be called",
+          "marker": "q2"
+        }
+      ]
+    },
+    "MAT 5:10": {
+      "why": "BSB pairs each blessing with its promise at the second indent; divide the same clauses without changing the King James words.",
+      "lines": [
+        {
+          "at": "Blessed are they which are persecuted",
+          "marker": "q1"
+        },
+        {
+          "at": "for theirs is the kingdom of heaven",
+          "marker": "q2"
+        }
+      ]
+    },
+    "MAT 5:11": {
+      "why": "BSB sets this verse as prose. Retain Scrivener’s poetry and extend the blessing-and-continuation pattern: the blessing opens the line, and its three parallel conditions share the second indent.",
+      "lines": [
+        {
+          "at": "Blessed are ye",
+          "marker": "q1"
+        },
+        {
+          "at": "when men shall revile you",
+          "marker": "q2"
+        },
+        {
+          "at": "and persecute you",
+          "marker": "q2"
+        },
+        {
+          "at": "and shall say all manner",
+          "marker": "q2"
+        }
+      ]
+    },
+    "MAT 5:12": {
+      "why": "BSB sets this verse as prose. Retain Scrivener’s poetry, with the command at the first indent and its two explanatory for-clauses at the second.",
+      "lines": [
+        {
+          "at": "Rejoice, and be exceeding glad",
+          "marker": "q1"
+        },
+        {
+          "at": "for great is your reward",
+          "marker": "q2"
+        },
+        {
+          "at": "for so persecuted they the prophets",
+          "marker": "q2"
+        }
+      ]
+    },
+    "LUK 1:47": {
+      "why": "As in BSB, the spirit’s rejoicing continues the soul’s magnifying in the preceding verse; the verse number does not start a new first-level line.",
+      "lines": [
+        {
+          "at": "And my spirit hath rejoiced",
+          "marker": "q2"
+        }
+      ]
+    },
+    "LUK 1:48": {
+      "why": "Follow BSB’s principal line and dependent continuation pattern in the King James words, retaining Scrivener’s poetry and stanza boundaries.",
+      "lines": [
+        {
+          "at": "For he hath regarded",
+          "marker": "q1"
+        },
+        {
+          "at": "For behold, from henceforth",
+          "marker": "q2"
+        }
+      ]
+    },
+    "LUK 1:49": {
+      "why": "Follow BSB’s principal line and dependent continuation pattern in the King James words, retaining Scrivener’s poetry and stanza boundaries.",
+      "lines": [
+        {
+          "at": "For he that is mighty",
+          "marker": "q1"
+        },
+        {
+          "at": "And holy is his name",
+          "marker": "q2"
+        }
+      ]
+    },
+    "LUK 1:50": {
+      "why": "Follow BSB’s principal line and dependent continuation pattern in the King James words, retaining Scrivener’s poetry and stanza boundaries.",
+      "lines": [
+        {
+          "at": "And his mercy",
+          "marker": "q1"
+        },
+        {
+          "at": "From generation to generation",
+          "marker": "q2"
+        }
+      ]
+    },
+    "LUK 1:51": {
+      "why": "Follow BSB’s first-level deed and its two dependent continuations, dividing the scattering from its qualification without changing the words.",
+      "lines": [
+        {
+          "at": "He hath shewed strength",
+          "marker": "q1"
+        },
+        {
+          "at": "He hath scattered the proud",
+          "marker": "q2"
+        },
+        {
+          "at": "in the imagination of their hearts",
+          "marker": "q2"
+        }
+      ]
+    },
+    "LUK 1:52": {
+      "why": "Follow BSB’s principal line and dependent continuation pattern in the King James words, retaining Scrivener’s poetry and stanza boundaries.",
+      "lines": [
+        {
+          "at": "He hath put down",
+          "marker": "q1"
+        },
+        {
+          "at": "And exalted them",
+          "marker": "q2"
+        }
+      ]
+    },
+    "LUK 1:53": {
+      "why": "Follow BSB’s principal line and dependent continuation pattern in the King James words, retaining Scrivener’s poetry and stanza boundaries.",
+      "lines": [
+        {
+          "at": "He hath filled the hungry",
+          "marker": "q1"
+        },
+        {
+          "at": "And the rich",
+          "marker": "q2"
+        }
+      ]
+    },
+    "LUK 1:54": {
+      "why": "Follow BSB’s principal line and dependent continuation pattern in the King James words, retaining Scrivener’s poetry and stanza boundaries.",
+      "lines": [
+        {
+          "at": "He hath holpen",
+          "marker": "q1"
+        },
+        {
+          "at": "In remembrance of",
+          "marker": "q2"
+        }
+      ]
+    },
+    "LUK 1:55": {
+      "why": "Follow BSB’s principal line and dependent continuation pattern in the King James words, retaining Scrivener’s poetry and stanza boundaries.",
+      "lines": [
+        {
+          "at": "(As he spake",
+          "marker": "q1"
+        },
+        {
+          "at": "To Abraham",
+          "marker": "q2"
+        }
+      ]
+    },
+    "LUK 1:68": {
+      "why": "Follow BSB’s principal line and dependent continuation pattern in the King James words, retaining Scrivener’s poetry and stanza boundaries.",
+      "lines": [
+        {
+          "at": "Blessed be the Lord God",
+          "marker": "q1"
+        },
+        {
+          "at": "For he hath visited",
+          "marker": "q2"
+        }
+      ]
+    },
+    "LUK 1:69": {
+      "why": "Follow BSB’s principal line and dependent continuation pattern in the King James words, retaining Scrivener’s poetry and stanza boundaries.",
+      "lines": [
+        {
+          "at": "And hath raised up",
+          "marker": "q1"
+        },
+        {
+          "at": "In the house of",
+          "marker": "q2"
+        }
+      ]
+    },
+    "LUK 1:70": {
+      "why": "Follow BSB’s principal line and dependent continuation pattern in the King James words, retaining Scrivener’s poetry and stanza boundaries.",
+      "lines": [
+        {
+          "at": "(As he spake",
+          "marker": "q1"
+        },
+        {
+          "at": "Which have been",
+          "marker": "q2"
+        }
+      ]
+    },
+    "LUK 1:71": {
+      "why": "Follow BSB’s principal line and dependent continuation pattern in the King James words, retaining Scrivener’s poetry and stanza boundaries.",
+      "lines": [
+        {
+          "at": "That we should be saved",
+          "marker": "q1"
+        },
+        {
+          "at": "And from the hand",
+          "marker": "q2"
+        }
+      ]
+    },
+    "LUK 1:72": {
+      "why": "Follow BSB’s principal line and dependent continuation pattern in the King James words, retaining Scrivener’s poetry and stanza boundaries.",
+      "lines": [
+        {
+          "at": "To perform the mercy",
+          "marker": "q1"
+        },
+        {
+          "at": "And to remember",
+          "marker": "q2"
+        }
+      ]
+    },
+    "LUK 1:74": {
+      "why": "BSB indents the granting and deliverance clauses under the oath. The King James numbers all these clauses in verse 74; retain that numbering and word order, with the grant, deliverance and service at the second indent.",
+      "lines": [
+        {
+          "at": "That he would grant unto us",
+          "marker": "q2"
+        },
+        {
+          "at": "that we being delivered",
+          "marker": "q2"
+        },
+        {
+          "at": "Might serve him",
+          "marker": "q2"
+        }
+      ]
+    },
+    "LUK 1:75": {
+      "why": "Follow BSB’s principal line and dependent continuation pattern in the King James words, retaining Scrivener’s poetry and stanza boundaries.",
+      "lines": [
+        {
+          "at": "In holiness and righteousness",
+          "marker": "q1"
+        },
+        {
+          "at": "All the days",
+          "marker": "q2"
+        }
+      ]
+    },
+    "LUK 1:76": {
+      "why": "Follow BSB’s two principal lines and their continuations: the child’s designation, then his commission. Keep Scrivener’s stanza boundaries.",
+      "lines": [
+        {
+          "at": "And thou, child, shalt be called",
+          "marker": "q1"
+        },
+        {
+          "at": "the prophet of the Highest",
+          "marker": "q2"
+        },
+        {
+          "at": "For thou shalt go",
+          "marker": "q1"
+        },
+        {
+          "at": "To prepare his ways",
+          "marker": "q2"
+        }
+      ]
+    },
+    "LUK 1:77": {
+      "why": "Follow BSB’s principal line and dependent continuation pattern in the King James words, retaining Scrivener’s poetry and stanza boundaries.",
+      "lines": [
+        {
+          "at": "To give knowledge",
+          "marker": "q1"
+        },
+        {
+          "at": "By the remission",
+          "marker": "q2"
+        }
+      ]
+    },
+    "LUK 1:78": {
+      "why": "Follow BSB’s principal line and dependent continuation pattern in the King James words, retaining Scrivener’s poetry and stanza boundaries.",
+      "lines": [
+        {
+          "at": "Through the tender mercy",
+          "marker": "q1"
+        },
+        {
+          "at": "Whereby the dayspring",
+          "marker": "q2"
+        }
+      ]
+    },
+    "LUK 1:79": {
+      "why": "Follow BSB’s two pairs: light for those in darkness and death’s shadow, then guidance into peace.",
+      "lines": [
+        {
+          "at": "To give light",
+          "marker": "q1"
+        },
+        {
+          "at": "and in the shadow of death",
+          "marker": "q2"
+        },
+        {
+          "at": "To guide our feet",
+          "marker": "q1"
+        },
+        {
+          "at": "into the way of peace",
+          "marker": "q2"
+        }
+      ]
+    },
+    "LUK 2:14": {
+      "why": "Follow BSB’s principal proclamation and indented continuations, but retain the King James three-part reading and its existing divisions rather than importing BSB’s different wording.",
+      "lines": [
+        {
+          "at": "Glory to God",
+          "marker": "q1"
+        },
+        {
+          "at": "And on earth peace",
+          "marker": "q2"
+        },
+        {
+          "at": "Good will towards men",
+          "marker": "q2"
+        }
+      ]
+    },
+    "LUK 2:29": {
+      "why": "Retain Scrivener’s two clauses and their King James order. BSB has the promise before dismissal; its order cannot be transferred without rewriting the translation.",
+      "lines": [
+        {
+          "at": "Lord, now lettest thou",
+          "marker": "q1"
+        },
+        {
+          "at": "In peace, according to thy word",
+          "marker": "q2"
+        }
+      ]
+    },
+    "LUK 2:31": {
+      "why": "As in BSB, the preparation clause continues the salvation announced in verse 30 at the second indent despite the verse number.",
+      "lines": [
+        {
+          "at": "Which thou hast prepared",
+          "marker": "q2"
+        }
+      ]
+    },
+    "LUK 2:32": {
+      "why": "Follow BSB’s principal line and dependent continuation pattern in the King James words, retaining Scrivener’s poetry and stanza boundaries.",
+      "lines": [
+        {
+          "at": "A light to lighten",
+          "marker": "q1"
+        },
+        {
+          "at": "and the glory of thy people Israel",
+          "marker": "q2"
+        }
+      ]
+    },
+    "REV 18:2": {
+      "why": "Retain Scrivener’s prose introduction; follow BSB’s alternating main announcement and dependent description without supplying its additional beast clause.",
+      "lines": [
+        {
+          "at": "Babylon the great",
+          "marker": "q1"
+        },
+        {
+          "at": "And is become",
+          "marker": "q2"
+        },
+        {
+          "at": "And the hold",
+          "marker": "q1"
+        },
+        {
+          "at": "And a cage",
+          "marker": "q2"
+        }
+      ]
+    },
+    "REV 18:3": {
+      "why": "Follow BSB’s wine-and-passion division and its merchants’ continuations, keeping the promoted Byzantine reading fallen because of.",
+      "lines": [
+        {
+          "at": "For all nations",
+          "marker": "q1"
+        },
+        {
+          "at": "of the wrath of her fornication",
+          "marker": "q2"
+        },
+        {
+          "at": "And the kings of the earth",
+          "marker": "q1"
+        },
+        {
+          "at": "And the merchants of the earth",
+          "marker": "q2"
+        },
+        {
+          "at": "through the abundance of her delicacies",
+          "marker": "q2"
+        }
+      ]
+    },
+    "REV 18:4": {
+      "why": "Follow BSB’s principal announcement and dependent continuation pattern in the promoted King James words, retaining Scrivener’s poetry scope and stanza boundaries.",
+      "lines": [
+        {
+          "at": "Come out of her",
+          "marker": "q1"
+        },
+        {
+          "at": "That ye be not partakers",
+          "marker": "q2"
+        },
+        {
+          "at": "And that ye receive not",
+          "marker": "q2"
+        }
+      ]
+    },
+    "REV 18:5": {
+      "why": "Follow BSB’s principal announcement and dependent continuation pattern in the promoted King James words, retaining Scrivener’s poetry scope and stanza boundaries.",
+      "lines": [
+        {
+          "at": "For her sins",
+          "marker": "q1"
+        },
+        {
+          "at": "And God hath remembered",
+          "marker": "q2"
+        }
+      ]
+    },
+    "REV 18:6": {
+      "why": "Follow BSB’s principal announcement and dependent continuation pattern in the promoted King James words, retaining Scrivener’s poetry scope and stanza boundaries.",
+      "lines": [
+        {
+          "at": "Reward her even as",
+          "marker": "q1"
+        },
+        {
+          "at": "And double unto her",
+          "marker": "q2"
+        },
+        {
+          "at": "In the cup",
+          "marker": "q2"
+        }
+      ]
+    },
+    "REV 18:7": {
+      "why": "Follow BSB’s principal announcement and dependent continuation pattern in the promoted King James words, retaining Scrivener’s poetry scope and stanza boundaries.",
+      "lines": [
+        {
+          "at": "How much she hath glorified",
+          "marker": "q1"
+        },
+        {
+          "at": "So much torment",
+          "marker": "q2"
+        },
+        {
+          "at": "For she saith",
+          "marker": "q1"
+        },
+        {
+          "at": "And am no widow",
+          "marker": "q2"
+        }
+      ]
+    },
+    "REV 18:8": {
+      "why": "Follow BSB’s principal announcement and dependent continuation pattern in the promoted King James words, retaining Scrivener’s poetry scope and stanza boundaries.",
+      "lines": [
+        {
+          "at": "Therefore shall her plagues",
+          "marker": "q1"
+        },
+        {
+          "at": "Death, and mourning",
+          "marker": "q2"
+        },
+        {
+          "at": "And she shall be utterly burnt",
+          "marker": "q1"
+        },
+        {
+          "at": "For strong is",
+          "marker": "q2"
+        }
+      ]
+    },
+    "REV 18:9": {
+      "why": "BSB has prose for this introduction. Retain Scrivener’s poetry, with the kings at the first indent and their lament and its temporal clause at the second.",
+      "lines": [
+        {
+          "at": "And the kings of the earth",
+          "marker": "q1"
+        },
+        {
+          "at": "Shall weep",
+          "marker": "q2"
+        },
+        {
+          "at": "When they shall see",
+          "marker": "q2"
+        }
+      ]
+    },
+    "REV 18:10": {
+      "why": "The opening participle and saying continue the kings’ lament in verse 9 at the second indent; the quoted lament then follows BSB’s principal lines and dependent continuations.",
+      "lines": [
+        {
+          "at": "Standing afar off",
+          "marker": "q2"
+        },
+        {
+          "at": "Saying",
+          "marker": "q2"
+        },
+        {
+          "at": "Alas, alas",
+          "marker": "q1"
+        },
+        {
+          "at": "that mighty city",
+          "marker": "q2"
+        },
+        {
+          "at": "For in one hour",
+          "marker": "q1"
+        },
+        {
+          "at": "is thy judgment come",
+          "marker": "q2"
+        }
+      ]
+    },
+    "REV 18:11": {
+      "why": "BSB has prose here. Retain Scrivener’s poetry, with the merchants’ mourning at the first indent and its reason at the second.",
+      "lines": [
+        {
+          "at": "And the merchants of the earth",
+          "marker": "q1"
+        },
+        {
+          "at": "For no man buyeth",
+          "marker": "q2"
+        }
+      ]
+    },
+    "REV 18:12": {
+      "why": "BSB has prose here. Retain Scrivener’s lines at the second indent: the merchandise continues verse 11’s “their merchandise” in apposition, as BSB indents the appositive of 18:8.",
+      "lines": [
+        {
+          "at": "The merchandise of gold",
+          "marker": "q2"
+        },
+        {
+          "at": "And precious stones",
+          "marker": "q2"
+        },
+        {
+          "at": "And fine linen",
+          "marker": "q2"
+        },
+        {
+          "at": "And all thyine wood",
+          "marker": "q2"
+        },
+        {
+          "at": "And all manner vessels of most",
+          "marker": "q2"
+        },
+        {
+          "at": "And of brass",
+          "marker": "q2"
+        }
+      ]
+    },
+    "REV 18:13": {
+      "why": "BSB has prose here. Retain Scrivener’s lines at the second indent, continuing the merchandise of verse 12.",
+      "lines": [
+        {
+          "at": "And cinnamon",
+          "marker": "q2"
+        },
+        {
+          "at": "And ointments",
+          "marker": "q2"
+        },
+        {
+          "at": "And wine",
+          "marker": "q2"
+        },
+        {
+          "at": "And fine flour",
+          "marker": "q2"
+        },
+        {
+          "at": "And sheep",
+          "marker": "q2"
+        },
+        {
+          "at": "And slaves",
+          "marker": "q2"
+        }
+      ]
+    },
+    "REV 18:14": {
+      "why": "Follow BSB’s fruit-and-departure pair and luxury-and-loss pair in the promoted King James wording.",
+      "lines": [
+        {
+          "at": "And the fruits",
+          "marker": "q1"
+        },
+        {
+          "at": "are departed from thee",
+          "marker": "q2"
+        },
+        {
+          "at": "And all things which were",
+          "marker": "q1"
+        },
+        {
+          "at": "And thou shalt find",
+          "marker": "q2"
+        }
+      ]
+    },
+    "REV 18:15": {
+      "why": "BSB has prose for this introduction. Retain Scrivener’s poetry, with the merchants as the principal line and their standing and weeping as continuations. The last line continues through verse 16’s and saying.",
+      "lines": [
+        {
+          "at": "The merchants of these things",
+          "marker": "q1"
+        },
+        {
+          "at": "Shall stand afar off",
+          "marker": "q2"
+        },
+        {
+          "at": "Weeping and wailing",
+          "marker": "q2"
+        }
+      ]
+    },
+    "REV 18:16": {
+      "why": "Keep and saying in the preceding line from verse 15. Follow BSB’s first-level lament and two indented descriptions.",
+      "lines": [
+        {
+          "at": "Alas, alas",
+          "marker": "q1"
+        },
+        {
+          "at": "That was clothed",
+          "marker": "q2"
+        },
+        {
+          "at": "And decked with gold",
+          "marker": "q2"
+        }
+      ]
+    },
+    "REV 18:17": {
+      "why": "Follow BSB’s single-hour announcement and indented result. BSB sets the shipmasters’ introduction as prose; retain Scrivener’s stanza and poetry, with the compound subject opening at the first indent and its second member and shared predicate at the second, as BSB sets the compound subject of 18:22.",
+      "lines": [
+        {
+          "at": "For in one hour",
+          "marker": "q1"
+        },
+        {
+          "at": "so great riches",
+          "marker": "q2"
+        },
+        {
+          "at": "And every shipmaster",
+          "marker": "q1"
+        },
+        {
+          "at": "And sailers",
+          "marker": "q2"
+        },
+        {
+          "at": "Stood afar off",
+          "marker": "q2"
+        }
+      ]
+    },
+    "REV 18:18": {
+      "why": "Keep and cried in the preceding line from verse 17. Retain Scrivener’s poetic introduction where BSB has prose: the temporal clause continues at the second indent and the direct question opens a first-level line.",
+      "lines": [
+        {
+          "at": "When they saw",
+          "marker": "q2"
+        },
+        {
+          "at": "What city is like",
+          "marker": "q1"
+        }
+      ]
+    },
+    "REV 18:19": {
+      "why": "Retain Scrivener’s poetic introduction where BSB has prose; follow BSB’s five-line lament, with the King James Wherein-clause and its qualification as dependent continuations.",
+      "lines": [
+        {
+          "at": "And they cast dust",
+          "marker": "q1"
+        },
+        {
+          "at": "And cried, weeping",
+          "marker": "q2"
+        },
+        {
+          "at": "Alas, alas",
+          "marker": "q1"
+        },
+        {
+          "at": "Wherein were made rich",
+          "marker": "q2"
+        },
+        {
+          "at": "by reason of her costliness",
+          "marker": "q2"
+        },
+        {
+          "at": "For in one hour",
+          "marker": "q1"
+        },
+        {
+          "at": "is she made desolate",
+          "marker": "q2"
+        }
+      ]
+    },
+    "REV 18:20": {
+      "why": "Follow BSB’s call and indented addressees. Keep the shorter King James judgment clause as one first-level line rather than inventing a division.",
+      "lines": [
+        {
+          "at": "Rejoice over her",
+          "marker": "q1"
+        },
+        {
+          "at": "And ye saints",
+          "marker": "q2"
+        },
+        {
+          "at": "For God hath avenged",
+          "marker": "q1"
+        }
+      ]
+    },
+    "REV 18:21": {
+      "why": "Retain Scrivener’s prose introduction and follow BSB’s principal violence announcement with the casting down and disappearance at the second indent.",
+      "lines": [
+        {
+          "at": "Thus with violence",
+          "marker": "q1"
+        },
+        {
+          "at": "shall that great city Babylon",
+          "marker": "q2"
+        },
+        {
+          "at": "and shall be found no more",
+          "marker": "q2"
+        }
+      ]
+    },
+    "REV 18:22": {
+      "why": "Follow BSB’s repeated first-level subjects and indented predicates, keeping the instruments’ continuation at the second indent.",
+      "lines": [
+        {
+          "at": "And the voice of harpers",
+          "marker": "q1"
+        },
+        {
+          "at": "and of pipers",
+          "marker": "q2"
+        },
+        {
+          "at": "shall be heard no more at all in thee",
+          "marker": "q2",
+          "occurrence": 1
+        },
+        {
+          "at": "And no craftsman",
+          "marker": "q1"
+        },
+        {
+          "at": "shall be found any more in thee",
+          "marker": "q2"
+        },
+        {
+          "at": "And the sound of a millstone",
+          "marker": "q1"
+        },
+        {
+          "at": "shall be heard no more at all in thee",
+          "marker": "q2",
+          "occurrence": 2
+        }
+      ]
+    },
+    "REV 18:23": {
+      "why": "Follow BSB’s repeated first-level subjects and indented predicates, then the merchants’ position and its explanation.",
+      "lines": [
+        {
+          "at": "And the light of a candle",
+          "marker": "q1"
+        },
+        {
+          "at": "shall shine no more at all in thee",
+          "marker": "q2"
+        },
+        {
+          "at": "And the voice of the bridegroom",
+          "marker": "q1"
+        },
+        {
+          "at": "shall be heard no more at all in thee",
+          "marker": "q2"
+        },
+        {
+          "at": "For thy merchants",
+          "marker": "q1"
+        },
+        {
+          "at": "For by thy sorceries",
+          "marker": "q2"
+        }
+      ]
+    },
+    "REV 18:24": {
+      "why": "BSB sets this verse as prose. Retain Scrivener’s two poetic lines, with the additional bloodguilt at the second indent.",
+      "lines": [
+        {
+          "at": "And in her was found",
+          "marker": "q1"
+        },
+        {
+          "at": "And of all that were slain",
+          "marker": "q2"
+        }
+      ]
+    }
   }
 }

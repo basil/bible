@@ -376,9 +376,10 @@ def lined(
 ) -> MappingProxyType[str, Document]:
     """Brenton's poems set in the update's lines where Scrivener sets the
     verse as verse too or has no say, with their pauses, descriptive titles
-    and acrostic headings. Each chapter's prose opens a new paragraph in
-    both testaments. After the verses are placed, through which the witnesses
-    are read."""
+    and acrostic headings, each line indented by where it stands in its verse.
+    NT poems receive their declared lines and indents. Each chapter's prose
+    opens a new paragraph in both testaments. After the verses are placed,
+    through which the witnesses are read."""
     lines.check(policy)
     old_testament = {
         code: doc for code, doc in units.items() if code not in policy.kjv_units
@@ -422,10 +423,14 @@ def lined(
     }
     brenton["LAM"] = lines.acrostics(brenton["LAM"], lines.within_verse(policy))
     brenton["PSA"] = psalter.divided(brenton["PSA"], policy.psalter)
+    brenton = {code: lines.indented(doc) for code, doc in brenton.items()}
+    testament = lines.new_testament(
+        {code: doc for code, doc in units.items() if code in policy.kjv_units}, policy
+    )
     return MappingProxyType(
         {
-            code: brenton[code] if code in brenton else lines.opened(doc)
-            for code, doc in units.items()
+            code: brenton[code] if code in brenton else lines.opened(testament[code])
+            for code in units
         }
     )
 
@@ -1024,8 +1029,7 @@ def sample_chapters(code: str, doc: Document, wanted: Sequence[int]) -> Document
 
 def view(edition: Edition, mode: str) -> list[tuple[str, Document]]:
     """The documents a build prints, as (id, document), in order: the whole
-    edition, or the sample's chapters; with their typography and their lines
-    of verse indented."""
+    edition, or the sample's chapters; with their typography."""
     require(mode in ("pdf", "sample"), f"Unknown output mode: {mode}")
     sample = edition.policy.sample
     result: list[tuple[str, Document]] = []
@@ -1036,24 +1040,5 @@ def view(edition: Edition, mode: str) -> list[tuple[str, Document]]:
             doc = sample_chapters(code, doc, sample[code])
         if code not in edition.authored:
             doc = typography.typographic(doc)
-        result.append((code, indented(doc)))
+        result.append((code, doc))
     return result
-
-
-def indented(doc: Document) -> Document:
-    """Poetry indented: a line that opens a verse, a poem or a stanza at the
-    first level, and a line that goes on with a verse at the second. The line
-    stage uses q1; Scrivener's existing markers survive it. An acrostic
-    heading starts the following line at the first level."""
-    result: list[Node] = []
-    for block in doc["content"]:
-        first = next(iter(block.get("content", [])), None)
-        if (
-            usj.is_type(block, "para", "q1")
-            and result
-            and usj.paragraph(result[-1]) in usj.POEM
-            and not usj.is_type(first, "verse")
-        ):
-            block = {**block, "marker": "q2"}
-        result.append(block)
-    return usj.with_blocks(doc, result)
