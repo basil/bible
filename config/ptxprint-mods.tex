@@ -3,6 +3,30 @@
 % native XeTeX output switch records ActualText without changing shaped text.
 \XeTeXgenerateactualtext=1
 
+% Prose indents by .125 IndentUnit. Set that to 3 en (1.5 em) of the
+% 12-unit body, scaling with layout.ini's fontfactor. Poetry and the other
+% stylesheet indents keep their multiples of this shared unit.
+\IndentUnit=144\FontSizeUnit
+
+% A table's first column keeps its natural width, so that a narrow label
+% column sits beside its definitions: PTXprint fills the first gap only
+% when this is undefined, and its native cell padding still separates them.
+\expandafter\def\csname tc1:fill\endcsname{\hskip0pt}
+
+% Include punctuation and an ordinary word space in the in-note label,
+% without changing the caller printed in the text.
+\sethook{end}{znotelabel}{.\space}
+
+% Keep sd2 semantic in USJ, but draw a compact rule in print. It stays a
+% native section paragraph, so it closes the line before it, keeps with the
+% text after it, and is padded to whole lines of the grid. Its paragraph is
+% empty, so it never starts and only its before hook runs: that precedes
+% the space before the paragraph, so repeat the space above the rule. The
+% rule is a quarter of the measure; a rule of given width keeps the side
+% skips of the line before it, so centre it on the column.
+\sethook{before}{sd2}{\vskip\headingmidspace
+  {\leftskip=0pt \rightskip=0pt \zrule|cat="VectorianRule89" width=".25"\*}}
+
 \input ../../../shared/ptxprint/Bible/running-heads.tex
 
 % Pages without verses use separate header slots. Freeze a peripheral's
@@ -138,21 +162,24 @@
 \gdef\BibleStartNote#1{%
   \BibleMarginNotetrue
   % A note with a caller is set below the text, not in the margin. Its
-  % caller takes its actual width, followed by a small gap. Set this here:
+  % caller takes its actual width, including its period and word space.
+  % Set this here:
   % PTXprint's size setup resets the minimum caller width.
   \ifx\them@rk\empty\else
     \BibleMarginNotefalse
     \NoteCallerWidth=0pt
-    \NoteCallerSpace=1pt
+    \NoteCallerSpace=0pt
   \fi
   \ifx\ch@pter\empty\BibleMarginNotefalse\fi
   \ifx\ch@pter\z@ro\BibleMarginNotefalse\fi
   % Peripheral scripture references keep their callers to identify the
-  % quoted words, but use the same margin as scripture's references.
+  % quoted words, but use the same margin as scripture's references. Their
+  % callers stay superior, a small gap before the reference.
   \ifinperiph
     \def\BibleNoteKind{#1}%
     \ifx\BibleNoteKind\BibleCrossReference
       \BibleMarginNotetrue
+      \NoteCallerSpace=1pt
     \fi
   \fi
   \ifBibleMarginNote

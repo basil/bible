@@ -39,16 +39,21 @@
 \Superscript -
 \Raise 0pt
 
-% Restore usfm_sb.sty's poetry geometry: relative to the ordinary prose
-% indent (.125 unit), level-1 and level-2 poetic lines open at 2X and 3X;
-% both wrap at 6X. Keep PTXprint's alignment and spacing.
+% Set poetry relative to the 3 en prose indent X (.125 IndentUnit, sized in
+% mods.tex): level-1 and level-2 poetic lines open at 2X and 3X, as in
+% usfm_sb.sty, and both wrap at 5X, not its 6X. Keep alignment and spacing.
 \Marker q1
-\LeftMargin 0.75
-\FirstLineIndent -0.5
+\LeftMargin 0.625
+\FirstLineIndent -0.375
 
 \Marker q2
-\LeftMargin 0.75
-\FirstLineIndent -0.375
+\LeftMargin 0.625
+\FirstLineIndent -0.25
+
+% List entries open flush left and wrap at the shared 3 en prose indent.
+\Marker li1
+\LeftMargin 0.125
+\FirstLineIndent -0.125
 
 % Set added words in ordinary roman type, as the introduction
 % (content/introduction.sfm) describes, not
@@ -83,7 +88,7 @@
 \Italic -
 
 % Match note origin numbers to the body verse figures: OLEBFont's designed
-% superscripts at the same nominal 9 pt (12 stylesheet units). FontSize
+% superscripts at the same nominal body size (12 stylesheet units). FontSize
 % clears the inherited note-relative FontScale; disable extra scaling and
 % raising so the glyphs keep their designed size and position. Keep them roman.
 \Marker fr
@@ -107,11 +112,17 @@
 \Marker f
 \Justification Left
 \SpaceBeside 0
+\NoteCallerStyle znotelabel
 
 % Match cross references to the footnotes sharing the inner-margin column.
 \Marker x
 \Justification Left
 \SpaceBeside 0
+
+% The label inside a note uses its text size and baseline; the caller in
+% scripture still uses v and its designed superior figures.
+\Marker znotelabel
+\StyleType Character
 
 % The verses a note of Brenton's Appendix supplies carry their numbers as the
 % text carries a supplied passage's.
@@ -159,6 +170,12 @@
 \Justification Center
 \SpaceBefore 4
 
+% A stasis is a compact rule (ptxprint-mods.tex), with this space on either
+% side of it.
+\Marker sd2
+\SpaceBefore 6
+\SpaceAfter 0
+
 % Every sidebar is a colophon, which spans the text's full width. PTXprint
 % sizes a sidebar at \esb, with its default 1 pt padding at either side,
 % before \cat names the category, and measures it again from that narrower
@@ -178,7 +195,7 @@
 
 % A testament's divider sets its title flush left without space about it,
 % and the lines beneath it flush left: its translation's title page, then
-% the edition's own.
+% the edition's own, in the regular weight.
 \Marker periph:x-old-testament|mt1
 \Justification Left
 \SpaceBefore 0
@@ -189,6 +206,7 @@
 
 \Marker periph:x-old-testament|mt3
 \Justification Left
+\Bold -
 
 \Marker periph:x-new-testament|mt1
 \Justification Left
@@ -200,6 +218,7 @@
 
 \Marker periph:x-new-testament|mt3
 \Justification Left
+\Bold -
 
 % The contents set a testament's row in small capitals.
 \Marker ztocpart
@@ -220,8 +239,3 @@
 
 \Marker periph:contents|mt1
 \Justification Left
-
-% List entries open flush left and wrap at the ordinary prose indent.
-\Marker li1
-\LeftMargin 0.125
-\FirstLineIndent -0.125

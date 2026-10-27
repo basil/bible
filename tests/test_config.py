@@ -149,7 +149,7 @@ def test_style_mods_override_only_non_default_fields() -> None:
         for field, value in fields.items()
         if field != "marker" and field in base.get(marker, {})
         # An explicit FontSize clears an inherited FontScale in PTXprint.
-        # Note origins need that reset to stay 9 pt inside smaller notes,
+        # Note origins need that reset to stay at the body size inside notes,
         # even when the numeric FontSize equals the underlying declaration.
         and not (field == "fontsize" and "fontscale" in base.get(marker, {}))
         and style_value(value) == style_value(base[marker][field])
@@ -227,7 +227,7 @@ def test_note_callers_follow_context_and_restart_without_margin_notes(
     (work / "front.usfm").write_text(
         r"""\id FRT
 \periph Preface|id="preface"
-\p Alpha\f + \ft First front note.\f* and beta\f + \ft Second front note.\f*.
+\p Alpha\f + \ft First front note. A longer explanation repeats its words to make this footnote wrap onto another line, where it must return to the left edge of the text.\f* and beta\f + \ft Second front note.\f*.
 \p More word\f + \ft Front note 3.\f* word\f + \ft Front note 4.\f* word\f + \ft Front note 5.\f* word\f + \ft Front note 6.\f* word\f + \ft Front note 7.\f* word\f + \ft Front note 8.\f* word\f + \ft Front note 9.\f* word\f + \ft Front note 10.\f*.
 \p Quotation\x + \xt Gen. 1:1\x*.
 """,
@@ -279,7 +279,7 @@ def test_note_callers_follow_context_and_restart_without_margin_notes(
 \nolotwritetrue
 \catcode`\@=11
 \def\ReportNote#1{%
-  \immediate\write16{NOTE #1 [\them@rk] WIDTH \the\NoteCallerWidth\space GAP \the\NoteCallerSpace}%
+  \immediate\write16{NOTE #1 [\them@rk] WIDTH \the\NoteCallerWidth\space GAP \the\NoteCallerSpace\space LEFT \the\leftskip}%
 }
 \sethook{start}{f}{\ReportNote{f}}
 \sethook{start}{x}{\ReportNote{x}}
@@ -320,9 +320,11 @@ def test_note_callers_follow_context_and_restart_without_margin_notes(
         ("x", "1"),
         ("f", "a"),
     ], result.stdout
-    for _, caller, width, gap in notes:
+    for kind, caller, width, gap in notes:
         if caller:
-            assert (float(width), float(gap)) == (0, 1)
+            # A bottom note's label carries its own word space; the front
+            # matter's margin reference keeps a superior caller and its gap.
+            assert (float(width), float(gap)) == (0, 1 if kind == "x" else 0)
         else:
             # Bottom-note spacing is local; margin notes keep their defaults.
             assert float(width) > 0
@@ -333,6 +335,37 @@ def test_note_callers_follow_context_and_restart_without_margin_notes(
     # not overwrite its predecessor's page. This also checks the image patch.
     assert [int(number) for number, _ in page_records] == list(range(1, 25))
     assert int(page_records[12][1]) > int(page_records[11][1]) + 1
+    left_skips = re.findall(r"NOTE f \[1\].* LEFT (-?[\d.]+)pt", result.stdout)
+    assert left_skips and all(float(left) == 0 for left in left_skips)
+
+    # In-note labels take the note's baseline and a period, while the
+    # caller in the text remains superior. Check both numbers and letters.
+    lines = layout(work, "callers").findall(".//x:line", NS)
+
+    def opening(*texts: str) -> int:
+        return next(
+            index
+            for index, line in enumerate(lines)
+            if [w.text for w in line][: len(texts)] == list(texts)
+        )
+
+    for label, first, second in (
+        ("1.", "First", "front"),
+        ("a.", "First", "scripture"),
+    ):
+        words = list(lines[opening(label, first, second)])
+        assert (
+            abs(float(words[0].attrib["yMax"]) - float(words[1].attrib["yMax"])) < 0.1
+        )
+        assert float(words[1].attrib["xMin"]) - float(words[0].attrib["xMax"]) > 1
+    first_line = opening("1.", "First", "front")
+    assert (
+        abs(
+            float(lines[first_line][0].attrib["xMin"])
+            - float(lines[first_line + 1][0].attrib["xMin"])
+        )
+        < 0.1
+    )
 
 
 NS = {"x": "http://www.w3.org/1999/xhtml"}
@@ -364,7 +397,6 @@ def typeset_lines(
 \FontSizeUnit=.75pt
 \def\LineSpaceBase{12}
 \def\LineSpacingFactor{1.222222}
-\IndentUnit=.8in
 \stylesheet{usfm_sb.sty}
 \stylesheet{ptx2pdf.sty}
 \stylesheet{../../../shared/ptxprint/Bible/baseline.sty}
@@ -500,6 +532,61 @@ def test_opening_pages_and_margin_contents(tmp_path: Path) -> None:
     assert texts[14] == ["The", "New", "Testament"]
 
 
+@pytest.mark.parametrize("label", ["Longlabel", "Longerlabel"])
+def test_narrow_table_labels_keep_their_natural_width(
+    tmp_path: Path, label: str
+) -> None:
+    work = ptxprint_project(tmp_path)
+    (work / "labels.usfm").write_text(
+        "\\id TST\n\\p Before.\n\\b\n"
+        "\\tr\\tc1 Short\\tc2 Meaning\n"
+        f"\\tr\\tc1 {label}\\tc2 Description\n\\b\n\\p After.\n",
+        encoding="utf-8",
+    )
+    words = [word for line in typeset_lines(work, "labels") for word in line]
+    longest = next(w for w in words if w.text == label)
+    meaning = next(w for w in words if w.text == "Meaning")
+    gap = float(meaning.attrib["xMin"]) - float(longest.attrib["xMax"])
+    # Native .1 IndentUnit padding, without stretching the intercolumn gap.
+    assert abs(gap * 72.27 / 72 - 0.1 * 144 * 0.75) < 0.02
+
+
+def test_stasis_draws_a_compact_ornamental_rule(tmp_path: Path) -> None:
+    work = ptxprint_project(tmp_path)
+    (work / "stasis.usfm").write_text(
+        "\\id PSA\n\\c 3\n\\p\\v 1 Preliminary prose.\n"
+        "\\q2 Beforestasis ends here.\n\\sd2\n"
+        "\\c 4\n\\d A Psalm.\n\\p\\v 1 Afterstasis begins here.\n",
+        encoding="utf-8",
+    )
+    words = [word for line in typeset_lines(work, "stasis") for word in line]
+    before = next(w for w in words if w.text == "Beforestasis")
+    after = next(w for w in words if w.text == "Afterstasis")
+    gap = float(after.attrib["yMin"]) - float(before.attrib["yMin"])
+    assert 11 < gap < 66
+    # As a native heading, it is padded to whole lines of the grid.
+    prose = next(w for w in words if w.text == "Preliminary")
+    line = float(before.attrib["yMin"]) - float(prose.attrib["yMin"])
+    assert abs(gap / line - round(gap / line)) < 0.01
+    # The rule is the Vectorian ornament, not PTXprint's plain fallback,
+    # which would also draw a path.
+    log = (work / "stasis.log").read_text(encoding="utf-8", errors="replace")
+    assert "vectorian89.pgf" in log
+    assert "unrecognised rule style" not in log
+    svg = work / "stasis.svg"
+    subprocess.run(
+        ["pdftocairo", "-svg", str(work / "stasis.pdf"), str(svg)], check=True
+    )
+    # Exclude font outlines in defs; the page itself must contain drawn paths.
+    drawing = ET.parse(svg)
+    assert any(
+        child.tag == "{http://www.w3.org/2000/svg}path"
+        or child.findall(".//{http://www.w3.org/2000/svg}path")
+        for child in drawing.getroot()
+        if child.tag != "{http://www.w3.org/2000/svg}defs"
+    )
+
+
 def test_urls_keep_both_slashes_in_print(tmp_path: Path) -> None:
     work = ptxprint_project(tmp_path)
     (work / "urls.usfm").write_text(
@@ -628,6 +715,12 @@ def test_poetry_indents_and_line_opening_verse_numbers(
 \b
 \p Afterpoetry resumes the ordinary prose paragraph indent.
 \p Prosebefore \v 43 Proseafter keeps an inline number outside poetry.
+\m Unindented resumes prose at the margin.
+\b
+\li1 \it Listkey\it* Listdescription """
+        + "echo " * 40
+        + r"""Listtail.
+\b
 \c 3
 \qa \v 1 ALEPH
 \q1 Chapteracrostic suppresses verse one beside the chapter figure.
@@ -654,8 +747,15 @@ def test_poetry_indents_and_line_opening_verse_numbers(
     def right(text: str) -> float:
         return edge(word(text), "xMax")
 
-    x = 0.125 * 0.8 * 72.27
+    # The prose indent is 3 en of the 12-unit body at .75 pt per unit.
+    x = 1.5 * 12 * 0.75
     margin = left("Afterpoetry") - x
+    assert abs(left("Unindented") - margin) < 0.15
+    assert abs(left("Listkey") - margin) < 0.15
+    list_index = next(i for i, line in enumerate(lines) if word("Listkey") in line)
+    list_continuation = lines[list_index + 1][0]
+    assert list_continuation.text == "echo"
+    assert abs(edge(list_continuation) - margin - x) < 0.15
     prose_gap = left("Proseafter") - right("43")
     assert abs(prose_gap - after_verse_space_factor * 0.75) < 0.02
     # Each level keeps its text position; variable-width labels share a
@@ -679,7 +779,7 @@ def test_poetry_indents_and_line_opening_verse_numbers(
         index = next(i for i, line in enumerate(lines) if word(start) in line)
         continuation = lines[index + 1][0]
         assert continuation.text == "echo"
-        assert abs(edge(continuation) - margin - 6 * x) < 0.15
+        assert abs(edge(continuation) - margin - 5 * x) < 0.15
     for before, label, after in (
         ("Beforeone", "38", "Afterone"),
         ("Beforetwo", "39", "Aftertwo"),

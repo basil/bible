@@ -1,20 +1,19 @@
 {
-  "why": "Every note stands in the inside margin beside its verse. PTXprint moves crowded notes up and down within their page but cannot carry them to the next, so where a page's notes overrun its margin, the tallest of them are set below the text, as footnotes with callers, each keyed by the note, with the passage it relieves. The placements are made for the published typeface, Valkyrie, and tolerated in the Utopia fallback, where the check that every note stands in its margin passes too.",
+  "why": "Every note stands in the inside margin beside its verse. PTXprint moves crowded notes up and down within their page but cannot carry them to the next, so where a page's notes overrun its margin, the tallest of them are set below the text, as footnotes with callers, each keyed by the note, with the passage it relieves. The placements are made for the published typeface, Valkyrie, and measured in the unfilled proof: each reason gives a note's height and its page's overrun in lines of notes, with the notes the page sets below left in the margin. Filling moves text between pages, and the check that every note stands in its margin is made on the filled book too.",
   "below": {
-    "REV 5:6#1 TR": "The tallest note where Revelation 5:5 to 6:9 overruns the margin of its page by some nineteen lines.",
-    "REV 5:13#3 TR#2": "The third tallest note where Revelation 5:5 to 6:9 overruns the margin of its page.",
-    "REV 5:14#4 TR": "A three-line note where Revelation 5:4 to 6:14 overruns its margin by about two lines with the 26.3 mm bottom margin; set below the text to keep every note within the page, beside or below its verse.",
-    "REV 6:6 A measure": "The second tallest note where Revelation 5:5 to 6:9 overruns the margin of its page.",
-    "REV 13:10#1 TR": "The third tallest note where Revelation 12:17 to 14:6 overruns the margin of its page.",
-    "REV 13:13#1 TR": "The tallest note where Revelation 12:17 to 14:6 overruns the margin of its page by some seventeen lines.",
-    "REV 13:14#3 TR": "The second tallest note where Revelation 12:17 to 14:6 overruns the margin of its page.",
-    "REV 14:8#1 TR#2": "The tallest note, of some eleven lines, where Revelation 13:1 to 14:8 overruns the margin of its page by some seven lines, set in Valkyrie.",
-    "1KI 14:1-20@6": "The long note explaining Alexandrinus’s unresolved each and with at 3 Kingdoms 14:8; set this explanation below the text beside its verse to relieve the crowded margin.",
-    "1KI 14:1-20@12": "The long note explaining the gathering-away clause at 3 Kingdoms 14:10; set it below the text with the note on 14:8 to relieve the crowded margin without carrying notes away from their verses.",
-    "1KI 14:1": "The passage’s source and adaptation notice; the completed Alexandrine apparatus of 3 Kingdoms 14:1–20 exceeds a full margin even after the explanations at 14:8 and 14:10 are set below. Keep these long notes below the text on the page with their verses, leaving the shorter readings in the margin.",
-    "1KI 14:1-20@2": "The long alternative gift list at 14:3; the completed Alexandrine apparatus of 3 Kingdoms 14:1–20 exceeds a full margin even after the explanations at 14:8 and 14:10 are set below. Keep these long notes below the text on the page with their verses, leaving the shorter readings in the margin.",
-    "1KI 14:1-20@4": "The alternative prediction and narrative at 14:5; the completed Alexandrine apparatus of 3 Kingdoms 14:1–20 exceeds a full margin even after the explanations at 14:8 and 14:10 are set below. Keep these long notes below the text on the page with their verses, leaving the shorter readings in the margin.",
-    "1KI 14:1-20@24": "The complete alternative construction at 3 Kingdoms 14:17 has a long lemma as well as its KJV reading. The sample’s page 59 overruns its margin at 14:15; set this long note below its verse to keep the remaining notes from overlapping.",
-    "1KI 14:1-20@omission1": "The complete Vatican passage 12:24a–z omitted after Alexandrinus, preserved as a long footnote on 12:24; it exceeds the verse’s margin and must continue at the foot of following pages."
+    "1KI 5:14a@omission1": "The two Vatican verses 5:14a–b, omitted after Alexandrinus, make a note of twenty-eight lines, by far the tallest where 3 Kingdoms 5:14 to 6:1 overruns its margin by some thirteen lines; set below the text beside its verse, it leaves the shorter readings in the margin.",
+    "1KI 14:1-20@omission1": "The complete Vatican passage 12:24a–z omitted after Alexandrinus, preserved as a long footnote on 12:24; it exceeds the verse’s margin and must continue at the foot of following pages.",
+    "1KI 14:1-20@6": "The explanation of Alexandrinus’s unresolved each and with at 3 Kingdoms 14:8, of seventeen lines, one of the two tallest notes where 14:8 to 14:26 overruns its margin by some forty lines.",
+    "1KI 14:1-20@12": "The explanation of the gathering-away clause at 3 Kingdoms 14:10, of seventeen lines, the other of the two tallest notes where 14:8 to 14:26 overruns its margin by some forty lines.",
+    "1KI 14:1-20@24": "The complete alternative construction at 3 Kingdoms 14:17, of nine lines, the next tallest where 14:8 to 14:26 overruns its margin; with the explanations at 14:8 and 14:10 alone below, the page is still some six lines over.",
+    "REV 5:5#2 TR": "A note of four lines, set below with the tallest where Revelation 3:20 to 5:8 overruns its margin by some eleven lines, which together relieve it.",
+    "REV 5:6#1 TR": "The tallest note, of eight lines, where Revelation 3:20 to 5:8 overruns its margin by some eleven lines.",
+    "REV 5:13#3 TR#2": "The second tallest note, of six lines, where Revelation 5:10 to 6:15 overruns its margin by some twenty-two lines.",
+    "REV 5:14#4 TR": "A note of four lines, set below with the two taller where Revelation 5:10 to 6:15 overruns its margin by some twenty-two lines; the three footnotes move the page's last verses and their notes to the next.",
+    "REV 6:6 A measure": "The tallest note, of seven lines, where Revelation 5:10 to 6:15 overruns its margin by some twenty-two lines.",
+    "REV 11:14#1 TR": "A note of five lines where Revelation 10:9 to 11:18 overruns its margin by some three lines.",
+    "REV 13:13#1 TR": "The second tallest note, of eight lines, where Revelation 13:12 to 14:13 overruns its margin by some twenty-four lines.",
+    "REV 13:14#3 TR": "The third tallest note, of six lines, where Revelation 13:12 to 14:13 overruns its margin by some twenty-four lines.",
+    "REV 14:8#1 TR#2": "The tallest note, of thirteen lines, where Revelation 13:12 to 14:13 overruns its margin by some twenty-four lines."
   }
 }
