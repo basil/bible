@@ -386,10 +386,8 @@ def typeset_lines(
     """Typeset <name>.usfm in one column with the production customizations,
     and return the words of each line as Poppler finds them."""
     (work / f"{name}.tex").write_text(
-        r"""\def\pluginlist{ornaments}
-\input paratext2.tex
+        r"""\input paratext2.tex
 \input ptx-ptxprint.tex
-\stylesheet{standardborders.sty}
 \def\regular{"OLEBFont:+onum=1:+pnum=1"}
 \def\bold{"OLEBFont/B:+onum=1:+pnum=1"}
 \def\italic{"OLEBFont/I:+onum=1:+pnum=1"}
@@ -489,7 +487,7 @@ def test_opening_pages_and_margin_contents(tmp_path: Path) -> None:
             "www.oleb.bible",
             "Compiled",
             "Copyright",
-            "under",
+            "Under",
             "[God",
             "Printed",
         )
@@ -562,7 +560,7 @@ def test_narrow_table_labels_keep_their_natural_width(
     assert abs(gap * 72.27 / 72 - 0.1 * 144 * 0.75) < 0.02
 
 
-def test_stasis_draws_a_compact_ornamental_rule(tmp_path: Path) -> None:
+def test_stasis_prints_a_centered_dinkus(tmp_path: Path) -> None:
     work = ptxprint_project(tmp_path)
     (work / "stasis.usfm").write_text(
         "\\id PSA\n\\c 3\n\\p\\v 1 Preliminary prose.\n"
@@ -579,23 +577,25 @@ def test_stasis_draws_a_compact_ornamental_rule(tmp_path: Path) -> None:
     prose = next(w for w in words if w.text == "Preliminary")
     line = float(before.attrib["yMin"]) - float(prose.attrib["yMin"])
     assert abs(gap / line - round(gap / line)) < 0.01
-    # The rule is the Vectorian ornament, not PTXprint's plain fallback,
-    # which would also draw a path.
-    log = (work / "stasis.log").read_text(encoding="utf-8", errors="replace")
-    assert "vectorian89.pgf" in log
-    assert "unrecognised rule style" not in log
-    svg = work / "stasis.svg"
-    subprocess.run(
-        ["pdftocairo", "-svg", str(work / "stasis.pdf"), str(svg)], check=True
+    stars = [w for w in words if w.text and set(w.text) == {"*"}]
+    assert "".join(w.text or "" for w in stars) == "***"
+    # It stands above the next psalm's title, centered on the column as the
+    # title is.
+    title = [
+        next(w for w in words if w.text == "A"),
+        next(w for w in words if w.text == "Psalm."),
+    ]
+    assert all(
+        float(before.attrib["yMin"])
+        < float(w.attrib["yMin"])
+        < float(title[0].attrib["yMin"])
+        for w in stars
     )
-    # Exclude font outlines in defs; the page itself must contain drawn paths.
-    drawing = ET.parse(svg)
-    assert any(
-        child.tag == "{http://www.w3.org/2000/svg}path"
-        or child.findall(".//{http://www.w3.org/2000/svg}path")
-        for child in drawing.getroot()
-        if child.tag != "{http://www.w3.org/2000/svg}defs"
-    )
+
+    def center(span: list[ET.Element]) -> float:
+        return (float(span[0].attrib["xMin"]) + float(span[-1].attrib["xMax"])) / 2
+
+    assert abs(center(stars) - center(title)) < 0.5
 
 
 def test_urls_keep_both_slashes_in_print(tmp_path: Path) -> None:

@@ -76,6 +76,24 @@ def test_exported_roles_are_consistent_across_the_edition(
             for at, block in enumerate(blocks):
                 if usj.is_type(block, "para", "b"):
                     assert 0 < at < len(blocks) - 1, code
+                    # A testament's title page sets its translation credit
+                    # apart from the title and the editorial credit.
+                    if code in {"XXF", "XXG"}:
+                        if usj.is_type(blocks[at - 1], "para", "b"):
+                            continue
+                        following = next(
+                            (
+                                b
+                                for b in blocks[at + 1 :]
+                                if not usj.is_type(b, "para", "b")
+                            ),
+                            None,
+                        )
+                        assert (
+                            usj.paragraph(blocks[at - 1]),
+                            usj.paragraph(following),
+                        ) in {("mt1", "mt2"), ("mt2", "mt3")}, code
+                        continue
                     # A blank line also sets a table or a list apart from
                     # the prose.
                     if export.set_apart(blocks[at - 1]):

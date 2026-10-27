@@ -186,10 +186,10 @@ def test_web(edition: pipeline.Edition, tmp_path: Path) -> None:
     assert not any(
         n["type"] in {"chapter", "verse"} for n in usj.walk(prologue["content"])
     )
-    # The stasis rule set before Psalm 4 opens it, not the close of Psalm 3.
+    # The stasis set before Psalm 4 opens it, not the close of Psalm 3.
     psalms = tmp_path / "books" / "PSA"
-    rule, chapter = files.read_json(psalms / "4.json")["content"][1:3]
-    assert (rule.get("marker"), chapter["type"]) == ("sd2", "chapter")
+    stasis, chapter = files.read_json(psalms / "4.json")["content"][1:3]
+    assert (stasis.get("marker"), chapter["type"]) == ("sd2", "chapter")
     assert all(
         b.get("marker") != "sd2" for b in files.read_json(psalms / "3.json")["content"]
     )

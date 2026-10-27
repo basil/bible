@@ -59,7 +59,6 @@ const CHAR_TAGS: Record<string, string> = {
   add: "span",
   sc: "span",
   it: "i",
-  lik: "i",
   bd: "b",
   fv: "span",
   vp: "span",
@@ -128,6 +127,11 @@ const PARAGRAPH_TAGS: Record<string, string> = {
   is2: "h3",
 };
 const LIST_ITEMS = new Set(["li1"]);
+// A list entry that opens with its key.
+const isKeyed = (n: Node) => {
+  const first = n.content?.[0];
+  return typeof first !== "string" && first?.marker === "lik";
+};
 // The blocks in the runs they render in: list entries together, and every
 // other block alone.
 function runs(nodes: Node[]) {
@@ -285,11 +289,31 @@ function renderer(titleAnchor = "") {
       ? headed(tag, id, html, title, marker)
       : `<${tag} class="${marker}">${html}</${tag}>`;
   }
-  // One of the runs: a list, or a block alone.
-  const run = (nodes: Node[]) =>
-    LIST_ITEMS.has(nodes[0]!.marker!)
-      ? `<ul>${nodes.map(block).join("\n")}</ul>`
-      : block(nodes[0]!);
+  // A list entry opened by its key: the key as the term and the rest as its
+  // description, without the word space between them.
+  function described(n: Node) {
+    const [key, ...rest] = n.content as Node[];
+    const html = (items: (string | Node)[]) =>
+      items
+        .map((c) => inline(c))
+        .join("")
+        .trim();
+    return `<dt class="lik">${html(key!.content || [])}</dt><dd class="${n.marker}">${html(rest)}</dd>`;
+  }
+  // One of the runs: a list of terms if its entries open with keys, a list
+  // if none does, or a block alone.
+  function run(nodes: Node[]) {
+    if (!LIST_ITEMS.has(nodes[0]!.marker!)) {
+      return block(nodes[0]!);
+    }
+    const keyed = nodes.filter(isKeyed).length;
+    if (keyed && keyed !== nodes.length) {
+      throw new Error("List with keyed and unkeyed entries");
+    }
+    return keyed
+      ? `<dl>${nodes.map(described).join("\n")}</dl>`
+      : `<ul>${nodes.map(block).join("\n")}</ul>`;
+  }
   const blocks = (nodes: Node[]) => runs(nodes).map(run).join("\n");
   // The notes list, once every block that calls one has been rendered: one
   // list, under one anchor, however often the page asks for it.

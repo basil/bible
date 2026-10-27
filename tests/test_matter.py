@@ -720,10 +720,10 @@ def test_brentons_introduction_includes_the_1851_continuation(
     assert "\\it intentionally\\it*" in introduction
     # The early translations are the entries of a list, each with the
     # source's run-in name.
-    assert introduction.index("\\li1 \\lik The Old Latin: \\lik*") < introduction.index(
-        "\\li1 \\lik The Gothic: \\lik*"
+    assert introduction.index("\\li1 \\lik The Old Latin \\lik*") < introduction.index(
+        "\\li1 \\lik The Gothic \\lik*"
     )
-    assert introduction.index("\\li1 \\lik The Gothic: \\lik*") < introduction.index(
+    assert introduction.index("\\li1 \\lik The Gothic \\lik*") < introduction.index(
         "Cardinal Caraffa"
     )
     assert introduction.index("Cardinal Caraffa") < introduction.index("Tischendorf")

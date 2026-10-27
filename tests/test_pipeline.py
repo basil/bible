@@ -1617,7 +1617,7 @@ def test_the_sample_prints_selected_chapters_as_the_full_edition_has_them(
     sample = dict(pipeline.view(edition, "sample"))
     assert set(sample) == set(full) - (edition.scripture - set(policy.sample))
 
-    # Stasis rules and kathisma headings belong to the next chapter; assembly
+    # Stases and kathisma headings belong to the next chapter; assembly
     # groups them with the preceding one. Their selection is checked in
     # test_psalter.
     def without_divisions(doc: Document) -> Document:

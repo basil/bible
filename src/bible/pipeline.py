@@ -994,7 +994,7 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
 
 def headed_chapters(doc: Document) -> tuple[list[Node], list[list[Node]]]:
     """A book's header and each chapter's blocks, a heading set just before a
-    chapter (Susanna, Bel and the Dragon, a stasis rule, a kathisma) opening
+    chapter (Susanna, Bel and the Dragon, a stasis, a kathisma) opening
     that chapter."""
     header, chapters = assembly.chapters_of(doc)
     parts = [list(header), *(list(chapter) for chapter in chapters)]

@@ -169,8 +169,8 @@ describe("chapter renderer", () => {
         .getAttribute("aria-hidden"),
     ).toBe("true");
   });
-  test("renders a division as a horizontal rule", () => {
-    expect(dom(chapter(para("sd2"))).querySelector("hr")).not.toBeNull();
+  test("renders a division as a thematic break", () => {
+    expect(dom(chapter(para("sd2"))).querySelector("hr.sd2")).not.toBeNull();
   });
   test("keeps a source colophon separate from scripture", () => {
     const fragment = dom(
@@ -703,10 +703,31 @@ test("acrostic headings stand alone with their verse number on the next line", (
   expect(JSON.stringify(doc)).toBe(before);
 });
 
-test("list keys retain their role and punctuation", () => {
+test("keyed list entries are terms and their descriptions", () => {
   const fragment = JSDOM.fragment(
-    renderProse([para("li1", char("lik", "Label:"), " Description.")]),
+    renderProse([
+      para("li1", char("lik", "Label."), " Description."),
+      para("li1", char("lik", "Other "), "Its description."),
+    ]),
   );
-  expect(fragment.querySelector("li > i.lik")?.textContent).toBe("Label:");
-  expect(fragment.querySelector("li")?.textContent).toBe("Label: Description.");
+  expect(
+    [...fragment.querySelectorAll("dl > *")].map(
+      (e) => `${e.tagName.toLowerCase()}.${e.className}:${e.textContent}`,
+    ),
+  ).toEqual([
+    "dt.lik:Label.",
+    "dd.li1:Description.",
+    "dt.lik:Other",
+    "dd.li1:Its description.",
+  ]);
+  expect(fragment.querySelector("ul")).toBeNull();
+});
+
+test("refuses a list mixing keyed and unkeyed entries", () => {
+  expect(() =>
+    renderProse([
+      para("li1", char("lik", "Label"), "Description."),
+      para("li1", "Unkeyed entry."),
+    ]),
+  ).toThrow("List with keyed and unkeyed entries");
 });

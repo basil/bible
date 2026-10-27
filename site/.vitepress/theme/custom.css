@@ -131,6 +131,24 @@
   height: 0.8em;
 }
 
+/* A stasis is a centered dinkus, as in print: three asterisks half an em
+   apart, the last one's spacing taken back so that they stand centered.
+   The rule takes the height of its asterisks, which VitePress's zero
+   height and the browser's hidden overflow for hr would otherwise clip. */
+.scripture hr.sd2 {
+  height: auto;
+  overflow: visible;
+  border: none;
+  margin: 1em 0;
+  text-align: center;
+}
+
+.scripture hr.sd2::after {
+  content: "***";
+  letter-spacing: 0.5em;
+  margin-right: -0.5em;
+}
+
 /* The variants: a table striped by verse rather than by row, since each
    verse's rows (its Greek and, where the English changes, its English)
    belong together; the readings tinted where the witnesses differ. */
@@ -172,6 +190,20 @@
 .variants .ins {
   color: var(--reading-new);
   background: var(--reading-new-soft);
+}
+
+/* A list of keys and their descriptions, each key in italics, as in print,
+   above its description. */
+.scripture dl {
+  margin: 1rem 0;
+}
+
+.scripture dt.lik {
+  font-style: italic;
+}
+
+.scripture dd {
+  margin: 0 0 0.5rem 1.25rem;
 }
 
 /* The lines about a unit of front matter's title stand close to it. */

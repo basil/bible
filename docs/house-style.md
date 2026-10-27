@@ -146,7 +146,7 @@ Check, in both testaments:
 - Brenton's square brackets are not printed: in a book the Hebrew has they marked Greek the Hebrew lacks, and the explanatory notes stay on those words; in a book it lacks they marked supplied English, which is marked `\add`. Exodus 5:14 and Judges 1:10 are the two other cases, handled as the `brackets` rule in `edition/revisions.json` records.
 - Direct speech receives no added quotation marks; existing quotation marks in prose are typographic; in notes italic takes their place around cited words.
 - Greek is set in GFS Heraklit with Valkyrie and in GFS Didot with Utopia; Hebrew is set in Ezra SIL with either. [font-normalization.md](font-normalization.md) explains the assembly.
-- Print on ISO B5 (176 × 250 mm), with a single scripture column and inside-margin notes. The published face is Valkyrie through OLEBFont, at 10 pt on a 12.37 pt baseline grid registered front and back, fitted for 48 lines within the body margins; Utopia is the fallback. Chapter figures are large and lining, set in TeX Gyre PagellaX with Valkyrie and in Utopia's own figures with Utopia; other figures are oldstyle, and verse figures superior; omit verse one beside the chapter figure. The outer running head gives the first reference on even pages and the last on odd pages. Add no editorial section headings or cross-reference column.
+- Print on ISO B5 (176 × 250 mm), with a single scripture column and inside-margin notes. The published face is Valkyrie through OLEBFont, at 10 pt on a 12.5 pt baseline grid registered front and back, fitted for 48 lines within the 116 × 212 mm text block; Utopia is the fallback. Chapter figures are large and lining, set in TeX Gyre PagellaX with Valkyrie and in Utopia's own figures with Utopia; other figures are oldstyle, and verse figures superior; omit verse one beside the chapter figure. The outer running head gives the first reference on even pages and the last on odd pages. Add no editorial section headings or cross-reference column.
 
 ## Lines of verse and paragraphs
 
@@ -162,7 +162,7 @@ Check, in both testaments:
 - In the Old Testament, print sets a line opening a verse, poem, or stanza at `q1` and a continuation at `q2`. Their first physical lines start at twice and three times the ordinary prose paragraph indent, respectively; wrapped continuations of either level start at five times that indent. A verse number opening a poetic line hangs as PTXprint sets it; beside a dropped chapter figure and within a poetic line, verse numbers remain inline.
 - The New Testament keeps Scrivener's paragraphs, the extent of his poetry (the Beatitudes, the canticles of Luke 1–2, and Revelation 7 and 18), and his stanza breaks. Its lines and `q1` indentation are Scrivener's except where a `new_testament` decision in `edition/lines.json` sets a verse's line divisions and `q1` or `q2` indentation, using the Berean Standard Bible as a model adapted to the King James wording. Indentation follows the clauses' relationships across verse numbers: a verse may begin at `q2`, while successive independent lines within one verse may each be `q1`. Where the Berean has prose or a different reading, the decisions retain Scrivener's poetry and the edition's words.
 - Susanna and Bel are headed by chapter labels (`\cl`), Sirach's Prologue is an introduction (`\imt1`, `\ip`), the Epistle of Jeremias's title is `\d`, the Song of the Three Children is `\s1`; the Psalter marks kathismata `\ms1`, named stases `\ms2`, other stases `\sd2`, and its middle `\lit`; the four Gospels’ and fourteen epistles’ subscriptions are colophons (`\esb`).
-- Keep the Psalter's 20 kathismata and 60 stases under Septuagint numbering, with Psalm 151 outside them. Mark ordinary stases with an ornamental rule a quarter of the text measure; in Psalm 118 name the Second and Third Stases and the Middle at verse 94. Psalm 71:20 remains a line of the psalm, not a detached colophon.
+- Keep the Psalter's 20 kathismata and 60 stases under Septuagint numbering, with Psalm 151 outside them. Mark ordinary stases with a centered dinkus of three separate asterisks, spaced half an em apart; in Psalm 118 name the Second and Third Stases and the Middle at verse 94. Psalm 71:20 remains a line of the psalm, not a detached colophon.
 
 ## Front matter
 
@@ -176,8 +176,9 @@ Check, in both testaments:
 - The introduction's book-name and quotation-gloss tables, and the separate alphabetized List of Abbreviations, are generated from the registries. The website's textual variants give both Greek readings and, where English changes, both English readings. Keep derived quotations, tables, and current reconciliation counts out of hand-maintained decisions; use the generated review to check them.
 
 List entries whose names run in use `\lik` for the key, retaining ordinary
-italics elsewhere. A colon introduces each translation’s description; punctuation changes
+italics elsewhere. Translation labels have no terminal punctuation; punctuation changes
 are decisions in `edition/revisions.json`. Print sets half an em between the key and its
-description, in place of the word space, and wraps list entries at the prose indent. The
+description, in place of the word space, and wraps list entries at the prose indent; the
+website sets keyed entries as a description list, each key above its description. The
 export sets lists and tables apart from prose with blank lines in print; the website's own
 margins set them apart there, so the pages do not write those blanks.

@@ -23,15 +23,21 @@
 % without changing the caller printed in the text.
 \sethook{end}{znotelabel}{.\space}
 
-% Keep sd2 semantic in USJ, but draw a compact rule in print. It stays a
-% native section paragraph, so it closes the line before it, keeps with the
-% text after it, and is padded to whole lines of the grid. Its paragraph is
-% empty, so it never starts and only its before hook runs: that precedes
-% the space before the paragraph, so repeat the space above the rule. The
-% rule is a quarter of the measure; a rule of given width keeps the side
-% skips of the line before it, so centre it on the column.
-\sethook{before}{sd2}{\vskip\headingmidspace
-  {\leftskip=0pt \rightskip=0pt \zrule|cat="VectorianRule89" width=".25"\*}}
+% Keep sd2 semantic in USJ, but print a centered dinkus of three asterisks.
+% It stays a native section paragraph, so it closes the line before it,
+% keeps with the text after it, and is padded to whole lines of the grid.
+% Its paragraph is empty, so it never starts and only its before hook runs,
+% in the heading block's vertical list: that precedes the space before the
+% paragraph, so repeat the space above the dinkus. Equal space still left
+% it high, 15 pt from the last line's baseline and 26 pt from the capitals
+% of the Psalm heading that every stasis precedes: PTXprint pads the block
+% to the grid above the dinkus (8.8 pt); that heading adds its own space
+% and leading below it (16.6 pt); and the asterisks stand 3.2 pt above
+% their baseline. Lower the dinkus by half the difference and take that
+% back below it, so that the block keeps its height and nothing else moves;
+% with Valkyrie it stands midway, 20.5 pt from each.
+\sethook{before}{sd2}{\vskip\dimexpr\headingmidspace+5.5pt\relax
+  \hbox to\hsize{\hfil*\kern.5em*\kern.5em*\hfil}\vskip-5.5pt}
 
 \input ../../../shared/ptxprint/Bible/running-heads.tex
 
