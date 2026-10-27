@@ -13,10 +13,10 @@ from typing import Any
 
 import pytest
 from ptxprint import page_filler
-from ptxprint.adjlist import AdjList
 
 from bible import cli, fill, fill_cache, fill_layout, paths, typeface
 from bible.checks import CheckFailed
+from bible.files import sha256
 from bible.project import SETTINGS_DIR
 
 
@@ -89,15 +89,29 @@ def test_complete_partial_empty_and_corrupt_checkpoints(project: Path) -> None:
     adj.parent.mkdir(parents=True)
     adj.write_text("REV 1.1 -1 % expand=99 p0=100+0@3\n")
     fill_cache.snapshot(cache, project, identities, {"GEN"}, {})
+    entry = cache / "REV" / f'{identities["REV"]}.json'
+    assert not entry.exists()
+    # Old incomplete entries must not restore adjustments or saved probes.
+    legacy = json.loads((cache / "GEN" / f'{identities["GEN"]}.json').read_text())
+    legacy.update(
+        book="REV",
+        key=identities["REV"],
+        complete=False,
+        adjustments=adj.read_text(),
+        checksum=sha256(adj.read_bytes()),
+    )
+    entry.parent.mkdir(parents=True)
+    entry.write_text(json.dumps(legacy))
     adj.unlink()
     restored = fill_cache.restore(cache, project, identities)
-    assert {book: entry["complete"] for book, entry in restored.items()} == {
-        "GEN": True,
-        "REV": False,
-    }
-    assert "expand=99" in adj.read_text()
+    assert set(restored) == {"GEN"}
+    assert not adj.exists()
     assert fill_cache.adjustment(project, "GEN").read_text() == ""
-    entry = cache / "REV" / f'{identities["REV"]}.json'
+    adj.write_text("REV 1.1 -1 % expand=99 p0=100+0@3\n")
+    fill_cache.snapshot(cache, project, identities, {"GEN", "REV"}, {})
+    adj.unlink()
+    assert set(fill_cache.restore(cache, project, identities)) == {"GEN", "REV"}
+    assert "expand=99" in adj.read_text()
     content = json.loads(entry.read_text())
     content["adjustments"] = "corrupt"
     entry.write_text(json.dumps(content))
@@ -105,24 +119,6 @@ def test_complete_partial_empty_and_corrupt_checkpoints(project: Path) -> None:
     entry.write_text("{truncated")
     assert fill_cache.load(cache, "REV", identities["REV"]) is None
     assert fill_cache.load(cache, "GEN", "wrong key") is None
-
-
-def test_adjustment_checkpoint_is_atomic(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    target = tmp_path / "book.adj"
-    target.write_text("previous checkpoint\n")
-    adj = AdjList(100, 95, 105, fname=str(target), gtk=None)
-    adj.liststore.append(["GEN", "1.1", 1, "-1", "", 99, "", ""])
-    adj.db.append({})
-
-    def interrupted(index: int) -> str:
-        raise InterruptedError("worker stopped during write")
-
-    monkeypatch.setattr(adj, "genline", interrupted)
-    with pytest.raises(InterruptedError):
-        adj.createAdjlist()
-    assert target.read_text() == "previous checkpoint\n"
 
 
 @pytest.mark.parametrize("failures", [[], [2]])
@@ -208,7 +204,6 @@ def test_only_publish_after_all_checks(
     report = fill.Report(
         books=1,
         reused=0,
-        resumed=0,
         completed=1,
         pending=0,
         status="typesetting",
@@ -298,10 +293,11 @@ def test_runner_checkpoints_reuses_and_stops_workers(
         def submit_fill_jobs(self, books: list[str], *args: Any, **kwargs: Any) -> None:
             for book in books:
                 target = fill_cache.adjustment(work, book)
+                assert not target.exists()  # Pending books always start fresh.
                 target.parent.mkdir(parents=True, exist_ok=True)
                 target.write_text(f"{book} 1.1 -1\n")
                 future: Future[Any] = Future()
-                if outcome == "interrupt":
+                if outcome == "interrupt" and book == "REV":
                     future.set_exception(KeyboardInterrupt())
                 else:
                     future.set_result(
@@ -310,7 +306,12 @@ def test_runner_checkpoints_reuses_and_stops_workers(
                             "worker",
                             True,
                             "finished",
-                            [2] if outcome in ("unresolved", "protected") else [],
+                            (
+                                [2]
+                                if outcome == "protected"
+                                or (outcome == "unresolved" and book == "REV")
+                                else []
+                            ),
                         )
                     )
                 self.pending_futures[future] = SimpleNamespace(books=[book])
@@ -346,13 +347,22 @@ def test_runner_checkpoints_reuses_and_stops_workers(
         checkpoint = fill_cache.load(
             paths.BUILD_DIR / "page-fill-cache", "REV", identities["REV"]
         )
-        assert checkpoint is not None and not checkpoint["complete"]
-        assert checkpoint["adjustments"].startswith("REV")
+        assert checkpoint is None
+        assert not (
+            paths.BUILD_DIR / "page-fill-cache/REV" / f'{identities["REV"]}.json'
+        ).exists()
+        assert (
+            fill_cache.load(
+                paths.BUILD_DIR / "page-fill-cache", "GEN", identities["GEN"]
+            )
+            is not None
+        )
         assert not (project / SETTINGS_DIR / "AdjLists").exists()
         outcome = "success"
-        resumed = fill.run(project, ["GEN", "REV"], 4, False)
-        assert resumed["resumed"] == 2
-        assert resumed["completed"] == 2
+        restarted = fill.run(project, ["GEN", "REV"], 4, False)
+        assert restarted["reused"] == 1
+        assert restarted["completed"] == 2
+        assert [book for book, *_ in restarted["results"]] == ["REV"]
     # The filler worked on its copy; the project typeset at the end is untouched.
     assert (
         project / SETTINGS_DIR / "ptxprint-mods.tex"

@@ -1,4 +1,4 @@
-"""Expose unresolved pages and publish whole adjustment checkpoints in PTXprint."""
+"""Run each PTXprint fill job in its own process group, and expose unresolved pages."""
 
 from pathlib import Path
 
@@ -75,19 +75,6 @@ def patch(root: Path) -> None:
         root / "page_filler.py",
         "        return retval\n",
         "        return (*retval, list(state.failures or getattr(solver, 'failed_pages', None) or []))\n",
-    )
-    # The parent snapshots these files while workers continue probing. A
-    # snapshot must see either complete version, never half a written file.
-    replace_once(
-        root / "adjlist.py",
-        '        with open(fname, "w", encoding="utf-8") as outf:\n',
-        '        with open(str(fname) + ".tmp", "w", encoding="utf-8") as outf:\n',
-    )
-    replace_once(
-        root / "adjlist.py",
-        '                    outf.write(line + "\\n")\n        self.ftime',
-        '                    outf.write(line + "\\n")\n'
-        '        os.replace(str(fname) + ".tmp", fname)\n        self.ftime',
     )
 
 

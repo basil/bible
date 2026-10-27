@@ -32,7 +32,6 @@ Result = tuple[str, str | None, bool, str, list[int]]
 class Report(TypedDict):
     books: int
     reused: int
-    resumed: int
     completed: int
     pending: int
     status: Literal["filling", "typesetting", "complete", "failed"]
@@ -98,13 +97,12 @@ def run(project: Path, books: list[str], jobs: int, fresh: bool) -> Report:
     base.mkdir()
     identities = fill_cache.keys(project, books)
     restored = fill_cache.restore(cache, project, identities)
-    completed = {book for book, entry in restored.items() if entry["complete"]}
+    completed = set(restored)
     pending = [book for book in books if book not in completed]
     results: list[Result] = []
     report = Report(
         books=len(books),
         reused=len(completed),
-        resumed=len(restored) - len(completed),
         completed=len(completed),
         pending=len(pending),
         status="filling",
@@ -135,7 +133,7 @@ def run(project: Path, books: list[str], jobs: int, fresh: bool) -> Report:
         mods.write("\n\\nolotwritetrue\n")
 
     def checkpoint(changed: Iterable[str]) -> None:
-        """Save the changed books' adjustments and the report."""
+        """Cache those of the changed books that are complete; save the report."""
         report.update(
             {"completed": len(completed), "pending": len(books) - len(completed)}
         )
@@ -165,32 +163,16 @@ def run(project: Path, books: list[str], jobs: int, fresh: bool) -> Report:
         )
         view = ptxprint_main(retview=True, viewClass=ViewModel)
         sys.argv = argv
-        view.args.restart = True
         view.savePics()
         view.saveStyles()
         view.saveAdjlists()
-        # Partial checkpoints may already be finished: upstream retains old
-        # failures after later reflow, and treats protected heading gaps as
-        # ordinary gaps. Re-typeset their saved choices before accepting them.
-        probed = [book for book in pending if book in restored]
-        for book in probed:
-            unresolved, protected = fill_layout.probe(view, book)
-            if not unresolved:
-                completed.add(book)
-                pending.remove(book)
-                report["protected_breaks"][book] = protected
-                print(
-                    f"Page filler {book}: saved layout verified; protected breaks {protected}",
-                    flush=True,
-                )
-        checkpoint(probed)
         params = BuildParams(
             prjtree=view.prjTree,
             config=view.userconfig,
             macrosdir=view.scriptsdir,
             scriptsdir=view.scriptsdir,
             args=view.args,
-            restart=True,
+            restart=False,
             pid=view.project.prjid,
             guid=view.project.guid,
             cfgid=view.cfgid,
@@ -233,7 +215,7 @@ def run(project: Path, books: list[str], jobs: int, fresh: bool) -> Report:
                 )
                 report["elapsed_seconds"] = round(elapsed)
                 report["remaining_seconds"] = round(eta) if eta is not None else None
-                checkpoint(b for b in pending if b not in completed)
+                save(report)
                 estimate = (
                     f"; about {eta/60:.0f} minutes of filling remain"
                     if eta is not None

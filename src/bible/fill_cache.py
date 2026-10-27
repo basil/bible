@@ -57,7 +57,7 @@ def load(cache: Path, book: str, key: str) -> dict[str, Any] | None:
             not isinstance(entry, dict)
             or entry.get("key") != key
             or entry.get("book") != book
-            or not isinstance(entry.get("complete"), bool)
+            or entry.get("complete") is not True
             or not isinstance(entry.get("adjustments"), str)
             or not isinstance(entry.get("protected_breaks"), list)
             or entry.get("checksum") != sha256(entry["adjustments"].encode())
@@ -90,19 +90,20 @@ def snapshot(
     completed: set[str],
     protected: dict[str, list[int]],
 ) -> None:
+    """Cache completed books only; trial adjustment files are not resumable."""
     for book, key in identities.items():
+        if book not in completed:
+            continue
         try:
             text = adjustment(project, book).read_text("utf-8")
         except FileNotFoundError:
-            if book not in completed:
-                continue
             text = ""  # A successful book may need no adjustments at all.
         write_json(
             cache / book / f"{key}.json",
             dict(
                 book=book,
                 key=key,
-                complete=book in completed,
+                complete=True,
                 adjustments=text,
                 checksum=sha256(text.encode()),
                 protected_breaks=protected.get(book, []),

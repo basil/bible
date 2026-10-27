@@ -70,7 +70,7 @@ def inspect(stem: Path) -> tuple[list[int], list[int]]:
 
 
 def probe(view: Any, book: str) -> tuple[list[int], list[int]]:
-    """Recheck an interrupted book's saved adjustments with one diagnostic pass."""
+    """Check a book's final saved adjustments with one diagnostic pass."""
     values: dict[str, Any] = {key: False for key in """
         c_inclFrontMatter c_autoToC c_frontmatter c_inclMaps c_useSectIntros
         c_makeCoverPage c_colophon c_inclBackMatter c_extradvproc
@@ -99,7 +99,7 @@ def probe(view: Any, book: str) -> tuple[list[int], list[int]]:
         job.doit(noview=True)
         job.maxRuns = 0
         job.run_xetex(job.outfname, job.pdffile)
-        require(job.res == 0, f"Cached {book} diagnostic failed")
+        require(job.res == 0, f"{book} diagnostic failed")
         return inspect(Path(job.tmpdir, job.outfname).with_suffix(""))
     finally:
         os.chdir(cwd)

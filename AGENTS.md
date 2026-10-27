@@ -32,19 +32,21 @@ avoids repeating the searches, but final typesetting and checks still run.
 
 Adjustments and saved probes live in `build/page-fill-cache/`, keyed by each
 book's generated USFM, shared layout, fonts, and pinned tools. Matching books
-are reused automatically; interrupted books resume from their last saved
-adjustments. A change confined to Revelation refills Revelation, while a
-margin or font change refills every book. Corrupt entries are recomputed.
+are reused automatically; only completed books are cached, and interrupted
+or failed books start fresh next time. A change confined to Revelation refills
+Revelation, while a margin or font change refills every book. Corrupt entries
+are recomputed.
 `make pdf FILL_ARGS=--fresh` discards the cache, and `make clean` removes it.
 
-The runner refuses concurrent filled builds, checkpoints every minute and
-after each book, and reports completed, reused, and pending books. Its rough
-remaining-time estimate starts once enough books have finished; it covers
-filling alone, not final typesetting. Logs and the machine-readable report
-are in `build/page-fill/`; complete typesetting and verification output is
-in `build/pdf/`. A failed or interrupted build preserves valid checkpoints
-and the last checked `dist/bible.pdf`. Any unresolved filler pages, failed
-convergence or failed publication checks stop publication.
+The runner refuses concurrent filled builds, caches each completed book,
+and reports progress every minute, including completed, reused, and pending
+books. Its rough remaining-time estimate starts once enough books have
+finished; it covers filling alone, not final typesetting. Logs and the
+machine-readable report are in `build/page-fill/`; complete typesetting and
+verification output is in `build/pdf/`. A failed or interrupted build
+preserves valid checkpoints and the last checked `dist/bible.pdf`. Any
+unresolved filler pages, failed convergence or failed publication checks
+stop publication.
 
 The filler checks its final page measurements rather than retaining every
 page it failed on earlier in its search. A short page is permitted when the
@@ -52,8 +54,6 @@ next page opens with a heading: TeX breaks before a heading only when it and
 the lines it keeps cannot follow the page's last line, and the filler cannot
 reflow a heading. These protected breaks are recorded by book in the cache
 and report; a gap before a verse paragraph, or inside one, still fails.
-Partial checkpoints receive a fresh diagnostic pass before they can be
-accepted as complete.
 
 The baseline grid keeps lines registered front and back on thin paper; it
 does not require every row to contain text. Paragraph protection can leave
