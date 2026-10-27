@@ -499,10 +499,24 @@ def check(policy: Policy) -> None:
                 "callers",
                 "colophons",
                 "sourced_colophons",
+                "closing_notices",
             },
             f"Prose changes {name}",
         )
         require(prose_group["why"], f"Prose changes without a why: {name}")
+        for notice in prose_group.get("closing_notices", ()):
+            label = f"Closing notice in {name}"
+            require_fields(notice, {"book", "lines"}, (), label)
+            require(notice["book"] in scriptures, f"{label}: not a printed book")
+            require(
+                isinstance(notice["lines"], tuple)
+                and bool(notice["lines"])
+                and all(
+                    isinstance(line, str) and line.strip() == line and line
+                    for line in notice["lines"]
+                ),
+                f"{label}: expected nonempty lines without surrounding space",
+            )
         for selection in prose_group.get("sourced_colophons", ()):
             code = selection.get("book")
             label = f"Sourced colophon in {name}: {code}"

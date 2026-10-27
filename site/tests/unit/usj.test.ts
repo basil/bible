@@ -189,6 +189,19 @@ describe("chapter renderer", () => {
     );
     expect(fragment.querySelectorAll(".verse")).toHaveLength(1);
   });
+  test("labels the closing notice", () => {
+    const fragment = dom(
+      chapter(para("p", { type: "verse", number: "21" }, "Amen."), {
+        type: "sidebar",
+        marker: "esb",
+        category: "closing",
+        content: [para("p", "The end of the Holy Bible")],
+      }),
+    );
+    expect(
+      fragment.querySelector("aside.closing")!.getAttribute("aria-label"),
+    ).toBe("Closing notice");
+  });
   test("omits the book", () => {
     const doc = chapter(para("p", "scripture"));
     doc.content.unshift({ type: "book", content: ["book"] });

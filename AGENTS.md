@@ -62,7 +62,7 @@ while retaining the baseline spacing. Samples and `make pdf-unfilled` skip
 filling. CI fills master builds and caches their checkpoints; pull requests
 build unfilled proofs in Utopia rather than the published Valkyrie face.
 
-The sample prints the chapters listed in `edition/sample.json`, which were picked to cover the awkward cases: Psalm 151, the additions to Esther and Daniel, the join between 2 Esdras and Nehemias, the end of Malachias, the verses of 3 Kingdoms 5–7, 12, and 14 supplied, omitted, or reordered after Codex Alexandrinus, the displaced passages of Proverbs 24 under the Hebrew's numbers, Sirach's Prologue and the Epistle of Jeremias's unnumbered title, quoted Greek and Hebrew, the verses the Byzantine text lacks or moves (Luke 17, Acts 24, Romans 14, Matthew 23, 1 John 5), Revelation 13 with its many readings, the four Gospel endings with their publication colophons, and pages crowded with notes.
+The sample prints the chapters listed in `edition/sample.json`, which were picked to cover the awkward cases: Psalm 151, the additions to Esther and Daniel, the join between 2 Esdras and Nehemias, the end of Malachias, the verses of 3 Kingdoms 5–7 and 12 supplied, omitted, or reordered after Codex Alexandrinus, the displaced passages of Proverbs 24 under the Hebrew's numbers, Sirach's Prologue and the Epistle of Jeremias's unnumbered title, quoted Greek and Hebrew, the verses the Byzantine text lacks or moves (Luke 17, Acts 24, Romans 14, Matthew 23, 1 John 5), Revelation 13 with its many readings, the four Gospel endings with their publication colophons, and pages crowded with notes.
 
 Logs and intermediate files go to `build/`, which is regenerated on every run except for the page filler's cache.
 

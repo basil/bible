@@ -1730,6 +1730,19 @@
       }
     ]
   },
+  "bible-closing-notice": {
+    "why": "Close the edition after Revelation's last verse with the editor's two-line notice and doxology, separated from Scripture and set in centered small capitals.",
+    "changes": [],
+    "closing_notices": [
+      {
+        "book": "REV",
+        "lines": [
+          "The end of the Holy Bible",
+          "And to our God be glory."
+        ]
+      }
+    ]
+  },
   "gospel-colophons": {
     "why": "Supply the four traditional Gospel publication colophons from Boyd’s Text-Critical English New Testament, whose Greek wording is also printed in his Text-Critical Greek New Testament. Print only the colophon, after the final verse and apart from Scripture, in the same form as the retained KJV epistle subscriptions. These are scribal traditions, not claims of scriptural authority.",
     "changes": [],

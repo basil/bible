@@ -497,17 +497,29 @@
   letter-spacing: normal !important;
 }
 
-/* One empty line separates a subscription from the final scripture line. */
-.scripture p:has(+ aside.colophon) {
+/*
+ * One empty line separates a subscription or the closing notice from the
+ * final scripture line.
+ */
+.scripture p:has(+ aside) {
   margin-bottom: 0;
 }
 
-.scripture aside.colophon {
+.scripture aside.colophon,
+.scripture aside.closing {
   margin: 0;
   padding-top: 1lh;
   line-height: 1.59;
 }
 
-.scripture aside.colophon > p {
+.scripture aside.colophon > p,
+.scripture aside.closing > p {
   margin: 0;
+}
+
+/* As printed: centered small capitals at the Psalm chapter labels' size. */
+.scripture aside.closing {
+  font-size: calc(14em / 12);
+  font-variant-caps: all-small-caps;
+  text-align: center;
 }

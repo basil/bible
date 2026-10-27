@@ -1226,12 +1226,29 @@ def test_all_nt_colophons_stand_without_their_pilcrow(
     )
 
 
+def test_bible_closing_notice_is_separate_from_revelations_last_verse(
+    edition: bible.pipeline.Edition,
+) -> None:
+    doc = edition.documents["REV"]
+    closing = doc["content"][-1]
+    assert closing["category"] == "closing"
+    assert [usj.text_of([p]) for p in closing["content"]] == [
+        "The end of the Holy Bible",
+        "And to our God be glory.",
+    ]
+    assert all(usj.is_type(p, "para", "p") for p in closing["content"])
+    assert bible.scripture.verses(doc) == bible.scripture.verses(
+        usj.with_blocks(doc, doc["content"][:-1])
+    )
+
+
 def test_gospel_colophons_are_sourced_and_appended_without_changing_verses(
     read: bible.pipeline.Read, declared: bible.policy.Policy
 ) -> None:
     expected = {"MAT": "eight", "MRK": "ten", "LUK": "fifteen", "JHN": "thirty-two"}
-    # Include Acts, whose closing notice the declared policy removes.
-    books = {code: read.kjv[code] for code in [*expected, "ACT"]}
+    # Include Acts, whose closing notice the declared policy removes, and
+    # Revelation, which the declared policy gives the edition's.
+    books = {code: read.kjv[code] for code in [*expected, "ACT", "REV"]}
     before = copy.deepcopy(books)
     supplied_before = copy.deepcopy(dict(read.colophons))
     result = matter.colophons(books, declared, read.colophons)

@@ -818,10 +818,12 @@ def test_poetry_indents_and_line_opening_verse_numbers(
     )
 
 
-def test_a_colophon_spans_the_text_width_flush_left(tmp_path: Path) -> None:
+def test_a_colophon_is_centered_across_the_text_width(tmp_path: Path) -> None:
     """PTXprint measures a sidebar before its category is named, so padding
-    on the category alone would still narrow it; nor does its paragraph
-    take the first-line indent."""
+    on the category alone would still narrow it. Its italic paragraph is
+    centered, including its short last line, with no first-line indent. The
+    notice ends without a full stop, whose protrusion would hang the last
+    line off center."""
     work = ptxprint_project(tmp_path)
     (work / "colophon.usfm").write_text(
         r"""\id ROM
@@ -833,22 +835,28 @@ def test_a_colophon_spans_the_text_width_flush_left(tmp_path: Path) -> None:
 \esb \cat colophon\cat*
 \p Colophon """
         + "echo " * 60
-        + r"""Notice.
+        + r"""Notice
 \esbe
 """,
         encoding="utf-8",
     )
     lines = typeset_lines(work, "colophon")
     start = next(i for i, line in enumerate(lines) if line[0].text == "Colophon")
-    end = next(i for i, line in enumerate(lines) if line[-1].text == "Notice.")
+    end = next(i for i, line in enumerate(lines) if line[-1].text == "Notice")
     prose, colophon = lines[:start], lines[start : end + 1]
     margin = min(float(line[0].attrib["xMin"]) for line in prose)
     measure = max(float(line[-1].attrib["xMax"]) for line in prose)
     assert len(colophon) > 2
     for line in colophon:
-        assert abs(float(line[0].attrib["xMin"]) - margin) < 0.15, line[0].text
-    for line in colophon[:-1]:
-        assert abs(float(line[-1].attrib["xMax"]) - measure) < 0.15
+        assert (
+            abs(
+                float(line[0].attrib["xMin"])
+                + float(line[-1].attrib["xMax"])
+                - margin
+                - measure
+            )
+            < 0.5
+        ), line[0].text
 
 
 def test_list_key_gap_and_hanging_indent(tmp_path: Path) -> None:

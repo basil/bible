@@ -91,7 +91,7 @@ def test_exported_roles_are_consistent_across_the_edition(
                         assert (before in usj.PROSE and after in usj.POEM) or (
                             before in usj.POEM and after in usj.PROSE
                         ), code
-                    elif blocks[at + 1].get("category") != "colophon":
+                    elif blocks[at + 1]["type"] != "sidebar":
                         assert usj.paragraph(blocks[at + 1]) in usj.BODY, code
     assert divisions == [
         peripherals.UNITS[code]
@@ -99,10 +99,10 @@ def test_exported_roles_are_consistent_across_the_edition(
         if code not in edition.scripture
     ]
     assert {code for code, _ in colophons} == set(
-        "MAT MRK LUK JHN ROM 1CO 2CO GAL EPH PHP COL 1TH 2TH 1TI 2TI TIT PHM HEB".split()
+        "MAT MRK LUK JHN ROM 1CO 2CO GAL EPH PHP COL 1TH 2TH 1TI 2TI TIT PHM HEB REV".split()
     )
-    assert len(colophons) == 18
-    assert {category for _, category in colophons} == {"colophon"}
+    assert len(colophons) == 19
+    assert {category for _, category in colophons} == {"colophon", "closing"}
 
 
 def test_quotation_roles_preserve_the_edition_grammar(

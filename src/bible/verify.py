@@ -225,21 +225,23 @@ def printed_key(text: str) -> str:
 
 
 def check_colophon_order(source: str, printed: str) -> None:
-    """A terminal sidebar must follow the completed final scripture verse."""
-    if "\\cat colophon\\cat*" not in source:
+    """Terminal sidebars must follow the completed final scripture verse,
+    each after the one before it."""
+    if "\\esb" not in source:
         return
     doc = usj.parse(source)
-    colophons = [b for b in doc["content"] if b.get("category") == "colophon"]
     last = next(reversed(scripture.verses(doc).values()))
     tail = printed_key(" ".join(last.text.split()[-12:]))
     words = printed_key(printed)
-    for colophon in colophons:
-        notice = printed_key(usj.text_of(colophon["content"]))
-        at = words.find(notice)
+    at = 0
+    for sidebar in (b for b in doc["content"] if b["type"] == "sidebar"):
+        notice = printed_key(usj.text_of(sidebar["content"]))
+        at = words.find(notice, at)
         require(
             at >= 0 and words.rfind(tail, 0, at) >= 0,
             "Colophon missing or printed before scripture ends",
         )
+        at += len(notice)
 
 
 def check_boundaries(

@@ -148,7 +148,7 @@ def colophons(
 ) -> MappingProxyType[str, Document]:
     """Terminal subscriptions outside scripture: the sources' own without
     their pilcrow, and the supplied ones after the final verse they name,
-    each with its declared edits."""
+    each with its declared edits; then the edition's closing notices."""
     result = {code: unpilcrowed(doc) for code, doc in books.items()}
     selections = {
         s["book"]: s
@@ -194,6 +194,27 @@ def colophons(
                     paragraph["content"], [(start, start + len(removed), added)]
                 )
                 result[code] = with_colophon(doc, edited)
+        for notice in group.get("closing_notices", ()):
+            code = notice["book"]
+            label = f"Closing notice in {name}: {code}"
+            require(code in result, f"{label}: missing book")
+            doc = result[code]
+            require(
+                not any(b.get("category") == "closing" for b in doc["content"]),
+                f"{label}: already has a closing notice",
+            )
+            result[code] = usj.with_blocks(
+                doc,
+                [
+                    *doc["content"],
+                    {
+                        "type": "sidebar",
+                        "marker": "esb",
+                        "category": "closing",
+                        "content": [usj.para("p", line) for line in notice["lines"]],
+                    },
+                ],
+            )
     return MappingProxyType(result)
 
 

@@ -90,6 +90,10 @@ const CELL_TAGS: Record<string, string> = {
   tc2: "td",
   tc3: "td",
 };
+const SIDEBAR_LABELS: Record<string, string> = {
+  colophon: "Source colophon",
+  closing: "Closing notice",
+};
 const PARAGRAPH_TAGS: Record<string, string> = {
   // A unit of front matter's printed title, and the lines about it.
   mt1: "h1",
@@ -234,7 +238,12 @@ function renderer(titleAnchor = "") {
   }
   function block(n: Node): string {
     if (n.type === "sidebar") {
-      return `<aside class="${escape(n.category || "")}" aria-label="${n.category === "colophon" ? "Source colophon" : "Annotation"}">${blocks(n.content as Node[])}</aside>`;
+      const category = n.category || "";
+      const label = SIDEBAR_LABELS[category];
+      if (!label) {
+        throw new Error(`Unknown sidebar category ${category}`);
+      }
+      return `<aside class="${category}" aria-label="${label}">${blocks(n.content as Node[])}</aside>`;
     }
     if (n.type === "table") {
       // Vue's parser inserts no tbody; the browser's does, and they must agree.

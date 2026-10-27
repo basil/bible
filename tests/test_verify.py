@@ -434,6 +434,23 @@ def test_a_colophon_follows_the_complete_final_verse() -> None:
         )
 
 
+def test_terminal_sidebars_print_in_their_order() -> None:
+    source = (
+        "\\id REV\n\\c 22\n\\p\\v 21 The grace be with you all. Amen.\n"
+        "\\esb \\cat colophon\\cat*\n\\p Written from Patmos.\n\\esbe\n"
+        "\\esb \\cat closing\\cat*\n\\p The end of the Holy Bible\n\\esbe\n"
+    )
+    verify.check_colophon_order(
+        source,
+        "The grace be with you all. Amen. Written from Patmos. The end of the Holy Bible",
+    )
+    with pytest.raises(CheckFailed, match="before scripture ends"):
+        verify.check_colophon_order(
+            source,
+            "The grace be with you all. Amen. The end of the Holy Bible Written from Patmos.",
+        )
+
+
 @pytest.mark.parametrize(
     "fault",
     ["", "missing", "wrong_chapter", "substitute", "unembedded", "unselected_newpx"],

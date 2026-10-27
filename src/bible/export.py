@@ -145,9 +145,8 @@ def spaced(doc: Document, unspaced: Set[int] = frozenset()) -> Document:
                 result.append(block)
             continue
         # A blank, unlike space inside the colophon's box, goes at a page top.
-        if block.get("category") == "colophon" or (
-            turns(before, marker) and at not in unspaced
-        ):
+        # Every sidebar is terminal paratext: a colophon or the closing notice.
+        if block["type"] == "sidebar" or (turns(before, marker) and at not in unspaced):
             result.append(usj.para("b"))
         result.append(block)
     return usj.with_blocks(doc, result)

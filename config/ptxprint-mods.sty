@@ -176,7 +176,7 @@
 \SpaceBefore 6
 \SpaceAfter 0
 
-% Every sidebar is a colophon, which spans the text's full width. PTXprint
+% Terminal notices span the text's full width. PTXprint
 % sizes a sidebar at \esb, with its default 1 pt padding at either side,
 % before \cat names the category, and measures it again from that narrower
 % width, so the padding is cleared here, not under the category.
@@ -189,9 +189,30 @@
 \Position h
 \Border None
 
-% Its notice is set flush left, without a paragraph's first-line indent.
+% Centered italic like the descriptive Psalm titles, without a paragraph's
+% first-line indent, but at 11/12 of the size they share with the
+% scripture: some 9.2 pt to their 10.
 \Marker cat:colophon|p
 \FirstLineIndent 0
+\Justification Center
+\Italic
+\FontSize 11
+
+% Its added words are italic too, as a descriptive title's are.
+\Marker cat:colophon|add
+\Italic
+
+% The edition's closing notice stands apart from Revelation's last verse,
+% in the upright small capitals and size of the Psalm chapter labels.
+\Marker cat:closing|esb
+\Position h
+\Border None
+
+\Marker cat:closing|p
+\FirstLineIndent 0
+\Justification Center
+\FontSize 14
+\ztexFontFeatures +[smcp] +[c2sc]
 
 % A testament's divider sets its title flush left without space about it,
 % and the lines beneath it flush left: its translation's title page, then

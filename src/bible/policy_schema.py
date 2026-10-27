@@ -245,9 +245,15 @@ class SourcedColophon(TypedDict):
     verse: ReadOnly[str]
 
 
+class ClosingNotice(TypedDict):
+    book: ReadOnly[str]
+    lines: ReadOnly[tuple[str, ...]]
+
+
 class Prose(TypedDict, total=False):
     colophons: ReadOnly[tuple[ColophonChange, ...]]
     sourced_colophons: ReadOnly[tuple[SourcedColophon, ...]]
+    closing_notices: ReadOnly[tuple[ClosingNotice, ...]]
     changes: ReadOnly[tuple[WordingChange, ...]]
     additions: ReadOnly[tuple[ProseAddition, ...]]
     markers: ReadOnly[tuple[MarkerChange, ...]]
