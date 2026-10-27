@@ -74,13 +74,12 @@ def test_every_book_prints_under_the_editions_name_and_heading(
 def test_every_unit_is_named_as_its_revised_heading_spells_it(
     edition: bible.pipeline.Edition,
 ) -> None:
-    # The manifest gives the source's spelling; revision respells it.
     assert edition.names["XXE"] == {
-        "title": "Introduction to the Old Testament: "
-        "A Historical Account of the Septuagint Version",
+        "title": "Introduction to the Old Testament",
         "short_title": "Introduction to the Old Testament",
         "abbreviation": "OT Intr.",
     }
+    # The manifest gives the source's spelling; revision respells it.
     headings = [
         usj.text_of(block["content"])
         for block in edition.documents["XXE"]["content"]
@@ -102,6 +101,14 @@ def test_heading_lines_must_spell_the_contents_title() -> None:
         ("mt1", "Ruth"),
         ("mt2", "A History"),
     ]
+    assert assembly.heading_lines(subtitle, {"title": "Ruth"}) == [
+        ("mt1", "Ruth"),
+        ("mt2", "A History"),
+    ]
+    # Only a subtitle after the main line may be left out.
+    for heading, title in ((split, "Ruth"), (subtitle, "A History")):
+        with pytest.raises(CheckFailed, match="do not spell the contents title"):
+            assembly.heading_lines(heading, {"title": title})
     with pytest.raises(CheckFailed, match="do not spell the contents title"):
         assembly.heading_lines({"id": "RUT", "heading": (("mt1", "Ruth"),)}, names)
     with pytest.raises(CheckFailed, match="Heading that changes nothing"):

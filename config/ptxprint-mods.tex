@@ -322,21 +322,21 @@
 \endgroup
 
 % Keep native titles and references. A part is a heading without a folio:
-% the first follows a blank line and starts the main matter, and each later
-% one opens a page. Every other row has its folio in the inner margin, and a
-% preliminary's title is italic. \endpage, unlike \pb, does not set a blank
-% line first, which would push a full page's break onto a page of its own.
+% each follows a blank line and stays with its first entry, and the first
+% starts the main matter. Every other row has its folio in the inner margin,
+% and a preliminary's title is italic.
 \def\doTOCline#1#2#3#4#5{%
   \ifcsname BiblePart:#1\endcsname
     \ifnum\BibleContentsMainPage=\maxdimen
-      \b\global\BibleContentsMainPage=#5\relax
-    \else\endpage\fi
-    \m\leavevmode\ztocpart #2\ztocpart*%
+      \global\BibleContentsMainPage=#5\relax
+    \fi
+    \b
+    \m\leavevmode\ztocpart #2\ztocpart*\par\nobreak
   \else
     \m\leavevmode
     \BibleContentsNumber{#1}{\BibleFolio{#5}\BibleContentsMainPage}%
-    \ifnum#5<\BibleContentsMainPage \it #2\it*\else #2\fi
-  \fi\par
+    \ifnum#5<\BibleContentsMainPage \it #2\it*\else #2\fi\par
+  \fi
 }
 
 % Ordinary pages use outer bottom folios; opening pages use the center

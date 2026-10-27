@@ -454,6 +454,9 @@ def test_opening_pages_and_margin_contents(tmp_path: Path) -> None:
             r"\doTOCline{x-old-testament}{The Old Testament}{}{}{11}"
             r"\doTOCline{GEN}{Genesis}{}{Gen.}{13}"
             r"\doTOCline{x-new-testament}{New Testament}{}{}{15}"
+            r"\doTOCline{TST}{Firstgospel}{}{}{16}"
+            # Exercise verso folios independently of testament spacing.
+            r"\endpage"
             r"\m\hbox to\hsize{Leftedge\hfil Rightedge}\endgraf"
             r"\doTOCline{MAT}{Matthew}{}{}{17}"
             r"\doTOCline{MRK}{Mark}{}{}{18}}",
@@ -499,8 +502,16 @@ def test_opening_pages_and_margin_contents(tmp_path: Path) -> None:
         contents["vii"].attrib["xMax"]
     )
     assert abs(gap - 6 * 72 / 25.4) < 0.05
+    # A part follows a blank line, on the page of its first entry.
+    tops = {
+        text: float(contents[text].attrib["yMin"])
+        for text in ("Genesis", "New", "Firstgospel")
+    }
+    line = tops["Firstgospel"] - tops["New"]
+    assert line > 0
+    assert abs(tops["New"] - tops["Genesis"] - 2 * line) < 0.5
     verso = by_text[5]
-    assert texts[5][:2] == ["New", "Testament"]
+    assert "New" not in verso
     right = float(verso["Rightedge"].attrib["xMax"])
     for number in ("7", "8"):
         offset = float(verso[number].attrib["xMax"]) - right

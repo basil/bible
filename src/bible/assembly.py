@@ -191,9 +191,10 @@ def heading_lines(entry: Entry, found: Mapping[str, str]) -> list[tuple[str, str
     """The mt lines printed over a book, as (marker, text) pairs.
 
     As in the Cambridge KJV, the heading is the contents title itself, but
-    for the colon a contents title may set after a main line that comes
-    first. The manifest's optional "heading" says how to break it into lines
-    and which line is the main one; without it the whole title is one mt1 line.
+    for a subtitle after a main line that comes first, which the contents
+    may leave out or set after a colon. The manifest's optional "heading"
+    says how to break it into lines and which line is the main one; without
+    it the whole title is one mt1 line.
     A unit's title is set in two sizes, so a line is mt1 or mt2, never mt3.
     """
     lines = entry.get("heading", (("mt1", found["title"]),))
@@ -210,8 +211,8 @@ def heading_lines(entry: Entry, found: Mapping[str, str]) -> list[tuple[str, str
     )
     titles = {" ".join(text for _, text in lines)}
     if len(lines) > 1 and lines[0][0] == "mt1":
-        # A title and subtitle may be separated by a colon in the contents,
-        # while their displayed heading uses the line break alone.
+        # The contents may give the main title alone, or its subtitle too.
+        titles.add(lines[0][1])
         titles.add(lines[0][1] + ": " + " ".join(text for _, text in lines[1:]))
     require(
         found["title"] in titles,
