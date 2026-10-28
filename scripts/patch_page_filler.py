@@ -1,4 +1,4 @@
-"""Run each PTXprint fill job in its own process group, and expose unresolved pages."""
+"""Expose unresolved pages from PTXprint's page filler."""
 
 from pathlib import Path
 
@@ -13,57 +13,6 @@ def replace_once(path: Path, old: str, new: str) -> None:
 
 
 def patch(root: Path) -> None:
-    # Each worker's TeX subprocesses share its process group, so cancellation
-    # can stop them too rather than leave orphaned typesetters running.
-    replace_once(
-        root / "multiprint.py",
-        "def _init_worker(progress_q, cpu_q, cancel_event):\n",
-        "def _init_worker(progress_q, cpu_q, cancel_event):\n    os.setsid()\n",
-    )
-    replace_once(
-        root / "multiprint.py", "import os, argparse\n", "import os, argparse, signal\n"
-    )
-    replace_once(
-        root / "multiprint.py",
-        "                    process.terminate()  # Sends SIGTERM to kill worker immediately\n",
-        # A worker still starting has no group of its own yet, nor typesetters.
-        "                    try:\n"
-        "                        os.killpg(process.pid, signal.SIGTERM)  # and its typesetters\n"
-        "                    except ProcessLookupError:\n"
-        "                        process.terminate()\n",
-    )
-    # Upstream runs a single worker synchronously in the parent. Always use
-    # a child, so --jobs 1 still reports progress and supports checkpoints
-    # and process-group cancellation while a book is being solved.
-    replace_once(
-        root / "multiprint.py",
-        "        if self.numproc == 1:\n"
-        "            _init_worker(self.progress_q, self.cpu_q, self.cancel_event)\n"
-        "            return\n",
-        "",
-    )
-    replace_once(
-        root / "multiprint.py",
-        "        if self.numproc == 1:\n"
-        "            res = _worker_dispatch(job)\n"
-        "            fut = Future()\n"
-        "            fut.set_result(res)\n"
-        "            self.pending_futures[fut] = job\n"
-        "        else:\n"
-        "            if not self.executor:\n"
-        "                self.start()\n"
-        "            fut = self.executor.submit(_worker_dispatch, job)\n"
-        "            self.pending_futures[fut] = job\n",
-        "        if not self.executor:\n"
-        "            self.start()\n"
-        "        fut = self.executor.submit(_worker_dispatch, job)\n"
-        "        self.pending_futures[fut] = job\n",
-    )
-    replace_once(
-        root / "page_filler.py",
-        'return (True, f"Complete {bk} Already good")',
-        'return (True, f"Complete {bk} Already good", [])',
-    )
     replace_once(
         root / "page_filler.py",
         'retval = (True, f"Complete {bk}, failures={res.failures},',

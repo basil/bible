@@ -99,8 +99,10 @@ def main(argv: Sequence[str] | None = None) -> int:
         "--fresh", action="store_true", help="Discard page-filler cache"
     )
     args = parser.parse_args(argv)
-    if args.jobs is not None and args.jobs < 1:
-        parser.error("--jobs must be positive")
+    # PTXprint fills a single job in this process, without progress,
+    # checkpoints, or a way to stop it.
+    if args.jobs is not None and args.jobs < 2:
+        parser.error("--jobs must be at least 2")
     if args.command != "pdf" and (args.fresh or args.jobs is not None):
         parser.error("Page-filler options require the pdf command")
     try:

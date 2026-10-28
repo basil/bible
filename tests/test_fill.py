@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import os
 import queue
 import shutil
 from concurrent.futures import Future
@@ -194,6 +193,12 @@ def test_worker_results_without_unresolved_pages_are_early_exits() -> None:
     )
 
 
+def test_one_worker_is_refused() -> None:
+    """PTXprint would fill a single worker's books in the build's own process."""
+    with pytest.raises(SystemExit):
+        cli.main(["pdf", "--jobs", "1"])
+
+
 @pytest.mark.parametrize("failure", ["fill", "typeset", "verify", None])
 def test_only_publish_after_all_checks(
     project: Path, monkeypatch: pytest.MonkeyPatch, failure: str | None
@@ -286,7 +291,6 @@ def test_runner_checkpoints_reuses_and_stops_workers(
             self.pending_futures: dict[Any, Any] = {}
             self.progress_q: queue.Queue[Any] = queue.Queue()
             self.cpu_q: queue.Queue[Any] = queue.Queue()
-            self.executor = None
             self.terminated = False
             pools.append(self)
 
@@ -368,18 +372,3 @@ def test_runner_checkpoints_reuses_and_stops_workers(
         project / SETTINGS_DIR / "ptxprint-mods.tex"
     ).read_text() == "production TeX"
     assert not (project / "local").exists()
-
-
-@pytest.mark.parametrize("workers", [1, 2])
-def test_workers_have_separate_process_groups(workers: int) -> None:
-    from ptxprint.multiprint import MultiPrint
-
-    pool = MultiPrint(numproc=workers, progress=True)
-    try:
-        pool.start()
-        assert pool.executor is not None
-        worker = pool.executor.submit(os.getpid).result(timeout=30)
-        assert worker != os.getpid()
-        assert os.getpgid(worker) == worker
-    finally:
-        pool.teardown()

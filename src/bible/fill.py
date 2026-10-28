@@ -253,7 +253,7 @@ def run(project: Path, books: list[str], jobs: int, fresh: bool) -> Report:
         return report
     except BaseException as error:
         if pool is not None:
-            pool.terminate()  # Patched to stop each worker's process group.
+            pool.terminate()
         report.update({"status": "failed", "error": str(error)})
         raise
     finally:
