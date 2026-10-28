@@ -4852,6 +4852,26 @@
     }
   },
   "words": {
+    "flixe": {
+      "to": "flux",
+      "why": "Modernize the obsolete spelling, retaining the historical medical noun and the surrounding words. The pinned King James archive has flixe once, at Acts 28:8; Brenton has none. Scrivener’s Cambridge Paragraph Bible (1873, Introduction printed p. xcvi, physical p. 102) explicitly records flixe at this verse as the restored 1611 spelling, flix in 1629, and flux in 1699. The pinned CrossWire King James archive (kjv.tr.xml, Acts.28.8) also reads bloody flux."
+    },
+    "lowring": {
+      "to": "louring",
+      "why": "Modernize the obsolete spelling, retaining the -ing form and the sense of a threatening sky. The pinned King James archive has lowring once, at Matthew 16:3; Brenton has none. David and Ben Crystal’s Shakespeare’s Words explicitly identifies lowring as an old form of louring (https://www.shakespeareswords.com/Public/GlossaryHeadword.aspx?headwordId=19235); Oxford’s Advanced Learner’s Dictionary explicitly lists louring as the -ing form of lour in its sky-and-clouds sense (https://www.oxfordlearnersdictionaries.com/us/definition/english/lour). This is an editorial spelling choice: the pinned Revised Version retains lowring, while Boyd’s archived Byzantine ASV has lowering."
+    },
+    "layedst": {
+      "to": "laidst",
+      "why": "Modernize the obsolete spelling, retaining the second-person singular past-tense inflection. The pinned King James archive has layedst once, at Luke 19:21; Brenton has none. Scrivener’s Cambridge Paragraph Bible (1873, New Testament printed p. (74), physical p. 1258) prints layedst there but laidst at Psalm 66:11 (Old Testament printed p. (513), physical p. 639). Boyd’s archived Byzantine ASV (engasvbt_usfm.zip, source revision 2026-10-24) also prints laidst at Luke 19:21; the pinned Revised Version retains layedst."
+    },
+    "doateth": {
+      "to": "doteth",
+      "why": "Modernize the obsolete doat spelling to dote while retaining the third-person singular -eth inflection. The pinned Brenton and King James archives each have doateth once, at Sirach 25:2. Brenton’s 1900 printing (Apocrypha printed p. 95, physical p. 1245) and Scrivener’s Cambridge Paragraph Bible (1873, Apocrypha printed p. (105), physical p. 1089) both print doateth; the 1611 King James scan prints doteth at this same verse (https://www.kingjamesbibleonline.org/1611-Bible-KJV/webp/Ecclesiasticus-Chapter-24-25.webp, left column, verse 2). The spelling changes, not the word."
+    },
+    "carrs": {
+      "to": "cars",
+      "why": "Modernize the obsolete spelling of the historical vehicle noun, retaining its plural and meaning. Brenton’s 1900 printing (Apocrypha printed p. 12, physical p. 1162) and Scrivener’s Cambridge Paragraph Bible (1873, Apocrypha printed p. (8), physical p. 992) both print carrs at their 1 Esdras 5:55, edition 5:53. The pinned Revised Version has cars there; Boyd’s archived Byzantine ASV (engasvbt_usfm.zip, source revision 2026-10-24) instead uses carts, a lexical substitution not adopted by this spelling decision. The pinned Brenton and King James archives each have this one occurrence."
+    },
     "moe": {
       "to": "more",
       "why": "An obsolete spelling is modernized wherever it stands. The pinned King James archive has moe thirty times, seven in the New Testament; Brenton has none. The seven printed occurrences are Matthew 21:36, 22:46, 25:20, John 4:41, 7:31, Acts 23:21, and Galatians 4:27. The spelling changes, not the word."

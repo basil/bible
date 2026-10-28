@@ -84,20 +84,6 @@ Compare the printing before calling one a transcription slip.
 - [ ] **our's, your's, their's** — GEN 31:16, JDT 5:18, 1MA 12:23 (three),
   2MA 13:22. Confidence: high that they exist; decide once.
 
-## Orthography: obsolete spellings
-
-All [editorial]. The introduction says obsolete spellings are modernized
-even where both sources agree; these candidates remain to be decided in
-`edition/revisions.json`. Confidence: high for
-each as an omission unless noted. Keep the inflection, change the spelling.
-
-- [ ] **flixe** (ACT 28:8) → flux.
-- [ ] **lowring** (MAT 16:3) → lowering or louring. Confidence: medium.
-- [ ] **layedst** (LUK 19:21) → laidst.
-- [ ] **doateth** (SIR 25:2) → doteth.
-- [ ] **carrs** (1ES 5:53) → cars. Confidence: medium (period vehicle noun).
-- Repro: `grep -rn -w 'flixe\|lowring\|layedst\|doateth\|carrs' build/review/text/`.
-
 ## Orthography: compounds and regional spelling
 
 All [editorial]. The introduction (`content/introduction.sfm:108`) ends
