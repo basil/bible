@@ -1,21 +1,5 @@
 # TODO
 
-## Scripture grammar: agreement and inflection
-
-All [source]: inherited in eBible and CCEL. Check the printing before a
-scoped revision (`verses` in `edition/revisions.json`). Confidence is medium
-for each unless noted; the slip is plain, the printing is unchecked.
-
-- [ ] **2SA 15:34** — "if thou shall return" (shalt).
-- [ ] **1KI 18:21** (3 Kingdoms) — "How long wilt ye halt".
-- [ ] **2MA 7:19** — "thou shall escape"; KJV and RV have "shalt".
-- [ ] **DEU 30:8** — "thou shalt return … and shall keep".
-- [ ] **1KI 10:12** — "timber had not come … nor have been seen" (had).
-- [ ] **1KI 10:28** — "the goings forth … was" (were).
-- [ ] **1MA 10:53** — "both he and his host was discomfited" (were).
-- [ ] **EZK 30:21** — "I have broken the arms of Pharaoh … it hath not been
-  bound up … upon it"; number of "arm" in the Greek decides.
-
 ## Scripture meaning and continuity questions
 
 All [source] and [source + Greek]. These are inherited readings that look

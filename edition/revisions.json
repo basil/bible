@@ -11796,6 +11796,18 @@
       "wording": "misprint",
       "changes": [
         {
+          "verse": "2MA 7:19",
+          "from": "thou shall escape",
+          "to": "thou shalt escape",
+          "why": "Brenton’s 1900 printing (Apocrypha printed p. 195, physical p. 1345) prints thou shall escape, faithfully transcribed by eBible. Scrivener’s Cambridge Paragraph Bible (1873), Apocrypha printed p. (185), physical p. 1169, has thou shalt escape unpunished; the pinned Revised Version also has thou shalt. Correct the second-person singular auxiliary while retaining Brenton’s surrounding wording and unmarked thou, without importing the King James supplied-word marking."
+        },
+        {
+          "verse": "DEU 30:8",
+          "from": "and shall keep his commands",
+          "to": "and shalt keep his commands",
+          "why": "Brenton’s 1844 printing (vol. I printed p. 224, physical p. 248), 1879 (physical p. 289), 1884 (physical p. 258), and 1900 (physical p. 285), the last three printed p. 273, all print and shall keep, as do pinned eBible and CCEL vi.37.xxx.htm. The checked facing Greek in the 1879 printing explicitly addresses σὺ and continues καὶ ποιήσεις τὰς ἐντολὰς αὐτοῦ, with a second-person singular verb. The pinned King James and Revised Versions attest thou shalt keep at Deuteronomy 8:6, a grammatical parallel rather than this verse’s wording. Correct the repeated auxiliary to agree with the continuing thou."
+        },
+        {
           "verse": "PSA 45:10",
           "from": "as for the ends of the earth",
           "to": "to the ends of the earth",
@@ -11862,10 +11874,46 @@
       "wording": "misprint",
       "changes": [
         {
+          "verse": "2SA 15:34",
+          "from": "if thou shall return",
+          "to": "if thou shalt return",
+          "why": "Brenton’s 1844 printing (vol. I printed p. 346, physical p. 370) reads if thou shalt return. The 1879 (physical p. 439), 1884 (physical p. 408), and 1900 (physical p. 435) printings, all printed p. 423, read if thou shall return, faithfully transcribed by eBible. Restore the earlier second-person singular auxiliary, agreeing with thou and the neighbouring shalt say and so shalt thou disconcert."
+        },
+        {
+          "verse": "1KI 18:21",
+          "from": "How long wilt ye halt",
+          "to": "How long will ye halt",
+          "why": "Brenton’s 1844 printing (vol. I printed p. 390, physical p. 414) reads How long will ye halt. The 1879 (physical p. 492), 1884 (physical p. 461, cropped scan), and 1900 (physical p. 488) printings, corresponding to printed p. 476, have wilt ye, faithfully transcribed by eBible. Restore the earlier auxiliary agreeing with plural ye; the facing Greek has plural ὑμεῖς χωλανεῖτε."
+        },
+        {
           "verse": "NUM 21:5",
           "from": "ought of Egypt",
           "to": "out of Egypt",
           "why": "The people ask why Moses brought them out of Egypt (Greek ἐξ Αἰγύπτου). Brenton’s 1844 edition (vol. 1, physical p. 192) prints out; the Bagster printings of 1879 (physical p. 220) and 1900 (physical p. 216) print ought, which eBible transcribes faithfully."
+        }
+      ]
+    },
+    "agreement and inflection": {
+      "why": "Correct the inflection of an English verb in the verses named, retaining the surrounding translation and recording the supporting witnesses and grammatical parallels.",
+      "wording": "spelling",
+      "changes": [
+        {
+          "verse": "1KI 10:12",
+          "from": "nor have been seen",
+          "to": "nor had been seen",
+          "why": "Brenton’s 1844 printing (vol. I printed p. 377, physical p. 401), 1879 (physical p. 476), 1884 (physical p. 445), and 1900 (physical p. 472), the last three printed p. 460, all print have, as do pinned eBible and CCEL. Scrivener’s Cambridge Paragraph Bible (1873), printed p. (310), physical p. 436, reads there came no such almug trees, nor were seen unto this day; the pinned Revised Version likewise gives past predicates. The facing Greek has the past passive οὐδὲ ὤφθησαν. Correct the auxiliary to had, agreeing with the retained subject timber and continuing Brenton’s preceding had not come. This is an editorial inflection correction supported by those constructions, not wording recovered verbatim from another witness at this verse."
+        },
+        {
+          "verse": "1KI 10:28",
+          "from": "was",
+          "to": "were",
+          "why": "Brenton’s 1844 printing (vol. I printed pp. 377–378, physical pp. 401–402), 1879 (physical p. 477), 1884 (physical p. 446), and 1900 (physical p. 473), the last three printed p. 461, all print supplied was, as do pinned eBible and CCEL. Agree the verb with Brenton’s retained plural English subject, the goings forth, preserving its supplied-word marking. Scrivener’s Cambridge Paragraph Bible (1873) attests plural agreement with goings forth at Micah 5:2 (printed p. (828), physical p. 954), and goings out … were at Joshua 15:4, 7, 11 (printed p. (203), physical p. 329); pinned Revised Version Micah 5:2 likewise has whose goings forth are. These are grammatical parallels, not another reading of this Kings verse, whose facing Greek has singular ἡ ἔξοδος and no expressed copula."
+        },
+        {
+          "verse": "1MA 10:53",
+          "from": "both he and his host was discomfited",
+          "to": "both he and his host were discomfited",
+          "why": "Brenton’s 1900 printing (Apocrypha printed p. 166, physical p. 1316) and Scrivener’s Cambridge Paragraph Bible (1873, Apocrypha printed p. (165), physical p. 1149) both print was. The printed Revised Version Apocrypha (revised A.D. 1894), printed p. 147, physical p. 161, has he and his army were discomfited by us, as does the pinned Revised Version. Use its plural agreement with the corresponding compound subject, retaining Brenton’s both he and his host and changing only the verb’s inflection. This is an editorial English agreement correction, not a different Greek reading: the facing Greek has singular συνετρίβη before αὐτὸς καὶ ἡ παρεμβολὴ αὐτοῦ. Do not import the King James supplied marking on both."
         }
       ]
     },
