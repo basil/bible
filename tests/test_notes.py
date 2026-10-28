@@ -825,6 +825,24 @@ def test_a_reversed_margin_stands_for_the_rendering_note_it_repeats(
     doc = corrected(rendering_note("25:8", "going out", "burning"))
     with pytest.raises(CheckFailed, match="covers no rendering note"):
         annotate.george("MAT", doc, [margin], ctx, original=original)
+    # A note that cites a witness cannot be left out for the margin.
+    policy = changed(
+        ctx.policy,
+        "byzantine",
+        lambda d: d["note_witnesses"].append(
+            {
+                "witness": "vulgate",
+                "reading": "gone out",
+                "notes": ["MAT 25:8 rendering"],
+                "why": "Test witness.",
+            }
+        ),
+    )
+    doc = corrected(rendering_note("25:8", "going out", "gone out"))
+    with pytest.raises(CheckFailed, match="note_witnesses cites"):
+        annotate.george(
+            "MAT", doc, [margin], replace(ctx, policy=policy), original=original
+        )
 
 
 def test_a_note_of_the_margin_must_find_its_words_once(
@@ -1172,7 +1190,7 @@ def test_a_sign_after_no_witness_is_refused(
 def test_every_note_is_printed_replaced_by_a_link_or_explicitly_omitted(
     edition: bible.pipeline.Edition,
 ) -> None:
-    assert edition.summary["printed_notes"] == 6244
+    assert edition.summary["printed_notes"] == 6250
     rows = [row for listed in edition.notes.values() for row in listed]
     assert len({row["key"] for row in rows}) == len(rows)
     # The 1611 margin is printed on the New Testament alone, and whole but
@@ -1195,7 +1213,7 @@ def test_every_note_is_printed_replaced_by_a_link_or_explicitly_omitted(
     )
     assert edition.summary["kjv_marginal_notes"] == 775
     assert margin == 775 - omitted == 758
-    assert edition.summary["byzantine_notes"] == 941
+    assert edition.summary["byzantine_notes"] == 947
     # A widened lemma's rendering takes in the same words (Matthew 6:1).
     row = next(row for row in edition.notes["MAT"] if row["key"] == "MAT 6:1 of")
     assert (row["lemma"], row["note"]) == ("of your Father", "or, _with your Father_")

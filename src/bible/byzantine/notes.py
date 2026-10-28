@@ -840,8 +840,8 @@ def for_edition(
     omitted, since it stands before the label), the lemma declared for the
     annotate stage to set, and the note at the start of its lemma, as every
     edition note stands. A verse-level note stands at its verse's start. A
-    rendering note gives the former King James words after "Or,", with no
-    witness, since the Greek is unchanged. The note takes its edition_key."""
+    rendering note gives the former King James words after "Or,", unless an
+    explicit decision cites a witness to them. The note takes its edition_key."""
     verses = scripture.verses(document)
     moved: list[tuple[str, int, int, Node]] = []
     for ref, verse in verses.items():
@@ -853,22 +853,23 @@ def for_edition(
             lemma = notes.lemma_of(note)
             scope = note["x-scope"]
             kind, where = scope["kind"], scope.get("where")
-            quotation = usj.text_of(fields.get("fqa", {}).get("content", []))
+            quotation = notes.quotation_of(note)
             adds, omits = terms.display("addition"), terms.display("omission")
             content: Content = [fields["fr"]]
-            if kind != "rendering":
+            witness = witnesses.get(note["x-key"])
+            # A correction of shared Greek prints "Or," and no witness, though
+            # received.labels gives it the King James Version, unless a note
+            # witness decision cites a version for its former words.
+            if kind == "rendering" and witness in {None, "king-james-version"}:
+                content.append(usj.char("ft", "Or, "))
+            else:
                 witness = present(
-                    witnesses.get(note["x-key"]),
-                    f"A note without its witness: {note['x-key']}",
+                    witness, f"A note without its witness: {note['x-key']}"
                 )
                 content.append(usj.char("fl", terms.display(witness) + " "))
-            if kind == "rendering":
-                # A correction of shared Greek: the former King James words
-                # as another rendering, with no witness to name.
-                content.append(usj.char("ft", "Or, "))
-                content.append(usj.char("fqa", quotation))
-            elif kind == "replace":
-                # A replaced reading: the note's words stand for the lemma.
+            if kind in {"replace", "rendering"}:
+                # A replaced reading, or the former King James words as
+                # another rendering: the note's words stand for the lemma.
                 content.append(usj.char("fqa", quotation))
             elif kind == "omits" and quotation == lemma:
                 # The whole lemma omitted: the words stand once, before the

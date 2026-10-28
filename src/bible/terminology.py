@@ -58,7 +58,7 @@ LABELS = (
 )
 # The witnesses a New Testament note names (byzantine.received.labels): the
 # Received Text, the printed editions the King James translators followed,
-# and the King James Version, whose words it gives.
+# the King James Version, whose words it gives, and explicitly cited versions.
 NEW_TESTAMENT = (
     "textus-receptus",
     "beza",
@@ -67,6 +67,7 @@ NEW_TESTAMENT = (
     "complutensian",
     "aldine",
     "king-james-version",
+    "vulgate",
 )
 # A sentence's end before a word: a stop, with any closing quotes, and space.
 BEFORE_SENTENCE = re.compile(r"[.?!]['’”)]*\s+$")

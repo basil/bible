@@ -1134,6 +1134,13 @@ def lemma_of(note: Node) -> str | None:
     return usj.text_of(field["content"]).removesuffix(": ") if field else None
 
 
+def quotation_of(note: Node) -> str:
+    """The words a note gives in its \\fqa field: those that stand for its
+    lemma, or those it quotes as added or omitted."""
+    field = next((n for n in note["content"] if usj.is_type(n, "char", "fqa")), None)
+    return usj.text_of(field["content"]) if field else ""
+
+
 def boundary_stop(scope: usj.Scope | None) -> str:
     """The stop a note's scope takes in past its printed lemma, or none.
 

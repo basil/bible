@@ -39,7 +39,8 @@ type Change = tuple[Verse, int, int, Content]
 # shared and the English corrected, the King James rendering the correction
 # displaced. A note carries its kind, and the verse or passage it names
 # (`where`), in its x-scope, and no label: notes.for_edition words it,
-# naming the witness (received.labels), or "Or," for a rendering.
+# naming the witness (received.labels), or "Or," for a rendering that no
+# note witness decision cites a version for.
 type NoteKind = Literal[
     "replace", "adds", "omits", "adds-verse", "moved", "moved-out", "rendering"
 ]

@@ -711,7 +711,7 @@ def check(policy: Policy) -> None:
     require_fields(
         policy.byzantine,
         {"why", "readings", "structure", "accents", "hodges-farstad", "lemmas"},
-        {"scrivener", "editions"},
+        {"scrivener", "editions", "note_witnesses"},
         "Byzantine decisions",
     )
     require_fields(
@@ -749,6 +749,28 @@ def check(policy: Policy) -> None:
         require(
             all(isinstance(words, str) and words.strip() for words in quoted),
             f"{what} quotes no words",
+        )
+    for number, witness_decision in enumerate(
+        policy.byzantine.get("note_witnesses", ()), 1
+    ):
+        what = f"Byzantine note witness {number}"
+        require_fields(
+            witness_decision, {"witness", "reading", "notes", "why"}, (), what
+        )
+        require(
+            all(
+                isinstance(witness_decision[field], str)
+                and witness_decision[field].strip()
+                for field in ("witness", "reading", "why")
+            ),
+            f"{what} without a witness, reading or why",
+        )
+        listed = witness_decision["notes"]
+        require(
+            isinstance(listed, (list, tuple))
+            and bool(listed)
+            and all(isinstance(key, str) and key.strip() for key in listed),
+            f"{what} lists no notes by key",
         )
     for key, lemma in policy.byzantine["lemmas"].items():
         require_fields(lemma, {"lemma", "why"}, (), f"Byzantine note lemma {key}")

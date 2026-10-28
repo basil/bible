@@ -64,13 +64,13 @@ def test_the_edition_prints_every_unit_once_in_the_manifests_order(
         "alexandrine_appendix_paragraphs": 26,
         "byzantine_units": 1940,
         "byzantine_edits": 858,
-        "kjv_corrections": 83,
-        "byzantine_notes": 941,
+        "kjv_corrections": 89,
+        "byzantine_notes": 947,
         "scripture_units": 78,
         "brenton_units": 51,
         "kjv_units": 27,
         "kjv_marginal_notes": 775,
-        "printed_notes": 6244,
+        "printed_notes": 6250,
         # Every verse of the assembled books: Brenton's, with the passages
         # supplied from Codex Alexandrinus and the King James Bible's
         # 1 Kingdoms 23:12 and 3 Kingdoms 14:1-20, less the verses
@@ -1515,20 +1515,21 @@ def test_beelzebul_is_consistent_without_respelling_its_variant(
         code, reference = key.split()
         source = scripture.verses(edition.read.kjv[code])[reference]
         assert "Beelzebub" in source.text
-
-    verse = scripture.verses(edition.documents["MAT"])["10:25"]
-    ((offset, note),) = verse.notes
-    assert verse.text[offset:].startswith("Beelzebul")
-    assert note["x-key"] == "MAT 10:25#1 TR"
-    assert note["category"] == "edition"
-    assert usj.text_of(note["content"]) == (
-        "10:25 Beelzebul: Complutensian text Beelzebub"
-    )
-    assert [
-        (item["marker"], usj.text_of(item["content"]))
-        for item in usj.walk(note["content"])
-        if item.get("marker") in {"fq", "fqa"}
-    ] == [("fq", "Beelzebul: "), ("fqa", "Beelzebub")]
+        verse = scripture.verses(edition.documents[code])[reference]
+        ((offset, note),) = verse.notes
+        assert verse.text[offset:].startswith("Beelzebul")
+        assert note["x-key"] == (
+            "MAT 10:25#1 TR" if key == "MAT 10:25" else f"{key} rendering"
+        )
+        assert note["category"] == "edition"
+        assert usj.text_of(note["content"]) == (
+            f"{reference} Beelzebul: Vulgate Beelzebub"
+        )
+        assert [
+            (item["marker"], usj.text_of(item["content"]))
+            for item in usj.walk(note["content"])
+            if item.get("marker") in {"fq", "fqa"}
+        ] == [("fq", "Beelzebul: "), ("fqa", "Beelzebub")]
 
 
 def test_a_subscription_name_is_scoped_and_must_be_met(

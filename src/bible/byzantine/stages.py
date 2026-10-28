@@ -159,6 +159,10 @@ class Decisions:
     # The printed edition a note names where the apparatuses establish no
     # Received Text, by the note's key (edition/byzantine.json editions).
     editions: Mapping[str, Mapping[str, str]]
+    # The versions cited for the former English words of the notes they list
+    # (edition/byzantine.json note_witnesses); received.labels carries them
+    # out, and Edited.note_witnesses holds the term each note then names.
+    note_witnesses: tuple[Mapping[str, Any], ...]
 
 
 @dataclass(frozen=True)
@@ -618,6 +622,7 @@ def stage_decisions(
         overrides=tuple(overrides),
         lemmas=tuple(lemmas),
         editions=MappingProxyType(editions),
+        note_witnesses=tuple(given.decisions.get("note_witnesses", ())),
     )
 
 
@@ -680,6 +685,7 @@ def stage_edit(
         greek_.units,
         received.rows(greek_.tcgnt, greek_.apparatus),
         decisions_.editions,
+        decisions_.note_witnesses,
     )
     return Edited(
         prepared=MappingProxyType(prepared),

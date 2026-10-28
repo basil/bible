@@ -188,6 +188,50 @@
         }
       }
     },
+    "MAT 12:24": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "MAT 12:24",
+          "from": "Beelzebub",
+          "to": "Beelzebul",
+          "greek": "Βεελζεβοὺλ"
+        }
+      ],
+      "why": "Both texts name the prince of the devils Βεελζεβοὺλ; the King James Beelzebub takes the Latin form of the name rather than rendering the Greek. Print Beelzebul, as Pierpont and Boyd do and as Matthew 10:25 already reads.",
+      "evidence": {
+        "pierpont": {
+          "entry": 29,
+          "quote": "Beelzebul"
+        },
+        "boyd-asv": {
+          "ref": "MAT 12:24",
+          "quote": "This man doth not cast out demons, but by Beelzebul the prince of demons"
+        }
+      }
+    },
+    "MAT 12:27": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "MAT 12:27",
+          "from": "Beelzebub",
+          "to": "Beelzebul",
+          "greek": "Βεελζεβοὺλ"
+        }
+      ],
+      "why": "The shared Βεελζεβοὺλ resumes the Pharisees’ charge of verse 24 and takes the same name: Beelzebul for the Latin form Beelzebub, as Pierpont and Boyd render it.",
+      "evidence": {
+        "pierpont": {
+          "entry": 30,
+          "quote": "Beelzebul"
+        },
+        "boyd-asv": {
+          "ref": "MAT 12:27",
+          "quote": "And if I by Beelzebul cast out demons"
+        }
+      }
+    },
     "MAT 12:32#2": {
       "units": [
         {
@@ -861,6 +905,28 @@
         "boyd-asv": {
           "ref": "MRK 2:26",
           "quote": "in the days of Abiathar the high priest"
+        }
+      }
+    },
+    "MRK 3:22": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "MRK 3:22",
+          "from": "Beelzebub",
+          "to": "Beelzebul",
+          "greek": "Βεελζεβοὺλ"
+        }
+      ],
+      "why": "The scribes’ charge names Βεελζεβοὺλ in both texts; the King James Beelzebub follows the Latin form rather than the Greek. Print Beelzebul, as Pierpont and Boyd do and as the parallel at Matthew 12:24 now reads.",
+      "evidence": {
+        "pierpont": {
+          "entry": 77,
+          "quote": "Beelzebul"
+        },
+        "boyd-asv": {
+          "ref": "MRK 3:22",
+          "quote": "He hath Beelzebul"
         }
       }
     },
@@ -2239,6 +2305,72 @@
         "kjv": {
           "ref": "LUK 11:11",
           "quote": "[If] a son shall ask bread"
+        }
+      }
+    },
+    "LUK 11:15": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "LUK 11:15",
+          "from": "Beelzebub",
+          "to": "Beelzebul",
+          "greek": "Βεελζεβοὺλ"
+        }
+      ],
+      "why": "Both texts name Βεελζεβοὺλ as the prince of the devils, and Beelzebub is the Latin form, not the Greek’s. Print Beelzebul, as Pierpont and Boyd do, matching the parallels in Matthew and Mark.",
+      "evidence": {
+        "pierpont": {
+          "entry": 162,
+          "quote": "Beelzebul"
+        },
+        "boyd-asv": {
+          "ref": "LUK 11:15",
+          "quote": "By Beelzebul the prince of demons"
+        }
+      }
+    },
+    "LUK 11:18": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "LUK 11:18",
+          "from": "Beelzebub",
+          "to": "Beelzebul",
+          "greek": "Βεελζεβοὺλ"
+        }
+      ],
+      "why": "Jesus repeats the accusers’ Βεελζεβοὺλ of verse 15, shared by both texts, so the name follows that verse: Beelzebul for the Latin form Beelzebub, as Pierpont and Boyd render it.",
+      "evidence": {
+        "pierpont": {
+          "entry": 163,
+          "quote": "Beelzebul"
+        },
+        "boyd-asv": {
+          "ref": "LUK 11:18",
+          "quote": "because ye say that I cast out demons by Beelzebul"
+        }
+      }
+    },
+    "LUK 11:19": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "LUK 11:19",
+          "from": "Beelzebub",
+          "to": "Beelzebul",
+          "greek": "Βεελζεβοὺλ"
+        }
+      ],
+      "why": "The shared Βεελζεβοὺλ continues the argument of verse 18 and takes the same name, Beelzebul for the Latin form Beelzebub, as Pierpont and Boyd render it.",
+      "evidence": {
+        "pierpont": {
+          "entry": 164,
+          "quote": "Beelzebul"
+        },
+        "boyd-asv": {
+          "ref": "LUK 11:19",
+          "quote": "And if I by Beelzebul cast out demons"
         }
       }
     },
@@ -14539,6 +14671,22 @@
       "why": "The printed RP2026 (p. 551) and Boyd's apparatus both give Scrivener τὸ πλοῦτον, against the τὸν πλοῦτον of Stephanus and RP2026; Robinson's electronic text, the accented transcription that follows it and his 2018 collation have τὸν. The English is unaffected."
     }
   },
+  "note_witnesses": [
+    {
+      "witness": "vulgate",
+      "reading": "Beelzebub",
+      "notes": [
+        "MAT 10:25#1 TR",
+        "MAT 12:24 rendering",
+        "MAT 12:27 rendering",
+        "MRK 3:22 rendering",
+        "LUK 11:15 rendering",
+        "LUK 11:18 rendering",
+        "LUK 11:19 rendering"
+      ],
+      "why": "Cite the traditional Vulgate's Beelzebub uniformly at all seven occurrences, rather than the Complutensian Greek edition at Matthew 10:25 and an unnamed alternative English rendering elsewhere. Scrivener, Greek New Testament (1894), Appendix, p. 649 (PDF p. 665), records Beelzebub in the Complutensian here alone and in the Vulgate throughout (“x. 25 Βεελζεβοὺβ] Compl. hic tantum, Vulg. passim, Tynd. Βεελζεβοὺλ Plant. Bez. ceteri omnes”); the note names no Greek edition at Matthew 10:25, since the Vulgate is cited for the English. The Latin text at https://www.drbo.org/lvb/chapter/47010.htm (10:25), 47012.htm (12:24, 27), 48003.htm (3:22), and 49011.htm (11:15, 18, 19) confirms each occurrence. This identifies a witness to the former words, without claiming the KJV's immediate source or changing the Greek classification; the modern Nova Vulgata is not the witness cited."
+    }
+  ],
   "editions": {
     "1JN 1:4#1 TR": {
       "label": "beza",
@@ -14822,11 +14970,6 @@
       "label": "erasmus",
       "reads": "μὴ",
       "why": "Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 650, PDF p. 666): “vi. 37 μὴ] Er. Ald. Col. Vulg. Tynd. καὶ μὴ Compl. St. Bez.” The first Greek edition named is Erasmus’. Scrivener’s Greek text (1894), p. 162 (PDF p. 178), has this reading."
-    },
-    "MAT 10:25#1 TR": {
-      "label": "complutensian",
-      "reads": "Βεελζεβοὺβ",
-      "why": "Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 649, PDF p. 665): “x. 25 Βεελζεβοὺβ] Compl. hic tantum, Vulg. passim, Tynd. Βεελζεβοὺλ Plant. Bez. ceteri omnes.” Scrivener’s Greek text (1894), p. 25 (PDF p. 41), has this reading."
     },
     "MAT 13:24#1 TR": {
       "label": "complutensian",

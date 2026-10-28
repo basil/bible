@@ -723,6 +723,13 @@ class ByzantineEdition(TypedDict, total=False):
     why: ReadOnly[str]
 
 
+class ByzantineNoteWitness(TypedDict):
+    witness: ReadOnly[str]
+    reading: ReadOnly[str]
+    notes: ReadOnly[tuple[str, ...]]
+    why: ReadOnly[str]
+
+
 class ByzantineSide(TypedDict, total=False):
     unit: ReadOnly[ByzantineUnit]
     side: ReadOnly[str]
@@ -740,6 +747,7 @@ Byzantine = TypedDict(
         "lemmas": ReadOnly[Mapping[str, ByzantineLemma]],
         "scrivener": ReadOnly[Mapping[str, ByzantineCorrection]],
         "editions": ReadOnly[Mapping[str, ByzantineEdition]],
+        "note_witnesses": ReadOnly[tuple[ByzantineNoteWitness, ...]],
     },
     total=False,
 )

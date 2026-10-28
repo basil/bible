@@ -11,11 +11,12 @@ import re
 from collections import Counter
 from collections.abc import Iterable, Mapping
 from dataclasses import replace
-from typing import cast
+from typing import Any, cast
 
 import pytest
 
 import bible.pipeline
+from bible import usj
 from bible.byzantine import decisions, greek, received, stages
 from bible.byzantine.inventories import reading_words
 from bible.byzantine.rows import BoydNote, Disposition, Placement, Unit, Unmatched
@@ -490,6 +491,9 @@ def test_a_note_names_the_received_text_only_where_every_unit_it_is_about_is_est
         received.labels(twice, units, found, {"C TR": beza})
     with pytest.raises(CheckFailed, match="name no printed edition"):
         received.labels(rows, units, found, {"C TR": {**beza, "label": "vatican"}})
+    # A version is cited by a note witness decision, never as an edition.
+    with pytest.raises(CheckFailed, match="name no printed edition"):
+        received.labels(rows, units, found, {"C TR": {**beza, "label": "vulgate"}})
 
 
 def test_rows_that_disagree_do_not_establish_the_received_text(
@@ -529,6 +533,7 @@ EDITIONS = {
     "stephanus-1549": "Stephanus",
     "complutensian": "Complutensian",
     "aldine": "Aldine",
+    "vulgate": "Vulgate",
 }
 
 
@@ -553,7 +558,8 @@ def test_the_notes_name_the_witness_the_apparatuses_establish(
         "Beza": 65,
         "Erasmus": 15,
         "Stephanus": 1,
-        "Complutensian": 12,
+        "Complutensian": 11,
+        "Vulgate": 1,
         "Aldine": 1,
         "KJV": 1,
     }
@@ -595,3 +601,59 @@ def test_an_edition_decision_quotes_scriveners_text_only_as_it_reads() -> None:
     # Words that are not there are never read.
     assert received.misquoted(decided(reads=""), scrivener)
     assert received.misquoted(decided(reads="Θεῷ"), {})
+
+
+@pytest.mark.parametrize("kind", ["replace", "rendering"])
+def test_an_explicit_note_witness_must_fit_its_note_and_former_words(kind: str) -> None:
+    key = "MAT 1:1 rendering" if kind == "rendering" else "MAT 1:1#1 TR"
+    held: Node = {
+        **note(key + "#1"),
+        "x-scope": {"kind": kind},
+        "content": [usj.char("fqa", "Beelzebub")],
+    }
+    rows: list[Disposition] = [{"unit": "MAT 1:1", "edits": [{"note": held}]}]
+    decision: dict[str, Any] = {
+        "witness": "vulgate",
+        "reading": "Beelzebub",
+        "notes": [key],
+        "why": "The traditional Vulgate has this name.",
+    }
+    assert received.labels(rows, [], {}, {}, [decision]) == {key + "#1": "vulgate"}
+    invalid: list[tuple[dict[str, Any], str]] = [
+        ({"notes": ["MAT 1:2 rendering"]}, "names no one note"),
+        ({"reading": "Beelzebul"}, "reading does not match"),
+        ({"witness": "unknown"}, "Unknown note witness"),
+        ({"notes": [key, key]}, "Repeated note witness"),
+        # Only a version is cited for the English; the Greek labels stay
+        # with the apparatuses and the edition decisions.
+        ({"witness": received.KING_JAMES}, "Unknown note witness"),
+        ({"witness": received.RECEIVED}, "Unknown note witness"),
+        ({"witness": "beza"}, "Unknown note witness"),
+    ]
+    for change, error in invalid:
+        with pytest.raises(CheckFailed, match=error):
+            received.labels(rows, [], {}, {}, [{**decision, **change}])
+    wrong: list[Disposition] = [
+        {"unit": "MAT 1:1", "edits": [{"note": {**held, "x-scope": {"kind": "adds"}}}]}
+    ]
+    with pytest.raises(CheckFailed, match="does not name a replaced reading"):
+        received.labels(wrong, [], {}, {}, [decision])
+    if kind == "replace":
+        # A note the Received Text or an edition decision labels keeps it.
+        unit: Unit = {"id": "MAT 1:1", "inventories": []}
+        beza = {"label": "beza", "why": "Beza has it."}
+        with pytest.raises(CheckFailed, match="overrides the Received Text"):
+            received.labels(rows, [unit], {}, {key: beza}, [decision])
+        established: Unit = {
+            "id": "MAT 1:1",
+            "inventories": [{"inventory": "tcgnt", "entry": 1}],
+        }
+        found = received.rows([note_row(1, "TR")], [])
+        with pytest.raises(CheckFailed, match="overrides the Received Text"):
+            received.labels(rows, [established], found, {}, [decision])
+        # Every note about the same units cites the version, or none does.
+        both: list[Disposition] = [
+            {"unit": "MAT 1:1", "edits": [{"note": held}, {"note": note(key + "#2")}]}
+        ]
+        with pytest.raises(CheckFailed, match="about the same units differently"):
+            received.labels(both, [unit], {}, {}, [decision])
