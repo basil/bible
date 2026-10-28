@@ -109,8 +109,7 @@ COPY scripts/ /opt/scripts/
 # (sillsdev/ptx2pdf#1262).
 RUN /opt/venv/bin/python /opt/scripts/patch_rerun_limit.py \
     && /opt/venv/bin/python /opt/scripts/patch_page_filler.py \
-    && /opt/venv/bin/python /opt/scripts/patch_note_callers.py \
-    && /opt/venv/bin/python /opt/scripts/patch_periph.py
+    && /opt/venv/bin/python /opt/scripts/patch_note_callers.py
 RUN <<EOF
 set -eu
 # Assemble OLEBFont from Valkyrie OT where the host provided it, else from
