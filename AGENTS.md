@@ -145,7 +145,7 @@ A correction to a slip in transcription must match the source text exactly once,
 | A quotation link, or Turpie's judgment of it | `edition/quotations.json`, `edition/turpie.json` |
 | How a chapter or verse is numbered where eBible numbers it otherwise than the Septuagint (`relabel`, `breaks`), with the editorial account in [the introduction](content/introduction.sfm) and the mechanics in [docs/numbering.md](docs/numbering.md), and a verse that prints no number (`unnumbered`) | `edition/versification.json` |
 | Where a verse stands in the King James Bible, an empty chapter of a transcription, or a note saying where a passage stands | `edition/versification.json` |
-| The spelling of a word, a misprint in the printed English (a missing word among them), or the punctuation of a verse, a note, or a paragraph of front or back matter | `edition/revisions.json` |
+| The spelling of a word, a misprint in the printed English (a missing word, or two words printed for one, among them), or the punctuation of a verse, a note, or a paragraph of front or back matter | `edition/revisions.json` |
 | The spelling of a proper name, by its bearer: the verses, subscriptions, and units of front matter that respell it and the verses that keep the source form, an occurrence by its number where a verse names two bearers alike | `names` in `edition/revisions.json` |
 | The Psalter's kathismata and stasis divisions, and a title of Brenton's that stays a verse | `edition/psalter.json` |
 | A passage the website compares with the King James Bible, and the phrases it highlights | `edition/comparisons.json` |

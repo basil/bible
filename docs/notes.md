@@ -197,5 +197,3 @@ Both [build]. `notes.is_sentence` keeps a final stop and capital only when
 - The Byzantine review and website omit TR notes for cross-verse readings
   (`HEB 1:1#1`, `2CO 1:6#1`, `COL 1:24#1`): tooling, filed under review and
   website in `todo.md`.
-- The "Bodleian Genesis" witness label used by notes at GEN 11:17, 12:5,
-  13:4, 26:34 is an introduction question, filed under authored matter.

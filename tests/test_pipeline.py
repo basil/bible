@@ -797,9 +797,11 @@ def group(
         ("injury", "do injury"),
         ("do not injury", "do not do injury"),
         ("do not", "do not injure"),
+        ("as for the ends", "to the ends"),
+        ("wars as for", "wars to"),
     ],
 )
-def test_a_misprint_may_restore_one_missing_word(
+def test_a_misprint_may_restore_a_word_or_set_one_for_two(
     policy: bible.policy.Policy, old: str, new: str
 ) -> None:
     revision.check(
@@ -820,12 +822,19 @@ def test_a_misprint_may_restore_one_missing_word(
         ("MAT 1:1", "misprint", "do not injury", "do not do injury"),
         ("GEN 19:8", "misprint", "do not injury", "do not do any injury"),
         ("GEN 19:8", "misprint", "do not injury", "do not cause harm"),
+        ("PSA 45:10", "spelling", "as for the ends", "to the ends"),
+        ("MAT 1:1", "misprint", "as for the ends", "to the ends"),
+        ("PSA 45:10", "misprint", "as for the ends", "to ends"),
+        ("PSA 45:10", "misprint", "as for the ends", "for the ends"),
+        ("PSA 45:10", "misprint", "as for the ends", "as the ends"),
+        ("PSA 45:10", "misprint", "as for the ends", "as for the"),
+        ("PSA 45:10", "misprint", "as for the ends", "the to ends"),
         ("GEN 19:8", "misprint", "do not do injury", "do not injury"),
         ("GEN 19:8", "misprint", "do not injury", "do injury not"),
         ("GEN 19:8", "misprint", ",", ", do"),
     ],
 )
-def test_a_missing_word_requires_a_single_ot_misprint_restoration(
+def test_wording_beyond_one_ot_misprint_is_refused(
     policy: bible.policy.Policy, verse: str, wording: str | None, old: str, new: str
 ) -> None:
     with pytest.raises(CheckFailed, match="Revision changes"):
@@ -964,6 +973,42 @@ def test_a_word_restored_at_a_verse_edge_requires_an_unstyled_boundary(
     else:
         result = revision.revised("GEN", source, declared, set())
         assert usj.serialize(result) == usj.serialize(source).replace("injury", new)
+
+
+NOTE = "\\f - \\fr 19:8 \\ft lit.\\f*"
+
+
+@pytest.mark.parametrize(
+    "text,old,new,joined",
+    [
+        ("as for the", "as for", "unto", "unto the"),
+        # A note before or after the two words stands beside the one.
+        (f"{NOTE}as for the", "as for", "unto", f"{NOTE}unto the"),
+        (f"as for{NOTE} the", "as for", "unto", f"unto{NOTE} the"),
+        # The letters kept on either side would hold the note or the style's
+        # edge within the one word, though only the space between them goes.
+        (f"in {NOTE}to the", "in to", "into", None),
+        (f"in {NOTE}to the", "in to", "unto", None),
+        ("in \\it to\\it* the", "in to", "into", None),
+    ],
+)
+def test_two_words_set_as_one_hold_no_style_or_note(
+    policy: bible.policy.Policy, text: str, old: str, new: str, joined: str | None
+) -> None:
+    source = pipeline.keyed(
+        "GEN", usj.parse(f"\\id GEN\n\\c 19\n\\p\n\\v 8 only {text} men.\n")
+    )
+    declared = revisions(
+        policy,
+        verses=group({"verse": "GEN 19:8", "from": old, "to": new}, wording="misprint"),
+    )
+    revision.check(declared)
+    if joined is None:
+        with pytest.raises(CheckFailed, match="joins words across a style or note"):
+            revision.revised("GEN", source, declared, set())
+    else:
+        result = revision.revised("GEN", source, declared, set())
+        assert usj.serialize(result) == usj.serialize(source).replace(text, joined)
 
 
 def test_a_verse_is_revised_in_its_own_words_and_the_notes_that_quote_them(

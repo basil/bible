@@ -11796,6 +11796,12 @@
       "wording": "misprint",
       "changes": [
         {
+          "verse": "PSA 45:10",
+          "from": "as for the ends of the earth",
+          "to": "to the ends of the earth",
+          "why": "Brenton’s 1844 printing (vol. II physical p. 100, printed p. 597), 1879 (physical p. 741), 1884 (physical p. 708), and 1900 (physical p. 737), the last three printed p. 725, all print as for the ends of the earth; eBible and CCEL 9.xlvi.htm transcribe it faithfully. Swete II (1907) p. 273 prints μέχρι τῶν περάτων τῆς γῆς, confirmed in the checked transcription and scan, expressing the geographical limit, which Brenton renders to the ends of the earth six times elsewhere. His apparatus records no variant affecting μέχρι or περάτων."
+        },
+        {
           "verse": "SIR 41:8",
           "from": "Who be unto you",
           "to": "Woe be unto you",

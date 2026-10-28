@@ -1,22 +1,6 @@
 # TODO
 
-## 1. Scripture wording: probable transcription or copyediting slips
-
-All [source]. A correction to eBible's wording needs a decision with the
-printing and page that has the right reading (`corrections` in
-`edition/brenton-notes.json` for a transcription slip, `edition/revisions.json`
-for an editorial change).
-
-- [ ] **PSA 45:10** — "Putting an end to wars as for the ends of the earth";
-  "as far as" expected. Confidence: medium. Check: Greek and printing.
-- [ ] **JER 45:25** — "what said the king to thee?" asked twice; the first
-  may be "what saidst thou to the king". Confidence: medium. Check: Greek
-  and printing. Do not supply the KJV wording without evidence.
-- [ ] **2CO 5:1** — "a house not made with hand"; Paragraph Bible has
-  "hand", CrossWire KJV, ASV, RV have "hands". Greek is one adjective and
-  settles nothing. Confidence: low. Check: the 1873 printing.
-
-## 2. Scripture grammar: agreement and inflection
+## Scripture grammar: agreement and inflection
 
 All [source]: inherited in eBible and CCEL. Check the printing before a
 scoped revision (`verses` in `edition/revisions.json`). Confidence is medium
@@ -32,7 +16,7 @@ for each unless noted; the slip is plain, the printing is unchecked.
 - [ ] **EZK 30:21** — "I have broken the arms of Pharaoh … it hath not been
   bound up … upon it"; number of "arm" in the Greek decides.
 
-## 3. Scripture meaning and continuity questions
+## Scripture meaning and continuity questions
 
 All [source] and [source + Greek]. These are inherited readings that look
 wrong against their context. None is an export regression. Confidence is
@@ -98,7 +82,7 @@ to the Hebrew or KJV without evidence; the Greek may read this way.
 - [ ] **1MA 12:7, 12:19–20** — the Spartan letter is from Darius, sent by
   Oniares, signed Areus to Onias.
 
-## 4. Scripture punctuation (inherited)
+## Scripture punctuation (inherited)
 
 [editorial] unless marked. Any change is a scoped punctuation revision.
 Compare the printing before calling one a transcription slip.
@@ -116,7 +100,7 @@ Compare the printing before calling one a transcription slip.
 - [ ] **our's, your's, their's** — GEN 31:16, JDT 5:18, 1MA 12:23 (three),
   2MA 13:22. Confidence: high that they exist; decide once.
 
-## 5. Orthography: obsolete spellings
+## Orthography: obsolete spellings
 
 All [editorial]. The introduction says obsolete spellings are modernized
 even where both sources agree; these candidates remain to be decided in
@@ -130,7 +114,7 @@ each as an omission unless noted. Keep the inflection, change the spelling.
 - [ ] **carrs** (1ES 5:53) → cars. Confidence: medium (period vehicle noun).
 - Repro: `grep -rn -w 'flixe\|lowring\|layedst\|doateth\|carrs' build/review/text/`.
 
-## 6. Orthography: compounds and regional spelling
+## Orthography: compounds and regional spelling
 
 All [editorial]. The introduction (`content/introduction.sfm:108`) ends
 "Compounds outside the declared changes keep their sources' forms", so none
@@ -156,7 +140,7 @@ call is open.
 - [ ] **paralyzed / paralysed** — 3MA 2:22, 6:20.
 - [ ] **Bethmaalo / Beth-maalo** — JDG 9:6, 9:20 (a place; see names too).
 
-## 7. Capitalization of "king" before a name
+## Capitalization of "king" before a name
 
 [editorial]. `edition/revisions.json` capitalizes "king `Name`" but excepts
 phrases where a demonstrative qualifies the title (lines 11243, 11284,
@@ -173,7 +157,7 @@ phrases where a demonstrative qualifies the title (lines 11243, 11284,
 - Fix: narrow or remove the three exceptions. Repro:
   `grep -n 'this king Artaxerxes\|that king Demetrius\|that king Seleucus' edition/revisions.json build/review/text/*.usfm`.
 
-## 8. Names: one bearer, several English forms
+## Names: one bearer, several English forms
 
 All [source + Greek]: tabulate Swete (or RP2026 for the NT) and the printed
 English before merging; declension alone never separates bearers
@@ -246,7 +230,7 @@ seen. Repro for any: `grep -rn -w '<Form>' build/review/text/`.
 - [ ] **Jona / Jonas** (Peter's father) — JHN 1:42 vs 21:15–17. RP2026 and
   Scrivener have Ἰωνᾶ at all four. The Jonah→Jonas rule is the prophet's.
 
-## 9. Authored matter
+## Authored matter
 
 - [ ] **Introduction, Conforming the King James Text
   (`content/introduction.sfm:61`)** [build] — says RV wording is taken only
@@ -260,11 +244,8 @@ seen. Repro for any: `grep -rn -w '<Form>' build/review/text/`.
   the Saturday of Renewal Week, but the table gives Kathisma XVII at Holy
   Saturday Matins. Confidence: high. Clarify the exception or the note's
   scope.
-- [ ] **Introduction: "Bodleian Genesis" witness label** [editorial] —
-  notes at GEN 11:17, 12:5, 13:4, 26:34 use it; consider identifying it as
-  Swete's E beside the other witness labels. Confidence: low (optional).
 
-## 10. Review and website tooling
+## Review and website tooling
 
 - [ ] **Cross-verse readings in the Byzantine review and `XXC.json`**
   [build] — `HEB 1:1#1` (edits 1:2), `2CO 1:6#1` (edits 1:7), `COL 1:24#1`

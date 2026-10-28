@@ -35,8 +35,8 @@ Six kinds of change are declared, each with its reason:
     verses   changes to the words of single verses, each naming its verse,
              as "EZK 1:3", which must have the words once: its punctuation,
              a spelling particular to it, or a misprint, which may restore
-             one missing word. They stand in groups, by the reason they
-             share
+             one missing word, or set one word for two printed. They stand
+             in groups, by the reason they share
     ligatures each ligature written out as its letters wherever it is
              printed, last of all, so that every other decision is written
              and met in the sources' letters
@@ -152,9 +152,25 @@ def one_word_inserted(old: str, new: str) -> bool:
     return before[at:] == after[at + 1 :]
 
 
+def two_words_for_one(old: str, new: str) -> bool:
+    """Two contiguous words printed where one belongs; every other word
+    keeps its order. The one is neither of the two, which would only delete
+    a word."""
+    before, after = _lexemes(old), _lexemes(new)
+    if len(before) != len(after) + 1:
+        return False
+    at = next((n for n, word in enumerate(after) if word != before[n]), len(after))
+    return (
+        at < len(after)
+        and after[at] != before[at + 1]
+        and before[at + 2 :] == after[at + 1 :]
+    )
+
+
 # What a verse revision may change among the words, declared by its group:
 # the spelling or inflection of a word, chosen by sense verse by verse, or a
-# printed misprint established by the cited evidence, including a missing word.
+# printed misprint established by the cited evidence, including a missing word
+# or two words printed for one.
 WORDING = frozenset({"spelling", "misprint"})
 
 
@@ -399,9 +415,9 @@ def check(policy: bible.policy.Policy) -> None:
             # keeping words, numbers, and internal apostrophes and hyphens
             # intact, unless its group declares the kind of wording it
             # changes, and then one word; a misprint may restore one missing
-            # word instead. NT wording belongs to checked Greek-reading or
-            # rendering decisions: no kind reaches it, and its capitals
-            # change only at a changed sentence end.
+            # word, or set one word for two printed. NT wording belongs to
+            # checked Greek-reading or rendering decisions: no kind reaches it,
+            # and its capitals change only at a changed sentence end.
             require(
                 key[:3] not in policy.kjv_units
                 or punctuation_only(change["from"], change["to"]),
@@ -422,7 +438,10 @@ def check(policy: bible.policy.Policy) -> None:
                         one_word_differs(change["from"], change["to"])
                         or (
                             wording == "misprint"
-                            and one_word_inserted(change["from"], change["to"])
+                            and (
+                                one_word_inserted(change["from"], change["to"])
+                                or two_words_for_one(change["from"], change["to"])
+                            )
                         )
                     )
                 ),
@@ -2034,7 +2053,8 @@ def _reworded(
         key = f"{code} {reference}"
         require(reference in verses, f"Revision of a verse the edition lacks: {key}")
         verse = verses[reference]
-        restores = len(_lexemes(to)) > len(_lexemes(old))
+        grows = len(_lexemes(to)) - len(_lexemes(old))
+        restores, joins = grows > 0, grows < 0
         found = list(_phrase(old).finditer(verse.text))
         if occurrences and (reference, old, to) in occurrences:
             numbered = occurrences[reference, old, to]
@@ -2072,8 +2092,10 @@ def _reworded(
             # set in a style, or on a side of the note, that nothing decides:
             # wherever the restored word can be read, whatever else changes
             # with it, no note or line break stands and no string meets
-            # another: a line break divides the words as a note does.
-            if restores:
+            # another: a line break divides the words as a note does. And
+            # words set as fewer would hold whatever divided them within the
+            # one they become, even where only a space between them goes.
+            if restores or joins:
                 begun = start - local
                 seams = {begun + b for _, b in strings} & {
                     begun + a for a, _ in strings
@@ -2081,11 +2103,27 @@ def _reworded(
                 seams |= {begun + edge for edge in _style_edges(content)}
                 seams |= {offset for offset, _ in verse.notes}
                 seams |= {line - 1 for line in verse.lines}
-                first, last = (match.start() + n for n in _restored(old, to))
-                require(
-                    not any(first <= seam <= last for seam in seams),
-                    f"Revision restores a word beside a style or note: {key}: {old}",
-                )
+                if restores:
+                    first, last = (match.start() + n for n in _restored(old, to))
+                    require(
+                        not any(first <= seam <= last for seam in seams),
+                        f"Revision restores a word beside a style or note: {key}: {old}",
+                    )
+                else:
+                    # Where each seam the change reaches stands in its words.
+                    words = verse.text[:start] + new + verse.text[end:]
+                    places = {
+                        start + len(new) if seam == end else start
+                        for seam in seams
+                        if start <= seam <= end
+                    }
+                    require(
+                        not any(
+                            re.fullmatch(r"\w\w", words[at - 1 : at + 1])
+                            for at in places
+                        ),
+                        f"Revision joins words across a style or note: {key}: {old}",
+                    )
             edits.append((verse, start, end, new, (old, to)))
     # Two groups may revise one verse, but not the same words of it.
     stretches = sorted((verse.reference, start, end) for verse, start, end, *_ in edits)
