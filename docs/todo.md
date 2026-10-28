@@ -158,7 +158,7 @@ call is open.
 
 ## 7. Capitalization of "king" before a name
 
-[editorial]. `edition/revisions.json` capitalizes "king <Name>" but excepts
+[editorial]. `edition/revisions.json` capitalizes "king `Name`" but excepts
 phrases where a demonstrative qualifies the title (lines 11243, 11284,
 11386). In these three the "this/that" is not a demonstrative on "king":
 
