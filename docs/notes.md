@@ -83,29 +83,7 @@ roman and what is italic.
   words as `\fqa`; audit other hedged glosses before changing the rule.
   Repro: `grep -n 'perhaps\|possibly' build/review/notes.md`.
 
-## 3. Lemma tail copied into the alternative (words added to the note)
-
-Resolved. When `unique_span` widens the glossed words to make them unique,
-`lemmas.echoes` adds the widened words to every alternative; where the rule
-that measures the rendering (by its length or its last word) took in too few
-words, the echo printed words the source does not have. Every note whose
-renderings were echoed (202 of them) was read against its source. The defective ones are decided
-in `edition/brenton-notes.json` (`LEV 4:12 CCEL`, `EXO 25:36 CCEL`,
-`1CH 22:9 CCEL`, `1CH 28:4 CCEL#2`, `EZK 21:20 CCEL`, `EZK 36:31 CCEL`,
-`EZK 44:13 CCEL`, `EZK 47:9 CCEL`) or in `edition/ccel-notes.json`, where CCEL
-misplaced a note (`8.xxxii#4`, now `JOB 33:26 CCEL`) or gave the second of
-Brenton's two δ notes ζ's words (`3.xxviii#5`, `1CH 28:4 CCEL#3`). The build
-now refuses a widened rendering that repeats its lemma, the one case of the
-class it can see without the source.
-
-Do not re-report: echoes of Brenton's Hebraisms substitute correctly, however
-awkward ("me out: Gr. _in me out_" at `1CH 28:4 CCEL`, "Israel short: Gr. _in
-Israel short_" at `2KI 10:32`). A rule that a lemma does not end on an
-auxiliary ("shall", "will") was tried and rejected: it fixed `1CH 22:9 CCEL`
-but broke "wilt: Gr. _dost_" (`EXO 32:32`, `2SA 13:4`) and "I will: or, _let
-me_" (`1KI 16:28g`), and made six lemma overrides redundant.
-
-## 4. Lemma scope (which words the note is about)
+## 3. Lemma scope (which words the note is about)
 
 The adjudication pass settled that a broad contextual lemma around a short
 gloss is a convention (`EZK 5:9 CCEL` declares it deliberately), so breadth
@@ -123,7 +101,7 @@ alone is not a defect. What remains:
 - [ ] **Boundary cut mid-constituent: `ECC 10:3 CCEL` ("thinketh of is"),
   `AMO 6:10 CCEL` ("a remnant shall")** [editorial] — length-matched lemma
   ends after a copula/auxiliary. Confidence: medium. A decision rather than a
-  rule change (section 3 records the rule that was tried). The same trial
+  rule change (see the rejected rule below). The same trial
   turned up `AMO 7:9 CCEL` ("joyful altars shall: Gr. _altars of
   laughter_"), `2CH 36:5c CCEL` ("they should: Gr. _he_, sc. _Juda_"),
   `JOB 13:14 CCEL` ("while I may: Gr. _having taken_") and `1CH 13:4 CCEL`
@@ -146,17 +124,7 @@ alone is not a defect. What remains:
   omitted passage. `prose.json` unbracketed-notes handles Esther the same way
   but has no PRO entry.
 
-### Withdrawn (do not re-report)
-
-Over-broad-lemma claims withdrawn by the adjudication unit: `GEN 2:23`,
-`GEN 9:17`, `LEV 10:11 CCEL`, `LEV 11:22 CCEL`, `LEV 25:31 CCEL`,
-`LEV 26:10 CCEL`, `RUT 1:15 CCEL`, `RUT 2:13 CCEL`, `1SA 18:1 CCEL`,
-`1CH 7:23 CCEL`, `1CH 23:28 CCEL`, `2CH 13:9 CCEL`, `2CH 28:11 CCEL#2`,
-`2CH 29:35 CCEL#3`, `EZR 6:15 CCEL`, `ESG 6:9 CCEL`, `2CH 35:18 CCEL`,
-`JDG 7:24`, `1KI 7:39#2`, `EZK 44:24 CCEL`, `MIC 2:12 CCEL`, `MIC 3:6 CCEL`,
-`MIC 4:13 CCEL`, `ZEC 9:1 CCEL`, `JER 30:18 CCEL`, `JER 32:28 CCEL#2`.
-
-## 5. Duplicate and misplaced notes
+## 4. Duplicate and misplaced notes
 
 - [ ] **JDG 14:1 and `JDG 14:2 CCEL` (CCEL `vii.xxxix#1`)** [build] — the
   ἀλλόφυλοι/Philistines explanation prints twice. `edition/ccel-notes.json`
@@ -173,7 +141,7 @@ Over-broad-lemma claims withdrawn by the adjudication unit: `GEN 2:23`,
   Confidence: medium. Check: printed callers; then one duplicate/placement
   decision keeping the fuller Hebrew gloss.
 
-## 6. Sentence detection (introduced punctuation and case)
+## 5. Sentence detection (introduced punctuation and case)
 
 Both [build]. `notes.is_sentence` keeps a final stop and capital only when
 `FINITE_VERB` matches or a `sentence: true` override exists
@@ -188,7 +156,7 @@ Both [build]. `notes.is_sentence` keeps a final stop and capital only when
   intermingled…" loses its final stop; the opening "Note" label blocks
   detection. Confidence: high. Fix: `sentence: true` as at `GEN 15:11`.
 
-## 7. Spelling, punctuation, and grammar inside notes (inherited)
+## 6. Spelling, punctuation, and grammar inside notes (inherited)
 
 ### Editorial judgment (policy says modernize obsolete spellings in notes too)
 
@@ -224,7 +192,7 @@ Both [build]. `notes.is_sentence` keeps a final stop and capital only when
   participle, so this is a note-wording question only. Confidence: medium
   that the mismatch is real; low that it should change. Check: printed 1611.
 
-## 8. Cross-references
+## 7. Cross-references
 
 - The Byzantine review and website omit TR notes for cross-verse readings
   (`HEB 1:1#1`, `2CO 1:6#1`, `COL 1:24#1`): tooling, filed under review and
