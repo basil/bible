@@ -34,8 +34,9 @@ Six kinds of change are declared, each with its reason:
     punctuation systematic English punctuation rules
     verses   changes to the words of single verses, each naming its verse,
              as "EZK 1:3", which must have the words once: its punctuation,
-             or a spelling particular to it. They stand in groups, by the
-             reason they share
+             a spelling particular to it, or a misprint, which may restore
+             one missing word. They stand in groups, by the reason they
+             share
     ligatures each ligature written out as its letters wherever it is
              printed, last of all, so that every other decision is written
              and met in the sources' letters
@@ -141,9 +142,19 @@ def one_word_differs(old: str, new: str) -> bool:
     return len(before) == len(after) and sum(a != b for a, b in zip(before, after)) == 1
 
 
+def one_word_inserted(old: str, new: str) -> bool:
+    """One missing word is restored beside words that place it; every
+    existing word keeps its order."""
+    before, after = _lexemes(old), _lexemes(new)
+    if not before or len(after) != len(before) + 1:
+        return False
+    at = next((n for n, word in enumerate(before) if word != after[n]), len(before))
+    return before[at:] == after[at + 1 :]
+
+
 # What a verse revision may change among the words, declared by its group:
 # the spelling or inflection of a word, chosen by sense verse by verse, or a
-# word the source's printing got wrong, which another printing shows.
+# printed misprint established by the cited evidence, including a missing word.
 WORDING = frozenset({"spelling", "misprint"})
 
 
@@ -387,9 +398,10 @@ def check(policy: bible.policy.Policy) -> None:
             # A verse revision changes punctuation and capitals only,
             # keeping words, numbers, and internal apostrophes and hyphens
             # intact, unless its group declares the kind of wording it
-            # changes, and then one word. NT wording belongs to checked
-            # Greek-reading or rendering decisions: no kind reaches it, and
-            # its capitals change only at a changed sentence end.
+            # changes, and then one word; a misprint may restore one missing
+            # word instead. NT wording belongs to checked Greek-reading or
+            # rendering decisions: no kind reaches it, and its capitals
+            # change only at a changed sentence end.
             require(
                 key[:3] not in policy.kjv_units
                 or punctuation_only(change["from"], change["to"]),
@@ -406,7 +418,13 @@ def check(policy: bible.policy.Policy) -> None:
                 (
                     words_kept(change["from"], change["to"])
                     if wording is None
-                    else one_word_differs(change["from"], change["to"])
+                    else (
+                        one_word_differs(change["from"], change["to"])
+                        or (
+                            wording == "misprint"
+                            and one_word_inserted(change["from"], change["to"])
+                        )
+                    )
                 ),
                 f"Revision changes words without their kind, or other than one: {name}: {key}",
             )
@@ -809,6 +827,45 @@ def _edit(at: int, old: str, new: str) -> tuple[int, int, str]:
         gone, came = old[:1], came + old[:1]
     start = at + prefix
     return start, start + len(gone), came
+
+
+def _restored(old: str, new: str) -> tuple[int, int]:
+    """The offsets in old between which a word restored to it stands: the
+    stretch the change replaces, or, where it only adds, every place the
+    addition can be read at. The common prefix reads an addition as late as
+    it can be, within the next word if the restored word begins as that one
+    does, so it is read back to where it begins a word, and further back to
+    the earliest place it begins one, as beside the same word it can."""
+    at, gone, came = repairs.change(old, new)
+    if gone:
+        return at, at + len(gone)
+    last, begins = at, None
+    while True:
+        if re.match(r"\w", came) and not (at and re.match(r"\w", old[at - 1])):
+            begins = at
+        if not (at and old[at - 1] == came[-1]):
+            break
+        at, came = at - 1, old[at - 1] + came[:-1]
+    return (at if begins is None else begins), last
+
+
+def _style_edges(content: Content) -> set[int]:
+    """Character-style openings and closings, including at the text's edges."""
+    edges: set[int] = set()
+
+    def visit(items: Content, at: int) -> int:
+        for item in items:
+            if isinstance(item, str):
+                at += len(item)
+            elif "content" in item and not usj.is_note(item):
+                start = at
+                at = visit(item["content"], at)
+                if item["type"] == "char":
+                    edges.update((start, at))
+        return at
+
+    visit(content, 0)
+    return edges
 
 
 def _style_runs(
@@ -1977,6 +2034,7 @@ def _reworded(
         key = f"{code} {reference}"
         require(reference in verses, f"Revision of a verse the edition lacks: {key}")
         verse = verses[reference]
+        restores = len(_lexemes(to)) > len(_lexemes(old))
         found = list(_phrase(old).finditer(verse.text))
         if occurrences and (reference, old, to) in occurrences:
             numbered = occurrences[reference, old, to]
@@ -2003,12 +2061,31 @@ def _reworded(
             # deleted lose nothing.
             index, local = verse.part_at(start, at_end=start == end)
             block, lo, hi, _ = verse.parts[index]
-            strings = usj.leaves(doc["content"][block]["content"][lo:hi])
+            content = doc["content"][block]["content"][lo:hi]
+            strings = usj.leaves(content)
             require(
                 not new
                 or sum(a < local + end - start and local < b for a, b in strings) <= 1,
                 f"Revision across a style or note: {key}: {old}",
             )
+            # A word restored where a style or note meets the words would be
+            # set in a style, or on a side of the note, that nothing decides:
+            # wherever the restored word can be read, whatever else changes
+            # with it, no note or line break stands and no string meets
+            # another: a line break divides the words as a note does.
+            if restores:
+                begun = start - local
+                seams = {begun + b for _, b in strings} & {
+                    begun + a for a, _ in strings
+                }
+                seams |= {begun + edge for edge in _style_edges(content)}
+                seams |= {offset for offset, _ in verse.notes}
+                seams |= {line - 1 for line in verse.lines}
+                first, last = (match.start() + n for n in _restored(old, to))
+                require(
+                    not any(first <= seam <= last for seam in seams),
+                    f"Revision restores a word beside a style or note: {key}: {old}",
+                )
             edits.append((verse, start, end, new, (old, to)))
     # Two groups may revise one verse, but not the same words of it.
     stretches = sorted((verse.reference, start, end) for verse, start, end, *_ in edits)

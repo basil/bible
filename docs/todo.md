@@ -7,13 +7,6 @@ printing and page that has the right reading (`corrections` in
 `edition/brenton-notes.json` for a transcription slip, `edition/revisions.json`
 for an editorial change).
 
-- [ ] **SIR 41:8** — "Who be unto you, ungodly men"; eBible has "Who", KJV
-  "Woe". Confidence: high. Check: printed Brenton, then choose the
-  correction mechanism. Repro: `grep -n 'Who be unto' build/review/text/SIR.usfm`.
-- [ ] **GEN 19:8** — "only do not injury to these men"; CCEL iii.19.htm has
-  "do not do injury". Confidence: high. Check: printed Brenton.
-- [ ] **LEV 7:31** — "the breast shall be Aaron's and his sons"; needs
-  "sons'". Confidence: high. Check printing, then a punctuation revision.
 - [ ] **PSA 45:10** — "Putting an end to wars as for the ends of the earth";
   "as far as" expected. Confidence: medium. Check: Greek and printing.
 - [ ] **JER 45:25** — "what said the king to thee?" asked twice; the first
@@ -110,12 +103,6 @@ to the Hebrew or KJV without evidence; the Greek may read this way.
 [editorial] unless marked. Any change is a scoped punctuation revision.
 Compare the printing before calling one a transcription slip.
 
-- [ ] **1CH 1:16–17 and 1:23–24** [build] — the Alexandrinus decision
-  `1CH 1:11-23` adds a comma to supplied 1:16 before the new sentence "The
-  sons of Sem", and 1:24 still begins lowercase "and Arphaxad" as it did when
-  it followed eBible's 1:17 directly. Confidence: high. Fix in
-  `edition/alexandrinus.json`: a stop after 1:16 and a sentence start at
-  1:24. Repro: `grep -n 'Amathite\|sons of Jectan' build/review/text/1CH.usfm`.
 - [ ] **EXO 16:35** — no clause boundary between "land" and "they ate the
   manna". Confidence: medium.
 - [ ] **1KI 5:25** (3 Kingdoms) — "beaten oil thus Solomon gave"; CCEL has a
@@ -132,18 +119,16 @@ Compare the printing before calling one a transcription slip.
 ## 5. Orthography: obsolete spellings
 
 All [editorial]. The introduction says obsolete spellings are modernized
-even where both sources agree; none of these has a decision in
-`edition/revisions.json` (spot-checked for "moe"). Confidence: high for
+even where both sources agree; these candidates remain to be decided in
+`edition/revisions.json`. Confidence: high for
 each as an omission unless noted. Keep the inflection, change the spelling.
 
-- [ ] **moe** — MAT 21:36, 22:46, 25:20; JHN 4:41, 7:31; ACT 23:21; GAL 4:27.
 - [ ] **flixe** (ACT 28:8) → flux.
 - [ ] **lowring** (MAT 16:3) → lowering or louring. Confidence: medium.
 - [ ] **layedst** (LUK 19:21) → laidst.
 - [ ] **doateth** (SIR 25:2) → doteth.
-- [ ] **stupified** (JER 28:39) → stupefied.
 - [ ] **carrs** (1ES 5:53) → cars. Confidence: medium (period vehicle noun).
-- Repro: `grep -rn -w 'moe\|flixe\|lowring\|layedst\|doateth\|stupified\|carrs' build/review/text/`.
+- Repro: `grep -rn -w 'flixe\|lowring\|layedst\|doateth\|carrs' build/review/text/`.
 
 ## 6. Orthography: compounds and regional spelling
 

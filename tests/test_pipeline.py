@@ -791,6 +791,181 @@ def group(
     return {"pointing": entry}
 
 
+@pytest.mark.parametrize(
+    "old,new",
+    [
+        ("injury", "do injury"),
+        ("do not injury", "do not do injury"),
+        ("do not", "do not injure"),
+    ],
+)
+def test_a_misprint_may_restore_one_missing_word(
+    policy: bible.policy.Policy, old: str, new: str
+) -> None:
+    revision.check(
+        revisions(
+            policy,
+            verses=group(
+                {"verse": "GEN 19:8", "from": old, "to": new}, wording="misprint"
+            ),
+        )
+    )
+
+
+@pytest.mark.parametrize(
+    "verse,wording,old,new",
+    [
+        ("GEN 19:8", None, "do not injury", "do not do injury"),
+        ("GEN 19:8", "spelling", "do not injury", "do not do injury"),
+        ("MAT 1:1", "misprint", "do not injury", "do not do injury"),
+        ("GEN 19:8", "misprint", "do not injury", "do not do any injury"),
+        ("GEN 19:8", "misprint", "do not injury", "do not cause harm"),
+        ("GEN 19:8", "misprint", "do not do injury", "do not injury"),
+        ("GEN 19:8", "misprint", "do not injury", "do injury not"),
+        ("GEN 19:8", "misprint", ",", ", do"),
+    ],
+)
+def test_a_missing_word_requires_a_single_ot_misprint_restoration(
+    policy: bible.policy.Policy, verse: str, wording: str | None, old: str, new: str
+) -> None:
+    with pytest.raises(CheckFailed, match="Revision changes"):
+        revision.check(
+            revisions(
+                policy,
+                verses=group({"verse": verse, "from": old, "to": new}, wording=wording),
+            )
+        )
+
+
+def test_restoring_a_missing_word_preserves_styles_notes_and_the_input(
+    policy: bible.policy.Policy,
+) -> None:
+    source = pipeline.keyed(
+        "GEN",
+        usj.parse(
+            "\\id GEN\n\\c 19\n\\p\n\\v 8 only do not injury to these men, "
+            "to avoid which they came under the shelter of my "
+            "\\f - \\fr 19:8 \\fq roof: \\ft lit. \\fqa beams\\f*roof. "
+            "\\add And\\add* they answered.\n"
+        ),
+    )
+    before = copy.deepcopy(source)
+    declared = revisions(
+        policy,
+        verses=group(
+            {"verse": "GEN 19:8", "from": "do not injury", "to": "do not do injury"},
+            wording="misprint",
+        ),
+    )
+    revision.check(declared)
+    met: revision.MetRevisions = set()
+    result = revision.revised("GEN", source, declared, met)
+    assert usj.serialize(result) == usj.serialize(source).replace(
+        "do not injury", "do not do injury"
+    )
+    assert list(usj.notes_of(result["content"])) == list(
+        usj.notes_of(source["content"])
+    )
+    assert source == before
+    assert met == {"GEN 19:8"}
+
+
+@pytest.mark.parametrize(
+    "text,old,new,restored",
+    [
+        (
+            "\\add do not\\add* injury",
+            "do not injury",
+            "do not do injury",
+            "\\add do not\\add* do injury",
+        ),
+        ("\\add do not\\add*, injury", "do not, injury", "do not do, injury", None),
+        ("do not \\add injury\\add*", "do not injury", "do not do injury", None),
+        (
+            "do not\\f - \\fr 19:8 \\ft lit.\\f*, injury",
+            "do not, injury",
+            "do not do, injury",
+            None,
+        ),
+        # Restored before the first word, it would take that word's style.
+        ("do not \\add injury\\add*", "injury", "do injury", None),
+        ("do not injury", "injury", "do injury", "do not do injury"),
+        # A restored word that begins as the next word does is read where it
+        # begins, not within that word.
+        ("my \\f - \\fr 19:8 \\ft lit.\\f*roof", "my roof", "my rough roof", None),
+        # Changed punctuation beside it does not hide it.
+        (
+            "do not\\f - \\fr 19:8 \\ft lit.\\f*, injury",
+            "do not, injury",
+            "do not do injury",
+            None,
+        ),
+        # A note that ends the verse stands beside what is added there too.
+        (
+            "do not\\f - \\fr 19:8 \\ft lit.\\f*\n\\v 9 Next",
+            "do not",
+            "do not injure",
+            None,
+        ),
+        # A dash divides words as a space does.
+        ("do—\\add injury\\add*", "do—injury", "do—not—injury", None),
+        # A word restored beside the same word may be read on either side.
+        ("\\add the\\add* man", "the man", "the the man", None),
+        # A line break divides the words as a note does: what begins a line
+        # stays there, and what would end one is set by nothing.
+        (
+            "do not\n\\q2 injury",
+            "do not injury",
+            "do not do injury",
+            "do not\n\\q2 do injury",
+        ),
+        ("do not\n\\q2 injury", "do not injury", "do not, do injury", None),
+    ],
+)
+def test_a_word_restored_beside_a_style_or_note_is_refused(
+    policy: bible.policy.Policy, text: str, old: str, new: str, restored: str | None
+) -> None:
+    source = pipeline.keyed(
+        "GEN", usj.parse(f"\\id GEN\n\\c 19\n\\p\n\\v 8 only {text} to these men.\n")
+    )
+    declared = revisions(
+        policy,
+        verses=group({"verse": "GEN 19:8", "from": old, "to": new}, wording="misprint"),
+    )
+    revision.check(declared)
+    met: revision.MetRevisions = set()
+    if restored is None:
+        with pytest.raises(CheckFailed, match="beside a style or note"):
+            revision.revised("GEN", source, declared, met)
+    else:
+        result = revision.revised("GEN", source, declared, met)
+        assert usj.serialize(result) == usj.serialize(source).replace(text, restored)
+
+
+@pytest.mark.parametrize("marker", [None, "it", "add"])
+@pytest.mark.parametrize("at_start", [True, False])
+def test_a_word_restored_at_a_verse_edge_requires_an_unstyled_boundary(
+    policy: bible.policy.Policy, marker: str | None, at_start: bool
+) -> None:
+    word = f"\\{marker} injury\\{marker}*" if marker else "injury"
+    text = f"{word} to these men." if at_start else f"Do not {word}"
+    new = "do injury" if at_start else "injury now"
+    source = pipeline.keyed("GEN", usj.parse(f"\\id GEN\n\\c 19\n\\p\n\\v 8 {text}\n"))
+    declared = revisions(
+        policy,
+        verses=group(
+            {"verse": "GEN 19:8", "from": "injury", "to": new}, wording="misprint"
+        ),
+    )
+    revision.check(declared)
+    if marker:
+        with pytest.raises(CheckFailed, match="beside a style or note"):
+            revision.revised("GEN", source, declared, set())
+    else:
+        result = revision.revised("GEN", source, declared, set())
+        assert usj.serialize(result) == usj.serialize(source).replace("injury", new)
+
+
 def test_a_verse_is_revised_in_its_own_words_and_the_notes_that_quote_them(
     policy: bible.policy.Policy,
 ) -> None:

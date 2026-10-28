@@ -4834,6 +4834,14 @@
     }
   },
   "words": {
+    "moe": {
+      "to": "more",
+      "why": "An obsolete spelling is modernized wherever it stands. The pinned King James archive has moe thirty times, seven in the New Testament; Brenton has none. The seven printed occurrences are Matthew 21:36, 22:46, 25:20, John 4:41, 7:31, Acts 23:21, and Galatians 4:27. The spelling changes, not the word."
+    },
+    "stupified": {
+      "to": "stupefied",
+      "why": "An obsolete spelling is modernized wherever it stands, retaining the inflection. The pinned Brenton archive has stupified once, at Jeremias 28:39; the King James archive has none. Brenton’s 1844 printing (vol. II physical p. 271, printed p. 768), 1879 (physical p. 956), 1884 (physical p. 921), and 1900 (physical p. 952), the last three printed p. 940, all print stupified. The spelling changes, not the word."
+    },
     "quœ addita sunt": {
       "to": "quae addita sunt",
       "why": "The transcription’s œ for the preface’s æ, the Latin diphthong, written ae as the edition writes it."
@@ -11783,6 +11791,45 @@
     }
   },
   "verses": {
+    "inherited English misprints": {
+      "why": "Correct inherited printed English slips by the cited Greek and English evidence, retaining the surrounding translation.",
+      "wording": "misprint",
+      "changes": [
+        {
+          "verse": "SIR 41:8",
+          "from": "Who be unto you",
+          "to": "Woe be unto you",
+          "why": "Brenton’s 1900 printing (physical p. 1260, Apocrypha printed p. 110) prints Who, faithfully transcribed by eBible. Swete II (1907) p. 729, Sirach 41:8 (marginal 11), prints οὐαὶ ὑμῖν ἄνδρες ἀσεβεῖς, Woe unto you, ungodly men; the checked transcription and scan agree, with no apparatus variant affecting οὐαὶ ὑμῖν. Correct the English interjection, not the Greek reading."
+        },
+        {
+          "verse": "GEN 19:8",
+          "from": "do not injury",
+          "to": "do not do injury",
+          "why": "Brenton’s 1844 printing (vol. I physical p. 41, printed p. 17), 1879 (physical p. 37), 1884 (physical p. 34), and 1900 (physical p. 33), the last three printed p. 21, all omit the verb before injury. The pinned CCEL transcription iii.19.htm reads do not do injury. Swete I (1901) p. 29 prints μόνον εἰς τοὺς ἄνδρας τούτους μὴ ποιήσητε μηδὲν ἄδικον in his Alexandrinus text, confirmed on the scan: the explicit ποιήσητε supports the restored lexical do alongside the negative auxiliary. His apparatus om μηδεν DE does not omit the verb. Restore the missing word from CCEL without changing the remaining English or its roof note."
+        }
+      ]
+    },
+    "plural possessive at Leviticus 7:31": {
+      "why": "The breast shall be Aaron’s and his sons’: supply the plural possessive required by the coordinated English construction. Brenton’s 1844 printing (vol. I physical p. 135, printed p. 111), 1879 (physical p. 150), 1884 (physical p. 119), and 1900 (physical p. 146), the last three printed p. 134, omit the apostrophe, as do pinned eBible and CCEL v.7.htm (Greek 7:21). Swete I (1901) p. 200, Greek 7:21 (marginal 31), prints καὶ ἔσται τὸ στηθύνιον Ἀαρὼν καὶ ἔσται τοῖς υἱοῖς αὐτοῦ, confirmed on the scan, assigning the breast to both Aaron and his sons. The apparatus om εσται 2° AF omits only the repeated shall be. Correct the possessive inflection locally, preserving the comma and the following verse’s continuation.",
+      "wording": "spelling",
+      "changes": [
+        {
+          "verse": "LEV 7:31",
+          "from": "Aaron's and his sons,",
+          "to": "Aaron's and his sons',"
+        }
+      ]
+    },
+    "supplied genealogy joins": {
+      "why": "Finish the English sentence boundary where the supplied Appendix genealogy meets retained scripture. The supplied sentence ending sons of Jectan precedes the separate ancestral chain at verse 24, whose inherited lowercase opening formerly continued verse 17. Preserve every name and the source-dependent reading and notes.",
+      "changes": [
+        {
+          "verse": "1CH 1:24",
+          "from": "and Arphaxad, Sala,",
+          "to": "And Arphaxad, Sala,"
+        }
+      ]
+    },
     "emphatic designations": {
       "why": "A designation printed in capitals takes the case of its place in the sentence.",
       "changes": [
