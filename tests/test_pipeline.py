@@ -1492,6 +1492,45 @@ def test_a_name_is_respelled_in_its_listed_verses_and_their_lemmas(
         )
 
 
+def test_beelzebul_is_consistent_without_respelling_its_variant(
+    edition: bible.pipeline.Edition,
+) -> None:
+    expected = {
+        "MAT 10:25",
+        "MAT 12:24",
+        "MAT 12:27",
+        "MRK 3:22",
+        "LUK 11:15",
+        "LUK 11:18",
+        "LUK 11:19",
+    }
+    found = {
+        f"{code} {reference}": re.findall(r"\bBeelzebu[bl]\b", verse.text)
+        for code in edition.scripture
+        for reference, verse in scripture.verses(edition.documents[code]).items()
+        if "Beelzebu" in verse.text
+    }
+    assert found == dict.fromkeys(expected, ["Beelzebul"])
+    for key in expected:
+        code, reference = key.split()
+        source = scripture.verses(edition.read.kjv[code])[reference]
+        assert "Beelzebub" in source.text
+
+    verse = scripture.verses(edition.documents["MAT"])["10:25"]
+    ((offset, note),) = verse.notes
+    assert verse.text[offset:].startswith("Beelzebul")
+    assert note["x-key"] == "MAT 10:25#1 TR"
+    assert note["category"] == "edition"
+    assert usj.text_of(note["content"]) == (
+        "10:25 Beelzebul: Complutensian text Beelzebub"
+    )
+    assert [
+        (item["marker"], usj.text_of(item["content"]))
+        for item in usj.walk(note["content"])
+        if item.get("marker") in {"fq", "fqa"}
+    ] == [("fq", "Beelzebul: "), ("fqa", "Beelzebub")]
+
+
 def test_a_subscription_name_is_scoped_and_must_be_met(
     declared: bible.policy.Policy,
 ) -> None:

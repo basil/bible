@@ -207,10 +207,6 @@ seen. Repro for any: `grep -rn -w '<Form>' build/review/text/`.
 
 ### New Testament (Greek is one form; confidence high)
 
-- [ ] **Beelzebul / Beelzebub** — MAT 10:25 vs MAT 12:24, 12:27, MRK 3:22,
-  LUK 11:15, 11:18, 11:19. RP2026 has Βεελζεβούλ at all seven; Scrivener
-  differs only at 10:25, and the existing note there attributes the
-  Complutensian reading. Normalize the six, keep the 10:25 attribution.
 - [ ] **Jona / Jonas** (Peter's father) — JHN 1:42 vs 21:15–17. RP2026 and
   Scrivener have Ἰωνᾶ at all four. The Jonah→Jonas rule is the prophet's.
 

@@ -440,6 +440,20 @@
           ]
         }
       },
+      "Beelzebul, prince of the devils": {
+        "to": "Beelzebul",
+        "why": "RP2026 has Βεελζεβούλ at all seven New Testament occurrences, and Scrivener agrees except at Matthew 10:25; in Boyd's USFM archives revised 2026-10-26, the TCGNT likewise prints Βεελζεβοὺλ and the TCENT Beelzebul at all seven. Normalize the six inherited King James spellings to the form already printed at Matthew 10:25, retaining that verse's Complutensian note because Scrivener has Βεελζεβούβ there alone.",
+        "forms": {
+          "Beelzebub": [
+            "MAT 12:24",
+            "MAT 12:27",
+            "MRK 3:22",
+            "LUK 11:15",
+            "LUK 11:18",
+            "LUK 11:19"
+          ]
+        }
+      },
       "Beth-horon, upper and lower towns": {
         "to": "Bethoron",
         "why": "The King James Greek books write the name both ways, Bethoron at Judith 4:4 and Bethhoron at 1 Macc 3:16, 24; 7:39; 9:50; Judith’s form serves every bearer, and the 1 Maccabees verses take it. The upper and lower towns name the same Beth-horon district in Joshua, Kingdoms and Chronicles.",
