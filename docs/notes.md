@@ -85,24 +85,25 @@ roman and what is italic.
 
 ## 3. Lemma tail copied into the alternative (words added to the note)
 
-All [build], one root cause. `annotate.printed` passes `lemmas.echoes` output
-to `notes.displayed`; when `unique_span` widens the glossed words to make them
-unique, the trailing words are appended to every alternative. The source
-alternatives already replace the whole phrase, so the tail is wrong.
+Resolved. When `unique_span` widens the glossed words to make them unique,
+`lemmas.echoes` adds the widened words to every alternative; where the rule
+that measures the rendering (by its length or its last word) took in too few
+words, the echo printed words the source does not have. Every note whose
+renderings were echoed (202 of them) was read against its source. The defective ones are decided
+in `edition/brenton-notes.json` (`LEV 4:12 CCEL`, `EXO 25:36 CCEL`,
+`1CH 22:9 CCEL`, `1CH 28:4 CCEL#2`, `EZK 21:20 CCEL`, `EZK 36:31 CCEL`,
+`EZK 44:13 CCEL`, `EZK 47:9 CCEL`) or in `edition/ccel-notes.json`, where CCEL
+misplaced a note (`8.xxxii#4`, now `JOB 33:26 CCEL`) or gave the second of
+Brenton's two δ notes ζ's words (`3.xxviii#5`, `1CH 28:4 CCEL#3`). The build
+now refuses a widened rendering that repeats its lemma, the one case of the
+class it can see without the source.
 
-- [ ] **`EZK 47:9 CCEL`** — "cometh go, or, is come go"; CCEL 15.xlvii.htm #5
-  has "Gr. comes, or, is come". Confidence: high.
-- [ ] **`LEV 4:12 CCEL`** — "the outpouring of the ashes poured". CCEL v.4.htm
-  #5. Confidence: high.
-- [ ] **`JOB 33:25 CCEL`** — "having prayed make". CCEL 8.xxxii.htm #4.
-  Confidence: high.
-- [ ] **`EZK 44:13 CCEL`** — "sanctuary things". Confidence: high.
-- [ ] **`EZK 21:20 CCEL` (edition 21:15)** — "it hath happened well fitted for
-  glittering"; CCEL 15.xxi.htm #6 has "Lit. it has happened well".
-  Confidence: medium (whether "fitted" belongs in the glossed phrase).
-- Next step for the group: enumerate every echo-bearing alternative
-  (`grep -n 'echoes' src/bible/annotate.py src/bible/notes.py`), fix the
-  glossed extent before padding, and compare each against CCEL.
+Do not re-report: echoes of Brenton's Hebraisms substitute correctly, however
+awkward ("me out: Gr. _in me out_" at `1CH 28:4 CCEL`, "Israel short: Gr. _in
+Israel short_" at `2KI 10:32`). A rule that a lemma does not end on an
+auxiliary ("shall", "will") was tried and rejected: it fixed `1CH 22:9 CCEL`
+but broke "wilt: Gr. _dost_" (`EXO 32:32`, `2SA 13:4`) and "I will: or, _let
+me_" (`1KI 16:28g`), and made six lemma overrides redundant.
 
 ## 4. Lemma scope (which words the note is about)
 
@@ -122,7 +123,12 @@ alone is not a defect. What remains:
 - [ ] **Boundary cut mid-constituent: `ECC 10:3 CCEL` ("thinketh of is"),
   `AMO 6:10 CCEL` ("a remnant shall")** [editorial] — length-matched lemma
   ends after a copula/auxiliary. Confidence: medium. A decision rather than a
-  rule change.
+  rule change (section 3 records the rule that was tried). The same trial
+  turned up `AMO 7:9 CCEL` ("joyful altars shall: Gr. _altars of
+  laughter_"), `2CH 36:5c CCEL` ("they should: Gr. _he_, sc. _Juda_"),
+  `JOB 13:14 CCEL` ("while I may: Gr. _having taken_") and `1CH 13:4 CCEL`
+  ("that they would: Gr. _on account of_"). Confidence: medium; check each
+  against its printed caller.
 - [ ] **`JOB 31:16 CCEL`** [editorial] — "cause the eye" truncates "cause …
   to fail". Confidence: low.
 - [ ] **`ZEP 3:4 CCEL`, `LAM 3:47 CCEL`** [editorial] — lemma takes in a

@@ -135,6 +135,18 @@ def printed(
     runs, terms, original = notes.displayed(
         body, *lemmas.echoes(verse.text, words, span, glossed), books=ctx.books
     )
+    # A rendering the same as the words it glosses reports a witness to the
+    # text; widened as its lemma was, it would print the lemma again as
+    # though it differed, whatever its capitals.
+    require(
+        runs == original
+        or all(
+            words_of(value) != words_of(lemma or "")
+            for kind, value in runs
+            if kind == "reading"
+        ),
+        f"Widened rendering repeats its lemma: {key}",
+    )
     runs = notes.finished(runs, terms, lemma, exception.get("sentence"), ctx.terms, key)
     report.keys.add(key)
     report.rows.append(

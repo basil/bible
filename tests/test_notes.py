@@ -543,6 +543,12 @@ def placed(
         ("EXO 12:3", "lamb"),
         ("ISA 61:3", "the garment of glory"),
         ("ISA 61:3#2", "oil"),
+        ("LEV 4:12 CCEL", "the ashes poured out"),
+        ("JOB 33:26 CCEL", "he shall pray"),
+        ("EXO 25:36 CCEL", "of one piece"),
+        ("1CH 22:9 CCEL", "shall be born"),
+        ("1CH 28:4 CCEL#2", "out of the whole"),
+        ("EZK 36:31 CCEL", "your abominations"),
     ],
 )
 def test_brentons_caller_follows_its_declared_words(
@@ -605,6 +611,7 @@ def test_commentary_lemmas_have_no_whole_lemma_alternatives(
     [
         ("JOS 21:13", ["suburbs", "glebe"]),
         ("MIC 7:4 CCEL", ["goeth upon"]),
+        ("JOB 33:26 CCEL", ["having prayed"]),
     ],
 )
 def test_lexical_commentary_does_not_echo_a_widened_lemma(
@@ -628,6 +635,14 @@ def test_lexical_commentary_does_not_echo_a_widened_lemma(
         ("ISA 6:13", ["there is a tenth"]),
         ("JER 45:2 CCEL", ["He that dwelleth in this city"]),
         ("EZK 17:15 CCEL", ["he that acteth perversely be preserved"]),
+        ("LEV 4:12 CCEL", ["burnt on the outpouring of the ashes."]),
+        ("EZK 44:13 CCEL", ["approach the sanctuary of the children"]),
+        ("EZK 47:9 CCEL", ["this water cometh thither", "this water is come thither"]),
+        ("EZK 21:20 CCEL", ["slaughter, it hath happened well for glittering."]),
+        ("EXO 25:36 CCEL", ["the branches be of it, altogether"]),
+        ("1CH 22:9 CCEL", ["Behold, a son is born to thee"]),
+        ("1CH 28:4 CCEL#2", ["chose me from the whole house"]),
+        ("1CH 28:4 CCEL#3", ["he preferred in me, that"]),
     ],
 )
 def test_alternatives_preserve_their_sentences_subjects_and_context(
@@ -1409,6 +1424,24 @@ def test_additions_do_not_echo_words_from_a_widened_lemma(
     assert result == (
         r"Tell us, Tell us \f - \fr 99:1 \fq Tell us what: \ft Alex. adds \fqa new words\f*what happened."
     )
+
+
+def test_a_widened_rendering_that_repeats_its_lemma_is_refused(
+    ctx: bible.annotate.Context,
+) -> None:
+    # Widened to "your sins", a rendering "your" of the second your would
+    # print the lemma again; "their" still takes in the widened word.
+    verse = r"\v 1 for your deeds and for \f + \fr 99:1 \fqa Alex. \ft {}.\f*your sins."
+    assert (
+        r"\fq your sins: \ft Alex. \fqa their sins\f*"
+        in printed(verse.replace("{}", "their"), ctx)["1"]
+    )
+    with pytest.raises(CheckFailed, match="Widened rendering repeats its lemma"):
+        printed(verse.replace("{}", "your"), ctx)
+    # Nor does the verse's capital make it differ.
+    opening = r"\v 1 \f + \fr 99:1 \fqa Alex. \ft your.\f*Your sins, and your deeds."
+    with pytest.raises(CheckFailed, match="Widened rendering repeats its lemma"):
+        printed(opening, ctx)
 
 
 def test_surviving_additions_keep_their_printed_words(

@@ -5792,6 +5792,49 @@
       "sentence": true,
       "why": "Brenton 1879 physical p. 998 and 1900 physical p. 994 both place the delta caller before punishment and print: ‘lit. torment, Βάσανος in Old Testament seems to signify punishment, as κόλασις in New Testament does torment, 1 Jno. 4. 18.’ Keep torment as the literal alternative for punishment, while the English senses in the ensuing Greek comparison are quoted glosses within commentary. That comparison is a complete sentence and retains its final stop."
     },
+    "LEV 4:12 CCEL": {
+      "lemma": "the ashes poured out",
+      "why": "Brenton 1879 physical p. 145 (printed p. 129) prints burnt on the γ ashes poured out, with γ Gr. the outpouring of the ashes, as CCEL v.4#5 does; the Greek is ἐπὶ τῆς ἐκχύσεως τῆς σποδιᾶς. The gloss renders the complete noun phrase the ashes poured out, its own the included, so it cannot follow Brenton's caller after the. Declare the full scope so annotation does not append poured to the alternative, and set the caller before the phrase's initial the."
+    },
+    "JOB 33:26 CCEL": {
+      "lemma": "he shall pray",
+      "note": "Gr. _having prayed_.",
+      "why": "Brenton 1879 physical p. 706 and 1900 physical p. 702 (printed p. 690 in both) place Gr. having prayed. before he shall pray in 33:26, where the Greek opens Εὐξάμενος δὲ πρὸς Κύριον. Having prayed is an abbreviated gloss of the participle, not replacement English for he shall pray: substitution would leave And having prayed to the Lord, and his prayer shall be accepted of him without a complete first clause. Quote the source gloss while keeping its scope and restored caller."
+    },
+    "EZK 44:13 CCEL": {
+      "lemma": "holy things",
+      "why": "Brenton 1879 physical p. 1057 (printed p. 1041) prints to approach the θ holy things, with θ Or, sanctuary, as CCEL 15.xliv#5 does; the Greek is τὰ ἅγια. Sanctuary renders the complete noun phrase holy things, not the adjective holy alone; things must not be appended to the alternative."
+    },
+    "EZK 47:9 CCEL": {
+      "lemma": "shall go",
+      "why": "Brenton 1879 physical p. 1062 (printed p. 1046) prints this water β shall go thither, with β Gr. comes, or, is come, as CCEL 15.xlvii#5 does; the Greek is ἥκει. Both alternatives render the complete verbal phrase shall go, not shall alone. Declare that scope so neither alternative receives the retained-looking word go."
+    },
+    "EZK 21:20 CCEL": {
+      "lemma": "it is well fitted",
+      "occurrence": 2,
+      "why": "Pinned CCEL 15.xxi#6 places Lit. it has happened well before the second it is well fitted clause, at edition 21:15. The text layers of Brenton 1879 physical p. 1022 and 1900 physical p. 1018 (printed p. 1006 in both) likewise give that note; their facing Greek has εὖ γέγονεν εἰς στίλβωσιν. It has happened well renders εὖ γέγονεν, which Brenton translates it is well fitted, so it glosses those four words of the second clause and not for glittering (εἰς στίλβωσιν); widened to that clause, the alternative reads it hath happened well for glittering."
+    },
+    "EXO 25:36 CCEL": {
+      "lemma": "of one piece",
+      "occurrence": 1,
+      "why": "Brenton 1879 physical p. 119 and 1900 physical p. 115 (printed p. 103) print Let the knops and the branches be β of one piece, with β Gr. of it., as CCEL iv.26#5 does; the facing Greek is ἐξ αὐτῆς ἔστωσαν. Of it renders the whole of one piece, as at 25:31, where the same β stands; measured by its length it glossed of one alone, and widened it read be of it piece."
+    },
+    "1CH 22:9 CCEL": {
+      "lemma": "shall be",
+      "occurrence": 1,
+      "why": "Brenton 1879 physical p. 573 and 1900 physical p. 569 (printed p. 557) print Behold, a son γ shall be born to thee, with γ Gr. is., as CCEL 3.xxii#1 does; the facing Greek is Ἰδοὺ υἱὸς τίκτεται σοι. Is renders shall be, the future Brenton gives the present τίκτεται; measured by its length it glossed shall alone, and widened it read a son is be born."
+    },
+    "1CH 28:4 CCEL#2": {
+      "lemma": "out of",
+      "occurrence": 1,
+      "why": "Brenton 1879 physical p. 580 and 1900 physical p. 576 (printed p. 564) print chose δ me ζ out of the whole house, with ζ Gr. from.; the facing Greek is ἀπὸ παντὸς οἴκου. From renders out of, not out alone, which read chose me from of the whole house."
+    },
+    "EZK 36:31 CCEL": {
+      "lemma": "your",
+      "occurrence": 5,
+      "widen": false,
+      "why": "Brenton 1879 physical p. 1044 and 1900 physical p. 1040 (printed p. 1028) set γ before the last your, in for your abominations, with γ Alex. ὑμῶν, your.; B and the facing Greek read αὐτῶν. The note reports that Alexandrinus has the your Brenton translates, so it is about that word alone; widened to your abominations, its gloss of ὑμῶν would repeat the lemma as though it differed."
+    },
     "EXO 6:2": {
       "verse": "6:3",
       "lemma": "Lord",

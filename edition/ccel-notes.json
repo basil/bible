@@ -82,6 +82,12 @@
       "why": "Brenton’s 1879 physical page 880; 1900 physical page 876. Both printings read “Or, wait for.” with the γ caller immediately before “stay themselves upon him” in Isaiah 30:18. CCEL drops “for”; eBible preserves the printed note. This is the same note and caller, not an additional note or a difference between printings. This mends CCEL’s note transcription alone.",
       "uncategorized": true
     },
+    "3.xxviii#5": {
+      "from": "<p> <i>Gr</i>. from.</p>",
+      "to": "<p> <i>Gr</i>. in me. <i>Hebraism</i>.</p>",
+      "why": "Brenton 1879 physical p. 580 and 1900 physical p. 576 (printed p. 564) set δ, Gr. in me. Hebraism., before both me in 1 Chronicles 28:4, he chose δ me and he preferred δ me, and ζ, Gr. from., before out of; the facing Greek has ἐξελέξατο Κύριος ὁ Θεὸς Ἰσραὴλ ἐν ἐμοὶ and ἐν ἐμοὶ ἠθέλησε. CCEL numbers the second δ as a note of its own and gives it ζ's words; eBible has no note. This mends CCEL’s note transcription alone.",
+      "uncategorized": true
+    },
     "12.xxxvii#2": {
       "from": "<p> <i>Gr</i>. \neat.</p>",
       "to": "<p> <i>Gr</i>. \ncut.</p>",
@@ -1298,6 +1304,11 @@
       "verse": "JOB 31:35",
       "anchor": "Oh that I had a hearer",
       "why": "CCEL sets this caller before the verse 35 number, but the note renders Oh that I had a hearer, which opens 31:35; set it there."
+    },
+    "8.xxxii#4": {
+      "verse": "JOB 33:26",
+      "anchor": "he shall pray",
+      "why": "CCEL sets this caller before he will make in 33:25, but Brenton 1879 physical p. 706 and 1900 physical p. 702 (printed p. 690 in both) print 26 And γ he shall pray, with γ Gr. having prayed. below; the facing Greek opens 33:26 with Εὐξάμενος δὲ πρὸς Κύριον, which he shall pray renders. Set it there."
     },
     "iv.36#8": {
       "verse": "EXO 38:17",
