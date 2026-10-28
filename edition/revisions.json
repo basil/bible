@@ -1,5 +1,5 @@
 {
-  "why": "The spelling, vocabulary, and punctuation of the translation, revised by explicit editorial decisions. A word is respelled or modernized wherever the translation, its notes, and its front and back matter print it as a whole word; a word with a scope of scripture is revised only in numbered scripture and marked note lemmas (fq) and readings (fqa), wherever they stand. Book titles and metadata, headings, introduction paragraphs, and explanatory commentary are outside that scripture scope. The scope marks the archaisms, the King James inflections and past tenses carried into Brenton’s Scripture, which the notes’ commentary and the prefaces do not take; a modernization has no scope, and reaches them as it reaches the text. Numbered scripture in d paragraphs, including Psalm superscriptions, remains in scope. Plain quotation marks do not establish scope. Names are respelled first. Global spelling, vocabulary, article, possessive, and participle decisions affect source prose and run next, followed by a separate single sweep of scoped grammar decisions. The ligatures are written out last of all. A verse's change is made to the words of that verse alone, which must have them once, as the names leave them, and to the notes that quote them. A note's lemma retains the verse's internal punctuation, including a colon before the separate colon that introduces the note: Luke 4:41, Revelation 14:13, and Haggai 2:14 keep both. Luke 1:45 retains its local comma revision under luke-belief-clause; avoiding two colons alone does not require another verse revision. Verses' changes stand in groups, each group under the reason its changes share. Each gives its reason. An isolated alternative whose word is also a plural noun may name its stable source note as its exact context. Passage changes name a stable note key or a front/back-matter unit and the plain words met once there; only punctuation, associated spacing, and sentence-initial capitalization may change, with lowercase word initials also allowed in keyed notes. A phrase is revised as a word is; possessives and articles follow the immediately following sound, including an intervening adjective: my and thy before consonant sounds, mine and thine before vowel sounds and silent h; a before consonant sounds, an before vowel sounds and silent h. Independent mine and thine stay. Capitalization is decided separately. A word may except the phrases it must not change, which the edition must print. Words that a character style divides keep their division, and so does the lemma that quotes them at its note; the style of the translators’ supplied words (add), which is printed in roman and shown plain on the website, divides nothing among roman words, so that a compound it splits there is joined as any other. Hyphens may replace spaces between unchanged words, preserving each word’s styles and the matching note lemma. Five past tenses the King James Bible holds to, spake, begat, bare, brake, and sware, are carried through scripture as the inflections are. A compound takes the form current English gives it, closed, hyphenated as a modifier before its noun or wherever English keeps the hyphen, and otherwise open; the edition retains first-born, first-fruits, corner-stone, mercy-seat, stumbling-block, stumbling-stone, threshing-floor, dwelling-place, ewe-lamb, turtle-dove, pre-eminence, battle-array, and well-pleased, with their plurals, by explicit editorial preference.",
+  "why": "The spelling, vocabulary, and punctuation of the translation, revised by explicit editorial decisions. A word is respelled or modernized wherever the translation, its notes, and its front and back matter print it as a whole word; a word with a scope of scripture is revised only in numbered scripture and marked note lemmas (fq) and readings (fqa), wherever they stand. Book titles and metadata, headings, introduction paragraphs, and explanatory commentary are outside that scripture scope. The scope marks the archaisms, the King James inflections and past tenses carried into Brenton’s Scripture, which the notes’ commentary and the prefaces do not take; a modernization has no scope, and reaches them as it reaches the text. Numbered scripture in d paragraphs, including Psalm superscriptions, remains in scope. Plain quotation marks do not establish scope. Names are respelled first. Global spelling, vocabulary, article, possessive, and participle decisions affect source prose and run next, followed by a separate single sweep of scoped grammar decisions. The ligatures are written out last of all. A verse's change is made to the words of that verse alone, which must have them once, as the names leave them, and to the notes that quote them. A note's lemma retains the verse's internal punctuation, including a colon before the separate colon that introduces the note: Luke 4:41, Revelation 14:13, and Haggai 2:14 keep both. Luke 1:45 retains its local comma revision under luke-belief-clause; avoiding two colons alone does not require another verse revision. Verses' changes stand in groups, each group under the reason its changes share. Each gives its reason. An isolated alternative whose word is also a plural noun may name its stable source note as its exact context. Passage changes name a stable note key or a front/back-matter unit and the plain words met once there; only punctuation, associated spacing, and sentence-initial capitalization may change, with lowercase word initials also allowed in keyed notes. A phrase is revised as a word is; possessives and articles follow the immediately following sound, including an intervening adjective: my and thy before consonant sounds, mine and thine before vowel sounds and silent h; a before consonant sounds, an before vowel sounds and silent h. Independent mine and thine stay. Capitalization is decided separately. A word may except the phrases it must not change, which the edition must print. Words that a character style divides keep their division, and so does the lemma that quotes them at its note; the style of the translators’ supplied words (add), which is printed in roman and shown plain on the website, divides nothing among roman words, so that a compound it splits there is joined as any other. Hyphens may replace spaces between unchanged words, preserving each word’s styles and the matching note lemma. Five past tenses the King James Bible holds to, spake, begat, bare, brake, and sware, are carried through scripture as the inflections are. A compound takes the form current English gives it, closed, hyphenated as a modifier before its noun or wherever English keeps the hyphen, and otherwise open; the edition retains first-born, first-fruits, corner-stone, mercy-seat, stumbling-block, stumbling-stone, threshing-floor, ewe-lamb, turtle-dove, pre-eminence, battle-array, well-pleased, and money-changer, with their plurals, by explicit editorial preference. The named place nouns likewise take a hyphen, by editorial choice and not as a rule for every compound: burying-place, resting-place, dwelling-place, hiding-place, lurking-place, and market-place, with their plurals. Hiding-place and lurking-place need no decision: Brenton hyphenates them throughout (5 and 2, plurals included), and the King James Bible's open forms (4 and 2) stand only in books the edition takes from Brenton.",
   "ligatures": {
     "why": "The edition writes the ligatures out as their letters: æ as ae and œ as oe, in every word of the translations, their notes, and their front and back matter, names and Latin alike, so that no verse prints both spellings. It is done last, after every decision has been carried out and checked in the sources’ own letters, so the decisions name the forms the sources print; a decision that writes a word anew writes it with the letters.",
     "letters": {
@@ -10121,11 +10121,11 @@
     },
     "first fruits": {
       "to": "first-fruits",
-      "why": "The edition retains these hyphenated forms by explicit editorial preference: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), dwelling-place (21 beside 1 open; 31 open), ewe-lamb, turtle-dove, pre-eminence, battle-array, and well-pleased, with their plurals. These spellings are editorial choices, not a general rule. Other compound changes are declared individually; forms outside those decisions stand as the sources print them."
+      "why": "The edition retains these hyphenated forms by explicit editorial preference: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), ewe-lamb, turtle-dove, pre-eminence, battle-array, well-pleased, and money-changer, with their plurals. These spellings are editorial choices, not a general rule. Other compound changes are declared individually; forms outside those decisions stand as the sources print them."
     },
     "firstfruits": {
       "to": "first-fruits",
-      "why": "The edition retains these hyphenated forms by explicit editorial preference: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), dwelling-place (21 beside 1 open; 31 open), ewe-lamb, turtle-dove, pre-eminence, battle-array, and well-pleased, with their plurals. These spellings are editorial choices, not a general rule. Other compound changes are declared individually; forms outside those decisions stand as the sources print them."
+      "why": "The edition retains these hyphenated forms by explicit editorial preference: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), ewe-lamb, turtle-dove, pre-eminence, battle-array, well-pleased, and money-changer, with their plurals. These spellings are editorial choices, not a general rule. Other compound changes are declared individually; forms outside those decisions stand as the sources print them."
     },
     "evildoers": {
       "to": "evil-doers",
@@ -10151,17 +10151,37 @@
       "to": "he-goats",
       "why": "Spell the compound he-goats consistently throughout the printed edition, as requested by the user."
     },
+    "preeminence": {
+      "to": "pre-eminence",
+      "why": "Use the established hyphenated spelling consistently: Brenton has pre-eminence at 1 Maccabees 11:27 and Scrivener's Cambridge Paragraph Bible at Sirach 7:4, 33:22 and 1 Maccabees 11:27; Oxford Advanced Learner's Dictionary also gives pre-eminence. Brenton writes preeminence at Sirach 7:4 and 30:31 (1 hyphenated beside 2 solid), and the King James Bible at Ecclesiastes 3:19, Colossians 1:18, and 3 John 9 (3 hyphenated beside 3 solid). This preserves the prefix and base visibly and gives the same noun one spelling across both Testaments. RV and Boyd's current ASV use the solid form; the hyphen is a declared editorial spelling, not a correction of their wording."
+    },
+    "turtledoves": {
+      "to": "turtle-doves",
+      "why": "Use turtle-doves consistently with Brenton's twelve hyphenated turtle-dove(s), especially Leviticus 12:8, which Luke 2:24 quotes. Brenton's checked 1844, 1879, 1884 and 1900 editions print turtle-doves at Leviticus 5:7, and Scrivener also uses turtle-dove at Genesis 15:9, beside turtledove(s) nine times (Leviticus, Psalm 74:19, and Luke 2:24). The same sacrificial bird takes one spelling in the Law and Gospel; RV and Boyd's current ASV and TCENT instead close the compound at Luke 2:24."
+    },
+    "moneychangers": {
+      "to": "money-changers",
+      "why": "Use money-changers in both parallel temple-cleansing accounts, as the Revised Version and Boyd's current ASV do at Matthew 21:12 and Mark 11:15. Scrivener prints money-changers in Mark but moneychangers in Matthew; the hyphenated occupational noun, also a current Cambridge dictionary headword, removes that spelling inconsistency without changing the wording. Boyd's current TCENT instead uses money changers."
+    },
+    "marketplace": {
+      "to": "market-place",
+      "why": "Scrivener prints market-place at Acts 16:19 and in the translators' preface, and Brenton at Ecclesiastes 12:4 (1844, vol. 2, p. 679; 1879, 1884 and 1900, p. 829). With the plurals, Brenton has 2 hyphenated beside 2 solid (Tobit 2:3, 1 Esdras 2:17), and the King James Bible 2 hyphenated beside 5 solid (Matthew 20:3, Mark 12:38, Luke 7:32, and its Tobit and 1 Esdras). Use that established spelling throughout the translations, keeping the market/place division visible and bringing the word into line with the edition's declared place compounds. RV and Boyd's current ASV and TCENT use marketplace; the hyphen unifies attested source forms rather than correcting their English."
+    },
+    "marketplaces": {
+      "to": "market-places",
+      "why": "Use the plural of the declared market-place spelling, already printed market-places by Brenton at Song of Songs 3:2; preserve number while unifying the source spellings."
+    },
     "burying place": {
       "to": "burying-place",
-      "why": "Spell the compound burying-place consistently throughout the printed edition, as requested by the user."
+      "why": "Brenton prints burying-place beside burying place in the same burial narrative (Genesis 23:4 and 9 beside 23:20). In all he has 2 hyphenated beside 4 open, with Genesis 50:13 and 2 Maccabees 9:4 and 14, and the King James Bible 7 solid beside 2 open. Use one spelling for the burial-site noun, hyphenated with the other named place nouns by editorial choice."
     },
     "mercy seat": {
       "to": "mercy-seat",
-      "why": "The edition retains these hyphenated forms by explicit editorial preference: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), dwelling-place (21 beside 1 open; 31 open), ewe-lamb, turtle-dove, pre-eminence, battle-array, and well-pleased, with their plurals. These spellings are editorial choices, not a general rule. Other compound changes are declared individually; forms outside those decisions stand as the sources print them."
+      "why": "The edition retains these hyphenated forms by explicit editorial preference: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), ewe-lamb, turtle-dove, pre-eminence, battle-array, well-pleased, and money-changer, with their plurals. These spellings are editorial choices, not a general rule. Other compound changes are declared individually; forms outside those decisions stand as the sources print them."
     },
     "corner stone": {
       "to": "corner-stone",
-      "why": "The edition retains these hyphenated forms by explicit editorial preference: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), dwelling-place (21 beside 1 open; 31 open), ewe-lamb, turtle-dove, pre-eminence, battle-array, and well-pleased, with their plurals. These spellings are editorial choices, not a general rule. Other compound changes are declared individually; forms outside those decisions stand as the sources print them."
+      "why": "The edition retains these hyphenated forms by explicit editorial preference: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), ewe-lamb, turtle-dove, pre-eminence, battle-array, well-pleased, and money-changer, with their plurals. These spellings are editorial choices, not a general rule. Other compound changes are declared individually; forms outside those decisions stand as the sources print them."
     },
     "stone bow": {
       "to": "stone-bow",
@@ -10233,19 +10253,19 @@
     },
     "threshingfloor": {
       "to": "threshing-floor",
-      "why": "The edition retains these hyphenated forms by explicit editorial preference: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), dwelling-place (21 beside 1 open; 31 open), ewe-lamb, turtle-dove, pre-eminence, battle-array, and well-pleased, with their plurals. These spellings are editorial choices, not a general rule. Other compound changes are declared individually; forms outside those decisions stand as the sources print them."
+      "why": "The edition retains these hyphenated forms by explicit editorial preference: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), ewe-lamb, turtle-dove, pre-eminence, battle-array, well-pleased, and money-changer, with their plurals. These spellings are editorial choices, not a general rule. Other compound changes are declared individually; forms outside those decisions stand as the sources print them."
     },
     "threshing floor": {
       "to": "threshing-floor",
-      "why": "The edition retains these hyphenated forms by explicit editorial preference: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), dwelling-place (21 beside 1 open; 31 open), ewe-lamb, turtle-dove, pre-eminence, battle-array, and well-pleased, with their plurals. These spellings are editorial choices, not a general rule. Other compound changes are declared individually; forms outside those decisions stand as the sources print them."
+      "why": "The edition retains these hyphenated forms by explicit editorial preference: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), ewe-lamb, turtle-dove, pre-eminence, battle-array, well-pleased, and money-changer, with their plurals. These spellings are editorial choices, not a general rule. Other compound changes are declared individually; forms outside those decisions stand as the sources print them."
     },
     "resting place": {
       "to": "resting-place",
-      "why": "Spell the compound resting-place consistently throughout the printed edition, as requested by the user."
+      "why": "Retain Brenton's usual resting-place spelling (9 hyphenated) also at Genesis 49:15, where the checked 1844 edition (p. 55) and the 1879, 1884 and 1900 editions (p. 68) print resting place. The King James Bible writes resting place open 5 times, all in books the edition takes from Brenton."
     },
     "dwelling place": {
       "to": "dwelling-place",
-      "why": "The edition retains these hyphenated forms by explicit editorial preference: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), dwelling-place (21 beside 1 open; 31 open), ewe-lamb, turtle-dove, pre-eminence, battle-array, and well-pleased, with their plurals. These spellings are editorial choices, not a general rule. Other compound changes are declared individually; forms outside those decisions stand as the sources print them."
+      "why": "Retain Brenton's usual dwelling-place spelling (21 hyphenated beside 1 open, at 1 Maccabees 13:48) and apply it also to the King James dwelling place at 1 Corinthians 4:11 (31 open in the King James Bible), giving the same noun one spelling across both Testaments."
     },
     "broken hearted": {
       "to": "broken-hearted",
@@ -11050,15 +11070,15 @@
     },
     "firstborn": {
       "to": "first-born",
-      "why": "The edition retains these hyphenated forms by explicit editorial preference: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), dwelling-place (21 beside 1 open; 31 open), ewe-lamb, turtle-dove, pre-eminence, battle-array, and well-pleased, with their plurals. These spellings are editorial choices, not a general rule. Other compound changes are declared individually; forms outside those decisions stand as the sources print them."
+      "why": "The edition retains these hyphenated forms by explicit editorial preference: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), ewe-lamb, turtle-dove, pre-eminence, battle-array, well-pleased, and money-changer, with their plurals. These spellings are editorial choices, not a general rule. Other compound changes are declared individually; forms outside those decisions stand as the sources print them."
     },
     "stumblingblock": {
       "to": "stumbling-block",
-      "why": "The edition retains these hyphenated forms by explicit editorial preference: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), dwelling-place (21 beside 1 open; 31 open), ewe-lamb, turtle-dove, pre-eminence, battle-array, and well-pleased, with their plurals. These spellings are editorial choices, not a general rule. Other compound changes are declared individually; forms outside those decisions stand as the sources print them."
+      "why": "The edition retains these hyphenated forms by explicit editorial preference: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), ewe-lamb, turtle-dove, pre-eminence, battle-array, well-pleased, and money-changer, with their plurals. These spellings are editorial choices, not a general rule. Other compound changes are declared individually; forms outside those decisions stand as the sources print them."
     },
     "stumblingblocks": {
       "to": "stumbling-blocks",
-      "why": "The edition retains these hyphenated forms by explicit editorial preference: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), dwelling-place (21 beside 1 open; 31 open), ewe-lamb, turtle-dove, pre-eminence, battle-array, and well-pleased, with their plurals. These spellings are editorial choices, not a general rule. Other compound changes are declared individually; forms outside those decisions stand as the sources print them."
+      "why": "The edition retains these hyphenated forms by explicit editorial preference: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), ewe-lamb, turtle-dove, pre-eminence, battle-array, well-pleased, and money-changer, with their plurals. These spellings are editorial choices, not a general rule. Other compound changes are declared individually; forms outside those decisions stand as the sources print them."
     },
     "Enquire": {
       "to": "Inquire",
@@ -11254,203 +11274,192 @@
     },
     "king Adonias": {
       "to": "King Adonias",
-      "why": "King is capitalized immediately before this ruler’s name, as his title. After an article or a demonstrative, king is a common noun standing before the name, as in the mount Sion and the river Jordan, and stays lowercase; so does king in generic references and after a ruler’s name."
+      "why": "King is capitalized immediately before this ruler’s name, as his title. King stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in generic references, and after a ruler’s name."
     },
     "king Agrippa": {
       "to": "King Agrippa",
-      "why": "King is capitalized immediately before this ruler’s name, as his title. After an article or a demonstrative, king is a common noun standing before the name, as in the mount Sion and the river Jordan, and stays lowercase; so does king in generic references and after a ruler’s name."
+      "why": "King is capitalized immediately before this ruler’s name, as his title. King stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in generic references, and after a ruler’s name."
     },
     "king Ahaz": {
       "to": "King Ahaz",
-      "except": [
-        "that king Ahaz"
-      ],
-      "why": "King is capitalized immediately before this ruler’s name, as his title. After an article or a demonstrative, king is a common noun standing before the name, as in the mount Sion and the river Jordan, and stays lowercase; so does king in generic references and after a ruler’s name."
+      "why": "King is capitalized immediately before this ruler’s name, as his title. King stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in generic references, and after a ruler’s name. At 4 Kingdoms 16:16, that refers to all the things commanded, not to the king: Swete I, p. 779, has κατὰ πάντα ὅσα … ὁ βασιλεὺς Ἀχάς. The name revision gives Brenton’s Achaz as Ahaz before this rule runs."
     },
     "king Alexander": {
       "to": "King Alexander",
-      "why": "King is capitalized immediately before this ruler’s name, as his title. After an article or a demonstrative, king is a common noun standing before the name, as in the mount Sion and the river Jordan, and stays lowercase; so does king in generic references and after a ruler’s name."
+      "why": "King is capitalized immediately before this ruler’s name, as his title. King stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in generic references, and after a ruler’s name."
     },
     "king Amon": {
       "to": "King Amon",
-      "why": "King is capitalized immediately before this ruler’s name, as his title. After an article or a demonstrative, king is a common noun standing before the name, as in the mount Sion and the river Jordan, and stays lowercase; so does king in generic references and after a ruler’s name."
+      "why": "King is capitalized immediately before this ruler’s name, as his title. King stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in generic references, and after a ruler’s name."
     },
     "king Antiochus": {
       "to": "King Antiochus",
-      "why": "King is capitalized immediately before this ruler’s name, as his title. After an article or a demonstrative, king is a common noun standing before the name, as in the mount Sion and the river Jordan, and stays lowercase; so does king in generic references and after a ruler’s name."
+      "except": [
+        "young king Antiochus"
+      ],
+      "why": "King is capitalized immediately before this ruler’s name, as his title. King stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in generic references, and after a ruler’s name."
     },
     "king Arphaxad": {
       "to": "King Arphaxad",
-      "why": "King is capitalized immediately before this ruler’s name, as his title. After an article or a demonstrative, king is a common noun standing before the name, as in the mount Sion and the river Jordan, and stays lowercase; so does king in generic references and after a ruler’s name."
+      "why": "King is capitalized immediately before this ruler’s name, as his title. King stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in generic references, and after a ruler’s name."
     },
     "king Artaxerxes": {
       "to": "King Artaxerxes",
       "except": [
-        "this king Artaxerxes"
+        "great king Artaxerxes"
       ],
-      "why": "King is capitalized immediately before this ruler’s name, as his title. After an article or a demonstrative, king is a common noun standing before the name, as in the mount Sion and the river Jordan, and stays lowercase; so does king in generic references and after a ruler’s name."
+      "why": "King is capitalized immediately before this ruler’s name, as his title. King stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in generic references, and after a ruler’s name. At Esther 3:1, this belongs to the temporal phrase after this, not to the title: Swete II, p. 760, has Μετὰ δὲ ταῦτα before ὁ βασιλεὺς Ἀρταξέρξης. The neuter plural ταῦτα refers to preceding events, not the masculine singular king. Brenton’s 1844 vol. II, p. 536, and 1879 and 1900, p. 654, retain lowercase king; the capital follows this edition’s title rule."
     },
     "king Arthasastha": {
       "to": "King Arthasastha",
-      "why": "King is capitalized immediately before this ruler’s name, as his title. After an article or a demonstrative, king is a common noun standing before the name, as in the mount Sion and the river Jordan, and stays lowercase; so does king in generic references and after a ruler’s name."
+      "why": "King is capitalized immediately before this ruler’s name, as his title. King stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in generic references, and after a ruler’s name."
     },
     "king Asa": {
       "to": "King Asa",
-      "why": "King is capitalized immediately before this ruler’s name, as his title. After an article or a demonstrative, king is a common noun standing before the name, as in the mount Sion and the river Jordan, and stays lowercase; so does king in generic references and after a ruler’s name."
+      "why": "King is capitalized immediately before this ruler’s name, as his title. King stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in generic references, and after a ruler’s name."
     },
     "king Astyages": {
       "to": "King Astyages",
-      "why": "King is capitalized immediately before this ruler’s name, as his title. After an article or a demonstrative, king is a common noun standing before the name, as in the mount Sion and the river Jordan, and stays lowercase; so does king in generic references and after a ruler’s name."
+      "why": "King is capitalized immediately before this ruler’s name, as his title. King stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in generic references, and after a ruler’s name."
     },
     "king Baltasar": {
       "to": "King Baltasar",
-      "why": "King is capitalized immediately before this ruler’s name, as his title. After an article or a demonstrative, king is a common noun standing before the name, as in the mount Sion and the river Jordan, and stays lowercase; so does king in generic references and after a ruler’s name."
+      "why": "King is capitalized immediately before this ruler’s name, as his title. King stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in generic references, and after a ruler’s name."
+    },
+    "king Beleissa": {
+      "to": "King Beleissa",
+      "why": "King is capitalized immediately before this ruler’s name, as his title. King stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in generic references, and after a ruler’s name. At Jeremias 47:14 (King James 40:14), that introduces what the hearer knows; it does not qualify king. Swete III, p. 337, reads Εἰ γνώσει γινώσκεις ὅτι Βελεισὰ βασιλεὺς υἱῶν Ἀμμὼν ἀπέστειλεν. Brenton’s 1844 vol. II, p. 788, and 1879 and 1900, p. 964, print lowercase king; the capital follows this edition’s title rule without changing his words."
     },
     "king Cyrus": {
       "to": "King Cyrus",
-      "except": [
-        "that king Cyrus"
-      ],
-      "why": "King is capitalized immediately before this ruler’s name, as his title. After an article or a demonstrative, king is a common noun standing before the name, as in the mount Sion and the river Jordan, and stays lowercase; so does king in generic references and after a ruler’s name."
+      "why": "King is capitalized immediately before this ruler’s name, as his title. King stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in generic references, and after a ruler’s name. At 1 Esdras 5:70 and 6:16 (source 5:73 and 6:17), that introduces the relative clauses describing the time he lived and the first year he reigned; it does not qualify king. The source’s lowercase title therefore takes the same capital as his other titles before the name."
     },
     "king Darius": {
       "to": "King Darius",
       "except": [
         "the king Darius"
       ],
-      "why": "King is capitalized immediately before this ruler’s name, as his title. After an article or a demonstrative, king is a common noun standing before the name, as in the mount Sion and the river Jordan, and stays lowercase; so does king in generic references and after a ruler’s name."
+      "why": "King is capitalized immediately before this ruler’s name, as his title. King stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in generic references, and after a ruler’s name."
     },
     "king David": {
       "to": "King David",
-      "why": "King is capitalized immediately before this ruler’s name, as his title. After an article or a demonstrative, king is a common noun standing before the name, as in the mount Sion and the river Jordan, and stays lowercase; so does king in generic references and after a ruler’s name."
+      "why": "King is capitalized immediately before this ruler’s name, as his title. King stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in generic references, and after a ruler’s name."
     },
     "king Demetrius": {
       "to": "King Demetrius",
-      "except": [
-        "that king Demetrius"
-      ],
-      "why": "King is capitalized immediately before this ruler’s name, as his title. After an article or a demonstrative, king is a common noun standing before the name, as in the mount Sion and the river Jordan, and stays lowercase; so does king in generic references and after a ruler’s name."
+      "why": "King is capitalized immediately before this ruler’s name, as his title. King stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in generic references, and after a ruler’s name. At 1 Maccabees 8:31, that refers to the evils he does, not to the king: Swete III, p. 626, has τῶν κακῶν ὧν ὁ βασιλεὺς Δημήτριος συντελεῖται. The Revised Version and Boyd’s Byzantine ASV also make the relative explicit with which. Brenton’s 1900 Apocrypha, p. 160, retains lowercase king; the capital follows this edition’s title rule."
     },
     "king Eumenes": {
       "to": "King Eumenes",
-      "why": "King is capitalized immediately before this ruler’s name, as his title. After an article or a demonstrative, king is a common noun standing before the name, as in the mount Sion and the river Jordan, and stays lowercase; so does king in generic references and after a ruler’s name."
+      "why": "King is capitalized immediately before this ruler’s name, as his title. King stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in generic references, and after a ruler’s name."
     },
     "king Gog": {
       "to": "King Gog",
-      "why": "King is capitalized immediately before this ruler’s name, as his title. After an article or a demonstrative, king is a common noun standing before the name, as in the mount Sion and the river Jordan, and stays lowercase; so does king in generic references and after a ruler’s name."
+      "why": "King is capitalized immediately before this ruler’s name, as his title. King stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in generic references, and after a ruler’s name."
     },
     "king Herod": {
       "to": "King Herod",
-      "why": "King is capitalized immediately before this ruler’s name, as his title. After an article or a demonstrative, king is a common noun standing before the name, as in the mount Sion and the river Jordan, and stays lowercase; so does king in generic references and after a ruler’s name."
+      "why": "King is capitalized immediately before this ruler’s name, as his title. King stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in generic references, and after a ruler’s name."
     },
     "king Hezekias": {
       "to": "King Hezekias",
-      "why": "King is capitalized immediately before this ruler’s name, as his title. After an article or a demonstrative, king is a common noun standing before the name, as in the mount Sion and the river Jordan, and stays lowercase; so does king in generic references and after a ruler’s name."
+      "why": "King is capitalized immediately before this ruler’s name, as his title. King stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in generic references, and after a ruler’s name."
     },
     "king Jarim": {
       "to": "King Jarim",
-      "why": "King is capitalized immediately before this ruler’s name, as his title. After an article or a demonstrative, king is a common noun standing before the name, as in the mount Sion and the river Jordan, and stays lowercase; so does king in generic references and after a ruler’s name."
+      "why": "King is capitalized immediately before this ruler’s name, as his title. King stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in generic references, and after a ruler’s name."
     },
     "king Jeroboam": {
       "to": "King Jeroboam",
-      "why": "King is capitalized immediately before this ruler’s name, as his title. After an article or a demonstrative, king is a common noun standing before the name, as in the mount Sion and the river Jordan, and stays lowercase; so does king in generic references and after a ruler’s name."
+      "why": "King is capitalized immediately before this ruler’s name, as his title. King stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in generic references, and after a ruler’s name."
     },
     "king Joacim": {
       "to": "King Joacim",
-      "why": "King is capitalized immediately before this ruler’s name, as his title. After an article or a demonstrative, king is a common noun standing before the name, as in the mount Sion and the river Jordan, and stays lowercase; so does king in generic references and after a ruler’s name."
+      "why": "King is capitalized immediately before this ruler’s name, as his title. King stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in generic references, and after a ruler’s name."
     },
     "king Joakim": {
       "to": "King Joakim",
-      "why": "King is capitalized immediately before this ruler’s name, as his title. After an article or a demonstrative, king is a common noun standing before the name, as in the mount Sion and the river Jordan, and stays lowercase; so does king in generic references and after a ruler’s name."
+      "why": "King is capitalized immediately before this ruler’s name, as his title. King stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in generic references, and after a ruler’s name."
     },
     "king Joash": {
       "to": "King Joash",
-      "why": "King is capitalized immediately before this ruler’s name, as his title. After an article or a demonstrative, king is a common noun standing before the name, as in the mount Sion and the river Jordan, and stays lowercase; so does king in generic references and after a ruler’s name."
+      "why": "King is capitalized immediately before this ruler’s name, as his title. King stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in generic references, and after a ruler’s name."
     },
     "king Joram": {
       "to": "King Joram",
-      "why": "King is capitalized immediately before this ruler’s name, as his title. After an article or a demonstrative, king is a common noun standing before the name, as in the mount Sion and the river Jordan, and stays lowercase; so does king in generic references and after a ruler’s name."
+      "why": "King is capitalized immediately before this ruler’s name, as his title. King stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in generic references, and after a ruler’s name."
     },
     "king Josaphat": {
       "to": "King Josaphat",
-      "why": "King is capitalized immediately before this ruler’s name, as his title. After an article or a demonstrative, king is a common noun standing before the name, as in the mount Sion and the river Jordan, and stays lowercase; so does king in generic references and after a ruler’s name."
+      "why": "King is capitalized immediately before this ruler’s name, as his title. King stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in generic references, and after a ruler’s name."
     },
     "king Josias": {
       "to": "King Josias",
-      "why": "King is capitalized immediately before this ruler’s name, as his title. After an article or a demonstrative, king is a common noun standing before the name, as in the mount Sion and the river Jordan, and stays lowercase; so does king in generic references and after a ruler’s name."
+      "why": "King is capitalized immediately before this ruler’s name, as his title. King stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in generic references, and after a ruler’s name."
     },
     "king Moloch": {
       "to": "King Moloch",
-      "why": "King is capitalized immediately before this ruler’s name, as his title. After an article or a demonstrative, king is a common noun standing before the name, as in the mount Sion and the river Jordan, and stays lowercase; so does king in generic references and after a ruler’s name."
+      "why": "King is capitalized immediately before this ruler’s name, as his title. King stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in generic references, and after a ruler’s name."
     },
     "king Nabuchodonosor": {
       "to": "King Nabuchodonosor",
-      "except": [
-        "that king Nabuchodonosor"
-      ],
-      "why": "King is capitalized immediately before this ruler’s name, as his title. After an article or a demonstrative, king is a common noun standing before the name, as in the mount Sion and the river Jordan, and stays lowercase; so does king in generic references and after a ruler’s name."
+      "why": "King is capitalized immediately before this ruler’s name, as his title. King stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in generic references, and after a ruler’s name. At 1 Esdras 1:46 (source 1:48), after that introduces the temporal clause about the oath before the main clause he forswore himself; that does not qualify king. The source’s lowercase title therefore takes the same capital as his other titles before the name."
     },
     "king Og": {
       "to": "King Og",
-      "why": "King is capitalized immediately before this ruler’s name, as his title. After an article or a demonstrative, king is a common noun standing before the name, as in the mount Sion and the river Jordan, and stays lowercase; so does king in generic references and after a ruler’s name."
+      "why": "King is capitalized immediately before this ruler’s name, as his title. King stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in generic references, and after a ruler’s name."
     },
     "king Ozias": {
       "to": "King Ozias",
-      "why": "King is capitalized immediately before this ruler’s name, as his title. After an article or a demonstrative, king is a common noun standing before the name, as in the mount Sion and the river Jordan, and stays lowercase; so does king in generic references and after a ruler’s name."
+      "why": "King is capitalized immediately before this ruler’s name, as his title. King stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in generic references, and after a ruler’s name."
     },
     "king Pharaoh": {
       "to": "King Pharaoh",
-      "why": "King is capitalized immediately before this ruler’s name, as his title. After an article or a demonstrative, king is a common noun standing before the name, as in the mount Sion and the river Jordan, and stays lowercase; so does king in generic references and after a ruler’s name."
+      "why": "King is capitalized immediately before this ruler’s name, as his title. King stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in generic references, and after a ruler’s name."
     },
     "king Ptolemee": {
       "to": "King Ptolemee",
-      "why": "King is capitalized immediately before this ruler’s name, as his title. After an article or a demonstrative, king is a common noun standing before the name, as in the mount Sion and the river Jordan, and stays lowercase; so does king in generic references and after a ruler’s name."
+      "why": "King is capitalized immediately before this ruler’s name, as his title. King stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in generic references, and after a ruler’s name."
     },
     "king Ptolemeus": {
       "to": "King Ptolemeus",
-      "why": "King is capitalized immediately before this ruler’s name, as his title. After an article or a demonstrative, king is a common noun standing before the name, as in the mount Sion and the river Jordan, and stays lowercase; so does king in generic references and after a ruler’s name."
+      "why": "King is capitalized immediately before this ruler’s name, as his title. King stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in generic references, and after a ruler’s name."
     },
     "king Raasson": {
       "to": "King Raasson",
-      "why": "King is capitalized immediately before this ruler’s name, as his title. After an article or a demonstrative, king is a common noun standing before the name, as in the mount Sion and the river Jordan, and stays lowercase; so does king in generic references and after a ruler’s name."
+      "why": "King is capitalized immediately before this ruler’s name, as his title. King stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in generic references, and after a ruler’s name."
     },
     "king Roboam": {
       "to": "King Roboam",
-      "why": "King is capitalized immediately before this ruler’s name, as his title. After an article or a demonstrative, king is a common noun standing before the name, as in the mount Sion and the river Jordan, and stays lowercase; so does king in generic references and after a ruler’s name."
+      "why": "King is capitalized immediately before this ruler’s name, as his title. King stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in generic references, and after a ruler’s name."
     },
     "king Saul": {
       "to": "King Saul",
-      "why": "King is capitalized immediately before this ruler’s name, as his title. After an article or a demonstrative, king is a common noun standing before the name, as in the mount Sion and the river Jordan, and stays lowercase; so does king in generic references and after a ruler’s name."
+      "why": "King is capitalized immediately before this ruler’s name, as his title. King stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in generic references, and after a ruler’s name."
     },
     "king Sedecias": {
       "to": "King Sedecias",
-      "why": "King is capitalized immediately before this ruler’s name, as his title. After an article or a demonstrative, king is a common noun standing before the name, as in the mount Sion and the river Jordan, and stays lowercase; so does king in generic references and after a ruler’s name."
+      "why": "King is capitalized immediately before this ruler’s name, as his title. King stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in generic references, and after a ruler’s name."
     },
     "king Seleucus": {
       "to": "King Seleucus",
-      "except": [
-        "that king Seleucus"
-      ],
-      "why": "King is capitalized immediately before this ruler’s name, as his title. After an article or a demonstrative, king is a common noun standing before the name, as in the mount Sion and the river Jordan, and stays lowercase; so does king in generic references and after a ruler’s name."
+      "why": "King is capitalized immediately before this ruler’s name, as his title. King stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in generic references, and after a ruler’s name. At 4 Maccabees 4:13, that introduces the clause giving what Onias fears the king might suppose, not a demonstrative on king: Swete III, p. 736, has εὐλαβηθεὶς μή ποτε νομίσειεν ὁ βασιλεὺς Σέλευκος. Brenton’s 1900 Apocrypha, p. 231, retains lowercase king; the capital follows this edition’s title rule, as at 4:3."
     },
     "king Solomon": {
       "to": "King Solomon",
-      "except": [
-        "that king Solomon"
-      ],
-      "why": "King is capitalized immediately before this ruler’s name, as his title. After an article or a demonstrative, king is a common noun standing before the name, as in the mount Sion and the river Jordan, and stays lowercase; so does king in generic references and after a ruler’s name."
+      "why": "King is capitalized immediately before this ruler’s name, as his title. King stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in generic references, and after a ruler’s name. At 1 Esdras 1:3, that introduces the relative clause describing the house he built, not a demonstrative on king. The Revised Version also prints King Solomon there."
     },
     "mount Bethel": {
       "to": "Mount Bethel",
-      "why": "Mount is capitalized where it begins a mountain’s name. After an article, a demonstrative, or an adjective, mount is a common noun standing before the name, as in the river Jordan, and stays lowercase; so do the verb, unnamed mountains, and descriptive phrases such as the mount of God or the mount of Esau."
+      "why": "Mount is capitalized where it begins a mountain’s name. Mount stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in descriptive phrases such as the mount of God or the mount of Esau, for unnamed mountains, and as a verb."
     },
     "mount Carmel": {
       "to": "Mount Carmel",
-      "why": "Mount is capitalized where it begins a mountain’s name. After an article, a demonstrative, or an adjective, mount is a common noun standing before the name, as in the river Jordan, and stays lowercase; so do the verb, unnamed mountains, and descriptive phrases such as the mount of God or the mount of Esau."
+      "why": "Mount is capitalized where it begins a mountain’s name. Mount stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in descriptive phrases such as the mount of God or the mount of Esau, for unnamed mountains, and as a verb."
     },
     "mount Enab": {
       "to": "Mount Enab",
-      "why": "Mount is capitalized where it begins a mountain’s name. After an article, a demonstrative, or an adjective, mount is a common noun standing before the name, as in the river Jordan, and stays lowercase; so do the verb, unnamed mountains, and descriptive phrases such as the mount of God or the mount of Esau."
+      "why": "Mount is capitalized where it begins a mountain’s name. Mount stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in descriptive phrases such as the mount of God or the mount of Esau, for unnamed mountains, and as a verb."
     },
     "mount Ephraim": {
       "to": "Mount Ephraim",
@@ -11458,66 +11467,66 @@
         "the mount Ephraim",
         "will mount Ephraim"
       ],
-      "why": "Mount is capitalized where it begins a mountain’s name. After an article, a demonstrative, or an adjective, mount is a common noun standing before the name, as in the river Jordan, and stays lowercase; so do the verb, unnamed mountains, and descriptive phrases such as the mount of God or the mount of Esau."
+      "why": "Mount is capitalized where it begins a mountain’s name. Mount stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in descriptive phrases such as the mount of God or the mount of Esau, for unnamed mountains, and as a verb."
     },
     "mount Ephron": {
       "to": "Mount Ephron",
-      "why": "Mount is capitalized where it begins a mountain’s name. After an article, a demonstrative, or an adjective, mount is a common noun standing before the name, as in the river Jordan, and stays lowercase; so do the verb, unnamed mountains, and descriptive phrases such as the mount of God or the mount of Esau."
+      "why": "Mount is capitalized where it begins a mountain’s name. Mount stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in descriptive phrases such as the mount of God or the mount of Esau, for unnamed mountains, and as a verb."
     },
     "mount Galaad": {
       "to": "Mount Galaad",
       "except": [
         "the mount Galaad"
       ],
-      "why": "Mount is capitalized where it begins a mountain’s name. After an article, a demonstrative, or an adjective, mount is a common noun standing before the name, as in the river Jordan, and stays lowercase; so do the verb, unnamed mountains, and descriptive phrases such as the mount of God or the mount of Esau."
+      "why": "Mount is capitalized where it begins a mountain’s name. Mount stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in descriptive phrases such as the mount of God or the mount of Esau, for unnamed mountains, and as a verb."
     },
     "mount Garizin": {
       "to": "Mount Garizin",
-      "why": "Mount is capitalized where it begins a mountain’s name. After an article, a demonstrative, or an adjective, mount is a common noun standing before the name, as in the river Jordan, and stays lowercase; so do the verb, unnamed mountains, and descriptive phrases such as the mount of God or the mount of Esau."
+      "why": "Mount is capitalized where it begins a mountain’s name. Mount stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in descriptive phrases such as the mount of God or the mount of Esau, for unnamed mountains, and as a verb."
     },
     "mount Gelbue": {
       "to": "Mount Gelbue",
-      "why": "Mount is capitalized where it begins a mountain’s name. After an article, a demonstrative, or an adjective, mount is a common noun standing before the name, as in the river Jordan, and stays lowercase; so do the verb, unnamed mountains, and descriptive phrases such as the mount of God or the mount of Esau."
+      "why": "Mount is capitalized where it begins a mountain’s name. Mount stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in descriptive phrases such as the mount of God or the mount of Esau, for unnamed mountains, and as a verb."
     },
     "mount Gæbal": {
       "to": "Mount Gæbal",
-      "why": "Mount is capitalized where it begins a mountain’s name. After an article, a demonstrative, or an adjective, mount is a common noun standing before the name, as in the river Jordan, and stays lowercase; so do the verb, unnamed mountains, and descriptive phrases such as the mount of God or the mount of Esau."
+      "why": "Mount is capitalized where it begins a mountain’s name. Mount stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in descriptive phrases such as the mount of God or the mount of Esau, for unnamed mountains, and as a verb."
     },
     "mount Hermon": {
       "to": "Mount Hermon",
       "except": [
         "the mount Hermon"
       ],
-      "why": "Mount is capitalized where it begins a mountain’s name. After an article, a demonstrative, or an adjective, mount is a common noun standing before the name, as in the river Jordan, and stays lowercase; so do the verb, unnamed mountains, and descriptive phrases such as the mount of God or the mount of Esau."
+      "why": "Mount is capitalized where it begins a mountain’s name. Mount stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in descriptive phrases such as the mount of God or the mount of Esau, for unnamed mountains, and as a verb."
     },
     "mount Hor": {
       "to": "Mount Hor",
-      "why": "Mount is capitalized where it begins a mountain’s name. After an article, a demonstrative, or an adjective, mount is a common noun standing before the name, as in the river Jordan, and stays lowercase; so do the verb, unnamed mountains, and descriptive phrases such as the mount of God or the mount of Esau."
+      "why": "Mount is capitalized where it begins a mountain’s name. Mount stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in descriptive phrases such as the mount of God or the mount of Esau, for unnamed mountains, and as a verb."
     },
     "mount Horeb": {
       "to": "Mount Horeb",
-      "why": "Mount is capitalized where it begins a mountain’s name. After an article, a demonstrative, or an adjective, mount is a common noun standing before the name, as in the river Jordan, and stays lowercase; so do the verb, unnamed mountains, and descriptive phrases such as the mount of God or the mount of Esau."
+      "why": "Mount is capitalized where it begins a mountain’s name. Mount stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in descriptive phrases such as the mount of God or the mount of Esau, for unnamed mountains, and as a verb."
     },
     "mount Or": {
       "to": "Mount Or",
       "except": [
         "the mount Or"
       ],
-      "why": "Mount is capitalized where it begins a mountain’s name. After an article, a demonstrative, or an adjective, mount is a common noun standing before the name, as in the river Jordan, and stays lowercase; so do the verb, unnamed mountains, and descriptive phrases such as the mount of God or the mount of Esau."
+      "why": "Mount is capitalized where it begins a mountain’s name. Mount stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in descriptive phrases such as the mount of God or the mount of Esau, for unnamed mountains, and as a verb."
     },
     "mount Seir": {
       "to": "Mount Seir",
       "except": [
         "the mount Seir"
       ],
-      "why": "Mount is capitalized where it begins a mountain’s name. After an article, a demonstrative, or an adjective, mount is a common noun standing before the name, as in the river Jordan, and stays lowercase; so do the verb, unnamed mountains, and descriptive phrases such as the mount of God or the mount of Esau."
+      "why": "Mount is capitalized where it begins a mountain’s name. Mount stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in descriptive phrases such as the mount of God or the mount of Esau, for unnamed mountains, and as a verb."
     },
     "mount Sinai": {
       "to": "Mount Sinai",
       "except": [
         "the mount Sinai"
       ],
-      "why": "Mount is capitalized where it begins a mountain’s name. After an article, a demonstrative, or an adjective, mount is a common noun standing before the name, as in the river Jordan, and stays lowercase; so do the verb, unnamed mountains, and descriptive phrases such as the mount of God or the mount of Esau."
+      "why": "Mount is capitalized where it begins a mountain’s name. Mount stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in descriptive phrases such as the mount of God or the mount of Esau, for unnamed mountains, and as a verb."
     },
     "mount Sion": {
       "to": "Mount Sion",
@@ -11525,15 +11534,15 @@
         "the mount Sion",
         "this mount Sion"
       ],
-      "why": "Mount is capitalized where it begins a mountain’s name. After an article, a demonstrative, or an adjective, mount is a common noun standing before the name, as in the river Jordan, and stays lowercase; so do the verb, unnamed mountains, and descriptive phrases such as the mount of God or the mount of Esau."
+      "why": "Mount is capitalized where it begins a mountain’s name. Mount stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in descriptive phrases such as the mount of God or the mount of Esau, for unnamed mountains, and as a verb."
     },
     "mount Tabor": {
       "to": "Mount Tabor",
-      "why": "Mount is capitalized where it begins a mountain’s name. After an article, a demonstrative, or an adjective, mount is a common noun standing before the name, as in the river Jordan, and stays lowercase; so do the verb, unnamed mountains, and descriptive phrases such as the mount of God or the mount of Esau."
+      "why": "Mount is capitalized where it begins a mountain’s name. Mount stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in descriptive phrases such as the mount of God or the mount of Esau, for unnamed mountains, and as a verb."
     },
     "mount Ziph": {
       "to": "Mount Ziph",
-      "why": "Mount is capitalized where it begins a mountain’s name. After an article, a demonstrative, or an adjective, mount is a common noun standing before the name, as in the river Jordan, and stays lowercase; so do the verb, unnamed mountains, and descriptive phrases such as the mount of God or the mount of Esau."
+      "why": "Mount is capitalized where it begins a mountain’s name. Mount stays lowercase after an article or a demonstrative that qualifies it as a common noun, directly or with adjectives between, in descriptive phrases such as the mount of God or the mount of Esau, for unnamed mountains, and as a verb."
     },
     "mount of Olives": {
       "to": "Mount of Olives",
@@ -11569,7 +11578,7 @@
     },
     "firstfruit": {
       "to": "first-fruit",
-      "why": "The edition retains these hyphenated forms by explicit editorial preference: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), dwelling-place (21 beside 1 open; 31 open), ewe-lamb, turtle-dove, pre-eminence, battle-array, and well-pleased, with their plurals. These spellings are editorial choices, not a general rule. Other compound changes are declared individually; forms outside those decisions stand as the sources print them."
+      "why": "The edition retains these hyphenated forms by explicit editorial preference: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), ewe-lamb, turtle-dove, pre-eminence, battle-array, well-pleased, and money-changer, with their plurals. These spellings are editorial choices, not a general rule. Other compound changes are declared individually; forms outside those decisions stand as the sources print them."
     },
     "birth-day": {
       "to": "birthday",
@@ -11733,7 +11742,7 @@
     },
     "stumblingstone": {
       "to": "stumbling-stone",
-      "why": "The edition retains these hyphenated forms by explicit editorial preference: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), dwelling-place (21 beside 1 open; 31 open), ewe-lamb, turtle-dove, pre-eminence, battle-array, and well-pleased, with their plurals. These spellings are editorial choices, not a general rule. Other compound changes are declared individually; forms outside those decisions stand as the sources print them."
+      "why": "The edition retains these hyphenated forms by explicit editorial preference: first-born (128 hyphenated in Brenton beside 6 solid; 121 solid in the King James Bible), first-fruits (78; 38 solid), corner-stone (2; 3 open), mercy-seat (11; 27 open), stumbling-block (14 beside 3 solid; 18 solid), stumbling-stone (1; 2 solid), threshing-floor (25 beside 2 solid and 3 open; 19 solid), ewe-lamb, turtle-dove, pre-eminence, battle-array, well-pleased, and money-changer, with their plurals. These spellings are editorial choices, not a general rule. Other compound changes are declared individually; forms outside those decisions stand as the sources print them."
     },
     "feebleminded": {
       "to": "feeble-minded",

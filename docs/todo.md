@@ -86,16 +86,12 @@ Compare the printing before calling one a transcription slip.
 
 ## Orthography: compounds and regional spelling
 
-All [editorial]. The introduction (`content/introduction.sfm:108`) ends
+All [editorial]. The introduction (`content/introduction.sfm:109`) says
 "Compounds outside the declared changes keep their sources' forms", so none
 of these is a failed transformation. They are candidates for declared
 compound decisions. Confidence: high that the variation exists; the policy
 call is open.
 
-- [ ] **preeminence** (COL 1:18, 3JN 1:9) and **turtledoves** (LUK 2:24) —
-  the retained-hyphen list names pre-eminence and turtle-dove "wherever they
-  stand", but no word rule normalizes the solid source forms. Decide whether
-  the preference means all occurrences; if so, declare them.
 - [ ] **task-masters / taskmasters** — EXO 1:11, 3:7, 5:6 vs 5:10, 5:13.
 - [ ] **olive-yards / oliveyards** — NEH 5:11, 9:25.
 - [ ] **waiting-woman / waitingwoman** — JDT 8:10, 8:33.
@@ -104,28 +100,8 @@ call is open.
 - [ ] **true-hearted / truehearted** — JOB 4:7, 27:17.
 - [ ] **casting net / casting-net** — HAB 1:15–16.
 - [ ] **no body** (SIR 23:18) — nobody, as 1SA 21:2 and DAG 0:16 print.
-- [ ] **money-changers / moneychangers** — MRK 11:15, MAT 21:12.
-- [ ] **market-place / marketplace(s)** — ACT 16:19 (and its 1611 lemma),
-  MAT 20:3, LUK 7:32, MRK 12:38; ECC 12:4, TOB 2:3, 1ES 2:17.
 - [ ] **paralyzed / paralysed** — 3MA 2:22, 6:20.
 - [ ] **Bethmaalo / Beth-maalo** — JDG 9:6, 9:20 (a place; see names too).
-
-## Capitalization of "king" before a name
-
-[editorial]. `edition/revisions.json` capitalizes "king `Name`" but excepts
-phrases where a demonstrative qualifies the title (lines 11243, 11284,
-11386). In these three the "this/that" is not a demonstrative on "king":
-
-- [ ] **ESG 3:1** — "And after this king Artaxerxes" (temporal "after this").
-  Confidence: high.
-- [ ] **1MA 8:31** — "the evils that king Demetrius doeth" (relative "that").
-  Confidence: high.
-- [ ] **4MA 4:13** — "anxious that king Seleucus should not suppose"
-  (conjunction "that"). Confidence: high. Contrast 4:3 "King Seleucus".
-- [ ] **JER 47:14** — "that king Beleissa"; may be a reported clause.
-  Confidence: low. Check the sentence.
-- Fix: narrow or remove the three exceptions. Repro:
-  `grep -n 'this king Artaxerxes\|that king Demetrius\|that king Seleucus' edition/revisions.json build/review/text/*.usfm`.
 
 ## Names: one bearer, several English forms
 

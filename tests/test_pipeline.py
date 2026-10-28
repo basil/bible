@@ -3529,6 +3529,30 @@ def test_house_style_distinguishes_titles_names_and_common_words(
     assert source == before
 
 
+@pytest.mark.parametrize(
+    "code,label,phrase",
+    [
+        ("ESG", "3:1", "after this King Artaxerxes"),
+        ("1MA", "8:31", "evils that King Demetrius doeth"),
+        ("4MA", "4:13", "anxious that King Seleucus should not suppose"),
+        ("JER", "47:14", "know that King Beleissa"),
+        ("1ES", "1:3", "house that King Solomon"),
+        ("1ES", "1:46", "after that King Nabuchodonosor"),
+        ("1ES", "5:70", "time that King Cyrus lived"),
+        ("1ES", "6:16", "year that King Cyrus reigned"),
+        ("2KI", "16:16", "all that King Ahaz commanded"),
+        ("1ES", "3:5", "the king Darius"),
+        ("1MA", "13:31", "the young king Antiochus"),
+        ("ESG", "3:13a", "The great king Artaxerxes"),
+        ("HAB", "3:3", "the dark shady mount Pharan"),
+    ],
+)
+def test_a_titles_capital_depends_on_whether_an_article_or_demonstrative_qualifies_it(
+    edition: bible.pipeline.Edition, code: str, label: str, phrase: str
+) -> None:
+    assert phrase in scripture.verses(edition.documents[code])[label].text
+
+
 def test_spake_revises_scripture_and_readings_but_preserves_commentary(
     declared: bible.policy.Policy,
 ) -> None:
