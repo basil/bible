@@ -1752,6 +1752,24 @@
           ]
         }
       },
+      "Jonas, father of Simon Peter": {
+        "to": "Jonas",
+        "why": "Peter’s father has the same Ἰωνᾶ in RP2026 and Scrivener at John 1:42 and 21:15–17; use throughout the standalone King James form of the three later verses, as the prophet’s genitive is also Jonas. Matthew 16:17 retains the distinct compound Bar-jona.",
+        "forms": {
+          "Jona": [
+            "JHN 1:42"
+          ]
+        },
+        "keep": [
+          {
+            "form": "Jona",
+            "verses": [
+              "2KI 25:23"
+            ],
+            "who": "The son of Careth among the captains who came to Godolias; a different bearer, whom the King James Bible calls Johanan."
+          }
+        ]
+      },
       "Joppa, port town": {
         "to": "Joppa",
         "why": "The spelling of the King James New Testament (Acts 9:36).",

@@ -205,11 +205,6 @@ seen. Repro for any: `grep -rn -w '<Form>' build/review/text/`.
 - [ ] **Caree / Careë** — JER 47:8, 47:13 vs 48:11, 50:2 (Joanan's father);
   CCEL has Careë throughout.
 
-### New Testament (Greek is one form; confidence high)
-
-- [ ] **Jona / Jonas** (Peter's father) — JHN 1:42 vs 21:15–17. RP2026 and
-  Scrivener have Ἰωνᾶ at all four. The Jonah→Jonas rule is the prophet's.
-
 ## Authored matter
 
 - [ ] **Introduction, Conforming the King James Text
