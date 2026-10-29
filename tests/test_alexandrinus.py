@@ -13,7 +13,16 @@ from conftest import book, changed, verse_lines
 import bible.annotate
 import bible.pipeline
 import bible.policy
-from bible import alexandrinus, annotate, notes, scripture, terminology, usj
+from bible import (
+    alexandrinus,
+    annotate,
+    ccel,
+    notes,
+    review,
+    scripture,
+    terminology,
+    usj,
+)
 from bible.checks import CheckFailed
 from bible.policy_schema import Decision, Swete
 from bible.usj import Document
@@ -66,6 +75,128 @@ def promoted(
 ) -> Document:
     doc = book("GEN", body)
     return alexandrinus.promoted("GEN", doc, policy, kjv or {}, {"GEN": doc})
+
+
+def unreported_reading() -> Decision:
+    return {
+        "why": "Print a reading of Alexandrinus that Brenton did not report.",
+        "swete": SWETE,
+        "source_note": None,
+        "from": "God said",
+        "english": {
+            "source": "from",
+            "edits": ({"span": (0, 0), "to": "the Lord "},),
+        },
+        "supplied": ("the", "Lord"),
+        "lemma": "the Lord",
+        "label": "valpy",
+        "omits": True,
+    }
+
+
+def test_an_unreported_reading_adds_a_note_without_consuming_a_source_note(
+    declared: bible.policy.Policy,
+) -> None:
+    policy = decided(declared, {"GEN 99:22": unreported_reading()})
+    doc = book("GEN", r"\v 22 And God said, Behold.")
+    before = copy.deepcopy(doc)
+    appendix = usj.parse(r"\id BAK" + "\n\\is1 " + alexandrinus.SUPPLIED + "\n")
+    assert alexandrinus.check(policy, {"GEN": doc, "BAK": appendix}) == (0, 0)
+    assert alexandrinus.consumed_notes(policy, "GEN") == set()
+    assert not ccel.decided_alexandrine(policy, "GEN 99:22")
+    result = alexandrinus.promoted("GEN", doc, policy, {}, {"GEN": doc})
+    assert doc == before
+    verse = scripture.verses(result)["99:22"]
+    assert verse.text == "And the Lord God said, Behold."
+    assert len(verse.notes) == 1
+    at, note = verse.notes[0]
+    assert at == len("And ")
+    assert note["x-key"] == "GEN 99:22"
+    assert note["category"] == "edition"
+    assert note["x-scope"] == {"declared": "the Lord"}
+    assert r"\fl Valpy \ft omits." in usj.serialize(note["content"])
+
+
+@pytest.mark.parametrize(
+    "change,message",
+    [
+        ({"source_note": ""}, "Invalid Alexandrine source note"),
+        ({"source_note": " "}, "Invalid Alexandrine source note"),
+        ({"source_note": 7}, "Invalid Alexandrine source note"),
+        ({"english": {"source": "brenton"}}, "not derived from its displaced words"),
+        (
+            {"edits": [{"target": "GEN 99:23", "english": {"source": "brenton"}}]},
+            "not derived from its displaced words",
+        ),
+    ],
+)
+def test_unreported_readings_require_an_explicit_absence_and_displaced_word_derivation(
+    declared: bible.policy.Policy, change: dict[str, Any], message: str
+) -> None:
+    reading = {**unreported_reading(), **change}
+    with pytest.raises(CheckFailed, match=message + ".*GEN 99:22"):
+        alexandrinus.check(
+            decided(declared, {"GEN 99:22": reading}), {"GEN": book("GEN", "")}
+        )
+
+
+def test_an_absent_source_note_cannot_hide_an_undecided_real_note(
+    declared: bible.policy.Policy,
+) -> None:
+    policy = decided(declared, {"GEN 99:22": unreported_reading()})
+    with pytest.raises(CheckFailed, match=r"not exhaustive; missing: \['GEN 99:22'\]"):
+        alexandrinus.check(policy, {"GEN": book("GEN", VERSES)})
+    reading = {
+        key: value
+        for key, value in unreported_reading().items()
+        if key != "source_note"
+    }
+    missing = decided(declared, {"GEN 99:22": reading})
+    # Read accounts for notes before Promote validates the decision. A
+    # missing field must reach that named validation, not raise KeyError here.
+    assert ccel.decided_alexandrine(missing, "GEN 99:22")
+    with pytest.raises(CheckFailed, match="without its source note: GEN 99:22"):
+        alexandrinus.check(missing, {"GEN": book("GEN", "")})
+
+
+@pytest.mark.parametrize(
+    "key,body",
+    [
+        # A verse's first note bears the verse's key.
+        ("GEN 99:22", r"\v 22 And \f + \fr 99:22 \fqa Gr. \ft look.\f*God said."),
+        ("GEN 99:22#2", r"\v 22 And God said."),
+        ("GEN 99:22 CCEL", r"\v 22 And God said."),
+    ],
+)
+def test_an_unreported_reading_is_keyed_by_its_verse_alone(
+    declared: bible.policy.Policy, key: str, body: str
+) -> None:
+    policy = decided(declared, {key: unreported_reading()})
+    with pytest.raises(CheckFailed, match="keyed as a note"):
+        alexandrinus.check(policy, {"GEN": book("GEN", body)})
+
+
+def test_a_retained_note_must_have_real_source_words(
+    declared: bible.policy.Policy,
+) -> None:
+    kept = {"GEN 99:22": {"source_note": None, "why": "Keep the note.", "swete": SWETE}}
+    with pytest.raises(
+        CheckFailed, match="Kept Alexandrine note without its source: GEN 99:22"
+    ):
+        alexandrinus.check(decided(declared, kept=kept), {"GEN": book("GEN", "")})
+
+
+def test_the_review_identifies_unreported_alexandrine_readings(
+    edition: bible.pipeline.Edition,
+) -> None:
+    report = review.alexandrinus_report(edition.read, edition)
+    for key in ("GEN 17:7", "1KI 15:28"):
+        entry = report.split(f"## {key} — readings\n", 1)[1].split("\n## ", 1)[0]
+        assert (
+            "Source: No Brenton source note; reading established from Swete." in entry
+        )
+        assert "Before:" in entry and "After:" in entry
+        assert "Valpy" in entry
 
 
 def test_a_reading_replaces_the_vatican_words_and_notes_them(

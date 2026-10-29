@@ -70,7 +70,8 @@ def test_the_edition_prints_every_unit_once_in_the_manifests_order(
         "brenton_units": 51,
         "kjv_units": 27,
         "kjv_marginal_notes": 775,
-        "printed_notes": 6250,
+        # GEN 17:7 and 1KI 15:28 add two notes without consuming source notes.
+        "printed_notes": 6252,
         # Every verse of the assembled books: Brenton's, with the passages
         # supplied from Codex Alexandrinus and the King James Bible's
         # 1 Kingdoms 23:12 and 3 Kingdoms 14:1-20, less the verses
@@ -842,6 +843,131 @@ def test_wording_beyond_one_ot_misprint_is_refused(
             revisions(
                 policy,
                 verses=group({"verse": verse, "from": old, "to": new}, wording=wording),
+            )
+        )
+
+
+def test_a_construction_preserves_supplied_words_notes_and_the_input(
+    policy: bible.policy.Policy,
+) -> None:
+    source = pipeline.keyed(
+        "NEH",
+        usj.parse(
+            "\\id NEH\n\\c 13\n\\p\n\\v 28 And Elisub the high priest, "
+            "\\add one\\add* of the sons of Joada, \\add being\\add* "
+            "son-in-law of Sanaballat the Uranite, "
+            "\\f - \\fr 13:28 \\fq I chased him: \\ft Gr. "
+            "\\fqa and I chased him\\ft , etc.\\f*I chased him away from me."
+        ),
+    )
+    before = copy.deepcopy(source)
+    changes = [
+        {"verse": "NEH 13:28", "from": "And Elisub the high priest,", "to": "And"},
+        {
+            "verse": "NEH 13:28",
+            "from": "sons of Joada,",
+            "to": "sons of Joada, the son of Elisub the high priest,",
+        },
+    ]
+    declared = revisions(policy, verses=group(*changes, wording="construction"))
+    revision.check(declared)
+    met: revision.MetRevisions = set()
+    result = revision.revised("NEH", source, declared, met)
+    assert scripture.verses(result)["13:28"].text == (
+        "And one of the sons of Joada, the son of Elisub the high priest, "
+        "being son-in-law of Sanaballat the Uranite, I chased him away from me."
+    )
+    assert [
+        usj.text_of(item["content"])
+        for item in usj.walk(result["content"])
+        if item.get("marker") == "add"
+    ] == ["one", "being"]
+    assert list(usj.notes_of(result["content"])) == list(
+        usj.notes_of(source["content"])
+    )
+    assert source == before
+    assert met == {"NEH 13:28"}
+
+    # Both parts describe one construction, checked against the same input.
+    # A stale second part cannot leave the first part applied in place.
+    stale = {**changes[1], "from": "sons of Another,"}
+    with pytest.raises(CheckFailed, match="Revision not met once"):
+        revision.revised(
+            "NEH",
+            source,
+            revisions(policy, verses=group(changes[0], stale, wording="construction")),
+            set(),
+        )
+    assert source == before
+
+
+def test_a_construction_keeps_every_word_it_moves(
+    policy: bible.policy.Policy,
+) -> None:
+    # Half a construction would delete the words the other half sets again.
+    alone = {"verse": "NEH 13:28", "from": "And Elisub the high priest,", "to": "And"}
+    with pytest.raises(CheckFailed, match="Construction drops words.*elisub"):
+        revision.check(revisions(policy, verses=group(alone, wording="construction")))
+    # Nor may a word moved be copied otherwise than the verse has it.
+    copied = {
+        "verse": "NEH 13:28",
+        "from": "sons of Joada,",
+        "to": "sons of Joada, the son of Eliasib the high priest,",
+    }
+    with pytest.raises(CheckFailed, match="Construction drops words.*elisub"):
+        revision.check(
+            revisions(policy, verses=group(alone, copied, wording="construction"))
+        )
+
+
+def test_a_construction_cannot_leave_a_note_behind_its_words(
+    policy: bible.policy.Policy,
+) -> None:
+    source = pipeline.keyed(
+        "NEH",
+        usj.parse(
+            "\\id NEH\n\\c 13\n\\p\n\\v 28 And \\f - \\fr 13:28 \\fq Elisub: "
+            "\\ft Or, \\fqa Eliasib\\ft .\\f*Elisub the high priest, one of the "
+            "sons of Joada, I chased him away from me."
+        ),
+    )
+    changes = [
+        {"verse": "NEH 13:28", "from": "And Elisub the high priest,", "to": "And"},
+        {
+            "verse": "NEH 13:28",
+            "from": "sons of Joada,",
+            "to": "sons of Joada, the son of Elisub the high priest,",
+        },
+    ]
+    declared = revisions(policy, verses=group(*changes, wording="construction"))
+    revision.check(declared)
+    with pytest.raises(CheckFailed, match="deletes words around a note"):
+        revision.revised("NEH", source, declared, set())
+
+
+@pytest.mark.parametrize(
+    "verse,old,new",
+    [
+        ("MAT 1:1", "Ephraim took away", "he took away Ephraim"),
+        ("MAT 1:1", "Who?", "Who."),
+        ("ISA 7:17", "Assyrians?", "Assyrians."),
+        ("ISA 7:17", ",", "he took away Ephraim"),
+        ("ISA 7:17", "Ephraim took away", "."),
+        ("ISA 7:17", "Ephraim took away", ""),
+        ("ISA 7:17", r"Ephraim \it took away\it*", "he took away Ephraim"),
+        ("ISA 7:17", "Ephraim took away", r"he took away \it Ephraim\it*"),
+    ],
+)
+def test_constructions_require_ot_words_at_both_ends(
+    policy: bible.policy.Policy, verse: str, old: str, new: str
+) -> None:
+    with pytest.raises(CheckFailed, match="Revision changes"):
+        revision.check(
+            revisions(
+                policy,
+                verses=group(
+                    {"verse": verse, "from": old, "to": new}, wording="construction"
+                ),
             )
         )
 

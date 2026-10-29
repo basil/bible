@@ -227,6 +227,8 @@ def alexandrinus_report(read: pipeline.Read, edition: pipeline.Edition) -> str:
                 if "english_note" in decision
                 else decision.get("appendix", decision.get("source_note", ""))
             )
+            if source is None:
+                source = "No Brenton source note; reading established from Swete."
             if "kjv" in decision:
                 source = f"Authorized Version, {key}" + (
                     f"; {source}" if source else ""

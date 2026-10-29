@@ -600,7 +600,7 @@ RevisionChange = TypedDict(
 class RevisionGroup(TypedDict, total=False):
     changes: ReadOnly[tuple[RevisionChange, ...]]
     why: ReadOnly[str]
-    wording: ReadOnly[Literal["spelling", "misprint"]]
+    wording: ReadOnly[Literal["spelling", "misprint", "construction"]]
 
 
 class AlexandrinusSuppliedSource(TypedDict):
@@ -632,7 +632,7 @@ Decision = TypedDict(
         "note_target": ReadOnly[str],
         "omit_verse": ReadOnly[bool],
         "reference": ReadOnly[str],
-        "source_note": ReadOnly[str],
+        "source_note": ReadOnly[str | None],
         "source_notes": ReadOnly[Mapping[str, str]],
         "supplied": ReadOnly[tuple[str, ...]],
         "supplied_sources": ReadOnly[tuple[AlexandrinusSuppliedSource, ...]],

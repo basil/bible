@@ -35,8 +35,9 @@ Six kinds of change are declared, each with its reason:
     verses   changes to the words of single verses, each naming its verse,
              as "EZK 1:3", which must have the words once: its punctuation,
              a spelling particular to it, or a misprint, which may restore
-             one missing word, or set one word for two printed. They stand
-             in groups, by the reason they share
+             one missing word, or set one word for two printed; a declared
+             construction corrects inherited Old Testament English syntax.
+             They stand in groups, by the reason they share
     ligatures each ligature written out as its letters wherever it is
              printed, last of all, so that every other decision is written
              and met in the sources' letters
@@ -170,8 +171,8 @@ def two_words_for_one(old: str, new: str) -> bool:
 # What a verse revision may change among the words, declared by its group:
 # the spelling or inflection of a word, chosen by sense verse by verse, or a
 # printed misprint established by the cited evidence, including a missing word
-# or two words printed for one.
-WORDING = frozenset({"spelling", "misprint"})
+# or two words printed for one; or an explicitly corrected English construction.
+WORDING = frozenset({"spelling", "misprint", "construction"})
 
 
 def check(policy: bible.policy.Policy) -> None:
@@ -415,7 +416,8 @@ def check(policy: bible.policy.Policy) -> None:
             # keeping words, numbers, and internal apostrophes and hyphens
             # intact, unless its group declares the kind of wording it
             # changes, and then one word; a misprint may restore one missing
-            # word, or set one word for two printed. NT wording belongs to
+            # word, or set one word for two printed. A construction declares
+            # a phrase's corrected syntax. NT wording belongs to
             # checked Greek-reading or rendering decisions: no kind reaches it,
             # and its capitals change only at a changed sentence end.
             require(
@@ -430,21 +432,25 @@ def check(policy: bible.policy.Policy) -> None:
                 or not words_kept(change["from"].translate(table), change["to"]),
                 f"Revision that only writes out a ligature: {name}: {key}",
             )
-            require(
-                (
-                    words_kept(change["from"], change["to"])
-                    if wording is None
-                    else (
-                        one_word_differs(change["from"], change["to"])
-                        or (
-                            wording == "misprint"
-                            and (
-                                one_word_inserted(change["from"], change["to"])
-                                or two_words_for_one(change["from"], change["to"])
-                            )
-                        )
+            if wording is None:
+                valid = words_kept(change["from"], change["to"])
+            elif wording == "construction":
+                valid = (
+                    key[:3] not in policy.kjv_units
+                    and "\\" not in change["from"] + change["to"]
+                    and bool(_lexemes(change["from"]) and _lexemes(change["to"]))
+                    and not words_kept(change["from"], change["to"])
+                )
+            else:
+                valid = one_word_differs(change["from"], change["to"]) or (
+                    wording == "misprint"
+                    and (
+                        one_word_inserted(change["from"], change["to"])
+                        or two_words_for_one(change["from"], change["to"])
                     )
-                ),
+                )
+            require(
+                valid,
                 f"Revision changes words without their kind, or other than one: {name}: {key}",
             )
             # A word it writes anew is written with the letters.
@@ -455,6 +461,24 @@ def check(policy: bible.policy.Policy) -> None:
                 ),
                 f"Revision that writes a ligature: {name}: {key}",
             )
+        if wording == "construction":
+            # A construction moves a verse's words and supplies what its
+            # syntax needs: its changes to a verse, together, keep every word
+            # they replace, so that none is lost, or copied otherwise than
+            # the verse has it, in the moving.
+            counted: dict[str, tuple[Counter[str], Counter[str]]] = {}
+            for change in group["changes"]:
+                before, after = counted.setdefault(
+                    change["verse"], (Counter(), Counter())
+                )
+                before.update(_lexemes(change["from"]))
+                after.update(_lexemes(change["to"]))
+            dropped = sorted(
+                f"{verse}: {' '.join(sorted((before - after).elements()))}"
+                for verse, (before, after) in counted.items()
+                if before - after
+            )
+            require(not dropped, f"Construction drops words: {name}: {dropped}")
 
     # Brenton's units, and the files their notes are keyed by: Daniel's
     # include those of Susanna and Bel.
@@ -2087,6 +2111,15 @@ def _reworded(
                 not new
                 or sum(a < local + end - start and local < b for a, b in strings) <= 1,
                 f"Revision across a style or note: {key}: {old}",
+            )
+            # But a note among words deleted would stay where they were,
+            # before other words, which its lemma, met elsewhere in the verse
+            # if a construction moved them there, would not tell.
+            require(
+                new
+                or not re.search(r"\w", verse.text[start:end])
+                or not any(start < offset < end for offset, _ in verse.notes),
+                f"Revision deletes words around a note: {key}: {old}",
             )
             # A word restored where a style or note meets the words would be
             # set in a style, or on a side of the note, that nothing decides:

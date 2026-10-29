@@ -7,35 +7,6 @@ wrong against their context. None is an export regression. Confidence is
 for "something is odd here", not for any particular fix. Do not harmonize
 to the Hebrew or KJV without evidence; the Greek may read this way.
 
-### Probable English or transcription slips (confidence: medium–high)
-
-- [ ] **GEN 17:7** — "between thee and thy seed" lacks "me and", unlike
-  17:2 and 17:10–11.
-- [ ] **1SA 26:20** — "the king of Israel hath come forth to seek thy life";
-  context wants "my life".
-- [ ] **NEH 13:28** — "Elisub the high priest, one of the sons of Joada"
-  reverses 12:10–11, where Eliasib begets Jodae.
-- [ ] **2CH 30:24** — "and the holy things of the priests abundantly" has no
-  predicate.
-- [ ] **2CH 12:11** — "and they that returned to meet the footmen" has no
-  predicate.
-- [ ] **JER 51:10** (source 44:10) — "And have not ceased even to this day"
-  opens a sentence with no subject.
-- [ ] **ISA 41:2** — "so that it should go? shall appoint it an adversary"
-  leaves the second predicate without a subject; the question mark may be
-  misplaced.
-- [ ] **ISA 7:17** — "Ephraim took away from Judah the king of the
-  Assyrians" attaches the king to the wrong clause; punctuation.
-- [ ] **PRO 27:13** — "Take away the man's garment (for a scorner hath
-  passed by) whoever layeth waste another's goods"; "whoever" hangs.
-- [ ] **4MA 14:7–8** — "for as the seven days of creation, about religion,
-  so the youths…" has no verb in the as-clause.
-- [ ] **NUM 6:4** — "vine, wine from the grape-stones to the husk"; second
-  "wine" unclear.
-- [ ] **NUM 29:4** — "each several ram, for the seven lambs"; animal
-  conflicts with the clause.
-- [ ] **1KI 15:28** (3 Kingdoms) — "Asa son of Asa"; patronymic.
-
 ### Possibly the Greek's own reading (confidence: medium)
 
 - [ ] **GEN 19:33, 19:35** — "he knew not when he slept … he rose" where the

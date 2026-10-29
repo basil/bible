@@ -1,5 +1,5 @@
 {
-  "why": "The spelling, vocabulary, and punctuation of the translation, revised by explicit editorial decisions. A word is respelled or modernized wherever the translation, its notes, and its front and back matter print it as a whole word; a word with a scope of scripture is revised only in numbered scripture and marked note lemmas (fq) and readings (fqa), wherever they stand. Book titles and metadata, headings, introduction paragraphs, and explanatory commentary are outside that scripture scope. The scope marks the archaisms, the King James inflections and past tenses carried into Brenton’s Scripture, which the notes’ commentary and the prefaces do not take; a modernization has no scope, and reaches them as it reaches the text. Numbered scripture in d paragraphs, including Psalm superscriptions, remains in scope. Plain quotation marks do not establish scope. Names are respelled first. Global spelling, vocabulary, article, possessive, and participle decisions affect source prose and run next, followed by a separate single sweep of scoped grammar decisions. The ligatures are written out last of all. A verse's change is made to the words of that verse alone, which must have them once, as the names leave them, and to the notes that quote them. A note's lemma retains the verse's internal punctuation, including a colon before the separate colon that introduces the note: Luke 4:41, Revelation 14:13, and Haggai 2:14 keep both. Luke 1:45 retains its local comma revision under luke-belief-clause; avoiding two colons alone does not require another verse revision. Verses' changes stand in groups, each group under the reason its changes share. Each gives its reason. An isolated alternative whose word is also a plural noun may name its stable source note as its exact context. Passage changes name a stable note key or a front/back-matter unit and the plain words met once there; only punctuation, associated spacing, and sentence-initial capitalization may change, with lowercase word initials also allowed in keyed notes. A phrase is revised as a word is; possessives and articles follow the immediately following sound, including an intervening adjective: my and thy before consonant sounds, mine and thine before vowel sounds and silent h; a before consonant sounds, an before vowel sounds and silent h. Independent mine and thine stay. Capitalization is decided separately. A word may except the phrases it must not change, which the edition must print. Words that a character style divides keep their division, and so does the lemma that quotes them at its note; the style of the translators’ supplied words (add), which is printed in roman and shown plain on the website, divides nothing among roman words, so that a compound it splits there is joined as any other. Hyphens may replace spaces between unchanged words, preserving each word’s styles and the matching note lemma. Five past tenses the King James Bible holds to, spake, begat, bare, brake, and sware, are carried through scripture as the inflections are. A compound takes the form current English gives it, closed, hyphenated as a modifier before its noun or wherever English keeps the hyphen, and otherwise open; the edition retains first-born, first-fruits, corner-stone, mercy-seat, stumbling-block, stumbling-stone, threshing-floor, ewe-lamb, turtle-dove, pre-eminence, battle-array, well-pleased, and money-changer, with their plurals, by explicit editorial preference. The named place nouns likewise take a hyphen, by editorial choice and not as a rule for every compound: burying-place, resting-place, dwelling-place, hiding-place, lurking-place, and market-place, with their plurals. Hiding-place and lurking-place need no decision: Brenton hyphenates them throughout (5 and 2, plurals included), and the King James Bible's open forms (4 and 2) stand only in books the edition takes from Brenton.",
+  "why": "The spelling, vocabulary, and punctuation of the translation, revised by explicit editorial decisions. A word is respelled or modernized wherever the translation, its notes, and its front and back matter print it as a whole word; a word with a scope of scripture is revised only in numbered scripture and marked note lemmas (fq) and readings (fqa), wherever they stand. Book titles and metadata, headings, introduction paragraphs, and explanatory commentary are outside that scripture scope. The scope marks the archaisms, the King James inflections and past tenses carried into Brenton’s Scripture, which the notes’ commentary and the prefaces do not take; a modernization has no scope, and reaches them as it reaches the text. Numbered scripture in d paragraphs, including Psalm superscriptions, remains in scope. Plain quotation marks do not establish scope. Names are respelled first. Global spelling, vocabulary, article, possessive, and participle decisions affect source prose and run next, followed by a separate single sweep of scoped grammar decisions. The ligatures are written out last of all. A verse's change is made to the words of that verse alone, which must have them once, as the names leave them, and to the notes that quote them. A note's lemma retains the verse's internal punctuation, including a colon before the separate colon that introduces the note: Luke 4:41, Revelation 14:13, and Haggai 2:14 keep both. Luke 1:45 retains its local comma revision under luke-belief-clause; avoiding two colons alone does not require another verse revision. An explicitly declared Old Testament construction corrects inherited English syntax while preserving the surrounding translation and its styles. Verses' changes stand in groups, each group under the reason its changes share. Each gives its reason. An isolated alternative whose word is also a plural noun may name its stable source note as its exact context. Passage changes name a stable note key or a front/back-matter unit and the plain words met once there; only punctuation, associated spacing, and sentence-initial capitalization may change, with lowercase word initials also allowed in keyed notes. A phrase is revised as a word is; possessives and articles follow the immediately following sound, including an intervening adjective: my and thy before consonant sounds, mine and thine before vowel sounds and silent h; a before consonant sounds, an before vowel sounds and silent h. Independent mine and thine stay. Capitalization is decided separately. A word may except the phrases it must not change, which the edition must print. Words that a character style divides keep their division, and so does the lemma that quotes them at its note; the style of the translators’ supplied words (add), which is printed in roman and shown plain on the website, divides nothing among roman words, so that a compound it splits there is joined as any other. Hyphens may replace spaces between unchanged words, preserving each word’s styles and the matching note lemma. Five past tenses the King James Bible holds to, spake, begat, bare, brake, and sware, are carried through scripture as the inflections are. A compound takes the form current English gives it, closed, hyphenated as a modifier before its noun or wherever English keeps the hyphen, and otherwise open; the edition retains first-born, first-fruits, corner-stone, mercy-seat, stumbling-block, stumbling-stone, threshing-floor, ewe-lamb, turtle-dove, pre-eminence, battle-array, well-pleased, and money-changer, with their plurals, by explicit editorial preference. The named place nouns likewise take a hyphen, by editorial choice and not as a rule for every compound: burying-place, resting-place, dwelling-place, hiding-place, lurking-place, and market-place, with their plurals. Hiding-place and lurking-place need no decision: Brenton hyphenates them throughout (5 and 2, plurals included), and the King James Bible's open forms (4 and 2) stand only in books the edition takes from Brenton.",
   "ligatures": {
     "why": "The edition writes the ligatures out as their letters: æ as ae and œ as oe, in every word of the translations, their notes, and their front and back matter, names and Latin alike, so that no verse prints both spellings. It is done last, after every decision has been carried out and checked in the sources’ own letters, so the decisions name the forms the sources print; a decision that writes a word anew writes it with the letters.",
     "letters": {
@@ -11871,6 +11871,36 @@
           "from": "do not injury",
           "to": "do not do injury",
           "why": "Brenton’s 1844 printing (vol. I physical p. 41, printed p. 17), 1879 (physical p. 37), 1884 (physical p. 34), and 1900 (physical p. 33), the last three printed p. 21, all omit the verb before injury. The pinned CCEL transcription iii.19.htm reads do not do injury. Swete I (1901) p. 29 prints μόνον εἰς τοὺς ἄνδρας τούτους μὴ ποιήσητε μηδὲν ἄδικον in his Alexandrinus text, confirmed on the scan: the explicit ποιήσητε supports the restored lexical do alongside the negative auxiliary. His apparatus om μηδεν DE does not omit the verb. Restore the missing word from CCEL without changing the remaining English or its roof note."
+        },
+        {
+          "verse": "1SA 26:20",
+          "from": "seek thy life",
+          "to": "seek my life",
+          "why": "Brenton’s 1844 printing (vol. I physical p. 347, printed p. 323), 1879 (physical p. 410, printed p. 394), 1884 (physical p. 379, its page number cropped), and 1900 (physical p. 406, printed p. 394) all print seek thy life, faithfully transcribed by eBible and retained in Boyd’s Updated Brenton. Brenton’s facing Greek in 1879 and 1900 reads ζητεῖν ψυχήν μου, seek my life. Swete I (1901) p. 601, checked transcription and scan, also prints ψυχήν μου; its sole apparatus entry here, ψυχην] pr την A, adds the article and reports no possessive change. Correct the inherited English possessive in David’s speech, retaining the rest of Brenton’s wording rather than importing the Hebrew’s flea from KJV, RV, or Boyd’s ASV."
+        },
+        {
+          "verse": "JER 51:10",
+          "from": "And have not ceased",
+          "to": "And they have not ceased",
+          "why": "Brenton’s 1844 vol. II p. 791 (physical p. 294), 1879 p. 968 (physical p. 984), and 1900 p. 968 (physical p. 980) omit the subject before have not ceased, as does pinned eBible. The 1884 scan’s corresponding page is cropped and does not preserve this opening. The facing Bagster Greek and Swete III (1905) p. 343, checked against the scan, read καὶ οὐκ ἐπαύσαντο, a third-person plural verb, followed by καὶ οὐκ ἀντείχοντο, which Brenton translates and they have not kept. Supply the first clause’s missing they, retaining the Greek’s ceased rather than importing the Hebrew-based humbled of Scrivener KJV, RV, and Boyd ASV at their Jeremiah 44:10."
+        },
+        {
+          "verse": "4MA 14:7",
+          "from": "creation, about religion,",
+          "to": "creation circle about religion,",
+          "why": "Brenton’s 1900 printing, Apocrypha p. 242 (physical p. 1392), faithfully transcribed by eBible and retained in Boyd’s Updated Brenton and his Brenton-derived ASV 4 Maccabees, leaves the as-clause without its understood circling verb. His facing Greek and Swete III (1905) p. 752, checked against the scan, have καθάπερ γὰρ ἑπτὰ τῆς κοσμοποιίας ἡμέραι περὶ τὴν εὐσέβειαν, followed by finite ἐκύκλουν in 14:8, rendered by Brenton as circling. Supply its finite English form circle in the first half of the comparison. This is an editorial completion of the Greek’s ellipsis, not a new Greek reading or a recovered compositor’s word. Circle is ordinary type; retain the whole second clause."
+        },
+        {
+          "verse": "NUM 29:4",
+          "from": "each several ram",
+          "to": "each several lamb",
+          "why": "Brenton’s 1844 vol. I p. 178 (physical p. 202) prints each several lamb. The 1879 and 1900 printings, p. 216 (physical pp. 232 and 228), and the cropped 1884 scan (physical p. 201) instead print each several ram, faithfully transcribed by eBible and retained in Boyd’s Updated Brenton. The facing Bagster Greek and Swete I (1901) p. 320, checked against its scan, read τῷ ἀμνῷ τῷ ἑνὶ τοῖς ἑπτὰ ἀμνοῖς, for the one lamb, for the seven lambs. The ram, κριῷ, already receives its two-tenth portion in verse 3. Restore the earlier English lamb without changing the surrounding wording; Scrivener1873 p. (146), RV and latest Boyd ASV agree on the animal."
+        },
+        {
+          "verse": "ISA 41:2",
+          "from": "go? shall appoint",
+          "to": "go? he shall appoint",
+          "why": "Brenton’s 1844 vol. II p. 716 and 1879/1884/1900 p. 875 print go? shall appoint, faithfully transcribed by eBible. His facing Greek and Swete III (1905) p. 175 close the initial question at πορεύσεται; and continue with δώσει. Ottley’s Greek-based translation (1909 I p. 223) independently reads it shall go forth? he shall set it before nations and ends the continuation with a period. Supply ordinary lowercase he, following Ottley and the source’s case convention, while retaining Brenton’s wording and supplied words. Ottley’s commentary (1906 II pp. 301–302) calls the sentence difficult; indicative mood alone does not establish its pointing. This is an editorial English repair, not a new Greek reading or a recovered transcription."
         }
       ]
     },
@@ -12774,6 +12804,43 @@
           "verse": "NAM 2:9",
           "from": "staid",
           "to": "stayed"
+        }
+      ]
+    },
+    "declarative continuation at Isaiah 41:2": {
+      "why": "The continuation after the question at go is declarative in the facing Greek of Brenton p. 875 and Swete III p. 175: δώσει ... τὰ τόξα αὐτῶν·. End its English as a declaration rather than a second subjectless question, alongside the separately declared restoration of lowercase he.",
+      "changes": [
+        {
+          "verse": "ISA 41:2",
+          "from": "as sticks?",
+          "to": "as sticks."
+        }
+      ]
+    },
+    "genealogy at Nehemias 13:28": {
+      "why": "Correct Brenton’s inherited reversal of the genealogy, not his names or the rest of the sentence. His 1844 II p. 533 and 1879/1900 p. 650 make Elisub one of Joada’s sons; his facing Greek and Swete II p. 212 instead name sons of Joada, Joada of Elisub. Scrivener’s Cambridge Paragraph Bible (1873), p. (438), and the Revised Version give that relationship. Express the Greek patronymic as the son in ordinary text, preserving Brenton’s supplied one and being and his note on I chased him.",
+      "wording": "construction",
+      "changes": [
+        {
+          "verse": "NEH 13:28",
+          "from": "And Elisub the high priest,",
+          "to": "And"
+        },
+        {
+          "verse": "NEH 13:28",
+          "from": "sons of Joada,",
+          "to": "sons of Joada, the son of Elisub the high priest,"
+        }
+      ]
+    },
+    "construction at Esaias 7:17": {
+      "why": "Correct Brenton’s inherited construction and separate the king God will bring. Brenton’s 1844 vol. II pp. 689–690 and 1879/1884/1900 p. 842 read Ephraim took away from Judah the king of the Assyrians. Ottley’s Greek-based translation (1909 I p. 89) renders he took away Ephraim from Judah; the king of the Assyrians. His commentary (1906 II p. 144) explicitly says that on the transitive interpretation the subject must be God Himself, while considering an intransitive broke off from as a possibility; p. 145 identifies Assyria as God’s threatening instrument. Choose Ottley’s adopted transitive interpretation, agreeing with the words and separating comma of Swete III (1905) p. 113, without changing the Greek or importing the Hebrew-based departed of KJV, RV, and Boyd’s ASV.",
+      "wording": "construction",
+      "changes": [
+        {
+          "verse": "ISA 7:17",
+          "from": "Ephraim took away from Judah the king of the Assyrians.",
+          "to": "he took away Ephraim from Judah; the king of the Assyrians."
         }
       ]
     }

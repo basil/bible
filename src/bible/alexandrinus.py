@@ -4,8 +4,9 @@
 The decision file owns every departure from Brenton’s translation: a
 reading printed in place of Brenton’s words, a passage supplied from
 Brenton's Appendix or a note, a note kept as it is. Each decision pins the
-note or Appendix paragraph it rests on, derives its English from those
-words by declared edits, and records Swete's evidence and its reason.
+note or Appendix paragraph it rests on, or explicitly records that Brenton
+reported no note. Its English is derived by declared edits, with Swete's
+evidence and its reason recorded.
 
 This stage reads Brenton's books as their source numbers them, before any
 chapter is selected or relabelled and before any note is set as a footnote.
@@ -302,6 +303,14 @@ def passage_source(entry: Decision) -> str:
     return entry["appendix"]
 
 
+def reported(entry: Decision) -> bool:
+    """Whether a reading rests on a note of Brenton's: one that records
+    none says so with a null source note. A reading without the field is
+    counted as reported, so that check names it rather than a reader failing
+    on it first."""
+    return entry.get("source_note", "") is not None
+
+
 def operations(
     policy: bible.policy.Policy, code: str, kjv_sources: Mapping[str, str]
 ) -> Iterator[tuple[str, Decision, str, str, str]]:
@@ -311,15 +320,14 @@ def operations(
     for key, entry in data["readings"].items():
         if references.book_of(key) != code:
             continue
+        source = entry["source_note"] or ""
         # A reading that only omits verses replaces no words.
         if "from" in entry:
             verse = entry.get("target", key).split()[1].split("#")[0]
-            yield key, entry, entry["source_note"], verse, key
+            yield key, entry, source, verse, key
         for index, item in enumerate(entry.get("edits", ()), 1):
             verse = item["target"].split()[-1]
-            yield key, further(entry, item), entry[
-                "source_note"
-            ], verse, f"{key}@{index}"
+            yield key, further(entry, item), source, verse, f"{key}@{index}"
     for key, entry in data["passages"].items():
         if references.book_of(key) != code:
             continue
@@ -350,7 +358,11 @@ def further(entry: Decision, item: Decision) -> Decision:
 def consumed_notes(policy: bible.policy.Policy, code: str) -> set[str]:
     """The keys of the notes a book's decisions replace or take up."""
     data = policy.alexandrinus
-    keys = {key for key in data["readings"] if references.book_of(key) == code}
+    keys = {
+        key
+        for key, entry in data["readings"].items()
+        if references.book_of(key) == code and reported(entry)
+    }
     for key, entry in data["passages"].items():
         if references.book_of(key) == code:
             keys.update(entry.get("source_notes", ()))
@@ -382,7 +394,9 @@ def companions(
                 f"Kept Alexandrine note changes nothing: {key}",
             )
             words: AlexandrinusReadingsNoteEdits = {
-                "from": entry["source_note"],
+                "from": present(
+                    entry["source_note"], f"Kept note without its source: {key}"
+                ),
                 "to": present(
                     entry["note"], f"Kept Alexandrine note without its words: {key}"
                 ),
@@ -432,6 +446,12 @@ def check(
                     and not entry.get("supplied"),
                     f"Invalid retained Alexandrine decision: {key}",
                 )
+                if "source_note" in entry:
+                    require(
+                        isinstance(entry["source_note"], str)
+                        and bool(entry["source_note"].strip()),
+                        f"Kept Alexandrine note without its source: {key}",
+                    )
                 # A lemma places the words a kept note is given, and nothing
                 # else: without them it would be accepted and never read.
                 require(
@@ -500,6 +520,25 @@ def check(
                     "source_note" in entry,
                     f"Alexandrine reading without its source note: {key}",
                 )
+                require(
+                    entry["source_note"] is None
+                    or (
+                        isinstance(entry["source_note"], str)
+                        and bool(entry["source_note"].strip())
+                    ),
+                    f"Invalid Alexandrine source note: {key}",
+                )
+                if entry["source_note"] is None:
+                    require(
+                        "from" in entry
+                        and not entry.get("omissions")
+                        and all(
+                            isinstance(proof := item.get("english"), Mapping)
+                            and proof.get("source") == "from"
+                            for item in (entry, *entry.get("edits", ()))
+                        ),
+                        f"Unreported Alexandrine reading not derived from its displaced words: {key}",
+                    )
                 require(
                     "from" in entry
                     or (
@@ -581,7 +620,7 @@ def check(
         "Alexandrine note consumed by several passages",
     )
     declared = (
-        set(data["readings"])
+        {k for k, v in data["readings"].items() if reported(v)}
         | {k for k, v in data["kept"].items() if "appendix" not in v}
         | set(consumed)
     )
@@ -589,17 +628,28 @@ def check(
         not set(consumed) & (set(data["readings"]) | set(data["kept"])),
         "Alexandrine passage note also has a decision",
     )
-    found = {
-        note["x-key"]
+    keyed = [
+        note
         for code, doc in books.items()
         if code != APPENDIX
         for note in usj.notes_of(doc["content"])
-        if "x-key" in note and ALEX.search(notes.source_text(note))
-    }
+        if "x-key" in note
+    ]
+    found = {note["x-key"] for note in keyed if ALEX.search(notes.source_text(note))}
     require(
         found == declared,
         f"Alexandrine notes not exhaustive; missing: {sorted(found - declared)}; unused: {sorted(declared - found)}",
     )
+    # A reading that rests on no note writes its own under its key, which is
+    # its verse alone: a verse's first note bears that key too, and a key of
+    # a note's form would name a note the reading does not rest on.
+    keys = {note["x-key"] for note in keyed}
+    shared = sorted(
+        key
+        for key, entry in data["readings"].items()
+        if not reported(entry) and (key in keys or len(key.split()) != 2 or "#" in key)
+    )
+    require(not shared, f"Unreported Alexandrine reading keyed as a note: {shared}")
     # An Appendix paragraph that supplies nothing moves into the note on its
     # verse: that note is then given its words, in the same book. The list it
     # stands in prints nowhere, so a paragraph kept but not moved is lost.
@@ -720,8 +770,11 @@ def check_pins(
         )
     for section in ("readings", "kept"):
         for key, entry in data[section].items():
-            if references.book_of(key) == code and "source_note" in entry:
-                pinned(key, entry["source_note"], placed)
+            if (
+                references.book_of(key) == code
+                and (source := entry.get("source_note")) is not None
+            ):
+                pinned(key, source, placed)
     for key, entry in data["passages"].items():
         if references.book_of(key) == code:
             for identity, body in entry.get("source_notes", {}).items():

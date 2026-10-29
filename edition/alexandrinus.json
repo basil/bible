@@ -266,6 +266,31 @@
       },
       "source_note": "\\fqa Alex. \\ft cattle."
     },
+    "GEN 17:7": {
+      "why": "Conform this covenant formula to Codex Alexandrinus as an explicitly decided exception to the restriction to variants Brenton reported. Swete I (1901) p. 25 prints ἀνὰ μέσον ἐμοῦ καὶ ἀνὰ μέσον σοῦ in its A text, confirmed in the checked transcription and scan. Valpy p. 13 (Internet Archive image n24) omits ἀνὰ μέσον ἐμοῦ, as do Brenton’s facing Greek and English; the omission is therefore labelled Valpy. Original Vaticanus is lost here: Swete I p. xvii identifies its Genesis 1:1–46:28 lacuna. Borrow between me and thee from Brenton’s own Genesis 17:2, retain the rest of his verse, and note Valpy’s omission at me and. Brenton has no Alexandrine source note at this verse.",
+      "swete": {
+        "volume": 1,
+        "page": 25,
+        "evidence": "text",
+        "reading": "ἀνὰ μέσον ἐμοῦ καὶ ἀνὰ μέσον σοῦ",
+        "agrees": true
+      },
+      "source_note": null,
+      "from": "between thee and thy seed",
+      "english": {
+        "source": "from",
+        "edits": [
+          {
+            "span": [8, 8],
+            "to": "me and "
+          }
+        ]
+      },
+      "supplied": ["me"],
+      "lemma": "me and",
+      "label": "valpy",
+      "omits": true
+    },
     "GEN 26:34": {
       "why": "Brenton source note \\fqa Alex. \\ft Hivite. is supported by the printings: 1879 physical p. 49 (printed p. 33); 1900 physical p. 45 (printed p. 33). Swete I p. 46: A reads θυγατέρα Αἰλὼμ τοῦ Εὐαίου at Helon, while E explicitly reads του Χετταιου there. The actual note quotes only Chettite, which is positively supported by E. Cotton’s silent collation omits του but does not establish Chettite. B is lacunose. Both printings set γ before the second Chettite, Helon’s, where A has the reading.",
       "swete": {
@@ -1848,6 +1873,29 @@
         }
       ],
       "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft In the twentieth year."
+    },
+    "1KI 15:28": {
+      "why": "Follow Alexandrinus in omitting the patronymic, as an explicitly decided exception to the restriction to readings Brenton reported. Valpy p. 317 (Internet Archive image n328) and Brenton’s 1844 vol. I p. 386 and 1879/1900 p. 472 print Asa son of Asa; his English faithfully renders Valpy’s υἱοῦ Ἀσὰ. Swete I (1901) p. 718, checked against its scan, prints Vaticanus’s son of Abiu but records βασ. του Ασα υιου Αβιου] Ασα βασ. Ιουδα A, omitting the patronymic in Alexandrinus. Preserve the precise former words in a Valpy addition note on Asa, not a Vaticanus note. Scrivener’s Cambridge Paragraph Bible (1873) p. 317, the Revised Version, and Boyd’s latest ASV agree in omitting the patronymic but are not the authority for the Greek selection. The corresponding 1884 scan crops out this verse; Brenton has no Alexandrine source note here.",
+      "swete": {
+        "volume": 1,
+        "page": 718,
+        "evidence": "apparatus",
+        "reading": "βασ. του Ασα υιου Αβιου] Ασα βασ. Ιουδα A",
+        "agrees": true
+      },
+      "from": "Asa son of Asa king of Juda",
+      "lemma": "Asa",
+      "note": "\\fl Valpy \\ft adds \\fq son of Asa\\ft .",
+      "english": {
+        "source": "from",
+        "edits": [
+          {
+            "span": [3, 14],
+            "to": ""
+          }
+        ]
+      },
+      "source_note": null
     },
     "1KI 16:8": {
       "why": "Print Brenton’s opening-date reading: 1879 physical p. 488 and 1900 physical p. 484 (printed p. 472) both give ρ before “And” in verse 8 and “Heb. and Alex. ‘in the 26th year of Asa king of Juda, Ela,’ etc.” Swete I p. 719 explicitly gives A’s opening εν ετει εικοστω και εκτω επι του Ασα βασιλεως Ιουδα and B’s undated Καὶ Ἠλὰ opening; no correcting hand or uncertainty qualifies the A reading. Retain the source-derived English, its ordinal expansion, the caller at the start of the verse, and a lemma covering the opening date and Ela. Quote the complete displaced And Ela, including its conjunction, rather than describing the date alone as absent. Swete’s B main text positively supports the displaced omission at this unit; the note names Vat.",
