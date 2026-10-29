@@ -64,7 +64,6 @@
         "Jud": "JDG",
         "Ju": "JDG",
         "Ruth": "RUT",
-        "1 Kings": "1SA",
         "Psalm": "PSA",
         "Prov": "PRO",
         "Isa": "ISA",
@@ -468,7 +467,7 @@
     "HAB 3:3 CCEL": {
       "source": "Psalm 3. 2",
       "numbering": "kjv-verses",
-      "why": "CCEL 24.iii#1 cites Psalm 3:2 using English verse numbers. The edition counts the Psalm title, so this is PSA3:3, whose note explicitly explains Pause."
+      "why": "CCEL 24.iii#1 cites Psalm 3:2 using English verse numbers. The edition counts the Psalm title, so this is Psalm 3:3, whose note explicitly explains Pause."
     },
     "1KI 7:37 Vat.": {
       "source": "7:38–50",
@@ -532,6 +531,45 @@
       "source": "Iliad. x. 456.",
       "not_a_citation": true,
       "why": "Brenton’s restored 1844 note cites Homer’s Iliad, book 10, line 456, not Deuteronomy or another biblical book. The prose decision expands this classical reference; do not interpret its Roman book number and line as a scripture citation."
+    },
+    "EZR 16:1 CCEL": {
+      "source": "1 Kings 10.5",
+      "passages": "1KI 10:5",
+      "print": "{1KI} 10:5",
+      "why": "Brenton 1879 physical page 653 (printed page 637) prints ‘Or, there was no spirit left in them. See 1 Kings 10.5.’ Here 1 Kings uses the Hebrew/English book name: the Queen of Sheba has ‘no more spirit in her’ at 1 Kings 10:5 in the Cambridge Paragraph Bible and Revised Version. The corresponding edition passage is 3 Kingdoms 10:5; 1 Kingdoms 10:5 instead describes Saul meeting the prophets. Resolve this note alone: Brenton's other citations of Kingdoms name the Greek books, as 2 Kings and 3 Kings."
+    },
+    "PSA 146:8": {
+      "source": "Ps. 103. (104) 14",
+      "passages": "PSA 103:14",
+      "print": "{PSA} 103:14",
+      "why": "The restored printed note gives the Greek Psalm 103 and the Hebrew Psalm 104; the Brenton scan evidence is recorded in the source-note correction. The edition’s 103:14 has ‘and green herb for the service of men’, the clause this note accompanies; KJV, RV and Boyd’s ASV have the parallel at 104:14. Read the complete restored citation as this verse."
+    },
+    "EZK 6:11 CCEL#2": {
+      "source": "Psalm 34. (35) 21",
+      "passages": "PSA 34:21",
+      "print": "{PSA} 34:21",
+      "why": "CCEL 15.vi#4 and Brenton 1879 physical p. 1001 (printed p. 985) cite ‘Psalm 34. (35) 21’: Greek Psalm 34, Hebrew Psalm 35. ‘Aha, aha’ is in the edition’s 34:21 and in KJV, RV and Boyd’s ASV 35:21. Read the whole dual-number citation as that verse."
+    },
+    "DAG 11:4 CCEL": {
+      "source": "Ps. 37. (36) 37, 38",
+      "passages": "PSA 36:37-38",
+      "print": "{PSA} 36:37–38",
+      "why": "Brenton 1879 physical p. 1083 (printed p. 1067) prints ‘Ps. 37. (36) 37, 38’, putting the Hebrew chapter first and Greek chapter in parentheses. CCEL 16.xi#2 explicitly identifies LXX Psalm 36:37,38. The edition’s 36:37–38 are the peaceable man and the destruction of the ungodly, where KJV and Boyd’s ASV 37:37–38 have ‘end’ and RV has ‘latter end’, the note’s gloss on posterity."
+    },
+    "1CH 29:17 CCEL": {
+      "source": "Ps. 46.1",
+      "numbering": "kjv",
+      "why": "CCEL 3.xxix#7 cites Psalm 46:1 by the Hebrew and English numbering after ‘Gr. found. See Heb.’ The ‘very present help’ of KJV, RV and ASV Psalm 46:1 is this edition’s Psalm 45:2; the edition counts the title as verse 1. Psalm 46:1 here is the title of the next psalm. Convert this citation alone."
+    },
+    "2CH 28:17 CCEL": {
+      "source": "Ps. 68.18",
+      "numbering": "kjv",
+      "why": "Brenton 1879, physical p. 618 (printed p. 602), cites Ps. 68. 18 beside Eph. 4. 8 before a number of prisoners. This is the Hebrew/English Psalm 68:18, thou hast led captivity captive, as the CCEL reference names it; the edition prints that passage at Psalm 67:19, counting the title. Its Psalm 68:18 is a different passage."
+    },
+    "LEV 11:10 CCEL": {
+      "source": "Ps. 44.1",
+      "numbering": "kjv-verses",
+      "why": "CCEL v.7#19 cites the Greek Psalm 44 with its first verse of text, not its title: the note’s eructant corresponds to hath uttered in this edition’s Psalm 44:2, whose own note glosses it eructavit. KJV, RV and ASV number that opening verse Psalm 45:1. The edition counts the Greek psalm’s title as verse 1. Convert this citation alone."
     }
   }
 }

@@ -3,8 +3,8 @@ each source writes them (edition/citations.json).
 
 Brenton writes "Rom. 4. 7,8", the margin of 1611 "Mat. 18.28", Brenton's
 preface "Gen. xlvii. 31", and each names the books its own way: Brenton's
-"1 Kings" is the First Book of Kingdoms, and the King James Bible's the
-Third. A dialect is a source's way of writing: its names for the books, its
+"2 Kings" is the Second Book of Kingdoms, and the King James Bible's the
+Fourth. A dialect is a source's way of writing: its names for the books, its
 numerals and stops, and the numbering it cites by. A citation is read once,
 where its source is read, into the books, chapters, and verses of this
 edition; what prints is written from those.
@@ -403,6 +403,8 @@ def _decided(
     items: tuple[tuple[Item, ...], ...]
     relative: str | None
     coordinates = "edition"
+    # A decision that reads the source's name for the book meets that name.
+    name: str | None = None
     if kind == "not_a_citation":
         return start, end, None
     if kind == "unprinted":
@@ -420,7 +422,8 @@ def _decided(
         )
         assert match is not None
         numbering = decision["numbering"]
-        book = tongue.books[tongue.book_name(match["book"])]
+        name = tongue.book_name(match["book"])
+        book = tongue.books[name]
         if (
             tongue.numbering == "brenton"
             and numbering in {"kjv", "hebrew"}
@@ -457,6 +460,7 @@ def _decided(
             tuple(others) if kind == "passages" else (),
             relative,
             decision.get("print"),
+            name,
             coordinate_numbering=coordinates,
         ),
     )

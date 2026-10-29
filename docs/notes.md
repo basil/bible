@@ -2,38 +2,6 @@
 
 ## 1. Citations inside notes that point at the wrong place
 
-### Build defects (target is wrong as exported)
-
-- [ ] **NEH 6:1, key `EZR 16:1 CCEL`** [build] — "1 Kings 10:5" resolves to
-  `1SA 10:5`; CCEL's convention means 3 Kingdoms 10:5 (`1KI 10:5`, Queen of
-  Sheba). Confidence: high. Fix: scoped decision in `edition/citations.json`;
-  do not change the general alias without auditing its other uses.
-  Repro: `grep -n 'EZR 16:1 CCEL' build/review/notes.md`.
-- [ ] **PSA 146:8, key `PSA 146:8`** [build] — exports
-  `\ref Ps. 103|PSA 103\ref*. (104) 14`; the verse is outside the link.
-  Target is Psalm 103:14. Confidence: high. Fix: scoped citation decision;
-  the full source citation was restored on purpose in
-  `edition/brenton-notes.json`. Repro: `grep -n 'Ps. 103' build/review/text/PSA.usfm`.
-- [ ] **EZK 6:11, key `EZK 6:11 CCEL#2`** [build] — exports
-  `\ref Ps. 34|PSA 34\ref*. (35) 21`; target is Psalm 34:21 ("Aha, aha").
-  Confidence: high. Same fix as above.
-- [ ] **DAG 11:4, key `DAG 11:4 CCEL`** [build] — exports
-  `\ref Ps. 37|PSA 37\ref*. (36) 37, 38`; CCEL names LXX Psalm 36:37–38, so
-  the chapter is wrong as well as unparsed. Confidence: high. Same fix.
-- [ ] **1CH 29:17, key `1CH 29:17 CCEL`** [build] — links `PSA 46:1` (a
-  superscription); the "present help" passage is edition Psalm 45:2.
-  Confidence: high. Fix: scope the citation to `PSA 45:2` in
-  `edition/citations.json`.
-- [ ] **2CH 28:17, key `2CH 28:17 CCEL`** [build] — links `PSA 68:18`
-  beside `EPH 4:8`; "led captivity captive" is edition Psalm 67:19.
-  Confidence: high. Fix: scoped citation to `PSA 67:19`.
-- [ ] **LEV 11:10, key `LEV 11:10 CCEL`** [build] — "see Ps. 44:1" lands on
-  the title; the eructavit verse is `PSA 44:2`, which has its own matching
-  note. The chapter is already Greek numbering; only the counted title is
-  off. Confidence: high. Fix: scoped decision in `edition/citations.json`,
-  no global Psalm shift. The ccel-notes correction of ernetant/Neb leaves
-  this citation alone.
-
 ### Needs a source check (the caller or reference may be Brenton's own)
 
 - [ ] **PRO 11:28, key `PRO 11:28`** [source] — "See 1 Tim 5:8" fits 11:29

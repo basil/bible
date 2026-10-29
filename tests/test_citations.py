@@ -384,6 +384,14 @@ def test_every_decision_and_name_must_be_met(
     )
     with pytest.raises(CheckFailed, match=r"Unused names.*'brenton', 'Nowhere'"):
         pipeline.check_met(unnamed, edition.met)
+    # A decision of another numbering reads the source's name, and meets it.
+    report = annotate.Report()
+    renumbered = [decision(source=JER, numbering="kjv")]
+    found = citations.scan(
+        f"Comp. {JER}.", tongue, HOME, "x", edition.inventory, renumbered, policy=policy
+    )
+    report.read(tongue, "x", found, policy)
+    assert report.names == {("brenton", "Jer")}
 
 
 # In the notes
@@ -448,6 +456,72 @@ def test_a_citation_of_the_wrong_verse_prints_the_verse_meant(
         in deuteronomy
     )
     assert "\\fr 32:21" not in deuteronomy and "Rom. 10:9" not in deuteronomy
+
+
+@pytest.mark.parametrize(
+    "book,key,expected",
+    [
+        (
+            "NEH",
+            "EZR 16:1 CCEL",
+            r"\f - \fr 6:1 \fq that there was no opening left therein: \ft or, "
+            r"\fqa there was no spirit left in them\ft . See "
+            r"\ref 3 Kgdms. 10:5|1KI 10:5\ref*\f*",
+        ),
+        (
+            "PSA",
+            "PSA 146:8",
+            r"\f - \fr 146:8 \fq and green herb for the service of men: \ft see "
+            r"\ref Ps. 103:14|PSA 103:14\ref*\f*",
+        ),
+        (
+            "EZK",
+            "EZK 6:11 CCEL#2",
+            r"\f - \fr 6:11 \fq Aha, aha: \ft see \ref Ps. 34:21|PSA 34:21\ref*\f*",
+        ),
+        (
+            "DAG",
+            "DAG 11:4 CCEL",
+            r"\f - \fr 11:4 \fq posterity: \ft lit. \fqa latter end\ft . See "
+            r"\ref Ps. 36:37–38|PSA 36:37\ref*\f*",
+        ),
+        (
+            "1CH",
+            "1CH 29:17 CCEL",
+            r"\f - \fr 29:17 \fq present: \ft Gr. \fqa found\ft . See Heb.; also "
+            r"\ref Ps. 45:2|PSA 45:2\ref*\f*",
+        ),
+        (
+            "2CH",
+            "2CH 28:17 CCEL",
+            r"\f - \fr 28:17 \fq a number of prisoners: \ft see "
+            r"\ref Ps. 67:19|PSA 67:19\ref*, and "
+            r"\ref Eph. 4:8|EPH 4:8\ref*\f*",
+        ),
+        (
+            "LEV",
+            "LEV 11:10 CCEL",
+            r"\f - \fr 11:10 \fq produce: \ft Gr. \fqa eructant\ft , see "
+            r"\ref Ps. 44:2|PSA 44:2\ref*, in LXX also in Heb.\f*",
+        ),
+        (
+            "HAB",
+            "HAB 3:3 CCEL",
+            r"\f - \fr 3:3 \fq Pause: \ft see note on \ref Ps. 3:3|PSA 3:3\ref*\f*",
+        ),
+    ],
+)
+def test_scoped_citations_reach_the_words_the_source_compares(
+    edition: bible.pipeline.Edition, book: str, key: str, expected: str
+) -> None:
+    # Exercise the source reader, numbering and annotation together: alternate
+    # chapter numbers and uncounted titles must not leave partial references.
+    [note] = [
+        note
+        for note in usj.notes_of(edition.documents[book]["content"])
+        if note.get("x-key") == key
+    ]
+    assert usj.serialize([note]).strip() == expected
 
 
 def test_a_book_cited_alone_keeps_its_abbreviations_period(
