@@ -544,7 +544,7 @@ def test_the_introduction_names_its_passages(
         ("REV 22:19", "Revelation 22:19"),
     ):
         assert "{" + named + "}" in written
-        assert "(" + printed + ")" in page
+        assert re.search(rf"(?<![\d:–]){re.escape(printed)}(?![\d–])", page)
 
 
 def test_the_introductions_scripture_quotes_match_the_prepared_edition(

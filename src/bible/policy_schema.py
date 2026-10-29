@@ -615,6 +615,7 @@ Decision = TypedDict(
         "appendix": ReadOnly[str],
         "edits": ReadOnly["tuple[Decision, ...]"],
         "english": ReadOnly[English],
+        "english_note": ReadOnly[str],
         "from": ReadOnly[str],
         "insertions": ReadOnly[tuple[AlexandrinusPassagesInsertions, ...]],
         "kjv": ReadOnly[bool],

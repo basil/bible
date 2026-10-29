@@ -879,6 +879,53 @@ def test_a_passage_supplies_verses_from_the_appendix_or_the_king_james_bible(
         promoted(decided(policy, passages={"GEN 99:22a": unnoted}))
 
 
+def test_a_passage_uses_brentons_pinned_note_without_borrowing_king_james_english(
+    policy: bible.policy.Policy, read: bible.pipeline.Read
+) -> None:
+    doc = alexandrinus.promoted("EZK", read.brenton["EZK"], policy, {}, read.brenton)
+    verse = scripture.verses(doc)["1:14"]
+    assert (
+        verse.text
+        == "And the living creatures ran and returned at the appearance of Bezec."
+    )
+    # Its note says only what the manuscripts read, not whose English it is.
+    assert [notes.source_text(note) for _, note in verse.notes] == [
+        r"\fl Heb. \ft agrees. \fl Vat. \ft omits this verse."
+    ]
+
+    def change(data: dict[str, Any]) -> None:
+        entry = data["passages"]["EZK 1:14"]
+        entry["source_notes"][entry["english_note"]] = entry["source_notes"][
+            entry["english_note"]
+        ].replace("Bezec", "Bezee")
+
+    drifted = changed(policy, "alexandrinus", change)
+    with pytest.raises(CheckFailed, match="source note changed: EZK 1:13 CCEL#2"):
+        alexandrinus.promoted("EZK", read.brenton["EZK"], drifted, {}, read.brenton)
+
+
+@pytest.mark.parametrize("source", ["EZK 1:13 missing", ""])
+def test_a_passages_english_note_must_be_pinned(
+    policy: bible.policy.Policy, read: bible.pipeline.Read, source: str
+) -> None:
+    def change(data: dict[str, Any]) -> None:
+        data["passages"]["EZK 1:14"]["english_note"] = source
+
+    with pytest.raises(CheckFailed, match="passage English note not pinned: EZK 1:14"):
+        alexandrinus.check(changed(policy, "alexandrinus", change), read.brenton)
+
+
+@pytest.mark.parametrize("other", ["appendix", "kjv"])
+def test_a_passage_takes_its_english_from_one_source(
+    policy: bible.policy.Policy, read: bible.pipeline.Read, other: str
+) -> None:
+    def change(data: dict[str, Any]) -> None:
+        data["passages"]["EZK 1:14"][other] = True if other == "kjv" else r"\ip 14."
+
+    with pytest.raises(CheckFailed, match="several English sources: EZK 1:14"):
+        alexandrinus.check(changed(policy, "alexandrinus", change), read.brenton)
+
+
 def test_every_alexandrine_note_and_supplied_passage_has_its_decision(
     policy: bible.policy.Policy, read: bible.pipeline.Read
 ) -> None:

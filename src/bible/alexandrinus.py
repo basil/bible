@@ -3,9 +3,9 @@
 
 The decision file owns every departure from Brenton’s translation: a
 reading printed in place of Brenton’s words, a passage supplied from
-Brenton's Appendix, a note kept as it is. Each decision pins the note or
-Appendix paragraph it rests on, derives its English from those words by
-declared edits, and records Swete's evidence and its reason.
+Brenton's Appendix or a note, a note kept as it is. Each decision pins the
+note or Appendix paragraph it rests on, derives its English from those
+words by declared edits, and records Swete's evidence and its reason.
 
 This stage reads Brenton's books as their source numbers them, before any
 chapter is selected or relabelled and before any note is set as a footnote.
@@ -78,6 +78,7 @@ FIELDS = {
     "passages": COMMON
     | {
         "appendix",
+        "english_note",
         "kjv",
         "edits",
         "insertions",
@@ -294,6 +295,13 @@ def edition_note(
     return usj.note("f", usj.char("fr", f"{reference} "), *content, caller="+", **extra)
 
 
+def passage_source(entry: Decision) -> str:
+    """Brenton's pinned Appendix paragraph or the pinned note supplying a passage."""
+    if "english_note" in entry:
+        return entry["source_notes"][entry["english_note"]]
+    return entry["appendix"]
+
+
 def operations(
     policy: bible.policy.Policy, code: str, kjv_sources: Mapping[str, str]
 ) -> Iterator[tuple[str, Decision, str, str, str]]:
@@ -316,7 +324,7 @@ def operations(
         if references.book_of(key) != code:
             continue
         # The Appendix only points to a KJV passage; use its original words.
-        source = kjv_sources[key] if "kjv" in entry else entry["appendix"]
+        source = kjv_sources[key] if "kjv" in entry else passage_source(entry)
         for index, item in enumerate(entry.get("edits", ()), 1):
             verse = item["target"].split()[-1]
             yield key, further(entry, item), source, verse, f"{key}@{index}"
@@ -437,7 +445,7 @@ def check(
                     f"Supplied sources outside a KJV passage: {key}",
                 )
                 require(
-                    ("appendix" in entry or "kjv" in entry)
+                    bool({"appendix", "english_note", "kjv"} & entry.keys())
                     and bool(
                         entry.get("edits")
                         or entry.get("insertions")
@@ -446,6 +454,15 @@ def check(
                     ),
                     f"Alexandrine passage needs an English source and an operation: {key}",
                 )
+                if "english_note" in entry:
+                    require(
+                        not {"appendix", "kjv"} & entry.keys(),
+                        f"Alexandrine passage has several English sources: {key}",
+                    )
+                    require(
+                        entry["english_note"] in entry.get("source_notes", {}),
+                        f"Alexandrine passage English note not pinned: {key}",
+                    )
                 require(
                     entry.get("kjv", True) is True,
                     f"Invalid KJV passage: {key}",
@@ -1274,10 +1291,10 @@ def with_insertions(
     code: str, doc: Document, policy: bible.policy.Policy, kjv: Mapping[str, Document]
 ) -> Document:
     """The document with the verses its passages supply, each from Brenton's
-    Appendix by a declared derivation, or from the King James Bible, without
-    its small capitals, to be conformed to Alexandrinus by the passage's
-    edits. Verses set before a verse that opens a paragraph are a paragraph
-    of their own."""
+    Appendix or a pinned note by a declared derivation, or from the King
+    James Bible, without its small capitals, to be conformed to Alexandrinus
+    by the passage's edits. Verses set before a verse that opens a paragraph
+    are a paragraph of their own."""
     for key, entry in policy.alexandrinus["passages"].items():
         if references.book_of(key) != code:
             continue
@@ -1349,7 +1366,7 @@ def with_insertions(
                     )
                 else:
                     english = derived(
-                        key, verse, entry["appendix"], entry.get("supplied", ())
+                        key, verse, passage_source(entry), entry.get("supplied", ())
                     )
                     words = usj.parse(english.strip(), fragment=True)
                 items.append(

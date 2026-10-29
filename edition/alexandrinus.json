@@ -8655,8 +8655,8 @@
       ]
     },
     "EZK 1:14": {
-      "kjv": true,
-      "why": "Supply Ezekiel 1:14 before 1:15 from the Authorized Version, which renders the Hebrew verse Brenton reports; A’s βεζεκ transliterates the Hebrew word that the Authorized Version renders a flash of lightning. Brenton 1879 physical p. 996 and 1900 physical p. 992 (printed p. 980) place θ after lightning. at the end of 1:13, immediately before 1:15, and print “Alex. and Heb. supply ver. 14. ‘And the living creatures ran and returned at the appearance of Bezec.’” Brenton 1844 vol. II physical p. 304 (printed p. 801) gives the same sentence in a marginal note called by a dagger after “lightning.” The 1884 physical p. 955 preserves the body and its θ caller, but its footnote band is cropped away and cannot independently confirm the note. CCEL 15#6 misreads the final c as e; the build sets its closing caller at the end of 1:13, as printed, under the key EZK 1:13 CCEL#2. In Swete III p. 386, checked against the scan, B’s main text passes directly from 1:13 to 1:15; explicit apparatus adds και τα ζωα ετρεχον και ανεκαμπτον ως ειδος του βεζεκ A et (sub θʹ ✣) Q. A is unqualified, without correcting hand, lacuna, or uncertainty; Q has a Theodotion source marker, not an A hand. Brenton’s Bezec transliterates βεζεκ, the Hebrew lightning word; his at does not express the Greek comparison ως. Pinned KJV Ezekiel 1:14 supplies the complete matching sentence “And the living creatures ran and returned as the appearance of a flash of lightning.” The pinned RV1885 has the identical sentence. Retain the complete KJV sentence under the house-style provision for passages whose English Brenton left incomplete; the introduction explains this case. Copy the entire KJV verse instead of splicing syntax or inventing a translation. B positively omits the verse independently of Brenton’s facing Greek, which also omits it.",
+      "english_note": "EZK 1:13 CCEL#2",
+      "why": "Retain Brenton’s complete English sentence for the verse Alexandrinus supplies before 1:15. Brenton 1879 physical p. 996 and 1900 physical p. 992 (printed p. 980) place θ after lightning. at the end of 1:13, immediately before 1:15, and print “Alex. and Heb. supply ver. 14. ‘And the living creatures ran and returned at the appearance of Bezec.’” Brenton 1844 vol. II physical p. 304 (printed p. 801) gives the same sentence in a marginal note called by a dagger after “lightning.” The 1884 physical p. 955 preserves the body and its θ caller, but its footnote band is cropped away and cannot independently confirm the note. CCEL 15#6 misreads the final c as e; the build sets its closing caller at the end of 1:13, as printed, under the key EZK 1:13 CCEL#2. In Swete III p. 386, checked against the scan, B’s main text passes directly from 1:13 to 1:15; explicit apparatus adds και τα ζωα ετρεχον και ανεκαμπτον ως ειδος του βεζεκ A et (sub θʹ ✣) Q. A is unqualified, without correcting hand, lacuna, or uncertainty; Q has a Theodotion source marker, not an A hand. Brenton’s Bezec represents Alexandrinus’s βεζεκ; a transliteration is not an incomplete translation. Retain his wording, including at the appearance, under the rule that the English is Brenton’s wherever he gave it. Derive the entire sentence, including its final period, from the pinned source note, excluding only its report and quotation marks. Do not substitute the KJV’s interpretation of the underlying Hebrew. B positively omits the verse independently of Brenton’s facing Greek, which also omits it.",
       "swete": {
         "volume": 3,
         "page": 386,
@@ -8670,7 +8670,11 @@
           "verses": [
             {
               "reference": "1:14",
-              "note": "\\fl Heb. \\ft agrees. \\fl Vat. \\ft omits this verse; the English is supplied from the KJV."
+              "note": "\\fl Heb. \\ft agrees. \\fl Vat. \\ft omits this verse.",
+              "english": {
+                "source": "brenton",
+                "span": [59, 128]
+              }
             }
           ]
         }

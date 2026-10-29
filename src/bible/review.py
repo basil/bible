@@ -45,7 +45,7 @@ from bible import (
     versification,
     web,
 )
-from bible.alexandrinus import APPENDIX
+from bible.alexandrinus import APPENDIX, passage_source
 from bible.byzantine import review as byzantine_review
 from bible.checks import require
 from bible.files import json_text
@@ -222,7 +222,11 @@ def alexandrinus_report(read: pipeline.Read, edition: pipeline.Edition) -> str:
             ]
             wanted -= {v for run in runs for v in run}
             groups = ([wanted] if wanted or not runs else []) + runs
-            source = decision.get("appendix", decision.get("source_note", ""))
+            source = (
+                passage_source(decision)
+                if "english_note" in decision
+                else decision.get("appendix", decision.get("source_note", ""))
+            )
             if "kjv" in decision:
                 source = f"Authorized Version, {key}" + (
                     f"; {source}" if source else ""
