@@ -18,7 +18,7 @@ from typing import Any, TypedDict
 from bible import scripture
 from bible.byzantine import BOOKS
 from bible.byzantine.greek import ascii_greek
-from bible.byzantine.rows import Report, Unit
+from bible.byzantine.rows import InstructionEdit, Report, RevisionRow, Unit
 from bible.checks import require
 from bible.sources import Content
 
@@ -104,6 +104,15 @@ def edit_offsets(
     i, j = edit["word_range"]
     lo = tokens[i][1] if i < len(tokens) else len(text)
     hi = tokens[j - 1][2] if j > i else lo
+    return lo, hi
+
+
+def kjv_bounds(kjv: str, row: InstructionEdit | RevisionRow) -> tuple[int, int]:
+    """A bound contrast's KJV span by word offsets, including its insertion side."""
+    lo, hi = edit_offsets(kjv, row)
+    at = row["word_range"][0]
+    if not row["old"] and row.get("side") == "after" and at:
+        lo = hi = spans(kjv)[at - 1][2]
     return lo, hi
 
 

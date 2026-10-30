@@ -18,6 +18,7 @@ import bible.annotate
 import bible.pipeline
 from bible import revision, scripture, usj
 from bible.byzantine import BOOKS, BOYD_ASV, REVISIONS, RV, review, variants
+from bible.byzantine.crosswire import kjv_bounds
 from bible.byzantine.decisions import ref_key
 from bible.byzantine.english import verses_of
 from bible.byzantine.greek import accent_letters, ascii_greek, greek_words
@@ -414,7 +415,7 @@ def test_a_bound_insertion_shows_its_kjv_context() -> None:
         "new": "new",
         "side": "after",
     }
-    bounds = review.kjv_bounds("one, two", edit)
+    bounds = kjv_bounds("one, two", edit)
     assert review.witness_excerpt("", "new", "one, two", bounds=bounds) == (
         "source context: ` one[+ new], … `"
     )
@@ -2222,7 +2223,7 @@ def test_excluded_recommendations_are_visible(
     excluded = [
         i
         for i in byzantine.decisions.instructions
-        if i["scope"] == "out-of-scope" and i["role"] != "agrees"
+        if i["scope"] == "no-greek-unit" and i["role"] != "agrees"
     ]
     assert excluded
     for i in excluded:
@@ -2246,26 +2247,76 @@ def test_excluded_recommendations_are_visible(
         "1PE 2:13",
     ):
         recommendation = next(i for i in excluded if i["refs"] == [ref])
-        assert review.addressed(recommendation, byzantine)
+        if ref in {"MRK 7:3", "1PE 2:13"}:
+            assert review.carried_out(recommendation, byzantine) is None
+            group, note = review.outcome(recommendation, byzantine)
+            assert group == "classify" and "matching edit found" in note
+        else:
+            assert review.carried_out(recommendation, byzantine)
 
 
-def test_summary_lists_unaddressed_exclusions(byzantine: Reconciliation) -> None:
-    text = review.summary(byzantine).split("## Unaddressed recommendations", 1)[1]
-    text = text.split("## Invariants", 1)[0]
-    excluded = [
+def test_summary_groups_the_recommendations_no_unit_executed(
+    byzantine: Reconciliation,
+) -> None:
+    heading = "## Recommendations no unit executed as written"
+    text = review.summary(byzantine).split(heading, 1)[1].split("## Invariants", 1)[0]
+    groups = dict(re.findall(r"### (.+?)\n\n(.*?)(?=\n### |\Z)", text, re.S))
+    assert list(groups) == [title for _, title, _ in review.OUTCOMES]
+    titles = {key: title for key, title, _ in review.OUTCOMES}
+    rows = [
         i
         for i in byzantine.decisions.instructions
-        if i["scope"] == "out-of-scope"
-        and i["role"] != "agrees"
-        and i["compatibility"] != "agrees"
+        if i["role"] != "agrees" and i["compatibility"] not in {"compatible", "agrees"}
     ]
-    addressed = [i for i in excluded if review.addressed(i, byzantine)]
-    unaddressed = [i for i in excluded if not review.addressed(i, byzantine)]
-    assert addressed and unaddressed
-    for i in unaddressed:
-        assert review.instruction_line(i, byzantine)[2:] in text
-    for i in addressed:
-        assert review.instruction_line(i, byzantine)[2:] not in text
+    continued = [i for i in rows if i["status"] == "continuation"]
+    assert [i["entry"] for i in continued] == [882]
+    assert "Pierpont 882" not in text
+    assert "1 continuation rows carry on the entry before them" in text
+    found = {review.outcome(i, byzantine)[0] for i in rows if i not in continued}
+    assert found == set(titles)
+    for i in rows:
+        if i in continued:
+            continue
+        key, note = review.outcome(i, byzantine)
+        head = review.instruction_line(i, byzantine)[2:].split("  \n")[0]
+        assert head in groups[titles[key]]
+        if note:
+            assert review.esc(note) in groups[titles[key]]
+    # The doxology's move, requested from both ends, is carried out; a
+    # placement explains an exclusion; a binding that fails, or attaches to
+    # no unit, is a placement problem; the rest await a judgment.
+    carried = groups[titles["carried"]]
+    assert (
+        "ROM 14:23: Pierpont 432:" in carried and "the structural decisions" in carried
+    )
+    assert "ROM 16:25: Pierpont 442:" in carried
+    # The reading at John 7:52 has Pierpont's words in another order, which
+    # may change the sense: a judgment, noted where it awaits one.
+    classify = groups[titles["classify"]]
+    assert "JHN 7:52: Pierpont 236:" in classify
+    assert "reading JHN 7:52 has the same words in another order" in classify
+    assert "Pierpont 236" not in carried
+    # At a verse with no unit, rendering contradictions remain advisory;
+    # only an editorial decision can settle an exclusion.
+    excluded = groups[titles["excluded"]]
+    assert "MAT 9:35: Pierpont 20:" in classify
+    assert (
+        "the rendering check: RP2026 keeps the Greek that 'people' renders" in classify
+    )
+    assert (
+        "MAT 21:30: Pierpont 50:" in classify
+        and "marginal reading (deuterw" in classify
+    )
+    assert "suspected contradiction:" in classify
+    assert "editorial decision needed" in classify
+    assert "Pierpont 20:" not in excluded
+    assert "Pierpont 50:" not in excluded
+    assert "JHN 8:3: Pierpont 240:" in groups[titles["excluded"]]
+    assert "REV 7:5: Pierpont 726:" in groups[titles["excluded"]]
+    assert "MAT 12:3: Pierpont 27:" in groups[titles["placement"]]
+    assert "MRK 14:25: Pierpont 111:" in groups[titles["placement"]]
+    assert "no Greek unit in the verse" in groups[titles["classify"]]
+    assert "category-c decision" not in groups[titles["classify"]]
 
 
 def test_english_comparison_keeps_hyphenated_compounds_whole() -> None:
@@ -2281,3 +2332,20 @@ def test_english_comparison_keeps_hyphenated_compounds_whole() -> None:
     ]
     for source, absent in ((before, "insert"), (after, "delete")):
         assert "".join(value for kind, value in spans if kind != absent) == source
+
+
+def test_the_review_accounts_for_every_category_c_row(
+    byzantine: Reconciliation,
+) -> None:
+    packet = "\n".join(review.category_c(byzantine))
+    assert packet.count("### pierpont ") == 39
+    assert "edit: 25; nochange: 14." in packet
+    assert "- Vulgate ROM 16:4: “suas cervices” ✓" in packet
+    assert "- former words: Vulgate JHN 10:16: “unum ovile” ✓" in packet
+    assert "Note JHN 14:23 rendering: Or, former words words" in packet
+    assert "Note JHN 10:16 rendering: Vulgate former words fold" in packet
+    assert "· edit by reading COL 1:24#1" in packet
+    assert "pierpont 345 · ACT 10:20 · edit by reading ACT 10:20" in packet
+    assert "pierpont 23 · MAT 10:25 · edit by its unit" in packet
+    assert "Note MAT 10:25" in packet
+    assert "pierpont 276 · JHN 14:23 · edit by itself" in packet

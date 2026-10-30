@@ -7,18 +7,20 @@ only where every unit it is about is established so: an apparatus row on
 it gives TR, and none gives SCR. Otherwise it names the printed edition the
 King James translators followed there, where a decision in
 edition/byzantine.json (editions) shows it from that edition or Scrivener's
-account of it, as an Old Testament note names Valpy; and failing that the
-King James Version, whose words it gives, as an Old Testament note names
-Brenton. A note that would name the King James Version, or a correction of
-shared Greek that would name no witness, names instead a version (VERSIONS)
-where a decision (note_witnesses) cites it for the former English words.
+account of it, as an Old Testament note names Valpy; and failing that
+Scrivener, whose reconstruction of the translators' Greek is the Received
+Text side of every unit. A correction of shared Greek names no Greek
+witness: its note gives the former English after "Or,", unless the reading
+that makes it declares (former) a version (VERSIONS), with a quotation the
+build finds in its pinned text, as the Vulgate's Beelzebub; that the Latin
+has the former English is the decision's judgment.
 """
 
 from __future__ import annotations
 
 from collections import defaultdict
 from collections.abc import Iterable, Mapping, Sequence
-from typing import Any, Literal
+from typing import Literal
 
 from bible import usj
 from bible.byzantine.greek import accent_key, occurrences
@@ -26,20 +28,22 @@ from bible.byzantine.notes import edition_key
 from bible.byzantine.rows import BoydNote, Disposition, Unit
 from bible.byzantine.units import PRINTED_APPARATUS
 from bible.checks import require
-from bible.notes import quotation_of
 from bible.terminology import NEW_TESTAMENT
 
 type Status = Literal["TR", "SCR", "disputed"] | None
 type Rows = Mapping[tuple[str, int], BoydNote]
 
 # The terms (edition/terminology.json) the notes name.
-RECEIVED, KING_JAMES = "textus-receptus", "king-james-version"
-# The versions a note witness decision may cite for the former English words,
-# whatever Greek stands behind them (edition/byzantine.json note_witnesses).
+RECEIVED, SCRIVENER = "textus-receptus", "scrivener"
+# The versions a former decision may cite for the former English words of a
+# correction of shared Greek (edition/byzantine.json former).
 VERSIONS = frozenset({"vulgate"})
-# The terms an edition decision may name: the printed editions the King
-# James translators followed.
-NAMED = frozenset(NEW_TESTAMENT) - {RECEIVED, KING_JAMES} - VERSIONS
+# The printed editions an edition decision may name: those the King James
+# translators followed. Scrivener is named where none is shown, and the
+# King James Version is no witness to its own words.
+NAMED = (
+    frozenset(NEW_TESTAMENT) - {RECEIVED, SCRIVENER, "king-james-version"} - VERSIONS
+)
 
 
 def rows(tcgnt: Iterable[BoydNote], printed: Iterable[BoydNote]) -> Rows:
@@ -72,49 +76,48 @@ def labels(
     units: Sequence[Unit],
     found: Rows,
     editions: Mapping[str, Mapping[str, str]],
-    note_witnesses: Sequence[Mapping[str, Any]] = (),
-) -> dict[str, str]:
+    former: Mapping[str, str] | None = None,
+) -> dict[str, str | None]:
     """The term each note of the reconciliation names, by its key: the
-    Received Text where every unit it is about is established as its,
-    the King James Version otherwise. A note is about its row's unit, the
-    units whose rows its owner executes (covered_by), and those of every
-    row that holds the same note (a combined note). A correction of shared
-    Greek is keyed by its verse and is about no unit; its "Or," note names
-    no witness unless a note witness decision cites one. An edition
-    decision names the printed edition instead of the King James Version
-    for its note and every other note about the same units, and stops the
-    build on a term it may not name, a key that names no note or more than
-    one, a note that names no witness, one the apparatuses establish as the
-    Received Text's, or a second decision about the same units. A note witness
-    decision names a version (VERSIONS) for each note it lists, a replaced
-    reading or a correction of shared Greek whose former words it quotes, and
-    stops the build on any other term, a key that names no one note or is listed
-    twice, another kind of note, another quotation, a note the Received Text or
-    an edition decision already labels, or another note about the same units
-    that it does not
-    cite alike."""
+    Received Text where every unit it is about is established as its, the
+    printed edition an edition decision names, and Scrivener otherwise. A
+    note is about its row's unit, the units whose rows its owner executes
+    (covered_by), and those of every row that holds the same note (a
+    combined note). A correction of shared Greek is keyed by its verse and
+    is about no unit; its note names the version its reading declares
+    (former, by the reading's id) and otherwise nothing, printing "Or,".
+    An edition decision names its note and every other note about the same
+    units, and stops the build on a term it may not name, a key that names
+    no note or more than one, a note that names no witness, one the
+    apparatuses establish as the Received Text's, or a second decision about
+    the same units; a former decision stops it on an unknown version or a
+    reading that made no note."""
     by_id = {u["id"]: u for u in units}
     covered: defaultdict[str, set[str]] = defaultdict(set)
     for row in dispositions:
         if row.get("covered_by"):
             covered[row["covered_by"]].add(row["unit"])
     about: defaultdict[str, set[str]] = defaultdict(set)
-    held_notes: dict[str, usj.Node] = {}
+    owners: defaultdict[str, set[str]] = defaultdict(set)
     for row in dispositions:
         ids = {i for i in (row["unit"], *covered[row["unit"]]) if i in by_id}
         held = [e["note"] for e in row.get("edits", []) if "note" in e]
         held += [n for n in (row.get("note"), row.get("source_note")) if n]
         for note in held:
             about[note["x-key"]] |= ids
-            held_notes[note["x-key"]] = note
-    named = {
-        key: (
-            RECEIVED
-            if ids and all(status(by_id[i], found) == "TR" for i in ids)
-            else KING_JAMES
-        )
-        for key, ids in about.items()
-    }
+            if row.get("override"):
+                owners[row["override"]].add(note["x-key"])
+
+    def witness(ids: set[str]) -> str | None:
+        """The Received Text where every unit is established as its, Scrivener
+        otherwise; a note about no unit names no Greek witness."""
+        if not ids:
+            return None
+        if all(status(by_id[i], found) == "TR" for i in ids):
+            return RECEIVED
+        return SCRIVENER
+
+    named = {key: witness(ids) for key, ids in about.items()}
     # A decision names one note by the edition's key, "unit TR" for a unit's
     # one note.
     keys: defaultdict[str, list[str]] = defaultdict(list)
@@ -148,55 +151,17 @@ def labels(
     result = {
         key: label.get(frozenset(about[key]), witness) for key, witness in named.items()
     }
-    # An explicitly cited witness to the former words is independent of the
-    # Greek edition behind them. It can also name a shared-Greek correction.
-    decided_notes: set[str] = set()
-    cited: dict[str, str] = {}
-    for decision in note_witnesses:
-        witness = decision["witness"]
-        require(witness in VERSIONS, f"Unknown note witness: {witness}")
-        for key in decision["notes"]:
-            require(key not in decided_notes, f"Repeated note witness decision: {key}")
-            decided_notes.add(key)
-            matches = keys.get(key, [])
-            require(len(matches) == 1, f"Note witness names no one note: {key}")
-            source_key = matches[0]
-            note = held_notes[source_key]
-            require(
-                note["x-scope"]["kind"] in {"rendering", "replace"},
-                f"Note witness does not name a replaced reading: {key}",
-            )
-            # The words the note prints for the lemma (notes.for_edition).
-            quotation = quotation_of(note)
-            require(
-                quotation == decision["reading"],
-                f"Note witness reading does not match {key}: {quotation!r}",
-            )
-            # The Received Text and an edition decision each stand on the
-            # Greek; a version cited for the English does not displace them.
-            require(
-                result[source_key] == KING_JAMES,
-                f"Note witness overrides the Received Text or an edition "
-                f"decision; remove one: {key}",
-            )
-            result[source_key] = witness
-            cited[source_key] = witness
-    # The notes about the same units cite the same version, as they name the
-    # same edition.
-    groups: defaultdict[frozenset[str], set[str]] = defaultdict(set)
-    for key in named:
-        if about[key]:
-            groups[frozenset(about[key])].add(key)
-    split = sorted(
-        " and ".join(sorted(ks))
-        for ks in groups.values()
-        if ks & cited.keys() and len({cited.get(k) for k in ks}) > 1
-    )
-    require(
-        not split,
-        f"Note witness decisions that cite notes about the same units "
-        f"differently; list them alike: {split}",
-    )
+    # A version cited for the former English of a correction of shared Greek:
+    # its quotation is checked once, so the reading makes one note.
+    for owner, version in (former or {}).items():
+        require(version in VERSIONS, f"{owner}: unknown former witness {version}")
+        made = sorted(owners.get(owner, ()))
+        require(
+            len(made) == 1,
+            f"{owner}: former names one note; the reading made {len(made)}",
+        )
+        require(result[made[0]] is None, f"{owner}: former witness on a Greek unit")
+        result[made[0]] = version
     return result
 
 

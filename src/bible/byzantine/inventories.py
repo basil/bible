@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import re
 import xml.etree.ElementTree as ET
+from collections.abc import Iterator
 from html import escape
 from typing import Any
 
@@ -261,6 +262,18 @@ def boyd_passages(root: ET.Element) -> dict[str, str]:
     return {ref: plain(value) for ref, value in passages.items()}
 
 
+def usx_books(folder: Content, name: str) -> Iterator[tuple[str, ET.Element]]:
+    """One of Boyd's publications parsed from its USX, a book at a time."""
+    for book in BOOKS:
+        paths = list(folder.glob(f"*{book}.usx"))
+        require(len(paths) == 1, f"{folder}: expected one {name} USX file: {book}")
+        try:
+            root = ET.fromstring(paths[0].read_bytes())
+        except ET.ParseError as error:
+            raise CheckFailed(f"{paths[0]}: {error}") from error
+        yield book, root
+
+
 def boyd(folder: Content, *, greek: bool = True) -> list[BoydNote]:
     """Read Boyd's Greek or English USX apparatus, retaining its sigla.
 
@@ -268,13 +281,7 @@ def boyd(folder: Content, *, greek: bool = True) -> list[BoydNote]:
     the same apparatus syntax; their wording is retained without translation.
     """
     rows: list[BoydNote] = []
-    for book in BOOKS:
-        paths = list(folder.glob(f"*{book}.usx"))
-        require(len(paths) == 1, f"{folder}: expected one Boyd USX file: {book}")
-        try:
-            root = ET.fromstring(paths[0].read_bytes())
-        except ET.ParseError as error:
-            raise CheckFailed(f"{paths[0]}: {error}") from error
+    for book, root in usx_books(folder, "Boyd"):
         positions = note_positions(root) if greek else {}
         passages = {} if greek else boyd_passages(root)
         for note in root.iter("note"):

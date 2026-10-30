@@ -6,7 +6,7 @@ from stage to stage; a stage reads only the keys the stages before it set.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, TypedDict
+from typing import TYPE_CHECKING, Any, Literal, TypedDict
 
 from bible.usj import Node
 
@@ -313,6 +313,24 @@ class Override(TypedDict, total=False):
     unit_ids: list[str]
     units: list[GreekKey]
     why: str
+    # A correction of shared Greek read from Pierpont: his instruction, and
+    # the RP2026 Greek each of its edits renders.
+    instruction: Instruction
+    greek: list[str]
+    # A version cited for the former English words (received.labels).
+    former: dict[str, str]
+    # The King James words a kjv parallel quotes, which no override may edit.
+    parallel: tuple[str, int, int]
+
+
+class Carrier(TypedDict):
+    """What carries out one of Pierpont's category-c edits: the unit its row
+    attaches to, a reading of the editor's, or the row itself, read from his
+    booklet as a reading (decisions.carriers)."""
+
+    kind: Literal["unit", "reading", "itself"]
+    # The unit's ids, or the id of the override that carries it out.
+    ids: list[str]
 
 
 class BoundEdit(TypedDict, total=False):

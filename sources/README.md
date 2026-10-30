@@ -175,6 +175,10 @@ The Far Above All ZIP is a local package of the unchanged `NTinHTML_AVorder_Unic
 
 The Boyd scrape is a local package, not a publisher download: its members are the pages as served, and its metadata is fixed (sorted names, deflated at level 9, dated 1980-01-01) so that the archive's hash is reproducible.
 
+### The Vulgate
+
+`latVUC_usfm.zip`, retrieved 2026-10-29 from [eBible](https://ebible.org/Scriptures/latVUC_usfm.zip), is its public-domain Clementine Vulgate of 1598, with the Glossa Ordinaria from the Migne edition of 1880, pinned unchanged by its SHA-256. Only its 27 New Testament books are read, 7,951 verses at the Latin's own addresses, without the Glossa footnotes. A `former` declaration in `edition/byzantine.json` quotes it for the former English words of a correction of shared Greek where the translators followed the Latin, and the build checks the quotation against the verse, letters and punctuation kept and whitespace normalized; the note then names the Vulgate. It supplies no English.
+
 ## 1611 marginal notes
 
 [`exhaustive-listing-marginal-notes-1611-edition-king-james-bible.md`](exhaustive-listing-marginal-notes-1611-edition-king-james-bible.md) is a Markdown copy of Calvin George's ["An exhaustive listing of the marginal notes of the 1611 edition of the King James Bible"](https://en.literaturabautista.com/exhaustive-listing-marginal-notes-1611-edition-king-james-bible), from Literatura Bautista. It covers the translators' notes on both testaments: alternative translations, literal meanings, and variant readings. It leaves out the Apocrypha, the chapter summaries, and the cross-references. George counts 6,566 notes in the Old Testament and 775 in the New; Scrivener counted 6,637 and 765.

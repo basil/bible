@@ -58,9 +58,11 @@ LABELS = (
 )
 # The witnesses a New Testament note names (byzantine.received.labels): the
 # Received Text, the printed editions the King James translators followed,
-# the King James Version, whose words it gives, and explicitly cited versions.
+# Scrivener's reconstruction of their Greek, the King James Version, and the
+# versions a reading cites for the former English words.
 NEW_TESTAMENT = (
     "textus-receptus",
+    "scrivener",
     "beza",
     "erasmus",
     "stephanus-1549",

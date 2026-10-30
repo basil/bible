@@ -16,6 +16,7 @@ from lxml import html
 
 from bible import scripture, usj
 from bible.byzantine import BOOKS
+from bible.byzantine.inventories import boyd_passages, usx_books
 from bible.checks import CheckFailed, require
 from bible.sources import Content
 
@@ -186,18 +187,25 @@ def surface_words(source: str) -> str:
     return re.sub(r"\\(\+?)w ([^\\|]*)\|[^\\]*\\\1w\*", r"\2", source)
 
 
-def surface_usfm(
+def usfm_documents(
     folder: Content, name: str, source: Callable[[str], str] = lambda text: text
-) -> tuple[dict[str, usj.Document], dict[str, scripture.Verse]]:
-    """Read a pinned USFM translation; discard lexical metadata, preserving
-    surface words."""
+) -> dict[str, usj.Document]:
+    """A pinned USFM translation's books, each read through source."""
     documents: dict[str, usj.Document] = {}
     for book in BOOKS:
         paths = list(folder.glob(f"*-{book}*.usfm"))
         require(len(paths) == 1, f"Expected one pinned {name} book: {book}")
-        text = paths[0].read_text(encoding="utf-8-sig")
-        # Unrecognized or malformed metadata still reaches the strict parser.
-        documents[book] = usj.parse(source(surface_words(text)))
+        documents[book] = usj.parse(source(paths[0].read_text(encoding="utf-8-sig")))
+    return documents
+
+
+def surface_usfm(
+    folder: Content, name: str, source: Callable[[str], str] = lambda text: text
+) -> tuple[dict[str, usj.Document], dict[str, scripture.Verse]]:
+    """Read a pinned USFM translation; discard lexical metadata, preserving
+    surface words. Unrecognized or malformed metadata still reaches the
+    strict parser."""
+    documents = usfm_documents(folder, name, lambda text: source(surface_words(text)))
     verses = verses_of(documents)
     require(
         len(verses) == 7957
@@ -210,6 +218,23 @@ def surface_usfm(
 def rv(folder: Content) -> tuple[dict[str, usj.Document], dict[str, scripture.Verse]]:
     """Read the RV of 1881."""
     return surface_usfm(folder, "RV")
+
+
+def vulgate(folder: Content) -> dict[str, str]:
+    """The Clementine NT at its own addresses, without the Glossa notes."""
+    verses = verses_of(usfm_documents(folder, "Vulgate"))
+    require(len(verses) == 7951, "Vulgate inventory: expected 7,951 verses")
+    return {ref: verse.text for ref, verse in verses.items()}
+
+
+def tcent_text(folder: Content) -> dict[str, str]:
+    """TCENT's scripture words at the King James addresses, without its
+    apparatus, which inventories.tcent reads."""
+    verses: dict[str, str] = {}
+    for _, root in usx_books(folder, "TCENT"):
+        verses.update(boyd_passages(root))
+    require(len(verses) == 7953, "TCENT 2022 inventory: expected 7,953 verses")
+    return verses
 
 
 # Paragraph styles of the ASV that the production model lacks. Only the

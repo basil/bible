@@ -29,15 +29,14 @@ from bible.byzantine import (
     RV,
     TCENT,
     WEB,
+    decisions,
     edit,
     notes,
     received,
 )
 from bible.byzantine import revisers as revisions
-from bible.byzantine.crosswire import edit_offsets, reports_by_unit
-from bible.byzantine.crosswire import spans as word_spans
-from bible.byzantine.crosswire import words
-from bible.byzantine.decisions import ref_key
+from bible.byzantine.crosswire import kjv_bounds, reports_by_unit, words
+from bible.byzantine.decisions import category_c_rows, ref_key
 from bible.byzantine.english import verses_of
 from bible.byzantine.presentation import (
     anchored,
@@ -50,7 +49,6 @@ from bible.byzantine.rows import (
     BoydNote,
     Disposition,
     Instruction,
-    InstructionEdit,
     Override,
     Report,
     RevisionRow,
@@ -80,6 +78,7 @@ NAMES = {
     "asv": "ASV 1901",
     BOYD_ASV: "Boyd ASV 2021",
     KJV: "KJV parallel",
+    "vulgate": "Vulgate",
 }
 LOOSE_HEADING = "## Attached to no unit"
 GREEK_CHANGES = {
@@ -530,15 +529,6 @@ def patriarchal_status(unit: Unit, index: Index) -> str:
     return "RP2026 agreement unknown"
 
 
-def kjv_bounds(kjv: str, row: InstructionEdit | RevisionRow) -> tuple[int, int]:
-    """A bound contrast's KJV span by word offsets, including its insertion side."""
-    lo, hi = edit_offsets(kjv, row)
-    at = row["word_range"][0]
-    if not row["old"] and row.get("side") == "after" and at:
-        lo = hi = word_spans(kjv)[at - 1][2]
-    return lo, hi
-
-
 def revision_excerpt(row: RevisionRow, kjv: str) -> str:
     """Locate the contrast by word offsets, including its insertion side."""
     return context_excerpt(row["old"], row["new"], kjv, kjv_bounds(kjv, row))
@@ -566,6 +556,9 @@ def instruction_line(
         berry = i.get("berry") or {}
         if berry.get("raw"):
             bits.append(f"Berry {berry['raw']}")
+    decision = context.decisions.instruction_decisions.get(decisions.instruction_key(i))
+    if decision:
+        bits.append(f"category-c decision: {decision['kind']} (see summary)")
     bits.append(f"bound {i.get('bind')}")
     bits.append(
         "attachment: " + (attachment_scope(i, uid) if uid else i.get("scope", "?"))
@@ -938,6 +931,24 @@ def section(
         found = [note_text(present(note, f"Review note not printed: {held['x-key']}"))]
     if found:
         lines.append("⁺ " + "; ".join(esc(n) for n in found))
+    # A Greek unit may execute English in a neighbouring source verse.
+    # Keep that wording and its printed notes with the unit that changed it.
+    for other in dict.fromkeys(
+        e["ref"] for e in row.get("edits", ()) if e["ref"] != ref
+    ):
+        destination = context.greek.structure.rp_ref(other)
+        other_after, other_printed = finished_verse(destination, index)
+        lines.extend(
+            verse_comparison(
+                kjv[other],
+                other_after.text if other_after else "",
+                f"KJV {other}",
+                f"OLEB {destination} (cross-verse instruction)",
+                after_verse=other_printed,
+            )
+        )
+        if other_printed and (other_notes := edition_notes(other_printed)):
+            lines.append("⁺ " + "; ".join(esc(n) for n in other_notes))
     if row["action"] == "refused":
         lines.append(f"Executor refused: {esc(row['reasons'][0])}")
     # Hard breaks keep comparison rows readable without blank paragraphs.
@@ -1008,8 +1019,31 @@ def override_lines(o: Override, ref: str) -> list[str]:
             + (f" ({e['ref']})" if e["ref"] != ref else "")
             + (f" · shared Greek {esc(e['greek'])}" if "greek" in e else "")
         )
+    if "instruction" in o:
+        # The edits are Pierpont's, read from his booklet.
+        for edit, cited in zip(o["instruction"]["edits"], o["greek"], strict=True):
+            lines.append(
+                f"- {esc(edit['old']) or '∅'} → {esc(edit['new']) or '∅'}"
+                f" · shared Greek {esc(cited)} · from Pierpont {o['instruction']['entry']}"
+            )
     lines.append(f"- why: {esc(o['why'])}")
-    for w, item in o.get("evidence", {}).items():
+    if "former" in o:
+        lines.append(former_line(o["former"]))
+    return lines + evidence_lines(o.get("evidence", {}))
+
+
+def former_line(former: Mapping[str, str]) -> str:
+    """The version a decision cites for the former English words, ticked as checked."""
+    return (
+        f"- former words: {NAMES.get(former['witness'], former['witness'])} "
+        f"{former['ref']}: “{esc(former['quote'])}” ✓ {esc(former['why'])}"
+    )
+
+
+def evidence_lines(evidence: Mapping[str, Mapping[str, str]]) -> list[str]:
+    """A decision's evidence, each item ticked as checked against its source."""
+    lines = []
+    for w, item in evidence.items():
         where = item.get("entry", item.get("ref"))
         if w == FAA and item.get("field") == "source_notes":
             where = f"{where} verse note"
@@ -1087,7 +1121,7 @@ def build_index(context: Reconciliation, finished: Mapping[str, Document]) -> In
             index["borrowings_at"].setdefault(unit["id"], {})[name] = oid
     for i in context.decisions.instructions:
         if i.get("scope") == "verse" or (
-            i.get("scope") == "out-of-scope" and i.get("role") != "agrees"
+            i.get("scope") == "no-greek-unit" and i.get("role") != "agrees"
         ):
             for ref in i.get("refs", []):
                 index["loose_in_verse"][ref].append(instruction_line(i, context))
@@ -1215,10 +1249,11 @@ def reading(value: object) -> str:
     return str(value) if value else "∅"
 
 
-def addressed(i: Instruction, context: Reconciliation) -> bool:
-    """Whether an execution or a recorded correction covers the recommendation."""
-    if i.get("displaced_by"):
-        return True
+def carried_out(i: Instruction, context: Reconciliation) -> str | None:
+    """An explicit decision or structural execution, never inferred fulfillment."""
+    decision = context.decisions.instruction_decisions.get(decisions.instruction_key(i))
+    if decision:
+        return f"category-c decision: {decision['kind']}"
     # A verse moved or omitted is carried out by the structural decisions.
     units = {u["unit"] for u in i.get("units", [])}
     if i.get("bind") == "structural" and units:
@@ -1228,43 +1263,122 @@ def addressed(i: Instruction, context: Reconciliation) -> bool:
             if r["disposition"] == "structural" and r["action"] != "refused"
         }
         if units <= moved:
-            return True
+            return "the structural decisions"
+    return None
 
-    def covered(e: InstructionEdit) -> bool:
-        ref = e.get("ref")
-        if ref is None or e.get("word_range") is None:
-            return False
-        lo, hi = kjv_bounds(context.english.kjv[ref], e)
-        for o in context.decisions.overrides:
-            for b in o["bound"]:
-                if b["ref"] != ref:
-                    continue
-                start, end = lo, hi
-                if start == end:
-                    # A bound insertion can stand on either side of a space.
-                    text = context.english.kjv[ref]
-                    if b["end"] <= start and not text[b["end"] : start].strip():
-                        start = end = b["end"]
-                    elif end <= b["start"] and not text[end : b["start"]].strip():
-                        start = end = b["start"]
-                if not b["start"] <= start <= end <= b["end"]:
-                    continue
-                # Compare the words of the entire declared replacement,
-                # including the unchanged words around the recommendation's
-                # own span, apart from punctuation and italic brackets.
-                proposed = " ".join(
-                    (
-                        b["old"][: start - b["start"]],
-                        e["new"],
-                        b["old"][end - b["start"] :],
-                    )
-                )
-                if words(proposed) == words(b["new"]):
-                    return True
-        return False
 
-    edits = i.get("edits", [])
-    return bool(edits) and all(covered(e) for e in edits)
+# The outcomes of the recommendations no unit executed as written, in the
+# order the summary lists them, each with what its rows await.
+OUTCOMES = (
+    (
+        "carried",
+        "Carried out or decided",
+        "Nothing: each has an explicit decision or a structural execution.",
+    ),
+    (
+        "excluded",
+        "Excluded with a reason",
+        "Nothing: a placement decision excludes the row, or its proposed "
+        "Greek change is incompatible with RP2026.",
+    ),
+    (
+        "classify",
+        "Editorial judgment needed",
+        "A judgment: whether another reading fulfills the recommendation, or "
+        "whether it corrects shared Greek or follows another Greek reading.",
+    ),
+    (
+        "placement",
+        "Binding or placement problems",
+        "A placement decision, or a correction of the binding: the words were "
+        "not found once in the verse, or attach to no unit.",
+    ),
+)
+
+
+def outcome(i: Instruction, context: Reconciliation) -> tuple[str, str]:
+    """A recommendation's outcome (OUTCOMES) and the note that says why."""
+    if how := carried_out(i, context):
+        return "carried", how
+    reason = i.get("compatibility_reason") or ""
+    if i.get("method") == "hand" or i.get("refused_by"):
+        return "excluded", reason
+    if i.get("scope") == "no-greek-unit" and i.get("rendering") == "contradicted":
+        return (
+            "classify",
+            f"suspected contradiction: {reason}; editorial decision needed",
+        )
+    readings, kjv = context.decisions.overrides, context.english.kjv
+    if matched := decisions.covering(i, readings, kjv):
+        return (
+            "classify",
+            f"matching edit found in reading {matched}; fulfillment not declared",
+        )
+    if reordered := decisions.covering(i, readings, kjv, ordered=False):
+        return "classify", f"reading {reordered} has the same words in another order"
+    overlaps = sorted(
+        set(i.get("displaced_by") or ())
+        | set(decisions.overlapping_readings(i, readings, kjv))
+    )
+    if overlaps:
+        return (
+            "classify",
+            f"overlapping readings {', '.join(overlaps)}; fulfillment not declared",
+        )
+    if i.get("compatibility") not in {"no-greek-unit", "unattached", "unbound"}:
+        return "excluded", reason
+    if i.get("bind") not in {"unique", "already"} or i.get("compatibility") != (
+        "no-greek-unit"
+    ):
+        return "placement", reason or f"binding {i.get('bind')}"
+    return "classify", reason
+
+
+def recommendations(context: Reconciliation) -> list[str]:
+    """The recommendations no unit executed as written, by outcome."""
+    rows = [
+        i
+        for i in context.decisions.instructions
+        if i.get("role") != "agrees"
+        and i.get("compatibility") not in {"compatible", "agrees"}
+    ]
+    # A continuation row carries on the entry before it, and is no
+    # recommendation of its own.
+    continued = [i for i in rows if i.get("status") == "continuation"]
+    grouped: defaultdict[str, list[str]] = defaultdict(list)
+    for i in rows:
+        if i.get("status") == "continuation":
+            continue
+        group, note = outcome(i, context)
+        line = f"- {', '.join(i.get('refs', []))}: " + instruction_line(i, context)[2:]
+        # The row's own facts may already say it (its compatibility reason, or
+        # its category-c decision); otherwise the outcome's note is added.
+        if note and esc(note) not in line:
+            head, _, tail = line.partition("  \n")
+            line = f"{head} · {esc(note)}" + (f"  \n{tail}" if tail else "")
+        grouped[group].append(line)
+    lines = [
+        "## Recommendations no unit executed as written",
+        "",
+        "Each row of the English witnesses that no unit executed as written, "
+        "apart from those the King James text already satisfies, by what "
+        "became of it. A row at a verse with no Greek difference matches no "
+        "unit; whether it follows another Greek reading or corrects the "
+        "English of shared Greek is a judgment the build does not make. "
+        f"{len(continued)} continuation rows carry on the entry before them "
+        "and are left out.",
+        "",
+        "| Outcome | Rows | Awaits |",
+        "| --- | --- | --- |",
+        *(
+            f"| {title} | {len(grouped[key])} | {awaits} |"
+            for key, title, awaits in OUTCOMES
+        ),
+        "",
+    ]
+    for key, title, _ in OUTCOMES:
+        lines += [f"### {title}", "", *(grouped[key] or ["- none"]), ""]
+    return lines
 
 
 def marking_only(row: Disposition) -> bool:
@@ -1344,6 +1458,83 @@ def sources_of_wording(rows: Sequence[Disposition]) -> list[str]:
     ]
 
 
+def category_c(context: Reconciliation) -> list[str]:
+    """Pierpont's category-c rows, each with its decision: the Greek it is
+    about, the verse before and after, and the note as labelled."""
+    declared = context.decisions.instruction_decisions
+    sources = category_c_rows(context.decisions.instructions)
+    prepared = verses_of(context.edited.prepared)
+    rows = context.verified.dispositions
+    carriers = context.decisions.instruction_carriers
+    counts = Counter(e["kind"] for e in declared.values())
+    lines = [
+        "## Pierpont’s category c",
+        "",
+        "Pierpont’s corrections of the English where the Greek is shared, each "
+        "judged against RP2026: an edit read from his booklet, an edit a reading "
+        "of the editor’s carries, or no change. The comparisons show every change "
+        "in the verse.",
+        "",
+        "; ".join(f"{kind}: {n}" for kind, n in sorted(counts.items())) + ".",
+        "",
+    ]
+    by_unit = {row["unit"]: row for row in rows}
+    by_override: defaultdict[str, list[Disposition]] = defaultdict(list)
+    for row in rows:
+        if row.get("override"):
+            by_override[row["override"]].append(row)
+    for key, entry in sorted(declared.items(), key=lambda kv: int(kv[0].split()[1])):
+        source = sources[key]
+        carrier = carriers.get(key)
+        if carrier is None:
+            status, carrying = "nochange", []
+        elif carrier["kind"] == "unit":
+            status = "edit by its unit"
+            carrying = [by_unit[i] for i in carrier["ids"]]
+        else:
+            status = (
+                "edit by itself"
+                if carrier["kind"] == "itself"
+                else f"edit by reading {carrier['ids'][0]}"
+            )
+            carrying = by_override[carrier["ids"][0]]
+        lines += [
+            f"### {key} · {', '.join(source['refs'])} · {status}",
+            "",
+            f"Source instruction: {esc(source['raw'])}",
+            "",
+            f"RP2026: {esc(' … '.join(entry['greek']))}",
+            "",
+            f"Reason: {esc(entry['why'])}",
+            "",
+        ]
+        if "former" in entry:
+            lines += [former_line(entry["former"]), ""]
+        lines += [
+            line for e in evidence_lines(entry.get("evidence", {})) for line in (e, "")
+        ]
+        for ref in source["refs"]:
+            target = context.greek.structure.rp_ref(ref)
+            after = prepared.get(target)
+            lines += verse_comparison(
+                context.english.kjv[ref],
+                after.text if after else "",
+                f"KJV {ref}",
+                f"Prepared {target}",
+            )
+        for row in carrying:
+            for e in row.get("edits", ()):
+                if "note" in e:
+                    label = context.edited.note_witnesses[e["note"]["x-key"]]
+                    lines += [
+                        f"Note {notes.edition_key(e['note']['x-key'])}: "
+                        f"{NAMES.get(label, label) if label else 'Or,'} "
+                        f"former words {esc(e['old']) or '∅'}",
+                        "",
+                    ]
+    return lines
+
+
 def summary(context: Reconciliation) -> str:
     """The reconciliation in figures, for the review: how many units (and
     corrections of shared Greek) of each disposition, where the wording of
@@ -1391,6 +1582,7 @@ def summary(context: Reconciliation) -> str:
     if not borrowings:
         lines.append("| none | — | — |")
     lines.append("")
+    lines += category_c(context)
     lines += ["## Witnesses", "", "| Witness | Rows | Scope |", "| --- | --- | --- |"]
     witnesses: defaultdict[str, list[str | None]] = defaultdict(list)
     for r in context.apparatuses.reports:
@@ -1401,16 +1593,8 @@ def summary(context: Reconciliation) -> str:
         lines.append(
             f"| {NAMES.get(name, name)} | {len(scopes)} | {', '.join(f'{k}: {n}' for k, n in sorted(c(scopes).items(), key=lambda kv: str(kv[0])))} |"
         )
-    lines += ["", "## Unaddressed recommendations", ""]
+    lines += ["", *recommendations(context)]
     lines += [
-        f"- {', '.join(i.get('refs', []))}: " + instruction_line(i, context)[2:]
-        for i in context.decisions.instructions
-        if i.get("role") != "agrees"
-        and i.get("compatibility") not in {"compatible", "agrees"}
-        and not addressed(i, context)
-    ] or ["- none"]
-    lines += [
-        "",
         "## Invariants",
         "",
         *(f"- {k}: {v}" for k, v in context.verified.invariants.items()),

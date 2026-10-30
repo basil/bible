@@ -465,3 +465,10 @@ def test_transliteration_is_roman_and_keeps_its_spacing(
             )
             == "lama"
         )
+
+
+def test_fk_is_a_note_field_not_scripture() -> None:
+    doc = usj.parse(
+        "\\id LUK\n\\c 23\n\\p\n\\v 42 in regnum\\f + \\fk Glossa\\ft commentary\\f* tuum."
+    )
+    assert scripture.verses(doc)["23:42"].text == "in regnum tuum."

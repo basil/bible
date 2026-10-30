@@ -25,6 +25,9 @@ class Scope(TypedDict, total=False):
     declared: str | None
     lemma: str | None
     glossed: str | None
+    # The witness an edition note of the New Testament names (the term of
+    # byzantine.received.labels), None where it gives another rendering.
+    witness: str | None
     # While the promote stage finishes a Textus Receptus note: what the note
     # says the TR has (byzantine.edit.NoteKind), and the verse or passage it
     # names. The note the edition prints declares only its lemma.
@@ -85,7 +88,7 @@ PROSE = frozenset("p m mi nb".split())
 POEM = frozenset("q1 q2 qr".split())
 BODY = PROSE | POEM
 # The parts of a note, each of which runs to the next or to the note's end.
-FIELDS = frozenset("fr ft fq fqa fl xo xt xta".split())
+FIELDS = frozenset("fr ft fq fqa fk fl xo xt xta".split())
 LABEL = re.compile(r"\d+[a-z]?(?:-\d+[a-z]?)?")
 # A verse's printed number, right after the verse's own.
 PRINTED = re.compile(r"\\vp ([^\\]*)\\vp\* ?")

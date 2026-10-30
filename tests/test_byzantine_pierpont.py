@@ -488,8 +488,8 @@ def test_unbound_and_unattached_rows(
             ] == "compatible" or "takes this construction" in (
                 row["compatibility_reason"] or ""
             ), entry
-        elif row.get("method") == "hand":  # placed out of scope (unit: null)
-            assert row["compatibility"] == "out-of-scope", entry
+        elif row.get("method") == "hand":  # no Greek unit (unit: null)
+            assert row["compatibility"] == "no-greek-unit", entry
         else:
             assert (row["compatibility"], row["scope"], row["units"]) == (
                 "unattached",
@@ -498,23 +498,43 @@ def test_unbound_and_unattached_rows(
             ), entry
 
 
-def test_rows_outside_the_greek_ledger_are_out_of_scope(
+def test_rows_outside_the_greek_ledger_have_no_greek_unit(
     pierpont_rows: dict[int | str, Instruction],
 ) -> None:
-    for entry, ref in (
-        (29, "MAT 12:24"),
-        (67, "MAT 26:53"),
-        (296, "ACT 2:13"),
-        (155, "LUK 9:55"),
-        (939, "REV 21:17"),
-        (965, "MAT 2:11"),
+    # At a verse with no unit, the rendering check reports a suspected
+    # contradiction without settling the editorial decision.
+    none = "no Greek unit in the verse"
+    for entry, ref, reason in (
+        (29, "MAT 12:24", none),
+        (
+            67,
+            "MAT 26:53",
+            f"{none}; the rendering check: RP2026 keeps the Greek that 'presently' renders",
+        ),
+        (296, "ACT 2:13", none),
+        (
+            155,
+            "LUK 9:55",
+            f"{none}; the rendering check: follows RP's marginal reading (kai eipen ouk "
+            "oidate oiou pneumatos este umeis > omits them); its main text keeps the "
+            "Greek these words render",
+        ),
+        (
+            939,
+            "REV 21:17",
+            f"{none}; the rendering check: follows RP's marginal reading (emetrhsen > "
+            "omits them); its main text keeps the Greek these words render",
+        ),
+        (965, "MAT 2:11", none),
     ):
         row = pierpont_rows[entry]
         assert row["ref"] == ref
         assert (row["compatibility"], row["compatibility_reason"]) == (
-            "out-of-scope",
-            "no Greek unit in the verse",
+            "no-greek-unit",
+            reason,
         ), entry
+        assert row["refused_by"] is None
+        assert row["rendering"] == ("contradicted" if reason != none else None)
         assert row["units"] == []
 
 
@@ -528,7 +548,7 @@ def test_kjv_agrees_rows_and_supplied_only_changes(
     jude = pierpont_rows[612]
     assert jude["compatibility"] == "compatible"  # only the second "them" is italic
     assert [e["new"] for e in jude["edits"]] == ["them", "[them]"]
-    assert pierpont_rows[171]["compatibility"] == "out-of-scope"
+    assert pierpont_rows[171]["compatibility"] == "no-greek-unit"
     assert not pierpont_rows[171].get("units")
     assert "pros authn" in (pierpont_rows[171]["compatibility_reason"] or "")
 

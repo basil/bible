@@ -571,11 +571,6 @@ def without_covered_renderings(
     if not reversed_margins:
         return doc
     verses = scripture.verses(doc)
-    cited = {
-        cited_key
-        for decision in policy.byzantine.get("note_witnesses", ())
-        for cited_key in decision["notes"]
-    }
     covered: list[str] = []
     for key, note, override in reversed_margins:
         former = override["former"]
@@ -609,11 +604,11 @@ def without_covered_renderings(
             found[0]["x-key"] not in covered,
             f"Marginal note former covers a rendering note another covers: {key}",
         )
-        # Left out, the note could not print the witness a decision cites.
+        # Left out, the note could not name the witness its reading declares.
         require(
-            found[0]["x-key"] not in cited,
-            f"Marginal note former covers a rendering note that "
-            f"note_witnesses cites: {key} covers {found[0]['x-key']}",
+            found[0]["x-scope"].get("witness") is None,
+            f"Marginal note former covers a rendering note that names a "
+            f"witness: {key} covers {found[0]['x-key']}",
         )
         covered.append(found[0]["x-key"])
     report.covered.extend(covered)

@@ -13,6 +13,7 @@ from __future__ import annotations
 import collections
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
+from functools import partial
 from types import MappingProxyType
 from typing import Any
 
@@ -45,6 +46,7 @@ from bible.byzantine.english import Citation
 from bible.byzantine.rows import (
     Alarm,
     BoydNote,
+    Carrier,
     CollationRow,
     Disposition,
     FaaRow,
@@ -159,10 +161,12 @@ class Decisions:
     # The printed edition a note names where the apparatuses establish no
     # Received Text, by the note's key (edition/byzantine.json editions).
     editions: Mapping[str, Mapping[str, str]]
-    # The versions cited for the former English words of the notes they list
-    # (edition/byzantine.json note_witnesses); received.labels carries them
-    # out, and Edited.note_witnesses holds the term each note then names.
-    note_witnesses: tuple[Mapping[str, Any], ...]
+    # The decisions on Pierpont's category-c rows, by the row
+    # (edition/byzantine.json instructions), and what carries each edit out
+    # (decisions.carriers); an edit that carries itself is among the
+    # overrides (decisions.instruction_entries).
+    instruction_decisions: Mapping[str, Mapping[str, Any]]
+    instruction_carriers: Mapping[str, Carrier]
 
 
 @dataclass(frozen=True)
@@ -172,8 +176,9 @@ class Edited:
     before the verify stage flags them."""
 
     prepared: Mapping[str, Document]
-    # The term each note names, by its key (received.labels).
-    note_witnesses: Mapping[str, str]
+    # The term each note names, by its key, None for a correction of shared
+    # Greek that names no witness (received.labels).
+    note_witnesses: Mapping[str, str | None]
     dispositions: tuple[Disposition, ...]
 
 
@@ -430,6 +435,10 @@ def stage_english(given: Inputs, greek_: Greek) -> English:
             {
                 RV: {r: v.text for r, v in rv.items()},
                 "asv": {r: v.text for r, v in asv.items()},
+                # TCENT's words, cited by verse; its apparatus is cited by
+                # entry. The Vulgate is cited for the former English words.
+                TCENT: english.tcent_text(given.sources["tcent"]),
+                "vulgate": english.vulgate(given.sources["vulgate"]),
                 BOYD_ASV: revisers.at_kjv_addresses(
                     {r: v.text for r, v in boyd.items()}, kjv, greek_.structure
                 ),
@@ -584,26 +593,60 @@ def stage_decisions(
     instructions_: Instructions,
     check: rendering.Checker,
 ) -> Decisions:
-    """The editor's readings and lemmas, validated against the placed rows."""
+    """The editor's readings and lemmas, validated against the placed rows,
+    and Pierpont's corrections of shared Greek, carried out by the readings
+    that cover them or compiled as readings themselves."""
     ledger, kjv = greek_.units, english_.kjv
+    witness_rows = decisions.witness_rows(apparatuses.reports, instructions_.rows)
+    evidence = partial(
+        decisions.evidence_checked,
+        kjv=kjv,
+        witness_rows=witness_rows,
+        texts=english_.texts,
+        supplied=english_.supplied,
+        revision_citations=english_.revision_citations,
+        faa_rows=apparatuses.faa_rows,
+    )
+
+    def validated(
+        entries: Sequence[Mapping[str, Any]], among: Sequence[Override] = ()
+    ) -> tuple[list[Override], list[str]]:
+        return decisions.validate_overrides(
+            entries,
+            ledger,
+            kjv,
+            witness_rows,
+            english_.texts,
+            english_.supplied,
+            revision_citations=english_.revision_citations,
+            faa_rows=apparatuses.faa_rows,
+            printed=greek_.printed,
+            alignment=greek_.rp_alignment,
+            structure=greek_.structure,
+            among=among,
+        )
+
     readings = [
         {"id": key, **entry} for key, entry in given.decisions["readings"].items()
     ]
-    overrides, errors_o = decisions.validate_overrides(
-        readings,
-        ledger,
-        kjv,
-        decisions.witness_rows(apparatuses.reports, instructions_.rows),
-        english_.texts,
-        english_.supplied,
-        revision_citations=english_.revision_citations,
-        faa_rows=apparatuses.faa_rows,
-        printed=greek_.printed,
-        alignment=greek_.rp_alignment,
-        structure=greek_.structure,
-    )
+    overrides, errors_o = validated(readings)
     # Judge and choose instructions by construction, never in parts.
     rows = instructions.constructions(instructions_.rows, kjv, check, overrides)
+    # Pierpont's corrections of shared Greek: what the bound readings do not
+    # carry out is compiled as a reading of its own, beside them.
+    declared = given.decisions["instructions"]
+    carriers = decisions.carriers(declared, rows, overrides, kjv)
+    added, errors_a = validated(
+        decisions.instruction_entries(
+            declared,
+            rows,
+            greek_,
+            carriers,
+            evidence,
+        ),
+        among=overrides,
+    )
+    overrides += added
     # One override owns a construction: two that take one must be merged.
     errors_c = sorted(
         {
@@ -616,13 +659,14 @@ def stage_decisions(
     errors_l = decisions.validate_lemmas(lemmas, ledger)
     editions = given.decisions.get("editions", {})
     errors_q = received.misquoted(editions, greek_.tr_alignment.text)
-    fitting([*errors_o, *errors_c, *errors_l, *errors_q])
+    fitting([*errors_o, *errors_a, *errors_c, *errors_l, *errors_q])
     return Decisions(
         instructions=tuple(rows),
         overrides=tuple(overrides),
         lemmas=tuple(lemmas),
         editions=MappingProxyType(editions),
-        note_witnesses=tuple(given.decisions.get("note_witnesses", ())),
+        instruction_decisions=MappingProxyType(declared),
+        instruction_carriers=MappingProxyType(carriers),
     )
 
 
@@ -685,7 +729,12 @@ def stage_edit(
         greek_.units,
         received.rows(greek_.tcgnt, greek_.apparatus),
         decisions_.editions,
-        decisions_.note_witnesses,
+        # The version a correction of shared Greek cites for its former words.
+        {
+            o["id"]: o["former"]["witness"]
+            for o in decisions_.overrides
+            if "former" in o
+        },
     )
     return Edited(
         prepared=MappingProxyType(prepared),

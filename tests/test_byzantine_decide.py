@@ -19,6 +19,7 @@ from bible.byzantine import (
     RV,
     TCENT,
     decide,
+    edit,
     rendering,
     stages,
 )
@@ -296,7 +297,10 @@ def test_two_readings_must_merge_even_when_every_instruction_is_refused(
         ),
     ):
         stages.stage_decisions(
-            replace(context.inputs, decisions={"readings": split, "lemmas": {}}),
+            replace(
+                context.inputs,
+                decisions={"readings": split, "instructions": {}, "lemmas": {}},
+            ),
             replace(context.greek, units=tuple(units)),
             replace(
                 context.english,
@@ -1003,7 +1007,7 @@ def test_contextual_case_compiles_only_initials_without_changing_evidence(
         "quoted_old": quoted,
     }
     before = copy.deepcopy(op)
-    compiled = decide.contextual_case(op, text, frozenset(common))
+    compiled = edit.contextual_case(op, text, frozenset(common))
     assert op == before
     assert compiled["new"] == expected
     assert compiled["kind"] == kind
@@ -1019,7 +1023,7 @@ def test_common_word_lookup_excludes_any_exceptional_capital() -> None:
         "4": "His parents spoke to him.",
     }
     before = dict(corpus)
-    common = decide.common_words(corpus)
+    common = edit.common_words(corpus)
     assert "judge" not in common and "jesus" not in common
     assert "him" in common and "his" not in common
     assert corpus == before
@@ -1055,9 +1059,7 @@ def test_contextual_case_keeps_a_lowercase_clause_after_a_question() -> None:
         "quoted_old": "Know",
     }
     assert (
-        decide.contextual_case(op, "What? know ye not?", frozenset({"understand"}))[
-            "new"
-        ]
+        edit.contextual_case(op, "What? know ye not?", frozenset({"understand"}))["new"]
         == "understand"
     )
 

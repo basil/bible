@@ -674,6 +674,22 @@ class ByzantineEvidence(TypedDict, total=False):
     quote: ReadOnly[str]
 
 
+class ByzantineFormer(TypedDict, total=False):
+    witness: ReadOnly[str]
+    ref: ReadOnly[str]
+    quote: ReadOnly[str]
+    why: ReadOnly[str]
+
+
+class ByzantineInstruction(TypedDict, total=False):
+    kind: ReadOnly[str]
+    carrier: ReadOnly[str]
+    greek: ReadOnly[tuple[str, ...]]
+    former: ReadOnly[ByzantineFormer]
+    why: ReadOnly[str]
+    evidence: ReadOnly[Mapping[str, ByzantineEvidence]]
+
+
 class ByzantineReading(TypedDict, total=False):
     units: ReadOnly[tuple[ByzantineUnit, ...]]
     kind: ReadOnly[str]
@@ -682,6 +698,7 @@ class ByzantineReading(TypedDict, total=False):
     grammar: ReadOnly[tuple[str, ...]]
     why: ReadOnly[str]
     evidence: ReadOnly[Mapping[str, ByzantineEvidence]]
+    former: ReadOnly[ByzantineFormer]
 
 
 class ByzantineOmitted(TypedDict, total=False):
@@ -724,13 +741,6 @@ class ByzantineEdition(TypedDict, total=False):
     why: ReadOnly[str]
 
 
-class ByzantineNoteWitness(TypedDict):
-    witness: ReadOnly[str]
-    reading: ReadOnly[str]
-    notes: ReadOnly[tuple[str, ...]]
-    why: ReadOnly[str]
-
-
 class ByzantineSide(TypedDict, total=False):
     unit: ReadOnly[ByzantineUnit]
     side: ReadOnly[str]
@@ -742,13 +752,13 @@ Byzantine = TypedDict(
     {
         "why": ReadOnly[str],
         "readings": ReadOnly[Mapping[str, ByzantineReading]],
+        "instructions": ReadOnly[Mapping[str, ByzantineInstruction]],
         "structure": ReadOnly[ByzantineStructure],
         "accents": ReadOnly[Mapping[str, ByzantineAccent]],
         "hodges-farstad": ReadOnly[Mapping[str, ByzantineSide]],
         "lemmas": ReadOnly[Mapping[str, ByzantineLemma]],
         "scrivener": ReadOnly[Mapping[str, ByzantineCorrection]],
         "editions": ReadOnly[Mapping[str, ByzantineEdition]],
-        "note_witnesses": ReadOnly[tuple[ByzantineNoteWitness, ...]],
     },
     total=False,
 )

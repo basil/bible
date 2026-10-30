@@ -772,18 +772,20 @@ def test_a_note_that_is_a_sentence_takes_a_capital_and_a_full_stop(
     assert [row["rule"] for row in report.rows] == ["anchor", "anchor"]
 
 
-def rendering_note(verse: str, lemma: str, former: str) -> Node:
+def rendering_note(
+    verse: str, lemma: str, former: str, witness: str | None = None
+) -> Node:
     return usj.note(
         "f",
         usj.char("fr", verse + " "),
-        usj.char("ft", "Or, "),
+        usj.char("fl", "Vulgate ") if witness else usj.char("ft", "Or, "),
         usj.char("fqa", former),
         caller="+",
         **usj.Extra(
             {
                 "x-key": f"MAT {verse} rendering",
                 "category": "edition",
-                "x-scope": {"declared": lemma},
+                "x-scope": {"declared": lemma, "witness": witness},
             }
         ),
     )
@@ -825,24 +827,10 @@ def test_a_reversed_margin_stands_for_the_rendering_note_it_repeats(
     doc = corrected(rendering_note("25:8", "going out", "burning"))
     with pytest.raises(CheckFailed, match="covers no rendering note"):
         annotate.george("MAT", doc, [margin], ctx, original=original)
-    # A note that cites a witness cannot be left out for the margin.
-    policy = changed(
-        ctx.policy,
-        "byzantine",
-        lambda d: d["note_witnesses"].append(
-            {
-                "witness": "vulgate",
-                "reading": "gone out",
-                "notes": ["MAT 25:8 rendering"],
-                "why": "Test witness.",
-            }
-        ),
-    )
-    doc = corrected(rendering_note("25:8", "going out", "gone out"))
-    with pytest.raises(CheckFailed, match="note_witnesses cites"):
-        annotate.george(
-            "MAT", doc, [margin], replace(ctx, policy=policy), original=original
-        )
+    # A note that names a witness cannot be left out for the margin.
+    doc = corrected(rendering_note("25:8", "going out", "gone out", "vulgate"))
+    with pytest.raises(CheckFailed, match="names a witness"):
+        annotate.george("MAT", doc, [margin], ctx, original=original)
 
 
 def test_a_note_of_the_margin_must_find_its_words_once(
@@ -1191,7 +1179,7 @@ def test_every_note_is_printed_replaced_by_a_link_or_explicitly_omitted(
     edition: bible.pipeline.Edition,
 ) -> None:
     # The two unreported Alexandrine readings add their own Valpy notes.
-    assert edition.summary["printed_notes"] == 6252
+    assert edition.summary["printed_notes"] == 6268
     rows = [row for listed in edition.notes.values() for row in listed]
     assert len({row["key"] for row in rows}) == len(rows)
     # The 1611 margin is printed on the New Testament alone, and whole but
@@ -1214,7 +1202,7 @@ def test_every_note_is_printed_replaced_by_a_link_or_explicitly_omitted(
     )
     assert edition.summary["kjv_marginal_notes"] == 775
     assert margin == 775 - omitted == 758
-    assert edition.summary["byzantine_notes"] == 947
+    assert edition.summary["byzantine_notes"] == 963
     # A widened lemma's rendering takes in the same words (Matthew 6:1).
     row = next(row for row in edition.notes["MAT"] if row["key"] == "MAT 6:1 of")
     assert (row["lemma"], row["note"]) == ("of your Father", "or, _with your Father_")

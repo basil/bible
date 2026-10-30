@@ -127,7 +127,7 @@ def test_report_counts_by_witness(
     assert len(tcent) == 552
     assert len({r["target_ref"] for r in tcent}) == 489
     assert (len(faa), len(msb), len(web)) == (7960, 354, 116)
-    # out-of-scope only by a hand placement (unit: null)
+    # marked as having no Greek unit only by a hand placement (unit: null)
     assert all(
         r["scope"] in {"greek", "verse"} or r.get("method") == "hand" for r in reports
     )

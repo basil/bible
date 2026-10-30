@@ -23,7 +23,7 @@ import bible.terminology
 from bible import scripture
 from bible.byzantine import received
 from bible.byzantine.crosswire import presentation_bridge
-from bible.byzantine.decisions import ref_key
+from bible.byzantine.decisions import cited_greek, ref_key
 from bible.byzantine.english import verses_of
 from bible.byzantine.greek import accent_key, ascii_greek, letter_key, occurrences
 from bible.byzantine.notes import source_range
@@ -510,10 +510,7 @@ def rows(
     about: dict[str, tuple[str, ...]] = {}
     for override in found.decisions.overrides:
         if not override["unit_ids"]:
-            for edit in override["edits"]:
-                cited = about.get(edit["ref"], ())
-                if edit["greek"] not in cited:
-                    about[edit["ref"]] = (*cited, edit["greek"])
+            about[override["id"]] = tuple(dict.fromkeys(cited_greek(override)))
     result = []
     for ref in sorted(printed, key=ref_key):
         source = structure.kjv_ref(ref)

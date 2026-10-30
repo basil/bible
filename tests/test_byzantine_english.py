@@ -12,7 +12,7 @@ import pytest
 from lxml import html
 
 from bible import scripture, usj
-from bible.byzantine import BOOKS, BOYD_ASV, english
+from bible.byzantine import BOOKS, BOYD_ASV, TCENT, english
 from bible.byzantine.stages import Reconciliation
 from bible.checks import CheckFailed
 from bible.sources import Content
@@ -336,3 +336,17 @@ def test_boyd_citation_metadata_uses_kjv_addresses(
         assert byzantine.english.revision_citations[BOYD_ASV][
             kjv_ref
         ] == english.citation_metadata(docs[source_ref.split()[0]], verses[source_ref])
+
+
+def test_the_vulgate_and_tcent_are_read_at_their_verses(
+    byzantine: Reconciliation,
+) -> None:
+    latin = byzantine.english.texts["vulgate"]
+    assert len(latin) == 7951
+    assert "cum veneris in regnum tuum" in latin["LUK 23:42"]
+    # The Glossa Ordinaria's footnotes are no part of the verse.
+    assert "Magna gratia" not in latin["LUK 23:42"]
+    assert "sermonem meum servabit" in latin["JHN 14:23"]
+    tcent = byzantine.english.texts[TCENT]
+    assert len(tcent) == 7953
+    assert "are considered worthy" in tcent["LUK 20:35"]

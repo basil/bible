@@ -710,8 +710,16 @@ def check(policy: Policy) -> None:
 
     require_fields(
         policy.byzantine,
-        {"why", "readings", "structure", "accents", "hodges-farstad", "lemmas"},
-        {"scrivener", "editions", "note_witnesses"},
+        {
+            "why",
+            "readings",
+            "instructions",
+            "structure",
+            "accents",
+            "hodges-farstad",
+            "lemmas",
+        },
+        {"scrivener", "editions"},
         "Byzantine decisions",
     )
     require_fields(
@@ -724,9 +732,51 @@ def check(policy: Policy) -> None:
         require_fields(
             reading,
             {"kind", "why", "evidence"},
-            {"units", "wording", "grammar", "edits"},
+            {"units", "wording", "grammar", "edits", "former"},
             f"Byzantine reading {key}",
         )
+    for key, instruction in policy.byzantine["instructions"].items():
+        what = f"Byzantine instruction {key}"
+        require_fields(
+            instruction,
+            {"kind", "why", "greek"},
+            {"carrier", "former", "evidence"},
+            what,
+        )
+        require(instruction["kind"] in {"edit", "nochange"}, f"{what}: unknown kind")
+        require(
+            "carrier" not in instruction
+            or (
+                instruction["kind"] == "edit"
+                and isinstance(instruction["carrier"], str)
+                and bool(instruction["carrier"].strip())
+            ),
+            f"{what}: carrier names the reading that carries an edit out",
+        )
+        require(bool(instruction["why"].strip()), f"{what} without a why")
+        require(
+            isinstance(instruction["greek"], (list, tuple))
+            and bool(instruction["greek"])
+            and all(isinstance(g, str) and g.strip() for g in instruction["greek"]),
+            f"{what} names no Greek",
+        )
+    for key, entry in (
+        *policy.byzantine["readings"].items(),
+        *policy.byzantine["instructions"].items(),
+    ):
+        if "former" in entry:
+            what = f"Byzantine former reading of {key}"
+            require_fields(
+                entry["former"], {"witness", "ref", "quote", "why"}, (), what
+            )
+            require(
+                all(
+                    isinstance(entry["former"][field], str)
+                    and entry["former"][field].strip()
+                    for field in ("witness", "ref", "quote", "why")
+                ),
+                f"{what} without its witness, place, quote or why",
+            )
     for key, accent in policy.byzantine["accents"].items():
         require_fields(accent, {"tr", "rp", "why"}, (), f"Byzantine accent {key}")
         require(bool(accent["why"].strip()), f"Byzantine accent without a why: {key}")
@@ -749,28 +799,6 @@ def check(policy: Policy) -> None:
         require(
             all(isinstance(words, str) and words.strip() for words in quoted),
             f"{what} quotes no words",
-        )
-    for number, witness_decision in enumerate(
-        policy.byzantine.get("note_witnesses", ()), 1
-    ):
-        what = f"Byzantine note witness {number}"
-        require_fields(
-            witness_decision, {"witness", "reading", "notes", "why"}, (), what
-        )
-        require(
-            all(
-                isinstance(witness_decision[field], str)
-                and witness_decision[field].strip()
-                for field in ("witness", "reading", "why")
-            ),
-            f"{what} without a witness, reading or why",
-        )
-        listed = witness_decision["notes"]
-        require(
-            isinstance(listed, (list, tuple))
-            and bool(listed)
-            and all(isinstance(key, str) and key.strip() for key in listed),
-            f"{what} lists no notes by key",
         )
     for key, lemma in policy.byzantine["lemmas"].items():
         require_fields(lemma, {"lemma", "why"}, (), f"Byzantine note lemma {key}")

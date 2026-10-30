@@ -3047,6 +3047,27 @@
       "unit": null,
       "why": "Both before the prophets renders wn te, which both texts share."
     },
+    "pierpont 432": {
+      "ref": "ROM 14:23",
+      "unit": [
+        {
+          "ref": "ROM 16:25",
+          "tr": "tw de dunamenw umas sthricai kata to euaggelion mou kai to khrugma ihsou xristou kata apokaluyin musthriou xronois aiwniois sesighmenou",
+          "rp": "tw de dunamenw umas sthricai kata to euaggelion mou kai to khrugma ihsou xristou kata apokaluyin musthriou xronois aiwniois sesighmenou"
+        },
+        {
+          "tr": "fanerwqentos de nun dia te grafwn profhtikwn kat epitaghn tou aiwniou qeou eis upakohn pistews eis panta ta eqnh gnwrisqentos",
+          "rp": "fanerwqentos de nun dia te grafwn profhtikwn kat epitaghn tou aiwniou qeou eis upakohn pistews eis panta ta eqnh gnwrisqentos",
+          "ref": "ROM 16:26"
+        },
+        {
+          "tr": "monw sofw qew dia ihsou xristou h doca eis tous aiwnas amhn",
+          "rp": "monw sofw qew dia ihsou xristou w h doca eis tous aiwnas amhn",
+          "ref": "ROM 16:27"
+        }
+      ],
+      "why": "Putting 16:25-27 here as 14:24-26 concerns the three relocated doxology units, as 442 does from the other end."
+    },
     "pierpont 442": {
       "ref": "ROM 16:25",
       "unit": [

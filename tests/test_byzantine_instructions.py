@@ -217,7 +217,7 @@ def test_attach_on_a_small_fixture_leaves_inputs_alone(
         [source_row], [{**unit, "ref": "MAT 3:9", "id": "MAT 3:9#1"}], {}, []
     )[0]
     assert (elsewhere["scope"], elsewhere["reason"]) == (
-        "out-of-scope",
+        "no-greek-unit",
         "no Greek unit in the verse",
     )
     assert (source_row, unit, aligned, report) == before
@@ -245,7 +245,7 @@ def test_compatibility_statuses_on_real_rows(
     assert check(PIERPONT, 11) == ("compatible", None)  # MAT 5:47 brethren -> friends
     # A placement separates this rendering advice from the actual spelling
     # difference. Misattaching it still cannot license the change.
-    assert check(PIERPONT, 171)[0] == "out-of-scope"
+    assert check(PIERPONT, 171)[0] == "no-greek-unit"
     attached = row(instructions, PIERPONT, 171)
     attached["role"] = "instruction"
     attached["scope"] = "greek"
@@ -259,8 +259,8 @@ def test_compatibility_statuses_on_real_rows(
     assert check(PIERPONT, 612) == ("compatible", None)
     assert check(PIERPONT, 27) == ("unbound", "binding absent")
     # The placement excludes nine Holies: RP2026's main text has three.
-    assert check(PIERPONT, 679)[0] == "out-of-scope"
-    assert check(PIERPONT, 29) == ("out-of-scope", "no Greek unit in the verse")
+    assert check(PIERPONT, 679)[0] == "no-greek-unit"
+    assert check(PIERPONT, 29) == ("no-greek-unit", "no Greek unit in the verse")
     assert check(PIERPONT, 968)[0] == "agrees"
 
 

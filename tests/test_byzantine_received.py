@@ -464,12 +464,14 @@ def test_a_note_names_the_received_text_only_where_every_unit_it_is_about_is_est
         # A correction of shared Greek is keyed by its verse.
         {"unit": "MAT 1:1", "edits": [{"note": note("MAT 1:1 rendering#1")}]},
     ]
+    # Where the apparatuses establish no Received Text, Scrivener's text
+    # prints the reading; a correction of shared Greek names no witness.
     assert received.labels(rows, units, found, {}) == {
         "A TR#1": received.RECEIVED,
-        "C TR#1": received.KING_JAMES,
-        "C 1:1 TR": received.KING_JAMES,
-        "AC TR#1": received.KING_JAMES,
-        "MAT 1:1 rendering#1": received.KING_JAMES,
+        "C TR#1": received.SCRIVENER,
+        "C 1:1 TR": received.SCRIVENER,
+        "AC TR#1": received.SCRIVENER,
+        "MAT 1:1 rendering#1": None,
     }
     # An edition decision names the printed edition the King James Version
     # followed where the apparatuses establish no Received Text.
@@ -478,7 +480,7 @@ def test_a_note_names_the_received_text_only_where_every_unit_it_is_about_is_est
     for key in ("C TR", "C 1:1 TR"):
         named = received.labels(rows, units, found, {key: beza})
         assert named["C TR#1"] == named["C 1:1 TR"] == "beza"
-        assert named["AC TR#1"] == received.KING_JAMES
+        assert named["AC TR#1"] == received.SCRIVENER
     with pytest.raises(CheckFailed, match="about the same units"):
         received.labels(rows, units, found, {"C TR": beza, "C 1:1 TR": beza})
     assert received.labels(rows, units, found, {"AC TR": beza})["AC TR#1"] == "beza"
@@ -491,9 +493,11 @@ def test_a_note_names_the_received_text_only_where_every_unit_it_is_about_is_est
         received.labels(twice, units, found, {"C TR": beza})
     with pytest.raises(CheckFailed, match="name no printed edition"):
         received.labels(rows, units, found, {"C TR": {**beza, "label": "vatican"}})
-    # A version is cited by a note witness decision, never as an edition.
-    with pytest.raises(CheckFailed, match="name no printed edition"):
-        received.labels(rows, units, found, {"C TR": {**beza, "label": "vulgate"}})
+    # A version is cited for former English words, never as an edition, and
+    # Scrivener is named by the rule, not by a decision.
+    for label in (*received.VERSIONS, received.SCRIVENER, "king-james-version"):
+        with pytest.raises(CheckFailed, match="name no printed edition"):
+            received.labels(rows, units, found, {"C TR": {**beza, "label": label}})
 
 
 def test_rows_that_disagree_do_not_establish_the_received_text(
@@ -527,7 +531,7 @@ def printed(edition: bible.pipeline.Edition) -> dict[str, str]:
 # The first word of each witness's label.
 EDITIONS = {
     received.RECEIVED: "TR",
-    received.KING_JAMES: "KJV",
+    received.SCRIVENER: "Scrivener",
     "beza": "Beza",
     "erasmus": "Erasmus",
     "stephanus-1549": "Stephanus",
@@ -544,7 +548,7 @@ def test_the_notes_name_the_witness_the_apparatuses_establish(
     witnesses = {
         key.removesuffix("#1"): term
         for key, term in byzantine.edited.note_witnesses.items()
-        if " TR" in key
+        if " TR" in key and term
     }
     labels: Counter[str] = Counter()
     for key, text in notes.items():
@@ -552,16 +556,16 @@ def test_the_notes_name_the_witness_the_apparatuses_establish(
         assert label == EDITIONS[witnesses[key]], key
         labels[label] += 1
     # Where the apparatuses establish no Received Text, a note names the
-    # printed edition the translators followed, and KJV where none is shown.
+    # printed edition the translators followed, and Scrivener where none is
+    # shown; never the King James Version, and never a version.
     assert labels == {
         "TR": 756,
         "Beza": 65,
         "Erasmus": 15,
         "Stephanus": 1,
-        "Complutensian": 11,
-        "Vulgate": 1,
+        "Complutensian": 12,
         "Aldine": 1,
-        "KJV": 1,
+        "Scrivener": 1,
     }
 
 
@@ -577,7 +581,8 @@ def test_the_notes_name_the_witness_the_apparatuses_establish(
         ("LUK 17:35 TR", "Beza adds verse 36"),
         ("LUK 8:31#1 TR", "Erasmus _they besought_"),
         ("JAS 4:15#1 TR", "Stephanus 1549 _we shall live_"),
-        ("REV 9:19#1 TR", "KJV _their power_"),
+        ("REV 9:19#1 TR", "Scrivener _their power_"),
+        ("MAT 10:25#1 TR", "Complutensian text _Beelzebub_"),
     ],
 )
 def test_a_note_names_its_witness(
@@ -603,57 +608,82 @@ def test_an_edition_decision_quotes_scriveners_text_only_as_it_reads() -> None:
     assert received.misquoted(decided(reads="Θεῷ"), {})
 
 
-@pytest.mark.parametrize("kind", ["replace", "rendering"])
-def test_an_explicit_note_witness_must_fit_its_note_and_former_words(kind: str) -> None:
-    key = "MAT 1:1 rendering" if kind == "rendering" else "MAT 1:1#1 TR"
-    held: Node = {
-        **note(key + "#1"),
-        "x-scope": {"kind": kind},
-        "content": [usj.char("fqa", "Beelzebub")],
-    }
-    rows: list[Disposition] = [{"unit": "MAT 1:1", "edits": [{"note": held}]}]
-    decision: dict[str, Any] = {
-        "witness": "vulgate",
-        "reading": "Beelzebub",
-        "notes": [key],
-        "why": "The traditional Vulgate has this name.",
-    }
-    assert received.labels(rows, [], {}, {}, [decision]) == {key + "#1": "vulgate"}
-    invalid: list[tuple[dict[str, Any], str]] = [
-        ({"notes": ["MAT 1:2 rendering"]}, "names no one note"),
-        ({"reading": "Beelzebul"}, "reading does not match"),
-        ({"witness": "unknown"}, "Unknown note witness"),
-        ({"notes": [key, key]}, "Repeated note witness"),
-        # Only a version is cited for the English; the Greek labels stay
-        # with the apparatuses and the edition decisions.
-        ({"witness": received.KING_JAMES}, "Unknown note witness"),
-        ({"witness": received.RECEIVED}, "Unknown note witness"),
-        ({"witness": "beza"}, "Unknown note witness"),
+def test_a_former_version_names_the_notes_of_its_correction_alone() -> None:
+    """A reading's former version labels the one rendering note its row made,
+    whose words the citation was checked for, never a note about a Greek unit;
+    a reading that made none, or several, is refused."""
+    rows: list[Disposition] = [
+        {
+            "unit": "MAT 1:1",
+            "override": "MAT 1:1",
+            "edits": [{"note": note("MAT 1:1 rendering#1")}],
+        },
+        {
+            "unit": "MAT 1:2#1",
+            "override": "MAT 1:2#1",
+            "edits": [{"note": note("MAT 1:2#1 TR#1")}],
+        },
     ]
-    for change, error in invalid:
+    unit: Unit = {"id": "MAT 1:2#1", "inventories": []}
+    assert received.labels(rows, [unit], {}, {}, {"MAT 1:1": "vulgate"}) == {
+        "MAT 1:1 rendering#1": "vulgate",
+        "MAT 1:2#1 TR#1": received.SCRIVENER,
+    }
+    for former, error in [
+        ({"MAT 1:1": "beza"}, "unknown former witness"),
+        ({"MAT 1:1": "king-james-version"}, "unknown former witness"),
+        ({"MAT 1:3": "vulgate"}, "former names one note; the reading made 0"),
+        ({"MAT 1:2#1": "vulgate"}, "on a Greek unit"),
+    ]:
         with pytest.raises(CheckFailed, match=error):
-            received.labels(rows, [], {}, {}, [{**decision, **change}])
-    wrong: list[Disposition] = [
-        {"unit": "MAT 1:1", "edits": [{"note": {**held, "x-scope": {"kind": "adds"}}}]}
+            received.labels(rows, [unit], {}, {}, former)
+    two: list[Disposition] = [
+        *rows,
+        {
+            "unit": "MAT 1:1",
+            "override": "MAT 1:1",
+            "edits": [{"note": note("MAT 1:1 rendering#2")}],
+        },
     ]
-    with pytest.raises(CheckFailed, match="does not name a replaced reading"):
-        received.labels(wrong, [], {}, {}, [decision])
-    if kind == "replace":
-        # A note the Received Text or an edition decision labels keeps it.
-        unit: Unit = {"id": "MAT 1:1", "inventories": []}
-        beza = {"label": "beza", "why": "Beza has it."}
-        with pytest.raises(CheckFailed, match="overrides the Received Text"):
-            received.labels(rows, [unit], {}, {key: beza}, [decision])
-        established: Unit = {
-            "id": "MAT 1:1",
-            "inventories": [{"inventory": "tcgnt", "entry": 1}],
-        }
-        found = received.rows([note_row(1, "TR")], [])
-        with pytest.raises(CheckFailed, match="overrides the Received Text"):
-            received.labels(rows, [established], found, {}, [decision])
-        # Every note about the same units cites the version, or none does.
-        both: list[Disposition] = [
-            {"unit": "MAT 1:1", "edits": [{"note": held}, {"note": note(key + "#2")}]}
-        ]
-        with pytest.raises(CheckFailed, match="about the same units differently"):
-            received.labels(both, [unit], {}, {}, [decision])
+    with pytest.raises(CheckFailed, match="former names one note; the reading made 2"):
+        received.labels(two, [unit], {}, {}, {"MAT 1:1": "vulgate"})
+
+
+def test_the_notes_name_the_version_the_reading_cites_or_say_or(
+    byzantine: Reconciliation, edition: bible.pipeline.Edition
+) -> None:
+    witnesses = byzantine.edited.note_witnesses
+    assert received.SCRIVENER not in {
+        w for k, w in witnesses.items() if "rendering" in k
+    }
+    assert "king-james-version" not in witnesses.values()
+    assert Counter(witnesses.values())["vulgate"] == 17
+    printed = {
+        n["x-key"]: usj.text_of(n["content"])
+        for doc in edition.documents.values()
+        for n in usj.notes_of(doc["content"])
+        if n.get("category") == "edition"
+    }
+    # The Vulgate's Beelzebub where the Greek is shared; the Complutensian
+    # text, the one edition that prints it, where the Greek differs.
+    for key in (
+        "MAT 12:24",
+        "MAT 12:27",
+        "MRK 3:22",
+        "LUK 11:15",
+        "LUK 11:18",
+        "LUK 11:19",
+    ):
+        assert "Beelzebul: Vulgate Beelzebub" in printed[f"{key} rendering"]
+    assert "Beelzebul: Complutensian text Beelzebub" in printed["MAT 10:25#1 TR"]
+    for key, label in {
+        "LUK 23:42 rendering": "Vulgate",
+        "ACT 10:20 rendering": "Vulgate",
+        "JHN 10:16 rendering": "Vulgate",
+    }.items():
+        assert label in printed[key]
+    # An edit from Pierpont with no version cited, and a reading of the
+    # editor's, give the former words as another rendering alike.
+    for key in ("JHN 14:23 rendering", "ROM 6:11 rendering", "LUK 23:15 rendering"):
+        assert "or," in printed[key].lower()
+        assert "KJV" not in printed[key]

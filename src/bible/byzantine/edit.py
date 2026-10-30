@@ -16,6 +16,7 @@ from typing import Any, Literal
 from bible import scripture, usj
 from bible.alexandrinus import without_verses
 from bible.byzantine.crosswire import (
+    SPAN,
     bracket_kept,
     curly_apostrophes,
     edit_offsets,
@@ -190,6 +191,91 @@ def seam(
             {"rule": 2, "range": [start, end], "from": text[start:end], "to": ""}
         )
     return start, end, new, seams
+
+
+def common_words(kjv: Mapping[str, str]) -> frozenset[str]:
+    """Words used in lowercase, with no capitalized use inside a KJV sentence.
+
+    Any contrary use excludes a word; counts and majority votes play no part.
+    Verse openings are not evidence for lowering a word.
+    """
+    lower: set[str] = set()
+    capital: set[str] = set()
+    for text in kjv.values():
+        for match in SPAN.finditer(text):
+            word, at = match[0], match.start()
+            if sentence_start(text, at):
+                continue
+            (lower if word.islower() else capital).add(word.casefold())
+    return frozenset(lower - capital)
+
+
+def contextual_case(
+    op: Mapping[str, Any], text: str, common: frozenset[str]
+) -> dict[str, Any]:
+    """Compile contextual initials against immutable words, keeping lexical identity.
+
+    Only a replacement's first letter or one following word's first letter can
+    change. An already lowercase verse opening or clause after a question keeps
+    its case. Uncertain capitals remain for an editorial decision.
+    """
+    result = dict(op)
+    lo, hi = edit_offsets(text, op)
+    if op["kind"] == "insert" and op.get("side") == "after":
+        lo = hi = spans(text)[op["word_range"][0] - 1][2] if op["word_range"][0] else 0
+    new = op["new"]
+    original = list(SPAN.finditer(text[lo:hi]))
+    quoted = list(SPAN.finditer(op.get("quoted_old", op["old"])))
+    replacement = list(SPAN.finditer(new))
+    if original and quoted and replacement and op["kind"] == "replace":
+        actual, witness, first = original[0][0], quoted[0][0], replacement[0][0]
+        at = replacement[0].start()
+        if actual[0].isupper() and witness[0].islower() and first[0].islower():
+            new = new[:at] + first[0].upper() + new[at + 1 :]
+        elif (
+            actual[0].islower()
+            and witness[0].isupper()
+            and first[0].isupper()
+            and first.casefold() in common
+        ):
+            new = new[:at] + first[0].lower() + new[at + 1 :]
+        result["new"] = new
+        if new != op["new"]:
+            result["witness_new"] = op["new"]
+    following = list(SPAN.finditer(text[hi:]))
+    if not following:
+        return result
+    word = following[0][0]
+    at = hi + following[0].start()
+    initial = word[0]
+    witness_words = [
+        m[0]
+        for m in SPAN.finditer(op.get("quoted_context", ""))
+        if m[0].casefold() == word.casefold()
+    ]
+    witnessed_lower = bool(witness_words) and all(w.islower() for w in witness_words)
+    if (
+        op["kind"] == "delete"
+        and original
+        and original[0][0][0].isupper()
+        and sentence_start(text, lo)
+    ):
+        # The executor removes opening punctuation too; a lowercase clause
+        # following an undeleted question is not a fresh sentence opening.
+        _, end, _, _ = seam(text, lo, hi, "")
+        if at >= end and initial.islower():
+            initial = initial.upper()
+    elif (
+        op["kind"] == "insert"
+        and (sentence_start(text, lo) or witnessed_lower)
+        and not text[hi:at].strip()
+        and (word.casefold() in common or witnessed_lower)
+    ):
+        if replacement and not new.rstrip().endswith(tuple(".!?")):
+            initial = initial.lower()
+    if initial != word[0]:
+        result["case"] = {"range": [at, at + 1], "from": word[0], "to": initial}
+    return result
 
 
 def edition_note(
@@ -501,7 +587,7 @@ def execute(
                             }
                         )
                 if adjustment := op.get("case"):
-                    # decide.contextual_case addresses the verse's own
+                    # contextual_case addresses the verse's own
                     # characters, not their plain form.
                     a, b = adjustment["range"]
                     old, new_initial = adjustment["from"], adjustment["to"]

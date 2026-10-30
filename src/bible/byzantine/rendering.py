@@ -226,7 +226,8 @@ class Checker:
                     ):
                         return (
                             "contradicted",
-                            f"RP2026 keeps the Greek that '{english[k]}' renders outside the attached unit",
+                            f"RP2026 keeps the Greek that '{english[k]}' renders"
+                            + (" outside the attached unit" if attached else ""),
                         )
                     continue
                 u = inside[0]

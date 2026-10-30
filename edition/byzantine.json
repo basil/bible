@@ -1,5 +1,5 @@
 {
-  "why": "The New Testament is the King James Version conformed to the Robinson-Pierpont Byzantine text of 2026 wherever that text differs translatably from the Received Text it was made from. The build decides every Greek difference from the pinned sources; what it cannot decide, or decides otherwise than the editor, is recorded here. readings: the editor's wording where no published instruction settles a unit, or a ruling that a reported difference is not applied, keyed by the unit's id, with wording sources and kinds of grammatical difference as lists, a reason of at most two sentences, and evidence quoted from the sources, which the build checks verbatim; or, keyed by a verse, a correction of the English where TR and RP2026 share the Greek, each edit with the printed RP2026 Greek it renders, which the build checks touches no difference, and no TR note. structure: the verses the Byzantine text lacks or places elsewhere. accents: a difference of accent or breathing alone, which the unaccented texts cannot show, made a unit, keyed by the unit's id, with the TR's and RP's accented words, which the build checks against the printed RP2026 and Boyd's apparatus. hodges-farstad: the side of Hodges and Farstad's edition where no apparatus the build reads gives it, keyed by the unit's id. lemmas: a Textus Receptus footnote's lemma widened by hand, keyed by the note. scrivener: a slip in the electronic transcriptions of Scrivener's text, keyed by the verse, with the words they have and the words he printed; the build applies it to the unaccented and the accented transcription alike, and stops unless Boyd's apparatus and the printed RP2026's both give the words as Scrivener's.",
+  "why": "The New Testament is the King James Version conformed to the Robinson-Pierpont Byzantine text of 2026 wherever that text differs translatably from the Received Text it was made from. The build decides every Greek difference from the pinned sources; what it cannot decide, or decides otherwise than the editor, is recorded here. readings: the editor's wording where no published instruction settles a unit, or a ruling that a reported difference is not applied, keyed by the unit's id, with wording sources and kinds of grammatical difference as lists, a reason of at most two sentences, and evidence quoted from the sources, which the build checks verbatim; or, keyed by a verse, a correction of the English where TR and RP2026 share the Greek, each edit with the printed RP2026 Greek it renders, which the build checks touches no difference, and no TR note: its note gives the former King James words after \"Or,\", unless former names the version (the Vulgate) whose text has the words the translators followed, quoted from its pinned text at the verse, which the note then names. instructions: the editor's decision on each of Pierpont's category-c rows, his own corrections of the English where the Greek is shared, keyed by the row: an edit, which the unit it attaches to or a reading of the editor's at its verse carries out, or else the build itself, reading the edit from his booklet and carrying it out at the verse as such a correction; or no change. Each names the RP2026 Greek it is about, which the build finds once in the verse, and the build stops on an edit nothing carries out. structure: the verses the Byzantine text lacks or places elsewhere. accents: a difference of accent or breathing alone, which the unaccented texts cannot show, made a unit, keyed by the unit's id, with the TR's and RP's accented words, which the build checks against the printed RP2026 and Boyd's apparatus. hodges-farstad: the side of Hodges and Farstad's edition where no apparatus the build reads gives it, keyed by the unit's id. lemmas: a Textus Receptus footnote's lemma widened by hand, keyed by the note. scrivener: a slip in the electronic transcriptions of Scrivener's text, keyed by the verse, with the words they have and the words he printed; the build applies it to the unaccented and the accented transcription alike, and stops unless Boyd's apparatus and the printed RP2026's both give the words as Scrivener's. editions: the printed edition a Textus Receptus note names where the apparatuses establish no Received Text, keyed by the note, with the words Scrivener's text reads or lacks there, which the build checks; a note with neither names Scrivener, and never the King James Version.",
   "readings": {
     "MAT 5:39#1": {
       "units": [
@@ -185,50 +185,6 @@
         "boyd-asv": {
           "ref": "MAT 12:6",
           "quote": "something greater than the temple"
-        }
-      }
-    },
-    "MAT 12:24": {
-      "kind": "edit",
-      "edits": [
-        {
-          "ref": "MAT 12:24",
-          "from": "Beelzebub",
-          "to": "Beelzebul",
-          "greek": "Βεελζεβοὺλ"
-        }
-      ],
-      "why": "Both texts name the prince of the devils Βεελζεβοὺλ; the King James Beelzebub takes the Latin form of the name rather than rendering the Greek. Print Beelzebul, as Pierpont and Boyd do and as Matthew 10:25 already reads.",
-      "evidence": {
-        "pierpont": {
-          "entry": 29,
-          "quote": "Beelzebul"
-        },
-        "boyd-asv": {
-          "ref": "MAT 12:24",
-          "quote": "This man doth not cast out demons, but by Beelzebul the prince of demons"
-        }
-      }
-    },
-    "MAT 12:27": {
-      "kind": "edit",
-      "edits": [
-        {
-          "ref": "MAT 12:27",
-          "from": "Beelzebub",
-          "to": "Beelzebul",
-          "greek": "Βεελζεβοὺλ"
-        }
-      ],
-      "why": "The shared Βεελζεβοὺλ resumes the Pharisees’ charge of verse 24 and takes the same name: Beelzebul for the Latin form Beelzebub, as Pierpont and Boyd render it.",
-      "evidence": {
-        "pierpont": {
-          "entry": 30,
-          "quote": "Beelzebul"
-        },
-        "boyd-asv": {
-          "ref": "MAT 12:27",
-          "quote": "And if I by Beelzebul cast out demons"
         }
       }
     },
@@ -905,28 +861,6 @@
         "boyd-asv": {
           "ref": "MRK 2:26",
           "quote": "in the days of Abiathar the high priest"
-        }
-      }
-    },
-    "MRK 3:22": {
-      "kind": "edit",
-      "edits": [
-        {
-          "ref": "MRK 3:22",
-          "from": "Beelzebub",
-          "to": "Beelzebul",
-          "greek": "Βεελζεβοὺλ"
-        }
-      ],
-      "why": "The scribes’ charge names Βεελζεβοὺλ in both texts; the King James Beelzebub follows the Latin form rather than the Greek. Print Beelzebul, as Pierpont and Boyd do and as the parallel at Matthew 12:24 now reads.",
-      "evidence": {
-        "pierpont": {
-          "entry": 77,
-          "quote": "Beelzebul"
-        },
-        "boyd-asv": {
-          "ref": "MRK 3:22",
-          "quote": "He hath Beelzebul"
         }
       }
     },
@@ -1610,28 +1544,6 @@
         }
       }
     },
-    "MRK 14:69": {
-      "kind": "edit",
-      "edits": [
-        {
-          "ref": "MRK 14:69",
-          "from": "a maid",
-          "to": "the maid",
-          "greek": "ἡ παιδίσκη"
-        }
-      ],
-      "why": "The shared definite article identifies the maid already introduced in verse 66. Boyd and the RV both retain that reference with the maid.",
-      "evidence": {
-        "boyd-asv": {
-          "ref": "MRK 14:69",
-          "quote": "And the maid saw him again"
-        },
-        "rv": {
-          "ref": "MRK 14:69",
-          "quote": "And the maid saw him"
-        }
-      }
-    },
     "MRK 15:3#1": {
       "units": [
         {
@@ -2308,72 +2220,6 @@
         }
       }
     },
-    "LUK 11:15": {
-      "kind": "edit",
-      "edits": [
-        {
-          "ref": "LUK 11:15",
-          "from": "Beelzebub",
-          "to": "Beelzebul",
-          "greek": "Βεελζεβοὺλ"
-        }
-      ],
-      "why": "Both texts name Βεελζεβοὺλ as the prince of the devils, and Beelzebub is the Latin form, not the Greek’s. Print Beelzebul, as Pierpont and Boyd do, matching the parallels in Matthew and Mark.",
-      "evidence": {
-        "pierpont": {
-          "entry": 162,
-          "quote": "Beelzebul"
-        },
-        "boyd-asv": {
-          "ref": "LUK 11:15",
-          "quote": "By Beelzebul the prince of demons"
-        }
-      }
-    },
-    "LUK 11:18": {
-      "kind": "edit",
-      "edits": [
-        {
-          "ref": "LUK 11:18",
-          "from": "Beelzebub",
-          "to": "Beelzebul",
-          "greek": "Βεελζεβοὺλ"
-        }
-      ],
-      "why": "Jesus repeats the accusers’ Βεελζεβοὺλ of verse 15, shared by both texts, so the name follows that verse: Beelzebul for the Latin form Beelzebub, as Pierpont and Boyd render it.",
-      "evidence": {
-        "pierpont": {
-          "entry": 163,
-          "quote": "Beelzebul"
-        },
-        "boyd-asv": {
-          "ref": "LUK 11:18",
-          "quote": "because ye say that I cast out demons by Beelzebul"
-        }
-      }
-    },
-    "LUK 11:19": {
-      "kind": "edit",
-      "edits": [
-        {
-          "ref": "LUK 11:19",
-          "from": "Beelzebub",
-          "to": "Beelzebul",
-          "greek": "Βεελζεβοὺλ"
-        }
-      ],
-      "why": "The shared Βεελζεβοὺλ continues the argument of verse 18 and takes the same name, Beelzebul for the Latin form Beelzebub, as Pierpont and Boyd render it.",
-      "evidence": {
-        "pierpont": {
-          "entry": 164,
-          "quote": "Beelzebul"
-        },
-        "boyd-asv": {
-          "ref": "LUK 11:19",
-          "quote": "And if I by Beelzebul cast out demons"
-        }
-      }
-    },
     "LUK 11:33#1": {
       "units": [
         {
@@ -2887,6 +2733,12 @@
           "ref": "LUK 23:42",
           "quote": "when thou comest in thy kingdom"
         }
+      },
+      "former": {
+        "witness": "vulgate",
+        "ref": "LUK 23:42",
+        "quote": "cum veneris in regnum tuum",
+        "why": "In with accusative regnum expresses entry into the kingdom, matching the former English into thy kingdom, against the Greek en with the dative."
       }
     },
     "LUK 23:54#1": {
@@ -3357,28 +3209,6 @@
         "boyd-asv": {
           "ref": "JHN 8:54",
           "quote": "of whom ye say, He is our God;"
-        }
-      }
-    },
-    "JHN 10:16": {
-      "kind": "edit",
-      "edits": [
-        {
-          "ref": "JHN 10:16",
-          "from": "one fold",
-          "to": "one flock",
-          "greek": "μία ποίμνη"
-        }
-      ],
-      "why": "The shared ποίμνη names the flock of sheep, distinct from the enclosure αὐλή earlier in the verse. Follow Boyd’s ASV and the RV with one flock, retaining this fold for the earlier enclosure.",
-      "evidence": {
-        "boyd-asv": {
-          "ref": "JHN 10:16",
-          "quote": "one flock, one shepherd."
-        },
-        "rv": {
-          "ref": "JHN 10:16",
-          "quote": "one flock, one shepherd."
         }
       }
     },
@@ -4330,6 +4160,12 @@
           "ref": "ACT 10:20",
           "quote": "But arise, and get thee down"
         }
+      },
+      "former": {
+        "witness": "vulgate",
+        "ref": "ACT 10:20",
+        "quote": "Surge itaque",
+        "why": "Latin itaque makes the command an inference, as the former arise therefore does; the shared ἀλλά is adversative."
       }
     },
     "ACT 11:26#1": {
@@ -4739,28 +4575,6 @@
         "boyd-asv": {
           "ref": "ACT 18:21",
           "quote": "He set sail from Ephesus"
-        }
-      }
-    },
-    "ACT 19:20": {
-      "kind": "edit",
-      "edits": [
-        {
-          "ref": "ACT 19:20",
-          "from": "God",
-          "to": "the Lord",
-          "greek": "τοῦ κυρίου"
-        }
-      ],
-      "why": "The shared Greek names the word of the Lord (τοῦ κυρίου), leaving that divine title and its reference intact. God replaces the stated title with another designation and can resolve its reference more narrowly. Restore the Lord while preserving the remaining King James sentence.",
-      "evidence": {
-        "rv": {
-          "ref": "ACT 19:20",
-          "quote": "word of the Lord"
-        },
-        "boyd-asv": {
-          "ref": "ACT 19:20",
-          "quote": "word of the Lord"
         }
       }
     },
@@ -5749,28 +5563,6 @@
         }
       }
     },
-    "ROM 4:24": {
-      "kind": "edit",
-      "edits": [
-        {
-          "ref": "ROM 4:24",
-          "from": "if we",
-          "to": "who",
-          "greek": "τοῖς πιστεύουσιν"
-        }
-      ],
-      "why": "The shared substantival participle identifies those who believe; it does not introduce a conditional if clause. Who preserves that relation to us with the least change, following Boyd and the RV.",
-      "evidence": {
-        "boyd-asv": {
-          "ref": "ROM 4:24",
-          "quote": "who believe on him"
-        },
-        "rv": {
-          "ref": "ROM 4:24",
-          "quote": "who believe on him"
-        }
-      }
-    },
     "ROM 5:21": {
       "kind": "edit",
       "edits": [
@@ -5824,6 +5616,40 @@
         "boyd-asv": {
           "ref": "ROM 6:1",
           "quote": "Do we continue in sin"
+        }
+      }
+    },
+    "ROM 6:3": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "ROM 6:3",
+          "from": "Jesus Christ",
+          "to": "Christ Jesus",
+          "greek": "χριστὸν Ἰησοῦν"
+        }
+      ],
+      "why": "Scrivener’s 1894 Appendix, p. 654, note 1, records the transposition of Christ Jesus to Jesus Christ in Tyndale and the Authorized Version here as an apparent inadvertence. Restore the shared Greek order Christ Jesus, which the translators transposed, as the RV, Boyd’s ASV, TCENT and the Latin keep it: a decision about the names’ order, not their referent.",
+      "evidence": {
+        "pierpont": {
+          "entry": 422,
+          "quote": "Christ Jesus"
+        },
+        "rv": {
+          "ref": "ROM 6:3",
+          "quote": "baptized into Christ Jesus"
+        },
+        "boyd-asv": {
+          "ref": "ROM 6:3",
+          "quote": "baptized into Christ Jesus"
+        },
+        "tcent": {
+          "ref": "ROM 6:3",
+          "quote": "baptized into Christ Jesus"
+        },
+        "vulgate": {
+          "ref": "ROM 6:3",
+          "quote": "in Christo Jesu"
         }
       }
     },
@@ -6074,6 +5900,36 @@
         }
       }
     },
+    "ROM 15:17": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "ROM 15:17",
+          "from": "Jesus Christ",
+          "to": "Christ Jesus",
+          "greek": "χριστῷ Ἰησοῦ"
+        }
+      ],
+      "why": "Restore the shared Greek order Christ Jesus, which the translators transposed, as the RV, Boyd’s ASV, TCENT and the Latin keep it: a decision about the names’ order, not their referent.",
+      "evidence": {
+        "rv": {
+          "ref": "ROM 15:17",
+          "quote": "glorying in Christ Jesus"
+        },
+        "boyd-asv": {
+          "ref": "ROM 15:17",
+          "quote": "glorying in Christ Jesus"
+        },
+        "tcent": {
+          "ref": "ROM 15:17",
+          "quote": "boasting in Christ Jesus"
+        },
+        "vulgate": {
+          "ref": "ROM 15:17",
+          "quote": "in Christo Jesu"
+        }
+      }
+    },
     "ROM 15:30": {
       "kind": "edit",
       "edits": [
@@ -6127,6 +5983,36 @@
         "kjv": {
           "ref": "GAL 1:5",
           "quote": "to whom [be] glory"
+        }
+      }
+    },
+    "1CO 1:4": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "1CO 1:4",
+          "from": "Jesus Christ",
+          "to": "Christ Jesus",
+          "greek": "χριστῷ Ἰησοῦ"
+        }
+      ],
+      "why": "Restore the shared Greek order Christ Jesus, which the translators transposed, as the RV, Boyd’s ASV, TCENT and the Latin keep it: a decision about the names’ order, not their referent.",
+      "evidence": {
+        "rv": {
+          "ref": "1CO 1:4",
+          "quote": "given you in Christ Jesus"
+        },
+        "boyd-asv": {
+          "ref": "1CO 1:4",
+          "quote": "given you in Christ Jesus"
+        },
+        "tcent": {
+          "ref": "1CO 1:4",
+          "quote": "given to you in Christ Jesus"
+        },
+        "vulgate": {
+          "ref": "1CO 1:4",
+          "quote": "in Christo Jesu"
         }
       }
     },
@@ -7039,6 +6925,66 @@
         }
       }
     },
+    "GAL 2:16": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "GAL 2:16",
+          "from": "believed in Jesus Christ",
+          "to": "believed in Christ Jesus",
+          "greek": "χριστὸν Ἰησοῦν"
+        }
+      ],
+      "why": "Scrivener’s 1894 Appendix, p. 654, note 1, records the transposition of Christ Jesus to Jesus Christ in Tyndale and the Authorized Version here as an apparent inadvertence. Restore the shared Greek order Christ Jesus, which the translators transposed, as the RV, Boyd’s ASV, TCENT and the Latin keep it: a decision about the names’ order, not their referent. The faith of Jesus Christ before it keeps the Greek’s own order.",
+      "evidence": {
+        "rv": {
+          "ref": "GAL 2:16",
+          "quote": "we believed on Christ Jesus"
+        },
+        "boyd-asv": {
+          "ref": "GAL 2:16",
+          "quote": "we believed on Christ Jesus"
+        },
+        "tcent": {
+          "ref": "GAL 2:16",
+          "quote": "put our faith in Christ Jesus"
+        },
+        "vulgate": {
+          "ref": "GAL 2:16",
+          "quote": "in Christo Jesu credimus"
+        }
+      }
+    },
+    "GAL 3:14": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "GAL 3:14",
+          "from": "Jesus Christ",
+          "to": "Christ Jesus",
+          "greek": "χριστῷ Ἰησοῦ"
+        }
+      ],
+      "why": "Scrivener’s 1894 Appendix, p. 654, note 1, records the transposition of Christ Jesus to Jesus Christ in Tyndale and the Authorized Version here as an apparent inadvertence. Restore the shared Greek order Christ Jesus, which the translators transposed, as the RV, Boyd’s ASV, TCENT and the Latin keep it: a decision about the names’ order, not their referent.",
+      "evidence": {
+        "rv": {
+          "ref": "GAL 3:14",
+          "quote": "blessing of Abraham in Christ Jesus"
+        },
+        "boyd-asv": {
+          "ref": "GAL 3:14",
+          "quote": "blessing of Abraham in Christ Jesus"
+        },
+        "tcent": {
+          "ref": "GAL 3:14",
+          "quote": "come to the Gentiles in Christ Jesus"
+        },
+        "vulgate": {
+          "ref": "GAL 3:14",
+          "quote": "in Christo Jesu"
+        }
+      }
+    },
     "GAL 5:12": {
       "kind": "edit",
       "edits": [
@@ -7084,6 +7030,36 @@
         "faa": {
           "entry": "EPH 2:21#1",
           "quote": "every"
+        }
+      }
+    },
+    "EPH 3:1": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "EPH 3:1",
+          "from": "Jesus Christ",
+          "to": "Christ Jesus",
+          "greek": "χριστοῦ Ἰησοῦ"
+        }
+      ],
+      "why": "Restore the shared Greek order Christ Jesus, which the translators transposed, as the RV, Boyd’s ASV, TCENT and the Latin keep it: a decision about the names’ order, not their referent.",
+      "evidence": {
+        "rv": {
+          "ref": "EPH 3:1",
+          "quote": "the prisoner of Christ Jesus"
+        },
+        "boyd-asv": {
+          "ref": "EPH 3:1",
+          "quote": "the prisoner of Christ Jesus"
+        },
+        "tcent": {
+          "ref": "EPH 3:1",
+          "quote": "a prisoner for Christ Jesus"
+        },
+        "vulgate": {
+          "ref": "EPH 3:1",
+          "quote": "vinctus Christi Jesu"
         }
       }
     },
@@ -7208,6 +7184,36 @@
         "boyd-asv": {
           "ref": "PHP 1:14",
           "quote": "most of the brethren in the Lord"
+        }
+      }
+    },
+    "PHP 1:26": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "PHP 1:26",
+          "from": "Jesus Christ",
+          "to": "Christ Jesus",
+          "greek": "χριστῷ Ἰησοῦ"
+        }
+      ],
+      "why": "Restore the shared Greek order Christ Jesus, which the translators transposed, as the RV, Boyd’s ASV, TCENT and the Latin keep it: a decision about the names’ order, not their referent.",
+      "evidence": {
+        "rv": {
+          "ref": "PHP 1:26",
+          "quote": "abound in Christ Jesus"
+        },
+        "boyd-asv": {
+          "ref": "PHP 1:26",
+          "quote": "abound in Christ Jesus"
+        },
+        "tcent": {
+          "ref": "PHP 1:26",
+          "quote": "abound in Christ Jesus"
+        },
+        "vulgate": {
+          "ref": "PHP 1:26",
+          "quote": "in Christo Jesu"
         }
       }
     },
@@ -7485,28 +7491,6 @@
         }
       }
     },
-    "1TH 2:16": {
-      "kind": "edit",
-      "edits": [
-        {
-          "ref": "1TH 2:16",
-          "from": "for the wrath",
-          "to": "but the wrath",
-          "greek": "ἔφθασεν δὲ"
-        }
-      ],
-      "why": "The shared δέ contrasts the coming wrath with their continuing accumulation of sins. But expresses that relation rather than the causal for, as Boyd and the RV render it.",
-      "evidence": {
-        "boyd-asv": {
-          "ref": "1TH 2:16",
-          "quote": "but the wrath is come upon them to the uttermost."
-        },
-        "rv": {
-          "ref": "1TH 2:16",
-          "quote": "but the wrath is come upon them to the uttermost."
-        }
-      }
-    },
     "1TH 4:1#1": {
       "units": [
         {
@@ -7721,28 +7705,6 @@
         "rv": {
           "ref": "2TI 1:15",
           "quote": "of whom are Phygelus and Hermogenes."
-        }
-      }
-    },
-    "2TI 1:18": {
-      "kind": "edit",
-      "edits": [
-        {
-          "ref": "2TI 1:18",
-          "from": "unto me",
-          "to": "",
-          "greek": "ἐν Ἐφέσῳ διηκόνησεν"
-        }
-      ],
-      "why": "The shared clause reports his ministry at Ephesus without naming its recipient. Omit the supplied unto me, which narrows the service to Paul; Boyd and the RV likewise leave the recipient unspecified.",
-      "evidence": {
-        "boyd-asv": {
-          "ref": "2TI 1:18",
-          "quote": "he ministered at Ephesus"
-        },
-        "rv": {
-          "ref": "2TI 1:18",
-          "quote": "he ministered at Ephesus"
         }
       }
     },
@@ -14485,6 +14447,643 @@
           "quote": "can (T"
         }
       }
+    },
+    "REV 17:9": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "REV 17:9",
+          "from": "And here",
+          "to": "Here",
+          "greek": "Ὧδε ὁ νοῦς"
+        }
+      ],
+      "why": "Carry out Pierpont’s omission of the supplied And with an explicit sentence opening: Here replaces And here, declaring the capitalization rather than adapting a following word in code.",
+      "evidence": {
+        "pierpont": {
+          "entry": 874,
+          "quote": "And"
+        },
+        "rv": {
+          "ref": "REV 17:9",
+          "quote": "Here is the mind"
+        },
+        "boyd-asv": {
+          "ref": "REV 17:9",
+          "quote": "Here is the mind"
+        },
+        "tcent": {
+          "ref": "REV 17:9",
+          "quote": "This calls for a mind"
+        }
+      },
+      "former": {
+        "witness": "vulgate",
+        "ref": "REV 17:9",
+        "quote": "Et hic est sensus",
+        "why": "The Latin begins Et and supports the displaced conjunction And."
+      }
+    }
+  },
+  "instructions": {
+    "pierpont 23": {
+      "kind": "edit",
+      "greek": [
+        "Βεελζεβοὺλ"
+      ],
+      "why": "Pierpont’s Beelzebul renders the Byzantine Βεελζεβοὺλ; the unit carries it out, and its note names the Complutensian text, the edition that prints Beelzebub here."
+    },
+    "pierpont 29": {
+      "kind": "edit",
+      "greek": [
+        "Βεελζεβοὺλ"
+      ],
+      "why": "Both texts name the prince of the devils Βεελζεβοὺλ; the King James Beelzebub takes the Latin form of the name rather than rendering the Greek. Print Beelzebul, as Pierpont and Boyd do and as Matthew 10:25 already reads.",
+      "former": {
+        "witness": "vulgate",
+        "ref": "MAT 12:24",
+        "quote": "Beelzebub",
+        "why": "The Vulgate reads Beelzebub, the form the translators kept against the Greek Beelzebul."
+      },
+      "evidence": {
+        "boyd-asv": {
+          "ref": "MAT 12:24",
+          "quote": "This man doth not cast out demons, but by Beelzebul the prince of demons"
+        }
+      }
+    },
+    "pierpont 30": {
+      "kind": "edit",
+      "greek": [
+        "Βεελζεβοὺλ"
+      ],
+      "why": "The shared Βεελζεβοὺλ resumes the Pharisees’ charge of verse 24 and takes the same name: Beelzebul for the Latin form Beelzebub, as Pierpont and Boyd render it.",
+      "former": {
+        "witness": "vulgate",
+        "ref": "MAT 12:27",
+        "quote": "Beelzebub",
+        "why": "The Vulgate reads Beelzebub, the form the translators kept against the Greek Beelzebul."
+      },
+      "evidence": {
+        "boyd-asv": {
+          "ref": "MAT 12:27",
+          "quote": "And if I by Beelzebul cast out demons"
+        }
+      }
+    },
+    "pierpont 77": {
+      "kind": "edit",
+      "greek": [
+        "Βεελζεβοὺλ"
+      ],
+      "why": "The scribes’ charge names Βεελζεβοὺλ in both texts; the King James Beelzebub follows the Latin form rather than the Greek. Print Beelzebul, as Pierpont and Boyd do and as the parallel at Matthew 12:24 now reads.",
+      "former": {
+        "witness": "vulgate",
+        "ref": "MRK 3:22",
+        "quote": "Beelzebub",
+        "why": "The Vulgate reads Beelzebub, the form the translators kept against the Greek Beelzebul."
+      },
+      "evidence": {
+        "boyd-asv": {
+          "ref": "MRK 3:22",
+          "quote": "He hath Beelzebul"
+        }
+      }
+    },
+    "pierpont 114": {
+      "kind": "nochange",
+      "greek": [
+        "εἷς ὢν τῶν δώδεκα"
+      ],
+      "why": "The apposition one of the twelve already states Judas’s membership; who was makes the participle explicit without changing the relation expressed in King James English."
+    },
+    "pierpont 116": {
+      "kind": "edit",
+      "greek": [
+        "ἡ παιδίσκη"
+      ],
+      "why": "The shared definite article identifies the maid already introduced in verse 66. Boyd and the RV both retain that reference with the maid.",
+      "evidence": {
+        "boyd-asv": {
+          "ref": "MRK 14:69",
+          "quote": "And the maid saw him again"
+        },
+        "rv": {
+          "ref": "MRK 14:69",
+          "quote": "And the maid saw him"
+        }
+      }
+    },
+    "pierpont 117": {
+      "kind": "edit",
+      "carrier": "MRK 15:3#1",
+      "greek": [
+        "Καὶ κατηγόρουν αὐτοῦ οἱ ἀρχιερεῖς πολλά"
+      ],
+      "why": "RP omits the clause but he answered nothing; the reading at this unit carries Pierpont’s omission out with the Byzantine text, and the accusation before it remains."
+    },
+    "pierpont 162": {
+      "kind": "edit",
+      "greek": [
+        "Βεελζεβοὺλ"
+      ],
+      "why": "Both texts name Βεελζεβοὺλ as the prince of the devils, and Beelzebub is the Latin form, not the Greek’s. Print Beelzebul, as Pierpont and Boyd do, matching the parallels in Matthew and Mark.",
+      "former": {
+        "witness": "vulgate",
+        "ref": "LUK 11:15",
+        "quote": "Beelzebub",
+        "why": "The Vulgate reads Beelzebub, the form the translators kept against the Greek Beelzebul."
+      },
+      "evidence": {
+        "boyd-asv": {
+          "ref": "LUK 11:15",
+          "quote": "By Beelzebul the prince of demons"
+        }
+      }
+    },
+    "pierpont 163": {
+      "kind": "edit",
+      "greek": [
+        "Βεελζεβοὺλ"
+      ],
+      "why": "Jesus repeats the accusers’ Βεελζεβοὺλ of verse 15, shared by both texts, so the name follows that verse: Beelzebul for the Latin form Beelzebub, as Pierpont and Boyd render it.",
+      "former": {
+        "witness": "vulgate",
+        "ref": "LUK 11:18",
+        "quote": "Beelzebub",
+        "why": "The Vulgate reads Beelzebub, the form the translators kept against the Greek Beelzebul."
+      },
+      "evidence": {
+        "boyd-asv": {
+          "ref": "LUK 11:18",
+          "quote": "because ye say that I cast out demons by Beelzebul"
+        }
+      }
+    },
+    "pierpont 164": {
+      "kind": "edit",
+      "greek": [
+        "Βεελζεβοὺλ"
+      ],
+      "why": "The shared Βεελζεβοὺλ continues the argument of verse 18 and takes the same name, Beelzebul for the Latin form Beelzebub, as Pierpont and Boyd render it.",
+      "former": {
+        "witness": "vulgate",
+        "ref": "LUK 11:19",
+        "quote": "Beelzebub",
+        "why": "The Vulgate reads Beelzebub, the form the translators kept against the Greek Beelzebul."
+      },
+      "evidence": {
+        "boyd-asv": {
+          "ref": "LUK 11:19",
+          "quote": "And if I by Beelzebul cast out demons"
+        }
+      }
+    },
+    "pierpont 171": {
+      "kind": "nochange",
+      "greek": [
+        "τοὺς ἀπεσταλμένους πρὸς αὐτήν"
+      ],
+      "why": "The KJV turns the description of Jerusalem into direct address throughout the clause. Thee keeps that apostrophe coherent; changing the pronoun alone to her would mix its grammatical persons without recovering a different referent."
+    },
+    "pierpont 196": {
+      "kind": "edit",
+      "greek": [
+        "καταξιωθέντες"
+      ],
+      "why": "Adopt Pierpont’s are accounted worthy for the aorist participle, the King James diction the RV and Boyd also use; TCENT has are considered worthy. The King James shall be accounted is prospective, which the participle is not.",
+      "former": {
+        "witness": "vulgate",
+        "ref": "LUK 20:35",
+        "quote": "qui digni habebuntur",
+        "why": "Latin habebuntur is future passive and supports the former shall be accounted."
+      },
+      "evidence": {
+        "rv": {
+          "ref": "LUK 20:35",
+          "quote": "are accounted worthy"
+        },
+        "boyd-asv": {
+          "ref": "LUK 20:35",
+          "quote": "are accounted worthy"
+        },
+        "tcent": {
+          "ref": "LUK 20:35",
+          "quote": "are considered worthy"
+        }
+      }
+    },
+    "pierpont 265": {
+      "kind": "edit",
+      "greek": [
+        "μία ποίμνη"
+      ],
+      "why": "The shared ποίμνη names the flock of sheep, distinct from the enclosure αὐλή earlier in the verse. Follow Boyd’s ASV and the RV with one flock, retaining this fold for the earlier enclosure.",
+      "former": {
+        "witness": "vulgate",
+        "ref": "JHN 10:16",
+        "quote": "unum ovile",
+        "why": "Latin unum ovile means one fold, supporting the displaced noun fold rather than the corrected flock."
+      },
+      "evidence": {
+        "boyd-asv": {
+          "ref": "JHN 10:16",
+          "quote": "one flock, one shepherd."
+        },
+        "rv": {
+          "ref": "JHN 10:16",
+          "quote": "one flock, one shepherd."
+        }
+      }
+    },
+    "pierpont 276": {
+      "kind": "edit",
+      "greek": [
+        "τὸν λόγον μου"
+      ],
+      "why": "The Greek has singular word, not plural words. Pierpont’s singular preserves that number; the Latin sermonem is singular too and does not support the displaced plural."
+    },
+    "pierpont 297": {
+      "kind": "nochange",
+      "greek": [
+        "ἄνδρα ἀπὸ τοῦ θεοῦ ἀποδεδειγμένον"
+      ],
+      "why": "Approved here means demonstrated or proved, with the miracles naming the evidence, rather than merely regarded favourably. Pierpont’s attested by restates that meaning without a necessary correction of the KJV construction."
+    },
+    "pierpont 319": {
+      "kind": "nochange",
+      "greek": [
+        "συνήλασεν αὐτοὺς εἰς εἰρήνην"
+      ],
+      "why": "Would have set them at one again expresses the attempt to reconcile men who reject Moses in the next verse. Urged them to peace makes that attempt explicit but does not establish a different meaning at the KJV’s level of literalness."
+    },
+    "pierpont 326": {
+      "kind": "nochange",
+      "greek": [
+        "καθὼς διετάξατο ὁ λαλῶν τῷ Μωσῇ"
+      ],
+      "why": "He had appointed, speaking unto Moses already identifies the speaker as the one who commanded. Pierpont’s recasting makes that identification a relative clause but does not correct its referent or command."
+    },
+    "pierpont 345": {
+      "kind": "edit",
+      "carrier": "ACT 10:20",
+      "greek": [
+        "ἀλλὰ ἀναστὰς"
+      ],
+      "why": "The shared ἀλλά introduces a contrasting command, not the inference therefore. The reading at Acts 10:20 carries it out with a lowercase but arise inside the King James sentence."
+    },
+    "pierpont 380": {
+      "kind": "edit",
+      "greek": [
+        "τοῦ κυρίου"
+      ],
+      "why": "The shared Greek names the word of the Lord (τοῦ κυρίου), leaving that divine title and its reference intact. God replaces the stated title with another designation and can resolve its reference more narrowly. Restore the Lord while preserving the remaining King James sentence.",
+      "former": {
+        "witness": "vulgate",
+        "ref": "ACT 19:20",
+        "quote": "verbum Dei",
+        "why": "Latin verbum Dei means word of God and supports the displaced God rather than the Greek title the Lord."
+      },
+      "evidence": {
+        "rv": {
+          "ref": "ACT 19:20",
+          "quote": "word of the Lord"
+        },
+        "boyd-asv": {
+          "ref": "ACT 19:20",
+          "quote": "word of the Lord"
+        }
+      }
+    },
+    "pierpont 400": {
+      "kind": "edit",
+      "greek": [
+        "τὰ περὶ αὐτοῦ"
+      ],
+      "why": "The Greek identifies the matters concerning Paul with the definite plural ta, rather than indefinite something. Pierpont’s the things restores that object.",
+      "former": {
+        "witness": "vulgate",
+        "ref": "ACT 23:15",
+        "quote": "aliquid certius cognituri de eo",
+        "why": "Latin aliquid is indefinite and supports the displaced something rather than the definite plural the things."
+      }
+    },
+    "pierpont 407": {
+      "kind": "nochange",
+      "greek": [
+        "ἔμφοβος γενόμενος"
+      ],
+      "why": "Felix trembled expresses his becoming afraid in response to the judgment described. Became terrified is an alternative rendering of that fear rather than a necessary correction of the KJV idiom."
+    },
+    "pierpont 420": {
+      "kind": "edit",
+      "greek": [
+        "τοῖς πιστεύουσιν"
+      ],
+      "why": "The shared substantival participle identifies those who believe; it does not introduce a conditional if clause. Who preserves that relation to us with the least change, following Boyd and the RV.",
+      "evidence": {
+        "boyd-asv": {
+          "ref": "ROM 4:24",
+          "quote": "who believe on him"
+        },
+        "rv": {
+          "ref": "ROM 4:24",
+          "quote": "who believe on him"
+        }
+      }
+    },
+    "pierpont 423": {
+      "kind": "edit",
+      "greek": [
+        "χριστῷ Ἰησοῦ"
+      ],
+      "why": "Scrivener’s 1894 Appendix, p. 654, note 1, records the transposition of Christ Jesus to Jesus Christ in Tyndale and the Authorized Version as an apparent inadvertence. Restore the shared Greek order with Pierpont, the RV, Boyd’s ASV and TCENT.",
+      "evidence": {
+        "rv": {
+          "ref": "ROM 6:11",
+          "quote": "in Christ Jesus"
+        },
+        "boyd-asv": {
+          "ref": "ROM 6:11",
+          "quote": "in Christ Jesus"
+        },
+        "vulgate": {
+          "ref": "ROM 6:11",
+          "quote": "in Christo Jesu"
+        },
+        "tcent": {
+          "ref": "ROM 6:11",
+          "quote": "in Christ Jesus"
+        }
+      }
+    },
+    "pierpont 424": {
+      "kind": "edit",
+      "greek": [
+        "χριστῷ Ἰησοῦ"
+      ],
+      "why": "Follow Pierpont, the RV, Boyd’s ASV and TCENT in restoring the shared Greek order Christ Jesus, which the Latin also has: a decision about the names’ order, not their referent.",
+      "evidence": {
+        "rv": {
+          "ref": "ROM 6:23",
+          "quote": "in Christ Jesus our Lord"
+        },
+        "boyd-asv": {
+          "ref": "ROM 6:23",
+          "quote": "in Christ Jesus our Lord"
+        },
+        "vulgate": {
+          "ref": "ROM 6:23",
+          "quote": "in Christo Jesu"
+        },
+        "tcent": {
+          "ref": "ROM 6:23",
+          "quote": "in Christ Jesus our Lord"
+        }
+      }
+    },
+    "pierpont 439": {
+      "kind": "nochange",
+      "greek": [
+        "τὸν ἑαυτῶν τράχηλον"
+      ],
+      "why": "The shared singular neck with plural possessors is distributive: each risked his own neck, which the King James their own necks says. The RV, Boyd’s ASV and TCENT keep the plural, and so does the Latin.",
+      "evidence": {
+        "rv": {
+          "ref": "ROM 16:4",
+          "quote": "their own necks"
+        },
+        "boyd-asv": {
+          "ref": "ROM 16:4",
+          "quote": "their own necks"
+        },
+        "vulgate": {
+          "ref": "ROM 16:4",
+          "quote": "suas cervices"
+        },
+        "tcent": {
+          "ref": "ROM 16:4",
+          "quote": "their own necks"
+        }
+      }
+    },
+    "pierpont 458": {
+      "kind": "edit",
+      "greek": [
+        "γέγονα χαλκὸς ἠχῶν"
+      ],
+      "why": "Keep the Greek’s metaphor rather than the comparison the supplied as makes of it. Pierpont directs the omission, the RV and Boyd’s ASV print become sounding brass, and TCENT also keeps a metaphor.",
+      "former": {
+        "witness": "vulgate",
+        "ref": "1CO 13:1",
+        "quote": "factus sum velut æs sonans",
+        "why": "Latin velut explicitly supplies the comparison expressed by the former as."
+      },
+      "evidence": {
+        "rv": {
+          "ref": "1CO 13:1",
+          "quote": "I am become sounding brass"
+        },
+        "boyd-asv": {
+          "ref": "1CO 13:1",
+          "quote": "I am become sounding brass"
+        },
+        "tcent": {
+          "ref": "1CO 13:1",
+          "quote": "I am a noisy gong"
+        }
+      }
+    },
+    "pierpont 488": {
+      "kind": "edit",
+      "greek": [
+        "χριστῷ Ἰησοῦ"
+      ],
+      "why": "Follow Pierpont, the RV, Boyd’s ASV and TCENT in restoring the shared Greek order Christ Jesus, which the Latin also has: a decision about the names’ order, not their referent.",
+      "evidence": {
+        "rv": {
+          "ref": "GAL 5:6",
+          "quote": "For in Christ Jesus"
+        },
+        "boyd-asv": {
+          "ref": "GAL 5:6",
+          "quote": "For in Christ Jesus"
+        },
+        "vulgate": {
+          "ref": "GAL 5:6",
+          "quote": "in Christo Jesu"
+        },
+        "tcent": {
+          "ref": "GAL 5:6",
+          "quote": "For in Christ Jesus"
+        }
+      }
+    },
+    "pierpont 506": {
+      "kind": "nochange",
+      "greek": [
+        "τὴν ἀγάπην τὴν εἰς πάντας τοὺς ἁγίους"
+      ],
+      "why": "The supplied which ye have makes the attributive relation readable in the KJV construction and adds no different possessor or object. Removing those words is an optional compression of the same relation."
+    },
+    "pierpont 510": {
+      "kind": "edit",
+      "carrier": "COL 1:24#1",
+      "greek": [
+        "Νῦν χαίρω"
+      ],
+      "why": "RP omits the relative os, so Now I rejoice begins a new sentence; the reading at this unit carries Pierpont’s change out, closing verse 23 with a full stop."
+    },
+    "pierpont 520": {
+      "kind": "edit",
+      "greek": [
+        "τοῦ καλοῦντος ὑμᾶς"
+      ],
+      "why": "Paul grounds the exhortation to walk worthily in God’s calling to his kingdom and glory. Pierpont’s calleth presents God as the caller, as the RV and Boyd do, rather than asserting only a completed past call.",
+      "former": {
+        "witness": "vulgate",
+        "ref": "1TH 2:12",
+        "quote": "qui vocavit vos",
+        "why": "Latin vocavit is perfect and supports the former hath called."
+      },
+      "evidence": {
+        "rv": {
+          "ref": "1TH 2:12",
+          "quote": "who calleth you"
+        },
+        "boyd-asv": {
+          "ref": "1TH 2:12",
+          "quote": "who calleth you"
+        }
+      }
+    },
+    "pierpont 521": {
+      "kind": "nochange",
+      "greek": [
+        "ἐδέξασθε οὐ λόγον ἀνθρώπων"
+      ],
+      "why": "The supplied it and as express the predicate relation: the message was received as God’s word rather than men’s. Removing both would obscure that contrast with the message they did receive."
+    },
+    "pierpont 522": {
+      "kind": "edit",
+      "greek": [
+        "ἔφθασεν δὲ"
+      ],
+      "why": "The shared δέ contrasts the wrath that has overtaken them with their continuing accumulation of sins. But expresses that relation rather than the causal for, as Boyd and the RV render it.",
+      "former": {
+        "witness": "vulgate",
+        "ref": "1TH 2:16",
+        "quote": "pervenit enim ira Dei",
+        "why": "Latin enim supplies the explanatory or causal for, and ira supplies the echoed wrath in the former phrase for the wrath."
+      },
+      "evidence": {
+        "boyd-asv": {
+          "ref": "1TH 2:16",
+          "quote": "but the wrath is come upon them to the uttermost."
+        },
+        "rv": {
+          "ref": "1TH 2:16",
+          "quote": "but the wrath is come upon them to the uttermost."
+        }
+      }
+    },
+    "pierpont 525": {
+      "kind": "nochange",
+      "greek": [
+        "ἵνα περισσεύητε μᾶλλον"
+      ],
+      "why": "The KJV’s that as ... so ye would expresses the requested result and its comparison with their instruction. Replacing so alone with that repeats that without needing to change the relation."
+    },
+    "pierpont 542": {
+      "kind": "edit",
+      "greek": [
+        "ἐν Ἐφέσῳ διηκόνησεν"
+      ],
+      "why": "The shared clause reports his ministry at Ephesus without naming its recipient. Omit the supplied unto me, which narrows the service to Paul; Boyd and the RV likewise leave the recipient unspecified.",
+      "former": {
+        "witness": "vulgate",
+        "ref": "2TI 1:18",
+        "quote": "ministravit mihi",
+        "why": "Latin ministravit mihi means ministered unto me; mihi explicitly names the recipient omitted from the shared Greek."
+      },
+      "evidence": {
+        "boyd-asv": {
+          "ref": "2TI 1:18",
+          "quote": "he ministered at Ephesus"
+        },
+        "rv": {
+          "ref": "2TI 1:18",
+          "quote": "he ministered at Ephesus"
+        }
+      }
+    },
+    "pierpont 550": {
+      "kind": "nochange",
+      "greek": [
+        "Καὶ γάρ ἐσμεν εὐηγγελισμένοι"
+      ],
+      "why": "As well as unto them already carries the comparison introduced by kai ... kathaper kakeinoi. Adding also duplicates the comparison rather than supplying a missing participant or assertion."
+    },
+    "pierpont 566": {
+      "kind": "nochange",
+      "greek": [
+        "ἐν τῇ καρδίᾳ ὑμῶν"
+      ],
+      "why": "The shared singular heart with plural your is distributive, which the King James your hearts says. The RV and Boyd’s ASV have the singular and TCENT the plural; keep the King James idiom rather than impose the Greek number.",
+      "evidence": {
+        "rv": {
+          "ref": "JAS 3:14",
+          "quote": "in your heart"
+        },
+        "boyd-asv": {
+          "ref": "JAS 3:14",
+          "quote": "in your heart"
+        },
+        "vulgate": {
+          "ref": "JAS 3:14",
+          "quote": "in cordibus vestris"
+        },
+        "tcent": {
+          "ref": "JAS 3:14",
+          "quote": "in your hearts"
+        }
+      }
+    },
+    "pierpont 810": {
+      "kind": "nochange",
+      "greek": [
+        "Εἴ τις ἔχει αἰχμαλωσίαν, ὑπάγει"
+      ],
+      "why": "He that is the KJV’s conditional formulation for ei tis here and in the parallel clause. Keep it while the separate reading corrects the changed captivity construction; if anyone also departs from the edition’s King James diction."
+    },
+    "pierpont 859": {
+      "kind": "nochange",
+      "greek": [
+        "ἐκ τῶν πόνων αὐτῶν καὶ ἐκ τῶν ἑλκῶν αὐτῶν"
+      ],
+      "why": "Because of governs both pains and sores in the coordinated English phrase. Repeating the preposition would express no additional relation."
+    },
+    "pierpont 874": {
+      "kind": "edit",
+      "greek": [
+        "Ὧδε ὁ νοῦς"
+      ],
+      "why": "Omit the supplied And: neither Greek text has a conjunction, and the sentence is complete without it. The RV and Boyd open Here is the mind, and TCENT This calls for a mind. The reading at Revelation 17:9 declares the new sentence opening explicitly.",
+      "evidence": {
+        "rv": {
+          "ref": "REV 17:9",
+          "quote": "Here is the mind"
+        },
+        "boyd-asv": {
+          "ref": "REV 17:9",
+          "quote": "Here is the mind"
+        },
+        "tcent": {
+          "ref": "REV 17:9",
+          "quote": "This calls for a mind"
+        }
+      },
+      "carrier": "REV 17:9"
     }
   },
   "structure": {
@@ -14671,22 +15270,6 @@
       "why": "The printed RP2026 (p. 551) and Boyd's apparatus both give Scrivener τὸ πλοῦτον, against the τὸν πλοῦτον of Stephanus and RP2026; Robinson's electronic text, the accented transcription that follows it and his 2018 collation have τὸν. The English is unaffected."
     }
   },
-  "note_witnesses": [
-    {
-      "witness": "vulgate",
-      "reading": "Beelzebub",
-      "notes": [
-        "MAT 10:25#1 TR",
-        "MAT 12:24 rendering",
-        "MAT 12:27 rendering",
-        "MRK 3:22 rendering",
-        "LUK 11:15 rendering",
-        "LUK 11:18 rendering",
-        "LUK 11:19 rendering"
-      ],
-      "why": "Cite the traditional Vulgate's Beelzebub uniformly at all seven occurrences, rather than the Complutensian Greek edition at Matthew 10:25 and an unnamed alternative English rendering elsewhere. Scrivener, Greek New Testament (1894), Appendix, p. 649 (PDF p. 665), records Beelzebub in the Complutensian here alone and in the Vulgate throughout (“x. 25 Βεελζεβοὺβ] Compl. hic tantum, Vulg. passim, Tynd. Βεελζεβοὺλ Plant. Bez. ceteri omnes”); the note names no Greek edition at Matthew 10:25, since the Vulgate is cited for the English. The Latin text at https://www.drbo.org/lvb/chapter/47010.htm (10:25), 47012.htm (12:24, 27), 48003.htm (3:22), and 49011.htm (11:15, 18, 19) confirms each occurrence. This identifies a witness to the former words, without claiming the KJV's immediate source or changing the Greek classification; the modern Nova Vulgata is not the witness cited."
-    }
-  ],
   "editions": {
     "1JN 1:4#1 TR": {
       "label": "beza",
@@ -15072,6 +15655,11 @@
       "label": "beza",
       "reads": "καὶ ἔχουσιν",
       "why": "Scrivener’s Greek text (1894), p. 618 (PDF p. 634), and Beza 1598 both read the words given, which the note gives back as “And they had”; Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 656, PDF p. 672) records only their elision: “ix. 11 ἐπ’ αὐτῶν] Compl. Er. Ald. Col. Bez. 1. ἐφ’ αὐτῶν St. Plant. Bez. 2. 3. 4. 5.”, which the English cannot show, and for which the apparatuses give the reading as Scrivener’s alone."
+    },
+    "MAT 10:25#1 TR": {
+      "label": "complutensian",
+      "reads": "Βεελζεβοὺβ",
+      "why": "Scrivener’s appendix of the places where his text departs from Beza 1598 (Greek New Testament, 1894, Appendix, p. 649, PDF p. 665) gives the Complutensian text alone among the Greek editions for Beelzebub here: “x. 25 Βεελζεβοὺβ] Compl. hic tantum, Vulg. passim, Tynd. Βεελζεβοὺλ Plant. Bez. ceteri omnes.” The Vulgate has the form throughout, and the six other notes on the name cite it (instructions), since there the Greek texts agree; here the Greek differs, and the note names the edition that prints it."
     },
     "ROM 16:20#1 TR": {
       "label": "beza",

@@ -75,7 +75,7 @@ def test_matthew_11_16_shared_greek_changes_have_no_unit(
     # concern retained words for markets and fellows.
     for entry in (25, 26):
         row = instructions[(PIERPONT, entry)]
-        assert row["compatibility"] == "out-of-scope"
+        assert row["compatibility"] == "no-greek-unit"
         assert row["units"] == []
 
 

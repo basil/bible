@@ -228,7 +228,7 @@ def attach(
                 unattached.append(edit["word_range"])
         row["units"] = list(attached.values())
         if not any(by_ref[r] for r in row.get("refs", []) if r):
-            row["scope"] = "out-of-scope"
+            row["scope"] = "no-greek-unit"
             row["reason"] = row.get("reason") or "no Greek unit in the verse"
         elif attached and not unattached:
             row["scope"] = "greek"
@@ -311,8 +311,27 @@ def compatibility(
             "rendering": rendering,
         }
 
-    if instruction.get("scope") == "out-of-scope":
-        return verdict("out-of-scope", instruction.get("reason"))
+    if instruction.get("scope") == "no-greek-unit":
+        # The row matches no difference between the Greek texts. Where its
+        # words bind, the rendering check can flag a suspected contradiction,
+        # but only an editorial decision settles it. A hand placement already
+        # has the editor's reason.
+        reason = instruction.get("reason")
+        bound = [
+            e
+            for e in instruction.get("edits", [])
+            if e.get("bind") == "unique" and e.get("ref")
+        ]
+        if checker is not None and instruction.get("method") != "hand":
+            for e in bound:
+                found, why = checker.check(e, [], bound)
+                if found == "contradicted":
+                    return verdict(
+                        "no-greek-unit",
+                        f"{reason}; the rendering check: {why}",
+                        rendering="contradicted",
+                    )
+        return verdict("no-greek-unit", reason)
     if instruction.get("role") == "agrees":
         return verdict("agrees", "the KJV already reads with the Majority here")
     edits = instruction.get("edits", [])
@@ -717,9 +736,9 @@ def constructions(
     edits_of: dict[int, list[InstructionEdit]] = {}
     by_book: defaultdict[str, list[Instruction]] = defaultdict(list)
     for row in instructions:
-        # A row placed out of scope is about other Greek; it is not part of a
-        # construction (a review placed it so, or it has no unit at all).
-        if row.get("compatibility") == "out-of-scope":
+        # A row with no Greek unit takes no part in a unit construction,
+        # whether placed by hand or attached automatically.
+        if row.get("compatibility") == "no-greek-unit":
             continue
         own = edits_of[id(row)] = bound(row)
         if row.get("compatibility") == "unbound":

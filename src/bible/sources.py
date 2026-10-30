@@ -161,6 +161,12 @@ SOURCES: Mapping[str, Pinned] = {
         "retrieved": "2026-10-06",
         "sha256": "ed587388c6a1935a8a61b8a44906587d0dfaa1712fa8b0b802d7ace5ced91175",
     },
+    "vulgate": {
+        "archive": "sources/latVUC_usfm.zip",
+        "url": "https://ebible.org/Scriptures/latVUC_usfm.zip",
+        "retrieved": "2026-10-29",
+        "sha256": "439d1789e021e3209125270dd2e3476f9ff7e99fea2a0349778655e4e40b7826",
+    },
     "asv": {
         "archive": "sources/eng-asv_usfm.zip",
         "url": "https://ebible.org/Scriptures/eng-asv_usfm.zip",
@@ -434,6 +440,7 @@ def byzantine_inputs(pinned: Mapping[str, bytes]) -> MappingProxyType[str, Conte
         "tcgnt": ("tcgnt", "", (*usx, "095XXC.usx")),
         "tcent": ("tcent", "", usx),
         "rv": ("rv", "", usfm),
+        "vulgate": ("vulgate", "", usfm),
         "asv": ("asv", "", usfm),
         "web": ("web", "", usfm),
         "boyd_asv": ("boyd_asv", "", ()),

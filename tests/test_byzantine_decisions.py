@@ -6,13 +6,16 @@ from __future__ import annotations
 
 import copy
 import re
+from collections import Counter
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import replace
+from functools import partial
 from typing import Any
 
 import pytest
 
 import bible.pipeline
+from bible import scripture, usj
 from bible.byzantine import (
     ADDITIONAL,
     BOYD_ASV,
@@ -21,10 +24,14 @@ from bible.byzantine import (
     RV,
     decide,
     decisions,
+    received,
     stages,
     verify,
 )
+from bible.byzantine.english import verses_of
 from bible.byzantine.rows import (
+    BoundEdit,
+    Carrier,
     FaaRow,
     Instruction,
     Override,
@@ -119,15 +126,25 @@ def sample(readings: list[Entry]) -> Callable[[], Entry]:
 def test_the_real_readings_compile_one_entry_each(
     byzantine: Reconciliation, readings: list[Entry]
 ) -> None:
-    assert len(byzantine.decisions.overrides) == len(readings)
-    for compiled, written in zip(byzantine.decisions.overrides, readings):
+    # The readings written, then the corrections read from Pierpont.
+    expanded = readings + decisions.instruction_entries(
+        byzantine.decisions.instruction_decisions,
+        byzantine.instructions.rows,
+        byzantine.greek,
+        byzantine.decisions.instruction_carriers,
+        lambda label, evidence, refs: None,
+    )
+    assert len(byzantine.decisions.overrides) == len(expanded)
+    for compiled, written in zip(byzantine.decisions.overrides, expanded, strict=True):
         assert compiled["id"] == written["id"]
         assert compiled["id"] == (
             decisions.override_id(compiled["unit_ids"])
             if compiled["unit_ids"]
             else compiled["bound"][0]["ref"]
         )
-        assert len(compiled["bound"]) == len(written.get("edits", []))
+        assert len(compiled["bound"]) == len(
+            written.get("edits") or written.get("instruction", {}).get("edits", [])
+        )
 
 
 def test_every_reading_edit_binds_to_the_pinned_kjv(
@@ -464,7 +481,10 @@ def test_kind_and_edits_must_agree(
     bad = sample()
     bad["kind"] = "nochange"
     _, errors = validate([bad])
-    assert len(errors) == 1 and "kind edit needs edits, nochange has none" in errors[0]
+    assert (
+        len(errors) == 1
+        and "kind edit needs edits or an instruction, nochange has none" in errors[0]
+    )
     bad = sample()
     bad["edits"] = []
     _, errors = validate([bad])
@@ -945,7 +965,7 @@ def test_place_reports_a_stale_placement(
     ]
 
 
-def test_place_with_a_null_unit_takes_the_row_out_of_scope(
+def test_place_with_a_null_unit_marks_the_row_as_having_no_greek_unit(
     reports: list[Report], ledger: list[Unit]
 ) -> None:
     row = next(r for r in reports if r.get("units"))
@@ -961,7 +981,7 @@ def test_place_with_a_null_unit_takes_the_row_out_of_scope(
     changed = placed_row(placed, row)
     assert (
         changed["units"] == []
-        and changed["scope"] == "out-of-scope"
+        and changed["scope"] == "no-greek-unit"
         and changed["reason"] == "Shared Greek."
     )
 
@@ -987,7 +1007,7 @@ def test_place_leaves_the_input_instruction_edits_unchanged(
     }
     placed, errors, _ = decisions.place([row], ledger, [decision])
     assert errors == []
-    assert placed[0]["scope"] == "out-of-scope"
+    assert placed[0]["scope"] == "no-greek-unit"
     assert row == original
 
 
@@ -1212,3 +1232,432 @@ def test_reading_units_need_both_kinds_of_claim(
     bad[field] = []
     _, errors = validate([bad])
     assert len(errors) == 1 and "wording and grammar go with units" in errors[0]
+
+
+# Pierpont's category-c instructions (edition/byzantine.json instructions), and
+# the version a correction of shared Greek cites for its former words (former)
+type Declared = dict[str, dict[str, Any]]
+
+
+def declared_of(found: Reconciliation) -> Declared:
+    return {
+        k: copy.deepcopy(dict(v))
+        for k, v in found.decisions.instruction_decisions.items()
+    }
+
+
+def instruction_entries(
+    found: Reconciliation, declared: Mapping[str, Mapping[str, Any]]
+) -> list[dict[str, Any]]:
+    """The readings the decisions add, checked as the decisions stage checks
+    them, with the evidence checker the stage uses."""
+    return decisions.instruction_entries(
+        declared,
+        found.decisions.instructions,
+        found.greek,
+        found.decisions.instruction_carriers,
+        partial(
+            decisions.evidence_checked,
+            kjv=found.english.kjv,
+            witness_rows=decisions.witness_rows(
+                found.apparatuses.reports, found.instructions.rows
+            ),
+            texts=found.english.texts,
+            supplied=found.english.supplied,
+            revision_citations=found.english.revision_citations,
+            faa_rows=found.apparatuses.faa_rows,
+        ),
+    )
+
+
+def readings_of(found: Reconciliation) -> list[Override]:
+    """The editor's readings compiled, without the instructions read as readings."""
+    return [o for o in found.decisions.overrides if "instruction" not in o]
+
+
+def test_every_category_c_row_is_decided(byzantine: Reconciliation) -> None:
+    declared = byzantine.decisions.instruction_decisions
+    assert set(declared) == set(decisions.category_c_rows(byzantine.instructions.rows))
+    assert len(declared) == 39
+    assert Counter(e["kind"] for e in declared.values()) == {"edit": 25, "nochange": 14}
+    # The edits that execute themselves are overrides keyed by their verse;
+    # the others are their unit's, or a reading's that took the construction
+    # (Mark 15:3, Colossians 1:24, in other words than Pierpont's) or that
+    # carries out the edit word for word at a verse with no unit (Acts 10:20).
+    added = instruction_entries(byzantine, declared)
+    assert len(added) == 20
+    compiled = {o["id"]: o for o in byzantine.decisions.overrides}
+    for entry in added:
+        override = compiled[entry["id"]]
+        assert override["instruction"] is entry["instruction"]
+        row = next(
+            r for r in byzantine.verified.dispositions if r["unit"] == entry["id"]
+        )
+        assert row["disposition"] == "shared" and row["execution"] == "applied"
+    carriers = byzantine.decisions.instruction_carriers
+    assert set(carriers) == {k for k, e in declared.items() if e["kind"] == "edit"}
+    assert {k: c for k, c in carriers.items() if c["kind"] != "itself"} == {
+        "pierpont 23": {"kind": "unit", "ids": ["MAT 10:25#1"]},
+        "pierpont 117": {"kind": "reading", "ids": ["MRK 15:3#1"]},
+        "pierpont 345": {"kind": "reading", "ids": ["ACT 10:20"]},
+        "pierpont 510": {"kind": "reading", "ids": ["COL 1:24#1"]},
+        "pierpont 874": {"kind": "reading", "ids": ["REV 17:9"]},
+    }
+    assert {c["ids"][0] for c in carriers.values() if c["kind"] == "itself"} == {
+        e["id"] for e in added
+    }
+
+
+@pytest.mark.parametrize(
+    ("change", "error"),
+    [
+        (lambda d: d.pop("pierpont 276"), "rows differ"),
+        (lambda d: d.update({"pierpont 99999": d["pierpont 276"]}), "rows differ"),
+        (lambda d: d["pierpont 276"].update(greek=["λέξεις ἀνύπαρκτοι"]), "once"),
+        (
+            lambda d: d["pierpont 276"].update(
+                greek=["τὸν λόγον μου", "τὸν λόγον μου"]
+            ),
+            "needs its Greek",
+        ),
+        # The former version goes on the reading that makes the edit.
+        (
+            lambda d: d["pierpont 345"].update(former=d["pierpont 29"]["former"]),
+            "goes on the reading",
+        ),
+        (
+            lambda d: d["pierpont 23"].update(former=d["pierpont 29"]["former"]),
+            "goes on the reading",
+        ),
+        # Evidence is read from its source.
+        (
+            lambda d: d["pierpont 566"]["evidence"]["rv"].update(
+                quote="imaginary wording"
+            ),
+            "not in the verse once",
+        ),
+        (
+            lambda d: d["pierpont 566"]["evidence"]["rv"].update(ref="JAS 3:15"),
+            "not in the verse once",
+        ),
+        (
+            lambda d: d["pierpont 566"]["evidence"].update(
+                unknown={"ref": "JAS 3:14", "quote": "heart"}
+            ),
+            "unknown witness",
+        ),
+    ],
+)
+def test_a_decision_must_fit_its_row_and_its_sources(
+    byzantine: Reconciliation, change: Any, error: str
+) -> None:
+    declared = declared_of(byzantine)
+    change(declared)
+    with pytest.raises(CheckFailed, match=error):
+        instruction_entries(byzantine, declared)
+
+
+def test_an_instruction_executes_only_where_it_binds_to_shared_greek(
+    byzantine: Reconciliation,
+) -> None:
+    declared = declared_of(byzantine)
+    rows = copy.deepcopy(list(byzantine.instructions.rows))
+    row = next(i for i in rows if i["source"] == "pierpont" and i["entry"] == 276)
+    row["bind"] = "ambiguous"
+    with pytest.raises(CheckFailed, match="does not bind uniquely"):
+        decisions.instruction_entries(
+            declared,
+            rows,
+            byzantine.greek,
+            byzantine.decisions.instruction_carriers,
+            lambda label, evidence, refs: None,
+        )
+    # A reading at the verse that does not carry the correction out leaves it
+    # no room; a reading at a unit of the verse leaves it to carry itself.
+    placed = byzantine.decisions.instructions
+    readings = readings_of(byzantine)
+    kjv = byzantine.english.kjv
+    stray: Override = {
+        "id": "JHN 14:23",
+        "unit_ids": [],
+        "bound": [
+            {"ref": "JHN 14:23", "start": 0, "end": 2, "old": "If", "new": "When"}
+        ],
+    }
+    with pytest.raises(CheckFailed, match="pierpont 276: the reading at JHN 14:23"):
+        decisions.carriers(declared, placed, [*readings, stray], kjv)
+    at_unit: Override = {**stray, "id": "JHN 14:23#9", "unit_ids": ["JHN 14:23#9"]}
+    carriers = decisions.carriers(declared, placed, [*readings, at_unit], kjv)
+    assert carriers["pierpont 276"] == {"kind": "itself", "ids": ["JHN 14:23"]}
+
+
+def test_two_instructions_cannot_carry_themselves_at_one_verse(
+    byzantine: Reconciliation,
+) -> None:
+    # A reading read from an instruction is keyed by its verse, so a second
+    # row at John 14:23 would share the key of the first.
+    declared = declared_of(byzantine)
+    rows = copy.deepcopy(list(byzantine.decisions.instructions))
+    first = next(i for i in rows if i["source"] == "pierpont" and i["entry"] == 276)
+    second = copy.deepcopy(first)
+    second["entry"] = 9999
+    rows.append(second)
+    declared["pierpont 9999"] = copy.deepcopy(declared["pierpont 276"])
+    carriers: dict[str, Carrier] = {
+        **byzantine.decisions.instruction_carriers,
+        "pierpont 9999": {"kind": "itself", "ids": ["JHN 14:23"]},
+    }
+    with pytest.raises(CheckFailed, match="carry themselves at one verse.*JHN 14:23"):
+        decisions.instruction_entries(
+            declared,
+            rows,
+            byzantine.greek,
+            carriers,
+            lambda label, evidence, refs: None,
+        )
+
+
+def test_an_edit_is_carried_out_by_its_unit_a_reading_or_itself(
+    byzantine: Reconciliation,
+) -> None:
+    declared = declared_of(byzantine)
+    rows = byzantine.decisions.instructions
+    overrides = byzantine.decisions.overrides
+    kjv = byzantine.english.kjv
+    carriers = decisions.carriers(declared, rows, overrides, kjv)
+    assert carriers == byzantine.decisions.instruction_carriers
+    # A carrier is declared by the editor; the build checks its passage.
+    without = [o for o in overrides if o["id"] != "ACT 10:20"]
+    with pytest.raises(CheckFailed, match="pierpont 345: carrier ACT 10:20 is no"):
+        decisions.carriers(declared, rows, without, kjv)
+    elsewhere = {
+        **declared,
+        "pierpont 345": {**declared["pierpont 345"], "carrier": "LUK 23:42"},
+    }
+    with pytest.raises(
+        CheckFailed, match="pierpont 345: reading LUK 23:42 concerns another"
+    ):
+        decisions.carriers(elsewhere, rows, overrides, kjv)
+    for key, reading in (("pierpont 510", "COL 1:24#1"), ("pierpont 345", "ACT 10:20")):
+        unnamed = {
+            **declared,
+            key: {k: v for k, v in declared[key].items() if k != "carrier"},
+        }
+        with pytest.raises(CheckFailed, match=f"{key}: overlaps readings {reading}"):
+            decisions.carriers(unnamed, rows, overrides, kjv)
+    at_unit = {
+        **declared,
+        "pierpont 23": {**declared["pierpont 23"], "carrier": "MAT 10:25#1"},
+    }
+    with pytest.raises(CheckFailed, match="pierpont 23: its unit carries it out"):
+        decisions.carriers(at_unit, rows, overrides, kjv)
+    # Rejecting Pierpont does not reject another correction of the same words.
+    declared["pierpont 345"] = {
+        k: v
+        for k, v in {**declared["pierpont 345"], "kind": "nochange"}.items()
+        if k != "carrier"
+    }
+    assert "pierpont 345" not in decisions.carriers(declared, rows, overrides, kjv)
+    # Execution of the instruction itself is still a mechanical contradiction.
+    declared["pierpont 23"] = {**declared["pierpont 23"], "kind": "nochange"}
+    with pytest.raises(
+        CheckFailed, match="pierpont 23: nochange, but its unit executes"
+    ):
+        decisions.carriers(declared, rows, overrides, kjv)
+
+
+def test_carriers_validate_keys_before_looking_up_rows(
+    byzantine: Reconciliation,
+) -> None:
+    declared = declared_of(byzantine)
+    declared["pierpont 99999"] = declared["pierpont 276"]
+    with pytest.raises(CheckFailed, match="Category-c decisions and rows differ"):
+        decisions.carriers(
+            declared,
+            byzantine.decisions.instructions,
+            readings_of(byzantine),
+            byzantine.english.kjv,
+        )
+
+
+def test_a_declared_carrier_need_not_enclose_the_instruction(
+    byzantine: Reconciliation,
+) -> None:
+    readings = readings_of(byzantine)
+    # The editor may recast a sentence elsewhere in the same verse. Span
+    # containment is not evidence that this does or does not fulfill Pierpont.
+    recast: Override = {
+        "id": "ACT 10:20",
+        "unit_ids": [],
+        "bound": [{"ref": "ACT 10:20", "start": 0, "end": 1, "old": "A", "new": "B"}],
+    }
+    readings = [recast if o["id"] == recast["id"] else o for o in readings]
+    carriers = decisions.carriers(
+        declared_of(byzantine),
+        byzantine.decisions.instructions,
+        readings,
+        byzantine.english.kjv,
+    )
+    assert carriers["pierpont 345"] == {"kind": "reading", "ids": ["ACT 10:20"]}
+
+
+def test_overlap_reports_all_readings_even_when_none_encloses_the_instruction() -> None:
+    row: Instruction = {
+        "edits": [{"ref": "JHN 14:23", "old": "my words", "word_range": [1, 3]}]
+    }
+    readings: list[Override] = [
+        {"id": "first", "bound": [{"ref": "JHN 14:23", "start": 5, "end": 7}]},
+        {"id": "second", "bound": [{"ref": "JHN 14:23", "start": 8, "end": 13}]},
+        {"id": "elsewhere", "bound": [{"ref": "JHN 14:23", "start": 0, "end": 4}]},
+    ]
+    assert decisions.overlapping_readings(
+        row, readings, {"JHN 14:23": "keep my words"}
+    ) == ["first", "second"]
+
+
+@pytest.mark.parametrize(
+    ("text", "edit", "expected"),
+    [
+        (
+            "Keep my words.",
+            {"kind": "replace", "old": "keep", "new": "observe", "word_range": [0, 1]},
+            "Observe",
+        ),
+        (
+            "I keep my words.",
+            {"kind": "replace", "old": "keep", "new": "observe", "word_range": [1, 2]},
+            "observe",
+        ),
+        (
+            "And here is the mind.",
+            {"kind": "delete", "old": "And", "new": "", "word_range": [0, 1]},
+            None,
+        ),
+        (
+            "I Keep my words.",
+            {"kind": "replace", "old": "keep", "new": "observe", "word_range": [1, 2]},
+            None,
+        ),
+        (
+            "Keep my words.",
+            {"kind": "insert", "old": "", "new": "Now", "word_range": [0, 0]},
+            None,
+        ),
+    ],
+)
+def test_direct_instruction_casing_stays_within_its_own_words(
+    byzantine: Reconciliation,
+    text: str,
+    edit: dict[str, Any],
+    expected: str | None,
+) -> None:
+    ref = "JHN 14:23"
+    target = byzantine.greek
+    entry = {
+        "instruction": {"edits": [{"ref": ref, **edit}]},
+        "greek": ["τὸν λόγον μου"],
+    }
+
+    def bound() -> list[BoundEdit]:
+        return list(
+            decisions.instruction_bound(
+                "instruction",
+                entry,
+                {ref: text},
+                target.units,
+                target.printed,
+                target.rp_alignment,
+                target.structure,
+            )
+        )
+
+    if expected is None:
+        with pytest.raises(CheckFailed, match="explicit reading"):
+            bound()
+    else:
+        result = bound()
+        assert result[0]["new"] == expected
+        assert result[0]["old"] == text[result[0]["start"] : result[0]["end"]]
+        assert result[0]["end"] <= text.index(" my")
+
+
+def test_the_former_version_is_quoted_from_its_text_at_the_verse() -> None:
+    former = {
+        "witness": "vulgate",
+        "ref": "LUK 23:42",
+        "quote": "in regnum tuum",
+        "why": "The accusative supports into.",
+    }
+    texts = {"vulgate": {"LUK 23:42": "cum veneris in regnum  tuum."}}
+    decisions.former_checked("reading", former, {"LUK 23:42"}, texts)
+    for bad, error in [
+        ({**former, "witness": "tyndale"}, "names no version"),
+        ({**former, "witness": "king-james-version"}, "names no version"),
+        ({**former, "ref": "LUK 23:43"}, "about another verse"),
+        ({**former, "quote": "in regno tuo"}, "not in vulgate LUK 23:42 once"),
+        ({**former, "quote": "in regnum tu"}, "cuts through a word"),
+    ]:
+        with pytest.raises(CheckFailed, match=error):
+            decisions.former_checked("reading", bad, {"LUK 23:42"}, texts)
+    with pytest.raises(CheckFailed, match="once"):
+        decisions.former_checked(
+            "reading",
+            former,
+            {"LUK 23:42"},
+            {"vulgate": {"LUK 23:42": "in regnum tuum in regnum tuum"}},
+        )
+
+
+def test_a_greek_difference_names_its_greek_witness_not_a_version(
+    byzantine: Reconciliation,
+) -> None:
+    reading = copy.deepcopy(byzantine.inputs.decisions["readings"]["MRK 15:3#1"])
+    reading["former"] = {
+        "witness": "vulgate",
+        "ref": "MRK 15:3",
+        "quote": "ipse autem nihil respondit",
+        "why": "The Latin has the clause.",
+    }
+    _, errors = decisions.validate_overrides(
+        [{"id": "MRK 15:3#1", **reading}],
+        byzantine.greek.units,
+        byzantine.english.kjv,
+        decisions.witness_rows(
+            byzantine.apparatuses.reports, byzantine.instructions.rows
+        ),
+        byzantine.english.texts,
+        byzantine.english.supplied,
+    )
+    assert errors == ["override MRK 15:3#1: a Greek difference names its Greek witness"]
+
+
+@pytest.mark.parametrize(
+    ("ref", "words"),
+    [
+        ("JHN 14:23", "keep my word:"),
+        ("1TH 2:12", "who calleth you"),
+        ("REV 17:9", "Here is the mind"),
+        ("ROM 6:11", "through Christ Jesus"),
+    ],
+)
+def test_instructions_correct_shared_greek_without_a_difference_unit(
+    byzantine: Reconciliation, ref: str, words: str
+) -> None:
+    assert words in verses_of(byzantine.edited.prepared)[ref].text
+    row = next(r for r in byzantine.verified.dispositions if r["unit"] == ref)
+    assert row["disposition"] == "shared"
+    assert not any(u["id"] == ref for u in byzantine.greek.units)
+
+
+@pytest.mark.parametrize(
+    ("ref", "words"), [("ROM 16:4", "their own necks"), ("JAS 3:14", "in your hearts")]
+)
+def test_a_nochange_keeps_the_king_james_words_without_a_note(
+    edition: bible.pipeline.Edition, ref: str, words: str
+) -> None:
+    book, address = ref.split()
+    document = edition.documents[book]
+    assert words in scripture.verses(document)[address].text
+    assert not any(
+        n.get("x-key") == f"{ref} rendering" for n in usj.notes_of(document["content"])
+    )

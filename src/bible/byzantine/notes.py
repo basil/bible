@@ -831,7 +831,7 @@ def edition_key(key: str) -> str:
 
 
 def for_edition(
-    document: Document, terms: Registry, witnesses: Mapping[str, str]
+    document: Document, terms: Registry, witnesses: Mapping[str, str | None]
 ) -> Document:
     """The finished notes in the edition's form: the witness's label (the
     term of received.labels, by the note's key), the
@@ -840,8 +840,10 @@ def for_edition(
     omitted, since it stands before the label), the lemma declared for the
     annotate stage to set, and the note at the start of its lemma, as every
     edition note stands. A verse-level note stands at its verse's start. A
-    rendering note gives the former King James words after "Or,", unless an
-    explicit decision cites a witness to them. The note takes its edition_key."""
+    rendering note names no witness (received.labels) and gives the former
+    King James words after "Or,", unless its reading declares a version for
+    them. The note takes its edition_key, and its x-scope says the witness
+    it names, for the annotate stage."""
     verses = scripture.verses(document)
     moved: list[tuple[str, int, int, Node]] = []
     for ref, verse in verses.items():
@@ -857,15 +859,14 @@ def for_edition(
             adds, omits = terms.display("addition"), terms.display("omission")
             content: Content = [fields["fr"]]
             witness = witnesses.get(note["x-key"])
-            # A correction of shared Greek prints "Or," and no witness, though
-            # received.labels gives it the King James Version, unless a note
-            # witness decision cites a version for its former words.
-            if kind == "rendering" and witness in {None, "king-james-version"}:
+            if witness is None:
+                # A correction of shared Greek names no witness: the former
+                # King James words are another rendering.
+                require(
+                    kind == "rendering", f"A note without its witness: {note['x-key']}"
+                )
                 content.append(usj.char("ft", "Or, "))
             else:
-                witness = present(
-                    witness, f"A note without its witness: {note['x-key']}"
-                )
                 content.append(usj.char("fl", terms.display(witness) + " "))
             if kind in {"replace", "rendering"}:
                 # A replaced reading, or the former King James words as
@@ -896,7 +897,7 @@ def for_edition(
                 at = lemmas.opening(verse.text, words[hits[0]][1])
             extra: usj.Extra = {
                 "x-key": key,
-                "x-scope": {"declared": lemma},
+                "x-scope": {"declared": lemma, "witness": witness},
                 "category": "edition",
             }
             moved.append(
