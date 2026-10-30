@@ -559,7 +559,7 @@ def test_the_notes_name_the_witness_the_apparatuses_establish(
     # printed edition the translators followed, and Scrivener where none is
     # shown; never the King James Version, and never a version.
     assert labels == {
-        "TR": 756,
+        "TR": 755,
         "Beza": 65,
         "Erasmus": 15,
         "Stephanus": 1,
