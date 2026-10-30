@@ -363,7 +363,10 @@ def test_the_editions_spelling_is_revised_wherever_a_word_is_printed(
     )
 
     def pattern(keys: Iterable[str]) -> re.Pattern[str]:
-        return re.compile(r"(?<!\w)(?:" + "|".join(map(re.escape, keys)) + r")(?!\w)")
+        # Either apostrophe: the sources' front matter and the edition's own
+        # pages print the curly one where the scripture has the straight.
+        alternatives = (re.escape(key).replace("'", "['’]") for key in keys)
+        return re.compile(r"(?<!\w)(?:" + "|".join(alternatives) + r")(?!\w)")
 
     def printed(phrase: str) -> str:
         doc = usj.parse("\\id GEN\n\\c 1\n\\p\n\\v 1 " + phrase)
@@ -410,6 +413,7 @@ def test_the_editions_spelling_is_revised_wherever_a_word_is_printed(
             "subtil",
             "brasen",
             "spue",
+            "our’s",
             "apostolick",
             "musick",
             "emerods",

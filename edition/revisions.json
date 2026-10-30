@@ -11835,6 +11835,18 @@
     "well pleased": {
       "to": "well-pleased",
       "why": "Write well-pleased with a hyphen in every position, including after a verb, by editorial preference. Brenton and the King James Bible both write well pleased; Brenton’s existing well-pleased stands too."
+    },
+    "our's": {
+      "to": "ours",
+      "why": "An obsolete spelling of the independent possessive is modernized wherever it stands. The pinned Brenton archive has our's three times, at Genesis 31:16 and twice at 1 Maccabees 12:23; the pinned King James archive has none. Brenton’s 1844 vol. I printed p. 33 (physical p. 57) already has ours at Genesis 31:16, whereas 1879 printed p. 40 (physical p. 56), 1884 printed p. 40 (physical p. 49), and 1900 printed p. 40 (physical p. 52) have our’s, as does pinned CCEL; the noun possessive children’s beside it stands. The 1900 Apocrypha prints our’s twice at 1 Maccabees 12:23 (printed p. 172, physical p. 1322). Scrivener’s Cambridge Paragraph Bible (1873) has ours at both places: printed pp. (26) and (169), physical pp. 152 and 1153."
+    },
+    "their's": {
+      "to": "theirs",
+      "why": "An obsolete spelling of the independent possessive is modernized wherever it stands. The pinned Brenton archive has their's twice, at Judith 5:18 and 2 Maccabees 13:22; the pinned King James archive has none. The 1900 Apocrypha prints their’s at both (printed pp. 40 and 208, physical pp. 1190 and 1358); the other local Brenton printings and pinned CCEL lack these books. Scrivener’s Cambridge Paragraph Bible (1873) has theirs at both places: printed pp. (53) and (194), physical pp. 1037 and 1178. Scrivener’s supplied marking on theirs in 2 Maccabees is not imported."
+    },
+    "your's": {
+      "to": "yours",
+      "why": "An obsolete spelling of the independent possessive is modernized wherever it stands. The pinned Brenton archive has your's once, at 1 Maccabees 12:23; the pinned King James archive has none. The 1900 Apocrypha prints your’s there (printed p. 172, physical p. 1322); the other local Brenton printings and pinned CCEL lack the book. Scrivener’s Cambridge Paragraph Bible (1873), printed p. (169), physical p. 1153, has yours."
     }
   },
   "verses": {
@@ -12853,6 +12865,41 @@
           "verse": "ISA 7:17",
           "from": "Ephraim took away from Judah the king of the Assyrians.",
           "to": "he took away Ephraim from Judah; the king of the Assyrians."
+        }
+      ]
+    },
+    "inherited scripture punctuation": {
+      "why": "Revise the punctuation of the listed clauses by explicit editorial judgment, preserving every word and all other punctuation. These are scoped revisions, not a general modernization of Brenton’s rhetorical pointing.",
+      "changes": [
+        {
+          "verse": "EXO 16:35",
+          "from": "land they ate",
+          "to": "land; they ate",
+          "why": "Brenton’s 1844 vol. I printed p. 76 (physical p. 100), 1879 printed p. 92 (physical p. 108), 1884 physical p. 84 (folio cropped, matching the same setting), and 1900 printed p. 92 (physical p. 104) all leave these independent clauses unseparated, as do pinned eBible and CCEL. Separate the resumed they ate the manna clause with a semicolon, retaining every word. Scrivener’s Cambridge Paragraph Bible (1873), printed p. (61), physical p. 187, likewise separates its corresponding a land inhabited; they did eat manna clauses; its different wording is not imported."
+        },
+        {
+          "verse": "1KI 5:25",
+          "from": "oil thus",
+          "to": "oil: thus",
+          "why": "Brenton’s 1844 vol. I printed p. 368 (physical p. 392) prints beaten oil: thus Solomon gave. The later Bagster setting has a raised single dot after oil: 1879 printed p. 450 (physical p. 466), 1884 physical p. 435 (folio cropped), and 1900 printed p. 450 (physical p. 462). The 1879 printing is a reprint of the plates of the 1870 printing that eBible transcribes (see the introduction’s decision in prose.json), so the mark stood in eBible’s source and its transcription dropped it; pinned CCEL retains the dot. A correction of the scripture’s transcription may mend only word spacing or a whole note, so the stop is restored here. Restore the 1844 colon before the annual summary, keeping lowercase thus and every word. Scrivener’s Cambridge Paragraph Bible (1873), 1 Kings 5:11, printed p. (303), physical p. 429, likewise has pure oil: thus gave. Brenton’s printed verse 5:11 is the edition’s 5:25."
+        },
+        {
+          "verse": "PSA 56:2",
+          "from": "Have mercy, upon me",
+          "to": "Have mercy upon me",
+          "why": "Brenton’s 1844 vol. II printed p. 601 (physical p. 104), 1879 printed p. 731 (physical p. 747), 1884 printed p. 731 (physical p. 714), and 1900 printed p. 731 (physical p. 743) all print this comma, faithfully transcribed by eBible and CCEL. Remove it between have mercy and its complement upon me, as the repeated petition in the same verse is already punctuated. Scrivener’s Cambridge Paragraph Bible (1873), Psalm 57:1, printed p. (509), physical p. 635, similarly keeps merciful unto me together. Brenton’s printed Psalm 56 (57):1 is the edition’s 56:2, which counts the title."
+        },
+        {
+          "verse": "MAL 1:3",
+          "from": "wilderness?",
+          "to": "wilderness.",
+          "why": "Brenton’s 1844 vol. II printed p. 924 (physical p. 427), 1879 printed p. 1127 (physical p. 1143), 1884 printed p. 1127 (physical p. 1081), and 1900 printed p. 1127 (physical p. 1139), as well as pinned eBible and CCEL, all end this continuation with a question mark. Brenton’s facing Greek also ends ἐρήμου; with a Greek question mark, so the inherited rhetorical question may be intentional. Choose instead to read yet I loved Jacob and its coordinated verbs as the Lord’s declarative answer, ending it with a period. Swete III p. 94, checked on the scan, ends ἐρήμου. and Scrivener’s Cambridge Paragraph Bible (1873), printed p. (853), physical p. 979, also closes its corresponding English declaration with a period. Retain the earlier questions in verse 2."
+        },
+        {
+          "verse": "DAG 3:51",
+          "from": "blessed, God",
+          "to": "blessed God",
+          "why": "Brenton’s 1900 Song of the Three Children verse 27, Apocrypha printed p. 132 (physical p. 1282), prints praised, glorified, and blessed, God, faithfully transcribed by eBible. The local 1844, 1879, and 1884 printings omit this addition and have no separate Apocrypha text for comparison; pinned CCEL has no counterpart. Choose to join the accumulated verbs directly to their shared object, removing only the comma after blessed, as Scrivener’s Cambridge Paragraph Bible (1873), Song verse 28, Apocrypha printed p. (140), physical p. 1124, already does. Brenton’s facing Greek and Swete’s Theodotion Daniel 3:51 (III p. 519), checked on the scans, identify τὸν θεόν as the object of all three verbs. The Greek addition has no Masoretic counterpart."
         }
       ]
     },

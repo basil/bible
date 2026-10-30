@@ -22,24 +22,6 @@ to the Hebrew or KJV without evidence; the Greek may read this way.
 - [ ] **1MA 12:7, 12:19–20** — the Spartan letter is from Darius, sent by
   Oniares, signed Areus to Onias.
 
-## Scripture punctuation (inherited)
-
-[editorial] unless marked. Any change is a scoped punctuation revision.
-Compare the printing before calling one a transcription slip.
-
-- [ ] **EXO 16:35** — no clause boundary between "land" and "they ate the
-  manna". Confidence: medium.
-- [ ] **1KI 5:25** (3 Kingdoms) — "beaten oil thus Solomon gave"; CCEL has a
-  separator, eBible none. Confidence: medium. [source]
-- [ ] **PSA 56:2** — "Have mercy, upon me"; the repeat in the verse is
-  clean. Confidence: high.
-- [ ] **MAL 1:3** — declarative "yet I loved Jacob … wilderness?" ends with a
-  question mark. Confidence: medium. [source]
-- [ ] **DAG 3:51** — "praised, glorified, and blessed, God". Confidence: low
-  (rhetorical punctuation).
-- [ ] **our's, your's, their's** — GEN 31:16, JDT 5:18, 1MA 12:23 (three),
-  2MA 13:22. Confidence: high that they exist; decide once.
-
 ## Orthography: compounds and regional spelling
 
 All [editorial]. The introduction (`content/introduction.sfm:109`) says
