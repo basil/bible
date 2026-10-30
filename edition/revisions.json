@@ -11925,6 +11925,12 @@
           "from": "drink wine",
           "to": "drink blood",
           "why": "Brenton’s 1844 vol. II p. 844 (physical p. 347), 1879 physical p. 1048, 1884 physical p. 995, and 1900 physical p. 1044 (printed p. 1032 in all three) print drink wine, with no note at the verse, but the Bagster printings’ facing Greek reads πίεσθε αἷμα, drink blood. Swete III p. 471 likewise prints αἷμα and reports no variant at verse 19. Correct the English noun to the blood the preceding two verses also name; retain Brenton’s remaining sacrificial imagery."
+        },
+        {
+          "verse": "EZK 4:5",
+          "from": "appointed thee their iniquities",
+          "to": "appointed thee their two iniquities",
+          "why": "Brenton’s 1844 vol. II p. 804 (physical p. 307), 1879 p. 983 (physical p. 999), and 1900 p. 983 (physical p. 995) omit two in English. The facing Bagster Greek and Swete III p. 390, checked against the scans, explicitly read τὰς δύο ἀδικίας αὐτῶν, their two iniquities. Restore this untranslated numeral while retaining the 150, 190, 40, and 190 day counts of verses 4, 5, 6, and 9, which the Greek also gives. The local 1884 scan lacks the relevant page. This corrects an inherited English omission without asserting whether the translator or compositor caused it, or resolving the chronology."
         }
       ]
     },

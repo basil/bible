@@ -1,27 +1,5 @@
 # TODO
 
-## Scripture meaning and continuity questions
-
-All [source] and [source + Greek]. These are inherited readings that look
-wrong against their context. None is an export regression. Confidence is
-for "something is odd here", not for any particular fix. Do not harmonize
-to the Hebrew or KJV without evidence; the Greek may read this way.
-
-### Possibly the Greek's own reading (confidence: medium)
-
-- [ ] **LEV 25:28** — "till the sixth year of the release" in the jubilee
-  rule.
-- [ ] **2SA 4:4** — "as he hasted and retreated" where the nurse flees.
-- [ ] **1CH 16:32** — "the tree of the field, and all things in it".
-- [ ] **TOB 6:6, 6:10, 7:1** — near Ecbatane, then near Rages, then lodging
-  in Ecbatane.
-- [ ] **TOB 6:13, 6:16, 7:9–14, 9:1–6** — marriage promised after returning
-  from Rages, held that night, Raphael then sent to Rages alone.
-- [ ] **EZK 4:4–6, 9** — 150 days in verse 4, 190 in verses 5 and 9.
-- [ ] **EZK 10:21** — eight wings each, where 1:6 gives four.
-- [ ] **1MA 12:7, 12:19–20** — the Spartan letter is from Darius, sent by
-  Oniares, signed Areus to Onias.
-
 ## Orthography: compounds and regional spelling
 
 All [editorial]. The introduction (`content/introduction.sfm:109`) says
