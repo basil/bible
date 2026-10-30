@@ -63,15 +63,15 @@ def test_the_edition_prints_every_unit_once_in_the_manifests_order(
         "alexandrine_notes": 416,
         "alexandrine_appendix_paragraphs": 26,
         "byzantine_units": 1940,
-        "byzantine_edits": 858,
-        "kjv_corrections": 105,
-        "byzantine_notes": 963,
+        "byzantine_edits": 857,
+        "kjv_corrections": 104,
+        "byzantine_notes": 960,
         "scripture_units": 78,
         "brenton_units": 51,
         "kjv_units": 27,
         "kjv_marginal_notes": 775,
         # GEN 17:7 and 1KI 15:28 add two notes without consuming source notes.
-        "printed_notes": 6268,
+        "printed_notes": 6265,
         # Every verse of the assembled books: Brenton's, with the passages
         # supplied from Codex Alexandrinus and the King James Bible's
         # 1 Kingdoms 23:12 and 3 Kingdoms 14:1-20, less the verses

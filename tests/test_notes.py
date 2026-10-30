@@ -1179,7 +1179,7 @@ def test_every_note_is_printed_replaced_by_a_link_or_explicitly_omitted(
     edition: bible.pipeline.Edition,
 ) -> None:
     # The two unreported Alexandrine readings add their own Valpy notes.
-    assert edition.summary["printed_notes"] == 6268
+    assert edition.summary["printed_notes"] == 6265
     rows = [row for listed in edition.notes.values() for row in listed]
     assert len({row["key"] for row in rows}) == len(rows)
     # The 1611 margin is printed on the New Testament alone, and whole but
@@ -1202,7 +1202,7 @@ def test_every_note_is_printed_replaced_by_a_link_or_explicitly_omitted(
     )
     assert edition.summary["kjv_marginal_notes"] == 775
     assert margin == 775 - omitted == 758
-    assert edition.summary["byzantine_notes"] == 963
+    assert edition.summary["byzantine_notes"] == 960
     # A widened lemma's rendering takes in the same words (Matthew 6:1).
     row = next(row for row in edition.notes["MAT"] if row["key"] == "MAT 6:1 of")
     assert (row["lemma"], row["note"]) == ("of your Father", "or, _with your Father_")

@@ -69,7 +69,7 @@ def test_the_edition_adds_notes(edition_notes: list[Found]) -> None:
     # A note for each edit that changes words, a TR note or an "Or," note,
     # and each structural change, the doxology of Romans 16 noted at both
     # ends.
-    assert len(edition_notes) == 963
+    assert len(edition_notes) == 960
 
 
 def test_structural_notes_stand_where_the_verses_were(

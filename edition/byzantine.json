@@ -641,28 +641,6 @@
         }
       }
     },
-    "MAT 24:32": {
-      "kind": "edit",
-      "edits": [
-        {
-          "ref": "MAT 24:32",
-          "from": "yet",
-          "to": "now",
-          "greek": "ἤδη"
-        }
-      ],
-      "why": "ἤδη marks the branch’s already-present tenderness as a sign that summer is near. Affirmative “yet” suggests continuing tenderness; “now” preserves the temporal relation while retaining the King James condition and wording.",
-      "evidence": {
-        "rv": {
-          "ref": "MAT 24:32",
-          "quote": "when her branch is now become tender"
-        },
-        "boyd-asv": {
-          "ref": "MAT 24:32",
-          "quote": "when her branch is now become tender"
-        }
-      }
-    },
     "MAT 25:8": {
       "kind": "edit",
       "edits": [
@@ -1247,23 +1225,14 @@
           "rp": "twn arxierewn kai twn"
         }
       ],
-      "kind": "edit",
-      "edits": [
-        {
-          "ref": "MRK 8:31",
-          "from": "",
-          "to": "[of] the",
-          "before": "scribes"
-        }
-      ],
+      "kind": "nochange",
       "wording": [
-        "pierpont"
+        "kjv-retained"
       ],
       "grammar": [
-        "article",
-        "supplied-word"
+        "article"
       ],
-      "why": "RP adds the articles but no second preposition, and the KJV prints the parallel of before the chief priests in italics. Pierpont’s wording takes supplied-word italics for the second of to satisfy the capitals and italics rule.",
+      "why": "RP2026 repeats the articles before chief priests and scribes, but keeps the same three definite groups under one preposition; the King James sentence already identifies them and preserves their relation to be rejected of. As the shared English determiner in the King James Acts 23:14 also shows, repeating of the would reproduce the Greek articles without correcting meaning or grammar, so withdraw the existing insertion and decline Pierpont’s proposal.",
       "evidence": {
         "pierpont": {
           "entry": 92,
@@ -8323,15 +8292,9 @@
           "from": "Do ye think",
           "to": "Or do ye think",
           "greek": "Ἢ δοκεῖτε"
-        },
-        {
-          "ref": "JAS 4:5",
-          "from": "saith",
-          "to": "speaketh",
-          "greek": "λέγει"
         }
       ],
-      "why": "The initial disjunctive Ἢ links this rhetorical question to the preceding charge of friendship with the world; restore that explicit alternative. Render λέγει as speaketh, following the RV and Boyd’s ASV: the question asks whether scripture speaks in vain, with the spirit clause set independently by the punctuation decision.",
+      "why": "The initial disjunctive Ἢ links this rhetorical question to the preceding charge of friendship with the world; restore that explicit alternative, following Boyd’s ASV. Retain the King James saith for λέγει, since speaketh changes English style alone.",
       "evidence": {
         "boyd-asv": {
           "ref": "JAS 4:5",
