@@ -65,6 +65,19 @@ def test_processed_output_that_changes_the_text_is_refused(
         processed(SOURCE_USFM.replace(before, after))
 
 
+def test_processed_output_that_drops_a_milestone_is_refused(
+    processed: Callable[[str], None], tmp_path: Path
+) -> None:
+    # The milestone prints nothing, so only its count shows it is gone, and
+    # the note it sets below the text would stand in the margin unnoticed.
+    sent = SOURCE_USFM.replace("\\f +", "\\zbelow\\*\\f +")
+    root = tmp_path / project.PROJECT_DIR
+    project.project_usfm(root, "GEN").write_text(sent, encoding="utf-8")
+    processed(sent)
+    with pytest.raises(CheckFailed, match="PTXprint changed notes, styles or tables"):
+        processed(SOURCE_USFM)
+
+
 def test_printed_origins_lose_their_chapter(declared: bible.policy.Policy) -> None:
     # What verify compares PTXprint's copy against is the exported text.
     doc = usj.parse(

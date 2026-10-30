@@ -227,8 +227,9 @@ def test_note_callers_follow_context_and_restart_without_margin_notes(
     (work / "front.usfm").write_text(
         r"""\id FRT
 \periph Preface|id="preface"
-\p Alpha\f + \ft First front note. A longer explanation repeats its words to make this footnote wrap onto another line, where it must return to the left edge of the text.\f* and beta\f + \ft Second front note.\f*.
+\p Alpha\f + \ft First front note.\f* and beta\f + \ft Second front note.\f*.
 \p More word\f + \ft Front note 3.\f* word\f + \ft Front note 4.\f* word\f + \ft Front note 5.\f* word\f + \ft Front note 6.\f* word\f + \ft Front note 7.\f* word\f + \ft Front note 8.\f* word\f + \ft Front note 9.\f* word\f + \ft Front note 10.\f*.
+\p Long\zbelow\*\f + \ft Below front note. A longer explanation repeats its words to make this footnote wrap onto another line, where it must return to the left edge of the text.\f* and after\f + \ft Front note 12.\f*.
 \p Quotation\x + \xt Gen. 1:1\x*.
 """,
         encoding="utf-8",
@@ -279,7 +280,7 @@ def test_note_callers_follow_context_and_restart_without_margin_notes(
 \nolotwritetrue
 \catcode`\@=11
 \def\ReportNote#1{%
-  \immediate\write16{NOTE #1 [\them@rk] WIDTH \the\NoteCallerWidth\space GAP \the\NoteCallerSpace\space LEFT \the\leftskip}%
+  \immediate\write16{NOTE #1 [\them@rk] WIDTH \the\NoteCallerWidth\space GAP \the\NoteCallerSpace\space PLACE \ifBibleMarginNote margin\else foot\fi\space LABEL \n@tec@llerstyle\space LEFT \the\leftskip}%
 }
 \sethook{start}{f}{\ReportNote{f}}
 \sethook{start}{x}{\ReportNote{x}}
@@ -303,39 +304,55 @@ def test_note_callers_follow_context_and_restart_without_margin_notes(
         records.append((work / "callers.notepages").read_text(encoding="utf-8"))
 
     notes = re.findall(
-        r"NOTE ([fx]) \[([^]]*)\] WIDTH ([\d.]+)pt GAP ([\d.]+)pt", result.stdout
+        r"NOTE ([fx]) \[([^]]*)\] WIDTH ([\d.]+)pt GAP ([\d.]+)pt"
+        r" PLACE (\w+) LABEL (\w+)",
+        result.stdout,
     )
-    assert [(kind, caller) for kind, caller, _, _ in notes] == [
-        ("f", "1"),
-        ("f", "2"),
-        *(("f", str(n)) for n in range(3, 11)),
-        ("x", "1"),
-        ("f", "a"),
-        ("f", "b"),
-        ("f", ""),
-        ("f", "a"),
-        ("f", "1"),
-        ("f", "2"),
-        *(("f", str(n)) for n in range(3, 11)),
-        ("x", "1"),
-        ("f", "a"),
+    front = [
+        *(("f", str(n), "margin") for n in range(1, 11)),
+        ("f", "11", "foot"),
+        ("f", "12", "margin"),
+        ("x", "1", "margin"),
+    ]
+    assert [(kind, caller, place) for kind, caller, _, _, place, _ in notes] == [
+        *front,
+        ("f", "a", "foot"),
+        ("f", "b", "foot"),
+        ("f", "", "margin"),
+        ("f", "a", "foot"),
+        *front,
+        ("f", "a", "foot"),
     ], result.stdout
-    for kind, caller, width, gap in notes:
-        if caller:
-            # A bottom note's label carries its own word space; the front
-            # matter's margin reference keeps a superior caller and its gap.
-            assert (float(width), float(gap)) == (0, 1 if kind == "x" else 0)
-        else:
+    for kind, caller, width, gap, place, label in notes:
+        if not caller:
             # Bottom-note spacing is local; margin notes keep their defaults.
             assert float(width) > 0
             assert float(gap) > 1
+        elif place == "foot":
+            # A bottom note's label carries its own period and word space.
+            assert (float(width), float(gap), label) == (0, 0, "znotelabel")
+        else:
+            # The front matter's margin notes keep their callers, superior as
+            # in the text, with the 1 pt gap that follows a margin origin.
+            assert (float(width), float(gap), label) == (0, 1, "v")
     assert records[1] == records[2]
     page_records = re.findall(r"\\noteonpage\{f\}\{(\d+)\}\{(-?\d+)\}", records[2])
     # Each automatic caller has exactly one record; the callerless note must
     # not overwrite its predecessor's page. This also checks the image patch.
-    assert [int(number) for number, _ in page_records] == list(range(1, 25))
-    assert int(page_records[12][1]) > int(page_records[11][1]) + 1
-    left_skips = re.findall(r"NOTE f \[1\].* LEFT (-?[\d.]+)pt", result.stdout)
+    assert [int(number) for number, _ in page_records] == list(range(1, 29))
+    assert int(page_records[14][1]) > int(page_records[13][1]) + 1
+    # The milestone is no reference: a margin note's reference names it
+    # alone, or PTXprint's tidying repeats one note's place for another.
+    margin = re.findall(
+        r"\\@marginnote\{([^}]*)\}\{([^}]*)\}",
+        (work / "callers.marginnotes").read_text(encoding="utf-8"),
+    )
+    assert {ref for ref, marker in margin if marker == "f" and "." in ref} == {
+        "FRT0.1",
+        *(f"FRT0.1[{n}]" for n in range(1, 11)),
+        "PRO8.6",
+    }
+    left_skips = re.findall(r"NOTE f \[11\].* LEFT (-?[\d.]+)pt", result.stdout)
     assert left_skips and all(float(left) == 0 for left in left_skips)
 
     # In-note labels take the note's baseline and a period, while the
@@ -350,7 +367,7 @@ def test_note_callers_follow_context_and_restart_without_margin_notes(
         )
 
     for label, first, second in (
-        ("1.", "First", "front"),
+        ("11.", "Below", "front"),
         ("a.", "First", "scripture"),
     ):
         words = list(lines[opening(label, first, second)])
@@ -358,7 +375,7 @@ def test_note_callers_follow_context_and_restart_without_margin_notes(
             abs(float(words[0].attrib["yMax"]) - float(words[1].attrib["yMax"])) < 0.1
         )
         assert float(words[1].attrib["xMin"]) - float(words[0].attrib["xMax"]) > 1
-    first_line = opening("1.", "First", "front")
+    first_line = opening("11.", "Below", "front")
     assert (
         abs(
             float(lines[first_line][0].attrib["xMin"])
@@ -989,7 +1006,7 @@ def test_back_matter_opens_rectos_and_the_colophon_closes_on_a_verso(
     assert "x-colophon" not in toc and "Colophon" not in toc
 
 
-def test_notes_in_a_peripherals_table_and_heading_go_to_the_foot(
+def test_notes_in_a_peripherals_table_and_heading_stand_in_the_margin(
     tmp_path: Path,
 ) -> None:
     work = ptxprint_project(tmp_path)
@@ -997,8 +1014,8 @@ def test_notes_in_a_peripherals_table_and_heading_go_to_the_foot(
         '\\id FRT\n\\periph Order|id="x-psalter"\n\\h Order\n\\mt1 Order\n'
         "\\p Introduction.\n"
         "\\tr \\th1 Day \\th2 Matins \\th3 Vespers\n"
-        "\\tr \\tc1 Sunday \\tc2 II, III\\f + \\ft Cellnote words.\\f* \\tc3\n"
-        "\\tr \\tc1 Monday \\tc2 IV, V \\tc3 VI\n"
+        "\\tr \\tc1 Sunday \\tc2 II, III\\zbelow\\*\\f + \\ft Cellnote words.\\f* \\tc3\n"
+        "\\tr \\tc1 Monday \\tc2 IV, V\\f + \\ft Rownote words.\\f* \\tc3 VI\n"
         "\\s1 Holyweek\\f + \\ft Headnote words.\\f*\n"
         "\\tr \\th1 Day \\th2 Matins \\th3 Vespers\n"
         "\\tr \\tc1 Saturday \\tc2 XVII \\tc3\n"
@@ -1008,17 +1025,26 @@ def test_notes_in_a_peripherals_table_and_heading_go_to_the_foot(
     lines = typeset_lines(work, "tablenotes")
     assert len(layout(work, "tablenotes").findall(".//x:page", NS)) == 1
     words = {w.text: w for line in lines for w in line}
-    # The callers are numbered in the text, and the notes stand at the foot
-    # of the page, below the prose that follows the tables, each labelled.
-    assert {"III1", "Holyweek2", "Cellnote", "Headnote"} <= set(words), list(words)
+    # The callers are numbered in the text in one sequence, wherever their
+    # notes stand.
+    assert {"III1", "V2", "Holyweek3"} <= set(words), list(words)
 
     def top(text: str) -> float:
         return float(words[text].attrib["yMin"])
 
-    assert top("Afterwards.") < top("Cellnote") < top("Headnote")
-    for label, note in (("1.", "Cellnote"), ("2.", "Headnote")):
-        assert abs(top(label) - top(note)) < 0.1
-        assert float(words[label].attrib["xMax"]) < float(words[note].attrib["xMin"])
+    def bottom(text: str) -> float:
+        return float(words[text].attrib["yMax"])
+
+    # The note the milestone marks stands at the foot of the page, below the
+    # prose that follows the tables, labelled.
+    assert top("Afterwards.") < top("Cellnote")
+    assert abs(top("1.") - top("Cellnote")) < 0.1
+    assert float(words["1."].attrib["xMax"]) < float(words["Cellnote"].attrib["xMin"])
+    # The others stand in the margin beside their row and their heading.
+    measure = float(words["Afterwards."].attrib["xMin"])
+    for line, note in (("Monday", "Rownote"), ("Holyweek3", "Headnote")):
+        assert float(words[note].attrib["xMax"]) < measure
+        assert top(note) < bottom(line) and top(line) < bottom(note), (line, note)
 
 
 def test_the_psalters_tables_span_the_measure(tmp_path: Path) -> None:

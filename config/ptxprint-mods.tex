@@ -193,6 +193,13 @@
 % 24 mm of notes, and 12 mm clear at the binding. PTXprint's
 % marginnoteswidth includes the gap, so the allocation is 30 mm, not 24 mm.
 \newif\ifBibleMarginNote
+% A long note of the front or back matter, which export.py sets below the
+% text, follows a zbelow milestone, which sets this for it alone. The
+% milestone marks no place: as one, it would become the reference of the
+% notes after it, and the margin notes' references would repeat.
+\newif\ifBibleNoteBelow
+\NotTriggerPoint{zbelow}
+\sethook{start}{zbelow}{\global\BibleNoteBelowtrue}
 \newbox\BibleHeadingNoteBox
 \let\BiblePrimitiveVadjust\vadjust
 \begingroup
@@ -202,7 +209,6 @@
 \global\marginnotesgap=6mm
 \global\marginnoteswidth=\dimexpr 24mm+\marginnotesgap\relax
 \gdef\MarginNoteSide{inner}
-\gdef\BibleCrossReference{x}
 \gdef\BibleStartNote#1{%
   \BibleMarginNotetrue
   % A note with a caller is set below the text, not in the margin. Its
@@ -216,16 +222,18 @@
   \fi
   \ifx\ch@pter\empty\BibleMarginNotefalse\fi
   \ifx\ch@pter\z@ro\BibleMarginNotefalse\fi
-  % Peripheral scripture references keep their callers to identify the
-  % quoted words, but use the same margin as scripture's references. Their
-  % callers stay superior, a small gap before the reference.
+  % The front and back matter's notes name no verse, so they keep their
+  % callers in the margin too: superior, in the figures of scripture's
+  % margin origins (ptxprint-mods.sty), with the origins' 1 pt gap before
+  % the note. A note that a zbelow milestone precedes stays below the text.
   \ifinperiph
-    \def\BibleNoteKind{#1}%
-    \ifx\BibleNoteKind\BibleCrossReference
+    \ifBibleNoteBelow\else
       \BibleMarginNotetrue
+      \let\n@tec@llerstyle\c@llerstyle
       \NoteCallerSpace=1pt
     \fi
   \fi
+  \global\BibleNoteBelowfalse
   \ifBibleMarginNote
     % A note in a heading (a Psalm's title) is set inside the heading box,
     % which forbids hyphenation and minimizes lines; the narrow column needs
@@ -233,7 +241,7 @@
     \ifhe@dings\hyphenpenalty=50 \exhyphenpenalty=50 \linepenalty=10 \fi
     \n@test@rt{#1}%
   \else
-    % The front matter's ordinary footnotes go to the foot, in
+    % A note below the text goes to the foot, in
     % separate paragraphs: PTXprint's separate notes reserve space and
     % can split long notes. The stylesheet's Left justification is for the
     % margin column; at the foot a note is justified like the text. This
@@ -274,14 +282,16 @@
 \expandafter\gdef\csname endnote-no-insert-x\endcsname{\BibleEndNote{x}}
 \endgroup
 
-% Caller-bearing footnotes use the ordinary bottom insertion; callerless
-% scripture notes use the margin. Both remain standard f notes. Callers
-% restart on each page; callerless notes leave the counters alone, and the
-% image patch keeps them from overwriting the callers' page records.
+% Scripture's caller-bearing footnotes use the ordinary bottom insertion and
+% its callerless notes the margin; the front and back matter's notes keep
+% their callers in either. All remain standard f notes. Callers restart on
+% each page; callerless notes leave the counters alone, and the image patch
+% keeps them from overwriting the callers' page records.
 \PageResetCallers{f}
 % Scripture already has verse figures, so its bottom notes use letters.
-% Front matter uses numbers. The before hook runs before PTXprint generates
-% the caller; the insertion hook above is too late to select its sequence.
+% The front and back matter use numbers. The before hook runs before
+% PTXprint generates the caller; the insertion hook above is too late to
+% select its sequence.
 \sethook{before}{f}{%
   \ifinperiph
     \AutoCallers{f}{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30}%

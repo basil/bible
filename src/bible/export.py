@@ -1,9 +1,10 @@
 """USFM for PTXprint, written once from a view of the edition, with the few
 things only the typesetter needs: its blank lines, the
 label it prints before a chapter's number, the margin origins of the notes
-without their chapter, the notes edition/margin.json sets below the text,
-and the Greek and Hebrew tagged for their fonts. Only the form of what
-prints changes here, never its substance."""
+without their chapter, the notes set below the text (scripture's by
+edition/margin.json, the front and back matter's long notes by rule), and
+the Greek and Hebrew tagged for their fonts. Only the form of what prints
+changes here, never its substance."""
 
 from __future__ import annotations
 
@@ -303,11 +304,39 @@ def notes_below(edition: Edition) -> dict[str, frozenset[str]]:
     return found
 
 
+# The front and back matter's notes stand in the margin beside their callers,
+# but one this long, some six lines of the margin or more, is set below the
+# text, where it cannot crowd its page's margin.
+LONG_NOTE = 150
+# PTXprint chooses the margin or the foot before it reads a note, and both
+# carry numbers, so a note below the text is preceded by a milestone
+# (ptxprint-mods.tex).
+BELOW: Node = {"type": "ms", "marker": "zbelow"}
+
+
+def long_notes_below(doc: Document) -> Document:
+    """A unit of front or back matter with each note of LONG_NOTE characters
+    or more preceded by the milestone that sets it below the text."""
+
+    def mark(item: Node) -> Node | Content:
+        # The note's words, without its origin.
+        if (
+            usj.is_note(item)
+            and len(usj.unlabelled(item["content"]).strip()) >= LONG_NOTE
+        ):
+            # Each milestone an object of its own, not one shared by them all.
+            return [{**BELOW}, item]
+        return item
+
+    return usj.with_content(doc, lambda content: usj.mapped(content, mark))
+
+
 def prepared(edition: Edition, mode: str) -> list[tuple[str, Document]]:
     """Every document of a view as PTXprint takes it, by its project id, in
     order, with the notes edition/margin.json sets below the text so set:
     the page whose margin a note relieves is PTXprint's, so the placement is
-    made for it alone, and the sample prints the notes of its chapters."""
+    made for it alone, and the sample prints the notes of its chapters. The
+    front and back matter's long notes are set below the text by rule."""
     below = notes_below(edition)
     result = []
     for code, doc in pipeline.view(edition, mode):
@@ -316,6 +345,8 @@ def prepared(edition: Edition, mode: str) -> list[tuple[str, Document]]:
                 note.get("x-key") for note in usj.notes_of(doc["content"])
             }
             doc = notes.set_below(doc, here)
+        elif code not in edition.scripture:
+            doc = long_notes_below(doc)
         result.append((code, document(code, doc, edition)))
     return result
 

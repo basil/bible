@@ -83,6 +83,9 @@ HEADINGS = frozenset("s1 s2 s3 ms1 ms2 sd1 sd2 cl lit".split())
 CELLS = frozenset(f"{kind}{n}" for kind in ("tc", "th") for n in range(1, 8))
 CHARS = frozenset("add bd fv it lik sc vp wg wh qs".split())
 NOTES = frozenset("f x".split())
+# The milestones the export writes for PTXprint: one before a note of the
+# front or back matter that is set below the text.
+MILESTONES = frozenset({"zbelow"})
 # The paragraphs of the body: prose, and the lines of a poem.
 PROSE = frozenset("p m mi nb".split())
 POEM = frozenset("q1 q2 qr".split())
@@ -265,6 +268,11 @@ def parse(text: str, *, fragment: bool = False) -> Document | Content:
             node = {"type": "ref", "content": []}
             content().append(node)
             inline.append(("ref", node))
+        elif name in MILESTONES:
+            if closing or plus or text[at : at + 2] != "\\*":
+                fail("Invalid milestone", at)
+            cursor = at + 2
+            content().append({"type": "ms", "marker": name})
         elif name in FIELDS:
             if closing or plus:
                 fail("Invalid note field", at)
@@ -614,6 +622,8 @@ def _inline(content: Iterable[str | Node], *, nested: bool) -> str:
             body = _inline(item["content"], nested=nested)
             target = f"|{item['loc']}" if item.get("loc") else ""
             parts.append(f"\\ref {body}{target}\\ref*")
+        elif item["type"] == "ms" and item["marker"] in MILESTONES:
+            parts.append(f"\\{item['marker']}\\*")
         else:
             require(False, f"Unsupported inline content: {item['type']}")
     return "".join(parts)

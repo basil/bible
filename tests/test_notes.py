@@ -2208,6 +2208,29 @@ def test_a_note_set_below_keeps_its_words_and_stale_placements_stop_the_build() 
         notes.set_below(usj.document([usj.para("p", note, note)]), [key])
 
 
+def test_a_long_note_of_the_front_matter_is_set_below_the_text() -> None:
+    def footnote(words: str) -> Node:
+        return usj.note("f", usj.char("ft", words), caller="+")
+
+    limit = bible.export.LONG_NOTE
+    short, long = footnote("x" * (limit - 1)), footnote("x" * limit)
+    doc = usj.document([usj.para("ip", "One", short, " two", long, ".")])
+    before = deepcopy(doc)
+    marked = bible.export.long_notes_below(doc)
+    assert doc == before
+    # Only the milestone before the long note is added, which PTXprint reads
+    # to set the numbered note below the text rather than in the margin.
+    assert marked["content"][0]["content"] == [
+        "One",
+        short,
+        " two",
+        bible.export.BELOW,
+        long,
+        ".",
+    ]
+    assert usj.serialize([bible.export.BELOW, long]).startswith("\\zbelow\\*\\f + ")
+
+
 @pytest.mark.parametrize(
     "reference, index, restored",
     [

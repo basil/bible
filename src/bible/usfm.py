@@ -99,4 +99,5 @@ def plain_text(text: str) -> str:
 def canonical_text(text: str) -> str:
     """A text's printed characters, without its markup and spaces."""
     text = re.sub(r"\\(" + "|".join(ESCAPED) + r")\b\s?", lambda m: ESCAPED[m[1]], text)
-    return re.sub(r"\s+", "", re.sub(r"\\(\+?[\w-]+\*?)\s?", "", text))
+    # A milestone closes with \*.
+    return re.sub(r"\s+", "", re.sub(r"\\(\+?[\w-]+\*?|\*)\s?", "", text))

@@ -39,12 +39,15 @@ OPENING_PAGES = 4
 TEX_POINTS = 72.27 / 72
 XHTML = "{http://www.w3.org/1999/xhtml}"
 # Notes, character styles, table cells, the Psalter's chapter label and
-# headings, the Pause lines, and acrostic headings, and the terms and
-# definitions of Brenton's list of translations, which PTXprint must keep.
+# headings, the Pause lines, and acrostic headings, the terms and
+# definitions of Brenton's list of translations, and the milestone that sets
+# a long note of the front or back matter below the text, which PTXprint
+# must keep: printing nothing, the milestone leaves no trace in the text.
 KEPT_MARKERS = {
     *(
         "f",
         "x",
+        *usj.MILESTONES,
         "xta",
         "add",
         "it",

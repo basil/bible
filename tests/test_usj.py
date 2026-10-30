@@ -166,6 +166,32 @@ def test_what_ptxprint_writes_reads_back_the_same(tmp_path: Path) -> None:
         assert usj.parse(processed) == doc
 
 
+def test_a_milestone_before_a_note_reads_back_as_usfmtc_reads_it(
+    tmp_path: Path,
+) -> None:
+    import usfmtc
+    from ptxprint.usxutils import PTXEmitter
+
+    text = (
+        "\\id FRT\n\\usfm 3.1\n"
+        "\\p Words\\zbelow\\*\\f + \\ft A long note.\\f* and more.\n"
+    )
+    doc = usj.parse(text)
+    assert doc["content"][1]["content"][1] == {"type": "ms", "marker": "zbelow"}
+    assert usj.serialize(doc) == text
+    path = tmp_path / "FRT.usfm"
+    path.write_text(text, encoding="utf-8")
+    upstream = usfmtc.readFile(str(path))
+    assert {"type": "ms", "marker": "zbelow"} in upstream.outUsj(None)["content"][1][
+        "content"
+    ]
+    for emitter in (None, PTXEmitter):
+        options = {"emitter": emitter} if emitter else {}
+        assert usj.parse(upstream.outUsfm(None, **options)) == doc
+    with pytest.raises(CheckFailed, match="Invalid milestone"):
+        usj.parse("\\id FRT\n\\p Words\\zbelow more.\n")
+
+
 def test_usj_agrees_with_the_reference_parser(
     sources: bible.sources.Sources, tmp_path: Path
 ) -> None:

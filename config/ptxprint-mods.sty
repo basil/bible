@@ -119,10 +119,16 @@
 \Justification Left
 \SpaceBeside 0
 
-% The label inside a note uses its text size and baseline; the caller in
-% scripture still uses v and its designed superior figures.
+% The label inside a note below the text uses its text size and baseline;
+% the caller in the text, and in a margin note of the front or back matter,
+% still uses v and its designed superior figures.
 \Marker znotelabel
 \StyleType Character
+
+% Sets the note of the front or back matter that follows below the text
+% (ptxprint-mods.tex).
+\Marker zbelow
+\StyleType Milestone
 
 % The verses a note of Brenton's Appendix supplies carry their numbers as the
 % text carries a supplied passage's.
