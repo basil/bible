@@ -693,6 +693,43 @@
         }
       }
     },
+    "MAT 26:53": {
+      "kind": "edit",
+      "edits": [
+        {
+          "ref": "MAT 26:53",
+          "from": "shall presently give",
+          "to": "shall give",
+          "greek": "παραστήσει"
+        }
+      ],
+      "why": "Follow Pierpont’s omission of presently: now pray already renders ἄρτι, while shall give retains the shared παραστήσει. Boyd’s Byzantine ASV and TCENT place the temporal qualification with the appeal to the Father and add none to his provision; FAA’s literal explanation likewise has and he will supply.",
+      "evidence": {
+        "pierpont": {
+          "entry": 67,
+          "quote": "and he shall _presently_ give me more than"
+        },
+        "boyd-asv": {
+          "ref": "MAT 26:53",
+          "quote": "I cannot now beseech my Father, and he shall send me"
+        },
+        "tcent": {
+          "ref": "MAT 26:53",
+          "quote": "Father right now, and he will provide me"
+        },
+        "faa": {
+          "ref": "MAT 26:53",
+          "field": "source_notes",
+          "quote": "and he will supply"
+        }
+      },
+      "former": {
+        "witness": "vulgate",
+        "ref": "MAT 26:53",
+        "quote": "exhibebit mihi modo",
+        "why": "Latin modo qualifies exhibebit, as the former presently qualifies shall give; the shared Greek has ἄρτι only with the appeal to the Father."
+      }
+    },
     "MAT 26:70#1": {
       "units": [
         {
@@ -3663,6 +3700,12 @@
           "ref": "ACT 2:47",
           "quote": "those that were saved."
         }
+      },
+      "former": {
+        "witness": "vulgate",
+        "ref": "ACT 2:47",
+        "quote": "qui salvi fierent",
+        "why": "The Vulgate’s qui salvi fierent can be rendered such as should be saved, as in the former English. Its relative subjunctive need not imply future or destined salvation."
       }
     },
     "ACT 3:19": {

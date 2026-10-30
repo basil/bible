@@ -657,7 +657,7 @@ def test_the_notes_name_the_version_the_reading_cites_or_say_or(
         w for k, w in witnesses.items() if "rendering" in k
     }
     assert "king-james-version" not in witnesses.values()
-    assert Counter(witnesses.values())["vulgate"] == 17
+    assert Counter(witnesses.values())["vulgate"] == 19
     printed = {
         n["x-key"]: usj.text_of(n["content"])
         for doc in edition.documents.values()
@@ -677,6 +677,8 @@ def test_the_notes_name_the_version_the_reading_cites_or_say_or(
         assert "Beelzebul: Vulgate Beelzebub" in printed[f"{key} rendering"]
     assert "Beelzebul: Complutensian text Beelzebub" in printed["MAT 10:25#1 TR"]
     for key, label in {
+        "MAT 26:53 rendering": "Vulgate",
+        "ACT 2:47 rendering": "Vulgate",
         "LUK 23:42 rendering": "Vulgate",
         "ACT 10:20 rendering": "Vulgate",
         "JHN 10:16 rendering": "Vulgate",
