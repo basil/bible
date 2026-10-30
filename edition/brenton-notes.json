@@ -5266,8 +5266,14 @@
       "why": "Brenton 1844 vol. 1 physical p. 237 (printed p. 213), 1879 physical p. 275, 1884 physical p. 244 and 1900 physical p. 271 (printed p. 259 in the Bagster printings) put the caller before in in bless in his name: a dagger in 1844 and δ in the Bagster printings. The note reads Or, his name. Hebraism. Swete I p. 385 prints καὶ εὐλογεῖν ἐπὶ τῷ ὀνόματι αὐτοῦ, without a variant on that phrase. His name renders in his name. Keep the complete lemma and source wording; the lemma override also places the note before these words rather than before bless, where eBible places it."
     },
     "EXO 21:17": {
-      "lemma": "let him certainly die",
-      "why": "Brenton’s caller stands before let him (1844 p. 105; 1879 p. 113; 1900 p. 109); eBible’s stands after it"
+      "verse": "21:16",
+      "lemma": null,
+      "why": "Editorial relocation of Brenton’s Matthew 15:4 reference from the kidnapping law to the parent-cursing law it quotes. Brenton 1844 vol. I printed p. 81 (PDF p. 105), 1879 printed p. 97 (PDF p. 113), and 1900 printed p. 97 (PDF p. 109) all put the caller before let him in 21:17; the available cropped 1884 scan lacks this page. Swete I p. 145 prints Ὁ κακολογῶν πατέρα αὐτοῦ ἢ μητέρα αὐτοῦ τελευτήσει θανάτῳ as 21:16 (Hebrew 21:17), and the kidnapping law as 21:17 (Hebrew 21:16). Turpie Q099 identifies Matthew 15:4 with LXX Exodus 21:16. Move the verse-level reference there, where the existing quotation link supplies it."
+    },
+    "PRO 11:28": {
+      "verse": "11:29",
+      "lemma": "He that deals not graciously with his own house",
+      "why": "eBible sets the reference at the end of 11:28, but Brenton’s caller stands immediately before 29: a dagger in 1844 vol. II printed p. 654 (PDF p. 157), and μ in 1879 printed p. 798 (PDF p. 814) and 1900 printed p. 798 (PDF p. 810). The cropped 1884 PDF p. 781 retains the caller but not the footnote band. The note reads See 1 Tim. 5. 8., which compares provision for one’s own household. Swete II p. 438 prints ὁ μὴ συνπεριφερόμενος τῷ ἑαυτοῦ οἴκῳ in 11:29. Restore the printed caller and declare the words compared."
     },
     "ISA 61:3": {
       "lemma": "the garment of glory",

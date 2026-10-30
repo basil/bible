@@ -1,23 +1,6 @@
 # TODO (Notes)
 
-## 1. Citations inside notes that point at the wrong place
-
-### Needs a source check (the caller or reference may be Brenton's own)
-
-- [ ] **PRO 11:28, key `PRO 11:28`** [source] — "See 1 Tim 5:8" fits 11:29
-  ("dealeth not graciously with his own house"); the source USJ puts the
-  caller at the end of 11:28. Confidence: medium. Check: printed caller
-  position in Brenton. Fix if confirmed: move via a note decision.
-- [ ] **DAG 9:16, key `DAG 9:16 CCEL`** [source] — "compare Heb. and Hos.
-  6:5"; HOS 6:4 is the mercy verse whose own note cites DAG 9:16, but 6:6 is
-  also about mercy. Confidence: low. Check: printed Brenton reference.
-- [ ] **EXO 21:17, key per `edition/brenton-notes.json`** [editorial] — the
-  Matthew 15:4 reference sits on the kidnapping law though the quotation
-  matches the neighbouring verse. The printed caller is already documented
-  from 1844, 1879, 1900. Confidence: low (Brenton's own placement). Decide
-  whether to keep it.
-
-## 2. Commentary classified as an alternative rendering, and the reverse
+## Commentary classified as an alternative rendering, and the reverse
 
 All [build]. The inference in `src/bible/notes.py` treats roman words after a
 label as a reading. Fix each with a scoped classification decision, or narrow
@@ -51,7 +34,7 @@ roman and what is italic.
   words as `\fqa`; audit other hedged glosses before changing the rule.
   Repro: `grep -n 'perhaps\|possibly' build/review/notes.md`.
 
-## 3. Lemma scope (which words the note is about)
+## Lemma scope (which words the note is about)
 
 The adjudication pass settled that a broad contextual lemma around a short
 gloss is a convention (`EZK 5:9 CCEL` declares it deliberately), so breadth
@@ -92,7 +75,7 @@ alone is not a defect. What remains:
   omitted passage. `prose.json` unbracketed-notes handles Esther the same way
   but has no PRO entry.
 
-## 4. Duplicate and misplaced notes
+## Duplicate and misplaced notes
 
 - [ ] **JDG 14:1 and `JDG 14:2 CCEL` (CCEL `vii.xxxix#1`)** [build] — the
   ἀλλόφυλοι/Philistines explanation prints twice. `edition/ccel-notes.json`
@@ -109,7 +92,7 @@ alone is not a defect. What remains:
   Confidence: medium. Check: printed callers; then one duplicate/placement
   decision keeping the fuller Hebrew gloss.
 
-## 5. Sentence detection (introduced punctuation and case)
+## Sentence detection (introduced punctuation and case)
 
 Both [build]. `notes.is_sentence` keeps a final stop and capital only when
 `FINITE_VERB` matches or a `sentence: true` override exists
@@ -124,7 +107,7 @@ Both [build]. `notes.is_sentence` keeps a final stop and capital only when
   intermingled…" loses its final stop; the opening "Note" label blocks
   detection. Confidence: high. Fix: `sentence: true` as at `GEN 15:11`.
 
-## 6. Spelling, punctuation, and grammar inside notes (inherited)
+## Spelling, punctuation, and grammar inside notes (inherited)
 
 ### Editorial judgment (policy says modernize obsolete spellings in notes too)
 
@@ -149,18 +132,7 @@ Both [build]. `notes.is_sentence` keeps a final stop and capital only when
   and "importeth, the pains". Confidence: high that they are inherited; low
   that they should change.
 
-### Needs a source check
-
-- [ ] **`DEU 5:29`** [source] — "Who will give that there should be so a
-  heart" (source "so an heart"); the article rule produced "a" but the
-  construction itself looks defective. Confidence: medium. Check: printed
-  note and the Greek demonstrative.
-- [ ] **`ROM 9:20 repliest against God?`** [source] — 1611 margin
-  "answereth again, or disputest with God" mixes persons; the Greek is a
-  participle, so this is a note-wording question only. Confidence: medium
-  that the mismatch is real; low that it should change. Check: printed 1611.
-
-## 7. Cross-references
+## Cross-references
 
 - The Byzantine review and website omit TR notes for cross-verse readings
   (`HEB 1:1#1`, `2CO 1:6#1`, `COL 1:24#1`): tooling, filed under review and

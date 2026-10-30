@@ -1179,7 +1179,7 @@ def test_every_note_is_printed_replaced_by_a_link_or_explicitly_omitted(
     edition: bible.pipeline.Edition,
 ) -> None:
     # Unreported Alexandrine readings add notes without consuming sources.
-    assert edition.summary["printed_notes"] == 6274
+    assert edition.summary["printed_notes"] == 6273
     rows = [row for listed in edition.notes.values() for row in listed]
     assert len({row["key"] for row in rows}) == len(rows)
     # The 1611 margin is printed on the New Testament alone, and whole but
@@ -2068,7 +2068,7 @@ def test_the_1611_margins_alternatives_keep_their_label(
         "ACT 5:3 to lie": ("to lie to", "or, _to deceive_"),
         "ROM 9:20 repliest against God?": (
             "repliest against God",
-            "or, _answereth again_, or _disputest with God_?",
+            "or, _answerest again_, or _disputest with God_?",
         ),
         "HEB 7:19 but the bringing in": (
             "but the bringing in",
@@ -2108,6 +2108,52 @@ def test_corrected_transcriptions_print_without_their_slips(
         if "Rom. 3:14" in usj.text_of(n["content"])
     ]
     assert len(romans) == 1 and romans[0].startswith("9:28 ")
+
+
+def test_the_household_reference_stands_at_proverbs_11_29(
+    edition: bible.pipeline.Edition,
+) -> None:
+    verses = scripture.verses(edition.documents["PRO"])
+    placed = [
+        (reference, offset, note)
+        for reference, verse in verses.items()
+        for offset, note in verse.notes
+        if note.get("x-key") == "PRO 11:28"
+    ]
+    assert len(placed) == 1
+    reference, offset, note = placed[0]
+    assert (reference, offset) == ("11:29", 0)
+    assert notes.lemma_of(note) == "He that dealeth not graciously with his own house"
+    assert "1TI 5:8" in usj.serialize([note])
+    assert scripture.plain(verses["11:28"].text) == (
+        "He that trusteth in wealth shall fall; "
+        "but he that helpeth righteous men shall rise."
+    )
+    assert scripture.plain(verses["11:29"].text) == (
+        "He that dealeth not graciously with his own house shall inherit the wind; "
+        "and the fool shall be servant to the wise man."
+    )
+
+
+def test_the_parent_cursing_link_replaces_brentons_kidnapping_reference(
+    edition: bible.pipeline.Edition,
+) -> None:
+    assert not any(r["key"] == "EXO 21:17" for r in edition.notes["EXO"])
+    verses = scripture.verses(edition.documents["EXO"])
+    assert not verses["21:17"].notes
+    [link] = [note for _, note in verses["21:16"].notes]
+    assert link["marker"] == "x"
+    text = usj.serialize([link])
+    assert text.count("|MAT 15:4") == 1
+    assert text.count("|MRK 7:10") == 1
+    assert "(Heb.\u00a0+ LXX)" in text
+    assert scripture.plain(verses["21:16"].text) == (
+        "He that revileth his father or his mother shall surely die."
+    )
+    assert scripture.plain(verses["21:17"].text) == (
+        "Whosoever shall steal one of the children of Israel, and prevail over him "
+        "and sell him, and he be found with him, let him certainly die."
+    )
 
 
 def test_notes_stay_in_the_margin_whatever_their_length_or_form(

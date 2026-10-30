@@ -71,7 +71,7 @@ def test_the_edition_prints_every_unit_once_in_the_manifests_order(
         "kjv_units": 27,
         "kjv_marginal_notes": 775,
         # Unreported Alexandrine readings add notes without consuming sources.
-        "printed_notes": 6274,
+        "printed_notes": 6273,
         # Every verse of the assembled books: Brenton's, with the passages
         # supplied from Codex Alexandrinus and the King James Bible's
         # 1 Kingdoms 23:12 and 3 Kingdoms 14:1-20, less the verses

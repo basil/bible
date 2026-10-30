@@ -481,6 +481,12 @@ def test_a_citation_of_the_wrong_verse_prints_the_verse_meant(
         ),
         (
             "DAG",
+            "DAG 9:16 CCEL",
+            r"\f - \fr 9:16 \fq thy mercy is over all: \ft compare Heb. and "
+            r"\ref Hos. 6:4|HOS 6:4\ref*\f*",
+        ),
+        (
+            "DAG",
             "DAG 11:4 CCEL",
             r"\f - \fr 11:4 \fq posterity: \ft lit. \fqa latter end\ft . See "
             r"\ref Ps. 36:37–38|PSA 36:37\ref*\f*",

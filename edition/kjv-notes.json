@@ -43,6 +43,12 @@
       "to": "Or, of",
       "why": "slip; the label is Or,"
     },
+    "ROM 9:20 repliest against God?": {
+      "from": "answereth",
+      "to": "answerest",
+      "uncategorized": true,
+      "why": "The 1611 margin, on the unnumbered leaf headed Pauls zeale / To the Romanes / Gods will (Romans 9:1–30, catchword 31 But), reads answerest againe, or disputest with God? The scan is reproduced at https://www.kingjamesbible.me/1611-Bible-KJV/webp/Romans-Chapter-9-9.webp and attributed to the University of Pennsylvania’s Rare Book and Manuscript Library. Scrivener’s Cambridge Paragraph Bible (1873), New Testament p. 146 (PDF p. 1330), likewise reads answerest again. George’s answereth is a transcription slip; restore the second-person form the printed sources give."
+    },
     "ROM 9:33 ashamed": {
       "from": "or confounded",
       "to": "Or, confounded",
