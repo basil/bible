@@ -9,31 +9,16 @@ to the Hebrew or KJV without evidence; the Greek may read this way.
 
 ### Possibly the Greek's own reading (confidence: medium)
 
-- [ ] **GEN 19:33, 19:35** — "he knew not when he slept … he rose" where the
-  daughter acts; pronoun referents.
-- [ ] **GEN 38:11** — commanded to sit in her father-in-law's house, she
-  sits in her father's.
-- [ ] **EXO 9:4** — "all that is of the children's of Israel".
 - [ ] **LEV 25:28** — "till the sixth year of the release" in the jubilee
   rule.
 - [ ] **2SA 4:4** — "as he hasted and retreated" where the nurse flees.
-- [ ] **1CH 10:3** — "they were wounded of the bows" makes the archers the
-  wounded.
 - [ ] **1CH 16:32** — "the tree of the field, and all things in it".
-- [ ] **2CH 22:12–24:1** — hidden six years, acts in the eighth, reigns at
-  seven.
 - [ ] **TOB 6:6, 6:10, 7:1** — near Ecbatane, then near Rages, then lodging
   in Ecbatane.
 - [ ] **TOB 6:13, 6:16, 7:9–14, 9:1–6** — marriage promised after returning
   from Rages, held that night, Raphael then sent to Rages alone.
-- [ ] **HAG 1:4** — "our house is desolate" where 1:9 says "my house".
-- [ ] **JER 20:16** — "Let that man rejoice as the cities which the Lord
-  overthrew"; irony or slip.
 - [ ] **EZK 4:4–6, 9** — 150 days in verse 4, 190 in verses 5 and 9.
 - [ ] **EZK 10:21** — eight wings each, where 1:6 gives four.
-- [ ] **EZK 39:19** — "drink wine" amid eating flesh and drinking blood.
-- [ ] **JDG 20:35** — 125,000 fallen against an army of 23,700 and a summary
-  of 25,000; Paragraph Bible has 25,100.
 - [ ] **1MA 12:7, 12:19–20** — the Spartan letter is from Darius, sent by
   Oniares, signed Areus to Onias.
 

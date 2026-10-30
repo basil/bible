@@ -55,7 +55,7 @@ from bible import (
     usj,
     versification,
 )
-from bible.alexandrinus import ALEX, APPENDIX, reported
+from bible.alexandrinus import ALEX, APPENDIX
 from bible.checks import CheckFailed, require, require_used
 from bible.policy_schema import CcelNote, Correction
 from bible.sources import Content
@@ -1032,11 +1032,7 @@ def decided_alexandrine(policy: bible.policy.Policy, key: str) -> bool:
     consumed = {
         k for entry in data["passages"].values() for k in entry.get("source_notes", ())
     }
-    return (
-        (key in data["readings"] and reported(data["readings"][key]))
-        or key in data["kept"]
-        or key in consumed
-    )
+    return key in data["readings"] or key in data["kept"] or key in consumed
 
 
 def supplemented(

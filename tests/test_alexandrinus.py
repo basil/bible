@@ -97,7 +97,7 @@ def unreported_reading() -> Decision:
 def test_an_unreported_reading_adds_a_note_without_consuming_a_source_note(
     declared: bible.policy.Policy,
 ) -> None:
-    policy = decided(declared, {"GEN 99:22": unreported_reading()})
+    policy = decided(declared, {"GEN 99:22 unreported": unreported_reading()})
     doc = book("GEN", r"\v 22 And God said, Behold.")
     before = copy.deepcopy(doc)
     appendix = usj.parse(r"\id BAK" + "\n\\is1 " + alexandrinus.SUPPLIED + "\n")
@@ -111,7 +111,7 @@ def test_an_unreported_reading_adds_a_note_without_consuming_a_source_note(
     assert len(verse.notes) == 1
     at, note = verse.notes[0]
     assert at == len("And ")
-    assert note["x-key"] == "GEN 99:22"
+    assert note["x-key"] == "GEN 99:22 unreported"
     assert note["category"] == "edition"
     assert note["x-scope"] == {"declared": "the Lord"}
     assert r"\fl Valpy \ft omits." in usj.serialize(note["content"])
@@ -136,14 +136,15 @@ def test_unreported_readings_require_an_explicit_absence_and_displaced_word_deri
     reading = {**unreported_reading(), **change}
     with pytest.raises(CheckFailed, match=message + ".*GEN 99:22"):
         alexandrinus.check(
-            decided(declared, {"GEN 99:22": reading}), {"GEN": book("GEN", "")}
+            decided(declared, {"GEN 99:22 unreported": reading}),
+            {"GEN": book("GEN", "")},
         )
 
 
 def test_an_absent_source_note_cannot_hide_an_undecided_real_note(
     declared: bible.policy.Policy,
 ) -> None:
-    policy = decided(declared, {"GEN 99:22": unreported_reading()})
+    policy = decided(declared, {"GEN 99:22 unreported": unreported_reading()})
     with pytest.raises(CheckFailed, match=r"not exhaustive; missing: \['GEN 99:22'\]"):
         alexandrinus.check(policy, {"GEN": book("GEN", VERSES)})
     reading = {
@@ -160,20 +161,120 @@ def test_an_absent_source_note_cannot_hide_an_undecided_real_note(
 
 
 @pytest.mark.parametrize(
-    "key,body",
+    "key,reading",
     [
-        # A verse's first note bears the verse's key.
-        ("GEN 99:22", r"\v 22 And \f + \fr 99:22 \fqa Gr. \ft look.\f*God said."),
-        ("GEN 99:22#2", r"\v 22 And God said."),
-        ("GEN 99:22 CCEL", r"\v 22 And God said."),
+        # Keyed by its verse alone, it would share the key of the verse's
+        # first source note, and of any decision on that note.
+        ("GEN 99:22", unreported_reading()),
+        ("GEN 99:22#2", unreported_reading()),
+        ("GEN 99:22 CCEL", unreported_reading()),
+        ("GEN 99:22#2 unreported", unreported_reading()),
+        # A reading that rests on a note is keyed by that note.
+        ("GEN 99:22 unreported", READING),
+        # Set in another verse, it would name a verse it does not stand in.
+        ("GEN 99:22 unreported", {**unreported_reading(), "target": "GEN 99:23"}),
+        # So would its note on the verse before one it omits whole.
+        (
+            "GEN 99:22 unreported",
+            {
+                **unreported_reading(),
+                "omit_verse": True,
+                "note_target": "GEN 99:21",
+                "note": r"\fl Valpy \ft has \fq God said\ft .",
+            },
+        ),
     ],
 )
-def test_an_unreported_reading_is_keyed_by_its_verse_alone(
-    declared: bible.policy.Policy, key: str, body: str
+def test_an_unreported_reading_is_keyed_by_its_verse_and_unreported(
+    declared: bible.policy.Policy, key: str, reading: Decision
 ) -> None:
-    policy = decided(declared, {key: unreported_reading()})
-    with pytest.raises(CheckFailed, match="keyed as a note"):
-        alexandrinus.check(policy, {"GEN": book("GEN", body)})
+    policy = decided(declared, {key: reading})
+    with pytest.raises(CheckFailed, match="not keyed by its verse and unreported"):
+        alexandrinus.check(policy, {"GEN": book("GEN", r"\v 22 And God said.")})
+
+
+def test_an_unreported_readings_note_is_keyed_apart_from_the_verses_first_note(
+    declared: bible.policy.Policy,
+) -> None:
+    policy = decided(declared, {"GEN 99:22 unreported": unreported_reading()})
+    doc = book("GEN", r"\v 22 And \f + \fr 99:22 \fqa Gr. \ft look.\f*God said.")
+    before = copy.deepcopy(doc)
+    appendix = usj.parse(r"\id BAK" + "\n\\is1 " + alexandrinus.SUPPLIED + "\n")
+    assert alexandrinus.check(policy, {"GEN": doc, "BAK": appendix}) == (0, 0)
+    result = alexandrinus.promoted("GEN", doc, policy, {}, {"GEN": doc})
+    assert doc == before
+    verse = scripture.verses(result)["99:22"]
+    assert verse.text == "And the Lord God said."
+    by_key = {note["x-key"]: note for _, note in verse.notes}
+    assert set(by_key) == {"GEN 99:22", "GEN 99:22 unreported"}
+    assert {
+        key: value for key, value in by_key["GEN 99:22"].items() if key != "x-scope"
+    } == scripture.verses(doc)["99:22"].notes[0][1]
+    assert by_key["GEN 99:22 unreported"]["category"] == "edition"
+    assert by_key["GEN 99:22 unreported"]["x-scope"] == {"declared": "the Lord"}
+
+
+def test_an_unreported_reading_stands_beside_a_decision_on_the_verses_first_note(
+    declared: bible.policy.Policy,
+) -> None:
+    # The verse's first note is Alexandrine and kept: its decision and the
+    # reading's are keyed apart, as are the notes. Its caller stands apart
+    # from the words the reading changes, which would divide its lemma.
+    kept = {"GEN 99:22": {"source_note": NOTE, "why": "Keep it.", "swete": SWETE}}
+    policy = decided(
+        declared, {"GEN 99:22 unreported": unreported_reading()}, kept=kept
+    )
+    body = r"\v 22 And God said, Behold, \f + \fr 99:22 \fqa Alex. \ft + the Lord.\f*Adam is become."
+    doc = book("GEN", body)
+    appendix = usj.parse(r"\id BAK" + "\n\\is1 " + alexandrinus.SUPPLIED + "\n")
+    alexandrinus.check(policy, {"GEN": doc, "BAK": appendix})
+    verse = scripture.verses(promoted(policy, body))["99:22"]
+    keys = {note["x-key"] for _, note in verse.notes}
+    assert {"GEN 99:22", "GEN 99:22 unreported"} <= keys
+
+
+@pytest.mark.parametrize(
+    "change",
+    [
+        {"target": "EXO 99:22"},
+        {"edits": [{"target": "EXO 99:23", "from": "So he sent"}]},
+        {"omit_verse": True, "note_target": "EXO 99:21"},
+    ],
+)
+def test_a_target_in_another_book_is_refused(
+    declared: bible.policy.Policy, change: dict[str, Any]
+) -> None:
+    # The replacement is made at the target's verse in the decision's book.
+    policy = decided(declared, {"GEN 99:22": {**READING, **change}})
+    with pytest.raises(CheckFailed, match="target in another book: GEN 99:22"):
+        alexandrinus.check(policy, {"GEN": book("GEN", VERSES)})
+
+
+def test_an_unreported_reading_edits_only_a_verse_beside_its_own(
+    declared: bible.policy.Policy,
+) -> None:
+    body = "\n".join(
+        (
+            r"\v 21 And they were clothed.",
+            r"\v 22 And God said.",
+            r"\v 23 So he sent him forth.",
+            r"\v 24 And he drove out the man.",
+        )
+    )
+    appendix = usj.parse(r"\id BAK" + "\n\\is1 " + alexandrinus.SUPPLIED + "\n")
+    books = {"GEN": book("GEN", body), "BAK": appendix}
+
+    def edited(target: str) -> bible.policy.Policy:
+        edit = {"target": target, "from": "And", "english": {"source": "from"}}
+        reading = {**unreported_reading(), "edits": [{**edit, "note": None}]}
+        return decided(declared, {"GEN 99:22 unreported": reading})
+
+    for beside in ("GEN 99:21", "GEN 99:23"):
+        alexandrinus.check(edited(beside), books)
+    with pytest.raises(
+        CheckFailed, match="edits a verse not beside its own: GEN 99:22 unreported"
+    ):
+        alexandrinus.check(edited("GEN 99:24"), books)
 
 
 def test_a_retained_note_must_have_real_source_words(
@@ -190,13 +291,37 @@ def test_the_review_identifies_unreported_alexandrine_readings(
     edition: bible.pipeline.Edition,
 ) -> None:
     report = review.alexandrinus_report(edition.read, edition)
-    for key in ("GEN 17:7", "1KI 15:28"):
+    readings = edition.policy.alexandrinus["readings"]
+    unreported = [
+        key for key, decision in readings.items() if decision["source_note"] is None
+    ]
+    assert {
+        "GEN 17:7 unreported",
+        "1KI 15:28 unreported",
+        "JER 20:16 unreported",
+    } <= set(unreported)
+    for key in unreported:
         entry = report.split(f"## {key} — readings\n", 1)[1].split("\n## ", 1)[0]
         assert (
             "Source: No Brenton source note; reading established from Swete." in entry
         )
         assert "Before:" in entry and "After:" in entry
-        assert "Valpy" in entry
+        # The note it writes is listed with it, not only its reason.
+        assert f"Footnote: {readings[key]['lemma']}: " in entry
+
+
+def test_jeremias_preserves_the_messengers_rejoicing_when_the_sentence_is_redivided(
+    edition: bible.pipeline.Edition,
+) -> None:
+    verses = scripture.verses(edition.documents["JER"])
+    assert verses["20:15"].text == (
+        "Cursed be the man who brought the glad tidings to my father, "
+        "saying with rejoicing, A male child is born to thee."
+    )
+    assert verses["20:16"].text.startswith("That man shall be as the cities")
+    assert "rejoic" not in verses["20:16"].text
+    assert len(verses["20:16"].notes) == 1
+    assert "Let that man rejoice" in usj.text_of(verses["20:16"].notes[0][1]["content"])
 
 
 def test_a_reading_replaces_the_vatican_words_and_notes_them(

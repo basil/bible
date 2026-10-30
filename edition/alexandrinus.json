@@ -266,7 +266,7 @@
       },
       "source_note": "\\fqa Alex. \\ft cattle."
     },
-    "GEN 17:7": {
+    "GEN 17:7 unreported": {
       "why": "Conform this covenant formula to Codex Alexandrinus as an explicitly decided exception to the restriction to variants Brenton reported. Swete I (1901) p. 25 prints ἀνὰ μέσον ἐμοῦ καὶ ἀνὰ μέσον σοῦ in its A text, confirmed in the checked transcription and scan. Valpy p. 13 (Internet Archive image n24) omits ἀνὰ μέσον ἐμοῦ, as do Brenton’s facing Greek and English; the omission is therefore labelled Valpy. Original Vaticanus is lost here: Swete I p. xvii identifies its Genesis 1:1–46:28 lacuna. Borrow between me and thee from Brenton’s own Genesis 17:2, retain the rest of his verse, and note Valpy’s omission at me and. Brenton has no Alexandrine source note at this verse.",
       "swete": {
         "volume": 1,
@@ -1874,7 +1874,7 @@
       ],
       "source_note": "\\fqa Heb. \\ft and \\fqa Alex. \\ft In the twentieth year."
     },
-    "1KI 15:28": {
+    "1KI 15:28 unreported": {
       "why": "Follow Alexandrinus in omitting the patronymic, as an explicitly decided exception to the restriction to readings Brenton reported. Valpy p. 317 (Internet Archive image n328) and Brenton’s 1844 vol. I p. 386 and 1879/1900 p. 472 print Asa son of Asa; his English faithfully renders Valpy’s υἱοῦ Ἀσὰ. Swete I (1901) p. 718, checked against its scan, prints Vaticanus’s son of Abiu but records βασ. του Ασα υιου Αβιου] Ασα βασ. Ιουδα A, omitting the patronymic in Alexandrinus. Preserve the precise former words in a Valpy addition note on Asa, not a Vaticanus note. Scrivener’s Cambridge Paragraph Bible (1873) p. 317, the Revised Version, and Boyd’s latest ASV agree in omitting the patronymic but are not the authority for the Greek selection. The corresponding 1884 scan crops out this verse; Brenton has no Alexandrine source note here.",
       "swete": {
         "volume": 1,
@@ -6507,6 +6507,255 @@
         ]
       },
       "supplied": ["outspreading"]
+    },
+    "GEN 19:33 unreported": {
+      "why": "Conform the pronouns to Alexandrinus as an explicitly decided reading beyond those Brenton reported. Swete I p. 31, checked against its scan, prints αὐτὴν in ἐν τῷ κοιμηθῆναι αὐτὴν καὶ ἀναστῆναι in its A main text at both 19:33 and 19:35: the daughter lies down and rises, while Lot does not know. Brenton 1879 physical p. 38 (printed p. 22) has masculine αὐτόν in its facing Greek and he in both English clauses. Change only those two English pronouns to she, retaining slept and the original form of rose. The note names Valpy: his p. 15 (PDF p. 27), checked against the scan, prints ἐν τῷ κοιμηθῆναι αὐτὸν, καὶ ἐν τῷ ἀναστῆναι, with the masculine pronoun supporting Brenton’s former he in both clauses. Original Vaticanus is missing before Genesis 46:28 and cannot be named here. Brenton reports no Alexandrine source note at this verse.",
+      "swete": {
+        "volume": 1,
+        "page": 31,
+        "evidence": "text",
+        "reading": "ἐν τῷ κοιμηθῆναι αὐτὴν καὶ ἀναστῆναι",
+        "agrees": true
+      },
+      "source_note": null,
+      "from": "he slept and when he rose up",
+      "english": {
+        "source": "from",
+        "edits": [
+          {
+            "span": [0, 2],
+            "to": "she"
+          },
+          {
+            "span": [18, 20],
+            "to": "she"
+          }
+        ]
+      },
+      "lemma": "she slept and when she rose up",
+      "label": "valpy",
+      "supplied": [
+        "she"
+      ]
+    },
+    "GEN 19:35 unreported": {
+      "why": "Conform the pronouns to Alexandrinus as an explicitly decided reading beyond those Brenton reported. Swete I p. 31, checked against its scan, prints αὐτὴν in ἐν τῷ κοιμηθῆναι αὐτὴν καὶ ἀναστῆναι in its A main text at both 19:33 and 19:35: the daughter lies down and rises, while Lot does not know. Brenton 1879 physical p. 38 (printed p. 22) has masculine αὐτόν in its facing Greek and he in both English clauses. Change only those two English pronouns to she, retaining slept and the original form of rose. The note names Valpy: his p. 16 (PDF p. 28), checked against the scan, prints ἐν τῷ κοιμηθῆναι αὐτὸν, καὶ ἀναστῆναι, with the masculine pronoun supporting Brenton’s former he in both clauses. Original Vaticanus is missing before Genesis 46:28 and cannot be named here. Brenton reports no Alexandrine source note at this verse.",
+      "swete": {
+        "volume": 1,
+        "page": 31,
+        "evidence": "text",
+        "reading": "ἐν τῷ κοιμηθῆναι αὐτὴν καὶ ἀναστῆναι",
+        "agrees": true
+      },
+      "source_note": null,
+      "from": "he slept, nor when he arose",
+      "english": {
+        "source": "from",
+        "edits": [
+          {
+            "span": [0, 2],
+            "to": "she"
+          },
+          {
+            "span": [19, 21],
+            "to": "she"
+          }
+        ]
+      },
+      "lemma": "she slept, nor when she arose",
+      "label": "valpy",
+      "supplied": [
+        "she"
+      ]
+    },
+    "EXO 9:4 unreported": {
+      "why": "Conform the closing cattle clause to Alexandrinus beyond the readings Brenton reported. Swete I p. 120, checked against its scan, explicitly records των του Ισρ. υιων] των κτηνων των υιων Ισρ. A, without a hand or uncertainty: A names the cattle of the children of Israel. Brenton 1879 physical p. 96 (printed p. 80) prints all that is of the children’s of Israel, with the superfluous English possessive, while its facing Greek lacks κτηνων in this clause. Use Brenton’s cattle and children wording already in this verse, retaining all, the surrounding negative, and his note on ῥητόν. Swete’s Vaticanus main text and Valpy p. 56 (PDF p. 68), both checked against their scans, print οὐ τελευτήσει ἀπὸ πάντων τῶν τοῦ Ἰσραὴλ υἱῶν ῥητόν. The displaced English renders that construction freely, with a superfluous English possessive; its grammatical defect is not an independent Greek reading. Name Vaticanus, whose reading Valpy also prints, for the former clause without explicit cattle. No Alexandrine source note is reported.",
+      "swete": {
+        "volume": 1,
+        "page": 120,
+        "evidence": "apparatus",
+        "reading": "των του Ισρ. υιων] των κτηνων των υιων Ισρ. A",
+        "agrees": true
+      },
+      "source_note": null,
+      "from": "all that is of the children's of Israel",
+      "english": {
+        "source": "from",
+        "edits": [
+          {
+            "span": [4, 11],
+            "to": "the cattle"
+          },
+          {
+            "span": [27, 29],
+            "to": ""
+          }
+        ]
+      },
+      "lemma": "all the cattle of the children of Israel",
+      "label": "vatican",
+      "supplied": [
+        "cattle",
+        "children"
+      ]
+    },
+    "1CH 10:3 unreported": {
+      "why": "Conform the wounded subject to Alexandrinus beyond the readings Brenton reported. Swete II p. 23, checked against its scan, explicitly gives αυτους] αυτον A and επονεσεν ℵA, without a hand or uncertainty: A makes the object and the sufferer singular. Brenton already renders the object him; retain that and his surrounding translation, changing only they were wounded to he was wounded to express A’s singular verb. The unchanged adjective wounded remains Brenton’s rendering, not a new lexical translation. B positively prints ἐπόνεσαν, supporting the displaced plural subject in the Vaticanus note. The singular auxiliary and pronoun are declared editorial inflections. No Alexandrine source note is reported.",
+      "swete": {
+        "volume": 2,
+        "page": 23,
+        "evidence": "apparatus",
+        "reading": "αυτους] αυτον A | τοξοις] pr τοις ℵA | επονεσεν ℵA",
+        "agrees": true
+      },
+      "source_note": null,
+      "from": "they were wounded",
+      "english": {
+        "source": "from",
+        "edits": [
+          {
+            "span": [0, 4],
+            "to": "he"
+          },
+          {
+            "span": [5, 9],
+            "to": "was"
+          }
+        ]
+      },
+      "lemma": "he was wounded",
+      "label": "vatican",
+      "supplied": [
+        "he",
+        "was"
+      ]
+    },
+    "JDG 20:15 unreported": {
+      "why": "Conform the army's number to Alexandrinus beyond the readings Brenton reported. Swete I p. 532, checked against its scan, explicitly records τρεις] και πεντε A, without a hand or uncertainty: A numbers twenty-five thousand from the cities, besides the seven hundred of Gabaa. Brenton prints twenty-three thousand, agreeing with B's εἴκοσι τρεῖς χιλιάδες. Replace only that number, preserving the former number in a Vaticanus note and retaining the unrelated source note. The resulting 25,700 accommodates the 25,100 slain at 20:35 and the 600 survivors at 20:47; the separate 25,000 casualty summary at 20:46 is unchanged. No Alexandrine source note is reported.",
+      "swete": {
+        "volume": 1,
+        "page": 532,
+        "evidence": "apparatus",
+        "reading": "τρεις] και πεντε A",
+        "agrees": true
+      },
+      "source_note": null,
+      "from": "twenty-three thousand",
+      "english": {
+        "source": "from",
+        "edits": [
+          {
+            "span": [7, 12],
+            "to": "five"
+          }
+        ]
+      },
+      "lemma": "twenty-five thousand",
+      "label": "vatican",
+      "supplied": [
+        "twenty-five thousand"
+      ]
+    },
+    "2CH 23:1 unreported": {
+      "why": "Conform the year to Alexandrinus beyond the readings Brenton reported. Swete II p. 97, checked against its scan, explicitly records ογδοω] εβδομω A, without a hand or uncertainty. B has eighth; A has seventh, consistent with the six years of hiding at 22:12 and the seven-year-old king at 24:1. Brenton 1879 physical p. 610 (printed p. 594) prints eighth. Replace only that ordinal with seventh, the exact value of A’s Greek, and preserve eighth in a Vaticanus note. No Alexandrine source note is reported.",
+      "swete": {
+        "volume": 2,
+        "page": 97,
+        "evidence": "apparatus",
+        "reading": "ογδοω] εβδομω A",
+        "agrees": true
+      },
+      "source_note": null,
+      "from": "eighth",
+      "english": {
+        "source": "from",
+        "edits": [
+          {
+            "span": [0, 6],
+            "to": "seventh"
+          }
+        ]
+      },
+      "lemma": "seventh",
+      "label": "vatican",
+      "supplied": [
+        "seventh"
+      ]
+    },
+    "HAG 1:4 unreported": {
+      "why": "Conform the demonstrative to Alexandrinus beyond the readings Brenton reported. Swete III p. 70, checked against its scan, records υμων 2°] ουτος ℵAQ, without a hand or uncertainty for A: A has this house. Brenton 1879 physical p. 1128 (printed p. 1112) has our house and facing ἡμῶν, whereas Swete’s B has ὑμῶν, your, so the displaced our must not be attributed to Vaticanus. Valpy p. 738 (PDF p. 750), checked against the scan, prints ὁ δὲ οἶκος ἡμῶν, supporting Brenton’s our house. Preserve that former English in a Valpy note, and declare this as the literal demonstrative supplied by A. No Alexandrine source note is reported.",
+      "swete": {
+        "volume": 3,
+        "page": 70,
+        "evidence": "apparatus",
+        "reading": "υμων 2°] ουτος ℵAQ",
+        "agrees": true
+      },
+      "source_note": null,
+      "from": "our house",
+      "english": {
+        "source": "from",
+        "edits": [
+          {
+            "span": [0, 3],
+            "to": "this"
+          }
+        ]
+      },
+      "lemma": "this house",
+      "label": "valpy",
+      "supplied": [
+        "this"
+      ]
+    },
+    "JER 20:16 unreported": {
+      "why": "Conform verses 15–16 together to Alexandrinus beyond the readings Brenton reported. Swete III p. 267, checked against its scan, explicitly records εστω] εσται A, without a hand or uncertainty: A has he shall be. The same page retains εὐφραινόμενος for A at the close of verse 15, describing the messenger who brings the news. Brenton 1879 physical p. 944 (printed p. 928) instead joins εὐφραινόμενος to ἔστω in its facing Greek and renders Let that man rejoice in verse 16. Preserve that participle as saying with rejoicing in verse 15 and use That man shall be for A’s future verb in verse 16, retaining the surrounding English. Rejoicing is the participial form of Brenton’s rejoice; with expresses its attachment to saying. Shall be is an explicit editorial rendering of ἔσται. These are one decision: changing the sentence division must not discard the rejoicing that A retains. Keep the displaced opening under Valpy, not Vaticanus: Valpy p. 619 (PDF p. 631), checked against the scan, prints σοι ἄρσην· εὐφραινόμενος at the end of verse 15, followed without sentence punctuation after the participle by Ἔστω ὁ ἄνθρωπος ἐκεῖνος, ὡς αἱ πόλεις in verse 16. His εὐφραινόμενος ἔστω supports Brenton’s periphrastic imperative Let that man rejoice, despite the intervening verse number; B’s ἔστω alone does not. The further edit restores the participle without a second note; the note at verse 16 preserves Brenton’s former construction. No Alexandrine source note is reported.",
+      "swete": {
+        "volume": 3,
+        "page": 267,
+        "evidence": "apparatus",
+        "reading": "εστω] εσται A",
+        "agrees": true
+      },
+      "source_note": null,
+      "from": "Let that man rejoice",
+      "english": {
+        "source": "from",
+        "edits": [
+          {
+            "span": [0, 8],
+            "to": "That"
+          },
+          {
+            "span": [13, 20],
+            "to": "shall be"
+          }
+        ]
+      },
+      "lemma": "That man shall be",
+      "label": "valpy",
+      "supplied": [
+        "shall",
+        "be",
+        "with",
+        "rejoicing"
+      ],
+      "edits": [
+        {
+          "target": "JER 20:15",
+          "from": "saying,",
+          "english": {
+            "source": "from",
+            "edits": [
+              {
+                "span": [6, 6],
+                "to": " with rejoicing"
+              }
+            ]
+          },
+          "note": null
+        }
+      ]
     }
   },
   "passages": {

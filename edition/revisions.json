@@ -11901,6 +11901,18 @@
           "from": "go? shall appoint",
           "to": "go? he shall appoint",
           "why": "Brenton’s 1844 vol. II p. 716 and 1879/1884/1900 p. 875 print go? shall appoint, faithfully transcribed by eBible. His facing Greek and Swete III (1905) p. 175 close the initial question at πορεύσεται; and continue with δώσει. Ottley’s Greek-based translation (1909 I p. 223) independently reads it shall go forth? he shall set it before nations and ends the continuation with a period. Supply ordinary lowercase he, following Ottley and the source’s case convention, while retaining Brenton’s wording and supplied words. Ottley’s commentary (1906 II pp. 301–302) calls the sentence difficult; indicative mood alone does not establish its pointing. This is an editorial English repair, not a new Greek reading or a recovered transcription."
+        },
+        {
+          "verse": "GEN 38:11",
+          "from": "house of thy father-in-law",
+          "to": "house of thy father",
+          "why": "Brenton’s 1844 vol. I p. 42 (physical p. 66), 1879 physical p. 67, 1884 physical p. 57, and 1900 physical p. 63 (printed p. 51 in all three) print thy father-in-law in the English command, with no note at the verse, but the Bagster printings’ facing Greek has τοῦ πατρός σου, thy father, and the same verse sends Thamar to her father’s house. Swete I p. 74 prints τοῦ πατρός σου in its A main text, with no qualification at this phrase. Correct only the mistaken English kinship word; do not change the daughter-in-law who is addressed."
+        },
+        {
+          "verse": "EZK 39:19",
+          "from": "drink wine",
+          "to": "drink blood",
+          "why": "Brenton’s 1844 vol. II p. 844 (physical p. 347), 1879 physical p. 1048, 1884 physical p. 995, and 1900 physical p. 1044 (printed p. 1032 in all three) print drink wine, with no note at the verse, but the Bagster printings’ facing Greek reads πίεσθε αἷμα, drink blood. Swete III p. 471 likewise prints αἷμα and reports no variant at verse 19. Correct the English noun to the blood the preceding two verses also name; retain Brenton’s remaining sacrificial imagery."
         }
       ]
     },
@@ -12841,6 +12853,18 @@
           "verse": "ISA 7:17",
           "from": "Ephraim took away from Judah the king of the Assyrians.",
           "to": "he took away Ephraim from Judah; the king of the Assyrians."
+        }
+      ]
+    },
+    "judges casualty numeral": {
+      "why": "Correct the construction of Brenton’s English number to the value his facing Greek prints, without supplying or dropping any number word. This is an explicitly scoped correction of the numeral’s English construction, not a harmonization of other totals in Judges 20.",
+      "wording": "construction",
+      "changes": [
+        {
+          "verse": "JDG 20:35",
+          "from": "a hundred and twenty-five thousand men",
+          "to": "twenty-five thousand and a hundred men",
+          "why": "Brenton’s 1844 vol. I p. 285 (physical p. 309), 1879 physical p. 363, 1884 physical p. 332, and 1900 physical p. 359 (printed p. 347 in all three) print a hundred and twenty-five thousand men in English, with no note at the verse, but the Bagster printings’ facing Greek reads εἴκοσι καὶ πέντε χιλιάδας καὶ ἑκατὸν ἄνδρας, 25,100. Swete I p. 534 prints that same number and reports no A numerical variant. Reorder Brenton’s existing numeral words to express twenty-five thousand plus a hundred, retaining every word and the surrounding sentence; no other army or casualty total is changed."
         }
       ]
     }

@@ -6,7 +6,7 @@
 
 ### Reviewing the readings from Codex Alexandrinus
 
-Each reading printed in the text is a decision in `edition/alexandrinus.json`. It records the note of Brenton's that it rests on, or, for one of the few readings he did not report, `"source_note": null`, the words it replaces, how its English is derived, and Swete's evidence. The English must be Brenton's own, or supplied from the translations [sources/README.md](sources/README.md#english-for-the-readings-from-codex-alexandrinus) names, in King James English, with the source in the reason: every change of wording, order, or punctuation is declared, and the build rejects a word that is neither his nor declared as supplied.
+Each reading printed in the text is a decision in `edition/alexandrinus.json`. It records the note of Brenton's that it rests on, or, for one of the few readings he did not report, `"source_note": null` under the key of its verse with `unreported` (`EXO 9:4 unreported`), the words it replaces, how its English is derived, and Swete's evidence. The English must be Brenton's own, or supplied from the translations [sources/README.md](sources/README.md#english-for-the-readings-from-codex-alexandrinus) names, in King James English, with the source in the reason, or, in a reading he did not report, the editor's rendering of Swete's Greek, with that Greek in the reason: every change of wording, order, or punctuation is declared, and the build rejects a word that is neither his nor declared as supplied.
 
 After changing a decision, run `make review` and read its entry in `build/review/alexandrinus.md`: the passage before and after with its neighbours, the footnote printed, and the Swete record. Check grammar, punctuation, names, numbers, and the words the note identifies.
 

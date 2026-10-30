@@ -557,6 +557,19 @@ def check(
                 )
                 check_swete(key, {**entry, **item}, policy)
             edits = entry.get("edits", ())
+            # A replacement is carried out in its decision's book, at its
+            # target's verse, and a verse omitted whole is noted there too: a
+            # target in another book would edit, or note, a verse of the same
+            # number there.
+            require(
+                all(
+                    references.book_of(item[field]) == code
+                    for item in (entry, *edits)
+                    for field in ("target", "note_target")
+                    if field in item
+                ),
+                f"Alexandrine target in another book: {key}",
+            )
             for item in (entry, *edits):
                 # A verse omitted whole is noted on a verse named for it: by
                 # its own note, or by the note of the decision's edit of that
@@ -612,6 +625,35 @@ def check(
                     ),
                     f"KJV passage edit not derived from the words it displaces: {key}",
                 )
+    # A reading that rests on no note is keyed as the note it writes, by its
+    # verse and `unreported`, since the verse alone is the key of the verse's
+    # first source note; it is set in that verse: not at a target, nor,
+    # omitting its verse, on the verse before. Only such a reading is. A
+    # misfiled key is named here, before the notes are matched against it.
+    misfiled = sorted(
+        key
+        for key, entry in data["readings"].items()
+        if (key.split()[2:] == ["unreported"] and "#" not in key) == reported(entry)
+        or (not reported(entry) and ("target" in entry or "note_target" in entry))
+    )
+    require(
+        not misfiled,
+        f"Unreported Alexandrine reading not keyed by its verse and unreported, or set in another verse: {misfiled}",
+    )
+    # A further edit carries such a reading only into a verse beside its
+    # own, whose sentence it completes.
+    for key, entry in data["readings"].items():
+        if reported(entry) or not entry.get("edits"):
+            continue
+        order = list(scripture.verses(books[references.book_of(key)]))
+        label = key.split()[1]
+        require(label in order, f"Alexandrine target verse missing: {key}")
+        at = order.index(label)
+        beside = set(order[max(at - 1, 0) : at + 2])
+        require(
+            all(item["target"].split()[-1] in beside for item in entry["edits"]),
+            f"Unreported Alexandrine reading edits a verse not beside its own: {key}",
+        )
     consumed = [
         k for entry in data["passages"].values() for k in entry.get("source_notes", ())
     ]
@@ -640,16 +682,6 @@ def check(
         found == declared,
         f"Alexandrine notes not exhaustive; missing: {sorted(found - declared)}; unused: {sorted(declared - found)}",
     )
-    # A reading that rests on no note writes its own under its key, which is
-    # its verse alone: a verse's first note bears that key too, and a key of
-    # a note's form would name a note the reading does not rest on.
-    keys = {note["x-key"] for note in keyed}
-    shared = sorted(
-        key
-        for key, entry in data["readings"].items()
-        if not reported(entry) and (key in keys or len(key.split()) != 2 or "#" in key)
-    )
-    require(not shared, f"Unreported Alexandrine reading keyed as a note: {shared}")
     # An Appendix paragraph that supplies nothing moves into the note on its
     # verse: that note is then given its words, in the same book. The list it
     # stands in prints nowhere, so a paragraph kept but not moved is lost.
