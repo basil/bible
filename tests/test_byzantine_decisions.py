@@ -1480,6 +1480,43 @@ def test_carriers_validate_keys_before_looking_up_rows(
         )
 
 
+def test_a_declared_carrier_must_make_an_edit(byzantine: Reconciliation) -> None:
+    # A reading that took the instruction's construction (Mark 15:3) concerns
+    # its passage, but carries nothing out if it makes no edit.
+    readings = readings_of(byzantine)
+    taken: Override = {
+        **next(o for o in readings if o["id"] == "MRK 15:3#1"),
+        "kind": "nochange",
+        "bound": [],
+    }
+    with pytest.raises(
+        CheckFailed, match="pierpont 117: reading MRK 15:3#1 makes no edit"
+    ):
+        decisions.carriers(
+            declared_of(byzantine),
+            byzantine.decisions.instructions,
+            [taken if o["id"] == taken["id"] else o for o in readings],
+            byzantine.english.kjv,
+        )
+
+
+@pytest.mark.parametrize("change", [{"role": "agrees"}, {"status": "continuation"}])
+def test_instruction_decisions_require_a_proposal(
+    byzantine: Reconciliation, change: Instruction
+) -> None:
+    rows: list[Instruction] = [
+        {**row, **change} if decisions.instruction_key(row) == "pierpont 276" else row
+        for row in byzantine.decisions.instructions
+    ]
+    with pytest.raises(CheckFailed, match="rows that propose nothing.*pierpont 276"):
+        decisions.carriers(
+            declared_of(byzantine),
+            rows,
+            readings_of(byzantine),
+            byzantine.english.kjv,
+        )
+
+
 def test_a_declared_carrier_need_not_enclose_the_instruction(
     byzantine: Reconciliation,
 ) -> None:

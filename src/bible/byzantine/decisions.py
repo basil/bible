@@ -825,6 +825,26 @@ def category_c_rows(instructions: Sequence[Instruction]) -> dict[str, Instructio
     }
 
 
+def decided_rows(
+    declared: Mapping[str, Mapping[str, Any]], rows: Sequence[Instruction]
+) -> dict[str, Instruction]:
+    """Require exactly the category-c rows, each proposing a correction. A row
+    that proposes nothing is the source's fault, not a decision's: no
+    decision, made or removed, would settle it."""
+    sources = category_c_rows(rows)
+    idle = sorted(
+        key
+        for key, row in sources.items()
+        if row.get("role") == "agrees" or row.get("status") == "continuation"
+    )
+    require(not idle, f"Category-c rows that propose nothing: {idle}")
+    require(
+        set(declared) == set(sources),
+        f"Category-c decisions and rows differ: {sorted(set(declared) ^ set(sources))}",
+    )
+    return sources
+
+
 def instruction_entries(
     declared: Mapping[str, Mapping[str, Any]],
     instructions: Sequence[Instruction],
@@ -839,17 +859,14 @@ def instruction_entries(
     RP2026 Greek it is about, found once in the row's verse, so that it
     cannot outlive the text it judges; the source supplies the English.
 
-    Stops the build on a decision that names no category-c row or leaves
-    one undecided, Greek that does not occur once in RP2026 at the row's
+    Stops the build on a category-c row that proposes nothing, a decision
+    that names no category-c row or leaves one undecided (decided_rows),
+    Greek that does not occur once in RP2026 at the row's
     verse, evidence not in its source (evidence), a former version on a
     decision that makes no edit itself, or an edit that would carry itself
     without binding uniquely to shared Greek.
     """
-    category = category_c_rows(instructions)
-    require(
-        set(declared) == set(category),
-        f"Category-c decisions and rows differ: {sorted(set(declared) ^ set(category))}",
-    )
+    category = decided_rows(declared, instructions)
     result: list[dict[str, Any]] = []
     for key, entry in declared.items():
         source = category[key]
@@ -997,15 +1014,12 @@ def carriers(
     kjv: Mapping[str, str],
 ) -> dict[str, Carrier]:
     """The executor of each category-c edit. A named reading is the editor's
-    judgment; check that it exists and concerns the instruction's passage,
-    not whether its words express the instruction's meaning. An unnamed
-    overlapping reading prevents independent execution, but does not imply
-    fulfillment. A nochange may coexist with a reading of the same words."""
-    sources = category_c_rows(rows)
-    require(
-        set(declared) == set(sources),
-        f"Category-c decisions and rows differ: {sorted(set(declared) ^ set(sources))}",
-    )
+    judgment; check that it exists, makes an edit, and concerns the
+    instruction's passage, not whether its words express the instruction's
+    meaning. An unnamed overlapping reading prevents independent execution,
+    but does not imply fulfillment. A nochange may coexist with a reading of
+    the same words."""
+    sources = decided_rows(declared, rows)
     # The readings: an override read from an instruction is the row itself.
     readings = {o["id"]: o for o in overrides if "instruction" not in o}
     result: dict[str, Carrier] = {}
@@ -1027,6 +1041,10 @@ def carriers(
         elif "carrier" in entry:
             named = entry["carrier"]
             require(named in readings, f"{label}: carrier {named} is no reading")
+            require(
+                bool(readings[named].get("bound")),
+                f"{label}: reading {named} makes no edit",
+            )
             require(
                 named in taken
                 or any(e["ref"] in row["refs"] for e in readings[named]["bound"]),
