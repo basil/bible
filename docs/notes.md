@@ -34,6 +34,23 @@ roman and what is italic.
   words as `\fqa`; audit other hedged glosses before changing the rule.
   Repro: `grep -n 'perhaps\|possibly' build/review/notes.md`.
 
+## Notes the 1844 printing gives more fully
+
+[source]. The later Bagster printings and CCEL shortened these; a correction
+may recover the 1844 information (AGENTS.md). Pages are 1844 vol. 2 printed
+pages (physical = printed − 497 in Ezekiel).
+
+- [ ] **`EZK 21:26 CCEL`** (edition 21:21) — 1844 p. 822 "† Perhaps, bring
+  forth, _or,_ send forth." where 1879 p. 1006 and CCEL 15.xxi #9 have
+  "Perhaps, send forth." Confidence: high that 1844 differs.
+- [ ] **`EZK 29:18 CCEL`** — 1844 p. 832 "† μαδών, _Heb._ word probably in
+  Greek letters." where 1879 p. 1034 has "_Heb._ word in Greek letters." Swete
+  III p. 447 prints μαδῶν, an ordinary Greek participle, which Brenton's
+  "probably" allows for. Confidence: high that 1844 differs.
+- [ ] **`EZK 21:2 CCEL`** (edition 20:46) — 1844 p. 821 sets a third † before
+  the first "Nageb" for the same "_Heb._ words." note; 1879 p. 1021 and CCEL
+  have callers at Thaeman and Darom only. Confidence: medium.
+
 ## Lemma scope (which words the note is about)
 
 The adjudication pass settled that a broad contextual lemma around a short
