@@ -798,8 +798,8 @@ def test_the_real_pages_supply_the_notes_ebible_lacks(
     )
     report = read.ccel
     assert (report.pages, report.bodies) == (708, 4116)
-    assert report.inserted == 1827
-    assert report.duplicates == 2214
+    assert report.inserted == 1826
+    assert report.duplicates == 2215
     assert len(report.held) == 0
     assert len(report.left_out) == 69
     assert {
@@ -911,6 +911,37 @@ def test_the_review_counts_the_notes_set_after_promotion(
             "as κόλασις in New Testament does _torment_, 1 John 4:18.",
         ),
         ("ZEP 3:7 CCEL", "3:7", "receive instruction", "see Ps. 2:12"),
+        (
+            "2KI 10:3",
+            "10:3",
+            "fittest",
+            "Gr. _upright_, q.d. _unblemished, perfect in body_, etc.",
+        ),
+        (
+            "JOB 40:20 CCEL",
+            "40:20",
+            "deep",
+            "Gr. _Tartarus_ Heb. _field_, q.d. _level_, or, _low place_",
+        ),
+        (
+            "ECC 5:9 CCEL#2",
+            "5:9",
+            "thereof",
+            "q.d. _of those_, or, _such things_",
+        ),
+        (
+            "SNG 5:14 CCEL#2",
+            "5:14",
+            "beryl",
+            "q.d. from Tarshish. Ezek. 1:16",
+        ),
+        (
+            "JER 34:14 CCEL",
+            "34:14",
+            "unrighteous",
+            "i.e., _false_. q.d. _unauthorised_",
+        ),
+        ("LAM 3:65", "3:65", "a covering", "see Heb. q.d. _callousness_"),
     ],
 )
 def test_recovered_notes_keep_their_callers_renderings_and_commentary(
@@ -948,6 +979,88 @@ def test_recovered_lexical_quotations_are_not_whole_lemma_alternatives(
     )
     assert not any(usj.is_type(node, "char", "fqa") for node in note["content"])
     assert "cool" in usj.serialize(note["content"])
+
+
+@pytest.mark.parametrize(
+    "key, lemma, alternatives, quotations, count",
+    [
+        (
+            "2KI 10:3",
+            "fittest",
+            ("upright",),
+            ("unblemished, perfect in body",),
+            1,
+        ),
+        (
+            "JOB 40:20 CCEL",
+            "deep",
+            ("field", "level", "low place"),
+            ("Tartarus",),
+            1,
+        ),
+        ("ECC 5:9 CCEL#2", "thereof", ("of those",), ("such things",), 2),
+        ("SNG 5:14 CCEL#2", "beryl", (), (), 2),
+        ("JER 34:14 CCEL", "unrighteous", ("false", "unauthorised"), (), 1),
+        ("LAM 3:65", "a covering", ("callousness",), (), 1),
+    ],
+)
+def test_recovered_compound_glosses_keep_their_distinct_roles_and_callers(
+    edition: bible.pipeline.Edition,
+    key: str,
+    lemma: str,
+    alternatives: tuple[str, ...],
+    quotations: tuple[str, ...],
+    count: int,
+) -> None:
+    code, reference, *_ = key.split()
+    verse = scripture.verses(edition.documents[code])[reference]
+    assert len(verse.notes) == count
+    matched = [(at, n) for at, n in verse.notes if n.get("x-key") == key]
+    assert len(matched) == 1
+    at, note = matched[0]
+    assert verse.text[at:].startswith(lemma)
+    assert (
+        tuple(
+            usj.text_of(n["content"]).strip()
+            for n in note["content"]
+            if usj.is_type(n, "char", "fqa")
+        )
+        == alternatives
+    )
+    assert (
+        tuple(
+            usj.text_of(n["content"])
+            for n in usj.walk(note["content"])
+            if usj.is_type(n, "char", "it")
+        )
+        == quotations
+    )
+
+
+def test_recovered_stone_reference_links_to_the_verse_naming_beryl(
+    edition: bible.pipeline.Edition,
+) -> None:
+    verse = scripture.verses(edition.documents["SNG"])["5:14"]
+    note = next(n for _, n in verse.notes if n.get("x-key") == "SNG 5:14 CCEL#2")
+    assert [n for n in usj.walk(note["content"]) if n["type"] == "ref"] == [
+        {"type": "ref", "loc": "EZK 1:16", "content": ["Ezek. 1:16"]}
+    ]
+    destination = scripture.verses(edition.documents["EZK"])["1:16"]
+    assert "appearance of beryl" in destination.text
+
+
+def test_shorter_ccel_copies_of_restored_notes_are_accounted_for_once(
+    read: bible.pipeline.Read,
+) -> None:
+    assert {
+        item.key: item.retained
+        for item in read.ccel.matched
+        if item.key in {"2.x#2", "14.iii#12"}
+    } == {"2.x#2": "2KI 10:3", "14.iii#12": "LAM 3:65"}
+    assert not any(
+        note.get("x-key") == "LAM 3:65 CCEL"
+        for note in usj.notes_of(read.brenton["LAM"]["content"])
+    )
 
 
 @pytest.mark.parametrize(

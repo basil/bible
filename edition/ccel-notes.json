@@ -613,6 +613,30 @@
       "to": "<p> <i>Gr.</i> every man.</p>",
       "why": "Brenton 1879 physical page 447 and 1900 physical page 443 (printed page 431) repeat the ζ caller before all the men of Juda at printed II Kings 19:42 (source 2SA 19:43), referring to “Gr. every man.” CCEL leaves a corrupt letter as its body. The preceding caller before all the men of Israel belongs to another verse; eBible preserves that note but lacks this one. Restore this note’s transcription without changing the verse.",
       "uncategorized": true
+    },
+    "8.xl#3": {
+      "from": "<p> <i>Heb</i>. field, <i>\nq.d</i>. level, <i>or</i>, low place.</p>",
+      "to": "<p> <i>Gr.</i> Tartarus <i>Heb</i>. field, <i>\nq.d</i>. level, <i>or</i>, low place.</p>",
+      "why": "Brenton’s 1844 printing, vol. 2 printed p. 573 (physical p. 76), prints one note, Gr. Tartarus Heb. field, q. d. level, or, low place., with no punctuation after Tartarus, at its dagger before the deep in printed Job 40:15 (eBible and edition 40:20). The 1879, 1884 and 1900 printings, printed p. 696 (physical pp. 712, 679 and 708 respectively), retain only the Hebrew explanation under delta at the same words. Swete II p. 597 prints ἐν τῷ ταρτάρῳ at 15 (20), confirming the Greek name; no evidence establishes its later omission as a correction. Restore the missing Greek gloss in the existing CCEL note, without changing scripture, numbering or its source caller.",
+      "uncategorized": true
+    },
+    "10.iv#5": {
+      "from": "<p> \n<i>q.d</i>. of those things.</p>",
+      "to": "<p> \n<i>q.d</i>. of those, <i>or</i>, such things.</p>",
+      "why": "Brenton’s 1844 printing, vol. 2 printed p. 674 (physical p. 177), gives q. d. of those, or, such things. under the dagger immediately before thereof in Ecclesiastes 5:9. The 1879, 1884 and 1900 printings, printed p. 823 (physical pp. 839, 806 and 835 respectively), instead give q. d. of those things. at the same caller. Swete II p. 491 records αυτων] αυτου ℵ^c.a AC, but establishes no correction requiring removal of the earlier glosses. Restore the earlier note’s two glosses without changing scripture or its caller.",
+      "uncategorized": true
+    },
+    "11.v#3": {
+      "from": "<p> <i>q.d</i>. from Tarshish.</p>",
+      "to": "<p> <i>q.d</i>. from Tarshish. <scripref>Ezek. 1. 16.</scripref></p>",
+      "why": "Brenton’s 1844 printing, vol. 2 printed p. 682 (physical p. 185), has a separate note, Ezek. 1. 16., with its dagger immediately before beryl at Song 5:14. The 1879, 1884 and 1900 printings, printed p. 833 (physical pp. 849, 816 and 845 respectively), instead have q. d. from Tarshish. at the same word. Retain both attested pieces of information in one note: this combination is editorial and occurs in neither printing. Swete II p. 514 reads θαρσεῖς here and III p. 386 reads θαρσείς at Ezekiel 1:16; the reference concerns the same stone name. Restore the citation without changing the scripture, caller, or numbering.",
+      "uncategorized": true
+    },
+    "13.xxxiv#1": {
+      "from": "<p> <i>i.e</i>. false.</p>",
+      "to": "<p> <i>i.e</i>. false. <i>q.d</i>. unauthorised.</p>",
+      "why": "Brenton’s 1844 printing, vol. 2 printed p. 775 (physical p. 278), gives one note, i. e. false. q. d. unauthorised., with its dagger immediately before unrighteous in Jeremiah 34:14. The 1879, 1884 and 1900 printings, printed p. 947 (physical pp. 963, 928 and 959 respectively), retain only i. e. false. at the same caller, the form CCEL 13.xxxiv#1 transcribes; eBible has no note. Restore the earlier explanation within the existing note without changing the scripture, caller, or numbering. Swete III pp. 303–304 has ὅτι ἄδικα αὐτοὶ προφητεύουσιν ὑμῖν at 34:11 (Hebrew 27:14), not at Swete 34:14; the recovered words remain Brenton’s explanation.",
+      "uncategorized": true
     }
   },
   "notes": {
@@ -1589,6 +1613,14 @@
     "vii.xlvi#5": {
       "duplicate": "JDG 21:12",
       "why": "CCEL’s shorter Bagster note is the same note retained at JDG 21:12. Brenton’s 1844 printing, vol. 1 physical p. 310 (printed p. 286), also gives the third prepositional sense of, now restored there. Retain the complete note once rather than insert its shortened transcription as a second note."
+    },
+    "2.x#2": {
+      "duplicate": "2KI 10:3",
+      "why": "CCEL’s Gr. upright, q.d. unblemished. is the shorter Bagster form of the same note before fittest in 4 Kingdoms 10:3, confirmed in the 1879, 1884 and 1900 printings at printed p. 502. The retained eBible note is completed from Brenton’s 1844 printing, vol. 1 printed p. 412; CCEL supplies no separate caller or additional information."
+    },
+    "14.iii#12": {
+      "duplicate": "LAM 3:65",
+      "why": "CCEL’s q.d. callousness. is the shorter later-printing form of Brenton’s one note before a covering in Lamentations 3:65. The retained eBible note is restored from the 1844 printing, vol. 2 printed p. 799, which also has See Heb.; the 1879, 1884 and 1900 printings at printed p. 977 omit that pointer. CCEL supplies no separate caller or additional note."
     }
   }
 }

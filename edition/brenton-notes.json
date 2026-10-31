@@ -2190,6 +2190,17 @@
       "to": "\\f + \\fr 25:2 \\ft Lit. 3,000 flocks, but the expression is probably elliptical, as we say in English, 3,000 troops, meaning men formed into troops.\\f*",
       "why": "Brenton’s 1844 printing, vol. 1 physical p. 344 (printed p. 320), explains but the expression is probably elliptical before the English troops analogy. The later Bagster setting (1879 physical p. 406; 1900 physical p. 402, printed p. 390) omits that qualification. Restore it while retaining the later wording of the concluding explanation and the source transcription’s thousands separators. Swete I p. 596 has τρισχίλια, confirming the number; the note discusses the expression, not another reading.",
       "uncategorized": true
+    },
+    "2KI 10:3": {
+      "from": "\\f + \\fr 10:3 \\fqa Gr. \\ft upright, \\fqa q. d. \\ft unblemished.\\f*",
+      "to": "\\f + \\fr 10:3 \\fqa Gr. \\ft upright, \\fqa q. d. \\ft unblemished, perfect in body, &c.\\f*",
+      "why": "Brenton’s 1844 printing, vol. 1 printed p. 412 (physical p. 436), prints Gr. upright, q. d. unblemished, perfect in body, &c. as one marginal note with its dagger before fittest in 4 Kingdoms 10:3. The later Bagster printings retain only Gr. upright, q. d. unblemished. at the same caller: 1879 printed p. 502 (physical p. 518), 1884 printed p. 502 (physical p. 485), and 1900 printed p. 502 (physical p. 514). Swete I p. 763 has τὸν εὐθῆ, with τον ευθη] ευθην A in the apparatus; this identifies the Greek discussed but establishes neither that bodily perfection is its necessary meaning nor that the later omission was a correction. Recover the complete earlier explanation without changing the scripture or adding another note.",
+      "uncategorized": true
+    },
+    "LAM 3:65": {
+      "from": "\\add as\\add* a covering,",
+      "to": "\\add as\\add* \\f + \\fr 3:65 \\fqa See Heb. q. d. \\ft callousness.\\f*a covering,",
+      "why": "Brenton’s 1844 printing, vol. 2 printed p. 799 (physical p. 302), prints See Heb. q.d. callousness. as one marginal note with its dagger immediately before a covering, after the supplied as, in Lamentations 3:65. The later printings retain only q. d. callousness. at the same caller: 1879 printed p. 977 (physical p. 993), 1884 printed p. 977 (physical p. 953), and 1900 printed p. 977 (physical p. 989). eBible lacks the note, and CCEL 14.iii#12 transcribes the shorter later form. Restore the complete earlier note once, without changing scripture, numbering, or the accepted substitution of callousness for the whole phrase a covering. Swete III p. 373 supplies no evidence establishing the omitted Hebrew pointer as a correction."
     }
   },
   "notes": {
@@ -5873,11 +5884,12 @@
     },
     "JOB 40:20 CCEL": {
       "lemma": "deep",
-      "why": "Field, level, and low place each name the ground after the verse's article (in the field, in the level, in the low place); the article stays outside the renderings."
+      "note": "Gr. _Tartarus_ Heb. {field}, q. d. {level}, or, {low place}.",
+      "why": "The restored compound note in Brenton 1844 II p. 573 names the Greek Tartarus before its Hebrew explanation. Tartarus is a lexical quotation, not a replacement for deep after the verse’s article, which would give in the Tartarus. Field, level and low place each replace deep after that article. Keep the existing lemma deep and distinguish these roles without supplying punctuation absent after Tartarus in the source."
     },
     "SNG 5:14 CCEL#2": {
-      "note": "q. d. from Tarshish.",
-      "why": "From Tarshish explains the stone's name rather than renders beryl, which it cannot replace."
+      "note": "q. d. from Tarshish. Ezek. 1. 16.",
+      "why": "From Tarshish explains the stone’s name rather than renders beryl, which it cannot replace. Keep that explanation roman and retain the restored 1844 citation to Ezekiel 1:16; the correction of CCEL 11.v#3 records the editorial combination of the two printings’ information."
     },
     "HOS 4:15 CCEL": {
       "lemma": "be not ignorant",
@@ -5938,6 +5950,14 @@
     "EZK 42:13 CCEL": {
       "note": "i. e. for sins of ignorance.",
       "why": "The note says what the trespass offerings are for; it explains rather than renders."
+    },
+    "2KI 10:3": {
+      "note": "Gr. {upright}, q. d. _unblemished, perfect in body_, &c.",
+      "why": "Upright renders fittest. The following q. d. cluster, unblemished, perfect in body, &c., explains Brenton’s intended sense of that literal gloss rather than offering the entire cluster as replacement wording. Retain its English as quoted glosses and its labels and etc. as commentary; this does not assert that bodily perfection is a necessary meaning of the Greek."
+    },
+    "ECC 5:9 CCEL#2": {
+      "note": "q. d. {of those}, or, _such things_.",
+      "why": "Brenton’s 1844 note gives of those and such things at thereof. Of those replaces thereof in in the abundance of those; such things cannot replace it without adding a preposition, so it remains a lexical quotation rather than a whole-lemma alternative."
     }
   },
   "shapes": {
