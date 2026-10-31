@@ -1,87 +1,57 @@
 # TODO
 
-## Orthography: compounds and regional spelling
+Everything still to do in the text and the notes, apart from names and
+spelling, which are in [spelling.md](spelling.md).
 
-All [editorial]. The introduction (`content/introduction.sfm:109`) says
-"Compounds outside the declared changes keep their sources' forms", so none
-of these is a failed transformation. They are candidates for declared
-compound decisions. Confidence: high that the variation exists; the policy
-call is open.
+## Notes: lemmas and their glosses
 
-- [ ] **task-masters / taskmasters** — EXO 1:11, 3:7, 5:6 vs 5:10, 5:13.
-- [ ] **olive-yards / oliveyards** — NEH 5:11, 9:25.
-- [ ] **waiting-woman / waitingwoman** — JDT 8:10, 8:33.
-- [ ] **beforementioned / before-mentioned** — 3MA 2:25, 4:14.
-- [ ] **byword / by-word** — JOB 17:6, 30:9, 31:30; EZK 23:10, 36:3.
-- [ ] **true-hearted / truehearted** — JOB 4:7, 27:17.
-- [ ] **casting net / casting-net** — HAB 1:15–16.
-- [ ] **no body** (SIR 23:18) — nobody, as 1SA 21:2 and DAG 0:16 print.
-- [ ] **paralyzed / paralysed** — 3MA 2:22, 6:20.
-- [ ] **Bethmaalo / Beth-maalo** — JDG 9:6, 9:20 (a place; see names too).
+Which words a note is about, and whether its gloss can stand in for them.
+The adjudication pass settled that a broad contextual lemma around a short
+gloss is a convention (`EZK 5:9 CCEL` declares it deliberately), so breadth
+alone is not a defect. What remains is editorial judgment.
 
-## Names: one bearer, several English forms
-
-All [source + Greek]: tabulate Swete (or RP2026 for the NT) and the printed
-English before merging; declension alone never separates bearers
-(memory: names-check-greek-declension). None has a `names` entry in
-`edition/revisions.json`. Confidence is high that the same bearer is meant
-unless noted; whether to normalize is the editor's call after the Greek is
-seen. Repro for any: `grep -rn -w '<Form>' build/review/text/`.
-
-### Old Testament, history
-
-- [ ] **Achikam / Achicam** — 2KI 22:12 vs 22:14, 25:22, 2CH 34:20, JER (six).
-- [ ] **Abener / Abenner** — 1SA 17:55, 17:57 (from the supplied Appendix
-  passage `1SA 17:55-58`) vs Abenner elsewhere. Enters by promotion, not
-  transcription.
-- [ ] **Aben-ezer / Abenezer** — 1SA 4:1 vs 5:1, 7:12.
-- [ ] **Chelcias / Chelkias** — 2KI 18:18, 18:37 vs 18:26 (Heliakim's
-  father; other Chelcias bearers exist).
-- [ ] **Helkana / Helcana** — 1SA 1 (seven) vs 2:20 (other Helcana bearers
-  in 1CH).
-- [ ] **Phadasur / Phadassur** — NUM 1:10 vs 2:20, 7:54, 7:59, 10:23.
-- [ ] **Sapphan / Saphan** — 2KI 22 vs 25:22, 2CH 34 (JOS 13:27 Saphan is a
-  place; exclude).
-- [ ] **Mala / Maala / Malaa** — NUM 26:37, 27:1, 36:11; JOS 17:3.
-- [ ] **Abesa / Abessa / Abesai / Abessai** — 1CH 18:12, 19:11, 19:15;
-  1SA 26:6–9; 2SA 19:21, 20:10.
-- [ ] **Jectan / Jektan** — 1CH 1:19, 20, 23 (supplied from the Appendix)
-  vs GEN 10:25, 26, 29.
-- [ ] **Gaddites / Gadites** — 1CH 26:32 vs 1CH 12:38, 2KI 10:33.
-- [ ] **Amalec / Amalek** — JDG 6:3 vs 6:33 (44 vs 1).
-- [ ] **Adraazar / Adrazaar** — 2SA 8:3–12 vs 1KI 14:26 (17 vs 1).
-- [ ] **Cath / Caath** — GEN 46:11 vs EXO 6:16–18 (1 vs 41).
-- [ ] **Cariathbaal / Cariath-Baal** — JOS 15:60 vs 18:14–15.
-- [ ] **Isaar / Issaar** — NUM 16:1, EXO 6:18, 21, 1CH 23:12, 18 (GEN 46:24
-  Issaar is a Nephthalite; exclude).
-- [ ] **Jasa / Jassa** — NUM 21:23, DEU 2:32, JDG 11:20.
-- [ ] **Jetur / Jettur** — GEN 25:15 vs 1CH 1:31.
-- [ ] **Kison / Kisson** — JDG 4:7, 4:13, 5:21 vs 1KI 18:40 (brook; Kison
-  the city excluded).
-- [ ] **Massecca / Masecca** — GEN 36:36 vs 1CH 1:47.
-- [ ] **Rabia / Raabia** — 1CH 23:17 vs 24:21.
-- [ ] **Raia / Raaia** — EZR 2:47 vs NEH 7:50.
-- [ ] **Rason / Rasson** — EZR 2:48 vs NEH 7:50.
-- [ ] **Samellius / Semellius** — 1ES 2:15–16 vs 2:21, 2:25.
-- [ ] **Joakim / Joachim** — 2CH 36:4–8.
-- [ ] **Sabanasar / Sabanazar** — EZR 5:14 vs 5:16.
-- [ ] **Esdrelom / Esdraelon / Esdraelom** — JDT 1:8, 3:9, 4:6, 7:3.
-- [ ] **Philopater / Philopator** — 3MA 1:1, 3:12 vs 7:1.
-- [ ] **Saucheans / Sauchaeans** — JOB 2:11 vs 42:17e.
-- [ ] **Beelphegor / Beel-phegor** — PSA 105:28 vs NUM 25:3, 25:5, DEU 4:3,
-  HOS 9:10.
-
-### Old Testament, prophets
-
-- [ ] **Rasin / Rasim / Rassin** — ISA 7:1, 7:8, 8:6.
-- [ ] **Heliakim / Eliakim** — ISA 22:20, 36:3, 36:22, 37:2 vs 36:11.
-- [ ] **Laches / Lachis** — ISA 36:2 vs 37:8 (and 21 other Lachis verses).
-- [ ] **Thogarma / Thorgama** — EZK 27:14 vs GEN 10:3, 1CH 1:6, EZK 38:6.
-- [ ] **Mosoch / Mesoch** — EZK 32:26 vs 38:2–3, 39:1 (GEN 10:23 and
-  1CH 1:17 Mosoch is an Aramean; exclude).
-- [ ] **Selemias / Semelias** — JER 44:3 vs 45:1 (Joachal's father).
-- [ ] **Caree / Careë** — JER 47:8, 47:13 vs 48:11, 50:2 (Joanan's father);
-  CCEL has Careë throughout.
+- [ ] **Declared lemma wider than its own rationale: `EXO 18:21`, `DEU 4:9`,
+  `JOS 21:4`, `JDG 3:25`, `2SA 14:4`, `1KI 11:33#2`** [editorial] — each
+  `why` in `edition/brenton-notes.json` names the narrow glossed word ("Gr.
+  them renders the people") while the stored lemma is the whole phrase.
+  Confidence: high that the mismatch exists; low that it needs changing.
+  Decide once whether the convention is "lemma = glossed words" or "lemma =
+  locating phrase", then make these six agree with it.
+- [ ] **`2KI 19:11 CCEL`** [editorial] — "waste them utterly" accepts
+  "curse them", but the second gloss "devote to destruction" omits the
+  object under strict substitution. Check whether its role needs a scoped
+  treatment; do not pad the source wording automatically.
+- [ ] **`PSA 35:3 CCEL`** [editorial] — substituting "with regard to the
+  discovering" for "to discover" leaves "his iniquity and hate it" with
+  doubtful coordination. Judge the complete sentence, allowing the older
+  verbal-gerund construction; quotation styling is only a possible outcome.
+- [ ] **`PSA 136:1`** [editorial] — "Alex. omits" has no lemma or
+  `x-scope`, so it reads as omitting the verse rather than the superscription
+  "For David, a Psalm of Jeremias". Decision keeps `agrees: null`.
+  Confidence: medium. Fix: a scoped lemma naming the heading.
+- [ ] **`JOB 31:16 CCEL`** [editorial] — "cause the eye" truncates "cause …
+  to fail". Confidence: low.
+- [ ] **`PRO 24:22a`** [source then editorial] — "Heb. omits to the end"
+  lost its bracket endpoint (eBible closes the bracket after "repent" in
+  24:22f) and now sits before a much longer relocated chapter. Confidence:
+  medium. The printed endpoint is checked: Brenton 1879 physical p. 827
+  (printed p. 811) closes the bracket after "repent.]", inside the edition's
+  22f (printed 30:1). Add a scoped note naming the omitted passage.
+  `prose.json` unbracketed-notes handles Esther the same way but has no PRO
+  entry. The verse-level `PRO 24:22a CCEL` "The verses of this chapter…"
+  note beside it is settled and independent.
+- [ ] **Boundary cut mid-constituent: `ECC 10:3 CCEL` ("thinketh of is"),
+  `AMO 6:10 CCEL` ("a remnant shall")** [editorial] — length-matched lemma
+  ends after a copula/auxiliary. Confidence: medium. A decision rather than a
+  rule change. The same trial turned up `AMO 7:9 CCEL` ("joyful altars
+  shall: Gr. _altars of laughter_"), `2CH 36:5c CCEL` ("they should: Gr.
+  _he_, sc. _Juda_"), `JOB 13:14 CCEL` ("while I may: Gr. _having taken_")
+  and `1CH 13:4 CCEL` ("that they would: Gr. _on account of_"). Confidence:
+  medium; check each against its printed caller.
+- [ ] **`ZEP 3:4 CCEL`, `LAM 3:47 CCEL`** [editorial] — lemma takes in a
+  second coordinated term ("and scornful men"; "and destruction") the gloss
+  does not cover. Lamentations has the stronger case (Luke 12:29 "suspense").
+  Confidence: medium.
 
 ## Authored matter
 
