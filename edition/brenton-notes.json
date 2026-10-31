@@ -2042,7 +2042,12 @@
     "LEV 15:4": {
       "from": "and every seat on which",
       "to": "and every \\f + \\fr 15:4 \\fqa Gr. \\ft vessel, or article of furniture.\\f*seat on which",
-      "why": "Brenton 1900 physical p. 160 and 1879 physical p. 164 (both printed p. 148) print β Gr. vessel, or article of furniture. with the caller before seat in Leviticus 15:4. eBible lacks the note, and CCEL sets the words of 13:3 to 17:6 in its note v.7#30 and loses the notes between. Brenton repeats this caller before seat in 15:6, where the note is not set again."
+      "why": "Brenton 1900 physical p. 160 and 1879 physical p. 164 (both printed p. 148) print β Gr. vessel, or article of furniture. with the caller before seat in Leviticus 15:4. eBible lacks the note, and CCEL sets the words of 13:3 to 17:6 in its note v.7#30 and loses the notes between. Brenton repeats this caller before seat in 15:6, where the note is set again."
+    },
+    "LEV 15:6": {
+      "from": "sits on the seat on which",
+      "to": "sits on the \\f + \\fr 15:6 \\fqa Gr. \\ft vessel, or article of furniture.\\f*seat on which",
+      "why": "Brenton 1879 physical p. 164 and 1900 physical p. 160 (printed p. 148) repeat the β caller before seat in Leviticus 15:6, referring to the one footnote β Gr. vessel, or article of furniture., whose first caller stands before seat in 15:4. eBible lacks the note, and CCEL loses the notes of 13:3 to 17:6. Set the note at this caller too, as Brenton's repeated caller does."
     },
     "LEV 15:28": {
       "from": "be esteemed clean",
@@ -2832,8 +2837,9 @@
       "why": "Gr. will overtake thee renders shall come to pass to thee"
     },
     "NUM 11:35": {
+      "verse": "11:34",
       "lemma": "Graves of Lust",
-      "why": "the note gives the Hebrew name of the Graves of Lust"
+      "why": "eBible sets the note in 11:35, before the second Graves of Lust, but Brenton's one caller stands before Graves of Lust in 11:34, where the place is named: † in the 1844 printing, vol. 1 physical p. 181 (printed p. 157), with the margin note Heb., the pointed Hebrew and Kivroth-hat-taavah beside it, and θ in 1879 physical p. 206 (printed p. 190), 1884 physical p. 175 and 1900 physical p. 202, where 11:35 has only the λ caller of Gr. were in. CCEL vi.11#9 also has the caller in 11:34. The note gives the Hebrew name of the Graves of Lust."
     },
     "NUM 11:35#2": {
       "lemma": "halted at",
@@ -4884,8 +4890,8 @@
       "why": "in the Lord renders in his master"
     },
     "JOL 1:4": {
-      "lemma": null,
-      "why": "the note is on the insect names throughout the verse"
+      "lemma": "caterpillar",
+      "why": "Brenton 1879 physical p. 1096 (printed p. 1080) sets δ, and the 1844 printing, vol. 2 physical p. 387 (printed p. 884), †, before caterpillar, before the first palmerworm and before cankerworm, with the one footnote δ It is difficult to assign the exact meaning of the Greek., which is set at each caller: this copy on caterpillar."
     },
     "JOL 1:12": {
       "lemma": "have abolished",
@@ -5428,10 +5434,6 @@
       "lemma": "labours of thy hands",
       "why": "The printed fruits of thy labours report concerns the entire Greek noun phrase, not labours alone. Keep its original caller before labours while declaring the complete words it discusses after withdrawing the unsupported promotion."
     },
-    "ISA 19:2#2": {
-      "omitted": true,
-      "why": "Brenton 1879 physical p. 869 and 1900 physical p. 865 (printed p. 853) use the same β caller at both law words for ONE physical Alex. district accent note. Retain that report at the first caller; omit its duplicate source transcription at the second caller after restoring law against law. No distinct printed note is lost."
-    },
     "EZK 26:19 CCEL": {
       "lemma": "the city desolate",
       "why": "Alex. thee a desolate city replaces the city desolate"
@@ -5711,10 +5713,6 @@
       "widen": false,
       "why": "eBible sets the caller before the second followed (followed Thamni), but Brenton's μ stands before the first, followed Ambri, and the verse has no other caller (1879 physical p. 489, 1900 physical p. 485, printed p. 473); Gr. was after renders ὁ ὢν ὀπίσω Ἀμβρί, while the people that followed Thamni is τὸν ὀπίσω Θαμνί, without ὢν"
     },
-    "ISA 19:2": {
-      "lemma": "law against law",
-      "why": "Brenton 1844 vol. 2 physical p. 201 (printed p. 698), 1879 physical p. 869, 1884 physical p. 836 and 1900 physical p. 865 (printed p. 853 in the Bagster printings) set the same caller before both law words and print one Alex. ‘district,’ the accent being different note. Scope that single report to law against law, keeping his verse unchanged and completing both applications as district against district. Swete III p. 133 reads πόλις ἐπὶ πόλιν καὶ νομὸς ἐπὶ νομὸν and reports no A noun variant; retain the kept report and agrees:null rather than promote an unattested A accent reading."
-    },
     "EZK 8:10 CCEL": {
       "lemma": "them",
       "why": "Brenton 1879 physical p. 1003 and 1900 physical p. 999 (printed p. 987) put ζ before them; Alex. αὐτοῦ reports the pronoun alone (ἐπ᾽ αὐτοῦ for the facing ἐπ᾽ αὐτοὺς), and κύκλῳ, round about, is common to both. Without English the clause rule would take round about into the lemma."
@@ -5958,6 +5956,60 @@
     "ECC 5:9 CCEL#2": {
       "note": "q. d. {of those}, or, _such things_.",
       "why": "Brenton’s 1844 note gives of those and such things at thereof. Of those replaces thereof in in the abundance of those; such things cannot replace it without adding a preposition, so it remains a lexical quotation rather than a whole-lemma alternative."
+    },
+    "PRO 24:22a CCEL": {
+      "lemma": null,
+      "why": "Brenton 1879 physical p. 827 and 1900 physical p. 823 (printed p. 811) set the β caller before the verse figure, ahead of [A son, and the 1844 printing, vol. 2 physical p. 167 (printed p. 664), prints the note uncalled in the margin: it concerns the arrangement of the chapter, not the words A son."
+    },
+    "ESG 1:1s CCEL": {
+      "lemma": null,
+      "why": "The note says where the Hebrew book of Esther begins, not what it came to pass means. Brenton 1879 physical p. 667 and 1900 physical p. 663 (printed p. 651) set δ before And it came to pass, and the 1844 printing, vol. 2 physical p. 37, prints the note uncalled in the margin beside the verse; it stands before the verse."
+    },
+    "EZR 22:17 CCEL": {
+      "note": "Seeming omission both in Heb. and Gr. vid. Heb. and E. V.",
+      "why": "The 1844 pointer vid. Heb. and E. V. restored by correction 6.xii#2 refers the reader to the Hebrew and the English Version; neither vid. after Gr. nor and E. V. after Heb. is a rendering, and the whole note is commentary."
+    },
+    "JOB 22:15 CCEL#2": {
+      "note": "Grabe conjectures ἄδικοι, {unjust}.",
+      "why": "Brenton sets Grabe in italic like his labels (1879 physical p. 698 and 1900 physical p. 694, printed p. 682); the name is the witness and stays roman. Unjust renders Grabe’s conjectured ἄδικοι for the δίκαιοι of the text and replaces righteous alone: which unjust men have trodden. Conjectures reports a witness, as Valpy omits does, so the note stays a fragment."
+    },
+    "HOS 4:12 CCEL": {
+      "note": "Gr. {him}, _his_, sc. _the people_.",
+      "why": "Brenton 1879 physical p. 1089 and 1900 physical p. 1085 (printed p. 1073) repeat the θ caller before them and before their staves for one footnote, Gr. him, his, sc. the people, which is set at each caller: this copy on them, which him renders. His is the other caller's gloss, and the people identifies the referent; both remain lexical quotations rather than alternatives to them."
+    },
+    "HOS 4:12 CCEL#2": {
+      "note": "Gr. _him_, {his}, sc. _the people_.",
+      "lemma": "their",
+      "occurrence": 1,
+      "widen": false,
+      "why": "The second θ caller of HOS 4:12 CCEL stands before their staves (1879 physical p. 1089, printed p. 1073); this copy of the one footnote is set on their, which his renders. Him is the other caller's gloss, and the people identifies the referent; both remain lexical quotations rather than alternatives to their."
+    },
+    "ISA 19:2": {
+      "lemma": "law",
+      "occurrence": 1,
+      "widen": false,
+      "why": "Brenton 1844 vol. 2 physical p. 201 (printed p. 698), 1879 physical p. 869, 1884 physical p. 836 and 1900 physical p. 865 (printed p. 853 in the Bagster printings) set the same caller before both law words and print one Alex. ‘district,’ the accent being different note, which is set at each caller. Scope this copy to the first law, which district renders, as ISA 19:2#2 is scoped to the second. Swete III p. 133 reads πόλις ἐπὶ πόλιν καὶ νομὸς ἐπὶ νομὸν and reports no A noun variant; retain the kept report and agrees:null rather than promote an unattested A accent reading."
+    },
+    "ISA 19:2#2": {
+      "lemma": "law",
+      "occurrence": 2,
+      "widen": false,
+      "why": "Brenton repeats the β caller of ISA 19:2 before the second law (1879 physical p. 869, 1900 physical p. 865, printed p. 853); the one note is set at each caller, this copy on the second law, which district renders."
+    },
+    "JOL 1:4 CCEL#2": {
+      "lemma": "palmerworm",
+      "occurrence": 1,
+      "widen": false,
+      "why": "The second δ caller of JOL 1:4 stands before the first palmerworm (1879 physical p. 1096, printed p. 1080); this copy of the one footnote is set on that word."
+    },
+    "JOL 1:4 CCEL#3": {
+      "lemma": "cankerworm",
+      "why": "The third δ caller of JOL 1:4 stands before cankerworm (1879 physical p. 1096, printed p. 1080); this copy of the one footnote is set on that word."
+    },
+    "GEN 18:12": {
+      "note": "The difference turns on the word עדנה. Heb. _pleasure_. Gr. _until now_.",
+      "lemma": "The thing",
+      "why": "The note compares the lexical interpretations of עדנה; pleasure and until now are quoted glosses rather than complete alternatives to The thing. Retain the source caller and current locating lemma."
     }
   },
   "shapes": {

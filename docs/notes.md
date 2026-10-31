@@ -52,41 +52,12 @@ alone is not a defect. What remains:
 - [ ] **`PRO 24:22a`** [source then editorial] — "Heb. omits to the end"
   lost its bracket endpoint (eBible closes the bracket after "repent" in
   24:22f) and now sits before a much longer relocated chapter. Confidence:
-  medium. Check the printed endpoint, then add a scoped note naming the
-  omitted passage. `prose.json` unbracketed-notes handles Esther the same way
-  but has no PRO entry.
-
-## Duplicate and misplaced notes
-
-- [ ] **JDG 14:1 and `JDG 14:2 CCEL` (CCEL `vii.xxxix#1`)** [build] — the
-  ἀλλόφυλοι/Philistines explanation prints twice. `edition/ccel-notes.json`
-  has duplicate decisions for `vii.xxxix#4`, `#8`, `#10` but none for `#1`.
-  Confidence: high. Fix: duplicate decision keeping one copy.
-  Repro: `grep -n 'JDG 14:[12]' build/review/notes.md`.
-- [ ] **`PSA 144:1` and `PSA 144:2`** [source] — identical "lit. to the age"
-  note in consecutive verses; eBible has both, CCEL has one caller (9.cxliv
-  #4, at verse 1) and `build/review/ccel.md` already treats it as a duplicate
-  of 144:1. Confidence: medium. Check: callers in 1844 and later printings;
-  if one printed note, omit 144:2 by decision.
-- [ ] **`NUM 11:34 CCEL` and `NUM 11:35`** [source] — Graves of Lust gloss in
-  adjacent verses; eBible has it at 11:35, CCEL's caller is in 11:34.
-  Confidence: medium. Check: printed callers; then one duplicate/placement
-  decision keeping the fuller Hebrew gloss.
-
-## Sentence detection (introduced punctuation and case)
-
-Both [build]. `notes.is_sentence` keeps a final stop and capital only when
-`FINITE_VERB` matches or a `sentence: true` override exists
-(`edition/brenton-notes.json` has 32 such overrides, `ccel-notes.json` none).
-
-- [ ] **NEH 12:36, key `EZR 22:36 CCEL`** — "These terminations often vary."
-  prints as "these terminations often vary" (no stop, lowercase) because
-  `vary` is absent from `FINITE_VERB` (`src/bible/notes.py:150`).
-  Confidence: high. Fix: override or extend the verb list with a corpus
-  check.
-- [ ] **`PRO 24:22a CCEL`** — "Note. The verses of this chapter are much
-  intermingled…" loses its final stop; the opening "Note" label blocks
-  detection. Confidence: high. Fix: `sentence: true` as at `GEN 15:11`.
+  medium. The printed endpoint is checked: Brenton 1879 physical p. 827
+  (printed p. 811) closes the bracket after "repent.]", inside the edition's
+  22f (printed 30:1). Add a scoped note naming the omitted passage.
+  `prose.json` unbracketed-notes handles Esther the same way but has no PRO
+  entry. The verse-level `PRO 24:22a CCEL` "The verses of this chapter…"
+  note beside it is settled and independent.
 
 ## Spelling, punctuation, and grammar inside notes (inherited)
 

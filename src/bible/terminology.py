@@ -655,7 +655,7 @@ def check_glossary(doc: Document, policy: bible.policy.Policy) -> None:
 # edition's abbreviation for Romans.
 UNPRINTED = re.compile(
     r"\bi\. e\.|\bq\. d\.|\b[Ss]cil\.|\bSept\b|\b[Cc]omp\.|\d AD\b|&c\b|\b[ab]\.[dc]\."
-    r"|(?<![\w.])(?:[ON]\. ?T|A\. V|Ald|Complut|Vulg)(?!\w)|\bAV\b"
+    r"|(?<![\w.])(?:[ON]\. ?T|[AE]\. V|Ald|Complut|Vulg)(?!\w)|\bAV\b"
     r"|\b(?:App|Chrysost|Gram|Qu|om|nom|voc|absol|infin|imper|pl|pp?|qy|viz|niph"
     r"|fem|ob|sing|fut|Conf)\.|\bRom\.(?! \d)|\bCateches\b|\bult\b|\b4to\b|\bEng\. Ver\b|\d\.(?:li|[sd])\b"
 )

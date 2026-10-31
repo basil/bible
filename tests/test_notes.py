@@ -820,6 +820,31 @@ def test_a_note_that_is_a_sentence_takes_a_capital_and_a_full_stop(
     assert [row["rule"] for row in report.rows] == ["anchor", "anchor"]
 
 
+@pytest.mark.parametrize(
+    "source,printed",
+    [
+        # A finite verb makes commentary a sentence (NEH 12:36, JOB 4:6,
+        # ESG 5:1, GEN 18:12).
+        ("These terminations often vary.", "These terminations often vary."),
+        ("One MS gives it.", "One MS gives it."),
+        ("the difference turns on the word.", "The difference turns on the word."),
+        (
+            "the Gr. widely differs from the Heb.",
+            "The Gr. widely differs from the Heb.",
+        ),
+        # A witness's report and an imperative stay fragments.
+        ("Valpy omits it.", "Valpy omits it"),
+        ("compare the Heb.", "compare the Heb."),
+    ],
+)
+def test_a_finite_verb_makes_a_note_a_sentence(
+    ctx: bible.annotate.Context, source: str, printed: str
+) -> None:
+    runs = [("commentary", source)]
+    finished = notes.finished(runs, (), "lemma", None, ctx.terms, "key")
+    assert notes.text_of(finished) == printed
+
+
 def rendering_note(
     verse: str, lemma: str, former: str, witness: str | None = None
 ) -> Node:
@@ -985,6 +1010,21 @@ def test_witness_names_keep_their_capital_after_a_lemma(
             notes.finished(runs, terms, "their", None, ctx.terms, "key")
         )
         assert printed.startswith(source.split()[0])
+
+
+@pytest.mark.parametrize(
+    "source,printed",
+    [
+        ("Chaldee word.", "Chaldee word"),  # DAG 3:21 CCEL
+        ("Grabe conjectures ἄδικοι.", "Grabe conjectures ἄδικοι"),  # JOB 22:15
+    ],
+)
+def test_a_name_keeps_its_capital_after_a_lemma(
+    ctx: bible.annotate.Context, source: str, printed: str
+) -> None:
+    runs = [("commentary", source)]
+    finished = notes.finished(runs, (), "lemma", None, ctx.terms, "key")
+    assert notes.text_of(finished) == printed
 
 
 @pytest.mark.parametrize(
@@ -1195,6 +1235,7 @@ def test_the_notes_the_edition_writes_say_what_each_part_is() -> None:
         ("English Bible margin", "KJV margin"),
         # The period of a form the label replaces still ends its sentence.
         ("so the Eng. Ver. The Heb. reads", "so the KJV. The Heb. reads"),
+        ("so the E. V. The Heb. reads", "so the KJV. The Heb. reads"),
         ("Ald. reads", "Aldine text reads"),
         ("Complut. reads", "Complutensian text reads"),
         ("see the MS. Then the Vulg. reads", "see the MS. Then the Vulgate reads"),
@@ -1264,7 +1305,7 @@ def test_every_note_is_printed_replaced_by_a_link_or_explicitly_omitted(
     edition: bible.pipeline.Edition,
 ) -> None:
     # Unreported Alexandrine readings add notes without consuming sources.
-    assert edition.summary["printed_notes"] == 6274
+    assert edition.summary["printed_notes"] == 6277
     rows = [row for listed in edition.notes.values() for row in listed]
     assert len({row["key"] for row in rows}) == len(rows)
     # The 1611 margin is printed on the New Testament alone, and whole but

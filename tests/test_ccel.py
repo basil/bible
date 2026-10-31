@@ -798,10 +798,10 @@ def test_the_real_pages_supply_the_notes_ebible_lacks(
     )
     report = read.ccel
     assert (report.pages, report.bodies) == (708, 4116)
-    assert report.inserted == 1826
-    assert report.duplicates == 2215
+    assert report.inserted == 1827
+    assert report.duplicates == 2216
     assert len(report.held) == 0
-    assert len(report.left_out) == 69
+    assert len(report.left_out) == 67
     assert {
         item.key: item.retained
         for item in report.matched

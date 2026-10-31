@@ -123,7 +123,7 @@
     ]
   },
   "expanded": {
-    "why": "Text names are printed in full in the notes, apart from the Alexandrine and Vatican Texts, which stay Alex. and Vat., and the King James Version, labelled KJV, and their other rows are removed from his list, as is his row for Comp. as Compare, which is printed in full. LXX remains in the text, and is listed by a row added. In notes the Authorized Version is labelled KJV, whether Brenton writes it A. V., Eng. Ver., the English Version or English Bible; front-matter prose keeps the full name, and his row for A. V. is removed. Other abbreviations used only once or twice are also printed in full where they stand and not listed, but for those that Chicago prints (AD, MS, MSS), which are listed. Where one ends a note, its period goes, as a note ends with no full stop, unless the note is a sentence of its own, which keeps it.",
+    "why": "Text names are printed in full in the notes, apart from the Alexandrine and Vatican Texts, which stay Alex. and Vat., and the King James Version, labelled KJV, and their other rows are removed from his list, as is his row for Comp. as Compare, which is printed in full. LXX remains in the text, and is listed by a row added. In notes the Authorized Version is labelled KJV, whether Brenton writes it A. V., E. V., Eng. Ver., the English Version or English Bible; front-matter prose keeps the full name, and his row for A. V. is removed. Other abbreviations used only once or twice are also printed in full where they stand and not listed, but for those that Chicago prints (AD, MS, MSS), which are listed. Where one ends a note, its period goes, as a note ends with no full stop, unless the note is a sentence of its own, which keeps it.",
     "changes": [
       {
         "note": "RUT 4:4",
@@ -354,6 +354,12 @@
         "from": "Fem. gen.",
         "to": "Feminine gender",
         "why": "Brenton 1879 physical page 946 (printed page 930) prints “Fem. gen.” after O, before thou at Jeremias 22:23. The feminine participles describe the addressee; gen. means gender."
+      },
+      {
+        "note": "EZR 22:17 CCEL",
+        "from": "vid.",
+        "to": "vide",
+        "why": "Brenton's vid. stands once in the notes, in the restored 1844 note; print it as vide, as the edition's other notes write it."
       }
     ]
   },
@@ -521,12 +527,6 @@
     "why": "Complete the source alternatives with the words and grammatical dependencies their full lemmas take in, as required by the marginal notes’ substitution rule. Each from is checked against its source note; the supplied object and clause context come from the verse named by the key, and the plural verb agrees with Brenton’s Abodes. Scripture wording and witness attribution are retained.",
     "changes": [
       {
-        "note": "ISA 19:2",
-        "from": "district",
-        "to": "district against district",
-        "why": "Brenton 1844 vol. 2 physical p. 201 (printed p. 698), 1879 physical p. 869, 1884 physical p. 836 and 1900 physical p. 865 (printed p. 853 in the Bagster printings) apply their one district note at both law words. Repeat his rendering at both positions, retaining against from the verse, so that it substitutes for the complete lemma law against law. Swete III p. 133 prints νομὸς ἐπὶ νομὸν; its silence about A does not establish a promoted reading."
-      },
-      {
         "note": "GEN 4:26",
         "from": "trusted",
         "to": "trusted to call",
@@ -596,6 +596,18 @@
         "from": "Note.—What follows",
         "to": "What follows",
         "why": "Brenton’s 1844 printing, vol. 2 physical p. 162 (printed p. 659), prints Note.—What follows seems quite an interpolation. Omit the introductory label and begin What follows, keeping the note before the passage it introduces."
+      },
+      {
+        "note": "PRO 24:22a CCEL",
+        "from": "Note. The verses",
+        "to": "The verses",
+        "why": "Brenton 1879 physical p. 827 and 1900 physical p. 823 (printed p. 811), checked on the scans, print β Note. The verses of this chapter are much intermingled with parts of other chapters., with β before the verse figure ahead of [A son; the 1844 printing, vol. 2 physical p. 167 (printed p. 664), sets it uncalled in the margin. Omit the introductory label and begin The verses, keeping the note before the verse."
+      },
+      {
+        "note": "ESG 1:1s CCEL",
+        "from": "Note.—In",
+        "to": "In",
+        "why": "Brenton 1879 physical p. 667 and 1900 physical p. 663 (printed p. 651), checked on the scans, print δ Note.—In the Heb. and some copies of LXX., Esther begins here., with δ before And it came to pass; the 1844 printing, vol. 2 physical p. 37, sets Note.—In the Heb. and some copies of LXX. Esther begins here. uncalled in the margin beside that verse. Omit the introductory label and begin In the Heb., keeping the note before the verse whose opening it marks."
       }
     ]
   },

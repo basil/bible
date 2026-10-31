@@ -637,6 +637,24 @@
       "to": "<p> <i>i.e</i>. false. <i>q.d</i>. unauthorised.</p>",
       "why": "Brenton’s 1844 printing, vol. 2 printed p. 775 (physical p. 278), gives one note, i. e. false. q. d. unauthorised., with its dagger immediately before unrighteous in Jeremiah 34:14. The 1879, 1884 and 1900 printings, printed p. 947 (physical pp. 963, 928 and 959 respectively), retain only i. e. false. at the same caller, the form CCEL 13.xxxiv#1 transcribes; eBible has no note. Restore the earlier explanation within the existing note without changing the scripture, caller, or numbering. Swete III pp. 303–304 has ὅτι ἄδικα αὐτοὶ προφητεύουσιν ὑμῖν at 34:11 (Hebrew 27:14), not at Swete 34:14; the recovered words remain Brenton’s explanation.",
       "uncategorized": true
+    },
+    "vi.11#9": {
+      "from": "<p> <i id=\"vi.10.p4.5\">Heb.</i> Kibroth-hattaavah.</p>",
+      "to": "<p> <i id=\"vi.10.p4.5\">Heb.</i> קברות התאוה Kibroth-hattaavah.</p>",
+      "why": "Brenton 1879 physical p. 206 (printed p. 190) and 1900 physical p. 202 print θ Heb. קברות התאוה Kibroth-hattaavah., unpointed, with θ before Graves of Lust in Numbers 11:34; the 1844 printing, vol. 1 physical p. 181 (printed p. 157), has the note in the margin with pointed Hebrew and the transliteration Kivroth-hat-taavah. CCEL vi.11#9 omits the Hebrew following Heb.; its note is a defective transcription of eBible's note, which a decision sets at this caller, not a second gloss. Restore the Hebrew without changing the caller.",
+      "uncategorized": true
+    },
+    "6.xii#2": {
+      "from": "<p> Seeming omission both in <i>Heb.</i> and <i>Gr.</i></p>",
+      "to": "<p> Seeming omission both in <i>Heb.</i> and <i>Gr.</i> vid. <i>Heb.</i> and <i>E. V.</i></p>",
+      "why": "Brenton's 1844 printing, vol. 2 physical p. 34 (printed p. 531), prints the margin note † Seeming omission both in Heb. and Gr. vid. Heb. and E. V., with its dagger before Pheleti in Nehemiah 12:17. The 1879 and 1900 printings, physical pp. 663 and 659 (printed p. 647), keep only Seeming omission both in Heb. and Gr. under δ at the same word, the form CCEL 6.xii#2 transcribes; eBible has no note. Restore the 1844 pointer to the Hebrew and the English Version within the note, without changing the caller.",
+      "uncategorized": true
+    },
+    "6.xii#6": {
+      "from": "<p> The text is defective \nhere.</p>",
+      "to": "<p> The text defective \nhere.</p>",
+      "why": "Brenton's 1844 printing, vol. 2 physical p. 34 (printed p. 531), and the 1879 and 1900 printings, physical pp. 664 and 660 (printed p. 648), all print The text defective here., with the caller before and to the fish-gate in Nehemiah 12:39. CCEL 6.xii#6 adds is; eBible has no note. Restore the printed wording without changing the caller.",
+      "uncategorized": true
     }
   },
   "notes": {
@@ -805,12 +823,9 @@
       "why": "The two transcriptions give the same note; retain eBible's complete transcription. Identical Greek gloss: in, despite caller displacement."
     },
     "18#3": {
-      "duplicate": "JOL 1:4",
-      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Identical caution about Greek meaning, repeated at another caller in the same verse."
-    },
-    "18#4": {
-      "duplicate": "JOL 1:4",
-      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Identical caution about Greek meaning, repeated at another caller in the same verse."
+      "verse": "JOL 1:4",
+      "anchor": "palmerworm eaten",
+      "why": "Brenton 1879 physical p. 1096 (printed p. 1080) repeats the δ caller of JOL 1:4 before the first palmerworm, not the second, where CCEL sets it; set this copy of the one footnote at the printed caller."
     },
     "18#10": {
       "duplicate": "JOL 1:20",
@@ -1478,10 +1493,6 @@
       "duplicate": "1KI 5:30#3",
       "why": "Brenton 1879 physical p. 466 and 1900 physical p. 462 (printed p. 450) both print ρ “See Appendix.” with ρ after “masters who wrought in the works.” at the end of III Kings 5:16, before verse 18; 1844 vol. 1 p. 368 has the same pointer in the margin. eBible numbers the verse 1KI 5:30, where the brenton-notes correction restores the same pointer at the verse’s end as 1KI 5:30#3, whose retained-note decision in alexandrinus.json gives it the Appendix reading instead of promoting that reading. CCEL’s caller also closes the verse, but its malformed chapter heading leaves the note in no chapter, and an anchor cannot stand after the last word, so the identical texts are not matched by caller. Account for it by that existing note rather than adding a second pointer."
     },
-    "17.iii#8": {
-      "omitted": true,
-      "why": "Brenton 1879 physical page 1089 and 1900 physical page 1085 (printed page 1073 in both) print one footnote, “θ Gr. him, his, sc. the people.”, with the θ caller repeated before “them” and before “their staves” in Osee 4:12, because one note glosses both pronouns. CCEL gives the shared footnote a second number and repeats its body word for word. Note 17.iii#7 already carries it over “them by their staves”, so leave out this second copy."
-    },
     "1.xxxii#25": {
       "duplicate": "1KI 7:1",
       "why": "Brenton 1879 physical p. 468 and 1900 physical p. 464 (printed p. 452 in both) print γ “See Appendix.” with γ immediately before “king” in “And king Solomon sent” at III Kings 7:13, which eBible numbers 1KI 7:1; CCEL places its caller at the same word. eBible’s single note there, 1KI 7:1, is the same pointer once the brenton-notes correction restores it from the pasted Appendix paragraph, and the 1KI 7:38-50 passage decision in alexandrinus.json consumes it. eBible’s caller stands before “And” rather than “king”, so the identical texts are not matched by caller. Account for it by that existing note rather than printing a second pointer."
@@ -1621,6 +1632,16 @@
     "14.iii#12": {
       "duplicate": "LAM 3:65",
       "why": "CCEL’s q.d. callousness. is the shorter later-printing form of Brenton’s one note before a covering in Lamentations 3:65. The retained eBible note is restored from the 1844 printing, vol. 2 printed p. 799, which also has See Heb.; the 1879, 1884 and 1900 printings at printed p. 977 omit that pointer. CCEL supplies no separate caller or additional note."
+    },
+    "vii.xxxix#1": {
+      "verse": "JDG 14:1",
+      "anchor": "Philistines",
+      "why": "Brenton's caller stands before Philistines closing Judges 14:1, where the Greek has ἀλλοφύλων: † in the 1844 printing, vol. 1 physical p. 300 (printed p. 276), and μ in 1879 physical p. 352, 1884 physical p. 321 and 1900 physical p. 348 (printed p. 336). CCEL sets it before Phylistines in 14:2, which renders Φυλιστιίμ. eBible already has the note at 14:1; moving it to the printed caller allows automatic duplicate detection."
+    },
+    "vi.11#1": {
+      "verse": "NUM 11:3",
+      "anchor": "Burning",
+      "why": "Pinned CCEL vi.11 joins Numbers 11:1–3 to 9:17–23 with no chapter division, so alignment places the run in chapter 9 and cannot place its first caller. CCEL sets the caller before Burning in 11:3, where eBible's NUM 11:3 has the same note; set it there, where it is accounted for automatically."
     }
   }
 }

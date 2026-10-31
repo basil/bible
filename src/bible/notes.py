@@ -152,9 +152,9 @@ TRIM = " \n.,;:?!+'‘’“”\"`"
 # Names, which keep their capital where a note runs on from its lemma: of
 # languages, texts, versions, and people, and the pronoun "I".
 NAMES = re.compile(
-    r"(?:Gr|Heb|Hebrew|Hebraism|Syr|Sept|Alex|Vat|Complut|Ald|Vulg|A\. V|App|Appendix"
+    r"(?:Gr|Heb|Hebrew|Hebraism|Chaldee|Syr|Sept|Alex|Vat|Complut|Ald|Vulg|A\. V|App|Appendix"
     r"|AV|Eng\. Ver|English Bible|English [Vv]ersion|Authorized Version"
-    r"|Lambert Bos|Patrick Junius|Tertullian|Professor Samuel Lee|Brenton|Valpy|Swete|Vatican"
+    r"|Lambert Bos|Patrick Junius|Tertullian|Professor Samuel Lee|Grabe|Brenton|Valpy|Swete|Vatican"
     r"|Sinaiticus|Cotton Genesis|Bodleian Genesis|Ambrosian Pentateuch|I)(?!\w)"
 )
 # Abbreviations, whose full stop stays at the end of a note ("so the Heb.").
@@ -174,11 +174,13 @@ LABEL_START = re.compile(
 LABEL = re.compile(rf"\s*{LABEL_START.pattern}[,;:]?(?=\s|$)\s*")
 # Finite verbs, which make a note that opens with neither a label nor a
 # rendering a sentence: "the word Batus in the original containeth nine gallons".
+# Not omits, adds or agrees, which report a witness ("Valpy omits"), nor an
+# imperative ("compare Heb.").
 FINITE_VERB = re.compile(
     r"\b(?:is|are|was|were|has|hath|have|had|can|could|may|might|must|shall|should"
     r"|will|would|seems?|appears?|reads?|read|renders?|retains?|copies|quotes?"
     r"|takes?|begins?|continues?|ends|belongs?|comes?|form|maintain|signifi(?:es|eth)"
-    r"|contain(?:s|eth)|cometh|importeth)\b"
+    r"|contain(?:s|eth)|cometh|importeth|var(?:y|ies)|differs|gives|turns)\b"
 )
 # What each part of a note the edition writes is, by its marker.
 AUTHORED = {
