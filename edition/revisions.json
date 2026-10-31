@@ -5019,6 +5019,14 @@
       "to": "a habitation",
       "why": "Use a before a sounded h."
     },
+    "nut tree": {
+      "to": "a nut tree",
+      "scope": "scripture",
+      "notes": [
+        "JER 1:11 CCEL"
+      ],
+      "why": "Supply the consonant-sound article in this alternative to the whole lemma an almond tree: a nut tree. The source gloss omits the article; including it lets the rendering replace the lemma without leaving an nut tree in the surrounding sentence."
+    },
     "an half": {
       "to": "a half",
       "why": "Use a before a sounded h."

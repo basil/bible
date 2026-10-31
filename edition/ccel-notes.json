@@ -360,6 +360,11 @@
       "to": "<p> Alex. for <span lang=\"EL\" class=\"Greek\">τῷ ἀνδρὶ οὐ</span> reads \n<span lang=\"EL\" class=\"Greek\">τοῦ ἀνδρείου</span>. Wisdom is the advantage of an energetic man.</p>",
       "why": "Brenton 1879 physical p. 844 and 1900 physical p. 840 (printed p. 828) print τοῦ ἀνδρείου in the β note after Ecclesiastes 10:10; CCEL transcribes its acute-accented ί as grave-accented ὶ. Mend this one-letter transcription slip only; preserve the printed reading and English."
     },
+    "13#2": {
+      "from": "<p> <i>Or</i>, rather nut-tree.</p>",
+      "to": "<p> <i>Or</i>, rather, nut-tree.</p>",
+      "why": "Brenton 1844 vol. 2 physical p. 241 (printed p. 738, in the margin), 1879 physical p. 918 and 1900 physical p. 914 (printed p. 902) all print “Or, rather, nut-tree.” with the caller before almond in Jeremiah 1:11. CCEL drops the comma after rather; restore it."
+    },
     "13.xxix#3": {
       "from": "<p> <i>Alex</i>. + or \nthou shalt surely drink of it.</p>",
       "to": "<p> <i>Alex</i>. + for \nthou shalt surely drink of it.</p>",
@@ -394,6 +399,18 @@
       "from": "<p> <i>Heb</i>. spied. <i>Alex</i>. aware.</p>",
       "to": "<p> <i>Heb</i>. spied. <i>Alex</i>. sware.</p>",
       "why": "Brenton 1879 physical p. 1018 and 1900 physical p. 1014 (printed p. 1002 in both) print θ “Heb. spied. Alex. sware.” with θ immediately before prepared at Ezekiel 20:6. CCEL 15.xix#8 misreads the initial s of sware as a in aware. Restore the printed word by a recognized wrong-letter correction; no uncategorized flag is needed. Swete III p. 422 explicitly records ητοιμασα] ωμοσα A, confirming the restored English verb and giving no A hand, lacuna, or uncertainty qualification. This repairs CCEL’s transcription alone, before the separate promotion."
+    },
+    "15.xxi#9": {
+      "from": "<p> \nPerhaps, send forth.</p>",
+      "to": "<p> \nPerhaps, bring forth, <i>or</i>, send forth.</p>",
+      "why": "Brenton’s 1844 margin, vol. 2 physical p. 325 (printed p. 822), prints † Perhaps, bring forth, or, send forth., with or in italic and its dagger before make bright the arrow in Ezekiel 21:21 (also 21:21 in the Bagster printings, but 21:26 in eBible). The later Bagster setting keeps only the second alternative, θ Perhaps, send forth. (1879 physical p. 1022; 1900 physical p. 1018; printed p. 1006), as CCEL 15.xxi#9 does. Both alternatives render ἀναβράσαι, to throw up, in τοῦ ἀναβράσαι ῥάβδον (Swete III p. 427). Restore 1844’s first alternative; the caller and the scripture words are unchanged.",
+      "uncategorized": true
+    },
+    "15.xxix#4": {
+      "from": "<p> <i>Heb</i>. word in Greek letters.</p>",
+      "to": "<p> μαδών, <i>Heb</i>. word probably in Greek letters.</p>",
+      "why": "Brenton’s 1844 margin, vol. 2 physical p. 335 (printed p. 832), prints † μαδών, Heb. word probably in Greek letters., with Heb. in italic and its dagger before peeled in Ezekiel 29:18. The later Bagster setting drops the Greek word and the qualification, δ Heb. word in Greek letters. (1879 physical p. 1034; 1900 physical p. 1030; printed p. 1018), as CCEL 15.xxix#4 does. 1844’s μαδών is the verse’s Greek, which Swete III p. 447 accents μαδῶν (καὶ πᾶς ὦμος μαδῶν), and is also a Greek participle, which 1844’s probably allows for. Restore the Greek word and the qualification; the caller and the scripture words are unchanged.",
+      "uncategorized": true
     },
     "19#4": {
       "from": "<p> <i>Heb. </i><span lang=\"HE\" class=\"Hebrew\">רהם</span><i> Alex. </i><span lang=\"EL\" class=\"Greek\">μήτραν</span>.</p>",
@@ -725,7 +742,7 @@
     },
     "12.xiv#1": {
       "duplicate": "ISA 14:2",
-      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same Israelites gloss as eBible's first note, differing only in the spacing of i. e.; CCEL's caller stands one word earlier, before shall inherit."
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same Israelites gloss as eBible's first note; CCEL's caller stands one word earlier, before shall inherit."
     },
     "12.xlii#1": {
       "duplicate": "ISA 42:1",
@@ -865,7 +882,7 @@
     },
     "9.clxxii#3": {
       "duplicate": "PRO 21:18",
-      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same off-scouring/ransom gloss; quote style and q.d. spacing only."
+      "why": "The two transcriptions give the same note; retain eBible's complete transcription. Same off-scouring/ransom gloss; quote style only."
     },
     "9.clxxiii#2": {
       "duplicate": "PRO 22:21",

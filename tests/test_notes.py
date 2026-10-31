@@ -596,6 +596,24 @@ def test_context_does_not_move_a_callers_scope(
         ("OBA 1:19 CCEL#2", "in the plain"),
         ("EXO 12:3", "lamb"),
         ("2KI 8:28#2", "king of the Syrians"),
+        # A linking word before a citation introduces it (Hosea 6:4).
+        ("HOS 6:4 CCEL", "mercy is as a morning cloud"),
+        ("2CH 2:5 CCEL#2", "bear his glory"),
+        # "A. V. margin" names a witness.
+        ("EZK 29:14 CCEL", "turn the captivity of the Egyptians"),
+        # A comment kept roman by its decision.
+        ("JER 39:5 CCEL", "dwell there"),
+        # "Heb. word" says what the Greek is.
+        ("DAG 1:3 CCEL", "princes"),
+        ("EZK 10:5 CCEL", "of the Almighty God"),
+        ("EZK 21:2 CCEL#2", "Darom"),
+        ("EZK 29:18 CCEL", "peeled"),
+        # The note restored at its 1844 caller (Ezekiel 20:46).
+        ("EZK 21:2", "Nageb"),
+        # A run of labels comments as its labels do apart (Ezra 8:18).
+        ("EZR 8:18 CCEL#2", "understanding of the sons of Mooli"),
+        ("JOB 21:23 CCEL", "his perfect strength"),
+        ("JER 20:2 CCEL", "dungeon"),
     ],
 )
 def test_commentary_lemmas_have_no_whole_lemma_alternatives(
@@ -607,11 +625,39 @@ def test_commentary_lemmas_have_no_whole_lemma_alternatives(
 
 
 @pytest.mark.parametrize(
+    "key, lemma, alternatives",
+    [
+        ("2CH 4:16 CCEL", "buckets", ["tongs"]),
+        ("EZK 21:26 CCEL", "make bright", ["bring forth", "send forth"]),
+        ("EZK 26:17 CCEL#2", "all her inhabitants", ["all her traders"]),
+        ("EZK 40:27 CCEL", "breadth southward", ["breadth at the south end"]),
+        ("JER 15:9 CCEL", "spent", ["emptied", "bereft of children"]),
+        ("EZK 1:20 CCEL#2", "them", ["the living creatures"]),
+        ("EZK 45:7 CCEL", "and out of this", ["and from the part next to this"]),
+        ("JER 1:11 CCEL", "an almond tree", ["a nut tree"]),
+        ("EZK 16:38 CCEL", "of an adulteress", ["due to an adulteress"]),
+        ("JOB 40:2 CCEL", "it", ["judgment"]),
+    ],
+)
+def test_hedged_and_labelled_renderings_are_alternatives(
+    edition: bible.pipeline.Edition, key: str, lemma: str, alternatives: list[str]
+) -> None:
+    _, _, note = placed(edition, key)
+    assert notes.lemma_of(note) == lemma
+    assert [
+        usj.text_of(n["content"]).strip()
+        for n in usj.walk(note["content"])
+        if usj.is_type(n, "char", "fqa")
+    ] == alternatives
+
+
+@pytest.mark.parametrize(
     "key, quoted",
     [
         ("JOS 21:13", ["suburbs", "glebe"]),
         ("MIC 7:4 CCEL", ["goeth upon"]),
         ("JOB 33:26 CCEL", ["having prayed"]),
+        ("JER 20:2 CCEL", ["stocks"]),
     ],
 )
 def test_lexical_commentary_does_not_echo_a_widened_lemma(
@@ -643,6 +689,8 @@ def test_lexical_commentary_does_not_echo_a_widened_lemma(
         ("1CH 22:9 CCEL", ["Behold, a son is born to thee"]),
         ("1CH 28:4 CCEL#2", ["chose me from the whole house"]),
         ("1CH 28:4 CCEL#3", ["he preferred in me, that"]),
+        ("JER 1:11 CCEL", ["A rod of a nut tree."]),
+        ("EZK 16:38 CCEL", ["the vengeance due to an adulteress"]),
     ],
 )
 def test_alternatives_preserve_their_sentences_subjects_and_context(
@@ -981,6 +1029,43 @@ def test_inserted_note_context_keeps_the_renderings_style(
         ("Gr. the fathers'.", "Gr. _the fathers'_"),
         # "Gr. sing." keeps its stop as an abbreviation; the verb does not.
         ("Or, they shall sing.", "or, _they shall sing_"),
+        # Bagster's printings drop the comma of the 1844 Or, in a few notes.
+        ("Or governor.", "or _governor_"),
+        # A hedge comments on the rendering it opens, closes, or divides.
+        ("Or, perhaps, tongs.", "or, perhaps, _tongs_"),
+        ("Or, possibly stocks.", "or, possibly _stocks_"),
+        ("Perhaps, send forth.", "perhaps, _send forth_"),
+        ("Or, rather, nut-tree.", "or, rather, _nut-tree_"),
+        ("Gr. also possibly tongs.", "Gr. also possibly _tongs_"),
+        ("sc. the living creatures probably.", "sc. _the living creatures_ probably"),
+        (
+            "Gr. emptied, possibly, bereft of children.",
+            "Gr. _emptied_, possibly, _bereft of children_",
+        ),
+        (
+            "Or, perhaps tongs, or possibly hooks.",
+            "or, perhaps _tongs_, or possibly _hooks_",
+        ),
+        ("Gr. tongs, Perhaps, hooks.", "Gr. _tongs_, Perhaps, _hooks_"),
+        # "Rather than" renders; it does not prefer.
+        ("Lit. rather than flee.", "lit. _rather than flee_"),
+        # So it does before the English of the Hebrew.
+        ("Heb. עדנה, perhaps pleasure.", "Heb. עדנה, perhaps _pleasure_"),
+        # "Probably" opens a judgment, not a rendering.
+        ("Or, probably any large fish.", "or, probably any large fish"),
+        (
+            "Gr. cold, probably, the right reading.",
+            "Gr. _cold_, probably, the right reading",
+        ),
+        # Words that say what the Greek is, or where to look, render nothing.
+        ("Hebrew word in Greek letters.", "Hebrew word in Greek letters"),
+        (
+            "μαδών, Heb. word probably in Greek letters.",
+            "μαδών, Heb. word probably in Greek letters",
+        ),
+        ("Heb. words.", "Heb. words"),
+        ("A. V. margin.", "KJV margin"),
+        ("Gr. word.", "Gr. _word_"),
     ],
 )
 def test_quoted_words_use_italic_without_quotation_marks(
@@ -1179,7 +1264,7 @@ def test_every_note_is_printed_replaced_by_a_link_or_explicitly_omitted(
     edition: bible.pipeline.Edition,
 ) -> None:
     # Unreported Alexandrine readings add notes without consuming sources.
-    assert edition.summary["printed_notes"] == 6273
+    assert edition.summary["printed_notes"] == 6274
     rows = [row for listed in edition.notes.values() for row in listed]
     assert len({row["key"] for row in rows}) == len(rows)
     # The 1611 margin is printed on the New Testament alone, and whole but
@@ -1274,6 +1359,17 @@ def inferred(verse: str, note: str, kind: str = "f") -> tuple[str | None, str]:
             "Or, probably any large fish",
             ("whales", "explanatory"),
         ),
+        # A hedged rendering measures the words as an unhedged one does.
+        (
+            "and the foot-baths, and the ‸buckets, and the cauldrons",
+            "Or, perhaps, tongs",
+            ("buckets", "length"),
+        ),
+        (
+            "to use divination, to ‸make bright the arrow, and to inquire",
+            "Perhaps, send forth",
+            ("make bright", "length"),
+        ),
         ("with sorrow to the grave. ‸", "Gr. Hades", ("grave", "length before")),
         # Before the caller, the words run from the rendering's first word.
         (
@@ -1361,6 +1457,54 @@ def test_joined_witness_labels_introduce_an_addition() -> None:
     body = notes.interpreted(notes.source_pieces(note), "key")
     assert body.addition
     assert body.alternative == "new words"
+
+
+@pytest.mark.parametrize(
+    "source, alternative",
+    [
+        # One italic run sets several labels as their labels would be set
+        # apart (Jeremiah 26:5, Job 40:2, 2 Chronicles 1:17).
+        (r"\fqa Or, lit. \ft returned.", "returned"),
+        # Their stop may stand outside the italics, as a single label's may.
+        (r"\fqa Or, lit\ft . returned.", "returned"),
+        (r"\fqa Gr. sc. \ft judgment.", "judgment"),
+        (r"\ft So \fqa A. V., Gr. \ft and \fqa Heb. \ft hands.", "hands"),
+        # They comment where they would apart (Job 21:23, 1 Chronicles 20:2,
+        # Ezra 8:18).
+        (
+            r"\fqa See Heb. \ft also see \xt 3 Kings 22.34\ft . in \fqa Heb. Gr. "
+            r"\ft and \fqa A. V.",
+            None,
+        ),
+        (r"\fqa Gr. singular.", None),
+        (r"\ft See \fqa Heb., \ft compare \fqa Gr.", None),
+    ],
+)
+def test_a_run_of_labels_is_its_labels(source: str, alternative: str | None) -> None:
+    note = usj.note("f", *usj.parse(source, fragment=True))
+    pieces = notes.source_pieces(note)
+    assert "cited" not in {kind for kind, _ in pieces}
+    assert notes.interpreted(pieces, "key").alternative == alternative
+
+
+@pytest.mark.parametrize(
+    "source",
+    [
+        r"\ft Comp. \fqa Heb. \ft and \xt Dan. 9. 16.",
+        r"\ft Comp. \fqa Heb. \ft and \fqa Gr. \ft with \xt Zech. 6.13\ft .",
+    ],
+)
+def test_a_linking_word_before_a_citation_introduces_it(source: str) -> None:
+    note = usj.note("f", *usj.parse(source, fragment=True))
+    body = notes.interpreted(notes.source_pieces(note), "key")
+    assert body.reading is None
+    assert not notes.readings(body)
+
+
+def test_a_rendering_before_a_citation_stays_one() -> None:
+    source = r"\fqa Gr. \ft stooped. See \xt 1 Pet. 1. 12."
+    note = usj.note("f", *usj.parse(source, fragment=True))
+    assert notes.interpreted(notes.source_pieces(note), "key").alternative == "stooped"
 
 
 @pytest.mark.parametrize(

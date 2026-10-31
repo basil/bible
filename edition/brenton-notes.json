@@ -214,6 +214,11 @@
         "why": "Brenton’s 1844 printing, vol. 2 physical p. 317 (printed p. 814), prints i. e. skirt. with the verse’s second dagger, before wings in Ezekiel 16:8. The later Bagster setting omits it (1879 physical p. 1011; 1900 physical p. 1007), and neither eBible nor CCEL transcribes it. Restore the earlier gloss at its caller."
       }
     ],
+    "EZK 21:2": {
+      "from": "the chief forest of Nageb,",
+      "to": "the chief forest of \\f + \\fr 21:2 \\fqa Heb. \\ft words.\\f*Nageb,",
+      "why": "Brenton’s 1844 printing, vol. 2 physical p. 324 (printed p. 821), sets three daggers in Ezekiel 20:46 (also 20:46 in the Bagster printings, but 21:2 in eBible), before Thæman, Darom, and the first Nageb, for its one margin note † Heb. words. The later Bagster setting keeps the callers before Thæman and Darom alone, both γ with the one footnote γ Heb. words. (1879 physical p. 1021; 1900 physical p. 1017; printed p. 1005), and CCEL transcribes those two as notes of their own. Nageb, Swete’s Νάγεβ (III p. 425), is a Hebrew word in Greek letters as they are. Restore the note at its 1844 caller; the scripture words are unchanged."
+    },
     "EZK 34:26": {
       "from": "give you the rain, the rain of blessing",
       "to": "give you \\f + \\fr 34:26 \\fqa q. d. \\ft the right sort of rain. Compare τὸν ἄρτον, \\xt John 6. 32.\\f*the rain, the rain of blessing",
@@ -2188,11 +2193,25 @@
     }
   },
   "notes": {
+    "JER 22:21 CCEL": {
+      "note": "Possibly '{concerning thy fall}.'",
+      "why": "Brenton’s 1844 printing, vol. 2 physical p. 263 (printed p. 760), sets † before on occasion of thy trespass, with the margin note † Possibly 'concerning thy fall.'; the 1879 printing, physical p. 946 (printed p. 930), has ζ there with the same words, Possibly in roman, as CCEL 13.xxii#7 transcribes them. Both render ἐν τῇ παραπτώσει σου (Swete III p. 270), and I spake to thee concerning thy fall reads in the verse: an alternative rendering, which Possibly hedges without its usual comma."
+    },
+    "DAG 12:10 CCEL": {
+      "note": "Rather '{chosen out}.'",
+      "why": "Brenton’s 1844 printing, vol. 2 physical p. 378 (printed p. 875), sets † before tested, with the margin note † Rather 'chosen out.'; the 1879 printing, physical p. 1086 (printed p. 1070), has γ there with the same words, as CCEL 16.xii#6 transcribes them. Tested renders ἐκλεγῶσιν, the first of Theodotion’s verbs (Swete III p. 575), of which chosen out is the literal sense, and Many must be chosen out reads in the verse: an alternative rendering, which Rather prefers."
+    },
     "ISA 54:17#2": {
       "lemma": "that",
       "occurrence": 1,
       "widen": false,
       "why": "Alexandrinus adds the relative ἣ, which that renders in every voice that shall rise up; the 1844 dagger stands before it."
+    },
+    "EZR 3:13 CCEL": {
+      "lemma": "from",
+      "occurrence": 1,
+      "widen": false,
+      "why": "Brenton’s 1844 printing, vol. 2 physical p. 13, sets † before from in from the voice of the weeping, with the margin note † Or, because of.; the 1879 printing, physical p. 637 (printed p. 621), keeps γ there with γ Or because of., the comma dropped, as CCEL 5.iii#3 transcribes it. The Greek is ἀπὸ τῆς φωνῆς τοῦ κλαυθμοῦ (Swete II p. 167): because of renders ἀπό, as from does, and the voice of the weeping stays in either rendering."
     },
     "EZR 5:1": {
       "lemma": "to them",
@@ -2225,8 +2244,7 @@
     },
     "2KI 12:6#2": {
       "lemma": "breaches",
-      "note": "Gr. sing. βεδὲκ. Hebrew word.",
-      "why": "βεδὲκ is the Greek’s transliteration, and Hebrew word says what it is: a comment, not a rendering of breaches."
+      "why": "Brenton's note is on breaches, which the Greek gives as βεδὲκ, a Hebrew word in Greek letters; the clause from the caller would take in the rest of the verse."
     },
     "EZR 4:18": {
       "lemma": "tribute-gatherer",
@@ -2796,8 +2814,7 @@
     },
     "NUM 10:21": {
       "lemma": "the others",
-      "note": "i. e. {the Gershonites and the Merarites}. A. V. margin.",
-      "why": "the note explains the others; margin is a comment"
+      "why": "the note explains the others"
     },
     "NUM 11:23": {
       "lemma": "shall come to pass to thee",
@@ -2905,10 +2922,6 @@
     "DEU 1:6": {
       "lemma": "to have dwelt",
       "why": "Gr. to dwell renders to have dwelt"
-    },
-    "DEU 1:15": {
-      "note": "Perhaps, {recorders}: more lit. {instructers in reading and writing}.",
-      "why": "recorders is a rendering; the note is on officers"
     },
     "DEU 1:16": {
       "lemma": "the stranger that is with him",
@@ -3862,10 +3875,6 @@
       "lemma": "snuffers",
       "why": "the rendering stands for snuffers alone; of gold remains"
     },
-    "1KI 7:36": {
-      "note": "Or, rather {work about the door}.",
-      "why": "rather is Brenton's comment"
-    },
     "1KI 7:36#2": {
       "lemma": "of pure gold",
       "why": "the phrase ends at gold"
@@ -4424,10 +4433,6 @@
       "lemma": "And the faces of them four",
       "why": "Brenton’s caller stands before And, and A adds after τεσσάρων (Swete III p. 385), the four that ends this clause"
     },
-    "EZK 16:44": {
-      "note": "Or, perhaps, {parable}.",
-      "why": "The rendering is parable, after the qualifier perhaps, which Brenton sets with Or, (1844 vol. 2 p. 318)"
-    },
     "PSA 2:9": {
       "lemma": "rule them",
       "why": "tend them as a shepherd renders rule them"
@@ -4638,10 +4643,6 @@
     "PSA 81:3": {
       "lemma": "do justice to",
       "why": "Gr. justify renders do justice to"
-    },
-    "PSA 91:8": {
-      "note": "Perhaps, '{come to light}'.",
-      "why": "come to light is a rendering of have watched"
     },
     "PSA 92:4": {
       "lemma": "at",
@@ -5367,13 +5368,9 @@
       "lemma": "in the plain",
       "why": "Brenton repeats the same note caller at south and plain. This second caller glosses the Greek transliteration of the Hebrew for plain, not the following Philistines; both Bagster printings confirm its position. The verse uses plain twice; in the plain uniquely identifies the first occurrence without including the Philistines."
     },
-    "EZR 15:13 CCEL": {
-      "note": "q.d. {fruits of labour}.",
-      "why": "Set the q.d. label in roman and the gloss of labours in italic, as the edition sets rendering notes; retain all source words."
-    },
     "EZR 15:14 CCEL": {
-      "note": "i.e. Artaxerxes the king.",
-      "why": "The note identifies the king meant by he; its explanatory label and words are roman, retaining all source words."
+      "lemma": "he",
+      "why": "The note identifies the king meant by he, which Artaxerxes the king replaces (From the day that Artaxerxes the king charged me); the caller stands before he."
     },
     "LEV 11:6 CCEL": {
       "lemma": "does not chew the cud",
@@ -5592,14 +5589,10 @@
       "lemma": "are concerned",
       "why": "Pinned CCEL 15.xxiv#4 reads 'Gr. spare.'. Spare is the alternative for the verbal unit are concerned; are alone excludes its lexical predicate. The pinned caller opens are concerned, and nothing in the complete verse attaches spare to sons or daughters."
     },
-    "EZK 38:21 CCEL": {
-      "lemma": "it",
-      "note": "i.e. the land.",
-      "why": "Pinned CCEL 15.xxxviii#8 reads 'i.e. the land.'. The land explains the pronoun it alone. Even every fear is a separate object in the clause and is not its antecedent. Pinned caller stands immediately before it."
-    },
     "EZK 43:15 CCEL": {
       "lemma": "altar",
-      "why": "CCEL 15.xliii#6 reads 'Gr. Ariel, Heb. Arci, i.e. the mountain of God.'. Set the note on the complete words it explains in this verse, excluding adjacent predicates or counts; retain the source's words without invented lemma echoes.",
+      "note": "Gr. {Ariel}, Heb. {Arel}, i. e. _the mountain of God_.",
+      "why": "CCEL 15.xliii#6 reads 'Gr. Ariel, Heb. Arci, i.e. the mountain of God.'. Set the note on the complete words it explains in this verse, excluding adjacent predicates or counts; retain the source's words without invented lemma echoes. The mountain of God explains Arel, the Hebrew name, and cannot replace altar, so it stays a quotation.",
       "occurrence": 1,
       "widen": false
     },
@@ -5625,10 +5618,6 @@
       "lemma": "many thousands",
       "why": "Pinned CCEL 16.xi#5 reads 'Gr. myriads.'. The pinned caller precedes many thousands, and myriads is the alternative quantified noun for that whole phrase. many alone omits the noun and misleadingly implies myriads thousands. Preserve the source wording and use many thousands as lemma."
     },
-    "DAG 11:45 CCEL": {
-      "note": "Heb. word.",
-      "why": "Pinned CCEL 16.xi#20 reads 'Heb. word.'. Heb. word. describes a Hebrew word retained in the Greek expression, not an English replacement word for his palace. The source has only Heb italic, with word plain. The explicit note override keeps explanatory prose roman without changing its words; the existing his palace target is appropriate."
-    },
     "1CH 5:15 CCEL": {
       "lemma": "brother",
       "why": "Pinned CCEL 3.v#3 reads \"The LXX. take אחי to mean 'brother.'\". The note explicitly says that אחי is taken to mean brother. The pinned caller follows brother and precedes of the son of Abdiel. Thus brother is its exact explained English word; the following genealogical clause is not the lemma."
@@ -5646,19 +5635,13 @@
       "lemma": "wickedness",
       "why": "Pinned CCEL 22.ii#1 reads 'Gr. plural.'. The pinned caller precedes wickedness. Gr. plural. comments on that singular English mass noun; beds is already plural and does not belong in its explained scope. Preserve the roman grammatical note with the existing wickedness lemma."
     },
-    "EZK 25:4 CCEL": {
-      "lemma": "Kedem",
-      "note": "i.e. the east.",
-      "why": "Pinned CCEL 15.xxv#1 reads 'i.e. the east.'. The pinned caller precedes Kedem. i.e. the east. explains that proper name, not the following for an inheritance phrase. Keep Kedem as the lemma and the source explanation roman."
-    },
     "EZK 36:37 CCEL": {
       "lemma": "for this",
       "why": "CCEL 15.xxxv#11 places its caller immediately before for this in Ezekiel 36:37 and reads Possibly, this time. The temporal alternative concerns for this alone; will remains the auxiliary of I be sought."
     },
     "EZK 40:22 CCEL": {
-      "lemma": "to it",
-      "note": "i.e. the gate.",
-      "why": "CCEL 15.xl#4 places its caller immediately before to it in Ezekiel 40:22 and reads i.e. the gate. The note identifies the antecedent of it; restrict its scope to to it, excluding the separate measure by seven steps, and retain it as commentary."
+      "lemma": "it",
+      "why": "CCEL 15.xl#4 places its caller immediately before to it in Ezekiel 40:22 and reads i.e. the gate. The note identifies the antecedent of it, which the gate replaces (they went up to the gate); the preposition to is outside the rendering."
     },
     "2CH 12:7 CCEL": {
       "lemma": "repented",
@@ -5845,6 +5828,116 @@
       "verse": "6:3",
       "lemma": "Lord",
       "why": "Brenton 1879 physical p. 92 and 1900 physical p. 88 place the single beta caller for Or, The Lord before Lord in Exodus 6:3, not 6:2, where the Lord is already printed; the note supplies the article to my name Lord."
+    },
+    "JER 39:5 CCEL": {
+      "note": "Complut. καθιεῖται, adopted here.",
+      "why": "Brenton 1844 vol. 2 physical p. 282 (printed 779), 1879 physical p. 969 (printed 953), 1884 physical p. 934 and 1900 physical p. 965 print Complut. καθιεῖται, adopted here., with Complut. alone in italic and the caller before dwell; CCEL 13.xxxix#1 has the same words. His Greek follows B, which reads καθίεται (Swete III p. 315: καθιειται (-θιεται B)); adopted here says that his English renders the Complutensian καθιεῖται instead: a comment, not a rendering of dwell there."
+    },
+    "EZK 10:5 CCEL": {
+      "lemma": "of the Almighty God",
+      "why": "Brenton's caller stands before of the Almighty God in 1844 vol. 2 physical p. 311 (printed 808) and 1879 physical p. 1005. Those words render θεοῦ Σαδδαί (Swete III p. 400), and Hebrew word in Greek letters is about Σαδδαί. The note gives no rendering, so its clause would take in speaking (λαλοῦντος) as well."
+    },
+    "EZK 40:29 CCEL": {
+      "note": "Or, perhaps, '_and the breadth of the porch 24 cubits extending to_,' etc.",
+      "why": "CCEL 15.xl#6 and Brenton 1879 physical p. 1051 quote the words Brenton cites. They are cut short with etc. and run on past the verse, so they cannot stand for its breadth twenty-five cubits: a quotation, not an alternative."
+    },
+    "EZK 45:7 CCEL": {
+      "lemma": "and out of this",
+      "why": "Brenton's caller stands before and out of this there (CCEL 15.xlv#4; 1879 physical p. 1058). Gr. perhaps, and from the part next to this renders καὶ ἀπὸ τούτου (Swete III p. 487), and out of this; there begins the words Brenton supplies, which the rendering does not replace."
+    },
+    "2CH 26:21 CCEL": {
+      "note": "The Gr. is a Heb. word. q. d. _of freedom_.",
+      "why": "Of freedom glosses the Hebrew word the Greek keeps (CCEL 4.xxvi#8), which the note names; it is a lexical quotation within the comment, not a rendering to put in place of separate house."
+    },
+    "2CH 31:1 CCEL": {
+      "note": "Or, {statues}, i. e. {standing images}.",
+      "why": "CCEL 4.xxxi#1 sets i.e. and standing in one italic run, with images roman (<i>i.e. standing</i> images); statues and standing images each replace pillars, after the labels Or and i.e."
+    },
+    "2CH 32:25 CCEL": {
+      "note": "q. d. to prayer.",
+      "why": "To prayer says what the return was to; it explains rather than renders, and cannot replace return."
+    },
+    "EZR 17:21 CCEL": {
+      "lemma": "the son of",
+      "why": "Belonging to renders the son of before Hezekias (Ater, belonging to Hezekias); the name stays outside the rendering."
+    },
+    "JOB 14:1 CCEL": {
+      "note": "Or, {vengeance}, q. d. passively.",
+      "why": "CCEL 8.xiv#1 sets q.d. passively in one italic run. Vengeance replaces wrath; passively says how it is meant and renders nothing."
+    },
+    "JOB 35:15 CCEL": {
+      "lemma": "he",
+      "occurrence": 1,
+      "widen": false,
+      "why": "God says who he is; it replaces the pronoun alone (For God is not now regarding), not he is."
+    },
+    "JOB 40:20 CCEL": {
+      "lemma": "deep",
+      "why": "Field, level, and low place each name the ground after the verse's article (in the field, in the level, in the low place); the article stays outside the renderings."
+    },
+    "SNG 5:14 CCEL#2": {
+      "note": "q. d. from Tarshish.",
+      "why": "From Tarshish explains the stone's name rather than renders beryl, which it cannot replace."
+    },
+    "HOS 4:15 CCEL": {
+      "lemma": "be not ignorant",
+      "note": "Or, {sin not}, i. e. a sin of ignorance.",
+      "why": "Sin not renders μὴ ἀγνόει, the whole of be not ignorant, which it replaces (thou, Israel, sin not); a sin of ignorance explains the sense and cannot replace it."
+    },
+    "JER 30:26 CCEL": {
+      "note": "Lit. {acorns}, q. d. {nuts}, as of screws.",
+      "why": "Acorns and nuts each replace bolts; as of screws is commentary on nuts."
+    },
+    "JER 31:9 CCEL": {
+      "note": "Or, {kindled}, q. d. _with carbuncle_.",
+      "why": "Kindled replaces touched; with carbuncle explains that sense and cannot replace touched, so it is quoted."
+    },
+    "JER 32:30 CCEL": {
+      "note": "q. d. oracularly.",
+      "why": "Oracularly says how the Lord speaks; it explains rather than renders, and cannot replace speak."
+    },
+    "JER 37:6 CCEL": {
+      "note": "i. e. that produced by scorching.",
+      "why": "The note says what paleness is meant; it explains rather than renders."
+    },
+    "JER 38:2 CCEL": {
+      "lemma": "warm",
+      "why": "Still living replaces warm (I found him still living in the wilderness); in the wilderness stays outside the rendering."
+    },
+    "JER 40:4 CCEL": {
+      "lemma": "for",
+      "occurrence": 2,
+      "widen": false,
+      "why": "To make replaces for before mounds (pulled down to make mounds and fortifications)."
+    },
+    "JER 44:4 CCEL": {
+      "note": "i. e. as he pleased.",
+      "why": "As he pleased says how Jeremias came and went; it explains rather than renders."
+    },
+    "JER 1:11 CCEL": {
+      "lemma": "an almond tree",
+      "why": "The alternative nut tree needs a rather than an. Include the article in the lemma; the note-specific revision supplies a in the rendering, so an almond tree is replaced by a nut tree without changing scripture."
+    },
+    "JER 20:2 CCEL": {
+      "note": "Or, possibly _stocks_.",
+      "why": "CCEL 13.xx#1 gives Or, possibly stocks at dungeon. Replacing dungeon alone leaves stocks which was, so retain this abbreviated gloss as an italic quotation within commentary rather than a whole-lemma alternative."
+    },
+    "EZK 16:38 CCEL": {
+      "lemma": "of",
+      "occurrence": 1,
+      "why": "Due to replaces the first of, before an adulteress (the vengeance due to an adulteress). Let annotation include an adulteress in the printed lemma and alternative to distinguish this attachment from blood of fury and jealousy later in the verse."
+    },
+    "EZK 39:23 CCEL": {
+      "note": "i. e. treacherously.",
+      "why": "Treacherously says how they rebelled; it explains rather than renders, and cannot replace rebelled."
+    },
+    "EZK 40:39 CCEL": {
+      "note": "i. e. for sins of ignorance.",
+      "why": "The note says what the trespass offerings are for; it explains rather than renders."
+    },
+    "EZK 42:13 CCEL": {
+      "note": "i. e. for sins of ignorance.",
+      "why": "The note says what the trespass offerings are for; it explains rather than renders."
     }
   },
   "shapes": {

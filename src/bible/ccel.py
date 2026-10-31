@@ -514,9 +514,10 @@ def normalized(pieces: Sequence[tuple[str, str]]) -> list[tuple[str, str]]:
     for kind, text in pieces:
         text = re.sub(r"\s+", " ", text).replace("--", "—")
         # A chapter and verse, and the abbreviations i. e. and q. d., spaced
-        # as eBible's transcription sets them.
+        # as eBible's transcription sets them, whether or not their stop is
+        # within the italics (<i>q.d</i>.).
         text = re.sub(r"(\d):(\d)", r"\1. \2", text)
-        text = re.sub(r"\b([iq])\.([ed])\.", r"\1. \2.", text)
+        text = re.sub(r"\b([iq])\.([ed])\b", r"\1. \2", text)
         if not result:
             text = text.lstrip(" ")
         else:

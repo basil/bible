@@ -43,7 +43,7 @@ from bible.usj import Content, Document, Node
 
 # Labels that introduce another rendering of the glossed words, which is italic.
 RENDERING_LABELS = {
-    *("Or,", "or,", "or", "Or simply,", "Possibly,", "Perhaps"),
+    *("Or,", "Or", "or,", "or", "Or simply,", "Possibly,", "Perhaps", "Perhaps,"),
     *("Gr.", "Gr. sing.", "Heb.", "Hebrew"),
     *(
         "Lit.",
@@ -63,6 +63,8 @@ RENDERING_LABELS = {
     *("Many Greek copies have,", "Many ancient copies add these words,"),
     *("That is,", "that is,", "that is to say,"),
 }
+# The labels of the Hebrew, after which English glosses it or says what it is.
+HEBREW_LABELS = {"Heb.", "Hebrew"}
 # Labels after which the note comments rather than renders, and stays roman.
 OTHER_LABELS = {
     *("Hebraism.", "Hebrew.", "Heb. עֹבֹר."),
@@ -80,16 +82,24 @@ KJV_LABEL = re.compile(
     )
     + r") "
 )
+# A word that hedges a rendering it closes or divides, in either case: "the
+# living creatures probably", "emptied, possibly, bereft of children".
+HEDGE = r"(?i:perhaps|possibly|probably)"
+# The hedges that divide two renderings; after a comma, "probably" opens a
+# comment instead ("cold, probably, the right reading").
+DIVIDING_HEDGE = r"(?i:perhaps|possibly)"
 # A rendering stops at the end of its sentence or clause, at "etc." unless the
-# sentence goes on ("Gr. none etc. shall be seen by thine eyes"), and before a
+# sentence goes on ("Gr. none etc. shall be seen by thine eyes"), before a
 # comment ("his vow, compare", "lascivious ways, as some copies read", "horn,
 # so Heb.", "cold, probably the right reading", "breach, as in", "it, sc. the
-# people"). A citation is a reference of its own, which ends it as well.
+# people"), and before a hedge that closes it ("the living creatures
+# probably"). A citation is a reference of its own, which ends it as well.
 RENDERING_END = re.compile(
     r"(?<!\betc)(?<!&c)\.['’”]?(?=\s|$)|\.(?=\s+[^\sa-z]|$)|[;:?!(—]"
-    r"|,\s+(?=(?:but|which|compare|see|probably|perhaps|so|if|as in)\b"
+    rf"|,\s+(?=(?:but|which|compare|see|probably|{DIVIDING_HEDGE}(?!,)|so|if|as in)\b"
     r"|(?:sc|scil|viz)\.|i\.\s?e\.|q\.\s?d\.)"
     r"|,?\s+(?=as some\b)"
+    rf"|(?<=\w)\s+(?={HEDGE}\s*(?:[.,;:]|$))"
 )
 # Greek or Hebrew quoted in a note.
 QUOTED = re.compile(f"[{GREEK}{HEBREW}]")
@@ -112,18 +122,31 @@ CLOSERS = {"curly": "’", "single": "'", "backtick": "'"}
 # The words a note quotes as added are the reading, as after "+": "Heb. and
 # Alex. insert 'priest'", "Alex. adds, 'and I the shepherd have done wickedly'".
 ADDED = re.compile(r"\s*(?:adds?|inserts?),?\s+(?=['‘“\"`])")
-# "X, or Y" and "X, etc." (or "&c.") set only X and Y in italic.
-RENDERING_SEPARATOR = re.compile(r",?\s+or,?\s+|,?\s*(?:\betc\b|&c\b)")
+# "X, or Y", "X, possibly, Y", and "X, etc." (or "&c.") set only X and Y in
+# italic.
+RENDERING_SEPARATOR = re.compile(
+    rf",?\s+or,?\s+|,\s+{DIVIDING_HEDGE},\s+|,?\s*(?:\betc\b|&c\b)"
+)
 # What follows a label but comments on the reading instead of giving one:
-# "Alex. has the following", "Gr. plural", "Alex. adds to", "Heb. omits".
+# "Alex. has the following", "Gr. plural", "Alex. adds to", "Heb. omits",
+# "A. V. margin".
 COMMENTARY = re.compile(
-    r"\s*(?:(?:also\s+)?(?:probably|perhaps|possibly|see|compare|comp|cf"
+    r"\s*(?:(?:also\s+)?(?:probably|see|compare|comp|cf|margin"
     r"|ha(?:s|ve)(?=\s+(?:the|a|an|this|these|those|no|nothing|only|here|it|them)\b)"
     r"|plural|singular|sing|participle|infin|fut"
     r"|adds|add(?=\s*[,:])|omits?|reads?|inserts?|wants?|translates?"
     r"|ends(?=\s+the\s+verse\b)|includes(?=\s+the\s+clause\b))\b|[—(-])",
     re.I,
 )
+# A hedge or a preference that opens a rendering is no part of it ("Or,
+# perhaps, tongs", "Gr. also possibly", "Or, rather, nut-tree"); "probably"
+# opens a comment instead, and "rather than" is part of the rendering.
+LEADING_HEDGE = re.compile(
+    rf"\s*(?:(?:also\s+)?{DIVIDING_HEDGE}|rather(?!\s+than\b))\b,?\s*", re.I
+)
+# What the Greek is, not a rendering: "Heb. word", "Hebrew word in Greek letters",
+# "Heb. word probably in Greek letters".
+HEBREW_WORD = re.compile(r"\s*words?(?:\s+probably)?(?:\s+in\s+Greek\s+letters)?\s*$")
 # Punctuation and quotation marks stay roman at either end of an italic run.
 TRIM = " \n.,;:?!+'‘’“”\"`"
 # Names, which keep their capital where a note runs on from its lemma: of
@@ -145,6 +168,10 @@ LABEL_START = re.compile(
     + "|".join(re.escape(label) for label in sorted(LABELS, key=len, reverse=True))
     + r")(?!\w)"
 )
+# A label of an italic run, with any comma, semicolon, or colon set after it
+# ("See Heb.,"): so punctuated, a label introduces no rendering, unless it is
+# listed with its punctuation ("Or,", "Vat.,").
+LABEL = re.compile(rf"\s*{LABEL_START.pattern}[,;:]?(?=\s|$)\s*")
 # Finite verbs, which make a note that opens with neither a label nor a
 # rendering a sentence: "the word Batus in the original containeth nine gallons".
 FINITE_VERB = re.compile(
@@ -282,11 +309,15 @@ class Roles:
     def renderings(
         self, start: int, extent: str, kind: str = "alternative"
     ) -> list[tuple[int, int]]:
-        """Mark each rendering of the extent that stands at start, "X, or Y"
-        and "X, etc." being X and Y alone, and say where each stands."""
+        """Mark each rendering of the extent that stands at start, "X, or Y",
+        "X, possibly, Y", and "X, etc." being X and Y alone, and say where
+        each stands. A hedge that opens one ("X, or perhaps Y") is no part
+        of it."""
         found, last = [], 0
         for separator in [*RENDERING_SEPARATOR.finditer(extent), None]:
             end = separator.start() if separator else len(extent)
+            if hedge := LEADING_HEDGE.match(extent, last, end):
+                last = hedge.end()
             found.append(self.reading(start + last, start + end, kind))
             last = separator.end() if separator else len(extent)
         return found
@@ -327,6 +358,26 @@ def labelled_pieces(text: str) -> list[tuple[str, str]]:
     if last < len(text):
         pieces.append(("text", text[last:]))
     return pieces
+
+
+def run_labels(run: str) -> list[str]:
+    """An italic run's labels, or none if it holds anything else: "See Heb."
+    and "Or, lit." are two labels each, as if Brenton had set them apart."""
+    labels = []
+    while match := LABEL.match(run):
+        labels.append(match[0])
+        run = run[match.end() :]
+    return [] if run else labels
+
+
+def rendering_extent(after: str) -> tuple[int, str]:
+    """The words of the rendering that opens after a label, to the end of
+    its clause and without a hedge that opens it, and how far into after
+    they start."""
+    extent = RENDERING_END.split(after, maxsplit=1)[0]
+    hedge = LEADING_HEDGE.match(extent)
+    skip = hedge.end() if hedge else 0
+    return skip, extent[skip:]
 
 
 def source_text(note: Node) -> str:
@@ -372,7 +423,8 @@ def source_pieces(note: Node) -> list[tuple[str, str]]:
         else:
             visit([item], None)
     # Merge runs that one marker split ("\\ft + \\ft 'and ...'"), and take the
-    # full stop that follows "Gr" or "Lit" into the label.
+    # full stop that follows "Gr" or "Lit", or a run that ends on one ("Or,
+    # lit"), into the label.
     merged: list[tuple[str, str]] = []
     for kind, text in pieces:
         # "\\+it Gr. \\+it* name": one space where two runs meet.
@@ -387,7 +439,8 @@ def source_pieces(note: Node) -> list[tuple[str, str]]:
             and kind == "text"
             and text.startswith(".")
             and merged[-1][0] == "emphasis"
-            and merged[-1][1].strip() + "." in RENDERING_LABELS
+            and (labels := run_labels(merged[-1][1].strip() + "."))
+            and labels[-1].strip() in RENDERING_LABELS
         ):
             merged[-1] = ("emphasis", merged[-1][1].strip() + ". ")
             merged.append((kind, text[1:].lstrip()))
@@ -396,7 +449,10 @@ def source_pieces(note: Node) -> list[tuple[str, str]]:
     result: list[tuple[str, str]] = []
     for kind, text in merged:
         if kind == "emphasis":
-            result.append(("label" if text.strip() in LABELS else "cited", text))
+            if labels := run_labels(text):
+                result += [("label", label) for label in labels]
+            else:
+                result.append(("cited", text))
         elif kind == "text":
             # A few labels are left in the note text ("Some read, out of").
             result += labelled_pieces(text)
@@ -429,17 +485,17 @@ def interpreted(pieces: Sequence[tuple[str, str]], key: str) -> Body:
     alternative = None
     addition = False
     for i, (kind, value) in enumerate(pieces[:-1]):
-        if kind != "label" or value.strip() not in {"Heb.", "Hebrew"}:
+        if kind != "label" or value.strip() not in HEBREW_LABELS:
             continue
         if pieces[i + 1][0] != "text":
             continue
         after = pieces[i + 1][1]
         if gloss := HEBREW_GLOSS.match(after):
-            english = after[gloss.end() :]
+            skip, extent = rendering_extent(after[gloss.end() :])
+            english = after[gloss.end() + skip :]
             if COMMENTARY.match(english) or GLOSS_COMMENT.match(english):
                 continue
-            extent = RENDERING_END.split(english, maxsplit=1)[0]
-            meaning.renderings(starts[i + 1] + gloss.end(), extent, "quotation")
+            meaning.renderings(starts[i + 1] + gloss.end() + skip, extent, "quotation")
     for i, (kind, value) in enumerate(pieces[:-1]):
         if kind != "label" or value.strip() not in RENDERING_LABELS:
             continue
@@ -476,8 +532,8 @@ def interpreted(pieces: Sequence[tuple[str, str]], key: str) -> Body:
             comma = text.find(",", stop, resume)
             stop = resume if comma < 0 else comma
         after = text[starts[i + 1] : stop]
-        extent = RENDERING_END.split(after, maxsplit=1)[0]
-        start = starts[i + 1]
+        skip, extent = rendering_extent(after)
+        start = starts[i + 1] + skip
         added = ADDED.match(extent)
         adds = extent.lstrip().startswith("+") or added is not None
         # The note adds words if the rendering that measures its lemma does,
@@ -503,15 +559,21 @@ def interpreted(pieces: Sequence[tuple[str, str]], key: str) -> Body:
             extent = extent[: quoted.start()]
             if not re.search(r",\s*$", extent):
                 extent = extent[: extent.rfind(",")] if "," in extent else ""
-        # Words that run into another label and end on one like "the" or "as"
-        # introduce it ("Gr. from the Heb.", "O Lord, as in Heb."): they comment.
+        # Words that run into another label or a citation and end on one like
+        # "the" or "as" introduce it ("Gr. from the Heb.", "O Lord, as in
+        # Heb.", "Comp. Heb. and Dan. 9. 16."): they comment.
         tail = word_spans(extent)
         if (
             tail
             and tail[-1][0] in lemmas.LINKING_WORDS
             and stop < len(text)
-            and pieces[i + 2][0] == "label"
-            and pieces[i + 2][1].strip().rstrip(",").lower() != "or"
+            and (
+                pieces[i + 2][0] == "xt"
+                or (
+                    pieces[i + 2][0] == "label"
+                    and pieces[i + 2][1].strip().rstrip(",").lower() != "or"
+                )
+            )
             and after.rstrip().endswith(extent.rstrip())
         ):
             extent = extent[: extent.rfind(",")] if "," in extent else ""
@@ -521,7 +583,8 @@ def interpreted(pieces: Sequence[tuple[str, str]], key: str) -> Body:
             and i + 2 < len(pieces)
             and pieces[i + 2][0] == "label"
         )
-        if not extent.strip() or COMMENTARY.match(extent) or joins_labels:
+        described = value.strip() in HEBREW_LABELS and HEBREW_WORD.match(extent)
+        if not extent.strip() or COMMENTARY.match(extent) or joins_labels or described:
             continue
         for bounds in meaning.renderings(start, extent):
             # "Alex. + the Lord" adds to the text rather than rendering it.

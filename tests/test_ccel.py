@@ -387,6 +387,10 @@ def test_a_body_whose_caller_is_in_skipped_markup_is_left_out_and_listed(
         ),
         ("i.e. a wife, q.d. his own.", "\\ft i. e. a wife, q. d. his own."),
         (
+            "<i>Or</i>, wife, <i>i.e</i>. spouse, <i>q.d</i>. his own.",
+            "\\fqa Or, \\ft wife, \\fqa i. e. \\ft spouse, \\fqa q. d. \\ft his own.",
+        ),
+        (
             "<i>Gr.</i> wise. See <scripRef>Gen. 1:2 </scripRef> .",
             "\\fqa Gr. \\ft wise. See \\xt Gen. 1. 2\\ft .",
         ),

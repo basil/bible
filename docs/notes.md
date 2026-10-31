@@ -1,55 +1,84 @@
 # TODO (Notes)
 
-## Commentary classified as an alternative rendering, and the reverse
+## Source expansions identified by the independent review
 
-All [build]. The inference in `src/bible/notes.py` treats roman words after a
-label as a reading. Fix each with a scoped classification decision, or narrow
-the inference and read the diff. CCEL pages named are the proof of what is
-roman and what is italic.
+These six gaps predate the reviewed changes. Independent reviewers checked
+the actual 1844, 1879, 1884 and 1900 scans and relevant Swete images. The
+missing information is verified; no evidence established its removal as a
+genuine later correction. Recovery and the resulting note styling remain
+separate editorial work. Page references below are printed folios, not PDF
+page numbers; 1844 references name the volume.
 
-- [ ] **`HOS 6:4 CCEL`** — "and" in "compare Heb. and Dan. 9:16" exported as
-  `\fqa`. CCEL 17.v.htm #8. Confidence: high.
-- [ ] **`2CH 2:5 CCEL#2`** — "with" in "compare Heb. and Gr. with Zach.
-  6:13" exported as `\fqa`. CCEL 4.ii.htm #3. Confidence: high.
-- [ ] **`JER 39:5 CCEL`** — "adopted here" after the Complutensian Greek
-  exported as `\fqa`. CCEL 13.xxxix.htm #1. Confidence: high.
-- [ ] **`EZK 29:14 CCEL`** — "margin" in "KJV margin" exported as `\fqa`.
-  CCEL 15.xxix.htm #3. Confidence: high.
-- [ ] **`DAG 1:3 CCEL`** — "Hebrew word." exported as `\ft Hebrew \fqa word`.
-  CCEL 16.htm #2. Compare the existing `DAG 11:45 CCEL` override, which keeps
-  the same wording roman. Confidence: high.
-- [ ] **`EZK 10:5 CCEL`, `EZK 21:2 CCEL`, `EZK 21:2 CCEL#2`, `EZK 29:18 CCEL`**
-  — "word(s) in Greek letters" exported as `\fqa`. CCEL 15.ix.htm #6,
-  15.xix.htm #16–17, 15.xxix.htm #4. Edition 20:46 (Thaeman/Darom) for the
-  21:2 pair. Confidence: high.
-- [ ] **`EZK 1:20 CCEL#2`** — "the living creatures probably" wholly `\fqa`;
-  "probably" is commentary. CCEL 15.htm #9. Confidence: medium.
-- [ ] **Reverse case: `2CH 4:16 CCEL`, `JER 20:2 CCEL`, `EZK 21:26 CCEL`,
-  `EZK 26:17 CCEL#2`, `EZK 40:27 CCEL`** — hedged alternatives ("or, perhaps,
-  tongs"; "or, possibly stocks"; "perhaps, send forth"; "or, perhaps, her
-  traders"; "or, possibly, at the south end") come out entirely roman because
-  `COMMENTARY` in `notes.py` rejects perhaps/possibly before the rendering is
-  classified. CCEL 4.iv.htm #3, 13.xx.htm #1, 15.xxi.htm #9, 15.xxvi.htm #4,
-  15.xl.htm #5. Confidence: high. Fix: adverb as commentary, the replacement
-  words as `\fqa`; audit other hedged glosses before changing the rule.
-  Repro: `grep -n 'perhaps\|possibly' build/review/notes.md`.
+- [ ] **`2KI 10:3` (CCEL duplicate `2.x#2`)** [source recovery] — recover
+  "perfect in body, &c." after "unblemished" in the retained eBible note.
+  1844 I p.412 has "Gr. upright, q. d. unblemished, perfect in body, &c.";
+  1879/1884/1900 p.502 stop after "unblemished". Caller is before
+  "fittest". Add a scoped correction in `edition/brenton-notes.json` and
+  explicitly account for the shorter CCEL duplicate in
+  `edition/ccel-notes.json`, so the restored note still prints once.
+  Swete I p.763 supports the Greek identity, not a new assertion that bodily
+  perfection is its necessary meaning. Confidence: high in the source gap.
+- [ ] **`JOB 40:20 CCEL` (printed 40:15; CCEL `8.xl#3`)** [source recovery]
+  — recover "Gr. Tartarus" before "Heb. field, q. d. level, or, low
+  place." 1844 II p.573 has both under one caller before "the deep";
+  1879/1884/1900 p.696 retain only the Hebrew explanation. Swete II p.597
+  confirms ταρτάρῳ. Use a scoped source correction, then check the compound
+  note's Greek/Hebrew labels and gloss roles; this is not an Alexandrine
+  reading or an extra note. Confidence: high in the source gap.
+- [ ] **`ECC 5:9 CCEL#2` (CCEL `10.iv#5`)** [source recovery] — recover
+  "q. d. of those, or, such things." from 1844 II p.674; later printings
+  p.823 have "q. d. of those things." Caller is before "thereof".
+  Swete II p.491 supplies no demonstrated correction requiring the earlier
+  alternative's removal. Use a CCEL correction and independently check
+  each gloss's quotation versus replacement role; do not copy the scratch
+  report's provisional markup unchecked. Confidence: high in the source gap.
+- [ ] **`SNG 5:14 CCEL#2` (CCEL `11.v#3`)** [source recovery] — recover the
+  separate "Ezek. 1. 16." citation at "beryl", printed in 1844 II p.682.
+  Later printings p.833 replace that note's contents with "q. d. from
+  Tarshish." Swete II p.514 and III p.386 confirm the shared stone name;
+  no erroneous reference was demonstrated. Decide how to retain both
+  attested pieces of information, acknowledging that their combination
+  occurs in neither printing. A CCEL correction must also update or remove
+  the current whole-note override so it cannot discard the citation.
+  Verify the resulting link to EZK 1:16. Confidence: high in the source facts.
+- [ ] **`JER 34:14 CCEL` (CCEL `13.xxxiv#1`)** [source recovery] — recover
+  "q. d. unauthorised" after "i.e. false". 1844 II p.775 has both;
+  1879/1884/1900 p.947 have only "i.e. false." All callers precede
+  "unrighteous". Swete III pp.303–304 numbers this passage 34:11
+  (Hebrew 27:14), not 34:14. Restore the whole note in eBible through
+  `edition/brenton-notes.json` and account for the shorter CCEL duplicate,
+  or verify an equivalent existing correction mechanism. Review the
+  compound gloss's styling without promoting Brenton's contextual
+  explanation into scripture. Confidence: high in the source gap.
+- [ ] **`LAM 3:65 CCEL` (CCEL `14.iii#12`)** [source recovery] — recover
+  "See Heb." before "q.d. callousness". 1844 II p.799 has one note
+  containing both, before "a covering"; later printings p.977 omit the
+  pointer. Swete III p.373 supplies no evidence that the pointer was a
+  correction. Restore a single whole note and account for the shorter
+  CCEL duplicate; migrate any affected note-key decisions. Retain the
+  independently accepted substitution of "callousness" for the whole
+  lemma "a covering": the source-gap report's contrary styling proposal
+  was rejected. Confidence: high in the source gap.
 
-## Notes the 1844 printing gives more fully
+For each accepted expansion, record exact source matches and the printing
+comparisons in its decision, check for stale overrides and duplicates,
+validate, and rebuild the review diff. Confirm one note at the same caller,
+correct semantic styling and links, and unchanged scripture and numbering.
 
-[source]. The later Bagster printings and CCEL shortened these; a correction
-may recover the 1844 information (AGENTS.md). Pages are 1844 vol. 2 printed
-pages (physical = printed − 497 in Ezekiel).
+### Additional inherited substitution questions
 
-- [ ] **`EZK 21:26 CCEL`** (edition 21:21) — 1844 p. 822 "† Perhaps, bring
-  forth, _or,_ send forth." where 1879 p. 1006 and CCEL 15.xxi #9 have
-  "Perhaps, send forth." Confidence: high that 1844 differs.
-- [ ] **`EZK 29:18 CCEL`** — 1844 p. 832 "† μαδών, _Heb._ word probably in
-  Greek letters." where 1879 p. 1034 has "_Heb._ word in Greek letters." Swete
-  III p. 447 prints μαδῶν, an ordinary Greek participle, which Brenton's
-  "probably" allows for. Confidence: high that 1844 differs.
-- [ ] **`EZK 21:2 CCEL`** (edition 20:46) — 1844 p. 821 sets a third † before
-  the first "Nageb" for the same "_Heb._ words." note; 1879 p. 1021 and CCEL
-  have callers at Thaeman and Darom only. Confidence: medium.
+These passed the duplicate-normalization review: the reviewed change did
+not introduce their limitations. They are diagnostic follow-ups, not
+approved wording changes, and contextual lemma breadth alone is not a bug.
+
+- [ ] **`2KI 19:11 CCEL`** [editorial] — "waste them utterly" accepts
+  "curse them", but the second gloss "devote to destruction" omits the
+  object under strict substitution. Check whether its role needs a scoped
+  treatment; do not pad the source wording automatically.
+- [ ] **`PSA 35:3 CCEL`** [editorial] — substituting "with regard to the
+  discovering" for "to discover" leaves "his iniquity and hate it" with
+  doubtful coordination. Judge the complete sentence, allowing the older
+  verbal-gerund construction; quotation styling is only a possible outcome.
 
 ## Lemma scope (which words the note is about)
 
