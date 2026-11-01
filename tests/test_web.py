@@ -322,10 +322,10 @@ def test_matter(edition: pipeline.Edition) -> None:
 
 
 def test_variants(edition: pipeline.Edition) -> None:
-    """The textual variants, by book, each entry the verse it is about,
-    with the King James number where it differs and its lanes, with the
-    prose that opens the page and without the names the site prints
-    itself."""
+    """The textual variants, by book, each entry the verse it is about, or
+    the verses one reading changes, with the King James number where it
+    differs and its lanes, with the prose that opens the page and without
+    the names the site prints itself."""
     listed = web.variants(edition)
     assert listed["title"] == "Textual Variants"
     assert listed["terms"] == {"kjv": "KJV", "apparatus": "apparatus"}
@@ -343,6 +343,7 @@ def test_variants(edition: pipeline.Edition) -> None:
     assert len(entries) == len(edition.variants)
     for entry, (row, lanes) in zip(entries, edition.variants, strict=True):
         assert row.reference.split()[1] == f"{entry['chapter']}:{entry['verse']}"
+        assert entry.get("through") == (row.through and row.through.split(":")[1])
         assert ("kjv" in entry) == (row.source != row.reference)
         assert entry.get("kjv", row.reference.split()[1]) == row.source.split()[1]
         assert entry["lanes"] == lanes

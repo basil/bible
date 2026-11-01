@@ -4,6 +4,7 @@ non-neutral unit once, markdown safe; and the textual variants."""
 from __future__ import annotations
 
 import copy
+import itertools
 import re
 import unicodedata
 from collections import Counter
@@ -512,6 +513,37 @@ def test_unit_english_comparison_is_separate_from_whole_verse(
     assert "English at this unit · KJV JAS 1:13 → OLEB JAS 1:13: unchanged" in section
 
 
+def test_unit_english_is_read_from_the_verse_scrivener_sets_it_in(
+    packets: dict[str, str],
+) -> None:
+    def unit_line(uid: str) -> str:
+        return next(
+            line
+            for line in section_of(packets, uid).splitlines()
+            if line.startswith("English at this unit · ")
+        )
+
+    # KJV 2:11 has καὶ μαρτυρούμενοι, which RP2026 sets in 2:12.
+    line = unit_line("1TH 2:12#1")
+    assert "KJV 1TH 2:11 = OLEB 1TH 2:11 · unchanged:" in line
+    assert "charged every one of you" in line
+    line = unit_line("HEB 1:1#1")
+    assert "KJV HEB 1:2 → OLEB HEB 1:2:" in line
+    assert "[+at the end of]" in line
+    # The verse its English was compared in is not compared again, but its
+    # finished wording still follows the unit's.
+    section = section_of(packets, "HEB 1:1#1")
+    assert "English whole verse · KJV HEB 1:2 " not in section
+    assert "OLEB HEB 1:2 (cross-verse instruction) (whole verse):" in section
+    # A unit whose words stand partly in its own verse reads that verse,
+    # and the other verse its reading changes is still compared whole.
+    assert "KJV 2CO 1:6 → OLEB 2CO 1:6:" in unit_line("2CO 1:6#1")
+    assert (
+        "English whole verse · KJV 2CO 1:7 → OLEB 2CO 1:7 (cross-verse instruction): "
+        in section_of(packets, "2CO 1:6#1")
+    )
+
+
 def test_short_form_unit_english_keeps_its_kjv_context(
     packets: dict[str, str],
 ) -> None:
@@ -966,10 +998,15 @@ def test_johannine_omission_is_one_reading(
     )
     english = entries["1JN 5:7"][1]
     # The variants quote the King James text as the edition spells it; the
-    # review quotes it as the source does.
-    assert english["segments"] == [
+    # review quotes it as the source does. The entry runs through 5:8, whose
+    # English the reading also changes.
+    assert english["segments"][:2] == [
         "For there are three that bear record",
         {"from": f" {omitted.format('Spirit')}", "to": ","},
+    ]
+    assert readings(english) == [
+        (omitted.format("Spirit"), ","),
+        ("And there are three that bear witness in earth,", None),
     ]
     section = section_of(packets, "1JN 5:7#1")
     assert f"bear record[+,][- {omitted.format('Ghost')}]" in section
@@ -980,12 +1017,53 @@ def test_every_verse_with_a_greek_difference_is_listed_once(
 ) -> None:
     references = [row.reference for row in rows]
     assert len(references) == len(set(references))
-    listed = set(references)
-    for unit in byzantine.greek.units:
-        if unit["class"] != "structural":
-            assert unit["target_ref"] in listed, unit["id"]
     keys = [ref_key(r) for r in references]
     assert keys == sorted(keys)
+    # A row of the verses one reading changes runs to its last, and no
+    # other row starts within it.
+    spans = [
+        (ref_key(row.reference), ref_key(row.through or row.reference)) for row in rows
+    ]
+    assert all(a[1] < b[0] for a, b in itertools.pairwise(spans))
+    for unit in byzantine.greek.units:
+        if unit["class"] != "structural":
+            key = ref_key(unit["target_ref"])
+            assert any(a <= key <= b for a, b in spans), unit["id"]
+
+
+# The readings that change the English of another verse than their Greek's,
+# each with the first and last of the verses its row spans.
+CROSS_VERSE = {
+    "ACT 24:6#1": ("ACT 24:6", "ACT 24:8"),
+    "ROM 12:2#1": ("ROM 12:1", "ROM 12:2"),
+    "2CO 1:6#1": ("2CO 1:6", "2CO 1:7"),
+    "COL 1:24#1": ("COL 1:23", "COL 1:24"),
+    "HEB 1:1#1": ("HEB 1:1", "HEB 1:2"),
+    "1JN 5:7#1": ("1JN 5:7", "1JN 5:8"),
+    "REV 5:13#3": ("REV 5:13", "REV 5:14"),
+}
+
+
+def test_the_verses_one_reading_changes_are_one_row(
+    byzantine: Reconciliation,
+    rows: list[variants.Row],
+    entries: dict[str, list[variants.Lane]],
+) -> None:
+    crossing = {
+        row.get("unit", row["ref"])
+        for row in byzantine.verified.dispositions
+        if any(e["ref"] != row["ref"] for e in row.get("edits", ()))
+    }
+    assert crossing == set(CROSS_VERSE)
+    ranged = {row.reference: row.through for row in rows if row.through}
+    assert ranged == dict(CROSS_VERSE.values())
+    # Hebrews 1:1 has the Greek of the reading, 1:2 its English: the row
+    # has both, with 1:2's own difference of a movable nu.
+    assert not any(row.reference == "HEB 1:2" for row in rows)
+    greek, english = entries["HEB 1:1"]
+    assert readings(greek) == [("ἐσχάτων", "ἐσχάτου"), ("ἔθηκε", "ἔθηκεν")]
+    assert readings(english) == [("in", "at the end of"), ("last", None)]
+    assert variants.witness(english["segments"], "from").startswith("God, who at")
 
 
 def test_a_changed_verse_has_one_aligned_comparison_per_language(
@@ -1078,11 +1156,21 @@ def test_the_four_omitted_verses_are_listed(
     entries: dict[str, list[variants.Lane]],
 ) -> None:
     omitted = [row for row in rows if row.kind == "omitted"]
+    # Acts 24:7 stands between the verses one reading changes, in their row.
+    acts = next(row for row in rows if row.reference == "ACT 24:6")
+    assert acts.through == "ACT 24:8"
     assert (
-        {row.reference for row in omitted}
+        {row.reference for row in omitted} | {"ACT 24:7"}
         == OMITTED
         == byzantine.greek.structure.omitted
     )
+    assert (
+        acts.kjv
+        and scripture.plain(scripture.verses(regularized["ACT"])["24:7"].text)
+        in acts.kjv
+    )
+    assert " ".join(byzantine.greek.tr_alignment.text["ACT 24:7"]) in acts.greek_tr
+    assert acts.oleb is not None and "Lysias" not in acts.oleb
     for row in omitted:
         assert row.greek_tr and not row.greek_rp and row.oleb is None
         book, verse = row.reference.split()
@@ -1119,20 +1207,45 @@ def test_a_moved_verse_is_labelled_with_the_king_james_number(
         ) == " ".join(byzantine.greek.tr[row.source])
 
 
+def row_verses(byzantine: Reconciliation, row: variants.Row) -> list[tuple[str, str]]:
+    """The verses of a row, each where the King James Bible has it and where
+    the edition does: its own, or those of the verses one reading changes,
+    which none of them moves."""
+    if not row.through:
+        return [(row.source, row.reference)]
+    first, last = ref_key(row.reference), ref_key(row.through)
+    text = byzantine.greek.tr_alignment.text
+    return [
+        (ref, ref) for ref in sorted(text, key=ref_key) if first <= ref_key(ref) <= last
+    ]
+
+
+def row_units(byzantine: Reconciliation, row: variants.Row) -> list[Unit]:
+    """A row's units in its order: each verse's differences of words, then
+    its differences of accent."""
+    return [
+        unit
+        for _, ref in row_verses(byzantine, row)
+        for unit in sorted(
+            (
+                u
+                for u in byzantine.greek.units
+                if u["target_ref"] == ref and u["class"] != "structural"
+            ),
+            key=lambda u: u["class"] == "accent",
+        )
+    ]
+
+
 def test_all_variants_passages_keep_source_words(
     byzantine: Reconciliation, rows: list[variants.Row]
 ) -> None:
+    tr, rp = byzantine.greek.tr_alignment.text, byzantine.greek.rp_alignment.text
     for row in rows:
-        assert row.greek_tr == " ".join(byzantine.greek.tr_alignment.text[row.source])
-        assert row.greek_rp == " ".join(
-            byzantine.greek.rp_alignment.text.get(row.reference, [])
-        )
-        units = [
-            u
-            for u in byzantine.greek.units
-            if u["target_ref"] == row.reference and u["class"] != "structural"
-        ]
-        units.sort(key=lambda u: u["class"] == "accent")
+        verses = row_verses(byzantine, row)
+        assert row.greek_tr == " ".join(w for source, _ in verses for w in tr[source])
+        assert row.greek_rp == " ".join(w for _, ref in verses for w in rp.get(ref, []))
+        units = row_units(byzantine, row)
         for printed, unit in zip(row.units, units, strict=True):
             for side, ref, value in (
                 ("tr", unit["ref"], printed.tr),
@@ -1184,21 +1297,25 @@ def test_variants_passages_and_comparisons_keep_source_case_and_punctuation(
             ),
         )
 
+    printed_greek = byzantine.greek.printed
     for row in rows:
+        verses = row_verses(byzantine, row)
         assert source_features(row.greek_tr) == source_features(
-            " ".join(byzantine.greek.tr_alignment.text[row.source])
+            " ".join(
+                w
+                for source, _ in verses
+                for w in byzantine.greek.tr_alignment.text[source]
+            )
         ), row.source
-        rp = byzantine.greek.printed[row.reference]["accented"]
         assert source_features(row.greek_rp) == source_features(
-            " ".join(rp)
+            " ".join(
+                w
+                for _, ref in verses
+                if ref in printed_greek
+                for w in printed_greek[ref]["accented"]
+            )
         ), row.reference
-        units = [
-            u
-            for u in byzantine.greek.units
-            if u["target_ref"] == row.reference and u["class"] != "structural"
-        ]
-        units.sort(key=lambda u: u["class"] == "accent")
-        for printed, unit in zip(row.units, units, strict=True):
+        for printed, unit in zip(row.units, row_units(byzantine, row), strict=True):
             assert source_features(printed.tr) == source_features(
                 " ".join(
                     byzantine.greek.tr_alignment.text[unit["ref"]][
@@ -1212,7 +1329,7 @@ def test_variants_passages_and_comparisons_keep_source_case_and_punctuation(
             ), unit["id"]
             assert source_features(printed.rp) == source_features(
                 " ".join(
-                    rp[
+                    printed_greek[unit["target_ref"]]["accented"][
                         slice(
                             *variants.projected(
                                 byzantine, "rp", unit["target_ref"], unit["rp_range"]

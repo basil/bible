@@ -184,6 +184,8 @@ def comparisons(
 class Variant(TypedDict):
     chapter: str
     verse: str
+    # The last verse, where the entry is of the verses one reading changes.
+    through: NotRequired[str]
     # The King James Bible's number, where it differs.
     kjv: NotRequired[str]
     lanes: list[Lane]
@@ -211,8 +213,9 @@ class Variants(TypedDict):
 def variants(edition: pipeline.Edition) -> Variants:
     """The textual variants for the website: the title and the prose of the
     page that opens them, then their entries by book, each the verse it is
-    about, for the site to anchor and link, with the King James number where
-    it differs and its lanes; and the terms the site labels them with, from
+    about, or the first and last of the verses one reading changes, for the
+    site to anchor and link, with the King James number where it differs
+    and its lanes; and the terms the site labels them with, from
     the registry. The page's own names and each book's heading and names are
     left to the site, which prints them from the manifest."""
     terms = terminology.registry(edition.policy)
@@ -232,6 +235,9 @@ def variants(edition: pipeline.Edition) -> Variants:
             "verse": f"{verse.number}{verse.letter}",
             "lanes": lanes,
         }
+        if row.through is not None:
+            last = references.parse_verse(row.through)
+            entry["through"] = f"{last.number}{last.letter}"
         if row.source != row.reference:
             entry["kjv"] = references.parse_verse(row.source).label
         books[-1]["entries"].append(entry)

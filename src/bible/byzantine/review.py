@@ -284,6 +284,7 @@ def verse_comparison(
     *,
     after_verse: Verse | None = None,
     anchors: Sequence[tuple[int, int, int, int]] = (),
+    heading: str = "English whole verse",
 ) -> list[str]:
     """Contextual source-to-target diff and readable finished verse, in two
     rows; or, where the words compared are the same, the one verse they are."""
@@ -291,7 +292,7 @@ def verse_comparison(
     if before == after:
         same = marked_readings(before, after, verse=True)[1]
         return [
-            f"English whole verse · {before_label} = {after_label} · unchanged: {same}",
+            f"{heading} · {before_label} = {after_label} · unchanged: {same}",
             "",
         ]
     right = (
@@ -300,7 +301,7 @@ def verse_comparison(
         else lemma_reading(after_verse)
     )
     return [
-        f"English whole verse · {before_label} → {after_label}: "
+        f"{heading} · {before_label} → {after_label}: "
         + diff_markup(anchored(before, after, anchors)),
         "",
         f"{after_label} (whole verse): {right}  ",
@@ -780,8 +781,11 @@ def unit_english_lines(
     context: Reconciliation,
     index: Index,
     passages: Passages,
+    elsewhere: Sequence[str],
 ) -> list[str]:
-    """The executed English for this unit, preserving shared constructions."""
+    """The executed English for this unit, preserving shared constructions;
+    or, where Scrivener sets its words only in other verses, those verses'
+    English, whole."""
     baseline = (
         "Corrected KJV"
         if index["corrected"][unit["ref"]].text != context.english.kjv[unit["ref"]]
@@ -793,6 +797,47 @@ def unit_english_lines(
     label = "English for shared construction" if shared else "English at this unit"
     if row.get("covered_by"):
         label += f" (executed with {row['covered_by']})"
+    if elsewhere:
+        # Scrivener, and so the KJV, sets the unit's words in another verse
+        # (the participle of 1TH 2:12 in 2:11, rendered "charged"): quote
+        # the English there, whole.
+        if row["action"] == "refused":
+            label += " (executor refused)"
+        # The whole verse stands for this unit's English only while this
+        # unit alone edits it, and edits nothing in its own verse.
+        mine = {owner["unit"], unit["id"]}
+        require(
+            all(e["ref"] != unit["ref"] for e in owner.get("edits", ())),
+            f"{unit['id']} edits its own verse, but Scrivener sets its words"
+            f" in {', '.join(elsewhere)}",
+        )
+        lines = []
+        for src in elsewhere:
+            others = sorted(
+                uid
+                for uid, other in index["rows"].items()
+                if uid not in mine
+                and any(e["ref"] == src for e in other.get("edits", ()))
+            )
+            require(
+                not others,
+                f"{unit['id']}'s English is quoted from {src}, which"
+                f" {', '.join(others)} also edits",
+            )
+            dest = context.greek.structure.rp_ref(src)
+            after, _ = finished_verse(dest, index)
+            before = index["corrected"][src].text
+            base = "Corrected KJV" if before != context.english.kjv[src] else "KJV"
+            lines.append(
+                verse_comparison(
+                    before,
+                    after.text if after else "",
+                    f"{base} {src}",
+                    f"OLEB {dest}",
+                    heading=label,
+                )[0]
+            )
+        return lines
     if not owner.get("edits") and row["action"] not in {"move", "omit"}:
         contrast = "unchanged" + (
             " (executor refused)" if row["action"] == "refused" else ""
@@ -896,7 +941,10 @@ def section(
     if source_refs and source_refs != [ref]:
         greek += " · Scrivener source: " + ", ".join(source_refs)
     lines.append(greek)
-    lines.extend(unit_english_lines(unit, row, context, index, passages))
+    # A unit whose words Scrivener sets only in other verses has its English
+    # compared there.
+    elsewhere = source_refs if ref not in source_refs else []
+    lines.extend(unit_english_lines(unit, row, context, index, passages, elsewhere))
     lines.append("")
     if greek_context:
         lines.append(
@@ -932,21 +980,23 @@ def section(
     if found:
         lines.append("⁺ " + "; ".join(esc(n) for n in found))
     # A Greek unit may execute English in a neighbouring source verse.
-    # Keep that wording and its printed notes with the unit that changed it.
+    # Keep that wording and its printed notes with the unit that changed it;
+    # a verse the unit's English was compared in, from the same King James
+    # text, gives only these.
     for other in dict.fromkeys(
         e["ref"] for e in row.get("edits", ()) if e["ref"] != ref
     ):
         destination = context.greek.structure.rp_ref(other)
         other_after, other_printed = finished_verse(destination, index)
-        lines.extend(
-            verse_comparison(
-                kjv[other],
-                other_after.text if other_after else "",
-                f"KJV {other}",
-                f"OLEB {destination} (cross-verse instruction)",
-                after_verse=other_printed,
-            )
+        comparison = verse_comparison(
+            kjv[other],
+            other_after.text if other_after else "",
+            f"KJV {other}",
+            f"OLEB {destination} (cross-verse instruction)",
+            after_verse=other_printed,
         )
+        compared = other in elsewhere and index["corrected"][other].text == kjv[other]
+        lines.extend(comparison[2:] if compared else comparison)
         if other_printed and (other_notes := edition_notes(other_printed)):
             lines.append("⁺ " + "; ".join(esc(n) for n in other_notes))
     if row["action"] == "refused":

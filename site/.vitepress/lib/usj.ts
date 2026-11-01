@@ -397,6 +397,8 @@ export type Lane = {
 export type Variant = {
   chapter: string;
   verse: string;
+  // The last verse, where the entry is of the verses one reading changes.
+  through?: string;
   kjv?: string;
   lanes: Lane[];
 };
@@ -496,7 +498,8 @@ function pair(lane: Lane, terms: Terms, lead: string) {
   return `<tr class="pair ${lane.language}">${lead}${cells}</tr>`;
 }
 // A book's variants as a table, each entry a group of rows under an anchor
-// of its verse, with its reference linked to the verse in its chapter, or to
+// of its verse, or of the first of the verses one reading changes, with its
+// reference linked to the verse in its chapter, or to
 // the chapter where the edition omits the verse, beside its lanes.
 export function renderVariants(
   book: string,
@@ -508,7 +511,9 @@ export function renderVariants(
     "<thead><tr><th>Verse</th><th>Source</th><th>Adopted</th></tr></thead>";
   const html = entries
     .map((entry) => {
-      const reference = `${entry.chapter}:${entry.verse}`;
+      const reference =
+        `${entry.chapter}:${entry.verse}` +
+        (entry.through ? `–${entry.through}` : "");
       const id = `c${entry.chapter}v${entry.verse}`;
       const target =
         chapterPath(book, entry.chapter) +

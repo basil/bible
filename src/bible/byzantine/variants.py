@@ -1,6 +1,8 @@
 """The textual variants: every verse of the New Testament where the
 Byzantine text differs from the Received Text, with the Greek of both and,
 where the English changes, the King James Bible's words and the edition's.
+The verses one reading changes are one entry, so that its Greek and its
+English stand together.
 
 The rows are read from what the reconciliation worked out and from the
 books as the edition prints them. The website publishes each verse's lanes:
@@ -14,6 +16,7 @@ from __future__ import annotations
 import itertools
 import re
 import unicodedata
+from collections import Counter
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from difflib import SequenceMatcher
@@ -52,10 +55,10 @@ class Unit:
 
 @dataclass(frozen=True)
 class Row:
-    """One verse of the variants: where the edition prints it, where the
-    King James Bible has it, the Greek of both texts, the English before
-    and after where it changes, and how the verse stands: changed, the
-    same in English, or omitted."""
+    """One verse of the variants, or the verses one reading changes: where
+    the edition prints it, where the King James Bible has it, the Greek of
+    both texts, the English before and after where it changes, and how the
+    verse stands: changed, the same in English, or omitted."""
 
     reference: str
     source: str
@@ -74,6 +77,8 @@ class Row:
     # The Greek both texts share that a correction of the English is about,
     # as the correction cites it.
     about: tuple[str, ...] = ()
+    # The last verse of an entry of several, the edition's.
+    through: str | None = None
 
 
 # A lane of a verse's entry, as the website publishes it: the source witness
@@ -451,9 +456,11 @@ def rows(
     """Every verse with a Greek difference, a changed English, or a place
     other than the King James Bible's, in the order the edition prints them;
     the verses the Byzantine text lacks stand where the King James Bible has
-    them. The English of both Bibles is read from their books as the edition
-    spells them: the original King James books and the books before
-    verse-specific punctuation, including corrections of the English where the Greek texts agree.
+    them, and the verses one reading changes are one row. The English of
+    both Bibles is read from their books as the edition spells them: the
+    original King James books and the books before verse-specific
+    punctuation, including corrections of the English where the Greek texts
+    agree.
     """
     structure = found.greek.structure
     tr, rp, contrasts = prepare_greek(found)
@@ -511,42 +518,39 @@ def rows(
     for override in found.decisions.overrides:
         if not override["unit_ids"]:
             about[override["id"]] = tuple(dict.fromkeys(cited_greek(override)))
+    grouped = groups(found, [*printed, *structure.omitted])
+    # Each joining verse's English before and after, in full.
+    english: dict[str, tuple[str, str]] = {}
     result = []
     for ref in sorted(printed, key=ref_key):
         source = structure.kjv_ref(ref)
-        before = kjv.get(source)
+        verse = kjv.get(source)
         after = printed[ref]
         units = (*units_at.get(ref, ()), *accents.get(ref, ()))
-        if before is None:
+        if verse is None:
             continue
-        if not units and source == ref and scripture.plain(before) == after:
+        before = scripture.plain(verse)
+        if ref in grouped:
+            english[ref] = before, after
+        elif not units and source == ref and before == after:
             continue
-        kind = (
-            "changed" if scripture.plain(before) != after or source != ref else "same"
-        )
+        kind = "changed" if before != after or source != ref else "same"
         left = " ".join(tr.get(source, []))
         right = " ".join(rp.get(ref, []))
         ranges = passage_ranges(found, source, ref, left, right)
         _, selected, english_ranges = selections(
-            found,
-            source,
-            ref,
-            left,
-            right,
-            scripture.plain(before),
-            after,
-            prepared_verses,
+            found, source, ref, left, right, before, after, prepared_verses
         )
         result.append(
             Row(
                 ref,
                 source,
                 kind,
-                " ".join(tr.get(source, [])),
-                " ".join(rp.get(ref, [])),
+                left,
+                right,
                 tuple(units),
-                scripture.plain(before) if scripture.plain(before) != after else None,
-                after if scripture.plain(before) != after else None,
+                before if before != after else None,
+                after if before != after else None,
                 ranges,
                 selected,
                 english_ranges,
@@ -555,6 +559,8 @@ def rows(
             )
         )
     for ref in sorted(structure.omitted, key=ref_key):
+        if ref in grouped:
+            english[ref] = scripture.plain(kjv[ref]), ""
         result.append(
             Row(
                 ref,
@@ -568,7 +574,118 @@ def rows(
                 received=ref not in unreceived,
             )
         )
-    return sorted(result, key=lambda row: ref_key(row.reference))
+    by_ref = {row.reference: row for row in result}
+    require(
+        len(by_ref) == len(result),
+        "Two rows of the variants at one verse: "
+        + ", ".join(
+            ref for ref, n in Counter(r.reference for r in result).items() if n > 1
+        ),
+    )
+    for group in dict.fromkeys(grouped.values()):
+        for ref in group:
+            require(
+                structure.kjv_ref(ref) == ref and ref in by_ref,
+                "A moved verse, or one the King James Bible lacks, among the"
+                f" verses one reading changes: {ref}",
+            )
+        by_ref[group[0]] = joined([by_ref.pop(ref) for ref in group], english)
+    return sorted(by_ref.values(), key=lambda row: ref_key(row.reference))
+
+
+def groups(found: Reconciliation, listed: Sequence[str]) -> dict[str, tuple[str, ...]]:
+    """The verses one reading changes, by each of them: the verse of its
+    Greek and every verse whose English it edits, the edition's, with the
+    verses between them; readings whose verses meet are one group. A group
+    stays within its chapter."""
+    structure = found.greek.structure
+    spans: list[tuple[str, str]] = []
+    for row in found.verified.dispositions:
+        edited = {e["ref"] for e in row.get("edits", ())} - {row["ref"]}
+        if not edited:
+            continue
+        refs = sorted(map(structure.rp_ref, {row["ref"], *edited}), key=ref_key)
+        require(
+            len({ref_key(ref)[:2] for ref in refs}) == 1,
+            f"A reading changes verses of two chapters: {row['ref']}",
+        )
+        spans.append((refs[0], refs[-1]))
+    merged: list[list[str]] = []
+    for first, last in sorted(spans, key=lambda s: ref_key(s[0])):
+        if merged and ref_key(first) <= ref_key(merged[-1][1]):
+            merged[-1][1] = max(merged[-1][1], last, key=ref_key)
+        else:
+            merged.append([first, last])
+    result: dict[str, tuple[str, ...]] = {}
+    for first, last in merged:
+        group = tuple(
+            sorted(
+                (r for r in listed if ref_key(first) <= ref_key(r) <= ref_key(last)),
+                key=ref_key,
+            )
+        )
+        result.update(dict.fromkeys(group, group))
+    return result
+
+
+def joined(parts: Sequence[Row], english: Mapping[str, tuple[str, str]]) -> Row:
+    """The rows of the verses one reading changes as one, its texts each
+    verse's joined, its anchors moved with them, and the verses quoted
+    whole."""
+
+    def join(texts: Sequence[str]) -> tuple[str, list[int]]:
+        # The texts with a space between those that have words, and where
+        # each starts.
+        text, starts = "", []
+        for part in texts:
+            if text and part:
+                text += " "
+            starts.append(len(text))
+            text += part
+        return text, starts
+
+    tr, tr_at = join([row.greek_tr for row in parts])
+    rp, rp_at = join([row.greek_rp for row in parts])
+    before, kjv_at = join([english[row.reference][0] for row in parts])
+    after, oleb_at = join([english[row.reference][1] for row in parts])
+
+    def moved(
+        ranges: Sequence[tuple[int, int, int, int]], left: int, right: int
+    ) -> list[tuple[int, int, int, int]]:
+        return [(a + left, b + left, c + right, d + right) for a, b, c, d in ranges]
+
+    changed = before != after
+    return Row(
+        parts[0].reference,
+        parts[0].source,
+        "changed" if changed else "same",
+        tr,
+        rp,
+        tuple(unit for row in parts for unit in row.units),
+        before if changed else None,
+        after if changed else None,
+        tuple(
+            r
+            for i, row in enumerate(parts)
+            for r in moved(row.greek_ranges, tr_at[i], rp_at[i])
+        ),
+        (
+            (
+                (0, len(tr)),
+                (0, len(rp)),
+                (0, len(before) if changed else 0),
+                (0, len(after) if changed else 0),
+            ),
+        ),
+        tuple(
+            r
+            for i, row in enumerate(parts)
+            for r in moved(row.english_ranges, kjv_at[i], oleb_at[i])
+        ),
+        all(row.received for row in parts),
+        tuple(dict.fromkeys(a for row in parts for a in row.about)),
+        parts[-1].reference,
+    )
 
 
 def joined_spans(

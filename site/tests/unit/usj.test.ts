@@ -404,6 +404,14 @@ describe("variants renderer", () => {
     expect(texts(fragment, "thead th")).toEqual(["Verse", "Source", "Adopted"]);
   });
 
+  test("heads the verses one reading changes by their range, anchored by the first", () => {
+    const fragment = render({ ...entry("5", "39"), through: "40" });
+    expect(fragment.querySelector("tbody.variant")!.id).toBe("c5v39");
+    const link = fragment.querySelector(".ref .variant-link")!;
+    expect(link.textContent).toBe("5:39–40");
+    expect(link.getAttribute("href")).toBe("/read/mat/5#v39");
+  });
+
   test("sets each witness's own words in its column, the readings marked", () => {
     const fragment = render(
       entry(
