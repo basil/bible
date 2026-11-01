@@ -1093,3 +1093,135 @@ def test_the_psalters_tables_span_the_measure(tmp_path: Path) -> None:
         if w.text in ("XIII,", "XIV,", "XV")
     }
     assert len(tops) == 1
+
+
+def test_the_paschalions_table_stands_in_two_columns(tmp_path: Path) -> None:
+    work = ptxprint_project(tmp_path)
+
+    def division(identifier: str, title: str, body: str) -> str:
+        return (
+            f'\\periph {title}|id="{identifier}"\n\\h {title}\n'
+            f"\\toc1 {title}\n\\toc2 {title}\n\\toc3 {title}\n{body}"
+        )
+
+    rows = "".join(
+        f"\\tr \\tc1 {2026 + n}{'†' if n % 3 == 0 else ''}"
+        f" \\tc2 April {1 + n % 25} \\tc3 May {1 + n % 8}\n"
+        for n in range(125)
+    )
+    prose = (
+        "\\p Pascha is the first Sunday " + "after the full moon " * 14 + "Old Style.\n"
+        "\\p The Orthodox Church reckons " + "by the Julian calendar " * 14 + "day.\n"
+    )
+    (work / "paschalion.usfm").write_text(
+        "\\id BAK\n"
+        + division(
+            "x-paschalion",
+            "Paschalion",
+            "\\mt1 Paschalion\n\\mt2 For the Years 2026 to 2150\n" + prose + "\\b\n"
+            "\\tr \\th1 Years \\th2 Old Style \\th3 New Style\n" + rows,
+        )
+        + division(
+            "x-odes",
+            "Odes",
+            "\\mt1 Odes\n\\p Odesbody of the nine "
+            + "odes chanted at matins " * 14
+            + "end.\n",
+        ),
+        encoding="utf-8",
+    )
+    cfg = read_cfg(LAYOUT.read_text(encoding="utf-8"))
+    setup = "\n".join(
+        [
+            *(rf"\defzvar{{{name}}}{{{value}}}" for name, value in cfg["vars"].items()),
+            rf"\def\zcopyright{{{cfg['project']['copyright']}}}",
+            rf"\def\zlicense{{{cfg['project']['license']}}}",
+            rf"\BindingGuttertrue\BindingGutter={cfg['paper']['gutter']}mm",
+            r"\notocwritetrue",
+            pagination(({"id": "paschalion"}, {"id": "odes"})),
+            "",
+        ]
+    )
+    typeset_lines(work, "paschalion", setup=setup)
+    pages = layout(work, "paschalion").findall(".//x:page", NS)
+    words = [page.findall(".//x:word", NS) for page in pages]
+    texts = [[w.text for w in page] for page in words]
+    opening = next(n for n, text in enumerate(texts) if text[:1] == ["Paschalion"])
+    odes = next(n for n, text in enumerate(texts) if text[:1] == ["Odes"])
+    year = re.compile(r"\d{4}†?")
+    line = 12 * 0.75 * 1.222222  # The grid: \LineSpaceBase at \FontSizeUnit.
+
+    def years(page: int) -> list[ET.Element]:
+        # The rows' years, below the subtitle's.
+        return [
+            w
+            for w in words[page]
+            if w.text
+            and year.fullmatch(w.text)
+            and (page != opening or x(w, "yMin") > prose_top)
+        ]
+
+    def x(word: ET.Element, side: str) -> float:
+        return float(word.attrib[side])
+
+    # The prose runs the measure: its first line, justified, spans it.
+    lines = pages[opening].findall(".//x:line", NS)
+    first = next(line for line in lines if line[0].text == "Pascha")
+    prose_top = x(first[0], "yMin")
+    measure = x(first[-1], "xMax") - x(first[0], "xMin")
+    # The rows stand in two columns, those of the right column going on
+    # from the left's, from the measure's left edge to its right. A verso's
+    # measure stands apart from a recto's by the binding gutter; its running
+    # head begins at its left edge.
+    for page in range(opening, odes):
+        left = x(first[0] if page == opening else words[page][0], "xMin")
+        right = left + measure
+        middle = left + measure / 2
+        lefts = [w for w in years(page) if x(w, "xMax") < middle]
+        rights = [w for w in years(page) if x(w, "xMin") > middle]
+        assert len(lefts) + len(rights) == len(years(page)) and lefts and rights
+        assert abs(len(lefts) - len(rights)) <= 1, page
+        assert abs(x(lefts[0], "xMin") - left) < 0.5
+        assert int(str(rights[0].text).rstrip("†")) == (
+            int(str(lefts[-1].text).rstrip("†")) + 1
+        )
+        # The three cells share each column equally, in both columns alike,
+        # so that the right column, as wide as the left, ends at the
+        # measure's edge: its width is that edge less its first cell's start.
+        width = right - x(rights[0], "xMin")
+        for text, share in (("April", 1 / 3), ("May", 2 / 3)):
+            expected = (left + share * width, right - width + share * width)
+            starts = [x(w, "xMin") for w in words[page] if w.text == text]
+            assert all(
+                min(abs(start - edge) for edge in expected) < 0.5 for start in starts
+            ), (page, text)
+            assert all(
+                any(abs(start - edge) < 0.5 for start in starts) for edge in expected
+            ), (page, text)
+        # Every row keeps the grid, and the rows of the right column stand
+        # at the heights of the left's, whose first may be the header.
+        tops = [x(w, "yMin") for w in lefts]
+        assert all(abs(b - a - line) < 0.1 for a, b in zip(tops, tops[1:]))
+        assert all(
+            min(abs(x(w, "yMin") - top) for top in [tops[0] - line, *tops]) < 0.1
+            for w in rights
+        )
+    # The header stands once, with the first row: the other "Years" is the
+    # subtitle's.
+    assert sum(text.count("Years") for text in texts) == 2
+    # The first rows stand on the grid below the prose: the prose is at
+    # 12/12 and the cells at 11/12, so the tops of their boxes differ by the
+    # ascent of the difference, well under half a line.
+    row_top = min(x(w, "yMin") for w in years(opening))
+    offset = (row_top - prose_top) % line
+    assert offset < 1.5 or offset > line - 1.5, offset
+    # The table goes on to a second page under the unit's running head, and
+    # the Odes open the recto after it, in one column at the measure.
+    assert odes - opening == 2 and texts[opening + 1][0] == "Paschalion"
+    assert odes % 2 == 0  # Zero-based: a recto.
+    body = next(
+        line
+        for line in pages[odes].findall(".//x:line", NS)
+        if line[0].text == "Odesbody"
+    )
+    assert abs(x(body[-1], "xMax") - x(first[-1], "xMax")) < 0.5

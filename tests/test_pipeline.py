@@ -46,6 +46,7 @@ def test_the_edition_prints_every_unit_once_in_the_manifests_order(
         "abbreviations",
         "XXF",
         "XXG",
+        "paschalion",
         "odes",
         "psalter",
         "colophon",
@@ -55,8 +56,13 @@ def test_the_edition_prints_every_unit_once_in_the_manifests_order(
     # The textual variants are prepared for the website, and printed nowhere.
     assert bible.policy.VARIANTS["id"] not in edition.documents
     # The back matter follows the last book, and the colophon closes the book.
-    assert order[order.index("REV") + 1 :] == ["odes", "psalter", "colophon"]
-    assert order[-4] == "REV"
+    assert order[order.index("REV") + 1 :] == [
+        "paschalion",
+        "odes",
+        "psalter",
+        "colophon",
+    ]
+    assert order[-5] == "REV"
     # Each is written under its own id, whatever file it was printed from.
     assert all(text.startswith(f"\\id {code}") for code, text in exported.items())
     assert dict(edition.summary) == {

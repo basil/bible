@@ -51,6 +51,63 @@
   \BibleWrapColumn}
 \endgroup
 
+% The Paschalion's table is set in two columns, to save space: its rows run
+% down the left column, then the right, then the next page, while the title
+% and prose above it keep the measure. PTXprint's \tr starts no paragraph,
+% so the switch is made when the table starts, after the paragraph before
+% it is closed, and back when the table ends, which balances the rows of
+% the last page; \BodyColumns stays one, so the paragraphs that follow are
+% set as before. The blank between prose and table is the \b the export
+% writes, not the transition skip. Rows start no paragraph either, so a
+% page of rows alone would carry no running head: every row marks the page
+% with the unit's name, and so does the return to one column, since marks
+% within the balanced columns are out of the page builder's sight. Where
+% the return has already shipped a nearly full last page, the forced page
+% break that ends the unit would print a blank page, so it is left out,
+% and set again for the next unit.
+\newif\ifBibleColumnTable
+\begingroup
+\catcode`\@=11
+\expandafter\gdef\csname BibleColumnTable:x-paschalion\endcsname{}
+\expandafter\gdef\csname BibleEqualColumns:x-paschalion\endcsname{}
+\global\let\BibleStartTable\startt@ble
+\gdef\startt@ble{%
+  \ifdoingt@ble\else
+    \BibleStartTable
+    \global\BibleColumnTablefalse
+    \ifinperiph\ifcsname BibleColumnTable:\periph@@@\endcsname
+      \global\BibleColumnTabletrue
+      % \doublecolumns takes back \lastdepth, which only headings set: give
+      % it the prose's last line's depth, so that the one-column part of the
+      % page is whole lines of the grid.
+      \ifdim\prevdepth>0pt \lastdepth=\prevdepth \else \lastdepth=0pt \fi
+      \global\notransitionskiptrue\doublecolumns\global\notransitionskipfalse
+    \fi\fi
+  \fi}
+\global\let\BibleEndTable\endt@ble
+\gdef\endt@ble{%
+  \ifdoingt@ble
+    \BibleEndTable
+    \ifBibleColumnTable
+      \global\BibleColumnTablefalse
+      \global\notransitionskiptrue\singlecolumn\global\notransitionskipfalse
+      % \singlecolumn adds the book-end rule to the balanced rows locally,
+      % and resets the next page's height locally, and the unit's group
+      % ends before the page does: keep both, or every later page would be
+      % gathered at the two columns' height and backed off line by line.
+      \global\setbox\partial\box\partial
+      \global\let\resetvsize\resetvsize
+      \marks\BiblePeripheralMark{\book}%
+      \ifvoid\partial \global\PagebreakAfterPeriphfalse \fi
+    \fi
+  \fi}
+% PTXprint's \zendtable milestone was bound to the table's end when loaded.
+\global\let\zendtable\endt@ble
+\global\let\BibleForEachRow\f@reachrow
+\gdef\f@reachrow#1{%
+  \BibleForEachRow{\ifBibleColumnTable\marks\BiblePeripheralMark{\book}\fi#1}}
+\endgroup
+
 % Include punctuation and an ordinary word space in the in-note label,
 % without changing the caller printed in the text.
 \sethook{end}{znotelabel}{.\space}
@@ -331,6 +388,7 @@
   \fi}
 \global\let\BibleStartPeriph\@@@periph
 \gdef\@@@periph#1|#2|#3\E{%
+  \global\PagebreakAfterPeriphtrue
   \BibleStartPeriph#1|#2|#3\E
   \ifcsname BiblePart:\periph@@@\endcsname
     % A part's divider opens a recto without a folio; the first part's

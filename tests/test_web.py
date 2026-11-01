@@ -268,7 +268,12 @@ def test_matter(edition: pipeline.Edition) -> None:
         "abbreviations",
     ]
     back = web.back_matter(edition, documents)
-    assert [unit["id"] for unit, _ in back] == ["odes", "psalter", "colophon"]
+    assert [unit["id"] for unit, _ in back] == [
+        "paschalion",
+        "odes",
+        "psalter",
+        "colophon",
+    ]
     units = {unit["id"]: unit for unit, _ in (*listed, *back)}
     assert units["dedication"]["title"] == "The Epistle Dedicatory"
     assert units["introduction"]["title"] == "Introduction"

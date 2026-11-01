@@ -22,7 +22,7 @@ from collections.abc import Iterable, Mapping, Sequence
 
 import bible.policy
 import bible.references
-from bible import crossrefs, scripture, terminology, usj, versification
+from bible import crossrefs, paschalion, scripture, terminology, usj, versification
 from bible.checks import require
 from bible.policy_schema import Run, VersificationApocrypha
 from bible.references import EDITION, Verse, parse_passage
@@ -39,7 +39,11 @@ AFTER = "after"
 # to print before it, "{kjv bare PSA 33:13-17}".
 NAMED = re.compile(r"\{((?:[a-z]+ )*)([1-4]?[A-Z]{2,3} [^{}]+)\}")
 # The tables the editor's pages ask for, each on a line of its own.
-TABLES = re.compile(r"^\{(names|psalms|books|glosses|abbreviations)\}$", re.M)
+TABLES = re.compile(
+    r"^\{(names|psalms|books|glosses|abbreviations|paschalion)\}$", re.M
+)
+# The years the Paschalion's table covers, named where the page says so.
+YEARS = "{paschalion years}"
 # How a passage that the pages name may print.
 WAYS = {"kjv", "bare"}
 
@@ -513,14 +517,16 @@ def page(
     theirs: bible.references.Books,
     *,
     glossary: Node,
+    years: tuple[int, int],
     policy: bible.policy.Policy,
 ) -> Document:
     """One of the editor's pages as it prints: the passages it names between
     braces as the edition cites them, or as the King James Bible numbers
     them, and the tables it asks for, each at most once, on a line of its
     own: the book names, the quotation glosses, the list of abbreviations,
-    and the chapters and verses, whose tables of the books and of the
-    Psalms are asked for together."""
+    the Paschalion for the years given, which the page may name where it
+    says so, and the chapters and verses, whose tables of the books and of
+    the Psalms are asked for together."""
     requested = TABLES.findall(text)
     repeated = sorted({t for t in requested if requested.count(t) > 1})
     require(not repeated, f"Tables asked for more than once: {repeated}")
@@ -528,6 +534,11 @@ def page(
         ("books" in requested) == ("psalms" in requested),
         "The tables of the books and of the Psalms not asked for as a pair",
     )
+    require(
+        YEARS not in text or "paschalion" in requested,
+        "The Paschalion's years named on a page without its table",
+    )
+    start, end = years
 
     def named(match: re.Match[str]) -> str:
         ways = frozenset(match[1].split())
@@ -584,13 +595,15 @@ def page(
                 blocks.append(
                     names_table(tuple(inventory), facing, ours, theirs, policy=policy)
                 )
+            elif asked[1] == "paschalion":
+                blocks.append(paschalion.table(start, end))
             elif asked[1] == "books":
                 here = psalms
             else:
                 blocks += books_tables(inventory, facing, ours, psalms, policy=policy)
                 here = blocks
         elif line.strip():
-            line = NAMED.sub(named, line)
+            line = NAMED.sub(named, line.replace(YEARS, f"{start} to {end}"))
             require(
                 "{" not in line and "}" not in line,
                 "Braces left on one of the editor's pages",

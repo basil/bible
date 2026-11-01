@@ -40,6 +40,7 @@ from bible import (
     lines,
     matter,
     numbering,
+    paschalion,
     places,
     psalter,
     quotations,
@@ -70,8 +71,8 @@ EXPECTED_NT_MARGINAL_NOTES = 775
 class Read:
     """The sources as documents: Brenton's files and the King James Bible's
     by their codes, the notes that corrections mend, George's listing of
-    the 1611 margin by book, the parsed versification table, and the report
-    of the notes CCEL's transcription supplied."""
+    the 1611 margin by book, the parsed versification table, the report of
+    the notes CCEL's transcription supplied, and the Paschalion's years."""
 
     brenton: MappingProxyType[str, Document]
     kjv: MappingProxyType[str, Document]
@@ -94,6 +95,9 @@ class Read:
     byzantine: MappingProxyType[str, bible.sources.Content]
     # Boyd's Gospel colophons, by book, which the matter stage appends.
     colophons: MappingProxyType[str, Node]
+    # The first and last years the Paschalion tables, from the date of the
+    # build, read once with the sources.
+    paschalion: tuple[int, int]
 
 
 # Words Brenton brackets within a run of text.
@@ -302,6 +306,7 @@ def read(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Read:
         authored=sources.authored,
         byzantine=sources.byzantine,
         colophons=matter.read_colophons(sources.byzantine, policy),
+        paschalion=paschalion.span(paschalion.today()),
     )
 
 
@@ -768,6 +773,7 @@ def authored(
             ctx.books,
             read_sources.kjv_books,
             glossary=glossary,
+            years=read_sources.paschalion,
             policy=policy,
         )
     # These pages discuss source names, so retain their spelling. Finish

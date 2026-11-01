@@ -12,6 +12,9 @@ services:
       HOME: /tmp/home
       # The build runs from the checkout: python3 -m bible.
       PYTHONPATH: /work/src
+      # Pins the date the Paschalion's years are reckoned from, where the
+      # host sets it; left unset otherwise.
+      SOURCE_DATE_EPOCH:
     volumes:
       - .:/work:z
   dockerfmt:

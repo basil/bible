@@ -104,6 +104,7 @@ test("every unit of matter reaches the static output under its title", () => {
     "abbreviations",
   ]);
   expect(manifest().back.map((u) => u.id)).toEqual([
+    "paschalion",
     "odes",
     "psalter",
     "colophon",
@@ -137,6 +138,13 @@ test("every unit of matter reaches the static output under its title", () => {
   const glossary = rows(JSDOM.fragment(builtFile("read/abbreviations.html")));
   expect(glossary).toHaveLength(1);
   expect(glossary[0]).toContainEqual(["KJV", "for King James Version"]);
+  // The Paschalion tables the years the build covers, in one column, the
+  // years Pascha and the Western Easter share marked with a dagger.
+  const [paschalion] = rows(JSDOM.fragment(builtFile("read/paschalion.html")));
+  expect(paschalion[0]).toEqual(["Years", "Old Style", "New Style"]);
+  expect(paschalion.length).toBeGreaterThan(100);
+  expect(paschalion.slice(1).every((row) => row.length === 3)).toBe(true);
+  expect(paschalion.some(([year]) => year!.endsWith("†"))).toBe(true);
   expect(
     [...introduction.querySelectorAll(".matter p .wg")].some(
       (node) => node.textContent === "ἐνέστηκεν",

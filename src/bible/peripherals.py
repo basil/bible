@@ -15,6 +15,7 @@ UNITS = {
     "abbreviations": "abbreviations",
     "XXF": "x-old-testament",
     "XXG": "x-new-testament",
+    "paschalion": "x-paschalion",
     "odes": "x-odes",
     "psalter": "x-psalter",
     "colophon": "x-colophon",
@@ -25,6 +26,7 @@ BACK = "BAK"
 BOOKS = {
     "intbible": "INT",
     "intot": "INT",
+    "x-paschalion": BACK,
     "x-odes": BACK,
     "x-psalter": BACK,
     "x-colophon": BACK,

@@ -1374,6 +1374,11 @@
   ],
   "back": [
     {
+      "id": "paschalion",
+      "source_id": "BAK",
+      "file": "content/paschalion.sfm"
+    },
+    {
       "id": "odes",
       "source_id": "BAK",
       "file": "content/odes.sfm"

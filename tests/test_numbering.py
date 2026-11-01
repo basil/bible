@@ -31,6 +31,9 @@ from bible.policy import NUMBERING
 from bible.references import Verse, parse_verse
 from bible.scripture import Inventory
 
+# The years the pages' Paschalion is built for.
+YEARS = (2026, 2150)
+
 
 class Printed(Protocol):
     def __call__(
@@ -79,6 +82,7 @@ def printed(
                 ours,
                 names[1],
                 glossary=edition.glossary,
+                years=YEARS,
                 policy=policy,
             )
         )
@@ -417,6 +421,7 @@ def test_a_page_keeps_the_rows_it_writes_over_several_lines_as_one_table(
         "{glosses}\n{glosses}\n",
         "{names}\n{names}\n",
         "{abbreviations}\n{abbreviations}\n",
+        "{paschalion}\n{paschalion}\n",
     ],
 )
 def test_the_page_asks_for_each_table_at_most_once(
@@ -424,6 +429,23 @@ def test_the_page_asks_for_each_table_at_most_once(
 ) -> None:
     with pytest.raises(CheckFailed, match="more than once"):
         printed(f"\\ip x\n{written}")
+
+
+def test_the_page_tables_the_paschalion_for_the_years_it_is_given(
+    printed: Printed,
+) -> None:
+    page = printed(
+        "\\mt2 For the Years {paschalion years}\n\\p Before.\n{paschalion}\n"
+    )
+    assert page.startswith("\\mt2 For the Years 2026 to 2150\n\\p Before.\n\\tr\n")
+    assert page.count("\\tr\n") == 126
+    assert "\\tr\n\\th1 Years\n\\th2 Old Style\n\\th3 New Style\n" in page
+    assert "\\tr\n\\tc1 2026\n\\tc2 March 30\n\\tc3 April 12\n" in page
+    assert "\\tr\n\\tc1 2028†\n\\tc2 April 3\n\\tc3 April 16\n" in page
+    assert page.endswith("\\tr\n\\tc1 2150\n\\tc2 April 5\n\\tc3 April 19\n")
+    # The years are named only where the table is asked for.
+    with pytest.raises(CheckFailed, match="years named"):
+        printed("\\mt2 For the Years {paschalion years}\n")
 
 
 def test_the_page_tables_the_abbreviations_where_it_asks(
