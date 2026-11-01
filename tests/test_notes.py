@@ -2041,6 +2041,130 @@ def test_identifying_lemmas_do_not_add_words_to_explanations(
 
 
 @pytest.mark.parametrize(
+    "key,lemma,alternatives,quotations,body",
+    [
+        (
+            "2KI 19:11",
+            "waste them utterly",
+            ["curse them"],
+            ["devote to destruction"],
+            "Gr. curse them. q.d. devote to destruction",
+        ),
+        (
+            "PSA 35:3",
+            "to discover",
+            [],
+            ["with regard to the discovering"],
+            "q.d. with regard to the discovering, etc.",
+        ),
+        (
+            "JOB 31:16 CCEL",
+            "cause the eye of the widow to fail",
+            [],
+            ["wear out"],
+            "Gr. wear out",
+        ),
+        (
+            "1CH 13:4 CCEL",
+            "that they would do thus",
+            [],
+            ["on account of", "concerning"],
+            "Gr. on account of or concerning",
+        ),
+    ],
+)
+def test_abbreviated_glosses_quote_without_completing_the_source(
+    edition: bible.pipeline.Edition,
+    key: str,
+    lemma: str,
+    alternatives: list[str],
+    quotations: list[str],
+    body: str,
+) -> None:
+    code = key.split()[0]
+    row = next(row for row in edition.notes[code] if row["key"] == key)
+    verse = scripture.verses(edition.documents[code])[row["reference"]]
+    ((offset, note),) = [
+        (at, note) for at, note in verse.notes if note.get("x-key") == key
+    ]
+    assert notes.lemma_of(note) == lemma
+    assert verse.text[offset:].startswith(lemma)
+    assert [
+        usj.text_of(node["content"])
+        for node in usj.walk(note["content"])
+        if usj.is_type(node, "char", "fqa")
+    ] == alternatives
+    assert [
+        usj.text_of(node["content"])
+        for node in usj.walk(note["content"])
+        if usj.is_type(node, "char", "it")
+    ] == quotations
+    actual = "".join(
+        usj.text_of(field["content"])
+        for field in note["content"]
+        if isinstance(field, dict) and field["marker"] not in {"fr", "fq"}
+    )
+    assert scripture.words_of(actual) == scripture.words_of(body)
+    assert not any(note.get("x-key") == key + " CCEL" for _, note in verse.notes)
+
+
+def test_unconfirmed_psalm_omission_locates_the_heading_without_removing_it(
+    edition: bible.pipeline.Edition,
+) -> None:
+    doc = edition.documents["PSA"]
+    verse = scripture.verses(doc)["136:1"]
+    ((offset, note),) = [
+        (at, note) for at, note in verse.notes if note.get("x-key") == "PSA 136:1"
+    ]
+    start, end = annotate.scope_span(
+        verse.text, scripture.word_spans(verse.text), offset, note
+    )
+    assert offset == start == 0
+    assert verse.text[start:end] == "For David, a Psalm of Jeremias"
+    assert "By the rivers of Babylon" in verse.text[end:]
+    assert notes.quotation_of(note) == ""
+    assert usj.text_of(note["content"]).endswith("Alex. omits")
+    assert [
+        usj.text_of(node["content"])
+        for index, lo, hi, _ in verse.parts
+        for node in usj.walk(doc["content"][index]["content"][lo:hi])
+        if usj.is_type(node, "char", "add")
+    ] == ["a Psalm"]
+    assert edition.policy.alexandrinus["kept"]["PSA 136:1"]["swete"]["agrees"] is None
+
+
+def test_proverbs_omission_ends_inside_the_verse_printed_as_30_1(
+    edition: bible.pipeline.Edition,
+) -> None:
+    verses = scripture.verses(edition.documents["PRO"])
+    verse = verses["24:22a"]
+    ((offset, note),) = [
+        (at, note) for at, note in verse.notes if note.get("x-key") == "PRO 24:22a"
+    ]
+    assert offset == 0
+    assert notes.lemma_of(note) is None
+    assert usj.text_of(note["content"]).endswith(
+        "Heb. omits verses 22a–22e and the first sentence of 30:1"
+    )
+    assert [
+        usj.text_of(note["content"])
+        for _, note in verse.notes
+        if note.get("x-key") == "PRO 24:22a CCEL"
+    ] == [
+        "24:22a The verses of this chapter are much intermingled with parts of other chapters."
+    ]
+    escape = next(
+        note for _, note in verse.notes if note.get("x-key") == "PRO 24:22a#2"
+    )
+    assert notes.lemma_of(escape) == "escape"
+    assert notes.quotation_of(escape) == "be outside of"
+    assert verses["24:22f"].text == (
+        "My son, reverence my words, and receive them, and repent.\n"
+        "These things saith the man to them that trust in God; and I cease."
+    )
+
+
+@pytest.mark.parametrize(
     "key",
     [
         "1KI 22:41",
@@ -2138,6 +2262,43 @@ def test_finished_readings_preserve_boundary_punctuation(
 @pytest.mark.parametrize(
     "key,lemma,alternative,former",
     [
+        (
+            "ECC 10:3 CCEL",
+            "thinketh of",
+            "will think of",
+            "all that he will think of is folly.",
+        ),
+        (
+            "AMO 6:10 CCEL",
+            "a remnant",
+            "the remaining ones",
+            "the remaining ones shall be left behind, and their relations",
+        ),
+        (
+            "AMO 7:9 CCEL",
+            "joyful altars",
+            "altars of laughter",
+            "And the altars of laughter shall be abolished",
+        ),
+        ("2CH 36:5c CCEL", "they", "he", "so that he should be removed"),
+        (
+            "JOB 13:14 CCEL",
+            "while I may take",
+            "having taken",
+            "having taken my flesh in my teeth,",
+        ),
+        (
+            "ZEP 3:4 CCEL",
+            "light",
+            "borne of the wind",
+            "Her prophets are borne of the wind and scornful men:",
+        ),
+        (
+            "LAM 3:47 CCEL",
+            "suspense",
+            "lifting up",
+            "lifting up and destruction.",
+        ),
         ("2CO 12:2 rendering#2", "Christ", "Christ above", "in Christ above fourteen"),
         ("ZEC 3:4", "long", "full length", "with a full length robe"),
         (
@@ -2228,7 +2389,7 @@ def test_final_replacement_scopes_restore_the_former_construction(
         if isinstance(n, dict)
     }
     assert fields["fq"] == lemma + ":"
-    assert fields["fqa"] == alternative
+    assert notes.quotation_of(note) == alternative
 
     def restored(note: Node) -> str:
         # The alternative in place of the words the note's scope takes in,
@@ -2238,6 +2399,18 @@ def test_final_replacement_scopes_restore_the_former_construction(
         return verse.text[:start] + alternative + verse.text[end:]
 
     assert former in restored(note)
+    if key == "JOB 13:14 CCEL":
+        preceding = scripture.verses(edition.documents["JOB"])["13:13"]
+        assert scripture.plain(preceding.text + " " + restored(note)) == (
+            "Be silent, that I may speak, and cease from mine anger, "
+            "having taken my flesh in my teeth, and put my life in my hand."
+        )
+    if key == "LAM 3:47 CCEL":
+        assert [
+            node["loc"]
+            for node in usj.walk(note["content"])
+            if usj.is_type(node, "ref")
+        ] == ["LUK 12:29"]
     if key == "2CO 12:2 rendering#2":
         assert note["x-scope"]["declared"] == "Christ,"
         damaged: Node = {**note, "x-scope": {"declared": "Christ"}}

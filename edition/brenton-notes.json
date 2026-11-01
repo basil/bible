@@ -2635,7 +2635,7 @@
     },
     "EXO 18:21": {
       "lemma": "over the people",
-      "why": "Gr. them renders the people"
+      "why": "Brenton’s 1844 printing, vol. 1 physical p. 102 (printed p. 78), puts the dagger before people, after the article the; 1879 physical p. 110 (printed p. 94) puts its caller before that second the people. Both give Gr. them. The gloss explains the people, not over. Retain over the people deliberately as a readable locating phrase for that occurrence, without adding its contextual over to Brenton’s short gloss; the edition’s declared locating phrase keeps the current caller before over."
     },
     "EXO 18:23": {
       "lemma": "their own",
@@ -2963,7 +2963,7 @@
     },
     "DEU 4:9": {
       "lemma": "keep thy heart",
-      "why": "soul renders heart alone"
+      "why": "Brenton’s 1844 printing, vol. 1 physical p. 218 (printed p. 194), and 1879 physical p. 251 (printed p. 235) put the caller before the first heart, after keep thy, and give Gr. soul. The gloss explains that first heart alone; the verse has another heart later. Retain keep thy heart deliberately to identify the first occurrence, without treating keep thy as words rendered by soul or adding them to Brenton’s gloss; the edition’s declared locating phrase keeps the current caller before keep."
     },
     "DEU 4:19": {
       "lemma": "heavenly bodies",
@@ -3218,7 +3218,7 @@
     },
     "JOS 21:4": {
       "lemma": "out of the tribe of Juda",
-      "why": "Gr. from renders out of, not cities"
+      "why": "Brenton’s 1844 printing, vol. 1 physical p. 276 (printed p. 252), and 1879 physical p. 322 (printed p. 306) put the caller before the first out of, after thirteen cities, and give Gr. from. The gloss explains out of, not cities or the tribe’s name. Retain out of the tribe of Juda deliberately to identify the first of the three tribal phrases, without adding locating context to Brenton’s gloss; the caller remains before that first out of."
     },
     "JOS 21:11": {
       "lemma": "they",
@@ -3278,7 +3278,7 @@
     },
     "JDG 3:25": {
       "lemma": "was no one",
-      "why": "Gr. is renders was"
+      "why": "Brenton’s 1844 printing, vol. 1 physical p. 286 (printed p. 262), and 1879 physical p. 335 (printed p. 319) put the caller before was in there was no one, and give Gr. is. The gloss explains the first was; the later was belongs to their lord was fallen down dead. Retain was no one deliberately to locate the first occurrence, without treating no one as words rendered by is or adding them to Brenton’s gloss; the caller remains before that first was."
     },
     "JDG 3:30": {
       "lemma": "humbled",
@@ -3727,7 +3727,7 @@
     },
     "2SA 14:4": {
       "lemma": "Help, O king",
-      "why": "save renders the first help"
+      "why": "Brenton’s 1844 printing, vol. 1 physical p. 367 (printed p. 343), and 1879 physical p. 435 (printed p. 419) put the caller before the first Help and give Or, save. The gloss explains that first Help, not the vocative O king or the second help. Retain Help, O king deliberately to locate the first appeal, without adding its contextual vocative to Brenton’s gloss; the caller remains before the first Help."
     },
     "2SA 14:25": {
       "lemma": "comely",
@@ -4325,7 +4325,8 @@
     },
     "2KI 19:11": {
       "lemma": "waste them utterly",
-      "why": "curse them renders waste them utterly"
+      "note": "Gr. {curse them}. q. d. _devote to destruction_.",
+      "why": "Brenton’s 1844 printing, vol. 1 physical p. 449 (printed p. 423), sets the dagger before waste them utterly and gives Gr. curse them. q. d. devote to destruction.; the later Bagster printings keep the caller and the same words, joining the glosses with a comma (1879 physical p. 534, 1884 physical p. 501, 1900 physical p. 530; printed p. 518). Swete I p. 786 has τοῦ ἀναθεματίσαι αὐτάς: curse them renders the whole phrase and replaces waste them utterly, while devote to destruction explains the verb without repeating its object. Keep the first as an alternative and the second as a lexical quotation, without adding words or changing eBible’s punctuation. CCEL’s copy, 2.xix#5, remains accounted for by this eBible note."
     },
     "2KI 19:14#2": {
       "lemma": "it",
@@ -4859,7 +4860,7 @@
     },
     "PRO 24:22a": {
       "lemma": null,
-      "why": "Heb. omits the whole addition from here"
+      "why": "Brenton’s omission note concerns the bracketed passage beginning here and ending after repent., the first sentence of source 24:22f, now printed 30:1; it does not concern the rest of that verse. Keep the caller before the passage without a one-verse lemma; unbracketed-notes in prose.json names its extent after the brackets are removed."
     },
     "PRO 24:22a#2": {
       "lemma": "escape",
@@ -5269,7 +5270,7 @@
     },
     "1KI 11:33#2": {
       "lemma": "the abomination of the children of Ammon",
-      "why": "provocation renders abomination"
+      "why": "Brenton’s 1844 printing, vol. 1 physical p. 403 (printed p. 379), and 1879 physical p. 479 (printed p. 463) put the caller before the second abomination, after their king the, and give Or, provocation. The gloss explains that second abomination, concerning the children of Ammon, rather than the earlier abomination concerning the Sidonians. Retain the abomination of the children of Ammon deliberately to locate the second occurrence, without adding its contextual words to Brenton’s gloss; the edition’s declared locating phrase keeps the current caller before the preceding the."
     },
     "1KI 7:43": {
       "lemma": "porch of the pillars",
@@ -5427,8 +5428,8 @@
       "why": "Greek addition belongs within the comparison his equal in strength, not the preceding and we do not find another."
     },
     "PSA 136:1": {
-      "lemma": null,
-      "why": "This is a source report about the heading, not a replacement of the first inferred words. Its printed caller precedes the complete heading; suppress a misleading shortened lemma while retaining the exact source note and its unestablished A attribution."
+      "lemma": "For David, a Psalm of Jeremias",
+      "why": "The pinned source and Brenton’s later Bagster setting place the caller before the complete superscription: 1879 physical p. 796, 1884 physical p. 763, and 1900 physical p. 792 (printed p. 780). Name that heading as the locating lemma of the retained source report, rather than presenting Alex. omits as a report about the whole verse. The earlier 1844 vol. 2 physical p. 143 (printed p. 640) places its dagger after For David, before the supplied a Psalm; the printings therefore do not establish a single precise omission extent. Swete II pp. 399 and 862 do not independently establish an A title omission. Keep the complete scripture heading, the source note’s wording and attribution, and agrees:null; the lemma locates Brenton’s report and does not promote or independently confirm its reading."
     },
     "PSA 127:2": {
       "lemma": "labours of thy hands",
@@ -6010,6 +6011,48 @@
       "note": "The difference turns on the word עדנה. Heb. _pleasure_. Gr. _until now_.",
       "lemma": "The thing",
       "why": "The note compares the lexical interpretations of עדנה; pleasure and until now are quoted glosses rather than complete alternatives to The thing. Retain the source caller and current locating lemma."
+    },
+    "JOB 31:16 CCEL": {
+      "lemma": "cause the eye of the widow to fail",
+      "note": "Gr. _wear out_.",
+      "why": "Brenton’s 1844 printing, vol. 2 physical p. 69 (printed p. 566), and the later Bagster printings (1879 physical p. 703; 1884 physical p. 670; 1900 physical p. 699; printed p. 687) put the caller before cause and give Gr. wear out. The gloss explains the verb expressed by cause the eye of the widow to fail, Swete II p. 576 χήρας δὲ τὸν ὀφθαλμὸν οὐκ ἐξέτηξα, rather than replacing cause the eye and leaving to fail behind. Name the complete locating phrase and retain wear out as a lexical quotation, without supplying an object Brenton did not print."
+    },
+    "ECC 10:3 CCEL": {
+      "lemma": "thinks of",
+      "why": "Brenton’s 1844 printing, vol. 2 physical p. 180 (printed p. 677), sets its dagger before thinks of and gives Gr. will think of.; the later Bagster setting has the same gloss and caller δ (1879 physical p. 843, 1884 physical p. 810, 1900 physical p. 839; printed p. 827). Swete II p. 501 has καὶ ἃ λογιεῖται πάντα ἀφροσύνη ἐστίν: will think of renders the future λογιεῖται, while is renders the separate copula ἐστίν and must remain outside the alternative. Name thinks of alone, before the edition’s systematic inflection revision, and keep the source gloss and its caller unchanged."
+    },
+    "AMO 6:10 CCEL": {
+      "lemma": "a remnant",
+      "why": "Brenton’s 1844 printing, vol. 2 physical p. 394 (printed p. 891), sets its dagger before a remnant and gives Gr. the remaining ones.; the 1879 physical p. 1105 and 1900 physical p. 1101 (printed p. 1089) keep the same caller and gloss. The local 1884 scan lacks printed p. 1089, between physical pp. 1044 and 1045. Swete III p. 23 has ὑπολειφθήσονται οἱ κατάλοιποι, the remaining ones shall be left, at the end of his 6:9, which Brenton begins as 6:10. The gloss renders a remnant alone; keep shall in the sentence, so that the remaining ones shall be left behind substitutes without changing or adding any source words."
+    },
+    "AMO 7:9 CCEL": {
+      "lemma": "joyful altars",
+      "why": "Brenton’s 1844 printing, vol. 2 physical p. 395 (printed p. 892), and the later Bagster printings (1879 physical p. 1106; 1884 physical p. 1045; 1900 physical p. 1102; printed p. 1090) put the caller before joyful and give Gr. altars of laughter. The gloss renders the noun phrase βωμοὶ τοῦ γέλωτος (Swete III p. 24), not the following verb rendered shall be abolished. Name joyful altars alone so that the source’s complete alternative leaves shall in the sentence, without adding words to the gloss or changing the companion note on set aside."
+    },
+    "2CH 36:5c CCEL": {
+      "lemma": "they",
+      "why": "Brenton’s 1844 printing, vol. 1 physical p. 529 (printed p. 505), and the later Bagster printings (1879 physical p. 632; 1884 physical p. 599; 1900 physical p. 628; printed p. 616) put the caller immediately before they and give Gr. he, sc. Juda. Swete II p. 126 has Ἰούδαν, τοῦ ἀποστῆναι αὐτὸν: the singular pronoun refers to Judah. The gloss concerns they alone; retain should in the surrounding construction, and keep the note’s words and its source name Juda unchanged."
+    },
+    "JOB 13:14 CCEL": {
+      "lemma": "while I may take",
+      "why": "Brenton’s 1844 printing, vol. 2 physical p. 57 (printed p. 554), and the later Bagster printings (1879 physical p. 691, 1884 physical p. 658, 1900 physical p. 687; printed p. 675) set the caller before while and give Gr. having taken. The gloss renders ἀναλαβὼν in Swete II p. 543, for which the text has the complete predicate while I may take, not while I may alone. Declare all four words so substitution does not leave taken take; the preceding verse supplies the finite clause, and taken and put can share having in the source gloss’s English construction. Keep every Scripture and note word and the printed caller. The following Greek θήσω is future; the coordination described here is a reading of Brenton’s English, not a claim that both Greek verbs are participles."
+    },
+    "1CH 13:4 CCEL": {
+      "note": "Gr. _on account of_ or _concerning_.",
+      "why": "Brenton’s 1844 printing, vol. 1 physical p. 473 (printed p. 449), and the later Bagster printings (1879 physical p. 563, 1884 physical p. 530, 1900 physical p. 559; printed p. 547) place the caller before that in that they would do thus and give Gr. on account of or concerning. Swete II p. 31 has τοῦ ποιῆσαι οὕτως. The two short prepositional glosses explain that construction; neither replaces that they would while leaving do thus as grammatical English. Preserve both as quoted explanations without supplying an unprinted nominalized alternative. With no replacement to measure, annotation derives the complete clause that they would do thus as the locating lemma and keeps its caller before that."
+    },
+    "ZEP 3:4 CCEL": {
+      "lemma": "light",
+      "why": "Brenton’s 1844 printing, vol. 2 physical p. 413 (printed p. 910), and the later Bagster printings (1879 physical p. 1127, 1884 physical p. 1065, 1900 physical p. 1123; printed p. 1111) place the caller immediately before light and give Gr. borne of the wind. Swete III p. 67 separates πνευματοφόροι, rendered light, from ἄνδρες καταφρονηταί, rendered scornful men. The gloss replaces light alone; keep the supplied and and the separate scornful men outside its scope, without adding their words to the source gloss."
+    },
+    "LAM 3:47 CCEL": {
+      "lemma": "suspense",
+      "why": "Brenton’s 1844 printing, vol. 2 physical p. 301 (printed p. 798), and the later Bagster printings (1879 physical p. 993; 1884 physical p. 953; 1900 physical p. 989; printed p. 977) put the caller before suspense. The later note gives Gr. lifting up. See Luke 12. 29.; the earlier note also has See Heb. and reverses the reference as Luke 29. 12. The gloss renders suspense alone, ἔπαρσις in Swete III p. 372, while and destruction renders the separate καὶ συντριβή. Name suspense alone so that the authentic alternative leaves destruction in the sentence; preserve the current note words, caller, and corrected later-printing Luke 12:29 reference."
+    },
+    "PSA 35:3": {
+      "lemma": "to discover",
+      "note": "q. d. _with regard to the discovering_, etc.",
+      "why": "Brenton’s 1844 printing, vol. 2 physical p. 94 (printed p. 591), sets a dagger before to discover and gives q. d. with regard to the discovering, &c.; the later setting (1879 physical p. 734, 1884 physical p. 701, 1900 physical p. 730; printed p. 718) keeps that caller and gives q. d. with regard to the discovering, etc. Swete II p. 257 has τοῦ εὑρεῖν τὴν ἀνομίαν αὐτοῦ καὶ μισῆσαι. The abbreviated gloss explains this construction: allowing the older verbal gerund with its direct object does not itself make and hate it a continuation of discovering. Keep the source’s actual words as a quotation, with the existing lemma and caller, rather than completing its etc. into an editorial alternative."
     }
   },
   "shapes": {
