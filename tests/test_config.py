@@ -220,7 +220,7 @@ def test_chapter_figures_are_lining_despite_the_base_oldstyle_font(
     assert depths["cl"] < depths["p"] / 2
 
 
-def test_note_callers_follow_context_and_restart_on_next_page(
+def test_note_callers_follow_context_and_restart_without_margin_notes(
     tmp_path: Path,
 ) -> None:
     work = ptxprint_project(tmp_path)
@@ -239,7 +239,7 @@ def test_note_callers_follow_context_and_restart_on_next_page(
 \c 8
 \p
 \v 5 Alpha\f + \ft First scripture note.\f* and beta\f + \ft Second scripture note.\f*.
-\p
+\p\pagebreak
 \v 6 Gamma\f - \fr 6 \ft Callerless margin note.\f*.
 \p\pagebreak
 \v 7 Delta\f + \ft Restarted scripture note.\f*.
@@ -336,6 +336,11 @@ def test_note_callers_follow_context_and_restart_on_next_page(
             # in the text, with the 1 pt gap that follows a margin origin.
             assert (float(width), float(gap), label) == (0, 1, "v")
     assert records[1] == records[2]
+    page_records = re.findall(r"\\noteonpage\{f\}\{(\d+)\}\{(-?\d+)\}", records[2])
+    # Each automatic caller has exactly one record; the callerless note must
+    # not overwrite its predecessor's page. This also checks the image patch.
+    assert [int(number) for number, _ in page_records] == list(range(1, 29))
+    assert int(page_records[14][1]) > int(page_records[13][1]) + 1
     # The milestone is no reference: a margin note's reference names it
     # alone, or PTXprint's tidying repeats one note's place for another.
     margin = re.findall(
