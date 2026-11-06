@@ -342,8 +342,7 @@
 % Scripture's caller-bearing footnotes use the ordinary bottom insertion and
 % its callerless notes the margin; the front and back matter's notes keep
 % their callers in either. All remain standard f notes. Callers restart on
-% each page; callerless notes leave the counters alone, and the image patch
-% keeps them from overwriting the callers' page records.
+% each page using PTXprint's caller-page records.
 \PageResetCallers{f}
 % Scripture already has verse figures, so its bottom notes use letters.
 % The front and back matter use numbers. The before hook runs before

@@ -72,8 +72,8 @@ ARG USFMTC_BRANCH=main
 ARG USFMTC_COMMIT=06392962f476349da816fabffaf442145838f543
 # renovate: datasource=git-tags depName=ptxprint
 ARG PTXPRINT_URL=https://github.com/sillsdev/ptx2pdf.git
-ARG PTXPRINT_TAG=3.1.5
-ARG PTXPRINT_COMMIT=1798dd19135744ddeb9ec09f62ce8d55fa42d353
+ARG PTXPRINT_TAG=3.1.6
+ARG PTXPRINT_COMMIT=a11c7e4e9620908b925ba5fd2ab046dfa918a132
 # Fetching and building several projects in one layer requires their directories.
 # hadolint ignore=DL3003
 RUN <<EOF
@@ -108,8 +108,7 @@ COPY scripts/ /opt/scripts/
 # Fail typesetting when layout still needs another pass at the rerun limit
 # (sillsdev/ptx2pdf#1262).
 RUN /opt/venv/bin/python /opt/scripts/patch_rerun_limit.py \
-    && /opt/venv/bin/python /opt/scripts/patch_page_filler.py \
-    && /opt/venv/bin/python /opt/scripts/patch_note_callers.py
+    && /opt/venv/bin/python /opt/scripts/patch_page_filler.py
 RUN <<EOF
 set -eu
 # Assemble OLEBFont from Valkyrie OT where the host provided it, else from
