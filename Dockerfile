@@ -108,8 +108,7 @@ COPY scripts/ /opt/scripts/
 # Fail typesetting when layout still needs another pass at the rerun limit
 # (sillsdev/ptx2pdf#1262).
 RUN /opt/venv/bin/python /opt/scripts/patch_rerun_limit.py \
-    && /opt/venv/bin/python /opt/scripts/patch_page_filler.py \
-    && /opt/venv/bin/python /opt/scripts/patch_note_callers.py
+    && /opt/venv/bin/python /opt/scripts/patch_page_filler.py
 RUN <<EOF
 set -eu
 # Assemble OLEBFont from Valkyrie OT where the host provided it, else from
