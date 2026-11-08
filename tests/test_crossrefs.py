@@ -14,21 +14,35 @@ import bible.pipeline
 import bible.policy
 from bible import annotate, crossrefs, pipeline, quotations, scripture, usj
 from bible.checks import CheckFailed
+from bible.extents import Extent
 from bible.policy_schema import QuotationsNoteMerges
 from bible.references import parse_passage, parse_passages
 
 
 @pytest.fixture(scope="module")
-def links(ctx: bible.annotate.Context) -> dict[str, list[crossrefs.Link]]:
-    return pipeline.quotation_links(ctx)
+def links(edition: bible.pipeline.Edition) -> dict[str, tuple[crossrefs.Link, ...]]:
+    return dict(edition.links)
+
+
+def link_at(
+    passage: str, targets: str, row: str = "Q999", agreement: str | None = "A"
+) -> crossrefs.Link:
+    """A link at the start of a passage's first verse."""
+    origin = parse_passage(passage)
+    return crossrefs.Link(
+        Extent(origin, origin.first, 0, origin.first, 0, "aligned"),
+        tuple(parse_passages(targets)),
+        (row,),
+        agreement,
+    )
 
 
 def test_every_link_has_its_link_back(
-    links: dict[str, list[bible.crossrefs.Link]],
+    links: dict[str, tuple[bible.crossrefs.Link, ...]],
 ) -> None:
-    """A quotation is joined both ways, at the first verse of each passage."""
+    """A quotation is joined both ways, a link at each passage."""
     forward = {
-        (link.origin, target.first)
+        (link.passage.first, target.first)
         for listed in links.values()
         for link in listed
         for target in link.targets
@@ -36,25 +50,52 @@ def test_every_link_has_its_link_back(
     assert forward and all((there, here) in forward for here, there in forward)
 
 
+def test_a_quoted_commission_across_a_verse_division_keeps_both_directions(
+    edition: bible.pipeline.Edition,
+) -> None:
+    source = next(link for link in edition.links["ISA"] if link.row_ids == ("Q147",))
+    quotation = next(link for link in edition.links["ACT"] if link.row_ids == ("Q147",))
+    assert str(source.passage) == "ISA 6:8-10"
+    assert str(source.origin) == "ISA 6:8"
+    assert quotation.targets == (source.passage,)
+    verse = scripture.verses(edition.documents["ISA"])[source.origin.label]
+    at = next(at for at, mark in verse.milestones if mark.get("sid") == source.sid)
+    assert verse.text[at:].startswith("Go, and say to this people")
+    # The other Isaiah quotations still open at the hearing prophecy in v9.
+    assert all(
+        str(link.origin) == "ISA 6:9"
+        for link in edition.links["ISA"]
+        if set(link.row_ids) & {"Q143", "Q198", "Q266"}
+    )
+
+
 def test_a_link_prints_the_other_passage_and_turpies_judgment(
     edition: bible.pipeline.Edition,
 ) -> None:
     matthew = usj.serialize(edition.documents["MAT"])
-    # The reference alone, where Turpie's class prints no gloss.
+    # The reference alone, where Turpie's class prints no gloss, and no
+    # lemma where the quotation opens the verse; the quotation milestone
+    # before the note, and after the last quoted word.
     assert (
-        "\\v 23 \\x - \\xo 1:23 \\xt \\ref Esai. 7:14|ISA 7:14\\ref*\\x*Behold, a virgin"
-        in matthew
-    )
+        '\\v 23 \\qt-s |sid="Q179 MAT 1:23"\\*\\x - \\cat edition\\cat*\\xo 1:23 '
+        "\\xt \\ref Esai. 7:14|ISA 7:14\\ref*\\x*Behold, a virgin"
+    ) in matthew
+    assert 'Emmanuel\\qt-e |eid="Q179 MAT 1:23"\\*, which' in matthew
+    # The lemma names the quotation's opening words where it does not open
+    # the verse.
     assert (
-        "\\x - \\xo 2:15 \\xt \\ref Hos. 11:1|HOS 11:1\\ref* \\xta (Heb.\u00a0≠ LXX)\\x*"
-        in matthew
-    )
-    # Quotations sharing a printed agreement are one note, before its footnotes.
+        'saying, \\qt-s |sid="Q060 MAT 2:15"\\*\\x - \\cat edition\\cat*\\xo 2:15 '
+        "\\xq Out of Egypt have I called my son: \\xt \\ref Hos. 11:1|HOS 11:1\\ref* "
+        "\\xta (Heb.\u00a0≠ LXX)\\x*Out of Egypt"
+    ) in matthew
+    # Quotations sharing an opening word and a printed agreement are one note.
     psalms = usj.serialize(edition.documents["PSA"])
     assert (
-        "\\v 7 \\x - \\xo 2:7 \\xt \\ref Acts 13:33|ACT 13:33\\ref*; \\ref Heb. 1:5|HEB 1:5\\ref*; \\ref 5:5|HEB 5:5\\ref* "
-        "\\xta (Heb.\u00a0+ LXX)\\x*declaring the ordinance"
+        "\\xo 2:7 \\xq Thou art my Son: \\xt \\ref Acts 13:33|ACT 13:33\\ref*; "
+        "\\ref Heb. 1:5|HEB 1:5\\ref*; \\ref 5:5|HEB 5:5\\ref* "
+        "\\xta (Heb.\u00a0+ LXX)\\x*Thou art my Son, today"
     ) in psalms
+    assert psalms.count('eid="Q036 PSA 2:7"') == 1
 
 
 def test_grouped_notes_keep_categories_and_sort_all_targets(
@@ -74,16 +115,21 @@ def test_grouped_notes_keep_categories_and_sort_all_targets(
         usj.text_of(note["content"])
         for _, note in mark.notes
         if usj.is_type(note["content"][0], "char", "xo")
-    ] == ["10:19 Ex. 20:12, 13–17; Deut. 5:16, 17–21 (Heb.\u00a0+ LXX)"]
+    ] == [
+        "10:19 Do not commit adultery: Ex. 20:13–17; Deut. 5:17–21 (Heb.\u00a0+ LXX)",
+        "10:19 Honour thy father and mother: Ex. 20:12; Deut. 5:16 (Heb.\u00a0+ LXX)",
+    ]
 
 
-def test_one_note_per_printed_agreement_across_the_edition(
-    edition: bible.pipeline.Edition, links: dict[str, list[crossrefs.Link]]
+def test_one_note_per_opening_word_and_printed_agreement_across_the_edition(
+    edition: bible.pipeline.Edition, links: dict[str, tuple[crossrefs.Link, ...]]
 ) -> None:
-    expected: dict[str, set[str | None]] = {}
+    expected: dict[str, set[tuple[int, str | None]]] = {}
     for listed in links.values():
         for link in listed:
-            expected.setdefault(str(link.origin), set()).add(link.agreement)
+            expected.setdefault(str(link.origin), set()).add(
+                (link.start, link.agreement)
+            )
     printed = {
         f"{code} {reference}": sum(
             usj.is_type(note["content"][0], "char", "xo") for _, note in verse.notes
@@ -95,7 +141,7 @@ def test_one_note_per_printed_agreement_across_the_edition(
     assert printed == {
         origin: len(agreements) for origin, agreements in expected.items()
     }
-    assert sum(count > 1 for count in printed.values()) == 13
+    assert sum(count > 1 for count in printed.values()) == 27
 
 
 def test_links_joined_in_one_note_may_not_repeat_a_passage(
@@ -104,31 +150,30 @@ def test_links_joined_in_one_note_may_not_repeat_a_passage(
     origin = parse_passage("PSA 2:7")
 
     def link(row: str, targets: str) -> crossrefs.Link:
-        return crossrefs.Link(
-            origin.first, origin, tuple(parse_passages(targets)), (row,), "A"
-        )
+        return link_at("PSA 2:7", targets, row)
 
+    verses = scripture.verses(
+        book("PSA", "\\v 7 declaring the ordinance of the Lord.", chapter=2)
+    )
     joined = [link("Q1", "ACT 13:33; HEB 1:5"), link("Q2", "HEB 5:5")]
-    [note] = crossrefs.link_notes(joined, ctx.books, ctx.terms)["2:7"]
+    [(at, offset, note)] = crossrefs.link_notes(joined, verses, ctx.books, ctx.terms)
+    assert (at, offset) == (origin.first, 0)
     assert (
         usj.text_of(note["content"])
         == "2:7 Acts 13:33; Heb. 1:5; 5:5 (Heb.\u00a0+ LXX)"
     )
+    assert note["x-key"] == "PSA 2:7 link" and note["x-scope"] == {"declared": None}
     with pytest.raises(CheckFailed, match="linked twice at one verse: PSA 2:7"):
-        crossrefs.link_notes([*joined, link("Q3", "HEB 1:5")], ctx.books, ctx.terms)
+        crossrefs.link_notes(
+            [*joined, link("Q3", "HEB 1:5")], verses, ctx.books, ctx.terms
+        )
 
 
 def linked(
     verse: str, ctx: bible.annotate.Context, policy: bible.policy.Policy | None = None
 ) -> tuple[str, bible.annotate.Report]:
     """A verse of Isaiah whose quotation in Matthew is linked, with a note."""
-    link = crossrefs.Link(
-        parse_passage("ISA 99:3").first,
-        parse_passage("ISA 99:3"),
-        (parse_passage("MAT 3:3"),),
-        ("Q999",),
-        "A",
-    )
+    link = link_at("ISA 99:3", "MAT 3:3")
     if policy is not None:
         ctx = annotate.Context(policy, ctx.inventory, ctx.books)
     doc, report = annotate.brenton("ISA", book("ISA", verse), [link], frozenset(), ctx)
@@ -160,13 +205,7 @@ def test_a_see_note_moved_onto_its_link_is_replaced_by_it(
         "\\v 2 He has said in his heart. \\x + \\xo 99:2 \\xt Mat. 3. 3.\\x*\n"
         "\\v 3 The voice of one crying."
     )
-    link = crossrefs.Link(
-        parse_passage("ISA 99:3").first,
-        parse_passage("ISA 99:3"),
-        (parse_passage("MAT 3:3"),),
-        ("Q999",),
-        "A",
-    )
+    link = link_at("ISA 99:3", "MAT 3:3")
 
     def moved(
         *links: crossrefs.Link, **more: Any
@@ -199,10 +238,7 @@ def test_a_see_note_moved_onto_its_link_is_replaced_by_it(
 def test_links_cover_notes_throughout_their_passages(
     ctx: bible.annotate.Context,
 ) -> None:
-    passage = parse_passage("ISA 99:2-3")
-    link = crossrefs.Link(
-        passage.first, passage, (parse_passage("MAT 3:3"),), ("Q999",), "A"
-    )
+    link = link_at("ISA 99:2-3", "MAT 3:3")
 
     def annotated(note: str) -> str:
         doc, _ = annotate.brenton(
@@ -237,9 +273,8 @@ def test_links_cover_notes_throughout_their_passages(
 def test_a_later_notes_references_can_be_covered_by_several_links(
     ctx: bible.annotate.Context,
 ) -> None:
-    passage = parse_passage("ISA 99:2-3")
     links = [
-        crossrefs.Link(passage.first, passage, (parse_passage(target),), (row,), "A")
+        link_at("ISA 99:2-3", target, row)
         for target, row in (("MAT 3:3", "Q998"), ("JHN 1:23", "Q999"))
     ]
     decided = ctx.policy.replace(
@@ -352,3 +387,65 @@ def test_redundant_notes_are_removed_and_commentary_is_kept(
     assert "Lit." in isaiah and "Joel 2:2" in isaiah and "Rom." not in isaiah
     assert "10:37–39" in rows["HAB 2:3 CCEL"]["note"]
     assert "8:8, 13" in rows["JER 38:31 CCEL"]["note"]
+
+
+def test_every_quotation_milestone_closes_in_its_chapter(
+    edition: bible.pipeline.Edition,
+) -> None:
+    """The website writes a chapter per file, and the print ignores the
+    milestones: each opening milestone has its closing one in the chapter,
+    and a link's note stands at its opening milestone."""
+    opened = 0
+    for code in edition.scripture:
+        _, chapters = pipeline.headed_chapters(edition.documents[code])
+        for blocks in chapters:
+            starts = [
+                node["sid"]
+                for node in usj.walk(blocks)
+                if usj.is_type(node, "ms", usj.QUOTATION_START)
+            ]
+            ends = [
+                node["eid"]
+                for node in usj.walk(blocks)
+                if usj.is_type(node, "ms", usj.QUOTATION_END)
+            ]
+            assert sorted(starts) == sorted(ends), code
+            assert len(set(starts)) == len(starts), code
+            opened += len(starts)
+    assert opened == sum(len(listed) for listed in edition.links.values())
+    for code, listed in edition.links.items():
+        verses = scripture.verses(edition.documents[code])
+        for link in listed:
+            verse = verses[link.origin.label]
+            [at] = [at for at, mark in verse.milestones if mark.get("sid") == link.sid]
+            assert any(
+                offset == at and usj.is_type(note, "note", "x")
+                for offset, note in verse.notes
+            ), link.sid
+
+
+def test_turpies_part_markers_agree_with_the_extents(
+    edition: bible.pipeline.Edition, policy: bible.policy.Policy
+) -> None:
+    """A row he marks "lp" quotes the last part of its verse, and one marked
+    "fp" stops short of its end."""
+    markers = {
+        row["id"]: row.get("part_markers", ())
+        for row in policy.turpie["rows"]
+        if row.get("part_markers") and row["id"] not in policy.quotations["excluded"]
+    }
+    checked = 0
+    for code, listed in edition.links.items():
+        if code not in {u["id"] for u in policy.scripture if u["source"] == "kjv"}:
+            continue
+        verses = scripture.verses(edition.documents[code])
+        for link in listed:
+            marked = markers.get(link.row_ids[0])
+            if not marked:
+                continue
+            verse = verses[link.extent.last.label]
+            [at] = [at for at, m in verse.milestones if m.get("eid") == link.sid]
+            last_word_end = scripture.word_spans(verse.text)[-1][2]
+            assert (at >= last_word_end) == ("lp" in marked), link.sid
+            checked += 1
+    assert checked == len(markers)

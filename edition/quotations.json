@@ -18,6 +18,439 @@
       "why": "Turpie tables all of Hebrews 2:13 under A.d against Isaiah 8:17-18 (page 55), then withdraws its second part on page 56: “The next part should have been assigned to Table D.s.I.r. since, while the New Test. and Sept. agree, they differ from the Heb., which has יהוה, by reading ὁ θεός.” He tables it there as Q153 against Isaiah 8:18, so Q052 links the trust clause, Isaiah 8:17, alone."
     }
   },
+  "extents": {
+    "Q001 DEU 5:17-20": {
+      "first": "Thou shalt not commit murder",
+      "last": "false witness",
+      "why": "The paired New Testament list quotes the murder prohibition as well as adultery and stealing. Turpie prints one Septuagint excerpt in Exodus's order, adultery–stealing–killing; Deuteronomy puts murder first and renders it “commit murder”, so its differently ordered opening must not be lost."
+    },
+    "Q006 MRK 11:17": {
+      "first": "My house shall be called",
+      "last": "for all nations",
+      "why": "The Byzantine text, which the edition prints, reads “a house of prayer for all nations” where Turpie's Authorised Version has “of all nations the house of prayer”."
+    },
+    "Q011 PSA 21:19": {
+      "first": "They parted my garments",
+      "last": "upon my raiment",
+      "why": "Turpie prints Brenton's English corrected: “and upon my vesture they cast lots” for Brenton's “and cast lots upon my raiment”."
+    },
+    "Q012 PSA 108:8": {
+      "first": "and let another take",
+      "last": "of overseer",
+      "why": "Turpie prints Brenton's English corrected: “and his office let another take” for Brenton's “and let another take his office of overseer”."
+    },
+    "Q014 PSA 2:1-2": {
+      "first": "Wherefore did the heathen rage",
+      "last": "against his Christ",
+      "why": "Turpie prints Brenton's English corrected: “Why did the heathen rage and the people” for Brenton's “Wherefore did the heathen rage, and the nations”."
+    },
+    "Q019 GEN 17:5": {
+      "first": "I have made thee",
+      "last": "many nations",
+      "why": "Turpie prints Brenton's English corrected: “for a father of many nations have I made thee” for Brenton's “for I have made thee a father of many nations”."
+    },
+    "Q020 GEN 15:5": {
+      "first": "thus shall thy seed be",
+      "last": "thy seed be",
+      "why": "Turpie prints Brenton's English corrected: “So shall thy seed be” for Brenton's “thus shall thy seed be”."
+    },
+    "Q024 EXO 33:19": {
+      "first": "and I will have mercy",
+      "last": "I will have pity",
+      "why": "Turpie prints Brenton's English corrected: “compassion” for Brenton's “pity”."
+    },
+    "Q026 DEU 5:17-21": {
+      "first": "Thou shalt not commit murder",
+      "last": "false witness against thy neighbour Thou shalt not covet",
+      "why": "The paired New Testament list quotes the murder prohibition as well as adultery and stealing. Turpie prints one Septuagint excerpt in Exodus's order, adultery–stealing–killing; Deuteronomy puts murder first and renders it “commit murder”, so its differently ordered opening must not be lost. The end is the first coveting prohibition, before its wife clause and the repeated prohibition about the house."
+    },
+    "Q026 ROM 13:9": {
+      "first": "Thou shalt not commit adultery",
+      "last": "Thou shalt not covet",
+      "why": "The Byzantine text, which the edition prints, lacks “Thou shalt not bear false witness”, which Turpie's Authorised Version quotes; the words that remain still quote the passage."
+    },
+    "Q031 PSA 115:1": {
+      "first": "I believed",
+      "last": "I have spoken",
+      "why": "Turpie prints Brenton's English corrected: “I believed, therefore did I speak” for Brenton's “I believed, wherefore I have spoken”."
+    },
+    "Q033 PSA 111:9": {
+      "first": "He has dispersed abroad",
+      "last": "for evermore",
+      "why": "Turpie prints Brenton's English corrected: “He dispersed, he gave to the poor; his righteousness remaineth for ever and ever” for Brenton's “He has dispersed abroad; he has given to the poor; his righteousness endures for evermore”."
+    },
+    "Q034 GEN 22:18": {
+      "first": "And in thy seed",
+      "last": "thy seed",
+      "why": "Galatians 3:16 quotes only the seed phrase, not the following universal-blessing predicate that Turpie includes in his Septuagint excerpt. Q073 still marks that whole blessing for Acts 3:25, which quotes it."
+    },
+    "Q050 EXO 22:28": {
+      "first": "nor speak ill",
+      "last": "thy people",
+      "why": "Acts 23:5 quotes the prohibition about speaking evil of the ruler. Its counterpart is Brenton's “nor speak ill of the ruler of thy people”, not the preceding separate prohibition about reviling the gods, whose “Thou shalt not” the alignment takes as its opening."
+    },
+    "Q051 MAL 1:2-3": {
+      "first": "I loved Jacob",
+      "last": "hated Esau",
+      "why": "Turpie prints Brenton's English corrected: “And I loved Jacob, but I hated Esau” for Brenton's “yet I loved Jacob, and hated Esau”."
+    },
+    "Q052 HEB 2:13": {
+      "first": "I will put my trust",
+      "last": "trust in him",
+      "why": "Turpie tables the whole verse against Isaiah 8:17–18 and withdraws its second part (see the narrowing of this row); the link stands at the trust clause alone."
+    },
+    "Q052 ISA 8:17": {
+      "first": "and I will trust",
+      "last": "trust in him",
+      "why": "Turpie prints the English of Isaiah 8:17–18; the row is narrowed to verse 17, whose quoted words are the trust clause."
+    },
+    "Q058 NUM 16:5": {
+      "first": "God",
+      "last": "those that are his",
+      "why": "The Lord's knowing those that are his in 2 Timothy 2:19 corresponds to “God has visited and known those that are his”. Turpie's “and God hath known them that are his” must not place the opening at Brenton's internal “and known”, leaving the divine subject and auxiliary outside the quotation."
+    },
+    "Q062 MRK 15:34": {
+      "first": "Eloi, Eloi",
+      "last": "forsaken me",
+      "why": "Turpie prints the cry as “Eloe, Eloe, lama sabachthani”; the edition's text has “Eloi, Eloi, lima sabachthani”."
+    },
+    "Q063 JOB 5:13": {
+      "first": "who takes the wise",
+      "last": "in their wisdom",
+      "why": "Turpie prints Brenton's English corrected: “who taketh the wise in their own prudence” for Brenton's “who takes the wise in their wisdom”."
+    },
+    "Q065 DEU 5:17-21": {
+      "first": "Thou shalt not commit murder",
+      "last": "false witness against thy neighbour Thou shalt not covet",
+      "why": "The paired New Testament list quotes the murder prohibition as well as adultery and stealing. Turpie prints one Septuagint excerpt in Exodus's order, adultery–stealing–killing; Deuteronomy puts murder first and renders it “commit murder”, so its differently ordered opening must not be lost. The end is the first coveting prohibition, before its wife clause and the repeated prohibition about the house."
+    },
+    "Q067 DEU 5:17-20": {
+      "first": "Thou shalt not commit murder",
+      "last": "false witness",
+      "why": "The paired New Testament list quotes the murder prohibition as well as adultery and stealing. Turpie prints one Septuagint excerpt in Exodus's order, adultery–stealing–killing; Deuteronomy puts murder first and renders it “commit murder”, so its differently ordered opening must not be lost."
+    },
+    "Q071 PSA 34:19": {
+      "first": "who hate me",
+      "last": "for nothing",
+      "why": "Turpie prints under this heading the words of Psalm 68:5, “they that hate me without a cause”; Brenton renders the same Greek here “who hate me for nothing”."
+    },
+    "Q072 EXO 12:46": {
+      "first": "a bone of it",
+      "last": "not break",
+      "why": "Turpie prints Brenton's English corrected: “ye shall not break a bone thereof” for Brenton's “a bone of it ye shall not break”."
+    },
+    "Q072 PSA 33:21": {
+      "first": "he keeps all their bones",
+      "last": "shall be broken",
+      "why": "Turpie prints under this heading the words of Exodus 12:46, “ye shall not break a bone thereof”; Brenton's psalm reads “he keeps all their bones, not one of them shall be broken”."
+    },
+    "Q076 DEU 32:21": {
+      "first": "and I will provoke them",
+      "last": "a nation void of understanding",
+      "why": "Romans 10:19 quotes both the jealousy and foolish-nation clauses. Turpie places “by a foolish nation” before “I will anger them”; Brenton places its counterpart, “with a nation void of understanding”, after it. The quotation therefore continues through that reordered phrase."
+    },
+    "Q080 PSA 67:19": {
+      "first": "Thou art gone up",
+      "last": "gifts for man",
+      "why": "Turpie prints Brenton's English corrected: “When thou didst ascend on high, thou didst lead captivity captive, thou didst receive gifts for men” for Brenton's “Thou art gone up on high, thou hast led captivity captive, thou hast received gifts for man”."
+    },
+    "Q084 DEU 31:6": {
+      "first": "neither will he",
+      "last": "nor desert thee",
+      "why": "Turpie prints Brenton's English corrected: “he will neither leave thee nor forsake thee” for Brenton's “neither will he by any means forsake thee, nor desert thee”."
+    },
+    "Q085 DEU 5:17": {
+      "first": "Thou shalt not",
+      "last": "murder",
+      "why": "Turpie prints the two commandments once under four headings, two of Exodus and two of Deuteronomy; this verse has the second, which Brenton renders “Thou shalt not commit murder”."
+    },
+    "Q085 DEU 5:18": {
+      "first": "Thou shalt not",
+      "last": "adultery",
+      "why": "Turpie prints the two commandments once under four headings, two of Exodus and two of Deuteronomy; this verse has the first."
+    },
+    "Q085 EXO 20:13": {
+      "first": "Thou shalt not",
+      "last": "adultery",
+      "why": "Turpie prints the two commandments once under four headings, two of Exodus and two of Deuteronomy; this verse has the first."
+    },
+    "Q085 EXO 20:15": {
+      "first": "Thou shalt not",
+      "last": "kill",
+      "why": "Turpie prints the two commandments once under four headings, two of Exodus and two of Deuteronomy; this verse has the second."
+    },
+    "Q085 JAS 2:11": {
+      "first": "Thou shalt not commit",
+      "last": "Thou shalt not kill",
+      "why": "The edition's text reads “Thou shalt not commit adultery … Thou shalt not kill” where Turpie's Authorised Version has “Do not commit adultery … Do not kill”."
+    },
+    "Q097 PSA 17:50": {
+      "first": "Therefore will I confess",
+      "last": "to thy name",
+      "why": "Turpie prints Brenton's English corrected: “For this cause I will confess to thee … and will sing unto thy name” for Brenton's “Therefore will I confess to thee … and sing to thy name”."
+    },
+    "Q099 EXO 21:16": {
+      "first": "He that reviles",
+      "last": "shall surely die",
+      "why": "Turpie prints Brenton's English corrected: “He that curseth his father or his mother shall die the death” for Brenton's “He that reviles his father or his mother shall surely die”."
+    },
+    "Q100 EXO 21:16": {
+      "first": "He that reviles",
+      "last": "shall surely die",
+      "why": "Turpie prints Brenton's English corrected: “He that curseth his father or his mother shall die the death” for Brenton's “He that reviles his father or his mother shall surely die”."
+    },
+    "Q103 DEU 19:15": {
+      "first": "by the mouth of two witnesses",
+      "last": "be established",
+      "why": "Turpie prints Brenton's English corrected: “at the mouth of two witnesses, or at the mouth of three witnesses” for Brenton's “by the mouth of two witnesses, or by the mouth of three witnesses”."
+    },
+    "Q108 GEN 18:18": {
+      "first": "and in him",
+      "last": "be blest",
+      "why": "Turpie prints Brenton's English corrected: “and all the nations of the earth shall be blessed in him” for Brenton's “and in him shall all the nations of the earth be blest”."
+    },
+    "Q112 PSA 40:10": {
+      "first": "who ate my bread",
+      "last": "against me",
+      "why": "Turpie prints Brenton's English corrected: “he that eateth my bread, lifted up his heel against me” for Brenton's “who ate my bread, lifted up his heel against me”."
+    },
+    "Q113 PSA 13:2-3": {
+      "first": "to see if there were any",
+      "last": "no, not one",
+      "why": "Turpie prints Brenton's English corrected: “to see if there is any one that understandeth, or that seeketh after God … there is not even one” for Brenton's “to see if there were any that understood, or sought after God … no not one”."
+    },
+    "Q117 MAL 3:1": {
+      "first": "Behold, I send forth",
+      "last": "the way before me",
+      "why": "Turpie prints Brenton's English corrected: “he shall survey the way before my face” for Brenton's “he shall survey the way before me”."
+    },
+    "Q118 MAL 3:1": {
+      "first": "Behold, I send forth",
+      "last": "the way before me",
+      "why": "Turpie prints Brenton's English corrected: “he shall survey the way before my face” for Brenton's “he shall survey the way before me”."
+    },
+    "Q119 MAL 3:1": {
+      "first": "Behold, I send forth",
+      "last": "the way before me",
+      "why": "Turpie prints Brenton's English corrected: “he shall survey the way before my face” for Brenton's “he shall survey the way before me”."
+    },
+    "Q121 HOS 2:23": {
+      "first": "and will pity the unpitied one",
+      "last": "Thou art my people",
+      "why": "Romans 9:25 quotes the people and beloved clauses, not the preceding sowing promise. The edition's Alexandrine “will pity the unpitied one” replaces the Vaticanus love wording Turpie quotes; its opening is this clause, not the earlier “And I will” before “sow”."
+    },
+    "Q123 2SA 7:8": {
+      "first": "thus says",
+      "last": "Almighty",
+      "why": "Turpie prints Brenton's English corrected: “These things saith the Lord Almighty” for Brenton's “thus says the Lord Almighty”."
+    },
+    "Q124 ISA 53:9": {
+      "first": "for he practised",
+      "last": "with his mouth",
+      "why": "Turpie prints Brenton's English corrected: “for he did no iniquity, neither spoke guile with his mouth” for Brenton's “for he practised no iniquity, nor craft with his mouth”."
+    },
+    "Q125 ISA 11:1": {
+      "first": "and a blossom",
+      "last": "from his root",
+      "why": "Turpie prints Brenton's English corrected: “and a flower shall arise out of his root” for Brenton's “and a blossom shall come up from his root”."
+    },
+    "Q126 ECC 7:20": {
+      "first": "there is not a righteous man",
+      "last": "and not sin",
+      "why": "Turpie prints Brenton's English corrected: “That there is not a just man on the earth” for Brenton's “For there is not a righteous man in the earth”."
+    },
+    "Q127 1KI 19:14": {
+      "first": "and they have overthrown",
+      "last": "to take it",
+      "why": "Turpie prints Brenton's English corrected: “they have thrown down thine altars … I only am left … to take it away” for Brenton's “they have overthrown thine altars … I am left entirely alone … to take it”."
+    },
+    "Q132 HEB 12:20": {
+      "first": "And if so much as a beast",
+      "last": "shall be stoned",
+      "why": "The Byzantine text, which the edition prints, lacks “or thrust through with a dart”, which Turpie's Authorised Version quotes."
+    },
+    "Q133 ISA 52:11-12": {
+      "first": "go out from thence",
+      "last": "separate yourselves",
+      "why": "Second Corinthians 6:17 quotes the exit, purity and separation commands. Its promise of reception does not quote the later travel assurances about tumult, flight and the Lord going ahead, so this source span ends with the commands rather than the longer excerpt Turpie prints."
+    },
+    "Q143 ISA 6:9-10": {
+      "first": "Ye shall hear indeed",
+      "last": "I should heal them",
+      "why": "Turpie prints Brenton's English corrected: “By hearing ye shall hear, and not understand; and seeing ye shall see, and not perceive” for Brenton's “Ye shall hear indeed, but ye shall not understand; and ye shall see indeed, but ye shall not perceive”."
+    },
+    "Q147 ISA 6:9-10": {
+      "passage": "ISA 6:8-10",
+      "first": "Go, and say to this people",
+      "last": "I should heal them",
+      "why": "Acts 28:26 quotes the divine commission as well as the hearing and seeing prophecy. Turpie includes that commission under his printed Isaiah 6:9-10 heading, but Brenton places it at the end of 6:8. The printed source range therefore begins in 6:8, after the call narrative, without changing Turpie's transcribed heading or the other Isaiah 6 quotations."
+    },
+    "Q163 DEU 32:43": {
+      "first": "rejoice ye Gentiles",
+      "last": "with his people",
+      "why": "Romans 15:10 quotes the Gentiles rejoicing with his people. Turpie's “Rejoice, ye nations, with his people” corresponds to this third clause, not the earlier repeated opening about the heavens or the intervening angel-worship clause."
+    },
+    "Q164 ISA 52:15": {
+      "first": "they to whom no report",
+      "last": "shall consider",
+      "why": "Turpie prints Brenton's English corrected: “for to whom he was not spoken of, they shall see; and they that have not heard shall understand” for Brenton's “for they to whom no report was brought concerning him shall see, and they who have not heard shall consider”."
+    },
+    "Q171 ROM 11:34": {
+      "first": "For who hath known",
+      "last": "his counseller",
+      "why": "Turpie's Authorised Version spells “counsellor”; Scrivener's text, which the edition prints, has “counseller”."
+    },
+    "Q185 ZEC 12:10": {
+      "first": "and they shall look upon me",
+      "last": "mocked me",
+      "why": "Turpie prints Brenton's English corrected: “they shall look to me, instead of the things wherewith they have mocked me” for Brenton's “they shall look upon me, because they have mocked me”."
+    },
+    "Q186 ISA 66:1-2": {
+      "first": "Heaven is my throne",
+      "last": "are mine",
+      "why": "Turpie prints Brenton's English corrected: “For all these things hath mine hand made” for Brenton's “for all these things are mine”."
+    },
+    "Q187 PSA 9:28": {
+      "first": "Whose mouth is full",
+      "last": "and bitterness",
+      "why": "Romans 3:14 quotes the mouth being full of cursing and bitterness. The following fraud is an additional terminal vice, not a grammatical completion or another rendering of bitterness; Turpie's longer Septuagint excerpt does not justify including it in this quotation."
+    },
+    "Q188 ISA 25:8": {
+      "first": "Death has prevailed",
+      "last": "swallowed men up",
+      "why": "Turpie prints Brenton's English corrected: “Death having prevailed hath swallowed up” for Brenton's “Death has prevailed and swallowed men up”."
+    },
+    "Q189 HOS 13:14": {
+      "first": "where is thy penalty",
+      "last": "where is thy sting",
+      "why": "Turpie prints Brenton's English corrected: “Where is thy cause, O death? Where is thy sting, O hades?” for Brenton's “where is thy penalty, O death? O Hades, where is thy sting?”."
+    },
+    "Q192 PRO 10:12": {
+      "first": "but affection covers",
+      "last": "do not love strife",
+      "why": "Turpie prints Brenton's English corrected: “but love covereth all that are not contentious” for Brenton's “but affection covers all that do not love strife”."
+    },
+    "Q198 ISA 6:9": {
+      "first": "Ye shall hear indeed",
+      "last": "not perceive",
+      "why": "Turpie prints Brenton's English corrected: “By hearing ye shall hear, and not understand; and seeing ye shall see, and not perceive” for Brenton's “Ye shall hear indeed, but ye shall not understand; and ye shall see indeed, but ye shall not perceive”."
+    },
+    "Q199 ACT 7:37": {
+      "first": "A prophet shall the Lord",
+      "last": "like unto me",
+      "why": "The Byzantine text, which the edition prints, lacks “him shall ye hear”, which Turpie's Authorised Version quotes."
+    },
+    "Q199 DEU 18:15": {
+      "first": "The Lord thy God",
+      "last": "like me",
+      "why": "The Byzantine Acts 7:37 quotation ends with the prophet like Moses and lacks the separate command “him shall ye hear”, as its existing NT extent decision and TR note record. That unquoted command remains outside Q199; Q271 retains it for Acts 3:22-23, which quotes it."
+    },
+    "Q200 ISA 49:6": {
+      "first": "behold, I have given thee",
+      "last": "the end of the earth",
+      "why": "Turpie prints Brenton's English corrected: “lo, I have given thee for the covenant of a race, for a light of the Gentiles, that thou mightest be for salvation unto the end of the earth” for Brenton's “behold, I have given thee for a light of the Gentiles, that thou shouldest be for salvation to the end of the earth”."
+    },
+    "Q201 GEN 18:10": {
+      "first": "I will return",
+      "last": "shall have a son",
+      "why": "Turpie prints Brenton's English corrected: “Returning I will come unto thee, according to this time seasonably, and Sarah thy wife” for Brenton's “I will return and come to thee according to this period seasonably, and Sarrha thy wife”."
+    },
+    "Q202 ISA 52:7": {
+      "first": "as a season of beauty",
+      "last": "one preaching good news",
+      "why": "Romans 10:15 quotes the beautiful feet and messengers of peace and good news, ending there. Turpie's Septuagint excerpt continues with the separate first-person explanation “for I will publish thy salvation”, which this quotation does not reuse."
+    },
+    "Q214 DEU 32:35": {
+      "first": "In the day of vengeance",
+      "last": "I will recompense",
+      "why": "Romans 12:19 quotes vengeance and recompense, not the subsequent condition about their foot being tripped. Q219's longer Hebrews quotation still ends at the following judgment clause, so that row may retain the intervening words inside its span."
+    },
+    "Q215 ISA 28:11-12": {
+      "first": "by reason of the contemptuous",
+      "last": "they would not hear",
+      "why": "Turpie prints Brenton's English corrected: “on account of the contempt of their lips, by means of another tongue” for Brenton's “by reason of the contemptuous words of the lips, by means of another language”."
+    },
+    "Q219 PSA 134:14": {
+      "first": "For the Lord shall judge",
+      "last": "his people",
+      "why": "Turpie prints one English text under Deuteronomy 32:35–36 and Psalm 134:14, the words of the Deuteronomy passage, whose last clause the psalm shares."
+    },
+    "Q222 PRO 10:12": {
+      "first": "but affection covers",
+      "last": "do not love strife",
+      "why": "Turpie prints Brenton's English corrected: “but love covereth all that are not contentious” for Brenton's “but affection covers all that do not love strife”."
+    },
+    "Q224 DEU 19:15": {
+      "first": "by the mouth of two witnesses",
+      "last": "be established",
+      "why": "Turpie prints Brenton's English corrected: “At the mouth of two witnesses, and at the mouth of three witnesses” for Brenton's “by the mouth of two witnesses, or by the mouth of three witnesses”."
+    },
+    "Q231 GEN 12:1": {
+      "first": "Go forth out of thy land",
+      "last": "I shall shew thee",
+      "why": "Turpie prints Brenton's English corrected: “Get thee out of thy country … out of thy father's house … the land that I will shew thee” for Brenton's “Go forth out of thy land … out of the house of thy father … the land which I shall shew thee”."
+    },
+    "Q232 AMO 5:25-27": {
+      "first": "have ye offered to me",
+      "last": "beyond Damascus",
+      "why": "Turpie prints Brenton's English corrected: “O house of Israel, have ye offered to me slain beasts and sacrifices … Raephan, their figures which ye made for them” for Brenton's “have ye offered to me victims and sacrifices, O house of Israel … Ræphan, the images of them which ye made for yourselves”."
+    },
+    "Q234 ISA 52:5": {
+      "first": "on account of you",
+      "last": "among the Gentiles",
+      "why": "Turpie prints Brenton's English corrected: “Through you my name is blasphemed among the Gentiles continually” for Brenton's “on account of you my name is continually blasphemed among the Gentiles”."
+    },
+    "Q236 DEU 19:15": {
+      "first": "by the mouth of two witnesses",
+      "last": "be established",
+      "why": "Turpie prints Brenton's English corrected: “At the mouth of two witnesses, and at the mouth of three witnesses” for Brenton's “by the mouth of two witnesses, or by the mouth of three witnesses”."
+    },
+    "Q246 EXO 3:5; EXO 3:7-8; EXO 3:10": {
+      "first": "loose thy sandals",
+      "last": "king of Egypt",
+      "why": "Turpie prints Brenton's English corrected: one text running through the three passages, “put off thy shoes from off thy feet … unto Pharaoh, king of Egypt”, for Brenton's “loose thy sandals from off thy feet … to Pharao king of Egypt”."
+    },
+    "Q249 PSA 68:23-24": {
+      "first": "Let their table before them",
+      "last": "their back continually",
+      "why": "Turpie prints Brenton's English corrected: “Let their table before them become a snare … and bow down their back alway” for Brenton's “Let their table before them be for a snare … and bow down their back continually”."
+    },
+    "Q256 ISA 8:12-13": {
+      "first": "fear not ye their fear",
+      "last": "the Lord himself",
+      "why": "Turpie prints Brenton's English corrected: “and fear ye not his fear, neither be troubled. Sanctify the Lord himself” for Brenton's “but fear not ye their fear, neither be dismayed. Sanctify ye the Lord himself”."
+    },
+    "Q263 ISA 9:1-2": {
+      "first": "O land of Zabulon",
+      "last": "a light shall shine upon you",
+      "why": "Matthew 4:15–16 quotes the geographical address and the people receiving light. Turpie also prints the preceding “Drink this first. Act quickly”, which Matthew does not quote; the reciprocal Isaiah span begins at the land of Zabulon, not those unrelated instructions."
+    },
+    "Q266 ISA 6:9-10": {
+      "first": "Ye shall hear indeed",
+      "last": "I should heal them",
+      "why": "Turpie prints Brenton's English corrected: “By hearing ye shall hear, and not understand; and seeing ye shall see, and not perceive” for Brenton's “Ye shall hear indeed, but ye shall not understand; and ye shall see indeed, but ye shall not perceive”."
+    },
+    "Q268 ZEC 11:13": {
+      "first": "Drop them into the furnace",
+      "last": "the house of the Lord",
+      "why": "Turpie prints Brenton's English corrected: “as I have been proved by them … threw them into the house of the Lord, into the furnace” for Brenton's “as I was proved for their sakes … cast them into the furnace in the house of the Lord”."
+    },
+    "Q272 ACT 7:6-7": {
+      "first": "That his seed should",
+      "last": "shall they come forth",
+      "why": "The linked Genesis 15:13-14 passage supplies the sojourn, oppression, judgment and emergence. Acts' following independent promise “and serve me in this place” has its counterpart in Exodus 3:12, not this Genesis passage, and stands outside this quotation. Genesis' property adjunct qualifies the same emergence event and need not be shortened merely to make the sides symmetrical."
+    },
+    "Q278 DEU 30:12-14": {
+      "first": "It is not in heaven above",
+      "last": "in thine heart",
+      "why": "Romans 10:8 ends the quoted declaration with the word in the mouth and heart. Deuteronomy's following hands-and-doing member is an additional terminal element, not a grammatical completion of the heart phrase; it stands outside this source span while the internal differences and the existing NT extent remain."
+    },
+    "Q278 ROM 10:6-8": {
+      "first": "Say not in",
+      "last": "in thy heart",
+      "why": "The quoted Deuteronomy saying ends with the word being near, in the mouth and heart. Romans' following “that is, the word of faith, which we preach” explains the saying rather than quoting Deuteronomy. Its internal explanations may remain within the continuous span, but the closing boundary precedes this final explanation."
+    }
+  },
   "note_merges": {
     "PSA 2:7": {
       "action": "merge",

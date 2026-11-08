@@ -821,22 +821,6 @@ def with_edition_notes(
     )
 
 
-def at_verse_starts(
-    doc: Document, verses: Mapping[str, scripture.Verse], placed: Mapping[str, Content]
-) -> Document:
-    """The document with content set at the start of its verses, before the
-    notes there, by each verse's reference."""
-    blocks = list(doc["content"])
-    for reference in sorted(placed, key=lambda r: verses[r].parts[0][:2], reverse=True):
-        block, at, _, _ = verses[reference].parts[0]
-        content = blocks[block]["content"]
-        blocks[block] = {
-            **blocks[block],
-            "content": usj.joined(content[:at], placed[reference], content[at:]),
-        }
-    return usj.with_blocks(doc, blocks)
-
-
 def check_notes(policy: bible.policy.Policy, reports: Iterable[Report]) -> None:
     """Every exception and declared change must have met its note."""
     keys = set().union(*(r.keys for r in reports))

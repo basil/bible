@@ -452,8 +452,8 @@ def test_a_citation_of_the_wrong_verse_prints_the_verse_meant(
     # the note is merged into it as any note is that the link repeats.
     deuteronomy = usj.serialize(edition.documents["DEU"])
     assert (
-        "\\xo 32:21 \\xt \\ref Rom. 10:19|ROM 10:19\\ref* \\xta (Heb.\u00a0+ LXX)\\x*"
-        in deuteronomy
+        "\\xo 32:21 \\xq and I will provoke: \\xt \\ref Rom. 10:19|ROM 10:19\\ref* "
+        "\\xta (Heb.\u00a0+ LXX)\\x*" in deuteronomy
     )
     assert "\\fr 32:21" not in deuteronomy and "Rom. 10:9" not in deuteronomy
 

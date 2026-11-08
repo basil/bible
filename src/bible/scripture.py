@@ -68,6 +68,8 @@ class Verse:
     text: str
     # Each note in it, with the offset in the words where it stands.
     notes: tuple[tuple[int, usj.Node], ...]
+    # Each milestone in it, likewise.
+    milestones: tuple[tuple[int, usj.Node], ...] = ()
 
     @property
     def lines(self) -> tuple[int, ...]:
@@ -90,14 +92,21 @@ class Verse:
         raise AssertionError("A verse has at least one part")
 
 
-def _noted(content: usj.Content, at: int, found: list[tuple[int, usj.Node]]) -> int:
+def _noted(
+    content: usj.Content,
+    at: int,
+    found: list[tuple[int, usj.Node]],
+    marks: list[tuple[int, usj.Node]],
+) -> int:
     for item in content:
         if isinstance(item, str):
             at += len(item)
         elif item["type"] == "note":
             found.append((at, item))
+        elif item["type"] == "ms":
+            marks.append((at, item))
         elif "content" in item:
-            at = _noted(item["content"], at, found)
+            at = _noted(item["content"], at, found, marks)
     return at
 
 
@@ -125,10 +134,11 @@ def verses(doc: usj.Document) -> dict[str, Verse]:
         require(reference not in result, f"Duplicate verse: {reference}")
         texts: list[str] = []
         notes: list[tuple[int, usj.Node]] = []
+        marks: list[tuple[int, usj.Node]] = []
         offset = 0
         for block, lo, hi in parts:
             items = doc["content"][block]["content"][lo:hi]
-            _noted(items, offset, notes)
+            _noted(items, offset, notes, marks)
             texts.append(usj.text_of(items))
             offset += len(texts[-1]) + 1
         result[reference] = Verse(
@@ -136,6 +146,7 @@ def verses(doc: usj.Document) -> dict[str, Verse]:
             tuple((*part, len(text)) for part, text in zip(parts, texts)),
             "\n".join(texts),
             tuple(notes),
+            tuple(marks),
         )
 
     for index, block in enumerate(doc["content"]):

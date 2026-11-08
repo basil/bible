@@ -4,7 +4,7 @@ Everything the build reads is committed here with its downloaded contents unchan
 
 ## New Testament quotations of the Old Testament
 
-[`edition/turpie.json`](../edition/turpie.json) cites the Internet Archive's [scan](https://archive.org/download/oldtestamentinne00turp/oldtestamentinne00turp.pdf) of David McCalman Turpie's *The Old Testament in the New* (1868), retrieved on 2026-09-27, by page for every quotation. The build doesn't read the scan, so at 23 MB it isn't committed. The introduction (`content/introduction.sfm`) explains how the quotations are chosen and linked. To check a citation, download it and compare its hash:
+[`edition/turpie.json`](../edition/turpie.json) cites the Internet Archive's [scan](https://archive.org/download/oldtestamentinne00turp/oldtestamentinne00turp.pdf) of David McCalman Turpie's *The Old Testament in the New* (1868), retrieved on 2026-09-27, by page for every quotation, and transcribes, for every row the edition links, the English he prints under its New Testament and Septuagint headings (`quoted`): the Authorised Version's words of the quotation, with the introductory formula in the brackets he sets it in, and Brenton's words of the passage. The build finds those words in its verses to set each link at the quotation's first word and mark its extent. The build doesn't read the scan, so at 23 MB it isn't committed. The introduction (`content/introduction.sfm`) explains how the quotations are chosen and linked. To check a citation, download it and compare its hash:
 
 ```sh
 curl -LO https://archive.org/download/oldtestamentinne00turp/oldtestamentinne00turp.pdf

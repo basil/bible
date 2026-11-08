@@ -121,7 +121,13 @@ def whole_compounds(verse: str, words: Words, first: int, last: int) -> Span:
 
 
 def unique_span(
-    verse: str, words: Words, first: int, last: int, lone: bool = False
+    verse: str,
+    words: Words,
+    first: int,
+    last: int,
+    lone: bool = False,
+    *,
+    rightward: bool = False,
 ) -> Span:
     """The shortest widening of words[first..last] that occurs once in the verse.
 
@@ -130,6 +136,8 @@ def unique_span(
     good ones, the shortest, then the one to the right. Words that already
     occur once are left as they are, unless they end on "the" or "of"; a lone
     word the note is about (lone) stands even then ("for: Or, unto").
+    Rightward, the widening keeps the first word, before which the note
+    stands.
     """
 
     def unique(span: Span) -> bool:
@@ -152,7 +160,7 @@ def unique_span(
     for extra in range(1, len(words)):
         if best and (awkwardness(best[1]) == 0 or extra > best[0] + 2):
             break
-        for left in range(extra + 1):
+        for left in range(1 if rightward else extra + 1):
             if first - left < 0 or last + extra - left >= len(words):
                 continue
             span = whole_compounds(verse, words, first - left, last + extra - left)
@@ -387,6 +395,34 @@ def inferred_lemma(
         return first, last
 
     return opened(*unique_span(verse, words, *span, lone=alone)), opened(*span), rule
+
+
+def quotation_lemma(verse: str, words: Words, first: int, last: int) -> Span | None:
+    """The words a quotation link names: none where the quotation opens the
+    verse, and otherwise the opening of the quotation, as a cross-reference's
+    lemma gives it: its clause, or the first few words of a long one, never
+    past the quotation's last word in the verse, and then widened to the
+    right until it occurs once, since the note stands before its first
+    word."""
+    if first == 0:
+        return None
+    clause = [i for i in clause_after(verse, words, first, []) if i <= last]
+    # A clause of a word or two ("Behold,") names too little: the opening
+    # words run on past it, as far as the quotation does in the verse.
+    if len(clause) < DEFAULT_LEMMA_WORDS:
+        clause = list(range(first, last + 1))
+        size = min(DEFAULT_LEMMA_WORDS, len(clause))
+    elif len(clause) <= XREF_CLAUSE_LEMMA_WORDS:
+        size = len(clause)
+    else:
+        size = DEFAULT_LEMMA_WORDS
+    # Never end on a word like "the" or "his" while the clause goes on, nor
+    # on "thine" or "mine", which revision respells by the word after them.
+    open_words = OPEN_WORDS | {"thine", "mine"}
+    while size < len(clause) and words[clause[size - 1]][0] in open_words:
+        size += 1
+    span = whole_compounds(verse, words, clause[0], clause[size - 1])
+    return unique_span(verse, words, *span, rightward=True)
 
 
 def indefinite(word: str) -> str:

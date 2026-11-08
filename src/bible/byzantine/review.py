@@ -390,12 +390,14 @@ def note_text(note: Node) -> str:
     return usj.text_of(note["content"]).strip()
 
 
+def reconciled(note: Node) -> bool:
+    """Whether a note is the edition's on the verse's words: a quotation
+    link (\\x) is no part of the reconciliation."""
+    return note.get("category") == "edition" and note["marker"] != "x"
+
+
 def edition_notes(verse: Verse) -> list[str]:
-    return list(
-        dict.fromkeys(
-            note_text(n) for _, n in verse.notes if n.get("category") == "edition"
-        )
-    )
+    return list(dict.fromkeys(note_text(n) for _, n in verse.notes if reconciled(n)))
 
 
 def lemma_reading(verse: Verse) -> str:
@@ -403,7 +405,7 @@ def lemma_reading(verse: Verse) -> str:
     text = scripture.plain(verse.text)
     ranges: list[tuple[int, int]] = []
     for offset, note in verse.notes:
-        if note.get("category") != "edition":
+        if not reconciled(note):
             continue
         field = next(
             (

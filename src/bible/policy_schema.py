@@ -183,9 +183,22 @@ class QuotationsNoteMerges(TypedDict, total=False):
     why: ReadOnly[str]
 
 
+# The words of a quotation the build cannot find from Turpie's English: the
+# first and last of them in the assembled verses' words, before revision,
+# each found once in the passage.
+class QuotationsExtent(TypedDict, total=False):
+    first: ReadOnly[str]
+    last: ReadOnly[str]
+    # A wider printed passage where a verse division separates quoted words
+    # from the verses of Turpie's heading. His transcribed heading stays intact.
+    passage: ReadOnly[str]
+    why: ReadOnly[str]
+
+
 class Quotations(TypedDict, total=False):
     class_conflicts: ReadOnly[tuple[ClassConflict, ...]]
     excluded: ReadOnly[Mapping[str, str]]
+    extents: ReadOnly[Mapping[str, QuotationsExtent]]
     lxx_to_edition: ReadOnly[Mapping[str, QuotationsLxxToEdition]]
     narrowed: ReadOnly[Mapping[str, QuotationsNarrowed]]
     note_merges: ReadOnly[Mapping[str, QuotationsNoteMerges]]
@@ -439,6 +452,10 @@ class TurpieHeading(TypedDict, total=False):
     evidence_pages: ReadOnly[tuple[int, ...]]
     normalized: ReadOnly[str | None]
     printed: ReadOnly[str]
+    # The English Turpie prints under the heading: the quotation's words,
+    # with the introductory formula in brackets; one text per passage of the
+    # heading where he prints each passage's.
+    quoted: ReadOnly[str | tuple[str, ...]]
     reference_location: ReadOnly[str]
 
 

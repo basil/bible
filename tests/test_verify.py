@@ -97,6 +97,7 @@ def test_printed_origins_lose_their_chapter(declared: bible.policy.Policy) -> No
         books=cast(Any, None),
         inventory=none,
         notes=none,
+        links=none,
         summary=none,
         met=none,
         byzantine=cast(Any, None),

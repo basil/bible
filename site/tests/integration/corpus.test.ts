@@ -107,20 +107,31 @@ test("generated quotation lists link each passage independently", () => {
   const page = pages.find(
     (p) => p.params.book === "mrk" && p.params.chapter === "10",
   )!;
-  const note = [
-    ...JSDOM.fragment(page.content).querySelectorAll(".notes li"),
-  ].find((n) => n.textContent.startsWith("10:19 Ex. 20:12"))!;
-  expect(
-    [...note.querySelectorAll(".xt a")].map((a) => [
-      a.textContent,
-      a.getAttribute("href"),
-    ]),
-  ).toEqual([
-    ["Ex. 20:12", "/read/exo/20#v12"],
-    ["13–17", "/read/exo/20#v13"],
-    ["Deut. 5:16", "/read/deu/5#v16"],
-    ["17–21", "/read/deu/5#v17"],
+  const notes = [...JSDOM.fragment(page.content).querySelectorAll(".notes li")];
+  const links = (opening: string) =>
+    [
+      ...notes
+        .find((n) => n.textContent.startsWith(opening))!
+        .querySelectorAll(".xt a"),
+    ].map((a) => [a.textContent, a.getAttribute("href")]);
+  // The verse's two quotations begin at different words, so each has its
+  // note, naming the words it stands at.
+  expect(links("10:19 Do not commit adultery: ")).toEqual([
+    ["Ex. 20:13–17", "/read/exo/20#v13"],
+    ["Deut. 5:17–21", "/read/deu/5#v17"],
   ]);
+  expect(links("10:19 Honour thy father and mother: ")).toEqual([
+    ["Ex. 20:12", "/read/exo/20#v12"],
+    ["Deut. 5:16", "/read/deu/5#v16"],
+  ]);
+  // The quoted words are marked, unstyled, between the milestones, with
+  // the note's caller inside the span.
+  const marked = [...JSDOM.fragment(page.content).querySelectorAll(".qt")].map(
+    (span) => [span.getAttribute("data-quotation"), span.textContent],
+  );
+  expect(marked.find(([id]) => id === "Q092 MRK 10:19")![1]).toMatch(
+    /^\[\d+\]Honour thy father and mother$/,
+  );
 });
 
 test("Lamentations keeps acrostic headings separate from verse numbers", () => {

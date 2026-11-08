@@ -273,6 +273,63 @@ describe("chapter renderer", () => {
     expect(fragment.querySelector("#n1")!.textContent).toContain("first");
     expect(fragment.querySelector("#n2")!.textContent).toContain("second");
   });
+  test("marks the words between quotation milestones", () => {
+    const start = (sid: string): Node => ({ type: "ms", marker: "qt-s", sid });
+    const end = (eid: string): Node => ({ type: "ms", marker: "qt-e", eid });
+    const fragment = dom(
+      chapter(
+        para("p", "He said, ", start("Q1 MAT 1:1"), "Out of the ", {
+          type: "note",
+          marker: "x",
+          content: [char("xq", "Out of the: "), char("xt", "Ps. 8:3")],
+        }),
+        para(
+          "q1",
+          "mouth of ",
+          start("Q2 MAT 1:1"),
+          "babes ",
+          end("Q1 MAT 1:1"),
+        ),
+        para("q2", "and sucklings", end("Q2 MAT 1:1"), " indeed."),
+      ),
+    );
+    const marked = Array.from(fragment.querySelectorAll(".qt"), (span) => [
+      span.getAttribute("data-quotation"),
+      span.textContent,
+    ]);
+    // A span cannot cross a block: each block reopens the quotations open
+    // at its start and closes them at its end, innermost last.
+    expect(marked).toEqual([
+      ["Q1 MAT 1:1", "Out of the [1]"],
+      ["Q1 MAT 1:1", "mouth of babes "],
+      ["Q2 MAT 1:1", "babes "],
+      ["Q2 MAT 1:1", "and sucklings"],
+    ]);
+    expect(fragment.querySelector(".q2")!.textContent).toBe(
+      "and sucklings indeed.",
+    );
+    expect(fragment.querySelector(".xq")!.tagName).toBe("SPAN");
+    // Quotations that close together, outermost first, leave no empty span.
+    const together = dom(
+      chapter(
+        para(
+          "p",
+          ...["A", "B", "C"].map(start),
+          "Honour",
+          ...["A", "B", "C"].map(end),
+        ),
+      ),
+    );
+    expect(
+      Array.from(together.querySelectorAll(".qt"), (span) => span.textContent),
+    ).toEqual(["Honour", "Honour", "Honour"]);
+    expect(() => dom(chapter(para("p", end("Q9"))))).toThrow(
+      "Quotation end without its start",
+    );
+    expect(() =>
+      dom(chapter(para("p", { type: "ms", marker: "zbelow" }))),
+    ).toThrow("Unexpected milestone zbelow");
+  });
   test.each([
     ["fr", "B"],
     ["fq", "SPAN"],
@@ -280,6 +337,7 @@ describe("chapter renderer", () => {
     ["ft", "SPAN"],
     ["fl", "SPAN"],
     ["xo", "B"],
+    ["xq", "SPAN"],
     ["xt", "SPAN"],
     ["xta", "SPAN"],
   ])("renders note field %s as %s", (marker, tag) => {

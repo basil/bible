@@ -8,17 +8,23 @@ from __future__ import annotations
 
 import collections
 import re
-from collections.abc import Iterable, Sequence
+from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 
 import bible.policy
 import bible.references
 import bible.terminology
-from bible import citations, notes, quotations, usj
+from bible import citations, extents, lemmas, notes, quotations, scripture, usj
 from bible.checks import require
+from bible.extents import Extent
+from bible.policy_schema import QuotationsExtent
 from bible.references import Passage, Verse
-from bible.usj import Node
-from bible.versification import mapped_passages
+from bible.usj import Content, Node
+from bible.versification import mapped_passages, require_own_labels
+
+# The kind a link note's key names, after its verse: "PSA 8:3 link", and
+# "PSA 8:3 link#2" for a verse's second.
+LINK = "link"
 
 # The table of the links' glosses: its headings, what a link without a
 # gloss prints, and what each gloss means, by the agreement it prints (None
@@ -105,34 +111,56 @@ def gloss_table(policy: bible.policy.Policy) -> Node:
 
 @dataclass(frozen=True)
 class Relation:
-    """One reviewed quotation, both sides in the edition's numbering."""
+    """One reviewed quotation, both sides in the edition's numbering, each
+    passage with the words of it that the quotation covers."""
 
     id: str
     classification: str
     table_code: str
-    nt: tuple[Passage, ...]
-    ot: tuple[Passage, ...]
+    nt: tuple[Extent, ...]
+    ot: tuple[Extent, ...]
 
     @property
     def pairs(self) -> tuple[tuple[Verse, Verse], ...]:
         return tuple(
             (nt, ot)
-            for nt_passage in self.nt
-            for nt in nt_passage.verses
-            for ot_passage in self.ot
-            for ot in ot_passage.verses
+            for nt_extent in self.nt
+            for nt in nt_extent.passage.verses
+            for ot_extent in self.ot
+            for ot in ot_extent.passage.verses
         )
 
 
 @dataclass(frozen=True)
 class Link:
-    """One direction of a relation, at the first verse of one of its passages."""
+    """One direction of a relation, at one of its passages: the note stands
+    before the first quoted word, in the first verse of the passage that has
+    one (origin), and the quotation milestones around the quoted words, from
+    that word to the extent's last."""
 
-    origin: Verse
-    passage: Passage
+    extent: Extent
     targets: tuple[Passage, ...]
     row_ids: tuple[str, ...]
     agreement: str | None
+
+    @property
+    def origin(self) -> Verse:
+        return self.extent.first
+
+    @property
+    def passage(self) -> Passage:
+        return self.extent.passage
+
+    @property
+    def start(self) -> int:
+        """The index of the first quoted word among the origin's words."""
+        return self.extent.start
+
+    @property
+    def sid(self) -> str:
+        """What the quotation milestones around the words carry: the row and
+        the passage."""
+        return f"{self.row_ids[0]} {self.passage}"
 
 
 def agreement(cls: str, table_code: str) -> str | None:
@@ -143,29 +171,81 @@ def agreement(cls: str, table_code: str) -> str | None:
     )
 
 
-def quotation_relations(
-    rows: Iterable[quotations.ReviewedRow], *, policy: bible.policy.Policy
-) -> tuple[Relation, ...]:
-    """Resolve each reviewed row once, before deriving either direction."""
-    relations = tuple(
-        Relation(
-            row["id"],
-            row["class"],
-            row["table_code"],
-            tuple(row["nt"]),
-            tuple(
-                mapped
-                for passage in row["ot"]
-                for mapped in mapped_passages(passage, policy=policy)
-            ),
+def row_extents(
+    row: quotations.ReviewedRow,
+    verses: extents.Verses,
+    decisions: Mapping[str, QuotationsExtent],
+    used: set[str],
+    *,
+    policy: bible.policy.Policy,
+) -> tuple[tuple[Extent, ...], tuple[Extent, ...]]:
+    """The words of one row's quotation on both sides, each passage in the
+    edition's numbering: Turpie's English found there, or an extent decision
+    carried out, which is added to those used."""
+
+    def side(
+        passages: Sequence[Passage], texts: Sequence[str], *, septuagint: bool
+    ) -> tuple[Extent, ...]:
+        # A Septuagint passage prints as the Brenton verses it maps to.
+        def printed(passage: Passage) -> list[Passage]:
+            return mapped_passages(passage, policy=policy) if septuagint else [passage]
+
+        def find(key: str, quoted: str, ranges: Sequence[Passage]) -> list[Extent]:
+            if key in decisions:
+                used.add(key)
+            found = extents.located(key, quoted, ranges, verses, decisions.get(key))
+            require_own_labels(
+                (verse for extent in found for verse in extent.passage.verses),
+                f"Quotation {key}",
+                policy=policy,
+            )
+            return found
+
+        # One text he prints under several headings runs through their
+        # passages, or gives the words of each; the words decide which.
+        if len(passages) > 1 and len(set(texts)) == 1:
+            ranges = [r for passage in passages for r in printed(passage)]
+            key = extents.decision_key(row["id"], passages)
+            if key in decisions or extents.spanning(texts[0], ranges, verses):
+                return tuple(find(key, texts[0], ranges))
+        return tuple(
+            extent
+            for passage, quoted in zip(passages, texts, strict=True)
+            for extent in find(
+                extents.decision_key(row["id"], [passage]), quoted, printed(passage)
+            )
         )
-        for row in rows
+
+    return (
+        side(row["nt"], row["nt_quoted"], septuagint=False),
+        side(row["ot"], row["ot_quoted"], septuagint=True),
     )
+
+
+def quotation_relations(
+    rows: Iterable[quotations.ReviewedRow],
+    verses: extents.Verses,
+    *,
+    policy: bible.policy.Policy,
+) -> tuple[Relation, ...]:
+    """Resolve each reviewed row once, before deriving either direction: each
+    passage of either side in the edition's numbering, with the words of it
+    Turpie's English finds there, or an extent decision gives."""
+    decisions = policy.quotations.get("extents", {})
+    used: set[str] = set()
+    relations = []
+    for row in rows:
+        nt, ot = row_extents(row, verses, decisions, used, policy=policy)
+        relations.append(Relation(row["id"], row["class"], row["table_code"], nt, ot))
     require(
         len({r.id for r in relations}) == len(relations),
         "Duplicate quotation relation id",
     )
-    return relations
+    require(
+        used == set(decisions),
+        f"Unused extent decisions: {sorted(set(decisions) - used)}",
+    )
+    return tuple(relations)
 
 
 def planned_links(
@@ -174,10 +254,11 @@ def planned_links(
     *,
     policy: bible.policy.Policy,
 ) -> dict[str, list[Link]]:
-    """Reciprocal links at the first verse of each quotation's passages, by book.
+    """Reciprocal links at the first quoted word of each quotation's
+    passages, by book.
 
     Each link names the whole of the other side's passages, and each of those
-    passages carries a link back at its own first verse. A New Testament verse
+    passages carries a link back at its own first quoted word. A New Testament verse
     and a Brenton verse that rows gloss differently need an
     explicit editorial decision naming the rows, even where the links that
     join them display different ranges or stand at different verses. Two
@@ -197,24 +278,29 @@ def planned_links(
     def add(
         relation: Relation,
         printed: str | None,
-        passage: Passage,
+        extent: Extent,
         side: str,
-        targets: Sequence[Passage],
+        targets: Sequence[Extent],
     ) -> None:
-        origin = passage.first
+        origin = extent.first
         require(
             sources.get(origin.book) == ("kjv" if side == "nt" else "brenton"),
             f"Quotation verse outside its testament's printed books: {origin}",
         )
-        link = Link(origin, passage, tuple(targets), (relation.id,), printed)
+        link = Link(
+            extent,
+            tuple(target.passage for target in targets),
+            (relation.id,),
+            printed,
+        )
         by_book[origin.book].append(link)
 
     for relation in relations:
         printed = agreement(relation.classification, relation.table_code)
-        for passage in relation.nt:
-            add(relation, printed, passage, "nt", relation.ot)
-        for passage in relation.ot:
-            add(relation, printed, passage, "ot", relation.nt)
+        for extent in relation.nt:
+            add(relation, printed, extent, "nt", relation.ot)
+        for extent in relation.ot:
+            add(relation, printed, extent, "ot", relation.nt)
         for pair in relation.pairs:
             pair_glosses[pair].append((relation.id, printed))
     # Judged on every contributor, so the order of the rows doesn't matter.
@@ -231,10 +317,11 @@ def planned_links(
     require(used_conflicts == resolved, "Unused link class conflict decisions")
     for links in by_book.values():
         visible = collections.Counter(
-            (link.origin, tuple(link.targets), link.agreement) for link in links
+            (link.origin, link.start, tuple(link.targets), link.agreement)
+            for link in links
         )
         repeated = sorted(
-            (str(key[0]), tuple(map(str, key[1])))
+            (str(key[0]), key[1], tuple(map(str, key[2])))
             for key, count in visible.items()
             if count > 1
         )
@@ -242,6 +329,7 @@ def planned_links(
         links.sort(
             key=lambda link: (
                 books.position(link.origin),
+                link.start,
                 books.position(link.targets[0].first),
                 tuple(link.row_ids),
             )
@@ -349,18 +437,24 @@ def merged_notes(
 
 def link_notes(
     links: Sequence[Link],
+    verses: Mapping[str, scripture.Verse],
     books: bible.references.Books,
     terms: bible.terminology.Registry,
-) -> dict[str, list[Node]]:
-    """One note per origin and printed agreement, with targets in edition order.
+) -> list[tuple[Verse, int, Node]]:
+    """One note per origin, first quoted word, and printed agreement, with
+    targets in edition order, each with the offset in its verse where it
+    stands: before the first quoted word, naming the quotation's opening
+    words where it does not open the verse. A verse's notes are keyed in
+    their order, "link", "link#2".
 
     Keep the relations separate upstream, where their classes and row ids
     govern reciprocal links, conflicts, and source-note merges.
     """
-    groups: dict[tuple[Verse, str | None], list[Passage]] = {}
+    groups: dict[tuple[Verse, int, str | None], list[Link]] = {}
     for link in links:
-        groups.setdefault((link.origin, link.agreement), []).extend(link.targets)
-    for (origin, _), targets in groups.items():
+        groups.setdefault((link.origin, link.start, link.agreement), []).append(link)
+    for (origin, _, _), grouped in groups.items():
+        targets = [target for link in grouped for target in link.targets]
         # Identical links are refused where they are planned; joined in one
         # note, two that share a passage would print it twice.
         require(
@@ -371,34 +465,92 @@ def link_notes(
     def position(passage: Passage) -> tuple[int, int, int, str, int]:
         return (*books.position(passage.first), passage.last.number)
 
-    ordered = [
-        (origin, agreement, sorted(targets, key=position))
-        for (origin, agreement), targets in groups.items()
-    ]
-    ordered.sort(key=lambda group: position(group[2][0]))
-    result: dict[str, list[Node]] = {}
-    for origin, agreement, targets in ordered:
-        result.setdefault(origin.label, []).append(
-            link_note(origin, targets, agreement, books, terms)
+    ordered = sorted(
+        groups.items(),
+        key=lambda group: (
+            books.position(group[0][0]),
+            group[0][1],
+            position(min((t for l in group[1] for t in l.targets), key=position)),
+        ),
+    )
+    result: list[tuple[Verse, int, Node]] = []
+    counted: collections.Counter[Verse] = collections.Counter()
+    for (origin, start, agreement), grouped in ordered:
+        verse = verses[origin.label]
+        words = scripture.word_spans(verse.text)
+        require(start < len(words), f"Quotation begins past its verse: {origin}")
+        # The last word in this verse of the shortest of the quotations the
+        # note joins: each ends there, or at the verse's last.
+        last = min(
+            link.extent.end if link.extent.last == origin else len(words) - 1
+            for link in grouped
         )
+        span = lemmas.quotation_lemma(verse.text, words, start, last)
+        lemma = lemmas.lemma_text(verse.text, words, span) if span else None
+        counted[origin] += 1
+        key = f"{origin} {LINK}" + (
+            f"#{counted[origin]}" if counted[origin] > 1 else ""
+        )
+        targets = sorted((t for link in grouped for t in link.targets), key=position)
+        note = link_note(origin, lemma, targets, agreement, books, terms, key)
+        result.append((origin, lemmas.opening(verse.text, words[start][1]), note))
     return result
+
+
+def quotation_milestones(
+    links: Sequence[Link], verses: Mapping[str, scripture.Verse]
+) -> list[tuple[scripture.Verse, int, int, Content]]:
+    """The quotation milestones of each link, as changes to its verses: one
+    before the first quoted word, after the notes already there and before
+    the link's own, and one after the last, each carrying the row and the
+    passage."""
+    changes: list[tuple[scripture.Verse, int, int, Content]] = []
+    for link in links:
+        first, last = verses[link.origin.label], verses[link.extent.last.label]
+        start = scripture.word_spans(first.text)[link.start]
+        end = scripture.word_spans(last.text)[link.extent.end]
+        opening = lemmas.opening(first.text, start[1])
+        changes.append(
+            (
+                first,
+                opening,
+                opening,
+                [usj.milestone(usj.QUOTATION_START, sid=link.sid)],
+            )
+        )
+        changes.append(
+            (last, end[2], end[2], [usj.milestone(usj.QUOTATION_END, eid=link.sid)])
+        )
+    # The opening milestones first, so that at one place they precede the notes.
+    return changes
 
 
 def link_note(
     origin: Verse,
+    lemma: str | None,
     targets: Sequence[Passage],
     agreement: str | None,
     books: bible.references.Books,
     terms: bible.terminology.Registry,
+    key: str,
 ) -> Node:
-    """Ordered references sharing one origin and printed agreement."""
+    """Ordered references sharing one origin, opening words, and printed
+    agreement: the verse's number, the quotation's opening words where it
+    does not open the verse, the passages, and the gloss."""
     linked = citations.listed(targets, books.abbreviated)
     target = usj.text_of(linked)
     require(not set(target) & set("\\\n("), f"Malformed link target: {target}")
     glossed = gloss(agreement, terms)
     content = [usj.char("xo", f"{origin.label} ")]
+    if lemma is not None:
+        content.append(usj.char("xq", f"{lemma}: "))
     if glossed:
         content += [usj.char("xt", *linked, " "), usj.char("xta", f"({glossed})")]
     else:
         content.append(usj.char("xt", *linked))
-    return usj.note("x", *content)
+    extra: usj.Extra = {
+        "x-key": key,
+        "x-scope": {"declared": lemma},
+        "category": "edition",
+    }
+    return usj.note("x", *content, **extra)

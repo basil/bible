@@ -9,8 +9,10 @@ from typing import TypedDict
 
 import bible.policy
 import bible.references
+from bible import scripture
 from bible.checks import require
-from bible.policy_schema import TurpieRows
+from bible.extents import BRACKETED
+from bible.policy_schema import TurpieHeading, TurpieRows
 from bible.references import parse_passage, parse_passages, verses_of
 from bible.versification import lxx_to_edition, mapped_passages, unused_exceptions
 
@@ -22,6 +24,9 @@ ReviewedRow = TypedDict(
         "table_code": str,
         "nt": list[bible.references.Passage],
         "ot": list[bible.references.Passage],
+        # Turpie's printed English of each passage of either side, in order.
+        "nt_quoted": list[str],
+        "ot_quoted": list[str],
     },
 )
 
@@ -41,6 +46,29 @@ def scope(table_code: str) -> str | None:
     """The first Roman numeral component of a Turpie table code, if any."""
     match = re.match(r"^[A-E]\.(?:[sd]\.)?(I{1,3})(?:\.|$)", table_code)
     return match[1] if match else None
+
+
+def quoted_texts(
+    heading: TurpieHeading, passages: Sequence[bible.references.Passage], where: str
+) -> list[str]:
+    """Turpie's printed English of each passage of a heading: the one text he
+    prints for them all, or the text he prints for each, in their order."""
+    quoted = heading.get("quoted")
+    require(
+        isinstance(quoted, str) or (quoted and len(quoted) == len(passages)),
+        f"Turpie's English is not one text or one per passage: {where}",
+    )
+    assert quoted is not None
+    texts = [quoted] * len(passages) if isinstance(quoted, str) else list(quoted)
+    for text in texts:
+        outside = BRACKETED.sub(" ", text)
+        require(
+            "[" not in outside
+            and "]" not in outside
+            and bool(scripture.words_of(outside)),
+            f"Turpie's English has no words outside balanced brackets: {where}",
+        )
+    return texts
 
 
 def brenton_verses(
@@ -130,6 +158,11 @@ def reviewed_rows(*, policy: bible.policy.Policy) -> list[ReviewedRow]:
     linked_passages = []
     for head in heads:
         if head["id"] in excluded:
+            # The transcription covers what the edition links.
+            require(
+                "quoted" not in head["nt"] and "quoted" not in head["lxx"],
+                f"Turpie's English transcribed for an excluded head: {head['id']}",
+            )
             continue
         # An appendix discussion has no class for a link to carry.
         require(
@@ -145,23 +178,32 @@ def reviewed_rows(*, policy: bible.policy.Policy) -> list[ReviewedRow]:
         normalized = head["lxx"]["normalized"]
         assert normalized is not None
         ot = parse_passages(normalized)
+        ot_quoted = quoted_texts(head["lxx"], ot, f"{head['id']} lxx")
         if narrowing := narrowed.get(head["id"]):
             part = parse_passages(narrowing["lxx"])
             require(
                 set(verses_of(part)) < set(verses_of(ot)),
                 f"Narrowing to what isn't part of its head: {head['id']}",
             )
-            ot = part
+            # The one English text he prints for the head serves its part.
+            require(
+                isinstance(head["lxx"].get("quoted"), str),
+                f"Narrowing of a head with an English text per passage: {head['id']}",
+            )
+            ot, ot_quoted = part, ot_quoted[:1] * len(part)
         classification = head["class"]
         assert classification is not None
         normalized_nt = head["nt"]["normalized"]
         assert normalized_nt is not None
+        nt = parse_passages(normalized_nt)
         row: ReviewedRow = {
             "id": head["id"],
             "class": classification,
             "table_code": head["table_code"],
-            "nt": parse_passages(normalized_nt),
+            "nt": nt,
             "ot": ot,
+            "nt_quoted": quoted_texts(head["nt"], nt, f"{head['id']} nt"),
+            "ot_quoted": ot_quoted,
         }
         mapped = brenton_verses(row["ot"], policy=policy)
         _unique(verses_of(row["nt"]), f"NT verses in {row['id']}")
@@ -200,4 +242,6 @@ def reviewed_rows(*, policy: bible.policy.Policy) -> list[ReviewedRow]:
             f"Note merge decision's drops without a merge: {key}",
         )
         require(note_verse(key) in linked, f"Note merge decision at no link: {key}")
+    # An extent decision at no linked passage is unused, which crossrefs
+    # refuses where the passages' words are found.
     return rows

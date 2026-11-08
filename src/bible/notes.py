@@ -1194,8 +1194,9 @@ BOUNDARY_STOPS = ",;:.!?"
 
 
 def lemma_of(note: Node) -> str | None:
-    """The words a printed note names, without the colon that ends the field."""
-    field = next((n for n in note["content"] if usj.is_type(n, "char", "fq")), None)
+    """The words a printed note names, without the colon that ends the field:
+    a footnote's \\fq, or a quotation link's \\xq."""
+    field = next((n for n in note["content"] if usj.is_lemma_field(n)), None)
     return usj.text_of(field["content"]).removesuffix(": ") if field else None
 
 

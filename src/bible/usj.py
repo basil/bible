@@ -52,6 +52,9 @@ Node = TypedDict(
         "alt": str,
         "x-key": str,
         "x-scope": Scope,
+        # A quotation milestone's row, opening (sid) or closing (eid).
+        "sid": str,
+        "eid": str,
     },
     total=False,
 )
@@ -83,15 +86,25 @@ HEADINGS = frozenset("s1 s2 s3 ms1 ms2 sd1 sd2 cl lit".split())
 CELLS = frozenset(f"{kind}{n}" for kind in ("tc", "th") for n in range(1, 8))
 CHARS = frozenset("add bd fv it lik sc vp wg wh qs".split())
 NOTES = frozenset("f x".split())
-# The milestones the export writes for PTXprint: one before a note of the
-# front or back matter that is set below the text.
-MILESTONES = frozenset({"zbelow"})
+# The milestones: the quotation milestones around the words a New Testament
+# quotation of the Old shares with its passage, which the annotate stage sets
+# with the row of Turpie's tables as their sid and eid, and the one the export
+# writes for PTXprint before a note of the front or back matter that is set
+# below the text.
+QUOTATION_START, QUOTATION_END = "qt-s", "qt-e"
+MILESTONES = frozenset({QUOTATION_START, QUOTATION_END, "zbelow"})
+# A milestone's attributes, as "|sid="Q003"", before the "\*" that closes it.
+MILESTONE_END = re.compile(r'\s*(?:\|\s*((?:[a-z]+="[^"\\]*"\s*)*))?\\\*')
+ATTRIBUTE = re.compile(r'([a-z]+)="([^"\\]*)"')
 # The paragraphs of the body: prose, and the lines of a poem.
 PROSE = frozenset("p m mi nb".split())
 POEM = frozenset("q1 q2 qr".split())
 BODY = PROSE | POEM
 # The parts of a note, each of which runs to the next or to the note's end.
-FIELDS = frozenset("fr ft fq fqa fk fl xo xt xta".split())
+FIELDS = frozenset("fr ft fq fqa fk fl xo xq xt xta".split())
+# The field that names the words a note is about: a footnote's, and a
+# cross-reference's quotation of the text.
+LEMMA_FIELDS = frozenset({"fq", "xq"})
 LABEL = re.compile(r"\d+[a-z]?(?:-\d+[a-z]?)?")
 # A verse's printed number, right after the verse's own.
 PRINTED = re.compile(r"\\vp ([^\\]*)\\vp\* ?")
@@ -138,6 +151,12 @@ def note(
     if "category" in extra:
         result["category"] = extra["category"]
     return result
+
+
+def milestone(marker: str, **attributes: str) -> Node:
+    """A milestone, with its attributes (sid, eid)."""
+    require(marker in MILESTONES, f"Unknown milestone: {marker}")
+    return {"type": "ms", "marker": marker, **attributes}  # type: ignore[typeddict-item]
 
 
 def cell(marker: str, *content: str | Node) -> Node:
@@ -269,10 +288,14 @@ def parse(text: str, *, fragment: bool = False) -> Document | Content:
             content().append(node)
             inline.append(("ref", node))
         elif name in MILESTONES:
-            if closing or plus or text[at : at + 2] != "\\*":
+            ended = MILESTONE_END.match(text, at)
+            if closing or plus or ended is None:
                 fail("Invalid milestone", at)
-            cursor = at + 2
-            content().append({"type": "ms", "marker": name})
+            cursor = ended.end()
+            milestone: Node = {"type": "ms", "marker": name}
+            for key, value in ATTRIBUTE.findall(ended[1] or ""):
+                milestone[key] = value  # type: ignore[literal-required]
+            content().append(milestone)
         elif name in FIELDS:
             if closing or plus:
                 fail("Invalid note field", at)
@@ -623,7 +646,16 @@ def _inline(content: Iterable[str | Node], *, nested: bool) -> str:
             target = f"|{item['loc']}" if item.get("loc") else ""
             parts.append(f"\\ref {body}{target}\\ref*")
         elif item["type"] == "ms" and item["marker"] in MILESTONES:
-            parts.append(f"\\{item['marker']}\\*")
+            attributes = " ".join(
+                f'{key}="{value}"'
+                for key, value in item.items()
+                if key not in ("type", "marker")
+            )
+            parts.append(
+                f"\\{item['marker']}"
+                + (f" |{attributes}" if attributes else "")
+                + "\\*"
+            )
         else:
             require(False, f"Unsupported inline content: {item['type']}")
     return "".join(parts)
@@ -635,6 +667,11 @@ def _inline(content: Iterable[str | Node], *, nested: bool) -> str:
 def is_note(node: Node) -> bool:
     """What stands in a verse without being its words."""
     return node["type"] == "note"
+
+
+def is_lemma_field(node: object) -> TypeGuard[Node]:
+    """Whether a node is the field that names the words a note is about."""
+    return is_type(node, "char") and node["marker"] in LEMMA_FIELDS
 
 
 def is_origin(node: object) -> bool:

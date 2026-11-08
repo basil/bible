@@ -1,7 +1,7 @@
 {
   "edition": "David McCalman Turpie, The Old Testament in the New (1868)",
   "pdf_page_numbering": "One-based PDF page numbers; printed page = PDF page minus 38 where numbered.",
-  "transcription_scope": "Printed and normalized NT, LXX, and Hebrew reference headings and table metadata. Later displayed headings and alternatives are recorded separately. No Greek, Hebrew, or English quotation wording has been transcribed.",
+  "transcription_scope": "Printed and normalized NT, LXX, and Hebrew reference headings and table metadata, and the English Turpie prints under the NT and LXX headings of every row the edition links (quoted): the Authorised Version's words of the quotation, with the introductory formula in brackets as he brackets it, and Brenton's words of the Septuagint passage, without his note callers and verse numbers, a hyphen at a line break joined. Later displayed headings and alternatives are recorded separately. No Greek or Hebrew wording has been transcribed.",
   "rows": [
     {
       "id": "Q001",
@@ -12,11 +12,13 @@
       "pdf_page": 39,
       "nt": {
         "printed": "Matt. XIX. 18.",
-        "normalized": "MAT 19:18"
+        "normalized": "MAT 19:18",
+        "quoted": "Thou shalt do no murder, Thou shalt not commit adultery, Thou shalt not steal, Thou shalt not bear false witness,"
       },
       "lxx": {
         "printed": "Exod. XX. 13–16.; Deut. V. 17–20.",
-        "normalized": "EXO 20:13-16; DEU 5:17-20"
+        "normalized": "EXO 20:13-16; DEU 5:17-20",
+        "quoted": "Thou shalt not commit adultery. Thou shalt not steal. Thou shalt not kill. Thou shalt not bear false witness."
       },
       "hebrew": {
         "printed": "Exod. XX. 13–16.; Deut. V. 17–20.",
@@ -32,11 +34,13 @@
       "pdf_page": 40,
       "nt": {
         "printed": "Matt. XIX. 19 lp.",
-        "normalized": "MAT 19:19"
+        "normalized": "MAT 19:19",
+        "quoted": "[and] Thou shalt love thy neighbour as thyself."
       },
       "lxx": {
         "printed": "Lev. XIX. 18.",
-        "normalized": "LEV 19:18"
+        "normalized": "LEV 19:18",
+        "quoted": "And thou shalt love thy neighbour as thyself."
       },
       "hebrew": {
         "printed": "Lev. XIX. 18.",
@@ -55,11 +59,13 @@
       "pdf_page": 40,
       "nt": {
         "printed": "Matt. XXI. 16.",
-        "normalized": "MAT 21:16"
+        "normalized": "MAT 21:16",
+        "quoted": "[Have ye never read,] Out of the mouth of babes and sucklings thou hast perfected praise?"
       },
       "lxx": {
         "printed": "Ps. VIII. 3.",
-        "normalized": "PSA 8:3"
+        "normalized": "PSA 8:3",
+        "quoted": "Out of the mouth of babes and sucklings thou hast perfected praise."
       },
       "hebrew": {
         "printed": "Ps. VIII. 3.",
@@ -75,11 +81,13 @@
       "pdf_page": 41,
       "nt": {
         "printed": "Matt. XXII. 39.",
-        "normalized": "MAT 22:39"
+        "normalized": "MAT 22:39",
+        "quoted": "Thou shalt love thy neighbour as thyself."
       },
       "lxx": {
         "printed": "Lev. XIX. 18.",
-        "normalized": "LEV 19:18"
+        "normalized": "LEV 19:18",
+        "quoted": "And thou shalt love thy neighbour as thyself."
       },
       "hebrew": {
         "printed": "Lev. XIX. 18.",
@@ -95,11 +103,13 @@
       "pdf_page": 41,
       "nt": {
         "printed": "Mark VII. 10 fp.",
-        "normalized": "MRK 7:10"
+        "normalized": "MRK 7:10",
+        "quoted": "[For Moses said] Honour thy father and thy mother;"
       },
       "lxx": {
         "printed": "Exod. XX. 12.",
-        "normalized": "EXO 20:12"
+        "normalized": "EXO 20:12",
+        "quoted": "Honour thy father and thy mother,"
       },
       "hebrew": {
         "printed": "Exod. XX. 12.",
@@ -118,11 +128,13 @@
       "pdf_page": 41,
       "nt": {
         "printed": "Mark XI. 17.",
-        "normalized": "MRK 11:17"
+        "normalized": "MRK 11:17",
+        "quoted": "[Is it not written,] My house shall be called of all nations the house of prayer?"
       },
       "lxx": {
         "printed": "Is. LVI. 7.",
-        "normalized": "ISA 56:7"
+        "normalized": "ISA 56:7",
+        "quoted": "for my house shall be called a house of prayer for all nations."
       },
       "hebrew": {
         "printed": "Is. LVI. 7.",
@@ -138,11 +150,13 @@
       "pdf_page": 41,
       "nt": {
         "printed": "Mark XII. 31.",
-        "normalized": "MRK 12:31"
+        "normalized": "MRK 12:31",
+        "quoted": "Thou shalt love thy neighbour as thyself."
       },
       "lxx": {
         "printed": "Lev. XIX. 18.",
-        "normalized": "LEV 19:18"
+        "normalized": "LEV 19:18",
+        "quoted": "And thou shalt love thy neighbour as thyself."
       },
       "hebrew": {
         "printed": "Lev. XIX. 18.",
@@ -158,11 +172,13 @@
       "pdf_page": 41,
       "nt": {
         "printed": "Luke X. 27 lp.",
-        "normalized": "LUK 10:27"
+        "normalized": "LUK 10:27",
+        "quoted": "and thy neighbour as thyself."
       },
       "lxx": {
         "printed": "Lev. XIX. 18.",
-        "normalized": "LEV 19:18"
+        "normalized": "LEV 19:18",
+        "quoted": "And thou shalt love thy neighbour as thyself."
       },
       "hebrew": {
         "printed": "Lev. XIX. 18.",
@@ -181,11 +197,13 @@
       "pdf_page": 42,
       "nt": {
         "printed": "Luke XVIII. 20 lp.",
-        "normalized": "LUK 18:20"
+        "normalized": "LUK 18:20",
+        "quoted": "Honour thy father and thy mother."
       },
       "lxx": {
         "printed": "Exod. XX. 12; Deut. V. 16.",
-        "normalized": "EXO 20:12; DEU 5:16"
+        "normalized": "EXO 20:12; DEU 5:16",
+        "quoted": "Honour thy father and thy mother."
       },
       "hebrew": {
         "printed": "Exod. XX. 12; Deut. V. 16.",
@@ -205,11 +223,13 @@
       "pdf_page": 42,
       "nt": {
         "printed": "John X. 34.",
-        "normalized": "JHN 10:34"
+        "normalized": "JHN 10:34",
+        "quoted": "[Is it not written in your law] I said, Ye are gods?"
       },
       "lxx": {
         "printed": "Ps. LXXXI. 6.",
-        "normalized": "PSA 81:6"
+        "normalized": "PSA 81:6",
+        "quoted": "I said, Ye are gods."
       },
       "hebrew": {
         "printed": "Ps. LXXXII. 6.",
@@ -225,11 +245,13 @@
       "pdf_page": 42,
       "nt": {
         "printed": "John XIX. 24.",
-        "normalized": "JHN 19:24"
+        "normalized": "JHN 19:24",
+        "quoted": "[that the scripture might be fulfilled, which saith,] They parted my raiment among them, and for my vesture they did cast lots."
       },
       "lxx": {
         "printed": "Ps. XXI. 19.",
-        "normalized": "PSA 21:19"
+        "normalized": "PSA 21:19",
+        "quoted": "They parted my garments among themselves, and upon my vesture they cast lots."
       },
       "hebrew": {
         "printed": "Ps. XXII. 19.",
@@ -245,11 +267,13 @@
       "pdf_page": 42,
       "nt": {
         "printed": "Acts I. 20 lp.",
-        "normalized": "ACT 1:20"
+        "normalized": "ACT 1:20",
+        "quoted": "[and] His bishoprick let another take."
       },
       "lxx": {
         "printed": "Ps. CVIII. 8.",
-        "normalized": "PSA 108:8"
+        "normalized": "PSA 108:8",
+        "quoted": "and his office let another take."
       },
       "hebrew": {
         "printed": "Ps. CIX. 8.",
@@ -268,11 +292,13 @@
       "pdf_page": 43,
       "nt": {
         "printed": "Acts II. 34–35.",
-        "normalized": "ACT 2:34-35"
+        "normalized": "ACT 2:34-35",
+        "quoted": "[but he saith himself,] The LORD said unto my Lord, Sit thou on my right hand, until I make thy foes thy footstool."
       },
       "lxx": {
         "printed": "Ps. CIX. 1.",
-        "normalized": "PSA 109:1"
+        "normalized": "PSA 109:1",
+        "quoted": "The LORD said unto my Lord, Sit thou at my right hand, until I make thine enemies thy footstool."
       },
       "hebrew": {
         "printed": "Ps. CX. 1.",
@@ -288,11 +314,13 @@
       "pdf_page": 43,
       "nt": {
         "printed": "Acts IV. 25–26.",
-        "normalized": "ACT 4:25-26"
+        "normalized": "ACT 4:25-26",
+        "quoted": "[who by the mouth of thy servant David hast said,] Why did the heathen rage and the people imagine vain things? The kings of the earth stood up, and the rulers were gathered together, against the Lord and against his Christ."
       },
       "lxx": {
         "printed": "Ps. II. 1–2.",
-        "normalized": "PSA 2:1-2"
+        "normalized": "PSA 2:1-2",
+        "quoted": "Why did the heathen rage and the people imagine vain things? The kings of the earth stood up, and the rulers were gathered together, against the Lord, and against his Christ."
       },
       "hebrew": {
         "printed": "Ps. II. 1–2.",
@@ -308,11 +336,13 @@
       "pdf_page": 44,
       "nt": {
         "printed": "Acts XIII. 33.",
-        "normalized": "ACT 13:33"
+        "normalized": "ACT 13:33",
+        "quoted": "[as it is also written in the second Psalm,] Thou art my Son, this day have I begotten thee."
       },
       "lxx": {
         "printed": "Ps. II. 7.",
-        "normalized": "PSA 2:7"
+        "normalized": "PSA 2:7",
+        "quoted": "Thou art my Son, this day have I begotten thee."
       },
       "hebrew": {
         "printed": "Ps. II. 7.",
@@ -328,11 +358,13 @@
       "pdf_page": 44,
       "nt": {
         "printed": "Acts XIII. 35.",
-        "normalized": "ACT 13:35"
+        "normalized": "ACT 13:35",
+        "quoted": "[he saith...] Thou shalt not suffer thine Holy One to see corruption."
       },
       "lxx": {
         "printed": "Ps. XV. 10.",
-        "normalized": "PSA 15:10"
+        "normalized": "PSA 15:10",
+        "quoted": "neither wilt Thou suffer Thine Holy One to see corruption."
       },
       "hebrew": {
         "printed": "Ps. XVI. 10.",
@@ -348,11 +380,13 @@
       "pdf_page": 44,
       "nt": {
         "printed": "Rom. III. 13.",
-        "normalized": "ROM 3:13"
+        "normalized": "ROM 3:13",
+        "quoted": "Their throat is an open sepulchre; with their tongues they have used deceit."
       },
       "lxx": {
         "printed": "Ps. V. 10.",
-        "normalized": "PSA 5:10"
+        "normalized": "PSA 5:10",
+        "quoted": "Their throat is an open sepulchre; with their tongues they have used deceit."
       },
       "hebrew": {
         "printed": "Ps. V. 10.",
@@ -368,11 +402,13 @@
       "pdf_page": 45,
       "nt": {
         "printed": "Rom. III. 13.",
-        "normalized": "ROM 3:13"
+        "normalized": "ROM 3:13",
+        "quoted": "the poison of asps is under their lips."
       },
       "lxx": {
         "printed": "Ps. CXXXIX. 4.",
-        "normalized": "PSA 139:4"
+        "normalized": "PSA 139:4",
+        "quoted": "the poison of asps is under their lips."
       },
       "hebrew": {
         "printed": "Ps. CXL. 4.",
@@ -388,11 +424,13 @@
       "pdf_page": 45,
       "nt": {
         "printed": "Rom. IV. 17.",
-        "normalized": "ROM 4:17"
+        "normalized": "ROM 4:17",
+        "quoted": "([As it is written,] I have made thee a father of many nations.)"
       },
       "lxx": {
         "printed": "Gen. XVII. 5.",
-        "normalized": "GEN 17:5"
+        "normalized": "GEN 17:5",
+        "quoted": "for a father of many nations have I made thee."
       },
       "hebrew": {
         "printed": "Gen. XVII. 5.",
@@ -408,11 +446,13 @@
       "pdf_page": 46,
       "nt": {
         "printed": "Rom. IV. 18.",
-        "normalized": "ROM 4:18"
+        "normalized": "ROM 4:18",
+        "quoted": "[according to that which was spoken,] So shall thy seed be."
       },
       "lxx": {
         "printed": "Gen. XV. 5.",
-        "normalized": "GEN 15:5"
+        "normalized": "GEN 15:5",
+        "quoted": "So shall thy seed be."
       },
       "hebrew": {
         "printed": "Gen. XV. 5.",
@@ -428,11 +468,13 @@
       "pdf_page": 46,
       "nt": {
         "printed": "Rom. VIII. 36.",
-        "normalized": "ROM 8:36"
+        "normalized": "ROM 8:36",
+        "quoted": "([As it is written] For thy sake we are killed all the day long; we are accounted as sheep for the slaughter)."
       },
       "lxx": {
         "printed": "Ps. XLIII. 23.",
-        "normalized": "PSA 43:23"
+        "normalized": "PSA 43:23",
+        "quoted": "For, for thy sake we are killed all the day long; we are accounted as sheep for the slaughter."
       },
       "hebrew": {
         "printed": "Ps. XLIV. 23.",
@@ -448,11 +490,13 @@
       "pdf_page": 46,
       "nt": {
         "printed": "Rom. IX. 7.",
-        "normalized": "ROM 9:7"
+        "normalized": "ROM 9:7",
+        "quoted": "In Isaac shall thy seed be called."
       },
       "lxx": {
         "printed": "Gen. XXI. 12.",
-        "normalized": "GEN 21:12"
+        "normalized": "GEN 21:12",
+        "quoted": "for in Isaac shall thy seed be called."
       },
       "hebrew": {
         "printed": "Gen. XXI. 12.",
@@ -468,11 +512,13 @@
       "pdf_page": 46,
       "nt": {
         "printed": "Rom. IX. 12.",
-        "normalized": "ROM 9:12"
+        "normalized": "ROM 9:12",
+        "quoted": "[It was said unto her] the elder shall serve the younger."
       },
       "lxx": {
         "printed": "Gen. XXV. 23.",
-        "normalized": "GEN 25:23"
+        "normalized": "GEN 25:23",
+        "quoted": "[And the LORD said to her]..and the elder shall serve the younger."
       },
       "hebrew": {
         "printed": "Gen. XXV. 23.",
@@ -488,11 +534,13 @@
       "pdf_page": 46,
       "nt": {
         "printed": "Rom. IX. 15.",
-        "normalized": "ROM 9:15"
+        "normalized": "ROM 9:15",
+        "quoted": "[For he saith to Moses,] I will have mercy on whom I will have mercy, and I will have compassion on whom I will have compassion."
       },
       "lxx": {
         "printed": "Exod. XXXIII. 19.",
-        "normalized": "EXO 33:19"
+        "normalized": "EXO 33:19",
+        "quoted": "And I will have mercy on whom I will have mercy, and I will have compassion on whom I will have compassion."
       },
       "hebrew": {
         "printed": "Exod. XXXIII. 19.",
@@ -508,11 +556,13 @@
       "pdf_page": 47,
       "nt": {
         "printed": "Rom. X. 13.",
-        "normalized": "ROM 10:13"
+        "normalized": "ROM 10:13",
+        "quoted": "[For] whosoever shall call upon the name of the Lord shall be saved."
       },
       "lxx": {
         "printed": "Joel II. 32.",
-        "normalized": "JOL 2:32"
+        "normalized": "JOL 2:32",
+        "quoted": "And it shall come to pass, that whosoever shall call on the name of the Lord shall be saved."
       },
       "hebrew": {
         "printed": "Joel III. 5.",
@@ -528,11 +578,13 @@
       "pdf_page": 47,
       "nt": {
         "printed": "Rom. XIII. 9 fp.",
-        "normalized": "ROM 13:9"
+        "normalized": "ROM 13:9",
+        "quoted": "[For this,] Thou shalt not commit adultery, Thou shalt not kill, Thou shalt not steal, Thou shalt not bear false witness, Thou shalt not covet."
       },
       "lxx": {
         "printed": "Exod. XX. 13–17.; Deut. V. 17–21.",
-        "normalized": "EXO 20:13-17; DEU 5:17-21"
+        "normalized": "EXO 20:13-17; DEU 5:17-21",
+        "quoted": "Thou shalt not commit adultery. Thou shalt not steal. Thou shalt not kill. Thou shalt not bear false witness. Thou shalt not covet."
       },
       "hebrew": {
         "printed": "Exod. XX. 13–17.; Deut. V. 17–21.",
@@ -552,11 +604,13 @@
       "pdf_page": 48,
       "nt": {
         "printed": "Rom. XIII. 9 lp.",
-        "normalized": "ROM 13:9"
+        "normalized": "ROM 13:9",
+        "quoted": "Thou shalt love thy neighbour as thyself."
       },
       "lxx": {
         "printed": "Lev. XIX. 18.",
-        "normalized": "LEV 19:18"
+        "normalized": "LEV 19:18",
+        "quoted": "And thou shalt love thy neighbour as thyself."
       },
       "hebrew": {
         "printed": "Lev. XIX. 18.",
@@ -575,11 +629,13 @@
       "pdf_page": 48,
       "nt": {
         "printed": "Rom. XV. 3.",
-        "normalized": "ROM 15:3"
+        "normalized": "ROM 15:3",
+        "quoted": "[as it is written,] The reproaches of them that reproached thee fell on me."
       },
       "lxx": {
         "printed": "Ps. LXVIII. 10.",
-        "normalized": "PSA 68:10"
+        "normalized": "PSA 68:10",
+        "quoted": "And the reproaches of them that reproached thee fell upon me."
       },
       "hebrew": {
         "printed": "Ps. LXIX. 10.",
@@ -595,11 +651,13 @@
       "pdf_page": 48,
       "nt": {
         "printed": "1 Cor. X. 7.",
-        "normalized": "1CO 10:7"
+        "normalized": "1CO 10:7",
+        "quoted": "[as it is written,] The people sat down to eat and drink, and rose up to play."
       },
       "lxx": {
         "printed": "Exod. XXXII. 6.",
-        "normalized": "EXO 32:6"
+        "normalized": "EXO 32:6",
+        "quoted": "and the people sat down to eat and to drink, and rose up to play."
       },
       "hebrew": {
         "printed": "Exod. XXXII. 6.",
@@ -615,11 +673,13 @@
       "pdf_page": 48,
       "nt": {
         "printed": "1 Cor. X. 26 (and 28 lp. in ς).",
-        "normalized": "1CO 10:26"
+        "normalized": "1CO 10:26",
+        "quoted": "[For] the earth is the Lord's, and the fulness thereof."
       },
       "lxx": {
         "printed": "Ps. XXIII. 1.",
-        "normalized": "PSA 23:1"
+        "normalized": "PSA 23:1",
+        "quoted": "The earth is the Lord's, and the fulness thereof."
       },
       "hebrew": {
         "printed": "Ps. XXIV. 1.",
@@ -636,11 +696,13 @@
       "pdf_page": 48,
       "nt": {
         "printed": "2 Cor. IV. 13.",
-        "normalized": "2CO 4:13"
+        "normalized": "2CO 4:13",
+        "quoted": "[according as it is written,] I believed, and therefore have I spoken."
       },
       "lxx": {
         "printed": "Ps. CXV. 1.",
-        "normalized": "PSA 115:1"
+        "normalized": "PSA 115:1",
+        "quoted": "I believed, therefore did I speak."
       },
       "hebrew": {
         "printed": "Ps. CXVI. 10.",
@@ -656,11 +718,13 @@
       "pdf_page": 49,
       "nt": {
         "printed": "2 Cor. VI. 2.",
-        "normalized": "2CO 6:2"
+        "normalized": "2CO 6:2",
+        "quoted": "[For he saith,] I have heard thee in a time accepted, and in the day of salvation have I succoured thee."
       },
       "lxx": {
         "printed": "Is. XLIX. 8.",
-        "normalized": "ISA 49:8"
+        "normalized": "ISA 49:8",
+        "quoted": "In an acceptable time have I heard thee, and in a day of salvation have I succoured thee."
       },
       "hebrew": {
         "printed": "Is. XLIX. 8.",
@@ -676,11 +740,13 @@
       "pdf_page": 49,
       "nt": {
         "printed": "2 Cor. IX. 9.",
-        "normalized": "2CO 9:9"
+        "normalized": "2CO 9:9",
+        "quoted": "[As it is written,] He hath dispersed abroad; he hath given to the poor; his righteousness remaineth for ever."
       },
       "lxx": {
         "printed": "Ps. CXI. 9.",
-        "normalized": "PSA 111:9"
+        "normalized": "PSA 111:9",
+        "quoted": "He dispersed, he gave to the poor; his righteousness remaineth for ever and ever."
       },
       "hebrew": {
         "printed": "Ps. CXII. 9.",
@@ -696,11 +762,13 @@
       "pdf_page": 49,
       "nt": {
         "printed": "Gal. III. 16.",
-        "normalized": "GAL 3:16"
+        "normalized": "GAL 3:16",
+        "quoted": "[He saith not, And to seeds, as of many; but as of one,] And to thy seed."
       },
       "lxx": {
         "printed": "Gen. XXII. 18.",
-        "normalized": "GEN 22:18"
+        "normalized": "GEN 22:18",
+        "quoted": "and in thy seed shall all the nations of the earth be blessed."
       },
       "hebrew": {
         "printed": "Gen. XXII. 18.",
@@ -716,11 +784,13 @@
       "pdf_page": 49,
       "nt": {
         "printed": "Gal. V. 14.",
-        "normalized": "GAL 5:14"
+        "normalized": "GAL 5:14",
+        "quoted": "[in this;] Thou shalt love thy neighbour as thyself."
       },
       "lxx": {
         "printed": "Lev. XIX. 18.",
-        "normalized": "LEV 19:18"
+        "normalized": "LEV 19:18",
+        "quoted": "and thou shalt love thy neighbour as thyself."
       },
       "hebrew": {
         "printed": "Lev. XIX. 18.",
@@ -736,11 +806,13 @@
       "pdf_page": 50,
       "nt": {
         "printed": "Heb. I. 5 fp.",
-        "normalized": "HEB 1:5"
+        "normalized": "HEB 1:5",
+        "quoted": "Thou art my son, this day have I begotten thee."
       },
       "lxx": {
         "printed": "Ps. II. 7.",
-        "normalized": "PSA 2:7"
+        "normalized": "PSA 2:7",
+        "quoted": "Thou art my son, this day have I begotten thee."
       },
       "hebrew": {
         "printed": "Ps. II. 7.",
@@ -759,11 +831,13 @@
       "pdf_page": 50,
       "nt": {
         "printed": "Heb. I. 5 lp.",
-        "normalized": "HEB 1:5"
+        "normalized": "HEB 1:5",
+        "quoted": "[And again,] I will be to him a Father, and he shall be to me a Son."
       },
       "lxx": {
         "printed": "2 Kings VII. 14.",
-        "normalized": "2SA 7:14"
+        "normalized": "2SA 7:14",
+        "quoted": "I will be to him a father, and he shall be to me a son."
       },
       "hebrew": {
         "printed": "2 Sam. VII. 14.",
@@ -782,11 +856,13 @@
       "pdf_page": 50,
       "nt": {
         "printed": "Heb. I. 8–9.",
-        "normalized": "HEB 1:8-9"
+        "normalized": "HEB 1:8-9",
+        "quoted": "[But unto the Son he saith] Thy throne, O God, is for ever and ever: a sceptre of righteousness is the sceptre of thy kingdom. Thou hast loved righteousness and hated iniquity; therefore God, even thy God, hath anointed thee with the oil of gladness above thy fellows."
       },
       "lxx": {
         "printed": "Ps. XLIV. 7–8.",
-        "normalized": "PSA 44:7-8"
+        "normalized": "PSA 44:7-8",
+        "quoted": "Thy throne, O God, is for ever and ever; a sceptre of righteousness is the sceptre of thy kingdom. Thou hast loved righteousness and hated iniquity; therefore God, thy God hath anointed thee with the oil of gladness above thy fellows."
       },
       "hebrew": {
         "printed": "Ps. XLV. 7–8.",
@@ -803,11 +879,13 @@
       "pdf_page": 51,
       "nt": {
         "printed": "Heb. I. 13.",
-        "normalized": "HEB 1:13"
+        "normalized": "HEB 1:13",
+        "quoted": "[said he at any time,] Sit on my right hand, until I make thine enemies thy footstool?"
       },
       "lxx": {
         "printed": "Ps. CIX. 1.",
-        "normalized": "PSA 109:1"
+        "normalized": "PSA 109:1",
+        "quoted": "Sit thou at my right hand, until I make thine enemies thy footstool."
       },
       "hebrew": {
         "printed": "Ps. CX. 1.",
@@ -823,11 +901,13 @@
       "pdf_page": 51,
       "nt": {
         "printed": "Heb. III. 15.",
-        "normalized": "HEB 3:15"
+        "normalized": "HEB 3:15",
+        "quoted": "[While it is said,] Today if ye will hear his voice, harden not your hearts, as in the provocation."
       },
       "lxx": {
         "printed": "Ps. XCIV. 8.",
-        "normalized": "PSA 94:8"
+        "normalized": "PSA 94:8",
+        "quoted": "Today if ye will hear his voice, harden not your hearts, as in the provocation."
       },
       "hebrew": {
         "printed": "Ps. XCV. 7–8.",
@@ -843,11 +923,13 @@
       "pdf_page": 51,
       "nt": {
         "printed": "Heb. IV. 3.",
-        "normalized": "HEB 4:3"
+        "normalized": "HEB 4:3",
+        "quoted": "[as he said,] As I have sworn in my wrath, if they shall enter into my rest."
       },
       "lxx": {
         "printed": "Ps. XCIV. 11.",
-        "normalized": "PSA 94:11"
+        "normalized": "PSA 94:11",
+        "quoted": "So I sware in my wrath, They shall not enter into my rest."
       },
       "hebrew": {
         "printed": "Ps. XCV. 11.",
@@ -863,11 +945,13 @@
       "pdf_page": 52,
       "nt": {
         "printed": "Heb. IV. 7.",
-        "normalized": "HEB 4:7"
+        "normalized": "HEB 4:7",
+        "quoted": "[as it is said,] Today if ye will hear his voice, harden not your hearts."
       },
       "lxx": {
         "printed": "Ps. XCIV. 8.",
-        "normalized": "PSA 94:8"
+        "normalized": "PSA 94:8",
+        "quoted": "Today if ye will hear his voice, harden not your hearts."
       },
       "hebrew": {
         "printed": "Ps. XCV. 7–8.",
@@ -883,11 +967,13 @@
       "pdf_page": 52,
       "nt": {
         "printed": "Heb. V. 5.",
-        "normalized": "HEB 5:5"
+        "normalized": "HEB 5:5",
+        "quoted": "[but he that said unto him,] Thou art my son, today have I begotten thee."
       },
       "lxx": {
         "printed": "Ps. II. 7.",
-        "normalized": "PSA 2:7"
+        "normalized": "PSA 2:7",
+        "quoted": "Thou art my son, this day have I begotten thee."
       },
       "hebrew": {
         "printed": "Ps. II. 7.",
@@ -903,11 +989,13 @@
       "pdf_page": 52,
       "nt": {
         "printed": "Heb. V. 6.",
-        "normalized": "HEB 5:6"
+        "normalized": "HEB 5:6",
+        "quoted": "[As he saith also in another place,] Thou art a priest for ever after the order of Melchisedec."
       },
       "lxx": {
         "printed": "Ps. CIX. 4.",
-        "normalized": "PSA 109:4"
+        "normalized": "PSA 109:4",
+        "quoted": "Thou art a priest for ever after the order of Melchisedec."
       },
       "hebrew": {
         "printed": "Ps. CX. 4.",
@@ -923,11 +1011,16 @@
       "pdf_page": 52,
       "nt": {
         "printed": "Heb. VII. 17. 21.",
-        "normalized": "HEB 7:17; HEB 7:21"
+        "normalized": "HEB 7:17; HEB 7:21",
+        "quoted": [
+          "[For He testifieth,] Thou art a priest for ever after the order of Melchisedec.",
+          "[by him that said unto him,] The Lord sware and will not repent, Thou art a priest for ever after the order of Melchisedec."
+        ]
       },
       "lxx": {
         "printed": "Ps. CIX. 4.",
-        "normalized": "PSA 109:4"
+        "normalized": "PSA 109:4",
+        "quoted": "The Lord sware and will not repent, Thou art a priest for ever after the order of Melchisedec."
       },
       "hebrew": {
         "printed": "Ps. CX. 4.",
@@ -944,11 +1037,13 @@
       "pdf_page": 53,
       "nt": {
         "printed": "Heb. XI. 18.",
-        "normalized": "HEB 11:18"
+        "normalized": "HEB 11:18",
+        "quoted": "That in Isaac shall thy seed be called."
       },
       "lxx": {
         "printed": "Gen. XXI. 12.",
-        "normalized": "GEN 21:12"
+        "normalized": "GEN 21:12",
+        "quoted": "for in Isaac shall thy seed be called."
       },
       "hebrew": {
         "printed": "Gen. XXI. 12.",
@@ -964,11 +1059,13 @@
       "pdf_page": 53,
       "nt": {
         "printed": "James II. 8.",
-        "normalized": "JAS 2:8"
+        "normalized": "JAS 2:8",
+        "quoted": "Thou shalt love thy neighbour as thyself."
       },
       "lxx": {
         "printed": "Lev. XIX. 18.",
-        "normalized": "LEV 19:18"
+        "normalized": "LEV 19:18",
+        "quoted": "Thou shalt love thy neighbour as thyself."
       },
       "hebrew": {
         "printed": "Lev. XIX. 18.",
@@ -1028,11 +1125,13 @@
       "pdf_page": 55,
       "nt": {
         "printed": "Acts XXIII. 5.",
-        "normalized": "ACT 23:5"
+        "normalized": "ACT 23:5",
+        "quoted": "[for it is written,] Thou shalt not speak evil of the ruler of thy people."
       },
       "lxx": {
         "printed": "Exod. XXII. 28.",
-        "normalized": "EXO 22:28"
+        "normalized": "EXO 22:28",
+        "quoted": "Thou shalt not speak evil of the ruler of thy people."
       },
       "hebrew": {
         "printed": "Exod. XXII. 27.",
@@ -1048,11 +1147,13 @@
       "pdf_page": 55,
       "nt": {
         "printed": "Rom. IX. 13.",
-        "normalized": "ROM 9:13"
+        "normalized": "ROM 9:13",
+        "quoted": "[As it is written,] Jacob have I loved, but Esau have I hated."
       },
       "lxx": {
         "printed": "Mal. I. 2–3.",
-        "normalized": "MAL 1:2-3"
+        "normalized": "MAL 1:2-3",
+        "quoted": "And I loved Jacob, but I hated Esau."
       },
       "hebrew": {
         "printed": "Mal. I. 2–3.",
@@ -1068,11 +1169,13 @@
       "pdf_page": 55,
       "nt": {
         "printed": "Heb. II. 13.",
-        "normalized": "HEB 2:13"
+        "normalized": "HEB 2:13",
+        "quoted": "[And again,] I will put my trust in him. [And again,] Behold I and the children which God hath given me."
       },
       "lxx": {
         "printed": "Is. VIII. 17–18.",
-        "normalized": "ISA 8:17-18"
+        "normalized": "ISA 8:17-18",
+        "quoted": "and I will trust in him. Behold I and the children which God hath given me."
       },
       "hebrew": {
         "printed": "Is. VIII. 17–18.",
@@ -1088,11 +1191,13 @@
       "pdf_page": 56,
       "nt": {
         "printed": "1 Pet. I. 16.",
-        "normalized": "1PE 1:16"
+        "normalized": "1PE 1:16",
+        "quoted": "[Because it is written,] Be ye holy; for I am holy."
       },
       "lxx": {
         "printed": "Lev. XI. 44.",
-        "normalized": "LEV 11:44"
+        "normalized": "LEV 11:44",
+        "quoted": "and ye shall be holy, for I am holy."
       },
       "hebrew": {
         "printed": "Lev. XI. 44.",
@@ -1108,11 +1213,13 @@
       "pdf_page": 57,
       "nt": {
         "printed": "Mark XII. 29–30.",
-        "normalized": "MRK 12:29-30"
+        "normalized": "MRK 12:29-30",
+        "quoted": "Hear, O Israel; the Lord our God is one Lord: And thou shalt love the Lord thy God with all thy heart, and with all thy soul, and with all thy mind, and with all thy strength:"
       },
       "lxx": {
         "printed": "Deut. VI. 4–5.",
-        "normalized": "DEU 6:4-5"
+        "normalized": "DEU 6:4-5",
+        "quoted": "Hear, O Israel; the Lord our God is one Lord: and thou shalt love the Lord thy God with all thy mind and with all thy soul and with all thy strength."
       },
       "hebrew": {
         "printed": "Deut. VI. 4–5.",
@@ -1128,11 +1235,13 @@
       "pdf_page": 58,
       "nt": {
         "printed": "Mark XV. 28.",
-        "normalized": "MRK 15:28"
+        "normalized": "MRK 15:28",
+        "quoted": "[And the scripture was fulfilled, which saith,] And he was numbered with the transgressors."
       },
       "lxx": {
         "printed": "Is. LIII. 12.",
-        "normalized": "ISA 53:12"
+        "normalized": "ISA 53:12",
+        "quoted": "and he was numbered among the transgressors;"
       },
       "hebrew": {
         "printed": "Is. LIII. 12.",
@@ -1148,11 +1257,13 @@
       "pdf_page": 58,
       "nt": {
         "printed": "Luke XXII. 37.",
-        "normalized": "LUK 22:37"
+        "normalized": "LUK 22:37",
+        "quoted": "[this that is written must yet be accomplished in me,] And he was reckoned among the transgressors:"
       },
       "lxx": {
         "printed": "Is. LIII. 12.",
-        "normalized": "ISA 53:12"
+        "normalized": "ISA 53:12",
+        "quoted": "and he was numbered among the transgressors;"
       },
       "hebrew": {
         "printed": "Is. LIII. 12.",
@@ -1168,11 +1279,13 @@
       "pdf_page": 58,
       "nt": {
         "printed": "2 Cor. VIII. 15.",
-        "normalized": "2CO 8:15"
+        "normalized": "2CO 8:15",
+        "quoted": "[As it is written,] He that had gathered much, had nothing over; and he that had gathered little, had no lack."
       },
       "lxx": {
         "printed": "Exod. XVI. 18.",
-        "normalized": "EXO 16:18"
+        "normalized": "EXO 16:18",
+        "quoted": "he that had gathered much had nothing over, and he that had gathered less had no lack."
       },
       "hebrew": {
         "printed": "Exod. XVI. 18.",
@@ -1188,11 +1301,13 @@
       "pdf_page": 59,
       "nt": {
         "printed": "2 Tim. II. 19.",
-        "normalized": "2TI 2:19"
+        "normalized": "2TI 2:19",
+        "quoted": "The Lord knoweth them that are his."
       },
       "lxx": {
         "printed": "Num. XVI. 5.",
-        "normalized": "NUM 16:5"
+        "normalized": "NUM 16:5",
+        "quoted": "and God hath known them that are his."
       },
       "hebrew": {
         "printed": "Num. XVI. 5.",
@@ -1208,11 +1323,13 @@
       "pdf_page": 59,
       "nt": {
         "printed": "Heb. II. 12.",
-        "normalized": "HEB 2:12"
+        "normalized": "HEB 2:12",
+        "quoted": "[Saying,] I will declare thy name unto my brethren, in the midst of the church will I sing praise unto thee."
       },
       "lxx": {
         "printed": "Ps. XXI. 23.",
-        "normalized": "PSA 21:23"
+        "normalized": "PSA 21:23",
+        "quoted": "I will declare thy name unto my brethren; in the midst of the church will I sing praise unto thee."
       },
       "hebrew": {
         "printed": "Ps. XXII. 23.",
@@ -1228,11 +1345,13 @@
       "pdf_page": 60,
       "nt": {
         "printed": "Matt. II. 15.",
-        "normalized": "MAT 2:15"
+        "normalized": "MAT 2:15",
+        "quoted": "[that it might be fulfilled which was spoken of the Lord by the prophet, saying,] Out of Egypt have I called my son."
       },
       "lxx": {
         "printed": "Hos. XI. 1.",
-        "normalized": "HOS 11:1"
+        "normalized": "HOS 11:1",
+        "quoted": "And out of Egypt did I call his children."
       },
       "hebrew": {
         "printed": "Hos. XI. 1.",
@@ -1248,11 +1367,13 @@
       "pdf_page": 60,
       "nt": {
         "printed": "Matt. XXVII. 46.",
-        "normalized": "MAT 27:46"
+        "normalized": "MAT 27:46",
+        "quoted": "Eli, Eli, lama sabachthani? that is to say, My God, my God, why hast thou forsaken me?"
       },
       "lxx": {
         "printed": "Ps. XXI. 2.",
-        "normalized": "PSA 21:2"
+        "normalized": "PSA 21:2",
+        "quoted": "O God, my God, attend to me; why hast thou forsaken me?"
       },
       "hebrew": {
         "printed": "Ps. XXII. 2.",
@@ -1268,11 +1389,13 @@
       "pdf_page": 61,
       "nt": {
         "printed": "Mark XV. 34.",
-        "normalized": "MRK 15:34"
+        "normalized": "MRK 15:34",
+        "quoted": "Eloe, Eloe, lama sabachthani? which is, being interpreted, My God, my God, why hast thou forsaken me?"
       },
       "lxx": {
         "printed": "Ps. XXI. 2.",
-        "normalized": "PSA 21:2"
+        "normalized": "PSA 21:2",
+        "quoted": "O God, my God, attend to me; Why hast thou forsaken me?"
       },
       "hebrew": {
         "printed": "Ps. XXII. 2.",
@@ -1288,11 +1411,13 @@
       "pdf_page": 62,
       "nt": {
         "printed": "1 Cor. III. 19.",
-        "normalized": "1CO 3:19"
+        "normalized": "1CO 3:19",
+        "quoted": "[For it is written,] He taketh the wise in their own craftiness."
       },
       "lxx": {
         "printed": "Job V. 13.",
-        "normalized": "JOB 5:13"
+        "normalized": "JOB 5:13",
+        "quoted": "who taketh the wise in their own prudence."
       },
       "hebrew": {
         "printed": "Job V. 13.",
@@ -1308,11 +1433,13 @@
       "pdf_page": 63,
       "nt": {
         "printed": "Matt. XXII. 44.",
-        "normalized": "MAT 22:44"
+        "normalized": "MAT 22:44",
+        "quoted": "[How then doth David in spirit call him Lord, saying,] The LORD said unto my Lord, Sit thou on my right hand, till I make thine enemies thy footstool?"
       },
       "lxx": {
         "printed": "Ps. CIX. 1.",
-        "normalized": "PSA 109:1"
+        "normalized": "PSA 109:1",
+        "quoted": "The LORD said unto my Lord, Sit thou at my right hand, until I make thine enemies thy footstool."
       },
       "hebrew": {
         "printed": "Ps. CX. 1.",
@@ -1328,11 +1455,13 @@
       "pdf_page": 64,
       "nt": {
         "printed": "Mark X. 19 fp.",
-        "normalized": "MRK 10:19"
+        "normalized": "MRK 10:19",
+        "quoted": "[Thou knowest the commandments,] Do not commit adultery, Do not kill, Do not steal, Do not bear false witness, Defraud not,"
       },
       "lxx": {
         "printed": "Exod. XX. 13–17.; Deut. V. 17–21.",
-        "normalized": "EXO 20:13-17; DEU 5:17-21"
+        "normalized": "EXO 20:13-17; DEU 5:17-21",
+        "quoted": "Thou shalt not commit adultery. Thou shalt not steal. Thou shalt not kill. Thou shalt not bear false witness. Thou shalt not covet."
       },
       "hebrew": {
         "printed": "Exod. XX. 13–17.; Deut. V. 17–21.",
@@ -1352,11 +1481,13 @@
       "pdf_page": 65,
       "nt": {
         "printed": "Mark XII. 36.",
-        "normalized": "MRK 12:36"
+        "normalized": "MRK 12:36",
+        "quoted": "[For David himself said by the Holy Ghost] The LORD said to my Lord, Sit thou on my right hand, till I make thine enemies thy footstool."
       },
       "lxx": {
         "printed": "Ps. CIX. 1.",
-        "normalized": "PSA 109:1"
+        "normalized": "PSA 109:1",
+        "quoted": "The LORD said unto my Lord, Sit thou at my right hand, until I make thine enemies thy footstool."
       },
       "hebrew": {
         "printed": "Ps. CX. 1.",
@@ -1372,11 +1503,13 @@
       "pdf_page": 66,
       "nt": {
         "printed": "Luke XVIII. 20 fp.",
-        "normalized": "LUK 18:20"
+        "normalized": "LUK 18:20",
+        "quoted": "[Thou knowest the commandments,] Do not commit adultery, Do not kill, Do not steal, Do not bear false witness,"
       },
       "lxx": {
         "printed": "Exod. XX. 13–16.; Deut. V. 17–20.",
-        "normalized": "EXO 20:13-16; DEU 5:17-20"
+        "normalized": "EXO 20:13-16; DEU 5:17-20",
+        "quoted": "Thou shalt not commit adultery. Thou shalt not steal. Thou shalt not kill. Thou shalt not bear false witness."
       },
       "hebrew": {
         "printed": "Exod. XX. 13–16.; Deut. V. 17–20.",
@@ -1396,11 +1529,13 @@
       "pdf_page": 66,
       "nt": {
         "printed": "Luke XX. 42–43.",
-        "normalized": "LUK 20:42-43"
+        "normalized": "LUK 20:42-43",
+        "quoted": "[And David himself saith in the book of Psalms,] The LORD said unto my Lord, Sit thou on my right hand, Till I make thine enemies thy footstool."
       },
       "lxx": {
         "printed": "Ps. CIX. 1.",
-        "normalized": "PSA 109:1"
+        "normalized": "PSA 109:1",
+        "quoted": "The LORD said unto my Lord, Sit thou at my right hand, until I make thine enemies thy footstool."
       },
       "hebrew": {
         "printed": "Ps. CX. 1.",
@@ -1416,11 +1551,13 @@
       "pdf_page": 67,
       "nt": {
         "printed": "Luke XXIII. 46.",
-        "normalized": "LUK 23:46"
+        "normalized": "LUK 23:46",
+        "quoted": "into thy hands I commend my spirit."
       },
       "lxx": {
         "printed": "Ps. XXX. 6.",
-        "normalized": "PSA 30:6"
+        "normalized": "PSA 30:6",
+        "quoted": "Into thy hands I will commend my spirit."
       },
       "hebrew": {
         "printed": "Ps. XXXI. 6.",
@@ -1436,11 +1573,13 @@
       "pdf_page": 67,
       "nt": {
         "printed": "John II. 17.",
-        "normalized": "JHN 2:17"
+        "normalized": "JHN 2:17",
+        "quoted": "[that it was written,] The zeal of thine house hath eaten me up."
       },
       "lxx": {
         "printed": "Ps. LXVIII. 10.",
-        "normalized": "PSA 68:10"
+        "normalized": "PSA 68:10",
+        "quoted": "For the zeal of thine house hath eaten me up."
       },
       "hebrew": {
         "printed": "Ps. LXIX. 10.",
@@ -1456,11 +1595,13 @@
       "pdf_page": 68,
       "nt": {
         "printed": "John XV. 25.",
-        "normalized": "JHN 15:25"
+        "normalized": "JHN 15:25",
+        "quoted": "[that the word might be fulfilled that is written in their law,] They hated me without a cause."
       },
       "lxx": {
         "printed": "Ps. XXXIV. 19 and LXVIII. 5.",
-        "normalized": "PSA 34:19; PSA 68:5"
+        "normalized": "PSA 34:19; PSA 68:5",
+        "quoted": "they that hate me without a cause."
       },
       "hebrew": {
         "printed": "Ps. XXXV. 19 and LXIX. 5.",
@@ -1496,11 +1637,13 @@
       "pdf_page": 69,
       "nt": {
         "printed": "John XIX. 36.",
-        "normalized": "JHN 19:36"
+        "normalized": "JHN 19:36",
+        "quoted": "[that the scripture should be fulfilled,] A bone of him shall not be broken."
       },
       "lxx": {
         "printed": "Exod. XII. 46.; Ps. XXXIII. 21.",
-        "normalized": "EXO 12:46; PSA 33:21"
+        "normalized": "EXO 12:46; PSA 33:21",
+        "quoted": "ye shall not break a bone thereof."
       },
       "hebrew": {
         "printed": "Exod. XII. 46.; Ps. XXXIV. 21.",
@@ -1517,11 +1660,13 @@
       "pdf_page": 70,
       "nt": {
         "printed": "Acts III. 25.",
-        "normalized": "ACT 3:25"
+        "normalized": "ACT 3:25",
+        "quoted": "[saying unto Abraham,] And in thy seed shall all the kindreds of the earth be blessed."
       },
       "lxx": {
         "printed": "Gen. XXII. 18.",
-        "normalized": "GEN 22:18"
+        "normalized": "GEN 22:18",
+        "quoted": "And in thy seed shall all the nations of the earth be blessed."
       },
       "hebrew": {
         "printed": "Gen. XXII. 18.",
@@ -1537,11 +1682,13 @@
       "pdf_page": 70,
       "nt": {
         "printed": "Rom. III. 4.",
-        "normalized": "ROM 3:4"
+        "normalized": "ROM 3:4",
+        "quoted": "[as it is written,] That thou mightest be justified in thy sayings, and mightest overcome when thou art judged."
       },
       "lxx": {
         "printed": "Ps. L. 6.",
-        "normalized": "PSA 50:6"
+        "normalized": "PSA 50:6",
+        "quoted": "that thou mightest be justified in thy sayings, and mightest overcome when thou art judged."
       },
       "hebrew": {
         "printed": "Ps. LI. 6.",
@@ -1557,11 +1704,13 @@
       "pdf_page": 71,
       "nt": {
         "printed": "Rom. III. 18.",
-        "normalized": "ROM 3:18"
+        "normalized": "ROM 3:18",
+        "quoted": "There is no fear of God before their eyes."
       },
       "lxx": {
         "printed": "Ps. XXXV. 2.",
-        "normalized": "PSA 35:2"
+        "normalized": "PSA 35:2",
+        "quoted": "There is no fear of God before his eyes."
       },
       "hebrew": {
         "printed": "Ps. XXXVI. 2.",
@@ -1577,11 +1726,13 @@
       "pdf_page": 71,
       "nt": {
         "printed": "Rom. X. 19.",
-        "normalized": "ROM 10:19"
+        "normalized": "ROM 10:19",
+        "quoted": "[Moses saith,] I will provoke you to jealousy by them that are no people, and by a foolish nation I will anger you."
       },
       "lxx": {
         "printed": "Deut. XXXII. 21.",
-        "normalized": "DEU 32:21"
+        "normalized": "DEU 32:21",
+        "quoted": "and I will provoke them to jealousy by them that are no people, and by a foolish nation I will anger them."
       },
       "hebrew": {
         "printed": "Deut. XXXII. 21.",
@@ -1597,11 +1748,13 @@
       "pdf_page": 71,
       "nt": {
         "printed": "Rom. XV. 11.",
-        "normalized": "ROM 15:11"
+        "normalized": "ROM 15:11",
+        "quoted": "[And again,] Praise the Lord, all ye Gentiles; and laud him, all ye people."
       },
       "lxx": {
         "printed": "Ps. CXVI. 1.",
-        "normalized": "PSA 116:1"
+        "normalized": "PSA 116:1",
+        "quoted": "Praise the Lord, all ye nations; laud him, all ye people."
       },
       "hebrew": {
         "printed": "Ps. CXVII. 1.",
@@ -1617,11 +1770,13 @@
       "pdf_page": 72,
       "nt": {
         "printed": "1 Cor. III. 20.",
-        "normalized": "1CO 3:20"
+        "normalized": "1CO 3:20",
+        "quoted": "[And again,] The Lord knoweth the thoughts of the wise, that they are vain."
       },
       "lxx": {
         "printed": "Ps. XCIII. 11.",
-        "normalized": "PSA 93:11"
+        "normalized": "PSA 93:11",
+        "quoted": "The Lord knoweth the thoughts of men that they are vain."
       },
       "hebrew": {
         "printed": "Ps. XCIV. 11.",
@@ -1637,11 +1792,13 @@
       "pdf_page": 72,
       "nt": {
         "printed": "1 Cor. XV. 27.",
-        "normalized": "1CO 15:27"
+        "normalized": "1CO 15:27",
+        "quoted": "[For] he hath put all things under his feet."
       },
       "lxx": {
         "printed": "Ps. VIII. 7.",
-        "normalized": "PSA 8:7"
+        "normalized": "PSA 8:7",
+        "quoted": "thou hast put all things under his feet."
       },
       "hebrew": {
         "printed": "Ps. VIII. 7.",
@@ -1657,11 +1814,13 @@
       "pdf_page": 73,
       "nt": {
         "printed": "Eph. IV. 8.",
-        "normalized": "EPH 4:8"
+        "normalized": "EPH 4:8",
+        "quoted": "[Wherefore he saith,] When he ascended up on high, he led captivity captive, and gave gifts unto men."
       },
       "lxx": {
         "printed": "Ps. LXVII. 19.",
-        "normalized": "PSA 67:19"
+        "normalized": "PSA 67:19",
+        "quoted": "When thou didst ascend on high, thou didst lead captivity captive, thou didst receive gifts for men."
       },
       "hebrew": {
         "printed": "Ps. LXVIII. 19.",
@@ -1677,11 +1836,13 @@
       "pdf_page": 74,
       "nt": {
         "printed": "Heb. I. 7.",
-        "normalized": "HEB 1:7"
+        "normalized": "HEB 1:7",
+        "quoted": "[he saith,] Who maketh his angels spirits, and his ministers a flame of fire."
       },
       "lxx": {
         "printed": "Ps. CIII. 4.",
-        "normalized": "PSA 103:4"
+        "normalized": "PSA 103:4",
+        "quoted": "Who maketh his angels spirits and his ministers a flaming fire."
       },
       "hebrew": {
         "printed": "Ps. CIV. 4.",
@@ -1698,11 +1859,13 @@
       "pdf_page": 74,
       "nt": {
         "printed": "Heb. VI. 14.",
-        "normalized": "HEB 6:14"
+        "normalized": "HEB 6:14",
+        "quoted": "[Saying.] Surely blessing I will bless thee, and multiplying I will multiply thee."
       },
       "lxx": {
         "printed": "Gen. XXII. 17.",
-        "normalized": "GEN 22:17"
+        "normalized": "GEN 22:17",
+        "quoted": "Surely blessing I will bless thee, and multiplying I will multiply thy seed."
       },
       "hebrew": {
         "printed": "Gen. XXII. 17.",
@@ -1718,11 +1881,13 @@
       "pdf_page": 75,
       "nt": {
         "printed": "Heb. IX. 20.",
-        "normalized": "HEB 9:20"
+        "normalized": "HEB 9:20",
+        "quoted": "[Saying,] This is the blood of the testament which God hath enjoined unto you."
       },
       "lxx": {
         "printed": "Exod. XXIV. 8.",
-        "normalized": "EXO 24:8"
+        "normalized": "EXO 24:8",
+        "quoted": "Behold the blood of the covenant, which the Lord hath placed upon you."
       },
       "hebrew": {
         "printed": "Exod. XXIV. 8.",
@@ -1738,11 +1903,13 @@
       "pdf_page": 75,
       "nt": {
         "printed": "Heb. XIII. 5.",
-        "normalized": "HEB 13:5"
+        "normalized": "HEB 13:5",
+        "quoted": "[for he hath said,] I will never leave thee, nor forsake thee."
       },
       "lxx": {
         "printed": "Deut. XXXI. 6.",
-        "normalized": "DEU 31:6"
+        "normalized": "DEU 31:6",
+        "quoted": "he will neither leave thee nor forsake thee."
       },
       "hebrew": {
         "printed": "Deut. XXXI. 6.",
@@ -1774,11 +1941,13 @@
       "pdf_page": 76,
       "nt": {
         "printed": "James II. 11.",
-        "normalized": "JAS 2:11"
+        "normalized": "JAS 2:11",
+        "quoted": "[For he that said,] Do not commit adultery, [said also,] Do not kill."
       },
       "lxx": {
         "printed": "Exod. XX. 13 and 15.; Deut. V. 17 and 18.",
-        "normalized": "EXO 20:13; EXO 20:15; DEU 5:17; DEU 5:18"
+        "normalized": "EXO 20:13; EXO 20:15; DEU 5:17; DEU 5:18",
+        "quoted": "Thou shalt not commit adultery. Thou shalt not kill."
       },
       "hebrew": {
         "printed": "Exod. XX. 13 and 14.; Deut. V. 17 and 18.",
@@ -1795,11 +1964,13 @@
       "pdf_page": 77,
       "nt": {
         "printed": "1 Pet. II. 24.",
-        "normalized": "1PE 2:24"
+        "normalized": "1PE 2:24",
+        "quoted": "by whose stripes ye were healed."
       },
       "lxx": {
         "printed": "Is. LIII. 5.",
-        "normalized": "ISA 53:5"
+        "normalized": "ISA 53:5",
+        "quoted": "by his stripes we were healed."
       },
       "hebrew": {
         "printed": "Is. LIII. 5.",
@@ -1843,11 +2014,13 @@
       "pdf_page": 79,
       "nt": {
         "printed": "Matt. XV. 4 fp.",
-        "normalized": "MAT 15:4"
+        "normalized": "MAT 15:4",
+        "quoted": "[For God commanded, saying,] Honour thy father and mother."
       },
       "lxx": {
         "printed": "Exod. XX. 12.; Deut. V. 16.",
-        "normalized": "EXO 20:12; DEU 5:16"
+        "normalized": "EXO 20:12; DEU 5:16",
+        "quoted": "Honour thy father and thy mother."
       },
       "hebrew": {
         "printed": "Exod. XX. 12.; Deut. V. 16.",
@@ -1867,11 +2040,13 @@
       "pdf_page": 79,
       "nt": {
         "printed": "Matt. XIX. 19 fp.",
-        "normalized": "MAT 19:19"
+        "normalized": "MAT 19:19",
+        "quoted": "Honour thy father and thy mother;"
       },
       "lxx": {
         "printed": "Exod. XX. 12.",
-        "normalized": "EXO 20:12"
+        "normalized": "EXO 20:12",
+        "quoted": "Honour thy father and thy mother."
       },
       "hebrew": {
         "printed": "Exod. XX. 12.",
@@ -1890,11 +2065,13 @@
       "pdf_page": 79,
       "nt": {
         "printed": "Matt. XXI. 13 fp.",
-        "normalized": "MAT 21:13"
+        "normalized": "MAT 21:13",
+        "quoted": "[It is written,] My house shall be called the house of prayer."
       },
       "lxx": {
         "printed": "Is. LVI. 7.",
-        "normalized": "ISA 56:7"
+        "normalized": "ISA 56:7",
+        "quoted": "for my house shall be called a house of prayer for all nations."
       },
       "hebrew": {
         "printed": "Is. LVI. 7.",
@@ -1913,11 +2090,13 @@
       "pdf_page": 80,
       "nt": {
         "printed": "Matt. XXII. 32.",
-        "normalized": "MAT 22:32"
+        "normalized": "MAT 22:32",
+        "quoted": "[have ye not read that which was spoken unto you by God, saying,] I am the God of Abraham, and the God of Isaac, and the God of Jacob?"
       },
       "lxx": {
         "printed": "Exod. III. 6.",
-        "normalized": "EXO 3:6"
+        "normalized": "EXO 3:6",
+        "quoted": "[And He said] I am the God of thy father, the God of Abraham, and the God of Isaac, and the God of Jacob."
       },
       "hebrew": {
         "printed": "Exod. III. 6.",
@@ -1933,11 +2112,13 @@
       "pdf_page": 80,
       "nt": {
         "printed": "Mark X. 19 lp.",
-        "normalized": "MRK 10:19"
+        "normalized": "MRK 10:19",
+        "quoted": "Honour thy father and mother."
       },
       "lxx": {
         "printed": "Exod. XX. 12.; Deut. V. 16.",
-        "normalized": "EXO 20:12; DEU 5:16"
+        "normalized": "EXO 20:12; DEU 5:16",
+        "quoted": "Honour thy father and thy mother."
       },
       "hebrew": {
         "printed": "Exod. XX. 12.; Deut. V. 16.",
@@ -1957,11 +2138,13 @@
       "pdf_page": 81,
       "nt": {
         "printed": "Mark XII. 26.",
-        "normalized": "MRK 12:26"
+        "normalized": "MRK 12:26",
+        "quoted": "[have ye not read in the book of Moses, how in the bush God spake unto him, saying,] I am the God of Abraham, and the God of Isaac, and the God of Jacob?"
       },
       "lxx": {
         "printed": "Exod. III. 6.",
-        "normalized": "EXO 3:6"
+        "normalized": "EXO 3:6",
+        "quoted": "[and he said,] I am the God of thy father, the God of Abraham, and the God of Isaac, and the God of Jacob."
       },
       "hebrew": {
         "printed": "Exod. III. 6.",
@@ -1977,11 +2160,13 @@
       "pdf_page": 81,
       "nt": {
         "printed": "Luke IV. 10–11.",
-        "normalized": "LUK 4:10-11"
+        "normalized": "LUK 4:10-11",
+        "quoted": "[For it is written,] He shall give his angels charge over thee, to keep thee; And in their hands they shall bear thee up, lest at any time thou dash thy foot against a stone."
       },
       "lxx": {
         "printed": "Ps. XC. 11–12.",
-        "normalized": "PSA 90:11-12"
+        "normalized": "PSA 90:11-12",
+        "quoted": "For he shall give charge unto his angels concerning thee, to keep thee in all thy ways. In their hands they shall bear thee up, lest at any time thou dash thy foot against a stone."
       },
       "hebrew": {
         "printed": "Ps. XCI. 11–12.",
@@ -1997,11 +2182,13 @@
       "pdf_page": 82,
       "nt": {
         "printed": "Acts VII. 40.",
-        "normalized": "ACT 7:40"
+        "normalized": "ACT 7:40",
+        "quoted": "Make us gods to go before us; for as for this Moses, which brought us out of the land of Egypt, we wot not what is become of him."
       },
       "lxx": {
         "printed": "Exod. XXXII. 1 or 23.",
         "normalized": "EXO 32:1",
+        "quoted": "make us gods which shall go before us; for as for this Moses, the man that brought us out of the land of Egypt, we wot not what is become of him.",
         "alternative_normalized": [
           "EXO 32:23"
         ]
@@ -2024,11 +2211,13 @@
       "pdf_page": 82,
       "nt": {
         "printed": "Rom. X. 5.",
-        "normalized": "ROM 10:5"
+        "normalized": "ROM 10:5",
+        "quoted": "[For Moses describeth..] That the man which doeth those things shall live by them."
       },
       "lxx": {
         "printed": "Lev. XVIII. 5.",
-        "normalized": "LEV 18:5"
+        "normalized": "LEV 18:5",
+        "quoted": "which if a man do, he shall live in them."
       },
       "hebrew": {
         "printed": "Lev. XVIII. 5.",
@@ -2044,11 +2233,13 @@
       "pdf_page": 83,
       "nt": {
         "printed": "Rom. XV. 9.",
-        "normalized": "ROM 15:9"
+        "normalized": "ROM 15:9",
+        "quoted": "[as it is written,] For this cause I will confess to thee among the Gentiles, and sing unto thy name."
       },
       "lxx": {
         "printed": "Ps. XVII. 50.",
-        "normalized": "PSA 17:50"
+        "normalized": "PSA 17:50",
+        "quoted": "For this cause I will confess to thee, O Lord, among the Gentiles, and will sing unto thy name."
       },
       "hebrew": {
         "printed": "Ps. XVIII. 50.",
@@ -2064,11 +2255,13 @@
       "pdf_page": 83,
       "nt": {
         "printed": "Gal. III. 12.",
-        "normalized": "GAL 3:12"
+        "normalized": "GAL 3:12",
+        "quoted": "The man that doeth them shall live in them."
       },
       "lxx": {
         "printed": "Lev. XVIII. 5.",
-        "normalized": "LEV 18:5"
+        "normalized": "LEV 18:5",
+        "quoted": "which, if a man do, he shall live in them."
       },
       "hebrew": {
         "printed": "Lev. XVIII. 5.",
@@ -2084,11 +2277,13 @@
       "pdf_page": 85,
       "nt": {
         "printed": "Matt. XV. 4 lp.",
-        "normalized": "MAT 15:4"
+        "normalized": "MAT 15:4",
+        "quoted": "[and,] He that curseth father or mother, let him die the death."
       },
       "lxx": {
         "printed": "Exod. XXI. 16.",
-        "normalized": "EXO 21:16"
+        "normalized": "EXO 21:16",
+        "quoted": "He that curseth his father or his mother shall die the death."
       },
       "hebrew": {
         "printed": "Exod. XXI. 17.",
@@ -2107,11 +2302,13 @@
       "pdf_page": 85,
       "nt": {
         "printed": "Mark VII. 10 lp.",
-        "normalized": "MRK 7:10"
+        "normalized": "MRK 7:10",
+        "quoted": "[and,] Whoso curseth father or mother, let him die the death."
       },
       "lxx": {
         "printed": "Exod. XXI. 16.",
-        "normalized": "EXO 21:16"
+        "normalized": "EXO 21:16",
+        "quoted": "He that curseth his father or his mother shall die the death."
       },
       "hebrew": {
         "printed": "Exod. XXI. 17.",
@@ -2130,11 +2327,13 @@
       "pdf_page": 85,
       "nt": {
         "printed": "Luke II. 23.",
-        "normalized": "LUK 2:23"
+        "normalized": "LUK 2:23",
+        "quoted": "[(As it is written in the law of the Lord,] Every male that openeth the womb shall be called holy to the Lord.)"
       },
       "lxx": {
         "printed": "Exod. XIII. 2.",
-        "normalized": "EXO 13:2"
+        "normalized": "EXO 13:2",
+        "quoted": "Sanctify to me every first-born, first-produced, opening every womb."
       },
       "hebrew": {
         "printed": "Exod. XIII. 2.",
@@ -2150,11 +2349,13 @@
       "pdf_page": 86,
       "nt": {
         "printed": "Luke XIX. 46 fp.",
-        "normalized": "LUK 19:46"
+        "normalized": "LUK 19:46",
+        "quoted": "[It is written,] My house is the house of prayer."
       },
       "lxx": {
         "printed": "Is. LVI. 7.",
-        "normalized": "ISA 56:7"
+        "normalized": "ISA 56:7",
+        "quoted": "for my house shall be called a house of prayer for all nations."
       },
       "hebrew": {
         "printed": "Is. LVI. 7.",
@@ -2173,11 +2374,13 @@
       "pdf_page": 87,
       "nt": {
         "printed": "John VIII. 17.",
-        "normalized": "JHN 8:17"
+        "normalized": "JHN 8:17",
+        "quoted": "[It is also written in your law,] that the testimony of two men is true."
       },
       "lxx": {
         "printed": "Deut. XIX. 15.",
-        "normalized": "DEU 19:15"
+        "normalized": "DEU 19:15",
+        "quoted": "at the mouth of two witnesses, or at the mouth of three witnesses, shall every word be established."
       },
       "hebrew": {
         "printed": "Deut. XIX. 15.",
@@ -2193,11 +2396,13 @@
       "pdf_page": 87,
       "nt": {
         "printed": "Acts I. 20 fp.",
-        "normalized": "ACT 1:20"
+        "normalized": "ACT 1:20",
+        "quoted": "[For it is written in the book of Psalms,] Let his habitation be desolate, and let no man dwell therein."
       },
       "lxx": {
         "printed": "Ps. LXVIII. 26.",
-        "normalized": "PSA 68:26"
+        "normalized": "PSA 68:26",
+        "quoted": "Let their habitation be made desolate, and let there be no dweller in their tents."
       },
       "hebrew": {
         "printed": "Ps. LXIX. 26.",
@@ -2216,11 +2421,16 @@
       "pdf_page": 88,
       "nt": {
         "printed": "Acts VII. 32.",
-        "normalized": "ACT 7:32"
+        "normalized": "ACT 7:32",
+        "quoted": "[the voice of the Lord came unto him,] Saying, I am the God of thy fathers, the God of Abraham, and the God of Isaac, and the God of Jacob."
       },
       "lxx": {
         "printed": "Exod. III. 6.; ver. 15.",
-        "normalized": "EXO 3:6; EXO 3:15"
+        "normalized": "EXO 3:6; EXO 3:15",
+        "quoted": [
+          "I am the God of thy father, the God of Abraham, and the God of Isaac, and the God of Jacob.",
+          "The LORD, the God of our fathers, God of Abraham and God of Isaac and God of Jacob"
+        ]
       },
       "hebrew": {
         "printed": "Exod. III. 6.; ver. 15.",
@@ -2237,11 +2447,13 @@
       "pdf_page": 88,
       "nt": {
         "printed": "Acts XIII. 34.",
-        "normalized": "ACT 13:34"
+        "normalized": "ACT 13:34",
+        "quoted": "[he said on this wise,] I will give you the sure mercies of David."
       },
       "lxx": {
         "printed": "Is. LV. 3.",
-        "normalized": "ISA 55:3"
+        "normalized": "ISA 55:3",
+        "quoted": "And I will make an everlasting covenant with you, the sure mercies of David."
       },
       "hebrew": {
         "printed": "Is. LV. 3.",
@@ -2257,11 +2469,16 @@
       "pdf_page": 89,
       "nt": {
         "printed": "2 Cor. VI. 16.",
-        "normalized": "2CO 6:16"
+        "normalized": "2CO 6:16",
+        "quoted": "[as GOD hath said,] I will dwell in them, and walk in them; and I will be their GOD, and they shall be my people."
       },
       "lxx": {
         "printed": "Lev. XXVI. 11–12.; Ezek. XXXVII. 27.",
-        "normalized": "LEV 26:11-12; EZK 37:27"
+        "normalized": "LEV 26:11-12; EZK 37:27",
+        "quoted": [
+          "And I will set my tabernacle among you: and I will walk among you, and I will be your GOD, and ye shall be unto me a people.",
+          "And my tabernacle shall be among them, and I will be to them a GOD, and they shall be my people."
+        ]
       },
       "hebrew": {
         "printed": "Lev. XXVI. 11–12.; Ezek. XXXVII. 27.",
@@ -2277,11 +2494,16 @@
       "pdf_page": 90,
       "nt": {
         "printed": "Gal. III. 8.",
-        "normalized": "GAL 3:8"
+        "normalized": "GAL 3:8",
+        "quoted": "[And the Scripture, foreseeing ... preached before the gospel unto Abraham, saying,] In thee shall all nations be blessed."
       },
       "lxx": {
         "printed": "Gen. XII. 3.; Gen. XVIII. 18.",
-        "normalized": "GEN 12:3; GEN 18:18"
+        "normalized": "GEN 12:3; GEN 18:18",
+        "quoted": [
+          "and in thee shall all the tribes of the earth be blessed.",
+          "and all the nations of the earth shall be blessed in him."
+        ]
       },
       "hebrew": {
         "printed": "Gen. XII. 3.; Gen. XVIII. 18.",
@@ -2298,11 +2520,13 @@
       "pdf_page": 91,
       "nt": {
         "printed": "1 Pet. II. 9.",
-        "normalized": "1PE 2:9"
+        "normalized": "1PE 2:9",
+        "quoted": "But ye are — a royal priesthood, an holy nation."
       },
       "lxx": {
         "printed": "Exod. XIX. 6.",
-        "normalized": "EXO 19:6"
+        "normalized": "EXO 19:6",
+        "quoted": "And ye shall be unto me a royal priesthood, and a holy nation."
       },
       "hebrew": {
         "printed": "Exod. XIX. 6.",
@@ -2318,11 +2542,13 @@
       "pdf_page": 92,
       "nt": {
         "printed": "Matt. XIX. 4.",
-        "normalized": "MAT 19:4"
+        "normalized": "MAT 19:4",
+        "quoted": "[Have ye not read, that] he which made them at the beginning made them male and female."
       },
       "lxx": {
         "printed": "Gen. I. 27.; Gen. V. 2.",
-        "normalized": "GEN 1:27; GEN 5:2"
+        "normalized": "GEN 1:27; GEN 5:2",
+        "quoted": "male and female made he them."
       },
       "hebrew": {
         "printed": "Gen. I. 27.; Gen. V. 2.",
@@ -2339,11 +2565,13 @@
       "pdf_page": 92,
       "nt": {
         "printed": "Mark X. 6.",
-        "normalized": "MRK 10:6"
+        "normalized": "MRK 10:6",
+        "quoted": "But from the beginning of the creation GOD made them male and female."
       },
       "lxx": {
         "printed": "Gen. I. 27.; Gen. V. 2.",
-        "normalized": "GEN 1:27; GEN 5:2"
+        "normalized": "GEN 1:27; GEN 5:2",
+        "quoted": "male and female made He them."
       },
       "hebrew": {
         "printed": "Gen. I. 27.; Gen. V. 2.",
@@ -2360,11 +2588,13 @@
       "pdf_page": 93,
       "nt": {
         "printed": "John XIII. 18.",
-        "normalized": "JHN 13:18"
+        "normalized": "JHN 13:18",
+        "quoted": "[that the scripture may be fulfilled,] He that eateth bread with me hath lifted up his heel against me."
       },
       "lxx": {
         "printed": "Ps. XL. 10.",
-        "normalized": "PSA 40:10"
+        "normalized": "PSA 40:10",
+        "quoted": "he that eateth my bread, lifted up his heel against me."
       },
       "hebrew": {
         "printed": "Ps. XLI. 10.",
@@ -2380,11 +2610,13 @@
       "pdf_page": 94,
       "nt": {
         "printed": "Rom. III. 11–12.",
-        "normalized": "ROM 3:11-12"
+        "normalized": "ROM 3:11-12",
+        "quoted": "There is none that understandeth, there is none that seeketh after GOD. They are all gone out of the way, they are together become unprofitable; there is none that doeth good, no, not one."
       },
       "lxx": {
         "printed": "Ps. XIII. 2–3.",
-        "normalized": "PSA 13:2-3"
+        "normalized": "PSA 13:2-3",
+        "quoted": "to see if there is any one that understandeth, or that seeketh after GOD. They are all gone out of the way, they are together become unprofitable; there is none that doeth good, there is not even one."
       },
       "hebrew": {
         "printed": "Ps. XIV. 2–3.",
@@ -2400,11 +2632,13 @@
       "pdf_page": 94,
       "nt": {
         "printed": "1 Cor. XV. 45.",
-        "normalized": "1CO 15:45"
+        "normalized": "1CO 15:45",
+        "quoted": "[and so it is written,] The first man Adam was made a living soul."
       },
       "lxx": {
         "printed": "Gen. II. 7.",
-        "normalized": "GEN 2:7"
+        "normalized": "GEN 2:7",
+        "quoted": "and the man became a living soul."
       },
       "hebrew": {
         "printed": "Gen. II. 7.",
@@ -2420,11 +2654,13 @@
       "pdf_page": 95,
       "nt": {
         "printed": "Heb. IV. 4.",
-        "normalized": "HEB 4:4"
+        "normalized": "HEB 4:4",
+        "quoted": "[For he spoke in a certain place of the seventh day on this wise,] And GOD did rest the seventh day from all his works."
       },
       "lxx": {
         "printed": "Gen. II. 2.",
-        "normalized": "GEN 2:2"
+        "normalized": "GEN 2:2",
+        "quoted": "and he rested on the seventh day from all his works."
       },
       "hebrew": {
         "printed": "Gen. II. 2.",
@@ -2440,11 +2676,13 @@
       "pdf_page": 95,
       "nt": {
         "printed": "Heb. XII. 21.",
-        "normalized": "HEB 12:21"
+        "normalized": "HEB 12:21",
+        "quoted": "[Moses said,] I exceedingly fear and quake."
       },
       "lxx": {
         "printed": "Deut. IX. 19.",
-        "normalized": "DEU 9:19"
+        "normalized": "DEU 9:19",
+        "quoted": "and I was greatly terrified."
       },
       "hebrew": {
         "printed": "Deut. IX. 19.",
@@ -2460,11 +2698,13 @@
       "pdf_page": 96,
       "nt": {
         "printed": "Matt. XI. 10.",
-        "normalized": "MAT 11:10"
+        "normalized": "MAT 11:10",
+        "quoted": "[For this is he, of whom it is written,] Behold, I send my messenger before thy face, which shall prepare thy way before thee."
       },
       "lxx": {
         "printed": "Mal. III. 1.",
-        "normalized": "MAL 3:1"
+        "normalized": "MAL 3:1",
+        "quoted": "Behold, I send forth my messenger, and he shall survey the way before my face."
       },
       "hebrew": {
         "printed": "Mal. III. 1.",
@@ -2480,11 +2720,13 @@
       "pdf_page": 97,
       "nt": {
         "printed": "Mark I. 2.",
-        "normalized": "MRK 1:2"
+        "normalized": "MRK 1:2",
+        "quoted": "[As it is written in the prophets,] Behold, I send my messenger before thy face, which shall prepare thy way before thee."
       },
       "lxx": {
         "printed": "Mal. III. 1.",
-        "normalized": "MAL 3:1"
+        "normalized": "MAL 3:1",
+        "quoted": "Behold I send forth my messenger, and he shall survey the way before my face."
       },
       "hebrew": {
         "printed": "Mal. III. 1.",
@@ -2501,11 +2743,13 @@
       "pdf_page": 98,
       "nt": {
         "printed": "Luke VII. 27.",
-        "normalized": "LUK 7:27"
+        "normalized": "LUK 7:27",
+        "quoted": "[This is he, of whom it is written,] Behold, I send my messenger before thy face, which shall prepare thy way before thee."
       },
       "lxx": {
         "printed": "Mal. III. 1.",
-        "normalized": "MAL 3:1"
+        "normalized": "MAL 3:1",
+        "quoted": "Behold I send forth my messenger, and he shall survey the way before my face."
       },
       "hebrew": {
         "printed": "Mal. III. 1.",
@@ -2521,11 +2765,13 @@
       "pdf_page": 98,
       "nt": {
         "printed": "John VI. 31.",
-        "normalized": "JHN 6:31"
+        "normalized": "JHN 6:31",
+        "quoted": "[as it is written,] He gave them bread from heaven to eat."
       },
       "lxx": {
         "printed": "Ps. LXXVII. 24.",
-        "normalized": "PSA 77:24"
+        "normalized": "PSA 77:24",
+        "quoted": "and He gave them bread of heaven."
       },
       "hebrew": {
         "printed": "Ps. LXXVIII. 24.",
@@ -2541,11 +2787,13 @@
       "pdf_page": 99,
       "nt": {
         "printed": "Rom. IX. 25.",
-        "normalized": "ROM 9:25"
+        "normalized": "ROM 9:25",
+        "quoted": "[As he saith also in Osee,] I will call them my people, which were not my people; and her beloved, which was not beloved."
       },
       "lxx": {
         "printed": "Hos. II. 23.",
-        "normalized": "HOS 2:23"
+        "normalized": "HOS 2:23",
+        "quoted": "and I will love her that was not beloved; and I will say to that which was not my people, Thou art my people."
       },
       "hebrew": {
         "printed": "Hos. II. 25.",
@@ -2561,11 +2809,13 @@
       "pdf_page": 100,
       "nt": {
         "printed": "1 Cor. X. 20.",
-        "normalized": "1CO 10:20"
+        "normalized": "1CO 10:20",
+        "quoted": "[But I say,] that the things which the Gentiles sacrifice, they sacrifice to devils and not to GOD."
       },
       "lxx": {
         "printed": "Deut. XXXII. 17.",
-        "normalized": "DEU 32:17"
+        "normalized": "DEU 32:17",
+        "quoted": "They sacrificed to devils and not to GOD."
       },
       "hebrew": {
         "printed": "Deut. XXXII. 17.",
@@ -2581,11 +2831,16 @@
       "pdf_page": 101,
       "nt": {
         "printed": "2 Cor. VI. 18.",
-        "normalized": "2CO 6:18"
+        "normalized": "2CO 6:18",
+        "quoted": "And (I) will be a Father unto you, and ye shall be my sons and daughters, [saith the LORD Almighty]."
       },
       "lxx": {
         "printed": "2 Kings VII. 8, 14.",
-        "normalized": "2SA 7:8; 2SA 7:14"
+        "normalized": "2SA 7:8; 2SA 7:14",
+        "quoted": [
+          "These things saith the LORD Almighty.",
+          "I will be to him a Father, and he shall be to me a son."
+        ]
       },
       "hebrew": {
         "printed": "2 Sam. VII. 8, 14.",
@@ -2601,11 +2856,13 @@
       "pdf_page": 101,
       "nt": {
         "printed": "1 Pet. II. 22.",
-        "normalized": "1PE 2:22"
+        "normalized": "1PE 2:22",
+        "quoted": "Who did no sin, neither was guile found in his mouth."
       },
       "lxx": {
         "printed": "Is. LIII. 9.",
-        "normalized": "ISA 53:9"
+        "normalized": "ISA 53:9",
+        "quoted": "for he did no iniquity, neither spoke guile with his mouth."
       },
       "hebrew": {
         "printed": "Is. LIII. 9.",
@@ -2622,11 +2879,13 @@
       "pdf_page": 102,
       "nt": {
         "printed": "Matt. II. 23.",
-        "normalized": "MAT 2:23"
+        "normalized": "MAT 2:23",
+        "quoted": "[that it might be fulfilled which was spoken by the prophets,] He shall be called a Nazarene."
       },
       "lxx": {
         "printed": "Is. XI. 1.",
-        "normalized": "ISA 11:1"
+        "normalized": "ISA 11:1",
+        "quoted": "and a flower shall arise out of his root."
       },
       "hebrew": {
         "printed": "Is. XI. 1.",
@@ -2642,11 +2901,13 @@
       "pdf_page": 104,
       "nt": {
         "printed": "Rom. III. 10.",
-        "normalized": "ROM 3:10"
+        "normalized": "ROM 3:10",
+        "quoted": "[As it is written,] There is none righteous, no, not one."
       },
       "lxx": {
         "printed": "Eccl. VII. 20.",
-        "normalized": "ECC 7:20"
+        "normalized": "ECC 7:20",
+        "quoted": "That there is not a just man on the earth, who will do good, and not sin."
       },
       "hebrew": {
         "printed": "Eccl. VII. 20.",
@@ -2662,11 +2923,13 @@
       "pdf_page": 105,
       "nt": {
         "printed": "Rom. XI. 3.",
-        "normalized": "ROM 11:3"
+        "normalized": "ROM 11:3",
+        "quoted": "[what the Scripture saith of Elias?]... Lord, they have killed thy prophets, and digged down thine altars; and I am left alone, and they seek my life."
       },
       "lxx": {
         "printed": "3 Kings XIX. 14.",
-        "normalized": "1KI 19:14"
+        "normalized": "1KI 19:14",
+        "quoted": "and they have thrown down thine altars, and slain thy prophets with the sword, and I only am left, and they seek my life to take it away."
       },
       "hebrew": {
         "printed": "1 Kings XIX. 14.",
@@ -2682,11 +2945,13 @@
       "pdf_page": 105,
       "nt": {
         "printed": "1 Cor. I. 31.",
-        "normalized": "1CO 1:31"
+        "normalized": "1CO 1:31",
+        "quoted": "[That, according as it is written,] He that glorieth, let him glory in the Lord."
       },
       "lxx": {
         "printed": "Jer. IX. 24.",
-        "normalized": "JER 9:24"
+        "normalized": "JER 9:24",
+        "quoted": "But let him that glorieth glory in this, to understand and know that I am the Lord."
       },
       "hebrew": {
         "printed": "Jer. IX. 23.",
@@ -2702,11 +2967,13 @@
       "pdf_page": 106,
       "nt": {
         "printed": "Gal. IV. 30.",
-        "normalized": "GAL 4:30"
+        "normalized": "GAL 4:30",
+        "quoted": "[Nevertheless what saith the Scripture?] Cast out the bond-woman and her son: for the son of the bondwoman shall not be heir with the son of the freewoman."
       },
       "lxx": {
         "printed": "Gen. XXI. 10.",
-        "normalized": "GEN 21:10"
+        "normalized": "GEN 21:10",
+        "quoted": "Cast out this bondwoman and her son; for the son of this bondwoman shall not inherit with my son Isaac."
       },
       "hebrew": {
         "printed": "Gen. XXI. 10.",
@@ -2722,11 +2989,13 @@
       "pdf_page": 107,
       "nt": {
         "printed": "1 Cor. XV. 25.",
-        "normalized": "1CO 15:25"
+        "normalized": "1CO 15:25",
+        "quoted": "till he hath put all enemies under his feet."
       },
       "lxx": {
         "printed": "Ps. CIX. 1.",
-        "normalized": "PSA 109:1"
+        "normalized": "PSA 109:1",
+        "quoted": "until I make thine enemies thy footstool."
       },
       "hebrew": {
         "printed": "Ps. CX. 1.",
@@ -2742,11 +3011,13 @@
       "pdf_page": 107,
       "nt": {
         "printed": "1 Pet. III. 10–12.",
-        "normalized": "1PE 3:10-12"
+        "normalized": "1PE 3:10-12",
+        "quoted": "For he that will love life, and see good days, let him refrain his tongue from evil, and his lips that they speak no guile; Let him eschew evil, and do good; let him seek peace, and ensue it. For the eyes of the Lord are over the righteous, and his ears are open unto their prayers; but the face of the Lord is against them that do evil."
       },
       "lxx": {
         "printed": "Ps. XXXIII. 13–17.",
-        "normalized": "PSA 33:13-17"
+        "normalized": "PSA 33:13-17",
+        "quoted": "What man is he that desireth life, that loveth to see good days? Refrain thy tongue from evil, and thy lips from speaking guile: turn away from evil, and do good; seek peace, and pursue it. The eyes of the Lord are upon the righteous, and his ears are open unto their prayer; but the face of the Lord is against them that do evil."
       },
       "hebrew": {
         "printed": "Ps. XXXIV. 13–17.",
@@ -2762,11 +3033,13 @@
       "pdf_page": 110,
       "nt": {
         "printed": "Heb. XII. 20.",
-        "normalized": "HEB 12:20"
+        "normalized": "HEB 12:20",
+        "quoted": "[For they could not endure that which was commanded,] And if so much as a beast touch the mountain, it shall be stoned, or thrust through with a dart."
       },
       "lxx": {
         "printed": "Exod. XIX. 12–13.",
-        "normalized": "EXO 19:12-13"
+        "normalized": "EXO 19:12-13",
+        "quoted": "Every one that toucheth the mountain shall surely die. ... for it shall be stoned with stones or thrust through with a dart; whether it be beast, or whether it be man, it shall not live."
       },
       "hebrew": {
         "printed": "Exod. XIX. 12–13.",
@@ -2782,11 +3055,13 @@
       "pdf_page": 111,
       "nt": {
         "printed": "2 Cor. VI. 17.",
-        "normalized": "2CO 6:17"
+        "normalized": "2CO 6:17",
+        "quoted": "[Wherefore] come out from among them, and be ye separate, [saith the Lord,] and touch not the unclean thing; and I will receive you."
       },
       "lxx": {
         "printed": "Is. LII. 11–12.",
-        "normalized": "ISA 52:11-12"
+        "normalized": "ISA 52:11-12",
+        "quoted": "go ye out from thence, and touch not the unclean thing; go ye out from the midst of her; for the Lord shall go first before you."
       },
       "hebrew": {
         "printed": "Is. LII. 11–12.",
@@ -2802,11 +3077,13 @@
       "pdf_page": 112,
       "nt": {
         "printed": "Matt. IV. 6.",
-        "normalized": "MAT 4:6"
+        "normalized": "MAT 4:6",
+        "quoted": "[for it is written,] He shall give his angels charge concerning thee: and in their hands they shall bear thee up, lest at any time thou dash thy foot against a stone."
       },
       "lxx": {
         "printed": "Ps. XC. 11, 12.",
-        "normalized": "PSA 90:11-12"
+        "normalized": "PSA 90:11-12",
+        "quoted": "For he shall give his angels charge concerning thee, to keep thee in all thy ways. In their hands they shall bear thee up, lest at any time thou dash thy foot against a stone."
       },
       "hebrew": {
         "printed": "Ps. XCI. 11, 12.",
@@ -2822,11 +3099,13 @@
       "pdf_page": 113,
       "nt": {
         "printed": "Rom. VII. 7.",
-        "normalized": "ROM 7:7"
+        "normalized": "ROM 7:7",
+        "quoted": "[the law had said] Thou shalt not covet."
       },
       "lxx": {
         "printed": "Exod. XX. 17.; Deut. V. 21.",
-        "normalized": "EXO 20:17; DEU 5:21"
+        "normalized": "EXO 20:17; DEU 5:21",
+        "quoted": "Thou shalt not covet thy neighbour's wife etc."
       },
       "hebrew": {
         "printed": "Exod. XX. 17.; Deut. V. 21.",
@@ -2843,11 +3122,13 @@
       "pdf_page": 114,
       "nt": {
         "printed": "Matt. XXII. 24.",
-        "normalized": "MAT 22:24"
+        "normalized": "MAT 22:24",
+        "quoted": "[Moses said,] If a man die, having no children, his brother shall marry his wife, and raise up seed unto his brother."
       },
       "lxx": {
         "printed": "Deut. XXV. 5.",
-        "normalized": "DEU 25:5"
+        "normalized": "DEU 25:5",
+        "quoted": "And if brethren should dwell together, and one of them should die, and should not have seed, the wife of the dead shall not marry without, to a man not related; her husband's brother shall go in unto her, and take her to himself for wife, and dwell with her."
       },
       "hebrew": {
         "printed": "Deut. XXV. 5.",
@@ -2863,11 +3144,13 @@
       "pdf_page": 115,
       "nt": {
         "printed": "Mark XII. 19.",
-        "normalized": "MRK 12:19"
+        "normalized": "MRK 12:19",
+        "quoted": "[Moses wrote unto us,] If a man's brother die, and leave his wife behind him, and leave no children, that his brother should take his wife, and raise up seed unto his brother."
       },
       "lxx": {
         "printed": "Deut. XXV. 5.",
-        "normalized": "DEU 25:5"
+        "normalized": "DEU 25:5",
+        "quoted": "And if brethren should dwell together, and one of them should die, and should not have seed, the wife of the dead shall not marry without, to a man not related; her husband's brother shall go in unto her, and take her to himself for wife, and dwell with her."
       },
       "hebrew": {
         "printed": "Deut. XXV. 5.",
@@ -2883,11 +3166,13 @@
       "pdf_page": 116,
       "nt": {
         "printed": "Luke XX. 28.",
-        "normalized": "LUK 20:28"
+        "normalized": "LUK 20:28",
+        "quoted": "[Moses wrote unto us,] If any man's brother die, having a wife, and he die without children, that his brother should take his wife, and raise up seed unto his brother."
       },
       "lxx": {
         "printed": "Deut. XXV. 5.",
-        "normalized": "DEU 25:5"
+        "normalized": "DEU 25:5",
+        "quoted": "And if brethren should dwell together, and one of them should die, and should not have seed, the wife of the dead shall not marry without, to a man not related; her husband's brother shall go in unto her, and take her to himself for wife, and dwell with her."
       },
       "hebrew": {
         "printed": "Deut. XXV. 5.",
@@ -2903,11 +3188,13 @@
       "pdf_page": 118,
       "nt": {
         "printed": "Acts II. 17–21.",
-        "normalized": "ACT 2:17-21"
+        "normalized": "ACT 2:17-21",
+        "quoted": "[this is that which was spoken by the prophet Joel;] And it shall come to pass in the last days, saith GOD, I will pour out of my spirit upon all flesh; and your sons and your daughters shall prophesy, and your young men shall see visions, and your old men shall dream dreams: And on my servants and on my handmaidens I will pour out in those days of my Spirit; and they shall prophesy: And I will shew wonders in heaven above, and signs in the earth beneath; blood, and fire, and vapour of smoke: The sun shall be turned into darkness, and the moon into blood, before that great and notable day of the Lord come; And it shall come to pass, that whosoever shall call on the name of the Lord shall be saved."
       },
       "lxx": {
         "printed": "Joel II. 28–32.",
-        "normalized": "JOL 2:28-32"
+        "normalized": "JOL 2:28-32",
+        "quoted": "And it shall come to pass after these things, that I will pour out of my spirit upon all flesh: and your sons and your daughters shall prophesy, and your old men shall dream dreams, and your young men shall see visions: And on my servants and on my handmaidens in those days will I pour out of my spirit. And I will shew wonders in heaven, and upon the earth; blood, and fire, and vapour of smoke: The sun shall be turned into darkness, and the moon into blood, before that great and notable day of the Lord come. And it shall come to pass, that whosoever shall call on the name of the Lord shall be saved."
       },
       "hebrew": {
         "printed": "Joel III. 1–5.",
@@ -2923,11 +3210,16 @@
       "pdf_page": 122,
       "nt": {
         "printed": "Acts XIII. 22.",
-        "normalized": "ACT 13:22"
+        "normalized": "ACT 13:22",
+        "quoted": "[to whom also he gave testimony, and said,] I have found David the son of Jesse, a man after mine own heart, which shall fulfil all my will."
       },
       "lxx": {
         "printed": "Ps. LXXXVIII. 21.; 1 Kings XIII. 14.",
-        "normalized": "PSA 88:21; 1SA 13:14"
+        "normalized": "PSA 88:21; 1SA 13:14",
+        "quoted": [
+          "I have found David my servant.",
+          "The Lord will seek for Himself a man after His own heart."
+        ]
       },
       "hebrew": {
         "printed": "Ps. LXXXIX. 21.; 1 Sam. XIII. 14.",
@@ -2944,11 +3236,16 @@
       "pdf_page": 123,
       "nt": {
         "printed": "Rom. XI. 8.",
-        "normalized": "ROM 11:8"
+        "normalized": "ROM 11:8",
+        "quoted": "[(According as it is written,] GOD hath given them the spirit of slumber, eyes that they should not see, and ears that they should not hear;) unto this day."
       },
       "lxx": {
         "printed": "Deut. XXIX. 4.; Is. XXIX. 10.",
-        "normalized": "DEU 29:4; ISA 29:10"
+        "normalized": "DEU 29:4; ISA 29:10",
+        "quoted": [
+          "Yet the Lord GOD hath not given you a heart to know, and eyes to see, and ears to hear, unto this day.",
+          "For the Lord hath made you drink the spirit of deep sleep, and he shall close their eyes."
+        ]
       },
       "hebrew": {
         "printed": "Deut. XXIX. 3.; Is. XXIX. 10.",
@@ -2965,11 +3262,13 @@
       "pdf_page": 125,
       "nt": {
         "printed": "Matt. IV. 7.",
-        "normalized": "MAT 4:7"
+        "normalized": "MAT 4:7",
+        "quoted": "[It is written again] Thou shalt not tempt the Lord thy GOD."
       },
       "lxx": {
         "printed": "Deut. VI. 16.",
-        "normalized": "DEU 6:16"
+        "normalized": "DEU 6:16",
+        "quoted": "Thou shalt not tempt the Lord thy GOD."
       },
       "hebrew": {
         "printed": "Deut. VI. 16.",
@@ -2985,11 +3284,13 @@
       "pdf_page": 126,
       "nt": {
         "printed": "Matt. XIII. 14–15.",
-        "normalized": "MAT 13:14-15"
+        "normalized": "MAT 13:14-15",
+        "quoted": "[And in them is fulfilled the prophecy of Esaias, which saith,] By hearing ye shall hear, and shall not understand; and seeing ye shall see, and shall not perceive; For this people's heart is waxed gross, and their ears are dull of hearing, and their eyes they have closed; lest at any time they should see with their eyes, and hear with their ears, and should understand with their heart, and should be converted and I should heal them."
       },
       "lxx": {
         "printed": "Is. VI. 9–10.",
-        "normalized": "ISA 6:9-10"
+        "normalized": "ISA 6:9-10",
+        "quoted": "By hearing ye shall hear, and not understand; and seeing ye shall see, and not perceive; For the heart of this people is become gross, and their ears are dull of hearing, and their eyes they closed; lest they should see with their eyes, and hear with their ears, and understand with their heart, and should be converted, and I should heal them."
       },
       "hebrew": {
         "printed": "Is. VI. 9–10.",
@@ -3005,11 +3306,13 @@
       "pdf_page": 128,
       "nt": {
         "printed": "Luke IV. 12.",
-        "normalized": "LUK 4:12"
+        "normalized": "LUK 4:12",
+        "quoted": "[It is said,] Thou shalt not tempt the Lord thy GOD."
       },
       "lxx": {
         "printed": "Deut. VI. 16.",
-        "normalized": "DEU 6:16"
+        "normalized": "DEU 6:16",
+        "quoted": "Thou shalt not tempt the Lord thy GOD."
       },
       "hebrew": {
         "printed": "Deut. VI. 16.",
@@ -3025,11 +3328,13 @@
       "pdf_page": 128,
       "nt": {
         "printed": "Acts II. 25–28.",
-        "normalized": "ACT 2:25-28"
+        "normalized": "ACT 2:25-28",
+        "quoted": "[For David speaketh concerning him,] I foresaw the Lord always before my face, for He is on my right hand, that I should not be moved: Therefore did my heart rejoice, and my tongue was glad; moreover also my flesh shall rest in hope; Because thou wilt not leave my soul in hell, neither wilt thou suffer thine Holy One to see corruption. Thou hast made known to me the ways of life; thou shalt make me full of joy with thy countenance."
       },
       "lxx": {
         "printed": "Ps. XV. 8–11.",
-        "normalized": "PSA 15:8-11"
+        "normalized": "PSA 15:8-11",
+        "quoted": "I foresaw the Lord always before my face; for He is on my right hand, that I should not be moved; therefore my heart rejoiced, and my tongue was glad; moreover also my flesh shall rest in hope: because thou wilt not leave my soul in hell, neither wilt thou suffer thine Holy One to see corruption. Thou hast made known to me the ways of life; Thou shalt make me full of joy with thy countenance."
       },
       "hebrew": {
         "printed": "Ps. XVI. 8–11.",
@@ -3045,11 +3350,13 @@
       "pdf_page": 130,
       "nt": {
         "printed": "Acts VIII. 32–33.",
-        "normalized": "ACT 8:32-33"
+        "normalized": "ACT 8:32-33",
+        "quoted": "[The place of the scripture which he read was this,] He was led as a sheep to the slaughter; and like a lamb dumb before his shearer, so opened he not his mouth: In his humiliation his judgment was taken away: and who shall declare his generation? for his life is taken from the earth."
       },
       "lxx": {
         "printed": "Is. LIII. 7–8.",
-        "normalized": "ISA 53:7-8"
+        "normalized": "ISA 53:7-8",
+        "quoted": "he was led as a sheep to the slaughter, and as a lamb before the shearer is dumb, so He openeth not His mouth. In His humiliation His judgment was taken away; who shall declare His generation? for His life is taken from the earth:"
       },
       "hebrew": {
         "printed": "Is. LIII. 7–8.",
@@ -3065,11 +3372,13 @@
       "pdf_page": 135,
       "nt": {
         "printed": "Acts XXVIII. 26–27.",
-        "normalized": "ACT 28:26-27"
+        "normalized": "ACT 28:26-27",
+        "quoted": "[Saying,] Go unto this people, and say, Hearing ye shall hear, and shall not understand; and seeing ye shall see, and not perceive: For the heart of this people is waxed gross, and their ears are dull of hearing, and their eyes have they closed; lest they should see with their eyes, and hear with their ears, and understand with their heart, and should be converted, and I should heal them."
       },
       "lxx": {
         "printed": "Is. VI. 9–10.",
-        "normalized": "ISA 6:9-10"
+        "normalized": "ISA 6:9-10",
+        "quoted": "Go and say to this people, By hearing ye shall hear, and not understand; and seeing ye shall see and not perceive; For the heart of this people is become gross, and their ears are dull of hearing, and their eyes they closed; lest they should see with their eyes, and hear with their ears, and understand with their heart, and should be converted, and I should heal them."
       },
       "hebrew": {
         "printed": "Is. VI. 9–10.",
@@ -3085,11 +3394,13 @@
       "pdf_page": 137,
       "nt": {
         "printed": "Rom. IV. 7–8.",
-        "normalized": "ROM 4:7-8"
+        "normalized": "ROM 4:7-8",
+        "quoted": "Blessed are they whose iniquities are forgiven, and whose sins are covered. Blessed is the man to whom the Lord will not impute sin."
       },
       "lxx": {
         "printed": "Ps. XXXI. 1–2.",
-        "normalized": "PSA 31:1-2"
+        "normalized": "PSA 31:1-2",
+        "quoted": "Blessed are they whose iniquities are forgiven, and whose sins are covered. Blessed is the man to whom the Lord will not impute sin,"
       },
       "hebrew": {
         "printed": "Ps. XXXII. 1–2.",
@@ -3105,11 +3416,13 @@
       "pdf_page": 137,
       "nt": {
         "printed": "Rom. X. 18.",
-        "normalized": "ROM 10:18"
+        "normalized": "ROM 10:18",
+        "quoted": "their sound went into all the earth, and their words unto the ends of the world."
       },
       "lxx": {
         "printed": "Ps. XVIII. 5.",
-        "normalized": "PSA 18:5"
+        "normalized": "PSA 18:5",
+        "quoted": "Their sound went into all the earth, and their words unto the ends of the world."
       },
       "hebrew": {
         "printed": "Ps. XIX. 5.",
@@ -3125,11 +3438,13 @@
       "pdf_page": 138,
       "nt": {
         "printed": "1 Cor. IX. 9.",
-        "normalized": "1CO 9:9"
+        "normalized": "1CO 9:9",
+        "quoted": "[For it is written in the law of Moses,] Thou shalt not muzzle the mouth of the ox that treadeth out the corn."
       },
       "lxx": {
         "printed": "Deut. XXV. 4.",
-        "normalized": "DEU 25:4"
+        "normalized": "DEU 25:4",
+        "quoted": "Thou shalt not muzzle an ox treading out the corn."
       },
       "hebrew": {
         "printed": "Deut. XXV. 4.",
@@ -3145,11 +3460,13 @@
       "pdf_page": 138,
       "nt": {
         "printed": "1 Cor. XV. 32.",
-        "normalized": "1CO 15:32"
+        "normalized": "1CO 15:32",
+        "quoted": "Let us eat and drink, for to morrow we die."
       },
       "lxx": {
         "printed": "Is. XXII. 13.",
-        "normalized": "ISA 22:13"
+        "normalized": "ISA 22:13",
+        "quoted": "Let us eat and drink, for to morrow we die."
       },
       "hebrew": {
         "printed": "Is. XXII. 13.",
@@ -3165,11 +3482,13 @@
       "pdf_page": 139,
       "nt": {
         "printed": "Gal. IV. 27.",
-        "normalized": "GAL 4:27"
+        "normalized": "GAL 4:27",
+        "quoted": "[For it is written,] Rejoice, thou barren that bearest not; break forth and cry, thou that travailest not: for the desolate hath many more children than she which hath an husband."
       },
       "lxx": {
         "printed": "Is. LIV. 1.",
-        "normalized": "ISA 54:1"
+        "normalized": "ISA 54:1",
+        "quoted": "Rejoice, thou barren that bearest not; break forth and cry, thou that travailest not: for more are the children of the desolate than of her that hath the husband."
       },
       "hebrew": {
         "printed": "Is. LIV. 1.",
@@ -3185,11 +3504,13 @@
       "pdf_page": 139,
       "nt": {
         "printed": "Heb. II. 13.",
-        "normalized": "HEB 2:13"
+        "normalized": "HEB 2:13",
+        "quoted": "[And again,] Behold I and the children which GOD hath given me."
       },
       "lxx": {
         "printed": "Is. VIII. 18.",
-        "normalized": "ISA 8:18"
+        "normalized": "ISA 8:18",
+        "quoted": "Behold I and the children which GOD hath given me"
       },
       "hebrew": {
         "printed": "Is. VIII. 18.",
@@ -3205,11 +3526,13 @@
       "pdf_page": 140,
       "nt": {
         "printed": "Acts VII. 35.",
-        "normalized": "ACT 7:35"
+        "normalized": "ACT 7:35",
+        "quoted": "Who made thee a ruler and a judge?"
       },
       "lxx": {
         "printed": "Exod. II. 14.",
-        "normalized": "EXO 2:14"
+        "normalized": "EXO 2:14",
+        "quoted": "Who made thee a ruler and a judge over us?"
       },
       "hebrew": {
         "printed": "Exod. II. 14.",
@@ -3225,11 +3548,13 @@
       "pdf_page": 141,
       "nt": {
         "printed": "Rom. XV. 12.",
-        "normalized": "ROM 15:12"
+        "normalized": "ROM 15:12",
+        "quoted": "[And again, Esaias saith,] There shall be a root of Jesse, and he that shall rise to reign over the Gentiles; in him shall the Gentiles trust."
       },
       "lxx": {
         "printed": "Is. XI. 10.",
-        "normalized": "ISA 11:10"
+        "normalized": "ISA 11:10",
+        "quoted": "And there shall be in that day a root of Jesse, and he that shall rise to rule over the Gentiles; in him shall the Gentiles trust."
       },
       "hebrew": {
         "printed": "Is. XI. 10.",
@@ -3245,11 +3570,13 @@
       "pdf_page": 141,
       "nt": {
         "printed": "Heb. XI. 21.",
-        "normalized": "HEB 11:21"
+        "normalized": "HEB 11:21",
+        "quoted": "Jacob...and worshipped, leaning upon the top of his staff."
       },
       "lxx": {
         "printed": "Gen. XLVII. 31.",
-        "normalized": "GEN 47:31"
+        "normalized": "GEN 47:31",
+        "quoted": "And Israel worshipped, leaning upon the top of his staff."
       },
       "hebrew": {
         "printed": "Gen. XLVII. 31.",
@@ -3265,11 +3592,13 @@
       "pdf_page": 143,
       "nt": {
         "printed": "Matt. XXI. 42.",
-        "normalized": "MAT 21:42"
+        "normalized": "MAT 21:42",
+        "quoted": "[Did ye never read in the Scriptures,] The stone which the builders rejected, the same is become the head of the corner: this is the Lord's doing, and it is marvellous in our eyes?"
       },
       "lxx": {
         "printed": "Ps. CXVII. 22–23.",
-        "normalized": "PSA 117:22-23"
+        "normalized": "PSA 117:22-23",
+        "quoted": "The stone which the builders rejected, the same is become the head of the corner. This was the Lord's doing, and it is marvellous in our eyes."
       },
       "hebrew": {
         "printed": "Ps. CXVIII. 22–23.",
@@ -3285,11 +3614,13 @@
       "pdf_page": 143,
       "nt": {
         "printed": "Mark XII. 10–11.",
-        "normalized": "MRK 12:10-11"
+        "normalized": "MRK 12:10-11",
+        "quoted": "[And have ye not read this scripture;] The stone which the builders rejected is become the head of the corner: This was the Lord's doing, and it is marvellous in our eyes?"
       },
       "lxx": {
         "printed": "Ps. CXVII. 22–23.",
-        "normalized": "PSA 117:22-23"
+        "normalized": "PSA 117:22-23",
+        "quoted": "The stone which the builders rejected, the same is become the head of the corner. This was the Lord's doing, and it is marvellous in our eyes."
       },
       "hebrew": {
         "printed": "Ps. CXVIII. 22–23.",
@@ -3306,11 +3637,13 @@
       "pdf_page": 144,
       "nt": {
         "printed": "Luke XX. 17.",
-        "normalized": "LUK 20:17"
+        "normalized": "LUK 20:17",
+        "quoted": "[What is this then that is written,] The stone which the builders rejected, the same is become the head of the corner?"
       },
       "lxx": {
         "printed": "Ps. CXVII. 22.",
-        "normalized": "PSA 117:22"
+        "normalized": "PSA 117:22",
+        "quoted": "The stone which the builders rejected, the same is become the head of the corner."
       },
       "hebrew": {
         "printed": "Ps. CXVIII. 22.",
@@ -3326,11 +3659,13 @@
       "pdf_page": 144,
       "nt": {
         "printed": "John XII. 38.",
-        "normalized": "JHN 12:38"
+        "normalized": "JHN 12:38",
+        "quoted": "[That the saying of Esaias the prophet might be fulfilled, which he spake,] Lord, who hath believed our report? and to whom hath the arm of the Lord been revealed."
       },
       "lxx": {
         "printed": "Is. LIII. 1.",
-        "normalized": "ISA 53:1"
+        "normalized": "ISA 53:1",
+        "quoted": "Lord, who hath believed our report? and to whom hath the arm of the Lord been revealed?"
       },
       "hebrew": {
         "printed": "Is. LIII. 1.",
@@ -3346,11 +3681,13 @@
       "pdf_page": 145,
       "nt": {
         "printed": "Rom. X. 16.",
-        "normalized": "ROM 10:16"
+        "normalized": "ROM 10:16",
+        "quoted": "[For Esaias saith,] Lord, who hath believed our report?"
       },
       "lxx": {
         "printed": "Is. LIII. 1.",
-        "normalized": "ISA 53:1"
+        "normalized": "ISA 53:1",
+        "quoted": "Lord, who hath believed our report?"
       },
       "hebrew": {
         "printed": "Is. LIII. 1.",
@@ -3366,11 +3703,13 @@
       "pdf_page": 145,
       "nt": {
         "printed": "Rom. XII. 20.",
-        "normalized": "ROM 12:20"
+        "normalized": "ROM 12:20",
+        "quoted": "Therefore if thine enemy hunger, feed him; if he thirst, give him drink: for in so doing thou shalt heap coals of fire on his head."
       },
       "lxx": {
         "printed": "Prov. XXV. 21–22.",
-        "normalized": "PRO 25:21-22"
+        "normalized": "PRO 25:21-22",
+        "quoted": "If thine enemy hunger, feed him; if he thirst, give him drink: for, doing this, thou shalt heap coals of fire upon his head."
       },
       "hebrew": {
         "printed": "Prov. XXV. 21–22.",
@@ -3386,11 +3725,13 @@
       "pdf_page": 145,
       "nt": {
         "printed": "Rom. XV. 10.",
-        "normalized": "ROM 15:10"
+        "normalized": "ROM 15:10",
+        "quoted": "[And again he saith,] Rejoice, ye Gentiles, with his people."
       },
       "lxx": {
         "printed": "Deut. XXXII. 43.",
-        "normalized": "DEU 32:43"
+        "normalized": "DEU 32:43",
+        "quoted": "Rejoice, ye nations, with his people."
       },
       "hebrew": {
         "printed": "Deut. XXXII. 43.",
@@ -3406,11 +3747,13 @@
       "pdf_page": 146,
       "nt": {
         "printed": "Rom. XV. 21.",
-        "normalized": "ROM 15:21"
+        "normalized": "ROM 15:21",
+        "quoted": "[But as it is written,] To whom he was not spoken of, they shall see: and they that have not heard shall understand."
       },
       "lxx": {
         "printed": "Is. LII. 15.",
-        "normalized": "ISA 52:15"
+        "normalized": "ISA 52:15",
+        "quoted": "for to whom he was not spoken of, they shall see; and they that have not heard shall understand."
       },
       "hebrew": {
         "printed": "Is. LII. 15.",
@@ -3427,11 +3770,13 @@
       "pdf_page": 147,
       "nt": {
         "printed": "1 Cor. VI. 16.",
-        "normalized": "1CO 6:16"
+        "normalized": "1CO 6:16",
+        "quoted": "for two, [saith he,] shall be one flesh."
       },
       "lxx": {
         "printed": "Gen. II. 24.",
-        "normalized": "GEN 2:24"
+        "normalized": "GEN 2:24",
+        "quoted": "and they twain shall be one flesh."
       },
       "hebrew": {
         "printed": "Gen. II. 24.",
@@ -3447,11 +3792,13 @@
       "pdf_page": 147,
       "nt": {
         "printed": "Heb. XIII. 6.",
-        "normalized": "HEB 13:6"
+        "normalized": "HEB 13:6",
+        "quoted": "The Lord is my helper, and I will not fear what man shall do unto me."
       },
       "lxx": {
         "printed": "Ps. CXVII. 6.",
-        "normalized": "PSA 117:6"
+        "normalized": "PSA 117:6",
+        "quoted": "The Lord is my helper, and I will not fear what man shall do unto me."
       },
       "hebrew": {
         "printed": "Ps. CXVIII. 6.",
@@ -3467,11 +3814,13 @@
       "pdf_page": 148,
       "nt": {
         "printed": "1 Pet. II. 7.",
-        "normalized": "1PE 2:7"
+        "normalized": "1PE 2:7",
+        "quoted": "The stone which the builders disallowed, the same is made the head of the corner,"
       },
       "lxx": {
         "printed": "Ps. CXVII. 22.",
-        "normalized": "PSA 117:22"
+        "normalized": "PSA 117:22",
+        "quoted": "The stone which the builders rejected, the same is become the head of the corner:"
       },
       "hebrew": {
         "printed": "Ps. CXVIII. 22.",
@@ -3487,11 +3836,13 @@
       "pdf_page": 149,
       "nt": {
         "printed": "Rom. IV. 3.",
-        "normalized": "ROM 4:3"
+        "normalized": "ROM 4:3",
+        "quoted": "[For what saith the scripture?] Abraham believed GOD, and it was counted unto him for righteousness."
       },
       "lxx": {
         "printed": "Gen. XV. 6.",
-        "normalized": "GEN 15:6"
+        "normalized": "GEN 15:6",
+        "quoted": "And Abram believed GOD, and it was counted unto him for righteousness."
       },
       "hebrew": {
         "printed": "Gen. XV. 6.",
@@ -3507,11 +3858,13 @@
       "pdf_page": 149,
       "nt": {
         "printed": "Rom. IX. 29.",
-        "normalized": "ROM 9:29"
+        "normalized": "ROM 9:29",
+        "quoted": "[And as Esaias said before,] Except the Lord of Sabaoth had left us a seed, we had been as Sodoma, and been made like unto Gomorrha."
       },
       "lxx": {
         "printed": "Is. I. 9.",
-        "normalized": "ISA 1:9"
+        "normalized": "ISA 1:9",
+        "quoted": "And except the Lord of Sabaoth had left us a seed, we had been as Sodoma, and been made like unto Gomorrha."
       },
       "hebrew": {
         "printed": "Is. I. 9.",
@@ -3527,11 +3880,13 @@
       "pdf_page": 150,
       "nt": {
         "printed": "James II. 23.",
-        "normalized": "JAS 2:23"
+        "normalized": "JAS 2:23",
+        "quoted": "[And the scripture was fulfilled which saith,] Abraham believed GOD, and it was imputed unto him for righteousness."
       },
       "lxx": {
         "printed": "Gen. XV. 6.",
-        "normalized": "GEN 15:6"
+        "normalized": "GEN 15:6",
+        "quoted": "And Abram believed GOD, and it was counted unto him for righteousness."
       },
       "hebrew": {
         "printed": "Gen. XV. 6.",
@@ -3547,11 +3902,13 @@
       "pdf_page": 151,
       "nt": {
         "printed": "Rom. XI. 34.",
-        "normalized": "ROM 11:34"
+        "normalized": "ROM 11:34",
+        "quoted": "For who hath known the mind of the Lord? or who hath been his counsellor?"
       },
       "lxx": {
         "printed": "Is. XL. 13.",
-        "normalized": "ISA 40:13"
+        "normalized": "ISA 40:13",
+        "quoted": "Who hath known the mind of the Lord? and who hath been his counsellor, that hath taught him?"
       },
       "hebrew": {
         "printed": "Is. XL. 13.",
@@ -3567,11 +3924,13 @@
       "pdf_page": 151,
       "nt": {
         "printed": "1 Tim. V. 18 fp.",
-        "normalized": "1TI 5:18"
+        "normalized": "1TI 5:18",
+        "quoted": "[For the scripture saith,] Thou shalt not muzzle the ox that treadeth out the corn."
       },
       "lxx": {
         "printed": "Deut. XXV. 4.",
-        "normalized": "DEU 25:4"
+        "normalized": "DEU 25:4",
+        "quoted": "Thou shalt not muzzle the ox, that treadeth out the corn."
       },
       "hebrew": {
         "printed": "Deut. XXV. 4.",
@@ -3590,11 +3949,13 @@
       "pdf_page": 152,
       "nt": {
         "printed": "Rom. X. 20–21.",
-        "normalized": "ROM 10:20-21"
+        "normalized": "ROM 10:20-21",
+        "quoted": "[But Esaias is very bold, and saith,] I was found of them that sought me not; I was made manifest unto them that asked not after me. [But to Israel he saith,] All day long I have stretched forth my hands unto a disobedient and gainsaying people."
       },
       "lxx": {
         "printed": "Is. LXV. 1–2.",
-        "normalized": "ISA 65:1-2"
+        "normalized": "ISA 65:1-2",
+        "quoted": "I became manifest to them that asked not after Me, I was found of them that sought Me not... I have stretched out My hands all the day unto a disobedient and gainsaying people."
       },
       "hebrew": {
         "printed": "Is. LXV. 1–2.",
@@ -3610,11 +3971,13 @@
       "pdf_page": 153,
       "nt": {
         "printed": "Gal. III. 6.",
-        "normalized": "GAL 3:6"
+        "normalized": "GAL 3:6",
+        "quoted": "[Even as] Abraham believed GOD, and it was accounted to him for righteousness."
       },
       "lxx": {
         "printed": "Gen. XV. 6.",
-        "normalized": "GEN 15:6"
+        "normalized": "GEN 15:6",
+        "quoted": "And Abram believed GOD, and it was counted unto him for righteousness."
       },
       "hebrew": {
         "printed": "Gen. XV. 6.",
@@ -3630,11 +3993,13 @@
       "pdf_page": 154,
       "nt": {
         "printed": "Heb. X. 37–38.",
-        "normalized": "HEB 10:37-38"
+        "normalized": "HEB 10:37-38",
+        "quoted": "and he that shall come will come, and will not tarry. Now the just shall live by faith: but if any man draw back, my soul shall have no pleasure in him."
       },
       "lxx": {
         "printed": "Hab. II. 3–4.",
-        "normalized": "HAB 2:3-4"
+        "normalized": "HAB 2:3-4",
+        "quoted": "for he that cometh will come, and will not tarry. If any man draw back, my soul hath no pleasure in him: but the just shall live by my faith."
       },
       "hebrew": {
         "printed": "Hab. II. 3–4.",
@@ -3650,11 +4015,13 @@
       "pdf_page": 156,
       "nt": {
         "printed": "Heb. II. 6–8.",
-        "normalized": "HEB 2:6-8"
+        "normalized": "HEB 2:6-8",
+        "quoted": "[But one in a certain place testified, saying,] What is man, that thou art mindful of him? or the son of man, that thou visitest him? Thou madest him a little lower than the angels; thou crownedst him with glory and honour, and didst set him over the works of thy hands: Thou hast put all things in subjection under his feet."
       },
       "lxx": {
         "printed": "Ps. VIII. 5–7.",
-        "normalized": "PSA 8:5-7"
+        "normalized": "PSA 8:5-7",
+        "quoted": "What is man, that thou art mindful of him? or the son of man, that thou visitest him? Thou madest him a little lower than the angels; thou hast crowned him with glory and honour, and hast set him over the works of thy hands: Thou hast put all things under his feet."
       },
       "hebrew": {
         "printed": "Ps. VIII. 5–7.",
@@ -3670,11 +4037,13 @@
       "pdf_page": 157,
       "nt": {
         "printed": "Heb. X. 5–7.",
-        "normalized": "HEB 10:5-7"
+        "normalized": "HEB 10:5-7",
+        "quoted": "[he saith,] Sacrifice and offering thou wouldest not, but a body hast thou prepared me: In burnt offerings and sacrifices for sin thou hast had no pleasure. Then said I, Lo, I come (in the volume of the book it is written of me,) to do thy will, O GOD."
       },
       "lxx": {
         "printed": "Ps. XXXIX. 7–9.",
-        "normalized": "PSA 39:7-9"
+        "normalized": "PSA 39:7-9",
+        "quoted": "Sacrifice and offering thou desiredst not, but a body hast thou prepared me: whole burnt-offering and sacrifice for sin thou didst not require. Then I said, Lo, I come; in the volume of the book it is written of me, I desired to do thy will, O my GOD."
       },
       "hebrew": {
         "printed": "Ps. XL. 7–9.",
@@ -3708,11 +4077,13 @@
       "pdf_page": 165,
       "nt": {
         "printed": "Matt. I. 23.",
-        "normalized": "MAT 1:23"
+        "normalized": "MAT 1:23",
+        "quoted": "[Now all this was done, that it might be fulfilled which was spoken of the Lord by the prophet, saying,] Behold, a virgin shall be with child, and shall bring forth a son, and they shall call his name Emmanuel."
       },
       "lxx": {
         "printed": "Is. VII. 14.",
-        "normalized": "ISA 7:14"
+        "normalized": "ISA 7:14",
+        "quoted": "[Therefore the Lord himself shall give you a sign:] Behold, a virgin shall conceive in the womb, and shall bring forth a son, and thou shalt call his name Emmanuel."
       },
       "hebrew": {
         "printed": "Is. VII. 14.",
@@ -3729,11 +4100,13 @@
       "pdf_page": 166,
       "nt": {
         "printed": "Matt. IX. 13.",
-        "normalized": "MAT 9:13"
+        "normalized": "MAT 9:13",
+        "quoted": "[learn what that meaneth] I will have mercy and not sacrifice."
       },
       "lxx": {
         "printed": "Hos. VI. 6.",
-        "normalized": "HOS 6:6"
+        "normalized": "HOS 6:6",
+        "quoted": "I will have mercy rather than sacrifice."
       },
       "hebrew": {
         "printed": "Hos. VI. 6.",
@@ -3749,11 +4122,13 @@
       "pdf_page": 167,
       "nt": {
         "printed": "Matt. XII. 7.",
-        "normalized": "MAT 12:7"
+        "normalized": "MAT 12:7",
+        "quoted": "[But if ye had known what this meaneth,] I will have mercy, and not sacrifice,"
       },
       "lxx": {
         "printed": "Hos. VI. 6.",
-        "normalized": "HOS 6:6"
+        "normalized": "HOS 6:6",
+        "quoted": "I will have mercy rather than sacrifice."
       },
       "hebrew": {
         "printed": "Hos. VI. 6.",
@@ -3769,11 +4144,13 @@
       "pdf_page": 167,
       "nt": {
         "printed": "Matt. XIII. 35.",
-        "normalized": "MAT 13:35"
+        "normalized": "MAT 13:35",
+        "quoted": "[That it might be fulfilled which was spoken by the prophet, saying,] I will open my mouth in parables; I will utter things which have been kept secret from the foundation of the world."
       },
       "lxx": {
         "printed": "Ps. LXXVII. 2.",
-        "normalized": "PSA 77:2"
+        "normalized": "PSA 77:2",
+        "quoted": "I will open my mouth in parables; I will utter things which have been hidden from the beginning."
       },
       "hebrew": {
         "printed": "Ps. LXXVIII. 2.",
@@ -3790,11 +4167,13 @@
       "pdf_page": 168,
       "nt": {
         "printed": "Mark XIV. 27.",
-        "normalized": "MRK 14:27"
+        "normalized": "MRK 14:27",
+        "quoted": "[it is written,] I will smite the shepherd, and the sheep shall be scattered."
       },
       "lxx": {
         "printed": "Zech. XIII. 7.",
-        "normalized": "ZEC 13:7"
+        "normalized": "ZEC 13:7",
+        "quoted": "smite ye the shepherds, and draw out the sheep."
       },
       "hebrew": {
         "printed": "Zech. XIII. 7.",
@@ -3810,11 +4189,13 @@
       "pdf_page": 168,
       "nt": {
         "printed": "Luke II. 24.",
-        "normalized": "LUK 2:24"
+        "normalized": "LUK 2:24",
+        "quoted": "[according to that which is said in the law of the Lord,] A pair of turtledoves, or two young pigeons."
       },
       "lxx": {
         "printed": "Lev. XII. 8.",
-        "normalized": "LEV 12:8"
+        "normalized": "LEV 12:8",
+        "quoted": "two turtledoves, or two young pigeons."
       },
       "hebrew": {
         "printed": "Lev. XII. 8.",
@@ -3830,11 +4211,13 @@
       "pdf_page": 169,
       "nt": {
         "printed": "John XIX. 37.",
-        "normalized": "JHN 19:37"
+        "normalized": "JHN 19:37",
+        "quoted": "[another scripture saith,] They shall look on Him whom they pierced."
       },
       "lxx": {
         "printed": "Zech. XII. 10.",
-        "normalized": "ZEC 12:10"
+        "normalized": "ZEC 12:10",
+        "quoted": "and they shall look to me, instead of the things wherewith they have mocked me."
       },
       "hebrew": {
         "printed": "Zech. XII. 10.",
@@ -3850,11 +4233,13 @@
       "pdf_page": 170,
       "nt": {
         "printed": "Acts VII. 49–50.",
-        "normalized": "ACT 7:49-50"
+        "normalized": "ACT 7:49-50",
+        "quoted": "[as saith the prophet,] Heaven is my throne, and earth is my footstool: what house will ye build me? saith the Lord: or what is the place of my rest? Hath not my hand made all these things?"
       },
       "lxx": {
         "printed": "Is. LXVI. 1–2.",
-        "normalized": "ISA 66:1-2"
+        "normalized": "ISA 66:1-2",
+        "quoted": "Heaven is my throne, and the earth is my footstool: what house will ye build me? and what is the place of my rest? For all these things hath mine hand made."
       },
       "hebrew": {
         "printed": "Is. LXVI. 1–2.",
@@ -3870,11 +4255,13 @@
       "pdf_page": 171,
       "nt": {
         "printed": "Rom. III. 14.",
-        "normalized": "ROM 3:14"
+        "normalized": "ROM 3:14",
+        "quoted": "Whose mouth is full of cursing and bitterness."
       },
       "lxx": {
         "printed": "Ps. IX. 28 (X. 7).",
-        "normalized": "PSA 9:28"
+        "normalized": "PSA 9:28",
+        "quoted": "Whose mouth is full of cursing and bitterness and deceit."
       },
       "hebrew": {
         "printed": "Ps. X. 7.",
@@ -3890,11 +4277,13 @@
       "pdf_page": 172,
       "nt": {
         "printed": "1 Cor. XV. 54.",
-        "normalized": "1CO 15:54"
+        "normalized": "1CO 15:54",
+        "quoted": "[then shall be brought to pass the saying that is written,] Death is swallowed up in victory."
       },
       "lxx": {
         "printed": "Is. XXV. 8.",
-        "normalized": "ISA 25:8"
+        "normalized": "ISA 25:8",
+        "quoted": "Death having prevailed hath swallowed up."
       },
       "hebrew": {
         "printed": "Is. XXV. 8.",
@@ -3910,11 +4299,13 @@
       "pdf_page": 173,
       "nt": {
         "printed": "1 Cor. XV. 55.",
-        "normalized": "1CO 15:55"
+        "normalized": "1CO 15:55",
+        "quoted": "O death, where is thy sting? O grave, where is thy victory?"
       },
       "lxx": {
         "printed": "Hosea XIII. 14.",
-        "normalized": "HOS 13:14"
+        "normalized": "HOS 13:14",
+        "quoted": "Where is thy cause, O death? Where is thy sting, O hades?"
       },
       "hebrew": {
         "printed": "Hosea XIII. 14.",
@@ -3930,11 +4321,13 @@
       "pdf_page": 174,
       "nt": {
         "printed": "1 Pet. I. 24–25.",
-        "normalized": "1PE 1:24-25"
+        "normalized": "1PE 1:24-25",
+        "quoted": "All flesh is as grass, and all the glory of man as the flower of grass. The grass withereth, and the flower thereof falleth away: But the word of the Lord endureth for ever."
       },
       "lxx": {
         "printed": "Is. XL. 6–8.",
-        "normalized": "ISA 40:6-8"
+        "normalized": "ISA 40:6-8",
+        "quoted": "All flesh is grass, and all the glory of man as the flower of grass. The grass withereth, and the flower falleth away; but the word of our GOD endureth for ever."
       },
       "hebrew": {
         "printed": "Is. XL. 6–8.",
@@ -3974,11 +4367,13 @@
       "pdf_page": 175,
       "nt": {
         "printed": "1 Pet. IV. 8.",
-        "normalized": "1PE 4:8"
+        "normalized": "1PE 4:8",
+        "quoted": "charity shall cover the multitude of sins."
       },
       "lxx": {
         "printed": "Prov. X. 12.",
-        "normalized": "PRO 10:12"
+        "normalized": "PRO 10:12",
+        "quoted": "but love covereth all that are not contentious."
       },
       "hebrew": {
         "printed": "Prov. X. 12.",
@@ -3994,11 +4389,13 @@
       "pdf_page": 176,
       "nt": {
         "printed": "2 Pet. II. 22 fp.",
-        "normalized": "2PE 2:22"
+        "normalized": "2PE 2:22",
+        "quoted": "[But it is happened unto them according to the true proverb,] The dog is turned to his own vomit again."
       },
       "lxx": {
         "printed": "Prov. XXVI. 11.",
-        "normalized": "PRO 26:11"
+        "normalized": "PRO 26:11",
+        "quoted": "As a dog, when he returneth to his own vomit."
       },
       "hebrew": {
         "printed": "Prov. XXVI. 11.",
@@ -4017,11 +4414,13 @@
       "pdf_page": 176,
       "nt": {
         "printed": "Rev. II. 27.",
-        "normalized": "REV 2:27"
+        "normalized": "REV 2:27",
+        "quoted": "And he shall rule them with a rod of iron; as the vessels of a potter shall they be broken to shivers."
       },
       "lxx": {
         "printed": "Ps. II. 9.",
-        "normalized": "PSA 2:9"
+        "normalized": "PSA 2:9",
+        "quoted": "Thou shalt rule them with a rod of iron; thou shalt dash them in pieces as a potter's vessel."
       },
       "hebrew": {
         "printed": "Ps. II. 9.",
@@ -4038,11 +4437,13 @@
       "pdf_page": 178,
       "nt": {
         "printed": "Rom. I. 17.",
-        "normalized": "ROM 1:17"
+        "normalized": "ROM 1:17",
+        "quoted": "[as it is written,] The just shall live by faith."
       },
       "lxx": {
         "printed": "Hab. II. 4.",
-        "normalized": "HAB 2:4"
+        "normalized": "HAB 2:4",
+        "quoted": "but the just shall live by my faith."
       },
       "hebrew": {
         "printed": "Hab. II. 4.",
@@ -4058,11 +4459,13 @@
       "pdf_page": 179,
       "nt": {
         "printed": "Gal. III. 11.",
-        "normalized": "GAL 3:11"
+        "normalized": "GAL 3:11",
+        "quoted": "for, The just shall live by faith."
       },
       "lxx": {
         "printed": "Hab. II. 4.",
-        "normalized": "HAB 2:4"
+        "normalized": "HAB 2:4",
+        "quoted": "but the just shall live by my faith."
       },
       "hebrew": {
         "printed": "Hab. II. 4.",
@@ -4078,11 +4481,13 @@
       "pdf_page": 180,
       "nt": {
         "printed": "Matt. VIII. 17.",
-        "normalized": "MAT 8:17"
+        "normalized": "MAT 8:17",
+        "quoted": "[That it might be fulfilled which was spoken by Esaias the prophet, saying,] Himself took our infirmities, and bare our sicknesses."
       },
       "lxx": {
         "printed": "Is. LIII. 4.",
-        "normalized": "ISA 53:4"
+        "normalized": "ISA 53:4",
+        "quoted": "He beareth our sins and is pained for us."
       },
       "hebrew": {
         "printed": "Is. LIII. 4.",
@@ -4098,11 +4503,13 @@
       "pdf_page": 181,
       "nt": {
         "printed": "Luke VIII. 10.",
-        "normalized": "LUK 8:10"
+        "normalized": "LUK 8:10",
+        "quoted": "that seeing they might not see, and hearing they might not understand."
       },
       "lxx": {
         "printed": "Is. VI. 9.",
-        "normalized": "ISA 6:9"
+        "normalized": "ISA 6:9",
+        "quoted": "By hearing ye shall hear, and not understand; and seeing ye shall see, and not perceive."
       },
       "hebrew": {
         "printed": "Is. VI. 9.",
@@ -4118,11 +4525,13 @@
       "pdf_page": 181,
       "nt": {
         "printed": "Acts VII. 37.",
-        "normalized": "ACT 7:37"
+        "normalized": "ACT 7:37",
+        "quoted": "A prophet shall the Lord your GOD raise up unto you of your brethren, like unto me; him shall ye hear."
       },
       "lxx": {
         "printed": "Deut. XVIII. 15.",
-        "normalized": "DEU 18:15"
+        "normalized": "DEU 18:15",
+        "quoted": "The Lord thy GOD will raise up unto thee a prophet from among thy brethren, like unto me; him shall ye hear."
       },
       "hebrew": {
         "printed": "Deut. XVIII. 15.",
@@ -4138,11 +4547,13 @@
       "pdf_page": 182,
       "nt": {
         "printed": "Acts XIII. 47.",
-        "normalized": "ACT 13:47"
+        "normalized": "ACT 13:47",
+        "quoted": "[hath the Lord commanded us, saying,] I have set thee to be a light of the Gentiles, that thou shouldest be for salvation unto the ends of the earth."
       },
       "lxx": {
         "printed": "Is. XLIX. 6.",
-        "normalized": "ISA 49:6"
+        "normalized": "ISA 49:6",
+        "quoted": "lo, I have given thee for the covenant of a race, for a light of the Gentiles, that Thou mightest be for salvation unto the end of the earth."
       },
       "hebrew": {
         "printed": "Is. XLIX. 6.",
@@ -4158,11 +4569,13 @@
       "pdf_page": 183,
       "nt": {
         "printed": "Rom. IX. 9.",
-        "normalized": "ROM 9:9"
+        "normalized": "ROM 9:9",
+        "quoted": "At this time will I come, and Sarah shall have a son."
       },
       "lxx": {
         "printed": "Gen. XVIII. 10.",
-        "normalized": "GEN 18:10"
+        "normalized": "GEN 18:10",
+        "quoted": "Returning I will come unto thee, according to this time seasonably, and Sarah thy wife shall have a son."
       },
       "hebrew": {
         "printed": "Gen. XVIII. 10.",
@@ -4178,11 +4591,13 @@
       "pdf_page": 184,
       "nt": {
         "printed": "Rom. X. 15.",
-        "normalized": "ROM 10:15"
+        "normalized": "ROM 10:15",
+        "quoted": "[as it is written,] How beautiful are the feet of them that preach the gospel of peace, and bring glad tidings of good things!"
       },
       "lxx": {
         "printed": "Is. LII. 7.",
-        "normalized": "ISA 52:7"
+        "normalized": "ISA 52:7",
+        "quoted": "as the dawn upon the mountains, as the feet of him that preacheth good tidings of peace, as one that preacheth good tidings of good things; for I will make thy salvation heard."
       },
       "hebrew": {
         "printed": "Is. LII. 7.",
@@ -4198,11 +4613,13 @@
       "pdf_page": 185,
       "nt": {
         "printed": "1 Cor. I. 19.",
-        "normalized": "1CO 1:19"
+        "normalized": "1CO 1:19",
+        "quoted": "[For it is written,] I will destroy the wisdom of the wise, and will bring to nothing the understanding of the prudent."
       },
       "lxx": {
         "printed": "Is. XXIX. 14.",
-        "normalized": "ISA 29:14"
+        "normalized": "ISA 29:14",
+        "quoted": "and I will destroy the wisdom of the wise, and will hide the understanding of the prudent."
       },
       "hebrew": {
         "printed": "Is. XXIX. 14.",
@@ -4218,11 +4635,13 @@
       "pdf_page": 186,
       "nt": {
         "printed": "1 Cor. II. 16.",
-        "normalized": "1CO 2:16"
+        "normalized": "1CO 2:16",
+        "quoted": "For who hath known the mind of the Lord, that he may instruct him?"
       },
       "lxx": {
         "printed": "Is. XL. 13.",
-        "normalized": "ISA 40:13"
+        "normalized": "ISA 40:13",
+        "quoted": "Who hath known the mind of the Lord? And who hath been his counsellor, that hath taught him?"
       },
       "hebrew": {
         "printed": "Is. XL. 13.",
@@ -4238,11 +4657,13 @@
       "pdf_page": 187,
       "nt": {
         "printed": "Eph. VI. 2–3.",
-        "normalized": "EPH 6:2-3"
+        "normalized": "EPH 6:2-3",
+        "quoted": "Honour thy father and mother (which is the first commandment with promise); That it may be well with thee, and thou mayest live long on the earth."
       },
       "lxx": {
         "printed": "Deut. V. 16.",
-        "normalized": "DEU 5:16"
+        "normalized": "DEU 5:16",
+        "quoted": "Honour thy father and thy mother (as the Lord thy GOD commanded thee); that it may be well with thee, and that thou mayest live long upon the land"
       },
       "hebrew": {
         "printed": "Deut. V. 16.",
@@ -4271,11 +4692,13 @@
       "pdf_page": 188,
       "nt": {
         "printed": "Heb. XII. 26.",
-        "normalized": "HEB 12:26"
+        "normalized": "HEB 12:26",
+        "quoted": "[saying,] Yet once more I shake not the earth only, but also heaven."
       },
       "lxx": {
         "printed": "Hag. II. 6.",
-        "normalized": "HAG 2:6"
+        "normalized": "HAG 2:6",
+        "quoted": "Yet once more I will shake the heaven and the earth."
       },
       "hebrew": {
         "printed": "Hag. II. 6.",
@@ -4291,11 +4714,13 @@
       "pdf_page": 189,
       "nt": {
         "printed": "Matt. IV. 10.",
-        "normalized": "MAT 4:10"
+        "normalized": "MAT 4:10",
+        "quoted": "[for it is written,] Thou shalt worship the Lord thy GOD, and Him only shalt thou serve."
       },
       "lxx": {
         "printed": "Deut. VI. 13.",
-        "normalized": "DEU 6:13"
+        "normalized": "DEU 6:13",
+        "quoted": "Thou shalt fear the Lord thy GOD, and Him only shalt thou serve."
       },
       "hebrew": {
         "printed": "Deut. VI. 13.",
@@ -4311,11 +4736,13 @@
       "pdf_page": 189,
       "nt": {
         "printed": "Luke IV. 8.",
-        "normalized": "LUK 4:8"
+        "normalized": "LUK 4:8",
+        "quoted": "[it is written,] Thou shalt worship the Lord thy GOD, and Him only shalt thou serve."
       },
       "lxx": {
         "printed": "Deut. VI. 13.",
-        "normalized": "DEU 6:13"
+        "normalized": "DEU 6:13",
+        "quoted": "Thou shalt fear the Lord thy GOD, and Him only shalt thou serve."
       },
       "hebrew": {
         "printed": "Deut. VI. 13.",
@@ -4331,11 +4758,13 @@
       "pdf_page": 190,
       "nt": {
         "printed": "Matt. XXVI. 31.",
-        "normalized": "MAT 26:31"
+        "normalized": "MAT 26:31",
+        "quoted": "[for it is written,] I will smite the shepherd, and the sheep of the flock shall be scattered abroad."
       },
       "lxx": {
         "printed": "Zech. XIII. 7.",
-        "normalized": "ZEC 13:7"
+        "normalized": "ZEC 13:7",
+        "quoted": "Smite ye the shepherds, and draw out the sheep."
       },
       "hebrew": {
         "printed": "Zech. XIII. 7.",
@@ -4351,11 +4780,13 @@
       "pdf_page": 190,
       "nt": {
         "printed": "Acts IV. 11.",
-        "normalized": "ACT 4:11"
+        "normalized": "ACT 4:11",
+        "quoted": "This is the stone which was set at nought of you builders, which is become the head of the corner."
       },
       "lxx": {
         "printed": "Ps. CXVII. 22.",
-        "normalized": "PSA 117:22"
+        "normalized": "PSA 117:22",
+        "quoted": "The stone which the builders rejected, the same is become the head of the corner."
       },
       "hebrew": {
         "printed": "Ps. CXVIII. 22.",
@@ -4371,11 +4802,13 @@
       "pdf_page": 191,
       "nt": {
         "printed": "Rom. IX. 17.",
-        "normalized": "ROM 9:17"
+        "normalized": "ROM 9:17",
+        "quoted": "[For the scripture saith unto Pharaoh,] Even for this same purpose have I raised thee up, that I might shew my power in thee, and that my name might be declared throughout all the earth."
       },
       "lxx": {
         "printed": "Exod. IX. 16.",
-        "normalized": "EXO 9:16"
+        "normalized": "EXO 9:16",
+        "quoted": "And for this cause hast thou been preserved, that I might shew in thee my strength, and that my name might be declared in all the earth."
       },
       "hebrew": {
         "printed": "Exod. IX. 16.",
@@ -4391,11 +4824,13 @@
       "pdf_page": 192,
       "nt": {
         "printed": "Rom. IX. 26.",
-        "normalized": "ROM 9:26"
+        "normalized": "ROM 9:26",
+        "quoted": "And it shall come to pass, that in the place where it was said unto them, Ye are not my people; there shall they be called the children of the living GOD."
       },
       "lxx": {
         "printed": "Hos. I. 10.",
-        "normalized": "HOS 1:10"
+        "normalized": "HOS 1:10",
+        "quoted": "and it shall come to pass, that in the place where it was said unto them, Ye are not my people, even they shall be called the sons of the living GOD."
       },
       "hebrew": {
         "printed": "Hos. II. 1.",
@@ -4411,11 +4846,13 @@
       "pdf_page": 193,
       "nt": {
         "printed": "Rom. X. 11.",
-        "normalized": "ROM 10:11"
+        "normalized": "ROM 10:11",
+        "quoted": "[For the scripture saith,] Whosoever believeth on him shall not be ashamed."
       },
       "lxx": {
         "printed": "Is. XXVIII. 16.",
-        "normalized": "ISA 28:16"
+        "normalized": "ISA 28:16",
+        "quoted": "And he that believeth shall in no ways be ashamed."
       },
       "hebrew": {
         "printed": "Is. XXVIII. 16.",
@@ -4431,11 +4868,13 @@
       "pdf_page": 193,
       "nt": {
         "printed": "Rom. XII. 19.",
-        "normalized": "ROM 12:19"
+        "normalized": "ROM 12:19",
+        "quoted": "[for it is written,] Vengeance is mine; I will repay, saith the Lord."
       },
       "lxx": {
         "printed": "Deut. XXXII. 35.",
-        "normalized": "DEU 32:35"
+        "normalized": "DEU 32:35",
+        "quoted": "In the day of vengeance I will recompense, when their foot totters."
       },
       "hebrew": {
         "printed": "Deut. XXXII. 35.",
@@ -4451,11 +4890,13 @@
       "pdf_page": 194,
       "nt": {
         "printed": "1 Cor. XIV. 21.",
-        "normalized": "1CO 14:21"
+        "normalized": "1CO 14:21",
+        "quoted": "[In the law it is written,] With men of other tongues and other lips will I speak unto this people; and yet for all that will they not hear me, saith the Lord."
       },
       "lxx": {
         "printed": "Is. XXVIII. 11–12.",
-        "normalized": "ISA 28:11-12"
+        "normalized": "ISA 28:11-12",
+        "quoted": "on account of the contempt of their lips, by means of another tongue; for they shall speak to this people. ...and they would not hear."
       },
       "hebrew": {
         "printed": "Is. XXVIII. 11–12.",
@@ -4471,11 +4912,13 @@
       "pdf_page": 195,
       "nt": {
         "printed": "2 Cor. IX. 7.",
-        "normalized": "2CO 9:7"
+        "normalized": "2CO 9:7",
+        "quoted": "for GOD loveth a cheerful giver."
       },
       "lxx": {
         "printed": "Prov. XXII. 8.",
-        "normalized": "PRO 22:8"
+        "normalized": "PRO 22:8",
+        "quoted": "GOD blesseth a cheerful and liberal man."
       },
       "hebrew": {
         "printed": "Prov. XXII. 9.",
@@ -4491,11 +4934,13 @@
       "pdf_page": 196,
       "nt": {
         "printed": "Gal. III. 10.",
-        "normalized": "GAL 3:10"
+        "normalized": "GAL 3:10",
+        "quoted": "[for it is written,] Cursed is every one that continueth not in all things which are written in the book of the law to do them."
       },
       "lxx": {
         "printed": "Deut. XXVII. 26.",
-        "normalized": "DEU 27:26"
+        "normalized": "DEU 27:26",
+        "quoted": "Cursed is every man that continueth not in all the words of this law to do them."
       },
       "hebrew": {
         "printed": "Deut. XXVII. 26.",
@@ -4511,11 +4956,13 @@
       "pdf_page": 197,
       "nt": {
         "printed": "Heb. I. 6.",
-        "normalized": "HEB 1:6"
+        "normalized": "HEB 1:6",
+        "quoted": "[he saith,] And let all the angels of GOD worship him."
       },
       "lxx": {
         "printed": "Ps. XCVI. 7.",
-        "normalized": "PSA 96:7"
+        "normalized": "PSA 96:7",
+        "quoted": "worship him, all ye his angels."
       },
       "hebrew": {
         "printed": "Ps. XCVII. 7.",
@@ -4531,11 +4978,13 @@
       "pdf_page": 198,
       "nt": {
         "printed": "Heb. X. 30.",
-        "normalized": "HEB 10:30"
+        "normalized": "HEB 10:30",
+        "quoted": "[For we know him that hath said,] Vengeance belongeth unto me, I will recompense, saith the Lord. [And again,] The Lord shall judge his people."
       },
       "lxx": {
         "printed": "Deut. XXXII. 35–36.; Ps. 134. 14.",
-        "normalized": "DEU 32:35-36; PSA 134:14"
+        "normalized": "DEU 32:35-36; PSA 134:14",
+        "quoted": "In the day of vengeance I will recompense... For the Lord shall judge his people."
       },
       "hebrew": {
         "printed": "Deut. XXXII. 35–36.; Ps. 135. 14.",
@@ -4552,11 +5001,13 @@
       "pdf_page": 199,
       "nt": {
         "printed": "Heb. XII. 5–6.",
-        "normalized": "HEB 12:5-6"
+        "normalized": "HEB 12:5-6",
+        "quoted": "My son, despise not thou the chastening of the Lord, nor faint when thou art rebuked of him: For whom the Lord loveth he chasteneth, and scourgeth every son whom he receiveth."
       },
       "lxx": {
         "printed": "Prov. III. 11–12.",
-        "normalized": "PRO 3:11-12"
+        "normalized": "PRO 3:11-12",
+        "quoted": "My son, despise not thou the chastening of the Lord, nor faint when thou art rebuked of him: For whom the Lord loveth he rebuketh, and scourgeth every son, whom he receiveth."
       },
       "hebrew": {
         "printed": "Prov. III. 11–12.",
@@ -4572,11 +5023,13 @@
       "pdf_page": 200,
       "nt": {
         "printed": "James IV. 6.",
-        "normalized": "JAS 4:6"
+        "normalized": "JAS 4:6",
+        "quoted": "[Wherefore he saith,] GOD resisteth the proud, but giveth grace unto the humble."
       },
       "lxx": {
         "printed": "Prov. III. 34.",
-        "normalized": "PRO 3:34"
+        "normalized": "PRO 3:34",
+        "quoted": "The Lord resisteth the proud, but giveth grace unto the humble."
       },
       "hebrew": {
         "printed": "Prov. III. 34.",
@@ -4592,11 +5045,13 @@
       "pdf_page": 200,
       "nt": {
         "printed": "James V. 20.",
-        "normalized": "JAS 5:20"
+        "normalized": "JAS 5:20",
+        "quoted": "[Let him know, that he which converteth the sinner from the error of his way shall save a soul from death,] and shall hide a multitude of sins."
       },
       "lxx": {
         "printed": "Prov. X. 12.",
-        "normalized": "PRO 10:12"
+        "normalized": "PRO 10:12",
+        "quoted": "but love covereth all that are not contentious."
       },
       "hebrew": {
         "printed": "Prov. X. 12.",
@@ -4612,11 +5067,13 @@
       "pdf_page": 202,
       "nt": {
         "printed": "Matt. IV. 4.",
-        "normalized": "MAT 4:4"
+        "normalized": "MAT 4:4",
+        "quoted": "[It is written,] Man shall not live by bread alone, but by every word that proceedeth out of the mouth of GOD."
       },
       "lxx": {
         "printed": "Deut. VIII. 3.",
-        "normalized": "DEU 8:3"
+        "normalized": "DEU 8:3",
+        "quoted": "man shall not live by bread alone, but by every word that proceedeth out of the mouth of GOD shall man live."
       },
       "hebrew": {
         "printed": "Deut. VIII. 3.",
@@ -4632,11 +5089,13 @@
       "pdf_page": 202,
       "nt": {
         "printed": "Matt. XVIII. 16.",
-        "normalized": "MAT 18:16"
+        "normalized": "MAT 18:16",
+        "quoted": "that in the mouth of two or three witnesses every word may be established."
       },
       "lxx": {
         "printed": "Deut. XIX. 15.",
-        "normalized": "DEU 19:15"
+        "normalized": "DEU 19:15",
+        "quoted": "At the mouth of two witnesses, and at the mouth of three witnesses, shall every word be established."
       },
       "hebrew": {
         "printed": "Deut. XIX. 15.",
@@ -4652,11 +5111,13 @@
       "pdf_page": 203,
       "nt": {
         "printed": "Matt. XIX. 5.",
-        "normalized": "MAT 19:5"
+        "normalized": "MAT 19:5",
+        "quoted": "[And said] For this cause shall a man leave father and mother, and shall cleave to his wife; and they twain shall be one flesh."
       },
       "lxx": {
         "printed": "Gen. II. 24.",
-        "normalized": "GEN 2:24"
+        "normalized": "GEN 2:24",
+        "quoted": "Therefore shall a man leave his father and his mother; and shall be joined unto his wife: and they twain shall be one flesh."
       },
       "hebrew": {
         "printed": "Gen. II. 24.",
@@ -4672,11 +5133,13 @@
       "pdf_page": 203,
       "nt": {
         "printed": "Matt. XXI. 13 lp.",
-        "normalized": "MAT 21:13"
+        "normalized": "MAT 21:13",
+        "quoted": "but ye have made it a den of thieves."
       },
       "lxx": {
         "printed": "Jer. VII. 11.",
-        "normalized": "JER 7:11"
+        "normalized": "JER 7:11",
+        "quoted": "Is not my house, whereon my name is called, a den of robbers in your eyes?"
       },
       "hebrew": {
         "printed": "Jer. VII. 11.",
@@ -4695,11 +5158,13 @@
       "pdf_page": 204,
       "nt": {
         "printed": "Matt. XXII. 37.",
-        "normalized": "MAT 22:37"
+        "normalized": "MAT 22:37",
+        "quoted": "Thou shalt love the Lord thy GOD with all thy heart, and with all thy soul, and with all thy mind."
       },
       "lxx": {
         "printed": "Deut. VI. 5.",
-        "normalized": "DEU 6:5"
+        "normalized": "DEU 6:5",
+        "quoted": "And thou shalt love the Lord thy GOD with all thy mind, and with all thy soul, and with all thy strength."
       },
       "hebrew": {
         "printed": "Deut. VI. 5.",
@@ -4715,11 +5180,13 @@
       "pdf_page": 205,
       "nt": {
         "printed": "Mark X. 7–8.",
-        "normalized": "MRK 10:7-8"
+        "normalized": "MRK 10:7-8",
+        "quoted": "For this cause shall a man leave his father and mother, and cleave to his wife; And they twain shall be one flesh."
       },
       "lxx": {
         "printed": "Gen. II. 24.",
-        "normalized": "GEN 2:24"
+        "normalized": "GEN 2:24",
+        "quoted": "Therefore shall a man leave his father and his mother, and shall be joined unto his wife; and they twain shall be one flesh."
       },
       "hebrew": {
         "printed": "Gen. II. 24.",
@@ -4736,11 +5203,13 @@
       "pdf_page": 206,
       "nt": {
         "printed": "Mark XI. 17 lp.",
-        "normalized": "MRK 11:17"
+        "normalized": "MRK 11:17",
+        "quoted": "but ye have made it a den of thieves."
       },
       "lxx": {
         "printed": "Jer. VII. 11.",
-        "normalized": "JER 7:11"
+        "normalized": "JER 7:11",
+        "quoted": "Is not my house, whereon my name is called, a den of robbers, in your eyes?"
       },
       "hebrew": {
         "printed": "Jer. VII. 11.",
@@ -4759,11 +5228,13 @@
       "pdf_page": 206,
       "nt": {
         "printed": "Luke XIX. 46 lp.",
-        "normalized": "LUK 19:46"
+        "normalized": "LUK 19:46",
+        "quoted": "but ye have made it a den of thieves."
       },
       "lxx": {
         "printed": "Jer. VII. 11.",
-        "normalized": "JER 7:11"
+        "normalized": "JER 7:11",
+        "quoted": "Is not my house, whereon my name is called, a den of robbers, in your eyes?"
       },
       "hebrew": {
         "printed": "Jer. VII. 11.",
@@ -4782,11 +5253,13 @@
       "pdf_page": 207,
       "nt": {
         "printed": "Acts VII. 3.",
-        "normalized": "ACT 7:3"
+        "normalized": "ACT 7:3",
+        "quoted": "[And said unto him,] Get thee out of thy country, and from thy kindred, and come into the land which I shall shew thee."
       },
       "lxx": {
         "printed": "Gen. XII. 1.",
-        "normalized": "GEN 12:1"
+        "normalized": "GEN 12:1",
+        "quoted": "[And the Lord said to Abram,] Get thee out of thy country, and out of thy kindred, and out of thy father's house; and come into the land that I will shew thee."
       },
       "hebrew": {
         "printed": "Gen. XII. 1.",
@@ -4802,11 +5275,13 @@
       "pdf_page": 207,
       "nt": {
         "printed": "Acts VII. 42–43.",
-        "normalized": "ACT 7:42-43"
+        "normalized": "ACT 7:42-43",
+        "quoted": "[as it is written in the book of the prophets,] O ye house of Israel, have ye offered to me slain beasts and sacrifices by the space of forty years in the wilderness? Yea, ye took up the tabernacle of Moloch, and the star of your god Remphan, figures which ye made to worship them; and I will carry you away beyond Babylon."
       },
       "lxx": {
         "printed": "Amos V. 25–27.",
-        "normalized": "AMO 5:25-27"
+        "normalized": "AMO 5:25-27",
+        "quoted": "O house of Israel, have ye offered to me slain beasts and sacrifices, forty years in the wilderness? Yea, ye took up the tabernacle of Moloch, and the star of your god Raephan, their figures which ye made for them; and I will carry you away beyond Damascus."
       },
       "hebrew": {
         "printed": "Amos V. 25–27.",
@@ -4822,11 +5297,13 @@
       "pdf_page": 221,
       "nt": {
         "printed": "Acts XIII. 41.",
-        "normalized": "ACT 13:41"
+        "normalized": "ACT 13:41",
+        "quoted": "[which is spoken of in the prophets;] Behold, ye despisers, and wonder, and perish: for I work a work in your days, a work which ye shall in no wise believe, though a man declare it unto you."
       },
       "lxx": {
         "printed": "Hab. I. 5.",
-        "normalized": "HAB 1:5"
+        "normalized": "HAB 1:5",
+        "quoted": "Behold, ye despisers, and look, and wonder marvellously, and perish: for I work a work in your days, which ye shall by no means believe, though one declare it unto you."
       },
       "hebrew": {
         "printed": "Hab. I. 5.",
@@ -4842,11 +5319,13 @@
       "pdf_page": 222,
       "nt": {
         "printed": "Rom. II. 24.",
-        "normalized": "ROM 2:24"
+        "normalized": "ROM 2:24",
+        "quoted": "For the name of GOD is blasphemed among the Gentiles through you, [as it is written]."
       },
       "lxx": {
         "printed": "Is. LII. 5.",
-        "normalized": "ISA 52:5"
+        "normalized": "ISA 52:5",
+        "quoted": "Through you my name is blasphemed among the Gentiles continually."
       },
       "hebrew": {
         "printed": "Is. LII. 5.",
@@ -4863,11 +5342,13 @@
       "pdf_page": 223,
       "nt": {
         "printed": "Rom. XI. 4.",
-        "normalized": "ROM 11:4"
+        "normalized": "ROM 11:4",
+        "quoted": "[What saith the answer of GOD unto him?] I have reserved to myself seven thousand men, who have not bowed the knee to the image of Baal."
       },
       "lxx": {
         "printed": "3 Kings XIX. 18.",
-        "normalized": "1KI 19:18"
+        "normalized": "1KI 19:18",
+        "quoted": "And thou shalt leave in Israel seven thousand men, all the knees which have not bowed a knee unto Baal."
       },
       "hebrew": {
         "printed": "1 Kings XIX. 18.",
@@ -4883,11 +5364,13 @@
       "pdf_page": 224,
       "nt": {
         "printed": "2 Cor. XIII. 1.",
-        "normalized": "2CO 13:1"
+        "normalized": "2CO 13:1",
+        "quoted": "In the mouth of two or three witnesses shall every word be established."
       },
       "lxx": {
         "printed": "Deut. XIX. 15.",
-        "normalized": "DEU 19:15"
+        "normalized": "DEU 19:15",
+        "quoted": "At the mouth of two witnesses, and at the mouth of three witnesses, shall every word be established."
       },
       "hebrew": {
         "printed": "Deut. XIX. 15.",
@@ -4903,11 +5386,13 @@
       "pdf_page": 225,
       "nt": {
         "printed": "Gal. III. 13.",
-        "normalized": "GAL 3:13"
+        "normalized": "GAL 3:13",
+        "quoted": "[for it is written,] Cursed is every one that hangeth on a tree:"
       },
       "lxx": {
         "printed": "Deut. XXI. 23.",
-        "normalized": "DEU 21:23"
+        "normalized": "DEU 21:23",
+        "quoted": "for every one that is hanged upon a tree is accursed of GOD."
       },
       "hebrew": {
         "printed": "Deut. XXI. 23.",
@@ -4923,11 +5408,13 @@
       "pdf_page": 225,
       "nt": {
         "printed": "Eph. V. 31.",
-        "normalized": "EPH 5:31"
+        "normalized": "EPH 5:31",
+        "quoted": "For this cause shall a man leave his father and mother, and shall be joined unto his wife, and they two shall be one flesh."
       },
       "lxx": {
         "printed": "Gen. II. 24.",
-        "normalized": "GEN 2:24"
+        "normalized": "GEN 2:24",
+        "quoted": "Therefore shall a man leave his father and mother, and shall be joined unto his wife; and they twain shall be one flesh."
       },
       "hebrew": {
         "printed": "Gen. II. 24.",
@@ -4943,11 +5430,13 @@
       "pdf_page": 227,
       "nt": {
         "printed": "Matt. II. 6.",
-        "normalized": "MAT 2:6"
+        "normalized": "MAT 2:6",
+        "quoted": "[for thus it is written by the prophet,] And thou Bethlehem, in the land of Juda, art not the least among the princes of Juda: for out of thee shall come a Governor, that shall rule my people Israel."
       },
       "lxx": {
         "printed": "Mic. V. 2.",
-        "normalized": "MIC 5:2"
+        "normalized": "MIC 5:2",
+        "quoted": "And thou, Bethleem, house of Ephratha, art few-in-number to be reckoned among the thousands of Juda; yet out of thee shall one come forth to me, to be for a ruler of Israel."
       },
       "hebrew": {
         "printed": "Mic. V. 1.",
@@ -4963,11 +5452,13 @@
       "pdf_page": 231,
       "nt": {
         "printed": "Matt. II. 18.",
-        "normalized": "MAT 2:18"
+        "normalized": "MAT 2:18",
+        "quoted": "[Then was fulfilled that which was spoken by Jeremy the prophet, saying,] In Rama was there a voice heard, lamentation, and weeping, and great mourning, Rachel weeping for her children, and would not be comforted, because they are not."
       },
       "lxx": {
         "printed": "Jerem. XXXVIII. 15.",
-        "normalized": "JER 38:15"
+        "normalized": "JER 38:15",
+        "quoted": "A voice was heard in Rama, of lamentation and weeping and wailing; Rachel would not cease weeping for her children, because they are not."
       },
       "hebrew": {
         "printed": "Jerem. XXXI. 15.",
@@ -4983,11 +5474,13 @@
       "pdf_page": 232,
       "nt": {
         "printed": "Matt. III. 3.",
-        "normalized": "MAT 3:3"
+        "normalized": "MAT 3:3",
+        "quoted": "[For this is he that was spoken of by the prophet Esaias, saying,] The voice of one crying in the wilderness, Prepare ye the way of the Lord, make his paths straight."
       },
       "lxx": {
         "printed": "Is. XL. 3.",
-        "normalized": "ISA 40:3"
+        "normalized": "ISA 40:3",
+        "quoted": "The voice of one crying in the wilderness, Prepare ye the way of the Lord, make straight the paths of our GOD."
       },
       "hebrew": {
         "printed": "Is. XL. 3.",
@@ -5003,11 +5496,13 @@
       "pdf_page": 233,
       "nt": {
         "printed": "Matt. XV. 8–9.",
-        "normalized": "MAT 15:8-9"
+        "normalized": "MAT 15:8-9",
+        "quoted": "[well did Esaias prophesy of you, saying,] This people draweth nigh unto me with their mouth, and honoureth me with their lips; but their heart is far from me. But in vain they do worship me, teaching for doctrines the commandments of men."
       },
       "lxx": {
         "printed": "Is. XXIX. 13.",
-        "normalized": "ISA 29:13"
+        "normalized": "ISA 29:13",
+        "quoted": "This people draw nigh unto me with their mouth, and honour me with their lips, but their heart is far from me; but in vain do they worship me, teaching the commandments and doctrines of men."
       },
       "hebrew": {
         "printed": "Is. XXIX. 13.",
@@ -5023,11 +5518,13 @@
       "pdf_page": 235,
       "nt": {
         "printed": "Mark I. 3.",
-        "normalized": "MRK 1:3"
+        "normalized": "MRK 1:3",
+        "quoted": "The voice of one crying in the wilderness, Prepare ye the way of the Lord, make his paths straight."
       },
       "lxx": {
         "printed": "Is. XL. 3.",
-        "normalized": "ISA 40:3"
+        "normalized": "ISA 40:3",
+        "quoted": "The voice of one crying in the wilderness, Prepare ye the way of the Lord, make straight the paths of our GOD."
       },
       "hebrew": {
         "printed": "Is. XL. 3.",
@@ -5043,11 +5540,13 @@
       "pdf_page": 236,
       "nt": {
         "printed": "Mark VII. 6–7.",
-        "normalized": "MRK 7:6-7"
+        "normalized": "MRK 7:6-7",
+        "quoted": "[Well hath Esaias prophesied of you hypocrites, as it is written,] This people honoureth me with their lips, but their heart is far from me. Howbeit in vain do they worship me, teaching for doctrines the commandments of men."
       },
       "lxx": {
         "printed": "Is. XXIX. 13.",
-        "normalized": "ISA 29:13"
+        "normalized": "ISA 29:13",
+        "quoted": "This people draw nigh unto me with their mouth, and honour me with their lips, but their heart is far from me; but in vain do they worship me, teaching the commandments and doctrines of men."
       },
       "hebrew": {
         "printed": "Is. XXIX. 13.",
@@ -5063,11 +5562,13 @@
       "pdf_page": 236,
       "nt": {
         "printed": "John VI. 45.",
-        "normalized": "JHN 6:45"
+        "normalized": "JHN 6:45",
+        "quoted": "[It is written in the prophets,] And they shall be all taught of GOD."
       },
       "lxx": {
         "printed": "Is. LIV. 13.",
-        "normalized": "ISA 54:13"
+        "normalized": "ISA 54:13",
+        "quoted": "and (I will make) all thy children to be taught of GOD."
       },
       "hebrew": {
         "printed": "Is. LIV. 13.",
@@ -5083,11 +5584,13 @@
       "pdf_page": 237,
       "nt": {
         "printed": "Acts VII. 33–34.",
-        "normalized": "ACT 7:33-34"
+        "normalized": "ACT 7:33-34",
+        "quoted": "[Then said the Lord to him,] Put off thy shoes from thy feet: for the place where thou standest is holy ground. I have seen, I have seen the affliction of my people which is in Egypt, and I have heard their groaning, and am come down to deliver them. And now come, I will send thee into Egypt."
       },
       "lxx": {
         "printed": "Exod. III. 5, 7, 8, 10.",
-        "normalized": "EXO 3:5; EXO 3:7-8; EXO 3:10"
+        "normalized": "EXO 3:5; EXO 3:7-8; EXO 3:10",
+        "quoted": "put off thy shoes from off thy feet, for the place whereon thou standest is holy ground. .. I have seen, I have seen the affliction of my people which are in Egypt, and I have heard their cry.. and I am come down to deliver them ... And now come, I will send thee unto Pharaoh, king of Egypt."
       },
       "hebrew": {
         "printed": "Exod. III. 5, 7, 8, 10.",
@@ -5103,11 +5606,13 @@
       "pdf_page": 239,
       "nt": {
         "printed": "Acts XV. 16–17.",
-        "normalized": "ACT 15:16-17"
+        "normalized": "ACT 15:16-17",
+        "quoted": "[as it is written,] After this I will return, and will build again the tabernacle of David, which is fallen down; and I will build again the ruins thereof, and I will set it up: That the residue of men might seek after the Lord, and all the Gentiles, upon whom my name is called, saith the Lord, who doeth all these things."
       },
       "lxx": {
         "printed": "Amos IX. 11–12.",
-        "normalized": "AMO 9:11-12"
+        "normalized": "AMO 9:11-12",
+        "quoted": "In that day will I raise up the tabernacle of David that is fallen, and I will build again the fallen places thereof, and I will raise up the ruins thereof, and I will build it again, as in the days of old: that the residue of men may seek after Me and all the Gentiles, upon whom my name is called, saith the Lord who doeth all these things."
       },
       "hebrew": {
         "printed": "Amos IX. 11–12.",
@@ -5123,11 +5628,13 @@
       "pdf_page": 241,
       "nt": {
         "printed": "Rom. IX. 27–28.",
-        "normalized": "ROM 9:27-28"
+        "normalized": "ROM 9:27-28",
+        "quoted": "[Esaias also crieth concerning Israel,] Though the number of the children of Israel be as the sand of the sea, a remnant shall be saved: For he will finish the work, and cut it short in righteousness: because a short work will the Lord make upon the earth."
       },
       "lxx": {
         "printed": "Is. X. 22–23.",
-        "normalized": "ISA 10:22-23"
+        "normalized": "ISA 10:22-23",
+        "quoted": "And though the people of Israel be as the sand of the sea, a remnant of them shall be saved: He will finish the work, and cut it short in righteousness; for a short work will the Lord make in the whole world."
       },
       "hebrew": {
         "printed": "Is. X. 22–23.",
@@ -5143,11 +5650,13 @@
       "pdf_page": 244,
       "nt": {
         "printed": "Rom. XI. 9–10.",
-        "normalized": "ROM 11:9-10"
+        "normalized": "ROM 11:9-10",
+        "quoted": "[And David saith,] Let their table be made a snare, and a trap, and a stumblingblock, and a recompence unto them: Let their eyes be darkened, that they may not see, and bow down their back alway."
       },
       "lxx": {
         "printed": "Ps. LXVIII. 23–24.",
-        "normalized": "PSA 68:23-24"
+        "normalized": "PSA 68:23-24",
+        "quoted": "Let their table before them become a snare, and a recompence and a stumbling block; Let their eyes be darkened, that they may not see, and bow down their back alway."
       },
       "hebrew": {
         "printed": "Ps. LXIX. 23–24.",
@@ -5163,11 +5672,16 @@
       "pdf_page": 245,
       "nt": {
         "printed": "Rom. XI. 26–27.",
-        "normalized": "ROM 11:26-27"
+        "normalized": "ROM 11:26-27",
+        "quoted": "[as it is written,] There shall come out of Sion the Deliverer, and shall turn away ungodliness from Jacob: For this is my covenant unto them, when I shall take away their sins."
       },
       "lxx": {
         "printed": "Is. LIX. 20–21.; Is. XXVII. 9.",
-        "normalized": "ISA 59:20-21; ISA 27:9"
+        "normalized": "ISA 59:20-21; ISA 27:9",
+        "quoted": [
+          "And the Deliverer shall come on account of Sion, and shall turn away ungodliness from Jacob; And this is my covenant unto them, said the Lord.",
+          "when I remit his sin."
+        ]
       },
       "hebrew": {
         "printed": "Is. LIX. 20–21.; Is. XXVII. 9.",
@@ -5184,11 +5698,13 @@
       "pdf_page": 247,
       "nt": {
         "printed": "Heb. I. 10–12.",
-        "normalized": "HEB 1:10-12"
+        "normalized": "HEB 1:10-12",
+        "quoted": "[And,] Thou, Lord, in the beginning hast laid the foundation of the earth; and the heavens are the works of thine hands: They shall perish, but thou remainest; and they all shall wax old as doth a garment; And as a vesture shalt thou fold them up, and they shall be changed: but thou art the same, and thy years shall not fail."
       },
       "lxx": {
         "printed": "Ps. CI. 26–28.",
-        "normalized": "PSA 101:26-28"
+        "normalized": "PSA 101:26-28",
+        "quoted": "In the beginning, thou, Lord, didst lay the foundation of the earth, and the heavens are the works of thy hands. They shall perish, but Thou remainest; and they all shall wax old as doth a garment; and as a vesture shalt thou fold them up, and they shall be changed; but thou art the same, and thy years shall not fail."
       },
       "hebrew": {
         "printed": "Ps. CII. 26–28.",
@@ -5204,11 +5720,13 @@
       "pdf_page": 248,
       "nt": {
         "printed": "Heb. III. 7–11.",
-        "normalized": "HEB 3:7-11"
+        "normalized": "HEB 3:7-11",
+        "quoted": "[(as the Holy Ghost saith,] Today if ye will hear his voice, Harden not your hearts, as in the provocation, in the day of temptation in the wilderness: When your fathers tempted me, proved me, and saw my works forty years. Wherefore I was grieved with that generation, and said, They do alway err in their heart; and they have not known my ways. So I sware in my wrath, They shall not enter into my rest.)"
       },
       "lxx": {
         "printed": "Ps. XCIV. 8–11.",
-        "normalized": "PSA 94:8-11"
+        "normalized": "PSA 94:8-11",
+        "quoted": "Today if ye will hear his voice, harden not your hearts, as in the provocation, according to the day of anger in the wilderness, where your fathers tempted me, proved me, and saw my works. Forty years was I grieved with that generation, and I said, They do alway err in their heart; and they have not known my ways. So I sware in my wrath, They shall not enter into my rest."
       },
       "hebrew": {
         "printed": "Ps. XCV. 7–11.",
@@ -5224,11 +5742,13 @@
       "pdf_page": 251,
       "nt": {
         "printed": "Heb. VIII. 5.",
-        "normalized": "HEB 8:5"
+        "normalized": "HEB 8:5",
+        "quoted": "[as Moses was admonished of GOD]... for, See, [saith he,] that thou make all things according to the pattern showed to thee in the Mount."
       },
       "lxx": {
         "printed": "Exod. XXV. 40.",
-        "normalized": "EXO 25:40"
+        "normalized": "EXO 25:40",
+        "quoted": "See that thou make them according to the pattern showed to thee in the Mount."
       },
       "hebrew": {
         "printed": "Exod. XXV. 40.",
@@ -5244,11 +5764,13 @@
       "pdf_page": 251,
       "nt": {
         "printed": "Heb. X. 16–17.",
-        "normalized": "HEB 10:16-17"
+        "normalized": "HEB 10:16-17",
+        "quoted": "[for after that he had said before,] This is the covenant that I will make with them after those days, saith the Lord, I will put my laws into their hearts, and in their minds will I write them: And their sins and iniquities will I remember no more."
       },
       "lxx": {
         "printed": "Jer. XXXVIII. 33–34.",
-        "normalized": "JER 38:33-34"
+        "normalized": "JER 38:33-34",
+        "quoted": "For this is my covenant that I will make with the house of Israel after those days, saith the Lord, I will surely put my laws into their mind, and write them upon their hearts; ... for I will be merciful to their unrighteousnesses, and their sins will I remember no more."
       },
       "hebrew": {
         "printed": "Jer. XXXI. 33–34.",
@@ -5264,11 +5786,13 @@
       "pdf_page": 253,
       "nt": {
         "printed": "1 Pet. II. 6.",
-        "normalized": "1PE 2:6"
+        "normalized": "1PE 2:6",
+        "quoted": "[Wherefore also it is contained in the scripture,] Behold, I lay in Sion a chief corner stone, elect, precious: and he that believeth on him shall not be confounded."
       },
       "lxx": {
         "printed": "Is. XXVIII. 16.",
-        "normalized": "ISA 28:16"
+        "normalized": "ISA 28:16",
+        "quoted": "Behold, I lay for the foundations of Sion, a costly stone, chosen, chief-corner, precious, for her foundations; and he that believeth shall not be ashamed."
       },
       "hebrew": {
         "printed": "Is. XXVIII. 16.",
@@ -5284,11 +5808,13 @@
       "pdf_page": 253,
       "nt": {
         "printed": "1 Pet. III. 14–15.",
-        "normalized": "1PE 3:14-15"
+        "normalized": "1PE 3:14-15",
+        "quoted": "and be not afraid of their terror, neither be troubled; But sanctify the Lord GOD."
       },
       "lxx": {
         "printed": "Is. VIII. 12–13.",
-        "normalized": "ISA 8:12-13"
+        "normalized": "ISA 8:12-13",
+        "quoted": "and fear ye not his fear, neither be troubled. Sanctify the Lord himself."
       },
       "hebrew": {
         "printed": "Is. VIII. 12–13.",
@@ -5304,11 +5830,13 @@
       "pdf_page": 256,
       "nt": {
         "printed": "Luke X. 27 fp.",
-        "normalized": "LUK 10:27"
+        "normalized": "LUK 10:27",
+        "quoted": "Thou shalt love the Lord thy GOD with all thy heart, and with all thy soul, and with all thy strength, and with all thy mind;"
       },
       "lxx": {
         "printed": "Deut. VI. 5.",
-        "normalized": "DEU 6:5"
+        "normalized": "DEU 6:5",
+        "quoted": "And thou shalt love the Lord thy GOD with all thy mind, and with all thy soul, and with all thy strength."
       },
       "hebrew": {
         "printed": "Deut. VI. 5.",
@@ -5327,11 +5855,13 @@
       "pdf_page": 257,
       "nt": {
         "printed": "Luke IV. 4.",
-        "normalized": "LUK 4:4"
+        "normalized": "LUK 4:4",
+        "quoted": "[It is written, That,] man shall not live by bread alone, but by every word of GOD."
       },
       "lxx": {
         "printed": "Deut. VIII. 3.",
-        "normalized": "DEU 8:3"
+        "normalized": "DEU 8:3",
+        "quoted": "man shall not live by bread alone, but by every word that proceedeth out of the mouth of GOD shall man live."
       },
       "hebrew": {
         "printed": "Deut. VIII. 3.",
@@ -5347,16 +5877,19 @@
       "pdf_page": 257,
       "nt": {
         "printed": "John I. 23.",
-        "normalized": "JHN 1:23"
+        "normalized": "JHN 1:23",
+        "quoted": "[He said,] I am the voice of one crying in the wilderness, Make straight the way of the Lord, [as said the prophet Esaias.]"
       },
       "lxx": {
         "printed": "Is. XL. 3.",
-        "normalized": "ISA 40:3"
+        "normalized": "ISA 40:3",
+        "quoted": "The voice of one crying in the wilderness, Prepare ye the way of the Lord, make straight the paths of our GOD."
       },
       "hebrew": {
         "printed": "Is. XL. 3.",
         "normalized": "ISA 40:3"
-      }
+      },
+      "note": "Page 257 prints the closing bracket of the second formula after “Lord,” and none after “Esaias.”; the quoted English is recorded with the bracket closing the formula, as printed elsewhere."
     },
     {
       "id": "Q260",
@@ -5367,11 +5900,13 @@
       "pdf_page": 259,
       "nt": {
         "printed": "Matt. XXI. 5.",
-        "normalized": "MAT 21:5"
+        "normalized": "MAT 21:5",
+        "quoted": "[All this was done, that it might be fulfilled which was spoken by the prophet, saying,] Tell ye the daughter of Sion, Behold, thy King cometh unto thee, meek, and sitting upon an ass, and a colt the foal of an ass."
       },
       "lxx": {
         "printed": "Zech. IX. 9.",
-        "normalized": "ZEC 9:9"
+        "normalized": "ZEC 9:9",
+        "quoted": "Rejoice greatly, O daughter of Sion; proclaim it aloud, O daughter of Jerusalem: behold, the King is coming to thee, just and saving; he is meek, and riding on an ass, and a young foal."
       },
       "hebrew": {
         "printed": "Zech. IX. 9.",
@@ -5387,11 +5922,13 @@
       "pdf_page": 260,
       "nt": {
         "printed": "John XII. 14, 15.",
-        "normalized": "JHN 12:14-15"
+        "normalized": "JHN 12:14-15",
+        "quoted": "[as it is written,] Fear not, daughter of Sion: behold, thy King cometh, sitting on an ass's colt."
       },
       "lxx": {
         "printed": "Zech. IX. 9.",
-        "normalized": "ZEC 9:9"
+        "normalized": "ZEC 9:9",
+        "quoted": "Rejoice greatly, O daughter of Sion; proclaim it aloud, O daughter of Jerusalem: behold thy king is coming to thee, just and saving; he is meek, and riding on an ass, and a young foal."
       },
       "hebrew": {
         "printed": "Zech. IX. 9.",
@@ -5408,11 +5945,13 @@
       "pdf_page": 261,
       "nt": {
         "printed": "1 Cor. II. 9.",
-        "normalized": "1CO 2:9"
+        "normalized": "1CO 2:9",
+        "quoted": "[But as it is written,] Eye hath not seen, nor ear heard, neither have entered into the heart of man the things which GOD hath prepared for them that love him."
       },
       "lxx": {
         "printed": "Is. LXIV. 4.",
-        "normalized": "ISA 64:4"
+        "normalized": "ISA 64:4",
+        "quoted": "From everlasting we have not heard, neither have our eyes seen a GOD, beside thee, and thy works which thou shalt do for them that wait for mercy."
       },
       "hebrew": {
         "printed": "Is. LXIV. 3.",
@@ -5428,11 +5967,13 @@
       "pdf_page": 263,
       "nt": {
         "printed": "Matt. IV. 15, 16.",
-        "normalized": "MAT 4:15-16"
+        "normalized": "MAT 4:15-16",
+        "quoted": "[That it might be fulfilled which was spoken by Esaias the prophet, saying,] The land of Zabulon, and the land of Nephthalim, by the way of the sea, beyond Jordan, Galilee of the Gentiles; The people which sat in darkness saw great light; and to them which sat in the region and shadow of death light is sprung up."
       },
       "lxx": {
         "printed": "Is. IX. 1, 2.",
-        "normalized": "ISA 9:1-2"
+        "normalized": "ISA 9:1-2",
+        "quoted": "Drink this first. Act quickly, O land of Zabulon, the land of Nephthalim, and the rest dwelling on the sea-coast, and beyond Jordan, Galilee of the Gentiles. O people walking in darkness, behold a great light! ye dwellers in the region and shadow of death, a light shall shine upon you."
       },
       "hebrew": {
         "printed": "Is. VIII. 23–IX. 1.",
@@ -5448,11 +5989,13 @@
       "pdf_page": 264,
       "nt": {
         "printed": "Rom. III. 15–17.",
-        "normalized": "ROM 3:15-17"
+        "normalized": "ROM 3:15-17",
+        "quoted": "Their feet are swift to shed blood: Destruction and misery are in their ways: And the way of peace have they not known:"
       },
       "lxx": {
         "printed": "Is. LIX. 7–8.",
-        "normalized": "ISA 59:7-8"
+        "normalized": "ISA 59:7-8",
+        "quoted": "And their feet run to evil, swift to shed blood; their thoughts also are thoughts of murder: destruction and misery are in their ways; and the way of peace they know not."
       },
       "hebrew": {
         "printed": "Is. LIX. 7–8.",
@@ -5468,11 +6011,13 @@
       "pdf_page": 266,
       "nt": {
         "printed": "Matt. XII. 18–21.",
-        "normalized": "MAT 12:18-21"
+        "normalized": "MAT 12:18-21",
+        "quoted": "[That it might be fulfilled which was spoken by Esaias the prophet, saying,] Behold my servant, whom I have chosen; my beloved, in whom my soul is well pleased: I will put my spirit upon him, and he shall shew judgment to the Gentiles. He shall not strive, nor cry; neither shall any man hear his voice in the streets. A bruised reed shall he not break, and smoking flax shall he not quench, till he send forth judgment unto victory. And in his name shall the Gentiles trust."
       },
       "lxx": {
         "printed": "Is. XLII. 1–4.",
-        "normalized": "ISA 42:1-4"
+        "normalized": "ISA 42:1-4",
+        "quoted": "Jacob is my servant, I will help him; Israel is mine elect, my soul has accepted him: I have put my spirit upon him, he shall bring forth judgment to the Gentiles. He shall not cry, nor lift up his voice, nor shall his voice be heard without. A bruised reed shall he not break, and smoking flax shall he not quench; but he shall bring forth judgment unto truth. He shall shine out, and shall not be discouraged, till he have set judgment upon the earth: and in his name shall the Gentiles trust."
       },
       "hebrew": {
         "printed": "Is. XLII. 1–4.",
@@ -5488,11 +6033,13 @@
       "pdf_page": 269,
       "nt": {
         "printed": "Mark IV. 12.",
-        "normalized": "MRK 4:12"
+        "normalized": "MRK 4:12",
+        "quoted": "[That] seeing they may see, and not perceive; and hearing they may hear, and not understand; lest at any time they should be converted, and their sins should be forgiven them."
       },
       "lxx": {
         "printed": "Is. VI. 9–10.",
-        "normalized": "ISA 6:9-10"
+        "normalized": "ISA 6:9-10",
+        "quoted": "By hearing ye shall hear, and not understand; and seeing ye shall see, and not perceive. For the heart of this people is become gross, and their ears are dull of hearing, and their eyes they closed, lest they should see with their eyes, and hear with their ears, and understand with their heart, and should be converted, and I should heal them."
       },
       "hebrew": {
         "printed": "Is. VI. 9–10.",
@@ -5508,11 +6055,13 @@
       "pdf_page": 271,
       "nt": {
         "printed": "John XII. 40.",
-        "normalized": "JHN 12:40"
+        "normalized": "JHN 12:40",
+        "quoted": "[Therefore they could not believe, because that Esaias said again,] He hath blinded their eyes, and hardened their heart; that they should not see with their eyes, nor understand with their heart, and be converted, and I should heal them."
       },
       "lxx": {
         "printed": "Is. VI. 10.",
-        "normalized": "ISA 6:10"
+        "normalized": "ISA 6:10",
+        "quoted": "For the heart of this people is become gross, and their ears are dull of hearing, and their eyes they closed, lest they should see with their eyes, and hear with their ears, and understand with their heart, and should be converted, and I should heal them."
       },
       "hebrew": {
         "printed": "Is. VI. 10.",
@@ -5528,11 +6077,13 @@
       "pdf_page": 273,
       "nt": {
         "printed": "Matt. XXVII. 9, 10.",
-        "normalized": "MAT 27:9-10"
+        "normalized": "MAT 27:9-10",
+        "quoted": "[Then was fulfilled that which was spoken by Jeremy the prophet, saying,] And they took the thirty pieces of silver, the price of him that was valued, whom they of the children of Israel did value; And gave them for the potter's field, as the Lord appointed me."
       },
       "lxx": {
         "printed": "Zech. XI. 13.",
-        "normalized": "ZEC 11:13"
+        "normalized": "ZEC 11:13",
+        "quoted": "Drop them into the furnace, and I will see if it is good metal, as I have been proved by them. And I took the thirty pieces of silver, and threw them into the house of the Lord, into the furnace."
       },
       "hebrew": {
         "printed": "Zech. XI. 13.",
@@ -5569,11 +6120,13 @@
       "pdf_page": 277,
       "nt": {
         "printed": "Luke IV. 18–19.",
-        "normalized": "LUK 4:18-19"
+        "normalized": "LUK 4:18-19",
+        "quoted": "The Spirit of the Lord is upon me, because he hath anointed me to preach the gospel to the poor; he hath sent me to heal the broken-hearted, to preach deliverance to the captives, and recovering of sight to the blind, to set at liberty them that are bruised, To preach the acceptable year of the Lord."
       },
       "lxx": {
         "printed": "Is. LXI. 1–2.",
-        "normalized": "ISA 61:1-2"
+        "normalized": "ISA 61:1-2",
+        "quoted": "The Spirit of the Lord is upon me, because he hath anointed me to preach the gospel to the poor; he hath sent me to heal the broken-hearted, to proclaim deliverance to the captives, and recovering of sight to the blind; to declare the acceptable year of the Lord,"
       },
       "hebrew": {
         "printed": "Is. LXI. 1–2.",
@@ -5589,11 +6142,13 @@
       "pdf_page": 279,
       "nt": {
         "printed": "Acts III. 22–23.",
-        "normalized": "ACT 3:22-23"
+        "normalized": "ACT 3:22-23",
+        "quoted": "[For Moses truly said unto the fathers,] A prophet shall the Lord your GOD raise up unto you of your brethren, like unto me; him shall ye hear in all things whatsoever he shall say unto you. And it shall come to pass, that every soul, which will not hear that prophet, shall be destroyed from among the people."
       },
       "lxx": {
         "printed": "Deut. XVIII. 15, 16, 18, 19.",
-        "normalized": "DEU 18:15-16; DEU 18:18-19"
+        "normalized": "DEU 18:15-16; DEU 18:18-19",
+        "quoted": "The Lord thy GOD will raise up unto thee a prophet from among thy brethren, like unto me; him shall ye hear. According to all that ... I will raise them up a prophet from their brethren, like unto thee ... and he shall speak unto them as I shall command him. And whatever man will not hearken to whatever words that prophet shall speak in my name, I will take vengeance on him."
       },
       "hebrew": {
         "printed": "Deut. XVIII. 15, 16, 18, 19.",
@@ -5609,11 +6164,13 @@
       "pdf_page": 281,
       "nt": {
         "printed": "Acts VII. 6–7.",
-        "normalized": "ACT 7:6-7"
+        "normalized": "ACT 7:6-7",
+        "quoted": "[And GOD spake on this wise,] That his seed should sojourn in a strange land; and that they should bring them into bondage, and entreat them evil four hundred years. And the nation, to whom they shall be in bondage, will I judge, said GOD: and after that shall they come forth, and serve me in this place."
       },
       "lxx": {
         "printed": "Gen. XV. 13–14.",
-        "normalized": "GEN 15:13-14"
+        "normalized": "GEN 15:13-14",
+        "quoted": "that thy seed shall be a sojourner in a land not their own; and they shall bring them into bondage, and entreat them evil, and humble them four hundred years. And the nation, to whom they shall be in bondage, will I judge; and after these things they shall come forth hither with much property."
       },
       "hebrew": {
         "printed": "Gen. XV. 13–14.",
@@ -5629,11 +6186,13 @@
       "pdf_page": 282,
       "nt": {
         "printed": "Acts VII. 26–28.",
-        "normalized": "ACT 7:26-28"
+        "normalized": "ACT 7:26-28",
+        "quoted": "[And the next day he shewed himself unto them as they strove, and would have set them at one again, saying,] Sirs, ye are brethren; why do ye wrong one to another? [But he that did his neighbour wrong thrust him away, saying,] Who made thee a ruler and a judge over us? Wilt thou kill me, as thou diddest the Egyptian yesterday?"
       },
       "lxx": {
         "printed": "Exod. II. 13–14.",
-        "normalized": "EXO 2:13-14"
+        "normalized": "EXO 2:13-14",
+        "quoted": "And having gone out the second day, he sees two Hebrew men fighting, and he says to the injurer, Wherefore smitest thou thy neighbour? And he said, Who made thee a ruler and a judge over us? Wilt thou slay me as thou yesterday slewest the Egyptian?"
       },
       "hebrew": {
         "printed": "Exod. II. 13–14.",
@@ -5649,11 +6208,16 @@
       "pdf_page": 284,
       "nt": {
         "printed": "Rom. IX. 33.",
-        "normalized": "ROM 9:33"
+        "normalized": "ROM 9:33",
+        "quoted": "[As it is written,] Behold, I lay in Sion a stumblingstone, and rock of offence: and whosoever believeth on him shall not be ashamed."
       },
       "lxx": {
         "printed": "Is. VIII. 14; Is. XXVIII. 16.",
-        "normalized": "ISA 8:14; ISA 28:16"
+        "normalized": "ISA 8:14; ISA 28:16",
+        "quoted": [
+          "and ye shall not come together against Him as against the obstruction of a stone, nor as against the falling of a rock.",
+          "Behold I lay, for the foundations of Sion, a costly stone, chosen, chief-corner, precious, for her foundations: and he that believeth shall not be ashamed."
+        ]
       },
       "hebrew": {
         "printed": "Is. VIII. 14; Is. XXVIII. 16.",
@@ -5670,11 +6234,13 @@
       "pdf_page": 286,
       "nt": {
         "printed": "Heb. VIII. 8–12.",
-        "normalized": "HEB 8:8-12"
+        "normalized": "HEB 8:8-12",
+        "quoted": "[he saith,] Behold, the days come, saith the Lord, when I will make a new covenant with the house of Israel and with the house of Judah: Not according to the covenant that I made with their fathers in the day when I took them by the hand to lead them out of the land of Egypt; because they continued not in my covenant, and I regarded them not, saith the Lord. For this is the covenant that I will make with the house of Israel after those days, saith the Lord; I will put my laws into their mind, and write them in their hearts: and I will be to them a GOD, and they shall be to me a people: And they shall not teach every man his neighbour, and every man his brother, saying, Know the Lord: for all shall know me, from the least to the greatest. For I will be merciful to their unrighteousness, and their sins and their iniquities will I remember no more."
       },
       "lxx": {
         "printed": "Jer. XXXVIII. 31–34.",
-        "normalized": "JER 38:31-34"
+        "normalized": "JER 38:31-34",
+        "quoted": "Behold, the days come, saith the Lord, when I will make a new covenant with the house of Israel, and with the house of Juda: not according to the covenant which I made with their fathers in the day when I took them by the hand to lead them out of the land of Egypt, for they continued not in my covenant, and I disregarded them, saith the Lord. For this is my covenant that I will make with the house of Israel; After those days, saith the Lord, I will surely put my laws into their mind, and write them on their hearts, and I will be to them a GOD, and they shall be to me a people. And they shall not at all teach every man his fellow-citizen, and every man his brother, saying, Know the Lord; for all shall know me, from the least of them to the greatest of them; for I will be merciful to their unrighteousnesses, and their sins will I remember no more."
       },
       "hebrew": {
         "printed": "Jer. XXXI. 31–34.",
@@ -5711,11 +6277,13 @@
       "pdf_page": 294,
       "nt": {
         "printed": "Luke III. 4–6.",
-        "normalized": "LUK 3:4-6"
+        "normalized": "LUK 3:4-6",
+        "quoted": "[As it is written in the book of the words of Esaias the prophet, saying,] The voice of one crying in the wilderness, Prepare ye the way of the Lord, make his paths straight. Every valley shall be filled, and every mountain and hill shall be brought low; and the crooked shall be made straight, and the rough ways shall be made smooth; And all flesh shall see the salvation of GOD."
       },
       "lxx": {
         "printed": "Is. XL. 3–5.",
-        "normalized": "ISA 40:3-5"
+        "normalized": "ISA 40:3-5",
+        "quoted": "The voice of one crying in the wilderness, Prepare ye the way of the Lord, make straight the paths of our GOD. Every valley shall be filled, and every mountain and hill shall be brought low; and all crooked ways shall be made straight, and the rough places into plains; and the glory of the Lord shall be seen, and all flesh shall see the salvation of GOD."
       },
       "hebrew": {
         "printed": "Is. XL. 3–5.",
@@ -5731,11 +6299,13 @@
       "pdf_page": 297,
       "nt": {
         "printed": "Rom. X. 6–8.",
-        "normalized": "ROM 10:6-8"
+        "normalized": "ROM 10:6-8",
+        "quoted": "[But the righteousness which is of faith speaketh on this wise,] Say not in thine heart, Who shall ascend into heaven? (that is, to bring Christ down from above:) Or, Who shall descend into the deep? (that is, to bring up Christ again from the dead.) But what saith it? The word is nigh thee, even in thy mouth, and in thy heart: that is, the word of faith which we preach;"
       },
       "lxx": {
         "printed": "Deut. XXX. 12–14.",
-        "normalized": "DEU 30:12-14"
+        "normalized": "DEU 30:12-14",
+        "quoted": "It is not in heaven above, as if one should say, Who shall go up for us into heaven, and take it for us, and we will hear it, and do it? Neither is it beyond the sea, as if one should say, Who will go over for us beyond the sea, and take it for us, and make it audible unto us, and we will do it? The word is very nigh thee, in thy mouth, and in thy heart, and in thy hands, to do it."
       },
       "hebrew": {
         "printed": "Deut. XXX. 12–14.",
@@ -5751,11 +6321,13 @@
       "pdf_page": 299,
       "nt": {
         "printed": "Rom. XIV. 11.",
-        "normalized": "ROM 14:11"
+        "normalized": "ROM 14:11",
+        "quoted": "[For it is written,] As I live, saith the Lord, every knee shall bow to me, and every tongue shall confess to GOD."
       },
       "lxx": {
         "printed": "Is. XLV. 23.",
-        "normalized": "ISA 45:23"
+        "normalized": "ISA 45:23",
+        "quoted": "By myself I swear, righteousness shall surely proceed out of my mouth, my words shall not be turned aside; That unto me every knee shall bow, and every tongue shall swear by GOD."
       },
       "hebrew": {
         "printed": "Is. XLV. 23.",

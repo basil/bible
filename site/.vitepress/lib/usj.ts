@@ -8,6 +8,9 @@ export type Node = {
   id?: string;
   alt?: string;
   category?: string;
+  // A quotation milestone's row, opening (sid) or closing (eid).
+  sid?: string;
+  eid?: string;
   content?: (string | Node)[];
 };
 export type Document = { content: Node[] };
@@ -78,9 +81,15 @@ const NOTE_TAGS: Record<string, string> = {
   ft: "span",
   fl: "span",
   xo: "b",
+  xq: "span",
   xt: "span",
   xta: "span",
 };
+// The words a New Testament quotation of the Old shares with its passage,
+// between the quotation milestones the build sets around them: marked for
+// what they are, and set like the words around them.
+const QUOTED = (sid: string) =>
+  `<span class="qt" data-quotation="${escape(sid)}">`;
 // The columns the edition's tables run to.
 const CELL_TAGS: Record<string, string> = Object.fromEntries(
   [1, 2, 3, 4, 5, 6, 7].flatMap((n) => [
@@ -157,6 +166,9 @@ function renderer(titleAnchor = "") {
   // A heading's anchor from its words, unique on the page, so that the
   // outline lists it: apart from the page title's, too.
   const anchors = new Set<string>([titleAnchor]);
+  // The quotations open at this point of the text, outermost first: a
+  // span cannot cross a block, so each block reopens them and closes them.
+  const quoted: string[] = [];
   function anchor(words: string) {
     const base =
       words
@@ -185,6 +197,27 @@ function renderer(titleAnchor = "") {
         return `<span class="verse" id="v${escape(item.number)}"></span>`;
       }
       return ` <sup class="verse" id="v${escape(item.number)}"><a href="#v${escape(item.number)}">${escape(item.pubnumber || item.number)}</a></sup> `;
+    }
+    if (item.type === "ms") {
+      if (inNote || !["qt-s", "qt-e"].includes(marker)) {
+        throw new Error(`Unexpected milestone ${marker}`);
+      }
+      if (marker === "qt-s") {
+        if (!item.sid) {
+          throw new Error("Quotation milestone without its row");
+        }
+        quoted.push(item.sid);
+        return QUOTED(item.sid);
+      }
+      const at = quoted.lastIndexOf(item.eid || "");
+      if (at < 0) {
+        throw new Error(`Quotation end without its start: ${item.eid}`);
+      }
+      // Close the spans opened since, then this one, and reopen the others.
+      const inner = quoted.splice(at + 1);
+      quoted.pop();
+      quoted.push(...inner);
+      return "</span>".repeat(inner.length + 1) + inner.map(QUOTED).join("");
     }
     if (item.type === "note") {
       if (inNote || !["f", "x"].includes(marker)) {
@@ -278,7 +311,17 @@ function renderer(titleAnchor = "") {
               : words(c.content || []),
         )
         .join("");
-    const html = (n.content || []).map((c) => inline(c)).join("");
+    // A quotation reopened as its block ends, or as another closes, leaves
+    // an empty span, which may hold others emptied so.
+    const opened = quoted.map(QUOTED).join("");
+    let html =
+      opened +
+      (n.content || []).map((c) => inline(c)).join("") +
+      "</span>".repeat(quoted.length);
+    for (let was = ""; was !== html;) {
+      was = html;
+      html = html.replace(/<span class="qt"[^>]*><\/span>/g, "");
+    }
     if (marker !== "mt1" && !/^h[2-4]$/.test(tag)) {
       return `<${tag} class="${marker}">${html}</${tag}>`;
     }

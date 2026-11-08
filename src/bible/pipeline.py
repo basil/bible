@@ -499,22 +499,33 @@ def placed(
     return policy.replace(versification={**policy.versification, "kjv": runs})
 
 
-def quotation_links(ctx: annotate.Context) -> dict[str, list[crossrefs.Link]]:
-    """The reviewed quotation links, by book, each side in the edition."""
+def quotation_links(
+    ctx: annotate.Context, units: Mapping[str, Document]
+) -> dict[str, list[crossrefs.Link]]:
+    """The reviewed quotation links, by book, each side in the edition, at
+    the words of the assembled books that Turpie's English finds."""
     policy = ctx.policy
-    relations = crossrefs.quotation_relations(
-        quotations.reviewed_rows(policy=policy), policy=policy
-    )
-    for relation in relations:
-        for passage in (*relation.nt, *relation.ot):
-            for verse in passage.verses:
-                require(
-                    scripture.has_verse(ctx.inventory, verse),
-                    f"Quotation verse missing from assembled edition: {relation.id}: {verse}",
-                )
-            versification.require_own_labels(
-                passage.verses, f"Quotation {relation.id}", policy=policy
+    rows = quotations.reviewed_rows(policy=policy)
+    # Each row's verses as the edition prints them: the Septuagint's by the
+    # Brenton verses they map to. Each is read for its words, so it must be
+    # printed, and under its own label.
+    printed = {
+        row["id"]: [
+            *bible.references.verses_of(row["nt"]),
+            *quotations.brenton_verses(row["ot"], policy=policy),
+        ]
+        for row in rows
+    }
+    for row_id, listed in printed.items():
+        for verse in listed:
+            require(
+                scripture.has_verse(ctx.inventory, verse),
+                f"Quotation verse missing from assembled edition: {row_id}: {verse}",
             )
+        versification.require_own_labels(listed, f"Quotation {row_id}", policy=policy)
+    books = {verse.book for listed in printed.values() for verse in listed}
+    verses = {code: scripture.verses(units[code]) for code in sorted(books)}
+    relations = crossrefs.quotation_relations(rows, verses, policy=policy)
     return crossrefs.planned_links(relations, ctx.books, policy=policy)
 
 
@@ -574,11 +585,12 @@ def linked(
     links: Sequence[crossrefs.Link],
     ctx: annotate.Context,
 ) -> Document:
-    """A book with its quotation links, each at the start of its verse, and
-    the notes of Brenton's Appendix, each at the words its decision names."""
+    """A book with its quotation links, each before the first quoted word
+    of its verse, the quotation milestones around the quoted words of each
+    passage, and the notes of Brenton's Appendix, each at the words its
+    decision names."""
     policy = ctx.policy
     verses = scripture.verses(doc)
-    placed: dict[str, Content] = {}
     require(
         all(link.origin.book == code for link in links),
         f"Links for another book passed to {code}",
@@ -587,10 +599,18 @@ def linked(
     require(
         cited <= set(verses), f"Quotation verse missing from prepared scripture: {code}"
     )
-    for reference, notes in crossrefs.link_notes(links, ctx.books, ctx.terms).items():
-        placed.setdefault(reference, []).extend(notes)
-    if placed:
-        doc = annotate.at_verse_starts(doc, verses, placed)
+    if links:
+        # Changes at one place stand in the order given: the opening
+        # milestones, then the notes, before the first quoted word. The
+        # notes are made first, which refuse a quotation past its verse.
+        noted: list[tuple[scripture.Verse, int, int, Content]] = [
+            (verses[origin.label], at, at, [note])
+            for origin, at, note in crossrefs.link_notes(
+                links, verses, ctx.books, ctx.terms
+            )
+        ]
+        changes = [*crossrefs.quotation_milestones(links, verses), *noted]
+        doc = scripture.edited(doc, changes, split_styles=True)
         verses = scripture.verses(doc)
     # At the words the decision names, found once, or at the verse's start or
     # end, after the notes already there.
@@ -620,10 +640,12 @@ def annotated(
     read_sources: Read,
     appendix_notes: Mapping[str, Sequence[Content]],
     ctx: annotate.Context,
-) -> tuple[dict[str, Document], dict[str, annotate.Report]]:
-    """The books with their notes and quotation links."""
+) -> tuple[
+    dict[str, Document], dict[str, annotate.Report], dict[str, list[crossrefs.Link]]
+]:
+    """The books with their notes and quotation links, and the links."""
     policy = ctx.policy
-    links = quotation_links(ctx)
+    links = quotation_links(ctx, units)
     docs, reports = {}, {}
     for unit in policy.scripture:
         code = unit["id"]
@@ -651,7 +673,7 @@ def annotated(
         docs[code] = linked(code, doc, appendix_notes, links.get(code, ()), ctx)
         reports[code] = report
     annotate.check_notes(policy, reports.values())
-    return docs, reports
+    return docs, reports, links
 
 
 @dataclass(frozen=True)
@@ -811,6 +833,8 @@ class Edition:
     inventory: MappingProxyType[str, Mapping[str, Sequence[str]]]
     # A row of the review for every note, by book, and a summary of the sources.
     notes: MappingProxyType[str, tuple[annotate.NoteRow, ...]]
+    # The quotation links, by book, with the words each stands at.
+    links: MappingProxyType[str, tuple[crossrefs.Link, ...]]
     summary: MappingProxyType[str, int]
     # What reading the sources met: the citation decisions, each dialect's
     # names for books, and the revisions of spelling and punctuation.
@@ -908,7 +932,7 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
     units = matter.colophons(units, policy, read_sources.colophons)
     ctx = context(units, policy)
     front, appendix_notes, front_report = front_and_back(read_sources, ctx)
-    books, reports = annotated(units, read_sources, appendix_notes, ctx)
+    books, reports, links = annotated(units, read_sources, appendix_notes, ctx)
     revised = revise(front, books, policy)
     # Brenton's list of abbreviations is finished and checked as the front
     # matter is, and the edition's list of abbreviations tables it.
@@ -987,6 +1011,7 @@ def prepare(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Edit
         books=ctx.books,
         inventory=MappingProxyType(ctx.inventory),
         notes=MappingProxyType({code: tuple(rows) for code, rows in note_rows.items()}),
+        links=MappingProxyType({code: tuple(listed) for code, listed in links.items()}),
         summary=MappingProxyType(summary),
         met=met,
         byzantine=promoted.byzantine,

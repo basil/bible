@@ -42,6 +42,7 @@ from bible import (
     quotations,
     references,
     scripture,
+    usj,
     versification,
     web,
 )
@@ -73,6 +74,75 @@ def notes_report(edition: pipeline.Edition) -> str:
         for code, rows in edition.notes.items()
         if rows
     )
+
+
+def links_report(edition: pipeline.Edition) -> str:
+    """Every quotation link, by book: its row and passage, the verses of the
+    passage as finished, with ‸ where the note stands and ⟦ ⟧ about the
+    quoted words, then the note, which names its opening words, and the
+    words of Turpie's the alignment did not place."""
+    lines = ["# Quotation links\n"]
+    # The books in the edition's order.
+    for code in (c for c in edition.documents if c in edition.links):
+        lines.append(f"\n## {code}\n\n")
+        verses = scripture.verses(edition.documents[code])
+        for link in edition.links[code]:
+            verse = verses[link.origin.label]
+            # The link's note: the cross-reference where its opening
+            # milestone stands, found by the milestone since revision may
+            # have divided words before it.
+            at_word = next(
+                (
+                    at
+                    for at, mark in verse.milestones
+                    if mark.get("marker") == usj.QUOTATION_START
+                    and mark.get("sid") == link.sid
+                ),
+                None,
+            )
+            # Of the links' notes there, the one that cites its targets: two
+            # glossed apart may stand at one word.
+            targets = {str(target.first) for target in link.targets}
+            note = next(
+                (
+                    n
+                    for at, n in verse.notes
+                    if at == at_word
+                    and usj.is_type(n, "note", "x")
+                    and targets
+                    <= {
+                        r.get("loc")
+                        for r in usj.walk(n["content"])
+                        if r["type"] == "ref"
+                    }
+                ),
+                None,
+            )
+            marked = []
+            for v in link.passage.verses:
+                text = verses[v.label].text
+                marks: dict[int, str] = {}
+                for at, mark in verses[v.label].milestones:
+                    if mark.get("sid") == link.sid:
+                        marks[at] = marks.get(at, "") + "⟦"
+                    elif mark.get("eid") == link.sid:
+                        marks[at] = "⟧" + marks.get(at, "")
+                if v == link.origin and note is not None and at_word is not None:
+                    marks[at_word] = marks.get(at_word, "") + "‸"
+                for at in sorted(marks, reverse=True):
+                    text = text[:at] + marks[at] + text[at:]
+                marked.append(f"{v.label} {scripture.plain(text)}")
+            printed = usj.text_of(note["content"]) if note else "(no note here)"
+            unplaced = (
+                f"  Unplaced: {' '.join(link.extent.unplaced)}\n"
+                if link.extent.unplaced
+                else ""
+            )
+            lines.append(
+                f"- `{link.sid}` [{link.extent.rule}] " + " / ".join(marked) + "\n"
+                f"  → {printed}\n" + unplaced
+            )
+    return "".join(lines)
 
 
 def ccel_line(item: bible.ccel.Listed) -> str:
@@ -350,6 +420,7 @@ def review(edition: pipeline.Edition) -> None:
     read, policy = edition.read, edition.policy
     files = {
         "notes.md": notes_report(edition),
+        "links.md": links_report(edition),
         "ccel.md": ccel_report(edition.ccel),
         "alexandrinus.md": alexandrinus_report(read, edition),
         "numbering.md": places.report(

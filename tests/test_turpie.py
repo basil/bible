@@ -219,3 +219,26 @@ def test_each_table_numbers_its_heads_in_order(
             notes = row.get("note", "") + (previous.get("note", "") if previous else "")
             assert "as printed" in notes, row["id"]
         previous = row
+
+
+def test_every_linked_row_transcribes_turpies_english(
+    rows: tuple[TurpieRows, ...], policy: bible.policy.Policy
+) -> None:
+    """The English he prints under both headings, with its formula bracketed,
+    for the rows the edition links and no other."""
+    excluded = set(policy.quotations["excluded"])
+    for row in rows:
+        if row["id"] in excluded:
+            assert "quoted" not in row["nt"] and "quoted" not in row["lxx"], row["id"]
+            continue
+        for column, heading in (("nt", row["nt"]), ("lxx", row["lxx"])):
+            text = heading.get("quoted")
+            assert text, f"{row['id']} {column}"
+            texts = [text] if isinstance(text, str) else list(text)
+            passages = str(heading["normalized"]).split("; ")
+            assert len(texts) in {1, len(passages)}, f"{row['id']} {column}"
+            for printed in texts:
+                assert printed == printed.strip() and "  " not in printed, printed
+                # No caller, verse number, or line break remains.
+                assert not re.search(r"[*†‡§¶\d\n]", printed), printed
+                assert printed.count("[") == printed.count("]"), printed

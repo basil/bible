@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import copy
+import re
 
 import pytest
 
@@ -51,14 +52,13 @@ def test_the_edition_is_sent_without_a_straight_quote(
 ) -> None:
     for code, text in exported.items():
         if code not in edition.authored:
-            assert not typography.PLAIN.search(text), code
+            # A quotation milestone's attributes are quoted as USFM quotes them.
+            words = re.sub(r"\\qt-[se] \|[^\\]*\\\*", "", text)
+            assert not typography.PLAIN.search(words), code
     # Only the form of the marks changes: the words are the prepared edition's.
     kingdoms = edition.documents["1KI"]
-    assert (
-        typography.count(kingdoms)
-        == len(typography.PLAIN.findall(usj.serialize(kingdoms)))
-        > 0
-    )
+    serialized = re.sub(r"\\qt-[se] \|[^\\]*\\\*", "", usj.serialize(kingdoms))
+    assert typography.count(kingdoms) == len(typography.PLAIN.findall(serialized)) > 0
 
 
 def test_small_caps_distinguish_opening_god_from_divine_name_emphasis() -> None:

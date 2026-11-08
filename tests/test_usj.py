@@ -192,6 +192,35 @@ def test_a_milestone_before_a_note_reads_back_as_usfmtc_reads_it(
         usj.parse("\\id FRT\n\\p Words\\zbelow more.\n")
 
 
+def test_quotation_milestones_carry_their_row_as_usfmtc_reads_them(
+    tmp_path: Path,
+) -> None:
+    import usfmtc
+
+    text = (
+        "\\id MAT\n\\usfm 3.1\n\\c 21\n\\p\n"
+        '\\v 16 read, \\qt-s |sid="Q003 MAT 21:16"\\*Out of the mouth'
+        '\\qt-e |eid="Q003 MAT 21:16"\\*?\n'
+    )
+    doc = usj.parse(text)
+    content = doc["content"][2]["content"]
+    assert content[2] == {"type": "ms", "marker": "qt-s", "sid": "Q003 MAT 21:16"}
+    assert content[4] == {"type": "ms", "marker": "qt-e", "eid": "Q003 MAT 21:16"}
+    assert usj.serialize(doc) == text
+    # The milestones are no words of the verse.
+    assert usj.text_of(content) == "read, Out of the mouth?"
+    path = tmp_path / "MAT.usfm"
+    path.write_text(text, encoding="utf-8")
+    upstream = usfmtc.readFile(str(path)).outUsj(None)["content"]
+    paragraph = next(n for n in upstream if n["type"] == "para")
+    assert [
+        n for n in paragraph["content"] if isinstance(n, dict) and n["type"] == "ms"
+    ] == [content[2], content[4]]
+    assert usj.milestone("qt-s", sid="Q1") == content[2] | {"sid": "Q1"}
+    with pytest.raises(CheckFailed, match="Invalid milestone"):
+        usj.parse('\\id MAT\n\\p Words\\qt-s |sid="Q1" more.\n')
+
+
 def test_usj_agrees_with_the_reference_parser(
     sources: bible.sources.Sources, tmp_path: Path
 ) -> None:
