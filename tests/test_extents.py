@@ -6,7 +6,7 @@ from __future__ import annotations
 import pytest
 from conftest import book
 
-from bible import extents, lemmas, scripture
+from bible import extents, scripture
 from bible.checks import CheckFailed
 from bible.policy_schema import QuotationsExtent
 from bible.references import parse_passage, parse_passages
@@ -231,41 +231,6 @@ def test_deciding_outer_ends_keeps_each_passages_matched_edges() -> None:
         (0, 10),
     ]
     assert all(e.rule == "decided" for e in found)
-
-
-def test_a_quotation_lemma_opens_the_quotation_within_the_verse() -> None:
-    text = VERSES["PSA"]["99:3"].text
-    words = scripture.word_spans(text)
-    # A quotation that opens the verse names no words.
-    assert lemmas.quotation_lemma(text, words, 0, 5) is None
-    # The clause from the first quoted word, within the quotation.
-    first = WORDS.index("because")
-    span = lemmas.quotation_lemma(text, words, first, len(words) - 1)
-    assert span is not None
-    assert lemmas.lemma_text(text, words, span) == "because of thine enemies"
-    # A clause of a word runs on, past a word like "thine" while the
-    # quotation goes on.
-    first = WORDS.index("praise")
-    span = lemmas.quotation_lemma(text, words, first, len(words) - 1)
-    assert span is not None
-    assert lemmas.lemma_text(text, words, span) == "praise, because of thine enemies"
-    # A long clause gives its first few words.
-    first = WORDS.index("that")
-    span = lemmas.quotation_lemma(text, words, first, len(words) - 1)
-    assert span is not None
-    assert lemmas.lemma_text(text, words, span) == "that thou mightest put"
-    # Never past the quotation's last word in the verse.
-    first = WORDS.index("that")
-    span = lemmas.quotation_lemma(text, words, first, first + 2)
-    assert span is not None
-    assert lemmas.lemma_text(text, words, span) == "that thou mightest"
-    # Words the verse repeats are widened to the right alone: the note
-    # stands before the lemma's first word, the quotation's.
-    text = "The Lord is good. And the Lord is good for ever."
-    words = scripture.word_spans(text)
-    span = lemmas.quotation_lemma(text, words, 5, 8)
-    assert span is not None
-    assert lemmas.lemma_text(text, words, span) == "the Lord is good for ever"
 
 
 def test_one_text_spans_its_passages_only_where_each_has_words_of_it() -> None:

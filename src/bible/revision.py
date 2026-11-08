@@ -78,7 +78,7 @@ type Trie = dict[str, "Trie"]
 
 # What scoped grammar does not read among the words: notes, labels, the
 # fields that quote or cite, and foreign words.
-UNREVISED = frozenset("xt fl fqa wg wh".split()) | usj.LEMMA_FIELDS
+UNREVISED = frozenset("xt fl fq fqa wg wh".split())
 
 # A word or phrase revised, or excepted: whole words, and what joins them.
 WORD = re.compile(r"\w(?:[\w’', -]*\w)?")
@@ -89,7 +89,7 @@ WORD = re.compile(r"\w(?:[\w’', -]*\w)?")
 # nothing the reader sees in a verse, a note's own text, or its lemma. Within
 # another style, such as an italic rendering (fqa), it divides them.
 INVISIBLE = frozenset({"add"})
-ROMAN = frozenset({"ft"}) | usj.LEMMA_FIELDS
+ROMAN = frozenset({"ft", "fq"})
 
 
 def _unrevised(item: Node) -> bool:
@@ -1153,7 +1153,7 @@ def respelled(
             output: Content = []
             for item in items:
                 if isinstance(item, dict) and "content" in item:
-                    if usj.is_lemma_field(item):
+                    if item.get("marker") == "fq":
                         quoted = usj.text_of(item["content"]).rstrip(": ")
                         kept = (
                             [
@@ -1171,7 +1171,7 @@ def respelled(
                                 match[0] if match.span() in kept else to(match)
                             ),
                             done=done,
-                            styles=(item["marker"],),
+                            styles=("fq",),
                         )
                     else:
                         inner = lemmas(item["content"])
@@ -1186,7 +1186,7 @@ def respelled(
             spelling,
             to,
             skip=lambda item: (
-                usj.is_note(item) or usj.is_label(item) or usj.is_lemma_field(item)
+                usj.is_note(item) or usj.is_label(item) or item.get("marker") == "fq"
             ),
             done=done,
         )
@@ -1259,10 +1259,8 @@ def respelled(
         output: Content = []
         for item in content:
             if isinstance(item, dict) and "content" in item:
-                if (
-                    usj.is_lemma_field(item)
-                    or item.get("marker") == "fqa"
-                    or (key is not None and item.get("marker") == "it")
+                if item.get("marker") in {"fq", "fqa"} or (
+                    key is not None and item.get("marker") == "it"
                 ):
                     inner = _rewritten(
                         item["content"],
@@ -1630,7 +1628,7 @@ def _check_lemmas(before: Document, after: Document) -> None:
         return [
             scripture.plain(usj.text_of(item["content"])).removesuffix(":")
             for item in usj.walk(note["content"])
-            if usj.is_lemma_field(item)
+            if usj.is_type(item, "char", "fq")
         ]
 
     old = scripture.verses(before)
@@ -1830,7 +1828,7 @@ def named(
                 _phrase(form).search(usj.text_of(item["content"]))
                 for _, note in verses[reference].notes
                 for item in usj.walk(note["content"])
-                if usj.is_lemma_field(item)
+                if usj.is_type(item, "char", "fq")
             ),
             f"Lemma quoting a numbered name: {code} {reference}: {form}",
         )
@@ -2185,13 +2183,11 @@ def _reworded(
         phrases = [(_phrase(old), to) for old, to in listed]
 
         def lemma(item: Node) -> Node:
-            if not usj.is_lemma_field(item):
+            if not usj.is_type(item, "char", "fq"):
                 return item
             content = item["content"]
             for pattern, to in phrases:
-                content = _rewritten(
-                    content, pattern, lambda match: to, styles=(item["marker"],)
-                )
+                content = _rewritten(content, pattern, lambda match: to, styles=("fq",))
             quoted = scripture.plain(usj.text_of(content)).removesuffix(":")
             require(
                 quoted in words,
@@ -2228,7 +2224,8 @@ def check_revised_notes(code: str, before: Document, after: Document) -> None:
         return [
             part
             for part in note["content"]
-            if not usj.is_type(part, "char", "fr") and not usj.is_lemma_field(part)
+            if not usj.is_type(part, "char", "fr")
+            and not usj.is_type(part, "char", "fq")
         ]
 
     was, now = keyed(before), keyed(after)

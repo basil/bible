@@ -25,6 +25,7 @@ is never read by the build.
 
 from __future__ import annotations
 
+import collections
 import difflib
 import json
 import shutil
@@ -79,8 +80,8 @@ def notes_report(edition: pipeline.Edition) -> str:
 def links_report(edition: pipeline.Edition) -> str:
     """Every quotation link, by book: its rows and passage, the verses of the
     passage as finished, with ‸ where the note stands and ⟦ ⟧ about the
-    quoted words, then the note, which names its opening words, and the
-    words of Turpie's the alignment did not place."""
+    quoted words, then the note, and the words of Turpie's the alignment did
+    not place."""
     lines = ["# Quotation links\n"]
     # The books in the edition's order.
     for code in (c for c in edition.documents if c in edition.links):
@@ -101,13 +102,15 @@ def links_report(edition: pipeline.Edition) -> str:
                 None,
             )
             # Of the links' notes there, the one that cites its targets: two
-            # glossed apart may stand at one word.
+            # glossed apart may stand at one word. In a passage quoted, the
+            # verse's quotations share a note, before the first of them.
             targets = {str(target.first) for target in link.targets}
-            note = next(
+            note_at, note = next(
                 (
-                    n
+                    (at, n)
                     for at, n in verse.notes
-                    if at == at_word
+                    if at_word is not None
+                    and (at <= at_word if link.quoted else at == at_word)
                     and usj.is_type(n, "note", "x")
                     and targets
                     <= {
@@ -116,19 +119,19 @@ def links_report(edition: pipeline.Edition) -> str:
                         if r["type"] == "ref"
                     }
                 ),
-                None,
+                (None, None),
             )
             marked = []
             for v in link.passage.verses:
                 text = verses[v.label].text
-                marks: dict[int, str] = {}
+                marks: collections.defaultdict[int, str] = collections.defaultdict(str)
                 for at, mark in verses[v.label].milestones:
                     if mark.get("sid") == link.sid:
-                        marks[at] = marks.get(at, "") + "⟦"
+                        marks[at] += "⟦"
                     elif mark.get("eid") == link.sid:
-                        marks[at] = "⟧" + marks.get(at, "")
-                if v == link.origin and note is not None and at_word is not None:
-                    marks[at_word] = marks.get(at_word, "") + "‸"
+                        marks[at] = "⟧" + marks[at]
+                if v == link.origin and note_at is not None:
+                    marks[note_at] += "‸"
                 for at in sorted(marks, reverse=True):
                     text = text[:at] + marks[at] + text[at:]
                 marked.append(f"{v.label} {scripture.plain(text)}")

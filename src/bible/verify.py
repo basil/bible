@@ -48,7 +48,6 @@ KEPT_MARKERS = {
         "f",
         "x",
         *usj.MILESTONES,
-        "xq",
         "xta",
         "add",
         "it",

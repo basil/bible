@@ -101,10 +101,7 @@ PROSE = frozenset("p m mi nb".split())
 POEM = frozenset("q1 q2 qr".split())
 BODY = PROSE | POEM
 # The parts of a note, each of which runs to the next or to the note's end.
-FIELDS = frozenset("fr ft fq fqa fk fl xo xq xt xta".split())
-# The field that names the words a note is about: a footnote's, and a
-# cross-reference's quotation of the text.
-LEMMA_FIELDS = frozenset({"fq", "xq"})
+FIELDS = frozenset("fr ft fq fqa fk fl xo xt xta".split())
 LABEL = re.compile(r"\d+[a-z]?(?:-\d+[a-z]?)?")
 # A verse's printed number, right after the verse's own.
 PRINTED = re.compile(r"\\vp ([^\\]*)\\vp\* ?")
@@ -153,9 +150,14 @@ def note(
     return result
 
 
-def milestone(marker: str, **attributes: str) -> Node:
+def milestone(marker: str, /, **attributes: str) -> Node:
     """A milestone, with its attributes (sid, eid)."""
     require(marker in MILESTONES, f"Unknown milestone: {marker}")
+    # An attribute may not stand for the node's own type or marker.
+    require(
+        not {"type", "marker"} & attributes.keys(),
+        f"Invalid milestone attributes: {marker}",
+    )
     return {"type": "ms", "marker": marker, **attributes}  # type: ignore[typeddict-item]
 
 
@@ -292,10 +294,7 @@ def parse(text: str, *, fragment: bool = False) -> Document | Content:
             if closing or plus or ended is None:
                 fail("Invalid milestone", at)
             cursor = ended.end()
-            milestone: Node = {"type": "ms", "marker": name}
-            for key, value in ATTRIBUTE.findall(ended[1] or ""):
-                milestone[key] = value  # type: ignore[literal-required]
-            content().append(milestone)
+            content().append(milestone(name, **dict(ATTRIBUTE.findall(ended[1] or ""))))
         elif name in FIELDS:
             if closing or plus:
                 fail("Invalid note field", at)
@@ -667,11 +666,6 @@ def _inline(content: Iterable[str | Node], *, nested: bool) -> str:
 def is_note(node: Node) -> bool:
     """What stands in a verse without being its words."""
     return node["type"] == "note"
-
-
-def is_lemma_field(node: object) -> TypeGuard[Node]:
-    """Whether a node is the field that names the words a note is about."""
-    return is_type(node, "char") and node["marker"] in LEMMA_FIELDS
 
 
 def is_origin(node: object) -> bool:

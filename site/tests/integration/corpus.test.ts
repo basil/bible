@@ -115,12 +115,12 @@ test("generated quotation lists link each passage independently", () => {
         .querySelectorAll(".xt a"),
     ].map((a) => [a.textContent, a.getAttribute("href")]);
   // The verse's two quotations begin at different words, so each has its
-  // note, naming the words it stands at.
-  expect(links("10:19 Do not commit adultery: ")).toEqual([
+  // note, before its first word; the notes name no words.
+  expect(links("10:19 Ex. 20:13")).toEqual([
     ["Ex. 20:13–17", "/read/exo/20#v13"],
     ["Deut. 5:17–21", "/read/deu/5#v17"],
   ]);
-  expect(links("10:19 Honour thy father and mother: ")).toEqual([
+  expect(links("10:19 Ex. 20:12")).toEqual([
     ["Ex. 20:12", "/read/exo/20#v12"],
     ["Deut. 5:16", "/read/deu/5#v16"],
   ]);

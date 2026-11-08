@@ -27,13 +27,14 @@ def links(edition: bible.pipeline.Edition) -> dict[str, tuple[crossrefs.Link, ..
 def link_at(
     passage: str, targets: str, row: str = "Q999", agreement: str | None = "A"
 ) -> crossrefs.Link:
-    """A link at the start of a passage's first verse."""
+    """A link at the start of a quoted passage's first verse."""
     origin = parse_passage(passage)
     return crossrefs.Link(
         Extent(origin, origin.first, 0, origin.first, 0, "aligned"),
         tuple(parse_passages(targets)),
         (row,),
         agreement,
+        True,
     )
 
 
@@ -73,25 +74,24 @@ def test_a_link_prints_the_other_passage_and_turpies_judgment(
     edition: bible.pipeline.Edition,
 ) -> None:
     matthew = usj.serialize(edition.documents["MAT"])
-    # The reference alone, where Turpie's class prints no gloss, and no
-    # lemma where the quotation opens the verse; the quotation milestone
-    # before the note, and after the last quoted word.
+    # The reference alone, where Turpie's class prints no gloss; the
+    # quotation milestone before the note, and after the last quoted word.
     assert (
         '\\v 23 \\qt-s |sid="Q179 MAT 1:23"\\*\\x - \\cat edition\\cat*\\xo 1:23 '
         "\\xt \\ref Esai. 7:14|ISA 7:14\\ref*\\x*Behold, a virgin"
     ) in matthew
     assert 'Emmanuel\\qt-e |eid="Q179 MAT 1:23"\\*, which' in matthew
-    # The lemma names the quotation's opening words where it does not open
-    # the verse.
+    # Where the quotation does not open the verse, the note stands before
+    # its first word, and names no words, like every link.
     assert (
         'saying, \\qt-s |sid="Q060 MAT 2:15"\\*\\x - \\cat edition\\cat*\\xo 2:15 '
-        "\\xq Out of Egypt have I called my son: \\xt \\ref Hos. 11:1|HOS 11:1\\ref* "
+        "\\xt \\ref Hos. 11:1|HOS 11:1\\ref* "
         "\\xta (Heb.\u00a0≠ LXX)\\x*Out of Egypt"
     ) in matthew
     # Quotations sharing an opening word and a printed agreement are one note.
     psalms = usj.serialize(edition.documents["PSA"])
     assert (
-        "\\xo 2:7 \\xq Thou art my Son: \\xt \\ref Acts 13:33|ACT 13:33\\ref*; "
+        "\\xo 2:7 \\xt \\ref Acts 13:33|ACT 13:33\\ref*; "
         "\\ref Heb. 1:5|HEB 1:5\\ref*; \\ref 5:5|HEB 5:5\\ref* "
         "\\xta (Heb.\u00a0+ LXX)\\x*Thou art my Son, today"
     ) in psalms
@@ -118,19 +118,29 @@ def test_grouped_notes_keep_categories_and_sort_all_targets(
         for _, note in mark.notes
         if usj.is_type(note["content"][0], "char", "xo")
     ] == [
-        "10:19 Do not commit adultery: Ex. 20:13–17; Deut. 5:17–21 (Heb.\u00a0+ LXX)",
-        "10:19 Honour thy father and mother: Ex. 20:12; Deut. 5:16 (Heb.\u00a0+ LXX)",
+        "10:19 Ex. 20:13–17; Deut. 5:17–21 (Heb.\u00a0+ LXX)",
+        "10:19 Ex. 20:12; Deut. 5:16 (Heb.\u00a0+ LXX)",
     ]
+    # A verse quoted from different words keeps one note, before the first.
+    lord = scripture.verses(edition.documents["PSA"])["109:1"]
+    [(at, note)] = [
+        (at, note) for at, note in lord.notes if usj.is_type(note, "note", "x")
+    ]
+    assert lord.text[at:].startswith("The Lord said to my Lord")
+    assert usj.text_of(note["content"]) == (
+        "109:1 Matt. 22:44; Mark 12:36; Luke 20:42\u201343; Acts 2:34\u201335; "
+        "1 Cor. 15:25; Heb. 1:13 (Heb.\u00a0+ LXX)"
+    )
 
 
-def test_one_note_per_opening_word_and_printed_agreement_across_the_edition(
+def test_one_note_per_opening_word_quoting_and_per_verse_quoted_across_the_edition(
     edition: bible.pipeline.Edition, links: dict[str, tuple[crossrefs.Link, ...]]
 ) -> None:
-    expected: dict[str, set[tuple[int, str | None]]] = {}
+    expected: dict[str, set[tuple[int | None, str | None]]] = {}
     for listed in links.values():
         for link in listed:
             expected.setdefault(str(link.origin), set()).add(
-                (link.start, link.agreement)
+                (None if link.quoted else link.start, link.agreement)
             )
     printed = {
         f"{code} {reference}": sum(
@@ -143,7 +153,7 @@ def test_one_note_per_opening_word_and_printed_agreement_across_the_edition(
     assert printed == {
         origin: len(agreements) for origin, agreements in expected.items()
     }
-    assert sum(count > 1 for count in printed.values()) == 26
+    assert sum(count > 1 for count in printed.values()) == 22
 
 
 def test_quotations_with_the_same_ending_share_a_note(
@@ -155,8 +165,7 @@ def test_quotations_with_the_same_ending_share_a_note(
     ]
     assert verse.text[at:].startswith("and thou shalt love thy neighbour as thyself")
     assert usj.text_of(note["content"]) == (
-        "19:18 and thou shalt love thy neighbour as thyself: "
-        "Matt. 19:19; 22:39; Mark 12:31; Luke 10:27; Rom. 13:9; Gal. 5:14; "
+        "19:18 Matt. 19:19; 22:39; Mark 12:31; Luke 10:27; Rom. 13:9; Gal. 5:14; "
         "James 2:8 (Heb.\u00a0+ LXX)"
     )
 
@@ -176,8 +185,6 @@ def test_leviticus_has_one_shared_quotation_span(
 def test_links_joined_in_one_note_may_not_repeat_a_passage(
     ctx: bible.annotate.Context,
 ) -> None:
-    origin = parse_passage("PSA 2:7")
-
     def link(row: str, targets: str) -> crossrefs.Link:
         return link_at("PSA 2:7", targets, row)
 
@@ -185,13 +192,16 @@ def test_links_joined_in_one_note_may_not_repeat_a_passage(
         book("PSA", "\\v 7 declaring the ordinance of the Lord.", chapter=2)
     )
     joined = [link("Q1", "ACT 13:33; HEB 1:5"), link("Q2", "HEB 5:5")]
-    [(at, offset, note)] = crossrefs.link_notes(joined, verses, ctx.books, ctx.terms)
-    assert (at, offset) == (origin.first, 0)
+    [(verse, at, end, [note])] = crossrefs.link_notes(
+        joined, verses, ctx.books, ctx.terms
+    )
+    assert (verse, at, end) == (verses["2:7"], 0, 0)
+    assert not isinstance(note, str)
     assert (
         usj.text_of(note["content"])
         == "2:7 Acts 13:33; Heb. 1:5; 5:5 (Heb.\u00a0+ LXX)"
     )
-    assert note["x-key"] == "PSA 2:7 link" and note["x-scope"] == {"declared": None}
+    assert note["x-key"] == "PSA 2:7 link"
     with pytest.raises(CheckFailed, match="linked twice at one verse: PSA 2:7"):
         crossrefs.link_notes(
             [*joined, link("Q3", "HEB 1:5")], verses, ctx.books, ctx.terms
@@ -423,7 +433,8 @@ def test_every_quotation_milestone_closes_in_its_chapter(
 ) -> None:
     """The website writes a chapter per file, and the print ignores the
     milestones: each opening milestone has its closing one in the chapter,
-    and a link's note stands at its opening milestone."""
+    and a link's note stands at its opening milestone, or, in a passage
+    quoted, at the first of its verse's."""
     opened = 0
     for code in edition.scripture:
         _, chapters = pipeline.headed_chapters(edition.documents[code])
@@ -448,7 +459,7 @@ def test_every_quotation_milestone_closes_in_its_chapter(
             verse = verses[link.origin.label]
             [at] = [at for at, mark in verse.milestones if mark.get("sid") == link.sid]
             assert any(
-                offset == at
+                (offset <= at if link.quoted else offset == at)
                 and usj.is_type(note, "note", "x")
                 and {str(target.first) for target in link.targets}
                 <= {

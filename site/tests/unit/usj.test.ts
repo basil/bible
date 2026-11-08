@@ -281,7 +281,7 @@ describe("chapter renderer", () => {
         para("p", "He said, ", start("Q1 MAT 1:1"), "Out of the ", {
           type: "note",
           marker: "x",
-          content: [char("xq", "Out of the: "), char("xt", "Ps. 8:3")],
+          content: [char("xt", "Ps. 8:3")],
         }),
         para(
           "q1",
@@ -308,7 +308,6 @@ describe("chapter renderer", () => {
     expect(fragment.querySelector(".q2")!.textContent).toBe(
       "and sucklings indeed.",
     );
-    expect(fragment.querySelector(".xq")!.tagName).toBe("SPAN");
     // Quotations that close together, outermost first, leave no empty span.
     const together = dom(
       chapter(
@@ -337,7 +336,6 @@ describe("chapter renderer", () => {
     ["ft", "SPAN"],
     ["fl", "SPAN"],
     ["xo", "B"],
-    ["xq", "SPAN"],
     ["xt", "SPAN"],
     ["xta", "SPAN"],
   ])("renders note field %s as %s", (marker, tag) => {

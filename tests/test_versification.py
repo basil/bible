@@ -162,7 +162,7 @@ def test_a_lettered_verse_never_joins_a_range(
     [link] = [link for link in edition.links["PRO"] if "Q216" in link.row_ids]
     assert link.origin == parse_verse("PRO 22:8a")
     note = crossrefs.link_note(
-        link.origin, None, link.targets, link.agreement, ctx.books, ctx.terms, "k"
+        link.origin, link.targets, link.agreement, ctx.books, ctx.terms, "k"
     )
     assert (
         usj.serialize([note])

@@ -19,9 +19,9 @@ from dataclasses import dataclass
 
 from bible import scripture
 from bible.alignment import Alignment, stem
-from bible.checks import require, require_fields
+from bible.checks import present, require, require_fields
 from bible.policy_schema import QuotationsExtent
-from bible.references import Passage, Verse, parse_passage
+from bible.references import Passage, Verse, parse_passage, verses_of
 
 # The share of Turpie's words the passage must have, in his order, for the
 # extent to stand without a decision: he corrected Brenton's English "when
@@ -97,8 +97,7 @@ def tagged_words(
     index among the verse's words."""
     return [
         (verse, index, word)
-        for passage in passages
-        for verse in passage.verses
+        for verse in verses_of(passages)
         for index, (word, _, _) in enumerate(
             scripture.word_spans(verses[verse.book][verse.label].text)
         )
@@ -200,21 +199,33 @@ def once(words: Sequence[str], phrase: str, key: str) -> tuple[int, int]:
     return hits[0], hits[0] + len(tokens) - 1
 
 
+def bounds(
+    places: Set[int], start: int, end: int, sizes: Iterable[int]
+) -> list[tuple[int, int] | None]:
+    """Of passages whose words stand in turn, each's first and last place
+    between start and end, or None where none is in it: a text running
+    through several passages leaves out words at their edges."""
+    result: list[tuple[int, int] | None] = []
+    at = 0
+    for size in sizes:
+        within = [p for p in places if max(start, at) <= p <= min(end, at + size - 1)]
+        result.append((min(within), max(within)) if within else None)
+        at += size
+    return result
+
+
 def spanning(quoted: str, ranges: Sequence[Passage], verses: Verses) -> bool:
     """Whether one text Turpie prints under several headings runs through
     their passages in turn, with his marks of omission between, rather than
     giving the words of each: aligned with them all, it places enough of
     his words, and every passage has some of them placed in it, as located
     reads each passage's extent."""
-    tagged = tagged_words(ranges, verses)
-    words = [word for _, _, word in tagged]
+    own = [tagged_words([passage], verses) for passage in ranges]
+    words = [word for its in own for _, _, word in its]
     found = aligned(quoted_words(quoted), words, omissions(quoted))
     if found.first is None or found.last is None:
         return False
-    reached = {
-        tagged[place][0] for place in found.places if found.first <= place <= found.last
-    }
-    return all(reached & set(passage.verses) for passage in ranges)
+    return None not in bounds(found.places, found.first, found.last, map(len, own))
 
 
 def located(
@@ -253,13 +264,13 @@ def located(
     turpie = quoted_words(quoted)
     require(bool(turpie), f"Quotation without words: {key}")
     found = aligned(turpie, words, omissions(quoted))
-    first, last, unplaced = found.first, found.last, found.unplaced
+    unplaced: tuple[str, ...]
     if decision is not None:
         start, _ = once(words, decision["first"], key)
         _, end = once(words, decision["last"], key)
         require(start <= end, f"Extent decision ends before it begins: {key}")
         require(
-            bool(added) or (first, last) != (start, end),
+            bool(added) or (found.first, found.last) != (start, end),
             f"Extent decision the build finds alike without it: {key}",
         )
         require(
@@ -271,23 +282,17 @@ def located(
         # intervening passage part of the quotation.
         places = found.places | {start, end}
     else:
-        require(
-            first is not None and last is not None,
+        unfound = (
             f"Quotation words not found in their passage, so an extent decision"
-            f" is needed: {key}: unplaced {' '.join(unplaced)!r}",
+            f" is needed: {key}: unplaced {' '.join(found.unplaced)!r}"
         )
-        assert first is not None and last is not None
-        start, end, rule = first, last, "aligned"
-        places = found.places
-    # Each passage's words from the first placed in it to the last: a text
-    # running through several passages leaves out words at their edges.
+        start, end = present(found.first, unfound), present(found.last, unfound)
+        rule, unplaced, places = "aligned", found.unplaced, found.places
+    # Each passage's words from the first placed in it to the last.
     extents = []
-    at = 0
-    for passage, its in zip(ranges, own, strict=True):
-        size = len(its)
-        within = [p for p in places if max(start, at) <= p <= min(end, at + size - 1)]
-        require(bool(within), f"Quotation skips a passage of its heading: {key}")
-        lo, hi = min(within), max(within)
+    sizes = [len(its) for its in own]
+    for passage, span in zip(ranges, bounds(places, start, end, sizes), strict=True):
+        lo, hi = present(span, f"Quotation skips a passage of its heading: {key}")
         extents.append(
             Extent(
                 passage,
@@ -299,5 +304,4 @@ def located(
                 unplaced,
             )
         )
-        at += size
     return extents

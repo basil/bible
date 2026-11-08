@@ -81,7 +81,6 @@ const NOTE_TAGS: Record<string, string> = {
   ft: "span",
   fl: "span",
   xo: "b",
-  xq: "span",
   xt: "span",
   xta: "span",
 };

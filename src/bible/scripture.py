@@ -69,7 +69,7 @@ class Verse:
     # Each note in it, with the offset in the words where it stands.
     notes: tuple[tuple[int, usj.Node], ...]
     # Each milestone in it, likewise.
-    milestones: tuple[tuple[int, usj.Node], ...] = ()
+    milestones: tuple[tuple[int, usj.Node], ...]
 
     @property
     def lines(self) -> tuple[int, ...]:

@@ -508,7 +508,7 @@ def quotation_links(
     rows = quotations.reviewed_rows(policy=policy)
     # Each row's verses as the edition prints them: the Septuagint's by the
     # Brenton verses they map to. Each is read for its words, so it must be
-    # printed, and under its own label.
+    # printed; crossrefs checks that each prints under its own label.
     printed = {
         row["id"]: [
             *bible.references.verses_of(row["nt"]),
@@ -522,7 +522,6 @@ def quotation_links(
                 scripture.has_verse(ctx.inventory, verse),
                 f"Quotation verse missing from assembled edition: {row_id}: {verse}",
             )
-        versification.require_own_labels(listed, f"Quotation {row_id}", policy=policy)
     books = {verse.book for listed in printed.values() for verse in listed}
     verses = {code: scripture.verses(units[code]) for code in sorted(books)}
     relations = crossrefs.quotation_relations(rows, verses, policy=policy)
@@ -608,12 +607,7 @@ def linked(
         # Changes at one place stand in the order given: the opening
         # milestones, then the notes, before the first quoted word. The
         # notes are made first, which refuse a quotation past its verse.
-        noted: list[tuple[scripture.Verse, int, int, Content]] = [
-            (verses[origin.label], at, at, [note])
-            for origin, at, note in crossrefs.link_notes(
-                links, verses, ctx.books, ctx.terms
-            )
-        ]
+        noted = crossrefs.link_notes(links, verses, ctx.books, ctx.terms)
         changes = [*crossrefs.quotation_milestones(links, verses), *noted]
         doc = scripture.edited(doc, changes, split_styles=True)
         verses = scripture.verses(doc)
