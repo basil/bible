@@ -95,7 +95,9 @@ def test_a_link_prints_the_other_passage_and_turpies_judgment(
         "\\ref Heb. 1:5|HEB 1:5\\ref*; \\ref 5:5|HEB 5:5\\ref* "
         "\\xta (Heb.\u00a0+ LXX)\\x*Thou art my Son, today"
     ) in psalms
-    assert psalms.count('eid="Q036 PSA 2:7"') == 1
+    [joined] = [link for link in edition.links["PSA"] if "Q036" in link.row_ids]
+    assert len(joined.row_ids) == 3
+    assert psalms.count(f'eid="{joined.sid}"') == 1
 
 
 def test_grouped_notes_keep_categories_and_sort_all_targets(
@@ -141,7 +143,34 @@ def test_one_note_per_opening_word_and_printed_agreement_across_the_edition(
     assert printed == {
         origin: len(agreements) for origin, agreements in expected.items()
     }
-    assert sum(count > 1 for count in printed.values()) == 27
+    assert sum(count > 1 for count in printed.values()) == 26
+
+
+def test_quotations_with_the_same_ending_share_a_note(
+    edition: bible.pipeline.Edition,
+) -> None:
+    verse = scripture.verses(edition.documents["LEV"])["19:18"]
+    [(at, note)] = [
+        (at, note) for at, note in verse.notes if usj.is_type(note, "note", "x")
+    ]
+    assert verse.text[at:].startswith("and thou shalt love thy neighbour as thyself")
+    assert usj.text_of(note["content"]) == (
+        "19:18 and thou shalt love thy neighbour as thyself: "
+        "Matt. 19:19; 22:39; Mark 12:31; Luke 10:27; Rom. 13:9; Gal. 5:14; "
+        "James 2:8 (Heb.\u00a0+ LXX)"
+    )
+
+
+def test_leviticus_has_one_shared_quotation_span(
+    edition: bible.pipeline.Edition,
+) -> None:
+    verse = scripture.verses(edition.documents["LEV"])["19:18"]
+    [(start, opening), (end, closing)] = verse.milestones
+    assert verse.text[start:end] == "and thou shalt love thy neighbour as thyself"
+    assert opening["sid"] == closing["eid"]
+    [link] = [link for link in edition.links["LEV"] if str(link.origin) == "LEV 19:18"]
+    assert link.row_ids == ("Q002", "Q004", "Q007", "Q008", "Q027", "Q035", "Q047")
+    assert opening["sid"] == link.sid == f"{'+'.join(link.row_ids)} LEV 19:18"
 
 
 def test_links_joined_in_one_note_may_not_repeat_a_passage(
@@ -419,7 +448,14 @@ def test_every_quotation_milestone_closes_in_its_chapter(
             verse = verses[link.origin.label]
             [at] = [at for at, mark in verse.milestones if mark.get("sid") == link.sid]
             assert any(
-                offset == at and usj.is_type(note, "note", "x")
+                offset == at
+                and usj.is_type(note, "note", "x")
+                and {str(target.first) for target in link.targets}
+                <= {
+                    node.get("loc")
+                    for node in usj.walk(note["content"])
+                    if node["type"] == "ref"
+                }
                 for offset, note in verse.notes
             ), link.sid
 
@@ -440,12 +476,13 @@ def test_turpies_part_markers_agree_with_the_extents(
             continue
         verses = scripture.verses(edition.documents[code])
         for link in listed:
-            marked = markers.get(link.row_ids[0])
-            if not marked:
-                continue
-            verse = verses[link.extent.last.label]
-            [at] = [at for at, m in verse.milestones if m.get("eid") == link.sid]
-            last_word_end = scripture.word_spans(verse.text)[-1][2]
-            assert (at >= last_word_end) == ("lp" in marked), link.sid
-            checked += 1
+            for row in link.row_ids:
+                marked = markers.get(row)
+                if not marked:
+                    continue
+                verse = verses[link.extent.last.label]
+                [at] = [at for at, m in verse.milestones if m.get("eid") == link.sid]
+                last_word_end = scripture.word_spans(verse.text)[-1][2]
+                assert (at >= last_word_end) == ("lp" in marked), row
+                checked += 1
     assert checked == len(markers)

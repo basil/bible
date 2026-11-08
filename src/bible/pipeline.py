@@ -526,7 +526,12 @@ def quotation_links(
     books = {verse.book for listed in printed.values() for verse in listed}
     verses = {code: scripture.verses(units[code]) for code in sorted(books)}
     relations = crossrefs.quotation_relations(rows, verses, policy=policy)
-    return crossrefs.planned_links(relations, ctx.books, policy=policy)
+    return {
+        code: crossrefs.joined_links(links, verses[code])
+        for code, links in crossrefs.planned_links(
+            relations, ctx.books, policy=policy
+        ).items()
+    }
 
 
 def context(

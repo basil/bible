@@ -9,7 +9,7 @@ from __future__ import annotations
 import collections
 import re
 from collections.abc import Iterable, Mapping, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 import bible.policy
 import bible.references
@@ -133,7 +133,7 @@ class Relation:
 
 @dataclass(frozen=True)
 class Link:
-    """One direction of a relation, at one of its passages: the note stands
+    """One direction of one or more relations quoting the same words: the note stands
     before the first quoted word, in the first verse of the passage that has
     one (origin), and the quotation milestones around the quoted words, from
     that word to the extent's last."""
@@ -158,9 +158,9 @@ class Link:
 
     @property
     def sid(self) -> str:
-        """What the quotation milestones around the words carry: the row and
+        """What the quotation milestones around the words carry: the rows and
         the passage."""
-        return f"{self.row_ids[0]} {self.passage}"
+        return f"{'+'.join(self.row_ids)} {self.passage}"
 
 
 def agreement(cls: str, table_code: str) -> str | None:
@@ -337,6 +337,62 @@ def planned_links(
     return dict(by_book)
 
 
+def joined_links(
+    links: Sequence[Link], verses: Mapping[str, scripture.Verse]
+) -> list[Link]:
+    """One span for the same quoted words, joining their references and rows.
+
+    A quotation with or without its opening conjunction shares the wider
+    span. Distinct clauses and different printed agreements remain separate.
+    The rows are in order, so that the same rows always mark the same span
+    alike, and each row's unplaced words are kept whole, once.
+    """
+
+    def span(
+        link: Link, start: int
+    ) -> tuple[Passage, Verse, int, Verse, int, str | None]:
+        return (
+            link.passage,
+            link.origin,
+            start,
+            link.extent.last,
+            link.extent.end,
+            link.agreement,
+        )
+
+    spans = {span(link, link.start) for link in links}
+    groups: dict[tuple[Passage, Verse, int, Verse, int, str | None], list[Link]] = {}
+    for link in links:
+        start = link.start
+        if (
+            start
+            and span(link, start - 1) in spans
+            and scripture.word_spans(verses[link.origin.label].text)[start - 1][0]
+            == "and"
+        ):
+            start -= 1
+        groups.setdefault(span(link, start), []).append(link)
+    return [
+        Link(
+            replace(
+                min(group, key=lambda link: link.start).extent,
+                rule="; ".join(dict.fromkeys(link.extent.rule for link in group)),
+                unplaced=tuple(
+                    word
+                    for unplaced in dict.fromkeys(
+                        link.extent.unplaced for link in group
+                    )
+                    for word in unplaced
+                ),
+            ),
+            tuple(target for link in group for target in link.targets),
+            tuple(sorted(row for link in group for row in link.row_ids)),
+            group[0].agreement,
+        )
+        for group in groups.values()
+    ]
+
+
 def bare(note: notes.Read) -> bool:
     """Whether a note is nothing but "See" and what it cites: only such a
     note can be merged whole, since merging drops the note."""
@@ -448,7 +504,7 @@ def link_notes(
     their order, "link", "link#2".
 
     Keep the relations separate upstream, where their classes and row ids
-    govern reciprocal links, conflicts, and source-note merges.
+    govern reciprocal links and conflicts, until joined_links.
     """
     groups: dict[tuple[Verse, int, str | None], list[Link]] = {}
     for link in links:

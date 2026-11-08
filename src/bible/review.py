@@ -77,7 +77,7 @@ def notes_report(edition: pipeline.Edition) -> str:
 
 
 def links_report(edition: pipeline.Edition) -> str:
-    """Every quotation link, by book: its row and passage, the verses of the
+    """Every quotation link, by book: its rows and passage, the verses of the
     passage as finished, with ‸ where the note stands and ⟦ ⟧ about the
     quoted words, then the note, which names its opening words, and the
     words of Turpie's the alignment did not place."""

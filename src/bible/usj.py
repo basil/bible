@@ -88,7 +88,7 @@ CHARS = frozenset("add bd fv it lik sc vp wg wh qs".split())
 NOTES = frozenset("f x".split())
 # The milestones: the quotation milestones around the words a New Testament
 # quotation of the Old shares with its passage, which the annotate stage sets
-# with the row of Turpie's tables as their sid and eid, and the one the export
+# with the rows of Turpie's tables as their sid and eid, and the one the export
 # writes for PTXprint before a note of the front or back matter that is set
 # below the text.
 QUOTATION_START, QUOTATION_END = "qt-s", "qt-e"
