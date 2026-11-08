@@ -858,9 +858,7 @@ def referenced(unit: Unit, code: str, ctx: bible.annotate.Context) -> Unit:
             for reference in decision["passages"].split("; "):
                 book, _, numbers = reference.partition(" ")
                 if ":" in numbers:
-                    passage = parse_passage(reference)
-                    first, last = passage.first, passage.last
-                    item = Item(first.chapter, first.number, last.number, first.letter)
+                    item = Item.of(parse_passage(reference))
                 else:
                     require(
                         numbers.isdigit() and int(numbers) > 0,

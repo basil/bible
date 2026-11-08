@@ -163,7 +163,7 @@ A correction to a slip in transcription must match the source text exactly once,
 | How OLEBFont is assembled from Valkyrie or Utopia, and which Greek face goes with each | `scripts/build_olebfont.py` |
 | The website | `site/` |
 
-A page in `content/` names a passage between braces, by its code, and the build prints it. A page also says, on a line of its own, where a table the build writes goes: `numbering.sfm` the tables of chapters and verses, `introduction.sfm` the book names and the glosses of the quotation links, and `abbreviations.sfm` the list of abbreviations.
+A page in `content/` names a passage between braces, by its code, and the build prints it as a reference to the verses the edition prints from its first to its last, which both must be: `{JHN 7:53-8:11}` stretches to a later chapter, `{DAG 3:57-88}` runs over the verses Daniel 3 lacks, and `{cited ACT 6:8-7:5; ACT 7:47-60}` is a list printed as the notes cite, abbreviated, "Acts 6:8–7:5, 47–60" (`kjv` prints the King James numbers as words, and `bare` the passage without its book). A page also says, on a line of its own, where a table the build writes goes: `numbering.sfm` the tables of chapters and verses, `introduction.sfm` the book names and the glosses of the quotation links, and `abbreviations.sfm` the list of abbreviations.
 
 ### Where things are
 

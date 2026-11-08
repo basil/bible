@@ -17,6 +17,7 @@ from bible import lines, notes, peripherals, pipeline, scripture, usfm, usj
 from bible.checks import require, require_used
 from bible.pipeline import Edition
 from bible.policy_schema import Entry
+from bible.references import parse_passage
 from bible.usj import Content, Document, Node
 
 ORIGIN = re.compile(r"^\d+:")
@@ -240,7 +241,8 @@ def document(code: str, doc: Document, edition: Edition) -> Document:
     The edition's own pages are sent as the editor wrote them, with their
     Greek and Hebrew tagged for their fonts, except that a peripheral
     unit's citations keep their words without their links,
-    which PTXprint would take as scripture to import. A note at a
+    which PTXprint would take as scripture to import; scripture's links name
+    a passage by its first verse, where PTXprint sets an anchor. A note at a
     verse that prints another label than its own is set under that label."""
 
     def bottom(item: Node) -> Node:
@@ -257,6 +259,10 @@ def document(code: str, doc: Document, edition: Edition) -> Document:
         # Keep the citation's words; its resolved links belong to the web.
         if item["type"] == "ref" and code not in edition.scripture:
             return item["content"]
+        if item["type"] == "ref" and ":" in item.get("loc", ""):
+            # PTXprint links a reference to the anchor its loc names, and
+            # anchors each verse alone: link a passage at its first verse.
+            return {**item, "loc": str(parse_passage(item["loc"]).first)}
         if item["type"] == "char" and usj.is_origin(item):
             values = item["content"]
             assert all(isinstance(v, str) for v in values)

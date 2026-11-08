@@ -22,11 +22,19 @@ from collections.abc import Iterable, Mapping, Sequence
 
 import bible.policy
 import bible.references
-from bible import crossrefs, paschalion, scripture, terminology, usj, versification
+from bible import (
+    citations,
+    crossrefs,
+    paschalion,
+    scripture,
+    terminology,
+    usj,
+    versification,
+)
 from bible.checks import require
 from bible.policy_schema import Run, VersificationApocrypha
-from bible.references import EDITION, Verse, parse_passage
-from bible.usj import Document, Node
+from bible.references import EDITION, Verse, parse_passages
+from bible.usj import Content, Document, Node
 
 # One side of a row: the chapters that stand whole, or verses; no verses,
 # where that Bible lacks what the other side has.
@@ -35,8 +43,8 @@ type Side = range | list[Verse]
 MISSING = "missing"
 # A run printed out of the order of its numbers, after the verse it follows.
 AFTER = "after"
-# A passage that the editor's pages name: "{PSA 33:13-17}", or with how it is
-# to print before it, "{kjv bare PSA 33:13-17}".
+# A passage that the editor's pages name, or a list of them: "{PSA 33:13-17}",
+# or with how it is to print before it, "{kjv bare PSA 33:13-17}".
 NAMED = re.compile(r"\{((?:[a-z]+ )*)([1-4]?[A-Z]{2,3} [^{}]+)\}")
 # The tables the editor's pages ask for, each on a line of its own.
 TABLES = re.compile(
@@ -44,8 +52,9 @@ TABLES = re.compile(
 )
 # The years the Paschalion's table covers, named where the page says so.
 YEARS = "{paschalion years}"
-# How a passage that the pages name may print.
-WAYS = {"kjv", "bare"}
+# How a passage that the pages name may print: by the King James Bible's
+# numbers, without its book's name, or as the notes cite it, abbreviated.
+WAYS = {"kjv", "bare", "cited"}
 
 
 def _letters(verses: list[bible.references.Verse]) -> str:
@@ -540,26 +549,65 @@ def page(
     )
     start, end = years
 
-    def named(match: re.Match[str]) -> str:
+    def named(match: re.Match[str]) -> Content:
         ways = frozenset(match[1].split())
         require(ways <= WAYS, f"Passage named to print no known way: {match[0]}")
-        passage = parse_passage(match[2])
-        lacking = [
-            str(v) for v in passage.verses if not scripture.has_verse(inventory, v)
-        ]
-        require(not lacking, f"Passage that the edition doesn't print: {lacking}")
+        require(
+            "cited" not in ways or not ways & {"kjv", "bare"},
+            f"Passage cited as the notes cite, and another way: {match[0]}",
+        )
+        passages = parse_passages(match[2])
+        printed = [scripture.verses_in(inventory, p) for p in passages]
         versification.require_own_labels(
-            passage.verses, f"Passage {match[0]}", policy=policy
+            [v for verses in printed for v in verses],
+            f"Passage {match[0]}",
+            policy=policy,
         )
-        targets = (
-            tuple(versification.kjv_passages(passage, policy=policy))
-            if "kjv" in ways
-            else (passage,)
-        )
-        require(targets, f"Passage that the King James Bible lacks: {match[0]}")
+        if "kjv" in ways:
+            # The King James numbers are another Bible's: words, not a reference.
+            # Each passage of a list must have a place there, or it would
+            # print as nothing.
+            mapped = [versification.kjv_passages(v, policy=policy) for v in printed]
+            require(all(mapped), f"Passage that the King James Bible lacks: {match[0]}")
+            targets = [p for found in mapped for p in found]
+            if "bare" in ways:
+                return [
+                    EDITION.passages.join(EDITION.within(p, theirs) for p in targets)
+                ]
+            return [EDITION.listed(targets, theirs)]
         if "bare" in ways:
-            return EDITION.passages.join(EDITION.within(p) for p in targets)
-        return EDITION.listed(targets, theirs if "kjv" in ways else ours)
+            # Without its book's name, a list keeps to one book, and joins a
+            # passage to the chapter the one before it ends in, as any list.
+            require(
+                len({p.first.book for p in passages}) == 1,
+                f"Passages named bare in more than one book: {match[0]}",
+            )
+            bare: Content = []
+            for n, passage in enumerate(passages):
+                if n and passages[n - 1].last.chapter == passage.first.chapter:
+                    separator, words = EDITION.verses, EDITION.after_chapter(passage)
+                else:
+                    separator = EDITION.passages if n else ""
+                    words = EDITION.within(passage, ours)
+                bare += [separator, citations.reference(words, str(passage))]
+            return usj.joined(bare)
+        return citations.listed(passages, ours.abbreviated if "cited" in ways else ours)
+
+    def naming(content: Iterable[str | Node]) -> Content:
+        """The content with each passage named in its words printed."""
+        result: Content = []
+        for item in content:
+            if isinstance(item, str):
+                at = 0
+                for match in NAMED.finditer(item):
+                    usj.extended(result, [item[at : match.start()], *named(match)])
+                    at = match.end()
+                usj.extended(result, [item[at:]])
+            elif "content" in item:
+                result.append({**item, "content": naming(item["content"])})
+            else:
+                result.append(item)
+        return result
 
     blocks: list[Node] = []
     # The editor's words for the Psalms stand after {books}, and {psalms}
@@ -573,7 +621,12 @@ def page(
 
     def flush() -> None:
         if pending:
-            here.extend(usj.parse("\n".join(pending))["content"])
+            parsed = naming(usj.parse("\n".join(pending))["content"])
+            require(
+                not set(usj.text_of(parsed, skip=lambda _: False)) & set("{}"),
+                "Braces left on one of the editor's pages",
+            )
+            here.extend(usj.objects(parsed))
             pending.clear()
 
     for line in text.split("\n"):
@@ -603,11 +656,6 @@ def page(
                 blocks += books_tables(inventory, facing, ours, psalms, policy=policy)
                 here = blocks
         elif line.strip():
-            line = NAMED.sub(named, line.replace(YEARS, f"{start} to {end}"))
-            require(
-                "{" not in line and "}" not in line,
-                "Braces left on one of the editor's pages",
-            )
-            pending.append(line)
+            pending.append(line.replace(YEARS, f"{start} to {end}"))
     flush()
     return usj.document(blocks)

@@ -153,22 +153,32 @@ def books(
     found = {
         unit["id"]: names(unit, documents[unit["id"]]) for unit in policy.scripture
     }
+    chapterless = [
+        code
+        for code in found
+        if sum(b["type"] == "chapter" for b in documents[code]["content"]) == 1
+    ]
     return Books(
         ((code, name["short_title"]) for code, name in found.items()),
         _singly(policy, "cited_singly"),
         Books(
             ((code, name["abbreviation"]) for code, name in found.items()),
             _singly(policy, "abbreviated_singly"),
+            chapterless=chapterless,
         ),
+        chapterless,
     )
 
 
 def kjv_books(
-    policy: bible.policy.Policy, texts: Mapping[str, str]
+    policy: bible.policy.Policy,
+    texts: Mapping[str, str],
+    chapters: scripture.Inventory,
 ) -> bible.references.Books:
     """The King James Bible's books, in its order, under its own names for
     them, which a reader's other Bible has: read from every file's text by
-    the read stage, which parses only the books the edition needs."""
+    the read stage, which parses only the books the edition needs, with
+    the chapters that file has."""
     return Books(
         (
             (code, usfm.header(text, "toc2"))
@@ -176,6 +186,7 @@ def kjv_books(
             if re.search(r"^\\toc2\s", text, re.M)
         ),
         _singly(policy, "cited_singly"),
+        chapterless=[code for code, found in chapters.items() if len(found) == 1],
     )
 
 

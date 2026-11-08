@@ -360,9 +360,9 @@ def test_the_page_prints_its_tables(edition: bible.pipeline.Edition) -> None:
         ("3 Maccabees", "(\\it missing\\it*)"),
     ):
         assert f"\\tr\n\\tc1 {theirs}\n\\tc2 {ours}\n" in intro
-    assert "as Proverbs 22:8a, is usually an addition" in page
+    assert "as \\ref Proverbs 22:8a|PRO 22:8a\\ref*, is usually an addition" in page
     assert "the Prayer of Azarias and the Song stand within chapter 3" in intro
-    assert "as 2:28–32 beside 3:1–5, they answer" in page
+    assert "as 2:28–32 beside \\ref 3:1–5|JOL 3:1-5\\ref*, they answer" in page
     # Esther's verses that are the King James Bible's Rest of Esther.
     assert (
         "\\tc1 The Rest of Esther (Apocrypha)\n\\tc2 Esther, the additions\n" in intro
@@ -476,18 +476,48 @@ def test_the_psalms_have_their_words_between_the_books_and_their_table(
 @pytest.mark.parametrize(
     "named,cited",
     [
-        ("{PSA 33:13-17}", "Psalm 33:13–17"),
+        ("{PSA 33:13-17}", "\\ref Psalm 33:13–17|PSA 33:13-17\\ref*"),
         ("{kjv PSA 33:13-17}", "Psalm 34:12–16"),
         ("{kjv bare PSA 33:13-17}", "34:12–16"),
-        ("{bare MAL 4:1-6}", "4:1–6"),
-        ("{JER 38:31-34}", "Jeremias 38:31–34"),
+        ("{bare MAL 4:1-6}", "\\ref 4:1–6|MAL 4:1-6\\ref*"),
+        ("{JER 38:31-34}", "\\ref Jeremias 38:31–34|JER 38:31-34\\ref*"),
         ("{kjv JER 38:31-34}", "Jeremiah 31:31–34"),
         ("{kjv MIC 5:1}", "Micah 5:2"),
         ("{kjv 1SA 17:4}", "1 Samuel 17:4"),
-        ("{2CO 9:7}", "2 Corinthians 9:7"),
-        ("{PRO 22:8a}", "Proverbs 22:8a"),
+        ("{2CO 9:7}", "\\ref 2 Corinthians 9:7|2CO 9:7\\ref*"),
+        ("{PRO 22:8a}", "\\ref Proverbs 22:8a|PRO 22:8a\\ref*"),
         # Into more than one place.
         ("{kjv bare JER 25:13-16}", "25:13; 49:34–36"),
+        # A passage stretching to a later chapter, over the verses the
+        # edition lacks, and a list of passages.
+        ("{JHN 7:53-8:11}", "\\ref John 7:53–8:11|JHN 7:53-8:11\\ref*"),
+        ("{DAG 3:57-88}", "\\ref Daniel 3:57–88|DAG 3:57-88\\ref*"),
+        # The King James Bible has 8:37, which the edition's verses skip.
+        ("{kjv ACT 8:26-39}", "Acts 8:26–36, 38–39"),
+        # Each King James verse once, though two of ours share it.
+        ("{kjv PRO 8:28-29}", "Proverbs 8:28–29"),
+        (
+            "{ACT 6:8-7:5; ACT 7:47-60}",
+            "\\ref Acts 6:8–7:5|ACT 6:8-7:5\\ref*, \\ref 47–60|ACT 7:47-60\\ref*",
+        ),
+        (
+            "{bare PSA 33:13; PSA 33:15; PSA 34:2}",
+            "\\ref 33:13|PSA 33:13\\ref*, \\ref 15|PSA 33:15\\ref*; "
+            "\\ref 34:2|PSA 34:2\\ref*",
+        ),
+        # As the notes cite: abbreviated, one psalm as Ps., a book of one
+        # chapter by its verses alone.
+        ("{cited PSA 85:9}", "\\ref Ps. 85:9|PSA 85:9\\ref*"),
+        (
+            "{cited PSA 2:7; PSA 109:1}",
+            "\\ref Pss. 2:7|PSA 2:7\\ref*; \\ref 109:1|PSA 109:1\\ref*",
+        ),
+        ("{cited 1KI 17:8-24}", "\\ref 3 Kgdms. 17:8–24|1KI 17:8-24\\ref*"),
+        ("{cited JUD 1:11-25}", "\\ref Jude 11–25|JUD 1:11-25\\ref*"),
+        (
+            "{cited LUK 14:16-24; MAT 22:14}",
+            "\\ref Luke 14:16–24|LUK 14:16-24\\ref*; \\ref Matt. 22:14|MAT 22:14\\ref*",
+        ),
     ],
 )
 def test_a_passage_named_prints_as_the_files_have_it(
@@ -501,9 +531,15 @@ def test_a_passage_named_prints_as_the_files_have_it(
     [
         ("{PSA 33:13-99}", "doesn't print"),
         ("{MAL 3:19-24}", "doesn't print"),
-        ("{DAG 3:57-88}", "doesn't print"),
+        ("{ACT 8:37}", "doesn't print"),
+        ("{cited kjv PSA 33:13}", "another way"),
+        ("{cited bare PSA 33:13}", "another way"),
+        ("{PRO 31:25-27}", "printed out of their order"),
+        ("{PRO 31:8-31}", "doesn't print"),
         ("{brenton MAL 3:19-24}", "no known way"),
         ("{kjv PRO 22:8a}", "King James Bible lacks"),
+        ("{kjv PRO 22:8a; PSA 33:13}", "King James Bible lacks"),
+        ("{bare PSA 33:13; ISA 1:1}", "more than one book"),
         ("{hebrew PSA 33:13}", "no known way"),
         ("{PSA 33}", "Malformed passage"),
         ("{table}", "Braces left"),
@@ -538,7 +574,6 @@ def test_the_introduction_names_its_passages(
         "Acts 8:37",
         "Acts 15:34",
         "Acts 24:7",
-        "John 7:53–8:11",
         "Daniel 3:24–90",
         "2 Esdras 1:39–40",
         "30:15–33",
@@ -711,7 +746,7 @@ def test_generated_names_share_the_body_heading_registry(
     names_page = printed("{names}\n", ours=ours)
     assert "\\tr\n\\tc1 Jeremiah\n\\tc2 Renamed Jeremias\n" in names_page
     assert "\\s1 Renamed Jeremias\n" in page
-    assert page.endswith("\\ip Renamed Jeremias 38:31\n")
+    assert page.endswith("\\ip \\ref Renamed Jeremias 38:31|JER 38:31\\ref*\n")
 
 
 @pytest.mark.parametrize(

@@ -40,9 +40,10 @@ export const heading = (id: string, title: string) =>
 // The site's route to a chapter, by its book's code.
 export const chapterPath = (book: string, chapter: string) =>
   `/read/${book.toLowerCase()}/${chapter}`;
-// A reference to a chapter, or to a verse by its anchor.
+// A reference to a chapter, or to a passage by its first verse's anchor:
+// the loc names the whole passage, as USFM does ("ACT 6:8-7:5").
 function refURL(loc: string) {
-  const match = /^(\w+) (\d+)(?::(\d+[a-z]?))?$/.exec(loc);
+  const match = /^(\w+) (\d+)(?::(\d+[a-z]?)(?:-\d+(?::\d+)?)?)?$/.exec(loc);
   if (!match) {
     throw new Error(`Unknown reference ${loc}`);
   }

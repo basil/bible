@@ -461,7 +461,7 @@ def test_every_quotation_milestone_closes_in_its_chapter(
             assert any(
                 (offset <= at if link.quoted else offset == at)
                 and usj.is_type(note, "note", "x")
-                and {str(target.first) for target in link.targets}
+                and {str(target) for target in link.targets}
                 <= {
                     node.get("loc")
                     for node in usj.walk(note["content"])

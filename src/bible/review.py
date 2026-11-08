@@ -104,7 +104,7 @@ def links_report(edition: pipeline.Edition) -> str:
             # Of the links' notes there, the one that cites its targets: two
             # glossed apart may stand at one word. In a passage quoted, the
             # verse's quotations share a note, before the first of them.
-            targets = {str(target.first) for target in link.targets}
+            targets = {str(target) for target in link.targets}
             note_at, note = next(
                 (
                     (at, n)

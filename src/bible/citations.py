@@ -228,12 +228,9 @@ def _carried(
 ) -> list[bible.references.Item]:
     """A King James passage's items in the edition, which may be in more
     than one place."""
-    found = versification.edition_passages(passage, policy=policy)
+    found = versification.edition_passages(passage.verses, policy=policy)
     require(found, f"Verses the edition lacks: {passage}")
-    return [
-        Item(p.first.chapter, p.first.number, p.last.number, p.first.letter)
-        for p in found
-    ]
+    return [Item.of(p) for p in found]
 
 
 def _kjv_chapter(book: str, chapter: int, *, policy: bible.policy.Policy) -> int:
@@ -439,8 +436,7 @@ def _decided(
         require(decision.get("print"), f"Citation decision prints nothing: {key}")
         named: list[tuple[str, list[tuple[Item, ...]]]] = []
         for passage in parse_passages(decision["passages"]):
-            first, last = passage.first, passage.last
-            item = Item(first.chapter, first.number, last.number, first.letter)
+            first, item = passage.first, Item.of(passage)
             if named and named[-1][0] == first.book:
                 named[-1][1].append((item,))
             else:
@@ -771,7 +767,8 @@ def printed(citation: Citation, books: bible.references.Books) -> str:
 
 
 def linked(citation: Citation, books: bible.references.Books) -> usj.Content:
-    """Printed citation spans, each a reference to its first resolved target.
+    """Printed citation spans, each a reference to the passage or chapter
+    its words name.
 
     Separators remain plain text. A custom rendering that names each of its
     books by its code refers each book's words to that book's first target;
@@ -826,7 +823,24 @@ def linked(citation: Citation, books: bible.references.Books) -> usj.Content:
         for m, item in enumerate(run):
             if m:
                 result.append(EDITION.verses)
-            if m or citation.relative == "verse":
+            # Its verses alone name a book of one chapter, so its chapter's
+            # number would read as a verse.
+            require(
+                citation.relative
+                or item.first is not None
+                or citation.book not in books.chapterless,
+                f"Citation of a book of one chapter by its chapter: {citation.source}",
+            )
+            if (
+                m
+                or citation.relative == "verse"
+                or (
+                    # A book of one chapter is cited by its verses alone.
+                    not citation.relative
+                    and item.first is not None
+                    and citation.book in books.chapterless
+                )
+            ):
                 text = _printed_item(item)
             elif item.first is None:
                 text = str(item.chapter)
@@ -839,24 +853,26 @@ def linked(citation: Citation, books: bible.references.Books) -> usj.Content:
 
 
 def _linked_span(text: str, book: str, item: Item) -> str | usj.Node:
-    """The words of a passage, as a reference to its first verse or chapter."""
+    """The words of a passage, as a reference to its verses or its chapter."""
     if not book:
         return text
-    loc = f"{book} {item.chapter}"
-    if item.first is not None:
-        loc += f":{item.first}{item.letter}"
+    passage = item.passage(book)
+    return reference(text, str(passage) if passage else f"{book} {item.chapter}")
+
+
+def reference(text: str, loc: str) -> usj.Node:
+    """Words that refer to a passage, named as the files write it: USFM's
+    own range form, "ISA 40:3-5"."""
     return {"type": "ref", "loc": loc, "content": [text]}
 
 
 def listed(passages: Sequence[Passage], books: bible.references.Books) -> usj.Content:
-    """A generated list, each printed item a reference to its first verse."""
+    """A generated list, each printed item a reference to its passage."""
     result: usj.Content = []
     for passage, (separator, words) in zip(
         passages, EDITION.listing(passages, books), strict=True
     ):
-        first, last = passage.first, passage.last
-        item = Item(first.chapter, first.number, last.number, first.letter)
-        result += [separator, _linked_span(words, first.book, item)]
+        result += [separator, reference(words, str(passage))]
     return usj.joined(result)
 
 

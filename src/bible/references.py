@@ -3,7 +3,10 @@ as its pages print them ("Esaias 40:3–5").
 
 A verse may carry the letter by which Brenton sets apart a Septuagint
 addition, as Proverbs 22:8a, but a lettered verse is never part of a range.
-A passage keeps to one chapter; nothing guesses where a chapter ends.
+A passage may stretch from one chapter to a later one of its book, as
+"ACT 6:8-7:5"; within one chapter its verses are known by their numbers,
+and across chapters only from what the edition prints (scripture.verses_in),
+since nothing here guesses where a chapter ends.
 """
 
 from __future__ import annotations
@@ -17,8 +20,9 @@ from bible.checks import present, require
 
 # A verse within its chapter, as a verse marker and a note's origin name it.
 VERSE_LABEL = r"\d+[a-z]?"
-# A verse, or a range of unlettered verses within one chapter.
-PASSAGE = re.compile(r"([1-4]?[A-Z]{2,3}) (\d+):(\d+)([a-z]?)(?:-(\d+))?")
+# A verse, or a range of unlettered verses, within one chapter or stretching
+# to a later one.
+PASSAGE = re.compile(r"([1-4]?[A-Z]{2,3}) (\d+):(\d+)([a-z]?)(?:-(?:(\d+):)?(\d+))?")
 ROMAN = {"I": 1, "V": 5, "X": 10, "L": 50, "C": 100}
 
 
@@ -51,23 +55,35 @@ class Passage:
 
     def __post_init__(self) -> None:
         first, last = self.first, self.last
-        require(
-            (first.book, first.chapter) == (last.book, last.chapter),
-            f"Passage beyond one chapter: {first}-{last}",
-        )
+        require(first.book == last.book, f"Passage beyond one book: {first}-{last}")
         require(
             first == last or not (first.letter or last.letter),
             f"Lettered verse in a range: {self}",
         )
-        require(last.number >= first.number, f"Reversed passage: {self}")
+        require(
+            (last.chapter, last.number) >= (first.chapter, first.number),
+            f"Reversed passage: {self}",
+        )
 
     def __str__(self) -> str:
         if self.first == self.last:
             return str(self.first)
+        if self.stretches:
+            return f"{self.first}-{self.last.label}"
         return f"{self.first}-{self.last.number}{self.last.letter}"
 
     @property
+    def stretches(self) -> bool:
+        """Whether the passage ends in a later chapter than it begins."""
+        return self.first.chapter != self.last.chapter
+
+    @property
     def verses(self) -> list[Verse]:
+        """The passage's verses by their numbers, within one chapter."""
+        require(
+            not self.stretches,
+            f"Verses of a passage beyond one chapter need the inventory: {self}",
+        )
         first = self.first
         return [
             Verse(first.book, first.chapter, number, first.letter)
@@ -77,17 +93,22 @@ class Passage:
 
 def parse_passage(text: str) -> Passage:
     match = present(PASSAGE.fullmatch(text), f"Malformed passage: {text}")
-    book, chapter, first_number, letter, last = match.groups()
-    first = Verse(book, int(chapter), int(first_number), letter)
-    return Passage(
-        first, first if last is None else Verse(book, int(chapter), int(last))
+    book, chapter, first_number, letter, last_chapter, last = match.groups()
+    # A range within one chapter names it once: "ISA 40:3-5", not "40:3-40:5".
+    require(
+        last_chapter is None or int(last_chapter) != int(chapter),
+        f"Malformed passage: {text}",
     )
+    first = Verse(book, int(chapter), int(first_number), letter)
+    if last is None:
+        return Passage(first, first)
+    return Passage(first, Verse(book, int(last_chapter or chapter), int(last)))
 
 
 def parse_verse(text: str) -> Verse:
     match = PASSAGE.fullmatch(text)
     require(
-        match is not None and match[5] is None, f"Malformed verse reference: {text}"
+        match is not None and match[6] is None, f"Malformed verse reference: {text}"
     )
     return parse_passage(text).first
 
@@ -137,7 +158,8 @@ class Books:
 
     A book of many may have a name for one of them: a psalm of the Psalms.
     The same books under their citation abbreviations are `abbreviated`:
-    these books themselves, if they have none.
+    these books themselves, if they have none. A book of one chapter is
+    `chapterless`: a citation of it names its verses alone, as Jude 1–10.
     """
 
     def __init__(
@@ -145,10 +167,12 @@ class Books:
         names: Mapping[str, str] | Iterable[tuple[str, str]],
         one: Mapping[str, str] | Iterable[tuple[str, str]] = (),
         abbreviated: Books | None = None,
+        chapterless: Iterable[str] = (),
     ) -> None:
         self.names = dict(names)
         self.one = dict(one)
         self.abbreviated = abbreviated or self
+        self.chapterless = frozenset(chapterless)
         self.order = {code: index for index, code in enumerate(self.names)}
 
     def name(self, code: str, chapters: Iterable[int] = ()) -> str:
@@ -179,17 +203,30 @@ class Style:
             return f"{first}{letter}"
         return f"{first}{self.range}{last}"
 
-    def within(self, passage: Passage) -> str:
-        """A passage within its book: "40:3–5"."""
+    def after_chapter(self, passage: Passage) -> str:
+        """A passage's verses after its chapter: "3–5", "8a", or "8–7:5"
+        where it stretches to a later chapter."""
         first, last = passage.first, passage.last
-        return (
-            f"{first.chapter}{self.chapter_verse}"
-            f"{self.stretch(first.number, last.number, first.letter)}"
-        )
+        if passage.stretches:
+            return (
+                f"{first.number}{first.letter}{self.range}"
+                f"{last.chapter}{self.chapter_verse}{last.number}{last.letter}"
+            )
+        return self.stretch(first.number, last.number, first.letter)
+
+    def within(self, passage: Passage, books: Books | None = None) -> str:
+        """A passage within its book: "40:3–5", or "6:8–7:5" where it
+        stretches to a later chapter; its verses alone, "1–10", in a book
+        of one chapter, where the books say which those are."""
+        verses = self.after_chapter(passage)
+        if books and passage.first.book in books.chapterless:
+            return verses
+        return f"{passage.first.chapter}{self.chapter_verse}{verses}"
 
     def passage(self, passage: Passage, books: Books) -> str:
-        name = books.name(passage.first.book, [passage.first.chapter])
-        return f"{name} {self.within(passage)}"
+        first, last = passage.first, passage.last
+        name = books.name(first.book, [first.chapter, last.chapter])
+        return f"{name} {self.within(passage, books)}"
 
     def listed(self, passages: Sequence[Passage], books: Books) -> str:
         """Passages in order, each book named once, and each chapter once
@@ -203,24 +240,26 @@ class Style:
         self, passages: Sequence[Passage], books: Books
     ) -> list[tuple[str, str]]:
         """Each passage of a list as it prints there, with the separator
-        before it."""
+        before it: a passage in the chapter the one before it ends in
+        follows a comma, and prints its verses alone."""
         printed: list[tuple[str, str]] = []
         for n, passage in enumerate(passages):
-            first, last, book = passage.first, passage.last, passage.first.book
+            first, book = passage.first, passage.first.book
             if n and passages[n - 1].first.book == book:
-                if passages[n - 1].first.chapter == first.chapter:
-                    words = self.stretch(first.number, last.number, first.letter)
-                    printed.append((self.verses, words))
+                if passages[n - 1].last.chapter == first.chapter:
+                    printed.append((self.verses, self.after_chapter(passage)))
                 else:
-                    printed.append((self.passages, self.within(passage)))
+                    printed.append((self.passages, self.within(passage, books)))
                 continue
+            # A passage stretching to a later chapter cites both.
             chapters = [
-                p.first.chapter
+                chapter
                 for p in itertools.takewhile(
                     lambda p: p.first.book == book, passages[n:]
                 )
+                for chapter in (p.first.chapter, p.last.chapter)
             ]
-            words = f"{books.name(book, chapters)} {self.within(passage)}"
+            words = f"{books.name(book, chapters)} {self.within(passage, books)}"
             printed.append((self.passages if n else "", words))
         return printed
 
@@ -244,6 +283,13 @@ class Item:
     first: int | LastVerse | None = None
     last: int | LastVerse | None = None
     letter: str = ""
+
+    @classmethod
+    def of(cls, passage: Passage) -> Item:
+        """A passage's verses as an item, which keeps to one chapter."""
+        require(not passage.stretches, f"Citation item beyond one chapter: {passage}")
+        first, last = passage.first, passage.last
+        return cls(first.chapter, first.number, last.number, first.letter)
 
     def passage(self, book: str) -> Passage | None:
         """The item's verses, if it names any."""

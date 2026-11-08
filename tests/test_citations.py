@@ -489,7 +489,7 @@ def test_a_citation_of_the_wrong_verse_prints_the_verse_meant(
             "DAG",
             "DAG 11:4 CCEL",
             r"\f - \fr 11:4 \fq posterity: \ft lit. \fqa latter end\ft . See "
-            r"\ref Ps. 36:37–38|PSA 36:37\ref*\f*",
+            r"\ref Ps. 36:37–38|PSA 36:37-38\ref*\f*",
         ),
         (
             "1CH",
@@ -556,7 +556,7 @@ def test_a_book_cited_alone_keeps_its_abbreviations_period(
         (
             "translators-preface",
             "studied them.\\x + \\xt \\ref Acts 17:11|ACT 17:11\\ref*; "
-            "\\ref 8:28–29|ACT 8:28\\ref*\\x* They",
+            "\\ref 8:28–29|ACT 8:28-29\\ref*\\x* They",
         ),
         (
             "translators-preface",
@@ -677,7 +677,7 @@ def test_several_decisions_on_one_note_form_a_list(
             None,
             None,
             "Exodus 4:9–11, 16; 5:1",
-            ["EXO 4:9", "EXO 4:16", "EXO 5:1"],
+            ["EXO 4:9-11", "EXO 4:16", "EXO 5:1"],
         ),
         (
             "EXO",
@@ -709,7 +709,7 @@ def test_several_decisions_on_one_note_form_a_list(
             None,
             "3:9–4:4",
             "3:9–4:4",
-            ["EXO 3:9"],
+            ["EXO 3:9-22"],
         ),
         ("", (), None, "verse 99", "verse 99", []),
     ],
@@ -736,6 +736,32 @@ def test_linked_citations(
     restored = usj.parse(encoded, fragment=True)
     assert usj.text_of(restored) == text
     assert [n["loc"] for n in usj.walk(restored) if n["type"] == "ref"] == targets
+
+
+def test_a_citation_of_a_book_of_one_chapter_names_its_verses() -> None:
+    books = bible.references.Books({"JUD": "Jude"}, chapterless=["JUD"])
+    cited = citations.Citation(
+        0,
+        1,
+        "source",
+        "JUD",
+        ((bible.references.Item(1, 9, 9), bible.references.Item(1, 14, 15)),),
+        "edition",
+    )
+    linked = citations.linked(cited, books)
+    assert [(n["content"], n["loc"]) for n in linked if isinstance(n, dict)] == [
+        (["Jude 9"], "JUD 1:9"),
+        (["14–15"], "JUD 1:14-15"),
+    ]
+
+
+def test_a_citation_of_a_book_of_one_chapter_by_its_chapter_is_refused() -> None:
+    books = bible.references.Books({"JUD": "Jude"}, chapterless=["JUD"])
+    cited = citations.Citation(
+        0, 1, "Jude 1", "JUD", ((bible.references.Item(1),),), "edition"
+    )
+    with pytest.raises(CheckFailed, match="book of one chapter by its chapter"):
+        citations.linked(cited, books)
 
 
 def test_custom_print_links_each_book_it_names() -> None:
@@ -836,7 +862,7 @@ def test_generated_list_links_each_item() -> None:
     result = citations.listed(passages, books)
     assert usj.text_of(result) == bible.references.EDITION.listed(passages, books)
     assert [n["loc"] for n in result if isinstance(n, dict)] == [
-        "EXO 4:9",
+        "EXO 4:9-11",
         "EXO 4:16",
         "EXO 5:1",
         "PRO 22:8a",

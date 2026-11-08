@@ -4114,6 +4114,19 @@ def test_exported_proverbs_sets_the_hebrews_labels(
     assert "\\v 23 \\vp 24:23\\vp* " in text
 
 
+def test_print_links_a_passage_at_its_first_verse(
+    edition: bible.pipeline.Edition,
+) -> None:
+    # PTXprint anchors each verse alone; the website follows the whole loc.
+    doc = usj.parse(
+        "\\id PRO\n\\c 24\n\\p\n"
+        "\\v 23 back\\f - \\fr 24:23 \\ft See "
+        "\\ref Acts 6:8–7:5|ACT 6:8-7:5\\ref*\\f*\n"
+    )
+    text = usj.serialize(bible.export.document("PRO", doc, edition))
+    assert "\\ref Acts 6:8–7:5|ACT 6:8\\ref*" in text
+
+
 def test_a_margin_note_names_another_chapters_label_in_full(
     edition: bible.pipeline.Edition,
 ) -> None:

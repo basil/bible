@@ -55,6 +55,26 @@ test("routes chapters and lettered verses", () => {
   ).toEqual(["/read/psa/2", "/read/pro/22#v8a"]);
 });
 
+test("links a passage, or one stretching across chapters, at its first verse", () => {
+  const html = render([
+    {
+      type: "char",
+      marker: "xt",
+      content: [
+        ref("ACT 6:8-7:5", "Acts 6:8–7:5"),
+        ", ",
+        ref("ACT 7:47-60", "47–60"),
+        "; ",
+        ref("JUD 1:11-25", "Jude 11–25"),
+      ],
+    },
+  ]);
+  const dom = JSDOM.fragment(html);
+  expect(
+    [...dom.querySelectorAll(".xt a")].map((a) => a.getAttribute("href")),
+  ).toEqual(["/read/act/6#v8", "/read/act/7#v47", "/read/jud/1#v11"]);
+});
+
 test("refuses a reference it cannot route", () => {
   expect(() =>
     render([

@@ -238,27 +238,28 @@ def from_kjv(
 
 
 def _mapped(
-    passage: bible.references.Passage, counterparts: Callable[[Verse], Iterable[Verse]]
+    verses: Iterable[Verse], counterparts: Callable[[Verse], Iterable[Verse]]
 ) -> list[bible.references.Passage]:
     found = []
-    for verse in passage.verses:
+    for verse in verses:
         found += [v for v in counterparts(verse) if v not in found]
     return runs(found)
 
 
 def kjv_passages(
-    passage: bible.references.Passage, *, policy: bible.policy.Policy
+    verses: Iterable[Verse], *, policy: bible.policy.Policy
 ) -> list[bible.references.Passage]:
-    """An edition passage as the King James Bible numbers it: verse by verse,
-    since a passage may be carried into more than one place."""
-    return _mapped(passage, lambda v: to_kjv(v, policy=policy))
+    """Edition verses as the King James Bible numbers them: verse by verse,
+    since a passage may be carried into more than one place, and each
+    King James verse once, though several of ours share it."""
+    return _mapped(verses, lambda v: to_kjv(v, policy=policy))
 
 
 def edition_passages(
-    passage: bible.references.Passage, *, policy: bible.policy.Policy
+    verses: Iterable[Verse], *, policy: bible.policy.Policy
 ) -> list[bible.references.Passage]:
-    """A King James passage as the edition numbers it."""
-    return _mapped(passage, lambda v: from_kjv(v, policy=policy))
+    """King James verses as the edition numbers them."""
+    return _mapped(verses, lambda v: from_kjv(v, policy=policy))
 
 
 @dataclass(frozen=True)

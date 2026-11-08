@@ -301,7 +301,7 @@ def read(sources: bible.sources.Sources, policy: bible.policy.Policy) -> Read:
         marginal=marginal_notes(sources.marginal, policy),
         versification=tvtms.rows(sources.versification)[0],
         ccel=ccel_report,
-        kjv_books=assembly.kjv_books(policy, sources.kjv),
+        kjv_books=assembly.kjv_books(policy, sources.kjv, facing),
         kjv_chapters=MappingProxyType(facing),
         authored=sources.authored,
         byzantine=sources.byzantine,

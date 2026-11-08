@@ -328,6 +328,8 @@ def test_a_malformed_run_is_refused(
         # The sea's bound in Proverbs 8:28 opens the King James Bible's 8:29.
         ("kjv", "PRO 8:28", "PRO 8:28-29"),
         ("kjv", "PRO 8:29", "PRO 8:29"),
+        # Each verse once, though two of the other Bible's share it.
+        ("kjv", "PRO 8:28-29", "PRO 8:28-29"),
         ("edition", "PRO 8:28", "PRO 8:28"),
         ("edition", "PRO 8:29", "PRO 8:28-29"),
     ],
@@ -336,7 +338,7 @@ def test_a_passage_is_mapped_verse_by_verse(
     policy: bible.policy.Policy, way: str, passage: str, mapped: str
 ) -> None:
     passages = getattr(versification, f"{way}_passages")
-    found = passages(parse_passage(passage), policy=policy)
+    found = passages(parse_passage(passage).verses, policy=policy)
     assert "; ".join(map(str, found)) == mapped
 
 

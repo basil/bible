@@ -15,7 +15,9 @@ from dataclasses import dataclass
 
 from bible import usj
 from bible.checks import require
+from bible.references import Passage
 from bible.references import Verse as Reference
+from bible.references import verse_at
 
 type Inventory = Mapping[str, Mapping[str, Sequence[str]]]
 
@@ -58,6 +60,58 @@ def has_verse(inventory: Inventory, verse: Reference) -> bool:
     """Whether what the edition prints has a verse."""
     labels = inventory.get(verse.book, {}).get(str(verse.chapter), ())
     return f"{verse.number}{verse.letter}" in labels
+
+
+def verses_in(inventory: Inventory, passage: Passage) -> list[Reference]:
+    """The verses the edition prints from a passage's first to its last, in
+    its order, across a chapter where the passage stretches over one.
+
+    Both ends must be printed; what the edition lacks between them is simply
+    not there, so Acts 8:26–39 is a reading of the verses this edition has.
+    A passage whose end stands within a run printed out of the order of its
+    numbers is refused: the verses between its ends would not all be in it.
+    A lettered verse, a Septuagint addition set after its number's, is in
+    the passage where it is printed within it, and no part of its range
+    otherwise.
+    """
+    first, last = passage.first, passage.last
+    lacking = [str(v) for v in (first, last) if not has_verse(inventory, v)]
+    require(not lacking, f"Passage that the edition doesn't print: {lacking}")
+    # The book's verses in the order they print, as labels; only those of
+    # the passage's chapters are read as verses.
+    printed = [
+        (chapter, label)
+        for chapter, labels in inventory[first.book].items()
+        for label in labels
+    ]
+    start, end = (
+        printed.index((str(v.chapter), f"{v.number}{v.letter}")) for v in (first, last)
+    )
+    require(start <= end, f"Passage against the order of the pages: {passage}")
+    found = [
+        verse_at(first.book, f"{c}:{label}") for c, label in printed[start : end + 1]
+    ]
+    near = [
+        verse_at(first.book, f"{c}:{label}")
+        for c, label in printed
+        if first.chapter <= int(c) <= last.chapter and label.isdigit()
+    ]
+    # The unlettered verses printed from one end to the other are those
+    # whose numbers stand between the ends.
+    spanned = {verse for verse in found if not verse.letter}
+    named = {
+        verse
+        for verse in near
+        if (first.chapter, first.number, first.letter)
+        <= (verse.chapter, verse.number, "")
+        <= (last.chapter, last.number, last.letter)
+    }
+    straddled = sorted(map(str, spanned ^ named))
+    require(
+        not straddled,
+        f"Passage {passage} ends within verses printed out of their order: {straddled}",
+    )
+    return found
 
 
 @dataclass(frozen=True)
