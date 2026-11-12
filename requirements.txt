@@ -3,7 +3,7 @@ black==26.10.1
 fonttools==4.68.0
 isort==9.0.2
 lxml==6.1.3
-markdown-it-py==4.2.0
+markdown-it-py==4.3.0
 mbake==1.5.0
 mypy==2.4.1
 numpy==2.5.4
