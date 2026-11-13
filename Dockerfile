@@ -69,7 +69,7 @@ ARG UTOPIA_COMMIT=75db04f06d90e6dd3227de88b76f8bfea88f8785
 # renovate: datasource=git-refs depName=usfmtc
 ARG USFMTC_URL=https://github.com/usfm-bible/usfmtc.git
 ARG USFMTC_BRANCH=main
-ARG USFMTC_COMMIT=06392962f476349da816fabffaf442145838f543
+ARG USFMTC_COMMIT=e72a391389e9cd516402ba5f2cfd81ff859ca762
 # renovate: datasource=git-tags depName=ptxprint
 ARG PTXPRINT_URL=https://github.com/sillsdev/ptx2pdf.git
 ARG PTXPRINT_TAG=3.1.6
