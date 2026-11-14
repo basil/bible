@@ -13,11 +13,7 @@ def replace_once(path: Path, old: str, new: str) -> None:
 
 
 def patch(root: Path) -> None:
-    replace_once(
-        root / "page_filler.py",
-        'retval = (True, f"Complete {bk}, failures={res.failures},',
-        'retval = (not res.failures, f"Complete {bk}, failures={res.failures},',
-    )
+    # PTXprint already reports failure in retval's status; expose the pages too.
     # A search that ends on a page it cannot fix returns a HumanFixRequest,
     # whose state carries no failures; the solver keeps the pages it gave up.
     replace_once(
