@@ -18,7 +18,7 @@ services:
     volumes:
       - .:/work:z
   dockerfmt:
-    image: ghcr.io/reteps/dockerfmt:v0.6.0
+    image: ghcr.io/reteps/dockerfmt:v1.0.0
     pull_policy: always
     network_mode: none
     working_dir: /work
