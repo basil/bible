@@ -72,8 +72,8 @@ ARG USFMTC_BRANCH=main
 ARG USFMTC_COMMIT=e72a391389e9cd516402ba5f2cfd81ff859ca762
 # renovate: datasource=git-tags depName=ptxprint
 ARG PTXPRINT_URL=https://github.com/sillsdev/ptx2pdf.git
-ARG PTXPRINT_TAG=3.1.6
-ARG PTXPRINT_COMMIT=a11c7e4e9620908b925ba5fd2ab046dfa918a132
+ARG PTXPRINT_TAG=3.1.7
+ARG PTXPRINT_COMMIT=e5062eb14549ee535218ea131fbbc7a57eceb311
 # Fetching and building several projects in one layer requires their directories.
 # hadolint ignore=DL3003
 RUN <<EOF
