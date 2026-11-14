@@ -6,8 +6,9 @@ defineProps<{ id: string; text: string; tag?: "h2" | "h3"; href?: string }>();
 
 <template>
   <component :is="tag ?? 'h3'" :id="id" tabindex="-1">
-    <a v-if="href" :href="href">{{ text }}</a
-    ><template v-else>{{ text }}</template
+    <a v-if="href" :href="href">{{ text }}</a><template v-else>{{
+      text
+    }}</template
     ><a
       class="header-anchor"
       :href="`#${id}`"
