@@ -41,7 +41,7 @@ WORKDIR /opt/sources
 RUN <<EOF
 set -eu
 # --strict: a malformed line would otherwise be skipped with only a warning.
-sha256sum --strict -c <<SUMS
+sha256sum --strict -c << SUMS
 866855b0296579451c233fc78bec82918996a8df7341ee2f1c09d7bc94440680  GFS_Didot.zip
 9d02c294c33aad58de44c408d20f5a7b06aefad411bce9f2e096a4040900f702  GFS_Heraklit.zip
 754a2e3ebb945ae905d720ac5896b3b34acc9546dd6551ef9536869788629dae  OTF-source-code-pro-2.042R-u_1.062R-i.zip
