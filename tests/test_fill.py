@@ -147,6 +147,7 @@ def test_upstream_exposes_unresolved_pages(
         failures=None if gave_up else failures,
         page=2,
         paragraph_params={},
+        float_anchors={},
         numPages=lambda: 3,
     )
     solved = page_filler.HumanFixRequest(state, 3, "Failed") if gave_up else state
