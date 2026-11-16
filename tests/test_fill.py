@@ -11,7 +11,7 @@ from types import SimpleNamespace
 from typing import Any
 
 import pytest
-from ptxprint import page_filler
+from ptxprint import multiprint, page_filler
 
 from bible import cli, fill, fill_cache, fill_layout, paths, typeface
 from bible.checks import CheckFailed
@@ -120,14 +120,34 @@ def test_complete_partial_empty_and_corrupt_checkpoints(project: Path) -> None:
     assert fill_cache.load(cache, "GEN", "wrong key") is None
 
 
-@pytest.mark.parametrize("failures", [[], [2]])
-@pytest.mark.parametrize("gave_up", [False, True])
-def test_upstream_exposes_unresolved_pages(
-    monkeypatch: pytest.MonkeyPatch, failures: list[int], gave_up: bool
+@pytest.mark.parametrize(
+    "case,expected",
+    [
+        ("clean", (True, [], [])),
+        ("gap", (False, [1], [])),
+        ("protected", (True, [], [1])),
+        ("gave up", (True, [], [1])),
+        ("gave up on a gap", (False, [1], [])),
+        ("timed out", (False, [], [])),
+        ("bad initial layout", (False, [], [])),
+        ("no pages", (False, [], [])),
+        ("missing", (False, [], [])),
+    ],
+)
+def test_worker_judges_the_layout_the_pinned_filler_ends_on(
+    monkeypatch: pytest.MonkeyPatch,
+    case: str,
+    expected: tuple[bool, list[int], list[int]],
 ) -> None:
+    """PTXprint's solve() must still lay the whole book out last and keep its
+    measurements; its record of failures is not read."""
+    assert multiprint._worker_ctx is None  # Set in a worker, where fill() runs.
     filler = page_filler.PTXFiller.__new__(page_filler.PTXFiller)
+    filler.nid = "Worker1"
+    filler.timedout = False
+    filler.cancel_event = None
     filler.view = SimpleNamespace(
-        getAllBooks=lambda: {"REV": None},
+        getAllBooks=lambda: {} if case == "missing" else {"REV": None},
         get=lambda key, default=None: (
             SimpleNamespace(feats={}) if key == "bl_fontR" else default
         ),
@@ -140,38 +160,71 @@ def test_upstream_exposes_unresolved_pages(
     filler.adjs = object()
     filler.stats = []
     filler.cpu_q = None
-    filler.parlocs = SimpleNamespace(numPages=lambda: 3, chapters={})
-    # A search that ends on a page it cannot fix returns a HumanFixRequest
-    # whose state has no failures; the solver keeps the pages it gave up.
+    heading = (SimpleNamespace(partype="section", mrk="s1"), None)
+    verse = (SimpleNamespace(partype="versetext", mrk="p"), None)
+    short = case in ("gap", "protected", "gave up", "gave up on a gap")
+    forced = case in ("protected", "gave up")
+    filler.parlocs = SimpleNamespace(
+        numPages=lambda: 0 if case == "no pages" else 3,
+        chapters={},
+        getParas=lambda page: iter([heading if forced else verse]),
+    )
+    gave_up = case.startswith("gave up")
+    # The solver's failures are of its search: here they name a page the last
+    # layout fills, and no page that layout leaves short.
     state = SimpleNamespace(
-        failures=None if gave_up else failures,
+        failures=None if gave_up else [2] if short else [],
         page=2,
         paragraph_params={},
         float_anchors={},
         numPages=lambda: 3,
     )
     solved = page_filler.HumanFixRequest(state, 3, "Failed") if gave_up else state
-    layout = SimpleNamespace(paragraph_pages={}, first_failing_page=1)
+    layout = SimpleNamespace(
+        paragraph_pages={},
+        first_failing_page=1,
+        pages=[object()],
+        result=1 if case == "bad initial layout" else 0,
+    )
+    runs = 0
 
     def run_layout(*args: object, **kwargs: object) -> Any:
+        nonlocal runs
+        runs += 1
         filler.job = SimpleNamespace(
-            pdffile="/tmp/REV.pdf", outfname="REV.tex", xdvtopdf=lambda *args: None
+            pdffile="/tmp/REV.pdf",
+            outfname="REV.tex",
+            res=0,
+            xdvtopdf=lambda *args: None,
         )
+        # The first layout is short on its second page; the last, with the
+        # chosen adjustments, on its first or nowhere.
+        filler.underfills = [[0], [5], [40]] if runs == 1 else [[3 * short], [0], [40]]
         return layout
+
+    def search(*args: object, **kwargs: object) -> Any:
+        filler.timedout = case == "timed out"
+        return solved
 
     filler.hooks_class = lambda *args: SimpleNamespace(run_layout=run_layout)
     filler.solver_class = lambda *args, **kwargs: SimpleNamespace(
-        solve=lambda *args, **kwargs: solved,
-        itercount=1,
-        shape_cache={},
-        failed_pages=failures,
+        solve=search, neutral=lambda p: (1.0, 0), itercount=1, shape_cache={}
     )
     monkeypatch.setattr(page_filler, "unlockme", lambda: None)
-    result = filler.solve("REV")
-    assert result[0] == (not failures and not gave_up)
-    assert result[2] == failures
-    assert fill.successful(("REV", "worker", *result)) == (not failures and not gave_up)
-    assert not fill.successful(("REV", "worker", True, "success", [2]))
+    monkeypatch.setattr(
+        multiprint, "_worker_ctx", multiprint.WorkerContext("Worker1", None, None, None)
+    )
+    monkeypatch.setattr(
+        multiprint.WorkerContext, "get_printer", lambda self, job: filler
+    )
+    book, worker, complete, message, unresolved, protected = fill_layout.fill(
+        SimpleNamespace(books=["REV"])
+    )
+    assert (book, worker) == ("REV", "Worker1")
+    assert (complete, unresolved, protected) == expected
+    assert runs == (0 if case == "missing" else 1 if case == "no pages" else 2)
+    if case in ("protected", "gave up"):
+        assert message == "Final layout verified; protected breaks [1]"
 
 
 def test_concurrent_build_cannot_take_lock(project: Path) -> None:
@@ -179,19 +232,6 @@ def test_concurrent_build_cannot_take_lock(project: Path) -> None:
         with pytest.raises(RuntimeError, match="Another page filler"):
             with fill.locked():
                 pytest.fail("second runner entered")
-
-
-def test_worker_results_without_unresolved_pages_are_early_exits() -> None:
-    assert fill.worker_result(("GEN", "worker", False, "Cancelled")) == (
-        "GEN",
-        "worker",
-        False,
-        "Cancelled",
-        [],
-    )
-    assert not fill.successful(
-        fill.worker_result(("GEN", "worker", False, "Cancelled"))
-    )
 
 
 def test_one_worker_is_refused() -> None:
@@ -280,11 +320,6 @@ def test_runner_checkpoints_reuses_and_stops_workers(
         saveAdjlists=lambda: None,
     )
     monkeypatch.setattr(fill, "ptxprint_main", lambda **kwargs: view)
-    monkeypatch.setattr(
-        fill_layout,
-        "probe",
-        lambda *args: ([], [1]) if outcome == "protected" else ([1], []),
-    )
     pools: list[Any] = []
 
     class Pool:
@@ -295,31 +330,25 @@ def test_runner_checkpoints_reuses_and_stops_workers(
             self.terminated = False
             pools.append(self)
 
-        def submit_fill_jobs(self, books: list[str], *args: Any, **kwargs: Any) -> None:
-            for book in books:
-                target = fill_cache.adjustment(work, book)
-                assert not target.exists()  # Pending books always start fresh.
-                target.parent.mkdir(parents=True, exist_ok=True)
-                target.write_text(f"{book} 1.1 -1\n")
-                future: Future[Any] = Future()
-                if outcome == "interrupt" and book == "REV":
-                    future.set_exception(KeyboardInterrupt())
-                else:
-                    future.set_result(
-                        (
-                            book,
-                            "worker",
-                            True,
-                            "finished",
-                            (
-                                [2]
-                                if outcome == "protected"
-                                or (outcome == "unresolved" and book == "REV")
-                                else []
-                            ),
-                        )
-                    )
-                self.pending_futures[future] = SimpleNamespace(books=[book])
+        def start(self) -> None:
+            self.executor = self
+
+        def submit(self, worker: Any, job: Any) -> Future[Any]:
+            assert worker is fill_layout.fill
+            (book,) = job.books
+            target = fill_cache.adjustment(work, book)
+            assert not target.exists()  # Pending books always start fresh.
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text(f"{book} 1.1 -1\n")
+            future: Future[Any] = Future()
+            if outcome == "interrupt" and book == "REV":
+                future.set_exception(KeyboardInterrupt())
+            elif outcome == "unresolved" and book == "REV":
+                future.set_result((book, "worker", False, "finished", [1], []))
+            else:
+                protected = [1] if outcome == "protected" else []
+                future.set_result((book, "worker", True, "finished", [], protected))
+            return future
 
         def terminate(self) -> None:
             self.terminated = True

@@ -16,7 +16,7 @@ from pathlib import Path
 from typing import Any, Literal, NotRequired, TypedDict
 
 from ptxprint.main import main as ptxprint_main
-from ptxprint.multiprint import MultiPrint
+from ptxprint.multiprint import Job, MultiPrint
 from ptxprint.utils import BuildParams
 from ptxprint.view import ViewModel
 
@@ -59,18 +59,6 @@ def locked() -> Iterator[None]:
         except BlockingIOError:
             raise RuntimeError("Another page filler is running") from None
         yield
-
-
-def worker_result(value: Any) -> Result:
-    """The patched worker lists its unresolved pages after upstream's fields;
-    upstream's early exits (a timeout, a cancellation) list none."""
-    book, worker, success, message, *rest = value
-    return (book, worker, success, message, rest[0] if rest else [])
-
-
-def successful(result: Result) -> bool:
-    """The patched API exposes unresolved pages separately from its boolean."""
-    return result[2] and not result[4]
 
 
 def drained(channel: Any) -> Iterator[Any]:
@@ -156,8 +144,9 @@ def run(project: Path, books: list[str], jobs: int, fresh: bool) -> Report:
     progress: dict[str, dict[str, Any]] = {}
     try:
         # The pinned CLI's fill command waits for every book, without
-        # checkpoints or progress. Its ViewModel plus MultiPrint API provide
-        # the supported primitives.
+        # checkpoints or progress, and its fill jobs return a status and a
+        # message alone. Its ViewModel and MultiPrint's pool provide the
+        # primitives; the job is ours, to report each book's final layout.
         sys.argv = typeset.command(
             work, base / "filler.log", "fill", "-b", " ".join(pending)
         )
@@ -179,11 +168,14 @@ def run(project: Path, books: list[str], jobs: int, fresh: bool) -> Report:
             timeout=None,
             loglevel=20,
         )
+        sizes = {book: (work / f"{book}.usfm").stat().st_size for book in pending}
         pool = MultiPrint(numproc=jobs, progress=True)
-        pool.submit_fill_jobs(pending, params, stop=False)
+        pool.start()
+        for book in sorted(pending, key=sizes.__getitem__, reverse=True):
+            job = Job(action="fill", books=[book], build_params=params)
+            pool.pending_futures[pool.executor.submit(fill_layout.fill, job)] = job
         report["progress"] = progress
         last_save = time.monotonic()
-        sizes = {book: (work / f"{book}.usfm").stat().st_size for book in pending}
         while pool.pending_futures:
             wait(list(pool.pending_futures), timeout=60, return_when=FIRST_COMPLETED)
             for event in drained(pool.progress_q):
@@ -196,12 +188,15 @@ def run(project: Path, books: list[str], jobs: int, fresh: bool) -> Report:
                 del pool.pending_futures[future]
                 book = job.books[0]
                 try:
-                    result = worker_result(future.result())
+                    *fields, protected = future.result()
+                    result: Result = tuple(fields)
                 except Exception as error:
-                    result = (book, None, False, str(error), [])
+                    result, protected = (book, None, False, str(error), []), []
                 results.append(result)
-                if successful(result):
+                if result[2]:
                     completed.add(book)
+                if protected:
+                    report["protected_breaks"][book] = protected
                 print(f"Page filler {book}: {result[3]}", flush=True)
                 checkpoint([book])
             elapsed = time.monotonic() - started
@@ -226,23 +221,8 @@ def run(project: Path, books: list[str], jobs: int, fresh: bool) -> Report:
                     flush=True,
                 )
                 last_save = time.monotonic()
-        # A failed trial need not describe the final saved choices. Check
-        # those choices afresh after all workers stop writing shared styles.
-        reprobed = [i for i, result in enumerate(results) if result[4]]
-        for i in reprobed:
-            book, worker, success, message, _ = results[i]
-            unresolved, protected = fill_layout.probe(view, book)
-            report["protected_breaks"][book] = protected
-            if unresolved:
-                results[i] = (book, worker, success, message, unresolved)
-            else:
-                message = f"Final layout verified; protected breaks {protected}"
-                results[i] = (book, worker, True, message, [])
-                completed.add(book)
-        report["elapsed_seconds"] = round(time.monotonic() - started)
-        checkpoint(results[i][0] for i in reprobed)
         require(
-            len(results) == len(pending) and all(successful(r) for r in results),
+            len(results) == len(pending) and all(r[2] for r in results),
             "Page filling failed or left unresolved pages; see build/page-fill/report.json",
         )
         if (work / ADJUSTMENTS_DIR).exists():

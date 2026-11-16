@@ -1,17 +1,15 @@
-"""Check the filler's actual output: a short page before a heading is forced."""
+"""Fill a book and check the layout it ends on: a short page before a heading is forced."""
 
 from __future__ import annotations
 
-import os
-from collections.abc import Iterable
-from pathlib import Path
+from collections.abc import Iterable, Sequence
 from typing import Any
 
-from ptxprint.parlocs import Paragraphs
-from ptxprint.runjob import RunJob, unlockme
-from ptxprint.texlog import readUnderfills
+from ptxprint import multiprint
 
-from bible.checks import require
+# A worker's report: the book, its worker, whether the book is complete, the
+# message, and the final layout's unresolved and protected pages.
+Filled = tuple[str, str, bool, str, list[int], list[int]]
 
 
 def heading(paragraph: Any) -> bool:
@@ -42,66 +40,55 @@ def forced(paragraphs: Any, page: int) -> bool:
 
 
 def remaining(
-    paragraphs: Any, records: Iterable[tuple[int, str, float, float, float]]
+    paragraphs: Any, underfills: Iterable[Sequence[int] | None]
 ) -> tuple[list[int], list[int]]:
-    """Return unresolved and protected pages, using physical one-based pages."""
+    """Return unresolved and protected pages, using physical one-based pages.
+
+    The filler measures every layout it runs (PTXFiller.underfills): the lines
+    each column of a physical page has free, or nothing for a page unmeasured.
+    """
     unresolved: list[int] = []
     protected: list[int] = []
-    for printed, column, available, used, leading in records:
-        if printed <= 0:
-            continue
-        page = paragraphs.pnums.get(printed, printed)
+    for page, columns in enumerate(underfills, start=1):
         if page >= paragraphs.numPages():  # The last page may be short.
-            continue
-        if int((available - used) / leading + 0.4) <= 0:
-            continue
-        target = protected if column == "A" and forced(paragraphs, page) else unresolved
-        target.append(page)
+            break
+        for column, lines in enumerate(columns or ()):
+            if lines <= 0:
+                continue
+            target = (
+                protected if column == 0 and forced(paragraphs, page) else unresolved
+            )
+            target.append(page)
     return sorted(set(unresolved)), sorted(set(protected))
 
 
-def inspect(stem: Path) -> tuple[list[int], list[int]]:
-    paragraphs = Paragraphs()
-    paragraphs.readParlocs(str(stem.with_suffix(".parlocs")), False)
-    require(paragraphs.numPages() > 0, f"No page data in {stem}")
-    status = stem.with_suffix(".status")
-    require(status.exists(), f"Missing page-filler status: {status}")
-    return remaining(paragraphs, readUnderfills(str(status)))
+def fill(job: Any) -> Filled:
+    """In a pool worker: fill a book, and judge it by the layout the filler ends on.
 
+    PTXprint returns a status and a message, and its record of failed pages
+    outlives the reflow that fixes them. But its filler lays the whole book out
+    with the adjustments it chose before it returns, and keeps that layout's
+    measurements for whoever calls it, so the pool's worker calls it here
+    rather than through PTXprint's own job.
+    """
+    book = job.books[0]
+    # The pool's worker keeps one filler, with its own directory and queues.
+    filler = multiprint._worker_ctx.get_printer(job)
 
-def probe(view: Any, book: str) -> tuple[list[int], list[int]]:
-    """Check a book's final saved adjustments with one diagnostic pass."""
-    values: dict[str, Any] = {key: False for key in """
-        c_inclFrontMatter c_autoToC c_frontmatter c_inclMaps c_useSectIntros
-        c_makeCoverPage c_colophon c_inclBackMatter c_extradvproc
-        c_inclSettingsInPDF c_applyWatermark c_cropmarks c_extractInserts
-        c_printArchive c_quickRun
-    """.split()}
-    values.update(
-        fcb_pagesPerSpread=1,
-        fcb_outputFormat="Screen",
-        c_allowUnbalanced=True,
-        r_book="single",
-        ecb_book=book,
-        t_chapfrom="1",
-        t_chapto="200",
-    )
-    old = {key: view.get(key) for key in values}
-    cwd = os.getcwd()  # RunJob changes into its working directory.
-    try:
-        for key, value in values.items():
-            view.set(key, value)
-        view.adjlists.pop(book, None)  # Reload choices written by the worker.
-        view.get_adjlist(book).createTriggerlist()
-        unlockme()
-        job = RunJob(view, view.scriptsdir, view.scriptsdir, view.args)
-        job.norun = job.nopdf = job.notracing = job.silent = job.nothreads = True
-        job.doit(noview=True)
-        job.maxRuns = 0
-        job.run_xetex(job.outfname, job.pdffile)
-        require(job.res == 0, f"{book} diagnostic failed")
-        return inspect(Path(job.tmpdir, job.outfname).with_suffix(""))
-    finally:
-        os.chdir(cwd)
-        for key, value in old.items():
-            view.set(key, value)
+    def failed(message: str) -> Filled:
+        return (book, filler.nid, False, message, [], [])
+
+    status, message = filler.solve(book) or (None, f"{book} is not in the project")
+    if status is None:  # The book could not be typeset.
+        return failed(message)
+    # The search or the last layout was cut short.
+    if filler.timedout or filler.cancelled:
+        return failed(message)
+    # TeX failed on the first layout, so the filler searched nothing.
+    initial = filler.hooks.basestate.layout
+    if not initial.pages or initial.result != 0:
+        return failed(message)
+    unresolved, protected = remaining(filler.parlocs, filler.underfills)
+    if not status and not unresolved:
+        message = f"Final layout verified; protected breaks {protected}"
+    return (book, filler.nid, not unresolved, message, unresolved, protected)

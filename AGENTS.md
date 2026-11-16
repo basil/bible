@@ -48,8 +48,9 @@ preserves valid checkpoints and the last checked `dist/bible.pdf`. Any
 unresolved filler pages, failed convergence or failed publication checks
 stop publication.
 
-The filler checks its final page measurements rather than retaining every
-page it failed on earlier in its search. A short page is permitted when the
+The runner judges each book by the measurements of the layout PTXprint's
+filler ends on, which the filler keeps, rather than by every page it failed
+on earlier in its search. A short page is permitted when the
 next page opens with a heading: TeX breaks before a heading only when it and
 the lines it keeps cannot follow the page's last line, and the filler cannot
 reflow a heading. These protected breaks are recorded by book in the cache
@@ -172,7 +173,7 @@ The rest of the repository:
 - `sources/`: the Bible texts, the Updated Brenton (read for its lines of verse and the prose markers at their end), CCEL's Brenton (read for its notes alone), the 1611 marginal notes, the Greek New Testament in both its texts with its collations and apparatus, the English witnesses to its differences, and the fonts, committed as downloaded. [sources/README.md](sources/README.md) says where each came from.
 - `src/bible/`: the Python package that prepares the edition; `src/bible/byzantine/` is the reconciliation of the New Testament with the Byzantine text, run by the promote stage.
 - `tests/`: the tests.
-- `scripts/`: the font assembly and the PTXprint patches, run when the image is built.
+- `scripts/`: the font assembly and the PTXprint patch, run when the image is built.
 - `Dockerfile`: the tool image, with the pinned versions of PTXprint and the fonts.
 
 ## Checking a change
