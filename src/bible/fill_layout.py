@@ -70,6 +70,14 @@ def fill(job: Any) -> Filled:
     with the adjustments it chose before it returns, and keeps that layout's
     measurements for whoever calls it, so the pool's worker calls it here
     rather than through PTXprint's own job.
+
+    The filler can stop before a book's end. To save time it lays a book out
+    only as far as a chapter a little past the page it is filling. It decides
+    whether such a layout covers the whole book after TeX has run, from the
+    chapters' pages, which that run has just rewritten. Where the last
+    chapters moved up a page, a layout cut before the last chapter passes for
+    the whole book, and the pages after it are never filled. Restarted, the
+    filler goes on from the first short page with the adjustments it chose.
     """
     book = job.books[0]
     # The pool's worker keeps one filler, with its own directory and queues.
@@ -89,6 +97,19 @@ def fill(job: Any) -> Filled:
     if not initial.pages or initial.result != 0:
         return failed(message)
     unresolved, protected = remaining(filler.parlocs, filler.underfills)
+    restarts = 0
+    # A restart that leaves as many pages short as it found will not do better.
+    while unresolved:
+        left = len(unresolved)
+        status, message = filler.solve(book, restart=True)
+        if status is None or filler.timedout or filler.cancelled:
+            return failed(message)
+        restarts += 1
+        unresolved, protected = remaining(filler.parlocs, filler.underfills)
+        if len(unresolved) >= left:
+            break
     if not status and not unresolved:
         message = f"Final layout verified; protected breaks {protected}"
+    if restarts:
+        message += f"; restarted {restarts} time{'s' * (restarts > 1)}"
     return (book, filler.nid, not unresolved, message, unresolved, protected)

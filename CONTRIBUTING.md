@@ -95,7 +95,7 @@ When upgrading PTXprint, check the places that depend on its internals:
 
 - `config/protrusion.tex` and `config/ptxprint-mods.tex` wrap PTXprint's private macros for fonts, tables, and margin notes. The TeX tests run outside PTXprint, so only the build exercises them.
 - `scripts/patch_rerun_limit.py` makes PTXprint fail with unresolved rerun reasons at the pass cap (sillsdev/ptx2pdf#1262).
-- `src/bible/fill_layout.py` runs in PTXprint's pool workers, where it takes the worker's filler (`multiprint._worker_ctx`), calls `PTXFiller.solve()` itself, and reads the layout the filler ends on: `underfills`, `parlocs`, `timedout`, `cancelled`, and the initial layout in `hooks.basestate`. PTXprint returns a status and a message alone, and leaves the pages to the caller. `tests/test_fill.py` runs the pinned `solve()` to check it.
+- `src/bible/fill_layout.py` runs in PTXprint's pool workers, where it takes the worker's filler (`multiprint._worker_ctx`), calls `PTXFiller.solve()` itself, and reads the layout the filler ends on: `underfills`, `parlocs`, `timedout`, `cancelled`, and the initial layout in `hooks.basestate`. PTXprint returns a status and a message alone, and leaves the pages to the caller. Where that layout leaves a page short, it calls `solve(restart=True)`, which reads the adjustments the filler saved (`view.get_adjlist`) and goes on from the first short page: the filler can take a layout it cut at a chapter for the whole book, and stop before the book's end. `tests/test_fill.py` runs the pinned `solve()`, restarted too, to check it.
 
 The image build fails if the patched lines have changed upstream. Drop the patch once PTXprint has the fix.
 

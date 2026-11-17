@@ -50,7 +50,9 @@ stop publication.
 
 The runner judges each book by the measurements of the layout PTXprint's
 filler ends on, which the filler keeps, rather than by every page it failed
-on earlier in its search. A short page is permitted when the
+on earlier in its search. The filler can stop before a book's end, so where
+that layout leaves a page short the runner restarts the filler from it, for
+as long as a restart leaves fewer pages short. A short page is permitted when the
 next page opens with a heading: TeX breaks before a heading only when it and
 the lines it keeps cannot follow the page's last line, and the filler cannot
 reflow a heading. These protected breaks are recorded by book in the cache

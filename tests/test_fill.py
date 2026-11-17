@@ -128,6 +128,8 @@ def test_complete_partial_empty_and_corrupt_checkpoints(project: Path) -> None:
         ("protected", (True, [], [1])),
         ("gave up", (True, [], [1])),
         ("gave up on a gap", (False, [1], [])),
+        ("stopped early", (True, [], [])),
+        ("restart timed out", (False, [], [])),
         ("timed out", (False, [], [])),
         ("bad initial layout", (False, [], [])),
         ("no pages", (False, [], [])),
@@ -140,7 +142,8 @@ def test_worker_judges_the_layout_the_pinned_filler_ends_on(
     expected: tuple[bool, list[int], list[int]],
 ) -> None:
     """PTXprint's solve() must still lay the whole book out last and keep its
-    measurements; its record of failures is not read."""
+    measurements; its record of failures is not read. Restarted, it must go on
+    from the adjustments it saved."""
     assert multiprint._worker_ctx is None  # Set in a worker, where fill() runs.
     filler = page_filler.PTXFiller.__new__(page_filler.PTXFiller)
     filler.nid = "Worker1"
@@ -152,6 +155,9 @@ def test_worker_judges_the_layout_the_pinned_filler_ends_on(
             SimpleNamespace(feats={}) if key == "bl_fontR" else default
         ),
         set=lambda *args: None,
+        get_adjlist=lambda book, save: SimpleNamespace(
+            get_params=lambda: {}, get_cache=lambda: ({}, {})
+        ),
     )
     filler.clear_book_files = lambda *args: None
     filler.printbk = lambda *args, **kwargs: None
@@ -162,7 +168,15 @@ def test_worker_judges_the_layout_the_pinned_filler_ends_on(
     filler.cpu_q = None
     heading = (SimpleNamespace(partype="section", mrk="s1"), None)
     verse = (SimpleNamespace(partype="versetext", mrk="p"), None)
-    short = case in ("gap", "protected", "gave up", "gave up on a gap")
+    # The filler stopped before the book's end, and fills it when restarted.
+    early = case == "stopped early"
+    restarted = case in (
+        "gap",
+        "gave up on a gap",
+        "stopped early",
+        "restart timed out",
+    )
+    short = restarted or case in ("protected", "gave up")
     forced = case in ("protected", "gave up")
     filler.parlocs = SimpleNamespace(
         numPages=lambda: 0 if case == "no pages" else 3,
@@ -173,7 +187,7 @@ def test_worker_judges_the_layout_the_pinned_filler_ends_on(
     # The solver's failures are of its search: here they name a page the last
     # layout fills, and no page that layout leaves short.
     state = SimpleNamespace(
-        failures=None if gave_up else [2] if short else [],
+        failures=None if gave_up else [2] if short and not early else [],
         page=2,
         paragraph_params={},
         float_anchors={},
@@ -187,6 +201,7 @@ def test_worker_judges_the_layout_the_pinned_filler_ends_on(
         result=1 if case == "bad initial layout" else 0,
     )
     runs = 0
+    solves = 0
 
     def run_layout(*args: object, **kwargs: object) -> Any:
         nonlocal runs
@@ -198,12 +213,18 @@ def test_worker_judges_the_layout_the_pinned_filler_ends_on(
             xdvtopdf=lambda *args: None,
         )
         # The first layout is short on its second page; the last, with the
-        # chosen adjustments, on its first or nowhere.
-        filler.underfills = [[0], [5], [40]] if runs == 1 else [[3 * short], [0], [40]]
+        # chosen adjustments, on its first or nowhere. A restart lays the
+        # book out twice more, as it was left and as the restart leaves it.
+        gap = short and not (early and runs == 4)
+        filler.underfills = [[0], [5], [40]] if runs == 1 else [[3 * gap], [0], [40]]
         return layout
 
     def search(*args: object, **kwargs: object) -> Any:
-        filler.timedout = case == "timed out"
+        nonlocal solves
+        solves += 1
+        filler.timedout = case == "timed out" or (
+            case == "restart timed out" and solves == 2
+        )
         return solved
 
     filler.hooks_class = lambda *args: SimpleNamespace(run_layout=run_layout)
@@ -222,9 +243,13 @@ def test_worker_judges_the_layout_the_pinned_filler_ends_on(
     )
     assert (book, worker) == ("REV", "Worker1")
     assert (complete, unresolved, protected) == expected
-    assert runs == (0 if case == "missing" else 1 if case == "no pages" else 2)
+    assert runs == (
+        0 if case == "missing" else 1 if case == "no pages" else 4 if restarted else 2
+    )
     if case in ("protected", "gave up"):
         assert message == "Final layout verified; protected breaks [1]"
+    if early:
+        assert message.endswith("; restarted 1 time")
 
 
 def test_concurrent_build_cannot_take_lock(project: Path) -> None:
