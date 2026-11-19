@@ -9,7 +9,7 @@ TOOLCHAIN := $(COMPOSE) run --rm -T --interactive=false --user $(UIDGID) toolcha
 DOCKERFMT := $(COMPOSE) run --rm -T --interactive=false --user $(UIDGID) dockerfmt
 HADOLINT := $(COMPOSE) run --rm -T --interactive=true hadolint
 PIPELINE := $(TOOLCHAIN) python3 -m bible
-.PHONY: bootstrap validate review review-diff test test-python test-tex test-tex-save font-specimen sample pdf pdf-unfilled web site site-dev clean lint lint-fix
+.PHONY: bootstrap validate review review-diff usfm test test-python test-tex test-tex-save font-specimen sample pdf pdf-unfilled web site site-dev clean lint lint-fix
 bootstrap:
 	sh scripts/collect_valkyrie.sh
 	$(COMPOSE) pull dockerfmt hadolint
@@ -43,6 +43,9 @@ test-tex-save:
 # A visual proof of all four faces and native numeral/small-cap features.
 font-specimen:
 	$(TOOLCHAIN) sh -c 'mkdir -p build/font-specimen dist && xelatex -interaction=nonstopmode -halt-on-error -output-directory=build/font-specimen tests/tex/olebfont-specimen.tex && cp build/font-specimen/olebfont-specimen.pdf dist/'
+# The scripture books as plain USFM, in dist/oleb-usfm.zip.
+usfm:
+	$(PIPELINE) usfm
 sample:
 	$(PIPELINE) sample
 pdf:
