@@ -14,7 +14,7 @@ from contextlib import nullcontext
 
 from bible import export, fill, paths, pipeline, policy, sources, usj, web
 from bible.project import write_project
-from bible.publish import publish
+from bible.publish import label_pages, publish
 from bible.review import review
 from bible.toolchain import check_image
 from bible.typeset import typeset
@@ -71,7 +71,7 @@ def render_project(
         pages = inspect_pdf(
             pdf, base, project, ids, mode == "sample", edition.policy.witnesses
         )
-        publish(command, pdf)
+        publish(command, label_pages(pdf, base))
         if report is not None:
             report.update(
                 {

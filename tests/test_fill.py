@@ -313,6 +313,7 @@ def test_only_publish_after_all_checks(
     monkeypatch.setattr(cli, "typeset", typeset)
     monkeypatch.setattr(cli, "check_processed", lambda *args: None)
     monkeypatch.setattr(cli, "inspect_pdf", inspect)
+    monkeypatch.setattr(cli, "label_pages", lambda pdf, base: pdf)
     paths.BUILD_DIR.mkdir()
     if failure:
         with pytest.raises(CheckFailed):
