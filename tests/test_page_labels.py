@@ -53,6 +53,9 @@ def test_labels_run_roman_then_arabic_from_the_divider(tmp_path: Path) -> None:
     ] + [{"/S": "/D", "/St": n} for n in (1, 2, 3)]
     # The PDF that verification checked is left as it was.
     assert "PageLabels" not in pdf.read_bytes().decode()
+    # The same PDF gives the same copy, its /ID included.
+    copy = labelled.read_bytes()
+    assert label_pages(pdf, tmp_path).read_bytes() == copy
 
 
 def test_labels_need_the_divider(tmp_path: Path) -> None:

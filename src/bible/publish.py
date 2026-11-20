@@ -21,8 +21,21 @@ def label_pages(pdf: Path, base: Path) -> Path:
     boundaries = read_json(base / "book-boundaries.json")
     main = [b["page"] for b in boundaries if b["printed_page"] == "1"]
     require(len(main) == 1, "No single page where the Arabic folios begin")
-    labelled = pdf.with_name(f"{pdf.stem}-labelled.pdf")
-    run("qpdf", pdf, "--set-page-labels", "1:r", f"{main[0]}:D", "--", labelled)
+    # Beside the build's logs, not among PTXprint's PDFs, which typeset counts.
+    labelled = base / f"{pdf.stem}-labelled.pdf"
+    # The PDF declares PDF/A, which wants an end of line before each
+    # endstream; and the same PDF is to give the same copy, /ID and all.
+    run(
+        "qpdf",
+        "--newline-before-endstream",
+        "--deterministic-id",
+        pdf,
+        "--set-page-labels",
+        "1:r",
+        f"{main[0]}:D",
+        "--",
+        labelled,
+    )
     with (base / "qpdf-labelled.log").open("w", encoding="utf-8") as log:
         run("qpdf", "--check", labelled, stdout=log, stderr=subprocess.STDOUT)
     labels = json.loads(capture("qpdf", "--json", "--json-key=pagelabels", labelled))
