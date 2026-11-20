@@ -43,7 +43,9 @@ and reports progress every minute, including completed, reused, and pending
 books. Its rough remaining-time estimate starts once enough books have
 finished; it covers filling alone, not final typesetting. Logs and the
 machine-readable report are in `build/page-fill/`; complete typesetting and
-verification output is in `build/pdf/`. A failed or interrupted build
+verification output is in `build/pdf/`. The PDF published to `dist/` is a
+copy of the checked one whose page labels are its folios, so that a
+reader's page numbers are the book's. A failed or interrupted build
 preserves valid checkpoints and the last checked `dist/bible.pdf`. Any
 unresolved filler pages, failed convergence or failed publication checks
 stop publication.
