@@ -111,6 +111,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         elif args.command == "review":
             review(prepared())
         elif args.command == "usfm":
+            check_image()
             publish_usfm(export.plain(prepared()))
         elif args.command == "web":
             check_image()

@@ -7,7 +7,8 @@ the Greek and Hebrew tagged for their fonts. Only the form of what prints
 changes here, never its substance.
 
 The scripture books are also written as plain USFM, for other readers: the
-same view, without anything PTXprint alone needs."""
+same view, with its chapter labels, its notes' origins as the book prints
+them, and a caller for every note, without anything PTXprint alone needs."""
 
 from __future__ import annotations
 
@@ -398,10 +399,25 @@ def grouped(
 
 def plain(edition: Edition) -> list[tuple[str, str]]:
     """The scripture books as plain USFM, by code, in the edition's order:
-    the view the book prints, with each note's origin whole and nothing
-    PTXprint alone needs."""
+    the view the book prints, with its chapter label where the manifest asks
+    for one, each note's origin whole under the label its verse prints, every
+    note marked in the text by a caller the reader supplies, since no margin
+    stands beside it, and nothing PTXprint alone needs. A note the book sets
+    below the text to relieve a page stays at its own words, as every other."""
+
+    def marked(note: Node) -> Node:
+        return {**note, "caller": "+"} if note.get("caller") == "-" else note
+
     return [
-        (code, usj.serialize(doc))
+        (
+            code,
+            usj.serialize(
+                labelled(
+                    with_printed_origins(scripture.map_notes(doc, marked)),
+                    edition.policy.unit(code),
+                )
+            ),
+        )
         for code, doc in pipeline.view(edition, "pdf")
         if code in edition.scripture
     ]
